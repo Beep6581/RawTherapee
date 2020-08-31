@@ -10365,7 +10365,7 @@ void ImProcFunctions::Lab_Local(
                                 for (int y = 0; y < bfh ; y++) {
                                     for (int x = 0; x < bfw; x++) {
                                         float hueG = xatan2f(LBbef[y][x], LAbef[y][x]);
-                                        float valparam = float ((locwavCurveguid[500.f * Color::huelab_to_huehsv2(hueG)] - 0.5f));  //get H=f(H)
+                                        float valparam = float (1.5f * (locwavCurveguid[500.f * Color::huelab_to_huehsv2(hueG)] - 0.5f));  //get H=f(H)
                                         LL[y][x] = LLbef[y][x] + (LL[y][x] - LLbef[y][x]) * (1.f + valparam);
                                         rr[y][x] = tmpImage->r(y, x) + (rr[y][x] - tmpImage->r(y, x)) * (1.f + valparam);
                                         gg[y][x] = tmpImage->g(y, x) + (gg[y][x] - tmpImage->g(y, x)) * (1.f + valparam);
@@ -10389,21 +10389,19 @@ void ImProcFunctions::Lab_Local(
                                 float MaxPg[10];
                                 float MaxNg[10];
 
-                                //2 decomposition LL after guidefilter and dst before (perhaps dst no need)
 #ifdef _OPENMP
                                 const int numThreads = omp_get_max_threads();
 #else
                                 const int numThreads = 1;
 
 #endif
-                                int wavelet_level =  params->locallab.spots.at(sp).levelbl; //1 + params->locallab.spots.at(sp).csthreshold.getBottomRight();//retrieve with +1 maximum wavelet_level
+                                int wavelet_level =  params->locallab.spots.at(sp).levelbl;
                                 int modeexpert = 0; 
                                 if(params->locallab.spots.at(sp).complexblur == 0) {
                                     modeexpert = 1;
                                 } 
-                                printf("Modeexpe=%i\n", modeexpert); 
                                 int minwin = rtengine::min(bfw, bfh);
-                                int maxlevelspot = 9;// params->locallab.spots.at(sp).levelbl; //10;//maximum possible
+                                int maxlevelspot = 9;
 
                                 // adap maximum level wavelet to size of crop
                                 while ((1 << maxlevelspot) >= (minwin * sk) && maxlevelspot  > 1) {
@@ -10450,10 +10448,10 @@ void ImProcFunctions::Lab_Local(
 
                                     float thrh = 0.f;
 
-                                    if (thrblh < 0.02f) {
-                                        thrh = 0.7f;
+                                    if (thrblh < 0.05f) {
+                                        thrh = 0.8f;
                                     } else if (thrblh < 0.1f) {
-                                        thrh = 0.5f;
+                                        thrh = 0.6f;
                                     } else if (thrblh < 0.3f) {
                                         thrh = 0.4f;
                                     } else {
@@ -10469,13 +10467,8 @@ void ImProcFunctions::Lab_Local(
                                         for (int level = 0; level < maxlvl; level++) {
                                             int Wlvl_L = LdecompLL->level_W(level);
                                             int Hlvl_L = LdecompLL->level_H(level);
-                                            float* const* WavCoeffs_L = LdecompLL->level_coeffs(level);//first decomp denoised
-                                            float* const* WavCoeffs_L2 = Ldecompdst->level_coeffs(level);//second decomp before denoise
-/*
-                                            if (settings->verbose) {
-                                                printf("level=%i mean=%.0f meanden=%.0f sigma=%.0f  sigmaden=%.0f Max=%.0f Maxden=%.0f\n", level, mean[level], meang[level], sigma[level], sigmag[level], MaxP[level], MaxPg[level]);
-                                            }
-*/
+                                            float* const* WavCoeffs_L = LdecompLL->level_coeffs(level);//first decomp GF
+                                            float* const* WavCoeffs_L2 = Ldecompdst->level_coeffs(level);//second decomp before GF
                                             //find local contrast
                                             float tempmean = 0.f;
                                             float tempsig = 0.f;
@@ -10528,7 +10521,7 @@ void ImProcFunctions::Lab_Local(
                                                     float kc = wavguid.getVal(absciss) - 1.f;
                                                     float kch = wavguidh.getVal(absciss) - 1.f;
                                                     if (kc < 0) {
-                                                        kc = -SQR(kc);//approximation to simulate sliders denoise
+                                                        kc = -SQR(kc);
                                                     }
 
                                                     if (kch < 0) {
@@ -10540,14 +10533,16 @@ void ImProcFunctions::Lab_Local(
                                                     float kinterm = 1.f + reduceeffect * kc;
                                                     float kintermh = 1.f + kch;
                                                     kinterm = kinterm <= 0.f ? 0.01f : kinterm;
-                                                    float prov = WavCoeffs_L2[dir][i];//save before denoise
+                                                    kintermh = kintermh <= 0.f ? 0.01f : kintermh;
+
+                                                    float prov = WavCoeffs_L2[dir][i];//save before
                                                     if(modeexpert == 0) {
                                                         kintermh = kinterm;
                                                     }
                                                     if(level < (maxlvl / 2)) {
-                                                        WavCoeffs_L[dir][i] = prov + (WavCoeffs_L[dir][i] - prov) * kinterm;//only apply local contrast on difference between denoise and normal
+                                                        WavCoeffs_L[dir][i] = prov + (WavCoeffs_L[dir][i] - prov) * kinterm;//only apply local contrast on difference between GF and normal
                                                     } else {
-                                                        WavCoeffs_L[dir][i] = prov + (WavCoeffs_L[dir][i] - prov) * kintermh;//only apply local contrast on difference between denoise and normal
+                                                        WavCoeffs_L[dir][i] = prov + (WavCoeffs_L[dir][i] - prov) * kintermh;//only apply local contrast on difference between GF and normal
                                                         
                                                     }
                                                 }
