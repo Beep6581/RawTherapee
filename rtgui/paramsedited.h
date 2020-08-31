@@ -620,6 +620,7 @@ public:
         bool locwavcurveguid;
         bool blMethod;
         bool chroMethod;
+        bool quamethod;
         bool blurMethod;
         bool medMethod;
         bool activlum;

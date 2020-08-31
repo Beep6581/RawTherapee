@@ -5624,6 +5624,7 @@ LocallabBlur::LocallabBlur():
     chroMethod(Gtk::manage(new MyComboBoxText())),
     activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
     expdenoise(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI_EXP")))),
+    quamethod(Gtk::manage(new MyComboBoxText())),
     LocalcurveEditorwavden(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVDEN"))),
     wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
     noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 0.01, 0.))),
@@ -5661,6 +5662,7 @@ LocallabBlur::LocallabBlur():
     Lmaskblshape(static_cast<DiagonalCurveEditor*>(mask2blCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     mask2blCurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
     LLmaskblshapewav(static_cast<FlatCurveEditor*>(mask2blCurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
+    quaHBox(Gtk::manage(new Gtk::HBox())),
     csThresholdblur(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
 {
     const LocallabParams::LocallabSpot defSpot;
@@ -5745,6 +5747,14 @@ LocallabBlur::LocallabBlur():
     activlumConn = activlum->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::activlumChanged));
 
     setExpandAlignProperties(expdenoise, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    
+
+    quamethod->append(M("TP_WAVELET_QUACONSER"));
+    quamethod->append(M("TP_WAVELET_QUAAGRES"));
+    quamethodconn = quamethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabBlur::quamethodChanged));
+    Gtk::Label* const quaLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DENQUA") + ":"));
+    quaHBox->pack_start(*quaLabel, Gtk::PACK_SHRINK, 4);
+    quaHBox->pack_start(*quamethod);
 
     LocalcurveEditorwavden->setCurveListener(this);
 
@@ -5767,7 +5777,7 @@ LocallabBlur::LocallabBlur():
 
     noisechrof->setAdjusterListener(this);
 
-    noisechroc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
+//    noisechroc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
     noisechroc->setAdjusterListener(this);
 
     noisechrodetail->setAdjusterListener(this);
@@ -5882,6 +5892,7 @@ LocallabBlur::LocallabBlur():
     ToolParamBlock* const denoisebox = Gtk::manage(new ToolParamBlock());
     Gtk::Frame* const wavFrame = Gtk::manage(new Gtk::Frame());
     ToolParamBlock* const wavBox = Gtk::manage(new ToolParamBlock());
+    wavBox->pack_start(*quaHBox);
     wavBox->pack_start(*LocalcurveEditorwavden, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     // wavBox->pack_start(*noiselumf0);
     // wavBox->pack_start(*noiselumf);
@@ -5965,7 +5976,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         expdenoise->set_tooltip_markup(M("TP_LOCALLAB_DENOI_TOOLTIP"));
         wavshapeden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
         wavguid->setTooltip(M("TP_LOCALLAB_WAVGUID_TOOLTIP"));
-        noiselumc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
+//        noiselumc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
         expmaskbl->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         showmaskblMethodtyp->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKTYP_TOOLTIP"));
         CCmaskblshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
@@ -6013,6 +6024,7 @@ void LocallabBlur::disableListener()
     medMethodConn.block(true);
     blurMethodConn.block(true);
     chroMethodConn.block(true);
+    quamethodconn.block(true);
     activlumConn.block(true);
     showmaskblMethodConn.block(true);
     showmaskblMethodtypConn.block(true);
@@ -6029,6 +6041,7 @@ void LocallabBlur::enableListener()
     medMethodConn.block(false);
     blurMethodConn.block(false);
     chroMethodConn.block(false);
+    quamethodconn.block(false);
     activlumConn.block(false);
     showmaskblMethodConn.block(false);
     showmaskblMethodtypConn.block(false);
@@ -6102,6 +6115,13 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         } else if (spot.chroMethod == "all") {
             chroMethod->set_active(2);
         }
+
+        if (spot.quamethod == "cons") {
+            quamethod->set_active(0);
+        } else if (spot.quamethod == "agre") {
+            quamethod->set_active(1);
+        }
+
 
         activlum->set_active(spot.activlum);
         wavshapeden->setCurve(spot.locwavcurveden);
@@ -6218,6 +6238,12 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
             spot.chroMethod = "chr";
         } else if (chroMethod->get_active_row_number() == 2) {
             spot.chroMethod = "all";
+        }
+
+        if (quamethod->get_active_row_number() == 0) {
+            spot.quamethod = "cons";
+        } else if (quamethod->get_active_row_number() == 1) {
+            spot.quamethod = "agre";
         }
 
         spot.activlum = activlum->get_active();
@@ -6845,6 +6871,17 @@ void LocallabBlur::chroMethodChanged()
         }
     }
 }
+
+void LocallabBlur::quamethodChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabquaMethod,
+                                   quamethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+        }
+    }
+}
+
 
 void LocallabBlur::activlumChanged()
 {

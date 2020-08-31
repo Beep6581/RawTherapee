@@ -654,6 +654,7 @@ private:
     MyComboBoxText* const chroMethod;
     Gtk::CheckButton* const activlum;
     MyExpander* const expdenoise;
+    MyComboBoxText* const quamethod;
     CurveEditorGroup* const LocalcurveEditorwavden;
     FlatCurveEditor* const wavshapeden;
     Adjuster* const noiselumf0;
@@ -691,9 +692,11 @@ private:
     DiagonalCurveEditor* const Lmaskblshape;
     CurveEditorGroup* const mask2blCurveEditorGwav;
     FlatCurveEditor* const LLmaskblshapewav;
+    Gtk::HBox* const quaHBox;
     ThresholdAdjuster* const csThresholdblur;
 
     sigc::connection blMethodConn, fftwblConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
+    sigc::connection  quamethodconn;
 
 public:
     LocallabBlur();
@@ -737,6 +740,7 @@ private:
     void showmaskblMethodtypChanged();
     void enablMaskChanged();
     void toolblChanged();
+    void quamethodChanged();
 
     void updateBlurGUI();
 };

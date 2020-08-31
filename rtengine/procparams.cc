@@ -3275,6 +3275,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     },
     blMethod("blur"),
     chroMethod("lum"),
+    quamethod("cons"),
     blurMethod("norm"),
     medMethod("33"),
     activlum(true),
@@ -3297,7 +3298,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.0,
         0.0,
         0.35,
-        0.5,
+        0.58,
         0.,
         0.35,
         0.35,
@@ -4213,6 +4214,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && locwavcurveguid == other.locwavcurveguid
         && blMethod == other.blMethod
         && chroMethod == other.chroMethod
+        && quamethod == other.quamethod
         && blurMethod == other.blurMethod
         && medMethod == other.medMethod
         && activlum == other.activlum
@@ -5743,6 +5745,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->locwavcurveguid, "Locallab", "LocwavCurveguid_" + index_str, spot.locwavcurveguid, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blMethod, "Locallab", "BlMethod_" + index_str, spot.blMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chroMethod, "Locallab", "ChroMethod_" + index_str, spot.chroMethod, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->quamethod, "Locallab", "QuaMethod_" + index_str, spot.quamethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blurMethod, "Locallab", "BlurMethod_" + index_str, spot.blurMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->medMethod, "Locallab", "MedMethod_" + index_str, spot.medMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->activlum, "Locallab", "activlum_" + index_str, spot.activlum, keyFile);
@@ -7474,6 +7477,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "LocwavCurveguid_" + index_str, pedited, spot.locwavcurveguid, spotEdited.locwavcurveguid);
                 assignFromKeyfile(keyFile, "Locallab", "BlMethod_" + index_str, pedited, spot.blMethod, spotEdited.blMethod);
                 assignFromKeyfile(keyFile, "Locallab", "ChroMethod_" + index_str, pedited, spot.chroMethod, spotEdited.chroMethod);
+                assignFromKeyfile(keyFile, "Locallab", "QuaMethod_" + index_str, pedited, spot.quamethod, spotEdited.quamethod);
                 assignFromKeyfile(keyFile, "Locallab", "BlurMethod_" + index_str, pedited, spot.blurMethod, spotEdited.blurMethod);
                 assignFromKeyfile(keyFile, "Locallab", "MedMethod_" + index_str, pedited, spot.medMethod, spotEdited.medMethod);
                 assignFromKeyfile(keyFile, "Locallab", "activlum_" + index_str, pedited, spot.activlum, spotEdited.activlum);

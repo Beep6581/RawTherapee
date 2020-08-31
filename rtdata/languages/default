@@ -2928,7 +2928,7 @@ TP_LOCALLAB_WAVCOMPRE_TOOLTIP;Achieve a Tone-mapping or reduction local contrast
 TP_LOCALLAB_WAVCOMP_TOOLTIP;Achive local contrast in function of the direction wavelet decomposition : horizontal, vertical, diagonal
 TP_LOCALLAB_WAVCON;Contrast by Level
 TP_LOCALLAB_WAVCONTF_TOOLTIP;Similar to Contrast By Detail Levels : on abscissa levels.
-TP_LOCALLAB_WAVDEN;Luminance denoise by level (0 1 2 +3 and more)
+TP_LOCALLAB_WAVDEN;Luminance denoise by level (0 1 2 3 .. 7)
 TP_LOCALLAB_WAVE;Ψ Wavelet
 TP_LOCALLAB_WAVEDG;Local contrast
 TP_LOCALLAB_WAVEEDG_TOOLTIP;Achieves a sharpness taking into account the notion of edges wavelet.\nRequires that at least the first 4 levels are usable

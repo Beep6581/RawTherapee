@@ -1207,6 +1207,7 @@ struct LocallabParams {
         std::vector<double> locwavcurveguid;
         Glib::ustring blMethod; // blur, med, guid
         Glib::ustring chroMethod; // lum, chr, all
+        Glib::ustring quamethod; // cons agre
         Glib::ustring blurMethod; // norm, inv
         Glib::ustring medMethod; // none, 33, 55, 77, 99
         bool activlum;
