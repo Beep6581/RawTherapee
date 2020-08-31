@@ -1217,6 +1217,7 @@ struct LocallabParams {
         double noiselumc;
         double noiselumdetail;
         int noiselequal;
+        std::vector<double> locwavcurvehue;
         double noisechrof;
         double noisechroc;
         double noisechrodetail;

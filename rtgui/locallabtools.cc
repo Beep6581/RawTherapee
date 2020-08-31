@@ -5633,6 +5633,8 @@ LocallabBlur::LocallabBlur():
     noiselumc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMCOARSE"), MINCHRO, MAXCHROCC, 0.01, 0.))),
     noiselumdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMDETAIL"), 0., 100., 0.01, 0.))),
     noiselequal(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELEQUAL"), -2, 10, 1, 7, Gtk::manage(new RTImage("circle-white-small.png")), Gtk::manage(new RTImage("circle-black-small.png"))))),
+    LocalcurveEditorwavhue(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_WAVELET_DENOISEHUE"))),
+    wavhue(static_cast<FlatCurveEditor*>(LocalcurveEditorwavhue->addCurve(CT_Flat, "", nullptr, false, false))),
     noisechrof(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noisechroc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), MINCHRO, MAXCHROCC, 0.01, 0.))),
     noisechrodetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHRODETAIL"), 0., 100., 0.01, 0.))),
@@ -5775,6 +5777,20 @@ LocallabBlur::LocallabBlur():
 
     noiselequal->setAdjusterListener(this);
 
+    LocalcurveEditorwavhue->setCurveListener(this);
+
+    wavhue->setIdentityValue(0.);
+    wavhue->setResetCurve(FlatCurveType(defSpot.locwavcurvehue.at(0)), defSpot.locwavcurvehue);
+    wavhue->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    wavhue->setCurveColorProvider(this, 3);
+    wavhue->setBottomBarBgGradient(six_shape);
+
+//    wavguid->setIdentityValue(0.);
+//    wavguid->setResetCurve(FlatCurveType(defSpot.locwavcurveguid.at(0)), defSpot.locwavcurveguid);
+
+    LocalcurveEditorwavhue->curveListComplete();
+
+
     noisechrof->setAdjusterListener(this);
 
 //    noisechroc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
@@ -5900,6 +5916,7 @@ LocallabBlur::LocallabBlur():
     // wavBox->pack_start(*noiselumc);
     wavBox->pack_start(*noiselumdetail);
     wavBox->pack_start(*noiselequal);
+    wavBox->pack_start(*LocalcurveEditorwavhue, Gtk::PACK_SHRINK, 4);
     wavBox->pack_start(*noisechrof);
     wavBox->pack_start(*noisechroc);
     wavBox->pack_start(*noisechrodetail);
@@ -5944,6 +5961,7 @@ LocallabBlur::~LocallabBlur()
 {
     delete LocalcurveEditorwavden;
     delete LocalcurveEditorwavguid;
+    delete LocalcurveEditorwavhue;
     delete maskblCurveEditorG;
     delete mask2blCurveEditorG;
     delete mask2blCurveEditorGwav;
@@ -5976,6 +5994,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         expdenoise->set_tooltip_markup(M("TP_LOCALLAB_DENOI_TOOLTIP"));
         wavshapeden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
         wavguid->setTooltip(M("TP_LOCALLAB_WAVGUID_TOOLTIP"));
+        wavhue->setTooltip(M("TP_LOCALLAB_WAVHUE_TOOLTIP"));
 //        noiselumc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
         expmaskbl->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         showmaskblMethodtyp->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKTYP_TOOLTIP"));
@@ -6126,6 +6145,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         activlum->set_active(spot.activlum);
         wavshapeden->setCurve(spot.locwavcurveden);
         wavguid->setCurve(spot.locwavcurveguid);
+        wavhue->setCurve(spot.locwavcurvehue);
         noiselumf0->setValue(spot.noiselumf0);
         noiselumf->setValue(spot.noiselumf);
         noiselumf2->setValue(spot.noiselumf2);
@@ -6249,6 +6269,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.activlum = activlum->get_active();
         spot.locwavcurveden = wavshapeden->getCurve();
         spot.locwavcurveguid = wavguid->getCurve();
+        spot.locwavcurvehue = wavhue->getCurve();
         spot.noiselumf0 = noiselumf0->getValue();
         spot.noiselumf = noiselumf->getValue();
         spot.noiselumf2 = noiselumf2->getValue();
@@ -6616,6 +6637,13 @@ void LocallabBlur::curveChanged(CurveEditor* ce)
         if (ce == wavguid) {
             if (listener) {
                 listener->panelChanged(EvlocallabwavCurveguid,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (ce == wavhue) {
+            if (listener) {
+                listener->panelChanged(EvlocallabwavCurvehue,
                                        M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
             }
         }

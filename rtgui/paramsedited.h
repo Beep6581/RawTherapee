@@ -618,6 +618,7 @@ public:
         bool levelbl;
         bool sigbl;
         bool locwavcurveguid;
+        bool locwavcurvehue;
         bool blMethod;
         bool chroMethod;
         bool quamethod;

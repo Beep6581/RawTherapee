@@ -1199,6 +1199,7 @@ HISTORY_MSG_957;Local - GF local contrast threshold
 HISTORY_MSG_958;Local - GF Local contrast Hue equalizer
 HISTORY_MSG_959;Local - GF Local contrast levels
 HISTORY_MSG_960;Local - GF Local contrast threshold high
+HISTORY_MSG_961;Local - Equalizer hue
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
