@@ -1272,6 +1272,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).scalegr = locallab.spots.at(j).scalegr && pSpot.scalegr == otherSpot.scalegr;
                 locallab.spots.at(j).epsbl = locallab.spots.at(j).epsbl && pSpot.epsbl == otherSpot.epsbl;
                 locallab.spots.at(j).thrbl = locallab.spots.at(j).thrbl && pSpot.thrbl == otherSpot.thrbl;
+                locallab.spots.at(j).levelbl = locallab.spots.at(j).levelbl && pSpot.levelbl == otherSpot.levelbl;
+                locallab.spots.at(j).sigbl = locallab.spots.at(j).sigbl && pSpot.sigbl == otherSpot.sigbl;
                 locallab.spots.at(j).locwavcurveguid = locallab.spots.at(j).locwavcurveguid && pSpot.locwavcurveguid == otherSpot.locwavcurveguid;
                 locallab.spots.at(j).blMethod = locallab.spots.at(j).blMethod && pSpot.blMethod == otherSpot.blMethod;
                 locallab.spots.at(j).chroMethod = locallab.spots.at(j).chroMethod && pSpot.chroMethod == otherSpot.chroMethod;
@@ -3988,6 +3990,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).thrbl = mods.locallab.spots.at(i).thrbl;
         }
 
+        if (locallab.spots.at(i).levelbl) {
+            toEdit.locallab.spots.at(i).levelbl = mods.locallab.spots.at(i).levelbl;
+        }
+
+        if (locallab.spots.at(i).sigbl) {
+            toEdit.locallab.spots.at(i).sigbl = mods.locallab.spots.at(i).sigbl;
+        }
+
         if (locallab.spots.at(i).locwavcurveguid) {
             toEdit.locallab.spots.at(i).locwavcurveguid = mods.locallab.spots.at(i).locwavcurveguid;
         }
@@ -6406,6 +6416,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     scalegr(v),
     epsbl(v),
     thrbl(v),
+    levelbl(v),
+    sigbl(v),
     locwavcurveguid(v),
     blMethod(v),
     chroMethod(v),
@@ -6896,6 +6908,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     scalegr = v;
     epsbl = v;
     thrbl = v;
+    levelbl = v;
+    sigbl = v;
     locwavcurveguid = v;
     blMethod = v;
     chroMethod = v;

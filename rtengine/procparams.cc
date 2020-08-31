@@ -3244,6 +3244,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     scalegr(100),
     epsbl(0),
     thrbl(0.),
+    levelbl(7.),
+    sigbl(0.),
     locwavcurveguid{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,
@@ -4206,6 +4208,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && scalegr == other.scalegr
         && epsbl == other.epsbl
         && thrbl == other.thrbl
+        && levelbl == other.levelbl
+        && sigbl == other.sigbl
         && locwavcurveguid == other.locwavcurveguid
         && blMethod == other.blMethod
         && chroMethod == other.chroMethod
@@ -5734,6 +5738,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->scalegr, "Locallab", "Scalegr_" + index_str, spot.scalegr, keyFile);
                     saveToKeyfile(!pedited || spot_edited->epsbl, "Locallab", "Epsbl_" + index_str, spot.epsbl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->thrbl, "Locallab", "Thrbl_" + index_str, spot.thrbl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->levelbl, "Locallab", "Levelbl_" + index_str, spot.levelbl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sigbl, "Locallab", "Sigbl_" + index_str, spot.sigbl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->locwavcurveguid, "Locallab", "LocwavCurveguid_" + index_str, spot.locwavcurveguid, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blMethod, "Locallab", "BlMethod_" + index_str, spot.blMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chroMethod, "Locallab", "ChroMethod_" + index_str, spot.chroMethod, keyFile);
@@ -7463,6 +7469,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Scalegr_" + index_str, pedited, spot.scalegr, spotEdited.scalegr);
                 assignFromKeyfile(keyFile, "Locallab", "Epsbl_" + index_str, pedited, spot.epsbl, spotEdited.epsbl);
                 assignFromKeyfile(keyFile, "Locallab", "Thrbl_" + index_str, pedited, spot.thrbl, spotEdited.thrbl);
+                assignFromKeyfile(keyFile, "Locallab", "Levelbl_" + index_str, pedited, spot.levelbl, spotEdited.levelbl);
+                assignFromKeyfile(keyFile, "Locallab", "Sigbl_" + index_str, pedited, spot.sigbl, spotEdited.sigbl);
                 assignFromKeyfile(keyFile, "Locallab", "LocwavCurveguid_" + index_str, pedited, spot.locwavcurveguid, spotEdited.locwavcurveguid);
                 assignFromKeyfile(keyFile, "Locallab", "BlMethod_" + index_str, pedited, spot.blMethod, spotEdited.blMethod);
                 assignFromKeyfile(keyFile, "Locallab", "ChroMethod_" + index_str, pedited, spot.chroMethod, spotEdited.chroMethod);

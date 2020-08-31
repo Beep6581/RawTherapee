@@ -1202,6 +1202,8 @@ struct LocallabParams {
         int scalegr;
         int epsbl;
         double thrbl;
+        double levelbl;
+        double sigbl;
         std::vector<double> locwavcurveguid;
         Glib::ustring blMethod; // blur, med, guid
         Glib::ustring chroMethod; // lum, chr, all

@@ -1196,7 +1196,9 @@ HISTORY_MSG_954;Local - Show-hide tools
 HISTORY_MSG_955;Local - Enable Spot
 HISTORY_MSG_956;Local - CH Curve
 HISTORY_MSG_957;Local - GF local contrast threshold
-HISTORY_MSG_958;Local - Local contrast Hue equalizer
+HISTORY_MSG_958;Local - GF Local contrast Hue equalizer
+HISTORY_MSG_959;Local - GF Local contrast levels
+HISTORY_MSG_960;Local - GF Local contrast threshold high
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2886,6 +2888,9 @@ TP_LOCALLAB_TONEMASCALE_TOOLTIP;This control gives meaning to the difference bet
 TP_LOCALLAB_TONE_TOOLNAME;Tone Mapping - 4
 TP_LOCALLAB_TOOLCOL;Structure mask as tool
 TP_LOCALLAB_TOOLMASK;Tools
+TP_LOCALLAB_THREND;Local contrast threshold
+TP_LOCALLAB_THRENDSIG;Local contrast threshold High levels
+TP_LOCALLAB_THRENDLEV;Levels
 TP_LOCALLAB_TRANSIT;Transition Gradient
 TP_LOCALLAB_TRANSITGRAD;Transition differentiation XY
 TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Changes the transition of the abscissa to that of the ordinate 

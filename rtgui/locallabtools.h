@@ -645,6 +645,8 @@ private:
     Adjuster* const strbl;
     Adjuster* const epsbl;
     Adjuster* const thrbl;
+    Adjuster* const levelbl;
+    Adjuster* const sigbl;
     CurveEditorGroup* const LocalcurveEditorwavguid;
     FlatCurveEditor* wavguid;
     Adjuster* const sensibn;
