@@ -6962,16 +6962,25 @@ void LocallabBlur::updateBlurGUI()
         strbl->show();
         epsbl->show();
         thrbl->show();
-        sigbl->show();
-        levelbl->show();
+        sigbl->hide();
+        levelbl->hide();
+        
+        if (mode == Expert) { // Keep widget hidden in Normal and Simple mode
+            sigbl->show();
+            levelbl->show();
+        }
         activlum->hide();
     }
 
     if (chroMethod->get_active_row_number() != 1 && blurMethod->get_active_row_number() == 0 && blMethod->get_active_row_number() == 2) {
         LocalcurveEditorwavguid->show();
         thrbl->show();
-        sigbl->show();
-        levelbl->show();
+        sigbl->hide();
+        levelbl->hide();
+        if (mode == Expert) { // Keep widget hidden in Normal and Simple mode
+            sigbl->show();
+            levelbl->show();
+        }
     } else {
         LocalcurveEditorwavguid->hide();
         thrbl->hide();
