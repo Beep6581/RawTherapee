@@ -8408,7 +8408,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
 }
 
-void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, float * slidb, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, float * slidb, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed, int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili)
 {
 
 //local denoise
@@ -8439,6 +8439,16 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
         int GW = transformed->W;
         int GH = transformed->H;
 
+        bool HHhuecurve = false;
+
+        if (locwavCurvehue && locwavhueutili) {
+            for (int i = 0; i < 500; i++) {
+                if (locwavCurvehue[i] != 0.5) {
+                    HHhuecurve = true;
+                    break;
+                }
+            }
+        }
 
 #ifdef _OPENMP
         const int numThreads = omp_get_max_threads();
@@ -8576,6 +8586,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     }
 
                     float* noisevarlum = new float[GH * GW];
+                    float* noisevarhue = new float[GH * GW];
                     int GW2 = (GW + 1) / 2;
 
                     float nvlh[13] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 0.7f, 0.5f}; //high value
@@ -8604,6 +8615,21 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             }
                         }
 
+                    if(HHhuecurve) {
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+                        for (int ir = 0; ir < GH; ir++)
+                            for (int jr = 0; jr < GW; jr++) {
+                                float hueG = xatan2f(tmp1.b[ir][jr], tmp1.a[ir][jr]);
+                                float valparam = float (2.f * (locwavCurvehue[500.f * Color::huelab_to_huehsv2(hueG)] - 0.5f));  //get H=f(H)
+                                noisevarhue[(ir >> 1)*GW2 + (jr >> 1)] = 1.f +  valparam;
+                                noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] *= noisevarhue[(ir >> 1)*GW2 + (jr >> 1)];
+                            }
+                    }
+
+
+
                     if ((lp.quamet == 0 && aut == 0) || (mxsl < 1.f && (aut == 1 || aut == 2))) {
                         WaveletDenoiseAllL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
 
@@ -8616,6 +8642,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     }
 
                     delete[] noisevarlum;
+                    delete[] noisevarhue;
 
                 }
             }
@@ -9133,6 +9160,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                         //    float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
                         float* noisevarlum = new float[bfh * bfw];
+                        float* noisevarhue = new float[bfh * bfw];
                         int bfw2 = (bfw + 1) / 2;
 
                         float nvlh[13] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 0.7f, 0.5f}; //high value
@@ -9153,14 +9181,26 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                                 float lN = bufwv.L[ir][jr];
 
                                 if (lN < seuillow) {
-                                    noisevarlum[(ir >> 1)*bfw2 + (jr >> 1)] =  nvlh[i];
+                                    noisevarlum[(ir >> 1)* bfw2 + (jr >> 1)] =  nvlh[i];
                                 } else if (lN < seuilhigh) {
-                                    noisevarlum[(ir >> 1)*bfw2 + (jr >> 1)] = ac * lN + bc;
+                                    noisevarlum[(ir >> 1)* bfw2 + (jr >> 1)] = ac * lN + bc;
                                 } else {
-                                    noisevarlum[(ir >> 1)*bfw2 + (jr >> 1)] =  nvll[i];
+                                    noisevarlum[(ir >> 1)* bfw2 + (jr >> 1)] =  nvll[i];
                                 }
                             }
 
+                    if(HHhuecurve) {
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                                float hueG = xatan2f(bufwv.b[ir][jr], bufwv.a[ir][jr]);
+                                float valparam = float (2.f * (locwavCurvehue[500.f * Color::huelab_to_huehsv2(hueG)] - 0.5f));  //get H=f(H)
+                                noisevarhue[(ir >> 1)* bfw2 + (jr >> 1)] = 1.f +  valparam;
+                                noisevarlum[(ir >> 1)* bfw2 + (jr >> 1)] *= noisevarhue[(ir >> 1)* bfw2 + (jr >> 1)];
+                            }
+                    }
 
                         if ((lp.quamet == 0 && aut == 0) || (mxsl < 1.f && (aut == 1 || aut == 2))) {
                             WaveletDenoiseAllL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
@@ -9170,6 +9210,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         }
 
                         delete [] noisevarlum;
+                        delete [] noisevarhue;
 
                     }
                 }
@@ -10830,7 +10871,7 @@ void ImProcFunctions::Lab_Local(
         float slida[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
         float slidb[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
         constexpr int aut = 0;
-        DeNoise(call, del, slidL, slida, slidb, aut, noiscfactiv, lp, originalmaskbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk);
+        DeNoise(call, del, slidL, slida, slidb, aut, noiscfactiv, lp, originalmaskbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk, locwavCurvehue, locwavhueutili);
 
         if (params->locallab.spots.at(sp).recurs) {
             original->CopyFrom(transformed, multiThread);

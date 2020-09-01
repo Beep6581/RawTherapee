@@ -1199,7 +1199,8 @@ HISTORY_MSG_957;Local - GF local contrast threshold
 HISTORY_MSG_958;Local - GF Local contrast Hue equalizer
 HISTORY_MSG_959;Local - GF Local contrast levels
 HISTORY_MSG_960;Local - GF Local contrast threshold high
-HISTORY_MSG_961;Local - Equalizer hue
+HISTORY_MSG_961;Local - Denoise mode
+HISTORY_MSG_962;Local - Equalizer hue
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2929,7 +2930,7 @@ TP_LOCALLAB_WAVCOMPRE_TOOLTIP;Achieve a Tone-mapping or reduction local contrast
 TP_LOCALLAB_WAVCOMP_TOOLTIP;Achive local contrast in function of the direction wavelet decomposition : horizontal, vertical, diagonal
 TP_LOCALLAB_WAVCON;Contrast by Level
 TP_LOCALLAB_WAVCONTF_TOOLTIP;Similar to Contrast By Detail Levels : on abscissa levels.
-TP_LOCALLAB_WAVDEN;Luminance denoise by level (0 1 2 3 .. 7)
+TP_LOCALLAB_WAVDEN;Luminance denoise by level (0 1 2 3 .. 6)
 TP_LOCALLAB_WAVE;Ψ Wavelet
 TP_LOCALLAB_WAVEDG;Local contrast
 TP_LOCALLAB_WAVEEDG_TOOLTIP;Achieves a sharpness taking into account the notion of edges wavelet.\nRequires that at least the first 4 levels are usable
