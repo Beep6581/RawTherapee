@@ -3472,6 +3472,12 @@ void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* buf
 
 static void showmask(int lumask, const local_params& lp, int xstart, int ystart, int cx, int cy, int bfw, int bfh, LabImage* bufexporig, LabImage* transformed, LabImage* bufmaskorigSH, int inv)
 {
+    float lum = fabs(lumask * 500.f);
+    float colo = 0.f;
+    if(lumask > 0.f) {
+        colo = 30000.f + 12.f * lum;
+    }
+
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -3493,15 +3499,15 @@ static void showmask(int lumask, const local_params& lp, int xstart, int ystart,
 
             if (inv == 0) {
                 if (zone > 0) {//normal
-                    transformed->L[y + ystart][x + xstart] = (lumask * 400.f) + clipLoc(bufmaskorigSH->L[y][x]);
+                    transformed->L[y + ystart][x + xstart] = (lum) + clipLoc(bufmaskorigSH->L[y][x]);
                     transformed->a[y + ystart][x + xstart] = bufexporig->a[y][x] * bufmaskorigSH->a[y][x];
-                    transformed->b[y + ystart][x + xstart] = bufexporig->b[y][x] * bufmaskorigSH->b[y][x];
+                    transformed->b[y + ystart][x + xstart] = (colo) + bufexporig->b[y][x] * bufmaskorigSH->b[y][x];
                 }
             } else if (inv == 1) { //inverse
                 if (zone == 0) {
-                    transformed->L[y + ystart][x + xstart] = (lumask * 400.f) + clipLoc(bufmaskorigSH->L[y][x]);
+                    transformed->L[y + ystart][x + xstart] = (lum) + clipLoc(bufmaskorigSH->L[y][x]);
                     transformed->a[y + ystart][x + xstart] = bufexporig->a[y][x] * bufmaskorigSH->a[y][x];
-                    transformed->b[y + ystart][x + xstart] = bufexporig->b[y][x] * bufmaskorigSH->b[y][x];
+                    transformed->b[y + ystart][x + xstart] = (colo) + bufexporig->b[y][x] * bufmaskorigSH->b[y][x];
                 }
             }
         }

@@ -2633,7 +2633,7 @@ TP_LOCALLAB_LOGTARGGREY_TOOLTIP;You can change this value to adapt it to your ta
 TP_LOCALLAB_LOG_TOOLNAME;Log Encoding - 0
 TP_LOCALLAB_LUM;Curves LL - CC
 TP_LOCALLAB_LUMADARKEST;Darkest
-TP_LOCALLAB_LUMASK;Luminance Background Mask
+TP_LOCALLAB_LUMASK;Luminance Color Background Mask
 TP_LOCALLAB_LUMASK_TOOLTIP;Adjust the gray of the mask background in Show Mask (Mask and modifications)
 TP_LOCALLAB_LUMAWHITESEST;Whiteest
 TP_LOCALLAB_LUMFRA;L*a*b* standard
