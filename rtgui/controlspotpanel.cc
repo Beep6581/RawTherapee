@@ -77,7 +77,7 @@ ControlSpotPanel::ControlSpotPanel():
     colorde_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COLORDE"), -15, 15, 2, 5, Gtk::manage(new RTImage("circle-blue-yellow-small.png")), Gtk::manage(new RTImage("circle-gray-green-small.png"))))),
     colorscope_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COLORSCOPE"), 0., 100.0, 1., 30.))),
     scopemask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCOPEMASK"), 0, 100, 1, 60))),
-    lumask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LUMASK"), -30, 30, 1, 20,Gtk::manage(new RTImage("circle-gray-small.png")), Gtk::manage(new RTImage("circle-yellow-small.png")) ))),
+    lumask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LUMASK"), -30, 50, 1, 30,Gtk::manage(new RTImage("circle-gray-small.png")), Gtk::manage(new RTImage("circle-yellow-small.png")) ))),
 
     activ_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIVSPOT")))),
     avoid_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOID")))),

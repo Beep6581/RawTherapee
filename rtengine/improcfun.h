@@ -315,6 +315,7 @@ public:
                 const LocwavCurve& loccompwavCurve, bool loccompwavutili,
                 const LocwavCurve& loccomprewavCurve, bool loccomprewavutili,
                 const LocwavCurve& locwavCurveguid, bool locwavguidutili,
+                const LocwavCurve& locwavCurvehue, bool locwavhueutili,
                 const LocwavCurve& locwavCurveden, bool locwavdenutili,
                 const LocwavCurve& locedgwavCurve, bool locedgwavutili,
                 const LocwavCurve& loclmasCurve_wav, bool lmasutili_wav,
