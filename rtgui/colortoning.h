@@ -46,6 +46,7 @@ public:
 
     void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override;
+    void adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop) override;
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override;
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override;
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;

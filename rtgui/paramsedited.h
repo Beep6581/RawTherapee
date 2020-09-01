@@ -658,6 +658,7 @@ public:
         bool Lmaskblcurve;
         bool LLmaskblcurvewav;
         bool csthresholdblur;
+        bool levelsigm;
         // Tone Mapping
         bool visitonemap;
         bool exptonemap;

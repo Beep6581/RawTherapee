@@ -345,6 +345,7 @@ void ThresholdAdjuster::sendToListener ()
             adjusterListener->adjusterChanged2 (this, t.getBottomLeft(), t.getTopLeft(), t.getBottomRight(), t.getTopRight());
         } else {
             adjusterListener->adjusterChanged (this, t.getBottomLeft(), t.getTopLeft());
+            adjusterListener->adjusterChanged3 (this, t.getBottomLeft(), t.getTopLeft());
         }
     } else {
         // if precision is equal to 0, then we assume that the listener is waiting for integers
@@ -355,6 +356,7 @@ void ThresholdAdjuster::sendToListener ()
             adjusterListener->adjusterChanged2 (this, t.getBottomLeft(), t.getTopLeft(), t.getBottomRight(), t.getTopRight());
         } else {
             adjusterListener->adjusterChanged (this, t.getBottomLeft(), t.getTopLeft());
+            adjusterListener->adjusterChanged3 (this, t.getBottomLeft(), t.getTopLeft());
         }
     }
 }

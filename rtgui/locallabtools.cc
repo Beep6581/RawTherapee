@@ -1592,6 +1592,9 @@ void LocallabColor::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
+
+
+
 void LocallabColor::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
 {
     if (isLocActivated && exp->getEnabled()) {
@@ -5627,6 +5630,7 @@ LocallabBlur::LocallabBlur():
     quamethod(Gtk::manage(new MyComboBoxText())),
     LocalcurveEditorwavden(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVDEN"))),
     wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
+    levelsigm(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVELSIGM"), 0.05, 3., 1., M("TP_WAVELET_LEVELHIGH"), 1, 0.05, 3., 1., M("TP_WAVELET_LEVELLOW"), 1., nullptr, false))),
     noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noiselumf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noiselumf2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINETWO"), MINCHRO, MAXCHRO, 0.01, 0.))),
@@ -5764,6 +5768,9 @@ LocallabBlur::LocallabBlur():
     wavshapeden->setResetCurve(FlatCurveType(defSpot.locwavcurveden.at(0)), defSpot.locwavcurveden);
 
     LocalcurveEditorwavden->curveListComplete();
+    levelsigm->setAdjusterListener(this);
+    levelsigm->setUpdatePolicy(RTUP_DYNAMIC);
+    levelsigm->set_tooltip_text(M("TP_WAVELET_DENSIGMA_TOOLTIP"));
 
     noiselumf0->setAdjusterListener(this);
 
@@ -5910,6 +5917,7 @@ LocallabBlur::LocallabBlur():
     ToolParamBlock* const wavBox = Gtk::manage(new ToolParamBlock());
     wavBox->pack_start(*quaHBox);
     wavBox->pack_start(*LocalcurveEditorwavden, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+//    wavBox->pack_start(*levelsigm, Gtk::PACK_SHRINK, 0);
     // wavBox->pack_start(*noiselumf0);
     // wavBox->pack_start(*noiselumf);
     // wavBox->pack_start(*noiselumf2);
@@ -6151,6 +6159,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         noiselumf2->setValue(spot.noiselumf2);
         noiselumc->setValue(spot.noiselumc);
         noiselumdetail->setValue(spot.noiselumdetail);
+        levelsigm->setValue<double>(spot.levelsigm);
         noiselequal->setValue((double)spot.noiselequal);
         noisechrof->setValue(spot.noisechrof);
         noisechroc->setValue(spot.noisechroc);
@@ -6276,6 +6285,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.noiselumc = noiselumc->getValue();
         spot.noiselumdetail = noiselumdetail->getValue();
         spot.noiselequal = noiselequal->getIntValue();
+        spot.levelsigm    = levelsigm->getValue<double> ();
         spot.noisechrof = noisechrof->getValue();
         spot.noisechroc = noisechroc->getValue();
         spot.noisechrodetail = noisechrodetail->getValue();
@@ -6340,6 +6350,7 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         noiselumf2->setDefault(defSpot.noiselumf2);
         noiselumc->setDefault(defSpot.noiselumc);
         noiselumdetail->setDefault(defSpot.noiselumdetail);
+        levelsigm->setDefault<double> (defSpot.levelsigm);
         noiselequal->setDefault((double)defSpot.noiselequal);
         noisechrof->setDefault(defSpot.noisechrof);
         noisechroc->setDefault(defSpot.noisechroc);
@@ -6362,6 +6373,19 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
+
+void LocallabBlur::adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop)
+{
+    if (isLocActivated && exp->getEnabled()) {
+
+        if (a == levelsigm) {
+            listener->panelChanged(Evlocallablevelsigm,
+                                       levelsigm->getHistoryString() + " (" + escapeHtmlChars(spotName) + ")");
+        }
+
+    }
+}
+
 
 void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
 {

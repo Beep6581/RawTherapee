@@ -317,6 +317,10 @@ void Vibrance::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTop
 {
 }
 
+void Vibrance::adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop)
+{
+}
+
 void Vibrance::setBatchMode(bool batchMode)
 {
 

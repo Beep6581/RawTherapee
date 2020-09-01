@@ -276,6 +276,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+    void adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop) override {};
     void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
@@ -552,6 +553,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+    void adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop) override {};
     void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override;
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
@@ -657,6 +659,8 @@ private:
     MyComboBoxText* const quamethod;
     CurveEditorGroup* const LocalcurveEditorwavden;
     FlatCurveEditor* const wavshapeden;
+    ThresholdAdjuster* const levelsigm;
+    
     Adjuster* const noiselumf0;
     Adjuster* const noiselumf;
     Adjuster* const noiselumf2;
@@ -718,6 +722,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+    void adjusterChanged3(ThresholdAdjuster* a, double newBotto, double newTo) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
@@ -1074,6 +1079,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+    void adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop) override {};
     void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
@@ -1289,6 +1295,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+    void adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop) override {};
     void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used

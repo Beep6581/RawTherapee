@@ -37,6 +37,7 @@ public:
     // to be used by listener that has created a ThresholdAdjuster with with single threshold and precision > 0
     virtual void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) = 0;
     // to be used by listener that has created a ThresholdAdjuster with with double threshold and precision > 0
+    virtual void adjusterChanged3(ThresholdAdjuster* a, double newBotto, double newTo) = 0;
     virtual void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) = 0;
     // to be used by listener that has created a ThresholdAdjuster with with single threshold and precision == 0
     virtual void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) = 0;

@@ -935,6 +935,9 @@ void ColorToning::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int new
 {
 }
 
+void ColorToning::adjusterChanged3 (ThresholdAdjuster* a, double newBottom, double newTop)
+{
+}
 //Two Color changed
 void ColorToning::twocolorChanged (bool changedbymethod)
 {

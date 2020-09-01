@@ -1315,6 +1315,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).Lmaskblcurve = locallab.spots.at(j).Lmaskblcurve && pSpot.Lmaskblcurve == otherSpot.Lmaskblcurve;
                 locallab.spots.at(j).LLmaskblcurvewav = locallab.spots.at(j).LLmaskblcurvewav && pSpot.LLmaskblcurvewav == otherSpot.LLmaskblcurvewav;
                 locallab.spots.at(j).csthresholdblur = locallab.spots.at(j).csthresholdblur && pSpot.csthresholdblur == otherSpot.csthresholdblur;
+                locallab.spots.at(j).levelsigm = locallab.spots.at(j).levelsigm && pSpot.levelsigm == otherSpot.levelsigm;
                 // Tone Mapping
                 locallab.spots.at(j).visitonemap = locallab.spots.at(j).visitonemap && pSpot.visitonemap == otherSpot.visitonemap;
                 locallab.spots.at(j).exptonemap = locallab.spots.at(j).exptonemap && pSpot.exptonemap == otherSpot.exptonemap;
@@ -4164,6 +4165,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).csthresholdblur = mods.locallab.spots.at(i).csthresholdblur;
         }
 
+        if (locallab.spots.at(i).levelsigm) {
+            toEdit.locallab.spots.at(i).levelsigm = mods.locallab.spots.at(i).levelsigm;
+        }
+
         // Tone Mapping
         if (locallab.spots.at(i).visitonemap) {
             toEdit.locallab.spots.at(i).visitonemap = mods.locallab.spots.at(i).visitonemap;
@@ -6469,6 +6474,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     Lmaskblcurve(v),
     LLmaskblcurvewav(v),
     csthresholdblur(v),
+    levelsigm(v),
     // Tone Mapping
     visitonemap(v),
     exptonemap(v),
@@ -6963,6 +6969,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     Lmaskblcurve = v;
     LLmaskblcurvewav = v;
     csthresholdblur = v;
+    levelsigm = v;
     // Tone Mapping
     visitonemap = v;
     exptonemap = v;

@@ -395,6 +395,10 @@ void Sharpening::enabledChanged ()
     }
 }
 
+void Sharpening::adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop)
+{
+}
+
 void Sharpening::edgesonly_toggled ()
 {
 

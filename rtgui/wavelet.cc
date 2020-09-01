@@ -2880,6 +2880,10 @@ void Wavelet::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTo
 {
 }
 
+void Wavelet::adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop)
+{
+}
+
 void Wavelet::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
 {
     if (listener && (multiImage || getEnabled())) {

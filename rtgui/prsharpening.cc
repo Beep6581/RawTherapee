@@ -478,6 +478,10 @@ void PrSharpening::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int ne
 {
 }
 
+void PrSharpening::adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop)
+{
+}
+
 void PrSharpening::setBatchMode (bool batchMode)
 {
 

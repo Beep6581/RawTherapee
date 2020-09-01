@@ -78,6 +78,7 @@ public:
     void method_changed ();
 
     void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override;
+    void adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override;
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override;
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override;

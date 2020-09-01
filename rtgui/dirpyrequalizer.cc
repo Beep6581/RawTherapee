@@ -322,6 +322,10 @@ void DirPyrEqualizer::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int
 {
 }
 
+void DirPyrEqualizer::adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop)
+{
+}
+
 void DirPyrEqualizer::setBatchMode (bool batchMode)
 {
 
