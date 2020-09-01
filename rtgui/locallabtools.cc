@@ -5630,6 +5630,7 @@ LocallabBlur::LocallabBlur():
     quamethod(Gtk::manage(new MyComboBoxText())),
     LocalcurveEditorwavden(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVDEN"))),
     wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
+    levelthr(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_LCTHR"), 0., 100., 0., M("TP_LOCALLAB_THRESHIGH"), 1, 0., 100., 0., M("TP_LOCALLAB_THRESLOW"), 1., nullptr, false))),
     levelsigm(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVELSIGM"), 0.05, 3., 1., M("TP_WAVELET_LEVELHIGH"), 1, 0.05, 3., 1., M("TP_WAVELET_LEVELLOW"), 1., nullptr, false))),
     noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noiselumf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
@@ -5768,6 +5769,11 @@ LocallabBlur::LocallabBlur():
     wavshapeden->setResetCurve(FlatCurveType(defSpot.locwavcurveden.at(0)), defSpot.locwavcurveden);
 
     LocalcurveEditorwavden->curveListComplete();
+
+    levelthr->setAdjusterListener(this);
+    levelthr->setUpdatePolicy(RTUP_DYNAMIC);
+    levelthr->set_tooltip_text(M("TP_WAVELET_DENTHR_TOOLTIP"));
+
     levelsigm->setAdjusterListener(this);
     levelsigm->setUpdatePolicy(RTUP_DYNAMIC);
     levelsigm->set_tooltip_text(M("TP_WAVELET_DENSIGMA_TOOLTIP"));
@@ -5917,7 +5923,8 @@ LocallabBlur::LocallabBlur():
     ToolParamBlock* const wavBox = Gtk::manage(new ToolParamBlock());
     wavBox->pack_start(*quaHBox);
     wavBox->pack_start(*LocalcurveEditorwavden, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-//    wavBox->pack_start(*levelsigm, Gtk::PACK_SHRINK, 0);
+    wavBox->pack_start(*levelthr, Gtk::PACK_SHRINK, 0);
+    wavBox->pack_start(*levelsigm, Gtk::PACK_SHRINK, 0);
     // wavBox->pack_start(*noiselumf0);
     // wavBox->pack_start(*noiselumf);
     // wavBox->pack_start(*noiselumf2);
@@ -6159,6 +6166,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         noiselumf2->setValue(spot.noiselumf2);
         noiselumc->setValue(spot.noiselumc);
         noiselumdetail->setValue(spot.noiselumdetail);
+        levelthr->setValue<double>(spot.levelthr);
         levelsigm->setValue<double>(spot.levelsigm);
         noiselequal->setValue((double)spot.noiselequal);
         noisechrof->setValue(spot.noisechrof);
@@ -6285,6 +6293,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.noiselumc = noiselumc->getValue();
         spot.noiselumdetail = noiselumdetail->getValue();
         spot.noiselequal = noiselequal->getIntValue();
+        spot.levelthr    = levelthr->getValue<double> ();
         spot.levelsigm    = levelsigm->getValue<double> ();
         spot.noisechrof = noisechrof->getValue();
         spot.noisechroc = noisechroc->getValue();
@@ -6350,6 +6359,7 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         noiselumf2->setDefault(defSpot.noiselumf2);
         noiselumc->setDefault(defSpot.noiselumc);
         noiselumdetail->setDefault(defSpot.noiselumdetail);
+        levelthr->setDefault<double> (defSpot.levelthr);
         levelsigm->setDefault<double> (defSpot.levelsigm);
         noiselequal->setDefault((double)defSpot.noiselequal);
         noisechrof->setDefault(defSpot.noisechrof);
@@ -6379,8 +6389,17 @@ void LocallabBlur::adjusterChanged3(ThresholdAdjuster* a, double newBottom, doub
     if (isLocActivated && exp->getEnabled()) {
 
         if (a == levelsigm) {
-            listener->panelChanged(Evlocallablevelsigm,
+            if (listener) {
+                listener->panelChanged(Evlocallablevelsigm,
                                        levelsigm->getHistoryString() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == levelthr) {
+            if (listener) {
+                listener->panelChanged(Evlocallablevelthr,
+                                       levelthr->getHistoryString() + " (" + escapeHtmlChars(spotName) + ")");
+            }
         }
 
     }

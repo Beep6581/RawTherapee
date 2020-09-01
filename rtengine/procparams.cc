@@ -3412,6 +3412,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     },
     csthresholdblur(0, 0, 6, 5, false),
     levelsigm(1, 1, false),
+    levelthr(0, 0, false),
     // Tone Mapping
     visitonemap(false),
     exptonemap(false),
@@ -4281,6 +4282,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && LLmaskblcurvewav == other.LLmaskblcurvewav
         && csthresholdblur == other.csthresholdblur
         && levelsigm == other.levelsigm
+        && levelthr == other.levelthr
         // Tone Mapping
         && visitonemap == other.visitonemap
         && exptonemap == other.exptonemap
@@ -5814,6 +5816,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->LLmaskblcurvewav, "Locallab", "LLmaskblCurvewav_" + index_str, spot.LLmaskblcurvewav, keyFile);
                     saveToKeyfile(!pedited || spot_edited->csthresholdblur, "Locallab", "CSThresholdblur_" + index_str, spot.csthresholdblur.toVector(), keyFile);
                     saveToKeyfile(!pedited || spot_edited->levelsigm, "Locallab", "Levelsigm_" + index_str, spot.levelsigm.toVector(), keyFile);
+                    saveToKeyfile(!pedited || spot_edited->levelthr, "Locallab", "Levelthr_" + index_str, spot.levelthr.toVector(), keyFile);
                 }
                 // Tone Mapping
                 if ((!pedited || spot_edited->visitonemap) && spot.visitonemap) {
@@ -7565,8 +7568,18 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     }
 
                     spotEdited.levelsigm = true;
-            }
-                
+                }
+
+                if (keyFile.has_key("Locallab", "Levelthr_" + index_str)) {
+                    const std::vector<double> thresh = keyFile.get_double_list("Locallab", "Levelthr_" + index_str);
+
+                    if (thresh.size() >= 2) {
+                        spot.levelthr.setValues(thresh[0], thresh[1]);
+                    }
+
+                    spotEdited.levelthr = true;
+                }
+
                 
                 // Tone Mapping
                 spot.visitonemap = assignFromKeyfile(keyFile, "Locallab", "Exptonemap_" + index_str, pedited, spot.exptonemap, spotEdited.exptonemap);
