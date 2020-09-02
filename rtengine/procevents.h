@@ -987,6 +987,7 @@ enum ProcEventCode {
     EvlocallabwavCurvehue = 961,
     Evlocallablevelsigm = 962,
     Evlocallablevelthr = 963,
+    Evlocallablimden = 964,
     NUMOFEVENTS
 };
 

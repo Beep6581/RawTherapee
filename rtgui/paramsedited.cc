@@ -1281,6 +1281,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).blurMethod = locallab.spots.at(j).blurMethod && pSpot.blurMethod == otherSpot.blurMethod;
                 locallab.spots.at(j).medMethod = locallab.spots.at(j).medMethod && pSpot.medMethod == otherSpot.medMethod;
                 locallab.spots.at(j).activlum = locallab.spots.at(j).activlum && pSpot.activlum == otherSpot.activlum;
+                locallab.spots.at(j).limden = locallab.spots.at(j).limden && pSpot.limden == otherSpot.limden;
                 locallab.spots.at(j).noiselumf = locallab.spots.at(j).noiselumf && pSpot.noiselumf == otherSpot.noiselumf;
                 locallab.spots.at(j).noiselumf0 = locallab.spots.at(j).noiselumf0 && pSpot.noiselumf0 == otherSpot.noiselumf0;
                 locallab.spots.at(j).noiselumf2 = locallab.spots.at(j).noiselumf2 && pSpot.noiselumf2 == otherSpot.noiselumf2;
@@ -4030,6 +4031,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).activlum = mods.locallab.spots.at(i).activlum;
         }
 
+        if (locallab.spots.at(i).limden) {
+            toEdit.locallab.spots.at(i).limden = mods.locallab.spots.at(i).limden;
+        }
+
         if (locallab.spots.at(i).noiselumf) {
             toEdit.locallab.spots.at(i).noiselumf = mods.locallab.spots.at(i).noiselumf;
         }
@@ -6446,6 +6451,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     blurMethod(v),
     medMethod(v),
     activlum(v),
+    limden(v),
     noiselumf(v),
     noiselumf0(v),
     noiselumf2(v),
@@ -6942,6 +6948,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     blurMethod = v;
     medMethod = v;
     activlum = v;
+    limden = v;
     noiselumf = v;
     noiselumf0 = v;
     noiselumf2 = v;

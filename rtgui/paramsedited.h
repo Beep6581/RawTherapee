@@ -625,6 +625,7 @@ public:
         bool blurMethod;
         bool medMethod;
         bool activlum;
+        bool limden;
         bool noiselumf;
         bool noiselumf0;
         bool noiselumf2;

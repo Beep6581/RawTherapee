@@ -5630,8 +5630,10 @@ LocallabBlur::LocallabBlur():
     quamethod(Gtk::manage(new MyComboBoxText())),
     LocalcurveEditorwavden(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVDEN"))),
     wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
+    expdenoise1(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI1_EXP")))),
     levelthr(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_LCTHR"), 0., 100., 0., M("TP_LOCALLAB_THRESHIGH"), 1, 0., 100., 0., M("TP_LOCALLAB_THRESLOW"), 1., nullptr, false))),
-    levelsigm(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVELSIGM"), 0.05, 3., 1., M("TP_WAVELET_LEVELHIGH"), 1, 0.05, 3., 1., M("TP_WAVELET_LEVELLOW"), 1., nullptr, false))),
+    levelsigm(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVELSIGM"), 0.05, 3., 1., M("TP_LOCALLAB_LEVELHIGH"), 1, 0.05, 3., 1., M("TP_LOCALLAB_LEVELLOW"), 1., nullptr, false))),
+    limden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIMDEN"), 0., 1., 0.01, 0.))),
     noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noiselumf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noiselumf2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINETWO"), MINCHRO, MAXCHRO, 0.01, 0.))),
@@ -5769,15 +5771,17 @@ LocallabBlur::LocallabBlur():
     wavshapeden->setResetCurve(FlatCurveType(defSpot.locwavcurveden.at(0)), defSpot.locwavcurveden);
 
     LocalcurveEditorwavden->curveListComplete();
+    setExpandAlignProperties(expdenoise1, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     levelthr->setAdjusterListener(this);
     levelthr->setUpdatePolicy(RTUP_DYNAMIC);
-    levelthr->set_tooltip_text(M("TP_WAVELET_DENTHR_TOOLTIP"));
+    levelthr->set_tooltip_text(M("TP_WAVELET_THRDEN_TOOLTIP"));
 
     levelsigm->setAdjusterListener(this);
     levelsigm->setUpdatePolicy(RTUP_DYNAMIC);
     levelsigm->set_tooltip_text(M("TP_WAVELET_DENSIGMA_TOOLTIP"));
 
+    limden->setAdjusterListener(this);
     noiselumf0->setAdjusterListener(this);
 
     noiselumf->setAdjusterListener(this);
@@ -5923,8 +5927,12 @@ LocallabBlur::LocallabBlur():
     ToolParamBlock* const wavBox = Gtk::manage(new ToolParamBlock());
     wavBox->pack_start(*quaHBox);
     wavBox->pack_start(*LocalcurveEditorwavden, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    wavBox->pack_start(*levelthr, Gtk::PACK_SHRINK, 0);
-    wavBox->pack_start(*levelsigm, Gtk::PACK_SHRINK, 0);
+    ToolParamBlock* const wavBox1 = Gtk::manage(new ToolParamBlock());
+    wavBox1->pack_start(*levelthr, Gtk::PACK_SHRINK, 0);
+    wavBox1->pack_start(*levelsigm, Gtk::PACK_SHRINK, 0);
+    wavBox1->pack_start(*limden);
+    expdenoise1->add(*wavBox1, false);
+    wavBox->pack_start(*expdenoise1);
     // wavBox->pack_start(*noiselumf0);
     // wavBox->pack_start(*noiselumf);
     // wavBox->pack_start(*noiselumf2);
@@ -6007,6 +6015,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         sensibn->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
         blurMethod->set_tooltip_markup(M("TP_LOCALLAB_BLMETHOD_TOOLTIP"));
         expdenoise->set_tooltip_markup(M("TP_LOCALLAB_DENOI_TOOLTIP"));
+       // expdenoise1->set_tooltip_markup(M("TP_LOCALLAB_DENOI1_TOOLTIP"));
         wavshapeden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
         wavguid->setTooltip(M("TP_LOCALLAB_WAVGUID_TOOLTIP"));
         wavhue->setTooltip(M("TP_LOCALLAB_WAVHUE_TOOLTIP"));
@@ -6046,6 +6055,7 @@ void LocallabBlur::setDefaultExpanderVisibility()
 {
     expblnoise->set_expanded(false);
     expdenoise->set_expanded(false);
+    expdenoise1->set_expanded(false);
     expmaskbl->set_expanded(false);
 }
 
@@ -6161,6 +6171,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         wavshapeden->setCurve(spot.locwavcurveden);
         wavguid->setCurve(spot.locwavcurveguid);
         wavhue->setCurve(spot.locwavcurvehue);
+        limden->setValue(spot.limden);
         noiselumf0->setValue(spot.noiselumf0);
         noiselumf->setValue(spot.noiselumf);
         noiselumf2->setValue(spot.noiselumf2);
@@ -6287,6 +6298,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.locwavcurveden = wavshapeden->getCurve();
         spot.locwavcurveguid = wavguid->getCurve();
         spot.locwavcurvehue = wavhue->getCurve();
+        spot.limden = limden->getValue();
         spot.noiselumf0 = noiselumf0->getValue();
         spot.noiselumf = noiselumf->getValue();
         spot.noiselumf2 = noiselumf2->getValue();
@@ -6354,6 +6366,7 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         levelbl->setDefault((double)defSpot.levelbl);
         sigbl->setDefault((double)defSpot.sigbl);
         sensibn->setDefault((double)defSpot.sensibn);
+        limden->setDefault(defSpot.limden);
         noiselumf0->setDefault(defSpot.noiselumf0);
         noiselumf->setDefault(defSpot.noiselumf);
         noiselumf2->setDefault(defSpot.noiselumf2);
@@ -6497,6 +6510,13 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabsensibn,
                                        sensibn->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == limden) {
+            if (listener) {
+                listener->panelChanged(Evlocallablimden,
+                                       limden->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -6792,6 +6812,7 @@ void LocallabBlur::convertParamToSimple()
     gammaskbl->setValue(defSpot.gammaskbl);
     slomaskbl->setValue(defSpot.slomaskbl);
     Lmaskblshape->setCurve(defSpot.Lmasklccurve);
+    levelthr->setValue<double>(defSpot.levelthr);
 
     // Enable all listeners
     enableListener();
@@ -6806,6 +6827,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             expmaskbl->hide();
             sigbl->hide();
             levelbl->hide();
+            expdenoise1->hide();
             break;
 
         case Normal:
@@ -6822,6 +6844,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             expmaskbl->show();
             sigbl->hide();
             levelbl->hide();
+            expdenoise1->show();
 
             break;
 
@@ -6833,6 +6856,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             }
             sigbl->show();
             levelbl->show();
+            expdenoise1->show();
 
             expmaskbl->show();
             strumaskbl->show();

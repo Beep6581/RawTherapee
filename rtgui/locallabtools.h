@@ -659,8 +659,10 @@ private:
     MyComboBoxText* const quamethod;
     CurveEditorGroup* const LocalcurveEditorwavden;
     FlatCurveEditor* const wavshapeden;
+    MyExpander* const expdenoise1;
     ThresholdAdjuster* const levelthr;
     ThresholdAdjuster* const levelsigm;
+    Adjuster* const limden;
     
     Adjuster* const noiselumf0;
     Adjuster* const noiselumf;

@@ -1211,6 +1211,7 @@ struct LocallabParams {
         Glib::ustring blurMethod; // norm, inv
         Glib::ustring medMethod; // none, 33, 55, 77, 99
         bool activlum;
+        double limden;
         double noiselumf;
         double noiselumf0;
         double noiselumf2;

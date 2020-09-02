@@ -3279,6 +3279,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     blurMethod("norm"),
     medMethod("33"),
     activlum(true),
+    limden(0.),
     noiselumf(0.),
     noiselumf0(0.),
     noiselumf2(0.),
@@ -4247,6 +4248,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && blurMethod == other.blurMethod
         && medMethod == other.medMethod
         && activlum == other.activlum
+        && limden == other.limden
         && noiselumf == other.noiselumf
         && noiselumf0 == other.noiselumf0
         && noiselumf2 == other.noiselumf2
@@ -5781,6 +5783,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->blurMethod, "Locallab", "BlurMethod_" + index_str, spot.blurMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->medMethod, "Locallab", "MedMethod_" + index_str, spot.medMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->activlum, "Locallab", "activlum_" + index_str, spot.activlum, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->limden, "Locallab", "limden_" + index_str, spot.limden, keyFile);
                     saveToKeyfile(!pedited || spot_edited->noiselumf, "Locallab", "noiselumf_" + index_str, spot.noiselumf, keyFile);
                     saveToKeyfile(!pedited || spot_edited->noiselumf0, "Locallab", "noiselumf0_" + index_str, spot.noiselumf0, keyFile);
                     saveToKeyfile(!pedited || spot_edited->noiselumf2, "Locallab", "noiselumf2_" + index_str, spot.noiselumf2, keyFile);
@@ -7516,6 +7519,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "BlurMethod_" + index_str, pedited, spot.blurMethod, spotEdited.blurMethod);
                 assignFromKeyfile(keyFile, "Locallab", "MedMethod_" + index_str, pedited, spot.medMethod, spotEdited.medMethod);
                 assignFromKeyfile(keyFile, "Locallab", "activlum_" + index_str, pedited, spot.activlum, spotEdited.activlum);
+                assignFromKeyfile(keyFile, "Locallab", "limden_" + index_str, pedited, spot.limden, spotEdited.limden);
                 assignFromKeyfile(keyFile, "Locallab", "noiselumf_" + index_str, pedited, spot.noiselumf, spotEdited.noiselumf);
                 assignFromKeyfile(keyFile, "Locallab", "noiselumf0_" + index_str, pedited, spot.noiselumf0, spotEdited.noiselumf0);
                 assignFromKeyfile(keyFile, "Locallab", "noiselumf2_" + index_str, pedited, spot.noiselumf2, spotEdited.noiselumf2);
