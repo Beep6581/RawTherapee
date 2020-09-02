@@ -3252,7 +3252,7 @@ void Wavelet::convertParamToNormal()
     //denoise
     chromfi->setValue(def_params.chromfi);
     chromco->setValue(def_params.chromco);
-    denmethod->set_active(0);
+    denmethod->set_active(4);
     mixmethod->set_active(2);
     slimethod->set_active(0);
     levelsigm->setValue<double>(def_params.levelsigm);
@@ -3343,7 +3343,7 @@ void Wavelet::updateGUIToMode(int mode)
         sigm->hide();
         levelsigm->show();
         limden->show();
-       // levden->show();
+        levden->show();
         sliHBox->show();
         if (slimethod->get_active_row_number() == 0){
             leveldenoise->show();
@@ -3357,7 +3357,7 @@ void Wavelet::updateGUIToMode(int mode)
             CurveEditorwavnoise->show();
         }
         disableListener();
-        denmethod->set_active(0);
+        denmethod->set_active(4);
         enableListener();
 
     }
