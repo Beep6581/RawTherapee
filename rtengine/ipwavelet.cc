@@ -1214,23 +1214,42 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 delete[] noisevarlum;
 
                                 //evaluate after denoise
+                                bool exitifzero = true;
                                 Evaluate2(*Ldecomp, meand, meanNd, sigmad, sigmaNd, MaxPd, MaxNd, wavNestedLevels);
+                                for (int dir = 1; dir < 4; dir++) {
+                                    for (int level = 0; level < levwavL; level++) {
+                                        if(mean[level] < 0.1f || meand[level] < 0.1f || sigma[level] < 0.1f || sigmad[level] < 0.1f) {
+                                            printf("near zero - exit\n");
+                                            exitifzero = false;
+                                        }
+                                    }
+                                }
+                                
                                 //for level 0 1 2 3
                                 float thr = 0.f;
                                 float thrend = cp.thrden; //cp.levdenlow;
-                                if(thrend < 0.02f) thr = 0.5f;
-                                else if(thrend < 0.05f) thr = 0.2f;
+                                if(thrend < 0.01f) thr = 0.95f;
+                                else if(thrend < 0.02f) thr = 0.9f;
+                                else if(thrend < 0.04f) thr = 0.8f;
+                                else if(thrend < 0.06f) thr = 0.7f;
+                                else if(thrend < 0.08f) thr = 0.6f;
+                                else if(thrend < 0.1f) thr = 0.5f;
+                                else if(thrend < 0.2f) thr = 0.2f;
                                 else thr = 0.f;
 
                                 FlatCurve wavlow({
                                     FCT_MinMaxCPoints,
                                     0, 1, 0.35, 0.35,thrend, 1.0, 0.35, 0.35, thrend + 0.01f, thr, 0.35, 0.35, 1, thr, 0.35, 0.35
                                 });
-                                //for level 4
+                                //for level 4 
                                 float thrhigh = 0.f;
                                 float threndhigh = cp.lev4t; //cp.levdenlow;
-                                if(threndhigh < 0.02f) thrhigh = 0.5f;
-                                else if(threndhigh < 0.05f) thrhigh = 0.2f;
+                                if(threndhigh < 0.01f) thrhigh = 0.95f;
+                                else if(threndhigh < 0.02f) thrhigh = 0.9f;
+                                else if(threndhigh < 0.04f) thrhigh = 0.8f;
+                                else if(threndhigh < 0.06f) thrhigh = 0.7f;
+                                else if(threndhigh < 0.08f) thrhigh = 0.6f;
+                                else if(threndhigh < 0.1f) thrhigh = 0.5f;
                                 else thrhigh = 0.f;
 
                                 FlatCurve wavhigh({
@@ -1283,7 +1302,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                     }
                                 }
                                // }
-                                if (execut) {
+                                if (execut  && exitifzero) {
                                     for (int dir = 1; dir < 4; dir++) {
                                         for (int level = 0; level < levref; level++) {
                                             int Wlvl_L = Ldecomp->level_W(level);
