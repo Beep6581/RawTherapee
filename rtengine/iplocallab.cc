@@ -61,7 +61,7 @@ namespace
 constexpr int limscope = 80;
 constexpr int mSPsharp = 39; //minimum size Spot Sharp due to buildblendmask
 constexpr int mSPwav = 32; //minimum size Spot Wavelet
-constexpr int mDEN = 64; //minimum size Spot Denoise
+constexpr int mDEN = 128; //minimum size Spot Denoise
 constexpr int mSP = 5; //minimum size Spot
 constexpr float MAXSCOPE = 1.25f;
 constexpr float MINSCOPE = 0.025f;
@@ -8493,6 +8493,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
             int edge = 2;
 
             if (!Ldecomp.memory_allocation_failed()) {
+                
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
 #endif
@@ -8640,6 +8641,31 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         WaveletDenoiseAllL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
 
                     }
+
+                    float mean[10];
+                    float meanN[10];
+                    float sigma[10];
+                    float sigmaN[10];
+                    float MaxP[10];
+                    float MaxN[10];
+                    float meand[10];
+                    float meanNd[10];
+                    float sigmad[10];
+                    float sigmaNd[10];
+                    float MaxPd[10];
+                    float MaxNd[10];
+                    Evaluate2(Ldecomp, meand, meanNd, sigmad, sigmaNd, MaxPd, MaxNd, numThreads);
+                    for (int lvl = 0; lvl < levred; lvl++) {
+                        for (int dir = 1; dir < 4; dir++) {
+                            int Wlvl_L = Ldecomp.level_W(lvl);
+                            int Hlvl_L = Ldecomp.level_H(lvl);
+                            const float* const* WavCoeffs_L = Ldecomp.level_coeffs(lvl);
+                        printf("AFTER LC level=%i mean=%.0f meanden=%.0f sigma=%.0f  sigmaden=%.0f Max=%.0f Maxden=%.0f\n", lvl, mean[lvl], meand[lvl], sigma[lvl], sigmad[lvl],MaxP[lvl], MaxPd[lvl]);
+                        
+                        }
+                    }
+
+
 
                     delete[] noisevarlum;
                     delete[] noisevarhue;
@@ -9211,6 +9237,10 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                         delete [] noisevarlum;
                         delete [] noisevarhue;
+
+
+
+
 
                     }
                 }
