@@ -660,6 +660,7 @@ private:
     CurveEditorGroup* const LocalcurveEditorwavden;
     FlatCurveEditor* const wavshapeden;
     MyExpander* const expdenoise1;
+    Gtk::CheckButton* const usemask;
     ThresholdAdjuster* const levelthr;
     ThresholdAdjuster* const levelsigm;
     Adjuster* const limden;
@@ -705,7 +706,7 @@ private:
     ThresholdAdjuster* const csThresholdblur;
 
     sigc::connection blMethodConn, fftwblConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
-    sigc::connection  quamethodconn;
+    sigc::connection  quamethodconn, usemaskConn;
 
 public:
     LocallabBlur();
@@ -742,6 +743,7 @@ private:
 
     void blMethodChanged();
     void fftwblChanged();
+    void usemaskChanged();
     void medMethodChanged();
     void blurMethodChanged();
     void chroMethodChanged();

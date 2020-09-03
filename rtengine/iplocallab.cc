@@ -661,6 +661,9 @@ struct local_params {
     float blurma;
     float contma;
     bool activspot;
+    float thrlow;
+    float thrhigh;
+    bool usemask;
 
 };
 
@@ -773,6 +776,11 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.enalcMask = locallab.spots.at(sp).enalcMask && lllcMask == 0 && llcbMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0 ;
     lp.enasharMask = lllcMask == 0 && llcbMask == 0 && llsharMask == 0 && llsoftMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0;
     lp.ena_Mask = locallab.spots.at(sp).enamask && lllcMask == 0 && llcbMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0;
+
+
+    lp.thrlow = locallab.spots.at(sp).levelthr.getTop();
+    lp.thrhigh = locallab.spots.at(sp).levelthr.getBottom();
+    lp.usemask = locallab.spots.at(sp).usemask;
 
     //  printf("llColorMask=%i lllcMask=%i llExpMask=%i  llSHMask=%i llcbMask=%i llretiMask=%i lltmMask=%i llblMask=%i llvibMask=%i\n", llColorMask, lllcMask, llExpMask, llSHMask, llcbMask, llretiMask, lltmMask, llblMask, llvibMask);
     if (locallab.spots.at(sp).softMethod == "soft") {
@@ -8408,7 +8416,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
 }
 
-void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, float * slidb, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed, int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili)
+void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, float * slidb, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed, int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili)
 {
 
 //local denoise
@@ -8458,7 +8466,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 #endif
 
         if (call == 1 && GW >= mDEN && GH >= mDEN) {
-
+            printf("den 1\n");
 
             LabImage tmp1(transformed->W, transformed->H);
             LabImage tmp2(transformed->W, transformed->H);
@@ -8588,8 +8596,9 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                     float* noisevarlum = new float[GH * GW];
                     float* noisevarhue = new float[GH * GW];
+                    float* noisevarmask = new float[GH * GW];
                     int GW2 = (GW + 1) / 2;
-
+ 
                     float nvlh[13] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 0.7f, 0.5f}; //high value
                     float nvll[13] = {0.1f, 0.15f, 0.2f, 0.25f, 0.3f, 0.35f, 0.4f, 0.45f, 0.7f, 0.8f, 1.f, 1.f, 1.f}; //low value
 
@@ -8615,6 +8624,31 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                                 noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] =  nvll[i];
                             }
                         }
+ 
+                    
+                    if(lp.enablMask && lp.usemask) {
+#ifdef _OPENMP
+                    #pragma omp parallel for if (multiThread)
+#endif
+                        for (int ir = 0; ir < GH; ir++)
+                            for (int jr = 0; jr < GW; jr++) {
+                                float lM = bufmaskblurbl->L[ir][jr];
+                                if (lM < 327.68f * lp.thrlow) {
+                                noisevarmask[(ir >> 1)*GW2 + (jr >> 1)] =  3.f;
+                                noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] *= noisevarmask[(ir >> 1)*GW2 + (jr >> 1)];
+                            } else if (lM < 327.68f * lp.thrhigh) {
+                                noisevarmask[(ir >> 1)*GW2 + (jr >> 1)] = 1.f;
+                                noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] *= noisevarmask[(ir >> 1)*GW2 + (jr >> 1)];
+                            } else {
+                                noisevarmask[(ir >> 1)*GW2 + (jr >> 1)] =  0.01f;
+                                noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] *= noisevarmask[(ir >> 1)*GW2 + (jr >> 1)];
+                            }
+
+                        }
+                        
+                        
+                    }
+                 
 
                     if(HHhuecurve) {
 #ifdef _OPENMP
@@ -8642,33 +8676,10 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                     }
 
-                    float mean[10];
-                    float meanN[10];
-                    float sigma[10];
-                    float sigmaN[10];
-                    float MaxP[10];
-                    float MaxN[10];
-                    float meand[10];
-                    float meanNd[10];
-                    float sigmad[10];
-                    float sigmaNd[10];
-                    float MaxPd[10];
-                    float MaxNd[10];
-                    Evaluate2(Ldecomp, meand, meanNd, sigmad, sigmaNd, MaxPd, MaxNd, numThreads);
-                    for (int lvl = 0; lvl < levred; lvl++) {
-                        for (int dir = 1; dir < 4; dir++) {
-                            int Wlvl_L = Ldecomp.level_W(lvl);
-                            int Hlvl_L = Ldecomp.level_H(lvl);
-                            const float* const* WavCoeffs_L = Ldecomp.level_coeffs(lvl);
-                        printf("AFTER LC level=%i mean=%.0f meanden=%.0f sigma=%.0f  sigmaden=%.0f Max=%.0f Maxden=%.0f\n", lvl, mean[lvl], meand[lvl], sigma[lvl], sigmad[lvl],MaxP[lvl], MaxPd[lvl]);
-                        
-                        }
-                    }
-
-
 
                     delete[] noisevarlum;
                     delete[] noisevarhue;
+                    delete[] noisevarmask;
 
                 }
             }
@@ -10013,7 +10024,8 @@ void ImProcFunctions::Lab_Local(
 
         if (lp.showmaskblmet == 2  || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) {
             bufmaskorigbl.reset(new LabImage(GW, GH));
-            bufmaskblurbl.reset(new LabImage(GW, GH, true));
+          //  bufmaskblurbl.reset(new LabImage(GW, GH, true));
+            bufmaskblurbl.reset(new LabImage(GW, GH));
             originalmaskbl.reset(new LabImage(GW, GH));
         }
 
@@ -10901,7 +10913,7 @@ void ImProcFunctions::Lab_Local(
         float slida[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
         float slidb[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
         constexpr int aut = 0;
-        DeNoise(call, del, slidL, slida, slidb, aut, noiscfactiv, lp, originalmaskbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk, locwavCurvehue, locwavhueutili);
+        DeNoise(call, del, slidL, slida, slidb, aut, noiscfactiv, lp, originalmaskbl.get(),  bufmaskblurbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk, locwavCurvehue, locwavhueutili);
 
         if (params->locallab.spots.at(sp).recurs) {
             original->CopyFrom(transformed, multiThread);

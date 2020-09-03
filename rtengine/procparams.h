@@ -1233,6 +1233,7 @@ struct LocallabParams {
         std::vector<double> HHmaskblcurve;
         bool enablMask;
         bool fftwbl;
+        bool usemask;
         bool toolbl;
         int blendmaskbl;
         double radmaskbl;

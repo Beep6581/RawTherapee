@@ -2478,7 +2478,7 @@ TP_LOCALLAB_DELTAEC;Mask ΔE Image
 TP_LOCALLAB_DENOIS;Ψ Denoise
 TP_LOCALLAB_DENOIS;Ψ Denoise
 TP_LOCALLAB_DENOI_EXP;Denoise
-TP_LOCALLAB_DENOI1_EXP;Local contrast denoise
+TP_LOCALLAB_DENOI1_EXP;Local contrast denoise using mask
 TP_LOCALLAB_DENOI_TOOLTIP;This module can be used alone (at the end of process), or in complement of main denoise (at the beginning).\nScope allows to differentiate the action according to the color (deltaE).\nYou can complete the action with "median" or "Guided Filter" (Smooth Blur...).\nYou can complete the action with "Blur levels" "Wavelet pyramid" 
 TP_LOCALLAB_DEPTH;Depth 
 TP_LOCALLAB_DETAIL;Local contrast
@@ -2655,6 +2655,10 @@ TP_LOCALLAB_MASK2;Contrast curve mask
 TP_LOCALLAB_MASKCOL;Mask Curves
 TP_LOCALLAB_MASKH;Hue curve mask
 TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a single tool, this requires activating another tool (but without using the tool : sliders to 0,...) where is the mask you want to activate.\n\nYou can also duplicate the RT-spot and place it right next to each other,variations of references allow fine work on images. 
+TP_LOCALLAB_MASKLCTHR;Threshold luminance mask
+TP_LOCALLAB_THRESMASKHIGH;Highlights
+TP_LOCALLAB_THRESMASKLOW;Shadows
+
 TP_LOCALLAB_MED;Medium
 TP_LOCALLAB_MEDIAN;Median Low
 TP_LOCALLAB_MEDNONE;None

@@ -5631,7 +5631,8 @@ LocallabBlur::LocallabBlur():
     LocalcurveEditorwavden(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVDEN"))),
     wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
     expdenoise1(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI1_EXP")))),
-    levelthr(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_LCTHR"), 0., 100., 0., M("TP_LOCALLAB_THRESHIGH"), 1, 0., 100., 0., M("TP_LOCALLAB_THRESLOW"), 1., nullptr, false))),
+    usemask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_USEMASK")))),
+    levelthr(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_MASKLCTHR"), 0., 100., 60., M("TP_LOCALLAB_THRESMASKHIGH"), 1, 0., 100., 30., M("TP_LOCALLAB_THRESMASKLOW"), 1., nullptr, false))),
     levelsigm(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVELSIGM"), 0.05, 3., 1., M("TP_LOCALLAB_LEVELHIGH"), 1, 0.05, 3., 1., M("TP_LOCALLAB_LEVELLOW"), 1., nullptr, false))),
     limden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIMDEN"), 0., 1., 0.01, 0.))),
     noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 0.01, 0.))),
@@ -5695,6 +5696,7 @@ LocallabBlur::LocallabBlur():
     blMethodConn = blMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabBlur::blMethodChanged));
 
     fftwblConn = fftwbl->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::fftwblChanged));
+    usemaskConn = usemask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::usemaskChanged));
 
     radius->setAdjusterListener(this);
 
@@ -5775,7 +5777,7 @@ LocallabBlur::LocallabBlur():
 
     levelthr->setAdjusterListener(this);
     levelthr->setUpdatePolicy(RTUP_DYNAMIC);
-    levelthr->set_tooltip_text(M("TP_WAVELET_THRDEN_TOOLTIP"));
+//    levelthr->set_tooltip_text(M("TP_WAVELET_THRDEN_TOOLTIP"));
 
     levelsigm->setAdjusterListener(this);
     levelsigm->setUpdatePolicy(RTUP_DYNAMIC);
@@ -5928,9 +5930,10 @@ LocallabBlur::LocallabBlur():
     wavBox->pack_start(*quaHBox);
     wavBox->pack_start(*LocalcurveEditorwavden, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     ToolParamBlock* const wavBox1 = Gtk::manage(new ToolParamBlock());
+    wavBox1->pack_start(*usemask, Gtk::PACK_SHRINK, 0);
     wavBox1->pack_start(*levelthr, Gtk::PACK_SHRINK, 0);
-    wavBox1->pack_start(*levelsigm, Gtk::PACK_SHRINK, 0);
-    wavBox1->pack_start(*limden);
+//    wavBox1->pack_start(*levelsigm, Gtk::PACK_SHRINK, 0);
+//    wavBox1->pack_start(*limden);
     expdenoise1->add(*wavBox1, false);
     wavBox->pack_start(*expdenoise1);
     // wavBox->pack_start(*noiselumf0);
@@ -6065,6 +6068,7 @@ void LocallabBlur::disableListener()
 
     blMethodConn.block(true);
     fftwblConn.block(true);
+    usemaskConn.block(true);
     medMethodConn.block(true);
     blurMethodConn.block(true);
     chroMethodConn.block(true);
@@ -6082,6 +6086,7 @@ void LocallabBlur::enableListener()
 
     blMethodConn.block(false);
     fftwblConn.block(false);
+    usemaskConn.block(false);
     medMethodConn.block(false);
     blurMethodConn.block(false);
     chroMethodConn.block(false);
@@ -6119,6 +6124,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         }
 
         fftwbl->set_active(spot.fftwbl);
+        usemask->set_active(spot.usemask);
         radius->setValue(spot.radius);
         strength->setValue(spot.strength);
         isogr->setValue((double)spot.isogr);
@@ -6247,6 +6253,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         }
 
         spot.fftwbl = fftwbl->get_active();
+        spot.usemask = usemask->get_active();
         spot.radius = radius->getValue();
         spot.strength = strength->getIntValue();
         spot.isogr = isogr->getIntValue();
@@ -6772,6 +6779,7 @@ void LocallabBlur::convertParamToNormal()
 
     // Set hidden GUI widgets in Normal mode to default spot values
     fftwbl->set_active(defSpot.fftwbl);
+    usemask->set_active(defSpot.usemask);
     strumaskbl->setValue(defSpot.strumaskbl);
     toolbl->set_active(defSpot.toolbl);
     lapmaskbl->setValue(defSpot.lapmaskbl);
@@ -6908,6 +6916,22 @@ void LocallabBlur::fftwblChanged()
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
             } else {
                 listener->panelChanged(Evlocallabfftwbl,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+    }
+}
+
+
+void LocallabBlur::usemaskChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (fftwbl->get_active()) {
+                listener->panelChanged(Evlocallabusemask,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            } else {
+                listener->panelChanged(Evlocallabusemask,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
