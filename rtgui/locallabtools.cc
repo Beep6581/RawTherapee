@@ -5632,7 +5632,7 @@ LocallabBlur::LocallabBlur():
     wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
     expdenoise1(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI1_EXP")))),
     usemask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_USEMASK")))),
-    levelthr(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_MASKLCTHR"), 0., 100., 60., M("TP_LOCALLAB_THRESMASKHIGH"), 1, 0., 100., 30., M("TP_LOCALLAB_THRESMASKLOW"), 1., nullptr, false))),
+    levelthr(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_MASKLCTHR"), 0., 100., 40., M("TP_LOCALLAB_THRESMASKHIGH"), 1, 0., 100., 25., M("TP_LOCALLAB_THRESMASKLOW"), 1., nullptr, false))),
     levelsigm(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVELSIGM"), 0.05, 3., 1., M("TP_LOCALLAB_LEVELHIGH"), 1, 0.05, 3., 1., M("TP_LOCALLAB_LEVELLOW"), 1., nullptr, false))),
     limden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIMDEN"), 0., 1., 0.01, 0.))),
     noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 0.01, 0.))),

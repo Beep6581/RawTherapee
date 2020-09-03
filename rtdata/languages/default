@@ -1201,6 +1201,8 @@ HISTORY_MSG_959;Local - GF Local contrast levels
 HISTORY_MSG_960;Local - GF Local contrast threshold high
 HISTORY_MSG_961;Local - Denoise mode
 HISTORY_MSG_962;Local - Equalizer hue
+HISTORY_MSG_964;Local - Threshold mask denoise
+HISTORY_MSG_966;Local - denoise use mask
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2478,7 +2480,7 @@ TP_LOCALLAB_DELTAEC;Mask ΔE Image
 TP_LOCALLAB_DENOIS;Ψ Denoise
 TP_LOCALLAB_DENOIS;Ψ Denoise
 TP_LOCALLAB_DENOI_EXP;Denoise
-TP_LOCALLAB_DENOI1_EXP;Local contrast denoise using mask
+TP_LOCALLAB_DENOI1_EXP;Denoise using local contrast mask
 TP_LOCALLAB_DENOI_TOOLTIP;This module can be used alone (at the end of process), or in complement of main denoise (at the beginning).\nScope allows to differentiate the action according to the color (deltaE).\nYou can complete the action with "median" or "Guided Filter" (Smooth Blur...).\nYou can complete the action with "Blur levels" "Wavelet pyramid" 
 TP_LOCALLAB_DEPTH;Depth 
 TP_LOCALLAB_DETAIL;Local contrast
@@ -2942,7 +2944,7 @@ TP_LOCALLAB_WAVCOMPRE_TOOLTIP;Achieve a Tone-mapping or reduction local contrast
 TP_LOCALLAB_WAVCOMP_TOOLTIP;Achive local contrast in function of the direction wavelet decomposition : horizontal, vertical, diagonal
 TP_LOCALLAB_WAVCON;Contrast by Level
 TP_LOCALLAB_WAVCONTF_TOOLTIP;Similar to Contrast By Detail Levels : on abscissa levels.
-TP_LOCALLAB_WAVDEN;Luminance denoise by level (0 1 2 3 .. 6)
+TP_LOCALLAB_WAVDEN;Luminance denoise by level (1 2 3 4 .. 7)
 TP_LOCALLAB_WAVE;Ψ Wavelet
 TP_LOCALLAB_WAVEDG;Local contrast
 TP_LOCALLAB_WAVEEDG_TOOLTIP;Achieves a sharpness taking into account the notion of edges wavelet.\nRequires that at least the first 4 levels are usable

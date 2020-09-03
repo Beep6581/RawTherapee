@@ -3414,7 +3414,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     },
     csthresholdblur(0, 0, 6, 5, false),
     levelsigm(1, 1, false),
-    levelthr(30, 60, false),
+    levelthr(25, 40, false),
     // Tone Mapping
     visitonemap(false),
     exptonemap(false),

@@ -8466,7 +8466,6 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 #endif
 
         if (call == 1 && GW >= mDEN && GH >= mDEN) {
-            printf("den 1\n");
 
             LabImage tmp1(transformed->W, transformed->H);
             LabImage tmp2(transformed->W, transformed->H);
@@ -8615,7 +8614,6 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     for (int ir = 0; ir < GH; ir++)
                         for (int jr = 0; jr < GW; jr++) {
                             float lN = tmp1.L[ir][jr];
-
                             if (lN < seuillow) {
                                 noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] =  nvlh[i];
                             } else if (lN < seuilhigh) {
@@ -8634,21 +8632,18 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             for (int jr = 0; jr < GW; jr++) {
                                 float lM = bufmaskblurbl->L[ir][jr];
                                 if (lM < 327.68f * lp.thrlow) {
-                                noisevarmask[(ir >> 1)*GW2 + (jr >> 1)] =  3.f;
-                                noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] *= noisevarmask[(ir >> 1)*GW2 + (jr >> 1)];
+                                noisevarmask[(ir >> 1) * GW2 + (jr >> 1)] =  3.f;
+                                noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] *= noisevarmask[(ir >> 1) * GW2 + (jr >> 1)];
                             } else if (lM < 327.68f * lp.thrhigh) {
-                                noisevarmask[(ir >> 1)*GW2 + (jr >> 1)] = 1.f;
-                                noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] *= noisevarmask[(ir >> 1)*GW2 + (jr >> 1)];
+                                noisevarmask[(ir >> 1) * GW2 + (jr >> 1)] = 1.f;
+                                noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] *= noisevarmask[(ir >> 1) * GW2 + (jr >> 1)];
                             } else {
-                                noisevarmask[(ir >> 1)*GW2 + (jr >> 1)] =  0.01f;
-                                noisevarlum[(ir >> 1)*GW2 + (jr >> 1)] *= noisevarmask[(ir >> 1)*GW2 + (jr >> 1)];
+                                noisevarmask[(ir >> 1) * GW2 + (jr >> 1)] =  0.01f;
+                                noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] *= noisevarmask[(ir >> 1) * GW2 + (jr >> 1)];
                             }
-
                         }
-                        
-                        
                     }
-                 
+
 
                     if(HHhuecurve) {
 #ifdef _OPENMP
@@ -8675,7 +8670,6 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         WaveletDenoiseAllL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
 
                     }
-
 
                     delete[] noisevarlum;
                     delete[] noisevarhue;
@@ -9198,6 +9192,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         //    float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
                         float* noisevarlum = new float[bfh * bfw];
                         float* noisevarhue = new float[bfh * bfw];
+                        float* noisevarmask = new float[bfh * bfw];
                         int bfw2 = (bfw + 1) / 2;
 
                         float nvlh[13] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 0.7f, 0.5f}; //high value
@@ -9226,6 +9221,27 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                                 }
                             }
 
+
+                    if(lp.enablMask && lp.usemask) {
+#ifdef _OPENMP
+                    #pragma omp parallel for if (multiThread)
+#endif
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                                float lM = bufmaskblurbl->L[ir][jr];
+                                if (lM < 327.68f * lp.thrlow) {
+                                    noisevarmask[(ir >> 1) * bfw2 + (jr >> 1)] =  3.f;
+                                    noisevarlum[(ir >> 1) * bfw2 + (jr >> 1)] *= noisevarmask[(ir >> 1) * bfw2 + (jr >> 1)];
+                                } else if (lM < 327.68f * lp.thrhigh) {
+                                    noisevarmask[(ir >> 1) * bfw2 + (jr >> 1)] = 1.f;
+                                    noisevarlum[(ir >> 1) * bfw2 + (jr >> 1)] *= noisevarmask[(ir >> 1) * bfw2 + (jr >> 1)];
+                                } else {
+                                    noisevarmask[(ir >> 1) * bfw2 + (jr >> 1)] =  0.01f;
+                                    noisevarlum[(ir >> 1) * bfw2 + (jr >> 1)] *= noisevarmask[(ir >> 1) * bfw2 + (jr >> 1)];
+                                }
+                        }
+                    }
+
                     if(HHhuecurve) {
 #ifdef _OPENMP
         #pragma omp parallel for
@@ -9248,11 +9264,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                         delete [] noisevarlum;
                         delete [] noisevarhue;
-
-
-
-
-
+                        delete [] noisevarmask;
                     }
                 }
 
