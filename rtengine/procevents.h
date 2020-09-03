@@ -989,6 +989,7 @@ enum ProcEventCode {
     Evlocallablevelthr = 963,
     Evlocallablimden = 964,
     Evlocallabusemask = 965,
+    Evlocallabhishow = 966,
     NUMOFEVENTS
 };
 
