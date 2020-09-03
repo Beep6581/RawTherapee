@@ -2441,7 +2441,7 @@ WaveletParams::WaveletParams() :
     Backmethod("grey"),
     Tilesmethod("full"),
     complexmethod("normal"),
-    denmethod("equ"),
+    denmethod("12low"),
     mixmethod("mix"),
     slimethod("sli"),
     quamethod("cons"),
