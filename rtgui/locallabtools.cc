@@ -5632,7 +5632,7 @@ LocallabBlur::LocallabBlur():
     wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
     expdenoise1(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI1_EXP")))),
     usemask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_USEMASK")))),
-    levelthr(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_MASKLCTHR"), 0., 100., 40., M("TP_LOCALLAB_THRESMASKHIGH"), 1, 0., 100., 25., M("TP_LOCALLAB_THRESMASKLOW"), 1., nullptr, false))),
+    levelthr(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_MASKLCTHR"), 0., 100., 40., M("TP_LOCALLAB_THRESMASKHIGH"), 1, 0., 100., 25., M("TP_LOCALLAB_THRESMASKLOW"), 0, this, false))),
     levelsigm(Gtk::manage(new ThresholdAdjuster(M("TP_WAVELET_LEVELSIGM"), 0.05, 3., 1., M("TP_LOCALLAB_LEVELHIGH"), 1, 0.05, 3., 1., M("TP_LOCALLAB_LEVELLOW"), 1., nullptr, false))),
     limden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIMDEN"), 0., 1., 0.01, 0.))),
     noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 0.01, 0.))),
@@ -5776,7 +5776,7 @@ LocallabBlur::LocallabBlur():
     setExpandAlignProperties(expdenoise1, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     levelthr->setAdjusterListener(this);
-    levelthr->setUpdatePolicy(RTUP_DYNAMIC);
+//    levelthr->setUpdatePolicy(RTUP_DYNAMIC);
 //    levelthr->set_tooltip_text(M("TP_WAVELET_THRDEN_TOOLTIP"));
 
     levelsigm->setAdjusterListener(this);
@@ -6423,6 +6423,54 @@ void LocallabBlur::adjusterChanged3(ThresholdAdjuster* a, double newBottom, doub
         }
 
     }
+}
+
+std::vector<double> LocallabBlur::getCurvePoints(ThresholdSelector* tAdjuster) const
+{
+    std::vector<double> points;
+    double threshold, transitionWeighting;
+    tAdjuster->getPositions<double>(transitionWeighting, threshold); // ( range -100;+100, range 0;+100 )
+    transitionWeighting /= 100.; // range -1., +1.
+    threshold /= 100.; // range  0., +1.
+
+    // Initial point
+    points.push_back(0.);
+    points.push_back(0.);
+
+    double p2 = 3.0 * threshold / 4.0; // same one than in ipvibrance.cc
+    double s0 = threshold + (1.0 - threshold) / 4.0; // same one than in ipvibrance.cc
+
+    // point at the beginning of the first linear transition
+    points.push_back(p2);
+    points.push_back(0.);
+
+    // Y value of the chroma mean point, calculated to get a straight line between p2 and s0
+    double chromaMean = (threshold / 4.0) / (s0 - p2);
+
+    // move chromaMean up or down depending on transitionWeighting
+    if (transitionWeighting > 0.0) {
+        // positive values -> give more weight to Saturated
+        chromaMean = (1.0 - chromaMean) * transitionWeighting + chromaMean;
+    } else if (transitionWeighting < 0.0) {
+        // negative values -> give more weight to Pastels
+        chromaMean = chromaMean * transitionWeighting + chromaMean;
+    }
+
+    // point at the location of the Top cursor, at the end of the first linear transition and the beginning of the second one
+    points.push_back(threshold);
+    points.push_back(chromaMean);
+
+    if (threshold < 1.0) {
+        // point at the end of the second linear transition
+        points.push_back(s0);
+        points.push_back(1.0);
+
+        // end point
+        points.push_back(1.0);
+        points.push_back(1.0);
+    }
+
+    return points;
 }
 
 

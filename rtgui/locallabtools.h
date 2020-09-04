@@ -628,7 +628,9 @@ private:
 class LocallabBlur:
     public Gtk::VBox,
     public LocallabTool,
-    public ThresholdAdjusterListener
+    public ThresholdAdjusterListener,
+    public ThresholdCurveProvider
+
 {
 private:
     // Blur & Noise specific widgets
@@ -731,6 +733,7 @@ public:
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
     void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
+    std::vector<double> getCurvePoints(ThresholdSelector* tAdjuster) const override;
     void curveChanged(CurveEditor* ce) override;
 
 private:

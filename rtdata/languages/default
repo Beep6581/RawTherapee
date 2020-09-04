@@ -2826,13 +2826,13 @@ TP_LOCALLAB_SHOWFOURIER;Fourier ƒ(dct)
 TP_LOCALLAB_SHOWLAPLACE;∆ Laplacian (first)
 TP_LOCALLAB_SHOWLC;Mask and modifications
 TP_LOCALLAB_SHOWMASK;Show mask
-TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Display mask modifications.\nBeware, you can only view one tool mask at the same time.\n\nNote: Use Mask is before algorihtm shape detection.
+TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Display mask modifications.\nBeware, you can only view one tool mask at the same time.\nShow modified image: Shows the modified image including any adjustments and masks\n\nNote: Use Mask is before algorihtm shape detection.
 TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP;Show process Fourier:\nShows the different stages of the process.\nLaplace - builds the second derivative according to the threshold (first step).\nFourier -shows the transformed Laplacian with DCT.\nPoisson - show solution of Poisson DCE.\nNormalize - show result without normalization luminance.
 TP_LOCALLAB_SHOWMASKTYP1;Blur & Noise
 TP_LOCALLAB_SHOWMASKTYP2;Denoise
 TP_LOCALLAB_SHOWMASKTYP3;Blur & Noise  + Denoise
 TP_LOCALLAB_SHOWMASKTYP_TOOLTIP;Mask and modifications can be chosen.\nBlur and noise : in this case it is not used for 'denoise'.\nDenoise : in this case it is not used for 'blur and noise'.\n\nBlur and noise + denoise : mask is shared, be carefull to 'show modifications' and 'scope'
-TP_LOCALLAB_SHOWMNONE;None
+TP_LOCALLAB_SHOWMNONE;Show modified image
 TP_LOCALLAB_SHOWMODIF;Show modifications without mask
 TP_LOCALLAB_SHOWMODIFMASK;Show modifications with mask
 TP_LOCALLAB_SHOWNORMAL;Normalize luminance (no)

@@ -8625,6 +8625,10 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
  
                     
                     if(lp.enablMask && lp.usemask) {
+                        float hig = lp.thrhigh;
+                        if(lp.thrhigh < lp.thrlow) {
+                            hig = lp.thrlow + 0.01f;
+                        }
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
@@ -8634,7 +8638,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                                 if (lM < 327.68f * lp.thrlow) {
                                 noisevarmask[(ir >> 1) * GW2 + (jr >> 1)] =  3.f;
                                 noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] *= noisevarmask[(ir >> 1) * GW2 + (jr >> 1)];
-                            } else if (lM < 327.68f * lp.thrhigh) {
+                            } else if (lM < 327.68f * hig) {
                                 noisevarmask[(ir >> 1) * GW2 + (jr >> 1)] = 1.f;
                                 noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] *= noisevarmask[(ir >> 1) * GW2 + (jr >> 1)];
                             } else {
@@ -9223,6 +9227,12 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
 
                     if(lp.enablMask && lp.usemask) {
+                        float hig = lp.thrhigh;
+                        if(lp.thrhigh < lp.thrlow) {
+                            hig = lp.thrlow + 0.01f;
+                        }
+                        
+                        
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
@@ -9232,7 +9242,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                                 if (lM < 327.68f * lp.thrlow) {
                                     noisevarmask[(ir >> 1) * bfw2 + (jr >> 1)] =  3.f;
                                     noisevarlum[(ir >> 1) * bfw2 + (jr >> 1)] *= noisevarmask[(ir >> 1) * bfw2 + (jr >> 1)];
-                                } else if (lM < 327.68f * lp.thrhigh) {
+                                } else if (lM < 327.68f * hig) {
                                     noisevarmask[(ir >> 1) * bfw2 + (jr >> 1)] = 1.f;
                                     noisevarlum[(ir >> 1) * bfw2 + (jr >> 1)] *= noisevarmask[(ir >> 1) * bfw2 + (jr >> 1)];
                                 } else {
