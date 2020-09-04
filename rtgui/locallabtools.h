@@ -318,13 +318,15 @@ class LocallabExposure:
 private:
     // Exposure specific widgets
     MyComboBoxText* const expMethod;
-    Gtk::Frame* const pdeFrame;
+//    Gtk::Frame* const pdeFrame;
+    MyExpander* const exppde;
     Adjuster* const laplacexp;
     Adjuster* const linear;
     Adjuster* const balanexp;
     Adjuster* const gamm;
     MyComboBoxText* const exnoiseMethod;
-    Gtk::Frame* const fatFrame;
+//    Gtk::Frame* const fatFrame;
+    MyExpander* const expfat;
     Adjuster* const fatamount;
     Adjuster* const fatdetail;
     Adjuster* const fatlevel;

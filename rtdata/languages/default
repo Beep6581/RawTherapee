@@ -2537,7 +2537,7 @@ TP_LOCALLAB_EXPOSE;Dynamic Range Compr. & Exposure
 TP_LOCALLAB_EXPOSURE_TOOLTIP;Modify exposure in L*a*b space  using Laplacian PDE algorithms to take into account dE and  minimize artifacts.
 TP_LOCALLAB_EXPRETITOOLS;Advanced Retinex Tools
 TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39.\nUse low transition values and high decay transition values and scope to simulate small RT-spot.
-TP_LOCALLAB_EXPTOOL;Tools exposure
+TP_LOCALLAB_EXPTOOL;Exposure tools
 TP_LOCALLAB_EXPTRC;Tone Response Curve - TRC
 TP_LOCALLAB_EXP_TOOLNAME;Contrast Attenuator -Dynamic Range Compression & Exposure- 10
 TP_LOCALLAB_FATAMOUNT;Amount
