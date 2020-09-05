@@ -1,4 +1,5 @@
 /*
+ *
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>frame
@@ -5549,9 +5550,9 @@ void LocallabMask::convertParamToSimple()
     disableListener();
 
     // Set hidden specific GUI widgets in Simple mode to default spot values
-    radmask->setValue(defSpot.radmask);
-    chromask->setValue(defSpot.chromask);
-    Lmask_shape->setCurve(defSpot.Lmask_curve);
+    gammask->setValue(defSpot.gammask);
+    slopmask->setValue(defSpot.slopmask);
+   // Lmask_shape->setCurve(defSpot.Lmask_curve);
 
     // Enable all listeners
     enableListener();
