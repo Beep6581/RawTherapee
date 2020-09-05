@@ -111,41 +111,34 @@ void RawImageSource::dual_demosaic_RT(bool isBayer, const procparams::RAWParams 
     buildBlendMask(L, blend, winw, winh, contrastf, autoContrast);
     contrast = contrastf * 100.f;
 
-    array2D<float>& redTmp = L; // L is not needed anymore => reuse it
-    array2D<float> greenTmp;
-    array2D<float> blueTmp;
-
     if (isBayer) {
         if (raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::AMAZEBILINEAR) ||
             raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::RCDBILINEAR) ||
             raw.bayersensor.method == procparams::RAWParams::BayerSensor::getMethodString(procparams::RAWParams::BayerSensor::Method::DCBBILINEAR)) {
             bayer_bilinear_demosaic(blend, rawData, red, green, blue);
-            return;
         } else {
-            greenTmp(winw, winh);
-            blueTmp(winw, winh);
+            array2D<float>& redTmp = L; // L is not needed anymore => reuse it
+            array2D<float> greenTmp(winw, winh);
+            array2D<float> blueTmp(winw, winh);
             vng4_demosaic(rawData, redTmp, greenTmp, blueTmp);
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16)
+#endif
+            for(int i = 0; i < winh; ++i) {
+                // the following is split into 3 loops intentionally to avoid cache conflicts on CPUs with only 4-way cache
+                for(int j = 0; j < winw; ++j) {
+                    red[i][j] = intp(blend[i][j], red[i][j], redTmp[i][j]);
+                }
+                for(int j = 0; j < winw; ++j) {
+                    green[i][j] = intp(blend[i][j], green[i][j], greenTmp[i][j]);
+                }
+                for(int j = 0; j < winw; ++j) {
+                    blue[i][j] = intp(blend[i][j], blue[i][j], blueTmp[i][j]);
+                }
+            }
         }
     } else {
-        greenTmp(winw, winh);
-        blueTmp(winw, winh);
-        fast_xtrans_interpolate(rawData, redTmp, greenTmp, blueTmp);
-    }
-
-#ifdef _OPENMP
-    #pragma omp parallel for schedule(dynamic,16)
-#endif
-    for(int i = 0; i < winh; ++i) {
-        // the following is split into 3 loops intentionally to avoid cache conflicts on CPUs with only 4-way cache
-        for(int j = 0; j < winw; ++j) {
-            red[i][j] = intp(blend[i][j], red[i][j], redTmp[i][j]);
-        }
-        for(int j = 0; j < winw; ++j) {
-            green[i][j] = intp(blend[i][j], green[i][j], greenTmp[i][j]);
-        }
-        for(int j = 0; j < winw; ++j) {
-            blue[i][j] = intp(blend[i][j], blue[i][j], blueTmp[i][j]);
-        }
+        fast_xtrans_interpolate_blend(blend, rawData, red, green, blue);
     }
 }
 }
