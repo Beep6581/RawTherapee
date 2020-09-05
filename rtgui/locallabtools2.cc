@@ -5569,6 +5569,11 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
             gammask->hide();
             slopmask->hide();
             shadmask->hide();
+            lapmask->hide();
+            mask_HCurveEditorG->hide();
+            mask2CurveEditorGwav->hide();
+            csThresholdmask->hide();
+            gradFramemask->hide();
 
             break;
 
