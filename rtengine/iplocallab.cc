@@ -2481,7 +2481,8 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, i
 
     const bool exec = (lp.expmet == 1 && linear > 0.f && lp.laplacexp > 0.1f);
 
-    if (!exec) { //for standard exposure
+    if (exec) { //for standard exposure
+     //   printf("EXEC\n");
         const float cexp_scale = std::pow(2.f, lp.expcomp);
         const float ccomp = (rtengine::max(0.f, lp.expcomp) + 1.f) * lp.hlcomp / 100.f;
         const float cshoulder = ((maxran / rtengine::max(1.0f, cexp_scale)) * (lp.hlcompthr / 200.f)) + 0.1f;
@@ -12096,7 +12097,7 @@ void ImProcFunctions::Lab_Local(
     }
 
 // soft light and retinex_pde
-    if (lp.strng > 0.f && call <= 3 && lp.sfena) {
+    if (lp.strng > 1.f && call <= 3 && lp.sfena) {
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -13613,8 +13614,9 @@ void ImProcFunctions::Lab_Local(
 
 
                     } else {
-
-                        ImProcFunctions::exlabLocal(lp, bfh, bfw, bfhr, bfwr, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
+                        if (lp.expcomp != 0.f) {
+                            ImProcFunctions::exlabLocal(lp, bfh, bfw, bfhr, bfwr, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
+                        }
                     }
 
 //gradient
