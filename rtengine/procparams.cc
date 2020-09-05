@@ -2723,7 +2723,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     shortc(false),
     savrest(false),
     scopemask(60),
-    lumask(30),
+    lumask(10),
     // Color & Light
     visicolor(false),
     expcolor(false),

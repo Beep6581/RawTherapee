@@ -2512,7 +2512,7 @@ LocallabExposure::LocallabExposure():
     mask2expCurveEditorG->curveListComplete();
 
     // Add Color & Light specific widgets to GUI
-    pack_start(*expMethod);
+//    pack_start(*expMethod);
     ToolParamBlock* const pdeBox = Gtk::manage(new ToolParamBlock());
     pdeBox->pack_start(*laplacexp);
     pdeBox->pack_start(*linear);
@@ -2613,7 +2613,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_EXPOSURE_TOOLTIP"));
-        expMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
+//        expMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
 //        pdeFrame->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
         exppde->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
         laplacexp->set_tooltip_text(M("TP_LOCALLAB_EXPLAP_TOOLTIP"));
@@ -2641,7 +2641,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         Lmaskexpshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
-        expMethod->set_tooltip_text("");
+//        expMethod->set_tooltip_text("");
 //        pdeFrame->set_tooltip_text("");
         laplacexp->set_tooltip_text("");
         linear->set_tooltip_text("");
@@ -2719,13 +2719,13 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
         exp->set_visible(spot.visiexpose);
         exp->setEnabled(spot.expexpose);
         complexity->set_active(spot.complexexpose);
-
+/*
         if (spot.expMethod == "std") {
             expMethod->set_active(0);
         } else if (spot.expMethod == "pde") {
             expMethod->set_active(1);
         }
-
+*/
         laplacexp->setValue(spot.laplacexp);
         linear->setValue(spot.linear);
         balanexp->setValue(spot.balanexp);
@@ -2802,13 +2802,13 @@ void LocallabExposure::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.expexpose = exp->getEnabled();
         spot.visiexpose = exp->get_visible();
         spot.complexexpose = complexity->get_active_row_number();
-
+/*
         if (expMethod->get_active_row_number() == 0) {
             spot.expMethod = "std";
         } else if (expMethod->get_active_row_number() == 1) {
             spot.expMethod = "pde";
         }
-
+*/
         spot.laplacexp = laplacexp->getValue();
         spot.linear = linear->getValue();
         spot.balanexp = balanexp->getValue();
@@ -3410,7 +3410,7 @@ void LocallabExposure::updateExposureGUI1()
 }
 
 void LocallabExposure::updateExposureGUI2()
-{
+{  /*
     // Update exposure GUI according to expMethod value
     if (expMethod->get_active_row_number() == 0) {
 //        pdeFrame->hide();
@@ -3427,6 +3427,7 @@ void LocallabExposure::updateExposureGUI2()
         softradiusexp->set_sensitive(false);
         sensiex->set_sensitive(true);
     }
+    */
 }
 
 void LocallabExposure::updateExposureGUI3()
