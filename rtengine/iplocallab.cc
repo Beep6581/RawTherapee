@@ -10796,7 +10796,6 @@ void ImProcFunctions::Lab_Local(
                                                 float bsig = 0.5f - asig * tempmean;
                                                 float amean = 0.5f / (tempmean);
 
-StopWatch Stop1("test 99");
 #ifdef _OPENMP
                                                 #pragma omp parallel for if (multiThread)
 #endif
@@ -10853,7 +10852,6 @@ StopWatch Stop1("test 99");
                                                         
                                                     }
                                                 }
-Stop1.stop();
                                             }
                                         }
                                     }
