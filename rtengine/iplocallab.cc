@@ -9199,7 +9199,6 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                         //    float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
                         float* noisevarlum = new float[bfh * bfw];
                         float* noisevarhue = new float[bfh * bfw];
-                        float* noisevarmask = new float[bfh * bfw];
                         int bfw2 = (bfw + 1) / 2;
 
                         float nvlh[13] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 0.7f, 0.5f}; //high value
@@ -9239,18 +9238,15 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
-                        for (int ir = 0; ir < bfh; ir++)
-                            for (int jr = 0; jr < bfw; jr++) {
-                                float lM = bufmaskblurbl->L[ir][jr];
+                        for (int ir = 0; ir < GH; ir++)
+                            for (int jr = 0; jr < GW; jr++) {
+                                const float lM = bufmaskblurbl->L[ir][jr];
                                 if (lM < 327.68f * lp.thrlow) {
-                                    noisevarmask[(ir >> 1) * bfw2 + (jr >> 1)] =  3.f;
-                                    noisevarlum[(ir >> 1) * bfw2 + (jr >> 1)] *= noisevarmask[(ir >> 1) * bfw2 + (jr >> 1)];
+                                    noisevarlum[(ir >> 1) * bfw2 + (jr >> 1)] *= 3.f;
                                 } else if (lM < 327.68f * hig) {
-                                    noisevarmask[(ir >> 1) * bfw2 + (jr >> 1)] = 1.f;
-                                    noisevarlum[(ir >> 1) * bfw2 + (jr >> 1)] *= noisevarmask[(ir >> 1) * bfw2 + (jr >> 1)];
+                                    // do nothing
                                 } else {
-                                    noisevarmask[(ir >> 1) * bfw2 + (jr >> 1)] =  0.01f;
-                                    noisevarlum[(ir >> 1) * bfw2 + (jr >> 1)] *= noisevarmask[(ir >> 1) * bfw2 + (jr >> 1)];
+                                    noisevarlum[(ir >> 1) * bfw2 + (jr >> 1)] *= 0.01f;
                                 }
                         }
                     }
@@ -9277,7 +9273,6 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                         delete [] noisevarlum;
                         delete [] noisevarhue;
-                        delete [] noisevarmask;
                     }
                 }
 
@@ -10801,7 +10796,7 @@ void ImProcFunctions::Lab_Local(
                                                 float bsig = 0.5f - asig * tempmean;
                                                 float amean = 0.5f / (tempmean);
 
-
+StopWatch Stop1("test 99");
 #ifdef _OPENMP
                                                 #pragma omp parallel for if (multiThread)
 #endif
@@ -10858,6 +10853,7 @@ void ImProcFunctions::Lab_Local(
                                                         
                                                     }
                                                 }
+Stop1.stop();
                                             }
                                         }
                                     }
