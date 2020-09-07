@@ -28,6 +28,7 @@
 
 #include "delayed.h"
 #include "guiutils.h"
+#include "options.h"
 #include "pointermotionlistener.h"
 
 #include "../rtengine/array2D.h"
@@ -36,10 +37,7 @@
 
 class HistogramArea;
 
-enum ScopeType
-{
-    HISTOGRAM, HISTOGRAM_RAW, VECTORSCOPE_HC, VECTORSCOPE_HS, WAVEFORM, NONE
-};
+using ScopeType = Options::ScopeType;
 
 struct HistogramAreaIdleHelper {
     HistogramArea* harea;
@@ -178,7 +176,7 @@ protected:
     bool valid;
     int drawMode;
     DrawModeListener *myDrawModeListener;
-    int scopeType;
+    ScopeType scopeType;
     int oldwidth, oldheight;
     /// Intensity of waveform and vectorscope trace.
     float trace_brightness;
@@ -221,7 +219,7 @@ public:
         const array2D<int>& waveformBlue,
         const array2D<int>& waveformLuma
     );
-    void updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode, int type, bool pointer);
+    void updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode, ScopeType type, bool pointer);
     bool updatePending();
     void on_realize() override;
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;

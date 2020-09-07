@@ -79,15 +79,18 @@ HistogramPanel::HistogramPanel () :
     histogramRGBAreaVert->show();
 
     switch (options.histogramScopeType) {
-        case 2:
-        case 3:
+        case ScopeType::NONE:
+        case ScopeType::VECTORSCOPE_HC:
+        case ScopeType::VECTORSCOPE_HS:
             histogramRGBArea = nullptr;
             break;
-        case 1:
+        case ScopeType::WAVEFORM:
             histogramRGBArea = histogramRGBAreaVert.get();
             break;
-        default:
+        case ScopeType::HISTOGRAM:
+        case ScopeType::HISTOGRAM_RAW:
             histogramRGBArea = histogramRGBAreaHori.get();
+            break;
     }
 
     // connecting the two childs
@@ -202,14 +205,22 @@ HistogramPanel::HistogramPanel () :
         showMode->set_image(*mode1Image);
     else
         showMode->set_image(*mode2Image);
-    if (options.histogramScopeType == 0) {
-        scopeType->set_image(*histImage);
-    } else if (options.histogramScopeType == 1) {
-        scopeType->set_image(*waveImage);
-    } else if (options.histogramScopeType == 2) {
-        scopeType->set_image(*vectHsImage);
-    } else if (options.histogramScopeType == 3) {
-        scopeType->set_image(*vectHcImage);
+    switch(options.histogramScopeType) {
+        case ScopeType::HISTOGRAM:
+            scopeType->set_image(*histImage);
+            break;
+        case ScopeType::WAVEFORM:
+            scopeType->set_image(*waveImage);
+            break;
+        case ScopeType::VECTORSCOPE_HS:
+            scopeType->set_image(*vectHsImage);
+            break;
+        case ScopeType::VECTORSCOPE_HC:
+            scopeType->set_image(*vectHcImage);
+            break;
+        case ScopeType::HISTOGRAM_RAW:
+        case ScopeType::NONE:
+            break;
     }
     showBAR->set_image   (showBAR->get_active()   ? *barImage   : *barImage_g);
     
@@ -303,7 +314,10 @@ void HistogramPanel::showRGBBar()
 
     gfxGrid->attach_next_to(*histogramRGBArea, *histogramArea, pos);
     setHistRGBInvalid();
-    histogramRGBArea->setShow(options.histogramScopeType < 2);
+    histogramRGBArea->setShow(
+        options.histogramScopeType == ScopeType::HISTOGRAM
+        || options.histogramScopeType == ScopeType::WAVEFORM
+    );
 }
 
 void HistogramPanel::resized (Gtk::Allocation& req)
@@ -363,8 +377,11 @@ void HistogramPanel::raw_toggled ()
         showChro->set_sensitive(false);
     } else {
         showRAW->set_image(*rawImage_g);
-        showValue->set_sensitive(options.histogramScopeType != 1);
-        showChro->set_sensitive(options.histogramScopeType != 1);
+        showValue->set_sensitive(
+            options.histogramScopeType == ScopeType::HISTOGRAM
+            || options.histogramScopeType == ScopeType::WAVEFORM
+        );
+        showChro->set_sensitive(options.histogramScopeType == ScopeType::HISTOGRAM);
     }
 
     rgbv_toggled();
@@ -384,17 +401,28 @@ void HistogramPanel::mode_released ()
 
 void HistogramPanel::type_pressed()
 {
-    constexpr int TYPE_COUNT = 4; // Histogram, waveform, and 2 vectorscopes.
-    options.histogramScopeType = (options.histogramScopeType + 1) % TYPE_COUNT;
-    if (options.histogramScopeType == 0) {
-        scopeType->set_image(*histImage);
-    } else if (options.histogramScopeType == 1) {
-        scopeType->set_image(*waveImage);
-    } else if (options.histogramScopeType == 2) {
-        scopeType->set_image(*vectHsImage);
-    } else if (options.histogramScopeType == 3) {
-        scopeType->set_image(*vectHcImage);
+    // Switch to next type.
+    switch (options.histogramScopeType) {
+        case ScopeType::NONE: // Default to histogram.
+        case ScopeType::HISTOGRAM_RAW: // Not supported as a true scope type.
+        case ScopeType::VECTORSCOPE_HC:
+            options.histogramScopeType = ScopeType::HISTOGRAM;
+            scopeType->set_image(*histImage);
+            break;
+        case ScopeType::HISTOGRAM:
+            options.histogramScopeType = ScopeType::WAVEFORM;
+            scopeType->set_image(*waveImage);
+            break;
+        case ScopeType::WAVEFORM:
+            options.histogramScopeType = ScopeType::VECTORSCOPE_HS;
+            scopeType->set_image(*vectHsImage);
+            break;
+        case ScopeType::VECTORSCOPE_HS:
+            options.histogramScopeType = ScopeType::VECTORSCOPE_HC;
+            scopeType->set_image(*vectHcImage);
+            break;
     }
+
     type_changed();
     updateHistAreaOptions();
     if (histogramRGBArea) {
@@ -409,54 +437,46 @@ void HistogramPanel::type_changed()
         gfxGrid->remove(*histogramRGBArea);
     }
 
-    if (options.histogramScopeType == 0) {
-        showRed->set_sensitive();
-        showGreen->set_sensitive();
-        showBlue->set_sensitive();
-        showValue->set_sensitive(!showRAW->get_active());
-        showChro->set_sensitive(!showRAW->get_active());
-        showRAW->set_sensitive();
-        showMode->set_sensitive();
-        histogramRGBArea = histogramRGBAreaHori.get();
-        if (panel_listener) {
-            updateHistAreaOptions();
-            panel_listener->scopeTypeChanged(ScopeType::HISTOGRAM);
-        }
-    } else if (options.histogramScopeType == 1) {
-        showRed->set_sensitive();
-        showGreen->set_sensitive();
-        showBlue->set_sensitive();
-        showValue->set_sensitive();
-        showChro->set_sensitive(false);
-        showRAW->set_sensitive(false);
-        showMode->set_sensitive(false);
-        histogramRGBArea = histogramRGBAreaVert.get();
-        if (panel_listener) {
-            updateHistAreaOptions();
-            panel_listener->scopeTypeChanged(ScopeType::WAVEFORM);
-        }
-    } else {
-        showRed->set_sensitive(false);
-        showGreen->set_sensitive(false);
-        showBlue->set_sensitive(false);
-        showValue->set_sensitive(false);
-        showChro->set_sensitive(false);
-        showRAW->set_sensitive(false);
-        showMode->set_sensitive(false);
-        histogramRGBArea = nullptr;
-        if (panel_listener) {
-            updateHistAreaOptions();
-            ScopeType type = ScopeType::NONE;
-            switch (options.histogramScopeType) {
-                case 2:
-                    type = ScopeType::VECTORSCOPE_HS;
-                    break;
-                case 3:
-                    type = ScopeType::VECTORSCOPE_HC;
-                    break;
-            }
-            panel_listener->scopeTypeChanged(type);
-        }
+    switch (options.histogramScopeType) {
+        case ScopeType::HISTOGRAM:
+        case ScopeType::HISTOGRAM_RAW:
+            showRed->set_sensitive();
+            showGreen->set_sensitive();
+            showBlue->set_sensitive();
+            showValue->set_sensitive(!showRAW->get_active());
+            showChro->set_sensitive(!showRAW->get_active());
+            showRAW->set_sensitive();
+            showMode->set_sensitive();
+            histogramRGBArea = histogramRGBAreaHori.get();
+            break;
+        case ScopeType::WAVEFORM:
+            showRed->set_sensitive();
+            showGreen->set_sensitive();
+            showBlue->set_sensitive();
+            showValue->set_sensitive();
+            showChro->set_sensitive(false);
+            showRAW->set_sensitive(false);
+            showMode->set_sensitive(false);
+            histogramRGBArea = histogramRGBAreaVert.get();
+            break;
+        case ScopeType::VECTORSCOPE_HC:
+        case ScopeType::VECTORSCOPE_HS:
+            showRed->set_sensitive(false);
+            showGreen->set_sensitive(false);
+            showBlue->set_sensitive(false);
+            showValue->set_sensitive(false);
+            showChro->set_sensitive(false);
+            showRAW->set_sensitive(false);
+            showMode->set_sensitive(false);
+            histogramRGBArea = nullptr;
+            break;
+        case ScopeType::NONE:
+            break;
+    }
+
+    if (panel_listener) {
+        updateHistAreaOptions();
+        panel_listener->scopeTypeChanged(options.histogramScopeType);
     }
 
     if (showBAR->get_active()) {
@@ -537,19 +557,7 @@ void HistogramPanel::setPanelListener(HistogramPanelListener* listener)
     panel_listener = listener;
 
     if (listener) {
-        ScopeType type;
-        if (options.histogramScopeType == 0) {
-            type = ScopeType::HISTOGRAM;
-        } else if (options.histogramScopeType == 1) {
-            type = ScopeType::WAVEFORM;
-        } else if (options.histogramScopeType == 2) {
-            type = ScopeType::VECTORSCOPE_HS;
-        } else if (options.histogramScopeType == 3) {
-            type = ScopeType::VECTORSCOPE_HC;
-        } else {
-            type = ScopeType::NONE;
-        }
-        listener->scopeTypeChanged(type);
+        listener->scopeTypeChanged(options.histogramScopeType);
     }
 }
 
@@ -577,7 +585,7 @@ void HistogramPanel::updateHistRGBAreaOptions()
         showValue->get_active(),
         showChro->get_active(),
         showRAW->get_active(),
-        showBAR->get_active() && options.histogramScopeType < 2
+        showBAR->get_active()
     );
 }
 
@@ -671,7 +679,8 @@ void HistogramRGBArea::setShow(bool show)
 
 void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustring &profile, const Glib::ustring &profileW)
 {
-    if (!get_realized () || !showMode || (rawMode && options.histogramScopeType != 1)) {
+    //if (!get_realized () || !showMode || (rawMode && options.histogramScopeType == ScopeType::HISTOGRAM) || options.histogramScopeType == ScopeType::HISTOGRAM_RAW) {
+    if (!get_realized () || !showMode || !((!rawMode && options.histogramScopeType == ScopeType::HISTOGRAM) || options.histogramScopeType == ScopeType::WAVEFORM)) {
         return;
     }
 
@@ -717,7 +726,11 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
                 drawBar(cc, b, 255.0, winw, winh, s);
             }
 
-            if((needLuma || needChroma) && options.histogramScopeType <= 1) {
+            if(
+                (needLuma || needChroma)
+                && (options.histogramScopeType == ScopeType::HISTOGRAM
+                    || options.histogramScopeType == ScopeType::WAVEFORM)
+            ) {
                 float Lab_L, Lab_a, Lab_b;
                 rtengine::Color::rgb2lab01(profile, profileW, r / 255.f, g / 255.f, b / 255.f, Lab_L, Lab_a, Lab_b, options.rtSettings.HistogramWorking);
 
@@ -727,7 +740,7 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
                     drawBar(cc, Lab_L, 100.0, winw, winh, s);
                 }
 
-                if (needChroma && options.histogramScopeType == 0) {
+                if (needChroma && options.histogramScopeType == ScopeType::HISTOGRAM) {
                     // Chroma
                     double chromaval = sqrt(Lab_a * Lab_a + Lab_b * Lab_b) / 1.8;
                     cc->set_source_rgb(0.9, 0.9, 0.0);
@@ -874,7 +887,7 @@ void HistogramRGBAreaHori::get_preferred_width_for_height_vfunc (int height, int
 void HistogramRGBAreaVert::drawBar(Cairo::RefPtr<Cairo::Context> cc, double value, double max_value, int winw, int winh, double scale)
 {
     double pos;
-    if (options.histogramDrawMode < 2 || options.histogramScopeType == 1) {
+    if (options.histogramDrawMode < 2 || options.histogramScopeType == ScopeType::WAVEFORM) {
         pos = padding + value * (winh - padding * 2.0 - 1) / max_value + 0.5 * scale;
     } else {
         pos = padding + HistogramScaling::log (max_value, value) * (winh - padding * 2.0) / max_value + 0.5 * scale;
@@ -988,7 +1001,7 @@ void HistogramArea::get_preferred_width_for_height_vfunc (int height, int &minim
     get_preferred_width_vfunc (minimum_width, natural_width);
 }
 
-void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode, int type, bool pointer)
+void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode, ScopeType type, bool pointer)
 {
 
     options.histogramRed      = needRed    = r;
@@ -1029,30 +1042,38 @@ void HistogramArea::update(
 )
 {
     if (histRed) {
-        if (scopeType == 0) {
-            rhist = histRed;
-            ghist = histGreen;
-            bhist = histBlue;
-            lhist = histLuma;
-            chist = histChroma;
-            rhistRaw = histRedRaw;
-            ghistRaw = histGreenRaw;
-            bhistRaw = histBlueRaw;
-        } else if (scopeType == 1) {
-            waveform_scale = waveformScale;
-            rwave = waveformRed;
-            gwave = waveformGreen;
-            bwave = waveformBlue;
-            lwave = waveformLuma;
-            wave_buffer_dirty = true;
-        } else if (scopeType == 2) {
-            vectorscope_scale = vectorscopeScale;
-            vect_hs = vectorscopeHS;
-            vect_hs_buffer_dirty = true;
-        } else if (scopeType == 3) {
-            vectorscope_scale = vectorscopeScale;
-            vect_hc = vectorscopeHC;
-            vect_hc_buffer_dirty = true;
+        switch (scopeType) {
+            case ScopeType::HISTOGRAM:
+                rhist = histRed;
+                ghist = histGreen;
+                bhist = histBlue;
+                lhist = histLuma;
+                chist = histChroma;
+                rhistRaw = histRedRaw;
+                ghistRaw = histGreenRaw;
+                bhistRaw = histBlueRaw;
+                break;
+            case ScopeType::WAVEFORM:
+                waveform_scale = waveformScale;
+                rwave = waveformRed;
+                gwave = waveformGreen;
+                bwave = waveformBlue;
+                lwave = waveformLuma;
+                wave_buffer_dirty = true;
+                break;
+            case ScopeType::VECTORSCOPE_HS:
+                vectorscope_scale = vectorscopeScale;
+                vect_hs = vectorscopeHS;
+                vect_hs_buffer_dirty = true;
+                break;
+            case ScopeType::VECTORSCOPE_HC:
+                vectorscope_scale = vectorscopeScale;
+                vect_hc = vectorscopeHC;
+                vect_hc_buffer_dirty = true;
+                break;
+            case ScopeType::HISTOGRAM_RAW:
+            case ScopeType::NONE:
+                break;
         }
         valid = true;
     } else {
@@ -1125,7 +1146,7 @@ void HistogramArea::updateBackBuffer ()
     int nrOfVGridPartitions = 8; // always show 8 stops (lines at 1,3,7,15,31,63,127)
 
     // draw vertical gridlines
-    if (options.histogramScopeType == 0) {
+    if (options.histogramScopeType == ScopeType::HISTOGRAM || options.histogramScopeType == ScopeType::HISTOGRAM_RAW) {
         for (int i = 0; i <= nrOfVGridPartitions; i++) {
             double xpos = padding + 0.5;
             if (options.histogramDrawMode < 2) {
@@ -1140,14 +1161,14 @@ void HistogramArea::updateBackBuffer ()
     }
 
     // draw horizontal gridlines
-    if (options.histogramScopeType == 1) {
+    if (options.histogramScopeType == ScopeType::WAVEFORM) {
         for (int i = 0; i <= nrOfVGridPartitions; i++) {
             const double ypos = h - padding - (pow(2.0,i) - 1) * (h - 2 * padding - 1) / 255.0;
             cr->move_to(0, ypos);
             cr->line_to(w, ypos);
             cr->stroke();
         }
-    } else if (options.histogramScopeType >= 2) {
+    } else if (options.histogramScopeType == ScopeType::VECTORSCOPE_HC || options.histogramScopeType == ScopeType::VECTORSCOPE_HS) {
         // Vectorscope has no gridlines.
     } else if (options.histogramDrawMode == 0) {
         for (int i = 1; i < nrOfHGridPartitions; i++) {            
@@ -1165,7 +1186,7 @@ void HistogramArea::updateBackBuffer ()
 
     cr->unset_dash();
 
-    if (valid && scopeType == 0) {
+    if (valid && (scopeType == ScopeType::HISTOGRAM || scopeType == ScopeType::HISTOGRAM_RAW)) {
         // For RAW mode use the other hists
         LUTu& rh = rawMode ? rhistRaw : rhist;
         LUTu& gh = rawMode ? ghistRaw : ghist;
@@ -1272,9 +1293,9 @@ void HistogramArea::updateBackBuffer ()
             drawMarks(cr, bhchanged, realhistheight, w, ui, oi);
         }
 
-    } else if (scopeType == 1 && rwave.getWidth() > 0) {
+    } else if (scopeType == ScopeType::WAVEFORM && rwave.getWidth() > 0) {
         drawWaveform(cr, w, h);
-    } else if (scopeType >= 2) {
+    } else if (scopeType == ScopeType::VECTORSCOPE_HC || scopeType == ScopeType::VECTORSCOPE_HS) {
         drawVectorscope(cr, w, h);
     }
 
@@ -1289,7 +1310,7 @@ void HistogramArea::updateBackBuffer ()
 
 bool HistogramArea::updatePointer(int r, int g, int b, const Glib::ustring &profile, const Glib::ustring &profileW)
 {
-    if (!needPointer || scopeType < 2) {
+    if (!needPointer || !(scopeType == ScopeType::VECTORSCOPE_HC || scopeType == ScopeType::VECTORSCOPE_HS)) {
         return false;
     }
     if (pointer_red == r && pointer_green == g && pointer_blue == b) {
@@ -1360,9 +1381,13 @@ void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
 
 void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, int h)
 {
-    const auto& vect = (scopeType == 3) ? vect_hc : vect_hs;
-    auto& vect_buffer = (scopeType == 3) ? vect_hc_buffer : vect_hs_buffer;
-    auto& vect_buffer_dirty = (scopeType == 3) ? vect_hc_buffer_dirty : vect_hs_buffer_dirty;
+    if (scopeType != ScopeType::VECTORSCOPE_HC && scopeType != ScopeType::VECTORSCOPE_HS) {
+        return;
+    }
+
+    const auto& vect = (scopeType == ScopeType::VECTORSCOPE_HC) ? vect_hc : vect_hs;
+    auto& vect_buffer = (scopeType == ScopeType::VECTORSCOPE_HC) ? vect_hc_buffer : vect_hs_buffer;
+    auto& vect_buffer_dirty = (scopeType == ScopeType::VECTORSCOPE_HC) ? vect_hc_buffer_dirty : vect_hs_buffer_dirty;
 
     const int vect_width = vect.getWidth();
     const int vect_height = vect.getHeight();
@@ -1413,7 +1438,7 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
     cr->set_antialias(Cairo::ANTIALIAS_SUBPIXEL);
     ch_ds[0] = 4;
 
-    if (scopeType == 2) { // Hue-Saturation.
+    if (scopeType == ScopeType::VECTORSCOPE_HS) { // Hue-Saturation.
         // RYGCBM lines.
         cr->set_line_width (2.0 * s);
         constexpr double color_labels[6][3] = {
@@ -1452,7 +1477,7 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
         cr->line_to(line_spacing + line_length, 0);
         cr->stroke();
         cr->unset_dash();
-    } else if (scopeType == 3) { // Hue-Chroma.
+    } else if (scopeType == ScopeType::VECTORSCOPE_HC) { // Hue-Chroma.
         // a and b axes.
         Cairo::RefPtr<Cairo::LinearGradient> gradient;
         cr->set_line_width (2.0 * s);
@@ -1508,7 +1533,7 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
 
         if (needPointer && pointer_red >= 0 && pointer_green >= 0 && pointer_blue >= 0) {
             float cx, cy;
-            if (scopeType == 2) {
+            if (scopeType == ScopeType::VECTORSCOPE_HS) {
                 float H, S, L;
                 Color::rgb2hslfloat(pointer_red * 257.f, pointer_green * 257.f, pointer_blue * 257.f, H, S, L);
                 cx = (w + scope_size * S * std::cos(H * 2 * RT_PI_F)) / 2;
@@ -1630,7 +1655,10 @@ bool HistogramArea::on_button_press_event (GdkEventButton* event)
     isPressed = true;
     movingPosition = event->x;
 
-    if (event->type == GDK_2BUTTON_PRESS && event->button == 1 && scopeType == 0) {
+    if (
+        event->type == GDK_2BUTTON_PRESS && event->button == 1
+        && (scopeType == ScopeType::HISTOGRAM || scopeType == ScopeType::HISTOGRAM_RAW)
+    ) {
 
         drawMode = (drawMode + 1) % 3;
         options.histogramDrawMode = (options.histogramDrawMode + 1) % 3;
@@ -1654,7 +1682,10 @@ bool HistogramArea::on_button_release_event (GdkEventButton* event)
 
 bool HistogramArea::on_motion_notify_event (GdkEventMotion* event)
 {
-    if (drawMode == 0 && scopeType == 0) {
+    if (
+        drawMode == 0
+        && (scopeType == ScopeType::HISTOGRAM || scopeType == ScopeType::HISTOGRAM_RAW)
+    ) {
         return false;
     }
 
@@ -1662,7 +1693,7 @@ bool HistogramArea::on_motion_notify_event (GdkEventMotion* event)
         return true;
     }
 
-    if (scopeType == 0) { // Adjust log scale.
+    if (scopeType == ScopeType::HISTOGRAM || scopeType == ScopeType::HISTOGRAM_RAW) { // Adjust log scale.
         double mod = 1 + (event->x - movingPosition) / get_width();
 
         factor /= mod;
@@ -1675,7 +1706,11 @@ bool HistogramArea::on_motion_notify_event (GdkEventMotion* event)
 
         setDirty(true);
         queue_draw ();
-    } else if (scopeType >= 1 && scopeType <= 3) { // Adjust brightness.
+    } else if (
+        scopeType == ScopeType::WAVEFORM
+        || scopeType == ScopeType::VECTORSCOPE_HC
+        || scopeType == ScopeType::VECTORSCOPE_HS
+    ) { // Adjust brightness.
         constexpr float MIN_BRIGHT = 0.1;
         constexpr float MAX_BRIGHT = 3;
         constexpr float RANGE = MAX_BRIGHT / MIN_BRIGHT;

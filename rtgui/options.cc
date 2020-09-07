@@ -450,7 +450,7 @@ void Options::setDefaults()
     histogramBar = true;
     histogramHeight = 200;
     histogramDrawMode = 0;
-    histogramScopeType = 0;
+    histogramScopeType = ScopeType::HISTOGRAM;
     curvebboxpos = 1;
     complexity = 2;
     prevdemo = PD_Sidecar;
@@ -1434,7 +1434,7 @@ void Options::readFromFile(Glib::ustring fname)
                 }
 
                 if (keyFile.has_key("GUI", "HistogramScopeType")) {
-                    histogramScopeType = keyFile.get_integer("GUI", "HistogramScopeType");
+                    histogramScopeType = static_cast<ScopeType>(keyFile.get_integer("GUI", "HistogramScopeType"));
                 }
 
                 if (keyFile.has_key("GUI", "NavigatorRGBUnit")) {

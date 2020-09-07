@@ -306,13 +306,22 @@ public:
     double sndLngEditProcDoneSecs;  // Minimum processing time seconds till the sound is played
     bool sndEnable;
 
+    enum ScopeType
+    {
+        HISTOGRAM = 0,
+        HISTOGRAM_RAW = 1,
+        VECTORSCOPE_HC = 2,
+        VECTORSCOPE_HS = 3,
+        WAVEFORM = 4,
+        NONE = -1
+    };
     int histogramPosition;  // 0=disabled, 1=left pane, 2=right pane
     bool histogramRed, histogramGreen, histogramBlue;
     bool histogramLuma, histogramChroma, histogramRAW;
     bool histogramBar;
     int histogramHeight;
     int histogramDrawMode;
-    int histogramScopeType;
+    ScopeType histogramScopeType;
     bool FileBrowserToolbarSingleRow;
     bool hideTPVScrollbar;
     int whiteBalanceSpotSize;
