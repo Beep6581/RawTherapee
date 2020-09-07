@@ -111,10 +111,14 @@ ImProcCoordinator::ImProcCoordinator() :
     lhist16CCAM(65536),
     lhist16RETI(),
     lhist16LClad(65536),
-    histRed(256), histRedRaw(256),
-    histGreen(256), histGreenRaw(256),
-    histBlue(256), histBlueRaw(256),
-    histLuma(256),
+    
+    // Main histogram
+    histRed(65536), histRedRaw(65536),
+    histGreen(65536), histGreenRaw(65536),
+    histBlue(65536), histBlueRaw(65536),
+    histLuma(65536),
+    histChroma(65536),
+    
     histToneCurve(256),
     histToneCurveBW(256),
     histLCurve(256),
@@ -125,7 +129,6 @@ ImProcCoordinator::ImProcCoordinator() :
     histCCAM(256),
     histClad(256),
     bcabhist(256),
-    histChroma(256),
 
     histLRETI(256),
 
@@ -1759,7 +1762,7 @@ void ImProcCoordinator::updateLRGBHistograms()
             for (int i = y1; i < y2; i++)
                 for (int j = x1; j < x2; j++)
                 {
-                    histChroma[(int)(sqrtf(SQR(nprevl->a[i][j]) + SQR(nprevl->b[i][j])) / 188.f)]++;      //188 = 48000/256
+                    histChroma[(int)(sqrtf(SQR(nprevl->a[i][j]) + SQR(nprevl->b[i][j])) * 1.3653333333f)]++; // = 65536/48000
                 }
         }
 #ifdef _OPENMP
@@ -1771,7 +1774,7 @@ void ImProcCoordinator::updateLRGBHistograms()
             for (int i = y1; i < y2; i++)
                 for (int j = x1; j < x2; j++)
                 {
-                    histLuma[(int)(nprevl->L[i][j] / 128.f)]++;
+                    histLuma[2 * (int)(nprevl->L[i][j])]++; // L = [0..32768] map to [0..65535]
                 }
         }
 #ifdef _OPENMP
@@ -1787,9 +1790,9 @@ void ImProcCoordinator::updateLRGBHistograms()
                 int ofs = (i * pW + x1) * 3;
 
                 for (int j = x1; j < x2; j++) {
-                    int r = workimg->data[ofs++];
-                    int g = workimg->data[ofs++];
-                    int b = workimg->data[ofs++];
+                    int r = workimg->data[ofs++] * 256; // scale up, because workimg is 8 bit
+                    int g = workimg->data[ofs++] * 256;
+                    int b = workimg->data[ofs++] * 256;
 
                     histRed[r]++;
                     histGreen[g]++;

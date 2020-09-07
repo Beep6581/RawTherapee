@@ -670,9 +670,9 @@ HistogramArea::HistogramArea (DrawModeListener *fml) :
     isPressed(false), movingPosition(0.0)
 {
 
-    rhist(256);
-    ghist(256);
-    bhist(256);
+    rhist(65536);
+    ghist(65536);
+    bhist(65536);
     lhist(256);
     chist(256);
 
@@ -869,64 +869,31 @@ void HistogramArea::updateBackBuffer ()
         LUTu& gh = rawMode ? ghistRaw : ghist;
         LUTu& bh = rawMode ? bhistRaw : bhist;
 
-        // make double copies of LUT, one for faster access, another one to scale down the raw histos
-        LUTu rhchanged(256), ghchanged(256), bhchanged(256);
-        unsigned int lhisttemp[256] ALIGNED16 {0}, chisttemp[256] ALIGNED16 {0}, rhtemp[256] ALIGNED16 {0}, ghtemp[256] ALIGNED16 {0}, bhtemp[256] ALIGNED16 {0};
-        const int scale = (rawMode ? 8 : 1);
-
-        for(int i = 0; i < 256; i++) {
-            if(needLuma) {
-                lhisttemp[i] = lhist[i];
-            }
-
-            if(needChroma) {
-                chisttemp[i] = chist[i];
-            }
-
-            if(needRed) {
-                rhchanged[i] = rhtemp[i] = rh[i] / scale;
-            }
-
-            if(needGreen) {
-                ghchanged[i] = ghtemp[i] = gh[i] / scale;
-            }
-
-            if(needBlue) {
-                bhchanged[i] = bhtemp[i] = bh[i] / scale;
-            }
-        }
-
         // Compute the highest point of the histogram for scaling
-        // Values at far left and right end (0 and 255) are handled differently
+        unsigned int rgbmax = 0;
+        unsigned int lumamax = 0;
+        unsigned int chromamax = 0;
 
-        unsigned int histheight = 0;
-
-        for (int i = 1; i < 255; i++) {
-            if (needLuma && lhisttemp[i] > histheight) {
-                histheight = lhisttemp[i];
+        for (int i = 1; i < 65535; i++) { // Values at far left and right end are handled differently
+            if (needLuma && lhist[i] > lumamax) {
+                lumamax = lhist[i];
             }
 
-            if (needChroma && chisttemp[i] > histheight) {
-                histheight = chisttemp[i];
+            if (needChroma && chist[i] > chromamax) {
+                chromamax = chist[i];
             }
 
-            if (needRed && rhtemp[i] > histheight) {
-                histheight = rhtemp[i];
+            if (needRed && rh[i] > rgbmax) {
+                rgbmax = rh[i];
             }
 
-            if (needGreen && ghtemp[i] > histheight) {
-                histheight = ghtemp[i];
+            if (needGreen && gh[i] > rgbmax) {
+                rgbmax = gh[i];
             }
 
-            if (needBlue && bhtemp[i] > histheight) {
-                histheight = bhtemp[i];
+            if (needBlue && bh[i] > rgbmax) {
+                rgbmax = bh[i];
             }
-        }
-
-        int realhistheight = histheight;
-
-        if (realhistheight < winh - 2) {
-            realhistheight = winh - 2;
         }
 
         cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
@@ -936,38 +903,38 @@ void HistogramArea::updateBackBuffer ()
         int ui = 0, oi = 0;
 
         if (needLuma && !rawMode) {
-            drawCurve(cr, lhist, realhistheight, w, h);
-            cr->set_source_rgba (0.65, 0.65, 0.65, 0.65);
-            cr->fill ();
-            drawMarks(cr, lhist, realhistheight, w, ui, oi);
+            drawCurve(cr, lhist, lumamax, w, h);
+            cr->set_source_rgb (0.7, 0.7, 0.7);
+            cr->stroke ();
+            drawMarks(cr, lhist, lumamax, w, ui, oi);
         }
 
         if (needChroma && !rawMode) {
-            drawCurve(cr, chist, realhistheight, w, h);
+            drawCurve(cr, chist, chromamax, w, h);
             cr->set_source_rgb (0.9, 0.9, 0.);
             cr->stroke ();
-            drawMarks(cr, chist, realhistheight, w, ui, oi);
+            drawMarks(cr, chist, chromamax, w, ui, oi);
         }
 
         if (needRed) {
-            drawCurve(cr, rhchanged, realhistheight, w, h);
+            drawCurve(cr, rh, rgbmax, w, h);
             cr->set_source_rgb (1.0, 0.0, 0.0);
             cr->stroke ();
-            drawMarks(cr, rhchanged, realhistheight, w, ui, oi);
+            drawMarks(cr, rh, rgbmax, w, ui, oi);
         }
 
         if (needGreen) {
-            drawCurve(cr, ghchanged, realhistheight, w, h);
+            drawCurve(cr, gh, rgbmax, w, h);
             cr->set_source_rgb (0.0, 1.0, 0.0);
             cr->stroke ();
-            drawMarks(cr, ghchanged, realhistheight, w, ui, oi);
+            drawMarks(cr, gh, rgbmax, w, ui, oi);
         }
 
         if (needBlue) {
-            drawCurve(cr, bhchanged, realhistheight, w, h);
+            drawCurve(cr, bh, rgbmax, w, h);
             cr->set_source_rgb (0.0, 0.4, 1.0);
             cr->stroke ();
-            drawMarks(cr, bhchanged, realhistheight, w, ui, oi);
+            drawMarks(cr, bh, rgbmax, w, ui, oi);
         }
 
     }
@@ -994,10 +961,10 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
     double s = RTScalable::getScale();
 
     cr->set_line_width(s);
-    cr->move_to (padding, vsize - 1);
+    //cr->move_to (padding, vsize - 1);
     scale = scale <= 0.0 ? 0.001 : scale; // avoid division by zero and negative values
 
-    for (int i = 0; i < 256; i++) {
+    for (int i = 0; i < 65536; i++) {
         double val = data[i] * (double)vsize / scale;
 
         if (drawMode > 0) { // scale y for single and double log-scale
@@ -1006,16 +973,17 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
 
         double iscaled = i;
         if (drawMode == 2) { // scale x for double log-scale
-            iscaled = HistogramScaling::log (255.0, (double)i);
+            iscaled = HistogramScaling::log (65535.0, (double)i);
         }
 
-        double posX = padding + iscaled * (hsize - padding * 2.0) / 255.0;
+        double posX = padding + iscaled * (hsize - padding * 2.0) / 65535.0;
         double posY = vsize - 2 + val * (4 - vsize) / vsize;
 
+        cr->move_to (posX, vsize - 2);
         cr->line_to (posX, posY);
     }
 
-    cr->line_to (hsize - padding, vsize - 1);
+    //cr->line_to (hsize - padding, vsize - 1);
 }
 
 void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
@@ -1027,7 +995,7 @@ void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
         cr->rectangle(padding, (ui++)*s, s, s);
     }
 
-    if(data[255] > scale) {
+    if(data[65535] > scale) {
         cr->rectangle(hsize - s - padding, (oi++)*s, s, s);
     }
 

@@ -3729,7 +3729,7 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
 
     const float maxWhite = rtengine::max(c_white[0], c_white[1], c_white[2], c_white[3]);
     const float scale = maxWhite <= 1.f ? 65535.f : 1.f; // special case for float raw images in [0.0;1.0] range
-    const float multScale = maxWhite <= 1.f ? 1.f / 255.f : 255.f;
+    const float multScale = maxWhite <= 1.f ? 1.f / 65535.f : 65535.f;
     const float mult[4] = { multScale / (c_white[0] - cblacksom[0]),
                             multScale / (c_white[1] - cblacksom[1]),
                             multScale / (c_white[2] - cblacksom[2]),
@@ -3838,12 +3838,12 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
             }
         } // end of critical region
     } // end of parallel region
-
+    
     const auto getidx =
         [&](int c, int i) -> int
         {
             float f = mult[c] * std::max(0.f, i - cblacksom[c]);
-            return f > 0.f ? (f < 1.f ? 1 : std::min(int(f), 255)) : 0;
+            return f > 0.f ? (f < 1.f ? 1 : std::min(int(f), 65535)) : 0;
         };
 
     for (int i = 0; i < histoSize; i++) {
@@ -3865,11 +3865,11 @@ void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LU
     }
 
     if (ri->getSensorType() == ST_BAYER)    // since there are twice as many greens, correct for it
-        for (int i = 0; i < 256; i++) {
+        for (int i = 0; i < 65536; i++) {
             histGreenRaw[i] >>= 1;
         }
     else if (ri->getSensorType() == ST_FUJI_XTRANS)  // since Xtrans has 2.5 as many greens, correct for it
-        for (int i = 0; i < 256; i++) {
+        for (int i = 0; i < 65536; i++) {
             histGreenRaw[i] = (histGreenRaw[i] * 2) / 5;
         }
     else if (ri->get_colors() == 1) { // monochrome sensor => set all histograms equal

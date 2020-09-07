@@ -124,8 +124,9 @@ protected:
     LUTu histRed, histRedRaw;
     LUTu histGreen, histGreenRaw;
     LUTu histBlue, histBlueRaw;
-    LUTu histLuma, histToneCurve, histToneCurveBW, histLCurve, histCCurve;
-    LUTu histLLCurve, histLCAM, histCCAM, histClad, bcabhist, histChroma, histLRETI;
+    LUTu histLuma, histChroma;
+    LUTu histToneCurve, histToneCurveBW, histLCurve, histCCurve;
+    LUTu histLLCurve, histLCAM, histCCAM, histClad, bcabhist, histLRETI;
 
     LUTf CAMBrightCurveJ, CAMBrightCurveQ;
 
