@@ -30,6 +30,7 @@
 
 #include "../rtengine/LUT.h"
 #include "../rtengine/noncopyable.h"
+#include "../rtengine/opthelper.h"
 
 class HistogramArea;
 
@@ -49,9 +50,10 @@ struct HistogramRGBAreaIdleHelper {
 class HistogramScaling
 {
 public:
-    double factor;
-    HistogramScaling() : factor(10.0) {}
-    double log (double vsize, double val);
+    float factor;
+    HistogramScaling() : factor(10.f) {}
+    float log (float vsize, float val) const;
+    float logMult (float vsize, float val, float mult) const;
 };
 
 class HistogramRGBArea final : public Gtk::DrawingArea, public BackBuffer, private HistogramScaling, public rtengine::NonCopyable

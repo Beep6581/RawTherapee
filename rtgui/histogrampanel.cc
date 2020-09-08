@@ -25,6 +25,9 @@
 #include "../rtengine/LUT.h"
 #include "rtimage.h"
 #include "../rtengine/color.h"
+#include "../rtengine/sleef.h"
+#define BENCHMARK
+#include "../rtengine/StopWatch.h"
 
 using namespace rtengine;
 
@@ -365,11 +368,18 @@ void HistogramPanel::toggleButtonMode ()
 //
 //
 // HistogramScaling
-double HistogramScaling::log(double vsize, double val)
+float HistogramScaling::log(float vsize, float val) const
 {
     //double factor = 10.0; // can be tuned if necessary - higher is flatter curve
-    return vsize * std::log(factor / (factor + val)) / std::log(factor / (factor + vsize));
+    return vsize * xlogf(factor / (factor + val)) / xlogf(factor / (factor + vsize));
 }
+
+float HistogramScaling::logMult(float vsize, float val, float mult) const
+{
+    //double factor = 10.0; // can be tuned if necessary - higher is flatter curve
+    return vsize * xlogf(factor / (factor + val)) * mult;
+}
+
 
 //
 //
@@ -958,26 +968,27 @@ void HistogramArea::on_realize ()
 void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
                               const LUTu & data, double scale, int hsize, int vsize)
 {
-    double s = RTScalable::getScale();
+    BENCHFUNMICRO
 
-    cr->set_line_width(s);
+    cr->set_line_width(RTScalable::getScale());
     //cr->move_to (padding, vsize - 1);
-    scale = scale <= 0.0 ? 0.001 : scale; // avoid division by zero and negative values
+    const float scalef = rtengine::max(scale, 0.001); // avoid division by zero and negative values
 
+    const float mult1 = 1.f / xlogf(HistogramScaling::factor / (HistogramScaling::factor + vsize));
+    const float mult2 = 1.f / xlogf(HistogramScaling::factor / (HistogramScaling::factor + 65535.0));
     for (int i = 0; i < 65536; i++) {
-        double val = data[i] * (double)vsize / scale;
+        float val = data[i] * vsize / scalef;
+        float iscaled = i;
 
         if (drawMode > 0) { // scale y for single and double log-scale
-            val = HistogramScaling::log ((double)vsize, val);
+            val = HistogramScaling::logMult (vsize, val, mult1);
+            if (drawMode == 2) { // scale x for double log-scale
+                iscaled = HistogramScaling::logMult (65535.f, i, mult2);
+            }
         }
 
-        double iscaled = i;
-        if (drawMode == 2) { // scale x for double log-scale
-            iscaled = HistogramScaling::log (65535.0, (double)i);
-        }
-
-        double posX = padding + iscaled * (hsize - padding * 2.0) / 65535.0;
-        double posY = vsize - 2 + val * (4 - vsize) / vsize;
+        const double posX = padding + iscaled * (hsize - padding * 2.f) / 65535.f;
+        const double posY = vsize - 2 + val * (4 - vsize) / vsize;
 
         cr->move_to (posX, vsize - 2);
         cr->line_to (posX, posY);
