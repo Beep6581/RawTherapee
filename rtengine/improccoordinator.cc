@@ -1745,7 +1745,6 @@ void ImProcCoordinator::setScale(int prevscale)
 
 void ImProcCoordinator::updateLRGBHistograms()
 {
-
     int x1, y1, x2, y2;
     params->crop.mapToResized(pW, pH, scale, x1, x2, y1, y2);
 

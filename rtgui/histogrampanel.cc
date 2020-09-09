@@ -785,6 +785,7 @@ void HistogramArea::update(
 
 void HistogramArea::updateBackBuffer ()
 {
+    BENCHFUNMICRO
 
     if (!get_realized ()) {
         return;
@@ -800,8 +801,6 @@ void HistogramArea::updateBackBuffer ()
     Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(surface);
     const Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
 
-    double s = RTScalable::getScale();
-
     // Setup drawing
     cr->set_source_rgba (0., 0., 0., 0.);
     cr->set_operator (Cairo::OPERATOR_CLEAR);
@@ -810,7 +809,7 @@ void HistogramArea::updateBackBuffer ()
 
     // Prepare drawing gridlines first
     cr->set_source_rgba (1., 1., 1., 0.25);
-    cr->set_line_width (1.0 * s);
+    cr->set_line_width (RTScalable::getScale());
     cr->set_antialias(Cairo::ANTIALIAS_NONE);
     cr->set_line_join(Cairo::LINE_JOIN_MITER);
     cr->set_line_cap(Cairo::LINE_CAP_BUTT);
@@ -885,8 +884,6 @@ void HistogramArea::updateBackBuffer ()
             }
         }
 
-        cr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
-        cr->set_line_width (1.0 * s);
         cr->set_operator (Cairo::OPERATOR_OVER);
 
         int ui = 0, oi = 0;
@@ -949,8 +946,6 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
 {
     BENCHFUNMICRO
 
-    cr->set_line_width(RTScalable::getScale());
-
     std::vector<float> iscaled(65536);
     std::vector<float> vals(65536);
 
@@ -995,12 +990,16 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
     }
 
     for (int i = 0; i < 65536; i++) {
+        
+        if (vals[i] == 0.0) continue;
+        
         const double posX = padding + iscaled[i] * (hsize - padding * 2.f) / 65535.f;
         const double posY = vsize - 2 + vals[i] * (4 - vsize) / vsize;
 
         cr->move_to (posX, vsize - 2);
         cr->line_to (posX, posY);
     }
+    
 }
 
 void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,

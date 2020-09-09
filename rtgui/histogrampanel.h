@@ -148,7 +148,7 @@ private:
 
 protected:
     LUTu rhist, ghist, bhist, lhist, chist;
-    LUTu rhistRaw, ghistRaw, bhistRaw, lhistRaw; //lhistRaw is unused?
+    LUTu rhistRaw, ghistRaw, bhistRaw;
 
     bool valid;
     int drawMode;
