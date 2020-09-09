@@ -407,19 +407,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             imgsrc->getRAWHistogram(histRedRaw, histGreenRaw, histBlueRaw);
 
             highDetailPreprocessComputed = highDetailNeeded;
-
-            // TEMP *** legacy mode, for backwards compatibility only *** 
-            // After preprocess, run film negative processing if enabled
-            if (
-                (todo & M_RAW) && imgsrc->isRAW()
-                && (imgsrc->getSensorType() == ST_BAYER || imgsrc->getSensorType() == ST_FUJI_XTRANS)
-                && params->filmNegative.greenBase == -1.f
-            ) {
-                if (settings->verbose) {
-                    printf("*** Film negative legacy mode raw convert\n");
-                }
-                imgsrc->filmNegativeProcess(params->filmNegative);
-            }
         }
 
         /*
@@ -691,23 +678,26 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         }
                     }
             */
-            imgsrc->convertColorSpace(orig_prev, params->icm, currWB);
 
-            if (params->filmNegative.enabled && !(imgsrc->isRAW() && params->filmNegative.greenBase == -1.f)) {
-                filmBaseValues = {
-                    static_cast<float>(params->filmNegative.greenBase * params->filmNegative.redBalance),
-                    static_cast<float>(params->filmNegative.greenBase),
-                    static_cast<float>(params->filmNegative.greenBase * params->filmNegative.blueBalance)
-                };
+            if (params->filmNegative.enabled) {
 
-                ipf.filmNegativeProcess(orig_prev, orig_prev, params->filmNegative, filmBaseValues);
-
-                if (filmNegListener && params->filmNegative.greenBase <= 0.f) {
-                    filmNegListener->filmBaseValuesChanged(
-                        filmBaseValues[1],
-                        filmBaseValues[0] / filmBaseValues[1],
-                        filmBaseValues[2] / filmBaseValues[1]);
+                // Process film negative AFTER colorspace conversion
+                if(params->filmNegative.colorSpace != FilmNegativeParams::ColorSpace::CAMERA) {
+                    imgsrc->convertColorSpace(orig_prev, params->icm, currWB);
                 }
+
+                // Perform negative inversion. If needed, upgrade filmNegative params for backwards compatibility with old profiles
+                if (ipf.filmNegativeProcess(orig_prev, orig_prev, params->filmNegative, params->raw, imgsrc, currWB) && filmNegListener) {
+                    filmNegListener->filmBaseValuesChanged(params->filmNegative.baseValues, params->filmNegative.refOutput);
+                }
+
+                // Process film negative BEFORE colorspace conversion (legacy mode)
+                if (params->filmNegative.colorSpace == FilmNegativeParams::ColorSpace::CAMERA) {
+                    imgsrc->convertColorSpace(orig_prev, params->icm, currWB);
+                }
+
+            } else {
+                imgsrc->convertColorSpace(orig_prev, params->icm, currWB);
             }
 
             ipf.firstAnalysis(orig_prev, *params, vhist16);

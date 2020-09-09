@@ -2082,10 +2082,29 @@ struct FilmNegativeParams {
     double greenExp;
     double blueRatio;
 
-    double greenBase;
-    
-    double redBalance;
-    double blueBalance;
+    struct RGB {
+        float r, g, b;
+
+        bool operator ==(const RGB& other) const;
+        bool operator !=(const RGB& other) const;
+        RGB operator *(const RGB& other) const;
+        std::vector<double> toVector() const;
+    };
+
+    RGB baseValues;
+    RGB refOutput;
+
+    enum class ColorSpace {
+        CAMERA = 0,
+        WORKING,
+        BUILTIN,
+        CUSTOM
+    };
+
+    ColorSpace colorSpace;
+
+    enum class BackCompat { CURRENT = 0, V1, V2 };
+    BackCompat backCompat;
 
     FilmNegativeParams();
 

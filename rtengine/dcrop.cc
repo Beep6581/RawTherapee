@@ -669,7 +669,15 @@ void Crop::update(int todo)
             }
         }
 
+        if (params.filmNegative.enabled && params.filmNegative.colorSpace == FilmNegativeParams::ColorSpace::CAMERA) {
+            parent->ipf.filmNegativeProcess(baseCrop, baseCrop, params.filmNegative);
+        }
+
         parent->imgsrc->convertColorSpace(origCrop, params.icm, parent->currWB);
+
+        if (params.filmNegative.enabled && params.filmNegative.colorSpace != FilmNegativeParams::ColorSpace::CAMERA) {
+            parent->ipf.filmNegativeProcess(baseCrop, baseCrop, params.filmNegative);
+        }
 
         delete [] min_r;
         delete [] min_b;
@@ -685,12 +693,6 @@ void Crop::update(int todo)
 
     // has to be called after setCropSizes! Tools prior to this point can't handle the Edit mechanism, but that shouldn't be a problem.
     createBuffer(cropw, croph);
-
-    // Perform film negative inversion (only if not using legacy mode)
-    if ( (todo & M_INIT) && params.filmNegative.enabled && !(parent->imgsrc->isRAW() && params.filmNegative.greenBase == -1.f)) {
-        parent->ipf.filmNegativeProcess(baseCrop, baseCrop, params.filmNegative, parent->filmBaseValues);
-    }
-
 
     std::unique_ptr<Imagefloat> fattalCrop;
 

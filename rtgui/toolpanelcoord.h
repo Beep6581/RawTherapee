@@ -307,9 +307,7 @@ public:
     Glib::ustring GetCurrentImageFilePath() override;
 
     // FilmNegProvider interface
-    bool getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps, float &r, float &b) override;
-    float getFilmBaseGreen(rtengine::Coord spot, int spotSize) override;
-    bool getFilmNegativeBalance(rtengine::Coord spot, int spotSize, float &r, float &b) override;
+    bool getFilmNegativeSpot(rtengine::Coord spot, int spotSize, RGB &refInput, RGB &refOutput) override;
 
     // rotatelistener interface
     void straightenRequested () override;

@@ -641,9 +641,9 @@ void ParamsEdited::set(bool v)
     filmNegative.redRatio = v;
     filmNegative.greenExp = v;
     filmNegative.blueRatio = v;
-    filmNegative.greenBase = v;
-    filmNegative.redBalance = v;
-    filmNegative.blueBalance = v;
+    filmNegative.baseValues = v;
+    filmNegative.refOutput = v;
+    filmNegative.colorSpace = v;
     raw.preprocessWB.mode = v;
 
     exif = v;
@@ -1739,9 +1739,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         filmNegative.redRatio = filmNegative.redRatio && p.filmNegative.redRatio == other.filmNegative.redRatio;
         filmNegative.greenExp = filmNegative.greenExp && p.filmNegative.greenExp == other.filmNegative.greenExp;
         filmNegative.blueRatio = filmNegative.blueRatio && p.filmNegative.blueRatio == other.filmNegative.blueRatio;
-        filmNegative.greenBase = filmNegative.greenBase && p.filmNegative.greenBase == other.filmNegative.greenBase;
-        filmNegative.redBalance = filmNegative.redBalance && p.filmNegative.redBalance == other.filmNegative.redBalance;
-        filmNegative.blueBalance = filmNegative.blueBalance && p.filmNegative.blueBalance == other.filmNegative.blueBalance;
+        filmNegative.baseValues = filmNegative.baseValues && p.filmNegative.baseValues == other.filmNegative.baseValues;
+        filmNegative.refOutput = filmNegative.refOutput && p.filmNegative.refOutput == other.filmNegative.refOutput;
+        filmNegative.colorSpace = filmNegative.colorSpace && p.filmNegative.colorSpace == other.filmNegative.colorSpace;
         raw.preprocessWB.mode  = raw.preprocessWB.mode  && p.raw.preprocessWB.mode  == other.raw.preprocessWB.mode;
 
 //      How the hell can we handle that???
@@ -5765,17 +5765,20 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.filmNegative.blueRatio = mods.filmNegative.blueRatio;
     }
 
-    if (filmNegative.greenBase) {
-        toEdit.filmNegative.greenBase = mods.filmNegative.greenBase;
+    if (filmNegative.baseValues) {
+        toEdit.filmNegative.baseValues = mods.filmNegative.baseValues;
     }
 
-    if (filmNegative.redBalance) {
-        toEdit.filmNegative.redBalance = mods.filmNegative.redBalance;
+    if (filmNegative.refOutput) {
+        toEdit.filmNegative.refOutput = mods.filmNegative.refOutput;
     }
 
-    if (filmNegative.blueBalance) {
-        toEdit.filmNegative.blueBalance = mods.filmNegative.blueBalance;
+    if (filmNegative.colorSpace) {
+        toEdit.filmNegative.colorSpace = mods.filmNegative.colorSpace;
     }
+
+    // BackCompat param cannot be managed via the GUI, and it's always copied
+    toEdit.filmNegative.backCompat = mods.filmNegative.backCompat;
 
     if (raw.preprocessWB.mode) {
         toEdit.raw.preprocessWB.mode = mods.raw.preprocessWB.mode;
@@ -5827,7 +5830,7 @@ bool RetinexParamsEdited::isUnchanged() const
 
 bool FilmNegativeParamsEdited::isUnchanged() const
 {
-    return enabled && redRatio && greenExp && blueRatio && greenBase && redBalance && blueBalance;
+    return enabled && redRatio && greenExp && blueRatio && baseValues && refOutput && colorSpace;
 }
 
 LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :

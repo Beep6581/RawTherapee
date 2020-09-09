@@ -1207,17 +1207,7 @@ void ToolPanelCoordinator::setEditProvider(EditDataProvider *provider)
     }
 }
 
-bool ToolPanelCoordinator::getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps, float& rBal, float& bBal)
+bool ToolPanelCoordinator::getFilmNegativeSpot(rtengine::Coord spot, int spotSize, RGB &refInput, RGB &refOutput)
 {
-    return ipc && ipc->getFilmNegativeExponents(spotA.x, spotA.y, spotB.x, spotB.y, newExps, rBal, bBal);
-}
-
-float ToolPanelCoordinator::getFilmBaseGreen(rtengine::Coord spot, int spotSize)
-{
-    return ipc ? ipc->getFilmBaseGreen(spot.x, spot.y, spotSize) : 0.f;
-}
-
-bool ToolPanelCoordinator::getFilmNegativeBalance(rtengine::Coord spot, int spotSize, float &r, float &b)
-{
-    return ipc && ipc->getFilmNegativeBalance(spot.x, spot.y, spotSize, r, b);
+    return ipc && ipc->getFilmNegativeSpot(spot.x, spot.y, spotSize, refInput, refOutput);
 }

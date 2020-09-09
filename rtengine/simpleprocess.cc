@@ -219,14 +219,6 @@ private:
         imgsrc->setCurrentFrame(params.raw.bayersensor.imageNum);
         imgsrc->preprocess(params.raw, params.lensProf, params.coarse, params.dirpyrDenoise.enabled);
 
-        // TEMP: film negative legacy method, will be removed in a future version
-        // After preprocess, run film negative processing if enabled
-        if (imgsrc->isRAW()
-                && (imgsrc->getSensorType() == ST_BAYER || imgsrc->getSensorType() == ST_FUJI_XTRANS)
-                && params.filmNegative.greenBase == -1) {
-            imgsrc->filmNegativeProcess (params.filmNegative);
-        }
-
         if (pl) {
             pl->setProgress(0.20);
         }
@@ -871,16 +863,22 @@ private:
         //ImProcFunctions ipf (&params, true);
         ImProcFunctions &ipf = * (ipf_p.get());
 
-        imgsrc->convertColorSpace(baseImg, params.icm, currWB);
+        if (params.filmNegative.enabled) {
+            // Process film negative AFTER colorspace conversion if camera space is NOT selected
+            if (params.filmNegative.colorSpace != FilmNegativeParams::ColorSpace::CAMERA) {
+                imgsrc->convertColorSpace(baseImg, params.icm, currWB);
+            }
 
-        if (params.filmNegative.enabled && params.filmNegative.greenBase != -1.f) {
-            std::array<float, 3> filmBaseValues = {
-                static_cast<float>(params.filmNegative.greenBase * params.filmNegative.redBalance),
-                static_cast<float>(params.filmNegative.greenBase),
-                static_cast<float>(params.filmNegative.greenBase * params.filmNegative.blueBalance)
-            };
+            FilmNegativeParams copy = params.filmNegative;
+            ipf.filmNegativeProcess(baseImg, baseImg, copy, params.raw, imgsrc, currWB);
 
-            ipf.filmNegativeProcess(baseImg, baseImg, params.filmNegative, filmBaseValues);
+            // ... otherwise, process film negative BEFORE colorspace conversion
+            if (params.filmNegative.colorSpace == FilmNegativeParams::ColorSpace::CAMERA) {
+                imgsrc->convertColorSpace(baseImg, params.icm, currWB);
+            }
+
+        } else {
+            imgsrc->convertColorSpace(baseImg, params.icm, currWB);
         }
 
         // perform first analysis

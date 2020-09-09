@@ -27,14 +27,19 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
+namespace
+{
+using RGB = rtengine::procparams::FilmNegativeParams::RGB;
+using ColorSpace = rtengine::procparams::FilmNegativeParams::ColorSpace;
+using BackCompat = rtengine::procparams::FilmNegativeParams::BackCompat;
+}
+
 class FilmNegProvider
 {
 public:
     virtual ~FilmNegProvider() = default;
 
-    virtual bool getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps, float &rBal, float &bBal) = 0;
-    virtual float getFilmBaseGreen(rtengine::Coord spot, int spotSize) = 0;
-    virtual bool getFilmNegativeBalance(rtengine::Coord spot, int spotSize, float &rBal, float &bBal) = 0;
+    virtual bool getFilmNegativeSpot(rtengine::Coord spot, int spotSize, RGB &refInput, RGB &refOutput) = 0;
 };
 
 class FilmNegative final :
@@ -55,8 +60,9 @@ public:
 
     void adjusterChanged(Adjuster* a, double newval) override;
     void enabledChanged() override;
+    void colorSpaceChanged();
 
-    void filmBaseValuesChanged(float greenBase, float redBalance, float blueBalance) override;
+    void filmBaseValuesChanged(const RGB &refInput, const RGB &refOutput) override;
 
     void setFilmNegProvider(FilmNegProvider* provider);
 
@@ -77,13 +83,16 @@ private:
     const rtengine::ProcEvent evFilmNegativeEnabled;
     const rtengine::ProcEvent evFilmBaseValues;
     const rtengine::ProcEvent evFilmNegativeBalance;
-    const rtengine::ProcEvent evOldFilmNegativeExponents;
+    const rtengine::ProcEvent evFilmNegativeColorSpace;
 
     std::vector<rtengine::Coord> refSpotCoords;
 
-    float filmBaseGreenValue;
+    RGB filmBaseValues;
+    bool paramsUpgraded;
 
     FilmNegProvider* fnp;
+
+    MyComboBoxText* const colorSpace;
 
     Adjuster* const greenExp;
     Adjuster* const redRatio;
@@ -95,7 +104,8 @@ private:
     Gtk::Label* const filmBaseLabel;
     Gtk::ToggleButton* const filmBaseSpotButton;
 
-    Adjuster* const redBalance;
+    Adjuster* const outputLevel;
+    Adjuster* const greenBalance;
     Adjuster* const blueBalance;
 
     IdleRegister idle_register;

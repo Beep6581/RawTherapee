@@ -157,7 +157,10 @@ public:
     bool needsTransform(int oW, int oH, int rawRotationDeg, const FramesMetaData *metadata) const;
     bool needsPCVignetting() const;
 
-    void filmNegativeProcess (rtengine::Imagefloat *input, rtengine::Imagefloat *output, const procparams::FilmNegativeParams &params, std::array<float, 3>& filmBaseValues);
+    bool filmNegativeProcess(rtengine::Imagefloat *input, rtengine::Imagefloat *output, procparams::FilmNegativeParams &fnp,
+                             const procparams::RAWParams &rawParams, const rtengine::ImageSource* imgsrc, const rtengine::ColorTemp &currWB);
+
+    void filmNegativeProcess(rtengine::Imagefloat *input, rtengine::Imagefloat *output, const procparams::FilmNegativeParams &params);
 
     float calcGradientFactor (const struct grad_params& gp, int x, int y);
     void firstAnalysis(const Imagefloat* const working, const procparams::ProcParams &params, LUTu & vhist16);
