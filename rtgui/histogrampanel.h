@@ -31,6 +31,7 @@
 #include "../rtengine/LUT.h"
 #include "../rtengine/noncopyable.h"
 #include "../rtengine/opthelper.h"
+#include "../rtengine/sleef.h"
 
 class HistogramArea;
 
@@ -51,9 +52,24 @@ class HistogramScaling
 {
 public:
     float factor;
-    HistogramScaling() : factor(10.f) {}
-    float log (float vsize, float val) const;
-    float logMult (float vsize, float val, float mult) const;
+    HistogramScaling() : factor(10.f) {} // factor(10.f) can be tuned if necessary - higher is flatter curve
+
+    float log(float vsize, float val) const
+    {
+        return vsize * xlogf(factor / (factor + val)) / xlogf(factor / (factor + vsize));
+    }
+
+    float logMult(float val, float mult) const
+    {
+        return xlogf(factor / (factor + val)) * mult;
+    }
+
+#ifdef __SSE2__
+    vfloat logMult(vfloat val, vfloat mult) const
+    {
+        return xlogf(F2V(factor) / (F2V(factor) + val)) * mult;
+    }
+#endif
 };
 
 class HistogramRGBArea final : public Gtk::DrawingArea, public BackBuffer, private HistogramScaling, public rtengine::NonCopyable
@@ -172,7 +188,7 @@ public:
     type_signal_factor_changed signal_factor_changed();
 
 private:
-    void drawCurve(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, double scale, int hsize, int vsize);
+    void drawCurve(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, float scale, float hsize, float vsize);
     void drawMarks(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, double scale, int hsize, int & ui, int & oi);
     Gtk::SizeRequestMode get_request_mode_vfunc () const override;
     void get_preferred_height_vfunc (int& minimum_height, int& natural_height) const override;

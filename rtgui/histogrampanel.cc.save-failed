@@ -25,6 +25,7 @@
 #include "../rtengine/LUT.h"
 #include "rtimage.h"
 #include "../rtengine/color.h"
+#include "../rtengine/sleef.h"
 #define BENCHMARK
 #include "../rtengine/StopWatch.h"
 
@@ -363,6 +364,26 @@ void HistogramPanel::toggleButtonMode ()
         showMode->set_image(*mode2Image);
 }
 
+//
+//
+//
+// HistogramScaling
+float HistogramScaling::log(float vsize, float val) const
+{
+    //double factor = 10.0; // can be tuned if necessary - higher is flatter curve
+    return vsize * xlogf(factor / (factor + val)) / xlogf(factor / (factor + vsize));
+}
+
+float HistogramScaling::logMult(float vsize, float val, float mult) const
+{
+    //double factor = 10.0; // can be tuned if necessary - higher is flatter curve
+    return vsize * xlogf(factor / (factor + val)) * mult;
+}
+
+
+//
+//
+//
 // HistogramRGBArea
 HistogramRGBArea::HistogramRGBArea () :
     val(0), r(0), g(0), b(0), valid(false),
@@ -945,55 +966,39 @@ void HistogramArea::on_realize ()
 }
 
 void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
-                              const LUTu & data, float scale, float hsize, float vsize)
+                              const LUTu & data, double scale, int hsize, int vsize)
 {
     BENCHFUNMICRO
 
     cr->set_line_width(RTScalable::getScale());
+    const float scalef = rtengine::max(scale, 0.001); // avoid division by zero and negative values
 
     std::vector<float> iscaled(65536);
     std::vector<float> vals(65536);
-
+    const float scaleFactor = vsize / scalef;
     if (drawMode == 2) { // scale x for double log-scale
-        const float mult = 65535.f / xlogf(HistogramScaling::factor / (HistogramScaling::factor + 65535.0));
-#ifdef __SSE2__
-        const vfloat multv = F2V(mult);
-        const vfloat fourv = F2V(4.f);
-        vfloat iv = _mm_setr_ps(0.f, 1.f, 2.f, 3.f);
-        for (int i = 0; i < 65536; i += 4, iv += fourv) {
-            STVFU(iscaled[i], HistogramScaling::logMult(iv, multv));
-        }
-#else
+        const float mult2 = 1.f / xlogf(HistogramScaling::factor / (HistogramScaling::factor + 65535.0));
+//#pragma omp parallel for
         for (int i = 0; i < 65536; ++i) {
-            iscaled[i] = HistogramScaling::logMult(i, mult);
+            iscaled[i] = HistogramScaling::logMult (65535.f, i, mult2);
         }
-#endif
     } else {
         for (int i = 0; i < 65536; ++i) {
             iscaled[i] = i;
         }
     }
-    const float scalef = rtengine::max(scale, 0.001f); // avoid division by zero and negative values
-    const float scaleFactor = vsize / scalef;
     if (drawMode > 0) { // scale y for single and double log-scale
-        const float mult = vsize / xlogf(HistogramScaling::factor / (HistogramScaling::factor + vsize));
-#ifdef __SSE2__
-        const vfloat scaleFactorv = F2V(scaleFactor);
-        const vfloat multv = F2V(mult);
-        for (int i = 0; i < 65536; i += 4) {
-            STVFU(vals[i], HistogramScaling::logMult(_mm_cvtepi32_ps(_mm_loadu_si128((__m128i_u*)&data[i])) * scaleFactorv, multv));
-        }
-#else
+        const float mult1 = 1.f / xlogf(HistogramScaling::factor / (HistogramScaling::factor + vsize));
+#pragma omp parallel for
         for (int i = 0; i < 65536; ++i) {
-            vals[i] = HistogramScaling::logMult(data[i] * scaleFactor, mult);
+            vals[i] = HistogramScaling::logMult(vsize, data[i] * scaleFactor, mult1);
         }
-#endif
     } else {
         for (int i = 0; i < 65536; ++i) {
             vals[i] = data[i] * scaleFactor;
         }
     }
-
+    
     for (int i = 0; i < 65536; i++) {
         const double posX = padding + iscaled[i] * (hsize - padding * 2.f) / 65535.f;
         const double posY = vsize - 2 + vals[i] * (4 - vsize) / vsize;
