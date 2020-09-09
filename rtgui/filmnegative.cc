@@ -530,7 +530,7 @@ bool FilmNegative::button1Pressed(int modifierKey)
             RGB filmBaseOut;
             fnp->getFilmNegativeSpot(provider->posImage, 32, filmBaseValues, filmBaseOut);
             
-            outputLevel->setValue(filmBaseOut.r);
+            outputLevel->setValue(rtengine::MAXVALF / 512.f);
             greenBalance->setValue(1.f); // filmBaseOut.g / filmBaseOut.r);
             blueBalance->setValue(1.f); // filmBaseOut.g / filmBaseOut.r);
 
