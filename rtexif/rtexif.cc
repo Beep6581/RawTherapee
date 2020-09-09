@@ -3248,7 +3248,43 @@ int ExifManager::createJPEGMarker (const TagDirectory* root, const rtengine::pro
     TagDirectory* cl;
 
     if (root) {
-        cl = (const_cast<TagDirectory*> (root))->clone (nullptr);
+        cl = root->clone(nullptr);
+
+        // Drop unwanted tags before exporting
+        // For example, Nikon Z-series has a 52Kb MakerNotes->ShotInfo tag
+        // which does not fit into the 65Kb limit on JPEG exif tags
+        const Tag* const make_tag = cl->getTag(271);
+        if (make_tag && !std::strncmp((const char*)make_tag->getValue(), "NIKON CORPORATION", 17)) {
+            [cl]()
+            {
+                Tag* const exif_tag = cl->getTag(34665);
+                if (!exif_tag) {
+                    return;
+                }
+
+                TagDirectory* const exif_dir = exif_tag->getDirectory();
+                if (!exif_dir) {
+                    return;
+                }
+
+                Tag* const make_notes_tag = exif_dir->getTag(37500);
+                if (!make_notes_tag) {
+                    return;
+                }
+
+                TagDirectory* const maker_notes_dir = make_notes_tag->getDirectory();
+                if (!maker_notes_dir) {
+                    return;
+                }
+
+                Tag* const shot_info_tag = maker_notes_dir->getTag(145);
+                if (!shot_info_tag) {
+                    return;
+                }
+
+                shot_info_tag->setKeep(false);
+            }();
+        }
     } else {
         cl = new TagDirectory (nullptr, ifdAttribs, INTEL);
     }

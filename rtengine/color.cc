@@ -1189,48 +1189,26 @@ void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::u
     float koymcp = 0.f;
 
     if(setting == "ROYGCBPM-Abs" || setting == "ROYGCBPM-Rel") {
-        float obM = 0.f;
-        float ogM = 0.f;
-        float orM = 0.f;
-
-        float ybM = 0.f;
-        float yrM = 0.f;
-        float ygM = 0.f;
-
-        float mgM = 0.f;
-        float mrM = 0.f;
-        float mbM = 0.f;
-
-        float pgM = 0.f;
-        float prM = 0.f;
-        float pbM = 0.f;
-
-        float crM = 0.f;
-        float cgM = 0.f;
-        float cbM = 0.f;
-        //printf("mixred=%f\n",mixerRed);
-
         float fcompl = 1.f;
 
-        if(complement && algo == "SP") {
+        if (complement && algo == "SP") {
             fcompl = 3.f;    //special
-        } else if(complement && algo == "LI") {
+        } else if (complement && algo == "LI") {
             fcompl = 1.5f;    //linear
         }
 
         // ponderate filters: report to R=G=B=33
         // I ponder RGB channel, not only orange or yellow or cyan, etc...it's my choice !
-        if(mixerOrange != 33) {
-            if (algo == "SP") { //special
-                if (mixerOrange >= 33) {
-                    orM = fcompl * (mixerOrange * 0.67f - 22.11f) / 100.f;
-                } else {
-                    orM = fcompl * (-0.3f * mixerOrange + 9.9f) / 100.f;
-                }
+        if (mixerOrange != 33.f) {
+            float ogM = 0.f;
+            float orM = 0.f;
 
-                if (mixerOrange >= 33) {
+            if (algo == "SP") { //special
+                if (mixerOrange > 33.f) {
+                    orM = fcompl * (mixerOrange * 0.67f - 22.11f) / 100.f;
                     ogM = fcompl * (-0.164f * mixerOrange + 5.412f) / 100.f;
                 } else {
+                    orM = fcompl * (-0.3f * mixerOrange + 9.9f) / 100.f;
                     ogM = fcompl * (0.4f * mixerOrange - 13.2f) / 100.f;
                 }
             } else if (algo == "LI") { //linear
@@ -1238,30 +1216,24 @@ void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::u
                 ogM = fcompl * (0.5f * mixerOrange - 16.5f) / 100.f;
             }
 
-            if(complement) {
-                obM = (-0.492f * mixerOrange + 16.236f) / 100.f;
-            }
+            const float obM = complement ? (-0.492f * mixerOrange + 16.236f) / 100.f : 0.f;
 
-            mixerRed   += orM;
+            mixerRed += orM;
             mixerGreen += ogM;
-            mixerBlue  += obM;
+            mixerBlue += obM;
             koymcp += (orM + ogM + obM);
-            //  printf("mixred+ORange=%f\n",mixerRed);
-
         }
 
-        if(mixerYellow != 33) {
+        if (mixerYellow != 33.f) {
+            float yrM = 0.f;
             if (algo == "SP") {
                 yrM = fcompl * (-0.134f * mixerYellow + 4.422f) / 100.f;    //22.4
             } else if (algo == "LI") {
                 yrM = fcompl * (0.5f * mixerYellow - 16.5f) / 100.f;    //22.4
             }
 
-            ygM = fcompl * (0.5f  * mixerYellow - 16.5f ) / 100.f;
-
-            if(complement) {
-                ybM = (-0.492f * mixerYellow + 16.236f) / 100.f;
-            }
+            const float ygM = fcompl * (0.5f  * mixerYellow - 16.5f ) / 100.f;
+            const float ybM = complement ? (-0.492f * mixerYellow + 16.236f) / 100.f : 0.f;
 
             mixerRed   += yrM;
             mixerGreen += ygM;
@@ -1269,17 +1241,15 @@ void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::u
             koymcp += (yrM + ygM + ybM);
         }
 
-        if(mixerMagenta != 33) {
+        if (mixerMagenta != 33.f) {
+            float mrM = 0.f;
+            float mbM = 0.f;
             if (algo == "SP") {
-                if(mixerMagenta >= 33) {
+                if (mixerMagenta > 33.f) {
                     mrM = fcompl * ( 0.67f * mixerMagenta - 22.11f) / 100.f;
-                } else {
-                    mrM = fcompl * (-0.3f * mixerMagenta + 9.9f) / 100.f;
-                }
-
-                if(mixerMagenta >= 33) {
                     mbM = fcompl * (-0.164f * mixerMagenta + 5.412f) / 100.f;
                 } else {
+                    mrM = fcompl * (-0.3f * mixerMagenta + 9.9f) / 100.f;
                     mbM = fcompl * ( 0.4f * mixerMagenta - 13.2f) / 100.f;
                 }
             } else if (algo == "LI") {
@@ -1287,9 +1257,7 @@ void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::u
                 mbM = fcompl * (0.5f * mixerMagenta - 16.5f) / 100.f;
             }
 
-            if(complement) {
-                mgM = (-0.492f * mixerMagenta + 16.236f) / 100.f;
-            }
+            const float mgM = complement ? (-0.492f * mixerMagenta + 16.236f) / 100.f : 0.f;
 
             mixerRed   += mrM;
             mixerGreen += mgM;
@@ -1297,18 +1265,16 @@ void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::u
             koymcp += (mrM + mgM + mbM);
         }
 
-        if(mixerPurple != 33) {
+        if (mixerPurple != 33.f) {
+            float prM = 0.f;
             if (algo == "SP") {
                 prM = fcompl * (-0.134f * mixerPurple + 4.422f) / 100.f;
             } else if (algo == "LI") {
                 prM = fcompl * (0.5f * mixerPurple - 16.5f) / 100.f;
             }
 
-            pbM = fcompl * (0.5f * mixerPurple - 16.5f) / 100.f;
-
-            if(complement) {
-                pgM = (-0.492f * mixerPurple + 16.236f) / 100.f;
-            }
+            const float pbM = fcompl * (0.5f * mixerPurple - 16.5f) / 100.f;
+            const float pgM = complement ? (-0.492f * mixerPurple + 16.236f) / 100.f : 0.f;
 
             mixerRed   += prM;
             mixerGreen += pgM;
@@ -1316,18 +1282,16 @@ void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::u
             koymcp += (prM + pgM + pbM);
         }
 
-        if(mixerCyan != 33) {
+        if (mixerCyan != 33.f) {
+            float cgM = 0.f;
             if (algo == "SP") {
                 cgM = fcompl * (-0.134f * mixerCyan + 4.422f) / 100.f;
             } else if (algo == "LI") {
                 cgM = fcompl * (0.5f * mixerCyan - 16.5f) / 100.f;
             }
 
-            cbM = fcompl * (0.5f * mixerCyan - 16.5f) / 100.f;
-
-            if(complement) {
-                crM = (-0.492f * mixerCyan + 16.236f) / 100.f;
-            }
+            const float cbM = fcompl * (0.5f * mixerCyan - 16.5f) / 100.f;
+            const float crM = complement ? (-0.492f * mixerCyan + 16.236f) / 100.f : 0.f;
 
             mixerRed   += crM;
             mixerGreen += cgM;
@@ -1347,7 +1311,7 @@ void Color::computeBWMixerConstants (const Glib::ustring &setting, const Glib::u
     filblue = 1.f;
     filcor = 1.f;
 
-    if          (filter == "None")        {
+    if (filter == "None")        {
         filred = 1.f;
         filgreen = 1.f;
         filblue = 1.f;
@@ -1496,101 +1460,79 @@ void Color::interpolateRGBColor (float realL, float iplow, float iphigh, int alg
                                  const float xl, const float yl, const float zl, const float x2, const float y2, const float z2,
                                  const double xyz_rgb[3][3], const double rgb_xyz[3][3], float &ro, float &go, float &bo)
 {
-    float X1, Y1, Z1, X2, Y2, Z2, X, Y, Z, XL, YL, ZL;
-    float L1 = 0.f, L2, LL, a_1 = 0.f, b_1 = 0.f, a_2 = 0.f, b_2 = 0.f, a_L, b_L;
+    float L1 = 0.f, a_1 = 0.f, b_1 = 0.f, a_2 = 0.f, b_2 = 0.f, a_L = 0.f, b_L = 0.f;
 
-    // converting color 1 to Lab  (image)
-    Color::rgbxyz(r1, g1, b1, X1, Y1, Z1, xyz_rgb);
-
-    if(algm == 1) {//use H interpolate
+    if (algm == 1) {//use H interpolate
+        // converting color 1 to Lab  (image)
+        float X1, Y1, Z1;
+        Color::rgbxyz(r1, g1, b1, X1, Y1, Z1, xyz_rgb);
         Color::XYZ2Lab(X1, Y1, Z1, L1, a_1, b_1);
-        //Color::Lab2Lch(a_1, b_1, c_1, h_1) ;
     }
 
     // converting color l lab(low) first color
-    if(twoc == 0) { // 2 colours
-        //Color::rgbxyz(rl, gl, bl, XL, YL, ZL, xyz_rgb);
-        XL = xl;
-        YL = yl;
-        ZL = zl;
-
-        if(algm <= 1) {//use H interpolate
-            Color::XYZ2Lab(XL, YL, ZL, LL, a_L, b_L);
+    if (twoc == 0) { // 2 colours
+        if (algm == 1) {//use H interpolate
+            float unused;
+            Color::XYZ2Lab(xl, yl, zl, unused, a_L, b_L);
         }
     }
 
     // converting color 2 to lab (universal or high)
-    X2 = x2;
-    Y2 = y2;
-    Z2 = z2;
-
-    if(algm == 1 ) {
-        Color::XYZ2Lab(X2, Y2, Z2, L2, a_2, b_2);
-        //Color::Lab2Lch(a_2, b_2, c_2, h_2) ;
+    if (algm == 1) {
+        float unused;
+        Color::XYZ2Lab(x2, y2, z2, unused, a_2, b_2);
     }
 
-    float cal, calH, calm;
-    cal = calH = calm = 1.f - chromat;
-    float med = 1.f;
-    float medH = 0.f;
+    float cal, calH;
+    cal = calH = 1.f - chromat;
 
-    float calan;
-    calan = chromat;
-
-    float calby;
-    calby = luma;
-
-    if(twoc == 0) { // 2 colours
-        calan = chromat;
-
+    if (twoc == 0) { // 2 colours
         //calculate new balance chroma
-        if      (realL > iplow && realL <= med) {
-            cal = realL * calan / (iplow - med) - med * calan / (iplow - med);
+        constexpr float med = 1.f;
+        if (realL > iplow && realL <= med) {
+            cal = realL * chromat / (iplow - med) - chromat / (iplow - med);
         } else if (realL <= iplow) {
-            cal = realL * calan / iplow;
+            cal = realL * chromat / iplow;
         }
 
-        if      (realL > medH && realL <= iphigh) {
-            calH = realL * calan / (iphigh - medH) - medH * calan / (iphigh - medH);
+        if (realL > 0.f && realL <= iphigh) {
+            calH = realL * chromat / iphigh;
         } else if (realL > iphigh) {
-            calH = realL * calan;    //*(iphigh-1.f) - calan*(iphigh-1.f);//it is better without transition in highlight
+            calH = realL * chromat;    //*(iphigh-1.f) - chromat*(iphigh-1.f);//it is better without transition in highlight
         }
     }
 
-    float aaH, bbH;
-
-    if(algm <= 1) {
-        if(twoc == 0  && metchrom == 3) { // 2 colours  only with special "ab"
-            if(algm == 1) {
-                aaH = a_1 + (a_2 - a_1) * calH;
-                bbH = b_1 + (b_2 - b_1) * calH; //pass to line after
+    if (algm <= 1) {
+        if (twoc == 0 && metchrom == 3) { // 2 colours  only with special "ab"
+            if (algm == 1) {
+                const float aaH = a_1 + (a_2 - a_1) * calH;
+                const float bbH = b_1 + (b_2 - b_1) * calH; //pass to line after
                 a_1 = aaH + (a_L - aaH) * cal * balance;
                 b_1 = bbH + (b_L - bbH) * cal * balance;
             }
-        } else if(twoc == 1) {
-            if(metchrom == 0) {
+        } else if (twoc == 1) {
+            if (metchrom == 0) {
                 a_1 = a_1 + (a_2 - a_1) * balance;
                 b_1 = b_1 + (b_2 - b_1) * balance;
-            } else if(metchrom == 1) {
-                a_1 = a_1 + (a_2 - a_1) * calan * balance;
-                b_1 = b_1 + (b_2 - b_1) * calan * balance;
-            } else if(metchrom == 2) {
-                a_1 = a_1 + (a_2 - a_1) * calan * balance;
-                b_1 = b_1 + (b_2 - b_1) * calby * balance;
+            } else if (metchrom == 1) {
+                a_1 = a_1 + (a_2 - a_1) * chromat * balance;
+                b_1 = b_1 + (b_2 - b_1) * chromat * balance;
+            } else if (metchrom == 2) {
+                a_1 = a_1 + (a_2 - a_1) * chromat * balance;
+                b_1 = b_1 + (b_2 - b_1) * luma * balance;
             }
         }
     }
 
+    float X, Y, Z;
     Color::Lab2XYZ(L1, a_1, b_1, X, Y, Z);
-
     Color::xyz2rgb(X, Y, Z, ro, go, bo, rgb_xyz);// ro go bo in gamut
 }
 
-void Color::calcGamma (double pwr, double ts, int mode, GammaValues &gamma)
+void Color::calcGamma (double pwr, double ts, GammaValues &gamma)
 {
     //from Dcraw (D.Coffin)
-    int i;
-    double g[6], bnd[2] = {0., 0.};
+    double g[6], bnd[2] = {};
 
     g[0] = pwr;
     g[1] = ts;
@@ -1598,7 +1540,7 @@ void Color::calcGamma (double pwr, double ts, int mode, GammaValues &gamma)
     bnd[g[1] >= 1.] = 1.;
 
     if (g[1] && (g[1] - 1.) * (g[0] - 1.) <= 0.) {
-        for (i = 0; i < 99; i++) {
+        for (int i = 0; i < 99; i++) {
             g[2] = (bnd[0] + bnd[1]) / 2.;
 
             if (g[0]) {
@@ -1621,16 +1563,13 @@ void Color::calcGamma (double pwr, double ts, int mode, GammaValues &gamma)
         g[5] = 1. / (g[1] * SQR(g[3]) / 2. + 1. - g[2] - g[3] - g[2] * g[3] * (log(g[3]) - 1.)) - 1.;
     }
 
-    if (!mode--) {
-        gamma[0] = g[0];
-        gamma[1] = g[1];
-        gamma[2] = g[2];
-        gamma[3] = g[3];
-        gamma[4] = g[4];
-        gamma[5] = g[5];
-        gamma[6] = 0.;
-        return;
-    }
+    gamma[0] = g[0];
+    gamma[1] = g[1];
+    gamma[2] = g[2];
+    gamma[3] = g[3];
+    gamma[4] = g[4];
+    gamma[5] = g[5];
+    gamma[6] = 0.;
 }
 void Color::gammaf2lut (LUTf &gammacurve, float gamma, float start, float slope, float divisor, float factor)
 {
@@ -1833,7 +1772,7 @@ void Color::RGB2Lab(float *R, float *G, float *B, float *L, float *a, float *b, 
     }
 }
 
-void Color::RGB2L(float *R, float *G, float *B, float *L, const float wp[3][3], int width)
+void Color::RGB2L(const float *R, const float *G, const float *B, float *L, const float wp[3][3], int width)
 {
 
 #ifdef __SSE2__
@@ -2039,7 +1978,7 @@ void Color::Lch2Luv(float c, float h, float &u, float &v)
  * columns of the matrix p=xyz_rgb are RGB tristimulus primaries in XYZ
  * c is the color fixed on the boundary; and m=0 for c=0, m=1 for c=255
  */
-void Color::gamutmap(float &X, float &Y, float &Z, const double p[3][3])
+void Color::gamutmap(float &X, float Y, float &Z, const double p[3][3])
 {
     float u = 4 * X / (X + 15 * Y + 3 * Z) - u0;
     float v = 9 * Y / (X + 15 * Y + 3 * Z) - v0;
@@ -2076,96 +2015,33 @@ void Color::gamutmap(float &X, float &Y, float &Z, const double p[3][3])
     Z = (12 - 3 * u - 20 * v) * Y / (4 * v);
 }
 
-void Color::skinred ( double J, double h, double sres, double Sp, float dred, float protect_red, int sk, float rstprotection, float ko, double &s)
-{
-    float factorskin, factorsat, factor, factorskinext, interm;
-    float scale = 100.0f / 100.1f; //reduction in normal zone
-    float scaleext = 1.0f; //reduction in transition zone
-    float deltaHH = 0.3f; //HH value transition : I have choice 0.3 radians
-    float HH;
-    bool doskin = false;
-
-    //rough correspondence between h (JC) and H (lab) that has relatively little importance because transitions that blur the correspondence is not linear
-    if     ((float)h > 8.6f  && (float)h <= 74.f ) {
-        HH = (1.15f / 65.4f) * (float)h - 0.0012f;     //H > 0.15   H<1.3
-        doskin = true;
-    } else if((float)h > 0.f   && (float)h <= 8.6f ) {
-        HH = (0.19f / 8.6f ) * (float)h - 0.04f;       //H>-0.04 H < 0.15
-        doskin = true;
-    } else if((float)h > 355.f && (float)h <= 360.f) {
-        HH = (0.11f / 5.0f ) * (float)h - 7.96f;       //H>-0.15 <-0.04
-        doskin = true;
-    } else if((float)h > 74.f  && (float)h < 95.f  ) {
-        HH = (0.30f / 21.0f) * (float)h + 0.24285f;    //H>1.3  H<1.6
-        doskin = true;
-    }
-
-    if(doskin) {
-        float chromapro = sres / Sp;
-
-        if(sk == 1) { //in C mode to adapt dred to J
-            if     (J < 16.0) {
-                dred = 40.0f;
-            } else if(J < 22.0) {
-                dred = 2.5f * (float)J;
-            } else if(J < 60.0) {
-                dred = 55.0f;
-            } else if(J < 70.0) {
-                dred = -1.5f * (float)J + 145.0f;
-            } else {
-                dred = 40.0f;
-            }
-        }
-
-        if(chromapro > 0.0) {
-            Color::scalered ( rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);    //Scale factor
-        }
-
-        if(chromapro > 1.0) {
-            interm = (chromapro - 1.0f) * 100.0f;
-            factorskin = 1.0f + (interm * scale) / 100.0f;
-            factorskinext = 1.0f + (interm * scaleext) / 100.0f;
-        } else {
-            factorskin = chromapro ;
-            factorskinext = chromapro ;
-        }
-
-        factorsat = chromapro;
-        factor = factorsat;
-        Color::transitred ( HH, s, dred, factorskin, protect_red, factorskinext, deltaHH, factorsat, factor);   //transition
-        s *= factor;
-    } else {
-        s = ko * sres;
-    }
-
-}
 void Color::skinredfloat ( float J, float h, float sres, float Sp, float dred, float protect_red, int sk, float rstprotection, float ko, float &s)
 {
     float HH;
     bool doskin = false;
 
     //rough correspondence between h (JC) and H (lab) that has relatively little importance because transitions that blur the correspondence is not linear
-    if     ((float)h > 8.6f  && (float)h <= 74.f ) {
-        HH = (1.15f / 65.4f) * (float)h - 0.0012f;     //H > 0.15   H<1.3
+    if (h > 8.6f  && h <= 74.f) {
+        HH = (1.15f / 65.4f) * h - 0.0012f;     //H > 0.15   H<1.3
         doskin = true;
-    } else if((float)h > 0.f   && (float)h <= 8.6f ) {
-        HH = (0.19f / 8.6f ) * (float)h - 0.04f;       //H>-0.04 H < 0.15
+    } else if(h > 0.f && h <= 8.6f) {
+        HH = (0.19f / 8.6f) * h - 0.04f;       //H>-0.04 H < 0.15
         doskin = true;
-    } else if((float)h > 355.f && (float)h <= 360.f) {
-        HH = (0.11f / 5.0f ) * (float)h - 7.96f;       //H>-0.15 <-0.04
+    } else if(h > 355.f && h <= 360.f) {
+        HH = (0.11f / 5.0f) * h - 7.96f;       //H>-0.15 <-0.04
         doskin = true;
-    } else if((float)h > 74.f  && (float)h < 95.f  ) {
-        HH = (0.30f / 21.0f) * (float)h + 0.24285f;    //H>1.3  H<1.6
+    } else if(h > 74.f && h < 95.f  ) {
+        HH = (0.30f / 21.0f) * h + 0.24285f;    //H>1.3  H<1.6
         doskin = true;
     }
 
     if(doskin) {
-        float factorskin, factorsat, factor, factorskinext;
+        float factorskin, factor, factorskinext;
         float deltaHH = 0.3f; //HH value transition : I have choice 0.3 radians
         float chromapro = sres / Sp;
 
         if(sk == 1) { //in C mode to adapt dred to J
-            if     (J < 16.f) {
+            if (J < 16.f) {
                 dred = 40.f;
             } else if(J < 22.f) {
                 dred = 2.5f * J;
@@ -2182,7 +2058,7 @@ void Color::skinredfloat ( float J, float h, float sres, float Sp, float dred, f
             float scale = 0.999000999f;  // 100.0f/100.1f; reduction in normal zone
             float scaleext = 1.0f; //reduction in transition zone
             Color::scalered ( rstprotection, chromapro, 0.0, HH, deltaHH, scale, scaleext);//Scale factor
-            float interm = (chromapro - 1.0f);
+            const float interm = chromapro - 1.0f;
             factorskin = 1.0f + (interm * scale);
             factorskinext = 1.0f + (interm * scaleext);
         } else {
@@ -2190,20 +2066,13 @@ void Color::skinredfloat ( float J, float h, float sres, float Sp, float dred, f
             factorskinext = chromapro ;
         }
 
-        factorsat = chromapro;
-        factor = factorsat;
-        Color::transitred ( HH, s, dred, factorskin, protect_red, factorskinext, deltaHH, factorsat, factor);   //transition
+        factor = chromapro;
+        Color::transitred ( HH, s, dred, factorskin, protect_red, factorskinext, deltaHH, chromapro, factor);   //transition
         s *= factor;
     } else {
         s = ko * sres;
     }
-
 }
-
-
-
-
-
 
 void Color::scalered ( const float rstprotection, const float param, const float limit, const float HH, const float deltaHH, float &scale, float &scaleext)
 {
@@ -2262,32 +2131,21 @@ void Color::transitred (const float HH, float const Chprov1, const float dred, c
 void Color::AllMunsellLch(bool lumaMuns, float Lprov1, float Loldd, float HH, float Chprov1, float CC, float &correctionHuechroma, float &correctlum)
 {
 
-    bool contin1, contin2;
-    float correctionHue = 0.0, correctionHueLum = 0.0;
-    bool correctL;
+    if (CC >= 6.f && CC < 140.f) {          //if C > 140 we say C=140 (only in Prophoto ...with very large saturation)
+        constexpr float huelimit[8] = { -2.48f, -0.55f, 0.44f, 1.52f, 1.87f, 3.09f, -0.27f, 0.44f}; //limits hue of blue-purple, red-yellow, green-yellow, red-purple
 
-    if(CC >= 6.0 && CC < 140) {          //if C > 140 we say C=140 (only in Prophoto ...with very large saturation)
-        static const float huelimit[8] = { -2.48, -0.55, 0.44, 1.52, 1.87, 3.09, -0.27, 0.44}; //limits hue of blue-purple, red-yellow, green-yellow, red-purple
+        Chprov1 = rtengine::LIM(Chprov1, 6.f, 140.f);
 
-        if (Chprov1 > 140.f) {
-            Chprov1 = 139.f;    //limits of LUTf
-        }
-
-        if (Chprov1 < 6.f) {
-            Chprov1 = 6.f;
-        }
-
-        for(int zo = 1; zo <= 4; zo++) {
-            if(HH > huelimit[2 * zo - 2] && HH < huelimit[2 * zo - 1]) {
-                //zone=zo;
-                contin1 = contin2 = false;
-                correctL = false;
+        for (int zo = 1; zo <= 4; ++zo) {
+            if (HH > huelimit[2 * zo - 2] && HH < huelimit[2 * zo - 1]) {
+                bool correctL = false;
+                float correctionHue = 0.f, correctionHueLum = 0.f;
                 MunsellLch (Lprov1, HH, Chprov1, CC, correctionHue, zo, correctionHueLum, correctL);       //munsell chroma correction
                 correctionHuechroma = correctionHue;  //preserve
 
                 if(lumaMuns) {
+                    bool contin1 = false;
                     float correctlumprov = 0.f;
-                    float correctlumprov2 = 0.f;
 
                     if(correctL) {
                         //for Munsell luminance correction
@@ -2296,26 +2154,19 @@ void Color::AllMunsellLch(bool lumaMuns, float Lprov1, float Loldd, float HH, fl
                         correctL = false;
                     }
 
-                    correctionHueLum = 0.0;
-                    correctionHue = 0.0;
-
-                    if(fabs(Lprov1 - Loldd) > 6.0) {
+                    if (std::fabs(Lprov1 - Loldd) > 6.f) {
+                        correctionHueLum = 0.f;
+                        correctionHue = 0.f;
                         // correction if delta L significative..Munsell luminance
                         MunsellLch (Loldd, HH, Chprov1, Chprov1, correctionHue, zo, correctionHueLum, correctL);
-
                         if(correctL) {
-                            correctlumprov2 = correctionHueLum;
-                            contin2 = true;
-                            correctL = false;
-                        }
-
-                        correctionHueLum = 0.0;
-
-                        if(contin1 && contin2) {
-                            correctlum = correctlumprov2 - correctlumprov;
+                            if(contin1) {
+                                correctlum = correctionHueLum - correctlumprov;
+                            }
                         }
                     }
                 }
+                break;
             }
         }
     }
@@ -2337,9 +2188,6 @@ void Color::AllMunsellLch(bool lumaMuns, float Lprov1, float Loldd, float HH, fl
 void Color::AllMunsellLch(float Lprov1, float HH, float Chprov1, float CC, float &correctionHuechroma)
 {
 
-    float correctionHue = 0.f, correctionHueLum = 0.f;
-    bool correctL;
-
     if(CC >= 6.f && CC < 140.f) {          //if C > 140 we say C=140 (only in Prophoto ...with very large saturation)
         static const float huelimit[8] = { -2.48f, -0.55f, 0.44f, 1.52f, 1.87f, 3.09f, -0.27f, 0.44f}; //limits hue of blue-purple, red-yellow, green-yellow, red-purple
 
@@ -2352,7 +2200,8 @@ void Color::AllMunsellLch(float Lprov1, float HH, float Chprov1, float CC, float
         for(int zo = 1; zo <= 4; zo++) {
             if(HH > huelimit[2 * zo - 2] && HH < huelimit[2 * zo - 1]) {
                 //zone=zo;
-                correctL = false;
+                float correctionHue = 0.f, correctionHueLum = 0.f;
+                bool correctL = false;
                 MunsellLch (Lprov1, HH, Chprov1, CC, correctionHue, zo, correctionHueLum, correctL);       //munsell chroma correction
                 correctionHuechroma = correctionHue;  //preserve
                 break;
@@ -2761,8 +2610,6 @@ void Color::gamutLchonly (float2 sincosval, float &Lprov1, float &Chprov1, const
  */
 void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, bool corMunsell, bool lumaMuns, bool isHLEnabled, bool gamut, const double wip[3][3])
 {
-    float correctlum = 0.f;
-    float correctionHuechroma = 0.f;
 #ifdef __SSE2__
     // precalculate H and C using SSE
     float HHBuffer[N];
@@ -2815,8 +2662,8 @@ void Color::LabGamutMunsell(float *labL, float *laba, float *labb, const int N, 
         }
 
         labL[j] = Lprov1 * 327.68f;
-        correctionHuechroma = 0.f;
-        correctlum = 0.f;
+        float correctionHuechroma = 0.f;
+        float correctlum = 0.f;
 
         if(corMunsell)
             AllMunsellLch(lumaMuns, Lprov1, Loldd, HH, Chprov1, Coldd, correctionHuechroma, correctlum);

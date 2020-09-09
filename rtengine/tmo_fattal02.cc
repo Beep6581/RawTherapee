@@ -123,12 +123,12 @@ public:
 
     int getRows() const
     {
-        return const_cast<Array2Df &>(*this).height();
+        return const_cast<Array2Df &>(*this).getHeight();
     }
 
     int getCols() const
     {
-        return const_cast<Array2Df &>(*this).width();
+        return const_cast<Array2Df &>(*this).getWidth();
     }
 
     float *data()
@@ -1180,7 +1180,6 @@ void ImProcFunctions::ToneMapFattal02(Imagefloat *rgb, const FattalToneMappingPa
         scale = (oldMedian == 0.f || newMedian == 0.f) ? 65535.f : (oldMedian / newMedian); // avoid Nan
     } else {
 
-        scale = 65535.f;
         {
             float ratio = 0.f;
             int ww, hh;

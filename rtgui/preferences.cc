@@ -10,8 +10,8 @@
  *
  *  RawTherapee is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
@@ -343,7 +343,13 @@ Gtk::Widget* Preferences::getBatchProcPanel()
 
     mi = behModel->append();
     mi->set_value(behavColumns.label, M("TP_PERSPECTIVE_LABEL"));
-    appendBehavList(mi, M("TP_PERSPECTIVE_HORIZONTAL") + ", " + M("TP_PERSPECTIVE_VERTICAL"), ADDSET_PERSPECTIVE, false);
+    appendBehavList(mi, M("TP_PERSPECTIVE_METHOD_SIMPLE") + " - " + M("TP_PERSPECTIVE_HORIZONTAL") + ", " + M("TP_PERSPECTIVE_VERTICAL"), ADDSET_PERSPECTIVE, false);
+    appendBehavList(mi, M("TP_PERSPECTIVE_CAMERA_FOCAL_LENGTH") + ", " + M("TP_PERSPECTIVE_CAMERA_CROP_FACTOR"), ADDSET_PERSP_CAM_FOCAL_LENGTH, false);
+    appendBehavList(mi, M("TP_PERSPECTIVE_CAMERA_FRAME") + " - " + M("TP_PERSPECTIVE_CAMERA_SHIFT_HORIZONTAL") + ", " + M("TP_PERSPECTIVE_CAMERA_SHIFT_VERTICAL"), ADDSET_PERSP_CAM_SHIFT, false);
+    appendBehavList(mi, M("TP_PERSPECTIVE_CAMERA_FRAME") + " - " + M("TP_PERSPECTIVE_CAMERA_ROLL") + ", " + M("TP_PERSPECTIVE_CAMERA_YAW") + ", " + M("TP_PERSPECTIVE_CAMERA_PITCH"), ADDSET_PERSP_CAM_ANGLE, false);
+    appendBehavList(mi, M("TP_PERSPECTIVE_POST_CORRECTION_ADJUSTMENT_FRAME") + " - " + M("TP_PERSPECTIVE_PROJECTION_SHIFT_HORIZONTAL") + ", " + M("TP_PERSPECTIVE_PROJECTION_SHIFT_VERTICAL"), ADDSET_PERSP_PROJ_SHIFT, false);
+    appendBehavList(mi, M("TP_PERSPECTIVE_PROJECTION_ROTATE"), ADDSET_PERSP_PROJ_ROTATE, false);
+    appendBehavList(mi, M("TP_PERSPECTIVE_RECOVERY_FRAME") + " - " + M("TP_PERSPECTIVE_PROJECTION_YAW") + ", " + M("TP_PERSPECTIVE_PROJECTION_PITCH"), ADDSET_PERSP_PROJ_ANGLE, false);
 
     mi = behModel->append();
     mi->set_value(behavColumns.label, M("TP_GRADIENT_LABEL"));
@@ -940,7 +946,8 @@ Gtk::Widget* Preferences::getGeneralPanel()
     setExpandAlignProperties(complexitylocal, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
     complexitylocal->append(M("PREFERENCES_COMPLEXITY_EXP"));
     complexitylocal->append(M("PREFERENCES_COMPLEXITY_NORM"));
-    complexitylocal->set_active(1);
+    complexitylocal->append(M("PREFERENCES_COMPLEXITY_SIMP"));
+    complexitylocal->set_active(2);
     workflowGrid->attach_next_to(*complexityL, *curveBBoxPosL, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to(*complexitylocal, *curveBBoxPosC, Gtk::POS_BOTTOM, 1, 1);
 

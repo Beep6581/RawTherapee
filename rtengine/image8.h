@@ -64,11 +64,6 @@ public:
         return getEmbeddedProfile ();
     }
 
-    int getBitsPerPixel () const override
-    {
-        return 8 * sizeof(unsigned char);
-    }
-
     int saveToFile (const Glib::ustring &fname) const override
     {
         return save (fname);
@@ -92,11 +87,6 @@ public:
     void setSaveProgressListener (ProgressListener* pl) override
     {
         setProgressListener (pl);
-    }
-
-    void free () override
-    {
-        delete this;
     }
 
 };

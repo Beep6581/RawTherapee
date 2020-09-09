@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
- *  2019 Pierre Cabrera <pierre.cab@gmail.com>
+ *  2019-2020 Pierre Cabrera <pierre.cab@gmail.com>
  */
 #ifndef _LOCALLABTOOLS_H_
 #define _LOCALLABTOOLS_H_
@@ -52,7 +52,8 @@ protected:
     // LocallabTool mode enumeration
     enum modeType {
         Expert = 0,
-        Normal = 1
+        Normal = 1,
+        Simple = 2
     };
 
     // LocallabTool parameters
@@ -123,7 +124,7 @@ public:
         return false;
     };
     virtual void resetMaskView() {};
-    virtual void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) {};
+    virtual void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) {};
 
     // Advice tooltips management function
     virtual void updateAdviceTooltips(const bool showTooltips) {};
@@ -162,7 +163,8 @@ private:
 
     // To be implemented
     virtual void enabledChanged() {};
-    virtual void convertParamToNormal() {}; // Only necessary when using mode
+    virtual void convertParamToNormal() {}; // From Expert mode to Normal mode; Only necessary when using mode
+    virtual void convertParamToSimple() {}; // From Normal mode to Simple mode; Only necessary when using mode
     virtual void updateGUIToMode(const modeType new_type) {}; // Only necessary when using mode
 };
 
@@ -174,10 +176,11 @@ class LocallabColor:
 {
 private:
     // Color & Light specific widgets
-    Gtk::CheckButton* const curvactiv;
+    Gtk::Frame* const lumFrame;
     Adjuster* const lightness;
     Adjuster* const contrast;
     Adjuster* const chroma;
+    Gtk::CheckButton* const curvactiv;
     Gtk::Frame* const gridFrame;
     LabGrid* const labgrid;
     MyComboBoxText* const gridMethod;
@@ -203,6 +206,8 @@ private:
     DiagonalCurveEditor* const lcshape;
     CurveEditorGroup* const HCurveEditorG;
     FlatCurveEditor* const LHshape;
+    CurveEditorGroup* const H3CurveEditorG;
+    FlatCurveEditor* const CHshape;
     CurveEditorGroup* const H2CurveEditorG;
     FlatCurveEditor* const HHshape;
     CurveEditorGroup* const rgbCurveEditorG;
@@ -259,7 +264,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -280,6 +285,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
@@ -369,7 +375,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -385,6 +391,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
@@ -454,7 +461,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -470,6 +477,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
@@ -532,7 +540,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -554,6 +562,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
@@ -588,7 +597,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -600,8 +609,11 @@ public:
     void adjusterChanged(Adjuster* a, double newval) override;
 
 private:
+    void complexityModeChanged();
+
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void softMethodChanged();
@@ -684,7 +696,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -705,6 +717,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
@@ -765,7 +778,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -781,6 +794,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
@@ -855,7 +869,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -871,6 +885,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
@@ -904,6 +919,7 @@ private:
     Adjuster* const sharradius;
     Adjuster* const sensisha;
     Gtk::CheckButton* const inverssha;
+    Gtk::Frame* const sharFrame;
     MyComboBoxText* const showmasksharMethod;
 
     sigc::connection inversshaConn, showmasksharMethodConn;
@@ -913,7 +929,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -927,6 +943,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void inversshaChanged();
@@ -945,11 +962,12 @@ private:
     Adjuster* const lcamount;
     Adjuster* const lcdarkness;
     Adjuster* const lclightness;
+    Gtk::Frame* const contFrame;
     Adjuster* const sigmalc;
     CurveEditorGroup* const LocalcurveEditorwav;
     FlatCurveEditor* const wavshape;
-    Adjuster* const levelwav;
     ThresholdAdjuster* const csThreshold;
+    Adjuster* const levelwav;
     MyExpander* const expresidpyr;
     Adjuster* const residcont;
     Adjuster* const residchro;
@@ -1033,7 +1051,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -1054,6 +1072,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
@@ -1085,10 +1104,10 @@ class LocallabCBDL:
     public LocallabTool
 {
 private:
+    Gtk::Frame* const levFrame;
     const std::array<Adjuster*, 6> multiplier;
     Adjuster* const chromacbdl;
     Adjuster* const threshold;
-    Adjuster* const blurcbdl;
     Adjuster* const clarityml;
     Adjuster* const contresid;
     Adjuster* const softradiuscb;
@@ -1123,7 +1142,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -1139,6 +1158,7 @@ public:
 private:
     void enabledChanged() override;
     void convertParamToNormal() override;
+    void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
@@ -1194,6 +1214,92 @@ private:
     void AutograyChanged();
 
     void updateLogGUI();
+};
+
+
+/* ==== LocallabMask ==== */
+class LocallabMask:
+    public Gtk::VBox,
+    public LocallabTool,
+    public ThresholdAdjusterListener
+{
+private:
+    Adjuster* const sensimask;
+    Adjuster* const blendmask;
+    Adjuster* const blendmaskab;
+    Adjuster* const softradiusmask;
+    MyComboBoxText* const showmask_Method;
+    Gtk::CheckButton* const enamask;
+    CurveEditorGroup* const mask_CurveEditorG;
+    FlatCurveEditor* const CCmask_shape;
+    FlatCurveEditor* const LLmask_shape;
+    FlatCurveEditor* const HHmask_shape;
+    Gtk::Frame* const struFrame;
+    Adjuster* const strumaskmask;
+    Gtk::CheckButton* const toolmask;
+    Gtk::Frame* const blurFrame;
+    Gtk::CheckButton* const fftmask;
+    Adjuster* const contmask;
+    Adjuster* const blurmask;
+    Gtk::Frame* const toolmaskFrame;
+    Adjuster* const radmask;
+    Adjuster* const lapmask;
+    Adjuster* const chromask;
+    Adjuster* const gammask;
+    Adjuster* const slopmask;
+    Adjuster* const shadmask;
+    CurveEditorGroup* const mask_HCurveEditorG;
+    FlatCurveEditor* const HHhmask_shape;
+    CurveEditorGroup* const mask2CurveEditorG;
+    DiagonalCurveEditor* const Lmask_shape;
+    CurveEditorGroup* const mask2CurveEditorGwav;
+    FlatCurveEditor* const LLmask_shapewav;
+    ThresholdAdjuster* const csThresholdmask;
+    Gtk::Frame* const gradFramemask;
+    Adjuster* const str_mask;
+    Adjuster* const ang_mask;
+
+    sigc::connection showmask_MethodConn, enamaskConn, toolmaskConn, fftmaskConn;
+
+public:
+    LocallabMask();
+    ~LocallabMask();
+
+    bool isMaskViewActive() override;
+    void resetMaskView() override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
+
+    void updateAdviceTooltips(const bool showTooltips) override;
+
+    void disableListener() override;
+    void enableListener() override;
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
+    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
+    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
+    void curveChanged(CurveEditor* ce) override;
+
+private:
+    void complexityModeChanged();
+
+    void enabledChanged() override;
+    void convertParamToNormal() override;
+    void convertParamToSimple() override;
+    void updateGUIToMode(const modeType new_type) override;
+
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
+
+    void showmask_MethodChanged();
+    void enamaskChanged();
+    void toolmaskChanged();
+    void fftmaskChanged();
+
+    void updateMaskGUI();
 };
 
 #endif

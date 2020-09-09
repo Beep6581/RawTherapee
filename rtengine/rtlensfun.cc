@@ -46,7 +46,7 @@ LFModifier::operator bool() const
 }
 
 
-void LFModifier::correctDistortion(double &x, double &y, int cx, int cy, double scale) const
+void LFModifier::correctDistortion(double &x, double &y, int cx, int cy) const
 {
     if (!data_) {
         return;
@@ -67,8 +67,6 @@ void LFModifier::correctDistortion(double &x, double &y, int cx, int cy, double 
         x -= cx;
         y -= cy;
     }
-    x *= scale;
-    y *= scale;
 }
 
 

@@ -151,9 +151,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     aGamma = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_GAMMA"), 1, 3.5, 0.00001, 2.4));
     setExpandAlignProperties(aGamma, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
 
-    if (aGamma->delay < options.adjusterMaxDelay) {
-        aGamma->delay = options.adjusterMaxDelay;
-    }
+    aGamma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     aGamma->show();
     mainGrid->attach(*aGamma, 1, 3, 1, 1); //gamma
@@ -161,9 +159,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     aSlope = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_SLOPE"), 0, 15, 0.00001, 12.92310));
     setExpandAlignProperties(aSlope, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
 
-    if (aSlope->delay < options.adjusterMaxDelay) {
-        aSlope->delay = options.adjusterMaxDelay;
-    }
+    aSlope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     aSlope->show();
     mainGrid->attach(*aSlope, 1, 4, 1, 1); //slope
@@ -328,7 +324,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     close->signal_clicked().connect(sigc::mem_fun(*this, &ICCProfileCreator::closePressed));
     get_action_area()->pack_start(*close);
 
-    //--------------- Show childrens
+    //--------------- Show children
 
     show_all_children();
 
@@ -881,8 +877,7 @@ void ICCProfileCreator::savePressed()
         double ts = slope;
         double slope2 = slope == 0 ? eps : slope;
 
-        int mode = 0;
-        rtengine::Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
+        rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
         ga[4] = g_a[3] * ts;
         //printf("g_a.gamma0=%f g_a.gamma1=%f g_a.gamma2=%f g_a.gamma3=%f g_a.gamma4=%f\n", g_a.gamma0,g_a.gamma1,g_a.gamma2,g_a.gamma3,g_a.gamma4);
         ga[0] = gamma;

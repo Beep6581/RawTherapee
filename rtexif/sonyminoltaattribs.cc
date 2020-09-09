@@ -1098,6 +1098,7 @@ public:
         choices.insert (p_t (32853, "Sony E 16-55mm f/2.8 G"));
         choices.insert (p_t (32854, "Sony E 70-350mm f/4.5-6.3 G OSS"));
         choices.insert (p_t (32858, "Sony FE 35mm f/1.8"));
+        choices.insert (p_t (32859, "Sony FE 20mm f/1.8 G"));
         choices.insert (p_t (33072, "Sony FE 70-200mm f/2.8 GM OSS + 1.4X Teleconverter"));
         choices.insert (p_t (33073, "Sony FE 70-200mm f/2.8 GM OSS + 2X Teleconverter"));
         choices.insert (p_t (33076, "Sony FE 100mm f/2.8 STF GM OSS (macro mode)"));
@@ -1127,6 +1128,8 @@ public:
         choices.insert (p_t (49459, "Tamron 35mm f/2.8 Di III OSD M1:2"));
         choices.insert (p_t (49460, "Tamron 24mm f/2.8 Di III OSD M1:2"));
         choices.insert (p_t (49461, "Tamron 20mm f/2.8 Di III OSD M1:2"));
+        choices.insert (p_t (49462, "Tamron 70-180mm f/2.8 Di III VXD"));
+        choices.insert (p_t (49463, "Tamron 28-200mm f/2.8-5.6 Di III RXD"));
         choices.insert (p_t (49712, "Tokina FiRIN 20mm f/2 FE AF"));
         choices.insert (p_t (49713, "Tokina FiRIN 100mm f/2.8 FE MACRO"));
         choices.insert (p_t (50480, "Sigma 30mm f/1.4 DC DN | C"));
@@ -1154,6 +1157,7 @@ public:
         choices.insert (p_t (50515, "Sigma 35mm f/1.2 DG DN | A"));
         choices.insert (p_t (50516, "Sigma 14-24mm f/2.8 DG DN | A"));
         choices.insert (p_t (50517, "Sigma 24-70mm f/2.8 DG DN | A"));
+        choices.insert (p_t (50518, "Sigma 100-400mm f/5-6.3 DG DN OS"));
         choices.insert (p_t (50992, "Voigtlander SUPER WIDE-HELIAR 15mm f/4.5 III"));
         choices.insert (p_t (50993, "Voigtlander HELIAR-HYPER WIDE 10mm f/5.6"));
         choices.insert (p_t (50994, "Voigtlander ULTRA WIDE-HELIAR 12mm f/5.6 III"));
@@ -1165,12 +1169,14 @@ public:
         choices.insert (p_t (51000, "Voigtlander NOKTON 50mm f/1.2 Aspherical"));
         choices.insert (p_t (51001, "Voigtlander NOKTON 21mm f/1.4 Aspherical"));
         choices.insert (p_t (51002, "Voigtlander APO-LANTHAR 50mm f/2 Aspherical"));
+        choices.insert (p_t (51003, "Voigtlander NOKTON 35mm f/1.2 Aspherical SE"));
         choices.insert (p_t (51504, "Samyang AF 50mm f/1.4"));
         choices.insert (p_t (51505, "Samyang AF 14mm f/2.8 or Samyang AF 35mm f/2.8"));
         choices.insert (p_t (51505, "Samyang AF 35mm f/2.8"));
         choices.insert (p_t (51507, "Samyang AF 35mm f/1.4"));
         choices.insert (p_t (51508, "Samyang AF 45mm f/1.8"));
         choices.insert (p_t (51510, "Samyang AF 18mm f/2.8"));
+        choices.insert (p_t (51512, "Samyang AF 75mm f/1.8"));
     }
 
     std::string toString (const Tag* t) const override

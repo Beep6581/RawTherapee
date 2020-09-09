@@ -162,6 +162,7 @@ Locallab::Locallab():
     expcontrast(Gtk::manage(new LocallabContrast())),
     expcbdl(Gtk::manage(new LocallabCBDL())),
     explog(Gtk::manage(new LocallabLog())),
+    expmask(Gtk::manage(new LocallabMask())),
 
     // Other widgets
     resetshowButton(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_RESETSHOW"))))
@@ -187,9 +188,11 @@ Locallab::Locallab():
     ToolVBox* const toolpanel = Gtk::manage(new ToolVBox());
     toolpanel->set_name("LocallabToolPanel");
     addTool(toolpanel, expcolor);
-    addTool(toolpanel, expexpose);
     addTool(toolpanel, expshadhigh);
     addTool(toolpanel, expvibrance);
+    addTool(toolpanel, explog);
+    addTool(toolpanel, expexpose);
+    addTool(toolpanel, expmask);
     addTool(toolpanel, expsoft);
     addTool(toolpanel, expblur);
     addTool(toolpanel, exptonemap);
@@ -197,7 +200,6 @@ Locallab::Locallab():
     addTool(toolpanel, expsharp);
     addTool(toolpanel, expcontrast);
     addTool(toolpanel, expcbdl);
-    addTool(toolpanel, explog);
     panel->pack_start(*toolpanel, false, false);
 
     // Add separator
@@ -259,6 +261,12 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
             r->shape = 1;
         }
 
+        if (pp->locallab.spots.at(i).prevMethod == "hide") {
+            r->prevMethod = 0;
+        } else {
+            r->prevMethod = 1;
+        }
+
         if (pp->locallab.spots.at(i).spotMethod == "norm") {
             r->spotMethod = 0;
         } else {
@@ -303,10 +311,11 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         r->balanh = pp->locallab.spots.at(i).balanh;
         r->colorde = pp->locallab.spots.at(i).colorde;
         r->colorscope = pp->locallab.spots.at(i).colorscope;
+        r->activ = pp->locallab.spots.at(i).activ;
         r->avoid = pp->locallab.spots.at(i).avoid;
         r->blwh = pp->locallab.spots.at(i).blwh;
         r->recurs = pp->locallab.spots.at(i).recurs;
-        r->laplac = pp->locallab.spots.at(i).laplac;
+        r->laplac = true; //pp->locallab.spots.at(i).laplac;
         r->deltae = pp->locallab.spots.at(i).deltae;
         r->scopemask = pp->locallab.spots.at(i).scopemask;
         r->shortc = pp->locallab.spots.at(i).shortc;
@@ -407,6 +416,13 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->shape = 1;
             }
 
+            if (newSpot->prevMethod == "hide") {
+                r->prevMethod = 0;
+            } else {
+                r->prevMethod = 1;
+            }
+
+
             if (newSpot->spotMethod == "norm") {
                 r->spotMethod = 0;
             } else {
@@ -470,6 +486,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->balanh = newSpot->balanh;
             r->colorde = newSpot->colorde;
             r->colorscope = newSpot->colorscope;
+            r->activ = newSpot->activ;
             r->avoid = newSpot->avoid;
             r->blwh = newSpot->blwh;
             r->recurs = newSpot->recurs;
@@ -684,6 +701,12 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 r->shape = 1;
             }
 
+            if (newSpot->prevMethod == "hide") {
+                r->prevMethod = 0;
+            } else {
+                r->prevMethod = 1;
+            }
+
             if (newSpot->spotMethod == "norm") {
                 r->spotMethod = 0;
             } else {
@@ -747,6 +770,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->balanh = newSpot->balanh;
             r->colorde = newSpot->colorde;
             r->colorscope = newSpot->colorscope;
+            r->activ = newSpot->activ;
             r->avoid = newSpot->avoid;
             r->blwh = newSpot->blwh;
             r->recurs = newSpot->recurs;
@@ -843,6 +867,13 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                         pp->locallab.spots.at(pp->locallab.selspot).shape = "RECT";
                     }
 
+                    if (r->prevMethod == 0) {
+                        pp->locallab.spots.at(pp->locallab.selspot).prevMethod = "hide";
+                    } else {
+                        pp->locallab.spots.at(pp->locallab.selspot).prevMethod = "show";
+                    }
+
+
                     if (r->spotMethod == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "norm";
                     } else {
@@ -887,6 +918,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).balanh = r->balanh;
                     pp->locallab.spots.at(pp->locallab.selspot).colorde = r->colorde;
                     pp->locallab.spots.at(pp->locallab.selspot).colorscope = r->colorscope;
+                    pp->locallab.spots.at(pp->locallab.selspot).activ = r->activ;
                     pp->locallab.spots.at(pp->locallab.selspot).avoid = r->avoid;
                     pp->locallab.spots.at(pp->locallab.selspot).blwh = r->blwh;
                     pp->locallab.spots.at(pp->locallab.selspot).recurs = r->recurs;
@@ -943,7 +975,7 @@ void Locallab::setDefaults(const rtengine::procparams::ProcParams* defParams, co
     // Set default values in spot panel control
     expsettings->setDefaults(defParams, pedited);
 
-    // Set defaut values in Locallab tools
+    // Set default values in Locallab tools
     for (auto tool : locallabTools) {
         tool->setDefaults(defParams, pedited);
     }
@@ -1025,20 +1057,20 @@ Locallab::llMaskVisibility Locallab::getMaskVisibility() const
     const bool prevDeltaE = expsettings->isDeltaEPrevActive();
 
     // Get mask preview from Locallab tools
-    int colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask;
+    int colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, maskMask;
 
     for (auto tool : locallabTools) {
-        tool->getMaskView(colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask);
+        tool->getMaskView(colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, maskMask);
     }
 
     // Indicate to spot control panel if one mask preview is active
     const bool isMaskActive = (colorMask == 0) || (colorMaskinv == 0) || (expMask == 0) || (expMaskinv == 0) ||
                               (shMask == 0) || (shMaskinv == 0) || (vibMask == 0) || (softMask == 0) ||
                               (blMask == 0) || (tmMask == 0) || (retiMask == 0) || (sharMask == 0) ||
-                              (lcMask == 0) || (cbMask == 0);
+                              (lcMask == 0) || (cbMask == 0) || (maskMask == 0);
     expsettings->setMaskPrevActive(isMaskActive);
 
-    return {prevDeltaE, colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask};
+    return {prevDeltaE, colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, maskMask};
 }
 
 void Locallab::resetshowPressed()
@@ -1097,6 +1129,9 @@ void Locallab::foldAllButOne(LocallabTool* except)
 
 void Locallab::openAllTools()
 {
+    // Set default visibility for settings panel sub-expanders
+    expsettings->setDefaultExpanderVisibility();
+
     for (auto tool : locallabTools) {
         tool->setExpanded(true);
 

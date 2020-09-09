@@ -26,6 +26,7 @@
 #include "../rtengine/dfmanager.h"
 #include "../rtengine/ffmanager.h"
 #include "../rtengine/improcfun.h"
+#include "../rtengine/perspectivecorrection.h"
 #include "../rtengine/procevents.h"
 #include "../rtengine/refreshmap.h"
 
@@ -280,6 +281,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     flatfield->setFFProvider(this);
     lensgeom->setLensGeomListener(this);
     rotate->setLensGeomListener(this);
+    perspective->setLensGeomListener(this);
     distortion->setLensGeomListener(this);
     crop->setCropPanelListener(this);
     icm->setICMPanelListener(this);
@@ -514,7 +516,7 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
     /*
      * Manage Locallab mask visibility:
      * - Mask preview is updated when choosing a mask preview method
-     * - Mask preview is also updated when modifying (to avoid hidding a potentially visible mask combobox):
+     * - Mask preview is also updated when modifying (to avoid hiding a potentially visible mask combobox):
      *   - Color&Light invers
      *   - Exposure inversex
      *   - Shadow Highlight inverssh
@@ -527,12 +529,12 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
         ipc->setLocallabMaskVisibility(maskStruc.previewDeltaE, maskStruc.colorMask, maskStruc.colorMaskinv, maskStruc.expMask, maskStruc.expMaskinv,
                 maskStruc.SHMask, maskStruc.SHMaskinv, maskStruc.vibMask, maskStruc.softMask,
                 maskStruc.blMask, maskStruc.tmMask, maskStruc.retiMask, maskStruc.sharMask,
-                maskStruc.lcMask, maskStruc.cbMask);
+                maskStruc.lcMask, maskStruc.cbMask, maskStruc.maskMask);
     } else if (event == rtengine::EvLocallabSpotCreated || event == rtengine::EvLocallabSpotSelectedWithMask ||
             event == rtengine::EvLocallabSpotDeleted || event == rtengine::Evlocallabshowreset ||
             event == rtengine::EvlocallabToolRemovedWithRefresh) {
         locallab->resetMaskVisibility();
-        ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
     ipc->endUpdateParams(changeFlags);    // starts the IPC processing
@@ -642,7 +644,7 @@ void ToolPanelCoordinator::profileChange(
 
     // Reset Locallab mask visibility
     locallab->resetMaskVisibility();
-    ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
     // start the IPC processing
     if (filterRawRefresh) {
@@ -727,6 +729,7 @@ void ToolPanelCoordinator::initImage(rtengine::StagedImageProcessor* ipc_, bool 
 
         icm->setRawMeta(raw, (const rtengine::FramesData*)pMetaData);
         lensProf->setRawMeta(raw, pMetaData);
+        perspective->setMetadata(pMetaData);
     }
 
 
@@ -976,6 +979,26 @@ void ToolPanelCoordinator::straightenRequested()
     }
 
     toolBar->setTool(TMStraighten);
+}
+
+void ToolPanelCoordinator::autoPerspRequested (bool corr_pitch, bool corr_yaw, double& rot, double& pitch, double& yaw)
+{
+    if (!(ipc && (corr_pitch || corr_yaw))) {
+        return;
+    }
+
+    rtengine::ImageSource *src = dynamic_cast<rtengine::ImageSource *>(ipc->getInitialImage());
+    if (!src) {
+        return;
+    }
+
+    rtengine::procparams::ProcParams params;
+    ipc->getParams(&params);
+
+    auto res = rtengine::PerspectiveCorrection::autocompute(src, corr_pitch, corr_yaw, &params, src->getMetaData());
+    rot = res.angle;
+    pitch = res.pitch;
+    yaw = res.yaw;
 }
 
 double ToolPanelCoordinator::autoDistorRequested()

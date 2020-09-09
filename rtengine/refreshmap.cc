@@ -690,7 +690,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // EvLocallabcontresid
     LUMINANCECURVE,   // Evlocallabnoiselumf0
     LUMINANCECURVE,   // Evlocallabnoiselumf2
-    LUMINANCECURVE,   // Evlocallabblurcbdl
+    0,   // Evlocallabblurcbdl
     LUMINANCECURVE,   // Evlocallabblendmaskcb
     LUMINANCECURVE,   // Evlocallabradmaskcb
     LUMINANCECURVE,   // Evlocallabchromaskcb
@@ -950,11 +950,39 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // Evlocallabsigmalc2
     LUMINANCECURVE,   // Evlocallabblwh
     LUMINANCECURVE,   // EvlocallabcomplexityWithRefresh
-    M_VOID,           // EvlocallabcomplexityWithoutRefresh
-    LUMINANCECURVE,    // EvLocallabSpotcolorscope
-    LUMINANCECURVE,    //EvlocallabshowmasktypMethod
-    LUMINANCECURVE   // Evlocallabshadmaskblsha
-
+    0,                // can be reused
+    LUMINANCECURVE,   // EvLocallabSpotcolorscope
+    LUMINANCECURVE,   // EvlocallabshowmasktypMethod
+    LUMINANCECURVE,   // Evlocallabshadmaskblsha
+    LUMINANCECURVE,   // EvLocenamask
+    LUMINANCECURVE,   // Evlocallabsensimask
+    LUMINANCECURVE,   // Evlocallabblendmask
+    LUMINANCECURVE,   // EvLocallabEna_Mask
+    LUMINANCECURVE,   // Evlocallabradmask
+    LUMINANCECURVE,   // Evlocallablapmask
+    LUMINANCECURVE,   // Evlocallabchromask
+    LUMINANCECURVE,   // Evlocallabgammask
+    LUMINANCECURVE,   // Evlocallabslopmask
+    LUMINANCECURVE,   // EvlocallabCCmask_shape
+    LUMINANCECURVE,   // EvlocallabLLmask_shape
+    LUMINANCECURVE,   // EvlocallabHHmask_shape
+    LUMINANCECURVE,   // EvLocallabtoolmask
+    LUMINANCECURVE,   // Evlocallabstrumaskmask
+    LUMINANCECURVE,   // EvlocallabHHhmask_shape
+    LUMINANCECURVE,   // EvLocallabfftmask
+    LUMINANCECURVE,   // Evlocallabblurmask
+    LUMINANCECURVE,   // Evlocallabcontmask
+    LUMINANCECURVE,   // Evlocallabshadmask
+    LUMINANCECURVE,   // EvlocallabLmask_shape
+    LUMINANCECURVE,   // EvlocallabLLmask_shapewav
+    LUMINANCECURVE,   // EvlocallabcsThresholdmask
+    LUMINANCECURVE,   // Evlocallabstr_mask
+    LUMINANCECURVE,   // Evlocallabang_mask
+    LUMINANCECURVE,   // Evlocallabsoftradiusmask
+    LUMINANCECURVE,   // Evlocallabblendmaskab
+    LUMINANCECURVE,   // EvLocallabSpotprevMethod
+    LUMINANCECURVE,   // Evlocallabactiv
+    LUMINANCECURVE,   // EvlocallabCHshape
 };
 
 

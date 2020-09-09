@@ -15,12 +15,14 @@ Development contributors, in last name alphabetical order:
   Maciek Dworak
   Michael Ezra
   Flössie
+  Rüdiger Franke
   Jean-Christophe Frisch
   Ilias Giarimis
   Alberto Griggio
   Steve Herrell
   Philippe Hupé
   Wolfgang Kuehnel
+  Lawrence Lee
   Guokai Ma
   Emil Martinec
   Wyatt Olson
@@ -64,6 +66,7 @@ Other contributors (profiles, ideas, mockups, testing, forum activity, translati
   Alberto Righetto
   Kostia (Kildor) Romanov
   Kalle Söderman
+  Wayne Sutton
   Johan Thor
   Vitalis Tiknius
   TooWaBoo

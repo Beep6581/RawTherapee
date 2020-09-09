@@ -45,9 +45,6 @@ public:
 
     Imagefloat* copy () const;
 
-    Image8* to8() const;
-    Image16* to16() const;
-
     void getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const override;
 
     const char* getType () const override
@@ -72,10 +69,6 @@ public:
     {
         return getEmbeddedProfile ();
     }
-    int getBitsPerPixel () const override
-    {
-        return 8 * sizeof(float);
-    }
     int saveToFile (const Glib::ustring &fname) const override
     {
         return save (fname);
@@ -96,10 +89,6 @@ public:
     {
         setProgressListener (pl);
     }
-    void free () override
-    {
-        delete this;
-    }
 
     inline uint16_t DNG_FloatToHalf(float f) const
     {
@@ -109,35 +98,35 @@ public:
         } tmp;
 
         tmp.f = f;
-        int32_t sign     =  (tmp.i >> 16) & 0x00008000;
+        const int32_t lsign = (tmp.i >> 16) & 0x00008000;
         int32_t exponent = ((tmp.i >> 23) & 0x000000ff) - (127 - 15);
-        int32_t mantissa =   tmp.i        & 0x007fffff;
+        int32_t mantissa = tmp.i & 0x007fffff;
         if (exponent <= 0) {
             if (exponent < -10) {
-                return (uint16_t)sign;
+                return (uint16_t)lsign;
             }
             mantissa = (mantissa | 0x00800000) >> (1 - exponent);
             if (mantissa &  0x00001000)
                 mantissa += 0x00002000;
-            return (uint16_t)(sign | (mantissa >> 13));
+            return (uint16_t)(lsign | (mantissa >> 13));
         } else if (exponent == 0xff - (127 - 15)) {
             if (mantissa == 0) {
-                return (uint16_t)(sign | 0x7c00);
+                return (uint16_t)(lsign | 0x7c00);
             } else {
-                return (uint16_t)(sign | 0x7c00 | (mantissa >> 13));
+                return (uint16_t)(lsign | 0x7c00 | (mantissa >> 13));
             }
         }
         if (mantissa & 0x00001000) {
             mantissa += 0x00002000;
             if (mantissa & 0x00800000) {
-                mantissa =  0;          // overflow in significand,
+                mantissa = 0;           // overflow in significand,
                 exponent += 1;          // adjust exponent
             }
         }
         if (exponent > 30) {
-            return (uint16_t)(sign | 0x7c00); // infinity with the same sign as f.
+            return (uint16_t)(lsign | 0x7c00); // infinity with the same sign as f.
         }
-        return (uint16_t)(sign | (exponent << 10) | (mantissa >> 13));
+        return (uint16_t)(lsign | (exponent << 10) | (mantissa >> 13));
     }
 
     // From DNG SDK dng_utils.h
@@ -148,13 +137,13 @@ public:
             uint32_t i;
         } tmp;
 
-        int32_t sign     = (halfValue >> 15) & 0x00000001;
+        const int32_t lsign = (halfValue >> 15) & 0x00000001;
         int32_t exponent = (halfValue >> 10) & 0x0000001f;
-        int32_t mantissa =  halfValue        & 0x000003ff;
+        int32_t mantissa = halfValue & 0x000003ff;
         if (exponent == 0) {
             if (mantissa == 0) {
                 // Plus or minus zero
-                tmp.i = (uint32_t) (sign << 31);
+                tmp.i = (uint32_t) (lsign << 31);
                 return tmp.f;
             } else {
                 // Denormalized number -- renormalize it
@@ -168,7 +157,7 @@ public:
         } else if (exponent == 31) {
             if (mantissa == 0) {
                 // Positive or negative infinity, convert to maximum (16 bit) values.
-                tmp.i = (uint32_t)((sign << 31) | ((0x1eL + 127 - 15) << 23) |  (0x3ffL << 13));
+                tmp.i = (uint32_t)((lsign << 31) | ((0x1eL + 127 - 15) << 23) | (0x3ffL << 13));
                 return tmp.f;
             } else {
                 // Nan -- Just set to zero.
@@ -179,32 +168,32 @@ public:
         exponent += (127 - 15);
         mantissa <<= 13;
         // Assemble sign, exponent and mantissa.
-        tmp.i = (uint32_t) ((sign << 31) | (exponent << 23) | mantissa);
+        tmp.i = (uint32_t) ((lsign << 31) | (exponent << 23) | mantissa);
         return tmp.f;
     }
 
     inline uint32_t      DNG_FP24ToFloat(const uint8_t * input)
     {
-        int32_t sign     = (input [0] >> 7) & 0x01;
-        int32_t exponent = (input [0]     ) & 0x7F;
-        int32_t mantissa = (((int32_t) input [1]) << 8) | input[2];
+        const int32_t lsign = (input[0] >> 7) & 0x01;
+        int32_t exponent = input[0] & 0x7F;
+        int32_t mantissa = (((int32_t) input[1]) << 8) | input[2];
         if (exponent == 0) {
             if (mantissa == 0) {
                 // Plus or minus zero
-                return (uint32_t) (sign << 31);
+                return (uint32_t) (lsign << 31);
             } else {
                 // Denormalized number -- renormalize it
                 while (!(mantissa & 0x00010000)) {
-                mantissa <<= 1;
-                exponent -=  1;
-            }
-            exponent += 1;
-            mantissa &= ~0x00010000;
+                    mantissa <<= 1;
+                    exponent -=  1;
+                }
+                exponent += 1;
+                mantissa &= ~0x00010000;
             }
         } else if (exponent == 127) {
             if (mantissa == 0) {
                 // Positive or negative infinity, convert to maximum (24 bit) values.
-                return (uint32_t) ((sign << 31) | ((0x7eL + 128 - 64) << 23) |  (0xffffL << 7));
+                return (uint32_t) ((lsign << 31) | ((0x7eL + 128 - 64) << 23) |  (0xffffL << 7));
             } else {
                 // Nan -- Just set to zero.
                 return 0;
@@ -214,13 +203,12 @@ public:
         exponent += (128 - 64);
         mantissa <<= 7;
         // Assemble sign, exponent and mantissa.
-        return (uint32_t) ((sign << 31) | (exponent << 23) | mantissa);
+        return (uint32_t) ((lsign << 31) | (exponent << 23) | mantissa);
     }
 
     void                 normalizeFloat(float srcMinVal, float srcMaxVal) override;
     void                 normalizeFloatTo1();
     void                 normalizeFloatTo65535();
-    void                 calcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist);
     void                 ExecCMSTransform(cmsHTRANSFORM hTransform);
     void                 ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy);
 };

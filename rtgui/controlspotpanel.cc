@@ -48,6 +48,7 @@ ControlSpotPanel::ControlSpotPanel():
     button_rename_(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_BUTTON_REN")))),
     button_visibility_(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_BUTTON_VIS")))),
 
+    prevMethod_(Gtk::manage(new MyComboBoxText())),
     shape_(Gtk::manage(new MyComboBoxText())),
     spotMethod_(Gtk::manage(new MyComboBoxText())),
     shapeMethod_(Gtk::manage(new MyComboBoxText())),
@@ -78,6 +79,7 @@ ControlSpotPanel::ControlSpotPanel():
     scopemask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCOPEMASK"), 0, 100, 1, 60))),
     lumask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LUMASK"), 0, 30, 1, 10))),
 
+    activ_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIVSPOT")))),
     avoid_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOID")))),
     blwh_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BLWH")))),
     recurs_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_RECURS")))),
@@ -86,7 +88,14 @@ ControlSpotPanel::ControlSpotPanel():
     shortc_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SHORTC")))),
     savrest_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SAVREST")))),
 
+    expTransGrad_(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_TRANSIT")))),
+    expShapeDetect_(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_ARTIF")))),
+    expSpecCases_(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SPECCASE")))),
+    expMaskMerge_(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_MASFRAME")))),
+
     preview_(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
+    ctboxshape(Gtk::manage(new Gtk::HBox())),
+    ctboxshapemethod(Gtk::manage(new Gtk::HBox())),
 
     controlPanelListener(nullptr),
     lastObject_(-1),
@@ -99,6 +108,18 @@ ControlSpotPanel::ControlSpotPanel():
     maskPrevActive(false)
 {
     const bool showtooltip = options.showtooltip;
+
+    Gtk::HBox* const ctboxprevmethod = Gtk::manage(new Gtk::HBox());
+    prevMethod_->append(M("TP_LOCALLAB_PREVHIDE"));
+    prevMethod_->append(M("TP_LOCALLAB_PREVSHOW"));
+    prevMethod_->set_active(0);
+    prevMethodconn_ = prevMethod_->signal_changed().connect(
+                          sigc::mem_fun(
+                              *this, &ControlSpotPanel::prevMethodChanged));
+    
+    ctboxprevmethod->pack_start(*prevMethod_);
+    pack_start(*ctboxprevmethod);
+
 
     Gtk::HBox* const hbox1_ = Gtk::manage(new Gtk::HBox(true, 4));
     buttonaddconn_ = button_add_->signal_clicked().connect(
@@ -171,7 +192,11 @@ ControlSpotPanel::ControlSpotPanel():
     scrolledwindow_->set_min_content_height(150);
     pack_start(*scrolledwindow_);
 
-    Gtk::HBox* const ctboxshape = Gtk::manage(new Gtk::HBox());
+    Gtk::HBox* const ctboxactivmethod = Gtk::manage(new Gtk::HBox());
+    ctboxactivmethod->pack_start(*activ_);
+    pack_start(*ctboxactivmethod);
+
+//    Gtk::HBox* const ctboxshape = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelshape = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SHAPETYPE") + ":"));
     ctboxshape->pack_start(*labelshape, Gtk::PACK_SHRINK, 4);
     shape_->append(M("TP_LOCALLAB_ELI"));
@@ -203,6 +228,7 @@ ControlSpotPanel::ControlSpotPanel():
     ctboxspotmethod->pack_start(*spotMethod_);
     pack_start(*ctboxspotmethod);
 
+
     excluFrame->set_label_align(0.025, 0.5);
 
     if (showtooltip) {
@@ -217,12 +243,15 @@ ControlSpotPanel::ControlSpotPanel():
 
     sensiexclu_->setAdjusterListener(this);
     structexclu_->setAdjusterListener(this);
+    structexclu_->setLogScale(10, 0);
+    
     excluBox->pack_start(*sensiexclu_);
     excluBox->pack_start(*structexclu_);
     excluFrame->add(*excluBox);
     pack_start(*excluFrame);
 
-    Gtk::HBox* const ctboxshapemethod = Gtk::manage(new Gtk::HBox());
+
+//    Gtk::HBox* const ctboxshapemethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelshapemethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_STYPE") + ":"));
     ctboxshapemethod->pack_start(*labelshapemethod, Gtk::PACK_SHRINK, 4);
 
@@ -281,34 +310,18 @@ ControlSpotPanel::ControlSpotPanel():
                              sigc::mem_fun(
                                  *this, &ControlSpotPanel::qualityMethodChanged));
     ctboxqualitymethod->pack_start(*qualityMethod_);
-//    pack_start(*ctboxqualitymethod);
-
-    Gtk::Frame* const transitFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TRANSIT")));
-    transitFrame->set_label_align(0.025, 0.5);
 
     if (showtooltip) {
-        transitFrame->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
+        expTransGrad_->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
     }
 
     ToolParamBlock* const transitBox = Gtk::manage(new ToolParamBlock());
 
     if (showtooltip) {
         transit_->set_tooltip_text(M("TP_LOCALLAB_TRANSIT_TOOLTIP"));
-    }
-
-    if (showtooltip) {
         transitweak_->set_tooltip_text(M("TP_LOCALLAB_TRANSITWEAK_TOOLTIP"));
-    }
-
-    if (showtooltip) {
         feather_->set_tooltip_text(M("TP_LOCALLAB_FEATH_TOOLTIP"));
-    }
-
-    if (showtooltip) {
         transitgrad_->set_tooltip_text(M("TP_LOCALLAB_TRANSITGRAD_TOOLTIP"));
-    }
-
-    if (showtooltip) {
         scopemask_->set_tooltip_text(M("TP_LOCALLAB_SCOPEMASK_TOOLTIP"));
     }
 
@@ -321,14 +334,11 @@ ControlSpotPanel::ControlSpotPanel():
     transitBox->pack_start(*transitweak_);
     transitBox->pack_start(*transitgrad_);
     transitBox->pack_start(*feather_);
-    transitFrame->add(*transitBox);
-    pack_start(*transitFrame);
-
-    Gtk::Frame* const artifFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_ARTIF")));
-    artifFrame->set_label_align(0.025, 0.5);
+    expTransGrad_->add(*transitBox, false);
+    pack_start(*expTransGrad_, false, false);
 
     if (showtooltip) {
-        artifFrame->set_tooltip_text(M("TP_LOCALLAB_ARTIF_TOOLTIP"));
+        expShapeDetect_->set_tooltip_text(M("TP_LOCALLAB_ARTIF_TOOLTIP"));
     }
 
     ToolParamBlock* const artifBox = Gtk::manage(new ToolParamBlock());
@@ -359,14 +369,23 @@ ControlSpotPanel::ControlSpotPanel():
     artifBox->pack_start(*balan_);
     artifBox->pack_start(*balanh_);
     artifBox->pack_start(*colorde_);
-    artifBox->pack_start(*preview_);
-    artifBox->pack_start(*colorscope_);
-    artifFrame->add(*artifBox);
-    pack_start(*artifFrame);
+//    artifBox->pack_start(*preview_);
+//    artifBox->pack_start(*colorscope_);
+    expShapeDetect_->add(*artifBox, false);
+    pack_start(*expShapeDetect_, false, false);
+    ToolParamBlock* const artifBox2 = Gtk::manage(new ToolParamBlock());
+    
+    artifBox2->pack_start(*preview_);
+    artifBox2->pack_start(*colorscope_);
+    pack_start(*artifBox2);
+    ToolParamBlock* const specCaseBox = Gtk::manage(new ToolParamBlock());
+
+    activConn_  = activ_->signal_toggled().connect(
+                     sigc::mem_fun(*this, &ControlSpotPanel::activChanged));
 
     avoidConn_  = avoid_->signal_toggled().connect(
                       sigc::mem_fun(*this, &ControlSpotPanel::avoidChanged));
-    pack_start(*avoid_);
+    specCaseBox->pack_start(*avoid_);
 
     blwhConn_  = blwh_->signal_toggled().connect(
                      sigc::mem_fun(*this, &ControlSpotPanel::blwhChanged));
@@ -375,7 +394,7 @@ ControlSpotPanel::ControlSpotPanel():
         blwh_->set_tooltip_text(M("TP_LOCALLAB_BLWH_TOOLTIP"));
     }
 
-    pack_start(*blwh_);
+    specCaseBox->pack_start(*blwh_);
 
     recursConn_  = recurs_->signal_toggled().connect(
                        sigc::mem_fun(*this, &ControlSpotPanel::recursChanged));
@@ -385,13 +404,35 @@ ControlSpotPanel::ControlSpotPanel():
         avoid_->set_tooltip_text(M("TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP"));
     }
 
-    pack_start(*recurs_);
+    specCaseBox->pack_start(*recurs_);
+    specCaseBox->pack_start(*ctboxshapemethod);
 
-    Gtk::Frame* const maskFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MASFRAME")));
-    maskFrame->set_label_align(0.025, 0.5);
+    Gtk::HBox* const ctboxwavmethod = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const labelwavmethod = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DAUBLOCAL") + ":"));
+    ctboxwavmethod->pack_start(*labelwavmethod, Gtk::PACK_SHRINK, 4);
 
     if (showtooltip) {
-        maskFrame->set_tooltip_text(M("TP_LOCALLAB_MASFRAME_TOOLTIP"));
+        ctboxwavmethod->set_tooltip_markup(M("TP_WAVELET_DAUB_TOOLTIP"));
+    }
+
+    wavMethod_->append(M("TP_WAVELET_DAUB2"));
+    wavMethod_->append(M("TP_WAVELET_DAUB4"));
+    wavMethod_->append(M("TP_WAVELET_DAUB6"));
+    wavMethod_->append(M("TP_WAVELET_DAUB10"));
+    wavMethod_->append(M("TP_WAVELET_DAUB14"));
+    wavMethod_->set_active(1);
+    wavMethodconn_ = wavMethod_->signal_changed().connect(
+                         sigc::mem_fun(
+                             *this, &ControlSpotPanel::wavMethodChanged));
+    ctboxwavmethod->pack_start(*wavMethod_);
+    specCaseBox->pack_start(*ctboxwavmethod);
+
+    
+    expSpecCases_->add(*specCaseBox, false);
+    pack_start(*expSpecCases_, false, false);
+
+    if (showtooltip) {
+        expMaskMerge_->set_tooltip_text(M("TP_LOCALLAB_MASFRAME_TOOLTIP"));
     }
 
     ToolParamBlock* const maskBox = Gtk::manage(new ToolParamBlock());
@@ -416,14 +457,14 @@ ControlSpotPanel::ControlSpotPanel():
         laplac_->set_tooltip_text(M("TP_LOCALLAB_LAP_MASK_TOOLTIP"));
     }
 
-    maskBox->pack_start(*laplac_);
+//    maskBox->pack_start(*laplac_);
     maskBox->pack_start(*deltae_);
     maskBox->pack_start(*scopemask_);
     // maskBox->pack_start(*shortc_);
     maskBox->pack_start(*lumask_);
     // maskBox->pack_start(*savrest_);
-    maskFrame->add(*maskBox);
-    pack_start(*maskFrame);
+    expMaskMerge_->add(*maskBox, false);
+    pack_start(*expMaskMerge_, false, false);
 
     Gtk::HSeparator *separatormet = Gtk::manage(new  Gtk::HSeparator());
     pack_start(*separatormet, Gtk::PACK_SHRINK, 2);
@@ -450,7 +491,7 @@ ControlSpotPanel::ControlSpotPanel():
                                  *this, &ControlSpotPanel::complexMethodChanged));
     ctboxcomplexmethod->pack_start(*complexMethod_);
     // pack_start(*ctboxcomplexmethod);
-
+/*
     Gtk::HBox* const ctboxwavmethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelwavmethod = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DAUBLOCAL") + ":"));
     ctboxwavmethod->pack_start(*labelwavmethod, Gtk::PACK_SHRINK, 4);
@@ -470,7 +511,7 @@ ControlSpotPanel::ControlSpotPanel():
                              *this, &ControlSpotPanel::wavMethodChanged));
     ctboxwavmethod->pack_start(*wavMethod_);
     pack_start(*ctboxwavmethod);
-
+*/
     show_all();
 
     // Define row background color
@@ -723,7 +764,7 @@ bool ControlSpotPanel::blockTreeviewSearch(GdkEventKey* event)
         }
     }
 
-    // Otherwise key action is transfered to treeview widget
+    // Otherwise key action is transferred to treeview widget
     return false;
 }
 
@@ -734,7 +775,7 @@ bool ControlSpotPanel::onSpotSelectionEvent(GdkEventButton* event)
         return true;
     }
 
-    // Otherwise selection action is transfered to treeview widget
+    // Otherwise selection action is transferred to treeview widget
     return false;
 }
 
@@ -753,6 +794,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     const Gtk::TreeModel::Row row = *iter;
 
     // Load param in selected control spot
+    prevMethod_->set_active(row[spots_.prevMethod]);
     shape_->set_active(row[spots_.shape]);
     spotMethod_->set_active(row[spots_.spotMethod]);
     sensiexclu_->setValue((double)row[spots_.sensiexclu]);
@@ -777,10 +819,12 @@ void ControlSpotPanel::load_ControlSpot_param()
     balanh_->setValue((double)row[spots_.balanh]);
     colorde_->setValue((double)row[spots_.colorde]);
     colorscope_->setValue((double)row[spots_.colorscope]);
+    activ_->set_active(row[spots_.activ]);
     avoid_->set_active(row[spots_.avoid]);
     blwh_->set_active(row[spots_.blwh]);
     recurs_->set_active(row[spots_.recurs]);
-    laplac_->set_active(row[spots_.laplac]);
+   // laplac_->set_active(row[spots_.laplac]);
+    laplac_->set_active(true);
     deltae_->set_active(row[spots_.deltae]);
     scopemask_->setValue((double)row[spots_.scopemask]);
     shortc_->set_active(row[spots_.shortc]);
@@ -839,6 +883,56 @@ void ControlSpotPanel::shapeChanged()
         listener->panelChanged(EvLocallabSpotShape, shape_->get_active_text());
     }
 }
+
+void ControlSpotPanel::prevMethodChanged()
+{
+    // printf("prevMethodChanged\n");
+
+    // Get selected control spot
+    const auto s = treeview_->get_selection();
+
+    if (!s->count_selected_rows()) {
+        return;
+    }
+
+    const auto iter = s->get_selected();
+    Gtk::TreeModel::Row row = *iter;
+
+    row[spots_.prevMethod] = prevMethod_->get_active_row_number();
+
+    // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with updateParamVisibility function)
+    if (multiImage && prevMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
+        expTransGrad_->show();
+        expShapeDetect_->show();
+        expSpecCases_->show();
+        expMaskMerge_->show();
+        circrad_->show();
+        ctboxshape->show();
+    } else if (prevMethod_->get_active_row_number() == 0) { // Normal case
+        expTransGrad_->hide();
+        expShapeDetect_->hide();
+        expSpecCases_->hide();
+        expMaskMerge_->hide();
+        circrad_->hide();
+        ctboxshape->hide();
+        shapeMethod_->set_active(0);
+
+    } else { // Excluding case
+        expTransGrad_->show();
+        expShapeDetect_->show();
+        expSpecCases_->show();
+        expMaskMerge_->show();
+        circrad_->show();
+        ctboxshape->show();
+    }
+
+    // Raise event
+    if (listener) {
+        listener->panelChanged(EvLocallabSpotprevMethod, prevMethod_->get_active_text());
+    }
+}
+
+
 
 void ControlSpotPanel::spotMethodChanged()
 {
@@ -1084,6 +1178,32 @@ void ControlSpotPanel::updateParamVisibility()
     } else { // Excluding case
         excluFrame->show();
     }
+
+
+    if (multiImage && prevMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
+        expTransGrad_->show();
+        expShapeDetect_->show();
+        expSpecCases_->show();
+        expMaskMerge_->show();
+        circrad_->show();
+        ctboxshape->show();
+    } else if (prevMethod_->get_active_row_number() == 0) { // Normal case
+        expTransGrad_->hide();
+        expShapeDetect_->hide();
+        expSpecCases_->hide();
+        expMaskMerge_->hide();
+        circrad_->hide();
+        ctboxshape->hide();
+    } else { // Excluding case
+        expTransGrad_->show();
+        expShapeDetect_->show();
+        expSpecCases_->show();
+        expMaskMerge_->show();
+        circrad_->show();
+        ctboxshape->show();
+    }
+
+    
 }
 
 void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
@@ -1312,6 +1432,9 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
+
+
+
 void ControlSpotPanel::avoidChanged()
 {
     // printf("avoidChanged\n");
@@ -1336,6 +1459,32 @@ void ControlSpotPanel::avoidChanged()
         }
     }
 }
+
+void ControlSpotPanel::activChanged()
+{
+    // printf("activChanged\n");
+
+    // Get selected control spot
+    const auto s = treeview_->get_selection();
+
+    if (!s->count_selected_rows()) {
+        return;
+    }
+
+    const auto iter = s->get_selected();
+    Gtk::TreeModel::Row row = *iter;
+    row[spots_.activ] = activ_->get_active();
+
+    // Raise event
+    if (listener) {
+        if (activ_->get_active()) {
+            listener->panelChanged(Evlocallabactiv, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(Evlocallabactiv, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
 
 void ControlSpotPanel::blwhChanged()
 {
@@ -1503,6 +1652,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     buttonduplicateconn_.block(cond);
     buttonrenameconn_.block(cond);
     buttonvisibilityconn_.block(cond);
+    prevMethodconn_.block(cond);
     shapeconn_.block(cond);
     spotMethodconn_.block(cond);
     sensiexclu_->block(cond);
@@ -1527,6 +1677,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     balanh_->block(cond);
     colorde_->block(cond);
     colorscope_->block(cond);
+    activConn_.block(cond);
     avoidConn_.block(cond);
     blwhConn_.block(cond);
     recursConn_.block(cond);
@@ -1544,6 +1695,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
 {
     // printf("setParamEditable: %d\n", cond);
 
+    prevMethod_->set_sensitive(cond);
     shape_->set_sensitive(cond);
     spotMethod_->set_sensitive(cond);
     sensiexclu_->set_sensitive(cond);
@@ -1568,6 +1720,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     balanh_->set_sensitive(cond);
     colorde_->set_sensitive(cond);
     colorscope_->set_sensitive(cond);
+    activ_->set_sensitive(cond);
     avoid_->set_sensitive(cond);
     blwh_->set_sensitive(cond);
     recurs_->set_sensitive(cond);
@@ -1579,6 +1732,33 @@ void ControlSpotPanel::setParamEditable(bool cond)
     savrest_->set_sensitive(cond);
     complexMethod_->set_sensitive(cond);
     wavMethod_->set_sensitive(cond);
+    preview_->set_sensitive(cond);
+
+    if (!cond) {
+        // Reset complex parameters visibility to default state
+        expTransGrad_->hide();
+        expShapeDetect_->hide();
+        expSpecCases_->hide();
+        expMaskMerge_->hide();
+        circrad_->hide();
+        ctboxshape->hide();
+        excluFrame->hide();
+//        ctboxshapemethod->hide();
+        locX_->hide();
+        locXL_->hide();
+        locY_->hide();
+        locYT_->hide();
+        centerX_->hide();
+        centerY_->hide();
+    }
+}
+
+void ControlSpotPanel::setDefaultExpanderVisibility()
+{
+    expTransGrad_->set_expanded(false);
+    expShapeDetect_->set_expanded(false);
+    expSpecCases_->set_expanded(false);
+    expMaskMerge_->set_expanded(false);
 }
 
 void ControlSpotPanel::addControlSpotCurve(Gtk::TreeModel::Row& row)
@@ -2192,6 +2372,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int index)
         if (i == index) {
             r->name = row[spots_.name];
             r->isvisible = row[spots_.isvisible];
+            r->prevMethod = row[spots_.prevMethod];
             r->shape = row[spots_.shape];
             r->spotMethod = row[spots_.spotMethod];
 //           r->mergeMethod = row[spots_.mergeMethod];
@@ -2220,6 +2401,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int index)
             r->transitgrad = row[spots_.transitgrad];
             r->scopemask = row[spots_.scopemask];
             r->lumask = row[spots_.lumask];
+            r->activ = row[spots_.activ];
             r->avoid = row[spots_.avoid];
             r->blwh = row[spots_.blwh];
             r->recurs = row[spots_.recurs];
@@ -2324,6 +2506,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.name] = newSpot->name;
     row[spots_.isvisible] = newSpot->isvisible;
     row[spots_.curveid] = 0; // No associated curve
+    row[spots_.prevMethod] = newSpot->prevMethod;
     row[spots_.shape] = newSpot->shape;
     row[spots_.spotMethod] = newSpot->spotMethod;
     row[spots_.sensiexclu] = newSpot->sensiexclu;
@@ -2348,6 +2531,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.balanh] = newSpot->balanh;
     row[spots_.colorde] = newSpot->colorde;
     row[spots_.colorscope] = newSpot->colorscope;
+    row[spots_.activ] = newSpot->activ;
     row[spots_.avoid] = newSpot->avoid;
     row[spots_.blwh] = newSpot->blwh;
     row[spots_.recurs] = newSpot->recurs;
@@ -2436,6 +2620,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(name);
     add(isvisible);
     add(curveid);
+    add(prevMethod);
     add(shape);
     add(spotMethod);
     add(sensiexclu);
@@ -2460,6 +2645,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(balanh);
     add(colorde);
     add(colorscope);
+    add(activ);
     add(avoid);
     add(blwh);
     add(recurs);

@@ -32,7 +32,22 @@ using namespace rtengine;
 //
 //
 // HistogramPanel
-HistogramPanel::HistogramPanel ()
+HistogramPanel::HistogramPanel() :
+    pointer_moved_delayed_call(
+        [this](bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int r, int g, int b)
+        {
+            if (!validPos) {
+                // do something to un-show vertical bars
+                histogramRGBArea->updateBackBuffer(-1, -1, -1);
+            } else {
+                // do something to show vertical bars
+                histogramRGBArea->updateBackBuffer(r, g, b, profile, profileW);
+            }
+            histogramRGBArea->queue_draw ();
+        },
+        50,
+        100
+    )
 {
     setExpandAlignProperties(this, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     set_name("HistogramPanel");
@@ -192,6 +207,8 @@ HistogramPanel::HistogramPanel ()
 
 HistogramPanel::~HistogramPanel ()
 {
+    pointer_moved_delayed_call.cancel();
+
     delete redImage;
     delete greenImage;
     delete blueImage;
@@ -311,15 +328,7 @@ void HistogramPanel::setHistRGBInvalid ()
 
 void HistogramPanel::pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw)
 {
-
-    if (!validPos) {
-        // do something to un-show vertical bars
-        histogramRGBArea->updateBackBuffer(-1, -1, -1);
-    } else {
-        // do something to show vertical bars
-        histogramRGBArea->updateBackBuffer(r, g, b, profile, profileW);
-    }
-    histogramRGBArea->queue_draw ();
+    pointer_moved_delayed_call(validPos, profile, profileW, r, g, b);
 }
 
 /*
@@ -372,7 +381,6 @@ HistogramRGBArea::HistogramRGBArea () :
     needLuma(options.histogramLuma), needChroma(options.histogramChroma), rawMode(options.histogramRAW),
     showMode(options.histogramBar), barDisplayed(options.histogramBar), parent(nullptr)
 {
-
     get_style_context()->add_class("drawingarea");
     set_name("HistogramRGBArea");
 
@@ -471,16 +479,17 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
         cc->set_line_width (1.0 * s);
 
         if ( r != -1 && g != -1 && b != -1 ) {
+            double xpos;
             if (needRed) {
                 // Red
                 cc->set_source_rgb(1.0, 0.0, 0.0);
                 if (options.histogramDrawMode < 2) {
-                    cc->move_to(r * (winw - 1.) / 255.0 + 0.5*s, 0); // Rescaling seems needed to fit between boundaries of draw area
-                    cc->line_to(r * (winw - 1.) / 255.0 + 0.5*s, winh - 0);
+                    xpos = padding + r * (winw - padding * 2.0) / 255.0 + 0.5*s;
                 } else {
-                    cc->move_to(HistogramScaling::log (255, r) * (winw - 1.*s) / 255.0 + 0.5*s, 0);
-                    cc->line_to(HistogramScaling::log (255, r) * (winw - 1.*s) / 255.0 + 0.5*s, winh - 0);
+                    xpos = padding + HistogramScaling::log (255, r) * (winw - padding * 2.0) / 255.0 + 0.5*s;
                 }
+                cc->move_to(xpos, 0.0);
+                cc->line_to(xpos, winh - 0.0);
                 cc->stroke();
             }
 
@@ -488,12 +497,12 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
                 // Green
                 cc->set_source_rgb(0.0, 1.0, 0.0);
                 if (options.histogramDrawMode < 2) {
-                    cc->move_to(g * (winw - 1.) / 255.0 + 0.5*s, 0);
-                    cc->line_to(g * (winw - 1.) / 255.0 + 0.5*s, winh - 0);
+                    xpos = padding + g * (winw - padding * 2.0) / 255.0 + 0.5*s;
                 } else {
-                    cc->move_to(HistogramScaling::log (255, g) * (winw - 1.) / 255.0 + 0.5*s, 0);
-                    cc->line_to(HistogramScaling::log (255, g) * (winw - 1.) / 255.0 + 0.5*s, winh - 0);
+                    xpos = padding + HistogramScaling::log (255, g) * (winw - padding * 2.0) / 255.0 + 0.5*s;
                 }
+                cc->move_to(xpos, 0.0);
+                cc->line_to(xpos, winh - 0.0);
                 cc->stroke();
             }
 
@@ -501,12 +510,12 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
                 // Blue
                 cc->set_source_rgb(0.0, 0.4, 1.0);
                 if (options.histogramDrawMode < 2) {
-                    cc->move_to(b * (winw - 1.) / 255.0 + 0.5*s, 0);
-                    cc->line_to(b * (winw - 1.) / 255.0 + 0.5*s, winh - 0);
+                    xpos = padding + b * (winw - padding * 2.0) / 255.0 + 0.5*s;
                 } else {
-                    cc->move_to(HistogramScaling::log (255, b) * (winw - 1.) / 255.0 + 0.5*s, 0);
-                    cc->line_to(HistogramScaling::log (255, b) * (winw - 1.) / 255.0 + 0.5*s, winh - 0);
+                    xpos = padding + HistogramScaling::log (255, b) * (winw - padding * 2.0) / 255.0 + 0.5*s;
                 }
+                cc->move_to(xpos, 0.0);
+                cc->line_to(xpos, winh - 0.0);
                 cc->stroke();
             }
 
@@ -518,27 +527,26 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
                     // Luma
                     cc->set_source_rgb(1.0, 1.0, 1.0);
                     if (options.histogramDrawMode < 2) {
-                        cc->move_to(static_cast<double>(Lab_L) * (winw - 3. * s) / 100.0 + 0.5 * s, 0);
-                        cc->line_to(static_cast<double>(Lab_L) * (winw - 3. * s) / 100.0 + 0.5 * s, winh - 0);
+                        xpos = padding + static_cast<double>(Lab_L) * (winw - padding * 2.0) / 100.0 + 0.5*s;
                     } else {
-                        cc->move_to(HistogramScaling::log(100, Lab_L) * (winw - 1.) / 100.0 + 0.5 * s, 0);
-                        cc->line_to(HistogramScaling::log(100, Lab_L) * (winw - 1.) / 100.0 + 0.5 * s, winh - 0);
+                        xpos = padding + HistogramScaling::log(100, Lab_L) * (winw - padding * 2.0) / 100.0 + 0.5*s;
                     }
+                    cc->move_to(xpos, 0.0);
+                    cc->line_to(xpos, winh - 0.0);
                     cc->stroke();
                 }
 
                 if (needChroma) {
                     // Chroma
                     double chromaval = sqrt(Lab_a * Lab_a + Lab_b * Lab_b) / 1.8;
-                    //  float chromaval = sqrt(Lab_a*Lab_a + Lab_b*Lab_b);
                     cc->set_source_rgb(0.9, 0.9, 0.0);
                     if (options.histogramDrawMode < 2) {
-                        cc->move_to(chromaval * (winw - 1.) / 100.0 + 0.5 * s, 0);
-                        cc->line_to(chromaval * (winw - 1.) / 100.0 + 0.5 * s, winh - 0);
+                        xpos = padding + chromaval * (winw - padding * 2.0) / 100.0 + 0.5*s;
                     } else {
-                        cc->move_to(HistogramScaling::log(100, chromaval) * (winw - 1.) / 100.0 + 0.5 * s, 0);
-                        cc->line_to(HistogramScaling::log(100, chromaval) * (winw - 1.) / 100.0 + 0.5 * s, winh - 0);
+                        xpos = padding + HistogramScaling::log(100, chromaval) * (winw - padding * 2.0) / 100.0 + 0.5*s;
                     }
+                    cc->move_to(xpos, 0.0);
+                    cc->line_to(xpos, winh - 0.0);
                     cc->stroke();
                 }
             }
@@ -826,31 +834,29 @@ void HistogramArea::updateBackBuffer ()
     int nrOfVGridPartitions = 8; // always show 8 stops (lines at 1,3,7,15,31,63,127)
 
     // draw vertical gridlines
-    if (options.histogramDrawMode < 2) {
-        for (int i = 1; i < nrOfVGridPartitions; i++) {
-            cr->move_to ((pow(2.0,i) - 1) / 255.0 * w + 0.5, 0.);
-            cr->line_to ((pow(2.0,i) - 1) / 255.0 * w + 0.5, h);
-            cr->stroke ();
+    for (int i = 0; i <= nrOfVGridPartitions; i++) {
+        double xpos = padding + 0.5;
+        if (options.histogramDrawMode < 2) {
+            xpos += (pow(2.0,i) - 1) * (w - padding * 2.0) / 255.0;
+        } else {
+            xpos += HistogramScaling::log (255, pow(2.0,i) - 1) * (w - padding * 2.0) / 255.0;
         }
-    } else {
-        for (int i = 1; i < nrOfVGridPartitions; i++) {
-            cr->move_to (HistogramScaling::log (255, pow(2.0,i) - 1) / 255.0 * w + 0.5, 0.);
-            cr->line_to (HistogramScaling::log (255, pow(2.0,i) - 1) / 255.0 * w + 0.5, h);
-            cr->stroke ();
-        }
+        cr->move_to (xpos, 0.);
+        cr->line_to (xpos, h);
+        cr->stroke ();
     }
 
     // draw horizontal gridlines
     if (options.histogramDrawMode == 0) {
-        for (int i = 1; i < nrOfHGridPartitions; i++) {
-            cr->move_to (0., i * (double)h / nrOfHGridPartitions + 0.5);
-            cr->line_to (w, i * (double)h / nrOfHGridPartitions + 0.5);
+        for (int i = 1; i < nrOfHGridPartitions; i++) {            
+            cr->move_to (padding, i * (double)h / nrOfHGridPartitions + 0.5);
+            cr->line_to (w - padding, i * (double)h / nrOfHGridPartitions + 0.5);
             cr->stroke ();
         }
     } else {
         for (int i = 1; i < nrOfHGridPartitions; i++) {
-            cr->move_to (0., h - HistogramScaling::log (h, i * (double)h / nrOfHGridPartitions) + 0.5*s);
-            cr->line_to (w, h - HistogramScaling::log (h, i * (double)h / nrOfHGridPartitions) + 0.5*s);
+            cr->move_to (padding, h - HistogramScaling::log (h, i * (double)h / nrOfHGridPartitions) + 0.5);
+            cr->line_to (w - padding, h - HistogramScaling::log (h, i * (double)h / nrOfHGridPartitions) + 0.5);
             cr->stroke ();
         }
     }
@@ -988,7 +994,7 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
     double s = RTScalable::getScale();
 
     cr->set_line_width(s);
-    cr->move_to (0, vsize - 1);
+    cr->move_to (padding, vsize - 1);
     scale = scale <= 0.0 ? 0.001 : scale; // avoid division by zero and negative values
 
     for (int i = 0; i < 256; i++) {
@@ -1003,13 +1009,13 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
             iscaled = HistogramScaling::log (255.0, (double)i);
         }
 
-        double posX = (iscaled / 255.0) * (hsize - 1);
+        double posX = padding + iscaled * (hsize - padding * 2.0) / 255.0;
         double posY = vsize - 2 + val * (4 - vsize) / vsize;
 
         cr->line_to (posX, posY);
     }
 
-    cr->line_to (hsize - 1, vsize - 1);
+    cr->line_to (hsize - padding, vsize - 1);
 }
 
 void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
@@ -1018,11 +1024,11 @@ void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
     int s = 8 * RTScalable::getScale();
 
     if(data[0] > scale) {
-        cr->rectangle(0, (ui++)*s, s, s);
+        cr->rectangle(padding, (ui++)*s, s, s);
     }
 
     if(data[255] > scale) {
-        cr->rectangle(hsize - s, (oi++)*s, s, s);
+        cr->rectangle(hsize - s - padding, (oi++)*s, s, s);
     }
 
     cr->fill();

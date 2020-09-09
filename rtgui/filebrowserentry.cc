@@ -230,7 +230,7 @@ void FileBrowserEntry::updateImage(rtengine::IImage8* img, double scale, const r
                     --feih->pending;
                 }
 
-                img->free();
+                delete img;
                 return false;
             }
 
@@ -276,7 +276,7 @@ void FileBrowserEntry::_updateImage(rtengine::IImage8* img, double s, const rten
 
     landscape = newLandscape;
 
-    img->free();
+    delete img;
 
     if (parent) {
         if (rotated) {

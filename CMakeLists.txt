@@ -45,7 +45,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION
 endif()
 
 # Warning for GCC 10, which causes problems #5749:
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "10.0")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "10.1")
     message(STATUS "WARNING: gcc ${CMAKE_CXX_COMPILER_VERSION} is known to miscompile RawTherapee when using -ftree-loop-vectorize, forcing the option to be off")    
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-tree-loop-vectorize")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-tree-loop-vectorize")
@@ -493,7 +493,11 @@ endif()
 
 # Check for libcanberra-gtk3 (sound events on Linux):
 if(UNIX AND (NOT APPLE))
-    pkg_check_modules(CANBERRA-GTK REQUIRED libcanberra-gtk3)
+    option(USE_LIBCANBERRA "Build with libcanberra" ON)
+    if(USE_LIBCANBERRA)
+       pkg_check_modules(CANBERRA-GTK REQUIRED libcanberra-gtk3)
+       add_definitions(-DUSE_CANBERRA)
+    endif()
 endif()
 
 if(WITH_MYFILE_MMAP)
@@ -637,14 +641,8 @@ else()
 endif()
 
 # Get compiler name and version.
-    get_filename_component(COMPILER_INFO ${CMAKE_C_COMPILER} NAME_WE)
-    set(COMPILER_INFO "${COMPILER_INFO} ${CMAKE_C_COMPILER_VERSION}")
-if(NOT APPLE)
-    execute_process(
-        COMMAND gcc -dumpversion
-        OUTPUT_VARIABLE GCC_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
-    set(COMPILER_INFO "gcc ${GCC_VERSION}")
-endif()
+get_filename_component(COMPILER_INFO ${CMAKE_C_COMPILER} NAME_WE)
+set(COMPILER_INFO "${COMPILER_INFO} ${CMAKE_C_COMPILER_VERSION}")
 
 # Get C++ and linker flags for rtengine (the GUI's C++ flags may have fewer
 # flags):

@@ -53,7 +53,7 @@ void ImProcFunctions::localContrast(LabImage *lab, float **destination, const rt
         gaussianBlur(lab->L, buf, width, height, sigma);
     } else {
         float kr = 1.f;
-        //emprical adjustement between FFTW radius and Gaussainblur
+        //emprical adjustment between FFTW radius and Gaussainblur
         //under 50 ==> 10.f
         //above 400 ==> 1.f
         if(settings->fftwsigma == false) {//empirical formula

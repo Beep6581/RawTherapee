@@ -430,6 +430,7 @@ Camera constants:
 
     { // Quality B, some intermediate ISO samples missing, LENR samples missing so White Levels not properly indicated, some aperture scaling missing
         "make_model": "Canon EOS 5D Mark IV",
+        "global_green_equilibration" : true,
         "dcraw_matrix": [ 6446,-366,-864,-4436,12204,2513,-952,2496,6348 ], // DNG_V9.7 D65
         "raw_crop": [ 136, 42, 6740, 4500 ], // full size 6880x4544, official crop 148,54,6867,4533
         "masked_areas": [ 54, 4, 4534, 132 ],
@@ -1343,11 +1344,19 @@ Camera constants:
     },
 
     { // Quality B
-        "make_model": [ "FUJIFILM X-T1", "FUJIFILM X-T10", "FUJIFILM X-E2" ],
+        "make_model": [ "FUJIFILM X-T10", "FUJIFILM X-E2" ],
         "dcraw_matrix": [ 8458,-2451,-855,-4597,12447,2407,-1475,2482,6526 ], // DNG D65
         //"dcraw_matrix": [ 9289,-3279,-632,-3539,11137,2758,-1049,1950,6544 ], // X-RITE D55
-        //"raw_crop": [ 4, 0, 4936, 3296 ], // full raw 4992,3296, fuji official 4936,3296 - experimental crop
+        //"raw_crop": [ 4, 0, 4936, 3296 ], // full raw 4992,3296, fuji official 4936,3296
         "ranges": { "white": 16100 }
+    },
+    
+    { // Quality B, samples provided by Claes
+        "make_model": "FUJIFILM X-T1",
+        "dcraw_matrix": [ 8458,-2451,-855,-4597,12447,2407,-1475,2482,6526 ], // DNG D65
+        "raw_crop": [ 4, 0, 4936, 3296 ], // full raw 4992,3296, fuji official 4936,3296
+        "ranges": { "white": [ 16202, 16277, 16232 ] } // LENR on from ISO4000+ negligibly underestimates white level
+        // No aperture scaling data provided, but likely negligible
     },
 
     { // Quality C
@@ -1369,16 +1378,40 @@ Camera constants:
     },
 
     { // Quality B
-        "make_model": [ "FUJIFILM X-T2", "FUJIFILM X-T20", "FUJIFILM X-E3", "FUJIFILM X100F", "FUJIFILM X-PRO2", "FUJIFILM X-H1" ],
+        "make_model": [ "FUJIFILM X-T20", "FUJIFILM X-E3", "FUJIFILM X100F", "FUJIFILM X-H1" ],
         "dcraw_matrix": [ 11434,-4948,-1210,-3746,12042,1903,-666,1479,5235 ], // DNG_v9.4 D65
         // "raw_crop": [ 0, 5, 6032, 4032 ], // full raw 6160,4032, Usable 6032,4032 - for lossless compressed files
         // "raw_crop": [ 0, 0, 6032, 4032 ], // full raw 6160,4032, Usable 6032,4032 - for uncompressed files
         "raw_crop": [ 0, 5, 6032, 4026 ], // full raw 6160,4032, Usable 6032,4026 - for uncompressed and lossless compressed files (but reduces height by 6 pixels)
         "ranges": { "white": 16100 }
     },
-
-    { // Quality C, only raw crop
-        "make_model": [ "FUJIFILM X-T3", "FUJIFILM X-T30", "FUJIFILM X-PRO3", "FUJIFILM X100V", "FUJIFILM X-T4" ],
+    
+    { // Quality B, samples provided by Daniel Catalina #5824
+        "make_model": "FUJIFILM X-T2",
+        "dcraw_matrix": [ 11434,-4948,-1210,-3746,12042,1903,-666,1479,5235 ], // DNG_v9.4 D65
+        "raw_crop": [ 0, 5, 6032, 4026 ], // xee X-T20
+        "ranges": { "white": [ 16195, 16270, 16195 ] } // With LENR on and ISO4000+ starts to overestimate white level, more realistic would be 16090
+        // Negligible aperture scaling effect
+    },
+    
+    { // Quality B, samples provided by Claes
+        "make_model": "FUJIFILM X-PRO2",
+        "dcraw_matrix": [ 11434,-4948,-1210,-3746,12042,1903,-666,1479,5235 ], // DNG_v9.4 D65
+        "raw_crop": [ 0, 5, 6032, 4026 ], // see X-T2
+        "ranges": { "white": [ 16105, 16270, 16082 ] } // These values are the lowest pixel values >16000 for all ISOs. LENR has a negligble effect.
+        // No aperture scaling data provided, but likely negligible
+    },
+    
+    { // Quality A, samples provided by Daniel Catalina (#5839) and pi99y (#5860)
+        "make_model": [ "FUJIFILM X-T3", "FUJIFILM X-PRO3" ],
+        "dcraw_matrix": [ 13426,-6334,-1177,-4244,12136,2371,-580,1303,5980 ], // DNG_v11, standard_v2 d65
+        "raw_crop": [ 0, 5, 6252, 4176],
+        "white": [ 16170, 16275, 16170 ] // typical safe-margins with LENR
+        // negligible aperture scaling effect
+    },
+    
+    { // Quality B
+        "make_model": [ "FUJIFILM X-T30", "FUJIFILM X100V", "FUJIFILM X-T4" ],
         "dcraw_matrix": [ 13426,-6334,-1177,-4244,12136,2371,-580,1303,5980 ], // DNG_v11, standard_v2 d65
         "raw_crop": [ 0, 5, 6252, 4176]
     },
@@ -1531,10 +1564,14 @@ Camera constants:
         }
     },
 
-    { // Quality B
+    { // Quality A, samples provided by dimonoid (#5842)
         "make_model": "NIKON COOLPIX P1000",
         "dcraw_matrix": [ 14294, -6116, -1333, -1628, 10219, 1637, -14, 1158, 5022 ], // ColorMatrix2 from Adobe DNG Converter 11.4
-        "ranges": { "black": 200, "white": 4087 }
+        "ranges": { 
+            "black": 200,
+            "white": [ 4000, 4050, 3950 ] // Typical values without LENR: 4009, 4093, 3963
+        } // No significant influence of ISO
+        // No aperture scaling reported
     },
 
     { // Quality B, no LENR samples
@@ -1690,6 +1727,55 @@ Camera constants:
         "dcraw_matrix" : [8210, -2534, -683, -5355, 13338, 2212, -1143, 1929, 6464], // Adobe DNG Converter 11.1 Beta ColorMatrix2
         "pdaf_pattern" : [0, 12],
         "pdaf_offset" : 32
+    },
+
+    { // Quality A, white levels and PDAF lines measured by Yann Leprince #5851
+        "make_model" : "Nikon Z 50",
+        "dcraw_matrix" : [11640, -4829, -1079, -5107, 13006, 2325, -972, 1711, 7380], // Adobe DNG Converter 12.2.1 ColorMatrix2 (D65)
+        "ranges": {
+            "white": [
+                // White level was consistently measured at 16383 for non-LENR images. These values are computed using
+                // 16383 - 6 * read_noise (where read_noise values are extracted from
+                // https://www.photonstophotos.net/Charts/RN_ADU.htm#Nikon%20Z%2050_14 for iso < 1600, fitted in the
+                // 1600-10183 range, and extrapolated from that fit into the 12800-204800 range, where the read noise
+                // provided by photonstophotos is underestimated due to in-body noise reduction. These values were
+                // verified to be below the 1st percentile of the distribution, on LENR white frames taken with a 2 s
+                // shutter in a variety of conditions (apertures from 1.8 to 6.3).
+                {"iso": 100, "levels": 16374},
+                {"iso": 126, "levels": 16371},
+                {"iso": 159, "levels": 16367},
+                {"iso": 200, "levels": 16367},
+                {"iso": 251, "levels": 16364},
+                {"iso": 318, "levels": 16360},
+                {"iso": 400, "levels": 16366},
+                {"iso": 503, "levels": 16364},
+                {"iso": 636, "levels": 16362},
+                {"iso": 800, "levels": 16358},
+                {"iso": 1006, "levels": 16349},
+                {"iso": 1273, "levels": 16345},
+                {"iso": 1600, "levels": 16337},
+                {"iso": 2011, "levels": 16327},
+                {"iso": 2546, "levels": 16313},
+                {"iso": 3200, "levels": 16298},
+                {"iso": 4022, "levels": 16278},
+                {"iso": 5091, "levels": 16253},
+                {"iso": 6400, "levels": 16223},
+                {"iso": 8045, "levels": 16186},
+                {"iso": 10183, "levels": 16139},
+                {"iso": 12800, "levels": 16082},
+                {"iso": 16090, "levels": 16013},
+                {"iso": 20366, "levels": 15924},
+                {"iso": 25600, "levels": 15818},
+                {"iso": 32180, "levels": 15687},
+                {"iso": 40731, "levels": 15521},
+                {"iso": 51200, "levels": 15321},
+                {"iso": 102400, "levels": 14388},
+                {"iso": 204800, "levels": 12633}
+            ]
+        },
+        "pdaf_offset": 0,
+        // Every 12th line from 285 to 3441. These lines (specifically, the blue subpixels) have a lower standard deviation on a black frame.
+        "pdaf_pattern": [285, 297, 309, 321, 333, 345, 357, 369, 381, 393, 405, 417, 429, 441, 453, 465, 477, 489, 501, 513, 525, 537, 549, 561, 573, 585, 597, 609, 621, 633, 645, 657, 669, 681, 693, 705, 717, 729, 741, 753, 765, 777, 789, 801, 813, 825, 837, 849, 861, 873, 885, 897, 909, 921, 933, 945, 957, 969, 981, 993, 1005, 1017, 1029, 1041, 1053, 1065, 1077, 1089, 1101, 1113, 1125, 1137, 1149, 1161, 1173, 1185, 1197, 1209, 1221, 1233, 1245, 1257, 1269, 1281, 1293, 1305, 1317, 1329, 1341, 1353, 1365, 1377, 1389, 1401, 1413, 1425, 1437, 1449, 1461, 1473, 1485, 1497, 1509, 1521, 1533, 1545, 1557, 1569, 1581, 1593, 1605, 1617, 1629, 1641, 1653, 1665, 1677, 1689, 1701, 1713, 1725, 1737, 1749, 1761, 1773, 1785, 1797, 1809, 1821, 1833, 1845, 1857, 1869, 1881, 1893, 1905, 1917, 1929, 1941, 1953, 1965, 1977, 1989, 2001, 2013, 2025, 2037, 2049, 2061, 2073, 2085, 2097, 2109, 2121, 2133, 2145, 2157, 2169, 2181, 2193, 2205, 2217, 2229, 2241, 2253, 2265, 2277, 2289, 2301, 2313, 2325, 2337, 2349, 2361, 2373, 2385, 2397, 2409, 2421, 2433, 2445, 2457, 2469, 2481, 2493, 2505, 2517, 2529, 2541, 2553, 2565, 2577, 2589, 2601, 2613, 2625, 2637, 2649, 2661, 2673, 2685, 2697, 2709, 2721, 2733, 2745, 2757, 2769, 2781, 2793, 2805, 2817, 2829, 2841, 2853, 2865, 2877, 2889, 2901, 2913, 2925, 2937, 2949, 2961, 2973, 2985, 2997, 3009, 3021, 3033, 3045, 3057, 3069, 3081, 3093, 3105, 3117, 3129, 3141, 3153, 3165, 3177, 3189, 3201, 3213, 3225, 3237, 3249, 3261, 3273, 3285, 3297, 3309, 3321, 3333, 3345, 3357, 3369, 3381, 3393, 3405, 3417, 3429, 3441]
     },
 
     { // Quality B, 16Mp and 64Mp raw frames
@@ -2667,6 +2753,12 @@ Camera constants:
         "make_model": [ "Phase One IQ3 100MP" ],
         "dcraw_matrix": [ 4479,-895,-536,-5818,13569,2742,-1186,2190,7909],
         "ranges": { "black": 0, "white": 64400 }
+    },
+
+    { // Quality B
+        "make_model": ["HASSELBLAD NEX-7", "SONY NEX-7"], // Hasselblad NEX-7 also known as Hasselblad Lunar
+        "dcraw_matrix": [ 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 ], // adobe DNGv12.2 d65
+        "ranges": { "black": 512, "white": 16372 } // Typical white level (samples provided by @ggc on Pixls, influence from LENR unknown
     },
 
     { // Quality A for tested CFV, the other models have the same sensor (16 megapixel square sensor)

@@ -832,7 +832,7 @@ int processLineParams ( int argc, char **argv )
         }
 
         ii->decreaseRef();
-        resultImage->free();
+        delete resultImage;
     }
 
     if (imgParams) {

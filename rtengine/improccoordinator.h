@@ -139,6 +139,8 @@ protected:
     NoiseCurve noiseLCurve;
     NoiseCurve noiseCCurve;
     WavCurve wavCLVCurve;
+    WavCurve wavdenoise;
+    WavCurve wavdenoiseh;
     Wavblcurve wavblcurve;
     WavOpacityCurveRG waOpacityCurveRG;
     WavOpacityCurveSH waOpacityCurveSH;
@@ -235,9 +237,6 @@ protected:
     
     //locallab
     LocallabListener* locallListener;
-    LabImage *reserv;
-    LabImage *lastorigimp;
-    int coordX, coordY, localX, localY;
     LUTf lllocalcurve;
     LUTf cllocalcurve;
     LUTf lclocalcurve;
@@ -257,12 +256,14 @@ protected:
     LUTf lmaskcblocalcurve;
     LUTf lmaskbllocalcurve;
     LUTf lmasklclocalcurve;
-//    LUTu lhist16loc;
+    LUTf lmasklocal_curve;
+    
     LocretigainCurve locRETgainCurve;
     LocretitransCurve locRETtransCurve;
     LocretigainCurverab locRETgainCurverab;
     LocLHCurve loclhCurve;
     LocHHCurve lochhCurve;
+    LocCHCurve locchCurve;
     LocCCmaskCurve locccmasCurve;
     LocLLmaskCurve locllmasCurve;
     LocHHmaskCurve lochhmasCurve;
@@ -291,6 +292,11 @@ protected:
     LocCCmaskCurve locccmasblCurve;
     LocLLmaskCurve locllmasblCurve;
     LocHHmaskCurve lochhmasblCurve;
+    LocCCmaskCurve locccmas_Curve;
+    LocLLmaskCurve locllmas_Curve;
+    LocHHmaskCurve lochhmas_Curve;
+    LocHHmaskCurve lochhhmas_Curve;
+    
     LocwavCurve locwavCurve;
     LocwavCurve loclmasCurveblwav;
     LocwavCurve loclmasCurvecolwav;
@@ -300,73 +306,16 @@ protected:
     LocwavCurve loccomprewavCurve;
     LocwavCurve locwavCurveden;
     LocwavCurve locedgwavCurve;
+    LocwavCurve loclmasCurve_wav;
 
-    bool locallutili;
-    bool localclutili;
-    bool locallcutili;
-    bool localcutili;
-    bool localrgbutili;
-    bool localexutili;
-    bool llmasutili;
-    bool lhmasutili;
-    bool lhhmasutili;
-    bool lcmasutili;
-    bool localmaskutili;
-    bool localmaskexputili;
-    bool localmaskSHutili;
-    bool localmaskvibutili;
-    bool localmasktmutili;
-    bool localmaskretiutili;
-    bool localmaskcbutili;
-    bool localmaskblutili;
-    bool localmasklcutili;
-    bool lcmasexputili;
-    bool lhmasexputili;
-    bool llmasexputili;
-    bool lcmasSHutili;
-    bool lhmasSHutili;
-    bool llmasSHutili;
-    bool lcmasvibutili;
-    bool lhmasvibutili;
-    bool llmasvibutili;
-    bool lcmaslcutili;
-    bool lhmaslcutili;
-    bool llmaslcutili;
-    bool lcmascbutili;
-    bool lhmascbutili;
-    bool llmascbutili;
-    bool lcmasretiutili;
-    bool lhmasretiutili;
-    bool llmasretiutili;
-    bool lcmastmutili;
-    bool lhmastmutili;
-    bool llmastmutili;
-    bool lcmasblutili;
-    bool lhmasblutili;
-    bool llmasblutili;
-    bool locwavutili;
-    bool locwavdenutili;
-    bool loclevwavutili;
-    bool locconwavutili;
-    bool loccompwavutili;
-    bool loccomprewavutili;
-    bool locedgwavutili;
-    bool lmasutiliblwav;
-    bool lmasutilicolwav;
-    bool LHutili;
-    bool HHutili;
-    LUTu lastsavrests;
-    LUTf huerefs;
-    LUTf huerefblurs;
-    LUTf chromarefblurs;
-    LUTf lumarefblurs;
-    LUTf chromarefs;
-    LUTf lumarefs;
-    LUTf sobelrefs;
-    LUTf avgs;
-    double huer, huerblu, chromarblu, lumarblu, chromar, lumar, sobeler;
-    int lastsav;
-    float avg;
+    std::vector<float> huerefs;
+    std::vector<float> huerefblurs;
+    std::vector<float> chromarefblurs;
+    std::vector<float> lumarefblurs;
+    std::vector<float> chromarefs;
+    std::vector<float> lumarefs;
+    std::vector<float> sobelrefs;
+    std::vector<float> avgs;
     bool lastspotdup;
     bool previewDeltaE;
     int locallColorMask;
@@ -383,6 +332,7 @@ protected:
     int localltmMask;
     int locallblMask;
     int locallsharMask;
+    int locall_Mask;
 
 public:
 
@@ -452,7 +402,7 @@ public:
         updaterThreadStart.unlock();
     }
 
-    void setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask) override
+    void setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int locall_Mask) override
     {
         this->previewDeltaE = previewDeltaE;
         this->locallColorMask = locallColorMask;
@@ -469,6 +419,7 @@ public:
         this->locallsharMask = locallsharMask;
         this->localllcMask = localllcMask;
         this->locallcbMask = locallcbMask;
+        this->locall_Mask = locall_Mask;
     }
 
     void setProgressListener (ProgressListener* pl) override

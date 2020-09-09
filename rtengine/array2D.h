@@ -27,7 +27,7 @@
  *
  *      creates an array which is valid within the normal C/C++ scope "{ ... }"
  *
- *      access to elements is a simple as:
+ *      access to elements is as simple as:
  *
  *          array2D<float> my_array (10,10); // creates 10x10 array of floats
  *          value =  my_array[3][5];
@@ -48,25 +48,20 @@
  *          array2D<float> my_array             ; // empty container.
  *          my_array(10,10)                     ; // resize to 10x10 array
  *          my_array(10,10,ARRAY2D_CLEAR_DATA)  ; // resize to 10x10 and clear data
- *          my_array(10,10,ARRAY2D_CLEAR_DATA|ARRAY2D_LOCK_DATA)  ; same but set a lock on changes
  *
- *          !! locked arrays cannot be resized and cannot be unlocked again !!
  */
 #pragma once
 
-#include <csignal>  // for raise()
 #include <cassert>
+#include <cstring>
+#include <sys/types.h>
+#include <vector>
+#include "noncopyable.h"
 
 // flags for use
-#define ARRAY2D_LOCK_DATA   1
-#define ARRAY2D_CLEAR_DATA  2
-#define ARRAY2D_BYREFERENCE 4
-#define ARRAY2D_VERBOSE     8
+constexpr unsigned int ARRAY2D_CLEAR_DATA = 1;
+constexpr unsigned int ARRAY2D_BYREFERENCE = 2;
 
-#include <cstring>
-#include <cstdio>
-
-#include "noncopyable.h"
 
 template<typename T>
 class array2D :
@@ -74,247 +69,156 @@ class array2D :
 {
 
 private:
-    int x, y, owner;
-    unsigned int flags;
-    T ** ptr;
-    T * data;
-    bool lock; // useful lock to ensure data is not changed anymore.
-    void ar_realloc(int w, int h, int offset = 0)
+    ssize_t width;
+    std::vector<T*> rows;
+    std::vector<T> buffer;
+
+    void initRows(ssize_t h, int offset = 0)
     {
-        if ((ptr) && ((h > y) || (4 * h < y))) {
-            delete[] ptr;
-            ptr = nullptr;
+        rows.resize(h);
+        T* start = buffer.data() + offset;
+        for (ssize_t i = 0; i < h; ++i) {
+            rows[i] = start + width * i;
         }
+    }
 
-        if ((data) && (((h * w) > (x * y)) || ((h * w) < ((x * y) / 4)))) {
-            delete[] data;
-            data = nullptr;
-        }
-
-        if (ptr == nullptr) {
-            ptr = new T*[h];
-        }
-
-        if (data == nullptr) {
-            data = new T[h * w + offset];
-        }
-
-        x = w;
-        y = h;
-
-        for (int i = 0; i < h; i++) {
-            ptr[i] = data + offset + w * i;
-        }
-
-        owner = 1;
+    void ar_realloc(ssize_t w, ssize_t h, int offset = 0)
+    {
+        width = w;
+        buffer.resize(h * width + offset);
+        initRows(h, offset);
     }
 public:
 
     // use as empty declaration, resize before use!
     // very useful as a member object
-    array2D() :
-        x(0), y(0), owner(0), flags(0), ptr(nullptr), data(nullptr), lock(false)
-    {
-        //printf("got empty array2D init\n");
-    }
+    array2D() : width(0) {}
 
     // creator type1
-    array2D(int w, int h, unsigned int flgs = 0)
+    array2D(int w, int h, unsigned int flags = 0) : width(w)
     {
-        flags = flgs;
-        lock = flags & ARRAY2D_LOCK_DATA;
-        data = new T[h * w];
-        owner = 1;
-        x = w;
-        y = h;
-        ptr = new T*[h];
-
-        for (int i = 0; i < h; i++) {
-            ptr[i] = data + i * w;
-        }
-
         if (flags & ARRAY2D_CLEAR_DATA) {
-            memset(data, 0, w * h * sizeof(T));
+            buffer.resize(h * width, 0);
+        } else {
+            buffer.resize(h * width);
         }
+        initRows(h);
     }
 
     // creator type 2
-    array2D(int w, int h, T ** source, unsigned int flgs = 0)
+    array2D(int w, int h, T ** source, unsigned int flags = 0) : width(w)
     {
-        flags = flgs;
-        //if (lock) { printf("array2D attempt to overwrite data\n");raise(SIGSEGV);}
-        lock = flags & ARRAY2D_LOCK_DATA;
-        // when by reference
-        // TODO: improve this code with ar_realloc()
-        owner = (flags & ARRAY2D_BYREFERENCE) ? 0 : 1;
-
-        if (owner) {
-            data = new T[h * w];
-        } else {
-            data = nullptr;
-        }
-
-        x = w;
-        y = h;
-        ptr = new T*[h];
-
-        for (int i = 0; i < h; i++) {
-            if (owner) {
-                ptr[i] = data + i * w;
-
-                for (int j = 0; j < w; j++) {
-                    ptr[i][j] = source[i][j];
+        rows.resize(h);
+        if (!(flags & ARRAY2D_BYREFERENCE)) {
+            buffer.resize(h * width);
+            T* start = buffer.data();
+            for (ssize_t i = 0; i < h; ++i) {
+                rows[i] = start + i * width;
+                for (ssize_t j = 0; j < width; ++j) {
+                    rows[i][j] = source[i][j];
                 }
-            } else {
-                ptr[i] = source[i];
             }
-        }
-    }
-
-    // destructor
-    ~array2D()
-    {
-
-        if (flags & ARRAY2D_VERBOSE) {
-            printf(" deleting array2D size %dx%d \n", x, y);
-        }
-
-        if ((owner) && (data)) {
-            delete[] data;
-        }
-
-        if (ptr) {
-            delete[] ptr;
+        } else {
+            for (ssize_t i = 0; i < h; ++i) {
+                rows[i] = source[i];
+            }
         }
     }
 
     void fill(const T val, bool multiThread = false)
     {
+        const ssize_t height = rows.size();
 #ifdef _OPENMP
         #pragma omp parallel for if(multiThread)
 #endif
-        for (int i = 0; i < x * y; ++i) {
-            data[i] = val;
+        for (ssize_t i = 0; i < width * height; ++i) {
+            buffer[i] = val;
         }
     }
 
     void free()
     {
-        if ((owner) && (data)) {
-            delete[] data;
-            data = nullptr;
-        }
-
-        if (ptr) {
-            delete [] ptr;
-            ptr = nullptr;
-        }
+        buffer.clear();
+        rows.clear();
     }
 
     // use with indices
-    T * operator[](int index) const
+    T * operator[](int index)
     {
-        assert((index >= 0) && (index < y));
-        return ptr[index];
+        assert((index >= 0) && (index < rows.size()));
+        return rows[index];
+    }
+
+    const T * operator[](int index) const
+    {
+        assert((index >= 0) && (index < rows.size()));
+        return rows[index];
     }
 
     // use as pointer to T**
     operator T**()
     {
-        return ptr;
+        return rows.data();
     }
 
     // use as pointer to T**
-    operator const T* const *()
+    operator const T* const *() const
     {
-        return ptr;
+        return rows.data();
     }
 
-    // use as pointer to data
+    // use as pointer to buffer
     operator T*()
     {
         // only if owner this will return a valid pointer
-        return data;
+        return buffer.data();
+    }
+
+    operator const T*() const
+    {
+        // only if owner this will return a valid pointer
+        return buffer.data();
     }
 
 
     // useful within init of parent object
     // or use as resize of 2D array
-    void operator()(int w, int h, unsigned int flgs = 0, int offset = 0)
+    void operator()(int w, int h, unsigned int flags = 0, int offset = 0)
     {
-        flags = flgs;
-
-        if (flags & ARRAY2D_VERBOSE) {
-            printf("got init request %dx%d flags=%u\n", w, h, flags);
-            printf("previous was data %p ptr %p \n", data, ptr);
-        }
-
-        if (lock) { // our object was locked so don't allow a change.
-            printf("got init request but object was locked!\n");
-            raise( SIGSEGV);
-        }
-
-        lock = flags & ARRAY2D_LOCK_DATA;
-
         ar_realloc(w, h, offset);
 
         if (flags & ARRAY2D_CLEAR_DATA) {
-            memset(data + offset, 0, static_cast<unsigned long>(w) * h * sizeof(T));
+            fill(0);
         }
     }
 
-    // import from flat data
-    void operator()(int w, int h, T* copy, unsigned int flgs = 0)
+    int getWidth() const
     {
-        flags = flgs;
-
-        if (flags & ARRAY2D_VERBOSE) {
-            printf("got init request %dx%d flags=%u\n", w, h, flags);
-            printf("previous was data %p ptr %p \n", data, ptr);
-        }
-
-        if (lock) { // our object was locked so don't allow a change.
-            printf("got init request but object was locked!\n");
-            raise( SIGSEGV);
-        }
-
-        lock = flags & ARRAY2D_LOCK_DATA;
-
-        ar_realloc(w, h);
-        memcpy(data, copy, w * h * sizeof(T));
+        return width;
     }
-    int width() const
+    int getHeight() const
     {
-        return x;
-    }
-    int height() const
-    {
-        return y;
+        return rows.size();
     }
 
     operator bool()
     {
-        return (x > 0 && y > 0);
+        return (width > 0 && !rows.empty());
     }
 
 };
 template<typename T, const size_t num>
-class multi_array2D
+class multi_array2D : public rtengine::NonCopyable
 {
 private:
     array2D<T> list[num];
 
 public:
-    multi_array2D(int x, int y, int flags = 0, int offset = 0)
+    multi_array2D(int width, int height, int flags = 0, int offset = 0)
     {
-        for (size_t i = 0; i < num; i++) {
-            list[i](x, y, flags, (i + 1) * offset);
+        for (size_t i = 0; i < num; ++i) {
+            list[i](width, height, flags, (i + 1) * offset);
         }
-    }
-
-    ~multi_array2D()
-    {
-        //printf("trying to delete the list of array2D objects\n");
     }
 
     array2D<T> & operator[](int index)

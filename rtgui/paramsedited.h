@@ -73,6 +73,7 @@ struct RetinexParamsEdited {
     bool slope;
     bool neigh;
     bool offs;
+    bool complexmethod;
     bool retinexMethod;
     bool mapMethod;
     bool viewMethod;
@@ -390,6 +391,7 @@ public:
         // Control spot settings
         bool name;
         bool isvisible;
+        bool prevMethod;
         bool shape;
         bool spotMethod;
         bool wavMethod;
@@ -413,6 +415,7 @@ public:
         bool colorscope;
         bool transitweak;
         bool transitgrad;
+        bool activ;
         bool avoid;
         bool blwh;
         bool recurs;
@@ -468,6 +471,7 @@ public:
         bool rgbcurve;
         bool LHcurve;
         bool HHcurve;
+        bool CHcurve;
         bool invers;
         bool special;
         bool toolcol;
@@ -807,7 +811,6 @@ public:
         bool sensicb;
         bool clarityml;
         bool contresid;
-        bool blurcbdl;
         bool softradiuscb;
         bool enacbMask;
         bool CCmaskcbcurve;
@@ -835,6 +838,35 @@ public:
         bool baselog;
         bool strlog;
         bool anglog;
+        //mask
+        bool visimask;
+        bool complexmask;
+        bool expmask;
+        bool sensimask;
+        bool blendmask;
+        bool blendmaskab;
+        bool softradiusmask;
+        bool enamask;
+        bool fftmask;
+        bool blurmask;
+        bool contmask;
+        bool CCmask_curve;
+        bool LLmask_curve;
+        bool HHmask_curve;
+        bool strumaskmask;
+        bool toolmask;
+        bool radmask;
+        bool lapmask;
+        bool chromask;
+        bool gammask;
+        bool slopmask;
+        bool shadmask;
+        bool str_mask;
+        bool ang_mask;
+        bool HHhmask_curve;
+        bool Lmask_curve;
+        bool LLmask_curvewav;
+        bool csthresholdmask;
 
         LocallabSpotEdited(bool v);
 
@@ -864,8 +896,21 @@ struct LensProfParamsEdited {
 };
 
 struct PerspectiveParamsEdited {
+    bool method;
     bool horizontal;
     bool vertical;
+    bool camera_crop_factor;
+    bool camera_focal_length;
+    bool camera_pitch;
+    bool camera_roll;
+    bool camera_shift_horiz;
+    bool camera_shift_vert;
+    bool camera_yaw;
+    bool projection_pitch;
+    bool projection_rotate;
+    bool projection_shift_horiz;
+    bool projection_shift_vert;
+    bool projection_yaw;
 };
 
 struct GradientParamsEdited {
@@ -995,6 +1040,11 @@ struct WaveletParamsEdited {
     bool CLmethod;
     bool Backmethod;
     bool Tilesmethod;
+    bool complexmethod;
+    bool denmethod;
+    bool mixmethod;
+    bool slimethod;
+    bool quamethod;
     bool daubcoeffmethod;
     bool Dirmethod;
     bool sigma;
@@ -1041,14 +1091,20 @@ struct WaveletParamsEdited {
     bool level1noise;
     bool level2noise;
     bool level3noise;
+    bool leveldenoise;
+    bool levelsigm;
     bool ccwcurve;
     bool blcurve;
     bool opacityCurveSH;
     bool opacityCurveBY;
+    bool wavdenoise;
+    bool wavdenoiseh;
     bool opacityCurveRG;
     bool opacityCurveW;
     bool opacityCurveWL;
     bool hhcurve;
+    bool wavguidcurve;
+    bool wavhuecurve;
     bool Chcurve;
     bool pastlev;
     bool satlev;
@@ -1060,6 +1116,10 @@ struct WaveletParamsEdited {
     bool greenhigh;
     bool bluehigh;
     bool ballum;
+    bool sigm;
+    bool levden;
+    bool thrden;
+    bool limden;
     bool balchrom;
     bool chromfi;
     bool chromco;
@@ -1067,6 +1127,9 @@ struct WaveletParamsEdited {
     bool mergeC;
     bool softrad;
     bool softradend;
+    bool strend;
+    bool detend;
+    bool thrend;
     bool expcontrast;
     bool expchroma;
     bool expedge;
@@ -1080,7 +1143,6 @@ struct WaveletParamsEdited {
     bool labgridBLow;
     bool labgridAHigh;
     bool labgridBHigh;
-    
 };
 
 struct DirPyrEqualizerParamsEdited {
