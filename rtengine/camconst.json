@@ -1149,6 +1149,22 @@ Camera constants:
         "raw_crop": [ 144, 46, 6744, 4500 ]
     },
 
+    { // Quality C
+        "make_model": "Canon EOS R5",
+        "dcraw_matrix" : [9766, -2953, -1254, -4276, 12116, 2433, -437, 1336, 5131],
+        "raw_crop" : [ 124, 92, 8220, 5486 ],
+        "masked_areas" : [ 94, 20, 5578, 122 ],
+        "ranges" : { "white" : 16382 } 
+    },
+
+    { // Quality C
+        "make_model": "Canon EOS R6",
+        "dcraw_matrix" : [8293, -1611, -1132, -4759, 12710, 2275, -1013, 2415, 5508],
+        "raw_crop": [ 72, 38, 5496, 3670 ],
+        "masked_areas" : [ 40, 10, 5534, 70 ],
+        "ranges" : { "white" : 16382 }
+    },
+    
 // Canon Powershot
     { // Quality C, CHDK DNGs, raw frame correction
         "make_model": "Canon PowerShot A3100 IS",
@@ -1727,6 +1743,11 @@ Camera constants:
         "dcraw_matrix" : [8210, -2534, -683, -5355, 13338, 2212, -1143, 1929, 6464], // Adobe DNG Converter 11.1 Beta ColorMatrix2
         "pdaf_pattern" : [0, 12],
         "pdaf_offset" : 32
+    },
+
+    { // Quality C, only dcraw looted from ART commit ad88c7d97
+        "make_model" : "NIKON Z 5",
+        "dcraw_matrix" : [8695, -2558, -648, -5015, 12711, 2575, -1279, 2215, 7514]
     },
 
     { // Quality A, white levels and PDAF lines measured by Yann Leprince #5851

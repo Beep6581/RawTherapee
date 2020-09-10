@@ -3132,7 +3132,8 @@ void DCraw::crxLoadRaw()
         hdr.tileHeight >>= 1;
     }
 
-//  /*imgdata.color.*/maximum = (1 << hdr.nBits) - 1;
+    //  /*imgdata.color.*/maximum = (1 << hdr.nBits) - 1;
+    tiff_bps = hdr.nBits;
 
     std::uint8_t* const hdrBuf = static_cast<std::uint8_t*>(malloc(hdr.mdatHdrSize));
 
