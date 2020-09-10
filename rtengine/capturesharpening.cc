@@ -127,12 +127,8 @@ void compute3x3kernel(float sigma, float kernel[3][3]) {
     float sum = 0.f;
     for (int i = -1; i <= 1; ++i) {
         for (int j = -1; j <= 1; ++j) {
-            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 0.84)) {
-                kernel[i + 1][j + 1] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
-                sum += kernel[i + 1][j + 1];
-            } else {
-                kernel[i + 1][j + 1] = 0.f;
-            }
+            kernel[i + 1][j + 1] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
+            sum += kernel[i + 1][j + 1];
         }
     }
 
