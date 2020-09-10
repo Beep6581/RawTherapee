@@ -2157,7 +2157,6 @@ struct FilmNegativeParams {
         bool operator ==(const RGB& other) const;
         bool operator !=(const RGB& other) const;
         RGB operator *(const RGB& other) const;
-        std::vector<double> toVector() const;
     };
 
     RGB baseValues;

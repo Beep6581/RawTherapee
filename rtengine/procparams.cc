@@ -170,11 +170,11 @@ void getFromKeyfile(
     rtengine::procparams::FilmNegativeParams::RGB& value
 )
 {
-    std::vector<double> v = keyfile.get_double_list(group_name, key);
+    const std::vector<double> v = keyfile.get_double_list(group_name, key);
     if(v.size() >= 3) {
-        value.r = static_cast<float>(v[0]);
-        value.g = static_cast<float>(v[1]);
-        value.b = static_cast<float>(v[2]);
+        value.r = v[0];
+        value.g = v[1];
+        value.b = v[2];
     }
 }
 
@@ -305,6 +305,18 @@ void putToKeyfile(
     const Glib::ArrayHandle<double> list = value;
     keyfile.set_double_list(group_name, key, list);
 }
+
+void putToKeyfile(
+    const Glib::ustring& group_name,
+    const Glib::ustring& key,
+    const rtengine::procparams::FilmNegativeParams::RGB& value,
+    Glib::KeyFile& keyfile
+)
+{
+    const std::vector<double> vec = { value.r, value.g, value.b };
+    keyfile.set_double_list(group_name, key, vec);
+}
+
 
 template<typename T>
 bool saveToKeyfile(
@@ -4962,15 +4974,6 @@ FilmNegativeParams::RGB FilmNegativeParams::RGB::operator *(const FilmNegativePa
     };
 }
 
-std::vector<double> FilmNegativeParams::RGB::toVector() const
-{
-    return {
-        static_cast<double>(r),
-        static_cast<double>(g),
-        static_cast<double>(b)
-    };
-}
-
 bool FilmNegativeParams::operator ==(const FilmNegativeParams& other) const
 {
     return
@@ -6436,8 +6439,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->filmNegative.baseValues, "Film Negative", "BlueBase", filmNegative.baseValues.b, keyFile);
         
         saveToKeyfile(!pedited || pedited->filmNegative.colorSpace, "Film Negative", "ColorSpace", toUnderlying(filmNegative.colorSpace), keyFile);
-        saveToKeyfile(!pedited || pedited->filmNegative.baseValues, "Film Negative", "RefInput", filmNegative.baseValues.toVector(), keyFile);
-        saveToKeyfile(!pedited || pedited->filmNegative.refOutput, "Film Negative", "RefOutput", filmNegative.refOutput.toVector(), keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.baseValues, "Film Negative", "RefInput", filmNegative.baseValues, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.refOutput, "Film Negative", "RefOutput", filmNegative.refOutput, keyFile);
         saveToKeyfile(true, "Film Negative", "BackCompat", toUnderlying(filmNegative.backCompat), keyFile);
 
 // Preprocess WB
