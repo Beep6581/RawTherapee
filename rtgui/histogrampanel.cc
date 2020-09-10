@@ -785,7 +785,7 @@ void HistogramArea::update(
 
 void HistogramArea::updateBackBuffer ()
 {
-    BENCHFUNMICRO
+    //BENCHFUNMICRO
 
     if (!get_realized ()) {
         return;
@@ -883,6 +883,20 @@ void HistogramArea::updateBackBuffer ()
                 rgbmax = bh[i];
             }
         }
+        
+        int rgbFirst = -1, rgbLast = -1;
+        for (int i = 0; i < 65536; i++) {
+            if (needRed   && rgbFirst == -1 && rh[i] != 0) rgbFirst = i;
+            if (needGreen && rgbFirst == -1 && gh[i] != 0) rgbFirst = i;
+            if (needBlue  && rgbFirst == -1 && bh[i] != 0) rgbFirst = i;
+            if (rgbFirst != -1) break;
+        }
+        for (int i = 65535; i >= 0; i--) {
+            if (needRed   && rgbLast == -1 && rh[i] != 0) rgbLast = i;
+            if (needGreen && rgbLast == -1 && gh[i] != 0) rgbLast = i;
+            if (needBlue  && rgbLast == -1 && bh[i] != 0) rgbLast = i;
+            if (rgbLast != -1) break;
+        }
 
         cr->set_operator (Cairo::OPERATOR_OVER);
 
@@ -922,6 +936,34 @@ void HistogramArea::updateBackBuffer ()
             cr->stroke ();
             drawMarks(cr, bh, rgbmax, w, ui, oi);
         }
+        
+        if (rgbFirst != -1) { // Draw min/max marker lines
+                
+            float posX = static_cast<float>(rgbFirst);
+            const float mult = 65535.f / xlogf(HistogramScaling::factor / (HistogramScaling::factor + 65535.0));
+            if (drawMode == 2) {
+                posX = HistogramScaling::logMult(posX, mult);
+            }
+            posX = posX * w / 65535.f + padding;// + 0.5;
+            cr->move_to (posX, 0);
+            cr->line_to (posX, h);
+            cr->set_source_rgba (1., 1., 1., 0.55);
+            cr->stroke();
+        }
+        
+        if (rgbLast != -1) { // Draw min/max marker lines
+        
+            float posX = static_cast<float>(rgbLast);
+            const float mult = 65535.f / xlogf(HistogramScaling::factor / (HistogramScaling::factor + 65535.0));
+            if (drawMode == 2) {
+                posX = HistogramScaling::logMult(posX, mult);
+            }
+            posX = posX * w / 65535.f + padding;// + 0.5;
+            cr->move_to (posX, 0);
+            cr->line_to (posX, h);
+            cr->set_source_rgba (1., 1., 1., 0.55);
+            cr->stroke();
+        }
 
     }
 
@@ -944,7 +986,7 @@ void HistogramArea::on_realize ()
 void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
                               const LUTu & data, float scale, float hsize, float vsize)
 {
-    BENCHFUNMICRO
+    //BENCHFUNMICRO
 
     std::vector<float> iscaled(65536);
     std::vector<float> vals(65536);
