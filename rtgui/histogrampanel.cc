@@ -991,25 +991,6 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
     std::vector<float> iscaled(65536);
     std::vector<float> vals(65536);
 
-    if (drawMode == 2) { // scale x for double log-scale
-        const float mult = 65535.f / xlogf(HistogramScaling::factor / (HistogramScaling::factor + 65535.0));
-#ifdef __SSE2__
-        const vfloat multv = F2V(mult);
-        const vfloat fourv = F2V(4.f);
-        vfloat iv = _mm_setr_ps(0.f, 1.f, 2.f, 3.f);
-        for (int i = 0; i < 65536; i += 4, iv += fourv) {
-            STVFU(iscaled[i], HistogramScaling::logMult(iv, multv));
-        }
-#else
-        for (int i = 0; i < 65536; ++i) {
-            iscaled[i] = HistogramScaling::logMult(i, mult);
-        }
-#endif
-    } else {
-        for (int i = 0; i < 65536; ++i) {
-            iscaled[i] = i;
-        }
-    }
     const float scalef = rtengine::max(scale, 0.001f); // avoid division by zero and negative values
     const float scaleFactor = vsize / scalef;
     if (drawMode > 0) { // scale y for single and double log-scale
@@ -1018,11 +999,20 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
         const vfloat scaleFactorv = F2V(scaleFactor);
         const vfloat multv = F2V(mult);
         for (int i = 0; i < 65536; i += 4) {
-            STVFU(vals[i], HistogramScaling::logMult(_mm_cvtepi32_ps(_mm_loadu_si128((__m128i_u*)&data[i])) * scaleFactorv, multv));
+            const vfloat val = _mm_cvtepi32_ps(_mm_loadu_si128((__m128i_u*)&data[i]));
+            if (_mm_movemask_ps(ZEROV - val)) {
+                STVFU(vals[i], HistogramScaling::logMult(val * scaleFactorv, multv));
+            } else {
+                STVFU(vals[i], ZEROV);
+            }
         }
 #else
         for (int i = 0; i < 65536; ++i) {
-            vals[i] = HistogramScaling::logMult(data[i] * scaleFactor, mult);
+            if (data[i]) {
+                vals[i] = HistogramScaling::logMult(data[i] * scaleFactor, mult);
+            } else {
+                vals[i] = 0.f;
+            }
         }
 #endif
     } else {
@@ -1031,17 +1021,42 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
         }
     }
 
-    for (int i = 0; i < 65536; i++) {
-        
-        if (vals[i] == 0.0) continue;
-        
-        const double posX = padding + iscaled[i] * (hsize - padding * 2.f) / 65535.f;
-        const double posY = vsize - 2 + vals[i] * (4 - vsize) / vsize;
-
-        cr->move_to (posX, vsize - 2);
-        cr->line_to (posX, posY);
+    if (drawMode == 2) { // scale x for double log-scale
+        const float mult = 65535.f / xlogf(HistogramScaling::factor / (HistogramScaling::factor + 65535.0));
+#ifdef __SSE2__
+        const vfloat multv = F2V(mult);
+        const vfloat fourv = F2V(4.f);
+        vfloat iv = _mm_setr_ps(0.f, 1.f, 2.f, 3.f);
+        for (int i = 0; i < 65536; i += 4, iv += fourv) {
+            if (_mm_movemask_ps(ZEROV - LVFU(vals[i]))) {
+                STVFU(iscaled[i], HistogramScaling::logMult(iv, multv));
+            }
+        }
+#else
+        for (int i = 0; i < 65536; ++i) {
+            if (vals[i] != 0.f) {
+                iscaled[i] = HistogramScaling::logMult(i, mult);
+            }
+        }
+#endif
+    } else {
+        for (int i = 0; i < 65536; ++i) {
+            iscaled[i] = i;
+        }
     }
-    
+
+    for (int i = 0; i < 65536; i++) {
+        if (vals[i] == 0.f) {
+            continue;
+        }
+        
+        const double posY = vsize - 2 + vals[i] * ((4 - vsize) / vsize);
+// remove me        if (vsize - 2 - posY >= 1) {
+            const double posX = padding + iscaled[i] * ((hsize - padding * 2.f) / 65535.f);
+            cr->move_to (posX, vsize - 2);
+            cr->line_to (posX, posY);
+// remove me        }
+    }
 }
 
 void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
