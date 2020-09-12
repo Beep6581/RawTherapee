@@ -674,7 +674,7 @@ void ParamsEdited::set(bool v)
     filmNegative.redRatio = v;
     filmNegative.greenExp = v;
     filmNegative.blueRatio = v;
-    filmNegative.baseValues = v;
+    filmNegative.refInput = v;
     filmNegative.refOutput = v;
     filmNegative.colorSpace = v;
     raw.preprocessWB.mode = v;
@@ -1835,7 +1835,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         filmNegative.redRatio = filmNegative.redRatio && p.filmNegative.redRatio == other.filmNegative.redRatio;
         filmNegative.greenExp = filmNegative.greenExp && p.filmNegative.greenExp == other.filmNegative.greenExp;
         filmNegative.blueRatio = filmNegative.blueRatio && p.filmNegative.blueRatio == other.filmNegative.blueRatio;
-        filmNegative.baseValues = filmNegative.baseValues && p.filmNegative.baseValues == other.filmNegative.baseValues;
+        filmNegative.refInput = filmNegative.refInput && p.filmNegative.refInput == other.filmNegative.refInput;
         filmNegative.refOutput = filmNegative.refOutput && p.filmNegative.refOutput == other.filmNegative.refOutput;
         filmNegative.colorSpace = filmNegative.colorSpace && p.filmNegative.colorSpace == other.filmNegative.colorSpace;
         raw.preprocessWB.mode  = raw.preprocessWB.mode  && p.raw.preprocessWB.mode  == other.raw.preprocessWB.mode;
@@ -6111,8 +6111,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.filmNegative.blueRatio = mods.filmNegative.blueRatio;
     }
 
-    if (filmNegative.baseValues) {
-        toEdit.filmNegative.baseValues = mods.filmNegative.baseValues;
+    if (filmNegative.refInput) {
+        toEdit.filmNegative.refInput = mods.filmNegative.refInput;
     }
 
     if (filmNegative.refOutput) {
@@ -6176,7 +6176,7 @@ bool RetinexParamsEdited::isUnchanged() const
 
 bool FilmNegativeParamsEdited::isUnchanged() const
 {
-    return enabled && redRatio && greenExp && blueRatio && baseValues && refOutput && colorSpace;
+    return enabled && redRatio && greenExp && blueRatio && refInput && refOutput && colorSpace;
 }
 
 LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :

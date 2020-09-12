@@ -258,7 +258,7 @@ bool doProcess(Imagefloat *input, Imagefloat *output,
         refOut = { MAXVALF / 24.f, MAXVALF / 24.f, MAXVALF / 24.f };
         refsUpdated = true;
     } else {
-        refIn = params.baseValues;
+        refIn = params.refInput;
         refOut = params.refOutput;
     }
 
@@ -333,7 +333,7 @@ bool rtengine::ImProcFunctions::filmNegativeProcess(
 
     bool paramsUpdated = false;
 
-    RGB &refIn = fnp.baseValues;
+    RGB &refIn = fnp.refInput;
     RGB &refOut = fnp.refOutput;
 
     // If we're opening a profile from an older version, apply the proper multiplier
@@ -367,13 +367,13 @@ bool rtengine::ImProcFunctions::filmNegativeProcess(
         gm2 /= mg;
         bm2 /= mg;
 
-        if (fnp.baseValues.g == 0.f) {
+        if (fnp.refInput.g == 0.f) {
             // Calc medians, 20% border cut
             refIn = getMedians(input, 20);
             refOut = { MAXVALF / 24.f, MAXVALF / 24.f, MAXVALF / 24.f };
-        } else if (fnp.baseValues.g > 0.f) {
+        } else if (fnp.refInput.g > 0.f) {
             // Calc refInput + refOutput from base levels, compensate currWB in, 3500 out
-            refIn = fnp.baseValues;
+            refIn = fnp.refInput;
             refIn.r *= rm * scale_mul[0];
             refIn.g *= gm * scale_mul[1];
             refIn.b *= bm * scale_mul[2];
@@ -413,7 +413,7 @@ void rtengine::ImProcFunctions::filmNegativeProcess(rtengine::Imagefloat *input,
         return;
     }
 
-    RGB refIn = params.baseValues, refOut = params.refOutput;
+    RGB refIn = params.refInput, refOut = params.refOutput;
 
     doProcess(input, output, params, this->params->icm, refIn, refOut);
 
@@ -436,9 +436,9 @@ bool rtengine::ImProcCoordinator::getFilmNegativeSpot(int x, int y, const int sp
     float gexp = -params->filmNegative.greenExp;
     float bexp = -(params->filmNegative.greenExp * params->filmNegative.blueRatio);
 
-    float rmult = params->filmNegative.refOutput.r / pow_F(rtengine::max(params->filmNegative.baseValues.r, 1.f), rexp);
-    float gmult = params->filmNegative.refOutput.g / pow_F(rtengine::max(params->filmNegative.baseValues.g, 1.f), gexp);
-    float bmult = params->filmNegative.refOutput.b / pow_F(rtengine::max(params->filmNegative.baseValues.b, 1.f), bexp);
+    float rmult = params->filmNegative.refOutput.r / pow_F(rtengine::max(params->filmNegative.refInput.r, 1.f), rexp);
+    float gmult = params->filmNegative.refOutput.g / pow_F(rtengine::max(params->filmNegative.refInput.g, 1.f), gexp);
+    float bmult = params->filmNegative.refOutput.b / pow_F(rtengine::max(params->filmNegative.refInput.b, 1.f), bexp);
 
     refInput = avg;
 
@@ -570,7 +570,7 @@ void rtengine::Thumbnail::processFilmNegativeV2(
     const float MAX_OUT_VALUE = 65000.f;
 
     // If the film base values are not set in params, estimate multipliers from each channel's median value.
-    if (params.filmNegative.baseValues.r <= 0.f) {
+    if (params.filmNegative.refInput.r <= 0.f) {
 
         // Channel medians
         float rmed, gmed, bmed;
@@ -602,9 +602,9 @@ void rtengine::Thumbnail::processFilmNegativeV2(
     } else {
 
         // Read film-base values from params
-        float rbase = params.filmNegative.baseValues.r; // redBase;
-        float gbase = params.filmNegative.baseValues.g; // greenBase;
-        float bbase = params.filmNegative.baseValues.b; // blueBase;
+        float rbase = params.filmNegative.refInput.r; // redBase;
+        float gbase = params.filmNegative.refInput.g; // greenBase;
+        float bbase = params.filmNegative.refInput.b; // blueBase;
 
         // Reconstruct scale_mul coefficients from thumbnail metadata:
         //   redMultiplier / camwbRed is pre_mul[0]

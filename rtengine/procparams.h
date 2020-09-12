@@ -2159,7 +2159,7 @@ struct FilmNegativeParams {
         RGB operator *(const RGB& other) const;
     };
 
-    RGB baseValues;
+    RGB refInput;
     RGB refOutput;
 
     enum class ColorSpace {

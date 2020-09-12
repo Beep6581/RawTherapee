@@ -127,7 +127,7 @@ RGB getFilmNegativeExponents(const RGB &ref1, const RGB &ref2) // , const RGB &c
     }
 
     // // Re-adjust color balance based on dense spot values and new exponents
-    // calcBalance(rtengine::max(static_cast<float>(params->filmNegative.baseValues.g), 1.f),
+    // calcBalance(rtengine::max(static_cast<float>(params->filmNegative.refInput.g), 1.f),
     //     -newExps[0], -newExps[1], -newExps[2],
     //     denseVals[0], denseVals[1], denseVals[2],
     //     rBal, bBal);
@@ -285,7 +285,7 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
     greenExp->setValue(pp->filmNegative.greenExp);
     blueRatio->setValue(pp->filmNegative.blueRatio);
 
-    filmBaseValues = pp->filmNegative.baseValues;
+    filmBaseValues = pp->filmNegative.refInput;
 
     // If base values are not set in params, estimated values will be passed in later
     // (after processing) via FilmNegListener
@@ -316,12 +316,12 @@ void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         pedited->filmNegative.redRatio = redRatio->getEditedState();
         pedited->filmNegative.greenExp = greenExp->getEditedState();
         pedited->filmNegative.blueRatio = blueRatio->getEditedState();
-        pedited->filmNegative.baseValues = filmBaseValues != pp->filmNegative.baseValues;
+        pedited->filmNegative.refInput = filmBaseValues != pp->filmNegative.refInput;
         pedited->filmNegative.refOutput = outputLevel->getEditedState() ||  greenBalance->getEditedState() || blueBalance->getEditedState();
         pedited->filmNegative.enabled = !get_inconsistent();
     }
 
-    pp->filmNegative.baseValues = filmBaseValues;
+    pp->filmNegative.refInput = filmBaseValues;
     
     pp->filmNegative.refOutput.r = outputLevel->getValue();
     pp->filmNegative.refOutput.g = greenBalance->getValue() * outputLevel->getValue();

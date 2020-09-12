@@ -4945,7 +4945,7 @@ FilmNegativeParams::FilmNegativeParams() :
     redRatio(1.36),
     greenExp(1.5),
     blueRatio(0.86),
-    baseValues({0.0, 0.0, 0.0}),
+    refInput({0.0, 0.0, 0.0}),
     refOutput({0.0, 0.0, 0.0}),
     colorSpace(ColorSpace::BUILTIN),
     backCompat(BackCompat::CURRENT)
@@ -4981,7 +4981,7 @@ bool FilmNegativeParams::operator ==(const FilmNegativeParams& other) const
         && redRatio == other.redRatio
         && greenExp == other.greenExp
         && blueRatio == other.blueRatio
-        && baseValues == other.baseValues
+        && refInput == other.refInput
         && refOutput == other.refOutput
         && colorSpace == other.colorSpace
         && backCompat == other.backCompat;
@@ -6434,12 +6434,12 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->filmNegative.blueRatio, "Film Negative", "BlueRatio", filmNegative.blueRatio, keyFile);
 
         // FIXME to be removed: only for backwards compatibility with an intermediate dev version
-        saveToKeyfile(!pedited || pedited->filmNegative.baseValues, "Film Negative", "RedBase", filmNegative.baseValues.r, keyFile);
-        saveToKeyfile(!pedited || pedited->filmNegative.baseValues, "Film Negative", "GreenBase", filmNegative.baseValues.g, keyFile);
-        saveToKeyfile(!pedited || pedited->filmNegative.baseValues, "Film Negative", "BlueBase", filmNegative.baseValues.b, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "RedBase", filmNegative.refInput.r, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "GreenBase", filmNegative.refInput.g, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "BlueBase", filmNegative.refInput.b, keyFile);
         
         saveToKeyfile(!pedited || pedited->filmNegative.colorSpace, "Film Negative", "ColorSpace", toUnderlying(filmNegative.colorSpace), keyFile);
-        saveToKeyfile(!pedited || pedited->filmNegative.baseValues, "Film Negative", "RefInput", filmNegative.baseValues, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "RefInput", filmNegative.refInput, keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.refOutput, "Film Negative", "RefOutput", filmNegative.refOutput, keyFile);
         saveToKeyfile(true, "Film Negative", "BackCompat", toUnderlying(filmNegative.backCompat), keyFile);
 
@@ -8739,7 +8739,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 filmNegative.colorSpace = FilmNegativeParams::ColorSpace::CAMERA;
                 filmNegative.backCompat = FilmNegativeParams::BackCompat::V1;
                 if (pedited) {
-                    pedited->filmNegative.baseValues = true;
+                    pedited->filmNegative.refInput = true;
                     pedited->filmNegative.refOutput = true;
                     pedited->filmNegative.colorSpace = true;
                 }
@@ -8747,24 +8747,24 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             } else if (!keyFile.has_key("Film Negative", "RefInput")) {
                 // Backwards compatibility with intermediate dev version (after v5.8) using film base values
                 bool r, g, b;
-                assignFromKeyfile(keyFile, "Film Negative", "RedBase", pedited, filmNegative.baseValues.r, r);
-                assignFromKeyfile(keyFile, "Film Negative", "GreenBase", pedited, filmNegative.baseValues.g, g);
-                assignFromKeyfile(keyFile, "Film Negative", "BlueBase", pedited, filmNegative.baseValues.b, b);
+                assignFromKeyfile(keyFile, "Film Negative", "RedBase", pedited, filmNegative.refInput.r, r);
+                assignFromKeyfile(keyFile, "Film Negative", "GreenBase", pedited, filmNegative.refInput.g, g);
+                assignFromKeyfile(keyFile, "Film Negative", "BlueBase", pedited, filmNegative.refInput.b, b);
                 if (pedited) {
-                    pedited->filmNegative.baseValues = r || g || b;
+                    pedited->filmNegative.refInput = r || g || b;
                     pedited->filmNegative.refOutput = r || g || b;
                     pedited->filmNegative.colorSpace = true;
                 }
 
                 filmNegative.colorSpace = FilmNegativeParams::ColorSpace::CAMERA;
                 // Special value -1 used to mean that this should be treated as a v5.8 profile
-                filmNegative.backCompat = (filmNegative.baseValues.r == -1.f)
+                filmNegative.backCompat = (filmNegative.refInput.r == -1.f)
                     ? FilmNegativeParams::BackCompat::V1
                     : FilmNegativeParams::BackCompat::V2;
 
             } else { // current version
 
-                assignFromKeyfile(keyFile, "Film Negative", "RefInput", pedited, filmNegative.baseValues, pedited->filmNegative.baseValues);
+                assignFromKeyfile(keyFile, "Film Negative", "RefInput", pedited, filmNegative.refInput, pedited->filmNegative.refInput);
                 assignFromKeyfile(keyFile, "Film Negative", "RefOutput", pedited, filmNegative.refOutput, pedited->filmNegative.refOutput);
 
                 int cs = toUnderlying(filmNegative.colorSpace);
