@@ -26,7 +26,6 @@
 #include "imagefloat.h"
 
 #include "coord.h"
-#include "mytime.h"
 #include "opthelper.h"
 #include "pixelsmap.h"
 #include "procparams.h"
@@ -35,7 +34,7 @@
 #include "rtthumbnail.h"
 #include "sleef.h"
 //#define BENCHMARK
-#include "StopWatch.h"
+//#include "StopWatch.h"
 #include "iccstore.h"
 #include "rt_math.h"
 #include "color.h"
@@ -326,6 +325,7 @@ bool rtengine::ImProcFunctions::filmNegativeProcess(
         Imagefloat *input, Imagefloat *output, FilmNegativeParams &fnp,
         const RAWParams &rawParams, const ImageSource* imgsrc, const ColorTemp &currWB)
 {
+    //BENCHFUNMICRO
 
     if (!fnp.enabled) {
         return false;
@@ -408,6 +408,7 @@ bool rtengine::ImProcFunctions::filmNegativeProcess(
 void rtengine::ImProcFunctions::filmNegativeProcess(rtengine::Imagefloat *input, rtengine::Imagefloat *output,
         const procparams::FilmNegativeParams &params)
 {
+    //BENCHFUNMICRO
 
     if (!params.enabled) {
         return;

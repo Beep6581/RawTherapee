@@ -81,13 +81,13 @@ private:
 
     const rtengine::ProcEvent evFilmNegativeExponents;
     const rtengine::ProcEvent evFilmNegativeEnabled;
-    const rtengine::ProcEvent evFilmBaseValues;
+    const rtengine::ProcEvent evFilmNegativeRefSpot;
     const rtengine::ProcEvent evFilmNegativeBalance;
     const rtengine::ProcEvent evFilmNegativeColorSpace;
 
     std::vector<rtengine::Coord> refSpotCoords;
 
-    RGB filmBaseValues;
+    RGB refInputValues;
     bool paramsUpgraded;
 
     FilmNegProvider* fnp;
@@ -101,8 +101,8 @@ private:
     Gtk::Grid* const spotgrid;
     Gtk::ToggleButton* const spotbutton;
 
-    Gtk::Label* const filmBaseLabel;
-    Gtk::ToggleButton* const filmBaseSpotButton;
+    Gtk::Label* const refInputLabel;
+    Gtk::ToggleButton* const refSpotButton;
 
     Adjuster* const outputLevel;
     Adjuster* const greenBalance;
