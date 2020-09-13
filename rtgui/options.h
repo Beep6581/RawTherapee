@@ -317,11 +317,12 @@ public:
     };
     int histogramPosition;  // 0=disabled, 1=left pane, 2=right pane
     bool histogramRed, histogramGreen, histogramBlue;
-    bool histogramLuma, histogramChroma, histogramRAW;
+    bool histogramLuma, histogramChroma;
     bool histogramBar;
     int histogramHeight;
     int histogramDrawMode;
     ScopeType histogramScopeType;
+    bool histogramShowScopeButtons;
     bool FileBrowserToolbarSingleRow;
     bool hideTPVScrollbar;
     int whiteBalanceSpotSize;

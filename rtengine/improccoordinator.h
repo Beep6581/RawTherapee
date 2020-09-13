@@ -127,6 +127,8 @@ protected:
     LUTu histLuma, histToneCurve, histToneCurveBW, histLCurve, histCCurve;
     LUTu histLLCurve, histLCAM, histCCAM, histClad, bcabhist, histChroma, histLRETI;
     bool hist_lrgb_dirty;
+    /// Used to simulate a lazy update of the raw histogram.
+    bool hist_raw_dirty;
     int vectorscopeScale;
     bool vectorscope_hc_dirty, vectorscope_hs_dirty;
     array2D<int> vectorscope_hc, vectorscope_hs;
@@ -569,6 +571,7 @@ public:
     } denoiseInfoStore;
 
     void requestUpdateHistogram() override;
+    void requestUpdateHistogramRaw() override;
     void requestUpdateVectorscopeHC() override;
     void requestUpdateVectorscopeHS() override;
     void requestUpdateWaveform() override;

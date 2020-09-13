@@ -145,6 +145,7 @@ public:
     ) override;
     void setObservable(rtengine::HistogramObservable* observable) override;
     bool updateHistogram(void) const override;
+    bool updateHistogramRaw(void) const override;
     bool updateVectorscopeHC(void) const override;
     bool updateVectorscopeHS(void) const override;
     bool updateWaveform(void) const override;

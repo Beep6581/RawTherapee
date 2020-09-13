@@ -446,11 +446,11 @@ void Options::setDefaults()
     histogramBlue = true;
     histogramLuma = false;
     histogramChroma = false;
-    histogramRAW = false;
     histogramBar = true;
     histogramHeight = 200;
     histogramDrawMode = 0;
     histogramScopeType = ScopeType::HISTOGRAM;
+    histogramShowScopeButtons = false;
     curvebboxpos = 1;
     complexity = 2;
     prevdemo = PD_Sidecar;
@@ -1418,7 +1418,10 @@ void Options::readFromFile(Glib::ustring fname)
                 }
 
                 if (keyFile.has_key("GUI", "HistogramRAW")) {
-                    histogramRAW = keyFile.get_boolean("GUI", "HistogramRAW");
+                    // Legacy option, replaced by HistogramScopeType.
+                    if (keyFile.get_boolean("GUI", "HistogramRAW")) {
+                        histogramScopeType = ScopeType::HISTOGRAM_RAW;
+                    }
                 }
 
                 if (keyFile.has_key("GUI", "HistogramBar")) {
@@ -1435,6 +1438,10 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("GUI", "HistogramScopeType")) {
                     histogramScopeType = static_cast<ScopeType>(keyFile.get_integer("GUI", "HistogramScopeType"));
+                }
+
+                if (keyFile.has_key("GUI", "HistogramShowScopeButtons")) {
+                    histogramShowScopeButtons = keyFile.get_boolean("GUI", "HistogramShowScopeButtons");
                 }
 
                 if (keyFile.has_key("GUI", "NavigatorRGBUnit")) {
@@ -2256,11 +2263,11 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("GUI", "HistogramBlue", histogramBlue);
         keyFile.set_boolean("GUI", "HistogramLuma", histogramLuma);
         keyFile.set_boolean("GUI", "HistogramChroma", histogramChroma);
-        keyFile.set_boolean("GUI", "HistogramRAW", histogramRAW);
         keyFile.set_boolean("GUI", "HistogramBar", histogramBar);
         keyFile.set_integer("GUI", "HistogramHeight", histogramHeight);
         keyFile.set_integer("GUI", "HistogramDrawMode", histogramDrawMode);
         keyFile.set_integer("GUI", "HistogramScopeType", histogramScopeType);
+        keyFile.set_boolean("GUI", "HistogramShowScopeButtons", histogramShowScopeButtons);
         keyFile.set_integer("GUI", "NavigatorRGBUnit", (int)navRGBUnit);
         keyFile.set_integer("GUI", "NavigatorHSVUnit", (int)navHSVUnit);
         keyFile.set_boolean("GUI", "ShowFilmStripToolBar", showFilmStripToolBar);

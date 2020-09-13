@@ -2276,6 +2276,12 @@ bool EditorPanel::updateHistogram(void) const
         || histogram_scope_type == ScopeType::NONE;
 }
 
+bool EditorPanel::updateHistogramRaw(void) const
+{
+    return histogram_scope_type == ScopeType::HISTOGRAM_RAW
+        || histogram_scope_type == ScopeType::NONE;
+}
+
 bool EditorPanel::updateVectorscopeHC(void) const
 {
     return
@@ -2310,6 +2316,9 @@ void EditorPanel::scopeTypeChanged(ScopeType new_type)
         case ScopeType::HISTOGRAM:
             histogram_observable->requestUpdateHistogram();
             break;
+        case ScopeType::HISTOGRAM_RAW:
+            histogram_observable->requestUpdateHistogramRaw();
+            break;
         case ScopeType::VECTORSCOPE_HC:
             histogram_observable->requestUpdateVectorscopeHC();
             break;
@@ -2319,7 +2328,6 @@ void EditorPanel::scopeTypeChanged(ScopeType new_type)
         case ScopeType::WAVEFORM:
             histogram_observable->requestUpdateWaveform();
             break;
-        case ScopeType::HISTOGRAM_RAW:
         case ScopeType::NONE:
             break;
     }

@@ -249,7 +249,12 @@ HISTOGRAM_TOOLTIP_L;Show/Hide CIELab luminance histogram.
 HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 HISTOGRAM_TOOLTIP_R;Show/Hide red histogram.
 HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram.
-HISTOGRAM_TOOLTIP_TYPE;Toggle between histogram, waveform, Hue-Saturation vectorscope, and Hue-Chroma vectorscope.
+HISTOGRAM_TOOLTIP_TYPE;Toggle visibility of the scope selection buttons.
+HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Histogram
+HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW;Raw Histogram
+HISTOGRAM_TOOLTIP_TYPE_WAVEFORM;Waveform
+HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HC;Hue-Chroma Vectorscope
+HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HS;Hue-Saturation Vectorscope
 HISTORY_CHANGED;Changed
 HISTORY_CUSTOMCURVE;Custom curve
 HISTORY_FROMCLIPBOARD;From clipboard

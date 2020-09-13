@@ -80,7 +80,6 @@ protected:
     bool needBlue;
     bool needLuma;
     bool needChroma;
-    bool rawMode;
     bool showMode;
     bool barDisplayed;
 
@@ -111,7 +110,7 @@ public:
     };
 
     void update (int val, int rh, int gh, int bh);
-    void updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, bool show);
+    void updateOptions (bool r, bool g, bool b, bool l, bool c, bool show);
 
     void on_realize() override;
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
@@ -182,7 +181,6 @@ protected:
     float trace_brightness;
 
     bool needRed, needGreen, needBlue, needLuma, needChroma;
-    bool rawMode;
     bool isPressed;
     double movingPosition;
     bool needPointer;
@@ -219,7 +217,7 @@ public:
         const array2D<int>& waveformBlue,
         const array2D<int>& waveformLuma
     );
-    void updateOptions (bool r, bool g, bool b, bool l, bool c, bool raw, int mode, ScopeType type, bool pointer);
+    void updateOptions (bool r, bool g, bool b, bool l, bool c, int mode, ScopeType type, bool pointer);
     bool updatePending();
     void on_realize() override;
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
@@ -255,6 +253,8 @@ protected:
 
     Gtk::Grid* gfxGrid;
     Gtk::Grid* buttonGrid;
+    Gtk::Box* persistentButtons;
+    Gtk::Box* scopeButtons;
     HistogramArea* histogramArea;
     HistogramRGBArea* histogramRGBArea;
     std::unique_ptr<HistogramRGBAreaHori> histogramRGBAreaHori;
@@ -263,17 +263,21 @@ protected:
     Gtk::ToggleButton* showGreen;
     Gtk::ToggleButton* showBlue;
     Gtk::ToggleButton* showValue;
-    Gtk::ToggleButton* showRAW;
     Gtk::ToggleButton* showBAR;
     Gtk::ToggleButton* showChro;
     Gtk::Button* showMode;
-    Gtk::Button* scopeType;
+    Gtk::ToggleButton* scopeType;
+
+    Gtk::RadioButton* scopeHistBtn;
+    Gtk::RadioButton* scopeHistRawBtn;
+    Gtk::RadioButton* scopeWaveBtn;
+    Gtk::RadioButton* scopeVectHcBtn;
+    Gtk::RadioButton* scopeVectHsBtn;
 
     Gtk::Image *redImage;
     Gtk::Image *greenImage;
     Gtk::Image *blueImage;
     Gtk::Image *valueImage;
-    Gtk::Image *rawImage;
     Gtk::Image *barImage;
     Gtk::Image *chroImage;
 
@@ -281,14 +285,25 @@ protected:
     Gtk::Image *greenImage_g;
     Gtk::Image *blueImage_g;
     Gtk::Image *valueImage_g;
-    Gtk::Image *rawImage_g;
     Gtk::Image *barImage_g;
     Gtk::Image *chroImage_g;
 
     std::unique_ptr<Gtk::Image> histImage;
+    std::unique_ptr<Gtk::Image> histRawImage;
     std::unique_ptr<Gtk::Image> waveImage;
     std::unique_ptr<Gtk::Image> vectHcImage;
     std::unique_ptr<Gtk::Image> vectHsImage;
+
+    std::unique_ptr<Gtk::Image> histImageOn;
+    std::unique_ptr<Gtk::Image> histRawImageOn;
+    std::unique_ptr<Gtk::Image> waveImageOn;
+    std::unique_ptr<Gtk::Image> vectHcImageOn;
+    std::unique_ptr<Gtk::Image> vectHsImageOn;
+    std::unique_ptr<Gtk::Image> histImageOff;
+    std::unique_ptr<Gtk::Image> histRawImageOff;
+    std::unique_ptr<Gtk::Image> waveImageOff;
+    std::unique_ptr<Gtk::Image> vectHcImageOff;
+    std::unique_ptr<Gtk::Image> vectHsImageOff;
 
     Gtk::Image *mode0Image;
     Gtk::Image *mode1Image;
@@ -339,11 +354,11 @@ public:
     void green_toggled ();
     void blue_toggled ();
     void value_toggled ();
-    void raw_toggled ();
     void chro_toggled ();
     void bar_toggled ();
     void mode_released ();
     void type_pressed ();
+    void type_selected(Gtk::RadioButton* button);
     void type_changed ();
     void rgbv_toggled ();
     void resized (Gtk::Allocation& req);

@@ -346,6 +346,8 @@ public:
     virtual void setObservable(HistogramObservable* observable) = 0;
     /** Returns if the listener wants the histogram to be updated. */
     virtual bool updateHistogram(void) const = 0;
+    /** Returns if the listener wants the raw histogram to be updated. */
+    virtual bool updateHistogramRaw(void) const = 0;
     /** Returns if the listener wants the H-C vectorscope to be updated. */
     virtual bool updateVectorscopeHC(void) const = 0;
     /** Returns if the listener wants the H-S vectorscope to be updated. */
@@ -359,6 +361,8 @@ class HistogramObservable
 public:
     /** Tells the observable to update the histogram data. */
     virtual void requestUpdateHistogram() = 0;
+    /** Tells the observable to update the raw histogram data. */
+    virtual void requestUpdateHistogramRaw() = 0;
     /** Tells the observable to update the H-C vectorscope data. */
     virtual void requestUpdateVectorscopeHC() = 0;
     /** Tells the observable to update the H-S vectorscope data. */

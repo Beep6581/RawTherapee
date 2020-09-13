@@ -358,6 +358,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
 
             imgsrc->getRAWHistogram(histRedRaw, histGreenRaw, histBlueRaw);
+            hist_raw_dirty = !hListener->updateHistogramRaw();
 
             highDetailPreprocessComputed = highDetailNeeded;
 
@@ -2467,6 +2468,19 @@ void ImProcCoordinator::requestUpdateHistogram()
     }
     bool updated = updateLRGBHistograms();
     if (updated) {
+        notifyHistogramChanged();
+    }
+}
+
+void ImProcCoordinator::requestUpdateHistogramRaw()
+{
+    if (!hListener) {
+        return;
+    }
+    // Don't need to actually update histogram because it is always
+    // up-to-date.
+    if (hist_raw_dirty) {
+        hist_raw_dirty = false;
         notifyHistogramChanged();
     }
 }
