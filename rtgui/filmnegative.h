@@ -98,8 +98,7 @@ private:
     Adjuster* const redRatio;
     Adjuster* const blueRatio;
 
-    Gtk::Grid* const spotgrid;
-    Gtk::ToggleButton* const spotbutton;
+    Gtk::ToggleButton* const spotButton;
 
     Gtk::Label* const refInputLabel;
     Gtk::ToggleButton* const refSpotButton;

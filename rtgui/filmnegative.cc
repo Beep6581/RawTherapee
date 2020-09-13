@@ -153,21 +153,17 @@ FilmNegative::FilmNegative() :
     greenExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_GREEN"), 0.3, 4, 1.5)),  // master exponent (green channel)
     redRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_RED"), 0.3, 3, (2.04 / 1.5))), // ratio of red exponent to master exponent
     blueRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_BLUE"), 0.3, 3, (1.29 / 1.5))), // ratio of blue exponent to master exponent
-    spotgrid(Gtk::manage(new Gtk::Grid())),
-    spotbutton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_PICK")))),
+    spotButton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_PICK")))),
     refInputLabel(Gtk::manage(new Gtk::Label(M("TP_FILMNEGATIVE_REF_LABEL")))), //, Gtk::ALIGN_CENTER))),
     refSpotButton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_REF_PICK")))),
     outputLevel(createLevelAdjuster(this, M("TP_FILMNEGATIVE_OUT_LEVEL"))),  // ref level
     greenBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_GREENBALANCE"), 0.1, 10, 1.0)),  // green balance
     blueBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_BLUEBALANCE"), 0.1, 10, 1.0))  // blue balance
 {
-    spotgrid->get_style_context()->add_class("grid-spacing");
-    setExpandAlignProperties(spotgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-
-    setExpandAlignProperties(spotbutton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    spotbutton->get_style_context()->add_class("independent");
-    spotbutton->set_tooltip_text(M("TP_FILMNEGATIVE_GUESS_TOOLTIP"));
-    spotbutton->set_image(*Gtk::manage(new RTImage("color-picker-small.png")));
+    setExpandAlignProperties(spotButton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    spotButton->get_style_context()->add_class("independent");
+    spotButton->set_tooltip_text(M("TP_FILMNEGATIVE_GUESS_TOOLTIP"));
+    spotButton->set_image(*Gtk::manage(new RTImage("color-picker-small.png")));
 
     refSpotButton->set_tooltip_text(M("TP_FILMNEGATIVE_REF_TOOLTIP"));
 
@@ -190,7 +186,7 @@ FilmNegative::FilmNegative() :
     // spotsize->set_active(0);
     // spotsize->append ("4");
 
-    spotgrid->attach(*spotbutton, 0, 1, 1, 1);
+    // spotgrid->attach(*spotButton, 0, 1, 1, 1);
     // spotgrid->attach (*slab, 1, 0, 1, 1);
     // spotgrid->attach (*wbsizehelper, 2, 0, 1, 1);
 
@@ -213,7 +209,7 @@ FilmNegative::FilmNegative() :
     pack_start(*greenExp, Gtk::PACK_SHRINK, 0);
     pack_start(*redRatio, Gtk::PACK_SHRINK, 0);
     pack_start(*blueRatio, Gtk::PACK_SHRINK, 0);
-    pack_start(*spotgrid, Gtk::PACK_SHRINK, 0);
+    pack_start(*spotButton, Gtk::PACK_SHRINK, 0);
 
 //    pack_start(*oldMethod, Gtk::PACK_SHRINK, 0);
 
@@ -233,7 +229,7 @@ FilmNegative::FilmNegative() :
 
     pack_start(*refSpotButton, Gtk::PACK_SHRINK, 0);
 
-    spotbutton->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::editToggled));
+    spotButton->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::editToggled));
     // spotsize->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::spotSizeChanged) );
 
     refSpotButton->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::baseSpotToggled));
@@ -366,7 +362,7 @@ void FilmNegative::setBatchMode(bool batchMode)
     ToolPanel::setBatchMode(batchMode);
 
     if (batchMode) {
-        removeIfThere(this, spotgrid, false);
+        removeIfThere(this, spotButton, false);
         removeIfThere(this, refSpotButton, false);
         colorSpace->append(M("GENERAL_UNCHANGED"));
         colorSpace->set_active_text(M("GENERAL_UNCHANGED"));
@@ -483,7 +479,7 @@ bool FilmNegative::button1Pressed(int modifierKey)
     EditSubscriber::action = EditSubscriber::Action::NONE;
 
     if (listener) {
-        if (spotbutton->get_active()) {
+        if (spotButton->get_active()) {
 
             refSpotCoords.push_back(provider->posImage);
 
@@ -566,13 +562,13 @@ void FilmNegative::switchOffEditMode()
 {
     refSpotCoords.clear();
     unsubscribe();
-    spotbutton->set_active(false);
+    spotButton->set_active(false);
     refSpotButton->set_active(false);
 }
 
 void FilmNegative::editToggled()
 {
-    if (spotbutton->get_active()) {
+    if (spotButton->get_active()) {
 
         refSpotButton->set_active(false);
         refSpotCoords.clear();
@@ -597,7 +593,7 @@ void FilmNegative::baseSpotToggled()
 {
     if (refSpotButton->get_active()) {
 
-        spotbutton->set_active(false);
+        spotButton->set_active(false);
         refSpotCoords.clear();
 
         subscribe();
