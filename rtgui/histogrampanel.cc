@@ -1061,7 +1061,9 @@ HistogramArea::HistogramArea (DrawModeListener *fml) :
     needRed(options.histogramRed), needGreen(options.histogramGreen), needBlue(options.histogramBlue),
     needLuma(options.histogramLuma), needChroma(options.histogramChroma),
     isPressed(false), movingPosition(0.0),
-    pointer_red(-1), pointer_green(-1), pointer_blue(-1)
+    needPointer(false),
+    pointer_red(-1), pointer_green(-1), pointer_blue(-1),
+    pointer_a(0), pointer_b(0)
 {
 
     rhist(256);

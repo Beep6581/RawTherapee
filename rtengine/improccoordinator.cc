@@ -130,10 +130,16 @@ ImProcCoordinator::ImProcCoordinator() :
 
     histLRETI(256),
 
+    hist_lrgb_dirty(false),
+    hist_raw_dirty(false),
+
     vectorscopeScale(0),
+    vectorscope_hc_dirty(false),
+    vectorscope_hs_dirty(false),
     vectorscope_hc(VECTORSCOPE_SIZE, VECTORSCOPE_SIZE),
     vectorscope_hs(VECTORSCOPE_SIZE, VECTORSCOPE_SIZE),
     waveformScale(0),
+    waveform_dirty(false),
     waveformRed(0, 0),
     waveformGreen(0, 0),
     waveformBlue(0, 0),
