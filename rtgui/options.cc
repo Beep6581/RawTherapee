@@ -2266,7 +2266,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("GUI", "HistogramBar", histogramBar);
         keyFile.set_integer("GUI", "HistogramHeight", histogramHeight);
         keyFile.set_integer("GUI", "HistogramDrawMode", histogramDrawMode);
-        keyFile.set_integer("GUI", "HistogramScopeType", histogramScopeType);
+        keyFile.set_integer("GUI", "HistogramScopeType", rtengine::toUnderlying(histogramScopeType));
         keyFile.set_boolean("GUI", "HistogramShowScopeButtons", histogramShowScopeButtons);
         keyFile.set_integer("GUI", "NavigatorRGBUnit", (int)navRGBUnit);
         keyFile.set_integer("GUI", "NavigatorHSVUnit", (int)navHSVUnit);

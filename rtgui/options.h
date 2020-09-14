@@ -168,13 +168,22 @@ private:
                      const Glib::ustring& entryName, Glib::ustring& destination);
 
 public:
-
     enum class NavigatorUnit {
         PERCENT,
         R0_255,
         R0_1,
         _COUNT
     };
+
+    enum class ScopeType {
+        NONE = -1,
+        HISTOGRAM,
+        HISTOGRAM_RAW,
+        VECTORSCOPE_HC,
+        VECTORSCOPE_HS,
+        WAVEFORM
+    };
+
     bool savesParamsAtExit;
     SaveFormat saveFormat, saveFormatBatch;
     Glib::ustring savePathTemplate;
@@ -306,15 +315,6 @@ public:
     double sndLngEditProcDoneSecs;  // Minimum processing time seconds till the sound is played
     bool sndEnable;
 
-    enum ScopeType
-    {
-        HISTOGRAM = 0,
-        HISTOGRAM_RAW = 1,
-        VECTORSCOPE_HC = 2,
-        VECTORSCOPE_HS = 3,
-        WAVEFORM = 4,
-        NONE = -1
-    };
     int histogramPosition;  // 0=disabled, 1=left pane, 2=right pane
     bool histogramRed, histogramGreen, histogramBlue;
     bool histogramLuma, histogramChroma;

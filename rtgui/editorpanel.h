@@ -151,7 +151,7 @@ public:
     bool updateWaveform(void) const override;
 
     // HistogramPanelListener
-    void scopeTypeChanged(ScopeType new_type) override;
+    void scopeTypeChanged(Options::ScopeType new_type) override;
 
     // event handlers
     void info_toggled ();
@@ -286,5 +286,5 @@ private:
     IdleRegister idle_register;
 
     rtengine::HistogramObservable* histogram_observable;
-    ScopeType histogram_scope_type;
+    Options::ScopeType histogram_scope_type;
 };

@@ -48,6 +48,8 @@
 
 using namespace rtengine::procparams;
 
+using ScopeType = Options::ScopeType;
+
 namespace
 {
 

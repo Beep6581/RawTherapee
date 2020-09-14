@@ -29,6 +29,7 @@
 
 using namespace rtengine;
 
+using ScopeType = Options::ScopeType;
 
 //
 //

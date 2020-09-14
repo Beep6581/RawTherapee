@@ -37,8 +37,6 @@
 
 class HistogramArea;
 
-using ScopeType = Options::ScopeType;
-
 struct HistogramAreaIdleHelper {
     HistogramArea* harea;
     bool destroyed;
@@ -175,7 +173,7 @@ protected:
     bool valid;
     int drawMode;
     DrawModeListener *myDrawModeListener;
-    ScopeType scopeType;
+    Options::ScopeType scopeType;
     int oldwidth, oldheight;
     /// Intensity of waveform and vectorscope trace.
     float trace_brightness;
@@ -217,7 +215,7 @@ public:
         const array2D<int>& waveformBlue,
         const array2D<int>& waveformLuma
     );
-    void updateOptions (bool r, bool g, bool b, bool l, bool c, int mode, ScopeType type, bool pointer);
+    void updateOptions (bool r, bool g, bool b, bool l, bool c, int mode, Options::ScopeType type, bool pointer);
     bool updatePending();
     void on_realize() override;
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
@@ -241,7 +239,7 @@ private:
 class HistogramPanelListener
 {
 public:
-    virtual void scopeTypeChanged(ScopeType new_type) = 0;
+    virtual void scopeTypeChanged(Options::ScopeType new_type) = 0;
 };
 
 class HistogramPanel final : public Gtk::Grid, public PointerMotionListener, public DrawModeListener, public rtengine::NonCopyable
