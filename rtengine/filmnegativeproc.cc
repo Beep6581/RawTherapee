@@ -233,7 +233,7 @@ void convertColorSpace(Imagefloat* input, const TMatrix &src2xyz, const TMatrix 
  * Otherwise, use provided values in params and return false
  */
 bool doProcess(Imagefloat *input, Imagefloat *output,
-               const FilmNegativeParams params, const ColorManagementParams icmParams,
+               const FilmNegativeParams &params, const ColorManagementParams &icmParams,
                RGB &refIn, RGB &refOut)
 {
     bool refsUpdated = false;

@@ -54,9 +54,11 @@ Adjuster* createLevelAdjuster(AdjusterListener* listener, const Glib::ustring& l
     return adj;
 }
 
-Adjuster* createBalanceAdjuster(AdjusterListener* listener, const Glib::ustring& label, double minV, double maxV, double defaultVal)
+Adjuster* createBalanceAdjuster(AdjusterListener* listener, const Glib::ustring& label, double minV, double maxV, double defaultVal,
+        const Glib::ustring& leftIcon, const Glib::ustring& rightIcon)
 {
-    Adjuster* const adj = Gtk::manage(new Adjuster(label, minV, maxV, 0.01, defaultVal));
+    Adjuster* const adj = Gtk::manage(new Adjuster(label, minV, maxV, 0.01, defaultVal,
+        Gtk::manage(new RTImage(leftIcon)), Gtk::manage(new RTImage(rightIcon)) ));
     adj->setAdjusterListener(listener);
     adj->setLogScale(6, 1, true);
 
@@ -157,8 +159,8 @@ FilmNegative::FilmNegative() :
     refInputLabel(Gtk::manage(new Gtk::Label(M("TP_FILMNEGATIVE_REF_LABEL")))), //, Gtk::ALIGN_CENTER))),
     refSpotButton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_REF_PICK")))),
     outputLevel(createLevelAdjuster(this, M("TP_FILMNEGATIVE_OUT_LEVEL"))),  // ref level
-    greenBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_GREENBALANCE"), 0.1, 10, 1.0)),  // green balance
-    blueBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_BLUEBALANCE"), 0.1, 10, 1.0))  // blue balance
+    greenBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_GREENBALANCE"), 0.1, 10, 1.0, "circle-magenta-small.png", "circle-green-small.png")),  // green balance
+    blueBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_BLUEBALANCE"), 0.1, 10, 1.0, "circle-yellow-small.png", "circle-blue-small.png"))  // blue balance
 {
     setExpandAlignProperties(spotButton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     spotButton->get_style_context()->add_class("independent");
@@ -194,6 +196,7 @@ FilmNegative::FilmNegative() :
     colorSpace->append(M("TP_FILMNEGATIVE_COLORSPACE_WORKING"));
     colorSpace->append(M("TP_FILMNEGATIVE_COLORSPACE_BUILTIN"));
     setExpandAlignProperties(colorSpace, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    colorSpace->set_tooltip_markup(M("TP_FILMNEGATIVE_COLORSPACE_TOOLTIP"));
 
     Gtk::Grid* csGrid = Gtk::manage(new Gtk::Grid());
     Gtk::Label* csLabel = Gtk::manage (new Gtk::Label (M("TP_FILMNEGATIVE_COLORSPACE")));
