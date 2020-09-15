@@ -97,6 +97,7 @@ static FILE* _printSetupTxt(
   const char *fname, 	/* Input: filename, or NULL for stderr */
   const char *fmt,	/* Input: format (e.g., %5.1f or %3d) */
   char *format,	/* Output: format (e.g., (%5.1f,%5.1f)=%3d) */
+  std::size_t format_size,
   char *type)	/* Output: either 'f' or 'd', based on input format */
 {
   FILE *fp;
@@ -124,7 +125,7 @@ static FILE* _printSetupTxt(
   }
 
   /* Construct feature format */
-  snprintf(format, sizeof(format), "(%s,%s)=%%%dd ", fmt, fmt, val_width);
+  snprintf(format, format_size, "(%s,%s)=%%%dd ", fmt, fmt, val_width);
      
   return fp;
 }
@@ -358,7 +359,7 @@ void KLTWriteFeatureList(
   }
 
   if (fmt != nullptr) {  /* text file or stderr */
-    fp = _printSetupTxt(fname, fmt, format, &type);
+    fp = _printSetupTxt(fname, fmt, format, sizeof(format), &type);
     _printHeader(fp, format, FEATURE_LIST, 0, fl->nFeatures);
 	
     for (i = 0 ; i < fl->nFeatures ; i++)  {
@@ -396,7 +397,7 @@ void KLTWriteFeatureHistory(
   }
 
   if (fmt != nullptr) {  /* text file or stderr */
-    fp = _printSetupTxt(fname, fmt, format, &type);
+    fp = _printSetupTxt(fname, fmt, format, sizeof(format), &type);
     _printHeader(fp, format, FEATURE_HISTORY, fh->nFrames, 0);
 	
     for (i = 0 ; i < fh->nFrames ; i++)  {
@@ -435,7 +436,7 @@ void KLTWriteFeatureTable(
   }
 
   if (fmt != nullptr) {  /* text file or stderr */
-    fp = _printSetupTxt(fname, fmt, format, &type);
+    fp = _printSetupTxt(fname, fmt, format, sizeof(format), &type);
     _printHeader(fp, format, FEATURE_TABLE, ft->nFrames, ft->nFeatures);
 
     for (j = 0 ; j < ft->nFeatures ; j++)  {
