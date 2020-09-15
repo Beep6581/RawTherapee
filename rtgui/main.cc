@@ -460,7 +460,7 @@ int main (int argc, char **argv)
                     SetConsoleCtrlHandler ( NULL, true );
                     // Set title of console
                     char consoletitle[128];
-                    sprintf (consoletitle, "RawTherapee %s Console", RTVERSION);
+                    snprintf(consoletitle, sizeof(consoletitle), "RawTherapee %s Console", RTVERSION);
                     SetConsoleTitle (consoletitle);
                     // increase size of screen buffer
                     COORD c;

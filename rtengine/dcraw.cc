@@ -4085,7 +4085,7 @@ void CLASS foveon_interpolate()
     FORC3 diag[c][i] = LAST(1,1)*LAST(2,2) - LAST(1,2)*LAST(2,1);
   #undef LAST
   FORC3 div[c] = diag[c][0]*0.3127 + diag[c][1]*0.329 + diag[c][2]*0.3583;
-  sprintf (str, "%sRGBNeutral", model2);
+  snprintf(str, sizeof(str), "%sRGBNeutral", model2);
   if (foveon_camf_param ("IncludeBlocks", str))
     foveon_fixed (div, 3, str);
   num = 0;
@@ -6723,7 +6723,7 @@ int CLASS parse_tiff_ifd (int base)
 	  raw_height = height;
 	  left_margin = top_margin = filters = flip = 0;
 	}
-	sprintf (model, "Ixpress %d-Mp", height*width/1000000);
+	snprintf(model, sizeof(model), "Ixpress %d-Mp", height*width/1000000);
 	load_raw = &CLASS imacon_full_load_raw;
 	if (filters) {
 	  if (left_margin & 1) filters = 0x61616161;
@@ -7717,7 +7717,7 @@ void CLASS parse_smal (int offset, int fsize)
   raw_height = height = get2();
   raw_width  = width  = get2();
   strcpy (make, "SMaL");
-  sprintf (model, "v%d %dx%d", ver, width, height);
+  snprintf(model, sizeof(model), "v%d %dx%d", ver, width, height);
   if (ver == 6) load_raw = &CLASS smal_v6_load_raw;
   if (ver == 9) load_raw = &CLASS smal_v9_load_raw;
 }
@@ -7745,7 +7745,7 @@ void CLASS parse_cine()
   }
   fseek (ifp, off_setup+792, SEEK_SET);
   strcpy (make, "CINE");
-  sprintf (model, "%d", get4());
+  snprintf(model, sizeof(model), "%d", get4());
   fseek (ifp, 12, SEEK_CUR);
   switch ((i=get4()) & 0xffffff) {
     case  3:  filters = 0x94949494;  break;
@@ -9058,7 +9058,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
   char name[130];
   int i, j;
 
-  sprintf (name, "%s %s", make, model);
+  snprintf(name, sizeof(name), "%s %s", make, model);
 
 
   // -- RT --------------------------------------------------------------------
@@ -10522,7 +10522,7 @@ bw:   colors = 1;
     load_raw = &CLASS rollei_load_raw;
   }
   if (!model[0])
-    sprintf (model, "%dx%d", width, height);
+    snprintf(model, sizeof(model), "%dx%d", width, height);
   if (filters == UINT_MAX) filters = 0x94949494;
   if (thumb_offset && !thumb_height) {
     fseek (ifp, thumb_offset, SEEK_SET);

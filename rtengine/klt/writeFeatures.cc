@@ -124,7 +124,7 @@ static FILE* _printSetupTxt(
   }
 
   /* Construct feature format */
-  sprintf(format, "(%s,%s)=%%%dd ", fmt, fmt, val_width);
+  snprintf(format, sizeof(format), "(%s,%s)=%%%dd ", fmt, fmt, val_width);
      
   return fp;
 }
@@ -163,7 +163,7 @@ static void _printInteger(
   int width)
 {
   char fmt[80];
-  sprintf(fmt, "%%%dd", width);
+  snprintf(fmt, sizeof(fmt), "%%%dd", width);
   fprintf(fp, fmt, integer);
 }
 

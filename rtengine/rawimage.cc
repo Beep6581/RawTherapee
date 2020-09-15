@@ -1047,7 +1047,7 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
     }
 
     char name[strlen(make) + strlen(model) + 32];
-    sprintf(name, "%s %s", make, model);
+    snprintf(name, sizeof(name), "%s %s", make, model);
 
     for (size_t i = 0; i < sizeof table / sizeof(table[0]); i++) {
         if (strcasecmp(name, table[i].prefix) == 0) {
