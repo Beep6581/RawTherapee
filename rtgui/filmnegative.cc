@@ -25,6 +25,7 @@
 #include "options.h"
 #include "rtimage.h"
 
+#include "../rtengine/colortemp.h"
 #include "../rtengine/procparams.h"
 
 namespace
@@ -60,7 +61,7 @@ Adjuster* createBalanceAdjuster(AdjusterListener* listener, const Glib::ustring&
     Adjuster* const adj = Gtk::manage(new Adjuster(label, minV, maxV, 0.01, defaultVal,
         Gtk::manage(new RTImage(leftIcon)), Gtk::manage(new RTImage(rightIcon)) ));
     adj->setAdjusterListener(listener);
-    adj->setLogScale(6, 1, true);
+    adj->setLogScale(9, 1, true);
 
     adj->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
@@ -292,8 +293,14 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
         Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), fmt(refInputValues)));
 
     outputLevel->setValue(pp->filmNegative.refOutput.r);
-    greenBalance->setValue(pp->filmNegative.refOutput.g / pp->filmNegative.refOutput.r);
-    blueBalance->setValue(pp->filmNegative.refOutput.r / pp->filmNegative.refOutput.b);
+
+    rtengine::ColorTemp ct = rtengine::ColorTemp(1.,
+        pp->filmNegative.refOutput.g / pp->filmNegative.refOutput.r,
+        pp->filmNegative.refOutput.b / pp->filmNegative.refOutput.r,
+        1.);
+
+    blueBalance->setValue(ct.getTemp() / 6500.);
+    greenBalance->setValue(ct.getGreen());
 
     enableListener();
 }
@@ -323,8 +330,14 @@ void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
     pp->filmNegative.refInput = refInputValues;
     
     pp->filmNegative.refOutput.r = outputLevel->getValue();
-    pp->filmNegative.refOutput.g = greenBalance->getValue() * outputLevel->getValue();
-    pp->filmNegative.refOutput.b = outputLevel->getValue() / blueBalance->getValue();
+
+    rtengine::ColorTemp ct = rtengine::ColorTemp(6500. * blueBalance->getValue(),
+		    greenBalance->getValue(), 1., "Custom");
+    double rm, gm, bm;
+    ct.getMultipliers(rm, gm, bm);
+
+    pp->filmNegative.refOutput.g = (rm / gm) * outputLevel->getValue();
+    pp->filmNegative.refOutput.b = (rm / bm) * outputLevel->getValue();
 
     if (paramsUpgraded) {
         pp->filmNegative.backCompat = BackCompat::CURRENT;
@@ -338,9 +351,9 @@ void FilmNegative::setDefaults(const rtengine::procparams::ProcParams* defParams
     greenExp->setValue(defParams->filmNegative.greenExp);
     blueRatio->setValue(defParams->filmNegative.blueRatio);
 
-    outputLevel->setValue(defParams->filmNegative.refOutput.r);
-    greenBalance->setValue(defParams->filmNegative.refOutput.g / defParams->filmNegative.refOutput.r);
-    blueBalance->setValue(defParams->filmNegative.refOutput.r / defParams->filmNegative.refOutput.b);
+    outputLevel->setValue(rtengine::MAXVALF / 24.f);
+    greenBalance->setValue(1.);
+    blueBalance->setValue(1.);
 
     if (pedited) {
         redRatio->setDefaultEditedState(pedited->filmNegative.redRatio ? Edited : UnEdited);
@@ -441,8 +454,14 @@ void FilmNegative::filmBaseValuesChanged(const RGB &refInput, const RGB &refOutp
                 Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), fmt(refInputValues)));            
             
             outputLevel->setValue(refOutput.r);
-            greenBalance->setValue(refOutput.g / refOutput.r);
-            blueBalance->setValue(refOutput.r / refOutput.b);
+
+            rtengine::ColorTemp ct = rtengine::ColorTemp(1.,
+                refOutput.g / refOutput.r,
+                refOutput.b / refOutput.r,
+                1.);
+
+            blueBalance->setValue(ct.getTemp() / 6500.);
+            greenBalance->setValue(ct.getGreen());
 
             enableListener();
             return false;
