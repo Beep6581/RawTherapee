@@ -160,7 +160,7 @@ FilmNegative::FilmNegative() :
     refSpotButton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_REF_PICK")))),
     outputLevel(createLevelAdjuster(this, M("TP_FILMNEGATIVE_OUT_LEVEL"))),  // ref level
     greenBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_GREENBALANCE"), 0.1, 10, 1.0, "circle-magenta-small.png", "circle-green-small.png")),  // green balance
-    blueBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_BLUEBALANCE"), 0.1, 10, 1.0, "circle-yellow-small.png", "circle-blue-small.png"))  // blue balance
+    blueBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_BLUEBALANCE"), 0.1, 10, 1.0, "circle-blue-small.png", "circle-yellow-small.png"))  // blue balance
 {
     setExpandAlignProperties(spotButton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     spotButton->get_style_context()->add_class("independent");
@@ -227,8 +227,8 @@ FilmNegative::FilmNegative() :
     pack_start(*refInputLabel, Gtk::PACK_SHRINK, 0);
 
     pack_start(*outputLevel, Gtk::PACK_SHRINK, 0);
-    pack_start(*greenBalance, Gtk::PACK_SHRINK, 0);
     pack_start(*blueBalance, Gtk::PACK_SHRINK, 0);
+    pack_start(*greenBalance, Gtk::PACK_SHRINK, 0);
 
     pack_start(*refSpotButton, Gtk::PACK_SHRINK, 0);
 
@@ -293,7 +293,7 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
 
     outputLevel->setValue(pp->filmNegative.refOutput.r);
     greenBalance->setValue(pp->filmNegative.refOutput.g / pp->filmNegative.refOutput.r);
-    blueBalance->setValue(pp->filmNegative.refOutput.b / pp->filmNegative.refOutput.r);
+    blueBalance->setValue(pp->filmNegative.refOutput.r / pp->filmNegative.refOutput.b);
 
     enableListener();
 }
@@ -324,7 +324,7 @@ void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
     
     pp->filmNegative.refOutput.r = outputLevel->getValue();
     pp->filmNegative.refOutput.g = greenBalance->getValue() * outputLevel->getValue();
-    pp->filmNegative.refOutput.b = blueBalance->getValue() * outputLevel->getValue();
+    pp->filmNegative.refOutput.b = outputLevel->getValue() / blueBalance->getValue();
 
     if (paramsUpgraded) {
         pp->filmNegative.backCompat = BackCompat::CURRENT;
@@ -340,7 +340,7 @@ void FilmNegative::setDefaults(const rtengine::procparams::ProcParams* defParams
 
     outputLevel->setValue(defParams->filmNegative.refOutput.r);
     greenBalance->setValue(defParams->filmNegative.refOutput.g / defParams->filmNegative.refOutput.r);
-    blueBalance->setValue(defParams->filmNegative.refOutput.b / defParams->filmNegative.refOutput.r);
+    blueBalance->setValue(defParams->filmNegative.refOutput.r / defParams->filmNegative.refOutput.b);
 
     if (pedited) {
         redRatio->setDefaultEditedState(pedited->filmNegative.redRatio ? Edited : UnEdited);
@@ -442,7 +442,7 @@ void FilmNegative::filmBaseValuesChanged(const RGB &refInput, const RGB &refOutp
             
             outputLevel->setValue(refOutput.r);
             greenBalance->setValue(refOutput.g / refOutput.r);
-            blueBalance->setValue(refOutput.b / refOutput.r);
+            blueBalance->setValue(refOutput.r / refOutput.b);
 
             enableListener();
             return false;
@@ -533,7 +533,7 @@ bool FilmNegative::button1Pressed(int modifierKey)
 
             outputLevel->setValue(filmBaseOut.r); // rtengine::MAXVALF / 512.f);
             greenBalance->setValue(1.0); // filmBaseOut.g / filmBaseOut.r);
-            blueBalance->setValue(1.0); // filmBaseOut.g / filmBaseOut.r);
+            blueBalance->setValue(1.0); // filmBaseOut.r / filmBaseOut.b);
 
             refInputLabel->set_text(
                 Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), fmt(refInputValues)));
