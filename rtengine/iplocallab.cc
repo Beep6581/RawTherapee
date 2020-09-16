@@ -13407,7 +13407,7 @@ void ImProcFunctions::Lab_Local(
                             if (lochhCurve && HHcurve && lp.qualcurvemet != 0 && !ctoning) { // H=f(H)
                                 const float chromat = std::sqrt(SQR(bufcolcalca) + SQR(bufcolcalcb));
                                 const float hhforcurv = xatan2f(bufcolcalcb, bufcolcalca);
-                                const float valparam = float ((lochhCurve[500.f * Color::huelab_to_huehsv2(hhforcurv)] - 0.5f));  //get H=f(H)
+                                const float valparam = 2.f * float ((lochhCurve[500.f * Color::huelab_to_huehsv2(hhforcurv)] - 0.5f)) + static_cast<double>(hhforcurv);
                                 float2 sincosval = xsincosf(valparam);
                                 bufcolcalca = chromat * sincosval.y;
                                 bufcolcalcb = chromat * sincosval.x;
