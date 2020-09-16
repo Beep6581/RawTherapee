@@ -274,6 +274,7 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
         greenExp->setEditedState(pedited->filmNegative.greenExp ? Edited : UnEdited);
         blueRatio->setEditedState(pedited->filmNegative.blueRatio ? Edited : UnEdited);
         outputLevel->setEditedState(pedited->filmNegative.refOutput  ? Edited : UnEdited);
+        greenBalance->setEditedState(pedited->filmNegative.refOutput ? Edited : UnEdited);
         blueBalance->setEditedState(pedited->filmNegative.refOutput ? Edited : UnEdited);
         set_inconsistent(multiImage && !pedited->filmNegative.enabled);
     }
@@ -329,15 +330,14 @@ void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
     pp->filmNegative.refInput = refInputValues;
     
-    pp->filmNegative.refOutput.r = outputLevel->getValue();
-
     rtengine::ColorTemp ct = rtengine::ColorTemp(6500. * blueBalance->getValue(),
 		    greenBalance->getValue(), 1., "Custom");
     double rm, gm, bm;
     ct.getMultipliers(rm, gm, bm);
 
-    pp->filmNegative.refOutput.g = (rm / gm) * outputLevel->getValue();
-    pp->filmNegative.refOutput.b = (rm / bm) * outputLevel->getValue();
+    pp->filmNegative.refOutput.r = outputLevel->getValue() / rm;
+    pp->filmNegative.refOutput.g = outputLevel->getValue() / gm;
+    pp->filmNegative.refOutput.b = outputLevel->getValue() / bm;
 
     if (paramsUpgraded) {
         pp->filmNegative.backCompat = BackCompat::CURRENT;
@@ -566,8 +566,7 @@ bool FilmNegative::button1Pressed(int modifierKey)
                     round(refInputValues.r), round(refInputValues.g), round(refInputValues.b)
                 )
             );
-
-            switchOffEditMode();
+            
         }
     }
 
@@ -577,6 +576,13 @@ bool FilmNegative::button1Pressed(int modifierKey)
 bool FilmNegative::button1Released()
 {
     EditSubscriber::action = EditSubscriber::Action::NONE;
+    return true;
+}
+
+bool FilmNegative::button3Pressed(int modifierKey)
+{
+    EditSubscriber::action = EditSubscriber::Action::NONE;
+    switchOffEditMode();
     return true;
 }
 

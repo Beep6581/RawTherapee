@@ -73,6 +73,7 @@ public:
     bool mouseOver(int modifierKey) override;
     bool button1Pressed(int modifierKey) override;
     bool button1Released() override;
+    bool button3Pressed(int modifierKey) override;
     void switchOffEditMode() override;
 
 private:
