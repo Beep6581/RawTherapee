@@ -643,7 +643,7 @@ float calcRadiusBayer(const float * const *rawData, int W, int H, float lowerLim
             }
         }
     }
-    return std::sqrt((1.f / (std::log(1.f / maxRatio) /  2.f)) / -2.f);
+    return std::sqrt(1.f / std::log(maxRatio));
 }
 
 float calcRadiusXtrans(const float * const *rawData, int W, int H, float lowerLimit, float upperLimit, unsigned int starty, unsigned int startx)
@@ -734,7 +734,7 @@ float calcRadiusXtrans(const float * const *rawData, int W, int H, float lowerLi
             }
         }
     }
-    return std::sqrt((1.f / (std::log(1.f / maxRatio) /  2.f)) / -2.f);
+    return std::sqrt(1.f / std::log(maxRatio));
 }
 
 bool checkForStop(float** tmpIThr, float** iterCheck, int fullTileSize, int border)
