@@ -5549,9 +5549,9 @@ void LocallabMask::convertParamToSimple()
     disableListener();
 
     // Set hidden specific GUI widgets in Simple mode to default spot values
-    radmask->setValue(defSpot.radmask);
-    chromask->setValue(defSpot.chromask);
-    Lmask_shape->setCurve(defSpot.Lmask_curve);
+    gammask->setValue(defSpot.gammask);
+    slopmask->setValue(defSpot.slopmask);
+    //Lmask_shape->setCurve(defSpot.Lmask_curve);
 
     // Enable all listeners
     enableListener();
@@ -5562,21 +5562,29 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
     switch (new_type) {
         case Simple:
             // Expert and Normal mode widgets are hidden in Simple mode
-            softradiusmask->hide();
+            softradiusmask->show();
+            toolmaskFrame->show();
             struFrame->hide();
             blurFrame->hide();
-            toolmaskFrame->hide();
+            gammask->hide();
+            slopmask->hide();
+            shadmask->hide();
+            lapmask->hide();
+            mask_HCurveEditorG->hide();
+            mask2CurveEditorGwav->hide();
+            csThresholdmask->hide();
+            gradFramemask->hide();
 
             break;
 
         case Normal:
             // Expert mode widgets are hidden in Normal mode
-            softradiusmask->hide();
+            softradiusmask->show();
             struFrame->hide();
             blurFrame->hide();
             lapmask->hide();
-            gammask->hide();
-            slopmask->hide();
+            gammask->show();
+            slopmask->show();
             shadmask->hide();
             mask_HCurveEditorG->hide();
             mask2CurveEditorGwav->hide();
@@ -5589,19 +5597,20 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
 
         case Expert:
             // Show widgets hidden in Normal and Simple mode
-            softradiusmask->hide();
-            struFrame->hide();
-            blurFrame->hide();
-            toolmaskFrame->hide();
-            lapmask->hide();
-            gammask->hide();
-            slopmask->hide();
-            shadmask->hide();
-            mask_HCurveEditorG->hide();
-            mask2CurveEditorGwav->hide();
-            csThresholdmask->hide();
-            gradFramemask->hide();
+            softradiusmask->show();
+            struFrame->show();
+            blurFrame->show();
+            toolmaskFrame->show();
+            lapmask->show();
+            gammask->show();
+            slopmask->show();
+            shadmask->show();
+            mask_HCurveEditorG->show();
+            mask2CurveEditorGwav->show();
+            csThresholdmask->show();
+            gradFramemask->show();
     }
+    
 }
 
 void LocallabMask::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
