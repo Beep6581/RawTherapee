@@ -217,7 +217,7 @@ void Exiv2Metadata::do_merge_xmp(Exiv2::Image *dst) const
 }
 
 
-void Exiv2Metadata::saveToImage(const Glib::ustring &path) const
+void Exiv2Metadata::saveToImage(const Glib::ustring &path, bool preserve_all_tags) const
 {
     auto dst = open_exiv2(path, false);
     if (image_.get()) {
@@ -227,7 +227,9 @@ void Exiv2Metadata::saveToImage(const Glib::ustring &path) const
             do_merge_xmp(dst.get());
         }
         auto srcexif = image_->exifData();
-        remove_unwanted(srcexif);
+        if (!preserve_all_tags) {
+            remove_unwanted(srcexif);
+        }
         dst->setExifData(srcexif);
     } else {
         dst->setExifData(exif_data_);

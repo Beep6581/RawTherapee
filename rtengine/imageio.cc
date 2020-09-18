@@ -1370,7 +1370,7 @@ bool ImageIO::saveMetadata(const Glib::ustring &fname) const
 
     if (has_meta) {
         try {
-            metadataInfo.saveToImage(fname);
+            metadataInfo.saveToImage(fname, false);
             // auto src = open_exiv2(metadataInfo.filename());
             // auto dst = open_exiv2(fname);
             // src->readMetadata();
