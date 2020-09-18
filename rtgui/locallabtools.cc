@@ -2311,13 +2311,15 @@ LocallabExposure::LocallabExposure():
 
     // Exposure specific widgets
     expMethod(Gtk::manage(new MyComboBoxText())),
-    pdeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PDEFRA")))),
+//    pdeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PDEFRA")))),
+    exppde(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_PDEFRA")))),
     laplacexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACEXP"), 0.0, 100.0, 0.1, 0.))),
     linear(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LINEAR"), 0., 1., 0.01, 0.05))),
     balanexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANEXP"), 0.5, 1.5, 0.01, 1.0))),
     gamm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMM"), 0.2, 1.3, 0.01, 0.4))),
     exnoiseMethod(Gtk::manage(new MyComboBoxText())),
-    fatFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATFRA")))),
+//    fatFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATFRA")))),
+    expfat(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_FATFRA")))),
     fatamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATAMOUNT"), 1., 100., 1., 1.))),
     fatdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATDETAIL"), -100., 300., 1., 0.))),
     fatlevel(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATLEVEL"), 0.25, 2.5, 0.05, 1.))),
@@ -2369,7 +2371,9 @@ LocallabExposure::LocallabExposure():
     expMethod->set_active(0);
     expMethodConn = expMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabExposure::expMethodChanged));
 
-    pdeFrame->set_label_align(0.025, 0.5);
+//    pdeFrame->set_label_align(0.025, 0.5);
+    setExpandAlignProperties(exppde, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    setExpandAlignProperties(expfat, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     laplacexp->setAdjusterListener(this);
 
@@ -2385,7 +2389,7 @@ LocallabExposure::LocallabExposure():
     exnoiseMethod->set_active(0);
     exnoiseMethodConn  = exnoiseMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabExposure::exnoiseMethodChanged));
 
-    fatFrame->set_label_align(0.025, 0.5);
+ //   fatFrame->set_label_align(0.025, 0.5);
 
     fatamount->setAdjusterListener(this);
 
@@ -2505,7 +2509,7 @@ LocallabExposure::LocallabExposure():
     mask2expCurveEditorG->curveListComplete();
 
     // Add Color & Light specific widgets to GUI
-    pack_start(*expMethod);
+//    pack_start(*expMethod);
     ToolParamBlock* const pdeBox = Gtk::manage(new ToolParamBlock());
     pdeBox->pack_start(*laplacexp);
     pdeBox->pack_start(*linear);
@@ -2516,15 +2520,19 @@ LocallabExposure::LocallabExposure():
     ctboxexpmethod->pack_start(*labelexpmethod, Gtk::PACK_SHRINK, 4);
     ctboxexpmethod->pack_start(*exnoiseMethod);
     pdeBox->pack_start(*ctboxexpmethod);
-    pdeFrame->add(*pdeBox);
-    pack_start(*pdeFrame);
+    exppde->add(*pdeBox, false);
+//    pdeFrame->add(*pdeBox);
+//    pack_start(*pdeFrame);
+    pack_start(*exppde);
     ToolParamBlock* const fatBox = Gtk::manage(new ToolParamBlock());
     fatBox->pack_start(*fatamount);
     fatBox->pack_start(*fatdetail);
     fatBox->pack_start(*fatlevel);
     fatBox->pack_start(*fatanchor);
-    fatFrame->add(*fatBox);
-    pack_start(*fatFrame);
+//    fatFrame->add(*fatBox);
+    expfat->add(*fatBox, false);
+//    pack_start(*fatFrame);
+    pack_start(*expfat);
     pack_start(*expcomp);
     pack_start(*sensiex);
     pack_start(*structexp);
@@ -2602,14 +2610,16 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_EXPOSURE_TOOLTIP"));
-        expMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
-        pdeFrame->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
+//        expMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
+//        pdeFrame->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
+        exppde->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
         laplacexp->set_tooltip_text(M("TP_LOCALLAB_EXPLAP_TOOLTIP"));
         linear->set_tooltip_text(M("TP_LOCALLAB_EXPLAPLIN_TOOLTIP"));
         balanexp->set_tooltip_text(M("TP_LOCALLAB_EXPLAPBAL_TOOLTIP"));
         gamm->set_tooltip_text(M("TP_LOCALLAB_EXPLAPGAMM_TOOLTIP"));
         exnoiseMethod->set_tooltip_text(M("TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP"));
-        fatFrame->set_tooltip_text(M("TP_LOCALLAB_FATFRAME_TOOLTIP"));
+//        fatFrame->set_tooltip_text(M("TP_LOCALLAB_FATFRAME_TOOLTIP"));
+        expfat->set_tooltip_text(M("TP_LOCALLAB_FATFRAME_TOOLTIP"));
         expcomp->set_tooltip_text(M("TP_LOCALLAB_EXPCOMP_TOOLTIP"));
         sensiex->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         structexp->set_tooltip_text(M("TP_LOCALLAB_STRUCT_TOOLTIP"));
@@ -2628,14 +2638,14 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         Lmaskexpshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
-        expMethod->set_tooltip_text("");
-        pdeFrame->set_tooltip_text("");
+//        expMethod->set_tooltip_text("");
+//        pdeFrame->set_tooltip_text("");
         laplacexp->set_tooltip_text("");
         linear->set_tooltip_text("");
         balanexp->set_tooltip_text("");
         gamm->set_tooltip_text("");
         exnoiseMethod->set_tooltip_text("");
-        fatFrame->set_tooltip_text("");
+//        fatFrame->set_tooltip_text("");
         expcomp->set_tooltip_text("");
         sensiex->set_tooltip_text("");
         structexp->set_tooltip_text("");
@@ -2658,6 +2668,8 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
 void LocallabExposure::setDefaultExpanderVisibility()
 {
     exptoolexp->set_expanded(false);
+    exppde->set_expanded(false);
+    expfat->set_expanded(false);
     expgradexp->set_expanded(false);
     expmaskexp->set_expanded(false);
 }
@@ -2704,13 +2716,13 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
         exp->set_visible(spot.visiexpose);
         exp->setEnabled(spot.expexpose);
         complexity->set_active(spot.complexexpose);
-
+/*
         if (spot.expMethod == "std") {
             expMethod->set_active(0);
         } else if (spot.expMethod == "pde") {
             expMethod->set_active(1);
         }
-
+*/
         laplacexp->setValue(spot.laplacexp);
         linear->setValue(spot.linear);
         balanexp->setValue(spot.balanexp);
@@ -2787,13 +2799,13 @@ void LocallabExposure::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.expexpose = exp->getEnabled();
         spot.visiexpose = exp->get_visible();
         spot.complexexpose = complexity->get_active_row_number();
-
+/*
         if (expMethod->get_active_row_number() == 0) {
             spot.expMethod = "std";
         } else if (expMethod->get_active_row_number() == 1) {
             spot.expMethod = "pde";
         }
-
+*/
         spot.laplacexp = laplacexp->getValue();
         spot.linear = linear->getValue();
         spot.balanexp = balanexp->getValue();
@@ -3395,19 +3407,24 @@ void LocallabExposure::updateExposureGUI1()
 }
 
 void LocallabExposure::updateExposureGUI2()
-{
+{  /*
     // Update exposure GUI according to expMethod value
     if (expMethod->get_active_row_number() == 0) {
-        pdeFrame->hide();
-        fatFrame->hide();
+//        pdeFrame->hide();
+//        fatFrame->hide();
+        exppde->hide();
+        expfat->hide();
         softradiusexp->set_sensitive(true);
         sensiex->set_sensitive(true);
     } else if (expMethod->get_active_row_number() == 1) {
-        pdeFrame->show();
-        fatFrame->show();
+ //       pdeFrame->show();
+ //       fatFrame->show();
+        exppde->show();
+        expfat->show();
         softradiusexp->set_sensitive(false);
         sensiex->set_sensitive(true);
     }
+    */
 }
 
 void LocallabExposure::updateExposureGUI3()
