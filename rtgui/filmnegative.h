@@ -27,6 +27,8 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
+#include "../rtengine/colortemp.h"
+
 namespace
 {
 using RGB = rtengine::procparams::FilmNegativeParams::RGB;
@@ -79,6 +81,9 @@ public:
 private:
     void editToggled();
     void baseSpotToggled();
+
+    // ColorTemp value corresponding to neutral RGB multipliers (1,1,1). Should be around 6500K.
+    const rtengine::ColorTemp NEUTRAL_TEMP;
 
     const rtengine::ProcEvent evFilmNegativeExponents;
     const rtengine::ProcEvent evFilmNegativeEnabled;

@@ -25,7 +25,6 @@
 #include "options.h"
 #include "rtimage.h"
 
-#include "../rtengine/colortemp.h"
 #include "../rtengine/procparams.h"
 
 namespace
@@ -144,6 +143,7 @@ RGB getFilmNegativeExponents(const RGB &ref1, const RGB &ref2) // , const RGB &c
 FilmNegative::FilmNegative() :
     FoldableToolPanel(this, "filmnegative", M("TP_FILMNEGATIVE_LABEL"), false, true),
     EditSubscriber(ET_OBJECTS),
+    NEUTRAL_TEMP(rtengine::ColorTemp(1., 1., 1., 1.)),
     evFilmNegativeExponents(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_VALUES")),
     evFilmNegativeEnabled(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_ENABLED")),
     evFilmNegativeRefSpot(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_REF_SPOT")),
@@ -293,15 +293,16 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
     refInputLabel->set_markup(
         Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), fmt(refInputValues)));
 
-    outputLevel->setValue(pp->filmNegative.refOutput.r);
+    outputLevel->setValue(rtengine::max(pp->filmNegative.refOutput.r, pp->filmNegative.refOutput.g, pp->filmNegative.refOutput.b));
 
-    rtengine::ColorTemp ct = rtengine::ColorTemp(1.,
-        pp->filmNegative.refOutput.g / pp->filmNegative.refOutput.r,
-        pp->filmNegative.refOutput.b / pp->filmNegative.refOutput.r,
+    rtengine::ColorTemp ct = rtengine::ColorTemp(
+        pp->filmNegative.refOutput.r,
+        pp->filmNegative.refOutput.g,
+        pp->filmNegative.refOutput.b,
         1.);
 
-    blueBalance->setValue(ct.getTemp() / 6500.);
-    greenBalance->setValue(ct.getGreen());
+    blueBalance->setValue(NEUTRAL_TEMP.getTemp() / ct.getTemp());
+    greenBalance->setValue(NEUTRAL_TEMP.getGreen() / ct.getGreen());
 
     enableListener();
 }
@@ -330,14 +331,19 @@ void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
     pp->filmNegative.refInput = refInputValues;
     
-    rtengine::ColorTemp ct = rtengine::ColorTemp(6500. * blueBalance->getValue(),
-		    greenBalance->getValue(), 1., "Custom");
+    rtengine::ColorTemp ct = rtengine::ColorTemp(
+        NEUTRAL_TEMP.getTemp() / blueBalance->getValue(),
+        NEUTRAL_TEMP.getGreen() / greenBalance->getValue(),
+        1., "Custom");
+
     double rm, gm, bm;
     ct.getMultipliers(rm, gm, bm);
 
-    pp->filmNegative.refOutput.r = outputLevel->getValue() / rm;
-    pp->filmNegative.refOutput.g = outputLevel->getValue() / gm;
-    pp->filmNegative.refOutput.b = outputLevel->getValue() / bm;
+    double maxGain = rtengine::max(rm, gm, bm);
+
+    pp->filmNegative.refOutput.r = (rm / maxGain) * outputLevel->getValue();
+    pp->filmNegative.refOutput.g = (gm / maxGain) * outputLevel->getValue();
+    pp->filmNegative.refOutput.b = (bm / maxGain) * outputLevel->getValue();
 
     if (paramsUpgraded) {
         pp->filmNegative.backCompat = BackCompat::CURRENT;
