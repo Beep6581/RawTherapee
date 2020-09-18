@@ -1185,7 +1185,7 @@ void ControlSpotPanel::updateParamVisibility()
         excluFrame->show();
     }
 
-
+/*
     if (multiImage && prevMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
         expTransGrad_->show();
         expShapeDetect_->show();
@@ -1194,6 +1194,8 @@ void ControlSpotPanel::updateParamVisibility()
         circrad_->show();
         ctboxshape->show();
     } else if (prevMethod_->get_active_row_number() == 0) { // Normal case
+    */
+    if (!hishow_->get_active()) { // Normal case
         expTransGrad_->hide();
         expShapeDetect_->hide();
         expSpecCases_->hide();
