@@ -2841,7 +2841,7 @@ TP_LOCALLAB_TONEMAP_TOOLTIP;Same as the tone mapping tool in the main menu.\nThe
 TP_LOCALLAB_TONEMASCALE_TOOLTIP;This control gives meaning to the difference between "local" and "global" contrast.\nThe greater it is the larger a detail needs to be in order to be boosted
 TP_LOCALLAB_TONE_TOOLNAME;Tone Mapping - 4
 TP_LOCALLAB_TOOLCOL;Structure mask as tool
-TP_LOCALLAB_TOOLMASK;Tools
+TP_LOCALLAB_TOOLMASK;Mask Tools
 TP_LOCALLAB_TRANSIT;Transition Gradient
 TP_LOCALLAB_TRANSITGRAD;Transition differentiation XY
 TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Changes the transition of the abscissa to that of the ordinate 
