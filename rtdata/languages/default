@@ -2825,7 +2825,7 @@ TP_LOCALLAB_SYM;Symmetrical (mouse)
 TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
 TP_LOCALLAB_TARGET_GRAY;Target gray point
 TP_LOCALLAB_THRES;Threshold structure
-TP_LOCALLAB_THRESDELTAE;ΔE-scope threshold 
+TP_LOCALLAB_THRESDELTAE;ΔE scope threshold 
 TP_LOCALLAB_THRESRETI;Threshold
 TP_LOCALLAB_THRESWAV;Balance threshold
 TP_LOCALLAB_TLABEL;TM Data Min=%1 Max=%2 Mean=%3 Sigma=%4 (Threshold)
