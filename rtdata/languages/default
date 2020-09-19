@@ -2317,9 +2317,9 @@ TP_LOCALLAB_ARTIF;Shape detection
 TP_LOCALLAB_ARTIF_TOOLTIP;Threshold deltaE-scope increase the range of scope-deltaE - high values are for very wide gamut images.\nIncrease deltaE decay improve shape detection, but can reduce the scope of detection.
 TP_LOCALLAB_AUTOGRAY;Automatic
 TP_LOCALLAB_AVOID;Avoid color shift
-TP_LOCALLAB_BALAN;Balance ΔE ab-L
+TP_LOCALLAB_BALAN;ab-L balance (ΔE)
 TP_LOCALLAB_BALANEXP;Laplacian balance
-TP_LOCALLAB_BALANH;Balance ΔE C-H
+TP_LOCALLAB_BALANH;C-H balance (ΔE)
 TP_LOCALLAB_BALAN_TOOLTIP;Change algorithm ΔE parameter.\nMore or less ab-L, more or less C - H.\nNot for Denoise
 TP_LOCALLAB_BASELOG;Logarithm base
 TP_LOCALLAB_BILATERAL;Bilateral filter
@@ -2385,7 +2385,7 @@ TP_LOCALLAB_CLARITYML;Clarity
 TP_LOCALLAB_CLARI_TOOLTIP;Under or equal level wavelet 4, 'Sharp mask' is enabled.\nAbove level wavelet 5 'Clarity' is enabled.\nUsefull if you use 'Level dynamic Range Compression'
 TP_LOCALLAB_CLIPTM;Clip restored data (gain)
 TP_LOCALLAB_COFR;Color & Light
-TP_LOCALLAB_COLORDE;Color preview selection ΔE - Intensity
+TP_LOCALLAB_COLORDE;ΔE preview color - intensity
 TP_LOCALLAB_COLORDEPREV_TOOLTIP;Button Preview ΔE needs that only one tool is enabled (expander).\nTo be able to have an Preview ΔE with several enable tools use Mask and modifications - Preview ΔE
 TP_LOCALLAB_COLORDE_TOOLTIP;Show preview selection ΔE in blue if negative and in green if positive.\n\nMask and modifications (show modifications without mask): show real modifications if positive, show enhanced modifications (only luminance) with blue and yellow if negative.
 TP_LOCALLAB_COLORSCOPE;Scope (color tools)
@@ -2825,7 +2825,7 @@ TP_LOCALLAB_SYM;Symmetrical (mouse)
 TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
 TP_LOCALLAB_TARGET_GRAY;Target gray point
 TP_LOCALLAB_THRES;Threshold structure
-TP_LOCALLAB_THRESDELTAE;Threshold ΔE-scope
+TP_LOCALLAB_THRESDELTAE;ΔE-scope threshold 
 TP_LOCALLAB_THRESRETI;Threshold
 TP_LOCALLAB_THRESWAV;Balance threshold
 TP_LOCALLAB_TLABEL;TM Data Min=%1 Max=%2 Mean=%3 Sigma=%4 (Threshold)
