@@ -2412,7 +2412,7 @@ TP_LOCALLAB_CURV;Lightness - Contrast - Chrominance "Super"
 TP_LOCALLAB_CURVCURR;Normal
 TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP;If curves at the top, mask is completely black no transformation is made by the mask on the image.\nAs you go down the curve, the mask gradually more colorful and brilliant, the image is changing more and more.\n\nIt is recommended (not required) to position the top of the curves on the gray transition line which represents the references (chroma, luma, hue).
 TP_LOCALLAB_CURVEEDITORM_CC_TOOLTIP;If curves at the top, mask is completely black no transformation is made by the mask on the image.\nAs you go down the curve, the mask gradually more colorful and brilliant, the image is changing more and more.\n\nThe gray transition line which represents the references (chroma, luma, hue).\nYou can choose or not to position the top of the curves on this transition.
-TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To be active, you must enable combobox 'Curves type'
+TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To be active, you must enable combobox 'Curve type'
 TP_LOCALLAB_CURVEEDITOR_TONES_LABEL;Tone curve
 TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP;L=f(L), can be used with L(H) in Color and Light
 TP_LOCALLAB_CURVEMETHOD_TOOLTIP;'Normal', the curve L=f(L) has the same algorithm than slider lightness.\n'Super' the curve L=f(L) has an new improved algorithm, which can leeds in some cases to artifacts.
@@ -2587,7 +2587,7 @@ TP_LOCALLAB_LOG_TOOLNAME;Log Encoding - 0
 TP_LOCALLAB_LUM;Curves LL - CC
 TP_LOCALLAB_LUMADARKEST;Darkest
 TP_LOCALLAB_LUMASK;Background color for luminance and color masks
-TP_LOCALLAB_LUMASK_TOOLTIP;Adjust the gray of the mask background in Show Mask (Mask and modifications)
+TP_LOCALLAB_LUMASK_TOOLTIP;Adjusts the shade of gray or color of the mask background in Show Mask (Mask and modifications)
 TP_LOCALLAB_LUMAWHITESEST;Whiteest
 TP_LOCALLAB_LUMFRA;L*a*b* standard
 TP_LOCALLAB_LUMONLY;Luminance only
@@ -2679,7 +2679,7 @@ TP_LOCALLAB_PREVIEW;Preview ΔE
 TP_LOCALLAB_PREVHIDE;Hide additional settings
 TP_LOCALLAB_PREVSHOW;Show additional settings
 TP_LOCALLAB_PROXI;ΔE decay
-TP_LOCALLAB_QUALCURV_METHOD;Curves type
+TP_LOCALLAB_QUALCURV_METHOD;Curve type
 TP_LOCALLAB_QUAL_METHOD;Global quality
 TP_LOCALLAB_RADIUS;Radius
 TP_LOCALLAB_RADIUS_TOOLTIP;Above Radius 30 Use Fast Fourier Transform
@@ -2700,7 +2700,7 @@ TP_LOCALLAB_RESIDHI;Highlights
 TP_LOCALLAB_RESIDHITHR;Highlights threshold
 TP_LOCALLAB_RESIDSHA;Shadows
 TP_LOCALLAB_RESIDSHATHR;Shadows threshold
-TP_LOCALLAB_RETI;Dehaze - Retinex
+TP_LOCALLAB_RETI;Dehaze & Retinex
 TP_LOCALLAB_RETIFRA;Retinex
 TP_LOCALLAB_RETIM;Original Retinex
 TP_LOCALLAB_RETITOOLFRA;Retinex Tools
@@ -2791,7 +2791,7 @@ TP_LOCALLAB_SIGMAWAV;Attenuation response
 TP_LOCALLAB_SIM;Simple
 TP_LOCALLAB_SLOMASKCOL;Slope
 TP_LOCALLAB_SLOSH;Slope
-TP_LOCALLAB_SOFT;Soft Light - Original Retinex
+TP_LOCALLAB_SOFT;Soft Light & Original Retinex
 TP_LOCALLAB_SOFTM;Soft Light
 //TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Original Retinex is very different from others Retinex method.\nIts acts on grey and balance luminance.\nIt is an emulation of "Dodge" and "Burn"
 TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Apply a Soft-light blend (identical to the global adjustment). Carry out dodge and burn using the original Retinex algorithm.
@@ -2831,7 +2831,7 @@ TP_LOCALLAB_THRESWAV;Balance threshold
 TP_LOCALLAB_TLABEL;TM Data Min=%1 Max=%2 Mean=%3 Sigma=%4 (Threshold)
 TP_LOCALLAB_TLABEL2;TM Effective Tm=%1 TM=%2
 TP_LOCALLAB_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nTm=Min TM=Max of Transmission Map.\nYou can act on Threshold to normalize
-TP_LOCALLAB_TM;Tone Mapping - Texture
+TP_LOCALLAB_TM;Tone Mapping
 TP_LOCALLAB_TM_MASK;Use transmission map
 TP_LOCALLAB_TONEMAPESTOP_TOOLTIP;This parameter affects sensitivity to edges.\n The greater it is the more likely an illumination change is to be considered an "edge".\n If set to zero tone mapping will have an effect similar to unsharp masking.
 TP_LOCALLAB_TONEMAPGAM_TOOLTIP;Gamma moves the action of tone-mapping to shadows or highlights.
@@ -2856,7 +2856,7 @@ TP_LOCALLAB_USEMASK;Use mask
 TP_LOCALLAB_VART;Variance (contrast)
 TP_LOCALLAB_VIBRANCE;Vibrance & Warm/Cool
 TP_LOCALLAB_VIBRA_TOOLTIP;Adjust vibrance (essentially the same as the global adjustment).\nCarry out the equivalent of a white-balance adjustment using a CIECAM algorithm.
-TP_LOCALLAB_VIB_TOOLNAME;Vibrance - Warm/Cool - 3
+TP_LOCALLAB_VIB_TOOLNAME;Vibrance & Warm/Cool - 3
 TP_LOCALLAB_SOFT_TOOLNAME;Soft Light & Original Retinex - 6
 TP_LOCALLAB_BLUR_TOOLNAME;Blur/Grain & Denoise - 1
 TP_LOCALLAB_TONE_TOOLNAME;Tone Mapping - 4
