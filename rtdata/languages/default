@@ -1085,49 +1085,6 @@ HISTORY_MSG_840;Local - CL Curve
 HISTORY_MSG_841;Local - LC curve
 HISTORY_MSG_842;Local - Contrast Threshold
 HISTORY_MSG_843;Local - Radius
-HISTORY_MSG_844;Local - Color Mask fftw
-HISTORY_MSG_845;Local - log encoding
-HISTORY_MSG_846;Local - Encoding auto
-HISTORY_MSG_847;Local - Source Gray
-HISTORY_MSG_848;Local - Source Gray auto
-HISTORY_MSG_849;Local - Auto Grayon
-HISTORY_MSG_850;Local - Black Ev
-HISTORY_MSG_851;Local - White Ev
-HISTORY_MSG_852;Local - Target Gray
-HISTORY_MSG_853;Local - Local contrast
-HISTORY_MSG_854;Local - Scope encoding log
-HISTORY_MSG_855;Local - Entire image
-HISTORY_MSG_856;Local - Base log
-HISTORY_MSG_857;Local - Contrast Blur Residual
-HISTORY_MSG_858;Local - Contrast Luminance only 
-HISTORY_MSG_859;Local - Contrast Maximum Blur levels
-HISTORY_MSG_860;Local - Contrast Curve Blur levels
-HISTORY_MSG_861;Local - Contrast Curve Contrast levels
-HISTORY_MSG_862;Local - Contrast Sigma luminance
-HISTORY_MSG_863;Local - Contrast Merge Original
-HISTORY_MSG_864;Local - Directional sigma
-HISTORY_MSG_865;Local - Directional delta
-HISTORY_MSG_866;Local - Contrast Curve Compression
-HISTORY_MSG_867;Local - Contrast Amount residual
-HISTORY_MSG_868;Local - balance ΔE C-H
-HISTORY_MSG_869;Local - denoise curve luminance
-HISTORY_MSG_870;Local - LC mask curve LC(H)
-HISTORY_MSG_871;Local - LC mask curve C(C)
-HISTORY_MSG_872;Local - LC mask curve L(L)
-HISTORY_MSG_873;Local - LC mask enable
-HISTORY_MSG_875;Local - LC mask blend
-HISTORY_MSG_876;Local - LC mask radius
-HISTORY_MSG_877;Local - LC mask chroma
-HISTORY_MSG_878;Local - LC mask curve contrast
-HISTORY_MSG_879;Local - LC Chroma levels
-HISTORY_MSG_880;Local - LC Chroma blur levels
-HISTORY_MSG_881;Local - Contrast Offset Luminance
-HISTORY_MSG_882;Local - Contrast Blur
-HISTORY_MSG_883;Local - Contrast By Level
-HISTORY_MSG_884;Local - Contrast Dynamic Range Laplacian
-HISTORY_MSG_885;Local - Contrast Dynamic Range Wavelet
-HISTORY_MSG_886;Local - Contrast Wavelet Curve Compression
-HISTORY_MSG_887;Local - Contrast Wavelet Compression Residual
 HISTORY_MSG_888;Local - Contrast Wavelet Balance Threshold
 HISTORY_MSG_889;Local - Contrast Wavelet Graduated Strength
 HISTORY_MSG_890;Local - Contrast Wavelet Graduated angle
