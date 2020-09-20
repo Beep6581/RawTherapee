@@ -297,7 +297,7 @@ void LocallabTone::updateAdviceTooltips(const bool showTooltips)
         scaltm->set_tooltip_text("");
         rewei->set_tooltip_text("");
         sensitm->set_tooltip_text("");
-        expmasktm->set_tooltip_text("");
+        expmasktm->set_tooltip_markup("");
         CCmasktmshape->setTooltip("");
         LLmasktmshape->setTooltip("");
         HHmasktmshape->setTooltip("");
@@ -1006,11 +1006,11 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
         cliptm->set_tooltip_text("");
         softradiusret->set_tooltip_text("");
         cTtransshape->setTooltip("");
-        mMLabels->set_tooltip_text("");
-        transLabels->set_tooltip_text("");
+        mMLabels->set_tooltip_markup("");
+        transLabels->set_tooltip_markup("");
         cTgainshape->setTooltip("");
-        expmaskreti->set_tooltip_text("");
-        enaretiMasktmap->set_tooltip_text("");
+        expmaskreti->set_tooltip_markup("");
+        enaretiMasktmap->set_tooltip_markup("");
         CCmaskretishape->setTooltip("");
         LLmaskretishape->setTooltip("");
         HHmaskretishape->setTooltip("");
@@ -2626,10 +2626,10 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         Lmasklcshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
     } else {
         contFrame->set_tooltip_text("");
-        LocalcurveEditorwav->set_tooltip_text("");
-        levelwav->set_tooltip_text("");
-        clariFrame->set_tooltip_text("");
-        clarisoft->set_tooltip_text("");
+        LocalcurveEditorwav->set_tooltip_markup("");
+        levelwav->set_tooltip_markup("");
+        clariFrame->set_tooltip_markup("");
+        clarisoft->set_tooltip_markup("");
         expcontrastpyr->set_tooltip_text("");
         wavgradl->set_tooltip_text("");
         wavedg->set_tooltip_text("");
@@ -2641,7 +2641,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         wavcompre->set_tooltip_text("");
         wavcomp->set_tooltip_text("");
         fftwlc->set_tooltip_text("");
-        expmasklc->set_tooltip_text("");
+        expmasklc->set_tooltip_markup("");
         CCmasklcshape->setTooltip("");
         LLmasklcshape->setTooltip("");
         HHmasklcshape->setTooltip("");
@@ -4076,7 +4076,7 @@ void LocallabCBDL::updateAdviceTooltips(const bool showTooltips)
         threshold->set_tooltip_text("");
         clarityml->set_tooltip_text("");
         sensicb->set_tooltip_text("");
-        expmaskcb->set_tooltip_text("");
+        expmaskcb->set_tooltip_markup("");
         CCmaskcbshape->setTooltip("");
         LLmaskcbshape->setTooltip("");
         HHmaskcbshape->setTooltip("");
