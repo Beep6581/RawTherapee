@@ -539,6 +539,7 @@ struct local_params {
     int blmet;
     int smasktyp;
     int chromet;
+    int quamet;
     int shmeth;
     int medmet;
     int locmet;
@@ -784,6 +785,12 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.chromet = 1;
     } else if (locallab.spots.at(sp).chroMethod == "all") {
         lp.chromet = 2;
+    }
+
+    if (locallab.spots.at(sp).quamethod == "cons") {
+        lp.quamet = 0;
+    } else if (locallab.spots.at(sp).quamethod == "agre") {
+        lp.quamet = 1;
     }
 
     if (locallab.spots.at(sp).shMethod == "std") {
@@ -8394,7 +8401,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             }
                         }
 
-                    if ((lp.noiselc < 0.02f && aut == 0) || (mxsl < 1.f && (aut == 1 || aut == 2))) {
+                    if ((lp.quamet == 0  && aut == 0) || (mxsl < 1.f && (aut == 1 || aut == 2))) {
                         WaveletDenoiseAllL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
 
                     } else {
@@ -8684,7 +8691,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                     float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
 
-                    if ((lp.noisecc < 2.f && aut == 0) || (maxccoarse < 0.1f && (aut == 1 || aut == 2)))  {
+                    if ((lp.quamet == 0  && aut == 0) || (maxccoarse < 0.1f && (aut == 1 || aut == 2)))  {
                         WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                         WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, numThreads);
                     } else {
@@ -8945,7 +8952,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             }
 
 
-                        if ((lp.noiselc < 0.02f && aut == 0) || (mxsl < 1.f && (aut == 1 || aut == 2))) {
+                        if ((lp.quamet == 0  && aut == 0) || (mxsl < 1.f && (aut == 1 || aut == 2))) {
                             WaveletDenoiseAllL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
                         } else {
                             WaveletDenoiseAll_BiShrinkL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
@@ -9231,7 +9238,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                         float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
 
-                        if ((lp.noisecc < 0.02f && aut == 0) || (maxccoarse < 0.1f && (aut == 1  || aut == 2)))  {
+                        if ((lp.quamet == 0  && aut == 0) || (maxccoarse < 0.1f && (aut == 1  || aut == 2)))  {
                             WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                             WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, numThreads);
                         } else {

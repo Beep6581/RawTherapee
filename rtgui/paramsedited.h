@@ -616,6 +616,7 @@ public:
         bool scalegr;
         bool epsbl;
         bool blMethod;
+        bool quamethod;
         bool chroMethod;
         bool blurMethod;
         bool medMethod;
