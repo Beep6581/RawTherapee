@@ -251,13 +251,19 @@ bool doProcess(Imagefloat *input, Imagefloat *output,
 
     // In case we are processing a thumbnail, reference values might not be set in params,
     // so make an estimate on the fly, using channel medians
-    if (refIn.g <= 0.f || refOut.g <= 0.f) {
+    if (refIn.g <= 0.f) {
         // Calc medians, 20% border cut
         refIn = getMedians(input, 20);
-        refOut = { MAXVALF / 24.f, MAXVALF / 24.f, MAXVALF / 24.f };
         refsUpdated = true;
     } else {
         refIn = params.refInput;
+    }
+
+    if (refOut.g <= 0.f) {
+        // Median will correspond to gray, 1/24th of max in the output
+        refOut = { MAXVALF / 24.f, MAXVALF / 24.f, MAXVALF / 24.f };
+        refsUpdated = true;
+    } else {
         refOut = params.refOutput;
     }
 
@@ -481,7 +487,7 @@ void rtengine::Thumbnail::processFilmNegative(
     calcMedians(baseImg, 0, 0, rwidth, rheight, rmed, gmed, bmed);
 
     if (settings->verbose) {
-        printf("Thumbnail input channel medians: %g %g %g\n", rmed, gmed, bmed);
+        printf("FilmNeg legacy V1 :: Thumbnail input channel medians: %g %g %g\n", rmed, gmed, bmed);
     }
 
     // Calculate output medians
@@ -515,7 +521,7 @@ void rtengine::Thumbnail::processFilmNegative(
     bmult /= gavg / bavg;
 
     if (settings->verbose) {
-        printf("Thumbnail computed multipliers: %g %g %g\n", static_cast<double>(rmult), static_cast<double>(gmult), static_cast<double>(bmult));
+        printf("FilmNeg legacy V1 :: Thumbnail computed multipliers: %g %g %g\n", static_cast<double>(rmult), static_cast<double>(gmult), static_cast<double>(bmult));
     }
 
 #ifdef __SSE2__
@@ -587,7 +593,7 @@ void rtengine::Thumbnail::processFilmNegativeV2(
         // }
 
         if (settings->verbose) {
-            printf("Thumbnail input channel medians: %g %g %g\n", rmed, gmed, bmed);
+            printf("FilmNeg legacy V2 :: Thumbnail input channel medians: %g %g %g\n", rmed, gmed, bmed);
         }
 
         // Calculate output medians
@@ -617,17 +623,13 @@ void rtengine::Thumbnail::processFilmNegativeV2(
         bbase *= (blueMultiplier / camwbBlue)   * scaleGain;
 
         if (settings->verbose) {
-            printf("Thumbnail input film base values: %g %g %g\n", rbase, gbase, bbase);
+            printf("FilmNeg legacy V2 :: Thumbnail input film base values: %g %g %g\n", rbase, gbase, bbase);
         }
 
         // Apply exponents to get output film base values
         rbase = powf(rbase, rexp);
         gbase = powf(gbase, gexp);
         bbase = powf(bbase, bexp);
-
-        if (settings->verbose) {
-            printf("Thumbnail output film base values: %g %g %g\n", rbase, gbase, bbase);
-        }
 
         // Calculate multipliers so that film base value is 1/512th of the output range.
         rmult = (MAX_OUT_VALUE / 512.f) / rbase;
@@ -655,7 +657,7 @@ void rtengine::Thumbnail::processFilmNegativeV2(
 
 
     if (settings->verbose) {
-        printf("Thumbnail computed multipliers: %g %g %g\n", static_cast<double>(rmult), static_cast<double>(gmult), static_cast<double>(bmult));
+        printf("FilmNeg legacy V2 :: Thumbnail computed multipliers: %g %g %g\n", static_cast<double>(rmult), static_cast<double>(gmult), static_cast<double>(bmult));
     }
 
 

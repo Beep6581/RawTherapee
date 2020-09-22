@@ -1186,8 +1186,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         if (params.filmNegative.backCompat == FilmNegativeParams::BackCompat::V1) {
             processFilmNegative(params, baseImg, rwidth, rheight);
         } else if (params.filmNegative.backCompat == FilmNegativeParams::BackCompat::V2) {
-            // TODO : restore method from filmneg_stable_mults
-            processFilmNegative(params, baseImg, rwidth, rheight);
+            processFilmNegativeV2(params, baseImg, rwidth, rheight);
         }
     }
 

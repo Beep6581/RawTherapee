@@ -138,6 +138,35 @@ RGB getFilmNegativeExponents(const RGB &ref1, const RGB &ref2) // , const RGB &c
 
 }
 
+void temp2rgb(double outLev, double temp, double green, RGB &refOut) {
+    rtengine::ColorTemp ct = rtengine::ColorTemp(temp, green, 1., "Custom");
+
+    double rm, gm, bm;
+    ct.getMultipliers(rm, gm, bm);
+
+    double maxGain = rtengine::max(rm, gm, bm);
+
+    refOut.r = (rm / maxGain) * outLev;
+    refOut.g = (gm / maxGain) * outLev;
+    refOut.b = (bm / maxGain) * outLev;
+}
+
+
+void rgb2temp(const RGB &refOut, double &outLev, double &temp, double &green) {
+    double maxVal = rtengine::max(refOut.r, refOut.g, refOut.b);
+
+    rtengine::ColorTemp ct = rtengine::ColorTemp(
+        refOut.r / maxVal,
+        refOut.g / maxVal,
+        refOut.b / maxVal,
+        1.);
+
+    outLev = maxVal;
+    temp = ct.getTemp();
+    green = ct.getGreen();
+}
+
+
 }
 
 FilmNegative::FilmNegative() :
@@ -288,21 +317,35 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
 
     refInputValues = pp->filmNegative.refInput;
 
-    // If base values are not set in params, estimated values will be passed in later
+    // If reference input values are not set in params, estimated values will be passed in later
     // (after processing) via FilmNegListener
     refInputLabel->set_markup(
         Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), fmt(refInputValues)));
 
-    outputLevel->setValue(rtengine::max(pp->filmNegative.refOutput.r, pp->filmNegative.refOutput.g, pp->filmNegative.refOutput.b));
+    if (pp->filmNegative.backCompat == BackCompat::CURRENT) {
+        outputLevel->show();
+        blueBalance->show();
+        greenBalance->show();
+    } else {
+        outputLevel->hide();
+        blueBalance->hide();
+        greenBalance->hide();
+    }
 
-    rtengine::ColorTemp ct = rtengine::ColorTemp(
-        pp->filmNegative.refOutput.r,
-        pp->filmNegative.refOutput.g,
-        pp->filmNegative.refOutput.b,
-        1.);
+    // If reference output values are not set in params, set the default output
+    // chosen for median estimation: gray 1/24th of max
+    if(pp->filmNegative.refOutput.r <= 0) {
+        outputLevel->setValue(rtengine::MAXVALF / 24.);
+        blueBalance->setValue(1.);
+        greenBalance->setValue(1.);
+    } else {
+        double outLev, cTemp, green;
+        rgb2temp(pp->filmNegative.refOutput, outLev, cTemp, green);
 
-    blueBalance->setValue(NEUTRAL_TEMP.getTemp() / ct.getTemp());
-    greenBalance->setValue(NEUTRAL_TEMP.getGreen() / ct.getGreen());
+        outputLevel->setValue(outLev);
+        blueBalance->setValue(NEUTRAL_TEMP.getTemp() / cTemp);
+        greenBalance->setValue(NEUTRAL_TEMP.getGreen() / green);
+    }
 
     enableListener();
 }
@@ -324,26 +367,18 @@ void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         pedited->filmNegative.redRatio = redRatio->getEditedState();
         pedited->filmNegative.greenExp = greenExp->getEditedState();
         pedited->filmNegative.blueRatio = blueRatio->getEditedState();
-        pedited->filmNegative.refInput = refInputValues != pp->filmNegative.refInput;
         pedited->filmNegative.refOutput = outputLevel->getEditedState() ||  greenBalance->getEditedState() || blueBalance->getEditedState();
+        // In batch mode, make sure refinput is always updated together with the balance sliders
+        pedited->filmNegative.refInput = pedited->filmNegative.refOutput || (refInputValues != pp->filmNegative.refInput);
         pedited->filmNegative.enabled = !get_inconsistent();
     }
 
     pp->filmNegative.refInput = refInputValues;
     
-    rtengine::ColorTemp ct = rtengine::ColorTemp(
+    temp2rgb(outputLevel->getValue(),
         NEUTRAL_TEMP.getTemp() / blueBalance->getValue(),
         NEUTRAL_TEMP.getGreen() / greenBalance->getValue(),
-        1., "Custom");
-
-    double rm, gm, bm;
-    ct.getMultipliers(rm, gm, bm);
-
-    double maxGain = rtengine::max(rm, gm, bm);
-
-    pp->filmNegative.refOutput.r = (rm / maxGain) * outputLevel->getValue();
-    pp->filmNegative.refOutput.g = (gm / maxGain) * outputLevel->getValue();
-    pp->filmNegative.refOutput.b = (bm / maxGain) * outputLevel->getValue();
+        pp->filmNegative.refOutput);
 
     if (paramsUpgraded) {
         pp->filmNegative.backCompat = BackCompat::CURRENT;
@@ -412,6 +447,10 @@ void FilmNegative::adjusterChanged(Adjuster* a, double newval)
             );
         } else if (a == outputLevel || a == greenBalance || a == blueBalance) {
 
+            outputLevel->setEditedState(a->getEditedState());
+            greenBalance->setEditedState(a->getEditedState());
+            blueBalance->setEditedState(a->getEditedState());
+
             listener->panelChanged(
                 evFilmNegativeBalance,
                 Glib::ustring::compose(
@@ -459,15 +498,16 @@ void FilmNegative::filmBaseValuesChanged(const RGB &refInput, const RGB &refOutp
             refInputLabel->set_markup(
                 Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), fmt(refInputValues)));            
             
-            outputLevel->setValue(refOutput.r);
+            double outLev, cTemp, green;
+            rgb2temp(refOutput, outLev, cTemp, green);
 
-            rtengine::ColorTemp ct = rtengine::ColorTemp(1.,
-                refOutput.g / refOutput.r,
-                refOutput.b / refOutput.r,
-                1.);
+            outputLevel->setValue(outLev);
+            blueBalance->setValue(NEUTRAL_TEMP.getTemp() / cTemp);
+            greenBalance->setValue(NEUTRAL_TEMP.getGreen() / green);
 
-            blueBalance->setValue(ct.getTemp() / 6500.);
-            greenBalance->setValue(ct.getGreen());
+            outputLevel->show();
+            blueBalance->show();
+            greenBalance->show();
 
             enableListener();
             return false;
