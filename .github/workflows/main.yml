@@ -75,7 +75,6 @@ jobs:
           zsh -c 'echo "Compiled in $(printf "%0.2f" $(($[$(date +%s)-$(cat compilestamp)]/$((60.))))) minutes"'
       - name: Create application bundle
         run: |
-          zsh
           date +%s > build/bundlestamp && date -u && cd build
           export REF=${GITHUB_REF##*/} && export LOCAL_PREFIX=/usr && sudo make macosx_bundle
           export ARTIFACT=(RawTherapee*.zip)
@@ -85,7 +84,6 @@ jobs:
           echo "::set-env name=ARTIFACT_PATH::${GITHUB_WORKSPACE}/build/${ARTIFACT}"
           echo "::set-env name=ARTIFACT_FILE::${ARTIFACT}"
           zsh -c 'echo "Bundled in $(printf "%0.2f" $(($[$(date +%s)-$(cat bundlestamp)]/$((60.))))) minutes"'
-          exit
       - uses: actions/upload-artifact@v1
         with:
           name: ${{env.ARTIFACT_FILE}}

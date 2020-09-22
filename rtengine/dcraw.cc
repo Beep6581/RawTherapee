@@ -7428,7 +7428,7 @@ void CLASS parse_ciff (int offset, int length, int depth)
     if (type == 0x180e) timestamp  = get4();
 #ifdef LOCALTIME
     if ((type | 0x4000) == 0x580e)
-      timestamp = mktime (gmtime (&timestamp));
+      timestamp = mktime (gmtime_r (&timestamp, nullptr));
 #endif
     fseek (ifp, save, SEEK_SET);
   }
@@ -7894,7 +7894,7 @@ void CLASS parse_foveon()
 	    focal_len = atof(value);
 	}
 #ifdef LOCALTIME
-	timestamp = mktime (gmtime (&timestamp));
+	timestamp = mktime (gmtime_r (&timestamp, nullptr));
 #endif
     }
     fseek (ifp, save, SEEK_SET);

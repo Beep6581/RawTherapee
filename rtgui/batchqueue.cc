@@ -395,7 +395,7 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring &filenam
     struct tm *timeinfo;
     char stringTimestamp [80];
     time ( &rawtime );
-    timeinfo = localtime ( &rawtime );
+    timeinfo = localtime_r ( &rawtime, nullptr );
     strftime (stringTimestamp, sizeof(stringTimestamp), "_%Y%m%d%H%M%S_", timeinfo);
     Glib::ustring savedParamPath;
     savedParamPath = options.rtdir + "/batch/";

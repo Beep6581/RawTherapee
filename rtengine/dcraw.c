@@ -6558,7 +6558,7 @@ void CLASS parse_ciff (int offset, int length, int depth)
     if (type == 0x180e) timestamp  = get4();
 #ifdef LOCALTIME
     if ((type | 0x4000) == 0x580e)
-      timestamp = mktime (gmtime (&timestamp));
+      timestamp = mktime (gmtime_r (&timestamp, NULL));
 #endif
     fseek (ifp, save, SEEK_SET);
   }
@@ -7019,7 +7019,7 @@ void CLASS parse_foveon()
 	    focal_len = atof(value);
 	}
 #ifdef LOCALTIME
-	timestamp = mktime (gmtime (&timestamp));
+	timestamp = mktime (gmtime_r (&timestamp, NULL));
 #endif
     }
     fseek (ifp, save, SEEK_SET);
@@ -10049,7 +10049,7 @@ int CLASS main (int argc, const char **argv)
     }
     if (identify_only && verbose && make[0]) {
       printf (_("\nFilename: %s\n"), ifname);
-      printf (_("Timestamp: %s"), ctime(&timestamp));
+      printf (_("Timestamp: %s"), ctime_r(&timestamp, NULL));
       printf (_("Camera: %s %s\n"), make, model);
       if (artist[0])
 	printf (_("Owner: %s\n"), artist);
