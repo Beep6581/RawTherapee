@@ -2422,6 +2422,10 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, i
     //exposure local
 
     constexpr float maxran = 65536.f;
+    if(lp.laplacexp == 0.f) {
+        lp.linear = 0.f;
+    }
+
     const float linear = lp.linear;
     int bw = bfw;
     int bh = bfh;
@@ -2430,7 +2434,7 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, i
     }
     const bool exec = (lp.expmet == 1 && linear > 0.f && lp.laplacexp > 0.1f);
 
-    if(exec) {//for standard exposure
+    if(!exec) {//for standard exposure
         const float cexp_scale = std::pow(2.f, lp.expcomp);
         const float ccomp = (rtengine::max(0.f, lp.expcomp) + 1.f) * lp.hlcomp / 100.f;
         const float cshoulder = ((maxran / rtengine::max(1.0f, cexp_scale)) * (lp.hlcompthr / 200.f)) + 0.1f;
@@ -12765,14 +12769,14 @@ void ImProcFunctions::Lab_Local(
                             }
 
                         if (lp.expcomp == 0.f) {
-                            lp.expcomp = 0.001f;    // to enabled
+                            lp.expcomp = 0.001f;// to enabled
                         }
 
                         ImProcFunctions::exlabLocal(lp, bfh, bfw, bfhr, bfwr, bufexpfin.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
 
 
                     } else {
-                        if (lp.expcomp != 0.f) {
+                        if (lp.expcomp != 0.f  ||  lp.laplacexp > 0.1f) {
                             ImProcFunctions::exlabLocal(lp, bfh, bfw, bfhr, bfwr, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
                         }
                     }

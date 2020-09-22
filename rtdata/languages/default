@@ -2815,7 +2815,7 @@ TP_LOCALLAB_STRENGTH;Noise
 TP_LOCALLAB_STRGRID;Strength
 TP_LOCALLAB_STRRETI_TOOLTIP;if Strength Retinex < 0.2 only Dehaze is enabled.\nif Strength Retinex >= 0.1 Dehaze is in luminance mode.
 TP_LOCALLAB_STRUC;Structure
-TP_LOCALLAB_STRUCCOL;Structure
+TP_LOCALLAB_STRUCCOL;Spot Structure
 TP_LOCALLAB_STRUCCOL1;Spot Structure
 TP_LOCALLAB_STRUCT_TOOLTIP;Use Sobel algorithm to take into account structure in shape detection.\nyou can have a preview by activating "mask and modifications - Show spot structure".\n\nCan be used in conjunction with masks (advanced) structure, blur, wavelet to improve edge detection.\n\nNeeds maskless adjustments to be activated (lightness, exposure...)
 TP_LOCALLAB_STRUMASKCOL;Structure mask strength
