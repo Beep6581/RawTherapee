@@ -26,6 +26,7 @@
 #include "rtimage.h"
 
 #include "../rtengine/procparams.h"
+#include "../rtengine/color.h"
 
 namespace
 {
@@ -44,9 +45,9 @@ Adjuster* createExponentAdjuster(AdjusterListener* listener, const Glib::ustring
 
 Adjuster* createLevelAdjuster(AdjusterListener* listener, const Glib::ustring& label)
 {
-    Adjuster* const adj = Gtk::manage(new Adjuster(label, 1.0, 65535.0, 1.0, 65535.0 / 512.0));
+    Adjuster* const adj = Gtk::manage(new Adjuster(label, 1.0, 65535.0, 1.0, rtengine::MAXVALF / 24.));
     adj->setAdjusterListener(listener);
-    adj->setLogScale(6, 4000.0, true);
+    adj->setLogScale(6, 1000.0, true);
 
     adj->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
@@ -596,9 +597,9 @@ bool FilmNegative::button1Pressed(int modifierKey)
             
             disableListener();
 
-            outputLevel->setValue(filmBaseOut.r); // rtengine::MAXVALF / 512.f);
-            greenBalance->setValue(1.0); // filmBaseOut.g / filmBaseOut.r);
-            blueBalance->setValue(1.0); // filmBaseOut.r / filmBaseOut.b);
+            outputLevel->setValue(rtengine::Color::rgbLuminance(filmBaseOut.r , filmBaseOut.g , filmBaseOut.b));
+            greenBalance->setValue(1.0);
+            blueBalance->setValue(1.0);
 
             refInputLabel->set_text(
                 Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), fmt(refInputValues)));
