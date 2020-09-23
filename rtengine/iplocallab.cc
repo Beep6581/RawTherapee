@@ -539,6 +539,7 @@ struct local_params {
     int blmet;
     int smasktyp;
     int chromet;
+    int quamet;
     int shmeth;
     int medmet;
     int locmet;
@@ -709,12 +710,14 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     } else if (locallab.spots.at(sp).gridMethod == "two") {
         lp.gridmet = 1;
     }
-
+/*
     if (locallab.spots.at(sp).expMethod == "std") {
         lp.expmet = 0;
     } else if (locallab.spots.at(sp).expMethod == "pde") {
         lp.expmet = 1;
     }
+*/
+    lp.expmet = 1;
 
     if (locallab.spots.at(sp).localcontMethod == "loc") {
         lp.locmet = 0;
@@ -782,6 +785,12 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.chromet = 1;
     } else if (locallab.spots.at(sp).chroMethod == "all") {
         lp.chromet = 2;
+    }
+
+    if (locallab.spots.at(sp).quamethod == "cons") {
+        lp.quamet = 0;
+    } else if (locallab.spots.at(sp).quamethod == "agre") {
+        lp.quamet = 1;
     }
 
     if (locallab.spots.at(sp).shMethod == "std") {
@@ -2413,6 +2422,10 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, i
     //exposure local
 
     constexpr float maxran = 65536.f;
+    if(lp.laplacexp == 0.f) {
+        lp.linear = 0.f;
+    }
+
     const float linear = lp.linear;
     int bw = bfw;
     int bh = bfh;
@@ -3401,6 +3414,13 @@ void ImProcFunctions::deltaEforMask(float **rdE, int bfw, int bfh, LabImage* buf
 
 static void showmask(int lumask, const local_params& lp, int xstart, int ystart, int cx, int cy, int bfw, int bfh, LabImage* bufexporig, LabImage* transformed, LabImage* bufmaskorigSH, int inv)
 {
+    float lum = fabs(lumask * 400.f);
+    float colo = 0.f;
+    if(lumask < 0.f) {
+        lum *= 1.4f;
+        colo = 30000.f + 12.f * lum;
+    }
+
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -3421,17 +3441,18 @@ static void showmask(int lumask, const local_params& lp, int xstart, int ystart,
 
             if (inv == 0) {
                 if (zone > 0) {//normal
-                    transformed->L[y + ystart][x + xstart] = (lumask * 400.f) + clipLoc(bufmaskorigSH->L[y][x]);
+                    transformed->L[y + ystart][x + xstart] = (lum) + clipLoc(bufmaskorigSH->L[y][x]);
                     transformed->a[y + ystart][x + xstart] = bufexporig->a[y][x] * bufmaskorigSH->a[y][x];
-                    transformed->b[y + ystart][x + xstart] = bufexporig->b[y][x] * bufmaskorigSH->b[y][x];
+                    transformed->b[y + ystart][x + xstart] = (colo) + bufexporig->b[y][x] * bufmaskorigSH->b[y][x];
                 }
             } else if (inv == 1) { //inverse
                 if (zone == 0) {
-                    transformed->L[y + ystart][x + xstart] = (lumask * 400.f) + clipLoc(bufmaskorigSH->L[y][x]);
+                    transformed->L[y + ystart][x + xstart] = (lum) + clipLoc(bufmaskorigSH->L[y][x]);
                     transformed->a[y + ystart][x + xstart] = bufexporig->a[y][x] * bufmaskorigSH->a[y][x];
-                    transformed->b[y + ystart][x + xstart] = bufexporig->b[y][x] * bufmaskorigSH->b[y][x];
+                    transformed->b[y + ystart][x + xstart] = (colo) + bufexporig->b[y][x] * bufmaskorigSH->b[y][x];
                 }
             }
+
         }
     }
 }
@@ -8384,7 +8405,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             }
                         }
 
-                    if ((lp.noiselc < 0.02f && aut == 0) || (mxsl < 1.f && (aut == 1 || aut == 2))) {
+                    if ((lp.quamet == 0  && aut == 0) || (mxsl < 1.f && (aut == 1 || aut == 2))) {
                         WaveletDenoiseAllL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
 
                     } else {
@@ -8674,7 +8695,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                     float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
 
-                    if ((lp.noisecc < 2.f && aut == 0) || (maxccoarse < 0.1f && (aut == 1 || aut == 2)))  {
+                    if ((lp.quamet == 0  && aut == 0) || (maxccoarse < 0.1f && (aut == 1 || aut == 2)))  {
                         WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                         WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, numThreads);
                     } else {
@@ -8935,7 +8956,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                             }
 
 
-                        if ((lp.noiselc < 0.02f && aut == 0) || (mxsl < 1.f && (aut == 1 || aut == 2))) {
+                        if ((lp.quamet == 0  && aut == 0) || (mxsl < 1.f && (aut == 1 || aut == 2))) {
                             WaveletDenoiseAllL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
                         } else {
                             WaveletDenoiseAll_BiShrinkL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
@@ -9221,7 +9242,7 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
                         float noisevarab_r = 100.f; //SQR(lp.noisecc / 10.0);
 
-                        if ((lp.noisecc < 0.02f && aut == 0) || (maxccoarse < 0.1f && (aut == 1  || aut == 2)))  {
+                        if ((lp.quamet == 0  && aut == 0) || (maxccoarse < 0.1f && (aut == 1  || aut == 2)))  {
                             WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                             WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, numThreads);
                         } else {
@@ -11293,7 +11314,7 @@ void ImProcFunctions::Lab_Local(
     }
 
 // soft light and retinex_pde
-    if (lp.strng > 0.f && call <= 3 && lp.sfena) {
+    if (lp.strng > 1.f && call <= 3 && lp.sfena) {
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -12748,15 +12769,16 @@ void ImProcFunctions::Lab_Local(
                             }
 
                         if (lp.expcomp == 0.f) {
-                            lp.expcomp = 0.001f;    // to enabled
+                            lp.expcomp = 0.001f;// to enabled
                         }
 
                         ImProcFunctions::exlabLocal(lp, bfh, bfw, bfhr, bfwr, bufexpfin.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
 
 
                     } else {
-
-                        ImProcFunctions::exlabLocal(lp, bfh, bfw, bfhr, bfwr, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
+                        if (lp.expcomp != 0.f  ||  lp.laplacexp > 0.1f) {
+                            ImProcFunctions::exlabLocal(lp, bfh, bfw, bfhr, bfwr, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
+                        }
                     }
 
 //gradient
@@ -13407,7 +13429,7 @@ void ImProcFunctions::Lab_Local(
                             if (lochhCurve && HHcurve && lp.qualcurvemet != 0 && !ctoning) { // H=f(H)
                                 const float chromat = std::sqrt(SQR(bufcolcalca) + SQR(bufcolcalcb));
                                 const float hhforcurv = xatan2f(bufcolcalcb, bufcolcalca);
-                                const float valparam = float ((lochhCurve[500.f * Color::huelab_to_huehsv2(hhforcurv)] - 0.5f));  //get H=f(H)
+                                const float valparam = 2.f * float ((lochhCurve[500.f * Color::huelab_to_huehsv2(hhforcurv)] - 0.5f)) + static_cast<double>(hhforcurv);
                                 float2 sincosval = xsincosf(valparam);
                                 bufcolcalca = chromat * sincosval.y;
                                 bufcolcalcb = chromat * sincosval.x;

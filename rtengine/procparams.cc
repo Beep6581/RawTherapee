@@ -2760,6 +2760,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     colorscope(30.0),
     transitweak(1.0),
     transitgrad(0.0),
+    hishow(false),
     activ(true),
     avoid(false),
     blwh(false),
@@ -3292,6 +3293,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     epsbl(0),
     blMethod("blur"),
     chroMethod("lum"),
+    quamethod("cons"),
     blurMethod("norm"),
     medMethod("33"),
     activlum(true),
@@ -4017,6 +4019,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && colorscope == other.colorscope
         && transitweak == other.transitweak
         && transitgrad == other.transitgrad
+        && hishow == other.hishow
         && activ == other.activ
         && avoid == other.avoid
         && blwh == other.blwh
@@ -4226,6 +4229,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && epsbl == other.epsbl
         && blMethod == other.blMethod
         && chroMethod == other.chroMethod
+        && quamethod == other.quamethod
         && blurMethod == other.blurMethod
         && medMethod == other.medMethod
         && activlum == other.activlum
@@ -5567,6 +5571,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || spot_edited->colorscope, "Locallab", "Colorscope_" + index_str, spot.colorscope, keyFile);
                 saveToKeyfile(!pedited || spot_edited->transitweak, "Locallab", "Transitweak_" + index_str, spot.transitweak, keyFile);
                 saveToKeyfile(!pedited || spot_edited->transitgrad, "Locallab", "Transitgrad_" + index_str, spot.transitgrad, keyFile);
+                saveToKeyfile(!pedited || spot_edited->hishow, "Locallab", "Hishow_" + index_str, spot.hishow, keyFile);
                 saveToKeyfile(!pedited || spot_edited->activ, "Locallab", "Activ_" + index_str, spot.activ, keyFile);
                 saveToKeyfile(!pedited || spot_edited->avoid, "Locallab", "Avoid_" + index_str, spot.avoid, keyFile);
                 saveToKeyfile(!pedited || spot_edited->blwh, "Locallab", "Blwh_" + index_str, spot.blwh, keyFile);
@@ -5776,6 +5781,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->epsbl, "Locallab", "Epsbl_" + index_str, spot.epsbl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blMethod, "Locallab", "BlMethod_" + index_str, spot.blMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chroMethod, "Locallab", "ChroMethod_" + index_str, spot.chroMethod, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->quamethod, "Locallab", "QuaMethod_" + index_str, spot.quamethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blurMethod, "Locallab", "BlurMethod_" + index_str, spot.blurMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->medMethod, "Locallab", "MedMethod_" + index_str, spot.medMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->activlum, "Locallab", "activlum_" + index_str, spot.activlum, keyFile);
@@ -7260,6 +7266,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Colorscope_" + index_str, pedited, spot.colorscope, spotEdited.colorscope);
                 assignFromKeyfile(keyFile, "Locallab", "Transitweak_" + index_str, pedited, spot.transitweak, spotEdited.transitweak);
                 assignFromKeyfile(keyFile, "Locallab", "Transitgrad_" + index_str, pedited, spot.transitgrad, spotEdited.transitgrad);
+                assignFromKeyfile(keyFile, "Locallab", "Hishow_" + index_str, pedited, spot.hishow, spotEdited.hishow);
                 assignFromKeyfile(keyFile, "Locallab", "Activ_" + index_str, pedited, spot.activ, spotEdited.activ);
                 assignFromKeyfile(keyFile, "Locallab", "Avoid_" + index_str, pedited, spot.avoid, spotEdited.avoid);
                 assignFromKeyfile(keyFile, "Locallab", "Blwh_" + index_str, pedited, spot.blwh, spotEdited.blwh);
@@ -7510,6 +7517,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Epsbl_" + index_str, pedited, spot.epsbl, spotEdited.epsbl);
                 assignFromKeyfile(keyFile, "Locallab", "BlMethod_" + index_str, pedited, spot.blMethod, spotEdited.blMethod);
                 assignFromKeyfile(keyFile, "Locallab", "ChroMethod_" + index_str, pedited, spot.chroMethod, spotEdited.chroMethod);
+                assignFromKeyfile(keyFile, "Locallab", "QuaMethod_" + index_str, pedited, spot.quamethod, spotEdited.quamethod);
                 assignFromKeyfile(keyFile, "Locallab", "BlurMethod_" + index_str, pedited, spot.blurMethod, spotEdited.blurMethod);
                 assignFromKeyfile(keyFile, "Locallab", "MedMethod_" + index_str, pedited, spot.medMethod, spotEdited.medMethod);
                 assignFromKeyfile(keyFile, "Locallab", "activlum_" + index_str, pedited, spot.activlum, spotEdited.activlum);

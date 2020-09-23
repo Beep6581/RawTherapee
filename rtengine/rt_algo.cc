@@ -34,23 +34,14 @@
 #include "sleef.h"
 
 namespace {
-float calcBlendFactor(float val, float threshold) {
-    // sigmoid function
-    // result is in ]0;1] range
-    // inflexion point is at (x, y) (threshold, 0.5)
-    return 1.f / (1.f + xexpf(16.f - 16.f * val / threshold));
-}
 
-#ifdef __SSE2__
-vfloat calcBlendFactor(vfloat valv, vfloat thresholdv) {
+template<typename T>
+T calcBlendFactor(T val, T threshold) {
     // sigmoid function
     // result is in ]0;1] range
     // inflexion point is at (x, y) (threshold, 0.5)
-    const vfloat onev = F2V(1.f);
-    const vfloat c16v = F2V(16.f);
-    return onev / (onev + xexpf(c16v - c16v * valv / thresholdv));
+    return 1.f / (1.f + xexpf(16.f - (16.f / threshold) * val));
 }
-#endif
 
 float tileAverage(const float * const *data, size_t tileY, size_t tileX, size_t tilesize) {
 

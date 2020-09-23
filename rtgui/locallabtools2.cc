@@ -297,7 +297,7 @@ void LocallabTone::updateAdviceTooltips(const bool showTooltips)
         scaltm->set_tooltip_text("");
         rewei->set_tooltip_text("");
         sensitm->set_tooltip_text("");
-        expmasktm->set_tooltip_text("");
+        expmasktm->set_tooltip_markup("");
         CCmasktmshape->setTooltip("");
         LLmasktmshape->setTooltip("");
         HHmasktmshape->setTooltip("");
@@ -1006,11 +1006,11 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
         cliptm->set_tooltip_text("");
         softradiusret->set_tooltip_text("");
         cTtransshape->setTooltip("");
-        mMLabels->set_tooltip_text("");
-        transLabels->set_tooltip_text("");
+        mMLabels->set_tooltip_markup("");
+        transLabels->set_tooltip_markup("");
         cTgainshape->setTooltip("");
-        expmaskreti->set_tooltip_text("");
-        enaretiMasktmap->set_tooltip_text("");
+        expmaskreti->set_tooltip_markup("");
+        enaretiMasktmap->set_tooltip_markup("");
         CCmaskretishape->setTooltip("");
         LLmaskretishape->setTooltip("");
         HHmaskretishape->setTooltip("");
@@ -2626,10 +2626,10 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         Lmasklcshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
     } else {
         contFrame->set_tooltip_text("");
-        LocalcurveEditorwav->set_tooltip_text("");
-        levelwav->set_tooltip_text("");
-        clariFrame->set_tooltip_text("");
-        clarisoft->set_tooltip_text("");
+        LocalcurveEditorwav->set_tooltip_markup("");
+        levelwav->set_tooltip_markup("");
+        clariFrame->set_tooltip_markup("");
+        clarisoft->set_tooltip_markup("");
         expcontrastpyr->set_tooltip_text("");
         wavgradl->set_tooltip_text("");
         wavedg->set_tooltip_text("");
@@ -2641,7 +2641,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         wavcompre->set_tooltip_text("");
         wavcomp->set_tooltip_text("");
         fftwlc->set_tooltip_text("");
-        expmasklc->set_tooltip_text("");
+        expmasklc->set_tooltip_markup("");
         CCmasklcshape->setTooltip("");
         LLmasklcshape->setTooltip("");
         HHmasklcshape->setTooltip("");
@@ -4076,7 +4076,7 @@ void LocallabCBDL::updateAdviceTooltips(const bool showTooltips)
         threshold->set_tooltip_text("");
         clarityml->set_tooltip_text("");
         sensicb->set_tooltip_text("");
-        expmaskcb->set_tooltip_text("");
+        expmaskcb->set_tooltip_markup("");
         CCmaskcbshape->setTooltip("");
         LLmaskcbshape->setTooltip("");
         HHmaskcbshape->setTooltip("");
@@ -5549,9 +5549,9 @@ void LocallabMask::convertParamToSimple()
     disableListener();
 
     // Set hidden specific GUI widgets in Simple mode to default spot values
-    radmask->setValue(defSpot.radmask);
-    chromask->setValue(defSpot.chromask);
-    Lmask_shape->setCurve(defSpot.Lmask_curve);
+    gammask->setValue(defSpot.gammask);
+    slopmask->setValue(defSpot.slopmask);
+    //Lmask_shape->setCurve(defSpot.Lmask_curve);
 
     // Enable all listeners
     enableListener();
@@ -5562,21 +5562,29 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
     switch (new_type) {
         case Simple:
             // Expert and Normal mode widgets are hidden in Simple mode
-            softradiusmask->hide();
+            softradiusmask->show();
+            toolmaskFrame->show();
             struFrame->hide();
             blurFrame->hide();
-            toolmaskFrame->hide();
+            gammask->hide();
+            slopmask->hide();
+            shadmask->hide();
+            lapmask->hide();
+            mask_HCurveEditorG->hide();
+            mask2CurveEditorGwav->hide();
+            csThresholdmask->hide();
+            gradFramemask->hide();
 
             break;
 
         case Normal:
             // Expert mode widgets are hidden in Normal mode
-            softradiusmask->hide();
+            softradiusmask->show();
             struFrame->hide();
             blurFrame->hide();
             lapmask->hide();
-            gammask->hide();
-            slopmask->hide();
+            gammask->show();
+            slopmask->show();
             shadmask->hide();
             mask_HCurveEditorG->hide();
             mask2CurveEditorGwav->hide();
@@ -5589,19 +5597,20 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
 
         case Expert:
             // Show widgets hidden in Normal and Simple mode
-            softradiusmask->hide();
-            struFrame->hide();
-            blurFrame->hide();
-            toolmaskFrame->hide();
-            lapmask->hide();
-            gammask->hide();
-            slopmask->hide();
-            shadmask->hide();
-            mask_HCurveEditorG->hide();
-            mask2CurveEditorGwav->hide();
-            csThresholdmask->hide();
-            gradFramemask->hide();
+            softradiusmask->show();
+            struFrame->show();
+            blurFrame->show();
+            toolmaskFrame->show();
+            lapmask->show();
+            gammask->show();
+            slopmask->show();
+            shadmask->show();
+            mask_HCurveEditorG->show();
+            mask2CurveEditorGwav->show();
+            csThresholdmask->show();
+            gradFramemask->show();
     }
+    
 }
 
 void LocallabMask::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)

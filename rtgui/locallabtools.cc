@@ -951,14 +951,14 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         structcol->set_tooltip_text("");
         strcol->set_tooltip_text("");
         angcol->set_tooltip_text("");
-        qualitycurveMethod->set_tooltip_text("");
+        qualitycurveMethod->set_tooltip_markup("");
         special->set_tooltip_text("");
         expmaskcol1->set_tooltip_text("");
         mercol->set_tooltip_text("");
         opacol->set_tooltip_text("");
         conthrcol->set_tooltip_text("");
         gridmerFrame->set_tooltip_text("");
-        expmaskcol->set_tooltip_text("");
+        expmaskcol->set_tooltip_markup("");
         CCmaskshape->setTooltip("");
         LLmaskshape->setTooltip("");
         HHmaskshape->setTooltip("");
@@ -2311,13 +2311,15 @@ LocallabExposure::LocallabExposure():
 
     // Exposure specific widgets
     expMethod(Gtk::manage(new MyComboBoxText())),
-    pdeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PDEFRA")))),
+//    pdeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PDEFRA")))),
+    exppde(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_PDEFRA")))),
     laplacexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACEXP"), 0.0, 100.0, 0.1, 0.))),
-    linear(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LINEAR"), 0., 1., 0.01, 0.05))),
+    linear(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LINEAR"), 0.01, 1., 0.01, 0.05))),
     balanexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANEXP"), 0.5, 1.5, 0.01, 1.0))),
     gamm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMM"), 0.2, 1.3, 0.01, 0.4))),
     exnoiseMethod(Gtk::manage(new MyComboBoxText())),
-    fatFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATFRA")))),
+//    fatFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATFRA")))),
+    expfat(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_FATFRA")))),
     fatamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATAMOUNT"), 1., 100., 1., 1.))),
     fatdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATDETAIL"), -100., 300., 1., 0.))),
     fatlevel(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATLEVEL"), 0.25, 2.5, 0.05, 1.))),
@@ -2369,7 +2371,9 @@ LocallabExposure::LocallabExposure():
     expMethod->set_active(0);
     expMethodConn = expMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabExposure::expMethodChanged));
 
-    pdeFrame->set_label_align(0.025, 0.5);
+//    pdeFrame->set_label_align(0.025, 0.5);
+    setExpandAlignProperties(exppde, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    setExpandAlignProperties(expfat, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     laplacexp->setAdjusterListener(this);
 
@@ -2385,7 +2389,7 @@ LocallabExposure::LocallabExposure():
     exnoiseMethod->set_active(0);
     exnoiseMethodConn  = exnoiseMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabExposure::exnoiseMethodChanged));
 
-    fatFrame->set_label_align(0.025, 0.5);
+ //   fatFrame->set_label_align(0.025, 0.5);
 
     fatamount->setAdjusterListener(this);
 
@@ -2505,7 +2509,7 @@ LocallabExposure::LocallabExposure():
     mask2expCurveEditorG->curveListComplete();
 
     // Add Color & Light specific widgets to GUI
-    pack_start(*expMethod);
+//    pack_start(*expMethod);
     ToolParamBlock* const pdeBox = Gtk::manage(new ToolParamBlock());
     pdeBox->pack_start(*laplacexp);
     pdeBox->pack_start(*linear);
@@ -2516,15 +2520,19 @@ LocallabExposure::LocallabExposure():
     ctboxexpmethod->pack_start(*labelexpmethod, Gtk::PACK_SHRINK, 4);
     ctboxexpmethod->pack_start(*exnoiseMethod);
     pdeBox->pack_start(*ctboxexpmethod);
-    pdeFrame->add(*pdeBox);
-    pack_start(*pdeFrame);
+    exppde->add(*pdeBox, false);
+//    pdeFrame->add(*pdeBox);
+//    pack_start(*pdeFrame);
+    pack_start(*exppde);
     ToolParamBlock* const fatBox = Gtk::manage(new ToolParamBlock());
     fatBox->pack_start(*fatamount);
     fatBox->pack_start(*fatdetail);
     fatBox->pack_start(*fatlevel);
     fatBox->pack_start(*fatanchor);
-    fatFrame->add(*fatBox);
-    pack_start(*fatFrame);
+//    fatFrame->add(*fatBox);
+    expfat->add(*fatBox, false);
+//    pack_start(*fatFrame);
+    pack_start(*expfat);
     pack_start(*expcomp);
     pack_start(*sensiex);
     pack_start(*structexp);
@@ -2602,14 +2610,16 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_EXPOSURE_TOOLTIP"));
-        expMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
-        pdeFrame->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
+//        expMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
+//        pdeFrame->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
+        exppde->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
         laplacexp->set_tooltip_text(M("TP_LOCALLAB_EXPLAP_TOOLTIP"));
         linear->set_tooltip_text(M("TP_LOCALLAB_EXPLAPLIN_TOOLTIP"));
         balanexp->set_tooltip_text(M("TP_LOCALLAB_EXPLAPBAL_TOOLTIP"));
         gamm->set_tooltip_text(M("TP_LOCALLAB_EXPLAPGAMM_TOOLTIP"));
         exnoiseMethod->set_tooltip_text(M("TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP"));
-        fatFrame->set_tooltip_text(M("TP_LOCALLAB_FATFRAME_TOOLTIP"));
+//        fatFrame->set_tooltip_text(M("TP_LOCALLAB_FATFRAME_TOOLTIP"));
+        expfat->set_tooltip_text(M("TP_LOCALLAB_FATFRAME_TOOLTIP"));
         expcomp->set_tooltip_text(M("TP_LOCALLAB_EXPCOMP_TOOLTIP"));
         sensiex->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         structexp->set_tooltip_text(M("TP_LOCALLAB_STRUCT_TOOLTIP"));
@@ -2628,21 +2638,20 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         Lmaskexpshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
-        expMethod->set_tooltip_text("");
-        pdeFrame->set_tooltip_text("");
+        exppde->set_tooltip_text("");
         laplacexp->set_tooltip_text("");
         linear->set_tooltip_text("");
         balanexp->set_tooltip_text("");
         gamm->set_tooltip_text("");
         exnoiseMethod->set_tooltip_text("");
-        fatFrame->set_tooltip_text("");
+        expfat->set_tooltip_text("");
         expcomp->set_tooltip_text("");
         sensiex->set_tooltip_text("");
         structexp->set_tooltip_text("");
         expchroma->set_tooltip_text("");
         shapeexpos->setTooltip("");
         strexp->set_tooltip_text("");
-        expmaskexp->set_tooltip_text("");
+        expmaskexp->set_tooltip_markup("");
         CCmaskexpshape->setTooltip("");
         LLmaskexpshape->setTooltip("");
         HHmaskexpshape->setTooltip("");
@@ -2658,6 +2667,8 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
 void LocallabExposure::setDefaultExpanderVisibility()
 {
     exptoolexp->set_expanded(false);
+    exppde->set_expanded(false);
+    expfat->set_expanded(false);
     expgradexp->set_expanded(false);
     expmaskexp->set_expanded(false);
 }
@@ -2704,13 +2715,13 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
         exp->set_visible(spot.visiexpose);
         exp->setEnabled(spot.expexpose);
         complexity->set_active(spot.complexexpose);
-
+/*
         if (spot.expMethod == "std") {
             expMethod->set_active(0);
         } else if (spot.expMethod == "pde") {
             expMethod->set_active(1);
         }
-
+*/
         laplacexp->setValue(spot.laplacexp);
         linear->setValue(spot.linear);
         balanexp->setValue(spot.balanexp);
@@ -2787,13 +2798,13 @@ void LocallabExposure::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.expexpose = exp->getEnabled();
         spot.visiexpose = exp->get_visible();
         spot.complexexpose = complexity->get_active_row_number();
-
+/*
         if (expMethod->get_active_row_number() == 0) {
             spot.expMethod = "std";
         } else if (expMethod->get_active_row_number() == 1) {
             spot.expMethod = "pde";
         }
-
+*/
         spot.laplacexp = laplacexp->getValue();
         spot.linear = linear->getValue();
         spot.balanexp = balanexp->getValue();
@@ -3395,19 +3406,24 @@ void LocallabExposure::updateExposureGUI1()
 }
 
 void LocallabExposure::updateExposureGUI2()
-{
+{  /*
     // Update exposure GUI according to expMethod value
     if (expMethod->get_active_row_number() == 0) {
-        pdeFrame->hide();
-        fatFrame->hide();
+//        pdeFrame->hide();
+//        fatFrame->hide();
+        exppde->hide();
+        expfat->hide();
         softradiusexp->set_sensitive(true);
         sensiex->set_sensitive(true);
     } else if (expMethod->get_active_row_number() == 1) {
-        pdeFrame->show();
-        fatFrame->show();
+ //       pdeFrame->show();
+ //       fatFrame->show();
+        exppde->show();
+        expfat->show();
         softradiusexp->set_sensitive(false);
         sensiex->set_sensitive(true);
     }
+    */
 }
 
 void LocallabExposure::updateExposureGUI3()
@@ -3723,11 +3739,10 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         for (const auto multiplier : multipliersh) {
             multiplier->set_tooltip_text("");
         }
-
         gamSH->set_tooltip_text("");
         sloSH->set_tooltip_text("");
         strSH->set_tooltip_text("");
-        expmasksh->set_tooltip_text("");
+        expmasksh->set_tooltip_markup("");
         CCmaskSHshape->setTooltip("");
         LLmaskSHshape->setTooltip("");
         HHmaskSHshape->setTooltip("");
@@ -3736,6 +3751,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         lapmaskSH->set_tooltip_text("");
         mask2SHCurveEditorG->set_tooltip_text("");
         LmaskSHshape->setTooltip("");
+        
     }
 }
 
@@ -4613,7 +4629,7 @@ void LocallabVibrance::updateAdviceTooltips(const bool showTooltips)
         exp->set_tooltip_text("");
         warm->set_tooltip_text("");
         strvib->set_tooltip_text("");
-        expmaskvib->set_tooltip_text("");
+        expmaskvib->set_tooltip_markup("");
         CCmaskvibshape->setTooltip("");
         LLmaskvibshape->setTooltip("");
         HHmaskvibshape->setTooltip("");
@@ -5280,7 +5296,7 @@ void LocallabSoft::updateAdviceTooltips(const bool showTooltips)
         laplace->set_tooltip_text(M("TP_LOCALLAB_ORRETILAP_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
-        showmasksoftMethod->set_tooltip_text("");
+        showmasksoftMethod->set_tooltip_markup("");
         streng->set_tooltip_text("");
         laplace->set_tooltip_text("");
     }
@@ -5619,6 +5635,7 @@ LocallabBlur::LocallabBlur():
     chroMethod(Gtk::manage(new MyComboBoxText())),
     activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
     expdenoise(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI_EXP")))),
+    quamethod(Gtk::manage(new MyComboBoxText())),
     LocalcurveEditorwavden(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVDEN"))),
     wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
     noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 0.01, 0.))),
@@ -5656,6 +5673,7 @@ LocallabBlur::LocallabBlur():
     Lmaskblshape(static_cast<DiagonalCurveEditor*>(mask2blCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     mask2blCurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
     LLmaskblshapewav(static_cast<FlatCurveEditor*>(mask2blCurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
+    quaHBox(Gtk::manage(new Gtk::HBox())),
     csThresholdblur(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
 {
     const LocallabParams::LocallabSpot defSpot;
@@ -5716,6 +5734,14 @@ LocallabBlur::LocallabBlur():
     activlumConn = activlum->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::activlumChanged));
 
     setExpandAlignProperties(expdenoise, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+
+    quamethod->append(M("TP_WAVELET_QUACONSER"));
+    quamethod->append(M("TP_WAVELET_QUAAGRES"));
+    quamethodconn = quamethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabBlur::quamethodChanged));
+    Gtk::Label* const quaLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DENQUA") + ":"));
+    quaHBox->pack_start(*quaLabel, Gtk::PACK_SHRINK, 4);
+    quaHBox->pack_start(*quamethod);
 
     LocalcurveEditorwavden->setCurveListener(this);
 
@@ -5849,6 +5875,7 @@ LocallabBlur::LocallabBlur():
     ToolParamBlock* const denoisebox = Gtk::manage(new ToolParamBlock());
     Gtk::Frame* const wavFrame = Gtk::manage(new Gtk::Frame());
     ToolParamBlock* const wavBox = Gtk::manage(new ToolParamBlock());
+    wavBox->pack_start(*quaHBox);
     wavBox->pack_start(*LocalcurveEditorwavden, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     // wavBox->pack_start(*noiselumf0);
     // wavBox->pack_start(*noiselumf);
@@ -5942,15 +5969,15 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         Lmaskblshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
         LLmaskblshapewav->setTooltip(M("TP_LOCALLAB_LMASK_LEVEL_TOOLTIP"));
     } else {
-        expblnoise->set_tooltip_text("");
+        expblnoise->set_tooltip_markup("");
         radius->set_tooltip_text("");
         sensibn->set_tooltip_text("");
-        blurMethod->set_tooltip_text("");
-        expdenoise->set_tooltip_text("");
+        blurMethod->set_tooltip_markup("");
+        expdenoise->set_tooltip_markup("");
         wavshapeden->setTooltip("");
         noiselumc->set_tooltip_text("");
-        expmaskbl->set_tooltip_text("");
-        showmaskblMethodtyp->set_tooltip_text("");
+        expmaskbl->set_tooltip_markup("");
+        showmaskblMethodtyp->set_tooltip_markup("");
         CCmaskblshape->setTooltip("");
         LLmaskblshape->setTooltip("");
         HHmaskblshape->setTooltip("");
@@ -5978,6 +6005,7 @@ void LocallabBlur::disableListener()
     medMethodConn.block(true);
     blurMethodConn.block(true);
     chroMethodConn.block(true);
+    quamethodconn.block(true);
     activlumConn.block(true);
     showmaskblMethodConn.block(true);
     showmaskblMethodtypConn.block(true);
@@ -5994,6 +6022,7 @@ void LocallabBlur::enableListener()
     medMethodConn.block(false);
     blurMethodConn.block(false);
     chroMethodConn.block(false);
+    quamethodconn.block(false);
     activlumConn.block(false);
     showmaskblMethodConn.block(false);
     showmaskblMethodtypConn.block(false);
@@ -6063,6 +6092,12 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
             chroMethod->set_active(1);
         } else if (spot.chroMethod == "all") {
             chroMethod->set_active(2);
+        }
+
+        if (spot.quamethod == "cons") {
+            quamethod->set_active(0);
+        } else if (spot.quamethod == "agre") {
+            quamethod->set_active(1);
         }
 
         activlum->set_active(spot.activlum);
@@ -6176,6 +6211,12 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
             spot.chroMethod = "chr";
         } else if (chroMethod->get_active_row_number() == 2) {
             spot.chroMethod = "all";
+        }
+
+        if (quamethod->get_active_row_number() == 0) {
+            spot.quamethod = "cons";
+        } else if (quamethod->get_active_row_number() == 1) {
+            spot.quamethod = "agre";
         }
 
         spot.activlum = activlum->get_active();
@@ -6743,6 +6784,17 @@ void LocallabBlur::chroMethodChanged()
         }
     }
 }
+
+void LocallabBlur::quamethodChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabquaMethod,
+                                   quamethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+        }
+    }
+}
+
 
 void LocallabBlur::activlumChanged()
 {

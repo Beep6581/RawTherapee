@@ -415,6 +415,7 @@ public:
         bool colorscope;
         bool transitweak;
         bool transitgrad;
+        bool hishow;
         bool activ;
         bool avoid;
         bool blwh;
@@ -616,6 +617,7 @@ public:
         bool epsbl;
         bool blMethod;
         bool chroMethod;
+        bool quamethod;
         bool blurMethod;
         bool medMethod;
         bool activlum;

@@ -1002,6 +1002,7 @@ struct LocallabParams {
         double colorscope;
         double transitweak;
         double transitgrad;
+        bool hishow;
         bool activ;
         bool avoid;
         bool blwh;
@@ -1203,6 +1204,7 @@ struct LocallabParams {
         int epsbl;
         Glib::ustring blMethod; // blur, med, guid
         Glib::ustring chroMethod; // lum, chr, all
+        Glib::ustring quamethod; // cons agre
         Glib::ustring blurMethod; // norm, inv
         Glib::ustring medMethod; // none, 33, 55, 77, 99
         bool activlum;

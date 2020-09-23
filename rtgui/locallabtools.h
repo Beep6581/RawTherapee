@@ -317,13 +317,15 @@ class LocallabExposure:
 private:
     // Exposure specific widgets
     MyComboBoxText* const expMethod;
-    Gtk::Frame* const pdeFrame;
+//    Gtk::Frame* const pdeFrame;
+    MyExpander* const exppde;
     Adjuster* const laplacexp;
     Adjuster* const linear;
     Adjuster* const balanexp;
     Adjuster* const gamm;
     MyComboBoxText* const exnoiseMethod;
-    Gtk::Frame* const fatFrame;
+//    Gtk::Frame* const fatFrame;
+    MyExpander* const expfat;
     Adjuster* const fatamount;
     Adjuster* const fatdetail;
     Adjuster* const fatlevel;
@@ -408,6 +410,7 @@ private:
     void updateExposureGUI2();
     void updateExposureGUI3();
 };
+
 
 /* ==== LocallabShadow ==== */
 class LocallabShadow:
@@ -649,6 +652,7 @@ private:
     MyComboBoxText* const chroMethod;
     Gtk::CheckButton* const activlum;
     MyExpander* const expdenoise;
+    MyComboBoxText* const quamethod;
     CurveEditorGroup* const LocalcurveEditorwavden;
     FlatCurveEditor* const wavshapeden;
     Adjuster* const noiselumf0;
@@ -686,10 +690,11 @@ private:
     DiagonalCurveEditor* const Lmaskblshape;
     CurveEditorGroup* const mask2blCurveEditorGwav;
     FlatCurveEditor* const LLmaskblshapewav;
+    Gtk::HBox* const quaHBox;
     ThresholdAdjuster* const csThresholdblur;
 
     sigc::connection blMethodConn, fftwblConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
-
+    sigc::connection  quamethodconn;
 public:
     LocallabBlur();
     ~LocallabBlur();
@@ -732,6 +737,7 @@ private:
     void showmaskblMethodtypChanged();
     void enablMaskChanged();
     void toolblChanged();
+    void quamethodChanged();
 
     void updateBlurGUI();
 };
