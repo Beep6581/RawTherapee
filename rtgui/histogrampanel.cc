@@ -1555,8 +1555,7 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
     const float o_y = (h - scope_scale * vect_height) / 2;
     const double s = RTScalable::getScale();
     auto orig_matrix = cr->get_matrix();
-    const double line_spacing = 4.0 * s;
-    const double line_length = scope_size / 2.0 - 2.0 * line_spacing;
+    const double line_length = scope_size / 2.0;
     std::valarray<double> ch_ds(1);
 
     cr->translate(w / 2.0, h / 2.0);
@@ -1569,21 +1568,23 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
         cr->set_line_width (2.0 * s);
         constexpr double color_labels[6][3] = {
             {1, 0, 0}, // R
-            {1, 1, 0}, // Y
             {0, 1, 0}, // G
-            {0, 1, 1}, // C
             {0, 0, 1}, // B
+            {0, 1, 1}, // C
             {1, 0, 1}, // M
+            {1, 1, 0}, // Y
         };
-        for (int i = 0; i < 6; i++) {
-            auto gradient = Cairo::LinearGradient::create(0, 0, scope_size / 2.0, 0);
-            const double (&color)[3] = color_labels[i];
+        for (int i = 0; i < 3; i++) {
+            auto gradient = Cairo::LinearGradient::create(-line_length, 0, line_length, 0);
+            const double (&color_1)[3] = color_labels[i];
+            const double (&color_2)[3] = color_labels[i + 3];
             cr->set_source(gradient);
-            gradient->add_color_stop_rgba(0, 1, 1, 1, 0.25);
-            gradient->add_color_stop_rgba(1, color[0], color[1], color[2], 0.5);
-            cr->move_to(line_spacing, 0);
-            cr->line_to(line_spacing + line_length, 0);
-            cr->rotate_degrees(-60);
+            gradient->add_color_stop_rgba(0, color_2[0], color_2[1], color_2[2], 0.5);
+            gradient->add_color_stop_rgba(0.5, 1, 1, 1, 0.25);
+            gradient->add_color_stop_rgba(1, color_1[0], color_1[1], color_1[2], 0.5);
+            cr->move_to(-line_length, 0);
+            cr->line_to(line_length, 0);
+            cr->rotate_degrees(-120);
             cr->stroke();
         }
         cr->set_line_width (1.0 * s);
@@ -1599,33 +1600,33 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
         }
         // HSV skin tone line derived from -I axis of YIQ.
         cr->rotate(-0.134900 * RT_PI);
-        cr->move_to(line_spacing, 0);
-        cr->line_to(line_spacing + line_length, 0);
+        cr->move_to(0, 0);
+        cr->line_to(line_length, 0);
         cr->stroke();
         cr->unset_dash();
     } else if (scopeType == ScopeType::VECTORSCOPE_HC) { // Hue-Chroma.
         // a and b axes.
         Cairo::RefPtr<Cairo::LinearGradient> gradient;
         cr->set_line_width (2.0 * s);
-        gradient = Cairo::LinearGradient::create(0, -scope_size / 2.0, 0, scope_size / 2.0);
+        gradient = Cairo::LinearGradient::create(0, -line_length, 0, line_length);
         cr->set_source(gradient);
         gradient->add_color_stop_rgba(0, 1, 1, 0, 0.5); // "yellow"
         gradient->add_color_stop_rgba(0.5, 1, 1, 1, 0.25); // neutral
         gradient->add_color_stop_rgba(1, 0, 0, 1, 0.5); // "blue"
-        cr->move_to(0, line_spacing);
-        cr->line_to(0, line_spacing + line_length);
-        cr->move_to(0, -line_spacing);
-        cr->line_to(0, -line_spacing - line_length);
+        cr->move_to(0, 0);
+        cr->line_to(0, line_length);
+        cr->move_to(0, 0);
+        cr->line_to(0, -line_length);
         cr->stroke();
-        gradient = Cairo::LinearGradient::create(-scope_size / 2.0, 0, scope_size / 2.0, 0);
+        gradient = Cairo::LinearGradient::create(-line_length, 0, line_length, 0);
         cr->set_source(gradient);
         gradient->add_color_stop_rgba(0, 0, 1, 0, 0.5); // "green"
         gradient->add_color_stop_rgba(0.5, 1, 1, 1, 0.25); // neutral
         gradient->add_color_stop_rgba(1, 1, 0, 1, 0.5); // "magenta"
-        cr->move_to(line_spacing, 0);
-        cr->line_to(line_spacing + line_length, 0);
-        cr->move_to(-line_spacing, 0);
-        cr->line_to(-line_spacing - line_length, 0);
+        cr->move_to(0, 0);
+        cr->line_to(line_length, 0);
+        cr->move_to(0, 0);
+        cr->line_to(-line_length, 0);
         cr->stroke();
         cr->set_source_rgba (1, 1, 1, 0.25);
         cr->set_line_width (1.0 * s);
@@ -1638,8 +1639,8 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
         // CIELAB skin tone line, approximated by 50% saturation and
         // value along the HSV skin tone line.
         cr->rotate(-0.321713 * RT_PI);
-        cr->move_to(line_spacing, 0);
-        cr->line_to(line_spacing + line_length, 0);
+        cr->move_to(0, 0);
+        cr->line_to(line_length, 0);
         cr->stroke();
         cr->unset_dash();
     }
