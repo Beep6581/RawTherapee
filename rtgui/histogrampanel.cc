@@ -1666,7 +1666,7 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
                 cx = (w + scope_size * S * std::cos(H * 2 * RT_PI_F)) / 2;
                 cy = (h - scope_size * S * std::sin(H * 2 * RT_PI_F)) / 2;
             } else {
-                constexpr float ab_factor = 327.68f / 96000.f;
+                constexpr float ab_factor = 1.f / 256.f;
                 cx = w / 2.f + scope_size * pointer_a * ab_factor;
                 cy = h / 2.f - scope_size * pointer_b * ab_factor;
             }

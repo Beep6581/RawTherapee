@@ -1875,6 +1875,7 @@ bool ImProcCoordinator::updateVectorscopeHC()
     params->crop.mapToResized(pW, pH, scale, x1, x2, y1, y2);
 
     constexpr int size = VECTORSCOPE_SIZE;
+    constexpr float norm_factor = size / (128.f * 655.36f);
     vectorscope_hc.fill(0);
 
     vectorscopeScale = (x2 - x1) * (y2 - y1);
@@ -1893,8 +1894,8 @@ bool ImProcCoordinator::updateVectorscopeHC()
 #endif
         for (int i = y1; i < y2; ++i) {
             for (int j = x1, ofs_lab = (i - y1) * (x2 - x1); j < x2; ++j, ++ofs_lab) {
-                const int col = (size / 96000.f) * a[ofs_lab] + size / 2;
-                const int row = (size / 96000.f) * b[ofs_lab] + size / 2;
+                const int col = norm_factor * a[ofs_lab] + size / 2 + 0.5f;
+                const int row = norm_factor * b[ofs_lab] + size / 2 + 0.5f;
                 if (col >= 0 && col < size && row >= 0 && row < size) {
                     vectorscopeThr[row][col]++;
                 }
