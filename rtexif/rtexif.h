@@ -304,7 +304,7 @@ public:
     double  toDouble        (int ofs = 0) const;
     double* toDoubleArray   (int ofs = 0) const;
     void    toRational      (int& num, int& denom, int ofs = 0) const;
-    void    toString        (char* buffer, int ofs = 0) const;
+    void    toString        (char* buffer, std::size_t size, int ofs = 0) const;
     void    fromString      (const char* v, int size = -1);
     void    setInt          (int v, int ofs = 0, TagType astype = LONG);
     int     getDistanceFrom (const TagDirectory *root);
@@ -392,7 +392,7 @@ public:
     virtual std::string toString (const Tag* t) const
     {
         char buffer[1024];
-        t->toString (buffer);
+        t->toString (buffer, sizeof(buffer));
         std::string s (buffer);
         std::string::size_type p1 = s.find_first_not_of (' ');
 
@@ -526,7 +526,7 @@ public:
             return r->second;
         } else {
             char buffer[1024];
-            t->toString(buffer);
+            t->toString(buffer, sizeof(buffer));
             return buffer;
         }
     }
