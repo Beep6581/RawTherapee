@@ -11047,7 +11047,7 @@ void ImProcFunctions::Lab_Local(
         tonecurv = true;
     }
 
-    if (! lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || tonequ || tonecurv || lp.strSH != 0.f || lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4 || lp.prevdE) && call < 3 && lp.hsena) {
+    if (! lp.invsh && (lp.highlihs > 0.f || lp.shadowhs > 0.f || tonequ || tonecurv || lp.strSH != 0.f || lp.showmaskSHmet == 2 || lp.enaSHMask || lp.showmaskSHmet == 3 || lp.showmaskSHmet == 4 || lp.prevdE) && call <= 3 && lp.hsena) {
         const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         const int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -11442,7 +11442,7 @@ void ImProcFunctions::Lab_Local(
         }
     }
 
-    if ((lp.lcamount > 0.f || wavcurve || lp.showmasklcmet == 2 || lp.enalcMask || lp.showmasklcmet == 3 || lp.showmasklcmet == 4 || lp.prevdE || lp.strwav != 0.f || wavcurvelev || wavcurvecon || wavcurvecomp || wavcurvecompre || lp.edgwena || params->locallab.spots.at(sp).residblur > 0.f || params->locallab.spots.at(sp).levelblur > 0.f || params->locallab.spots.at(sp).residcont != 0.f || params->locallab.spots.at(sp).clarilres != 0.f || params->locallab.spots.at(sp).claricres != 0.f) && call < 3 && lp.lcena) {
+    if ((lp.lcamount > 0.f || wavcurve || lp.showmasklcmet == 2 || lp.enalcMask || lp.showmasklcmet == 3 || lp.showmasklcmet == 4 || lp.prevdE || lp.strwav != 0.f || wavcurvelev || wavcurvecon || wavcurvecomp || wavcurvecompre || lp.edgwena || params->locallab.spots.at(sp).residblur > 0.f || params->locallab.spots.at(sp).levelblur > 0.f || params->locallab.spots.at(sp).residcont != 0.f || params->locallab.spots.at(sp).clarilres != 0.f || params->locallab.spots.at(sp).claricres != 0.f) && call <= 3 && lp.lcena) {
 
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
