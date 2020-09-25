@@ -2345,6 +2345,7 @@ TP_LOCALLAB_BLUMETHOD_TOOLTIP;To blur the background and isolate the foreground:
 TP_LOCALLAB_BLUR;Gaussian Blur - Noise - Grain
 TP_LOCALLAB_BLURCBDL;Blur levels 0-1-2-3-4
 TP_LOCALLAB_BLURCOL;Radius
+TP_LOCALLAB_BLURCOLDE_TOOLTIP;The image used to calculate dE is blurred slightly to avoid taking isolated pixels into account.
 TP_LOCALLAB_BLURDE;Blur shape detection
 TP_LOCALLAB_BLURLC;Luminance Only
 TP_LOCALLAB_BLURLEVELFRA;Blur Levels 
@@ -2416,7 +2417,7 @@ TP_LOCALLAB_CURVEEDITORM_CC_TOOLTIP;If curves at the top, mask is completely bla
 TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;To be active, you must enable combobox 'Curve type'
 TP_LOCALLAB_CURVEEDITOR_TONES_LABEL;Tone curve
 TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP;L=f(L), can be used with L(H) in Color and Light
-TP_LOCALLAB_CURVEMETHOD_TOOLTIP;'Normal', the curve L=f(L) has the same algorithm than slider lightness.\n'Super' the curve L=f(L) has an new improved algorithm, which can leeds in some cases to artifacts.
+TP_LOCALLAB_CURVEMETHOD_TOOLTIP;'Normal', the curve L=f(L) uses the same algorithm as the lightness slider.
 TP_LOCALLAB_CURVENCONTRAST;Super+Contrast threshold (experimental)
 TP_LOCALLAB_CURVENH;Super
 TP_LOCALLAB_CURVENHSU;Combined HueChroma (experimental)
@@ -2474,11 +2475,12 @@ TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;See the documentation of wavelet levels.\nHow
 TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Avoid spots that are too small(< 32x32 pixels).\nUse low transition values and high decay transition values and scope to simulate small RT-spot and deal wth defects.\nUse if necessary the module 'Clarity & Sharp mask and Blend images' by adjusting 'Soft radius' to reduce artifacts.
 TP_LOCALLAB_EXPCURV;Curves
 TP_LOCALLAB_EXPGRAD;Graduated Filter
+TP_LOCALLAB_EXPGRADCOL_TOOLTIP;A graduated filter is available in Color and Light (luminance, chrominance & hue gradients, and "Merge file")  Exposure (luminance grad.), Exposure Mask (luminance grad.), Shadows/Highlights (luminance grad.), Vibrance (luminance, chrominance & hue gradients), Local contrast & wavelet pyramid (local contrast grad.).\nFeather is located in Settings. 
 TP_LOCALLAB_EXPLAPBAL_TOOLTIP;Balances the action between the original image and the Laplace transform.
 TP_LOCALLAB_EXPLAPGAMM_TOOLTIP;Apply a gamma before and after Laplace transform
 TP_LOCALLAB_EXPLAPLIN_TOOLTIP;Add linear exposure component before application Laplace transform
 TP_LOCALLAB_EXPLAP_TOOLTIP;The more you act on this threshold slider, the greater the action of reducing contrast.
-TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Allows various possibilities to blend image (as layers in Photoshop (c)) : difference, multiply, soft light, overlay...with opacity...\nOriginal Image : merge current RT-spot with Original.\nPrevious spot : merge current Rt-spot with previous - if there is only one spot previous = original.\nBackground : merge current RT-spot with a color and luminance background (less possibilties)  
+TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Allows you to use GIMP or Photoshop (c) layer blend modes i.e. Difference, Multiply, Soft Light, Overlay etc., with opacity control\nOriginal Image : merge current RT-spot with Original.\nPrevious spot : merge current Rt-spot with previous - if there is only one spot previous = original.\nBackground : merge current RT-spot with a color and luminance background (fewer possibilties) 
 TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposure but in L*a*b* and taking account of deltaE.\n\nContrast attenuator : use another algorithm also with deltaE and with Poisson equation to solve Laplacian in Fourier space.\nContrast attenuator, Dynamic range compression and Standard can be combined.\nFFTW Fourier Transform is optimized in size to reduce processing time.\nReduce artifacts and noise.
 TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Apply a median before Laplace transform to prevent artifacts (noise).\nYou can also use "Denoise" tool.
 TP_LOCALLAB_EXPOSE;Dynamic Range & Exposure
@@ -2513,14 +2515,15 @@ TP_LOCALLAB_GAMSH;Gamma
 TP_LOCALLAB_GRADANG;Gradient angle
 TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees : -180 0 +180
 TP_LOCALLAB_GRADFRA;Graduated Filter Mask
-TP_LOCALLAB_GRADGEN_TOOLTIP;Graduated filter is supplied with Color and Light & merge file, Exposure & mask, Shadows Highlight, Vibrance, Log Encoding.\n\nVibrance, Color and Light & merge file, are provided with GF luminance, chrominance, Hue.\nFeather is located in settings. 
+//TP_LOCALLAB_GRADGEN_TOOLTIP;Graduated filter is supplied with Color and Light & merge file, Exposure & mask, Shadows Highlight, Vibrance, Log Encoding.\n\nVibrance, Color and Light & merge file, are provided with GF luminance, chrominance, Hue.\nFeather is located in settings. 
+TP_LOCALLAB_GRADGEN_TOOLTIP;Adjusts luminance gradient strength
 TP_LOCALLAB_GRADLOGFRA;Graduated Filter Luminance 
 TP_LOCALLAB_GRADSTR;Gradient strength
-TP_LOCALLAB_GRADSTRAB_TOOLTIP;Filter chroma strength
+TP_LOCALLAB_GRADSTRAB_TOOLTIP;Adjusts chroma gradient strength
 TP_LOCALLAB_GRADSTRCHRO;Chrominance gradient strength 
 TP_LOCALLAB_GRADSTRHUE;Hue gradient strength
 TP_LOCALLAB_GRADSTRHUE2;Hue gradient strength
-TP_LOCALLAB_GRADSTRHUE_TOOLTIP;Filter Hue strength
+TP_LOCALLAB_GRADSTRHUE_TOOLTIP;Adjusts hue gradient strength
 TP_LOCALLAB_GRADSTRLUM;Luminance gradient strength
 TP_LOCALLAB_GRADSTR_TOOLTIP;Filter strength in stops
 TP_LOCALLAB_GRAINFRA;Film Grain   1:1
@@ -2528,6 +2531,7 @@ TP_LOCALLAB_GRALWFRA;Graduated Filter Local contrast
 TP_LOCALLAB_GRIDFRAME_TOOLTIP;You can use this tool as a brush. Use small spot and adapt transition and transition decay\nOnly mode NORMAL and eventually Hue, Saturation, Color, Luminosity are concerned by Merge background (ΔE)
 TP_LOCALLAB_GRIDONE;Color Toning
 TP_LOCALLAB_GRIDTWO;Direct
+TP_LOCALLAB_GRIDMETH_TOOLTIP;Color toning: the luminance is taken into account when varying chroma -Equivalent to H=f(H) if the "white dot" on the grid remains at zero and you only vary the "black dot"-Equivalent to "Color toning" if you vary the 2 dots.\n\nDirect: acts directly on the chroma
 TP_LOCALLAB_GUIDBL;Soft radius
 TP_LOCALLAB_GUIDFILTER;Guided filter radius
 TP_LOCALLAB_GUIDFILTER_TOOLTIP;Adapt this values according to images - can reduce or increase artifacts.
@@ -2537,7 +2541,8 @@ TP_LOCALLAB_HLH;Curves H
 TP_LOCALLAB_IND;Independent (mouse)
 TP_LOCALLAB_INDSL;Independent (mouse + sliders)
 TP_LOCALLAB_INVERS;Inverse
-TP_LOCALLAB_INVERS_TOOLTIP;If selected (inverse) less possibilities.\n\nAlternative\nFirst Spot:\n full image - delimiter outside preview\n Shape RT-spot area : rectangle. Transition 100\n\nSecond spot : Excluding spot
+//TP_LOCALLAB_INVERS_TOOLTIP;If selected (inverse) less possibilities.\n\nAlternative\nFirst Spot:\n full image - delimiter outside preview\n Shape RT-spot area : rectangle. Transition 100\n\nSecond spot : Excluding spot
+TP_LOCALLAB_INVERS_TOOLTIP;Fewer possibilities if selected (Inverse).\n\nAlternative: use two spots\nFirst Spot:\n full image - delimiter outside preview\n RT-spot shape: rectangle. Transition 100\n\nSecond spot : Excluding spot
 TP_LOCALLAB_ISOGR;Coarseness (ISO)
 TP_LOCALLAB_LABBLURM;Blur Mask
 TP_LOCALLAB_LABEL;Local Adjustments
@@ -2616,10 +2621,10 @@ TP_LOCALLAB_MERGE1COLFRA;Merge with Original or Previous or Background
 TP_LOCALLAB_MERGECOLFRA;Mask: LCH & Structure
 TP_LOCALLAB_MERGEFIV;Previous Spot(Mask 7) + Mask LCH
 TP_LOCALLAB_MERGEFOU;Previous Spot(Mask 7)
-TP_LOCALLAB_MERGEMER_TOOLTIP;Take into account ΔE to merge files (equivalent of scope for this use)
+TP_LOCALLAB_MERGEMER_TOOLTIP;Takes ΔE into account when merging files (equivalent of scope in this case)
 TP_LOCALLAB_MERGENONE;None
 TP_LOCALLAB_MERGEONE;Short Curves 'L' Mask
-TP_LOCALLAB_MERGEOPA_TOOLTIP;Opacity merge % current Spot with original or previous Spot.\nContrast threshold : adjust result in function of Original contrast
+TP_LOCALLAB_MERGEOPA_TOOLTIP;Opacity = % of current spot to be merged with original or previous Spot.\nContrast threshold : adjusts result as a function of contrast in original image.
 TP_LOCALLAB_MERGETHR;Original(Mask 7) + Mask LCH
 TP_LOCALLAB_MERGETWO;Original(Mask 7)
 TP_LOCALLAB_MERGETYPE;Merge image and mask
@@ -2715,6 +2720,7 @@ TP_LOCALLAB_RETI_SCALE_TOOLTIP;If scale=1, retinex behaves like local contrast w
 TP_LOCALLAB_RET_TOOLNAME;Dehaze & Retinex - 9
 TP_LOCALLAB_REWEI;Reweighting iterates
 TP_LOCALLAB_RGB;RGB Tone Curve
+TP_LOCALLAB_RGBCURVE_TOOLTIP;In RGB mode you have 4 choices : Standard, Weighted standard, Luminance & Film-like.
 TP_LOCALLAB_ROW_NVIS;Not visible
 TP_LOCALLAB_ROW_VIS;Visible
 TP_LOCALLAB_SATUR;Saturation
@@ -2798,13 +2804,14 @@ TP_LOCALLAB_SOFTM;Soft Light
 //TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Original Retinex is very different from others Retinex method.\nIts acts on grey and balance luminance.\nIt is an emulation of "Dodge" and "Burn"
 TP_LOCALLAB_SOFTMETHOD_TOOLTIP;Apply a Soft-light blend (identical to the global adjustment). Carry out dodge and burn using the original Retinex algorithm.
 TP_LOCALLAB_SOFTRADIUSCOL;Soft radius
+TP_LOCALLAB_SOFTRADIUSCOL_TOOLTIP;Applies a guided filter to the output image to reduce possible artifacts.
 TP_LOCALLAB_SOFTRETI;Reduce ΔE artifacts 
 TP_LOCALLAB_SOFTRETI_TOOLTIP;Take into account deltaE to improve Transmission map
 TP_LOCALLAB_SOFT_TOOLNAME;Soft Light & Original Retinex - 6
 TP_LOCALLAB_SOURCE_GRAY;Value
 TP_LOCALLAB_SPECCASE;Specific cases
 TP_LOCALLAB_SPECIAL;Special use of RGB curves
-TP_LOCALLAB_SPECIAL_TOOLTIP;Only for this RGB curve, disabled (or reduce effects) of Scope, mask...for example, if you want to have a negative effect.
+TP_LOCALLAB_SPECIAL_TOOLTIP;The use of the RGB curve can give unexpected results in some cases due to the way the local adjustments algorithm operates (especially if you invert the curve to create a "negative" effect). The checkbox allows you to isolate the RGB tone-curve effect by removing all other actions i.e. "Scope", masks, sliders etc., except for transitions. 
 TP_LOCALLAB_SPOTNAME;New Spot
 TP_LOCALLAB_STD;Standard
 TP_LOCALLAB_STR;Strength
@@ -2813,12 +2820,14 @@ TP_LOCALLAB_STREN;Compression Strength
 TP_LOCALLAB_STRENG;Strength
 TP_LOCALLAB_STRENGR;Strength
 TP_LOCALLAB_STRENGTH;Noise
+TP_LOCALLAB_STRENGRID_TOOLTIP;You can adjust the desired effect with "strength", but you can also use the "scope" function which allows you to delimit the action (e.g., to isolate a particular color).
 TP_LOCALLAB_STRGRID;Strength
 TP_LOCALLAB_STRRETI_TOOLTIP;if Strength Retinex < 0.2 only Dehaze is enabled.\nif Strength Retinex >= 0.1 Dehaze is in luminance mode.
 TP_LOCALLAB_STRUC;Structure
 TP_LOCALLAB_STRUCCOL;Spot Structure
 TP_LOCALLAB_STRUCCOL1;Spot Structure
-TP_LOCALLAB_STRUCT_TOOLTIP;Use Sobel algorithm to take into account structure in shape detection.\nyou can have a preview by activating "mask and modifications - Show spot structure".\n\nCan be used in conjunction with masks (advanced) structure, blur, wavelet to improve edge detection.\n\nNeeds maskless adjustments to be activated (lightness, exposure...)
+//TP_LOCALLAB_STRUCT_TOOLTIP;Use Sobel algorithm to take into account structure in shape detection.\nyou can have a preview by activating "mask and modifications - Show spot structure".\n\nCan be used in conjunction with masks (advanced) structure, blur, wavelet to improve edge detection.\n\nNeeds maskless adjustments to be activated (lightness, exposure...)
+TP_LOCALLAB_STRUCT_TOOLTIP;Uses the Sobel algorithm to take into account structure for shape detection.\nActivate "Mask and modifications” > “Show spot structure" (advanced mode) to see a preview of the mask (without modifications).\n\nCan be used in conjunction with the Structure Mask, Blur Mask and “Local contrast (by wavelet level)”  to improve edge detection.\n\nEffects of adjustments using Lightness, Contrast, Chrominance, Exposure or other non-mask-related tools visible using either ‘Show modified image” or “Show modifications with mask ”. 
 TP_LOCALLAB_STRUMASKCOL;Structure mask strength
 TP_LOCALLAB_STRUMASK_TOOLTIP;Generate a structure mask with difference between surface areas and reliefs.\nIf structure mask as tool is enabled, this mask is used in addition to the other tools (gamma, slope, contrast curve ...)
 TP_LOCALLAB_STYPE;Shape method

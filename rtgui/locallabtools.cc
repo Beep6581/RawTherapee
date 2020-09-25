@@ -919,6 +919,12 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         lumFrame->set_tooltip_text(M("TP_LOCALLAB_EXPCOLOR_TOOLTIP"));
         lightness->set_tooltip_text(M("TP_LOCALLAB_LIGHTN_TOOLTIP"));
+        gridMethod->set_tooltip_text(M("TP_LOCALLAB_GRIDMETH_TOOLTIP"));
+        strengthgrid->set_tooltip_text(M("TP_LOCALLAB_STRENGRID_TOOLTIP"));
+        blurcolde->set_tooltip_text(M("TP_LOCALLAB_BLURCOLDE_TOOLTIP"));
+        softradiuscol->set_tooltip_text(M("TP_LOCALLAB_SOFTRADIUSCOL_TOOLTIP"));
+        expgradcol->set_tooltip_text(M("TP_LOCALLAB_EXPGRADCOL_TOOLTIP"));
+        rgbCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_RGBCURVE_TOOLTIP"));
         sensi->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         structcol->set_tooltip_text(M("TP_LOCALLAB_STRUCT_TOOLTIP"));
         strcol->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
@@ -947,6 +953,12 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
     } else {
         lumFrame->set_tooltip_text("");
         lightness->set_tooltip_text("");
+        gridMethod->set_tooltip_text("");
+        strengthgrid->set_tooltip_text("");
+        blurcolde->set_tooltip_text("");
+        softradiuscol->set_tooltip_text("");
+        expgradcol->set_tooltip_text("");
+        rgbCurveEditorG->set_tooltip_text("");
         sensi->set_tooltip_text("");
         structcol->set_tooltip_text("");
         strcol->set_tooltip_text("");
@@ -2613,6 +2625,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
 //        expMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
 //        pdeFrame->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
         exppde->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
+        blurexpde->set_tooltip_text(M("TP_LOCALLAB_BLURCOLDE_TOOLTIP"));
         laplacexp->set_tooltip_text(M("TP_LOCALLAB_EXPLAP_TOOLTIP"));
         linear->set_tooltip_text(M("TP_LOCALLAB_EXPLAPLIN_TOOLTIP"));
         balanexp->set_tooltip_text(M("TP_LOCALLAB_EXPLAPBAL_TOOLTIP"));
@@ -2639,6 +2652,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
     } else {
         exp->set_tooltip_text("");
         exppde->set_tooltip_text("");
+        blurexpde->set_tooltip_text("");
         laplacexp->set_tooltip_text("");
         linear->set_tooltip_text("");
         balanexp->set_tooltip_text("");
@@ -3725,6 +3739,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         sloSH->set_tooltip_text(M("TP_LOCALLAB_SHTRC_TOOLTIP"));
         strSH->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
         expmasksh->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+        blurSHde->set_tooltip_text(M("TP_LOCALLAB_BLURCOLDE_TOOLTIP"));
         CCmaskSHshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         LLmaskSHshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         HHmaskSHshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
@@ -3742,6 +3757,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         gamSH->set_tooltip_text("");
         sloSH->set_tooltip_text("");
         strSH->set_tooltip_text("");
+        blurSHde->set_tooltip_text("");
         expmasksh->set_tooltip_markup("");
         CCmaskSHshape->setTooltip("");
         LLmaskSHshape->setTooltip("");
