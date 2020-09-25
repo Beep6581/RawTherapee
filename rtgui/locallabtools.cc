@@ -461,6 +461,7 @@ LocallabColor::LocallabColor():
     labgridmerg(Gtk::manage(new LabGrid(EvLocallabLabGridmergValue, M("TP_LOCALLAB_LABGRID_VALUES"), false))),
     merlucol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MERLUCOL"), 0.0, 100.0, 0.5, 32., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     expmaskcol(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWC")))),
+    mergecolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGECOLFRA")))),
     showmaskcolMethod(Gtk::manage(new MyComboBoxText())),
     showmaskcolMethodinv(Gtk::manage(new MyComboBoxText())),
     enaColorMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
@@ -830,7 +831,6 @@ LocallabColor::LocallabColor():
     mask7Box->pack_start(*mask7);
     expmaskcol1->add(*mask7Box, false);
     pack_start(*expmaskcol1, false, false);
-    Gtk::Frame* const mergecolFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGECOLFRA")));
     mergecolFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const maskcolBox = Gtk::manage(new ToolParamBlock());
     maskcolBox->pack_start(*showmaskcolMethod, Gtk::PACK_SHRINK, 4);
@@ -937,19 +937,31 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         conthrcol->set_tooltip_text(M("TP_LOCALLAB_MERGEOPA_TOOLTIP"));
         gridmerFrame->set_tooltip_text(M("TP_LOCALLAB_GRIDFRAME_TOOLTIP"));
         expmaskcol->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+        mergecolFrame->set_tooltip_markup(M("TP_LOCALLAB_MERGECOLFRMASK_TOOLTIP"));
+        maskCurveEditorG->set_tooltip_markup(M("TP_LOCALLAB_MASKCURVE_TOOLTIP"));
         CCmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         LLmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         HHmaskshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         struFrame->set_tooltip_text(M("TP_LOCALLAB_STRUMASK_TOOLTIP"));
+        strumaskcol->set_tooltip_text(M("TP_LOCALLAB_STRUSTRMASK_TOOLTIP"));
+        toolcol->set_tooltip_text(M("TP_LOCALLAB_TOOLMASK_TOOLTIP"));
+        fftColorMask->set_tooltip_text(M("TP_LOCALLAB_FFTMASK_TOOLTIP"));
+        gammaskcol->set_tooltip_text(M("TP_LOCALLAB_GAMMASK_TOOLTIP"));
+        chromaskcol->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
+        slomaskcol->set_tooltip_text(M("TP_LOCALLAB_SLOMASK_TOOLTIP"));
+        shadmaskcol->set_tooltip_text(M("TP_LOCALLAB_SHADMASK_TOOLTIP"));
+        contcol->set_tooltip_text(M("TP_LOCALLAB_CONTTHMASK_TOOLTIP"));
+        blurcol->set_tooltip_text(M("TP_LOCALLAB_BLURRMASK_TOOLTIP"));
         blurFrame->set_tooltip_text(M("TP_LOCALLAB_BLURMASK_TOOLTIP"));
         blendmaskcol->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
         radmaskcol->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
-        lapmaskcol->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        lapmaskcol->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
         maskHCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_HHMASK_TOOLTIP"));
         mask2CurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
         Lmaskshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
         mask2CurveEditorGwav->set_tooltip_text(M("TP_LOCALLAB_WAVMASK_TOOLTIP"));
         LLmaskcolshapewav->setTooltip(M("TP_LOCALLAB_LMASK_LEVEL_TOOLTIP"));
+        csThresholdcol->set_tooltip_text(M("TP_LOCALLAB_WAVEMASK_LEVEL_TOOLTIP"));
     } else {
         lumFrame->set_tooltip_text("");
         lightness->set_tooltip_text("");
@@ -966,15 +978,26 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         qualitycurveMethod->set_tooltip_markup("");
         special->set_tooltip_text("");
         expmaskcol1->set_tooltip_text("");
+        maskCurveEditorG->set_tooltip_markup("");
         mercol->set_tooltip_text("");
         opacol->set_tooltip_text("");
         conthrcol->set_tooltip_text("");
         gridmerFrame->set_tooltip_text("");
         expmaskcol->set_tooltip_markup("");
+        mergecolFrame->set_tooltip_markup("");
         CCmaskshape->setTooltip("");
         LLmaskshape->setTooltip("");
         HHmaskshape->setTooltip("");
         struFrame->set_tooltip_text("");
+        strumaskcol->set_tooltip_text("");
+        toolcol->set_tooltip_text("");
+        fftColorMask->set_tooltip_text("");
+        gammaskcol->set_tooltip_text("");
+        chromaskcol->set_tooltip_text("");
+        slomaskcol->set_tooltip_text("");
+        shadmaskcol->set_tooltip_text("");
+        contcol->set_tooltip_text("");
+        blurcol->set_tooltip_text("");
         blurFrame->set_tooltip_text("");
         blendmaskcol->set_tooltip_text("");
         radmaskcol->set_tooltip_text("");
@@ -984,6 +1007,7 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         Lmaskshape->setTooltip("");
         mask2CurveEditorGwav->set_tooltip_text("");
         LLmaskcolshapewav->setTooltip("");
+        csThresholdcol->set_tooltip_text("");
     }
 }
 

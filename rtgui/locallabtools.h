@@ -225,6 +225,7 @@ private:
     LabGrid* const labgridmerg;
     Adjuster* const merlucol;
     MyExpander* const expmaskcol;
+    Gtk::Frame* const mergecolFrame ;
     MyComboBoxText* const showmaskcolMethod;
     MyComboBoxText* const showmaskcolMethodinv;
     Gtk::CheckButton* const enaColorMask;
