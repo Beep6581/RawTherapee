@@ -1022,8 +1022,15 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         cp.mul[0] = 0.01f;//to always enable WaveletcontAllL if no contrast is needed
                     }
                 }
-
-                if (!exblurL && cp.contrast == 0.f && cp.blurres == 0.f && !cp.tonemap && !cp.finena && cp.conres == 0.f && cp.conresH == 0.f && cp.val == 0  && !ref0 && params->wavelet.CLmethod == "all") { // no processing of residual L or edge=> we probably can reduce the number of levels
+                
+                if (cp.BAmet != 0) {
+                    if (cp.mul[0] == 0.f) {
+                        cp.mul[0] = 0.01f;
+                    }
+                }
+                    
+                
+                if (!exblurL && cp.contrast == 0.f && cp.blurres == 0.f && !cp.tonemap && !cp.finena  && cp.conres == 0.f && cp.conresH == 0.f && cp.val == 0  && !ref0 && params->wavelet.CLmethod == "all") { // no processing of residual L or edge=> we probably can reduce the number of levels
                     while (levwavL > 0 && cp.mul[levwavL - 1] == 0.f) { // cp.mul[level] == 0.f means no changes to level
                         levwavL--;
                     }
