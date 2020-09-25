@@ -2867,6 +2867,7 @@ TP_LOCALLAB_TONEMAP_TOOLTIP;Same as the tone mapping tool in the main menu.\nThe
 TP_LOCALLAB_TONEMASCALE_TOOLTIP;This control gives meaning to the difference between "local" and "global" contrast.\nThe greater it is the larger a detail needs to be in order to be boosted
 TP_LOCALLAB_TONE_TOOLNAME;Tone Mapping - 4
 TP_LOCALLAB_TOOLCOL;Structure mask as tool
+TP_LOCALLAB_TOOLCOLFRMASK_TOOLTIP;Allow you to modify the mask, if one exist
 TP_LOCALLAB_TOOLMASK;Mask Tools
 TP_LOCALLAB_TRANSIT;Transition Gradient
 TP_LOCALLAB_TRANSITGRAD;Transition differentiation XY
@@ -2916,6 +2917,7 @@ TP_LOCALLAB_WAVLEV;Blur by Level
 TP_LOCALLAB_WAVLOW;Ψ Wavelet low
 TP_LOCALLAB_WAVMASK;Ψ Local contrast (by wavelet level)
 TP_LOCALLAB_WAVMASK_TOOLTIP;Uses wavelets to modify the local contrast of the mask and reinforce or reduce the structure (skin, buildings...)
+TP_LOCALLAB_WAVEMASK_LEVEL_TOOLTIP;Range of wavelet levels used in “Local contrast (by wavelet level)”
 TP_LOCALLAB_WAVMED;Ψ Wavelet normal
 TP_LOCALLAB_WEDIANHI;Median Hi
 TP_LOCALLAB_WHITE_EV;White Ev
