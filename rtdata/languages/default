@@ -2515,7 +2515,7 @@ TP_LOCALLAB_GAM;Gamma
 TP_LOCALLAB_GAMFRA;Tone response curve (TRC)
 TP_LOCALLAB_GAMM;Gamma
 TP_LOCALLAB_GAMMASKCOL;Gamma
-TP_LOCALLAB_GAMMASK_TOOLTIP;Modifies the gamma of the mask (in the gamma / slope curve), i. e. modifies the contrast between shadow and light (assumes L(L) or LC(H) activated).
+TP_LOCALLAB_GAMMASK_TOOLTIP;Gamma and Slope allow a soft and artifact-free transformation of the mask by progressively modifying “L” to avoid any discontinuities.
 TP_LOCALLAB_GAMSH;Gamma
 TP_LOCALLAB_GRADANG;Gradient angle
 TP_LOCALLAB_GRADANG_TOOLTIP;Rotation angle in degrees : -180 0 +180
@@ -2810,7 +2810,7 @@ TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer - 5
 TP_LOCALLAB_SIGMAWAV;Attenuation response
 TP_LOCALLAB_SIM;Simple
 TP_LOCALLAB_SLOMASKCOL;Slope
-TP_LOCALLAB_SLOMASK_TOOLTIP;Changes the slope of the mask (in the gamma / slope curve), affects the lower end of the luminance range (assumes L(L) or LC(H) on)\nThe algorithm acts simultaneously on gamma and slope to make a contrast curve  which is linear in the shadows and  logarithmic thereafter (similar to gamma sRGB).
+TP_LOCALLAB_SLOMASK_TOOLTIP;Gamma and Slope allow a soft and artifact-free transformation of the mask by progressively modifying “L” to avoid any discontinuities.
 TP_LOCALLAB_SLOSH;Slope
 TP_LOCALLAB_SOFT;Soft Light & Original Retinex
 TP_LOCALLAB_SOFTM;Soft Light
@@ -2824,7 +2824,7 @@ TP_LOCALLAB_SOFT_TOOLNAME;Soft Light & Original Retinex - 6
 TP_LOCALLAB_SOURCE_GRAY;Value
 TP_LOCALLAB_SPECCASE;Specific cases
 TP_LOCALLAB_SPECIAL;Special use of RGB curves
-TP_LOCALLAB_SPECIAL_TOOLTIP;The use of the RGB curve can give unexpected results in some cases due to the way the local adjustments algorithm operates (especially if you invert the curve to create a "negative" effect). The checkbox allows you to isolate the RGB tone-curve effect by removing all other actions i.e. "Scope", masks, sliders etc., except for transitions. 
+TP_LOCALLAB_SPECIAL_TOOLTIP;The checkbox allows you to remove all other actions i.e. “Scope”, masks, sliders etc., (except for transitions) and use just the effect of the RGB tone-curve. 
 TP_LOCALLAB_SPOTNAME;New Spot
 TP_LOCALLAB_STD;Standard
 TP_LOCALLAB_STR;Strength
@@ -2868,10 +2868,10 @@ TP_LOCALLAB_TONEMASCALE_TOOLTIP;This control gives meaning to the difference bet
 TP_LOCALLAB_TONE_TOOLNAME;Tone Mapping - 4
 TP_LOCALLAB_TOOLCOL;Structure mask as tool
 TP_LOCALLAB_TOOLCOLFRMASK_TOOLTIP;Allow you to modify the mask, if one exist
-TP_LOCALLAB_TOOLMASK;Mask Tools
 TP_LOCALLAB_TRANSIT;Transition Gradient
+TP_LOCALLAB_TOOLMASK;Mask Tools
 TP_LOCALLAB_TRANSITGRAD;Transition differentiation XY
-TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Allows you to differentiate the y-axis transition with respect to the x-axis 
+TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Allows you to vary the y-axis transition
 TP_LOCALLAB_TRANSITVALUE;Transition value
 TP_LOCALLAB_TRANSITWEAK;Transition decay (linear-log)
 //TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust transition decay function: 1 linear , 2 parabolic, 3 cubic up to ^25.\nCan be used in conjunction with very low transition values to reduce defects (CBDL, Wavelets, Color & Light)
