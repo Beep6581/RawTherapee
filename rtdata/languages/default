@@ -2457,6 +2457,7 @@ TP_LOCALLAB_EV_VIS_ALL;Show all
 TP_LOCALLAB_EXCLUF;Excluding
 TP_LOCALLAB_EXCLUF_TOOLTIP;Can be used to exclude this part of datas - move Scope to extend color.\n You can apply all settings to this RT-spot.
 TP_LOCALLAB_EXCLUTYPE;Spot method
+//TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Normal spot uses recursive data.\n\nExcluding spot reinitializes all local adjustment data.\nCan be used to totally or partially cancel a previous action or to carry out operations in inverted mode
 TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Normal spot uses recursive data.\n\nExcluding spot reinitializes all local adjustment data.\nCan be used to totally or partially cancel a previous action or to carry out operations in inverted mode
 TP_LOCALLAB_EXECLU;Excluding spot
 TP_LOCALLAB_EXNORM;Normal spot
@@ -2497,7 +2498,7 @@ TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal - use Fattal Tone mapping algorithm.
 TP_LOCALLAB_FATLEVEL;Sigma
 TP_LOCALLAB_FATRES;Amount Residual Image
 TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask ƒ
-TP_LOCALLAB_FEATH_TOOLTIP;Gradient width in percent of the Spot diagonal\nUsed by all graduated filters in all tools.\nNo action if a graduated filter hasn’t been activated.
+TP_LOCALLAB_FEATH_TOOLTIP;Gradient width as a percentage of the Spot diagonal\nUsed by all graduated filters in all tools.\nNo action if a graduated filter hasn’t been activated.
 TP_LOCALLAB_FEATVALUE;Feather gradient (Graduated Filters)
 TP_LOCALLAB_FFTCOL_MASK;FFTW ƒ
 TP_LOCALLAB_FFTW;ƒ - Use Fast Fourier Transform
@@ -2687,7 +2688,7 @@ TP_LOCALLAB_RADIUS_TOOLTIP;Above Radius 30 Use Fast Fourier Transform
 TP_LOCALLAB_RADMASKCOL;Smooth radius
 TP_LOCALLAB_RECT;Rectangle
 TP_LOCALLAB_RECURS;Recursive references
-TP_LOCALLAB_RECURS_TOOLTIP;Recalculate references for hue, luma, chroma after each module and after each RT-spot.\nAlso useful for working with masks.
+TP_LOCALLAB_RECURS_TOOLTIP;Forces the algorithm to recalculate the references after each tool is applied.\nAlso useful for working with masks.
 TP_LOCALLAB_REFLABEL;Ref. (0..1) Chroma=%1 Luma=%2 Hue=%3
 TP_LOCALLAB_REN_DIALOG_LAB;Enter the new Control Spot name
 TP_LOCALLAB_REN_DIALOG_NAME;Renaming Control Spot
@@ -2845,9 +2846,10 @@ TP_LOCALLAB_TOOLCOL;Structure mask as tool
 TP_LOCALLAB_TOOLMASK;Mask Tools
 TP_LOCALLAB_TRANSIT;Transition Gradient
 TP_LOCALLAB_TRANSITGRAD;Transition differentiation XY
-TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Changes the transition of the abscissa to that of the ordinate 
+TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Allows you to differentiate the y-axis transition with respect to the x-axis 
 TP_LOCALLAB_TRANSITVALUE;Transition value
 TP_LOCALLAB_TRANSITWEAK;Transition decay (linear-log)
+//TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust transition decay function: 1 linear , 2 parabolic, 3 cubic up to ^25.\nCan be used in conjunction with very low transition values to reduce defects (CBDL, Wavelets, Color & Light)
 TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust transition decay function: 1 linear , 2 parabolic, 3 cubic up to ^25.\nCan be used in conjunction with very low transition values to reduce defects (CBDL, Wavelets, Color & Light)
 TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas, as a percentage of the "radius" 
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
