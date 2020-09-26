@@ -99,7 +99,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     bayerrawexposure    = Gtk::manage(new BayerRAWExposure());
     xtransrawexposure   = Gtk::manage(new XTransRAWExposure());
     fattal              = Gtk::manage(new FattalToneMapping());
-    filmNegative        = Gtk::manage (new FilmNegative ());
+    filmNegative        = Gtk::manage (new FilmNegative());
     pdSharpening        = Gtk::manage (new PdSharpening());
     // So Demosaic, Line noise filter, Green Equilibration, Ca-Correction (garder le nom de section identique!) and Black-Level will be moved in a "Bayer sensor" tool,
     // and a separate Demosaic and Black Level tool will be created in an "X-Trans sensor" tool
@@ -285,7 +285,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     distortion->setLensGeomListener(this);
     crop->setCropPanelListener(this);
     icm->setICMPanelListener(this);
-    filmNegative->setFilmNegProvider (this);
+    filmNegative->setFilmNegProvider(this);
 
     toolBar = new ToolBar();
     toolBar->setToolBarListener(this);
@@ -605,7 +605,7 @@ void ToolPanelCoordinator::profileChange(
         lParams[1] = *mergedParams;
         pe.initFrom(lParams);
 
-        filterRawRefresh = pe.raw.isUnchanged() && pe.lensProf.isUnchanged() && pe.retinex.isUnchanged() && pe.filmNegative.isUnchanged() && pe.pdsharpening.isUnchanged();
+        filterRawRefresh = pe.raw.isUnchanged() && pe.lensProf.isUnchanged() && pe.retinex.isUnchanged() && pe.pdsharpening.isUnchanged();
     }
 
     *params = *mergedParams;
@@ -724,7 +724,7 @@ void ToolPanelCoordinator::initImage(rtengine::StagedImageProcessor* ipc_, bool 
         ipc->setSizeListener(resize);
         ipc->setLocallabListener(locallab);
         ipc->setImageTypeListener(this);
-        ipc->setFilmNegListener (filmNegative);
+        ipc->setFilmNegListener(filmNegative);
         flatfield->setShortcutPath(Glib::path_get_dirname(ipc->getInitialImage()->getFileName()));
 
         icm->setRawMeta(raw, (const rtengine::FramesData*)pMetaData);
