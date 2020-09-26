@@ -169,10 +169,10 @@ protected:
     std::vector<unsigned char> parade_buffer_r;
     std::vector<unsigned char> parade_buffer_g;
     std::vector<unsigned char> parade_buffer_b;
-    bool parade_buffer_dirty;
+    bool parade_buffer_r_dirty, parade_buffer_g_dirty, parade_buffer_b_dirty;
     std::vector<unsigned char> wave_buffer;
     std::vector<unsigned char> wave_buffer_luma;
-    bool wave_buffer_dirty;
+    bool wave_buffer_dirty, wave_buffer_luma_dirty;
 
     bool valid;
     int drawMode;

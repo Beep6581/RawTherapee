@@ -1093,7 +1093,8 @@ HistogramArea::HistogramArea (DrawModeListener *fml) :
     vect_hc_buffer_dirty(true), vect_hs_buffer_dirty(true),
     waveform_scale(0),
     rwave(0, 0), gwave(0, 0),bwave(0, 0), lwave(0, 0),
-    parade_buffer_dirty(true), wave_buffer_dirty(true),
+    parade_buffer_r_dirty(true), parade_buffer_g_dirty(true), parade_buffer_b_dirty(true),
+    wave_buffer_dirty(true), wave_buffer_luma_dirty(true),
     valid(false), drawMode(options.histogramDrawMode), myDrawModeListener(fml),
     scopeType(options.histogramScopeType),
     oldwidth(-1), oldheight(-1),
@@ -1166,6 +1167,7 @@ void HistogramArea::get_preferred_width_for_height_vfunc (int height, int &minim
 
 void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool c, int mode, ScopeType type, bool pointer)
 {
+    wave_buffer_dirty = wave_buffer_dirty || needRed != r || needGreen != g || needBlue != b;
 
     options.histogramRed      = needRed    = r;
     options.histogramGreen    = needGreen  = g;
@@ -1175,8 +1177,6 @@ void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool c, int m
     options.histogramDrawMode = drawMode   = mode;
     options.histogramScopeType = scopeType = type;
     options.histogramBar = needPointer = pointer;
-
-    wave_buffer_dirty = true;
 }
 
 bool HistogramArea::updatePending(void)
@@ -1224,7 +1224,7 @@ void HistogramArea::update(
                 gwave = waveformGreen;
                 bwave = waveformBlue;
                 lwave = waveformLuma;
-                parade_buffer_dirty = wave_buffer_dirty = true;
+                parade_buffer_r_dirty = parade_buffer_g_dirty = parade_buffer_b_dirty = wave_buffer_dirty = wave_buffer_luma_dirty = true;
                 break;
             case ScopeType::VECTORSCOPE_HS:
                 vectorscope_scale = vectorscopeScale;
@@ -1556,48 +1556,66 @@ void HistogramArea::drawParade(Cairo::RefPtr<Cairo::Context> &cr, int w, int h)
 
     // See Cairo documentation on stride.
     const int cairo_stride = Cairo::ImageSurface::format_stride_for_width(Cairo::FORMAT_ARGB32, rwave.getWidth());
+    const auto buffer_size = static_cast<std::vector<unsigned char>::size_type>(wave_height) * cairo_stride;
 
-    if (parade_buffer_dirty) {
-        const auto buffer_size = static_cast<std::vector<unsigned char>::size_type>(wave_height) * cairo_stride;
+    if (parade_buffer_r_dirty && needRed) {
         parade_buffer_r.assign(buffer_size, 0);
-        parade_buffer_g.assign(buffer_size, 0);
-        parade_buffer_b.assign(buffer_size, 0);
-        wave_buffer_luma.assign(buffer_size, 0);
-
         assert(parade_buffer_r.size() % 4 == 0);
-        assert(parade_buffer_g.size() % 4 == 0);
-        assert(parade_buffer_b.size() % 4 == 0);
-        assert(wave_buffer_luma.size() % 4 == 0);
 
         for (int val = 0; val < wave_height; val++) {
             const int* const r_row = rwave[val];
-            const int* const g_row = gwave[val];
-            const int* const b_row = bwave[val];
             std::uint32_t* const buffer_r_row = reinterpret_cast<uint32_t*>(parade_buffer_r.data() + (255 - val) * cairo_stride);
-            std::uint32_t* const buffer_g_row = reinterpret_cast<uint32_t*>(parade_buffer_g.data() + (255 - val) * cairo_stride);
-            std::uint32_t* const buffer_b_row = reinterpret_cast<uint32_t*>(parade_buffer_b.data() + (255 - val) * cairo_stride);
             for (int col = 0; col < wave_width; col++) {
                 const unsigned char r = std::min<float>(scale * r_row[col], 0xff);
-                const unsigned char g = std::min<float>(scale * g_row[col], 0xff);
-                const unsigned char b = std::min<float>(scale * b_row[col], 0xff);
-                if (r == 0) {
-                    buffer_r_row[col] = 0;
-                } else {
+                if (r != 0) {
                     buffer_r_row[col] = (r << 16) | (r << 24);
                 }
-                if (g == 0) {
-                    buffer_g_row[col] = 0;
-                } else {
+            }
+        }
+
+        parade_buffer_r_dirty = false;
+    }
+
+    if (parade_buffer_g_dirty && needGreen) {
+        parade_buffer_g.assign(buffer_size, 0);
+        assert(parade_buffer_g.size() % 4 == 0);
+
+        for (int val = 0; val < wave_height; val++) {
+            const int* const g_row = gwave[val];
+            std::uint32_t* const buffer_g_row = reinterpret_cast<uint32_t*>(parade_buffer_g.data() + (255 - val) * cairo_stride);
+            for (int col = 0; col < wave_width; col++) {
+                const unsigned char g = std::min<float>(scale * g_row[col], 0xff);
+                if (g != 0) {
                     buffer_g_row[col] = (g << 8) | (g << 24);
                 }
-                if (b == 0) {
-                    buffer_b_row[col] = 0;
-                } else {
+            }
+        }
+
+        parade_buffer_g_dirty = false;
+    }
+
+    if (parade_buffer_b_dirty && needBlue) {
+        parade_buffer_b.assign(buffer_size, 0);
+        assert(parade_buffer_b.size() % 4 == 0);
+
+        for (int val = 0; val < wave_height; val++) {
+            const int* const b_row = bwave[val];
+            std::uint32_t* const buffer_b_row = reinterpret_cast<uint32_t*>(parade_buffer_b.data() + (255 - val) * cairo_stride);
+            for (int col = 0; col < wave_width; col++) {
+                const unsigned char b = std::min<float>(scale * b_row[col], 0xff);
+                if (b != 0) {
                     const unsigned char green = b / 2; // Make blue easier to see.
                     buffer_b_row[col] = b | (green << 8) | (b << 24);
                 }
             }
         }
+
+        parade_buffer_b_dirty = false;
+    }
+
+    if (wave_buffer_luma_dirty && needLuma) {
+        wave_buffer_luma.assign(buffer_size, 0);
+        assert(wave_buffer_luma.size() % 4 == 0);
 
         for (int val = 0; val < wave_height; val++) {
             const int* const l_row = lwave[val];
@@ -1609,7 +1627,7 @@ void HistogramArea::drawParade(Cairo::RefPtr<Cairo::Context> &cr, int w, int h)
             }
         }
 
-        parade_buffer_dirty = false;
+        wave_buffer_luma_dirty = false;
     }
 
     std::vector<unsigned char*> buffers;
@@ -1668,7 +1686,6 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
 
         assert(vect_buffer.size() % 4 == 0);
 
-        // TODO: Optimize.
         for (int y = 0; y < vect_height; y++) {
             const int* const vect_row = vect[y];
             std::uint32_t* const buffer_row =
@@ -1834,16 +1851,12 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
 
     // See Cairo documentation on stride.
     const int cairo_stride = Cairo::ImageSurface::format_stride_for_width(Cairo::FORMAT_ARGB32, rwave.getWidth());
+    const auto buffer_size = static_cast<std::vector<unsigned char>::size_type>(wave_height) * cairo_stride;
 
-    if (wave_buffer_dirty) {
-        const auto buffer_size = static_cast<std::vector<unsigned char>::size_type>(wave_height) * cairo_stride;
+    if (wave_buffer_dirty && (needRed || needGreen || needBlue)) {
         wave_buffer.assign(buffer_size, 0);
-        wave_buffer_luma.assign(buffer_size, 0);
-
         assert(wave_buffer.size() % 4 == 0);
-        assert(wave_buffer_luma.size() % 4 == 0);
 
-        // TODO: Optimize.
         for (int val = 0; val < wave_height; val++) {
             const int* const r_row = rwave[val];
             const int* const g_row = gwave[val];
@@ -1854,14 +1867,19 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
                 const unsigned char g = needGreen ? std::min<float>(scale * g_row[col], 0xff) : 0;
                 const unsigned char b = needBlue ? std::min<float>(scale * b_row[col], 0xff) : 0;
                 const unsigned char value = rtengine::max(r, g, b);
-                if (value == 0) {
-                    buffer_row[col] = 0;
-                } else {
-                    // Speedup with one memory access instead of four.
+                if (value != 0) {
+                    // Ensures correct order regardless of endianness.
                     buffer_row[col] = b | (g << 8) | (r << 16) | (value << 24);
                 }
             }
         }
+
+        wave_buffer_dirty = false;
+    }
+
+    if (wave_buffer_luma_dirty && needLuma) {
+        wave_buffer_luma.assign(buffer_size, 0);
+        assert(wave_buffer_luma.size() % 4 == 0);
 
         for (int val = 0; val < wave_height; val++) {
             const int* const l_row = lwave[val];
@@ -1873,7 +1891,7 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
             }
         }
 
-        wave_buffer_dirty = false;
+        wave_buffer_luma_dirty = false;
     }
 
     Cairo::RefPtr<Cairo::ImageSurface> surface;
@@ -1888,12 +1906,14 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
         cr->paint();
         surface->finish();
     }
-    surface = Cairo::ImageSurface::create(
-        wave_buffer.data(), Cairo::FORMAT_ARGB32, wave_width, wave_height, cairo_stride);
-    cr->set_source(surface, 0, 0);
-    cr->set_operator(Cairo::OPERATOR_OVER);
-    cr->paint();
-    surface->finish();
+    if (needRed || needGreen || needBlue) {
+        surface = Cairo::ImageSurface::create(
+            wave_buffer.data(), Cairo::FORMAT_ARGB32, wave_width, wave_height, cairo_stride);
+        cr->set_source(surface, 0, 0);
+        cr->set_operator(Cairo::OPERATOR_OVER);
+        cr->paint();
+        surface->finish();
+    }
     cr->set_matrix(orig_matrix);
 }
 
@@ -1980,7 +2000,7 @@ bool HistogramArea::on_motion_notify_event (GdkEventMotion* event)
         double dx = (event->x - movingPosition) / get_width();
         float new_brightness = LIM<float>(trace_brightness * pow(RANGE, dx), MIN_BRIGHT, MAX_BRIGHT);
         if (new_brightness != trace_brightness) {
-            parade_buffer_dirty = wave_buffer_dirty = vect_hc_buffer_dirty = vect_hs_buffer_dirty = true;
+            parade_buffer_r_dirty = parade_buffer_g_dirty = parade_buffer_b_dirty = wave_buffer_dirty = wave_buffer_luma_dirty = vect_hc_buffer_dirty = vect_hs_buffer_dirty = true;
             trace_brightness = new_brightness;
             setDirty(true);
             queue_draw();
