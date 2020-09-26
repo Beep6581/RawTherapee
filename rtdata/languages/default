@@ -2763,6 +2763,7 @@ TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Adjust shadows & highlights either with shad
 //Can be used instead - or in complement - of exposure module in difficult cases.\nThe use of Denoise may be necessary : lightening the shadows.\n\nCan be used as graduated filter (increase Scope)
 TP_LOCALLAB_SHAMASKCOL;Shadows
 TP_LOCALLAB_SHADMASK_TOOLTIP;Lifts the shadows of the mask in the same way as the shadows/highlights algorithm
+TP_LOCALLAB_SHADHMASK_TOOLTIP;Lowers the highlights of the mask in the same way as the shadows/highlights algorithm
 TP_LOCALLAB_SHAPETYPE;RT-spot shape
 TP_LOCALLAB_SHAPE_TOOLTIP;Elipse is normal mode.\nRectangle can be used in some cases, for example to work in full image in conjonction with delimiters outside preview, transition = 100.\n\nPolygone - Beziers are waiting for GUI...
 TP_LOCALLAB_SHARAMOUNT;Amount

@@ -680,6 +680,7 @@ private:
     FlatCurveEditor* const HHmaskblshape;
     Adjuster* const strumaskbl;
     Gtk::CheckButton* const toolbl;
+    Gtk::Frame* const toolblFrame;
     Adjuster* const blendmaskbl;
     Adjuster* const radmaskbl;
     Adjuster* const lapmaskbl;
