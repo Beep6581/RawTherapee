@@ -225,6 +225,7 @@ private:
     LabGrid* const labgridmerg;
     Adjuster* const merlucol;
     MyExpander* const expmaskcol;
+    Gtk::Frame* const mergecolFrame ;
     MyComboBoxText* const showmaskcolMethod;
     MyComboBoxText* const showmaskcolMethodinv;
     Gtk::CheckButton* const enaColorMask;
@@ -240,6 +241,7 @@ private:
     Adjuster* const contcol;
     Adjuster* const blurcol;
     Adjuster* const blendmaskcol;
+    Gtk::Frame* const toolcolFrame;
     Adjuster* const radmaskcol;
     Adjuster* const lapmaskcol;
     Adjuster* const chromaskcol;
@@ -678,6 +680,7 @@ private:
     FlatCurveEditor* const HHmaskblshape;
     Adjuster* const strumaskbl;
     Gtk::CheckButton* const toolbl;
+    Gtk::Frame* const toolblFrame;
     Adjuster* const blendmaskbl;
     Adjuster* const radmaskbl;
     Adjuster* const lapmaskbl;
