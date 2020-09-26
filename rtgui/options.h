@@ -179,6 +179,7 @@ public:
         NONE = -1,
         HISTOGRAM,
         HISTOGRAM_RAW,
+        PARADE,
         VECTORSCOPE_HC,
         VECTORSCOPE_HS,
         WAVEFORM

@@ -86,6 +86,7 @@ HistogramPanel::HistogramPanel () :
         case ScopeType::VECTORSCOPE_HS:
             histogramRGBArea = nullptr;
             break;
+        case ScopeType::PARADE:
         case ScopeType::WAVEFORM:
             histogramRGBArea = histogramRGBAreaVert.get();
             break;
@@ -129,17 +130,20 @@ HistogramPanel::HistogramPanel () :
 
     histImage.reset(new RTImage("histogram-type-histogram-small.png"));
     histRawImage.reset(new RTImage("histogram-bayer-on-small.png"));
+    paradeImage.reset(new RTImage("histogram-type-parade-small.png"));
     waveImage.reset(new RTImage("histogram-type-waveform-small.png"));
     vectHcImage.reset(new RTImage("histogram-type-vectorscope-hc-small.png"));
     vectHsImage.reset(new RTImage("histogram-type-vectorscope-hs-small.png"));
 
     histImageOn.reset(new RTImage("histogram-type-histogram-small.png"));
     histRawImageOn.reset(new RTImage("histogram-bayer-on-small.png"));
+    paradeImageOn.reset(new RTImage("histogram-type-parade-small.png"));
     waveImageOn.reset(new RTImage("histogram-type-waveform-small.png"));
     vectHcImageOn.reset(new RTImage("histogram-type-vectorscope-hc-small.png"));
     vectHsImageOn.reset(new RTImage("histogram-type-vectorscope-hs-small.png"));
     histImageOff.reset(new RTImage("histogram-type-histogram-off-small.png"));
     histRawImageOff.reset(new RTImage("histogram-bayer-off-small.png"));
+    paradeImageOff.reset(new RTImage("histogram-type-parade-off-small.png"));
     waveImageOff.reset(new RTImage("histogram-type-waveform-off-small.png"));
     vectHcImageOff.reset(new RTImage("histogram-type-vectorscope-hc-off-small.png"));
     vectHsImageOff.reset(new RTImage("histogram-type-vectorscope-hs-off-small.png"));
@@ -156,11 +160,13 @@ HistogramPanel::HistogramPanel () :
     Gtk::RadioButtonGroup scopeTypeGroup;
     scopeHistBtn = Gtk::manage(new Gtk::RadioButton(scopeTypeGroup));
     scopeHistRawBtn = Gtk::manage(new Gtk::RadioButton(scopeTypeGroup));
+    scopeParadeBtn = Gtk::manage(new Gtk::RadioButton(scopeTypeGroup));
     scopeWaveBtn = Gtk::manage(new Gtk::RadioButton(scopeTypeGroup));
     scopeVectHcBtn = Gtk::manage(new Gtk::RadioButton(scopeTypeGroup));
     scopeVectHsBtn = Gtk::manage(new Gtk::RadioButton(scopeTypeGroup));
     scopeHistBtn->set_mode(false);
     scopeHistRawBtn->set_mode(false);
+    scopeParadeBtn->set_mode(false);
     scopeWaveBtn->set_mode(false);
     scopeVectHcBtn->set_mode(false);
     scopeVectHsBtn->set_mode(false);
@@ -185,6 +191,8 @@ HistogramPanel::HistogramPanel () :
     scopeHistBtn->set_can_focus(false);
     scopeHistRawBtn->set_name("histButton");
     scopeHistRawBtn->set_can_focus(false);
+    scopeParadeBtn->set_name("histButton");
+    scopeParadeBtn->set_can_focus(false);
     scopeWaveBtn->set_name("histButton");
     scopeWaveBtn->set_can_focus(false);
     scopeVectHcBtn->set_name("histButton");
@@ -202,6 +210,7 @@ HistogramPanel::HistogramPanel () :
     showBAR->set_relief (Gtk::RELIEF_NONE);
     scopeHistBtn->set_relief (Gtk::RELIEF_NONE);
     scopeHistRawBtn->set_relief (Gtk::RELIEF_NONE);
+    scopeParadeBtn->set_relief (Gtk::RELIEF_NONE);
     scopeWaveBtn->set_relief (Gtk::RELIEF_NONE);
     scopeVectHcBtn->set_relief (Gtk::RELIEF_NONE);
     scopeVectHsBtn->set_relief (Gtk::RELIEF_NONE);
@@ -216,6 +225,7 @@ HistogramPanel::HistogramPanel () :
     showBAR->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_BAR"));
     scopeHistBtn->set_tooltip_text(M("HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM"));
     scopeHistRawBtn->set_tooltip_text(M("HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW"));
+    scopeParadeBtn->set_tooltip_text(M("HISTOGRAM_TOOLTIP_TYPE_PARADE"));
     scopeWaveBtn->set_tooltip_text(M("HISTOGRAM_TOOLTIP_TYPE_WAVEFORM"));
     scopeVectHcBtn->set_tooltip_text(M("HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HC"));
     scopeVectHsBtn->set_tooltip_text(M("HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HS"));
@@ -249,6 +259,7 @@ HistogramPanel::HistogramPanel () :
         showMode->set_image(*mode2Image);
     scopeHistBtn->set_image(*histImageOff);
     scopeHistRawBtn->set_image(*histRawImageOff);
+    scopeParadeBtn->set_image(*paradeImageOff);
     scopeWaveBtn->set_image(*waveImageOff);
     scopeVectHcBtn->set_image(*vectHcImageOff);
     scopeVectHsBtn->set_image(*vectHsImageOff);
@@ -260,6 +271,10 @@ HistogramPanel::HistogramPanel () :
         case ScopeType::HISTOGRAM_RAW:
             scopeHistRawBtn->set_active();
             scopeHistRawBtn->set_image(*histRawImageOn);
+            break;
+        case ScopeType::PARADE:
+            scopeParadeBtn->set_active();
+            scopeParadeBtn->set_image(*paradeImageOn);
             break;
         case ScopeType::WAVEFORM:
             scopeWaveBtn->set_active();
@@ -279,6 +294,8 @@ HistogramPanel::HistogramPanel () :
     showBAR->set_image   (showBAR->get_active()   ? *barImage   : *barImage_g);
     
     type_changed();
+    updateHistAreaOptions();
+    updateHistRGBAreaOptions();
 
     setExpandAlignProperties(showRed  , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(showGreen, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -299,6 +316,7 @@ HistogramPanel::HistogramPanel () :
     showBAR->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::bar_toggled), showBAR );
     scopeHistBtn->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &HistogramPanel::type_selected), scopeHistBtn));
     scopeHistRawBtn->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &HistogramPanel::type_selected), scopeHistRawBtn));
+    scopeParadeBtn->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &HistogramPanel::type_selected), scopeParadeBtn));
     scopeWaveBtn->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &HistogramPanel::type_selected), scopeWaveBtn));
     scopeVectHcBtn->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &HistogramPanel::type_selected), scopeVectHcBtn));
     scopeVectHsBtn->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &HistogramPanel::type_selected), scopeVectHsBtn));
@@ -314,6 +332,7 @@ HistogramPanel::HistogramPanel () :
 
     scopeButtons->add(*scopeHistBtn);
     scopeButtons->add(*scopeHistRawBtn);
+    scopeButtons->add(*scopeParadeBtn);
     scopeButtons->add(*scopeWaveBtn);
     scopeButtons->add(*scopeVectHsBtn);
     scopeButtons->add(*scopeVectHcBtn);
@@ -462,6 +481,8 @@ void HistogramPanel::type_selected(Gtk::RadioButton* button)
         new_type = ScopeType::HISTOGRAM;
     } else if (button == scopeHistRawBtn) {
         new_type = ScopeType::HISTOGRAM_RAW;
+    } else if (button == scopeParadeBtn) {
+        new_type = ScopeType::PARADE;
     } else if (button == scopeWaveBtn) {
         new_type = ScopeType::WAVEFORM;
     } else if (button == scopeVectHcBtn) {
@@ -480,6 +501,9 @@ void HistogramPanel::type_selected(Gtk::RadioButton* button)
             break;
         case ScopeType::HISTOGRAM_RAW:
             scopeHistRawBtn->set_image(*histRawImageOff);
+            break;
+        case ScopeType::PARADE:
+            scopeParadeBtn->set_image(*paradeImageOff);
             break;
         case ScopeType::WAVEFORM:
             scopeWaveBtn->set_image(*waveImageOff);
@@ -500,6 +524,9 @@ void HistogramPanel::type_selected(Gtk::RadioButton* button)
             break;
         case ScopeType::HISTOGRAM_RAW:
             scopeHistRawBtn->set_image(*histRawImageOn);
+            break;
+        case ScopeType::PARADE:
+            scopeParadeBtn->set_image(*paradeImageOn);
             break;
         case ScopeType::WAVEFORM:
             scopeWaveBtn->set_image(*waveImageOn);
@@ -551,6 +578,7 @@ void HistogramPanel::type_changed()
             scopeType->set_image(*histRawImage);
             histogramRGBArea = nullptr;
             break;
+        case ScopeType::PARADE:
         case ScopeType::WAVEFORM:
             showRed->set_sensitive();
             showGreen->set_sensitive();
@@ -558,7 +586,11 @@ void HistogramPanel::type_changed()
             showValue->set_sensitive();
             showChro->set_sensitive(false);
             showMode->set_sensitive(false);
-            scopeType->set_image(*waveImage);
+            if (options.histogramScopeType == ScopeType::PARADE) {
+                scopeType->set_image(*paradeImage);
+            } else {
+                scopeType->set_image(*waveImage);
+            }
             histogramRGBArea = histogramRGBAreaVert.get();
             break;
         case ScopeType::VECTORSCOPE_HC:
@@ -803,7 +835,11 @@ void HistogramRGBArea::setShow(bool show)
 
 void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustring &profile, const Glib::ustring &profileW)
 {
-    if (!get_realized () || !showMode || !(options.histogramScopeType == ScopeType::HISTOGRAM || options.histogramScopeType == ScopeType::WAVEFORM)) {
+    if (!get_realized () || !showMode || !(
+        options.histogramScopeType == ScopeType::HISTOGRAM
+        || options.histogramScopeType == ScopeType::PARADE
+        || options.histogramScopeType == ScopeType::WAVEFORM
+    )) {
         return;
     }
 
@@ -852,6 +888,7 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
             if(
                 (needLuma || needChroma)
                 && (options.histogramScopeType == ScopeType::HISTOGRAM
+                    || options.histogramScopeType == ScopeType::PARADE
                     || options.histogramScopeType == ScopeType::WAVEFORM)
             ) {
                 float Lab_L, Lab_a, Lab_b;
@@ -1009,7 +1046,7 @@ void HistogramRGBAreaHori::get_preferred_width_for_height_vfunc (int height, int
 void HistogramRGBAreaVert::drawBar(Cairo::RefPtr<Cairo::Context> cc, double value, double max_value, int winw, int winh, double scale)
 {
     double pos;
-    if (options.histogramDrawMode < 2 || options.histogramScopeType == ScopeType::WAVEFORM) {
+    if (options.histogramDrawMode < 2 || options.histogramScopeType == ScopeType::PARADE || options.histogramScopeType == ScopeType::WAVEFORM) {
         pos = padding + value * (winh - padding * 2.0 - 1) / max_value + 0.5 * scale;
     } else {
         pos = padding + HistogramScaling::log (max_value, value) * (winh - padding * 2.0) / max_value + 0.5 * scale;
@@ -1054,7 +1091,7 @@ HistogramArea::HistogramArea (DrawModeListener *fml) :
     vect_hc_buffer_dirty(true), vect_hs_buffer_dirty(true),
     waveform_scale(0),
     rwave(0, 0), gwave(0, 0),bwave(0, 0), lwave(0, 0),
-    wave_buffer_dirty(true),
+    parade_buffer_dirty(true), wave_buffer_dirty(true),
     valid(false), drawMode(options.histogramDrawMode), myDrawModeListener(fml),
     scopeType(options.histogramScopeType),
     oldwidth(-1), oldheight(-1),
@@ -1178,13 +1215,14 @@ void HistogramArea::update(
                 ghistRaw = histGreenRaw;
                 bhistRaw = histBlueRaw;
                 break;
+            case ScopeType::PARADE:
             case ScopeType::WAVEFORM:
                 waveform_scale = waveformScale;
                 rwave = waveformRed;
                 gwave = waveformGreen;
                 bwave = waveformBlue;
                 lwave = waveformLuma;
-                wave_buffer_dirty = true;
+                parade_buffer_dirty = wave_buffer_dirty = true;
                 break;
             case ScopeType::VECTORSCOPE_HS:
                 vectorscope_scale = vectorscopeScale;
@@ -1285,7 +1323,7 @@ void HistogramArea::updateBackBuffer ()
     }
 
     // draw horizontal gridlines
-    if (options.histogramScopeType == ScopeType::WAVEFORM) {
+    if (options.histogramScopeType == ScopeType::PARADE || options.histogramScopeType == ScopeType::WAVEFORM) {
         for (int i = 0; i <= nrOfVGridPartitions; i++) {
             const double ypos = h - padding - (pow(2.0,i) - 1) * (h - 2 * padding - 1) / 255.0;
             cr->move_to(0, ypos);
@@ -1419,6 +1457,8 @@ void HistogramArea::updateBackBuffer ()
             drawMarks(cr, bhchanged, realhistheight, w, ui, oi);
         }
 
+    } else if (scopeType == ScopeType::PARADE && rwave.getWidth() > 0) {
+        drawParade(cr, w, h);
     } else if (scopeType == ScopeType::WAVEFORM && rwave.getWidth() > 0) {
         drawWaveform(cr, w, h);
     } else if (scopeType == ScopeType::VECTORSCOPE_HC || scopeType == ScopeType::VECTORSCOPE_HS) {
@@ -1503,6 +1543,101 @@ void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
     }
 
     cr->fill();
+}
+
+void HistogramArea::drawParade(Cairo::RefPtr<Cairo::Context> &cr, int w, int h)
+{
+    // Arbitrary scale factor divided by current scale.
+    const float scale = trace_brightness * 32.f * 255.f / waveform_scale;
+    const int wave_width = rwave.getWidth();
+    const int wave_height = rwave.getHeight();
+
+    // See Cairo documentation on stride.
+    const int cairo_stride = Cairo::ImageSurface::format_stride_for_width(Cairo::FORMAT_ARGB32, rwave.getWidth());
+
+    if (parade_buffer_dirty) {
+        const auto buffer_size = static_cast<std::vector<unsigned char>::size_type>(wave_height) * cairo_stride;
+        parade_buffer_r.assign(buffer_size, 0);
+        parade_buffer_g.assign(buffer_size, 0);
+        parade_buffer_b.assign(buffer_size, 0);
+        wave_buffer_luma.assign(buffer_size, 0);
+
+        assert(parade_buffer_r.size() % 4 == 0);
+        assert(parade_buffer_g.size() % 4 == 0);
+        assert(parade_buffer_b.size() % 4 == 0);
+        assert(wave_buffer_luma.size() % 4 == 0);
+
+        for (int val = 0; val < wave_height; val++) {
+            const int* const r_row = rwave[val];
+            const int* const g_row = gwave[val];
+            const int* const b_row = bwave[val];
+            std::uint32_t* const buffer_r_row = reinterpret_cast<uint32_t*>(parade_buffer_r.data() + (255 - val) * cairo_stride);
+            std::uint32_t* const buffer_g_row = reinterpret_cast<uint32_t*>(parade_buffer_g.data() + (255 - val) * cairo_stride);
+            std::uint32_t* const buffer_b_row = reinterpret_cast<uint32_t*>(parade_buffer_b.data() + (255 - val) * cairo_stride);
+            for (int col = 0; col < wave_width; col++) {
+                const unsigned char r = std::min<float>(scale * r_row[col], 0xff);
+                const unsigned char g = std::min<float>(scale * g_row[col], 0xff);
+                const unsigned char b = std::min<float>(scale * b_row[col], 0xff);
+                if (r == 0) {
+                    buffer_r_row[col] = 0;
+                } else {
+                    buffer_r_row[col] = (r << 16) | (r << 24);
+                }
+                if (g == 0) {
+                    buffer_g_row[col] = 0;
+                } else {
+                    buffer_g_row[col] = (g << 8) | (g << 24);
+                }
+                if (b == 0) {
+                    buffer_b_row[col] = 0;
+                } else {
+                    const unsigned char green = b / 2; // Make blue easier to see.
+                    buffer_b_row[col] = b | (green << 8) | (b << 24);
+                }
+            }
+        }
+
+        for (int val = 0; val < wave_height; val++) {
+            const int* const l_row = lwave[val];
+            std::uint32_t* const buffer_row =
+                reinterpret_cast<uint32_t*>(wave_buffer_luma.data() + (255 - val) * cairo_stride);
+            for (int col = 0; col < wave_width; col++) {
+                const unsigned char l = std::min<float>(scale * l_row[col], 0xff);
+                buffer_row[col] = l | (l << 8) | (l << 16) | (l << 24);
+            }
+        }
+
+        parade_buffer_dirty = false;
+    }
+
+    std::vector<unsigned char*> buffers;
+    if (needLuma) {
+        buffers.push_back(wave_buffer_luma.data());
+    }
+    if (needRed) {
+        buffers.push_back(parade_buffer_r.data());
+    }
+    if (needGreen) {
+        buffers.push_back(parade_buffer_g.data());
+    }
+    if (needBlue) {
+        buffers.push_back(parade_buffer_b.data());
+    }
+
+    auto orig_matrix = cr->get_matrix();
+    const double display_wave_width = static_cast<double>(w) / buffers.size();
+    for (int i = 0; i < buffers.size(); i++) {
+        Cairo::RefPtr<Cairo::ImageSurface> surface;
+        cr->translate(i * display_wave_width, padding);
+        cr->scale(display_wave_width / wave_width, (h - 2 * padding) / wave_height);
+        surface = Cairo::ImageSurface::create(
+            buffers[i], Cairo::FORMAT_ARGB32, wave_width, wave_height, cairo_stride);
+        cr->set_source(surface, 0, 0);
+        cr->set_operator(Cairo::OPERATOR_OVER);
+        cr->paint();
+        surface->finish();
+        cr->set_matrix(orig_matrix);
+    }
 }
 
 void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, int h)
@@ -1726,15 +1861,13 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
             }
         }
 
-        if (needLuma) {
-            for (int val = 0; val < wave_height; val++) {
-                const int* const l_row = lwave[val];
-                std::uint32_t* const buffer_row =
-                    reinterpret_cast<uint32_t*>(wave_buffer_luma.data() + (255 - val) * cairo_stride);
-                for (int col = 0; col < wave_width; col++) {
-                    const unsigned char l = std::min<float>(scale * l_row[col], 0xff);
-                    buffer_row[col] = l | (l << 8) | (l << 16) | (l << 24);
-                }
+        for (int val = 0; val < wave_height; val++) {
+            const int* const l_row = lwave[val];
+            std::uint32_t* const buffer_row =
+                reinterpret_cast<uint32_t*>(wave_buffer_luma.data() + (255 - val) * cairo_stride);
+            for (int col = 0; col < wave_width; col++) {
+                const unsigned char l = std::min<float>(scale * l_row[col], 0xff);
+                buffer_row[col] = l | (l << 8) | (l << 16) | (l << 24);
             }
         }
 
@@ -1834,7 +1967,8 @@ bool HistogramArea::on_motion_notify_event (GdkEventMotion* event)
         setDirty(true);
         queue_draw ();
     } else if (
-        scopeType == ScopeType::WAVEFORM
+        scopeType == ScopeType::PARADE
+        || scopeType == ScopeType::WAVEFORM
         || scopeType == ScopeType::VECTORSCOPE_HC
         || scopeType == ScopeType::VECTORSCOPE_HS
     ) { // Adjust brightness.
@@ -1844,7 +1978,7 @@ bool HistogramArea::on_motion_notify_event (GdkEventMotion* event)
         double dx = (event->x - movingPosition) / get_width();
         float new_brightness = LIM<float>(trace_brightness * pow(RANGE, dx), MIN_BRIGHT, MAX_BRIGHT);
         if (new_brightness != trace_brightness) {
-            wave_buffer_dirty = vect_hc_buffer_dirty = vect_hs_buffer_dirty = true;
+            parade_buffer_dirty = wave_buffer_dirty = vect_hc_buffer_dirty = vect_hs_buffer_dirty = true;
             trace_brightness = new_brightness;
             setDirty(true);
             queue_draw();

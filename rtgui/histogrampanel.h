@@ -166,6 +166,10 @@ protected:
     bool vect_hc_buffer_dirty, vect_hs_buffer_dirty;
     int waveform_scale;
     array2D<int> rwave, gwave, bwave, lwave;
+    std::vector<unsigned char> parade_buffer_r;
+    std::vector<unsigned char> parade_buffer_g;
+    std::vector<unsigned char> parade_buffer_b;
+    bool parade_buffer_dirty;
     std::vector<unsigned char> wave_buffer;
     std::vector<unsigned char> wave_buffer_luma;
     bool wave_buffer_dirty;
@@ -227,6 +231,7 @@ public:
 private:
     void drawCurve(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, double scale, int hsize, int vsize);
     void drawMarks(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, double scale, int hsize, int & ui, int & oi);
+    void drawParade(Cairo::RefPtr<Cairo::Context> &cr, int hsize, int vsize);
     void drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int hsize, int vsize);
     void drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int hsize, int vsize);
     Gtk::SizeRequestMode get_request_mode_vfunc () const override;
@@ -268,6 +273,7 @@ protected:
 
     Gtk::RadioButton* scopeHistBtn;
     Gtk::RadioButton* scopeHistRawBtn;
+    Gtk::RadioButton* scopeParadeBtn;
     Gtk::RadioButton* scopeWaveBtn;
     Gtk::RadioButton* scopeVectHcBtn;
     Gtk::RadioButton* scopeVectHsBtn;
@@ -288,17 +294,20 @@ protected:
 
     std::unique_ptr<Gtk::Image> histImage;
     std::unique_ptr<Gtk::Image> histRawImage;
+    std::unique_ptr<Gtk::Image> paradeImage;
     std::unique_ptr<Gtk::Image> waveImage;
     std::unique_ptr<Gtk::Image> vectHcImage;
     std::unique_ptr<Gtk::Image> vectHsImage;
 
     std::unique_ptr<Gtk::Image> histImageOn;
     std::unique_ptr<Gtk::Image> histRawImageOn;
+    std::unique_ptr<Gtk::Image> paradeImageOn;
     std::unique_ptr<Gtk::Image> waveImageOn;
     std::unique_ptr<Gtk::Image> vectHcImageOn;
     std::unique_ptr<Gtk::Image> vectHsImageOn;
     std::unique_ptr<Gtk::Image> histImageOff;
     std::unique_ptr<Gtk::Image> histRawImageOff;
+    std::unique_ptr<Gtk::Image> paradeImageOff;
     std::unique_ptr<Gtk::Image> waveImageOff;
     std::unique_ptr<Gtk::Image> vectHcImageOff;
     std::unique_ptr<Gtk::Image> vectHsImageOff;
