@@ -295,7 +295,9 @@ HistogramPanel::HistogramPanel () :
     
     type_changed();
     updateHistAreaOptions();
-    updateHistRGBAreaOptions();
+    if (histogramRGBArea) {
+        updateHistRGBAreaOptions();
+    }
 
     setExpandAlignProperties(showRed  , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(showGreen, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
