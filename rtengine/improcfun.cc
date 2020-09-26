@@ -5739,31 +5739,21 @@ void ImProcFunctions::rgb2lab(const Image8 &src, int x, int y, int w, int h, flo
 
     Glib::ustring profile;
 
-    bool standard_gamma;
+    cmsHPROFILE oprof = nullptr;
 
     if (settings->HistogramWorking && consider_histogram_settings) {
         profile = icm.workingProfile;
-        standard_gamma = true;
     } else {
         profile = icm.outputProfile;
 
         if (icm.outputProfile.empty() || icm.outputProfile == ColorManagementParams::NoICMString) {
             profile = "sRGB";
         }
-
-        standard_gamma = false;
+        oprof = ICCStore::getInstance()->getProfile(profile);
     }
 
-    cmsHPROFILE oprof = ICCStore::getInstance()->getProfile(profile);
-
     if (oprof) {
-        cmsHPROFILE oprofG = oprof;
-
-        if (standard_gamma) {
-            oprofG = ICCStore::makeStdGammaProfile(oprof);
-        }
-
-        cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
+        cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE; // NOCACHE is important for thread safety
 
         if (icm.outputBPC) {
             flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
@@ -5771,7 +5761,7 @@ void ImProcFunctions::rgb2lab(const Image8 &src, int x, int y, int w, int h, flo
 
         lcmsMutex->lock();
         cmsHPROFILE LabIProf  = cmsCreateLab4Profile(nullptr);
-        cmsHTRANSFORM hTransform = cmsCreateTransform (oprofG, TYPE_RGB_8, LabIProf, TYPE_Lab_FLT, icm.outputIntent, flags);  // NOCACHE is important for thread safety
+        cmsHTRANSFORM hTransform = cmsCreateTransform (oprof, TYPE_RGB_8, LabIProf, TYPE_Lab_FLT, icm.outputIntent, flags);
         cmsCloseProfile(LabIProf);
         lcmsMutex->unlock();
 
@@ -5806,10 +5796,6 @@ void ImProcFunctions::rgb2lab(const Image8 &src, int x, int y, int w, int h, flo
         } // End of parallelization
 
         cmsDeleteTransform(hTransform);
-
-        if (oprofG != oprof) {
-            cmsCloseProfile(oprofG);
-        }
     } else {
         TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(profile);
         const float wp[3][3] = {
