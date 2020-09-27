@@ -429,12 +429,15 @@ void rtengine::ImProcFunctions::filmNegativeProcess(rtengine::Imagefloat *input,
 
 bool rtengine::ImProcCoordinator::getFilmNegativeSpot(int x, int y, const int spotSize, RGB &refInput, RGB &refOutput)
 {
-    MyMutex::MyLock lock(mProcessing);
+// FIXME temporary hack! uncomment this lock!
+//    MyMutex::MyLock lock(mProcessing);
 
     const int tr = getCoarseBitMask(params->coarse);
 
-    const Coord2D p = translateCoord(ipf, fw, fh, x, y);
-    
+    const Coord2D p = x == -1 ? filmNegReferenceSpot : translateCoord(ipf, fw, fh, x, y);
+
+    filmNegReferenceSpot = p;
+
     // Get the average channel values from the sampled spot
     RGB avg, max;
     getSpotAvgMax(imgsrc, currWB, params, p, tr, spotSize, avg, max);

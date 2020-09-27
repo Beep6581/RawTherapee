@@ -122,6 +122,7 @@ ImProcCoordinator::ImProcCoordinator() :
     rcurvehist(256), rcurvehistCropped(256), rbeforehist(256),
     gcurvehist(256), gcurvehistCropped(256), gbeforehist(256),
     bcurvehist(256), bcurvehistCropped(256), bbeforehist(256),
+    filmNegReferenceSpot(Coord2D()),
     fw(0), fh(0), tr(0),
     fullw(1), fullh(1),
     pW(-1), pH(-1),
@@ -613,8 +614,17 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     imgsrc->convertColorSpace(orig_prev, params->icm, currWB);
                 }
 
+                bool changed = false;
+                if (filmNegReferenceSpot.x && filmNegReferenceSpot.y) {
+                    procparams::FilmNegativeParams::RGB refIn, dummy;
+                    getFilmNegativeSpot(-1, -1, 32, refIn, dummy);
+                    changed = params->filmNegative.refInput != refIn;
+                    params->filmNegative.refInput = refIn;
+                }
+
+
                 // Perform negative inversion. If needed, upgrade filmNegative params for backwards compatibility with old profiles
-                if (ipf.filmNegativeProcess(orig_prev, orig_prev, params->filmNegative, params->raw, imgsrc, currWB) && filmNegListener) {
+                if ((changed | ipf.filmNegativeProcess(orig_prev, orig_prev, params->filmNegative, params->raw, imgsrc, currWB)) && filmNegListener) {
                     filmNegListener->filmBaseValuesChanged(params->filmNegative.refInput, params->filmNegative.refOutput);
                 }
 

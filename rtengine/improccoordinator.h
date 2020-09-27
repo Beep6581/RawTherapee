@@ -160,6 +160,8 @@ protected:
     LUTu gcurvehist, gcurvehistCropped, gbeforehist;
     LUTu bcurvehist, bcurvehistCropped, bbeforehist;
 
+    Coord2D filmNegReferenceSpot;
+
     // ------------------------------------------------------------------------------------
 
     int fw, fh, tr, fullw, fullh;
