@@ -9700,7 +9700,6 @@ void ImProcFunctions::Lab_Local(
 
     bool blurz = false;
     bool delt = params->locallab.spots.at(sp).deltae;
-//    bool astool = params->locallab.spots.at(sp).toolbl;
 
     if (((radius > 1.5 * GAUSS_SKIP)  || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 1 || lp.showmaskblmet == 2  || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) {
         blurz = true;
