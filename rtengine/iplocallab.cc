@@ -4107,7 +4107,6 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
 
         if (strumask > 0.f && astool) {
-
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -9701,7 +9700,7 @@ void ImProcFunctions::Lab_Local(
 
     bool blurz = false;
     bool delt = params->locallab.spots.at(sp).deltae;
-    bool astool = params->locallab.spots.at(sp).toolbl;
+//    bool astool = params->locallab.spots.at(sp).toolbl;
 
     if (((radius > 1.5 * GAUSS_SKIP)  || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 1 || lp.showmaskblmet == 2  || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) {
         blurz = true;
@@ -13204,6 +13203,7 @@ void ImProcFunctions::Lab_Local(
                 const float amountcd = 0.f;
                 const float anchorcd = 50.f;
                 const int highl = 0;
+                bool astool = params->locallab.spots.at(sp).toolcol;
 
                 maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, reserved, inv, lp,
                             strumask, astool,
@@ -14289,7 +14289,8 @@ void ImProcFunctions::Lab_Local(
                 const float amountcd = 0.f;
                 const float anchorcd = 50.f;
                 const int highl = 0;
-  
+                bool astool = params->locallab.spots.at(sp).toolmask;
+
                 maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufcolorig.get(), bufmaskblurcol.get(), originalmaskcol.get(), original, reserved, inv, lp,
                             strumask, astool,
                             locccmas_Curve, lcmas_utili, locllmas_Curve, llmas_utili, lochhmas_Curve, lhmas_utili, lochhhmas_Curve, lhhmas_utili, multiThread,
