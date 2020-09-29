@@ -4639,11 +4639,16 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         autocompute->set_tooltip_text(M("TP_LOCALLAB_LOGAUTO_TOOLTIP"));
         blackEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
         whiteEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
-        sourceGray->set_tooltip_text(M("TP_LOCALLAB_LOGSRCGREY_TOOLTIP"));
+        sourceGray->set_tooltip_text("");
         targetGray->set_tooltip_text(M("TP_LOCALLAB_LOGTARGGREY_TOOLTIP"));
         baselog->set_tooltip_text(M("TP_LOCALLAB_LOGBASE_TOOLTIP"));
         strlog->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
         anglog->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
+
+        detail->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
+        Autogray->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
+        sensilog->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
+
     } else {
         exp->set_tooltip_text("");
         logPFrame->set_tooltip_text("");
@@ -4655,6 +4660,9 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         baselog->set_tooltip_text("");
         strlog->set_tooltip_text("");
         anglog->set_tooltip_text("");
+        detail->set_tooltip_text("");
+        Autogray->set_tooltip_text("");
+        sensilog->set_tooltip_text("");
     }
 }
 
