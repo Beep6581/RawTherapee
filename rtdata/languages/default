@@ -2511,6 +2511,7 @@ TP_LOCALLAB_FFTW2;ƒ - Use Fast Fourier Transform (TIF, JPG,..)
 TP_LOCALLAB_FFTMASK_TOOLTIP;Use a Fourier transform for better quality (increased processing time and memory requirements)
 TP_LOCALLAB_FFTWBLUR;ƒ - Always Use Fast Fourier Transform
 TP_LOCALLAB_FULLIMAGE;Calculate the dark-Ev & white-Ev values for the entire image 
+TP_LOCALLAB_FULLIMAGELOG_TOOLTIP;Calculates the Ev levels for the entire image.
 TP_LOCALLAB_GAM;Gamma
 TP_LOCALLAB_GAMFRA;Tone response curve (TRC)
 TP_LOCALLAB_GAMM;Gamma
@@ -2597,7 +2598,8 @@ TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Estimated values of Dynamic Range i.e. Black Ev
 TP_LOCALLAB_LOGENCOD_TOOLTIP;Tone Mapping with Logarithmic encoding (ACES).\nUseful for underexposed images or images with high dynamic range.\n\nTwo-step process : 1) Dynamic Range calculation 2) Manual adjustment
 TP_LOCALLAB_LOGFRA;Source Gray Point
 //TP_LOCALLAB_LOGFRAME_TOOLTIP;Calculate or use Exposure levels of the image early in the process:\n Black Ev, White Ev and Source Gray point.\n Take into account main exposure compensation.
-TP_LOCALLAB_LOGFRAME_TOOLTIP;Allows you to calculate and adjust Ev levels for the entire image. The resulting values will be used by all Lab operations and most RGB operations in the pipeline:\n Black Ev, White Ev and Source Gray Point.\n Takes into account exposure compensation in main-menu Exposure tab.
+TP_LOCALLAB_LOGFRAME_TOOLTIP;Allows you to calculate and adjust the Ev levels and the Source Gray Point for the spot area. The resulting values will be used by all Lab operations and most RGB operations in the pipeline.\n Takes into account exposure compensation in the main-menu Exposure tab.
+//Allows you to calculate and adjust Ev levels for the entire image. The resulting values will be used by all Lab operations and most RGB operations in the pipeline:\n Black Ev, White Ev and Source Gray Point.\n Takes into account exposure compensation in main-menu Exposure tab.
 TP_LOCALLAB_LOGLIN;Logarithm mode
 TP_LOCALLAB_LOGPFRA;Relative Exposure Levels
 //TP_LOCALLAB_LOGSRCGREY_TOOLTIP;Estimated gray point value of the image, early in the process

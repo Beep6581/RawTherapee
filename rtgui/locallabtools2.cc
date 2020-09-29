@@ -4653,7 +4653,7 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         detail->set_tooltip_text("");
         Autogray->set_tooltip_text("");
         sensilog->set_tooltip_text("");
-
+        fullimage->set_tooltip_text(M("TP_LOCALLAB_FULLIMAGELOG_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
         logPFrame->set_tooltip_text("");
@@ -4668,6 +4668,8 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         detail->set_tooltip_text("");
         Autogray->set_tooltip_text("");
         sensilog->set_tooltip_text("");
+        fullimage->set_tooltip_text("");
+
     }
 }
 
