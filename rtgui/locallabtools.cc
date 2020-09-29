@@ -3787,11 +3787,19 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         chromaskSH->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
         slomaskSH->set_tooltip_text(M("TP_LOCALLAB_SLOMASK_TOOLTIP"));
         lapmaskSH->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
+        /*
         highlights->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         h_tonalwidth->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         shadows->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         s_tonalwidth->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         sh_radius->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
+        */
+        highlights->set_tooltip_text("");
+        h_tonalwidth->set_tooltip_text("");
+        shadows->set_tooltip_text("");
+        s_tonalwidth->set_tooltip_text("");
+        sh_radius->set_tooltip_text("");
+        
     } else {
         exp->set_tooltip_text("");
 
@@ -4699,7 +4707,7 @@ void LocallabVibrance::updateAdviceTooltips(const bool showTooltips)
         chromaskvib->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
         slomaskvib->set_tooltip_text(M("TP_LOCALLAB_SLOMASK_TOOLTIP"));
         lapmaskvib->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
-
+/*
         saturated->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         pastels->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         psThreshold->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
@@ -4708,6 +4716,15 @@ void LocallabVibrance::updateAdviceTooltips(const bool showTooltips)
         pastSatTog->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         sensiv->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         curveEditorGG->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
+*/
+        saturated->set_tooltip_text("");
+        pastels->set_tooltip_text("");
+        psThreshold->set_tooltip_text("");
+        protectSkins->set_tooltip_text("");
+        avoidColorShift->set_tooltip_text("");
+        pastSatTog->set_tooltip_text("");
+        sensiv->set_tooltip_text("");
+        curveEditorGG->set_tooltip_text("");
 
     } else {
         exp->set_tooltip_text("");
