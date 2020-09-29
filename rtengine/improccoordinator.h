@@ -469,7 +469,9 @@ public:
             hListener->setObservable(nullptr);
         }
         hListener = h;
-        h->setObservable(this);
+        if (h) {
+            h->setObservable(this);
+        }
     }
     void setAutoCamListener  (AutoCamListener* acl) override
     {

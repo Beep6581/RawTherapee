@@ -364,7 +364,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
 
             imgsrc->getRAWHistogram(histRedRaw, histGreenRaw, histBlueRaw);
-            hist_raw_dirty = !hListener->updateHistogramRaw();
+            hist_raw_dirty = !(hListener && hListener->updateHistogramRaw());
 
             highDetailPreprocessComputed = highDetailNeeded;
 
