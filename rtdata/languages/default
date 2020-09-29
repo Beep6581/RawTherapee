@@ -2510,7 +2510,7 @@ TP_LOCALLAB_FFTW;ƒ - Use Fast Fourier Transform
 TP_LOCALLAB_FFTW2;ƒ - Use Fast Fourier Transform (TIF, JPG,..)
 TP_LOCALLAB_FFTMASK_TOOLTIP;Use a Fourier transform for better quality (increased processing time and memory requirements)
 TP_LOCALLAB_FFTWBLUR;ƒ - Always Use Fast Fourier Transform
-TP_LOCALLAB_FULLIMAGE;Calculate dark-Ev/white-Ev value on the entire image 
+TP_LOCALLAB_FULLIMAGE;Calculate the dark-Ev & white-Ev values for the entire image 
 TP_LOCALLAB_GAM;Gamma
 TP_LOCALLAB_GAMFRA;Tone response curve (TRC)
 TP_LOCALLAB_GAMM;Gamma
@@ -2587,22 +2587,29 @@ TP_LOCALLAB_LOC_CONTRASTPYRLAB;Graduated Filter - Edge Sharpness - Blur
 TP_LOCALLAB_LOC_RESIDPYR;Residual Image (Main)
 TP_LOCALLAB_LOG;Log Encoding
 TP_LOCALLAB_LOGAUTO;Automatic
-TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will bring an evaluation of dynamic range and Source Gray point (if "Automatic" Source gray enabled).\nTo be able to touch up the automatic values, press the button again
-TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm, the shadows are darker, the highlights are brighter.\nValues greater than 2 change the action of the algorithm, the shadows are grayer the highlights are more washed out
-TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Estimated values of Dynamic Range - Black Ev and White Ev
-TP_LOCALLAB_LOGENCOD_TOOLTIP;Allows Tone Mapping with Logarithm encoding (ACES).\nUsefull for underexposed pictures, or with high dynamic range.\n\nTwo steps in the process : 1) Calculate Dynamic Range 2) User adaptation
+//TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will bring an evaluation of dynamic range and Source Gray point (if "Automatic" Source gray enabled).\nTo be able to touch up the automatic values, press the button again
+TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the dynamic range and Source Gray Point (if "Automatic Source Gray Point” enabled).\nPress the button again to adjust the automatically calculated values.
+//TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm, the shadows are darker, the highlights are brighter.\nValues greater than 2 change the action of the algorithm, the shadows are grayer the highlights are more washed out
+TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm making the shadows darker and the highlights brighter.\nWith values greater than 2, the shadows are grayer and the highlights become more washed out.
+//TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Estimated values of Dynamic Range - Black Ev and White Ev
+TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Estimated values of Dynamic Range i.e. Black Ev and White Ev
+//TP_LOCALLAB_LOGENCOD_TOOLTIP;Allows Tone Mapping with Logarithm encoding (ACES).\nUsefull for underexposed pictures, or with high dynamic range.\n\nTwo steps in the process : 1) Calculate Dynamic Range 2) User adaptation
+TP_LOCALLAB_LOGENCOD_TOOLTIP;Tone Mapping with Logarithmic encoding (ACES).\nUseful for underexposed images or images with high dynamic range.\n\nTwo-step process : 1) Dynamic Range calculation 2) Manual adjustment
 TP_LOCALLAB_LOGFRA;Source Gray Point
-TP_LOCALLAB_LOGFRAME_TOOLTIP;Calculate or use Exposure levels of the image early in the process:\n Black Ev, White Ev and Source Gray point.\n Take into account main exposure compensation.
+//TP_LOCALLAB_LOGFRAME_TOOLTIP;Calculate or use Exposure levels of the image early in the process:\n Black Ev, White Ev and Source Gray point.\n Take into account main exposure compensation.
+TP_LOCALLAB_LOGFRAME_TOOLTIP;Allows you to calculate and adjust Ev levels for the (entire) image. The resulting values will be used by all Lab operations and most RGB operations in the pipeline:\n Black Ev, White Ev and Source Gray Point.\n Takes into account exposure compensation in main-menu Exposure tab.
 TP_LOCALLAB_LOGLIN;Logarithm mode
 TP_LOCALLAB_LOGPFRA;Relative Exposure Levels
-TP_LOCALLAB_LOGSRCGREY_TOOLTIP;Estimated gray point value of the image, early in the process
-TP_LOCALLAB_LOGTARGGREY_TOOLTIP;You can change this value to adapt it to your taste.
+//TP_LOCALLAB_LOGSRCGREY_TOOLTIP;Estimated gray point value of the image, early in the process
+TP_LOCALLAB_LOGSRCGREY_TOOLTIP;Estimated gray point value of the image.
+//TP_LOCALLAB_LOGTARGGREY_TOOLTIP;You can change this value to adapt it to your taste.
+TP_LOCALLAB_LOGTARGGREY_TOOLTIP;You can adjust this value to suit.
 TP_LOCALLAB_LOG_TOOLNAME;Log Encoding - 0
 TP_LOCALLAB_LUM;Curves LL - CC
 TP_LOCALLAB_LUMADARKEST;Darkest
 TP_LOCALLAB_LUMASK;Background color for luminance and color masks
 TP_LOCALLAB_LUMASK_TOOLTIP;Adjusts the shade of gray or color of the mask background in Show Mask (Mask and modifications)
-TP_LOCALLAB_LUMAWHITESEST;Whiteest
+TP_LOCALLAB_LUMAWHITESEST;Lightest
 TP_LOCALLAB_LUMFRA;L*a*b* standard
 TP_LOCALLAB_LUMONLY;Luminance only
 TP_LOCALLAB_MASKCOM;Common Color Mask
@@ -2667,7 +2674,8 @@ TP_LOCALLAB_MRFOU;Previous Spot
 TP_LOCALLAB_MRONE;None
 TP_LOCALLAB_MRTHR;Original Image
 TP_LOCALLAB_MRTWO;Short Curves 'L' Mask
-TP_LOCALLAB_MULTIPL_TOOLTIP;Allows the retouching of tones over a very wide range : -18EV +4EV. The first slider acts on very dark tones between -18EV and -6EV. The last slider acts light tones up to 4EV  
+//TP_LOCALLAB_MULTIPL_TOOLTIP;Allows the retouching of tones over a very wide range : -18EV +4EV. The first slider acts on very dark tones between -18EV and -6EV. The last slider acts light tones up to 4EV  
+TP_LOCALLAB_MULTIPL_TOOLTIP;Wide-range tone adjustment: -18EV to +4EV. The first slider acts on very dark tones between -18EV and -6EV. The last slider acts on light tones up to 4EV  
 TP_LOCALLAB_NEIGH;Radius
 TP_LOCALLAB_NOISECHROCOARSE;Coarse chroma (Wav)
 TP_LOCALLAB_NOISECHROC_TOOLTIP;If superior to zero, high quality algorithm is enabled.\nCoarse is for slider >=0.02
@@ -2859,7 +2867,7 @@ TP_LOCALLAB_TLABEL2;TM Effective Tm=%1 TM=%2
 TP_LOCALLAB_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nTm=Min TM=Max of Transmission Map.\nYou can act on Threshold to normalize
 TP_LOCALLAB_TM;Tone Mapping
 TP_LOCALLAB_TM_MASK;Use transmission map
-TP_LOCALLAB_TOOLMASK_TOOLTIP;Structure mask (slider) with the checkbox "Structure mask as tool" checked: in this case a mask showing the structure will be generated after one or more of the 3 curves has been modified.\n Here, the "Structure mask" behaves like the other Mask tools : Gamma, Slope, etc.\n It allows you to vary the action on the mask according to the structure of the image. This option is sensitive to "deltaE image mask" and the associated slider "Scope (deltaE image mask)".
+TP_LOCALLAB_TOOLMASK_TOOLTIP;Structure mask (slider) with the checkbox "Structure mask as tool" checked: in this case a mask showing the structure will be generated after one or more of the 2 curves L(L) or LC(H) has been modified.\n Here, the "Structure mask" behaves like the other Mask tools : Gamma, Slope, etc.\n It allows you to vary the action on the mask according to the structure of the image.
 TP_LOCALLAB_TONEMAPESTOP_TOOLTIP;This parameter affects sensitivity to edges.\n The greater it is the more likely an illumination change is to be considered an "edge".\n If set to zero tone mapping will have an effect similar to unsharp masking.
 TP_LOCALLAB_TONEMAPGAM_TOOLTIP;Gamma moves the action of tone-mapping to shadows or highlights.
 TP_LOCALLAB_TONEMAPREWEI_TOOLTIP;In some cases tone mapping may result in a cartoonish appearance, and in some rare cases soft but wide halos may appear.\n Increasing the number of reweighting iterates will help fight some of these problems.
@@ -2884,7 +2892,8 @@ TP_LOCALLAB_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscis
 TP_LOCALLAB_USEMASK;Use mask
 TP_LOCALLAB_VART;Variance (contrast)
 TP_LOCALLAB_VIBRANCE;Vibrance & Warm/Cool
-TP_LOCALLAB_VIBRA_TOOLTIP;Adjust vibrance (essentially the same as the global adjustment).\nCarry out the equivalent of a white-balance adjustment using a CIECAM algorithm.
+//TP_LOCALLAB_VIBRA_TOOLTIP;Adjust vibrance (essentially the same as the global adjustment).\nCarry out the equivalent of a white-balance adjustment using a CIECAM algorithm.
+TP_LOCALLAB_VIBRA_TOOLTIP;Adjusts vibrance (essentially the same as the global adjustment).\nCarries out the equivalent of a white-balance adjustment using a CIECAM algorithm.
 TP_LOCALLAB_VIB_TOOLNAME;Vibrance & Warm/Cool - 3
 TP_LOCALLAB_SOFT_TOOLNAME;Soft Light & Original Retinex - 6
 TP_LOCALLAB_BLUR_TOOLNAME;Blur/Grain & Denoise - 1
@@ -2898,7 +2907,8 @@ TP_LOCALLAB_MASKCOM_TOOLNAME;Common Color Mask  - 13
 TP_LOCALLAB_VIS_TOOLTIP;<b>Click</b> to show/hide selected Control Spot.\n<b>Ctrl</b>+<b>click</b> to show/hide all Control Spot.
 TP_LOCALLAB_WAMASKCOL;Ψ Mask Wavelet level
 TP_LOCALLAB_WARM;Warm/Cool & Color artifacts
-TP_LOCALLAB_WARM_TOOLTIP;This slider use Ciecam algorithm and acts as White Balance, it can warm or cool the area selected.\nIt can also in some cases reduce color artifacts.
+//TP_LOCALLAB_WARM_TOOLTIP;This slider use Ciecam algorithm and acts as White Balance, it can warm or cool the area selected.\nIt can also in some cases reduce color artifacts.
+TP_LOCALLAB_WARM_TOOLTIP;This slider uses the CIECAM algorithm and acts as a White Balance control to make the color temperature of the selected area warmer or cooler\nIt can also reduce color artifacts in some cases.
 TP_LOCALLAB_WASDEN_TOOLTIP;Denoise luminance for the 3 first levels (fine).\nThe right limit of the curve correspond to coarse : level 3 and beyond
 TP_LOCALLAB_WAV;Local contrast by level
 TP_LOCALLAB_WAVBLUR_TOOLTIP;Performs a blur for each level of decomposition, as well as the residual image.
