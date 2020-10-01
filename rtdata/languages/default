@@ -2681,8 +2681,8 @@ TP_LOCALLAB_OFFS;Offset
 TP_LOCALLAB_OFFSETWAV;Offset
 TP_LOCALLAB_OPACOL;Opacity
 TP_LOCALLAB_ORIGLC;Merge only with original image
-TP_LOCALLAB_ORRETILAP_TOOLTIP;Acts on a second Laplacian threshold, to take into account ΔE to differentiate the action especially with the background (different from Scope)
-TP_LOCALLAB_ORRETISTREN_TOOLTIP;Acts on a second Laplacian threshold, to take into account ΔE. This allows you to differentiate the action, by acting upstream, with respect to the background for example (different from Scope which acts after)
+TP_LOCALLAB_ORRETILAP_TOOLTIP;Acts on a second Laplacian threshold, to take into account ΔE. This allows you to differentiate the action, by acting upstream, with respect to the background for example (different from Scope which acts after)
+TP_LOCALLAB_ORRETISTREN_TOOLTIP;Acts on the Laplacian threshold, the greater the action, the more the differences in contrast will be reduced
 TP_LOCALLAB_PASTELS2;Vibrance
 TP_LOCALLAB_PDE;Contrast Attenuator - Dynamic Range compression
 TP_LOCALLAB_PDEFRA;Contrast Attenuator ƒ
