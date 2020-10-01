@@ -2466,29 +2466,28 @@ TP_LOCALLAB_EXECLU;Excluding spot
 TP_LOCALLAB_EXNORM;Normal spot
 TP_LOCALLAB_EXPCBDL_TOOLTIP;Can be used to remove marks on the sensor or lens.
 TP_LOCALLAB_EXPCHROMA;Chroma compensation
-TP_LOCALLAB_EXPCHROMA_TOOLTIP;Only in association with exposure compensation and PDE Ipol.\nAvoids desaturation of colors
+TP_LOCALLAB_EXPCHROMA_TOOLTIP;Use in association with ‘Exposure compensation f’ and ‘Contrast Attenuator f’ to avoid desaturating colors.
 TP_LOCALLAB_EXPCOLOR_TOOLTIP;Adjust color, lightness, contrast and correct small defects such as red-eye, sensor dust etc.
 TP_LOCALLAB_EXPCOMP;Exposure compensation ƒ
 TP_LOCALLAB_EXPCOMPINV;Exposure compensation
-TP_LOCALLAB_EXPCOMP_TOOLTIP;For portrait or images with low color gradient, you can change "Shape detection" in "settings":\n\nIncrease 'Threshold ΔE scope'\nReduce 'ΔE decay'\nIncrease 'Balance ΔE ab-L' 
+TP_LOCALLAB_EXPCOMP_TOOLTIP;For portraits or images with a low color gradient. You can change "Shape detection" in "Settings":\n\nIncrease 'ΔE scope threshold'\nReduce 'ΔE decay'\nIncrease 'ab-L balance (ΔE)’ 
 TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;See the documentation of wavelet levels.\nHowever there are some differences: more tools and closer to the details.\nEx: Tone mapping for wavelet levels. 
 TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Avoid spots that are too small(< 32x32 pixels).\nUse low transition values and high decay transition values and scope to simulate small RT-spot and deal wth defects.\nUse if necessary the module 'Clarity & Sharp mask and Blend images' by adjusting 'Soft radius' to reduce artifacts.
 TP_LOCALLAB_EXPCURV;Curves
 TP_LOCALLAB_EXPGRAD;Graduated Filter
 TP_LOCALLAB_EXPGRADCOL_TOOLTIP;A graduated filter is available in Color and Light (luminance, chrominance & hue gradients, and "Merge file")  Exposure (luminance grad.), Exposure Mask (luminance grad.), Shadows/Highlights (luminance grad.), Vibrance (luminance, chrominance & hue gradients), Local contrast & wavelet pyramid (local contrast grad.).\nFeather is located in Settings. 
 TP_LOCALLAB_EXPLAPBAL_TOOLTIP;Balances the action between the original image and the Laplace transform.
-TP_LOCALLAB_EXPLAPGAMM_TOOLTIP;Apply a gamma before and after Laplace transform
-TP_LOCALLAB_EXPLAPLIN_TOOLTIP;Add linear exposure component before application Laplace transform
-TP_LOCALLAB_EXPLAP_TOOLTIP;The more you act on this threshold slider, the greater the action of reducing contrast.
+TP_LOCALLAB_EXPLAPGAMM_TOOLTIP;Applies a gamma curve before and after the Laplace transform, in order to change the behavior for images with little or too much contrast.
+TP_LOCALLAB_EXPLAPLIN_TOOLTIP;Adds a linear exposure component before applying a Laplace transform, in order to change the behavior for underexposed images.
+TP_LOCALLAB_EXPLAP_TOOLTIP;Moving the slider to the right progressively reduces the contrast.
 TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Allows you to use GIMP or Photoshop (c) layer blend modes i.e. Difference, Multiply, Soft Light, Overlay etc., with opacity control\nOriginal Image : merge current RT-spot with Original.\nPrevious spot : merge current Rt-spot with previous - if there is only one spot previous = original.\nBackground : merge current RT-spot with a color and luminance background (fewer possibilties) 
 TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposure but in L*a*b* and taking account of deltaE.\n\nContrast attenuator : use another algorithm also with deltaE and with Poisson equation to solve Laplacian in Fourier space.\nContrast attenuator, Dynamic range compression and Standard can be combined.\nFFTW Fourier Transform is optimized in size to reduce processing time.\nReduce artifacts and noise.
-TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Apply a median before Laplace transform to prevent artifacts (noise).\nYou can also use "Denoise" tool.
+TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Applies a median filter before the Laplace transform to prevent artifacts (noise).\nYou can also use the "Denoise" tool.
 TP_LOCALLAB_EXPOSE;Dynamic Range & Exposure
-//TP_LOCALLAB_EXPOSURE_TOOLTIP;In some cases (strong shadows ..) you can use others modules "Shadows Highlights", "Tone equalizer", "TRC", "Log Encoding"...
 TP_LOCALLAB_EXPOSURE_TOOLTIP;Modify exposure in L*a*b space  using Laplacian PDE algorithms to take into account dE and  minimize artifacts.
 TP_LOCALLAB_EXPRETITOOLS;Advanced Retinex Tools
 TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39.\nUse low transition values and high decay transition values and scope to simulate small RT-spot.
-TP_LOCALLAB_EXPTOOL;Exposure tools
+TP_LOCALLAB_EXPTOOL;Exposure Tools
 TP_LOCALLAB_EXPTRC;Tone Response Curve - TRC
 TP_LOCALLAB_EXP_TOOLNAME;Dynamic Range & Exposure - 10
 TP_LOCALLAB_FATAMOUNT;Amount
@@ -2496,7 +2495,7 @@ TP_LOCALLAB_FATANCHOR;Anchor
 TP_LOCALLAB_FATANCHORA;Offset
 TP_LOCALLAB_FATDETAIL;Detail
 TP_LOCALLAB_FATFRA;Dynamic Range Compression ƒ
-TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal - use Fattal Tone mapping algorithm.
+TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal – uses the Fattal Tone-mapping algorithm.
 TP_LOCALLAB_FATLEVEL;Sigma
 TP_LOCALLAB_FATRES;Amount Residual Image
 TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask ƒ
@@ -2683,11 +2682,11 @@ TP_LOCALLAB_OFFSETWAV;Offset
 TP_LOCALLAB_OPACOL;Opacity
 TP_LOCALLAB_ORIGLC;Merge only with original image
 TP_LOCALLAB_ORRETILAP_TOOLTIP;Acts on a second Laplacian threshold, to take into account ΔE to differentiate the action especially with the background (different from Scope)
-TP_LOCALLAB_ORRETISTREN_TOOLTIP;Acts on the Laplacian threshold, the greater the action, the more the differences in contrast will be reduced
+TP_LOCALLAB_ORRETISTREN_TOOLTIP;Acts on a second Laplacian threshold, to take into account ΔE. This allows you to differentiate the action, by acting upstream, with respect to the background for example (different from Scope which acts after)
 TP_LOCALLAB_PASTELS2;Vibrance
 TP_LOCALLAB_PDE;Contrast Attenuator - Dynamic Range compression
 TP_LOCALLAB_PDEFRA;Contrast Attenuator ƒ
-TP_LOCALLAB_PDEFRAME_TOOLTIP;PDE IPOL - personal algorithm adapted from IPOL to Rawtherapee: lead to very different results and needs differents settings that Standard (negative black, gamma < 1,...)\nMay be usefull for low exposure or high dynamic range.\n
+TP_LOCALLAB_PDEFRAME_TOOLTIP;Algorithm adapted by Jacques Desmis for Rawtherapee : gives different results and requires differents settings compared to 'Exposure' (negative black, gamma < 1,...)\nMay be useful for under-exposed or high dynamic range images.\n
 TP_LOCALLAB_PREVIEW;Preview ΔE
 TP_LOCALLAB_PREVHIDE;Hide additional settings
 TP_LOCALLAB_PREVSHOW;Show additional settings
@@ -2743,17 +2742,17 @@ TP_LOCALLAB_SENSIDEN;Scope
 TP_LOCALLAB_SENSIEXCLU;Scope
 TP_LOCALLAB_SENSIEXCLU_TOOLTIP;Adjust color to include in exclusion!
 TP_LOCALLAB_SENSIH;Scope
-TP_LOCALLAB_SENSIH_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.
+TP_LOCALLAB_SENSIH_TOOLTIP;Adjusts the range of action:\nSmall values limit the action to colors similar to those in the center of the spot.\nHigh values let the tool act on a wider range of colors.
 TP_LOCALLAB_SENSILOG;Scope
 TP_LOCALLAB_SENSIS;Scope
 TP_LOCALLAB_SENSIS_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
 TP_LOCALLAB_SENSI_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.\nValues smaller than 20 lead to a better algorithm.
-TP_LOCALLAB_SENSIMASK_TOOLTIP;Adjust scope of action for this common mask tool.\nActs on the gap between the original image and the mask.\nThe references (luma, chroma, hue) are those of the center of the RT-spot\n\nYou can also act on deltaE internal to the mask with 'Scope Mask deltaE image' in 'Settings'
+TP_LOCALLAB_SENSIMASK_TOOLTIP;Scope adjustment specific to common mask tool.\nActs on the difference between the original image and the mask.\nUses the luma, chroma & hue references from the center of the RT-spot\n\nYou can also adjust  the deltaE of the mask itself by using 'Scope (deltaE image mask)' in 'Settings' > ‘Mask & Merge’
 TP_LOCALLAB_SETTINGS;Settings
 TP_LOCALLAB_SH1;Shadows Highlights
 TP_LOCALLAB_SH2;Equalizer
 TP_LOCALLAB_SHADEX;Shadows
-TP_LOCALLAB_SHADEXCOMP;Shadows compression & tonal width
+TP_LOCALLAB_SHADEXCOMP;Shadow compression & tonal width
 TP_LOCALLAB_SHADHIGH;Shadows/Highlights & Tone equalizer
 TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Adjust shadows & highlights either with shadows & highlights sliders or with a tone equalizer.\nCan be used instead of, or in conjunction with the Exposure module.\nCan also be used as a graduated filter.
 //Can be used instead - or in complement - of exposure module in difficult cases.\nThe use of Denoise may be necessary : lightening the shadows.\n\nCan be used as graduated filter (increase Scope)
@@ -2833,8 +2832,8 @@ TP_LOCALLAB_STRENGRID_TOOLTIP;You can adjust the desired effect with "strength",
 TP_LOCALLAB_STRGRID;Strength
 TP_LOCALLAB_STRRETI_TOOLTIP;if Strength Retinex < 0.2 only Dehaze is enabled.\nif Strength Retinex >= 0.1 Dehaze is in luminance mode.
 TP_LOCALLAB_STRUC;Structure
-TP_LOCALLAB_STRUCCOL;Spot Structure
-TP_LOCALLAB_STRUCCOL1;Spot Structure
+TP_LOCALLAB_STRUCCOL;Spot structure
+TP_LOCALLAB_STRUCCOL1;Spot structure
 TP_LOCALLAB_STRUCT_TOOLTIP;Uses the Sobel algorithm to take into account structure for shape detection.\nActivate "Mask and modifications” > “Show spot structure" (advanced mode) to see a preview of the mask (without modifications).\n\nCan be used in conjunction with the Structure Mask, Blur Mask and “Local contrast (by wavelet level)”  to improve edge detection.\n\nEffects of adjustments using Lightness, Contrast, Chrominance, Exposure or other non-mask-related tools visible using either ‘Show modified image” or “Show modifications with mask ”. 
 TP_LOCALLAB_STRUMASKCOL;Structure mask strength
 TP_LOCALLAB_STRUMASK_TOOLTIP;Structure mask (slider) with the checkbox "Structure mask as tool" unchecked: In this case a mask showing the structure will be generated even if none of the 3 curves is activated. Structure masks are available for mask 1 (Blur and denoise") and mask 7 (Color & Light).
