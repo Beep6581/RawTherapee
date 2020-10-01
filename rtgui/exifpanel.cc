@@ -28,6 +28,8 @@
 #include "../rtengine/metadata.h"
 #include "../rtengine/procparams.h"
 
+#include <glibmm/regex.h>
+
 using namespace rtengine;
 using namespace rtengine::procparams;
 
@@ -637,6 +639,74 @@ void ExifPanel::setExifTagValue(Gtk::CellRenderer *renderer, const Gtk::TreeMode
 }
 
 
+namespace {
+
+
+Glib::ustring to_fraction(const Glib::ustring &s)
+{
+    auto i = s.find(".");
+    if (i != Glib::ustring::npos) {
+        return s.substr(0, i) + s.substr(i+1) + "/1" + Glib::ustring(s.size() - i - 1, '0');
+    }
+    return s;
+}
+
+typedef Glib::ustring (*validator_func)(const Glib::ustring &);
+
+Glib::ustring get_fnumber(const Glib::ustring &val)
+{
+    Glib::MatchInfo m;
+    auto re = Glib::Regex::create("f? *([0-9.]+) *", Glib::REGEX_CASELESS);
+    if (re->match(val, m)) {
+        auto s = m.fetch(1);
+        return to_fraction(s);
+    }
+    return val;
+}
+
+Glib::ustring get_shutterspeed(const Glib::ustring &val)
+{
+    Glib::MatchInfo m;
+    auto re = Glib::Regex::create(" *([0-9/]+) *s? *", Glib::REGEX_CASELESS);
+    if (re->match(val, m)) {
+        auto s = m.fetch(1);
+        return s;
+    }
+    return val;
+}
+
+Glib::ustring get_focallen(const Glib::ustring &val)
+{
+    Glib::MatchInfo m;
+    auto re = Glib::Regex::create(" *([0-9.]+) *(mm)? *", Glib::REGEX_CASELESS);
+    if (re->match(val, m)) {
+        auto s = m.fetch(1);
+        return to_fraction(s);
+    }
+    return val;
+}
+
+Glib::ustring get_expcomp(const Glib::ustring &val)
+{
+    Glib::MatchInfo m;
+    auto re = Glib::Regex::create(" *(-?[0-9.]+) *(EV)? *", Glib::REGEX_CASELESS);
+    if (re->match(val, m)) {
+        auto s = m.fetch(1);
+        return to_fraction(s);
+    }
+    return val;
+}
+
+std::unordered_map<std::string, validator_func> validators = {
+    {"Exif.Photo.FNumber", get_fnumber},
+    {"Exif.Photo.ExposureTime", get_shutterspeed},
+    {"Exif.Photo.FocalLength", get_focallen},
+    {"Exif.Photo.ExposureBiasValue", get_expcomp}
+};
+
+} // namespace
+
+
 void ExifPanel::onEditExifTagValue(const Glib::ustring &path, const Glib::ustring &val)
 {
     auto it = exifTreeModel->get_iter(path);
@@ -648,6 +718,13 @@ void ExifPanel::onEditExifTagValue(const Glib::ustring &path, const Glib::ustrin
     try {
         Exiv2::ExifData data;
         auto &datum = data[key];
+        auto it = validators.find(key);
+        if (it != validators.end()) {
+            auto v = it->second(value);
+            if (datum.setValue(v) == 0) {
+                value = v;
+            }
+        }
         if (datum.setValue(value) != 0) {
             if ((datum.typeId() == Exiv2::signedRational || datum.typeId() == Exiv2::unsignedRational) && datum.setValue(value + "/1") == 0) {
                 value += "/1";
