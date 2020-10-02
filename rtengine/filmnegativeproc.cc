@@ -71,21 +71,6 @@ Coord2D translateCoord(const rtengine::ImProcFunctions& ipf, int fw, int fh, int
 }
 
 
-constexpr double FILMNEG_MATRIX[3][3] = {
-    // FilmNeg
-    {0.47734,	0.34436,	0.1425 },
-    {0.18016,	0.79044,	0.0294 },
-    {0	    ,   0.00696,	0.81795}
-};
-
-constexpr double FILMNEG_INV_MATRIX[3][3] = {
-    // FilmNeg Inv
-    {  2.505614 , -1.088087 , -0.397408 },
-    { -0.571270 ,  1.513598 ,  0.045120 },
-    {  0.004861 , -0.012879 ,  1.222185 }
-};
-
-
 void getSpotAvgMax(ImageSource *imgsrc, ColorTemp currWB, const std::unique_ptr<rtengine::procparams::ProcParams> &params,
                  Coord2D p, int tr, int spotSize, RGB &avg, RGB &max)
 {
@@ -131,16 +116,6 @@ void getSpotAvgMax(ImageSource *imgsrc, ColorTemp currWB, const std::unique_ptr<
 
         avgMax(avg, max);
 
-        // Convert avg/max values to the requested inversion color space, if different from working space
-        if(params->filmNegative.colorSpace == FilmNegativeParams::ColorSpace::BUILTIN) {
-            rtengine::TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix (params->icm.workingProfile);
-            float x, y, z;
-            Color::rgbxyz (avg.r, avg.g, avg.b, x, y, z, wprof);
-            Color::xyz2rgb (x, y, z, avg.r, avg.g, avg.b, FILMNEG_INV_MATRIX);
-
-            Color::rgbxyz (max.r, max.g, max.b, x, y, z, wprof);
-            Color::xyz2rgb (x, y, z, max.r, max.g, max.b, FILMNEG_INV_MATRIX);
-        }
         // TODO handle custom color profile !
     }
 
@@ -242,13 +217,6 @@ bool doProcess(Imagefloat *input, Imagefloat *output,
     float gexp = -params.greenExp;
     float bexp = -(params.greenExp * params.blueRatio);
 
-    // Convert to "filmneg" built-in profile
-    if(params.colorSpace == FilmNegativeParams::ColorSpace::BUILTIN) {
-        convertColorSpace(input, 
-            ICCStore::getInstance()->workingSpaceMatrix (icmParams.workingProfile),
-            FILMNEG_INV_MATRIX);
-    }
-
     // In case we are processing a thumbnail, reference values might not be set in params,
     // so make an estimate on the fly, using channel medians
     if (refIn.g <= 0.f) {
@@ -310,13 +278,6 @@ bool doProcess(Imagefloat *input, Imagefloat *output,
             glineout[j] = CLIP(gmult * pow_F(glinein[j], gexp));
             blineout[j] = CLIP(bmult * pow_F(blinein[j], bexp));
         }
-    }
-
-
-    // Convert back to working profile
-    if(params.colorSpace == FilmNegativeParams::ColorSpace::BUILTIN) {
-        convertColorSpace(output, FILMNEG_MATRIX,
-            ICCStore::getInstance()->workingSpaceInverseMatrix (icmParams.workingProfile));
     }
 
     return refsUpdated;
@@ -429,14 +390,11 @@ void rtengine::ImProcFunctions::filmNegativeProcess(rtengine::Imagefloat *input,
 
 bool rtengine::ImProcCoordinator::getFilmNegativeSpot(int x, int y, const int spotSize, RGB &refInput, RGB &refOutput)
 {
-// FIXME temporary hack! uncomment this lock!
-//    MyMutex::MyLock lock(mProcessing);
+    MyMutex::MyLock lock(mProcessing);
 
     const int tr = getCoarseBitMask(params->coarse);
 
-    const Coord2D p = x == -1 ? filmNegReferenceSpot : translateCoord(ipf, fw, fh, x, y);
-
-    filmNegReferenceSpot = p;
+    const Coord2D p = translateCoord(ipf, fw, fh, x, y);
 
     // Get the average channel values from the sampled spot
     RGB avg, max;

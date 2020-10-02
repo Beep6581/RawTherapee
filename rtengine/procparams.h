@@ -2166,9 +2166,8 @@ struct FilmNegativeParams {
 
     enum class ColorSpace {
         CAMERA = 0,
-        WORKING,
-        BUILTIN,
-        CUSTOM
+        WORKING
+        // TODO : add support for custom color profile
     };
 
     ColorSpace colorSpace;

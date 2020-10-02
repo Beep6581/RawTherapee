@@ -31,6 +31,14 @@
 namespace
 {
 
+double toAdjuster(double v) {
+    return CLAMP(std::log2(v), 6, 16) - 6;
+}
+
+double fromAdjuster(double v) {
+    return std::pow(2, v + 6);
+}
+
 Adjuster* createExponentAdjuster(AdjusterListener* listener, const Glib::ustring& label, double minV, double maxV, double defaultVal)
 {
     Adjuster* const adj = Gtk::manage(new Adjuster(label, minV, maxV, 0.001, defaultVal));
@@ -45,9 +53,10 @@ Adjuster* createExponentAdjuster(AdjusterListener* listener, const Glib::ustring
 
 Adjuster* createLevelAdjuster(AdjusterListener* listener, const Glib::ustring& label)
 {
-    Adjuster* const adj = Gtk::manage(new Adjuster(label, 1.0, 65535.0, 1.0, rtengine::MAXVALF / 24.));
+//    Adjuster* const adj = Gtk::manage(new Adjuster(label, 1.0, 65535.0, 1.0, rtengine::MAXVALF / 24.));
+    Adjuster* const adj = Gtk::manage(new Adjuster(label, 0.0, 10.0, 0.01, toAdjuster(rtengine::MAXVALF / 24.)));
     adj->setAdjusterListener(listener);
-    adj->setLogScale(6, 1000.0, true);
+//    adj->setLogScale(6, 1000.0, true);
 
     adj->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
@@ -225,7 +234,6 @@ FilmNegative::FilmNegative() :
 
     colorSpace->append(M("TP_FILMNEGATIVE_COLORSPACE_CAMERA"));
     colorSpace->append(M("TP_FILMNEGATIVE_COLORSPACE_WORKING"));
-    colorSpace->append(M("TP_FILMNEGATIVE_COLORSPACE_BUILTIN"));
     setExpandAlignProperties(colorSpace, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     colorSpace->set_tooltip_markup(M("TP_FILMNEGATIVE_COLORSPACE_TOOLTIP"));
 
@@ -236,7 +244,7 @@ FilmNegative::FilmNegative() :
 
     pack_start(*csGrid);
 
-    colorSpace->set_active((int)rtengine::procparams::FilmNegativeParams::ColorSpace::BUILTIN);
+    colorSpace->set_active((int)rtengine::procparams::FilmNegativeParams::ColorSpace::WORKING);
     colorSpace->signal_changed().connect(sigc::mem_fun(*this, &FilmNegative::colorSpaceChanged));
     colorSpace->show();
 
@@ -336,14 +344,14 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
     // If reference output values are not set in params, set the default output
     // chosen for median estimation: gray 1/24th of max
     if(pp->filmNegative.refOutput.r <= 0) {
-        outputLevel->setValue(rtengine::MAXVALF / 24.);
+        outputLevel->setValue(toAdjuster(rtengine::MAXVALF / 24.));
         blueBalance->setValue(1.);
         greenBalance->setValue(1.);
     } else {
         double outLev, cTemp, green;
         rgb2temp(pp->filmNegative.refOutput, outLev, cTemp, green);
 
-        outputLevel->setValue(outLev);
+        outputLevel->setValue(toAdjuster(outLev));
         blueBalance->setValue(NEUTRAL_TEMP.getTemp() / cTemp);
         greenBalance->setValue(NEUTRAL_TEMP.getGreen() / green);
     }
@@ -376,7 +384,7 @@ void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
     pp->filmNegative.refInput = refInputValues;
     
-    temp2rgb(outputLevel->getValue(),
+    temp2rgb(fromAdjuster(outputLevel->getValue()),
         NEUTRAL_TEMP.getTemp() / blueBalance->getValue(),
         NEUTRAL_TEMP.getGreen() / greenBalance->getValue(),
         pp->filmNegative.refOutput);
@@ -502,7 +510,7 @@ void FilmNegative::filmBaseValuesChanged(const RGB &refInput, const RGB &refOutp
             double outLev, cTemp, green;
             rgb2temp(refOutput, outLev, cTemp, green);
 
-            outputLevel->setValue(outLev);
+            outputLevel->setValue(toAdjuster(outLev));
             blueBalance->setValue(NEUTRAL_TEMP.getTemp() / cTemp);
             greenBalance->setValue(NEUTRAL_TEMP.getGreen() / green);
 
@@ -597,7 +605,7 @@ bool FilmNegative::button1Pressed(int modifierKey)
             
             disableListener();
 
-            outputLevel->setValue(rtengine::Color::rgbLuminance(filmBaseOut.r , filmBaseOut.g , filmBaseOut.b));
+            outputLevel->setValue(toAdjuster(rtengine::Color::rgbLuminance(filmBaseOut.r , filmBaseOut.g , filmBaseOut.b)));
             greenBalance->setValue(1.0);
             blueBalance->setValue(1.0);
 
