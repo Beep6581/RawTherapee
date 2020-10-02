@@ -293,6 +293,7 @@ void LocallabTone::updateAdviceTooltips(const bool showTooltips)
         chromasktm->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
         slomasktm->set_tooltip_text(M("TP_LOCALLAB_SLOMASK_TOOLTIP"));
         lapmasktm->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
+
     } else {
         exp->set_tooltip_text("");
         equiltm->set_tooltip_text("");
@@ -1837,7 +1838,7 @@ void LocallabSharp::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_EXPSHARP_TOOLTIP"));
-        sensisha->set_tooltip_text(M("TP_LOCALLAB_SENSIS_TOOLTIP"));
+        sensisha->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
         sensisha->set_tooltip_text("");
@@ -2645,6 +2646,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         Lmasklcshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
         masklcCurveEditorG->set_tooltip_markup(M("TP_LOCALLAB_MASKCURVE_TOOLTIP"));
         chromasklc->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
+        sensilc->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
     } else {
         contFrame->set_tooltip_text("");
         LocalcurveEditorwav->set_tooltip_markup("");
@@ -2671,6 +2673,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         Lmasklcshape->setTooltip("");
         masklcCurveEditorG->set_tooltip_markup("");
         chromasklc->set_tooltip_text("");
+        sensilc->set_tooltip_text("");
     }
 }
 
@@ -4652,7 +4655,7 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
      //   sensilog->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         detail->set_tooltip_text("");
         Autogray->set_tooltip_text("");
-        sensilog->set_tooltip_text("");
+        sensilog->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         fullimage->set_tooltip_text(M("TP_LOCALLAB_FULLIMAGELOG_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");

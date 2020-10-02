@@ -4720,6 +4720,7 @@ void LocallabVibrance::updateAdviceTooltips(const bool showTooltips)
         sensiv->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         curveEditorGG->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
 */
+
         saturated->set_tooltip_text("");
         pastels->set_tooltip_text("");
         psThreshold->set_tooltip_text("");
@@ -5411,11 +5412,14 @@ void LocallabSoft::updateAdviceTooltips(const bool showTooltips)
         showmasksoftMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP"));
         streng->set_tooltip_text(M("TP_LOCALLAB_ORRETISTREN_TOOLTIP"));
         laplace->set_tooltip_text(M("TP_LOCALLAB_ORRETILAP_TOOLTIP"));
+        sensisf->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+
     } else {
         exp->set_tooltip_text("");
         showmasksoftMethod->set_tooltip_markup("");
         streng->set_tooltip_text("");
         laplace->set_tooltip_text("");
+        sensisf->set_tooltip_text("");
     }
 }
 
@@ -6096,6 +6100,8 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         shadmaskblsha->set_tooltip_text(M("TP_LOCALLAB_SHADMASK_TOOLTIP"));
         lapmaskbl->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
         csThresholdblur->set_tooltip_text(M("TP_LOCALLAB_WAVEMASK_LEVEL_TOOLTIP"));
+        sensiden->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+
     } else {
         expblnoise->set_tooltip_markup("");
         radius->set_tooltip_text("");
@@ -6124,6 +6130,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         shadmaskbl->set_tooltip_text("");
         shadmaskblsha->set_tooltip_text("");
         csThresholdblur->set_tooltip_text("");
+        sensiden->set_tooltip_text("");
 
     }
 }
