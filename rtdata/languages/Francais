@@ -1782,17 +1782,17 @@ TP_LOCALLAB_BLMETHOD_TOOLTIP;Normal - direct floute et bruite avec tous les rég
 TP_LOCALLAB_BLNOI_EXP;Flouter & Bruit
 TP_LOCALLAB_BLNORM;Normal
 TP_LOCALLAB_BLSYM;Symétrique
-TP_LOCALLAB_BLUFR;Adoucir - Flouter - Grain - Debruiter
+TP_LOCALLAB_BLUFR;Flouter - Grain - Debruiter
 TP_LOCALLAB_BLUMETHOD_TOOLTIP;Pour flouter l'arrère plan et isoler le premier plan:\n*Flouter l'arrière plan avec un RT-spot couvrant totalement l'image (valeurs élevées Etendue et transition) - normal ou inverse.\n*Isoler le premier plan avec un ou plusieurs RT-spot Exclusion avec l'outils que vous voulez (accroître Etendue).\n\nCe module peut être utilisé en réduction de bruit additionnelle,incluant un "median" et un "Filtre Guidé" 
 TP_LOCALLAB_BLUR;Flou Gaussien - Bruit - Grain
 TP_LOCALLAB_BLURCBDL;Flouter niveaux 0-1-2-3-4
-TP_LOCALLAB_BLURCOL;Rayon floutage masque
+TP_LOCALLAB_BLURCOL;Rayon floutage
 TP_LOCALLAB_BLURDE;Flouter la détection de forme
 TP_LOCALLAB_BLURLC;Luminance seulement
 TP_LOCALLAB_BLURLEVELFRA;Flouter niveaux 
 TP_LOCALLAB_BLURMASK_TOOLTIP;Génère un masque flou, prend en compte la structure avec le curseur de seuil de contraste du Masque flou.
 TP_LOCALLAB_BLURRESIDFRA;Flouter image Résiduelle
-TP_LOCALLAB_BLUR_TOOLNAME;Adoucir Flouter Grain & Réduction du Bruit - 1
+TP_LOCALLAB_BLUR_TOOLNAME;Flouter/Grain & Réduction du Bruit - 1
 TP_LOCALLAB_BLWH;Tous les changements forcés en noir et blanc
 TP_LOCALLAB_BLWH_TOOLTIP;Force le changement de la  composante "a" et  "b" à zéro.\nUtile quand l'utilisateur choisit un processus noir et blanc, ou un film. 
 TP_LOCALLAB_BUTTON_ADD;Ajouter
@@ -1804,7 +1804,7 @@ TP_LOCALLAB_CBDL;Contraste niveaux détail
 TP_LOCALLAB_CBDLCLARI_TOOLTIP;Ajuste les tons moyens et les réhausse.
 TP_LOCALLAB_CBDL_ADJ_TOOLTIP;Agit comme un outil ondelettes.\nLe premier niveau (0) agit sur des détails de 2x2.\nLe dernier niveau (5) agit sur des détails de 64x64.
 TP_LOCALLAB_CBDL_THRES_TOOLTIP;Empêche d'augmenter le bruit
-TP_LOCALLAB_CBDL_TOOLNAME;Contraste par niveaux de détails(Défauts) - 2
+TP_LOCALLAB_CBDL_TOOLNAME;Contraste par niveaux de détails - 2
 TP_LOCALLAB_CENTER_X;Centre X
 TP_LOCALLAB_CENTER_Y;Centre Y
 TP_LOCALLAB_CH;Courbes CL - LC
@@ -1814,7 +1814,7 @@ TP_LOCALLAB_CHROMABLU_TOOLTIP;Agit comme un amplificateur-reducteur d'action en 
 TP_LOCALLAB_CHROMACBDL;Chroma
 TP_LOCALLAB_CHROMACB_TOOLTIP;Agit comme un amplificateur-reducteur d'action en comparant aux curseurs de luminance.\nEn dessous de 100 reduit, au dessus de 100 amplifie
 TP_LOCALLAB_CHROMALEV;Niveaux de Chroma
-TP_LOCALLAB_CHROMASKCOL;Masque Chroma
+TP_LOCALLAB_CHROMASKCOL;Chroma
 TP_LOCALLAB_CHROMASK_TOOLTIP;Vous pouvez utiliser ce curseur pour désaturer l'arrière plan (inverse masque - courbe proche de 0).\nEgalement pour atténier ou accroître l'action du masque sur la chroma
 TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIRCRADIUS;Taille Spot
@@ -1833,7 +1833,7 @@ TP_LOCALLAB_COLORDEPREV_TOOLTIP;Bouton Prévisualisation ΔE a besoin qu'un seul
 TP_LOCALLAB_COLORDE_TOOLTIP;Affiche la prévisualisation ΔE en bleu si négatif et en vert si positif.\n\nMasque et modifications (montre modifications sans masque): montre les modifications réelles si positf, montre les modifications améliorées (luminance seule) en bleu et jaune si négatif.
 TP_LOCALLAB_COLORSCOPE;Etendue Outils Couleur
 TP_LOCALLAB_COLORSCOPE_TOOLTIP;Utilise une étendue commune pour Couleur et lumière, Ombres Lumières, Vibrance.\nLes autres outils ont leur étendue spécifique.
-TP_LOCALLAB_COLOR_TOOLNAME;Couleur&Lumière (Défauts) - 11
+TP_LOCALLAB_COLOR_TOOLNAME;Couleur & Lumière - 11
 TP_LOCALLAB_COL_NAME;Nom
 TP_LOCALLAB_COL_VIS;Statut
 TP_LOCALLAB_COMPFRA;Niveaux Contraste directionnel
@@ -1922,14 +1922,13 @@ TP_LOCALLAB_EXPLAP_TOOLTIP;Plus vous agissez sur ce curseur de seuil, plus grand
 TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Autorise de nombreuses possibilités de fusionner les images (comme les calques dans Photosshop) : difference, multiply, soft light, overlay...avec opacité...\nOriginale Image : fusionne le RT-spot en cours avec Originale.\nSpot Précédent : fusionne le RT-spot en cours avec le précédent - si il n'y a qu'un spot précédent = original.\nArrière plan : fusionne le RT-spot en cours avec la couleur et la luminance de l'arrière plan (moins de possibilités)  
 TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : utilise un algorithme similaire à Exposure principal mais en L*a*b* et en prenant en compte le deltaE.\n\nCompression dynamique et atténuateur de contraste : utilise un autre algorithme aussi avec deltaE et avec l'équation de Poisson pour résoudre le Laplacien dans l'espace de  Fourier.\nAtténuateur, Compression dynamqiue et Standard peuvent être combinés.\nFFTW La transformée de Fourier est optimisée en taille pour réduire les temps de traitement.\nRéduit les artéfacts et le bruit.
 TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Applique un median avant la transformée de Laplace pour éviter les artéfacts (bruit).\nVous pouvez aussi utiliser l'outil  "Réduction du bruit".
-TP_LOCALLAB_EXPOSE;Compression dynamique - Exposition
-//TP_LOCALLAB_EXPOSURE_TOOLTIP;Dans certains cases (fortes ombres ..) vous pouvez utiliser le module "Shadows Highlights", "Tone equalizer", "TRC", "Encoding Log"...
+TP_LOCALLAB_EXPOSE;Compression dynamique & Exposition
 TP_LOCALLAB_EXPOSURE_TOOLTIP;Modifie l'exposition dans l'espace L*a*b* en utilisant un Laplacien et les algorithmes PDE en prenant en compte dE, minimise les artéfacts.
 TP_LOCALLAB_EXPRETITOOLS;Outils Retinex avancés
 TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39.\nUtiliser de basses valeurs de transition et de hautes valeurs de transition affaiblissement et Etendue pour simuler un petit RT-spot.
 TP_LOCALLAB_EXPTOOL;Outils exposition
 TP_LOCALLAB_EXPTRC;Courbe de réponse Tonale - TRC
-TP_LOCALLAB_EXP_TOOLNAME;Atténuation Contraste -Compression Dynamique & Exposition- 10
+TP_LOCALLAB_EXP_TOOLNAME;Compression Dynamique & Exposition- 10
 TP_LOCALLAB_FATAMOUNT;Quantité
 TP_LOCALLAB_FATANCHOR;Ancre
 TP_LOCALLAB_FATANCHORA;Décalage
@@ -1949,7 +1948,7 @@ TP_LOCALLAB_FULLIMAGE;Calcule les valeurs Noir Ev - Blanc Ev - sur l'image enti�
 TP_LOCALLAB_GAM;Gamma
 TP_LOCALLAB_GAMFRA;Courbe Réponse Tonale (TRC)
 TP_LOCALLAB_GAMM;Gamma
-TP_LOCALLAB_GAMMASKCOL;Gamma masque
+TP_LOCALLAB_GAMMASKCOL;Gamma
 TP_LOCALLAB_GAMSH;Gamma
 TP_LOCALLAB_GRADANG;Angle du Gradient
 TP_LOCALLAB_GRADANG_TOOLTIP;Angle de Rotation en degrés : -180 0 +180
@@ -1989,11 +1988,11 @@ TP_LOCALLAB_LABSTRUM;Masque Structure
 TP_LOCALLAB_LAPLACC;ΔØ Masque Laplacien résoud PDE
 TP_LOCALLAB_LAPLACE;Laplacien seuil ΔE
 TP_LOCALLAB_LAPLACEXP;Laplacien seuil
-TP_LOCALLAB_LAPMASKCOL;Laplacien seuil masque
+TP_LOCALLAB_LAPMASKCOL;Laplacien seuil
 TP_LOCALLAB_LAPRAD_TOOLTIP;Eviter d'utiliser Radius and Laplace Seuil en même temps.\nLaplacien seuil reduit le contraste, artéfacts, adoucit le résultat.
 TP_LOCALLAB_LAP_MASK_TOOLTIP;Résoud PDE (Equation aux dérivées partielles) pour tous les masques Laplacien.\nSi activé Laplacien masque seuil reduit les artéfacts et adoucit les résultats.\nSi désactivé réponse linaire. 
 TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT améliore la qualité et autorise de grands rayons, mais accroît les temps de traitement.\nCe temps dépends de la surface devant être traitée.\nA utiliser de préférences pour de grands rayons.\n\nLes Dimensions peuvent être réduites de quelques pixels pour optimiser FFTW.\nCette optimisation peut réduire le temps de traitement d'un facteur de 1.5 à 10.\n
-TP_LOCALLAB_LC_TOOLNAME;Constrast Local & Ondelettes (Défauts) - 7
+TP_LOCALLAB_LC_TOOLNAME;Constraste Local & Ondelettes - 7
 TP_LOCALLAB_LEVELBLUR;Maximum Flouter
 TP_LOCALLAB_LEVELLOCCONTRAST_TOOLTIP;En abscisse le contraste local (proche du concept de luminance). En ordonnée, amplification ou reduction du contraste local.
 TP_LOCALLAB_LEVELWAV;Ψ Ondelettes Niveaux
@@ -2008,7 +2007,7 @@ TP_LOCALLAB_LIST_TOOLTIP;Vous pouvez choisir 3 niveaux de complexité pour chaqu
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Donne priorité à l'action sur les tons moyens et hautes lumières en choisissant les niveaux concernés d'ondelettes
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
 TP_LOCALLAB_LOCCONT;Masque Flou
-TP_LOCALLAB_LOC_CONTRAST;Contraste Local-Ondelettes-déf.
+TP_LOCALLAB_LOC_CONTRAST;Contraste Local & Ondelettes
 TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramide 1:
 TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramide 2:
 TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contr. par niveaux- Tone Mapping - Cont.Dir.
@@ -2031,16 +2030,16 @@ TP_LOCALLAB_LUM;Courbes LL - CC
 TP_LOCALLAB_LUMADARKEST;Plus Sombre
 TP_LOCALLAB_LUMASK;Maqsue Luminance arrière plan
 TP_LOCALLAB_LUMASK_TOOLTIP;Ajuste le gris de l'arrière plan du masque dans Montrer Masque (Masque et modifications)
-TP_LOCALLAB_LUMAWHITESEST;Plus blanc
-TP_LOCALLAB_LUMONLY;Luminance seulemnt
+TP_LOCALLAB_LUMAWHITESEST;Plus clair
+TP_LOCALLAB_LUMONLY;Luminance seulement
 TP_LOCALLAB_MASKCOM;Masque couleur Commun
 TP_LOCALLAB_MASKCOM_TOOLTIP;Ces masques travaillent comme les autres outils, ils prennet en compte Etendue.\nIls sont différents des autres masques qui complètent un outil (Couleur et Lumière, Exposition...)
 TP_LOCALLAB_MASFRAME;Masque et Fusion
 TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTake into account deltaE image to avoid retouching the selection area when sliders gamma mask, slope mask, chroma mask and curves contrast , levels contrasts, and mask blur, structure(if enabled tool) are used.\nDisabled in Inverse
 TP_LOCALLAB_MASK;Masque
-TP_LOCALLAB_MASK2;Courbe de Contraste masque
+TP_LOCALLAB_MASK2;Courbe de Contraste
 TP_LOCALLAB_MASKCOL;Masque Courbes
-TP_LOCALLAB_MASKH;Courbe teinte masque
+TP_LOCALLAB_MASKH;Courbe teinte
 TP_LOCALLAB_MASK_TOOLTIP;Vous pouvez activer plusieurs masques pour un simple outil, ceci nécessite d'activer un autre outil (mais sans utilser l'outil : curseurs à 0,...)où est le masque que vous souhaitez activer.\n\nVous pouvez aussi dupliquer le RT-spot et le placer juste à côté de l'autre,les variations de références autorisent un travail fin sur les images. 
 TP_LOCALLAB_MED;Medium
 TP_LOCALLAB_MEDIAN;Median Bas
@@ -2070,7 +2069,7 @@ TP_LOCALLAB_MERLUM;Luminosité
 TP_LOCALLAB_MERNIN;Ecran
 TP_LOCALLAB_MERONE;Normal
 TP_LOCALLAB_MERSAT;Saturation
-TP_LOCALLAB_MERSEV;Soft Light Photshop
+TP_LOCALLAB_MERSEV;Soft Light (legacy)
 TP_LOCALLAB_MERSEV0;Soft Light Illusion
 TP_LOCALLAB_MERSEV1;Soft Light W3C
 TP_LOCALLAB_MERSEV2;Lumière dure
@@ -2123,7 +2122,7 @@ TP_LOCALLAB_QUALCURV_METHOD;Types de Courbes
 TP_LOCALLAB_QUAL_METHOD;Qualité globale
 TP_LOCALLAB_RADIUS;Rayon
 TP_LOCALLAB_RADIUS_TOOLTIP;Above Radius 30 Use Fast Fourier Transform
-TP_LOCALLAB_RADMASKCOL;Rayon adoucir Masque
+TP_LOCALLAB_RADMASKCOL;Rayon adoucir
 TP_LOCALLAB_RECT;Rectangle
 TP_LOCALLAB_RECURS;Réferences Récursives 
 TP_LOCALLAB_RECURS_TOOLTIP;Recalcule les références pour  teinte, luma, chroma après chaque module et après chaque RT-spot.\nAussi utile pour le travail avec les masques.
@@ -2182,7 +2181,7 @@ TP_LOCALLAB_SHADEX;Ombres
 TP_LOCALLAB_SHADEXCOMP;Compression ombres & profondeur tonale
 TP_LOCALLAB_SHADHIGH;Ombres/Lumières - Egaliseur tonal
 TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Peut être utilisé - ou en complement - du module Exposition dans les cas difficiles.\nUtiliser réduction du bruit Denoise peut être nécessaire : éclaicir les ombres.\n\nPeut être utilisé comme  un filtre gradué (augmenter Etendue)
-TP_LOCALLAB_SHAMASKCOL;masque ombres
+TP_LOCALLAB_SHAMASKCOL;Ombres
 TP_LOCALLAB_SHAPETYPE;Forme aire RT-spot
 TP_LOCALLAB_SHAPE_TOOLTIP;Ellipse est le mode normal.\nRectangle peut être utilé dans certains cas, par exemple pour travailler en image complète en conjonction avec les délimiteurs en dehors de la prévisualisation, transition = 100.\n\nPolygone - Beziers sont en attente de GUI...
 TP_LOCALLAB_SHARAMOUNT;Quantité
@@ -2210,7 +2209,7 @@ TP_LOCALLAB_SHOWMASKTYP1;Flouter & Bruit
 TP_LOCALLAB_SHOWMASKTYP2;Réduction du bruit
 TP_LOCALLAB_SHOWMASKTYP3;Flouter & Bruit  + De-bruite
 TP_LOCALLAB_SHOWMASKTYP_TOOLTIP;Masque et modifications peuvent être choisis.\nFlouter et bruit: dans ce cas il n'est pas utilisé pour 'Réduction du bruit'.\nRéduction du bruit : dans ce cas il n'est pas utilisé pour 'flouter et bruit'.\n\nFlouter et bruit + Réduction du bruit : le masque est partagé, faire attention à 'montrer modifications' et 'Etendue'
-TP_LOCALLAB_SHOWMNONE;Rien
+TP_LOCALLAB_SHOWMNONE;Montrer image modifiée
 TP_LOCALLAB_SHOWMODIF;Montrer modifications sans masque
 TP_LOCALLAB_SHOWMODIFMASK;Montrer modifications avec masque
 TP_LOCALLAB_SHOWNORMAL;Normalise luminance (non)
@@ -2225,10 +2224,10 @@ TP_LOCALLAB_SHOWT;Masque et modifications
 TP_LOCALLAB_SHOWVI;Masque et modifications
 TP_LOCALLAB_SHRESFRA;Ombres/Lumières
 TP_LOCALLAB_SHTRC_TOOLTIP;Modifie les tons de l'image en agissant sur la TRC (Tone Response Curve).\nGamma agit principalement sur les tons lumineux.\nSlope (pente) agit principalement sur les tons sombres.
-TP_LOCALLAB_SH_TOOLNAME;Ombres-lumières & Egaliser tonal - 5
+TP_LOCALLAB_SH_TOOLNAME;Ombres/lumières & Egaliseur tonal - 5
 TP_LOCALLAB_SIGMAWAV;Atténuation Réponse
 TP_LOCALLAB_SIM;Simple
-TP_LOCALLAB_SLOMASKCOL;Pente (slope) masque
+TP_LOCALLAB_SLOMASKCOL;Pente (slope)
 TP_LOCALLAB_SLOSH;Pente
 TP_LOCALLAB_SOFT;Lumière douce - Original Retinex
 TP_LOCALLAB_SOFTM;Lumière douce (soft light)
@@ -2254,9 +2253,9 @@ TP_LOCALLAB_STRGRID;Force
 TP_LOCALLAB_STRRETI_TOOLTIP;Si force Retinex < 0.2 seul Dehaze est activé.\nSi force Retinex >= 0.1 Dehaze est en mode luminance.
 TP_LOCALLAB_STRUC;Structure
 TP_LOCALLAB_STRUCCOL;Structure
-TP_LOCALLAB_STRUCCOL1;Spot Structure 
+TP_LOCALLAB_STRUCCOL1;Spot structure 
 TP_LOCALLAB_STRUCT_TOOLTIP;Utilise l'algorithme de Sobel pour prendre en compte la structure dans la détection de forme.\nvous pouvez prévisualiser avec "masque et modifications - Montrer structure spot".\n\nPeut être utilisé avec masques (avancé) structure, flouter, ondelettes pour améliorer la détection de bords.\n\nA besoin de réglages sans-masque pour êtrre activé (luminosité, exposition...)
-TP_LOCALLAB_STRUMASKCOL;Structure masque force
+TP_LOCALLAB_STRUMASKCOL;Structure force
 TP_LOCALLAB_STRUMASK_TOOLTIP;Génère un masque structure qui va différencier les aplats et reliefs.\nSi structure masque comme outil est activé, ce masque est untilisé en plus des autres outils (gamma, slope, courbe contraste ...)
 TP_LOCALLAB_STYPE;Forme méthode
 TP_LOCALLAB_STYPE_TOOLTIP;Vous pouvez choisir entre:\nSymétrique - gauche et droite sont liés, haut et bas sont liés.\nIndépendent - toutes les saisies sont indépendantes.
@@ -2279,7 +2278,7 @@ TP_LOCALLAB_TONEMAP_TOOLTIP;Compression tonal - menu principal doit être désac
 TP_LOCALLAB_TONEMASCALE_TOOLTIP;Ce contrôle donne le pouvoir de différencier le contraste "local" et "global".\nPlus il est important, plus un détail sera accentué.
 TP_LOCALLAB_TONE_TOOLNAME;Compression tonale - 4
 TP_LOCALLAB_TOOLCOL;Masque Structure comme outil
-TP_LOCALLAB_TOOLMASK;Outils
+TP_LOCALLAB_TOOLMASK;Outils du masque
 TP_LOCALLAB_TRANSIT;Transition - Gradient
 TP_LOCALLAB_TRANSITGRAD;Transition différentiation XY
 TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Change la transition des abscisses vers les ordonnées 
@@ -2295,16 +2294,16 @@ TP_LOCALLAB_VART;Variance (contraste)
 TP_LOCALLAB_VIBRANCE;Vibrance - Chaud & Froid
 TP_LOCALLAB_VIB_TOOLNAME;Vibrance - Chaud & Froid - 3
 TP_LOCALLAB_SOFT_TOOLNAME;Lumière douce & Original Retinex - 6
-TP_LOCALLAB_BLUR_TOOLNAME;Adoucir Flouter Grain & De-bruite - 1
+TP_LOCALLAB_BLUR_TOOLNAME;Flouter/Grain & Réduction du bruit - 1
 TP_LOCALLAB_TONE_TOOLNAME;Compression tonale - 4
 TP_LOCALLAB_RET_TOOLNAME;De-brume & Retinex - 9
 TP_LOCALLAB_SHARP_TOOLNAME;Netteté - 8
 TP_LOCALLAB_LC_TOOLNAME;Constraste local & Ondelettes (Défauts) - 7
-TP_LOCALLAB_CBDL_TOOLNAME;Contraste par Niveau détail (Défauts) - 2
+TP_LOCALLAB_CBDL_TOOLNAME;Contraste par Niveau détail - 2
 TP_LOCALLAB_LOG_TOOLNAME;Codage log - 0
 TP_LOCALLAB_MASKCOM_TOOLNAME;Masque Commun Couleur  - 13
 TP_LOCALLAB_VIS_TOOLTIP;<b>Click</b> pour montrer/cacher le Spot sélectionné.\n<b>Ctrl</b>+<b>click</b> pour montrer/cacher tous les Spot.
-TP_LOCALLAB_WAMASKCOL;Ψ Masque Niveau Ondelettes
+TP_LOCALLAB_WAMASKCOL;Ψ Niveau Ondelettes
 TP_LOCALLAB_WARM;Chaud - Froid & Artefacts de couleur
 TP_LOCALLAB_WARM_TOOLTIP;Ce curseur utilise l'algorithme Ciecam et agit comme une Balance des blancs, il prut réchauffer ou refroidir cool la zone concernée.\nIl peut aussi dans certains réduire les artefacts colorés.
 TP_LOCALLAB_WASDEN_TOOLTIP;De-bruite luminance pour les 3 premiers niveaux (fin).\nLa limite droite de la courbe correspond à gros : niveau 3 et au delà.
@@ -2324,7 +2323,7 @@ TP_LOCALLAB_WAVGRAD_TOOLTIP;Filtre gradué pour Contraste local "luminance"
 TP_LOCALLAB_WAVHIGH;Ψ Ondelette haut
 TP_LOCALLAB_WAVLEV;Flouter par niveau
 TP_LOCALLAB_WAVLOW;Ψ Ondelette bas
-TP_LOCALLAB_WAVMASK;Ψ Masque Niveau contraste local
+TP_LOCALLAB_WAVMASK;Ψ Niveau contraste local
 TP_LOCALLAB_WAVMASK_TOOLTIP;Autorise un travail fin sur les masques niveaux de contraste (structure)
 TP_LOCALLAB_WAVMED;Ψ Ondelette normal
 TP_LOCALLAB_WEDIANHI;Median Haut
