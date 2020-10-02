@@ -2734,17 +2734,9 @@ TP_LOCALLAB_SCALTM;Scale
 TP_LOCALLAB_SCOPEMASK;Scope (ΔE image mask)
 TP_LOCALLAB_SCOPEMASK_TOOLTIP;Enabled if DeltaE Image Mask is enabled.\nLow values avoid retouching selected area
 TP_LOCALLAB_SENSI;Scope
-TP_LOCALLAB_SENSIBN;Scope
-TP_LOCALLAB_SENSICB;Scope
-TP_LOCALLAB_SENSIDEN;Scope
 TP_LOCALLAB_SENSIEXCLU;Scope
 TP_LOCALLAB_SENSIEXCLU_TOOLTIP;Adjust the colors to be excluded
-TP_LOCALLAB_SENSIH;Scope
-TP_LOCALLAB_SENSIH_TOOLTIP;Adjusts the scope of the action:\nSmall values limit the action to colors similar to those in the center of the spot.\nHigh values let the tool act on a wider range of colors
-TP_LOCALLAB_SENSILOG;Scope
-TP_LOCALLAB_SENSIS;Scope
-TP_LOCALLAB_SENSIS_TOOLTIP;Adjusts the scope of the action:\nSmall values limit action to colors similar to those under the center spot.\nHigh values let the tool act upon on a wider range of colors.
-TP_LOCALLAB_SENSI_TOOLTIP;Adjusts the scope of the action:\nSmall values limit action to colors similar to those under the center spot.\nHigh values let the tool act upon on a wider range of colors.
+TP_LOCALLAB_SENSI_TOOLTIP;Adjusts the scope of the action:\nSmall values limit the action to colors similar to those in the center of the spot.\nHigh values let the tool act on a wider range of colors
 TP_LOCALLAB_SENSIMASK_TOOLTIP;Scope adjustment specific to common mask tool.\nActs on the difference between the original image and the mask.\nUses the luma, chroma & hue references from the center of the RT-spot\n\nYou can also adjust  the deltaE of the mask itself by using 'Scope (deltaE image mask)' in 'Settings' > ‘Mask & Merge’
 TP_LOCALLAB_SETTINGS;Settings
 TP_LOCALLAB_SH1;Shadows Highlights
