@@ -2356,6 +2356,7 @@ LocallabExposure::LocallabExposure():
     linear(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LINEAR"), 0.01, 1., 0.01, 0.05))),
     balanexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANEXP"), 0.5, 1.5, 0.01, 1.0))),
     gamm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMM"), 0.2, 1.3, 0.01, 0.4))),
+    labelexpmethod(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_NOISEMETH") + ":"))),
     exnoiseMethod(Gtk::manage(new MyComboBoxText())),
 //    fatFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_FATFRA")))),
     expfat(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_FATFRA")))),
@@ -2555,7 +2556,7 @@ LocallabExposure::LocallabExposure():
     pdeBox->pack_start(*balanexp);
     pdeBox->pack_start(*gamm);
     Gtk::HBox* const ctboxexpmethod = Gtk::manage(new Gtk::HBox());
-    Gtk::Label* const labelexpmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_NOISEMETH") + ":"));
+//    Gtk::Label* const labelexpmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_NOISEMETH") + ":"));
     ctboxexpmethod->pack_start(*labelexpmethod, Gtk::PACK_SHRINK, 4);
     ctboxexpmethod->pack_start(*exnoiseMethod);
     pdeBox->pack_start(*ctboxexpmethod);
@@ -2657,6 +2658,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         linear->set_tooltip_text(M("TP_LOCALLAB_EXPLAPLIN_TOOLTIP"));
         balanexp->set_tooltip_text(M("TP_LOCALLAB_EXPLAPBAL_TOOLTIP"));
         gamm->set_tooltip_text(M("TP_LOCALLAB_EXPLAPGAMM_TOOLTIP"));
+        labelexpmethod->set_tooltip_text(M("TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP"));
         exnoiseMethod->set_tooltip_text(M("TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP"));
 //        fatFrame->set_tooltip_text(M("TP_LOCALLAB_FATFRAME_TOOLTIP"));
         expfat->set_tooltip_text(M("TP_LOCALLAB_FATFRAME_TOOLTIP"));
@@ -2689,6 +2691,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         linear->set_tooltip_text("");
         balanexp->set_tooltip_text("");
         gamm->set_tooltip_text("");
+        labelexpmethod->set_tooltip_text("");
         exnoiseMethod->set_tooltip_text("");
         expfat->set_tooltip_text("");
         expcomp->set_tooltip_text("");

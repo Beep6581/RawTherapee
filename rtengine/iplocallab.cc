@@ -1561,7 +1561,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp
         small adaptations to local adjustments
         replace log2 by log(lp.baselog) allows diferentiation between low and high lights
     */
-    BENCHFUN
+   // BENCHFUN
     const float gray = lp.sourcegray / 100.f;
     const float shadows_range = lp.blackev;
     const float dynamic_range = lp.whiteev - lp.blackev;
@@ -1713,7 +1713,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp
 
 void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE)
 {
-    BENCHFUN
+    //BENCHFUN
 //adpatation to local adjustments Jacques Desmis 12 2019
     const PreviewProps pp(0, 0, fw, fh, SCALE);
 
@@ -1847,7 +1847,7 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
 */
 
 {
-    BENCHFUN
+   // BENCHFUN
 
     const int W = R.getWidth();
     const int H = R.getHeight();
@@ -2055,7 +2055,7 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const stru
 void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
 {
     //be careful quasi duplicate with branch cat02wb
-    BENCHFUN
+    //BENCHFUN
 
     int width = lab->W, height = lab->H;
     float Yw;
@@ -2418,7 +2418,7 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
 
 void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, int bfwr, LabImage* bufexporig, LabImage* lab, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve, const float hueref, const float lumaref, const float chromaref)
 {
-    BENCHFUN
+    //BENCHFUN
     //exposure local
 
     constexpr float maxran = 65536.f;
@@ -3459,7 +3459,7 @@ static void showmask(int lumask, const local_params& lp, int xstart, int ystart,
 
 void ImProcFunctions::discrete_laplacian_threshold(float * data_out, const float * data_in, size_t nx, size_t ny, float t)
 {
-    BENCHFUN
+   // BENCHFUN
 
     if (!data_in || !data_out) {
         fprintf(stderr, "a pointer is NULL and should not be so\n");
@@ -3546,7 +3546,7 @@ void ImProcFunctions::rex_poisson_dct(float * data, size_t nx, size_t ny, double
      * @author Nicolas Limare <nicolas.limare@cmla.ens-cachan.fr>
      * some adaptations for Rawtherapee
      */
-    BENCHFUN
+   // BENCHFUN
 
     /*
      * get the cosinus tables
@@ -3660,7 +3660,7 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
      * adapted for Rawtherapee by Jacques Desmis 6-2019 <jdesmis@gmail.com>
      */
 
-    BENCHFUN
+   // BENCHFUN
 #ifdef RT_FFTW3F_OMP
     if (multiThread) {
         fftwf_init_threads();
@@ -4527,7 +4527,7 @@ void ImProcFunctions::InverseSharp_Local(float **loctemp, const float hueref, co
 
 void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const float hueref, const float chromaref, const float lumaref, local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
-    BENCHFUN
+    //BENCHFUN
     const float ach = lp.trans / 100.f;
     const float varsens = senstype == 1 ? lp.senslc : lp.senssha;
     const bool sharshow = (lp.showmasksharmet == 1);
@@ -4651,7 +4651,8 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
 void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromaref, float lumaref, float sobelref, float meansobel, const struct local_params & lp, const LabImage * original, LabImage * transformed, const LabImage * rsv, const LabImage * reserv, int cx, int cy, int sk)
 {
 
-    BENCHFUN {
+   // BENCHFUN 
+    {
         const float ach = lp.trans / 100.f;
         const float varsens =  lp.sensexclu;
         const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
@@ -4790,7 +4791,8 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
 void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabImage * bufexporig, LabImage * bufmask, LabImage * buforigmas, float **buflight, float **bufchro, const float hueref, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 
-    BENCHFUN {
+    //BENCHFUN 
+    {
         const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         const int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -5005,7 +5007,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
 void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexporig, LabImage * originalmask, float **bufchro, bool HHutili, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 
-    BENCHFUN
+   // BENCHFUN
     const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
     const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
     const int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -5912,7 +5914,7 @@ void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct loc
 void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, float **bufchro, const float hueref, const float chromaref, const float lumaref, local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 //local BLUR
-    BENCHFUN
+    //BENCHFUN
 
     const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
     const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
@@ -6403,7 +6405,7 @@ void ImProcFunctions::exposure_pde(float * dataor, float * datain, float * datao
 */
 {
 
-    BENCHFUN
+    //BENCHFUN
 #ifdef RT_FFTW3F_OMP
     if (multiThread) {
         fftwf_init_threads();
@@ -6488,7 +6490,7 @@ void ImProcFunctions::fftw_convol_blur(float * input, float * output, int bfw, i
         ** you can enabled or disabled this function with rtsettings.fftwsigma in options. By default empirical formula is disabled
         ** in fact no importance....if it is this function (for sigma) or another... we are not in research :)
     */
-    BENCHFUN
+    //BENCHFUN
 
 #ifdef RT_FFTW3F_OMP
     if (multiThread) {
@@ -6666,7 +6668,7 @@ void ImProcFunctions::fftw_convol_blur2(float **input2, float **output2, int bfw
 
 void ImProcFunctions::fftw_tile_blur(int GW, int GH, int tilssize, int max_numblox_W, int min_numblox_W, float **tmp1, int numThreads, double radius)
 {
-    BENCHFUN
+    //BENCHFUN
     float epsil = 0.001f / (tilssize * tilssize);
     fftwf_plan plan_forward_blox[2];
     fftwf_plan plan_backward_blox[2];
@@ -7076,7 +7078,7 @@ void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavel
                               const LocwavCurve & loccomprewavCurve, bool loccomprewavutili,
                               float radlevblur, int process, float chromablu, float thres,  float sigmadc, float deltad)
 {
-    BENCHFUN
+    //BENCHFUN
     const int W_L = wdspot.level_W(0);
     const int H_L = wdspot.level_H(0);
 
@@ -7289,7 +7291,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
                                    const LocwavCurve & locedgwavCurve, bool locedgwavutili,
                                    float sigm, float offs, int & maxlvl, float sigmadc, float deltad, float chromalev, float chromablu, bool blurlc, bool blurena, bool levelena, bool comprena, bool compreena, float compress, float thres)
 {
-BENCHFUN
+//BENCHFUN
     std::unique_ptr<wavelet_decomposition> wdspot(new wavelet_decomposition(tmp[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));
 
     //first decomposition for compress dynamic range positive values and other process
@@ -7964,7 +7966,7 @@ BENCHFUN
 
 void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_numblox_W, float **tmp1, array2D<float> *Lin, int numThreads, const struct local_params & lp, int chrom)
 {
-    BENCHFUN
+   // BENCHFUN
 
     fftwf_plan plan_forward_blox[2];
     fftwf_plan plan_backward_blox[2];
@@ -9545,7 +9547,7 @@ void ImProcFunctions::Lab_Local(
         return;
     }
 
-    BENCHFUN
+    //BENCHFUN
 
     constexpr int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
     struct local_params lp;

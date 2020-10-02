@@ -325,6 +325,7 @@ private:
     Adjuster* const linear;
     Adjuster* const balanexp;
     Adjuster* const gamm;
+    Gtk::Label* const labelexpmethod;
     MyComboBoxText* const exnoiseMethod;
 //    Gtk::Frame* const fatFrame;
     MyExpander* const expfat;
