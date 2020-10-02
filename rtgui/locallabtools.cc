@@ -4720,6 +4720,7 @@ void LocallabVibrance::updateAdviceTooltips(const bool showTooltips)
         sensiv->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         curveEditorGG->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
 */
+
         saturated->set_tooltip_text("");
         pastels->set_tooltip_text("");
         psThreshold->set_tooltip_text("");
@@ -5411,11 +5412,14 @@ void LocallabSoft::updateAdviceTooltips(const bool showTooltips)
         showmasksoftMethod->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP"));
         streng->set_tooltip_text(M("TP_LOCALLAB_ORRETISTREN_TOOLTIP"));
         laplace->set_tooltip_text(M("TP_LOCALLAB_ORRETILAP_TOOLTIP"));
+        sensisf->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+
     } else {
         exp->set_tooltip_text("");
         showmasksoftMethod->set_tooltip_markup("");
         streng->set_tooltip_text("");
         laplace->set_tooltip_text("");
+        sensisf->set_tooltip_text("");
     }
 }
 
@@ -5747,7 +5751,7 @@ LocallabBlur::LocallabBlur():
     guidbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDBL"), 0, 1000, 1, 0))),
     strbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRBL"), 0, 100, 1, 50))),
     epsbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EPSBL"), -10, 10, 1, 0))),
-    sensibn(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIBN"), 0, 100, 1, 40))),
+    sensibn(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 40))),
     blurMethod(Gtk::manage(new MyComboBoxText())),
     chroMethod(Gtk::manage(new MyComboBoxText())),
     activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
@@ -5767,7 +5771,7 @@ LocallabBlur::LocallabBlur():
     detailthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAILTHR"), 0, 100, 1, 0))),
     adjblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJ"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-yellow-small.png")), Gtk::manage(new RTImage("circle-red-green-small.png"))))),
     bilateral(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BILATERAL"), 0, 100, 1, 0))),
-    sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIDEN"), 0, 100, 1, 60))),
+    sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     expmaskbl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWPLUS")))),
     showmaskblMethod(Gtk::manage(new MyComboBoxText())),
     showmaskblMethodtyp(Gtk::manage(new MyComboBoxText())),
@@ -6070,7 +6074,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         expblnoise->set_tooltip_markup(M("TP_LOCALLAB_BLUMETHOD_TOOLTIP"));
         radius->set_tooltip_text(M("TP_LOCALLAB_RADIUS_TOOLTIP"));
-        sensibn->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
+        sensibn->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         blurMethod->set_tooltip_markup(M("TP_LOCALLAB_BLMETHOD_TOOLTIP"));
         expdenoise->set_tooltip_markup(M("TP_LOCALLAB_DENOI_TOOLTIP"));
         wavshapeden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
@@ -6096,6 +6100,8 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         shadmaskblsha->set_tooltip_text(M("TP_LOCALLAB_SHADMASK_TOOLTIP"));
         lapmaskbl->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
         csThresholdblur->set_tooltip_text(M("TP_LOCALLAB_WAVEMASK_LEVEL_TOOLTIP"));
+        sensiden->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+
     } else {
         expblnoise->set_tooltip_markup("");
         radius->set_tooltip_text("");
@@ -6124,6 +6130,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         shadmaskbl->set_tooltip_text("");
         shadmaskblsha->set_tooltip_text("");
         csThresholdblur->set_tooltip_text("");
+        sensiden->set_tooltip_text("");
 
     }
 }

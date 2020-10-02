@@ -293,6 +293,7 @@ void LocallabTone::updateAdviceTooltips(const bool showTooltips)
         chromasktm->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
         slomasktm->set_tooltip_text(M("TP_LOCALLAB_SLOMASK_TOOLTIP"));
         lapmasktm->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
+
     } else {
         exp->set_tooltip_text("");
         equiltm->set_tooltip_text("");
@@ -688,7 +689,7 @@ LocallabRetinex::LocallabRetinex():
     retiFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETIFRA")))),
     str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0., 100., 0.2, 0.))),
     loglin(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGLIN")))),
-    sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 60))),
+    sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     retitoolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETITOOLFRA")))),
     retinexMethod(Gtk::manage(new MyComboBoxText())),
     fftwreti(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW")))),
@@ -975,7 +976,7 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         loglin->set_tooltip_text(M("TP_LOCALLAB_RETI_LOGLIN_TOOLTIP"));
-        sensih->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
+        sensih->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         fftwreti->set_tooltip_text(M("TP_LOCALLAB_RETI_FFTW_TOOLTIP"));
         equilret->set_tooltip_text(M("TP_LOCALLAB_EQUILTM_TOOLTIP"));
         neigh->set_tooltip_text(M("TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP"));
@@ -1771,7 +1772,7 @@ LocallabSharp::LocallabSharp():
     shardamping(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARDAMPING"), 0, 100, 1, 0))),
     shariter(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARITER"), 5, 100, 1, 30))),
     sharradius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARRADIUS"), 0.4, 2.5, 0.01, 0.75))),
-    sensisha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 40))),
+    sensisha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 40))),
     inverssha(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     sharFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARFRAME")))),
     showmasksharMethod(Gtk::manage(new MyComboBoxText()))
@@ -1837,7 +1838,7 @@ void LocallabSharp::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_EXPSHARP_TOOLTIP"));
-        sensisha->set_tooltip_text(M("TP_LOCALLAB_SENSIS_TOOLTIP"));
+        sensisha->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
         sensisha->set_tooltip_text("");
@@ -2130,7 +2131,7 @@ LocallabContrast::LocallabContrast():
     residshathr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDSHATHR"), 0., 100., 1., 30.))),
     residhi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDHI"), -100., 100., 1., 0.))),
     residhithr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDHITHR"), 0., 100., 1., 70.))),
-    sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 60))),
+    sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
     clarilres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARILRES"), -20., 100., 0.5, 0.))),
     claricres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARICRES"), -20., 100., 0.5, 0.))),
@@ -2645,6 +2646,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         Lmasklcshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
         masklcCurveEditorG->set_tooltip_markup(M("TP_LOCALLAB_MASKCURVE_TOOLTIP"));
         chromasklc->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
+        sensilc->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
     } else {
         contFrame->set_tooltip_text("");
         LocalcurveEditorwav->set_tooltip_markup("");
@@ -2671,6 +2673,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         Lmasklcshape->setTooltip("");
         masklcCurveEditorG->set_tooltip_markup("");
         chromasklc->set_tooltip_text("");
+        sensilc->set_tooltip_text("");
     }
 }
 
@@ -3905,7 +3908,7 @@ LocallabCBDL::LocallabCBDL():
     clarityml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARITYML"), 0.1, 100., 0.1, 0.1))),
     contresid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRESID"), -100, 100, 1, 0))),
     softradiuscb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
-    sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSICB"), 0, 100, 1, 60))),
+    sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     expmaskcb(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWCB")))),
     showmaskcbMethod(Gtk::manage(new MyComboBoxText())),
     enacbMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
@@ -4078,7 +4081,7 @@ void LocallabCBDL::updateAdviceTooltips(const bool showTooltips)
         chromacbdl->set_tooltip_text(M("TP_LOCALLAB_CHROMACB_TOOLTIP"));
         threshold->set_tooltip_text(M("TP_LOCALLAB_CBDL_THRES_TOOLTIP"));
         clarityml->set_tooltip_text(M("TP_LOCALLAB_CBDLCLARI_TOOLTIP"));
-        sensicb->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
+        sensicb->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         expmaskcb->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         CCmaskcbshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         LLmaskcbshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
@@ -4571,7 +4574,7 @@ LocallabLog::LocallabLog():
     targetGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
     detail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 1., 0.01, 0.6))),
     baselog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BASELOG"), 1.3, 8., 0.05, 2., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
-    sensilog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSILOG"), 0, 100, 1, 60))),
+    sensilog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     strlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2.0, 2.0, 0.05, 0.))),
     anglog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.)))
 {
@@ -4652,7 +4655,7 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
      //   sensilog->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         detail->set_tooltip_text("");
         Autogray->set_tooltip_text("");
-        sensilog->set_tooltip_text("");
+        sensilog->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         fullimage->set_tooltip_text(M("TP_LOCALLAB_FULLIMAGELOG_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");

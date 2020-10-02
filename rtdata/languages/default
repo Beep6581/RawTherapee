@@ -2734,17 +2734,9 @@ TP_LOCALLAB_SCALTM;Scale
 TP_LOCALLAB_SCOPEMASK;Scope (ΔE image mask)
 TP_LOCALLAB_SCOPEMASK_TOOLTIP;Enabled if DeltaE Image Mask is enabled.\nLow values avoid retouching selected area
 TP_LOCALLAB_SENSI;Scope
-TP_LOCALLAB_SENSIBN;Scope
-TP_LOCALLAB_SENSICB;Scope
-TP_LOCALLAB_SENSIDEN;Scope
 TP_LOCALLAB_SENSIEXCLU;Scope
 TP_LOCALLAB_SENSIEXCLU_TOOLTIP;Adjust the colors to be excluded
-TP_LOCALLAB_SENSIH;Scope
-TP_LOCALLAB_SENSIH_TOOLTIP;Adjusts the scope of action:\nSmall values limit action to colors close to those under the center spot.\nHigh values let the tool act on a wider range of colors.
-TP_LOCALLAB_SENSILOG;Scope
-TP_LOCALLAB_SENSIS;Scope
-TP_LOCALLAB_SENSIS_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.
-TP_LOCALLAB_SENSI_TOOLTIP;Adjust scope of action:\nSmall values limit action to colors very similar to those under the center spot.\nHigh values let the tool act upon a wider range of colors.
+TP_LOCALLAB_SENSI_TOOLTIP;Adjusts the scope of the action:\nSmall values limit the action to colors similar to those in the center of the spot.\nHigh values let the tool act on a wider range of colors
 TP_LOCALLAB_SENSIMASK_TOOLTIP;Scope adjustment specific to common mask tool.\nActs on the difference between the original image and the mask.\nUses the luma, chroma & hue references from the center of the RT-spot\n\nYou can also adjust  the deltaE of the mask itself by using 'Scope (deltaE image mask)' in 'Settings' > ‘Mask & Merge’
 TP_LOCALLAB_SETTINGS;Settings
 TP_LOCALLAB_SH1;Shadows Highlights
@@ -2779,7 +2771,7 @@ TP_LOCALLAB_SHOWLAPLACE;∆ Laplacian (first)
 TP_LOCALLAB_SHOWLC;Mask and modifications
 TP_LOCALLAB_SHOWMASK;Show mask
 TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Displays masks and modifications.\nBeware, you can only view one tool mask at a time.\nShow modified image: shows the modified image including the effect of any adjustments and masks\nShow modifications without mask: shows the modifications before any masks are applied\nShow modifications with mask: shows the modifications after a mask has been applied\nShow mask: shows the aspect of the mask including the effect of any curves and filters.\nShow spot structure: allows you to see the  structure-detection mask when the "Spot structure" cursor is activated (when available).\nNote: The mask is applied before the shape detection algorithm.
-TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP;Show process Fourier:\nShows the different stages of the process.\nLaplace - builds the second derivative according to the threshold (first step).\nFourier -shows the transformed Laplacian with DCT.\nPoisson - show solution of Poisson DCE.\nNormalize - show result without normalization luminance.
+TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP;Allows you to visualize the different stages of the Fourier process.\n Laplace - calculates the second derivative of the Laplace transform as a function of the threshold.\nFourier - shows the Laplacian transform with DCT.\nPoisson - shows the solution of the Poisson DCE.\nNo luminance normalization - shows result without any luminance normalization.
 TP_LOCALLAB_SHOWMASKTYP1;Blur & Noise
 TP_LOCALLAB_SHOWMASKTYP2;Denoise
 TP_LOCALLAB_SHOWMASKTYP3;Blur & Noise  + Denoise
