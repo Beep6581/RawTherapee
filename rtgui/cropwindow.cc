@@ -125,13 +125,13 @@ void CropWindow::initZoomSteps()
     char lbl[64];
     for (int s = 100; s >= 11; --s) {
         float z = 10.f / s;
-        sprintf(lbl, "% 2d%%", int(z * 100));
+        snprintf(lbl, sizeof(lbl), "% 2d%%", int(z * 100));
         bool is_major = (s == s/10 * 10);
         zoomSteps.push_back(ZoomStep(lbl, z, s, is_major));
     }
     zoom11index = zoomSteps.size();
     for (int s = 1; s <= 8; ++s) {
-        sprintf(lbl, "%d00%%", s);
+        snprintf(lbl, sizeof(lbl), "%d00%%", s);
         zoomSteps.push_back(ZoomStep(lbl, s, s * 1000, true));
     }
     zoomSteps.push_back(ZoomStep("1600%", 16, 16000, true));

@@ -424,8 +424,8 @@ void ICMPanel::updateDCP(int dcpIlluminant, Glib::ustring dcp_name)
         if (illuminants.will_interpolate) {
             if (dcpTemperatures[0] != illuminants.temperature_1 || dcpTemperatures[1] != illuminants.temperature_2) {
                 char tempstr1[64], tempstr2[64];
-                sprintf(tempstr1, "%.0fK", illuminants.temperature_1);
-                sprintf(tempstr2, "%.0fK", illuminants.temperature_2);
+                snprintf(tempstr1, sizeof(tempstr1), "%.0fK", illuminants.temperature_1);
+                snprintf(tempstr2, sizeof(tempstr2), "%.0fK", illuminants.temperature_2);
                 int curr_active = dcpIll->get_active_row_number();
                 dcpIll->remove_all();
                 dcpIll->append(M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));

@@ -1979,7 +1979,7 @@ public:
 
         if (a > 0) {
             char buffer[32];
-            sprintf (buffer, "%.4f", a);
+            snprintf(buffer, sizeof(buffer), "%.4f", a);
             return buffer;
         } else {
             return "n/a";
@@ -2039,7 +2039,7 @@ public:
 
         if (a) {
             char buffer[32];
-            sprintf (buffer, "%.1f", a / 100. );
+            snprintf(buffer, sizeof(buffer), "%.1f", a / 100. );
             return buffer;
         } else {
             return "n/a";
@@ -2099,7 +2099,7 @@ public:
 
         if (a) {
             char buffer[32];
-            sprintf (buffer, "%d", a );
+            snprintf(buffer, sizeof(buffer), "%d", a );
             return buffer;
         } else {
             return "Auto";
@@ -2138,7 +2138,7 @@ public:
     {
         double a = t->toDouble();
         char buffer[32];
-        sprintf (buffer, "%.2f", a );
+        snprintf(buffer, sizeof(buffer), "%.2f", a );
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -2158,7 +2158,7 @@ public:
     std::string toString (const Tag* t) const override
     {
         char buffer[32];
-        sprintf (buffer, "%d", t->getValue()[0] - 20);
+        snprintf(buffer, sizeof(buffer), "%d", t->getValue()[0] - 20);
         return buffer;
     }
     int toInt (const Tag* t, int ofs, TagType astype) override
@@ -2197,7 +2197,7 @@ public:
     std::string toString (const Tag* t) const override
     {
         char buffer[32];
-        sprintf (buffer, "%d", t->getValue()[0] & 0x7f);
+        snprintf(buffer, sizeof(buffer), "%d", t->getValue()[0] & 0x7f);
         return buffer;
     }
     int toInt (const Tag* t, int ofs, TagType astype) override
@@ -2253,7 +2253,7 @@ public:
     std::string toString (const Tag* t) const override
     {
         char buffer[32];
-        sprintf (buffer, "%d", t->toInt());
+        snprintf(buffer, sizeof(buffer), "%d", t->toInt());
         return buffer;
     }
     int toInt (const Tag* t, int ofs, TagType astype) override

@@ -5218,7 +5218,7 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
 
     /* Debuggery. Saves L for toying with outside of RT.
     char nm[64];
-    sprintf(nm, "%ux%ufloat.bin", lab->W, lab->H);
+    snprintf(nm, sizeof(nm), "%ux%ufloat.bin", lab->W, lab->H);
     FILE *f = fopen(nm, "wb");
     fwrite(L, N, sizeof(float), f);
     fclose(f);*/

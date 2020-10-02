@@ -1238,7 +1238,7 @@ std::string FramesMetaData::apertureToString(double aperture)
 {
 
     char buffer[256];
-    sprintf(buffer, "%0.1f", aperture);
+    snprintf(buffer, sizeof(buffer), "%0.1f", aperture);
     return buffer;
 }
 
@@ -1248,9 +1248,9 @@ std::string FramesMetaData::shutterToString(double shutter)
     char buffer[256];
 
     if (shutter > 0.0 && shutter <= 0.5) {
-        sprintf(buffer, "1/%0.0f", 1.0 / shutter);
+        snprintf(buffer, sizeof(buffer), "1/%0.0f", 1.0 / shutter);
     } else {
-        sprintf(buffer, "%0.1f", shutter);
+        snprintf(buffer, sizeof(buffer), "%0.1f", shutter);
     }
 
     return buffer;
@@ -1263,13 +1263,13 @@ std::string FramesMetaData::expcompToString(double expcomp, bool maskZeroexpcomp
 
     if (maskZeroexpcomp) {
         if (expcomp != 0.0) {
-            sprintf(buffer, "%0.2f", expcomp);
+            snprintf(buffer, sizeof(buffer), "%0.2f", expcomp);
             return buffer;
         } else {
             return "";
         }
     } else {
-        sprintf(buffer, "%0.2f", expcomp);
+        snprintf(buffer, sizeof(buffer), "%0.2f", expcomp);
         return buffer;
     }
 }

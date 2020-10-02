@@ -1022,8 +1022,15 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         cp.mul[0] = 0.01f;//to always enable WaveletcontAllL if no contrast is needed
                     }
                 }
-
-                if (!exblurL && cp.contrast == 0.f && cp.blurres == 0.f && !cp.tonemap && cp.conres == 0.f && cp.conresH == 0.f && cp.val == 0  && !ref0 && params->wavelet.CLmethod == "all") { // no processing of residual L or edge=> we probably can reduce the number of levels
+                
+                if (cp.BAmet != 0) {
+                    if (cp.mul[0] == 0.f) {
+                        cp.mul[0] = 0.01f;
+                    }
+                }
+                    
+                
+                if (!exblurL && cp.contrast == 0.f && cp.blurres == 0.f && !cp.tonemap && !cp.finena  && cp.conres == 0.f && cp.conresH == 0.f && cp.val == 0  && !ref0 && params->wavelet.CLmethod == "all") { // no processing of residual L or edge=> we probably can reduce the number of levels
                     while (levwavL > 0 && cp.mul[levwavL - 1] == 0.f) { // cp.mul[level] == 0.f means no changes to level
                         levwavL--;
                     }
@@ -1865,9 +1872,9 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         if (usechrom) {
                             Ldecomp->reconstruct(labco->data, cp.strength);
                         }
-                        if (settings->verbose) {
-                            printf("OK END\n");
-                        }
+//                        if (settings->verbose) {
+//                            printf("OK END\n");
+//                        }
  
                     }
                 }
@@ -2597,7 +2604,7 @@ void ImProcFunctions::WaveletcontAllLfinal(wavelet_decomposition& WaveletCoeffs_
 void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float **varchrom, wavelet_decomposition& WaveletCoeffs_L, const Wavblcurve & wavblcurve,
      struct cont_params &cp, int skip, float *mean, float *sigma, float *MaxP, float *MaxN, const WavCurve & wavCLVCcurve, const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveSH & waOpacityCurveSH, FlatCurve* ChCurve, bool Chutili)
 {
-    BENCHFUN
+//   BENCHFUN
     const int maxlvl = WaveletCoeffs_L.maxlevel();
     const int W_L = WaveletCoeffs_L.level_W(0);
     const int H_L = WaveletCoeffs_L.level_H(0);
@@ -3029,7 +3036,7 @@ void ImProcFunctions::WaveletAandBAllAB(wavelet_decomposition& WaveletCoeffs_a, 
 void ImProcFunctions::WaveletcontAllAB(LabImage * labco, float ** varhue, float **varchrom, wavelet_decomposition& WaveletCoeffs_ab, const Wavblcurve & wavblcurve, const WavOpacityCurveW & waOpacityCurveW,
           struct cont_params &cp, const bool useChannelA, int skip, float *meanab, float *sigmaab)
 {
-BENCHFUN
+//BENCHFUN
     int maxlvl = WaveletCoeffs_ab.maxlevel();
     int W_L = WaveletCoeffs_ab.level_W(0);
     int H_L = WaveletCoeffs_ab.level_H(0);

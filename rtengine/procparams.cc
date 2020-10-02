@@ -2928,7 +2928,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     },
     invers(false),
     special(false),
-    toolcol(true),
+    toolcol(false),
     enaColorMask(false),
     fftColorMask(true),
     CCmaskcurve{
@@ -3942,7 +3942,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35
     },
     strumaskmask(0.),
-    toolmask(true),
+    toolmask(false),
     radmask(0.0),
     lapmask(0.0),
     chromask(0.0),
