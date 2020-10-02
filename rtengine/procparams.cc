@@ -6440,9 +6440,11 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->filmNegative.blueRatio, "Film Negative", "BlueRatio", filmNegative.blueRatio, keyFile);
 
         // FIXME to be removed: only for backwards compatibility with an intermediate dev version
-        saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "RedBase", filmNegative.refInput.r, keyFile);
-        saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "GreenBase", filmNegative.refInput.g, keyFile);
-        saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "BlueBase", filmNegative.refInput.b, keyFile);
+        if (filmNegative.backCompat == FilmNegativeParams::BackCompat::V2) {
+            saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "RedBase", filmNegative.refInput.r, keyFile);
+            saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "GreenBase", filmNegative.refInput.g, keyFile);
+            saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "BlueBase", filmNegative.refInput.b, keyFile);
+        }
         
         saveToKeyfile(!pedited || pedited->filmNegative.colorSpace, "Film Negative", "ColorSpace", toUnderlying(filmNegative.colorSpace), keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "RefInput", filmNegative.refInput, keyFile);

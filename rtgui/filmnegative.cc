@@ -493,7 +493,7 @@ void FilmNegative::colorSpaceChanged()
     }
 }
 
-void FilmNegative::filmBaseValuesChanged(const RGB &refInput, const RGB &refOutput)
+void FilmNegative::filmRefValuesChanged(const RGB &refInput, const RGB &refOutput)
 {
 
     idle_register.add(

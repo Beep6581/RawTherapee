@@ -615,7 +615,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 // Perform negative inversion. If needed, upgrade filmNegative params for backwards compatibility with old profiles
                 if (ipf.filmNegativeProcess(orig_prev, orig_prev, params->filmNegative, params->raw, imgsrc, currWB) && filmNegListener) {
-                    filmNegListener->filmBaseValuesChanged(params->filmNegative.refInput, params->filmNegative.refOutput);
+                    filmNegListener->filmRefValuesChanged(params->filmNegative.refInput, params->filmNegative.refOutput);
                 }
 
                 // Process film negative BEFORE colorspace conversion (legacy mode)

@@ -64,7 +64,7 @@ public:
     void enabledChanged() override;
     void colorSpaceChanged();
 
-    void filmBaseValuesChanged(const RGB &refInput, const RGB &refOutput) override;
+    void filmRefValuesChanged(const RGB &refInput, const RGB &refOutput) override;
 
     void setFilmNegProvider(FilmNegProvider* provider);
 

@@ -470,7 +470,7 @@ class FilmNegListener
 {
 public:
     virtual ~FilmNegListener() = default;
-    virtual void filmBaseValuesChanged(const procparams::FilmNegativeParams::RGB &refInput, const procparams::FilmNegativeParams::RGB &refOutput) = 0;
+    virtual void filmRefValuesChanged(const procparams::FilmNegativeParams::RGB &refInput, const procparams::FilmNegativeParams::RGB &refOutput) = 0;
 };
 
 /** This class represents a detailed part of the image (looking through a kind of window).

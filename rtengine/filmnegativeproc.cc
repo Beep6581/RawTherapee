@@ -174,7 +174,8 @@ RGB getMedians(const rtengine::Imagefloat* input, int borderPercent) {
     return { rmed, gmed, bmed };
 }
 
-
+/*
+// TODO not needed for now
 void convertColorSpace(Imagefloat* input, const TMatrix &src2xyz, const TMatrix &xyz2dest)
 {
     
@@ -200,6 +201,7 @@ void convertColorSpace(Imagefloat* input, const TMatrix &src2xyz, const TMatrix 
         }
     }
 }
+*/
 
 
 /**
