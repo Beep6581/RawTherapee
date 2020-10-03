@@ -2350,7 +2350,7 @@ TP_LOCALLAB_BLURDE;Blur shape detection
 TP_LOCALLAB_BLURLC;Luminance Only
 TP_LOCALLAB_BLURLEVELFRA;Blur Levels 
 TP_LOCALLAB_BLURMASK_TOOLTIP;Uses a large-radius blur to create a mask that allows you to vary the contrast of the image and/or darken/lighten parts of it.
-TP_LOCALLAB_BLURRMASK_TOOLTIP;Allows you to vary the "radius" of the Gaussian blur (0 to 500)
+TP_LOCALLAB_BLURRMASK_TOOLTIP;Allows you to vary the "radius" of the Gaussian blur (0 to 1000)
 TP_LOCALLAB_BLURRESIDFRA;Blur Residual
 TP_LOCALLAB_BLUR_TOOLNAME;Blur/Grain & Denoise - 1
 TP_LOCALLAB_BLWH;All changes forced in Black-and-White
@@ -2360,19 +2360,19 @@ TP_LOCALLAB_BUTTON_DEL;Delete
 TP_LOCALLAB_BUTTON_DUPL;Duplicate
 TP_LOCALLAB_BUTTON_REN;Rename
 TP_LOCALLAB_BUTTON_VIS;Show/Hide
-TP_LOCALLAB_CBDL;Contrast by detail levels
-TP_LOCALLAB_CBDLCLARI_TOOLTIP;Takes the midtones and enhance them.
-TP_LOCALLAB_CBDL_ADJ_TOOLTIP;Acts as a wavelet tools.\nThe first level (0) acts on 2x2 details.\nThe last level (5) acts on 64x64 details.
-TP_LOCALLAB_CBDL_THRES_TOOLTIP;Prevent the sharpening of noise
+TP_LOCALLAB_CBDL;Contrast by Detail Levels
+TP_LOCALLAB_CBDLCLARI_TOOLTIP;Enhances local contrast of the midtones.
+TP_LOCALLAB_CBDL_ADJ_TOOLTIP;Same as wavelets.\nThe first level (0) acts on 2x2 pixel details.\nThe last level (5) acts on 64x64 pixel details.
+TP_LOCALLAB_CBDL_THRES_TOOLTIP;Prevents the sharpening of noise
 TP_LOCALLAB_CBDL_TOOLNAME;CBDL - 2
 TP_LOCALLAB_CENTER_X;Center X
 TP_LOCALLAB_CENTER_Y;Center Y
 TP_LOCALLAB_CH;Curves CL - LC
 TP_LOCALLAB_CHROMA;Chrominance
 TP_LOCALLAB_CHROMABLU;Chroma levels
-TP_LOCALLAB_CHROMABLU_TOOLTIP;Acts as an amplifier-reducer action compare to settings of luma.\nUnder 1 reduce, above 1 amplifie
+TP_LOCALLAB_CHROMABLU_TOOLTIP;Increases or reduces the effect depending on the luma settings.\nValues under 1 reduce the effect. Values greater than 1 increase the effect.
 TP_LOCALLAB_CHROMACBDL;Chroma
-TP_LOCALLAB_CHROMACB_TOOLTIP;Acts as an amplifier-reducer action compare to sliders of luminance.\nUnder 100 reduce, above 100 amplifie
+TP_LOCALLAB_CHROMACB_TOOLTIP;Increases or reduces the effect depending on the luma settings.\nValues under 1 reduce the effect. Values greater than 1 increase the effect.
 TP_LOCALLAB_CHROMALEV;Chroma levels
 TP_LOCALLAB_CHROMASKCOL;Chroma
 TP_LOCALLAB_CHROMASK_TOOLTIP;Changes the chroma of the mask if one exists (i.e. C(C) or LC(H) is activated).
@@ -2407,7 +2407,7 @@ TP_LOCALLAB_CONTCOL;Contrast threshold
 TP_LOCALLAB_CONTFRA;Contrast by Level
 TP_LOCALLAB_CONTTHMASK_TOOLTIP;Allows you to determine which parts of the image will be impacted  depending on the texture.
 TP_LOCALLAB_CONTRAST;Contrast
-TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP;Allows you to freely modify the contrast of the mask (gamma & slope), instead of using a continuous & progressive curve. However it can create artifacts that have to be dealt with using the “Smooth radius” or “Laplacian threshold sliders”.
+TP_LOCALLAB_CONTRASTCURVMASK1_TOOLTIP;Allows you to freely modify the contrast of the mask (gamma & slope), instead of using a continuous & progressive curve. However it can create artifacts that have to be dealt with using the “Smooth radius” or “Laplacian threshold sliders”.
 TP_LOCALLAB_CONTRESID;Contrast
 TP_LOCALLAB_CONTTHR;Contrast Threshold
 TP_LOCALLAB_CONTWFRA;Local contrast
@@ -2451,7 +2451,7 @@ TP_LOCALLAB_ENH;Enhanced
 TP_LOCALLAB_ENHDEN;Enhanced + chroma denoise
 TP_LOCALLAB_EPSBL;Detail
 TP_LOCALLAB_EQUIL;Normalize Luminance
-TP_LOCALLAB_EQUILTM_TOOLTIP;Reconstruct luminance in such a way that the mean and the variance of the output image is identical to that of the original.
+TP_LOCALLAB_EQUILTM_TOOLTIP;Reconstruct luminance so that the mean and the variance of the output image is identical to that of the original.
 TP_LOCALLAB_ESTOP;Edge stopping
 TP_LOCALLAB_EV_DUPL;Copy of
 TP_LOCALLAB_EV_NVIS;Hide
@@ -2464,7 +2464,7 @@ TP_LOCALLAB_EXCLUTYPE;Spot method
 TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Normal spot uses recursive data.\n\nExcluding spot reinitializes all local adjustment data.\nCan be used to totally or partially cancel a previous action or to carry out operations in Inverse mode
 TP_LOCALLAB_EXECLU;Excluding spot
 TP_LOCALLAB_EXNORM;Normal spot
-TP_LOCALLAB_EXPCBDL_TOOLTIP;Can be used to remove marks on the sensor or lens.
+TP_LOCALLAB_EXPCBDL_TOOLTIP;Can be used to remove marks on the sensor or lens by reducing the contrast on the appropriate detail level(s).
 TP_LOCALLAB_EXPCHROMA;Chroma compensation
 TP_LOCALLAB_EXPCHROMA_TOOLTIP;Use in association with ‘Exposure compensation f’ and ‘Contrast Attenuator f’ to avoid desaturating colors.
 TP_LOCALLAB_EXPCOLOR_TOOLTIP;Adjust color, lightness, contrast and correct small defects such as red-eye, sensor dust etc.
@@ -2486,7 +2486,7 @@ TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Applies a median filter before the Laplace tr
 TP_LOCALLAB_EXPOSE;Dynamic Range & Exposure
 TP_LOCALLAB_EXPOSURE_TOOLTIP;Modify exposure in L*a*b space  using Laplacian PDE algorithms to take into account dE and  minimize artifacts.
 TP_LOCALLAB_EXPRETITOOLS;Advanced Retinex Tools
-TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39.\nUse low transition values and high decay transition values and scope to simulate small RT-spot.
+TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39.\nUse low transition values and high ‘Transition decay’ and ‘Scope’ values to simulate smaller RT-spots.
 TP_LOCALLAB_EXPTOOL;Exposure Tools
 TP_LOCALLAB_EXPTRC;Tone Response Curve - TRC
 TP_LOCALLAB_EXP_TOOLNAME;Dynamic Range & Exposure - 10
@@ -2571,7 +2571,7 @@ TP_LOCALLAB_LINEAR;Linearity
 TP_LOCALLAB_LIST_NAME;Add tool to current spot...
 TP_LOCALLAB_LIST_TOOLTIP;You can select 3 levels of complexity for each tool: Basic, Standard & Advanced.\nThe default setting for all tools is Basic but this can be changed in the Preferences window.\nYou can also change the level of complexity on a per-tool basis while you are editing
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Give priority to action on midtones and high lights and by choosing the concerned wavelet levels
-TP_LOCALLAB_LMASK_LL_TOOLTIP;Give priority to action on midtones and high lights
+TP_LOCALLAB_LMASK_LL_TOOLTIP;Allows you to freely change the contrast of the mask. May create artifacts.
 TP_LOCALLAB_LOCCONT;Unsharp Mask
 TP_LOCALLAB_LOC_CONTRAST;Local Contrast & Wavelets
 TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramid 1:
@@ -2813,7 +2813,7 @@ TP_LOCALLAB_SPOTNAME;New Spot
 TP_LOCALLAB_STD;Standard
 TP_LOCALLAB_STR;Strength
 TP_LOCALLAB_STRBL;Strength
-TP_LOCALLAB_STREN;Compression Strength
+TP_LOCALLAB_STREN;Compression strength
 TP_LOCALLAB_STRENG;Strength
 TP_LOCALLAB_STRENGR;Strength
 TP_LOCALLAB_STRENGTH;Noise
@@ -2842,11 +2842,11 @@ TP_LOCALLAB_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Var
 TP_LOCALLAB_TM;Tone Mapping
 TP_LOCALLAB_TM_MASK;Use transmission map
 TP_LOCALLAB_TOOLMASK_TOOLTIP;Structure mask (slider) with the checkbox "Structure mask as tool" checked: in this case a mask showing the structure will be generated after one or more of the 2 curves L(L) or LC(H) has been modified.\n Here, the "Structure mask" behaves like the other Mask tools : Gamma, Slope, etc.\n It allows you to vary the action on the mask according to the structure of the image.
-TP_LOCALLAB_TONEMAPESTOP_TOOLTIP;This parameter affects sensitivity to edges.\n The greater it is the more likely an illumination change is to be considered an "edge".\n If set to zero tone mapping will have an effect similar to unsharp masking.
-TP_LOCALLAB_TONEMAPGAM_TOOLTIP;Gamma moves the action of tone-mapping to shadows or highlights.
+TP_LOCALLAB_TONEMAPESTOP_TOOLTIP;This slider affects edge sensitivity.\n The greater the value, the more likely a change in contrast will be interpreted as an "edge".\n If set to zero the tone mapping will have an effect similar to unsharp masking.
+TP_LOCALLAB_TONEMAPGAM_TOOLTIP;The Gamma slider shifts the tone-mapping effect towards either the shadows or the highlights.
 TP_LOCALLAB_TONEMAPREWEI_TOOLTIP;In some cases tone mapping may result in a cartoonish appearance, and in some rare cases soft but wide halos may appear.\n Increasing the number of reweighting iterates will help fight some of these problems.
-TP_LOCALLAB_TONEMAP_TOOLTIP;Same as the tone mapping tool in the main menu.\nThe main menu tool must be de-activated if this tool is used.
-TP_LOCALLAB_TONEMASCALE_TOOLTIP;This control gives meaning to the difference between "local" and "global" contrast.\nThe greater it is the larger a detail needs to be in order to be boosted
+TP_LOCALLAB_TONEMAP_TOOLTIP;Same as the tone mapping tool in the main menu.\nThe main-menu tool must be deactivated if this tool is used.
+TP_LOCALLAB_TONEMASCALE_TOOLTIP;This slider allows you to adjust  the transition between "local" and "global" contrast.\nThe greater the value, the larger a detail needs to be for it to be boosted
 TP_LOCALLAB_TONE_TOOLNAME;Tone Mapping - 4
 TP_LOCALLAB_TOOLCOL;Structure mask as tool
 TP_LOCALLAB_TOOLCOLFRMASK_TOOLTIP;Allow you to modify the mask, if one exist
