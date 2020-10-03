@@ -2271,7 +2271,7 @@ void ImProcFunctions::Aver(const float* RESTRICT DataList, int datalen, float &a
     #pragma omp parallel num_threads(numThreads) if (numThreads>1)
 #endif
     {
-        float lmax = 0.f, lmin = 0.f;
+        float lmax = 0.f, lmin = RT_INFINITY_F;
 #ifdef _OPENMP
         #pragma omp for reduction(+:averaP,averaN,countP,countN) nowait
 #endif
