@@ -70,7 +70,7 @@ Adjuster* createBalanceAdjuster(AdjusterListener* listener, const Glib::ustring&
     Adjuster* const adj = Gtk::manage(new Adjuster(label, minV, maxV, 0.01, defaultVal,
         Gtk::manage(new RTImage(leftIcon)), Gtk::manage(new RTImage(rightIcon)) ));
     adj->setAdjusterListener(listener);
-    adj->setLogScale(9, 1, true);
+    adj->setLogScale(9, 0, true);
 
     adj->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
@@ -199,8 +199,8 @@ FilmNegative::FilmNegative() :
     refInputLabel(Gtk::manage(new Gtk::Label(Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), "- - -")))),
     refSpotButton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_REF_PICK")))),
     outputLevel(createLevelAdjuster(this, M("TP_FILMNEGATIVE_OUT_LEVEL"))),  // ref level
-    greenBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_GREENBALANCE"), 0.1, 10, 1.0, "circle-magenta-small.png", "circle-green-small.png")),  // green balance
-    blueBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_BLUEBALANCE"), 0.1, 10, 1.0, "circle-blue-small.png", "circle-yellow-small.png"))  // blue balance
+    greenBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_GREENBALANCE"), -3.0, 3.0, 0.0, "circle-magenta-small.png", "circle-green-small.png")),  // green balance
+    blueBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_BLUEBALANCE"), -3.0, 3.0, 0.0, "circle-blue-small.png", "circle-yellow-small.png"))  // blue balance
 {
     setExpandAlignProperties(spotButton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     spotButton->get_style_context()->add_class("independent");
@@ -303,6 +303,26 @@ FilmNegative::~FilmNegative()
     }
 }
 
+
+void FilmNegative::readOutputSliders(RGB &refOut)
+{
+    temp2rgb(fromAdjuster(outputLevel->getValue()),
+        NEUTRAL_TEMP.getTemp() / std::pow(2., blueBalance->getValue()),
+        NEUTRAL_TEMP.getGreen() / std::pow(2., greenBalance->getValue()),
+        refOut);
+}
+
+void FilmNegative::writeOutputSliders(const RGB &refOut)
+{
+    double outLev, cTemp, green;
+    rgb2temp(refOut, outLev, cTemp, green);
+
+    outputLevel->setValue(toAdjuster(outLev));
+    blueBalance->setValue(std::log2(NEUTRAL_TEMP.getTemp() / cTemp));
+    greenBalance->setValue(std::log2(NEUTRAL_TEMP.getGreen() / green));
+}
+
+
 void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
     disableListener();
@@ -344,16 +364,10 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
     // If reference output values are not set in params, set the default output
     // chosen for median estimation: gray 1/24th of max
     if(pp->filmNegative.refOutput.r <= 0) {
-        outputLevel->setValue(toAdjuster(rtengine::MAXVALF / 24.));
-        blueBalance->setValue(1.);
-        greenBalance->setValue(1.);
+        float gray = rtengine::MAXVALF / 24.f;
+        writeOutputSliders({gray, gray, gray});
     } else {
-        double outLev, cTemp, green;
-        rgb2temp(pp->filmNegative.refOutput, outLev, cTemp, green);
-
-        outputLevel->setValue(toAdjuster(outLev));
-        blueBalance->setValue(NEUTRAL_TEMP.getTemp() / cTemp);
-        greenBalance->setValue(NEUTRAL_TEMP.getGreen() / green);
+        writeOutputSliders(pp->filmNegative.refOutput);
     }
 
     enableListener();
@@ -384,10 +398,7 @@ void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
     pp->filmNegative.refInput = refInputValues;
     
-    temp2rgb(fromAdjuster(outputLevel->getValue()),
-        NEUTRAL_TEMP.getTemp() / blueBalance->getValue(),
-        NEUTRAL_TEMP.getGreen() / greenBalance->getValue(),
-        pp->filmNegative.refOutput);
+    readOutputSliders(pp->filmNegative.refOutput);
 
     if (paramsUpgraded) {
         pp->filmNegative.backCompat = BackCompat::CURRENT;
@@ -401,9 +412,8 @@ void FilmNegative::setDefaults(const rtengine::procparams::ProcParams* defParams
     greenExp->setValue(defParams->filmNegative.greenExp);
     blueRatio->setValue(defParams->filmNegative.blueRatio);
 
-    outputLevel->setValue(toAdjuster(rtengine::MAXVALF / 24.f));
-    greenBalance->setValue(1.);
-    blueBalance->setValue(1.);
+    float gray = rtengine::MAXVALF / 24.f;
+    writeOutputSliders({gray, gray, gray});
 
     if (pedited) {
         redRatio->setDefaultEditedState(pedited->filmNegative.redRatio ? Edited : UnEdited);
@@ -507,12 +517,7 @@ void FilmNegative::filmRefValuesChanged(const RGB &refInput, const RGB &refOutpu
             refInputLabel->set_markup(
                 Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), fmt(refInputValues)));            
             
-            double outLev, cTemp, green;
-            rgb2temp(refOutput, outLev, cTemp, green);
-
-            outputLevel->setValue(toAdjuster(outLev));
-            blueBalance->setValue(NEUTRAL_TEMP.getTemp() / cTemp);
-            greenBalance->setValue(NEUTRAL_TEMP.getGreen() / green);
+            writeOutputSliders(refOutput);
 
             outputLevel->show();
             blueBalance->show();
@@ -605,9 +610,8 @@ bool FilmNegative::button1Pressed(int modifierKey)
             
             disableListener();
 
-            outputLevel->setValue(toAdjuster(rtengine::Color::rgbLuminance(filmBaseOut.r , filmBaseOut.g , filmBaseOut.b)));
-            greenBalance->setValue(1.0);
-            blueBalance->setValue(1.0);
+            float gray = rtengine::Color::rgbLuminance(filmBaseOut.r , filmBaseOut.g , filmBaseOut.b);
+            writeOutputSliders({gray, gray, gray});
 
             refInputLabel->set_text(
                 Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), fmt(refInputValues)));

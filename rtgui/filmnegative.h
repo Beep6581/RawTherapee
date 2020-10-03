@@ -82,6 +82,9 @@ private:
     void editToggled();
     void baseSpotToggled();
 
+    void readOutputSliders(RGB &refOutput);
+    void writeOutputSliders(const RGB &refOutput);
+
     // ColorTemp value corresponding to neutral RGB multipliers (1,1,1). Should be around 6500K.
     const rtengine::ColorTemp NEUTRAL_TEMP;
 
