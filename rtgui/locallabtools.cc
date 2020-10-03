@@ -5980,7 +5980,7 @@ LocallabBlur::LocallabBlur():
     ToolParamBlock* const grainBox = Gtk::manage(new ToolParamBlock());
     grainBox->pack_start(*isogr);
     grainBox->pack_start(*strengr);
-    grainBox->pack_start(*scalegr);
+//    grainBox->pack_start(*scalegr);
     grainFrame->add(*grainBox);
     blnoisebox->pack_start(*grainFrame);
     blnoisebox->pack_start(*medMethod);
@@ -6074,10 +6074,28 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         expblnoise->set_tooltip_markup(M("TP_LOCALLAB_BLUMETHOD_TOOLTIP"));
         radius->set_tooltip_text(M("TP_LOCALLAB_RADIUS_TOOLTIP"));
+        strength->set_tooltip_text(M("TP_LOCALLAB_NOISE_TOOLTIP"));
+        grainFrame->set_tooltip_text(M("TP_LOCALLAB_GRAIN_TOOLTIP"));
         sensibn->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+        medMethod->set_tooltip_text(M("TP_LOCALLAB_MEDIAN_TOOLTIP"));
+        itera->set_tooltip_text(M("TP_LOCALLAB_MEDIANITER_TOOLTIP"));
+        guidbl->set_tooltip_text(M("TP_LOCALLAB_GUIDBL_TOOLTIP"));
+        strbl->set_tooltip_text(M("TP_LOCALLAB_GUIDSTRBL_TOOLTIP"));
+        epsbl->set_tooltip_text(M("TP_LOCALLAB_GUIDEPSBL_TOOLTIP"));
         blurMethod->set_tooltip_markup(M("TP_LOCALLAB_BLMETHOD_TOOLTIP"));
         expdenoise->set_tooltip_markup(M("TP_LOCALLAB_DENOI_TOOLTIP"));
+        quamethod->set_tooltip_markup(M("TP_LOCALLAB_DENOIQUA_TOOLTIP"));
         wavshapeden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
+        LocalcurveEditorwavden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
+        noiselequal->set_tooltip_text(M("TP_LOCALLAB_DENOIEQUAL_TOOLTIP"));
+        noiselumdetail->set_tooltip_text(M("TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP"));
+        noisechrof->set_tooltip_text(M("TP_LOCALLAB_DENOICHROF_TOOLTIP"));
+        noisechroc->set_tooltip_text(M("TP_LOCALLAB_DENOICHROC_TOOLTIP"));
+        noisechrodetail->set_tooltip_text(M("TP_LOCALLAB_DENOICHRODET_TOOLTIP"));
+        detailthr->set_tooltip_text(M("TP_LOCALLAB_DENOITHR_TOOLTIP"));
+        adjblur->set_tooltip_text(M("TP_LOCALLAB_DENOIEQUALCHRO_TOOLTIP"));
+        bilateral->set_tooltip_text(M("TP_LOCALLAB_DENOIBILAT_TOOLTIP"));
+
         noiselumc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
         expmaskbl->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         showmaskblMethodtyp->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKTYP_TOOLTIP"));
@@ -6103,8 +6121,28 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         sensiden->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
 
     } else {
+        
         expblnoise->set_tooltip_markup("");
         radius->set_tooltip_text("");
+        strength->set_tooltip_text("");
+        grainFrame->set_tooltip_text("");
+        sensibn->set_tooltip_text("");
+        medMethod->set_tooltip_text("");
+        itera->set_tooltip_text("");
+        guidbl->set_tooltip_text("");
+        strbl->set_tooltip_text("");
+        epsbl->set_tooltip_text("");
+        blurMethod->set_tooltip_markup("");
+        quamethod->set_tooltip_markup("");
+        LocalcurveEditorwavden->setTooltip("");
+        noiselequal->set_tooltip_text("");
+        noiselumdetail->set_tooltip_text("");
+        noisechrof->set_tooltip_text("");
+        noisechroc->set_tooltip_text("");
+        noisechrodetail->set_tooltip_text("");
+        detailthr->set_tooltip_text("");
+        adjblur->set_tooltip_text("");
+        bilateral->set_tooltip_text("");
         sensibn->set_tooltip_text("");
         blurMethod->set_tooltip_markup("");
         expdenoise->set_tooltip_markup("");
