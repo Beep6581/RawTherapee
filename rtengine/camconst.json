@@ -1144,9 +1144,12 @@ Camera constants:
         "raw_crop": [ 144, 72, 6984, 4660 ]
     },
 
-    { // Quality C, only raw crop
+    { // Quality B, samples by jonathanBieler (#5922). No dual-pixel information.
         "make_model": [ "Canon EOS R" ],
-        "raw_crop": [ 144, 46, 6744, 4500 ]
+        "dcraw_matrix" : [ 8293, -1789, -1094, -5025, 12925, 2327, -1199, 2769, 6108 ], // DNG v2 style
+        "raw_crop": [ 144, 46, 6744, 4500 ],
+        "masked_areas": [ 50, 40, 4540, 140 ], // Taken from ART
+        "ranges" : { "white" : 16367 } // Typically 16383 without LENR, with LENR safest value is 15800 for ISO 25600
     },
 
     { // Quality C
