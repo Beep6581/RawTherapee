@@ -2350,7 +2350,7 @@ TP_LOCALLAB_BLURDE;Blur shape detection
 TP_LOCALLAB_BLURLC;Luminance Only
 TP_LOCALLAB_BLURLEVELFRA;Blur Levels 
 TP_LOCALLAB_BLURMASK_TOOLTIP;Uses a large-radius blur to create a mask that allows you to vary the contrast of the image and/or darken/lighten parts of it.
-TP_LOCALLAB_BLURRMASK_TOOLTIP;Allows you to vary the "radius" of the Gaussian blur (0 to 500)
+TP_LOCALLAB_BLURRMASK_TOOLTIP;Allows you to vary the "radius" of the Gaussian blur (0 to 1000)
 TP_LOCALLAB_BLURRESIDFRA;Blur Residual
 TP_LOCALLAB_BLUR_TOOLNAME;Blur/Grain & Denoise - 1
 TP_LOCALLAB_BLWH;All changes forced in Black-and-White
