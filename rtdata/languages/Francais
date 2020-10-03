@@ -1875,15 +1875,15 @@ TP_LOCALLAB_DELTAD;Delta balance
 TP_LOCALLAB_DELTAEC;Masque ΔE Image
 TP_LOCALLAB_DENOIS;Ψ Réduction du bruit
 TP_LOCALLAB_DENOI_EXP;Réduction du bruit
-TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative : préserve les fréquences basses, alors que agressive les efface
+TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservatif préserve les fréquences basses, alors que agressif tend à les effacer
 TP_LOCALLAB_DENOIEQUAL_TOOLTIP;Equilibre l'action de denoise luminance entre les ombres et les lumières
 TP_LOCALLAB_DENOI_TOOLTIP;Ce module peut être utilisé seul (à la fin du processus), ou en complément de Réduction du bruit (au début).\nEtendue(deltaE)permet de différencier l'action.\nVous pouvez compléter avec  "median" ou "Filtre guidé" (Adoucir Flou...).\nVous pouvez compléter l'action avec "Flou niveaux" "Ondelette pyramide" 
 TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP;Permet de récupérer les détails de luminance par mise en oeuvre progressive de la transformée de Fourier (DCT)
-TP_LOCALLAB_DENOICHROF_TOOLTIP;Agit sur les détails du bruit de chrominance 
+TP_LOCALLAB_DENOICHROF_TOOLTIP;Agit sur les fins détails du bruit de chrominance 
 TP_LOCALLAB_DENOICHROC_TOOLTIP;Agit sur les paquets et amas de bruit de chrominance
 TP_LOCALLAB_DENOICHRODET_TOOLTIP;Permet de récupérer les détails de chrominance par mise en oeuvre progressive de la transformée de Fourier (DCT)
 TP_LOCALLAB_DENOITHR_TOOLTIP;Règle l'effet de bord pour privilégier l'action sur les aplats
-TP_LOCALLAB_DENOIEQUALCHRO_TOOLTIP;Equilibre l'action de denoise chrominance entre les bleu-jaunes et les rouges-verts
+TP_LOCALLAB_DENOIEQUALCHRO_TOOLTIP;Equilibre l'action de denoise chrominance entre les bleus-jaunes et les rouges-verts
 TP_LOCALLAB_DENOIBILAT_TOOLTIP;Traite le bruit d'impulsion (poivre et sel)
 TP_LOCALLAB_DEPTH;Profondeur
 TP_LOCALLAB_DETAIL;Contrast local
@@ -1980,7 +1980,7 @@ TP_LOCALLAB_GRADSTRHUE_TOOLTIP;Filttre Teinte force
 TP_LOCALLAB_GRADSTRLUM;Force Gradient Luminance
 TP_LOCALLAB_GRADSTR_TOOLTIP;Force Filtre en Ev
 TP_LOCALLAB_GRAINFRA;Film Grain   1:1
-TP_LOCALLAB_GRAIN_TOOLTIP;Ajoute du grain similaire à du film
+TP_LOCALLAB_GRAIN_TOOLTIP;Ajoute du grain pour simuler un film
 TP_LOCALLAB_GRALWFRA;Filtre Gradué Local contraste
 TP_LOCALLAB_GRIDFRAME_TOOLTIP;Vous pouvez utiliser cet outil comme une brosse. Utiliser un petit Spot et adaptez transition et transition affaiblissement\nSeulement en mode NORMAL et éventuellement Teinte, Saturation, Couleur, Luminosité sont concernés par Fusion arrire plan (ΔE)
 TP_LOCALLAB_GRIDONE;Virage partiel
@@ -2067,7 +2067,7 @@ TP_LOCALLAB_MASK_TOOLTIP;Vous pouvez activer plusieurs masques pour un simple ou
 TP_LOCALLAB_MED;Medium
 TP_LOCALLAB_MEDIAN;Median Bas
 TP_LOCALLAB_MEDIAN_TOOLTIP;Choisir un median 3x3 à 9x9: plus les valeurs sont élévées, plus la réduction du bruit ou le flou seront marqués
-TP_LOCALLAB_MEDIANITER_TOOLTIP;Nombre d'applications succesives du median
+TP_LOCALLAB_MEDIANITER_TOOLTIP;Nombre d'applications successives du median
 TP_LOCALLAB_MEDNONE;Rien
 TP_LOCALLAB_MERCOL;Couleur
 TP_LOCALLAB_MERDCOL;Fusion arrière plan (ΔE)
