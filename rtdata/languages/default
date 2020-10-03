@@ -2372,7 +2372,7 @@ TP_LOCALLAB_CHROMA;Chrominance
 TP_LOCALLAB_CHROMABLU;Chroma levels
 TP_LOCALLAB_CHROMABLU_TOOLTIP;Increases or reduces the effect depending on the luma settings.\nValues under 1 reduce the effect. Values greater than 1 increase the effect.
 TP_LOCALLAB_CHROMACBDL;Chroma
-TP_LOCALLAB_CHROMACB_TOOLTIP;Acts as an amplifier-reducer action compare to sliders of luminance.\nUnder 100 reduce, above 100 amplifie
+TP_LOCALLAB_CHROMACB_TOOLTIP;Increases or reduces the effect depending on the luma settings.\nValues under 1 reduce the effect. Values greater than 1 increase the effect.
 TP_LOCALLAB_CHROMALEV;Chroma levels
 TP_LOCALLAB_CHROMASKCOL;Chroma
 TP_LOCALLAB_CHROMASK_TOOLTIP;Changes the chroma of the mask if one exists (i.e. C(C) or LC(H) is activated).
@@ -2451,7 +2451,7 @@ TP_LOCALLAB_ENH;Enhanced
 TP_LOCALLAB_ENHDEN;Enhanced + chroma denoise
 TP_LOCALLAB_EPSBL;Detail
 TP_LOCALLAB_EQUIL;Normalize Luminance
-TP_LOCALLAB_EQUILTM_TOOLTIP;Reconstruct luminance in such a way that the mean and the variance of the output image is identical to that of the original.
+TP_LOCALLAB_EQUILTM_TOOLTIP;Reconstruct luminance so that the mean and the variance of the output image is identical to that of the original.
 TP_LOCALLAB_ESTOP;Edge stopping
 TP_LOCALLAB_EV_DUPL;Copy of
 TP_LOCALLAB_EV_NVIS;Hide
@@ -2846,7 +2846,7 @@ TP_LOCALLAB_TONEMAPESTOP_TOOLTIP;This slider affects edge sensitivity.\n The gre
 TP_LOCALLAB_TONEMAPGAM_TOOLTIP;The Gamma slider shifts the tone-mapping effect towards either the shadows or the highlights.
 TP_LOCALLAB_TONEMAPREWEI_TOOLTIP;In some cases tone mapping may result in a cartoonish appearance, and in some rare cases soft but wide halos may appear.\n Increasing the number of reweighting iterates will help fight some of these problems.
 TP_LOCALLAB_TONEMAP_TOOLTIP;Same as the tone mapping tool in the main menu.\nThe main-menu tool must be deactivated if this tool is used.
-TP_LOCALLAB_TONEMASCALE_TOOLTIP;This slider allows you adjust  the transition between "local" and "global" contrast.\nThe greater the value, the larger a detail needs to be for it to be boosted
+TP_LOCALLAB_TONEMASCALE_TOOLTIP;This slider allows you to adjust  the transition between "local" and "global" contrast.\nThe greater the value, the larger a detail needs to be for it to be boosted
 TP_LOCALLAB_TONE_TOOLNAME;Tone Mapping - 4
 TP_LOCALLAB_TOOLCOL;Structure mask as tool
 TP_LOCALLAB_TOOLCOLFRMASK_TOOLTIP;Allow you to modify the mask, if one exist

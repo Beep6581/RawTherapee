@@ -1802,11 +1802,11 @@ TP_LOCALLAB_BUTTON_DEL;Effacer
 TP_LOCALLAB_BUTTON_DUPL;Dupliquer
 TP_LOCALLAB_BUTTON_REN;Renommer
 TP_LOCALLAB_BUTTON_VIS;Montrer/Cacher
-TP_LOCALLAB_CBDL;Contraste niveaux détail
+TP_LOCALLAB_CBDL;Contraste par niveaux de détail
 TP_LOCALLAB_CBDLCLARI_TOOLTIP;Ajuste les tons moyens et les réhausse.
 TP_LOCALLAB_CBDL_ADJ_TOOLTIP;Agit comme un outil ondelettes.\nLe premier niveau (0) agit sur des détails de 2x2.\nLe dernier niveau (5) agit sur des détails de 64x64.
 TP_LOCALLAB_CBDL_THRES_TOOLTIP;Empêche d'augmenter le bruit
-TP_LOCALLAB_CBDL_TOOLNAME;Contraste par niveaux de détails - 2
+TP_LOCALLAB_CBDL_TOOLNAME;Contraste par niveaux de détail - 2
 TP_LOCALLAB_CENTER_X;Centre X
 TP_LOCALLAB_CENTER_Y;Centre Y
 TP_LOCALLAB_CH;Courbes CL - LC
