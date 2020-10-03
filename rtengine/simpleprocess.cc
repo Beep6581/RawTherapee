@@ -865,7 +865,7 @@ private:
 
         if (params.filmNegative.enabled) {
             // Process film negative AFTER colorspace conversion if camera space is NOT selected
-            if (params.filmNegative.colorSpace != FilmNegativeParams::ColorSpace::CAMERA) {
+            if (params.filmNegative.colorSpace != FilmNegativeParams::ColorSpace::INPUT) {
                 imgsrc->convertColorSpace(baseImg, params.icm, currWB);
             }
 
@@ -873,7 +873,7 @@ private:
             ipf.filmNegativeProcess(baseImg, baseImg, copy, params.raw, imgsrc, currWB);
 
             // ... otherwise, process film negative BEFORE colorspace conversion
-            if (params.filmNegative.colorSpace == FilmNegativeParams::ColorSpace::CAMERA) {
+            if (params.filmNegative.colorSpace == FilmNegativeParams::ColorSpace::INPUT) {
                 imgsrc->convertColorSpace(baseImg, params.icm, currWB);
             }
 

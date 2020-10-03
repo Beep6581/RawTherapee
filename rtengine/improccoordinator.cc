@@ -609,7 +609,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             if (params->filmNegative.enabled) {
 
                 // Process film negative AFTER colorspace conversion
-                if(params->filmNegative.colorSpace != FilmNegativeParams::ColorSpace::CAMERA) {
+                if(params->filmNegative.colorSpace != FilmNegativeParams::ColorSpace::INPUT) {
                     imgsrc->convertColorSpace(orig_prev, params->icm, currWB);
                 }
 
@@ -619,7 +619,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
 
                 // Process film negative BEFORE colorspace conversion (legacy mode)
-                if (params->filmNegative.colorSpace == FilmNegativeParams::ColorSpace::CAMERA) {
+                if (params->filmNegative.colorSpace == FilmNegativeParams::ColorSpace::INPUT) {
                     imgsrc->convertColorSpace(orig_prev, params->icm, currWB);
                 }
 

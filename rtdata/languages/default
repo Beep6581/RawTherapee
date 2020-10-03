@@ -1487,7 +1487,7 @@ PARTIALPASTE_EQUALIZER;Wavelet levels
 PARTIALPASTE_EVERYTHING;Everything
 PARTIALPASTE_EXIFCHANGES;Exif
 PARTIALPASTE_EXPOSURE;Exposure
-PARTIALPASTE_FILMNEGATIVE;Film Negative
+PARTIALPASTE_FILMNEGATIVE;Film negative
 PARTIALPASTE_FILMSIMULATION;Film simulation
 PARTIALPASTE_FLATFIELDAUTOSELECT;Flat-field auto-selection
 PARTIALPASTE_FLATFIELDBLURRADIUS;Flat-field blur radius
@@ -2167,10 +2167,10 @@ TP_EXPOS_BLACKPOINT_LABEL;Raw Black Points
 TP_EXPOS_WHITEPOINT_LABEL;Raw White Points
 TP_FILMNEGATIVE_BLUE;Blue ratio
 TP_FILMNEGATIVE_BLUEBALANCE;Cool/Warm
-TP_FILMNEGATIVE_COLORSPACE;Inversion colorspace:
-TP_FILMNEGATIVE_COLORSPACE_CAMERA;Camera space
-TP_FILMNEGATIVE_COLORSPACE_TOOLTIP;Select the color space used to perform the negative inversion:\n<b>Camera space</b> : perform inversion before the input profile is applied, as in the previous versions of RT.\n<b>Working space</b> : perform inversion after input profile, using the currently selected working profile.
-TP_FILMNEGATIVE_COLORSPACE_WORKING;Working space
+TP_FILMNEGATIVE_COLORSPACE;Inversion color space:
+TP_FILMNEGATIVE_COLORSPACE_INPUT;Input color space
+TP_FILMNEGATIVE_COLORSPACE_TOOLTIP;Select the color space used to perform the negative inversion:\n<b>Input color space</b> : perform inversion before the input profile is applied, as in the previous versions of RT.\n<b>Working color space</b> : perform inversion after input profile, using the currently selected working profile.
+TP_FILMNEGATIVE_COLORSPACE_WORKING;Working color space
 TP_FILMNEGATIVE_REF_LABEL;Input RGB: %1
 TP_FILMNEGATIVE_REF_PICK;Pick white balance spot
 TP_FILMNEGATIVE_REF_TOOLTIP;Pick a gray patch for white-balancing the output, positive image.

@@ -108,7 +108,7 @@ void getSpotAvgMax(ImageSource *imgsrc, ColorTemp currWB, const std::unique_ptr<
         avg.b /= (spotSize * spotSize);
     };
 
-    if(params->filmNegative.colorSpace == rtengine::FilmNegativeParams::ColorSpace::CAMERA) {
+    if(params->filmNegative.colorSpace == rtengine::FilmNegativeParams::ColorSpace::INPUT) {
         avgMax(avg, max);
     } else {
         // Convert spot image to current working space

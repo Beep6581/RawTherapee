@@ -8746,7 +8746,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             if (ppVersion < 347) {
                 // Backwards compatibility with RT v5.8
-                filmNegative.colorSpace = FilmNegativeParams::ColorSpace::CAMERA;
+                filmNegative.colorSpace = FilmNegativeParams::ColorSpace::INPUT;
                 filmNegative.backCompat = FilmNegativeParams::BackCompat::V1;
                 if (pedited) {
                     pedited->filmNegative.refInput = true;
@@ -8766,7 +8766,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                     pedited->filmNegative.colorSpace = true;
                 }
 
-                filmNegative.colorSpace = FilmNegativeParams::ColorSpace::CAMERA;
+                filmNegative.colorSpace = FilmNegativeParams::ColorSpace::INPUT;
                 // Special value -1 used to mean that this should be treated as a v5.8 profile
                 filmNegative.backCompat = (filmNegative.refInput.r == -1.f)
                     ? FilmNegativeParams::BackCompat::V1

@@ -232,7 +232,7 @@ FilmNegative::FilmNegative() :
     // spotgrid->attach (*slab, 1, 0, 1, 1);
     // spotgrid->attach (*wbsizehelper, 2, 0, 1, 1);
 
-    colorSpace->append(M("TP_FILMNEGATIVE_COLORSPACE_CAMERA"));
+    colorSpace->append(M("TP_FILMNEGATIVE_COLORSPACE_INPUT"));
     colorSpace->append(M("TP_FILMNEGATIVE_COLORSPACE_WORKING"));
     setExpandAlignProperties(colorSpace, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     colorSpace->set_tooltip_markup(M("TP_FILMNEGATIVE_COLORSPACE_TOOLTIP"));

@@ -1238,7 +1238,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     ipf.updateColorProfiles (ICCStore::getInstance()->getDefaultMonitorProfileName(), RenderingIntent(settings->monitorIntent), false, false);
 
     // Process film negative BEFORE colorspace conversion, if needed
-    if (params.filmNegative.enabled && params.filmNegative.backCompat == FilmNegativeParams::BackCompat::CURRENT && params.filmNegative.colorSpace == FilmNegativeParams::ColorSpace::CAMERA) {
+    if (params.filmNegative.enabled && params.filmNegative.backCompat == FilmNegativeParams::BackCompat::CURRENT && params.filmNegative.colorSpace == FilmNegativeParams::ColorSpace::INPUT) {
         ipf.filmNegativeProcess(baseImg, baseImg, params.filmNegative);
     }
 
@@ -1252,7 +1252,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     }
 
     // Process film negative AFTER colorspace conversion, if needed
-    if (params.filmNegative.enabled && params.filmNegative.backCompat == FilmNegativeParams::BackCompat::CURRENT && params.filmNegative.colorSpace != FilmNegativeParams::ColorSpace::CAMERA) {
+    if (params.filmNegative.enabled && params.filmNegative.backCompat == FilmNegativeParams::BackCompat::CURRENT && params.filmNegative.colorSpace != FilmNegativeParams::ColorSpace::INPUT) {
         ipf.filmNegativeProcess(baseImg, baseImg, params.filmNegative);
     }
 
