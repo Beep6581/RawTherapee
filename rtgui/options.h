@@ -323,7 +323,7 @@ public:
     int histogramHeight;
     int histogramDrawMode;
     ScopeType histogramScopeType;
-    bool histogramShowScopeButtons;
+    bool histogramShowOptionButtons;
     bool FileBrowserToolbarSingleRow;
     bool hideTPVScrollbar;
     int whiteBalanceSpotSize;

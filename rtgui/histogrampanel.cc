@@ -128,13 +128,6 @@ HistogramPanel::HistogramPanel () :
     mode1Image  = new RTImage ("histogram-mode-logx-small.png");
     mode2Image  = new RTImage ("histogram-mode-logxy-small.png");
 
-    histImage.reset(new RTImage("histogram-type-histogram-small.png"));
-    histRawImage.reset(new RTImage("histogram-bayer-on-small.png"));
-    paradeImage.reset(new RTImage("histogram-type-parade-small.png"));
-    waveImage.reset(new RTImage("histogram-type-waveform-small.png"));
-    vectHcImage.reset(new RTImage("histogram-type-vectorscope-hc-small.png"));
-    vectHsImage.reset(new RTImage("histogram-type-vectorscope-hs-small.png"));
-
     histImageOn.reset(new RTImage("histogram-type-histogram-small.png"));
     histRawImageOn.reset(new RTImage("histogram-bayer-on-small.png"));
     paradeImageOn.reset(new RTImage("histogram-type-parade-small.png"));
@@ -154,8 +147,8 @@ HistogramPanel::HistogramPanel () :
     showValue = Gtk::manage (new Gtk::ToggleButton ());
     showChro  = Gtk::manage (new Gtk::ToggleButton ());
     showMode  = Gtk::manage (new Gtk::Button ());
-    scopeType = Gtk::manage (new Gtk::ToggleButton ());
     showBAR   = Gtk::manage (new Gtk::ToggleButton ());
+    scopeOptions = Gtk::manage (new Gtk::ToggleButton ());
 
     Gtk::RadioButtonGroup scopeTypeGroup;
     scopeHistBtn = Gtk::manage(new Gtk::RadioButton(scopeTypeGroup));
@@ -183,8 +176,8 @@ HistogramPanel::HistogramPanel () :
     showChro->set_can_focus(false);
     showMode->set_name("histButton");
     showMode->set_can_focus(false);
-    scopeType->set_name("histButton");
-    scopeType->set_can_focus(false);
+    scopeOptions->set_name("histButton");
+    scopeOptions->set_can_focus(false);
     showBAR->set_name("histButton");
     showBAR->set_can_focus(false);
     scopeHistBtn->set_name("histButton");
@@ -206,7 +199,7 @@ HistogramPanel::HistogramPanel () :
     showValue->set_relief (Gtk::RELIEF_NONE);
     showChro->set_relief (Gtk::RELIEF_NONE);
     showMode->set_relief (Gtk::RELIEF_NONE);
-    scopeType->set_relief (Gtk::RELIEF_NONE);
+    scopeOptions->set_relief (Gtk::RELIEF_NONE);
     showBAR->set_relief (Gtk::RELIEF_NONE);
     scopeHistBtn->set_relief (Gtk::RELIEF_NONE);
     scopeHistRawBtn->set_relief (Gtk::RELIEF_NONE);
@@ -221,8 +214,7 @@ HistogramPanel::HistogramPanel () :
     showValue->set_tooltip_text (M("HISTOGRAM_TOOLTIP_L"));
     showChro->set_tooltip_text  (M("HISTOGRAM_TOOLTIP_CHRO"));
     showMode->set_tooltip_text  (M("HISTOGRAM_TOOLTIP_MODE"));
-    scopeType->set_tooltip_text (M("HISTOGRAM_TOOLTIP_TYPE"));
-    showBAR->set_tooltip_text   (M("HISTOGRAM_TOOLTIP_BAR"));
+    scopeOptions->set_tooltip_text(M("HISTOGRAM_TOOLTIP_SHOW_OPTIONS"));
     scopeHistBtn->set_tooltip_text(M("HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM"));
     scopeHistRawBtn->set_tooltip_text(M("HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW"));
     scopeParadeBtn->set_tooltip_text(M("HISTOGRAM_TOOLTIP_TYPE_PARADE"));
@@ -234,8 +226,8 @@ HistogramPanel::HistogramPanel () :
     buttonGrid->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
     persistentButtons = Gtk::manage(new Gtk::Box());
     persistentButtons->set_orientation(Gtk::ORIENTATION_VERTICAL);
-    scopeButtons = Gtk::manage(new Gtk::Box());
-    scopeButtons->set_orientation(Gtk::ORIENTATION_VERTICAL);
+    optionButtons = Gtk::manage(new Gtk::Box());
+    optionButtons->set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     showRed->set_active   (options.histogramRed);
     showGreen->set_active (options.histogramGreen);
@@ -243,7 +235,7 @@ HistogramPanel::HistogramPanel () :
     showValue->set_active (options.histogramLuma);
     showChro->set_active  (options.histogramChroma);
     // no showMode->set_active(), as it's not a ToggleButton
-    scopeType->set_active(options.histogramShowScopeButtons);
+    scopeOptions->set_active(options.histogramShowOptionButtons);
     showBAR->set_active   (options.histogramBar);
 
     showRed->set_image   (showRed->get_active()   ? *redImage   : *redImage_g);
@@ -291,22 +283,19 @@ HistogramPanel::HistogramPanel () :
         case ScopeType::NONE:
             break;
     }
+    scopeOptions->set_image(*Gtk::manage(new RTImage("histogram-ellipsis-small.png")));
     showBAR->set_image   (showBAR->get_active()   ? *barImage   : *barImage_g);
     
-    type_changed();
-    updateHistAreaOptions();
-    if (histogramRGBArea) {
-        updateHistRGBAreaOptions();
-    }
-
     setExpandAlignProperties(showRed  , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(showGreen, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(showBlue , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(showValue, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(showChro , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(showMode , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    setExpandAlignProperties(scopeType, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(scopeOptions, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(showBAR  , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(persistentButtons, false, true, Gtk::ALIGN_START, Gtk::ALIGN_FILL);
+    setExpandAlignProperties(optionButtons, false, true, Gtk::ALIGN_START, Gtk::ALIGN_FILL);
 
     showRed->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::red_toggled), showRed );
     showGreen->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::green_toggled), showGreen );
@@ -314,7 +303,7 @@ HistogramPanel::HistogramPanel () :
     showValue->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::value_toggled), showValue );
     showChro->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::chro_toggled), showChro );
     showMode->signal_released().connect( sigc::mem_fun(*this, &HistogramPanel::mode_released), showMode );
-    scopeType->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::type_pressed) );
+    scopeOptions->signal_toggled().connect(sigc::mem_fun(*this, &HistogramPanel::scopeOptionsToggled));
     showBAR->signal_toggled().connect( sigc::mem_fun(*this, &HistogramPanel::bar_toggled), showBAR );
     scopeHistBtn->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &HistogramPanel::type_selected), scopeHistBtn));
     scopeHistRawBtn->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &HistogramPanel::type_selected), scopeHistRawBtn));
@@ -323,31 +312,34 @@ HistogramPanel::HistogramPanel () :
     scopeVectHcBtn->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &HistogramPanel::type_selected), scopeVectHcBtn));
     scopeVectHsBtn->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &HistogramPanel::type_selected), scopeVectHsBtn));
 
-    persistentButtons->add(*showRed);
-    persistentButtons->add(*showGreen);
-    persistentButtons->add(*showBlue);
-    persistentButtons->add(*showValue);
-    persistentButtons->add(*showChro);
-    persistentButtons->add(*showMode);
-    persistentButtons->add(*scopeType);
-    persistentButtons->add(*showBAR);
+    optionButtons->add(*showRed);
+    optionButtons->add(*showGreen);
+    optionButtons->add(*showBlue);
+    optionButtons->add(*showValue);
+    optionButtons->add(*showChro);
+    optionButtons->add(*showMode);
+    optionButtons->add(*showBAR);
 
-    scopeButtons->add(*scopeHistBtn);
-    scopeButtons->add(*scopeHistRawBtn);
-    scopeButtons->add(*scopeParadeBtn);
-    scopeButtons->add(*scopeWaveBtn);
-    scopeButtons->add(*scopeVectHsBtn);
-    scopeButtons->add(*scopeVectHcBtn);
+    Gtk::VSeparator* separator = Gtk::manage(new Gtk::VSeparator());
+    setExpandAlignProperties(separator, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
+    persistentButtons->add(*scopeHistBtn);
+    persistentButtons->add(*scopeHistRawBtn);
+    persistentButtons->add(*scopeParadeBtn);
+    persistentButtons->add(*scopeWaveBtn);
+    persistentButtons->add(*scopeVectHsBtn);
+    persistentButtons->add(*scopeVectHcBtn);
+    persistentButtons->add(*separator);
+    persistentButtons->add(*scopeOptions);
 
     // Put the button vbox next to the window's border to be less disturbing
     if (options.histogramPosition == 1) {
         buttonGrid->add(*persistentButtons);
-        buttonGrid->add(*scopeButtons);
+        buttonGrid->add(*optionButtons);
 
         add (*buttonGrid);
         add (*gfxGrid);
     } else {
-        buttonGrid->add(*scopeButtons);
+        buttonGrid->add(*optionButtons);
         buttonGrid->add(*persistentButtons);
 
         add (*gfxGrid);
@@ -355,8 +347,14 @@ HistogramPanel::HistogramPanel () :
     }
 
     show_all ();
-    scopeButtons->set_no_show_all();
-    scopeButtons->set_visible(options.histogramShowScopeButtons);
+    optionButtons->set_no_show_all();
+    optionButtons->set_visible(options.histogramShowOptionButtons);
+
+    type_changed();
+    updateHistAreaOptions();
+    if (histogramRGBArea) {
+        updateHistRGBAreaOptions();
+    }
 
     rconn = signal_size_allocate().connect( sigc::mem_fun(*this, &HistogramPanel::resized) );
 }
@@ -469,10 +467,10 @@ void HistogramPanel::mode_released ()
     rgbv_toggled();
 }
 
-void HistogramPanel::type_pressed()
+void HistogramPanel::scopeOptionsToggled()
 {
-    options.histogramShowScopeButtons = scopeType->get_active();
-    scopeButtons->set_visible(scopeType->get_active());
+    options.histogramShowOptionButtons = scopeOptions->get_active();
+    optionButtons->set_visible(scopeOptions->get_active());
 }
 
 void HistogramPanel::type_selected(Gtk::RadioButton* button)
@@ -561,53 +559,48 @@ void HistogramPanel::type_changed()
 
     switch (options.histogramScopeType) {
         case ScopeType::HISTOGRAM:
-            showRed->set_sensitive();
-            showGreen->set_sensitive();
-            showBlue->set_sensitive();
-            showValue->set_sensitive();
-            showChro->set_sensitive();
-            showMode->set_sensitive();
-            scopeType->set_image(*histImage);
+            showRed->show();
+            showGreen->show();
+            showBlue->show();
+            showValue->show();
+            showChro->show();
+            showMode->show();
+            showBAR->show();
+            showBAR->set_tooltip_text(M("HISTOGRAM_TOOLTIP_BAR"));
             histogramRGBArea = histogramRGBAreaHori.get();
             break;
         case ScopeType::HISTOGRAM_RAW:
-            showRed->set_sensitive();
-            showGreen->set_sensitive();
-            showBlue->set_sensitive();
-            showValue->set_sensitive(false);
-            showChro->set_sensitive(false);
-            showMode->set_sensitive();
-            scopeType->set_image(*histRawImage);
+            showRed->show();
+            showGreen->show();
+            showBlue->show();
+            showValue->hide();
+            showChro->hide();
+            showMode->show();
+            showBAR->hide();
             histogramRGBArea = nullptr;
             break;
         case ScopeType::PARADE:
         case ScopeType::WAVEFORM:
-            showRed->set_sensitive();
-            showGreen->set_sensitive();
-            showBlue->set_sensitive();
-            showValue->set_sensitive();
-            showChro->set_sensitive(false);
-            showMode->set_sensitive(false);
-            if (options.histogramScopeType == ScopeType::PARADE) {
-                scopeType->set_image(*paradeImage);
-            } else {
-                scopeType->set_image(*waveImage);
-            }
+            showRed->show();
+            showGreen->show();
+            showBlue->show();
+            showValue->show();
+            showChro->hide();
+            showMode->hide();
+            showBAR->show();
+            showBAR->set_tooltip_text(M("HISTOGRAM_TOOLTIP_BAR"));
             histogramRGBArea = histogramRGBAreaVert.get();
             break;
         case ScopeType::VECTORSCOPE_HC:
         case ScopeType::VECTORSCOPE_HS:
-            showRed->set_sensitive(false);
-            showGreen->set_sensitive(false);
-            showBlue->set_sensitive(false);
-            showValue->set_sensitive(false);
-            showChro->set_sensitive(false);
-            showMode->set_sensitive(false);
-            if (options.histogramScopeType == ScopeType::VECTORSCOPE_HC) {
-                scopeType->set_image(*vectHcImage);
-            } else {
-                scopeType->set_image(*vectHsImage);
-            }
+            showRed->hide();
+            showGreen->hide();
+            showBlue->hide();
+            showValue->hide();
+            showChro->hide();
+            showMode->hide();
+            showBAR->show();
+            showBAR->set_tooltip_text(M("HISTOGRAM_TOOLTIP_CROSSHAIR"));
             histogramRGBArea = nullptr;
             break;
         case ScopeType::NONE:
@@ -679,10 +672,10 @@ void HistogramPanel::reorder (Gtk::PositionType align)
             gfxGrid->add(*histogramRGBArea);
         }
 
-        scopeButtons->reference();
-        removeIfThere(buttonGrid, scopeButtons, false);
-        buttonGrid->add(*scopeButtons);
-        scopeButtons->unreference();
+        optionButtons->reference();
+        removeIfThere(buttonGrid, optionButtons, false);
+        buttonGrid->add(*optionButtons);
+        optionButtons->unreference();
     } else {
         buttonGrid->reference();
         removeIfThere(this, buttonGrid, false);

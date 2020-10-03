@@ -257,7 +257,7 @@ protected:
     Gtk::Grid* gfxGrid;
     Gtk::Grid* buttonGrid;
     Gtk::Box* persistentButtons;
-    Gtk::Box* scopeButtons;
+    Gtk::Box* optionButtons;
     HistogramArea* histogramArea;
     HistogramRGBArea* histogramRGBArea;
     std::unique_ptr<HistogramRGBAreaHori> histogramRGBAreaHori;
@@ -269,7 +269,7 @@ protected:
     Gtk::ToggleButton* showBAR;
     Gtk::ToggleButton* showChro;
     Gtk::Button* showMode;
-    Gtk::ToggleButton* scopeType;
+    Gtk::ToggleButton* scopeOptions;
 
     Gtk::RadioButton* scopeHistBtn;
     Gtk::RadioButton* scopeHistRawBtn;
@@ -291,13 +291,6 @@ protected:
     Gtk::Image *valueImage_g;
     Gtk::Image *barImage_g;
     Gtk::Image *chroImage_g;
-
-    std::unique_ptr<Gtk::Image> histImage;
-    std::unique_ptr<Gtk::Image> histRawImage;
-    std::unique_ptr<Gtk::Image> paradeImage;
-    std::unique_ptr<Gtk::Image> waveImage;
-    std::unique_ptr<Gtk::Image> vectHcImage;
-    std::unique_ptr<Gtk::Image> vectHsImage;
 
     std::unique_ptr<Gtk::Image> histImageOn;
     std::unique_ptr<Gtk::Image> histRawImageOn;
@@ -364,7 +357,7 @@ public:
     void chro_toggled ();
     void bar_toggled ();
     void mode_released ();
-    void type_pressed ();
+    void scopeOptionsToggled();
     void type_selected(Gtk::RadioButton* button);
     void type_changed ();
     void rgbv_toggled ();

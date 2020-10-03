@@ -450,7 +450,7 @@ void Options::setDefaults()
     histogramHeight = 200;
     histogramDrawMode = 0;
     histogramScopeType = ScopeType::HISTOGRAM;
-    histogramShowScopeButtons = false;
+    histogramShowOptionButtons = false;
     curvebboxpos = 1;
     complexity = 2;
     prevdemo = PD_Sidecar;
@@ -1440,8 +1440,8 @@ void Options::readFromFile(Glib::ustring fname)
                     histogramScopeType = static_cast<ScopeType>(keyFile.get_integer("GUI", "HistogramScopeType"));
                 }
 
-                if (keyFile.has_key("GUI", "HistogramShowScopeButtons")) {
-                    histogramShowScopeButtons = keyFile.get_boolean("GUI", "HistogramShowScopeButtons");
+                if (keyFile.has_key("GUI", "HistogramShowOptionButtons")) {
+                    histogramShowOptionButtons = keyFile.get_boolean("GUI", "HistogramShowOptionButtons");
                 }
 
                 if (keyFile.has_key("GUI", "NavigatorRGBUnit")) {
@@ -2267,7 +2267,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "HistogramHeight", histogramHeight);
         keyFile.set_integer("GUI", "HistogramDrawMode", histogramDrawMode);
         keyFile.set_integer("GUI", "HistogramScopeType", rtengine::toUnderlying(histogramScopeType));
-        keyFile.set_boolean("GUI", "HistogramShowScopeButtons", histogramShowScopeButtons);
+        keyFile.set_boolean("GUI", "HistogramShowOptionButtons", histogramShowOptionButtons);
         keyFile.set_integer("GUI", "NavigatorRGBUnit", (int)navRGBUnit);
         keyFile.set_integer("GUI", "NavigatorHSVUnit", (int)navHSVUnit);
         keyFile.set_boolean("GUI", "ShowFilmStripToolBar", showFilmStripToolBar);
