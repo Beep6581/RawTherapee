@@ -497,6 +497,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     profilep = Gtk::manage (new ProfilePanel ());
     ppframe = Gtk::manage(new Gtk::Frame());
+    ppframe->set_label_align(0.025, 0.5);
     ppframe->set_name ("ProfilePanel");
     ppframe->add (*profilep);
     ppframe->set_label (M ("PROFILEPANEL_LABEL"));
@@ -773,6 +774,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     hpanedr->set_name ("EditorRightPaned");
     leftbox->reference ();
     vboxright->reference ();
+    vboxright->set_name ("EditorModules");
 
     if (options.showHistory) {
         hpanedl->pack1 (*leftbox, false, false);

@@ -165,7 +165,6 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     // ---- Median FIltering ----
 
     Gtk::Frame* medianFrame = Gtk::manage (new Gtk::Frame ());
-    medianFrame->set_label_align(0.025, 0.5);
 
     Gtk::VBox *medianVBox = Gtk::manage ( new Gtk::VBox());
     medianVBox->set_spacing(2);

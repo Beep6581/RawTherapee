@@ -74,11 +74,13 @@ LensProfilePanel::LensProfilePanel() :
     // Main containers:
 
     Gtk::Frame *nodesFrame = Gtk::manage(new Gtk::Frame(M("TP_LENSPROFILE_MODE_HEADER")));
+    nodesFrame->set_label_align (0.025, 0.5);
 
     modesGrid->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(modesGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
     Gtk::Frame *distFrame = Gtk::manage(new Gtk::Frame(M("TP_LENSPROFILE_USE_HEADER")));
+    distFrame->set_label_align (0.025, 0.5);
 
     distGrid->get_style_context()->add_class("grid-spacing");
     setExpandAlignProperties(distGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
