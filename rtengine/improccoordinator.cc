@@ -609,7 +609,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             if (params->filmNegative.enabled) {
 
                 // Process film negative AFTER colorspace conversion
-                if(params->filmNegative.colorSpace != FilmNegativeParams::ColorSpace::INPUT) {
+                if (params->filmNegative.colorSpace != FilmNegativeParams::ColorSpace::INPUT) {
                     imgsrc->convertColorSpace(orig_prev, params->icm, currWB);
                 }
 

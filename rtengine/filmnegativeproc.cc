@@ -58,7 +58,8 @@ using rtengine::TMatrix;
 using rtengine::Color;
 using RGB = rtengine::procparams::FilmNegativeParams::RGB;
 
-Coord2D translateCoord(const rtengine::ImProcFunctions& ipf, int fw, int fh, int x, int y) {
+Coord2D translateCoord(const rtengine::ImProcFunctions& ipf, int fw, int fh, int x, int y)
+{
 
     const std::vector<Coord2D> points = {Coord2D(x, y)};
 
@@ -72,28 +73,30 @@ Coord2D translateCoord(const rtengine::ImProcFunctions& ipf, int fw, int fh, int
 
 
 void getSpotAvgMax(ImageSource *imgsrc, ColorTemp currWB, const std::unique_ptr<rtengine::procparams::ProcParams> &params,
-                 Coord2D p, int tr, int spotSize, RGB &avg, RGB &max)
+                   Coord2D p, int tr, int spotSize, RGB &avg, RGB &max)
 {
-    int x1 = MAX(0, (int)p.x - spotSize/2);
-    int y1 = MAX(0, (int)p.y - spotSize/2);
+    int x1 = MAX(0, (int)p.x - spotSize / 2);
+    int y1 = MAX(0, (int)p.y - spotSize / 2);
     PreviewProps pp(x1, y1, spotSize, spotSize, 1);
 
     if (settings->verbose) {
-        printf("Spot: %d,%d   %d,%d\n", x1, y1, x1+spotSize/2, y1+spotSize/2);
+        printf("Spot: %d,%d   %d,%d\n", x1, y1, x1 + spotSize / 2, y1 + spotSize / 2);
     }
 
-    rtengine::Imagefloat spotImg(spotSize,spotSize);
+    rtengine::Imagefloat spotImg(spotSize, spotSize);
     imgsrc->getImage(currWB, tr, &spotImg, pp, params->toneCurve, params->raw);
 
-    auto avgMax = [spotSize, &spotImg](RGB &avg, RGB &max) -> void {
+    auto avgMax = [spotSize, &spotImg](RGB & avg, RGB & max) -> void {
         avg = {};
         max = {};
-        for (int i = 0; i < spotSize; ++i) {
+
+        for (int i = 0; i < spotSize; ++i)
+        {
             for (int j = 0; j < spotSize; ++j) {
 
-                float r = spotImg.r(i,j);
-                float g = spotImg.g(i,j);
-                float b = spotImg.b(i,j);
+                float r = spotImg.r(i, j);
+                float g = spotImg.g(i, j);
+                float b = spotImg.b(i, j);
 
                 avg.r += r;
                 avg.g += g;
@@ -103,12 +106,13 @@ void getSpotAvgMax(ImageSource *imgsrc, ColorTemp currWB, const std::unique_ptr<
                 max.b = MAX(max.b, b);
             }
         }
+
         avg.r /= (spotSize * spotSize);
         avg.g /= (spotSize * spotSize);
         avg.b /= (spotSize * spotSize);
     };
 
-    if(params->filmNegative.colorSpace == rtengine::FilmNegativeParams::ColorSpace::INPUT) {
+    if (params->filmNegative.colorSpace == rtengine::FilmNegativeParams::ColorSpace::INPUT) {
         avgMax(avg, max);
     } else {
         // Convert spot image to current working space
@@ -149,9 +153,9 @@ void calcMedians(
 
     for (int ii = y1; ii < y2; ii ++) {
         for (int jj = x1; jj < x2; jj ++) {
-            rv.push_back( input->r (ii, jj) );
-            gv.push_back( input->g (ii, jj) );
-            bv.push_back( input->b (ii, jj) );
+            rv.push_back(input->r(ii, jj));
+            gv.push_back(input->g(ii, jj));
+            bv.push_back(input->b(ii, jj));
         }
     }
 
@@ -162,15 +166,16 @@ void calcMedians(
 }
 
 
-RGB getMedians(const rtengine::Imagefloat* input, int borderPercent) {
+RGB getMedians(const rtengine::Imagefloat* input, int borderPercent)
+{
     float rmed, gmed, bmed;
     // Cut 20% border from medians calculation. It will probably contain outlier values
     // from the film holder, which will bias the median result.
     const int bW = input->getWidth() * borderPercent / 100;
     const int bH = input->getHeight() * borderPercent / 100;
     calcMedians(input, bW, bH,
-        input->getWidth() - bW, input->getHeight() - bH,
-        rmed, gmed, bmed);
+                input->getWidth() - bW, input->getHeight() - bH,
+                rmed, gmed, bmed);
 
     if (settings->verbose) {
         printf("Channel medians: R=%g, G=%g, B=%g\n", rmed, gmed, bmed);
@@ -183,7 +188,7 @@ RGB getMedians(const rtengine::Imagefloat* input, int borderPercent) {
 // TODO not needed for now
 void convertColorSpace(Imagefloat* input, const TMatrix &src2xyz, const TMatrix &xyz2dest)
 {
-    
+
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
@@ -296,8 +301,8 @@ bool doProcess(Imagefloat *input, Imagefloat *output,
 
 
 bool rtengine::ImProcFunctions::filmNegativeProcess(
-        Imagefloat *input, Imagefloat *output, FilmNegativeParams &fnp,
-        const RAWParams &rawParams, const ImageSource* imgsrc, const ColorTemp &currWB)
+    Imagefloat *input, Imagefloat *output, FilmNegativeParams &fnp,
+    const RAWParams &rawParams, const ImageSource* imgsrc, const ColorTemp &currWB)
 {
     //BENCHFUNMICRO
 
@@ -364,9 +369,9 @@ bool rtengine::ImProcFunctions::filmNegativeProcess(
 
     if (settings->verbose && fnp.backCompat != FilmNegativeParams::BackCompat::CURRENT) {
         printf("Upgraded from V%d - refIn: R=%g G=%g B=%g refOut: R=%g G=%g B=%g\n",
-            (int)fnp.backCompat,
-            static_cast<double>(refIn.r), static_cast<double>(refIn.g), static_cast<double>(refIn.b),
-            static_cast<double>(refOut.r), static_cast<double>(refOut.g), static_cast<double>(refOut.b));
+               (int)fnp.backCompat,
+               static_cast<double>(refIn.r), static_cast<double>(refIn.g), static_cast<double>(refIn.b),
+               static_cast<double>(refOut.r), static_cast<double>(refOut.g), static_cast<double>(refOut.b));
     }
 
     // FilmNeg params are now upgraded to the latest version
@@ -550,15 +555,10 @@ void rtengine::Thumbnail::processFilmNegativeV2(
         // Channel medians
         float rmed, gmed, bmed;
 
-        // if (oldChannelScaling) {
-        //     // If using the old method, calculate nedians on the whole image
-        //     calcMedians(baseImg, 0, 0, rwidth, rheight, rmed, gmed, bmed);
-        // } else {
-            // The new method cuts out a 20% border from medians calculation.
-            const int bW = rwidth * 20 / 100;
-            const int bH = rheight * 20 / 100;
-            calcMedians(baseImg, bW, bH, rwidth - bW, rheight - bH, rmed, gmed, bmed);
-        // }
+        // The new method cuts out a 20% border from medians calculation.
+        const int bW = rwidth * 20 / 100;
+        const int bH = rheight * 20 / 100;
+        calcMedians(baseImg, bW, bH, rwidth - bW, rheight - bH, rmed, gmed, bmed);
 
         if (settings->verbose) {
             printf("FilmNeg legacy V2 :: Thumbnail input channel medians: %g %g %g\n", rmed, gmed, bmed);

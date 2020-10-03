@@ -31,11 +31,13 @@
 namespace
 {
 
-double toAdjuster(double v) {
+double toAdjuster(double v)
+{
     return CLAMP(std::log2(v), 6, 16) - 6;
 }
 
-double fromAdjuster(double v) {
+double fromAdjuster(double v)
+{
     return std::pow(2, v + 6);
 }
 
@@ -65,10 +67,10 @@ Adjuster* createLevelAdjuster(AdjusterListener* listener, const Glib::ustring& l
 }
 
 Adjuster* createBalanceAdjuster(AdjusterListener* listener, const Glib::ustring& label, double minV, double maxV, double defaultVal,
-        const Glib::ustring& leftIcon, const Glib::ustring& rightIcon)
+                                const Glib::ustring& leftIcon, const Glib::ustring& rightIcon)
 {
     Adjuster* const adj = Gtk::manage(new Adjuster(label, minV, maxV, 0.01, defaultVal,
-        Gtk::manage(new RTImage(leftIcon)), Gtk::manage(new RTImage(rightIcon)) ));
+                                      Gtk::manage(new RTImage(leftIcon)), Gtk::manage(new RTImage(rightIcon))));
     adj->setAdjusterListener(listener);
     adj->setLogScale(9, 0, true);
 
@@ -87,7 +89,7 @@ Glib::ustring fmt(const RGB& rgb)
         return Glib::ustring::format(std::fixed, std::setprecision(1), rgb.r) + " " +
                Glib::ustring::format(std::fixed, std::setprecision(1), rgb.g) + " " +
                Glib::ustring::format(std::fixed, std::setprecision(1), rgb.b);
-    }    
+    }
 }
 
 
@@ -128,9 +130,9 @@ RGB getFilmNegativeExponents(const RGB &ref1, const RGB &ref2) // , const RGB &c
     //     };
 
     RGB newExps;
-    newExps.r = logBase(clearVals.r / denseVals.r, denseGreenRatio );
+    newExps.r = logBase(clearVals.r / denseVals.r, denseGreenRatio);
     newExps.g = 1.f; // logBase(ratio(clearVals.g, denseVals.g), ratio(denseValsOut.g, clearValsOut.g) );
-    newExps.b = logBase(clearVals.b / denseVals.b, denseGreenRatio );
+    newExps.b = logBase(clearVals.b / denseVals.b, denseGreenRatio);
 
 
 
@@ -148,7 +150,8 @@ RGB getFilmNegativeExponents(const RGB &ref1, const RGB &ref2) // , const RGB &c
 
 }
 
-void temp2rgb(double outLev, double temp, double green, RGB &refOut) {
+void temp2rgb(double outLev, double temp, double green, RGB &refOut)
+{
     rtengine::ColorTemp ct = rtengine::ColorTemp(temp, green, 1., "Custom");
 
     double rm, gm, bm;
@@ -162,14 +165,15 @@ void temp2rgb(double outLev, double temp, double green, RGB &refOut) {
 }
 
 
-void rgb2temp(const RGB &refOut, double &outLev, double &temp, double &green) {
+void rgb2temp(const RGB &refOut, double &outLev, double &temp, double &green)
+{
     double maxVal = rtengine::max(refOut.r, refOut.g, refOut.b);
 
     rtengine::ColorTemp ct = rtengine::ColorTemp(
-        refOut.r / maxVal,
-        refOut.g / maxVal,
-        refOut.b / maxVal,
-        1.);
+                                 refOut.r / maxVal,
+                                 refOut.g / maxVal,
+                                 refOut.b / maxVal,
+                                 1.);
 
     outLev = maxVal;
     temp = ct.getTemp();
@@ -238,7 +242,7 @@ FilmNegative::FilmNegative() :
     colorSpace->set_tooltip_markup(M("TP_FILMNEGATIVE_COLORSPACE_TOOLTIP"));
 
     Gtk::Grid* csGrid = Gtk::manage(new Gtk::Grid());
-    Gtk::Label* csLabel = Gtk::manage (new Gtk::Label (M("TP_FILMNEGATIVE_COLORSPACE")));
+    Gtk::Label* csLabel = Gtk::manage(new Gtk::Label(M("TP_FILMNEGATIVE_COLORSPACE")));
     csGrid->attach(*csLabel, 0, 0, 1, 1);
     csGrid->attach(*colorSpace, 1, 0, 1, 1);
 
@@ -307,9 +311,9 @@ FilmNegative::~FilmNegative()
 void FilmNegative::readOutputSliders(RGB &refOut)
 {
     temp2rgb(fromAdjuster(outputLevel->getValue()),
-        NEUTRAL_TEMP.getTemp() / std::pow(2., blueBalance->getValue()),
-        NEUTRAL_TEMP.getGreen() / std::pow(2., greenBalance->getValue()),
-        refOut);
+             NEUTRAL_TEMP.getTemp() / std::pow(2., blueBalance->getValue()),
+             NEUTRAL_TEMP.getGreen() / std::pow(2., greenBalance->getValue()),
+             refOut);
 }
 
 void FilmNegative::writeOutputSliders(const RGB &refOut)
@@ -363,7 +367,7 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
 
     // If reference output values are not set in params, set the default output
     // chosen for median estimation: gray 1/24th of max
-    if(pp->filmNegative.refOutput.r <= 0) {
+    if (pp->filmNegative.refOutput.r <= 0) {
         float gray = rtengine::MAXVALF / 24.f;
         writeOutputSliders({gray, gray, gray});
     } else {
@@ -397,7 +401,7 @@ void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
     }
 
     pp->filmNegative.refInput = refInputValues;
-    
+
     readOutputSliders(pp->filmNegative.refOutput);
 
     if (paramsUpgraded) {
@@ -507,22 +511,21 @@ void FilmNegative::filmRefValuesChanged(const RGB &refInput, const RGB &refOutpu
 {
 
     idle_register.add(
-        [this, refInput, refOutput]() -> bool
-        {
+        [this, refInput, refOutput]() -> bool {
             refInputValues = refInput;
             paramsUpgraded = true;
-
+    
             disableListener();
-
+    
             refInputLabel->set_markup(
-                Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), fmt(refInputValues)));            
-            
+                Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), fmt(refInputValues)));
+    
             writeOutputSliders(refOutput);
-
+    
             outputLevel->show();
             blueBalance->show();
             greenBalance->show();
-
+    
             enableListener();
             return false;
         }
@@ -570,8 +573,9 @@ bool FilmNegative::button1Pressed(int modifierKey)
                 // from channel values and updating parameters.
 
                 RGB ref1, ref2, dummy;
+
                 if (fnp->getFilmNegativeSpot(refSpotCoords[0], 32, ref1, dummy) &&
-                    fnp->getFilmNegativeSpot(refSpotCoords[1], 32, ref2, dummy)) {
+                        fnp->getFilmNegativeSpot(refSpotCoords[1], 32, ref2, dummy)) {
 
                     disableListener();
 
@@ -607,10 +611,10 @@ bool FilmNegative::button1Pressed(int modifierKey)
 
             RGB filmBaseOut;
             fnp->getFilmNegativeSpot(provider->posImage, 32, refInputValues, filmBaseOut);
-            
+
             disableListener();
 
-            float gray = rtengine::Color::rgbLuminance(filmBaseOut.r , filmBaseOut.g , filmBaseOut.b);
+            float gray = rtengine::Color::rgbLuminance(filmBaseOut.r, filmBaseOut.g, filmBaseOut.b);
             writeOutputSliders({gray, gray, gray});
 
             refInputLabel->set_text(
@@ -625,7 +629,7 @@ bool FilmNegative::button1Pressed(int modifierKey)
                     round(refInputValues.r), round(refInputValues.g), round(refInputValues.b)
                 )
             );
-            
+
         }
     }
 
