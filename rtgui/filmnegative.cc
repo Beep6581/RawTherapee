@@ -401,7 +401,7 @@ void FilmNegative::setDefaults(const rtengine::procparams::ProcParams* defParams
     greenExp->setValue(defParams->filmNegative.greenExp);
     blueRatio->setValue(defParams->filmNegative.blueRatio);
 
-    outputLevel->setValue(rtengine::MAXVALF / 24.f);
+    outputLevel->setValue(toAdjuster(rtengine::MAXVALF / 24.f));
     greenBalance->setValue(1.);
     blueBalance->setValue(1.);
 

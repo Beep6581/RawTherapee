@@ -119,6 +119,11 @@ void getSpotAvgMax(ImageSource *imgsrc, ColorTemp currWB, const std::unique_ptr<
         // TODO handle custom color profile !
     }
 
+    // Clip away zeroes or negative numbers, you never know
+    avg.r = MAX(avg.r, 1.f);
+    avg.g = MAX(avg.g, 1.f);
+    avg.b = MAX(avg.b, 1.f);
+
     if (settings->verbose) {
         printf("Average Spot RGB: %f,%f,%f\n", avg.r, avg.g, avg.b);
     }
