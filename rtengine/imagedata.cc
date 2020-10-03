@@ -69,6 +69,15 @@ T getFromFrame(
     return {};
 }
 
+const std::string& validateUft8(const std::string& str, const std::string& on_error = "???")
+{
+    if (Glib::ustring(str).validate()) {
+        return str;
+    }
+
+    return on_error;
+}
+
 }
 
 FramesMetaData* FramesMetaData::fromFile (const Glib::ustring& fname, std::unique_ptr<RawMetaDataLocation> rml, bool firstFrameOnly)
@@ -120,7 +129,8 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
         }
     }
     if (tag) {
-        make = tag->valueToString();
+        make = validateUft8(tag->valueToString());
+
         // Same dcraw treatment
         for (const auto& corp : {
             "Canon",
@@ -154,7 +164,7 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
 
     tag = newFrameRootDir->findTagUpward("Model");
     if (tag) {
-        model = tag->valueToString();
+        model = validateUft8(tag->valueToString());
     }
 
     if (!model.empty()) {
@@ -189,13 +199,13 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
     if (model == "Unknown") {
         tag = newFrameRootDir->findTag("UniqueCameraModel");
         if (tag) {
-            model = tag->valueToString();
+            model = validateUft8(tag->valueToString());
         }
     }
 
     tag = newFrameRootDir->findTagUpward("Orientation");
     if (tag) {
-        orientation = tag->valueToString ();
+        orientation = validateUft8(tag->valueToString());
     }
 
     // Look for Rating metadata in the following order:
@@ -303,7 +313,7 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
         }
 
         if (tag) {
-            serial = tag->valueToString();
+            serial = validateUft8(tag->valueToString());
         }
 
         // guess lens...
@@ -311,9 +321,9 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
 
         // Sometimes (e.g. DNG) EXIF already contains lens data
 
-        if(!make.compare (0, 8, "FUJIFILM")) {
-            if(exif->getTag ("LensModel")) {
-                lens = exif->getTag ("LensModel")->valueToString ();
+        if (!make.compare(0, 8, "FUJIFILM")) {
+            if (exif->getTag("LensModel")) {
+                lens = validateUft8(exif->getTag("LensModel")->valueToString());
             }
         } else if(!make.compare (0, 4, "SONY")) {
             if (iso_speed == 65535 || iso_speed == 0) {
@@ -340,9 +350,9 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                         const rtexif::Tag* const lens_make = exif->getTag(0xA433);
                         const std::string make =
                             lens_make
-                                ? lens_make->valueToString()
+                                ? validateUft8(lens_make->valueToString())
                                 : std::string();
-                        const std::string model = lens_model->valueToString();
+                        const std::string model = validateUft8(lens_model->valueToString());
 
                         if (!model.empty()) {
                             lens = make;
@@ -374,8 +384,8 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
 
                     bool lensOk = false;
 
-                    if (mnote->getTag ("LensData")) {
-                        std::string ldata = mnote->getTag ("LensData")->valueToString ();
+                    if (mnote->getTag("LensData")) {
+                        std::string ldata = validateUft8(mnote->getTag("LensData")->valueToString());
                         size_t pos;
 
                         if (ldata.size() > 10 && (pos = ldata.find ("Lens = ")) != Glib::ustring::npos) {
@@ -386,11 +396,11 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                             } else {
                                 size_t pos = lens.find("$FL$");        // is there a placeholder for focallength?
 
-                                if(pos != Glib::ustring::npos) {                // then fill in focallength
-                                    lens = lens.replace(pos, 4, exif->getTag ("FocalLength")->valueToString ());
+                                if (pos != Glib::ustring::npos) {               // then fill in focallength
+                                    lens = lens.replace(pos, 4, validateUft8(exif->getTag("FocalLength")->valueToString()));
 
-                                    if(mnote->getTag ("LensType")) {
-                                        std::string ltype = mnote->getTag ("LensType")->valueToString ();
+                                    if (mnote->getTag("LensType")) {
+                                        const std::string ltype = validateUft8(mnote->getTag("LensType")->valueToString());
 
                                         if(ltype.find("MF = Yes") != Glib::ustring::npos) { // check, whether it's a MF lens, should be always
                                             lens = lens.replace(0, 7, "MF");
@@ -408,8 +418,8 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                         }
                     }
 
-                    if (!lensOk && mnote->getTag ("Lens")) {
-                        std::string ldata = mnote->getTag ("Lens")->valueToString ();
+                    if (!lensOk && mnote->getTag("Lens")) {
+                        const std::string ldata = validateUft8(mnote->getTag("Lens")->valueToString());
                         size_t i = 0, j = 0;
                         double n[4] = {0.0};
 
@@ -445,8 +455,8 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                         lens = str.str();
 
                         // Look whether it's MF or AF
-                        if(mnote->getTag ("LensType")) {
-                            std::string ltype = mnote->getTag ("LensType")->valueToString ();
+                        if (mnote->getTag("LensType")) {
+                            const std::string ltype = validateUft8(mnote->getTag("LensType")->valueToString());
 
                             if(ltype.find("MF = Yes") != Glib::ustring::npos) { // check, whether it's a MF lens
                                 lens = lens.replace(0, 7, "MF");    // replace 'Unknwon' with 'MF'
@@ -471,7 +481,7 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
 
                     if ( lt ) {
                         if (lt->toInt()) {
-                            std::string ldata = lt->valueToString ();
+                            const std::string ldata = validateUft8(lt->valueToString());
 
                             if (ldata.size() > 1) {
                                 found = true;
@@ -491,8 +501,8 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                     if( !found || remaining_size < 7U ) {
                         lt = mnote->findTag("LensID");
 
-                        if ( lt ) {
-                            std::string ldata = lt->valueToString ();
+                        if (lt) {
+                            const std::string ldata = validateUft8(lt->valueToString());
 
                             if (ldata.size() > 1) {
                                 lens = ldata;
@@ -510,8 +520,9 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                             }
                         }
                     }
-                    if (mnote->getTag ("LensType")) {
-                        lens = mnote->getTag ("LensType")->valueToString();
+
+                    if (mnote->getTag("LensType")) {
+                        lens = validateUft8(mnote->getTag("LensType")->valueToString());
                         // If MakeNotes are vague, fall back to Exif LensMake and LensModel if set
                         // https://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Pentax.html#LensType
                         if (lens == "M-42 or No Lens" || lens == "K or M Lens" || lens == "A Series Lens" || lens == "Sigma") {
@@ -538,7 +549,7 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                     }
                 } else if (mnote && (!make.compare (0, 4, "SONY") || !make.compare (0, 6, "KONICA"))) {
                     if (mnote->getTag ("LensID")) {
-                        lens = mnote->getTag ("LensID")->valueToString ();
+                        lens = validateUft8(mnote->getTag("LensID")->valueToString());
                         if (lens == "Unknown") {
                             lens_from_make_and_model();
                         }
@@ -547,8 +558,8 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                     if (mnote->getTag ("Equipment"))  {
                         rtexif::TagDirectory* eq = mnote->getTag ("Equipment")->getDirectory ();
 
-                        if (eq->getTag ("LensType")) {
-                            lens = eq->getTag ("LensType")->valueToString ();
+                        if (eq->getTag("LensType")) {
+                            lens = validateUft8(eq->getTag("LensType")->valueToString());
                         }
                     }
                     if (lens == "Unknown") {
@@ -556,7 +567,7 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                     }
                 } else if (mnote && !make.compare (0, 9, "Panasonic")) {
                     if (mnote->getTag ("LensType")) {
-                        std::string panalens = mnote->getTag("LensType")->valueToString();
+                        const std::string panalens = validateUft8(mnote->getTag("LensType")->valueToString());
 
                         if (panalens.find("LUMIX") != Glib::ustring::npos) {
                             lens = "Panasonic " + panalens;
@@ -566,10 +577,10 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                         }
                     }
                 }
-            } else if (exif->getTag ("DNGLensInfo")) {
-                lens = exif->getTag ("DNGLensInfo")->valueToString ();
+            } else if (exif->getTag("DNGLensInfo")) {
+                lens = validateUft8(exif->getTag("DNGLensInfo")->valueToString());
             } else if (!lens_from_make_and_model() && exif->getTag ("LensInfo")) {
-                lens = exif->getTag ("LensInfo")->valueToString ();
+                lens = validateUft8(exif->getTag("LensInfo")->valueToString());
             }
         }
     }
