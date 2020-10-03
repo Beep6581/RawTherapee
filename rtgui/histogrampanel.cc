@@ -1817,14 +1817,13 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
                 cx = w / 2.f + scope_size * pointer_a * ab_factor;
                 cy = h / 2.f - scope_size * pointer_b * ab_factor;
             }
+            const float crosshair_size = 20.f * s;
             cr->set_source_rgba(1, 1, 1, 0.5);
-            cr->set_dash(ch_ds, 0);
-            cr->move_to(0, cy);
-            cr->line_to(w, cy);
-            cr->move_to(cx, 0);
-            cr->line_to(cx, h);
+            cr->move_to(cx - crosshair_size, cy);
+            cr->line_to(cx + crosshair_size, cy);
+            cr->move_to(cx, cy - crosshair_size);
+            cr->line_to(cx, cy + crosshair_size);
             cr->stroke();
-            cr->unset_dash();
             cr->arc(cx, cy, 3 * s, 0, 2 * RT_PI);
             cr->set_source_rgb(1, 1, 1);
             cr->fill_preserve();
