@@ -6099,7 +6099,6 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         detailthr->set_tooltip_text(M("TP_LOCALLAB_DENOITHR_TOOLTIP"));
         adjblur->set_tooltip_text(M("TP_LOCALLAB_DENOIEQUALCHRO_TOOLTIP"));
         bilateral->set_tooltip_text(M("TP_LOCALLAB_DENOIBILAT_TOOLTIP"));
-
         noiselumc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
         expmaskbl->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         showmaskblMethodtyp->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKTYP_TOOLTIP"));
