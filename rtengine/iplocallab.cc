@@ -811,10 +811,16 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     } else if (locallab.spots.at(sp).medMethod == "99") {
         lp.medmet = 3;
     }
-
+/*
     if (locallab.spots.at(sp).blurMethod == "norm") {
         lp.blurmet = 0;
     } else if (locallab.spots.at(sp).blurMethod == "inv") {
+        lp.blurmet = 1;
+    }
+*/
+    if (locallab.spots.at(sp).invbl == false) {
+        lp.blurmet = 0;
+    } else if (locallab.spots.at(sp).invbl == true) {
         lp.blurmet = 1;
     }
 
@@ -9809,7 +9815,9 @@ void ImProcFunctions::Lab_Local(
     }
 
     bool execmaskblur = (lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.smasktyp != 1;
-    if (((radius > 1.5 * GAUSS_SKIP && lp.rad > 1.6) || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 0 || execmaskblur) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
+    int strengr = params->locallab.spots.at(sp).strengr;
+
+    if (((radius > 1.5 * GAUSS_SKIP && lp.rad > 1.6) || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 0 || strengr > 0 || execmaskblur) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
  //   if (((radius > 1.5 * GAUSS_SKIP && lp.rad > 1.6) || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 0 || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
         std::unique_ptr<LabImage> tmp1;
         std::unique_ptr<LabImage> tmp2;
@@ -9824,8 +9832,7 @@ void ImProcFunctions::Lab_Local(
 
         bool fft = params->locallab.spots.at(sp).fftwbl;
         int isogr = params->locallab.spots.at(sp).isogr;
-        int strengr = params->locallab.spots.at(sp).strengr;
-        int scalegr = params->locallab.spots.at(sp).scalegr;
+        int scalegr = 100;//params->locallab.spots.at(sp).scalegr;
 
 
 

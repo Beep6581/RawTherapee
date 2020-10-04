@@ -5753,6 +5753,7 @@ LocallabBlur::LocallabBlur():
     epsbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EPSBL"), -10, 10, 1, 0))),
     sensibn(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 40))),
     blurMethod(Gtk::manage(new MyComboBoxText())),
+    invbl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVBL")))),
     chroMethod(Gtk::manage(new MyComboBoxText())),
     activlum(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIV")))),
     expdenoise(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI_EXP")))),
@@ -5810,6 +5811,7 @@ LocallabBlur::LocallabBlur():
     blMethodConn = blMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabBlur::blMethodChanged));
 
     fftwblConn = fftwbl->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::fftwblChanged));
+    invblConn = invbl->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::invblChanged));
 
     radius->setAdjusterListener(this);
 
@@ -5980,7 +5982,7 @@ LocallabBlur::LocallabBlur():
     ToolParamBlock* const grainBox = Gtk::manage(new ToolParamBlock());
     grainBox->pack_start(*isogr);
     grainBox->pack_start(*strengr);
-    grainBox->pack_start(*scalegr);
+//    grainBox->pack_start(*scalegr);
     grainFrame->add(*grainBox);
     blnoisebox->pack_start(*grainFrame);
     blnoisebox->pack_start(*medMethod);
@@ -5989,7 +5991,8 @@ LocallabBlur::LocallabBlur():
     blnoisebox->pack_start(*strbl);
     blnoisebox->pack_start(*epsbl);
     blnoisebox->pack_start(*sensibn);
-    blnoisebox->pack_start(*blurMethod);
+//    blnoisebox->pack_start(*blurMethod);
+    blnoisebox->pack_start(*invbl);
     blnoisebox->pack_start(*chroMethod);
     // blnoisebox->pack_start(*activlum);
     expblnoise->add(*blnoisebox, false);
@@ -6074,10 +6077,28 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         expblnoise->set_tooltip_markup(M("TP_LOCALLAB_BLUMETHOD_TOOLTIP"));
         radius->set_tooltip_text(M("TP_LOCALLAB_RADIUS_TOOLTIP"));
+        strength->set_tooltip_text(M("TP_LOCALLAB_NOISE_TOOLTIP"));
+        grainFrame->set_tooltip_text(M("TP_LOCALLAB_GRAIN_TOOLTIP"));
         sensibn->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+        medMethod->set_tooltip_text(M("TP_LOCALLAB_MEDIAN_TOOLTIP"));
+        itera->set_tooltip_text(M("TP_LOCALLAB_MEDIANITER_TOOLTIP"));
+        guidbl->set_tooltip_text(M("TP_LOCALLAB_GUIDBL_TOOLTIP"));
+        strbl->set_tooltip_text(M("TP_LOCALLAB_GUIDSTRBL_TOOLTIP"));
+        epsbl->set_tooltip_text(M("TP_LOCALLAB_GUIDEPSBL_TOOLTIP"));
         blurMethod->set_tooltip_markup(M("TP_LOCALLAB_BLMETHOD_TOOLTIP"));
+        invbl->set_tooltip_markup(M("TP_LOCALLAB_INVBL_TOOLTIP"));
         expdenoise->set_tooltip_markup(M("TP_LOCALLAB_DENOI_TOOLTIP"));
+        quamethod->set_tooltip_markup(M("TP_LOCALLAB_DENOIQUA_TOOLTIP"));
         wavshapeden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
+        LocalcurveEditorwavden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
+        noiselequal->set_tooltip_text(M("TP_LOCALLAB_DENOIEQUAL_TOOLTIP"));
+        noiselumdetail->set_tooltip_text(M("TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP"));
+        noisechrof->set_tooltip_text(M("TP_LOCALLAB_DENOICHROF_TOOLTIP"));
+        noisechroc->set_tooltip_text(M("TP_LOCALLAB_DENOICHROC_TOOLTIP"));
+        noisechrodetail->set_tooltip_text(M("TP_LOCALLAB_DENOICHRODET_TOOLTIP"));
+        detailthr->set_tooltip_text(M("TP_LOCALLAB_DENOITHR_TOOLTIP"));
+        adjblur->set_tooltip_text(M("TP_LOCALLAB_DENOIEQUALCHRO_TOOLTIP"));
+        bilateral->set_tooltip_text(M("TP_LOCALLAB_DENOIBILAT_TOOLTIP"));
         noiselumc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
         expmaskbl->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         showmaskblMethodtyp->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKTYP_TOOLTIP"));
@@ -6103,8 +6124,28 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         sensiden->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
 
     } else {
+        
         expblnoise->set_tooltip_markup("");
         radius->set_tooltip_text("");
+        strength->set_tooltip_text("");
+        grainFrame->set_tooltip_text("");
+        sensibn->set_tooltip_text("");
+        medMethod->set_tooltip_text("");
+        itera->set_tooltip_text("");
+        guidbl->set_tooltip_text("");
+        strbl->set_tooltip_text("");
+        epsbl->set_tooltip_text("");
+        blurMethod->set_tooltip_markup("");
+        quamethod->set_tooltip_markup("");
+        LocalcurveEditorwavden->setTooltip("");
+        noiselequal->set_tooltip_text("");
+        noiselumdetail->set_tooltip_text("");
+        noisechrof->set_tooltip_text("");
+        noisechroc->set_tooltip_text("");
+        noisechrodetail->set_tooltip_text("");
+        detailthr->set_tooltip_text("");
+        adjblur->set_tooltip_text("");
+        bilateral->set_tooltip_text("");
         sensibn->set_tooltip_text("");
         blurMethod->set_tooltip_markup("");
         expdenoise->set_tooltip_markup("");
@@ -6148,6 +6189,7 @@ void LocallabBlur::disableListener()
 
     blMethodConn.block(true);
     fftwblConn.block(true);
+    invblConn.block(true);
     medMethodConn.block(true);
     blurMethodConn.block(true);
     chroMethodConn.block(true);
@@ -6165,6 +6207,7 @@ void LocallabBlur::enableListener()
 
     blMethodConn.block(false);
     fftwblConn.block(false);
+    invblConn.block(false);
     medMethodConn.block(false);
     blurMethodConn.block(false);
     chroMethodConn.block(false);
@@ -6202,6 +6245,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         }
 
         fftwbl->set_active(spot.fftwbl);
+        invbl->set_active(spot.invbl);
         radius->setValue(spot.radius);
         strength->setValue(spot.strength);
         isogr->setValue((double)spot.isogr);
@@ -6321,6 +6365,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         }
 
         spot.fftwbl = fftwbl->get_active();
+        spot.invbl = invbl->get_active();
         spot.radius = radius->getValue();
         spot.strength = strength->getIntValue();
         spot.isogr = isogr->getIntValue();
@@ -6895,6 +6940,21 @@ void LocallabBlur::fftwblChanged()
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
             } else {
                 listener->panelChanged(Evlocallabfftwbl,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+    }
+}
+
+void LocallabBlur::invblChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (invbl->get_active()) {
+                listener->panelChanged(Evlocallabinvbl,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            } else {
+                listener->panelChanged(Evlocallabinvbl,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
             }
         }

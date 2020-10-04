@@ -1875,7 +1875,16 @@ TP_LOCALLAB_DELTAD;Delta balance
 TP_LOCALLAB_DELTAEC;Masque ΔE Image
 TP_LOCALLAB_DENOIS;Ψ Réduction du bruit
 TP_LOCALLAB_DENOI_EXP;Réduction du bruit
+TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservatif préserve les fréquences basses, alors que agressif tend à les effacer
+TP_LOCALLAB_DENOIEQUAL_TOOLTIP;Equilibre l'action de denoise luminance entre les ombres et les lumières
 TP_LOCALLAB_DENOI_TOOLTIP;Ce module peut être utilisé seul (à la fin du processus), ou en complément de Réduction du bruit (au début).\nEtendue(deltaE)permet de différencier l'action.\nVous pouvez compléter avec  "median" ou "Filtre guidé" (Adoucir Flou...).\nVous pouvez compléter l'action avec "Flou niveaux" "Ondelette pyramide" 
+TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP;Permet de récupérer les détails de luminance par mise en oeuvre progressive de la transformée de Fourier (DCT)
+TP_LOCALLAB_DENOICHROF_TOOLTIP;Agit sur les fins détails du bruit de chrominance 
+TP_LOCALLAB_DENOICHROC_TOOLTIP;Agit sur les paquets et amas de bruit de chrominance
+TP_LOCALLAB_DENOICHRODET_TOOLTIP;Permet de récupérer les détails de chrominance par mise en oeuvre progressive de la transformée de Fourier (DCT)
+TP_LOCALLAB_DENOITHR_TOOLTIP;Règle l'effet de bord pour privilégier l'action sur les aplats
+TP_LOCALLAB_DENOIEQUALCHRO_TOOLTIP;Equilibre l'action de denoise chrominance entre les bleus-jaunes et les rouges-verts
+TP_LOCALLAB_DENOIBILAT_TOOLTIP;Traite le bruit d'impulsion (poivre et sel)
 TP_LOCALLAB_DEPTH;Profondeur
 TP_LOCALLAB_DETAIL;Contrast local
 TP_LOCALLAB_DETAILSH;Details
@@ -1905,11 +1914,9 @@ TP_LOCALLAB_EXCLUTYPE;Spot méthode
 TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Spot Normal utilise les données récursives.\n\nSpot exclusion réinitialise les données d'origine.\nPeut être utilsé pour annuler totalement ou partiellement une action précédente ou pour  réaliser un mode inverse
 TP_LOCALLAB_EXECLU;Spot Exclusion
 TP_LOCALLAB_EXNORM;Spot Normal
-//TP_LOCALLAB_EXPCBDL_TOOLTIP;Dans le cas d'un capteur contaminé ("graisse"), et qaund la surface est importante ou pourune série de petits défauts.\n\na) Mettre la sélection du spot sur un défaut prononcé (adapter la taille si nécessaire), utilise run spot suffisament grand qui autorise les ondelettes; b) choisir une aire suffisament grande pour couvrir largement la zone affectée par les défauts; c) Choisir une valeur de transition (basse) et une transition affaiblissement (haute); d) agir sur les niveaux 2, 3, 4 or 5 ou^plus bas en réduisant le  the contrast (valeurs en dessous de 100) agir sur le curseur chroma si nécessaire. e)possibilité d'agir sur "Etendue" pour réduire la zone d'action.\n\nVous pouvez aussi compléter avec "Flou niveaux" et Flouu Gaussien (Adoucir Flou et bruit)
 TP_LOCALLAB_EXPCBDL_TOOLTIP;Peut être utilisé pour retirer les marques sur le capteur ou la lentille.
 TP_LOCALLAB_EXPCHROMA;Chroma compensation
 TP_LOCALLAB_EXPCHROMA_TOOLTIP;Seulement en association avec compensation d'exposition et PDE Ipol.\nEvite la desaturation des couleurs
-//TP_LOCALLAB_EXPCOLOR_TOOLTIP;Dans le cas de petits défauts.\n\nYeux-rouges : sélecteur centré sur la partie rouge, délimiteurs du spot près de l'oeil, adaptez Etendue, "luminosité" -100, "chrominance" -100.\n\nSpotIR :sélection Circulaire centrée sur le défaut, délimiteurs du spot proches du default - reduire "chrominance", possibilté d'agir sur Etendue pour réduire la zone de l'action.\n\nPoussières - graisse (petit) :Sélection circulaire centrée sur le défaut (adapter la taille du spot), délimiteurs du spot pas trop près du défaut pour permettre une transition quasi invisible. a) "Transition" (faibles valeurs) and "Transition affaiblissement" (hautes valeurs); b) agir sur "luminosité" et aussi sur "chrominance" ou sur "Grille de correction couleur - direct" de telle manière que le rendu de la zone polluée soit proche de celui de la zone saine; c) agir modérement  sur "Etendue" pour moduler l'action.\n\nVous pouvez aussi compléter avec Flouter Gaussien (Adoucir Flouter et bruit)
 TP_LOCALLAB_EXPCOLOR_TOOLTIP;Ajuste les couleurs, la luminosité, le contrast et corrige les petits défauts tels que teux-rouges, poussières sur le capteur, etc.
 TP_LOCALLAB_EXPCOMP;Compensation d'exposition ƒ
 TP_LOCALLAB_EXPCOMPINV;Compensation d'exposition
@@ -1971,6 +1978,7 @@ TP_LOCALLAB_GRADSTRHUE_TOOLTIP;Filttre Teinte force
 TP_LOCALLAB_GRADSTRLUM;Force Gradient Luminance
 TP_LOCALLAB_GRADSTR_TOOLTIP;Force Filtre en Ev
 TP_LOCALLAB_GRAINFRA;Film Grain   1:1
+TP_LOCALLAB_GRAIN_TOOLTIP;Ajoute du grain pour simuler un film
 TP_LOCALLAB_GRALWFRA;Filtre Gradué Local contraste
 TP_LOCALLAB_GRIDFRAME_TOOLTIP;Vous pouvez utiliser cet outil comme une brosse. Utiliser un petit Spot et adaptez transition et transition affaiblissement\nSeulement en mode NORMAL et éventuellement Teinte, Saturation, Couleur, Luminosité sont concernés par Fusion arrire plan (ΔE)
 TP_LOCALLAB_GRIDONE;Virage partiel
@@ -1979,6 +1987,9 @@ TP_LOCALLAB_GRIDMETH_TOOLTIP;Virage partiel: la luminance est prise en compte qu
 TP_LOCALLAB_GUIDBL;Rayon adoucir
 TP_LOCALLAB_GUIDFILTER;Rayon Filtre Guidé
 TP_LOCALLAB_GUIDFILTER_TOOLTIP;Adapter cette valeur en fonction des images - peut réduire ou accroître les artéfacts.
+TP_LOCALLAB_GUIDBL_TOOLTIP;Applique un filtre guidé avec un rayon donné, pour réduire les artefacts ou flouter l'image
+TP_LOCALLAB_GUIDSTRBL_TOOLTIP;Force du filtre guidé
+TP_LOCALLAB_GUIDEPSBL_TOOLTIP;Détail - agit sur la répartition du filtre guidé, les valeurs négatives simulent un flou gaussien
 TP_LOCALLAB_HHMASK_TOOLTIP;Ajustements fin de la teinte par exemple pour la peau.
 TP_LOCALLAB_HIGHMASKCOL;Hautes lumières masque
 TP_LOCALLAB_HLH;Courbes H
@@ -1986,6 +1997,7 @@ TP_LOCALLAB_IND;Independant (souris)
 TP_LOCALLAB_INDSL;Independant (souris + curseurs)
 TP_LOCALLAB_INVERS;Inverse
 TP_LOCALLAB_INVERS_TOOLTIP;Si sélectionné (inverse) moins de possibilités.\n\nAlternative\nPremier Spot:\n image entière - delimiteurs en dehors de la prévisualisation\n RT-spot forme sélection : rectangle. Transition 100\n\nDeuxième spot : Spot Exclusion
+TP_LOCALLAB_INVBL_TOOLTIP;Alternative\nPremier Spot:\n image entière - delimiteurs en dehors de la prévisualisation\n RT-spot forme sélection : rectangle. Transition 100\n\nDeuxième spot : Spot Exclusion
 TP_LOCALLAB_ISOGR;Plus gros (ISO)
 TP_LOCALLAB_LABBLURM;Masque Flouter
 TP_LOCALLAB_LABEL;Ajustements Locaux
@@ -2053,6 +2065,8 @@ TP_LOCALLAB_MASKH;Courbe teinte
 TP_LOCALLAB_MASK_TOOLTIP;Vous pouvez activer plusieurs masques pour un simple outil, ceci nécessite d'activer un autre outil (mais sans utilser l'outil : curseurs à 0,...)où est le masque que vous souhaitez activer.\n\nVous pouvez aussi dupliquer le RT-spot et le placer juste à côté de l'autre,les variations de références autorisent un travail fin sur les images. 
 TP_LOCALLAB_MED;Medium
 TP_LOCALLAB_MEDIAN;Median Bas
+TP_LOCALLAB_MEDIAN_TOOLTIP;Choisir un median 3x3 à 9x9: plus les valeurs sont élévées, plus la réduction du bruit ou le flou seront marqués
+TP_LOCALLAB_MEDIANITER_TOOLTIP;Nombre d'applications successives du median
 TP_LOCALLAB_MEDNONE;Rien
 TP_LOCALLAB_MERCOL;Couleur
 TP_LOCALLAB_MERDCOL;Fusion arrière plan (ΔE)
@@ -2102,6 +2116,7 @@ TP_LOCALLAB_MRTHR;Image Originale
 TP_LOCALLAB_MRTWO;Short Curves 'L' Mask
 TP_LOCALLAB_MULTIPL_TOOLTIP;Autorise la retouche des tons sur une large plage : -18EV +4EV. Le remier curseur agit sur -18EV and -6EV. Le dernier curseur agit sur les tons au-dessus de 4EV  
 TP_LOCALLAB_NEIGH;Rayon
+TP_LOCALLAB_NOISE_TOOLTIP;Ajoute du bruit de luminance
 TP_LOCALLAB_NOISECHROCOARSE;Chroma gros (Ond)
 TP_LOCALLAB_NOISECHROC_TOOLTIP;Si supérieur à zéro, algorithme haute qualité est activé.\nGros est sélectionné si curseur >=0.2
 TP_LOCALLAB_NOISECHRODETAIL;Récupération des détails Chroma (DCT ƒ)
