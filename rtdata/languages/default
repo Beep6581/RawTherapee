@@ -2898,7 +2898,7 @@ TP_LOCALLAB_VIS_TOOLTIP;<b>Click</b> to show/hide selected Control Spot.\n<b>Ctr
 TP_LOCALLAB_WAMASKCOL;Ψ Mask Wavelet level
 TP_LOCALLAB_WARM;Warm/Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider uses the CIECAM algorithm and acts as a White Balance control to make the color temperature of the selected area warmer or cooler\nIt can also reduce color artifacts in some cases.
-TP_LOCALLAB_WASDEN_TOOLTIP;Luminance noise reduction for the first 3 levels 0,1 &2 (fine detail). The right hand side of the curve corresponds to the coarser details (level 3 and beyond).
+TP_LOCALLAB_WASDEN_TOOLTIP;Luminance noise reduction: the left-hand side of the curve corresponds to the first 3 levels 0,1 &2 (fine detail). The right hand side of the curve corresponds to the coarser details (level 3 and beyond).
 TP_LOCALLAB_WAV;Local contrast by level
 TP_LOCALLAB_WAVBLUR_TOOLTIP;Performs a blur for each level of decomposition, as well as the residual image.
 TP_LOCALLAB_WAVCOMP;Compression by Level
