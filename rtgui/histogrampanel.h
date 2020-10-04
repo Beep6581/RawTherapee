@@ -292,19 +292,6 @@ protected:
     Gtk::Image *barImage_g;
     Gtk::Image *chroImage_g;
 
-    std::unique_ptr<Gtk::Image> histImageOn;
-    std::unique_ptr<Gtk::Image> histRawImageOn;
-    std::unique_ptr<Gtk::Image> paradeImageOn;
-    std::unique_ptr<Gtk::Image> waveImageOn;
-    std::unique_ptr<Gtk::Image> vectHcImageOn;
-    std::unique_ptr<Gtk::Image> vectHsImageOn;
-    std::unique_ptr<Gtk::Image> histImageOff;
-    std::unique_ptr<Gtk::Image> histRawImageOff;
-    std::unique_ptr<Gtk::Image> paradeImageOff;
-    std::unique_ptr<Gtk::Image> waveImageOff;
-    std::unique_ptr<Gtk::Image> vectHcImageOff;
-    std::unique_ptr<Gtk::Image> vectHsImageOff;
-
     Gtk::Image *mode0Image;
     Gtk::Image *mode1Image;
     Gtk::Image *mode2Image;

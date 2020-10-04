@@ -128,18 +128,12 @@ HistogramPanel::HistogramPanel () :
     mode1Image  = new RTImage ("histogram-mode-logx-small.png");
     mode2Image  = new RTImage ("histogram-mode-logxy-small.png");
 
-    histImageOn.reset(new RTImage("histogram-type-histogram-small.png"));
-    histRawImageOn.reset(new RTImage("histogram-bayer-on-small.png"));
-    paradeImageOn.reset(new RTImage("histogram-type-parade-small.png"));
-    waveImageOn.reset(new RTImage("histogram-type-waveform-small.png"));
-    vectHcImageOn.reset(new RTImage("histogram-type-vectorscope-hc-small.png"));
-    vectHsImageOn.reset(new RTImage("histogram-type-vectorscope-hs-small.png"));
-    histImageOff.reset(new RTImage("histogram-type-histogram-off-small.png"));
-    histRawImageOff.reset(new RTImage("histogram-bayer-off-small.png"));
-    paradeImageOff.reset(new RTImage("histogram-type-parade-off-small.png"));
-    waveImageOff.reset(new RTImage("histogram-type-waveform-off-small.png"));
-    vectHcImageOff.reset(new RTImage("histogram-type-vectorscope-hc-off-small.png"));
-    vectHsImageOff.reset(new RTImage("histogram-type-vectorscope-hs-off-small.png"));
+    Gtk::Image* histImage = Gtk::manage(new RTImage("histogram-type-histogram-small.png"));
+    Gtk::Image* histRawImage = Gtk::manage(new RTImage("histogram-type-histogram-raw-small.png"));
+    Gtk::Image* paradeImage = Gtk::manage(new RTImage("histogram-type-parade-small.png"));
+    Gtk::Image* waveImage = Gtk::manage(new RTImage("histogram-type-waveform-small.png"));
+    Gtk::Image* vectHcImage = Gtk::manage(new RTImage("histogram-type-vectorscope-hc-small.png"));
+    Gtk::Image* vectHsImage = Gtk::manage(new RTImage("histogram-type-vectorscope-hs-small.png"));
 
     showRed   = Gtk::manage (new Gtk::ToggleButton ());
     showGreen = Gtk::manage (new Gtk::ToggleButton ());
@@ -249,36 +243,30 @@ HistogramPanel::HistogramPanel () :
         showMode->set_image(*mode1Image);
     else
         showMode->set_image(*mode2Image);
-    scopeHistBtn->set_image(*histImageOff);
-    scopeHistRawBtn->set_image(*histRawImageOff);
-    scopeParadeBtn->set_image(*paradeImageOff);
-    scopeWaveBtn->set_image(*waveImageOff);
-    scopeVectHcBtn->set_image(*vectHcImageOff);
-    scopeVectHsBtn->set_image(*vectHsImageOff);
+    scopeHistBtn->set_image(*histImage);
+    scopeHistRawBtn->set_image(*histRawImage);
+    scopeParadeBtn->set_image(*paradeImage);
+    scopeWaveBtn->set_image(*waveImage);
+    scopeVectHcBtn->set_image(*vectHcImage);
+    scopeVectHsBtn->set_image(*vectHsImage);
     switch(options.histogramScopeType) {
         case ScopeType::HISTOGRAM:
             scopeHistBtn->set_active();
-            scopeHistBtn->set_image(*histImageOn);
             break;
         case ScopeType::HISTOGRAM_RAW:
             scopeHistRawBtn->set_active();
-            scopeHistRawBtn->set_image(*histRawImageOn);
             break;
         case ScopeType::PARADE:
             scopeParadeBtn->set_active();
-            scopeParadeBtn->set_image(*paradeImageOn);
             break;
         case ScopeType::WAVEFORM:
             scopeWaveBtn->set_active();
-            scopeWaveBtn->set_image(*waveImageOn);
             break;
         case ScopeType::VECTORSCOPE_HS:
             scopeVectHsBtn->set_active();
-            scopeVectHsBtn->set_image(*vectHsImageOn);
             break;
         case ScopeType::VECTORSCOPE_HC:
             scopeVectHcBtn->set_active();
-            scopeVectHcBtn->set_image(*vectHcImageOn);
             break;
         case ScopeType::NONE:
             break;
@@ -294,6 +282,13 @@ HistogramPanel::HistogramPanel () :
     setExpandAlignProperties(showMode , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(scopeOptions, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(showBAR  , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(scopeOptions, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    setExpandAlignProperties(scopeHistBtn, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    setExpandAlignProperties(scopeHistRawBtn, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    setExpandAlignProperties(scopeParadeBtn, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    setExpandAlignProperties(scopeWaveBtn, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    setExpandAlignProperties(scopeVectHcBtn, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+    setExpandAlignProperties(scopeVectHsBtn, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     setExpandAlignProperties(persistentButtons, false, true, Gtk::ALIGN_START, Gtk::ALIGN_FILL);
     setExpandAlignProperties(optionButtons, false, true, Gtk::ALIGN_START, Gtk::ALIGN_FILL);
 
@@ -321,7 +316,7 @@ HistogramPanel::HistogramPanel () :
     optionButtons->add(*showBAR);
 
     Gtk::VSeparator* separator = Gtk::manage(new Gtk::VSeparator());
-    setExpandAlignProperties(separator, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
+    setExpandAlignProperties(separator, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     persistentButtons->add(*scopeHistBtn);
     persistentButtons->add(*scopeHistRawBtn);
     persistentButtons->add(*scopeParadeBtn);
@@ -493,52 +488,6 @@ void HistogramPanel::type_selected(Gtk::RadioButton* button)
 
     if (new_type == options.histogramScopeType) {
         return;
-    }
-
-    switch (options.histogramScopeType) {
-        case ScopeType::HISTOGRAM:
-            scopeHistBtn->set_image(*histImageOff);
-            break;
-        case ScopeType::HISTOGRAM_RAW:
-            scopeHistRawBtn->set_image(*histRawImageOff);
-            break;
-        case ScopeType::PARADE:
-            scopeParadeBtn->set_image(*paradeImageOff);
-            break;
-        case ScopeType::WAVEFORM:
-            scopeWaveBtn->set_image(*waveImageOff);
-            break;
-        case ScopeType::VECTORSCOPE_HC:
-            scopeVectHcBtn->set_image(*vectHcImageOff);
-            break;
-        case ScopeType::VECTORSCOPE_HS:
-            scopeVectHsBtn->set_image(*vectHsImageOff);
-            break;
-        case ScopeType::NONE:
-            break;
-    }
-
-    switch (new_type) {
-        case ScopeType::HISTOGRAM:
-            scopeHistBtn->set_image(*histImageOn);
-            break;
-        case ScopeType::HISTOGRAM_RAW:
-            scopeHistRawBtn->set_image(*histRawImageOn);
-            break;
-        case ScopeType::PARADE:
-            scopeParadeBtn->set_image(*paradeImageOn);
-            break;
-        case ScopeType::WAVEFORM:
-            scopeWaveBtn->set_image(*waveImageOn);
-            break;
-        case ScopeType::VECTORSCOPE_HC:
-            scopeVectHcBtn->set_image(*vectHcImageOn);
-            break;
-        case ScopeType::VECTORSCOPE_HS:
-            scopeVectHsBtn->set_image(*vectHsImageOn);
-            break;
-        case ScopeType::NONE:
-            break;
     }
 
     options.histogramScopeType = new_type;
