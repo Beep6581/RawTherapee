@@ -3326,6 +3326,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     },
     enablMask(false),
     fftwbl(false),
+    invbl(false),
     toolbl(false),
     blendmaskbl(0),
     radmaskbl(0.0),
@@ -4206,6 +4207,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && HHmaskblcurve == other.HHmaskblcurve
         && enablMask == other.enablMask
         && fftwbl == other.fftwbl
+        && invbl == other.invbl
         && toolbl == other.toolbl
         && blendmaskbl == other.blendmaskbl
         && radmaskbl == other.radmaskbl
@@ -5734,6 +5736,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->HHmaskblcurve, "Locallab", "HHmaskblCurve_" + index_str, spot.HHmaskblcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->enablMask, "Locallab", "EnablMask_" + index_str, spot.enablMask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fftwbl, "Locallab", "Fftwbl_" + index_str, spot.fftwbl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->invbl, "Locallab", "Invbl_" + index_str, spot.invbl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->toolbl, "Locallab", "Toolbl_" + index_str, spot.toolbl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blendmaskbl, "Locallab", "Blendmaskbl_" + index_str, spot.blendmaskbl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->radmaskbl, "Locallab", "Radmaskbl_" + index_str, spot.radmaskbl, keyFile);
@@ -7463,6 +7466,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "HHmaskblCurve_" + index_str, pedited, spot.HHmaskblcurve, spotEdited.HHmaskblcurve);
                 assignFromKeyfile(keyFile, "Locallab", "EnablMask_" + index_str, pedited, spot.enablMask, spotEdited.enablMask);
                 assignFromKeyfile(keyFile, "Locallab", "Fftwbl_" + index_str, pedited, spot.fftwbl, spotEdited.fftwbl);
+                assignFromKeyfile(keyFile, "Locallab", "Invbl_" + index_str, pedited, spot.invbl, spotEdited.invbl);
                 assignFromKeyfile(keyFile, "Locallab", "Toolbl_" + index_str, pedited, spot.toolbl, spotEdited.toolbl);
                 assignFromKeyfile(keyFile, "Locallab", "Blendmaskbl_" + index_str, pedited, spot.blendmaskbl, spotEdited.blendmaskbl);
                 assignFromKeyfile(keyFile, "Locallab", "Radmaskbl_" + index_str, pedited, spot.radmaskbl, spotEdited.radmaskbl);

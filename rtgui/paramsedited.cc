@@ -1298,6 +1298,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).HHmaskblcurve = locallab.spots.at(j).HHmaskblcurve && pSpot.HHmaskblcurve == otherSpot.HHmaskblcurve;
                 locallab.spots.at(j).enablMask = locallab.spots.at(j).enablMask && pSpot.enablMask == otherSpot.enablMask;
                 locallab.spots.at(j).fftwbl = locallab.spots.at(j).fftwbl && pSpot.fftwbl == otherSpot.fftwbl;
+                locallab.spots.at(j).invbl = locallab.spots.at(j).invbl && pSpot.invbl == otherSpot.invbl;
                 locallab.spots.at(j).toolbl = locallab.spots.at(j).toolbl && pSpot.toolbl == otherSpot.toolbl;
                 locallab.spots.at(j).blendmaskbl = locallab.spots.at(j).blendmaskbl && pSpot.blendmaskbl == otherSpot.blendmaskbl;
                 locallab.spots.at(j).radmaskbl = locallab.spots.at(j).radmaskbl && pSpot.radmaskbl == otherSpot.radmaskbl;
@@ -4092,6 +4093,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).fftwbl = mods.locallab.spots.at(i).fftwbl;
         }
 
+        if (locallab.spots.at(i).invbl) {
+            toEdit.locallab.spots.at(i).invbl = mods.locallab.spots.at(i).invbl;
+        }
+
         if (locallab.spots.at(i).toolbl) {
             toEdit.locallab.spots.at(i).toolbl = mods.locallab.spots.at(i).toolbl;
         }
@@ -6432,6 +6437,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     HHmaskblcurve(v),
     enablMask(v),
     fftwbl(v),
+    invbl(v),
     toolbl(v),
     blendmaskbl(v),
     radmaskbl(v),
@@ -6922,6 +6928,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     HHmaskblcurve = v;
     enablMask = v;
     fftwbl = v;
+    invbl = v;
     toolbl = v;
     blendmaskbl = v;
     radmaskbl = v;

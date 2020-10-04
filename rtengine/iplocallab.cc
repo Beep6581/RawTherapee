@@ -811,10 +811,16 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     } else if (locallab.spots.at(sp).medMethod == "99") {
         lp.medmet = 3;
     }
-
+/*
     if (locallab.spots.at(sp).blurMethod == "norm") {
         lp.blurmet = 0;
     } else if (locallab.spots.at(sp).blurMethod == "inv") {
+        lp.blurmet = 1;
+    }
+*/
+    if (locallab.spots.at(sp).invbl == false) {
+        lp.blurmet = 0;
+    } else if (locallab.spots.at(sp).invbl == true) {
         lp.blurmet = 1;
     }
 
