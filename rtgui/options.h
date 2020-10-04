@@ -271,6 +271,7 @@ public:
     CPBKeyType CPBKeys; // Custom Profile Builder's key type
     int editorToSendTo;
     int maxThumbnailHeight;
+    int maxThumbnailWidth;
     std::size_t maxCacheEntries;
     int thumbInterp; // 0: nearest, 1: bilinear
     std::vector<Glib::ustring> parseExtensions;   // List containing all extensions type
