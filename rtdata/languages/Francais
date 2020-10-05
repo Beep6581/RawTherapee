@@ -1869,6 +1869,7 @@ TP_LOCALLAB_CURVENSOB2;Combined HueChroma + Contrast threshold (experimental)
 TP_LOCALLAB_CURVNONE;Désactive courbes
 TP_LOCALLAB_DARKRETI;Obscuirité
 TP_LOCALLAB_DEHAFRA;Elimination de la brume
+TP_LOCALLAB_DEHAZFRAME_TOOLTIP;Élimine la brume atmosphérique. Augmente généralement la saturation et les détails. \ N Peut supprimer les dominantes de couleur, mais peut également introduire une dominante bleue qui peut être corrigée à l'aide d'autres outils.
 TP_LOCALLAB_DEHAZ;Force
 TP_LOCALLAB_DEHAZ_TOOLTIP;Valeurs Négatives ajoute de la brume
 TP_LOCALLAB_DELTAD;Delta balance
@@ -2169,6 +2170,7 @@ TP_LOCALLAB_RETI;De-brume - Retinex Fort contraste
 TP_LOCALLAB_RETIFRA;Retinex
 TP_LOCALLAB_RETIM;Original Retinex
 TP_LOCALLAB_RETITOOLFRA;Retinex Outils
+TP_LOCALLAB_RETIFRAME_TOOLTIP; L'utilisation de Retinex peut être bénéfique pour le traitement des images: \ nqui sont floues, brumeuses ou ayant un voile de brouillard (en complément de Dehaz). \ Navec d'importants écarts de luminance. \ N où l'utilisateur recherche des effets spéciaux (cartographie des tons…)
 TP_LOCALLAB_RETI_FFTW_TOOLTIP;FFT améliore la qualité et autorise de grands rayons, mais accroît les temps de traitement.\nCe temps dépends de la surface traitée\nLe temps de traitements dépend de "scale" (échelle) (soyez prudent avec les hautes valeurs ).\nA utiliser de préférence avec de grand rayons.\n\nLes Dimensions peuvent être réduites de quelques pixels pour optimiser FFTW.\nCette optimisation peut réduire le temps de traitement d'un facteur de 1.5 à 10.\nOptimisation pas utilsée en prévisualisation
 TP_LOCALLAB_RETI_LIGHTDARK_TOOLTIP;Have no effect when the value "Lightness = 1" or "Darkness =2" is chosen.\nIn other cases, the last step of "Multiple scale Retinex" is applied an algorithm close to "local contrast", these 2 cursors, associated with "Strength" will allow to play upstream on the local contrast.
 TP_LOCALLAB_RETI_LIMDOFFS_TOOLTIP;Play on internal parameters to optimize response.\nLook at the "restored datas" indicators "near" min=0 and max=32768 (log mode), but others values are possible. 
