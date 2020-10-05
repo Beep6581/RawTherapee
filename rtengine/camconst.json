@@ -1279,14 +1279,17 @@ Camera constants:
 
     { // Quality C
         "make_model": [ "DJI FC2103" ],
-        "ranges": {
-            "black": 4080
-        }
+        "ranges": { "black": 4080 }
     },
 
     { // Quality C
         "make_model": "DJI FC6310",
         "ranges": { "white": 64886 }
+    },
+    
+    { // Quality C
+        "make_model": "DJI FC3170",
+        "ranges": { "white": 65472 }
     },
 
     { // Quality C
