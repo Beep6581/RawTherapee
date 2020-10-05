@@ -50,11 +50,11 @@ public:
     void adjusterAutoToggled (Adjuster* a) override;
 //    void adjusterAdapToggled (Adjuster* a, bool newval);
     void enabledChanged      () override;
-    void surroundChanged     ();
-    void surrsrcChanged     ();
-    void wbmodelChanged      ();
-    void illumChanged      ();
-    void algoChanged         ();
+    void surroundChanged     (bool autoenable = true);
+    void surrsrcChanged      (bool autoenable = true);
+    void wbmodelChanged      (bool autoenable = true);
+    void illumChanged        (bool autoenable = true);
+    void algoChanged         (bool autoenable = true);
     void surrsource_toggled  ();
     void gamut_toggled       ();
 //   void badpix_toggled       ();

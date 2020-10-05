@@ -57,7 +57,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     ctbox->pack_start (*method);
     pack_start (*ctbox);
 
-    methodconn = method->signal_changed().connect ( sigc::mem_fun(*this, &ColorToning::methodChanged) );
+    methodconn = method->signal_changed().connect ( sigc::bind(sigc::mem_fun(*this, &ColorToning::methodChanged), true) );
 
     //----------- Color curve ------------------------------
 
@@ -498,7 +498,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     show_all();
 
     disableListener();
-    methodChanged();
+    methodChanged(false);
     enableListener();
 }
 
@@ -553,6 +553,10 @@ void ColorToning::neutral_pressed ()
     //balance->resetValue(false);
 
     enableListener();
+
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && getEnabled()) {
         listener->panelChanged (EvColorToningNeutral, M("GENERAL_RESET"));
@@ -661,7 +665,7 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
         method->set_active(6);
     }
 
-    methodChanged();
+    methodChanged(false);
     methodconn.block(false);
 
 
@@ -677,7 +681,7 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
         twocolor->set_active (3);
     }
 
-    twocolorChanged(true);
+    twocolorChanged(true, false);
 
     twocconn.block(false);
 
@@ -800,6 +804,10 @@ void ColorToning::lumamodeChanged ()
         lastLumamode = lumamode->get_active ();
     }
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         if (lumamode->get_active ()) {
             listener->panelChanged (EvColorToningLumamode, M("GENERAL_ENABLED"));
@@ -909,6 +917,10 @@ void ColorToning::autoColorTonChanged(int bwct, int satthres, int satprot)
 
 void ColorToning::adjusterChanged (ThresholdAdjuster* a, double newBottom, double newTop)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         listener->panelChanged(
             a == hlColSat
@@ -936,7 +948,7 @@ void ColorToning::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int new
 }
 
 //Two Color changed
-void ColorToning::twocolorChanged (bool changedbymethod)
+void ColorToning::twocolorChanged (bool changedbymethod, bool autoenable)
 {
     if (!batchMode) {
         if(method->get_active_row_number() == 0) {              // Lab
@@ -982,6 +994,10 @@ void ColorToning::twocolorChanged (bool changedbymethod)
         }
     }
 
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled() && !changedbymethod) {
         listener->panelChanged (EvColorToningTwocolor, twocolor->get_active_text ());
     }
@@ -992,7 +1008,7 @@ void ColorToning::twoColorChangedByGui()
     twocolorChanged(false);
 }
 
-void ColorToning::methodChanged ()
+void ColorToning::methodChanged (bool autoenable)
 {
 
     if (!batchMode) {
@@ -1035,7 +1051,7 @@ void ColorToning::methodChanged ()
             //satlow->hide();
             //sathigh->hide();
 
-            twocolorChanged(true);
+            twocolorChanged(true, autoenable);
         } else if (method->get_active_row_number() == 1) { // RGB Sliders
             colorSep->hide();
             colorCurveEditorG->hide();
@@ -1173,6 +1189,10 @@ void ColorToning::methodChanged ()
         }
     }
 
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         listener->panelChanged (EvColorToningMethod, method->get_active_text ());
     }
@@ -1246,6 +1266,9 @@ void ColorToning::colorForValue (double valX, double valY, enum ColorCaller::Ele
 
 void ColorToning::curveChanged (CurveEditor* ce)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && getEnabled()) {
         if (ce == colorShape) {
@@ -1296,6 +1319,10 @@ void ColorToning::autosatChanged ()
         lastautosat = autosat->get_active ();
     }
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener) {
         if (autosat->get_active()) {
             if (getEnabled()) {
@@ -1333,6 +1360,10 @@ void ColorToning::trimValues (rtengine::procparams::ProcParams* pp)
 
 void ColorToning::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (!listener || !getEnabled()) {
         return;
     }

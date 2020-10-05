@@ -691,11 +691,11 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
 
 //   surrconn = surrsource->signal_toggled().connect ( sigc::mem_fun (*this, &ColorAppearance::surrsource_toggled) );
-    wbmodelconn = wbmodel->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::wbmodelChanged) );
-    illumconn = illum->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::illumChanged) );
-    algoconn = algo->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::algoChanged) );
-    surroundconn = surround->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::surroundChanged) );
-    surrsrcconn = surrsrc->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::surrsrcChanged) );
+    wbmodelconn = wbmodel->signal_changed().connect ( sigc::bind(sigc::mem_fun (*this, &ColorAppearance::wbmodelChanged), true) );
+    illumconn = illum->signal_changed().connect ( sigc::bind(sigc::mem_fun (*this, &ColorAppearance::illumChanged), true) );
+    algoconn = algo->signal_changed().connect ( sigc::bind(sigc::mem_fun (*this, &ColorAppearance::algoChanged), true) );
+    surroundconn = surround->signal_changed().connect ( sigc::bind(sigc::mem_fun (*this, &ColorAppearance::surroundChanged), true) );
+    surrsrcconn = surrsrc->signal_changed().connect ( sigc::bind(sigc::mem_fun (*this, &ColorAppearance::surrsrcChanged), true) );
 
     degree->setAdjusterListener  (this);
     degreeout->setAdjusterListener  (this);
@@ -892,7 +892,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     surrsrcconn.block (false);
     // Have to be manually called to handle initial state update
-    surrsrcChanged();
+    surrsrcChanged(false);
 
 
     surroundconn.block (true);
@@ -911,7 +911,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     surroundconn.block (false);
     // Have to be manually called to handle initial state update
-    surroundChanged();
+    surroundChanged(false);
 
 
 
@@ -929,7 +929,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     wbmodelconn.block (false);
     // Have to be manually called to handle initial state update
-    wbmodelChanged();
+    wbmodelChanged(false);
 
     illumconn.block (true);
 
@@ -955,7 +955,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     illumconn.block (false);
     // Have to be manually called to handle initial state update
-    illumChanged();
+    illumChanged(false);
 
     algoconn.block (true);
 
@@ -973,7 +973,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     algoconn.block (false);
     // Have to be manually called to handle initial state update
-    algoChanged();
+    algoChanged(false);
 
     //  surrconn.block (true);
     //  surrsource->set_active (pp->colorappearance.surrsource);
@@ -1735,6 +1735,10 @@ void ColorAppearance::colorForValue (double valX, double valY, enum ColorCaller:
 
 void ColorAppearance::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled()) ) {
         if (a == degree) {
             listener->panelChanged (EvCATDegree, a->getTextValue());
@@ -1832,6 +1836,10 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
 
     }
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled()) ) {
 
         if (a == degree) {
@@ -1903,8 +1911,11 @@ void ColorAppearance::enabledChanged ()
     }
 }
 
-void ColorAppearance::surrsrcChanged ()
+void ColorAppearance::surrsrcChanged (bool autoenable)
 {
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && (multiImage || getEnabled()) ) {
         listener->panelChanged (EvCATsurr, surrsrc->get_active_text ());
@@ -1912,15 +1923,18 @@ void ColorAppearance::surrsrcChanged ()
 }
 
 
-void ColorAppearance::surroundChanged ()
+void ColorAppearance::surroundChanged (bool autoenable)
 {
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && (multiImage || getEnabled()) ) {
         listener->panelChanged (EvCATMethodsur, surround->get_active_text ());
     }
 }
 
-void ColorAppearance::wbmodelChanged ()
+void ColorAppearance::wbmodelChanged (bool autoenable)
 {
     if (wbmodel->get_active_row_number() == 0 || wbmodel->get_active_row_number() == 1) {
         illum->hide();
@@ -1936,12 +1950,16 @@ void ColorAppearance::wbmodelChanged ()
         illum->show();
     }
 
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled()) ) {
         listener->panelChanged (EvCATMethodWB, wbmodel->get_active_text ());
     }
 }
 
-void ColorAppearance::illumChanged ()
+void ColorAppearance::illumChanged (bool autoenable)
 {
     if (illum->get_active_row_number() == 0) {
             tempsc->setValue (2856);
@@ -1976,6 +1994,10 @@ void ColorAppearance::illumChanged ()
             greensc->set_sensitive(true);
     }
 
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled()) ) {
         listener->panelChanged (EvCATillum, illum->get_active_text ());
     }
@@ -1983,7 +2005,7 @@ void ColorAppearance::illumChanged ()
 
 
 
-void ColorAppearance::algoChanged ()
+void ColorAppearance::algoChanged (bool autoenable)
 {
 
     if ( algo->get_active_row_number() == 0 ) {
@@ -2048,6 +2070,10 @@ void ColorAppearance::algoChanged ()
         curveEditorG->show();
         curveEditorG2->show();
         curveEditorG3->show();
+    }
+
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
     }
 
     if (listener && (multiImage || getEnabled()) ) {

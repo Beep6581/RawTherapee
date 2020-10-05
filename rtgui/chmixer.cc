@@ -18,6 +18,7 @@
  */
 #include "chmixer.h"
 
+#include "options.h"
 #include "rtimage.h"
 
 #include "../rtengine/procparams.h"
@@ -172,6 +173,9 @@ void ChMixer::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
 
 void ChMixer::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && getEnabled()) {
         Glib::ustring descr = Glib::ustring::compose ("R=%1,%2,%3\nG=%4,%5,%6\nB=%7,%8,%9",

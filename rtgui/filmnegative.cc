@@ -230,6 +230,10 @@ void FilmNegative::setBatchMode(bool batchMode)
 
 void FilmNegative::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener) {
         if (a == redRatio || a == greenExp || a == blueRatio) {
             if (getEnabled()) {
@@ -292,6 +296,10 @@ bool FilmNegative::mouseOver(int modifierKey)
 
 bool FilmNegative::button1Pressed(int modifierKey)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     EditDataProvider* const provider = getEditProvider();
 
     EditSubscriber::action = EditSubscriber::Action::NONE;

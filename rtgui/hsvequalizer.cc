@@ -145,6 +145,9 @@ void HSVEqualizer::write (ProcParams* pp, ParamsEdited* pedited)
  */
 void HSVEqualizer::curveChanged (CurveEditor* ce)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && getEnabled()) {
         if (ce == hshape) {

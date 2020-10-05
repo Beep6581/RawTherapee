@@ -22,6 +22,7 @@
 #include "impulsedenoise.h"
 
 #include "guiutils.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
 
@@ -83,6 +84,10 @@ void ImpulseDenoise::setDefaults (const ProcParams* defParams, const ParamsEdite
 
 void ImpulseDenoise::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         listener->panelChanged (EvIDNThresh, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(1), a->getValue()));
     }

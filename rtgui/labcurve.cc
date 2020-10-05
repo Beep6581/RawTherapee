@@ -262,7 +262,7 @@ void LCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
     brightness->setValue    (pp->labCurve.brightness);
     contrast->setValue      (pp->labCurve.contrast);
     chromaticity->setValue  (pp->labCurve.chromaticity);
-    adjusterChanged(chromaticity, pp->labCurve.chromaticity); // To update the GUI sensitiveness
+    adjusterChanged(chromaticity, pp->labCurve.chromaticity, false); // To update the GUI sensitiveness
     //%%%%%%%%%%%%%%%%%%%%%%
     rstprotection->setValue (pp->labCurve.rstprotection);
 
@@ -440,6 +440,10 @@ void LCurve::avoidcolorshift_toggled ()
         lastACVal = avoidcolorshift->get_active ();
     }
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         if (avoidcolorshift->get_active ()) {
             listener->panelChanged (EvLAvoidColorShift, M("GENERAL_ENABLED"));
@@ -467,6 +471,10 @@ void LCurve::lcredsk_toggled ()
         lcshape->refresh();
     }
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         if (lcredsk->get_active ()) {
             listener->panelChanged (EvLLCredsk, M("GENERAL_ENABLED"));
@@ -486,6 +494,9 @@ void LCurve::lcredsk_toggled ()
  */
 void LCurve::curveChanged (CurveEditor* ce)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && getEnabled()) {
         if (ce == lshape) {
@@ -530,6 +541,15 @@ void LCurve::curveChanged (CurveEditor* ce)
 
 void LCurve::adjusterChanged(Adjuster* a, double newval)
 {
+    adjusterChanged(a, newval, true);
+}
+
+void LCurve::adjusterChanged(Adjuster* a, double newval, bool autoenable)
+{
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
+    }
+
     Glib::ustring costr;
 
     if (a == brightness) {

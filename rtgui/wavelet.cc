@@ -991,7 +991,7 @@ Wavelet::Wavelet() :
 // Residual Image
     ToolParamBlock* const resBox = Gtk::manage(new ToolParamBlock());
     oldsh->set_active(true);
-    oldshConn = oldsh->signal_toggled().connect(sigc::mem_fun(*this, &Wavelet::oldshToggled));
+    oldshConn = oldsh->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &Wavelet::oldshToggled), true));
 
 
     rescon->setAdjusterListener(this);
@@ -1392,6 +1392,10 @@ void Wavelet::neutral_pressed()
     bluehigh->resetValue(false);
 
     enableListener();
+
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && getEnabled()) {
         listener->panelChanged(EvWavNeutral, M("GENERAL_RESET"));
@@ -2033,7 +2037,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
         //BackmethodUpdateUI();
         CLmethodUpdateUI();
         lipstUpdateUI();
-        oldshToggled();
+        oldshToggled(false);
         //TilesmethodUpdateUI();
         //daubcoeffmethodUpdateUI();
         //DirmethodUpdateUI();
@@ -2557,6 +2561,9 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
 
 void Wavelet::curveChanged(CurveEditor* ce)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && getEnabled()) {
         if (ce == ccshape) {
@@ -2843,6 +2850,10 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
 
 void Wavelet::adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         if (a == level0noise) {
             listener->panelChanged(EvWavlev0nois,
@@ -2882,6 +2893,10 @@ void Wavelet::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTo
 
 void Wavelet::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         if (a == hueskin) {
             listener->panelChanged(EvWavHueskin, hueskin->getHistoryString());
@@ -2923,6 +2938,10 @@ void Wavelet::HSmethodUpdateUI()
 void Wavelet::HSmethodChanged()
 {
     HSmethodUpdateUI();
+
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavHSmet, HSmethod->get_active_text());
@@ -2994,6 +3013,10 @@ void Wavelet::CHmethodChanged()
 {
     CHmethodUpdateUI();
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavCHmet, CHmethod->get_active_text());
     }
@@ -3047,6 +3070,10 @@ void Wavelet::EDmethodChanged()
 {
     EDmethodUpdateUI();
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavEDmet, EDmethod->get_active_text());
     }
@@ -3061,6 +3088,10 @@ void Wavelet::NPmethodUpdateUI()
 void Wavelet::NPmethodChanged()
 {
     NPmethodUpdateUI();
+
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavNPmet, NPmethod->get_active_text());
@@ -3095,6 +3126,10 @@ void Wavelet::BAmethodChanged()
 {
     BAmethodUpdateUI();
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavBAmet, BAmethod->get_active_text());
     }
@@ -3127,6 +3162,10 @@ void Wavelet::TMmethodChanged()
 {
     TMmethodUpdateUI();
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavTMmet, TMmethod->get_active_text());
     }
@@ -3142,6 +3181,10 @@ void Wavelet::BackmethodUpdateUI() {
 void Wavelet::BackmethodChanged()
 {
     //BackmethodUpdateUI();
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavBackmet, Backmethod->get_active_text());
     }
@@ -3173,6 +3216,10 @@ void Wavelet::CLmethodUpdateUI()
 void Wavelet::CLmethodChanged()
 {
     CLmethodUpdateUI();
+
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavCLmet, CLmethod->get_active_text());
@@ -3224,6 +3271,10 @@ void Wavelet::ushamethodChanged()
         Dirmethod->set_sensitive(false);
         CLmethod->set_sensitive(true);
         Backmethod->set_sensitive(true);
+    }
+
+    if (options.autoenable) {
+        setEnabled(true);
     }
 
     if (listener && (multiImage || getEnabled())) {
@@ -3371,6 +3422,10 @@ void Wavelet::complexmethodChanged()
         updateGUIToMode(1);
     }
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavcomplexmet, complexmethod->get_active_text());
     }
@@ -3378,6 +3433,9 @@ void Wavelet::complexmethodChanged()
 
 void Wavelet::denmethodChanged()
 {    
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavdenmethod, denmethod->get_active_text());
@@ -3386,6 +3444,9 @@ void Wavelet::denmethodChanged()
 
 void Wavelet::mixmethodChanged()
 {    
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavmixmethod, mixmethod->get_active_text());
@@ -3411,6 +3472,9 @@ void Wavelet::slimethodChanged()
         CurveEditorwavnoise->show();
     }
         
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavslimethod, slimethod->get_active_text());
@@ -3419,6 +3483,9 @@ void Wavelet::slimethodChanged()
 
 void Wavelet::quamethodChanged()
 {    
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavquamethod, quamethod->get_active_text());
@@ -3428,6 +3495,10 @@ void Wavelet::quamethodChanged()
 void Wavelet::TilesmethodChanged()
 {
     //TilesmethodUpdateUI();
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavTilesmet, Tilesmethod->get_active_text());
     }
@@ -3441,6 +3512,10 @@ void Wavelet::daubcoeffmethodUpdateUI() {
 void Wavelet::daubcoeffmethodChanged()
 {
     //daubcoeffmethodUpdateUI();
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavdaubcoeffmet, daubcoeffmethod->get_active_text());
     }
@@ -3455,6 +3530,10 @@ void Wavelet::MedgreinfUpdateUI() {
 void Wavelet::MedgreinfChanged()
 {
     //MedgreinfUpdateUI();
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavedgreinf, Medgreinf->get_active_text());
     }
@@ -3469,6 +3548,10 @@ void Wavelet::DirmethodUpdateUI() {
 void Wavelet::DirmethodChanged()
 {
     //DirmethodUpdateUI();
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvWavDirmeto, Dirmethod->get_active_text());
     }
@@ -3493,6 +3576,10 @@ void Wavelet::LmethodChanged()
         if (Lmethod->get_active_row_number() < 4) {
             Lmethod->set_active(4);
         }
+    }
+
+    if (options.autoenable) {
+        setEnabled(true);
     }
 
     if (listener && (multiImage || getEnabled())) {
@@ -3627,6 +3714,10 @@ void Wavelet::adjusterUpdateUI(Adjuster* a)
 
 void Wavelet::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         if (a == edgthresh) {
             listener->panelChanged(EvWavtiles, edgthresh->getTextValue());
@@ -3887,6 +3978,10 @@ void Wavelet::medianToggled()
         lastmedian = median->get_active();
     }
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         if (median->get_inconsistent()) {
             listener->panelChanged(EvWavmedian, M("GENERAL_UNCHANGED"));
@@ -3959,6 +4054,10 @@ void Wavelet::medianlevToggled()
 
     medianlevUpdateUI();
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         if (medianlev->get_inconsistent()) {
             listener->panelChanged(EvWavmedianlev, M("GENERAL_UNCHANGED"));
@@ -3984,6 +4083,10 @@ void Wavelet::linkedgToggled()
         }
 
         lastlinkedg = linkedg->get_active();
+    }
+
+    if (options.autoenable) {
+        setEnabled(true);
     }
 
     if (listener && (multiImage || getEnabled())) {
@@ -4030,6 +4133,10 @@ void Wavelet::cbenabToggled()
     }
 
     cbenabUpdateUI();
+
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && (multiImage || getEnabled())) {
         if (cbenab->get_inconsistent()) {
@@ -4080,6 +4187,10 @@ void Wavelet::lipstToggled()
     }
 
     lipstUpdateUI();
+
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && (multiImage || getEnabled())) {
         if (lipst->get_inconsistent()) {
@@ -4134,6 +4245,10 @@ void Wavelet::avoidToggled()
         lastavoid = avoid->get_active();
     }
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         if (avoid->get_inconsistent()) {
             listener->panelChanged(EvWavavoid, M("GENERAL_UNCHANGED"));
@@ -4160,6 +4275,10 @@ void Wavelet::showmaskToggled()
         lastshowmask = showmask->get_active();
     }
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         if (showmask->get_inconsistent()) {
             listener->panelChanged(EvWavshowmask, M("GENERAL_UNCHANGED"));
@@ -4171,7 +4290,7 @@ void Wavelet::showmaskToggled()
     }
 }
 
-void Wavelet::oldshToggled()
+void Wavelet::oldshToggled(bool autoenable)
 {
     if (oldsh->get_active()) {
         radius->hide();
@@ -4190,6 +4309,10 @@ void Wavelet::oldshToggled()
         }
 
         lastoldsh = oldsh->get_active();
+    }
+
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
     }
 
     if (listener && (multiImage || getEnabled())) {
@@ -4217,6 +4340,10 @@ void Wavelet::tmrToggled()
         }
 
         lasttmr = tmr->get_active();
+    }
+
+    if (options.autoenable) {
+        setEnabled(true);
     }
 
     if (listener && (multiImage || getEnabled())) {

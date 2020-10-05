@@ -59,7 +59,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     Lmethod->append (M("CURVEEDITOR_CURVE"));
     Lmethod->append (M("GENERAL_SLIDER"));
     Lmethod->set_active(0);
-    Lmethodconn = Lmethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::LmethodChanged) );
+    Lmethodconn = Lmethod->signal_changed().connect ( sigc::bind(sigc::mem_fun(*this, &DirPyrDenoise::LmethodChanged), true) );
 
     luma  = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING"), 0, 100, 0.01, 0));
     Ldetail  = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_LUMINANCE_DETAIL"), 0, 100, 0.01, 50));
@@ -96,7 +96,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     Cmethod->append (M("TP_DIRPYRDENOISE_CHROMINANCE_AMZ"));
     Cmethod->append (M("TP_DIRPYRDENOISE_CHROMINANCE_PMZ"));
     Cmethod->set_active(0);
-    Cmethodconn = Cmethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::CmethodChanged) );
+    Cmethodconn = Cmethod->signal_changed().connect ( sigc::bind(sigc::mem_fun(*this, &DirPyrDenoise::CmethodChanged), true) );
     Cmethod->set_tooltip_markup (M("TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP"));
 
     ctboxC2 = Gtk::manage (new Gtk::HBox ());
@@ -109,7 +109,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     C2method->append (M("TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL"));
     C2method->append (M("TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW"));
     C2method->set_active(0);
-    C2methodconn = C2method->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::C2methodChanged) );
+    C2methodconn = C2method->signal_changed().connect ( sigc::bind(sigc::mem_fun(*this, &DirPyrDenoise::C2methodChanged), true) );
 
     NoiseLabels = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
     NoiseLabels->set_tooltip_text(M("TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP"));
@@ -132,7 +132,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     hb1->pack_end (*dmethod, Gtk::PACK_EXPAND_WIDGET, 1);
     pack_start(*hb1, Gtk::PACK_SHRINK, 1);
 
-    dmethodconn = dmethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::dmethodChanged) );
+    dmethodconn = dmethod->signal_changed().connect ( sigc::bind(sigc::mem_fun(*this, &DirPyrDenoise::dmethodChanged), true) );
 
     luma->setAdjusterListener (this);
     Ldetail->setAdjusterListener (this);
@@ -182,7 +182,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     methodmed->append (M("TP_DIRPYRDENOISE_MEDIAN_METHOD_RGB"));
     methodmed->set_active (0);
     methodmed->set_tooltip_text (M("TP_DIRPYRDENOISE_MEDIAN_METHOD_TOOLTIP"));
-    methodmedconn = methodmed->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::methodmedChanged) );
+    methodmedconn = methodmed->signal_changed().connect ( sigc::bind(sigc::mem_fun(*this, &DirPyrDenoise::methodmedChanged), true) );
 
     rgbmethod = Gtk::manage (new MyComboBoxText ());
     rgbmethod->append (M("TP_DIRPYRDENOISE_TYPE_3X3SOFT"));
@@ -190,7 +190,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     rgbmethod->append (M("TP_DIRPYRDENOISE_TYPE_5X5SOFT"));
     rgbmethod->set_active (0);
     rgbmethod->set_tooltip_text (M("TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP"));
-    rgbmethodconn = rgbmethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::rgbmethodChanged) );
+    rgbmethodconn = rgbmethod->signal_changed().connect ( sigc::bind(sigc::mem_fun(*this, &DirPyrDenoise::rgbmethodChanged), true) );
 
 
     medmethod = Gtk::manage (new MyComboBoxText ());
@@ -202,7 +202,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     medmethod->append (M("TP_DIRPYRDENOISE_TYPE_9X9"));
     medmethod->set_active (0);
     medmethod->set_tooltip_text (M("TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP"));
-    medmethodconn = medmethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::medmethodChanged) );
+    medmethodconn = medmethod->signal_changed().connect ( sigc::bind(sigc::mem_fun(*this, &DirPyrDenoise::medmethodChanged), true) );
 
     ctboxm = Gtk::manage (new Gtk::HBox ());
     Gtk::Label* labmm = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_MEDIAN_METHOD") + ":"));
@@ -421,7 +421,7 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited)
         dmethod->set_active (1);
     }
 
-    dmethodChanged ();
+    dmethodChanged (false);
 
     Lmethod->set_active (0);
 
@@ -431,7 +431,7 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited)
         Lmethod->set_active (1);
     }
 
-    LmethodChanged();
+    LmethodChanged(false);
 
     if(options.rtSettings.leveldnautsimpl == 1) {
         Cmethod->set_active (0);
@@ -446,7 +446,7 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited)
             Cmethod->set_active (3);
         }
 
-        CmethodChanged();
+        CmethodChanged(false);
     } else {
         C2method->set_active (0);
 
@@ -458,7 +458,7 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited)
             C2method->set_active (2);
         }
 
-        C2methodChanged();
+        C2methodChanged(false);
     }
 
     smethod->set_active (0);
@@ -493,7 +493,7 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited)
         methodmed->set_active (4);
     }
 
-    methodmedChanged();
+    methodmedChanged(false);
 
     medmethod->set_active (0);
 
@@ -513,7 +513,7 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited)
         medmethod->set_active (5);
     }
 
-    medmethodChanged();
+    medmethodChanged(false);
 
     rgbmethod->set_active (0);
 
@@ -527,7 +527,7 @@ void DirPyrDenoise::read (const ProcParams* pp, const ParamsEdited* pedited)
         rgbmethod->set_active (2);
     }
 
-    rgbmethodChanged();
+    rgbmethodChanged(false);
 
 
     if (pedited) {
@@ -752,6 +752,9 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited)
 
 void DirPyrDenoise::curveChanged (CurveEditor* ce)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && getEnabled()) {
         if (ce == lshape) {
@@ -764,14 +767,17 @@ void DirPyrDenoise::curveChanged (CurveEditor* ce)
     }
 }
 
-void DirPyrDenoise::dmethodChanged ()
+void DirPyrDenoise::dmethodChanged (bool autoenable)
 {
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && (multiImage || getEnabled()) ) {
         listener->panelChanged (EvDPDNmet, dmethod->get_active_text ());
     }
 }
-void DirPyrDenoise::LmethodChanged ()
+void DirPyrDenoise::LmethodChanged (bool autoenable)
 {
     if (!batchMode) {
         if(Lmethod->get_active_row_number() == 0) {             // CUR
@@ -783,12 +789,16 @@ void DirPyrDenoise::LmethodChanged ()
         }
     }
 
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled()) ) {
         listener->panelChanged (EvDPDNLmet, Lmethod->get_active_text ());
     }
 }
 
-void DirPyrDenoise::CmethodChanged ()
+void DirPyrDenoise::CmethodChanged (bool autoenable)
 {
     if (!batchMode) {
         if(Cmethod->get_active_row_number() == 0 ) { //MAN
@@ -839,12 +849,16 @@ void DirPyrDenoise::CmethodChanged ()
 
     }
 
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled()) ) {
         listener->panelChanged (EvDPDNCmet, Cmethod->get_active_text ());
     }
 }
 
-void DirPyrDenoise::C2methodChanged ()
+void DirPyrDenoise::C2methodChanged (bool autoenable)
 {
     if (!batchMode) {
         if(C2method->get_active_row_number() == 0 ) { //MAN
@@ -885,6 +899,10 @@ void DirPyrDenoise::C2methodChanged ()
 
     }
 
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled()) ) {
         listener->panelChanged (EvDPDNC2met, C2method->get_active_text ());
     }
@@ -893,27 +911,36 @@ void DirPyrDenoise::C2methodChanged ()
 
 void DirPyrDenoise::smethodChanged ()
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && (multiImage || getEnabled()) ) {
         listener->panelChanged (EvDPDNsmet, smethod->get_active_text ());
     }
 }
 
-void DirPyrDenoise::medmethodChanged ()
+void DirPyrDenoise::medmethodChanged (bool autoenable)
 {
-
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && (multiImage || getEnabled())  && median->get_active() ) {
         listener->panelChanged (EvDPDNmedmet, medmethod->get_active_text ());
     }
 }
 
-void DirPyrDenoise::rgbmethodChanged ()
+void DirPyrDenoise::rgbmethodChanged (bool autoenable)
 {
     ctboxrgb->hide();
 
     if(methodmed->get_active_row_number() == 4) {
         ctboxrgb->show();
+    }
+
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
     }
 
     if (listener && (multiImage || getEnabled())  && median->get_active()) {
@@ -923,7 +950,7 @@ void DirPyrDenoise::rgbmethodChanged ()
 
 
 
-void DirPyrDenoise::methodmedChanged ()
+void DirPyrDenoise::methodmedChanged (bool autoenable)
 {
     if(methodmed->get_active_row_number() == 4) {
         ctboxrgb->show();
@@ -931,6 +958,10 @@ void DirPyrDenoise::methodmedChanged ()
     } else {
         ctboxrgb->hide();
         ctbox->show();
+    }
+
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
     }
 
     if (listener && (multiImage || getEnabled())  && median->get_active()) {
@@ -970,6 +1001,10 @@ void DirPyrDenoise::setDefaults (const ProcParams* defParams, const ParamsEdited
 
 void DirPyrDenoise::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     const Glib::ustring costr = Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), a->getValue());
 
     if (listener && getEnabled()) {

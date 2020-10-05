@@ -3,6 +3,8 @@
  */
 #include "pcvignette.h"
 
+#include "options.h"
+
 #include "../rtengine/procparams.h"
 
 using namespace rtengine;
@@ -82,6 +84,10 @@ void PCVignette::setDefaults (const ProcParams* defParams, const ParamsEdited* p
 
 void PCVignette::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         if (a == strength) {
             listener->panelChanged (EvPCVignetteStrength, strength->getTextValue());

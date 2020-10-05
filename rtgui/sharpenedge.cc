@@ -121,6 +121,10 @@ void SharpenEdge::chanthree_toggled ()
         lastchanthree = threechannels->get_active ();
     }
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         if (threechannels->get_active ()) {
             listener->panelChanged (EvSharpenEdgeThreechannels, M("GENERAL_ENABLED"));
@@ -132,6 +136,10 @@ void SharpenEdge::chanthree_toggled ()
 
 void SharpenEdge::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         Glib::ustring value = a->getTextValue();
 

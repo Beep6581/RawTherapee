@@ -452,6 +452,7 @@ void Options::setDefaults()
     histogramDrawMode = 0;
     curvebboxpos = 1;
     complexity = 2;
+    autoenable = false;
     prevdemo = PD_Sidecar;
 
     rgbDenoiseThreadLimit = 0;
@@ -1469,6 +1470,9 @@ void Options::readFromFile(Glib::ustring fname)
                     complexity = keyFile.get_integer("GUI", "Complexity");
                 }
                 
+                if (keyFile.has_key("GUI", "Autoenable")) {
+                    autoenable = keyFile.get_boolean("GUI", "Autoenable");
+                }
             }
 
             if (keyFile.has_group("Crop Settings")) {
@@ -2264,6 +2268,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "CurveBBoxPosition", curvebboxpos);
         keyFile.set_boolean("GUI", "Showtooltip", showtooltip);
         keyFile.set_integer("GUI", "Complexity", complexity);
+        keyFile.set_boolean("GUI", "Autoenable", autoenable);
 
         //Glib::ArrayHandle<int> crvopen = crvOpen;
         //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);

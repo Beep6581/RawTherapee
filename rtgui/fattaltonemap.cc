@@ -23,6 +23,7 @@
 #include "fattaltonemap.h"
 
 #include "eventmapper.h"
+#include "options.h"
 #include "rtimage.h"
 
 #include "../rtengine/procparams.h"
@@ -109,6 +110,10 @@ void FattalToneMapping::setDefaults(const ProcParams *defParams, const ParamsEdi
 
 void FattalToneMapping::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if(listener && getEnabled()) {
         if(a == threshold) {
             listener->panelChanged(EvTMFattalThreshold, a->getTextValue());

@@ -19,6 +19,8 @@
 
 #include "dirpyrequalizer.h"
 
+#include "options.h"
+
 #include "../rtengine/color.h"
 
 using namespace rtengine;
@@ -313,6 +315,10 @@ void DirPyrEqualizer::adjusterChanged(ThresholdAdjuster* a, int newBottom, int n
 
 void DirPyrEqualizer::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled()) ) {
         listener->panelChanged (EvDirPyrEqualizerHueskin, hueskin->getHistoryString());
     }
@@ -349,6 +355,10 @@ void DirPyrEqualizer::cbdlMethodChanged()
 
 void DirPyrEqualizer::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         if (a == threshold) {
             listener->panelChanged (EvDirPyrEqualizerThreshold,

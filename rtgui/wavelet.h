@@ -146,7 +146,7 @@ private:
     void TilesmethodChanged();
     void avoidToggled();
     void showmaskToggled ();
-    void oldshToggled ();
+    void oldshToggled (bool autoenable = true);
     void cbenabToggled();
     void contrastMinusPressed();
     void contrastPlusPressed();

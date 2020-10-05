@@ -82,6 +82,10 @@ FilmSimulation::FilmSimulation()
 
 void FilmSimulation::onClutSelected()
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     Glib::ustring currentClutFilename = m_clutComboBox->getSelectedClut();
 
     if ( getEnabled() && !currentClutFilename.empty() && listener && currentClutFilename != m_oldClutFilename ) {
@@ -109,6 +113,10 @@ void FilmSimulation::enabledChanged ()
 
 void FilmSimulation::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         const Glib::ustring value = a->getTextValue();
         listener->panelChanged(EvFilmSimulationStrength, value);

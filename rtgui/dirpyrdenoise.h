@@ -63,16 +63,16 @@ public:
 
 //    void perform_toggled  ();
     void updateNoiseLabel      ();
-    void LmethodChanged      ();
-    void CmethodChanged      ();
-    void C2methodChanged      ();
+    void LmethodChanged      (bool autoenable = true);
+    void CmethodChanged      (bool autoenable = true);
+    void C2methodChanged      (bool autoenable = true);
     void updateTileLabel      ();
     void updatePrevLabel      ();
 
-    void dmethodChanged      ();
-    void medmethodChanged      ();
-    void methodmedChanged      ();
-    void rgbmethodChanged      ();
+    void dmethodChanged        (bool autoenable = true);
+    void medmethodChanged      (bool autoenable = true);
+    void methodmedChanged      (bool autoenable = true);
+    void rgbmethodChanged      (bool autoenable = true);
     void smethodChanged      ();
     void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
 

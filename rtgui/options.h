@@ -289,6 +289,7 @@ public:
     bool internalThumbIfUntouched;
     bool overwriteOutputFile;
     int complexity;
+    bool autoenable;
 
     std::vector<double> thumbnailZoomRatios;
     bool overlayedFileNames;

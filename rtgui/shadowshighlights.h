@@ -36,6 +36,7 @@ protected:
     Adjuster* s_tonalwidth;
     Adjuster* radius;
     MyComboBoxText *colorspace;
+    sigc::connection colorspaceconn;
 
     rtengine::ProcEvent EvSHColorspace;
 

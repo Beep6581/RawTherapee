@@ -119,7 +119,7 @@ public:
     void trimValues(rtengine::procparams::ProcParams* pp) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void autoOpenCurve() override;
-    void medianmapChanged();
+    void medianmapChanged(bool autoenable = true);
     void minmaxChanged(double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax) override;
     void updateLabel();
     void updateTrans();

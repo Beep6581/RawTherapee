@@ -180,6 +180,10 @@ void PdSharpening::checkBoxToggled (CheckBox* c, CheckValue newval)
 
 void PdSharpening::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
 
         Glib::ustring costr;

@@ -57,7 +57,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     method->set_active (0);
     metHBox->pack_start (*method);
     pack_start (*metHBox);
-    methodconn = method->signal_changed().connect ( sigc::mem_fun(*this, &BlackWhite::methodChanged) );
+    methodconn = method->signal_changed().connect ( sigc::bind(sigc::mem_fun(*this, &BlackWhite::methodChanged), true) );
 
 
     //----------- Luminance equalizer ------------------------------
@@ -138,7 +138,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     setting->set_active (11);
     settingHBox->pack_start (*setting);
     mixerVBox->pack_start (*settingHBox);
-    settingconn = setting->signal_changed().connect ( sigc::mem_fun(*this, &BlackWhite::settingChanged) );
+    settingconn = setting->signal_changed().connect ( sigc::bind(sigc::mem_fun(*this, &BlackWhite::settingChanged), true) );
 
     RGBLabels = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
     RGBLabels->set_tooltip_text(M("TP_BWMIX_RGBLABEL_HINT"));
@@ -182,7 +182,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     filter->set_active (0);
     filterHBox->pack_start (*filter);
     mixerVBox->pack_start (*filterHBox);
-    filterconn = filter->signal_changed().connect ( sigc::mem_fun(*this, &BlackWhite::filterChanged) );
+    filterconn = filter->signal_changed().connect ( sigc::bind(sigc::mem_fun(*this, &BlackWhite::filterChanged), true) );
 
     //----------- RGB / ROYGCBPM Mixer ------------------------------
 
@@ -238,7 +238,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     algo->set_active (1);
     algoHBox->pack_start (*algo);
     mixerVBox->pack_start(*algoHBox);
-    algoconn = algo->signal_changed().connect ( sigc::mem_fun(*this, &BlackWhite::algoChanged) );
+    algoconn = algo->signal_changed().connect ( sigc::bind(sigc::mem_fun(*this, &BlackWhite::algoChanged), true) );
 
     mixerOrange = Gtk::manage(new Adjuster (/*M("TP_BWMIX_ORANGE")*/"", -100, 200, 1, 33, imgIcon[1]));
 
@@ -364,7 +364,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     show_all();
 
     disableListener();
-    methodChanged();
+    methodChanged(false);
     enableListener();
 }
 BlackWhite::~BlackWhite ()
@@ -461,7 +461,7 @@ void BlackWhite::read (const ProcParams* pp, const ParamsEdited* pedited)
         setting->set_active (14);
     }
 
-    settingChanged();
+    settingChanged(false);
 
 
     if (pedited && !pedited->blackwhite.method) {
@@ -474,7 +474,7 @@ void BlackWhite::read (const ProcParams* pp, const ParamsEdited* pedited)
         method->set_active (2);
     }
 
-    methodChanged();
+    methodChanged(false);
 
 
     if (pedited && !pedited->blackwhite.filter) {
@@ -499,7 +499,7 @@ void BlackWhite::read (const ProcParams* pp, const ParamsEdited* pedited)
         filter->set_active (8);
     }
 
-    filterChanged();
+    filterChanged(false);
 
     enabledcc->set_active (pp->blackwhite.enabledcc);
     lastEnabledcc = pp->blackwhite.enabledcc;
@@ -536,7 +536,7 @@ void BlackWhite::read (const ProcParams* pp, const ParamsEdited* pedited)
     }
 
     algoconn.block(false);
-    algoChanged();
+    algoChanged(false);
 
 
     if (pedited) {
@@ -659,8 +659,12 @@ void BlackWhite::write (ProcParams* pp, ParamsEdited* pedited)
     pp->blackwhite.filter = getFilterString();
 }
 
-void BlackWhite::algoChanged ()
+void BlackWhite::algoChanged (bool autoenable)
 {
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled()) ) {
         listener->panelChanged (EvBWMethodalg, algo->get_active_text ());
     }
@@ -745,7 +749,7 @@ void BlackWhite::colorForValue (double valX, double valY, enum ColorCaller::Elem
 }
 
 
-void BlackWhite::settingChanged ()
+void BlackWhite::settingChanged (bool autoenable)
 {
 
     if ( setting->get_active_row_number() == 10 || setting->get_active_row_number() == 11 ) {
@@ -785,13 +789,17 @@ void BlackWhite::settingChanged ()
 
     updateRGBLabel();
 
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged (EvBWsetting, setting->get_active_text ());
     }
 }
 
 
-void BlackWhite::filterChanged ()
+void BlackWhite::filterChanged (bool autoenable)
 {
     // Checking "listener" to avoid "autoch" getting toggled off because it has to change the sliders when toggling on
     if (listener) {
@@ -807,13 +815,17 @@ void BlackWhite::filterChanged ()
 
     updateRGBLabel();
 
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged (EvBWfilter, filter->get_active_text ());
         listener->panelChanged (EvAutoch, M("GENERAL_ENABLED"));
     }
 }
 
-void BlackWhite::methodChanged ()
+void BlackWhite::methodChanged (bool autoenable)
 {
     if(method->get_active_row_number() == 2) {
         // Channel Mixer
@@ -851,6 +863,10 @@ void BlackWhite::methodChanged ()
         hideMixer();
         beforeCurveCEG->show();
         afterCurveCEG->show();
+    }
+
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
     }
 
     if (listener && (multiImage || getEnabled())) {
@@ -1104,6 +1120,10 @@ void BlackWhite::autoch_toggled ()
 
 void BlackWhite::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     // Checking "listener" to avoid "autoch" getting toggled off because it has to change the sliders when toggling on
     if (listener && (a == mixerRed || a == mixerGreen || a == mixerBlue || a == mixerOrange || a == mixerYellow || a == mixerMagenta || a == mixerPurple || a == mixerCyan) ) {
         if (multiImage && autoch->get_inconsistent()) {

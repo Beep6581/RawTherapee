@@ -21,6 +21,8 @@
 
 #include "epd.h"
 
+#include "options.h"
+
 #include "../rtengine/procparams.h"
 
 using namespace rtengine;
@@ -146,6 +148,10 @@ void EdgePreservingDecompositionUI::setDefaults(const ProcParams *defParams, con
 
 void EdgePreservingDecompositionUI::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         if(a == strength) {
             listener->panelChanged(EvEPDStrength, Glib::ustring::format(std::setw(2), std::fixed, std::setprecision(2), a->getValue()));

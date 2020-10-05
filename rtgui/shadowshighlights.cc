@@ -19,6 +19,7 @@
 #include "shadowshighlights.h"
 
 #include "eventmapper.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
 
@@ -63,7 +64,7 @@ ShadowsHighlights::ShadowsHighlights () : FoldableToolPanel(this, "shadowshighli
     shadows->setAdjusterListener (this);
     s_tonalwidth->setAdjusterListener (this);
 
-    colorspace->signal_changed().connect(sigc::mem_fun(*this, &ShadowsHighlights::colorspaceChanged));
+    colorspaceconn = colorspace->signal_changed().connect(sigc::mem_fun(*this, &ShadowsHighlights::colorspaceChanged));
     
     show_all_children ();
 }
@@ -91,6 +92,7 @@ void ShadowsHighlights::read (const ProcParams* pp, const ParamsEdited* pedited)
     shadows->setValue       (pp->sh.shadows);
     s_tonalwidth->setValue  (pp->sh.stonalwidth);
 
+    colorspaceconn.block(true);
     if (pedited && !pedited->sh.lab) {
         colorspace->set_active(2);
     } else if (pp->sh.lab) {
@@ -98,6 +100,7 @@ void ShadowsHighlights::read (const ProcParams* pp, const ParamsEdited* pedited)
     } else {
         colorspace->set_active(0);
     }
+    colorspaceconn.block(false);
     
     enableListener ();
 }
@@ -155,6 +158,10 @@ void ShadowsHighlights::setDefaults (const ProcParams* defParams, const ParamsEd
 
 void ShadowsHighlights::adjusterChanged (Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         const Glib::ustring costr = Glib::ustring::format ((int)a->getValue());
 
@@ -188,6 +195,10 @@ void ShadowsHighlights::enabledChanged ()
 
 void ShadowsHighlights::colorspaceChanged()
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled()) ) {
         listener->panelChanged(EvSHColorspace, colorspace->get_active_text());
     }

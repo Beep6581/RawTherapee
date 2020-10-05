@@ -34,6 +34,7 @@ class PrSharpening final :
 protected:
     Adjuster* contrast;
     MyComboBoxText* method;
+    sigc::connection methodConn;
     Adjuster* dradius;
     Adjuster* damount;
     Adjuster* ddamping;

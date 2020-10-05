@@ -150,6 +150,9 @@ void Defringe::setDefaults (const ProcParams* defParams, const ParamsEdited* ped
 }
 void Defringe::curveChanged ()
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && getEnabled()) {
         listener->panelChanged (EvPFCurve, M("HISTORY_CUSTOMCURVE"));
@@ -158,6 +161,10 @@ void Defringe::curveChanged ()
 
 void Defringe::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
 
         if (a == radius) {

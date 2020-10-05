@@ -23,6 +23,7 @@
 #include "dehaze.h"
 
 #include "eventmapper.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
 
@@ -117,6 +118,10 @@ void Dehaze::setDefaults(const ProcParams *defParams, const ParamsEdited *pedite
 
 void Dehaze::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         if (a == strength) {
             listener->panelChanged(EvDehazeStrength, a->getTextValue());

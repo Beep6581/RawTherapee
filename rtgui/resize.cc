@@ -23,6 +23,7 @@
 
 #include "eventmapper.h"
 #include "guiutils.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
 
@@ -270,6 +271,10 @@ void Resize::adjusterChanged(Adjuster* a, double newval)
         hconn.block (false);
     }
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (getEnabled () || batchMode)) {
         listener->panelChanged (EvResizeScale, Glib::ustring::format (std::setw(5), std::fixed, std::setprecision(2), scale->getValue()));
     }
@@ -309,6 +314,10 @@ void Resize::appliesToChanged ()
     //printf("\nPASSAGE EN MODE \"%s\"\n\n", appliesTo->get_active_text().c_str());
     setDimensions();
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (getEnabled () || batchMode)) {
         //printf("Appel du listener\n");
         listener->panelChanged (EvResizeAppliesTo, appliesTo->get_active_text());
@@ -317,6 +326,9 @@ void Resize::appliesToChanged ()
 
 void Resize::methodChanged ()
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && (getEnabled () || batchMode)) {
         listener->panelChanged (EvResizeMethod, method->get_active_text());
@@ -487,6 +499,10 @@ void Resize::entryWChanged ()
         }
     }
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener) {
         if (spec->get_active_row_number() == 3) {
             notifyBBox();
@@ -518,6 +534,10 @@ void Resize::entryHChanged ()
             scale->block (false);
             wconn.block (false);
         }
+    }
+
+    if (options.autoenable) {
+        setEnabled(true);
     }
 
     if (listener) {

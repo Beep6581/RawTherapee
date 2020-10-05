@@ -155,6 +155,9 @@ void RGBCurves::write (ProcParams* pp, ParamsEdited* pedited)
  */
 void RGBCurves::curveChanged (CurveEditor* ce)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && getEnabled()) {
         if (ce == Rshape) {
@@ -185,6 +188,10 @@ void RGBCurves::lumamodeChanged ()
         }
 
         lastLumamode = lumamode->get_active ();
+    }
+
+    if (options.autoenable) {
+        setEnabled(true);
     }
 
     if (listener && getEnabled()) {

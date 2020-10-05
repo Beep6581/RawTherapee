@@ -23,6 +23,7 @@
 #include "localcontrast.h"
 
 #include "eventmapper.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
 
@@ -121,6 +122,10 @@ void LocalContrast::setDefaults(const ProcParams *defParams, const ParamsEdited 
 
 void LocalContrast::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         if (a == radius) {
             listener->panelChanged(EvLocalContrastRadius, a->getTextValue());

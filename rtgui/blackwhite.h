@@ -60,9 +60,9 @@ public:
     void trimValues          (rtengine::procparams::ProcParams* pp) override;
     void enabledcc_toggled   ();
     void enabledChanged      () override;
-    void methodChanged       ();
-    void filterChanged       ();
-    void settingChanged      ();
+    void methodChanged       (bool autoenable = true);
+    void filterChanged       (bool autoenable = true);
+    void settingChanged      (bool autoenable = true);
     void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
     void BWChanged           (double redbw, double greenbw, double bluebw) override;
     bool BWComputed_         ();
@@ -71,7 +71,7 @@ public:
     bool curveMode1Changed_  ();
     void curveMode1Changed2  ();
     bool curveMode1Changed2_ ();
-    void algoChanged         ();
+    void algoChanged         (bool autoenable = true);
 
     Glib::ustring getSettingString ();
     Glib::ustring getFilterString  ();

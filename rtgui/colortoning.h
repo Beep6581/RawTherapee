@@ -54,8 +54,8 @@ public:
     void curveChanged          (CurveEditor* ce) override;
     void autosatChanged        ();
     void autoOpenCurve         () override;
-    void methodChanged         ();
-    void twocolorChanged       (bool changedbymethod);
+    void methodChanged         (bool autoenable = true);
+    void twocolorChanged       (bool changedbymethod, bool autoenable = true);
     void twoColorChangedByGui  ();
     void lumamodeChanged       ();
 

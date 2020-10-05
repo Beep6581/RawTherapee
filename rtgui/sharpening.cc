@@ -17,8 +17,11 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cmath>
-#include "eventmapper.h"
+
 #include "sharpening.h"
+
+#include "eventmapper.h"
+#include "options.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -138,7 +141,7 @@ Sharpening::Sharpening () : FoldableToolPanel(this, "sharpening", M("TP_SHARPENI
 
     eonlyConn = edgesonly->signal_toggled().connect( sigc::mem_fun(*this, &Sharpening::edgesonly_toggled) );
     hcConn    = halocontrol->signal_toggled().connect( sigc::mem_fun(*this, &Sharpening::halocontrol_toggled) );
-    method->signal_changed().connect( sigc::mem_fun(*this, &Sharpening::method_changed) );
+    methodConn = method->signal_changed().connect( sigc::mem_fun(*this, &Sharpening::method_changed) );
 }
 
 Sharpening::~Sharpening ()
@@ -216,6 +219,7 @@ void Sharpening::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     }
 
+    methodConn.block(true);
     if (pedited && !pedited->sharpening.method) {
         method->set_active (2);
     } else if (pp->sharpening.method == "usm") {
@@ -223,6 +227,7 @@ void Sharpening::read (const ProcParams* pp, const ParamsEdited* pedited)
     } else if (pp->sharpening.method == "rld") {
         method->set_active (1);
     }
+    methodConn.block(false);
 
     enableListener ();
 }
@@ -318,6 +323,10 @@ void Sharpening::setDefaults (const ProcParams* defParams, const ParamsEdited* p
 
 void Sharpening::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled()) ) {
 
         Glib::ustring costr;
@@ -370,6 +379,10 @@ void Sharpening::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop
 
 void Sharpening::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled())) {
         if (a == threshold) {
             listener->panelChanged(EvShrThresh, threshold->getHistoryString());
@@ -419,6 +432,10 @@ void Sharpening::edgesonly_toggled ()
         }
     }
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled()) ) {
         if (edgesonly->get_inconsistent()) {
             listener->panelChanged (EvShrEdgeOnly, M("GENERAL_INITIALVALUES"));
@@ -454,6 +471,10 @@ void Sharpening::halocontrol_toggled ()
         }
     }
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && (multiImage || getEnabled()) ) {
         if (halocontrol->get_inconsistent()) {
             listener->panelChanged (EvShrHaloControl, M("GENERAL_INITIALVALUES"));
@@ -477,6 +498,10 @@ void Sharpening::method_changed ()
         } else if (method->get_active_row_number() == 1) {
             pack_start (*rld);
         }
+    }
+
+    if (options.autoenable) {
+        setEnabled(true);
     }
 
     if (listener && (multiImage || getEnabled()) ) {

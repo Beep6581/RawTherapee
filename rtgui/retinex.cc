@@ -430,7 +430,7 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
     medianmap = Gtk::manage (new Gtk::CheckButton (M ("TP_RETINEX_MEDIAN")));
     setExpandAlignProperties (medianmap, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     medianmap->set_active (true);
-    medianmapConn  = medianmap->signal_toggled().connect ( sigc::mem_fun (*this, &Retinex::medianmapChanged) );
+    medianmapConn  = medianmap->signal_toggled().connect ( sigc::bind(sigc::mem_fun (*this, &Retinex::medianmapChanged), true) );
     tranGrid->attach (*medianmap, 0, 3, 1, 1);
     medianmap->show ();
 
@@ -558,7 +558,7 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
     disableListener();
     retinexColorSpaceChanged();
     gammaretinexChanged();
-    medianmapChanged();
+    medianmapChanged(false);
     enableListener();
 
 }
@@ -852,6 +852,7 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     setEnabled (pp->retinex.enabled);
 
+    medianmapConn.block (true);
     medianmap->set_active (pp->retinex.medianmap);
     medianmapConn.block (false);
     lastmedianmap = pp->retinex.medianmap;
@@ -927,7 +928,7 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 
     medianmapConn.block (true);
-    medianmapChanged ();
+    medianmapChanged (false);
     medianmapConn.block (false);
 
     cdshape->setCurve  (pp->retinex.cdcurve);
@@ -1266,8 +1267,12 @@ void Retinex::gammaretinexChanged()
     }
 }
 
-void Retinex::medianmapChanged ()
+void Retinex::medianmapChanged (bool autoenable)
 {
+    if (autoenable && options.autoenable) {
+        setEnabled(true);
+    }
+
     if (batchMode) {
         if (medianmap->get_inconsistent()) {
             medianmap->set_inconsistent (false);
@@ -1390,6 +1395,10 @@ void Retinex::adjusterChanged(Adjuster* a, double newval)
         }
     }
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (!listener || !getEnabled()) {
         return;
     }
@@ -1448,7 +1457,11 @@ void Retinex::autoOpenCurve  ()
 
 void Retinex::curveChanged (CurveEditor* ce)
 {
-    if (listener && getEnabled()) {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
+   if (listener && getEnabled()) {
         if (ce == cdshape) {
             listener->panelChanged (EvLCDCurve, M ("HISTORY_CUSTOMCURVE"));
         } else if (ce == cdshapeH) {

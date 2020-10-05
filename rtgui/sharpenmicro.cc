@@ -23,6 +23,7 @@
 
 #include "eventmapper.h"
 #include "guiutils.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
 
@@ -132,6 +133,10 @@ void SharpenMicro::matrix_toggled ()
         lastmatrix = matrix->get_active ();
     }
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         if (matrix->get_active ()) {
             listener->panelChanged (EvSharpenMicroMatrix, M("GENERAL_ENABLED"));
@@ -143,6 +148,10 @@ void SharpenMicro::matrix_toggled ()
 
 void SharpenMicro::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         const Glib::ustring value = a->getTextValue();
 

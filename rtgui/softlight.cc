@@ -23,6 +23,7 @@
 #include "softlight.h"
 
 #include "eventmapper.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
 
@@ -84,6 +85,10 @@ void SoftLight::setDefaults(const ProcParams *defParams, const ParamsEdited *ped
 
 void SoftLight::adjusterChanged(Adjuster* a, double newval)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         listener->panelChanged(EvSoftLightStrength, a->getTextValue());
     }

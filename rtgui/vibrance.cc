@@ -173,6 +173,9 @@ void Vibrance::write( ProcParams* pp, ParamsEdited* pedited)
 }
 void Vibrance::curveChanged ()
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && getEnabled ()) {
         listener->panelChanged (EvVibranceSkinTonesCurve, M("HISTORY_CUSTOMCURVE"));
@@ -209,6 +212,10 @@ void Vibrance::protectskins_toggled ()
         lastProtectSkins = protectSkins->get_active ();
     }
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         if (protectSkins->get_active ()) {
             listener->panelChanged (EvVibranceProtectSkins, M("GENERAL_ENABLED"));
@@ -231,6 +238,10 @@ void Vibrance::avoidcolorshift_toggled ()
         }
 
         lastAvoidColorShift = avoidColorShift->get_active ();
+    }
+
+    if (options.autoenable) {
+        setEnabled(true);
     }
 
     if (listener && getEnabled()) {
@@ -268,6 +279,10 @@ void Vibrance::pastsattog_toggled ()
         saturated->set_sensitive(true);
     }
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         if (pastSatTog->get_active ()) {
             listener->panelChanged (EvVibrancePastSatTog, M("GENERAL_ENABLED"));
@@ -281,6 +296,10 @@ void Vibrance::adjusterChanged(Adjuster* a, double newval)
 {
     if (a == pastels && pastSatTog->get_active()) {
         saturated->setValue (newval);
+    }
+
+    if (options.autoenable) {
+        setEnabled(true);
     }
 
     if (listener && getEnabled()) {
@@ -304,6 +323,10 @@ void Vibrance::adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, doubl
 
 void Vibrance::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop)
 {
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
     if (listener && getEnabled()) {
         listener->panelChanged (EvVibrancePastSatThreshold, psThreshold->getHistoryString());
     }

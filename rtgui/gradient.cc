@@ -4,6 +4,7 @@
 #include "gradient.h"
 
 #include "editwidgets.h"
+#include "options.h"
 #include "rtimage.h"
 
 #include "../rtengine/procparams.h"
@@ -256,6 +257,10 @@ void Gradient::setDefaults (const ProcParams* defParams, const ParamsEdited* ped
 void Gradient::adjusterChanged(Adjuster* a, double newval)
 {
     updateGeometry(int(centerX->getValue()), int(centerY->getValue()), feather->getValue(), degree->getValue());
+
+    if (options.autoenable) {
+        setEnabled(true);
+    }
 
     if (listener && getEnabled()) {
 

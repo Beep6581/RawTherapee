@@ -35,6 +35,7 @@ protected:
     Adjuster* contrast;
     Adjuster* blur;
     MyComboBoxText* method;
+    sigc::connection methodConn;
     Adjuster* dradius;
     Adjuster* damount;
     Adjuster* ddamping;

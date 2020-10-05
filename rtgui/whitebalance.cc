@@ -431,6 +431,10 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
         cache_customEqual (eVal);
     }
 
+    if (options.autoenable) {
+        setEnabled(true);
+    }
+
         // Recomputing AutoWB if it's the current method will happen in improccoordinator.cc
 
     if (listener && getEnabled()) {
@@ -557,6 +561,10 @@ void WhiteBalance::optChanged ()
 
                 break;
             }
+        }
+
+        if (options.autoenable) {
+            setEnabled(true);
         }
 
         if (listener && getEnabled()) {
