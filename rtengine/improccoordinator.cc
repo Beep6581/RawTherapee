@@ -819,7 +819,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
 
         if (todo & (M_AUTOEXP | M_RGBCURVE)) {
-          /*  if (params->icm.workingTRC == "Custom") { //exec TRC IN free
+            if (params->icm.workingTRC == "Custom") { //exec TRC IN free
                 if (oprevi == orig_prev) {
                     oprevi = new Imagefloat(pW, pH);
                     orig_prev->copyData(oprevi);
@@ -848,7 +848,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     ipf.workingtrc(oprevi, oprevi, cw, ch, 5, params->icm.workingProfile, params->icm.workingTRCGamma, params->icm.workingTRCSlope, customTransformOut, false, true, true);
                 }
             }
-            */
         }
 
 

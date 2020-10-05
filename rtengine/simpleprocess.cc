@@ -918,7 +918,7 @@ private:
             ipf.lab2rgb(labcbdl, *baseImg, params.icm.workingProfile);
         }
 
-/*        //gamma TRC working
+        //gamma TRC working
         if (params.icm.workingTRC == "Custom") { //exec TRC IN free
             const Glib::ustring profile = params.icm.workingProfile;
 
@@ -932,7 +932,7 @@ private:
                 ipf.workingtrc(baseImg, baseImg, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope, dummyTransForm, false, true, false);
             }
         }
-*/
+
         // RGB processing
 
         curve1(65536);
