@@ -583,6 +583,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     setExpandAlignProperties(headerHBox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
     if (useEnabled) {
+        get_style_context()->add_class("OnOff");
         statusImage = Gtk::manage(new RTImage(disabledImage));
         imageEvBox = Gtk::manage(new Gtk::EventBox());
         imageEvBox->set_name("MyExpanderStatus");
@@ -593,6 +594,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
         imageEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
         headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
     } else {
+        get_style_context()->add_class("Fold");
         statusImage = Gtk::manage(new RTImage(openedImage));
         headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
     }
@@ -635,8 +637,8 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
     headerHBox->set_can_focus(false);
     setExpandAlignProperties(headerHBox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
-
     if (useEnabled) {
+        get_style_context()->add_class("OnOff");
         statusImage = Gtk::manage(new RTImage(disabledImage));
         imageEvBox = Gtk::manage(new Gtk::EventBox());
         imageEvBox->set_name("MyExpanderStatus");
@@ -647,6 +649,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
         imageEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
         headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
     } else {
+        get_style_context()->add_class("Fold");
         statusImage = Gtk::manage(new RTImage(openedImage));
         headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
     }

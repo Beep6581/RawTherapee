@@ -717,6 +717,7 @@ flowboxchild:selected {
     margin: 0;
     padding: 0;
 }
+
 #MyExpander.withScrollbar { /* This margin is always added */
     margin-right: 1em;
 }
@@ -762,12 +763,18 @@ flowboxchild:selected {
 }
 
 #MyExpanderTitle label {
-    color: #CCCCCC;
+    color: #999999;
     padding: 0;
     margin: 0;
     font-size: 1.1em;
     font-weight: bold;
 }
+
+#MyExpander.Fold > #MyExpanderTitle label,
+#MyExpander.OnOff.enabledTool > #MyExpanderTitle label {
+    color: #DDDDDD;
+}
+
 #MyExpanderTitle:hover {
     background-color: #202020;
 }
@@ -781,8 +788,8 @@ flowboxchild:selected {
 }
 
 /* Alignment of tool headers is controlled by the image */
-#MyExpander > #MyExpanderTitle box > image,
-#MyExpander > #MyExpanderTitle #MyExpanderStatus image {
+#MyExpander.Fold > #MyExpanderTitle box > image,
+#MyExpander.OnOff > #MyExpanderTitle #MyExpanderStatus image {
     border: solid 0.0833333333333333em transparent;
     padding: 0.25em;
     margin: 0.3em 0.5em 0.3em 0;
