@@ -184,7 +184,7 @@ popover separator:not(:only-child) {
 paned.horizontal > separator {
     margin:  0 0.16666666666666666em;
 }
-/* Double line separator */
+
 paned.vertical > separator {
     margin: 0.25em 0;
 }
@@ -404,19 +404,19 @@ button.flat  {
 }
 
 button.flat:checked {
-    background-image:  linear-gradient(#343434, #2E2E2E, #292929);
+    background-image:  linear-gradient(#545454, #4E4E34, #494949);
 }
 
 checkbutton > check {
-    background-image: linear-gradient(#343434, #2E2E2E, #292929);
+    background-image: linear-gradient(#545454, #4E4E4E, #494949);
 }
 
 radiobutton > radio {
-    background-image: linear-gradient(#343434, #2E2E2E, #292929);
+    background-image: linear-gradient(#545454, #4E4E4E, #494949);
 }
 
 button.flat:hover, checkbutton:hover > check, radiobutton:hover > radio {
-    background-image: linear-gradient(shade(#343434,1.3), shade(#2E2E2E,1.3), shade(#292929,1.3));
+    background-image: linear-gradient(shade(#545454,1.3), shade(#4E4E4E,1.3), shade(#494949,1.3));
 }
 
 button.popupbutton-arrow {
@@ -461,10 +461,10 @@ scale slider {
     padding: 0.583333333333333333em;
     border-radius: 1.166666666666666666em;
     border-width: 0.083333333333333333em;
-    background-image: linear-gradient(#343434, #2E2E2E, #292929);
+    background-image: linear-gradient(#444444, #3E3E3E, #393939);
 }
 scale slider:hover {
-    background-image: linear-gradient(#444444, #3E3E3E, #393939);
+    background-image: linear-gradient(#545454, #4E4E4E, #494949);
 }
 scale:disabled slider {
     background-image: none;
@@ -478,7 +478,7 @@ scale trough {
     padding: 0 0.583333333333333333em;
     border-width: 0.083333333333333333em;
     border-radius: 0.333333333333333333em;
-    background-color: #2A2A2A;
+    background-color: rgba(0,0,0,0.15);
 }
 scale:disabled trough {
     background-color: #444;
@@ -616,7 +616,7 @@ button.Right {
 /* [1.23[-][+]] */
 entry, spinbutton {
     min-height: 0.8333333333333333em;
-    background-color: #262626;
+    background-color: rgba(0,0,0,0.075);
     border-radius: 0.2em;
 }
 
@@ -721,18 +721,19 @@ flowboxchild:selected {
     margin-right: 1em;
 }
 
-#MyExpander.enabledTool > #MyExpanderTitle {
-    background: @theme_selected_bg_color;
-}
-
 /* Tool background */
 #ExpanderBox > box,
 #ExpanderBox > grid {
-    background-color: rgba(0,0,0,0.125);
+    background-color: rgba(255,255,255,0.075);
     margin: 0;
     padding: 0.5em 0.5em 0.75em 0.5em;
+    border-top: 0.0833333333333333em solid rgba(255,255,255,0.1);
+    border-bottom: 0.0833333333333333em solid rgba(0,0,0,0.3);
 }
 
+/* Not all combinations below are used, but this makes sure
+   also some of the more exotic box and frame layouts are
+   treated properly. */
 #ExpanderBox frame > box,
 #ExpanderBox frame frame > box,
 #ExpanderBox2 frame > box,
@@ -753,22 +754,19 @@ flowboxchild:selected {
 #LocallabToolPanel > grid,
 #ExpanderBox2 > box,
 #ExpanderBox2 > grid {
-    background-color: rgba(0,0,0,0.125);
+    background-color: rgba(255,255,255,0.075);
     margin: 0;
     padding: 0.25em 0.5em 0.5em 0.25em;
-}
-
-#MyExpanderTitle > box {
-    margin: 0;
-    padding: 0;
-    border-bottom: 0.0833333333333333em solid #363636;
+    border-top: 0.0833333333333333em solid rgba(255,255,255,0.1);
+    border-bottom: 0.0833333333333333em solid rgba(0,0,0,0.3);
 }
 
 #MyExpanderTitle label {
     color: #CCCCCC;
-    padding: 0.6em 0.5em;
+    padding: 0;
     margin: 0;
     font-size: 1.1em;
+    font-weight: bold;
 }
 #MyExpanderTitle:hover {
     background-color: #202020;
@@ -780,6 +778,19 @@ flowboxchild:selected {
 }
 #MyExpanderTitle:hover label {
     color: #D8D8D8;
+}
+
+/* Alignment of tool headers is controlled by the image */
+#MyExpander > #MyExpanderTitle box > image,
+#MyExpander > #MyExpanderTitle #MyExpanderStatus image {
+    border: solid 0.0833333333333333em transparent;
+    padding: 0.25em;
+    margin: 0.3em 0.5em 0.3em 0;
+}
+
+#MyExpander.enabledTool > #MyExpanderTitle #MyExpanderStatus image {
+    border: solid 0.0833333333333333em rgba(255,255,255,0.15);
+    background: @theme_selected_bg_color;
 }
 
 #LocallabToolPanel separator, #ExpanderBox2 separator, #ExpanderBox3 separator {
@@ -868,12 +879,14 @@ paned box, paned grid {
 }
 
 paned > separator {
-    border-width: 0.0833333333333333em 0.0833333333333333em 0 0;
-    border-style: solid;
-    border-color: #404040;
+    background: rgba(0,0,0,0.075);
+    border: none;
+    min-width: 0.25em;
+    min-height: 0.25em;
     padding: 0;
-    margin: 0.3333333333333333em;
+    margin: 0;
 }
+
 fontchooser scrolledwindow,
 #PlacesPaned scrolledwindow,
 #HistoryPanel scrolledwindow,

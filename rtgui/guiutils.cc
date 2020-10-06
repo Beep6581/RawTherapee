@@ -655,7 +655,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
 
     label = Gtk::manage(new Gtk::Label());
     setExpandAlignProperties(label, true, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    label->set_markup(Glib::ustring("<b>") + escapeHtmlChars(titleLabel) + Glib::ustring("</b>"));
+    label->set_markup(escapeHtmlChars(titleLabel));
     headerHBox->pack_start(*label, Gtk::PACK_EXPAND_WIDGET, 0);
 
     titleEvBox = Gtk::manage(new Gtk::EventBox());

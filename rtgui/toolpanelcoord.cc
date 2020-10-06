@@ -1141,13 +1141,11 @@ void ToolPanelCoordinator::updateVScrollbars(bool hide)
     rawPanelSW->set_policy          (Gtk::POLICY_AUTOMATIC, policy);
     advancedPanelSW->set_policy      (Gtk::POLICY_AUTOMATIC, policy);
     locallabPanelSW->set_policy(Gtk::POLICY_AUTOMATIC, policy);
-    
 
     for (auto currExp : expList) {
         currExp->updateVScrollbars(hide);
     }
 }
-
 
 void ToolPanelCoordinator::updateTPVScrollbar(bool hide)
 {

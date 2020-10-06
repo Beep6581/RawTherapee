@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -17,7 +15,7 @@
    inkscape:export-filename="/tmp/template.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
-   inkscape:version="0.92.2 2405546, 2018-03-11"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
    sodipodi:docname="power-off-small.svg">
   <sodipodi:namedview
      id="base"
@@ -26,16 +24,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="50.625"
-     inkscape:cx="8"
-     inkscape:cy="8"
+     inkscape:zoom="48.806956"
+     inkscape:cx="7.6926668"
+     inkscape:cy="8.0255665"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
-     inkscape:window-width="1920"
-     inkscape:window-height="1019"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-width="3440"
+     inkscape:window-height="1387"
+     inkscape:window-x="3832"
+     inkscape:window-y="-8"
      inkscape:window-maximized="1"
      inkscape:grid-bbox="true"
      inkscape:pagecheckerboard="false"
@@ -44,7 +42,8 @@
      inkscape:snap-others="false"
      inkscape:object-nodes="false"
      inkscape:snap-grids="true"
-     inkscape:snap-bbox-midpoints="false">
+     inkscape:snap-bbox-midpoints="false"
+     inkscape:document-rotation="0">
     <inkscape:grid
        type="xygrid"
        id="grid1374"
@@ -63,7 +62,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
         <dc:creator>
           <cc:Agent>
             <dc:title>Maciej Dworak</dc:title>
@@ -100,11 +99,15 @@
      inkscape:groupmode="layer"
      inkscape:label="Layer 1"
      transform="translate(0,-8)">
-    <circle
-       style="opacity:0.5;fill:none;fill-opacity:0.75294118;fill-rule:nonzero;stroke:#2a7fff;stroke-width:1.50047243;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-       id="path2547"
-       cx="8"
-       cy="17"
-       r="3.2497637" />
+    <path
+       style="display:inline;opacity:0.5;fill:none;fill-opacity:0.752941;fill-rule:nonzero;stroke:#2a7fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       d="m 11.030908,13.501206 a 4.3252046,4.3407218 0 0 1 1.294297,3.096681 v 0 A 4.3252046,4.3407218 0 0 1 8,20.938608 4.3252046,4.3407218 0 0 1 3.6747954,16.597887 4.3252046,4.3407218 0 0 1 4.9720116,13.498331"
+       id="path5608"
+       inkscape:connector-curvature="0" />
+    <path
+       style="opacity:0.5;fill:none;fill-rule:evenodd;stroke:#2a7fff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       d="m 7.9999995,11.259782 v 3.39629"
+       id="path2553"
+       inkscape:connector-curvature="0" />
   </g>
 </svg>
