@@ -2631,9 +2631,11 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         contFrame->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRAST_TOOLTIP"));
         LocalcurveEditorwav->set_tooltip_markup(M("TP_LOCALLAB_LEVELLOCCONTRAST_TOOLTIP"));
+        csThreshold->set_tooltip_markup(M("TP_LOCALLAB_THRESHOLDWAV_TOOLTIP"));
         levelwav->set_tooltip_markup(M("TP_LOCALLAB_LEVELWAV_TOOLTIP"));
         clariFrame->set_tooltip_markup(M("TP_LOCALLAB_CLARI_TOOLTIP"));
         clarisoft->set_tooltip_markup(M("TP_LOCALLAB_CLARISOFT_TOOLTIP"));
+        expresidpyr->set_tooltip_text(M("TP_LOCALLAB_EXPRESID_TOOLTIP"));
         expcontrastpyr->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP"));
         wavgradl->set_tooltip_text(M("TP_LOCALLAB_WAVGRAD_TOOLTIP"));
         wavedg->set_tooltip_text(M("TP_LOCALLAB_WAVEEDG_TOOLTIP"));
@@ -2658,6 +2660,8 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
     } else {
         contFrame->set_tooltip_text("");
         LocalcurveEditorwav->set_tooltip_markup("");
+        csThreshold->set_tooltip_markup("");
+        expresidpyr->set_tooltip_text("");
         levelwav->set_tooltip_markup("");
         clariFrame->set_tooltip_markup("");
         clarisoft->set_tooltip_markup("");

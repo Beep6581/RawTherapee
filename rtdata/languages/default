@@ -2496,6 +2496,7 @@ TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposu
 TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Applies a median filter before the Laplace transform to prevent artifacts (noise).\nYou can also use the "Denoise" tool.
 TP_LOCALLAB_EXPOSE;Dynamic Range & Exposure
 TP_LOCALLAB_EXPOSURE_TOOLTIP;Modify exposure in L*a*b space  using Laplacian PDE algorithms to take into account dE and  minimize artifacts.
+TP_LOCALLAB_EXPRESID_TOOLTIP;Residual image.\nBehave as main image without decomposition
 TP_LOCALLAB_EXPRETITOOLS;Advanced Retinex Tools
 TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39.\nUse low transition values and high ‘Transition decay’ and ‘Scope’ values to simulate smaller RT-spots.
 TP_LOCALLAB_EXPTOOL;Exposure Tools
@@ -2889,6 +2890,7 @@ TP_LOCALLAB_VIBRA_TOOLTIP;Adjusts vibrance (essentially the same as the global a
 TP_LOCALLAB_VIB_TOOLNAME;Vibrance & Warm/Cool - 3
 TP_LOCALLAB_SOFT_TOOLNAME;Soft Light & Original Retinex - 6
 TP_LOCALLAB_BLUR_TOOLNAME;Blur/Grain & Denoise - 1
+TP_LOCALLAB_THRESHOLDWAV_TOOLTIP;Range of wavelet levels used in “Local contrast (by wavelet level)”
 TP_LOCALLAB_TONE_TOOLNAME;Tone Mapping - 4
 TP_LOCALLAB_RET_TOOLNAME;Dehaze & Retinex - 9
 TP_LOCALLAB_SHARP_TOOLNAME;Sharpening - 8
