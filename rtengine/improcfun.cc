@@ -3602,7 +3602,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     }
 
     if (sCurveEnabled) {
-        delete sCurve;
+        delete sCurve; 
     }
 
     if (vCurveEnabled) {
@@ -3611,7 +3611,25 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
   //  shadowsHighlights(lab);
     shadowsHighlights(lab, params->sh.enabled, params->sh.lab,params->sh.highlights ,params->sh.shadows, params->sh.radius, scale, params->sh.htonalwidth, params->sh.stonalwidth);
+/*
+    if (params->icm.workingTRC == "Custom") {
+        int GW = lab->W;
+        int GH = lab->H;
+        const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
 
+        lab2rgb(*lab, *tmpImage1, params->icm.workingProfile);
+
+        const float gamtone = params->icm.workingTRCGamma;
+        const float slotone = params->icm.workingTRCSlope;
+        if(gamtone != 2.4f  && slotone != 12.92f) {
+            cmsHTRANSFORM dummy = nullptr;
+            workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, params->icm.workingProfile, 2.4, 12.92310, dummy, true, false, false);
+            workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, params->icm.workingProfile, gamtone, slotone, dummy, false, true, true);
+        }
+
+        rgb2lab(*tmpImage1, *lab, params->icm.workingProfile);
+    }
+*/
     if (params->localContrast.enabled) {
         // Alberto's local contrast
         localContrast(lab, lab->L, params->localContrast, false, scale);

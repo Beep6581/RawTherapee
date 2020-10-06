@@ -183,9 +183,13 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
     wProfNames->set_active(0);
 
-    // wFrame->add(*wVBox);
+    wFrame->add(*wProfVBox);
 
     //-----------------gamma TRC working
+    Gtk::Frame *trcFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_TRCFRAME")));
+    trcFrame->set_label_align(0.025, 0.5);
+    Gtk::VBox *trcProfVBox = Gtk::manage(new Gtk::VBox());
+    trcFrame->set_tooltip_text(M("TP_ICM_TRCFRAME_TOOLTIP"));
 
     wTRCHBox = Gtk::manage(new Gtk::HBox());
 
@@ -194,21 +198,21 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wTRCHBox->pack_start(*wtrclab, Gtk::PACK_SHRINK);
     wTRC = Gtk::manage(new MyComboBoxText());
     wTRCHBox->pack_start(*wTRC, Gtk::PACK_EXPAND_WIDGET);
- //   wProfVBox->pack_start(*wTRCHBox, Gtk::PACK_EXPAND_WIDGET);
+    trcProfVBox->pack_start(*wTRCHBox, Gtk::PACK_EXPAND_WIDGET);
     wTRC->append(M("TP_ICM_WORKING_TRC_NONE"));
     wTRC->append(M("TP_ICM_WORKING_TRC_CUSTOM"));
 
-//    wTRC->set_active(0);
-//    wTRC->set_tooltip_text(M("TP_ICM_WORKING_TRC_TOOLTIP"));
+    wTRC->set_active(0);
+    wFrame->set_tooltip_text(M("TP_ICM_WORKING_TRC_TOOLTIP"));
 
 
     wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_GAMMA"), 0.40, 15.0, 0.001, 2.4));
     wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SLOPE"), 0., 150., 0.01, 12.92310));
-//    wProfVBox->pack_start(*wGamma, Gtk::PACK_SHRINK);
-//    wGamma->show();
+    trcProfVBox->pack_start(*wGamma, Gtk::PACK_SHRINK);
+    wGamma->show();
 
-//    wProfVBox->pack_start(*wSlope, Gtk::PACK_SHRINK);
-//    wSlope->show();
+    trcProfVBox->pack_start(*wSlope, Gtk::PACK_SHRINK);
+    wSlope->show();
 
 
     wGamma->setAdjusterListener(this);
@@ -218,9 +222,10 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
     wSlope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    wFrame->add(*wProfVBox);
+    trcFrame->add(*trcProfVBox);
 
     pack_start(*wFrame, Gtk::PACK_EXPAND_WIDGET);
+    pack_start(*trcFrame, Gtk::PACK_EXPAND_WIDGET);
 
 
     // ---------------------------- Output profile

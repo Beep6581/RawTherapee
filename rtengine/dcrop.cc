@@ -807,6 +807,7 @@ void Crop::update(int todo)
 /*
         if (params.icm.workingTRC == "Custom") { //exec TRC IN free
             const Glib::ustring profile = params.icm.workingProfile;
+                cmsHTRANSFORM dummy = nullptr;
 
             if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
                 const int cw = baseCrop->getWidth();
@@ -1131,6 +1132,26 @@ void Crop::update(int todo)
         parent->ipf.chromiLuminanceCurve(this, 1, labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
         parent->ipf.vibrance(labnCrop, params.vibrance, params.toneCurve.hrenabled, params.icm.workingProfile);
         parent->ipf.labColorCorrectionRegions(labnCrop);
+
+        if (params.icm.workingTRC == "Custom") {
+            int GW = labnCrop->W;
+            int GH = labnCrop->H;
+            const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
+
+            parent->ipf.lab2rgb(*labnCrop, *tmpImage1, params.icm.workingProfile);
+
+            const float gamtone = params.icm.workingTRCGamma;
+            const float slotone = params.icm.workingTRCSlope;
+            printf("DCROP gam=%f slo=%f\n", gamtone, slotone);
+
+            printf("OK DCROP\n");
+            cmsHTRANSFORM dummy = nullptr;
+            parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, params.icm.workingProfile, 2.4, 12.92310, dummy, true, false, false);
+            parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, params.icm.workingProfile, gamtone, slotone, dummy, false, true, true);
+
+            parent->ipf.rgb2lab(*tmpImage1, *labnCrop, params.icm.workingProfile);
+        }
+
 
         if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
             parent->ipf.EPDToneMap(labnCrop, 0, skip);

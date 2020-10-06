@@ -2244,6 +2244,8 @@ TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when sav
 TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
 TP_ICM_TONECURVE;Tone curve
 TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only available if the selected DCP has a tone curve.
+TP_ICM_TRCFRAME;TRC
+TP_ICM_TRCFRAME_TOOLTIP;Allows you to change the 'Tone response curve' which by default in RT is with a gamma sRGB (g=2.4 s=12.92).\nThis TRC change RGB values and histogram.\nOthers usual values - BT709 g=2.2 s=4.5 - linear g=1 - g=2.2 - g=1.8.\nYou can choose any pair of gamma and slope values, the algorithm ensures continuity between the linear part and the parabolic part
 TP_ICM_WORKINGPROFILE;Working Profile
 TP_ICM_WORKING_TRC;Tone response curve:
 TP_ICM_WORKING_TRC_CUSTOM;Custom

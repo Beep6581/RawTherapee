@@ -1418,6 +1418,25 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     ipf.vibrance (labView, params.vibrance, params.toneCurve.hrenabled, params.icm.workingProfile);
     ipf.labColorCorrectionRegions(labView);
 
+    if (params.icm.workingTRC == "Custom") {
+        int GW = labView->W;
+        int GH = labView->H;
+        const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
+
+        ipf.lab2rgb(*labView, *tmpImage1, params.icm.workingProfile);
+
+        const float gamtone = params.icm.workingTRCGamma;
+        const float slotone = params.icm.workingTRCSlope;
+                //printf("IMP gam=%f slo=%f\n", gamtone, slotone);
+        
+        cmsHTRANSFORM dummy = nullptr;
+        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, params.icm.workingProfile, 2.4, 12.92310, dummy, true, false, false);
+        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, params.icm.workingProfile, gamtone, slotone, dummy, false, true, true);
+
+        ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
+    }
+
+
     if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) {
         ipf.EPDToneMap (labView, 5, 6);
     }
