@@ -2431,7 +2431,7 @@ TP_LOCALLAB_DARKRETI;Darkness
 TP_LOCALLAB_DEHAFRA;Dehaze
 TP_LOCALLAB_DEHAZ;Strength
 TP_LOCALLAB_DEHAZ_TOOLTIP;Negative values add haze
-TP_LOCALLAB_DEHAZFRAME_TOOLTIP;Removes atmospheric haze. Usually increases saturation and detail.\n Might remove color casts, but might also introduce a blue cast which can be corrected using other tools.
+TP_LOCALLAB_DEHAZFRAME_TOOLTIP;Removes atmospheric haze. Increases overall saturation and detail. \ n Can remove color casts, but may also introduce a blue cast which can be corrected with other tools.
 TP_LOCALLAB_DELTAD;Delta balance
 TP_LOCALLAB_DELTAEC;ΔE Image mask
 TP_LOCALLAB_DENOIS;Ψ Denoise
@@ -2669,7 +2669,7 @@ TP_LOCALLAB_MERTWE;Exclusion
 TP_LOCALLAB_MERTWO;Subtract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
 TP_LOCALLAB_MLABEL;Restored data Min=%1 Max=%2 (Clip - Offset)
-TP_LOCALLAB_MLABEL_TOOLTIP;'Should be' near min=0 max=32768 (log mode) but others values are possible.\nYou can act on Clip Restored datas and Offset to normalize.\n\nRestored image with no mixture.
+TP_LOCALLAB_MLABEL_TOOLTIP;The values should be close to Min=0 Max=32768 (log mode) but other values are possible.You can adjust ‘Clip restored data (gain)’  & ‘Offset’ to normalize.\n\Recovers image data without blending.
 TP_LOCALLAB_MODE_EXPERT;Advanced
 TP_LOCALLAB_MODE_NORMAL;Standard
 TP_LOCALLAB_MODE_SIMPLE;Basic
@@ -2732,13 +2732,13 @@ TP_LOCALLAB_RESIDSHA;Shadows
 TP_LOCALLAB_RESIDSHATHR;Shadows threshold
 TP_LOCALLAB_RETI;Dehaze & Retinex
 TP_LOCALLAB_RETIFRA;Retinex
-TP_LOCALLAB_RETIFRAME_TOOLTIP;Retinex can be useful for processing images: \nthat are blurred, foggy or hazy (in addition to Dehaze). \nthat contain large differences in luminance. \ n It can also be used for special effects (tone mapping).
+TP_LOCALLAB_RETIFRAME_TOOLTIP;Retinex can be useful for processing images: \nthat are blurred, foggy or hazy (in addition to Dehaze).\nthat contain large differences in luminance.\n It can also be used for special effects (tone mapping).
 TP_LOCALLAB_RETIM;Original Retinex
 TP_LOCALLAB_RETITOOLFRA;Retinex Tools
 TP_LOCALLAB_RETI_FFTW_TOOLTIP;FFT improve quality and allow big radius, but increases the treatment time.\nThe treatment time depends on the surface to be treated\nThe treatment time depends on the value of scale (be carefull to high values).\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.\nThis optimization can reduce the treatment time by a factor of 1.5 to 10.\nOptimization not used in Preview
 TP_LOCALLAB_RETI_LIGHTDARK_TOOLTIP;Has no effect when the value of "Lightness = 1" or "Darkness =2".\nFor other values, the last step of a "Multiple scale Retinex" algorithm (similar to "local contrast") is applied. These 2 cursors, associated with "Strength" allow you to make adjustments upstream of local contrast
 TP_LOCALLAB_RETI_LIMDOFFS_TOOLTIP;Adjusts the internal parameters to optimize the response.\nPreferable to keep the "Restored data" values close to Min=0 and Max=32768 (log mode), but other values are possible.  
-TP_LOCALLAB_RETI_LOGLIN_TOOLTIP;Logarithm mode introduces more contrast but will generate more halos.
+TP_LOCALLAB_RETI_LOGLIN_TOOLTIP;Logarithm mode introduces more contrast but will also generate more halos.
 TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP;The radius and variance sliders allow you adjust haze and target either the foreground or the background.
 TP_LOCALLAB_RETI_SCALE_TOOLTIP;If Scale=1, Retinex behaves like local contrast with additional possibilities.\nIncreasing the value of Scale increases the intensity of the recursive action at the expense of processing time. 
 TP_LOCALLAB_RET_TOOLNAME;Dehaze & Retinex - 9
@@ -2859,7 +2859,7 @@ TP_LOCALLAB_THRESRETI;Threshold
 TP_LOCALLAB_THRESWAV;Balance threshold
 TP_LOCALLAB_TLABEL;TM Data Min=%1 Max=%2 Mean=%3 Sigma=%4 (Threshold)
 TP_LOCALLAB_TLABEL2;TM Effective Tm=%1 TM=%2
-TP_LOCALLAB_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nTm=Min TM=Max of Transmission Map.\nYou can act on Threshold to normalize
+TP_LOCALLAB_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nTm=Min TM=Max of Transmission Map.\nYou can normalize the results with the threshold slider.
 TP_LOCALLAB_TM;Tone Mapping
 TP_LOCALLAB_TM_MASK;Use transmission map
 TP_LOCALLAB_TOOLMASK_TOOLTIP;Structure mask (slider) with the checkbox "Structure mask as tool" checked: in this case a mask showing the structure will be generated after one or more of the 2 curves L(L) or LC(H) has been modified.\n Here, the "Structure mask" behaves like the other Mask tools : Gamma, Slope, etc.\n It allows you to vary the action on the mask according to the structure of the image.
@@ -2881,7 +2881,7 @@ TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust transition decay function: 1 linear , 2 p
 TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas, as a percentage of the "radius" 
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
 TP_LOCALLAB_TRANSMISSIONMAP;Transmission map
-TP_LOCALLAB_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.\nYou can adjust this curve to change the Transmission and reduce artifacts
+TP_LOCALLAB_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positive values (max).\nOrdinate: amplification or reduction.\nYou can adjust this curve to change the Transmission and reduce artifacts
 TP_LOCALLAB_USEMASK;Use mask
 TP_LOCALLAB_VART;Variance (contrast)
 TP_LOCALLAB_VIBRANCE;Vibrance & Warm/Cool
@@ -2927,7 +2927,7 @@ TP_LOCAL_HEIGHT;Bottom
 TP_LOCAL_HEIGHT_T;Top
 TP_LOCAL_WIDTH;Right
 TP_LOCAL_WIDTH_L;Left
-TP_LOCRETI_METHOD_TOOLTIP;Low = Reinforce low light.\nUniform = Evenly distributed..\nHigh = Reinforce strong.\n
+TP_LOCRETI_METHOD_TOOLTIP;Low = Reinforce low light.\nUniform = Evenly distributed.\nHigh = Reinforce strong light.\n
 TP_METADATA_EDIT;Apply modifications
 TP_METADATA_MODE;Metadata copy mode
 TP_METADATA_STRIP;Strip all metadata

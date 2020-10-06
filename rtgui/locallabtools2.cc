@@ -980,7 +980,7 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
         retiFrame->set_tooltip_text(M("TP_LOCALLAB_RETIFRAME_TOOLTIP"));
         loglin->set_tooltip_text(M("TP_LOCALLAB_RETI_LOGLIN_TOOLTIP"));
         sensih->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
-        fftwreti->set_tooltip_text(M("TP_LOCALLAB_RETI_FFTW_TOOLTIP"));
+        fftwreti->set_tooltip_text(M("TP_LOCALLAB_LC_FFTW_TOOLTIP"));
         equilret->set_tooltip_text(M("TP_LOCALLAB_EQUILTM_TOOLTIP"));
         neigh->set_tooltip_text(M("TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP"));
         vart->set_tooltip_text(M("TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP"));
