@@ -994,6 +994,7 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
         cTtransshape->setTooltip(M("TP_LOCALLAB_TRANSMISSION_TOOLTIP"));
         mMLabels->set_tooltip_markup(M("TP_LOCALLAB_MLABEL_TOOLTIP"));
         transLabels->set_tooltip_markup(M("TP_LOCALLAB_TLABEL_TOOLTIP"));
+        transLabels2->set_tooltip_markup(M("TP_LOCALLAB_TLABEL_TOOLTIP"));
         cTgainshape->setTooltip(M("TP_RETINEX_GAINTRANSMISSION_TOOLTIP"));
         expmaskreti->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         enaretiMasktmap->set_tooltip_markup(M("TP_LOCALLAB_ENARETIMASKTMAP_TOOLTIP"));
@@ -1030,6 +1031,7 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
         cTtransshape->setTooltip("");
         mMLabels->set_tooltip_markup("");
         transLabels->set_tooltip_markup("");
+        transLabels2->set_tooltip_markup("");
         cTgainshape->setTooltip("");
         expmaskreti->set_tooltip_markup("");
         enaretiMasktmap->set_tooltip_markup("");

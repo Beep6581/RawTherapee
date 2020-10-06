@@ -2669,7 +2669,7 @@ TP_LOCALLAB_MERTWE;Exclusion
 TP_LOCALLAB_MERTWO;Subtract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
 TP_LOCALLAB_MLABEL;Restored data Min=%1 Max=%2 (Clip - Offset)
-TP_LOCALLAB_MLABEL_TOOLTIP;The values should be close to Min=0 Max=32768 (log mode) but other values are possible.You can adjust ‘Clip restored data (gain)’  & ‘Offset’ to normalize.\n\Recovers image data without blending.
+TP_LOCALLAB_MLABEL_TOOLTIP;The values should be close to Min=0 Max=32768 (log mode) but other values are possible.You can adjust ‘Clip restored data (gain)’ and ‘Offset’ to normalize.\nRecovers image data without blending.
 TP_LOCALLAB_MODE_EXPERT;Advanced
 TP_LOCALLAB_MODE_NORMAL;Standard
 TP_LOCALLAB_MODE_SIMPLE;Basic
@@ -2732,7 +2732,7 @@ TP_LOCALLAB_RESIDSHA;Shadows
 TP_LOCALLAB_RESIDSHATHR;Shadows threshold
 TP_LOCALLAB_RETI;Dehaze & Retinex
 TP_LOCALLAB_RETIFRA;Retinex
-TP_LOCALLAB_RETIFRAME_TOOLTIP;Retinex can be useful for processing images: \nthat are blurred, foggy or hazy (in addition to Dehaze).\nthat contain large differences in luminance.\n It can also be used for special effects (tone mapping).
+TP_LOCALLAB_RETIFRAME_TOOLTIP;Retinex can be useful for processing images: \nthat are blurred, foggy or hazy (in addition to Dehaze).\nthat contain large differences in luminance.\nIt can also be used for special effects (tone mapping).
 TP_LOCALLAB_RETIM;Original Retinex
 TP_LOCALLAB_RETITOOLFRA;Retinex Tools
 TP_LOCALLAB_RETI_FFTW_TOOLTIP;FFT improve quality and allow big radius, but increases the treatment time.\nThe treatment time depends on the surface to be treated\nThe treatment time depends on the value of scale (be carefull to high values).\nTo be used preferably for large radius.\n\nDimensions can be reduced by a few pixels to optimize FFTW.\nThis optimization can reduce the treatment time by a factor of 1.5 to 10.\nOptimization not used in Preview
@@ -3140,7 +3140,7 @@ TP_RETINEX_MEDIAN;Transmission median filter
 TP_RETINEX_METHOD;Method
 TP_RETINEX_METHOD_TOOLTIP;Low = Reinforce low light.\nUniform = Equalize action.\nHigh = Reinforce high light.\nHighlights = Remove magenta in highlights.
 TP_RETINEX_MLABEL;Restored data Min=%1 Max=%2
-TP_RETINEX_MLABEL_TOOLTIP;The values should be close to Min=0 Max=32768 (log mode) but other values are possible.You can adjust ‘Clip restored data (gain)’  & ‘Offset’ to normalize.\n\Recovers image data without blending
+TP_RETINEX_MLABEL_TOOLTIP;The values should be close to Min=0 Max=32768 (log mode) but other values are possible.You can adjust ‘Clip restored data (gain)’ and ‘Offset’ to normalize.\nRecovers image data without blending
 TP_RETINEX_NEIGHBOR;Radius
 TP_RETINEX_NEUTRAL;Reset
 TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
