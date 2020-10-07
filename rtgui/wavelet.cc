@@ -3730,6 +3730,13 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             } else {
                 sup->hide();
             }
+            if(z >= 8 ) {
+                expnoise->setEnabled(false);
+                expnoise->set_sensitive(false);
+            } else {
+              //  expnoise->setEnabled(pp->wavelet.expnoise);
+                expnoise->set_sensitive(true);
+            }
 
             listener->panelChanged(EvWavthres, thres->getTextValue());
              updateGUImaxlev();
@@ -3851,6 +3858,13 @@ void Wavelet::enabledUpdateUI()
         } else {
             sup->hide();
         }
+
+            if(z >= 8) {
+                expnoise->setEnabled(false);
+                expnoise->set_sensitive(false);
+            } else {
+                expnoise->set_sensitive(true);
+            }
 
 //      adjusterUpdateUI(tmrs);
     }
