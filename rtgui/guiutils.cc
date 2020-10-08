@@ -740,7 +740,7 @@ void MyExpander::setLevel (int level)
 void MyExpander::setLabel (Glib::ustring newLabel)
 {
     if (label) {
-        label->set_markup(Glib::ustring("<b>") + escapeHtmlChars(newLabel) + Glib::ustring("</b>"));
+        label->set_markup(escapeHtmlChars(newLabel));
     }
 }
 

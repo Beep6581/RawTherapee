@@ -55,7 +55,7 @@ FoldableToolPanel::FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, 
         Gtk::HBox *titleHBox = Gtk::manage(new Gtk::HBox());
 
         Gtk::Label *label = Gtk::manage(new Gtk::Label());
-        label->set_markup(Glib::ustring("<b>") + escapeHtmlChars(UILabel) + Glib::ustring("</b>"));
+        label->set_markup(escapeHtmlChars(UILabel));
         label->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
         titleHBox->pack_start(*label, Gtk::PACK_EXPAND_WIDGET, 0);
 
