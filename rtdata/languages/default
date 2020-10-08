@@ -2577,7 +2577,6 @@ TP_LOCALLAB_LAP_MASK_TOOLTIP;Solve PDE for all Laplacian masks.\nIf enabled Lapl
 TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improves quality and allows the use of large radii, but increases processing time (depends on the area to be processed). Preferable to use only for large radii. Dimensions of the area can be reduced by a few pixels to optimize the FFTW. This can reduce the processing time by a factor of 1.5 to 10.
 TP_LOCALLAB_LC_TOOLNAME;Local Contrast & Wavelets - 7
 TP_LOCALLAB_LEVELBLUR;Maximum blur levels
-TP_LOCALLAB_LEVELLOCCONTRAST_TOOLTIP;Fine to coarse detail levels from left to right on the x-axis: f.\nIncrease or decrease local contrast on the y-axis.
 TP_LOCALLAB_LEVELWAV;Ψ Wavelets Levels
 TP_LOCALLAB_LEVELWAV_TOOLTIP;The Level is automatically adapted to the size of the spot and the preview.\nFrom level 9 size max 512 to level 1 size max = 4
 TP_LOCALLAB_LEVFRA;Levels
@@ -2902,7 +2901,10 @@ TP_LOCALLAB_WARM;Warm/Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider uses the CIECAM algorithm and acts as a White Balance control to make the color temperature of the selected area warmer or cooler\nIt can also reduce color artifacts in some cases.
 TP_LOCALLAB_WASDEN_TOOLTIP;Luminance noise reduction: the left-hand side of the curve corresponds to the first 3 levels 0,1 &2 (fine detail). The right hand side of the curve corresponds to the coarser details (level 3 and beyond).
 
+TP_LOCALLAB_WAT_WAVSHAPE_TOOLTIP;Low to high local contrast from left to right on the x-axis\nIncrease or decrease local contrast on the y-axis.
+TP_LOCALLAB_WAT_LEVELLOCCONTRAST_TOOLTIP;Low to high local contrast from left to right on the x-axis\nIncrease or decrease local contrast on the y-axis.
 TP_LOCALLAB_WAT_SIGMALC_TOOLTIP;The effect of the local contrast adjustment is stronger for medium-contrast details, and weaker for high and low-contrast details.\n This slider controls how quickly the effect dampens towards the extreme contrasts.\n The higher the value of the slider, the wider the range of contrasts that will receive the full effect of the local contrast adjustment, and the higher the risk  of generating artifacts.\n .The lower the value, the more the effect will be pinpointed towards a narrow range of contrast values
+TP_LOCALLAB_WAT_BLURLC_TOOLTIP;Par défaut les 3 dimensions de L*a*b* luminance et couleur sont concernées par le floutage.\nCase cochée - luminance seulement
 TP_LOCALLAB_WAT_THRESHOLDWAV_TOOLTIP;Etendue des niveaux d’ondelettes utilisée dans l’ensemble du module “wavelets” 
 TP_LOCALLAB_WAT_EXPRESID_TOOLTIP;Image résiduelle, a le même comportement que l'image principale
 TP_LOCALLAB_WAT_CLARIL_TOOLTIP;"Merge luma" is used to select the intensity of the desired effect on luminance.
@@ -2912,7 +2914,18 @@ TP_LOCALLAB_WAT_STRWAV_TOOLTIP;Allows the local contrast to be varied according 
 TP_LOCALLAB_WAT_CONTOFFSET_TOOLTIP;Offset modifies the balance between low-contrast and high-contrast details.\nHigh values will amplify contrast changes to the higher contrast details, whereas low values will amplify contrast changes to low contrast details.\nBy using a low “Attenuation response” value you can select which contrast values will be enhanced.
 TP_LOCALLAB_WAT_CONTCHROMALEV_TOOLTIP;"Chroma levels": adjusts the "a" and "b" components of L*a*b* as a proportion of the luminance values.
 TP_LOCALLAB_WAT_WAVCBDL_TOOLTIP;Similar to Contrast By Detail Levels. Fine to coarse detail levels from left to right on the x-axis.
-
+TP_LOCALLAB_WAT_STRENGTHW_TOOLTIP;Intensité de la détection d'effet de bord
+TP_LOCALLAB_WAT_LOCCONTRASTEDG_TOOLTIP;Vous pouvez agir sur la répartition du contraste local selon l'intensité initiale du contraste par niveaux d'ondelettes.\nCeci aura comme conséquences de modifier l'effet de perspective et de relief de l'image, et/ou réduire les contrastes pour les très faibles niveaux de contraste initial
+TP_LOCALLAB_WAT_GRADW_TOOLTIP;Plus vous déplacez le curseur à droite, plus l'algorithme de détection sera efficace, moins les effets du contraste local seront sensibles
+TP_LOCALLAB_WAT_WAVESHOW_TOOLTIP;Montre l'ensemble des outils "edge sharpness".\nLa lecture de la documentation wavelet est recommandée
+TP_LOCALLAB_WAT_WAVLEVELBLUR_TOOLTIP;Permet d'ajuster l'effet maximum de floutage des niveaux
+TP_LOCALLAB_WAT_WAVBLURCURV_TOOLTIP;Vous permet de flouter chaque niveau de décomposition.\nEn abscisse de gauche à droite, les niveaux de décomposition du plus fin au plus gros
+TP_LOCALLAB_WAT_RESIDBLUR_TOOLTIP;Floute l'image résiduelle, indépendamment des niveaux
+TP_LOCALLAB_WAT_WAVTM_TOOLTIP;La partie inférieure (négative) compresse chaque niveau de décomposition créant un effet tone mapping.\nLa partie supérieure (positive) atténue le contraste par niveau.\nEn abscisse de gauche à droite, les niveaux de décomposition du plus fin au plus gros
+TP_LOCALLAB_WAT_BALTHRES_TOOLTIP;Equilibre l'action à l'intérieur de chaque niveau
+TP_LOCALLAB_WAT_RESIDCOMP_TOOLTIP;Commpresse l'image résiduelle afin d'accentuer ou réduire les contrastes
+TP_LOCALLAB_WAT_DELTABAL_TOOLTIP;En déplaçant le curseur à gauche, les bas niveaux sont accentués, et vers la droite ce sont les bas niveaux qui sont réduits et les hauts niveaux accentués
+TP_LOCALLAB_WAT_WAVDELTABAL_TOOLTIP;Agit sur la balance des trois directions horizontale - verticale - diagonale - en fonction de la luminance de l'image.\nPar défaut les parties sombres ou hautes lumières sont réduites afin d'éviter les artefacts 
 
 TP_LOCALLAB_WAV;Local contrast by level
 TP_LOCALLAB_WAVBLUR_TOOLTIP;Allows you to blur each level of the decomposition, as well as the residual image.

@@ -2630,8 +2630,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         contFrame->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRAST_TOOLTIP"));
-        LocalcurveEditorwav->set_tooltip_markup(M("TP_LOCALLAB_LEVELLOCCONTRAST_TOOLTIP"));
-        wavshape->setTooltip(M("TP_LOCALLAB_WAVSHAPE_TOOLTIP"));
+        LocalcurveEditorwav->set_tooltip_markup(M("TP_LOCALLAB_WAT_LEVELLOCCONTRAST_TOOLTIP"));
         csThreshold->set_tooltip_markup(M("TP_LOCALLAB_WAT_THRESHOLDWAV_TOOLTIP"));
         levelwav->set_tooltip_markup(M("TP_LOCALLAB_LEVELWAV_TOOLTIP"));
         clariFrame->set_tooltip_markup(M("TP_LOCALLAB_CLARI_TOOLTIP"));
@@ -2669,6 +2668,8 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         deltad->set_tooltip_text(M("TP_LOCALLAB_WAT_DELTABAL_TOOLTIP"));
         LocalcurveEditorwavcomp->set_tooltip_markup(M("TP_LOCALLAB_WAT_WAVDELTABAL_TOOLTIP"));
         wavshapecomp->setTooltip(M("TP_LOCALLAB_WAT_WAVDELTABAL_TOOLTIP"));
+        threswav->set_tooltip_text(M("TP_LOCALLAB_WAT_BALTHRES_TOOLTIP"));
+        residcomp->set_tooltip_text(M("TP_LOCALLAB_WAT_RESIDCOMP_TOOLTIP"));
 
         
         expresidpyr->set_tooltip_text(M("TP_LOCALLAB_WAT_EXPRESID_TOOLTIP"));
@@ -2755,6 +2756,8 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         deltad->set_tooltip_text("");
         LocalcurveEditorwavcomp->set_tooltip_markup("");
         wavshapecomp->setTooltip("");
+        threswav->set_tooltip_text("");
+        residcomp->set_tooltip_text("");
 
     }
 }
