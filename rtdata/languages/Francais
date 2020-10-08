@@ -2342,7 +2342,6 @@ TP_LOCALLAB_WAMASKCOL;Ψ Niveau Ondelettes
 TP_LOCALLAB_WARM;Chaud - Froid & Artefacts de couleur
 TP_LOCALLAB_WARM_TOOLTIP;Ce curseur utilise l'algorithme Ciecam et agit comme une Balance des blancs, il prut réchauffer ou refroidir cool la zone concernée.\nIl peut aussi dans certains réduire les artefacts colorés.
 TP_LOCALLAB_WASDEN_TOOLTIP;De-bruite luminance pour les 3 premiers niveaux (fin).\nLa limite droite de la courbe correspond à gros : niveau 3 et au delà.
-
 TP_LOCALLAB_WAT_WAVSHAPE_TOOLTIP;Contraste faible à élevé de gauche à droite en abscisse\nAugmente ou réduit le contraste en ordonnée.
 TP_LOCALLAB_WAT_LEVELLOCCONTRAST_TOOLTIP;Contraste faible à élevé de gauche à droite en abscisse\nAugmente ou réduit le contraste en ordonnée.
 TP_LOCALLAB_WAT_SIGMALC_TOOLTIP;L'effet sur le contraste local est maximum pour les valeurs moyennes, et affaibli pour les valeurs faibles ou élevées.\n Le curseur contrôle comment s'effectue les changements pour ces valeurs extêmse.\n Plus la valeur du curseur est élevée, plus grande sera l'étendue qui recevra le maximum d'ajustements, ainsi que le risque de voir apparaître des artefacts.\n .Plus faible sera cette valeur, plus les différences de contraste seront atténuées
@@ -2368,12 +2367,10 @@ TP_LOCALLAB_WAT_BALTHRES_TOOLTIP;Equilibre l'action à l'intérieur de chaque ni
 TP_LOCALLAB_WAT_RESIDCOMP_TOOLTIP;Commpresse l'image résiduelle afin d'accentuer ou réduire les contrastes
 TP_LOCALLAB_WAT_DELTABAL_TOOLTIP;En déplaçant le curseur à gauche, les bas niveaux sont accentués, et vers la droite ce sont les bas niveaux qui sont réduits et les hauts niveaux accentués
 TP_LOCALLAB_WAT_WAVDELTABAL_TOOLTIP;Agit sur la balance des trois directions horizontale - verticale - diagonale - en fonction de la luminance de l'image.\nPar défaut les parties sombres ou hautes lumières sont réduites afin d'éviter les artefacts 
-
-
 TP_LOCALLAB_WAV;Contrast local niveau
 TP_LOCALLAB_WAVBLUR_TOOLTIP;Réalise un flou pour chaque niveau de décomposition, également pour l'image résiduelle.
 TP_LOCALLAB_WAVCOMP;Compression par niveau
-TP_LOCALLAB_WAVCOMPRE;(de)Compression par niveau
+TP_LOCALLAB_WAVCOMPRE;Compression par niveau
 TP_LOCALLAB_WAVCOMPRE_TOOLTIP;Réalise un 'Tone-mapping' ou une réduction du contraste local par niveau.\nEn abscisse: niveaux
 TP_LOCALLAB_WAVCOMP_TOOLTIP;Réalise un contrast local en fonction de la direction de la décomposition en ondelettes : horizontal, vertical, diagonal
 TP_LOCALLAB_WAVCON;Contraste par niveau
