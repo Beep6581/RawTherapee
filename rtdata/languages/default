@@ -2382,12 +2382,12 @@ TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Contains the references of RT-spot, useful for shape detection (hue, luma, chroma, Sobel).\nLow values may be useful for treating foliage.\nHigh values may be useful for treating skin
 TP_LOCALLAB_CLARICRES;Merge chroma
-TP_LOCALLAB_CLARIFRA;Clarity & Sharp mask - Blend & Soft images 
+TP_LOCALLAB_CLARIFRA;Clarity & Sharp mask - Blend & Soft Images 
 TP_LOCALLAB_CLARILRES;Merge luma
 TP_LOCALLAB_CLARISOFT;Soft radius
-TP_LOCALLAB_CLARISOFT_TOOLTIP;Enabled for Clarity and Sharp mask if Merge Luma different from zero.\n\nEnabled for all wavelets pyramid modules.\nDisabled if Soft radius = 0
+TP_LOCALLAB_CLARISOFT_TOOLTIP;The "Soft radius" slider (guided filter algorithm) reduces halos and irregularities for both Clarity and Sharp Mask and for all pyramid wavelet processes. To deactivate, set slider to zero.
 TP_LOCALLAB_CLARITYML;Clarity
-TP_LOCALLAB_CLARI_TOOLTIP;Under or equal level wavelet 4, 'Sharp mask' is enabled.\nAbove level wavelet 5 'Clarity' is enabled.\nUsefull if you use 'Level dynamic Range Compression'
+TP_LOCALLAB_CLARI_TOOLTIP;Levels 0 to 4 (included): ‘Sharp mask’ is enabled\nLevels 5 and above: 'Clarity' is enabled.\nUseful if you use 'Wavelet level tone mapping'
 TP_LOCALLAB_CLIPTM;Clip restored data (gain)
 TP_LOCALLAB_COFR;Color & Light
 TP_LOCALLAB_COLORDE;ΔE preview color - intensity
@@ -2402,10 +2402,10 @@ TP_LOCALLAB_COMPFRA;Directional Contrast
 TP_LOCALLAB_COMPFRAME_TOOLTIP;Allows special effects. You can reduce artifacts with 'Clarity & Sharp mask - Blend & Soft Images".\nUses a lot of resources
 TP_LOCALLAB_COMPLEX_METHOD;Software Complexity
 TP_LOCALLAB_COMPLEX_TOOLTIP; Allow user to select Local adjustments rubrics.
-TP_LOCALLAB_COMPREFRA;Wavelet level tone-mapping
+TP_LOCALLAB_COMPREFRA;Wavelet level tone mapping
 TP_LOCALLAB_COMPRESS_TOOLTIP;Use if necessary the module 'Clarity & Sharp mask and Blend & Soft Images' by adjusting 'Soft radius' to reduce artifacts.
 TP_LOCALLAB_CONTCOL;Contrast threshold
-TP_LOCALLAB_CONTFRA;Contrast by Level
+TP_LOCALLAB_CONTFRA;Contrast by level
 TP_LOCALLAB_CONTTHMASK_TOOLTIP;Allows you to determine which parts of the image will be impacted  depending on the texture.
 TP_LOCALLAB_CONTRAST;Contrast
 TP_LOCALLAB_CONTRASTCURVMASK1_TOOLTIP;Allows you to freely modify the contrast of the mask (gamma & slope), instead of using a continuous & progressive curve. However it can create artifacts that have to be dealt with using the “Smooth radius” or “Laplacian threshold sliders”.
@@ -2452,7 +2452,7 @@ TP_LOCALLAB_DETAILSH;Details
 TP_LOCALLAB_DETAILTHR;Luminance & chroma detail threshold (DCT ƒ)
 TP_LOCALLAB_DUPLSPOTNAME;Copy
 TP_LOCALLAB_EDGFRA;Edge Sharpness
-TP_LOCALLAB_EDGSHOW;Show all tolls
+TP_LOCALLAB_EDGSHOW;Show all tools
 TP_LOCALLAB_ELI;Ellipse
 TP_LOCALLAB_ENABLE_AFTER_MASK;Use Tone Mapping
 TP_LOCALLAB_ENABLE_MASK;Enable mask
@@ -2482,8 +2482,8 @@ TP_LOCALLAB_EXPCOLOR_TOOLTIP;Adjust color, lightness, contrast and correct small
 TP_LOCALLAB_EXPCOMP;Exposure compensation ƒ
 TP_LOCALLAB_EXPCOMPINV;Exposure compensation
 TP_LOCALLAB_EXPCOMP_TOOLTIP;For portraits or images with a low color gradient. You can change "Shape detection" in "Settings":\n\nIncrease 'ΔE scope threshold'\nReduce 'ΔE decay'\nIncrease 'ab-L balance (ΔE)’ 
-TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;See the documentation of wavelet levels.\nHowever there are some differences: more tools and closer to the details.\nEx: Tone mapping for wavelet levels. 
-TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Avoid spots that are too small(< 32x32 pixels).\nUse low transition values and high decay transition values and scope to simulate small RT-spot and deal wth defects.\nUse if necessary the module 'Clarity & Sharp mask and Blend images' by adjusting 'Soft radius' to reduce artifacts.
+TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;See the documentation for Wavelet Levels.\nThere are some differences in the Locallab version: more tools and more possibilities for working on individual detail levels.\ne.g. Wavelet-level tone mapping. 
+TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Avoid spots that are too small ( < 32x32 pixels).\nUse low ‘Transition value’ and high ‘Transition decay’  and ‘Scope’ to simulate small RT-spots and deal wth defects.\nUse 'Clarity & Sharp mask and Blend & Soft Images' if necessary by adjusting 'Soft radius' to reduce artifacts.
 TP_LOCALLAB_EXPCURV;Curves
 TP_LOCALLAB_EXPGRAD;Graduated Filter
 TP_LOCALLAB_EXPGRADCOL_TOOLTIP;A graduated filter is available in Color and Light (luminance, chrominance & hue gradients, and "Merge file")  Exposure (luminance grad.), Exposure Mask (luminance grad.), Shadows/Highlights (luminance grad.), Vibrance (luminance, chrominance & hue gradients), Local contrast & wavelet pyramid (local contrast grad.).\nFeather is located in Settings. 
@@ -2496,7 +2496,6 @@ TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposu
 TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Applies a median filter before the Laplace transform to prevent artifacts (noise).\nYou can also use the "Denoise" tool.
 TP_LOCALLAB_EXPOSE;Dynamic Range & Exposure
 TP_LOCALLAB_EXPOSURE_TOOLTIP;Modify exposure in L*a*b space  using Laplacian PDE algorithms to take into account dE and  minimize artifacts.
-TP_LOCALLAB_EXPRESID_TOOLTIP;Residual image.\nBehave as main image without decomposition
 TP_LOCALLAB_EXPRETITOOLS;Advanced Retinex Tools
 TP_LOCALLAB_EXPSHARP_TOOLTIP;RT-Spot minimum 39*39.\nUse low transition values and high ‘Transition decay’ and ‘Scope’ values to simulate smaller RT-spots.
 TP_LOCALLAB_EXPTOOL;Exposure Tools
@@ -2541,7 +2540,7 @@ TP_LOCALLAB_GRADSTRLUM;Luminance gradient strength
 TP_LOCALLAB_GRADSTR_TOOLTIP;Filter strength in stops
 TP_LOCALLAB_GRAIN_TOOLTIP;Adds film-like grain to the image
 TP_LOCALLAB_GRAINFRA;Film Grain   1:1
-TP_LOCALLAB_GRALWFRA;Graduated Filter Local contrast
+TP_LOCALLAB_GRALWFRA;Graduated filter (local contrast)
 TP_LOCALLAB_GRIDFRAME_TOOLTIP;You can use this tool as a brush. Use small spot and adapt transition and transition decay\nOnly mode NORMAL and eventually Hue, Saturation, Color, Luminosity are concerned by Merge background (ΔE)
 TP_LOCALLAB_GRIDONE;Color Toning
 TP_LOCALLAB_GRIDTWO;Direct
@@ -2578,7 +2577,7 @@ TP_LOCALLAB_LAP_MASK_TOOLTIP;Solve PDE for all Laplacian masks.\nIf enabled Lapl
 TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improves quality and allows the use of large radii, but increases processing time (depends on the area to be processed). Preferable to use only for large radii. Dimensions of the area can be reduced by a few pixels to optimize the FFTW. This can reduce the processing time by a factor of 1.5 to 10.
 TP_LOCALLAB_LC_TOOLNAME;Local Contrast & Wavelets - 7
 TP_LOCALLAB_LEVELBLUR;Maximum blur levels
-TP_LOCALLAB_LEVELLOCCONTRAST_TOOLTIP;On the abscissa local contrast (near concept luminance). On the ordinate, amplification or reduction local contrast.
+TP_LOCALLAB_LEVELLOCCONTRAST_TOOLTIP;Fine to coarse detail levels from left to right on the x-axis: f.\nIncrease or decrease local contrast on the y-axis.
 TP_LOCALLAB_LEVELWAV;Ψ Wavelets Levels
 TP_LOCALLAB_LEVELWAV_TOOLTIP;The Level is automatically adapted to the size of the spot and the preview.\nFrom level 9 size max 512 to level 1 size max = 4
 TP_LOCALLAB_LEVFRA;Levels
@@ -2594,9 +2593,9 @@ TP_LOCALLAB_LOCCONT;Unsharp Mask
 TP_LOCALLAB_LOC_CONTRAST;Local Contrast & Wavelets
 TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramid 1:
 TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramid 2:
-TP_LOCALLAB_LOC_CONTRASTPYR2LAB;Contrast by Level- Tone Mapping - Dir.Contrast
-TP_LOCALLAB_LOC_CONTRASTPYRLAB;Graduated Filter - Edge Sharpness - Blur
-TP_LOCALLAB_LOC_RESIDPYR;Residual Image (Main)
+TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by level- Tone Mapping - Dir.Contrast
+TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter - Edge Sharpness - Blur
+TP_LOCALLAB_LOC_RESIDPYR;Residual image (Main)
 TP_LOCALLAB_LOG;Log Encoding
 TP_LOCALLAB_LOGAUTO;Automatic
 TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the dynamic range and Source Gray Point (if "Automatic Source Gray Point” enabled).\nPress the button again to adjust the automatically calculated values.
@@ -2890,7 +2889,6 @@ TP_LOCALLAB_VIBRA_TOOLTIP;Adjusts vibrance (essentially the same as the global a
 TP_LOCALLAB_VIB_TOOLNAME;Vibrance & Warm/Cool - 3
 TP_LOCALLAB_SOFT_TOOLNAME;Soft Light & Original Retinex - 6
 TP_LOCALLAB_BLUR_TOOLNAME;Blur/Grain & Denoise - 1
-TP_LOCALLAB_THRESHOLDWAV_TOOLTIP;Range of wavelet levels used in “Local contrast (by wavelet level)”
 TP_LOCALLAB_TONE_TOOLNAME;Tone Mapping - 4
 TP_LOCALLAB_RET_TOOLNAME;Dehaze & Retinex - 9
 TP_LOCALLAB_SHARP_TOOLNAME;Sharpening - 8
@@ -2903,21 +2901,34 @@ TP_LOCALLAB_WAMASKCOL;Ψ Mask Wavelet level
 TP_LOCALLAB_WARM;Warm/Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider uses the CIECAM algorithm and acts as a White Balance control to make the color temperature of the selected area warmer or cooler\nIt can also reduce color artifacts in some cases.
 TP_LOCALLAB_WASDEN_TOOLTIP;Luminance noise reduction: the left-hand side of the curve corresponds to the first 3 levels 0,1 &2 (fine detail). The right hand side of the curve corresponds to the coarser details (level 3 and beyond).
+
+TP_LOCALLAB_WAT_SIGMALC_TOOLTIP;The effect of the local contrast adjustment is stronger for medium-contrast details, and weaker for high and low-contrast details.\n This slider controls how quickly the effect dampens towards the extreme contrasts.\n The higher the value of the slider, the wider the range of contrasts that will receive the full effect of the local contrast adjustment, and the higher the risk  of generating artifacts.\n .The lower the value, the more the effect will be pinpointed towards a narrow range of contrast values
+TP_LOCALLAB_WAT_THRESHOLDWAV_TOOLTIP;Etendue des niveaux d’ondelettes utilisée dans l’ensemble du module “wavelets” 
+TP_LOCALLAB_WAT_EXPRESID_TOOLTIP;Image résiduelle, a le même comportement que l'image principale
+TP_LOCALLAB_WAT_CLARIL_TOOLTIP;"Merge luma" is used to select the intensity of the desired effect on luminance.
+TP_LOCALLAB_WAT_CLARIC_TOOLTIP;"Merge chroma" is used to select the intensity of the desired effect on chrominance
+TP_LOCALLAB_WAT_ORIGLC_TOOLTIP;"Merge only with original image", prevents the "Wavelet Pyramid" settings from  interfering with "Clarity" and "Sharp mask"
+TP_LOCALLAB_WAT_STRWAV_TOOLTIP;Allows the local contrast to be varied according to a chosen gradient and angle. The variation of the luminance signal is takens into account and not the luminance.
+TP_LOCALLAB_WAT_CONTOFFSET_TOOLTIP;Offset modifies the balance between low-contrast and high-contrast details.\nHigh values will amplify contrast changes to the higher contrast details, whereas low values will amplify contrast changes to low contrast details.\nBy using a low “Attenuation response” value you can select which contrast values will be enhanced.
+TP_LOCALLAB_WAT_CONTCHROMALEV_TOOLTIP;"Chroma levels": adjusts the "a" and "b" components of L*a*b* as a proportion of the luminance values.
+TP_LOCALLAB_WAT_WAVCBDL_TOOLTIP;Similar to Contrast By Detail Levels. Fine to coarse detail levels from left to right on the x-axis.
+
+
 TP_LOCALLAB_WAV;Local contrast by level
-TP_LOCALLAB_WAVBLUR_TOOLTIP;Performs a blur for each level of decomposition, as well as the residual image.
+TP_LOCALLAB_WAVBLUR_TOOLTIP;Allows you to blur each level of the decomposition, as well as the residual image.
 TP_LOCALLAB_WAVCOMP;Compression by Level
 TP_LOCALLAB_WAVCOMPRE;(un)Compression by Level
-TP_LOCALLAB_WAVCOMPRE_TOOLTIP;Achieve a Tone-mapping or reduction local contrast by level.\nOn abscissa levels
-TP_LOCALLAB_WAVCOMP_TOOLTIP;Achive local contrast in function of the direction wavelet decomposition : horizontal, vertical, diagonal
-TP_LOCALLAB_WAVCON;Contrast by Level
-TP_LOCALLAB_WAVCONTF_TOOLTIP;Similar to Contrast By Detail Levels : on abscissa levels.
+TP_LOCALLAB_WAVCOMPRE_TOOLTIP;Allows you to apply tone mapping or reduce local contrast on individual levels.\nFine to coarse detail levels from left to right on the x-axis.
+TP_LOCALLAB_WAVCOMP_TOOLTIP;Allows you to apply local contrast based on the direction of the wavelet decomposition : horizontal, vertical, diagonal
+TP_LOCALLAB_WAVCON;Contrast by level
+TP_LOCALLAB_WAVCONTF_TOOLTIP;Similar to Contrast By Detail Levels. Fine to coarse detail levels from left to right on the x-axis.
 TP_LOCALLAB_WAVDEN;Luminance denoise by level (0 1 2 &3 and more)
 TP_LOCALLAB_WAVE;Ψ Wavelet
 TP_LOCALLAB_WAVEDG;Local contrast
-TP_LOCALLAB_WAVEEDG_TOOLTIP;Achieves a sharpness taking into account the notion of edges wavelet.\nRequires that at least the first 4 levels are usable
-TP_LOCALLAB_WAVGRAD_TOOLTIP;Graduated filter for Local contrast "luminance"
+TP_LOCALLAB_WAVEEDG_TOOLTIP;Improves sharpness by targeting the action of local contrast on the edges. It has the same functions as the corresponding module in Wavelet Levels. and uses the same settings.
+TP_LOCALLAB_WAVGRAD_TOOLTIP;Allows the local contrast to be varied according to a chosen gradient and angle.  The variation of the luminance signal is takens into account and not the luminance.
 TP_LOCALLAB_WAVHIGH;Ψ Wavelet high
-TP_LOCALLAB_WAVLEV;Blur by Level
+TP_LOCALLAB_WAVLEV;Blur by level
 TP_LOCALLAB_WAVLOW;Ψ Wavelet low
 TP_LOCALLAB_WAVMASK;Ψ Local contrast (by wavelet level)
 TP_LOCALLAB_WAVMASK_TOOLTIP;Uses wavelets to modify the local contrast of the mask and reinforce or reduce the structure (skin, buildings...)
@@ -3367,7 +3378,7 @@ TP_WAVELET_EDEFFECT;Attenuation response
 TP_WAVELET_EDEFFECT_TOOLTIP;This slider selects the range of contrast values that will receive the full effect of any adjustment
 TP_WAVELET_EDGCONT;Local contrast
 TP_WAVELET_EDGCONT_TOOLTIP;Adjusting the points to the left decreases contrast, and to the right increases it.\nBottom-left, top-left, top-right and bottom-right represent respectively local contrast for low values, mean, mean+std. dev. and maxima.
-TP_WAVELET_EDGE;Edge Sharpness
+TP_WAVELET_EDGE;Edge sharpness
 TP_WAVELET_EDGEAMPLI;Base amplification
 TP_WAVELET_EDGEDETECT;Gradient sensitivity
 TP_WAVELET_EDGEDETECTTHR;Threshold low (noise)
@@ -3398,7 +3409,7 @@ TP_WAVELET_HUESKY;Hue range
 TP_WAVELET_HUESKY_TOOLTIP;The bottom points set the beginning of the transition zone, and the upper points the end of it, where the effect is at its maximum.\n\nIf you need to move the area significantly, or if there are artifacts, then the <b>white balance is incorrect</b>.
 TP_WAVELET_ITER;Delta balance levels
 TP_WAVELET_ITER_TOOLTIP;Left: increase low levels and reduce high levels,\nRight: reduce low levels and increase high levels.
-TP_WAVELET_LABEL;Wavelet Levels
+TP_WAVELET_LABEL;Wavelet levels
 TP_WAVELET_LARGEST;Coarsest
 TP_WAVELET_LEVCH;Chroma
 TP_WAVELET_LEVDEN;Level 5-6 denoise
