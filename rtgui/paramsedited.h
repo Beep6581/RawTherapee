@@ -914,6 +914,7 @@ struct PerspectiveParamsEdited {
     bool projection_shift_horiz;
     bool projection_shift_vert;
     bool projection_yaw;
+    bool control_lines;
 };
 
 struct GradientParamsEdited {
