@@ -2352,14 +2352,14 @@ TP_LOCALLAB_WAT_EXPRESID_TOOLTIP;Image résiduelle, a le même comportement que 
 TP_LOCALLAB_WAT_CLARIL_TOOLTIP;"Fusion luma" est utilisée pour selectionner l'intensité de l'effet désiré sur la luminance.
 TP_LOCALLAB_WAT_CLARIC_TOOLTIP;"Fusion chroma"  est utilisée pour selectionner l'intensité de l'effet désiré sur la luminance.
 TP_LOCALLAB_WAT_ORIGLC_TOOLTIP;"Fusion selement avec image originale", empêche les actions "Wavelet Pyramid" d'interférer avec "Claté" and "Masque netteté"
-TP_LOCALLAB_WAT_STRWAV_TOOLTIP;Permet au contraste local de varier en fonction d'un gradient et d'un angle. La variation du signal de la luminance signal est pris en compte et non pas la luminance.
-TP_LOCALLAB_WAT_CONTOFFSET_TOOLTIP;Décalage modifie la balance entre faible contraste et contraste élévé.\nLes hautes valeurs values amplifie les changements de contraste pour les détails à contraste élévé, alors que les faibles valeurs vont amplifier les détails à contraste faible .\nEn selectionant des valeurs faibles vous pouvez ainsi sélectionner les zones de contrastes qui seront accentuées.
+TP_LOCALLAB_WAT_STRWAV_TOOLTIP;Permet au contraste local de varier en fonction d'un gradient et d'un angle. La variation du signal de la luminance signal est prise en compte et non pas la luminance.
+TP_LOCALLAB_WAT_CONTOFFSET_TOOLTIP;Décalage modifie la balance entre faible contraste et contraste élévé.\nLes hautes valeurs amplifient les changements de contraste pour les détails à contraste élévé, alors que les faibles valeurs vont amplifier les détails à contraste faible .\nEn selectionant des valeurs faibles vous pouvez ainsi sélectionner les zones de contrastes qui seront accentuées.
 TP_LOCALLAB_WAT_CONTCHROMALEV_TOOLTIP;"Niveaux de Chroma": ajuste les valeurs "a" et "b" des composantes L*a*b* comme une proportion de la luminance.
-TP_LOCALLAB_WAT_WAVCBDL_TOOLTIP;Similaira à Contrast By Detail Levels. Des détails fins au gros details de gauche à droite en abscisse.
+TP_LOCALLAB_WAT_WAVCBDL_TOOLTIP;Similaira à Contraste par niveaux de détail. Des détails fins au gros details de gauche à droite en abscisse.
 TP_LOCALLAB_WAT_STRENGTHW_TOOLTIP;Intensité de la détection d'effet de bord
 TP_LOCALLAB_WAT_LOCCONTRASTEDG_TOOLTIP;Vous pouvez agir sur la répartition du contraste local selon l'intensité initiale du contraste par niveaux d'ondelettes.\nCeci aura comme conséquences de modifier l'effet de perspective et de relief de l'image, et/ou réduire les contrastes pour les très faibles niveaux de contraste initial
 TP_LOCALLAB_WAT_GRADW_TOOLTIP;Plus vous déplacez le curseur à droite, plus l'algorithme de détection sera efficace, moins les effets du contraste local seront sensibles
-TP_LOCALLAB_WAT_WAVESHOW_TOOLTIP;Montre l'ensemble des outils "edge sharpness".\nLa lecture de la documentation wavelet est recommandée
+TP_LOCALLAB_WAT_WAVESHOW_TOOLTIP;Montre l'ensemble des outils "Netteté bords".\nLa lecture de la documentation wavelet est recommandée
 TP_LOCALLAB_WAT_WAVLEVELBLUR_TOOLTIP;Permet d'ajuster l'effet maximum de floutage des niveaux
 TP_LOCALLAB_WAT_WAVBLURCURV_TOOLTIP;Vous permet de flouter chaque niveau de décomposition.\nEn abscisse de gauche à droite, les niveaux de décomposition du plus fin au plus gros
 TP_LOCALLAB_WAT_RESIDBLUR_TOOLTIP;Floute l'image résiduelle, indépendamment des niveaux
