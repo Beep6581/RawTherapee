@@ -2351,7 +2351,7 @@ TP_LOCALLAB_WAT_THRESHOLDWAV_TOOLTIP;Etendue des niveaux d’ondelettes utilisé
 TP_LOCALLAB_WAT_EXPRESID_TOOLTIP;Image résiduelle, a le même comportement que l'image principale
 TP_LOCALLAB_WAT_CLARIL_TOOLTIP;"Fusion luma" est utilisée pour selectionner l'intensité de l'effet désiré sur la luminance.
 TP_LOCALLAB_WAT_CLARIC_TOOLTIP;"Fusion chroma"  est utilisée pour selectionner l'intensité de l'effet désiré sur la luminance.
-TP_LOCALLAB_WAT_ORIGLC_TOOLTIP;"Fusion selement avec image originale", empêche les actions "Wavelet Pyramid" d'interférer avec "Claté" and "Masque netteté"
+TP_LOCALLAB_WAT_ORIGLC_TOOLTIP;"Fusion seulement avec image originale", empêche les actions "Wavelet Pyramid" d'interférer avec "Claté" and "Masque netteté"
 TP_LOCALLAB_WAT_STRWAV_TOOLTIP;Permet au contraste local de varier en fonction d'un gradient et d'un angle. La variation du signal de la luminance signal est prise en compte et non pas la luminance.
 TP_LOCALLAB_WAT_CONTOFFSET_TOOLTIP;Décalage modifie la balance entre faible contraste et contraste élévé.\nLes hautes valeurs amplifient les changements de contraste pour les détails à contraste élévé, alors que les faibles valeurs vont amplifier les détails à contraste faible .\nEn selectionant des valeurs faibles vous pouvez ainsi sélectionner les zones de contrastes qui seront accentuées.
 TP_LOCALLAB_WAT_CONTCHROMALEV_TOOLTIP;"Niveaux de Chroma": ajuste les valeurs "a" et "b" des composantes L*a*b* comme une proportion de la luminance.
