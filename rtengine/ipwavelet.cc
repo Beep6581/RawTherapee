@@ -1036,6 +1036,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                     }
                 }
 
+                if (levwavL == 6  && cp.noiseena) {
+                    cp.chromfi = 0.01f;
+                }
+
                 if (cp.chromfi > 0.f || cp.chromco > 0.f) {
                     if (levwavL < 7) {
                         levwavL = 7;
