@@ -41,9 +41,9 @@ double fromAdjuster(double v)
     return std::pow(2, v + 6);
 }
 
-Adjuster* createExponentAdjuster(AdjusterListener* listener, const Glib::ustring& label, double minV, double maxV, double defaultVal)
+Adjuster* createExponentAdjuster(AdjusterListener* listener, const Glib::ustring& label, double minV, double maxV, double step, double defaultVal)
 {
-    Adjuster* const adj = Gtk::manage(new Adjuster(label, minV, maxV, 0.001, defaultVal));
+    Adjuster* const adj = Gtk::manage(new Adjuster(label, minV, maxV, step, defaultVal));
     adj->setAdjusterListener(listener);
     adj->setLogScale(6, 1, true);
 
@@ -56,7 +56,7 @@ Adjuster* createExponentAdjuster(AdjusterListener* listener, const Glib::ustring
 Adjuster* createLevelAdjuster(AdjusterListener* listener, const Glib::ustring& label)
 {
 //    Adjuster* const adj = Gtk::manage(new Adjuster(label, 1.0, 65535.0, 1.0, rtengine::MAXVALF / 24.));
-    Adjuster* const adj = Gtk::manage(new Adjuster(label, 0.0, 10.0, 0.01, toAdjuster(rtengine::MAXVALF / 24.)));
+    Adjuster* const adj = Gtk::manage(new Adjuster(label, 0.0, 10.0, 0.05, toAdjuster(rtengine::MAXVALF / 24.)));
     adj->setAdjusterListener(listener);
 //    adj->setLogScale(6, 1000.0, true);
 
@@ -196,9 +196,9 @@ FilmNegative::FilmNegative() :
     paramsUpgraded(false),
     fnp(nullptr),
     colorSpace(Gtk::manage(new MyComboBoxText())),
-    greenExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_GREEN"), 0.3, 4, 1.5)),  // master exponent (green channel)
-    redRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_RED"), 0.3, 3, (2.04 / 1.5))), // ratio of red exponent to master exponent
-    blueRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_BLUE"), 0.3, 3, (1.29 / 1.5))), // ratio of blue exponent to master exponent
+    greenExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_GREEN"), 0.3, 4, 0.01, 1.5)),  // master exponent (green channel)
+    redRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_RED"), 0.3, 5, 0.01, (2.04 / 1.5))), // ratio of red exponent to master exponent
+    blueRatio(createExponentAdjuster(this, M("TP_FILMNEGATIVE_BLUE"), 0.3, 5, 0.01, (1.29 / 1.5))), // ratio of blue exponent to master exponent
     spotButton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_PICK")))),
     refInputLabel(Gtk::manage(new Gtk::Label(Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), "- - -")))),
     refSpotButton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_REF_PICK")))),
@@ -248,7 +248,7 @@ FilmNegative::FilmNegative() :
 
     pack_start(*csGrid);
 
-    colorSpace->set_active((int)rtengine::procparams::FilmNegativeParams::ColorSpace::WORKING);
+    colorSpace->set_active((int)ColorSpace::WORKING);
     colorSpace->signal_changed().connect(sigc::mem_fun(*this, &FilmNegative::colorSpaceChanged));
     colorSpace->show();
 
@@ -343,7 +343,7 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
 
     setEnabled(pp->filmNegative.enabled);
 
-    colorSpace->set_active((int)pp->filmNegative.colorSpace);
+    colorSpace->set_active(CLAMP((int)pp->filmNegative.colorSpace, 0, 1));
     redRatio->setValue(pp->filmNegative.redRatio);
     greenExp->setValue(pp->filmNegative.greenExp);
     blueRatio->setValue(pp->filmNegative.blueRatio);
