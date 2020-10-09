@@ -221,8 +221,10 @@ GENERAL_BEFORE;Before
 GENERAL_CANCEL;Cancel
 GENERAL_CLOSE;Close
 GENERAL_CURRENT;Current
+GENERAL_DELETE_ALL;Delete all
 GENERAL_DISABLE;Disable
 GENERAL_DISABLED;Disabled
+GENERAL_EDIT;Edit
 GENERAL_ENABLE;Enable
 GENERAL_ENABLED;Enabled
 GENERAL_FILE;File
@@ -1213,6 +1215,7 @@ HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
 HISTORY_MSG_PERSP_CAM_ANGLE;Perspective - Camera
 HISTORY_MSG_PERSP_CAM_FL;Perspective - Camera
 HISTORY_MSG_PERSP_CAM_SHIFT;Perspective - Camera
+HISTORY_MSG_PERSP_CTRL_LINE;Perspective - Control lines
 HISTORY_MSG_PERSP_METHOD;Perspective - Method
 HISTORY_MSG_PERSP_PROJ_ANGLE;Perspective - Recovery
 HISTORY_MSG_PERSP_PROJ_ROTATE;Perspective - PCA rotation
@@ -1814,6 +1817,7 @@ THRESHOLDSELECTOR_TR;Top-right
 TOOLBAR_TOOLTIP_COLORPICKER;Lockable Color Picker\n\nWhen the tool is active:\n- Add a picker: <b>left-click</b>.\n- Drag a picker: <b>left-click and drag</b>.\n- Delete a picker: <b>right-click</b>.\n- Delete all pickers: <b>Ctrl</b>+<b>Shift</b>+<b>right-click</b>.\n- Revert to hand tool: <b>right-click</b> outside any picker.
 TOOLBAR_TOOLTIP_CROP;<b>Crop</b> selection.\nShortcut: <b>c</b>\nMove the crop using <b>Shift</b>+<b>mouse drag</b>.
 TOOLBAR_TOOLTIP_HAND;Hand tool.\nShortcut: <b>h</b>
+TOOLBAR_TOOLTIP_PERSPECTIVE;<b>Perspective Correction</b>\n\nEdit control lines to correct perspective distortion. Click this button again to apply correction.
 TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Straighten</b> / <b>fine rotation</b>.\nShortcut: <b>s</b>\n\nIndicate the vertical or horizontal by drawing a guide line over the image preview. Angle of rotation will be shown next to the guide line. Center of rotation is the geometrical center of the image.
 TOOLBAR_TOOLTIP_WB;Spot white balance.\nShortcut: <b>w</b>
 TP_BWMIX_ALGO;Algorithm OYCPM
@@ -2973,6 +2977,8 @@ TP_PERSPECTIVE_CAMERA_ROLL;Rotation
 TP_PERSPECTIVE_CAMERA_SHIFT_HORIZONTAL;Horizontal shift
 TP_PERSPECTIVE_CAMERA_SHIFT_VERTICAL;Vertical shift
 TP_PERSPECTIVE_CAMERA_YAW;Horizontal
+TP_PERSPECTIVE_CONTROL_LINES;Control lines
+TP_PERSPECTIVE_CONTROL_LINES_TOOLTIP;<b>Ctrl</b>+<b>drag</b>: Draw new line\n<b>Right-click</b>: Delete line
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_METHOD;Method
