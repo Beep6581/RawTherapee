@@ -1870,6 +1870,7 @@ LensProfParams::LcMode LensProfParams::getMethodNumber(const Glib::ustring& mode
 
 PerspectiveParams::PerspectiveParams() :
     method("simple"),
+    render(true),
     horizontal(0.0),
     vertical(0.0),
     camera_crop_factor(0.0),
@@ -1891,6 +1892,7 @@ bool PerspectiveParams::operator ==(const PerspectiveParams& other) const
 {
     return
         method == other.method
+        && render == other.render
         && horizontal == other.horizontal
         && vertical == other.vertical
         && camera_focal_length == other.camera_focal_length
@@ -1904,7 +1906,12 @@ bool PerspectiveParams::operator ==(const PerspectiveParams& other) const
         && projection_shift_vert == other.projection_shift_vert
         && projection_rotate == other.projection_rotate
         && projection_pitch == other.projection_pitch
-        && projection_yaw == other.projection_yaw;
+        && projection_yaw == other.projection_yaw
+        // Lines could still be equivalent if the vectors aren't, but this is
+        // rare and a small issue. Besides, a proper comparison requires lots
+        // more code which introduces clutter.
+        && control_line_values == other.control_line_values
+        && control_line_types == other.control_line_types;
 }
 
 bool PerspectiveParams::operator !=(const PerspectiveParams& other) const
@@ -5454,6 +5461,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->perspective.projection_shift_horiz, "Perspective", "ProjectionShiftHorizontal", perspective.projection_shift_horiz, keyFile);
         saveToKeyfile(!pedited || pedited->perspective.projection_shift_vert, "Perspective", "ProjectionShiftVertical", perspective.projection_shift_vert, keyFile);
         saveToKeyfile(!pedited || pedited->perspective.projection_yaw, "Perspective", "ProjectionYaw", perspective.projection_yaw, keyFile);
+        saveToKeyfile(!pedited || pedited->perspective.control_lines, "Perspective", "ControlLineValues", perspective.control_line_values, keyFile);
+        saveToKeyfile(!pedited || pedited->perspective.control_lines, "Perspective", "ControlLineTypes", perspective.control_line_types, keyFile);
 
 // Gradient
         saveToKeyfile(!pedited || pedited->gradient.enabled, "Gradient", "Enabled", gradient.enabled, keyFile);
@@ -7137,6 +7146,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Perspective", "ProjectionShiftHorizontal", pedited, perspective.projection_shift_horiz, pedited->perspective.projection_shift_horiz);
             assignFromKeyfile(keyFile, "Perspective", "ProjectionShiftVertical", pedited, perspective.projection_shift_vert, pedited->perspective.projection_shift_vert);
             assignFromKeyfile(keyFile, "Perspective", "ProjectionYaw", pedited, perspective.projection_yaw, pedited->perspective.projection_yaw);
+            if (keyFile.has_key("Perspective", "ControlLineValues") && keyFile.has_key("Perspective", "ControlLineTypes")) {
+                perspective.control_line_values = keyFile.get_integer_list("Perspective", "ControlLineValues");
+                perspective.control_line_types = keyFile.get_integer_list("Perspective", "ControlLineTypes");
+                if (pedited) {
+                    pedited->perspective.control_lines = true;
+                }
+            }
         }
 
         if (keyFile.has_group("Gradient")) {
