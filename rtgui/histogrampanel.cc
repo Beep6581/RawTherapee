@@ -73,11 +73,9 @@ HistogramPanel::HistogramPanel () :
 
     histogramRGBAreaHori.reset(new HistogramRGBAreaHori());
     setExpandAlignProperties(histogramRGBAreaHori.get(), true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_END);
-    histogramRGBAreaHori->show();
 
     histogramRGBAreaVert.reset(new HistogramRGBAreaVert());
     setExpandAlignProperties(histogramRGBAreaVert.get(), false, true, Gtk::ALIGN_END, Gtk::ALIGN_FILL);
-    histogramRGBAreaVert->show();
 
     switch (options.histogramScopeType) {
         case ScopeType::NONE:
@@ -102,13 +100,14 @@ HistogramPanel::HistogramPanel () :
     gfxGrid = Gtk::manage (new Gtk::Grid ());
     gfxGrid->set_row_spacing(1);
     gfxGrid->set_column_spacing(1);
-    histogramRGBAreaHori->setParent(gfxGrid);
-    histogramRGBAreaVert->setParent(gfxGrid);
     gfxGrid->add(*histogramArea);
-
-    if (options.histogramBar) {
-        showRGBBar();
-    }
+    gfxGrid->attach_next_to(
+        *histogramRGBAreaVert, *histogramArea,
+        options.histogramPosition == 1 ? Gtk::POS_RIGHT : Gtk::POS_LEFT
+    );
+    gfxGrid->attach_next_to(*histogramRGBAreaHori, *histogramArea, Gtk::POS_BOTTOM);
+    histogramRGBAreaHori->set_no_show_all();
+    histogramRGBAreaVert->set_no_show_all();
 
     redImage   = new RTImage ("histogram-red-on-small.png");
     greenImage = new RTImage ("histogram-green-on-small.png");
@@ -379,26 +378,19 @@ HistogramPanel::~HistogramPanel ()
 
 void HistogramPanel::showRGBBar()
 {
-    Gtk::PositionType pos;
+    histogramRGBAreaHori->set_visible(
+        histogramRGBArea == histogramRGBAreaHori.get() && showBAR->get_active());
+    histogramRGBAreaVert->set_visible(
+        histogramRGBArea == histogramRGBAreaVert.get() && showBAR->get_active());
+    histogramRGBAreaHori->setShow(false);
+    histogramRGBAreaVert->setShow(false);
 
-    if (histogramRGBArea == histogramRGBAreaHori.get()) {
-        pos = Gtk::POS_BOTTOM;
-    } else if (histogramRGBArea == nullptr) {
+    if (!histogramRGBArea) {
         return;
-    } else {
-        if (options.histogramPosition == 1) {
-            pos = Gtk::POS_RIGHT;
-        } else {
-            pos = Gtk::POS_LEFT;
-        }
     }
 
-    gfxGrid->attach_next_to(*histogramRGBArea, *histogramArea, pos);
     setHistRGBInvalid();
-    histogramRGBArea->setShow(
-        options.histogramScopeType == ScopeType::HISTOGRAM
-        || options.histogramScopeType == ScopeType::WAVEFORM
-    );
+    histogramRGBArea->setShow(showBAR->get_active());
 }
 
 void HistogramPanel::resized (Gtk::Allocation& req)
@@ -510,11 +502,6 @@ void HistogramPanel::type_selected(Gtk::RadioButton* button)
 
 void HistogramPanel::type_changed()
 {
-    if (showBAR->get_active() && histogramRGBArea) {
-        histogramRGBArea->setShow(false);
-        gfxGrid->remove(*histogramRGBArea);
-    }
-
     switch (options.histogramScopeType) {
         case ScopeType::HISTOGRAM:
             showRed->show();
@@ -570,21 +557,14 @@ void HistogramPanel::type_changed()
         panel_listener->scopeTypeChanged(options.histogramScopeType);
     }
 
-    if (showBAR->get_active()) {
-        showRGBBar();
-    }
+    showRGBBar();
 }
 
 void HistogramPanel::bar_toggled ()
 {
     showBAR->set_image(showBAR->get_active() ? *barImage : *barImage_g);
     rgbv_toggled();
-
-    if (showBAR->get_active()) {
-        showRGBBar();
-    } else if (histogramRGBArea) {
-        gfxGrid->remove(*histogramRGBArea);
-    }
+    showRGBBar();
 }
 
 void HistogramPanel::rgbv_toggled ()
@@ -625,10 +605,8 @@ void HistogramPanel::reorder (Gtk::PositionType align)
         add (*gfxGrid);
         gfxGrid->unreference();
 
-        if (histogramRGBArea == histogramRGBAreaVert.get()) {
-            gfxGrid->remove(*histogramRGBArea);
-            gfxGrid->add(*histogramRGBArea);
-        }
+        gfxGrid->remove(*histogramRGBAreaVert);
+        gfxGrid->add(*histogramRGBAreaVert);
 
         optionButtons->reference();
         removeIfThere(buttonGrid, optionButtons, false);
@@ -640,10 +618,8 @@ void HistogramPanel::reorder (Gtk::PositionType align)
         add (*buttonGrid);
         buttonGrid->unreference();
 
-        if (histogramRGBArea == histogramRGBAreaVert.get()) {
-            gfxGrid->remove(*histogramArea);
-            gfxGrid->add(*histogramArea);
-        }
+        gfxGrid->remove(*histogramRGBAreaVert);
+        gfxGrid->attach_next_to(*histogramRGBAreaVert, *histogramArea, Gtk::POS_LEFT);
 
         persistentButtons->reference();
         removeIfThere(buttonGrid, persistentButtons, false);
@@ -1021,7 +997,8 @@ void HistogramRGBAreaVert::get_preferred_height_vfunc (int &minimum_height, int 
 
 void HistogramRGBAreaVert::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    getPreferredThickness(minimum_width, natural_width);
+    minimum_width = 10 * RTScalable::getScale();
+    natural_width = minimum_width;
 }
 
 void HistogramRGBAreaVert::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
@@ -1031,7 +1008,7 @@ void HistogramRGBAreaVert::get_preferred_height_for_width_vfunc (int width, int 
 
 void HistogramRGBAreaVert::get_preferred_width_for_height_vfunc (int height, int &minimum_width, int &natural_width) const
 {
-    getPreferredThicknessForLength(height, minimum_width, natural_width);
+    get_preferred_width_vfunc(minimum_width, natural_width);
 }
 
 //
