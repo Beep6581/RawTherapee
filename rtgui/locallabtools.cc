@@ -2,8 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>frame
- *
- *
+fft *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -6082,6 +6081,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         sensibn->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         medMethod->set_tooltip_text(M("TP_LOCALLAB_MEDIAN_TOOLTIP"));
         itera->set_tooltip_text(M("TP_LOCALLAB_MEDIANITER_TOOLTIP"));
+        fftwbl->set_tooltip_text(M("TP_LOCALLAB_FFTMASK_TOOLTIP"));
         guidbl->set_tooltip_text(M("TP_LOCALLAB_GUIDBL_TOOLTIP"));
         strbl->set_tooltip_text(M("TP_LOCALLAB_GUIDSTRBL_TOOLTIP"));
         epsbl->set_tooltip_text(M("TP_LOCALLAB_GUIDEPSBL_TOOLTIP"));
@@ -6132,6 +6132,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         sensibn->set_tooltip_text("");
         medMethod->set_tooltip_text("");
         itera->set_tooltip_text("");
+        fftwbl->set_tooltip_text("");
         guidbl->set_tooltip_text("");
         strbl->set_tooltip_text("");
         epsbl->set_tooltip_text("");
