@@ -403,14 +403,19 @@ void HistogramPanel::showRGBBar()
 
 void HistogramPanel::resized (Gtk::Allocation& req)
 {
+    static int old_height = 0;
+    static int old_width = 0;
 
-    if (!histogramArea->updatePending()) {
+    bool size_changed =
+        old_height != req.get_height() || old_width != req.get_width();
+
+    if (!histogramArea->updatePending() && size_changed) {
         histogramArea->updateBackBuffer ();
         histogramArea->queue_draw ();
     }
 
     // set histogramRGBArea invalid;
-    if (histogramRGBArea) {
+    if (histogramRGBArea && size_changed) {
         histogramRGBArea->updateBackBuffer(-1, -1, -1);
         histogramRGBArea->queue_draw ();
     }
@@ -418,6 +423,8 @@ void HistogramPanel::resized (Gtk::Allocation& req)
     // Store current height of the histogram
     options.histogramHeight = get_height();
 
+    old_height = req.get_height();
+    old_width = req.get_width();
 }
 
 void HistogramPanel::red_toggled ()
@@ -589,7 +596,7 @@ void HistogramPanel::rgbv_toggled ()
 
     if (histogramRGBArea) {
         updateHistRGBAreaOptions();
-        histogramRGBArea->updateBackBuffer (0, 0, 0);
+        histogramRGBArea->updateBackBuffer(-1, -1, -1);
         histogramRGBArea->queue_draw ();
     }
 }
