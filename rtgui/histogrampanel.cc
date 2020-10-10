@@ -497,6 +497,8 @@ void HistogramPanel::type_selected(Gtk::RadioButton* button)
     if (histogramRGBArea) {
         updateHistRGBAreaOptions();
     }
+    histogramArea->setDirty(true);
+    histogramArea->queue_draw();
 }
 
 void HistogramPanel::type_changed()
