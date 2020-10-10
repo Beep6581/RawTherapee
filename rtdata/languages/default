@@ -2395,7 +2395,7 @@ TP_LOCALLAB_CLARI_TOOLTIP;Levels 0 to 4 (included): ‘Sharp mask’ is enabled\
 TP_LOCALLAB_CLIPTM;Clip restored data (gain)
 TP_LOCALLAB_COFR;Color & Light
 TP_LOCALLAB_COLORDE;ΔE preview color - intensity
-TP_LOCALLAB_COLORDE_TOOLTIP;Show a blue color-preview for ΔE  selection if negative and green if positive.\n\nMask and modifications (show modifications without mask): show actual modifications if positive, show enhanced modifications (luminance only) with blue and yellow if negative.
+TP_LOCALLAB_COLORDE_TOOLTIP;Show a blue color-preview for ΔE  selection if negative and green if positive.\n\nMask and modifications (show modified areas without mask): show actual modifications if positive, show enhanced modifications (luminance only) with blue and yellow if negative.
 TP_LOCALLAB_COLORDEPREV_TOOLTIP;Preview ΔE button will only work if you have activated one (and only one) of the tools in "Add tool to current spot" menu.\nTo be able to preview ΔE with several tools enabled, use Mask and modifications - Preview ΔE
 TP_LOCALLAB_COLORSCOPE;Scope (color tools)
 TP_LOCALLAB_COLORSCOPE_TOOLTIP;Common Scope slider for Color and Light, Shadows/Highlights, Vibrance.\nOther tools have their own scope controls.
@@ -2793,15 +2793,15 @@ TP_LOCALLAB_SHOWFOURIER;Fourier ƒ(dct)
 TP_LOCALLAB_SHOWLAPLACE;∆ Laplacian (first)
 TP_LOCALLAB_SHOWLC;Mask and modifications
 TP_LOCALLAB_SHOWMASK;Show mask
-TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Displays masks and modifications.\nBeware, you can only view one tool mask at a time.\nShow modified image: shows the modified image including the effect of any adjustments and masks.\nShow modifications without mask: shows the modifications before any masks are applied.\nShow modifications with mask: shows the modifications after a mask has been applied.\nShow mask: shows the aspect of the mask including the effect of any curves and filters.\nShow spot structure: allows you to see the  structure-detection mask when the "Spot structure" cursor is activated (when available).\nNote: The mask is applied before the shape detection algorithm.
+TP_LOCALLAB_SHOWMASKCOL_TOOLTIP;Displays masks and modifications.\nBeware, you can only view one tool mask at a time.\nShow modified image: shows the modified image including the effect of any adjustments and masks.\nShow modified areas without mask: shows the modifications before any masks are applied.\nShow modified areas with mask: shows the modifications after a mask has been applied.\nShow mask: shows the aspect of the mask including the effect of any curves and filters.\nShow spot structure: allows you to see the  structure-detection mask when the "Spot structure" cursor is activated (when available).\nNote: The mask is applied before the shape detection algorithm.
 TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP;Allows you to visualize the different stages of the Fourier process.\n Laplace - calculates the second derivative of the Laplace transform as a function of the threshold.\nFourier - shows the Laplacian transform with DCT.\nPoisson - shows the solution of the Poisson DCE.\nNo luminance normalization - shows result without any luminance normalization.
 TP_LOCALLAB_SHOWMASKTYP1;Blur & Noise
 TP_LOCALLAB_SHOWMASKTYP2;Denoise
 TP_LOCALLAB_SHOWMASKTYP3;Blur & Noise  + Denoise
 TP_LOCALLAB_SHOWMASKTYP_TOOLTIP;Mask and modifications can be chosen.\nBlur and noise : in this case it is not used for 'denoise'.\nDenoise : in this case it is not used for 'blur and noise'.\n\nBlur and noise + denoise : mask is shared, be carefull to 'show modifications' and 'scope'
 TP_LOCALLAB_SHOWMNONE;Show modified image
-TP_LOCALLAB_SHOWMODIF;Show modifications without mask
-TP_LOCALLAB_SHOWMODIFMASK;Show modifications with mask
+TP_LOCALLAB_SHOWMODIF;Show modified areas without mask
+TP_LOCALLAB_SHOWMODIFMASK;Show modified areas with mask
 TP_LOCALLAB_SHOWNORMAL;No luminance normalization
 TP_LOCALLAB_SHOWPLUS;Mask and modifications (Blur & Denoise)
 TP_LOCALLAB_SHOWPOISSON;Poisson (pde ƒ)
@@ -2846,7 +2846,7 @@ TP_LOCALLAB_STRRETI_TOOLTIP;if Strength Retinex < 0.2 only Dehaze is enabled.\ni
 TP_LOCALLAB_STRUC;Structure
 TP_LOCALLAB_STRUCCOL;Spot structure
 TP_LOCALLAB_STRUCCOL1;Spot structure
-TP_LOCALLAB_STRUCT_TOOLTIP;Uses the Sobel algorithm to take into account structure for shape detection.\nActivate "Mask and modifications” > “Show spot structure" (advanced mode) to see a preview of the mask (without modifications).\n\nCan be used in conjunction with the Structure Mask, Blur Mask and “Local contrast (by wavelet level)”  to improve edge detection.\n\nEffects of adjustments using Lightness, Contrast, Chrominance, Exposure or other non-mask-related tools visible using either ‘Show modified image” or “Show modifications with mask ”. 
+TP_LOCALLAB_STRUCT_TOOLTIP;Uses the Sobel algorithm to take into account structure for shape detection.\nActivate "Mask and modifications” > “Show spot structure" (advanced mode) to see a preview of the mask (without modifications).\n\nCan be used in conjunction with the Structure Mask, Blur Mask and “Local contrast (by wavelet level)”  to improve edge detection.\n\nEffects of adjustments using Lightness, Contrast, Chrominance, Exposure or other non-mask-related tools visible using either ‘Show modified image” or “Show modified areas with mask ”. 
 TP_LOCALLAB_STRUMASKCOL;Structure mask strength
 TP_LOCALLAB_STRUMASK_TOOLTIP;Structure mask (slider) with the checkbox "Structure mask as tool" unchecked: In this case a mask showing the structure will be generated even if none of the 3 curves is activated. Structure masks are available for mask 1 (Blur and denoise") and mask 7 (Color & Light).
 TP_LOCALLAB_STRUSTRMASK_TOOLTIP;Moderate use of this slider is recommended!
