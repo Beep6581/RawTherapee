@@ -594,6 +594,11 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wSlope->setEditedState(pedited->icm.workingTRCSlope  ? Edited : UnEdited);
 
     }
+    if(pp->icm.workingTRCGamma <= 1.) {
+       wSlope->set_sensitive(false);
+    } else {
+       wSlope->set_sensitive(true);
+    }
 
     enableListener();
 }
@@ -689,6 +694,11 @@ void ICMPanel::adjusterChanged(Adjuster* a, double newval)
         Glib::ustring costr2 = Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), newval);
 
         if (a == wGamma) {
+            if(wGamma->getValue() <= 1.) {
+                wSlope->set_sensitive(false);
+            } else {
+                wSlope->set_sensitive(true);
+            }
             listener->panelChanged(EvICMgamm, costr2);
         } else if (a == wSlope) {
             listener->panelChanged(EvICMslop, costr2);
