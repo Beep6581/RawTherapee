@@ -824,6 +824,7 @@ class LocallabRetinex:
 {
 private:
     // Retinex specific widgets
+    Gtk::Frame* const dehaFrame;
     Adjuster* const dehaz;
     Adjuster* const depth;
     Gtk::CheckButton* const lumonly;

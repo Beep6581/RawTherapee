@@ -683,6 +683,7 @@ LocallabRetinex::LocallabRetinex():
     LocallabTool(this, M("TP_LOCALLAB_RET_TOOLNAME"), M("TP_LOCALLAB_RETI"), true),
 
     // Retinex specific widgets
+    dehaFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")))),
     dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), -100, 100, 1, 0))),
     depth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEPTH"), 0, 100, 1, 25))),
     lumonly(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LUMONLY")))),
@@ -733,7 +734,6 @@ LocallabRetinex::LocallabRetinex():
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Retinex specific widgets
-    dehaz->set_tooltip_text(M("TP_LOCALLAB_DEHAZ_TOOLTIP"));
     dehaz->setAdjusterListener(this);
 
     depth->setAdjusterListener(this);
@@ -860,7 +860,7 @@ LocallabRetinex::LocallabRetinex():
 
     // Add Retinex specific widgets to GUI
     ToolParamBlock* const auxBox = Gtk::manage(new ToolParamBlock());
-    Gtk::Frame* const dehaFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")));
+//    Gtk::Frame* const dehaFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")));
     dehaFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const dehaBox = Gtk::manage(new ToolParamBlock());
     dehaBox->pack_start(*dehaz);
@@ -975,9 +975,12 @@ void LocallabRetinex::getMaskView(int &colorMask, int &colorMaskinv, int &expMas
 void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
+        dehaFrame->set_tooltip_text(M("TP_LOCALLAB_DEHAZFRAME_TOOLTIP"));
+        dehaz->set_tooltip_text(M("TP_LOCALLAB_DEHAZ_TOOLTIP"));
+        retiFrame->set_tooltip_text(M("TP_LOCALLAB_RETIFRAME_TOOLTIP"));
         loglin->set_tooltip_text(M("TP_LOCALLAB_RETI_LOGLIN_TOOLTIP"));
         sensih->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
-        fftwreti->set_tooltip_text(M("TP_LOCALLAB_RETI_FFTW_TOOLTIP"));
+        fftwreti->set_tooltip_text(M("TP_LOCALLAB_LC_FFTW_TOOLTIP"));
         equilret->set_tooltip_text(M("TP_LOCALLAB_EQUILTM_TOOLTIP"));
         neigh->set_tooltip_text(M("TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP"));
         vart->set_tooltip_text(M("TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP"));
@@ -991,6 +994,7 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
         cTtransshape->setTooltip(M("TP_LOCALLAB_TRANSMISSION_TOOLTIP"));
         mMLabels->set_tooltip_markup(M("TP_LOCALLAB_MLABEL_TOOLTIP"));
         transLabels->set_tooltip_markup(M("TP_LOCALLAB_TLABEL_TOOLTIP"));
+        transLabels2->set_tooltip_markup(M("TP_LOCALLAB_TLABEL_TOOLTIP"));
         cTgainshape->setTooltip(M("TP_RETINEX_GAINTRANSMISSION_TOOLTIP"));
         expmaskreti->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         enaretiMasktmap->set_tooltip_markup(M("TP_LOCALLAB_ENARETIMASKTMAP_TOOLTIP"));
@@ -1008,6 +1012,9 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
         lapmaskreti->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
 
     } else {
+        dehaFrame->set_tooltip_text("");
+        dehaz->set_tooltip_text("");
+        retiFrame->set_tooltip_text("");
         loglin->set_tooltip_text("");
         sensih->set_tooltip_text("");
         fftwreti->set_tooltip_text("");
@@ -1024,6 +1031,7 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
         cTtransshape->setTooltip("");
         mMLabels->set_tooltip_markup("");
         transLabels->set_tooltip_markup("");
+        transLabels2->set_tooltip_markup("");
         cTgainshape->setTooltip("");
         expmaskreti->set_tooltip_markup("");
         enaretiMasktmap->set_tooltip_markup("");
@@ -2622,10 +2630,49 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         contFrame->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRAST_TOOLTIP"));
-        LocalcurveEditorwav->set_tooltip_markup(M("TP_LOCALLAB_LEVELLOCCONTRAST_TOOLTIP"));
+        LocalcurveEditorwav->set_tooltip_markup(M("TP_LOCALLAB_WAT_LEVELLOCCONTRAST_TOOLTIP"));
+        csThreshold->set_tooltip_markup(M("TP_LOCALLAB_WAT_THRESHOLDWAV_TOOLTIP"));
         levelwav->set_tooltip_markup(M("TP_LOCALLAB_LEVELWAV_TOOLTIP"));
         clariFrame->set_tooltip_markup(M("TP_LOCALLAB_CLARI_TOOLTIP"));
         clarisoft->set_tooltip_markup(M("TP_LOCALLAB_CLARISOFT_TOOLTIP"));
+
+        wavshape->setTooltip(M("TP_LOCALLAB_WAT_WAVSHAPE_TOOLTIP"));
+        clarilres->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARIL_TOOLTIP"));
+        claricres->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARIC_TOOLTIP"));
+        sigmalc->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
+        sigmalc2->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
+        sigmaed->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
+        sigmabl->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
+        sigma->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
+        sigmadc->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
+        sigmadr->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
+        origlc->set_tooltip_text(M("TP_LOCALLAB_WAT_ORIGLC_TOOLTIP"));
+        strwav->set_tooltip_text(M("TP_LOCALLAB_WAT_STRWAV_TOOLTIP"));
+        angwav->set_tooltip_text(M("TP_LOCALLAB_WAT_STRWAV_TOOLTIP"));
+        strengthw->set_tooltip_text(M("TP_LOCALLAB_WAT_STRENGTHW_TOOLTIP"));
+        LocalcurveEditorwavedg->set_tooltip_markup(M("TP_LOCALLAB_WAT_LOCCONTRASTEDG_TOOLTIP"));
+        wavshapeedg->setTooltip(M("TP_LOCALLAB_WAT_LOCCONTRASTEDG_TOOLTIP"));
+        gradw->set_tooltip_text(M("TP_LOCALLAB_WAT_GRADW_TOOLTIP"));
+        waveshow->set_tooltip_text(M("TP_LOCALLAB_WAT_WAVESHOW_TOOLTIP"));
+        LocalcurveEditorwavlev->set_tooltip_markup(M("TP_LOCALLAB_WAT_WAVBLURCURV_TOOLTIP"));
+        wavshapelev->setTooltip(M("TP_LOCALLAB_WAT_WAVBLURCURV_TOOLTIP"));
+        levelblur->set_tooltip_text(M("TP_LOCALLAB_WAT_WAVLEVELBLUR_TOOLTIP"));
+        residblur->set_tooltip_text(M("TP_LOCALLAB_WAT_RESIDBLUR_TOOLTIP"));
+        blurlc->set_tooltip_text(M("TP_LOCALLAB_WAT_BLURLC_TOOLTIP"));
+        offset->set_tooltip_text(M("TP_LOCALLAB_WAT_CONTOFFSET_TOOLTIP"));
+        chromalev->set_tooltip_text(M("TP_LOCALLAB_WAT_CONTCHROMALEV_TOOLTIP"));
+        LocalcurveEditorwavcon->set_tooltip_markup(M("TP_LOCALLAB_WAT_WAVCBDL_TOOLTIP"));
+        wavshapecon->setTooltip(M("TP_LOCALLAB_WAT_WAVCBDL_TOOLTIP"));
+        LocalcurveEditorwavcompre->set_tooltip_markup(M("TP_LOCALLAB_WAT_WAVTM_TOOLTIP"));
+        wavshapecompre->setTooltip(M("TP_LOCALLAB_WAT_WAVTM_TOOLTIP"));
+        deltad->set_tooltip_text(M("TP_LOCALLAB_WAT_DELTABAL_TOOLTIP"));
+        LocalcurveEditorwavcomp->set_tooltip_markup(M("TP_LOCALLAB_WAT_WAVDELTABAL_TOOLTIP"));
+        wavshapecomp->setTooltip(M("TP_LOCALLAB_WAT_WAVDELTABAL_TOOLTIP"));
+        threswav->set_tooltip_text(M("TP_LOCALLAB_WAT_BALTHRES_TOOLTIP"));
+        residcomp->set_tooltip_text(M("TP_LOCALLAB_WAT_RESIDCOMP_TOOLTIP"));
+
+        
+        expresidpyr->set_tooltip_text(M("TP_LOCALLAB_WAT_EXPRESID_TOOLTIP"));
         expcontrastpyr->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP"));
         wavgradl->set_tooltip_text(M("TP_LOCALLAB_WAVGRAD_TOOLTIP"));
         wavedg->set_tooltip_text(M("TP_LOCALLAB_WAVEEDG_TOOLTIP"));
@@ -2650,6 +2697,8 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
     } else {
         contFrame->set_tooltip_text("");
         LocalcurveEditorwav->set_tooltip_markup("");
+        csThreshold->set_tooltip_markup("");
+        expresidpyr->set_tooltip_text("");
         levelwav->set_tooltip_markup("");
         clariFrame->set_tooltip_markup("");
         clarisoft->set_tooltip_markup("");
@@ -2674,6 +2723,42 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         masklcCurveEditorG->set_tooltip_markup("");
         chromasklc->set_tooltip_text("");
         sensilc->set_tooltip_text("");
+
+        wavshape->setTooltip("");
+        clarilres->set_tooltip_text("");
+        claricres->set_tooltip_text("");
+        sigmalc->set_tooltip_text("");
+        sigmalc2->set_tooltip_text("");
+        sigmaed->set_tooltip_text("");
+        sigmabl->set_tooltip_text("");
+        sigma->set_tooltip_text("");
+        sigmadc->set_tooltip_text("");
+        sigmadr->set_tooltip_text("");
+        origlc->set_tooltip_text("");
+        strwav->set_tooltip_text("");
+        angwav->set_tooltip_text("");
+        strengthw->set_tooltip_text("");
+        LocalcurveEditorwavedg->set_tooltip_markup("");
+        wavshapeedg->setTooltip("");
+        gradw->set_tooltip_text("");
+        waveshow->set_tooltip_text("");
+        LocalcurveEditorwavlev->set_tooltip_markup("");
+        wavshapelev->setTooltip("");
+        residblur->set_tooltip_text("");
+        blurlc->set_tooltip_text("");
+        levelblur->set_tooltip_text("");
+        offset->set_tooltip_text("");
+        chromalev->set_tooltip_text("");
+        LocalcurveEditorwavcon->set_tooltip_markup("");
+        wavshapecon->setTooltip("");
+        LocalcurveEditorwavcompre->set_tooltip_markup("");
+        wavshapecompre->setTooltip("");
+        deltad->set_tooltip_text("");
+        LocalcurveEditorwavcomp->set_tooltip_markup("");
+        wavshapecomp->setTooltip("");
+        threswav->set_tooltip_text("");
+        residcomp->set_tooltip_text("");
+
     }
 }
 
