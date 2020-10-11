@@ -56,7 +56,7 @@ Adjuster* createExponentAdjuster(AdjusterListener* listener, const Glib::ustring
 Adjuster* createLevelAdjuster(AdjusterListener* listener, const Glib::ustring& label)
 {
 //    Adjuster* const adj = Gtk::manage(new Adjuster(label, 1.0, 65535.0, 1.0, rtengine::MAXVALF / 24.));
-    Adjuster* const adj = Gtk::manage(new Adjuster(label, 0.0, 10.0, 0.05, toAdjuster(rtengine::MAXVALF / 24.)));
+    Adjuster* const adj = Gtk::manage(new Adjuster(label, 0.0, 10.0, 0.01, toAdjuster(rtengine::MAXVALF / 24.)));
     adj->setAdjusterListener(listener);
 //    adj->setLogScale(6, 1000.0, true);
 
