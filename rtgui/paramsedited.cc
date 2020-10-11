@@ -354,6 +354,7 @@ void ParamsEdited::set(bool v)
     perspective.projection_shift_horiz = v;
     perspective.projection_shift_vert = v;
     perspective.projection_yaw = v;
+    perspective.control_lines = v;
     gradient.enabled = v;
     gradient.degree = v;
     gradient.feather = v;
@@ -1028,6 +1029,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         perspective.projection_shift_horiz = perspective.projection_shift_horiz && p.perspective.projection_shift_horiz == other.perspective.projection_shift_horiz;
         perspective.projection_shift_vert = perspective.projection_shift_vert && p.perspective.projection_shift_vert == other.perspective.projection_shift_vert;
         perspective.projection_yaw = perspective.projection_yaw && p.perspective.projection_yaw == other.perspective.projection_yaw;
+        perspective.control_lines = perspective.control_lines && p.perspective.control_line_values == other.perspective.control_line_values && p.perspective.control_line_types == other.perspective.control_line_types;
         gradient.enabled = gradient.enabled && p.gradient.enabled == other.gradient.enabled;
         gradient.degree = gradient.degree && p.gradient.degree == other.gradient.degree;
         gradient.feather = gradient.feather && p.gradient.feather == other.gradient.feather;
@@ -1300,6 +1302,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).HHmaskblcurve = locallab.spots.at(j).HHmaskblcurve && pSpot.HHmaskblcurve == otherSpot.HHmaskblcurve;
                 locallab.spots.at(j).enablMask = locallab.spots.at(j).enablMask && pSpot.enablMask == otherSpot.enablMask;
                 locallab.spots.at(j).fftwbl = locallab.spots.at(j).fftwbl && pSpot.fftwbl == otherSpot.fftwbl;
+                locallab.spots.at(j).invbl = locallab.spots.at(j).invbl && pSpot.invbl == otherSpot.invbl;
                 locallab.spots.at(j).toolbl = locallab.spots.at(j).toolbl && pSpot.toolbl == otherSpot.toolbl;
                 locallab.spots.at(j).blendmaskbl = locallab.spots.at(j).blendmaskbl && pSpot.blendmaskbl == otherSpot.blendmaskbl;
                 locallab.spots.at(j).radmaskbl = locallab.spots.at(j).radmaskbl && pSpot.radmaskbl == otherSpot.radmaskbl;
@@ -3063,6 +3066,11 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.perspective.projection_yaw = dontforceSet && options.baBehav[ADDSET_PERSP_PROJ_ANGLE] ? toEdit.perspective.projection_yaw + mods.perspective.projection_yaw : mods.perspective.projection_yaw;
     }
 
+    if (perspective.control_lines) {
+        toEdit.perspective.control_line_values = mods.perspective.control_line_values;
+        toEdit.perspective.control_line_types = mods.perspective.control_line_types;
+    }
+
     if (gradient.enabled) {
         toEdit.gradient.enabled = mods.gradient.enabled;
     }
@@ -4092,6 +4100,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).fftwbl) {
             toEdit.locallab.spots.at(i).fftwbl = mods.locallab.spots.at(i).fftwbl;
+        }
+
+        if (locallab.spots.at(i).invbl) {
+            toEdit.locallab.spots.at(i).invbl = mods.locallab.spots.at(i).invbl;
         }
 
         if (locallab.spots.at(i).toolbl) {
@@ -6443,6 +6455,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     HHmaskblcurve(v),
     enablMask(v),
     fftwbl(v),
+    invbl(v),
     toolbl(v),
     blendmaskbl(v),
     radmaskbl(v),
@@ -6933,6 +6946,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     HHmaskblcurve = v;
     enablMask = v;
     fftwbl = v;
+    invbl = v;
     toolbl = v;
     blendmaskbl = v;
     radmaskbl = v;

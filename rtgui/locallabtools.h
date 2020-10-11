@@ -652,6 +652,7 @@ private:
     Adjuster* const epsbl;
     Adjuster* const sensibn;
     MyComboBoxText* const blurMethod;
+    Gtk::CheckButton* const invbl;
     MyComboBoxText* const chroMethod;
     Gtk::CheckButton* const activlum;
     MyExpander* const expdenoise;
@@ -697,7 +698,7 @@ private:
     Gtk::HBox* const quaHBox;
     ThresholdAdjuster* const csThresholdblur;
 
-    sigc::connection blMethodConn, fftwblConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
+    sigc::connection blMethodConn, fftwblConn, invblConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
     sigc::connection  quamethodconn;
 public:
     LocallabBlur();
@@ -733,6 +734,7 @@ private:
 
     void blMethodChanged();
     void fftwblChanged();
+    void invblChanged();
     void medMethodChanged();
     void blurMethodChanged();
     void chroMethodChanged();
@@ -822,6 +824,7 @@ class LocallabRetinex:
 {
 private:
     // Retinex specific widgets
+    Gtk::Frame* const dehaFrame;
     Adjuster* const dehaz;
     Adjuster* const depth;
     Gtk::CheckButton* const lumonly;

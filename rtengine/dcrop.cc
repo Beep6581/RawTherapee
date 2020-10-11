@@ -812,7 +812,7 @@ void Crop::update(int todo)
 
     if (todo & M_RGBCURVE) {
         Imagefloat *workingCrop = baseCrop;
-
+/*
         if (params.icm.workingTRC == "Custom") { //exec TRC IN free
             const Glib::ustring profile = params.icm.workingProfile;
 
@@ -826,7 +826,7 @@ void Crop::update(int todo)
                 parent->ipf.workingtrc(workingCrop, workingCrop, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope, parent->getCustomTransformOut(), false, true, true);
             }
         }
-
+*/
         double rrm, ggm, bbm;
         DCPProfileApplyState as;
         DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, as);

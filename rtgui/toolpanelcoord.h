@@ -102,6 +102,7 @@ class ToolPanelCoordinator :
     public LensGeomListener,
     public SpotWBListener,
     public CropPanelListener,
+    public PerspCorrectionPanelListener,
     public ICMPanelListener,
     public ImageAreaToolListener,
     public rtengine::ImageTypeListener,
@@ -312,14 +313,18 @@ public:
     // rotatelistener interface
     void straightenRequested () override;
     void autoCropRequested () override;
-    void autoPerspRequested (bool corr_pitch, bool corr_yaw, double& rot, double& pitch, double& yaw) override;
+    void autoPerspRequested (bool corr_pitch, bool corr_yaw, double& rot, double& pitch, double& yaw, const std::vector<rtengine::ControlLine> *lines = nullptr) override;
     double autoDistorRequested () override;
+    void updateTransformPreviewRequested (rtengine::ProcEvent event, bool render_perspective) override;
 
     // spotwblistener interface
     void spotWBRequested (int size) override;
 
     // croppanellistener interface
     void cropSelectRequested () override;
+
+    // PerspCorrectionPanelListener interface
+    void controlLineEditModeChanged(bool active) override;
 
     // icmpanellistener interface
     void saveInputICCReference(const Glib::ustring& fname, bool apply_wb) override;
@@ -337,6 +342,7 @@ public:
     bool handleShortcutKey(GdkEventKey* event);
 
     // ToolBarListener interface
+    void toolDeselected(ToolMode tool) override;
     void toolSelected (ToolMode tool) override;
     void editModeSwitchedOff () final;
 
