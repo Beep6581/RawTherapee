@@ -453,6 +453,27 @@ filechooser placessidebar list row:selected {
     padding-bottom: 0.25em;
     margin: 0;
 }
+
+/* Vertical version of slider. */
+#histScale {
+    min-height: 4em;
+    min-width: 1.833333333333333333em;
+    margin: -0.333333333333333333em 0;
+}
+#histScale trough {
+    padding: 0.583333333333333333em 0;
+}
+#histScale highlight {
+    background-image: linear-gradient(to right, shade (@accent-color2,1.22), shade(@accent-color2,.88));
+    margin: -0.583333333333333333em 0;
+    padding: 0.333333333333333333em 0 0 0.333333333333333333em;
+}
+#histScale slider {
+}
+#histScale.fine-tune highlight {
+    padding: 0.5em 0 0 0.5em;
+}
+
 /* Copied from button.flat style. */
 button.radio#histButton {
     border: 0.083333333333333333em solid transparent;

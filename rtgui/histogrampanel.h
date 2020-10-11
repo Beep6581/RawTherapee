@@ -152,7 +152,10 @@ class HistogramArea final : public Gtk::DrawingArea, public BackBuffer, private 
 {
 public:
     typedef sigc::signal<void, double> type_signal_factor_changed;
+    typedef sigc::signal<void, float> SignalBrightnessChanged;
 
+    static constexpr float MIN_BRIGHT = 0.1;
+    static constexpr float MAX_BRIGHT = 3;
 private:
     IdleRegister idle_register;
     type_signal_factor_changed sigFactorChanged;
@@ -194,6 +197,8 @@ protected:
     int pointer_red, pointer_green, pointer_blue;
     float pointer_a, pointer_b;
 
+    SignalBrightnessChanged signal_brightness_changed;
+
 public:
     explicit HistogramArea(DrawModeListener *fml = nullptr);
     ~HistogramArea() override;
@@ -226,6 +231,10 @@ public:
     bool on_button_press_event (GdkEventButton* event) override;
     bool on_button_release_event (GdkEventButton* event) override;
     bool on_motion_notify_event (GdkEventMotion* event) override;
+    float getBrightness(void);
+    /** Set the trace brightness, with 1 being normal. */
+    void setBrightness(float brightness);
+    SignalBrightnessChanged getBrighnessChangedSignal(void);
     type_signal_factor_changed signal_factor_changed();
 
 private:
@@ -270,6 +279,7 @@ protected:
     Gtk::ToggleButton* showChro;
     Gtk::Button* showMode;
     Gtk::ToggleButton* scopeOptions;
+    Gtk::Scale* brightnessWidget;
 
     Gtk::RadioButton* scopeHistBtn;
     Gtk::RadioButton* scopeHistRawBtn;
@@ -298,6 +308,7 @@ protected:
 
     HistogramPanelListener* panel_listener;
 
+    sigc::connection brightness_changed_connection;
     sigc::connection rconn;
     void setHistInvalid ();
     void showRGBBar();
@@ -344,6 +355,8 @@ public:
     void chro_toggled ();
     void bar_toggled ();
     void mode_released ();
+    void brightnessWidgetValueChanged();
+    void brightnessUpdated(float brightness);
     void scopeOptionsToggled();
     void type_selected(Gtk::RadioButton* button);
     void type_changed ();

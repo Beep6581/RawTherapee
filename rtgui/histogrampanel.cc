@@ -273,14 +273,14 @@ HistogramPanel::HistogramPanel () :
     scopeOptions->set_image(*Gtk::manage(new RTImage("histogram-ellipsis-small.png")));
     showBAR->set_image   (showBAR->get_active()   ? *barImage   : *barImage_g);
     
-    setExpandAlignProperties(showRed  , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    setExpandAlignProperties(showGreen, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    setExpandAlignProperties(showBlue , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    setExpandAlignProperties(showValue, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    setExpandAlignProperties(showChro , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    setExpandAlignProperties(showMode , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(showRed  , false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(showGreen, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(showBlue , false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(showValue, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(showChro , false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(showMode , false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(scopeOptions, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    setExpandAlignProperties(showBAR  , false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    setExpandAlignProperties(showBAR  , false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(scopeOptions, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     setExpandAlignProperties(scopeHistBtn, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     setExpandAlignProperties(scopeHistRawBtn, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
@@ -306,6 +306,15 @@ HistogramPanel::HistogramPanel () :
     scopeVectHcBtn->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &HistogramPanel::type_selected), scopeVectHcBtn));
     scopeVectHsBtn->signal_toggled().connect(sigc::bind(sigc::mem_fun(*this, &HistogramPanel::type_selected), scopeVectHsBtn));
 
+    brightnessWidget = Gtk::manage(new Gtk::Scale(Gtk::ORIENTATION_VERTICAL));
+    brightnessWidget->set_inverted();
+    brightnessWidget->set_range(log(HistogramArea::MIN_BRIGHT), log(HistogramArea::MAX_BRIGHT));
+    brightnessWidget->set_draw_value(false);
+    brightnessWidget->signal_value_changed().connect(sigc::mem_fun(*this, &HistogramPanel::brightnessWidgetValueChanged));
+    brightnessWidget->set_name("histScale");
+    brightnessWidget->set_tooltip_text(M("HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS"));
+    setExpandAlignProperties(brightnessWidget, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
+
     optionButtons->add(*showRed);
     optionButtons->add(*showGreen);
     optionButtons->add(*showBlue);
@@ -313,6 +322,7 @@ HistogramPanel::HistogramPanel () :
     optionButtons->add(*showChro);
     optionButtons->add(*showMode);
     optionButtons->add(*showBAR);
+    optionButtons->add(*brightnessWidget);
 
     Gtk::VSeparator* separator = Gtk::manage(new Gtk::VSeparator());
     setExpandAlignProperties(separator, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
@@ -350,6 +360,7 @@ HistogramPanel::HistogramPanel () :
         updateHistRGBAreaOptions();
     }
 
+    brightness_changed_connection = histogramArea->getBrighnessChangedSignal().connect(sigc::mem_fun(*this, &HistogramPanel::brightnessUpdated));
     rconn = signal_size_allocate().connect( sigc::mem_fun(*this, &HistogramPanel::resized) );
 }
 
@@ -461,6 +472,17 @@ void HistogramPanel::mode_released ()
     rgbv_toggled();
 }
 
+void HistogramPanel::brightnessWidgetValueChanged(void)
+{
+    ConnectionBlocker blocker(brightness_changed_connection);
+    histogramArea->setBrightness(exp(brightnessWidget->get_value()));
+}
+
+void HistogramPanel::brightnessUpdated(float brightness)
+{
+    brightnessWidget->set_value(log(brightness));
+}
+
 void HistogramPanel::scopeOptionsToggled()
 {
     options.histogramShowOptionButtons = scopeOptions->get_active();
@@ -512,6 +534,7 @@ void HistogramPanel::type_changed()
             showMode->show();
             showBAR->show();
             showBAR->set_tooltip_text(M("HISTOGRAM_TOOLTIP_BAR"));
+            brightnessWidget->hide();
             histogramRGBArea = histogramRGBAreaHori.get();
             break;
         case ScopeType::HISTOGRAM_RAW:
@@ -522,6 +545,7 @@ void HistogramPanel::type_changed()
             showChro->hide();
             showMode->show();
             showBAR->hide();
+            brightnessWidget->hide();
             histogramRGBArea = nullptr;
             break;
         case ScopeType::PARADE:
@@ -534,6 +558,7 @@ void HistogramPanel::type_changed()
             showMode->hide();
             showBAR->show();
             showBAR->set_tooltip_text(M("HISTOGRAM_TOOLTIP_BAR"));
+            brightnessWidget->show();
             histogramRGBArea = histogramRGBAreaVert.get();
             break;
         case ScopeType::VECTORSCOPE_HC:
@@ -546,6 +571,7 @@ void HistogramPanel::type_changed()
             showMode->hide();
             showBAR->show();
             showBAR->set_tooltip_text(M("HISTOGRAM_TOOLTIP_CROSSHAIR"));
+            brightnessWidget->show();
             histogramRGBArea = nullptr;
             break;
         case ScopeType::NONE:
@@ -1921,21 +1947,37 @@ bool HistogramArea::on_motion_notify_event (GdkEventMotion* event)
         || scopeType == ScopeType::VECTORSCOPE_HC
         || scopeType == ScopeType::VECTORSCOPE_HS
     ) { // Adjust brightness.
-        constexpr float MIN_BRIGHT = 0.1;
-        constexpr float MAX_BRIGHT = 3;
         constexpr float RANGE = MAX_BRIGHT / MIN_BRIGHT;
         double dx = (event->x - movingPosition) / get_width();
         float new_brightness = LIM<float>(trace_brightness * pow(RANGE, dx), MIN_BRIGHT, MAX_BRIGHT);
-        if (new_brightness != trace_brightness) {
-            parade_buffer_r_dirty = parade_buffer_g_dirty = parade_buffer_b_dirty = wave_buffer_dirty = wave_buffer_luma_dirty = vect_hc_buffer_dirty = vect_hs_buffer_dirty = true;
-            trace_brightness = new_brightness;
-            setDirty(true);
-            queue_draw();
-        }
+        setBrightness(new_brightness);
         movingPosition = event->x;
     }
 
     return true;
+}
+
+float HistogramArea::getBrightness(void)
+{
+    return trace_brightness;
+}
+
+void HistogramArea::setBrightness(float brightness)
+{
+    brightness = LIM<float>(brightness, MIN_BRIGHT, MAX_BRIGHT);
+    if (brightness != trace_brightness) {
+        parade_buffer_r_dirty = parade_buffer_g_dirty = parade_buffer_b_dirty = wave_buffer_dirty = wave_buffer_luma_dirty = vect_hc_buffer_dirty = vect_hs_buffer_dirty = true;
+        trace_brightness = brightness;
+        setDirty(true);
+        queue_draw();
+
+        signal_brightness_changed.emit(trace_brightness);
+    }
+}
+
+HistogramArea::SignalBrightnessChanged HistogramArea::getBrighnessChangedSignal(void)
+{
+    return signal_brightness_changed;
 }
 
 HistogramArea::type_signal_factor_changed HistogramArea::signal_factor_changed()
