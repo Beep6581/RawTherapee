@@ -233,6 +233,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
     Gtk::Frame *oFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_OUTPUTPROFILE")));
     oFrame->set_label_align(0.025, 0.5);
+    oFrame->set_tooltip_text(M("TP_ICM_OUTPUTPROFILE_TOOLTIP"));
 
     Gtk::VBox *oProfVBox = Gtk::manage(new Gtk::VBox());
 
@@ -594,6 +595,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wSlope->setEditedState(pedited->icm.workingTRCSlope  ? Edited : UnEdited);
 
     }
+
     if(pp->icm.workingTRCGamma <= 1.) {
        wSlope->set_sensitive(false);
     } else {
