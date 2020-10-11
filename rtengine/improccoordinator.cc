@@ -821,39 +821,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         if (todo & (M_AUTOEXP | M_RGBCURVE)) {
             
             
-         /*   if (params->icm.workingTRC == "Custom") { //exec TRC IN free
-                if (oprevi == orig_prev) {
-                    oprevi = new Imagefloat(pW, pH);
-                    orig_prev->copyData(oprevi);
-                }
-
-                const Glib::ustring profile = params->icm.workingProfile;
-               // cmsHTRANSFORM dummy = nullptr;
-
-                if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
-                    const int cw = oprevi->getWidth();
-                    const int ch = oprevi->getHeight();
-
-                    // put gamma TRC to 1
-                    if (customTransformIn) {
-                        cmsDeleteTransform(customTransformIn);
-                        customTransformIn = nullptr;
-                    }
-
-                    ipf.workingtrc(oprevi, oprevi, cw, ch, -5, params->icm.workingProfile, 2.4, 12.92310, customTransformIn, true, false, true);
-              //      ipf.workingtrc(oprevi, oprevi, cw, ch, -5, params->icm.workingProfile, 2.4, 12.92310, dummy, true, false, true);
-
-                    //adjust TRC
-                    if (customTransformOut) {
-                        cmsDeleteTransform(customTransformOut);
-                        customTransformOut = nullptr;
-                    }
-
-                 //   ipf.workingtrc(oprevi, oprevi, cw, ch, 5, params->icm.workingProfile, params->icm.workingTRCGamma, params->icm.workingTRCSlope, dummy, false, true, true);
-                    ipf.workingtrc(oprevi, oprevi, cw, ch, 5, params->icm.workingProfile, params->icm.workingTRCGamma, params->icm.workingTRCSlope, customTransformOut, false, true, true);
-                }
-            }
-            */
         }
 
 
@@ -1268,26 +1235,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             ipf.chromiLuminanceCurve(nullptr, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histLCurve);
             ipf.vibrance(nprevl, params->vibrance, params->toneCurve.hrenabled, params->icm.workingProfile);
             ipf.labColorCorrectionRegions(nprevl);
-
-
-            if (params->icm.workingTRC == "Custom") {
-                int GW = nprevl->W;
-                int GH = nprevl->H;
-                const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
-
-                ipf.lab2rgb(*nprevl, *tmpImage1, params->icm.workingProfile);
-
-                const float gamtone = params->icm.workingTRCGamma;
-                const float slotone = params->icm.workingTRCSlope;
-                //printf("IMP gam=%f slo=%f\n", gamtone, slotone);
-        
-                cmsHTRANSFORM dummy = nullptr;
-                ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, params->icm.workingProfile, 2.4, 12.92310, dummy, true, false, false);
-                ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, params->icm.workingProfile, gamtone, slotone, dummy, false, true, true);
-
-                ipf.rgb2lab(*tmpImage1, *nprevl, params->icm.workingProfile);
-            }
-
             if ((params->colorappearance.enabled && !params->colorappearance.tonecie) || (!params->colorappearance.enabled)) {
                 ipf.EPDToneMap(nprevl, 0, scale);
             }
@@ -1614,6 +1561,26 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if (CAMBrightCurveQ) {
                     CAMBrightCurveQ.reset();
                 }
+            }
+        }
+
+        if (todo & (M_AUTOEXP | M_RGBCURVE)) {
+            if (params->icm.workingTRC == "Custom") {
+                int GW = nprevl->W;
+                int GH = nprevl->H;
+                const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
+
+                ipf.lab2rgb(*nprevl, *tmpImage1, params->icm.workingProfile);
+
+                const float gamtone = params->icm.workingTRCGamma;
+                const float slotone = params->icm.workingTRCSlope;
+                //printf("IMP gam=%f slo=%f\n", gamtone, slotone);
+        
+                cmsHTRANSFORM dummy = nullptr;
+                ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, params->icm.workingProfile, 2.4, 12.92310, dummy, true, false, false);
+                ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, params->icm.workingProfile, gamtone, slotone, dummy, false, true, true);
+
+                ipf.rgb2lab(*tmpImage1, *nprevl, params->icm.workingProfile);
             }
         }
 
