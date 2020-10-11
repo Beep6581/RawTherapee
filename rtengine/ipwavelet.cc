@@ -749,6 +749,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         maxlev2 = 6;
     }
 
+    if (minsizetile < 64) {
+        maxlev2 = 5;
+    }
+
     levwav = rtengine::min(maxlev2, levwav);
 
 #ifdef _OPENMP
@@ -1049,6 +1053,9 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                 if (levwavL < 5 && cp.noiseena) {
                     levwavL = 6;    //to allow edge and denoise  => I always allocate 3 (4) levels..because if user select wavelet it is to do something !!
                 }
+                
+                levwavL = rtengine::min(maxlevelcrop, levwavL);
+                
 /*
                 if(cp.denoicurvh  || cp.levdenhigh > 0.01f) {
                     levwavL = levwav;
