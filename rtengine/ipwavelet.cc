@@ -669,7 +669,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         maxlevelcrop = 6;
     }
 
-    if (minwin < 64) {
+    if (minwin * skip < 64) {
         maxlevelcrop = 5;
     }
 
@@ -1054,7 +1054,6 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                     levwavL = 6;    //to allow edge and denoise  => I always allocate 3 (4) levels..because if user select wavelet it is to do something !!
                 }
                 
-                levwavL = rtengine::min(maxlevelcrop, levwavL);
                 
 /*
                 if(cp.denoicurvh  || cp.levdenhigh > 0.01f) {
@@ -1066,11 +1065,12 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                     levwavL = levwav;
                 }
 
+
+                bool usechrom = cp.chromfi > 0.f || cp.chromco > 0.f;
+                levwavL = rtengine::min(maxlevelcrop, levwavL);
                 if (settings->verbose) {
                     printf("Level decomp L=%i\n", levwavL);
                 }
-
-                bool usechrom = cp.chromfi > 0.f || cp.chromco > 0.f;
 
                 if (levwavL > 0) {
                     const std::unique_ptr<wavelet_decomposition> Ldecomp(new wavelet_decomposition(labco->data, labco->W, labco->H, levwavL, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
@@ -1773,6 +1773,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 }
                             }
 
+                            levwava = rtengine::min(maxlevelcrop, levwava);
                             if (settings->verbose) {
                                 printf("Leval decomp a=%i\n", levwava);
                             }
@@ -1809,10 +1810,11 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 }
                             }
 
+
+                            levwavb = rtengine::min(maxlevelcrop, levwavb);
                             if (settings->verbose) {
                                 printf("Leval decomp b=%i\n", levwavb);
                             }
-
 
                             if (levwavb > 0) {
                                 const std::unique_ptr<wavelet_decomposition> bdecomp(new wavelet_decomposition(labco->data + 2 * datalen, labco->W, labco->H, levwavb, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
