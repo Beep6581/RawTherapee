@@ -669,10 +669,13 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         maxlevelcrop = 6;
     }
 
-    if (minwin < 64) {
+    if (minwin * skip < 64) {
         maxlevelcrop = 5;
     }
 
+    if (minwin * skip < 32) {
+        maxlevelcrop = 4;
+    }
     
     int levwav = params->wavelet.thres;
     if(params->wavelet.expnoise) {
@@ -751,6 +754,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
     if (minsizetile < 64) {
         maxlev2 = 5;
+    }
+
+    if (minsizetile < 32) {
+        maxlev2 = 4;
     }
 
     levwav = rtengine::min(maxlev2, levwav);
@@ -1054,7 +1061,6 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                     levwavL = 6;    //to allow edge and denoise  => I always allocate 3 (4) levels..because if user select wavelet it is to do something !!
                 }
                 
-                levwavL = rtengine::min(maxlevelcrop, levwavL);
                 
 /*
                 if(cp.denoicurvh  || cp.levdenhigh > 0.01f) {
@@ -1066,11 +1072,14 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                     levwavL = levwav;
                 }
 
+
+                bool usechrom = cp.chromfi > 0.f || cp.chromco > 0.f;
+                levwavL = rtengine::min(maxlevelcrop, levwavL);
+                levwavL = rtengine::min(maxlev2, levwavL);
+
                 if (settings->verbose) {
                     printf("Level decomp L=%i\n", levwavL);
                 }
-
-                bool usechrom = cp.chromfi > 0.f || cp.chromco > 0.f;
 
                 if (levwavL > 0) {
                     const std::unique_ptr<wavelet_decomposition> Ldecomp(new wavelet_decomposition(labco->data, labco->W, labco->H, levwavL, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
@@ -1761,7 +1770,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         if (!hhutili) { //always a or b
                             int levwava = levwav;
 
-                            if (!exblurab && cp.chrores == 0.f  && cp.blurcres == 0.f && params->wavelet.CLmethod == "all" && !cp.cbena) { // no processing of residual ab => we probably can reduce the number of levels
+                            if (!exblurab && cp.chrores == 0.f  && cp.blurcres == 0.f && !cp.tonemap && !cp.resena && !cp.chromena && !cp.finena && !cp.edgeena&& params->wavelet.CLmethod == "all" && !cp.cbena) { // no processing of residual ab => we probably can reduce the number of levels
                                 while (levwava > 0 && !cp.diag && (((cp.CHmet == 2 && (cp.chro == 0.f || cp.mul[levwava - 1] == 0.f)) || (cp.CHmet != 2 && (levwava == 10 || (!cp.curv  || cp.mulC[levwava - 1] == 0.f))))) && (!cp.opaRG || levwava == 10 || (cp.opaRG && cp.mulopaRG[levwava - 1] == 0.f)) && ((levwava == 10 || (cp.CHSLmet == 1 && cp.mulC[levwava - 1] == 0.f)))) {
                                     levwava--;
                                 }
@@ -1773,31 +1782,41 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 }
                             }
 
+                            levwava = rtengine::min(maxlevelcrop, levwava);
+                            levwava = rtengine::min(maxlev2, levwava);
                             if (settings->verbose) {
                                 printf("Leval decomp a=%i\n", levwava);
                             }
 
                             if (levwava > 0) {
                                 const std::unique_ptr<wavelet_decomposition> adecomp(new wavelet_decomposition(labco->data + datalen, labco->W, labco->H, levwava, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
-
                                 if (!adecomp->memory_allocation_failed()) {
+                                    if(levwava == 6) {
+                                        edge = 1;
+                                    }
                                     if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.quamet == 0 )) {
+
                                        WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
+
                                     } else if (cp.chromfi > 0.f && cp.chromco >= 2.f){
 
                                         WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
                                         WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
+                                       
                                     }
 
                                     Evaluate2(*adecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab, wavNestedLevels);
+
                                     WaveletcontAllAB(labco, varhue, varchro, *adecomp, wavblcurve, waOpacityCurveW, cp, true, skip, meanab, sigmaab);
+
                                     adecomp->reconstruct(labco->data + datalen, cp.strength);
+
                                 }
                             }
 
                             int levwavb = levwav;
 
-                            if (!exblurab && cp.chrores == 0.f && cp.blurcres == 0.f && params->wavelet.CLmethod == "all" && !cp.cbena) { // no processing of residual ab => we probably can reduce the number of levels
+                            if (!exblurab && cp.chrores == 0.f && cp.blurcres == 0.f && !cp.tonemap && !cp.resena && !cp.chromena && !cp.finena && !cp.edgeena && params->wavelet.CLmethod == "all" && !cp.cbena) { // no processing of residual ab => we probably can reduce the number of levels
                                 while (levwavb > 0 &&  !cp.diag && (((cp.CHmet == 2 && (cp.chro == 0.f || cp.mul[levwavb - 1] == 0.f)) || (cp.CHmet != 2 && (levwavb == 10 || (!cp.curv || cp.mulC[levwavb - 1] == 0.f))))) && (!cp.opaBY || levwavb == 10 || (cp.opaBY && cp.mulopaBY[levwavb - 1] == 0.f)) && ((levwavb == 10 || (cp.CHSLmet == 1 && cp.mulC[levwavb - 1] == 0.f)))) {
                                     levwavb--;
                                 }
@@ -1809,13 +1828,19 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 }
                             }
 
+
+                            levwavb = rtengine::min(maxlevelcrop, levwavb);
+                            levwavb = rtengine::min(maxlev2, levwavb);
+
                             if (settings->verbose) {
                                 printf("Leval decomp b=%i\n", levwavb);
                             }
 
-
                             if (levwavb > 0) {
                                 const std::unique_ptr<wavelet_decomposition> bdecomp(new wavelet_decomposition(labco->data + 2 * datalen, labco->W, labco->H, levwavb, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
+                                if(levwavb == 6) {
+                                    edge = 1;
+                                }
 
                                 if (!bdecomp->memory_allocation_failed()) {
                                   //  if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.chromco < 2.f )) {

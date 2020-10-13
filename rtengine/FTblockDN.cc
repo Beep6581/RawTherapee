@@ -2378,6 +2378,11 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposition& Wavele
 {
     int maxlvl = WaveletCoeffs_L.maxlevel();
 
+    if (local == 1) {
+        maxlvl = 6;    //for local denoise
+    }
+
+
     if (local == 2) {
         maxlvl = 7;    //for local denoise
     }
@@ -2614,6 +2619,11 @@ bool ImProcFunctions::WaveletDenoiseAllAB(wavelet_decomposition& WaveletCoeffs_L
 {
 
     int maxlvl = WaveletCoeffs_L.maxlevel();
+
+    if (local == 1) {
+        maxlvl = 6;    //for local denoise
+    }
+
 
     if (local == 2) {
         maxlvl = 7;    //for local denoise
