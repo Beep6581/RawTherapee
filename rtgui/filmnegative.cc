@@ -278,7 +278,7 @@ FilmNegative::FilmNegative() :
     spotButton->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::editToggled));
     // spotsize->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::spotSizeChanged) );
 
-    refSpotButton->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::baseSpotToggled));
+    refSpotButton->signal_toggled().connect(sigc::mem_fun(*this, &FilmNegative::refSpotToggled));
 
     // Editing geometry; create the spot rectangle
     Rectangle* const spotRect = new Rectangle();
@@ -609,12 +609,12 @@ bool FilmNegative::button1Pressed(int modifierKey)
 
         } else if (refSpotButton->get_active()) {
 
-            RGB filmBaseOut;
-            fnp->getFilmNegativeSpot(provider->posImage, 32, refInputValues, filmBaseOut);
+            RGB refOut;
+            fnp->getFilmNegativeSpot(provider->posImage, 32, refInputValues, refOut);
 
             disableListener();
 
-            float gray = rtengine::Color::rgbLuminance(filmBaseOut.r, filmBaseOut.g, filmBaseOut.b);
+            float gray = rtengine::Color::rgbLuminance(refOut.r, refOut.g, refOut.b);
             writeOutputSliders({gray, gray, gray});
 
             refInputLabel->set_text(
@@ -680,7 +680,7 @@ void FilmNegative::editToggled()
 }
 
 
-void FilmNegative::baseSpotToggled()
+void FilmNegative::refSpotToggled()
 {
     if (refSpotButton->get_active()) {
 

@@ -80,7 +80,7 @@ public:
 
 private:
     void editToggled();
-    void baseSpotToggled();
+    void refSpotToggled();
 
     void readOutputSliders(RGB &refOutput);
     void writeOutputSliders(const RGB &refOutput);
