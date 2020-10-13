@@ -2160,7 +2160,7 @@ ColorManagementParams::ColorManagementParams() :
     dcpIlluminant(0),
     workingProfile("ProPhoto"),
     workingTRC("none"),
-    workingTRCGamma(2.2),
+    workingTRCGamma(2.222),
     workingTRCSlope(4.5),
     outputProfile(options.rtSettings.srgb),
     outputIntent(RI_RELATIVE),

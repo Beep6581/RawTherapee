@@ -206,7 +206,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wFrame->set_tooltip_text(M("TP_ICM_WORKING_TRC_TOOLTIP"));
 
 
-    wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_GAMMA"), 0.40, 15.0, 0.001, 2.2));
+    wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_GAMMA"), 0.40, 15.0, 0.001, 2.222));
     wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SLOPE"), 0., 150., 0.01, 4.5));
     trcProfVBox->pack_start(*wGamma, Gtk::PACK_SHRINK);
     wGamma->show();
