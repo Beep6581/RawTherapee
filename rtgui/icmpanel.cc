@@ -495,6 +495,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker oprofnamesconn_(oprofnamesconn);
     ConnectionBlocker orendintentconn_(orendintentconn);
     ConnectionBlocker dcpillconn_(dcpillconn);
+    ConnectionBlocker wtrcconn_(wtrcconn);
 
     if (pp->icm.inputProfile.substr(0, 5) != "file:" && !ipDialog->get_filename().empty()) {
         ipDialog->set_filename(pp->icm.inputProfile);
