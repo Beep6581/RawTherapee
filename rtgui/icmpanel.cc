@@ -206,8 +206,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wFrame->set_tooltip_text(M("TP_ICM_WORKING_TRC_TOOLTIP"));
 
 
-    wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_GAMMA"), 0.40, 15.0, 0.001, 2.4));
-    wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SLOPE"), 0., 150., 0.01, 12.92310));
+    wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_GAMMA"), 0.40, 15.0, 0.001, 2.2));
+    wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SLOPE"), 0., 150., 0.01, 4.5));
     trcProfVBox->pack_start(*wGamma, Gtk::PACK_SHRINK);
     wGamma->show();
 
@@ -596,11 +596,20 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     }
 
-    if(pp->icm.workingTRCGamma <= 1.) {
-       wSlope->set_sensitive(false);
-    } else {
-       wSlope->set_sensitive(true);
+    if (pp->icm.workingTRC == "none") {
+        wSlope->set_sensitive(false);
+        wGamma->set_sensitive(false);
+
+    } else if (pp->icm.workingTRC == "Custom") {
+        if(pp->icm.workingTRCGamma <= 1.) {
+            wGamma->set_sensitive(true);
+            wSlope->set_sensitive(false);
+        } else {
+            wGamma->set_sensitive(true);
+            wSlope->set_sensitive(true);
+        }
     }
+
 
     enableListener();
 }
@@ -722,9 +731,14 @@ void ICMPanel::wtrcinChanged()
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
 
-    } else {
-        wGamma->set_sensitive(true);
-        wSlope->set_sensitive(true);
+    } else if(wTRC->get_active_row_number() == 1) {
+        if(wGamma->getValue() <= 1.) {
+            wGamma->set_sensitive(true);
+            wSlope->set_sensitive(false);
+        } else {
+            wGamma->set_sensitive(true);
+            wSlope->set_sensitive(true);
+        }
     }
 
     if (listener) {
