@@ -758,7 +758,7 @@ LocallabColor::LocallabColor():
 
     LLmaskcolshapewav->setIdentityValue(0.);
     LLmaskcolshapewav->setResetCurve(FlatCurveType(defSpot.LLmaskcolcurvewav.at(0)), defSpot.LLmaskcolcurvewav);
-    LLmaskcolshapewav->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+//    LLmaskcolshapewav->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
     mask2CurveEditorGwav->curveListComplete();
 
