@@ -194,33 +194,29 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wTRCHBox->pack_start(*wtrclab, Gtk::PACK_SHRINK);
     wTRC = Gtk::manage(new MyComboBoxText());
     wTRCHBox->pack_start(*wTRC, Gtk::PACK_EXPAND_WIDGET);
-    wProfVBox->pack_start(*wTRCHBox, Gtk::PACK_EXPAND_WIDGET);
+ //   wProfVBox->pack_start(*wTRCHBox, Gtk::PACK_EXPAND_WIDGET);
     wTRC->append(M("TP_ICM_WORKING_TRC_NONE"));
     wTRC->append(M("TP_ICM_WORKING_TRC_CUSTOM"));
 
-    wTRC->set_active(0);
-    wTRC->set_tooltip_text(M("TP_ICM_WORKING_TRC_TOOLTIP"));
+//    wTRC->set_active(0);
+//    wTRC->set_tooltip_text(M("TP_ICM_WORKING_TRC_TOOLTIP"));
 
 
     wGamma = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_GAMMA"), 0.40, 15.0, 0.001, 2.4));
     wSlope = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_TRC_SLOPE"), 0., 150., 0.01, 12.92310));
-    wProfVBox->pack_start(*wGamma, Gtk::PACK_SHRINK);
-    wGamma->show();
+//    wProfVBox->pack_start(*wGamma, Gtk::PACK_SHRINK);
+//    wGamma->show();
 
-    wProfVBox->pack_start(*wSlope, Gtk::PACK_SHRINK);
-    wSlope->show();
+//    wProfVBox->pack_start(*wSlope, Gtk::PACK_SHRINK);
+//    wSlope->show();
 
 
     wGamma->setAdjusterListener(this);
     wSlope->setAdjusterListener(this);
 
-    if (wGamma->delay < options.adjusterMaxDelay) {
-        wGamma->delay = options.adjusterMaxDelay;
-    }
+    wGamma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    if (wSlope->delay < options.adjusterMaxDelay) {
-        wSlope->delay = options.adjusterMaxDelay;
-    }
+    wSlope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     wFrame->add(*wProfVBox);
 
@@ -428,8 +424,8 @@ void ICMPanel::updateDCP(int dcpIlluminant, Glib::ustring dcp_name)
         if (illuminants.will_interpolate) {
             if (dcpTemperatures[0] != illuminants.temperature_1 || dcpTemperatures[1] != illuminants.temperature_2) {
                 char tempstr1[64], tempstr2[64];
-                sprintf(tempstr1, "%.0fK", illuminants.temperature_1);
-                sprintf(tempstr2, "%.0fK", illuminants.temperature_2);
+                snprintf(tempstr1, sizeof(tempstr1), "%.0fK", illuminants.temperature_1);
+                snprintf(tempstr2, sizeof(tempstr2), "%.0fK", illuminants.temperature_2);
                 int curr_active = dcpIll->get_active_row_number();
                 dcpIll->remove_all();
                 dcpIll->append(M("TP_ICM_DCPILLUMINANT_INTERPOLATED"));

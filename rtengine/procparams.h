@@ -932,6 +932,7 @@ struct LensProfParams {
   */
 struct PerspectiveParams {
     Glib::ustring method;
+    bool    render;
     double  horizontal;
     double  vertical;
     double  camera_crop_factor;
@@ -946,6 +947,10 @@ struct PerspectiveParams {
     double  projection_shift_horiz;
     double  projection_shift_vert;
     double  projection_yaw;
+    /** A line is stored as 4 integers in this order: x1, y1, x2, y2 */
+    std::vector<int> control_line_values;
+    /** 0 is vertical, 1 is horizontal, undefined otherwise. */
+    std::vector<int> control_line_types;
 
     PerspectiveParams();
 
@@ -1002,6 +1007,7 @@ struct LocallabParams {
         double colorscope;
         double transitweak;
         double transitgrad;
+        bool hishow;
         bool activ;
         bool avoid;
         bool blwh;
@@ -1203,6 +1209,7 @@ struct LocallabParams {
         int epsbl;
         Glib::ustring blMethod; // blur, med, guid
         Glib::ustring chroMethod; // lum, chr, all
+        Glib::ustring quamethod; // cons agre
         Glib::ustring blurMethod; // norm, inv
         Glib::ustring medMethod; // none, 33, 55, 77, 99
         bool activlum;
@@ -1226,6 +1233,7 @@ struct LocallabParams {
         std::vector<double> HHmaskblcurve;
         bool enablMask;
         bool fftwbl;
+        bool invbl;
         bool toolbl;
         int blendmaskbl;
         double radmaskbl;
@@ -1725,6 +1733,8 @@ private:
 
 struct WaveletParams {
     std::vector<double> ccwcurve;
+    std::vector<double> wavdenoise;
+    std::vector<double> wavdenoiseh;
     std::vector<double> blcurve;
     std::vector<double> levelshc;
     std::vector<double> opacityCurveRG;
@@ -1733,6 +1743,8 @@ struct WaveletParams {
     std::vector<double> opacityCurveW;
     std::vector<double> opacityCurveWL;
     std::vector<double> hhcurve;
+    std::vector<double> wavguidcurve;
+    std::vector<double> wavhuecurve;
     std::vector<double> Chcurve;
     std::vector<double> wavclCurve;
     bool enabled;
@@ -1747,6 +1759,10 @@ struct WaveletParams {
     int greenhigh;
     int bluehigh;
     double ballum;
+    double sigm;
+    double levden;
+    double thrden;
+    double limden;
     double balchrom;
     double chromfi;
     double chromco;
@@ -1754,6 +1770,9 @@ struct WaveletParams {
     double mergeC;
     double softrad;
     double softradend;
+    double strend;
+    int detend;
+    double thrend;
 
     bool lipst;
     bool avoid;
@@ -1792,6 +1811,10 @@ struct WaveletParams {
     Glib::ustring Backmethod;
     Glib::ustring Tilesmethod;
     Glib::ustring complexmethod;
+    Glib::ustring denmethod;
+    Glib::ustring mixmethod;
+    Glib::ustring slimethod;
+    Glib::ustring quamethod;
     Glib::ustring daubcoeffmethod;
     Glib::ustring CHmethod;
     Glib::ustring Medgreinf;
@@ -1849,6 +1872,8 @@ struct WaveletParams {
     Threshold<double> level1noise;
     Threshold<double> level2noise;
     Threshold<double> level3noise;
+    Threshold<double> leveldenoise;
+    Threshold<double> levelsigm;
 
     WaveletParams();
 
@@ -1857,6 +1882,8 @@ struct WaveletParams {
 
     void getCurves(
         WavCurve& cCurve,
+        WavCurve& wavdenoise,
+        WavCurve& wavdenoiseh,
         Wavblcurve& tCurve,
         WavOpacityCurveRG& opacityCurveLUTRG,
         WavOpacityCurveSH& opacityCurveLUTSH,
@@ -1947,10 +1974,13 @@ struct RAWParams {
     struct BayerSensor {
         enum class Method {
             AMAZE,
+            AMAZEBILINEAR,
             AMAZEVNG4,
             RCD,
+            RCDBILINEAR,
             RCDVNG4,
             DCB,
+            DCBBILINEAR,
             DCBVNG4,
             LMMSE,
             IGV,

@@ -233,7 +233,7 @@ public:
                  const LocCCmaskCurve & locccmasCurve, bool lcmasutili, 
                  const LocLLmaskCurve & locllmasCurve, bool llmasutili, 
                  const LocHHmaskCurve & lochhmasCurve, bool lhmasutili, const LocHHmaskCurve & lochhhmasCurve, bool lhhmasutili, 
-                 bool multiThread, bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm, float blendmab, int shado, float amountcd, float anchorcd,
+                 bool multiThread, bool enaMask, bool showmaske, bool deltaE, bool modmask, bool zero, bool modif, float chrom, float rad, float lap, float gamma, float slope, float blendm, float blendmab, int shado, int highl, float amountcd, float anchorcd,
                  const LUTf& lmasklocalcurve, bool localmaskutili,
                  const LocwavCurve & loclmasCurvecolwav, bool lmasutilicolwav, int level_bl, int level_hl, int level_br, int level_hr,
                  int shortcu, bool delt, const float hueref, const float chromaref, const float lumaref,
@@ -368,7 +368,7 @@ public:
 
 //Wavelet and denoise
     void Tile_calc(int tilesize, int overlap, int kall, int imwidth, int imheight, int &numtiles_W, int &numtiles_H, int &tilewidth, int &tileheight, int &tileWskip, int &tileHskip);
-    void ip_wavelet(LabImage * lab, LabImage * dst, int kall, const procparams::WaveletParams & waparams, const WavCurve & wavCLVCcurve, const Wavblcurve & wavblcurve, const WavOpacityCurveRG & waOpacityCurveRG, const WavOpacityCurveSH & waOpacityCurveSH, const WavOpacityCurveBY & waOpacityCurveBY,  const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, const LUTf &wavclCurve, int skip);
+    void ip_wavelet(LabImage * lab, LabImage * dst, int kall, const procparams::WaveletParams & waparams, const WavCurve & wavCLVCcurve, const WavCurve & wavdenoise, WavCurve & wavdenoiseh, const Wavblcurve & wavblcurve, const WavOpacityCurveRG & waOpacityCurveRG, const WavOpacityCurveSH & waOpacityCurveSH, const WavOpacityCurveBY & waOpacityCurveBY,  const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveWL & waOpacityCurveWL, const LUTf &wavclCurve, int skip);
 
     void WaveletcontAllL(LabImage * lab, float **varhue, float **varchrom, wavelet_decomposition& WaveletCoeffs_L, const Wavblcurve & wavblcurve,
             struct cont_params &cp, int skip, float *mean, float *sigma, float *MaxP, float *MaxN,  const WavCurve & wavCLVCcurve, const WavOpacityCurveW & waOpacityCurveW, const WavOpacityCurveSH & waOpacityCurveSH, FlatCurve* ChCurve, bool Chutili);

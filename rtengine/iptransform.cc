@@ -454,7 +454,7 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
     double cost = cos (params->rotate.degree * rtengine::RT_PI / 180.0);
     double sint = sin (params->rotate.degree * rtengine::RT_PI / 180.0);
 
-    double ascale = ascaleDef > 0 ? ascaleDef : (params->commonTrans.autofill ? getTransformAutoFill (oW, oH, pLCPMap) : 1.0);
+    double ascale = ascaleDef > 0 ? ascaleDef : (params->commonTrans.autofill && params->perspective.render ? getTransformAutoFill (oW, oH, pLCPMap) : 1.0);
 
     // auxiliary variables for perspective correction
     // Simple.
@@ -1182,7 +1182,7 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
             p_projection_rotate, p_projection_shift_horiz,
             p_projection_shift_vert, p_projection_scale);
 
-    const double ascale = params->commonTrans.autofill ? getTransformAutoFill(oW, oH, pLCPMap) : 1.0;
+    const double ascale = params->commonTrans.autofill && params->perspective.render ? getTransformAutoFill(oW, oH, pLCPMap) : 1.0;
 
     const bool darkening = (params->vignetting.amount <= 0.0);
     const bool useLog = params->commonTrans.method == "log" && highQuality;
@@ -1471,7 +1471,8 @@ bool ImProcFunctions::needsPerspective () const
 {
     return ( (params->perspective.method == "simple") &&
             (params->perspective.horizontal || params->perspective.vertical) )
-        || ( (params->perspective.method == "camera_based") && (
+        || ( (params->perspective.method == "camera_based") &&
+             params->perspective.render && (
                     params->perspective.camera_pitch ||
                     params->perspective.camera_roll ||
                     params->perspective.camera_shift_horiz ||

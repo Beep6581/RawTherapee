@@ -285,10 +285,15 @@ void LocallabTone::updateAdviceTooltips(const bool showTooltips)
         LLmasktmshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         HHmasktmshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         blendmasktm->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
-        lapmasktm->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         radmasktm->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         mask2tmCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
         Lmasktmshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
+        masktmCurveEditorG->set_tooltip_markup(M("TP_LOCALLAB_MASKCURVE_TOOLTIP"));
+        gammasktm->set_tooltip_text(M("TP_LOCALLAB_GAMMASK_TOOLTIP"));
+        chromasktm->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
+        slomasktm->set_tooltip_text(M("TP_LOCALLAB_SLOMASK_TOOLTIP"));
+        lapmasktm->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
+
     } else {
         exp->set_tooltip_text("");
         equiltm->set_tooltip_text("");
@@ -297,15 +302,21 @@ void LocallabTone::updateAdviceTooltips(const bool showTooltips)
         scaltm->set_tooltip_text("");
         rewei->set_tooltip_text("");
         sensitm->set_tooltip_text("");
-        expmasktm->set_tooltip_text("");
+        expmasktm->set_tooltip_markup("");
         CCmasktmshape->setTooltip("");
         LLmasktmshape->setTooltip("");
         HHmasktmshape->setTooltip("");
         blendmasktm->set_tooltip_text("");
-        lapmasktm->set_tooltip_text("");
         radmasktm->set_tooltip_text("");
         mask2tmCurveEditorG->set_tooltip_text("");
         Lmasktmshape->setTooltip("");
+        mask2tmCurveEditorG->set_tooltip_text("");
+        Lmasktmshape->setTooltip("");
+        masktmCurveEditorG->set_tooltip_markup("");
+        gammasktm->set_tooltip_text("");
+        chromasktm->set_tooltip_text("");
+        slomasktm->set_tooltip_text("");
+        lapmasktm->set_tooltip_text("");
     }
 }
 
@@ -672,13 +683,14 @@ LocallabRetinex::LocallabRetinex():
     LocallabTool(this, M("TP_LOCALLAB_RET_TOOLNAME"), M("TP_LOCALLAB_RETI"), true),
 
     // Retinex specific widgets
+    dehaFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")))),
     dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), -100, 100, 1, 0))),
     depth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEPTH"), 0, 100, 1, 25))),
     lumonly(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LUMONLY")))),
     retiFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETIFRA")))),
     str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0., 100., 0.2, 0.))),
     loglin(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGLIN")))),
-    sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIH"), 0, 100, 1, 60))),
+    sensih(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     retitoolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETITOOLFRA")))),
     retinexMethod(Gtk::manage(new MyComboBoxText())),
     fftwreti(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTW")))),
@@ -722,7 +734,6 @@ LocallabRetinex::LocallabRetinex():
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Retinex specific widgets
-    dehaz->set_tooltip_text(M("TP_LOCALLAB_DEHAZ_TOOLTIP"));
     dehaz->setAdjusterListener(this);
 
     depth->setAdjusterListener(this);
@@ -849,7 +860,7 @@ LocallabRetinex::LocallabRetinex():
 
     // Add Retinex specific widgets to GUI
     ToolParamBlock* const auxBox = Gtk::manage(new ToolParamBlock());
-    Gtk::Frame* const dehaFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")));
+//    Gtk::Frame* const dehaFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")));
     dehaFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const dehaBox = Gtk::manage(new ToolParamBlock());
     dehaBox->pack_start(*dehaz);
@@ -964,9 +975,12 @@ void LocallabRetinex::getMaskView(int &colorMask, int &colorMaskinv, int &expMas
 void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
+        dehaFrame->set_tooltip_text(M("TP_LOCALLAB_DEHAZFRAME_TOOLTIP"));
+        dehaz->set_tooltip_text(M("TP_LOCALLAB_DEHAZ_TOOLTIP"));
+        retiFrame->set_tooltip_text(M("TP_LOCALLAB_RETIFRAME_TOOLTIP"));
         loglin->set_tooltip_text(M("TP_LOCALLAB_RETI_LOGLIN_TOOLTIP"));
-        sensih->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
-        fftwreti->set_tooltip_text(M("TP_LOCALLAB_RETI_FFTW_TOOLTIP"));
+        sensih->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+        fftwreti->set_tooltip_text(M("TP_LOCALLAB_LC_FFTW_TOOLTIP"));
         equilret->set_tooltip_text(M("TP_LOCALLAB_EQUILTM_TOOLTIP"));
         neigh->set_tooltip_text(M("TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP"));
         vart->set_tooltip_text(M("TP_LOCALLAB_RETI_NEIGH_VART_TOOLTIP"));
@@ -980,6 +994,7 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
         cTtransshape->setTooltip(M("TP_LOCALLAB_TRANSMISSION_TOOLTIP"));
         mMLabels->set_tooltip_markup(M("TP_LOCALLAB_MLABEL_TOOLTIP"));
         transLabels->set_tooltip_markup(M("TP_LOCALLAB_TLABEL_TOOLTIP"));
+        transLabels2->set_tooltip_markup(M("TP_LOCALLAB_TLABEL_TOOLTIP"));
         cTgainshape->setTooltip(M("TP_RETINEX_GAINTRANSMISSION_TOOLTIP"));
         expmaskreti->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         enaretiMasktmap->set_tooltip_markup(M("TP_LOCALLAB_ENARETIMASKTMAP_TOOLTIP"));
@@ -988,10 +1003,18 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
         HHmaskretishape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         blendmaskreti->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
         radmaskreti->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
-        lapmaskreti->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         mask2retiCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
         Lmaskretishape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
+        maskretiCurveEditorG->set_tooltip_markup(M("TP_LOCALLAB_MASKCURVE_TOOLTIP"));
+        gammaskreti->set_tooltip_text(M("TP_LOCALLAB_GAMMASK_TOOLTIP"));
+        chromaskreti->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
+        slomaskreti->set_tooltip_text(M("TP_LOCALLAB_SLOMASK_TOOLTIP"));
+        lapmaskreti->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
+
     } else {
+        dehaFrame->set_tooltip_text("");
+        dehaz->set_tooltip_text("");
+        retiFrame->set_tooltip_text("");
         loglin->set_tooltip_text("");
         sensih->set_tooltip_text("");
         fftwreti->set_tooltip_text("");
@@ -1006,19 +1029,24 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
         cliptm->set_tooltip_text("");
         softradiusret->set_tooltip_text("");
         cTtransshape->setTooltip("");
-        mMLabels->set_tooltip_text("");
-        transLabels->set_tooltip_text("");
+        mMLabels->set_tooltip_markup("");
+        transLabels->set_tooltip_markup("");
+        transLabels2->set_tooltip_markup("");
         cTgainshape->setTooltip("");
-        expmaskreti->set_tooltip_text("");
-        enaretiMasktmap->set_tooltip_text("");
+        expmaskreti->set_tooltip_markup("");
+        enaretiMasktmap->set_tooltip_markup("");
         CCmaskretishape->setTooltip("");
         LLmaskretishape->setTooltip("");
         HHmaskretishape->setTooltip("");
         blendmaskreti->set_tooltip_text("");
         radmaskreti->set_tooltip_text("");
-        lapmaskreti->set_tooltip_text("");
         mask2retiCurveEditorG->set_tooltip_text("");
         Lmaskretishape->setTooltip("");
+        maskretiCurveEditorG->set_tooltip_markup("");
+        gammaskreti->set_tooltip_text("");
+        chromaskreti->set_tooltip_text("");
+        slomaskreti->set_tooltip_text("");
+        lapmaskreti->set_tooltip_text("");
     }
 }
 
@@ -1752,7 +1780,7 @@ LocallabSharp::LocallabSharp():
     shardamping(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARDAMPING"), 0, 100, 1, 0))),
     shariter(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARITER"), 5, 100, 1, 30))),
     sharradius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARRADIUS"), 0.4, 2.5, 0.01, 0.75))),
-    sensisha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 40))),
+    sensisha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 40))),
     inverssha(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS")))),
     sharFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARFRAME")))),
     showmasksharMethod(Gtk::manage(new MyComboBoxText()))
@@ -1818,7 +1846,7 @@ void LocallabSharp::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_EXPSHARP_TOOLTIP"));
-        sensisha->set_tooltip_text(M("TP_LOCALLAB_SENSIS_TOOLTIP"));
+        sensisha->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
         sensisha->set_tooltip_text("");
@@ -2111,7 +2139,7 @@ LocallabContrast::LocallabContrast():
     residshathr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDSHATHR"), 0., 100., 1., 30.))),
     residhi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDHI"), -100., 100., 1., 0.))),
     residhithr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDHITHR"), 0., 100., 1., 70.))),
-    sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSIS"), 0, 100, 1, 60))),
+    sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
     clarilres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARILRES"), -20., 100., 0.5, 0.))),
     claricres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARICRES"), -20., 100., 0.5, 0.))),
@@ -2203,7 +2231,7 @@ LocallabContrast::LocallabContrast():
 
     wavshape->setIdentityValue(0.);
     wavshape->setResetCurve(FlatCurveType(defSpot.locwavcurve.at(0)), defSpot.locwavcurve);
-    wavshape->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+//    wavshape->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
     LocalcurveEditorwav->curveListComplete();
 
@@ -2270,7 +2298,7 @@ LocallabContrast::LocallabContrast():
 
     wavshapeedg->setIdentityValue(0.);
     wavshapeedg->setResetCurve(FlatCurveType(defSpot.locedgwavcurve.at(0)), defSpot.locedgwavcurve);
-    wavshapeedg->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+//    wavshapeedg->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
     LocalcurveEditorwavedg->curveListComplete();
 
@@ -2370,7 +2398,7 @@ LocallabContrast::LocallabContrast():
 
     wavshapecomp->setIdentityValue(0.);
     wavshapecomp->setResetCurve(FlatCurveType(defSpot.loccompwavcurve.at(0)), defSpot.loccompwavcurve);
-    wavshapecomp->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+//    wavshapecomp->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
     LocalcurveEditorwavcomp->curveListComplete();
 
@@ -2399,7 +2427,7 @@ LocallabContrast::LocallabContrast():
 
     LLmasklcshape->setIdentityValue(0.);
     LLmasklcshape->setResetCurve(FlatCurveType(defSpot.LLmasklccurve.at(0)), defSpot.LLmasklccurve);
-    LLmasklcshape->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+//    LLmasklcshape->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
     HHmasklcshape->setIdentityValue(0.);
     HHmasklcshape->setResetCurve(FlatCurveType(defSpot.HHmasklccurve.at(0)), defSpot.HHmasklccurve);
@@ -2602,10 +2630,49 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         contFrame->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRAST_TOOLTIP"));
-        LocalcurveEditorwav->set_tooltip_markup(M("TP_LOCALLAB_LEVELLOCCONTRAST_TOOLTIP"));
+        LocalcurveEditorwav->set_tooltip_markup(M("TP_LOCALLAB_WAT_LEVELLOCCONTRAST_TOOLTIP"));
+        csThreshold->set_tooltip_markup(M("TP_LOCALLAB_WAT_THRESHOLDWAV_TOOLTIP"));
         levelwav->set_tooltip_markup(M("TP_LOCALLAB_LEVELWAV_TOOLTIP"));
         clariFrame->set_tooltip_markup(M("TP_LOCALLAB_CLARI_TOOLTIP"));
         clarisoft->set_tooltip_markup(M("TP_LOCALLAB_CLARISOFT_TOOLTIP"));
+
+        wavshape->setTooltip(M("TP_LOCALLAB_WAT_WAVSHAPE_TOOLTIP"));
+        clarilres->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARIL_TOOLTIP"));
+        claricres->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARIC_TOOLTIP"));
+        sigmalc->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
+        sigmalc2->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
+        sigmaed->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
+        sigmabl->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
+        sigma->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
+        sigmadc->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
+        sigmadr->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
+        origlc->set_tooltip_text(M("TP_LOCALLAB_WAT_ORIGLC_TOOLTIP"));
+        strwav->set_tooltip_text(M("TP_LOCALLAB_WAT_STRWAV_TOOLTIP"));
+        angwav->set_tooltip_text(M("TP_LOCALLAB_WAT_STRWAV_TOOLTIP"));
+        strengthw->set_tooltip_text(M("TP_LOCALLAB_WAT_STRENGTHW_TOOLTIP"));
+        LocalcurveEditorwavedg->set_tooltip_markup(M("TP_LOCALLAB_WAT_LOCCONTRASTEDG_TOOLTIP"));
+        wavshapeedg->setTooltip(M("TP_LOCALLAB_WAT_LOCCONTRASTEDG_TOOLTIP"));
+        gradw->set_tooltip_text(M("TP_LOCALLAB_WAT_GRADW_TOOLTIP"));
+        waveshow->set_tooltip_text(M("TP_LOCALLAB_WAT_WAVESHOW_TOOLTIP"));
+        LocalcurveEditorwavlev->set_tooltip_markup(M("TP_LOCALLAB_WAT_WAVBLURCURV_TOOLTIP"));
+        wavshapelev->setTooltip(M("TP_LOCALLAB_WAT_WAVBLURCURV_TOOLTIP"));
+        levelblur->set_tooltip_text(M("TP_LOCALLAB_WAT_WAVLEVELBLUR_TOOLTIP"));
+        residblur->set_tooltip_text(M("TP_LOCALLAB_WAT_RESIDBLUR_TOOLTIP"));
+        blurlc->set_tooltip_text(M("TP_LOCALLAB_WAT_BLURLC_TOOLTIP"));
+        offset->set_tooltip_text(M("TP_LOCALLAB_WAT_CONTOFFSET_TOOLTIP"));
+        chromalev->set_tooltip_text(M("TP_LOCALLAB_WAT_CONTCHROMALEV_TOOLTIP"));
+        LocalcurveEditorwavcon->set_tooltip_markup(M("TP_LOCALLAB_WAT_WAVCBDL_TOOLTIP"));
+        wavshapecon->setTooltip(M("TP_LOCALLAB_WAT_WAVCBDL_TOOLTIP"));
+        LocalcurveEditorwavcompre->set_tooltip_markup(M("TP_LOCALLAB_WAT_WAVTM_TOOLTIP"));
+        wavshapecompre->setTooltip(M("TP_LOCALLAB_WAT_WAVTM_TOOLTIP"));
+        deltad->set_tooltip_text(M("TP_LOCALLAB_WAT_DELTABAL_TOOLTIP"));
+        LocalcurveEditorwavcomp->set_tooltip_markup(M("TP_LOCALLAB_WAT_WAVDELTABAL_TOOLTIP"));
+        wavshapecomp->setTooltip(M("TP_LOCALLAB_WAT_WAVDELTABAL_TOOLTIP"));
+        threswav->set_tooltip_text(M("TP_LOCALLAB_WAT_BALTHRES_TOOLTIP"));
+        residcomp->set_tooltip_text(M("TP_LOCALLAB_WAT_RESIDCOMP_TOOLTIP"));
+
+        
+        expresidpyr->set_tooltip_text(M("TP_LOCALLAB_WAT_EXPRESID_TOOLTIP"));
         expcontrastpyr->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP"));
         wavgradl->set_tooltip_text(M("TP_LOCALLAB_WAVGRAD_TOOLTIP"));
         wavedg->set_tooltip_text(M("TP_LOCALLAB_WAVEEDG_TOOLTIP"));
@@ -2624,12 +2691,17 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         blendmasklc->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
         mask2lcCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
         Lmasklcshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
+        masklcCurveEditorG->set_tooltip_markup(M("TP_LOCALLAB_MASKCURVE_TOOLTIP"));
+        chromasklc->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
+        sensilc->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
     } else {
         contFrame->set_tooltip_text("");
-        LocalcurveEditorwav->set_tooltip_text("");
-        levelwav->set_tooltip_text("");
-        clariFrame->set_tooltip_text("");
-        clarisoft->set_tooltip_text("");
+        LocalcurveEditorwav->set_tooltip_markup("");
+        csThreshold->set_tooltip_markup("");
+        expresidpyr->set_tooltip_text("");
+        levelwav->set_tooltip_markup("");
+        clariFrame->set_tooltip_markup("");
+        clarisoft->set_tooltip_markup("");
         expcontrastpyr->set_tooltip_text("");
         wavgradl->set_tooltip_text("");
         wavedg->set_tooltip_text("");
@@ -2641,13 +2713,52 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         wavcompre->set_tooltip_text("");
         wavcomp->set_tooltip_text("");
         fftwlc->set_tooltip_text("");
-        expmasklc->set_tooltip_text("");
+        expmasklc->set_tooltip_markup("");
         CCmasklcshape->setTooltip("");
         LLmasklcshape->setTooltip("");
         HHmasklcshape->setTooltip("");
         blendmasklc->set_tooltip_text("");
         mask2lcCurveEditorG->set_tooltip_text("");
         Lmasklcshape->setTooltip("");
+        masklcCurveEditorG->set_tooltip_markup("");
+        chromasklc->set_tooltip_text("");
+        sensilc->set_tooltip_text("");
+
+        wavshape->setTooltip("");
+        clarilres->set_tooltip_text("");
+        claricres->set_tooltip_text("");
+        sigmalc->set_tooltip_text("");
+        sigmalc2->set_tooltip_text("");
+        sigmaed->set_tooltip_text("");
+        sigmabl->set_tooltip_text("");
+        sigma->set_tooltip_text("");
+        sigmadc->set_tooltip_text("");
+        sigmadr->set_tooltip_text("");
+        origlc->set_tooltip_text("");
+        strwav->set_tooltip_text("");
+        angwav->set_tooltip_text("");
+        strengthw->set_tooltip_text("");
+        LocalcurveEditorwavedg->set_tooltip_markup("");
+        wavshapeedg->setTooltip("");
+        gradw->set_tooltip_text("");
+        waveshow->set_tooltip_text("");
+        LocalcurveEditorwavlev->set_tooltip_markup("");
+        wavshapelev->setTooltip("");
+        residblur->set_tooltip_text("");
+        blurlc->set_tooltip_text("");
+        levelblur->set_tooltip_text("");
+        offset->set_tooltip_text("");
+        chromalev->set_tooltip_text("");
+        LocalcurveEditorwavcon->set_tooltip_markup("");
+        wavshapecon->setTooltip("");
+        LocalcurveEditorwavcompre->set_tooltip_markup("");
+        wavshapecompre->setTooltip("");
+        deltad->set_tooltip_text("");
+        LocalcurveEditorwavcomp->set_tooltip_markup("");
+        wavshapecomp->setTooltip("");
+        threswav->set_tooltip_text("");
+        residcomp->set_tooltip_text("");
+
     }
 }
 
@@ -3882,7 +3993,7 @@ LocallabCBDL::LocallabCBDL():
     clarityml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARITYML"), 0.1, 100., 0.1, 0.1))),
     contresid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRESID"), -100, 100, 1, 0))),
     softradiuscb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
-    sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSICB"), 0, 100, 1, 60))),
+    sensicb(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     expmaskcb(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWCB")))),
     showmaskcbMethod(Gtk::manage(new MyComboBoxText())),
     enacbMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
@@ -4055,16 +4166,20 @@ void LocallabCBDL::updateAdviceTooltips(const bool showTooltips)
         chromacbdl->set_tooltip_text(M("TP_LOCALLAB_CHROMACB_TOOLTIP"));
         threshold->set_tooltip_text(M("TP_LOCALLAB_CBDL_THRES_TOOLTIP"));
         clarityml->set_tooltip_text(M("TP_LOCALLAB_CBDLCLARI_TOOLTIP"));
-        sensicb->set_tooltip_text(M("TP_LOCALLAB_SENSIH_TOOLTIP"));
+        sensicb->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         expmaskcb->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         CCmaskcbshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         LLmaskcbshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         HHmaskcbshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         blendmaskcb->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
         radmaskcb->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
-        lapmaskcb->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         mask2cbCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
         Lmaskcbshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
+        maskcbCurveEditorG->set_tooltip_markup(M("TP_LOCALLAB_MASKCURVE_TOOLTIP"));
+        gammaskcb->set_tooltip_text(M("TP_LOCALLAB_GAMMASK_TOOLTIP"));
+        chromaskcb->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
+        slomaskcb->set_tooltip_text(M("TP_LOCALLAB_SLOMASK_TOOLTIP"));
+        lapmaskcb->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
     } else {
         levFrame->set_tooltip_text("");
 
@@ -4076,15 +4191,19 @@ void LocallabCBDL::updateAdviceTooltips(const bool showTooltips)
         threshold->set_tooltip_text("");
         clarityml->set_tooltip_text("");
         sensicb->set_tooltip_text("");
-        expmaskcb->set_tooltip_text("");
+        expmaskcb->set_tooltip_markup("");
         CCmaskcbshape->setTooltip("");
         LLmaskcbshape->setTooltip("");
         HHmaskcbshape->setTooltip("");
         blendmaskcb->set_tooltip_text("");
         radmaskcb->set_tooltip_text("");
-        lapmaskcb->set_tooltip_text("");
         mask2cbCurveEditorG->set_tooltip_text("");
         Lmaskcbshape->setTooltip("");
+        maskcbCurveEditorG->set_tooltip_markup("");
+        gammaskcb->set_tooltip_text("");
+        chromaskcb->set_tooltip_text("");
+        slomaskcb->set_tooltip_text("");
+        lapmaskcb->set_tooltip_text("");
     }
 }
 
@@ -4540,7 +4659,7 @@ LocallabLog::LocallabLog():
     targetGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
     detail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 1., 0.01, 0.6))),
     baselog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BASELOG"), 1.3, 8., 0.05, 2., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
-    sensilog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSILOG"), 0, 100, 1, 60))),
+    sensilog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     strlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2.0, 2.0, 0.05, 0.))),
     anglog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.)))
 {
@@ -4606,13 +4725,23 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         exp->set_tooltip_text(M("TP_LOCALLAB_LOGENCOD_TOOLTIP"));
         logPFrame->set_tooltip_text(M("TP_LOCALLAB_LOGFRAME_TOOLTIP"));
         autocompute->set_tooltip_text(M("TP_LOCALLAB_LOGAUTO_TOOLTIP"));
-        blackEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
-        whiteEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
-        sourceGray->set_tooltip_text(M("TP_LOCALLAB_LOGSRCGREY_TOOLTIP"));
+    //    blackEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
+    //    whiteEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
+        blackEv->set_tooltip_text("");
+        whiteEv->set_tooltip_text("");
+        sourceGray->set_tooltip_text("");
         targetGray->set_tooltip_text(M("TP_LOCALLAB_LOGTARGGREY_TOOLTIP"));
         baselog->set_tooltip_text(M("TP_LOCALLAB_LOGBASE_TOOLTIP"));
         strlog->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
         anglog->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
+
+     //   detail->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
+     //   Autogray->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
+     //   sensilog->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
+        detail->set_tooltip_text("");
+        Autogray->set_tooltip_text("");
+        sensilog->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+        fullimage->set_tooltip_text(M("TP_LOCALLAB_FULLIMAGELOG_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
         logPFrame->set_tooltip_text("");
@@ -4624,6 +4753,11 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         baselog->set_tooltip_text("");
         strlog->set_tooltip_text("");
         anglog->set_tooltip_text("");
+        detail->set_tooltip_text("");
+        Autogray->set_tooltip_text("");
+        sensilog->set_tooltip_text("");
+        fullimage->set_tooltip_text("");
+
     }
 }
 
@@ -5028,7 +5162,7 @@ LocallabMask::LocallabMask():
 
     LLmask_shapewav->setIdentityValue(0.);
     LLmask_shapewav->setResetCurve(FlatCurveType(defSpot.LLmask_curvewav.at(0)), defSpot.LLmask_curvewav);
-    LLmask_shapewav->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+//    LLmask_shapewav->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
     mask2CurveEditorGwav->curveListComplete();
 
@@ -5117,12 +5251,25 @@ void LocallabMask::updateAdviceTooltips(const bool showTooltips)
         HHmask_shape->setTooltip(M("TP_LOCALLAB_CURVEEDITORM_CC_TOOLTIP"));
         struFrame->set_tooltip_text(M("TP_LOCALLAB_STRUMASK_TOOLTIP"));
         radmask->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
-        lapmask->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         mask_HCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_HHMASK_TOOLTIP"));
         mask2CurveEditorG->set_tooltip_text(M("TP_LOCALLAB_WAVMASK_TOOLTIP"));
         Lmask_shape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
         mask2CurveEditorGwav->set_tooltip_text(M("TP_LOCALLAB_WAVMASK_TOOLTIP"));
         LLmask_shapewav->setTooltip(M("TP_LOCALLAB_LMASK_LEVEL_TOOLTIP"));
+        mask_CurveEditorG->set_tooltip_markup(M("TP_LOCALLAB_MASKCURVE_TOOLTIP"));
+        strumaskmask->set_tooltip_text(M("TP_LOCALLAB_STRUSTRMASK_TOOLTIP"));
+        blurFrame->set_tooltip_text(M("TP_LOCALLAB_BLURMASK_TOOLTIP"));
+        toolmask->set_tooltip_text(M("TP_LOCALLAB_TOOLMASK_TOOLTIP"));
+        toolmaskFrame->set_tooltip_text(M("TP_LOCALLAB_TOOLCOLFRMASK_TOOLTIP"));
+        fftmask->set_tooltip_text(M("TP_LOCALLAB_FFTMASK_TOOLTIP"));
+        gammask->set_tooltip_text(M("TP_LOCALLAB_GAMMASK_TOOLTIP"));
+        chromask->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
+        slopmask->set_tooltip_text(M("TP_LOCALLAB_SLOMASK_TOOLTIP"));
+        shadmask->set_tooltip_text(M("TP_LOCALLAB_SHADMASK_TOOLTIP"));
+        contmask->set_tooltip_text(M("TP_LOCALLAB_CONTTHMASK_TOOLTIP"));
+        blurmask->set_tooltip_text(M("TP_LOCALLAB_BLURRMASK_TOOLTIP"));
+        lapmask->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
+        csThresholdmask->set_tooltip_text(M("TP_LOCALLAB_WAVEMASK_LEVEL_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
         sensimask->set_tooltip_text("");
@@ -5133,12 +5280,25 @@ void LocallabMask::updateAdviceTooltips(const bool showTooltips)
         HHmask_shape->setTooltip("");
         struFrame->set_tooltip_text("");
         radmask->set_tooltip_text("");
-        lapmask->set_tooltip_text("");
         mask_HCurveEditorG->set_tooltip_text("");
         mask2CurveEditorG->set_tooltip_text("");
         Lmask_shape->setTooltip("");
         mask2CurveEditorGwav->set_tooltip_text("");
         LLmask_shapewav->setTooltip("");
+        mask_CurveEditorG->set_tooltip_markup("");
+        strumaskmask->set_tooltip_text("");
+        blurFrame->set_tooltip_text("");
+        toolmask->set_tooltip_text("");
+        toolmaskFrame->set_tooltip_text("");
+        fftmask->set_tooltip_text("");
+        gammask->set_tooltip_text("");
+        chromask->set_tooltip_text("");
+        slopmask->set_tooltip_text("");
+        shadmask->set_tooltip_text("");
+        contmask->set_tooltip_text("");
+        blurmask->set_tooltip_text("");
+        lapmask->set_tooltip_text("");
+        csThresholdmask->set_tooltip_text("");
     }
 }
 
@@ -5549,9 +5709,9 @@ void LocallabMask::convertParamToSimple()
     disableListener();
 
     // Set hidden specific GUI widgets in Simple mode to default spot values
-    radmask->setValue(defSpot.radmask);
-    chromask->setValue(defSpot.chromask);
-    Lmask_shape->setCurve(defSpot.Lmask_curve);
+    gammask->setValue(defSpot.gammask);
+    slopmask->setValue(defSpot.slopmask);
+    //Lmask_shape->setCurve(defSpot.Lmask_curve);
 
     // Enable all listeners
     enableListener();
@@ -5562,21 +5722,29 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
     switch (new_type) {
         case Simple:
             // Expert and Normal mode widgets are hidden in Simple mode
-            softradiusmask->hide();
+            softradiusmask->show();
+            toolmaskFrame->show();
             struFrame->hide();
             blurFrame->hide();
-            toolmaskFrame->hide();
+            gammask->hide();
+            slopmask->hide();
+            shadmask->hide();
+            lapmask->hide();
+            mask_HCurveEditorG->hide();
+            mask2CurveEditorGwav->hide();
+            csThresholdmask->hide();
+            gradFramemask->hide();
 
             break;
 
         case Normal:
             // Expert mode widgets are hidden in Normal mode
-            softradiusmask->hide();
+            softradiusmask->show();
             struFrame->hide();
             blurFrame->hide();
             lapmask->hide();
-            gammask->hide();
-            slopmask->hide();
+            gammask->show();
+            slopmask->show();
             shadmask->hide();
             mask_HCurveEditorG->hide();
             mask2CurveEditorGwav->hide();
@@ -5589,19 +5757,20 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
 
         case Expert:
             // Show widgets hidden in Normal and Simple mode
-            softradiusmask->hide();
-            struFrame->hide();
-            blurFrame->hide();
-            toolmaskFrame->hide();
-            lapmask->hide();
-            gammask->hide();
-            slopmask->hide();
-            shadmask->hide();
-            mask_HCurveEditorG->hide();
-            mask2CurveEditorGwav->hide();
-            csThresholdmask->hide();
-            gradFramemask->hide();
+            softradiusmask->show();
+            struFrame->show();
+            blurFrame->show();
+            toolmaskFrame->show();
+            lapmask->show();
+            gammask->show();
+            slopmask->show();
+            shadmask->show();
+            mask_HCurveEditorG->show();
+            mask2CurveEditorGwav->show();
+            csThresholdmask->show();
+            gradFramemask->show();
     }
+    
 }
 
 void LocallabMask::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)

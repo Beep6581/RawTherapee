@@ -35,7 +35,7 @@ public:
     std::string toString (const Tag* t) const override
     {
         char buffer[32];
-        sprintf (buffer, "%d", t->toInt (2));
+        snprintf(buffer, sizeof(buffer), "%d", t->toInt (2));
         return buffer;
     }
 };
@@ -49,7 +49,7 @@ public:
     {
         char buffer[32];
         int a = t->toInt();
-        sprintf (buffer, "%d", a);
+        snprintf(buffer, sizeof(buffer), "%d", a);
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -128,7 +128,7 @@ public:
 
             default: {
                 char buffer[32];
-                sprintf (buffer, "0x%04X", a);
+                snprintf(buffer, sizeof(buffer), "0x%04X", a);
                 return buffer;
             }
         }

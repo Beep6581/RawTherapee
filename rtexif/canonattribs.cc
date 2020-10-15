@@ -70,7 +70,7 @@ public:
             return "undef";
         }
 
-        sprintf (buffer, "%.1f", v );
+        snprintf(buffer, sizeof(buffer), "%.1f", v );
         return buffer;
     }
 };
@@ -99,7 +99,7 @@ public:
         }
 
         char buffer[32];
-        sprintf (buffer, "%.1fs %s", sec / 10., (sec & 0x4000) ? ",Custom" : "");
+        snprintf(buffer, sizeof(buffer), "%.1fs %s", sec / 10., (sec & 0x4000) ? ",Custom" : "");
         return buffer;
     }
 };
@@ -542,7 +542,7 @@ public:
         }
 
         char buffer[32];
-        sprintf (buffer, "%.1f", v );
+        snprintf(buffer, sizeof(buffer), "%.1f", v );
         return buffer;
     }
 };
@@ -1175,7 +1175,7 @@ public:
         }
 
         char buffer[32];
-        sprintf (buffer, "%.2fmm", val * 25.4 / 1000);
+        snprintf(buffer, sizeof(buffer), "%.2fmm", val * 25.4 / 1000);
         return buffer;
     }
 };
@@ -1188,7 +1188,7 @@ public:
     {
         char buffer[32];
         double d = pow (2, - t->toInt() / 32.0);
-        sprintf (buffer, "%.3f", d);
+        snprintf(buffer, sizeof(buffer), "%.3f", d);
         return buffer;
     }
 };
@@ -1199,7 +1199,7 @@ class CAEVInterpreter : public Interpreter
     std::string toString (const Tag* t) const override
     {
         char buffer[32];
-        sprintf (buffer, "%.1f", t->toDouble() / 32.0  );
+        snprintf(buffer, sizeof(buffer), "%.1f", t->toDouble() / 32.0  );
         return buffer;
     }
 };
@@ -1212,7 +1212,7 @@ public:
     {
         char buffer[32];
         int a = t->toInt();
-        sprintf (buffer, "%d", a);
+        snprintf(buffer, sizeof(buffer), "%d", a);
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -1354,7 +1354,7 @@ public:
         }
 
         char buffer[32];
-        sprintf (buffer, "%.0f", n / 32. );
+        snprintf(buffer, sizeof(buffer), "%.0f", n / 32. );
         return buffer;
     }
 };
@@ -1409,7 +1409,7 @@ public:
     std::string toString (const Tag* t) const override
     {
         char buffer[32];
-        sprintf (buffer, "%.2f", t->toDouble() / 100 );
+        snprintf(buffer, sizeof(buffer), "%.2f", t->toDouble() / 100 );
         return buffer;
     }
 };
@@ -1421,7 +1421,7 @@ public:
     std::string toString (const Tag* t) const override
     {
         char buffer[32];
-        sprintf (buffer, "%.1f", t->toDouble() / 8 - 6 );
+        snprintf(buffer, sizeof(buffer), "%.1f", t->toDouble() / 8 - 6 );
         return buffer;
     }
 };
@@ -1557,7 +1557,7 @@ public:
     {
         unsigned long val = t->toInt (0, LONG);
         char buffer[32];
-        sprintf (buffer, "%ld", ((val & 0xffc0) >> 6) * 10000 + ((val >> 16) & 0xff) + ((val & 0x3f) << 8) );
+        snprintf(buffer, sizeof(buffer), "%ld", ((val & 0xffc0) >> 6) * 10000 + ((val >> 16) & 0xff) + ((val & 0x3f) << 8) );
         return buffer;
     }
 };

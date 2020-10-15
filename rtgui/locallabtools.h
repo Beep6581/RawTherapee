@@ -225,6 +225,7 @@ private:
     LabGrid* const labgridmerg;
     Adjuster* const merlucol;
     MyExpander* const expmaskcol;
+    Gtk::Frame* const mergecolFrame ;
     MyComboBoxText* const showmaskcolMethod;
     MyComboBoxText* const showmaskcolMethodinv;
     Gtk::CheckButton* const enaColorMask;
@@ -240,6 +241,7 @@ private:
     Adjuster* const contcol;
     Adjuster* const blurcol;
     Adjuster* const blendmaskcol;
+    Gtk::Frame* const toolcolFrame;
     Adjuster* const radmaskcol;
     Adjuster* const lapmaskcol;
     Adjuster* const chromaskcol;
@@ -317,13 +319,16 @@ class LocallabExposure:
 private:
     // Exposure specific widgets
     MyComboBoxText* const expMethod;
-    Gtk::Frame* const pdeFrame;
+//    Gtk::Frame* const pdeFrame;
+    MyExpander* const exppde;
     Adjuster* const laplacexp;
     Adjuster* const linear;
     Adjuster* const balanexp;
     Adjuster* const gamm;
+    Gtk::Label* const labelexpmethod;
     MyComboBoxText* const exnoiseMethod;
-    Gtk::Frame* const fatFrame;
+//    Gtk::Frame* const fatFrame;
+    MyExpander* const expfat;
     Adjuster* const fatamount;
     Adjuster* const fatdetail;
     Adjuster* const fatlevel;
@@ -408,6 +413,7 @@ private:
     void updateExposureGUI2();
     void updateExposureGUI3();
 };
+
 
 /* ==== LocallabShadow ==== */
 class LocallabShadow:
@@ -646,9 +652,11 @@ private:
     Adjuster* const epsbl;
     Adjuster* const sensibn;
     MyComboBoxText* const blurMethod;
+    Gtk::CheckButton* const invbl;
     MyComboBoxText* const chroMethod;
     Gtk::CheckButton* const activlum;
     MyExpander* const expdenoise;
+    MyComboBoxText* const quamethod;
     CurveEditorGroup* const LocalcurveEditorwavden;
     FlatCurveEditor* const wavshapeden;
     Adjuster* const noiselumf0;
@@ -674,6 +682,7 @@ private:
     FlatCurveEditor* const HHmaskblshape;
     Adjuster* const strumaskbl;
     Gtk::CheckButton* const toolbl;
+    Gtk::Frame* const toolblFrame;
     Adjuster* const blendmaskbl;
     Adjuster* const radmaskbl;
     Adjuster* const lapmaskbl;
@@ -686,10 +695,11 @@ private:
     DiagonalCurveEditor* const Lmaskblshape;
     CurveEditorGroup* const mask2blCurveEditorGwav;
     FlatCurveEditor* const LLmaskblshapewav;
+    Gtk::HBox* const quaHBox;
     ThresholdAdjuster* const csThresholdblur;
 
-    sigc::connection blMethodConn, fftwblConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
-
+    sigc::connection blMethodConn, fftwblConn, invblConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
+    sigc::connection  quamethodconn;
 public:
     LocallabBlur();
     ~LocallabBlur();
@@ -724,6 +734,7 @@ private:
 
     void blMethodChanged();
     void fftwblChanged();
+    void invblChanged();
     void medMethodChanged();
     void blurMethodChanged();
     void chroMethodChanged();
@@ -732,6 +743,7 @@ private:
     void showmaskblMethodtypChanged();
     void enablMaskChanged();
     void toolblChanged();
+    void quamethodChanged();
 
     void updateBlurGUI();
 };
@@ -812,6 +824,7 @@ class LocallabRetinex:
 {
 private:
     // Retinex specific widgets
+    Gtk::Frame* const dehaFrame;
     Adjuster* const dehaz;
     Adjuster* const depth;
     Gtk::CheckButton* const lumonly;

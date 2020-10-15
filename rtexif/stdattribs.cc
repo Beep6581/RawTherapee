@@ -334,7 +334,7 @@ public:
             return "undef";
         }
 
-        sprintf (buffer, "%0.1f", v);
+        snprintf(buffer, sizeof(buffer), "%0.1f", v);
         return buffer;
     }
 };
@@ -353,7 +353,7 @@ public:
             return "undef";
         }
 
-        sprintf (buffer, "%.1f", v );
+        snprintf(buffer, sizeof(buffer), "%.1f", v );
         return buffer;
     }
 };
@@ -372,7 +372,7 @@ public:
             return "undef";
         }
 
-        sprintf (buffer, "%+0.2f", v );
+        snprintf(buffer, sizeof(buffer), "%+0.2f", v );
         return buffer;
     }
 };
@@ -388,9 +388,9 @@ public:
         double d = pow (2.0, -t->toDouble());
 
         if (d > 0.0 && d <= 0.5) {
-            sprintf (buffer, "1/%.0f", 1.0 / d);
+            snprintf(buffer, sizeof(buffer), "1/%.0f", 1.0 / d);
         } else {
-            sprintf (buffer, "%.1f", d);
+            snprintf(buffer, sizeof(buffer), "%.1f", d);
         }
 
         return buffer;
@@ -408,9 +408,9 @@ public:
         double d = t->toDouble();
 
         if (d > 0.0 && d <= 0.5) {
-            sprintf (buffer, "1/%.0f", 1.0 / d);
+            snprintf(buffer, sizeof(buffer), "1/%.0f", 1.0 / d);
         } else {
-            sprintf (buffer, "%.1f", d);
+            snprintf(buffer, sizeof(buffer), "%.1f", d);
         }
 
         return buffer;
@@ -431,7 +431,7 @@ public:
             return "undef";
         }
 
-        sprintf (buffer, "%.1f", v );
+        snprintf(buffer, sizeof(buffer), "%.1f", v );
         return buffer;
     }
 };
@@ -637,7 +637,7 @@ public:
         int lastSegmentWidth = t->toInt(4, SHORT);
 
         char buffer[32];
-        sprintf (buffer, "%d %d %d", segmentNumber, segmentWidth, lastSegmentWidth);
+        snprintf(buffer, sizeof(buffer), "%d %d %d", segmentNumber, segmentWidth, lastSegmentWidth);
         return buffer;
     }
 };
