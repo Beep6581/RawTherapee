@@ -249,6 +249,10 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
         }
     }
 
+    // Precaution to prevent division by zero later on
+    if (h < 1) h = 1;
+    if (w < 1) w = 1;
+
     // bilinear interpolation
     if (tpp->thumbImg) {
         delete tpp->thumbImg;
