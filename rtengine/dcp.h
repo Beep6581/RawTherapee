@@ -36,7 +36,6 @@ namespace rtengine
 
 class ColorTemp;
 class Imagefloat;
-class DCPProfileApplyState;
 
 class DCPProfile final
 {

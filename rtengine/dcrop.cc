@@ -820,7 +820,7 @@ void Crop::update(int todo)
         }
 */
         double rrm, ggm, bbm;
-        DCPProfileApplyState as;
+        DCPProfile::ApplyState as;
         DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, as);
 
         LUTu histToneCurve;

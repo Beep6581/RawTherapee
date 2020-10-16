@@ -42,7 +42,7 @@ namespace rtengine
 
 class ColorTemp;
 class DCPProfile;
-class DCPProfileApplyState;
+class DCPProfile::ApplyState;
 class Imagefloat;
 class RetinexgaintransmissionCurve;
 class RetinextransmissionCurve;
@@ -140,7 +140,7 @@ public:
 
     virtual ImageMatrices* getImageMatrices () = 0;
     virtual bool           isRAW () const = 0;
-    virtual DCPProfile*    getDCP (const procparams::ColorManagementParams &cmp, DCPProfileApplyState &as)
+    virtual DCPProfile*    getDCP (const procparams::ColorManagementParams &cmp, DCPProfile::ApplyState &as)
     {
         return nullptr;
     };

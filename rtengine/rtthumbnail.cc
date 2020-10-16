@@ -1329,7 +1329,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     LabImage* labView = new LabImage (fw, fh);
     DCPProfile *dcpProf = nullptr;
-    DCPProfileApplyState as;
+    DCPProfile::ApplyState as;
 
     if (isRaw) {
         cmsHPROFILE dummy;
