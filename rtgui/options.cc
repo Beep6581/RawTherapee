@@ -451,6 +451,7 @@ void Options::setDefaults()
     histogramDrawMode = 0;
     histogramScopeType = ScopeType::HISTOGRAM;
     histogramShowOptionButtons = false;
+    histogramTraceBrightness = 1;
     curvebboxpos = 1;
     complexity = 2;
     prevdemo = PD_Sidecar;
@@ -1444,6 +1445,10 @@ void Options::readFromFile(Glib::ustring fname)
                     histogramShowOptionButtons = keyFile.get_boolean("GUI", "HistogramShowOptionButtons");
                 }
 
+                if (keyFile.has_key("GUI", "HistogramTraceBrightness")) {
+                    histogramTraceBrightness = keyFile.get_double("GUI", "HistogramTraceBrightness");
+                }
+
                 if (keyFile.has_key("GUI", "NavigatorRGBUnit")) {
                     navRGBUnit = (NavigatorUnit)keyFile.get_integer("GUI", "NavigatorRGBUnit");
                 }
@@ -2268,6 +2273,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "HistogramDrawMode", histogramDrawMode);
         keyFile.set_integer("GUI", "HistogramScopeType", rtengine::toUnderlying(histogramScopeType));
         keyFile.set_boolean("GUI", "HistogramShowOptionButtons", histogramShowOptionButtons);
+        keyFile.set_double("GUI", "HistogramTraceBrightness", histogramTraceBrightness);
         keyFile.set_integer("GUI", "NavigatorRGBUnit", (int)navRGBUnit);
         keyFile.set_integer("GUI", "NavigatorHSVUnit", (int)navHSVUnit);
         keyFile.set_boolean("GUI", "ShowFilmStripToolBar", showFilmStripToolBar);

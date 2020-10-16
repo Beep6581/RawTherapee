@@ -324,6 +324,7 @@ public:
     int histogramDrawMode;
     ScopeType histogramScopeType;
     bool histogramShowOptionButtons;
+    float histogramTraceBrightness;
     bool FileBrowserToolbarSingleRow;
     bool hideTPVScrollbar;
     int whiteBalanceSpotSize;

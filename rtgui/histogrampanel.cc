@@ -362,6 +362,8 @@ HistogramPanel::HistogramPanel () :
 
     brightness_changed_connection = histogramArea->getBrighnessChangedSignal().connect(sigc::mem_fun(*this, &HistogramPanel::brightnessUpdated));
     rconn = signal_size_allocate().connect( sigc::mem_fun(*this, &HistogramPanel::resized) );
+
+    histogramArea->setBrightness(options.histogramTraceBrightness);
 }
 
 HistogramPanel::~HistogramPanel ()
@@ -476,11 +478,13 @@ void HistogramPanel::brightnessWidgetValueChanged(void)
 {
     ConnectionBlocker blocker(brightness_changed_connection);
     histogramArea->setBrightness(exp(brightnessWidget->get_value()));
+    options.histogramTraceBrightness = histogramArea->getBrightness();
 }
 
 void HistogramPanel::brightnessUpdated(float brightness)
 {
     brightnessWidget->set_value(log(brightness));
+    options.histogramTraceBrightness = histogramArea->getBrightness();
 }
 
 void HistogramPanel::scopeOptionsToggled()
