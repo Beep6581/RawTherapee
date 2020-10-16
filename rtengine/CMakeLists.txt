@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 if(EXTRA_INCDIR)
     include_directories("${EXTRA_INCDIR}")
 endif()

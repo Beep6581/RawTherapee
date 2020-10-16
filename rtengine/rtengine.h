@@ -47,12 +47,6 @@ class LUT;
 using LUTu = LUT<uint32_t>;
 
 class EditDataProvider;
-namespace rtexif
-{
-
-class TagDirectory;
-
-}
 
 namespace rtengine
 {

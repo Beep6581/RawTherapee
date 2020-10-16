@@ -29,7 +29,6 @@
 #include "utils.h"
 #include "../rtgui/options.h"
 #include "../rtgui/version.h"
-#include "../rtexif/rtexif.h"
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -1177,6 +1176,10 @@ int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool u
     TIFFSetField (out, TIFFTAG_COMPRESSION, uncompressed ? COMPRESSION_NONE : COMPRESSION_ADOBE_DEFLATE);
     TIFFSetField (out, TIFFTAG_SAMPLEFORMAT, (bps == 16 || bps == 32) && isFloat ? SAMPLEFORMAT_IEEEFP : SAMPLEFORMAT_UINT);
 
+    /*
+    
+    TODO: Re-apply fix from #5787
+    
     [out]()
     {
         const std::vector<rtexif::Tag*> default_tags = rtexif::ExifManager::getDefaultTIFFTags(nullptr);
@@ -1188,7 +1191,7 @@ int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool u
         for (auto default_tag : default_tags) {
             delete default_tag;
         }
-    }();
+    }();*/
 
     if (!uncompressed) {
         TIFFSetField (out, TIFFTAG_PREDICTOR, (bps == 16 || bps == 32) && isFloat ? PREDICTOR_FLOATINGPOINT : PREDICTOR_HORIZONTAL);

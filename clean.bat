@@ -20,4 +20,3 @@ del .\rtdata\Makefile
 del .\rtengine\librtengine.so
 del .\rtengine\librtengine.a
 del .\rtgui\rawtherapee
-del .\rtexif\librtexif.a
