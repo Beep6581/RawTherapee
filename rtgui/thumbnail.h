@@ -82,7 +82,7 @@ class Thumbnail
     void            _loadThumbnail (bool firstTrial = true);
     void            _saveThumbnail ();
     void            _generateThumbnailImage ();
-    int             infoFromImage (const Glib::ustring& fname, std::unique_ptr<rtengine::RawMetaDataLocation> rml = nullptr);
+    int             infoFromImage (const Glib::ustring& fname);
     void            loadThumbnail (bool firstTrial = true);
     void            generateExifDateTimeStrings ();
 

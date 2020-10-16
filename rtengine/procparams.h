@@ -1651,8 +1651,17 @@ struct MetaDataParams {
   */
 class ExifPairs final
 {
+private:
+    using Pairs = std::map<Glib::ustring, Glib::ustring>;
+
 public:
-    using const_iterator = std::map<Glib::ustring, Glib::ustring>::const_iterator;
+    using const_iterator = Pairs::const_iterator;
+    using size_type = Pairs::size_type;
+
+    const_iterator find(const Glib::ustring& key) const
+    {
+        return pairs.find(key);
+    }
 
     const_iterator begin() const
     {
@@ -1669,6 +1678,11 @@ public:
         pairs.clear();
     }
 
+    size_type erase(const Glib::ustring& key)
+    {
+        return pairs.erase(key);
+    }
+
     Glib::ustring& operator[](const Glib::ustring& key)
     {
         return pairs[key];
@@ -1680,7 +1694,7 @@ public:
     }
 
 private:
-    std::map<Glib::ustring, Glib::ustring> pairs;
+    Pairs pairs;
 };
 
 /**

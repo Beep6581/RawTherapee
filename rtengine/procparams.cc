@@ -310,7 +310,35 @@ bool saveToKeyfile(
     return false;
 }
 
-}
+const std::map<std::string, std::string> exif_keys = {
+    {"Copyright", "Exif.Image.Copyright"},
+    {"Artist", "Exif.Image.Artist"},
+    {"ImageDescription", "Exif.Image.ImageDescription"},
+    {"Exif.UserComment", "Exif.Photo.UserComment"}
+};
+
+const std::map<std::string, std::string> iptc_keys = {
+    {"Title", "Iptc.Application2.ObjectName"},
+    {"Category", "Iptc.Application2.Category"},
+    {"SupplementalCategories", "Iptc.Application2.SuppCategory"},
+    {"Keywords", "Iptc.Application2.Keywords"},
+    {"Instructions", "Iptc.Application2.SpecialInstructions"},
+    {"DateCreated", "Iptc.Application2.DateCreated"},
+    {"Creator", "Iptc.Application2.Byline"},
+    {"CreatorJobTitle", "Iptc.Application2.BylineTitle"},
+    {"City", "Iptc.Application2.City"},
+    {"Province", "Iptc.Application2.ProvinceState"},
+    {"Country", "Iptc.Application2.CountryName"},
+    {"TransReference", "Iptc.Application2.TransmissionReference"},
+    {"Headline", "Iptc.Application2.Headline"},
+    {"Credit", "Iptc.Application2.Credit"},
+    {"Source", "Iptc.Application2.Source"},
+    {"Copyright", "Iptc.Application2.Copyright"},
+    {"Caption", "Iptc.Application2.Caption"},
+    {"CaptionWriter", "Iptc.Application2.Writer"}
+};
+
+} // namespace
 
 namespace rtengine
 {
@@ -5348,9 +5376,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Dehaze
         saveToKeyfile(!pedited || pedited->dehaze.enabled, "Dehaze", "Enabled", dehaze.enabled, keyFile);
-        saveToKeyfile(!pedited || pedited->dehaze.strength, "Dehaze", "Strength", dehaze.strength, keyFile);        
-        saveToKeyfile(!pedited || pedited->dehaze.showDepthMap, "Dehaze", "ShowDepthMap", dehaze.showDepthMap, keyFile);        
-        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Depth", dehaze.depth, keyFile);        
+        saveToKeyfile(!pedited || pedited->dehaze.strength, "Dehaze", "Strength", dehaze.strength, keyFile);
+        saveToKeyfile(!pedited || pedited->dehaze.showDepthMap, "Dehaze", "ShowDepthMap", dehaze.showDepthMap, keyFile);
+        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Depth", dehaze.depth, keyFile);
         saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Luminance", dehaze.luminance, keyFile);
 
 // Directional pyramid denoising
@@ -6388,16 +6416,30 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // EXIF change list
         if (!pedited || pedited->exif) {
+            std::map<Glib::ustring, Glib::ustring> m;
+            for (auto &p : exif_keys) {
+                m[p.second] = p.first;
+            }
             for (ExifPairs::const_iterator i = exif.begin(); i != exif.end(); ++i) {
-                keyFile.set_string("Exif", i->first, i->second);
+                auto it = m.find(i->first);
+                if (it != m.end()) {
+                    keyFile.set_string("Exif", it->second, i->second);
+                }
             }
         }
 
 // IPTC change list
         if (!pedited || pedited->iptc) {
+            std::map<std::string, std::string> m;
+            for (auto &p : iptc_keys) {
+                m[p.second] = p.first;
+            }
             for (IPTCPairs::const_iterator i = iptc.begin(); i != iptc.end(); ++i) {
-                Glib::ArrayHandle<Glib::ustring> values = i->second;
-                keyFile.set_string_list("IPTC", i->first, values);
+                auto it = m.find(i->first);
+                if (it != m.end()) {
+                    Glib::ArrayHandle<Glib::ustring> values = i->second;
+                    keyFile.set_string_list("IPTC", it->second, values);
+                }
             }
         }
 
@@ -8322,7 +8364,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Dehaze", "Depth", pedited, dehaze.depth, pedited->dehaze.depth);
             assignFromKeyfile(keyFile, "Dehaze", "Luminance", pedited, dehaze.luminance, pedited->dehaze.luminance);
         }
-        
+
         if (keyFile.has_group("Film Simulation")) {
             assignFromKeyfile(keyFile, "Film Simulation", "Enabled", pedited, filmSimulation.enabled, pedited->filmSimulation.enabled);
             assignFromKeyfile(keyFile, "Film Simulation", "ClutFilename", pedited, filmSimulation.clutFilename, pedited->filmSimulation.clutFilename);
@@ -8724,10 +8766,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("Exif")) {
             for (const auto& key : keyFile.get_keys("Exif")) {
-                exif[key] = keyFile.get_string("Exif", key);
+                auto it = exif_keys.find(key);
+                if (it != exif_keys.end()) {
+                    exif[it->second] = keyFile.get_string("Exif", key);
 
-                if (pedited) {
-                    pedited->exif = true;
+                    if (pedited) {
+                        pedited->exif = true;
+                    }
                 }
             }
         }
@@ -8747,7 +8792,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         if (keyFile.has_group("IPTC")) {
             for (const auto& key : keyFile.get_keys("IPTC")) {
                 // does this key already exist?
-                const IPTCPairs::iterator element = iptc.find(key);
+                auto it = iptc_keys.find(key);
+                if (it == iptc_keys.end()) {
+                    continue;
+                }
+
+                auto kk = it->second;
+                const IPTCPairs::iterator element = iptc.find(kk);
 
                 if (element != iptc.end()) {
                     // it already exist so we cleanup the values
@@ -8756,7 +8807,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
                 // TODO: look out if merging Keywords and SupplementalCategories from the procparams chain would be interesting
                 for (const auto& currLoadedTagValue : keyFile.get_string_list("IPTC", key)) {
-                    iptc[key].push_back(currLoadedTagValue);
+                    iptc[kk].push_back(currLoadedTagValue);
                 }
 
                 if (pedited) {

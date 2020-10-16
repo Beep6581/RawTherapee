@@ -1323,16 +1323,16 @@ void EditorPanel::info_toggled ()
 
     const rtengine::FramesMetaData* idata = ipc->getInitialImage()->getMetaData();
 
-    if (idata && idata->hasExif(selectedFrame)) {
+    if (idata && idata->hasExif()) {
         infoString = Glib::ustring::compose ("%1 + %2\n<span size=\"small\">f/</span><span size=\"large\">%3</span>  <span size=\"large\">%4</span><span size=\"small\">s</span>  <span size=\"small\">%5</span><span size=\"large\">%6</span>  <span size=\"large\">%7</span><span size=\"small\">mm</span>",
                                               Glib::ustring (idata->getMake() + " " + idata->getModel()),
                                               Glib::ustring (idata->getLens()),
-                                              Glib::ustring (idata->apertureToString (idata->getFNumber(selectedFrame))),
-                                              Glib::ustring (idata->shutterToString (idata->getShutterSpeed(selectedFrame))),
-                                              M ("QINFO_ISO"), idata->getISOSpeed(selectedFrame),
-                                              Glib::ustring::format (std::setw (3), std::fixed, std::setprecision (2), idata->getFocalLen(selectedFrame)));
+                                              Glib::ustring (idata->apertureToString (idata->getFNumber())),
+                                              Glib::ustring (idata->shutterToString (idata->getShutterSpeed())),
+                                              M ("QINFO_ISO"), idata->getISOSpeed(),
+                                              Glib::ustring::format (std::setw (3), std::fixed, std::setprecision (2), idata->getFocalLen()));
 
-        expcomp = Glib::ustring (idata->expcompToString (idata->getExpComp(selectedFrame), true)); // maskZeroexpcomp
+        expcomp = Glib::ustring (idata->expcompToString (idata->getExpComp(), true)); // maskZeroexpcomp
 
         if (!expcomp.empty ()) {
             infoString = Glib::ustring::compose ("%1  <span size=\"large\">%2</span><span size=\"small\">EV</span>",
@@ -1360,7 +1360,7 @@ void EditorPanel::info_toggled ()
         if (isHDR) {
             infoString = Glib::ustring::compose ("%1\n" + M("QINFO_HDR"), infoString, numFrames);
             if (numFrames == 1) {
-                int sampleFormat = idata->getSampleFormat(selectedFrame);
+                int sampleFormat = idata->getSampleFormat();
                 infoString = Glib::ustring::compose ("%1 / %2", infoString, M(Glib::ustring::compose("SAMPLEFORMAT_%1", sampleFormat)));
             }
         } else if (isPixelShift) {

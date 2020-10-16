@@ -19,10 +19,7 @@
 #pragma once
 
 #include <memory>
-
 #include <glibmm/ustring.h>
-
-#include <libiptcdata/iptc-data.h>
 
 #include "iimage.h"
 #include "imagedimensions.h"
@@ -40,26 +37,39 @@ enum {
     IMIO_CANNOTWRITEFILE
 };
 
-namespace rtexif
-{
-
-class TagDirectory;
-
-}
-
 namespace rtengine
 {
-
-class ColorTemp;
-class ProgressListener;
-class Imagefloat;
 
 namespace procparams
 {
 
 class ExifPairs;
+class IPTCPairs;
 
 }
+
+class ColorTemp;
+class ProgressListener;
+class Imagefloat;
+
+class MetadataInfo final
+{
+public:
+    explicit MetadataInfo(const Glib::ustring& src = {});
+
+    const Glib::ustring& filename() const;
+
+    const rtengine::procparams::ExifPairs& exif() const;
+    const rtengine::procparams::IPTCPairs& iptc() const;
+
+    void setExif(const rtengine::procparams::ExifPairs &exif);
+    void setIptc(const rtengine::procparams::IPTCPairs &iptc);
+
+private:
+    Glib::ustring src_;
+    std::unique_ptr<rtengine::procparams::ExifPairs> exif_;
+    std::unique_ptr<rtengine::procparams::IPTCPairs> iptc_;
+};
 
 class ImageIO : virtual public ImageDatas
 {
@@ -67,24 +77,20 @@ class ImageIO : virtual public ImageDatas
 protected:
     ProgressListener* pl;
     cmsHPROFILE embProfile;
-    char* profileData;
+    std::string profileData;
     int profileLength;
     char* loadedProfileData;
     bool loadedProfileDataJpg;
     int loadedProfileLength;
-    const std::unique_ptr<procparams::ExifPairs> exifChange;
-    IptcData* iptc;
-    const rtexif::TagDirectory* exifRoot;
     MyMutex imutex;
     IIOSampleFormat sampleFormat;
     IIOSampleArrangement sampleArrangement;
+    MetadataInfo metadataInfo;
 
 private:
     void deleteLoadedProfileData( );
 
 public:
-    static Glib::ustring errorMsg[6];
-
     ImageIO();
     ~ImageIO() override;
 
@@ -119,9 +125,10 @@ public:
     cmsHPROFILE getEmbeddedProfile () const;
     void getEmbeddedProfileData (int& length, unsigned char*& pdata) const;
 
-    void setMetadata (const rtexif::TagDirectory* eroot);
-    void setMetadata (const rtexif::TagDirectory* eroot, const rtengine::procparams::ExifPairs& exif, const rtengine::procparams::IPTCPairs& iptcc);
-    void setOutputProfile (const char* pdata, int plen);
+    void setMetadata(MetadataInfo info);
+    void setOutputProfile(const std::string& pdata);
+
+    bool saveMetadata(const Glib::ustring &fname) const;
 
     MyMutex& mutex ();
 };

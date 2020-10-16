@@ -1544,18 +1544,11 @@ private:
 
         if (params.colorappearance.enabled) {
             double adap;
-            int imgNum = 0;
 
-            if (imgsrc->getSensorType() == ST_BAYER) {
-                imgNum = params.raw.bayersensor.imageNum;
-            } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
-                //imgNum = params.raw.xtranssensor.imageNum;
-            }
-
-            float fnum = imgsrc->getMetaData()->getFNumber(imgNum);          // F number
-            float fiso = imgsrc->getMetaData()->getISOSpeed(imgNum) ;        // ISO
-            float fspeed = imgsrc->getMetaData()->getShutterSpeed(imgNum) ;  //speed
-            float fcomp = imgsrc->getMetaData()->getExpComp(imgNum);         //compensation + -
+            const float fnum = imgsrc->getMetaData()->getFNumber();         // F number
+            const float fiso = imgsrc->getMetaData()->getISOSpeed() ;       // ISO
+            const float fspeed = imgsrc->getMetaData()->getShutterSpeed() ; // Speed
+            const float fcomp = imgsrc->getMetaData()->getExpComp();        // Compensation + -
 
             if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) {
                 adap = 2000.;
@@ -1687,21 +1680,24 @@ private:
             readyImg = tempImage;
         }
 
+        MetadataInfo info(imgsrc->getFileName());
         switch (params.metadata.mode) {
-            case MetaDataParams::TUNNEL:
-                // Sending back the whole first root, which won't necessarily be the selected frame number
-                // and may contain subframe depending on initial raw's hierarchy
-                readyImg->setMetadata(initialImage->getMetaData()->getRootExifData());
-                break;
-
-            case MetaDataParams::EDIT:
-                // ask for the correct frame number, but may contain subframe depending on initial raw's hierarchy
-                readyImg->setMetadata(initialImage->getMetaData()->getBestExifData(imgsrc, &params.raw), params.exif, params.iptc);
-                break;
-
-            default: // case MetaDataParams::STRIP
-                // nothing to do
-                break;
+        case MetaDataParams::TUNNEL:
+            // Sending back the whole first root, which won't necessarily be the selected frame number
+            // and may contain subframe depending on initial raw's hierarchy
+            // readyImg->setMetadata (ii->getMetaData()->getRootExifData ());
+            readyImg->setMetadata(std::move(info));
+            break;
+        case MetaDataParams::EDIT:
+            info.setExif(params.exif);
+            info.setIptc(params.iptc);
+            readyImg->setMetadata(std::move(info));
+            // ask for the correct frame number, but may contain subframe depending on initial raw's hierarchy
+            // readyImg->setMetadata (ii->getMetaData()->getBestExifData(imgsrc, &params.raw), params.exif, params.iptc);
+            break;
+        default: // case MetaDataParams::STRIP
+            // nothing to do
+            break;
         }
 
 

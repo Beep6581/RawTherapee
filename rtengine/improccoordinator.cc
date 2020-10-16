@@ -1510,20 +1510,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                                     customColCurve1, customColCurve2, customColCurve3, 1);
 
                 const FramesMetaData* metaData = imgsrc->getMetaData();
-                int imgNum = 0;
-
-                if (imgsrc->isRAW()) {
-                    if (imgsrc->getSensorType() == ST_BAYER) {
-                        imgNum = rtengine::LIM<unsigned int>(params->raw.bayersensor.imageNum, 0, metaData->getFrameCount() - 1);
-                    } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
-                        //imgNum = rtengine::LIM<unsigned int>(params->raw.xtranssensor.imageNum, 0, metaData->getFrameCount() - 1);
-                    }
-                }
-
-                float fnum = metaData->getFNumber(imgNum);          // F number
-                float fiso = metaData->getISOSpeed(imgNum) ;        // ISO
-                float fspeed = metaData->getShutterSpeed(imgNum) ;  // Speed
-                double fcomp = metaData->getExpComp(imgNum);        // Compensation +/-
+                float fnum = metaData->getFNumber();          // F number
+                float fiso = metaData->getISOSpeed() ;        // ISO
+                float fspeed = metaData->getShutterSpeed() ;  // Speed
+                double fcomp = metaData->getExpComp();        // Compensation +/-
                 double adap;
 
                 if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) { //if no exif data or wrong
@@ -2075,7 +2065,7 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
         im = tempImage;
     }
 
-    im->setMetadata(imgsrc->getMetaData()->getRootExifData());
+    im->setMetadata(MetadataInfo(imgsrc->getFileName()));
 
     im->saveTIFF(fname, 16, false, true);
     delete im;

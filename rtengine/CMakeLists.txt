@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 if(EXTRA_INCDIR)
     include_directories("${EXTRA_INCDIR}")
 endif()
@@ -42,8 +43,11 @@ if(NOT WITH_SYSTEM_KLT)
 else()
     include_directories("${KLT_INCLUDE_DIRS}")
 endif()
+if(EXIV2_INCLUDE_DIRS)
+    include_directories("${EXIV2_INCLUDE_DIRS}")
+endif()
 
-link_directories("${PROJECT_SOURCE_DIR}/rtexif"
+link_directories(
     "${EXPAT_LIBRARY_DIRS}"
     "${EXTRA_LIBDIR}"
     "${FFTW3F_LIBRARY_DIRS}"
@@ -205,7 +209,7 @@ endif()
 
 set_target_properties(rtengine PROPERTIES COMPILE_FLAGS "${RTENGINE_CXX_FLAGS}")
 
-target_link_libraries(rtengine rtexif
+target_link_libraries(rtengine
     ${EXPAT_LIBRARIES}
     ${EXTRA_LIB}
     ${FFTW3F_LIBRARIES}
@@ -222,6 +226,7 @@ target_link_libraries(rtengine rtexif
     ${LENSFUN_LIBRARIES}
     ${RSVG_LIBRARIES}
     ${KLT_LIBRARIES}
-)
+    ${EXIV2_LIBRARIES}
+    )
 
 install(FILES ${CAMCONSTSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
