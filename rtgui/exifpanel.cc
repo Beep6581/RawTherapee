@@ -175,9 +175,10 @@ void ExifPanel::setImageData (const FramesMetaData* id)
 Gtk::TreeModel::Children ExifPanel::addTag(const std::string &key, const Glib::ustring &label, const Glib::ustring &value, bool editable, bool edited)
 {
 
-    if (!value.validate()) {
-        value = "???";
-    }
+    // TODO Re-fix #5923 if necessary
+    //if (!value.validate()) {
+    //    value = "???";
+    //}
 
     auto root = exifTreeModel->children();
 

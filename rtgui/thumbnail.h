@@ -26,6 +26,7 @@
 #include "cacheimagedata.h"
 #include "threadutils.h"
 #include "thumbnaillistener.h"
+#include "../rtengine/procparams.h"
 
 namespace rtengine
 {

@@ -1719,11 +1719,11 @@ private:
                 }
 
                 ProfileContent pc = ICCStore::getInstance()->getContent(params.icm.outputProfile);
-                readyImg->setOutputProfile(pc.getData().c_str(), pc.getData().size());
+                readyImg->setOutputProfile(pc.getData());
             }
         } else {
             // No ICM
-            readyImg->setOutputProfile(nullptr, 0);
+            readyImg->setOutputProfile({});
         }
 
 //    t2.set();

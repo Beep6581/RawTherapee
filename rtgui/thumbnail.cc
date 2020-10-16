@@ -41,15 +41,14 @@
 #include "md5helper.h"
 #include "pathutils.h"
 #include "paramsedited.h"
-
+#include "ppversion.h"
 #include "procparamchangers.h"
 #include "profilestorecombobox.h"
 #include "version.h"
 
-#include "../rtengine/dynamicprofile.h"
-#include "../rtengine/imagedata.h"
 #include "../rtengine/mytime.h"
-#include "../rtengine/procparams.h"
+
+using namespace rtengine::procparams;
 
 namespace {
 
@@ -109,8 +108,6 @@ bool CPBDump(
 }
 
 } // namespace
-
-using namespace rtengine::procparams;
 
 Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf) :
     fname(fname),
