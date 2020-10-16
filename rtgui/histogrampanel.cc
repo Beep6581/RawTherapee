@@ -1604,7 +1604,7 @@ void HistogramArea::drawParade(Cairo::RefPtr<Cairo::Context> &cr, int w, int h)
 
     auto orig_matrix = cr->get_matrix();
     const double display_wave_width = static_cast<double>(w) / buffers.size();
-    for (int i = 0; i < buffers.size(); i++) {
+    for (unsigned i = 0; i < buffers.size(); i++) {
         Cairo::RefPtr<Cairo::ImageSurface> surface;
         cr->translate(i * display_wave_width, padding);
         cr->scale(display_wave_width / wave_width, (h - 2 * padding) / wave_height);
