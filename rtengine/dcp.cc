@@ -1059,7 +1059,7 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
 
     DCPMetadata md(file);
     if (!md.parse()) {
-        //printf ("Unable to load DCP profile '%s'.", filename.c_str());
+        //printf ("Unable to load DCP profile '%s' !", filename.c_str());
         return;
     }
 
@@ -1331,8 +1331,7 @@ void DCPProfile::apply(
     const ColorTemp& white_balance,
     const Triple& pre_mul,
     const Matrix& cam_wb_matrix,
-    bool apply_hue_sat_map,
-    bool apply_look_table
+    bool apply_hue_sat_map
 ) const
 {
 
@@ -1344,7 +1343,7 @@ void DCPProfile::apply(
         apply_hue_sat_map = false;
     }
 
-    const Matrix xyz_cam = makeXyzCam(white_balance, pre_mul, cam_wb_matrix, preferred_illuminant, apply_hue_sat_map || apply_look_table); // Camera RGB to XYZ D50 matrix
+    const Matrix xyz_cam = makeXyzCam(white_balance, pre_mul, cam_wb_matrix, preferred_illuminant); // Camera RGB to XYZ D50 matrix
     
     if (!apply_hue_sat_map) {
         // The fast path: No LUT --> Calculate matrix for direct conversion raw -> working space

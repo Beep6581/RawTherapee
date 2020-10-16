@@ -68,11 +68,9 @@ const std::string& validateUft8(const std::string& str, const std::string& on_er
     return on_error;
 }
 
-}
-
-FramesMetaData* FramesMetaData::fromFile(const Glib::ustring& fname, std::unique_ptr<RawMetaDataLocation> rml, bool firstFrameOnly)
+FramesMetaData* FramesMetaData::fromFile(const Glib::ustring& fname)
 {
-    return new FramesData(fname, std::move(rml), firstFrameOnly);
+    return new FramesData(fname);
 }
 
 FramesData::FramesData(const Glib::ustring &fname) :

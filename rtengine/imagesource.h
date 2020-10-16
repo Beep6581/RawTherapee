@@ -28,6 +28,7 @@
 #include "rtengine.h"
 #include "colortemp.h"
 #include "array2D.h"
+#include "dcp.h"
 
 template<typename T>
 class LUT;
@@ -41,9 +42,8 @@ namespace rtengine
 {
 
 class ColorTemp;
-class DCPProfile;
-class DCPProfile::ApplyState;
 class Imagefloat;
+class DCPProfile;
 class RetinexgaintransmissionCurve;
 class RetinextransmissionCurve;
 

@@ -49,7 +49,6 @@ namespace rtengine
 class ColorAppearance;
 class ColorGradientCurve;
 class DCPProfile;
-class DCPProfile::ApplyState;
 class FlatCurve;
 class FramesMetaData;
 class LensCorrection;
