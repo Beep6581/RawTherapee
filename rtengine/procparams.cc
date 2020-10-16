@@ -2160,6 +2160,7 @@ ColorManagementParams::ColorManagementParams() :
     dcpIlluminant(0),
     workingProfile("ProPhoto"),
     workingTRC("none"),
+    will("def"),
     workingTRCGamma(2.222),
     workingTRCSlope(4.5),
     outputProfile(options.rtSettings.srgb),
@@ -2179,6 +2180,7 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && dcpIlluminant == other.dcpIlluminant
         && workingProfile == other.workingProfile
         && workingTRC == other.workingTRC
+        && will == other.will
         && workingTRCGamma == other.workingTRCGamma
         && workingTRCSlope == other.workingTRCSlope
         && outputProfile == other.outputProfile
@@ -6052,6 +6054,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.dcpIlluminant, "Color Management", "DCPIlluminant", icm.dcpIlluminant, keyFile);
         saveToKeyfile(!pedited || pedited->icm.workingProfile, "Color Management", "WorkingProfile", icm.workingProfile, keyFile);
         saveToKeyfile(!pedited || pedited->icm.workingTRC, "Color Management", "WorkingTRC", icm.workingTRC, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.will, "Color Management", "Will", icm.will, keyFile);
         saveToKeyfile(!pedited || pedited->icm.workingTRCGamma, "Color Management", "WorkingTRCGamma", icm.workingTRCGamma, keyFile);
         saveToKeyfile(!pedited || pedited->icm.workingTRCSlope, "Color Management", "WorkingTRCSlope", icm.workingTRCSlope, keyFile);
         saveToKeyfile(!pedited || pedited->icm.outputProfile, "Color Management", "OutputProfile", icm.outputProfile, keyFile);
@@ -7884,6 +7887,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "DCPIlluminant", pedited, icm.dcpIlluminant, pedited->icm.dcpIlluminant);
             assignFromKeyfile(keyFile, "Color Management", "WorkingProfile", pedited, icm.workingProfile, pedited->icm.workingProfile);
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRC", pedited, icm.workingTRC, pedited->icm.workingTRC);
+            assignFromKeyfile(keyFile, "Color Management", "Will", pedited, icm.will, pedited->icm.will);
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", pedited, icm.workingTRCGamma, pedited->icm.workingTRCGamma);
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", pedited, icm.workingTRCSlope, pedited->icm.workingTRCSlope);
 

@@ -48,6 +48,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     EvICMgamm = m->newEvent(AUTOEXP, "HISTORY_MSG_ICM_WORKING_GAMMA");
     EvICMslop = m->newEvent(AUTOEXP, "HISTORY_MSG_ICM_WORKING_SLOPE");
     EvICMtrcinMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_ICM_WORKING_TRC_METHOD");
+    EvICMwillMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_ICM_WORKING_ILLUM_METHOD");
 
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
 
@@ -193,14 +194,19 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
     wTRCHBox = Gtk::manage(new Gtk::HBox());
 
-    Gtk::Label* wtrclab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_TRC")));
+//    Gtk::Label* wtrclab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_TRC")));
 
-    wTRCHBox->pack_start(*wtrclab, Gtk::PACK_SHRINK);
+//    wTRCHBox->pack_start(*wtrclab, Gtk::PACK_SHRINK);
     wTRC = Gtk::manage(new MyComboBoxText());
     wTRCHBox->pack_start(*wTRC, Gtk::PACK_EXPAND_WIDGET);
     trcProfVBox->pack_start(*wTRCHBox, Gtk::PACK_EXPAND_WIDGET);
     wTRC->append(M("TP_ICM_WORKING_TRC_NONE"));
     wTRC->append(M("TP_ICM_WORKING_TRC_CUSTOM"));
+    wTRC->append(M("TP_ICM_WORKING_TRC_BT709"));
+    wTRC->append(M("TP_ICM_WORKING_TRC_SRGB"));
+    wTRC->append(M("TP_ICM_WORKING_TRC_22"));
+    wTRC->append(M("TP_ICM_WORKING_TRC_18"));
+    wTRC->append(M("TP_ICM_WORKING_TRC_LIN"));
 
     wTRC->set_active(0);
     wFrame->set_tooltip_text(M("TP_ICM_WORKING_TRC_TOOLTIP"));
@@ -214,6 +220,25 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     trcProfVBox->pack_start(*wSlope, Gtk::PACK_SHRINK);
     wSlope->show();
 
+    willuBox = Gtk::manage(new Gtk::HBox());
+//    Gtk::Label* willulab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_ILLU")));
+    willulab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_ILLU")));
+
+    willuBox->pack_start(*willulab, Gtk::PACK_SHRINK);
+    will = Gtk::manage(new MyComboBoxText());
+    willuBox->pack_start(*will, Gtk::PACK_EXPAND_WIDGET);
+    trcProfVBox->pack_start(*willuBox, Gtk::PACK_EXPAND_WIDGET);
+    will->append(M("TP_ICM_WORKING_ILLU_NONE"));
+    will->append(M("TP_ICM_WORKING_ILLU_D41"));
+    will->append(M("TP_ICM_WORKING_ILLU_D50"));
+    will->append(M("TP_ICM_WORKING_ILLU_D55"));
+    will->append(M("TP_ICM_WORKING_ILLU_D60"));
+    will->append(M("TP_ICM_WORKING_ILLU_D65"));
+    will->append(M("TP_ICM_WORKING_ILLU_D80"));
+    will->append(M("TP_ICM_WORKING_ILLU_STDA"));
+    will->set_active(0);
+
+    wTRC->set_active(0);
 
     wGamma->setAdjusterListener(this);
     wSlope->setAdjusterListener(this);
@@ -310,6 +335,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     orendintentconn = oRendIntent->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::oiChanged));
     dcpillconn = dcpIll->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::dcpIlluminantChanged));
     wtrcconn = wTRC->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wtrcinChanged));
+    willconn = will->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::willChanged));
 
     obpcconn = obpc->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::oBPCChanged));
     tcurveconn = ckbToneCurve->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::toneCurveChanged));
@@ -496,6 +522,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker orendintentconn_(orendintentconn);
     ConnectionBlocker dcpillconn_(dcpillconn);
     ConnectionBlocker wtrcconn_(wtrcconn);
+    ConnectionBlocker willconn_(willconn);
 
     if (pp->icm.inputProfile.substr(0, 5) != "file:" && !ipDialog->get_filename().empty()) {
         ipDialog->set_filename(pp->icm.inputProfile);
@@ -535,9 +562,38 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wTRC->set_active(0);
     } else if (pp->icm.workingTRC == "Custom") {
         wTRC->set_active(1);
+    } else if (pp->icm.workingTRC == "bt709") {
+        wTRC->set_active(2);
+    } else if (pp->icm.workingTRC == "srgb") {
+        wTRC->set_active(3);
+    } else if (pp->icm.workingTRC == "22") {
+        wTRC->set_active(4);
+    } else if (pp->icm.workingTRC == "18") {
+        wTRC->set_active(5);
+    } else if (pp->icm.workingTRC == "lin") {
+        wTRC->set_active(6);
+    }
+
+    if (pp->icm.will == "def") {
+        will->set_active(0);
+    } else if (pp->icm.will == "D41") {
+        will->set_active(1);
+    } else if (pp->icm.will == "D50") {
+        will->set_active(2);
+    } else if (pp->icm.will == "D55") {
+        will->set_active(3);
+    } else if (pp->icm.will == "D60") {
+        will->set_active(4);
+    } else if (pp->icm.will == "D65") {
+        will->set_active(5);
+    } else if (pp->icm.will == "D80") {
+        will->set_active(6);
+    } else if (pp->icm.will == "stda") {
+        will->set_active(7);
     }
 
     wtrcinChanged();
+    willChanged();
 
     if (pp->icm.outputProfile == ColorManagementParams::NoICMString) {
         oProfNames->set_active_text(M("TP_ICM_NOICM"));
@@ -592,6 +648,10 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wTRC->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
+        if (!pedited->icm.will) {
+            will->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+
         wGamma->setEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
         wSlope->setEditedState(pedited->icm.workingTRCSlope  ? Edited : UnEdited);
 
@@ -600,8 +660,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     if (pp->icm.workingTRC == "none") {
         wSlope->set_sensitive(false);
         wGamma->set_sensitive(false);
+        will->set_sensitive(false);
+        willulab->set_sensitive(false);
 
     } else if (pp->icm.workingTRC == "Custom") {
+        will->set_sensitive(true);
+        willulab->set_sensitive(true);
         if(pp->icm.workingTRCGamma <= 1.) {
             wGamma->set_sensitive(true);
             wSlope->set_sensitive(false);
@@ -609,8 +673,44 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             wGamma->set_sensitive(true);
             wSlope->set_sensitive(true);
         }
+    } else if(wTRC->get_active_row_number() == 2) {
+        wGamma->setValue(2.222);
+        wSlope->setValue(4.5);
+        will->set_sensitive(true);
+        willulab->set_sensitive(true);
+        wGamma->set_sensitive(false);
+        wSlope->set_sensitive(false);
+        
+    } else if(wTRC->get_active_row_number() == 3) {
+        wGamma->setValue(2.4);
+        wSlope->setValue(12.92);
+        will->set_sensitive(true);
+        willulab->set_sensitive(true);
+        wGamma->set_sensitive(false);
+        wSlope->set_sensitive(false);
+    } else if(wTRC->get_active_row_number() == 4) {
+        wGamma->setValue(2.2);
+        wSlope->setValue(0.);
+        will->set_sensitive(true);
+        willulab->set_sensitive(true);
+        wGamma->set_sensitive(false);
+        wSlope->set_sensitive(false);
+    } else if(wTRC->get_active_row_number() == 5) {
+        wGamma->setValue(1.8);
+        wSlope->setValue(0.);
+        will->set_sensitive(true);
+        willulab->set_sensitive(true);
+        wGamma->set_sensitive(false);
+        wSlope->set_sensitive(false);
+    } else if(wTRC->get_active_row_number() == 6) {
+        wGamma->setValue(1.);
+        wSlope->setValue(0.);
+        will->set_sensitive(true);
+        willulab->set_sensitive(true);
+        wGamma->set_sensitive(false);
+        wSlope->set_sensitive(false);
+    
     }
-
 
     enableListener();
 }
@@ -637,6 +737,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.workingProfile = wProfNames->get_active_text();
     pp->icm.dcpIlluminant = rtengine::max<int>(dcpIll->get_active_row_number(), 0);
     pp->icm.workingTRC = wTRC->get_active_text();
+    pp->icm.will = will->get_active_text();
 
     if (oProfNames->get_active_text() == M("TP_ICM_NOICM")) {
         pp->icm.outputProfile  = ColorManagementParams::NoICMString;
@@ -656,6 +757,35 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pp->icm.workingTRC = "none";
     } else if (wTRC->get_active_row_number() == 1) {
         pp->icm.workingTRC = "Custom";
+    } else if (wTRC->get_active_row_number() == 2) {
+        pp->icm.workingTRC = "bt709";
+    } else if (wTRC->get_active_row_number() == 3) {
+        pp->icm.workingTRC = "srgb";
+    } else if (wTRC->get_active_row_number() == 4) {
+        pp->icm.workingTRC = "22";
+    } else if (wTRC->get_active_row_number() == 5) {
+        pp->icm.workingTRC = "18";
+    } else if (wTRC->get_active_row_number() == 6) {
+        pp->icm.workingTRC = "lin";
+    }
+
+
+    if (will->get_active_row_number() == 0) {
+        pp->icm.will = "def";
+    } else if (will->get_active_row_number() == 1) {
+        pp->icm.will = "D41";
+    } else if (will->get_active_row_number() == 2) {
+        pp->icm.will = "D50";
+    } else if (will->get_active_row_number() == 3) {
+        pp->icm.will = "D55";
+    } else if (will->get_active_row_number() == 4) {
+        pp->icm.will = "D60";
+    } else if (will->get_active_row_number() == 5) {
+        pp->icm.will = "D65";
+    } else if (will->get_active_row_number() == 6) {
+        pp->icm.will = "D80";
+    } else if (will->get_active_row_number() == 7) {
+        pp->icm.will = "stda";
     }
 
     pp->icm.toneCurve = ckbToneCurve->get_active();
@@ -681,6 +811,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.workingTRCGamma = wGamma->getEditedState();
         pedited->icm.workingTRCSlope = wSlope->getEditedState();
         pedited->icm.workingTRC = wTRC->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->icm.will = will->get_active_text() != M("GENERAL_UNCHANGED");
     }
 }
 
@@ -731,8 +862,13 @@ void ICMPanel::wtrcinChanged()
     if (wTRC->get_active_row_number() == 0) {
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
+        will->set_sensitive(false);
+        willulab->set_sensitive(false);
 
     } else if(wTRC->get_active_row_number() == 1) {
+        will->set_sensitive(true);
+        willulab->set_sensitive(true);
+
         if(wGamma->getValue() <= 1.) {
             wGamma->set_sensitive(true);
             wSlope->set_sensitive(false);
@@ -740,12 +876,58 @@ void ICMPanel::wtrcinChanged()
             wGamma->set_sensitive(true);
             wSlope->set_sensitive(true);
         }
+    } else if(wTRC->get_active_row_number() == 2) {
+        wGamma->setValue(2.222);
+        wSlope->setValue(4.5);
+        will->set_sensitive(true);
+        willulab->set_sensitive(true);
+        wGamma->set_sensitive(false);
+        wSlope->set_sensitive(false);
+        
+    } else if(wTRC->get_active_row_number() == 3) {
+        wGamma->setValue(2.4);
+        wSlope->setValue(12.92);
+        will->set_sensitive(true);
+        willulab->set_sensitive(true);
+        wGamma->set_sensitive(false);
+        wSlope->set_sensitive(false);
+    } else if(wTRC->get_active_row_number() == 4) {
+        wGamma->setValue(2.2);
+        wSlope->setValue(0.);
+        will->set_sensitive(true);
+        willulab->set_sensitive(true);
+        wGamma->set_sensitive(false);
+        wSlope->set_sensitive(false);
+    } else if(wTRC->get_active_row_number() == 5) {
+        wGamma->setValue(1.8);
+        wSlope->setValue(0.);
+        will->set_sensitive(true);
+        willulab->set_sensitive(true);
+        wGamma->set_sensitive(false);
+        wSlope->set_sensitive(false);
+    } else if(wTRC->get_active_row_number() == 6) {
+        wGamma->setValue(1.0);
+        wSlope->setValue(0.);
+        will->set_sensitive(true);
+        willulab->set_sensitive(true);
+        wGamma->set_sensitive(false);
+        wSlope->set_sensitive(false);
     }
+
 
     if (listener) {
         listener->panelChanged(EvICMtrcinMethod, wTRC->get_active_text());
     }
 }
+
+void ICMPanel::willChanged()
+{
+
+    if (listener) {
+        listener->panelChanged(EvICMwillMethod, will->get_active_text());
+    }
+}
+
 
 void ICMPanel::dcpIlluminantChanged()
 {
@@ -1055,6 +1237,7 @@ void ICMPanel::setBatchMode(bool batchMode)
     oRendIntent->show();
     wProfNames->append(M("GENERAL_UNCHANGED"));
     wTRC->append(M("GENERAL_UNCHANGED"));
+    will->append(M("GENERAL_UNCHANGED"));
     dcpIll->append(M("GENERAL_UNCHANGED"));
     wGamma->showEditedCB();
     wSlope->showEditedCB();

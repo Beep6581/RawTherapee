@@ -1474,20 +1474,38 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         delete cieView;
     }
 
-    if (params.icm.workingTRC == "Custom") {
+    if (params.icm.workingTRC != "none") {
         int GW = labView->W;
         int GH = labView->H;
         const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
 
         ipf.lab2rgb(*labView, *tmpImage1, params.icm.workingProfile);
 
-        const float gamtone = params.icm.workingTRCGamma;
-        const float slotone = params.icm.workingTRCSlope;
+            const float gamtone = params.icm.workingTRCGamma;
+            const float slotone = params.icm.workingTRCSlope;
+            int illum = 0;
+            if(params.icm.will == "def"){
+                illum = 0; 
+            } else if(params.icm.will == "D41"){
+                illum = 1; 
+            } else if(params.icm.will == "D50"){
+                illum = 2; 
+            } else if(params.icm.will == "D55"){
+                illum = 3; 
+            } else if(params.icm.will == "D60"){
+                illum = 4; 
+            } else if(params.icm.will == "D65"){
+                illum = 5; 
+            } else if(params.icm.will == "D80"){
+                illum = 6; 
+            } else if(params.icm.will == "stda"){
+                illum = 7; 
+            }
                 //printf("IMP gam=%f slo=%f\n", gamtone, slotone);
         
         cmsHTRANSFORM dummy = nullptr;
-        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, params.icm.workingProfile, 2.4, 12.92310, dummy, true, false, false);
-        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, params.icm.workingProfile, gamtone, slotone, dummy, false, true, true);
+        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, params.icm.workingProfile, 2.4, 12.92310, 0, dummy, true, false, false);
+        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, params.icm.workingProfile, gamtone, slotone, illum, dummy, false, true, true);
 
         ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
     }

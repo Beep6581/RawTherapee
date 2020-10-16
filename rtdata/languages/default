@@ -1194,9 +1194,10 @@ HISTORY_MSG_HISTMATCHING;Auto-matched tone curve
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
 HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 illuminant D
 HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Type
-HISTORY_MSG_ICM_WORKING_GAMMA;Working - Gamma
-HISTORY_MSG_ICM_WORKING_SLOPE;Working - Slope
-HISTORY_MSG_ICM_WORKING_TRC_METHOD;Working - TRC method
+HISTORY_MSG_ICM_WORKING_GAMMA;TRC - Gamma
+HISTORY_MSG_ICM_WORKING_SLOPE;TRC - Slope
+HISTORY_MSG_ICM_WORKING_TRC_METHOD;TRC method
+HISTORY_MSG_ICM_WORKING_ILLUM_METHOD;Illuminant method
 HISTORY_MSG_ILLUM;Illuminant
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
@@ -2249,14 +2250,28 @@ TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when sav
 TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
 TP_ICM_TONECURVE;Tone curve
 TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only available if the selected DCP has a tone curve.
-TP_ICM_TRCFRAME;TRC
-TP_ICM_TRCFRAME_TOOLTIP;Allows you to change the 'Tone response curve' which by default in RT is with a gamma sRGB (g=2.4 s=12.92).\nThis TRC modifies the tones of the image - RGB and Lab values, histogram and output (screen, TIF, JPG) are changed:\n-Gamma acts mainly on light tones.\n-Slope acts mainly on dark tones.\n\nOthers usual values: BT709 g=2.22 s=4.5 (default), linear g=1, g=2.2 s=0, g=1.8 s=0\nYou can choose any pair of gamma > 1 and slope values, the algorithm ensures continuity between the linear part and the parabolic part
+TP_ICM_TRCFRAME;TRC & Illuminant
+TP_ICM_TRCFRAME_TOOLTIP;Based on 'working profile', allows you to change the 'Tone response curve' which by default in RT is with a gamma sRGB (g=2.4 s=12.92).\nThis TRC modifies the tones of the image - RGB and Lab values, histogram and output (screen, TIF, JPG) are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of gamma > 1 and slope values, the algorithm ensures continuity between the linear part and the parabolic part.\nIlluminant : allows you to modifies the working profiles primaries to adapt them to the shooting conditions. 
 TP_ICM_WORKINGPROFILE;Working Profile
 TP_ICM_WORKING_TRC;Tone response curve:
+TP_ICM_WORKING_TRC_BT709;BT709
+TP_ICM_WORKING_TRC_SRGB;sRGB
+TP_ICM_WORKING_TRC_22;Adobe 2.2
+TP_ICM_WORKING_TRC_18;Prophoto 1.8
+TP_ICM_WORKING_TRC_LIN;Linear 1
 TP_ICM_WORKING_TRC_CUSTOM;Custom
 TP_ICM_WORKING_TRC_GAMMA;Gamma
 TP_ICM_WORKING_TRC_NONE;None
 TP_ICM_WORKING_TRC_SLOPE;Slope
+TP_ICM_WORKING_ILLU;Illuminant
+TP_ICM_WORKING_ILLU_NONE;Default
+TP_ICM_WORKING_ILLU_D41;D41
+TP_ICM_WORKING_ILLU_D50;D50
+TP_ICM_WORKING_ILLU_D55;D55
+TP_ICM_WORKING_ILLU_D60;D60
+TP_ICM_WORKING_ILLU_D65;D65
+TP_ICM_WORKING_ILLU_D80;D80
+TP_ICM_WORKING_ILLU_STDA;stdA 2875K
 TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Threshold

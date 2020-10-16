@@ -330,7 +330,7 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
 }
 
 
-void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, const Glib::ustring &profile, double gampos, double slpos, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm) const
+void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, const Glib::ustring &profile, double gampos, double slpos, int illum, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm) const
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
@@ -374,8 +374,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             D60 = 6005  // for ACES AP0 and AP1
 
         };
-        ColorTemp temp = ColorTemp::D50;
-
+        double tempv4 = 5003.;
         float p[6]; //primaries
 
         //primaries for 10 working profiles ==> output profiles
@@ -393,7 +392,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = 0.7100;
             p[4] = 0.1500;
             p[5] = 0.0600;
-            temp = ColorTemp::D65;
+            tempv4 = 6504.;
         } else if (profile == "sRGB") {
             p[0] = 0.6400;    // sRGB primaries
             p[1] = 0.3300;
@@ -401,7 +400,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = 0.6000;
             p[4] = 0.1500;
             p[5] = 0.0600;
-            temp = ColorTemp::D65;
+            tempv4 = 6504.;
         } else if (profile == "BruceRGB") {
             p[0] = 0.6400;    // Bruce primaries
             p[1] = 0.3300;
@@ -409,7 +408,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = 0.6500;
             p[4] = 0.1500;
             p[5] = 0.0600;
-            temp = ColorTemp::D65;
+            tempv4 = 6504.;
         } else if (profile == "Beta RGB") {
             p[0] = 0.6888;    // Beta primaries
             p[1] = 0.3112;
@@ -431,7 +430,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = 0.7970;
             p[4] = 0.1310;
             p[5] = 0.0460;
-            temp = ColorTemp::D65;
+            tempv4 = 6504.;
         } else if (profile == "ACESp0") {
             p[0] = 0.7347;    // ACES P0 primaries
             p[1] = 0.2653;
@@ -439,7 +438,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = 1.0;
             p[4] = 0.0001;
             p[5] = -0.0770;
-            temp = ColorTemp::D60;
+            tempv4 = 6004.;
         } else if (profile == "ACESp1") {
             p[0] = 0.713;    // ACES P1 primaries
             p[1] = 0.293;
@@ -447,7 +446,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = 0.830;
             p[4] = 0.128;
             p[5] = 0.044;
-            temp = ColorTemp::D60;
+            tempv4 = 6004.;
         } else if (profile == "ProPhoto") {
             p[0] = 0.7347;    //ProPhoto and default primaries
             p[1] = 0.2653;
@@ -484,11 +483,42 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 
         // 7 parameters for smoother curves
         cmsCIExyY xyD;
-        cmsWhitePointFromTemp(&xyD, (double)temp);
-        if (profile == "ACESp0") {
-            xyD = {0.32168, 0.33767, 1.0};//refine white point to avoid differences
+
+        if (illum == 1) {
+            tempv4 = 4100.;
+        } else if (illum == 2) {
+            tempv4 = 5003.;
+        } else if (illum == 3) {
+            tempv4 = 5500.;
+        } else if (illum == 4) {
+            tempv4 = 6004.;
+        } else if (illum == 5) {
+            tempv4 = 6504.;
+        } else if (illum == 6) {
+            tempv4 = 8000.;
+        } else if (illum == 7) {
+            tempv4 = 5003.;//it is not an error
         }
 
+        cmsWhitePointFromTemp(&xyD, tempv4);
+
+        if (illum == 5) {
+            xyD = {0.312700492, 0.329000939, 1.0};
+        }
+
+        if (illum == 4) {
+            xyD = {0.32168, 0.33767, 1.0};
+        }
+
+        if (illum == 2) {
+            xyD = {0.3457, 0.3585, 1.0};//white D50      near LCMS values but not perfect...it's a compromise!!
+        }
+
+        if (illum == 7) {//stdA
+            xyD = {0.447573, 0.407440, 1.0};
+        }
+        
+        
         cmsToneCurve* GammaTRC[3];
         GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, five, gammaParams);//5 = more smoother than 4
 

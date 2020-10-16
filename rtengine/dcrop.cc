@@ -1444,7 +1444,7 @@ void Crop::update(int todo)
     PipetteBuffer::setReady();
 
     if (todo & (M_AUTOEXP | M_RGBCURVE)) {
-        if (params.icm.workingTRC == "Custom") {
+        if (params.icm.workingTRC != "none") {
             int GW = labnCrop->W;
             int GH = labnCrop->H;
             const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
@@ -1453,12 +1453,30 @@ void Crop::update(int todo)
 
             const float gamtone = params.icm.workingTRCGamma;
             const float slotone = params.icm.workingTRCSlope;
-            printf("DCROP gam=%f slo=%f\n", gamtone, slotone);
+            int illum = 0;
+            if(params.icm.will == "def"){
+                illum = 0; 
+            } else if(params.icm.will == "D41"){
+                illum = 1; 
+            } else if(params.icm.will == "D50"){
+                illum = 2; 
+            } else if(params.icm.will == "D55"){
+                illum = 3; 
+            } else if(params.icm.will == "D60"){
+                illum = 4; 
+            } else if(params.icm.will == "D65"){
+                illum = 5; 
+            } else if(params.icm.will == "D80"){
+                illum = 6; 
+            } else if(params.icm.will == "stda"){
+                illum = 7; 
+            }
+            
+           // printf("DCROP gam=%f slo=%f\n", gamtone, slotone);
 
-            printf("OK DCROP\n");
             cmsHTRANSFORM dummy = nullptr;
-            parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, params.icm.workingProfile, 2.4, 12.92310, dummy, true, false, false);
-            parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, params.icm.workingProfile, gamtone, slotone, dummy, false, true, true);
+            parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, params.icm.workingProfile, 2.4, 12.92310, 0, dummy, true, false, false);
+            parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, params.icm.workingProfile, gamtone, slotone, illum, dummy, false, true, true);
 
             parent->ipf.rgb2lab(*tmpImage1, *labnCrop, params.icm.workingProfile);
         }

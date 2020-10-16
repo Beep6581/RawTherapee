@@ -5323,9 +5323,10 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
             if (tonecurv) { //Tone response curve  : does nothing if gamma=2.4 and slope=12.92 ==> gamma sRGB
                 const float gamtone = params->locallab.spots.at(sp).gamSH;
                 const float slotone = params->locallab.spots.at(sp).sloSH;
+                const int illum = 0;
                 cmsHTRANSFORM dummy = nullptr;
-                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, -5, params->icm.workingProfile, 2.4, 12.92310, dummy, true, false, false);
-                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, 5, params->icm.workingProfile, gamtone, slotone, dummy, false, true, true);
+                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, -5, params->icm.workingProfile, 2.4, 12.92310, illum, dummy, true, false, false);
+                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, 5, params->icm.workingProfile, gamtone, slotone, illum, dummy, false, true, true);
             }
 
             if (tonequ) {
@@ -11203,8 +11204,8 @@ void ImProcFunctions::Lab_Local(
                         float gamtone = params->locallab.spots.at(sp).gamSH;
                         float slotone = params->locallab.spots.at(sp).sloSH;
                         cmsHTRANSFORM dummy = nullptr;
-                        workingtrc(tmpImage, tmpImage, bfw, bfh, -5, params->icm.workingProfile, 2.4, 12.92310, dummy, true, false, false);
-                        workingtrc(tmpImage, tmpImage, bfw, bfh, 5, params->icm.workingProfile, gamtone, slotone, dummy, false, true, true);
+                        workingtrc(tmpImage, tmpImage, bfw, bfh, -5, params->icm.workingProfile, 2.4, 12.92310, 0, dummy, true, false, false);
+                        workingtrc(tmpImage, tmpImage, bfw, bfh, 5, params->icm.workingProfile, gamtone, slotone, 0, dummy, false, true, true);
                     }
 
                     if (tonequ) {
