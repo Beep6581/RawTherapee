@@ -29,6 +29,9 @@
 
 using namespace rtengine;
 
+constexpr float HistogramArea::MAX_BRIGHT;
+constexpr float HistogramArea::MIN_BRIGHT;
+
 using ScopeType = Options::ScopeType;
 
 //
