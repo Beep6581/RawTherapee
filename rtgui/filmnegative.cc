@@ -449,9 +449,10 @@ void FilmNegative::setBatchMode(bool batchMode)
         redRatio->showEditedCB();
         greenExp->showEditedCB();
         blueRatio->showEditedCB();
-        outputLevel->showEditedCB();
-        greenBalance->showEditedCB();
-        blueBalance->showEditedCB();
+        removeIfThere(this, refInputLabel, false);
+        removeIfThere(this, outputLevel, false);
+        removeIfThere(this, greenBalance, false);
+        removeIfThere(this, blueBalance, false);
     }
 }
 
@@ -469,10 +470,6 @@ void FilmNegative::adjusterChanged(Adjuster* a, double newval)
                 )
             );
         } else if (a == outputLevel || a == greenBalance || a == blueBalance) {
-
-            outputLevel->setEditedState(a->getEditedState());
-            greenBalance->setEditedState(a->getEditedState());
-            blueBalance->setEditedState(a->getEditedState());
 
             listener->panelChanged(
                 evFilmNegativeBalance,
