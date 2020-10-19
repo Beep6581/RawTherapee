@@ -2456,10 +2456,11 @@ LocallabContrast::LocallabContrast():
     pack_start(*lcamount);
     pack_start(*lcdarkness);
     pack_start(*lclightness);
+    pack_start(*csThreshold);
     ToolParamBlock* const coBox = Gtk::manage(new ToolParamBlock());
     coBox->pack_start(*sigmalc);
     coBox->pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    coBox->pack_start(*csThreshold);
+   // coBox->pack_start(*csThreshold);
     contFrame->add(*coBox);
     pack_start(*contFrame);
     // pack_start(*levelwav);
@@ -3912,6 +3913,7 @@ void LocallabContrast::updateContrastGUI1()
         lcdarkness->show();
         lclightness->show();
         contFrame->hide();
+        csThreshold->hide();
         levelwav->hide();
         expresidpyr->hide();
         clariFrame->hide();
@@ -3927,6 +3929,7 @@ void LocallabContrast::updateContrastGUI1()
         lcdarkness->hide();
         lclightness->hide();
         contFrame->show();
+        csThreshold->show();
         levelwav->show();
         expresidpyr->show();
         clariFrame->show();
