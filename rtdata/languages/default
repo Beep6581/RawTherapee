@@ -2928,7 +2928,7 @@ TP_LOCALLAB_WAT_BALTHRES_TOOLTIP;Balances the action within each level.
 TP_LOCALLAB_WAT_RESIDCOMP_TOOLTIP;Compresses the residual image to increase or reduce contrast.
 TP_LOCALLAB_WAT_DELTABAL_TOOLTIP;By moving the slider to the left, the lower levels are accentuated. To the right, the lower levels are reduced and the higher levels accentuated.
 TP_LOCALLAB_WAT_WAVDELTABAL_TOOLTIP;Acts on the balance of the three directions (horizontal, vertical and diagonal) based on the luminance of the image.\nBy default the shadows or highlights are reduced to avoid artifacts.
-TP_LOCALLAB_WAV;Local contrast by level
+TP_LOCALLAB_WAV;Local contrast
 TP_LOCALLAB_WAVBLUR_TOOLTIP;Allows you to blur each level of the decomposition, as well as the residual image.
 TP_LOCALLAB_WAVCOMP;Compression by level
 TP_LOCALLAB_WAVCOMPRE;Compression by level
