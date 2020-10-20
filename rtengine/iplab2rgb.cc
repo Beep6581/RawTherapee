@@ -350,6 +350,16 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         }
     };
 
+    if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
+        if (settings->verbose) {
+            printf("Profile=%s\n", profile.c_str());
+        }
+    } else {
+        if (settings->verbose) {
+            printf("profile not accepted\n");
+        }
+        return;
+    }
     cmsHTRANSFORM hTransform = nullptr;
     if (transform) {
         hTransform = transform;
