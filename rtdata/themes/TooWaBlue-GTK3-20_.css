@@ -454,6 +454,47 @@ filechooser placessidebar list row:selected {
     margin: 0;
 }
 
+/* Vertical version of slider. */
+#histScale {
+    min-height: 4em;
+    min-width: 1.833333333333333333em;
+    margin: -0.333333333333333333em 0;
+}
+#histScale trough {
+    padding: 0.583333333333333333em 0;
+}
+#histScale highlight {
+    background-image: linear-gradient(to right, shade (@accent-color2,1.22), shade(@accent-color2,.88));
+    margin: -0.583333333333333333em 0;
+    padding: 0.333333333333333333em 0 0 0.333333333333333333em;
+}
+#histScale slider {
+}
+#histScale.fine-tune highlight {
+    padding: 0.5em 0 0 0.5em;
+}
+
+/* Copied from button.flat style. */
+button.radio#histButton {
+    border: 0.083333333333333333em solid transparent;
+    box-shadow: none;
+    background-image: none;
+    background-color: transparent;
+}
+button.radio#histButton:hover {
+    border-color: @bg-button-border;
+    box-shadow: inset 0 0.083333333333333333em rgba(242, 242, 242, 0.1);
+    background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
+    background-color: @bg-button-hover;
+}
+button.radio#histButton:active,
+button.radio#histButton:checked {
+    border-color: @bg-button-border;
+    box-shadow: inset 0 0.1em rgba(242, 242, 242, 0.08);
+    background-image: linear-gradient(to bottom, rgba(100,100,100,.3), rgba(30,30,30,.3));
+    background-color: @bg-button-active;
+}
+
 /*** end ***************************************************************************************/
 
 /*** Separator *********************************************************************************/
