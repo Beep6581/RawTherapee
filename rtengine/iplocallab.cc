@@ -11049,8 +11049,10 @@ void ImProcFunctions::Lab_Local(
     }
 
     bool tonecurv = false;
+    const Glib::ustring profile = params->icm.workingProfile;
+    bool isworking = (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1");
 
-    if (params->locallab.spots.at(sp).gamSH != 2.4 || params->locallab.spots.at(sp).sloSH != 12.92) {
+    if (isworking && (params->locallab.spots.at(sp).gamSH != 2.4 || params->locallab.spots.at(sp).sloSH != 12.92)) {
         tonecurv = true;
     }
 
