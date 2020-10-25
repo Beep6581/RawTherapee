@@ -1375,6 +1375,7 @@ ColorAppearanceParams::ColorAppearanceParams() :
     curveMode(TcMode::LIGHT),
     curveMode2(TcMode::LIGHT),
     curveMode3(CtcMode::CHROMA),
+    complexmethod("normal"),
     surround("Average"),
     surrsrc("Average"),
     adapscen(2000.0),
@@ -1423,6 +1424,7 @@ bool ColorAppearanceParams::operator ==(const ColorAppearanceParams& other) cons
         && curveMode == other.curveMode
         && curveMode2 == other.curveMode2
         && curveMode3 == other.curveMode3
+        && complexmethod == other.complexmethod
         && surround == other.surround
         && surrsrc == other.surrsrc
         && adapscen == other.adapscen
@@ -5282,6 +5284,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->colorappearance.degreeout, "Color appearance", "Degreeout",        colorappearance.degreeout, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.autodegreeout, "Color appearance", "AutoDegreeout",    colorappearance.autodegreeout, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.surround, "Color appearance", "Surround", colorappearance.surround, keyFile);
+        saveToKeyfile(!pedited || pedited->colorappearance.complexmethod, "Color appearance", "complex", colorappearance.complexmethod, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.surrsrc, "Color appearance", "Surrsrc", colorappearance.surrsrc, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.adaplum, "Color appearance", "AdaptLum", colorappearance.adaplum, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.badpixsl, "Color appearance", "Badpixsl", colorappearance.badpixsl, keyFile);
@@ -6863,6 +6866,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             assignFromKeyfile(keyFile, "Color appearance", "AutoDegreeout", pedited, colorappearance.autodegreeout, pedited->colorappearance.autodegreeout);
 
+            assignFromKeyfile(keyFile, "Color appearance", "complex", pedited, colorappearance.complexmethod, pedited->colorappearance.complexmethod);
             assignFromKeyfile(keyFile, "Color appearance", "Surround", pedited, colorappearance.surround, pedited->colorappearance.surround);
             assignFromKeyfile(keyFile, "Color appearance", "Surrsrc", pedited, colorappearance.surrsrc, pedited->colorappearance.surrsrc);
             assignFromKeyfile(keyFile, "Color appearance", "AdaptLum", pedited, colorappearance.adaplum, pedited->colorappearance.adaplum);

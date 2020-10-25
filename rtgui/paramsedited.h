@@ -266,6 +266,7 @@ struct ColorAppearanceParamsEdited {
     bool curveMode;
     bool curveMode2;
     bool curveMode3;
+    bool complexmethod;
     bool enabled;
     bool degree;
     bool autodegree;
