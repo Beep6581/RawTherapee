@@ -400,6 +400,7 @@ void Options::setDefaults()
     overwriteOutputFile = false;        // if TRUE, existing output JPGs/PNGs are overwritten, instead of adding ..-1.jpg, -2.jpg etc.
     theme = "RawTherapee";
     maxThumbnailHeight = 250;
+    maxThumbnailWidth = 800;
     maxCacheEntries = 20000;
     thumbInterp = 1;
     autoSuffix = true;
@@ -1017,6 +1018,10 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("File Browser", "MaxPreviewHeight")) {
                     maxThumbnailHeight = keyFile.get_integer("File Browser", "MaxPreviewHeight");
+                }
+
+                if (keyFile.has_key("File Browser", "MaxPreviewWidth")) {
+                    maxThumbnailWidth = keyFile.get_integer("File Browser", "MaxPreviewWidth");
                 }
 
                 if (keyFile.has_key("File Browser", "MaxCacheEntries")) {
@@ -2114,6 +2119,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("File Browser", "ThumbnailSizeQueue", thumbSizeQueue);
         keyFile.set_integer("File Browser", "SameThumbSize", sameThumbSize);
         keyFile.set_integer("File Browser", "MaxPreviewHeight", maxThumbnailHeight);
+        keyFile.set_integer("File Browser", "MaxPreviewWidth", maxThumbnailWidth);
         keyFile.set_integer("File Browser", "MaxCacheEntries", maxCacheEntries);
         Glib::ArrayHandle<Glib::ustring> pext = parseExtensions;
         keyFile.set_string_list("File Browser", "ParseExtensions", pext);
