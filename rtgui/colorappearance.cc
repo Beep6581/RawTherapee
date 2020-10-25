@@ -224,6 +224,13 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     EvCATillum = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ILLUM");
     EvCATcomplex = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CATCOMPLEX");
     //preset button cat02
+    Gtk::Frame *genFrame;
+    Gtk::VBox *genVBox;
+    genFrame = Gtk::manage (new Gtk::Frame (M ("TP_COLORAPP_GEN")) );
+    genFrame->set_label_align (0.025, 0.5);
+    genFrame->set_tooltip_markup (M ("TP_COLORAPP_GEN_TOOLTIP"));
+    genVBox = Gtk::manage ( new Gtk::VBox());
+    genVBox->set_spacing (2);
     
     complexmethod = Gtk::manage (new MyComboBoxText ());
     complexmethod->append(M("TP_WAVELET_COMPNORMAL"));
@@ -234,13 +241,16 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     Gtk::Label* const complexLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_COMPLEXLAB") + ":"));
     complexHBox->pack_start(*complexLabel, Gtk::PACK_SHRINK, 4);
     complexHBox->pack_start(*complexmethod);
-    pack_start (*complexHBox, Gtk::PACK_SHRINK);
+    genVBox->pack_start (*complexHBox, Gtk::PACK_SHRINK);
     
     
     presetcat02 = Gtk::manage (new Gtk::CheckButton  (M ("TP_COLORAPP_PRESETCAT02")));
     presetcat02->set_tooltip_markup (M("TP_COLORAPP_PRESETCAT02_TIP"));
     presetcat02conn = presetcat02->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::presetcat02pressed));
-    pack_start (*presetcat02, Gtk::PACK_SHRINK);
+    genVBox->pack_start (*presetcat02, Gtk::PACK_SHRINK);
+
+    genFrame->add (*genVBox);
+    pack_start (*genFrame, Gtk::PACK_EXPAND_WIDGET, 4);
 
     // ----------------------- Process #1: Converting to CIECAM
 
@@ -252,7 +262,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
     p1Frame = Gtk::manage (new Gtk::Frame (M ("TP_COLORAPP_LABEL_SCENE")) );
     p1Frame->set_label_align (0.025, 0.5);
-
+    p1Frame->set_tooltip_markup (M ("TP_COLORAPP_SOURCEF_TOOLTIP"));
     p1VBox = Gtk::manage ( new Gtk::VBox());
     p1VBox->set_spacing (2);
 
@@ -606,6 +616,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
     p3Frame = Gtk::manage (new Gtk::Frame (M ("TP_COLORAPP_LABEL_VIEWING")) ); // "Editing viewing conditions" ???
     p3Frame->set_label_align (0.025, 0.5);
+    p3Frame->set_tooltip_markup (M ("TP_COLORAPP_VIEWINGF_TOOLTIP"));
 
     p3VBox = Gtk::manage ( new Gtk::VBox());
     p3VBox->set_spacing (2);

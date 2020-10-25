@@ -1937,6 +1937,8 @@ TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show app
 TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 TP_COLORAPP_GAMUT;Gamut control (L*a*b*)
 TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in L*a*b* mode.
+TP_COLORAPP_GEN;Settings - Preset
+TP_COLORAPP_GEN_TOOLTIP;The goal is to take into account the environment (chromatic and luminosity) of each color to modify its appearance in order to get as close as possible to our vision. It also proposes to change the global vision in order to adapt to the viewing condition of your Output device (Monitor, Projector, Printer, File).
 TP_COLORAPP_HUE;Hue (h)
 TP_COLORAPP_HUE_TOOLTIP;Hue (h) - angle between 0° and 360°.
 TP_COLORAPP_IL41;D41
@@ -1949,7 +1951,7 @@ TP_COLORAPP_ILA;Incandescent StdA 2856K
 TP_COLORAPP_ILFREE;Free
 TP_COLORAPP_ILLUM;Illuminant
 TP_COLORAPP_ILLUM_TOOLTIP;Select the illuminant closest to the shooting conditions.\nIn general D50, but it can change depending on the time and lattitude.
-TP_COLORAPP_LABEL;CIE Color Appearance Model 2002
+TP_COLORAPP_LABEL;CIE Color Appearance Model 2002 - Smart Lighting
 TP_COLORAPP_LABEL_CAM02;Image Adjustments
 TP_COLORAPP_LABEL_SCENE;Scene Conditions
 TP_COLORAPP_LABEL_VIEWING;Viewing Conditions
