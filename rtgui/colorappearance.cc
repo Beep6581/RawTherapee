@@ -1285,6 +1285,7 @@ void ColorAppearance::updateGUIToMode(int mode)
         curveEditorG3->hide();
         greenout->hide();
         badpixsl->hide();
+        datacie->hide();
     } else {
         alHBox->show(); 
         wbmHBox->show();
@@ -1293,6 +1294,7 @@ void ColorAppearance::updateGUIToMode(int mode)
         curveEditorG3->show();
         greenout->show();
         badpixsl->show();
+        datacie->show();
     }
 
 }
