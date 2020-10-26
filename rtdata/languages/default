@@ -1941,7 +1941,7 @@ TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 TP_COLORAPP_GAMUT;Gamut control (L*a*b*)
 TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in L*a*b* mode.
 TP_COLORAPP_GEN;Settings - Preset
-TP_COLORAPP_GEN_TOOLTIP;This module is based on the CIECAM02 color appearance model, which was designed to better simulate how human vision perceives colors under different lighting conditions, e.g., against different backgrounds.\nIt takes into account the environment of each color and modifies its appearance to get as close as possible to human perception.\nIt also adapts the output to the intended viewing conditions (monitor, projector, print etc.) so that the chromatic appearance is preserved across the scene and display environments.
+TP_COLORAPP_GEN_TOOLTIP;This module is based on the CIECAM02 color appearance model, which was designed to better simulate how human vision perceives colors under different lighting conditions, e.g., against different backgrounds.\nIt takes into account the environment of each color and modifies its appearance to get as close as possible to human perception.\nIt also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic appearance is preserved across the scene and display environments.
 TP_COLORAPP_HUE;Hue (h)
 TP_COLORAPP_IL41;D41
 TP_COLORAPP_HUE_TOOLTIP;Hue (h) is the degree to which a stimulus can be described as similar to a color described as red, green, blue and yellow.
