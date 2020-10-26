@@ -1561,7 +1561,7 @@ float find_gray(float source_gray, float target_gray)
 // basic log encoding taken from ACESutil.Lin_to_Log2, from
 // https://github.com/ampas/aces-dev
 // (as seen on pixls.us)
-void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp, bool multiThread, int bfw, int bfh)
+void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool multiThread, int bfw, int bfh)
 {
     /* J.Desmis 12 2019
         small adaptations to local adjustments
@@ -1570,7 +1570,13 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp
    // BENCHFUN
     const float gray = lp.sourcegray / 100.f;
     const float shadows_range = lp.blackev;
-    const float dynamic_range = lp.whiteev - lp.blackev;
+    if(lp.whiteev < 0.5f) {
+        lp.whiteev = 0.5f;
+    }
+    float dynamic_range = lp.whiteev - lp.blackev;
+    if (dynamic_range < 0.5f) {
+        dynamic_range = 0.5f;
+    }
     const float noise = pow_F(2.f, -16.f);
     const float log2 = xlogf(lp.baselog);
     const float base = lp.targetgray > 1 && lp.targetgray < 100 && dynamic_range > 0 ? find_gray(std::abs(lp.blackev) / dynamic_range, lp.targetgray / 100.f) : 0.f;
@@ -1830,7 +1836,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
     }
 }
 
-void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const struct local_params & lp, const Glib::ustring &workingProfile, double scale, bool multithread)
+void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B,  const struct local_params & lp, const Glib::ustring &workingProfile, double scale, bool multithread)
 // adapted from the tone equalizer of darktable
 /*
     Copyright 2019 Alberto Griggio <alberto.griggio@gmail.com>

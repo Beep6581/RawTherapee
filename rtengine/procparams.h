@@ -672,6 +672,7 @@ struct ColorAppearanceParams {
     TcMode     curveMode;
     TcMode     curveMode2;
     CtcMode    curveMode3;
+    Glib::ustring complexmethod;
 
     Glib::ustring surround;
     Glib::ustring surrsrc;

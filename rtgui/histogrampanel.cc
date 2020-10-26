@@ -106,9 +106,11 @@ HistogramPanel::HistogramPanel () :
     gfxGrid->add(*histogramArea);
     gfxGrid->attach_next_to(
         *histogramRGBAreaVert, *histogramArea,
-        options.histogramPosition == 1 ? Gtk::POS_RIGHT : Gtk::POS_LEFT
+        options.histogramPosition == 1 ? Gtk::POS_RIGHT : Gtk::POS_LEFT,
+        1,
+        1
     );
-    gfxGrid->attach_next_to(*histogramRGBAreaHori, *histogramArea, Gtk::POS_BOTTOM);
+    gfxGrid->attach_next_to(*histogramRGBAreaHori, *histogramArea, Gtk::POS_BOTTOM, 1, 1);
     histogramRGBAreaHori->set_no_show_all();
     histogramRGBAreaVert->set_no_show_all();
 
@@ -275,7 +277,7 @@ HistogramPanel::HistogramPanel () :
     }
     scopeOptions->set_image(*Gtk::manage(new RTImage("histogram-ellipsis-small.png")));
     showBAR->set_image   (showBAR->get_active()   ? *barImage   : *barImage_g);
-    
+
     setExpandAlignProperties(showRed  , false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(showGreen, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     setExpandAlignProperties(showBlue , false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
@@ -652,7 +654,7 @@ void HistogramPanel::reorder (Gtk::PositionType align)
         buttonGrid->unreference();
 
         gfxGrid->remove(*histogramRGBAreaVert);
-        gfxGrid->attach_next_to(*histogramRGBAreaVert, *histogramArea, Gtk::POS_LEFT);
+        gfxGrid->attach_next_to(*histogramRGBAreaVert, *histogramArea, Gtk::POS_LEFT, 1, 1);
 
         persistentButtons->reference();
         removeIfThere(buttonGrid, persistentButtons, false);
@@ -1296,7 +1298,7 @@ void HistogramArea::updateBackBuffer ()
     } else if (options.histogramScopeType == ScopeType::VECTORSCOPE_HC || options.histogramScopeType == ScopeType::VECTORSCOPE_HS) {
         // Vectorscope has no gridlines.
     } else if (options.histogramDrawMode == 0) {
-        for (int i = 1; i < nrOfHGridPartitions; i++) {            
+        for (int i = 1; i < nrOfHGridPartitions; i++) {
             cr->move_to (padding, i * static_cast<double>(h) / nrOfHGridPartitions + 0.5);
             cr->line_to (w - padding, i * static_cast<double>(h) / nrOfHGridPartitions + 0.5);
             cr->stroke ();
