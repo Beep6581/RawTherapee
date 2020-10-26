@@ -116,9 +116,12 @@ void FileBrowserEntry::refreshQuickThumbnailImage ()
 
 void FileBrowserEntry::calcThumbnailSize ()
 {
-
     if (thumbnail) {
-        prew = thumbnail->getThumbnailWidth(preh);
+        int ow = prew, oh = preh;
+        thumbnail->getThumbnailSize(prew, preh);
+        if (ow != prew || oh != preh || preview.size() != static_cast<std::size_t>(prew * preh * 3)) {
+            preview.clear();
+        }
     }
 }
 
@@ -255,22 +258,16 @@ void FileBrowserEntry::_updateImage(rtengine::IImage8* img, double s, const rten
     bool rotated = false;
 
     if (preh == img->getHeight()) {
-        const bool resize = !preview || prew != img->getWidth();
         prew = img->getWidth ();
 
         // Check if image has been rotated since last time
-        rotated = preview && newLandscape != landscape;
+        rotated = !preview.empty() && newLandscape != landscape;
 
-        if (resize) {
-            if (preview) {
-                delete [] preview;
-            }
-            preview = new guint8 [prew * preh * 3];
-        }
-        memcpy(preview, img->getData(), prew * preh * 3);
+        preview.resize(prew * preh * 3);
+        std::copy(img->getData(), img->getData() + preview.size(), preview.begin());
         {
-        GThreadLock lock;
-        updateBackBuffer ();
+            GThreadLock lock;
+            updateBackBuffer ();
         }
     }
 
@@ -601,7 +598,7 @@ bool FileBrowserEntry::onArea (CursorArea a, int x, int y)
 {
 
     MYREADERLOCK(l, lockRW);
-    if (!drawable || !preview) {
+    if (!drawable || preview.empty()) {
         return false;
     }
 
