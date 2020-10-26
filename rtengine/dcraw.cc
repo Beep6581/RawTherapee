@@ -1399,7 +1399,7 @@ void CLASS nikon_load_raw()
 
 void CLASS nikon_yuv_load_raw()
 {
-  int row, col, yuv[4], rgb[3], b, c;
+  int row, col, yuv[4] = {}, rgb[3], b, c;
   UINT64 bitbuf=0;
 
   for (row=0; row < raw_height; row++)
@@ -5620,7 +5620,7 @@ nf: order = 0x4949;
     if (tag == 2 && strstr(make,"NIKON") && !iso_speed)
       iso_speed = (get2(),get2());
     if ((tag == 0x25 || tag == 0x28) && strstr(make,"NIKON") && !iso_speed) { // Nikon ISOInfo Tags/ISO & ISO2
-      uchar iso[1];
+      uchar iso[1] = {};
       fread (iso, 1, 1, ifp);
       iso_speed = 100 * pow(2,(float)iso[0]/12.0-5);
     }

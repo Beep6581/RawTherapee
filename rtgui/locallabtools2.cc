@@ -2456,10 +2456,11 @@ LocallabContrast::LocallabContrast():
     pack_start(*lcamount);
     pack_start(*lcdarkness);
     pack_start(*lclightness);
+    pack_start(*csThreshold);
     ToolParamBlock* const coBox = Gtk::manage(new ToolParamBlock());
     coBox->pack_start(*sigmalc);
     coBox->pack_start(*LocalcurveEditorwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    coBox->pack_start(*csThreshold);
+   // coBox->pack_start(*csThreshold);
     contFrame->add(*coBox);
     pack_start(*contFrame);
     // pack_start(*levelwav);
@@ -3912,6 +3913,7 @@ void LocallabContrast::updateContrastGUI1()
         lcdarkness->show();
         lclightness->show();
         contFrame->hide();
+        csThreshold->hide();
         levelwav->hide();
         expresidpyr->hide();
         clariFrame->hide();
@@ -3927,6 +3929,7 @@ void LocallabContrast::updateContrastGUI1()
         lcdarkness->hide();
         lclightness->hide();
         contFrame->show();
+        csThreshold->show();
         levelwav->show();
         expresidpyr->show();
         clariFrame->show();
@@ -4652,7 +4655,7 @@ LocallabLog::LocallabLog():
     autocompute(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_LOGAUTO")))),
     logPFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGPFRA")))),
     blackEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.0, 0.0, 0.1, -5.0))),
-    whiteEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0.0, 32.0, 0.1, 10.0))),
+    whiteEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0.5, 32.0, 0.1, 10.0))),
     fullimage(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FULLIMAGE")))),
     Autogray(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAY")))),
     sourceGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 10.0))),
