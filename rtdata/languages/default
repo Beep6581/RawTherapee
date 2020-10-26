@@ -1920,8 +1920,8 @@ TP_COLORAPP_CHROMA;Chroma (C)
 TP_COLORAPP_CHROMA_M;Colorfulness (M)
 TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM02 is the perceived amount of hue in relation to gray, an indicator that a stimulus appears to be more or less colored.
 TP_COLORAPP_CHROMA_S;Saturation (S)
-TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM02 corresponds to the coloring of a stimulus in relation to its own brightness, differs from L*a*b* and RGB saturation.
-TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM02 corresponds to the "coloring" of a stimulus relative to the clarity of a stimulus that appears white under identical conditions, differs from L*a*b* and RGB chroma.
+TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM02 corresponds to the color of a stimulus in relation to its own brightness, differs from L*a*b* and RGB saturation.
+TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM02 corresponds to the color of a stimulus relative to the clarity of a stimulus that appears white under identical conditions, differs from L*a*b* and RGB chroma.
 TP_COLORAPP_CIECAT_DEGREE;CAT02 adaptation
 TP_COLORAPP_CONTRAST;Contrast (J), 
 TP_COLORAPP_CONTRAST_Q;Contrast (Q)
@@ -1966,7 +1966,7 @@ TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's 
 TP_COLORAPP_NEUTRAL;Reset
 TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
 TP_COLORAPP_PRESETCAT02;Preset cat02 automatic
-TP_COLORAPP_PRESETCAT02_TIP;Set combobox, sliders, temp, green so that Cat02 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change Cat02 adaptation Viewing conditions if need.\nYou can change Temperature and Tint Viewing conditions if need, and other settings if need. 
+TP_COLORAPP_PRESETCAT02_TIP;Set combobox, sliders, temp, green so that Cat02 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change Cat02 adaptation Viewing conditions if needed.\nYou can change Temperature and Tint Viewing conditions if needed, and other settings if needed. 
 TP_COLORAPP_RSTPRO;Red & skin-tones protection
 TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
 TP_COLORAPP_SOURCEF_TOOLTIP;Corresponds to the shooting conditions and how to bring the conditions and data back to a "normal" area. Normal" means average or standard conditions and data, i.e. without taking into account CIECAM corrections.
@@ -1975,7 +1975,7 @@ TP_COLORAPP_SURROUND_AVER;Average
 TP_COLORAPP_SURROUND_DARK;Dark
 TP_COLORAPP_SURROUND_DIM;Dim
 TP_COLORAPP_SURROUND_EXDARK;Extremly Dark (Cutsheet)
-TP_COLORAPP_SURROUNDSRC;Surround - Smart Lighting
+TP_COLORAPP_SURROUNDSRC;Surround - Scene Lighting
 TP_COLORAPP_SURSOURCE_TOOLTIP;Changes tones and colors to take into account the Scene conditions.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment. The image will become slightly bright.\n\n<b>Dark</b>: Dark environment. The image will become more bright.\n\n<b>Extremly Dark</b>: Extremly dark environment. The image will become very bright.
 TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colors to take into account the viewing conditions of the output device.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment (TV). The image will become slightly dark.\n\n<b>Dark</b>: Dark environment (projector). The image will become more dark.\n\n<b>Extremly Dark</b>: Extremly dark environment (cutsheet). The image will become very dark.
 TP_COLORAPP_TCMODE_BRIGHTNESS;Brightness
