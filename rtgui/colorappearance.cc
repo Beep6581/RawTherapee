@@ -282,7 +282,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     Gtk::HBox* surrHBox1 = Gtk::manage (new Gtk::HBox ());
     surrHBox1->set_spacing (2);
     surrHBox1->set_tooltip_markup (M ("TP_COLORAPP_SURSOURCE_TOOLTIP"));
-    Gtk::Label* surrLabel1 = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
+    Gtk::Label* surrLabel1 = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUNDSRC") + ":"));
     surrHBox1->pack_start (*surrLabel1, Gtk::PACK_SHRINK);
     surrsrc = Gtk::manage (new MyComboBoxText ());
     surrsrc->append (M ("TP_COLORAPP_SURROUND_AVER"));
