@@ -578,7 +578,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.chromfi = 0.1f * waparams.chromfi;
     cp.chromco = 0.1f * waparams.chromco;
     cp.ballum = waparams.ballum;
-
+    printf("wavparfi=%f\n", cp.chromfi);
     cp.conres = waparams.rescon;
     cp.conresH = waparams.resconH;
     cp.radius = waparams.radius;
@@ -1041,13 +1041,13 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                 }
                     
                 
-                if (!exblurL && cp.contrast == 0.f && cp.blurres == 0.f && !cp.tonemap && !cp.resena && !cp.chromena && !cp.finena && !cp.edgeena && cp.conres == 0.f && cp.conresH == 0.f && cp.val == 0  && !ref0 && params->wavelet.CLmethod == "all") { // no processing of residual L or edge=> we probably can reduce the number of levels
+                if (!exblurL && cp.contrast == 0.f && cp.blurres == 0.f && !cp.noiseena && !cp.tonemap && !cp.resena && !cp.chromena && !cp.finena && !cp.edgeena && cp.conres == 0.f && cp.conresH == 0.f && cp.val == 0  && !ref0 && params->wavelet.CLmethod == "all") { // no processing of residual L or edge=> we probably can reduce the number of levels
                     while (levwavL > 0 && cp.mul[levwavL - 1] == 0.f) { // cp.mul[level] == 0.f means no changes to level
                         levwavL--;
                     }
                 }
 
-                if (levwavL == 6  && cp.noiseena) {
+                if (levwavL == 6  && cp.noiseena && cp.chromfi == 0.f) {
                     cp.chromfi = 0.01f;
                 }
 
@@ -1552,6 +1552,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                         float noisecfb = cp.chromfi;
                         float noiseccb = cp.chromco;
+                            printf("nf=%f\n", noisecfr);
 
                         if (cp.balchrom < 0.f) {
                             noisecfb = cp.chromfi - 0.1f * cp.balchrom;
@@ -1574,7 +1575,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         if (noiseccb < 0.f) {
                             noiseccb = 0.0001f;
                         }
-
+                            printf("chroR=%f chrocB=%f\n", noisecfr, noisecfb);
                         int edge = 2;
                         variC[0] = SQR(noisecfr);
                         variC[1] = SQR(noisecfr);
@@ -1770,7 +1771,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         if (!hhutili) { //always a or b
                             int levwava = levwav;
 
-                            if (!exblurab && cp.chrores == 0.f  && cp.blurcres == 0.f && !cp.tonemap && !cp.resena && !cp.chromena && !cp.finena && !cp.edgeena&& params->wavelet.CLmethod == "all" && !cp.cbena) { // no processing of residual ab => we probably can reduce the number of levels
+                            if (!exblurab && cp.chrores == 0.f  && cp.blurcres == 0.f && !cp.noiseena && !cp.tonemap && !cp.resena && !cp.chromena && !cp.finena && !cp.edgeena&& params->wavelet.CLmethod == "all" && !cp.cbena) { // no processing of residual ab => we probably can reduce the number of levels
                                 while (levwava > 0 && !cp.diag && (((cp.CHmet == 2 && (cp.chro == 0.f || cp.mul[levwava - 1] == 0.f)) || (cp.CHmet != 2 && (levwava == 10 || (!cp.curv  || cp.mulC[levwava - 1] == 0.f))))) && (!cp.opaRG || levwava == 10 || (cp.opaRG && cp.mulopaRG[levwava - 1] == 0.f)) && ((levwava == 10 || (cp.CHSLmet == 1 && cp.mulC[levwava - 1] == 0.f)))) {
                                     levwava--;
                                 }
@@ -1798,7 +1799,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                                        WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
 
-                                    } else if (cp.chromfi > 0.f && cp.chromco >= 2.f){
+                                    } else if (cp.chromfi > 0.f && cp.chromco >= 0.f){
 
                                         WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
                                         WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
@@ -1816,7 +1817,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                             int levwavb = levwav;
 
-                            if (!exblurab && cp.chrores == 0.f && cp.blurcres == 0.f && !cp.tonemap && !cp.resena && !cp.chromena && !cp.finena && !cp.edgeena && params->wavelet.CLmethod == "all" && !cp.cbena) { // no processing of residual ab => we probably can reduce the number of levels
+                            if (!exblurab && cp.chrores == 0.f && cp.blurcres == 0.f && !cp.noiseena && !cp.tonemap && !cp.resena && !cp.chromena && !cp.finena && !cp.edgeena && params->wavelet.CLmethod == "all" && !cp.cbena) { // no processing of residual ab => we probably can reduce the number of levels
                                 while (levwavb > 0 &&  !cp.diag && (((cp.CHmet == 2 && (cp.chro == 0.f || cp.mul[levwavb - 1] == 0.f)) || (cp.CHmet != 2 && (levwavb == 10 || (!cp.curv || cp.mulC[levwavb - 1] == 0.f))))) && (!cp.opaBY || levwavb == 10 || (cp.opaBY && cp.mulopaBY[levwavb - 1] == 0.f)) && ((levwavb == 10 || (cp.CHSLmet == 1 && cp.mulC[levwavb - 1] == 0.f)))) {
                                     levwavb--;
                                 }
@@ -1845,9 +1846,11 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 if (!bdecomp->memory_allocation_failed()) {
                                   //  if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.chromco < 2.f )) {
                                     if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) &&  cp.quamet == 0)) {
-                                        
                                         WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
-                                    } else if (cp.chromfi > 0.f && cp.chromco >= 2.f){
+                                        printf("Denoise ab\n");
+                                    } else if (cp.chromfi > 0.f && cp.chromco > 0.f){
+                                        printf("Denoise ab agressive\n");
+
                                         WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                         WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                     }
