@@ -2542,7 +2542,7 @@ TP_LOCALLAB_FFTW;ƒ - Use Fast Fourier Transform
 TP_LOCALLAB_FFTW2;ƒ - Use Fast Fourier Transform (TIF, JPG,..)
 TP_LOCALLAB_FFTMASK_TOOLTIP;Use a Fourier transform for better quality (increased processing time and memory requirements)
 TP_LOCALLAB_FFTWBLUR;ƒ - Always Use Fast Fourier Transform
-TP_LOCALLAB_FULLIMAGE;Calculate the dark-Ev & white-Ev values for the entire image 
+TP_LOCALLAB_FULLIMAGE;Dark-Ev & white-Ev for the entire image 
 TP_LOCALLAB_FULLIMAGELOG_TOOLTIP;Calculates the Ev levels for the entire image.
 TP_LOCALLAB_GAM;Gamma
 TP_LOCALLAB_GAMFRA;Tone response curve (TRC)
