@@ -4655,7 +4655,7 @@ LocallabLog::LocallabLog():
     autocompute(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_LOGAUTO")))),
     logPFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGPFRA")))),
     blackEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.0, 0.0, 0.1, -5.0))),
-    whiteEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0.5, 32.0, 0.1, 10.0))),
+    whiteEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 1., 32.0, 0.1, 10.0))),
     fullimage(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FULLIMAGE")))),
     Autogray(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAY")))),
     sourceGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 10.0))),
@@ -4669,10 +4669,10 @@ LocallabLog::LocallabLog():
     // Parameter Log encoding specific widgets
     autoconn = autocompute->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::autocomputeToggled));
 
-    blackEv->setLogScale(2, -8);
+  //  blackEv->setLogScale(2, -8);
     blackEv->setAdjusterListener(this);
 
-    whiteEv->setLogScale(16, 0);
+   // whiteEv->setLogScale(16, 0);
     whiteEv->setAdjusterListener(this);
 
     fullimageConn = fullimage->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::fullimageChanged));
@@ -4800,7 +4800,9 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 
         autocompute->set_active(spot.autocompute);
         blackEv->setValue(spot.blackEv);
+
         whiteEv->setValue(spot.whiteEv);
+        if(whiteEv->getValue() < 1.) whiteEv->setValue(1.);
         fullimage->set_active(spot.fullimage);
         Autogray->set_active(spot.Autogray);
         sourceGray->setValue(spot.sourceGray);
