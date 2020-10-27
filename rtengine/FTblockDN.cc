@@ -2619,7 +2619,6 @@ bool ImProcFunctions::WaveletDenoiseAllAB(wavelet_decomposition& WaveletCoeffs_L
         float *noisevarchrom, float madL[8][3],  float *variC, int local, float noisevar_ab, const bool useNoiseCCurve, bool autoch, bool denoiseMethodRgb, int denoiseNestedLevels)//mod JD
 
 {
-    printf("Ftblockdn ab std\n");
     int maxlvl = WaveletCoeffs_L.maxlevel();
 
     if (local == 1) {
@@ -2782,7 +2781,6 @@ void ImProcFunctions::ShrinkAllAB(wavelet_decomposition& WaveletCoeffs_L, wavele
 {
     //simple wavelet shrinkage
     const float eps = 0.01f;
-   // printf("Shrink ab simple\n");
 
     if (autoch && noisevar_ab <= 0.001f) {
         noisevar_ab = 0.02f;

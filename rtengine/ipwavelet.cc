@@ -578,7 +578,6 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     cp.chromfi = 0.1f * waparams.chromfi;
     cp.chromco = 0.1f * waparams.chromco;
     cp.ballum = waparams.ballum;
-    printf("wavparfi=%f\n", cp.chromfi);
     cp.conres = waparams.rescon;
     cp.conresH = waparams.resconH;
     cp.radius = waparams.radius;
@@ -1552,7 +1551,6 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                         float noisecfb = cp.chromfi;
                         float noiseccb = cp.chromco;
-                            printf("nf=%f\n", noisecfr);
 
                         if (cp.balchrom < 0.f) {
                             noisecfb = cp.chromfi - 0.1f * cp.balchrom;
@@ -1575,7 +1573,6 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         if (noiseccb < 0.f) {
                             noiseccb = 0.0001f;
                         }
-                            printf("chroR=%f chrocB=%f\n", noisecfr, noisecfb);
                         int edge = 2;
                         variC[0] = SQR(noisecfr);
                         variC[1] = SQR(noisecfr);
@@ -1799,7 +1796,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                                        WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
 
-                                    } else if (cp.chromfi > 0.f && cp.chromco >= 0.f){
+                                    } else if (cp.noiseena && ((cp.chromfi > 0.f && cp.chromco >= 0.f) && cp.quamet == 1 )){
 
                                         WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
                                         WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
@@ -1847,12 +1844,17 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                   //  if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.chromco < 2.f )) {
                                     if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) &&  cp.quamet == 0)) {
                                         WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
-                                        printf("Denoise ab\n");
-                                    } else if (cp.chromfi > 0.f && cp.chromco > 0.f){
-                                        printf("Denoise ab agressive\n");
+                                        if (settings->verbose) {
+                                            printf("Denoise ab standard\n");
+                                        }
+                                    } else if (cp.noiseena && ((cp.chromfi > 0.f && cp.chromco >= 0.f) && cp.quamet == 1 )){
 
                                         WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                         WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
+                                        if (settings->verbose) {
+                                            printf("Denoise ab bishrink\n");
+                                        }
+
                                     }
 
                                     Evaluate2(*bdecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab, wavNestedLevels);
@@ -1911,9 +1913,6 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         if (usechrom) {
                             Ldecomp->reconstruct(labco->data, cp.strength);
                         }
-//                        if (settings->verbose) {
-//                            printf("OK END\n");
-//                        }
  
                     }
                 }
@@ -2185,7 +2184,6 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         }
         //end hue
         
-//        printf("LEVWAV=%i\n", levwavL);
         
     if (thrend > 0.f) {
             //2 decomposition LL after guidefilter and dst before (perhaps dst no need)
@@ -3743,7 +3741,7 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float maxkoeLi, bool lipschitz,
         float edghig = settings->edghi;//increase or reduce "reinforce"
         float edglow = settings->edglo;//increase or reduce "reduce"
         float limrad = settings->limrad;//threshold action in function radius (rad)
-        printf("edghi=%f edglo=%f limrad=%f\n", edghig, edglow, limrad); 
+       // printf("edghi=%f edglo=%f limrad=%f\n", edghig, edglow, limrad); 
         // value *= beta;
         float edge = 1.f;
         float lim0 = limrad; //arbitrary limit for low radius and level between 2 or 3 to 30 maxi
@@ -3769,7 +3767,7 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float maxkoeLi, bool lipschitz,
         float bk = al0;
         float koef = ak * level + bk; //modulate for levels : more levels high, more koef low ==> concentrated action on low levels, without or near for high levels
         float expkoef = -std::pow(std::fabs(rad - lev), koef); //reduce effect for high levels
-        printf("repart=%f\n", repart);
+      //  printf("repart=%f\n", repart);
 
         if (cp.reinforce == 3) {
             if (rad < (lim0 / 60.f) && level == 0) {
