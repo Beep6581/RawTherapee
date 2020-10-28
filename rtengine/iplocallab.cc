@@ -1570,12 +1570,14 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
    // BENCHFUN
     const float gray = lp.sourcegray / 100.f;
     const float shadows_range = lp.blackev;
+    /*
     if(lp.whiteev < 1.5f) {
         lp.whiteev = 1.5f;
     }
+    */
     float dynamic_range = lp.whiteev - lp.blackev;
-    if (dynamic_range < 1.f) {
-        dynamic_range = 1.f;
+    if (dynamic_range < 0.5f) {
+        dynamic_range = 0.5f;
     }
     const float noise = pow_F(2.f, -16.f);
     const float log2 = xlogf(lp.baselog);
@@ -1654,9 +1656,14 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
                 if (m > noise) {
                     float mm = apply(m);
                     float f = mm / m;
+                    f = min(f, 1000000.f);
+                    
                     r *= f;
                     b *= f;
                     g *= f;
+                    r = CLIP(r);
+                    g = CLIP(g);
+                    b = CLIP(b);
                 }
 
                 assert(r == r);
@@ -1710,13 +1717,18 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
                     //   float t2 = norm(r, g, b);
                     float f2 = apply(t2) / t2;
                     f = intp(blend, f, f2);
-                    assert(std::isfinite(f));
+                    f = min(f, 1000000.f);
+                   
+               //     assert(std::isfinite(f));
                     r *= f;
                     g *= f;
                     b *= f;
-                    assert(std::isfinite(r));
-                    assert(std::isfinite(g));
-                    assert(std::isfinite(b));
+                    r = CLIP(r);
+                    g = CLIP(g);
+                    b = CLIP(b);
+               //     assert(std::isfinite(r));
+               //     assert(std::isfinite(g));
+               //     assert(std::isfinite(b));
                 }
             }
         }
