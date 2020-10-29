@@ -1107,6 +1107,35 @@ HISTORY_MSG_853;Local - Log encodind loc contrast
 HISTORY_MSG_854;Local - Log encodind Scope
 HISTORY_MSG_855;Local - Log encoding Entire image
 HISTORY_MSG_856;Local - Log encoding Shadows range
+HISTORY_MSG_857;Local - Wavelet blur residual
+HISTORY_MSG_858;Local - Wavelet blur luminance only
+HISTORY_MSG_859;Local - Wavelet max blur
+HISTORY_MSG_860;Local - Wavelet blur levels
+HISTORY_MSG_861;Local - Wavelet contrast levels
+HISTORY_MSG_862;Local - Wavelet contrast attenuation
+HISTORY_MSG_863;Local - Wavelet merge original image
+HISTORY_MSG_864;Local - Wavelet dir contrast attenuation
+HISTORY_MSG_865;Local - Wavelet dir contrast delta
+HISTORY_MSG_866;Local - Wavelet dir compression
+HISTORY_MSG_869;Local - Denoise by level
+
+HISTORY_MSG_870;Local - Wavelet mask curve H
+HISTORY_MSG_871;Local - Wavelet mask curve C
+HISTORY_MSG_872;Local - Wavelet mask curve L
+HISTORY_MSG_873;Local - Wavelet mask
+HISTORY_MSG_875;Local - Wavelet mask blend
+HISTORY_MSG_876;Local - Wavelet mask smooth
+HISTORY_MSG_877;Local - Wavelet mask chroma
+HISTORY_MSG_878;Local - Wavelet mask contrast curve
+HISTORY_MSG_879;Local - Wavelet contrast chroma
+HISTORY_MSG_880;Local - Wavelet blur chroma
+HISTORY_MSG_881;Local - Wavelet contrast offset
+HISTORY_MSG_882;Local - Wavelet blur
+HISTORY_MSG_883;Local - Wavelet contrast by level
+HISTORY_MSG_884;Local - Wavelet dir contrast
+HISTORY_MSG_885;Local - Wavelet tone mapping
+HISTORY_MSG_886;Local - Wavelet tone mapping compress
+HISTORY_MSG_887;Local - Wavelet tone mapping compress residual
 HISTORY_MSG_888;Local - Contrast Wavelet Balance Threshold
 HISTORY_MSG_889;Local - Contrast Wavelet Graduated Strength
 HISTORY_MSG_890;Local - Contrast Wavelet Graduated angle
