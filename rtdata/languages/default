@@ -2348,7 +2348,7 @@ TP_LOCALLAB_BALAN;ab-L balance (ΔE)
 TP_LOCALLAB_BALANEXP;Laplacian balance
 TP_LOCALLAB_BALANH;C-H balance (ΔE)
 TP_LOCALLAB_BALAN_TOOLTIP;Changes the ΔE algorithm parameters.\nTakes into account more or less a*b* or L*, or more or less C or H.\nNot for Denoise
-TP_LOCALLAB_BASELOG;Logarithm base
+TP_LOCALLAB_BASELOG;Shadows range (logarithm base)
 TP_LOCALLAB_BILATERAL;Bilateral filter
 TP_LOCALLAB_BLACK_EV;Black Ev
 TP_LOCALLAB_BLCO;Chrominance only
