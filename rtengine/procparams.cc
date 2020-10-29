@@ -8324,7 +8324,15 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Dehaze", "Strength", pedited, dehaze.strength, pedited->dehaze.strength);
             assignFromKeyfile(keyFile, "Dehaze", "ShowDepthMap", pedited, dehaze.showDepthMap, pedited->dehaze.showDepthMap);
             assignFromKeyfile(keyFile, "Dehaze", "Depth", pedited, dehaze.depth, pedited->dehaze.depth);
-            assignFromKeyfile(keyFile, "Dehaze", "Saturation", pedited, dehaze.saturation, pedited->dehaze.saturation);
+            if (ppVersion < 349 && dehaze.enabled && keyFile.has_key("Dehaze", "Luminance")) {
+                const bool luminance = keyFile.get_boolean("Dehaze", "Luminance");
+                dehaze.saturation = luminance ? 0 : 100;
+                if (pedited) {
+                    pedited->dehaze.saturation = true;
+                }
+            } else {
+                assignFromKeyfile(keyFile, "Dehaze", "Saturation", pedited, dehaze.saturation, pedited->dehaze.saturation);
+            }
         }
         
         if (keyFile.has_group("Film Simulation")) {
