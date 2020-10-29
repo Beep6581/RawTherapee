@@ -1570,11 +1570,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
    // BENCHFUN
     const float gray = lp.sourcegray / 100.f;
     const float shadows_range = lp.blackev;
-    /*
-    if(lp.whiteev < 1.5f) {
-        lp.whiteev = 1.5f;
-    }
-    */
+
     float dynamic_range = lp.whiteev - lp.blackev;
     if (dynamic_range < 0.5f) {
         dynamic_range = 0.5f;

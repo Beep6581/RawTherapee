@@ -2626,7 +2626,8 @@ TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the dynamic rang
 TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm making the shadows darker and the highlights brighter.\nWith values greater than 2, the shadows are grayer and the highlights become more washed out.
 TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Estimated values of Dynamic Range i.e. Black Ev and White Ev
 TP_LOCALLAB_LOGENCOD_TOOLTIP;Tone Mapping with Logarithmic encoding (ACES).\nUseful for underexposed images or images with high dynamic range.\n\nTwo-step process : 1) Dynamic Range calculation 2) Manual adjustment
-TP_LOCALLAB_LOGFRA;Source Gray Point
+TP_LOCALLAB_LOGFRA;Source
+TP_LOCALLAB_LOG2FRA;Target
 TP_LOCALLAB_LOGFRAME_TOOLTIP;Allows you to calculate and adjust the Ev levels and the Source Gray Point for the spot area. The resulting values will be used by all Lab operations and most RGB operations in the pipeline.\n Takes into account exposure compensation in the main-menu Exposure tab.
 TP_LOCALLAB_LOGLIN;Logarithm mode
 TP_LOCALLAB_LOGPFRA;Relative Exposure Levels
@@ -2849,7 +2850,7 @@ TP_LOCALLAB_SOFTRADIUSCOL_TOOLTIP;Applies a guided filter to the output image to
 TP_LOCALLAB_SOFTRETI;Reduce ΔE artifacts 
 TP_LOCALLAB_SOFTRETI_TOOLTIP;Take into account deltaE to improve Transmission map
 TP_LOCALLAB_SOFT_TOOLNAME;Soft Light & Original Retinex - 6
-TP_LOCALLAB_SOURCE_GRAY;Value
+TP_LOCALLAB_SOURCE_GRAY;Mean luminance (Yb%)
 TP_LOCALLAB_SPECCASE;Specific cases
 TP_LOCALLAB_SPECIAL;Special use of RGB curves
 TP_LOCALLAB_SPECIAL_TOOLTIP;The checkbox allows you to remove all other actions i.e. “Scope”, masks, sliders etc., (except for transitions) and use just the effect of the RGB tone-curve. 
@@ -2875,7 +2876,7 @@ TP_LOCALLAB_STYPE;Shape method
 TP_LOCALLAB_STYPE_TOOLTIP;You can choose between:\nSymmetrical - left handle linked to right, top handle linked to bottom.\nIndependent - all handles are independent.
 TP_LOCALLAB_SYM;Symmetrical (mouse)
 TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
-TP_LOCALLAB_TARGET_GRAY;Target gray point
+TP_LOCALLAB_TARGET_GRAY;Mean luminance (Yb%)
 TP_LOCALLAB_THRES;Threshold structure
 TP_LOCALLAB_THRESDELTAE;ΔE scope threshold 
 TP_LOCALLAB_THRESRETI;Threshold
