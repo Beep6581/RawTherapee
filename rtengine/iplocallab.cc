@@ -11964,7 +11964,7 @@ void ImProcFunctions::Lab_Local(
             dehazeParams.strength = lp.dehaze;
             dehazeParams.showDepthMap = false;
             dehazeParams.depth = lp.depth;
-            dehazeParams.luminance = params->locallab.spots.at(sp).lumonly;
+//            dehazeParams.luminance = true;
             lab2rgb(*bufexpfin, *tmpImage.get(), params->icm.workingProfile);
             dehazeloc(tmpImage.get(), dehazeParams);
             rgb2lab(*tmpImage.get(), *bufexpfin, params->icm.workingProfile);

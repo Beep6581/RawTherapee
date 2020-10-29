@@ -386,7 +386,7 @@ void ImProcFunctions::dehaze(Imagefloat *img, const DehazeParams &dehazeParams)
     const float t0 = max(1e-3f, std::exp(depth * maxDistance));
     const float teps = 1e-3f;
 
-    const bool luminance = dehazeParams.luminance;
+    const float satBlend = dehazeParams.saturation / 100.f;
     const TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 #ifdef __SSE2__
     const vfloat wsv[3] = {F2V(ws[1][0]), F2V(ws[1][1]),F2V(ws[1][2])};
@@ -407,6 +407,7 @@ void ImProcFunctions::dehaze(Imagefloat *img, const DehazeParams &dehazeParams)
         const vfloat t0v = F2V(t0);
         const vfloat tepsv = F2V(teps);
         const vfloat cmaxChannelv = F2V(maxChannel);
+        const vfloat satBlendv = F2V(satBlend);
         for (; x < W - 3; x += 4) {
             // ensure that the transmission is such that to avoid clipping...
             const vfloat r = LVFU(img->r(y, x));
@@ -420,17 +421,13 @@ void ImProcFunctions::dehaze(Imagefloat *img, const DehazeParams &dehazeParams)
                 STVFU(img->r(y, x), valv);
                 STVFU(img->g(y, x), valv);
                 STVFU(img->b(y, x), valv);
-            } else if (luminance) {
+            } else {
                 const vfloat Yv = Color::rgbLuminance(r, g, b, wsv);
                 const vfloat YYv = (Yv - ambientYv) / mtv + ambientYv;
                 const vfloat fv = vself(vmaskf_gt(Yv, epsYv), cmaxChannelv * YYv / Yv, cmaxChannelv);
-                STVFU(img->r(y, x), r * fv);
-                STVFU(img->g(y, x), g * fv);
-                STVFU(img->b(y, x), b * fv);
-            } else {
-                STVFU(img->r(y, x), ((r - ambient0v) / mtv + ambient0v) * cmaxChannelv);
-                STVFU(img->g(y, x), ((g - ambient1v) / mtv + ambient1v) * cmaxChannelv);
-                STVFU(img->b(y, x), ((b - ambient2v) / mtv + ambient2v) * cmaxChannelv);
+                STVFU(img->r(y, x), vintpf(satBlendv, ((r - ambient0v) / mtv + ambient0v) * cmaxChannelv, r * fv));
+                STVFU(img->g(y, x), vintpf(satBlendv, ((g - ambient1v) / mtv + ambient1v) * cmaxChannelv, g * fv));
+                STVFU(img->b(y, x), vintpf(satBlendv, ((b - ambient2v) / mtv + ambient2v) * cmaxChannelv, b * fv));
             }
         }
 #endif
@@ -444,17 +441,13 @@ void ImProcFunctions::dehaze(Imagefloat *img, const DehazeParams &dehazeParams)
             const float mt = max(dark[y][x], t0, tl + teps);
             if (dehazeParams.showDepthMap) {
                 img->r(y, x) = img->g(y, x) = img->b(y, x) = LIM01(1.f - mt) * maxChannel;
-            } else if (luminance) {
+            } else {
                 const float Y = Color::rgbLuminance(img->r(y, x), img->g(y, x), img->b(y, x), ws);
                 const float YY = (Y - ambientY) / mt + ambientY;
                 const float f = Y > 1e-5f ? maxChannel * YY / Y : maxChannel;
-                img->r(y, x) *= f;
-                img->g(y, x) *= f;
-                img->b(y, x) *= f;
-            } else {
-                img->r(y, x) = ((r - ambient[0]) / mt + ambient[0]) * maxChannel;
-                img->g(y, x) = ((g - ambient[1]) / mt + ambient[1]) * maxChannel;
-                img->b(y, x) = ((b - ambient[2]) / mt + ambient[2]) * maxChannel;
+                img->r(y, x) = intp(satBlend, ((r - ambient[0]) / mt + ambient[0]) * maxChannel, r * f);
+                img->g(y, x) = intp(satBlend, ((g - ambient[1]) / mt + ambient[1]) * maxChannel, g * f);
+                img->b(y, x) = intp(satBlend, ((b - ambient[2]) / mt + ambient[2]) * maxChannel, b * f);
             }
         }
     }
@@ -556,7 +549,8 @@ void ImProcFunctions::dehazeloc(Imagefloat *img, const DehazeParams &dehazeParam
     const float teps = 1e-6f;
     const float t0 = max(teps, std::exp(depth * maxDistance));
 
-    const bool luminance = dehazeParams.luminance;
+//    const bool luminance = dehazeParams.luminance;
+    const bool luminance = true;
     const TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
     const float ambientY = Color::rgbLuminance(ambient[0], ambient[1], ambient[2], ws);
