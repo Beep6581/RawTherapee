@@ -2088,13 +2088,20 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
     double Xwout, Zwout;
     double Xwsc, Zwsc;
 
-    int tempo;
+    int tempo = 5000;
 
     if (params->locallab.spots.at(sp).warm > 0) {
         tempo = 5000 - 30 * params->locallab.spots.at(sp).warm;
-    } else {
+    } else if (params->locallab.spots.at(sp).warm < 0){
         tempo = 5000 - 49 * params->locallab.spots.at(sp).warm;
     }
+
+    if (params->locallab.spots.at(sp).catad > 0) {
+        tempo = 5000 - 30 * params->locallab.spots.at(sp).catad;
+    } else if (params->locallab.spots.at(sp).catad < 0){
+        tempo = 5000 - 49 * params->locallab.spots.at(sp).catad;
+    }
+
 
     ColorTemp::temp2mulxyz(params->wb.temperature, params->wb.method, Xw, Zw);  //compute white Xw Yw Zw  : white current WB
     ColorTemp::temp2mulxyz(tempo, "Custom", Xwout, Zwout);
@@ -9686,6 +9693,9 @@ void ImProcFunctions::Lab_Local(
             log_encode(tmpImage.get(), lp, multiThread, bfw, bfh);
             rgb2lab(*(tmpImage.get()), *bufexpfin, params->icm.workingProfile);
             tmpImage.reset();
+            if (params->locallab.spots.at(sp).catad != 0) {
+                ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get());
+            }
 
             //here begin graduated filter
             //first solution "easy" but we can do other with log_encode...to see the results

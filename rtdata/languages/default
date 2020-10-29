@@ -1096,6 +1096,17 @@ HISTORY_MSG_840;Local - CL Curve
 HISTORY_MSG_841;Local - LC curve
 HISTORY_MSG_842;Local - Contrast Threshold
 HISTORY_MSG_843;Local - Radius
+HISTORY_MSG_845;Local - Log encoding
+HISTORY_MSG_846;Local - Log encoding auto
+HISTORY_MSG_847;Local - Log encoding Source
+HISTORY_MSG_849;Local - Log encoding Source auto
+HISTORY_MSG_850;Local - Log encoding B_Ev
+HISTORY_MSG_851;Local - Log encoding W_Ev
+HISTORY_MSG_852;Local - Log encoding Target
+HISTORY_MSG_853;Local - Log encodind loc contrast
+HISTORY_MSG_854;Local - Log encodind Scope
+HISTORY_MSG_855;Local - Log encoding Entire image
+HISTORY_MSG_856;Local - Log encoding Shadows range
 HISTORY_MSG_888;Local - Contrast Wavelet Balance Threshold
 HISTORY_MSG_889;Local - Contrast Wavelet Graduated Strength
 HISTORY_MSG_890;Local - Contrast Wavelet Graduated angle
@@ -1166,6 +1177,7 @@ HISTORY_MSG_956;Local - CH Curve
 HISTORY_MSG_957;Local - Denoise mode
 HISTORY_MSG_958;Local - Show/hide settings
 HISTORY_MSG_959;Local - Inverse blur
+HISTORY_MSG_960;Local - Log encoding - cat02
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2386,6 +2398,7 @@ TP_LOCALLAB_BUTTON_DEL;Delete
 TP_LOCALLAB_BUTTON_DUPL;Duplicate
 TP_LOCALLAB_BUTTON_REN;Rename
 TP_LOCALLAB_BUTTON_VIS;Show/Hide
+TP_LOCALLAB_CATAD;Chromatic adaptation - Cat02
 TP_LOCALLAB_CBDL;Contrast by Detail Levels
 TP_LOCALLAB_CBDLCLARI_TOOLTIP;Enhances local contrast of the midtones.
 TP_LOCALLAB_CBDL_ADJ_TOOLTIP;Same as wavelets.\nThe first level (0) acts on 2x2 pixel details.\nThe last level (5) acts on 64x64 pixel details.

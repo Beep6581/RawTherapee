@@ -1425,6 +1425,7 @@ struct LocallabParams {
         bool autocompute;
         double sourceGray;
         double targetGray;
+        double catad;
         bool Autogray;
         bool fullimage;
         double blackEv;

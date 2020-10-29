@@ -833,6 +833,7 @@ public:
         bool autocompute;
         bool sourceGray;
         bool targetGray;
+        bool catad;
         bool Autogray;
         bool fullimage;
         bool blackEv;

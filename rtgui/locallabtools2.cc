@@ -4662,6 +4662,7 @@ LocallabLog::LocallabLog():
     log2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
     targetGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
     detail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 1., 0.01, 0.6))),
+    catad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0.))),
     baselog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BASELOG"), 1.3, 8., 0.05, 2., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     sensilog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     strlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2.0, 2.0, 0.05, 0.))),
@@ -4685,6 +4686,8 @@ LocallabLog::LocallabLog():
     targetGray->setAdjusterListener(this);
 
     detail->setAdjusterListener(this);
+
+    catad->setAdjusterListener(this);
 
     baselog->setAdjusterListener(this);
 
@@ -4715,6 +4718,7 @@ LocallabLog::LocallabLog():
     ToolParamBlock* const logP2Box = Gtk::manage(new ToolParamBlock());
     logP2Box->pack_start(*targetGray);
     logP2Box->pack_start(*detail);
+    logP2Box->pack_start(*catad);
     log2Frame->add(*logP2Box);
     pack_start(*log2Frame);
 //    pack_start(*baselog);
@@ -4849,6 +4853,7 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.Autogray = Autogray->get_active();
         spot.sourceGray = sourceGray->getValue();
         spot.targetGray = targetGray->getValue();
+        spot.catad = catad->getValue();
         spot.detail = detail->getValue();
         spot.baselog = baselog->getValue();
         spot.sensilog = sensilog->getIntValue();
@@ -4871,6 +4876,7 @@ void LocallabLog::setDefaults(const rtengine::procparams::ProcParams* defParams,
         whiteEv->setDefault(defSpot.whiteEv);
         sourceGray->setDefault(defSpot.sourceGray);
         targetGray->setDefault(defSpot.targetGray);
+        catad->setDefault(defSpot.catad);
         detail->setDefault(defSpot.detail);
         baselog->setDefault(defSpot.baselog);
         sensilog->setDefault((double)defSpot.sensilog);
@@ -4909,6 +4915,13 @@ void LocallabLog::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(EvlocallabtargetGray,
                                        targetGray->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == catad) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcatad,
+                                       catad->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
