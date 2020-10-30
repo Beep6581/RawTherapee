@@ -832,13 +832,17 @@ public:
         bool explog;
         bool autocompute;
         bool sourceGray;
+        bool sourceabs;
+        bool targabs;
         bool targetGray;
         bool catad;
         bool Autogray;
         bool fullimage;
+        bool ciecam;
         bool blackEv;
         bool whiteEv;
         bool detail;
+        bool surround;
         bool sensilog;
         bool baselog;
         bool strlog;

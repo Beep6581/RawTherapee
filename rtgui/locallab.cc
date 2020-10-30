@@ -1017,10 +1017,10 @@ void Locallab::minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int 
     }
 }
 
-void Locallab::logencodChanged(const float blackev, const float whiteev, const float sourceg, const float targetg)
+void Locallab::logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg)
 {
     // Update Locallab Log Encoding accordingly
-    explog->updateAutocompute(blackev, whiteev, sourceg, targetg);
+    explog->updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg);
 }
 
 void Locallab::refChanged(const std::vector<locallabRef> &ref, int selspot)

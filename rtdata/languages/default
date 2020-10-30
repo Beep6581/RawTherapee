@@ -1118,7 +1118,6 @@ HISTORY_MSG_864;Local - Wavelet dir contrast attenuation
 HISTORY_MSG_865;Local - Wavelet dir contrast delta
 HISTORY_MSG_866;Local - Wavelet dir compression
 HISTORY_MSG_869;Local - Denoise by level
-
 HISTORY_MSG_870;Local - Wavelet mask curve H
 HISTORY_MSG_871;Local - Wavelet mask curve C
 HISTORY_MSG_872;Local - Wavelet mask curve L
@@ -1207,6 +1206,10 @@ HISTORY_MSG_957;Local - Denoise mode
 HISTORY_MSG_958;Local - Show/hide settings
 HISTORY_MSG_959;Local - Inverse blur
 HISTORY_MSG_960;Local - Log encoding - cat02
+HISTORY_MSG_961;Local - Log encoding Ciecam
+HISTORY_MSG_962;Local - Log encoding  Absolute luminance source
+HISTORY_MSG_963;Local - Log encoding  Absolute luminance target
+HISTORY_MSG_964;Local - Log encoding  Surround
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2446,6 +2449,7 @@ TP_LOCALLAB_CHROMASKCOL;Chroma
 TP_LOCALLAB_CHROMASK_TOOLTIP;Changes the chroma of the mask if one exists (i.e. C(C) or LC(H) is activated).
 TP_LOCALLAB_CHROMASK_TOOLTIP;You can use this slider to desaturated background (inverse mask - curve near 0).\nAlso to attenuate or enhance the action of a mask on the chroma
 TP_LOCALLAB_CHRRT;Chroma
+TP_LOCALLAB_CIEC;Uses ciecam's environment variables (partially)
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Contains the references of the RT-spot, useful for shape detection (hue, luma, chroma, Sobel).\nLow values may be useful for treating foliage.\nHigh values may be useful for treating skin
 TP_LOCALLAB_CLARICRES;Merge chroma
@@ -2892,6 +2896,7 @@ TP_LOCALLAB_SOFTRADIUSCOL_TOOLTIP;Applies a guided filter to the output image to
 TP_LOCALLAB_SOFTRETI;Reduce ΔE artifacts 
 TP_LOCALLAB_SOFTRETI_TOOLTIP;Take into account deltaE to improve Transmission map
 TP_LOCALLAB_SOFT_TOOLNAME;Soft Light & Original Retinex - 6
+TP_LOCALLAB_SOURCE_ABS;Absolute luminance
 TP_LOCALLAB_SOURCE_GRAY;Mean luminance (Yb%)
 TP_LOCALLAB_SPECCASE;Specific cases
 TP_LOCALLAB_SPECIAL;Special use of RGB curves

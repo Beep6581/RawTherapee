@@ -36,7 +36,6 @@
 #include "rt_algo.h"
 #include "settings.h"
 #include "../rtgui/options.h"
-
 #include "utils.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -1731,7 +1730,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
     }
 }
 
-void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE)
+void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, float *sourceab, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE)
 {
     //BENCHFUN
 //adpatation to local adjustments Jacques Desmis 12 2019
@@ -1841,6 +1840,35 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
         const float gray = sourceg[sp] / 100.f;
         whiteev[sp] = xlogf(maxVal / gray) / log2;
         blackev[sp] = whiteev[sp] - dynamic_range;
+        
+        const FramesMetaData* metaData = imgsrc->getMetaData();
+        int imgNum = 0;
+
+        if (imgsrc->isRAW()) {
+            if (imgsrc->getSensorType() == ST_BAYER) {
+                imgNum = rtengine::LIM<unsigned int>(params->raw.bayersensor.imageNum, 0, metaData->getFrameCount() - 1);
+            } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
+                        //imgNum = rtengine::LIM<unsigned int>(params->raw.xtranssensor.imageNum, 0, metaData->getFrameCount() - 1);
+            }
+        }
+        
+        float fnum = metaData->getFNumber(imgNum);          // F number
+        float fiso = metaData->getISOSpeed(imgNum) ;        // ISO
+        float fspeed = metaData->getShutterSpeed(imgNum) ;  // Speed
+        double fcomp = metaData->getExpComp(imgNum);        // Compensation +/-
+        double adap;
+
+        if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) { //if no exif data or wrong
+            adap = 2000.;
+        } else {
+            double E_V = fcomp + std::log2(double ((fnum * fnum) / fspeed / (fiso / 100.f)));
+            E_V += params->toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
+            E_V += std::log2(params->raw.expos);  // exposure raw white point ; log2 ==> linear to EV
+            adap = pow(2.0, E_V - 3.0);  // cd / m2
+            // end calculation adaptation scene luminosity
+        }
+        
+        sourceab[sp] = adap;
     }
 }
 
@@ -2076,7 +2104,10 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
 {
     //be careful quasi duplicate with branch cat02wb
     //BENCHFUN
-
+    bool ciec = false;
+    if (params->locallab.spots.at(sp).ciecam) {
+        ciec = true;
+    }
     int width = lab->W, height = lab->H;
     float Yw;
     Yw = 1.0f;
@@ -2089,17 +2120,20 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
     double Xwsc, Zwsc;
 
     int tempo = 5000;
-
-    if (params->locallab.spots.at(sp).warm > 0) {
-        tempo = 5000 - 30 * params->locallab.spots.at(sp).warm;
-    } else if (params->locallab.spots.at(sp).warm < 0){
-        tempo = 5000 - 49 * params->locallab.spots.at(sp).warm;
+    if(!ciec) {
+        if (params->locallab.spots.at(sp).warm > 0) {
+            tempo = 5000 - 30 * params->locallab.spots.at(sp).warm;
+        } else if (params->locallab.spots.at(sp).warm < 0){
+            tempo = 5000 - 49 * params->locallab.spots.at(sp).warm;
+        }
     }
 
-    if (params->locallab.spots.at(sp).catad > 0) {
-        tempo = 5000 - 30 * params->locallab.spots.at(sp).catad;
-    } else if (params->locallab.spots.at(sp).catad < 0){
-        tempo = 5000 - 49 * params->locallab.spots.at(sp).catad;
+    if(ciec) {
+        if (params->locallab.spots.at(sp).catad > 0) {
+            tempo = 5000 - 30 * params->locallab.spots.at(sp).catad;
+        } else if (params->locallab.spots.at(sp).catad < 0){
+            tempo = 5000 - 49 * params->locallab.spots.at(sp).catad;
+        }
     }
 
 
@@ -2113,6 +2147,25 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
     nc = 1.00f;
     //viewing condition for surround
     f2 = 1.0f, c2 = 0.69f, nc2 = 1.0f;
+    if(ciec) {
+        //viewing condition for surround
+        if (params->locallab.spots.at(sp).surround == "Average") {
+            f2 = 1.0f, c2 = 0.69f, nc2 = 1.0f;
+        } else if (params->locallab.spots.at(sp).surround == "Dim") {
+            f2  = 0.9f;
+            c2  = 0.59f;
+            nc2 = 0.9f;
+        } else if (params->locallab.spots.at(sp).surround == "Dark") {
+            f2  = 0.8f;
+            c2  = 0.525f;
+            nc2 = 0.8f;
+        } else if (params->locallab.spots.at(sp).surround == "ExtremelyDark") {
+            f2  = 0.8f;
+            c2  = 0.41f;
+            nc2 = 0.8f;
+        }
+    }
+
     //with which algorithm
     //  alg = 0;
 
@@ -2126,10 +2179,15 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
     yws = 100.f;
 
 
-    yb2 = 18;
     //La and la2 = ambiant luminosity scene and viewing
     la = 400.f;
-    const float la2 = 400.f;
+    float la2 = 400.f;
+    if(ciec) {
+        la = params->locallab.spots.at(sp).sourceabs;
+        
+        la2 = params->locallab.spots.at(sp).targabs;
+    }
+    
     const float pilot = 2.f;
     const float pilotout = 2.f;
 
@@ -2138,6 +2196,14 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
     LUTu hist16J;
     LUTu hist16Q;
     float yb = 18.f;
+    yb2 = 18;
+    if(ciec) {
+        yb = params->locallab.spots.at(sp).targetGray;//target because we are after Log encoding
+        
+        yb2 = params->locallab.spots.at(sp).targetGray;
+    }
+    
+
     float d, dj;
 
     // const int gamu = 0; //(params->colorappearance.gamut) ? 1 : 0;
@@ -9693,7 +9759,7 @@ void ImProcFunctions::Lab_Local(
             log_encode(tmpImage.get(), lp, multiThread, bfw, bfh);
             rgb2lab(*(tmpImage.get()), *bufexpfin, params->icm.workingProfile);
             tmpImage.reset();
-            if (params->locallab.spots.at(sp).catad != 0) {
+            if (params->locallab.spots.at(sp).ciecam) {
                 ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get());
             }
 

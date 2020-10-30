@@ -1424,14 +1424,18 @@ struct LocallabParams {
         bool explog;
         bool autocompute;
         double sourceGray;
+        double sourceabs;
+        double targabs;
         double targetGray;
         double catad;
         bool Autogray;
         bool fullimage;
+        bool ciecam;
         double blackEv;
         double whiteEv;
         double detail;
         int sensilog;
+        Glib::ustring surround;
         double baselog;
         double strlog;
         double anglog;
