@@ -5117,15 +5117,20 @@ void LocallabLog::autocomputeToggled()
 void LocallabLog::ciecamChanged()
 {
     if(ciecam->get_active()){
-        sourceabs->set_sensitive(true);
+    /*    sourceabs->set_sensitive(true);
         targabs->set_sensitive(true);
         catad->set_sensitive(true);
         surrHBox->set_sensitive(true);
+        */
+        sourceabs->show();
+        targabs->show();
+        catad->show();
+        surrHBox->show();
     } else {
-        sourceabs->set_sensitive(false);
-        targabs->set_sensitive(false);
-        catad->set_sensitive(false);
-        surrHBox->set_sensitive(false);
+        sourceabs->hide();
+        targabs->hide();
+        catad->hide();
+        surrHBox->hide();
     }
 
     if (isLocActivated && exp->getEnabled()) {
@@ -5175,15 +5180,15 @@ void LocallabLog::AutograyChanged()
 void LocallabLog::updateLogGUI2()
 {
     if(ciecam->get_active()){
-        sourceabs->set_sensitive(true);
-        targabs->set_sensitive(true);
-        catad->set_sensitive(true);
-        surrHBox->set_sensitive(true);
+        sourceabs->show();
+        targabs->show();
+        catad->show();
+        surrHBox->show();
     } else {
-        sourceabs->set_sensitive(false);
-        targabs->set_sensitive(false);
-        catad->set_sensitive(false);
-        surrHBox->set_sensitive(false);
+        sourceabs->hide();
+        targabs->hide();
+        catad->hide();
+        surrHBox->hide();
     }
 }
 
