@@ -2100,12 +2100,12 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B,  const str
 }
 
 
-void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
+void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
 {
     //be careful quasi duplicate with branch cat02wb
     //BENCHFUN
     bool ciec = false;
-    if (params->locallab.spots.at(sp).ciecam) {
+    if (params->locallab.spots.at(sp).ciecam && params->locallab.spots.at(sp).explog && call == 1) {
         ciec = true;
     }
     int width = lab->W, height = lab->H;
@@ -2120,11 +2120,11 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
     double Xwsc, Zwsc;
 
     int tempo = 5000;
-    if(!ciec) {
+    if(params->locallab.spots.at(sp).expvibrance && call == 2) {
         if (params->locallab.spots.at(sp).warm > 0) {
             tempo = 5000 - 30 * params->locallab.spots.at(sp).warm;
         } else if (params->locallab.spots.at(sp).warm < 0){
-            tempo = 5000 - 49 * params->locallab.spots.at(sp).warm;
+            tempo = 5000 - 70 * params->locallab.spots.at(sp).warm;
         }
     }
 
@@ -2132,7 +2132,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
         if (params->locallab.spots.at(sp).catad > 0) {
             tempo = 5000 - 30 * params->locallab.spots.at(sp).catad;
         } else if (params->locallab.spots.at(sp).catad < 0){
-            tempo = 5000 - 49 * params->locallab.spots.at(sp).catad;
+            tempo = 5000 - 70 * params->locallab.spots.at(sp).catad;
         }
     }
 
@@ -2211,7 +2211,11 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
     yw = 100.f * Yw;
     zw = 100.0 * Zw;
     float xw1 = xws, yw1 = yws, zw1 = zws, xw2 = xwd, yw2 = ywd, zw2 = zwd;
-
+/*    
+            xw1 = 96.46f;    //use RT WB; CAT 02 is used for output device (see prefreneces)
+            yw1 = 100.0f;
+            zw1 = 82.445f;
+*/
     float cz, wh, pfl;
     Ciecam02::initcam1float(yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
 //   const float chr = 0.f;
@@ -9760,7 +9764,7 @@ void ImProcFunctions::Lab_Local(
             rgb2lab(*(tmpImage.get()), *bufexpfin, params->icm.workingProfile);
             tmpImage.reset();
             if (params->locallab.spots.at(sp).ciecam) {
-                ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get());
+                ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 1);
             }
 
             //here begin graduated filter
@@ -10885,7 +10889,7 @@ void ImProcFunctions::Lab_Local(
                     ImProcFunctions::vibrance(bufexpfin.get(), vibranceParams, params->toneCurve.hrenabled, params->icm.workingProfile);
 
                     if (params->locallab.spots.at(sp).warm != 0) {
-                        ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get());
+                        ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 2);
                     }
 
 
