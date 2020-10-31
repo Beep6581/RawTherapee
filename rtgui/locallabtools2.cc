@@ -4873,6 +4873,7 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         Autogray->set_active(spot.Autogray);
         sourceGray->setValue(spot.sourceGray);
         sourceabs->setValue(spot.sourceabs);
+        catad->setValue(spot.catad);
         targabs->setValue(spot.targabs);
         targetGray->setValue(spot.targetGray);
         detail->setValue(spot.detail);
