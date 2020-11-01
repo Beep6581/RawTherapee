@@ -2203,6 +2203,19 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         yb2 = params->locallab.spots.at(sp).targetGray;
     }
     
+    float schr = 0.f;
+
+    if (ciec) {
+        schr = params->locallab.spots.at(sp).saturl;
+
+        if (schr > 0.f) {
+          schr = schr / 2.f;    //divide sensibility for saturation
+        }
+
+        if (schr == -100.f) {
+            schr = -99.8f;
+        }
+    }
 
     float d, dj;
 
@@ -2226,6 +2239,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     const float reccmcz = 1.f / (c2 * czj);
 #endif
     const float pow1n = pow_F(1.64f - pow_F(0.29f, nj), 0.73f);
+    const float coe = pow_F(fl, 0.25f);
+    const float QproFactor = (0.4f / c) * (aw + 4.0f) ;
 
 #ifdef __SSE2__
     int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
@@ -2337,7 +2352,20 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                 spro = s;
                 /*
                 */
-
+                if(ciec) {
+                    float sres;
+                    float rstprotection = 50.f;//arbitrary 50% protection skin tones
+                    float Sp = spro / 100.0f;
+                    float parsat = 1.5f; //parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfullness (personal evaluation)
+                    Ciecam02::curvecolorfloat(schr, Sp, sres, parsat);
+                    float dred = 100.f; // in C mode
+                    float protect_red = 80.0f; // in C mode
+                    dred = 100.0f * sqrtf((dred * coe) / Qpro);
+                    protect_red = 100.0f * sqrtf((protect_red * coe) / Qpro);
+                    Color::skinredfloat(Jpro, hpro, sres, Sp, dred, protect_red, 0, rstprotection, 100.f, spro);
+                    Qpro = QproFactor * sqrtf(Jpro);
+                    Cpro = (spro * spro * Qpro) / (10000.0f);
+                }
 
                 //retrieve values C,J...s
                 C = Cpro;

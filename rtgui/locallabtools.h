@@ -1203,6 +1203,7 @@ private:
     Adjuster* const targetGray;
     Adjuster* const detail;
     Adjuster* const catad;
+    Adjuster* const saturl;
     Adjuster* const targabs;
     MyComboBoxText*  const surround;
     Gtk::HBox* const surrHBox;
