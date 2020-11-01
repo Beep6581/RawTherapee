@@ -93,7 +93,7 @@ Wavelet::Wavelet() :
     offset(Gtk::manage(new Adjuster(M("TP_WAVELET_WAVOFFSET"), 0.33, 1.66, 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     lowthr(Gtk::manage(new Adjuster(M("TP_WAVELET_WAVLOWTHR"), 20., 100., 0.5, 40.))),
     rescon(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCON"), -100, 100, 1, 0))),
-    resconH(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCONH"), -100, 100, 1, 0))),
+    resconH(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCONH"), 0, 100, 1, 0))),
     reschro(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCHRO"), -100, 100, 1, 0))),
     resblur(Gtk::manage(new Adjuster(M("TP_WAVELET_RESBLUR"), 0, 100, 1, 0))),
     resblurc(Gtk::manage(new Adjuster(M("TP_WAVELET_RESBLURC"), 0, 100, 1, 0))),

@@ -1197,8 +1197,10 @@ private:
     Gtk::CheckButton* const fullimage;
     Gtk::CheckButton* const Autogray;
     Adjuster* const sourceGray;
+    Gtk::Frame* const log2Frame;
     Adjuster* const targetGray;
     Adjuster* const detail;
+    Adjuster* const catad;
     Adjuster* const baselog;
     Adjuster* const sensilog;
     Adjuster* const strlog;

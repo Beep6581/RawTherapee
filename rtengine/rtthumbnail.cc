@@ -205,11 +205,6 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 
     ImageIO* img = imgSrc.getImageIO();
 
-    // agriggio -- hotfix for #3794, to be revised once a proper solution is implemented
-    if (std::max(img->getWidth(), img->getHeight()) / std::min(img->getWidth(), img->getHeight()) >= 10) {
-        return nullptr;
-    }
-    
     Thumbnail* tpp = new Thumbnail ();
 
     unsigned char* data;
@@ -235,14 +230,28 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
         h = img->getHeight();
         tpp->scale = 1.;
     } else {
-        if (fixwh == 1) {
+        if (fixwh < 0 && w > 0 && h > 0) {
+            const int ww = h * img->getWidth() / img->getHeight();
+            const int hh = w * img->getHeight() / img->getWidth();
+            if (ww <= w) {
+                w = ww;
+                tpp->scale = static_cast<double>(img->getHeight()) / h;
+            } else {
+                h = hh;
+                tpp->scale = static_cast<double>(img->getWidth()) / w;
+            }
+        } else if (fixwh == 1) {
             w = h * img->getWidth() / img->getHeight();
-            tpp->scale = (double)img->getHeight() / h;
+            tpp->scale = static_cast<double>(img->getHeight()) / h;
         } else {
             h = w * img->getHeight() / img->getWidth();
-            tpp->scale = (double)img->getWidth() / w;
+            tpp->scale = static_cast<double>(img->getWidth()) / w;
         }
     }
+
+    // Precaution to prevent division by zero later on
+    if (h < 1) h = 1;
+    if (w < 1) w = 1;
 
     // bilinear interpolation
     if (tpp->thumbImg) {
@@ -1178,6 +1187,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         rwidth = int (size_t (thumbImg->getWidth()) * size_t (rheight) / size_t (thumbImg->getHeight()));
     }
 
+    if (rwidth < 1) rwidth = 1;
+    if (rheight < 1) rheight = 1;
 
     Imagefloat* baseImg = resizeTo<Imagefloat> (rwidth, rheight, interp, thumbImg);
 

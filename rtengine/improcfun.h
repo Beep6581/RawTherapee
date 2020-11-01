@@ -270,7 +270,7 @@ public:
 
     //3 functions from Alberto Griggio, adapted J.Desmis 2019
     void filmGrain(Imagefloat *rgb, int isogr, int strengr, int scalegr, int bfw, int bfh);
-    void log_encode(Imagefloat *rgb, const struct local_params & lp, bool multiThread, int bfw, int bfh);
+    void log_encode(Imagefloat *rgb, struct local_params & lp, bool multiThread, int bfw, int bfh);
     void getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE);
 
     void MSRLocal(int call, int sp, bool fftw, int lum, float** reducDE, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, const float* const *originalLuminance,
@@ -456,6 +456,7 @@ public:
     void labColorCorrectionRegions(LabImage *lab);
 
     Image8*     lab2rgb(LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm, bool consider_histogram_settings = true);
+    void rgb2lab(const Image8 &src, int x, int y, int w, int h, float L[], float a[], float b[], const procparams::ColorManagementParams &icm, bool consider_histogram_settings = true) const;
     Imagefloat*    lab2rgbOut(LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm);
     // CieImage *ciec;
     void workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, const Glib::ustring &profile, double gampos, double slpos, cmsHTRANSFORM &transform, bool normalizeIn = true, bool normalizeOut = true, bool keepTransForm = false) const;

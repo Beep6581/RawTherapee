@@ -720,6 +720,36 @@ flowboxchild:selected {
     margin: 0;
 }
 
+/* Vertical version of slider. */
+#histScale {
+    min-height: 4em;
+    min-width: 0.4166666666666666em;
+    margin: 0.5833333333333333em 0 0 0;
+}
+#histScale trough {
+    padding: 0.583333333333333333em 0;
+}
+#histScale trough highlight {
+    margin: -0.583333333333333333em 0;
+    padding: 0.1em 0 0 0.1em;
+}
+#histScale.fine-tune trough highlight {
+    padding: 0.5em 0 0 0.5em;
+}
+
+/* Copied from button.flat style. */
+button.radio#histButton  {
+    background-image: none;
+}
+
+button.radio#histButton:checked {
+    background-image:  linear-gradient(#343434, #2E2E2E, #292929);
+}
+
+button.radio#histButton:hover {
+    background-image: linear-gradient(shade(#343434,1.3), shade(#2E2E2E,1.3), shade(#292929,1.3));
+}
+
 /*** end ***************************************************************************************/
 
 #MyExpander {

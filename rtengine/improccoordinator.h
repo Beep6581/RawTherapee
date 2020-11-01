@@ -54,7 +54,7 @@ class Crop;
   * but using this class' LUT and other precomputed parameters. The main preview area is displaying a non framed Crop object,
   * while detail windows are framed Crop objects.
   */
-class ImProcCoordinator final : public StagedImageProcessor
+class ImProcCoordinator final : public StagedImageProcessor, public HistogramObservable
 {
 
     friend class Crop;
@@ -126,6 +126,16 @@ protected:
     LUTu histBlue, histBlueRaw;
     LUTu histLuma, histToneCurve, histToneCurveBW, histLCurve, histCCurve;
     LUTu histLLCurve, histLCAM, histCCAM, histClad, bcabhist, histChroma, histLRETI;
+    bool hist_lrgb_dirty;
+    /// Used to simulate a lazy update of the raw histogram.
+    bool hist_raw_dirty;
+    int vectorscopeScale;
+    bool vectorscope_hc_dirty, vectorscope_hs_dirty;
+    array2D<int> vectorscope_hc, vectorscope_hs;
+    /// Waveform's intensity. Same as height of reference image.
+    int waveformScale;
+    bool waveform_dirty;
+    array2D<int> waveformRed, waveformGreen, waveformBlue, waveformLuma;
 
     LUTf CAMBrightCurveJ, CAMBrightCurveQ;
 
@@ -195,8 +205,16 @@ protected:
 
     MyMutex minit;  // to gain mutually exclusive access to ... to what exactly?
 
+    void notifyHistogramChanged();
     void reallocAll();
-    void updateLRGBHistograms();
+    /// Updates L, R, G, and B histograms. Returns true unless not updated.
+    bool updateLRGBHistograms();
+    /// Updates the H-C vectorscope. Returns true unless not updated.
+    bool updateVectorscopeHC();
+    /// Updates the H-S vectorscope. Returns true unless not updated.
+    bool updateVectorscopeHS();
+    /// Updates all waveforms. Returns true unless not updated.
+    bool updateWaveforms();
     void setScale(int prevscale);
     void updatePreviewImage (int todo, bool panningRelatedChange);
 
@@ -448,7 +466,13 @@ public:
     }
     void setHistogramListener (HistogramListener *h) override
     {
+        if (hListener) {
+            hListener->setObservable(nullptr);
+        }
         hListener = h;
+        if (h) {
+            h->setObservable(this);
+        }
     }
     void setAutoCamListener  (AutoCamListener* acl) override
     {
@@ -549,6 +573,11 @@ public:
 
     } denoiseInfoStore;
 
+    void requestUpdateHistogram() override;
+    void requestUpdateHistogramRaw() override;
+    void requestUpdateVectorscopeHC() override;
+    void requestUpdateVectorscopeHS() override;
+    void requestUpdateWaveform() override;
 };
 
 }

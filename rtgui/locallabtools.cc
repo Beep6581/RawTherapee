@@ -758,7 +758,7 @@ LocallabColor::LocallabColor():
 
     LLmaskcolshapewav->setIdentityValue(0.);
     LLmaskcolshapewav->setResetCurve(FlatCurveType(defSpot.LLmaskcolcurvewav.at(0)), defSpot.LLmaskcolcurvewav);
-    LLmaskcolshapewav->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+//    LLmaskcolshapewav->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
     mask2CurveEditorGwav->curveListComplete();
 
@@ -3557,7 +3557,7 @@ LocallabShadow::LocallabShadow():
     blurSHde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     gamFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GAMFRA")))),
     gamSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMSH"), 0.25, 15.0, 0.01, 2.4))),
-    sloSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOSH"), 0.0, 150.0, 0.01, 12.92))),
+    sloSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOSH"), 0.0, 500.0, 0.01, 12.92))),
     expgradsh(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
@@ -3611,6 +3611,7 @@ LocallabShadow::LocallabShadow():
     blurSHde->setAdjusterListener(this);
 
     gamSH->setAdjusterListener(this);
+    sloSH->setLogScale(16, 0);
 
     sloSH->setAdjusterListener(this);
 

@@ -246,11 +246,20 @@ GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done edit
 HISTOGRAM_TOOLTIP_B;Show/Hide blue histogram.
 HISTOGRAM_TOOLTIP_BAR;Show/Hide RGB indicator bar.
 HISTOGRAM_TOOLTIP_CHRO;Show/Hide chromaticity histogram.
+HISTOGRAM_TOOLTIP_CROSSHAIR;Show/Hide indicator crosshair.
 HISTOGRAM_TOOLTIP_G;Show/Hide green histogram.
 HISTOGRAM_TOOLTIP_L;Show/Hide CIELab luminance histogram.
 HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 HISTOGRAM_TOOLTIP_R;Show/Hide red histogram.
 HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram.
+HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Toggle visibility of the scope option buttons.
+HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Adjust scope brightness.
+HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Histogram
+HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW;Raw Histogram
+HISTOGRAM_TOOLTIP_TYPE_PARADE;RGB Parade
+HISTOGRAM_TOOLTIP_TYPE_WAVEFORM;Waveform
+HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HC;Hue-Chroma Vectorscope
+HISTOGRAM_TOOLTIP_TYPE_VECTORSCOPE_HS;Hue-Saturation Vectorscope
 HISTORY_CHANGED;Changed
 HISTORY_CUSTOMCURVE;Custom curve
 HISTORY_FROMCLIPBOARD;From clipboard
@@ -1087,6 +1096,46 @@ HISTORY_MSG_840;Local - CL Curve
 HISTORY_MSG_841;Local - LC curve
 HISTORY_MSG_842;Local - Contrast Threshold
 HISTORY_MSG_843;Local - Radius
+HISTORY_MSG_845;Local - Log encoding
+HISTORY_MSG_846;Local - Log encoding auto
+HISTORY_MSG_847;Local - Log encoding Source
+HISTORY_MSG_849;Local - Log encoding Source auto
+HISTORY_MSG_850;Local - Log encoding B_Ev
+HISTORY_MSG_851;Local - Log encoding W_Ev
+HISTORY_MSG_852;Local - Log encoding Target
+HISTORY_MSG_853;Local - Log encodind loc contrast
+HISTORY_MSG_854;Local - Log encodind Scope
+HISTORY_MSG_855;Local - Log encoding Entire image
+HISTORY_MSG_856;Local - Log encoding Shadows range
+HISTORY_MSG_857;Local - Wavelet blur residual
+HISTORY_MSG_858;Local - Wavelet blur luminance only
+HISTORY_MSG_859;Local - Wavelet max blur
+HISTORY_MSG_860;Local - Wavelet blur levels
+HISTORY_MSG_861;Local - Wavelet contrast levels
+HISTORY_MSG_862;Local - Wavelet contrast attenuation
+HISTORY_MSG_863;Local - Wavelet merge original image
+HISTORY_MSG_864;Local - Wavelet dir contrast attenuation
+HISTORY_MSG_865;Local - Wavelet dir contrast delta
+HISTORY_MSG_866;Local - Wavelet dir compression
+HISTORY_MSG_869;Local - Denoise by level
+
+HISTORY_MSG_870;Local - Wavelet mask curve H
+HISTORY_MSG_871;Local - Wavelet mask curve C
+HISTORY_MSG_872;Local - Wavelet mask curve L
+HISTORY_MSG_873;Local - Wavelet mask
+HISTORY_MSG_875;Local - Wavelet mask blend
+HISTORY_MSG_876;Local - Wavelet mask smooth
+HISTORY_MSG_877;Local - Wavelet mask chroma
+HISTORY_MSG_878;Local - Wavelet mask contrast curve
+HISTORY_MSG_879;Local - Wavelet contrast chroma
+HISTORY_MSG_880;Local - Wavelet blur chroma
+HISTORY_MSG_881;Local - Wavelet contrast offset
+HISTORY_MSG_882;Local - Wavelet blur
+HISTORY_MSG_883;Local - Wavelet contrast by level
+HISTORY_MSG_884;Local - Wavelet dir contrast
+HISTORY_MSG_885;Local - Wavelet tone mapping
+HISTORY_MSG_886;Local - Wavelet tone mapping compress
+HISTORY_MSG_887;Local - Wavelet tone mapping compress residual
 HISTORY_MSG_888;Local - Contrast Wavelet Balance Threshold
 HISTORY_MSG_889;Local - Contrast Wavelet Graduated Strength
 HISTORY_MSG_890;Local - Contrast Wavelet Graduated angle
@@ -1157,6 +1206,7 @@ HISTORY_MSG_956;Local - CH Curve
 HISTORY_MSG_957;Local - Denoise mode
 HISTORY_MSG_958;Local - Show/hide settings
 HISTORY_MSG_959;Local - Inverse blur
+HISTORY_MSG_960;Local - Log encoding - cat02
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -1177,6 +1227,7 @@ HISTORY_MSG_COLORTONING_LABREGION_POWER;CT - region power
 HISTORY_MSG_COLORTONING_LABREGION_SATURATION;CT - Saturation
 HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;CT - region show mask
 HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - region slope
+HISTORY_MSG_CATCOMPLEX;Ciecam complexity
 HISTORY_MSG_COMPLEX;Wavelet complexity
 HISTORY_MSG_COMPLEXRETI;Retinex complexity
 HISTORY_MSG_DEHAZE_DEPTH;Dehaze - Depth
@@ -1303,7 +1354,7 @@ ICCPROFCREATOR_ILL_65;D65
 ICCPROFCREATOR_ILL_80;D80
 ICCPROFCREATOR_ILL_DEF;Default
 ICCPROFCREATOR_ILL_INC;StdA 2856K
-ICCPROFCREATOR_ILL_TOOLTIP;You can only set the illuminant for ICC v4 profiles.
+ICCPROFCREATOR_ILL_TOOLTIP;You can set the illuminant for ICC v4 profiles and also for ICC v2 profiles.
 ICCPROFCREATOR_PRIMARIES;Primaries:
 ICCPROFCREATOR_PRIM_ACESP0;ACES AP0
 ICCPROFCREATOR_PRIM_ACESP1;ACES AP1
@@ -1320,7 +1371,7 @@ ICCPROFCREATOR_PRIM_REC2020;Rec2020
 ICCPROFCREATOR_PRIM_REDX;Red X
 ICCPROFCREATOR_PRIM_REDY;Red Y
 ICCPROFCREATOR_PRIM_SRGB;sRGB
-ICCPROFCREATOR_PRIM_TOOLTIP;You can only set custom primaries for ICC v4 profiles.
+ICCPROFCREATOR_PRIM_TOOLTIP;You can set custom primaries for ICC v4 profiles and also for ICC v2 profiles.
 ICCPROFCREATOR_PRIM_WIDEG;Widegamut
 ICCPROFCREATOR_PROF_V2;ICC v2
 ICCPROFCREATOR_PROF_V4;ICC v4
@@ -1896,6 +1947,7 @@ TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left.\n\nShortcuts:\n<b>[</b> - Multiple Ed
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right.\n\nShortcuts:\n<b>]</b> - Multiple Editor Tabs Mode,\n<b>Alt-]</b> - Single Editor Tab Mode.
 TP_COARSETRAF_TOOLTIP_VFLIP;Flip vertically.
 TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminance
+TP_COLORAPP_ADAPSCEN_TOOLTIP;It corresponds to the luminance at the time of the shooting in candelas per m2, calculated automatically from the exif data.
 TP_COLORAPP_ALGO;Algorithm
 TP_COLORAPP_ALGO_ALL;All
 TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
@@ -1905,33 +1957,37 @@ TP_COLORAPP_ALGO_TOOLTIP;Lets you choose between parameter subsets or all parame
 TP_COLORAPP_BADPIXSL;Hot/bad pixel filter
 TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n0 = No effect\n1 = Median\n2 = Gaussian.\nAlternatively, adjust the image to avoid very dark shadows.\n\nThese artifacts are due to limitations of CIECAM02.
 TP_COLORAPP_BRIGHT;Brightness (Q)
-TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM02 takes into account the white's luminosity and differs from L*a*b* and RGB brightness.
+TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM02 is the amount of perceived light emanating from a stimulus and differs from L*a*b* and RGB brightness.
 TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;When setting manually, values above 65 are recommended.
 TP_COLORAPP_CHROMA;Chroma (C)
 TP_COLORAPP_CHROMA_M;Colorfulness (M)
-TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM02 differs from L*a*b* and RGB colorfulness.
+TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM02 is the perceived amount of hue in relation to gray, an indicator that a stimulus appears to be more or less colored.
 TP_COLORAPP_CHROMA_S;Saturation (S)
-TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM02 differs from L*a*b* and RGB saturation.
-TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM02 differs from L*a*b* and RGB chroma.
+TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM02 corresponds to the color of a stimulus in relation to its own brightness, differs from L*a*b* and RGB saturation.
+TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM02 corresponds to the color of a stimulus relative to the clarity of a stimulus that appears white under identical conditions, differs from L*a*b* and RGB chroma.
 TP_COLORAPP_CIECAT_DEGREE;CAT02 adaptation
-TP_COLORAPP_CONTRAST;Contrast (J)
+TP_COLORAPP_CONTRAST;Contrast (J), 
 TP_COLORAPP_CONTRAST_Q;Contrast (Q)
-TP_COLORAPP_CONTRAST_Q_TOOLTIP;Differs from L*a*b* and RGB contrast.
-TP_COLORAPP_CONTRAST_TOOLTIP;Differs from L*a*b* and RGB contrast.
+TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast (Q) based on brightness, differs from L*a*b* and RGB contrast.
+TP_COLORAPP_CONTRAST_TOOLTIP;Contrast (J) based on lightness, differs from L*a*b* and RGB contrast.
 TP_COLORAPP_CURVEEDITOR1;Tone curve 1
-TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L* (L*a*b*) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of J or Q after CIECAM02.\n\nJ and Q are not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel.
+TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L* (L*a*b*) before CIECAM02.\nIf the "CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of J or Q after CIECAM02.\n\nJ and Q are not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel.
 TP_COLORAPP_CURVEEDITOR2;Tone curve 2
 TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the second exposure tone curve.
 TP_COLORAPP_CURVEEDITOR3;Color curve
-TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM02.\nIf the "Show CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of C, s or M after CIECAM02.\n\nC, s and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
+TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM02.\nIf the "CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of C, S or M after CIECAM02.\n\nC, S and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
 TP_COLORAPP_DATACIE;CIECAM02 output histograms in curves
 TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show L*a*b* values before CIECAM02 adjustments.
+TP_COLORAPP_DEGREE_TOOLTIP;CAT02 is a chromatic adaptation, it converts the values of an image whose white point is that of a given illuminant (for example D65), into new values whose white point is that of the new illuminant - see WP Model (for example D50 or D55).
+TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02 is a chromatic adaptation, it converts the values of an image whose white point is that of a given illuminant (for example D50), into new values whose white point is that of the new illuminant - see WP model (for example D75).
 TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 TP_COLORAPP_GAMUT;Gamut control (L*a*b*)
 TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in L*a*b* mode.
+TP_COLORAPP_GEN;Settings - Preset
+TP_COLORAPP_GEN_TOOLTIP;This module is based on the CIECAM02 color appearance model, which was designed to better simulate how human vision perceives colors under different lighting conditions, e.g., against different backgrounds.\nIt takes into account the environment of each color and modifies its appearance to get as close as possible to human perception.\nIt also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic appearance is preserved across the scene and display environments.
 TP_COLORAPP_HUE;Hue (h)
-TP_COLORAPP_HUE_TOOLTIP;Hue (h) - angle between 0° and 360°.
 TP_COLORAPP_IL41;D41
+TP_COLORAPP_HUE_TOOLTIP;Hue (h) is the degree to which a stimulus can be described as similar to a color described as red, green, blue and yellow.
 TP_COLORAPP_IL50;D50
 TP_COLORAPP_IL55;D55
 TP_COLORAPP_IL60;D60
@@ -1941,26 +1997,29 @@ TP_COLORAPP_ILA;Incandescent StdA 2856K
 TP_COLORAPP_ILFREE;Free
 TP_COLORAPP_ILLUM;Illuminant
 TP_COLORAPP_ILLUM_TOOLTIP;Select the illuminant closest to the shooting conditions.\nIn general D50, but it can change depending on the time and lattitude.
-TP_COLORAPP_LABEL;CIE Color Appearance Model 2002
+TP_COLORAPP_LABEL;Color Appearance & Lighting (CIECAM02)
 TP_COLORAPP_LABEL_CAM02;Image Adjustments
 TP_COLORAPP_LABEL_SCENE;Scene Conditions
 TP_COLORAPP_LABEL_VIEWING;Viewing Conditions
 TP_COLORAPP_LIGHT;Lightness (J)
-TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 differs from L*a*b* and RGB lightness.
+TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 is the clarity of a stimulus relative to the clarity of a stimulus that appears white under similar viewing conditions, differs from L*a*b* and RGB lightness.
 TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
 TP_COLORAPP_MODEL;WP Model
 TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02 is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp+green + CAT02 + [output]:</b> temp and green are selected by the user, the output device's white balance is set in Viewing Conditions.
 TP_COLORAPP_NEUTRAL;Reset
 TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
 TP_COLORAPP_PRESETCAT02;Preset cat02 automatic
-TP_COLORAPP_PRESETCAT02_TIP;Set combobox, sliders, temp, green so that Cat02 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change Cat02 adaptation Viewing conditions if need.\nYou can change Temperature and Tint Viewing conditions if need, and other settings if need. 
+TP_COLORAPP_PRESETCAT02_TIP;Set combobox, sliders, temp, green so that Cat02 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change Cat02 adaptation Viewing conditions if needed.\nYou can change Temperature and Tint Viewing conditions if needed, and other settings if needed. 
 TP_COLORAPP_RSTPRO;Red & skin-tones protection
 TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
+TP_COLORAPP_SOURCEF_TOOLTIP;Corresponds to the shooting conditions and how to bring the conditions and data back to a "normal" area. Normal" means average or standard conditions and data, i.e. without taking into account CIECAM corrections.
 TP_COLORAPP_SURROUND;Surround
 TP_COLORAPP_SURROUND_AVER;Average
 TP_COLORAPP_SURROUND_DARK;Dark
 TP_COLORAPP_SURROUND_DIM;Dim
 TP_COLORAPP_SURROUND_EXDARK;Extremly Dark (Cutsheet)
+TP_COLORAPP_SURROUNDSRC;Surround - Scene Lighting
+TP_COLORAPP_SURSOURCE_TOOLTIP;Changes tones and colors to take into account the Scene conditions.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment. The image will become slightly bright.\n\n<b>Dark</b>: Dark environment. The image will become more bright.\n\n<b>Extremly Dark</b>: Extremly dark environment. The image will become very bright.
 TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colors to take into account the viewing conditions of the output device.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment (TV). The image will become slightly dark.\n\n<b>Dark</b>: Dark environment (projector). The image will become more dark.\n\n<b>Extremly Dark</b>: Extremly dark environment (cutsheet). The image will become very dark.
 TP_COLORAPP_TCMODE_BRIGHTNESS;Brightness
 TP_COLORAPP_TCMODE_CHROMA;Chroma
@@ -1976,8 +2035,11 @@ TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2
 TP_COLORAPP_TONECIE;Tone mapping using CIECAM02
 TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
 TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Absolute luminance of the viewing environment\n(usually 16 cd/m²).
+TP_COLORAPP_VIEWINGF_TOOLTIP;Takes into account the support on which the final image will be viewed (monitor, TV, projector, printer, ...), as well as its environment. This process will take the data coming from process "Image Adjustments" and "bring" it to the support in such a way that the viewing conditions and its environment are taken into account.
 TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
 TP_COLORAPP_WBRT;WB [RT] + [output]
+TP_COLORAPP_YBOUT_TOOLTIP;Yb is the relative luminance of the background, expressed in % of gray. A gray at 18% corresponds to a background luminance expressed in CIE L of 50%.\nThis data must take into account the average luminance of the image
+TP_COLORAPP_YBSCEN_TOOLTIP;Yb is the relative luminance of the background, expressed in % of gray. A gray at 18% corresponds to a background luminance expressed in CIE L of 50%.\nThis data is calculated from the average luminance of the image
 TP_COLORTONING_AB;o C/L
 TP_COLORTONING_AUTOSAT;Automatic
 TP_COLORTONING_BALANCE;Balance
@@ -2336,7 +2398,7 @@ TP_LOCALLAB_BALAN;ab-L balance (ΔE)
 TP_LOCALLAB_BALANEXP;Laplacian balance
 TP_LOCALLAB_BALANH;C-H balance (ΔE)
 TP_LOCALLAB_BALAN_TOOLTIP;Changes the ΔE algorithm parameters.\nTakes into account more or less a*b* or L*, or more or less C or H.\nNot for Denoise
-TP_LOCALLAB_BASELOG;Logarithm base
+TP_LOCALLAB_BASELOG;Shadows range (logarithm base)
 TP_LOCALLAB_BILATERAL;Bilateral filter
 TP_LOCALLAB_BLACK_EV;Black Ev
 TP_LOCALLAB_BLCO;Chrominance only
@@ -2374,6 +2436,7 @@ TP_LOCALLAB_BUTTON_DEL;Delete
 TP_LOCALLAB_BUTTON_DUPL;Duplicate
 TP_LOCALLAB_BUTTON_REN;Rename
 TP_LOCALLAB_BUTTON_VIS;Show/Hide
+TP_LOCALLAB_CATAD;Chromatic adaptation - Cat02
 TP_LOCALLAB_CBDL;Contrast by Detail Levels
 TP_LOCALLAB_CBDLCLARI_TOOLTIP;Enhances local contrast of the midtones.
 TP_LOCALLAB_CBDL_ADJ_TOOLTIP;Same as wavelets.\nThe first level (0) acts on 2x2 pixel details.\nThe last level (5) acts on 64x64 pixel details.
@@ -2530,7 +2593,7 @@ TP_LOCALLAB_FFTW;ƒ - Use Fast Fourier Transform
 TP_LOCALLAB_FFTW2;ƒ - Use Fast Fourier Transform (TIF, JPG,..)
 TP_LOCALLAB_FFTMASK_TOOLTIP;Use a Fourier transform for better quality (increased processing time and memory requirements)
 TP_LOCALLAB_FFTWBLUR;ƒ - Always Use Fast Fourier Transform
-TP_LOCALLAB_FULLIMAGE;Calculate the dark-Ev & white-Ev values for the entire image 
+TP_LOCALLAB_FULLIMAGE;Dark-Ev & white-Ev for the entire image 
 TP_LOCALLAB_FULLIMAGELOG_TOOLTIP;Calculates the Ev levels for the entire image.
 TP_LOCALLAB_GAM;Gamma
 TP_LOCALLAB_GAMFRA;Tone response curve (TRC)
@@ -2614,7 +2677,8 @@ TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the dynamic rang
 TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm making the shadows darker and the highlights brighter.\nWith values greater than 2, the shadows are grayer and the highlights become more washed out.
 TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Estimated values of Dynamic Range i.e. Black Ev and White Ev
 TP_LOCALLAB_LOGENCOD_TOOLTIP;Tone Mapping with Logarithmic encoding (ACES).\nUseful for underexposed images or images with high dynamic range.\n\nTwo-step process : 1) Dynamic Range calculation 2) Manual adjustment
-TP_LOCALLAB_LOGFRA;Source Gray Point
+TP_LOCALLAB_LOGFRA;Source
+TP_LOCALLAB_LOG2FRA;Target
 TP_LOCALLAB_LOGFRAME_TOOLTIP;Allows you to calculate and adjust the Ev levels and the Source Gray Point for the spot area. The resulting values will be used by all Lab operations and most RGB operations in the pipeline.\n Takes into account exposure compensation in the main-menu Exposure tab.
 TP_LOCALLAB_LOGLIN;Logarithm mode
 TP_LOCALLAB_LOGPFRA;Relative Exposure Levels
@@ -2822,7 +2886,7 @@ TP_LOCALLAB_SHOWSTRUCEX;Show spot structure(advanced)
 TP_LOCALLAB_SHOWT;Mask and modifications
 TP_LOCALLAB_SHOWVI;Mask and modifications
 TP_LOCALLAB_SHRESFRA;Shadows/Highlights
-TP_LOCALLAB_SHTRC_TOOLTIP;Modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones
+TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones.\nIt is recommended that the TRC of both devices (monitor and output profile) be sRGB (default).
 TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer - 5
 TP_LOCALLAB_SIGMAWAV;Attenuation response
 TP_LOCALLAB_SIM;Simple
@@ -2837,7 +2901,7 @@ TP_LOCALLAB_SOFTRADIUSCOL_TOOLTIP;Applies a guided filter to the output image to
 TP_LOCALLAB_SOFTRETI;Reduce ΔE artifacts 
 TP_LOCALLAB_SOFTRETI_TOOLTIP;Take into account deltaE to improve Transmission map
 TP_LOCALLAB_SOFT_TOOLNAME;Soft Light & Original Retinex - 6
-TP_LOCALLAB_SOURCE_GRAY;Value
+TP_LOCALLAB_SOURCE_GRAY;Mean luminance (Yb%)
 TP_LOCALLAB_SPECCASE;Specific cases
 TP_LOCALLAB_SPECIAL;Special use of RGB curves
 TP_LOCALLAB_SPECIAL_TOOLTIP;The checkbox allows you to remove all other actions i.e. “Scope”, masks, sliders etc., (except for transitions) and use just the effect of the RGB tone-curve. 
@@ -2863,7 +2927,7 @@ TP_LOCALLAB_STYPE;Shape method
 TP_LOCALLAB_STYPE_TOOLTIP;You can choose between:\nSymmetrical - left handle linked to right, top handle linked to bottom.\nIndependent - all handles are independent.
 TP_LOCALLAB_SYM;Symmetrical (mouse)
 TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
-TP_LOCALLAB_TARGET_GRAY;Target gray point
+TP_LOCALLAB_TARGET_GRAY;Mean luminance (Yb%)
 TP_LOCALLAB_THRES;Threshold structure
 TP_LOCALLAB_THRESDELTAE;ΔE scope threshold 
 TP_LOCALLAB_THRESRETI;Threshold
@@ -2937,7 +3001,7 @@ TP_LOCALLAB_WAT_BALTHRES_TOOLTIP;Balances the action within each level.
 TP_LOCALLAB_WAT_RESIDCOMP_TOOLTIP;Compresses the residual image to increase or reduce contrast.
 TP_LOCALLAB_WAT_DELTABAL_TOOLTIP;By moving the slider to the left, the lower levels are accentuated. To the right, the lower levels are reduced and the higher levels accentuated.
 TP_LOCALLAB_WAT_WAVDELTABAL_TOOLTIP;Acts on the balance of the three directions (horizontal, vertical and diagonal) based on the luminance of the image.\nBy default the shadows or highlights are reduced to avoid artifacts.
-TP_LOCALLAB_WAV;Local contrast by level
+TP_LOCALLAB_WAV;Local contrast
 TP_LOCALLAB_WAVBLUR_TOOLTIP;Allows you to blur each level of the decomposition, as well as the residual image.
 TP_LOCALLAB_WAVCOMP;Compression by level
 TP_LOCALLAB_WAVCOMPRE;Compression by level

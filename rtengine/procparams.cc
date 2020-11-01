@@ -1422,6 +1422,7 @@ ColorAppearanceParams::ColorAppearanceParams() :
     curveMode(TcMode::LIGHT),
     curveMode2(TcMode::LIGHT),
     curveMode3(CtcMode::CHROMA),
+    complexmethod("normal"),
     surround("Average"),
     surrsrc("Average"),
     adapscen(2000.0),
@@ -1470,6 +1471,7 @@ bool ColorAppearanceParams::operator ==(const ColorAppearanceParams& other) cons
         && curveMode == other.curveMode
         && curveMode2 == other.curveMode2
         && curveMode3 == other.curveMode3
+        && complexmethod == other.complexmethod
         && surround == other.surround
         && surrsrc == other.surrsrc
         && adapscen == other.adapscen
@@ -3883,6 +3885,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     autocompute(false),
     sourceGray(10.),
     targetGray(18.),
+    catad(0.),
     Autogray(true),
     fullimage(true),
     blackEv(-5.0),
@@ -4460,6 +4463,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && autocompute == other.autocompute
         && sourceGray == other.sourceGray
         && targetGray == other.targetGray
+        && catad == other.catad
         && Autogray == other.Autogray
         && fullimage == other.fullimage
         && blackEv == other.blackEv
@@ -5353,6 +5357,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->colorappearance.degreeout, "Color appearance", "Degreeout",        colorappearance.degreeout, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.autodegreeout, "Color appearance", "AutoDegreeout",    colorappearance.autodegreeout, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.surround, "Color appearance", "Surround", colorappearance.surround, keyFile);
+        saveToKeyfile(!pedited || pedited->colorappearance.complexmethod, "Color appearance", "complex", colorappearance.complexmethod, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.surrsrc, "Color appearance", "Surrsrc", colorappearance.surrsrc, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.adaplum, "Color appearance", "AdaptLum", colorappearance.adaplum, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.badpixsl, "Color appearance", "Badpixsl", colorappearance.badpixsl, keyFile);
@@ -6017,6 +6022,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->autocompute, "Locallab", "Autocompute_" + index_str, spot.autocompute, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sourceGray, "Locallab", "SourceGray_" + index_str, spot.sourceGray, keyFile);
                     saveToKeyfile(!pedited || spot_edited->targetGray, "Locallab", "TargetGray_" + index_str, spot.targetGray, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->catad, "Locallab", "Catad_" + index_str, spot.catad, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Autogray, "Locallab", "Autogray_" + index_str, spot.Autogray, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fullimage, "Locallab", "Fullimage_" + index_str, spot.fullimage, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blackEv, "Locallab", "BlackEv_" + index_str, spot.blackEv, keyFile);
@@ -6943,6 +6949,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             assignFromKeyfile(keyFile, "Color appearance", "AutoDegreeout", pedited, colorappearance.autodegreeout, pedited->colorappearance.autodegreeout);
 
+            assignFromKeyfile(keyFile, "Color appearance", "complex", pedited, colorappearance.complexmethod, pedited->colorappearance.complexmethod);
             assignFromKeyfile(keyFile, "Color appearance", "Surround", pedited, colorappearance.surround, pedited->colorappearance.surround);
             assignFromKeyfile(keyFile, "Color appearance", "Surrsrc", pedited, colorappearance.surrsrc, pedited->colorappearance.surrsrc);
             assignFromKeyfile(keyFile, "Color appearance", "AdaptLum", pedited, colorappearance.adaplum, pedited->colorappearance.adaplum);
@@ -7801,6 +7808,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Autocompute_" + index_str, pedited, spot.autocompute, spotEdited.autocompute);
                 assignFromKeyfile(keyFile, "Locallab", "SourceGray_" + index_str, pedited, spot.sourceGray, spotEdited.sourceGray);
                 assignFromKeyfile(keyFile, "Locallab", "TargetGray_" + index_str, pedited, spot.targetGray, spotEdited.targetGray);
+                assignFromKeyfile(keyFile, "Locallab", "Catad_" + index_str, pedited, spot.catad, spotEdited.catad);
                 assignFromKeyfile(keyFile, "Locallab", "AutoGray_" + index_str, pedited, spot.Autogray, spotEdited.Autogray);
                 assignFromKeyfile(keyFile, "Locallab", "Fullimage_" + index_str, pedited, spot.fullimage, spotEdited.fullimage);
                 assignFromKeyfile(keyFile, "Locallab", "BlackEv_" + index_str, pedited, spot.blackEv, spotEdited.blackEv);

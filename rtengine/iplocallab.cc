@@ -1561,7 +1561,7 @@ float find_gray(float source_gray, float target_gray)
 // basic log encoding taken from ACESutil.Lin_to_Log2, from
 // https://github.com/ampas/aces-dev
 // (as seen on pixls.us)
-void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp, bool multiThread, int bfw, int bfh)
+void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool multiThread, int bfw, int bfh)
 {
     /* J.Desmis 12 2019
         small adaptations to local adjustments
@@ -1570,7 +1570,11 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp
    // BENCHFUN
     const float gray = lp.sourcegray / 100.f;
     const float shadows_range = lp.blackev;
-    const float dynamic_range = lp.whiteev - lp.blackev;
+
+    float dynamic_range = lp.whiteev - lp.blackev;
+    if (dynamic_range < 0.5f) {
+        dynamic_range = 0.5f;
+    }
     const float noise = pow_F(2.f, -16.f);
     const float log2 = xlogf(lp.baselog);
     const float base = lp.targetgray > 1 && lp.targetgray < 100 && dynamic_range > 0 ? find_gray(std::abs(lp.blackev) / dynamic_range, lp.targetgray / 100.f) : 0.f;
@@ -1648,9 +1652,14 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp
                 if (m > noise) {
                     float mm = apply(m);
                     float f = mm / m;
+                    f = min(f, 1000000.f);
+                    
                     r *= f;
                     b *= f;
                     g *= f;
+                    r = CLIP(r);
+                    g = CLIP(g);
+                    b = CLIP(b);
                 }
 
                 assert(r == r);
@@ -1704,13 +1713,18 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, const struct local_params & lp
                     //   float t2 = norm(r, g, b);
                     float f2 = apply(t2) / t2;
                     f = intp(blend, f, f2);
-                    assert(std::isfinite(f));
+                    f = min(f, 1000000.f);
+                   
+               //     assert(std::isfinite(f));
                     r *= f;
                     g *= f;
                     b *= f;
-                    assert(std::isfinite(r));
-                    assert(std::isfinite(g));
-                    assert(std::isfinite(b));
+                    r = CLIP(r);
+                    g = CLIP(g);
+                    b = CLIP(b);
+               //     assert(std::isfinite(r));
+               //     assert(std::isfinite(g));
+               //     assert(std::isfinite(b));
                 }
             }
         }
@@ -1830,7 +1844,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
     }
 }
 
-void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B, const struct local_params & lp, const Glib::ustring &workingProfile, double scale, bool multithread)
+void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B,  const struct local_params & lp, const Glib::ustring &workingProfile, double scale, bool multithread)
 // adapted from the tone equalizer of darktable
 /*
     Copyright 2019 Alberto Griggio <alberto.griggio@gmail.com>
@@ -2074,13 +2088,20 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
     double Xwout, Zwout;
     double Xwsc, Zwsc;
 
-    int tempo;
+    int tempo = 5000;
 
     if (params->locallab.spots.at(sp).warm > 0) {
         tempo = 5000 - 30 * params->locallab.spots.at(sp).warm;
-    } else {
+    } else if (params->locallab.spots.at(sp).warm < 0){
         tempo = 5000 - 49 * params->locallab.spots.at(sp).warm;
     }
+
+    if (params->locallab.spots.at(sp).catad > 0) {
+        tempo = 5000 - 30 * params->locallab.spots.at(sp).catad;
+    } else if (params->locallab.spots.at(sp).catad < 0){
+        tempo = 5000 - 49 * params->locallab.spots.at(sp).catad;
+    }
+
 
     ColorTemp::temp2mulxyz(params->wb.temperature, params->wb.method, Xw, Zw);  //compute white Xw Yw Zw  : white current WB
     ColorTemp::temp2mulxyz(tempo, "Custom", Xwout, Zwout);
@@ -9672,6 +9693,9 @@ void ImProcFunctions::Lab_Local(
             log_encode(tmpImage.get(), lp, multiThread, bfw, bfh);
             rgb2lab(*(tmpImage.get()), *bufexpfin, params->icm.workingProfile);
             tmpImage.reset();
+            if (params->locallab.spots.at(sp).catad != 0) {
+                ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get());
+            }
 
             //here begin graduated filter
             //first solution "easy" but we can do other with log_encode...to see the results
@@ -11049,8 +11073,10 @@ void ImProcFunctions::Lab_Local(
     }
 
     bool tonecurv = false;
+    const Glib::ustring profile = params->icm.workingProfile;
+    bool isworking = (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1");
 
-    if (params->locallab.spots.at(sp).gamSH != 2.4 || params->locallab.spots.at(sp).sloSH != 12.92) {
+    if (isworking && (params->locallab.spots.at(sp).gamSH != 2.4 || params->locallab.spots.at(sp).sloSH != 12.92)) {
         tonecurv = true;
     }
 

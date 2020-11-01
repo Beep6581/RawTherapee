@@ -17,16 +17,14 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <fstream>
-#include <iostream>
-#include <string>
 #include <glibmm/thread.h>
 
 #include "improccoordinator.h"
 
+#include "array2D.h"
 #include "cieimage.h"
 #include "color.h"
 #include "colortemp.h"
-#include "jaggedarray.h"
 #include "curves.h"
 #include "dcp.h"
 #include "iccstore.h"
@@ -45,6 +43,12 @@
 #include <omp.h>
 #endif
 
+namespace
+{
+
+constexpr int VECTORSCOPE_SIZE = 128;
+
+}
 
 namespace rtengine
 {
@@ -112,6 +116,21 @@ ImProcCoordinator::ImProcCoordinator() :
     histChroma(256),
 
     histLRETI(256),
+
+    hist_lrgb_dirty(false),
+    hist_raw_dirty(false),
+
+    vectorscopeScale(0),
+    vectorscope_hc_dirty(false),
+    vectorscope_hs_dirty(false),
+    vectorscope_hc(VECTORSCOPE_SIZE, VECTORSCOPE_SIZE),
+    vectorscope_hs(VECTORSCOPE_SIZE, VECTORSCOPE_SIZE),
+    waveformScale(0),
+    waveform_dirty(false),
+    waveformRed(0, 0),
+    waveformGreen(0, 0),
+    waveformBlue(0, 0),
+    waveformLuma(0, 0),
 
     CAMBrightCurveJ(), CAMBrightCurveQ(),
 
@@ -332,6 +351,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
 
             imgsrc->getRAWHistogram(histRedRaw, histGreenRaw, histBlueRaw);
+            hist_raw_dirty = !(hListener && hListener->updateHistogramRaw());
 
             highDetailPreprocessComputed = highDetailNeeded;
         }
@@ -1622,9 +1642,21 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             imageListener->imageReady(params->crop);
         }
 
+        hist_lrgb_dirty = vectorscope_hc_dirty = vectorscope_hs_dirty = waveform_dirty = true;
         if (hListener) {
-            updateLRGBHistograms();
-            hListener->histogramChanged(histRed, histGreen, histBlue, histLuma, histToneCurve, histLCurve, histCCurve, /*histCLurve, histLLCurve,*/ histLCAM, histCCAM, histRedRaw, histGreenRaw, histBlueRaw, histChroma, histLRETI);
+            if (hListener->updateHistogram()) {
+                updateLRGBHistograms();
+            }
+            if (hListener->updateVectorscopeHC()) {
+                updateVectorscopeHC();
+            }
+            if (hListener->updateVectorscopeHS()) {
+                updateVectorscopeHS();
+            }
+            if (hListener->updateWaveform()) {
+                updateWaveforms();
+            }
+            notifyHistogramChanged();
         }
     }
 
@@ -1725,8 +1757,42 @@ void ImProcCoordinator::setScale(int prevscale)
 }
 
 
-void ImProcCoordinator::updateLRGBHistograms()
+void ImProcCoordinator::notifyHistogramChanged()
 {
+    if (hListener) {
+        hListener->histogramChanged(
+            histRed,
+            histGreen,
+            histBlue,
+            histLuma,
+            histToneCurve,
+            histLCurve,
+            histCCurve,
+            histLCAM,
+            histCCAM,
+            histRedRaw,
+            histGreenRaw,
+            histBlueRaw,
+            histChroma,
+            histLRETI,
+            vectorscopeScale,
+            vectorscope_hc,
+            vectorscope_hs,
+            waveformScale,
+            waveformRed,
+            waveformGreen,
+            waveformBlue,
+            waveformLuma
+        );
+    }
+}
+
+bool ImProcCoordinator::updateLRGBHistograms()
+{
+
+    if (!hist_lrgb_dirty) {
+        return false;
+    }
 
     int x1, y1, x2, y2;
     params->crop.mapToResized(pW, pH, scale, x1, x2, y1, y2);
@@ -1784,6 +1850,159 @@ void ImProcCoordinator::updateLRGBHistograms()
         }
     }
 
+    hist_lrgb_dirty = false;
+    return true;
+
+}
+
+bool ImProcCoordinator::updateVectorscopeHC()
+{
+    if (!workimg || !vectorscope_hc_dirty) {
+        return false;
+    }
+
+    int x1, y1, x2, y2;
+    params->crop.mapToResized(pW, pH, scale, x1, x2, y1, y2);
+
+    constexpr int size = VECTORSCOPE_SIZE;
+    constexpr float norm_factor = size / (128.f * 655.36f);
+    vectorscope_hc.fill(0);
+
+    vectorscopeScale = (x2 - x1) * (y2 - y1);
+
+    const std::unique_ptr<float[]> a(new float[vectorscopeScale]);
+    const std::unique_ptr<float[]> b(new float[vectorscopeScale]);
+    const std::unique_ptr<float[]> L(new float[vectorscopeScale]);
+    ipf.rgb2lab(*workimg, x1, y1, x2 - x1, y2 - y1, L.get(), a.get(), b.get(), params->icm);
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        array2D<int> vectorscopeThr(size, size, ARRAY2D_CLEAR_DATA);
+#ifdef _OPENMP
+        #pragma omp for nowait
+#endif
+        for (int i = y1; i < y2; ++i) {
+            for (int j = x1, ofs_lab = (i - y1) * (x2 - x1); j < x2; ++j, ++ofs_lab) {
+                const int col = norm_factor * a[ofs_lab] + size / 2 + 0.5f;
+                const int row = norm_factor * b[ofs_lab] + size / 2 + 0.5f;
+                if (col >= 0 && col < size && row >= 0 && row < size) {
+                    vectorscopeThr[row][col]++;
+                }
+            }
+        }
+#ifdef _OPENMP
+        #pragma omp critical
+#endif
+        {
+            vectorscope_hc += vectorscopeThr;
+        }
+    }
+
+    vectorscope_hc_dirty = false;
+    return true;
+}
+
+bool ImProcCoordinator::updateVectorscopeHS()
+{
+    if (!workimg || !vectorscope_hs_dirty) {
+        return false;
+    }
+
+    int x1, y1, x2, y2;
+    params->crop.mapToResized(pW, pH, scale, x1, x2, y1, y2);
+
+    constexpr int size = VECTORSCOPE_SIZE;
+    vectorscope_hs.fill(0);
+
+    vectorscopeScale = (x2 - x1) * (y2 - y1);
+
+#ifdef _OPENMP
+    #pragma omp parallel
+#endif
+    {
+        array2D<int> vectorscopeThr(size, size, ARRAY2D_CLEAR_DATA);
+#ifdef _OPENMP
+        #pragma omp for nowait
+#endif
+        for (int i = y1; i < y2; ++i) {
+            int ofs = (i * pW + x1) * 3;
+            for (int j = x1; j < x2; ++j) {
+                const float red = 257.f * workimg->data[ofs++];
+                const float green = 257.f * workimg->data[ofs++];
+                const float blue = 257.f * workimg->data[ofs++];
+                float h, s, l;
+                Color::rgb2hslfloat(red, green, blue, h, s, l);
+                const auto sincosval = xsincosf(2.f * RT_PI_F * h);
+                const int col = s * sincosval.y * (size / 2) + size / 2;
+                const int row = s * sincosval.x * (size / 2) + size / 2;
+                if (col >= 0 && col < size && row >= 0 && row < size) {
+                    vectorscopeThr[row][col]++;
+                }
+            }
+        }
+#ifdef _OPENMP
+        #pragma omp critical
+#endif
+        {
+            vectorscope_hs += vectorscopeThr;
+        }
+    }
+
+    vectorscope_hs_dirty = false;
+    return true;
+}
+
+bool ImProcCoordinator::updateWaveforms()
+{
+    if (!workimg) {
+        // free memory
+        waveformRed.free();
+        waveformGreen.free();
+        waveformBlue.free();
+        waveformLuma.free();
+        return true;
+    }
+
+    if (!waveform_dirty) {
+        return false;
+    }
+
+    int x1, y1, x2, y2;
+    params->crop.mapToResized(pW, pH, scale, x1, x2, y1, y2);
+    int waveform_width = waveformRed.getWidth();
+
+    if (waveform_width != x2 - x1) {
+        // Resize waveform arrays.
+        waveform_width = x2 - x1;
+        waveformRed(waveform_width, 256);
+        waveformGreen(waveform_width, 256);
+        waveformBlue(waveform_width, 256);
+        waveformLuma(waveform_width, 256);
+    }
+
+    // Start with zero.
+    waveformRed.fill(0);
+    waveformGreen.fill(0);
+    waveformBlue.fill(0);
+    waveformLuma.fill(0);
+
+    constexpr float luma_factor = 255.f / 32768.f;
+    for (int i = y1; i < y2; i++) {
+        int ofs = (i * pW + x1) * 3;
+        float* L_row = nprevl->L[i] + x1;
+
+        for (int j = 0; j < waveform_width; j++) {
+            waveformRed[workimg->data[ofs++]][j]++;
+            waveformGreen[workimg->data[ofs++]][j]++;
+            waveformBlue[workimg->data[ofs++]][j]++;
+            waveformLuma[LIM<int>(L_row[j] * luma_factor, 0, 255)][j]++;
+        }
+    }
+
+    waveformScale = y2 - y1;
+    waveform_dirty = false;
+    return true;
 }
 
 bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, double tempBias)
@@ -2209,6 +2428,63 @@ bool ImProcCoordinator::getHighQualComputed()
 void ImProcCoordinator::setHighQualComputed()
 {
     highQualityComputed = true;
+}
+
+void ImProcCoordinator::requestUpdateWaveform()
+{
+    if (!hListener) {
+        return;
+    }
+    bool updated = updateWaveforms();
+    if (updated) {
+        notifyHistogramChanged();
+    }
+}
+
+void ImProcCoordinator::requestUpdateHistogram()
+{
+    if (!hListener) {
+        return;
+    }
+    bool updated = updateLRGBHistograms();
+    if (updated) {
+        notifyHistogramChanged();
+    }
+}
+
+void ImProcCoordinator::requestUpdateHistogramRaw()
+{
+    if (!hListener) {
+        return;
+    }
+    // Don't need to actually update histogram because it is always
+    // up-to-date.
+    if (hist_raw_dirty) {
+        hist_raw_dirty = false;
+        notifyHistogramChanged();
+    }
+}
+
+void ImProcCoordinator::requestUpdateVectorscopeHC()
+{
+    if (!hListener) {
+        return;
+    }
+    bool updated = updateVectorscopeHC();
+    if (updated) {
+        notifyHistogramChanged();
+    }
+}
+
+void ImProcCoordinator::requestUpdateVectorscopeHS()
+{
+    if (!hListener) {
+        return;
+    }
+    bool updated = updateVectorscopeHS();
+    if (updated) {
+        notifyHistogramChanged();
+    }
 }
 
 }

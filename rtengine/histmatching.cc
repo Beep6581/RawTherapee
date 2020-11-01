@@ -279,7 +279,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
     {
         RawMetaDataLocation rml;
         eSensorType sensor_type;
-        int w, h;
+        int w = 0, h = 0;
         std::unique_ptr<Thumbnail> thumb(Thumbnail::loadQuickFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, true, true));
         if (!thumb) {
             if (settings->verbose) {
