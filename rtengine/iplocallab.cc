@@ -12809,7 +12809,10 @@ void ImProcFunctions::Lab_Local(
 
 
                     } else {
-                        if (lp.expcomp != 0.f  ||  lp.laplacexp > 0.1f) {
+                        if (lp.expcomp != 0.f  ) { // ||  lp.laplacexp > 0.1f
+                            if(lp.laplacexp <= 0.1f) {
+                                lp.laplacexp = 0.2f;  //force to use Laplacian wth very small values
+                            }
                             ImProcFunctions::exlabLocal(lp, bfh, bfw, bfhr, bfwr, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
                         }
                     }
