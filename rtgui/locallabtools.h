@@ -1203,6 +1203,7 @@ private:
     Adjuster* const targetGray;
     Adjuster* const detail;
     Adjuster* const catad;
+    Adjuster* const contl;
     Adjuster* const saturl;
     Adjuster* const targabs;
     MyComboBoxText*  const surround;

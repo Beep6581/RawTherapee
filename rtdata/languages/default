@@ -1203,14 +1203,15 @@ HISTORY_MSG_954;Local - Show-hide tools
 HISTORY_MSG_955;Local - Enable Spot
 HISTORY_MSG_956;Local - CH Curve
 HISTORY_MSG_957;Local - Denoise mode
-HISTORY_MSG_958;Local - Show/hide settings
 HISTORY_MSG_959;Local - Inverse blur
+HISTORY_MSG_958;Local - Show/hide settings
 HISTORY_MSG_960;Local - Log encoding - cat02
 HISTORY_MSG_961;Local - Log encoding Ciecam
 HISTORY_MSG_962;Local - Log encoding  Absolute luminance source
 HISTORY_MSG_963;Local - Log encoding  Absolute luminance target
 HISTORY_MSG_964;Local - Log encoding  Surround
-HISTORY_MSG_965;Local - Log encoding  Saturation
+HISTORY_MSG_965;Local - Log encoding  Saturation s
+HISTORY_MSG_966;Local - Log encoding  Contrast J
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2451,7 +2452,7 @@ TP_LOCALLAB_CHROMASK_TOOLTIP;Changes the chroma of the mask if one exists (i.e. 
 TP_LOCALLAB_CHROMASK_TOOLTIP;You can use this slider to desaturated background (inverse mask - curve near 0).\nAlso to attenuate or enhance the action of a mask on the chroma
 TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIEC;Use Ciecam environment parameters
-TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM02 color appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nOnly the third Ciecam process (Viewing conditions - Target) is taken into account, as well as some data from the first process (Scene conditions - Source) which is used for the Log encoding.\nIt also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment. 
+TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM02 color appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nOnly the third Ciecam process (Viewing conditions - Target) is taken into account, as well as part of the second (contrast J, saturation s) , as well as some data from the first process (Scene conditions - Source) which is used for the Log encoding.\nIt also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment. 
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Contains the references of the RT-spot, useful for shape detection (hue, luma, chroma, Sobel).\nLow values may be useful for treating foliage.\nHigh values may be useful for treating skin
 TP_LOCALLAB_CLARICRES;Merge chroma
@@ -2479,6 +2480,7 @@ TP_LOCALLAB_COMPREFRA;Wavelet level tone mapping
 TP_LOCALLAB_COMPRESS_TOOLTIP;Use if necessary the module 'Clarity & Sharp mask and Blend & Soften Images' by adjusting 'Soft radius' to reduce artifacts.
 TP_LOCALLAB_CONTCOL;Contrast threshold
 TP_LOCALLAB_CONTFRA;Contrast by level
+TP_LOCALLAB_CONTL;Contrast (J)
 TP_LOCALLAB_CONTTHMASK_TOOLTIP;Allows you to determine which parts of the image will be impacted based on the texture.
 TP_LOCALLAB_CONTRAST;Contrast
 TP_LOCALLAB_CONTRASTCURVMASK1_TOOLTIP;Allows you to freely modify the contrast of the mask (gamma & slope), instead of using a continuous & progressive curve. However it can create artifacts that have to be dealt with using the “Smooth radius” or “Laplacian threshold sliders”.
@@ -2821,6 +2823,7 @@ TP_LOCALLAB_RGBCURVE_TOOLTIP;In RGB mode you have 4 choices : Standard, Weighted
 TP_LOCALLAB_ROW_NVIS;Not visible
 TP_LOCALLAB_ROW_VIS;Visible
 TP_LOCALLAB_SATUR;Saturation
+TP_LOCALLAB_SATURV;Saturation (s)
 TP_LOCALLAB_SAVREST;Save - Restore Current Image
 TP_LOCALLAB_SCALEGR;Scale
 TP_LOCALLAB_SCALERETI;Scale

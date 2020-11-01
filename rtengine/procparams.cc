@@ -3842,6 +3842,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     targetGray(18.),
     catad(0.),
     saturl(0.),
+    contl(0.),
     Autogray(true),
     fullimage(true),
     ciecam(false),
@@ -4425,6 +4426,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && targetGray == other.targetGray
         && catad == other.catad
         && saturl == other.saturl
+        && contl == other.contl
         && Autogray == other.Autogray
         && fullimage == other.fullimage
         && ciecam == other.ciecam
@@ -5965,6 +5967,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->targetGray, "Locallab", "TargetGray_" + index_str, spot.targetGray, keyFile);
                     saveToKeyfile(!pedited || spot_edited->catad, "Locallab", "Catad_" + index_str, spot.catad, keyFile);
                     saveToKeyfile(!pedited || spot_edited->saturl, "Locallab", "Saturl_" + index_str, spot.saturl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->contl, "Locallab", "Contl_" + index_str, spot.contl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Autogray, "Locallab", "Autogray_" + index_str, spot.Autogray, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fullimage, "Locallab", "Fullimage_" + index_str, spot.fullimage, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ciecam, "Locallab", "Ciecam_" + index_str, spot.ciecam, keyFile);
@@ -7747,6 +7750,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "TargetGray_" + index_str, pedited, spot.targetGray, spotEdited.targetGray);
                 assignFromKeyfile(keyFile, "Locallab", "Catad_" + index_str, pedited, spot.catad, spotEdited.catad);
                 assignFromKeyfile(keyFile, "Locallab", "Saturl_" + index_str, pedited, spot.saturl, spotEdited.saturl);
+                assignFromKeyfile(keyFile, "Locallab", "Contl_" + index_str, pedited, spot.contl, spotEdited.contl);
                 assignFromKeyfile(keyFile, "Locallab", "AutoGray_" + index_str, pedited, spot.Autogray, spotEdited.Autogray);
                 assignFromKeyfile(keyFile, "Locallab", "Fullimage_" + index_str, pedited, spot.fullimage, spotEdited.fullimage);
                 assignFromKeyfile(keyFile, "Locallab", "Ciecam_" + index_str, pedited, spot.ciecam, spotEdited.ciecam);

@@ -837,6 +837,7 @@ public:
         bool targetGray;
         bool catad;
         bool saturl;
+        bool contl;
         bool Autogray;
         bool fullimage;
         bool ciecam;

@@ -1429,6 +1429,7 @@ struct LocallabParams {
         double targetGray;
         double catad;
         double saturl;
+        double contl;
         bool Autogray;
         bool fullimage;
         bool ciecam;

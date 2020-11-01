@@ -2119,6 +2119,103 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     double Xwout, Zwout;
     double Xwsc, Zwsc;
 
+    LUTu hist16J;
+    LUTf CAMBrightCurveJ;
+    CAMBrightCurveJ(32768, LUT_CLIP_ABOVE);
+    CAMBrightCurveJ.dirty = true;
+
+    if (CAMBrightCurveJ.dirty) {
+        hist16J(32768);
+        hist16J.clear();
+
+        double sum = 0.0; // use double precision for large summations
+
+#ifdef _OPENMP
+        const int numThreads = min(max(width * height / 65536, 1), omp_get_max_threads());
+            #pragma omp parallel num_threads(numThreads) if(numThreads>1)
+#endif
+            {
+                LUTu hist16Jthr;
+                hist16Jthr(hist16J.getSize());
+                hist16Jthr.clear();
+
+#ifdef _OPENMP
+                #pragma omp for reduction(+:sum)
+#endif
+
+                for (int i = 0; i < height; i++) {
+                    for (int j = 0; j < width; j++) { //rough correspondence between L and J
+                        float currL = lab->L[i][j] / 327.68f;
+                        float koef; //rough correspondence between L and J
+
+                        if (currL > 50.f) {
+                            if (currL > 70.f) {
+                                if (currL > 80.f) {
+                                    if (currL > 85.f) {
+                                        koef = 0.97f;
+                                    } else {
+                                        koef = 0.93f;
+                                    }
+                                } else {
+                                    koef = 0.87f;
+                                }
+                            } else {
+                                if (currL > 60.f) {
+                                    koef = 0.85f;
+                                } else {
+                                    koef = 0.8f;
+                                }
+                            }
+                        } else {
+                            if (currL > 10.f) {
+                                if (currL > 20.f) {
+                                    if (currL > 40.f) {
+                                        koef = 0.75f;
+                                    } else {
+                                        koef = 0.7f;
+                                    }
+                                } else {
+                                    koef = 0.9f;
+                                }
+                            } else {
+                                koef = 1.0;
+                            }
+                        }
+
+                            hist16Jthr[(int)((koef * lab->L[i][j]))]++;    //evaluate histogram luminance L # J
+                            sum += static_cast<double>(koef) * static_cast<double>(lab->L[i][j]); //evaluate mean J to calculate Yb
+                            //sum not used, but perhaps...
+                    }
+                }
+
+#ifdef _OPENMP
+                #pragma omp critical
+#endif
+                {
+                        hist16J += hist16Jthr;
+                }
+            }
+#ifdef _OPENMP
+            static_cast<void>(numThreads); // to silence cppcheck warning
+#endif
+
+            //evaluate lightness, contrast
+        }
+
+
+
+
+    
+    float contL = 0.f;
+    if (ciec) {
+        contL = 0.6f *params->locallab.spots.at(sp).contl;
+   
+        if (CAMBrightCurveJ.dirty) {
+            Ciecam02::curveJfloat(0.f, contL, hist16J, CAMBrightCurveJ); //contrast J
+            CAMBrightCurveJ /= 327.68f;
+            CAMBrightCurveJ.dirty = false;
+        }
+    }
     int tempo = 5000;
     if(params->locallab.spots.at(sp).expvibrance && call == 2) {
         if (params->locallab.spots.at(sp).warm > 0) {
@@ -2193,7 +2290,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
 
     //algoritm's params
     // const float rstprotection = 100. ;//- params->colorappearance.rstprotection;
-    LUTu hist16J;
     LUTu hist16Q;
     float yb = 18.f;
     yb2 = 18;
@@ -2353,6 +2449,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                 /*
                 */
                 if(ciec) {
+                    Jpro = CAMBrightCurveJ[Jpro * 327.68f]; //CIECAM02 + contrast
                     float sres;
                     float rstprotection = 50.f;//arbitrary 50% protection skin tones
                     float Sp = spro / 100.0f;

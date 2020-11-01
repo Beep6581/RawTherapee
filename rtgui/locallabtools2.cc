@@ -4665,7 +4665,8 @@ LocallabLog::LocallabLog():
     targetGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
     detail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 1., 0.01, 0.6))),
     catad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0.))),
-    saturl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATUR"), -100., 100., 0.5, 0.))),
+    contl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTL"), -100., 100., 0.5, 0.))),
+    saturl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
     targabs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 16.0))),
     surround(Gtk::manage (new MyComboBoxText ())),
     surrHBox(Gtk::manage(new Gtk::HBox())),
@@ -4702,6 +4703,8 @@ LocallabLog::LocallabLog():
     catad->setAdjusterListener(this);
 
     saturl->setAdjusterListener(this);
+
+    contl->setAdjusterListener(this);
 
     targabs->setLogScale(500, 0);
 
@@ -4752,6 +4755,7 @@ LocallabLog::LocallabLog():
     logP2Box->pack_start(*targetGray);
     logP2Box->pack_start(*targabs);
     logP2Box->pack_start(*detail);
+    logP2Box->pack_start(*contl);
     logP2Box->pack_start(*saturl);
     logP2Box->pack_start(*catad);
     logP2Box->pack_start (*surrHBox);
@@ -4879,6 +4883,7 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         sourceabs->setValue(spot.sourceabs);
         catad->setValue(spot.catad);
         saturl->setValue(spot.saturl);
+        contl->setValue(spot.contl);
         targabs->setValue(spot.targabs);
         targetGray->setValue(spot.targetGray);
         detail->setValue(spot.detail);
@@ -4920,6 +4925,7 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.targetGray = targetGray->getValue();
         spot.catad = catad->getValue();
         spot.saturl = saturl->getValue();
+        spot.contl = contl->getValue();
         spot.detail = detail->getValue();
         spot.baselog = baselog->getValue();
         spot.sensilog = sensilog->getIntValue();
@@ -4958,6 +4964,7 @@ void LocallabLog::setDefaults(const rtengine::procparams::ProcParams* defParams,
         targetGray->setDefault(defSpot.targetGray);
         catad->setDefault(defSpot.catad);
         saturl->setDefault(defSpot.saturl);
+        contl->setDefault(defSpot.contl);
         detail->setDefault(defSpot.detail);
         baselog->setDefault(defSpot.baselog);
         sensilog->setDefault((double)defSpot.sensilog);
@@ -5024,6 +5031,13 @@ void LocallabLog::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabsaturl,
                                        saturl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == contl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcontl,
+                                       contl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -5141,11 +5155,13 @@ void LocallabLog::ciecamChanged()
         targabs->show();
         catad->show();
         saturl->show();
+        contl->show();
         surrHBox->show();
     } else {
         sourceabs->hide();
         targabs->hide();
         saturl->hide();
+        contl->hide();
         catad->hide();
         surrHBox->hide();
     }
@@ -5201,12 +5217,14 @@ void LocallabLog::updateLogGUI2()
         targabs->show();
         catad->show();
         saturl->show();
+        contl->show();
         surrHBox->show();
     } else {
         sourceabs->hide();
         targabs->hide();
         catad->hide();
         saturl->hide();
+        contl->hide();
         surrHBox->hide();
     }
 }
