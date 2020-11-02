@@ -364,6 +364,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     bayerprocess->FoldableToolPanel::show();
                     bayerpreprocess->FoldableToolPanel::show();
                     rawcacorrection->FoldableToolPanel::show();
+                    preprocessWB->FoldableToolPanel::show();
                     preprocess->FoldableToolPanel::show();
                     flatfield->FoldableToolPanel::show();
                     filmNegative->FoldableToolPanel::show();
@@ -384,6 +385,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     bayerprocess->FoldableToolPanel::hide();
                     bayerpreprocess->FoldableToolPanel::hide();
                     rawcacorrection->FoldableToolPanel::hide();
+                    preprocessWB->FoldableToolPanel::show();
                     preprocess->FoldableToolPanel::show();
                     flatfield->FoldableToolPanel::show();
                     filmNegative->FoldableToolPanel::show();
