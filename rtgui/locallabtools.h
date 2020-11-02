@@ -1196,9 +1196,11 @@ private:
     Adjuster* const blackEv;
     Adjuster* const whiteEv;
     Gtk::CheckButton* const fullimage;
+    Gtk::Frame* const logFrame;
     Gtk::CheckButton* const Autogray;
     Adjuster* const sourceGray;
     Adjuster* const sourceabs;
+    Gtk::Frame* const log1Frame;
     Gtk::Frame* const log2Frame;
     Adjuster* const targetGray;
     Adjuster* const detail;

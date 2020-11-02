@@ -2452,7 +2452,8 @@ TP_LOCALLAB_CHROMASK_TOOLTIP;Changes the chroma of the mask if one exists (i.e. 
 TP_LOCALLAB_CHROMASK_TOOLTIP;You can use this slider to desaturated background (inverse mask - curve near 0).\nAlso to attenuate or enhance the action of a mask on the chroma
 TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIEC;Use Ciecam environment parameters
-TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM02 color appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nOnly the third Ciecam process (Viewing conditions - Target) is taken into account, as well as part of the second (contrast J, saturation s) , as well as some data from the first process (Scene conditions - Source) which is used for the Log encoding.\nIt also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment. 
+//TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM02 color appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nOnly the third Ciecam process (Viewing conditions - Target) is taken into account, as well as part of the second (contrast J, saturation s) , as well as some data from the first process (Scene conditions - Source) which is used for the Log encoding.\nIt also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment. 
+TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM02 color appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nThe first Ciecam process 'Scene conditions' is carried out by Log encoding, it also uses 'Absolute luminance' at the time of the shooting.\nThe second Ciecam process  'Image adjustments' is simplified and uses only 3 variables (local contrast, contrast J, saturation s).\nThe third Ciecam process  'Viewing conditions' adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment. 
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Contains the references of the RT-spot, useful for shape detection (hue, luma, chroma, Sobel).\nLow values may be useful for treating foliage.\nHigh values may be useful for treating skin
 TP_LOCALLAB_CLARICRES;Merge chroma
@@ -2675,15 +2676,23 @@ TP_LOCALLAB_LOGAUTO;Automatic
 TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the dynamic range and Source Gray Point (if "Automatic Source Gray Point” enabled).\nPress the button again to adjust the automatically calculated values.
 TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm making the shadows darker and the highlights brighter.\nWith values greater than 2, the shadows are grayer and the highlights become more washed out.
 TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Estimated values of Dynamic Range i.e. Black Ev and White Ev
+TP_LOCALLAB_LOGCONTL_TOOLTIP;Contrast (J) in CIECAM02 takes into account the increase in perceived coloration with luminance.
+TP_LOCALLAB_LOGDETAIL_TOOLTIP;Acts mainly on high frequencies.
+TP_LOCALLAB_LOGCATAD_TOOLTIP;The chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance is far from reference D50.\nAdapts colors to the illuminant of the output device.
 TP_LOCALLAB_LOGENCOD_TOOLTIP;Tone Mapping with Logarithmic encoding (ACES).\nUseful for underexposed images or images with high dynamic range.\n\nTwo-step process : 1) Dynamic Range calculation 2) Manual adjustment
-TP_LOCALLAB_LOGFRA;Source
-TP_LOCALLAB_LOG2FRA;Target
-TP_LOCALLAB_LOGFRAME_TOOLTIP;Allows you to calculate and adjust the Ev levels and the Source Gray Point for the spot area. The resulting values will be used by all Lab operations and most RGB operations in the pipeline.\n Takes into account exposure compensation in the main-menu Exposure tab.
+TP_LOCALLAB_LOGFRA;Scene Conditions
+TP_LOCALLAB_LOG1FRA;Image Adjustments
+TP_LOCALLAB_LOG2FRA;Viewing Conditions
+TP_LOCALLAB_LOGFRAME_TOOLTIP;Allows you to calculate and adjust the Ev levels and the Source Gray Point for the spot area. The resulting values will be used by all Lab operations and most RGB operations in the pipeline.\nTakes into account exposure compensation in the main-menu Exposure tab.\nAlso calculates the absolute luminance at the time of the shooting.
+TP_LOCALLAB_LOGIMAGE_TOOLTIP;Corresponds to the treatment of correlated Ciecam variables (here mainly Contrast 'J' and Saturation 's').
 TP_LOCALLAB_LOGLIN;Logarithm mode
 TP_LOCALLAB_LOGPFRA;Relative Exposure Levels
+TP_LOCALLAB_LOGSATURL_TOOLTIP;Saturation (s) in CIECAM02 corresponds to the color of a stimulus in relation to its own brightness.\nActs mainly on medium and high light tones
+TP_LOCALLAB_LOGSCENE_TOOLTIP;Corresponds to the shooting conditions.
 TP_LOCALLAB_LOGSRCGREY_TOOLTIP;Estimated gray point value of the image.
 TP_LOCALLAB_LOGTARGGREY_TOOLTIP;You can adjust this value to suit.
 TP_LOCALLAB_LOG_TOOLNAME;Log Encoding - 0
+TP_LOCALLAB_LOGVIEWING_TOOLTIP;Corresponds to the medium on which the final image will be viewed (monitor, TV, projector, printer,..), as well as its environment.
 TP_LOCALLAB_LUM;Curves LL - CC
 TP_LOCALLAB_LUMADARKEST;Darkest
 TP_LOCALLAB_LUMASK;Background color for luminance and color masks

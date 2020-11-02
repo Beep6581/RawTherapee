@@ -4658,13 +4658,15 @@ LocallabLog::LocallabLog():
     blackEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.0, 0.0, 0.1, -5.0))),
     whiteEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0., 32.0, 0.1, 10.0))),
     fullimage(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FULLIMAGE")))),
+    logFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
     Autogray(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAY")))),
     sourceGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 10.0))),
     sourceabs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 2000.0))),
+    log1Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG1FRA")))),
     log2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
     targetGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
     detail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 1., 0.01, 0.6))),
-    catad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0.))),
+    catad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png"))))),
     contl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTL"), -100., 100., 0.5, 0.))),
     saturl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
     targabs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 16.0))),
@@ -4741,22 +4743,26 @@ LocallabLog::LocallabLog():
     logPBox->pack_start(*fullimage);
     logPFrame->add(*logPBox);
     pack_start(*logPFrame);
-    Gtk::Frame* const logFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")));
+//    Gtk::Frame* const logFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")));
     logFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const logFBox = Gtk::manage(new ToolParamBlock());
     logFBox->pack_start(*Autogray);
     logFBox->pack_start(*sourceGray);
     logFBox->pack_start(*sourceabs);
-    logFBox->pack_start(*baselog);
+//    logFBox->pack_start(*baselog);
     logFrame->add(*logFBox);
     pack_start(*logFrame);
-    log2Frame->set_label_align(0.025, 0.5);
+    log1Frame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const logP1Box = Gtk::manage(new ToolParamBlock());
+    logP1Box->pack_start(*detail);
+    logP1Box->pack_start(*contl);
+    logP1Box->pack_start(*saturl);
+    log1Frame->add(*logP1Box);
+    pack_start(*log1Frame);
+    log2Frame->set_label_align(0.025, 0.5);    
     ToolParamBlock* const logP2Box = Gtk::manage(new ToolParamBlock());
     logP2Box->pack_start(*targetGray);
     logP2Box->pack_start(*targabs);
-    logP2Box->pack_start(*detail);
-    logP2Box->pack_start(*contl);
-    logP2Box->pack_start(*saturl);
     logP2Box->pack_start(*catad);
     logP2Box->pack_start (*surrHBox);
     log2Frame->add(*logP2Box);
@@ -4777,6 +4783,9 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_LOGENCOD_TOOLTIP"));
         logPFrame->set_tooltip_text(M("TP_LOCALLAB_LOGFRAME_TOOLTIP"));
+        logFrame->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
+        log1Frame->set_tooltip_text(M("TP_LOCALLAB_LOGIMAGE_TOOLTIP"));
+        log2Frame->set_tooltip_text(M("TP_LOCALLAB_LOGVIEWING_TOOLTIP"));
         autocompute->set_tooltip_text(M("TP_LOCALLAB_LOGAUTO_TOOLTIP"));
     //    blackEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
     //    whiteEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
@@ -4789,11 +4798,13 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         baselog->set_tooltip_text(M("TP_LOCALLAB_LOGBASE_TOOLTIP"));
         strlog->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
         anglog->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
-
+        contl->set_tooltip_text(M("TP_LOCALLAB_LOGCONTL_TOOLTIP"));
+        saturl->set_tooltip_text(M("TP_LOCALLAB_LOGSATURL_TOOLTIP"));
+        detail->set_tooltip_text(M("TP_LOCALLAB_LOGDETAIL_TOOLTIP"));
+        catad->set_tooltip_text(M("TP_LOCALLAB_LOGCATAD_TOOLTIP"));
      //   detail->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
      //   Autogray->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
      //   sensilog->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
-        detail->set_tooltip_text("");
         Autogray->set_tooltip_text("");
         sensilog->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         fullimage->set_tooltip_text(M("TP_LOCALLAB_FULLIMAGELOG_TOOLTIP"));
@@ -4801,6 +4812,9 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
     } else {
         exp->set_tooltip_text("");
         logPFrame->set_tooltip_text("");
+        logFrame->set_tooltip_text("");
+        log1Frame->set_tooltip_text("");
+        log2Frame->set_tooltip_text("");
         autocompute->set_tooltip_text("");
         blackEv->set_tooltip_text("");
         whiteEv->set_tooltip_text("");
@@ -4816,7 +4830,9 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         sensilog->set_tooltip_text("");
         fullimage->set_tooltip_text("");
         ciecam->set_tooltip_text("");
-
+        contl->set_tooltip_text("");
+        saturl->set_tooltip_text("");
+        catad->set_tooltip_text("");
     }
 }
 

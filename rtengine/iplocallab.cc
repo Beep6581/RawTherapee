@@ -1575,7 +1575,8 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
         dynamic_range = 0.5f;
     }
     const float noise = pow_F(2.f, -16.f);
-    const float log2 = xlogf(lp.baselog);
+   // const float log2 = xlogf(lp.baselog);
+    const float log2 = xlogf(2.f);
     const float base = lp.targetgray > 1 && lp.targetgray < 100 && dynamic_range > 0 ? find_gray(std::abs(lp.blackev) / dynamic_range, lp.targetgray / 100.f) : 0.f;
     const float linbase = rtengine::max(base, 0.f);
     TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
