@@ -21,6 +21,9 @@ ApplyHueSatMap=false
 WorkingProfile=Rec2020
 WorkingTRC=none
 
+[RAW Bayer]
+Method=rcd
+
 [Film Negative]
 Enabled=true
 RedRatio=1.360
