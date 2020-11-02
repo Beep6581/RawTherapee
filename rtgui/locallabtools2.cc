@@ -4652,18 +4652,28 @@ LocallabLog::LocallabLog():
     LocallabTool(this, M("TP_LOCALLAB_LOG_TOOLNAME"), M("TP_LOCALLAB_LOG"), false, false),
 
     // Log encoding specific widgets
+    ciecam(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CIEC")))),
     autocompute(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_LOGAUTO")))),
     logPFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGPFRA")))),
     blackEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.0, 0.0, 0.1, -5.0))),
     whiteEv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0., 32.0, 0.1, 10.0))),
     fullimage(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FULLIMAGE")))),
+    logFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
     Autogray(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAY")))),
     sourceGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 10.0))),
+    sourceabs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 2000.0))),
+    log1Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG1FRA")))),
     log2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
     targetGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
     detail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 1., 0.01, 0.6))),
-    catad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0.))),
-    baselog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BASELOG"), 1.3, 8., 0.05, 2., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+    catad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png"))))),
+    contl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTL"), -100., 100., 0.5, 0.))),
+    saturl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
+    targabs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 16.0))),
+    surround(Gtk::manage (new MyComboBoxText ())),
+    surrHBox(Gtk::manage(new Gtk::HBox())),
+
+    baselog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BASELOG"), 1.3, 3., 0.05, 2., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     sensilog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     strlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2.0, 2.0, 0.05, 0.))),
     anglog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.)))
@@ -4676,6 +4686,7 @@ LocallabLog::LocallabLog():
 
     whiteEv->setLogScale(16, 0);
     whiteEv->setAdjusterListener(this);
+    ciecamconn = ciecam->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::ciecamChanged));
 
     fullimageConn = fullimage->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::fullimageChanged));
 
@@ -4683,11 +4694,23 @@ LocallabLog::LocallabLog():
 
     sourceGray->setAdjusterListener(this);
 
+    sourceabs->setLogScale(500, 0);
+
+    sourceabs->setAdjusterListener(this);
+
     targetGray->setAdjusterListener(this);
 
     detail->setAdjusterListener(this);
 
     catad->setAdjusterListener(this);
+
+    saturl->setAdjusterListener(this);
+
+    contl->setAdjusterListener(this);
+
+    targabs->setLogScale(500, 0);
+
+    targabs->setAdjusterListener(this);
 
     baselog->setAdjusterListener(this);
 
@@ -4697,7 +4720,21 @@ LocallabLog::LocallabLog():
 
     anglog->setAdjusterListener(this);
 
+//    Gtk::HBox* surrHBox = Gtk::manage (new Gtk::HBox ());
+    surrHBox->set_spacing (2);
+    surrHBox->set_tooltip_markup (M ("TP_COLORAPP_SURROUND_TOOLTIP"));
+    Gtk::Label* surrLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
+    surrHBox->pack_start (*surrLabel, Gtk::PACK_SHRINK);
+    surround->append (M ("TP_COLORAPP_SURROUND_AVER"));
+    surround->append (M ("TP_COLORAPP_SURROUND_DIM"));
+    surround->append (M ("TP_COLORAPP_SURROUND_DARK"));
+    surround->append (M ("TP_COLORAPP_SURROUND_EXDARK"));
+    surround->set_active (0);
+    surrHBox->pack_start (*surround);
+    surroundconn = surround->signal_changed().connect ( sigc::mem_fun (*this, &LocallabLog::surroundChanged) );
+
     // Add Log encoding specific widgets to GUI
+    pack_start(*ciecam);
     logPFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const logPBox = Gtk::manage(new ToolParamBlock());
     logPBox->pack_start(*autocompute);
@@ -4706,19 +4743,28 @@ LocallabLog::LocallabLog():
     logPBox->pack_start(*fullimage);
     logPFrame->add(*logPBox);
     pack_start(*logPFrame);
-    Gtk::Frame* const logFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")));
+//    Gtk::Frame* const logFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")));
     logFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const logFBox = Gtk::manage(new ToolParamBlock());
     logFBox->pack_start(*Autogray);
     logFBox->pack_start(*sourceGray);
-    logFBox->pack_start(*baselog);
+    logFBox->pack_start(*sourceabs);
+//    logFBox->pack_start(*baselog);
     logFrame->add(*logFBox);
     pack_start(*logFrame);
-    log2Frame->set_label_align(0.025, 0.5);
+    log1Frame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const logP1Box = Gtk::manage(new ToolParamBlock());
+    logP1Box->pack_start(*detail);
+    logP1Box->pack_start(*contl);
+    logP1Box->pack_start(*saturl);
+    log1Frame->add(*logP1Box);
+    pack_start(*log1Frame);
+    log2Frame->set_label_align(0.025, 0.5);    
     ToolParamBlock* const logP2Box = Gtk::manage(new ToolParamBlock());
     logP2Box->pack_start(*targetGray);
-    logP2Box->pack_start(*detail);
+    logP2Box->pack_start(*targabs);
     logP2Box->pack_start(*catad);
+    logP2Box->pack_start (*surrHBox);
     log2Frame->add(*logP2Box);
     pack_start(*log2Frame);
 //    pack_start(*baselog);
@@ -4737,31 +4783,44 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_LOGENCOD_TOOLTIP"));
         logPFrame->set_tooltip_text(M("TP_LOCALLAB_LOGFRAME_TOOLTIP"));
+        logFrame->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
+        log1Frame->set_tooltip_text(M("TP_LOCALLAB_LOGIMAGE_TOOLTIP"));
+        log2Frame->set_tooltip_text(M("TP_LOCALLAB_LOGVIEWING_TOOLTIP"));
         autocompute->set_tooltip_text(M("TP_LOCALLAB_LOGAUTO_TOOLTIP"));
     //    blackEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
     //    whiteEv->set_tooltip_text(M("TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP"));
         blackEv->set_tooltip_text("");
         whiteEv->set_tooltip_text("");
         sourceGray->set_tooltip_text("");
-        targetGray->set_tooltip_text(M("TP_LOCALLAB_LOGTARGGREY_TOOLTIP"));
+        sourceabs->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
+        targabs->set_tooltip_text(M("TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP"));
+        targetGray->set_tooltip_text(M("TP_COLORAPP_YBOUT_TOOLTIP"));
         baselog->set_tooltip_text(M("TP_LOCALLAB_LOGBASE_TOOLTIP"));
         strlog->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
         anglog->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
-
+        contl->set_tooltip_text(M("TP_LOCALLAB_LOGCONTL_TOOLTIP"));
+        saturl->set_tooltip_text(M("TP_LOCALLAB_LOGSATURL_TOOLTIP"));
+        detail->set_tooltip_text(M("TP_LOCALLAB_LOGDETAIL_TOOLTIP"));
+        catad->set_tooltip_text(M("TP_LOCALLAB_LOGCATAD_TOOLTIP"));
      //   detail->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
      //   Autogray->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
      //   sensilog->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
-        detail->set_tooltip_text("");
         Autogray->set_tooltip_text("");
         sensilog->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         fullimage->set_tooltip_text(M("TP_LOCALLAB_FULLIMAGELOG_TOOLTIP"));
+        ciecam->set_tooltip_text(M("TP_LOCALLAB_CIECAMLOG_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
         logPFrame->set_tooltip_text("");
+        logFrame->set_tooltip_text("");
+        log1Frame->set_tooltip_text("");
+        log2Frame->set_tooltip_text("");
         autocompute->set_tooltip_text("");
         blackEv->set_tooltip_text("");
         whiteEv->set_tooltip_text("");
         sourceGray->set_tooltip_text("");
+        sourceabs->set_tooltip_text("");
+        targabs->set_tooltip_text("");
         targetGray->set_tooltip_text("");
         baselog->set_tooltip_text("");
         strlog->set_tooltip_text("");
@@ -4770,7 +4829,10 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         Autogray->set_tooltip_text("");
         sensilog->set_tooltip_text("");
         fullimage->set_tooltip_text("");
-
+        ciecam->set_tooltip_text("");
+        contl->set_tooltip_text("");
+        saturl->set_tooltip_text("");
+        catad->set_tooltip_text("");
     }
 }
 
@@ -4780,6 +4842,8 @@ void LocallabLog::disableListener()
 
     autoconn.block(true);
     fullimageConn.block(true);
+    ciecamconn.block(true);
+    surroundconn.block (true);
     AutograyConn.block(true);
 }
 
@@ -4789,6 +4853,8 @@ void LocallabLog::enableListener()
 
     autoconn.block(false);
     fullimageConn.block(false);
+    ciecamconn.block(false);
+    surroundconn.block (false);
     AutograyConn.block(false);
 }
 
@@ -4816,9 +4882,25 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             whiteEv->setValue(1.5);
         }
 */
+        if (spot.surround == "Average") {
+            surround->set_active (0);
+        } else if (spot.surround == "Dim") {
+            surround->set_active (1);
+        } else if (spot.surround == "Dark") {
+            surround->set_active (2);
+        } else if (spot.surround == "ExtremelyDark") {
+            surround->set_active (3);
+        }
+
+        ciecam->set_active(spot.ciecam);
         fullimage->set_active(spot.fullimage);
         Autogray->set_active(spot.Autogray);
         sourceGray->setValue(spot.sourceGray);
+        sourceabs->setValue(spot.sourceabs);
+        catad->setValue(spot.catad);
+        saturl->setValue(spot.saturl);
+        contl->setValue(spot.contl);
+        targabs->setValue(spot.targabs);
         targetGray->setValue(spot.targetGray);
         detail->setValue(spot.detail);
         baselog->setValue(spot.baselog);
@@ -4832,6 +4914,7 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 
     // Update Log Encoding GUI according to autocompute button state
     updateLogGUI();
+    updateLogGUI2();
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
 }
@@ -4850,15 +4933,32 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.blackEv = blackEv->getValue();
         spot.whiteEv = whiteEv->getValue();
         spot.fullimage = fullimage->get_active();
+        spot.ciecam = ciecam->get_active();
         spot.Autogray = Autogray->get_active();
         spot.sourceGray = sourceGray->getValue();
+        spot.sourceabs = sourceabs->getValue();
+        spot.targabs = targabs->getValue();
         spot.targetGray = targetGray->getValue();
         spot.catad = catad->getValue();
+        spot.saturl = saturl->getValue();
+        spot.contl = contl->getValue();
         spot.detail = detail->getValue();
         spot.baselog = baselog->getValue();
         spot.sensilog = sensilog->getIntValue();
         spot.strlog = strlog->getValue();
         spot.anglog = anglog->getValue();
+        
+
+        if (surround->get_active_row_number() == 0) {
+            spot.surround = "Average";
+        } else if (surround->get_active_row_number() == 1) {
+            spot.surround = "Dim";
+        } else if (surround->get_active_row_number() == 2) {
+            spot.surround = "Dark";
+        } else if (surround->get_active_row_number() == 3) {
+            spot.surround = "ExtremelyDark";
+        }
+        
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -4875,8 +4975,12 @@ void LocallabLog::setDefaults(const rtengine::procparams::ProcParams* defParams,
         blackEv->setDefault(defSpot.blackEv);
         whiteEv->setDefault(defSpot.whiteEv);
         sourceGray->setDefault(defSpot.sourceGray);
+        sourceabs->setDefault(defSpot.sourceabs);
+        targabs->setDefault(defSpot.targabs);
         targetGray->setDefault(defSpot.targetGray);
         catad->setDefault(defSpot.catad);
+        saturl->setDefault(defSpot.saturl);
+        contl->setDefault(defSpot.contl);
         detail->setDefault(defSpot.detail);
         baselog->setDefault(defSpot.baselog);
         sensilog->setDefault((double)defSpot.sensilog);
@@ -4911,6 +5015,20 @@ void LocallabLog::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == sourceabs) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsourceabs,
+                                       sourceabs->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == targabs) {
+            if (listener) {
+                listener->panelChanged(Evlocallabtargabs,
+                                       targabs->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
         if (a == targetGray) {
             if (listener) {
                 listener->panelChanged(EvlocallabtargetGray,
@@ -4922,6 +5040,20 @@ void LocallabLog::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabcatad,
                                        catad->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == saturl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsaturl,
+                                       saturl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == contl) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcontl,
+                                       contl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -4962,10 +5094,10 @@ void LocallabLog::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void LocallabLog::updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float targetg)
+void LocallabLog::updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg)
 {
     idle_register.add(
-    [this, blackev, whiteev, sourceg, targetg]() -> bool {
+    [this, blackev, whiteev, sourceg, sourceab, targetg]() -> bool {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
         // Update adjuster values according to autocomputed ones
@@ -4974,6 +5106,7 @@ void LocallabLog::updateAutocompute(const float blackev, const float whiteev, co
         blackEv->setValue(blackev);
         whiteEv->setValue(whiteev);
         sourceGray->setValue(sourceg);
+        sourceabs->setValue(sourceab);
         targetGray->setValue(targetg);
 
         enableListener();
@@ -4998,6 +5131,16 @@ void LocallabLog::enabledChanged()
     }
 }
 
+void LocallabLog::surroundChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(Evlocallabsurround,
+                                   surround->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+        }
+    }
+}
+
 void LocallabLog::autocomputeToggled()
 {
     // Update Log Encoding GUI according to autocompute button state
@@ -5015,6 +5158,43 @@ void LocallabLog::autocomputeToggled()
         }
     }
 }
+
+void LocallabLog::ciecamChanged()
+{
+    if(ciecam->get_active()){
+    /*    sourceabs->set_sensitive(true);
+        targabs->set_sensitive(true);
+        catad->set_sensitive(true);
+        surrHBox->set_sensitive(true);
+        */
+        sourceabs->show();
+        targabs->show();
+        catad->show();
+        saturl->show();
+        contl->show();
+        surrHBox->show();
+    } else {
+        sourceabs->hide();
+        targabs->hide();
+        saturl->hide();
+        contl->hide();
+        catad->hide();
+        surrHBox->hide();
+    }
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (ciecam->get_active()) {
+                listener->panelChanged(Evlocallabciecam,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            } else {
+                listener->panelChanged(Evlocallabciecam,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+    }
+}
+
 
 void LocallabLog::fullimageChanged()
 {
@@ -5046,16 +5226,42 @@ void LocallabLog::AutograyChanged()
     }
 }
 
+void LocallabLog::updateLogGUI2()
+{
+    if(ciecam->get_active()){
+        sourceabs->show();
+        targabs->show();
+        catad->show();
+        saturl->show();
+        contl->show();
+        surrHBox->show();
+    } else {
+        sourceabs->hide();
+        targabs->hide();
+        catad->hide();
+        saturl->hide();
+        contl->hide();
+        surrHBox->hide();
+    }
+}
+
+
 void LocallabLog::updateLogGUI()
 {
     if (autocompute->get_active()) {
         blackEv->set_sensitive(false);
         whiteEv->set_sensitive(false);
         sourceGray->set_sensitive(false);
+        sourceabs->set_sensitive(false);
     } else {
         blackEv->set_sensitive(true);
         whiteEv->set_sensitive(true);
         sourceGray->set_sensitive(true);
+        if(ciecam->get_active()){
+            sourceabs->set_sensitive(true);
+        } else {
+            sourceabs->set_sensitive(false);
+        }
     }
 }
 

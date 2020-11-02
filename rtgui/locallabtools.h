@@ -1190,27 +1190,39 @@ class LocallabLog:
     public LocallabTool
 {
 private:
+    Gtk::CheckButton* const ciecam;
     Gtk::ToggleButton* const autocompute;
     Gtk::Frame* const logPFrame;
     Adjuster* const blackEv;
     Adjuster* const whiteEv;
     Gtk::CheckButton* const fullimage;
+    Gtk::Frame* const logFrame;
     Gtk::CheckButton* const Autogray;
     Adjuster* const sourceGray;
+    Adjuster* const sourceabs;
+    Gtk::Frame* const log1Frame;
     Gtk::Frame* const log2Frame;
     Adjuster* const targetGray;
     Adjuster* const detail;
     Adjuster* const catad;
+    Adjuster* const contl;
+    Adjuster* const saturl;
+    Adjuster* const targabs;
+    MyComboBoxText*  const surround;
+    Gtk::HBox* const surrHBox;
+    
     Adjuster* const baselog;
     Adjuster* const sensilog;
     Adjuster* const strlog;
     Adjuster* const anglog;
 
-    sigc::connection autoconn, fullimageConn, AutograyConn;
+    sigc::connection autoconn, ciecamconn, fullimageConn, AutograyConn;
+    sigc::connection  surroundconn;
 
 public:
     LocallabLog();
     void updateAdviceTooltips(const bool showTooltips) override;
+    void surroundChanged();
 
     void disableListener() override;
     void enableListener() override;
@@ -1219,7 +1231,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
 
-    void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float targetg);
+    void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg);
 
 private:
     void enabledChanged() override;
@@ -1227,8 +1239,10 @@ private:
     void autocomputeToggled();
     void fullimageChanged();
     void AutograyChanged();
+    void ciecamChanged();
 
     void updateLogGUI();
+    void updateLogGUI2();
 };
 
 
