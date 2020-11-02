@@ -1837,11 +1837,13 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
                 }
             }
         }
-
         const float gray = sourceg[sp] / 100.f;
         whiteev[sp] = xlogf(maxVal / gray) / log2;
         blackev[sp] = whiteev[sp] - dynamic_range;
-        
+
+
+        //calculate La - Absolute luminance shooting
+
         const FramesMetaData* metaData = imgsrc->getMetaData();
         int imgNum = 0;
 
@@ -2103,7 +2105,6 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B,  const str
 
 void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
 {
-    //be careful quasi duplicate with branch cat02wb
     //BENCHFUN
     bool ciec = false;
     if (params->locallab.spots.at(sp).ciecam && params->locallab.spots.at(sp).explog && call == 1) {
@@ -2121,6 +2122,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     double Xwsc, Zwsc;
 
     LUTu hist16J;
+    //for J light and contrast
     LUTf CAMBrightCurveJ;
     CAMBrightCurveJ(32768, LUT_CLIP_ABOVE);
     CAMBrightCurveJ.dirty = true;
@@ -2209,7 +2211,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     
     float contL = 0.f;
     if (ciec) {
-        contL = 0.6f *params->locallab.spots.at(sp).contl;
+        contL = 0.6f *params->locallab.spots.at(sp).contl;//0.6 less effect, no need 1.
    
         if (CAMBrightCurveJ.dirty) {
             Ciecam02::curveJfloat(0.f, contL, hist16J, CAMBrightCurveJ); //contrast J
@@ -2264,8 +2266,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         }
     }
 
-    //with which algorithm
-    //  alg = 0;
 
 
     xwd = 100.0 * Xwout;
@@ -2290,7 +2290,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     const float pilotout = 2.f;
 
     //algoritm's params
-    // const float rstprotection = 100. ;//- params->colorappearance.rstprotection;
     LUTu hist16Q;
     float yb = 18.f;
     yb2 = 18;
