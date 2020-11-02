@@ -1496,13 +1496,19 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).explog = locallab.spots.at(j).explog && pSpot.explog == otherSpot.explog;
                 locallab.spots.at(j).autocompute = locallab.spots.at(j).autocompute && pSpot.autocompute == otherSpot.autocompute;
                 locallab.spots.at(j).sourceGray = locallab.spots.at(j).sourceGray && pSpot.sourceGray == otherSpot.sourceGray;
+                locallab.spots.at(j).sourceabs = locallab.spots.at(j).sourceabs && pSpot.sourceabs == otherSpot.sourceabs;
+                locallab.spots.at(j).targabs = locallab.spots.at(j).targabs && pSpot.targabs == otherSpot.targabs;
                 locallab.spots.at(j).targetGray = locallab.spots.at(j).targetGray && pSpot.targetGray == otherSpot.targetGray;
                 locallab.spots.at(j).catad = locallab.spots.at(j).catad && pSpot.catad == otherSpot.catad;
+                locallab.spots.at(j).saturl = locallab.spots.at(j).saturl && pSpot.saturl == otherSpot.saturl;
+                locallab.spots.at(j).contl = locallab.spots.at(j).contl && pSpot.contl == otherSpot.contl;
                 locallab.spots.at(j).Autogray = locallab.spots.at(j).Autogray && pSpot.Autogray == otherSpot.Autogray;
                 locallab.spots.at(j).fullimage = locallab.spots.at(j).fullimage && pSpot.fullimage == otherSpot.fullimage;
+                locallab.spots.at(j).ciecam = locallab.spots.at(j).ciecam && pSpot.ciecam == otherSpot.ciecam;
                 locallab.spots.at(j).blackEv = locallab.spots.at(j).blackEv && pSpot.blackEv == otherSpot.blackEv;
                 locallab.spots.at(j).whiteEv = locallab.spots.at(j).whiteEv && pSpot.whiteEv == otherSpot.whiteEv;
                 locallab.spots.at(j).detail = locallab.spots.at(j).detail && pSpot.detail == otherSpot.detail;
+                locallab.spots.at(j).surround = locallab.spots.at(j).surround && pSpot.surround == otherSpot.surround;
                 locallab.spots.at(j).sensilog = locallab.spots.at(j).sensilog && pSpot.sensilog == otherSpot.sensilog;
                 locallab.spots.at(j).baselog = locallab.spots.at(j).baselog && pSpot.baselog == otherSpot.baselog;
                 locallab.spots.at(j).strlog = locallab.spots.at(j).strlog && pSpot.strlog == otherSpot.strlog;
@@ -4852,6 +4858,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).sourceGray = mods.locallab.spots.at(i).sourceGray;
         }
 
+        if (locallab.spots.at(i).sourceabs) {
+            toEdit.locallab.spots.at(i).sourceabs = mods.locallab.spots.at(i).sourceabs;
+        }
+
+        if (locallab.spots.at(i).targabs) {
+            toEdit.locallab.spots.at(i).targabs = mods.locallab.spots.at(i).targabs;
+        }
+
         if (locallab.spots.at(i).targetGray) {
             toEdit.locallab.spots.at(i).targetGray = mods.locallab.spots.at(i).targetGray;
         }
@@ -4860,12 +4874,24 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).catad = mods.locallab.spots.at(i).catad;
         }
 
+        if (locallab.spots.at(i).saturl) {
+            toEdit.locallab.spots.at(i).saturl = mods.locallab.spots.at(i).saturl;
+        }
+
+        if (locallab.spots.at(i).contl) {
+            toEdit.locallab.spots.at(i).contl = mods.locallab.spots.at(i).contl;
+        }
+
         if (locallab.spots.at(i).Autogray) {
             toEdit.locallab.spots.at(i).Autogray = mods.locallab.spots.at(i).Autogray;
         }
 
         if (locallab.spots.at(i).fullimage) {
             toEdit.locallab.spots.at(i).fullimage = mods.locallab.spots.at(i).fullimage;
+        }
+
+        if (locallab.spots.at(i).ciecam) {
+            toEdit.locallab.spots.at(i).ciecam = mods.locallab.spots.at(i).ciecam;
         }
 
         if (locallab.spots.at(i).blackEv) {
@@ -4886,6 +4912,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).baselog) {
             toEdit.locallab.spots.at(i).baselog = mods.locallab.spots.at(i).baselog;
+        }
+
+        if (locallab.spots.at(i).surround) {
+            toEdit.locallab.spots.at(i).surround = mods.locallab.spots.at(i).surround;
         }
 
         if (locallab.spots.at(i).strlog) {
@@ -6645,13 +6675,19 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     explog(v),
     autocompute(v),
     sourceGray(v),
+    sourceabs(v),
+    targabs(v),
     targetGray(v),
     catad(v),
+    saturl(v),
+    contl(v),
     Autogray(v),
     fullimage(v),
+    ciecam(v),
     blackEv(v),
     whiteEv(v),
     detail(v),
+    surround(v),
     sensilog(v),
     baselog(v),
     strlog(v),
@@ -7141,13 +7177,19 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     explog = v;
     autocompute = v;
     sourceGray = v;
+    sourceabs = v;
+    targabs = v;
     targetGray = v;
     catad = v;
+    saturl = v;
+    contl = v;
     Autogray = v;
     fullimage = v;
+    ciecam = v;
     blackEv = v;
     whiteEv = v;
     detail = v;
+    surround = v;
     sensilog = v;
     baselog = v;
     strlog = v;
