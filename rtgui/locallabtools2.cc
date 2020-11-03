@@ -4681,8 +4681,13 @@ LocallabLog::LocallabLog():
     maskCurveEditorL(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASKCOL"))),
     CCmaskshapeL(static_cast<FlatCurveEditor*>(maskCurveEditorL->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
     LLmaskshapeL(static_cast<FlatCurveEditor*>(maskCurveEditorL->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
-    HHmaskshapeL(static_cast<FlatCurveEditor *>(maskCurveEditorL->addCurve(CT_Flat, "LC(H)", nullptr, false, true)))
-    
+    HHmaskshapeL(static_cast<FlatCurveEditor *>(maskCurveEditorL->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
+    blendmaskL(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
+    radmaskL(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+    chromaskL(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
+    mask2CurveEditorL(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
+    LmaskshapeL(static_cast<DiagonalCurveEditor*>(mask2CurveEditorL->addCurve(CT_Diagonal, "L(L)")))
+   
     
 {
     // Parameter Log encoding specific widgets
@@ -4771,6 +4776,17 @@ LocallabLog::LocallabLog():
 
     maskCurveEditorL->curveListComplete();
 
+    blendmaskL->setAdjusterListener(this);
+    radmaskL->setAdjusterListener(this);
+    chromaskL->setAdjusterListener(this);
+
+    mask2CurveEditorL->setCurveListener(this);
+
+    LmaskshapeL->setResetCurve(DiagonalCurveType(defSpot.LmaskcurveL.at(0)), defSpot.LmaskcurveL);
+    LmaskshapeL->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+    LmaskshapeL->setLeftBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+
+    mask2CurveEditorL->curveListComplete();
 
     // Add Log encoding specific widgets to GUI
     pack_start(*ciecam);
@@ -4807,6 +4823,12 @@ LocallabLog::LocallabLog():
     logP2Box->pack_start(*showmaskLMethod, Gtk::PACK_SHRINK, 4);
     logP2Box->pack_start(*enaLMask, Gtk::PACK_SHRINK, 0);
     logP2Box->pack_start(*maskCurveEditorL, Gtk::PACK_SHRINK, 4);
+    logP2Box->pack_start(*blendmaskL);
+    logP2Box->pack_start(*radmaskL);
+    logP2Box->pack_start(*chromaskL);
+    logP2Box->pack_start(*mask2CurveEditorL, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+
+
     log2Frame->add(*logP2Box);
     pack_start(*log2Frame);
 //    pack_start(*baselog);
@@ -4823,6 +4845,8 @@ LocallabLog::LocallabLog():
 LocallabLog::~LocallabLog()
 {
     delete maskCurveEditorL;
+    delete mask2CurveEditorL;
+    
 }
 
 void LocallabLog::updateAdviceTooltips(const bool showTooltips)
@@ -4982,6 +5006,11 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         LLmaskshapeL->setCurve(spot.LLmaskcurveL);
         HHmaskshapeL->setCurve(spot.HHmaskcurveL);
         enaLMask->set_active(spot.enaLMask);
+        blendmaskL->setValue(spot.blendmaskL);
+        radmaskL->setValue(spot.radmaskL);
+        chromaskL->setValue(spot.chromaskL);
+        LmaskshapeL->setCurve(spot.LmaskcurveL);
+
         
     }
 
@@ -5027,7 +5056,10 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.LLmaskcurveL = LLmaskshapeL->getCurve();
         spot.HHmaskcurveL = HHmaskshapeL->getCurve();
         spot.enaLMask = enaLMask->get_active();
-        
+        spot.blendmaskL = blendmaskL->getValue();
+        spot.radmaskL = radmaskL->getValue();
+        spot.chromaskL = chromaskL->getValue();
+        spot.LmaskcurveL = LmaskshapeL->getCurve();
 
         if (surround->get_active_row_number() == 0) {
             spot.surround = "Average";
@@ -5095,7 +5127,14 @@ void LocallabLog::curveChanged(CurveEditor* ce)
                                        M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
-        
+
+        if (ce == LmaskshapeL) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLmaskshapeL,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
     }
 }
 
@@ -5122,6 +5161,11 @@ void LocallabLog::setDefaults(const rtengine::procparams::ProcParams* defParams,
         sensilog->setDefault((double)defSpot.sensilog);
         strlog->setDefault(defSpot.strlog);
         anglog->setDefault(defSpot.anglog);
+        blendmaskL->setDefault(defSpot.blendmaskL);
+        radmaskL->setDefault(defSpot.radmaskL);
+        chromaskL->setDefault(defSpot.chromaskL);
+
+
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -5227,6 +5271,29 @@ void LocallabLog::adjusterChanged(Adjuster* a, double newval)
                                        anglog->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
+        
+        if (a == blendmaskL) {
+            if (listener) {
+                listener->panelChanged(EvLocallabblendmaskL,
+                                       blendmaskL->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == radmaskL) {
+            if (listener) {
+                listener->panelChanged(EvLocallabradmaskL,
+                                       radmaskL->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == chromaskL) {
+            if (listener) {
+                listener->panelChanged(EvLocallabchromaskL,
+                                       chromaskL->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        
     }
 }
 

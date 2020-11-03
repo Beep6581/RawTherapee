@@ -1445,6 +1445,11 @@ struct LocallabParams {
         std::vector<double> LLmaskcurveL;
         std::vector<double> HHmaskcurveL;
         bool enaLMask;
+        double blendmaskL;
+        double radmaskL;
+        double chromaskL;
+        std::vector<double> LmaskcurveL;
+
         // mask
         bool visimask;
         int complexmask;

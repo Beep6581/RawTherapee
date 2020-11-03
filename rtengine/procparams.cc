@@ -3900,6 +3900,16 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35
     },
     enaLMask(false),
+    blendmaskL(0),
+    radmaskL(0.),
+    chromaskL(0.),
+    LmaskcurveL{
+        static_cast<double>(DCT_NURBS),
+        0.0,
+        0.0,
+        1.0,
+        1.0
+    },
     // mask
     visimask(false),
     complexmask(0),
@@ -4488,6 +4498,11 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && LLmaskcurveL == other.LLmaskcurveL
         && HHmaskcurveL == other.HHmaskcurveL
         && enaLMask == other.enaLMask
+        && blendmaskL == other.blendmaskL
+        && radmaskL == other.radmaskL
+        && chromaskL == other.chromaskL
+        && LmaskcurveL == other.LmaskcurveL
+
         // mask
         && visimask == other.visimask
         && complexmask == other.complexmask
@@ -6033,6 +6048,11 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->LLmaskcurveL, "Locallab", "LLmaskCurveL_" + index_str, spot.LLmaskcurveL, keyFile);
                     saveToKeyfile(!pedited || spot_edited->HHmaskcurveL, "Locallab", "HHmaskCurveL_" + index_str, spot.HHmaskcurveL, keyFile);
                     saveToKeyfile(!pedited || spot_edited->enaLMask, "Locallab", "EnaLMask_" + index_str, spot.enaLMask, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->blendmaskL, "Locallab", "blendmaskL_" + index_str, spot.blendmaskL, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->radmaskL, "Locallab", "radmaskL_" + index_str, spot.radmaskL, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->chromaskL, "Locallab", "chromaskL_" + index_str, spot.chromaskL, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->LmaskcurveL, "Locallab", "LmaskCurveL_" + index_str, spot.LmaskcurveL, keyFile);
+
                 }
                 //mask
                 if ((!pedited || spot_edited->visimask) && spot.visimask) {
@@ -7820,6 +7840,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskCurveL_" + index_str, pedited, spot.LLmaskcurveL, spotEdited.LLmaskcurveL);
                 assignFromKeyfile(keyFile, "Locallab", "HHmaskCurveL_" + index_str, pedited, spot.HHmaskcurveL, spotEdited.HHmaskcurveL);
                 assignFromKeyfile(keyFile, "Locallab", "EnaLMask_" + index_str, pedited, spot.enaLMask, spotEdited.enaLMask);
+                assignFromKeyfile(keyFile, "Locallab", "blendmaskL_" + index_str, pedited, spot.blendmaskL, spotEdited.blendmaskL);
+                assignFromKeyfile(keyFile, "Locallab", "radmaskL_" + index_str, pedited, spot.radmaskL, spotEdited.radmaskL);
+                assignFromKeyfile(keyFile, "Locallab", "chromaskL_" + index_str, pedited, spot.chromaskL, spotEdited.chromaskL);
+                assignFromKeyfile(keyFile, "Locallab", "LmaskCurveL_" + index_str, pedited, spot.LmaskcurveL, spotEdited.LmaskcurveL);
+
                 // mask
                 spot.visimask = assignFromKeyfile(keyFile, "Locallab", "Expmask_" + index_str, pedited, spot.expmask, spotEdited.expmask);
                 assignFromKeyfile(keyFile, "Locallab", "Complexmask_" + index_str, pedited, spot.complexmask, spotEdited.complexmask);

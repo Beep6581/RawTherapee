@@ -1517,6 +1517,12 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).CCmaskcurveL = locallab.spots.at(j).CCmaskcurveL && pSpot.CCmaskcurveL == otherSpot.CCmaskcurveL;
                 locallab.spots.at(j).LLmaskcurveL = locallab.spots.at(j).LLmaskcurveL && pSpot.LLmaskcurveL == otherSpot.LLmaskcurveL;
                 locallab.spots.at(j).HHmaskcurveL = locallab.spots.at(j).HHmaskcurveL && pSpot.HHmaskcurveL == otherSpot.HHmaskcurveL;
+                locallab.spots.at(j).blendmaskL = locallab.spots.at(j).blendmaskL && pSpot.blendmaskL == otherSpot.blendmaskL;
+                locallab.spots.at(j).radmaskL = locallab.spots.at(j).radmaskL && pSpot.radmaskL == otherSpot.radmaskL;
+                locallab.spots.at(j).chromaskL = locallab.spots.at(j).chromaskL && pSpot.chromaskL == otherSpot.chromaskL;
+                locallab.spots.at(j).LmaskcurveL = locallab.spots.at(j).LmaskcurveL && pSpot.LmaskcurveL == otherSpot.LmaskcurveL;
+
+
                 //mask
                 locallab.spots.at(j).visimask = locallab.spots.at(j).visimask && pSpot.visimask == otherSpot.visimask;
                 locallab.spots.at(j).complexmask = locallab.spots.at(j).complexmask && pSpot.complexmask == otherSpot.complexmask;
@@ -4945,7 +4951,23 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         if (locallab.spots.at(i).HHmaskcurveL) {
             toEdit.locallab.spots.at(i).HHmaskcurveL = mods.locallab.spots.at(i).HHmaskcurveL;
         }
-        
+
+        if (locallab.spots.at(i).blendmaskL) {
+            toEdit.locallab.spots.at(i).blendmaskL   = mods.locallab.spots.at(i).blendmaskL;
+        }
+
+        if (locallab.spots.at(i).radmaskL) {
+            toEdit.locallab.spots.at(i).radmaskL   = mods.locallab.spots.at(i).radmaskL;
+        }
+
+        if (locallab.spots.at(i).chromaskL) {
+            toEdit.locallab.spots.at(i).chromaskL   = mods.locallab.spots.at(i).chromaskL;
+        }
+
+        if (locallab.spots.at(i).LmaskcurveL) {
+            toEdit.locallab.spots.at(i).LmaskcurveL = mods.locallab.spots.at(i).LmaskcurveL;
+        }
+
         // mask
         if (locallab.spots.at(i).visimask) {
             toEdit.locallab.spots.at(i).visimask = mods.locallab.spots.at(i).visimask;
@@ -6716,6 +6738,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     LLmaskcurveL(v),
     HHmaskcurveL(v),
     enaLMask(v),
+    blendmaskL(v),
+    radmaskL(v),
+    chromaskL(v),
+    LmaskcurveL(v),
     // mask
     visimask(v),
     complexmask(v),
@@ -7222,6 +7248,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     LLmaskcurveL = v;
     HHmaskcurveL = v;
     enaLMask = v;
+    blendmaskL = v;
+    radmaskL = v;
+    chromaskL = v;
+    LmaskcurveL = v;
     // mask
     visimask = v;
     complexmask = v;

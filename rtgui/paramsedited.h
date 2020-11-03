@@ -853,6 +853,10 @@ public:
         bool LLmaskcurveL;
         bool HHmaskcurveL;
         bool enaLMask;
+        bool blendmaskL;
+        bool radmaskL;
+        bool chromaskL;
+        bool LmaskcurveL;
         //mask
         bool visimask;
         bool complexmask;

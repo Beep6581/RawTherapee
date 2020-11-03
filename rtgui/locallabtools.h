@@ -1221,6 +1221,11 @@ private:
     FlatCurveEditor* const CCmaskshapeL;
     FlatCurveEditor* const LLmaskshapeL;
     FlatCurveEditor* const HHmaskshapeL;
+    Adjuster* const blendmaskL;
+    Adjuster* const radmaskL;
+    Adjuster* const chromaskL;
+    CurveEditorGroup* const mask2CurveEditorL;
+    DiagonalCurveEditor* const LmaskshapeL;
 
     sigc::connection autoconn, ciecamconn, fullimageConn, AutograyConn;
     sigc::connection  surroundconn;
