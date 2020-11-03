@@ -124,7 +124,7 @@ public:
         return false;
     };
     virtual void resetMaskView() {};
-    virtual void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) {};
+    virtual void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask) {};
 
     // Advice tooltips management function
     virtual void updateAdviceTooltips(const bool showTooltips) {};
@@ -266,7 +266,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -380,7 +380,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -467,7 +467,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -546,7 +546,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -603,7 +603,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -706,7 +706,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -790,7 +790,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -882,7 +882,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -942,7 +942,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -1064,7 +1064,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -1155,7 +1155,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 
@@ -1215,12 +1215,24 @@ private:
     Adjuster* const sensilog;
     Adjuster* const strlog;
     Adjuster* const anglog;
+    MyComboBoxText* const showmaskLMethod;
+    Gtk::CheckButton* const enaLMask;
+    CurveEditorGroup* const maskCurveEditorL;
+    FlatCurveEditor* const CCmaskshapeL;
+    FlatCurveEditor* const LLmaskshapeL;
+    FlatCurveEditor* const HHmaskshapeL;
 
     sigc::connection autoconn, ciecamconn, fullimageConn, AutograyConn;
     sigc::connection  surroundconn;
-
+    sigc::connection showmaskLMethodConn, enaLMaskConn;
 public:
     LocallabLog();
+    ~LocallabLog();
+    
+    bool isMaskViewActive() override;
+    void resetMaskView() override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask) override;
+
     void updateAdviceTooltips(const bool showTooltips) override;
     void surroundChanged();
 
@@ -1230,6 +1242,7 @@ public:
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
+    void curveChanged(CurveEditor* ce) override;
 
     void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg);
 
@@ -1240,6 +1253,8 @@ private:
     void fullimageChanged();
     void AutograyChanged();
     void ciecamChanged();
+    void showmaskLMethodChanged();
+    void enaLMaskChanged();
 
     void updateLogGUI();
     void updateLogGUI2();
@@ -1296,7 +1311,7 @@ public:
 
     bool isMaskViewActive() override;
     void resetMaskView() override;
-    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask) override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
 

@@ -1060,10 +1060,10 @@ Locallab::llMaskVisibility Locallab::getMaskVisibility() const
     const bool prevDeltaE = expsettings->isDeltaEPrevActive();
 
     // Get mask preview from Locallab tools
-    int colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, maskMask;
+    int colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, logMask, maskMask;
 
     for (auto tool : locallabTools) {
-        tool->getMaskView(colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, maskMask);
+        tool->getMaskView(colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, logMask, maskMask);
     }
 
     // Indicate to spot control panel if one mask preview is active

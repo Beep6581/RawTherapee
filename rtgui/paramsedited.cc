@@ -1505,6 +1505,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).Autogray = locallab.spots.at(j).Autogray && pSpot.Autogray == otherSpot.Autogray;
                 locallab.spots.at(j).fullimage = locallab.spots.at(j).fullimage && pSpot.fullimage == otherSpot.fullimage;
                 locallab.spots.at(j).ciecam = locallab.spots.at(j).ciecam && pSpot.ciecam == otherSpot.ciecam;
+                locallab.spots.at(j).enaLMask = locallab.spots.at(j).enaLMask && pSpot.enaLMask == otherSpot.enaLMask;
                 locallab.spots.at(j).blackEv = locallab.spots.at(j).blackEv && pSpot.blackEv == otherSpot.blackEv;
                 locallab.spots.at(j).whiteEv = locallab.spots.at(j).whiteEv && pSpot.whiteEv == otherSpot.whiteEv;
                 locallab.spots.at(j).detail = locallab.spots.at(j).detail && pSpot.detail == otherSpot.detail;
@@ -1513,6 +1514,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).baselog = locallab.spots.at(j).baselog && pSpot.baselog == otherSpot.baselog;
                 locallab.spots.at(j).strlog = locallab.spots.at(j).strlog && pSpot.strlog == otherSpot.strlog;
                 locallab.spots.at(j).anglog = locallab.spots.at(j).anglog && pSpot.anglog == otherSpot.anglog;
+                locallab.spots.at(j).CCmaskcurveL = locallab.spots.at(j).CCmaskcurveL && pSpot.CCmaskcurveL == otherSpot.CCmaskcurveL;
+                locallab.spots.at(j).LLmaskcurveL = locallab.spots.at(j).LLmaskcurveL && pSpot.LLmaskcurveL == otherSpot.LLmaskcurveL;
+                locallab.spots.at(j).HHmaskcurveL = locallab.spots.at(j).HHmaskcurveL && pSpot.HHmaskcurveL == otherSpot.HHmaskcurveL;
                 //mask
                 locallab.spots.at(j).visimask = locallab.spots.at(j).visimask && pSpot.visimask == otherSpot.visimask;
                 locallab.spots.at(j).complexmask = locallab.spots.at(j).complexmask && pSpot.complexmask == otherSpot.complexmask;
@@ -4894,6 +4898,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).ciecam = mods.locallab.spots.at(i).ciecam;
         }
 
+        if (locallab.spots.at(i).enaLMask) {
+            toEdit.locallab.spots.at(i).enaLMask = mods.locallab.spots.at(i).enaLMask;
+        }
+
         if (locallab.spots.at(i).blackEv) {
             toEdit.locallab.spots.at(i).blackEv = mods.locallab.spots.at(i).blackEv;
         }
@@ -4924,6 +4932,18 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).anglog) {
             toEdit.locallab.spots.at(i).anglog   = mods.locallab.spots.at(i).anglog;
+        }
+
+        if (locallab.spots.at(i).CCmaskcurveL) {
+            toEdit.locallab.spots.at(i).CCmaskcurveL = mods.locallab.spots.at(i).CCmaskcurveL;
+        }
+
+        if (locallab.spots.at(i).LLmaskcurveL) {
+            toEdit.locallab.spots.at(i).LLmaskcurveL = mods.locallab.spots.at(i).LLmaskcurveL;
+        }
+
+        if (locallab.spots.at(i).HHmaskcurveL) {
+            toEdit.locallab.spots.at(i).HHmaskcurveL = mods.locallab.spots.at(i).HHmaskcurveL;
         }
         
         // mask
@@ -6692,6 +6712,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     baselog(v),
     strlog(v),
     anglog(v),
+    CCmaskcurveL(v),
+    LLmaskcurveL(v),
+    HHmaskcurveL(v),
+    enaLMask(v),
     // mask
     visimask(v),
     complexmask(v),
@@ -7194,6 +7218,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     baselog = v;
     strlog = v;
     anglog = v;
+    CCmaskcurveL = v;
+    LLmaskcurveL = v;
+    HHmaskcurveL = v;
+    enaLMask = v;
     // mask
     visimask = v;
     complexmask = v;

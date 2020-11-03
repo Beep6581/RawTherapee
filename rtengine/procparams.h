@@ -1441,6 +1441,10 @@ struct LocallabParams {
         double baselog;
         double strlog;
         double anglog;
+        std::vector<double> CCmaskcurveL;
+        std::vector<double> LLmaskcurveL;
+        std::vector<double> HHmaskcurveL;
+        bool enaLMask;
         // mask
         bool visimask;
         int complexmask;

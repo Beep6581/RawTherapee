@@ -849,6 +849,10 @@ public:
         bool baselog;
         bool strlog;
         bool anglog;
+        bool CCmaskcurveL;
+        bool LLmaskcurveL;
+        bool HHmaskcurveL;
+        bool enaLMask;
         //mask
         bool visimask;
         bool complexmask;
