@@ -4649,7 +4649,7 @@ void LocallabCBDL::lumacontrastPlusPressed()
 
 /* ==== LocallabLog ==== */
 LocallabLog::LocallabLog():
-    LocallabTool(this, M("TP_LOCALLAB_LOG_TOOLNAME"), M("TP_LOCALLAB_LOG"), false, false),
+    LocallabTool(this, M("TP_LOCALLAB_LOG_TOOLNAME"), M("TP_LOCALLAB_LOG"), false),
 
     // Log encoding specific widgets
     ciecam(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CIEC")))),
@@ -4667,8 +4667,11 @@ LocallabLog::LocallabLog():
     targetGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
     detail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 1., 0.01, 0.6))),
     catad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png"))))),
+    lightl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIGHTL"), -100., 100., 0.5, 0.))),
     contl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTL"), -100., 100., 0.5, 0.))),
     saturl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
+    CurveEditorL(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_LOGCONTQ"))),
+    LshapeL(static_cast<DiagonalCurveEditor*>(CurveEditorL->addCurve(CT_Diagonal, "Q(Q)"))),
     targabs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 16.0))),
     surround(Gtk::manage (new MyComboBoxText ())),
     surrHBox(Gtk::manage(new Gtk::HBox())),
@@ -4676,6 +4679,7 @@ LocallabLog::LocallabLog():
     sensilog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     strlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2.0, 2.0, 0.05, 0.))),
     anglog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
+    expmaskL(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWC")))),
     showmaskLMethod(Gtk::manage(new MyComboBoxText())),
     enaLMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
     maskCurveEditorL(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASKCOL"))),
@@ -4687,7 +4691,7 @@ LocallabLog::LocallabLog():
     chromaskL(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
     mask2CurveEditorL(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     LmaskshapeL(static_cast<DiagonalCurveEditor*>(mask2CurveEditorL->addCurve(CT_Diagonal, "L(L)")))
-   
+  
     
 {
     // Parameter Log encoding specific widgets
@@ -4719,7 +4723,18 @@ LocallabLog::LocallabLog():
 
     saturl->setAdjusterListener(this);
 
+    lightl->setAdjusterListener(this);
+
     contl->setAdjusterListener(this);
+
+    CurveEditorL->setCurveListener(this);
+
+    LshapeL->setResetCurve(DiagonalCurveType(defSpot.LcurveL.at(0)), defSpot.LcurveL);
+    LshapeL->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+    LshapeL->setLeftBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+
+    CurveEditorL->curveListComplete();
+
 
     targabs->setLogScale(500, 0);
 
@@ -4746,6 +4761,7 @@ LocallabLog::LocallabLog():
     surrHBox->pack_start (*surround);
     surroundconn = surround->signal_changed().connect ( sigc::mem_fun (*this, &LocallabLog::surroundChanged) );
 
+    setExpandAlignProperties(expmaskL, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     showmaskLMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
     showmaskLMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
@@ -4810,8 +4826,10 @@ LocallabLog::LocallabLog():
     log1Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const logP1Box = Gtk::manage(new ToolParamBlock());
     logP1Box->pack_start(*detail);
+    logP1Box->pack_start(*lightl);
     logP1Box->pack_start(*contl);
     logP1Box->pack_start(*saturl);
+    logP1Box->pack_start(*CurveEditorL, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     log1Frame->add(*logP1Box);
     pack_start(*log1Frame);
     log2Frame->set_label_align(0.025, 0.5);    
@@ -4820,19 +4838,24 @@ LocallabLog::LocallabLog():
     logP2Box->pack_start(*targabs);
     logP2Box->pack_start(*catad);
     logP2Box->pack_start (*surrHBox);
-    logP2Box->pack_start(*showmaskLMethod, Gtk::PACK_SHRINK, 4);
-    logP2Box->pack_start(*enaLMask, Gtk::PACK_SHRINK, 0);
-    logP2Box->pack_start(*maskCurveEditorL, Gtk::PACK_SHRINK, 4);
-    logP2Box->pack_start(*blendmaskL);
-    logP2Box->pack_start(*radmaskL);
-    logP2Box->pack_start(*chromaskL);
-    logP2Box->pack_start(*mask2CurveEditorL, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    ToolParamBlock* const logP3Box = Gtk::manage(new ToolParamBlock());
+    logP3Box->pack_start(*showmaskLMethod, Gtk::PACK_SHRINK, 4);
+    logP3Box->pack_start(*enaLMask, Gtk::PACK_SHRINK, 0);
+    logP3Box->pack_start(*maskCurveEditorL, Gtk::PACK_SHRINK, 4);
+    logP3Box->pack_start(*blendmaskL);
+    logP3Box->pack_start(*radmaskL);
+    logP3Box->pack_start(*chromaskL);
+    logP3Box->pack_start(*mask2CurveEditorL, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    expmaskL->add(*logP3Box, false);
 
 
     log2Frame->add(*logP2Box);
     pack_start(*log2Frame);
+    
 //    pack_start(*baselog);
     pack_start(*sensilog);
+    pack_start(*expmaskL, false, false);
+    
     Gtk::Frame* const gradlogFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADLOGFRA")));
     gradlogFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const gradlogBox = Gtk::manage(new ToolParamBlock());
@@ -4846,7 +4869,13 @@ LocallabLog::~LocallabLog()
 {
     delete maskCurveEditorL;
     delete mask2CurveEditorL;
+    delete CurveEditorL;
     
+}
+
+void LocallabLog::setDefaultExpanderVisibility()
+{
+    expmaskL->set_expanded(false);
 }
 
 void LocallabLog::updateAdviceTooltips(const bool showTooltips)
@@ -4994,7 +5023,9 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         sourceabs->setValue(spot.sourceabs);
         catad->setValue(spot.catad);
         saturl->setValue(spot.saturl);
+        lightl->setValue(spot.lightl);
         contl->setValue(spot.contl);
+        LshapeL->setCurve(spot.LcurveL);
         targabs->setValue(spot.targabs);
         targetGray->setValue(spot.targetGray);
         detail->setValue(spot.detail);
@@ -5046,7 +5077,9 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.targetGray = targetGray->getValue();
         spot.catad = catad->getValue();
         spot.saturl = saturl->getValue();
+        spot.lightl = lightl->getValue();
         spot.contl = contl->getValue();
+        spot.LcurveL = LshapeL->getCurve();
         spot.detail = detail->getValue();
         spot.baselog = baselog->getValue();
         spot.sensilog = sensilog->getIntValue();
@@ -5135,6 +5168,13 @@ void LocallabLog::curveChanged(CurveEditor* ce)
             }
         }
 
+        if (ce == LshapeL) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLshapeL,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
     }
 }
 
@@ -5155,6 +5195,7 @@ void LocallabLog::setDefaults(const rtengine::procparams::ProcParams* defParams,
         targetGray->setDefault(defSpot.targetGray);
         catad->setDefault(defSpot.catad);
         saturl->setDefault(defSpot.saturl);
+        lightl->setDefault(defSpot.lightl);
         contl->setDefault(defSpot.contl);
         detail->setDefault(defSpot.detail);
         baselog->setDefault(defSpot.baselog);
@@ -5229,6 +5270,14 @@ void LocallabLog::adjusterChanged(Adjuster* a, double newval)
                                        saturl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
+
+        if (a == lightl) {
+            if (listener) {
+                listener->panelChanged(Evlocallablightl,
+                                       lightl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
 
         if (a == contl) {
             if (listener) {

@@ -1205,8 +1205,11 @@ private:
     Adjuster* const targetGray;
     Adjuster* const detail;
     Adjuster* const catad;
+    Adjuster* const lightl;
     Adjuster* const contl;
     Adjuster* const saturl;
+    CurveEditorGroup* const CurveEditorL;
+    DiagonalCurveEditor* const LshapeL;
     Adjuster* const targabs;
     MyComboBoxText*  const surround;
     Gtk::HBox* const surrHBox;
@@ -1215,6 +1218,7 @@ private:
     Adjuster* const sensilog;
     Adjuster* const strlog;
     Adjuster* const anglog;
+    MyExpander* const expmaskL;
     MyComboBoxText* const showmaskLMethod;
     Gtk::CheckButton* const enaLMask;
     CurveEditorGroup* const maskCurveEditorL;
@@ -1240,6 +1244,7 @@ public:
 
     void updateAdviceTooltips(const bool showTooltips) override;
     void surroundChanged();
+    void setDefaultExpanderVisibility() override;
 
     void disableListener() override;
     void enableListener() override;

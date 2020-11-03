@@ -1501,7 +1501,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).targetGray = locallab.spots.at(j).targetGray && pSpot.targetGray == otherSpot.targetGray;
                 locallab.spots.at(j).catad = locallab.spots.at(j).catad && pSpot.catad == otherSpot.catad;
                 locallab.spots.at(j).saturl = locallab.spots.at(j).saturl && pSpot.saturl == otherSpot.saturl;
+                locallab.spots.at(j).lightl = locallab.spots.at(j).lightl && pSpot.lightl == otherSpot.lightl;
                 locallab.spots.at(j).contl = locallab.spots.at(j).contl && pSpot.contl == otherSpot.contl;
+                locallab.spots.at(j).LcurveL = locallab.spots.at(j).LcurveL && pSpot.LcurveL == otherSpot.LcurveL;
                 locallab.spots.at(j).Autogray = locallab.spots.at(j).Autogray && pSpot.Autogray == otherSpot.Autogray;
                 locallab.spots.at(j).fullimage = locallab.spots.at(j).fullimage && pSpot.fullimage == otherSpot.fullimage;
                 locallab.spots.at(j).ciecam = locallab.spots.at(j).ciecam && pSpot.ciecam == otherSpot.ciecam;
@@ -4888,8 +4890,16 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).saturl = mods.locallab.spots.at(i).saturl;
         }
 
+        if (locallab.spots.at(i).lightl) {
+            toEdit.locallab.spots.at(i).lightl = mods.locallab.spots.at(i).lightl;
+        }
+
         if (locallab.spots.at(i).contl) {
             toEdit.locallab.spots.at(i).contl = mods.locallab.spots.at(i).contl;
+        }
+
+        if (locallab.spots.at(i).LcurveL) {
+            toEdit.locallab.spots.at(i).LcurveL = mods.locallab.spots.at(i).LcurveL;
         }
 
         if (locallab.spots.at(i).Autogray) {
@@ -6722,7 +6732,9 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     targetGray(v),
     catad(v),
     saturl(v),
+    lightl(v),
     contl(v),
+    LcurveL(v),
     Autogray(v),
     fullimage(v),
     ciecam(v),
@@ -7232,7 +7244,9 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     targetGray = v;
     catad = v;
     saturl = v;
+    lightl = v;
     contl = v;
+    LcurveL = v;
     Autogray = v;
     fullimage = v;
     ciecam = v;
