@@ -3844,6 +3844,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     saturl(0.),
     lightl(0.),
     contl(0.),
+    contq(0.),
     LcurveL{
         static_cast<double>(DCT_NURBS),
         0.0,
@@ -3858,6 +3859,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     whiteEv(10.0),
     detail(0.6),
     sensilog(60),
+    sursour("Average"),
     surround("Average"),
     baselog(2.),
     strlog(0.0),
@@ -4483,6 +4485,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         // Log encoding
         && visilog == other.visilog
         && explog == other.explog
+        && complexlog == other.complexlog
         && autocompute == other.autocompute
         && sourceGray == other.sourceGray
         && sourceabs == other.sourceabs
@@ -4492,6 +4495,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && saturl == other.saturl
         && lightl == other.lightl
         && contl == other.contl
+        && contq == other.contq
         && LcurveL == other.LcurveL
         && Autogray == other.Autogray
         && fullimage == other.fullimage
@@ -4501,6 +4505,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && detail == other.detail
         && sensilog == other.sensilog
         && baselog == other.baselog
+        && sursour == other.sursour
         && surround == other.surround
         && strlog == other.strlog
         && anglog == other.anglog
@@ -6035,6 +6040,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 // Log encoding
                 if ((!pedited || spot_edited->visilog) && spot.visilog) {
                     saveToKeyfile(!pedited || spot_edited->explog, "Locallab", "Explog_" + index_str, spot.explog, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->complexlog, "Locallab", "Complexlog_" + index_str, spot.complexlog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->autocompute, "Locallab", "Autocompute_" + index_str, spot.autocompute, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sourceGray, "Locallab", "SourceGray_" + index_str, spot.sourceGray, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sourceabs, "Locallab", "Sourceabs_" + index_str, spot.sourceabs, keyFile);
@@ -6045,6 +6051,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->LcurveL, "Locallab", "LCurveL_" + index_str, spot.LcurveL, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lightl, "Locallab", "Lightl_" + index_str, spot.lightl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contl, "Locallab", "Contl_" + index_str, spot.contl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->contq, "Locallab", "Contq_" + index_str, spot.contq, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Autogray, "Locallab", "Autogray_" + index_str, spot.Autogray, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fullimage, "Locallab", "Fullimage_" + index_str, spot.fullimage, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ciecam, "Locallab", "Ciecam_" + index_str, spot.ciecam, keyFile);
@@ -6053,6 +6060,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->detail, "Locallab", "Detail_" + index_str, spot.detail, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sensilog, "Locallab", "Sensilog_" + index_str, spot.sensilog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->baselog, "Locallab", "Baselog_" + index_str, spot.baselog, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sursour, "Locallab", "Sursour_" + index_str, spot.sursour, keyFile);
                     saveToKeyfile(!pedited || spot_edited->surround, "Locallab", "Surround_" + index_str, spot.surround, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strlog, "Locallab", "Strlog_" + index_str, spot.strlog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->anglog, "Locallab", "Anglog_" + index_str, spot.anglog, keyFile);
@@ -7828,6 +7836,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 if (spot.visilog) {
                     spotEdited.visilog = true;
                 }
+                assignFromKeyfile(keyFile, "Locallab", "Complexlog_" + index_str, pedited, spot.complexlog, spotEdited.complexlog);
 
                 assignFromKeyfile(keyFile, "Locallab", "Autocompute_" + index_str, pedited, spot.autocompute, spotEdited.autocompute);
                 assignFromKeyfile(keyFile, "Locallab", "SourceGray_" + index_str, pedited, spot.sourceGray, spotEdited.sourceGray);
@@ -7838,6 +7847,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Saturl_" + index_str, pedited, spot.saturl, spotEdited.saturl);
                 assignFromKeyfile(keyFile, "Locallab", "Lightl_" + index_str, pedited, spot.lightl, spotEdited.lightl);
                 assignFromKeyfile(keyFile, "Locallab", "Contl_" + index_str, pedited, spot.contl, spotEdited.contl);
+                assignFromKeyfile(keyFile, "Locallab", "Contq_" + index_str, pedited, spot.contq, spotEdited.contq);
                 assignFromKeyfile(keyFile, "Locallab", "LCurveL_" + index_str, pedited, spot.LcurveL, spotEdited.LcurveL);
                 assignFromKeyfile(keyFile, "Locallab", "AutoGray_" + index_str, pedited, spot.Autogray, spotEdited.Autogray);
                 assignFromKeyfile(keyFile, "Locallab", "Fullimage_" + index_str, pedited, spot.fullimage, spotEdited.fullimage);
@@ -7847,6 +7857,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Detail_" + index_str, pedited, spot.detail, spotEdited.detail);
                 assignFromKeyfile(keyFile, "Locallab", "Sensilog_" + index_str, pedited, spot.sensilog, spotEdited.sensilog);
                 assignFromKeyfile(keyFile, "Locallab", "Baselog_" + index_str, pedited, spot.baselog, spotEdited.baselog);
+                assignFromKeyfile(keyFile, "Locallab", "Sursour_" + index_str, pedited, spot.sursour, spotEdited.sursour);
                 assignFromKeyfile(keyFile, "Locallab", "Surround_" + index_str, pedited, spot.surround, spotEdited.surround);
                 assignFromKeyfile(keyFile, "Locallab", "Strlog_" + index_str, pedited, spot.strlog, spotEdited.strlog);
                 assignFromKeyfile(keyFile, "Locallab", "Anglog_" + index_str, pedited, spot.anglog, spotEdited.anglog);

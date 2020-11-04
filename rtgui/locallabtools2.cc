@@ -4662,14 +4662,18 @@ LocallabLog::LocallabLog():
     Autogray(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAY")))),
     sourceGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 10.0))),
     sourceabs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 2000.0))),
+    sursour(Gtk::manage (new MyComboBoxText ())),
+    surHBox(Gtk::manage(new Gtk::HBox())),
     log1Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG1FRA")))),
     log2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
     targetGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
     detail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 1., 0.01, 0.6))),
     catad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png"))))),
-    lightl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIGHTL"), -100., 100., 0.5, 0.))),
-    contl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTL"), -100., 100., 0.5, 0.))),
+    lightl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTL"), -100., 100., 0.5, 0.))),
+    contl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTL"), -100., 100., 0.5, 0.))),
+    contq(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),
     saturl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
+    expL(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_LOGEXP")))),
     CurveEditorL(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_LOGCONTQ"))),
     LshapeL(static_cast<DiagonalCurveEditor*>(CurveEditorL->addCurve(CT_Diagonal, "Q(Q)"))),
     targabs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 16.0))),
@@ -4721,11 +4725,15 @@ LocallabLog::LocallabLog():
 
     catad->setAdjusterListener(this);
 
+    setExpandAlignProperties(expL, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
     saturl->setAdjusterListener(this);
 
     lightl->setAdjusterListener(this);
 
     contl->setAdjusterListener(this);
+
+    contq->setAdjusterListener(this);
 
     CurveEditorL->setCurveListener(this);
 
@@ -4747,6 +4755,19 @@ LocallabLog::LocallabLog():
     strlog->setAdjusterListener(this);
 
     anglog->setAdjusterListener(this);
+    
+    surHBox->set_spacing (2);
+    surHBox->set_tooltip_markup (M ("TP_LOCALLAB_LOGSURSOUR_TOOLTIP"));
+    Gtk::Label* surLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
+    surHBox->pack_start (*surLabel, Gtk::PACK_SHRINK);
+    sursour->append (M ("TP_COLORAPP_SURROUND_AVER"));
+    sursour->append (M ("TP_COLORAPP_SURROUND_DIM"));
+//    sursour->append (M ("TP_COLORAPP_SURROUND_DARK"));
+    sursour->set_active (0);
+    surHBox->pack_start (*sursour);
+    sursourconn = sursour->signal_changed().connect ( sigc::mem_fun (*this, &LocallabLog::sursourChanged) );
+
+
 
 //    Gtk::HBox* surrHBox = Gtk::manage (new Gtk::HBox ());
     surrHBox->set_spacing (2);
@@ -4820,16 +4841,22 @@ LocallabLog::LocallabLog():
     logFBox->pack_start(*Autogray);
     logFBox->pack_start(*sourceGray);
     logFBox->pack_start(*sourceabs);
+    logFBox->pack_start (*surHBox);
 //    logFBox->pack_start(*baselog);
     logFrame->add(*logFBox);
     pack_start(*logFrame);
     log1Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const logP1Box = Gtk::manage(new ToolParamBlock());
     logP1Box->pack_start(*detail);
-    logP1Box->pack_start(*lightl);
     logP1Box->pack_start(*contl);
     logP1Box->pack_start(*saturl);
-    logP1Box->pack_start(*CurveEditorL, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    ToolParamBlock* const logP11Box = Gtk::manage(new ToolParamBlock());
+    logP11Box->pack_start(*lightl);
+    logP11Box->pack_start(*contq);
+    expL->add(*logP11Box, false);
+    logP1Box->pack_start(*expL, false, false);
+    
+//    logP1Box->pack_start(*CurveEditorL, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     log1Frame->add(*logP1Box);
     pack_start(*log1Frame);
     log2Frame->set_label_align(0.025, 0.5);    
@@ -4876,6 +4903,8 @@ LocallabLog::~LocallabLog()
 void LocallabLog::setDefaultExpanderVisibility()
 {
     expmaskL->set_expanded(false);
+    expL->set_expanded(false);
+
 }
 
 void LocallabLog::updateAdviceTooltips(const bool showTooltips)
@@ -4945,6 +4974,7 @@ void LocallabLog::disableListener()
     ciecamconn.block(true);
     enaLMaskConn.block(true);
     surroundconn.block (true);
+    sursourconn.block (true);
     AutograyConn.block(true);
     showmaskLMethodConn.block(true);
 }
@@ -4958,6 +4988,7 @@ void LocallabLog::enableListener()
     ciecamconn.block(false);
     enaLMaskConn.block(false);
     surroundconn.block (false);
+    sursourconn.block (false);
     AutograyConn.block(false);
     showmaskLMethodConn.block(false);
 }
@@ -4997,6 +5028,7 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 
         exp->set_visible(spot.visilog);
         exp->setEnabled(spot.explog);
+        complexity->set_active(spot.complexlog);
 
         autocompute->set_active(spot.autocompute);
         blackEv->setValue(spot.blackEv);
@@ -5006,6 +5038,13 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             whiteEv->setValue(1.5);
         }
 */
+        if (spot.sursour == "Average") {
+            sursour->set_active (0);
+        } else if (spot.sursour == "Dim") {
+            sursour->set_active (1);
+        }
+
+
         if (spot.surround == "Average") {
             surround->set_active (0);
         } else if (spot.surround == "Dim") {
@@ -5025,6 +5064,7 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         saturl->setValue(spot.saturl);
         lightl->setValue(spot.lightl);
         contl->setValue(spot.contl);
+        contq->setValue(spot.contq);
         LshapeL->setCurve(spot.LcurveL);
         targabs->setValue(spot.targabs);
         targetGray->setValue(spot.targetGray);
@@ -5048,6 +5088,9 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
     // Enable all listeners
     enableListener();
 
+    // Update GUI according to complexity mode
+    updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
+
     // Update Log Encoding GUI according to autocompute button state
     updateLogGUI();
     updateLogGUI2();
@@ -5064,6 +5107,7 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 
         spot.explog = exp->getEnabled();
         spot.visilog = exp->get_visible();
+        spot.complexlog = complexity->get_active_row_number();
 
         spot.autocompute = autocompute->get_active();
         spot.blackEv = blackEv->getValue();
@@ -5079,6 +5123,7 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.saturl = saturl->getValue();
         spot.lightl = lightl->getValue();
         spot.contl = contl->getValue();
+        spot.contq = contq->getValue();
         spot.LcurveL = LshapeL->getCurve();
         spot.detail = detail->getValue();
         spot.baselog = baselog->getValue();
@@ -5093,6 +5138,12 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.radmaskL = radmaskL->getValue();
         spot.chromaskL = chromaskL->getValue();
         spot.LmaskcurveL = LmaskshapeL->getCurve();
+
+        if (sursour->get_active_row_number() == 0) {
+            spot.sursour = "Average";
+        } else if (sursour->get_active_row_number() == 1) {
+            spot.sursour = "Dim";
+        }
 
         if (surround->get_active_row_number() == 0) {
             spot.surround = "Average";
@@ -5123,6 +5174,99 @@ void LocallabLog::enaLMaskChanged()
         }
     }
 }
+
+
+
+void LocallabLog::updateGUIToMode(const modeType new_type)
+{
+
+    switch (new_type) {
+        case Simple:
+            // Expert and Normal mode widgets are hidden in Simple mode
+            ciecam->hide();
+            ciecam->set_active(false);
+            sourceabs->hide();
+            targabs->hide();
+            saturl->hide();
+            contl->hide();
+            lightl->hide();
+            contq->hide();
+            catad->hide();
+            surrHBox->hide();
+            expL->hide();
+            surHBox->hide();
+            break;
+
+        case Normal:
+            // Expert mode widgets are hidden in Normal mode
+            ciecam->hide();
+            ciecam->set_active(true);
+
+            sourceabs->show();
+            targabs->show();
+            catad->show();
+            saturl->show();
+            lightl->show();
+            contl->show();
+            contq->show();
+            surrHBox->show();
+            expL->hide();
+            surHBox->hide();
+
+            break;
+
+        case Expert:
+            // Show widgets hidden in Normal and Simple mode
+            ciecam->hide();
+            ciecam->set_active(true);
+            sourceabs->show();
+            targabs->show();
+            catad->show();
+            saturl->show();
+            lightl->show();
+            contl->show();
+            contq->show();
+            surrHBox->show();
+            expL->show();
+            surHBox->show();
+
+    }
+}
+
+
+
+
+void LocallabLog::convertParamToSimple()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+    ciecam->set_active(false);
+    contq->setValue(defSpot.contq);
+    lightl->setValue(defSpot.lightl);
+    sursour->set_active(0);
+    // Enable all listeners
+    enableListener();
+}
+
+
+void LocallabLog::convertParamToNormal()
+{
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+    ciecam->set_active(true);
+    contq->setValue(defSpot.contq);
+    lightl->setValue(defSpot.lightl);
+    sursour->set_active(0);
+    // Enable all listeners
+    enableListener();
+
+}
+
+
 
 void LocallabLog::showmaskLMethodChanged()
 {
@@ -5197,6 +5341,7 @@ void LocallabLog::setDefaults(const rtengine::procparams::ProcParams* defParams,
         saturl->setDefault(defSpot.saturl);
         lightl->setDefault(defSpot.lightl);
         contl->setDefault(defSpot.contl);
+        contq->setDefault(defSpot.contq);
         detail->setDefault(defSpot.detail);
         baselog->setDefault(defSpot.baselog);
         sensilog->setDefault((double)defSpot.sensilog);
@@ -5283,6 +5428,13 @@ void LocallabLog::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabcontl,
                                        contl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == contq) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcontq,
+                                       contq->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -5383,6 +5535,17 @@ void LocallabLog::enabledChanged()
     }
 }
 
+void LocallabLog::sursourChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(Evlocallabsursour,
+                                   sursour->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+        }
+    }
+}
+
+
 void LocallabLog::surroundChanged()
 {
     if (isLocActivated && exp->getEnabled()) {
@@ -5413,27 +5576,32 @@ void LocallabLog::autocomputeToggled()
 
 void LocallabLog::ciecamChanged()
 {
+    /*
     if(ciecam->get_active()){
-    /*    sourceabs->set_sensitive(true);
+        sourceabs->set_sensitive(true);
         targabs->set_sensitive(true);
         catad->set_sensitive(true);
         surrHBox->set_sensitive(true);
-        */
+        
         sourceabs->show();
         targabs->show();
         catad->show();
         saturl->show();
+        lightl->show();
         contl->show();
+        contq->show();
         surrHBox->show();
     } else {
         sourceabs->hide();
         targabs->hide();
         saturl->hide();
         contl->hide();
+        lightl->hide();
+        contq->hide();
         catad->hide();
         surrHBox->hide();
     }
-
+*/
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (ciecam->get_active()) {
@@ -5480,39 +5648,51 @@ void LocallabLog::AutograyChanged()
 
 void LocallabLog::updateLogGUI2()
 {
+    /*
     if(ciecam->get_active()){
         sourceabs->show();
         targabs->show();
         catad->show();
         saturl->show();
         contl->show();
+        lightl->show();
+        contq->show();
         surrHBox->show();
     } else {
         sourceabs->hide();
         targabs->hide();
         catad->hide();
         saturl->hide();
+        lightl->hide();
         contl->hide();
+        contq->hide();
         surrHBox->hide();
     }
+    */
 }
 
 
 void LocallabLog::updateLogGUI()
 {
+    const int mode = complexity->get_active_row_number();
+    
     if (autocompute->get_active()) {
         blackEv->set_sensitive(false);
         whiteEv->set_sensitive(false);
         sourceGray->set_sensitive(false);
-        sourceabs->set_sensitive(false);
+        if (mode == Expert || mode == Normal) {
+            sourceabs->set_sensitive(false);
+        } else {
+            sourceabs->hide();
+        }
     } else {
         blackEv->set_sensitive(true);
         whiteEv->set_sensitive(true);
         sourceGray->set_sensitive(true);
-        if(ciecam->get_active()){
+        if (mode == Expert || mode == Normal){
             sourceabs->set_sensitive(true);
         } else {
-            sourceabs->set_sensitive(false);
+            sourceabs->hide();
         }
     }
 }

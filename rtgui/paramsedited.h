@@ -830,6 +830,7 @@ public:
         // Log encoding
         bool visilog;
         bool explog;
+        bool complexlog;
         bool autocompute;
         bool sourceGray;
         bool sourceabs;
@@ -839,6 +840,7 @@ public:
         bool saturl;
         bool lightl;
         bool contl;
+        bool contq;
         bool LcurveL;
         bool Autogray;
         bool fullimage;
@@ -846,6 +848,7 @@ public:
         bool blackEv;
         bool whiteEv;
         bool detail;
+        bool sursour;
         bool surround;
         bool sensilog;
         bool baselog;

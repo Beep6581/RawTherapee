@@ -1200,6 +1200,8 @@ private:
     Gtk::CheckButton* const Autogray;
     Adjuster* const sourceGray;
     Adjuster* const sourceabs;
+    MyComboBoxText*  const sursour;
+    Gtk::HBox* const surHBox;
     Gtk::Frame* const log1Frame;
     Gtk::Frame* const log2Frame;
     Adjuster* const targetGray;
@@ -1207,7 +1209,9 @@ private:
     Adjuster* const catad;
     Adjuster* const lightl;
     Adjuster* const contl;
+    Adjuster* const contq;
     Adjuster* const saturl;
+    MyExpander* const expL;
     CurveEditorGroup* const CurveEditorL;
     DiagonalCurveEditor* const LshapeL;
     Adjuster* const targabs;
@@ -1232,7 +1236,7 @@ private:
     DiagonalCurveEditor* const LmaskshapeL;
 
     sigc::connection autoconn, ciecamconn, fullimageConn, AutograyConn;
-    sigc::connection  surroundconn;
+    sigc::connection  surroundconn, sursourconn;
     sigc::connection showmaskLMethodConn, enaLMaskConn;
 public:
     LocallabLog();
@@ -1244,6 +1248,7 @@ public:
 
     void updateAdviceTooltips(const bool showTooltips) override;
     void surroundChanged();
+    void sursourChanged();
     void setDefaultExpanderVisibility() override;
 
     void disableListener() override;
@@ -1258,6 +1263,10 @@ public:
 
 private:
     void enabledChanged() override;
+    void convertParamToNormal() override;
+    void convertParamToSimple() override;
+    void updateGUIToMode(const modeType new_type) override;
+    void complexityModeChanged();
 
     void autocomputeToggled();
     void fullimageChanged();
