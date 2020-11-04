@@ -4928,12 +4928,11 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         strlog->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
         anglog->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
         contl->set_tooltip_text(M("TP_LOCALLAB_LOGCONTL_TOOLTIP"));
+        contq->set_tooltip_text(M("TP_LOCALLAB_LOGCONTQ_TOOLTIP"));
+        lightl->set_tooltip_text(M("TP_LOCALLAB_LOGLIGHTL_TOOLTIP"));        
         saturl->set_tooltip_text(M("TP_LOCALLAB_LOGSATURL_TOOLTIP"));
         detail->set_tooltip_text(M("TP_LOCALLAB_LOGDETAIL_TOOLTIP"));
         catad->set_tooltip_text(M("TP_LOCALLAB_LOGCATAD_TOOLTIP"));
-     //   detail->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
-     //   Autogray->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
-     //   sensilog->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         Autogray->set_tooltip_text("");
         sensilog->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         fullimage->set_tooltip_text(M("TP_LOCALLAB_FULLIMAGELOG_TOOLTIP"));
@@ -4960,6 +4959,8 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         fullimage->set_tooltip_text("");
         ciecam->set_tooltip_text("");
         contl->set_tooltip_text("");
+        lightl->set_tooltip_text("");
+        contq->set_tooltip_text("");
         saturl->set_tooltip_text("");
         catad->set_tooltip_text("");
     }
@@ -5195,6 +5196,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             surrHBox->hide();
             expL->hide();
             surHBox->hide();
+            expmaskL->hide();
             break;
 
         case Normal:
@@ -5212,6 +5214,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             surrHBox->show();
             expL->hide();
             surHBox->hide();
+            expmaskL->hide();
 
             break;
 
@@ -5228,6 +5231,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             contq->show();
             surrHBox->show();
             expL->show();
+            expmaskL->hide();
             surHBox->show();
 
     }
