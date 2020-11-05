@@ -1503,8 +1503,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).catad = locallab.spots.at(j).catad && pSpot.catad == otherSpot.catad;
                 locallab.spots.at(j).saturl = locallab.spots.at(j).saturl && pSpot.saturl == otherSpot.saturl;
                 locallab.spots.at(j).lightl = locallab.spots.at(j).lightl && pSpot.lightl == otherSpot.lightl;
+                locallab.spots.at(j).lightq = locallab.spots.at(j).lightq && pSpot.lightq == otherSpot.lightq;
                 locallab.spots.at(j).contl = locallab.spots.at(j).contl && pSpot.contl == otherSpot.contl;
                 locallab.spots.at(j).contq = locallab.spots.at(j).contq && pSpot.contq == otherSpot.contq;
+                locallab.spots.at(j).colorfl = locallab.spots.at(j).colorfl && pSpot.colorfl == otherSpot.colorfl;
                 locallab.spots.at(j).LcurveL = locallab.spots.at(j).LcurveL && pSpot.LcurveL == otherSpot.LcurveL;
                 locallab.spots.at(j).Autogray = locallab.spots.at(j).Autogray && pSpot.Autogray == otherSpot.Autogray;
                 locallab.spots.at(j).fullimage = locallab.spots.at(j).fullimage && pSpot.fullimage == otherSpot.fullimage;
@@ -4901,12 +4903,20 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).lightl = mods.locallab.spots.at(i).lightl;
         }
 
+        if (locallab.spots.at(i).lightq) {
+            toEdit.locallab.spots.at(i).lightq = mods.locallab.spots.at(i).lightq;
+        }
+
         if (locallab.spots.at(i).contl) {
             toEdit.locallab.spots.at(i).contl = mods.locallab.spots.at(i).contl;
         }
 
         if (locallab.spots.at(i).contq) {
             toEdit.locallab.spots.at(i).contq = mods.locallab.spots.at(i).contq;
+        }
+
+        if (locallab.spots.at(i).colorfl) {
+            toEdit.locallab.spots.at(i).colorfl = mods.locallab.spots.at(i).colorfl;
         }
 
         if (locallab.spots.at(i).LcurveL) {
@@ -6749,8 +6759,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     catad(v),
     saturl(v),
     lightl(v),
+    lightq(v),
     contl(v),
     contq(v),
+    colorfl(v),
     LcurveL(v),
     Autogray(v),
     fullimage(v),
@@ -7264,8 +7276,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     catad = v;
     saturl = v;
     lightl = v;
+    lightq = v;
     contl = v;
     contq = v;
+    colorfl = v;
     LcurveL = v;
     Autogray = v;
     fullimage = v;

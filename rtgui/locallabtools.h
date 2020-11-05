@@ -1208,8 +1208,10 @@ private:
     Adjuster* const detail;
     Adjuster* const catad;
     Adjuster* const lightl;
+    Adjuster* const lightq;
     Adjuster* const contl;
     Adjuster* const contq;
+    Adjuster* const colorfl;
     Adjuster* const saturl;
     MyExpander* const expL;
     CurveEditorGroup* const CurveEditorL;

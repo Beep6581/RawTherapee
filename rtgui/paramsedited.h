@@ -839,8 +839,10 @@ public:
         bool catad;
         bool saturl;
         bool lightl;
+        bool lightq;
         bool contl;
         bool contq;
+        bool colorfl;
         bool LcurveL;
         bool Autogray;
         bool fullimage;

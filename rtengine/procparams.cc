@@ -3843,8 +3843,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     catad(0.),
     saturl(0.),
     lightl(0.),
+    lightq(0.),
     contl(0.),
     contq(0.),
+    colorfl(0.),
     LcurveL{
         static_cast<double>(DCT_NURBS),
         0.0,
@@ -4494,8 +4496,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && catad == other.catad
         && saturl == other.saturl
         && lightl == other.lightl
+        && lightq == other.lightq
         && contl == other.contl
         && contq == other.contq
+        && colorfl == other.colorfl
         && LcurveL == other.LcurveL
         && Autogray == other.Autogray
         && fullimage == other.fullimage
@@ -6050,8 +6054,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->saturl, "Locallab", "Saturl_" + index_str, spot.saturl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LcurveL, "Locallab", "LCurveL_" + index_str, spot.LcurveL, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lightl, "Locallab", "Lightl_" + index_str, spot.lightl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lightq, "Locallab", "Brightq_" + index_str, spot.lightq, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contl, "Locallab", "Contl_" + index_str, spot.contl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contq, "Locallab", "Contq_" + index_str, spot.contq, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->colorfl, "Locallab", "Colorfl_" + index_str, spot.colorfl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Autogray, "Locallab", "Autogray_" + index_str, spot.Autogray, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fullimage, "Locallab", "Fullimage_" + index_str, spot.fullimage, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ciecam, "Locallab", "Ciecam_" + index_str, spot.ciecam, keyFile);
@@ -7846,8 +7852,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Catad_" + index_str, pedited, spot.catad, spotEdited.catad);
                 assignFromKeyfile(keyFile, "Locallab", "Saturl_" + index_str, pedited, spot.saturl, spotEdited.saturl);
                 assignFromKeyfile(keyFile, "Locallab", "Lightl_" + index_str, pedited, spot.lightl, spotEdited.lightl);
+                assignFromKeyfile(keyFile, "Locallab", "Brightq_" + index_str, pedited, spot.lightq, spotEdited.lightq);
                 assignFromKeyfile(keyFile, "Locallab", "Contl_" + index_str, pedited, spot.contl, spotEdited.contl);
                 assignFromKeyfile(keyFile, "Locallab", "Contq_" + index_str, pedited, spot.contq, spotEdited.contq);
+                assignFromKeyfile(keyFile, "Locallab", "Colorfl_" + index_str, pedited, spot.colorfl, spotEdited.colorfl);
                 assignFromKeyfile(keyFile, "Locallab", "LCurveL_" + index_str, pedited, spot.LcurveL, spotEdited.LcurveL);
                 assignFromKeyfile(keyFile, "Locallab", "AutoGray_" + index_str, pedited, spot.Autogray, spotEdited.Autogray);
                 assignFromKeyfile(keyFile, "Locallab", "Fullimage_" + index_str, pedited, spot.fullimage, spotEdited.fullimage);

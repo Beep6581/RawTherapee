@@ -2240,11 +2240,13 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     float contL = 0.f;
     float lightL = 0.f;
     float contQ = 0.f;
+    float lightQ = 0.f;
     
     if (ciec) {
         contL = 0.6f *params->locallab.spots.at(sp).contl;//0.6 less effect, no need 1.
         lightL = 0.4f *params->locallab.spots.at(sp).lightl;//0.4 less effect, no need 1.
         contQ = 0.5f *params->locallab.spots.at(sp).contq;//0.5 less effect, no need 1.
+        lightQ = 0.4f *params->locallab.spots.at(sp).lightq;//0.4 less effect, no need 1.
    
         if (CAMBrightCurveJ.dirty) {
             Ciecam02::curveJfloat(lightL, contL, hist16J, CAMBrightCurveJ); //contrast J
@@ -2253,7 +2255,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         }
         
         if (CAMBrightCurveQ.dirty) {
-            Ciecam02::curveJfloat(0.f, contQ, hist16Q, CAMBrightCurveQ); //brightness and contrast Q
+            Ciecam02::curveJfloat(lightQ, contQ, hist16Q, CAMBrightCurveQ); //brightness and contrast Q
             CAMBrightCurveQ.dirty = false;
         }
         
@@ -2351,6 +2353,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     }
     
     float schr = 0.f;
+    float mchr = 0.f;
 
     if (ciec) {
         schr = params->locallab.spots.at(sp).saturl;
@@ -2362,6 +2365,17 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         if (schr == -100.f) {
             schr = -99.8f;
         }
+        
+
+        mchr = params->locallab.spots.at(sp).colorfl;
+
+        if (mchr == -100.0f) {
+            mchr = -99.8f ;
+        }
+        if (mchr == 100.0f) {
+            mchr = 99.9f;
+        }
+        
     }
 
     float d, dj;
@@ -2506,7 +2520,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                 if(ciec) {
                         Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
                         float rstprotection = 50.f;
-                        float mchr = 0.f;
                         float chr = 0.f;
                         float Mp, sres;
                         Mp = Mpro / 100.0f;

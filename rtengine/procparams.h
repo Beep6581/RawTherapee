@@ -1431,8 +1431,10 @@ struct LocallabParams {
         double catad;
         double saturl;
         double lightl;
+        double lightq;
         double contl;
         double contq;
+        double colorfl;
         std::vector<double> LcurveL;
         bool Autogray;
         bool fullimage;

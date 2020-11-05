@@ -1213,9 +1213,19 @@ HISTORY_MSG_963;Local - Log encoding  Absolute luminance target
 HISTORY_MSG_964;Local - Log encoding  Surround
 HISTORY_MSG_965;Local - Log encoding  Saturation s
 HISTORY_MSG_966;Local - Log encoding  Contrast J
+HISTORY_MSG_967;Local - Log encoding  Mask curve C
+HISTORY_MSG_968;Local - Log encoding  Mask curve L
+HISTORY_MSG_969;Local - Log encoding  Mask curve H
+HISTORY_MSG_970;Local - Log encoding  Mask enable
+HISTORY_MSG_971;Local - Log encoding  Mask blend
+HISTORY_MSG_972;Local - Log encoding  Mask radius
+HISTORY_MSG_973;Local - Log encoding  Mask chroma
+HISTORY_MSG_974;Local - Log encoding  Mask contrast
 HISTORY_MSG_975;Local - Log encoding  Lightness J
 HISTORY_MSG_977;Local - Log encoding  Contrast Q
 HISTORY_MSG_978;Local - Log encoding  Sursource
+HISTORY_MSG_979;Local - Log encoding  Brightness Q
+HISTORY_MSG_980;Local - Log encoding  Colorfulness M
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2687,6 +2697,8 @@ TP_LOCALLAB_LOGCONTL_TOOLTIP;Contrast (J) in CIECAM02 takes into account the inc
 TP_LOCALLAB_LOGCONTQ_TOOLTIP;Contrast (Q) in CIECAM02 takes into account the increase in perceived coloration with brightness.
 TP_LOCALLAB_LOGDETAIL_TOOLTIP;Acts mainly on high frequencies.
 TP_LOCALLAB_LOGCATAD_TOOLTIP;The chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance is far from reference D50.\nAdapts colors to the illuminant of the output device.
+TP_LOCALLAB_LOGCOLORFL;Colorfulness (M)
+TP_LOCALLAB_LOGCOLORF_TOOLTIP;Perceived amount of hue in relation to gray.\nIndicator that a stimulus appears more or less colored.
 TP_LOCALLAB_LOGCONTL;Contrast (J)
 TP_LOCALLAB_LOGCONQL;Contrast (Q)
 TP_LOCALLAB_LOGENCOD_TOOLTIP;Tone Mapping with Logarithmic encoding (ACES).\nUseful for underexposed images or images with high dynamic range.\n\nTwo-step process : 1) Dynamic Range calculation 2) Manual adjustment
@@ -2697,7 +2709,9 @@ TP_LOCALLAB_LOG2FRA;Viewing Conditions
 TP_LOCALLAB_LOGFRAME_TOOLTIP;Allows you to calculate and adjust the Ev levels and the Source Gray Point for the spot area. The resulting values will be used by all Lab operations and most RGB operations in the pipeline.\nTakes into account exposure compensation in the main-menu Exposure tab.\nAlso calculates the absolute luminance at the time of the shooting.
 TP_LOCALLAB_LOGIMAGE_TOOLTIP;Takes into account corresponding Ciecam variables (mainly Contrast 'J' and Saturation 's', and also 'advanced' Contrast 'Q' and Lightness (J)).
 TP_LOCALLAB_LOGLIGHTL;Lightness (J)
+TP_LOCALLAB_LOGLIGHTQ;Brightness (Q)
 TP_LOCALLAB_LOGLIGHTL_TOOLTIP;Close to lightness (L*a*b*), takes into account the increase in perceived coloration. 
+TP_LOCALLAB_LOGLIGHTQ_TOOLTIP;Perceived amount of light emanating from a stimulus.\nIndicator that a stimulus appears to be more or less bright, clear. 
 TP_LOCALLAB_LOGLIN;Logarithm mode
 TP_LOCALLAB_LOGPFRA;Relative Exposure Levels
 TP_LOCALLAB_LOGSATURL_TOOLTIP;Saturation (s) in CIECAM02 corresponds to the color of a stimulus in relation to its own brightness.\nActs mainly on medium and highlights tones
