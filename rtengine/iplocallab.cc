@@ -425,6 +425,9 @@ struct local_params {
     float angvib;
     float angwav;
     float strwav;
+    float blendmaL;
+    float radmaL;
+    float chromaL;
 
     float strengthw;
     float radiusw;
@@ -1099,6 +1102,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     bool fftwlc = locallab.spots.at(sp).fftwlc;
     bool fftwreti = locallab.spots.at(sp).fftwreti;
 
+    float blendmaskL = ((float) locallab.spots.at(sp).blendmaskL) / 100.f ;
+    float radmaskL = ((float) locallab.spots.at(sp).radmaskL);
+    float chromaskL = ((float) locallab.spots.at(sp).chromaskL);
+
     bool equilret = locallab.spots.at(sp).equilret;
     bool inverserad = false; // Provision
     bool inverseret = locallab.spots.at(sp).inversret;
@@ -1220,6 +1227,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.gammatm = gammasktm;
     lp.slomatm = slomasktm;
     lp.wavgradl = wavgradl;
+    lp.blendmaL = blendmaskL;
+    lp.radmaL = radmaskL;
+    lp.chromaL = chromaskL;
 
     lp.strengthw = ((float) locallab.spots.at(sp).strengthw);
     lp.radiusw = ((float) locallab.spots.at(sp).radiusw);
@@ -6415,6 +6425,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     const bool tmshow = ((lp.showmasktmmet == 1 || lp.showmasktmmet == 2) &&  senstype == 8);
     const bool lcshow = ((lp.showmasklcmet == 1 || lp.showmasklcmet == 2) &&  senstype == 10);
     const bool origshow = ((lp.showmasksoftmet == 5) &&  senstype == 3 && lp.softmet == 1);
+    const bool logshow = ((lp.showmasklogmet == 1 || lp.showmasklogmet == 2) &&  senstype == 11);
  
     const bool masshow = ((lp.showmask_met == 1) &&  senstype == 20);
 
@@ -6426,6 +6437,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     const bool previewlc = ((lp.showmasklcmet == 4) &&  senstype == 10);
     const bool previeworig = ((lp.showmasksoftmet == 6) &&  senstype == 3 && lp.softmet == 1);
     const bool previewmas = ((lp.showmask_met == 3) &&  senstype == 20);
+    const bool previewlog = ((lp.showmasklogmet == 4) &&  senstype == 11);
 
     float radius = 3.f / sk;
 
@@ -6464,7 +6476,8 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     const bool usemasktm = (lp.showmasktmmet == 2 || lp.enatmMask || lp.showmasktmmet == 4) && senstype == 8;
     const bool usemasklc = (lp.showmasklcmet == 2 || lp.enalcMask || lp.showmasklcmet == 4) && senstype == 10;
     const bool usemaskmas = (lp.showmask_met == 1 || lp.ena_Mask || lp.showmask_met == 3) && senstype == 20;
-    const bool usemaskall = (usemaskexp || usemaskvib || usemaskcol || usemaskSH || usemasktm || usemasklc || usemaskmas);
+    const bool usemasklog = (lp.showmasklogmet == 2 || lp.enaLMask || lp.showmasklogmet == 4) && senstype == 11;
+    const bool usemaskall = (usemaskexp || usemaskvib || usemaskcol || usemaskSH || usemasktm || usemasklc || usemasklog || usemaskmas);
 
     //blur a little mask
     if (usemaskall) {
@@ -6649,13 +6662,13 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                     const float difb = factorx * realstrbdE;
                     float maxdifab = rtengine::max(std::fabs(difa), std::fabs(difb));
 
-                    if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || origshow || masshow) && lp.colorde < 0) { //show modifications with use "b"
+                    if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || logshow || origshow || masshow) && lp.colorde < 0) { //show modifications with use "b"
                         //  (origshow && lp.colorde < 0) { //original Retinex
                         transformed->a[y + ystart][x + xstart] = 0.f;
                         transformed->b[y + ystart][x + xstart] = ampli * 8.f * diflc * reducdE;
                         transformed->L[y + ystart][x + xstart] = CLIP(12000.f + 0.5f * ampli * diflc);
 
-                    } else if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || origshow || masshow) && lp.colorde > 0) {//show modifications without use "b"
+                    } else if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || logshow || origshow || masshow) && lp.colorde > 0) {//show modifications without use "b"
                         if (diflc < 1000.f) {//if too low to be view use ab
                             diflc += 0.5f * maxdifab;
                         }
@@ -6663,7 +6676,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                         transformed->L[y + ystart][x + xstart] = CLIP(12000.f + 0.5f * ampli * diflc);
                         transformed->a[y + ystart][x + xstart] = clipC(ampli * difa);
                         transformed->b[y + ystart][x + xstart] = clipC(ampli * difb);
-                    } else if (previewexp || previewvib || previewcol || previewSH || previewtm || previewlc || previeworig || previewmas || lp.prevdE) {//show deltaE
+                    } else if (previewexp || previewvib || previewcol || previewSH || previewtm || previewlc || previewlog || previeworig || previewmas || lp.prevdE) {//show deltaE
                         float difbdisp = reducdE * 10000.f * lp.colorde;
 
                         if (transformed->L[y + ystart][x + xstart] < darklim) { //enhance dark luminance as user can see!
@@ -9928,7 +9941,8 @@ void ImProcFunctions::Lab_Local(
     }
 
 //encoding lab at the beginning
-    if (lp.logena) {
+    if (lp.logena || lp.showmasklogmet == 2 || lp.enaLMask || lp.showmasklogmet == 3 || lp.showmasklogmet == 4) {
+        
         const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         const int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -9939,6 +9953,16 @@ void ImProcFunctions::Lab_Local(
         if (bfh >= mSP && bfw >= mSP) {
             const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh)); //buffer for data in zone limit
             const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
+
+            std::unique_ptr<LabImage> bufmaskblurlog;
+            std::unique_ptr<LabImage> originalmasklog;
+            std::unique_ptr<LabImage> bufmaskoriglog;
+
+            if (lp.showmasklogmet == 2  || lp.enaLMask || lp.showmasklogmet == 3 || lp.showmasklogmet == 4) {
+                bufmaskblurlog.reset(new LabImage(bfw, bfh));
+                originalmasklog.reset(new LabImage(bfw, bfh));
+                bufmaskoriglog.reset(new LabImage(bfw, bfh));
+            }
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if(multiThread)
@@ -9951,34 +9975,104 @@ void ImProcFunctions::Lab_Local(
                 }
             }
 
-            bufexpfin->CopyFrom(bufexporig.get(), multiThread);
-            std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
-            lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
-            log_encode(tmpImage.get(), lp, multiThread, bfw, bfh);
-            rgb2lab(*(tmpImage.get()), *bufexpfin, params->icm.workingProfile);
-            tmpImage.reset();
-            if (params->locallab.spots.at(sp).ciecam) {
-                ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 1);
+            int inv = 0;
+            bool showmaske = false;
+            bool enaMask = false;
+            bool deltaE = false;
+            bool modmask = false;
+            bool zero = false;
+            bool modif = false;
+
+            if (lp.showmasklogmet == 3) {
+                showmaske = true;
             }
 
-            //here begin graduated filter
-            //first solution "easy" but we can do other with log_encode...to see the results
-            if (lp.strlog != 0.f) {
-                struct grad_params gplog;
-                calclocalGradientParams(lp, gplog, ystart, xstart, bfw, bfh, 11);
+            if (lp.enaLMask) {
+                enaMask = true;
+            }
+
+            if (lp.showmasklogmet == 4) {
+                deltaE = true;
+            }
+
+            if (lp.showmasklogmet == 2) {
+                modmask = true;
+            }
+
+            if (lp.showmasklogmet == 1) {
+                modif = true;
+            }
+
+            if (lp.showmasklogmet == 0) {
+                zero = true;
+            }
+            float chrom = lp.chromaL;
+            float rad = lp.radmaL;
+            float blendm = lp.blendmaL;
+            float gamma = 1.f;
+            float slope = 0.f;
+            float lap = 0.f; //params->locallab.spots.at(sp).lapmaskexp;
+            bool pde = false; //params->locallab.spots.at(sp).laplac;
+            LocwavCurve dummy;
+            bool lmasutilicolwav = false;
+            bool delt = params->locallab.spots.at(sp).deltae;
+            int sco = params->locallab.spots.at(sp).scopemask;
+            int shado = 0;
+            int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
+            const float mindE = 2.f + MINSCOPE * sco * lp.thr;
+            const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
+            const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+            const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+            float amountcd = 0.f;
+            float anchorcd = 50.f;
+            int lumask = params->locallab.spots.at(sp).lumask;
+            LocHHmaskCurve lochhhmasCurve;
+            bool lhhmasutili = false;
+            const int highl = 0;
+            maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskoriglog.get(), originalmasklog.get(), original, reserved, inv, lp,
+                        0.f, false,
+                        locccmaslogCurve, lcmaslogutili, locllmaslogCurve, llmaslogutili, lochhmaslogCurve, lhmaslogutili, lochhhmasCurve, lhhmasutili, multiThread,
+                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmaskloglocalcurve, localmasklogutili, dummy, lmasutilicolwav, 1, 1, 5, 5,
+                        shortcu, delt, hueref, chromaref, lumaref,
+                        maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, -1
+                       );
+
+            if (lp.showmasklogmet == 3) {
+                showmask(lumask, lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), transformed, bufmaskoriglog.get(), 0);
+
+                return;
+            }
+            if (lp.showmasklogmet == 0 || lp.showmasklogmet == 1  || lp.showmasklogmet == 2 || lp.showmasklogmet == 4 || lp.enaLMask) {
+
+                bufexpfin->CopyFrom(bufexporig.get(), multiThread);
+                std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
+                lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
+                log_encode(tmpImage.get(), lp, multiThread, bfw, bfh);
+                rgb2lab(*(tmpImage.get()), *bufexpfin, params->icm.workingProfile);
+                tmpImage.reset();
+                if (params->locallab.spots.at(sp).ciecam) {
+                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 1);
+                }
+
+                //here begin graduated filter
+                //first solution "easy" but we can do other with log_encode...to see the results
+                if (lp.strlog != 0.f) {
+                    struct grad_params gplog;
+                    calclocalGradientParams(lp, gplog, ystart, xstart, bfw, bfh, 11);
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if(multiThread)
 #endif
-                for (int ir = 0; ir < bfh; ir++) {
-                    for (int jr = 0; jr < bfw; jr++) {
-                        bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gplog, jr, ir);
+                    for (int ir = 0; ir < bfh; ir++) {
+                        for (int jr = 0; jr < bfw; jr++) {
+                            bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gplog, jr, ir);
+                        }
                     }
                 }
-            }
 
             //end graduated
-            transit_shapedetect2(call, 11, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
-
+                transit_shapedetect2(call, 11, bufexporig.get(), bufexpfin.get(), originalmasklog.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+            }
+            
             if (params->locallab.spots.at(sp).recurs) {
                 original->CopyFrom(transformed, multiThread);
                 float avge;

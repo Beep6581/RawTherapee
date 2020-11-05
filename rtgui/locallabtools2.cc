@@ -5217,7 +5217,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             surrHBox->hide();
             expL->hide();
             surHBox->hide();
-           // expmaskL->hide();
+            expmaskL->hide();
             break;
 
         case Normal:
@@ -5235,7 +5235,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             surrHBox->show();
             expL->hide();
             surHBox->hide();
-         //   expmaskL->hide();
+            expmaskL->hide();
 
             break;
 
@@ -5252,7 +5252,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             contq->show();
             surrHBox->show();
             expL->show();
-           // expmaskL->hide();
+            expmaskL->show();
             surHBox->show();
 
     }
@@ -5271,6 +5271,7 @@ void LocallabLog::convertParamToSimple()
     contq->setValue(defSpot.contq);
     lightl->setValue(defSpot.lightl);
     sursour->set_active(0);
+    enaLMask->set_active(false);
     // Enable all listeners
     enableListener();
 }
@@ -5286,6 +5287,7 @@ void LocallabLog::convertParamToNormal()
     contq->setValue(defSpot.contq);
     lightl->setValue(defSpot.lightl);
     sursour->set_active(0);
+    enaLMask->set_active(false);
     // Enable all listeners
     enableListener();
 
