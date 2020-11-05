@@ -1966,7 +1966,7 @@ TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left.\n\nShortcuts:\n<b>[</b> - Multiple Ed
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right.\n\nShortcuts:\n<b>]</b> - Multiple Editor Tabs Mode,\n<b>Alt-]</b> - Single Editor Tab Mode.
 TP_COARSETRAF_TOOLTIP_VFLIP;Flip vertically.
 TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminance
-TP_COLORAPP_ADAPSCEN_TOOLTIP;Corresponds to the luminance in candelas per m2 at the time of shooting ,calculated automatically from the exif data.
+TP_COLORAPP_ADAPSCEN_TOOLTIP;Corresponds to the luminance in candelas per m2 at the time of shooting, calculated automatically from the exif data.
 TP_COLORAPP_ALGO;Algorithm
 TP_COLORAPP_ALGO_ALL;All
 TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
@@ -2709,7 +2709,7 @@ TP_LOCALLAB_LOGFRA;Scene Conditions
 TP_LOCALLAB_LOG1FRA;Image Adjustments
 TP_LOCALLAB_LOG2FRA;Viewing Conditions
 TP_LOCALLAB_LOGFRAME_TOOLTIP;Allows you to calculate and adjust the Ev levels and the Source Gray Point for the spot area. The resulting values will be used by all Lab operations and most RGB operations in the pipeline.\nTakes into account exposure compensation in the main-menu Exposure tab.\nAlso calculates the absolute luminance at the time of shooting.
-TP_LOCALLAB_LOGIMAGE_TOOLTIP;Takes into account corresponding Ciecam variables (mainly Contrast 'J' and Saturation 's', and also 'advanced' Contrast 'Q' and Lightness (J)).
+TP_LOCALLAB_LOGIMAGE_TOOLTIP;Takes into account corresponding Ciecam variables (mainly Contrast 'J' and Saturation 's', and also 'advanced' Contrast 'Q' , Brightness 'Q', Lightness (J), Colorfulness (M)).
 TP_LOCALLAB_LOGLIGHTL;Lightness (J)
 TP_LOCALLAB_LOGLIGHTQ;Brightness (Q)
 TP_LOCALLAB_LOGLIGHTL_TOOLTIP;Close to lightness (L*a*b*), takes into account the increase in perceived coloration. 

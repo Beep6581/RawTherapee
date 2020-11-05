@@ -2157,7 +2157,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
 
 #ifdef _OPENMP
         const int numThreads = min(max(width * height / 65536, 1), omp_get_max_threads());
-            #pragma omp parallel num_threads(numThreads) if(numThreads>1)
+        #pragma omp parallel num_threads(numThreads) if(numThreads>1)
 #endif
             {
                 LUTu hist16Jthr;
@@ -2166,7 +2166,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                 hist16Jthr.clear();
                 hist16Qthr(hist16Q.getSize());
                 hist16Qthr.clear();
-                
 
 #ifdef _OPENMP
                 #pragma omp for reduction(+:sum)
@@ -2233,10 +2232,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
             //evaluate lightness, contrast
         }
 
-
-
-
-    
     float contL = 0.f;
     float lightL = 0.f;
     float contQ = 0.f;
@@ -2249,13 +2244,13 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         lightQ = 0.4f *params->locallab.spots.at(sp).lightq;//0.4 less effect, no need 1.
    
         if (CAMBrightCurveJ.dirty) {
-            Ciecam02::curveJfloat(lightL, contL, hist16J, CAMBrightCurveJ); //contrast J
+            Ciecam02::curveJfloat(lightL, contL, hist16J, CAMBrightCurveJ); //lightness J and contrast J
             CAMBrightCurveJ /= 327.68f;
             CAMBrightCurveJ.dirty = false;
         }
         
         if (CAMBrightCurveQ.dirty) {
-            Ciecam02::curveJfloat(lightQ, contQ, hist16Q, CAMBrightCurveQ); //brightness and contrast Q
+            Ciecam02::curveJfloat(lightQ, contQ, hist16Q, CAMBrightCurveQ); //brightness Q and contrast Q
             CAMBrightCurveQ.dirty = false;
         }
         
@@ -2277,7 +2272,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         }
     }
 
-
     ColorTemp::temp2mulxyz(params->wb.temperature, params->wb.method, Xw, Zw);  //compute white Xw Yw Zw  : white current WB
     ColorTemp::temp2mulxyz(tempo, "Custom", Xwout, Zwout);
     ColorTemp::temp2mulxyz(5000, "Custom", Xwsc, Zwsc);
@@ -2289,7 +2283,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     //viewing condition for surround
     f2 = 1.0f, c2 = 0.69f, nc2 = 1.0f;
     if(ciec) {
-
+        //surround source with only 2 choices (because Log encoding before)
         if (params->locallab.spots.at(sp).sursour == "Average") {
             f = 1.0f, c = 0.69f, nc = 1.0f;
         } else if (params->locallab.spots.at(sp).sursour == "Dim") {
@@ -2298,7 +2292,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
             nc = 0.9f;
         }
 
-        
         //viewing condition for surround
         if (params->locallab.spots.at(sp).surround == "Average") {
             f2 = 1.0f, c2 = 0.69f, nc2 = 1.0f;
@@ -2317,8 +2310,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         }
     }
 
-
-
     xwd = 100.0 * Xwout;
     zwd = 100.0 * Zwout;
     ywd = 100.f;
@@ -2336,14 +2327,11 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         
         la2 = params->locallab.spots.at(sp).targabs;
     }
-    
-    
-    
+
     const float pilot = 2.f;
     const float pilotout = 2.f;
 
     //algoritm's params
-//    LUTu hist16Q;
     float yb = 18.f;
     yb2 = 18;
     if(ciec) {
@@ -2365,7 +2353,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         if (schr == -100.f) {
             schr = -99.8f;
         }
-        
 
         mchr = params->locallab.spots.at(sp).colorfl;
 
@@ -2375,7 +2362,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         if (mchr == 100.0f) {
             mchr = 99.9f;
         }
-        
     }
 
     float d, dj;
@@ -2385,14 +2371,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     yw = 100.f * Yw;
     zw = 100.0 * Zw;
     float xw1 = xws, yw1 = yws, zw1 = zws, xw2 = xwd, yw2 = ywd, zw2 = zwd;
-/*    
-            xw1 = 96.46f;    //use RT WB; CAT 02 is used for output device (see prefreneces)
-            yw1 = 100.0f;
-            zw1 = 82.445f;
-*/
     float cz, wh, pfl;
     Ciecam02::initcam1float(yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
-//   const float chr = 0.f;
     const float pow1 = pow_F(1.64f - pow_F(0.29f, n), 0.73f);
     float nj, nbbj, ncbj, czj, awj, flj;
     Ciecam02::initcam2float(yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
@@ -2401,8 +2381,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
 #endif
     const float epsil = 0.0001f;
     const float coefQ = 32767.f / wh;
-//        const float a_w = aw;
-
     const float pow1n = pow_F(1.64f - pow_F(0.29f, nj), 0.73f);
     const float coe = pow_F(fl, 0.25f);
     const float QproFactor = (0.4f / c) * (aw + 4.0f) ;
@@ -2518,40 +2496,39 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                 /*
                 */
                 if(ciec) {
-                        Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
-                        float rstprotection = 50.f;
-                        float chr = 0.f;
-                        float Mp, sres;
-                        Mp = Mpro / 100.0f;
-                        Ciecam02::curvecolorfloat(mchr, Mp, sres, 2.5f);
-                        float dred = 100.f; //in C mode
-                        float protect_red = 80.0f; // in C mode
-                        dred *= coe; //in M mode
-                        protect_red *= coe; //M mode
-                        Color::skinredfloat(Jpro, hpro, sres, Mp, dred, protect_red, 0, rstprotection, 100.f, Mpro);
-                        Jpro = SQR((10.f * Qpro) / wh);
-                        Cpro = Mpro / coe;
-                        Qpro = (Qpro == 0.f ? epsil : Qpro); // avoid division by zero
-                        spro = 100.0f * sqrtf(Mpro / Qpro);
+                    Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
+                    float rstprotection = 50.f;//default value to avoid 1 slider
+                    float chr = 0.f;//no use of chroma 
+                    float Mp, sres;
+                    Mp = Mpro / 100.0f;
+                    Ciecam02::curvecolorfloat(mchr, Mp, sres, 2.5f);
+                    float dred = 100.f; //in C mode
+                    float protect_red = 80.0f; // in C mode
+                    dred *= coe; //in M mode
+                    protect_red *= coe; //M mode
+                    Color::skinredfloat(Jpro, hpro, sres, Mp, dred, protect_red, 0, rstprotection, 100.f, Mpro);
+                    Jpro = SQR((10.f * Qpro) / wh);
+                    Cpro = Mpro / coe;
+                    Qpro = (Qpro == 0.f ? epsil : Qpro); // avoid division by zero
+                    spro = 100.0f * sqrtf(Mpro / Qpro);
 
-                        if (Jpro > 99.9f) {
-                            Jpro = 99.9f;
-                        }
+                    if (Jpro > 99.9f) {
+                       Jpro = 99.9f;
+                    }
 
-                        Jpro = CAMBrightCurveJ[(float)(Jpro * 327.68f)];   //lightness CIECAM02 + contrast
-                        float Sp = spro / 100.0f;
-                        Ciecam02::curvecolorfloat(schr, Sp, sres, 1.5f);
-                        dred = 100.f; // in C mode
-                        protect_red = 80.0f; // in C mode
-                        dred = 100.0f * sqrtf((dred * coe) / Q);
-                        protect_red = 100.0f * sqrtf((protect_red * coe) / Q);
-                        Color::skinredfloat(Jpro, hpro, sres, Sp, dred, protect_red, 0, rstprotection, 100.f, spro);
-                        Qpro = QproFactor * sqrtf(Jpro);
-                        float Cp = (spro * spro * Qpro) / (1000000.f);
-                        Cpro = Cp * 100.f;
-                        Ciecam02::curvecolorfloat(chr, Cp, sres, 1.8f);
-                        Color::skinredfloat(Jpro, hpro, sres, Cp, 55.f, 30.f, 1, rstprotection, 100.f, Cpro);
-                    
+                    Jpro = CAMBrightCurveJ[(float)(Jpro * 327.68f)];   //lightness CIECAM02 + contrast
+                    float Sp = spro / 100.0f;
+                    Ciecam02::curvecolorfloat(schr, Sp, sres, 1.5f);
+                    dred = 100.f; // in C mode
+                    protect_red = 80.0f; // in C mode
+                    dred = 100.0f * sqrtf((dred * coe) / Q);
+                    protect_red = 100.0f * sqrtf((protect_red * coe) / Q);
+                    Color::skinredfloat(Jpro, hpro, sres, Sp, dred, protect_red, 0, rstprotection, 100.f, spro);
+                    Qpro = QproFactor * sqrtf(Jpro);
+                    float Cp = (spro * spro * Qpro) / (1000000.f);
+                    Cpro = Cp * 100.f;
+                    Ciecam02::curvecolorfloat(chr, Cp, sres, 1.8f);
+                    Color::skinredfloat(Jpro, hpro, sres, Cp, 55.f, 30.f, 1, rstprotection, 100.f, Cpro);
                 }
 
                 //retrieve values C,J...s
