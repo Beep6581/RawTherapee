@@ -9796,6 +9796,7 @@ void ImProcFunctions::Lab_Local(
     const LUTf& lmaskcblocalcurve, bool localmaskcbutili,
     const LUTf& lmaskbllocalcurve, bool localmaskblutili,
     const LUTf& lmasklclocalcurve, bool localmasklcutili,
+    const LUTf& lmaskloglocalcurve, bool localmasklogutili,
     const LUTf& lmasklocal_curve, bool localmask_utili,
 
     const LocCCmaskCurve& locccmasCurve, bool lcmasutili, const LocLLmaskCurve& locllmasCurve, bool llmasutili, const LocHHmaskCurve& lochhmasCurve, bool lhmasutili, const LocHHmaskCurve& lochhhmasCurve, bool lhhmasutili,
@@ -9807,6 +9808,7 @@ void ImProcFunctions::Lab_Local(
     const LocCCmaskCurve& locccmastmCurve, bool lcmastmutili, const LocLLmaskCurve& locllmastmCurve, bool llmastmutili, const LocHHmaskCurve& lochhmastmCurve, bool lhmastmutili,
     const LocCCmaskCurve& locccmasblCurve, bool lcmasblutili, const LocLLmaskCurve& locllmasblCurve, bool llmasblutili, const LocHHmaskCurve& lochhmasblCurve, bool lhmasblutili,
     const LocCCmaskCurve& locccmaslcCurve, bool lcmaslcutili, const LocLLmaskCurve& locllmaslcCurve, bool llmaslcutili, const LocHHmaskCurve& lochhmaslcCurve, bool lhmaslcutili,
+    const LocCCmaskCurve& locccmaslogCurve, bool lcmaslogutili, const LocLLmaskCurve& locllmaslogCurve, bool llmaslogutili, const LocHHmaskCurve& lochhmaslogCurve, bool lhmaslogutili,
     const LocCCmaskCurve& locccmas_Curve, bool lcmas_utili, const LocLLmaskCurve& locllmas_Curve, bool llmas_utili, const LocHHmaskCurve& lochhmas_Curve, bool lhmas_utili,
     const LocHHmaskCurve& lochhhmas_Curve, bool lhhmas_utili,
     const LocwavCurve& loclmasCurveblwav, bool lmasutiliblwav,
@@ -9822,7 +9824,7 @@ void ImProcFunctions::Lab_Local(
     
     bool LHutili, bool HHutili, bool CHutili, const LUTf& cclocalcurve, bool localcutili, const LUTf& rgblocalcurve, bool localrgbutili, bool localexutili, const LUTf& exlocalcurve, const LUTf& hltonecurveloc, const LUTf& shtonecurveloc, const LUTf& tonecurveloc, const LUTf& lightCurveloc,
     double& huerefblur, double& chromarefblur, double& lumarefblur, double& hueref, double& chromaref, double& lumaref, double& sobelref, int &lastsav,
-    bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int ll_Mask,
+    bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax
     )
 {

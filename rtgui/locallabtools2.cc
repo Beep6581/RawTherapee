@@ -5196,7 +5196,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             surrHBox->hide();
             expL->hide();
             surHBox->hide();
-            expmaskL->hide();
+           // expmaskL->hide();
             break;
 
         case Normal:
@@ -5214,7 +5214,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             surrHBox->show();
             expL->hide();
             surHBox->hide();
-            expmaskL->hide();
+         //   expmaskL->hide();
 
             break;
 
@@ -5231,7 +5231,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             contq->show();
             surrHBox->show();
             expL->show();
-            expmaskL->hide();
+           // expmaskL->hide();
             surHBox->show();
 
     }
