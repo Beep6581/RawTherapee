@@ -4681,6 +4681,7 @@ LocallabLog::LocallabLog():
     surrHBox(Gtk::manage(new Gtk::HBox())),
     baselog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BASELOG"), 1.3, 3., 0.05, 2., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     sensilog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    gradlogFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADLOGFRA")))),
     strlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2.0, 2.0, 0.05, 0.))),
     anglog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
     expmaskL(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWC")))),
@@ -4883,7 +4884,7 @@ LocallabLog::LocallabLog():
     pack_start(*sensilog);
     pack_start(*expmaskL, false, false);
     
-    Gtk::Frame* const gradlogFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADLOGFRA")));
+ //   Gtk::Frame* const gradlogFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADLOGFRA")));
     gradlogFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const gradlogBox = Gtk::manage(new ToolParamBlock());
     gradlogBox->pack_start(*strlog);
@@ -5218,6 +5219,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             expL->hide();
             surHBox->hide();
             expmaskL->hide();
+            gradlogFrame->hide();
             break;
 
         case Normal:
@@ -5236,6 +5238,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             expL->hide();
             surHBox->hide();
             expmaskL->hide();
+            gradlogFrame->show();
 
             break;
 
@@ -5253,6 +5256,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             surrHBox->show();
             expL->show();
             expmaskL->show();
+            gradlogFrame->show();
             surHBox->show();
 
     }
@@ -5271,6 +5275,8 @@ void LocallabLog::convertParamToSimple()
     contq->setValue(defSpot.contq);
     lightl->setValue(defSpot.lightl);
     sursour->set_active(0);
+    strlog->setValue(defSpot.strlog);
+    anglog->setValue(defSpot.anglog);
     enaLMask->set_active(false);
     // Enable all listeners
     enableListener();

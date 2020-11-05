@@ -1220,6 +1220,7 @@ private:
     
     Adjuster* const baselog;
     Adjuster* const sensilog;
+    Gtk::Frame* const gradlogFrame;
     Adjuster* const strlog;
     Adjuster* const anglog;
     MyExpander* const expmaskL;
