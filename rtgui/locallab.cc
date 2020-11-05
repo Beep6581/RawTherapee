@@ -311,6 +311,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         r->balanh = pp->locallab.spots.at(i).balanh;
         r->colorde = pp->locallab.spots.at(i).colorde;
         r->colorscope = pp->locallab.spots.at(i).colorscope;
+        r->hishow = pp->locallab.spots.at(i).hishow;
         r->activ = pp->locallab.spots.at(i).activ;
         r->avoid = pp->locallab.spots.at(i).avoid;
         r->blwh = pp->locallab.spots.at(i).blwh;
@@ -486,6 +487,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->balanh = newSpot->balanh;
             r->colorde = newSpot->colorde;
             r->colorscope = newSpot->colorscope;
+            r->hishow = newSpot->hishow;
             r->activ = newSpot->activ;
             r->avoid = newSpot->avoid;
             r->blwh = newSpot->blwh;
@@ -918,6 +920,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).balanh = r->balanh;
                     pp->locallab.spots.at(pp->locallab.selspot).colorde = r->colorde;
                     pp->locallab.spots.at(pp->locallab.selspot).colorscope = r->colorscope;
+                    pp->locallab.spots.at(pp->locallab.selspot).hishow = r->hishow;
                     pp->locallab.spots.at(pp->locallab.selspot).activ = r->activ;
                     pp->locallab.spots.at(pp->locallab.selspot).avoid = r->avoid;
                     pp->locallab.spots.at(pp->locallab.selspot).blwh = r->blwh;
@@ -1014,10 +1017,10 @@ void Locallab::minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int 
     }
 }
 
-void Locallab::logencodChanged(const float blackev, const float whiteev, const float sourceg, const float targetg)
+void Locallab::logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg)
 {
     // Update Locallab Log Encoding accordingly
-    explog->updateAutocompute(blackev, whiteev, sourceg, targetg);
+    explog->updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg);
 }
 
 void Locallab::refChanged(const std::vector<locallabRef> &ref, int selspot)

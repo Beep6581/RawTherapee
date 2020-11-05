@@ -493,7 +493,11 @@ endif()
 
 # Check for libcanberra-gtk3 (sound events on Linux):
 if(UNIX AND (NOT APPLE))
-    pkg_check_modules(CANBERRA-GTK REQUIRED libcanberra-gtk3)
+    option(USE_LIBCANBERRA "Build with libcanberra" ON)
+    if(USE_LIBCANBERRA)
+       pkg_check_modules(CANBERRA-GTK REQUIRED libcanberra-gtk3)
+       add_definitions(-DUSE_CANBERRA)
+    endif()
 endif()
 
 if(WITH_MYFILE_MMAP)
@@ -637,14 +641,8 @@ else()
 endif()
 
 # Get compiler name and version.
-    get_filename_component(COMPILER_INFO ${CMAKE_C_COMPILER} NAME_WE)
-    set(COMPILER_INFO "${COMPILER_INFO} ${CMAKE_C_COMPILER_VERSION}")
-if(NOT APPLE)
-    execute_process(
-        COMMAND gcc -dumpversion
-        OUTPUT_VARIABLE GCC_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
-    set(COMPILER_INFO "gcc ${GCC_VERSION}")
-endif()
+get_filename_component(COMPILER_INFO ${CMAKE_C_COMPILER} NAME_WE)
+set(COMPILER_INFO "${COMPILER_INFO} ${CMAKE_C_COMPILER_VERSION}")
 
 # Get C++ and linker flags for rtengine (the GUI's C++ flags may have fewer
 # flags):

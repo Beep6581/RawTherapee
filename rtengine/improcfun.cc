@@ -5218,7 +5218,7 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
 
     /* Debuggery. Saves L for toying with outside of RT.
     char nm[64];
-    sprintf(nm, "%ux%ufloat.bin", lab->W, lab->H);
+    snprintf(nm, sizeof(nm), "%ux%ufloat.bin", lab->W, lab->H);
     FILE *f = fopen(nm, "wb");
     fwrite(L, N, sizeof(float), f);
     fclose(f);*/
@@ -5712,6 +5712,116 @@ void ImProcFunctions::rgb2lab(const Imagefloat &src, LabImage &dst, const Glib::
             Color::rgbxyz(src.r(i, j), src.g(i, j), src.b(i, j), X, Y, Z, wp);
             //convert Lab
             Color::XYZ2Lab(X, Y, Z, dst.L[i][j], dst.a[i][j], dst.b[i][j]);
+        }
+    }
+}
+
+void ImProcFunctions::rgb2lab(const Image8 &src, int x, int y, int w, int h, float L[], float a[], float b[], const procparams::ColorManagementParams &icm, bool consider_histogram_settings) const
+{ // Adapted from ImProcFunctions::lab2rgb
+    const int src_width = src.getWidth();
+    const int src_height = src.getHeight();
+
+    if (x < 0) {
+        x = 0;
+    }
+
+    if (y < 0) {
+        y = 0;
+    }
+
+    if (x + w > src_width) {
+        w = src_width - x;
+    }
+
+    if (y + h > src_height) {
+        h = src_height - y;
+    }
+
+    Glib::ustring profile;
+
+    cmsHPROFILE oprof = nullptr;
+
+    if (settings->HistogramWorking && consider_histogram_settings) {
+        profile = icm.workingProfile;
+    } else {
+        profile = icm.outputProfile;
+
+        if (icm.outputProfile.empty() || icm.outputProfile == ColorManagementParams::NoICMString) {
+            profile = "sRGB";
+        }
+        oprof = ICCStore::getInstance()->getProfile(profile);
+    }
+
+    if (oprof) {
+        cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE; // NOCACHE is important for thread safety
+
+        if (icm.outputBPC) {
+            flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
+        }
+
+        lcmsMutex->lock();
+        cmsHPROFILE LabIProf  = cmsCreateLab4Profile(nullptr);
+        cmsHTRANSFORM hTransform = cmsCreateTransform (oprof, TYPE_RGB_8, LabIProf, TYPE_Lab_FLT, icm.outputIntent, flags);
+        cmsCloseProfile(LabIProf);
+        lcmsMutex->unlock();
+
+        // cmsDoTransform is relatively expensive
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            AlignedBuffer<float> oBuf(3 * w);
+            float *outbuffer = oBuf.data;
+            int condition = y + h;
+
+#ifdef _OPENMP
+            #pragma omp for schedule(dynamic,16)
+#endif
+
+            for (int i = y; i < condition; i++) {
+                const int ix = 3 * (x + i * src_width);
+                int iy = 0;
+                float* rL = L + (i - y) * w;
+                float* ra = a + (i - y) * w;
+                float* rb = b + (i - y) * w;
+
+                cmsDoTransform (hTransform, src.data + ix, outbuffer, w);
+
+                for (int j = 0; j < w; j++) {
+                    rL[j] = outbuffer[iy++] * 327.68f;
+                    ra[j] = outbuffer[iy++] * 327.68f;
+                    rb[j] = outbuffer[iy++] * 327.68f;
+                }
+            }
+        } // End of parallelization
+
+        cmsDeleteTransform(hTransform);
+    } else {
+        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(profile);
+        const float wp[3][3] = {
+            {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
+            {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
+            {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
+        };
+
+        const int x2 = x + w;
+        const int y2 = y + h;
+        constexpr float rgb_factor = 65355.f / 255.f;
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+        for (int i = y; i < y2; i++) {
+            int offset = (i - y) * w;
+            for (int j = x; j < x2; j++) {
+                float X, Y, Z;
+                // lab2rgb uses gamma2curve, which is gammatab_srgb.
+                const auto& igamma = Color::igammatab_srgb;
+                Color::rgbxyz(igamma[rgb_factor * src.r(i, j)], igamma[rgb_factor * src.g(i, j)], igamma[rgb_factor * src.b(i, j)], X, Y, Z, wp);
+                Color::XYZ2Lab(X, Y, Z, L[offset], a[offset], b[offset]);
+                offset++;
+            }
         }
     }
 }

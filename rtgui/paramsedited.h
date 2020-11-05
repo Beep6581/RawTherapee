@@ -266,6 +266,7 @@ struct ColorAppearanceParamsEdited {
     bool curveMode;
     bool curveMode2;
     bool curveMode3;
+    bool complexmethod;
     bool enabled;
     bool degree;
     bool autodegree;
@@ -415,6 +416,7 @@ public:
         bool colorscope;
         bool transitweak;
         bool transitgrad;
+        bool hishow;
         bool activ;
         bool avoid;
         bool blwh;
@@ -616,6 +618,7 @@ public:
         bool epsbl;
         bool blMethod;
         bool chroMethod;
+        bool quamethod;
         bool blurMethod;
         bool medMethod;
         bool activlum;
@@ -639,6 +642,7 @@ public:
         bool HHmaskblcurve;
         bool enablMask;
         bool fftwbl;
+        bool invbl;
         bool toolbl;
         bool blendmaskbl;
         bool radmaskbl;
@@ -828,12 +832,19 @@ public:
         bool explog;
         bool autocompute;
         bool sourceGray;
+        bool sourceabs;
+        bool targabs;
         bool targetGray;
+        bool catad;
+        bool saturl;
+        bool contl;
         bool Autogray;
         bool fullimage;
+        bool ciecam;
         bool blackEv;
         bool whiteEv;
         bool detail;
+        bool surround;
         bool sensilog;
         bool baselog;
         bool strlog;
@@ -911,6 +922,7 @@ struct PerspectiveParamsEdited {
     bool projection_shift_horiz;
     bool projection_shift_vert;
     bool projection_yaw;
+    bool control_lines;
 };
 
 struct GradientParamsEdited {
@@ -1041,6 +1053,10 @@ struct WaveletParamsEdited {
     bool Backmethod;
     bool Tilesmethod;
     bool complexmethod;
+    bool denmethod;
+    bool mixmethod;
+    bool slimethod;
+    bool quamethod;
     bool daubcoeffmethod;
     bool Dirmethod;
     bool sigma;
@@ -1087,14 +1103,20 @@ struct WaveletParamsEdited {
     bool level1noise;
     bool level2noise;
     bool level3noise;
+    bool leveldenoise;
+    bool levelsigm;
     bool ccwcurve;
     bool blcurve;
     bool opacityCurveSH;
     bool opacityCurveBY;
+    bool wavdenoise;
+    bool wavdenoiseh;
     bool opacityCurveRG;
     bool opacityCurveW;
     bool opacityCurveWL;
     bool hhcurve;
+    bool wavguidcurve;
+    bool wavhuecurve;
     bool Chcurve;
     bool pastlev;
     bool satlev;
@@ -1106,6 +1128,10 @@ struct WaveletParamsEdited {
     bool greenhigh;
     bool bluehigh;
     bool ballum;
+    bool sigm;
+    bool levden;
+    bool thrden;
+    bool limden;
     bool balchrom;
     bool chromfi;
     bool chromco;
@@ -1113,6 +1139,9 @@ struct WaveletParamsEdited {
     bool mergeC;
     bool softrad;
     bool softradend;
+    bool strend;
+    bool detend;
+    bool thrend;
     bool expcontrast;
     bool expchroma;
     bool expedge;

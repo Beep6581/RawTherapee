@@ -2099,12 +2099,12 @@ float ImProcFunctions::Mad(const float * DataList, const int datalen)
     }
 
     //computes Median Absolute Deviation
-    //DataList values should mostly have abs val < 256 because we are in Lab mode
-    int histo[256] ALIGNED64 = {0};
+    //DataList values should mostly have abs val < 256 because we are in Lab mode (32768)
+    int histo[32768] ALIGNED64 = {0};
 
     //calculate histogram of absolute values of wavelet coeffs
     for (int i = 0; i < datalen; ++i) {
-        histo[static_cast<int>(rtengine::min(255.f, fabsf(DataList[i])))]++;
+        histo[static_cast<int>(rtengine::min(32768.f, fabsf(DataList[i])))]++;
     }
 
     //find median of histogram
@@ -2196,6 +2196,10 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition& Wavelet
         maxlvl = 4;    //for refine denoise edge wavelet
     }
 
+    if (edge == 6) {
+        maxlvl = 6;    //for wavelet denoise
+    }
+
     if (edge == 2) {
         maxlvl = 7;    //for locallab denoise
     }
@@ -2264,7 +2268,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition& Wavelet
                         for (int i = 0; i < Hlvl_L * Wlvl_L; ++i) {
                             nvl[i] = 0.f;
                         }
-                        if ((edge == 1 || edge == 2 || edge == 3  || edge == 5) && vari) {
+                        if ((edge == 1 || edge == 2 || edge == 3  || edge == 5 || edge == 6) && vari) {
                             //  nvl = blurBuffer;       // we need one buffer, but fortunately we don't have to allocate a new one because we can use blurBuffer
                             if ((edge == 1 || edge == 3)) {
                                 for (int i = 0; i < Hlvl_L * Wlvl_L; ++i) {
@@ -2272,7 +2276,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition& Wavelet
                                 }
                             }
 
-                            if (edge == 2 || edge == 4 || edge == 5) {
+                            if (edge == 2 || edge == 4 || edge == 5 || edge == 6) {
                                 for (int i = 0; i < Hlvl_L * Wlvl_L; ++i) {
                                     nvl[i] = vari[lvl] * SQR(noisevarlum[i]);
                                 }
@@ -2373,6 +2377,12 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition& Wavelet
 bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposition& WaveletCoeffs_L, wavelet_decomposition& WaveletCoeffs_ab, float *noisevarchrom, float madL[8][3], float *variC, int local, float noisevar_ab, const bool useNoiseCCurve,  bool autoch, bool denoiseMethodRgb, int denoiseNestedLevels)
 {
     int maxlvl = WaveletCoeffs_L.maxlevel();
+    printf("Ftblockdn ab bishrink\n");
+
+    if (local == 1) {
+        maxlvl = 6;    //for local denoise
+    }
+
 
     if (local == 2) {
         maxlvl = 7;    //for local denoise
@@ -2449,6 +2459,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposition& Wavele
                     float* const* WavCoeffs_ab = WaveletCoeffs_ab.level_coeffs(lvl);
 
                     if (lvl == maxlvl - 1) {
+                        //printf("Shrink ab bis\n");
                         ShrinkAllAB(WaveletCoeffs_L, WaveletCoeffs_ab, buffer, lvl, dir, noisevarchrom, noisevar_ab, useNoiseCCurve, autoch, denoiseMethodRgb, madL[lvl], nullptr, 0, madab[lvl], true);
                     } else {
                         //simple wavelet shrinkage
@@ -2550,6 +2561,10 @@ bool ImProcFunctions::WaveletDenoiseAllL(wavelet_decomposition& WaveletCoeffs_L,
         maxlvl = 4;    //for refine denoise edge wavelet
     }
 
+    if (edge == 6) {
+        maxlvl = 6;    //for wavelet denoise
+    }
+
     if (edge == 2) {
         maxlvl = 7;    //for locallab denoise
     }
@@ -2565,7 +2580,6 @@ bool ImProcFunctions::WaveletDenoiseAllL(wavelet_decomposition& WaveletCoeffs_L,
             maxHL = WaveletCoeffs_L.level_H(lvl);
         }
     }
-
     bool memoryAllocationFailed = false;
 #ifdef _OPENMP
     #pragma omp parallel num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
@@ -2605,8 +2619,12 @@ bool ImProcFunctions::WaveletDenoiseAllAB(wavelet_decomposition& WaveletCoeffs_L
         float *noisevarchrom, float madL[8][3],  float *variC, int local, float noisevar_ab, const bool useNoiseCCurve, bool autoch, bool denoiseMethodRgb, int denoiseNestedLevels)//mod JD
 
 {
-
     int maxlvl = WaveletCoeffs_L.maxlevel();
+
+    if (local == 1) {
+        maxlvl = 6;    //for local denoise
+    }
+
 
     if (local == 2) {
         maxlvl = 7;    //for local denoise
@@ -2690,15 +2708,15 @@ void ImProcFunctions::ShrinkAllL(wavelet_decomposition& WaveletCoeffs_L, float *
         nvl[i] = 0.f;
     }
 
-    if ((edge == 1 || edge == 2 || edge == 3 || edge == 5) && vari) {
+    if ((edge == 1 || edge == 2 || edge == 3 || edge == 5 || edge == 6) && vari) {
         //  nvl = blurBuffer;       // we need one buffer, but fortunately we don't have to allocate a new one because we can use blurBuffer
         if ((edge == 1 || edge == 3)) {
             for (int i = 0; i < W_L * H_L; ++i) {
                 nvl[i] = vari[level]; //* SQR(1.f + 4.f * noisevarchrom[p]);
             }
-        }
+        } 
 
-        if (edge == 2 || edge == 4 || edge == 5) {
+        if (edge == 2 || edge == 4 || edge == 5 || edge == 6) {
             for (int i = 0; i < W_L * H_L; ++i) {
                 nvl[i] = vari[level] * SQR(noisevarlum[i]);
             }

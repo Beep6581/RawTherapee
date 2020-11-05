@@ -75,6 +75,7 @@ public:
         double balanh;
         double colorde;
         double colorscope;
+        bool hishow;
         bool activ;
         bool avoid;
         bool blwh;
@@ -245,6 +246,7 @@ private:
 
     void adjusterChanged(Adjuster* a, double newval) override;
 
+    void hishowChanged();
     void activChanged();
     void avoidChanged();
     void blwhChanged();
@@ -305,6 +307,7 @@ private:
         Gtk::TreeModelColumn<double> balanh;
         Gtk::TreeModelColumn<double> colorde;
         Gtk::TreeModelColumn<double> colorscope;
+        Gtk::TreeModelColumn<bool> hishow;
         Gtk::TreeModelColumn<bool> activ;
         Gtk::TreeModelColumn<bool> avoid;
         Gtk::TreeModelColumn<bool> blwh;
@@ -355,6 +358,7 @@ private:
     Gtk::Button* const button_visibility_;
     sigc::connection buttonvisibilityconn_;
 
+
     MyComboBoxText* const prevMethod_;
     sigc::connection prevMethodconn_;
     MyComboBoxText* const shape_;
@@ -393,6 +397,8 @@ private:
     Adjuster* const scopemask_;
     Adjuster* const lumask_;
 
+    Gtk::CheckButton* const hishow_;
+    sigc::connection hishowconn_;
     Gtk::CheckButton* const activ_;
     sigc::connection activConn_;
     Gtk::CheckButton* const avoid_;

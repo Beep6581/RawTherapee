@@ -45,9 +45,6 @@ public:
 
     Imagefloat* copy () const;
 
-    Image8* to8() const;
-    Image16* to16() const;
-
     void getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const override;
 
     const char* getType () const override
@@ -72,10 +69,6 @@ public:
     {
         return getEmbeddedProfile ();
     }
-    int getBitsPerPixel () const override
-    {
-        return 8 * sizeof(float);
-    }
     int saveToFile (const Glib::ustring &fname) const override
     {
         return save (fname);
@@ -95,10 +88,6 @@ public:
     void setSaveProgressListener (ProgressListener* pl) override
     {
         setProgressListener (pl);
-    }
-    void free () override
-    {
-        delete this;
     }
 
     inline uint16_t DNG_FloatToHalf(float f) const
@@ -220,7 +209,6 @@ public:
     void                 normalizeFloat(float srcMinVal, float srcMaxVal) override;
     void                 normalizeFloatTo1();
     void                 normalizeFloatTo65535();
-    void                 calcCroppedHistogram(const ProcParams &params, float scale, LUTu & hist);
     void                 ExecCMSTransform(cmsHTRANSFORM hTransform);
     void                 ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy);
 };

@@ -96,7 +96,6 @@ public:
 
     /*static*/ std::vector<Glib::ustring> getWorkingProfiles();
 
-    static cmsHPROFILE makeStdGammaProfile(cmsHPROFILE iprof);
     static cmsHPROFILE createFromMatrix(const double matrix[3][3], bool gamma = false, const Glib::ustring& name = Glib::ustring());
 
 private:

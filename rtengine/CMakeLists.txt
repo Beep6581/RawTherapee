@@ -63,6 +63,7 @@ set(RTENGINESOURCEFILES
     ahd_demosaic_RT.cc
     amaze_demosaic_RT.cc
     badpixels.cc
+    bayer_bilinear_demosaic.cc
     boxblur.cc
     canon_cr3_decoder.cc
     CA_correct_RT.cc

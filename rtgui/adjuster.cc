@@ -36,7 +36,7 @@ double one2one(double val)
 }
 }
 
-Adjuster::Adjuster (
+Adjuster::Adjuster(
     Glib::ustring vlabel,
     double vmin,
     double vmax,
@@ -45,21 +45,20 @@ Adjuster::Adjuster (
     Gtk::Image *imgIcon1,
     Gtk::Image *imgIcon2,
     double2double_fun slider2value,
-    double2double_fun value2slider)
-
-    :
-
+    double2double_fun value2slider
+) :
     adjustmentName(std::move(vlabel)),
     grid(nullptr),
     label(nullptr),
     imageIcon1(imgIcon1),
     automatic(nullptr),
     adjusterListener(nullptr),
+    spinChange(options.adjusterMinDelay, options.adjusterMaxDelay),
+    sliderChange(options.adjusterMinDelay, options.adjusterMaxDelay),
     editedCheckBox(nullptr),
     afterReset(false),
     blocked(false),
     addMode(false),
-    eventPending(false),
     vMin(vmin),
     vMax(vmax),
     vStep(vstep),
@@ -67,8 +66,7 @@ Adjuster::Adjuster (
     logPivot(0),
     logAnchorMiddle(false),
     value2slider(value2slider ? value2slider : &one2one),
-    slider2value(slider2value ? slider2value : &one2one),
-    delay(options.adjusterMinDelay)
+    slider2value(slider2value ? slider2value : &one2one)
 
 {
     set_hexpand(true);
@@ -155,8 +153,27 @@ Adjuster::Adjuster (
     defaultVal = ctorDefaultVal = shapeValue(vdefault);
     editedState = defEditedState = Irrelevant;
 
-    sliderChange = slider->signal_value_changed().connect( sigc::mem_fun(*this, &Adjuster::sliderChanged) );
-    spinChange = spin->signal_value_changed().connect( sigc::mem_fun(*this, &Adjuster::spinChanged), true);
+    spinChange.connect(
+        spin->signal_value_changed(),
+        sigc::mem_fun(*this, &Adjuster::spinChanged),
+        [this]()
+        {
+            sliderChange.block(true);
+            setSliderValue(addMode ? spin->get_value() : this->value2slider(spin->get_value()));
+            sliderChange.block(false);
+        }
+    );
+    sliderChange.connect(
+        slider->signal_value_changed(),
+        sigc::mem_fun(*this, &Adjuster::sliderChanged),
+        [this]()
+        {
+            spinChange.block();
+            const double v = shapeValue(getSliderValue());
+            spin->set_value(addMode ? v : this->slider2value(v));
+            spinChange.unblock();
+        }
+    );
     reset->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &Adjuster::resetPressed) );
 
     show_all();
@@ -165,9 +182,8 @@ Adjuster::Adjuster (
 Adjuster::~Adjuster ()
 {
 
-    sliderChange.block(true);
-    spinChange.block(true);
-    delayConnection.block(true);
+    sliderChange.block();
+    spinChange.block();
     adjusterListener = nullptr;
 
 }
@@ -211,8 +227,6 @@ void Adjuster::throwOnButtonRelease(bool throwOnBRelease)
             buttonReleaseSpin.disconnect();
         }
     }
-
-    eventPending = false;
 }
 
 void Adjuster::setDefault (double def)
@@ -239,9 +253,7 @@ void Adjuster::sliderReleased (GdkEventButton* event)
 {
 
     if ((event != nullptr) && (event->button == 1)) {
-        if (delayConnection.connected()) {
-            delayConnection.disconnect();
-        }
+        sliderChange.cancel();
 
         notifyListener();
     }
@@ -250,10 +262,8 @@ void Adjuster::sliderReleased (GdkEventButton* event)
 void Adjuster::spinReleased (GdkEventButton* event)
 {
 
-    if ((event != nullptr) && delay == 0) {
-        if (delayConnection.connected()) {
-            delayConnection.disconnect();
-        }
+    if (event) {
+        spinChange.cancel();
 
         notifyListener();
     }
@@ -351,31 +361,15 @@ void Adjuster::setAddMode(bool addM)
     }
 }
 
-void Adjuster::spinChanged ()
+void Adjuster::spinChanged()
 {
-    if (delayConnection.connected()) {
-        delayConnection.disconnect();
-    }
-
-    sliderChange.block(true);
-    setSliderValue(addMode ? spin->get_value() : value2slider(spin->get_value()));
-    sliderChange.block(false);
-
-    if (delay == 0) {
-        if (adjusterListener && !blocked) {
-            if (!buttonReleaseSlider.connected() || afterReset) {
-                eventPending = false;
-                if (automatic) {
-                    setAutoValue(false);
-                }
-                adjusterListener->adjusterChanged(this, spin->get_value());
-            } else {
-                eventPending = true;
+    if (adjusterListener && !blocked) {
+        if (!buttonReleaseSlider.connected() || afterReset) {
+            if (automatic) {
+                setAutoValue(false);
             }
+            adjusterListener->adjusterChanged(this, spin->get_value());
         }
-    } else {
-        eventPending = true;
-        delayConnection = Glib::signal_timeout().connect(sigc::mem_fun(*this, &Adjuster::notifyListener), delay);
     }
 
     if (editedState == UnEdited) {
@@ -393,31 +387,13 @@ void Adjuster::spinChanged ()
 
 void Adjuster::sliderChanged ()
 {
-
-    if (delayConnection.connected()) {
-        delayConnection.disconnect();
-    }
-
-    spinChange.block(true);
-    const double v = shapeValue(getSliderValue());
-    spin->set_value(addMode ? v : slider2value(v));
-    spinChange.block(false);
-
-    if (delay == 0 || afterReset) {
-        if (adjusterListener && !blocked) {
-            if (!buttonReleaseSlider.connected() || afterReset) {
-                eventPending = false;
-                if (automatic) {
-                    setAutoValue(false);
-                }
-                adjusterListener->adjusterChanged(this, spin->get_value());
-            } else {
-                eventPending = true;
+    if (adjusterListener && !blocked) {
+        if (!buttonReleaseSlider.connected() || afterReset) {
+            if (automatic) {
+                setAutoValue(false);
             }
+            adjusterListener->adjusterChanged(this, spin->get_value());
         }
-    } else {
-        eventPending = true;
-        delayConnection = Glib::signal_timeout().connect(sigc::mem_fun(*this, &Adjuster::notifyListener), delay);
     }
 
     if (!afterReset && editedState == UnEdited) {
@@ -435,12 +411,12 @@ void Adjuster::sliderChanged ()
 
 void Adjuster::setValue (double a)
 {
-    spinChange.block(true);
+    spinChange.block();
     sliderChange.block(true);
     spin->set_value(shapeValue(a));
     setSliderValue(addMode ? shapeValue(a) : value2slider(shapeValue(a)));
     sliderChange.block(false);
-    spinChange.block(false);
+    spinChange.unblock();
     afterReset = false;
 }
 
@@ -455,15 +431,12 @@ void Adjuster::setAutoValue (bool a)
 
 bool Adjuster::notifyListener ()
 {
-
-    if (eventPending && adjusterListener != nullptr && !blocked) {
+    if (adjusterListener != nullptr && !blocked) {
         if (automatic) {
             setAutoValue(false);
         }
         adjusterListener->adjusterChanged(this, spin->get_value());
     }
-
-    eventPending = false;
 
     return false;
 }
@@ -555,8 +528,6 @@ void Adjuster::editedToggled ()
         }
         adjusterListener->adjusterChanged(this, spin->get_value());
     }
-
-    eventPending = false;
 }
 
 void Adjuster::trimValue (double &val) const
@@ -705,4 +676,10 @@ bool Adjuster::block(bool isBlocked)
 bool Adjuster::getAddMode() const
 {
     return addMode;
+}
+
+void Adjuster::setDelay(unsigned int min_delay_ms, unsigned int max_delay_ms)
+{
+    spinChange.setDelay(min_delay_ms, max_delay_ms);
+    sliderChange.setDelay(min_delay_ms, max_delay_ms);
 }

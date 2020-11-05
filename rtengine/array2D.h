@@ -64,8 +64,7 @@ constexpr unsigned int ARRAY2D_BYREFERENCE = 2;
 
 
 template<typename T>
-class array2D :
-    public rtengine::NonCopyable
+class array2D
 {
 
 private:
@@ -125,6 +124,25 @@ public:
         }
     }
 
+    array2D(const array2D& other) :
+        width(other.width),
+        buffer(other.buffer)
+    {
+        initRows(other.rows.size());
+    }
+
+    array2D& operator =(const array2D& other)
+    {
+        if (this != &other) {
+            free();
+            width = other.width;
+            buffer = other.buffer;
+            initRows(other.rows.size());
+        }
+
+        return *this;
+    }
+
     void fill(const T val, bool multiThread = false)
     {
         const ssize_t height = rows.size();
@@ -140,6 +158,7 @@ public:
     {
         buffer.clear();
         rows.clear();
+        width = 0;
     }
 
     // use with indices
@@ -191,6 +210,24 @@ public:
             fill(0);
         }
     }
+
+    array2D<T>& operator+=(const array2D<T>& rhs)
+    {
+        if (rhs.getWidth() == this->getWidth() && rhs.getHeight() == this->getHeight()) {
+            for (int i = 0; i < getHeight(); ++i) {
+#ifdef _OPENMP
+                #pragma omp simd
+#endif
+
+                for (int j = 0; j < getWidth(); ++j) {
+                    rows[i][j] += rhs[i][j];
+                }
+            }
+        }
+
+        return *this;
+    }
+
 
     int getWidth() const
     {

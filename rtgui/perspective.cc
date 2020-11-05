@@ -20,16 +20,75 @@
 #include "perspective.h"
 
 #include "rtimage.h"
+#include "rtsurface.h"
 
 #include "../rtengine/procparams.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+namespace
+{
+
+void controlLinesToValues(const std::vector<rtengine::ControlLine>& lines,
+        std::vector<int>& values, std::vector<int>& types)
+{
+    values.clear();
+    types.clear();
+
+    for (auto&& line : lines) {
+        values.push_back(line.x1);
+        values.push_back(line.y1);
+        values.push_back(line.x2);
+        values.push_back(line.y2);
+
+        int type = -1;
+        switch (line.type) {
+            case rtengine::ControlLine::VERTICAL:
+                type = 0;
+                break;
+            case rtengine::ControlLine::HORIZONTAL:
+                type = 1;
+                break;
+        }
+        types.push_back(type);
+    }
+}
+
+std::vector<rtengine::ControlLine> valuesToControlLines(
+        const std::vector<int>& values, const std::vector<int>& types)
+{
+    int line_count = min(values.size() / 4, types.size());
+    std::vector<rtengine::ControlLine> lines(line_count);
+
+    auto values_iter = values.begin();
+    auto types_iter = types.begin();
+    for (auto&& line : lines) {
+        line.x1 = *(values_iter++);
+        line.y1 = *(values_iter++);
+        line.x2 = *(values_iter++);
+        line.y2 = *(values_iter++);
+
+        switch (*(types_iter++)) {
+            case 0:
+                line.type = rtengine::ControlLine::VERTICAL;
+                break;
+            case 1:
+                line.type = rtengine::ControlLine::HORIZONTAL;
+                break;
+        }
+    }
+
+    return lines;
+}
+
+}
+
 PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("TP_PERSPECTIVE_LABEL"))
 {
 
     auto mapper = ProcEventMapper::getInstance();
+    // Normal events.
     EvPerspCamAngle = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_CAM_ANGLE");
     EvPerspCamFocalLength = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_CAM_FL");
     EvPerspCamShift = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_CAM_SHIFT");
@@ -37,8 +96,24 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     EvPerspProjAngle = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_ANGLE");
     EvPerspProjRotate = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_ROTATE");
     EvPerspProjShift = mapper->newEvent(TRANSFORM, "HISTORY_MSG_PERSP_PROJ_SHIFT");
+    EvPerspRender = mapper->newEvent(TRANSFORM);
+    // Void events.
+    EvPerspCamAngleVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CAM_ANGLE");
+    EvPerspCamFocalLengthVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CAM_FL");
+    EvPerspCamShiftVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CAM_SHIFT");
+    EvPerspProjAngleVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_PROJ_ANGLE");
+    EvPerspProjRotateVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_PROJ_ROTATE");
+    EvPerspProjShiftVoid = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_PROJ_SHIFT");
+    setCamBasedEventsActive();
+    EvPerspControlLines = mapper->newEvent(M_VOID, "HISTORY_MSG_PERSP_CTRL_LINE");
+
     lens_geom_listener = nullptr;
+    panel_listener = nullptr;
     metadata = nullptr;
+
+    Gtk::Image* ipers_draw(new RTImage ("draw.png"));
+    Gtk::Image* ipers_trash = Gtk::manage (new RTImage ("trash-empty.png"));
+    Gtk::Image* ipers_apply = Gtk::manage (new RTImage ("tick.png"));
 
     Gtk::Image* ipersHL =   Gtk::manage (new RTImage ("perspective-horizontal-left-small.png"));
     Gtk::Image* ipersHR =   Gtk::manage (new RTImage ("perspective-horizontal-right-small.png"));
@@ -108,6 +183,39 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
                 -60, 60, 0.1, 0, ipers_cam_yaw_left, ipers_cam_yaw_right));
     camera_yaw->setAdjusterListener (this);
 
+    // Begin control lines interface.
+    lines_button_apply = Gtk::manage (new Gtk::Button());
+    lines_button_apply->set_image(*ipers_apply);
+    lines_button_apply->set_tooltip_text(M("GENERAL_APPLY"));
+    lines_button_apply->set_sensitive(false);
+    lines_button_apply->signal_pressed().connect(sigc::mem_fun(
+            *this, &::PerspCorrection::linesApplyButtonPressed));
+
+    lines_button_edit = Gtk::manage (new Gtk::ToggleButton());
+    lines_button_edit->set_image(*ipers_draw);
+    lines_button_edit->set_tooltip_text(M("GENERAL_EDIT"));
+    lines_button_edit->signal_toggled().connect(sigc::mem_fun(
+            *this, &::PerspCorrection::linesEditButtonPressed));
+
+    lines_button_erase = Gtk::manage (new Gtk::Button());
+    lines_button_erase->set_image(*ipers_trash);
+    lines_button_erase->set_tooltip_text(M("GENERAL_DELETE_ALL"));
+    lines_button_erase->set_sensitive(false);
+    lines_button_erase->signal_pressed().connect(sigc::mem_fun(
+            *this, &::PerspCorrection::linesEraseButtonPressed));
+
+    lines = std::unique_ptr<ControlLineManager>(new ControlLineManager());
+    lines->callbacks = std::make_shared<LinesCallbacks>(this);
+
+    Gtk::HBox* control_lines_box = Gtk::manage (new Gtk::HBox());
+    Gtk::Label* control_lines_label = Gtk::manage (new Gtk::Label (M("TP_PERSPECTIVE_CONTROL_LINES") + ": "));
+    control_lines_label->set_tooltip_markup( M("TP_PERSPECTIVE_CONTROL_LINES_TOOLTIP") );
+    control_lines_box->pack_start(*control_lines_label, Gtk::PACK_SHRINK);
+    control_lines_box->pack_start(*lines_button_edit);
+    control_lines_box->pack_start(*lines_button_apply);
+    control_lines_box->pack_start(*lines_button_erase);
+    // End control lines interface.
+
     auto_pitch = Gtk::manage (new Gtk::Button ());
     auto_pitch->set_image(*ipers_auto_pitch);
     auto_pitch->signal_pressed().connect( sigc::bind(sigc::mem_fun(*this, &PerspCorrection::autoCorrectionPressed), auto_pitch) );
@@ -165,6 +273,9 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     camera_vbox->pack_start (*camera_roll);
     camera_vbox->pack_start (*camera_pitch);
     camera_vbox->pack_start (*camera_yaw);
+    camera_vbox->pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+    camera_vbox->pack_start (*control_lines_box);
+    camera_vbox->pack_start (*Gtk::manage (new  Gtk::HSeparator()));
     camera_vbox->pack_start (*auto_hbox);
     camera_frame->add(*camera_vbox);
     camera_based->pack_start(*camera_frame);
@@ -213,6 +324,7 @@ void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
         projection_shift_horiz->setEditedState (pedited->perspective.projection_shift_horiz ? Edited : UnEdited);
         projection_shift_vert->setEditedState (pedited->perspective.projection_shift_vert ? Edited : UnEdited);
         projection_yaw->setEditedState (pedited->perspective.projection_yaw ? Edited : UnEdited);
+        lines->setEdited (pedited->perspective.control_lines);
     }
 
     horiz->setValue (pp->perspective.horizontal);
@@ -228,6 +340,8 @@ void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
     projection_shift_horiz->setValue (pp->perspective.projection_shift_horiz);
     projection_shift_vert->setValue (pp->perspective.projection_shift_vert);
     projection_yaw->setValue (pp->perspective.projection_yaw);
+    lines->setLines(valuesToControlLines(pp->perspective.control_line_values,
+            pp->perspective.control_line_types));
 
     if (pedited && !pedited->perspective.method) {
         method->set_active (2);
@@ -243,6 +357,8 @@ void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
 void PerspCorrection::write (ProcParams* pp, ParamsEdited* pedited)
 {
 
+    pp->perspective.render = render;
+
     pp->perspective.horizontal  = horiz->getValue ();
     pp->perspective.vertical = vert->getValue ();
     pp->perspective.camera_crop_factor= camera_crop_factor->getValue ();
@@ -257,6 +373,11 @@ void PerspCorrection::write (ProcParams* pp, ParamsEdited* pedited)
     pp->perspective.projection_shift_horiz = projection_shift_horiz->getValue ();
     pp->perspective.projection_shift_vert = projection_shift_vert->getValue ();
     pp->perspective.projection_yaw = projection_yaw->getValue ();
+
+    std::vector<rtengine::ControlLine> control_lines;
+    lines->toControlLines(control_lines);
+    controlLinesToValues(control_lines, pp->perspective.control_line_values,
+            pp->perspective.control_line_types);
 
     if (method->get_active_row_number() == 0) {
         pp->perspective.method = "simple";
@@ -280,6 +401,7 @@ void PerspCorrection::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->perspective.projection_shift_horiz = projection_shift_horiz->getEditedState();
         pedited->perspective.projection_shift_vert = projection_shift_vert->getEditedState();
         pedited->perspective.projection_yaw = projection_yaw->getEditedState();
+        pedited->perspective.control_lines = lines->getEdited();
     }
 }
 
@@ -345,21 +467,21 @@ void PerspCorrection::adjusterChanged(Adjuster* a, double newval)
                         M("TP_PERSPECTIVE_VERTICAL"),
                         vert->getValue()));
         } else if (a == camera_focal_length || a == camera_crop_factor) {
-            listener->panelChanged (EvPerspCamFocalLength,
+            listener->panelChanged (*event_persp_cam_focal_length,
                     Glib::ustring::compose("%1=%2\n%3=%4",
                         M("TP_PERSPECTIVE_CAMERA_FOCAL_LENGTH"),
                         camera_focal_length->getValue(),
                         M("TP_PERSPECTIVE_CAMERA_CROP_FACTOR"),
                         camera_crop_factor->getValue()));
         } else if (a == camera_shift_horiz || a == camera_shift_vert) {
-            listener->panelChanged (EvPerspCamShift,
+            listener->panelChanged (*event_persp_cam_shift,
                     Glib::ustring::compose("%1=%2\n%3=%4",
                         M("TP_PERSPECTIVE_CAMERA_SHIFT_HORIZONTAL"),
                         camera_shift_horiz->getValue(),
                         M("TP_PERSPECTIVE_CAMERA_SHIFT_VERTICAL"),
                         camera_shift_vert->getValue()));
         } else if (a == camera_pitch || a == camera_roll|| a == camera_yaw) {
-            listener->panelChanged (EvPerspCamAngle,
+            listener->panelChanged (*event_persp_cam_angle,
                     Glib::ustring::compose("%1=%2\n%3=%4\n%5=%6",
                         M("TP_PERSPECTIVE_CAMERA_ROLL"),
                         camera_roll->getValue(),
@@ -368,17 +490,17 @@ void PerspCorrection::adjusterChanged(Adjuster* a, double newval)
                         M("TP_PERSPECTIVE_CAMERA_PITCH"),
                         camera_pitch->getValue()));
         } else if (a == projection_shift_horiz || a == projection_shift_vert) {
-            listener->panelChanged (EvPerspProjShift,
+            listener->panelChanged (*event_persp_proj_shift,
                     Glib::ustring::compose("%1=%2\n%3=%4",
                         M("TP_PERSPECTIVE_PROJECTION_SHIFT_HORIZONTAL"),
                         projection_shift_horiz->getValue(),
                         M("TP_PERSPECTIVE_PROJECTION_SHIFT_VERTICAL"),
                         projection_shift_vert->getValue()));
         } else if (a == projection_rotate) {
-            listener->panelChanged (EvPerspProjRotate,
+            listener->panelChanged (*event_persp_proj_rotate,
                     Glib::ustring::format(projection_rotate->getValue()));
         } else if (a == projection_pitch || a == projection_yaw) {
-            listener->panelChanged (EvPerspProjAngle,
+            listener->panelChanged (*event_persp_proj_angle,
                     Glib::ustring::compose("%1=%2\n%3=%4",
                         M("TP_PERSPECTIVE_PROJECTION_PITCH"),
                         projection_pitch->getValue(),
@@ -386,6 +508,39 @@ void PerspCorrection::adjusterChanged(Adjuster* a, double newval)
                         projection_yaw->getValue()));
         }
     }
+}
+
+void PerspCorrection::applyControlLines(void)
+{
+    if (!lens_geom_listener) {
+        return;
+    }
+
+    std::vector<rtengine::ControlLine> control_lines;
+    int h_count = 0, v_count = 0;
+    double rot = camera_roll->getValue();
+    double pitch = camera_pitch->getValue();
+    double yaw = camera_yaw->getValue();
+
+    lines->toControlLines(control_lines);
+
+    for (unsigned int i = 0; i < lines->size(); i++) {
+        if (control_lines[i].type == rtengine::ControlLine::HORIZONTAL) {
+            h_count++;
+        } else if (control_lines[i].type == rtengine::ControlLine::VERTICAL) {
+            v_count++;
+        }
+    }
+    lens_geom_listener->autoPerspRequested(v_count > 1, h_count > 1, rot, pitch,
+            yaw, &control_lines);
+
+    disableListener();
+    camera_pitch->setValue(pitch);
+    camera_roll->setValue(rot);
+    camera_yaw->setValue(yaw);
+    enableListener();
+
+    adjusterChanged(camera_pitch, pitch);
 }
 
 void PerspCorrection::autoCorrectionPressed(Gtk::Button* b)
@@ -427,6 +582,11 @@ void PerspCorrection::methodChanged (void)
         } else if (method->get_active_row_number() == 1) {
             pack_start (*camera_based);
         }
+
+        // If no longer in camera-based mode and control lines are being edited.
+        if (method->get_active_row_number() != 1 && lines_button_edit->get_active()) {
+            lines_button_edit->set_active(false);
+        }
     }
 
     if (listener) {
@@ -452,6 +612,17 @@ void PerspCorrection::setAdjusterBehavior (bool badd, bool camera_focal_length_a
     projection_shift_horiz->setAddMode(projection_shift_add);
     projection_shift_vert->setAddMode(projection_shift_add);
     projection_yaw->setAddMode(projection_angle_add);
+}
+
+void PerspCorrection::setControlLineEditMode(bool active)
+{
+    // Only camera-based mode supports control lines, so the mode must be
+    // switched if not in camera-based mode.
+    if (method->get_active_row_number() != 1) {
+        method->set_active(1);
+    }
+
+    lines_button_edit->set_active(active);
 }
 
 void PerspCorrection::setMetadata (const rtengine::FramesMetaData* metadata)
@@ -497,6 +668,7 @@ void PerspCorrection::setBatchMode (bool batchMode)
     projection_shift_vert->showEditedCB ();
     projection_yaw->showEditedCB ();
 
+    lines_button_edit->set_sensitive(false);
     auto_pitch->set_sensitive(false);
     auto_yaw->set_sensitive(false);
     auto_pitch_yaw->set_sensitive(false);
@@ -547,5 +719,112 @@ void PerspCorrection::setFocalLengthValue (const ProcParams* pparams, const Fram
     } else {
         camera_focal_length->setDefault(default_focal_length);
         camera_focal_length->setValue(default_focal_length);
+    }
+}
+
+void PerspCorrection::switchOffEditMode(void)
+{
+    lines_button_edit->set_active(false);
+}
+
+void PerspCorrection::setEditProvider(EditDataProvider* provider)
+{
+    lines->setEditProvider(provider);
+}
+
+void PerspCorrection::lineChanged(void)
+{
+    if (listener) {
+        listener->panelChanged(EvPerspControlLines, M("HISTORY_CHANGED"));
+    }
+}
+
+void PerspCorrection::linesApplyButtonPressed(void)
+{
+    if (method->get_active_row_number() == 1) {
+        // Calculate perspective distortion if in camera-based mode.
+        applyControlLines();
+    }
+    lines_button_edit->set_active(false);
+}
+
+void PerspCorrection::linesEditButtonPressed(void)
+{
+    if (lines_button_edit->get_active()) { // Enter edit mode.
+        lines->setActive(true);
+        lines->setDrawMode(true);
+        render = false;
+        if (lens_geom_listener) {
+            lens_geom_listener->updateTransformPreviewRequested(EvPerspRender, false);
+        }
+        lines_button_apply->set_sensitive(true);
+        lines_button_erase->set_sensitive(true);
+        setCamBasedEventsActive(false);
+        if (panel_listener) {
+            panel_listener->controlLineEditModeChanged(true);
+        }
+    } else { // Leave edit mode.
+        setCamBasedEventsActive(true);
+        lines_button_apply->set_sensitive(false);
+        lines_button_erase->set_sensitive(false);
+        render = true;
+        if (lens_geom_listener) {
+            lens_geom_listener->updateTransformPreviewRequested(EvPerspRender, true);
+        }
+        lines->setDrawMode(false);
+        lines->setActive(false);
+        if (panel_listener) {
+            panel_listener->controlLineEditModeChanged(false);
+        }
+    }
+}
+
+void PerspCorrection::linesEraseButtonPressed(void)
+{
+    lines->removeAll();
+}
+
+void PerspCorrection::requestApplyControlLines(void)
+{
+    if (lines_button_apply->is_sensitive()) {
+        linesApplyButtonPressed();
+    }
+}
+
+void PerspCorrection::setCamBasedEventsActive(bool active)
+{
+    if (active) {
+        event_persp_cam_focal_length = &EvPerspCamFocalLength;
+        event_persp_cam_shift = &EvPerspCamShift;
+        event_persp_cam_angle = &EvPerspCamAngle;
+        event_persp_proj_shift = &EvPerspProjShift;
+        event_persp_proj_rotate = &EvPerspProjRotate;
+        event_persp_proj_angle = &EvPerspProjAngle;
+    } else {
+        event_persp_cam_focal_length = &EvPerspCamFocalLengthVoid;
+        event_persp_cam_shift = &EvPerspCamShiftVoid;
+        event_persp_cam_angle = &EvPerspCamAngleVoid;
+        event_persp_proj_shift = &EvPerspProjShiftVoid;
+        event_persp_proj_rotate = &EvPerspProjRotateVoid;
+        event_persp_proj_angle = &EvPerspProjAngleVoid;
+    }
+}
+
+LinesCallbacks::LinesCallbacks(PerspCorrection* tool):
+    tool(tool)
+{
+}
+
+void LinesCallbacks::lineChanged(void)
+{
+    if (tool) {
+        tool->lineChanged();
+    }
+}
+
+void LinesCallbacks::switchOffEditMode(void)
+{
+    if (tool) {
+        tool->switchOffEditMode();
     }
 }

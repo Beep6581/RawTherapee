@@ -1015,23 +1015,6 @@ void Color::xyz2r (float x, float y, float z, float &r, const double rgb_xyz[3][
     r = ((rgb_xyz[0][0] * x + rgb_xyz[0][1] * y + rgb_xyz[0][2] * z)) ;
 }
 
-// same for float
-void Color::xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const float rgb_xyz[3][3])
-{
-    r = ((rgb_xyz[0][0] * x + rgb_xyz[0][1] * y + rgb_xyz[0][2] * z)) ;
-    g = ((rgb_xyz[1][0] * x + rgb_xyz[1][1] * y + rgb_xyz[1][2] * z)) ;
-    b = ((rgb_xyz[2][0] * x + rgb_xyz[2][1] * y + rgb_xyz[2][2] * z)) ;
-}
-
-#ifdef __SSE2__
-void Color::xyz2rgb (vfloat x, vfloat y, vfloat z, vfloat &r, vfloat &g, vfloat &b, const vfloat rgb_xyz[3][3])
-{
-    r = ((rgb_xyz[0][0] * x + rgb_xyz[0][1] * y + rgb_xyz[0][2] * z)) ;
-    g = ((rgb_xyz[1][0] * x + rgb_xyz[1][1] * y + rgb_xyz[1][2] * z)) ;
-    b = ((rgb_xyz[2][0] * x + rgb_xyz[2][1] * y + rgb_xyz[2][2] * z)) ;
-}
-#endif // __SSE2__
-
 #ifdef __SSE2__
 void Color::trcGammaBW (float &r, float &g, float &b, float gammabwr, float gammabwg, float gammabwb)
 {
@@ -1570,6 +1553,9 @@ void Color::calcGamma (double pwr, double ts, GammaValues &gamma)
     gamma[4] = g[4];
     gamma[5] = g[5];
     gamma[6] = 0.;
+   // if (rtengine::settings->verbose) {
+    //    printf("g0=%f g1=%f g2=%f g3=%f g4=%f g5=%f\n", g[0], g[1], g[2], g[3], g[4], g[5]);
+   // }
 }
 void Color::gammaf2lut (LUTf &gammacurve, float gamma, float start, float slope, float divisor, float factor)
 {
@@ -1646,19 +1632,6 @@ void Color::gammanf2lut (LUTf &gammacurve, float gamma, float divisor, float fac
 #endif
 }
 
-void Color::Lab2XYZ(float L, float a, float b, float &x, float &y, float &z)
-{
-    float LL = L / 327.68f;
-    float aa = a / 327.68f;
-    float bb = b / 327.68f;
-    float fy = (c1By116 * LL) + c16By116; // (L+16)/116
-    float fx = (0.002f * aa) + fy;
-    float fz = fy - (0.005f * bb);
-    x = 65535.0f * f2xyz(fx) * D50x;
-    z = 65535.0f * f2xyz(fz) * D50z;
-    y = (LL > epskap) ? 65535.0f * fy * fy * fy : 65535.0f * LL / kappa;
-}
-
 float Color::L2Y(float L)
 {
     const float LL = L / 327.68f;
@@ -1675,27 +1648,6 @@ void Color::L2XYZ(float L, float &x, float &y, float &z) // for black & white
     z = fxz * D50z;
     y = (LL > epskap) ? 65535.0f * fy * fy * fy : 65535.0f * LL / kappa;
 }
-
-
-#ifdef __SSE2__
-void Color::Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &z)
-{
-    vfloat c327d68 = F2V(327.68f);
-    L /= c327d68;
-    a /= c327d68;
-    b /= c327d68;
-    vfloat fy = F2V(c1By116) * L + F2V(c16By116);
-    vfloat fx = F2V(0.002f) * a + fy;
-    vfloat fz = fy - (F2V(0.005f) * b);
-    vfloat c65535 = F2V(65535.f);
-    x = c65535 * f2xyz(fx) * F2V(D50x);
-    z = c65535 * f2xyz(fz) * F2V(D50z);
-    vfloat res1 = fy * fy * fy;
-    vfloat res2 = L / F2V(kappa);
-    y = vself(vmaskf_gt(L, F2V(epskap)), res1, res2);
-    y *= c65535;
-}
-#endif // __SSE2__
 
 inline float Color::computeXYZ2Lab(float f)
 {

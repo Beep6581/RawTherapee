@@ -1017,13 +1017,13 @@ Tag::Tag (TagDirectory* p, FILE* f, int base)
         Tag* tmake = parent->getRoot()->getTag ("Make");
 
         if (tmake) {
-            tmake->toString (make);
+            tmake->toString (make, sizeof(make));
         }
 
         Tag* tmodel = parent->getRoot()->getTag ("Model");
 
         if (tmodel) {
-            tmodel->toString (model);
+            tmodel->toString (model, sizeof(model));
         }
 
         if (!strncmp (make, "SONY", 4)) {
@@ -1677,8 +1677,11 @@ void Tag::toRational (int& num, int& denom, int ofs) const
     }
 }
 
-void Tag::toString (char* buffer, int ofs) const
+void Tag::toString (char* buffer, std::size_t size, int ofs) const
 {
+    if (!buffer || !size) {
+        return;
+    }
 
     if (type == UNDEFINED && !directory) {
         bool isstring = true;
@@ -1690,67 +1693,80 @@ void Tag::toString (char* buffer, int ofs) const
             }
 
         if (isstring) {
-            int j = 0;
+            if (size < 3) {
+                return;
+            }
+
+            std::size_t j = 0;
 
             for (i = 0; i + ofs < count && i < 64 && value[i + ofs]; i++) {
                 if (value[i + ofs] == '<' || value[i + ofs] == '>') {
                     buffer[j++] = '\\';
+                    if (j > size - 2) {
+                        break;
+                    }
                 }
 
                 buffer[j++] = value[i + ofs];
+                if (j > size - 2) {
+                    break;
+                }
             }
 
             buffer[j++] = 0;
             return;
         }
     } else if (type == ASCII) {
-        sprintf (buffer, "%.64s", value + ofs);
+        snprintf(buffer, size, "%.64s", value + ofs);
         return;
     }
 
     size_t maxcount = rtengine::min<size_t>(count, 10);
 
-    strcpy (buffer, "");
+    buffer[0] = 0;
 
     for (ssize_t i = 0; i < rtengine::min<int>(maxcount, valuesize - ofs); i++) {
-        if (i > 0) {
+        std::size_t len = strlen(buffer);
+
+        if (i > 0 && size - len > 2) {
             strcat (buffer, ", ");
+            len += 2;
         }
 
-        char* b = buffer + strlen (buffer);
+        char* b = buffer + len;
 
         switch (type) {
             case UNDEFINED:
             case BYTE:
-                sprintf (b, "%d", value[i + ofs]);
+                snprintf(b, size - len, "%d", value[i + ofs]);
                 break;
 
             case SSHORT:
-                sprintf (b, "%d", toInt (2 * i + ofs));
+                snprintf(b, size - len, "%d", toInt (2 * i + ofs));
                 break;
 
             case SHORT:
-                sprintf (b, "%u", toInt (2 * i + ofs));
+                snprintf(b, size - len, "%u", toInt (2 * i + ofs));
                 break;
 
             case SLONG:
-                sprintf (b, "%d", toInt (4 * i + ofs));
+                snprintf(b, size - len, "%d", toInt (4 * i + ofs));
                 break;
 
             case LONG:
-                sprintf (b, "%u", toInt (4 * i + ofs));
+                snprintf(b, size - len, "%u", toInt (4 * i + ofs));
                 break;
 
             case SRATIONAL:
-                sprintf (b, "%d/%d", (int)sget4 (value + 8 * i + ofs, getOrder()), (int)sget4 (value + 8 * i + ofs + 4, getOrder()));
+                snprintf(b, size - len, "%d/%d", (int)sget4 (value + 8 * i + ofs, getOrder()), (int)sget4 (value + 8 * i + ofs + 4, getOrder()));
                 break;
 
             case RATIONAL:
-                sprintf (b, "%u/%u", (uint32_t)sget4 (value + 8 * i + ofs, getOrder()), (uint32_t)sget4 (value + 8 * i + ofs + 4, getOrder()));
+                snprintf(b, size - len, "%u/%u", (uint32_t)sget4 (value + 8 * i + ofs, getOrder()), (uint32_t)sget4 (value + 8 * i + ofs + 4, getOrder()));
                 break;
 
             case FLOAT:
-                sprintf (b, "%g", toDouble (8 * i + ofs));
+                snprintf(b, size - len, "%g", toDouble (8 * i + ofs));
                 break;
 
             default:
@@ -1758,7 +1774,7 @@ void Tag::toString (char* buffer, int ofs) const
         }
     }
 
-    if (count > maxcount) {
+    if (count > maxcount && size - strlen(buffer) > 3) {
         strcat (buffer, "...");
     }
 }
@@ -1771,7 +1787,7 @@ std::string Tag::nameToString (int i)
     if (attrib) {
         strncpy (buffer, attrib->name, 1024);
     } else {
-        sprintf (buffer, "0x%x", tag);
+        snprintf(buffer, sizeof(buffer), "0x%x", tag);
     }
 
     if (i > 0) {
@@ -1788,7 +1804,7 @@ std::string Tag::valueToString () const
         return attrib->interpreter->toString (this);
     } else {
         char buffer[1024];
-        toString (buffer);
+        toString (buffer, sizeof(buffer));
         return buffer;
     }
 }
@@ -2763,7 +2779,7 @@ parse_leafdata (TagDirectory* root, ByteOrder order)
                                    &tm.tm_mday, &tm.tm_hour,
                                    &tm.tm_min, &tm.tm_sec) == 6) {
                     char tstr[64];
-                    sprintf (tstr, "%04d:%02d:%02d %02d:%02d:%02d", tm.tm_year, tm.tm_mon,
+                    snprintf(tstr, sizeof(tstr), "%04d:%02d:%02d %02d:%02d:%02d", tm.tm_year, tm.tm_mon,
                              tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
                     t->initString (tstr);
                     exif->getDirectory()->addTagFront (t);

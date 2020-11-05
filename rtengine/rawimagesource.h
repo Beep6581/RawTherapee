@@ -299,7 +299,9 @@ protected:
     void xtransborder_interpolate (int border, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
     void xtrans_interpolate (const int passes, const bool useCieLab, size_t chunkSize = 1, bool measure = false);
     void fast_xtrans_interpolate (const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
+    void fast_xtrans_interpolate_blend (const float* const * blend, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
     void pixelshift(int winx, int winy, int winw, int winh, const procparams::RAWParams &rawParams, unsigned int frame, const std::string &make, const std::string &model, float rawWpCorrection);
+    void bayer_bilinear_demosaic(const float *const * blend, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue);
     void    hflip       (Imagefloat* im);
     void    vflip       (Imagefloat* im);
     void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) override;

@@ -1144,11 +1144,30 @@ Camera constants:
         "raw_crop": [ 144, 72, 6984, 4660 ]
     },
 
-    { // Quality C, only raw crop
+    { // Quality B, samples by jonathanBieler (#5922). No dual-pixel information.
         "make_model": [ "Canon EOS R" ],
-        "raw_crop": [ 144, 46, 6744, 4500 ]
+        "dcraw_matrix" : [ 8293, -1789, -1094, -5025, 12925, 2327, -1199, 2769, 6108 ], // DNG v2 style
+        "raw_crop": [ 144, 46, 6744, 4500 ],
+        "masked_areas": [ 50, 40, 4540, 140 ], // Taken from ART
+        "ranges" : { "white" : 16367 } // Typically 16383 without LENR, with LENR safest value is 15800 for ISO 25600
     },
 
+    { // Quality C
+        "make_model": "Canon EOS R5",
+        "dcraw_matrix" : [9766, -2953, -1254, -4276, 12116, 2433, -437, 1336, 5131],
+        "raw_crop" : [ 124, 92, 8220, 5486 ],
+        "masked_areas" : [ 94, 20, 5578, 122 ],
+        "ranges" : { "white" : 16382 } 
+    },
+
+    { // Quality C
+        "make_model": "Canon EOS R6",
+        "dcraw_matrix" : [8293, -1611, -1132, -4759, 12710, 2275, -1013, 2415, 5508],
+        "raw_crop": [ 72, 38, 5496, 3670 ],
+        "masked_areas" : [ 40, 10, 5534, 70 ],
+        "ranges" : { "white" : 16382 }
+    },
+    
 // Canon Powershot
     { // Quality C, CHDK DNGs, raw frame correction
         "make_model": "Canon PowerShot A3100 IS",
@@ -1260,14 +1279,17 @@ Camera constants:
 
     { // Quality C
         "make_model": [ "DJI FC2103" ],
-        "ranges": {
-            "black": 4080
-        }
+        "ranges": { "black": 4080 }
     },
 
     { // Quality C
         "make_model": "DJI FC6310",
         "ranges": { "white": 64886 }
+    },
+    
+    { // Quality C
+        "make_model": "DJI FC3170",
+        "ranges": { "white": 65472 }
     },
 
     { // Quality C
@@ -1727,6 +1749,11 @@ Camera constants:
         "dcraw_matrix" : [8210, -2534, -683, -5355, 13338, 2212, -1143, 1929, 6464], // Adobe DNG Converter 11.1 Beta ColorMatrix2
         "pdaf_pattern" : [0, 12],
         "pdaf_offset" : 32
+    },
+
+    { // Quality C, only dcraw looted from ART commit ad88c7d97
+        "make_model" : "NIKON Z 5",
+        "dcraw_matrix" : [8695, -2558, -648, -5015, 12711, 2575, -1279, 2215, 7514]
     },
 
     { // Quality A, white levels and PDAF lines measured by Yann Leprince #5851

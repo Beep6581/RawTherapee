@@ -209,6 +209,9 @@ void ExifPanel::setImageData (const FramesMetaData* id)
 
 Gtk::TreeModel::Children ExifPanel::addTag (const Gtk::TreeModel::Children& root, Glib::ustring field, Glib::ustring value, rtexif::ActionCode action, bool editable)
 {
+    if (!value.validate()) {
+        value = "???";
+    }
 
     Gtk::TreeModel::Row row = * (exifTreeModel->append (root));
     row[exifColumns.action]   = action;
