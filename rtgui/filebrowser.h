@@ -81,6 +81,7 @@ protected:
     Gtk::MenuItem* remove;
     Gtk::MenuItem* removeInclProc;
     Gtk::MenuItem* open;
+    Gtk::MenuItem* inspect;
     Gtk::MenuItem* selall;
     Gtk::MenuItem* copyTo;
     Gtk::MenuItem* moveTo;
@@ -136,6 +137,7 @@ protected:
     void requestColorLabel(int colorlabel);
     void notifySelectionListener ();
     void openRequested( std::vector<FileBrowserEntry*> mselected);
+    void inspectRequested( std::vector<FileBrowserEntry*> mselected);
     ExportPanel* exportPanel;
 
     type_trash_changed m_trash_changed;
