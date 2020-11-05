@@ -2487,6 +2487,7 @@ TP_LOCALLAB_CONTFRA;Contrast by level
 TP_LOCALLAB_CONTL;Contrast (J)
 TP_LOCALLAB_CONTTHMASK_TOOLTIP;Allows you to determine which parts of the image will be impacted based on the texture.
 TP_LOCALLAB_CONTRAST;Contrast
+TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP;Allows you to freely change the contrast of the mask. May create artifacts.
 TP_LOCALLAB_CONTRASTCURVMASK1_TOOLTIP;Allows you to freely modify the contrast of the mask (gamma & slope), instead of using a continuous & progressive curve. However it can create artifacts that have to be dealt with using the “Smooth radius” or “Laplacian threshold sliders”.
 TP_LOCALLAB_CONTRESID;Contrast
 TP_LOCALLAB_CONTTHR;Contrast Threshold

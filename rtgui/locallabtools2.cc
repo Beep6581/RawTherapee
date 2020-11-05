@@ -4937,6 +4937,17 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         sensilog->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         fullimage->set_tooltip_text(M("TP_LOCALLAB_FULLIMAGELOG_TOOLTIP"));
         ciecam->set_tooltip_text(M("TP_LOCALLAB_CIECAMLOG_TOOLTIP"));
+        expmaskL->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
+        CCmaskshapeL->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+        LLmaskshapeL->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+        HHmaskshapeL->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
+        blendmaskL->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
+        radmaskL->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        chromaskL->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
+//        mask2CurveEditorL->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
+        LmaskshapeL->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
+
+
     } else {
         exp->set_tooltip_text("");
         logPFrame->set_tooltip_text("");
@@ -4963,6 +4974,16 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         contq->set_tooltip_text("");
         saturl->set_tooltip_text("");
         catad->set_tooltip_text("");
+        expmaskL->set_tooltip_markup("");
+        CCmaskshapeL->setTooltip("");
+        LLmaskshapeL->setTooltip("");
+        HHmaskshapeL->setTooltip("");
+        blendmaskL->set_tooltip_text("");
+        radmaskL->set_tooltip_text("");
+        chromaskL->set_tooltip_text("");
+        mask2CurveEditorL->set_tooltip_text("");
+        LmaskshapeL->setTooltip("");
+
     }
 }
 
