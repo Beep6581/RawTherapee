@@ -1512,6 +1512,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).fullimage = locallab.spots.at(j).fullimage && pSpot.fullimage == otherSpot.fullimage;
                 locallab.spots.at(j).ciecam = locallab.spots.at(j).ciecam && pSpot.ciecam == otherSpot.ciecam;
                 locallab.spots.at(j).enaLMask = locallab.spots.at(j).enaLMask && pSpot.enaLMask == otherSpot.enaLMask;
+                locallab.spots.at(j).repar = locallab.spots.at(j).repar && pSpot.repar == otherSpot.repar;
                 locallab.spots.at(j).blackEv = locallab.spots.at(j).blackEv && pSpot.blackEv == otherSpot.blackEv;
                 locallab.spots.at(j).whiteEv = locallab.spots.at(j).whiteEv && pSpot.whiteEv == otherSpot.whiteEv;
                 locallab.spots.at(j).detail = locallab.spots.at(j).detail && pSpot.detail == otherSpot.detail;
@@ -4939,6 +4940,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).enaLMask = mods.locallab.spots.at(i).enaLMask;
         }
 
+        if (locallab.spots.at(i).repar) {
+            toEdit.locallab.spots.at(i).repar = mods.locallab.spots.at(i).repar;
+        }
+
         if (locallab.spots.at(i).blackEv) {
             toEdit.locallab.spots.at(i).blackEv = mods.locallab.spots.at(i).blackEv;
         }
@@ -6766,6 +6771,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     LcurveL(v),
     Autogray(v),
     fullimage(v),
+    repar(v),
     ciecam(v),
     blackEv(v),
     whiteEv(v),
@@ -7283,6 +7289,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     LcurveL = v;
     Autogray = v;
     fullimage = v;
+    repar = v;
     ciecam = v;
     blackEv = v;
     whiteEv = v;

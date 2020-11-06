@@ -4652,6 +4652,7 @@ LocallabLog::LocallabLog():
     LocallabTool(this, M("TP_LOCALLAB_LOG_TOOLNAME"), M("TP_LOCALLAB_LOG"), false),
 
     // Log encoding specific widgets
+    repar(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     ciecam(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CIEC")))),
     autocompute(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_LOGAUTO")))),
     logPFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGPFRA")))),
@@ -4681,7 +4682,7 @@ LocallabLog::LocallabLog():
     targabs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 16.0))),
     surround(Gtk::manage (new MyComboBoxText ())),
     surrHBox(Gtk::manage(new Gtk::HBox())),
-    baselog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BASELOG"), 1.3, 3., 0.05, 2., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+    baselog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BASELOG"), 1.3, 3., 0.05, 2.))),//, Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     sensilog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     gradlogFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADLOGFRA")))),
     strlog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2.0, 2.0, 0.05, 0.))),
@@ -4704,6 +4705,7 @@ LocallabLog::LocallabLog():
     // Parameter Log encoding specific widgets
     autoconn = autocompute->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::autocomputeToggled));
     const LocallabParams::LocallabSpot defSpot;
+    repar->setAdjusterListener(this);
 
     blackEv->setLogScale(2, -8);
     blackEv->setAdjusterListener(this);
@@ -4831,6 +4833,7 @@ LocallabLog::LocallabLog():
     mask2CurveEditorL->curveListComplete();
 
     // Add Log encoding specific widgets to GUI
+    pack_start(*repar);
     pack_start(*ciecam);
     logPFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const logPBox = Gtk::manage(new ToolParamBlock());
@@ -4918,6 +4921,7 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_LOGENCOD_TOOLTIP"));
+        repar->set_tooltip_text(M("TP_LOCALLAB_LOGREPART_TOOLTIP"));
         logPFrame->set_tooltip_text(M("TP_LOCALLAB_LOGFRAME_TOOLTIP"));
         logFrame->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
         log1Frame->set_tooltip_text(M("TP_LOCALLAB_LOGIMAGE_TOOLTIP"));
@@ -4959,6 +4963,7 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
 
     } else {
         exp->set_tooltip_text("");
+        repar->set_tooltip_text("");
         logPFrame->set_tooltip_text("");
         logFrame->set_tooltip_text("");
         log1Frame->set_tooltip_text("");
@@ -5065,6 +5070,7 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 
         autocompute->set_active(spot.autocompute);
         blackEv->setValue(spot.blackEv);
+        repar->setValue(spot.repar);
 
         whiteEv->setValue(spot.whiteEv);
 /*        if(whiteEv->getValue() < 1.5){
@@ -5145,6 +5151,7 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.complexlog = complexity->get_active_row_number();
 
         spot.autocompute = autocompute->get_active();
+        spot.repar = repar->getValue();
         spot.blackEv = blackEv->getValue();
         spot.whiteEv = whiteEv->getValue();
         spot.fullimage = fullimage->get_active();
@@ -5388,6 +5395,7 @@ void LocallabLog::setDefaults(const rtengine::procparams::ProcParams* defParams,
         const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
 
         // Set default value for adjuster widgets
+        repar->setDefault(defSpot.repar);
         blackEv->setDefault(defSpot.blackEv);
         whiteEv->setDefault(defSpot.whiteEv);
         sourceGray->setDefault(defSpot.sourceGray);
@@ -5419,6 +5427,13 @@ void LocallabLog::setDefaults(const rtengine::procparams::ProcParams* defParams,
 void LocallabLog::adjusterChanged(Adjuster* a, double newval)
 {
     if (isLocActivated && exp->getEnabled()) {
+        if (a == repar) {
+            if (listener) {
+                listener->panelChanged(Evlocallabrepar,
+                                       repar->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
         if (a == blackEv) {
             if (listener) {
                 listener->panelChanged(EvlocallabblackEv,

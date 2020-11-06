@@ -1226,6 +1226,7 @@ HISTORY_MSG_977;Local - Log encoding  Contrast Q
 HISTORY_MSG_978;Local - Log encoding  Sursource
 HISTORY_MSG_979;Local - Log encoding  Brightness Q
 HISTORY_MSG_980;Local - Log encoding  Colorfulness M
+HISTORY_MSG_981;Local - Log encoding  Strength
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2716,6 +2717,8 @@ TP_LOCALLAB_LOGLIGHTL_TOOLTIP;Close to lightness (L*a*b*), takes into account th
 TP_LOCALLAB_LOGLIGHTQ_TOOLTIP;Perceived amount of light emanating from a stimulus.\nIndicator that a stimulus appears to be more or less bright, clear. 
 TP_LOCALLAB_LOGLIN;Logarithm mode
 TP_LOCALLAB_LOGPFRA;Relative Exposure Levels
+TP_LOCALLAB_LOGREPART;Strength
+TP_LOCALLAB_LOGREPART_TOOLTIP;Acts in proportionality on the 'Log' component between the original image and the modified image.\nDoes not affect the Ciecam component.
 TP_LOCALLAB_LOGSATURL_TOOLTIP;Saturation (s) in CIECAM02 corresponds to the color of a stimulus in relation to its own brightness.\nActs mainly on medium and highlights tones
 TP_LOCALLAB_LOGSCENE_TOOLTIP;Corresponds to the shooting conditions.
 TP_LOCALLAB_LOGSRCGREY_TOOLTIP;Estimated gray point value of the image.

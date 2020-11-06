@@ -1003,6 +1003,7 @@ enum ProcEventCode {
     Evlocallabsursour = 977,
     Evlocallablightq = 978,
     Evlocallabcolorfl = 979,
+    Evlocallabrepar = 980,
 
     NUMOFEVENTS
 };

@@ -1190,6 +1190,7 @@ class LocallabLog:
     public LocallabTool
 {
 private:
+    Adjuster* const repar;
     Gtk::CheckButton* const ciecam;
     Gtk::ToggleButton* const autocompute;
     Gtk::Frame* const logPFrame;

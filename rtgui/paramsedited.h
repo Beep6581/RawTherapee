@@ -846,6 +846,7 @@ public:
         bool LcurveL;
         bool Autogray;
         bool fullimage;
+        bool repar;
         bool ciecam;
         bool blackEv;
         bool whiteEv;

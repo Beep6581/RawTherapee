@@ -3856,6 +3856,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     },
     Autogray(true),
     fullimage(true),
+    repar(100.0),
     ciecam(false),
     blackEv(-5.0),
     whiteEv(10.0),
@@ -4503,6 +4504,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && LcurveL == other.LcurveL
         && Autogray == other.Autogray
         && fullimage == other.fullimage
+        && repar == other.repar
         && ciecam == other.ciecam
         && blackEv == other.blackEv
         && whiteEv == other.whiteEv
@@ -6060,6 +6062,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->colorfl, "Locallab", "Colorfl_" + index_str, spot.colorfl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Autogray, "Locallab", "Autogray_" + index_str, spot.Autogray, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fullimage, "Locallab", "Fullimage_" + index_str, spot.fullimage, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->repar, "Locallab", "Repart_" + index_str, spot.repar, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ciecam, "Locallab", "Ciecam_" + index_str, spot.ciecam, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blackEv, "Locallab", "BlackEv_" + index_str, spot.blackEv, keyFile);
                     saveToKeyfile(!pedited || spot_edited->whiteEv, "Locallab", "WhiteEv_" + index_str, spot.whiteEv, keyFile);
@@ -7859,6 +7862,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "LCurveL_" + index_str, pedited, spot.LcurveL, spotEdited.LcurveL);
                 assignFromKeyfile(keyFile, "Locallab", "AutoGray_" + index_str, pedited, spot.Autogray, spotEdited.Autogray);
                 assignFromKeyfile(keyFile, "Locallab", "Fullimage_" + index_str, pedited, spot.fullimage, spotEdited.fullimage);
+                assignFromKeyfile(keyFile, "Locallab", "Repart_" + index_str, pedited, spot.repar, spotEdited.repar);
                 assignFromKeyfile(keyFile, "Locallab", "Ciecam_" + index_str, pedited, spot.ciecam, spotEdited.ciecam);
                 assignFromKeyfile(keyFile, "Locallab", "BlackEv_" + index_str, pedited, spot.blackEv, spotEdited.blackEv);
                 assignFromKeyfile(keyFile, "Locallab", "WhiteEv_" + index_str, pedited, spot.whiteEv, spotEdited.whiteEv);

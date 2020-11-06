@@ -10036,9 +10036,36 @@ void ImProcFunctions::Lab_Local(
 
                 bufexpfin->CopyFrom(bufexporig.get(), multiThread);
                 std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
+                std::unique_ptr<Imagefloat> tmpImageorig(new Imagefloat(bfw, bfh));
                 lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if(multiThread)
+#endif
+                    for (int y = 0; y < bfh; y++) {
+                        for (int x = 0; x < bfw; x++) {
+                            tmpImageorig->r(y, x) = tmpImage->r(y, x);
+                            tmpImageorig->g(y, x) = tmpImage->g(y, x);
+                            tmpImageorig->b(y, x) = tmpImage->b(y, x);
+                        }
+                    }
+                
                 log_encode(tmpImage.get(), lp, multiThread, bfw, bfh);
+                float repart = 1.f - 0.01f * params->locallab.spots.at(sp).repar;
+               
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if(multiThread)
+#endif
+                    for (int y = 0; y < bfh; y++) {
+                        for (int x = 0; x < bfw; x++) {
+                            tmpImage->r(y, x) = intp(repart, tmpImageorig->r(y, x), tmpImage->r(y, x));
+                            tmpImage->g(y, x) = intp(repart, tmpImageorig->g(y, x), tmpImage->g(y, x));
+                            tmpImage->b(y, x) = intp(repart, tmpImageorig->b(y, x), tmpImage->b(y, x));
+                        }
+                    }
+                
                 rgb2lab(*(tmpImage.get()), *bufexpfin, params->icm.workingProfile);
+                
+                tmpImageorig.reset();
                 tmpImage.reset();
                 if (params->locallab.spots.at(sp).ciecam) {
                     ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 1);

@@ -1438,6 +1438,7 @@ struct LocallabParams {
         std::vector<double> LcurveL;
         bool Autogray;
         bool fullimage;
+        double repar;
         bool ciecam;
         double blackEv;
         double whiteEv;
