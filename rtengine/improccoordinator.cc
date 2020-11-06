@@ -745,6 +745,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 float *sourceg = nullptr;
                 sourceg = new float[sizespot];
+                float *sourceab = nullptr;
+                sourceab = new float[sizespot];
                 float *targetg = nullptr;
                 targetg = new float[sizespot];
                 bool *log = nullptr;
@@ -777,6 +779,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     blackev[sp] = params->locallab.spots.at(sp).blackEv;
                     whiteev[sp] = params->locallab.spots.at(sp).whiteEv;
                     sourceg[sp] = params->locallab.spots.at(sp).sourceGray;
+                    sourceab[sp] = params->locallab.spots.at(sp).sourceabs;
                     Autogr[sp] = params->locallab.spots.at(sp).Autogray;
                     targetg[sp] = params->locallab.spots.at(sp).targetGray;
                     locx[sp] = params->locallab.spots.at(sp).loc.at(0) / 2000.0;
@@ -806,14 +809,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             xend = 1.f;
                         }
 
-                        ipf.getAutoLogloc(sp, imgsrc, sourceg, blackev, whiteev, Autogr, fw, fh, xsta, xend, ysta, yend, SCALE);
+                        ipf.getAutoLogloc(sp, imgsrc, sourceg, blackev, whiteev, Autogr, sourceab, fw, fh, xsta, xend, ysta, yend, SCALE);
 
                         params->locallab.spots.at(sp).blackEv = blackev[sp];
                         params->locallab.spots.at(sp).whiteEv = whiteev[sp];
                         params->locallab.spots.at(sp).sourceGray = sourceg[sp];
+                        params->locallab.spots.at(sp).sourceabs = sourceab[sp];
 
                         if (locallListener) {
-                            locallListener->logencodChanged(blackev[sp], whiteev[sp], sourceg[sp], targetg[sp]);
+                            locallListener->logencodChanged(blackev[sp], whiteev[sp], sourceg[sp], sourceab[sp], targetg[sp]);
                         }
                     }
                 }
@@ -829,6 +833,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 delete [] whiteev;
                 delete [] blackev;
                 delete [] targetg;
+                delete [] sourceab;
                 delete [] sourceg;
                 delete [] log;
                 delete [] autocomput;

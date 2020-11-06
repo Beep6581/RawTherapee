@@ -3611,6 +3611,7 @@ LocallabShadow::LocallabShadow():
     blurSHde->setAdjusterListener(this);
 
     gamSH->setAdjusterListener(this);
+    sloSH->setLogScale(16, 0);
 
     sloSH->setAdjusterListener(this);
 

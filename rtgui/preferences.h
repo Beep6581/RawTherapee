@@ -148,6 +148,9 @@ class Preferences final :
 
     Gtk::ComboBoxText* complexitylocal;
 
+    Gtk::CheckButton* inspectorWindowCB;
+    Gtk::CheckButton* zoomOnScrollCB;
+
     Gtk::ComboBoxText* themeCBT;
     Gtk::FontButton* mainFontFB;
     Gtk::FontButton* colorPickerFontFB;

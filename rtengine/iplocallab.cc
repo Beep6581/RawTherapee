@@ -36,7 +36,6 @@
 #include "rt_algo.h"
 #include "settings.h"
 #include "../rtgui/options.h"
-
 #include "utils.h"
 #ifdef _OPENMP
 #include <omp.h>
@@ -1570,15 +1569,14 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
    // BENCHFUN
     const float gray = lp.sourcegray / 100.f;
     const float shadows_range = lp.blackev;
-    if(lp.whiteev < 1.5f) {
-        lp.whiteev = 1.5f;
-    }
+
     float dynamic_range = lp.whiteev - lp.blackev;
-    if (dynamic_range < 1.f) {
-        dynamic_range = 1.f;
+    if (dynamic_range < 0.5f) {
+        dynamic_range = 0.5f;
     }
     const float noise = pow_F(2.f, -16.f);
-    const float log2 = xlogf(lp.baselog);
+   // const float log2 = xlogf(lp.baselog);
+    const float log2 = xlogf(2.f);
     const float base = lp.targetgray > 1 && lp.targetgray < 100 && dynamic_range > 0 ? find_gray(std::abs(lp.blackev) / dynamic_range, lp.targetgray / 100.f) : 0.f;
     const float linbase = rtengine::max(base, 0.f);
     TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
@@ -1654,9 +1652,14 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
                 if (m > noise) {
                     float mm = apply(m);
                     float f = mm / m;
+                    f = min(f, 1000000.f);
+                    
                     r *= f;
                     b *= f;
                     g *= f;
+                    r = CLIP(r);
+                    g = CLIP(g);
+                    b = CLIP(b);
                 }
 
                 assert(r == r);
@@ -1710,20 +1713,25 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
                     //   float t2 = norm(r, g, b);
                     float f2 = apply(t2) / t2;
                     f = intp(blend, f, f2);
-                    assert(std::isfinite(f));
+                    f = min(f, 1000000.f);
+                   
+               //     assert(std::isfinite(f));
                     r *= f;
                     g *= f;
                     b *= f;
-                    assert(std::isfinite(r));
-                    assert(std::isfinite(g));
-                    assert(std::isfinite(b));
+                    r = CLIP(r);
+                    g = CLIP(g);
+                    b = CLIP(b);
+               //     assert(std::isfinite(r));
+               //     assert(std::isfinite(g));
+               //     assert(std::isfinite(b));
                 }
             }
         }
     }
 }
 
-void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE)
+void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, float *sourceab, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE)
 {
     //BENCHFUN
 //adpatation to local adjustments Jacques Desmis 12 2019
@@ -1829,10 +1837,41 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
                 }
             }
         }
-
         const float gray = sourceg[sp] / 100.f;
         whiteev[sp] = xlogf(maxVal / gray) / log2;
         blackev[sp] = whiteev[sp] - dynamic_range;
+
+
+        //calculate La - Absolute luminance shooting
+
+        const FramesMetaData* metaData = imgsrc->getMetaData();
+        int imgNum = 0;
+
+        if (imgsrc->isRAW()) {
+            if (imgsrc->getSensorType() == ST_BAYER) {
+                imgNum = rtengine::LIM<unsigned int>(params->raw.bayersensor.imageNum, 0, metaData->getFrameCount() - 1);
+            } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
+                        //imgNum = rtengine::LIM<unsigned int>(params->raw.xtranssensor.imageNum, 0, metaData->getFrameCount() - 1);
+            }
+        }
+        
+        float fnum = metaData->getFNumber(imgNum);          // F number
+        float fiso = metaData->getISOSpeed(imgNum) ;        // ISO
+        float fspeed = metaData->getShutterSpeed(imgNum) ;  // Speed
+        double fcomp = metaData->getExpComp(imgNum);        // Compensation +/-
+        double adap;
+
+        if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) { //if no exif data or wrong
+            adap = 2000.;
+        } else {
+            double E_V = fcomp + std::log2(double ((fnum * fnum) / fspeed / (fiso / 100.f)));
+            E_V += params->toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
+            E_V += std::log2(params->raw.expos);  // exposure raw white point ; log2 ==> linear to EV
+            adap = pow(2.0, E_V - 3.0);  // cd / m2
+            // end calculation adaptation scene luminosity
+        }
+        
+        sourceab[sp] = adap;
     }
 }
 
@@ -2064,11 +2103,13 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B,  const str
 }
 
 
-void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
+void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
 {
-    //be careful quasi duplicate with branch cat02wb
     //BENCHFUN
-
+    bool ciec = false;
+    if (params->locallab.spots.at(sp).ciecam && params->locallab.spots.at(sp).explog && call == 1) {
+        ciec = true;
+    }
     int width = lab->W, height = lab->H;
     float Yw;
     Yw = 1.0f;
@@ -2080,13 +2121,121 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
     double Xwout, Zwout;
     double Xwsc, Zwsc;
 
-    int tempo;
+    LUTu hist16J;
+    //for J light and contrast
+    LUTf CAMBrightCurveJ;
+    CAMBrightCurveJ(32768, LUT_CLIP_ABOVE);
+    CAMBrightCurveJ.dirty = true;
 
-    if (params->locallab.spots.at(sp).warm > 0) {
-        tempo = 5000 - 30 * params->locallab.spots.at(sp).warm;
-    } else {
-        tempo = 5000 - 49 * params->locallab.spots.at(sp).warm;
+    if (CAMBrightCurveJ.dirty) {
+        hist16J(32768);
+        hist16J.clear();
+
+        double sum = 0.0; // use double precision for large summations
+
+#ifdef _OPENMP
+        const int numThreads = min(max(width * height / 65536, 1), omp_get_max_threads());
+            #pragma omp parallel num_threads(numThreads) if(numThreads>1)
+#endif
+            {
+                LUTu hist16Jthr;
+                hist16Jthr(hist16J.getSize());
+                hist16Jthr.clear();
+
+#ifdef _OPENMP
+                #pragma omp for reduction(+:sum)
+#endif
+
+                for (int i = 0; i < height; i++) {
+                    for (int j = 0; j < width; j++) { //rough correspondence between L and J
+                        float currL = lab->L[i][j] / 327.68f;
+                        float koef; //rough correspondence between L and J
+
+                        if (currL > 50.f) {
+                            if (currL > 70.f) {
+                                if (currL > 80.f) {
+                                    if (currL > 85.f) {
+                                        koef = 0.97f;
+                                    } else {
+                                        koef = 0.93f;
+                                    }
+                                } else {
+                                    koef = 0.87f;
+                                }
+                            } else {
+                                if (currL > 60.f) {
+                                    koef = 0.85f;
+                                } else {
+                                    koef = 0.8f;
+                                }
+                            }
+                        } else {
+                            if (currL > 10.f) {
+                                if (currL > 20.f) {
+                                    if (currL > 40.f) {
+                                        koef = 0.75f;
+                                    } else {
+                                        koef = 0.7f;
+                                    }
+                                } else {
+                                    koef = 0.9f;
+                                }
+                            } else {
+                                koef = 1.0;
+                            }
+                        }
+
+                            hist16Jthr[(int)((koef * lab->L[i][j]))]++;    //evaluate histogram luminance L # J
+                            sum += static_cast<double>(koef) * static_cast<double>(lab->L[i][j]); //evaluate mean J to calculate Yb
+                            //sum not used, but perhaps...
+                    }
+                }
+
+#ifdef _OPENMP
+                #pragma omp critical
+#endif
+                {
+                        hist16J += hist16Jthr;
+                }
+            }
+#ifdef _OPENMP
+            static_cast<void>(numThreads); // to silence cppcheck warning
+#endif
+
+            //evaluate lightness, contrast
+        }
+
+
+
+
+    
+    float contL = 0.f;
+    if (ciec) {
+        contL = 0.6f *params->locallab.spots.at(sp).contl;//0.6 less effect, no need 1.
+   
+        if (CAMBrightCurveJ.dirty) {
+            Ciecam02::curveJfloat(0.f, contL, hist16J, CAMBrightCurveJ); //contrast J
+            CAMBrightCurveJ /= 327.68f;
+            CAMBrightCurveJ.dirty = false;
+        }
     }
+    int tempo = 5000;
+    if(params->locallab.spots.at(sp).expvibrance && call == 2) {
+        if (params->locallab.spots.at(sp).warm > 0) {
+            tempo = 5000 - 30 * params->locallab.spots.at(sp).warm;
+        } else if (params->locallab.spots.at(sp).warm < 0){
+            tempo = 5000 - 70 * params->locallab.spots.at(sp).warm;
+        }
+    }
+
+    if(ciec) {
+        if (params->locallab.spots.at(sp).catad > 0) {
+            tempo = 5000 - 30 * params->locallab.spots.at(sp).catad;
+        } else if (params->locallab.spots.at(sp).catad < 0){
+            tempo = 5000 - 70 * params->locallab.spots.at(sp).catad;
+        }
+    }
+
 
     ColorTemp::temp2mulxyz(params->wb.temperature, params->wb.method, Xw, Zw);  //compute white Xw Yw Zw  : white current WB
     ColorTemp::temp2mulxyz(tempo, "Custom", Xwout, Zwout);
@@ -2098,8 +2247,25 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
     nc = 1.00f;
     //viewing condition for surround
     f2 = 1.0f, c2 = 0.69f, nc2 = 1.0f;
-    //with which algorithm
-    //  alg = 0;
+    if(ciec) {
+        //viewing condition for surround
+        if (params->locallab.spots.at(sp).surround == "Average") {
+            f2 = 1.0f, c2 = 0.69f, nc2 = 1.0f;
+        } else if (params->locallab.spots.at(sp).surround == "Dim") {
+            f2  = 0.9f;
+            c2  = 0.59f;
+            nc2 = 0.9f;
+        } else if (params->locallab.spots.at(sp).surround == "Dark") {
+            f2  = 0.8f;
+            c2  = 0.525f;
+            nc2 = 0.8f;
+        } else if (params->locallab.spots.at(sp).surround == "ExtremelyDark") {
+            f2  = 0.8f;
+            c2  = 0.41f;
+            nc2 = 0.8f;
+        }
+    }
+
 
 
     xwd = 100.0 * Xwout;
@@ -2111,18 +2277,42 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
     yws = 100.f;
 
 
-    yb2 = 18;
     //La and la2 = ambiant luminosity scene and viewing
     la = 400.f;
-    const float la2 = 400.f;
+    float la2 = 400.f;
+    if(ciec) {
+        la = params->locallab.spots.at(sp).sourceabs;
+        
+        la2 = params->locallab.spots.at(sp).targabs;
+    }
+    
     const float pilot = 2.f;
     const float pilotout = 2.f;
 
     //algoritm's params
-    // const float rstprotection = 100. ;//- params->colorappearance.rstprotection;
-    LUTu hist16J;
     LUTu hist16Q;
     float yb = 18.f;
+    yb2 = 18;
+    if(ciec) {
+        yb = params->locallab.spots.at(sp).targetGray;//target because we are after Log encoding
+        
+        yb2 = params->locallab.spots.at(sp).targetGray;
+    }
+    
+    float schr = 0.f;
+
+    if (ciec) {
+        schr = params->locallab.spots.at(sp).saturl;
+
+        if (schr > 0.f) {
+          schr = schr / 2.f;    //divide sensibility for saturation
+        }
+
+        if (schr == -100.f) {
+            schr = -99.8f;
+        }
+    }
+
     float d, dj;
 
     // const int gamu = 0; //(params->colorappearance.gamut) ? 1 : 0;
@@ -2130,7 +2320,11 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
     yw = 100.f * Yw;
     zw = 100.0 * Zw;
     float xw1 = xws, yw1 = yws, zw1 = zws, xw2 = xwd, yw2 = ywd, zw2 = zwd;
-
+/*    
+            xw1 = 96.46f;    //use RT WB; CAT 02 is used for output device (see prefreneces)
+            yw1 = 100.0f;
+            zw1 = 82.445f;
+*/
     float cz, wh, pfl;
     Ciecam02::initcam1float(yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
 //   const float chr = 0.f;
@@ -2141,6 +2335,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
     const float reccmcz = 1.f / (c2 * czj);
 #endif
     const float pow1n = pow_F(1.64f - pow_F(0.29f, nj), 0.73f);
+    const float coe = pow_F(fl, 0.25f);
+    const float QproFactor = (0.4f / c) * (aw + 4.0f) ;
 
 #ifdef __SSE2__
     int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
@@ -2252,7 +2448,21 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab)
                 spro = s;
                 /*
                 */
-
+                if(ciec) {
+                    Jpro = CAMBrightCurveJ[Jpro * 327.68f]; //CIECAM02 + contrast
+                    float sres;
+                    float rstprotection = 50.f;//arbitrary 50% protection skin tones
+                    float Sp = spro / 100.0f;
+                    float parsat = 1.5f; //parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfullness (personal evaluation)
+                    Ciecam02::curvecolorfloat(schr, Sp, sres, parsat);
+                    float dred = 100.f; // in C mode
+                    float protect_red = 80.0f; // in C mode
+                    dred = 100.0f * sqrtf((dred * coe) / Qpro);
+                    protect_red = 100.0f * sqrtf((protect_red * coe) / Qpro);
+                    Color::skinredfloat(Jpro, hpro, sres, Sp, dred, protect_red, 0, rstprotection, 100.f, spro);
+                    Qpro = QproFactor * sqrtf(Jpro);
+                    Cpro = (spro * spro * Qpro) / (10000.0f);
+                }
 
                 //retrieve values C,J...s
                 C = Cpro;
@@ -9678,6 +9888,9 @@ void ImProcFunctions::Lab_Local(
             log_encode(tmpImage.get(), lp, multiThread, bfw, bfh);
             rgb2lab(*(tmpImage.get()), *bufexpfin, params->icm.workingProfile);
             tmpImage.reset();
+            if (params->locallab.spots.at(sp).ciecam) {
+                ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 1);
+            }
 
             //here begin graduated filter
             //first solution "easy" but we can do other with log_encode...to see the results
@@ -10801,7 +11014,7 @@ void ImProcFunctions::Lab_Local(
                     ImProcFunctions::vibrance(bufexpfin.get(), vibranceParams, params->toneCurve.hrenabled, params->icm.workingProfile);
 
                     if (params->locallab.spots.at(sp).warm != 0) {
-                        ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get());
+                        ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 2);
                     }
 
 
