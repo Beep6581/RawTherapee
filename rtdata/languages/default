@@ -2718,7 +2718,7 @@ TP_LOCALLAB_LOGLIGHTQ_TOOLTIP;Perceived amount of light emanating from a stimulu
 TP_LOCALLAB_LOGLIN;Logarithm mode
 TP_LOCALLAB_LOGPFRA;Relative Exposure Levels
 TP_LOCALLAB_LOGREPART;Strength
-TP_LOCALLAB_LOGREPART_TOOLTIP;Acts in proportionality on the 'Log' component between the original image and the modified image.\nDoes not affect the Ciecam component.
+TP_LOCALLAB_LOGREPART_TOOLTIP;Allows you to adjust the relative strength of the log-encoded image with respect to the original image.\nDoes not affect the Ciecam component.
 TP_LOCALLAB_LOGSATURL_TOOLTIP;Saturation (s) in CIECAM02 corresponds to the color of a stimulus in relation to its own brightness.\nActs mainly on medium and highlights tones
 TP_LOCALLAB_LOGSCENE_TOOLTIP;Corresponds to the shooting conditions.
 TP_LOCALLAB_LOGSRCGREY_TOOLTIP;Estimated gray point value of the image.
