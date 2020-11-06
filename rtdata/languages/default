@@ -3561,7 +3561,7 @@ TP_WAVELET_LEVONE;Level 2
 TP_WAVELET_LEVTHRE;Level 4
 TP_WAVELET_LEVTWO;Level 3
 TP_WAVELET_LEVZERO;Level 1
-TP_WAVELET_LIMDEN;Interaction levels 56 on levels 14
+TP_WAVELET_LIMDEN;Interaction levels 5-6 on levels 1-4
 TP_WAVELET_LINKEDG;Link to Edge Sharpness Strength
 TP_WAVELET_LIPST;Enhanced algoritm
 TP_WAVELET_LOWLIGHT;Coarser levels luminance range
