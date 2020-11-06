@@ -9790,7 +9790,7 @@ void ImProcFunctions::Lab_Local(
 //lastsav for save restore image
     lastsav = 0;
 
-    if (lp.excmet == 1 && call <= 3) {//exclude
+    if (lp.excmet == 1 && call <= 3 && lp.activspot) {//exclude
         const int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
         const int bfw = int (lp.lx + lp.lxL) + del;
         const int begy = lp.yc - lp.lyT;
