@@ -1278,6 +1278,7 @@ private:
     void ciecamChanged();
     void showmaskLMethodChanged();
     void enaLMaskChanged();
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void updateLogGUI();
     void updateLogGUI2();

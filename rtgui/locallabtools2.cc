@@ -5719,6 +5719,25 @@ void LocallabLog::fullimageChanged()
     }
 }
 
+void LocallabLog::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
+{
+    idle_register.add(
+    [this, normHuer, normLumar, normChromar]() -> bool {
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+        // Update mask background
+        CCmaskshapeL->updateLocallabBackground(normChromar);
+        LLmaskshapeL->updateLocallabBackground(normLumar);
+        HHmaskshapeL->updateLocallabBackground(normHuer);
+        LmaskshapeL->updateLocallabBackground(normLumar);
+
+        return false;
+    }
+    );
+}
+
+
+
 void LocallabLog::AutograyChanged()
 {
     if (isLocActivated && exp->getEnabled()) {
