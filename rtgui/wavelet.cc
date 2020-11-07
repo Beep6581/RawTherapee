@@ -3254,9 +3254,9 @@ void Wavelet::convertParamToNormal()
     levelsigm->setValue<double>(def_params.levelsigm);
     leveldenoise->setValue<double>(def_params.leveldenoise);
     limden->setValue(def_params.limden);
-
+    thrden->setValue(def_params.thrden);
 //    quamethod->set_active(0);
-//    sigm->setValue(def_params.sigm);
+    sigm->setValue(def_params.sigm);
     //toning
     exptoning->setEnabled(def_params.exptoning);
     //gamut
@@ -3309,12 +3309,12 @@ void Wavelet::updateGUIToMode(int mode)
         denHBox->hide();
         mixHBox->hide();
         sliHBox->hide();
-        sigm->show();
+        sigm->hide();
         levelsigm->hide();
         CurveEditorwavnoiseh->hide();
         CurveEditorwavnoise->hide();
        // levden->hide();
-        thrden->show();
+        thrden->hide();
         leveldenoise->hide();
         limden->hide();
     } else {

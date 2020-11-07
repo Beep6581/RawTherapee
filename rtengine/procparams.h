@@ -1422,19 +1422,42 @@ struct LocallabParams {
         // Log encoding
         bool visilog;
         bool explog;
+        int complexlog;
         bool autocompute;
         double sourceGray;
+        double sourceabs;
+        double targabs;
         double targetGray;
         double catad;
+        double saturl;
+        double lightl;
+        double lightq;
+        double contl;
+        double contq;
+        double colorfl;
+        std::vector<double> LcurveL;
         bool Autogray;
         bool fullimage;
+        double repar;
+        bool ciecam;
         double blackEv;
         double whiteEv;
         double detail;
         int sensilog;
+        Glib::ustring sursour;
+        Glib::ustring surround;
         double baselog;
         double strlog;
         double anglog;
+        std::vector<double> CCmaskcurveL;
+        std::vector<double> LLmaskcurveL;
+        std::vector<double> HHmaskcurveL;
+        bool enaLMask;
+        double blendmaskL;
+        double radmaskL;
+        double chromaskL;
+        std::vector<double> LmaskcurveL;
+
         // mask
         bool visimask;
         int complexmask;

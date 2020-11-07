@@ -364,6 +364,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     bayerprocess->FoldableToolPanel::show();
                     bayerpreprocess->FoldableToolPanel::show();
                     rawcacorrection->FoldableToolPanel::show();
+                    preprocessWB->FoldableToolPanel::show();
                     preprocess->FoldableToolPanel::show();
                     flatfield->FoldableToolPanel::show();
                     pdSharpening->FoldableToolPanel::show();
@@ -383,6 +384,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     bayerprocess->FoldableToolPanel::hide();
                     bayerpreprocess->FoldableToolPanel::hide();
                     rawcacorrection->FoldableToolPanel::hide();
+                    preprocessWB->FoldableToolPanel::show();
                     preprocess->FoldableToolPanel::show();
                     flatfield->FoldableToolPanel::show();
                     pdSharpening->FoldableToolPanel::show();
@@ -530,12 +532,12 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
         ipc->setLocallabMaskVisibility(maskStruc.previewDeltaE, maskStruc.colorMask, maskStruc.colorMaskinv, maskStruc.expMask, maskStruc.expMaskinv,
                 maskStruc.SHMask, maskStruc.SHMaskinv, maskStruc.vibMask, maskStruc.softMask,
                 maskStruc.blMask, maskStruc.tmMask, maskStruc.retiMask, maskStruc.sharMask,
-                maskStruc.lcMask, maskStruc.cbMask, maskStruc.maskMask);
+                maskStruc.lcMask, maskStruc.cbMask, maskStruc.logMask, maskStruc.maskMask);
     } else if (event == rtengine::EvLocallabSpotCreated || event == rtengine::EvLocallabSpotSelectedWithMask ||
             event == rtengine::EvLocallabSpotDeleted || event == rtengine::Evlocallabshowreset ||
             event == rtengine::EvlocallabToolRemovedWithRefresh) {
         locallab->resetMaskVisibility();
-        ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
     ipc->endUpdateParams(changeFlags);    // starts the IPC processing
@@ -645,7 +647,7 @@ void ToolPanelCoordinator::profileChange(
 
     // Reset Locallab mask visibility
     locallab->resetMaskVisibility();
-    ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
     // start the IPC processing
     if (filterRawRefresh) {
