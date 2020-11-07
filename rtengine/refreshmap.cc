@@ -992,7 +992,22 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // Evlocallabtargabs
     LUMINANCECURVE,   // Evlocallabsurround
     LUMINANCECURVE,   // Evlocallabsaturl
-    LUMINANCECURVE   // Evlocallabcontl
+    LUMINANCECURVE,   // Evlocallabcontl
+    LUMINANCECURVE,   //EvlocallabCCmaskshapeL 
+    LUMINANCECURVE,   //EvlocallabLLmaskshapeL
+    LUMINANCECURVE,   // EvlocallabHHmaskshapeL
+    LUMINANCECURVE,   // EvlocallabenaLMask
+    LUMINANCECURVE,   // EvlocallabblendmaskL
+    LUMINANCECURVE,   // EvlocallabradmaskL
+    LUMINANCECURVE,   // EvlocallabchromaskL
+    LUMINANCECURVE,   //EvlocallabLmaskshapeL
+    LUMINANCECURVE,   // Evlocallablightl
+    LUMINANCECURVE,   // EvlocallabLshapeL
+    LUMINANCECURVE,   // Evlocallabcontq
+    LUMINANCECURVE,   // Evlocallabsursour
+    LUMINANCECURVE,   // Evlocallablightq
+    LUMINANCECURVE,   // Evlocallabcolorfl
+    LUMINANCECURVE   // Evlocallabrepar
 
 };
 

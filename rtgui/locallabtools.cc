@@ -908,7 +908,7 @@ void LocallabColor::resetMaskView()
     showmaskcolMethodConninv.block(false);
 }
 
-void LocallabColor::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask)
+void LocallabColor::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask)
 {
     colorMask = showmaskcolMethod->get_active_row_number();
     colorMaskinv = showmaskcolMethodinv->get_active_row_number();
@@ -2639,7 +2639,7 @@ void LocallabExposure::resetMaskView()
     showmaskexpMethodConninv.block(false);
 }
 
-void LocallabExposure::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask)
+void LocallabExposure::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask)
 {
     expMask = showmaskexpMethod->get_active_row_number();
     expMaskinv = showmaskexpMethodinv->get_active_row_number();
@@ -3758,7 +3758,7 @@ void LocallabShadow::resetMaskView()
     showmaskSHMethodConninv.block(false);
 }
 
-void LocallabShadow::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask)
+void LocallabShadow::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask)
 {
     shMask = showmaskSHMethod->get_active_row_number();
     shMaskinv = showmaskSHMethodinv->get_active_row_number();
@@ -4687,7 +4687,7 @@ void LocallabVibrance::resetMaskView()
     showmaskvibMethodConn.block(false);
 }
 
-void LocallabVibrance::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask)
+void LocallabVibrance::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask)
 {
     vibMask = showmaskvibMethod->get_active_row_number();
 }
@@ -5400,7 +5400,7 @@ void LocallabSoft::resetMaskView()
     showmasksoftMethodConn.block(false);
 }
 
-void LocallabSoft::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask)
+void LocallabSoft::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask)
 {
     softMask = showmasksoftMethod->get_active_row_number();
 }
@@ -6067,7 +6067,7 @@ void LocallabBlur::resetMaskView()
     showmaskblMethodConn.block(false);
 }
 
-void LocallabBlur::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask)
+void LocallabBlur::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask)
 {
     blMask = showmaskblMethod->get_active_row_number();
 }
@@ -6924,6 +6924,19 @@ void LocallabBlur::blMethodChanged()
 {
     // Update Blur & Noise GUI according to blMethod combobox state
     updateBlurGUI();
+    const LocallabParams::LocallabSpot defSpot;
+
+    if (invbl->get_active()  &&  blMethod->get_active_row_number() == 2) {
+        radius->setValue(defSpot.radius);
+        medMethod->set_active(0);
+    } else if(invbl->get_active()  &&  blMethod->get_active_row_number() == 0) {
+        guidbl->setValue(defSpot.guidbl);
+        medMethod->set_active(0);
+    } else if(invbl->get_active()  &&  blMethod->get_active_row_number() == 1) {
+        radius->setValue(defSpot.radius);
+        guidbl->setValue(defSpot.guidbl);
+    }
+
 
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
@@ -6950,6 +6963,21 @@ void LocallabBlur::fftwblChanged()
 
 void LocallabBlur::invblChanged()
 {
+    const LocallabParams::LocallabSpot defSpot;
+
+    if (invbl->get_active()  &&  blMethod->get_active_row_number() == 2) {
+        radius->setValue(defSpot.radius);
+        medMethod->set_active(0);
+    } else if(invbl->get_active()  &&  blMethod->get_active_row_number() == 0) {
+        guidbl->setValue(defSpot.guidbl);
+        medMethod->set_active(0);
+    } else if(invbl->get_active()  &&  blMethod->get_active_row_number() == 1) {
+        radius->setValue(defSpot.radius);
+        guidbl->setValue(defSpot.guidbl);
+    }
+
+
+    
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (invbl->get_active()) {
@@ -7076,6 +7104,20 @@ void LocallabBlur::toolblChanged()
 
 void LocallabBlur::updateBlurGUI()
 {
+    const LocallabParams::LocallabSpot defSpot;
+
+    if (invbl->get_active()  &&  blMethod->get_active_row_number() == 2) {
+        radius->setValue(defSpot.radius);
+        medMethod->set_active(0);
+    } else if(invbl->get_active()  &&  blMethod->get_active_row_number() == 0) {
+        guidbl->setValue(defSpot.guidbl);
+        medMethod->set_active(0);
+    } else if(invbl->get_active()  &&  blMethod->get_active_row_number() == 1) {
+        radius->setValue(defSpot.radius);
+        guidbl->setValue(defSpot.guidbl);
+    }
+
+    
     const int mode = complexity->get_active_row_number();
 
     if (blMethod->get_active_row_number() == 0) {
