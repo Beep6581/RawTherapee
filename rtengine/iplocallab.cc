@@ -425,6 +425,9 @@ struct local_params {
     float angvib;
     float angwav;
     float strwav;
+    float blendmaL;
+    float radmaL;
+    float chromaL;
 
     float strengthw;
     float radiusw;
@@ -527,6 +530,7 @@ struct local_params {
     int showmasksoftmet;
     int showmasktmmet;
     int showmaskblmet;
+    int showmasklogmet;
     int showmask_met;
     bool fftbl;
     float laplacexp;
@@ -613,6 +617,7 @@ struct local_params {
     bool enaretiMasktmap;
     bool enatmMask;
     bool enablMask;
+    bool enaLMask;
     bool ena_Mask;
     int highlihs;
     int shadowhs;
@@ -651,7 +656,7 @@ struct local_params {
 
 };
 
-static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locallab, struct local_params& lp, bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int ll_Mask, const LocwavCurve & locwavCurveden, bool locwavdenutili)
+static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locallab, struct local_params& lp, bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, const LocwavCurve & locwavCurveden, bool locwavdenutili)
 {
     int w = oW;
     int h = oH;
@@ -745,23 +750,25 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     
     lp.showmasktmmet = lltmMask;
     lp.showmaskblmet = llblMask;
+    lp.showmasklogmet = lllogMask;
     lp.showmask_met = ll_Mask;
-  //  printf("mask=%i \n", lp.showmask_met);
+    printf("mask=%i \n", lp.showmasklogmet);
     
-    lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llsoftMask == 0 && llColorMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
-    lp.enaColorMaskinv = locallab.spots.at(sp).enaColorMask && llColorMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
-    lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
-    lp.enaExpMaskinv = locallab.spots.at(sp).enaExpMask && llExpMaskinv == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
-    lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0;
-    lp.enaSHMaskinv = locallab.spots.at(sp).enaSHMask && llSHMaskinv == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0;
-    lp.enacbMask = locallab.spots.at(sp).enacbMask && llcbMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0;
-    lp.enaretiMask = locallab.spots.at(sp).enaretiMask && lllcMask == 0 && llsharMask == 0 && llsoftMask == 0 && llretiMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0;
-    lp.enatmMask = locallab.spots.at(sp).enatmMask && lltmMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0;
-    lp.enablMask = locallab.spots.at(sp).enablMask && llblMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && ll_Mask == 0;
-    lp.enavibMask = locallab.spots.at(sp).enavibMask && llvibMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llSHMask == 0 && ll_Mask == 0;
-    lp.enalcMask = locallab.spots.at(sp).enalcMask && lllcMask == 0 && llcbMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0 ;
-    lp.enasharMask = lllcMask == 0 && llcbMask == 0 && llsharMask == 0 && llsoftMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0;
-    lp.ena_Mask = locallab.spots.at(sp).enamask && lllcMask == 0 && llcbMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0;
+    lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llsoftMask == 0 && llColorMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
+    lp.enaColorMaskinv = locallab.spots.at(sp).enaColorMask && llColorMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
+    lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
+    lp.enaExpMaskinv = locallab.spots.at(sp).enaExpMask && llExpMaskinv == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
+    lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0  && ll_Mask == 0;
+    lp.enaSHMaskinv = locallab.spots.at(sp).enaSHMask && llSHMaskinv == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
+    lp.enacbMask = locallab.spots.at(sp).enacbMask && llcbMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
+    lp.enaretiMask = locallab.spots.at(sp).enaretiMask && lllcMask == 0 && llsharMask == 0 && llsoftMask == 0 && llretiMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
+    lp.enatmMask = locallab.spots.at(sp).enatmMask && lltmMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && llblMask == 0 && llvibMask == 0&& lllogMask == 0  && ll_Mask == 0;
+    lp.enablMask = locallab.spots.at(sp).enablMask && llblMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
+    lp.enavibMask = locallab.spots.at(sp).enavibMask && llvibMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0;
+    lp.enalcMask = locallab.spots.at(sp).enalcMask && lllcMask == 0 && llcbMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 ;
+    lp.enasharMask = lllcMask == 0 && llcbMask == 0 && llsharMask == 0 && llsoftMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
+    lp.ena_Mask = locallab.spots.at(sp).enamask && lllcMask == 0 && llcbMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && lllogMask == 0 && llvibMask == 0;
+    lp.enaLMask = locallab.spots.at(sp).enaLMask && lllogMask == 0 && llColorMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
 
     //  printf("llColorMask=%i lllcMask=%i llExpMask=%i  llSHMask=%i llcbMask=%i llretiMask=%i lltmMask=%i llblMask=%i llvibMask=%i\n", llColorMask, lllcMask, llExpMask, llSHMask, llcbMask, llretiMask, lltmMask, llblMask, llvibMask);
     if (locallab.spots.at(sp).softMethod == "soft") {
@@ -1095,6 +1102,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     bool fftwlc = locallab.spots.at(sp).fftwlc;
     bool fftwreti = locallab.spots.at(sp).fftwreti;
 
+    float blendmaskL = ((float) locallab.spots.at(sp).blendmaskL) / 100.f ;
+    float radmaskL = ((float) locallab.spots.at(sp).radmaskL);
+    float chromaskL = ((float) locallab.spots.at(sp).chromaskL);
+
     bool equilret = locallab.spots.at(sp).equilret;
     bool inverserad = false; // Provision
     bool inverseret = locallab.spots.at(sp).inversret;
@@ -1216,6 +1227,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.gammatm = gammasktm;
     lp.slomatm = slomasktm;
     lp.wavgradl = wavgradl;
+    lp.blendmaL = blendmaskL;
+    lp.radmaL = radmaskL;
+    lp.chromaL = chromaskL;
 
     lp.strengthw = ((float) locallab.spots.at(sp).strengthw);
     lp.radiusw = ((float) locallab.spots.at(sp).radiusw);
@@ -1335,24 +1349,25 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     }
     lp.activspot = locallab.spots.at(sp).activ;
 
-    lp.logena = locallab.spots.at(sp).explog && lp.activspot;
 
     lp.detailsh = locallab.spots.at(sp).detailSH;
     lp.threshol = thresho;
     lp.chromacb = chromcbdl;
     lp.expvib = locallab.spots.at(sp).expvibrance && lp.activspot ;
-    lp.colorena = locallab.spots.at(sp).expcolor && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && ll_Mask == 0; // Color & Light tool is deactivated if Exposure mask is visible or SHMask
-    lp.blurena = locallab.spots.at(sp).expblur && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && ll_Mask == 0;
-    lp.tonemapena = locallab.spots.at(sp).exptonemap && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llColorMask == 0 && llvibMask == 0 && ll_Mask == 0;
-    lp.retiena = locallab.spots.at(sp).expreti && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && llSHMask == 0 && ll_Mask == 0;
-    lp.lcena = locallab.spots.at(sp).expcontrast && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && llsharMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && llSHMask == 0 && ll_Mask == 0;
-    lp.cbdlena = locallab.spots.at(sp).expcbdl && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llretiMask == 0 && lllcMask == 0 && llsharMask == 0 && lllcMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && ll_Mask == 0;
-    lp.exposena = locallab.spots.at(sp).expexpose && lp.activspot  && llColorMask == 0 && llsoftMask == 0 && llSHMask == 0 && lllcMask == 0 && llsharMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && ll_Mask == 0; // Exposure tool is deactivated if Color & Light mask SHmask is visible
-    lp.hsena = locallab.spots.at(sp).expshadhigh && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && ll_Mask == 0;// Shadow Highlight tool is deactivated if Color & Light mask or SHmask is visible
-    lp.vibena = locallab.spots.at(sp).expvibrance && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && ll_Mask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
-    lp.sharpena = locallab.spots.at(sp).expsharp && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && llvibMask == 0 && ll_Mask == 0;
-    lp.sfena = locallab.spots.at(sp).expsoft && lp.activspot && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && llvibMask == 0 && ll_Mask == 0;
-    lp.maskena = locallab.spots.at(sp).expmask && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
+    lp.colorena = locallab.spots.at(sp).expcolor && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0; // Color & Light tool is deactivated if Exposure mask is visible or SHMask
+    lp.blurena = locallab.spots.at(sp).expblur && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
+    lp.tonemapena = locallab.spots.at(sp).exptonemap && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llColorMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
+    lp.retiena = locallab.spots.at(sp).expreti && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0;
+    lp.lcena = locallab.spots.at(sp).expcontrast && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && llsharMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0;
+    lp.cbdlena = locallab.spots.at(sp).expcbdl && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llretiMask == 0 && lllcMask == 0 && llsharMask == 0 && lllcMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
+    lp.exposena = locallab.spots.at(sp).expexpose && lp.activspot  && llColorMask == 0 && llsoftMask == 0 && llSHMask == 0 && lllcMask == 0 && llsharMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0; // Exposure tool is deactivated if Color & Light mask SHmask is visible
+    lp.hsena = locallab.spots.at(sp).expshadhigh && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;// Shadow Highlight tool is deactivated if Color & Light mask or SHmask is visible
+    lp.vibena = locallab.spots.at(sp).expvibrance && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
+    lp.sharpena = locallab.spots.at(sp).expsharp && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
+    lp.sfena = locallab.spots.at(sp).expsoft && lp.activspot && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
+    lp.maskena = locallab.spots.at(sp).expmask && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && lllogMask == 0 && llSHMask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
+    lp.logena = locallab.spots.at(sp).explog && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
+
 
     lp.sensv = local_sensiv;
     lp.past =  chromaPastel;
@@ -2122,25 +2137,35 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     double Xwsc, Zwsc;
 
     LUTu hist16J;
+    LUTu hist16Q;
     //for J light and contrast
     LUTf CAMBrightCurveJ;
     CAMBrightCurveJ(32768, LUT_CLIP_ABOVE);
     CAMBrightCurveJ.dirty = true;
+    
+    LUTf CAMBrightCurveQ;
+    CAMBrightCurveQ(32768, LUT_CLIP_ABOVE);
+    CAMBrightCurveQ.dirty = true;
 
-    if (CAMBrightCurveJ.dirty) {
+    if (CAMBrightCurveJ.dirty  || CAMBrightCurveQ.dirty) {
         hist16J(32768);
         hist16J.clear();
+        hist16Q(32768);
+        hist16Q.clear();
 
         double sum = 0.0; // use double precision for large summations
 
 #ifdef _OPENMP
         const int numThreads = min(max(width * height / 65536, 1), omp_get_max_threads());
-            #pragma omp parallel num_threads(numThreads) if(numThreads>1)
+        #pragma omp parallel num_threads(numThreads) if(numThreads>1)
 #endif
             {
                 LUTu hist16Jthr;
+                LUTu hist16Qthr;
                 hist16Jthr(hist16J.getSize());
                 hist16Jthr.clear();
+                hist16Qthr(hist16Q.getSize());
+                hist16Qthr.clear();
 
 #ifdef _OPENMP
                 #pragma omp for reduction(+:sum)
@@ -2186,6 +2211,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                         }
 
                             hist16Jthr[(int)((koef * lab->L[i][j]))]++;    //evaluate histogram luminance L # J
+                            hist16Qthr[CLIP((int)(32768.f * sqrt((koef * (lab->L[i][j])) / 32768.f)))]++;     //for brightness Q : approximation for Q=wh*sqrt(J/100)  J not equal L
                             sum += static_cast<double>(koef) * static_cast<double>(lab->L[i][j]); //evaluate mean J to calculate Yb
                             //sum not used, but perhaps...
                     }
@@ -2196,7 +2222,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
 #endif
                 {
                         hist16J += hist16Jthr;
-                }
+                        hist16Q += hist16Qthr;
+        }
             }
 #ifdef _OPENMP
             static_cast<void>(numThreads); // to silence cppcheck warning
@@ -2205,19 +2232,28 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
             //evaluate lightness, contrast
         }
 
-
-
-
-    
     float contL = 0.f;
+    float lightL = 0.f;
+    float contQ = 0.f;
+    float lightQ = 0.f;
+    
     if (ciec) {
         contL = 0.6f *params->locallab.spots.at(sp).contl;//0.6 less effect, no need 1.
+        lightL = 0.4f *params->locallab.spots.at(sp).lightl;//0.4 less effect, no need 1.
+        contQ = 0.5f *params->locallab.spots.at(sp).contq;//0.5 less effect, no need 1.
+        lightQ = 0.4f *params->locallab.spots.at(sp).lightq;//0.4 less effect, no need 1.
    
         if (CAMBrightCurveJ.dirty) {
-            Ciecam02::curveJfloat(0.f, contL, hist16J, CAMBrightCurveJ); //contrast J
+            Ciecam02::curveJfloat(lightL, contL, hist16J, CAMBrightCurveJ); //lightness J and contrast J
             CAMBrightCurveJ /= 327.68f;
             CAMBrightCurveJ.dirty = false;
         }
+        
+        if (CAMBrightCurveQ.dirty) {
+            Ciecam02::curveJfloat(lightQ, contQ, hist16Q, CAMBrightCurveQ); //brightness Q and contrast Q
+            CAMBrightCurveQ.dirty = false;
+        }
+        
     }
     int tempo = 5000;
     if(params->locallab.spots.at(sp).expvibrance && call == 2) {
@@ -2236,7 +2272,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         }
     }
 
-
     ColorTemp::temp2mulxyz(params->wb.temperature, params->wb.method, Xw, Zw);  //compute white Xw Yw Zw  : white current WB
     ColorTemp::temp2mulxyz(tempo, "Custom", Xwout, Zwout);
     ColorTemp::temp2mulxyz(5000, "Custom", Xwsc, Zwsc);
@@ -2248,6 +2283,15 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     //viewing condition for surround
     f2 = 1.0f, c2 = 0.69f, nc2 = 1.0f;
     if(ciec) {
+        //surround source with only 2 choices (because Log encoding before)
+        if (params->locallab.spots.at(sp).sursour == "Average") {
+            f = 1.0f, c = 0.69f, nc = 1.0f;
+        } else if (params->locallab.spots.at(sp).sursour == "Dim") {
+            f  = 0.9f;
+            c  = 0.59f;
+            nc = 0.9f;
+        }
+
         //viewing condition for surround
         if (params->locallab.spots.at(sp).surround == "Average") {
             f2 = 1.0f, c2 = 0.69f, nc2 = 1.0f;
@@ -2266,8 +2310,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         }
     }
 
-
-
     xwd = 100.0 * Xwout;
     zwd = 100.0 * Zwout;
     ywd = 100.f;
@@ -2285,12 +2327,11 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         
         la2 = params->locallab.spots.at(sp).targabs;
     }
-    
+
     const float pilot = 2.f;
     const float pilotout = 2.f;
 
     //algoritm's params
-    LUTu hist16Q;
     float yb = 18.f;
     yb2 = 18;
     if(ciec) {
@@ -2300,6 +2341,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     }
     
     float schr = 0.f;
+    float mchr = 0.f;
 
     if (ciec) {
         schr = params->locallab.spots.at(sp).saturl;
@@ -2311,6 +2353,15 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         if (schr == -100.f) {
             schr = -99.8f;
         }
+
+        mchr = params->locallab.spots.at(sp).colorfl;
+
+        if (mchr == -100.0f) {
+            mchr = -99.8f ;
+        }
+        if (mchr == 100.0f) {
+            mchr = 99.9f;
+        }
     }
 
     float d, dj;
@@ -2320,20 +2371,16 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     yw = 100.f * Yw;
     zw = 100.0 * Zw;
     float xw1 = xws, yw1 = yws, zw1 = zws, xw2 = xwd, yw2 = ywd, zw2 = zwd;
-/*    
-            xw1 = 96.46f;    //use RT WB; CAT 02 is used for output device (see prefreneces)
-            yw1 = 100.0f;
-            zw1 = 82.445f;
-*/
     float cz, wh, pfl;
     Ciecam02::initcam1float(yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
-//   const float chr = 0.f;
     const float pow1 = pow_F(1.64f - pow_F(0.29f, n), 0.73f);
     float nj, nbbj, ncbj, czj, awj, flj;
     Ciecam02::initcam2float(yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
 #ifdef __SSE2__
     const float reccmcz = 1.f / (c2 * czj);
 #endif
+    const float epsil = 0.0001f;
+    const float coefQ = 32767.f / wh;
     const float pow1n = pow_F(1.64f - pow_F(0.29f, nj), 0.73f);
     const float coe = pow_F(fl, 0.25f);
     const float QproFactor = (0.4f / c) * (aw + 4.0f) ;
@@ -2449,19 +2496,39 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                 /*
                 */
                 if(ciec) {
-                    Jpro = CAMBrightCurveJ[Jpro * 327.68f]; //CIECAM02 + contrast
-                    float sres;
-                    float rstprotection = 50.f;//arbitrary 50% protection skin tones
-                    float Sp = spro / 100.0f;
-                    float parsat = 1.5f; //parsat=1.5 =>saturation  ; 1.8 => chroma ; 2.5 => colorfullness (personal evaluation)
-                    Ciecam02::curvecolorfloat(schr, Sp, sres, parsat);
-                    float dred = 100.f; // in C mode
+                    Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
+                    float rstprotection = 50.f;//default value to avoid 1 slider
+                    float chr = 0.f;//no use of chroma 
+                    float Mp, sres;
+                    Mp = Mpro / 100.0f;
+                    Ciecam02::curvecolorfloat(mchr, Mp, sres, 2.5f);
+                    float dred = 100.f; //in C mode
                     float protect_red = 80.0f; // in C mode
-                    dred = 100.0f * sqrtf((dred * coe) / Qpro);
-                    protect_red = 100.0f * sqrtf((protect_red * coe) / Qpro);
+                    dred *= coe; //in M mode
+                    protect_red *= coe; //M mode
+                    Color::skinredfloat(Jpro, hpro, sres, Mp, dred, protect_red, 0, rstprotection, 100.f, Mpro);
+                    Jpro = SQR((10.f * Qpro) / wh);
+                    Cpro = Mpro / coe;
+                    Qpro = (Qpro == 0.f ? epsil : Qpro); // avoid division by zero
+                    spro = 100.0f * sqrtf(Mpro / Qpro);
+
+                    if (Jpro > 99.9f) {
+                       Jpro = 99.9f;
+                    }
+
+                    Jpro = CAMBrightCurveJ[(float)(Jpro * 327.68f)];   //lightness CIECAM02 + contrast
+                    float Sp = spro / 100.0f;
+                    Ciecam02::curvecolorfloat(schr, Sp, sres, 1.5f);
+                    dred = 100.f; // in C mode
+                    protect_red = 80.0f; // in C mode
+                    dred = 100.0f * sqrtf((dred * coe) / Q);
+                    protect_red = 100.0f * sqrtf((protect_red * coe) / Q);
                     Color::skinredfloat(Jpro, hpro, sres, Sp, dred, protect_red, 0, rstprotection, 100.f, spro);
                     Qpro = QproFactor * sqrtf(Jpro);
-                    Cpro = (spro * spro * Qpro) / (10000.0f);
+                    float Cp = (spro * spro * Qpro) / (1000000.f);
+                    Cpro = Cp * 100.f;
+                    Ciecam02::curvecolorfloat(chr, Cp, sres, 1.8f);
+                    Color::skinredfloat(Jpro, hpro, sres, Cp, 55.f, 30.f, 1, rstprotection, 100.f, Cpro);
                 }
 
                 //retrieve values C,J...s
@@ -5830,7 +5897,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
     if (params->locallab.enabled) {
         //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
         struct local_params lp;
-        calcLocalParams(sp, oW, oH, params->locallab, lp, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, locwavCurveden, locwavdenutili);
+        calcLocalParams(sp, oW, oH, params->locallab, lp, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, locwavCurveden, locwavdenutili);
         int begy = lp.yc - lp.lyT;
         int begx = lp.xc - lp.lxL;
         int yEn = lp.yc + lp.ly;
@@ -6348,6 +6415,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     const bool tmshow = ((lp.showmasktmmet == 1 || lp.showmasktmmet == 2) &&  senstype == 8);
     const bool lcshow = ((lp.showmasklcmet == 1 || lp.showmasklcmet == 2) &&  senstype == 10);
     const bool origshow = ((lp.showmasksoftmet == 5) &&  senstype == 3 && lp.softmet == 1);
+    const bool logshow = ((lp.showmasklogmet == 1 || lp.showmasklogmet == 2) &&  senstype == 11);
  
     const bool masshow = ((lp.showmask_met == 1) &&  senstype == 20);
 
@@ -6359,6 +6427,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     const bool previewlc = ((lp.showmasklcmet == 4) &&  senstype == 10);
     const bool previeworig = ((lp.showmasksoftmet == 6) &&  senstype == 3 && lp.softmet == 1);
     const bool previewmas = ((lp.showmask_met == 3) &&  senstype == 20);
+    const bool previewlog = ((lp.showmasklogmet == 4) &&  senstype == 11);
 
     float radius = 3.f / sk;
 
@@ -6397,7 +6466,8 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
     const bool usemasktm = (lp.showmasktmmet == 2 || lp.enatmMask || lp.showmasktmmet == 4) && senstype == 8;
     const bool usemasklc = (lp.showmasklcmet == 2 || lp.enalcMask || lp.showmasklcmet == 4) && senstype == 10;
     const bool usemaskmas = (lp.showmask_met == 1 || lp.ena_Mask || lp.showmask_met == 3) && senstype == 20;
-    const bool usemaskall = (usemaskexp || usemaskvib || usemaskcol || usemaskSH || usemasktm || usemasklc || usemaskmas);
+    const bool usemasklog = (lp.showmasklogmet == 2 || lp.enaLMask || lp.showmasklogmet == 4) && senstype == 11;
+    const bool usemaskall = (usemaskexp || usemaskvib || usemaskcol || usemaskSH || usemasktm || usemasklc || usemasklog || usemaskmas);
 
     //blur a little mask
     if (usemaskall) {
@@ -6582,13 +6652,13 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                     const float difb = factorx * realstrbdE;
                     float maxdifab = rtengine::max(std::fabs(difa), std::fabs(difb));
 
-                    if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || origshow || masshow) && lp.colorde < 0) { //show modifications with use "b"
+                    if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || logshow || origshow || masshow) && lp.colorde < 0) { //show modifications with use "b"
                         //  (origshow && lp.colorde < 0) { //original Retinex
                         transformed->a[y + ystart][x + xstart] = 0.f;
                         transformed->b[y + ystart][x + xstart] = ampli * 8.f * diflc * reducdE;
                         transformed->L[y + ystart][x + xstart] = CLIP(12000.f + 0.5f * ampli * diflc);
 
-                    } else if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || origshow || masshow) && lp.colorde > 0) {//show modifications without use "b"
+                    } else if ((expshow || vibshow || colshow || SHshow || tmshow || lcshow || logshow || origshow || masshow) && lp.colorde > 0) {//show modifications without use "b"
                         if (diflc < 1000.f) {//if too low to be view use ab
                             diflc += 0.5f * maxdifab;
                         }
@@ -6596,7 +6666,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                         transformed->L[y + ystart][x + xstart] = CLIP(12000.f + 0.5f * ampli * diflc);
                         transformed->a[y + ystart][x + xstart] = clipC(ampli * difa);
                         transformed->b[y + ystart][x + xstart] = clipC(ampli * difb);
-                    } else if (previewexp || previewvib || previewcol || previewSH || previewtm || previewlc || previeworig || previewmas || lp.prevdE) {//show deltaE
+                    } else if (previewexp || previewvib || previewcol || previewSH || previewtm || previewlc || previewlog || previeworig || previewmas || lp.prevdE) {//show deltaE
                         float difbdisp = reducdE * 10000.f * lp.colorde;
 
                         if (transformed->L[y + ystart][x + xstart] < darklim) { //enhance dark luminance as user can see!
@@ -9734,6 +9804,7 @@ void ImProcFunctions::Lab_Local(
     const LUTf& lmaskcblocalcurve, bool localmaskcbutili,
     const LUTf& lmaskbllocalcurve, bool localmaskblutili,
     const LUTf& lmasklclocalcurve, bool localmasklcutili,
+    const LUTf& lmaskloglocalcurve, bool localmasklogutili,
     const LUTf& lmasklocal_curve, bool localmask_utili,
 
     const LocCCmaskCurve& locccmasCurve, bool lcmasutili, const LocLLmaskCurve& locllmasCurve, bool llmasutili, const LocHHmaskCurve& lochhmasCurve, bool lhmasutili, const LocHHmaskCurve& lochhhmasCurve, bool lhhmasutili,
@@ -9745,6 +9816,7 @@ void ImProcFunctions::Lab_Local(
     const LocCCmaskCurve& locccmastmCurve, bool lcmastmutili, const LocLLmaskCurve& locllmastmCurve, bool llmastmutili, const LocHHmaskCurve& lochhmastmCurve, bool lhmastmutili,
     const LocCCmaskCurve& locccmasblCurve, bool lcmasblutili, const LocLLmaskCurve& locllmasblCurve, bool llmasblutili, const LocHHmaskCurve& lochhmasblCurve, bool lhmasblutili,
     const LocCCmaskCurve& locccmaslcCurve, bool lcmaslcutili, const LocLLmaskCurve& locllmaslcCurve, bool llmaslcutili, const LocHHmaskCurve& lochhmaslcCurve, bool lhmaslcutili,
+    const LocCCmaskCurve& locccmaslogCurve, bool lcmaslogutili, const LocLLmaskCurve& locllmaslogCurve, bool llmaslogutili, const LocHHmaskCurve& lochhmaslogCurve, bool lhmaslogutili,
     const LocCCmaskCurve& locccmas_Curve, bool lcmas_utili, const LocLLmaskCurve& locllmas_Curve, bool llmas_utili, const LocHHmaskCurve& lochhmas_Curve, bool lhmas_utili,
     const LocHHmaskCurve& lochhhmas_Curve, bool lhhmas_utili,
     const LocwavCurve& loclmasCurveblwav, bool lmasutiliblwav,
@@ -9760,7 +9832,7 @@ void ImProcFunctions::Lab_Local(
     
     bool LHutili, bool HHutili, bool CHutili, const LUTf& cclocalcurve, bool localcutili, const LUTf& rgblocalcurve, bool localrgbutili, bool localexutili, const LUTf& exlocalcurve, const LUTf& hltonecurveloc, const LUTf& shtonecurveloc, const LUTf& tonecurveloc, const LUTf& lightCurveloc,
     double& huerefblur, double& chromarefblur, double& lumarefblur, double& hueref, double& chromaref, double& lumaref, double& sobelref, int &lastsav,
-    bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int ll_Mask,
+    bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax
     )
 {
@@ -9773,7 +9845,7 @@ void ImProcFunctions::Lab_Local(
 
     constexpr int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
     struct local_params lp;
-    calcLocalParams(sp, oW, oH, params->locallab, lp, prevDeltaE, llColorMask, llColorMaskinv, llExpMask, llExpMaskinv, llSHMask, llSHMaskinv, llvibMask, lllcMask, llsharMask, llcbMask, llretiMask, llsoftMask, lltmMask, llblMask, ll_Mask, locwavCurveden, locwavdenutili);
+    calcLocalParams(sp, oW, oH, params->locallab, lp, prevDeltaE, llColorMask, llColorMaskinv, llExpMask, llExpMaskinv, llSHMask, llSHMaskinv, llvibMask, lllcMask, llsharMask, llcbMask, llretiMask, llsoftMask, lltmMask, llblMask, lllogMask, ll_Mask, locwavCurveden, locwavdenutili);
 
     const float radius = lp.rad / (sk * 1.4f); //0 to 70 ==> see skip
     int levred;
@@ -9859,7 +9931,8 @@ void ImProcFunctions::Lab_Local(
     }
 
 //encoding lab at the beginning
-    if (lp.logena) {
+    if (lp.logena || lp.showmasklogmet == 2 || lp.enaLMask || lp.showmasklogmet == 3 || lp.showmasklogmet == 4) {
+        
         const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         const int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -9870,6 +9943,16 @@ void ImProcFunctions::Lab_Local(
         if (bfh >= mSP && bfw >= mSP) {
             const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh)); //buffer for data in zone limit
             const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
+
+            std::unique_ptr<LabImage> bufmaskblurlog;
+            std::unique_ptr<LabImage> originalmasklog;
+            std::unique_ptr<LabImage> bufmaskoriglog;
+
+            if (lp.showmasklogmet == 2  || lp.enaLMask || lp.showmasklogmet == 3 || lp.showmasklogmet == 4) {
+                bufmaskblurlog.reset(new LabImage(bfw, bfh));
+                originalmasklog.reset(new LabImage(bfw, bfh));
+                bufmaskoriglog.reset(new LabImage(bfw, bfh));
+            }
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if(multiThread)
@@ -9882,34 +9965,131 @@ void ImProcFunctions::Lab_Local(
                 }
             }
 
-            bufexpfin->CopyFrom(bufexporig.get(), multiThread);
-            std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
-            lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
-            log_encode(tmpImage.get(), lp, multiThread, bfw, bfh);
-            rgb2lab(*(tmpImage.get()), *bufexpfin, params->icm.workingProfile);
-            tmpImage.reset();
-            if (params->locallab.spots.at(sp).ciecam) {
-                ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 1);
+            int inv = 0;
+            bool showmaske = false;
+            bool enaMask = false;
+            bool deltaE = false;
+            bool modmask = false;
+            bool zero = false;
+            bool modif = false;
+
+            if (lp.showmasklogmet == 3) {
+                showmaske = true;
             }
 
-            //here begin graduated filter
-            //first solution "easy" but we can do other with log_encode...to see the results
-            if (lp.strlog != 0.f) {
-                struct grad_params gplog;
-                calclocalGradientParams(lp, gplog, ystart, xstart, bfw, bfh, 11);
+            if (lp.enaLMask) {
+                enaMask = true;
+            }
+
+            if (lp.showmasklogmet == 4) {
+                deltaE = true;
+            }
+
+            if (lp.showmasklogmet == 2) {
+                modmask = true;
+            }
+
+            if (lp.showmasklogmet == 1) {
+                modif = true;
+            }
+
+            if (lp.showmasklogmet == 0) {
+                zero = true;
+            }
+            float chrom = lp.chromaL;
+            float rad = lp.radmaL;
+            float blendm = lp.blendmaL;
+            float gamma = 1.f;
+            float slope = 0.f;
+            float lap = 0.f; //params->locallab.spots.at(sp).lapmaskexp;
+            bool pde = false; //params->locallab.spots.at(sp).laplac;
+            LocwavCurve dummy;
+            bool lmasutilicolwav = false;
+            bool delt = params->locallab.spots.at(sp).deltae;
+            int sco = params->locallab.spots.at(sp).scopemask;
+            int shado = 0;
+            int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
+            const float mindE = 2.f + MINSCOPE * sco * lp.thr;
+            const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
+            const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+            const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+            float amountcd = 0.f;
+            float anchorcd = 50.f;
+            int lumask = params->locallab.spots.at(sp).lumask;
+            LocHHmaskCurve lochhhmasCurve;
+            bool lhhmasutili = false;
+            const int highl = 0;
+            maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskoriglog.get(), originalmasklog.get(), original, reserved, inv, lp,
+                        0.f, false,
+                        locccmaslogCurve, lcmaslogutili, locllmaslogCurve, llmaslogutili, lochhmaslogCurve, lhmaslogutili, lochhhmasCurve, lhhmasutili, multiThread,
+                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmaskloglocalcurve, localmasklogutili, dummy, lmasutilicolwav, 1, 1, 5, 5,
+                        shortcu, delt, hueref, chromaref, lumaref,
+                        maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, -1
+                       );
+
+            if (lp.showmasklogmet == 3) {
+                showmask(lumask, lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), transformed, bufmaskoriglog.get(), 0);
+
+                return;
+            }
+            if (lp.showmasklogmet == 0 || lp.showmasklogmet == 1  || lp.showmasklogmet == 2 || lp.showmasklogmet == 4 || lp.enaLMask) {
+
+                bufexpfin->CopyFrom(bufexporig.get(), multiThread);
+                std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
+                std::unique_ptr<Imagefloat> tmpImageorig(new Imagefloat(bfw, bfh));
+                lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if(multiThread)
 #endif
-                for (int ir = 0; ir < bfh; ir++) {
-                    for (int jr = 0; jr < bfw; jr++) {
-                        bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gplog, jr, ir);
+                    for (int y = 0; y < bfh; y++) {
+                        for (int x = 0; x < bfw; x++) {
+                            tmpImageorig->r(y, x) = tmpImage->r(y, x);
+                            tmpImageorig->g(y, x) = tmpImage->g(y, x);
+                            tmpImageorig->b(y, x) = tmpImage->b(y, x);
+                        }
+                    }
+                
+                log_encode(tmpImage.get(), lp, multiThread, bfw, bfh);
+                float repart = 1.f - 0.01f * params->locallab.spots.at(sp).repar;
+               
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if(multiThread)
+#endif
+                    for (int y = 0; y < bfh; y++) {
+                        for (int x = 0; x < bfw; x++) {
+                            tmpImage->r(y, x) = intp(repart, tmpImageorig->r(y, x), tmpImage->r(y, x));
+                            tmpImage->g(y, x) = intp(repart, tmpImageorig->g(y, x), tmpImage->g(y, x));
+                            tmpImage->b(y, x) = intp(repart, tmpImageorig->b(y, x), tmpImage->b(y, x));
+                        }
+                    }
+                
+                rgb2lab(*(tmpImage.get()), *bufexpfin, params->icm.workingProfile);
+                
+                tmpImageorig.reset();
+                tmpImage.reset();
+                if (params->locallab.spots.at(sp).ciecam) {
+                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 1);
+                }
+
+                //here begin graduated filter
+                //first solution "easy" but we can do other with log_encode...to see the results
+                if (lp.strlog != 0.f) {
+                    struct grad_params gplog;
+                    calclocalGradientParams(lp, gplog, ystart, xstart, bfw, bfh, 11);
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if(multiThread)
+#endif
+                    for (int ir = 0; ir < bfh; ir++) {
+                        for (int jr = 0; jr < bfw; jr++) {
+                            bufexpfin->L[ir][jr] *= ImProcFunctions::calcGradientFactor(gplog, jr, ir);
+                        }
                     }
                 }
-            }
 
             //end graduated
-            transit_shapedetect2(call, 11, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
-
+                transit_shapedetect2(call, 11, bufexporig.get(), bufexpfin.get(), originalmasklog.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+            }
+            
             if (params->locallab.spots.at(sp).recurs) {
                 original->CopyFrom(transformed, multiThread);
                 float avge;

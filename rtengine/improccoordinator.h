@@ -274,6 +274,7 @@ protected:
     LUTf lmaskcblocalcurve;
     LUTf lmaskbllocalcurve;
     LUTf lmasklclocalcurve;
+    LUTf lmaskloglocalcurve;
     LUTf lmasklocal_curve;
     
     LocretigainCurve locRETgainCurve;
@@ -314,6 +315,9 @@ protected:
     LocLLmaskCurve locllmas_Curve;
     LocHHmaskCurve lochhmas_Curve;
     LocHHmaskCurve lochhhmas_Curve;
+    LocCCmaskCurve locccmaslogCurve;
+    LocLLmaskCurve locllmaslogCurve;
+    LocHHmaskCurve lochhmaslogCurve;
     
     LocwavCurve locwavCurve;
     LocwavCurve loclmasCurveblwav;
@@ -350,6 +354,7 @@ protected:
     int localltmMask;
     int locallblMask;
     int locallsharMask;
+    int localllogMask;
     int locall_Mask;
 
 public:
@@ -421,7 +426,7 @@ public:
         updaterThreadStart.unlock();
     }
 
-    void setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int locall_Mask) override
+    void setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int localllogMask, int locall_Mask) override
     {
         this->previewDeltaE = previewDeltaE;
         this->locallColorMask = locallColorMask;
@@ -438,6 +443,7 @@ public:
         this->locallsharMask = locallsharMask;
         this->localllcMask = localllcMask;
         this->locallcbMask = locallcbMask;
+        this->localllogMask = localllogMask;
         this->locall_Mask = locall_Mask;
     }
 

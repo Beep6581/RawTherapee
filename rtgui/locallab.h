@@ -163,6 +163,7 @@ public:
         int sharMask;
         int lcMask;
         int cbMask;
+        int logMask;
         int maskMask;
     };
 

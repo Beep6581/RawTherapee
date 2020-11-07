@@ -830,6 +830,7 @@ public:
         // Log encoding
         bool visilog;
         bool explog;
+        bool complexlog;
         bool autocompute;
         bool sourceGray;
         bool sourceabs;
@@ -837,18 +838,33 @@ public:
         bool targetGray;
         bool catad;
         bool saturl;
+        bool lightl;
+        bool lightq;
         bool contl;
+        bool contq;
+        bool colorfl;
+        bool LcurveL;
         bool Autogray;
         bool fullimage;
+        bool repar;
         bool ciecam;
         bool blackEv;
         bool whiteEv;
         bool detail;
+        bool sursour;
         bool surround;
         bool sensilog;
         bool baselog;
         bool strlog;
         bool anglog;
+        bool CCmaskcurveL;
+        bool LLmaskcurveL;
+        bool HHmaskcurveL;
+        bool enaLMask;
+        bool blendmaskL;
+        bool radmaskL;
+        bool chromaskL;
+        bool LmaskcurveL;
         //mask
         bool visimask;
         bool complexmask;

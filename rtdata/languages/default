@@ -1106,7 +1106,7 @@ HISTORY_MSG_851;Local - Log encoding W_Ev
 HISTORY_MSG_852;Local - Log encoding Target
 HISTORY_MSG_853;Local - Log encodind loc contrast
 HISTORY_MSG_854;Local - Log encodind Scope
-HISTORY_MSG_855;Local - Log encoding Entire image
+HISTORY_MSG_855;Local - Log encoding Whole image
 HISTORY_MSG_856;Local - Log encoding Shadows range
 HISTORY_MSG_857;Local - Wavelet blur residual
 HISTORY_MSG_858;Local - Wavelet blur luminance only
@@ -1211,8 +1211,22 @@ HISTORY_MSG_961;Local - Log encoding Ciecam
 HISTORY_MSG_962;Local - Log encoding  Absolute luminance source
 HISTORY_MSG_963;Local - Log encoding  Absolute luminance target
 HISTORY_MSG_964;Local - Log encoding  Surround
-HISTORY_MSG_965;Local - Log encoding  Saturation s
 HISTORY_MSG_966;Local - Log encoding  Contrast J
+HISTORY_MSG_965;Local - Log encoding  Saturation s
+HISTORY_MSG_967;Local - Log encoding  Mask curve C
+HISTORY_MSG_968;Local - Log encoding  Mask curve L
+HISTORY_MSG_969;Local - Log encoding  Mask curve H
+HISTORY_MSG_970;Local - Log encoding  Mask enable
+HISTORY_MSG_971;Local - Log encoding  Mask blend
+HISTORY_MSG_972;Local - Log encoding  Mask radius
+HISTORY_MSG_973;Local - Log encoding  Mask chroma
+HISTORY_MSG_974;Local - Log encoding  Mask contrast
+HISTORY_MSG_975;Local - Log encoding  Lightness J
+HISTORY_MSG_977;Local - Log encoding  Contrast Q
+HISTORY_MSG_978;Local - Log encoding  Sursource
+HISTORY_MSG_979;Local - Log encoding  Brightness Q
+HISTORY_MSG_980;Local - Log encoding  Colorfulness M
+HISTORY_MSG_981;Local - Log encoding  Strength
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -1953,7 +1967,7 @@ TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotate left.\n\nShortcuts:\n<b>[</b> - Multiple Ed
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotate right.\n\nShortcuts:\n<b>]</b> - Multiple Editor Tabs Mode,\n<b>Alt-]</b> - Single Editor Tab Mode.
 TP_COARSETRAF_TOOLTIP_VFLIP;Flip vertically.
 TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminance
-TP_COLORAPP_ADAPSCEN_TOOLTIP;It corresponds to the luminance at the time of the shooting in candelas per m2, calculated automatically from the exif data.
+TP_COLORAPP_ADAPSCEN_TOOLTIP;Corresponds to the luminance in candelas per m2 at the time of shooting, calculated automatically from the exif data.
 TP_COLORAPP_ALGO;Algorithm
 TP_COLORAPP_ALGO_ALL;All
 TP_COLORAPP_ALGO_JC;Lightness + Chroma (JC)
@@ -2391,7 +2405,7 @@ TP_LOCALLAB_ALL;All rubrics
 TP_LOCALLAB_AMOUNT;Amount
 TP_LOCALLAB_ARTIF;Shape detection
 TP_LOCALLAB_ARTIF_TOOLTIP;ΔE scope threshold increases the range of deltaE scope. High values are for very wide gamut images.\nIncreasing deltaE decay can improve shape detection, but can also reduce the scope.
-TP_LOCALLAB_AUTOGRAY;Automatic
+TP_LOCALLAB_AUTOGRAY;Auto mean luminance (Yb%)
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_BALAN;ab-L balance (ΔE)
 TP_LOCALLAB_BALANEXP;Laplacian balance
@@ -2456,7 +2470,7 @@ TP_LOCALLAB_CHROMASK_TOOLTIP;You can use this slider to desaturated background (
 TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIEC;Use Ciecam environment parameters
 //TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM02 color appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nOnly the third Ciecam process (Viewing conditions - Target) is taken into account, as well as part of the second (contrast J, saturation s) , as well as some data from the first process (Scene conditions - Source) which is used for the Log encoding.\nIt also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment. 
-TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM02 color appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nThe first Ciecam process 'Scene conditions' is carried out by Log encoding, it also uses 'Absolute luminance' at the time of the shooting.\nThe second Ciecam process  'Image adjustments' is simplified and uses only 3 variables (local contrast, contrast J, saturation s).\nThe third Ciecam process  'Viewing conditions' adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment. 
+TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM02 color appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nThe first Ciecam process 'Scene conditions' is carried out by Log encoding, it also uses 'Absolute luminance' at the time of shooting.\nThe second Ciecam process  'Image adjustments' is simplified and uses only 3 variables (local contrast, contrast J, saturation s).\nThe third Ciecam process  'Viewing conditions' adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment. 
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Contains the references of the RT-spot, useful for shape detection (hue, luma, chroma, Sobel).\nLow values may be useful for treating foliage.\nHigh values may be useful for treating skin
 TP_LOCALLAB_CLARICRES;Merge chroma
@@ -2487,6 +2501,7 @@ TP_LOCALLAB_CONTFRA;Contrast by level
 TP_LOCALLAB_CONTL;Contrast (J)
 TP_LOCALLAB_CONTTHMASK_TOOLTIP;Allows you to determine which parts of the image will be impacted based on the texture.
 TP_LOCALLAB_CONTRAST;Contrast
+TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP;Allows you to freely change the contrast of the mask. May create artifacts.
 TP_LOCALLAB_CONTRASTCURVMASK1_TOOLTIP;Allows you to freely modify the contrast of the mask (gamma & slope), instead of using a continuous & progressive curve. However it can create artifacts that have to be dealt with using the “Smooth radius” or “Laplacian threshold sliders”.
 TP_LOCALLAB_CONTRESID;Contrast
 TP_LOCALLAB_CONTTHR;Contrast Threshold
@@ -2596,8 +2611,8 @@ TP_LOCALLAB_FFTW;ƒ - Use Fast Fourier Transform
 TP_LOCALLAB_FFTW2;ƒ - Use Fast Fourier Transform (TIF, JPG,..)
 TP_LOCALLAB_FFTMASK_TOOLTIP;Use a Fourier transform for better quality (increased processing time and memory requirements)
 TP_LOCALLAB_FFTWBLUR;ƒ - Always Use Fast Fourier Transform
-TP_LOCALLAB_FULLIMAGE;Dark-Ev & white-Ev for the entire image 
-TP_LOCALLAB_FULLIMAGELOG_TOOLTIP;Calculates the Ev levels for the entire image.
+TP_LOCALLAB_FULLIMAGE;Dark-Ev & white-Ev for the whole image 
+TP_LOCALLAB_FULLIMAGELOG_TOOLTIP;Calculates the Ev levels for the whole image.
 TP_LOCALLAB_GAM;Gamma
 TP_LOCALLAB_GAMFRA;Tone response curve (TRC)
 TP_LOCALLAB_GAMM;Gamma
@@ -2652,6 +2667,7 @@ TP_LOCALLAB_LAPLACEXP;Laplacian threshold
 TP_LOCALLAB_LAPMASKCOL;Laplacian threshold
 TP_LOCALLAB_LAPRAD_TOOLTIP;Avoid using “Smooth radius” and “Laplacian threshold” (advanced) together.\nSmooth radius uses a guided filter to decrease artifacts and smooth out the transition
 TP_LOCALLAB_LAPRAD1_TOOLTIP;Avoid using “Smooth radius” and “Laplacian threshold” (advanced) together.\nTransforms the mask to eliminate values lower than the threshold.\nReduces artifacts and noise, and allows local contrast to be modified.
+TP_LOCALLAB_LAPRAD2_TOOLTIP;Smooth radius uses a guided filter to decrease artifacts and smooth out the transition
 TP_LOCALLAB_LAP_MASK_TOOLTIP;Solve PDE for all Laplacian masks.\nIf enabled Laplacian threshold mask reduce artifacts and smooth result.\nIf disabled linear response. 
 TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improves quality and allows the use of large radii, but increases processing time (depends on the area to be processed). Preferable to use only for large radii. The size of the area can be reduced by a few pixels to optimize the FFTW. This can reduce the processing time by a factor of 1.5 to 10.
 TP_LOCALLAB_LC_TOOLNAME;Local Contrast & Wavelets - 7
@@ -2676,23 +2692,37 @@ TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter - Edge Sharpness - Blur
 TP_LOCALLAB_LOC_RESIDPYR;Residual image (Main)
 TP_LOCALLAB_LOG;Log Encoding
 TP_LOCALLAB_LOGAUTO;Automatic
-TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the dynamic range and Source Gray Point (if "Automatic Source Gray Point” enabled).\nPress the button again to adjust the automatically calculated values.
+TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the 'dynamic range' and 'mean luminance' for the scene conditions if the "Auto mean luminance (Yb%)” is checked).\nAlso calculates the absolute luminance at the time of shooting.\nPress the button again to adjust the automatically calculated values.
+TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Automatically calculates the 'mean luminance' for the scene conditons when the ‘Automatic’ button in Relative Exposure Levels is pressed.
 TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm making the shadows darker and the highlights brighter.\nWith values greater than 2, the shadows are grayer and the highlights become more washed out.
 TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Estimated values of Dynamic Range i.e. Black Ev and White Ev
 TP_LOCALLAB_LOGCONTL_TOOLTIP;Contrast (J) in CIECAM02 takes into account the increase in perceived coloration with luminance.
+TP_LOCALLAB_LOGCONTQ_TOOLTIP;Contrast (Q) in CIECAM02 takes into account the increase in perceived coloration with brightness.
 TP_LOCALLAB_LOGDETAIL_TOOLTIP;Acts mainly on high frequencies.
 TP_LOCALLAB_LOGCATAD_TOOLTIP;The chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance is far from reference D50.\nAdapts colors to the illuminant of the output device.
+TP_LOCALLAB_LOGCOLORFL;Colorfulness (M)
+TP_LOCALLAB_LOGCOLORF_TOOLTIP;Perceived amount of hue in relation to gray.\nIndicator that a stimulus appears more or less colored.
+TP_LOCALLAB_LOGCONTL;Contrast (J)
+TP_LOCALLAB_LOGCONQL;Contrast (Q)
 TP_LOCALLAB_LOGENCOD_TOOLTIP;Tone Mapping with Logarithmic encoding (ACES).\nUseful for underexposed images or images with high dynamic range.\n\nTwo-step process : 1) Dynamic Range calculation 2) Manual adjustment
+TP_LOCALLAB_LOGEXP;All tools
 TP_LOCALLAB_LOGFRA;Scene Conditions
 TP_LOCALLAB_LOG1FRA;Image Adjustments
 TP_LOCALLAB_LOG2FRA;Viewing Conditions
-TP_LOCALLAB_LOGFRAME_TOOLTIP;Allows you to calculate and adjust the Ev levels and the Source Gray Point for the spot area. The resulting values will be used by all Lab operations and most RGB operations in the pipeline.\nTakes into account exposure compensation in the main-menu Exposure tab.\nAlso calculates the absolute luminance at the time of the shooting.
-TP_LOCALLAB_LOGIMAGE_TOOLTIP;Takes into account corresponding Ciecam variables (mainly Contrast 'J' and Saturation 's').
+TP_LOCALLAB_LOGFRAME_TOOLTIP;Allows you to calculate and adjust the Ev levels and the 'Mean luminance Yb%' (source gray point) for the spot area. The resulting values will be used by all Lab operations and most RGB operations in the pipeline.\nTakes into account exposure compensation in the main-menu Exposure tab.\nAlso calculates the absolute luminance at the time of shooting.
+TP_LOCALLAB_LOGIMAGE_TOOLTIP;Takes into account corresponding Ciecam variables (mainly Contrast 'J' and Saturation 's', and also 'advanced' Contrast 'Q' , Brightness 'Q', Lightness (J), Colorfulness (M)).
+TP_LOCALLAB_LOGLIGHTL;Lightness (J)
+TP_LOCALLAB_LOGLIGHTQ;Brightness (Q)
+TP_LOCALLAB_LOGLIGHTL_TOOLTIP;Close to lightness (L*a*b*), takes into account the increase in perceived coloration. 
+TP_LOCALLAB_LOGLIGHTQ_TOOLTIP;Perceived amount of light emanating from a stimulus.\nIndicator that a stimulus appears to be more or less bright, clear. 
 TP_LOCALLAB_LOGLIN;Logarithm mode
 TP_LOCALLAB_LOGPFRA;Relative Exposure Levels
+TP_LOCALLAB_LOGREPART;Strength
+TP_LOCALLAB_LOGREPART_TOOLTIP;Allows you to adjust the relative strength of the log-encoded image with respect to the original image.\nDoes not affect the Ciecam component.
 TP_LOCALLAB_LOGSATURL_TOOLTIP;Saturation (s) in CIECAM02 corresponds to the color of a stimulus in relation to its own brightness.\nActs mainly on medium and highlights tones
 TP_LOCALLAB_LOGSCENE_TOOLTIP;Corresponds to the shooting conditions.
 TP_LOCALLAB_LOGSRCGREY_TOOLTIP;Estimated gray point value of the image.
+TP_LOCALLAB_LOGSURSOUR_TOOLTIP;Changes tones and colors to take into account the Scene conditions.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment. The image will become slightly bright.
 TP_LOCALLAB_LOGTARGGREY_TOOLTIP;You can adjust this value to suit.
 TP_LOCALLAB_LOG_TOOLNAME;Log Encoding - 0
 TP_LOCALLAB_LOGVIEWING_TOOLTIP;Corresponds to the medium on which the final image will be viewed (monitor, TV, projector, printer,..), as well as its environment.
@@ -3531,7 +3561,7 @@ TP_WAVELET_LEVONE;Level 2
 TP_WAVELET_LEVTHRE;Level 4
 TP_WAVELET_LEVTWO;Level 3
 TP_WAVELET_LEVZERO;Level 1
-TP_WAVELET_LIMDEN;Interaction levels 56 on levels 14
+TP_WAVELET_LIMDEN;Interaction levels 5-6 on levels 1-4
 TP_WAVELET_LINKEDG;Link to Edge Sharpness Strength
 TP_WAVELET_LIPST;Enhanced algoritm
 TP_WAVELET_LOWLIGHT;Coarser levels luminance range
