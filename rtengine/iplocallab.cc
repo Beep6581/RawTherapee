@@ -9862,7 +9862,7 @@ void ImProcFunctions::Lab_Local(
 //lastsav for save restore image
     lastsav = 0;
 
-    if (lp.excmet == 1 && call <= 3) {//exclude
+    if (lp.excmet == 1 && call <= 3 && lp.activspot) {//exclude
         const int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
         const int bfw = int (lp.lx + lp.lxL) + del;
         const int begy = lp.yc - lp.lyT;
@@ -13184,7 +13184,10 @@ void ImProcFunctions::Lab_Local(
 
 
                     } else {
-                        if (lp.expcomp != 0.f  ||  lp.laplacexp > 0.1f) {
+                        if (lp.expcomp != 0.f  ) { // ||  lp.laplacexp > 0.1f
+                            if(lp.laplacexp <= 0.1f) {
+                                lp.laplacexp = 0.2f;  //force to use Laplacian wth very small values
+                            }
                             ImProcFunctions::exlabLocal(lp, bfh, bfw, bfhr, bfwr, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
                         }
                     }
