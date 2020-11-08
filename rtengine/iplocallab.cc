@@ -275,14 +275,16 @@ void deltaEforLaplace(float *dE, const float lap, int bfw, int bfh, rtengine::La
     }
 
     const float ade = 1.f / (maxdE - maxC);
-    const float bde = -ade * maxC;
+  //  const float bde = -ade * maxC;
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
 #endif
     for (int y = 0; y < bfh; y++) {
         for (int x = 0; x < bfw; x++) {
-            dE[y * bfw + x] = dE[y * bfw + x] >= maxdE ? ade * dE[y * bfw + x] + bde : 1.f;
+          //  dE[y * bfw + x] = dE[y * bfw + x] >= maxdE ? ade * dE[y * bfw + x] + bde : 1.f;
+            dE[y * bfw + x] = dE[y * bfw + x] >= maxdE ? ade * (dE[y * bfw + x] - maxC) : 1.f;
+
         }
     }
 }
