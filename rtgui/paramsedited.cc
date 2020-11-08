@@ -1360,7 +1360,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).inversret = locallab.spots.at(j).inversret && pSpot.inversret == otherSpot.inversret;
                 locallab.spots.at(j).equilret = locallab.spots.at(j).equilret && pSpot.equilret == otherSpot.equilret;
                 locallab.spots.at(j).loglin = locallab.spots.at(j).loglin && pSpot.loglin == otherSpot.loglin;
-                locallab.spots.at(j).lumonly = locallab.spots.at(j).lumonly && pSpot.lumonly == otherSpot.lumonly;
+                locallab.spots.at(j).dehazeSaturation = locallab.spots.at(j).dehazeSaturation && pSpot.dehazeSaturation == otherSpot.dehazeSaturation;
                 locallab.spots.at(j).softradiusret = locallab.spots.at(j).softradiusret && pSpot.softradiusret == otherSpot.softradiusret;
                 locallab.spots.at(j).CCmaskreticurve = locallab.spots.at(j).CCmaskreticurve && pSpot.CCmaskreticurve == otherSpot.CCmaskreticurve;
                 locallab.spots.at(j).LLmaskreticurve = locallab.spots.at(j).LLmaskreticurve && pSpot.LLmaskreticurve == otherSpot.LLmaskreticurve;
@@ -4357,8 +4357,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).loglin = mods.locallab.spots.at(i).loglin;
         }
 
-        if (locallab.spots.at(i).lumonly) {
-            toEdit.locallab.spots.at(i).lumonly = mods.locallab.spots.at(i).lumonly;
+        if (locallab.spots.at(i).dehazeSaturation) {
+            toEdit.locallab.spots.at(i).dehazeSaturation = mods.locallab.spots.at(i).dehazeSaturation;
         }
 
         if (locallab.spots.at(i).softradiusret) {
@@ -6625,7 +6625,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     inversret(v),
     equilret(v),
     loglin(v),
-    lumonly(v),
+    dehazeSaturation(v),
     softradiusret(v),
     CCmaskreticurve(v),
     LLmaskreticurve(v),
@@ -7139,7 +7139,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     inversret = v;
     equilret = v;
     loglin = v;
-    lumonly = v;
+    dehazeSaturation = v;
     softradiusret = v;
     CCmaskreticurve = v;
     LLmaskreticurve = v;

@@ -700,7 +700,7 @@ public:
         bool inversret;
         bool equilret;
         bool loglin;
-        bool lumonly;
+        bool dehazeSaturation;
         bool softradiusret;
         bool CCmaskreticurve;
         bool LLmaskreticurve;

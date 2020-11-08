@@ -3485,7 +3485,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     inversret(false),
     equilret(true),
     loglin(false),
-    lumonly(false),
+    dehazeSaturation(50.0),
     softradiusret(40.0),
     CCmaskreticurve{
         static_cast<double>(FCT_MinMaxCPoints),
@@ -4350,7 +4350,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && inversret == other.inversret
         && equilret == other.equilret
         && loglin == other.loglin
-        && lumonly == other.lumonly
+        && dehazeSaturation == other.dehazeSaturation
         && softradiusret == other.softradiusret
         && CCmaskreticurve == other.CCmaskreticurve
         && LLmaskreticurve == other.LLmaskreticurve
@@ -5908,7 +5908,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->inversret, "Locallab", "Inversret_" + index_str, spot.inversret, keyFile);
                     saveToKeyfile(!pedited || spot_edited->equilret, "Locallab", "Equilret_" + index_str, spot.equilret, keyFile);
                     saveToKeyfile(!pedited || spot_edited->loglin, "Locallab", "Loglin_" + index_str, spot.loglin, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->lumonly, "Locallab", "Lumonly_" + index_str, spot.lumonly, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->dehazeSaturation, "Locallab", "dehazeSaturation_" + index_str, spot.dehazeSaturation, keyFile);
                     saveToKeyfile(!pedited || spot_edited->softradiusret, "Locallab", "Softradiusret_" + index_str, spot.softradiusret, keyFile);
                     saveToKeyfile(!pedited || spot_edited->CCmaskreticurve, "Locallab", "CCmaskretiCurve_" + index_str, spot.CCmaskreticurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LLmaskreticurve, "Locallab", "LLmaskretiCurve_" + index_str, spot.LLmaskreticurve, keyFile);
@@ -7685,7 +7685,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Inversret_" + index_str, pedited, spot.inversret, spotEdited.inversret);
                 assignFromKeyfile(keyFile, "Locallab", "Equilret_" + index_str, pedited, spot.equilret, spotEdited.equilret);
                 assignFromKeyfile(keyFile, "Locallab", "Loglin_" + index_str, pedited, spot.loglin, spotEdited.loglin);
-                assignFromKeyfile(keyFile, "Locallab", "Lumonly_" + index_str, pedited, spot.lumonly, spotEdited.lumonly);
+                assignFromKeyfile(keyFile, "Locallab", "dehazeSaturation" + index_str, pedited, spot.dehazeSaturation, spotEdited.dehazeSaturation);
                 assignFromKeyfile(keyFile, "Locallab", "Softradiusret_" + index_str, pedited, spot.softradiusret, spotEdited.softradiusret);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskretiCurve_" + index_str, pedited, spot.CCmaskreticurve, spotEdited.CCmaskreticurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskretiCurve_" + index_str, pedited, spot.LLmaskreticurve, spotEdited.LLmaskreticurve);
