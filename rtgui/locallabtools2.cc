@@ -686,7 +686,7 @@ LocallabRetinex::LocallabRetinex():
     dehaFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")))),
     dehaz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEHAZ"), -100, 100, 1, 0))),
     depth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DEPTH"), 0, 100, 1, 25))),
-    lumonly(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LUMONLY")))),
+    dehazeSaturation(Gtk::manage(new Adjuster(M("TP_DEHAZE_SATURATION"), 0, 100, 1, 50))),
     retiFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_RETIFRA")))),
     str(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STR"), 0., 100., 0.2, 0.))),
     loglin(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGLIN")))),
@@ -736,9 +736,8 @@ LocallabRetinex::LocallabRetinex():
     // Parameter Retinex specific widgets
     dehaz->setAdjusterListener(this);
 
+    dehazeSaturation->setAdjusterListener(this);
     depth->setAdjusterListener(this);
-
-    lumonlyConn = lumonly->signal_toggled().connect(sigc::mem_fun(*this, &LocallabRetinex::lumonlyChanged));
 
     retiFrame->set_label_align(0.025, 0.5);
 
@@ -865,7 +864,7 @@ LocallabRetinex::LocallabRetinex():
     ToolParamBlock* const dehaBox = Gtk::manage(new ToolParamBlock());
     dehaBox->pack_start(*dehaz);
     dehaBox->pack_start(*depth);
-    dehaBox->pack_start(*lumonly);
+    dehaBox->pack_start(*dehazeSaturation);
     dehaFrame->add(*dehaBox);
     auxBox->add(*dehaFrame);
     ToolParamBlock* const deharetiBox = Gtk::manage(new ToolParamBlock());
@@ -1060,7 +1059,6 @@ void LocallabRetinex::disableListener()
 {
     LocallabTool::disableListener();
 
-    lumonlyConn.block(true);
     loglinConn.block(true);
     retinexMethodConn.block(true);
     fftwretiConn.block(true);
@@ -1075,7 +1073,6 @@ void LocallabRetinex::enableListener()
 {
     LocallabTool::enableListener();
 
-    lumonlyConn.block(false);
     loglinConn.block(false);
     retinexMethodConn.block(false);
     fftwretiConn.block(false);
@@ -1105,7 +1102,7 @@ void LocallabRetinex::read(const rtengine::procparams::ProcParams* pp, const Par
 
         dehaz->setValue((double)spot.dehaz);
         depth->setValue((double)spot.depth);
-        lumonly->set_active(spot.lumonly);
+        dehazeSaturation->setValue((double)spot.dehazeSaturation);
         str->setValue(spot.str);
         loglin->set_active(spot.loglin);
         sensih->setValue((double)spot.sensih);
@@ -1178,7 +1175,7 @@ void LocallabRetinex::write(rtengine::procparams::ProcParams* pp, ParamsEdited* 
 
         spot.dehaz = dehaz->getIntValue();
         spot.depth = depth->getIntValue();
-        spot.lumonly = lumonly->get_active();
+        spot.dehazeSaturation = dehazeSaturation->getIntValue();
         spot.str = str->getValue();
         spot.loglin = loglin->get_active();
         spot.sensih = sensih->getIntValue();
@@ -1232,6 +1229,7 @@ void LocallabRetinex::setDefaults(const rtengine::procparams::ProcParams* defPar
 
         // Set default values for adjuster widgets
         dehaz->setDefault((double)defSpot.dehaz);
+        dehazeSaturation->setDefault((double)defSpot.dehazeSaturation);
         depth->setDefault((double)defSpot.depth);
         str->setDefault(defSpot.str);
         sensih->setDefault((double)defSpot.sensih);
@@ -1273,6 +1271,13 @@ void LocallabRetinex::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabdehaz,
                                        dehaz->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == dehazeSaturation) {
+            if (listener) {
+                listener->panelChanged(EvlocallabdehazeSaturation,
+                                       dehazeSaturation->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -1535,16 +1540,6 @@ void LocallabRetinex::convertParamToNormal()
 
 void LocallabRetinex::convertParamToSimple()
 {
-    const LocallabParams::LocallabSpot defSpot;
-
-    // Disable all listeners
-    disableListener();
-
-    // Set hidden specific GUI widgets in Simple mode to default spot values
-    lumonly->set_active(defSpot.lumonly);
-
-    // Enable all listeners
-    enableListener();
 }
 
 void LocallabRetinex::updateGUIToMode(const modeType new_type)
@@ -1552,10 +1547,8 @@ void LocallabRetinex::updateGUIToMode(const modeType new_type)
     switch (new_type) {
         case Simple:
             // Expert and Normal mode widgets are hidden in Simple mode
-            lumonly->hide();
             retiFrame->hide();
             retitoolFrame->hide();
-
             break;
 
         case Normal:
@@ -1563,13 +1556,10 @@ void LocallabRetinex::updateGUIToMode(const modeType new_type)
             retiFrame->hide();
             retitoolFrame->hide();
             // Specific Simple mode widgets are shown in Normal mode
-            lumonly->show();
-
             break;
 
         case Expert:
             // Show widgets hidden in Normal and Simple mode
-            lumonly->show();
             retiFrame->show();
             retitoolFrame->show();
     }
@@ -1590,21 +1580,6 @@ void LocallabRetinex::updateMaskBackground(const double normChromar, const doubl
         return false;
     }
     );
-}
-
-void LocallabRetinex::lumonlyChanged()
-{
-    if (isLocActivated && exp->getEnabled()) {
-        if (listener) {
-            if (lumonly->get_active()) {
-                listener->panelChanged(Evlocallablumonly,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
-            } else {
-                listener->panelChanged(Evlocallablumonly,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
-            }
-        }
-    }
 }
 
 void LocallabRetinex::loglinChanged()

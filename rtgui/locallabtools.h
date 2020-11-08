@@ -827,7 +827,7 @@ private:
     Gtk::Frame* const dehaFrame;
     Adjuster* const dehaz;
     Adjuster* const depth;
-    Gtk::CheckButton* const lumonly;
+    Adjuster* const dehazeSaturation;
     Gtk::Frame* const retiFrame;
     Adjuster* const str;
     Gtk::CheckButton* const loglin;
@@ -872,7 +872,7 @@ private:
     DiagonalCurveEditor* const Lmaskretishape;
     Gtk::CheckButton* const inversret;
 
-    sigc::connection lumonlyConn, loglinConn, retinexMethodConn, fftwretiConn, equilretConn, showmaskretiMethodConn, enaretiMaskConn, enaretiMasktmapConn, inversretConn;
+    sigc::connection loglinConn, retinexMethodConn, fftwretiConn, equilretConn, showmaskretiMethodConn, enaretiMaskConn, enaretiMasktmapConn, inversretConn;
 
 public:
     LocallabRetinex();
@@ -903,7 +903,6 @@ private:
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
-    void lumonlyChanged();
     void loglinChanged();
     void retinexMethodChanged();
     void fftwretiChanged();

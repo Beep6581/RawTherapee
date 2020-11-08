@@ -500,6 +500,7 @@ struct local_params {
     float trans;
     float feath;
     int dehaze;
+    int dehazeSaturation;
     int depth;
     bool inv;
     bool invex;
@@ -754,8 +755,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.showmaskblmet = llblMask;
     lp.showmasklogmet = lllogMask;
     lp.showmask_met = ll_Mask;
-    printf("mask=%i \n", lp.showmasklogmet);
-    
+
     lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llsoftMask == 0 && llColorMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaColorMaskinv = locallab.spots.at(sp).enaColorMask && llColorMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
@@ -1007,6 +1007,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int local_sensih = locallab.spots.at(sp).sensih;
     int local_dehaze = locallab.spots.at(sp).dehaz;
     int local_depth = locallab.spots.at(sp).depth;
+    int local_dehazeSaturation = locallab.spots.at(sp).dehazeSaturation;
     int local_sensicb = locallab.spots.at(sp).sensicb;
     float local_clarityml = (float) locallab.spots.at(sp).clarityml;
     float local_contresid = (float) locallab.spots.at(sp).contresid;
@@ -1262,6 +1263,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.sens = local_sensi;
     lp.sensh = local_sensih;
     lp.dehaze = local_dehaze;
+    lp.dehazeSaturation = local_dehazeSaturation;
     lp.depth = local_depth;
     lp.senscb = local_sensicb;
     lp.clarityml = local_clarityml;
@@ -12358,8 +12360,8 @@ void ImProcFunctions::Lab_Local(
             dehazeParams.enabled = true;
             dehazeParams.strength = lp.dehaze;
             dehazeParams.showDepthMap = false;
+            dehazeParams.saturation = lp.dehazeSaturation;
             dehazeParams.depth = lp.depth;
-            dehazeParams.luminance = params->locallab.spots.at(sp).lumonly;
             lab2rgb(*bufexpfin, *tmpImage.get(), params->icm.workingProfile);
             dehazeloc(tmpImage.get(), dehazeParams);
             rgb2lab(*tmpImage.get(), *bufexpfin, params->icm.workingProfile);

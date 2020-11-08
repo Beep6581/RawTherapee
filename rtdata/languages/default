@@ -1004,7 +1004,7 @@ HISTORY_MSG_747;Local Spot created
 HISTORY_MSG_748;Local - Exp Denoise
 HISTORY_MSG_749;Local - Reti Depth
 HISTORY_MSG_750;Local - Reti Mode log - lin
-HISTORY_MSG_751;Local - Reti Dehaze luminance
+HISTORY_MSG_751;Local - Reti Dehaze saturation
 HISTORY_MSG_752;Local - Reti Offset
 HISTORY_MSG_753;Local - Reti Transmission map
 HISTORY_MSG_754;Local - Reti Clip
@@ -1251,7 +1251,7 @@ HISTORY_MSG_COMPLEX;Wavelet complexity
 HISTORY_MSG_COMPLEXRETI;Retinex complexity
 HISTORY_MSG_DEHAZE_DEPTH;Dehaze - Depth
 HISTORY_MSG_DEHAZE_ENABLED;Haze Removal
-HISTORY_MSG_DEHAZE_LUMINANCE;Dehaze - Luminance only
+HISTORY_MSG_DEHAZE_SATURATION;Dehaze - Saturation
 HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Dehaze - Show depth map
 HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
@@ -2142,7 +2142,7 @@ TP_DEFRINGE_RADIUS;Radius
 TP_DEFRINGE_THRESHOLD;Threshold
 TP_DEHAZE_DEPTH;Depth
 TP_DEHAZE_LABEL;Haze Removal
-TP_DEHAZE_LUMINANCE;Luminance only
+TP_DEHAZE_SATURATION;Saturation
 TP_DEHAZE_SHOW_DEPTH_MAP;Show depth map
 TP_DEHAZE_STRENGTH;Strength
 TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zones
