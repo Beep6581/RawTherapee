@@ -1100,6 +1100,10 @@ private:
             LocCCmaskCurve locccmasblCurve;
             LocLLmaskCurve locllmasblCurve;
             LocHHmaskCurve lochhmasblCurve;
+            LocCCmaskCurve locccmaslogCurve;
+            LocLLmaskCurve locllmaslogCurve;
+            LocHHmaskCurve lochhmaslogCurve;
+
             LocCCmaskCurve locccmas_Curve;
             LocLLmaskCurve locllmas_Curve;
             LocHHmaskCurve lochhmas_Curve;
@@ -1134,6 +1138,7 @@ private:
             LUTf lmaskcblocalcurve(65536, LUT_CLIP_OFF);
             LUTf lmaskbllocalcurve(65536, LUT_CLIP_OFF);
             LUTf lmasklclocalcurve(65536, LUT_CLIP_OFF);
+            LUTf lmaskloglocalcurve(65536, LUT_CLIP_OFF);
             LUTf lmasklocal_curve(65536, LUT_CLIP_OFF);
 
             array2D<float> shbuffer;
@@ -1177,6 +1182,10 @@ private:
                 const bool lcmasblutili = locccmasblCurve.Set(params.locallab.spots.at(sp).CCmaskblcurve);
                 const bool llmasblutili = locllmasblCurve.Set(params.locallab.spots.at(sp).LLmaskblcurve);
                 const bool lhmasblutili = lochhmasblCurve.Set(params.locallab.spots.at(sp).HHmaskblcurve);
+                const bool lcmaslogutili = locccmaslogCurve.Set(params.locallab.spots.at(sp).CCmaskcurveL);
+                const bool llmaslogutili = locllmaslogCurve.Set(params.locallab.spots.at(sp).LLmaskcurveL);
+                const bool lhmaslogutili = lochhmaslogCurve.Set(params.locallab.spots.at(sp).HHmaskcurveL);
+                
                 const bool lcmas_utili = locccmas_Curve.Set(params.locallab.spots.at(sp).CCmask_curve);
                 const bool llmas_utili = locllmas_Curve.Set(params.locallab.spots.at(sp).LLmask_curve);
                 const bool lhmas_utili = lochhmas_Curve.Set(params.locallab.spots.at(sp).HHmask_curve);
@@ -1208,6 +1217,7 @@ private:
                 const bool localmaskcbutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskcbcurve, lmaskcblocalcurve, 1);
                 const bool localmaskblutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskblcurve, lmaskbllocalcurve, 1);
                 const bool localmasklcutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmasklccurve, lmasklclocalcurve, 1);
+                const bool localmasklogutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).LmaskcurveL, lmaskloglocalcurve, 1);
                 const bool localmask_utili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmask_curve, lmasklocal_curve, 1);
 
                 //provisory
@@ -1258,6 +1268,7 @@ private:
                         lmaskcblocalcurve, localmaskcbutili,
                         lmaskbllocalcurve, localmaskblutili,
                         lmasklclocalcurve, localmasklcutili,
+                        lmaskloglocalcurve, localmasklogutili,
                         lmasklocal_curve, localmask_utili,
                         
                         locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
@@ -1268,6 +1279,8 @@ private:
                         locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
                         locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
                         locccmaslcCurve, lcmaslcutili, locllmaslcCurve, llmaslcutili, lochhmaslcCurve, lhmaslcutili,
+                        locccmaslogCurve, lcmaslogutili, locllmaslogCurve, llmaslogutili, lochhmaslogCurve, lhmaslogutili,
+                        
                         locccmas_Curve, lcmas_utili, locllmas_Curve, llmas_utili, lochhmas_Curve, lhmas_utili,
                         lochhhmas_Curve, lhhmas_utili,
                         loclmasCurveblwav,lmasutiliblwav,
@@ -1281,7 +1294,7 @@ private:
                         locedgwavCurve, locedgwavutili,
                         loclmasCurve_wav,lmasutili_wav,
                         LHutili, HHutili, CHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                        huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
 
                 if (sp + 1u < params.locallab.spots.size()) {

@@ -858,6 +858,7 @@ void Crop::update(int todo)
             auto& lmaskcblocalcurve2 = parent->lmaskcblocalcurve;
             auto& lmaskbllocalcurve2 = parent->lmaskbllocalcurve;
             auto& lmasklclocalcurve2 = parent->lmasklclocalcurve;
+            auto& lmaskloglocalcurve2 = parent->lmaskloglocalcurve;
             auto& hltonecurveloc2 = parent->hltonecurveloc;
             auto& shtonecurveloc2 = parent->shtonecurveloc;
             auto& tonecurveloc2 = parent->tonecurveloc;
@@ -895,6 +896,10 @@ void Crop::update(int todo)
             auto& locccmasblCurve = parent->locccmasblCurve;
             auto& locllmasblCurve = parent->locllmasblCurve;
             auto& lochhmasblCurve = parent->lochhmasblCurve;
+            auto& locccmaslogCurve = parent->locccmaslogCurve;
+            auto& locllmaslogCurve = parent->locllmaslogCurve;
+            auto& lochhmaslogCurve = parent->lochhmaslogCurve;
+            
             auto& locccmas_Curve = parent->locccmas_Curve;
             auto& locllmas_Curve = parent->locllmas_Curve;
             auto& lochhmas_Curve = parent->lochhmas_Curve;
@@ -942,6 +947,10 @@ void Crop::update(int todo)
                 const bool lcmasblutili = locccmasblCurve.Set(params.locallab.spots.at(sp).CCmaskblcurve);
                 const bool llmasblutili = locllmasblCurve.Set(params.locallab.spots.at(sp).LLmaskblcurve);
                 const bool lhmasblutili = lochhmasblCurve.Set(params.locallab.spots.at(sp).HHmaskblcurve);
+                const bool lcmaslogutili = locccmaslogCurve.Set(params.locallab.spots.at(sp).CCmaskcurveL);
+                const bool llmaslogutili = locllmaslogCurve.Set(params.locallab.spots.at(sp).LLmaskcurveL);
+                const bool lhmaslogutili = lochhmaslogCurve.Set(params.locallab.spots.at(sp).HHmaskcurveL);
+                
                 const bool lcmas_utili = locccmas_Curve.Set(params.locallab.spots.at(sp).CCmask_curve);
                 const bool llmas_utili = locllmas_Curve.Set(params.locallab.spots.at(sp).LLmask_curve);
                 const bool lhmas_utili = lochhmas_Curve.Set(params.locallab.spots.at(sp).HHmask_curve);
@@ -974,6 +983,7 @@ void Crop::update(int todo)
                 const bool localmaskcbutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskcbcurve, lmaskcblocalcurve2, skip);
                 const bool localmasklcutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmasklccurve, lmasklclocalcurve2, skip);
                 const bool localmaskblutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskblcurve, lmaskbllocalcurve2, skip);
+                const bool localmasklogutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).LmaskcurveL, lmaskloglocalcurve2, skip);
                 const bool localmask_utili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmask_curve, lmasklocal_curve2, skip);
 
                 double ecomp = params.locallab.spots.at(sp).expcomp;
@@ -1025,6 +1035,7 @@ void Crop::update(int todo)
                             lmaskcblocalcurve2, localmaskcbutili, 
                             lmaskbllocalcurve2, localmaskblutili, 
                             lmasklclocalcurve2, localmasklcutili,
+                            lmaskloglocalcurve2, localmasklogutili,
                             lmasklocal_curve2, localmask_utili, 
                             
                             locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
@@ -1035,6 +1046,8 @@ void Crop::update(int todo)
                             locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
                             locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
                             locccmaslcCurve, lcmaslcutili, locllmaslcCurve, llmaslcutili, lochhmaslcCurve, lhmaslcutili,
+                            locccmaslogCurve, lcmaslogutili, locllmaslogCurve, llmaslogutili, lochhmaslogCurve, lhmaslogutili,
+                            
                             locccmas_Curve, lcmas_utili, locllmas_Curve, llmas_utili, lochhmas_Curve, lhmas_utili,
                             lochhhmas_Curve, lhhmas_utili,
                             loclmasCurveblwav,lmasutiliblwav,
@@ -1050,7 +1063,7 @@ void Crop::update(int todo)
                             LHutili, HHutili, CHutili, cclocalcurve2, localcutili, rgblocalcurve2, localrgbutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
                             huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 
                             parent->previewDeltaE, parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallvibMask,  parent->localllcMask, parent->locallsharMask, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask,
-                            parent->locall_Mask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+                            parent->localllogMask, parent->locall_Mask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
                 } else {
                     parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), lastorigCrop.get(), cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
                             lllocalcurve2,locallutili, 
@@ -1066,6 +1079,7 @@ void Crop::update(int todo)
                             lmaskcblocalcurve2, localmaskcbutili, 
                             lmaskbllocalcurve2, localmaskblutili, 
                             lmasklclocalcurve2, localmasklcutili,
+                            lmaskloglocalcurve2, localmasklogutili,
                             lmasklocal_curve2, localmask_utili, 
                             
                             locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili,lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, 
@@ -1076,6 +1090,8 @@ void Crop::update(int todo)
                             locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
                             locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
                             locccmaslcCurve, lcmaslcutili, locllmaslcCurve, llmaslcutili, lochhmaslcCurve, lhmaslcutili,
+                            locccmaslogCurve, lcmaslogutili, locllmaslogCurve, llmaslogutili, lochhmaslogCurve, lhmaslogutili,
+                            
                             locccmas_Curve, lcmas_utili, locllmas_Curve, llmas_utili, lochhmas_Curve, lhmas_utili,
                             lochhhmas_Curve, lhhmas_utili,
 
@@ -1090,7 +1106,7 @@ void Crop::update(int todo)
                             locedgwavCurve, locedgwavutili,
                             loclmasCurve_wav,lmasutili_wav,
                             LHutili, HHutili, CHutili, cclocalcurve2, localcutili, rgblocalcurve2, localrgbutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
-                            huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                            huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                             minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
                 }
 

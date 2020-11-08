@@ -313,10 +313,6 @@ void ImProcFunctions::dehaze(Imagefloat *img, const DehazeParams &dehazeParams)
     const int H = img->getHeight();
     const float strength = LIM01(float(dehazeParams.strength) / 100.f * 0.9f);
 
-    if (settings->verbose) {
-        std::cout << "dehaze: strength = " << strength << std::endl;
-    }
-
     array2D<float> dark(W, H);
 
     int patchsize = max(int(5 / scale), 2);
@@ -384,14 +380,15 @@ void ImProcFunctions::dehaze(Imagefloat *img, const DehazeParams &dehazeParams)
 
     const float depth = -float(dehazeParams.depth) / 100.f;
     const float t0 = max(1e-3f, std::exp(depth * maxDistance));
-    const float teps = 1e-3f;
+    constexpr float teps = 1.f + 1e-3f;
 
-    const bool luminance = dehazeParams.luminance;
+    const float satBlend = dehazeParams.saturation / 100.f;
     const TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 #ifdef __SSE2__
     const vfloat wsv[3] = {F2V(ws[1][0]), F2V(ws[1][1]),F2V(ws[1][2])};
 #endif
     const float ambientY = Color::rgbLuminance(ambient[0], ambient[1], ambient[2], ws);
+
 #ifdef _OPENMP
     #pragma omp parallel for if (multiThread)
 #endif
@@ -407,30 +404,27 @@ void ImProcFunctions::dehaze(Imagefloat *img, const DehazeParams &dehazeParams)
         const vfloat t0v = F2V(t0);
         const vfloat tepsv = F2V(teps);
         const vfloat cmaxChannelv = F2V(maxChannel);
+        const vfloat satBlendv = F2V(satBlend);
         for (; x < W - 3; x += 4) {
             // ensure that the transmission is such that to avoid clipping...
             const vfloat r = LVFU(img->r(y, x));
             const vfloat g = LVFU(img->g(y, x));
             const vfloat b = LVFU(img->b(y, x));
             // ... t >= tl to avoid negative values
-            const vfloat tlv = onev - vminf(r / ambient0v, vminf(g / ambient1v, b / ambient2v));
-            const vfloat mtv = vmaxf(LVFU(dark[y][x]), vmaxf(tlv + tepsv, t0v));
+            const vfloat tlv = tepsv - vminf(r / ambient0v, vminf(g / ambient1v, b / ambient2v));
+            const vfloat mtv = vmaxf(LVFU(dark[y][x]), vmaxf(tlv, t0v));
             if (dehazeParams.showDepthMap) {
                 const vfloat valv = vclampf(onev - mtv, ZEROV, onev) * cmaxChannelv;
                 STVFU(img->r(y, x), valv);
                 STVFU(img->g(y, x), valv);
                 STVFU(img->b(y, x), valv);
-            } else if (luminance) {
+            } else {
                 const vfloat Yv = Color::rgbLuminance(r, g, b, wsv);
                 const vfloat YYv = (Yv - ambientYv) / mtv + ambientYv;
                 const vfloat fv = vself(vmaskf_gt(Yv, epsYv), cmaxChannelv * YYv / Yv, cmaxChannelv);
-                STVFU(img->r(y, x), r * fv);
-                STVFU(img->g(y, x), g * fv);
-                STVFU(img->b(y, x), b * fv);
-            } else {
-                STVFU(img->r(y, x), ((r - ambient0v) / mtv + ambient0v) * cmaxChannelv);
-                STVFU(img->g(y, x), ((g - ambient1v) / mtv + ambient1v) * cmaxChannelv);
-                STVFU(img->b(y, x), ((b - ambient2v) / mtv + ambient2v) * cmaxChannelv);
+                STVFU(img->r(y, x), vintpf(satBlendv, ((r - ambient0v) / mtv + ambient0v) * cmaxChannelv, r * fv));
+                STVFU(img->g(y, x), vintpf(satBlendv, ((g - ambient1v) / mtv + ambient1v) * cmaxChannelv, g * fv));
+                STVFU(img->b(y, x), vintpf(satBlendv, ((b - ambient2v) / mtv + ambient2v) * cmaxChannelv, b * fv));
             }
         }
 #endif
@@ -440,38 +434,30 @@ void ImProcFunctions::dehaze(Imagefloat *img, const DehazeParams &dehazeParams)
             const float g = img->g(y, x);
             const float b = img->b(y, x);
             // ... t >= tl to avoid negative values
-            const float tl = 1.f - min(r / ambient[0], g / ambient[1], b / ambient[2]);
-            const float mt = max(dark[y][x], t0, tl + teps);
+            const float tl = teps - min(r / ambient[0], g / ambient[1], b / ambient[2]);
+            const float mt = max(dark[y][x], t0, tl);
             if (dehazeParams.showDepthMap) {
                 img->r(y, x) = img->g(y, x) = img->b(y, x) = LIM01(1.f - mt) * maxChannel;
-            } else if (luminance) {
+            } else {
                 const float Y = Color::rgbLuminance(img->r(y, x), img->g(y, x), img->b(y, x), ws);
                 const float YY = (Y - ambientY) / mt + ambientY;
                 const float f = Y > 1e-5f ? maxChannel * YY / Y : maxChannel;
-                img->r(y, x) *= f;
-                img->g(y, x) *= f;
-                img->b(y, x) *= f;
-            } else {
-                img->r(y, x) = ((r - ambient[0]) / mt + ambient[0]) * maxChannel;
-                img->g(y, x) = ((g - ambient[1]) / mt + ambient[1]) * maxChannel;
-                img->b(y, x) = ((b - ambient[2]) / mt + ambient[2]) * maxChannel;
+                img->r(y, x) = intp(satBlend, ((r - ambient[0]) / mt + ambient[0]) * maxChannel, r * f);
+                img->g(y, x) = intp(satBlend, ((g - ambient[1]) / mt + ambient[1]) * maxChannel, g * f);
+                img->b(y, x) = intp(satBlend, ((b - ambient[2]) / mt + ambient[2]) * maxChannel, b * f);
             }
         }
     }
 }
 
-
-
 void ImProcFunctions::dehazeloc(Imagefloat *img, const DehazeParams &dehazeParams)
 {
     //J.Desmis 12 2019 - this version derived from ART, is slower than the main from maximum 10% - probably use of SSE
     //Probably Ingo could solved this problem in some times
-   BENCHFUN 
+
     if (!dehazeParams.enabled || dehazeParams.strength == 0.0) {
         return;
     }
-
-
 
     const float maxChannel = normalize(img, multiThread);
 
@@ -479,10 +465,6 @@ void ImProcFunctions::dehazeloc(Imagefloat *img, const DehazeParams &dehazeParam
     const int H = img->getHeight();
     const float strength = LIM01(float(std::abs(dehazeParams.strength)) / 100.f * 0.9f);
     const bool add_haze = dehazeParams.strength < 0;
-
-    if (settings->verbose) {
-        std::cout << "dehaze: strength = " << strength << std::endl;
-    }
 
     array2D<float> dark(W, H);
 
@@ -553,10 +535,11 @@ void ImProcFunctions::dehazeloc(Imagefloat *img, const DehazeParams &dehazeParam
     }
 
     const float depth = -float(dehazeParams.depth) / 100.f;
-    const float teps = 1e-6f;
+    constexpr float teps = 1e-6f;
     const float t0 = max(teps, std::exp(depth * maxDistance));
 
-    const bool luminance = dehazeParams.luminance;
+    const float satBlend = dehazeParams.saturation / 100.f;
+
     const TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
     const float ambientY = Color::rgbLuminance(ambient[0], ambient[1], ambient[2], ws);
@@ -565,56 +548,43 @@ void ImProcFunctions::dehazeloc(Imagefloat *img, const DehazeParams &dehazeParam
 #endif
 
     for (int y = 0; y < H; ++y) {
-        int x = 0;
-        for (; x < W; ++x) {
+        for (int x = 0; x < W; ++x) {
             // ensure that the transmission is such that to avoid clipping...
-            float rgb[3] = { img->r(y, x), img->g(y, x), img->b(y, x) };
+            const float rIn = img->r(y, x);
+            const float gIn = img->g(y, x);
+            const float bIn = img->b(y, x);
             // ... t >= tl to avoid negative values
-            float tl = 1.f - min(rgb[0] / ambient[0], rgb[1] / ambient[1], rgb[2] / ambient[2]);
-            // // ... t >= tu to avoid values > 1
-            // float tu = t0 - teps;
-            // for (int c = 0; c < 3; ++c) {
-            //     if (ambient[c] < 1) {
-            //         tu = max(tu, (rgb[c] - ambient[c])/(1.f - ambient[c]));
-            //     }
-            // }
-            float &ir = img->r(y, x);
-            float &ig = img->g(y, x);
-            float &ib = img->b(y, x);
-            const float mt = max(dark[y][x], t0, tl + teps);
+            const float tl = 1.f + teps - min(rIn / ambient[0], gIn / ambient[1], bIn / ambient[2]);
+            const float mt = max(dark[y][x], t0, tl);
 
             if (dehazeParams.showDepthMap) {
                 img->r(y, x) = img->g(y, x) = img->b(y, x) = LIM01(1.f - mt) * maxChannel;
-            } else if (luminance) {
-                float Y = Color::rgbLuminance(img->r(y, x), img->g(y, x), img->b(y, x), ws);
-                float YY = (Y - ambientY) / mt + ambientY;
-
+            } else {
+                float f = 1.f;
+                const float Y = Color::rgbLuminance(rIn, gIn, bIn, ws);
                 if (Y > 1e-5f) {
+                    float YY = (Y - ambientY) / mt + ambientY;
                     if (add_haze) {
                         YY = Y + Y - YY;
                     }
-
-                    float f = YY / Y;
-                    ir = rgb[0] * f;
-                    ig = rgb[1] * f;
-                    ib = rgb[2] * f;
-
+                    f = YY / Y;
                 }
-            } else {
-                float r = ((rgb[0] - ambient[0]) / mt + ambient[0]);
-                float g = ((rgb[1] - ambient[1]) / mt + ambient[1]);
-                float b = ((rgb[2] - ambient[2]) / mt + ambient[2]);
+                const float r1 = rIn * f;
+                const float g1 = gIn * f;
+                const float b1 = bIn * f;
+
+                float r2 = ((rIn - ambient[0]) / mt + ambient[0]);
+                float g2 = ((gIn - ambient[1]) / mt + ambient[1]);
+                float b2 = ((bIn - ambient[2]) / mt + ambient[2]);
 
                 if (add_haze) {
-                    ir += (ir - r);
-                    ig += (ig - g);
-                    ib += (ib - b);
-                } else {
-                    ir = r;
-                    ig = g;
-                    ib = b;
+                    r2 = rIn + rIn - r2;
+                    g2 = gIn + gIn - g2;
+                    b2 = bIn + bIn - b2;
                 }
-
+                img->r(y, x) = intp(satBlend, r2, r1);
+                img->g(y, x) = intp(satBlend, g2, g1);
+                img->b(y, x) = intp(satBlend, b2, b1);
             }
         }
     }

@@ -700,7 +700,7 @@ public:
         bool inversret;
         bool equilret;
         bool loglin;
-        bool lumonly;
+        bool dehazeSaturation;
         bool softradiusret;
         bool CCmaskreticurve;
         bool LLmaskreticurve;
@@ -830,18 +830,41 @@ public:
         // Log encoding
         bool visilog;
         bool explog;
+        bool complexlog;
         bool autocompute;
         bool sourceGray;
+        bool sourceabs;
+        bool targabs;
         bool targetGray;
+        bool catad;
+        bool saturl;
+        bool lightl;
+        bool lightq;
+        bool contl;
+        bool contq;
+        bool colorfl;
+        bool LcurveL;
         bool Autogray;
         bool fullimage;
+        bool repar;
+        bool ciecam;
         bool blackEv;
         bool whiteEv;
         bool detail;
+        bool sursour;
+        bool surround;
         bool sensilog;
         bool baselog;
         bool strlog;
         bool anglog;
+        bool CCmaskcurveL;
+        bool LLmaskcurveL;
+        bool HHmaskcurveL;
+        bool enaLMask;
+        bool blendmaskL;
+        bool radmaskL;
+        bool chromaskL;
+        bool LmaskcurveL;
         //mask
         bool visimask;
         bool complexmask;
@@ -1184,7 +1207,7 @@ struct DehazeParamsEdited {
     bool strength;
     bool showDepthMap;
     bool depth;
-    bool luminance;
+    bool saturation;
 };
 
 struct RAWParamsEdited {
