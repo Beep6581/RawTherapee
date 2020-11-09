@@ -3249,12 +3249,12 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
                         const float chra = tmp1->a[y][x];
                         const float chrb = tmp1->b[y][x];
 
-                        if (!lp.actsp) {
+                      //  if (!lp.actsp) {
                             difa = chra * flia - original->a[y][x];
                             difb = chrb * flib - original->b[y][x];
                             transformed->a[y][x] = clipC(original->a[y][x] + difa);
                             transformed->b[y][x] = clipC(original->b[y][x] + difb);
-                        }
+                      //  }
 
                         if (blshow) {
                             transformed->L[y][x] = CLIP(12000.f + difL);
@@ -3282,7 +3282,7 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
 
                         transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
 
-                        if (!lp.actsp) {
+                     //   if (!lp.actsp) {
                             difa = chra * flia - original->a[y][x];
                             difb = chrb * flib - original->b[y][x];
                             difa *= factorx;
@@ -3290,7 +3290,7 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
                             transformed->a[y][x] = clipC(original->a[y][x] + difa);
                             transformed->b[y][x] = clipC(original->b[y][x] + difb);
 
-                        }
+                    //    }
 
                         if (blshow) {
                             transformed->L[y][x] = CLIP(12000.f + difL);
@@ -3307,11 +3307,11 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
                     case 2: { // inside selection => no effect, keep original values
                         transformed->L[y][x] = original->L[y][x];
 
-                        if (!lp.actsp) {
+                    //    if (!lp.actsp) {
 
                             transformed->a[y][x] = original->a[y][x];
                             transformed->b[y][x] = original->b[y][x];
-                        }
+                    //    }
                     }
                 }
             }
@@ -6311,10 +6311,10 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
                 const float difa = tmp1->a[y - ystart][x - xstart] * fli - original->a[y][x] * localFactor;
                 const float difb = tmp1->b[y - ystart][x - xstart] * fli - original->b[y][x] * localFactor;
 
-                if (!lp.actsp) {
+            //    if (!lp.actsp) {
                     transformed->a[y][x] = clipC(original->a[y][x] + difa);
                     transformed->b[y][x] = clipC(original->b[y][x] + difb);
-                }
+            //    }
 
                 const float maxdifab = rtengine::max(std::fabs(difa), std::fabs(difb));
 
@@ -10273,6 +10273,9 @@ void ImProcFunctions::Lab_Local(
                             tmp2->L[y][x] = original->L[y][x];
                             tmp2->a[y][x] = original->a[y][x];
                             tmp2->b[y][x] = original->b[y][x];
+                            tmp1->L[y][x] = original->L[y][x];
+                            tmp1->a[y][x] = original->a[y][x];
+                            tmp1->b[y][x] = original->b[y][x];
                             bufgbi->L[y][x] = original->L[y][x];
                             bufgbi->a[y][x] = original->a[y][x];
                             bufgbi->b[y][x] = original->b[y][x];
