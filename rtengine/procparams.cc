@@ -2724,7 +2724,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     transitgrad(0.0),
     hishow(false),
     activ(true),
-    avoid(false),
+    avoid(true),
     blwh(false),
     recurs(false),
     laplac(true),
