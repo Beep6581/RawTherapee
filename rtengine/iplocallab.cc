@@ -585,6 +585,7 @@ struct local_params {
     bool hsena;
     bool vibena;
     bool logena;
+    bool islocal;
     bool maskena;
     bool cut_past;
     float past;
@@ -1354,7 +1355,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.activspot = locallab.spots.at(sp).activ;
 
 
-    lp.detailsh = locallab.spots.at(sp).detailSH;
+    lp.detailsh = locallab.spots.at(sp).detailSH; 
     lp.threshol = thresho;
     lp.chromacb = chromcbdl;
     lp.expvib = locallab.spots.at(sp).expvibrance && lp.activspot ;
@@ -1372,6 +1373,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.maskena = locallab.spots.at(sp).expmask && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && lllogMask == 0 && llSHMask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
     lp.logena = locallab.spots.at(sp).explog && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
 
+    lp.islocal = (lp.expvib || lp.colorena || lp.blurena || lp.tonemapena || lp.retiena || lp.lcena || lp.cbdlena || lp.exposena || lp.hsena || lp.vibena || lp.sharpena || lp.sfena || lp.maskena || lp.logena);
 
     lp.sensv = local_sensiv;
     lp.past =  chromaPastel;
@@ -9794,7 +9796,7 @@ void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabIm
 
 void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * original, LabImage *transformed, int cy, int cx)
 {
-    if (params->locallab.spots.at(sp).avoid) {
+    if (params->locallab.spots.at(sp).avoid  && lp.islocal) {
         const float ach = lp.trans / 100.f;
 
         TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
