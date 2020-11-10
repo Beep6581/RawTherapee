@@ -585,6 +585,7 @@ struct local_params {
     bool hsena;
     bool vibena;
     bool logena;
+    bool islocal;
     bool maskena;
     bool cut_past;
     float past;
@@ -1354,7 +1355,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.activspot = locallab.spots.at(sp).activ;
 
 
-    lp.detailsh = locallab.spots.at(sp).detailSH;
+    lp.detailsh = locallab.spots.at(sp).detailSH; 
     lp.threshol = thresho;
     lp.chromacb = chromcbdl;
     lp.expvib = locallab.spots.at(sp).expvibrance && lp.activspot ;
@@ -1372,6 +1373,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.maskena = locallab.spots.at(sp).expmask && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && lllogMask == 0 && llSHMask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
     lp.logena = locallab.spots.at(sp).explog && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
 
+    lp.islocal = (lp.expvib || lp.colorena || lp.blurena || lp.tonemapena || lp.retiena || lp.lcena || lp.cbdlena || lp.exposena || lp.hsena || lp.vibena || lp.sharpena || lp.sfena || lp.maskena || lp.logena);
 
     lp.sensv = local_sensiv;
     lp.past =  chromaPastel;
@@ -3146,10 +3148,7 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
     }
 }
 
-
-
-
-void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bufchro, const struct local_params & lp,  const float hueref, const float chromaref, const float lumaref, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int sk)
+void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, const struct local_params & lp,  const float hueref, const float chromaref, const float lumaref, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int sk)
 {
     // BENCHFUN
 //inverse local blur and noise
@@ -3224,40 +3223,30 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else /*if (lp.shapmet == 1)*/ {
+                } else {
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
-
-                const float clc = (previewbl) ? settings->previewselection * 100.f : bufchro[y][x];
-                float abdelta2 = SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x]);
-                float chrodelta2 = SQR(std::sqrt(SQR(maskptr->a[y][x]) + SQR(maskptr->b[y][x])) - (chromaref * 327.68f));
-                float huedelta2 = abdelta2 - chrodelta2;
-
-                float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
-                const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn);
-                const float realstrchdE = reducdE * clc;
+                float reducdE; 
+                if (zone != 2) {
+                    float abdelta2 = SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x]);
+                    float chrodelta2 = SQR(std::sqrt(SQR(maskptr->a[y][x]) + SQR(maskptr->b[y][x])) - (chromaref * 327.68f));
+                    float huedelta2 = abdelta2 - chrodelta2;
+                    float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
+                    reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn);
+                }
 
                 switch (zone) {
 
                     case 0: { // outside selection and outside transition zone => full effect, no transition
-                        float difL = tmp1->L[y][x] - original->L[y][x];
-                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
-                        float difa = tmp1->a[y][x] - original->a[y][x];
-                        float difb = tmp1->b[y][x] - original->b[y][x];
-                        float flia = 1.f, flib = 1.f;
-                        flia = flib = ((100.f + realstrchdE) / 100.f);
-                        const float chra = tmp1->a[y][x];
-                        const float chrb = tmp1->b[y][x];
-
-                        if (!lp.actsp) {
-                            difa = chra * flia - original->a[y][x];
-                            difb = chrb * flib - original->b[y][x];
-                            transformed->a[y][x] = clipC(original->a[y][x] + difa);
-                            transformed->b[y][x] = clipC(original->b[y][x] + difb);
-                        }
+                       const float diflc = (tmp1->L[y][x] - original->L[y][x]) * reducdE;
+                       const float difa = (tmp1->a[y][x] - original->a[y][x]) * reducdE;
+                       const float difb = (tmp1->b[y][x] - original->b[y][x]) * reducdE;
+                       transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
+                       transformed->a[y][x] = clipC(original->a[y][x] + difa) ;
+                       transformed->b[y][x] = clipC(original->b[y][x] + difb);
 
                         if (blshow) {
-                            transformed->L[y][x] = CLIP(12000.f + difL);
+                            transformed->L[y][x] = CLIP(12000.f + diflc);
                             transformed->a[y][x] = clipC(difa);
                             transformed->b[y][x] = clipC(difb);
                         } else if (previewbl || lp.prevdE) {
@@ -3269,31 +3258,17 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
                     }
 
                     case 1: { // inside transition zone
-                        float difL = tmp1->L[y][x] - original->L[y][x];
-                        float difa = tmp1->a[y][x] - original->a[y][x];
-                        float difb = tmp1->b[y][x] - original->b[y][x];
-                        float flia = 1.f, flib = 1.f;
-                        flia = flib = ((100.f + realstrchdE) / 100.f);
-                        const float chra = tmp1->a[y][x];
-                        const float chrb = tmp1->b[y][x];
+                        const float factorx = 1.f - localFactor;
 
-                        float factorx = 1.f - localFactor;
-                        difL *= factorx;
-
-                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
-
-                        if (!lp.actsp) {
-                            difa = chra * flia - original->a[y][x];
-                            difb = chrb * flib - original->b[y][x];
-                            difa *= factorx;
-                            difb *= factorx;
-                            transformed->a[y][x] = clipC(original->a[y][x] + difa);
-                            transformed->b[y][x] = clipC(original->b[y][x] + difb);
-
-                        }
+                        const float diflc = (tmp1->L[y][x] - original->L[y][x]) * (reducdE * factorx);
+                        const float difa = (tmp1->a[y][x] - original->a[y][x]) * (reducdE * factorx);
+                        const float difb = (tmp1->b[y][x] - original->b[y][x]) * (reducdE * factorx);
+                        transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
+                        transformed->a[y][x] = clipC(original->a[y][x] + difa) ;
+                        transformed->b[y][x] = clipC(original->b[y][x] + difb);
 
                         if (blshow) {
-                            transformed->L[y][x] = CLIP(12000.f + difL);
+                            transformed->L[y][x] = CLIP(12000.f + diflc);
                             transformed->a[y][x] = clipC(difa);
                             transformed->b[y][x] = clipC(difb);
                         } else if (previewbl) {
@@ -3304,20 +3279,18 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
                         break;
                     }
 
-                    case 2: { // inside selection => no effect, keep original values
+                    case 2: { // outside selection and outside transition zone => no effect, keep original values
                         transformed->L[y][x] = original->L[y][x];
-
-                        if (!lp.actsp) {
-
-                            transformed->a[y][x] = original->a[y][x];
-                            transformed->b[y][x] = original->b[y][x];
-                        }
+                        transformed->a[y][x] = original->a[y][x];
+                        transformed->b[y][x] = original->b[y][x];
                     }
                 }
             }
         }
     }
 }
+
+
 
 static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexporig, const LabImage* original, float &fab, float &meanfab, float chrom, bool multiThread)
 {
@@ -6312,10 +6285,10 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, f
                 const float difa = tmp1->a[y - ystart][x - xstart] * fli - original->a[y][x] * localFactor;
                 const float difb = tmp1->b[y - ystart][x - xstart] * fli - original->b[y][x] * localFactor;
 
-                if (!lp.actsp) {
+            //    if (!lp.actsp) {
                     transformed->a[y][x] = clipC(original->a[y][x] + difa);
                     transformed->b[y][x] = clipC(original->b[y][x] + difb);
-                }
+            //    }
 
                 const float maxdifab = rtengine::max(std::fabs(difa), std::fabs(difb));
 
@@ -9793,6 +9766,161 @@ void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabIm
     }
 }
 
+void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * original, LabImage *transformed, int cy, int cx)
+{
+    if (params->locallab.spots.at(sp).avoid  && lp.islocal) {
+        const float ach = lp.trans / 100.f;
+
+        TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
+        const float wip[3][3] = {
+            {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
+            {static_cast<float>(wiprof[1][0]), static_cast<float>(wiprof[1][1]), static_cast<float>(wiprof[1][2])},
+            {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
+        };
+        const bool highlight = params->toneCurve.hrenabled;
+        const bool needHH = (lp.chro != 0.f);
+#ifdef _OPENMP
+        #pragma omp parallel if (multiThread)
+#endif
+        {
+#ifdef __SSE2__
+            float atan2Buffer[transformed->W] ALIGNED16;
+            float sqrtBuffer[transformed->W] ALIGNED16;
+            float sincosyBuffer[transformed->W] ALIGNED16;
+            float sincosxBuffer[transformed->W] ALIGNED16;
+            vfloat c327d68v = F2V(327.68f);
+            vfloat onev = F2V(1.f);
+#endif
+
+#ifdef _OPENMP
+            #pragma omp for schedule(dynamic,16)
+#endif
+            for (int y = 0; y < transformed->H; y++) {
+                const int loy = cy + y;
+                const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
+
+                if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
+                    continue;
+                }
+
+#ifdef __SSE2__
+                int i = 0;
+
+                for (; i < transformed->W - 3; i += 4) {
+                    vfloat av = LVFU(transformed->a[y][i]);
+                    vfloat bv = LVFU(transformed->b[y][i]);
+
+                    if (needHH) { // only do expensive atan2 calculation if needed
+                        STVF(atan2Buffer[i], xatan2f(bv, av));
+                    }
+
+                    vfloat Chprov1v = vsqrtf(SQRV(bv) + SQRV(av));
+                    STVF(sqrtBuffer[i], Chprov1v / c327d68v);
+                    vfloat sincosyv = av / Chprov1v;
+                    vfloat sincosxv = bv / Chprov1v;
+                    vmask selmask = vmaskf_eq(Chprov1v, ZEROV);
+                    sincosyv = vself(selmask, onev, sincosyv);
+                    sincosxv = vselfnotzero(selmask, sincosxv);
+                    STVF(sincosyBuffer[i], sincosyv);
+                    STVF(sincosxBuffer[i], sincosxv);
+                }
+
+                for (; i < transformed->W; i++) {
+                    float aa = transformed->a[y][i];
+                    float bb = transformed->b[y][i];
+
+                    if (needHH) { // only do expensive atan2 calculation if needed
+                        atan2Buffer[i] = xatan2f(bb, aa);
+                    }
+
+                    float Chprov1 = std::sqrt(SQR(bb) + SQR(aa));
+                    sqrtBuffer[i] = Chprov1 / 327.68f;
+
+                    if (Chprov1 == 0.0f) {
+                        sincosyBuffer[i] = 1.f;
+                        sincosxBuffer[i] = 0.0f;
+                    } else {
+                        sincosyBuffer[i] = aa / Chprov1;
+                        sincosxBuffer[i] = bb / Chprov1;
+                    }
+                }
+
+#endif
+
+                for (int x = 0; x < transformed->W; x++) {
+                    int lox = cx + x;
+                    int zone;
+                    float localFactor = 1.f;
+
+                    if (lp.shapmet == 0) {
+                        calcTransition(lox, loy, ach, lp, zone, localFactor);
+                    } else /*if (lp.shapmet == 1)*/ {
+                        calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                    }
+
+                    if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
+                        continue;
+                    }
+
+                    float Lprov1 = transformed->L[y][x] / 327.68f;
+                    float2 sincosval;
+#ifdef __SSE2__
+                    float HH = atan2Buffer[x]; // reading HH from line buffer even if line buffer is not filled is faster than branching
+                    float Chprov1 = sqrtBuffer[x];
+                    sincosval.y = sincosyBuffer[x];
+                    sincosval.x = sincosxBuffer[x];
+                    float chr = 0.f;
+
+#else
+                    const float aa = transformed->a[y][x];
+                    const float bb = transformed->b[y][x];
+                    float HH = 0.f, chr = 0.f;
+
+                    if (needHH) { // only do expensive atan2 calculation if needed
+                        HH = xatan2f(bb, aa);
+                    }
+
+                    float Chprov1 = std::sqrt(SQR(aa) + SQR(bb)) / 327.68f;
+
+                    if (Chprov1 == 0.0f) {
+                        sincosval.y = 1.f;
+                        sincosval.x = 0.0f;
+                    } else {
+                        sincosval.y = aa / (Chprov1 * 327.68f);
+                        sincosval.x = bb / (Chprov1 * 327.68f);
+                    }
+#endif
+
+                    Color::pregamutlab(Lprov1, HH, chr);
+                    Chprov1 = rtengine::min(Chprov1, chr);
+                    Color::gamutLchonly(sincosval, Lprov1, Chprov1, wip, highlight, 0.15f, 0.92f);
+                    transformed->L[y][x] = Lprov1 * 327.68f;
+                    transformed->a[y][x] = 327.68f * Chprov1 * sincosval.y;
+                    transformed->b[y][x] = 327.68f * Chprov1 * sincosval.x;
+
+                    if (needHH) {
+                        const float Lprov2 = original->L[y][x] / 327.68f;
+                        float correctionHue = 0.f; // Munsell's correction
+                        float correctlum = 0.f;
+                        const float memChprov = std::sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x])) / 327.68f;
+                        float Chprov = std::sqrt(SQR(transformed->a[y][x]) + SQR(transformed->b[y][x])) / 327.68f;
+                        Color::AllMunsellLch(true, Lprov1, Lprov2, HH, Chprov, memChprov, correctionHue, correctlum);
+
+                        if (std::fabs(correctionHue) < 0.015f) {
+                            HH += correctlum;    // correct only if correct Munsell chroma very little.
+                        }
+
+                        sincosval = xsincosf(HH + correctionHue);
+                        transformed->a[y][x] = 327.68f * Chprov * sincosval.y; // apply Munsell
+                        transformed->b[y][x] = 327.68f * Chprov * sincosval.x;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
 void ImProcFunctions::Lab_Local(
     int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, LabImage * lastorig, int cx, int cy, int oW, int oH, int sk,
     const LocretigainCurve& locRETgainCcurve, const LocretitransCurve& locRETtransCcurve,
@@ -10274,6 +10402,9 @@ void ImProcFunctions::Lab_Local(
                             tmp2->L[y][x] = original->L[y][x];
                             tmp2->a[y][x] = original->a[y][x];
                             tmp2->b[y][x] = original->b[y][x];
+                            tmp1->L[y][x] = original->L[y][x];
+                            tmp1->a[y][x] = original->a[y][x];
+                            tmp1->b[y][x] = original->b[y][x];
                             bufgbi->L[y][x] = original->L[y][x];
                             bufgbi->a[y][x] = original->a[y][x];
                             bufgbi->b[y][x] = original->b[y][x];
@@ -10702,9 +10833,9 @@ void ImProcFunctions::Lab_Local(
                     } else if (lp.blurmet == 1) {
  //                       InverseBlurNoise_Local(originalmaskbl, bufchro, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
                         if(lp.smasktyp != 1) {
-                            InverseBlurNoise_Local(originalmaskbl.get(), bufchro, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
+                            InverseBlurNoise_Local(originalmaskbl.get(), lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
                         } else {
-                            InverseBlurNoise_Local(original, bufchro, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
+                            InverseBlurNoise_Local(original, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
                         }
 
                         if (params->locallab.spots.at(sp).recurs) {
@@ -14786,157 +14917,7 @@ void ImProcFunctions::Lab_Local(
 //end common mask
 
 // Gamut and Munsell control - very important do not deactivated to avoid crash
-    if (params->locallab.spots.at(sp).avoid) {
-        const float ach = lp.trans / 100.f;
-
-        TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
-        const float wip[3][3] = {
-            {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
-            {static_cast<float>(wiprof[1][0]), static_cast<float>(wiprof[1][1]), static_cast<float>(wiprof[1][2])},
-            {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
-        };
-        const bool highlight = params->toneCurve.hrenabled;
-        const bool needHH = (lp.chro != 0.f);
-#ifdef _OPENMP
-        #pragma omp parallel if (multiThread)
-#endif
-        {
-#ifdef __SSE2__
-            float atan2Buffer[transformed->W] ALIGNED16;
-            float sqrtBuffer[transformed->W] ALIGNED16;
-            float sincosyBuffer[transformed->W] ALIGNED16;
-            float sincosxBuffer[transformed->W] ALIGNED16;
-            vfloat c327d68v = F2V(327.68f);
-            vfloat onev = F2V(1.f);
-#endif
-
-#ifdef _OPENMP
-            #pragma omp for schedule(dynamic,16)
-#endif
-            for (int y = 0; y < transformed->H; y++) {
-                const int loy = cy + y;
-                const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
-
-                if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
-                    continue;
-                }
-
-#ifdef __SSE2__
-                int i = 0;
-
-                for (; i < transformed->W - 3; i += 4) {
-                    vfloat av = LVFU(transformed->a[y][i]);
-                    vfloat bv = LVFU(transformed->b[y][i]);
-
-                    if (needHH) { // only do expensive atan2 calculation if needed
-                        STVF(atan2Buffer[i], xatan2f(bv, av));
-                    }
-
-                    vfloat Chprov1v = vsqrtf(SQRV(bv) + SQRV(av));
-                    STVF(sqrtBuffer[i], Chprov1v / c327d68v);
-                    vfloat sincosyv = av / Chprov1v;
-                    vfloat sincosxv = bv / Chprov1v;
-                    vmask selmask = vmaskf_eq(Chprov1v, ZEROV);
-                    sincosyv = vself(selmask, onev, sincosyv);
-                    sincosxv = vselfnotzero(selmask, sincosxv);
-                    STVF(sincosyBuffer[i], sincosyv);
-                    STVF(sincosxBuffer[i], sincosxv);
-                }
-
-                for (; i < transformed->W; i++) {
-                    float aa = transformed->a[y][i];
-                    float bb = transformed->b[y][i];
-
-                    if (needHH) { // only do expensive atan2 calculation if needed
-                        atan2Buffer[i] = xatan2f(bb, aa);
-                    }
-
-                    float Chprov1 = std::sqrt(SQR(bb) + SQR(aa));
-                    sqrtBuffer[i] = Chprov1 / 327.68f;
-
-                    if (Chprov1 == 0.0f) {
-                        sincosyBuffer[i] = 1.f;
-                        sincosxBuffer[i] = 0.0f;
-                    } else {
-                        sincosyBuffer[i] = aa / Chprov1;
-                        sincosxBuffer[i] = bb / Chprov1;
-                    }
-                }
-
-#endif
-
-                for (int x = 0; x < transformed->W; x++) {
-                    int lox = cx + x;
-                    int zone;
-                    float localFactor = 1.f;
-
-                    if (lp.shapmet == 0) {
-                        calcTransition(lox, loy, ach, lp, zone, localFactor);
-                    } else /*if (lp.shapmet == 1)*/ {
-                        calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
-                    }
-
-                    if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
-                        continue;
-                    }
-
-                    float Lprov1 = transformed->L[y][x] / 327.68f;
-                    float2 sincosval;
-#ifdef __SSE2__
-                    float HH = atan2Buffer[x]; // reading HH from line buffer even if line buffer is not filled is faster than branching
-                    float Chprov1 = sqrtBuffer[x];
-                    sincosval.y = sincosyBuffer[x];
-                    sincosval.x = sincosxBuffer[x];
-                    float chr = 0.f;
-
-#else
-                    const float aa = transformed->a[y][x];
-                    const float bb = transformed->b[y][x];
-                    float HH = 0.f, chr = 0.f;
-
-                    if (needHH) { // only do expensive atan2 calculation if needed
-                        HH = xatan2f(bb, aa);
-                    }
-
-                    float Chprov1 = std::sqrt(SQR(aa) + SQR(bb)) / 327.68f;
-
-                    if (Chprov1 == 0.0f) {
-                        sincosval.y = 1.f;
-                        sincosval.x = 0.0f;
-                    } else {
-                        sincosval.y = aa / (Chprov1 * 327.68f);
-                        sincosval.x = bb / (Chprov1 * 327.68f);
-                    }
-#endif
-
-                    Color::pregamutlab(Lprov1, HH, chr);
-                    Chprov1 = rtengine::min(Chprov1, chr);
-                    Color::gamutLchonly(sincosval, Lprov1, Chprov1, wip, highlight, 0.15f, 0.92f);
-                    transformed->L[y][x] = Lprov1 * 327.68f;
-                    transformed->a[y][x] = 327.68f * Chprov1 * sincosval.y;
-                    transformed->b[y][x] = 327.68f * Chprov1 * sincosval.x;
-
-                    if (needHH) {
-                        const float Lprov2 = original->L[y][x] / 327.68f;
-                        float correctionHue = 0.f; // Munsell's correction
-                        float correctlum = 0.f;
-                        const float memChprov = std::sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x])) / 327.68f;
-                        float Chprov = std::sqrt(SQR(transformed->a[y][x]) + SQR(transformed->b[y][x])) / 327.68f;
-                        Color::AllMunsellLch(true, Lprov1, Lprov2, HH, Chprov, memChprov, correctionHue, correctlum);
-
-                        if (std::fabs(correctionHue) < 0.015f) {
-                            HH += correctlum;    // correct only if correct Munsell chroma very little.
-                        }
-
-                        sincosval = xsincosf(HH + correctionHue);
-                        transformed->a[y][x] = 327.68f * Chprov * sincosval.y; // apply Munsell
-                        transformed->b[y][x] = 327.68f * Chprov * sincosval.x;
-                    }
-                }
-            }
-        }
-    }
-
+    avoidcolshi(lp, sp, original, transformed, cy, cx);
 }
 
 }
