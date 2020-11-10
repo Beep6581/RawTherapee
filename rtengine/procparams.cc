@@ -8150,7 +8150,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "BackMethod", pedited, wavelet.Backmethod, pedited->wavelet.Backmethod);
             assignFromKeyfile(keyFile, "Wavelet", "TilesMethod", pedited, wavelet.Tilesmethod, pedited->wavelet.Tilesmethod);
 
-            if (keyFile.has_key("Wavelet", "complex")) {
+            if (keyFile.has_key("Wavelet", "complexMethod")) {
                 assignFromKeyfile(keyFile, "Wavelet", "complexMethod", pedited, wavelet.complexmethod, pedited->wavelet.complexmethod);
             } else if (wavelet.enabled) {
                 wavelet.complexmethod = "expert";
