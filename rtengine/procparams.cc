@@ -6990,7 +6990,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             assignFromKeyfile(keyFile, "Color appearance", "AutoDegreeout", pedited, colorappearance.autodegreeout, pedited->colorappearance.autodegreeout);
 
-            assignFromKeyfile(keyFile, "Color appearance", "complex", pedited, colorappearance.complexmethod, pedited->colorappearance.complexmethod);
+            if (keyFile.has_key("Color appearance", "complex")) {
+                assignFromKeyfile(keyFile, "Color appearance", "complex", pedited, colorappearance.complexmethod, pedited->colorappearance.complexmethod);
+            } else {
+                colorappearance.complexmethod = "expert";
+                if (pedited) {
+                    pedited->colorappearance.complexmethod = true;
+                }
+            }
             assignFromKeyfile(keyFile, "Color appearance", "Surround", pedited, colorappearance.surround, pedited->colorappearance.surround);
             assignFromKeyfile(keyFile, "Color appearance", "Surrsrc", pedited, colorappearance.surrsrc, pedited->colorappearance.surrsrc);
             assignFromKeyfile(keyFile, "Color appearance", "AdaptLum", pedited, colorappearance.adaplum, pedited->colorappearance.adaplum);
