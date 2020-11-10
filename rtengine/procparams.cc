@@ -6992,7 +6992,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             if (keyFile.has_key("Color appearance", "complex")) {
                 assignFromKeyfile(keyFile, "Color appearance", "complex", pedited, colorappearance.complexmethod, pedited->colorappearance.complexmethod);
-            } else {
+            } else if (colorappearance.enabled) {
                 colorappearance.complexmethod = "expert";
                 if (pedited) {
                     pedited->colorappearance.complexmethod = true;
