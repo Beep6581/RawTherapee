@@ -3148,10 +3148,7 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
     }
 }
 
-
-
-
-void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bufchro, const struct local_params & lp,  const float hueref, const float chromaref, const float lumaref, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int sk)
+void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, const struct local_params & lp,  const float hueref, const float chromaref, const float lumaref, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int sk)
 {
     // BENCHFUN
 //inverse local blur and noise
@@ -3226,40 +3223,30 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
 
                 if (lp.shapmet == 0) {
                     calcTransition(lox, loy, ach, lp, zone, localFactor);
-                } else /*if (lp.shapmet == 1)*/ {
+                } else {
                     calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
                 }
-
-                const float clc = (previewbl) ? settings->previewselection * 100.f : bufchro[y][x];
-                float abdelta2 = SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x]);
-                float chrodelta2 = SQR(std::sqrt(SQR(maskptr->a[y][x]) + SQR(maskptr->b[y][x])) - (chromaref * 327.68f));
-                float huedelta2 = abdelta2 - chrodelta2;
-
-                float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
-                const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn);
-                const float realstrchdE = reducdE * clc;
+                float reducdE; 
+                if (zone != 2) {
+                    float abdelta2 = SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x]);
+                    float chrodelta2 = SQR(std::sqrt(SQR(maskptr->a[y][x]) + SQR(maskptr->b[y][x])) - (chromaref * 327.68f));
+                    float huedelta2 = abdelta2 - chrodelta2;
+                    float dE = std::sqrt(kab * (kch * chrodelta2 + kH * huedelta2) + kL * SQR(refL - maskptr->L[y][x]));
+                    reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensbn);
+                }
 
                 switch (zone) {
 
                     case 0: { // outside selection and outside transition zone => full effect, no transition
-                        float difL = tmp1->L[y][x] - original->L[y][x];
-                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
-                        float difa = tmp1->a[y][x] - original->a[y][x];
-                        float difb = tmp1->b[y][x] - original->b[y][x];
-                        float flia = 1.f, flib = 1.f;
-                        flia = flib = ((100.f + realstrchdE) / 100.f);
-                        const float chra = tmp1->a[y][x];
-                        const float chrb = tmp1->b[y][x];
-
-                      //  if (!lp.actsp) {
-                            difa = chra * flia - original->a[y][x];
-                            difb = chrb * flib - original->b[y][x];
-                            transformed->a[y][x] = clipC(original->a[y][x] + difa);
-                            transformed->b[y][x] = clipC(original->b[y][x] + difb);
-                      //  }
+                       const float diflc = (tmp1->L[y][x] - original->L[y][x]) * reducdE;
+                       const float difa = (tmp1->a[y][x] - original->a[y][x]) * reducdE;
+                       const float difb = (tmp1->b[y][x] - original->b[y][x]) * reducdE;
+                       transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
+                       transformed->a[y][x] = clipC(original->a[y][x] + difa) ;
+                       transformed->b[y][x] = clipC(original->b[y][x] + difb);
 
                         if (blshow) {
-                            transformed->L[y][x] = CLIP(12000.f + difL);
+                            transformed->L[y][x] = CLIP(12000.f + diflc);
                             transformed->a[y][x] = clipC(difa);
                             transformed->b[y][x] = clipC(difb);
                         } else if (previewbl || lp.prevdE) {
@@ -3271,31 +3258,17 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
                     }
 
                     case 1: { // inside transition zone
-                        float difL = tmp1->L[y][x] - original->L[y][x];
-                        float difa = tmp1->a[y][x] - original->a[y][x];
-                        float difb = tmp1->b[y][x] - original->b[y][x];
-                        float flia = 1.f, flib = 1.f;
-                        flia = flib = ((100.f + realstrchdE) / 100.f);
-                        const float chra = tmp1->a[y][x];
-                        const float chrb = tmp1->b[y][x];
+                        const float factorx = 1.f - localFactor;
 
-                        float factorx = 1.f - localFactor;
-                        difL *= factorx;
-
-                        transformed->L[y][x] = CLIP(original->L[y][x] + difL * reducdE);
-
-                     //   if (!lp.actsp) {
-                            difa = chra * flia - original->a[y][x];
-                            difb = chrb * flib - original->b[y][x];
-                            difa *= factorx;
-                            difb *= factorx;
-                            transformed->a[y][x] = clipC(original->a[y][x] + difa);
-                            transformed->b[y][x] = clipC(original->b[y][x] + difb);
-
-                    //    }
+                        const float diflc = (tmp1->L[y][x] - original->L[y][x]) * (reducdE * factorx);
+                        const float difa = (tmp1->a[y][x] - original->a[y][x]) * (reducdE * factorx);
+                        const float difb = (tmp1->b[y][x] - original->b[y][x]) * (reducdE * factorx);
+                        transformed->L[y][x] = CLIP(original->L[y][x] + diflc);
+                        transformed->a[y][x] = clipC(original->a[y][x] + difa) ;
+                        transformed->b[y][x] = clipC(original->b[y][x] + difb);
 
                         if (blshow) {
-                            transformed->L[y][x] = CLIP(12000.f + difL);
+                            transformed->L[y][x] = CLIP(12000.f + diflc);
                             transformed->a[y][x] = clipC(difa);
                             transformed->b[y][x] = clipC(difb);
                         } else if (previewbl) {
@@ -3306,20 +3279,18 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, float **bu
                         break;
                     }
 
-                    case 2: { // inside selection => no effect, keep original values
+                    case 2: { // outside selection and outside transition zone => no effect, keep original values
                         transformed->L[y][x] = original->L[y][x];
-
-                    //    if (!lp.actsp) {
-
-                            transformed->a[y][x] = original->a[y][x];
-                            transformed->b[y][x] = original->b[y][x];
-                    //    }
+                        transformed->a[y][x] = original->a[y][x];
+                        transformed->b[y][x] = original->b[y][x];
                     }
                 }
             }
         }
     }
 }
+
+
 
 static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexporig, const LabImage* original, float &fab, float &meanfab, float chrom, bool multiThread)
 {
@@ -10861,9 +10832,9 @@ void ImProcFunctions::Lab_Local(
                     } else if (lp.blurmet == 1) {
  //                       InverseBlurNoise_Local(originalmaskbl, bufchro, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
                         if(lp.smasktyp != 1) {
-                            InverseBlurNoise_Local(originalmaskbl.get(), bufchro, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
+                            InverseBlurNoise_Local(originalmaskbl.get(), lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
                         } else {
-                            InverseBlurNoise_Local(original, bufchro, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
+                            InverseBlurNoise_Local(original, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
                         }
 
                         if (params->locallab.spots.at(sp).recurs) {
