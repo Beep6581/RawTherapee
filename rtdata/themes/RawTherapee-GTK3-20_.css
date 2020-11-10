@@ -19,12 +19,12 @@
 */
 
 /***************************/
-/**/ @import "size.css"; /**/ /* TODO: Remove this weird dependancy */
+/**/ @import "size.css"; /**/ /* TODO: Remove this weird dependency */
 /***************************/
 
 /** Set style defaults **/
 * {
-    color: #AAAAAA;
+    color: #BBBBBB;
     text-shadow: none; /* Keep at none, or suffer serious performance issues */
     font-size: 1em;
 }
@@ -36,7 +36,7 @@
 
 .view:selected:not(check):not(radio) {
     color: #262626;
-    background-color: #AAAAAA
+    background-color: #AAAAAA;
 }
 
 /* The Places and Dir browser panels */
@@ -718,8 +718,7 @@ flowboxchild:selected {
 }
 
 /* Borders around tools and subtools */
-#MyExpander,
-#MyExpander #MyExpander {
+#MyExpander {
     border-top: 0.0833333333333333em solid rgba(0,0,0,0.3);
 }
 #MyExpander:first-child {
@@ -739,7 +738,7 @@ flowboxchild:selected {
 #ExpanderBox > grid {
     background-color: rgba(255,255,255,0.075);
     margin: 0;
-    padding: 0.5em 0.5em 0.75em 0.5em;
+    padding: 0.3em 0.5em 0.6em 0.5em;
     border-top: 0.0833333333333333em solid rgba(255,255,255,0.1);
     border-bottom: none;
 }
@@ -778,7 +777,7 @@ flowboxchild:selected {
     color: #999999;
     padding: 0;
     margin: 0;
-    font-size: 1.1em; /* Does not work? */
+    font-size: 1.1em; /* TODO: Does not work? */
     font-weight: bold;
 }
 
@@ -802,12 +801,8 @@ flowboxchild:selected {
 /* Alignment of tool headers is controlled by the image */
 #MyExpander.Fold > #MyExpanderTitle box > image,
 #MyExpander.OnOff > #MyExpanderTitle #MyExpanderStatus image {
-    padding: 0.4em;
-    margin: 0.3em 0.3em 0.3em 0; /* Change to margin: 0.3em 0.5em 0.3em 0; when testing dark background */
-}
-
-#MyExpander.OnOff.enabledTool > #MyExpanderTitle #MyExpanderStatus image {
-    /*background: #292929;*/ /* Remove comments to test dark background */
+    padding: 0.3em;
+    margin: 0.25em 0.25em 0.25em 0;
 }
 
 #LocallabToolPanel separator, #ExpanderBox2 separator, #ExpanderBox3 separator {

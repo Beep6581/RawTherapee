@@ -334,8 +334,8 @@ menu > arrow.top:hover,
 menu > arrow.bottom,
 menu > arrow.bottom:hover {
     border: none;
-    padding: 0.5em;
-    min-height: 1.5em;
+    padding: 0.25em;
+    min-height: 1em;
 }
 
 menuitem {
