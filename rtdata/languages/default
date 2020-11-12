@@ -1268,6 +1268,7 @@ HISTORY_MSG_ICM_WORKING_GAMMA;TRC - Gamma
 HISTORY_MSG_ICM_WORKING_SLOPE;TRC - Slope
 HISTORY_MSG_ICM_WORKING_TRC_METHOD;TRC method
 HISTORY_MSG_ICM_WORKING_ILLUM_METHOD;Illuminant method
+HISTORY_MSG_ICM_WORKING_PRIM_METHOD;Primaries method
 HISTORY_MSG_ILLUM;Illuminant
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
@@ -2310,6 +2311,7 @@ TP_ICM_BPC;Black Point Compensation
 TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only available if a dual-illuminant DCP with interpolation support is selected.
+TP_ICM_ILLUMPRIM_TOOLTIP;You must enable Ciecam02 - in symetric mode - and in 'Scene conditions' set "Illuminant" to the same value as in 'Destination profile: TRC - illuminant - Primaries.
 TP_ICM_INPUTCAMERA;Camera standard
 TP_ICM_INPUTCAMERAICC;Auto-matched camera profile
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
@@ -2333,8 +2335,8 @@ TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when sav
 TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
 TP_ICM_TONECURVE;Tone curve
 TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only available if the selected DCP has a tone curve.
-TP_ICM_TRCFRAME;TRC & Illuminant
-TP_ICM_TRCFRAME_TOOLTIP;Based on 'working profile' (provide), allows you to change the 'Tone response curve' which by default in RT is with a gamma sRGB (g=2.4 s=12.92).\nThis TRC modifies the tones of the image - RGB and Lab values, histogram and output (screen, TIF, JPG) are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of gamma > 1 and slope values, the algorithm ensures continuity between the linear part and the parabolic part.\nThe Output Profile must use a TRC sRGB(default).\nIlluminant : allows you to change the working profiles primaries (provide) to adapt them to the shooting conditions. 
+TP_ICM_TRCFRAME;Destination Profile : TRC - Illuminant - Primaries
+TP_ICM_TRCFRAME_TOOLTIP;Based on 'working profile' (provide) and 'destination profile', allows you to change the 'Tone response curve' which by default in RT is with a gamma sRGB (g=2.4 s=12.92).\nThis TRC modifies the tones of the image - RGB and Lab values, histogram and output (screen, TIF, JPG) are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of gamma > 1 and slope values, the algorithm ensures continuity between the linear part and the parabolic part.\nThe Output Profile must use a TRC sRGB(default).\nIlluminant : allows you to change the profiles primaries to adapt them to the shooting conditions.\nPrimaries: allows you to change the destination profile primaries.\nIlluminant and Primaries must be used with Ciecam cat02 
 TP_ICM_WORKINGPROFILE;Working Profile
 TP_ICM_WORKING_TRC;Tone response curve:
 TP_ICM_WORKING_TRC_BT709;BT709 g=2.22 s=4.5
@@ -2355,6 +2357,13 @@ TP_ICM_WORKING_ILLU_D60;D60
 TP_ICM_WORKING_ILLU_D65;D65
 TP_ICM_WORKING_ILLU_D80;D80
 TP_ICM_WORKING_ILLU_STDA;stdA 2875K
+TP_ICM_WORKING_PRIM;Destination space (primaries)
+TP_ICM_WORKING_PRIM_NONE;Default
+TP_ICM_WORKING_PRIM_SRGB;sRGB
+TP_ICM_WORKING_PRIM_ADOB;Adobe
+TP_ICM_WORKING_PRIM_PROP;Prophoto
+TP_ICM_WORKING_PRIM_REC;Rec2020
+TP_ICM_WORKING_PRIM_ACE;ACESp1
 TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Threshold

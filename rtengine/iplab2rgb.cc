@@ -373,7 +373,7 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
 }
 
 
-void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, const Glib::ustring &profile, double gampos, double slpos, int illum, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm) const
+void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int illum, int prim, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm) const
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
@@ -403,6 +403,24 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         }
         return;
     }
+    
+    if(prim != 0) {
+        if(prim == 1) {
+            profile = "sRGB";
+        } else if(prim == 2) {
+            profile = "Adobe RGB";
+        } else if(prim == 3) {
+            profile = "ProPhoto";
+        } else if(prim == 4) {
+            profile = "Rec2020";
+        } else if(prim == 5) {
+            profile = "ACESp1";
+        }
+    }
+    
+        if (settings->verbose  && prim != 0) {
+            printf("prim=%i Profile Destination=%s\n", prim, profile.c_str());
+        }
     cmsHTRANSFORM hTransform = nullptr;
     if (transform) {
         hTransform = transform;

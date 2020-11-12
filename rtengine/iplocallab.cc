@@ -5579,14 +5579,14 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
             const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(GW, GH));
 
             lab2rgb(*temp, *tmpImage, params->icm.workingProfile);
-
+            Glib::ustring prof = params->icm.workingProfile;
             if (tonecurv) { //Tone response curve  : does nothing if gamma=2.4 and slope=12.92 ==> gamma sRGB
                 const float gamtone = params->locallab.spots.at(sp).gamSH;
                 const float slotone = params->locallab.spots.at(sp).sloSH;
                 const int illum = 0;
                 cmsHTRANSFORM dummy = nullptr;
-                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, -5, params->icm.workingProfile, 2.4, 12.92310, illum, dummy, true, false, false);
-                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, 5, params->icm.workingProfile, gamtone, slotone, illum, dummy, false, true, true);
+                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, -5, prof, 2.4, 12.92310, illum, 0, dummy, true, false, false);
+                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, 5, prof, gamtone, slotone, illum, 0, dummy, false, true, true);
             }
 
             if (tonequ) {
@@ -11735,13 +11735,14 @@ void ImProcFunctions::Lab_Local(
                     Imagefloat *tmpImage = nullptr;
                     tmpImage = new Imagefloat(bfw, bfh);
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
+                    Glib::ustring prof = params->icm.workingProfile;
 
                     if (tonecurv) { //Tone response curve  : does nothing if gamma=2.4 and slope=12.92 ==> gamma sRGB
                         float gamtone = params->locallab.spots.at(sp).gamSH;
                         float slotone = params->locallab.spots.at(sp).sloSH;
                         cmsHTRANSFORM dummy = nullptr;
-                        workingtrc(tmpImage, tmpImage, bfw, bfh, -5, params->icm.workingProfile, 2.4, 12.92310, 0, dummy, true, false, false);
-                        workingtrc(tmpImage, tmpImage, bfw, bfh, 5, params->icm.workingProfile, gamtone, slotone, 0, dummy, false, true, true);
+                        workingtrc(tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, 0, dummy, true, false, false);
+                        workingtrc(tmpImage, tmpImage, bfw, bfh, 5, prof, gamtone, slotone, 0, 0, dummy, false, true, true);
                     }
 
                     if (tonequ) {

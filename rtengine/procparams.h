@@ -1639,6 +1639,7 @@ struct ColorManagementParams {
     Glib::ustring workingProfile;
     Glib::ustring workingTRC;
     Glib::ustring will;
+    Glib::ustring wprim;
     double workingTRCGamma;
     double workingTRCSlope;
 

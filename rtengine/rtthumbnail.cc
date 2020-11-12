@@ -1513,10 +1513,25 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
                 illum = 7; 
             }
                 //printf("IMP gam=%f slo=%f\n", gamtone, slotone);
+            int prim = 0;
+            if(params.icm.wprim == "def"){
+                prim = 0; 
+            } else if(params.icm.wprim == "srgb"){
+                prim = 1; 
+            } else if(params.icm.wprim == "adob"){
+                prim = 2; 
+            } else if(params.icm.wprim == "prop"){
+                prim = 3; 
+            } else if(params.icm.wprim == "rec"){
+                prim = 4; 
+            } else if(params.icm.wprim == "aces"){
+                prim = 5; 
+            }
+        Glib::ustring prof = params.icm.workingProfile;
         
         cmsHTRANSFORM dummy = nullptr;
-        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, params.icm.workingProfile, 2.4, 12.92310, 0, dummy, true, false, false);
-        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, params.icm.workingProfile, gamtone, slotone, illum, dummy, false, true, true);
+        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, 0, dummy, true, false, false);
+        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
 
         ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
     }

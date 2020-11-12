@@ -80,11 +80,14 @@ private:
     rtengine::ProcEvent EvICMslop;
     rtengine::ProcEvent EvICMtrcinMethod;
     rtengine::ProcEvent EvICMwillMethod;
+    rtengine::ProcEvent EvICMwprimMethod;
 
     Gtk::VBox* iVBox;
     Gtk::HBox* wTRCHBox;
     Gtk::HBox* willuBox;
     Gtk::Label* willulab;
+    Gtk::HBox* wprimBox;
+    Gtk::Label* wprimlab;
 
     Gtk::CheckButton* obpc;
     Gtk::RadioButton* inone;
@@ -106,6 +109,8 @@ private:
     sigc::connection wtrcconn;
     MyComboBoxText* will;
     sigc::connection willconn;
+    MyComboBoxText* wprim;
+    sigc::connection wprimconn;
 
     MyComboBoxText* oProfNames;
     sigc::connection oprofnamesconn;
@@ -136,6 +141,7 @@ public:
     void wpChanged();
     void wtrcinChanged();
     void willChanged();
+    void wprimChanged();
     void opChanged();
     void oiChanged(int n);
     void oBPCChanged();

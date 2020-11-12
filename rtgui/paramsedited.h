@@ -1028,6 +1028,7 @@ struct ColorManagementParamsEdited {
     bool workingTRCGamma;
     bool workingTRCSlope;
     bool will;
+    bool wprim;
 
     bool outputProfile;
     bool outputIntent;
