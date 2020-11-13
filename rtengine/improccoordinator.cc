@@ -1493,12 +1493,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             if (params->icm.workingTRC != "none") {
                 int GW = nprevl->W;
                 int GH = nprevl->H;
-                const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
+                Imagefloat *tmpImage1 = nullptr;
+                tmpImage1 = new Imagefloat(GW, GH);
 
                 ipf.lab2rgb(*nprevl, *tmpImage1, params->icm.workingProfile);
 
                 const float gamtone = params->icm.workingTRCGamma;
                 const float slotone = params->icm.workingTRCSlope;
+          //      printf("ga=%f slo=%f\n", gamtone, slotone);
                 int illum = 0;
                 if(params->icm.will == "def"){
                     illum = 0; 
@@ -1531,15 +1533,17 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     prim = 4; 
                 } else if(params->icm.wprim == "aces"){
                     prim = 5; 
+                } else if(params->icm.wprim == "wid"){
+                    prim = 6; 
                 }
                 Glib::ustring prof = params->icm.workingProfile;
                 cmsHTRANSFORM dummy = nullptr;
-                ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, 0, dummy, true, false, false);
-                ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
+                ipf.workingtrc(tmpImage1, tmpImage1, GW, GH, -5, prof, 2.4, 12.92310, 0, 0, dummy, true, false, false);
+                ipf.workingtrc(tmpImage1, tmpImage1, GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
 
                 ipf.rgb2lab(*tmpImage1, *nprevl, params->icm.workingProfile);
-            }
-
+                delete tmpImage1;
+      }
 
             if (params->colorappearance.enabled) {
                 // L histo  and Chroma histo for ciecam

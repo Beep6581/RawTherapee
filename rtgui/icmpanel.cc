@@ -255,9 +255,9 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprim->append(M("TP_ICM_WORKING_PRIM_PROP"));
     wprim->append(M("TP_ICM_WORKING_PRIM_REC"));
     wprim->append(M("TP_ICM_WORKING_PRIM_ACE"));
+    wprim->append(M("TP_ICM_WORKING_PRIM_WID"));
     wprim->set_active(0);
 
-    wprim->set_active(0);
     wprim->set_tooltip_text(M("TP_ICM_ILLUMPRIM_TOOLTIP"));
 
 
@@ -628,6 +628,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprim->set_active(4);
     } else if (pp->icm.wprim == "aces") {
         wprim->set_active(5);
+    } else if (pp->icm.wprim == "wid") {
+        wprim->set_active(6);
     }
     wtrcinChanged();
     willChanged();
@@ -758,7 +760,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wSlope->set_sensitive(false);
     } else if(wTRC->get_active_row_number() == 6) {
         wGamma->setValue(1.);
-        wSlope->setValue(0.);
+        wSlope->setValue(1.);
         will->set_sensitive(true);
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
@@ -857,6 +859,8 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pp->icm.wprim = "rec";
     } else if (wprim->get_active_row_number() == 5) {
         pp->icm.wprim = "aces";
+    } else if (wprim->get_active_row_number() == 6) {
+        pp->icm.wprim = "wid";
     }
 
     pp->icm.toneCurve = ckbToneCurve->get_active();
@@ -989,7 +993,7 @@ void ICMPanel::wtrcinChanged()
         wSlope->set_sensitive(false);
     } else if(wTRC->get_active_row_number() == 6) {
         wGamma->setValue(1.0);
-        wSlope->setValue(0.);
+        wSlope->setValue(1.);
         will->set_sensitive(true);
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);

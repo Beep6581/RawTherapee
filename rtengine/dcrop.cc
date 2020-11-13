@@ -1415,15 +1415,18 @@ void Crop::update(int todo)
         }
         
         parent->ipf.softLight(labnCrop, params.softlight);
+
         if (params.icm.workingTRC != "none") {
             int GW = labnCrop->W;
             int GH = labnCrop->H;
-            const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
+            Imagefloat *tmpImage1 = nullptr;
+            tmpImage1 = new Imagefloat(GW, GH);
 
             parent->ipf.lab2rgb(*labnCrop, *tmpImage1, params.icm.workingProfile);
 
-            const float gamtone = params.icm.workingTRCGamma;
-            const float slotone = params.icm.workingTRCSlope;
+            const float gamtone = parent->params->icm.workingTRCGamma;
+            const float slotone = parent->params->icm.workingTRCSlope;
+            //printf("Dcrop gam=%f slo=%f\n",gamtone, slotone); 
             int illum = 0;
             if(params.icm.will == "def"){
                 illum = 0; 
@@ -1456,17 +1459,21 @@ void Crop::update(int todo)
                 prim = 4; 
             } else if(params.icm.wprim == "aces"){
                 prim = 5; 
+            } else if(params.icm.wprim == "wid"){
+                prim = 6; 
             }
 
            // printf("DCROP gam=%f slo=%f\n", gamtone, slotone);
             Glib::ustring prof = params.icm.workingProfile;
 
             cmsHTRANSFORM dummy = nullptr;
-            parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, 0, dummy, true, false, false);
-            parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
+            parent->ipf.workingtrc(tmpImage1, tmpImage1, GW, GH, -5, prof, 2.4, 12.92310, 0, 0, dummy, true, false, false);
+            parent->ipf.workingtrc(tmpImage1, tmpImage1, GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
 
             parent->ipf.rgb2lab(*tmpImage1, *labnCrop, params.icm.workingProfile);
+            delete tmpImage1;
         }
+        
 
         if (params.colorappearance.enabled) {
             float fnum = parent->imgsrc->getMetaData()->getFNumber();          // F number

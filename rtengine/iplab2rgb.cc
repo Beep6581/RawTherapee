@@ -415,6 +415,8 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             profile = "Rec2020";
         } else if(prim == 5) {
             profile = "ACESp1";
+        } else if(prim == 6) {
+            profile = "WideGamut";
         }
     }
     
@@ -592,13 +594,19 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         
         cmsToneCurve* GammaTRC[3];
         GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, five, gammaParams);//5 = more smoother than 4
+        cmsHPROFILE oprofdef = nullptr;
+       // cmsSetProfileVersion(oprofdef, 4.3);
 
         const cmsCIExyYTRIPLE Primaries = {
             {p[0], p[1], 1.0}, // red
             {p[2], p[3], 1.0}, // green
             {p[4], p[5], 1.0}  // blue
         };
-        const cmsHPROFILE oprofdef = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
+        oprofdef = cmsCreateRGBProfile(&xyD, &Primaries, GammaTRC);
+        cmsWriteTag(oprofdef, cmsSigRedTRCTag, GammaTRC[0]);
+        cmsWriteTag(oprofdef, cmsSigGreenTRCTag, GammaTRC[1]);
+        cmsWriteTag(oprofdef, cmsSigBlueTRCTag, GammaTRC[2]);
+
         cmsFreeToneCurve(GammaTRC[0]);
 
         if (oprofdef) {

@@ -1436,7 +1436,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     }
 
     ipf.softLight(labView, params.softlight);
-
+/*
     if (params.icm.workingTRC != "none") {
         int GW = labView->W;
         int GH = labView->H;
@@ -1478,6 +1478,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
                 prim = 4; 
             } else if(params.icm.wprim == "aces"){
                 prim = 5; 
+            } else if(params.icm.wprim == "wid"){
+                prim = 6; 
             }
         Glib::ustring prof = params.icm.workingProfile;
         
@@ -1487,7 +1489,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
         ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
     }
-
+*/
 
 
     if (params.colorappearance.enabled) {
