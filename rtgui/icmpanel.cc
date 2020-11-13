@@ -243,7 +243,6 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
 
     wprimBox = Gtk::manage(new Gtk::HBox());
-//    Gtk::Label* willulab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_ILLU")));
     wprimlab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_PRIM")));
 
     wprimBox->pack_start(*wprimlab, Gtk::PACK_SHRINK);
@@ -264,6 +263,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
 
     wGamma->setAdjusterListener(this);
+    wSlope->setLogScale(16, 0);
     wSlope->setAdjusterListener(this);
 
     wGamma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
