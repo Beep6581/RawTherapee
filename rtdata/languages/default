@@ -2029,7 +2029,7 @@ TP_COLORAPP_MODEL;WP Model
 TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02 is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp+green + CAT02 + [output]:</b> temp and green are selected by the user, the output device's white balance is set in Viewing Conditions.
 TP_COLORAPP_NEUTRAL;Reset
 TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
-TP_COLORAPP_PRESETCAT02;Preset cat02 automatic
+TP_COLORAPP_PRESETCAT02;Preset cat02 automatic - Symmetric mode
 TP_COLORAPP_PRESETCAT02_TIP;Set combobox, sliders, temp, green so that Cat02 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change Cat02 adaptation Viewing conditions if needed.\nYou can change Temperature and Tint Viewing conditions if needed, and other settings if needed. 
 TP_COLORAPP_RSTPRO;Red & skin-tones protection
 TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
@@ -2311,7 +2311,7 @@ TP_ICM_BPC;Black Point Compensation
 TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only available if a dual-illuminant DCP with interpolation support is selected.
-TP_ICM_ILLUMPRIM_TOOLTIP;Choose the illuminant closest to the shooting conditions.\nYou can enable Ciecam02 - in symetric mode - and in 'Scene conditions' set "Illuminant" to a value close to that in 'Abstract Profile'
+TP_ICM_ILLUMPRIM_TOOLTIP;Choose the illuminant closest to the shooting conditions.\nEnable Ciecam02 in symmetric mode and set the ‘Illuminant’ in ‘Scene conditions’ to a value close to the value used in the ‘Abstract Profile’
 TP_ICM_INPUTCAMERA;Camera standard
 TP_ICM_INPUTCAMERAICC;Auto-matched camera profile
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
@@ -2336,7 +2336,7 @@ TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile
 TP_ICM_TONECURVE;Tone curve
 TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only available if the selected DCP has a tone curve.
 TP_ICM_TRCFRAME;Abstract Profile
-TP_ICM_TRCFRAME_TOOLTIP;Also call 'synthetic' or 'virtual' profile.\nBased on 'working profile' (provide) and 'destination profile',allows you to change:\n 'Tone response curve' : this TRC modifies the tones of the image.\n 'Illuminant' : allows you to change the profiles primaries to adapt them to the shooting conditions.\n Primaries: allows you to change the destination profile primaries - which allow you to apply custom image effects without modifying the image data used in the processing pipeline.
+TP_ICM_TRCFRAME_TOOLTIP;Also called a ‘synthetic’ or ‘virtual’ profile. It allows you to apply custom image effects without modifying the data used in the processing pipeline\nAllows you to change the:\n ‘Tone response curve’, which modifies the tones of the image.\n ‘Illuminant’ : allows you to change the profile primaries to adapt them to the shooting conditions.\n ‘Destination space (primaries)’: allows you to change the destination profile primaries.\n\nAllows you to apply custom image effects without modifying the image data used in the processing pipeline.
 TP_ICM_WORKINGPROFILE;Working Profile
 TP_ICM_WORKING_TRC;Tone response curve:
 TP_ICM_WORKING_TRC_BT709;BT709 g=2.22 s=4.5
@@ -2348,7 +2348,7 @@ TP_ICM_WORKING_TRC_CUSTOM;Custom
 TP_ICM_WORKING_TRC_GAMMA;Gamma
 TP_ICM_WORKING_TRC_NONE;None
 TP_ICM_WORKING_TRC_SLOPE;Slope
-TP_ICM_TRC_TOOLTIP;Allows you to change the 'Tone response curve' which by default in RT is with a gamma sRGB (g=2.4 s=12.92).\nThis TRC modifies the tones of the image - RGB and Lab values, histogram and output (screen, TIF, JPG) are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of gamma > 1 and slope values, the algorithm ensures continuity between the linear part and the parabolic part.\nThe Output Profile must use a TRC sRGB(default). 
+TP_ICM_TRC_TOOLTIP;Allows you to change the default sRGB ‘Tone response curve’ in RT (g=2.4 s=12.92).\nThis TRC modifies the tones of the image. The RGB and Lab values, histogram and output (screen, TIF, JPG) are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of gamma and slope values >1 and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nThe Output Profile must use an sRGB TRC  (default).
 TP_ICM_WORKING_ILLU;Illuminant
 TP_ICM_WORKING_ILLU_NONE;Default
 TP_ICM_WORKING_ILLU_D41;D41
@@ -2359,7 +2359,7 @@ TP_ICM_WORKING_ILLU_D65;D65
 TP_ICM_WORKING_ILLU_D80;D80
 TP_ICM_WORKING_ILLU_STDA;stdA 2875K
 TP_ICM_WORKING_PRIM;Destination space (primaries)
-TP_ICM_PRIMILLUM_TOOLTIP;You can change an image from its original mode ('working profile') to a different mode ('destination profile'). When you choose a different color mode for an image, you permanently change the color values in the image.\n\nChange 'primaries' is complex and difficult to use. It requires a lot of experimentation.\n it’s capable of making exotic color adjustments but it’s much harder to predict and control.
+TP_ICM_PRIMILLUM_TOOLTIP;You can change an image from its original mode (‘working profile’) to a different mode (‘destination profile’). When you choose a different color mode for an image, you permanently change the color values in the image.\n\nChanging the ‘primaries’ is complex and difficult to use. It requires a lot of experimenting.\n It is capable of making exotic color adjustments but it’s much harder to predict and control.
 TP_ICM_WORKING_PRIM_NONE;Default
 TP_ICM_WORKING_PRIM_SRGB;sRGB
 TP_ICM_WORKING_PRIM_ADOB;Adobe
