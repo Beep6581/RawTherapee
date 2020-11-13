@@ -210,6 +210,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wTRC->append(M("TP_ICM_WORKING_TRC_LIN"));
 
     wTRC->set_active(0);
+    wTRC->set_tooltip_text(M("TP_ICM_TRC_TOOLTIP"));
+
     wFrame->set_tooltip_text(M("TP_ICM_WORKING_TRC_TOOLTIP"));
 
 
@@ -222,7 +224,6 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wSlope->show();
 
     willuBox = Gtk::manage(new Gtk::HBox());
-//    Gtk::Label* willulab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_ILLU")));
     willulab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_ILLU")));
 
     willuBox->pack_start(*willulab, Gtk::PACK_SHRINK);
@@ -258,7 +259,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprim->append(M("TP_ICM_WORKING_PRIM_WID"));
     wprim->set_active(0);
 
-    wprim->set_tooltip_text(M("TP_ICM_ILLUMPRIM_TOOLTIP"));
+    wprim->set_tooltip_text(M("TP_ICM_PRIMILLUM_TOOLTIP"));
 
 
 
