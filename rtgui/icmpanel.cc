@@ -45,11 +45,11 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     EvICMpgrey = m->newEvent(GAMMA, "HISTORY_MSG_ICMPGREY");
     EvICMpblux = m->newEvent(GAMMA, "HISTORY_MSG_ICMPBLUX");
     EvICMpbluy = m->newEvent(GAMMA, "HISTORY_MSG_ICMPBLUY");
-    EvICMgamm = m->newEvent(AUTOEXP, "HISTORY_MSG_ICM_WORKING_GAMMA");
-    EvICMslop = m->newEvent(AUTOEXP, "HISTORY_MSG_ICM_WORKING_SLOPE");
-    EvICMtrcinMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_ICM_WORKING_TRC_METHOD");
-    EvICMwillMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_ICM_WORKING_ILLUM_METHOD");
-    EvICMwprimMethod = m->newEvent(AUTOEXP, "HISTORY_MSG_ICM_WORKING_PRIM_METHOD");
+    EvICMgamm = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WORKING_GAMMA");
+    EvICMslop = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WORKING_SLOPE");
+    EvICMtrcinMethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WORKING_TRC_METHOD");
+    EvICMwillMethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WORKING_ILLUM_METHOD");
+    EvICMwprimMethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WORKING_PRIM_METHOD");
 
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
 

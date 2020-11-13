@@ -1415,51 +1415,6 @@ void Crop::update(int todo)
         }
         
         parent->ipf.softLight(labnCrop, params.softlight);
-
-        if (params.colorappearance.enabled) {
-            float fnum = parent->imgsrc->getMetaData()->getFNumber();          // F number
-            float fiso = parent->imgsrc->getMetaData()->getISOSpeed() ;        // ISO
-            float fspeed = parent->imgsrc->getMetaData()->getShutterSpeed() ;  // Speed
-            double fcomp = parent->imgsrc->getMetaData()->getExpComp();        // Compensation +/-
-            double adap; // Scene's luminosity adaptation factor
-
-            if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) { //if no exif data or wrong
-                adap = 2000.;
-            } else {
-                double E_V = fcomp + log2(double ((fnum * fnum) / fspeed / (fiso / 100.f)));
-                E_V += params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
-                E_V += log2(params.raw.expos);  // exposure raw white point ; log2 ==> linear to EV
-                adap = pow(2., E_V - 3.);  // cd / m2
-                // end calculation adaptation scene luminosity
-            }
-
-            bool execsharp = false;
-
-            if (skip == 1) {
-                execsharp = true;
-            }
-
-            if (!cieCrop) {
-                cieCrop = new CieImage(cropw, croph);
-            }
-
-            float d, dj, yb; // not used after this block
-            parent->ipf.ciecam_02float(cieCrop, float (adap), 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
-                                       dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 0, skip, execsharp, d, dj, yb, 1, parent->sharpMask);
-        } else {
-            // CIECAM is disabled, we free up its image buffer to save some space
-            if (cieCrop) {
-                delete cieCrop;
-            }
-
-            cieCrop = nullptr;
-        }
-    }
-
-    // all pipette buffer processing should be finished now
-    PipetteBuffer::setReady();
-
-    if (todo & (M_AUTOEXP | M_RGBCURVE)) {
         if (params.icm.workingTRC != "none") {
             int GW = labnCrop->W;
             int GH = labnCrop->H;
@@ -1512,7 +1467,50 @@ void Crop::update(int todo)
 
             parent->ipf.rgb2lab(*tmpImage1, *labnCrop, params.icm.workingProfile);
         }
+
+        if (params.colorappearance.enabled) {
+            float fnum = parent->imgsrc->getMetaData()->getFNumber();          // F number
+            float fiso = parent->imgsrc->getMetaData()->getISOSpeed() ;        // ISO
+            float fspeed = parent->imgsrc->getMetaData()->getShutterSpeed() ;  // Speed
+            double fcomp = parent->imgsrc->getMetaData()->getExpComp();        // Compensation +/-
+            double adap; // Scene's luminosity adaptation factor
+
+            if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f) { //if no exif data or wrong
+                adap = 2000.;
+            } else {
+                double E_V = fcomp + log2(double ((fnum * fnum) / fspeed / (fiso / 100.f)));
+                E_V += params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
+                E_V += log2(params.raw.expos);  // exposure raw white point ; log2 ==> linear to EV
+                adap = pow(2., E_V - 3.);  // cd / m2
+                // end calculation adaptation scene luminosity
+            }
+
+            bool execsharp = false;
+
+            if (skip == 1) {
+                execsharp = true;
+            }
+
+            if (!cieCrop) {
+                cieCrop = new CieImage(cropw, croph);
+            }
+
+            float d, dj, yb; // not used after this block
+            parent->ipf.ciecam_02float(cieCrop, float (adap), 1, 2, labnCrop, &params, parent->customColCurve1, parent->customColCurve2, parent->customColCurve3,
+                                       dummy, dummy, parent->CAMBrightCurveJ, parent->CAMBrightCurveQ, parent->CAMMean, 0, skip, execsharp, d, dj, yb, 1, parent->sharpMask);
+        } else {
+            // CIECAM is disabled, we free up its image buffer to save some space
+            if (cieCrop) {
+                delete cieCrop;
+            }
+
+            cieCrop = nullptr;
+        }
     }
+
+    // all pipette buffer processing should be finished now
+    PipetteBuffer::setReady();
+
 
 
     // Computing the preview image, i.e. converting from lab->Monitor color space (soft-proofing disabled) or lab->Output profile->Monitor color space (soft-proofing enabled)

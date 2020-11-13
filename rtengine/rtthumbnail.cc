@@ -1437,54 +1437,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     ipf.softLight(labView, params.softlight);
 
-    if (params.colorappearance.enabled) {
-        CurveFactory::curveLightBrightColor (
-            params.colorappearance.curve,
-            params.colorappearance.curve2,
-            params.colorappearance.curve3,
-            hist16, dummy,
-            dummy, dummy,
-            customColCurve1,
-            customColCurve2,
-            customColCurve3,
-            16);
-
-        bool execsharp = false;
-        float d, dj, yb;
-        float fnum = fnumber;// F number
-        float fiso = iso;// ISO
-        float fspeed = shutter;//speed
-        float adap;
-
-        if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f)
-            //if no exif data or wrong
-        {
-            adap = 2000.f;
-        } else {
-            float E_V = fcomp + log2 ((fnum * fnum) / fspeed / (fiso / 100.f));
-            float expo2 = params.toneCurve.expcomp; // exposure compensation in tonecurve ==> direct EV
-            E_V += expo2;
-            float expo1;//exposure raw white point
-            expo1 = log2 (params.raw.expos); //log2 ==>linear to EV
-            E_V += expo1;
-            adap = powf (2.f, E_V - 3.f); //cd / m2
-            //end calculation adaptation scene luminosity
-        }
-
-        LUTf CAMBrightCurveJ;
-        LUTf CAMBrightCurveQ;
-        float CAMMean;
-        int sk;
-        sk = 16;
-        int rtt = 0;
-        CieImage* cieView = new CieImage (fw, fh);
-        CAMMean = NAN;
-        CAMBrightCurveJ.dirty = true;
-        CAMBrightCurveQ.dirty = true;
-        ipf.ciecam_02float (cieView, adap, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, sk, execsharp, d, dj, yb, rtt);
-        delete cieView;
-    }
-
     if (params.icm.workingTRC != "none") {
         int GW = labView->W;
         int GH = labView->H;
@@ -1535,6 +1487,57 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
         ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
     }
+
+
+
+    if (params.colorappearance.enabled) {
+        CurveFactory::curveLightBrightColor (
+            params.colorappearance.curve,
+            params.colorappearance.curve2,
+            params.colorappearance.curve3,
+            hist16, dummy,
+            dummy, dummy,
+            customColCurve1,
+            customColCurve2,
+            customColCurve3,
+            16);
+
+        bool execsharp = false;
+        float d, dj, yb;
+        float fnum = fnumber;// F number
+        float fiso = iso;// ISO
+        float fspeed = shutter;//speed
+        float adap;
+
+        if (fnum < 0.3f || fiso < 5.f || fspeed < 0.00001f)
+            //if no exif data or wrong
+        {
+            adap = 2000.f;
+        } else {
+            float E_V = fcomp + log2 ((fnum * fnum) / fspeed / (fiso / 100.f));
+            float expo2 = params.toneCurve.expcomp; // exposure compensation in tonecurve ==> direct EV
+            E_V += expo2;
+            float expo1;//exposure raw white point
+            expo1 = log2 (params.raw.expos); //log2 ==>linear to EV
+            E_V += expo1;
+            adap = powf (2.f, E_V - 3.f); //cd / m2
+            //end calculation adaptation scene luminosity
+        }
+
+        LUTf CAMBrightCurveJ;
+        LUTf CAMBrightCurveQ;
+        float CAMMean;
+        int sk;
+        sk = 16;
+        int rtt = 0;
+        CieImage* cieView = new CieImage (fw, fh);
+        CAMMean = NAN;
+        CAMBrightCurveJ.dirty = true;
+        CAMBrightCurveQ.dirty = true;
+        ipf.ciecam_02float (cieView, adap, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, sk, execsharp, d, dj, yb, rtt);
+        delete cieView;
+    }
+
 
     // color processing
     //ipf.colorCurve (labView, labView);
