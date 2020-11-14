@@ -295,8 +295,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     greFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_GREFRAME")));
     greFrame->set_label_align(0.025, 0.5);
     Gtk::VBox *greVBox = Gtk::manage(new Gtk::VBox());
-    greVBox->pack_start(*greBox, Gtk::PACK_EXPAND_WIDGET);
-    greFrame->add(*greVBox);
+    redVBox->pack_start(*greBox, Gtk::PACK_EXPAND_WIDGET);
+    redFrame->add(*greVBox);
 
     bluBox = Gtk::manage(new Gtk::HBox());
     bluBox->pack_start(*blux, Gtk::PACK_SHRINK);
@@ -304,8 +304,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     bluFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_BLUFRAME")));
     bluFrame->set_label_align(0.025, 0.5);
     Gtk::VBox *bluVBox = Gtk::manage(new Gtk::VBox());
-    bluVBox->pack_start(*bluBox, Gtk::PACK_EXPAND_WIDGET);
-    bluFrame->add(*bluVBox);
+    redVBox->pack_start(*bluBox, Gtk::PACK_EXPAND_WIDGET);
+    redFrame->add(*bluVBox);
 
     wGamma->setAdjusterListener(this);
     wSlope->setLogScale(16, 0);
@@ -326,8 +326,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     pack_start(*wFrame, Gtk::PACK_EXPAND_WIDGET);
     pack_start(*trcFrame, Gtk::PACK_EXPAND_WIDGET);
     pack_start(*redFrame, Gtk::PACK_EXPAND_WIDGET);
-    pack_start(*greFrame, Gtk::PACK_EXPAND_WIDGET);
-    pack_start(*bluFrame, Gtk::PACK_EXPAND_WIDGET);
+  //  pack_start(*greFrame, Gtk::PACK_EXPAND_WIDGET);
+   // pack_start(*bluFrame, Gtk::PACK_EXPAND_WIDGET);
 
 
     // ---------------------------- Output profile

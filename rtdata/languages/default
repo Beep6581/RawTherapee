@@ -2337,7 +2337,7 @@ TP_ICM_NOICM;No ICM: sRGB Output
 TP_ICM_OUTPUTPROFILE;Output Profile
 TP_ICM_OUTPUTPROFILE_TOOLTIP;By default all RTv4 or RTv2 profiles are with TRC - sRGB: g=2.4 s=12.92\n\nWith 'ICC Profile Creator' you can generate v4 or v2 profiles with the following choices;\n-Primaries: Aces AP0, Aces AP1, AdobeRGB, Prophoto, Rec2020, sRGB, Widegamut, BestRGB, BetaRGB, BruceRGB, Custom\n-TRC: BT709, sRGB, linear, standard g=2.2, standard g=1.8, Custom\n-Illuminant: D41, D50, D55, D60, D65, D80, stdA 2856K
 TP_ICM_PROFILEINTENT;Rendering Intent
-TP_ICM_REDFRAME;Red Primaries
+TP_ICM_REDFRAME;Custom Primaries
 TP_ICM_SAVEREFERENCE;Save Reference Image
 TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
