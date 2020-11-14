@@ -46,8 +46,8 @@ protected:
     Gtk::Frame* dcpFrame;
     Gtk::Frame* coipFrame;
     Gtk::Frame* redFrame;
-    Gtk::Frame* greFrame;
-    Gtk::Frame* bluFrame;
+//    Gtk::Frame* greFrame;
+//    Gtk::Frame* bluFrame;
 
     Adjuster* wGamma;
     Adjuster* wSlope;

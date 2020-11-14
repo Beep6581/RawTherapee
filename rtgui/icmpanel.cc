@@ -292,8 +292,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     greBox = Gtk::manage(new Gtk::HBox());
     greBox->pack_start(*grex, Gtk::PACK_SHRINK);
     greBox->pack_start(*grey, Gtk::PACK_SHRINK);
-    greFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_GREFRAME")));
-    greFrame->set_label_align(0.025, 0.5);
+//    greFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_GREFRAME")));
+//    greFrame->set_label_align(0.025, 0.5);
     Gtk::VBox *greVBox = Gtk::manage(new Gtk::VBox());
     redVBox->pack_start(*greBox, Gtk::PACK_EXPAND_WIDGET);
     redFrame->add(*greVBox);
@@ -301,8 +301,8 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     bluBox = Gtk::manage(new Gtk::HBox());
     bluBox->pack_start(*blux, Gtk::PACK_SHRINK);
     bluBox->pack_start(*bluy, Gtk::PACK_SHRINK);
-    bluFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_BLUFRAME")));
-    bluFrame->set_label_align(0.025, 0.5);
+//    bluFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_BLUFRAME")));
+//    bluFrame->set_label_align(0.025, 0.5);
     Gtk::VBox *bluVBox = Gtk::manage(new Gtk::VBox());
     redVBox->pack_start(*bluBox, Gtk::PACK_EXPAND_WIDGET);
     redFrame->add(*bluVBox);
@@ -778,8 +778,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprim->set_sensitive(false);
         wprimlab->set_sensitive(false);
         redFrame->hide();
-        greFrame->hide();
-        bluFrame->hide();
+      //  greFrame->hide();
+      //  bluFrame->hide();
 
     } else if (pp->icm.workingTRC == "Custom") {
         will->set_sensitive(true);
@@ -788,12 +788,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprimlab->set_sensitive(true);
         if (wprim->get_active_row_number() == 7) {
             redFrame->show();
-            bluFrame->show();
-            greFrame->show();
+        //    bluFrame->show();
+        //    greFrame->show();
         } else {
             redFrame->hide();
-            bluFrame->hide();
-            greFrame->hide();
+        //    bluFrame->hide();
+        //    greFrame->hide();
         }
 
         if(pp->icm.workingTRCGamma <= 1.) {
@@ -814,12 +814,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wSlope->set_sensitive(false);
         if (wprim->get_active_row_number() == 7) {
             redFrame->show();
-            bluFrame->show();
-            greFrame->show();
+         //   bluFrame->show();
+         //   greFrame->show();
         } else {
             redFrame->hide();
-            bluFrame->hide();
-            greFrame->hide();
+         //   bluFrame->hide();
+          //  greFrame->hide();
         }
         
     } else if(wTRC->get_active_row_number() == 3) {
@@ -833,12 +833,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wSlope->set_sensitive(false);
         if (wprim->get_active_row_number() == 7) {
             redFrame->show();
-            bluFrame->show();
-            greFrame->show();
+         //   bluFrame->show();
+         //   greFrame->show();
         } else {
             redFrame->hide();
-            bluFrame->hide();
-            greFrame->hide();
+         //   bluFrame->hide();
+         //   greFrame->hide();
         }
     } else if(wTRC->get_active_row_number() == 4) {
         wGamma->setValue(2.2);
@@ -852,12 +852,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wSlope->set_sensitive(false);
         if (wprim->get_active_row_number() == 7) {
             redFrame->show();
-            bluFrame->show();
-            greFrame->show();
+          //  bluFrame->show();
+          //  greFrame->show();
         } else {
             redFrame->hide();
-            bluFrame->hide();
-            greFrame->hide();
+          //  bluFrame->hide();
+          //  greFrame->hide();
         }
     } else if(wTRC->get_active_row_number() == 5) {
         wGamma->setValue(1.8);
@@ -868,12 +868,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprimlab->set_sensitive(true);
         if (wprim->get_active_row_number() == 7) {
             redFrame->show();
-            bluFrame->show();
-            greFrame->show();
+          //  bluFrame->show();
+          //  greFrame->show();
         } else {
             redFrame->hide();
-            bluFrame->hide();
-            greFrame->hide();
+         //   bluFrame->hide();
+         //   greFrame->hide();
         }
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
@@ -888,12 +888,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wSlope->set_sensitive(false);
         if (wprim->get_active_row_number() == 7) {
             redFrame->show();
-            bluFrame->show();
-            greFrame->show();
+          //  bluFrame->show();
+          //  greFrame->show();
         } else {
             redFrame->hide();
-            bluFrame->hide();
-            greFrame->hide();
+          //  bluFrame->hide();
+          //  greFrame->hide();
         }
     
     }
@@ -1111,8 +1111,8 @@ void ICMPanel::wtrcinChanged()
         wprim->set_sensitive(false);
         wprimlab->set_sensitive(false);
         redFrame->hide();
-        bluFrame->hide();
-        greFrame->hide();
+      //  bluFrame->hide();
+      //  greFrame->hide();
         
     } else if(wTRC->get_active_row_number() == 1) {
         will->set_sensitive(true);
@@ -1121,12 +1121,12 @@ void ICMPanel::wtrcinChanged()
         willulab->set_sensitive(true);
         if (wprim->get_active_row_number() == 7) {
             redFrame->show();
-            bluFrame->show();
-            greFrame->show();
+          //  bluFrame->show();
+          //  greFrame->show();
         } else {
             redFrame->hide();
-            bluFrame->hide();
-            greFrame->hide();
+          //  bluFrame->hide();
+          //  greFrame->hide();
         }
 
         if(wGamma->getValue() <= 1.) {
@@ -1147,12 +1147,12 @@ void ICMPanel::wtrcinChanged()
         wSlope->set_sensitive(false);
         if (wprim->get_active_row_number() == 7) {
             redFrame->show();
-            bluFrame->show();
-            greFrame->show();
+           // bluFrame->show();
+           // greFrame->show();
         } else {
             redFrame->hide();
-            bluFrame->hide();
-            greFrame->hide();
+           // bluFrame->hide();
+           // greFrame->hide();
         }
         
     } else if(wTRC->get_active_row_number() == 3) {
@@ -1164,12 +1164,12 @@ void ICMPanel::wtrcinChanged()
         wSlope->set_sensitive(false);
         if (wprim->get_active_row_number() == 7) {
             redFrame->show();
-            bluFrame->show();
-            greFrame->show();
+          //  bluFrame->show();
+          //  greFrame->show();
         } else {
             redFrame->hide();
-            bluFrame->hide();
-            greFrame->hide();
+          //  bluFrame->hide();
+          //  greFrame->hide();
         }
     } else if(wTRC->get_active_row_number() == 4) {
         wGamma->setValue(2.2);
@@ -1182,12 +1182,12 @@ void ICMPanel::wtrcinChanged()
         wSlope->set_sensitive(false);
         if (wprim->get_active_row_number() == 7) {
             redFrame->show();
-            bluFrame->show();
-            greFrame->show();
+          //  bluFrame->show();
+          //  greFrame->show();
         } else {
             redFrame->hide();
-            bluFrame->hide();
-            greFrame->hide();
+         //   bluFrame->hide();
+         //   greFrame->hide();
         }
     } else if(wTRC->get_active_row_number() == 5) {
         wGamma->setValue(1.8);
@@ -1200,12 +1200,12 @@ void ICMPanel::wtrcinChanged()
         wSlope->set_sensitive(false);
         if (wprim->get_active_row_number() == 7) {
             redFrame->show();
-            bluFrame->show();
-            greFrame->show();
+         //   bluFrame->show();
+         //   greFrame->show();
         } else {
             redFrame->hide();
-            bluFrame->hide();
-            greFrame->hide();
+          //  bluFrame->hide();
+          //  greFrame->hide();
         }
     } else if(wTRC->get_active_row_number() == 6) {
         wGamma->setValue(1.0);
@@ -1218,12 +1218,12 @@ void ICMPanel::wtrcinChanged()
         wSlope->set_sensitive(false);
         if (wprim->get_active_row_number() == 7) {
             redFrame->show();
-            bluFrame->show();
-            greFrame->show();
+         //   bluFrame->show();
+         //   greFrame->show();
         } else {
             redFrame->hide();
-            bluFrame->hide();
-            greFrame->hide();
+         //   bluFrame->hide();
+         //   greFrame->hide();
         }
     }
 
@@ -1245,12 +1245,12 @@ void ICMPanel::wprimChanged()
 {
     if (wprim->get_active_row_number() == 7) {
         redFrame->show();
-        bluFrame->show();
-        greFrame->show();
+      //  bluFrame->show();
+      //  greFrame->show();
     } else {
         redFrame->hide();
-        bluFrame->hide();
-        greFrame->hide();
+      //  bluFrame->hide();
+      //  greFrame->hide();
     }
 
     if (listener) {

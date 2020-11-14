@@ -1563,6 +1563,8 @@ private:
                 prim = 5; 
             } else if(params.icm.wprim == "wid"){
                 prim = 6; 
+            } else if(params.icm.wprim == "cus"){
+                prim = 7; 
             }
             Glib::ustring prof = params.icm.workingProfile;
 

@@ -2345,7 +2345,7 @@ TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile
 TP_ICM_TONECURVE;Tone curve
 TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only available if the selected DCP has a tone curve.
 TP_ICM_TRCFRAME;Abstract Profile
-TP_ICM_TRCFRAME_TOOLTIP;Also called a ‘synthetic’ or ‘virtual’ profile. It allows you to apply custom image effects without modifying the data used in the processing pipeline\nAllows you to change the:\n ‘Tone response curve’, which modifies the tones of the image.\n ‘Illuminant’ : allows you to change the profile primaries to adapt them to the shooting conditions.\n ‘Destination space (primaries)’: allows you to change the destination profile primaries.\n\nAllows you to apply custom image effects without modifying the image data used in the processing pipeline.
+TP_ICM_TRCFRAME_TOOLTIP;Also known as synthetic or virtual profile which are applied at the end of the processing pipeline (prior to ciecam) and allow you to create custom image effects.\nAllows you to change the:\n ‘Tone response curve’, which modifies the tones of the image.\n ‘Illuminant’ : allows you to change the profile primaries to adapt them to the shooting conditions.\n ‘Destination space (primaries)’: allows you to change the destination profile primaries.\n\nAllows you to apply custom image effects.
 TP_ICM_WORKINGPROFILE;Working Profile
 TP_ICM_WORKING_TRC;Tone response curve:
 TP_ICM_WORKING_TRC_BT709;BT709 g=2.22 s=4.5

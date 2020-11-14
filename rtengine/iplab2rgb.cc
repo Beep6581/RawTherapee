@@ -403,7 +403,14 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         }
         return;
     }
-    
+
+    float redxx = params->icm.redx;
+    float redyy = params->icm.redy;
+    float grexx = params->icm.grex;
+    float greyy = params->icm.grey;
+    float bluxx = params->icm.blux;
+    float bluyy = params->icm.bluy;
+
     if(prim != 0) {
         if(prim == 1) {
             profile = "sRGB";
@@ -417,6 +424,8 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             profile = "ACESp1";
         } else if(prim == 6) {
             profile = "WideGamut";
+        } else if(prim == 7) {
+            profile = "Custom";
         }
     }
     
@@ -527,6 +536,13 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = 0.8404;
             p[4] = 0.0366;
             p[5] = 0.0001;
+        } else if (profile == "Custom") {
+            p[0] = redxx;   
+            p[1] = redyy;
+            p[2] = grexx;
+            p[3] = greyy;
+            p[4] = bluxx;
+            p[5] = bluyy;
         } else {
             p[0] = 0.7347;    //default primaries always unused
             p[1] = 0.2653;
