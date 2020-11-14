@@ -1642,6 +1642,12 @@ struct ColorManagementParams {
     Glib::ustring wprim;
     double workingTRCGamma;
     double workingTRCSlope;
+    double redx;
+    double redy;
+    double grex;
+    double grey;
+    double blux;
+    double bluy;
 
     Glib::ustring outputProfile;
     RenderingIntent outputIntent;

@@ -50,6 +50,12 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     EvICMtrcinMethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WORKING_TRC_METHOD");
     EvICMwillMethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WORKING_ILLUM_METHOD");
     EvICMwprimMethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WORKING_PRIM_METHOD");
+    EvICMredx = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_REDX");
+    EvICMredy = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_REDY");
+    EvICMgrex = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_GREX");
+    EvICMgrey = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_GREY");
+    EvICMblux = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_BLUX");
+    EvICMbluy = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_BLUY");
 
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
 
@@ -256,15 +262,60 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprim->append(M("TP_ICM_WORKING_PRIM_REC"));
     wprim->append(M("TP_ICM_WORKING_PRIM_ACE"));
     wprim->append(M("TP_ICM_WORKING_PRIM_WID"));
+    wprim->append(M("TP_ICM_WORKING_PRIM_CUS"));
     wprim->set_active(0);
 
     wprim->set_tooltip_text(M("TP_ICM_PRIMILLUM_TOOLTIP"));
 
+    redx = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_REDX"), 0.6300, 0.7350, 0.0001, 0.6400/*, gamuts0, gamutl0*/));
+    setExpandAlignProperties(redx, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    redy = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_REDY"), 0.2650, 0.3350, 0.0001, 0.3300/*, gamutl1, gamuts1*/));
+    setExpandAlignProperties(redy, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    grex = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_GREX"), 0.0000, 0.3100, 0.0001, 0.3000/*, gamutl2, gamuts2*/));
+    setExpandAlignProperties(grex, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    grey = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_GREY"), 0.5900, 1.0000, 0.0001, 0.6000/*, gamuts3, gamutl3*/));
+    setExpandAlignProperties(grey, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    blux = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_BLUX"), 0.0001, 0.1600, 0.0001, 0.1500/*, gamutl4, gamuts4*/));
+    setExpandAlignProperties(blux, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+    bluy = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_BLUY"), -0.0800, 0.0700, 0.0001, 0.060/*, gamutl5, gamuts5*/));
+    setExpandAlignProperties(bluy, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
+    redBox = Gtk::manage(new Gtk::HBox());
+    redBox->pack_start(*redx, Gtk::PACK_SHRINK);
+    redBox->pack_start(*redy, Gtk::PACK_SHRINK);
+    redFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_REDFRAME")));
+    redFrame->set_label_align(0.025, 0.5);
+    Gtk::VBox *redVBox = Gtk::manage(new Gtk::VBox());
+    redVBox->pack_start(*redBox, Gtk::PACK_EXPAND_WIDGET);
+    redFrame->add(*redVBox);
+
+    greBox = Gtk::manage(new Gtk::HBox());
+    greBox->pack_start(*grex, Gtk::PACK_SHRINK);
+    greBox->pack_start(*grey, Gtk::PACK_SHRINK);
+    greFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_GREFRAME")));
+    greFrame->set_label_align(0.025, 0.5);
+    Gtk::VBox *greVBox = Gtk::manage(new Gtk::VBox());
+    greVBox->pack_start(*greBox, Gtk::PACK_EXPAND_WIDGET);
+    greFrame->add(*greVBox);
+
+    bluBox = Gtk::manage(new Gtk::HBox());
+    bluBox->pack_start(*blux, Gtk::PACK_SHRINK);
+    bluBox->pack_start(*bluy, Gtk::PACK_SHRINK);
+    bluFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_BLUFRAME")));
+    bluFrame->set_label_align(0.025, 0.5);
+    Gtk::VBox *bluVBox = Gtk::manage(new Gtk::VBox());
+    bluVBox->pack_start(*bluBox, Gtk::PACK_EXPAND_WIDGET);
+    bluFrame->add(*bluVBox);
 
     wGamma->setAdjusterListener(this);
     wSlope->setLogScale(16, 0);
     wSlope->setAdjusterListener(this);
+    redx->setAdjusterListener(this);
+    redy->setAdjusterListener(this);
+    grex->setAdjusterListener(this);
+    grey->setAdjusterListener(this);
+    blux->setAdjusterListener(this);
+    bluy->setAdjusterListener(this);
 
     wGamma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
@@ -274,6 +325,9 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
     pack_start(*wFrame, Gtk::PACK_EXPAND_WIDGET);
     pack_start(*trcFrame, Gtk::PACK_EXPAND_WIDGET);
+    pack_start(*redFrame, Gtk::PACK_EXPAND_WIDGET);
+    pack_start(*greFrame, Gtk::PACK_EXPAND_WIDGET);
+    pack_start(*bluFrame, Gtk::PACK_EXPAND_WIDGET);
 
 
     // ---------------------------- Output profile
@@ -631,6 +685,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprim->set_active(5);
     } else if (pp->icm.wprim == "wid") {
         wprim->set_active(6);
+    } else if (pp->icm.wprim == "cus") {
+        wprim->set_active(7);
     }
     wtrcinChanged();
     willChanged();
@@ -660,6 +716,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     wGamma->setValue(pp->icm.workingTRCGamma);
     wSlope->setValue(pp->icm.workingTRCSlope);
+    redx->setValue(pp->icm.redx);
+    redy->setValue(pp->icm.redy);
+    grex->setValue(pp->icm.grex);
+    grey->setValue(pp->icm.grey);
+    blux->setValue(pp->icm.blux);
+    bluy->setValue(pp->icm.bluy);
 
     if (pedited) {
         iunchanged->set_active(!pedited->icm.inputProfile);
@@ -699,6 +761,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
         wGamma->setEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
         wSlope->setEditedState(pedited->icm.workingTRCSlope  ? Edited : UnEdited);
+        redx->setEditedState(pedited->icm.redx  ? Edited : UnEdited);
+        redy->setEditedState(pedited->icm.redy  ? Edited : UnEdited);
+        grex->setEditedState(pedited->icm.grex  ? Edited : UnEdited);
+        grey->setEditedState(pedited->icm.grey  ? Edited : UnEdited);
+        blux->setEditedState(pedited->icm.blux  ? Edited : UnEdited);
+        bluy->setEditedState(pedited->icm.bluy  ? Edited : UnEdited);
 
     }
 
@@ -709,12 +777,25 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         willulab->set_sensitive(false);
         wprim->set_sensitive(false);
         wprimlab->set_sensitive(false);
+        redFrame->hide();
+        greFrame->hide();
+        bluFrame->hide();
 
     } else if (pp->icm.workingTRC == "Custom") {
         will->set_sensitive(true);
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
         wprimlab->set_sensitive(true);
+        if (wprim->get_active_row_number() == 7) {
+            redFrame->show();
+            bluFrame->show();
+            greFrame->show();
+        } else {
+            redFrame->hide();
+            bluFrame->hide();
+            greFrame->hide();
+        }
+
         if(pp->icm.workingTRCGamma <= 1.) {
             wGamma->set_sensitive(true);
             wSlope->set_sensitive(false);
@@ -731,6 +812,15 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprimlab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
+        if (wprim->get_active_row_number() == 7) {
+            redFrame->show();
+            bluFrame->show();
+            greFrame->show();
+        } else {
+            redFrame->hide();
+            bluFrame->hide();
+            greFrame->hide();
+        }
         
     } else if(wTRC->get_active_row_number() == 3) {
         wGamma->setValue(2.4);
@@ -741,6 +831,15 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprimlab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
+        if (wprim->get_active_row_number() == 7) {
+            redFrame->show();
+            bluFrame->show();
+            greFrame->show();
+        } else {
+            redFrame->hide();
+            bluFrame->hide();
+            greFrame->hide();
+        }
     } else if(wTRC->get_active_row_number() == 4) {
         wGamma->setValue(2.2);
         wSlope->setValue(0.);
@@ -748,8 +847,18 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
         wprimlab->set_sensitive(true);
+        redFrame->show();
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
+        if (wprim->get_active_row_number() == 7) {
+            redFrame->show();
+            bluFrame->show();
+            greFrame->show();
+        } else {
+            redFrame->hide();
+            bluFrame->hide();
+            greFrame->hide();
+        }
     } else if(wTRC->get_active_row_number() == 5) {
         wGamma->setValue(1.8);
         wSlope->setValue(0.);
@@ -757,6 +866,15 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
         wprimlab->set_sensitive(true);
+        if (wprim->get_active_row_number() == 7) {
+            redFrame->show();
+            bluFrame->show();
+            greFrame->show();
+        } else {
+            redFrame->hide();
+            bluFrame->hide();
+            greFrame->hide();
+        }
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
     } else if(wTRC->get_active_row_number() == 6) {
@@ -768,6 +886,15 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprimlab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
+        if (wprim->get_active_row_number() == 7) {
+            redFrame->show();
+            bluFrame->show();
+            greFrame->show();
+        } else {
+            redFrame->hide();
+            bluFrame->hide();
+            greFrame->hide();
+        }
     
     }
 
@@ -862,6 +989,8 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pp->icm.wprim = "aces";
     } else if (wprim->get_active_row_number() == 6) {
         pp->icm.wprim = "wid";
+    } else if (wprim->get_active_row_number() == 7) {
+        pp->icm.wprim = "cus";
     }
 
     pp->icm.toneCurve = ckbToneCurve->get_active();
@@ -871,6 +1000,12 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.outputBPC = obpc->get_active();
     pp->icm.workingTRCGamma = (double) wGamma->getValue();
     pp->icm.workingTRCSlope = (double) wSlope->getValue();
+    pp->icm.redx = (double) redx->getValue();
+    pp->icm.redy = (double) redy->getValue();
+    pp->icm.grex = (double) grex->getValue();
+    pp->icm.grey = (double) grey->getValue();
+    pp->icm.blux = (double) blux->getValue();
+    pp->icm.bluy = (double) bluy->getValue();
     pp->toneCurve.fromHistMatching = false;
 
     if (pedited) {
@@ -889,6 +1024,8 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.workingTRC = wTRC->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.will = will->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.wprim = wprim->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->icm.redx = redx->getEditedState();
+        pedited->icm.redy = redy->getEditedState();
     }
 }
 
@@ -896,14 +1033,32 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
 {
     wGamma->setDefault(defParams->icm.workingTRCGamma);
     wSlope->setDefault(defParams->icm.workingTRCSlope);
+    redx->setDefault(defParams->icm.redx);
+    redy->setDefault(defParams->icm.redy);
+    grex->setDefault(defParams->icm.grex);
+    grey->setDefault(defParams->icm.grey);
+    blux->setDefault(defParams->icm.blux);
+    bluy->setDefault(defParams->icm.bluy);
 
     if (pedited) {
         wGamma->setDefaultEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
         wSlope->setDefaultEditedState(pedited->icm.workingTRCSlope ? Edited : UnEdited);
+        redx->setDefaultEditedState(pedited->icm.redx ? Edited : UnEdited);
+        redy->setDefaultEditedState(pedited->icm.redy ? Edited : UnEdited);
+        grex->setDefaultEditedState(pedited->icm.grex ? Edited : UnEdited);
+        grey->setDefaultEditedState(pedited->icm.grey ? Edited : UnEdited);
+        blux->setDefaultEditedState(pedited->icm.blux ? Edited : UnEdited);
+        bluy->setDefaultEditedState(pedited->icm.bluy ? Edited : UnEdited);
 
     } else {
         wGamma->setDefaultEditedState(Irrelevant);
         wSlope->setDefaultEditedState(Irrelevant);
+        redx->setDefaultEditedState(Irrelevant);
+        redy->setDefaultEditedState(Irrelevant);
+        grex->setDefaultEditedState(Irrelevant);
+        grey->setDefaultEditedState(Irrelevant);
+        blux->setDefaultEditedState(Irrelevant);
+        bluy->setDefaultEditedState(Irrelevant);
 
     }
 }
@@ -922,6 +1077,18 @@ void ICMPanel::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvICMgamm, costr2);
         } else if (a == wSlope) {
             listener->panelChanged(EvICMslop, costr2);
+        } else if (a == redx) {
+            listener->panelChanged(EvICMredx, costr2);
+        } else if (a == redy) {
+            listener->panelChanged(EvICMredy, costr2);
+        } else if (a == grex) {
+            listener->panelChanged(EvICMgrex, costr2);
+        } else if (a == grey) {
+            listener->panelChanged(EvICMgrey, costr2);
+        } else if (a == blux) {
+            listener->panelChanged(EvICMblux, costr2);
+        } else if (a == bluy) {
+            listener->panelChanged(EvICMbluy, costr2);
         }
 
     }
@@ -943,12 +1110,24 @@ void ICMPanel::wtrcinChanged()
         willulab->set_sensitive(false);
         wprim->set_sensitive(false);
         wprimlab->set_sensitive(false);
-
+        redFrame->hide();
+        bluFrame->hide();
+        greFrame->hide();
+        
     } else if(wTRC->get_active_row_number() == 1) {
         will->set_sensitive(true);
         wprim->set_sensitive(true);
         wprimlab->set_sensitive(true);
         willulab->set_sensitive(true);
+        if (wprim->get_active_row_number() == 7) {
+            redFrame->show();
+            bluFrame->show();
+            greFrame->show();
+        } else {
+            redFrame->hide();
+            bluFrame->hide();
+            greFrame->hide();
+        }
 
         if(wGamma->getValue() <= 1.) {
             wGamma->set_sensitive(true);
@@ -966,6 +1145,15 @@ void ICMPanel::wtrcinChanged()
         wprimlab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
+        if (wprim->get_active_row_number() == 7) {
+            redFrame->show();
+            bluFrame->show();
+            greFrame->show();
+        } else {
+            redFrame->hide();
+            bluFrame->hide();
+            greFrame->hide();
+        }
         
     } else if(wTRC->get_active_row_number() == 3) {
         wGamma->setValue(2.4);
@@ -974,6 +1162,15 @@ void ICMPanel::wtrcinChanged()
         willulab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
+        if (wprim->get_active_row_number() == 7) {
+            redFrame->show();
+            bluFrame->show();
+            greFrame->show();
+        } else {
+            redFrame->hide();
+            bluFrame->hide();
+            greFrame->hide();
+        }
     } else if(wTRC->get_active_row_number() == 4) {
         wGamma->setValue(2.2);
         wSlope->setValue(0.);
@@ -983,6 +1180,15 @@ void ICMPanel::wtrcinChanged()
         wprimlab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
+        if (wprim->get_active_row_number() == 7) {
+            redFrame->show();
+            bluFrame->show();
+            greFrame->show();
+        } else {
+            redFrame->hide();
+            bluFrame->hide();
+            greFrame->hide();
+        }
     } else if(wTRC->get_active_row_number() == 5) {
         wGamma->setValue(1.8);
         wSlope->setValue(0.);
@@ -992,6 +1198,15 @@ void ICMPanel::wtrcinChanged()
         wprimlab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
+        if (wprim->get_active_row_number() == 7) {
+            redFrame->show();
+            bluFrame->show();
+            greFrame->show();
+        } else {
+            redFrame->hide();
+            bluFrame->hide();
+            greFrame->hide();
+        }
     } else if(wTRC->get_active_row_number() == 6) {
         wGamma->setValue(1.0);
         wSlope->setValue(1.);
@@ -1001,6 +1216,15 @@ void ICMPanel::wtrcinChanged()
         wprimlab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
+        if (wprim->get_active_row_number() == 7) {
+            redFrame->show();
+            bluFrame->show();
+            greFrame->show();
+        } else {
+            redFrame->hide();
+            bluFrame->hide();
+            greFrame->hide();
+        }
     }
 
 
@@ -1019,6 +1243,15 @@ void ICMPanel::willChanged()
 
 void ICMPanel::wprimChanged()
 {
+    if (wprim->get_active_row_number() == 7) {
+        redFrame->show();
+        bluFrame->show();
+        greFrame->show();
+    } else {
+        redFrame->hide();
+        bluFrame->hide();
+        greFrame->hide();
+    }
 
     if (listener) {
         listener->panelChanged(EvICMwprimMethod, wprim->get_active_text());
@@ -1338,5 +1571,11 @@ void ICMPanel::setBatchMode(bool batchMode)
     dcpIll->append(M("GENERAL_UNCHANGED"));
     wGamma->showEditedCB();
     wSlope->showEditedCB();
+    redx->showEditedCB();
+    redy->showEditedCB();
+    grex->showEditedCB();
+    grey->showEditedCB();
+    blux->showEditedCB();
+    bluy->showEditedCB();
 }
 

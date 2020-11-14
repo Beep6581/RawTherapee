@@ -45,9 +45,18 @@ class ICMPanel final :
 protected:
     Gtk::Frame* dcpFrame;
     Gtk::Frame* coipFrame;
+    Gtk::Frame* redFrame;
+    Gtk::Frame* greFrame;
+    Gtk::Frame* bluFrame;
 
     Adjuster* wGamma;
     Adjuster* wSlope;
+    Adjuster* redx;
+    Adjuster* redy;
+    Adjuster* grex;
+    Adjuster* grey;
+    Adjuster* blux;
+    Adjuster* bluy;
 
     Gtk::Label* labmga;
     Gtk::HBox* gabox;
@@ -81,6 +90,12 @@ private:
     rtengine::ProcEvent EvICMtrcinMethod;
     rtengine::ProcEvent EvICMwillMethod;
     rtengine::ProcEvent EvICMwprimMethod;
+    rtengine::ProcEvent EvICMredx;
+    rtengine::ProcEvent EvICMredy;
+    rtengine::ProcEvent EvICMgrex;
+    rtengine::ProcEvent EvICMgrey;
+    rtengine::ProcEvent EvICMblux;
+    rtengine::ProcEvent EvICMbluy;
 
     Gtk::VBox* iVBox;
     Gtk::HBox* wTRCHBox;
@@ -88,6 +103,9 @@ private:
     Gtk::Label* willulab;
     Gtk::HBox* wprimBox;
     Gtk::Label* wprimlab;
+    Gtk::HBox* redBox;
+    Gtk::HBox* greBox;
+    Gtk::HBox* bluBox;
 
     Gtk::CheckButton* obpc;
     Gtk::RadioButton* inone;

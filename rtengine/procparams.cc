@@ -2166,6 +2166,12 @@ ColorManagementParams::ColorManagementParams() :
     wprim("def"),
     workingTRCGamma(2.222),
     workingTRCSlope(4.5),
+    redx(0.64),
+    redy(0.33),
+    grex(0.30),
+    grey(0.60),
+    blux(0.15),
+    bluy(0.06),
     outputProfile(options.rtSettings.srgb),
     outputIntent(RI_RELATIVE),
     outputBPC(true)
@@ -2187,6 +2193,12 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && wprim == other.wprim
         && workingTRCGamma == other.workingTRCGamma
         && workingTRCSlope == other.workingTRCSlope
+        && redx == other.redx
+        && redy == other.redy
+        && grex == other.grex
+        && grey == other.grey
+        && blux == other.blux
+        && bluy == other.bluy
         && outputProfile == other.outputProfile
         && outputIntent == other.outputIntent
         && outputBPC == other.outputBPC;
@@ -6187,6 +6199,12 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.wprim, "Color Management", "Wprim", icm.wprim, keyFile);
         saveToKeyfile(!pedited || pedited->icm.workingTRCGamma, "Color Management", "WorkingTRCGamma", icm.workingTRCGamma, keyFile);
         saveToKeyfile(!pedited || pedited->icm.workingTRCSlope, "Color Management", "WorkingTRCSlope", icm.workingTRCSlope, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.redx, "Color Management", "Redx", icm.redx, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.redy, "Color Management", "Redy", icm.redy, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.grex, "Color Management", "Grex", icm.grex, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.grey, "Color Management", "Grey", icm.grey, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.blux, "Color Management", "Blux", icm.blux, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.bluy, "Color Management", "Bluy", icm.bluy, keyFile);
         saveToKeyfile(!pedited || pedited->icm.outputProfile, "Color Management", "OutputProfile", icm.outputProfile, keyFile);
         saveToKeyfile(
             !pedited || pedited->icm.outputIntent,
@@ -8062,6 +8080,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "Wprim", pedited, icm.wprim, pedited->icm.wprim);
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", pedited, icm.workingTRCGamma, pedited->icm.workingTRCGamma);
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", pedited, icm.workingTRCSlope, pedited->icm.workingTRCSlope);
+
+            assignFromKeyfile(keyFile, "Color Management", "Redx", pedited, icm.redx, pedited->icm.redx);
+            assignFromKeyfile(keyFile, "Color Management", "Redy", pedited, icm.redy, pedited->icm.redy);
+            assignFromKeyfile(keyFile, "Color Management", "Grex", pedited, icm.grex, pedited->icm.grex);
+            assignFromKeyfile(keyFile, "Color Management", "Grey", pedited, icm.grey, pedited->icm.grey);
+            assignFromKeyfile(keyFile, "Color Management", "Blux", pedited, icm.blux, pedited->icm.blux);
+            assignFromKeyfile(keyFile, "Color Management", "Bluy", pedited, icm.bluy, pedited->icm.bluy);
 
             assignFromKeyfile(keyFile, "Color Management", "OutputProfile", pedited, icm.outputProfile, pedited->icm.outputProfile);
             if (ppVersion < 341) {

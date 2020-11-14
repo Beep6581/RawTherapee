@@ -436,6 +436,12 @@ void ParamsEdited::set(bool v)
     icm.outputBPC = v;
     icm.workingTRCGamma = v;
     icm.workingTRCSlope = v;
+    icm.redx = v;
+    icm.redy = v;
+    icm.grex = v;
+    icm.grey = v;
+    icm.blux = v;
+    icm.bluy = v;
     icm.workingTRC = v;
     icm.will = v;
     icm.wprim = v;
@@ -1635,6 +1641,12 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.outputBPC = icm.outputBPC && p.icm.outputBPC == other.icm.outputBPC ;
         icm.workingTRCGamma = icm.workingTRCGamma && p.icm.workingTRCGamma == other.icm.workingTRCGamma;
         icm.workingTRCSlope = icm.workingTRCSlope && p.icm.workingTRCSlope == other.icm.workingTRCSlope;
+        icm.redx = icm.redx && p.icm.redx == other.icm.redx;
+        icm.redy = icm.redy && p.icm.redy == other.icm.redy;
+        icm.grex = icm.grex && p.icm.grex == other.icm.grex;
+        icm.grey = icm.grey && p.icm.grey == other.icm.grey;
+        icm.blux = icm.blux && p.icm.blux == other.icm.blux;
+        icm.bluy = icm.bluy && p.icm.bluy == other.icm.bluy;
         icm.workingTRC = icm.workingTRC && p.icm.workingTRC == other.icm.workingTRC;
         icm.will = icm.will && p.icm.will == other.icm.will;
         icm.wprim = icm.wprim && p.icm.wprim == other.icm.wprim;
@@ -5359,6 +5371,30 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (icm.workingTRCSlope) {
         toEdit.icm.workingTRCSlope = mods.icm.workingTRCSlope;
+    }
+
+    if (icm.redx) {
+        toEdit.icm.redx = mods.icm.redx;
+    }
+
+    if (icm.redy) {
+        toEdit.icm.redy = mods.icm.redy;
+    }
+
+    if (icm.grex) {
+        toEdit.icm.grex = mods.icm.grex;
+    }
+
+    if (icm.grey) {
+        toEdit.icm.grey = mods.icm.grey;
+    }
+
+    if (icm.blux) {
+        toEdit.icm.blux = mods.icm.blux;
+    }
+
+    if (icm.bluy) {
+        toEdit.icm.bluy = mods.icm.bluy;
     }
 
     if (icm.workingTRC) {
