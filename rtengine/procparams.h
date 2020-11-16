@@ -1292,7 +1292,7 @@ struct LocallabParams {
         bool inversret;
         bool equilret;
         bool loglin;
-        bool lumonly;
+        double dehazeSaturation;
         double softradiusret;
         std::vector<double> CCmaskreticurve;
         std::vector<double> LLmaskreticurve;
@@ -1979,9 +1979,9 @@ struct SoftLightParams {
 struct DehazeParams {
     bool enabled;
     int strength;
+    int saturation;
     bool showDepthMap;
     int depth;
-    bool luminance;
 
     DehazeParams();
 

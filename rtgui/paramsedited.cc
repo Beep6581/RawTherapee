@@ -670,7 +670,7 @@ void ParamsEdited::set(bool v)
     dehaze.strength = v;
     dehaze.showDepthMap = v;
     dehaze.depth = v;
-    dehaze.luminance = v;
+    dehaze.saturation = v;
     metadata.mode = v;
     filmNegative.enabled = v;
     filmNegative.redRatio = v;
@@ -1362,7 +1362,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).inversret = locallab.spots.at(j).inversret && pSpot.inversret == otherSpot.inversret;
                 locallab.spots.at(j).equilret = locallab.spots.at(j).equilret && pSpot.equilret == otherSpot.equilret;
                 locallab.spots.at(j).loglin = locallab.spots.at(j).loglin && pSpot.loglin == otherSpot.loglin;
-                locallab.spots.at(j).lumonly = locallab.spots.at(j).lumonly && pSpot.lumonly == otherSpot.lumonly;
+                locallab.spots.at(j).dehazeSaturation = locallab.spots.at(j).dehazeSaturation && pSpot.dehazeSaturation == otherSpot.dehazeSaturation;
                 locallab.spots.at(j).softradiusret = locallab.spots.at(j).softradiusret && pSpot.softradiusret == otherSpot.softradiusret;
                 locallab.spots.at(j).CCmaskreticurve = locallab.spots.at(j).CCmaskreticurve && pSpot.CCmaskreticurve == otherSpot.CCmaskreticurve;
                 locallab.spots.at(j).LLmaskreticurve = locallab.spots.at(j).LLmaskreticurve && pSpot.LLmaskreticurve == otherSpot.LLmaskreticurve;
@@ -1861,7 +1861,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         dehaze.strength = dehaze.strength && p.dehaze.strength == other.dehaze.strength;
         dehaze.showDepthMap = dehaze.showDepthMap && p.dehaze.showDepthMap == other.dehaze.showDepthMap;
         dehaze.depth = dehaze.depth && p.dehaze.depth == other.dehaze.depth;
-        dehaze.luminance = dehaze.luminance && p.dehaze.luminance == other.dehaze.luminance;
+        dehaze.saturation = dehaze.saturation && p.dehaze.saturation == other.dehaze.saturation;
         metadata.mode = metadata.mode && p.metadata.mode == other.metadata.mode;
         filmNegative.enabled = filmNegative.enabled && p.filmNegative.enabled == other.filmNegative.enabled;
         filmNegative.redRatio = filmNegative.redRatio && p.filmNegative.redRatio == other.filmNegative.redRatio;
@@ -4359,8 +4359,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).loglin = mods.locallab.spots.at(i).loglin;
         }
 
-        if (locallab.spots.at(i).lumonly) {
-            toEdit.locallab.spots.at(i).lumonly = mods.locallab.spots.at(i).lumonly;
+        if (locallab.spots.at(i).dehazeSaturation) {
+            toEdit.locallab.spots.at(i).dehazeSaturation = mods.locallab.spots.at(i).dehazeSaturation;
         }
 
         if (locallab.spots.at(i).softradiusret) {
@@ -6232,8 +6232,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.dehaze.showDepthMap = mods.dehaze.showDepthMap;
     }
 
-    if (dehaze.luminance) {
-        toEdit.dehaze.luminance = mods.dehaze.luminance;
+    if (dehaze.saturation) {
+        toEdit.dehaze.saturation = mods.dehaze.saturation;
     }
 
     if (metadata.mode) {
@@ -6636,7 +6636,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     inversret(v),
     equilret(v),
     loglin(v),
-    lumonly(v),
+    dehazeSaturation(v),
     softradiusret(v),
     CCmaskreticurve(v),
     LLmaskreticurve(v),
@@ -7150,7 +7150,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     inversret = v;
     equilret = v;
     loglin = v;
-    lumonly = v;
+    dehazeSaturation = v;
     softradiusret = v;
     CCmaskreticurve = v;
     LLmaskreticurve = v;

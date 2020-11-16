@@ -2771,7 +2771,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     transitgrad(0.0),
     hishow(false),
     activ(true),
-    avoid(false),
+    avoid(true),
     blwh(false),
     recurs(false),
     laplac(true),
@@ -3532,7 +3532,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     inversret(false),
     equilret(true),
     loglin(false),
-    lumonly(false),
+    dehazeSaturation(50.0),
     softradiusret(40.0),
     CCmaskreticurve{
         static_cast<double>(FCT_MinMaxCPoints),
@@ -4397,7 +4397,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && inversret == other.inversret
         && equilret == other.equilret
         && loglin == other.loglin
-        && lumonly == other.lumonly
+        && dehazeSaturation == other.dehazeSaturation
         && softradiusret == other.softradiusret
         && CCmaskreticurve == other.CCmaskreticurve
         && LLmaskreticurve == other.LLmaskreticurve
@@ -4745,9 +4745,9 @@ bool SoftLightParams::operator !=(const SoftLightParams& other) const
 DehazeParams::DehazeParams() :
     enabled(false),
     strength(50),
+    saturation(50),
     showDepthMap(false),
-    depth(25),
-    luminance(false)
+    depth(25)
 {
 }
 
@@ -4758,7 +4758,7 @@ bool DehazeParams::operator ==(const DehazeParams& other) const
         && strength == other.strength
         && showDepthMap == other.showDepthMap
         && depth == other.depth
-        && luminance == other.luminance;
+        && saturation == other.saturation;
 }
 
 bool DehazeParams::operator !=(const DehazeParams& other) const
@@ -5525,7 +5525,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->dehaze.strength, "Dehaze", "Strength", dehaze.strength, keyFile);        
         saveToKeyfile(!pedited || pedited->dehaze.showDepthMap, "Dehaze", "ShowDepthMap", dehaze.showDepthMap, keyFile);        
         saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Depth", dehaze.depth, keyFile);        
-        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Luminance", dehaze.luminance, keyFile);
+        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Saturation", dehaze.saturation, keyFile);
 
 // Directional pyramid denoising
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.enabled, "Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled, keyFile);
@@ -5979,7 +5979,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->inversret, "Locallab", "Inversret_" + index_str, spot.inversret, keyFile);
                     saveToKeyfile(!pedited || spot_edited->equilret, "Locallab", "Equilret_" + index_str, spot.equilret, keyFile);
                     saveToKeyfile(!pedited || spot_edited->loglin, "Locallab", "Loglin_" + index_str, spot.loglin, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->lumonly, "Locallab", "Lumonly_" + index_str, spot.lumonly, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->dehazeSaturation, "Locallab", "dehazeSaturation_" + index_str, spot.dehazeSaturation, keyFile);
                     saveToKeyfile(!pedited || spot_edited->softradiusret, "Locallab", "Softradiusret_" + index_str, spot.softradiusret, keyFile);
                     saveToKeyfile(!pedited || spot_edited->CCmaskreticurve, "Locallab", "CCmaskretiCurve_" + index_str, spot.CCmaskreticurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LLmaskreticurve, "Locallab", "LLmaskretiCurve_" + index_str, spot.LLmaskreticurve, keyFile);
@@ -6815,7 +6815,16 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("Retinex")) {
             assignFromKeyfile(keyFile, "Retinex", "Median", pedited, retinex.medianmap, pedited->retinex.medianmap);
-            assignFromKeyfile(keyFile, "Retinex", "complexMethod", pedited, retinex.complexmethod, pedited->retinex.complexmethod);
+
+            if (keyFile.has_key("Retinex", "complexMethod")) {
+                assignFromKeyfile(keyFile, "Retinex", "complexMethod", pedited, retinex.complexmethod, pedited->retinex.complexmethod);
+            } else if (retinex.enabled) {
+                retinex.complexmethod = "expert";
+                if (pedited) {
+                    pedited->retinex.complexmethod = true;
+                }
+            }
+
             assignFromKeyfile(keyFile, "Retinex", "RetinexMethod", pedited, retinex.retinexMethod, pedited->retinex.retinexMethod);
             assignFromKeyfile(keyFile, "Retinex", "mapMethod", pedited, retinex.mapMethod, pedited->retinex.mapMethod);
             assignFromKeyfile(keyFile, "Retinex", "viewMethod", pedited, retinex.viewMethod, pedited->retinex.viewMethod);
@@ -7070,7 +7079,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             assignFromKeyfile(keyFile, "Color appearance", "AutoDegreeout", pedited, colorappearance.autodegreeout, pedited->colorappearance.autodegreeout);
 
-            assignFromKeyfile(keyFile, "Color appearance", "complex", pedited, colorappearance.complexmethod, pedited->colorappearance.complexmethod);
+            if (keyFile.has_key("Color appearance", "complex")) {
+                assignFromKeyfile(keyFile, "Color appearance", "complex", pedited, colorappearance.complexmethod, pedited->colorappearance.complexmethod);
+            } else if (colorappearance.enabled) {
+                colorappearance.complexmethod = "expert";
+                if (pedited) {
+                    pedited->colorappearance.complexmethod = true;
+                }
+            }
             assignFromKeyfile(keyFile, "Color appearance", "Surround", pedited, colorappearance.surround, pedited->colorappearance.surround);
             assignFromKeyfile(keyFile, "Color appearance", "Surrsrc", pedited, colorappearance.surrsrc, pedited->colorappearance.surrsrc);
             assignFromKeyfile(keyFile, "Color appearance", "AdaptLum", pedited, colorappearance.adaplum, pedited->colorappearance.adaplum);
@@ -7765,7 +7781,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Inversret_" + index_str, pedited, spot.inversret, spotEdited.inversret);
                 assignFromKeyfile(keyFile, "Locallab", "Equilret_" + index_str, pedited, spot.equilret, spotEdited.equilret);
                 assignFromKeyfile(keyFile, "Locallab", "Loglin_" + index_str, pedited, spot.loglin, spotEdited.loglin);
-                assignFromKeyfile(keyFile, "Locallab", "Lumonly_" + index_str, pedited, spot.lumonly, spotEdited.lumonly);
+                assignFromKeyfile(keyFile, "Locallab", "dehazeSaturation" + index_str, pedited, spot.dehazeSaturation, spotEdited.dehazeSaturation);
                 assignFromKeyfile(keyFile, "Locallab", "Softradiusret_" + index_str, pedited, spot.softradiusret, spotEdited.softradiusret);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskretiCurve_" + index_str, pedited, spot.CCmaskreticurve, spotEdited.CCmaskreticurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskretiCurve_" + index_str, pedited, spot.LLmaskreticurve, spotEdited.LLmaskreticurve);
@@ -8222,7 +8238,16 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "ChoiceLevMethod", pedited, wavelet.CLmethod, pedited->wavelet.CLmethod);
             assignFromKeyfile(keyFile, "Wavelet", "BackMethod", pedited, wavelet.Backmethod, pedited->wavelet.Backmethod);
             assignFromKeyfile(keyFile, "Wavelet", "TilesMethod", pedited, wavelet.Tilesmethod, pedited->wavelet.Tilesmethod);
-            assignFromKeyfile(keyFile, "Wavelet", "complexMethod", pedited, wavelet.complexmethod, pedited->wavelet.complexmethod);
+
+            if (keyFile.has_key("Wavelet", "complexMethod")) {
+                assignFromKeyfile(keyFile, "Wavelet", "complexMethod", pedited, wavelet.complexmethod, pedited->wavelet.complexmethod);
+            } else if (wavelet.enabled) {
+                wavelet.complexmethod = "expert";
+                if (pedited) {
+                    pedited->wavelet.complexmethod = true;
+                }
+            }
+
             assignFromKeyfile(keyFile, "Wavelet", "denMethod", pedited, wavelet.denmethod, pedited->wavelet.denmethod);
             assignFromKeyfile(keyFile, "Wavelet", "mixMethod", pedited, wavelet.mixmethod, pedited->wavelet.mixmethod);
             assignFromKeyfile(keyFile, "Wavelet", "sliMethod", pedited, wavelet.slimethod, pedited->wavelet.slimethod);
@@ -8552,7 +8577,15 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Dehaze", "Strength", pedited, dehaze.strength, pedited->dehaze.strength);
             assignFromKeyfile(keyFile, "Dehaze", "ShowDepthMap", pedited, dehaze.showDepthMap, pedited->dehaze.showDepthMap);
             assignFromKeyfile(keyFile, "Dehaze", "Depth", pedited, dehaze.depth, pedited->dehaze.depth);
-            assignFromKeyfile(keyFile, "Dehaze", "Luminance", pedited, dehaze.luminance, pedited->dehaze.luminance);
+            if (ppVersion < 349 && dehaze.enabled && keyFile.has_key("Dehaze", "Luminance")) {
+                const bool luminance = keyFile.get_boolean("Dehaze", "Luminance");
+                dehaze.saturation = luminance ? 0 : 100;
+                if (pedited) {
+                    pedited->dehaze.saturation = true;
+                }
+            } else {
+                assignFromKeyfile(keyFile, "Dehaze", "Saturation", pedited, dehaze.saturation, pedited->dehaze.saturation);
+            }
         }
         
         if (keyFile.has_group("Film Simulation")) {
