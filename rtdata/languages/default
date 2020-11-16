@@ -2263,7 +2263,7 @@ TP_FILMNEGATIVE_COLORSPACE_WORKING;Working color space
 TP_FILMNEGATIVE_REF_LABEL;Input RGB: %1
 TP_FILMNEGATIVE_REF_PICK;Pick white balance spot
 TP_FILMNEGATIVE_REF_TOOLTIP;Pick a gray patch for white-balancing the output, positive image.
-TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
+TP_FILMNEGATIVE_GREEN;Reference exponent
 TP_FILMNEGATIVE_GREENBALANCE;Magenta/Green
 TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness.
 TP_FILMNEGATIVE_LABEL;Film Negative
