@@ -42,6 +42,7 @@ jobs:
           # name only (new-feature)
           export REF=${GITHUB_REF##*/}
           export C_FLAGS=$(echo -e $C_FLAGS | tr -d '\n')
+          sudo xcode-select -s /Applications/Xcode_12.2.app
           cd build && date -u && date +%s > configstamp
           cmake \
             -DCMAKE_BUILD_TYPE="Release" \
