@@ -479,4 +479,25 @@ void buildBlendMask(const float* const * luminance, float **blend, int W, int H,
     }
 }
 
+double accumulateProduct(const float* data1, const float* data2, size_t n, bool multiThread) {
+    if (n == 0) {
+        return 0.0;
+    }
+
+    // use two accumulators to reduce dependencies (improves speed) and increase accuracy
+    double acc1 = 0.0;
+    double acc2 = 0.0;
+#ifdef _OPENMP
+    #pragma omp parallel for reduction(+:acc1,acc2) if(multiThread)
+#endif
+    for (size_t i = 0; i < n - 1; i += 2) {
+        acc1 += static_cast<double>(data1[i]) * static_cast<double>(data2[i]);
+        acc2 += static_cast<double>(data1[i + 1]) * static_cast<double>(data2[i + 1]);
+    }
+
+    if (n & 1) {
+        acc1 += static_cast<double>(data1[n -1]) * static_cast<double>(data2[n -1]);
+    }
+    return acc1 + acc2;
+}
 }
