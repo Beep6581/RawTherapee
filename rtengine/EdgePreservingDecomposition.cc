@@ -4,6 +4,7 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+#include "rt_algo.h"
 #include "sleef.h"
 
 #define DIAGONALS 5
@@ -42,21 +43,13 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 
     //s is preconditionment of r. Without, direct to r.
     float *s = r;
-    double rs = 0.0; // use double precision for large summations
 
     if(Preconditioner != nullptr) {
         s = new float[n];
-
         Preconditioner(s, r, Pass);
     }
 
-#ifdef _OPENMP
-    #pragma omp parallel for reduction(+:rs)  // removed schedule(dynamic,10)
-#endif
-
-    for(int ii = 0; ii < n; ii++) {
-        rs += static_cast<double>(r[ii]) * static_cast<double>(s[ii]);
-    }
+    double rs = rtengine::accumulateProduct(r, s, n);
 
     //Search direction d.
     float *d = (buffer + n + 32);
@@ -77,16 +70,9 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 
     for(iterate = 0; iterate < MaximumIterates; iterate++) {
         //Get step size alpha, store ax while at it.
-        double ab = 0.0; // use double precision for large summations
         Ax(ax, d, Pass);
-#ifdef _OPENMP
-        #pragma omp parallel for reduction(+:ab)
-#endif
 
-        for(int ii = 0; ii < n; ii++) {
-            ab += static_cast<double>(d[ii]) * static_cast<double>(ax[ii]);
-        }
-
+        double ab = rtengine::accumulateProduct(d, ax, n);
         if(ab == 0.0) {
             break;    //So unlikely. It means perfectly converged or singular, stop either way.
         }
@@ -118,22 +104,7 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 
         //Get beta.
         ab = rs;
-        rs = 0.0f;
-
-#ifdef _OPENMP
-        #pragma omp parallel
-#endif
-        {
-#ifdef _OPENMP
-            #pragma omp for reduction(+:rs)
-#endif
-
-            for(int ii = 0; ii < n; ii++) {
-                rs += static_cast<double>(r[ii]) * static_cast<double>(s[ii]);
-            }
-
-        }
-
+        rs = rtengine::accumulateProduct(r, s, n);
         ab = rs / ab;
         abf = ab;
         //Update search direction p.
