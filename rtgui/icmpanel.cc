@@ -267,17 +267,17 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
     wprim->set_tooltip_text(M("TP_ICM_PRIMILLUM_TOOLTIP"));
 
-    redx = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_REDX"), 0.6300, 0.7350, 0.0001, 0.6400));
+    redx = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_REDX"), 0.6000, 0.80, 0.0001, 0.6400));
     setExpandAlignProperties(redx, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    redy = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_REDY"), 0.2650, 0.3350, 0.0001, 0.3300));
+    redy = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_REDY"), 0.20, 0.40, 0.0001, 0.3300));
     setExpandAlignProperties(redy, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    grex = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_GREX"), 0.0000, 0.3100, 0.0001, 0.2100));
+    grex = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_GREX"), -0.1000, 0.400, 0.0001, 0.2100));
     setExpandAlignProperties(grex, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    grey = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_GREY"), 0.5900, 1.0000, 0.0001, 0.7100));
+    grey = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_GREY"), 0.500, 1.0000, 0.0001, 0.7100));
     setExpandAlignProperties(grey, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    blux = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_BLUX"), 0.0001, 0.1600, 0.0001, 0.1500));
+    blux = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_BLUX"), -0.1, 0.1, 0.0001, 0.1500));
     setExpandAlignProperties(blux, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    bluy = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_BLUY"), -0.0800, 0.0700, 0.0001, 0.060));
+    bluy = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_BLUY"), -0.100, 0.200, 0.0001, 0.060));
     setExpandAlignProperties(bluy, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
     redx->set_tooltip_text(M("TP_ICM_PRIMRED_TOOLTIP"));
