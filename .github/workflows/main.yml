@@ -82,8 +82,8 @@ jobs:
           echo "=== artifact: ${ARTIFACT}"
           # defining environment variables for next step as per
           # https://github.com/actions/starter-workflows/issues/68
-          echo "::set-env name=ARTIFACT_PATH::${GITHUB_WORKSPACE}/build/${ARTIFACT}"
-          echo "::set-env name=ARTIFACT_FILE::${ARTIFACT}"
+          echo "ARTIFACT_PATH=${GITHUB_WORKSPACE}/build/${ARTIFACT}" >> $GITHUB_ENV
+          echo "ARTIFACT_FILE=${ARTIFACT}" >> $GITHUB_ENV
           zsh -c 'echo "Bundled in $(printf "%0.2f" $(($[$(date +%s)-$(cat bundlestamp)]/$((60.))))) minutes"'
           exit
       - uses: actions/upload-artifact@v1
