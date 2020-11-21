@@ -48,19 +48,6 @@ namespace
 
 constexpr int VECTORSCOPE_SIZE = 128;
 
-using rtengine::Coord2D;
-Coord2D translateCoord(const rtengine::ImProcFunctions& ipf, int fw, int fh, int x, int y) {
-
-    const std::vector<Coord2D> points = {Coord2D(x, y)};
-
-    std::vector<Coord2D> red;
-    std::vector<Coord2D> green;
-    std::vector<Coord2D> blue;
-    ipf.transCoord(fw, fh, points, red, green, blue);
-
-    return green[0];
-}
-
 }
 
 namespace rtengine
@@ -369,26 +356,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             hist_raw_dirty = !(hListener && hListener->updateHistogramRaw());
 
             highDetailPreprocessComputed = highDetailNeeded;
-
-            // After preprocess, run film negative processing if enabled
-            if (
-                (todo & M_RAW)
-                && (
-                    imgsrc->getSensorType() == ST_BAYER
-                    || imgsrc->getSensorType() == ST_FUJI_XTRANS
-                )
-                && params->filmNegative.enabled
-            ) {
-                std::array<float, 3> filmBaseValues = {
-                    static_cast<float>(params->filmNegative.redBase),
-                    static_cast<float>(params->filmNegative.greenBase),
-                    static_cast<float>(params->filmNegative.blueBase)
-                };
-                imgsrc->filmNegativeProcess(params->filmNegative, filmBaseValues);
-                if (filmNegListener && params->filmNegative.redBase <= 0.f) {
-                    filmNegListener->filmBaseValuesChanged(filmBaseValues);
-                }
-            }
         }
 
         /*
@@ -660,7 +627,27 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         }
                     }
             */
-            imgsrc->convertColorSpace(orig_prev, params->icm, currWB);
+
+            if (params->filmNegative.enabled) {
+
+                // Process film negative AFTER colorspace conversion
+                if (params->filmNegative.colorSpace != FilmNegativeParams::ColorSpace::INPUT) {
+                    imgsrc->convertColorSpace(orig_prev, params->icm, currWB);
+                }
+
+                // Perform negative inversion. If needed, upgrade filmNegative params for backwards compatibility with old profiles
+                if (ipf.filmNegativeProcess(orig_prev, orig_prev, params->filmNegative, params->raw, imgsrc, currWB) && filmNegListener) {
+                    filmNegListener->filmRefValuesChanged(params->filmNegative.refInput, params->filmNegative.refOutput);
+                }
+
+                // Process film negative BEFORE colorspace conversion (legacy mode)
+                if (params->filmNegative.colorSpace == FilmNegativeParams::ColorSpace::INPUT) {
+                    imgsrc->convertColorSpace(orig_prev, params->icm, currWB);
+                }
+
+            } else {
+                imgsrc->convertColorSpace(orig_prev, params->icm, currWB);
+            }
 
             ipf.firstAnalysis(orig_prev, *params, vhist16);
         }
@@ -2116,25 +2103,7 @@ void ImProcCoordinator::getSpotWB(int x, int y, int rect, double& temp, double& 
     }
 }
 
-bool ImProcCoordinator::getFilmNegativeExponents(int xA, int yA, int xB, int yB, std::array<float, 3>& newExps)
-{
-    MyMutex::MyLock lock(mProcessing);
 
-    const int tr = getCoarseBitMask(params->coarse);
-
-    const Coord2D p1 = translateCoord(ipf, fw, fh, xA, yA);
-    const Coord2D p2 = translateCoord(ipf, fw, fh, xB, yB);
-
-    return imgsrc->getFilmNegativeExponents(p1, p2, tr, params->filmNegative, newExps);
-}
-
-bool ImProcCoordinator::getRawSpotValues(int x, int y, int spotSize, std::array<float, 3>& rawValues)
-{
-    MyMutex::MyLock lock(mProcessing);
-
-    return imgsrc->getRawSpotValues(translateCoord(ipf, fw, fh, x, y), spotSize,
-        getCoarseBitMask(params->coarse), params->filmNegative, rawValues);
-}
 
 void ImProcCoordinator::getAutoCrop(double ratio, int &x, int &y, int &w, int &h)
 {
@@ -2405,6 +2374,7 @@ void ImProcCoordinator::process()
             || params->dirpyrequalizer != nextParams->dirpyrequalizer
             || params->dehaze != nextParams->dehaze
             || params->pdsharpening != nextParams->pdsharpening
+            || params->filmNegative != nextParams->filmNegative
             || sharpMaskChanged;
 
         sharpMaskChanged = false;

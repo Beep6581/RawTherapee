@@ -1257,8 +1257,10 @@ HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
 HISTORY_MSG_EDGEFFECT;Edge Attenuation response
+HISTORY_MSG_FILMNEGATIVE_BALANCE;FN - Reference output
+HISTORY_MSG_FILMNEGATIVE_COLORSPACE;Film negative color space
 HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
-HISTORY_MSG_FILMNEGATIVE_FILMBASE;Film base color
+HISTORY_MSG_FILMNEGATIVE_REF_SPOT;FN - Reference input
 HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
 HISTORY_MSG_HISTMATCHING;Auto-matched tone curve
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
@@ -1559,7 +1561,7 @@ PARTIALPASTE_EQUALIZER;Wavelet levels
 PARTIALPASTE_EVERYTHING;Everything
 PARTIALPASTE_EXIFCHANGES;Exif
 PARTIALPASTE_EXPOSURE;Exposure
-PARTIALPASTE_FILMNEGATIVE;Film Negative
+PARTIALPASTE_FILMNEGATIVE;Film negative
 PARTIALPASTE_FILMSIMULATION;Film simulation
 PARTIALPASTE_FLATFIELDAUTOSELECT;Flat-field auto-selection
 PARTIALPASTE_FLATFIELDBLURRADIUS;Flat-field blur radius
@@ -2252,12 +2254,19 @@ TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Weighted Standard
 TP_EXPOS_BLACKPOINT_LABEL;Raw Black Points
 TP_EXPOS_WHITEPOINT_LABEL;Raw White Points
 TP_FILMNEGATIVE_BLUE;Blue ratio
-TP_FILMNEGATIVE_FILMBASE_PICK;Pick film base color
-TP_FILMNEGATIVE_FILMBASE_TOOLTIP;Pick a spot of unexposed film (eg. the border between frames), to get the actual film base color values, and save them in the processing profile.\nThis makes it easy to get a more consistent color balance when batch-processing multiple pictures from the same roll.\nAlso use this when the converted image is extremely dark, bright, or color-unbalanced.
-TP_FILMNEGATIVE_FILMBASE_VALUES;Film base RGB:
-TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
-TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness. Set the white balance afterwards.
+TP_FILMNEGATIVE_BLUEBALANCE;Cool/Warm
+TP_FILMNEGATIVE_COLORSPACE;Inversion color space:
+TP_FILMNEGATIVE_COLORSPACE_INPUT;Input color space
+TP_FILMNEGATIVE_COLORSPACE_TOOLTIP;Select the color space used to perform the negative inversion:\n<b>Input color space</b> : perform inversion before the input profile is applied, as in the previous versions of RT.\n<b>Working color space</b> : perform inversion after input profile, using the currently selected working profile.
+TP_FILMNEGATIVE_COLORSPACE_WORKING;Working color space
+TP_FILMNEGATIVE_REF_LABEL;Input RGB: %1
+TP_FILMNEGATIVE_REF_PICK;Pick white balance spot
+TP_FILMNEGATIVE_REF_TOOLTIP;Pick a gray patch for white-balancing the output, positive image.
+TP_FILMNEGATIVE_GREEN;Reference exponent
+TP_FILMNEGATIVE_GREENBALANCE;Magenta/Green
+TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness.
 TP_FILMNEGATIVE_LABEL;Film Negative
+TP_FILMNEGATIVE_OUT_LEVEL;Output level
 TP_FILMNEGATIVE_PICK;Pick neutral spots
 TP_FILMNEGATIVE_RED;Red ratio
 TP_FILMSIMULATION_LABEL;Film Simulation

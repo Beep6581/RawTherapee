@@ -99,7 +99,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     bayerrawexposure    = Gtk::manage(new BayerRAWExposure());
     xtransrawexposure   = Gtk::manage(new XTransRAWExposure());
     fattal              = Gtk::manage(new FattalToneMapping());
-    filmNegative        = Gtk::manage (new FilmNegative ());
+    filmNegative        = Gtk::manage (new FilmNegative());
     pdSharpening        = Gtk::manage (new PdSharpening());
     // So Demosaic, Line noise filter, Green Equilibration, Ca-Correction (garder le nom de section identique!) and Black-Level will be moved in a "Bayer sensor" tool,
     // and a separate Demosaic and Black Level tool will be created in an "X-Trans sensor" tool
@@ -123,6 +123,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     addfavoritePanel (detailsPanel, sharpenMicro);
     addfavoritePanel (colorPanel, hsvequalizer);
     addfavoritePanel (colorPanel, filmSimulation);
+    addfavoritePanel (colorPanel, filmNegative);
     addfavoritePanel (colorPanel, softlight);
     addfavoritePanel (colorPanel, rgbcurves);
     addfavoritePanel (colorPanel, colortoning);
@@ -165,7 +166,6 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     addfavoritePanel (rawPanel, preprocess);
     addfavoritePanel (rawPanel, darkframe);
     addfavoritePanel (rawPanel, flatfield);
-    addfavoritePanel (rawPanel, filmNegative);
     addfavoritePanel (rawPanel, pdSharpening);
 
     int favoriteCount = 0;
@@ -286,7 +286,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     distortion->setLensGeomListener(this);
     crop->setCropPanelListener(this);
     icm->setICMPanelListener(this);
-    filmNegative->setFilmNegProvider (this);
+    filmNegative->setFilmNegProvider(this);
 
     toolBar = new ToolBar();
     toolBar->setToolBarListener(this);
@@ -367,7 +367,6 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     preprocessWB->FoldableToolPanel::show();
                     preprocess->FoldableToolPanel::show();
                     flatfield->FoldableToolPanel::show();
-                    filmNegative->FoldableToolPanel::show();
                     pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
                     return false;
@@ -388,7 +387,6 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     preprocessWB->FoldableToolPanel::show();
                     preprocess->FoldableToolPanel::show();
                     flatfield->FoldableToolPanel::show();
-                    filmNegative->FoldableToolPanel::show();
                     pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
                     return false;
@@ -409,7 +407,6 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     preprocessWB->FoldableToolPanel::hide();
                     preprocess->FoldableToolPanel::hide();
                     flatfield->FoldableToolPanel::show();
-                    filmNegative->FoldableToolPanel::hide();
                     pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
                     return false;
@@ -430,7 +427,6 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     preprocessWB->FoldableToolPanel::hide();
                     preprocess->FoldableToolPanel::hide();
                     flatfield->FoldableToolPanel::hide();
-                    filmNegative->FoldableToolPanel::hide();
                     pdSharpening->FoldableToolPanel::hide();
                     retinex->FoldableToolPanel::setGrayedOut(false);
                     return false;
@@ -452,7 +448,6 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                 preprocessWB->FoldableToolPanel::hide();
                 preprocess->FoldableToolPanel::hide();
                 flatfield->FoldableToolPanel::hide();
-                filmNegative->FoldableToolPanel::hide();
                 pdSharpening->FoldableToolPanel::hide();
                 retinex->FoldableToolPanel::setGrayedOut(true);
                 return false;
@@ -613,7 +608,7 @@ void ToolPanelCoordinator::profileChange(
         lParams[1] = *mergedParams;
         pe.initFrom(lParams);
 
-        filterRawRefresh = pe.raw.isUnchanged() && pe.lensProf.isUnchanged() && pe.retinex.isUnchanged() && pe.filmNegative.isUnchanged() && pe.pdsharpening.isUnchanged();
+        filterRawRefresh = pe.raw.isUnchanged() && pe.lensProf.isUnchanged() && pe.retinex.isUnchanged() && pe.pdsharpening.isUnchanged();
     }
 
     *params = *mergedParams;
@@ -732,7 +727,7 @@ void ToolPanelCoordinator::initImage(rtengine::StagedImageProcessor* ipc_, bool 
         ipc->setSizeListener(resize);
         ipc->setLocallabListener(locallab);
         ipc->setImageTypeListener(this);
-        ipc->setFilmNegListener (filmNegative);
+        ipc->setFilmNegListener(filmNegative);
         flatfield->setShortcutPath(Glib::path_get_dirname(ipc->getInitialImage()->getFileName()));
 
         icm->setRawMeta(raw, (const rtengine::FramesData*)pMetaData);
@@ -1280,12 +1275,7 @@ void ToolPanelCoordinator::setEditProvider(EditDataProvider *provider)
     }
 }
 
-bool ToolPanelCoordinator::getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps)
+bool ToolPanelCoordinator::getFilmNegativeSpot(rtengine::Coord spot, int spotSize, RGB &refInput, RGB &refOutput)
 {
-    return ipc && ipc->getFilmNegativeExponents(spotA.x, spotA.y, spotB.x, spotB.y, newExps);
-}
-
-bool ToolPanelCoordinator::getRawSpotValues(rtengine::Coord spot, int spotSize, std::array<float, 3>& rawValues)
-{
-    return ipc && ipc->getRawSpotValues(spot.x, spot.y, spotSize, rawValues);
+    return ipc && ipc->getFilmNegativeSpot(spot.x, spot.y, spotSize, refInput, refOutput);
 }

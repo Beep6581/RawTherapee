@@ -2184,10 +2184,28 @@ struct FilmNegativeParams {
     double greenExp;
     double blueRatio;
 
-    double redBase;
-    double greenBase;
-    double blueBase;
-    
+    struct RGB {
+        float r, g, b;
+
+        bool operator ==(const RGB& other) const;
+        bool operator !=(const RGB& other) const;
+        RGB operator *(const RGB& other) const;
+    };
+
+    RGB refInput;
+    RGB refOutput;
+
+    enum class ColorSpace {
+        INPUT = 0,
+        WORKING
+        // TODO : add support for custom color profile
+    };
+
+    ColorSpace colorSpace;
+
+    enum class BackCompat { CURRENT = 0, V1, V2 };
+    BackCompat backCompat;
+
     FilmNegativeParams();
 
     bool operator ==(const FilmNegativeParams& other) const;
