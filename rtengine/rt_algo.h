@@ -29,4 +29,5 @@ void buildBlendMask(const float* const * luminance, float **blend, int W, int H,
 void buildGradientsMask(int W, int H, float **luminance, float **out, 
                         float amount, int nlevels, int detail_level,
                         float alfa, float beta, bool multithread);
+double accumulateProduct(const float* data1, const float* data2, size_t n, bool multiThread = true);
 }
