@@ -14,9 +14,9 @@ on:
       - created
 jobs:
   build:
-    runs-on: macos-10.15
+    runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Install dependencies
         run: |
            date -u
@@ -86,7 +86,7 @@ jobs:
           echo "ARTIFACT_FILE=${ARTIFACT}" >> $GITHUB_ENV
           zsh -c 'echo "Bundled in $(printf "%0.2f" $(($[$(date +%s)-$(cat bundlestamp)]/$((60.))))) minutes"'
           exit
-      - uses: actions/upload-artifact@v1
+      - uses: actions/upload-artifact@v2
         with:
           name: ${{env.ARTIFACT_FILE}}
           path: ${{env.ARTIFACT_PATH}}
