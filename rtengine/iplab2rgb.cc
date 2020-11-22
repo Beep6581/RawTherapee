@@ -404,6 +404,28 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         return;
     }
 
+    if(mul == -5 &&  gampos == 2.4 && slpos == 12.92310) {//must be change if we change settings RT sRGB
+        //only in this case we can shortcut..all process..no gamut control..because we reduce...leads to very small differences, but big speedup
+#ifdef _OPENMP
+            #pragma omp for schedule(dynamic, 16) nowait
+#endif
+
+            for (int i = 0; i < ch; ++i) 
+                for (int j = 0; j < cw; ++j) {
+                    float r = src->r(i, j);
+                    float g = src->g(i, j);
+                    float b = src->b(i, j);
+                    r = (Color::igammatab_srgb[r]) / 65535.f;
+                    g = (Color::igammatab_srgb[g]) / 65535.f;
+                    b = (Color::igammatab_srgb[b]) / 65535.f;
+                    dst->r(i, j) = r;
+                    dst->g(i, j) = g;
+                    dst->b(i, j) = b;
+                }
+       return;
+
+    } 
+
     float redxx = params->icm.redx;
     float redyy = params->icm.redy;
     float grexx = params->icm.grex;
