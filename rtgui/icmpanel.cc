@@ -56,7 +56,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     EvICMgrey = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_GREY");
     EvICMblux = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_BLUX");
     EvICMbluy = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_BLUY");
-
+    EvaIntent = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_AINTENT");
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
 
     ipDialog = Gtk::manage(new MyFileChooserButton(M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
@@ -318,6 +318,21 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
     wSlope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
+    // Rendering intent
+    riaHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* abIntentLbl = Gtk::manage(new Gtk::Label(M("TP_ICM_PROFILEINTENT")));
+    riaHBox->pack_start(*abIntentLbl, Gtk::PACK_SHRINK);
+    aRendIntent.reset(new PopUpButton());
+    aRendIntent->addEntry("intent-perceptual.png", M("PREFERENCES_INTENT_PERCEPTUAL"));
+    aRendIntent->addEntry("intent-relative.png", M("PREFERENCES_INTENT_RELATIVE"));
+    aRendIntent->addEntry("intent-saturation.png", M("PREFERENCES_INTENT_SATURATION"));
+    aRendIntent->addEntry("intent-absolute.png", M("PREFERENCES_INTENT_ABSOLUTE"));
+    aRendIntent->setSelected(1);
+    aRendIntent->show();
+    riaHBox->pack_start(*aRendIntent->buttonGroup, Gtk::PACK_EXPAND_PADDING);
+    trcProfVBox->pack_start(*riaHBox, Gtk::PACK_SHRINK);
+
+
     trcFrame->add(*trcProfVBox);
 
     pack_start(*wFrame, Gtk::PACK_EXPAND_WIDGET);
@@ -407,6 +422,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprofnamesconn = wProfNames->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wpChanged));
     oprofnamesconn = oProfNames->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::opChanged));
     orendintentconn = oRendIntent->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::oiChanged));
+    arendintentconn = aRendIntent->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::aiChanged));
     dcpillconn = dcpIll->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::dcpIlluminantChanged));
     wtrcconn = wTRC->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wtrcinChanged));
     willconn = will->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::willChanged));
@@ -445,6 +461,13 @@ void ICMPanel::updateRenderingIntent(const Glib::ustring &profile)
         oRendIntent->setItemSensitivity(1, supportsRelative);
         oRendIntent->setItemSensitivity(2, supportsSaturation);
         oRendIntent->setItemSensitivity(3, supportsAbsolute);
+
+        aRendIntent->set_sensitive(true);
+        aRendIntent->setItemSensitivity(0, supportsPerceptual);
+        aRendIntent->setItemSensitivity(1, supportsRelative);
+        aRendIntent->setItemSensitivity(2, supportsSaturation);
+        aRendIntent->setItemSensitivity(3, supportsAbsolute);
+
     } else {
         oRendIntent->setItemSensitivity(0, true);
         oRendIntent->setItemSensitivity(1, true);
@@ -452,6 +475,14 @@ void ICMPanel::updateRenderingIntent(const Glib::ustring &profile)
         oRendIntent->setItemSensitivity(3, true);
         oRendIntent->set_sensitive(false);
         oRendIntent->setSelected(1);
+
+        aRendIntent->setItemSensitivity(0, true);
+        aRendIntent->setItemSensitivity(1, true);
+        aRendIntent->setItemSensitivity(2, true);
+        aRendIntent->setItemSensitivity(3, true);
+        aRendIntent->set_sensitive(false);
+        aRendIntent->setSelected(1);
+
     }
 }
 
@@ -595,6 +626,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker wprofnamesconn_(wprofnamesconn);
     ConnectionBlocker oprofnamesconn_(oprofnamesconn);
     ConnectionBlocker orendintentconn_(orendintentconn);
+    ConnectionBlocker arendintentconn_(arendintentconn);
     ConnectionBlocker dcpillconn_(dcpillconn);
     ConnectionBlocker wtrcconn_(wtrcconn);
     ConnectionBlocker willconn_(willconn);
@@ -700,6 +732,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     }
 
     oRendIntent->setSelected(pp->icm.outputIntent);
+    aRendIntent->setSelected(pp->icm.aRendIntent);
 
     obpc->set_active(pp->icm.outputBPC);
     ckbToneCurve->set_active(pp->icm.toneCurve);
@@ -740,6 +773,10 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             oRendIntent->setSelected(4);
         }
 
+        if (!pedited->icm.aRendIntent) {
+            aRendIntent->setSelected(4);
+        }
+
         if (!pedited->icm.dcpIlluminant) {
             dcpIll->set_active_text(M("GENERAL_UNCHANGED"));
         }
@@ -774,6 +811,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         willulab->set_sensitive(false);
         wprim->set_sensitive(false);
         wprimlab->set_sensitive(false);
+        riaHBox->set_sensitive(false);
         redFrame->hide();
       //  greFrame->hide();
       //  bluFrame->hide();
@@ -788,6 +826,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         } else {
             redFrame->show();
         }
+        riaHBox->set_sensitive(true);
 
         if(pp->icm.workingTRCGamma <= 1.) {
             wGamma->set_sensitive(true);
@@ -810,6 +849,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         } else {
             redFrame->show();
         }
+        riaHBox->set_sensitive(true);
         
     } else if(wTRC->get_active_row_number() == 3) {
         wGamma->setValue(2.4);
@@ -820,6 +860,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprimlab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
+        riaHBox->set_sensitive(true);
         if (wprim->get_active_row_number() == 0) {
             redFrame->hide();
         } else {
@@ -835,6 +876,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         redFrame->show();
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
+        riaHBox->set_sensitive(true);
         if (wprim->get_active_row_number() == 0) {
             redFrame->hide();
         } else {
@@ -847,6 +889,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
         wprimlab->set_sensitive(true);
+        riaHBox->set_sensitive(true);
         if (wprim->get_active_row_number() == 0) {
             redFrame->hide();
         } else {
@@ -863,6 +906,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprimlab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
+        riaHBox->set_sensitive(true);
         if (wprim->get_active_row_number() == 0) {
             redFrame->hide();
         } else {
@@ -911,6 +955,14 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pp->icm.outputIntent  = static_cast<RenderingIntent>(ointentVal);
     } else {
         pp->icm.outputIntent  = rtengine::RI_RELATIVE;
+    }
+
+    int aintentVal = aRendIntent->getSelected();
+
+    if (aintentVal >= 0 && aintentVal < RI__COUNT) {
+        pp->icm.aRendIntent  = static_cast<RenderingIntent>(aintentVal);
+    } else {
+        pp->icm.aRendIntent  = rtengine::RI_RELATIVE;
     }
 
     if (wTRC->get_active_row_number() == 0) {
@@ -986,6 +1038,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.workingProfile = wProfNames->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.outputProfile = oProfNames->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.outputIntent = oRendIntent->getSelected() < 4;
+        pedited->icm.aRendIntent = aRendIntent->getSelected() < 4;
         pedited->icm.outputBPC = !obpc->get_inconsistent();
         pedited->icm.dcpIlluminant = dcpIll->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.toneCurve = !ckbToneCurve->get_inconsistent();
@@ -1084,6 +1137,7 @@ void ICMPanel::wtrcinChanged()
         wprim->set_sensitive(false);
         wprimlab->set_sensitive(false);
         redFrame->hide();
+        riaHBox->set_sensitive(false);
         
     } else if(wTRC->get_active_row_number() == 1) {
         will->set_sensitive(true);
@@ -1095,6 +1149,7 @@ void ICMPanel::wtrcinChanged()
         } else {
             redFrame->show();
         }
+        riaHBox->set_sensitive(true);
 
         if(wGamma->getValue() <= 1.) {
             wGamma->set_sensitive(true);
@@ -1117,6 +1172,7 @@ void ICMPanel::wtrcinChanged()
         } else {
             redFrame->show();
         }
+        riaHBox->set_sensitive(true);
         
     } else if(wTRC->get_active_row_number() == 3) {
         wGamma->setValue(2.4);
@@ -1125,6 +1181,7 @@ void ICMPanel::wtrcinChanged()
         willulab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
+        riaHBox->set_sensitive(true);
         if (wprim->get_active_row_number() == 0) {
             redFrame->hide();
         } else {
@@ -1139,6 +1196,7 @@ void ICMPanel::wtrcinChanged()
         wprimlab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
+        riaHBox->set_sensitive(true);
         if (wprim->get_active_row_number() == 0) {
             redFrame->hide();
         } else {
@@ -1153,6 +1211,7 @@ void ICMPanel::wtrcinChanged()
         wprimlab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
+        riaHBox->set_sensitive(true);
         if (wprim->get_active_row_number() == 0) {
             redFrame->hide();
         } else {
@@ -1167,6 +1226,7 @@ void ICMPanel::wtrcinChanged()
         wprimlab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
+        riaHBox->set_sensitive(true);
         if (wprim->get_active_row_number() == 0) {
             redFrame->hide();
         } else {
@@ -1427,6 +1487,39 @@ void ICMPanel::oiChanged(int n)
     }
 }
 
+void ICMPanel::aiChanged(int n)
+{
+
+    if (listener) {
+        Glib::ustring str;
+
+        switch (n) {
+            case 0:
+                str = M("PREFERENCES_INTENT_PERCEPTUAL");
+                break;
+
+            case 1:
+                str = M("PREFERENCES_INTENT_RELATIVE");
+                break;
+
+            case 2:
+                str = M("PREFERENCES_INTENT_SATURATION");
+                break;
+
+            case 3:
+                str = M("PREFERENCES_INTENT_ABSOLUTE");
+                break;
+
+            case 4:
+            default:
+                str = M("GENERAL_UNCHANGED");
+                break;
+        }
+
+        listener->panelChanged(EvaIntent, str);
+    }
+}
+
 void ICMPanel::oBPCChanged()
 {
     if (multiImage) {
@@ -1552,6 +1645,8 @@ void ICMPanel::setBatchMode(bool batchMode)
     oProfNames->append(M("GENERAL_UNCHANGED"));
     oRendIntent->addEntry("template-24.png", M("GENERAL_UNCHANGED"));
     oRendIntent->show();
+    aRendIntent->addEntry("template-24.png", M("GENERAL_UNCHANGED"));
+    aRendIntent->show();
     wProfNames->append(M("GENERAL_UNCHANGED"));
     wTRC->append(M("GENERAL_UNCHANGED"));
     will->append(M("GENERAL_UNCHANGED"));

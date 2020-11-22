@@ -651,7 +651,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             constexpr cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE | cmsFLAGS_BLACKPOINTCOMPENSATION;
             const cmsHPROFILE iprof = ICCStore::getInstance()->getXYZProfile();
             lcmsMutex->lock();
-            hTransform = cmsCreateTransform(iprof, TYPE_RGB_FLT, oprofdef, TYPE_RGB_FLT, params->icm.outputIntent, flags);
+            hTransform = cmsCreateTransform(iprof, TYPE_RGB_FLT, oprofdef, TYPE_RGB_FLT, params->icm.aRendIntent, flags);
             lcmsMutex->unlock();
         }
     }

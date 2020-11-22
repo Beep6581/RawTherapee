@@ -1648,6 +1648,7 @@ struct ColorManagementParams {
     double grey;
     double blux;
     double bluy;
+    RenderingIntent aRendIntent;
 
     Glib::ustring outputProfile;
     RenderingIntent outputIntent;

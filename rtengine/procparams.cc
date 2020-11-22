@@ -2172,6 +2172,7 @@ ColorManagementParams::ColorManagementParams() :
     grey(0.71),
     blux(0.15),
     bluy(0.06),
+    aRendIntent(RI_RELATIVE),
     outputProfile(options.rtSettings.srgb),
     outputIntent(RI_RELATIVE),
     outputBPC(true)
@@ -2199,6 +2200,7 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && grey == other.grey
         && blux == other.blux
         && bluy == other.bluy
+        && aRendIntent == other.aRendIntent
         && outputProfile == other.outputProfile
         && outputIntent == other.outputIntent
         && outputBPC == other.outputBPC;
@@ -6207,6 +6209,21 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.bluy, "Color Management", "Bluy", icm.bluy, keyFile);
         saveToKeyfile(!pedited || pedited->icm.outputProfile, "Color Management", "OutputProfile", icm.outputProfile, keyFile);
         saveToKeyfile(
+            !pedited || pedited->icm.aRendIntent,
+            "Color Management",
+            "aIntent",
+            {
+                {RI_PERCEPTUAL, "Perceptual"},
+                {RI_RELATIVE, "Relative"},
+                {RI_SATURATION, "Saturation"},
+                {RI_ABSOLUTE, "Absolute"}
+
+            },
+            icm.aRendIntent,
+            keyFile
+        );
+
+        saveToKeyfile(
             !pedited || pedited->icm.outputIntent,
             "Color Management",
             "OutputProfileIntent",
@@ -8087,6 +8104,23 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "Grey", pedited, icm.grey, pedited->icm.grey);
             assignFromKeyfile(keyFile, "Color Management", "Blux", pedited, icm.blux, pedited->icm.blux);
             assignFromKeyfile(keyFile, "Color Management", "Bluy", pedited, icm.bluy, pedited->icm.bluy);
+            if (keyFile.has_key("Color Management", "aIntent")) {
+                Glib::ustring intent = keyFile.get_string("Color Management", "aIntent");
+
+                if (intent == "Perceptual") {
+                    icm.aRendIntent = RI_PERCEPTUAL;
+                } else if (intent == "Relative") {
+                    icm.aRendIntent = RI_RELATIVE;
+                } else if (intent == "Saturation") {
+                    icm.aRendIntent = RI_SATURATION;
+                } else if (intent == "Absolute") {
+                    icm.aRendIntent = RI_ABSOLUTE;
+                }
+
+                if (pedited) {
+                    pedited->icm.aRendIntent = true;
+                }
+            }
 
             assignFromKeyfile(keyFile, "Color Management", "OutputProfile", pedited, icm.outputProfile, pedited->icm.outputProfile);
             if (ppVersion < 341) {

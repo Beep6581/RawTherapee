@@ -96,7 +96,7 @@ private:
     rtengine::ProcEvent EvICMgrey;
     rtengine::ProcEvent EvICMblux;
     rtengine::ProcEvent EvICMbluy;
-
+    rtengine::ProcEvent EvaIntent;
     Gtk::VBox* iVBox;
     Gtk::HBox* wTRCHBox;
     Gtk::HBox* willuBox;
@@ -106,6 +106,7 @@ private:
     Gtk::HBox* redBox;
     Gtk::HBox* greBox;
     Gtk::HBox* bluBox;
+    Gtk::HBox* riaHBox;
 
     Gtk::CheckButton* obpc;
     Gtk::RadioButton* inone;
@@ -129,6 +130,8 @@ private:
     sigc::connection willconn;
     MyComboBoxText* wprim;
     sigc::connection wprimconn;
+    std::unique_ptr<PopUpButton> aRendIntent;
+    sigc::connection arendintentconn;
 
     MyComboBoxText* oProfNames;
     sigc::connection oprofnamesconn;
@@ -162,6 +165,7 @@ public:
     void wprimChanged();
     void opChanged();
     void oiChanged(int n);
+    void aiChanged(int n);
     void oBPCChanged();
     void ipChanged();
     void ipSelectionChanged();
