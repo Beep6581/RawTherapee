@@ -737,7 +737,7 @@ flowboxchild:selected {
 #ExpanderBox > box,
 #ExpanderBox > grid {
     background-color: rgba(255,255,255,0.075);
-    margin: 0;
+    margin: 0.5em;
     padding: 0.3em 0.5em 0.6em 0.5em;
     border-top: 0.0833333333333333em solid rgba(255,255,255,0.1);
     border-bottom: none;
@@ -761,6 +761,12 @@ flowboxchild:selected {
     padding: 0 0.5em 0.5em 0.5em;
 }
 
+/* Necessary hack for extra margin in Wavelets and some other locations */
+#ExpanderBox box > box,
+#ExpanderBox2 box > box {
+    margin: 0.16666666666666em 0;
+}
+
 /* Sub-tool (MyExpander) background */
 #LocallabToolPanel > box,
 #LocallabToolPanel > grid,
@@ -774,7 +780,7 @@ flowboxchild:selected {
 }
 
 #MyExpanderTitle label {
-    color: #999999;
+    color: #AAAAAA;
     padding: 0;
     margin: 0;
     font-size: 1.1em; /* TODO: Does not work? */
