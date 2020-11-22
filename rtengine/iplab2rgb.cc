@@ -646,9 +646,9 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         cmsWriteTag(oprofdef, cmsSigBlueTRCTag, GammaTRC[2]);
 
         cmsFreeToneCurve(GammaTRC[0]);
-
+        //printf("indent=%i \n", params->icm.aRendIntent);
         if (oprofdef) {
-            constexpr cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE | cmsFLAGS_BLACKPOINTCOMPENSATION;
+            constexpr cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE | cmsFLAGS_BLACKPOINTCOMPENSATION | cmsFLAGS_GAMUTCHECK;
             const cmsHPROFILE iprof = ICCStore::getInstance()->getXYZProfile();
             lcmsMutex->lock();
             hTransform = cmsCreateTransform(iprof, TYPE_RGB_FLT, oprofdef, TYPE_RGB_FLT, params->icm.aRendIntent, flags);

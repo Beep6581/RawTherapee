@@ -330,7 +330,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     aRendIntent->setSelected(1);
     aRendIntent->show();
     riaHBox->pack_start(*aRendIntent->buttonGroup, Gtk::PACK_EXPAND_PADDING);
-    trcProfVBox->pack_start(*riaHBox, Gtk::PACK_SHRINK);
+ //   trcProfVBox->pack_start(*riaHBox, Gtk::PACK_SHRINK);
 
 
     trcFrame->add(*trcProfVBox);
