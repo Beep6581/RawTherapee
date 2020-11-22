@@ -116,6 +116,16 @@ void getFromKeyfile(
     const Glib::KeyFile& keyfile,
     const Glib::ustring& group_name,
     const Glib::ustring& key,
+    float& value
+)
+{
+    value = static_cast<float>(keyfile.get_double(group_name, key));
+}
+
+void getFromKeyfile(
+    const Glib::KeyFile& keyfile,
+    const Glib::ustring& group_name,
+    const Glib::ustring& key,
     bool& value
 )
 {
@@ -151,6 +161,21 @@ void getFromKeyfile(
 {
     value = keyfile.get_double_list(group_name, key);
     rtengine::sanitizeCurve(value);
+}
+
+void getFromKeyfile(
+    const Glib::KeyFile& keyfile,
+    const Glib::ustring& group_name,
+    const Glib::ustring& key,
+    rtengine::procparams::FilmNegativeParams::RGB& value
+)
+{
+    const std::vector<double> v = keyfile.get_double_list(group_name, key);
+    if(v.size() >= 3) {
+        value.r = v[0];
+        value.g = v[1];
+        value.b = v[2];
+    }
 }
 
 template<typename T>
@@ -222,6 +247,16 @@ void putToKeyfile(
 void putToKeyfile(
     const Glib::ustring& group_name,
     const Glib::ustring& key,
+    float value,
+    Glib::KeyFile& keyfile
+)
+{
+    keyfile.set_double(group_name, key, static_cast<double>(value));
+}
+
+void putToKeyfile(
+    const Glib::ustring& group_name,
+    const Glib::ustring& key,
     double value,
     Glib::KeyFile& keyfile
 )
@@ -270,6 +305,18 @@ void putToKeyfile(
     const Glib::ArrayHandle<double> list = value;
     keyfile.set_double_list(group_name, key, list);
 }
+
+void putToKeyfile(
+    const Glib::ustring& group_name,
+    const Glib::ustring& key,
+    const rtengine::procparams::FilmNegativeParams::RGB& value,
+    Glib::KeyFile& keyfile
+)
+{
+    const std::vector<double> vec = { value.r, value.g, value.b };
+    keyfile.set_double_list(group_name, key, vec);
+}
+
 
 template<typename T>
 bool saveToKeyfile(
@@ -1375,6 +1422,7 @@ ColorAppearanceParams::ColorAppearanceParams() :
     curveMode(TcMode::LIGHT),
     curveMode2(TcMode::LIGHT),
     curveMode3(CtcMode::CHROMA),
+    complexmethod("normal"),
     surround("Average"),
     surrsrc("Average"),
     adapscen(2000.0),
@@ -1423,6 +1471,7 @@ bool ColorAppearanceParams::operator ==(const ColorAppearanceParams& other) cons
         && curveMode == other.curveMode
         && curveMode2 == other.curveMode2
         && curveMode3 == other.curveMode3
+        && complexmethod == other.complexmethod
         && surround == other.surround
         && surrsrc == other.surrsrc
         && adapscen == other.adapscen
@@ -1870,6 +1919,7 @@ LensProfParams::LcMode LensProfParams::getMethodNumber(const Glib::ustring& mode
 
 PerspectiveParams::PerspectiveParams() :
     method("simple"),
+    render(true),
     horizontal(0.0),
     vertical(0.0),
     camera_crop_factor(0.0),
@@ -1891,6 +1941,7 @@ bool PerspectiveParams::operator ==(const PerspectiveParams& other) const
 {
     return
         method == other.method
+        && render == other.render
         && horizontal == other.horizontal
         && vertical == other.vertical
         && camera_focal_length == other.camera_focal_length
@@ -1904,7 +1955,12 @@ bool PerspectiveParams::operator ==(const PerspectiveParams& other) const
         && projection_shift_vert == other.projection_shift_vert
         && projection_rotate == other.projection_rotate
         && projection_pitch == other.projection_pitch
-        && projection_yaw == other.projection_yaw;
+        && projection_yaw == other.projection_yaw
+        // Lines could still be equivalent if the vectors aren't, but this is
+        // rare and a small issue. Besides, a proper comparison requires lots
+        // more code which introduces clutter.
+        && control_line_values == other.control_line_values
+        && control_line_types == other.control_line_types;
 }
 
 bool PerspectiveParams::operator !=(const PerspectiveParams& other) const
@@ -2715,7 +2771,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     transitgrad(0.0),
     hishow(false),
     activ(true),
-    avoid(false),
+    avoid(true),
     blwh(false),
     recurs(false),
     laplac(true),
@@ -3326,6 +3382,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     },
     enablMask(false),
     fftwbl(false),
+    invbl(false),
     toolbl(false),
     blendmaskbl(0),
     radmaskbl(0.0),
@@ -3475,7 +3532,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     inversret(false),
     equilret(true),
     loglin(false),
-    lumonly(false),
+    dehazeSaturation(50.0),
     softradiusret(40.0),
     CCmaskreticurve{
         static_cast<double>(FCT_MinMaxCPoints),
@@ -3827,16 +3884,92 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     explog(false),
     autocompute(false),
     sourceGray(10.),
+    sourceabs(2000.),
+    targabs(16.),
     targetGray(18.),
+    catad(0.),
+    saturl(0.),
+    lightl(0.),
+    lightq(0.),
+    contl(0.),
+    contq(0.),
+    colorfl(0.),
+    LcurveL{
+        static_cast<double>(DCT_NURBS),
+        0.0,
+        0.0,
+        1.0,
+        1.0
+    },
     Autogray(true),
     fullimage(true),
+    repar(100.0),
+    ciecam(false),
     blackEv(-5.0),
     whiteEv(10.0),
     detail(0.6),
     sensilog(60),
+    sursour("Average"),
+    surround("Average"),
     baselog(2.),
     strlog(0.0),
     anglog(0.0),
+    CCmaskcurveL{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        1.0,
+        0.35,
+        0.35,
+        0.50,
+        1.0,
+        0.35,
+        0.35,
+        1.00,
+        1.0,
+        0.35,
+        0.35
+    },
+    LLmaskcurveL{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        1.0,
+        0.35,
+        0.35,
+        0.50,
+        1.0,
+        0.35,
+        0.35,
+        1.00,
+        1.0,
+        0.35,
+        0.35
+    },
+    HHmaskcurveL{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        1.0,
+        0.35,
+        0.35,
+        0.50,
+        1.0,
+        0.35,
+        0.35,
+        1.00,
+        1.0,
+        0.35,
+        0.35
+    },
+    enaLMask(false),
+    blendmaskL(0),
+    radmaskL(0.),
+    chromaskL(0.),
+    LmaskcurveL{
+        static_cast<double>(DCT_NURBS),
+        0.0,
+        0.0,
+        1.0,
+        1.0
+    },
     // mask
     visimask(false),
     complexmask(0),
@@ -4206,6 +4339,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && HHmaskblcurve == other.HHmaskblcurve
         && enablMask == other.enablMask
         && fftwbl == other.fftwbl
+        && invbl == other.invbl
         && toolbl == other.toolbl
         && blendmaskbl == other.blendmaskbl
         && radmaskbl == other.radmaskbl
@@ -4263,7 +4397,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && inversret == other.inversret
         && equilret == other.equilret
         && loglin == other.loglin
-        && lumonly == other.lumonly
+        && dehazeSaturation == other.dehazeSaturation
         && softradiusret == other.softradiusret
         && CCmaskreticurve == other.CCmaskreticurve
         && LLmaskreticurve == other.LLmaskreticurve
@@ -4401,18 +4535,42 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         // Log encoding
         && visilog == other.visilog
         && explog == other.explog
+        && complexlog == other.complexlog
         && autocompute == other.autocompute
         && sourceGray == other.sourceGray
+        && sourceabs == other.sourceabs
+        && targabs == other.targabs
         && targetGray == other.targetGray
+        && catad == other.catad
+        && saturl == other.saturl
+        && lightl == other.lightl
+        && lightq == other.lightq
+        && contl == other.contl
+        && contq == other.contq
+        && colorfl == other.colorfl
+        && LcurveL == other.LcurveL
         && Autogray == other.Autogray
         && fullimage == other.fullimage
+        && repar == other.repar
+        && ciecam == other.ciecam
         && blackEv == other.blackEv
         && whiteEv == other.whiteEv
         && detail == other.detail
         && sensilog == other.sensilog
         && baselog == other.baselog
+        && sursour == other.sursour
+        && surround == other.surround
         && strlog == other.strlog
         && anglog == other.anglog
+        && CCmaskcurveL == other.CCmaskcurveL
+        && LLmaskcurveL == other.LLmaskcurveL
+        && HHmaskcurveL == other.HHmaskcurveL
+        && enaLMask == other.enaLMask
+        && blendmaskL == other.blendmaskL
+        && radmaskL == other.radmaskL
+        && chromaskL == other.chromaskL
+        && LmaskcurveL == other.LmaskcurveL
+
         // mask
         && visimask == other.visimask
         && complexmask == other.complexmask
@@ -4587,9 +4745,9 @@ bool SoftLightParams::operator !=(const SoftLightParams& other) const
 DehazeParams::DehazeParams() :
     enabled(false),
     strength(50),
+    saturation(50),
     showDepthMap(false),
-    depth(25),
-    luminance(false)
+    depth(25)
 {
 }
 
@@ -4600,7 +4758,7 @@ bool DehazeParams::operator ==(const DehazeParams& other) const
         && strength == other.strength
         && showDepthMap == other.showDepthMap
         && depth == other.depth
-        && luminance == other.luminance;
+        && saturation == other.saturation;
 }
 
 bool DehazeParams::operator !=(const DehazeParams& other) const
@@ -4902,10 +5060,33 @@ FilmNegativeParams::FilmNegativeParams() :
     redRatio(1.36),
     greenExp(1.5),
     blueRatio(0.86),
-    redBase(0),
-    greenBase(0),
-    blueBase(0)
+    refInput({0.0, 0.0, 0.0}),
+    refOutput({0.0, 0.0, 0.0}),
+    colorSpace(ColorSpace::WORKING),
+    backCompat(BackCompat::CURRENT)
 {
+}
+
+bool FilmNegativeParams::RGB::operator ==(const FilmNegativeParams::RGB& other) const
+{
+    return
+        r == other.r
+        && g == other.g
+        && b == other.b;
+}
+
+bool FilmNegativeParams::RGB::operator !=(const FilmNegativeParams::RGB& other) const
+{
+    return !(*this == other);
+}
+
+FilmNegativeParams::RGB FilmNegativeParams::RGB::operator *(const FilmNegativeParams::RGB& other) const
+{
+    return {
+        (*this).r * other.r,
+        (*this).g * other.g,
+        (*this).b * other.b
+    };
 }
 
 bool FilmNegativeParams::operator ==(const FilmNegativeParams& other) const
@@ -4915,9 +5096,10 @@ bool FilmNegativeParams::operator ==(const FilmNegativeParams& other) const
         && redRatio == other.redRatio
         && greenExp == other.greenExp
         && blueRatio == other.blueRatio
-        && redBase == other.redBase
-        && greenBase == other.greenBase
-        && blueBase == other.blueBase;
+        && refInput == other.refInput
+        && refOutput == other.refOutput
+        && colorSpace == other.colorSpace
+        && backCompat == other.backCompat;
 }
 
 bool FilmNegativeParams::operator !=(const FilmNegativeParams& other) const
@@ -5273,6 +5455,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->colorappearance.degreeout, "Color appearance", "Degreeout",        colorappearance.degreeout, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.autodegreeout, "Color appearance", "AutoDegreeout",    colorappearance.autodegreeout, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.surround, "Color appearance", "Surround", colorappearance.surround, keyFile);
+        saveToKeyfile(!pedited || pedited->colorappearance.complexmethod, "Color appearance", "complex", colorappearance.complexmethod, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.surrsrc, "Color appearance", "Surrsrc", colorappearance.surrsrc, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.adaplum, "Color appearance", "AdaptLum", colorappearance.adaplum, keyFile);
         saveToKeyfile(!pedited || pedited->colorappearance.badpixsl, "Color appearance", "Badpixsl", colorappearance.badpixsl, keyFile);
@@ -5342,7 +5525,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->dehaze.strength, "Dehaze", "Strength", dehaze.strength, keyFile);        
         saveToKeyfile(!pedited || pedited->dehaze.showDepthMap, "Dehaze", "ShowDepthMap", dehaze.showDepthMap, keyFile);        
         saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Depth", dehaze.depth, keyFile);        
-        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Luminance", dehaze.luminance, keyFile);
+        saveToKeyfile(!pedited || pedited->dehaze.depth, "Dehaze", "Saturation", dehaze.saturation, keyFile);
 
 // Directional pyramid denoising
         saveToKeyfile(!pedited || pedited->dirpyrDenoise.enabled, "Directional Pyramid Denoising", "Enabled", dirpyrDenoise.enabled, keyFile);
@@ -5452,6 +5635,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->perspective.projection_shift_horiz, "Perspective", "ProjectionShiftHorizontal", perspective.projection_shift_horiz, keyFile);
         saveToKeyfile(!pedited || pedited->perspective.projection_shift_vert, "Perspective", "ProjectionShiftVertical", perspective.projection_shift_vert, keyFile);
         saveToKeyfile(!pedited || pedited->perspective.projection_yaw, "Perspective", "ProjectionYaw", perspective.projection_yaw, keyFile);
+        saveToKeyfile(!pedited || pedited->perspective.control_lines, "Perspective", "ControlLineValues", perspective.control_line_values, keyFile);
+        saveToKeyfile(!pedited || pedited->perspective.control_lines, "Perspective", "ControlLineTypes", perspective.control_line_types, keyFile);
 
 // Gradient
         saveToKeyfile(!pedited || pedited->gradient.enabled, "Gradient", "Enabled", gradient.enabled, keyFile);
@@ -5734,6 +5919,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->HHmaskblcurve, "Locallab", "HHmaskblCurve_" + index_str, spot.HHmaskblcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->enablMask, "Locallab", "EnablMask_" + index_str, spot.enablMask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fftwbl, "Locallab", "Fftwbl_" + index_str, spot.fftwbl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->invbl, "Locallab", "Invbl_" + index_str, spot.invbl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->toolbl, "Locallab", "Toolbl_" + index_str, spot.toolbl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blendmaskbl, "Locallab", "Blendmaskbl_" + index_str, spot.blendmaskbl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->radmaskbl, "Locallab", "Radmaskbl_" + index_str, spot.radmaskbl, keyFile);
@@ -5793,7 +5979,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->inversret, "Locallab", "Inversret_" + index_str, spot.inversret, keyFile);
                     saveToKeyfile(!pedited || spot_edited->equilret, "Locallab", "Equilret_" + index_str, spot.equilret, keyFile);
                     saveToKeyfile(!pedited || spot_edited->loglin, "Locallab", "Loglin_" + index_str, spot.loglin, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->lumonly, "Locallab", "Lumonly_" + index_str, spot.lumonly, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->dehazeSaturation, "Locallab", "dehazeSaturation_" + index_str, spot.dehazeSaturation, keyFile);
                     saveToKeyfile(!pedited || spot_edited->softradiusret, "Locallab", "Softradiusret_" + index_str, spot.softradiusret, keyFile);
                     saveToKeyfile(!pedited || spot_edited->CCmaskreticurve, "Locallab", "CCmaskretiCurve_" + index_str, spot.CCmaskreticurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LLmaskreticurve, "Locallab", "LLmaskretiCurve_" + index_str, spot.LLmaskreticurve, keyFile);
@@ -5931,18 +6117,42 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 // Log encoding
                 if ((!pedited || spot_edited->visilog) && spot.visilog) {
                     saveToKeyfile(!pedited || spot_edited->explog, "Locallab", "Explog_" + index_str, spot.explog, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->complexlog, "Locallab", "Complexlog_" + index_str, spot.complexlog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->autocompute, "Locallab", "Autocompute_" + index_str, spot.autocompute, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sourceGray, "Locallab", "SourceGray_" + index_str, spot.sourceGray, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sourceabs, "Locallab", "Sourceabs_" + index_str, spot.sourceabs, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->targabs, "Locallab", "Targabs_" + index_str, spot.targabs, keyFile);
                     saveToKeyfile(!pedited || spot_edited->targetGray, "Locallab", "TargetGray_" + index_str, spot.targetGray, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->catad, "Locallab", "Catad_" + index_str, spot.catad, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->saturl, "Locallab", "Saturl_" + index_str, spot.saturl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->LcurveL, "Locallab", "LCurveL_" + index_str, spot.LcurveL, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lightl, "Locallab", "Lightl_" + index_str, spot.lightl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lightq, "Locallab", "Brightq_" + index_str, spot.lightq, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->contl, "Locallab", "Contl_" + index_str, spot.contl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->contq, "Locallab", "Contq_" + index_str, spot.contq, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->colorfl, "Locallab", "Colorfl_" + index_str, spot.colorfl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Autogray, "Locallab", "Autogray_" + index_str, spot.Autogray, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fullimage, "Locallab", "Fullimage_" + index_str, spot.fullimage, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->repar, "Locallab", "Repart_" + index_str, spot.repar, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ciecam, "Locallab", "Ciecam_" + index_str, spot.ciecam, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blackEv, "Locallab", "BlackEv_" + index_str, spot.blackEv, keyFile);
                     saveToKeyfile(!pedited || spot_edited->whiteEv, "Locallab", "WhiteEv_" + index_str, spot.whiteEv, keyFile);
                     saveToKeyfile(!pedited || spot_edited->detail, "Locallab", "Detail_" + index_str, spot.detail, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sensilog, "Locallab", "Sensilog_" + index_str, spot.sensilog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->baselog, "Locallab", "Baselog_" + index_str, spot.baselog, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sursour, "Locallab", "Sursour_" + index_str, spot.sursour, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->surround, "Locallab", "Surround_" + index_str, spot.surround, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strlog, "Locallab", "Strlog_" + index_str, spot.strlog, keyFile);
                     saveToKeyfile(!pedited || spot_edited->anglog, "Locallab", "Anglog_" + index_str, spot.anglog, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->CCmaskcurveL, "Locallab", "CCmaskCurveL_" + index_str, spot.CCmaskcurveL, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->LLmaskcurveL, "Locallab", "LLmaskCurveL_" + index_str, spot.LLmaskcurveL, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->HHmaskcurveL, "Locallab", "HHmaskCurveL_" + index_str, spot.HHmaskcurveL, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->enaLMask, "Locallab", "EnaLMask_" + index_str, spot.enaLMask, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->blendmaskL, "Locallab", "blendmaskL_" + index_str, spot.blendmaskL, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->radmaskL, "Locallab", "radmaskL_" + index_str, spot.radmaskL, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->chromaskL, "Locallab", "chromaskL_" + index_str, spot.chromaskL, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->LmaskcurveL, "Locallab", "LmaskCurveL_" + index_str, spot.LmaskcurveL, keyFile);
+
                 }
                 //mask
                 if ((!pedited || spot_edited->visimask) && spot.visimask) {
@@ -6367,9 +6577,18 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->filmNegative.redRatio, "Film Negative", "RedRatio", filmNegative.redRatio, keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.greenExp, "Film Negative", "GreenExponent", filmNegative.greenExp, keyFile);
         saveToKeyfile(!pedited || pedited->filmNegative.blueRatio, "Film Negative", "BlueRatio", filmNegative.blueRatio, keyFile);
-        saveToKeyfile(!pedited || pedited->filmNegative.baseValues, "Film Negative", "RedBase", filmNegative.redBase, keyFile);
-        saveToKeyfile(!pedited || pedited->filmNegative.baseValues, "Film Negative", "GreenBase", filmNegative.greenBase, keyFile);
-        saveToKeyfile(!pedited || pedited->filmNegative.baseValues, "Film Negative", "BlueBase", filmNegative.blueBase, keyFile);
+
+        // FIXME to be removed: only for backwards compatibility with an intermediate dev version
+        if (filmNegative.backCompat == FilmNegativeParams::BackCompat::V2) {
+            saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "RedBase", filmNegative.refInput.r, keyFile);
+            saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "GreenBase", filmNegative.refInput.g, keyFile);
+            saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "BlueBase", filmNegative.refInput.b, keyFile);
+        }
+        
+        saveToKeyfile(!pedited || pedited->filmNegative.colorSpace, "Film Negative", "ColorSpace", toUnderlying(filmNegative.colorSpace), keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.refInput, "Film Negative", "RefInput", filmNegative.refInput, keyFile);
+        saveToKeyfile(!pedited || pedited->filmNegative.refOutput, "Film Negative", "RefOutput", filmNegative.refOutput, keyFile);
+        saveToKeyfile(true, "Film Negative", "BackCompat", toUnderlying(filmNegative.backCompat), keyFile);
 
 // Preprocess WB
         saveToKeyfile(!pedited || pedited->raw.preprocessWB.mode, "RAW Preprocess WB", "Mode", toUnderlying(raw.preprocessWB.mode), keyFile);
@@ -6596,7 +6815,16 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("Retinex")) {
             assignFromKeyfile(keyFile, "Retinex", "Median", pedited, retinex.medianmap, pedited->retinex.medianmap);
-            assignFromKeyfile(keyFile, "Retinex", "complexMethod", pedited, retinex.complexmethod, pedited->retinex.complexmethod);
+
+            if (keyFile.has_key("Retinex", "complexMethod")) {
+                assignFromKeyfile(keyFile, "Retinex", "complexMethod", pedited, retinex.complexmethod, pedited->retinex.complexmethod);
+            } else if (retinex.enabled) {
+                retinex.complexmethod = "expert";
+                if (pedited) {
+                    pedited->retinex.complexmethod = true;
+                }
+            }
+
             assignFromKeyfile(keyFile, "Retinex", "RetinexMethod", pedited, retinex.retinexMethod, pedited->retinex.retinexMethod);
             assignFromKeyfile(keyFile, "Retinex", "mapMethod", pedited, retinex.mapMethod, pedited->retinex.mapMethod);
             assignFromKeyfile(keyFile, "Retinex", "viewMethod", pedited, retinex.viewMethod, pedited->retinex.viewMethod);
@@ -6851,6 +7079,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
             assignFromKeyfile(keyFile, "Color appearance", "AutoDegreeout", pedited, colorappearance.autodegreeout, pedited->colorappearance.autodegreeout);
 
+            if (keyFile.has_key("Color appearance", "complex")) {
+                assignFromKeyfile(keyFile, "Color appearance", "complex", pedited, colorappearance.complexmethod, pedited->colorappearance.complexmethod);
+            } else if (colorappearance.enabled) {
+                colorappearance.complexmethod = "expert";
+                if (pedited) {
+                    pedited->colorappearance.complexmethod = true;
+                }
+            }
             assignFromKeyfile(keyFile, "Color appearance", "Surround", pedited, colorappearance.surround, pedited->colorappearance.surround);
             assignFromKeyfile(keyFile, "Color appearance", "Surrsrc", pedited, colorappearance.surrsrc, pedited->colorappearance.surrsrc);
             assignFromKeyfile(keyFile, "Color appearance", "AdaptLum", pedited, colorappearance.adaplum, pedited->colorappearance.adaplum);
@@ -7134,6 +7370,13 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Perspective", "ProjectionShiftHorizontal", pedited, perspective.projection_shift_horiz, pedited->perspective.projection_shift_horiz);
             assignFromKeyfile(keyFile, "Perspective", "ProjectionShiftVertical", pedited, perspective.projection_shift_vert, pedited->perspective.projection_shift_vert);
             assignFromKeyfile(keyFile, "Perspective", "ProjectionYaw", pedited, perspective.projection_yaw, pedited->perspective.projection_yaw);
+            if (keyFile.has_key("Perspective", "ControlLineValues") && keyFile.has_key("Perspective", "ControlLineTypes")) {
+                perspective.control_line_values = keyFile.get_integer_list("Perspective", "ControlLineValues");
+                perspective.control_line_types = keyFile.get_integer_list("Perspective", "ControlLineTypes");
+                if (pedited) {
+                    pedited->perspective.control_lines = true;
+                }
+            }
         }
 
         if (keyFile.has_group("Gradient")) {
@@ -7463,6 +7706,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "HHmaskblCurve_" + index_str, pedited, spot.HHmaskblcurve, spotEdited.HHmaskblcurve);
                 assignFromKeyfile(keyFile, "Locallab", "EnablMask_" + index_str, pedited, spot.enablMask, spotEdited.enablMask);
                 assignFromKeyfile(keyFile, "Locallab", "Fftwbl_" + index_str, pedited, spot.fftwbl, spotEdited.fftwbl);
+                assignFromKeyfile(keyFile, "Locallab", "Invbl_" + index_str, pedited, spot.invbl, spotEdited.invbl);
                 assignFromKeyfile(keyFile, "Locallab", "Toolbl_" + index_str, pedited, spot.toolbl, spotEdited.toolbl);
                 assignFromKeyfile(keyFile, "Locallab", "Blendmaskbl_" + index_str, pedited, spot.blendmaskbl, spotEdited.blendmaskbl);
                 assignFromKeyfile(keyFile, "Locallab", "Radmaskbl_" + index_str, pedited, spot.radmaskbl, spotEdited.radmaskbl);
@@ -7537,7 +7781,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Inversret_" + index_str, pedited, spot.inversret, spotEdited.inversret);
                 assignFromKeyfile(keyFile, "Locallab", "Equilret_" + index_str, pedited, spot.equilret, spotEdited.equilret);
                 assignFromKeyfile(keyFile, "Locallab", "Loglin_" + index_str, pedited, spot.loglin, spotEdited.loglin);
-                assignFromKeyfile(keyFile, "Locallab", "Lumonly_" + index_str, pedited, spot.lumonly, spotEdited.lumonly);
+                assignFromKeyfile(keyFile, "Locallab", "dehazeSaturation" + index_str, pedited, spot.dehazeSaturation, spotEdited.dehazeSaturation);
                 assignFromKeyfile(keyFile, "Locallab", "Softradiusret_" + index_str, pedited, spot.softradiusret, spotEdited.softradiusret);
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskretiCurve_" + index_str, pedited, spot.CCmaskreticurve, spotEdited.CCmaskreticurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskretiCurve_" + index_str, pedited, spot.LLmaskreticurve, spotEdited.LLmaskreticurve);
@@ -7697,19 +7941,43 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 if (spot.visilog) {
                     spotEdited.visilog = true;
                 }
+                assignFromKeyfile(keyFile, "Locallab", "Complexlog_" + index_str, pedited, spot.complexlog, spotEdited.complexlog);
 
                 assignFromKeyfile(keyFile, "Locallab", "Autocompute_" + index_str, pedited, spot.autocompute, spotEdited.autocompute);
                 assignFromKeyfile(keyFile, "Locallab", "SourceGray_" + index_str, pedited, spot.sourceGray, spotEdited.sourceGray);
+                assignFromKeyfile(keyFile, "Locallab", "Sourceabs_" + index_str, pedited, spot.sourceabs, spotEdited.sourceabs);
+                assignFromKeyfile(keyFile, "Locallab", "Targabs_" + index_str, pedited, spot.targabs, spotEdited.targabs);
                 assignFromKeyfile(keyFile, "Locallab", "TargetGray_" + index_str, pedited, spot.targetGray, spotEdited.targetGray);
+                assignFromKeyfile(keyFile, "Locallab", "Catad_" + index_str, pedited, spot.catad, spotEdited.catad);
+                assignFromKeyfile(keyFile, "Locallab", "Saturl_" + index_str, pedited, spot.saturl, spotEdited.saturl);
+                assignFromKeyfile(keyFile, "Locallab", "Lightl_" + index_str, pedited, spot.lightl, spotEdited.lightl);
+                assignFromKeyfile(keyFile, "Locallab", "Brightq_" + index_str, pedited, spot.lightq, spotEdited.lightq);
+                assignFromKeyfile(keyFile, "Locallab", "Contl_" + index_str, pedited, spot.contl, spotEdited.contl);
+                assignFromKeyfile(keyFile, "Locallab", "Contq_" + index_str, pedited, spot.contq, spotEdited.contq);
+                assignFromKeyfile(keyFile, "Locallab", "Colorfl_" + index_str, pedited, spot.colorfl, spotEdited.colorfl);
+                assignFromKeyfile(keyFile, "Locallab", "LCurveL_" + index_str, pedited, spot.LcurveL, spotEdited.LcurveL);
                 assignFromKeyfile(keyFile, "Locallab", "AutoGray_" + index_str, pedited, spot.Autogray, spotEdited.Autogray);
                 assignFromKeyfile(keyFile, "Locallab", "Fullimage_" + index_str, pedited, spot.fullimage, spotEdited.fullimage);
+                assignFromKeyfile(keyFile, "Locallab", "Repart_" + index_str, pedited, spot.repar, spotEdited.repar);
+                assignFromKeyfile(keyFile, "Locallab", "Ciecam_" + index_str, pedited, spot.ciecam, spotEdited.ciecam);
                 assignFromKeyfile(keyFile, "Locallab", "BlackEv_" + index_str, pedited, spot.blackEv, spotEdited.blackEv);
                 assignFromKeyfile(keyFile, "Locallab", "WhiteEv_" + index_str, pedited, spot.whiteEv, spotEdited.whiteEv);
                 assignFromKeyfile(keyFile, "Locallab", "Detail_" + index_str, pedited, spot.detail, spotEdited.detail);
                 assignFromKeyfile(keyFile, "Locallab", "Sensilog_" + index_str, pedited, spot.sensilog, spotEdited.sensilog);
                 assignFromKeyfile(keyFile, "Locallab", "Baselog_" + index_str, pedited, spot.baselog, spotEdited.baselog);
+                assignFromKeyfile(keyFile, "Locallab", "Sursour_" + index_str, pedited, spot.sursour, spotEdited.sursour);
+                assignFromKeyfile(keyFile, "Locallab", "Surround_" + index_str, pedited, spot.surround, spotEdited.surround);
                 assignFromKeyfile(keyFile, "Locallab", "Strlog_" + index_str, pedited, spot.strlog, spotEdited.strlog);
                 assignFromKeyfile(keyFile, "Locallab", "Anglog_" + index_str, pedited, spot.anglog, spotEdited.anglog);
+                assignFromKeyfile(keyFile, "Locallab", "CCmaskCurveL_" + index_str, pedited, spot.CCmaskcurveL, spotEdited.CCmaskcurveL);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskCurveL_" + index_str, pedited, spot.LLmaskcurveL, spotEdited.LLmaskcurveL);
+                assignFromKeyfile(keyFile, "Locallab", "HHmaskCurveL_" + index_str, pedited, spot.HHmaskcurveL, spotEdited.HHmaskcurveL);
+                assignFromKeyfile(keyFile, "Locallab", "EnaLMask_" + index_str, pedited, spot.enaLMask, spotEdited.enaLMask);
+                assignFromKeyfile(keyFile, "Locallab", "blendmaskL_" + index_str, pedited, spot.blendmaskL, spotEdited.blendmaskL);
+                assignFromKeyfile(keyFile, "Locallab", "radmaskL_" + index_str, pedited, spot.radmaskL, spotEdited.radmaskL);
+                assignFromKeyfile(keyFile, "Locallab", "chromaskL_" + index_str, pedited, spot.chromaskL, spotEdited.chromaskL);
+                assignFromKeyfile(keyFile, "Locallab", "LmaskCurveL_" + index_str, pedited, spot.LmaskcurveL, spotEdited.LmaskcurveL);
+
                 // mask
                 spot.visimask = assignFromKeyfile(keyFile, "Locallab", "Expmask_" + index_str, pedited, spot.expmask, spotEdited.expmask);
                 assignFromKeyfile(keyFile, "Locallab", "Complexmask_" + index_str, pedited, spot.complexmask, spotEdited.complexmask);
@@ -7970,7 +8238,16 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Wavelet", "ChoiceLevMethod", pedited, wavelet.CLmethod, pedited->wavelet.CLmethod);
             assignFromKeyfile(keyFile, "Wavelet", "BackMethod", pedited, wavelet.Backmethod, pedited->wavelet.Backmethod);
             assignFromKeyfile(keyFile, "Wavelet", "TilesMethod", pedited, wavelet.Tilesmethod, pedited->wavelet.Tilesmethod);
-            assignFromKeyfile(keyFile, "Wavelet", "complexMethod", pedited, wavelet.complexmethod, pedited->wavelet.complexmethod);
+
+            if (keyFile.has_key("Wavelet", "complexMethod")) {
+                assignFromKeyfile(keyFile, "Wavelet", "complexMethod", pedited, wavelet.complexmethod, pedited->wavelet.complexmethod);
+            } else if (wavelet.enabled) {
+                wavelet.complexmethod = "expert";
+                if (pedited) {
+                    pedited->wavelet.complexmethod = true;
+                }
+            }
+
             assignFromKeyfile(keyFile, "Wavelet", "denMethod", pedited, wavelet.denmethod, pedited->wavelet.denmethod);
             assignFromKeyfile(keyFile, "Wavelet", "mixMethod", pedited, wavelet.mixmethod, pedited->wavelet.mixmethod);
             assignFromKeyfile(keyFile, "Wavelet", "sliMethod", pedited, wavelet.slimethod, pedited->wavelet.slimethod);
@@ -8300,7 +8577,15 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Dehaze", "Strength", pedited, dehaze.strength, pedited->dehaze.strength);
             assignFromKeyfile(keyFile, "Dehaze", "ShowDepthMap", pedited, dehaze.showDepthMap, pedited->dehaze.showDepthMap);
             assignFromKeyfile(keyFile, "Dehaze", "Depth", pedited, dehaze.depth, pedited->dehaze.depth);
-            assignFromKeyfile(keyFile, "Dehaze", "Luminance", pedited, dehaze.luminance, pedited->dehaze.luminance);
+            if (ppVersion < 349 && dehaze.enabled && keyFile.has_key("Dehaze", "Luminance")) {
+                const bool luminance = keyFile.get_boolean("Dehaze", "Luminance");
+                dehaze.saturation = luminance ? 0 : 100;
+                if (pedited) {
+                    pedited->dehaze.saturation = true;
+                }
+            } else {
+                assignFromKeyfile(keyFile, "Dehaze", "Saturation", pedited, dehaze.saturation, pedited->dehaze.saturation);
+            }
         }
         
         if (keyFile.has_group("Film Simulation")) {
@@ -8663,23 +8948,48 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Film Negative", "RedRatio", pedited, filmNegative.redRatio, pedited->filmNegative.redRatio);
             assignFromKeyfile(keyFile, "Film Negative", "GreenExponent", pedited, filmNegative.greenExp, pedited->filmNegative.greenExp);
             assignFromKeyfile(keyFile, "Film Negative", "BlueRatio", pedited, filmNegative.blueRatio, pedited->filmNegative.blueRatio);
-            if (ppVersion >= 347) {
+
+            if (ppVersion < 347) {
+                // Backwards compatibility with RT v5.8
+                filmNegative.colorSpace = FilmNegativeParams::ColorSpace::INPUT;
+                filmNegative.backCompat = FilmNegativeParams::BackCompat::V1;
+                if (pedited) {
+                    pedited->filmNegative.refInput = true;
+                    pedited->filmNegative.refOutput = true;
+                    pedited->filmNegative.colorSpace = true;
+                }
+
+            } else if (!keyFile.has_key("Film Negative", "RefInput")) {
+                // Backwards compatibility with intermediate dev version (after v5.8) using film base values
                 bool r, g, b;
-                assignFromKeyfile(keyFile, "Film Negative", "RedBase", pedited, filmNegative.redBase, r);
-                assignFromKeyfile(keyFile, "Film Negative", "GreenBase", pedited, filmNegative.greenBase, g);
-                assignFromKeyfile(keyFile, "Film Negative", "BlueBase", pedited, filmNegative.blueBase, b);
+                assignFromKeyfile(keyFile, "Film Negative", "RedBase", pedited, filmNegative.refInput.r, r);
+                assignFromKeyfile(keyFile, "Film Negative", "GreenBase", pedited, filmNegative.refInput.g, g);
+                assignFromKeyfile(keyFile, "Film Negative", "BlueBase", pedited, filmNegative.refInput.b, b);
                 if (pedited) {
-                    pedited->filmNegative.baseValues = r || g || b;
+                    pedited->filmNegative.refInput = r || g || b;
+                    pedited->filmNegative.refOutput = r || g || b;
+                    pedited->filmNegative.colorSpace = true;
                 }
-            } else {
-                // Backwards compatibility with film negative in RT 5.7: use special film base value -1,
-                // to signal that the old channel scaling method should be used.
-                filmNegative.redBase = -1.f;
-                filmNegative.greenBase = -1.f;
-                filmNegative.blueBase = -1.f;
-                if (pedited) {
-                    pedited->filmNegative.baseValues = true;
+
+                filmNegative.colorSpace = FilmNegativeParams::ColorSpace::INPUT;
+                // Special value -1 used to mean that this should be treated as a v5.8 profile
+                filmNegative.backCompat = (filmNegative.refInput.r == -1.f)
+                    ? FilmNegativeParams::BackCompat::V1
+                    : FilmNegativeParams::BackCompat::V2;
+
+            } else { // current version
+
+                assignFromKeyfile(keyFile, "Film Negative", "RefInput", pedited, filmNegative.refInput, pedited->filmNegative.refInput);
+                assignFromKeyfile(keyFile, "Film Negative", "RefOutput", pedited, filmNegative.refOutput, pedited->filmNegative.refOutput);
+
+                int cs = toUnderlying(filmNegative.colorSpace);
+                assignFromKeyfile(keyFile, "Film Negative", "ColorSpace", pedited, cs, pedited->filmNegative.colorSpace);
+                filmNegative.colorSpace = static_cast<FilmNegativeParams::ColorSpace>(cs);
+
+                if (keyFile.has_key("Film Negative", "BackCompat")) {
+                    filmNegative.backCompat = FilmNegativeParams::BackCompat(keyFile.get_integer("Film Negative", "BackCompat"));
                 }
+
             }
         }
 

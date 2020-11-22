@@ -248,12 +248,18 @@ my_error_exit (j_common_ptr cinfo)
 }
 
 
-//const char * const jpeg_std_message_table[] = {
-//#include "jerror.h"
-//  NULL
-//};
-extern const char * const jpeg_std_message_table[];
+#ifdef WIN32
+#define JVERSION	"6b  27-Mar-1998"
+#define JCOPYRIGHT_SHORT	"(C) 1998, Thomas G. Lane"
+#define JMESSAGE(code,string)	string ,
 
+const char * const jpeg_std_message_table[] = {
+#include "jerror.h"
+  NULL
+};
+#else
+extern const char * const jpeg_std_message_table[];
+#endif
 
 /*
  * Actual output of an error or trace message.

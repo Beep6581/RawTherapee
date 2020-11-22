@@ -777,7 +777,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // EvlocallabexnoiseMethod
     LUMINANCECURVE,   // Evlocallabdepth
     LUMINANCECURVE,   // Evlocallabloglin
-    LUMINANCECURVE,   // Evlocallablumonly
+    LUMINANCECURVE,   // EvlocallabdehazeSaturation
     LUMINANCECURVE,   // Evlocallaboffs
     LUMINANCECURVE,   // EvlocallabCTtransCurve
     LUMINANCECURVE,   // Evlocallabcliptm
@@ -984,7 +984,31 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // Evlocallabactiv
     LUMINANCECURVE,   // EvlocallabCHshape
     LUMINANCECURVE,   //EvlocallabquaMethod
-    LUMINANCECURVE   //Evlocallabhishow
+    LUMINANCECURVE,   //Evlocallabhishow
+    LUMINANCECURVE,   // Evlocallabinvbl
+    LUMINANCECURVE,   // Evlocallabcatad
+    LUMINANCECURVE,   // Evlocallabciecam
+    LUMINANCECURVE,   // Evlocallabsourceabs
+    LUMINANCECURVE,   // Evlocallabtargabs
+    LUMINANCECURVE,   // Evlocallabsurround
+    LUMINANCECURVE,   // Evlocallabsaturl
+    LUMINANCECURVE,   // Evlocallabcontl
+    LUMINANCECURVE,   //EvlocallabCCmaskshapeL 
+    LUMINANCECURVE,   //EvlocallabLLmaskshapeL
+    LUMINANCECURVE,   // EvlocallabHHmaskshapeL
+    LUMINANCECURVE,   // EvlocallabenaLMask
+    LUMINANCECURVE,   // EvlocallabblendmaskL
+    LUMINANCECURVE,   // EvlocallabradmaskL
+    LUMINANCECURVE,   // EvlocallabchromaskL
+    LUMINANCECURVE,   //EvlocallabLmaskshapeL
+    LUMINANCECURVE,   // Evlocallablightl
+    LUMINANCECURVE,   // EvlocallabLshapeL
+    LUMINANCECURVE,   // Evlocallabcontq
+    LUMINANCECURVE,   // Evlocallabsursour
+    LUMINANCECURVE,   // Evlocallablightq
+    LUMINANCECURVE,   // Evlocallabcolorfl
+    LUMINANCECURVE   // Evlocallabrepar
+
 };
 
 

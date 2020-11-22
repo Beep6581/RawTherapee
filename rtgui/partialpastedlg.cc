@@ -355,6 +355,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[2]->pack_start (*blackwhite, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*hsveq, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*filmSimulation, Gtk::PACK_SHRINK, 2);
+    vboxes[2]->pack_start (*filmNegative, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*softlight, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*rgbcurves, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*colortoning, Gtk::PACK_SHRINK, 2);
@@ -425,7 +426,6 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[8]->pack_start (*raw_caredblue, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_ca_avoid_colourshift, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
-    vboxes[8]->pack_start (*filmNegative, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*captureSharpening, Gtk::PACK_SHRINK, 2);
 
     Gtk::VBox* vbCol1 = Gtk::manage (new Gtk::VBox ());
@@ -655,7 +655,6 @@ void PartialPasteDlg::rawToggled ()
     ConnectionBlocker raw_ca_autocorrectBlocker(raw_ca_autocorrectConn);
     ConnectionBlocker raw_caredblueBlocker(raw_caredblueConn);
     ConnectionBlocker raw_ca_avoid_colourshiftBlocker(raw_ca_avoid_colourshiftconn);
-    ConnectionBlocker filmNegativeBlocker(filmNegativeConn);
     ConnectionBlocker captureSharpeningBlocker(captureSharpeningConn);
     ConnectionBlocker raw_preprocwbBlocker(raw_preprocwbConn);
 
@@ -686,7 +685,6 @@ void PartialPasteDlg::rawToggled ()
     raw_ca_autocorrect->set_active (raw->get_active ());
     raw_caredblue->set_active (raw->get_active ());
     raw_ca_avoid_colourshift->set_active (raw->get_active ());
-    filmNegative->set_active (raw->get_active());
     captureSharpening->set_active (raw->get_active());
     raw_preprocwb->set_active (raw->get_active());
 }
@@ -764,6 +762,7 @@ void PartialPasteDlg::colorToggled ()
     ConnectionBlocker chmixerbwBlocker(chmixerbwConn);
     ConnectionBlocker hsveqBlocker(hsveqConn);
     ConnectionBlocker filmSimulationBlocker(filmSimulationConn);
+    ConnectionBlocker filmNegativeBlocker(filmNegativeConn);
     ConnectionBlocker softlightBlocker(softlightConn);
     ConnectionBlocker rgbcurvesBlocker(rgbcurvesConn);
     ConnectionBlocker colortoningBlocker(colortoningConn);
@@ -776,6 +775,7 @@ void PartialPasteDlg::colorToggled ()
     blackwhite->set_active (color->get_active ());
     hsveq->set_active (color->get_active ());
     filmSimulation->set_active (color->get_active ());
+    filmNegative->set_active (color->get_active());
     softlight->set_active (color->get_active ());
     rgbcurves->set_active (color->get_active ());
     colortoning->set_active(color->get_active ());
@@ -1178,7 +1178,9 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
         filterPE.filmNegative.redRatio   = falsePE.filmNegative.redRatio;
         filterPE.filmNegative.greenExp  = falsePE.filmNegative.greenExp;
         filterPE.filmNegative.blueRatio   = falsePE.filmNegative.blueRatio;
-        filterPE.filmNegative.baseValues   = falsePE.filmNegative.baseValues;
+        filterPE.filmNegative.refInput   = falsePE.filmNegative.refInput;
+        filterPE.filmNegative.refOutput   = falsePE.filmNegative.refOutput;
+        filterPE.filmNegative.colorSpace   = falsePE.filmNegative.colorSpace;
     }
 
     if (!captureSharpening->get_active ()) {

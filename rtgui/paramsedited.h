@@ -266,6 +266,7 @@ struct ColorAppearanceParamsEdited {
     bool curveMode;
     bool curveMode2;
     bool curveMode3;
+    bool complexmethod;
     bool enabled;
     bool degree;
     bool autodegree;
@@ -641,6 +642,7 @@ public:
         bool HHmaskblcurve;
         bool enablMask;
         bool fftwbl;
+        bool invbl;
         bool toolbl;
         bool blendmaskbl;
         bool radmaskbl;
@@ -698,7 +700,7 @@ public:
         bool inversret;
         bool equilret;
         bool loglin;
-        bool lumonly;
+        bool dehazeSaturation;
         bool softradiusret;
         bool CCmaskreticurve;
         bool LLmaskreticurve;
@@ -828,18 +830,41 @@ public:
         // Log encoding
         bool visilog;
         bool explog;
+        bool complexlog;
         bool autocompute;
         bool sourceGray;
+        bool sourceabs;
+        bool targabs;
         bool targetGray;
+        bool catad;
+        bool saturl;
+        bool lightl;
+        bool lightq;
+        bool contl;
+        bool contq;
+        bool colorfl;
+        bool LcurveL;
         bool Autogray;
         bool fullimage;
+        bool repar;
+        bool ciecam;
         bool blackEv;
         bool whiteEv;
         bool detail;
+        bool sursour;
+        bool surround;
         bool sensilog;
         bool baselog;
         bool strlog;
         bool anglog;
+        bool CCmaskcurveL;
+        bool LLmaskcurveL;
+        bool HHmaskcurveL;
+        bool enaLMask;
+        bool blendmaskL;
+        bool radmaskL;
+        bool chromaskL;
+        bool LmaskcurveL;
         //mask
         bool visimask;
         bool complexmask;
@@ -913,6 +938,7 @@ struct PerspectiveParamsEdited {
     bool projection_shift_horiz;
     bool projection_shift_vert;
     bool projection_yaw;
+    bool control_lines;
 };
 
 struct GradientParamsEdited {
@@ -1180,7 +1206,7 @@ struct DehazeParamsEdited {
     bool strength;
     bool showDepthMap;
     bool depth;
-    bool luminance;
+    bool saturation;
 };
 
 struct RAWParamsEdited {
@@ -1277,7 +1303,9 @@ struct FilmNegativeParamsEdited {
     bool redRatio;
     bool greenExp;
     bool blueRatio;
-    bool baseValues;
+    bool refInput;
+    bool refOutput;
+    bool colorSpace;
 
     bool isUnchanged() const;
 };

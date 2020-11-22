@@ -54,7 +54,7 @@ class Crop;
   * but using this class' LUT and other precomputed parameters. The main preview area is displaying a non framed Crop object,
   * while detail windows are framed Crop objects.
   */
-class ImProcCoordinator final : public StagedImageProcessor
+class ImProcCoordinator final : public StagedImageProcessor, public HistogramObservable
 {
 
     friend class Crop;
@@ -126,6 +126,16 @@ protected:
     LUTu histBlue, histBlueRaw;
     LUTu histLuma, histToneCurve, histToneCurveBW, histLCurve, histCCurve;
     LUTu histLLCurve, histLCAM, histCCAM, histClad, bcabhist, histChroma, histLRETI;
+    bool hist_lrgb_dirty;
+    /// Used to simulate a lazy update of the raw histogram.
+    bool hist_raw_dirty;
+    int vectorscopeScale;
+    bool vectorscope_hc_dirty, vectorscope_hs_dirty;
+    array2D<int> vectorscope_hc, vectorscope_hs;
+    /// Waveform's intensity. Same as height of reference image.
+    int waveformScale;
+    bool waveform_dirty;
+    array2D<int> waveformRed, waveformGreen, waveformBlue, waveformLuma;
 
     LUTf CAMBrightCurveJ, CAMBrightCurveQ;
 
@@ -195,8 +205,16 @@ protected:
 
     MyMutex minit;  // to gain mutually exclusive access to ... to what exactly?
 
+    void notifyHistogramChanged();
     void reallocAll();
-    void updateLRGBHistograms();
+    /// Updates L, R, G, and B histograms. Returns true unless not updated.
+    bool updateLRGBHistograms();
+    /// Updates the H-C vectorscope. Returns true unless not updated.
+    bool updateVectorscopeHC();
+    /// Updates the H-S vectorscope. Returns true unless not updated.
+    bool updateVectorscopeHS();
+    /// Updates all waveforms. Returns true unless not updated.
+    bool updateWaveforms();
     void setScale(int prevscale);
     void updatePreviewImage (int todo, bool panningRelatedChange);
 
@@ -256,6 +274,7 @@ protected:
     LUTf lmaskcblocalcurve;
     LUTf lmaskbllocalcurve;
     LUTf lmasklclocalcurve;
+    LUTf lmaskloglocalcurve;
     LUTf lmasklocal_curve;
     
     LocretigainCurve locRETgainCurve;
@@ -296,6 +315,9 @@ protected:
     LocLLmaskCurve locllmas_Curve;
     LocHHmaskCurve lochhmas_Curve;
     LocHHmaskCurve lochhhmas_Curve;
+    LocCCmaskCurve locccmaslogCurve;
+    LocLLmaskCurve locllmaslogCurve;
+    LocHHmaskCurve lochhmaslogCurve;
     
     LocwavCurve locwavCurve;
     LocwavCurve loclmasCurveblwav;
@@ -332,6 +354,7 @@ protected:
     int localltmMask;
     int locallblMask;
     int locallsharMask;
+    int localllogMask;
     int locall_Mask;
 
 public:
@@ -384,8 +407,7 @@ public:
     bool getAutoWB   (double& temp, double& green, double equal, double tempBias) override;
     void getCamWB    (double& temp, double& green) override;
     void getSpotWB   (int x, int y, int rectSize, double& temp, double& green) override;
-    bool getFilmNegativeExponents(int xA, int yA, int xB, int yB, std::array<float, 3>& newExps) override;
-    bool getRawSpotValues(int x, int y, int spotSize, std::array<float, 3>& rawValues) override;
+    bool getFilmNegativeSpot(int x, int y, int spotSize, FilmNegativeParams::RGB &refInput, FilmNegativeParams::RGB &refOutput) override;
     void getAutoCrop (double ratio, int &x, int &y, int &w, int &h) override;
     bool getHighQualComputed() override;
     void setHighQualComputed() override;
@@ -403,7 +425,7 @@ public:
         updaterThreadStart.unlock();
     }
 
-    void setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int locall_Mask) override
+    void setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int localllogMask, int locall_Mask) override
     {
         this->previewDeltaE = previewDeltaE;
         this->locallColorMask = locallColorMask;
@@ -420,6 +442,7 @@ public:
         this->locallsharMask = locallsharMask;
         this->localllcMask = localllcMask;
         this->locallcbMask = locallcbMask;
+        this->localllogMask = localllogMask;
         this->locall_Mask = locall_Mask;
     }
 
@@ -449,7 +472,13 @@ public:
     }
     void setHistogramListener (HistogramListener *h) override
     {
+        if (hListener) {
+            hListener->setObservable(nullptr);
+        }
         hListener = h;
+        if (h) {
+            h->setObservable(this);
+        }
     }
     void setAutoCamListener  (AutoCamListener* acl) override
     {
@@ -550,6 +579,11 @@ public:
 
     } denoiseInfoStore;
 
+    void requestUpdateHistogram() override;
+    void requestUpdateHistogramRaw() override;
+    void requestUpdateVectorscopeHC() override;
+    void requestUpdateVectorscopeHS() override;
+    void requestUpdateWaveform() override;
 };
 
 }

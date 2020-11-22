@@ -129,19 +129,19 @@ public:
     @param picked True if the cursor is still above the the same object than on button pressed and with the same modifier keys.
                   If false, the user moved the cursor away or the modifier key is different, so the element is considered as NOT selected.
     @return true if the preview has to be redrawn, false otherwise */
-    bool pick1 (bool picked);
+    virtual bool pick1 (bool picked);
 
     /** @brief Triggered when the user is releasing mouse button 2 while in action==ES_ACTION_PICKING mode
     @param picked True if the cursor is still above the the same object than on button pressed and with the same modifier keys.
                   If false, the user moved the cursor away or the modifier key is different, so the element is considered as NOT selected.
     @return true if the preview has to be redrawn, false otherwise */
-    bool pick2 (bool picked);
+    virtual bool pick2 (bool picked);
 
     /** @brief Triggered when the user is releasing mouse button 3 while in action==ES_ACTION_PICKING mode
     @param picked True if the cursor is still above the the same object than on button pressed and with the same modifier keys.
                   If false, the user moved the cursor away or the modifier key is different, so the element is considered as NOT selected.
     @return true if the preview has to be redrawn, false otherwise */
-    bool pick3 (bool picked);
+    virtual bool pick3 (bool picked);
 
     /** @brief Get the geometry to be shown to the user */
     const std::vector<Geometry*>& getVisibleGeometry ();

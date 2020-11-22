@@ -438,7 +438,7 @@ std::vector<LFLens> LFDatabase::getLenses() const
 LFCamera LFDatabase::findCamera(const Glib::ustring &make, const Glib::ustring &model) const
 {
     LFCamera ret;
-    if (data_) {
+    if (data_ && !make.empty()) {
         MyMutex::MyLock lock(lfDBMutex);
         auto found = data_->FindCamerasExt(make.c_str(), model.c_str());
         if (found) {
@@ -453,7 +453,7 @@ LFCamera LFDatabase::findCamera(const Glib::ustring &make, const Glib::ustring &
 LFLens LFDatabase::findLens(const LFCamera &camera, const Glib::ustring &name) const
 {
     LFLens ret;
-    if (data_) {
+    if (data_ && !name.empty()) {
         MyMutex::MyLock lock(lfDBMutex);
         auto found = data_->FindLenses(camera.data_, nullptr, name.c_str());
         for (size_t pos = 0; !found && pos < name.size(); ) {

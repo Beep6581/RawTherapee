@@ -414,7 +414,8 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                             action_y = 0;
                             needRedraw = true;
                         }
-                    } else if (iarea->getToolMode () == TMHand
+                    } else if ((iarea->getToolMode () == TMHand
+                                || iarea->getToolMode() == TMPerspective)
                                && editSubscriber
                                && cropgl
                                && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y)
@@ -429,6 +430,8 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                                 state = SEditPick1;
                                 pickedObject = iarea->getObject();
                                 pickModifierKey = bstate;
+                            } else if (iarea->getToolMode() == TMPerspective) {
+                                state = SCropImgMove;
                             }
                             press_x = x;
                             press_y = y;
@@ -592,7 +595,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
             }
         }
     } else if (button == 3) {
-        if (iarea->getToolMode () == TMHand) {
+        if (iarea->getToolMode () == TMHand || iarea->getToolMode() == TMPerspective) {
             EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
             if (editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS) {
                 needRedraw = editSubscriber->button3Pressed(bstate);
@@ -764,7 +767,10 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
 
             iarea->setObject(ObjectMOBuffer::getObjectID(cropPos));
 
-            bool elemPicked = iarea->getObject() == pickedObject && bstate == pickModifierKey;
+            int buttonMask = ((state == SEditPick1) ? GDK_BUTTON1_MASK : 0)
+                           | ((state == SEditPick2) ? GDK_BUTTON2_MASK : 0)
+                           | ((state == SEditPick3) ? GDK_BUTTON3_MASK : 0);
+            bool elemPicked = iarea->getObject() == pickedObject && bstate == (pickModifierKey | buttonMask);
 
             if        (state == SEditPick1) {
                 needRedraw = editSubscriber->pick1 (elemPicked);
