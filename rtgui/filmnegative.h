@@ -27,13 +27,21 @@
 #include "guiutils.h"
 #include "toolpanel.h"
 
+#include "../rtengine/colortemp.h"
+
+namespace
+{
+using RGB = rtengine::procparams::FilmNegativeParams::RGB;
+using ColorSpace = rtengine::procparams::FilmNegativeParams::ColorSpace;
+using BackCompat = rtengine::procparams::FilmNegativeParams::BackCompat;
+}
+
 class FilmNegProvider
 {
 public:
     virtual ~FilmNegProvider() = default;
 
-    virtual bool getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps) = 0;
-    virtual bool getRawSpotValues(rtengine::Coord spot, int spotSize, std::array<float, 3>& rawValues) = 0;
+    virtual bool getFilmNegativeSpot(rtengine::Coord spot, int spotSize, RGB &refInput, RGB &refOutput) = 0;
 };
 
 class FilmNegative final :
@@ -54,8 +62,9 @@ public:
 
     void adjusterChanged(Adjuster* a, double newval) override;
     void enabledChanged() override;
+    void colorSpaceChanged();
 
-    void filmBaseValuesChanged(std::array<float, 3> rgb) override;
+    void filmRefValuesChanged(const RGB &refInput, const RGB &refOutput) override;
 
     void setFilmNegProvider(FilmNegProvider* provider);
 
@@ -66,31 +75,47 @@ public:
     bool mouseOver(int modifierKey) override;
     bool button1Pressed(int modifierKey) override;
     bool button1Released() override;
+    bool button3Pressed(int modifierKey) override;
     void switchOffEditMode() override;
 
 private:
     void editToggled();
-    void baseSpotToggled();
+    void refSpotToggled();
+
+    void readOutputSliders(RGB &refOutput);
+    void writeOutputSliders(const RGB &refOutput);
+
+    // ColorTemp value corresponding to neutral RGB multipliers (1,1,1). Should be around 6500K.
+    const rtengine::ColorTemp NEUTRAL_TEMP;
 
     const rtengine::ProcEvent evFilmNegativeExponents;
     const rtengine::ProcEvent evFilmNegativeEnabled;
-    const rtengine::ProcEvent evFilmBaseValues;
+    const rtengine::ProcEvent evFilmNegativeRefSpot;
+    const rtengine::ProcEvent evFilmNegativeBalance;
+    const rtengine::ProcEvent evFilmNegativeColorSpace;
 
     std::vector<rtengine::Coord> refSpotCoords;
 
-    std::array<float, 3> filmBaseValues;
+    RGB refInputValues;
+    bool paramsUpgraded;
 
     FilmNegProvider* fnp;
+
+    MyComboBoxText* const colorSpace;
 
     Adjuster* const greenExp;
     Adjuster* const redRatio;
     Adjuster* const blueRatio;
 
-    Gtk::Grid* const spotgrid;
-    Gtk::ToggleButton* const spotbutton;
+    Gtk::ToggleButton* const spotButton;
 
-    Gtk::Label* const filmBaseLabel;
-    Gtk::Label* const filmBaseValuesLabel;
-    Gtk::ToggleButton* const filmBaseSpotButton;
+    Gtk::Label* const refInputLabel;
+    Gtk::ToggleButton* const refSpotButton;
+
+    Adjuster* const outputLevel;
+    Adjuster* const greenBalance;
+    Adjuster* const blueBalance;
+
+    IdleRegister idle_register;
 
 };

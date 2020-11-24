@@ -123,7 +123,7 @@ float* RawImageSource::CA_correct_RT(
     double cared,
     double cablue,
     bool avoidColourshift,
-    const array2D<float> &rawData,
+    array2D<float> &rawData,
     double* fitParamsTransfer,
     bool fitParamsIn,
     bool fitParamsOut,
@@ -1291,7 +1291,7 @@ float* RawImageSource::CA_correct_RT(
                 for (int i = 0; i < H - 2 * cb; ++i) {
                     const int firstCol = fc(cfa, i, 0) & 1;
                     const int colour = fc(cfa, i, firstCol);
-                    const array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
+                    array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
                     int j = firstCol;
 #ifdef __SSE2__
                     for (; j < W - 7 - 2 * cb; j += 8) {
@@ -1325,7 +1325,7 @@ float* RawImageSource::CA_correct_RT(
                         const int ngRow = 1 - (fc(cfa, 0, 0) & 1);
                         const int ngCol = fc(cfa, ngRow, 0) & 1;
                         const int colour = fc(cfa, ngRow, ngCol);
-                        const array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
+                        array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
                         for (int i = 0; i < (H + 1 - 2 * cb) / 2; ++i) {
                             (*nonGreen)[i][(W - 2 * cb + 1) / 2 - 1] = (*nonGreen)[i][(W - 2* cb + 1) / 2 - 2];
                         }

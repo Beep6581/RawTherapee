@@ -162,12 +162,13 @@ class EditDataProvider
 
 private:
     EditSubscriber *currSubscriber;
-    int object;            /// ET_OBJECTS mode: Object detected under the cursor, 0 otherwise; ET_PIPETTE mode: 1 if above the image, 0 otherwise
+//    int object;            /// ET_OBJECTS mode: Object detected under the cursor, 0 otherwise; ET_PIPETTE mode: 1 if above the image, 0 otherwise
     float pipetteVal1;     /// Current pipette values
     float pipetteVal2;     /// Current pipette values; if bufferType==BT_SINGLEPLANE_FLOAT, will be set to 0
     float pipetteVal3;     /// Current pipette values; if bufferType==BT_SINGLEPLANE_FLOAT, will be set to 0
 
 public:
+    int object;            /// ET_OBJECTS mode: Object detected under the cursor, 0 otherwise; ET_PIPETTE mode: 1 if above the image, 0 otherwise
 
     rtengine::Coord posScreen;       /// Location of the mouse button press, in preview image space
     rtengine::Coord posImage;        /// Location of the mouse button press, in the full image space
@@ -194,4 +195,6 @@ public:
     int getPipetteRectSize () const;
     EditSubscriber* getCurrSubscriber() const;
     virtual void getImageSize (int &w, int&h) = 0;
+    virtual void getPreviewCenterPos(int &x, int &y) = 0;
+    virtual void getPreviewSize(int &w, int &h) = 0;
 };

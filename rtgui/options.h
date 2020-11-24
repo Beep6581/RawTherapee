@@ -168,13 +168,23 @@ private:
                      const Glib::ustring& entryName, Glib::ustring& destination);
 
 public:
-
     enum class NavigatorUnit {
         PERCENT,
         R0_255,
         R0_1,
         _COUNT
     };
+
+    enum class ScopeType {
+        NONE = -1,
+        HISTOGRAM,
+        HISTOGRAM_RAW,
+        PARADE,
+        VECTORSCOPE_HC,
+        VECTORSCOPE_HS,
+        WAVEFORM
+    };
+
     bool savesParamsAtExit;
     SaveFormat saveFormat, saveFormatBatch;
     Glib::ustring savePathTemplate;
@@ -271,6 +281,7 @@ public:
     CPBKeyType CPBKeys; // Custom Profile Builder's key type
     int editorToSendTo;
     int maxThumbnailHeight;
+    int maxThumbnailWidth;
     std::size_t maxCacheEntries;
     int thumbInterp; // 0: nearest, 1: bilinear
     std::vector<Glib::ustring> parseExtensions;   // List containing all extensions type
@@ -282,12 +293,15 @@ public:
     //std::vector<int> crvOpen;
     std::vector<int> baBehav;
     rtengine::Settings rtSettings;
-
+    bool showtooltip;
     std::vector<Glib::ustring> favoriteDirs;
     std::vector<Glib::ustring> renameTemplates;
     bool renameUseTemplates;
     bool internalThumbIfUntouched;
     bool overwriteOutputFile;
+    int complexity;
+    bool inspectorWindow; // open inspector in spearate window
+    bool zoomOnScroll;    // translate scroll events to zoom
 
     std::vector<double> thumbnailZoomRatios;
     bool overlayedFileNames;
@@ -307,10 +321,13 @@ public:
 
     int histogramPosition;  // 0=disabled, 1=left pane, 2=right pane
     bool histogramRed, histogramGreen, histogramBlue;
-    bool histogramLuma, histogramChroma, histogramRAW;
+    bool histogramLuma, histogramChroma;
     bool histogramBar;
     int histogramHeight;
     int histogramDrawMode;
+    ScopeType histogramScopeType;
+    bool histogramShowOptionButtons;
+    float histogramTraceBrightness;
     bool FileBrowserToolbarSingleRow;
     bool hideTPVScrollbar;
     int whiteBalanceSpotSize;
@@ -409,6 +426,7 @@ public:
     Glib::ustring lastRetinexDir;
     Glib::ustring lastDenoiseCurvesDir;
     Glib::ustring lastWaveletCurvesDir;
+    Glib::ustring lastlocalCurvesDir;
     Glib::ustring lastPFCurvesDir;
     Glib::ustring lastHsvCurvesDir;
     Glib::ustring lastToneCurvesDir;

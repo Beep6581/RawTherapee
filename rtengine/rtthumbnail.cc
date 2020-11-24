@@ -205,11 +205,6 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 
     ImageIO* img = imgSrc.getImageIO();
 
-    // agriggio -- hotfix for #3794, to be revised once a proper solution is implemented
-    if (std::max(img->getWidth(), img->getHeight()) / std::min(img->getWidth(), img->getHeight()) >= 10) {
-        return nullptr;
-    }
-    
     Thumbnail* tpp = new Thumbnail ();
 
     unsigned char* data;
@@ -235,14 +230,28 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
         h = img->getHeight();
         tpp->scale = 1.;
     } else {
-        if (fixwh == 1) {
+        if (fixwh < 0 && w > 0 && h > 0) {
+            const int ww = h * img->getWidth() / img->getHeight();
+            const int hh = w * img->getHeight() / img->getWidth();
+            if (ww <= w) {
+                w = ww;
+                tpp->scale = static_cast<double>(img->getHeight()) / h;
+            } else {
+                h = hh;
+                tpp->scale = static_cast<double>(img->getWidth()) / w;
+            }
+        } else if (fixwh == 1) {
             w = h * img->getWidth() / img->getHeight();
-            tpp->scale = (double)img->getHeight() / h;
+            tpp->scale = static_cast<double>(img->getHeight()) / h;
         } else {
             h = w * img->getHeight() / img->getWidth();
-            tpp->scale = (double)img->getWidth() / w;
+            tpp->scale = static_cast<double>(img->getWidth()) / w;
         }
     }
+
+    // Precaution to prevent division by zero later on
+    if (h < 1) h = 1;
+    if (w < 1) w = 1;
 
     // bilinear interpolation
     if (tpp->thumbImg) {
@@ -594,7 +603,7 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     tpp->defGain = max (scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min (scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
     tpp->defGain *= std::pow(2, ri->getBaselineExposure());
 
-    tpp->scaleGain = scale_mul[0] / pre_mul[0]; // used to reconstruct scale_mul from filmnegativethumb.cc
+    tpp->scaleGain = scale_mul[0] / pre_mul[0]; // can be used to reconstruct scale_mul later in processing
 
     tpp->gammaCorrected = true;
 
@@ -1178,11 +1187,18 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         rwidth = int (size_t (thumbImg->getWidth()) * size_t (rheight) / size_t (thumbImg->getHeight()));
     }
 
+    if (rwidth < 1) rwidth = 1;
+    if (rheight < 1) rheight = 1;
 
     Imagefloat* baseImg = resizeTo<Imagefloat> (rwidth, rheight, interp, thumbImg);
 
-    if (isRaw && params.filmNegative.enabled) {
-        processFilmNegative(params, baseImg, rwidth, rheight);
+    // Film negative legacy mode, for backwards compatibility RT v5.8
+    if (params.filmNegative.enabled) {
+        if (params.filmNegative.backCompat == FilmNegativeParams::BackCompat::V1) {
+            processFilmNegative(params, baseImg, rwidth, rheight);
+        } else if (params.filmNegative.backCompat == FilmNegativeParams::BackCompat::V2) {
+            processFilmNegativeV2(params, baseImg, rwidth, rheight);
+        }
     }
 
     if (params.coarse.rotate) {
@@ -1224,6 +1240,19 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     // if luma denoise has to be done for thumbnails, it should be right here
 
+    int fw = baseImg->getWidth();
+    int fh = baseImg->getHeight();
+    //ColorTemp::CAT02 (baseImg, &params)   ;//perhaps not good!
+
+    ImProcFunctions ipf (&params, forHistogramMatching); // enable multithreading when forHistogramMatching is true
+    ipf.setScale (sqrt (double (fw * fw + fh * fh)) / sqrt (double (thumbImg->getWidth() * thumbImg->getWidth() + thumbImg->getHeight() * thumbImg->getHeight()))*scale);
+    ipf.updateColorProfiles (ICCStore::getInstance()->getDefaultMonitorProfileName(), RenderingIntent(settings->monitorIntent), false, false);
+
+    // Process film negative BEFORE colorspace conversion, if needed
+    if (params.filmNegative.enabled && params.filmNegative.backCompat == FilmNegativeParams::BackCompat::CURRENT && params.filmNegative.colorSpace == FilmNegativeParams::ColorSpace::INPUT) {
+        ipf.filmNegativeProcess(baseImg, baseImg, params.filmNegative);
+    }
+
     // perform color space transformation
 
     if (isRaw) {
@@ -1233,20 +1262,17 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         StdImageSource::colorSpaceConversion (baseImg, params.icm, embProfile, thumbImg->getSampleFormat());
     }
 
-    int fw = baseImg->getWidth();
-    int fh = baseImg->getHeight();
-    //ColorTemp::CAT02 (baseImg, &params)   ;//perhaps not good!
-
-    ImProcFunctions ipf (&params, forHistogramMatching); // enable multithreading when forHistogramMatching is true
-    ipf.setScale (sqrt (double (fw * fw + fh * fh)) / sqrt (double (thumbImg->getWidth() * thumbImg->getWidth() + thumbImg->getHeight() * thumbImg->getHeight()))*scale);
-    ipf.updateColorProfiles (ICCStore::getInstance()->getDefaultMonitorProfileName(), RenderingIntent(settings->monitorIntent), false, false);
+    // Process film negative AFTER colorspace conversion, if needed
+    if (params.filmNegative.enabled && params.filmNegative.backCompat == FilmNegativeParams::BackCompat::CURRENT && params.filmNegative.colorSpace != FilmNegativeParams::ColorSpace::INPUT) {
+        ipf.filmNegativeProcess(baseImg, baseImg, params.filmNegative);
+    }
 
     LUTu hist16 (65536);
 
     ipf.firstAnalysis (baseImg, params, hist16);
 
-    ipf.dehaze(baseImg);
-    ipf.ToneMapFattal02(baseImg);
+    ipf.dehaze(baseImg, params.dehaze);
+    ipf.ToneMapFattal02(baseImg, params.fattal, 3, 0, nullptr, 0, 0, 0);
     
     // perform transform
     int origFW;
@@ -1327,10 +1353,10 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         params.colorToning.getCurves (ctColorCurve, ctOpacityCurve, wp, opautili);
 
         clToningcurve (65536);
-        CurveFactory::curveToning (params.colorToning.clcurve, clToningcurve, scale == 1 ? 1 : 16);
+        CurveFactory::diagonalCurve2Lut (params.colorToning.clcurve, clToningcurve, scale == 1 ? 1 : 16);
 
         cl2Toningcurve (65536);
-        CurveFactory::curveToning (params.colorToning.cl2curve, cl2Toningcurve, scale == 1 ? 1 : 16);
+        CurveFactory::diagonalCurve2Lut (params.colorToning.cl2curve, cl2Toningcurve, scale == 1 ? 1 : 16);
     }
 
     if (params.blackwhite.enabled) {
@@ -1406,23 +1432,23 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     CurveFactory::complexLCurve (params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve,
                                  hist16, lumacurve, dummy, 16, utili);
 
-    bool clcutili;
-    CurveFactory::curveCL (clcutili, params.labCurve.clcurve, clcurve, 16);
+    const bool clcutili = CurveFactory::diagonalCurve2Lut(params.labCurve.clcurve, clcurve, 16);
 
     bool autili, butili, ccutili, cclutili;
     CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,
                                    params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 16);
 
-    ipf.chromiLuminanceCurve (nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
-    ipf.vibrance (labView);
+	ipf.chromiLuminanceCurve (nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
+
+    ipf.vibrance (labView, params.vibrance, params.toneCurve.hrenabled, params.icm.workingProfile);
     ipf.labColorCorrectionRegions(labView);
 
     if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) {
         ipf.EPDToneMap (labView, 5, 6);
     }
 
-    ipf.softLight(labView);
+    ipf.softLight(labView, params.softlight);
 
     if (params.colorappearance.enabled) {
         CurveFactory::curveLightBrightColor (

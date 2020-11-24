@@ -22,11 +22,6 @@
 #include <math.h>
 #include "sleef.h"
 
-#ifdef _DEBUG
-#include "settings.h"
-#include <stdio.h>
-#endif
-
 #undef CLIPD
 #define CLIPD(a) ((a)>0.f?((a)<1.f?(a):1.f):0.f)
 #define MAXR(a,b) ((a) > (b) ? (a) : (b))
@@ -420,13 +415,6 @@ void Ciecam02::initcam1float (float yb, float pilotd, float f, float la, float x
     aw = achromatic_response_to_whitefloat ( xw, yw, zw, d, fl, nbb);
     wh = ( 4.0f / c ) * ( aw + 4.0f ) * pow_F ( fl, 0.25f );
     pfl = pow_F ( fl, 0.25f );
-#ifdef _DEBUG
-
-    if (settings->verbose) {
-        printf ("Source float d=%f aw=%f fl=%f wh=%f c=%f  awc=%f\n", d, aw, fl, wh, c, (4.f / c) * (aw + 4.f));
-    }
-
-#endif
 }
 
 void Ciecam02::initcam2float (float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
@@ -445,13 +433,6 @@ void Ciecam02::initcam2float (float yb, float pilotd, float f, float la, float x
     nbb = ncb = 0.725f * pow_F ( 1.0f / n, 0.2f );
     cz = 1.48f + sqrt ( n );
     aw = achromatic_response_to_whitefloat ( xw, yw, zw, d, fl, nbb);
-#ifdef _DEBUG
-
-    if (settings->verbose) {
-        printf ("Viewing float d=%f aw=%f fl=%f n=%f\n", d, aw, fl, n);
-    }
-
-#endif
 }
 
 void Ciecam02::xyz2jchqms_ciecam02float ( float &J, float &C, float &h, float &Q, float &M, float &s, float aw, float fl, float wh,

@@ -720,6 +720,36 @@ flowboxchild:selected {
     margin: 0;
 }
 
+/* Vertical version of slider. */
+#histScale {
+    min-height: 4em;
+    min-width: 0.4166666666666666em;
+    margin: 0.5833333333333333em 0 0 0;
+}
+#histScale trough {
+    padding: 0.583333333333333333em 0;
+}
+#histScale trough highlight {
+    margin: -0.583333333333333333em 0;
+    padding: 0.1em 0 0 0.1em;
+}
+#histScale.fine-tune trough highlight {
+    padding: 0.5em 0 0 0.5em;
+}
+
+/* Copied from button.flat style. */
+button.radio#histButton  {
+    background-image: none;
+}
+
+button.radio#histButton:checked {
+    background-image:  linear-gradient(#343434, #2E2E2E, #292929);
+}
+
+button.radio#histButton:hover {
+    background-image: linear-gradient(shade(#343434,1.3), shade(#2E2E2E,1.3), shade(#292929,1.3));
+}
+
 /*** end ***************************************************************************************/
 
 #MyExpander {
@@ -745,6 +775,7 @@ flowboxchild:selected {
     background-color: #363636;
 }
 
+#LocallabToolPanel frame,
 #ExpanderBox  frame,
 #ExpanderBox2 frame,
 #ExpanderBox3 frame {
@@ -761,18 +792,22 @@ flowboxchild:selected {
     padding: 0.25em;
 }
 
+#LocallabToolPanel frame > label, #LocallabToolPanel frame frame > label,
 #ExpanderBox  frame > label, #ExpanderBox  frame frame > label,
 #ExpanderBox2 frame > label, #ExpanderBox2 frame frame > label,
 #ExpanderBox3 frame > label, #ExpanderBox3 frame frame > label {
     margin-left: 7pt;
     margin-top: 0;
 }
+
+#LocallabToolPanel  frame > box, #LocallabToolPanel  frame frame > box, #LocallabToolPanel  frame > grid, #LocallabToolPanel  frame frame > grid,
 #ExpanderBox  frame > box, #ExpanderBox  frame frame > box, #ExpanderBox  frame > grid, #ExpanderBox  frame frame > grid,
 #ExpanderBox2 frame > box, #ExpanderBox2 frame frame > box, #ExpanderBox2 frame > grid, #ExpanderBox2 frame frame > grid,
 #ExpanderBox3 frame > box, #ExpanderBox3 frame frame > box, #ExpanderBox3 frame > grid, #ExpanderBox3 frame frame > grid {
     margin: 0.1666666666666666em;
 }
 
+#LocallabToolPanel  > box > checkbutton, #LocallabToolPanel  > box > box, #LocallabToolPanel  > grid > checkbutton, #LocallabToolPanel  > box > grid, #LocallabToolPanel  > grid > grid, #LocallabToolPanel  frame > box > grid, #LocallabToolPanel  frame > grid > grid, #LocallabToolPanel  frame > grid > box,
 #ExpanderBox  > box > checkbutton, #ExpanderBox  > box > box, #ExpanderBox  > grid > checkbutton, #ExpanderBox  > box > grid, #ExpanderBox  > grid > grid, #ExpanderBox  frame > box > grid, #ExpanderBox  frame > grid > grid, #ExpanderBox  frame > grid > box,
 #ExpanderBox2 > box > checkbutton, #ExpanderBox2 > box > box, #ExpanderBox2 > grid > checkbutton, #ExpanderBox2 > box > grid, #ExpanderBox2 > grid > grid, #ExpanderBox2 frame > box > grid, #ExpanderBox2 frame > grid > grid, #ExpanderBox2 frame > grid > box,
 #ExpanderBox3 > box > checkbutton, #ExpanderBox3 > box > box, #ExpanderBox3 > grid > checkbutton, #ExpanderBox3 > box > grid, #ExpanderBox3 > grid > grid, #ExpanderBox3 frame > box > grid, #ExpanderBox3 frame > grid > grid, #ExpanderBox3 frame > grid > box {
@@ -796,6 +831,7 @@ flowboxchild:selected {
 }
 
 /* Sub-tool (MyExpander) background */
+#LocallabToolPanel > box, #LocallabToolPanel > grid,
 #ExpanderBox2 > box, #ExpanderBox2 > grid {
     background-color: #3B3B3B;
     border: 0.0833333333333333em solid #2A2A2A;
@@ -804,10 +840,12 @@ flowboxchild:selected {
     padding: 0.25em;
 }
 
+#LocallabToolPanel drawingarea,
 #ExpanderBox2 drawingarea {
     background-color: #3B3B3B;
 }
 
+#LocallabToolPanel frame > border,
 #ExpanderBox2 frame > border {
     background-color: #414141;
     border: 0.0833333333333333em solid #373737;
@@ -816,10 +854,12 @@ flowboxchild:selected {
     padding: 0.25em;
 }
 
+#LocallabToolPanel frame drawingarea,
 #ExpanderBox2 frame drawingarea {
     background-color: #414141;
 }
 
+#LocallabToolPanel frame frame > border,
 #ExpanderBox2 frame frame > border {
     background-color: #474747;
     border: 0.0833333333333333em solid #3D3D3D;
@@ -828,6 +868,7 @@ flowboxchild:selected {
     padding: 0.25em;
 }
 
+#LocallabToolPanel frame frame drawingarea,
 #ExpanderBox2 frame frame drawingarea {
     background-color: #474747;
 }
@@ -854,7 +895,7 @@ flowboxchild:selected {
     color: #D8D8D8;
 }
 
-#ExpanderBox2 separator, #ExpanderBox3 separator {
+#LocallabToolPanel separator, #ExpanderBox2 separator, #ExpanderBox3 separator {
     color: #292929;
 }
 

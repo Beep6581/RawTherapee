@@ -26,8 +26,50 @@
 
 using namespace rtengine;
 
-Navigator::Navigator () : currentRGBUnit(options.navRGBUnit), currentHSVUnit(options.navHSVUnit)
+Navigator::Navigator() :
+    pointer_moved_delayed_call(50, 100),
+    currentRGBUnit(options.navRGBUnit),
+    currentHSVUnit(options.navHSVUnit)
 {
+    pointer_moved_delayed_call.setFunction(
+        [this](bool validPos, Glib::ustring profile, Glib::ustring profileW, int x, int y, int r, int g, int b, bool isRaw)
+        {
+            if (!validPos) {
+                setInvalid (x, y);
+            } else {
+                Glib::ustring s1, s2, s3;
+
+                position->set_text (Glib::ustring::compose ("x: %1, y: %2", x, y));
+
+                getRGBText (r, g, b, s1, s2, s3, isRaw);
+                R->set_text (s1);
+                G->set_text (s2);
+                B->set_text (s3);
+                if (isRaw) {
+                    H->set_text ("--");
+                    S->set_text ("--");
+                    V->set_text ("--");
+                    LAB_L->set_text ("--");
+                    LAB_A->set_text ("--");
+                    LAB_B->set_text ("--");
+                } else {
+                    float h, s, v;
+                    float LAB_a, LAB_b, LAB_l;
+                    Color::rgb2hsv01(r / 255.f, g / 255.f, b / 255.f, h, s, v);
+                    getHSVText (h, s, v, s1, s2, s3);
+                    H->set_text (s1);
+                    S->set_text (s2);
+                    V->set_text (s3);
+
+                    Color::rgb2lab01(profile, profileW, r / 255.f, g / 255.f, b / 255.f, LAB_l, LAB_a, LAB_b, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
+                    getLABText (LAB_l, LAB_a, LAB_b, s1, s2, s3);
+                    LAB_L->set_text (s1);
+                    LAB_A->set_text (s2);
+                    LAB_B->set_text (s3);
+                }
+            }
+        }
+    );
 
     set_label (M("MAIN_MSG_NAVIGATOR"));
     Gtk::VBox* mbox = Gtk::manage (new Gtk::VBox ());
@@ -202,6 +244,11 @@ Navigator::Navigator () : currentRGBUnit(options.navRGBUnit), currentHSVUnit(opt
     show_all ();
 }
 
+Navigator::~Navigator()
+{
+    pointer_moved_delayed_call.cancel();
+}
+
 void Navigator::setInvalid (int fullWidth, int fullHeight)
 {
     if (fullWidth > 0 && fullHeight > 0) {
@@ -278,41 +325,7 @@ void Navigator::getLABText (float l, float a, float b, Glib::ustring &sL, Glib::
 // if !validPos then x/y contain the full image size
 void Navigator::pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw)
 {
-
-    if (!validPos) {
-        setInvalid (x, y);
-    } else {
-        Glib::ustring s1, s2, s3;
-
-        position->set_text (Glib::ustring::compose ("x: %1, y: %2", x, y));
-
-        getRGBText (r, g, b, s1, s2, s3, isRaw);
-        R->set_text (s1);
-        G->set_text (s2);
-        B->set_text (s3);
-        if (isRaw) {
-            H->set_text ("--");
-            S->set_text ("--");
-            V->set_text ("--");
-            LAB_L->set_text ("--");
-            LAB_A->set_text ("--");
-            LAB_B->set_text ("--");
-        } else {
-            float h, s, v;
-            float LAB_a, LAB_b, LAB_l;
-            Color::rgb2hsv01(r / 255.f, g / 255.f, b / 255.f, h, s, v);
-            getHSVText (h, s, v, s1, s2, s3);
-            H->set_text (s1);
-            S->set_text (s2);
-            V->set_text (s3);
-
-            Color::rgb2lab01(profile, profileW, r / 255.f, g / 255.f, b / 255.f, LAB_l, LAB_a, LAB_b, options.rtSettings.HistogramWorking);  // TODO: Really sure this function works?
-            getLABText (LAB_l, LAB_a, LAB_b, s1, s2, s3);
-            LAB_L->set_text (s1);
-            LAB_A->set_text (s2);
-            LAB_B->set_text (s3);
-        }
-    }
+    pointer_moved_delayed_call(validPos, profile, profileW, x, y, r, g, b, isRaw);
 }
 
 void Navigator::cycleUnitsRGB (GdkEventButton *event) {

@@ -55,6 +55,7 @@ public:
 
     FlatCurveEditor* addCurve(Glib::ustring curveLabel = "", bool periodic = true);
     //virtual void updateBackgroundHistogram (CurveEditor* ce);
+    void updateLocallabBackground(CurveEditor* ce) override;    
     void switchGUI() override;
     void refresh(CurveEditor *curveToRefresh) override;
     void editModeSwitchedOff() override;
@@ -71,6 +72,7 @@ protected:
     void storeCurveValues (CurveEditor* ce, const std::vector<double>& p) override;
     void storeDisplayedCurve () override;
     void restoreDisplayedHistogram () override;
+    void restoreLocallabBackground() override;
     void savePressed ();
     void loadPressed ();
     void copyPressed ();

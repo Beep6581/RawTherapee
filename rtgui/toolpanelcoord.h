@@ -54,6 +54,7 @@
 #include "lensgeomlistener.h"
 #include "lensprofile.h"
 #include "localcontrast.h"
+#include "locallab.h"
 #include "pcvignette.h"
 #include "pdsharpening.h"
 #include "perspective.h"
@@ -102,6 +103,7 @@ class ToolPanelCoordinator :
     public LensGeomListener,
     public SpotWBListener,
     public CropPanelListener,
+    public PerspCorrectionPanelListener,
     public ICMPanelListener,
     public ImageAreaToolListener,
     public rtengine::ImageTypeListener,
@@ -112,6 +114,7 @@ protected:
     WhiteBalance* whitebalance;
     Vignetting* vignetting;
     Gradient* gradient;
+    Locallab* locallab;
     Retinex*  retinex;
     PCVignette* pcvignette;
     LensGeometry* lensgeom;
@@ -178,6 +181,7 @@ protected:
     ToolVBox* transformPanel;
     ToolVBox* rawPanel;
     ToolVBox* advancedPanel;
+    ToolVBox* locallabPanel;
     ToolBar* toolBar;
 
     TextOrIcon* toiF;
@@ -188,9 +192,10 @@ protected:
     TextOrIcon* toiR;
     TextOrIcon* toiM;
     TextOrIcon* toiW;
+    TextOrIcon* toiL;
 
-    Gtk::Image* imgPanelEnd[7];
-    Gtk::VBox* vbPanelEnd[7];
+    Gtk::Image* imgPanelEnd[8];
+    Gtk::VBox* vbPanelEnd[8];
 
     Gtk::ScrolledWindow* favoritePanelSW;
     Gtk::ScrolledWindow* exposurePanelSW;
@@ -199,27 +204,32 @@ protected:
     Gtk::ScrolledWindow* transformPanelSW;
     Gtk::ScrolledWindow* rawPanelSW;
     Gtk::ScrolledWindow* advancedPanelSW;
+    Gtk::ScrolledWindow* locallabPanelSW;
 
     std::vector<MyExpander*> expList;
 
     bool hasChanged;
 
-    void addPanel (Gtk::Box* where, FoldableToolPanel* panel, int level = 1);
-    void foldThemAll (GdkEventButton* event);
-    void updateVScrollbars (bool hide);
+    void addPanel(Gtk::Box* where, FoldableToolPanel* panel, int level = 1);
+    void foldThemAll(GdkEventButton* event);
+    void updateVScrollbars(bool hide);
     void addfavoritePanel (Gtk::Box* where, FoldableToolPanel* panel, int level = 1);
+    void notebookPageChanged(Gtk::Widget* page, guint page_num);
 
 private:
     EditDataProvider *editDataProvider;
+    sigc::connection notebookconn;
+    bool photoLoadedOnce; // Used to indicated that a photo has been loaded yet
+    Gtk::Widget* prevPage;
 
 public:
     CoarsePanel* coarse;
     Gtk::Notebook* toolPanelNotebook;
 
-    ToolPanelCoordinator (bool batch = false);
+    ToolPanelCoordinator(bool batch = false);
     ~ToolPanelCoordinator () override;
 
-    bool getChangedState                ()
+    bool getChangedState()
     {
         return hasChanged;
     }
@@ -235,12 +245,12 @@ public:
         const LUTu& histLuma,
         const LUTu& histLRETI
     );
-    void foldAllButOne (Gtk::Box* parent, FoldableToolPanel* openedSection);
+    void foldAllButOne(Gtk::Box* parent, FoldableToolPanel* openedSection);
 
     // multiple listeners can be added that are notified on changes (typical: profile panel and the history)
-    void addPParamsChangeListener   (PParamsChangeListener* pp)
+    void addPParamsChangeListener(PParamsChangeListener* pp)
     {
-        paramcListeners.push_back (pp);
+        paramcListeners.push_back(pp);
     }
 
     // toolpanellistener interface
@@ -263,36 +273,36 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defparams) override;
 
     // DirSelectionListener interface
-    void dirSelected (const Glib::ustring& dirname, const Glib::ustring& openfile);
+    void dirSelected(const Glib::ustring& dirname, const Glib::ustring& openfile);
 
     // to support the GUI:
-    CropGUIListener* getCropGUIListener (); // through the CropGUIListener the editor area can notify the "crop" ToolPanel when the crop selection changes
+    CropGUIListener* getCropGUIListener();  // through the CropGUIListener the editor area can notify the "crop" ToolPanel when the crop selection changes
 
     // init the toolpanelcoordinator with an image & close it
-    void initImage          (rtengine::StagedImageProcessor* ipc_, bool israw);
-    void closeImage         ();
+    void initImage(rtengine::StagedImageProcessor* ipc_, bool israw);
+    void closeImage();
 
     // update the "expanded" state of the Tools
-    void updateToolState    ();
-    void openAllTools       ();
-    void closeAllTools      ();
+    void updateToolState();
+    void openAllTools();
+    void closeAllTools();
     // read/write the "expanded" state of the expanders & read/write the crop panel settings (ratio, guide type, etc.)
-    void readOptions        ();
-    void writeOptions       ();
-    void writeToolExpandedStatus (std::vector<int> &tpOpen);
-
+    void readOptions();
+    void writeOptions();
+    void writeToolExpandedStatus(std::vector<int> &tpOpen);
+    void updateShowtooltipVisibility (bool showtooltip);
 
     // wbprovider interface
     void getAutoWB (double& temp, double& green, double equal, double tempBias) override
     {
         if (ipc) {
-            ipc->getAutoWB (temp, green, equal, tempBias);
+            ipc->getAutoWB(temp, green, equal, tempBias);
         }
     }
     void getCamWB (double& temp, double& green) override
     {
         if (ipc) {
-            ipc->getCamWB (temp, green);
+            ipc->getCamWB(temp, green);
         }
     }
 
@@ -304,19 +314,23 @@ public:
     Glib::ustring GetCurrentImageFilePath() override;
 
     // FilmNegProvider interface
-    bool getFilmNegativeExponents(rtengine::Coord spotA, rtengine::Coord spotB, std::array<float, 3>& newExps) override;
-    bool getRawSpotValues(rtengine::Coord spot, int spotSize, std::array<float, 3>& rawValues) override;
+    bool getFilmNegativeSpot(rtengine::Coord spot, int spotSize, RGB &refInput, RGB &refOutput) override;
 
     // rotatelistener interface
     void straightenRequested () override;
     void autoCropRequested () override;
+    void autoPerspRequested (bool corr_pitch, bool corr_yaw, double& rot, double& pitch, double& yaw, const std::vector<rtengine::ControlLine> *lines = nullptr) override;
     double autoDistorRequested () override;
+    void updateTransformPreviewRequested (rtengine::ProcEvent event, bool render_perspective) override;
 
     // spotwblistener interface
     void spotWBRequested (int size) override;
 
     // croppanellistener interface
     void cropSelectRequested () override;
+
+    // PerspCorrectionPanelListener interface
+    void controlLineEditModeChanged(bool active) override;
 
     // icmpanellistener interface
     void saveInputICCReference(const Glib::ustring& fname, bool apply_wb) override;
@@ -330,14 +344,15 @@ public:
     ToolBar* getToolBar() const final;
     CropGUIListener* startCropEditing(Thumbnail* thm = nullptr) override;
 
-    void updateTPVScrollbar (bool hide);
-    bool handleShortcutKey (GdkEventKey* event);
+    void updateTPVScrollbar(bool hide);
+    bool handleShortcutKey(GdkEventKey* event);
 
     // ToolBarListener interface
+    void toolDeselected(ToolMode tool) override;
     void toolSelected (ToolMode tool) override;
     void editModeSwitchedOff () final;
 
-    void setEditProvider (EditDataProvider *provider);
+    void setEditProvider(EditDataProvider *provider);
 
 private:
     IdleRegister idle_register;

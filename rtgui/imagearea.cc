@@ -409,6 +409,34 @@ void ImageArea::getImageSize (int &w, int&h)
     }
 }
 
+void ImageArea::getPreviewCenterPos(int &x, int &y)
+{
+    if (mainCropWindow) {
+        // Getting crop window size
+        int cW, cH;
+        mainCropWindow->getSize(cW, cH);
+
+        // Converting center coord of crop window to image coord
+        const int cX = cW / 2;
+        const int cY = cH / 2;
+        mainCropWindow->screenCoordToImage(cX, cY, x, y);
+    } else {
+        x = y = 0;
+    }
+}
+
+void ImageArea::getPreviewSize(int &w, int &h)
+{
+    if (mainCropWindow) {
+        int tmpW, tmpH;
+        mainCropWindow->getSize(tmpW, tmpH);
+        w = mainCropWindow->scaleValueToImage(tmpW);
+        h = mainCropWindow->scaleValueToImage(tmpH);
+    } else {
+        w = h = 0;
+    }
+}
+
 void ImageArea::grabFocus (CropWindow* cw)
 {
 

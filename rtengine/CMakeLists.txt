@@ -64,6 +64,7 @@ set(RTENGINESOURCEFILES
     ahd_demosaic_RT.cc
     amaze_demosaic_RT.cc
     badpixels.cc
+    bayer_bilinear_demosaic.cc
     boxblur.cc
     canon_cr3_decoder.cc
     CA_correct_RT.cc
@@ -94,7 +95,6 @@ set(RTENGINESOURCEFILES
     fast_demo.cc
     ffmanager.cc
     filmnegativeproc.cc
-    filmnegativethumb.cc
     flatcurves.cc
     FTblockDN.cc
     gamutwarning.cc
@@ -118,7 +118,9 @@ set(RTENGINESOURCEFILES
     impulse_denoise.cc
     init.cc
     ipdehaze.cc
+    ipgrain.cc
     iplab2rgb.cc
+    iplocallab.cc
     iplabregions.cc
     iplocalcontrast.cc
     ipresize.cc
@@ -141,6 +143,7 @@ set(RTENGINESOURCEFILES
     myfile.cc
     panasonic_decoders.cc
     pdaflinesfilter.cc
+    perspectivecorrection.cc
     PF_correct_RT.cc
     pipettebuffer.cc
     pixelshift.cc

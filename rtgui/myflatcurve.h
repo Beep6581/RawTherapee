@@ -68,6 +68,8 @@ public:
 
 class MyFlatCurve final : public MyCurve
 {
+private:
+    IdleRegister idle_register;
 
 protected:
     FlatCurveDescr curve;
@@ -95,6 +97,7 @@ protected:
     enum EditedHandle editedHandle;
     bool draggingElement;
     enum MouseOverAreas area;
+    double locallabRef; // Locallab reference value to display in the background
 
     void draw ();
     void movePoint(bool moveX, bool moveY, bool pipetteDrag = false);
@@ -129,4 +132,6 @@ public:
 
     void setPos(double pos, int chanIdx) override;
     void stopNumericalAdjustment() override;
+
+    void updateLocallabBackground(double ref);
 };

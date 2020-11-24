@@ -14,6 +14,7 @@
 #14 2015-11-23 update by wim ter meer
 #15 2016-07-21 update by wim ter meer
 #16 2017-04-21 update by wim ter meer
+#17 2020-06-05 update by dheijl 
 
 ABOUT_TAB_BUILD;Versie
 ABOUT_TAB_CREDITS;Credits
@@ -1962,367 +1963,367 @@ ZOOMPANEL_ZOOMOUT;Zoom uit\nSneltoets: <b>-</b>
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - reset to default value.\n<b>Ctrl</b>+<b>click</b> - reset to initial value.
-!CURVEEDITOR_CATMULLROM;Flexible
-!DONT_SHOW_AGAIN;Don't show this message again.
-!DYNPROFILEEDITOR_IMGTYPE_ANY;Any
-!DYNPROFILEEDITOR_IMGTYPE_HDR;HDR
-!DYNPROFILEEDITOR_IMGTYPE_PS;Pixel Shift
-!DYNPROFILEEDITOR_IMGTYPE_STD;Standard
-!EXIFFILTER_IMAGETYPE;Image type
-!EXIFPANEL_SHOWALL;Show all
-!FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
-!FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
-!FILEBROWSER_CACHECLEARFROMPARTIAL;Clear all except cached profiles
-!FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
-!FILEBROWSER_DELETEDIALOG_SELECTED;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files?
-!FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Are you sure you want to <b>permanently</b> delete the selected <b>%1</b> files, <b>including</b> a queue-processed version?
-!FILEBROWSER_EMPTYTRASHHINT;<b>Permanently</b> delete all files in trash.
-!FILEBROWSER_POPUPREMOVE;Delete permanently
-!FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
-!FILEBROWSER_SHOWNOTTRASHHINT;Show only images not in trash.
-!GENERAL_CURRENT;Current
-!GENERAL_HELP;Help
-!GENERAL_RESET;Reset
-!GENERAL_SAVE_AS;Save as...
-!GENERAL_SLIDER;Slider
-!GIMP_PLUGIN_INFO;Welcome to the RawTherapee GIMP plugin!\nOnce you are done editing, simply close the main RawTherapee window and the image will be automatically imported in GIMP.
-!HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
-!HISTORY_MSG_173;NR - Detail recovery
-!HISTORY_MSG_203;NR - Color space
-!HISTORY_MSG_235;B&amp;W - CM - Auto
-!HISTORY_MSG_237;B&amp;W - CM
-!HISTORY_MSG_256;NR - Median - Type
-!HISTORY_MSG_273;CT - Color Balance SMH
-!HISTORY_MSG_297;NR - Mode
-!HISTORY_MSG_392;W - Residual - Color Balance
-!HISTORY_MSG_441;Retinex - Gain transmission
-!HISTORY_MSG_475;PS - Equalize channel
-!HISTORY_MSG_476;CAM02 - Temp out
-!HISTORY_MSG_477;CAM02 - Green out
-!HISTORY_MSG_478;CAM02 - Yb out
-!HISTORY_MSG_479;CAM02 - CAT02 adaptation out
-!HISTORY_MSG_480;CAM02 - Automatic CAT02 out
-!HISTORY_MSG_481;CAM02 - Temp scene
-!HISTORY_MSG_482;CAM02 - Green scene
-!HISTORY_MSG_483;CAM02 - Yb scene
-!HISTORY_MSG_484;CAM02 - Auto Yb scene
-!HISTORY_MSG_485;Lens Correction
-!HISTORY_MSG_486;Lens Correction - Camera
-!HISTORY_MSG_487;Lens Correction - Lens
-!HISTORY_MSG_488;Dynamic Range Compression
-!HISTORY_MSG_489;DRC - Detail
-!HISTORY_MSG_490;DRC - Amount
-!HISTORY_MSG_491;White Balance
-!HISTORY_MSG_492;RGB Curves
-!HISTORY_MSG_493;L*a*b* Adjustments
-!HISTORY_MSG_494;Capture Sharpening
-!HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
-!HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
-!HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
-!HISTORY_MSG_COLORTONING_LABREGION_CHANNEL;CT - Channel
-!HISTORY_MSG_COLORTONING_LABREGION_CHROMATICITYMASK;CT - region C mask
-!HISTORY_MSG_COLORTONING_LABREGION_HUEMASK;CT - H mask
-!HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESS;CT - Lightness
-!HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESSMASK;CT - L mask
-!HISTORY_MSG_COLORTONING_LABREGION_LIST;CT - List
-!HISTORY_MSG_COLORTONING_LABREGION_MASKBLUR;CT - region mask blur
-!HISTORY_MSG_COLORTONING_LABREGION_OFFSET;CT - region offset
-!HISTORY_MSG_COLORTONING_LABREGION_POWER;CT - region power
-!HISTORY_MSG_COLORTONING_LABREGION_SATURATION;CT - Saturation
-!HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;CT - region show mask
-!HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - region slope
-!HISTORY_MSG_DEHAZE_DEPTH;Dehaze - Depth
-!HISTORY_MSG_DEHAZE_ENABLED;Haze Removal
-!HISTORY_MSG_DEHAZE_LUMINANCE;Dehaze - Luminance only
-!HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Dehaze - Show depth map
-!HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
-!HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
-!HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
-!HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
-!HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
-!HISTORY_MSG_HISTMATCHING;Auto-matched tone curve
-!HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
-!HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 illuminant D
-!HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Type
-!HISTORY_MSG_ICM_WORKING_GAMMA;Working - Gamma
-!HISTORY_MSG_ICM_WORKING_SLOPE;Working - Slope
-!HISTORY_MSG_ICM_WORKING_TRC_METHOD;Working - TRC method
-!HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
-!HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
-!HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
-!HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
-!HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
-!HISTORY_MSG_METADATA_MODE;Metadata copy mode
-!HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
-!HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
-!HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - Auto radius
-!HISTORY_MSG_PDSHARPEN_CHECKITER;CS - Auto limit iterations
-!HISTORY_MSG_PDSHARPEN_CONTRAST;CS - Contrast threshold
-!HISTORY_MSG_PDSHARPEN_ITERATIONS;CS - Iterations
-!HISTORY_MSG_PDSHARPEN_RADIUS;CS - Radius
-!HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
-!HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
-!HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
-!HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrast threshold
-!HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
-!HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw CA Correction - Avoid color shift
-!HISTORY_MSG_RAW_BORDER;Raw border
-!HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
-!HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
-!HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
-!HISTORY_MSG_SH_COLORSPACE;S/H - Colorspace
-!HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
-!HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
-!HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
-!HISTORY_MSG_TRANS_Method;Geometry - Method
-!ICCPROFCREATOR_COPYRIGHT;Copyright:
-!ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Reset to the default copyright, granted to "RawTherapee, CC0"
-!ICCPROFCREATOR_CUSTOM;Custom
-!ICCPROFCREATOR_DESCRIPTION;Description:
-!ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Append gamma and slope values to the description
-!ICCPROFCREATOR_DESCRIPTION_TOOLTIP;Leave empty to set the default description.
-!ICCPROFCREATOR_GAMMA;Gamma
-!ICCPROFCREATOR_ICCVERSION;ICC version:
-!ICCPROFCREATOR_ILL;Illuminant:
-!ICCPROFCREATOR_ILL_41;D41
-!ICCPROFCREATOR_ILL_50;D50
-!ICCPROFCREATOR_ILL_55;D55
-!ICCPROFCREATOR_ILL_60;D60
-!ICCPROFCREATOR_ILL_65;D65
-!ICCPROFCREATOR_ILL_80;D80
-!ICCPROFCREATOR_ILL_DEF;Default
-!ICCPROFCREATOR_ILL_INC;StdA 2856K
-!ICCPROFCREATOR_ILL_TOOLTIP;You can only set the illuminant for ICC v4 profiles.
-!ICCPROFCREATOR_PRIMARIES;Primaries:
-!ICCPROFCREATOR_PRIM_ACESP0;ACES AP0
-!ICCPROFCREATOR_PRIM_ACESP1;ACES AP1
-!ICCPROFCREATOR_PRIM_ADOBE;Adobe RGB (1998)
-!ICCPROFCREATOR_PRIM_BEST;BestRGB
-!ICCPROFCREATOR_PRIM_BETA;BetaRGB
-!ICCPROFCREATOR_PRIM_BLUX;Blue X
-!ICCPROFCREATOR_PRIM_BLUY;Blue Y
-!ICCPROFCREATOR_PRIM_BRUCE;BruceRGB
-!ICCPROFCREATOR_PRIM_GREX;Green X
-!ICCPROFCREATOR_PRIM_GREY;Green Y
-!ICCPROFCREATOR_PRIM_PROPH;Prophoto
-!ICCPROFCREATOR_PRIM_REC2020;Rec2020
-!ICCPROFCREATOR_PRIM_REDX;Red X
-!ICCPROFCREATOR_PRIM_REDY;Red Y
-!ICCPROFCREATOR_PRIM_SRGB;sRGB
-!ICCPROFCREATOR_PRIM_TOOLTIP;You can only set custom primaries for ICC v4 profiles.
-!ICCPROFCREATOR_PRIM_WIDEG;Widegamut
-!ICCPROFCREATOR_PROF_V2;ICC v2
-!ICCPROFCREATOR_PROF_V4;ICC v4
-!ICCPROFCREATOR_SAVEDIALOG_TITLE;Save ICC profile as...
-!ICCPROFCREATOR_SLOPE;Slope
-!ICCPROFCREATOR_TRC_PRESET;Tone response curve:
-!MAIN_BUTTON_ICCPROFCREATOR;ICC Profile Creator
-!MAIN_FRAME_PLACES_DEL;Remove
-!MAIN_MSG_TOOMANYOPENEDITORS;Too many open editors.\nPlease close an editor to continue.
-!MAIN_TAB_ADVANCED;Advanced
-!MAIN_TAB_ADVANCED_TOOLTIP;Shortcut: <b>Alt</b>-<b>a</b>
-!MAIN_TAB_FAVORITES;Favorites
-!MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>
-!MAIN_TOOLTIP_BACKCOLOR3;Background color of the preview: <b>middle grey</b>\nShortcut: <b>9</b>
-!MAIN_TOOLTIP_PREVIEWSHARPMASK;Preview the <b>sharpening contrast mask</b>.\nShortcut: <b>p</b>\n\nOnly works when sharpening is enabled and zoom >= 100%.
-!OPTIONS_BUNDLED_MISSING;The bundled profile "<b>%1</b>" could not be found!\n\nYour installation could be damaged.\n\nDefault internal values will be used instead.
-!OPTIONS_DEFIMG_MISSING;The default profile for <b>non-raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
-!OPTIONS_DEFRAW_MISSING;The default profile for <b>raw photos</b> could not be found or is not set.\n\nPlease check your profiles' directory, it may be missing or damaged.\n\n"<b>%1</b>" will be used instead.
-!PARTIALPASTE_ADVANCEDGROUP;Advanced Settings
-!PARTIALPASTE_DEHAZE;Haze removal
-!PARTIALPASTE_FILMNEGATIVE;Film Negative
-!PARTIALPASTE_LOCALCONTRAST;Local contrast
-!PARTIALPASTE_METADATA;Metadata mode
-!PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA avoid color shift
-!PARTIALPASTE_RAW_BORDER;Raw border
-!PARTIALPASTE_SOFTLIGHT;Soft light
-!PARTIALPASTE_TM_FATTAL;Dynamic range compression
-!PREFERENCES_APPEARANCE;Appearance
-!PREFERENCES_APPEARANCE_COLORPICKERFONT;Color picker font
-!PREFERENCES_APPEARANCE_CROPMASKCOLOR;Crop mask color
-!PREFERENCES_APPEARANCE_MAINFONT;Main font
-!PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI mode
-!PREFERENCES_APPEARANCE_THEME;Theme
-!PREFERENCES_AUTOSAVE_TP_OPEN;Save tool collapsed/expanded state on exit
-!PREFERENCES_CACHECLEAR;Clear
-!PREFERENCES_CACHECLEAR_ALL;Clear all cached files:
-!PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Clear all cached files except for cached processing profiles:
-!PREFERENCES_CACHECLEAR_ONLYPROFILES;Clear only cached processing profiles:
-!PREFERENCES_CACHECLEAR_SAFETY;Only files in the cache are cleared. Processing profiles stored alongside the source images are not touched.
-!PREFERENCES_CHUNKSIZES;Tiles per thread
-!PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demosaic
-!PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correction
-!PREFERENCES_CHUNKSIZE_RAW_RCD;RCD demosaic
-!PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans demosaic
-!PREFERENCES_CHUNKSIZE_RGB;RGB processing
-!PREFERENCES_CROP;Crop Editing
-!PREFERENCES_CROP_AUTO_FIT;Automatically zoom to fit the crop
-!PREFERENCES_CROP_GUIDES;Guides shown when not editing the crop
-!PREFERENCES_CROP_GUIDES_FRAME;Frame
-!PREFERENCES_CROP_GUIDES_FULL;Original
-!PREFERENCES_CROP_GUIDES_NONE;None
-!PREFERENCES_DIRECTORIES;Directories
-!PREFERENCES_EDITORCMDLINE;Custom command line
-!PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
-!PREFERENCES_LANG;Language
-!PREFERENCES_PERFORMANCE_MEASURE;Measure
-!PREFERENCES_PERFORMANCE_MEASURE_HINT;Logs processing times in console
-!PREFERENCES_PERFORMANCE_THREADS;Threads
-!PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximum number of threads for Noise Reduction and Wavelet Levels (0 = Automatic)
-!PREFERENCES_PROFILESAVEBOTH;Save processing profile both to the cache and next to the input file
-!PREFERENCES_PROFILESAVELOCATION;Processing profile saving location
-!PREFERENCES_SAVE_TP_OPEN_NOW;Save tool collapsed/expanded state now
-!PREFERENCES_TAB_PERFORMANCE;Performance
-!PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Embedded JPEG preview
-!PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Image to show
-!PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw rendering
-!PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
-!PROGRESSBAR_DECODING;Decoding...
-!PROGRESSBAR_GREENEQUIL;Green equilibration...
-!PROGRESSBAR_HLREC;Highlight reconstruction...
-!PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
-!PROGRESSBAR_LINEDENOISE;Line noise filter...
-!PROGRESSBAR_RAWCACORR;Raw CA correction...
-!QINFO_FRAMECOUNT;%2 frames
-!QINFO_HDR;HDR / %2 frame(s)
-!QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
-!QUEUE_LOCATION_TITLE;Output Location
-!QUEUE_STARTSTOP_TOOLTIP;Start or stop processing the images in the queue.\n\nShortcut: <b>Ctrl</b>+<b>s</b>
-!SAMPLEFORMAT_0;Unknown data format
-!SAMPLEFORMAT_1;8-bit unsigned
-!SAMPLEFORMAT_2;16-bit unsigned
-!SAMPLEFORMAT_4;24-bit LogLuv
-!SAMPLEFORMAT_8;32-bit LogLuv
-!SAMPLEFORMAT_16;16-bit floating-point
-!SAMPLEFORMAT_32;24-bit floating-point
-!SAMPLEFORMAT_64;32-bit floating-point
-!SAVEDLG_FILEFORMAT_FLOAT; floating-point
-!SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
-!SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
-!TP_BWMIX_MIXC;Channel Mixer
-!TP_BWMIX_NEUTRAL;Reset
-!TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminance
-!TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;When setting manually, values above 65 are recommended.
-!TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
-!TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
-!TP_COLORAPP_NEUTRAL;Reset
-!TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
-!TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
-!TP_COLORTONING_LABGRID;L*a*b* color correction grid
-!TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4
-!TP_COLORTONING_LABREGIONS;Color correction regions
-!TP_COLORTONING_LABREGION_ABVALUES;a=%1 b=%2
-!TP_COLORTONING_LABREGION_CHANNEL;Channel
-!TP_COLORTONING_LABREGION_CHANNEL_ALL;All
-!TP_COLORTONING_LABREGION_CHANNEL_B;Blue
-!TP_COLORTONING_LABREGION_CHANNEL_G;Green
-!TP_COLORTONING_LABREGION_CHANNEL_R;Red
-!TP_COLORTONING_LABREGION_CHROMATICITYMASK;C
-!TP_COLORTONING_LABREGION_HUEMASK;H
-!TP_COLORTONING_LABREGION_LIGHTNESS;Lightness
-!TP_COLORTONING_LABREGION_LIGHTNESSMASK;L
-!TP_COLORTONING_LABREGION_LIST_TITLE;Correction
-!TP_COLORTONING_LABREGION_MASK;Mask
-!TP_COLORTONING_LABREGION_MASKBLUR;Mask Blur
-!TP_COLORTONING_LABREGION_OFFSET;Offset
-!TP_COLORTONING_LABREGION_POWER;Power
-!TP_COLORTONING_LABREGION_SATURATION;Saturation
-!TP_COLORTONING_LABREGION_SHOWMASK;Show mask
-!TP_COLORTONING_LABREGION_SLOPE;Slope
-!TP_CROP_PPI;PPI
-!TP_CROP_RESETCROP;Reset
-!TP_CROP_SELECTCROP;Select
-!TP_DEHAZE_DEPTH;Depth
-!TP_DEHAZE_LABEL;Haze Removal
-!TP_DEHAZE_LUMINANCE;Luminance only
-!TP_DEHAZE_SHOW_DEPTH_MAP;Show depth map
-!TP_DEHAZE_STRENGTH;Strength
-!TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
-!TP_DIRPYRDENOISE_LABEL;Noise Reduction
-!TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colors
-!TP_EXPOSURE_HISTMATCHING;Auto-Matched Tone Curve
-!TP_EXPOSURE_HISTMATCHING_TOOLTIP;Automatically adjust sliders and curves (except exposure compensation) to match the look of the embedded JPEG thumbnail.
-!TP_FILMNEGATIVE_BLUE;Blue ratio
-!TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
-!TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness. Set the white balance afterwards.
-!TP_FILMNEGATIVE_LABEL;Film Negative
-!TP_FILMNEGATIVE_PICK;Pick neutral spots
-!TP_FILMNEGATIVE_RED;Red ratio
-!TP_ICM_WORKING_TRC;Tone response curve:
-!TP_ICM_WORKING_TRC_CUSTOM;Custom
-!TP_ICM_WORKING_TRC_GAMMA;Gamma
-!TP_ICM_WORKING_TRC_NONE;None
-!TP_ICM_WORKING_TRC_SLOPE;Slope
-!TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
-!TP_LENSGEOM_LIN;Linear
-!TP_LENSGEOM_LOG;Logarithmic
-!TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected
-!TP_LENSPROFILE_CORRECTION_LCPFILE;LCP file
-!TP_LENSPROFILE_CORRECTION_MANUAL;Manually selected
-!TP_LENSPROFILE_LENS_WARNING;Warning: the crop factor used for lens profiling is larger than the crop factor of the camera, the results might be wrong.
-!TP_LENSPROFILE_MODE_HEADER;Lens Profile
-!TP_LENSPROFILE_USE_CA;Chromatic aberration
-!TP_LENSPROFILE_USE_GEOMETRIC;Geometric distortion
-!TP_LENSPROFILE_USE_HEADER;Correct
-!TP_LENSPROFILE_USE_VIGNETTING;Vignetting
-!TP_LOCALCONTRAST_AMOUNT;Amount
-!TP_LOCALCONTRAST_DARKNESS;Darkness level
-!TP_LOCALCONTRAST_LABEL;Local Contrast
-!TP_LOCALCONTRAST_LIGHTNESS;Lightness level
-!TP_LOCALCONTRAST_RADIUS;Radius
-!TP_METADATA_EDIT;Apply modifications
-!TP_METADATA_MODE;Metadata copy mode
-!TP_METADATA_STRIP;Strip all metadata
-!TP_METADATA_TUNNEL;Copy unchanged
-!TP_PDSHARPENING_LABEL;Capture Sharpening
-!TP_PREPROCESS_LINEDENOISE_DIRECTION;Direction
-!TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Both
-!TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Horizontal
-!TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontal only on PDAF rows
-!TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Vertical
-!TP_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
-!TP_RAWCACORR_AUTOIT;Iterations
-!TP_RAWCACORR_AUTOIT_TOOLTIP;This setting is available if "Auto-correction" is checked.\nAuto-correction is conservative, meaning that it often does not correct all chromatic aberration.\nTo correct the remaining chromatic aberration, you can use up to five iterations of automatic chromatic aberration correction.\nEach iteration will reduce the remaining chromatic aberration from the last iteration at the cost of additional processing time.
-!TP_RAWCACORR_AVOIDCOLORSHIFT;Avoid color shift
-!TP_RAW_2PASS;1-pass+fast
-!TP_RAW_4PASS;3-pass+fast
-!TP_RAW_AMAZEVNG4;AMaZE+VNG4
-!TP_RAW_BORDER;Border
-!TP_RAW_DCBVNG4;DCB+VNG4
-!TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto threshold
-!TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;If the checkbox is checked (recommended), RawTherapee calculates an optimum value based on flat regions in the image.\nIf there is no flat region in the image or the image is too noisy, the value will be set to 0.\nTo set the value manually, uncheck the checkbox first (reasonable values depend on the image).
-!TP_RAW_DUALDEMOSAICCONTRAST;Contrast threshold
-!TP_RAW_IMAGENUM_SN;SN mode
-!TP_RAW_IMAGENUM_TOOLTIP;Some raw files consist of several sub-images (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel, Fuji EXR).\n\nWhen using any demosaicing method other than Pixel Shift, this selects which sub-image is used.\n\nWhen using the Pixel Shift demosaicing method on a Pixel Shift raw, all sub-images are used, and this selects which sub-image should be used for moving parts.
-!TP_RAW_PIXELSHIFTDMETHOD;Demosaic method for motion
-!TP_RAW_PIXELSHIFTEPERISO;Sensitivity
-!TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;The default value of 0 should work fine for base ISO.\nHigher values increase sensitivity of motion detection.\nChange in small steps and watch the motion mask while changing.\nIncrease sensitivity for underexposed or high ISO images.
-!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Equalize per channel
-!TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Enabled: Equalize the RGB channels individually.\nDisabled: Use same equalization factor for all channels.
-!TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlays the image with a green mask showing the regions with motion.
-!TP_RAW_RCD;RCD
-!TP_RAW_RCDVNG4;RCD+VNG4
-!TP_RAW_XTRANS;X-Trans
-!TP_RAW_XTRANSFAST;Fast X-Trans
-!TP_RESIZE_ALLOW_UPSCALING;Allow Upscaling
-!TP_RETINEX_CONTEDIT_MAP;Equalizer
-!TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
-!TP_RETINEX_GAINTRANSMISSION;Gain transmission
-!TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplify or reduce the transmission map to achieve the desired luminance.\nThe x-axis is the transmission.\nThe y-axis is the gain.
-!TP_RETINEX_MAP;Method
-!TP_SHARPENING_BLUR;Blur radius
-!TP_SHARPENING_CONTRAST;Contrast threshold
-!TP_SHARPENING_ITERCHECK;Auto limit iterations
-!TP_SHARPENING_RADIUS_BOOST;Corner radius boost
-!TP_SHARPENMICRO_CONTRAST;Contrast threshold
-!TP_SOFTLIGHT_LABEL;Soft Light
-!TP_SOFTLIGHT_STRENGTH;Strength
-!TP_TM_FATTAL_AMOUNT;Amount
-!TP_TM_FATTAL_ANCHOR;Anchor
-!TP_TM_FATTAL_LABEL;Dynamic Range Compression
-!TP_TM_FATTAL_THRESHOLD;Detail
-!TP_WAVELET_CB_TOOLTIP;For strong values product color-toning by combining it or not with levels decomposition 'toning'\nFor low values you can change the white balance of the background (sky, ...) without changing that of the front plane, generally more contrasted
-!TP_WBALANCE_PICKER;Pick
+ADJUSTER_RESET_TO_DEFAULT;<b>Klik</b> - terug naar standaardwaarde.\n<b>Ctrl+klik</b> - terug naar laatst opgeslagen waarde.
+CURVEEDITOR_CATMULLROM;Flexibel
+DONT_SHOW_AGAIN;Dit bericht niet meer tonen
+DYNPROFILEEDITOR_IMGTYPE_ANY;Alles
+DYNPROFILEEDITOR_IMGTYPE_HDR;HDR
+DYNPROFILEEDITOR_IMGTYPE_PS;Pixel Shift
+DYNPROFILEEDITOR_IMGTYPE_STD;Standaard
+EXIFFILTER_IMAGETYPE;Type afbeelding
+EXIFPANEL_SHOWALL;Toon alles
+FILEBROWSER_BROWSEPATHBUTTONHINT;Klik om de opgegeven map te laden, en het zoekfilter opnieuw toe te passen.
+FILEBROWSER_CACHECLEARFROMFULL;Wis alles inclusief opgeslagen profielen
+FILEBROWSER_CACHECLEARFROMPARTIAL;Wis alles behalve opgeslagen profielen
+FILEBROWSER_DELETEDIALOG_ALL;Alle <b>%1</b> bestanden in de prullenbak definitief verwijderen?
+FILEBROWSER_DELETEDIALOG_SELECTED;Geselecteerde <b>%1</b> bestanden definitief verwijderen?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Geselecteerde <b>%1</b> bestanden <b>inclusief</b> een versie die door de verwerkingsrij is gemaakt verwijderen?
+FILEBROWSER_EMPTYTRASHHINT;Alle bestanden in de prullenbak permanent verwijderen
+FILEBROWSER_POPUPREMOVE;Permanent verwijderen
+FILEBROWSER_POPUPREMOVEINCLPROC;Verwijder definitief, inclusief met uitvoer in de verwerkingsrij
+FILEBROWSER_SHOWNOTTRASHHINT;Toon alleen niet-verwijderde afbeeldingen.
+GENERAL_CURRENT;Huidig
+GENERAL_HELP;Help
+GENERAL_RESET;Terugzetten
+GENERAL_SAVE_AS;Bewaren als...
+GENERAL_SLIDER;Schuifregelaar
+GIMP_PLUGIN_INFO;Welkom bij de RawTherapee GIMP plug-in!\nAls uw bewerking gereed is, sluit dan het hoofdvenster van RawTherapee en uw afbeelding wordt automatisch in GIMP geladen.
+HISTOGRAM_TOOLTIP_MODE;Wissel tussen lineair, log-lineair and log-log schalen van het histogram.
+HISTORY_MSG_173;NR - Detailbehoud
+HISTORY_MSG_203;NR - Kleurruimte
+HISTORY_MSG_235;B&amp;W - CM - Auto
+HISTORY_MSG_237;B&amp;W - CM
+HISTORY_MSG_256;NR - Mediaan - Type
+HISTORY_MSG_273;CT - Kleurbalans SMH
+HISTORY_MSG_297;NR - Modus
+HISTORY_MSG_392;W - Overblijvend - Kleurbalans
+HISTORY_MSG_441;Retinex - Toename transmissie
+HISTORY_MSG_475;PS - Kanaalbalans
+HISTORY_MSG_476;CAM02 - Temp uit
+HISTORY_MSG_477;CAM02 - Groen uit
+HISTORY_MSG_478;CAM02 - Yb uit
+HISTORY_MSG_479;CAM02 - CAT02 aanpassing uit
+HISTORY_MSG_480;CAM02 - Automatische CAT02 uit
+HISTORY_MSG_481;CAM02 - Temp scène
+HISTORY_MSG_482;CAM02 - Groen scène
+HISTORY_MSG_483;CAM02 - Yb scène
+HISTORY_MSG_484;CAM02 - Auto Yb scène
+HISTORY_MSG_485;Lenscorrectie
+HISTORY_MSG_486;Lenscorrectie - Camera
+HISTORY_MSG_487;Lenscorrectie - Lens
+HISTORY_MSG_488;Compressie Dynamisch Bereik
+HISTORY_MSG_489;DRC - Detail
+HISTORY_MSG_490;DRC - Hoeveelheid
+HISTORY_MSG_491;Witbalans
+HISTORY_MSG_492;RGB Curven
+HISTORY_MSG_493;L*a*b* Adjustments
+HISTORY_MSG_494;verscherpen
+HISTORY_MSG_CLAMPOOG;Kleuren afkappen die buiten het gamma vallen
+HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Kleurcorrectie
+HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Kleurcorrectie
+HISTORY_MSG_COLORTONING_LABREGION_CHANNEL;CT - Kanaal
+HISTORY_MSG_COLORTONING_LABREGION_CHROMATICITYMASK;CT - gebied C masker
+HISTORY_MSG_COLORTONING_LABREGION_HUEMASK;CT - H masker
+HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESS;CT - Licht
+HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESSMASK;CT - L masker
+HISTORY_MSG_COLORTONING_LABREGION_LIST;CT - Lijst
+HISTORY_MSG_COLORTONING_LABREGION_MASKBLUR;CT - verzachtingsmasker gebied
+HISTORY_MSG_COLORTONING_LABREGION_OFFSET;CT - offset gebied
+HISTORY_MSG_COLORTONING_LABREGION_POWER;CT - sterkte gebied
+HISTORY_MSG_COLORTONING_LABREGION_SATURATION;CT - Verzadiging
+HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;CT - toon gebiedsmasker
+HISTORY_MSG_COLORTONING_LABREGION_SLOPE;CT - hellingsgebied
+HISTORY_MSG_DEHAZE_DEPTH;Nevelvermindering - Diepte
+HISTORY_MSG_DEHAZE_ENABLED;Nevelvermindering
+HISTORY_MSG_DEHAZE_LUMINANCE;Nevelvermindering - Alleen Luminantie
+HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Nevelvermindering - Toon dieptemap
+HISTORY_MSG_DEHAZE_STRENGTH;Nevelvermindering - Sterkte
+HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual-demozaïek - auto-drempel
+HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual-demozaïek - Contrastdrempel
+HISTORY_MSG_FILMNEGATIVE_ENABLED;Filmnegatief
+HISTORY_MSG_FILMNEGATIVE_VALUES;Filmnegatief waarden
+HISTORY_MSG_HISTMATCHING;Auto-matched tooncurve
+HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Uitvoer - Primaries
+HISTORY_MSG_ICM_OUTPUT_TEMP;Uitvoer - ICC-v4 illuminant D
+HISTORY_MSG_ICM_OUTPUT_TYPE;Uitvoer - Type
+HISTORY_MSG_ICM_WORKING_GAMMA;Working - Gamma
+HISTORY_MSG_ICM_WORKING_SLOPE;Working - Helling
+HISTORY_MSG_ICM_WORKING_TRC_METHOD;Working - TRC methode
+HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Hoeveelheid
+HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Donker
+HISTORY_MSG_LOCALCONTRAST_ENABLED;Lokaal Contrast
+HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Lokaal Contrast - Licht
+HISTORY_MSG_LOCALCONTRAST_RADIUS;Lokaal Contrast - Radius
+HISTORY_MSG_METADATA_MODE;Metadata kopieermodus
+HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrastdrempel
+HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto drempel
+HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - Auto radius
+HISTORY_MSG_PDSHARPEN_CHECKITER;CS - Auto limiet herhalingen
+HISTORY_MSG_PDSHARPEN_CONTRAST;CS - Contrastdrempel
+HISTORY_MSG_PDSHARPEN_ITERATIONS;CS - Herhalingen
+HISTORY_MSG_PDSHARPEN_RADIUS;CS - Radius
+HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Toename hoekradius
+HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demozaïekmethode voor beweging
+HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;lijnruisfilter richting
+HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lijnfilter
+HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Contrastdrempel
+HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correctie - Herhalingen
+HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw CA Correctie - Vermijd kleurverschuiving
+HISTORY_MSG_RAW_BORDER;Raw rand
+HISTORY_MSG_RESIZE_ALLOWUPSCALING;Schalen - sta vergroting toe
+HISTORY_MSG_SHARPENING_BLUR;Verscherpen - Vervagingsradius
+HISTORY_MSG_SHARPENING_CONTRAST;Verscherpen - Contrastdrempel
+HISTORY_MSG_SH_COLORSPACE;S/H - Kleurruimte
+HISTORY_MSG_SOFTLIGHT_ENABLED;Zacht licht
+HISTORY_MSG_SOFTLIGHT_STRENGTH;Zacht licht - Sterkte
+HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anker
+HISTORY_MSG_TRANS_Method;Geometrie - Methode
+ICCPROFCREATOR_COPYRIGHT;Copyright:
+ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Zet terug naar standaard copyright, verleend aan "RawTherapee, CC0"
+ICCPROFCREATOR_CUSTOM;Handmatig
+ICCPROFCREATOR_DESCRIPTION;Beschriiving:
+ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Voeg gamma- en hellingwaarden toe aan de beschrijving
+ICCPROFCREATOR_DESCRIPTION_TOOLTIP;Laat leeg voor de standaard beschrijving.
+ICCPROFCREATOR_GAMMA;Gamma
+ICCPROFCREATOR_ICCVERSION;ICC versie:
+ICCPROFCREATOR_ILL;Illuminant:
+ICCPROFCREATOR_ILL_41;D41
+ICCPROFCREATOR_ILL_50;D50
+ICCPROFCREATOR_ILL_55;D55
+ICCPROFCREATOR_ILL_60;D60
+ICCPROFCREATOR_ILL_65;D65
+ICCPROFCREATOR_ILL_80;D80
+ICCPROFCREATOR_ILL_DEF;Standaard
+ICCPROFCREATOR_ILL_INC;StdA 2856K
+ICCPROFCREATOR_ILL_TOOLTIP;U kunt alleen de illuminant instellen voor ICC v4-profielen.
+ICCPROFCREATOR_PRIMARIES;Primaire kleuren:
+ICCPROFCREATOR_PRIM_ACESP0;ACES AP0
+ICCPROFCREATOR_PRIM_ACESP1;ACES AP1
+ICCPROFCREATOR_PRIM_ADOBE;Adobe RGB (1998)
+ICCPROFCREATOR_PRIM_BEST;BestRGB
+ICCPROFCREATOR_PRIM_BETA;BetaRGB
+ICCPROFCREATOR_PRIM_BLUX;Blauw X
+ICCPROFCREATOR_PRIM_BLUY;Blauw Y
+ICCPROFCREATOR_PRIM_BRUCE;BruceRGB
+ICCPROFCREATOR_PRIM_GREX;Groen X
+ICCPROFCREATOR_PRIM_GREY;Groen Y
+ICCPROFCREATOR_PRIM_PROPH;Prophoto
+ICCPROFCREATOR_PRIM_REC2020;Rec2020
+ICCPROFCREATOR_PRIM_REDX;Rood X
+ICCPROFCREATOR_PRIM_REDY;Rood Y
+ICCPROFCREATOR_PRIM_SRGB;sRGB
+ICCPROFCREATOR_PRIM_TOOLTIP;U kunt alleen aangepaste primaries voor ICC v4-profielen instellen.
+ICCPROFCREATOR_PRIM_WIDEG;Widegamut
+ICCPROFCREATOR_PROF_V2;ICC v2
+ICCPROFCREATOR_PROF_V4;ICC v4
+ICCPROFCREATOR_SAVEDIALOG_TITLE;Bewaar ICC profiel als...
+ICCPROFCREATOR_SLOPE;Helling
+ICCPROFCREATOR_TRC_PRESET;Toonresponscurve:
+MAIN_BUTTON_ICCPROFCREATOR;ICC Profielmaker
+MAIN_FRAME_PLACES_DEL;Verwijderen
+MAIN_MSG_TOOMANYOPENEDITORS;Teveel open fotobewerkers.\nSluit er een om verder te kunnen.
+MAIN_TAB_ADVANCED;Geavanceerd
+MAIN_TAB_ADVANCED_TOOLTIP;Sneltoets: <b>Alt</b>-<b>a</b>
+MAIN_TAB_FAVORITES;Favorieten
+MAIN_TAB_FAVORITES_TOOLTIP;Sneltoets: <b>Alt-u</b>
+MAIN_TOOLTIP_BACKCOLOR3;Achtergrondkleur van het voorbeeld: <b>middelgrijs</b>\nSneltoets: <b>9</b>
+MAIN_TOOLTIP_PREVIEWSHARPMASK;Bekijk het <b>scherptecontrastmasker</b>.\nSneltoets: <b>p</b>\nWerkt alleen als verscherping is geactiveerd en het zoomniveau >= 100%.
+OPTIONS_BUNDLED_MISSING;Het gebundelde profiel "<b>%1</b>" werd niet gevonden!\n\nUw installatie kan beschadigd zijn.\n\nDaarom worden interne standaardwaarden gebruikt.
+OPTIONS_DEFIMG_MISSING;Het standaardprofiel voor <b>niet-raw- foto's</b> werd niet gevonden of is niet ingesteld.\n\nControleer de profielenmap, het kan ontbreken of beschadigd zijn.\n\n"<b>%1</b>" wordt daarom gebruikt.
+OPTIONS_DEFRAW_MISSING;Het standaardprofiel voor <b>raw-foto's</b> werd niet gevonden of is niet ingesteld.\n\nControleer de profielenmap, het kan ontbreken of beschadigd zijn.\n\n"<b>%1</b>" wordt daarom gebruikt.
+PARTIALPASTE_ADVANCEDGROUP;Geavanceerd
+PARTIALPASTE_DEHAZE;Nevel verminderen
+PARTIALPASTE_FILMNEGATIVE;Film Negatief
+PARTIALPASTE_LOCALCONTRAST;Lokaal contrast
+PARTIALPASTE_METADATA;Metadata modus
+PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF lijnfilter
+PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA vermijd kleurverschuiving
+PARTIALPASTE_RAW_BORDER;Raw rand
+PARTIALPASTE_SOFTLIGHT;Zacht licht
+PARTIALPASTE_TM_FATTAL;Compressie dynamisch bereik
+PREFERENCES_APPEARANCE;Uiterlijk
+PREFERENCES_APPEARANCE_COLORPICKERFONT;Lettertype kleurenkiezer
+PREFERENCES_APPEARANCE_CROPMASKCOLOR;Kleur bijsnijdmasker
+PREFERENCES_APPEARANCE_MAINFONT;Standaard lettertype
+PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI modus
+PREFERENCES_APPEARANCE_THEME;Thema
+PREFERENCES_AUTOSAVE_TP_OPEN;Bewaar positie gereedschappen (open/dicht) bij afsluiten
+PREFERENCES_CACHECLEAR;Wissen
+PREFERENCES_CACHECLEAR_ALL;Wis alle bestanden in de cache:
+PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Wis alle bestanden in de cache behalve verwerkingsprofielen:
+PREFERENCES_CACHECLEAR_ONLYPROFILES;Wis alleen verwerkingsprofielen in de cache:
+PREFERENCES_CACHECLEAR_SAFETY;Alleen bestanden in de cache worden gewist. Verwerkingsprofielen van de oorspronkelijke afbeeldingen blijven ongemoeid.
+PREFERENCES_CHUNKSIZES;Tegels per thread
+PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demosaïek
+PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correctie
+PREFERENCES_CHUNKSIZE_RAW_RCD;RCD demosaïek
+PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans demosaïek
+PREFERENCES_CHUNKSIZE_RGB;RGB verwerking
+PREFERENCES_CROP;Uitsnijden
+PREFERENCES_CROP_AUTO_FIT;Automatisch zoomen tot de uitsnede
+PREFERENCES_CROP_GUIDES;Getoonde hulplijnen als uitsnede niet bewerkt wordt
+PREFERENCES_CROP_GUIDES_FRAME;Frame
+PREFERENCES_CROP_GUIDES_FULL;Origineel
+PREFERENCES_CROP_GUIDES_NONE;Geen
+PREFERENCES_DIRECTORIES;Mappen
+PREFERENCES_EDITORCMDLINE;Aangepaste opdrachtregel
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compacte gereedschapsbalken in bestandsnavigator
+PREFERENCES_LANG;Taal
+PREFERENCES_PERFORMANCE_MEASURE;Meting
+PREFERENCES_PERFORMANCE_MEASURE_HINT;Log verwerkingstijden in de console
+PREFERENCES_PERFORMANCE_THREADS;Threads
+PREFERENCES_PERFORMANCE_THREADS_LABEL;Maximaal aantal threads voor ruisvermindering and Wavelet Niveaus (0 = Automatisch)
+PREFERENCES_PROFILESAVEBOTH;Bewaar verwerkingsprofielen zowel in de cache als naast het invoerbestand
+PREFERENCES_PROFILESAVELOCATION;Opslaglocatie profielen
+PREFERENCES_SAVE_TP_OPEN_NOW;Bewaar open/dicht-status van de gereedschappen nu
+PREFERENCES_TAB_PERFORMANCE;Performantie
+PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Ingesloten JPEG voorbeeld
+PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Te tonen foto
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutrale raw rendering
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Ingesloten JPEG indien vol formaat, anders neutrale raw
+PROGRESSBAR_DECODING;Decoderen...
+PROGRESSBAR_GREENEQUIL;Groen blancering...
+PROGRESSBAR_HLREC;Reconstructie hoge lichten...
+PROGRESSBAR_HOTDEADPIXELFILTER;Hot/dead pixel filter...
+PROGRESSBAR_LINEDENOISE;Lijnruis filter...
+PROGRESSBAR_RAWCACORR;Raw CA correctie...
+QINFO_FRAMECOUNT;%2 frames
+QINFO_HDR;HDR / %2 frame(s)
+QINFO_PIXELSHIFT;Pixel Shift / %2 frame(s)
+QUEUE_LOCATION_TITLE;Uitvoerlocatie
+QUEUE_STARTSTOP_TOOLTIP;;Start of stop de verwerking van foto's in de rij.\n\nSneltoets: <b>Ctrl+s</b>
+SAMPLEFORMAT_0;onbekend data formaat
+SAMPLEFORMAT_1;8-bit unsigned
+SAMPLEFORMAT_2;16-bit unsigned
+SAMPLEFORMAT_4;24-bit LogLuv
+SAMPLEFORMAT_8;32-bit LogLuv
+SAMPLEFORMAT_16;16-bit drijvendekomma
+SAMPLEFORMAT_32;24-bit drijvendekomma
+SAMPLEFORMAT_64;32-bit drijvendekomma
+SAVEDLG_FILEFORMAT_FLOAT; drijvendekomma
+SOFTPROOF_GAMUTCHECK_TOOLTIP;Markeer pixels waarvan de kleuren buiten het kleurgamma vallen, relatief aan:\n- het printerprofiel, indien opgegeven en soft-proofing is ingeschakeld,\n- het uitvoerprofiel, indien geen printerprofiel is gekozen en soft-proofing is ingeschakeld,\n- het beeldschermprofiel, indien soft-proofing is uitgeschakeld.
+SOFTPROOF_TOOLTIP;Soft-proofing simuleert hoe een foto wordt getoond:\n- als deze wordt afgedrukt, indien een printerprofiel is opgegeven in Voorkeuren > Kleurbeheer,\n- als de foto getoond wordt op een beeldscherm dat het huidige uitvoerprofiel gebruikt en een printerprofiel niet is opgegeven.
+TP_BWMIX_MIXC;Kanaal Mixer
+TP_BWMIX_NEUTRAL;Terugzetten
+TP_COLORAPP_ABSOLUTELUMINANCE;Absolute luminantie
+TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;Bij manuele aanpassing worden waardon boven 65 aanbevolen.
+TP_COLORAPP_FREE;Vrije temp+groen + CAT02 + [uitvoer]
+TP_COLORAPP_MEANLUMINANCE;Gemiddelde luminantie (Yb%)
+TP_COLORAPP_NEUTRAL;Terugzetten
+TP_COLORAPP_NEUTRAL_TIP;Zet alle regelaars, vinkjes en curves terug naar hun standaardwaarde
+TP_COLORAPP_TEMP_TOOLTIP;Zet altijd Tint=1 om een lichtbron te selecteren.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
+TP_COLORTONING_LABGRID;L*a*b* kleurcorrectie raster
+TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4
+TP_COLORTONING_LABREGIONS;Kleurcorrectie gebieden
+TP_COLORTONING_LABREGION_ABVALUES;a=%1 b=%2
+TP_COLORTONING_LABREGION_CHANNEL;Kanaal
+TP_COLORTONING_LABREGION_CHANNEL_ALL;Alle
+TP_COLORTONING_LABREGION_CHANNEL_B;Blauw
+TP_COLORTONING_LABREGION_CHANNEL_G;Groen
+TP_COLORTONING_LABREGION_CHANNEL_R;Rood
+TP_COLORTONING_LABREGION_CHROMATICITYMASK;C
+TP_COLORTONING_LABREGION_HUEMASK;H
+TP_COLORTONING_LABREGION_LIGHTNESS;Helderheid(L)
+TP_COLORTONING_LABREGION_LIGHTNESSMASK;L
+TP_COLORTONING_LABREGION_LIST_TITLE;Correctie
+TP_COLORTONING_LABREGION_MASK;Masker
+TP_COLORTONING_LABREGION_MASKBLUR;Verzachtingsmasker
+TP_COLORTONING_LABREGION_OFFSET;Offset
+TP_COLORTONING_LABREGION_POWER;Kracht
+TP_COLORTONING_LABREGION_SATURATION;Verzadiging
+TP_COLORTONING_LABREGION_SHOWMASK;Toon masker
+TP_COLORTONING_LABREGION_SLOPE;Helling
+TP_CROP_PPI;PPI
+TP_CROP_RESETCROP;Terugzetten
+TP_CROP_SELECTCROP;Selecteer
+TP_DEHAZE_DEPTH;Diepte
+TP_DEHAZE_LABEL;Nevel vermindering
+TP_DEHAZE_LUMINANCE;Luminantie alleen
+TP_DEHAZE_SHOW_DEPTH_MAP;Toon de dieptemap
+TP_DEHAZE_STRENGTH;Sterkte
+TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Verhoog (vermenigvuldig) de waarde van alle chrominantie regelaars.\nDeze curve regelt de sterkte van de chromatische ruisvermindering als een functie van de chromaticiteit, om bijvoorbeeld het effect te vergroten in gebieden met lage verzadiging en te verminderen in deze met lage verzadiging.
+TP_DIRPYRDENOISE_LABEL;Ruisvermindering
+TP_EXPOSURE_CLAMPOOG;Knip kleuren die buiten het gamma vallen
+TP_EXPOSURE_HISTMATCHING;Automatische Tooncurve
+TP_EXPOSURE_HISTMATCHING_TOOLTIP;Pas automatisch de curves en schuifregelaars aan (behalve belichtingscompensatie) om overeen te komen met de ingesloten JPEG miniatuur.
+TP_FILMNEGATIVE_BLUE;Blauw verhouding
+TP_FILMNEGATIVE_GREEN;Referentie exponent (contrast)
+TP_FILMNEGATIVE_GUESS_TOOLTIP;Zet automatisch de rood/groen verhouding door 2 gebieden te kiezen met een neutrale tint (geen kleur) in het origineel. De gebieden moeten verschillen in helderheid. Zet de witbalans nadien.
+TP_FILMNEGATIVE_LABEL;Film Negatief
+TP_FILMNEGATIVE_PICK;Kies neutrale punten
+TP_FILMNEGATIVE_RED;Rood verhouding
+TP_ICM_WORKING_TRC;Tooncurve:
+TP_ICM_WORKING_TRC_CUSTOM;Gebruiker gedefinieerd
+TP_ICM_WORKING_TRC_GAMMA;Gamma
+TP_ICM_WORKING_TRC_NONE;Geen
+TP_ICM_WORKING_TRC_SLOPE;Helling
+TP_ICM_WORKING_TRC_TOOLTIP;Enkel voor ingebouwde profielen.
+TP_LENSGEOM_LIN;Lineair
+TP_LENSGEOM_LOG;Logarithmisch
+TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatische selectie
+TP_LENSPROFILE_CORRECTION_LCPFILE;LCP bestand
+TP_LENSPROFILE_CORRECTION_MANUAL;Manuele selectie
+TP_LENSPROFILE_LENS_WARNING;Waarschuwing: de gebruikte lens profiel crop factor komt niet overeen met de camera crop factor, de resultaten kunnen verkeerd zijn.
+TP_LENSPROFILE_MODE_HEADER;Lens Profiel
+TP_LENSPROFILE_USE_CA;Chromatische afwijking
+TP_LENSPROFILE_USE_GEOMETRIC;Geometrische vervorming
+TP_LENSPROFILE_USE_HEADER;Lenscorrecties
+TP_LENSPROFILE_USE_VIGNETTING;Vignettering
+TP_LOCALCONTRAST_AMOUNT;Hoeveelheid
+TP_LOCALCONTRAST_DARKNESS;Donker niveau
+TP_LOCALCONTRAST_LABEL;Lokaal Contrast
+TP_LOCALCONTRAST_LIGHTNESS;helderheidsniveau
+TP_LOCALCONTRAST_RADIUS;Straal
+TP_METADATA_EDIT;Pas wijzigingen toe
+TP_METADATA_MODE;Metadata kopieermodus
+TP_METADATA_STRIP;Strip alle metadata
+TP_METADATA_TUNNEL;Kopieer ongewijzigd
+TP_PDSHARPENING_LABEL;Verscherpen
+TP_PREPROCESS_LINEDENOISE_DIRECTION;Richting
+TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Beide
+TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Horizontaal
+TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Horizontaal enkel op PDAF-rijen
+TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Verticaal
+TP_PREPROCESS_PDAFLINESFILTER;PDAF lijnfilter
+TP_RAWCACORR_AUTOIT;Herhalingen
+TP_RAWCACORR_AUTOIT_TOOLTIP;Deze schuif is alleen actief als Automatische CA-correctie is aangevinkt.\nAuto-correctie werkt conservatief en corrigeert meestal niet alle chromatische aberratie.\nOm de resterende CA te corrigeren, kunt u dit proces tot vijf keer herhalen.\nElke herhaling vermindert de CA van de vorige herhaling, maar gaat wel ten koste van extra rekentijd. 
+TP_RAWCACORR_AVOIDCOLORSHIFT;Vermijd kleurverschuiving
+TP_RAW_2PASS;1-pass+snel
+TP_RAW_4PASS;3-pass+snel
+TP_RAW_AMAZEVNG4;AMaZE+VNG4
+TP_RAW_BORDER;Rand
+TP_RAW_DCBVNG4;DCB+VNG4
+TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto drempel
+TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;Als checkbox is aangevinkt (aanbevolen), berekent RT een optimale waarde gebaseerd op vlakke gebieden in de foto.\nIndien die niet gevonden worden of de foto bevat veel ruis, wordt de waarde op 0 gezet.\nOm de waarde handmatig in te voeren moet u eerst de checkbox uitvinken (redelijke waarden zijn afhankelijk van het soort foto).
+TP_RAW_DUALDEMOSAICCONTRAST;Contrast drempel
+TP_RAW_IMAGENUM_SN;SN modus
+TP_RAW_IMAGENUM_TOOLTIP;Sommige raw bestanden bestaan uit verschillende sub-afbeeldingen (Pentax/Sony Pixel Shift, Pentax 3-in-1 HDR, Canon Dual Pixel, Fuji EXR).\n\Als een andere demozaïek methode dan Pixel Shift gebruikt wordt, selecteert dit de gebruikte sub-afbeelding.\n\nBij gebruik van de Pixel Shift demozaïek methode op een Pixel Shift raw, worden alle sub-afbeeldingen gebruikt, and dit selecteert de subafbeeldijg die gebruikt wordt voor bewegende moving gebieden.
+TP_RAW_PIXELSHIFTDMETHOD;Demozaïek voor beweging
+TP_RAW_PIXELSHIFTEPERISO;Gevoeligheid
+TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;De standaardwaarde 0 werkt goed voor lage ISO-waarden.\nHogere waarden vergroten de gevoeligheid van bewegingsdetectie.\nWijzig in kleine stappen en controleer het bewegingsmasker.\nVerhoog gevoeligheid voor onderbelichte foto's of foto's met hoge ISO-waarden.
+TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Balanceer per kanaal
+TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Ingeschakeld: Balanceer elk RGB kanaal afzonderlijk.\nUitgeschakeld: Balanceer alle kanalen evenveel.
+TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Toont de foto met een groen masker dat de bewegingsgebieden toont.
+TP_RAW_RCD;RCD
+TP_RAW_RCDVNG4;RCD+VNG4
+TP_RAW_XTRANS;X-Trans
+TP_RAW_XTRANSFAST;Snelle X-Trans
+TP_RESIZE_ALLOW_UPSCALING;Sta opschalen toe
+TP_RETINEX_CONTEDIT_MAP;Equalizer
+TP_RETINEX_GAINOFFS;Versterking en Offset (helderheid)
+TP_RETINEX_GAINTRANSMISSION;Transmissie versterking
+TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Versterk of verzwak de transmssiemap om de gewenste luminantie te bekomen.\nThe x-as is the transmissie.\nThe y-as is the versterking.
+TP_RETINEX_MAP;Methode
+TP_SHARPENING_BLUR;Vervagen straal
+TP_SHARPENING_CONTRAST;Contrast drempel
+TP_SHARPENING_ITERCHECK;Automatische limiet herhalingen
+TP_SHARPENING_RADIUS_BOOST;Straalvergroting
+TP_SHARPENMICRO_CONTRAST;Contrast drempel
+TP_SOFTLIGHT_LABEL;Zacht licht
+TP_SOFTLIGHT_STRENGTH;Sterkte
+TP_TM_FATTAL_AMOUNT;Hoeveelheid
+TP_TM_FATTAL_ANCHOR;Anker
+TP_TM_FATTAL_LABEL;Dynamisch bereik compressie
+TP_TM_FATTAL_THRESHOLD;Detail
+TP_WAVELET_CB_TOOLTIP;Voor hoge waarden: kleurcorrectie door al of niet te combineren met niveau decompositie 'toning'\nVoor lage waarden de witbalans van de achtergrond (hemel, ...) wijzigen zonder die van de voorgrond, meestal meer contrastrijk
+TP_WBALANCE_PICKER;Kies

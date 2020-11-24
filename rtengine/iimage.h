@@ -1862,9 +1862,6 @@ public:
       * @return The mutex */
     virtual MyMutex& getMutex () = 0;
     virtual cmsHPROFILE getProfile () const = 0;
-    /** @brief Returns the bits per pixel of the image.
-      * @return The bits per pixel of the image */
-    virtual int getBitsPerPixel () const = 0;
     /** @brief Saves the image to file. It autodetects the format (jpg, tif, png are supported).
       * @param fname is the name of the file
         @return the error code, 0 if none */
@@ -1889,8 +1886,6 @@ public:
     /** @brief Sets the progress listener if you want to follow the progress of the image saving operations (optional).
       * @param pl is the pointer to the class implementing the ProgressListener interface */
     virtual void setSaveProgressListener (ProgressListener* pl) = 0;
-    /** @brief Free the image */
-    virtual void free () = 0;
 };
 
 /** @brief This class represents an image having a float pixel planar representation.

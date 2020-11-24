@@ -41,6 +41,18 @@ namespace rtengine
 // TODO Tiles to reduce memory consumption
 void RawImageSource::lmmse_interpolate_omp(int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations)
 {
+    // Test for RGB cfa
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            if (FC(i, j) == 3) {
+                // avoid crash
+                std::cout << "lmmse_interpolate_omp supports only RGB Colour filter arrays. Falling back to igv_interpolate" << std::endl;
+                igv_interpolate(winw, winh);
+                return;
+            }
+        }
+    }
+
     const int width = winw, height = winh;
     const int ba = 10;
     const int rr1 = height + 2 * ba;

@@ -34,6 +34,8 @@ set(NONCLISOURCEFILES
     colorappearance.cc
     coloredbar.cc
     colortoning.cc
+    controllines.cc
+    controlspotpanel.cc
     coordinateadjuster.cc
     crop.cc
     crophandler.cc
@@ -90,6 +92,9 @@ set(NONCLISOURCEFILES
     lensgeom.cc
     lensprofile.cc
     localcontrast.cc
+    locallab.cc
+    locallabtools.cc
+    locallabtools2.cc
     lockablecolorpicker.cc
     lwbutton.cc
     lwbuttonset.cc
