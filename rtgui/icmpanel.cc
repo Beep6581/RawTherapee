@@ -57,6 +57,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     EvICMblux = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_BLUX");
     EvICMbluy = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_BLUY");
     EvaIntent = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_AINTENT");
+    EvICMpreser = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_PRESER");
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
 
     ipDialog = Gtk::manage(new MyFileChooserButton(M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
@@ -302,6 +303,11 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     bluBox->pack_start(*blux, Gtk::PACK_SHRINK);
     bluBox->pack_start(*bluy, Gtk::PACK_SHRINK);
     redVBox->pack_start(*bluBox, Gtk::PACK_EXPAND_WIDGET);
+    preser = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_PRESER"), 0., 100., 0.5, 0.));
+    preser->setAdjusterListener(this);
+    preBox = Gtk::manage(new Gtk::HBox());
+    preBox->pack_start(*preser, Gtk::PACK_SHRINK);
+    redVBox->pack_start(*preBox, Gtk::PACK_EXPAND_WIDGET);    
     redFrame->add(*redVBox);
 
     wGamma->setAdjusterListener(this);
@@ -752,6 +758,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     grey->setValue(pp->icm.grey);
     blux->setValue(pp->icm.blux);
     bluy->setValue(pp->icm.bluy);
+    preser->setValue(pp->icm.preser);
 
     if (pedited) {
         iunchanged->set_active(!pedited->icm.inputProfile);
@@ -801,6 +808,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         grey->setEditedState(pedited->icm.grey  ? Edited : UnEdited);
         blux->setEditedState(pedited->icm.blux  ? Edited : UnEdited);
         bluy->setEditedState(pedited->icm.bluy  ? Edited : UnEdited);
+        preser->setEditedState(pedited->icm.preser  ? Edited : UnEdited);
 
     }
 
@@ -1032,6 +1040,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.blux = (double) blux->getValue();
     pp->icm.bluy = (double) bluy->getValue();
     pp->toneCurve.fromHistMatching = false;
+    pp->icm.preser = (double) preser->getValue();
 
     if (pedited) {
         pedited->icm.inputProfile = !iunchanged->get_active();
@@ -1065,6 +1074,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
     grey->setDefault(defParams->icm.grey);
     blux->setDefault(defParams->icm.blux);
     bluy->setDefault(defParams->icm.bluy);
+    preser->setDefault(defParams->icm.preser);
 
     if (pedited) {
         wGamma->setDefaultEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
@@ -1075,6 +1085,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
         grey->setDefaultEditedState(pedited->icm.grey ? Edited : UnEdited);
         blux->setDefaultEditedState(pedited->icm.blux ? Edited : UnEdited);
         bluy->setDefaultEditedState(pedited->icm.bluy ? Edited : UnEdited);
+        preser->setDefaultEditedState(pedited->icm.preser ? Edited : UnEdited);
 
     } else {
         wGamma->setDefaultEditedState(Irrelevant);
@@ -1085,6 +1096,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
         grey->setDefaultEditedState(Irrelevant);
         blux->setDefaultEditedState(Irrelevant);
         bluy->setDefaultEditedState(Irrelevant);
+        preser->setDefaultEditedState(Irrelevant);
 
     }
 }
@@ -1115,6 +1127,8 @@ void ICMPanel::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvICMblux, costr2);
         } else if (a == bluy) {
             listener->panelChanged(EvICMbluy, costr2);
+        } else if (a == preser) {
+            listener->panelChanged(EvICMpreser, costr2);
         }
 
     }
@@ -1660,5 +1674,6 @@ void ICMPanel::setBatchMode(bool batchMode)
     grey->showEditedCB();
     blux->showEditedCB();
     bluy->showEditedCB();
+    preser->showEditedCB();
 }
 

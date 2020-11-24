@@ -1523,6 +1523,13 @@ private:
         if (params.icm.workingTRC != "none") {
             int GW = labView->W;
             int GH = labView->H;
+            LabImage *provis = nullptr;
+            float pres = 0.01f * params.icm.preser;
+            if(pres > 0.f) {
+                provis = new LabImage(GW, GH);
+                provis->CopyFrom(labView);
+            }
+
             const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
 
             ipf.lab2rgb(*labView, *tmpImage1, params.icm.workingProfile);
@@ -1573,6 +1580,12 @@ private:
             ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
 
             ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
+            // labView and provis
+            if(pres > 0.f) {
+                ipf.preserv(labView, provis, GW, GH);
+                delete provis;
+                provis = nullptr;
+            }
         }
 
         //Colorappearance and tone-mapping associated

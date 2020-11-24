@@ -1419,6 +1419,13 @@ void Crop::update(int todo)
         if (params.icm.workingTRC != "none") {
             int GW = labnCrop->W;
             int GH = labnCrop->H;
+            LabImage *provis = nullptr;
+            float pres = 0.01f * params.icm.preser;
+            if(pres > 0.f) {
+                provis = new LabImage(GW, GH);
+                provis->CopyFrom(labnCrop);
+            }
+
             Imagefloat *tmpImage1 = nullptr;
             tmpImage1 = new Imagefloat(GW, GH);
 
@@ -1473,6 +1480,12 @@ void Crop::update(int todo)
             parent->ipf.workingtrc(tmpImage1, tmpImage1, GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
 
             parent->ipf.rgb2lab(*tmpImage1, *labnCrop, params.icm.workingProfile);
+            //labnCrop and provis
+            if(pres > 0.f) {
+                parent->ipf.preserv(labnCrop, provis, GW, GH);
+                delete provis;
+                provis = nullptr;
+            }
             delete tmpImage1;
         }
         

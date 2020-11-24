@@ -372,6 +372,29 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
     return image;
 }
 
+void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch)
+{
+  float pres = 0.01f * params->icm.preser;
+  float neutral = 10000000.f;//if a2 + b2 < 100000000 scale 0..100 a and b about : 7 > a & b > -7  
+  float medneutral = 5000000.f;
+  float aaneu = 1.f / (medneutral - neutral);
+  float bbneu = - aaneu * neutral;
+#ifdef _OPENMP
+            #pragma omp for schedule(dynamic, 16) nowait
+#endif
+            for (int i = 0; i < ch; ++i) 
+                for (int j = 0; j < cw; ++j) {
+                    float neu = SQR(provis->a[i][j]) + SQR(provis->b[i][j]);
+                    if(neu < medneutral) {
+                        nprevl->a[i][j] = intp(pres, provis->a[i][j], nprevl->a[i][j]); 
+                        nprevl->b[i][j] = intp(pres, provis->b[i][j], nprevl->b[i][j]); 
+                    } else if (neu < neutral) {
+                        float presred = aaneu * neu + bbneu;
+                        nprevl->a[i][j] = intp(pres * presred, provis->a[i][j], nprevl->a[i][j]); 
+                        nprevl->b[i][j] = intp(pres * presred, provis->b[i][j], nprevl->b[i][j]); 
+                    }
+                }
+}
 
 void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int illum, int prim, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm) const
 {

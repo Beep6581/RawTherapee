@@ -2172,6 +2172,7 @@ ColorManagementParams::ColorManagementParams() :
     grey(0.71),
     blux(0.15),
     bluy(0.06),
+    preser(0.),
     aRendIntent(RI_RELATIVE),
     outputProfile(options.rtSettings.srgb),
     outputIntent(RI_RELATIVE),
@@ -2200,6 +2201,7 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && grey == other.grey
         && blux == other.blux
         && bluy == other.bluy
+        && preser == other.preser
         && aRendIntent == other.aRendIntent
         && outputProfile == other.outputProfile
         && outputIntent == other.outputIntent
@@ -6207,6 +6209,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.grey, "Color Management", "Grey", icm.grey, keyFile);
         saveToKeyfile(!pedited || pedited->icm.blux, "Color Management", "Blux", icm.blux, keyFile);
         saveToKeyfile(!pedited || pedited->icm.bluy, "Color Management", "Bluy", icm.bluy, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.preser, "Color Management", "Preser", icm.preser, keyFile);
         saveToKeyfile(!pedited || pedited->icm.outputProfile, "Color Management", "OutputProfile", icm.outputProfile, keyFile);
         saveToKeyfile(
             !pedited || pedited->icm.aRendIntent,
@@ -8104,6 +8107,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "Grey", pedited, icm.grey, pedited->icm.grey);
             assignFromKeyfile(keyFile, "Color Management", "Blux", pedited, icm.blux, pedited->icm.blux);
             assignFromKeyfile(keyFile, "Color Management", "Bluy", pedited, icm.bluy, pedited->icm.bluy);
+            assignFromKeyfile(keyFile, "Color Management", "Preser", pedited, icm.preser, pedited->icm.preser);
             if (keyFile.has_key("Color Management", "aIntent")) {
                 Glib::ustring intent = keyFile.get_string("Color Management", "aIntent");
 

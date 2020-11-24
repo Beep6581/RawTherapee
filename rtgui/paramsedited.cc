@@ -442,6 +442,7 @@ void ParamsEdited::set(bool v)
     icm.grey = v;
     icm.blux = v;
     icm.bluy = v;
+    icm.preser = v;
     icm.aRendIntent = v;
     icm.workingTRC = v;
     icm.will = v;
@@ -1648,6 +1649,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.grey = icm.grey && p.icm.grey == other.icm.grey;
         icm.blux = icm.blux && p.icm.blux == other.icm.blux;
         icm.bluy = icm.bluy && p.icm.bluy == other.icm.bluy;
+        icm.preser = icm.preser && p.icm.preser == other.icm.preser;
         icm.aRendIntent = icm.aRendIntent && p.icm.aRendIntent == other.icm.aRendIntent;
         icm.workingTRC = icm.workingTRC && p.icm.workingTRC == other.icm.workingTRC;
         icm.will = icm.will && p.icm.will == other.icm.will;
@@ -5397,6 +5399,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (icm.bluy) {
         toEdit.icm.bluy = mods.icm.bluy;
+    }
+
+    if (icm.preser) {
+        toEdit.icm.preser = mods.icm.preser;
     }
 
     if (icm.aRendIntent) {

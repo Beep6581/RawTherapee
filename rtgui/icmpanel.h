@@ -57,6 +57,7 @@ protected:
     Adjuster* grey;
     Adjuster* blux;
     Adjuster* bluy;
+    Adjuster* preser;
 
     Gtk::Label* labmga;
     Gtk::HBox* gabox;
@@ -97,6 +98,7 @@ private:
     rtengine::ProcEvent EvICMblux;
     rtengine::ProcEvent EvICMbluy;
     rtengine::ProcEvent EvaIntent;
+    rtengine::ProcEvent EvICMpreser;
     Gtk::VBox* iVBox;
     Gtk::HBox* wTRCHBox;
     Gtk::HBox* willuBox;
@@ -107,6 +109,7 @@ private:
     Gtk::HBox* greBox;
     Gtk::HBox* bluBox;
     Gtk::HBox* riaHBox;
+    Gtk::HBox* preBox;
 
     Gtk::CheckButton* obpc;
     Gtk::RadioButton* inone;

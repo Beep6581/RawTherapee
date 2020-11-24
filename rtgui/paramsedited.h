@@ -1035,6 +1035,7 @@ struct ColorManagementParamsEdited {
     bool grey;
     bool blux;
     bool bluy;
+    bool preser;
     bool aRendIntent;
     bool outputProfile;
     bool outputIntent;
