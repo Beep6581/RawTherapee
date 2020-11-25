@@ -11872,7 +11872,7 @@ void ImProcFunctions::Lab_Local(
     }
 
 // soft light and retinex_pde
-    if (lp.strng > 1.f && call <= 3 && lp.sfena) {
+    if ((lp.strng > 1.f || lp.prevdE) && call <= 3 && lp.sfena) {
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
