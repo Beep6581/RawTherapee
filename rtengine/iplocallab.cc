@@ -5053,8 +5053,10 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
 }
 
 
+            
+            
 
-void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabImage * bufexporig, LabImage * bufmask, LabImage * buforigmas, float **buflight, float **bufchro, const float hueref, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabImage * bufexporig, LabImage * bufexpfin, LabImage * bufmask, LabImage * buforigmas, float **buflight, float **bufchro, const float hueref, const float chromaref, const float lumaref, struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 
     //BENCHFUN 
@@ -5085,7 +5087,17 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
         const float kab = balancedeltaE(lp.balance) / SQR(327.68f);
         const float kH = lp.balanceh;
         const float kch = balancedeltaE(kH);
+        if (lp.colorde == 0) {
+            lp.colorde = -1;//to avoid black
+        }
+/*
+        float ampli = 1.f + std::fabs(lp.colorde);
+        ampli = 2.f + 0.5f * (ampli - 2.f);
 
+        float darklim = 5000.f;
+        float aadark = -1.f;
+        float bbdark = darklim;
+*/
         const bool showmas = lp.showmaskretimet == 3 ;
 
         const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
@@ -5116,7 +5128,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
             const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
             const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
             const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
-            const float previewint = settings->previewselection;
+            float previewint = 0.f; //reducdE * 10000.f * lp.colorde; //settings->previewselection;
 
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
@@ -5168,17 +5180,19 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                     }
 
                     float cli, clc;
+                    const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens) / 100.f;
+                    previewint = reducdE * 10000.f * lp.colorde; //settings->previewselection;
 
                     if (call == 2) {
                         cli = buflight[y - ystart][x - xstart];
                         clc = previewreti ? settings->previewselection * 100.f : bufchro[y - ystart][x - xstart];
                     } else {
                         cli = buflight[y][x];
-                        clc = previewreti ? settings->previewselection * 100.f : bufchro[y][x];
+                      //  clc = previewreti ? settings->previewselection * 100.f : bufchro[y][x];
+                        clc = previewreti ? reducdE * 10000.f * lp.colorde: bufchro[y][x];
 
                     }
 
-                    const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens) / 100.f;
 
                     cli *= reducdE;
                     clc *= reducdE;
@@ -5252,7 +5266,8 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                             transformed->b[y][x] = clipC(difb);
                         }
 
-                        if (previewreti) {
+                        if (previewreti || lp.prevdE) {
+                            difb = (bufexpfin->b[y][x] - original->b[y][x]) * localFactor;
                             transformed->a[y][x] = 0.f;
                             transformed->b[y][x] = previewint * difb;
                         }
@@ -12460,7 +12475,7 @@ void ImProcFunctions::Lab_Local(
         }
     }
 
-    if (lp.dehaze != 0 && lp.retiena) {
+    if ((lp.dehaze != 0 || lp.prevdE) && lp.retiena ) {
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -12684,7 +12699,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
 
-            transit_shapedetect_retinex(call, 4, bufreti, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+            transit_shapedetect_retinex(call, 4, bufreti, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
             if (params->locallab.spots.at(sp).recurs) {
                 original->CopyFrom(transformed, multiThread);
@@ -12786,7 +12801,7 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
 
-                transit_shapedetect_retinex(call, 5, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect_retinex(call, 5, tmpl, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
                 if (params->locallab.spots.at(sp).recurs) {
                     original->CopyFrom(transformed, multiThread);
@@ -13015,7 +13030,7 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
 
-                transit_shapedetect_retinex(call, 4, bufreti, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect_retinex(call, 4, bufreti, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
                 if (params->locallab.spots.at(sp).recurs) {
                     original->CopyFrom(transformed, multiThread);
@@ -13112,7 +13127,7 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 if (!lp.invret) {
-                    transit_shapedetect_retinex(call, 5, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect_retinex(call, 5, tmpl, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
                     if (params->locallab.spots.at(sp).recurs) {
                         original->CopyFrom(transformed, multiThread);
