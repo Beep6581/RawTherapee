@@ -362,7 +362,7 @@ public:
 
     void transit_shapedetect_retinex(int call, int senstype, LabImage * bufexporig, LabImage * bufexpfin, LabImage * bufmask, LabImage * buforigmas, float **buflight, float **bufchro, const float hueref, const float chromaref,  const float lumaref, struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk);
     void transit_shapedetect(int senstype, const LabImage *bufexporig, LabImage * originalmask, float **bufchro, bool HHutili, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk);
-    void exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, int bfwr, LabImage* bufexporig, LabImage* lab, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve,  const float hueref, const float lumaref, const float chromaref);
+    void exlabLocal(local_params& lp, float strlap, int bfh, int bfw, int bfhr, int bfwr, LabImage* bufexporig, LabImage* lab, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve,  const float hueref, const float lumaref, const float chromaref);
     void Exclude_Local(float **deltaso, float hueref, float chromaref, float lumaref, float sobelref, float meansobel, const struct local_params & lp, const LabImage * original, LabImage * transformed, const LabImage * rsv, const LabImage * reserv, int cx, int cy, int sk);
 
     void DeNoise_Local(int call, const struct local_params& lp, LabImage* originalmask, int levred, float hueref, float lumaref, float chromaref, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy, int sk);

@@ -2711,7 +2711,7 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
     }
 }
 
-void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, int bfwr, LabImage* bufexporig, LabImage* lab, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve, const float hueref, const float lumaref, const float chromaref)
+void ImProcFunctions::exlabLocal(local_params& lp, float strlap, int bfh, int bfw, int bfhr, int bfwr, LabImage* bufexporig, LabImage* lab, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve, const float hueref, const float lumaref, const float chromaref)
 {
     //BENCHFUN
     //exposure local
@@ -2746,10 +2746,10 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, i
 
             deltaEforLaplace(dE.get(), diffde, bfwr, bfhr, bufexporig, hueref, chromaref, lumaref);
 
-            constexpr float alap = 600.f;
-            constexpr float blap = 100.f;
-            constexpr float aa = (alap - blap) / 50.f;
-            constexpr float bb = 100.f - 30.f * aa;
+            float alap = strlap * 600.f;
+            float blap = strlap * 100.f;
+            float aa = (alap - blap) / 50.f;
+            float bb = blap - 30.f * aa;
 
             float lap;
             if (diffde > 80.f) {
@@ -5616,7 +5616,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
         }
 
     } else if (senstype == 1) { //exposure
-        ImProcFunctions::exlabLocal(lp, GH, GW, GW, GH, original, temp.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
+        ImProcFunctions::exlabLocal(lp, 1.f, GH, GW, GW, GH, original, temp.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
 
         if (exlocalcurve) {
 #ifdef _OPENMP
@@ -13318,19 +13318,21 @@ void ImProcFunctions::Lab_Local(
 
 
                     if (exlocalcurve && localexutili) {// L=f(L) curve enhanced
+                    
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
-                                bufexpfin->L[ir][jr] = 0.5f * exlocalcurve[2.f * bufexporig->L[ir][jr]];
+                                bufexpfin->L[ir][jr] = 0.6f * bufexporig->L[ir][jr] + 0.2f * exlocalcurve[2.f * bufexporig->L[ir][jr]];
                             }
-
+                        
                         if (lp.expcomp == 0.f) {
                             lp.expcomp = 0.001f;// to enabled
                         }
 
-                        ImProcFunctions::exlabLocal(lp, bfh, bfw, bfhr, bfwr, bufexpfin.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
+                        ImProcFunctions::exlabLocal(lp, 0.5f, bfh, bfw, bfhr, bfwr, bufexpfin.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
+
 
 
                     } else {
@@ -13338,7 +13340,7 @@ void ImProcFunctions::Lab_Local(
                             if(lp.laplacexp <= 0.1f) {
                                 lp.laplacexp = 0.2f;  //force to use Laplacian wth very small values
                             }
-                            ImProcFunctions::exlabLocal(lp, bfh, bfw, bfhr, bfwr, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
+                            ImProcFunctions::exlabLocal(lp, 1.f, bfh, bfw, bfhr, bfwr, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
                         }
                     }
 
