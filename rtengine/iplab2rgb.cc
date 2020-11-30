@@ -375,9 +375,9 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
 void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch)
 {
   float pres = 0.01f * params->icm.preser;
-  float neutral = 10000000.f;//if a2 + b2 < 100000000 scale 0..100 a and b about : 7 > a & b > -7  
-  float medneutral = 5000000.f;
-  float aaneu = 1.f / (medneutral - neutral);
+  float neutral = 2000000000.f;//if a2 + b2 < 1500000000 scale 0..100 a and b about : 30 > a & b > -30  decrease effect 
+  float medneutral = 10000000.f;//plein effect
+  float aaneu = 1.f / (medneutral - neutral);//6.8 > a & b > -6.8
   float bbneu = - aaneu * neutral;
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic, 16) nowait
