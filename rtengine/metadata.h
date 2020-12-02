@@ -58,6 +58,8 @@ public:
 
     void setExifKeys(const std::vector<std::string> *keys);
 
+    void getDimensions(int &w, int &h) const;
+
     static Glib::ustring xmpSidecarPath(const Glib::ustring& path);
     static Exiv2::XmpData getXmpSidecar(const Glib::ustring& path);
 

@@ -690,7 +690,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 {
     MyMutex::MyLock lock(getImageMutex);
 
-    tran = defTransform (tran);
+    tran = defTransform(ri, tran);
 
     // compute channel multipliers
     double r, g, b;
@@ -1009,8 +1009,41 @@ void RawImageSource::convertColorSpace(Imagefloat* image, const ColorManagementP
 
 void RawImageSource::getFullSize (int& w, int& h, int tr)
 {
+    computeFullSize(ri, tr, w, h);
 
-    tr = defTransform (tr);
+    // tr = defTransform(ri, tr);
+
+    // if (fuji) {
+    //     w = ri->get_FujiWidth() * 2 + 1;
+    //     h = (H - ri->get_FujiWidth()) * 2 + 1;
+    // } else if (d1x) {
+    //     w = W;
+    //     h = 2 * H;
+    // } else {
+    //     w = W;
+    //     h = H;
+    // }
+
+    // if ((tr & TR_ROT) == TR_R90 || (tr & TR_ROT) == TR_R270) {
+    //     int tmp = w;
+    //     w = h;
+    //     h = tmp;
+    // }
+
+    // w -= 2 * border;
+    // h -= 2 * border;
+}
+
+
+void RawImageSource::computeFullSize(const RawImage *ri, int tr, int &w, int &h)
+{
+    tr = defTransform(ri, tr);
+
+    const int W = ri->get_width();
+    const int H = ri->get_height();
+    const bool fuji = ri->get_FujiWidth() != 0;
+    const bool d1x = !ri->get_model().compare("D1X");
+    const int border = (ri->getSensorType() == ST_BAYER ? 4 : (ri->getSensorType() == ST_FUJI_XTRANS ? 7 : 0));
 
     if (fuji) {
         w = ri->get_FujiWidth() * 2 + 1;
@@ -1253,6 +1286,11 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
     // Load complete Exif information
     idata = new FramesData(fname); // TODO: std::unique_ptr<>
     idata->setDCRawFrameCount (numFrames);
+    {
+        int ww, hh;
+        getFullSize(ww, hh);
+        idata->setDimensions(ww, hh);
+    }
 
     green(W, H);
     red(W, H);
@@ -2718,7 +2756,7 @@ void RawImageSource::scaleColors(int winx, int winy, int winw, int winh, const R
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-int RawImageSource::defTransform (int tran)
+int RawImageSource::defTransform(const RawImage *ri, int tran)
 {
 
     int deg = ri->get_rotateDegree();
@@ -4466,7 +4504,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     Probably (sure) there are improvement to do...
 
     I have create a table temperature with temp and white point with 118 values between 2000K and 12000K we can obviously  change these values, more...with different steps
-    I have create a table for tint (green)with 134 values between 0.4 to 4. 
+    I have create a table for tint (green)with 134 values between 0.4 to 4.
     I have create or recuparate and transformed 201 spectral colors from Colorchecker24, others color and my 468 colors target, or from web flowers, etc. with a step of 5nm, I think it is large enough.
     I think this value of 201 is now complete: I tested correlation with 60, 90, 100, 120, 155...better student increase with number of color, but now it seems stabilized
     Of course we can increase this number :)
@@ -4519,7 +4557,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     itcwb_precis : 5 by default - can be set to 3 or 9 - 3 best sampling but more time...9 "old" settings - but low differences in times with 3 instead of 9 about twice time 160ms instead of 80ms for a big raw file
     */
 //    BENCHFUN
- 
+
     TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix("sRGB");
     const float wp[3][3] = {
         {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
@@ -5064,7 +5102,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 
     estimchrom /= sizcu4;
-    if (settings->verbose) {   
+    if (settings->verbose) {
         printf("estimchrom=%f\n", estimchrom);
     }
     if (settings->itcwb_sort) { //sort in ascending with chroma values
@@ -5366,7 +5404,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     if (settings->itcwb_precis == 5) {
         precision = 5;
     } else if (settings->itcwb_precis < 5) {
-        precision = 3; 
+        precision = 3;
     } else if (settings->itcwb_precis > 5) {
         precision = 9;
     }
@@ -5628,11 +5666,11 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
         if (settings->itcwb_precis == 5) {
             precision = 5;
         } else if (settings->itcwb_precis < 5) {
-            precision = 3; 
+            precision = 3;
         } else if (settings->itcwb_precis > 5) {
             precision = 9;
         }
-        
+
         const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
         const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
         WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw);
@@ -6093,7 +6131,7 @@ ColorTemp RawImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
 void RawImageSource::transformPosition (int x, int y, int tran, int& ttx, int& tty)
 {
 
-    tran = defTransform (tran);
+    tran = defTransform(ri, tran);
 
     x += border;
     y += border;

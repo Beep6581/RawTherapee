@@ -241,6 +241,10 @@ void Thumbnail::_generateThumbnailImage ()
             cfs.format = FT_Raw;
             cfs.thumbImgType = quick ? CacheImageData::QUICK_THUMBNAIL : CacheImageData::FULL_THUMBNAIL;
             infoFromImage (fname);
+            if (!quick) {
+                cfs.width = tpp->full_width;
+                cfs.height = tpp->full_height;
+            }
         }
     }
 
@@ -892,6 +896,8 @@ int Thumbnail::infoFromImage (const Glib::ustring& fname)
     } else {
         cfs.filetype = "";
     }
+
+    idata->getDimensions(cfs.width, cfs.height);
 
     delete idata;
     return deg;

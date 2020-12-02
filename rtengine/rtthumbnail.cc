@@ -968,6 +968,9 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, eSensorType &sens
         }
 
     tpp->init();
+
+    RawImageSource::computeFullSize(ri, TR_NONE, tpp->full_width, tpp->full_height);
+
     delete ri;
     return tpp;
 }
@@ -1025,7 +1028,9 @@ Thumbnail::Thumbnail () :
     gammaCorrected (false),
     colorMatrix{},
     scaleGain (1.0),
-    isRaw (true)
+    isRaw (true),
+    full_width(-1),
+    full_height(-1)
 {
 }
 
@@ -1236,7 +1241,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     ipf.dehaze(baseImg, params.dehaze);
     ipf.ToneMapFattal02(baseImg, params.fattal, 3, 0, nullptr, 0, 0, 0);
-    
+
     // perform transform
     int origFW;
     int origFH;
@@ -2125,7 +2130,7 @@ bool Thumbnail::readData  (const Glib::ustring& fname)
                         colorMatrix[i][j] = cm[ix++];
                     }
             }
-            
+
             if (keyFile.has_key ("LiveThumbData", "ScaleGain")) {
                 scaleGain           = keyFile.get_double ("LiveThumbData", "ScaleGain");
             }

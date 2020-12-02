@@ -57,6 +57,8 @@ private:
     IIOSampleFormat sampleFormat;
     bool isPixelShift;
     bool isHDR;
+    int w_;
+    int h_;
 
 public:
     explicit FramesData(const Glib::ustring& fname);
@@ -84,8 +86,11 @@ public:
     std::string getOrientation() const override;
     Glib::ustring getFileName() const override;
     int getRating() const override;
+    void getDimensions(int &w, int &h) const override;
 
     void fillBasicTags(Exiv2::ExifData &exif) const;
+
+    void setDimensions(int w, int h);
 };
 
 }

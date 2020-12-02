@@ -157,6 +157,7 @@ public:
     static FramesMetaData* fromFile(const Glib::ustring& fname);
 
     virtual Glib::ustring getFileName() const = 0;
+    virtual void getDimensions(int &w, int &h) const = 0;
 };
 
 /** This listener interface is used to indicate the progress of time consuming operations */
@@ -371,7 +372,7 @@ public :
     virtual void adapCamChanged(double cadap) = 0;
     virtual void ybCamChanged(int yb) = 0;
     virtual void wbCamChanged(double tem, double tin) = 0;
-    
+
 };
 
 class AutoChromaListener
@@ -574,7 +575,7 @@ public:
     virtual void        getCamWB    (double& temp, double& green) = 0;
     virtual void        getSpotWB  (int x, int y, int rectSize, double& temp, double& green) = 0;
     virtual bool        getFilmNegativeSpot(int x, int y, int spotSize, procparams::FilmNegativeParams::RGB &refInput, procparams::FilmNegativeParams::RGB &refOutput) = 0;
-    
+
     virtual void        getAutoCrop (double ratio, int &x, int &y, int &w, int &h) = 0;
 
     virtual void        saveInputICCReference (const Glib::ustring& fname, bool apply_wb) = 0;

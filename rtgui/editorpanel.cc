@@ -1357,8 +1357,13 @@ void EditorPanel::info_toggled ()
                                               escapeHtmlChars (Glib::path_get_dirname (openThm->getFileName())) + G_DIR_SEPARATOR_S,
                                               escapeHtmlChars (Glib::path_get_basename (openThm->getFileName()))  );
 
-        int ww = ipc->getFullWidth();
-        int hh = ipc->getFullHeight();
+        int ww = -1, hh = -1;
+        idata->getDimensions(ww, hh);
+        if (ww <= 0) {
+            ww = ipc->getFullWidth();
+            hh = ipc->getFullHeight();
+        }
+        
         //megapixels
         infoString = Glib::ustring::compose ("%1\n<span size=\"small\">%2 MP (%3x%4)</span>",
                                              infoString,
