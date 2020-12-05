@@ -16,6 +16,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#if defined __has_include
+#if __has_include(<lcms2_fast_float.h>)
+#include <lcms2_fast_float.h>
+#define RT_USE_FAST_FLOAT
+#endif
+#endif
+
 #include "rtengine.h"
 #include "image8.h"
 #include "imagefloat.h"
@@ -28,7 +35,7 @@
 #include "alignedbuffer.h"
 #include "color.h"
 #include "procparams.h"
-
+#include "StopWatch.h"
 namespace rtengine
 {
 
@@ -322,18 +329,25 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
     cmsHPROFILE oprof = ICCStore::getInstance()->getProfile(icm.outputProfile);
 
     if (oprof) {
+#ifdef RT_USE_FAST_FLOAT
+        cmsUInt32Number flags = 0;
+#else
         cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
-
+#endif
         if (icm.outputBPC) {
             flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
         }
 
         lcmsMutex->lock();
+        StopWatch Stop1("create transform");
         cmsHPROFILE iprof = cmsCreateLab4Profile(nullptr);
         cmsHTRANSFORM hTransform = cmsCreateTransform(iprof, TYPE_Lab_FLT, oprof, TYPE_RGB_FLT, icm.outputIntent, flags);
+        Stop1.stop();
         lcmsMutex->unlock();
 
+        StopWatch Stop2("exec transform");
         image->ExecCMSTransform(hTransform, *lab, cx, cy);
+        Stop2.stop();
         cmsDeleteTransform(hTransform);
         image->normalizeFloatTo65535();
     } else {
