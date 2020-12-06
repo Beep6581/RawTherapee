@@ -952,7 +952,13 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 
 
         float cz, wh, pfl;
-        float c16 = 1.f;
+        int c16 = 1;
+        if (params->colorappearance.modelmethod == "02") {
+            c16 = 1;
+        }else if (params->colorappearance.modelmethod == "16") {
+            c16 = 16;
+        }
+
         Ciecam02::initcam1float (yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c, c16);
         //printf ("wh=%f \n", wh);
 

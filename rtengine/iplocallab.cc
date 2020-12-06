@@ -2378,7 +2378,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     zw = 100.0 * Zw;
     float xw1 = xws, yw1 = yws, zw1 = zws, xw2 = xwd, yw2 = ywd, zw2 = zwd;
     float cz, wh, pfl;
-    float c16 = 1.f;
+    int c16 = 16;//always cat16
     Ciecam02::initcam1float(yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c, c16);
     const float pow1 = pow_F(1.64f - pow_F(0.29f, n), 0.73f);
     float nj, nbbj, ncbj, czj, awj, flj;

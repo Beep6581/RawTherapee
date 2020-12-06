@@ -437,14 +437,14 @@ HISTORY_MSG_171;L*a*b* - LC curve
 HISTORY_MSG_172;L*a*b* - Restrict LC
 HISTORY_MSG_173;NR - Detail recovery
 HISTORY_MSG_174;CIECAM02
-HISTORY_MSG_175;CAM02 - CAT02 adaptation
+HISTORY_MSG_175;CAM02 - CAT02/16 adaptation
 HISTORY_MSG_176;CAM02 - Viewing surround
 HISTORY_MSG_177;CAM02 - Scene luminosity
 HISTORY_MSG_178;CAM02 - Viewing luminosity
 HISTORY_MSG_179;CAM02 - White-point model
 HISTORY_MSG_180;CAM02 - Lightness (J)
 HISTORY_MSG_181;CAM02 - Chroma (C)
-HISTORY_MSG_182;CAM02 - Automatic CAT02
+HISTORY_MSG_182;CAM02 - Automatic CAT02/16
 HISTORY_MSG_183;CAM02 - Contrast (J)
 HISTORY_MSG_184;CAM02 - Scene surround
 HISTORY_MSG_185;CAM02 - Gamut control
@@ -1205,7 +1205,7 @@ HISTORY_MSG_956;Local - CH Curve
 HISTORY_MSG_957;Local - Denoise mode
 HISTORY_MSG_958;Local - Show/hide settings
 HISTORY_MSG_959;Local - Inverse blur
-HISTORY_MSG_960;Local - Log encoding - cat02
+HISTORY_MSG_960;Local - Log encoding - cat16
 HISTORY_MSG_961;Local - Log encoding Ciecam
 HISTORY_MSG_962;Local - Log encoding  Absolute luminance source
 HISTORY_MSG_963;Local - Log encoding  Absolute luminance target
@@ -1230,8 +1230,9 @@ HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
 HISTORY_MSG_BLUWAV;Attenuation response
-HISTORY_MSG_CAT02PRESET;Cat02 automatic preset
+HISTORY_MSG_CAT02PRESET;Cat02/16 automatic preset
 HISTORY_MSG_CATCOMPLEX;Ciecam complexity
+HISTORY_MSG_CATMODEL;Model Cat
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -1986,7 +1987,7 @@ TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM02 is the perceived amount of
 TP_COLORAPP_CHROMA_S;Saturation (S)
 TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM02 corresponds to the color of a stimulus in relation to its own brightness, differs from L*a*b* and RGB saturation.
 TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM02 corresponds to the color of a stimulus relative to the clarity of a stimulus that appears white under identical conditions, differs from L*a*b* and RGB chroma.
-TP_COLORAPP_CIECAT_DEGREE;CAT02 adaptation
+TP_COLORAPP_CIECAT_DEGREE;CAT02/16 adaptation
 TP_COLORAPP_CONTRAST;Contrast (J), 
 TP_COLORAPP_CONTRAST_Q;Contrast (Q)
 TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast (Q) based on brightness, differs from L*a*b* and RGB contrast.
@@ -1999,13 +2000,13 @@ TP_COLORAPP_CURVEEDITOR3;Color curve
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM02.\nIf the "CIECAM02 output histograms in curves" checkbox is enabled, shows the histogram of C, S or M after CIECAM02.\n\nC, S and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
 TP_COLORAPP_DATACIE;CIECAM02 output histograms in curves
 TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show L*a*b* values before CIECAM02 adjustments.
-TP_COLORAPP_DEGREE_TOOLTIP;CAT02 is a chromatic adaptation, it converts the values of an image whose white point is that of a given illuminant (for example D65), into new values whose white point is that of the new illuminant - see WP Model (for example D50 or D55).
-TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02 is a chromatic adaptation, it converts the values of an image whose white point is that of a given illuminant (for example D50), into new values whose white point is that of the new illuminant - see WP model (for example D75).
-TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
+TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 is a chromatic adaptation, it converts the values of an image whose white point is that of a given illuminant (for example D65), into new values whose white point is that of the new illuminant - see WP Model (for example D50 or D55).
+TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02/16 is a chromatic adaptation, it converts the values of an image whose white point is that of a given illuminant (for example D50), into new values whose white point is that of the new illuminant - see WP model (for example D75).
+TP_COLORAPP_FREE;Free temp+green + CAT02/16 + [output]
 TP_COLORAPP_GAMUT;Gamut control (L*a*b*)
 TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in L*a*b* mode.
 TP_COLORAPP_GEN;Settings - Preset
-TP_COLORAPP_GEN_TOOLTIP;This module is based on the CIECAM02 color appearance model, which was designed to better simulate how human vision perceives colors under different lighting conditions, e.g., against different backgrounds.\nIt takes into account the environment of each color and modifies its appearance to get as close as possible to human perception.\nIt also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic appearance is preserved across the scene and display environments.
+TP_COLORAPP_GEN_TOOLTIP;This module is based on the CIECAM color appearance model, which was designed to better simulate how human vision perceives colors under different lighting conditions, e.g., against different backgrounds.\nIt takes into account the environment of each color and modifies its appearance to get as close as possible to human perception.\nIt also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic appearance is preserved across the scene and display environments.
 TP_COLORAPP_HUE;Hue (h)
 TP_COLORAPP_HUE_TOOLTIP;Hue (h) is the degree to which a stimulus can be described as similar to a color described as red, green, blue and yellow.
 TP_COLORAPP_IL41;D41
@@ -2018,7 +2019,7 @@ TP_COLORAPP_ILA;Incandescent StdA 2856K
 TP_COLORAPP_ILFREE;Free
 TP_COLORAPP_ILLUM;Illuminant
 TP_COLORAPP_ILLUM_TOOLTIP;Select the illuminant closest to the shooting conditions.\nIn general D50, but it can change depending on the time and lattitude.
-TP_COLORAPP_LABEL;Color Appearance & Lighting (CIECAM02)
+TP_COLORAPP_LABEL;Color Appearance & Lighting (CIECAM02/16)
 TP_COLORAPP_LABEL_CAM02;Image Adjustments
 TP_COLORAPP_LABEL_SCENE;Scene Conditions
 TP_COLORAPP_LABEL_VIEWING;Viewing Conditions
@@ -2027,10 +2028,14 @@ TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02 is the clarity of a stimulus rel
 TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
 TP_COLORAPP_MODEL;WP Model
 TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02 is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp+green + CAT02 + [output]:</b> temp and green are selected by the user, the output device's white balance is set in Viewing Conditions.
+TP_COLORAPP_MODELCAT;Model Cat
+TP_COLORAPP_MODELCAT_TOOLTIP;Allows you to choose between Ciecam02 or Ciecam16.\n Ciecam02 will generally be more accurate.\n Ciecam16 should generate fewer artifacts
+TP_COLORAPP_MOD02;Cat02
+TP_COLORAPP_MOD16;Cat16
 TP_COLORAPP_NEUTRAL;Reset
 TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
-TP_COLORAPP_PRESETCAT02;Preset cat02 automatic - Symetric mode
-TP_COLORAPP_PRESETCAT02_TIP;Set combobox, sliders, temp, green so that Cat02 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change Cat02 adaptation Viewing conditions if needed.\nYou can change Temperature and Tint Viewing conditions if needed, and other settings if needed. 
+TP_COLORAPP_PRESETCAT02;Preset cat02/16 automatic - Symmetric mode
+TP_COLORAPP_PRESETCAT02_TIP;Set combobox, sliders, temp, green so that Cat02/16 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change Cat02/16 adaptation Viewing conditions if needed.\nYou can change Temperature and Tint Viewing conditions if needed, and other settings if needed. 
 TP_COLORAPP_RSTPRO;Red & skin-tones protection
 TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
 TP_COLORAPP_SOURCEF_TOOLTIP;Corresponds to the shooting conditions and how to bring the conditions and data back to a "normal" area. Normal" means average or standard conditions and data, i.e. without taking into account CIECAM corrections.
@@ -2057,7 +2062,7 @@ TP_COLORAPP_TONECIE;Tone mapping using CIECAM02
 TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
 TP_COLORAPP_VIEWINGF_TOOLTIP;Takes into account the support on which the final image will be viewed (monitor, TV, projector, printer, ...), as well as its environment. This process will take the data coming from process "Image Adjustments" and "bring" it to the support in such a way that the viewing conditions and its environment are taken into account.
 TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Absolute luminance of the viewing environment\n(usually 16 cd/m²).
-TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
+TP_COLORAPP_WBCAM;WB [RT+CAT02/16] + [output]
 TP_COLORAPP_WBRT;WB [RT] + [output]
 TP_COLORAPP_YBOUT_TOOLTIP;Yb is the relative luminance of the background, expressed in % of gray. A gray at 18% corresponds to a background luminance expressed in CIE L of 50%.\nThis data must take into account the average luminance of the image
 TP_COLORAPP_YBSCEN_TOOLTIP;Yb is the relative luminance of the background, expressed in % of gray. A gray at 18% corresponds to a background luminance expressed in CIE L of 50%.\nThis data is calculated from the average luminance of the image
@@ -2457,7 +2462,7 @@ TP_LOCALLAB_BUTTON_DEL;Delete
 TP_LOCALLAB_BUTTON_DUPL;Duplicate
 TP_LOCALLAB_BUTTON_REN;Rename
 TP_LOCALLAB_BUTTON_VIS;Show/Hide
-TP_LOCALLAB_CATAD;Chromatic adaptation - Cat02
+TP_LOCALLAB_CATAD;Chromatic adaptation - Cat16
 TP_LOCALLAB_CBDL;Contrast by Detail Levels
 TP_LOCALLAB_CBDLCLARI_TOOLTIP;Enhances local contrast of the midtones.
 TP_LOCALLAB_CBDL_ADJ_TOOLTIP;Same as wavelets.\nThe first level (0) acts on 2x2 pixel details.\nThe last level (5) acts on 64x64 pixel details.
@@ -2476,7 +2481,7 @@ TP_LOCALLAB_CHROMASKCOL;Chroma
 TP_LOCALLAB_CHROMASK_TOOLTIP;Changes the chroma of the mask if one exists (i.e. C(C) or LC(H) is activated).
 TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIEC;Use Ciecam environment parameters
-TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM02 color appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nThe first Ciecam process 'Scene conditions' is carried out by Log encoding, it also uses 'Absolute luminance' at the time of shooting.\nThe second Ciecam process  'Image adjustments' is simplified and uses only 3 variables (local contrast, contrast J, saturation s).\nThe third Ciecam process  'Viewing conditions' adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment. 
+TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM color appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nThe first Ciecam process 'Scene conditions' is carried out by Log encoding, it also uses 'Absolute luminance' at the time of shooting.\nThe second Ciecam process  'Image adjustments' is simplified and uses only 3 variables (local contrast, contrast J, saturation s).\nThe third Ciecam process  'Viewing conditions' adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment. 
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Contains the references of the RT-spot, useful for shape detection (hue, luma, chroma, Sobel).\nLow values may be useful for treating foliage.\nHigh values may be useful for treating skin
 TP_LOCALLAB_CLARICRES;Merge chroma
@@ -3709,7 +3714,7 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Fit crop to screen\nShortcut: <b>f</b>
 ZOOMPANEL_ZOOMFITSCREEN;Fit whole image to screen\nShortcut: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Zoom In\nShortcut: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>
-//TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM02 color appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nOnly the third Ciecam process (Viewing conditions - Target) is taken into account, as well as part of the second (contrast J, saturation s) , as well as some data from the first process (Scene conditions - Source) which is used for the Log encoding.\nIt also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment. 
+//TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM color appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nOnly the third Ciecam process (Viewing conditions - Target) is taken into account, as well as part of the second (contrast J, saturation s) , as well as some data from the first process (Scene conditions - Source) which is used for the Log encoding.\nIt also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment. 
 //TP_WAVELET_DENH;Low levels (1234)- Finest details
 //TP_WAVELET_DENL;High levels - Coarsest details
 //TP_WAVELET_DENLH;Guided threshold by detail levels 1-4
