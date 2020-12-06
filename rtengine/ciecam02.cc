@@ -2,7 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
- *
+ *  Changes in Ciecam02 with Ciecam16 Jacques Desmis jdesmis@gmail.com   12/2020 
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -230,7 +230,6 @@ void Ciecam02::xyz_to_cat02float ( float &r, float &g, float &b, float x, float 
         b = ( -0.002079f * x) + (0.048952f * y) + (0.953127f * z);
     }
 
-//    }
 }
 #ifdef __SSE2__
 void Ciecam02::xyz_to_cat02float ( vfloat &r, vfloat &g, vfloat &b, vfloat x, vfloat y, vfloat z, int c16)
@@ -265,7 +264,6 @@ void Ciecam02::cat02_to_xyzfloat ( float &x, float &y, float &z, float r, float 
         z = ( -0.0158415f * r) - (0.03412294f * g) + (1.04996444f * b);
     }
 
-//    }
 }
 #ifdef __SSE2__
 void Ciecam02::cat02_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vfloat g, vfloat b, int c16 )
@@ -281,7 +279,6 @@ void Ciecam02::cat02_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vf
         y = ( F2V (0.38752654f) * r) + (F2V (0.621447744f) * g) - (F2V (0.00897398f) * b);
         z = -(F2V(0.0158415f) * r) - (F2V(0.03412294f) * g) + (F2V(1.04996444f) * b);
     }
-    
 }
 #endif
 
@@ -306,7 +303,6 @@ void Ciecam02::cat02_to_hpefloat ( float &rh, float &gh, float &bh, float r, flo
 //        rh = ( 0.7409792f * r) + (0.2180250f * g) + (0.0410058f * b);
 //        gh = ( 0.2853532f * r) + (0.6242014f * g) + (0.0904454f * b);
 //        bh = (-0.0096280f * r) - (0.0056980f * g) + (1.0153260f * b);
-//    } else if (gamu == 1) { //Changjun Li
     if(c16 == 1) {//cat02
         rh = ( 0.550930835f * r) + (0.519435987f * g) - ( 0.070356303f * b);
         gh = ( 0.055954056f * r) + (0.89973132f * g) + (0.044315524f * b);
@@ -315,10 +311,8 @@ void Ciecam02::cat02_to_hpefloat ( float &rh, float &gh, float &bh, float r, flo
         rh = ( 1.f * r) + (0.f * g) + ( 0.f * b);
         gh = ( 0.f * r) + (1.f * g) + (0.f * b);
         bh = (0.0f * r) + (0.0f * g) + (1.0f * b);
-   
     }
 
-//    }
 }
 
 #ifdef __SSE2__
@@ -610,7 +604,6 @@ void Ciecam02::xyz2jch_ciecam02float ( float &J, float &C, float &h, float aw, f
     float a, ca, cb;
     float e, t;
     float myh;
-//    int gamu = 1;
     xyz_to_cat02float ( r, g, b, x, y, z, c16);
     xyz_to_cat02float ( rw, gw, bw, xw, yw, zw, c16);
     rc = r * (((yw * d) / rw) + (1.f - d));
@@ -819,6 +812,4 @@ vfloat Ciecam02::inverse_nonlinear_adaptationfloat ( vfloat c, vfloat fl )
     return (F2V (100.0f) / fl) * pow_F ( (F2V (27.13f) * c) / (F2V (400.0f) - c), F2V (2.38095238f) );
 }
 #endif
-//end CIECAM Billy Bigg
-
 }

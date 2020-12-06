@@ -33,7 +33,7 @@ namespace rtengine
 {
 
 class Ciecam02
-{
+{//also used with Ciecam16
 private:
     static float d_factorfloat ( float f, float la );
     static float calculate_fl_from_la_ciecam02float ( float la );
