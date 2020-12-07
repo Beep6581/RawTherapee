@@ -26,6 +26,14 @@
 #include <glibmm/ustring.h>
 
 #include <lcms2.h>
+#if defined __has_include
+#if __has_include(<lcms2_fast_float.h>)
+#include <lcms2_fast_float.h>
+#if LCMS2_FAST_FLOAT_VERSION >= 1400
+#define RT_LCMS2_FAST_FLOAT
+#endif
+#endif
+#endif
 
 namespace rtengine
 {

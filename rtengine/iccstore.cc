@@ -1034,6 +1034,10 @@ rtengine::ICCStore* rtengine::ICCStore::getInstance()
 
 void rtengine::ICCStore::init(const Glib::ustring& usrICCDir, const Glib::ustring& stdICCDir, bool loadAll)
 {
+#ifdef RT_LCMS2_FAST_FLOAT
+    cmsPlugin(cmsFastFloatExtensions());
+#endif
+
     implementation->init(usrICCDir, stdICCDir, loadAll);
 }
 

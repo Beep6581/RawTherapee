@@ -16,12 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#if defined __has_include
-#if __has_include(<lcms2_fast_float.h>)
-#include <lcms2_fast_float.h>
-#define RT_USE_FAST_FLOAT
-#endif
-#endif
 
 #include "rtengine.h"
 #include "image8.h"
@@ -329,7 +323,7 @@ Imagefloat* ImProcFunctions::lab2rgbOut(LabImage* lab, int cx, int cy, int cw, i
     cmsHPROFILE oprof = ICCStore::getInstance()->getProfile(icm.outputProfile);
 
     if (oprof) {
-#ifdef RT_USE_FAST_FLOAT
+#ifdef RT_LCMS2_FAST_FLOAT
         cmsUInt32Number flags = 0;
 #else
         cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;

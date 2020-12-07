@@ -22,12 +22,6 @@
 #error Using the -ffast-math CFLAG is known to lead to problems. Disable it to compile RawTherapee.
 #endif
 #endif
-#if defined __has_include
-#if __has_include(<lcms2_fast_float.h>)
-#include <lcms2_fast_float.h>
-#define RT_USE_FAST_FLOAT
-#endif
-#endif
 #include "config.h"
 #include <gtkmm.h>
 #include <giomm.h>
@@ -375,9 +369,7 @@ int main (int argc, char **argv)
 {
     setlocale (LC_ALL, "");
     setlocale (LC_NUMERIC, "C"); // to set decimal point to "."
-#ifdef RT_USE_FAST_FLOAT
-    cmsPlugin(cmsFastFloatExtensions());
-#endif
+
     simpleEditor = false;
     gimpPlugin = false;
     remote = false;
