@@ -939,7 +939,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         complexmethod->set_active(1);
     }
     
-    modelmethod->set_active(1);
+    modelmethod->set_active(0);
 
     if (pp->colorappearance.modelmethod == "02") {
         modelmethod->set_active(0);

@@ -1988,10 +1988,10 @@ TP_COLORAPP_CHROMA_S;Saturation (S)
 TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM02/16 corresponds to the color of a stimulus in relation to its own brightness, differs from L*a*b* and RGB saturation.
 TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM02/16 corresponds to the color of a stimulus relative to the clarity of a stimulus that appears white under identical conditions, differs from L*a*b* and RGB chroma.
 TP_COLORAPP_CIECAT_DEGREE;CAT02/16 adaptation
-TP_COLORAPP_CONTRAST;Contrast (J), 
+TP_COLORAPP_CONTRAST;Contrast (J) 
 TP_COLORAPP_CONTRAST_Q;Contrast (Q)
-TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast (Q) based on brightness, differs from L*a*b* and RGB contrast.
-TP_COLORAPP_CONTRAST_TOOLTIP;Contrast (J) based on lightness, differs from L*a*b* and RGB contrast.
+TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast (Q) in CIECAM02/16 is based on brightness, differs from L*a*b* and RGB contrast.
+TP_COLORAPP_CONTRAST_TOOLTIP;Contrast (J) in CIECAM02/16 is based on lightness, differs from L*a*b* and RGB contrast.
 TP_COLORAPP_CURVEEDITOR1;Tone curve 1
 TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L* (L*a*b*) before CIECAM02/16.\nIf the "CIECAM02/16 output histograms in curves" checkbox is enabled, shows the histogram of J or Q after CIECAM02/16.\n\nJ and Q are not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel.
 TP_COLORAPP_CURVEEDITOR2;Tone curve 2
@@ -2029,7 +2029,7 @@ TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
 TP_COLORAPP_MODEL;WP Model
 TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02/16 is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02/16] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp+green + CAT02/16 + [output]:</b> temp and green are selected by the user, the output device's white balance is set in Viewing Conditions.
 TP_COLORAPP_MODELCAT;CAM Model
-TP_COLORAPP_MODELCAT_TOOLTIP;Allows you to choose between Ciecam02 or Ciecam16.\n Ciecam02 will generally be more accurate.\n Ciecam16 should generate fewer artifacts
+TP_COLORAPP_MODELCAT_TOOLTIP;Allows you to choose between CIECAM02 or CIECAM16.\n CIECAM02 will sometimes be more accurate.\n CIECAM16 should generate fewer artifacts
 TP_COLORAPP_MOD02;CIECAM02
 TP_COLORAPP_MOD16;CIECAM16
 TP_COLORAPP_NEUTRAL;Reset

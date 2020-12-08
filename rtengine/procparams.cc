@@ -1423,7 +1423,7 @@ ColorAppearanceParams::ColorAppearanceParams() :
     curveMode2(TcMode::LIGHT),
     curveMode3(CtcMode::CHROMA),
     complexmethod("normal"),
-    modelmethod("16"),
+    modelmethod("02"),
     surround("Average"),
     surrsrc("Average"),
     adapscen(2000.0),
