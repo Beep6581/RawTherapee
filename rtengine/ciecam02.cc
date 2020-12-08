@@ -195,9 +195,9 @@ float Ciecam02::achromatic_response_to_whitefloat ( float x, float y, float z, f
     gc = g * (((y * d) / g) + (1.0f - d));
     bc = b * (((y * d) / b) + (1.0f - d));
 
-    cat02_to_hpefloat ( rp, gp, bp, rc, gc, bc, c16);
 
-    if(c16 ==1) {
+    if(c16 == 1) {
+        cat02_to_hpefloat ( rp, gp, bp, rc, gc, bc, c16);
         rp = MAXR (rp, 0.0f);
         gp = MAXR (gp, 0.0f);
         bp = MAXR (bp, 0.0f);
