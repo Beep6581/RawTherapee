@@ -219,16 +219,6 @@ private:
         imgsrc->setCurrentFrame(params.raw.bayersensor.imageNum);
         imgsrc->preprocess(params.raw, params.lensProf, params.coarse, params.dirpyrDenoise.enabled);
 
-        // After preprocess, run film negative processing if enabled
-        if ((imgsrc->getSensorType() == ST_BAYER || (imgsrc->getSensorType() == ST_FUJI_XTRANS)) && params.filmNegative.enabled) {
-            std::array<float, 3> filmBaseValues = {
-                static_cast<float>(params.filmNegative.redBase),
-                static_cast<float>(params.filmNegative.greenBase),
-                static_cast<float>(params.filmNegative.blueBase)
-            };
-            imgsrc->filmNegativeProcess (params.filmNegative, filmBaseValues);
-        }
-
         if (pl) {
             pl->setProgress(0.20);
         }
@@ -873,7 +863,23 @@ private:
         //ImProcFunctions ipf (&params, true);
         ImProcFunctions &ipf = * (ipf_p.get());
 
-        imgsrc->convertColorSpace(baseImg, params.icm, currWB);
+        if (params.filmNegative.enabled) {
+            // Process film negative AFTER colorspace conversion if camera space is NOT selected
+            if (params.filmNegative.colorSpace != FilmNegativeParams::ColorSpace::INPUT) {
+                imgsrc->convertColorSpace(baseImg, params.icm, currWB);
+            }
+
+            FilmNegativeParams copy = params.filmNegative;
+            ipf.filmNegativeProcess(baseImg, baseImg, copy, params.raw, imgsrc, currWB);
+
+            // ... otherwise, process film negative BEFORE colorspace conversion
+            if (params.filmNegative.colorSpace == FilmNegativeParams::ColorSpace::INPUT) {
+                imgsrc->convertColorSpace(baseImg, params.icm, currWB);
+            }
+
+        } else {
+            imgsrc->convertColorSpace(baseImg, params.icm, currWB);
+        }
 
         // perform first analysis
         hist16(65536);

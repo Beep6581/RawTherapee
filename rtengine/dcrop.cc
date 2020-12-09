@@ -669,7 +669,15 @@ void Crop::update(int todo)
             }
         }
 
+        if (params.filmNegative.enabled && params.filmNegative.colorSpace == FilmNegativeParams::ColorSpace::INPUT) {
+            parent->ipf.filmNegativeProcess(baseCrop, baseCrop, params.filmNegative);
+        }
+
         parent->imgsrc->convertColorSpace(origCrop, params.icm, parent->currWB);
+
+        if (params.filmNegative.enabled && params.filmNegative.colorSpace != FilmNegativeParams::ColorSpace::INPUT) {
+            parent->ipf.filmNegativeProcess(baseCrop, baseCrop, params.filmNegative);
+        }
 
         delete [] min_r;
         delete [] min_b;

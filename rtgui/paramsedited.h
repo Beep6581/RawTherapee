@@ -267,6 +267,7 @@ struct ColorAppearanceParamsEdited {
     bool curveMode2;
     bool curveMode3;
     bool complexmethod;
+    bool modelmethod;
     bool enabled;
     bool degree;
     bool autodegree;
@@ -1312,7 +1313,9 @@ struct FilmNegativeParamsEdited {
     bool redRatio;
     bool greenExp;
     bool blueRatio;
-    bool baseValues;
+    bool refInput;
+    bool refOutput;
+    bool colorSpace;
 
     bool isUnchanged() const;
 };

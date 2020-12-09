@@ -223,7 +223,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     EvCATAutotempout = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_TEMPOUT");
     EvCATillum = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ILLUM");
     EvCATcomplex = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CATCOMPLEX");
-    //preset button cat02
+    EvCATmodel = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CATMODEL");
+    //preset button cat02/16
     Gtk::Frame *genFrame;
     Gtk::VBox *genVBox;
     genFrame = Gtk::manage (new Gtk::Frame (M ("TP_COLORAPP_GEN")) );
@@ -243,6 +244,16 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     complexHBox->pack_start(*complexmethod);
     genVBox->pack_start (*complexHBox, Gtk::PACK_SHRINK);
     
+    modelmethod = Gtk::manage (new MyComboBoxText ());
+    modelmethod->append(M("TP_COLORAPP_MOD02"));
+    modelmethod->append(M("TP_COLORAPP_MOD16"));
+    modelmethodconn = modelmethod->signal_changed().connect(sigc::mem_fun(*this, &ColorAppearance::modelmethodChanged));
+    modelmethod->set_tooltip_text(M("TP_COLORAPP_MODELCAT_TOOLTIP"));
+    Gtk::HBox* const modelHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const modelLabel = Gtk::manage(new Gtk::Label(M("TP_COLORAPP_MODELCAT") + ":"));
+    modelHBox->pack_start(*modelLabel, Gtk::PACK_SHRINK, 4);
+    modelHBox->pack_start(*modelmethod);
+    genVBox->pack_start (*modelHBox, Gtk::PACK_SHRINK);
     
     presetcat02 = Gtk::manage (new Gtk::CheckButton  (M ("TP_COLORAPP_PRESETCAT02")));
     presetcat02->set_tooltip_markup (M("TP_COLORAPP_PRESETCAT02_TIP"));
@@ -842,6 +853,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     disableListener ();
     complexmethodconn.block(true);
+    modelmethodconn.block(true);
     tcmodeconn.block (true);
     tcmode2conn.block (true);
     tcmode3conn.block (true);
@@ -903,6 +915,9 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         if (!pedited->colorappearance.complexmethod) {
             complexmethod->set_active_text(M("GENERAL_UNCHANGED"));
         }
+        if (!pedited->colorappearance.modelmethod) {
+            modelmethod->set_active_text(M("GENERAL_UNCHANGED"));
+        }
 
         if (!pedited->colorappearance.curveMode2) {
             toneCurveMode2->set_active (2);
@@ -923,7 +938,14 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     } else if (pp->colorappearance.complexmethod == "expert") {
         complexmethod->set_active(1);
     }
+    
+    modelmethod->set_active(0);
 
+    if (pp->colorappearance.modelmethod == "02") {
+        modelmethod->set_active(0);
+    } else if (pp->colorappearance.modelmethod == "16") {
+        modelmethod->set_active(1);
+    }
 
     surrsrcconn.block (true);
 
@@ -1098,6 +1120,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     tcmode3conn.block (false);
     tcmode2conn.block (false);
     tcmodeconn.block (false);
+    modelmethodconn.block(false);
     complexmethodconn.block(false);
     enableListener ();
 }
@@ -1178,6 +1201,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
 
     if (pedited) {
         pedited->colorappearance.complexmethod   = complexmethod->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->colorappearance.modelmethod   = modelmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->colorappearance.degree        = degree->getEditedState ();
         pedited->colorappearance.degreeout        = degreeout->getEditedState ();
         pedited->colorappearance.adapscen      = adapscen->getEditedState ();
@@ -1231,6 +1255,11 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pp->colorappearance.complexmethod = "expert";
     }
 
+    if (modelmethod->get_active_row_number() == 0) {
+        pp->colorappearance.modelmethod = "02";
+    } else if (modelmethod->get_active_row_number() == 1) {
+        pp->colorappearance.modelmethod = "16";
+    }
 
 
     if (surrsrc->get_active_row_number() == 0) {
@@ -1355,6 +1384,13 @@ void ColorAppearance::complexmethodChanged()
     }
 }
 
+void ColorAppearance::modelmethodChanged()
+{    
+
+    if (listener && (multiImage || getEnabled())) {
+        listener->panelChanged(EvCATmodel, modelmethod->get_active_text());
+    }
+}
 
 void ColorAppearance::curveChanged (CurveEditor* ce)
 {
@@ -2216,6 +2252,7 @@ void ColorAppearance::setBatchMode (bool batchMode)
     greensc->showEditedCB ();
 
     complexmethod->append(M("GENERAL_UNCHANGED"));
+    modelmethod->append(M("GENERAL_UNCHANGED"));
     surround->append (M ("GENERAL_UNCHANGED"));
     surrsrc->append (M ("GENERAL_UNCHANGED"));
     wbmodel->append (M ("GENERAL_UNCHANGED"));

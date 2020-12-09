@@ -2378,10 +2378,11 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     zw = 100.0 * Zw;
     float xw1 = xws, yw1 = yws, zw1 = zws, xw2 = xwd, yw2 = ywd, zw2 = zwd;
     float cz, wh, pfl;
-    Ciecam02::initcam1float(yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
+    int c16 = 16;//always cat16
+    Ciecam02::initcam1float(yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c, c16);
     const float pow1 = pow_F(1.64f - pow_F(0.29f, n), 0.73f);
     float nj, nbbj, ncbj, czj, awj, flj;
-    Ciecam02::initcam2float(yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
+    Ciecam02::initcam2float(yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj, c16);
 #ifdef __SSE2__
     const float reccmcz = 1.f / (c2 * czj);
 #endif
@@ -2428,7 +2429,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                                                    Q,  M,  s, F2V(aw), F2V(fl), F2V(wh),
                                                    x,  y,  z,
                                                    F2V(xw1), F2V(yw1),  F2V(zw1),
-                                                   F2V(c),  F2V(nc), F2V(pow1), F2V(nbb), F2V(ncb), F2V(pfl), F2V(cz), F2V(d));
+                                                   F2V(c),  F2V(nc), F2V(pow1), F2V(nbb), F2V(ncb), F2V(pfl), F2V(cz), F2V(d), c16);
                 STVF(Jbuffer[k], J);
                 STVF(Cbuffer[k], C);
                 STVF(hbuffer[k], h);
@@ -2452,7 +2453,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                                                    Q,  M,  s, aw, fl, wh,
                                                    x,  y,  z,
                                                    xw1, yw1,  zw1,
-                                                   c,  nc, pow1, nbb, ncb, pfl, cz, d);
+                                                   c,  nc, pow1, nbb, ncb, pfl, cz, d, c16);
                 Jbuffer[k] = J;
                 Cbuffer[k] = C;
                 hbuffer[k] = h;
@@ -2490,7 +2491,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                                                    Q,  M,  s, aw, fl, wh,
                                                    x,  y,  z,
                                                    xw1, yw1,  zw1,
-                                                   c,  nc, pow1, nbb, ncb, pfl, cz, d);
+                                                   c,  nc, pow1, nbb, ncb, pfl, cz, d, c16);
 #endif
                 float Jpro, Cpro, hpro, Qpro, Mpro, spro;
                 Jpro = J;
@@ -2557,7 +2558,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                 Ciecam02::jch2xyz_ciecam02float(xx, yy, zz,
                                                 J,  C, h,
                                                 xw2, yw2,  zw2,
-                                                c2, nc2,  pow1n, nbbj, ncbj, flj, czj, dj, awj);
+                                                c2, nc2,  pow1n, nbbj, ncbj, flj, czj, dj, awj, c16);
                 x = xx * 655.35f;
                 y = yy * 655.35f;
                 z = zz * 655.35f;
@@ -2580,7 +2581,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                 Ciecam02::jch2xyz_ciecam02float(x, y, z,
                                                 LVF(Jbuffer[k]), LVF(Cbuffer[k]), LVF(hbuffer[k]),
                                                 F2V(xw2), F2V(yw2), F2V(zw2),
-                                                F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz));
+                                                F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz), c16);
                 STVF(xbuffer[k], x * c655d35);
                 STVF(ybuffer[k], y * c655d35);
                 STVF(zbuffer[k], z * c655d35);
@@ -2711,7 +2712,7 @@ void ImProcFunctions::softprocess(const LabImage* bufcolorig, array2D<float> &bu
     }
 }
 
-void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, int bfwr, LabImage* bufexporig, LabImage* lab, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve, const float hueref, const float lumaref, const float chromaref)
+void ImProcFunctions::exlabLocal(local_params& lp, float strlap, int bfh, int bfw, int bfhr, int bfwr, LabImage* bufexporig, LabImage* lab, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve, const float hueref, const float lumaref, const float chromaref)
 {
     //BENCHFUN
     //exposure local
@@ -2746,10 +2747,10 @@ void ImProcFunctions::exlabLocal(local_params& lp, int bfh, int bfw, int bfhr, i
 
             deltaEforLaplace(dE.get(), diffde, bfwr, bfhr, bufexporig, hueref, chromaref, lumaref);
 
-            constexpr float alap = 600.f;
-            constexpr float blap = 100.f;
-            constexpr float aa = (alap - blap) / 50.f;
-            constexpr float bb = 100.f - 30.f * aa;
+            float alap = strlap * 600.f;
+            float blap = strlap * 100.f;
+            float aa = (alap - blap) / 50.f;
+            float bb = blap - 30.f * aa;
 
             float lap;
             if (diffde > 80.f) {
@@ -5053,8 +5054,10 @@ void ImProcFunctions::Exclude_Local(float **deltaso, float hueref, float chromar
 }
 
 
+            
+            
 
-void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabImage * bufexporig, LabImage * bufmask, LabImage * buforigmas, float **buflight, float **bufchro, const float hueref, const float chromaref, const float lumaref, const struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabImage * bufexporig, LabImage * bufexpfin, LabImage * bufmask, LabImage * buforigmas, float **buflight, float **bufchro, const float hueref, const float chromaref, const float lumaref, struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 
     //BENCHFUN 
@@ -5085,7 +5088,17 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
         const float kab = balancedeltaE(lp.balance) / SQR(327.68f);
         const float kH = lp.balanceh;
         const float kch = balancedeltaE(kH);
+        if (lp.colorde == 0) {
+            lp.colorde = -1;//to avoid black
+        }
+/*
+        float ampli = 1.f + std::fabs(lp.colorde);
+        ampli = 2.f + 0.5f * (ampli - 2.f);
 
+        float darklim = 5000.f;
+        float aadark = -1.f;
+        float bbdark = darklim;
+*/
         const bool showmas = lp.showmaskretimet == 3 ;
 
         const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
@@ -5116,7 +5129,7 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
             const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
             const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
             const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
-            const float previewint = settings->previewselection;
+            float previewint = 0.f; //reducdE * 10000.f * lp.colorde; //settings->previewselection;
 
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic,16)
@@ -5168,17 +5181,19 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                     }
 
                     float cli, clc;
+                    const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens) / 100.f;
+                    previewint = reducdE * 10000.f * lp.colorde; //settings->previewselection;
 
                     if (call == 2) {
                         cli = buflight[y - ystart][x - xstart];
                         clc = previewreti ? settings->previewselection * 100.f : bufchro[y - ystart][x - xstart];
                     } else {
                         cli = buflight[y][x];
-                        clc = previewreti ? settings->previewselection * 100.f : bufchro[y][x];
+                      //  clc = previewreti ? settings->previewselection * 100.f : bufchro[y][x];
+                        clc = previewreti ? reducdE * 10000.f * lp.colorde: bufchro[y][x];
 
                     }
 
-                    const float reducdE = calcreducdE(dE, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, varsens) / 100.f;
 
                     cli *= reducdE;
                     clc *= reducdE;
@@ -5252,7 +5267,8 @@ void ImProcFunctions::transit_shapedetect_retinex(int call, int senstype, LabIma
                             transformed->b[y][x] = clipC(difb);
                         }
 
-                        if (previewreti) {
+                        if (previewreti || lp.prevdE) {
+                            difb = (bufexpfin->b[y][x] - original->b[y][x]) * localFactor;
                             transformed->a[y][x] = 0.f;
                             transformed->b[y][x] = previewint * difb;
                         }
@@ -5602,7 +5618,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
         }
 
     } else if (senstype == 1) { //exposure
-        ImProcFunctions::exlabLocal(lp, GH, GW, GW, GH, original, temp.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
+        ImProcFunctions::exlabLocal(lp, 1.f, GH, GW, GW, GH, original, temp.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
 
         if (exlocalcurve) {
 #ifdef _OPENMP
@@ -11859,7 +11875,7 @@ void ImProcFunctions::Lab_Local(
     }
 
 // soft light and retinex_pde
-    if (lp.strng > 1.f && call <= 3 && lp.sfena) {
+    if ((lp.strng > 1.f || lp.prevdE) && call <= 3 && lp.sfena) {
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -12462,7 +12478,7 @@ void ImProcFunctions::Lab_Local(
         }
     }
 
-    if (lp.dehaze != 0 && lp.retiena) {
+    if ((lp.dehaze != 0 || lp.prevdE) && lp.retiena ) {
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -12686,7 +12702,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
 
-            transit_shapedetect_retinex(call, 4, bufreti, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+            transit_shapedetect_retinex(call, 4, bufreti, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
             if (params->locallab.spots.at(sp).recurs) {
                 original->CopyFrom(transformed, multiThread);
@@ -12788,7 +12804,7 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
 
-                transit_shapedetect_retinex(call, 5, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect_retinex(call, 5, tmpl, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
                 if (params->locallab.spots.at(sp).recurs) {
                     original->CopyFrom(transformed, multiThread);
@@ -13017,7 +13033,7 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
 
-                transit_shapedetect_retinex(call, 4, bufreti, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect_retinex(call, 4, bufreti, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
                 if (params->locallab.spots.at(sp).recurs) {
                     original->CopyFrom(transformed, multiThread);
@@ -13114,7 +13130,7 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 if (!lp.invret) {
-                    transit_shapedetect_retinex(call, 5, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect_retinex(call, 5, tmpl, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
                     if (params->locallab.spots.at(sp).recurs) {
                         original->CopyFrom(transformed, multiThread);
@@ -13305,19 +13321,21 @@ void ImProcFunctions::Lab_Local(
 
 
                     if (exlocalcurve && localexutili) {// L=f(L) curve enhanced
+                    
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
-                                bufexpfin->L[ir][jr] = 0.5f * exlocalcurve[2.f * bufexporig->L[ir][jr]];
+                                bufexpfin->L[ir][jr] = 0.6f * bufexporig->L[ir][jr] + 0.2f * exlocalcurve[2.f * bufexporig->L[ir][jr]];
                             }
-
+                        
                         if (lp.expcomp == 0.f) {
                             lp.expcomp = 0.001f;// to enabled
                         }
 
-                        ImProcFunctions::exlabLocal(lp, bfh, bfw, bfhr, bfwr, bufexpfin.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
+                        ImProcFunctions::exlabLocal(lp, 0.5f, bfh, bfw, bfhr, bfwr, bufexpfin.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
+
 
 
                     } else {
@@ -13325,7 +13343,7 @@ void ImProcFunctions::Lab_Local(
                             if(lp.laplacexp <= 0.1f) {
                                 lp.laplacexp = 0.2f;  //force to use Laplacian wth very small values
                             }
-                            ImProcFunctions::exlabLocal(lp, bfh, bfw, bfhr, bfwr, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
+                            ImProcFunctions::exlabLocal(lp, 1.f, bfh, bfw, bfhr, bfwr, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
                         }
                     }
 
