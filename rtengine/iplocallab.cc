@@ -3037,6 +3037,159 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
     }
 }
 
+void ImProcFunctions::DeNoise_Local2(const struct local_params& lp, LabImage* originalmask, int levred, float hueref, float lumaref, float chromaref, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy, int sk)
+{
+    //warning, but I hope used it next
+    // local denoise and impulse
+    //simple algo , perhaps we can improve as the others, but noise is here and not good for hue detection
+    // BENCHFUN
+    const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+    const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+    const int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+    const int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+    
+    
+    lumaref *= 327.68f;
+    const float ach = lp.trans / 100.f;
+
+    const float factnoise1 = 1.f + (lp.noisecf) / 500.f;
+    const float factnoise2 = 1.f + (lp.noisecc) / 500.f;
+    const float factnoise = factnoise1 * factnoise2;
+
+    const int GW = transformed->W;
+    const int GH = transformed->H;
+
+    const float colorde = lp.colorde == 0 ? -1.f : lp.colorde; // -1.f to avoid black
+    const float amplabL = 2.f * colorde;
+    constexpr float darklim = 5000.f;
+
+    const float refa = chromaref * std::cos(hueref) * 327.68f;
+    const float refb = chromaref * std::sin(hueref) * 327.68f;
+    const bool usemaskbl = lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 4;
+    const bool blshow = lp.showmaskblmet == 1 || lp.showmaskblmet == 2;
+    const bool previewbl = lp.showmaskblmet == 4;
+
+    const std::unique_ptr<LabImage> origblur(new LabImage(GW, GH));
+    const float radius = 3.f / sk;
+
+    if (usemaskbl) {
+#ifdef _OPENMP
+        #pragma omp parallel if (multiThread)
+#endif
+        {
+            gaussianBlur(originalmask->L, origblur->L, GW, GH, radius);
+            gaussianBlur(originalmask->a, origblur->a, GW, GH, radius);
+            gaussianBlur(originalmask->b, origblur->b, GW, GH, radius);
+        }
+    } else {
+#ifdef _OPENMP
+        #pragma omp parallel if (multiThread)
+#endif
+        {
+            gaussianBlur(original->L, origblur->L, GW, GH, radius);
+            gaussianBlur(original->a, origblur->a, GW, GH, radius);
+            gaussianBlur(original->b, origblur->b, GW, GH, radius);
+        }
+    }
+
+ //   const int begx = lp.xc - lp.lxL;
+ //   const int begy = lp.yc - lp.lyT;
+    constexpr float r327d68 = 1.f / 327.68f;
+
+#ifdef _OPENMP
+    #pragma omp parallel if (multiThread)
+#endif
+    {
+        const LabImage* maskptr = origblur.get();
+        const float mindE = 2.f + MINSCOPE * lp.sensden * lp.thr;
+        const float maxdE = 5.f + MAXSCOPE * lp.sensden * (1 + 0.1f * lp.thr);
+        const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+        const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+
+#ifdef _OPENMP
+        #pragma omp for schedule(dynamic,16)
+#endif
+
+        for (int y = ystart; y < yend; y++) {
+            const int loy = cy + y;
+//            const bool isZone0 = loy > lp.yc + lp.ly || loy < lp.yc - lp.lyT; // whole line is zone 0 => we can skip a lot of processing
+
+//            if (isZone0) { // outside selection and outside transition zone => no effect, keep original values
+//                continue;
+ //           }
+
+            for (int x = xstart, lox = cx + x; x < xend; x++, lox++) {
+                int zone;
+                float localFactor = 1.f;
+
+                if (lp.shapmet == 0) {
+                    calcTransition(lox, loy, ach, lp, zone, localFactor);
+                } else { /*if (lp.shapmet == 1)*/
+                    calcTransitionrect(lox, loy, ach, lp, zone, localFactor);
+                }
+
+                if (zone == 0) { // outside selection and outside transition zone => no effect, keep original values
+                    continue;
+                }
+
+                float reducdEL = 1.f;
+                float reducdEa = 1.f;
+                float reducdEb = 1.f;
+
+                if (levred == 7) {
+                    const float dEL = std::sqrt(0.9f * SQR(refa - maskptr->a[y][x]) + 0.9f * SQR(refb - maskptr->b[y][x]) + 1.2f * SQR(lumaref - maskptr->L[y][x])) * r327d68;
+                    const float dEa = std::sqrt(1.2f * SQR(refa - maskptr->a[y][x]) + 1.f * SQR(refb - maskptr->b[y][x]) + 0.8f * SQR(lumaref - maskptr->L[y][x])) * r327d68;
+                    const float dEb = std::sqrt(1.f * SQR(refa - maskptr->a[y][x]) + 1.2f * SQR(refb - maskptr->b[y][x]) + 0.8f * SQR(lumaref - maskptr->L[y][x])) * r327d68;
+                    reducdEL = SQR(calcreducdE(dEL, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden));
+                    reducdEa = SQR(calcreducdE(dEa, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden));
+                    reducdEb = SQR(calcreducdE(dEb, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, lp.sensden));
+                }
+
+                float difL, difa, difb;
+
+ //               if (call == 2  /*|| call == 1  || call == 3 */) { //simpleprocess
+ //                   difL = tmp1.L[loy - begy][lox - begx] - original->L[y][x];
+ //                   difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
+ //                   difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
+ //               } else  { //dcrop
+              
+                    difL = tmp1.L[y-ystart][x-xstart] - original->L[y][x];
+                    difa = tmp1.a[y-ystart][x-xstart] - original->a[y][x];
+                    difb = tmp1.b[y-ystart][x-xstart] - original->b[y][x];
+ //               }
+
+                difL *= localFactor * reducdEL;
+                difa *= localFactor * reducdEa;
+                difb *= localFactor * reducdEb;
+                transformed->L[y][x] = CLIP(original->L[y][x] + difL);
+                transformed->a[y][x] = clipC((original->a[y][x] + difa) * factnoise);
+                transformed->b[y][x] = clipC((original->b[y][x] + difb) * factnoise) ;
+
+                if (blshow) {
+                    transformed->L[y][x] = CLIP(12000.f + amplabL * difL);// * 10.f empirical to can visualize modifications
+                    transformed->a[y][x] = clipC(amplabL * difa);// * 10.f empirical to can visualize modifications
+                    transformed->b[y][x] = clipC(amplabL * difb);// * 10.f empirical to can visualize modifications
+                } else if (previewbl || lp.prevdE) {
+                    const float difbdisp = (reducdEL + reducdEa + reducdEb) * 10000.f * colorde;
+
+                    if (transformed->L[y][x] < darklim) { //enhance dark luminance as user can see!
+                        transformed->L[y][x] = darklim - transformed->L[y][x];
+                    }
+
+                    if (colorde <= 0) {
+                        transformed->a[y][x] = 0.f;
+                        transformed->b[y][x] = difbdisp;
+                    } else {
+                        transformed->a[y][x] = -difbdisp;
+                        transformed->b[y][x] = 0.f;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
 void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const float hueref, const float chromaref,  const float lumaref, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int chro, int sk)
 {
     // BENCHFUN
@@ -8497,7 +8650,7 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
 
 }
 
-void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, float * slidb, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * slidb, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
 
 //local denoise
@@ -9071,8 +9224,12 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
 
         } else if (call == 2) { //simpleprocess
 
-            int bfh = int (lp.ly + lp.lyT) + del; //bfw bfh real size of square zone
-            int bfw = int (lp.lx + lp.lxL) + del;
+            const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+            const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+            const int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+            const int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+            const int bfh = yend - ystart;
+            const int bfw = xend - xstart;
 
             if (bfh >= mDEN && bfw >= mDEN) {
                 LabImage bufwv(bfw, bfh);
@@ -9087,10 +9244,10 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                 // these are needed only for creation of the plans and will be freed before entering the parallel loop
 
 
-                int begy = lp.yc - lp.lyT;
-                int begx = lp.xc - lp.lxL;
-                int yEn = lp.yc + lp.ly;
-                int xEn = lp.xc + lp.lx;
+                int begy = ystart; //lp.yc - lp.lyT;
+                int begx = xstart; //lp.xc - lp.lxL;
+                int yEn = yend; //lp.yc + lp.ly;
+                int xEn = xend; //lp.xc + lp.lx;
 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -9609,13 +9766,11 @@ void ImProcFunctions::DeNoise(int call, int del, float * slidL, float * slida, f
                     }
                 }
 
-            if(lp.smasktyp != 0) {
-                DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, bufwv, cx, cy, sk);
-            } else {
-                DeNoise_Local(call, lp,  original, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, bufwv, cx, cy, sk);
-            }
-
-              //  DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, bufwv, cx, cy, sk);
+                if (lp.smasktyp != 0) {
+                    DeNoise_Local2(lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, bufwv, cx, cy, sk);
+                } else {
+                    DeNoise_Local2(lp,  original, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, bufwv, cx, cy, sk);
+                }
             }
         }
     }
@@ -10919,7 +11074,7 @@ void ImProcFunctions::Lab_Local(
         float slida[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
         float slidb[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
         constexpr int aut = 0;
-        DeNoise(call, del, slidL, slida, slidb, aut, noiscfactiv, lp, originalmaskbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk);
+        DeNoise(call, slidL, slida, slidb, aut, noiscfactiv, lp, originalmaskbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk);
 
         if (params->locallab.spots.at(sp).recurs) {
             original->CopyFrom(transformed, multiThread);
