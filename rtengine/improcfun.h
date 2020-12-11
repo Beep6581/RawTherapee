@@ -325,6 +325,7 @@ public:
                 const LocwavCurve& locconwavCurve, bool locconwavutili,
                 const LocwavCurve& loccompwavCurve, bool loccompwavutili,
                 const LocwavCurve& loccomprewavCurve, bool loccomprewavutili,
+                const LocwavCurve& locwavCurvehue, bool locwavhueutili,
                 const LocwavCurve& locwavCurveden, bool locwavdenutili,
                 const LocwavCurve& locedgwavCurve, bool locedgwavutili,
                 const LocwavCurve& loclmasCurve_wav, bool lmasutili_wav,
@@ -368,7 +369,7 @@ public:
     void DeNoise_Local(int call, const struct local_params& lp, LabImage* originalmask, int levred, float hueref, float lumaref, float chromaref, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy, int sk);
     void DeNoise_Local2(const struct local_params& lp, LabImage* originalmask, int levred, float hueref, float lumaref, float chromaref, LabImage* original, LabImage* transformed, const LabImage &tmp1, int cx, int cy, int sk);
 
-    void DeNoise(int call, float * slidL, float * slida, float * slidb, int aut, bool noiscfactiv, const struct local_params& lp, LabImage* originalmaskbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage* original, LabImage* transformed, int cx, int cy, int sk);
+    void DeNoise(int call, float * slidL, float * slida, float * slidb, int aut, bool noiscfactiv, const struct local_params& lp, LabImage* originalmaskbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage* original, LabImage* transformed, int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili);
 
 
     void fftw_denoise(int GW, int GH, int max_numblox_W, int min_numblox_W, float **tmp1, array2D<float> *Lin,  int numThreads, const struct local_params & lp, int chrom);

@@ -1229,6 +1229,7 @@ struct LocallabParams {
         int sensiden;
         int detailthr;
         std::vector<double> locwavcurveden;
+        std::vector<double> locwavcurvehue;
         Glib::ustring showmaskblMethodtyp;
         std::vector<double> CCmaskblcurve;
         std::vector<double> LLmaskblcurve;

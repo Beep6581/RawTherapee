@@ -1300,6 +1300,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).sensiden = locallab.spots.at(j).sensiden && pSpot.sensiden == otherSpot.sensiden;
                 locallab.spots.at(j).detailthr = locallab.spots.at(j).detailthr && pSpot.detailthr == otherSpot.detailthr;
                 locallab.spots.at(j).locwavcurveden = locallab.spots.at(j).locwavcurveden && pSpot.locwavcurveden == otherSpot.locwavcurveden;
+                locallab.spots.at(j).locwavcurvehue = locallab.spots.at(j).locwavcurvehue && pSpot.locwavcurvehue == otherSpot.locwavcurvehue;
                 locallab.spots.at(j).showmaskblMethodtyp = locallab.spots.at(j).showmaskblMethodtyp && pSpot.showmaskblMethodtyp == otherSpot.showmaskblMethodtyp;
                 locallab.spots.at(j).CCmaskblcurve = locallab.spots.at(j).CCmaskblcurve && pSpot.CCmaskblcurve == otherSpot.CCmaskblcurve;
                 locallab.spots.at(j).LLmaskblcurve = locallab.spots.at(j).LLmaskblcurve && pSpot.LLmaskblcurve == otherSpot.LLmaskblcurve;
@@ -4115,6 +4116,11 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).locwavcurveden = mods.locallab.spots.at(i).locwavcurveden;
         }
 
+        if (locallab.spots.at(i).locwavcurvehue) {
+            toEdit.locallab.spots.at(i).locwavcurvehue = mods.locallab.spots.at(i).locwavcurvehue;
+        }
+
+
         if (locallab.spots.at(i).showmaskblMethodtyp) {
             toEdit.locallab.spots.at(i).showmaskblMethodtyp = mods.locallab.spots.at(i).showmaskblMethodtyp;
         }
@@ -6578,6 +6584,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     sensiden(v),
     detailthr(v),
     locwavcurveden(v),
+    locwavcurvehue(v),
     showmaskblMethodtyp(v),
     CCmaskblcurve(v),
     LLmaskblcurve(v),
