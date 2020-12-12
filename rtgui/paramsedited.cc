@@ -1284,6 +1284,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).chroMethod = locallab.spots.at(j).chroMethod && pSpot.chroMethod == otherSpot.chroMethod;
                 locallab.spots.at(j).quamethod = locallab.spots.at(j).quamethod && pSpot.quamethod == otherSpot.quamethod;
                 locallab.spots.at(j).blurMethod = locallab.spots.at(j).blurMethod && pSpot.blurMethod == otherSpot.blurMethod;
+                locallab.spots.at(j).usemask = locallab.spots.at(j).usemask && pSpot.usemask == otherSpot.usemask;
+                locallab.spots.at(j).levelthr = locallab.spots.at(j).levelthr && pSpot.levelthr == otherSpot.levelthr;
+                locallab.spots.at(j).levelthrlow = locallab.spots.at(j).levelthrlow && pSpot.levelthrlow == otherSpot.levelthrlow;
                 locallab.spots.at(j).medMethod = locallab.spots.at(j).medMethod && pSpot.medMethod == otherSpot.medMethod;
                 locallab.spots.at(j).activlum = locallab.spots.at(j).activlum && pSpot.activlum == otherSpot.activlum;
                 locallab.spots.at(j).noiselumf = locallab.spots.at(j).noiselumf && pSpot.noiselumf == otherSpot.noiselumf;
@@ -4052,6 +4055,18 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).blurMethod = mods.locallab.spots.at(i).blurMethod;
         }
 
+        if (locallab.spots.at(i).usemask) {
+            toEdit.locallab.spots.at(i).usemask = mods.locallab.spots.at(i).usemask;
+        }
+
+        if (locallab.spots.at(i).levelthr) {
+            toEdit.locallab.spots.at(i).levelthr = mods.locallab.spots.at(i).levelthr;
+        }
+
+        if (locallab.spots.at(i).levelthrlow) {
+            toEdit.locallab.spots.at(i).levelthrlow = mods.locallab.spots.at(i).levelthrlow;
+        }
+
         if (locallab.spots.at(i).medMethod) {
             toEdit.locallab.spots.at(i).medMethod = mods.locallab.spots.at(i).medMethod;
         }
@@ -6567,6 +6582,9 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     blMethod(v),
     chroMethod(v),
     quamethod(v),
+    usemask(v),
+    levelthr(v),
+    levelthrlow(v),
     blurMethod(v),
     medMethod(v),
     activlum(v),
@@ -7082,6 +7100,9 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     blMethod = v;
     chroMethod = v;
     quamethod = v;
+    usemask = v;
+    levelthr = v;
+    levelthrlow = v;
     blurMethod = v;
     medMethod = v;
     activlum = v;

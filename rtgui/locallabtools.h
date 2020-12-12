@@ -278,6 +278,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+//    void adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop) override {};
     void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
@@ -558,6 +559,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+//    void adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop) override {};
     void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override;
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
@@ -633,6 +635,8 @@ class LocallabBlur:
     public Gtk::VBox,
     public LocallabTool,
     public ThresholdAdjusterListener
+//    public ThresholdCurveProvider
+    
 {
 private:
     // Blur & Noise specific widgets
@@ -659,6 +663,10 @@ private:
     MyComboBoxText* const quamethod;
     CurveEditorGroup* const LocalcurveEditorwavden;
     FlatCurveEditor* const wavshapeden;
+    MyExpander* const expdenoise1;
+    Gtk::CheckButton* const usemask;
+    Adjuster* const levelthr;
+    Adjuster* const levelthrlow;
     Adjuster* const noiselumf0;
     Adjuster* const noiselumf;
     Adjuster* const noiselumf2;
@@ -701,7 +709,7 @@ private:
     ThresholdAdjuster* const csThresholdblur;
 
     sigc::connection blMethodConn, fftwblConn, invblConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
-    sigc::connection  quamethodconn;
+    sigc::connection  quamethodconn, usemaskConn;
 public:
     LocallabBlur();
     ~LocallabBlur();
@@ -720,6 +728,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+//    void adjusterChanged3(ThresholdAdjuster* a, double newBotto, double newTo) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
@@ -736,6 +745,7 @@ private:
 
     void blMethodChanged();
     void fftwblChanged();
+    void usemaskChanged();
     void invblChanged();
     void medMethodChanged();
     void blurMethodChanged();
@@ -969,6 +979,7 @@ class LocallabContrast:
     public Gtk::VBox,
     public LocallabTool,
     public ThresholdAdjusterListener
+
 {
 private:
     MyComboBoxText* const localcontMethod;
@@ -1077,6 +1088,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+//    void adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop) override {};
     void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
@@ -1347,6 +1359,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+//    void adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop) override {};
     void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used

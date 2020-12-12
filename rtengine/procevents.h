@@ -1005,6 +1005,9 @@ enum ProcEventCode {
     Evlocallabcolorfl = 979,
     Evlocallabrepar = 980,
     EvlocallabwavCurvehue = 981,
+    Evlocallablevelthr = 982,
+    Evlocallablevelthrlow = 983,
+    Evlocallabusemask1 = 984,
     NUMOFEVENTS
 };
 

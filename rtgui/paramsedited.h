@@ -620,6 +620,9 @@ public:
         bool blMethod;
         bool chroMethod;
         bool quamethod;
+        bool usemask;
+        bool levelthr;
+        bool levelthrlow;
         bool blurMethod;
         bool medMethod;
         bool activlum;
