@@ -230,7 +230,12 @@ void Exiv2Metadata::saveToImage(const Glib::ustring &path, bool preserve_all_tag
         if (!preserve_all_tags) {
             remove_unwanted(srcexif);
         }
-        dst->setExifData(srcexif);
+        //dst->setExifData(srcexif);
+        for (auto &tag : srcexif) {
+            if (tag.count() > 0) {
+                dst->exifData()[tag.key()] = tag;
+            }
+        }
     } else {
         dst->setExifData(exif_data_);
         dst->setIptcData(iptc_data_);
