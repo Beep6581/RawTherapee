@@ -1593,6 +1593,8 @@ void ColorAppearance::presetcat02pressed ()
     degreeout->setValue(90);
     ybout->setValue(18);
     tempout->setValue (nexttemp);
+    tempout->setAutoValue (true);
+
     greenout->setValue (nextgreen);
     enableListener();
  } else {
