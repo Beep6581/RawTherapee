@@ -5762,7 +5762,8 @@ LocallabBlur::LocallabBlur():
     wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
     expdenoise1(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI1_EXP")))),
     usemask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_USEMASK")))),
-    levelthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 0., 100., 1., 50.))),
+    lnoiselow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLNOISELOW"), 0.5, 10., 0.1, 3.))),
+    levelthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 1., 100., 1., 50.))),
     levelthrlow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 0., 100., 1., 25.))),
     noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noiselumf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
@@ -5891,6 +5892,7 @@ LocallabBlur::LocallabBlur():
     setExpandAlignProperties(expdenoise1, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     levelthr->setAdjusterListener(this);
+    lnoiselow->setAdjusterListener(this);
 
     levelthrlow->setAdjusterListener(this);
 
@@ -6044,6 +6046,7 @@ LocallabBlur::LocallabBlur():
     wavBox->pack_start(*LocalcurveEditorwavhue, Gtk::PACK_SHRINK, 4);
     ToolParamBlock* const wavBox1 = Gtk::manage(new ToolParamBlock());
     wavBox1->pack_start(*usemask, Gtk::PACK_SHRINK, 0);
+    wavBox1->pack_start(*lnoiselow, Gtk::PACK_SHRINK, 0);
     wavBox1->pack_start(*levelthrlow, Gtk::PACK_SHRINK, 0);
     wavBox1->pack_start(*levelthr, Gtk::PACK_SHRINK, 0);
     expdenoise1->add(*wavBox1, false);
@@ -6349,6 +6352,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         noiselumc->setValue(spot.noiselumc);
         noiselumdetail->setValue(spot.noiselumdetail);
         levelthr->setValue(spot.levelthr);
+        lnoiselow->setValue(spot.lnoiselow);
         levelthrlow->setValue(spot.levelthrlow);
         noiselequal->setValue((double)spot.noiselequal);
         noisechrof->setValue(spot.noisechrof);
@@ -6473,6 +6477,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.noiselumc = noiselumc->getValue();
         spot.noiselumdetail = noiselumdetail->getValue();
         spot.levelthr    = levelthr->getValue();
+        spot.lnoiselow    = lnoiselow->getValue();
         spot.levelthrlow    = levelthrlow->getValue();
         spot.noiselequal = noiselequal->getIntValue();
         spot.noisechrof = noisechrof->getValue();
@@ -6538,6 +6543,7 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         noiselumc->setDefault(defSpot.noiselumc);
         noiselumdetail->setDefault(defSpot.noiselumdetail);
         levelthr->setDefault(defSpot.levelthr);
+        lnoiselow->setDefault(defSpot.lnoiselow);
         levelthrlow->setDefault(defSpot.levelthrlow);
         noiselequal->setDefault((double)defSpot.noiselequal);
         noisechrof->setDefault(defSpot.noisechrof);
@@ -6681,6 +6687,13 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallablevelthr,
                                        levelthr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == lnoiselow) {
+            if (listener) {
+                listener->panelChanged(Evlocallablnoiselow,
+                                       lnoiselow->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -6937,6 +6950,7 @@ void LocallabBlur::convertParamToSimple()
     slomaskbl->setValue(defSpot.slomaskbl);
     Lmaskblshape->setCurve(defSpot.Lmasklccurve);
     levelthr->setValue(defSpot.levelthr);
+    lnoiselow->setValue(defSpot.lnoiselow);
     levelthrlow->setValue(defSpot.levelthrlow);
     usemask->set_active(defSpot.usemask);
 

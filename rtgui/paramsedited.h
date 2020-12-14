@@ -622,6 +622,7 @@ public:
         bool quamethod;
         bool usemask;
         bool levelthr;
+        bool lnoiselow;
         bool levelthrlow;
         bool blurMethod;
         bool medMethod;

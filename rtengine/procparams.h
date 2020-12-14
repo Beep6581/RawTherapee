@@ -1216,6 +1216,7 @@ struct LocallabParams {
         Glib::ustring medMethod; // none, 33, 55, 77, 99
         bool usemask;
         double levelthr;
+        double lnoiselow;
         double levelthrlow;
         bool activlum;
         double noiselumf;

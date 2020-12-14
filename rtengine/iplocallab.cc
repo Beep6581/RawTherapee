@@ -660,6 +660,7 @@ struct local_params {
     float thrlow;
     float thrhigh;
     bool usemask;
+    float lnoiselow;
 
 };
 
@@ -780,6 +781,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.thrlow = locallab.spots.at(sp).levelthrlow;
     lp.thrhigh = locallab.spots.at(sp).levelthr;
     lp.usemask = locallab.spots.at(sp).usemask;
+    lp.lnoiselow = locallab.spots.at(sp).lnoiselow;
 
     //  printf("llColorMask=%i lllcMask=%i llExpMask=%i  llSHMask=%i llcbMask=%i llretiMask=%i lltmMask=%i llblMask=%i llvibMask=%i\n", llColorMask, lllcMask, llExpMask, llSHMask, llcbMask, llretiMask, lltmMask, llblMask, llvibMask);
     if (locallab.spots.at(sp).softMethod == "soft") {
@@ -8868,19 +8870,24 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         if(lp.thrhigh < lp.thrlow) {
                             hig = lp.thrlow + 0.01f;
                         }
-
+                        float alow = -lp.lnoiselow / lp.thrlow;
+                        float blow = lp.lnoiselow;
+                        float ahigh = 0.9999f / (hig - 100.f);
+                        float bhigh = 1.f - hig * ahigh;
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
                         for (int ir = 0; ir < GH; ir++)
                             for (int jr = 0; jr < GW; jr++) {
                                 const float lM = bufmaskblurbl->L[ir][jr];
+                                const float lmr = lM / 327.68f;
+
                                 if (lM < 327.68f * lp.thrlow) {
-                                    noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] *= 3.f;
+                                    noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] *= alow * lmr + blow; //3.f;//increase denoise
                                 } else if (lM < 327.68f * hig) {
-                                    // do nothing
+                                    // do nothing - denoise not change
                                 } else {
-                                    noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] *= 0.01f;
+                                    noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] *= ahigh * lmr + bhigh; //0.01f;//quasi suppress denoise
                                 }
                         }
                     }
@@ -9462,18 +9469,25 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                             hig = lp.thrlow + 0.01f;
                         }
 
+                        float alow = -lp.lnoiselow / lp.thrlow;
+                        float blow = lp.lnoiselow;
+                        float ahigh = 0.9999f / (hig - 100.f);
+                        float bhigh = 1.f - hig * ahigh;
+
+
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
                         for (int ir = 0; ir < bfh; ir++)
                             for (int jr = 0; jr < bfw; jr++) {
                                 const float lM = bufmaskblurbl->L[ir + ystart][jr + xstart];
+                                const float lmr = lM / 327.68f;
                                 if (lM < 327.68f * lp.thrlow) {
-                                    noisevarlum[(ir >> 1) * bfw2 + (jr >> 1)] *= 3.f;
+                                    noisevarlum[(ir >> 1) * bfw2 + (jr >> 1)] *= alow * lmr + blow; 
                                 } else if (lM < 327.68f * hig) {
                                     // do nothing
                                 } else {
-                                    noisevarlum[(ir >> 1) * bfw2 + (jr >> 1)] *= 0.01f;
+                                    noisevarlum[(ir >> 1) * bfw2 + (jr >> 1)] *= ahigh * lmr + bhigh;
                                 }
                         }
                     }

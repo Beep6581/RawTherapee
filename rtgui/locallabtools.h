@@ -665,6 +665,7 @@ private:
     FlatCurveEditor* const wavshapeden;
     MyExpander* const expdenoise1;
     Gtk::CheckButton* const usemask;
+    Adjuster* const lnoiselow;
     Adjuster* const levelthr;
     Adjuster* const levelthrlow;
     Adjuster* const noiselumf0;
