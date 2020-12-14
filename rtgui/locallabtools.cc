@@ -5762,9 +5762,9 @@ LocallabBlur::LocallabBlur():
     wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
     expdenoise1(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI1_EXP")))),
     usemask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_USEMASK")))),
-    lnoiselow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLNOISELOW"), 0.5, 10., 0.1, 3.))),
-    levelthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 1., 100., 1., 50.))),
-    levelthrlow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 0., 100., 1., 25.))),
+    lnoiselow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLNOISELOW"), 0.5, 4., 0.1, 1.5))),
+    levelthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 1., 100., 1., 40.))),
+    levelthrlow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 0., 100., 1., 12.))),
     noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noiselumf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noiselumf2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINETWO"), MINCHRO, MAXCHRO, 0.01, 0.))),
@@ -6135,7 +6135,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         expdenoise->set_tooltip_markup(M("TP_LOCALLAB_DENOI_TOOLTIP"));
         quamethod->set_tooltip_markup(M("TP_LOCALLAB_DENOIQUA_TOOLTIP"));
         wavshapeden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
-//        wavhue->setTooltip(M("TP_LOCALLAB_WAVHUE_TOOLTIP"));
+        wavhue->setTooltip(M("TP_LOCALLAB_WAVHUE_TOOLTIP"));
         LocalcurveEditorwavden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
         noiselequal->set_tooltip_text(M("TP_LOCALLAB_DENOIEQUAL_TOOLTIP"));
         noiselumdetail->set_tooltip_text(M("TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP"));
@@ -6218,7 +6218,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         shadmaskbl->set_tooltip_text("");
         shadmaskblsha->set_tooltip_text("");
         csThresholdblur->set_tooltip_text("");
-//        wavhue->setTooltip("");
+        wavhue->setTooltip("");
         sensiden->set_tooltip_text("");
         expdenoise1->set_tooltip_markup("");
 

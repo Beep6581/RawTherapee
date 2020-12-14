@@ -2517,7 +2517,7 @@ TP_LOCALLAB_CONTFRA;Contrast by level
 TP_LOCALLAB_CONTL;Contrast (J)
 TP_LOCALLAB_CONTRAST;Contrast
 TP_LOCALLAB_CONTRASTCURVMASK1_TOOLTIP;Allows you to freely modify the contrast of the mask (gamma & slope), instead of using a continuous & progressive curve. However it can create artifacts that have to be dealt with using the “Smooth radius” or “Laplacian threshold sliders”.
-TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP;Allows you to freely change the contrast of the mask. May create artifacts.
+TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP;Allows you to freely change the contrast of the mask.\n Has a similar function to the Gamma and Slope sliders. It allows you to target certain parts of the image (usually the lightest parts of the mask by using the curve to exclude the darker parts).May create artifacts.
 TP_LOCALLAB_CONTRESID;Contrast
 TP_LOCALLAB_CONTTHMASK_TOOLTIP;Allows you to determine which parts of the image will be impacted based on the texture.
 TP_LOCALLAB_CONTTHR;Contrast Threshold
@@ -2698,8 +2698,10 @@ TP_LOCALLAB_LIGHTRETI;Lightness
 TP_LOCALLAB_LINEAR;Linearity
 TP_LOCALLAB_LIST_NAME;Add tool to current spot...
 TP_LOCALLAB_LIST_TOOLTIP;You can select 3 levels of complexity for each tool: Basic, Standard & Advanced.\nThe default setting for all tools is Basic but this can be changed in the Preferences window.\nYou can also change the level of complexity on a per-tool basis while you are editing
-TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Give priority to action on midtones and high lights and by choosing the concerned wavelet levels
-TP_LOCALLAB_LMASK_LL_TOOLTIP;Allows you to freely change the contrast of the mask. May create artifacts.
+//TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Give priority to action on midtones and high lights and by choosing the concerned wavelet levels
+TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Allows you to decrease or increase the effect on particular levels of detail in the mask by targeting certain luminance zones (in general the lightest).
+//TP_LOCALLAB_LMASK_LL_TOOLTIP;Allows you to freely change the contrast of the mask. May create artifacts.
+TP_LOCALLAB_LMASK_LL_TOOLTIP;Allows you to freely change the contrast of the mask.\n Has a similar function to the Gamma and Slope sliders. It allows you to target certain parts of the image (usually the lightest parts of the mask by using the curve to exclude the darker parts).May create artifacts.
 TP_LOCALLAB_LOCCONT;Unsharp Mask
 TP_LOCALLAB_LOC_CONTRAST;Local Contrast & Wavelets
 TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramid 1:
@@ -2752,7 +2754,7 @@ TP_LOCALLAB_LUMFRA;L*a*b* standard
 TP_LOCALLAB_LUMONLY;Luminance only
 TP_LOCALLAB_MASFRAME;Mask and Merge
 TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTakes into account the deltaE image to avoid modifying the selection area when the following Mask Tools are used: Gamma , Slope , Chroma, Contrast curve , Local contrast (by wavelet level), Blur Mask and Structure Mask (if enabled ) .\nDisabled when Inverse mode is used
-TP_LOCALLAB_MASK;Mask
+TP_LOCALLAB_MASK;Contrast
 TP_LOCALLAB_MASK2;Contrast curve
 TP_LOCALLAB_MASKCOL;Mask Curves
 TP_LOCALLAB_MASKCOM;Common Color Mask
@@ -2761,8 +2763,8 @@ TP_LOCALLAB_MASKCOM_TOOLTIP;A tool in its own right.\nCan be used to adjust the 
 TP_LOCALLAB_MASKCURVE_TOOLTIP;The 3 curves are set to 1 (maximum) by default:\nC=f(C) the chroma varies according to the chrominance. You can decrease the chroma to improve the selection. By setting this curve close to zero (with a low value of C  to activate the curve) you can desaturate the background in Inverse mode.\nL=f(L) the luminance varies according to the luminance, so you can decrease the brightness to improve the selection.\nL and C = f(H) luminance and chroma vary with hue, so you can decrease luminance and chroma to improve selection
 TP_LOCALLAB_MASKH;Hue curve
 TP_LOCALLAB_MASKLC_TOOLTIP;This allows you to target the denoise based on the image luminance information contained in the L(L) or LC(H) mask (Mask and Modifications). The L(L) mask or the LC(H) mask must be enabled to use this function. \n if the mask is very dark - below the threshold 'dark' - denoise will be increased.\n if the mask is clear - above the threshold 'light' - denoise will be progressively cancelled.\n between the two, denoise will be maintained at the settings without mask.
-TP_LOCALLAB_MASKLCTHR;Light area luminance threshold
-TP_LOCALLAB_MASKLCTHRLOW; Dark area luminance threshold
+TP_LOCALLAB_MASKLCTHR;Light area luminance % threshold
+TP_LOCALLAB_MASKLCTHRLOW; Dark area luminance % threshold
 TP_LOCALLAB_MASKLNOISELOW;Reinforce denoise in dark areas
 TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a tool by activating another tool and using only the mask (set the tool sliders to 0 ).\n\nYou can also duplicate the RT-spot and place it close to the first spot. The small variations in the spot references allows you to make fine adjustments.  
 TP_LOCALLAB_MED;Medium
@@ -3072,6 +3074,7 @@ TP_LOCALLAB_WAVEEDG_TOOLTIP;Improves sharpness by targeting the action of local 
 TP_LOCALLAB_WAVEMASK_LEVEL_TOOLTIP;Range of wavelet levels used in “Local contrast (by wavelet level)”
 TP_LOCALLAB_WAVGRAD_TOOLTIP;Allows the local contrast to be varied according to a chosen gradient and angle.  The variation of the luminance signal is taken into account and not the luminance.
 TP_LOCALLAB_WAVHIGH;Ψ Wavelet high
+TP_LOCALLAB_WAVHUE_TOOLTIP;Allows you to reduce or increase the denoise based on hue.
 TP_LOCALLAB_WAVLEV;Blur by level
 TP_LOCALLAB_WAVLOW;Ψ Wavelet low
 TP_LOCALLAB_WAVMASK;Ψ Local contrast (by wavelet level)
@@ -3502,7 +3505,7 @@ TP_WAVELET_DENMIX_TOOLTIP;Balances the action of the guide taking into account t
 TP_WAVELET_DENOISE;Guide curve based on Local contrast
 TP_WAVELET_DENOISEGUID;Guided threshold based on hue
 TP_WAVELET_DENOISEH;High levels Curve Local contrast
-TP_WAVELET_DENOISEHUE;Denoise equalizer Hue
+TP_WAVELET_DENOISEHUE;Denoise hue equalizer
 TP_WAVELET_DENQUA;Mode
 TP_WAVELET_DENSIGMA_TOOLTIP;Adapts the shape of the guide
 TP_WAVELET_DENSLI;Slider
