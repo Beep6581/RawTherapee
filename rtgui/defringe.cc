@@ -120,6 +120,7 @@ void Defringe::autoOpenCurve ()
 
 void Defringe::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const DefringeParams old_params = pp->defringe;
 
     pp->defringe.radius    = radius->getValue ();
     pp->defringe.threshold = (int)threshold->getValue ();
@@ -131,6 +132,11 @@ void Defringe::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->defringe.threshold = threshold->getEditedState ();
         pedited->defringe.enabled   = !get_inconsistent();
         pedited->defringe.huecurve  = !chshape->isUnChanged ();
+    }
+
+    if (!old_params.enabled && pp->defringe != old_params) {
+        setEnabled(true);
+        pp->defringe.enabled = true;
     }
 }
 
@@ -150,16 +156,26 @@ void Defringe::setDefaults (const ProcParams* defParams, const ParamsEdited* ped
 }
 void Defringe::curveChanged ()
 {
-
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvPFCurve, M("HISTORY_CUSTOMCURVE"));
     }
 }
 
 void Defringe::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener && getEnabled()) {
-
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (a == radius) {
             listener->panelChanged (EvDefringeRadius, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(1), a->getValue()));
         } else if (a == threshold) {

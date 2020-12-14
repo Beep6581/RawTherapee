@@ -457,6 +457,7 @@ void Options::setDefaults()
     complexity = 2;
     inspectorWindow = false;
     zoomOnScroll = true;
+    autoenable = false;
     prevdemo = PD_Sidecar;
 
     rgbDenoiseThreadLimit = 0;
@@ -1500,6 +1501,10 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("GUI", "ZoomOnScroll")) {
                     zoomOnScroll = keyFile.get_boolean("GUI", "ZoomOnScroll");
                 }
+
+                if (keyFile.has_key("GUI", "Autoenable")) {
+                    autoenable = keyFile.get_boolean("GUI", "Autoenable");
+                }
             }
 
             if (keyFile.has_group("Crop Settings")) {
@@ -2300,6 +2305,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "Complexity", complexity);
         keyFile.set_boolean("GUI", "InspectorWindow", inspectorWindow);
         keyFile.set_boolean("GUI", "ZoomOnScroll", zoomOnScroll);
+        keyFile.set_boolean("GUI", "Autoenable", autoenable);
 
         //Glib::ArrayHandle<int> crvopen = crvOpen;
         //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);

@@ -123,17 +123,23 @@ void HSVEqualizer::autoOpenCurve ()
 
 void HSVEqualizer::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const HSVEqualizerParams old_params = pp->hsvequalizer;
+
     pp->hsvequalizer.enabled = getEnabled();
     pp->hsvequalizer.hcurve = hshape->getCurve ();
     pp->hsvequalizer.scurve = sshape->getCurve ();
     pp->hsvequalizer.vcurve = vshape->getCurve ();
 
     if (pedited) {
-
         pedited->hsvequalizer.hcurve = !hshape->isUnChanged ();
         pedited->hsvequalizer.scurve = !sshape->isUnChanged ();
         pedited->hsvequalizer.vcurve = !vshape->isUnChanged ();
         pedited->hsvequalizer.enabled = !get_inconsistent();
+    }
+
+    if (!old_params.enabled && pp->hsvequalizer != old_params) {
+        setEnabled(true);
+        pp->hsvequalizer.enabled = true;
     }
 }
 
@@ -145,8 +151,13 @@ void HSVEqualizer::write (ProcParams* pp, ParamsEdited* pedited)
  */
 void HSVEqualizer::curveChanged (CurveEditor* ce)
 {
-
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (ce == hshape) {
             listener->panelChanged (EvHSVEqualizerH, M("HISTORY_CUSTOMCURVE"));
         }

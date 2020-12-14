@@ -150,6 +150,7 @@ class Preferences final :
 
     Gtk::CheckButton* inspectorWindowCB;
     Gtk::CheckButton* zoomOnScrollCB;
+    Gtk::CheckButton* autoenableCB;
 
     Gtk::ComboBoxText* themeCBT;
     Gtk::FontButton* mainFontFB;

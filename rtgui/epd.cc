@@ -21,6 +21,8 @@
 
 #include "epd.h"
 
+#include "options.h"
+
 #include "../rtengine/procparams.h"
 
 using namespace rtengine;
@@ -92,6 +94,8 @@ void EdgePreservingDecompositionUI::read(const ProcParams *pp, const ParamsEdite
 
 void EdgePreservingDecompositionUI::write(ProcParams *pp, ParamsEdited *pedited)
 {
+    const EPDParams old_params = pp->epd;
+
     pp->epd.strength = strength->getValue();
     pp->epd.gamma = gamma->getValue();
     pp->epd.edgeStopping = edgeStopping->getValue();
@@ -118,6 +122,11 @@ void EdgePreservingDecompositionUI::write(ProcParams *pp, ParamsEdited *pedited)
         pedited->epd.scale = scale->getEditedState();
         pedited->epd.reweightingIterates = reweightingIterates->getEditedState();
         pedited->epd.enabled = !get_inconsistent();
+    }
+
+    if (!old_params.enabled && pp->epd != old_params) {
+        setEnabled(true);
+        pp->epd.enabled = true;
     }
 }
 
@@ -146,16 +155,22 @@ void EdgePreservingDecompositionUI::setDefaults(const ProcParams *defParams, con
 
 void EdgePreservingDecompositionUI::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener && getEnabled()) {
-        if(a == strength) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
+        if (a == strength) {
             listener->panelChanged(EvEPDStrength, Glib::ustring::format(std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
-        } else if(a == gamma) {
+        } else if (a == gamma) {
             listener->panelChanged(EvEPDgamma, Glib::ustring::format(std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
-        } else if(a == edgeStopping) {
+        } else if (a == edgeStopping) {
             listener->panelChanged(EvEPDEdgeStopping, Glib::ustring::format(std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
-        } else if(a == scale) {
+        } else if (a == scale) {
             listener->panelChanged(EvEPDScale, Glib::ustring::format(std::setw(2), std::fixed, std::setprecision(2), a->getValue()));
-        } else if(a == reweightingIterates) {
+        } else if (a == reweightingIterates) {
             listener->panelChanged(EvEPDReweightingIterates, Glib::ustring::format((int)a->getValue()));
         }
     }

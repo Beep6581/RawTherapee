@@ -19,6 +19,7 @@
 #include "shadowshighlights.h"
 
 #include "eventmapper.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
 
@@ -104,6 +105,7 @@ void ShadowsHighlights::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 void ShadowsHighlights::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const SHParams old_params = pp->sh;
 
     pp->sh.radius        = (int)radius->getValue ();
     pp->sh.highlights    = (int)highlights->getValue ();
@@ -126,6 +128,11 @@ void ShadowsHighlights::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->sh.stonalwidth     = s_tonalwidth->getEditedState ();
         pedited->sh.enabled         = !get_inconsistent();
         pedited->sh.lab = colorspace->get_active_row_number() != 2;
+    }
+
+    if (!old_params.enabled && pp->sh != old_params) {
+        setEnabled(true);
+        pp->sh.enabled = true;
     }
 }
 
@@ -155,7 +162,13 @@ void ShadowsHighlights::setDefaults (const ProcParams* defParams, const ParamsEd
 
 void ShadowsHighlights::adjusterChanged (Adjuster* a, double newval)
 {
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         const Glib::ustring costr = Glib::ustring::format ((int)a->getValue());
 
         if (a == highlights) {
@@ -188,7 +201,14 @@ void ShadowsHighlights::enabledChanged ()
 
 void ShadowsHighlights::colorspaceChanged()
 {
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvSHColorspace, colorspace->get_active_text());
     }
 }

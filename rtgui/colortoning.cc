@@ -554,7 +554,13 @@ void ColorToning::neutral_pressed ()
 
     enableListener();
 
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvColorToningNeutral, M("GENERAL_RESET"));
     }
 }
@@ -686,6 +692,8 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 void ColorToning::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const ColorToningParams old_params = pp->colorToning;
+
     pp->colorToning.redlow    = redlow->getValue ();
     pp->colorToning.greenlow  = greenlow->getValue ();
     pp->colorToning.bluelow   = bluelow->getValue ();
@@ -782,6 +790,11 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited)
     } else if (twocolor->get_active_row_number() == 3) {
         pp->colorToning.twocolor = "Two";
     }
+
+    if (!old_params.enabled && pp->colorToning != old_params) {
+        setEnabled(true);
+        pp->colorToning.enabled = true;
+    }
 }
 
 void ColorToning::lumamodeChanged ()
@@ -800,7 +813,13 @@ void ColorToning::lumamodeChanged ()
         lastLumamode = lumamode->get_active ();
     }
 
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (lumamode->get_active ()) {
             listener->panelChanged (EvColorToningLumamode, M("GENERAL_ENABLED"));
         } else {
@@ -909,7 +928,13 @@ void ColorToning::autoColorTonChanged(int bwct, int satthres, int satprot)
 
 void ColorToning::adjusterChanged (ThresholdAdjuster* a, double newBottom, double newTop)
 {
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(
             a == hlColSat
                 ? EvColorToningHighights
@@ -982,7 +1007,14 @@ void ColorToning::twocolorChanged (bool changedbymethod)
         }
     }
 
-    if (listener && getEnabled() && !changedbymethod) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+        && !changedbymethod
+    ) {
         listener->panelChanged (EvColorToningTwocolor, twocolor->get_active_text ());
     }
 }
@@ -1173,7 +1205,13 @@ void ColorToning::methodChanged ()
         }
     }
 
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvColorToningMethod, method->get_active_text ());
     }
 }
@@ -1246,8 +1284,13 @@ void ColorToning::colorForValue (double valX, double valY, enum ColorCaller::Ele
 
 void ColorToning::curveChanged (CurveEditor* ce)
 {
-
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (ce == colorShape) {
             listener->panelChanged (EvColorToningColor, M("HISTORY_CUSTOMCURVE"));
         } else if (ce == opacityShape) {
@@ -1298,14 +1341,14 @@ void ColorToning::autosatChanged ()
 
     if (listener) {
         if (autosat->get_active()) {
-            if (getEnabled()) {
+            if (getEnabled() || options.autoenable) {
                 listener->panelChanged (EvColorToningautosat, M("GENERAL_ENABLED"));
             }
 
             saturatedOpacity->set_sensitive(false);
             satProtectionThreshold->set_sensitive(false);
         } else {
-            if (getEnabled()) {
+            if (getEnabled() || options.autoenable) {
                 listener->panelChanged (EvColorToningautosat, M("GENERAL_DISABLED"));
             }
 
@@ -1333,7 +1376,13 @@ void ColorToning::trimValues (rtengine::procparams::ProcParams* pp)
 
 void ColorToning::adjusterChanged(Adjuster* a, double newval)
 {
-    if (!listener || !getEnabled()) {
+    if (
+        !listener
+        || (
+            !getEnabled()
+            && !options.autoenable
+        )
+    ) {
         return;
     }
 

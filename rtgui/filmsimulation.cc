@@ -84,7 +84,15 @@ void FilmSimulation::onClutSelected()
 {
     Glib::ustring currentClutFilename = m_clutComboBox->getSelectedClut();
 
-    if ( getEnabled() && !currentClutFilename.empty() && listener && currentClutFilename != m_oldClutFilename ) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+        && !currentClutFilename.empty()
+        && currentClutFilename != m_oldClutFilename
+    ) {
         Glib::ustring clutName, dummy;
         HaldCLUT::splitClutFilename( currentClutFilename, clutName, dummy, dummy );
         listener->panelChanged( EvFilmSimulationFilename, clutName );
@@ -109,7 +117,14 @@ void FilmSimulation::enabledChanged ()
 
 void FilmSimulation::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         const Glib::ustring value = a->getTextValue();
         listener->panelChanged(EvFilmSimulationStrength, value);
     }
@@ -172,6 +187,8 @@ void FilmSimulation::updateDisable( bool value )
 
 void FilmSimulation::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedited )
 {
+    const rtengine::procparams::FilmSimulationParams old_params = pp->filmSimulation;
+
     if (pedited) {
         pedited->filmSimulation.enabled = !get_inconsistent();
         pedited->filmSimulation.strength = m_strength->getEditedState();
@@ -186,6 +203,11 @@ void FilmSimulation::write( rtengine::procparams::ProcParams* pp, ParamsEdited* 
     }
 
     pp->filmSimulation.strength = m_strength->getValue();
+
+    if (!old_params.enabled && pp->filmSimulation != old_params) {
+        setEnabled(true);
+        pp->filmSimulation.enabled = true;
+    }
 }
 
 void FilmSimulation::setAdjusterBehavior( bool strength )

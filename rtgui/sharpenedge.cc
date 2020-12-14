@@ -78,8 +78,10 @@ void SharpenEdge::read(const ProcParams* pp, const ParamsEdited* pedited)
 
 void SharpenEdge::write( ProcParams* pp, ParamsEdited* pedited)
 {
+    const SharpenEdgeParams old_params = pp->sharpenEdge;
+
     pp->sharpenEdge.enabled       = getEnabled();
-    pp->sharpenEdge.passes        = (int)passes->getValue();
+    pp->sharpenEdge.passes        = passes->getValue();
     pp->sharpenEdge.amount        = amount->getValue ();
     pp->sharpenEdge.threechannels = threechannels->get_active ();
 
@@ -90,6 +92,10 @@ void SharpenEdge::write( ProcParams* pp, ParamsEdited* pedited)
         pedited->sharpenEdge.threechannels = !threechannels->get_inconsistent();
     }
 
+    if (!old_params.enabled && pp->sharpenEdge != old_params) {
+        setEnabled(true);
+        pp->sharpenEdge.enabled = true;
+    }
 }
 
 void SharpenEdge::enabledChanged ()
@@ -121,7 +127,13 @@ void SharpenEdge::chanthree_toggled ()
         lastchanthree = threechannels->get_active ();
     }
 
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (threechannels->get_active ()) {
             listener->panelChanged (EvSharpenEdgeThreechannels, M("GENERAL_ENABLED"));
         } else {
@@ -132,7 +144,13 @@ void SharpenEdge::chanthree_toggled ()
 
 void SharpenEdge::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         Glib::ustring value = a->getTextValue();
 
         if (a == passes ) {

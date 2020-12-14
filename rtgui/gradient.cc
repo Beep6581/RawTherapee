@@ -4,6 +4,7 @@
 #include "gradient.h"
 
 #include "editwidgets.h"
+#include "options.h"
 #include "rtimage.h"
 
 #include "../rtengine/procparams.h"
@@ -213,6 +214,8 @@ void Gradient::updateGeometry(const int centerX, const int centerY, const double
 
 void Gradient::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const GradientParams old_params = pp->gradient;
+
     pp->gradient.degree = degree->getValue ();
     pp->gradient.feather = feather->getIntValue ();
     pp->gradient.strength = strength->getValue ();
@@ -227,6 +230,11 @@ void Gradient::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->gradient.centerX = centerX->getEditedState ();
         pedited->gradient.centerY = centerY->getEditedState ();
         pedited->gradient.enabled = !get_inconsistent();
+    }
+
+    if (!old_params.enabled && pp->gradient != old_params) {
+        setEnabled(true);
+        pp->gradient.enabled = true;
     }
 }
 
@@ -257,8 +265,13 @@ void Gradient::adjusterChanged(Adjuster* a, double newval)
 {
     updateGeometry(int(centerX->getValue()), int(centerY->getValue()), feather->getValue(), degree->getValue());
 
-    if (listener && getEnabled()) {
-
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (a == degree) {
             listener->panelChanged (EvGradientDegree, degree->getTextValue());
         } else if (a == feather) {

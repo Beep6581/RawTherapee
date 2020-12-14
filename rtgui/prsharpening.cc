@@ -17,8 +17,11 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <cmath>
-#include "eventmapper.h"
+
 #include "prsharpening.h"
+
+#include "eventmapper.h"
+#include "options.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -229,6 +232,7 @@ void PrSharpening::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 void PrSharpening::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const SharpeningParams old_params = pp->prsharpening;
 
     pp->prsharpening.contrast         = contrast->getValue ();
     pp->prsharpening.amount           = (int)amount->getValue();
@@ -267,6 +271,11 @@ void PrSharpening::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->prsharpening.halocontrol        = !halocontrol->get_inconsistent();
         pedited->prsharpening.edgesonly          = !edgesonly->get_inconsistent();
         pedited->prsharpening.enabled            = !get_inconsistent();
+    }
+
+    if (!old_params.enabled && pp->prsharpening != old_params) {
+        setEnabled(true);
+        pp->prsharpening.enabled = true;
     }
 }
 
@@ -314,8 +323,14 @@ void PrSharpening::setDefaults (const ProcParams* defParams, const ParamsEdited*
 
 void PrSharpening::adjusterChanged (Adjuster* a, double newval)
 {
-    if (listener && (multiImage || getEnabled()) ) {
-
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         Glib::ustring costr;
 
         if (a == radius || a == dradius) {
@@ -387,7 +402,14 @@ void PrSharpening::edgesonly_toggled ()
         }
     }
 
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (edgesonly->get_inconsistent()) {
             listener->panelChanged (EvPrShrEdgeOnly, M("GENERAL_INITIALVALUES"));
         } else if (edgesonly->get_active ()) {
@@ -422,7 +444,14 @@ void PrSharpening::halocontrol_toggled ()
         }
     }
 
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (halocontrol->get_inconsistent()) {
             listener->panelChanged (EvPrShrHaloControl, M("GENERAL_INITIALVALUES"));
         } else if (halocontrol->get_active ()) {
@@ -447,7 +476,14 @@ void PrSharpening::method_changed ()
         }
     }
 
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvPrShrMethod, method->get_active_text ());
     }
 
@@ -467,7 +503,14 @@ void PrSharpening::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newT
 
 void PrSharpening::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight)
 {
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if(a == threshold) {
             listener->panelChanged (EvPrShrThresh, threshold->getHistoryString());
         }

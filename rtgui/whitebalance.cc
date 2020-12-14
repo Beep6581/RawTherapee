@@ -433,7 +433,13 @@ void WhiteBalance::adjusterChanged(Adjuster* a, double newval)
 
         // Recomputing AutoWB if it's the current method will happen in improccoordinator.cc
 
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (a == temp) {
             listener->panelChanged (EvWBTemp, Glib::ustring::format ((int)a->getValue()));
         } else if (a == green) {
@@ -559,7 +565,13 @@ void WhiteBalance::optChanged ()
             }
         }
 
-        if (listener && getEnabled()) {
+        if (
+            listener
+            && (
+                getEnabled()
+                || options.autoenable
+            )
+        ) {
             listener->panelChanged (EvWBMethod, row[methodColumns.colLabel]);
         }
     }
@@ -726,6 +738,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const WBParams old_params = pp->wb;
 
     Gtk::TreeModel::Row row = getActiveMethod();
 
@@ -750,6 +763,11 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->wb.green = green->getValue ();
     pp->wb.equal = equal->getValue ();
     pp->wb.tempBias = tempBias->getValue ();
+
+    if (!old_params.enabled && pp->wb != old_params) {
+        setEnabled(true);
+        pp->wb.enabled = true;
+    }
 }
 
 void WhiteBalance::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)

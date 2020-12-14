@@ -19,6 +19,8 @@
 
 #include "dirpyrequalizer.h"
 
+#include "options.h"
+
 #include "../rtengine/color.h"
 
 using namespace rtengine;
@@ -224,6 +226,7 @@ void DirPyrEqualizer::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 void DirPyrEqualizer::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const DirPyrEqualizerParams old_params = pp->dirpyrequalizer;
 
     pp->dirpyrequalizer.enabled = getEnabled();
     pp->dirpyrequalizer.gamutlab = gamutlab->get_active ();
@@ -263,6 +266,11 @@ void DirPyrEqualizer::write (ProcParams* pp, ParamsEdited* pedited)
         else if (algo->get_active_row_number()==1)
             pp->dirpyrequalizer.algo = "LA";
             */
+
+    if (!old_params.enabled && pp->dirpyrequalizer != old_params) {
+        setEnabled(true);
+        pp->dirpyrequalizer.enabled = true;
+    }
 }
 /*
 void DirPyrEqualizer::algoChanged () {
@@ -313,7 +321,14 @@ void DirPyrEqualizer::adjusterChanged(ThresholdAdjuster* a, int newBottom, int n
 
 void DirPyrEqualizer::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight)
 {
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvDirPyrEqualizerHueskin, hueskin->getHistoryString());
     }
 }
@@ -349,7 +364,13 @@ void DirPyrEqualizer::cbdlMethodChanged()
 
 void DirPyrEqualizer::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (a == threshold) {
             listener->panelChanged (EvDirPyrEqualizerThreshold,
                                     Glib::ustring::compose("%1",

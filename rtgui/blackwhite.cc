@@ -580,6 +580,8 @@ void BlackWhite::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 void BlackWhite::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const rtengine::procparams::BlackWhiteParams old_params = pp->blackwhite;
+
     pp->blackwhite.enabled = getEnabled();
     pp->blackwhite.luminanceCurve = luminanceCurve->getCurve ();
     pp->blackwhite.autoc = autoch->get_active();
@@ -657,11 +659,23 @@ void BlackWhite::write (ProcParams* pp, ParamsEdited* pedited)
 
     pp->blackwhite.setting = getSettingString();
     pp->blackwhite.filter = getFilterString();
+
+    if (!old_params.enabled && pp->blackwhite != old_params) {
+        setEnabled(true);
+        pp->blackwhite.enabled = true;
+    }
 }
 
 void BlackWhite::algoChanged ()
 {
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvBWMethodalg, algo->get_active_text ());
     }
 }
@@ -785,7 +799,14 @@ void BlackWhite::settingChanged ()
 
     updateRGBLabel();
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvBWsetting, setting->get_active_text ());
     }
 }
@@ -807,7 +828,14 @@ void BlackWhite::filterChanged ()
 
     updateRGBLabel();
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvBWfilter, filter->get_active_text ());
         listener->panelChanged (EvAutoch, M("GENERAL_ENABLED"));
     }
@@ -853,7 +881,14 @@ void BlackWhite::methodChanged ()
         afterCurveCEG->show();
     }
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvBWmethod, method->get_active_text ());
     }
 }
@@ -1125,7 +1160,14 @@ void BlackWhite::adjusterChanged(Adjuster* a, double newval)
         updateRGBLabel();
     }
 
-    if (listener  && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         Glib::ustring value = a->getTextValue();
 
         if (a == mixerRed) {

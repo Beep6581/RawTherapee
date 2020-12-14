@@ -1393,7 +1393,13 @@ void Wavelet::neutral_pressed()
 
     enableListener();
 
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavNeutral, M("GENERAL_RESET"));
     }
 }
@@ -2123,6 +2129,7 @@ void Wavelet::autoOpenCurve()
 
 void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
 {
+    const WaveletParams old_params = pp->wavelet;
 
     pp->wavelet.enabled        = getEnabled();
     pp->wavelet.avoid          = avoid->get_active();
@@ -2553,12 +2560,22 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
     }
 
     pp->wavelet.Lmethod = Lmethod->get_active_row_number() + 1;
+
+    if (!old_params.enabled && pp->wavelet != old_params) {
+        setEnabled(true);
+        pp->wavelet.enabled = true;
+    }
 }
 
 void Wavelet::curveChanged(CurveEditor* ce)
 {
-
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (ce == ccshape) {
             listener->panelChanged(EvWavCCCurve, M("HISTORY_CUSTOMCURVE"));
         } else if (ce == blshape) {
@@ -2843,7 +2860,14 @@ void Wavelet::setDefaults(const ProcParams* defParams, const ParamsEdited* pedit
 
 void Wavelet::adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop)
 {
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (a == level0noise) {
             listener->panelChanged(EvWavlev0nois,
                                    Glib::ustring::compose(Glib::ustring(M("TP_WAVELET_NOIS") + ": %1" + "\n" + M("TP_WAVELET_STREN") + ": %2"), int(newTop), int(newBottom)));
@@ -2882,7 +2906,14 @@ void Wavelet::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTo
 
 void Wavelet::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
 {
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (a == hueskin) {
             listener->panelChanged(EvWavHueskin, hueskin->getHistoryString());
         } else if (a == hueskin2) {
@@ -2924,7 +2955,14 @@ void Wavelet::HSmethodChanged()
 {
     HSmethodUpdateUI();
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavHSmet, HSmethod->get_active_text());
     }
 }
@@ -2994,7 +3032,14 @@ void Wavelet::CHmethodChanged()
 {
     CHmethodUpdateUI();
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavCHmet, CHmethod->get_active_text());
     }
 }
@@ -3047,7 +3092,14 @@ void Wavelet::EDmethodChanged()
 {
     EDmethodUpdateUI();
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavEDmet, EDmethod->get_active_text());
     }
 }
@@ -3062,7 +3114,14 @@ void Wavelet::NPmethodChanged()
 {
     NPmethodUpdateUI();
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavNPmet, NPmethod->get_active_text());
     }
 }
@@ -3095,7 +3154,14 @@ void Wavelet::BAmethodChanged()
 {
     BAmethodUpdateUI();
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavBAmet, BAmethod->get_active_text());
     }
 }
@@ -3127,7 +3193,14 @@ void Wavelet::TMmethodChanged()
 {
     TMmethodUpdateUI();
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavTMmet, TMmethod->get_active_text());
     }
 }
@@ -3142,7 +3215,14 @@ void Wavelet::BackmethodUpdateUI() {
 void Wavelet::BackmethodChanged()
 {
     //BackmethodUpdateUI();
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavBackmet, Backmethod->get_active_text());
     }
 }
@@ -3174,7 +3254,14 @@ void Wavelet::CLmethodChanged()
 {
     CLmethodUpdateUI();
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavCLmet, CLmethod->get_active_text());
     }
 }
@@ -3226,7 +3313,14 @@ void Wavelet::ushamethodChanged()
         Backmethod->set_sensitive(true);
     }
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavushamet, ushamethod->get_active_text());
     }
 }
@@ -3371,23 +3465,42 @@ void Wavelet::complexmethodChanged()
         updateGUIToMode(1);
     }
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavcomplexmet, complexmethod->get_active_text());
     }
 }
 
 void Wavelet::denmethodChanged()
 {    
-
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavdenmethod, denmethod->get_active_text());
     }
 }
 
 void Wavelet::mixmethodChanged()
 {    
-
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavmixmethod, mixmethod->get_active_text());
     }
 }
@@ -3412,15 +3525,28 @@ void Wavelet::slimethodChanged()
     }
         
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavslimethod, slimethod->get_active_text());
     }
 }
 
 void Wavelet::quamethodChanged()
 {    
-
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavquamethod, quamethod->get_active_text());
     }
 }
@@ -3428,7 +3554,14 @@ void Wavelet::quamethodChanged()
 void Wavelet::TilesmethodChanged()
 {
     //TilesmethodUpdateUI();
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavTilesmet, Tilesmethod->get_active_text());
     }
 }
@@ -3441,7 +3574,14 @@ void Wavelet::daubcoeffmethodUpdateUI() {
 void Wavelet::daubcoeffmethodChanged()
 {
     //daubcoeffmethodUpdateUI();
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavdaubcoeffmet, daubcoeffmethod->get_active_text());
     }
 }
@@ -3455,7 +3595,14 @@ void Wavelet::MedgreinfUpdateUI() {
 void Wavelet::MedgreinfChanged()
 {
     //MedgreinfUpdateUI();
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavedgreinf, Medgreinf->get_active_text());
     }
 }
@@ -3469,7 +3616,14 @@ void Wavelet::DirmethodUpdateUI() {
 void Wavelet::DirmethodChanged()
 {
     //DirmethodUpdateUI();
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavDirmeto, Dirmethod->get_active_text());
     }
 }
@@ -3495,7 +3649,14 @@ void Wavelet::LmethodChanged()
         }
     }
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvWavLmet, Lmethod->get_active_text());
     }
 }
@@ -3627,7 +3788,14 @@ void Wavelet::adjusterUpdateUI(Adjuster* a)
 
 void Wavelet::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (a == edgthresh) {
             listener->panelChanged(EvWavtiles, edgthresh->getTextValue());
         } else if (a == rescon) {
@@ -3901,7 +4069,14 @@ void Wavelet::medianToggled()
         lastmedian = median->get_active();
     }
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (median->get_inconsistent()) {
             listener->panelChanged(EvWavmedian, M("GENERAL_UNCHANGED"));
         } else if (median->get_active()) {
@@ -3973,7 +4148,14 @@ void Wavelet::medianlevToggled()
 
     medianlevUpdateUI();
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (medianlev->get_inconsistent()) {
             listener->panelChanged(EvWavmedianlev, M("GENERAL_UNCHANGED"));
         } else if (medianlev->get_active()) {
@@ -4000,7 +4182,14 @@ void Wavelet::linkedgToggled()
         lastlinkedg = linkedg->get_active();
     }
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (linkedg->get_inconsistent()) {
             listener->panelChanged(EvWavlinkedg, M("GENERAL_UNCHANGED"));
         } else if (linkedg->get_active()) {
@@ -4045,7 +4234,14 @@ void Wavelet::cbenabToggled()
 
     cbenabUpdateUI();
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (cbenab->get_inconsistent()) {
             listener->panelChanged(EvWavcbenab, M("GENERAL_UNCHANGED"));
         } else if (cbenab->get_active()) {
@@ -4095,7 +4291,14 @@ void Wavelet::lipstToggled()
 
     lipstUpdateUI();
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (lipst->get_inconsistent()) {
             listener->panelChanged(EvWavlipst, M("GENERAL_UNCHANGED"));
         } else if (lipst->get_active()) {
@@ -4148,7 +4351,14 @@ void Wavelet::avoidToggled()
         lastavoid = avoid->get_active();
     }
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (avoid->get_inconsistent()) {
             listener->panelChanged(EvWavavoid, M("GENERAL_UNCHANGED"));
         } else if (avoid->get_active()) {
@@ -4174,7 +4384,14 @@ void Wavelet::showmaskToggled()
         lastshowmask = showmask->get_active();
     }
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (showmask->get_inconsistent()) {
             listener->panelChanged(EvWavshowmask, M("GENERAL_UNCHANGED"));
         } else if (showmask->get_active()) {
@@ -4206,7 +4423,14 @@ void Wavelet::oldshToggled()
         lastoldsh = oldsh->get_active();
     }
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (oldsh->get_inconsistent()) {
             listener->panelChanged(EvWavoldsh, M("GENERAL_UNCHANGED"));
         } else if (oldsh->get_active()) {
@@ -4233,7 +4457,14 @@ void Wavelet::tmrToggled()
         lasttmr = tmr->get_active();
     }
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (tmr->get_inconsistent()) {
             listener->panelChanged(EvWavtmr, M("GENERAL_UNCHANGED"));
         } else if (tmr->get_active()) {

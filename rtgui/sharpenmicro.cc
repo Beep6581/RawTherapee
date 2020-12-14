@@ -23,6 +23,7 @@
 
 #include "eventmapper.h"
 #include "guiutils.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
 
@@ -88,6 +89,8 @@ void SharpenMicro::read(const ProcParams* pp, const ParamsEdited* pedited)
 
 void SharpenMicro::write( ProcParams* pp, ParamsEdited* pedited)
 {
+    const SharpenMicroParams old_params = pp->sharpenMicro;
+
     pp->sharpenMicro.enabled    = getEnabled();
     pp->sharpenMicro.matrix     = matrix->get_active ();
     pp->sharpenMicro.amount     = amount->getValue ();
@@ -100,6 +103,11 @@ void SharpenMicro::write( ProcParams* pp, ParamsEdited* pedited)
         pedited->sharpenMicro.amount     = amount->getEditedState ();
         pedited->sharpenMicro.contrast   = contrast->getEditedState ();
         pedited->sharpenMicro.uniformity = uniformity->getEditedState ();
+    }
+
+    if (!old_params.enabled && pp->sharpenMicro != old_params) {
+        setEnabled(true);
+        pp->sharpenMicro.enabled = true;
     }
 }
 
@@ -132,7 +140,13 @@ void SharpenMicro::matrix_toggled ()
         lastmatrix = matrix->get_active ();
     }
 
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (matrix->get_active ()) {
             listener->panelChanged (EvSharpenMicroMatrix, M("GENERAL_ENABLED"));
         } else {
@@ -143,7 +157,13 @@ void SharpenMicro::matrix_toggled ()
 
 void SharpenMicro::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         const Glib::ustring value = a->getTextValue();
 
         if (a == amount) {

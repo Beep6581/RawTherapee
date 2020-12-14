@@ -16,9 +16,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+
 #include <cmath>
-#include "eventmapper.h"
+
 #include "sharpening.h"
+
+#include "eventmapper.h"
+#include "options.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -229,6 +233,7 @@ void Sharpening::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 void Sharpening::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const SharpeningParams old_params = pp->sharpening;
 
     pp->sharpening.contrast         = contrast->getValue ();
     pp->sharpening.blurradius       = blur->getValue ();
@@ -269,6 +274,11 @@ void Sharpening::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->sharpening.halocontrol     =  !halocontrol->get_inconsistent();
         pedited->sharpening.edgesonly       =  !edgesonly->get_inconsistent();
         pedited->sharpening.enabled         =  !get_inconsistent();
+    }
+
+    if (!old_params.enabled && pp->sharpening != old_params) {
+        setEnabled(true);
+        pp->sharpening.enabled = true;
     }
 }
 
@@ -318,8 +328,14 @@ void Sharpening::setDefaults (const ProcParams* defParams, const ParamsEdited* p
 
 void Sharpening::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener && (multiImage || getEnabled()) ) {
-
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         Glib::ustring costr;
 
         if (a == radius || a == dradius || a == blur) {
@@ -370,7 +386,14 @@ void Sharpening::adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop
 
 void Sharpening::adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight)
 {
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (a == threshold) {
             listener->panelChanged(EvShrThresh, threshold->getHistoryString());
         }
@@ -419,7 +442,14 @@ void Sharpening::edgesonly_toggled ()
         }
     }
 
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (edgesonly->get_inconsistent()) {
             listener->panelChanged (EvShrEdgeOnly, M("GENERAL_INITIALVALUES"));
         } else if (edgesonly->get_active ()) {
@@ -454,7 +484,14 @@ void Sharpening::halocontrol_toggled ()
         }
     }
 
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (halocontrol->get_inconsistent()) {
             listener->panelChanged (EvShrHaloControl, M("GENERAL_INITIALVALUES"));
         } else if (halocontrol->get_active ()) {
@@ -479,7 +516,14 @@ void Sharpening::method_changed ()
         }
     }
 
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvShrMethod, method->get_active_text ());
     }
 

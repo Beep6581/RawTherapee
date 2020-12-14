@@ -961,6 +961,7 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const RetinexParams old_params = pp->retinex;
 
     pp->retinex.str    = str->getValue ();
     pp->retinex.scal      = (int)scal->getValue ();
@@ -1091,6 +1092,10 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
         pp->retinex.gammaretinex = "fre";
     }
 
+    if (!old_params.enabled && pp->retinex != old_params) {
+        setEnabled(true);
+        pp->retinex.enabled = true;
+    }
 }
 
 void Retinex::complexmethodChanged()
@@ -1283,11 +1288,11 @@ void Retinex::medianmapChanged ()
 
     if (listener) {
         if (medianmap->get_active()) {
-            if (getEnabled()) {
+            if (getEnabled() || options.autoenable) {
                 listener->panelChanged (EvRetinexmedianmap, M ("GENERAL_ENABLED"));
             }
         } else {
-            if (getEnabled()) {
+            if (getEnabled() || options.autoenable) {
                 listener->panelChanged (EvRetinexmedianmap, M ("GENERAL_DISABLED"));
             }
         }
@@ -1390,7 +1395,13 @@ void Retinex::adjusterChanged(Adjuster* a, double newval)
         }
     }
 
-    if (!listener || !getEnabled()) {
+    if (
+        !listener
+        || (
+            !getEnabled()
+            && !options.autoenable
+        )
+    ) {
         return;
     }
 
@@ -1448,7 +1459,13 @@ void Retinex::autoOpenCurve  ()
 
 void Retinex::curveChanged (CurveEditor* ce)
 {
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (ce == cdshape) {
             listener->panelChanged (EvLCDCurve, M ("HISTORY_CUSTOMCURVE"));
         } else if (ce == cdshapeH) {

@@ -23,6 +23,7 @@
 #include "dehaze.h"
 
 #include "eventmapper.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
 
@@ -83,6 +84,8 @@ void Dehaze::read(const ProcParams *pp, const ParamsEdited *pedited)
 
 void Dehaze::write(ProcParams *pp, ParamsEdited *pedited)
 {
+    const DehazeParams old_params = pp->dehaze;
+
     pp->dehaze.strength = strength->getValue();
     pp->dehaze.saturation = saturation->getValue();
     pp->dehaze.depth = depth->getValue();
@@ -95,6 +98,11 @@ void Dehaze::write(ProcParams *pp, ParamsEdited *pedited)
         pedited->dehaze.depth = depth->getEditedState();
         pedited->dehaze.enabled = !get_inconsistent();
         pedited->dehaze.showDepthMap = !showDepthMap->get_inconsistent();
+    }
+
+    if (!old_params.enabled && pp->dehaze != old_params) {
+        setEnabled(true);
+        pp->dehaze.enabled = true;
     }
 }
 
@@ -117,7 +125,13 @@ void Dehaze::setDefaults(const ProcParams *defParams, const ParamsEdited *pedite
 
 void Dehaze::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (a == strength) {
             listener->panelChanged(EvDehazeStrength, a->getTextValue());
         } else if (a == depth) {

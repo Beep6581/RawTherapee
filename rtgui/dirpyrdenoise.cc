@@ -624,6 +624,7 @@ void DirPyrDenoise::autoOpenCurve ()
 }
 void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const DirPyrDenoiseParams old_params = pp->dirpyrDenoise;
 
     pp->dirpyrDenoise.luma      = luma->getValue ();
     pp->dirpyrDenoise.Ldetail   = Ldetail->getValue ();
@@ -748,12 +749,21 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited)
         pp->dirpyrDenoise.rgbmethod = "55soft";
     }
 
+    if (!old_params.enabled && pp->dirpyrDenoise != old_params) {
+        setEnabled(true);
+        pp->dirpyrDenoise.enabled = true;
+    }
 }
 
 void DirPyrDenoise::curveChanged (CurveEditor* ce)
 {
-
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (ce == lshape) {
             listener->panelChanged (EvDPDNLCurve, M("HISTORY_CUSTOMCURVE"));
         }
@@ -766,8 +776,14 @@ void DirPyrDenoise::curveChanged (CurveEditor* ce)
 
 void DirPyrDenoise::dmethodChanged ()
 {
-
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvDPDNmet, dmethod->get_active_text ());
     }
 }
@@ -783,7 +799,14 @@ void DirPyrDenoise::LmethodChanged ()
         }
     }
 
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvDPDNLmet, Lmethod->get_active_text ());
     }
 }
@@ -839,7 +862,14 @@ void DirPyrDenoise::CmethodChanged ()
 
     }
 
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvDPDNCmet, Cmethod->get_active_text ());
     }
 }
@@ -885,7 +915,14 @@ void DirPyrDenoise::C2methodChanged ()
 
     }
 
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvDPDNC2met, C2method->get_active_text ());
     }
 }
@@ -893,17 +930,29 @@ void DirPyrDenoise::C2methodChanged ()
 
 void DirPyrDenoise::smethodChanged ()
 {
-
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvDPDNsmet, smethod->get_active_text ());
     }
 }
 
 void DirPyrDenoise::medmethodChanged ()
 {
-
-
-    if (listener && (multiImage || getEnabled())  && median->get_active() ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+        && median->get_active()
+    ) {
         listener->panelChanged (EvDPDNmedmet, medmethod->get_active_text ());
     }
 }
@@ -916,7 +965,15 @@ void DirPyrDenoise::rgbmethodChanged ()
         ctboxrgb->show();
     }
 
-    if (listener && (multiImage || getEnabled())  && median->get_active()) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+        && median->get_active()
+    ) {
         listener->panelChanged (EvDPDNrgbmet, rgbmethod->get_active_text ());
     }
 }
@@ -933,7 +990,15 @@ void DirPyrDenoise::methodmedChanged ()
         ctbox->show();
     }
 
-    if (listener && (multiImage || getEnabled())  && median->get_active()) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+        && median->get_active()
+    ) {
         listener->panelChanged (EvDPDNmetmed, methodmed->get_active_text ());
     }
 }
@@ -972,7 +1037,13 @@ void DirPyrDenoise::adjusterChanged(Adjuster* a, double newval)
 {
     const Glib::ustring costr = Glib::ustring::format (std::setw(3), std::fixed, std::setprecision(2), a->getValue());
 
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (a == Ldetail) {
             listener->panelChanged (EvDPDNLdetail, costr);
         } else if (a == luma) {

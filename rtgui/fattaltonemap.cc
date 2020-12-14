@@ -23,6 +23,7 @@
 #include "fattaltonemap.h"
 
 #include "eventmapper.h"
+#include "options.h"
 #include "rtimage.h"
 
 #include "../rtengine/procparams.h"
@@ -77,16 +78,23 @@ void FattalToneMapping::read(const ProcParams *pp, const ParamsEdited *pedited)
 
 void FattalToneMapping::write(ProcParams *pp, ParamsEdited *pedited)
 {
+    const FattalToneMappingParams old_params = pp->fattal;
+
     pp->fattal.threshold = threshold->getValue();
     pp->fattal.amount = amount->getValue();
     pp->fattal.anchor = anchor->getValue();
     pp->fattal.enabled = getEnabled();
 
-    if(pedited) {
+    if (pedited) {
         pedited->fattal.threshold = threshold->getEditedState();
         pedited->fattal.amount = amount->getEditedState();
         pedited->fattal.anchor = anchor->getEditedState();
         pedited->fattal.enabled = !get_inconsistent();
+    }
+
+    if (!old_params.enabled && pp->fattal != old_params) {
+        setEnabled(true);
+        pp->fattal.enabled = true;
     }
 }
 
@@ -109,7 +117,13 @@ void FattalToneMapping::setDefaults(const ProcParams *defParams, const ParamsEdi
 
 void FattalToneMapping::adjusterChanged(Adjuster* a, double newval)
 {
-    if(listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if(a == threshold) {
             listener->panelChanged(EvTMFattalThreshold, a->getTextValue());
         } else if(a == amount) {

@@ -1135,6 +1135,7 @@ void ColorAppearance::autoOpenCurve  ()
 
 void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const ColorAppearanceParams old_params = pp->colorappearance;
 
     pp->colorappearance.degree        = degree->getValue ();
     pp->colorappearance.autodegree    = degree->getAutoValue ();
@@ -1319,6 +1320,10 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pp->colorappearance.algo = "ALL";
     }
 
+    if (!old_params.enabled && pp->colorappearance != old_params) {
+        setEnabled(true);
+        pp->colorappearance.enabled = true;
+    }
 }
 
 
@@ -1379,7 +1384,14 @@ void ColorAppearance::complexmethodChanged()
         updateGUIToMode(1);
     }
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvCATcomplex, complexmethod->get_active_text());
     }
 }
@@ -1387,7 +1399,14 @@ void ColorAppearance::complexmethodChanged()
 void ColorAppearance::modelmethodChanged()
 {    
 
-    if (listener && (multiImage || getEnabled())) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged(EvCATmodel, modelmethod->get_active_text());
     }
 }
@@ -1905,7 +1924,14 @@ void ColorAppearance::colorForValue (double valX, double valY, enum ColorCaller:
 
 void ColorAppearance::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (a == degree) {
             listener->panelChanged (EvCATDegree, a->getTextValue());
         } else if (a == degreeout) {
@@ -2002,8 +2028,14 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
 
     }
 
-    if (listener && (multiImage || getEnabled()) ) {
-
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (a == degree) {
             if (degree->getAutoInconsistent()) {
                 listener->panelChanged (EvCATAutoDegree, M ("GENERAL_UNCHANGED"));
@@ -2076,7 +2108,14 @@ void ColorAppearance::enabledChanged ()
 void ColorAppearance::surrsrcChanged ()
 {
 
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvCATsurr, surrsrc->get_active_text ());
     }
 }
@@ -2085,7 +2124,14 @@ void ColorAppearance::surrsrcChanged ()
 void ColorAppearance::surroundChanged ()
 {
 
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvCATMethodsur, surround->get_active_text ());
     }
 }
@@ -2108,7 +2154,14 @@ void ColorAppearance::wbmodelChanged ()
         illum->show();
     }
 
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvCATMethodWB, wbmodel->get_active_text ());
     }
 }
@@ -2148,7 +2201,14 @@ void ColorAppearance::illumChanged ()
             greensc->set_sensitive(true);
     }
 
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvCATillum, illum->get_active_text ());
     }
 }
@@ -2222,7 +2282,14 @@ void ColorAppearance::algoChanged ()
         curveEditorG3->show();
     }
 
-    if (listener && (multiImage || getEnabled()) ) {
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvCATMethodalg, algo->get_active_text ());
     }
 }

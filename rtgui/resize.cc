@@ -23,6 +23,7 @@
 
 #include "eventmapper.h"
 #include "guiutils.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
 
@@ -200,6 +201,8 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 void Resize::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const ResizeParams old_params = pp->resize;
+
     int dataSpec = spec->get_active_row_number();
 
     pp->resize.scale  = scale->getValue();
@@ -245,6 +248,11 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited)
         }
         pedited->resize.allowUpscaling = !allowUpscaling->get_inconsistent();
     }
+
+    if (!old_params.enabled && pp->resize != old_params) {
+        setEnabled(true);
+        pp->resize.enabled = true;
+    }
 }
 
 void Resize::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
@@ -270,7 +278,14 @@ void Resize::adjusterChanged(Adjuster* a, double newval)
         hconn.block (false);
     }
 
-    if (listener && (getEnabled () || batchMode)) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+            || batchMode
+        )
+    ) {
         listener->panelChanged (EvResizeScale, Glib::ustring::format (std::setw(5), std::fixed, std::setprecision(2), scale->getValue()));
     }
 }
@@ -309,7 +324,14 @@ void Resize::appliesToChanged ()
     //printf("\nPASSAGE EN MODE \"%s\"\n\n", appliesTo->get_active_text().c_str());
     setDimensions();
 
-    if (listener && (getEnabled () || batchMode)) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+            || batchMode
+        )
+    ) {
         //printf("Appel du listener\n");
         listener->panelChanged (EvResizeAppliesTo, appliesTo->get_active_text());
     }
@@ -317,8 +339,14 @@ void Resize::appliesToChanged ()
 
 void Resize::methodChanged ()
 {
-
-    if (listener && (getEnabled () || batchMode)) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+            || batchMode
+        )
+    ) {
         listener->panelChanged (EvResizeMethod, method->get_active_text());
     }
 
@@ -491,7 +519,11 @@ void Resize::entryWChanged ()
         if (spec->get_active_row_number() == 3) {
             notifyBBox();
         } else {
-            if (getEnabled () || batchMode) {
+            if (
+                getEnabled()
+                || options.autoenable
+                || batchMode
+            ) {
                 listener->panelChanged (EvResizeWidth, Glib::ustring::format (w->get_value_as_int()));
             }
         }
@@ -524,7 +556,11 @@ void Resize::entryHChanged ()
         if (spec->get_active_row_number() == 3) {
             notifyBBox();
         } else {
-            if (getEnabled () || batchMode) {
+            if (
+                getEnabled()
+                || options.autoenable
+                || batchMode
+            ) {
                 listener->panelChanged (EvResizeHeight, Glib::ustring::format (h->get_value_as_int()));
             }
         }
@@ -608,7 +644,14 @@ void Resize::updateGUI ()
 
 void Resize::notifyBBox()
 {
-    if (listener && (getEnabled () || batchMode)) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+            || batchMode
+        )
+    ) {
         listener->panelChanged (EvResizeBoundingBox, Glib::ustring::compose("(%1x%2)", (int)w->get_value(), (int)h->get_value() ));
     }
 }

@@ -131,6 +131,8 @@ void RGBCurves::autoOpenCurve  ()
 
 void RGBCurves::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const RGBCurvesParams old_params = pp->rgbCurves;
+
     pp->rgbCurves.enabled = getEnabled();
     pp->rgbCurves.rcurve         = Rshape->getCurve ();
     pp->rgbCurves.gcurve         = Gshape->getCurve ();
@@ -144,6 +146,11 @@ void RGBCurves::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->rgbCurves.bcurve    = !Bshape->isUnChanged ();
         pedited->rgbCurves.lumamode  = !lumamode->get_inconsistent();
     }
+
+    if (!old_params.enabled && pp->rgbCurves != old_params) {
+        setEnabled(true);
+        pp->rgbCurves.enabled = true;
+    }
 }
 
 
@@ -155,8 +162,13 @@ void RGBCurves::write (ProcParams* pp, ParamsEdited* pedited)
  */
 void RGBCurves::curveChanged (CurveEditor* ce)
 {
-
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (ce == Rshape) {
             listener->panelChanged (EvRGBrCurve, M("HISTORY_CUSTOMCURVE"));
         }
@@ -187,7 +199,13 @@ void RGBCurves::lumamodeChanged ()
         lastLumamode = lumamode->get_active ();
     }
 
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (lumamode->get_active ()) {
             listener->panelChanged (EvRGBrCurveLumamode, M("GENERAL_ENABLED"));
         } else {

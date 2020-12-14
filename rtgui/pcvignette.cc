@@ -3,6 +3,8 @@
  */
 #include "pcvignette.h"
 
+#include "options.h"
+
 #include "../rtengine/procparams.h"
 
 using namespace rtengine;
@@ -50,6 +52,8 @@ void PCVignette::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 void PCVignette::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const PCVignetteParams old_params = pp->pcvignette;
+
     pp->pcvignette.strength = strength->getValue ();
     pp->pcvignette.feather = feather->getIntValue ();
     pp->pcvignette.roundness = roundness->getIntValue ();
@@ -60,6 +64,11 @@ void PCVignette::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->pcvignette.feather = feather->getEditedState ();
         pedited->pcvignette.roundness = roundness->getEditedState ();
         pedited->pcvignette.enabled = !get_inconsistent();
+    }
+
+    if (!old_params.enabled && pp->pcvignette != old_params) {
+        setEnabled(true);
+        pp->pcvignette.enabled = true;
     }
 }
 
@@ -82,7 +91,13 @@ void PCVignette::setDefaults (const ProcParams* defParams, const ParamsEdited* p
 
 void PCVignette::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (a == strength) {
             listener->panelChanged (EvPCVignetteStrength, strength->getTextValue());
         } else if (a == feather) {

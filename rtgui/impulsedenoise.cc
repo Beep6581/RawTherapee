@@ -22,6 +22,7 @@
 #include "impulsedenoise.h"
 
 #include "guiutils.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
 
@@ -59,6 +60,7 @@ void ImpulseDenoise::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 void ImpulseDenoise::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const ImpulseDenoiseParams old_params = pp->impulseDenoise;
 
     pp->impulseDenoise.thresh    = thresh->getValue ();
     pp->impulseDenoise.enabled   = getEnabled();
@@ -66,6 +68,11 @@ void ImpulseDenoise::write (ProcParams* pp, ParamsEdited* pedited)
     if (pedited) {
         pedited->impulseDenoise.thresh        = thresh->getEditedState ();
         pedited->impulseDenoise.enabled       = !get_inconsistent();
+    }
+
+    if (!old_params.enabled && pp->impulseDenoise != old_params) {
+        setEnabled(true);
+        pp->impulseDenoise.enabled = true;
     }
 }
 
@@ -83,7 +90,13 @@ void ImpulseDenoise::setDefaults (const ProcParams* defParams, const ParamsEdite
 
 void ImpulseDenoise::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         listener->panelChanged (EvIDNThresh, Glib::ustring::format (std::setw(2), std::fixed, std::setprecision(1), a->getValue()));
     }
 }

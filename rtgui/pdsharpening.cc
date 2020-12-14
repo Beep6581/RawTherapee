@@ -128,6 +128,7 @@ void PdSharpening::read(const ProcParams* pp, const ParamsEdited* pedited)
 
 void PdSharpening::write(ProcParams* pp, ParamsEdited* pedited)
 {
+    const CaptureSharpeningParams old_params = pp->pdsharpening;
 
     pp->pdsharpening.contrast = contrast->getValue();
     pp->pdsharpening.autoContrast = contrast->getAutoValue();
@@ -147,6 +148,11 @@ void PdSharpening::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->pdsharpening.deconviter = diter->getEditedState();
         pedited->pdsharpening.deconvitercheck = !itercheck->get_inconsistent();
         pedited->pdsharpening.enabled = !get_inconsistent();
+    }
+
+    if (!old_params.enabled && pp->pdsharpening != old_params) {
+        setEnabled(true);
+        pp->pdsharpening.enabled = true;
     }
 }
 
@@ -180,8 +186,14 @@ void PdSharpening::checkBoxToggled (CheckBox* c, CheckValue newval)
 
 void PdSharpening::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener && (multiImage || getEnabled())) {
-
+    if (
+        listener
+        && (
+            multiImage
+            || getEnabled()
+            || options.autoenable
+        )
+    ) {
         Glib::ustring costr;
 
         if (a == dradius || a == dradiusOffset) {

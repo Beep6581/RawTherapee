@@ -383,6 +383,8 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
 
 void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
+    const rtengine::procparams::LocallabParams old_params = pp->locallab;
+
     // Update Locallab activation state
     pp->locallab.enabled = getEnabled();
 
@@ -959,6 +961,11 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
                 // Note: No need to manage pedited as batch mode is deactivated for Locallab
             }
+    }
+
+    if (!old_params.enabled && pp->locallab != old_params) {
+        setEnabled(true);
+        pp->locallab.enabled = true;
     }
 }
 

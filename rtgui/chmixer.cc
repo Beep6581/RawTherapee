@@ -18,6 +18,7 @@
  */
 #include "chmixer.h"
 
+#include "options.h"
 #include "rtimage.h"
 
 #include "../rtengine/procparams.h"
@@ -129,6 +130,7 @@ void ChMixer::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 void ChMixer::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const ChannelMixerParams old_params = pp->chmixer;
 
     for (int i = 0; i < 3; i++) {
         pp->chmixer.red[i] = red[i]->getValue() * 10;
@@ -144,6 +146,11 @@ void ChMixer::write (ProcParams* pp, ParamsEdited* pedited)
             pedited->chmixer.blue[i] = blue[i]->getEditedState ();
         }
         pedited->chmixer.enabled = !get_inconsistent();
+    }
+
+    if (!old_params.enabled && pp->chmixer != old_params) {
+        setEnabled(true);
+        pp->chmixer.enabled = true;
     }
 }
 
@@ -173,7 +180,13 @@ void ChMixer::setDefaults (const ProcParams* defParams, const ParamsEdited* pedi
 void ChMixer::adjusterChanged(Adjuster* a, double newval)
 {
 
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         Glib::ustring descr = Glib::ustring::compose ("R=%1,%2,%3\nG=%4,%5,%6\nB=%7,%8,%9",
                               red[0]->getValue(), red[1]->getValue(), red[2]->getValue(),
                               green[0]->getValue(), green[1]->getValue(), green[2]->getValue(),

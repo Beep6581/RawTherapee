@@ -379,6 +379,8 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
 
 void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
 {
+    const rtengine::procparams::FilmNegativeParams old_params = pp->filmNegative;
+
     if (colorSpace->get_active_row_number() != 3) {  // UNCHANGED entry, see setBatchMode
         pp->filmNegative.colorSpace = rtengine::procparams::FilmNegativeParams::ColorSpace(colorSpace->get_active_row_number());
     }
@@ -408,6 +410,10 @@ void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         pp->filmNegative.backCompat = BackCompat::CURRENT;
     }
 
+    if (!old_params.enabled && pp->filmNegative != old_params) {
+        setEnabled(true);
+        pp->filmNegative.enabled = true;
+    }
 }
 
 void FilmNegative::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
@@ -458,7 +464,13 @@ void FilmNegative::setBatchMode(bool batchMode)
 
 void FilmNegative::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (a == redRatio || a == greenExp || a == blueRatio) {
             listener->panelChanged(
                 evFilmNegativeExponents,
@@ -585,7 +597,7 @@ bool FilmNegative::button1Pressed(int modifierKey)
 
                     enableListener();
 
-                    if (getEnabled()) {
+                    if (getEnabled() || options.autoenable) {
                         listener->panelChanged(
                             evFilmNegativeExponents,
                             Glib::ustring::compose(

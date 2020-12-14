@@ -353,6 +353,8 @@ void LCurve::setEditProvider  (EditDataProvider *provider)
 
 void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const LCurveParams old_params = pp->labCurve;
+
     pp->labCurve.enabled = getEnabled();
     
     pp->labCurve.brightness    = brightness->getValue ();
@@ -399,6 +401,10 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->labCurve.enabled = !get_inconsistent();
     }
 
+    if (!old_params.enabled && pp->labCurve != old_params) {
+        setEnabled(true);
+        pp->labCurve.enabled = true;
+    }
 }
 
 void LCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
@@ -440,7 +446,13 @@ void LCurve::avoidcolorshift_toggled ()
         lastACVal = avoidcolorshift->get_active ();
     }
 
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (avoidcolorshift->get_active ()) {
             listener->panelChanged (EvLAvoidColorShift, M("GENERAL_ENABLED"));
         } else {
@@ -467,7 +479,13 @@ void LCurve::lcredsk_toggled ()
         lcshape->refresh();
     }
 
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (lcredsk->get_active ()) {
             listener->panelChanged (EvLLCredsk, M("GENERAL_ENABLED"));
         } else {
@@ -486,8 +504,13 @@ void LCurve::lcredsk_toggled ()
  */
 void LCurve::curveChanged (CurveEditor* ce)
 {
-
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (ce == lshape) {
             listener->panelChanged (EvLLCurve, M("HISTORY_CUSTOMCURVE"));
         }
@@ -541,15 +564,33 @@ void LCurve::adjusterChanged(Adjuster* a, double newval)
     }
 
     if (a == brightness) {
-        if (listener && getEnabled()) {
+        if (
+            listener
+            && (
+                getEnabled()
+                || options.autoenable
+            )
+        ) {
             listener->panelChanged (EvLBrightness, costr);
         }
     } else if (a == contrast) {
-        if (listener && getEnabled()) {
+        if (
+            listener
+            && (
+                getEnabled()
+                || options.autoenable
+            )
+        ) {
             listener->panelChanged (EvLContrast, costr);
         }
     } else if (a == rstprotection) {
-        if (listener && getEnabled()) {
+        if (
+            listener
+            && (
+                getEnabled()
+                || options.autoenable
+            )
+        ) {
             listener->panelChanged (EvLRSTProtection, costr);
         }
     } else if (a == chromaticity) {
@@ -565,7 +606,13 @@ void LCurve::adjusterChanged(Adjuster* a, double newval)
             lcredsk->set_sensitive( int(newval) > -100 );
         }
 
-        if (listener && getEnabled()) {
+        if (
+            listener
+            && (
+                getEnabled()
+                || options.autoenable
+            )
+        ) {
             listener->panelChanged (EvLSaturation, costr);
         }
     }

@@ -502,8 +502,9 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 void Crop::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    const CropParams old_params = pp->crop;
 
-    pp->crop.enabled = getEnabled ();
+    pp->crop.enabled = getEnabled();
     pp->crop.x = nx;
     pp->crop.y = ny;
     pp->crop.w = nw;
@@ -563,6 +564,10 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->crop.y             = yDirty;
     }
 
+    if (!old_params.enabled && pp->crop != old_params) {
+        setEnabled(true);
+        pp->crop.enabled = true;
+    }
 }
 
 void Crop::trim (ProcParams* pp, int ow, int oh)
@@ -637,8 +642,13 @@ void Crop::doresetCrop ()
 
 void Crop::notifyListener ()
 {
-
-    if (listener && getEnabled ()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (nw == 1 && nh == 1) {
             setEnabled(false);
             nx = (int)x->get_value ();

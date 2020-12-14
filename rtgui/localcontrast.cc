@@ -23,6 +23,7 @@
 #include "localcontrast.h"
 
 #include "eventmapper.h"
+#include "options.h"
 
 #include "../rtengine/procparams.h"
 
@@ -84,6 +85,8 @@ void LocalContrast::read(const ProcParams *pp, const ParamsEdited *pedited)
 
 void LocalContrast::write(ProcParams *pp, ParamsEdited *pedited)
 {
+    const LocalContrastParams old_params = pp->localContrast;
+
     pp->localContrast.radius = radius->getValue();
     pp->localContrast.amount = amount->getValue();
     pp->localContrast.darkness = darkness->getValue();
@@ -96,6 +99,11 @@ void LocalContrast::write(ProcParams *pp, ParamsEdited *pedited)
         pedited->localContrast.darkness = darkness->getEditedState();
         pedited->localContrast.lightness = lightness->getEditedState();
         pedited->localContrast.enabled = !get_inconsistent();
+    }
+
+    if (!old_params.enabled && pp->localContrast != old_params) {
+        setEnabled(true);
+        pp->localContrast.enabled = true;
     }
 }
 
@@ -121,7 +129,13 @@ void LocalContrast::setDefaults(const ProcParams *defParams, const ParamsEdited 
 
 void LocalContrast::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener && getEnabled()) {
+    if (
+        listener
+        && (
+            getEnabled()
+            || options.autoenable
+        )
+    ) {
         if (a == radius) {
             listener->panelChanged(EvLocalContrastRadius, a->getTextValue());
         } else if (a == amount) {

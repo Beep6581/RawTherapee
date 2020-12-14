@@ -356,7 +356,6 @@ void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
 
 void PerspCorrection::write (ProcParams* pp, ParamsEdited* pedited)
 {
-
     pp->perspective.render = render;
 
     pp->perspective.horizontal  = horiz->getValue ();

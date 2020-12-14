@@ -966,11 +966,15 @@ Gtk::Widget* Preferences::getGeneralPanel()
     setExpandAlignProperties(ckbHistogramPositionLeft, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
     workflowGrid->attach_next_to(*ckbHistogramPositionLeft, *zoomOnScrollCB, Gtk::POS_BOTTOM, 1, 1);
 
+    autoenableCB = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_AUTOENABLE")));
+    setExpandAlignProperties(autoenableCB, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
+    workflowGrid->attach_next_to(*autoenableCB, *ckbHistogramPositionLeft, Gtk::POS_BOTTOM, 1, 1);
+
     ckbFileBrowserToolbarSingleRow = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_FILEBROWSERTOOLBARSINGLEROW")));
     setExpandAlignProperties(ckbFileBrowserToolbarSingleRow, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
     ckbShowFilmStripToolBar = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_SHOWFILMSTRIPTOOLBAR")));
     setExpandAlignProperties(ckbShowFilmStripToolBar, false, false, Gtk::ALIGN_START, Gtk::ALIGN_START);
-    workflowGrid->attach_next_to(*ckbFileBrowserToolbarSingleRow, *ckbHistogramPositionLeft, Gtk::POS_BOTTOM, 1, 1);
+    workflowGrid->attach_next_to(*ckbFileBrowserToolbarSingleRow, *autoenableCB, Gtk::POS_BOTTOM, 1, 1);
     workflowGrid->attach_next_to(*ckbShowFilmStripToolBar, *inspectorWindowCB, Gtk::POS_BOTTOM, 2, 1);
 
     Gtk::Label* hb4label = Gtk::manage(new Gtk::Label(M("PREFERENCES_TP_LABEL")));
@@ -1828,6 +1832,7 @@ void Preferences::storePreferences()
     moptions.complexity = complexitylocal->get_active_row_number();
     moptions.inspectorWindow = inspectorWindowCB->get_active();
     moptions.zoomOnScroll = zoomOnScrollCB->get_active();
+    moptions.autoenable = autoenableCB->get_active();
     moptions.histogramPosition = ckbHistogramPositionLeft->get_active() ? 1 : 2;
     moptions.FileBrowserToolbarSingleRow = ckbFileBrowserToolbarSingleRow->get_active();
     moptions.showFilmStripToolBar = ckbShowFilmStripToolBar->get_active();
@@ -2044,6 +2049,7 @@ void Preferences::fillPreferences()
     complexitylocal->set_active(moptions.complexity); 
     inspectorWindowCB->set_active(moptions.inspectorWindow);
     zoomOnScrollCB->set_active(moptions.zoomOnScroll);
+    autoenableCB->set_active(moptions.autoenable);
 
     ckbHistogramPositionLeft->set_active(moptions.histogramPosition == 1);
     ckbFileBrowserToolbarSingleRow->set_active(moptions.FileBrowserToolbarSingleRow);
