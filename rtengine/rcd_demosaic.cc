@@ -196,7 +196,8 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
 #else
                     const vfloat VH_Disc = vabsf(zd5v - VH_Central_Value) < vabsf(zd5v - VH_Neighbourhood_Value) ? VH_Neighbourhood_Value : VH_Central_Value;
 #endif
-                    STC2VFU(rgb[1][indx], vintpf(VH_Disc, H_Est, V_Est));
+                    const vfloat result = vintpf(VH_Disc, H_Est, V_Est);
+                    STC2VFU(rgb[1][indx], result);
                }
 #endif
                for (; col < tilecols - 4; col += 2, indx += 2) {
