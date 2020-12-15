@@ -1434,7 +1434,7 @@ ColorAppearanceParams::ColorAppearanceParams() :
     badpixsl(0),
     wbmodel("RawT"),
     illum("i50"),
-    algo("No"),
+    algo("JC"),
     contrast(0.0),
     qcontrast(0.0),
     jlight(0.0),
