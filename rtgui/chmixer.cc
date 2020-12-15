@@ -148,7 +148,11 @@ void ChMixer::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->chmixer.enabled = !get_inconsistent();
     }
 
-    if (!old_params.enabled && pp->chmixer != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->chmixer != old_params
+    ) {
         setEnabled(true);
         pp->chmixer.enabled = true;
     }

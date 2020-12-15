@@ -749,7 +749,11 @@ void DirPyrDenoise::write (ProcParams* pp, ParamsEdited* pedited)
         pp->dirpyrDenoise.rgbmethod = "55soft";
     }
 
-    if (!old_params.enabled && pp->dirpyrDenoise != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->dirpyrDenoise != old_params
+    ) {
         setEnabled(true);
         pp->dirpyrDenoise.enabled = true;
     }

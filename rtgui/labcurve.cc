@@ -401,7 +401,11 @@ void LCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->labCurve.enabled = !get_inconsistent();
     }
 
-    if (!old_params.enabled && pp->labCurve != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->labCurve != old_params
+    ) {
         setEnabled(true);
         pp->labCurve.enabled = true;
     }

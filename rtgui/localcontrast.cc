@@ -101,7 +101,11 @@ void LocalContrast::write(ProcParams *pp, ParamsEdited *pedited)
         pedited->localContrast.enabled = !get_inconsistent();
     }
 
-    if (!old_params.enabled && pp->localContrast != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->localContrast != old_params
+    ) {
         setEnabled(true);
         pp->localContrast.enabled = true;
     }

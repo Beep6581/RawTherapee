@@ -564,7 +564,11 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->crop.y             = yDirty;
     }
 
-    if (!old_params.enabled && pp->crop != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->crop != old_params
+    ) {
         setEnabled(true);
         pp->crop.enabled = true;
     }

@@ -137,7 +137,11 @@ void HSVEqualizer::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->hsvequalizer.enabled = !get_inconsistent();
     }
 
-    if (!old_params.enabled && pp->hsvequalizer != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->hsvequalizer != old_params
+    ) {
         setEnabled(true);
         pp->hsvequalizer.enabled = true;
     }

@@ -660,7 +660,11 @@ void BlackWhite::write (ProcParams* pp, ParamsEdited* pedited)
     pp->blackwhite.setting = getSettingString();
     pp->blackwhite.filter = getFilterString();
 
-    if (!old_params.enabled && pp->blackwhite != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->blackwhite != old_params
+    ) {
         setEnabled(true);
         pp->blackwhite.enabled = true;
     }

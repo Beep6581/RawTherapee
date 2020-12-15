@@ -764,7 +764,11 @@ void WhiteBalance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->wb.equal = equal->getValue ();
     pp->wb.tempBias = tempBias->getValue ();
 
-    if (!old_params.enabled && pp->wb != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->wb != old_params
+    ) {
         setEnabled(true);
         pp->wb.enabled = true;
     }

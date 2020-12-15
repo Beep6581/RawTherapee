@@ -134,7 +134,11 @@ void Defringe::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->defringe.huecurve  = !chshape->isUnChanged ();
     }
 
-    if (!old_params.enabled && pp->defringe != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->defringe != old_params
+    ) {
         setEnabled(true);
         pp->defringe.enabled = true;
     }

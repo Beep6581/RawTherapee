@@ -204,7 +204,11 @@ void FilmSimulation::write( rtengine::procparams::ProcParams* pp, ParamsEdited* 
 
     pp->filmSimulation.strength = m_strength->getValue();
 
-    if (!old_params.enabled && pp->filmSimulation != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->filmSimulation != old_params
+    ) {
         setEnabled(true);
         pp->filmSimulation.enabled = true;
     }

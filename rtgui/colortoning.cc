@@ -791,7 +791,11 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited)
         pp->colorToning.twocolor = "Two";
     }
 
-    if (!old_params.enabled && pp->colorToning != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->colorToning != old_params
+    ) {
         setEnabled(true);
         pp->colorToning.enabled = true;
     }

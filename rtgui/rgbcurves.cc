@@ -147,7 +147,11 @@ void RGBCurves::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->rgbCurves.lumamode  = !lumamode->get_inconsistent();
     }
 
-    if (!old_params.enabled && pp->rgbCurves != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->rgbCurves != old_params
+    ) {
         setEnabled(true);
         pp->rgbCurves.enabled = true;
     }

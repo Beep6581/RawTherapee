@@ -963,7 +963,11 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             }
     }
 
-    if (!old_params.enabled && pp->locallab != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->locallab != old_params
+    ) {
         setEnabled(true);
         pp->locallab.enabled = true;
     }

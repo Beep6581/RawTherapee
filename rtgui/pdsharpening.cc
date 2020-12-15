@@ -150,7 +150,11 @@ void PdSharpening::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->pdsharpening.enabled = !get_inconsistent();
     }
 
-    if (!old_params.enabled && pp->pdsharpening != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->pdsharpening != old_params
+    ) {
         setEnabled(true);
         pp->pdsharpening.enabled = true;
     }

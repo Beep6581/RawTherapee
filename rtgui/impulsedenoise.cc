@@ -70,7 +70,11 @@ void ImpulseDenoise::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->impulseDenoise.enabled       = !get_inconsistent();
     }
 
-    if (!old_params.enabled && pp->impulseDenoise != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->impulseDenoise != old_params
+    ) {
         setEnabled(true);
         pp->impulseDenoise.enabled = true;
     }

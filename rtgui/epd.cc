@@ -124,7 +124,11 @@ void EdgePreservingDecompositionUI::write(ProcParams *pp, ParamsEdited *pedited)
         pedited->epd.enabled = !get_inconsistent();
     }
 
-    if (!old_params.enabled && pp->epd != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->epd != old_params
+    ) {
         setEnabled(true);
         pp->epd.enabled = true;
     }

@@ -105,7 +105,11 @@ void SharpenMicro::write( ProcParams* pp, ParamsEdited* pedited)
         pedited->sharpenMicro.uniformity = uniformity->getEditedState ();
     }
 
-    if (!old_params.enabled && pp->sharpenMicro != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->sharpenMicro != old_params
+    ) {
         setEnabled(true);
         pp->sharpenMicro.enabled = true;
     }

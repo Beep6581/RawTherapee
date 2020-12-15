@@ -66,7 +66,11 @@ void PCVignette::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->pcvignette.enabled = !get_inconsistent();
     }
 
-    if (!old_params.enabled && pp->pcvignette != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->pcvignette != old_params
+    ) {
         setEnabled(true);
         pp->pcvignette.enabled = true;
     }

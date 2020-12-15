@@ -1320,7 +1320,11 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pp->colorappearance.algo = "ALL";
     }
 
-    if (!old_params.enabled && pp->colorappearance != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->colorappearance != old_params
+    ) {
         setEnabled(true);
         pp->colorappearance.enabled = true;
     }

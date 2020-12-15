@@ -172,7 +172,11 @@ void Vibrance::write( ProcParams* pp, ParamsEdited* pedited)
         pedited->vibrance.skintonescurve  = !skinTonesCurve->isUnChanged ();
     }
 
-    if (!old_params.enabled && pp->vibrance != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->vibrance != old_params
+    ) {
         setEnabled(true);
         pp->vibrance.enabled = true;
     }

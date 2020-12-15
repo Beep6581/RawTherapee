@@ -2561,7 +2561,11 @@ void Wavelet::write(ProcParams* pp, ParamsEdited* pedited)
 
     pp->wavelet.Lmethod = Lmethod->get_active_row_number() + 1;
 
-    if (!old_params.enabled && pp->wavelet != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->wavelet != old_params
+    ) {
         setEnabled(true);
         pp->wavelet.enabled = true;
     }

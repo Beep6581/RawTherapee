@@ -249,7 +249,11 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->resize.allowUpscaling = !allowUpscaling->get_inconsistent();
     }
 
-    if (!old_params.enabled && pp->resize != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->resize != old_params
+    ) {
         setEnabled(true);
         pp->resize.enabled = true;
     }

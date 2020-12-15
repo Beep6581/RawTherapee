@@ -410,7 +410,11 @@ void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         pp->filmNegative.backCompat = BackCompat::CURRENT;
     }
 
-    if (!old_params.enabled && pp->filmNegative != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->filmNegative != old_params
+    ) {
         setEnabled(true);
         pp->filmNegative.enabled = true;
     }

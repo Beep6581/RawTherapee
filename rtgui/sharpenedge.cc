@@ -92,7 +92,11 @@ void SharpenEdge::write( ProcParams* pp, ParamsEdited* pedited)
         pedited->sharpenEdge.threechannels = !threechannels->get_inconsistent();
     }
 
-    if (!old_params.enabled && pp->sharpenEdge != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->sharpenEdge != old_params
+    ) {
         setEnabled(true);
         pp->sharpenEdge.enabled = true;
     }

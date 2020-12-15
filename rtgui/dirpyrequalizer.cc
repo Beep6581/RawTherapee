@@ -267,7 +267,11 @@ void DirPyrEqualizer::write (ProcParams* pp, ParamsEdited* pedited)
             pp->dirpyrequalizer.algo = "LA";
             */
 
-    if (!old_params.enabled && pp->dirpyrequalizer != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->dirpyrequalizer != old_params
+    ) {
         setEnabled(true);
         pp->dirpyrequalizer.enabled = true;
     }

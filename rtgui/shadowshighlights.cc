@@ -130,7 +130,11 @@ void ShadowsHighlights::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->sh.lab = colorspace->get_active_row_number() != 2;
     }
 
-    if (!old_params.enabled && pp->sh != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->sh != old_params
+    ) {
         setEnabled(true);
         pp->sh.enabled = true;
     }

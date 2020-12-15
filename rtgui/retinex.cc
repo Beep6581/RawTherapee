@@ -1092,7 +1092,11 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
         pp->retinex.gammaretinex = "fre";
     }
 
-    if (!old_params.enabled && pp->retinex != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->retinex != old_params
+    ) {
         setEnabled(true);
         pp->retinex.enabled = true;
     }

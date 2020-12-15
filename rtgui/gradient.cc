@@ -232,7 +232,11 @@ void Gradient::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->gradient.enabled = !get_inconsistent();
     }
 
-    if (!old_params.enabled && pp->gradient != old_params) {
+    if (
+        options.autoenable
+        && !old_params.enabled
+        && pp->gradient != old_params
+    ) {
         setEnabled(true);
         pp->gradient.enabled = true;
     }
