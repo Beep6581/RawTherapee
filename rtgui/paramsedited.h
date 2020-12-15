@@ -620,7 +620,7 @@ public:
         bool blMethod;
         bool chroMethod;
         bool quamethod;
-        bool usemask;
+ //       bool usemask;
         bool levelthr;
         bool lnoiselow;
         bool levelthrlow;

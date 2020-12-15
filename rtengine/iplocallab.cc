@@ -659,7 +659,7 @@ struct local_params {
     bool activspot;
     float thrlow;
     float thrhigh;
-    bool usemask;
+ //   bool usemask;
     float lnoiselow;
 
 };
@@ -780,7 +780,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 
     lp.thrlow = locallab.spots.at(sp).levelthrlow;
     lp.thrhigh = locallab.spots.at(sp).levelthr;
-    lp.usemask = locallab.spots.at(sp).usemask;
+ //   lp.usemask = locallab.spots.at(sp).usemask;
     lp.lnoiselow = locallab.spots.at(sp).lnoiselow;
 
     //  printf("llColorMask=%i lllcMask=%i llExpMask=%i  llSHMask=%i llcbMask=%i llretiMask=%i lltmMask=%i llblMask=%i llvibMask=%i\n", llColorMask, lllcMask, llExpMask, llSHMask, llcbMask, llretiMask, lltmMask, llblMask, llvibMask);

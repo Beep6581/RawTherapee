@@ -664,7 +664,7 @@ private:
     CurveEditorGroup* const LocalcurveEditorwavden;
     FlatCurveEditor* const wavshapeden;
     MyExpander* const expdenoise1;
-    Gtk::CheckButton* const usemask;
+//    Gtk::CheckButton* const usemask;
     Adjuster* const lnoiselow;
     Adjuster* const levelthr;
     Adjuster* const levelthrlow;

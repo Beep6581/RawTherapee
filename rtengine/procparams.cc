@@ -3307,7 +3307,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     quamethod("cons"),
     blurMethod("norm"),
     medMethod("33"),
-    usemask(false),
+ //   usemask(false),
     levelthr(40.),
     lnoiselow(1.),
     levelthrlow(12.),
@@ -4350,7 +4350,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && chroMethod == other.chroMethod
         && quamethod == other.quamethod
         && blurMethod == other.blurMethod
-        && usemask == other.usemask
+   //     && usemask == other.usemask
         && levelthr == other.levelthr
         && lnoiselow == other.lnoiselow
         && levelthrlow == other.levelthrlow
@@ -5936,7 +5936,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->chroMethod, "Locallab", "ChroMethod_" + index_str, spot.chroMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->quamethod, "Locallab", "QuaMethod_" + index_str, spot.quamethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blurMethod, "Locallab", "BlurMethod_" + index_str, spot.blurMethod, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->usemask, "Locallab", "Usemaskb_" + index_str, spot.usemask, keyFile);
+          //          saveToKeyfile(!pedited || spot_edited->usemask, "Locallab", "Usemaskb_" + index_str, spot.usemask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->levelthr, "Locallab", "Levelthr_" + index_str, spot.levelthr, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lnoiselow, "Locallab", "Lnoiselow_" + index_str, spot.lnoiselow, keyFile);
                     saveToKeyfile(!pedited || spot_edited->levelthrlow, "Locallab", "Levelthrlow_" + index_str, spot.levelthrlow, keyFile);
@@ -7738,7 +7738,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "ChroMethod_" + index_str, pedited, spot.chroMethod, spotEdited.chroMethod);
                 assignFromKeyfile(keyFile, "Locallab", "QuaMethod_" + index_str, pedited, spot.quamethod, spotEdited.quamethod);
                 assignFromKeyfile(keyFile, "Locallab", "BlurMethod_" + index_str, pedited, spot.blurMethod, spotEdited.blurMethod);
-                assignFromKeyfile(keyFile, "Locallab", "Usemaskb_" + index_str, pedited, spot.usemask, spotEdited.usemask);
+           //     assignFromKeyfile(keyFile, "Locallab", "Usemaskb_" + index_str, pedited, spot.usemask, spotEdited.usemask);
                 assignFromKeyfile(keyFile, "Locallab", "Levelthr_" + index_str, pedited, spot.levelthr, spotEdited.levelthr);
                 assignFromKeyfile(keyFile, "Locallab", "Lnoiselow_" + index_str, pedited, spot.lnoiselow, spotEdited.lnoiselow);
                 assignFromKeyfile(keyFile, "Locallab", "Levelthrlow_" + index_str, pedited, spot.levelthrlow, spotEdited.levelthrlow);

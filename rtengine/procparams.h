@@ -1214,7 +1214,7 @@ struct LocallabParams {
         Glib::ustring quamethod; // cons agre
         Glib::ustring blurMethod; // norm, inv
         Glib::ustring medMethod; // none, 33, 55, 77, 99
-        bool usemask;
+      //  bool usemask;
         double levelthr;
         double lnoiselow;
         double levelthrlow;

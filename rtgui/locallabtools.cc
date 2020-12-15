@@ -5761,7 +5761,7 @@ LocallabBlur::LocallabBlur():
     LocalcurveEditorwavden(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVDEN"))),
     wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
     expdenoise1(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI1_EXP")))),
-    usemask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_USEMASK")))),
+ //   usemask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_USEMASK")))),
     lnoiselow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLNOISELOW"), 0.7, 2., 0.01, 1.))),
     levelthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 10., 100., 1., 40.))),
     levelthrlow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 100., 1., 12.))),
@@ -5826,7 +5826,7 @@ LocallabBlur::LocallabBlur():
     blMethodConn = blMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabBlur::blMethodChanged));
 
     fftwblConn = fftwbl->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::fftwblChanged));
-    usemaskConn = usemask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::usemaskChanged));
+  //  usemaskConn = usemask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::usemaskChanged));
     invblConn = invbl->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::invblChanged));
 
     radius->setAdjusterListener(this);
@@ -6136,6 +6136,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         quamethod->set_tooltip_markup(M("TP_LOCALLAB_DENOIQUA_TOOLTIP"));
         wavshapeden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
         wavhue->setTooltip(M("TP_LOCALLAB_WAVHUE_TOOLTIP"));
+        expdenoise1->set_tooltip_markup(M("TP_LOCALLAB_MASKLC_TOOLTIP"));
         LocalcurveEditorwavden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
         noiselequal->set_tooltip_text(M("TP_LOCALLAB_DENOIEQUAL_TOOLTIP"));
         noiselumdetail->set_tooltip_text(M("TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP"));
@@ -6168,7 +6169,6 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         lapmaskbl->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
         csThresholdblur->set_tooltip_text(M("TP_LOCALLAB_WAVEMASK_LEVEL_TOOLTIP"));
         sensiden->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
-        expdenoise1->set_tooltip_markup(M("TP_LOCALLAB_MASKLC_TOOLTIP"));
     } else {
         
         expblnoise->set_tooltip_markup("");
@@ -6184,6 +6184,8 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         epsbl->set_tooltip_text("");
         blurMethod->set_tooltip_markup("");
         quamethod->set_tooltip_markup("");
+        wavhue->setTooltip("");
+        expdenoise1->set_tooltip_markup("");
         LocalcurveEditorwavden->setTooltip("");
         noiselequal->set_tooltip_text("");
         noiselumdetail->set_tooltip_text("");
@@ -6218,9 +6220,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         shadmaskbl->set_tooltip_text("");
         shadmaskblsha->set_tooltip_text("");
         csThresholdblur->set_tooltip_text("");
-        wavhue->setTooltip("");
         sensiden->set_tooltip_text("");
-        expdenoise1->set_tooltip_markup("");
 
     }
 }
@@ -6239,7 +6239,7 @@ void LocallabBlur::disableListener()
 
     blMethodConn.block(true);
     fftwblConn.block(true);
-    usemaskConn.block(true);
+  //  usemaskConn.block(true);
     invblConn.block(true);
     medMethodConn.block(true);
     blurMethodConn.block(true);
@@ -6258,7 +6258,7 @@ void LocallabBlur::enableListener()
 
     blMethodConn.block(false);
     fftwblConn.block(false);
-    usemaskConn.block(false);
+  //  usemaskConn.block(false);
     invblConn.block(false);
     medMethodConn.block(false);
     blurMethodConn.block(false);
@@ -6297,7 +6297,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         }
 
         fftwbl->set_active(spot.fftwbl);
-        usemask->set_active(spot.usemask);
+   //     usemask->set_active(spot.usemask);
         invbl->set_active(spot.invbl);
         radius->setValue(spot.radius);
         strength->setValue(spot.strength);
@@ -6422,7 +6422,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         }
 
         spot.fftwbl = fftwbl->get_active();
-        spot.usemask = usemask->get_active();
+    //    spot.usemask = usemask->get_active();
         spot.invbl = invbl->get_active();
         spot.radius = radius->getValue();
         spot.strength = strength->getIntValue();
@@ -6952,7 +6952,7 @@ void LocallabBlur::convertParamToSimple()
     levelthr->setValue(defSpot.levelthr);
     lnoiselow->setValue(defSpot.lnoiselow);
     levelthrlow->setValue(defSpot.levelthrlow);
-    usemask->set_active(defSpot.usemask);
+  //  usemask->set_active(defSpot.usemask);
 
     // Enable all listeners
     enableListener();
@@ -7061,7 +7061,7 @@ void LocallabBlur::fftwblChanged()
         }
     }
 }
-
+/*
 void LocallabBlur::usemaskChanged()
 {
     if (isLocActivated && exp->getEnabled()) {
@@ -7076,7 +7076,7 @@ void LocallabBlur::usemaskChanged()
         }
     }
 }
-
+*/
 void LocallabBlur::invblChanged()
 {
     const LocallabParams::LocallabSpot defSpot;
