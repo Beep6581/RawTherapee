@@ -2172,7 +2172,7 @@ bool CACorrParams::operator !=(const CACorrParams& other) const
 
 ResizeParams::ResizeParams() :
     enabled(false),
-    scale(1.0),
+    scale(0.17000000000000001),
     appliesTo("Cropped area"),
     method("Lanczos"),
     dataspec(3),
