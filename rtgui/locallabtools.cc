@@ -6950,7 +6950,7 @@ void LocallabBlur::updateMaskBackground(const double normChromar, const double n
         LLmaskblshape->updateLocallabBackground(normLumar);
         HHmaskblshape->updateLocallabBackground(normHuer);
         Lmaskblshape->updateLocallabBackground(normLumar);
-
+        wavhue->updateLocallabBackground(normHuer);
         return false;
     }
     );
