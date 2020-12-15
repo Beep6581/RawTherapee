@@ -3309,7 +3309,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     medMethod("33"),
     usemask(false),
     levelthr(40.),
-    lnoiselow(1.5),
+    lnoiselow(1.),
     levelthrlow(12.),
     activlum(true),
     noiselumf(0.),

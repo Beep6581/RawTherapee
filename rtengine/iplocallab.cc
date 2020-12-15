@@ -8865,12 +8865,13 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                             }
                         }
 
-                    if(lp.enablMask && lp.usemask) {
+                    if(lp.enablMask && lp.lnoiselow !=1.f) {
+                        //this code has been reviewed by Ingo in september 2020 PR5903
                         float hig = lp.thrhigh;
                         if(lp.thrhigh < lp.thrlow) {
                             hig = lp.thrlow + 0.01f;
                         }
-                        float alow = -lp.lnoiselow / lp.thrlow;
+                        float alow = -(lp.lnoiselow - 1.f) / lp.thrlow;
                         float blow = lp.lnoiselow;
                         float ahigh = 0.9999f / (hig - 100.f);
                         float bhigh = 1.f - hig * ahigh;
@@ -8894,6 +8895,8 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
 
                     if(HHhuecurve) {
+                    //same code as in wavelet levels
+                        
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -9463,13 +9466,15 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                                 }
                             }
                             
-                    if(lp.enablMask && lp.usemask) {
+                    if(lp.enablMask && lp.lnoiselow != 1.f) {
+                         //this code has been reviewed by Ingo in september 2020 PR5903
+                         //i just change parameters to better progressivity
                         float hig = lp.thrhigh;
                         if(lp.thrhigh < lp.thrlow) {
                             hig = lp.thrlow + 0.01f;
                         }
 
-                        float alow = -lp.lnoiselow / lp.thrlow;
+                        float alow = -(lp.lnoiselow - 1.f) / lp.thrlow;
                         float blow = lp.lnoiselow;
                         float ahigh = 0.9999f / (hig - 100.f);
                         float bhigh = 1.f - hig * ahigh;
@@ -9494,6 +9499,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
 
                         if(HHhuecurve) {
+                            //same code as in wavelet levels
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
