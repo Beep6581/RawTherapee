@@ -205,8 +205,6 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited)
 
     int dataSpec = spec->get_active_row_number();
 
-    pp->resize.scale  = scale->getValue();
-
     pp->resize.appliesTo = "Cropped area";
 
     if (appliesTo->get_active_row_number() == 0) {
@@ -224,12 +222,40 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited)
     }
 
     pp->resize.dataspec = dataSpec;
-    pp->resize.width = w->get_value_as_int ();
-    pp->resize.height = h->get_value_as_int ();
     pp->resize.enabled = getEnabled ();
     //printf("  L:%d   H:%d\n", pp->resize.width, pp->resize.height);
 
     pp->resize.allowUpscaling = allowUpscaling->get_active();
+
+    switch (spec->get_active_row_number()) {
+        case 0: {
+            // Scale mode
+            pp->resize.scale = scale->getValue();
+            break;
+        }
+
+        case 1: {
+            // Width mode
+            pp->resize.width = w->get_value_as_int();
+            break;
+        }
+
+        case 2: {
+            // Height mode
+            pp->resize.height = h->get_value_as_int();
+            break;
+        }
+
+        case 3: {
+            // Bounding box mode
+            pp->resize.width = w->get_value_as_int();
+            pp->resize.height = h->get_value_as_int();
+            break;
+        }
+
+        default:
+            break;
+    }
 
     if (pedited) {
         pedited->resize.enabled   = !get_inconsistent();
@@ -257,6 +283,10 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited)
         setEnabled(true);
         pp->resize.enabled = true;
     }
+
+    pp->resize.scale = scale->getValue();
+    pp->resize.width = w->get_value_as_int();
+    pp->resize.height = h->get_value_as_int();
 }
 
 void Resize::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
