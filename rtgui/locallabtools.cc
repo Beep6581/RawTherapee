@@ -5782,6 +5782,7 @@ LocallabBlur::LocallabBlur():
     adjblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJ"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-yellow-small.png")), Gtk::manage(new RTImage("circle-red-green-small.png"))))),
     bilateral(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BILATERAL"), 0, 100, 1, 0))),
     sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    neutral(Gtk::manage (new Gtk::Button (M ("TP_RETINEX_NEUTRAL")))),
     expmaskbl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWPLUS")))),
     showmaskblMethod(Gtk::manage(new MyComboBoxText())),
     showmaskblMethodtyp(Gtk::manage(new MyComboBoxText())),
@@ -5938,6 +5939,15 @@ LocallabBlur::LocallabBlur():
 
     sensiden->setAdjusterListener(this);
 
+
+    setExpandAlignProperties (neutral, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    RTImage *resetImg = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
+    setExpandAlignProperties (resetImg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    neutral->set_image (*resetImg);
+    neutral->set_tooltip_text (M ("TP_RETINEX_NEUTRAL_TIP"));
+    neutralconn = neutral->signal_pressed().connect ( sigc::mem_fun (*this, &LocallabBlur::neutral_pressed) );
+    neutral->show();
+
     setExpandAlignProperties(expmaskbl, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     showmaskblMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
@@ -6064,6 +6074,8 @@ LocallabBlur::LocallabBlur():
     denoisebox->pack_start(*wavFrame);
     denoisebox->pack_start(*bilateral);
     denoisebox->pack_start(*sensiden);
+    denoisebox->pack_start(*neutral);
+
     expdenoise->add(*denoisebox, false);
     pack_start(*expdenoise);
     ToolParamBlock* const maskblBox = Gtk::manage(new ToolParamBlock());
@@ -6227,6 +6239,27 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         sensiden->set_tooltip_text("");
 
     }
+}
+
+void LocallabBlur::neutral_pressed ()
+{    
+    const LocallabParams::LocallabSpot defSpot;
+    lnoiselow->setValue(defSpot.lnoiselow);
+    levelthr->setValue(defSpot.levelthr);
+    levelthrlow->setValue(defSpot.levelthrlow);
+    noiselumf0->setValue(defSpot.noiselumf0);
+    noiselumdetail->setValue(defSpot.noiselumdetail);
+    noiselequal->setValue(defSpot.noiselequal);
+    noisechrof->setValue(defSpot.noisechrof);
+    noisechroc->setValue(defSpot.noisechroc);
+    noisechrodetail->setValue(defSpot.noisechrodetail);
+    detailthr->setValue(defSpot.detailthr);;
+    adjblur->setValue(defSpot.adjblur);
+    bilateral->setValue(defSpot.bilateral);
+    sensiden->setValue(defSpot.sensiden);
+    quamethod->set_active (0);    
+    wavshapeden->setCurve(defSpot.locwavcurveden);
+    wavhue->setCurve(defSpot.locwavcurvehue);
 }
 
 void LocallabBlur::setDefaultExpanderVisibility()

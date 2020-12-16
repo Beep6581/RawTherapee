@@ -686,6 +686,7 @@ private:
     Adjuster* const adjblur;
     Adjuster* const bilateral;
     Adjuster* const sensiden;
+    Gtk::Button* neutral;
     MyExpander* const expmaskbl;
     MyComboBoxText* const showmaskblMethod;
     MyComboBoxText* const showmaskblMethodtyp;
@@ -713,7 +714,7 @@ private:
     ThresholdAdjuster* const csThresholdblur;
 
     sigc::connection blMethodConn, fftwblConn, invblConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
-    sigc::connection  quamethodconn, usemaskConn;
+    sigc::connection  quamethodconn, usemaskConn, neutralconn;
 public:
     LocallabBlur();
     ~LocallabBlur();
@@ -723,6 +724,7 @@ public:
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
+    void neutral_pressed();
 
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
