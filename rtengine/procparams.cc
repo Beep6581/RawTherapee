@@ -3367,7 +3367,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35,
         0.35
     },
-    showmaskblMethodtyp("blur"),
+    showmaskblMethodtyp("nois"),
     CCmaskblcurve{
         static_cast<double>(FCT_MinMaxCPoints),
         0.0,

@@ -5949,7 +5949,7 @@ LocallabBlur::LocallabBlur():
     showmaskblMethodtyp->append(M("TP_LOCALLAB_SHOWMASKTYP1"));
     showmaskblMethodtyp->append(M("TP_LOCALLAB_SHOWMASKTYP2"));
     showmaskblMethodtyp->append(M("TP_LOCALLAB_SHOWMASKTYP3"));
-    showmaskblMethodtyp->set_active(0);
+    showmaskblMethodtyp->set_active(1);
     showmaskblMethodtypConn = showmaskblMethodtyp->signal_changed().connect(sigc::mem_fun(*this, &LocallabBlur::showmaskblMethodtypChanged));
 
     enablMaskConn = enablMask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::enablMaskChanged));
@@ -6691,6 +6691,11 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
         }
 
         if (a == lnoiselow) {
+            if(lnoiselow->getValue()!= 1.) {
+                if (showmaskblMethodtyp->get_active_row_number() == 0) {
+                    showmaskblMethodtyp->set_active(2);
+                }
+            }
             if (listener) {
                 listener->panelChanged(Evlocallablnoiselow,
                                        lnoiselow->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
@@ -6938,7 +6943,7 @@ void LocallabBlur::convertParamToSimple()
     } else if (defSpot.showmaskblMethodtyp == "all") {
         showmaskblMethodtyp->set_active(2);
     }
-
+    lnoiselow->setValue(defSpot.lnoiselow);
     enablMask->set_active(defSpot.enablMask);
     CCmaskblshape->setCurve(defSpot.CCmaskblcurve);
     LLmaskblshape->setCurve(defSpot.LLmaskblcurve);
@@ -6982,6 +6987,11 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             // Specific Simple mode widgets are shown in Normal mode
             expmaskbl->show();
             expdenoise1->show();
+            if(lnoiselow->getValue()!= 1.) {
+                if (showmaskblMethodtyp->get_active_row_number() == 0) {
+                    showmaskblMethodtyp->set_active(2);
+                }
+            }
 
             break;
 
@@ -7001,6 +7011,12 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             shadmaskblsha->show();
             mask2blCurveEditorGwav->show();
             csThresholdblur->show();
+            if(lnoiselow->getValue()!= 1.) {
+                if (showmaskblMethodtyp->get_active_row_number() == 0) {
+                    showmaskblMethodtyp->set_active(2);
+                }
+            }
+            
     }
 }
 
@@ -7177,6 +7193,12 @@ void LocallabBlur::showmaskblMethodChanged()
 
 void LocallabBlur::showmaskblMethodtypChanged()
 {
+    if(lnoiselow->getValue()!= 1.) {
+        if (showmaskblMethodtyp->get_active_row_number() == 0) {
+            showmaskblMethodtyp->set_active(2);
+        }
+    }
+
     // If mask preview is activated, deactivate all other tool mask preview
     if (locToolListener) {
         locToolListener->resetOtherMaskView(this);

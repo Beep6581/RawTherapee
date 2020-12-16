@@ -8865,7 +8865,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                             }
                         }
 
-                    if(lp.enablMask && lp.lnoiselow !=1.f) {
+                    if(lp.enablMask && lp.lnoiselow !=1.f && lp.smasktyp != 0) {
                         //this code has been reviewed by Ingo in september 2020 PR5903
                         float hig = lp.thrhigh;
                         if(lp.thrhigh < lp.thrlow) {
@@ -9466,7 +9466,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                                 }
                             }
                             
-                    if(lp.enablMask && lp.lnoiselow != 1.f) {
+                    if(lp.enablMask && lp.lnoiselow != 1.f  && lp.smasktyp != 0) {
                          //this code has been reviewed by Ingo in september 2020 PR5903
                          //i just change parameters to better progressivity
                         float hig = lp.thrhigh;
