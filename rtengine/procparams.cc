@@ -5091,7 +5091,7 @@ FilmNegativeParams::FilmNegativeParams() :
     greenExp(1.5),
     blueRatio(0.86),
     refInput{0.0, 0.0, 0.0},
-    refOutput{2739.94702, 2740.07568, 2740.0354},
+    refOutput{0.0, 0.0, 0.0},
     colorSpace(ColorSpace::WORKING),
     backCompat(BackCompat::CURRENT)
 {

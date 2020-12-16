@@ -331,6 +331,9 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
 {
     disableListener();
 
+    // Reset the paramsUpgraded flag. It will be set by filmRefValuesChanged if the tool is enabled.
+    paramsUpgraded = false;
+
     if (pedited) {
         redRatio->setEditedState(pedited->filmNegative.redRatio ? Edited : UnEdited);
         greenExp->setEditedState(pedited->filmNegative.greenExp ? Edited : UnEdited);
@@ -404,7 +407,10 @@ void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
     pp->filmNegative.refInput = refInputValues;
 
-    readOutputSliders(pp->filmNegative.refOutput);
+    // Don't read from output sliders while they're hidden
+    if(outputLevel->is_visible()) {
+        readOutputSliders(pp->filmNegative.refOutput);
+    }
 
     if (paramsUpgraded) {
         pp->filmNegative.backCompat = BackCompat::CURRENT;
