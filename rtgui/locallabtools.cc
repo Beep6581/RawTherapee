@@ -908,7 +908,7 @@ void LocallabColor::resetMaskView()
     showmaskcolMethodConninv.block(false);
 }
 
-void LocallabColor::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask)
+void LocallabColor::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask)
 {
     colorMask = showmaskcolMethod->get_active_row_number();
     colorMaskinv = showmaskcolMethodinv->get_active_row_number();
@@ -2639,7 +2639,7 @@ void LocallabExposure::resetMaskView()
     showmaskexpMethodConninv.block(false);
 }
 
-void LocallabExposure::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask)
+void LocallabExposure::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask)
 {
     expMask = showmaskexpMethod->get_active_row_number();
     expMaskinv = showmaskexpMethodinv->get_active_row_number();
@@ -3611,6 +3611,7 @@ LocallabShadow::LocallabShadow():
     blurSHde->setAdjusterListener(this);
 
     gamSH->setAdjusterListener(this);
+    sloSH->setLogScale(16, 0);
 
     sloSH->setAdjusterListener(this);
 
@@ -3757,7 +3758,7 @@ void LocallabShadow::resetMaskView()
     showmaskSHMethodConninv.block(false);
 }
 
-void LocallabShadow::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask)
+void LocallabShadow::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask)
 {
     shMask = showmaskSHMethod->get_active_row_number();
     shMaskinv = showmaskSHMethodinv->get_active_row_number();
@@ -4686,7 +4687,7 @@ void LocallabVibrance::resetMaskView()
     showmaskvibMethodConn.block(false);
 }
 
-void LocallabVibrance::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask)
+void LocallabVibrance::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask)
 {
     vibMask = showmaskvibMethod->get_active_row_number();
 }
@@ -5399,7 +5400,7 @@ void LocallabSoft::resetMaskView()
     showmasksoftMethodConn.block(false);
 }
 
-void LocallabSoft::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask)
+void LocallabSoft::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask)
 {
     softMask = showmasksoftMethod->get_active_row_number();
 }
@@ -5765,6 +5766,8 @@ LocallabBlur::LocallabBlur():
     noiselumc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMCOARSE"), MINCHRO, MAXCHROCC, 0.01, 0.))),
     noiselumdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMDETAIL"), 0., 100., 0.01, 0.))),
     noiselequal(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELEQUAL"), -2, 10, 1, 7, Gtk::manage(new RTImage("circle-white-small.png")), Gtk::manage(new RTImage("circle-black-small.png"))))),
+    LocalcurveEditorwavhue(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_WAVELET_DENOISEHUE"))),
+    wavhue(static_cast<FlatCurveEditor*>(LocalcurveEditorwavhue->addCurve(CT_Flat, "", nullptr, false, true))),
     noisechrof(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noisechroc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), MINCHRO, MAXCHROCC, 0.01, 0.))),
     noisechrodetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHRODETAIL"), 0., 100., 0.01, 0.))),
@@ -5802,6 +5805,14 @@ LocallabBlur::LocallabBlur():
 
     // Parameter Blur, Noise & Denoise specific widgets
     setExpandAlignProperties(expblnoise, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    float R, G, B;
+    std::vector<GradientMilestone> six_shape;
+
+    for (int i = 0; i < 6; i++) {
+        const float x = static_cast<float>(i) * (1.f / 6.f);
+        Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
+        six_shape.emplace_back(x, R, G, B);
+    }
 
     blMethod->append(M("TP_LOCALLAB_BLUR"));
     blMethod->append(M("TP_LOCALLAB_BLMED"));
@@ -5884,6 +5895,19 @@ LocallabBlur::LocallabBlur():
     noiselumdetail->setAdjusterListener(this);
 
     noiselequal->setAdjusterListener(this);
+
+    LocalcurveEditorwavhue->setCurveListener(this);
+
+    wavhue->setIdentityValue(0.);
+    wavhue->setResetCurve(FlatCurveType(defSpot.locwavcurvehue.at(0)), defSpot.locwavcurvehue);
+    wavhue->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    wavhue->setCurveColorProvider(this, 3);
+    wavhue->setBottomBarBgGradient(six_shape);
+
+//    wavguid->setIdentityValue(0.);
+//    wavguid->setResetCurve(FlatCurveType(defSpot.locwavcurveguid.at(0)), defSpot.locwavcurveguid);
+
+    LocalcurveEditorwavhue->curveListComplete();
 
     noisechrof->setAdjusterListener(this);
 
@@ -6007,6 +6031,7 @@ LocallabBlur::LocallabBlur():
     // wavBox->pack_start(*noiselumc);
     wavBox->pack_start(*noiselumdetail);
     wavBox->pack_start(*noiselequal);
+    wavBox->pack_start(*LocalcurveEditorwavhue, Gtk::PACK_SHRINK, 4);
     wavBox->pack_start(*noisechrof);
     wavBox->pack_start(*noisechroc);
     wavBox->pack_start(*noisechrodetail);
@@ -6049,6 +6074,7 @@ LocallabBlur::LocallabBlur():
 LocallabBlur::~LocallabBlur()
 {
     delete LocalcurveEditorwavden;
+    delete LocalcurveEditorwavhue;
     delete maskblCurveEditorG;
     delete mask2blCurveEditorG;
     delete mask2blCurveEditorGwav;
@@ -6066,7 +6092,7 @@ void LocallabBlur::resetMaskView()
     showmaskblMethodConn.block(false);
 }
 
-void LocallabBlur::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &maskMask)
+void LocallabBlur::getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask)
 {
     blMask = showmaskblMethod->get_active_row_number();
 }
@@ -6090,6 +6116,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         expdenoise->set_tooltip_markup(M("TP_LOCALLAB_DENOI_TOOLTIP"));
         quamethod->set_tooltip_markup(M("TP_LOCALLAB_DENOIQUA_TOOLTIP"));
         wavshapeden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
+//        wavhue->setTooltip(M("TP_LOCALLAB_WAVHUE_TOOLTIP"));
         LocalcurveEditorwavden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
         noiselequal->set_tooltip_text(M("TP_LOCALLAB_DENOIEQUAL_TOOLTIP"));
         noiselumdetail->set_tooltip_text(M("TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP"));
@@ -6172,6 +6199,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         shadmaskbl->set_tooltip_text("");
         shadmaskblsha->set_tooltip_text("");
         csThresholdblur->set_tooltip_text("");
+//        wavhue->setTooltip("");
         sensiden->set_tooltip_text("");
 
     }
@@ -6293,6 +6321,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
 
         activlum->set_active(spot.activlum);
         wavshapeden->setCurve(spot.locwavcurveden);
+        wavhue->setCurve(spot.locwavcurvehue);
         noiselumf0->setValue(spot.noiselumf0);
         noiselumf->setValue(spot.noiselumf);
         noiselumf2->setValue(spot.noiselumf2);
@@ -6413,6 +6442,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
         spot.activlum = activlum->get_active();
         spot.locwavcurveden = wavshapeden->getCurve();
+        spot.locwavcurvehue = wavhue->getCurve();
         spot.noiselumf0 = noiselumf0->getValue();
         spot.noiselumf = noiselumf->getValue();
         spot.noiselumf2 = noiselumf2->getValue();
@@ -6753,6 +6783,13 @@ void LocallabBlur::curveChanged(CurveEditor* ce)
             }
         }
 
+        if (ce == wavhue) {
+            if (listener) {
+                listener->panelChanged(EvlocallabwavCurvehue,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
         if (ce == CCmaskblshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabCCmaskblshape,
@@ -6913,7 +6950,7 @@ void LocallabBlur::updateMaskBackground(const double normChromar, const double n
         LLmaskblshape->updateLocallabBackground(normLumar);
         HHmaskblshape->updateLocallabBackground(normHuer);
         Lmaskblshape->updateLocallabBackground(normLumar);
-
+        wavhue->updateLocallabBackground(normHuer);
         return false;
     }
     );
@@ -6923,6 +6960,19 @@ void LocallabBlur::blMethodChanged()
 {
     // Update Blur & Noise GUI according to blMethod combobox state
     updateBlurGUI();
+    const LocallabParams::LocallabSpot defSpot;
+
+    if (invbl->get_active()  &&  blMethod->get_active_row_number() == 2) {
+        radius->setValue(defSpot.radius);
+        medMethod->set_active(0);
+    } else if(invbl->get_active()  &&  blMethod->get_active_row_number() == 0) {
+        guidbl->setValue(defSpot.guidbl);
+        medMethod->set_active(0);
+    } else if(invbl->get_active()  &&  blMethod->get_active_row_number() == 1) {
+        radius->setValue(defSpot.radius);
+        guidbl->setValue(defSpot.guidbl);
+    }
+
 
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
@@ -6949,6 +6999,21 @@ void LocallabBlur::fftwblChanged()
 
 void LocallabBlur::invblChanged()
 {
+    const LocallabParams::LocallabSpot defSpot;
+
+    if (invbl->get_active()  &&  blMethod->get_active_row_number() == 2) {
+        radius->setValue(defSpot.radius);
+        medMethod->set_active(0);
+    } else if(invbl->get_active()  &&  blMethod->get_active_row_number() == 0) {
+        guidbl->setValue(defSpot.guidbl);
+        medMethod->set_active(0);
+    } else if(invbl->get_active()  &&  blMethod->get_active_row_number() == 1) {
+        radius->setValue(defSpot.radius);
+        guidbl->setValue(defSpot.guidbl);
+    }
+
+
+    
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (invbl->get_active()) {
@@ -7075,6 +7140,20 @@ void LocallabBlur::toolblChanged()
 
 void LocallabBlur::updateBlurGUI()
 {
+    const LocallabParams::LocallabSpot defSpot;
+
+    if (invbl->get_active()  &&  blMethod->get_active_row_number() == 2) {
+        radius->setValue(defSpot.radius);
+        medMethod->set_active(0);
+    } else if(invbl->get_active()  &&  blMethod->get_active_row_number() == 0) {
+        guidbl->setValue(defSpot.guidbl);
+        medMethod->set_active(0);
+    } else if(invbl->get_active()  &&  blMethod->get_active_row_number() == 1) {
+        radius->setValue(defSpot.radius);
+        guidbl->setValue(defSpot.guidbl);
+    }
+
+    
     const int mode = complexity->get_active_row_number();
 
     if (blMethod->get_active_row_number() == 0) {

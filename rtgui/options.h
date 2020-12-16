@@ -300,6 +300,8 @@ public:
     bool internalThumbIfUntouched;
     bool overwriteOutputFile;
     int complexity;
+    bool inspectorWindow; // open inspector in spearate window
+    bool zoomOnScroll;    // translate scroll events to zoom
 
     std::vector<double> thumbnailZoomRatios;
     bool overlayedFileNames;

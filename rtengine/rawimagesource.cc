@@ -636,6 +636,56 @@ float calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const flo
     return gain;
 }
 
+
+void RawImageSource::getWBMults (const ColorTemp &ctemp, const RAWParams &raw, std::array<float, 4>& out_scale_mul, float &autoGainComp, float &rm, float &gm, float &bm) const
+{
+    // compute channel multipliers
+    double r, g, b;
+    //float rm, gm, bm;
+
+    if (ctemp.getTemp() < 0) {
+        // no white balance, ie revert the pre-process white balance to restore original unbalanced raw camera color
+        rm = ri->get_pre_mul(0);
+        gm = ri->get_pre_mul(1);
+        bm = ri->get_pre_mul(2);
+    } else {
+        ctemp.getMultipliers (r, g, b);
+        rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
+        gm = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
+        bm = imatrices.cam_rgb[2][0] * r + imatrices.cam_rgb[2][1] * g + imatrices.cam_rgb[2][2] * b;
+    }
+
+    // adjust gain so the maximum raw value of the least scaled channel just hits max
+    const float new_pre_mul[4] = { ri->get_pre_mul(0) / rm, ri->get_pre_mul(1) / gm, ri->get_pre_mul(2) / bm, ri->get_pre_mul(3) / gm };
+    float new_scale_mul[4];
+
+    bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
+                    || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
+
+    float c_white[4];
+    for (int i = 0; i < 4; ++i) {
+        c_white[i] = (ri->get_white(i) - cblacksom[i]) / static_cast<float>(raw.expos) + cblacksom[i];
+    }
+
+    float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, isMono, ri->get_colors());
+    rm = new_scale_mul[0] / scale_mul[0] * gain;
+    gm = new_scale_mul[1] / scale_mul[1] * gain;
+    bm = new_scale_mul[2] / scale_mul[2] * gain;
+    //fprintf(stderr, "camera gain: %f, current wb gain: %f, diff in stops %f\n", camInitialGain, gain, log2(camInitialGain) - log2(gain));
+
+    const float expcomp = std::pow(2, ri->getBaselineExposure());
+    rm *= expcomp;
+    gm *= expcomp;
+    bm *= expcomp;
+
+    out_scale_mul[0] = scale_mul[0];
+    out_scale_mul[1] = scale_mul[1];
+    out_scale_mul[2] = scale_mul[2];
+    out_scale_mul[3] = scale_mul[3];
+
+    autoGainComp = camInitialGain / initialGain;
+}
+
 void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw)
 {
     MyMutex::MyLock lock(getImageMutex);

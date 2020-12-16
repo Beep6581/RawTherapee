@@ -439,7 +439,7 @@ public:
     virtual ~LocallabListener() = default;
     virtual void refChanged(const std::vector<locallabRef> &ref, int selspot) = 0;
     virtual void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) = 0;
-    virtual void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float targetg) = 0;
+    virtual void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg) = 0;
 };
 
 class AutoColorTonListener
@@ -510,7 +510,7 @@ class FilmNegListener
 {
 public:
     virtual ~FilmNegListener() = default;
-    virtual void filmBaseValuesChanged(std::array<float, 3> rgb) = 0;
+    virtual void filmRefValuesChanged(const procparams::FilmNegativeParams::RGB &refInput, const procparams::FilmNegativeParams::RGB &refOutput) = 0;
 };
 
 /** This class represents a detailed part of the image (looking through a kind of window).
@@ -589,7 +589,7 @@ public:
 
     virtual void        updateUnLock() = 0;
 
-    virtual void        setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int locall_Mask) = 0;
+    virtual void        setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int localllogMask, int locall_Mask) = 0;
 
     /** Creates and returns a Crop instance that acts as a window on the image
       * @param editDataProvider pointer to the EditDataProvider that communicates with the EditSubscriber
@@ -599,9 +599,8 @@ public:
     virtual bool        getAutoWB   (double& temp, double& green, double equal, double tempBias) = 0;
     virtual void        getCamWB    (double& temp, double& green) = 0;
     virtual void        getSpotWB  (int x, int y, int rectSize, double& temp, double& green) = 0;
-    virtual bool        getFilmNegativeExponents(int xA, int yA, int xB, int yB, std::array<float, 3>& newExps) = 0;
-    virtual bool        getRawSpotValues  (int x, int y, int spotSize, std::array<float, 3>& rawValues) = 0;
-
+    virtual bool        getFilmNegativeSpot(int x, int y, int spotSize, procparams::FilmNegativeParams::RGB &refInput, procparams::FilmNegativeParams::RGB &refOutput) = 0;
+    
     virtual void        getAutoCrop (double ratio, int &x, int &y, int &w, int &h) = 0;
 
     virtual void        saveInputICCReference (const Glib::ustring& fname, bool apply_wb) = 0;

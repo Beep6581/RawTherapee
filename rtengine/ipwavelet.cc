@@ -1055,6 +1055,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         levwavL = 7;
                     }
                 }
+                bool isdenoisL = (cp.lev0n > 0.1f || cp.lev1n > 0.1f || cp.lev2n > 0.1f || cp.lev3n > 0.1f || cp.lev4n > 0.1f);
 
                 if (levwavL < 5 && cp.noiseena) {
                     levwavL = 6;    //to allow edge and denoise  => I always allocate 3 (4) levels..because if user select wavelet it is to do something !!
@@ -1102,7 +1103,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 madL[lvl][dir - 1] = SQR(Mad(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
 
                                 if (settings->verbose) {
-                                    printf("Luminance noise estimate (sqr) madL=%.0f lvl=%i dir=%i\n", madL[lvl][dir - 1], lvl, dir - 1);
+                                  //  printf("Luminance noise estimate (sqr) madL=%.0f lvl=%i dir=%i\n", madL[lvl][dir - 1], lvl, dir - 1);
                                 }
                             }
                         }
@@ -1159,7 +1160,6 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         } else {
                             kr4 = 1.f;
                         }
-
                         if ((cp.lev0n > 0.1f || cp.lev1n > 0.1f || cp.lev2n > 0.1f || cp.lev3n > 0.1f || cp.lev4n > 0.1f) && cp.noiseena) {
                             int edge = 6;
                             vari[0] = rtengine::max(0.000001f, vari[0]);
@@ -1226,12 +1226,12 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                                 if(cp.quamet == 0) {
                                     if (settings->verbose) {
-                                        printf("denoise standard\n");
+                                        printf("denoise standard L\n");
                                     }
                                     WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, vari, edge, 1);
                                 } else {
                                     if (settings->verbose) {
-                                        printf("denoise bishrink\n");
+                                        printf("denoise bishrink L\n");
                                     }
                                     WaveletDenoiseAll_BiShrinkL(*Ldecomp, noisevarlum, madL, vari, edge, 1);
 
@@ -1792,11 +1792,17 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                     if(levwava == 6) {
                                         edge = 1;
                                     }
-                                    if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.quamet == 0 )) {
+                                    if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.quamet == 0 && isdenoisL)) {
+                                        if (settings->verbose) {
+                                            printf("denoise standard a \n");
+                                        }
 
                                        WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
 
-                                    } else if (cp.noiseena && ((cp.chromfi > 0.f && cp.chromco >= 0.f) && cp.quamet == 1 )){
+                                    } else if (cp.noiseena && ((cp.chromfi > 0.f && cp.chromco >= 0.f) && cp.quamet == 1 && isdenoisL)){
+                                        if (settings->verbose) {
+                                            printf("denoise bishrink a \n");
+                                        }
 
                                         WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
                                         WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
@@ -1842,17 +1848,17 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                                 if (!bdecomp->memory_allocation_failed()) {
                                   //  if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.chromco < 2.f )) {
-                                    if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) &&  cp.quamet == 0)) {
+                                    if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) &&  cp.quamet == 0 && isdenoisL)) {
                                         WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                         if (settings->verbose) {
-                                            printf("Denoise ab standard\n");
+                                            printf("Denoise standard b\n");
                                         }
-                                    } else if (cp.noiseena && ((cp.chromfi > 0.f && cp.chromco >= 0.f) && cp.quamet == 1 )){
+                                    } else if (cp.noiseena && ((cp.chromfi > 0.f && cp.chromco >= 0.f) && cp.quamet == 1 && isdenoisL)){
 
                                         WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                         WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                         if (settings->verbose) {
-                                            printf("Denoise ab bishrink\n");
+                                            printf("Denoise bishrink b\n");
                                         }
 
                                     }
@@ -1876,18 +1882,24 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 const std::unique_ptr<wavelet_decomposition> bdecomp(new wavelet_decomposition(labco->data + 2 * datalen, labco->W, labco->H, levwavab, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
 
                                 if (!adecomp->memory_allocation_failed() && !bdecomp->memory_allocation_failed()) {
-                                    if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.quamet == 0)) {
+                                    if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.quamet == 0 && isdenoisL)) {
                                         WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
-                                    } else if (cp.chromfi > 0.f && cp.chromco >= 2.f){
+                                        if (settings->verbose) {
+                                            printf("Denoise standard ab\n");
+                                        }
+                                    } else if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.quamet == 1 && isdenoisL)) { 
                                         WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
                                         WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
+                                        if (settings->verbose) {
+                                            printf("Denoise bishrink ab\n");
+                                        }
                                     }
 
                                     Evaluate2(*adecomp, meanab, meanNab, sigmaab, sigmaNab, MaxPab, MaxNab, wavNestedLevels);
                                     WaveletcontAllAB(labco, varhue, varchro, *adecomp, wavblcurve, waOpacityCurveW, cp, true, skip, meanab, sigmaab);
-                                    if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.quamet == 0)) {
+                                    if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.quamet == 0 && isdenoisL)) {
                                         WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
-                                    } else if (cp.chromfi > 0.f && cp.chromco >= 2.f){
+                                    } else if(cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.quamet == 1 && isdenoisL)) {
                                         WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                         WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                     }
