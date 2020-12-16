@@ -5761,7 +5761,9 @@ LocallabBlur::LocallabBlur():
     LocalcurveEditorwavden(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVDEN"))),
     wavshapeden(static_cast<FlatCurveEditor*>(LocalcurveEditorwavden->addCurve(CT_Flat, "", nullptr, false, false))),
     expdenoise1(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI1_EXP")))),
- //   usemask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_USEMASK")))),
+    maskusable(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
+    maskunusable(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
+//   usemask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_USEMASK")))),
     lnoiselow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLNOISELOW"), 0.7, 2., 0.01, 1.))),
     levelthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 10., 100., 1., 40.))),
     levelthrlow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 100., 1., 12.))),
@@ -6046,6 +6048,8 @@ LocallabBlur::LocallabBlur():
     wavBox->pack_start(*LocalcurveEditorwavhue, Gtk::PACK_SHRINK, 4);
     ToolParamBlock* const wavBox1 = Gtk::manage(new ToolParamBlock());
    // wavBox1->pack_start(*usemask, Gtk::PACK_SHRINK, 0);
+    wavBox1->pack_start(*maskusable, Gtk::PACK_SHRINK, 0);
+    wavBox1->pack_start(*maskunusable, Gtk::PACK_SHRINK, 0);
     wavBox1->pack_start(*lnoiselow, Gtk::PACK_SHRINK, 0);
     wavBox1->pack_start(*levelthrlow, Gtk::PACK_SHRINK, 0);
     wavBox1->pack_start(*levelthr, Gtk::PACK_SHRINK, 0);
@@ -6971,6 +6975,8 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             fftwbl->hide();
             expmaskbl->hide();
             expdenoise1->hide();
+            maskusable->hide();
+            maskunusable->hide();
 
             break;
 
@@ -6991,6 +6997,13 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
                 if (showmaskblMethodtyp->get_active_row_number() == 0) {
                     showmaskblMethodtyp->set_active(2);
                 }
+            }
+            if (enablMask->get_active()) {
+                maskusable->show();
+                maskunusable->hide();
+            } else {
+                maskusable->hide();
+                maskunusable->show();
             }
 
             break;
@@ -7015,6 +7028,13 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
                 if (showmaskblMethodtyp->get_active_row_number() == 0) {
                     showmaskblMethodtyp->set_active(2);
                 }
+            }
+            if (enablMask->get_active()) {
+                maskusable->show();
+                maskunusable->hide();
+            } else {
+                maskusable->hide();
+                maskunusable->show();
             }
             
     }
@@ -7212,6 +7232,14 @@ void LocallabBlur::showmaskblMethodtypChanged()
 
 void LocallabBlur::enablMaskChanged()
 {
+    if (enablMask->get_active()) {
+        maskusable->show();
+        maskunusable->hide();
+    } else {
+        maskusable->hide();
+        maskunusable->show();
+    }
+
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (enablMask->get_active()) {

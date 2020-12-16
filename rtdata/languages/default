@@ -2764,6 +2764,8 @@ TP_LOCALLAB_MASKLC_TOOLTIP;This allows you to target the denoise based on the im
 TP_LOCALLAB_MASKLCTHR;Light area luminance % threshold
 TP_LOCALLAB_MASKLCTHRLOW; Dark area luminance % threshold
 TP_LOCALLAB_MASKLNOISELOW;Reinforce denoise in dark areas
+TP_LOCALLAB_MASKUSABLE;Mask usable
+TP_LOCALLAB_MASKUNUSABLE;No mask
 TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a tool by activating another tool and using only the mask (set the tool sliders to 0 ).\n\nYou can also duplicate the RT-spot and place it close to the first spot. The small variations in the spot references allows you to make fine adjustments.  
 TP_LOCALLAB_MED;Medium
 TP_LOCALLAB_MEDIAN;Median Low
