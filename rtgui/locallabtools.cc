@@ -6265,6 +6265,7 @@ void LocallabBlur::neutral_pressed ()
     quamethod->set_active (0);    
     wavshapeden->setCurve(defSpot.locwavcurveden);
     wavhue->setCurve(defSpot.locwavcurvehue);
+    usemask->set_active(defSpot.usemask);
 }
 
 void LocallabBlur::setDefaultExpanderVisibility()
