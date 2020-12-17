@@ -6069,12 +6069,12 @@ LocallabBlur::LocallabBlur():
     wavBox->pack_start(*noisechrof);
     wavBox->pack_start(*noisechroc);
     wavBox->pack_start(*noisechrodetail);
+    wavBox->pack_start(*adjblur);
     ToolParamBlock* const detailBox = Gtk::manage(new ToolParamBlock());
     detailBox->pack_start(*detailthr);
     detailBox->pack_start(*usemask, Gtk::PACK_SHRINK, 0);
     detailFrame->add(*detailBox);
     wavBox->pack_start(*detailFrame);
-    wavBox->pack_start(*adjblur);
     wavFrame->add(*wavBox);
     denoisebox->pack_start(*wavFrame);
     denoisebox->pack_start(*bilateral);
