@@ -667,7 +667,7 @@ private:
     Gtk::Label* const maskusable;
     Gtk::Label* const maskunusable;
 
-//    Gtk::CheckButton* const usemask;
+    Gtk::CheckButton* const usemask;
     Adjuster* const lnoiselow;
     Adjuster* const levelthr;
     Adjuster* const levelthrlow;
@@ -682,6 +682,7 @@ private:
     Adjuster* const noisechrof;
     Adjuster* const noisechroc;
     Adjuster* const noisechrodetail;
+    Gtk::Frame* const detailFrame;
     Adjuster* const detailthr;
     Adjuster* const adjblur;
     Adjuster* const bilateral;

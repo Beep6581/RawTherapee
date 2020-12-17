@@ -1229,7 +1229,7 @@ HISTORY_MSG_981;Local - Log encoding  Strength
 HISTORY_MSG_982;Local - Equalizer hue
 HISTORY_MSG_983;Local - denoise threshold mask high
 HISTORY_MSG_984;Local - denoise threshold mask low
-HISTORY_MSG_985;Local - denoise use mask
+HISTORY_MSG_985;Local - denoise Laplacian
 HISTORY_MSG_986;Local - denoise reinforce
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
@@ -2559,6 +2559,7 @@ TP_LOCALLAB_DENOI_EXP;Denoise
 TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action  based on color (deltaE).\n\n You can refine the result with a "Median filter" or a "Guided Filter" (Soft radius).
 TP_LOCALLAB_DEPTH;Depth 
 TP_LOCALLAB_DETAIL;Local contrast
+TP_LOCALLAB_DETAILFRA;Edge detection
 TP_LOCALLAB_DETAILSH;Details
 TP_LOCALLAB_DETAILTHR;Luminance & chroma detail threshold (DCT ƒ)
 TP_LOCALLAB_DUPLSPOTNAME;Copy
@@ -3024,7 +3025,7 @@ TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
 TP_LOCALLAB_TRANSMISSIONMAP;Transmission map
 TP_LOCALLAB_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positive values (max).\nOrdinate: amplification or reduction.\nYou can adjust this curve to change the Transmission and reduce artifacts
-//TP_LOCALLAB_USEMASK;Use mask
+TP_LOCALLAB_USEMASK;Laplacian
 TP_LOCALLAB_VART;Variance (contrast)
 TP_LOCALLAB_VIBRANCE;Vibrance & Warm/Cool
 TP_LOCALLAB_VIBRA_TOOLTIP;Adjusts vibrance (essentially the same as the global adjustment).\nCarries out the equivalent of a white-balance adjustment using a CIECAM algorithm.

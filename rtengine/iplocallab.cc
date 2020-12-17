@@ -49,6 +49,7 @@
 #define BENCHMARK
 #include "StopWatch.h"
 #include "guidedfilter.h"
+#include "boxblural.h"
 
 
 #pragma GCC diagnostic warning "-Wall"
@@ -249,6 +250,8 @@ float calcreducdE(float dE, float maxdE, float mindE, float maxdElim, float mind
         }
     }
 }
+
+
 
 void deltaEforLaplace(float *dE, const float lap, int bfw, int bfh, rtengine::LabImage* bufexporig, const float hueref, const float chromaref, const float lumaref)
 {
@@ -659,7 +662,7 @@ struct local_params {
     bool activspot;
     float thrlow;
     float thrhigh;
- //   bool usemask;
+    bool usemask;
     float lnoiselow;
 
 };
@@ -780,7 +783,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 
     lp.thrlow = locallab.spots.at(sp).levelthrlow;
     lp.thrhigh = locallab.spots.at(sp).levelthr;
- //   lp.usemask = locallab.spots.at(sp).usemask;
+    lp.usemask = locallab.spots.at(sp).usemask;
     lp.lnoiselow = locallab.spots.at(sp).lnoiselow;
 
     //  printf("llColorMask=%i lllcMask=%i llExpMask=%i  llSHMask=%i llcbMask=%i llretiMask=%i lltmMask=%i llblMask=%i llvibMask=%i\n", llColorMask, lllcMask, llExpMask, llSHMask, llcbMask, llretiMask, lltmMask, llblMask, llvibMask);
@@ -3886,6 +3889,48 @@ static void showmask(int lumask, const local_params& lp, int xstart, int ystart,
         }
     }
 }
+//from A.Griggio...very similar to discrete_laplacian_threhold...some differences with ceiling and data format
+void laplacian(const array2D<float> &src, array2D<float> &dst, int bfw, int bfh, float threshold, float ceiling, float factor, bool multiThread)
+{
+    const int W = bfw;
+    const int H = bfh;
+
+    const auto X =
+        [W](int x) -> int
+        {
+            return x < 0 ? x+2 : (x >= W ? x-2 : x);
+        };
+
+    const auto Y =
+        [H](int y) -> int
+        {
+            return y < 0 ? y+2 : (y >= H ? y-2 : y);
+        };
+
+    const auto get =
+        [&src](int y, int x) -> float
+        {
+            return std::max(src[y][x], 0.f);
+        };
+
+    dst(W, H);
+    const float f = factor / ceiling;
+
+#ifdef _OPENMP
+#   pragma omp parallel for if (multiThread)
+#endif
+    for (int y = 0; y < H; ++y) {
+        int n = Y(y-1), s = Y(y+1);
+        for (int x = 0; x < W; ++x) {
+            int w = X(x-1), e = X(x+1);
+            float v = -8.f * get(y, x) + get(n, x) + get(s, x) + get(y, w) + get(y, e) + get(n, w) + get(n, e) + get(s, w) + get(s, e);
+            dst[y][x] = LIM(std::abs(v) - threshold, 0.f, ceiling) * f;
+        }
+    }
+}
+
+
+
 
 void ImProcFunctions::discrete_laplacian_threshold(float * data_out, const float * data_in, size_t nx, size_t ny, float t)
 {
@@ -8412,7 +8457,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
 }
 
 
-void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_numblox_W, float **tmp1, array2D<float> *Lin, int numThreads, const struct local_params & lp, int chrom)
+void ImProcFunctions::fftw_denoise(int sk, int GW, int GH, int max_numblox_W, int min_numblox_W, float **tmp1, array2D<float> *Lin, int numThreads, const struct local_params & lp, int chrom)
 {
    // BENCHFUN
 
@@ -8596,30 +8641,44 @@ void ImProcFunctions::fftw_denoise(int GW, int GH, int max_numblox_W, int min_nu
         }//end of vertical block loop
     }
 
-    //Threshold DCT from Alberto Grigio
+    //Threshold DCT from Alberto Grigio, adapted to Rawtherapee 
     const int detail_thresh = lp.detailthr;
     array2D<float> mask;
 
     if (detail_thresh > 0) {
         mask(GW, GH);
-        float thr = log2lin(float(detail_thresh) / 200.f, 100.f);
-        buildBlendMask(prov, mask, GW, GH, thr);
+        if (lp.usemask) {//with Laplacian
+            float amount = LIM01(float(detail_thresh)/100.f);
+            float thr = 1.f - amount;
+            array2D<float> LL(GW, GH, prov, ARRAY2D_BYREFERENCE);
+            laplacian(LL, mask, GW, GH, 25.f, 10000.f, amount, false);
+            for (int i = 0; i < GH; ++i) {
+                for (int j = 0; j < GW; ++j) {
+                    mask[i][j] = LIM01(mask[i][j] + thr);
+                }
+            }
+            for (int i = 0; i < 3; ++i) {
+                boxblur(mask, mask, 10 / sk, GW, GH, false);
+            }
+        } else {//with blend mask
+            float thr = log2lin(float(detail_thresh) / 200.f, 100.f);
+            buildBlendMask(prov, mask, GW, GH, thr);
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
 #endif
-        {
-            gaussianBlur(mask, mask, GW, GH, 20.0);
-        }
-        array2D<float> m2(GW, GH);
-        constexpr float alfa = 0.856f;
-        const float beta = 1.f + std::sqrt(log2lin(thr, 100.f));
-        buildGradientsMask(GW, GH, prov, m2, params_Ldetail / 100.f, 7, 3, alfa, beta, multiThread);
-
-        for (int i = 0; i < GH; ++i) {
-            for (int j = 0; j < GW; ++j) {
-                mask[i][j] *= m2[i][j];
+            {
+                gaussianBlur(mask, mask, GW, GH, 20.0);
             }
-        }
+            array2D<float> m2(GW, GH);
+            constexpr float alfa = 0.856f;
+            const float beta = 1.f + std::sqrt(log2lin(thr, 100.f));
+            buildGradientsMask(GW, GH, prov, m2, params_Ldetail / 100.f, 7, 3, alfa, beta, multiThread);
+            for (int i = 0; i < GH; ++i) {
+                for (int j = 0; j < GW; ++j) {
+                    mask[i][j] *= m2[i][j];
+                }
+            }
+        } 
     }
 
 
@@ -9233,7 +9292,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
             if (!Ldecomp.memory_allocation_failed() && aut == 0) {
                 if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f) {
-                    fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.L, Lin,  numThreads, lp, 0);
+                    fftw_denoise(sk, GW, GH, max_numblox_W, min_numblox_W, tmp1.L, Lin,  numThreads, lp, 0);
                 }
             }
 
@@ -9254,7 +9313,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
             if (!adecomp.memory_allocation_failed() && aut == 0) {
                 if ((lp.noisecf >= 0.01f ||  lp.noisecc >= 0.01f) && levred == 7 && lp.noisechrodetail != 100.f) {
-                    fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.a, Ain,  numThreads, lp, 1);
+                    fftw_denoise(sk, GW, GH, max_numblox_W, min_numblox_W, tmp1.a, Ain,  numThreads, lp, 1);
                 }
             }
 
@@ -9277,7 +9336,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
             if (!bdecomp.memory_allocation_failed() && aut == 0) {
                 if ((lp.noisecf >= 0.01f ||  lp.noisecc >= 0.01f) && levred == 7 && lp.noisechrodetail != 100.f) {
-                    fftw_denoise(GW, GH, max_numblox_W, min_numblox_W, tmp1.b, Bin,  numThreads, lp, 1);
+                    fftw_denoise(sk, GW, GH, max_numblox_W, min_numblox_W, tmp1.b, Bin,  numThreads, lp, 1);
                 }
 
             }
@@ -9835,7 +9894,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
 
                     if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f) {
-                        fftw_denoise(bfw, bfh, max_numblox_W, min_numblox_W, bufwv.L, Lin,  numThreads, lp, 0);
+                        fftw_denoise(sk, bfw, bfh, max_numblox_W, min_numblox_W, bufwv.L, Lin,  numThreads, lp, 0);
                     }
                 }
 
@@ -9856,7 +9915,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
                 if (!adecomp.memory_allocation_failed() && aut == 0) {
                     if ((lp.noisecf >= 0.001f ||  lp.noisecc >= 0.001f) && levred == 7 && lp.noisechrodetail != 100.f) {
-                        fftw_denoise(bfw, bfh, max_numblox_W, min_numblox_W, bufwv.a, Ain,  numThreads, lp, 1);
+                        fftw_denoise(sk, bfw, bfh, max_numblox_W, min_numblox_W, bufwv.a, Ain,  numThreads, lp, 1);
                     }
                 }
 
@@ -9877,7 +9936,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
                 if (!bdecomp.memory_allocation_failed() && aut == 0) {
                     if ((lp.noisecf >= 0.001f ||  lp.noisecc >= 0.001f) && levred == 7 && lp.noisechrodetail != 100.f) {
-                        fftw_denoise(bfw, bfh, max_numblox_W, min_numblox_W, bufwv.b, Bin,  numThreads, lp, 1);
+                        fftw_denoise(sk, bfw, bfh, max_numblox_W, min_numblox_W, bufwv.b, Bin,  numThreads, lp, 1);
                     }
                 }
 
