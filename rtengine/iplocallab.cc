@@ -8667,7 +8667,7 @@ void ImProcFunctions::fftw_denoise(int sk, int GW, int GH, int max_numblox_W, in
         #pragma omp parallel if (multiThread)
 #endif
             {
-                gaussianBlur(mask, mask, GW, GH, 20.0);
+                gaussianBlur(mask, mask, GW, GH, 20.0 / sk);
             }
             array2D<float> m2(GW, GH);
             constexpr float alfa = 0.856f;
