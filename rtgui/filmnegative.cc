@@ -408,7 +408,7 @@ void FilmNegative::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
     pp->filmNegative.refInput = refInputValues;
 
     // Don't read from output sliders while they're hidden
-    if(outputLevel->is_visible()) {
+    if (outputLevel->is_visible()) {
         readOutputSliders(pp->filmNegative.refOutput);
     }
 

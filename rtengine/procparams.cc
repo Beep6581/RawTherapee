@@ -1738,8 +1738,8 @@ bool SHParams::operator !=(const SHParams& other) const
 
 CropParams::CropParams() :
     enabled(false),
-    x(-1),
-    y(-1),
+    x(0),
+    y(0),
     w(15000),
     h(15000),
     fixratio(true),
