@@ -8649,16 +8649,23 @@ void ImProcFunctions::fftw_denoise(int sk, int GW, int GH, int max_numblox_W, in
         mask(GW, GH);
         if (lp.usemask) {//with Laplacian
             float amount = LIM01(float(detail_thresh)/100.f);
-            float thr = 1.f - amount;
+            float thr = (1.f - amount);
+            float alph = params_Ldetail / 100.f;
             array2D<float> LL(GW, GH, prov, ARRAY2D_BYREFERENCE);
-            laplacian(LL, mask, GW, GH, 25.f, 10000.f, amount, false);
+            laplacian(LL, mask, GW, GH, 25.f, 20000.f, amount, false);
             for (int i = 0; i < GH; ++i) {
                 for (int j = 0; j < GW; ++j) {
-                    mask[i][j] = LIM01(mask[i][j] + thr);
+                    mask[i][j] = LIM01(mask[i][j]+ thr);
                 }
             }
             for (int i = 0; i < 3; ++i) {
                 boxblur(mask, mask, 10 / sk, GW, GH, false);
+            }
+            for (int i = 0; i < GH; ++i) {
+                for (int j = 0; j < GW; ++j) {
+                    float k = 1.f - mask[i][j] * alph;
+                    mask[i][j] = 1.f - (k * k);
+                }
             }
         } else {//with blend mask
             float thr = log2lin(float(detail_thresh) / 200.f, 100.f);
