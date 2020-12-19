@@ -5763,7 +5763,7 @@ LocallabBlur::LocallabBlur():
     expdenoise1(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI1_EXP")))),
     maskusable(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusable(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
-//   usemask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_USEMASK")))),
+    usemask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_USEMASK")))),
     lnoiselow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLNOISELOW"), 0.7, 2., 0.01, 1.))),
     levelthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 10., 100., 1., 40.))),
     levelthrlow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 100., 1., 12.))),
@@ -5778,6 +5778,7 @@ LocallabBlur::LocallabBlur():
     noisechrof(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noisechroc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROCOARSE"), MINCHRO, MAXCHROCC, 0.01, 0.))),
     noisechrodetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHRODETAIL"), 0., 100., 0.01, 50.))),
+    detailFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DETAILFRA")))),
     detailthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAILTHR"), 0, 100, 1, 50))),
     adjblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJ"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-yellow-small.png")), Gtk::manage(new RTImage("circle-red-green-small.png"))))),
     bilateral(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BILATERAL"), 0, 100, 1, 0))),
@@ -5829,7 +5830,7 @@ LocallabBlur::LocallabBlur():
     blMethodConn = blMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabBlur::blMethodChanged));
 
     fftwblConn = fftwbl->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::fftwblChanged));
-  //  usemaskConn = usemask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::usemaskChanged));
+    usemaskConn = usemask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::usemaskChanged));
     invblConn = invbl->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::invblChanged));
 
     radius->setAdjusterListener(this);
@@ -5931,6 +5932,7 @@ LocallabBlur::LocallabBlur():
 
     noisechrodetail->setAdjusterListener(this);
 
+    detailFrame->set_label_align(0.025, 0.5);
     detailthr->setAdjusterListener(this);
 
     adjblur->setAdjusterListener(this);
@@ -6057,7 +6059,6 @@ LocallabBlur::LocallabBlur():
     wavBox->pack_start(*noiselequal);
     wavBox->pack_start(*LocalcurveEditorwavhue, Gtk::PACK_SHRINK, 4);
     ToolParamBlock* const wavBox1 = Gtk::manage(new ToolParamBlock());
-   // wavBox1->pack_start(*usemask, Gtk::PACK_SHRINK, 0);
     wavBox1->pack_start(*maskusable, Gtk::PACK_SHRINK, 0);
     wavBox1->pack_start(*maskunusable, Gtk::PACK_SHRINK, 0);
     wavBox1->pack_start(*lnoiselow, Gtk::PACK_SHRINK, 0);
@@ -6068,8 +6069,12 @@ LocallabBlur::LocallabBlur():
     wavBox->pack_start(*noisechrof);
     wavBox->pack_start(*noisechroc);
     wavBox->pack_start(*noisechrodetail);
-    wavBox->pack_start(*detailthr);
     wavBox->pack_start(*adjblur);
+    ToolParamBlock* const detailBox = Gtk::manage(new ToolParamBlock());
+    detailBox->pack_start(*detailthr);
+    detailBox->pack_start(*usemask, Gtk::PACK_SHRINK, 0);
+    detailFrame->add(*detailBox);
+    wavBox->pack_start(*detailFrame);
     wavFrame->add(*wavBox);
     denoisebox->pack_start(*wavFrame);
     denoisebox->pack_start(*bilateral);
@@ -6260,6 +6265,7 @@ void LocallabBlur::neutral_pressed ()
     quamethod->set_active (0);    
     wavshapeden->setCurve(defSpot.locwavcurveden);
     wavhue->setCurve(defSpot.locwavcurvehue);
+    usemask->set_active(defSpot.usemask);
 }
 
 void LocallabBlur::setDefaultExpanderVisibility()
@@ -6276,7 +6282,7 @@ void LocallabBlur::disableListener()
 
     blMethodConn.block(true);
     fftwblConn.block(true);
-  //  usemaskConn.block(true);
+    usemaskConn.block(true);
     invblConn.block(true);
     medMethodConn.block(true);
     blurMethodConn.block(true);
@@ -6295,7 +6301,7 @@ void LocallabBlur::enableListener()
 
     blMethodConn.block(false);
     fftwblConn.block(false);
-  //  usemaskConn.block(false);
+    usemaskConn.block(false);
     invblConn.block(false);
     medMethodConn.block(false);
     blurMethodConn.block(false);
@@ -6334,7 +6340,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         }
 
         fftwbl->set_active(spot.fftwbl);
-   //     usemask->set_active(spot.usemask);
+        usemask->set_active(spot.usemask);
         invbl->set_active(spot.invbl);
         radius->setValue(spot.radius);
         strength->setValue(spot.strength);
@@ -6459,7 +6465,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         }
 
         spot.fftwbl = fftwbl->get_active();
-    //    spot.usemask = usemask->get_active();
+        spot.usemask = usemask->get_active();
         spot.invbl = invbl->get_active();
         spot.radius = radius->getValue();
         spot.strength = strength->getIntValue();
@@ -6994,7 +7000,7 @@ void LocallabBlur::convertParamToSimple()
     levelthr->setValue(defSpot.levelthr);
     lnoiselow->setValue(defSpot.lnoiselow);
     levelthrlow->setValue(defSpot.levelthrlow);
-  //  usemask->set_active(defSpot.usemask);
+    usemask->set_active(defSpot.usemask);
 
     // Enable all listeners
     enableListener();
@@ -7130,7 +7136,7 @@ void LocallabBlur::fftwblChanged()
         }
     }
 }
-/*
+
 void LocallabBlur::usemaskChanged()
 {
     if (isLocActivated && exp->getEnabled()) {
@@ -7145,7 +7151,7 @@ void LocallabBlur::usemaskChanged()
         }
     }
 }
-*/
+
 void LocallabBlur::invblChanged()
 {
     const LocallabParams::LocallabSpot defSpot;
