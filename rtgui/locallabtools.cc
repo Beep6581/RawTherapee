@@ -5751,6 +5751,7 @@ LocallabBlur::LocallabBlur():
     guidbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDBL"), 0, 1000, 1, 0))),
     strbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRBL"), 0, 100, 1, 50))),
     epsbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EPSBL"), -10, 10, 1, 0))),
+    recothres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RECOTHRES"), 0, 100, 1, 0))),
     sensibn(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 40))),
     blurMethod(Gtk::manage(new MyComboBoxText())),
     invbl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVBL")))),
@@ -5861,6 +5862,7 @@ LocallabBlur::LocallabBlur():
     strbl->setAdjusterListener(this);
 
     epsbl->setAdjusterListener(this);
+    recothres->setAdjusterListener(this);
 
     sensibn->setAdjusterListener(this);
 
@@ -6039,6 +6041,7 @@ LocallabBlur::LocallabBlur():
     blnoisebox->pack_start(*guidbl);
     blnoisebox->pack_start(*strbl);
     blnoisebox->pack_start(*epsbl);
+    blnoisebox->pack_start(*recothres);
     blnoisebox->pack_start(*sensibn);
 //    blnoisebox->pack_start(*blurMethod);
     blnoisebox->pack_start(*invbl);
@@ -6363,6 +6366,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         itera->setValue((double)spot.itera);
         guidbl->setValue((double)spot.guidbl);
         strbl->setValue((double)spot.strbl);
+        recothres->setValue((double)spot.recothres);
         epsbl->setValue((double)spot.epsbl);
         sensibn->setValue((double)spot.sensibn);
 
@@ -6488,6 +6492,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.itera = itera->getIntValue();
         spot.guidbl = guidbl->getIntValue();
         spot.strbl = strbl->getIntValue();
+        spot.recothres = recothres->getIntValue();
         spot.epsbl = epsbl->getIntValue();
         spot.sensibn = sensibn->getIntValue();
 
@@ -6578,6 +6583,7 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         itera->setDefault((double)defSpot.itera);
         guidbl->setDefault((double)defSpot.guidbl);
         strbl->setDefault((double)defSpot.strbl);
+        recothres->setDefault((double)defSpot.recothres);
         epsbl->setDefault((double)defSpot.epsbl);
         sensibn->setDefault((double)defSpot.sensibn);
         noiselumf0->setDefault(defSpot.noiselumf0);
@@ -6667,6 +6673,13 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabstrbl,
                                        strbl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == recothres) {
+            if (listener) {
+                listener->panelChanged(Evlocallabrecothres,
+                                       recothres->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -7337,6 +7350,7 @@ void LocallabBlur::updateBlurGUI()
         itera->hide();
         guidbl->hide();
         strbl->hide();
+        recothres->hide();
         epsbl->hide();
         activlum->show();
     } else if (blMethod->get_active_row_number() == 1) {
@@ -7348,6 +7362,7 @@ void LocallabBlur::updateBlurGUI()
         itera->show();
         guidbl->hide();
         strbl->hide();
+        recothres->hide();
         epsbl->hide();
         activlum->show();
     } else if (blMethod->get_active_row_number() == 2) {
@@ -7359,6 +7374,7 @@ void LocallabBlur::updateBlurGUI()
         itera->hide();
         guidbl->show();
         strbl->show();
+        recothres->show();
         epsbl->show();
         activlum->hide();
     }

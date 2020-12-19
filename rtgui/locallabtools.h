@@ -654,6 +654,7 @@ private:
     Adjuster* const guidbl;
     Adjuster* const strbl;
     Adjuster* const epsbl;
+    Adjuster* const recothres;
     Adjuster* const sensibn;
     MyComboBoxText* const blurMethod;
     Gtk::CheckButton* const invbl;

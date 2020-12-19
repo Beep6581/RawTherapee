@@ -613,6 +613,7 @@ public:
         bool itera;
         bool guidbl;
         bool strbl;
+        bool recothres;
         bool isogr;
         bool strengr;
         bool scalegr;
