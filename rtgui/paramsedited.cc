@@ -1279,6 +1279,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).recothres = locallab.spots.at(j).recothres && pSpot.recothres == otherSpot.recothres;
                 locallab.spots.at(j).lowthres = locallab.spots.at(j).lowthres && pSpot.lowthres == otherSpot.lowthres;
                 locallab.spots.at(j).higthres = locallab.spots.at(j).higthres && pSpot.higthres == otherSpot.higthres;
+                locallab.spots.at(j).recothresd = locallab.spots.at(j).recothresd && pSpot.recothresd == otherSpot.recothresd;
+                locallab.spots.at(j).lowthresd = locallab.spots.at(j).lowthresd && pSpot.lowthresd == otherSpot.lowthresd;
+                locallab.spots.at(j).higthresd = locallab.spots.at(j).higthresd && pSpot.higthresd == otherSpot.higthresd;
                 locallab.spots.at(j).isogr = locallab.spots.at(j).isogr && pSpot.isogr == otherSpot.isogr;
                 locallab.spots.at(j).strengr = locallab.spots.at(j).strengr && pSpot.strengr == otherSpot.strengr;
                 locallab.spots.at(j).scalegr = locallab.spots.at(j).scalegr && pSpot.scalegr == otherSpot.scalegr;
@@ -4039,6 +4042,18 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).higthres = mods.locallab.spots.at(i).higthres;
         }
 
+        if (locallab.spots.at(i).recothresd) {
+            toEdit.locallab.spots.at(i).recothresd = mods.locallab.spots.at(i).recothresd;
+        }
+
+        if (locallab.spots.at(i).lowthresd) {
+            toEdit.locallab.spots.at(i).lowthresd = mods.locallab.spots.at(i).lowthresd;
+        }
+
+        if (locallab.spots.at(i).higthresd) {
+            toEdit.locallab.spots.at(i).higthresd = mods.locallab.spots.at(i).higthresd;
+        }
+
         if (locallab.spots.at(i).isogr) {
             toEdit.locallab.spots.at(i).isogr = mods.locallab.spots.at(i).isogr;
         }
@@ -6598,6 +6613,9 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     recothres(v),
     lowthres(v),
     higthres(v),
+    recothresd(v),
+    lowthresd(v),
+    higthresd(v),
     isogr(v),
     strengr(v),
     scalegr(v),
@@ -7120,6 +7138,9 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     recothres = v;
     lowthres = v;
     higthres = v;
+    recothresd = v;
+    lowthresd = v;
+    higthresd = v;
     isogr = v;
     strengr = v;
     scalegr = v;

@@ -9359,6 +9359,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
            // DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
             if(lp.smasktyp != 0) {
+                
                 DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
             } else {
                 DeNoise_Local(call, lp,  original, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);

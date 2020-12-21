@@ -1208,6 +1208,9 @@ struct LocallabParams {
         double recothres;
         double lowthres;
         double higthres;
+        double recothresd;
+        double lowthresd;
+        double higthresd;
         int isogr;
         int strengr;
         int scalegr;

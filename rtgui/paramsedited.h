@@ -616,6 +616,9 @@ public:
         bool recothres;
         bool lowthres;
         bool higthres;
+        bool recothresd;
+        bool lowthresd;
+        bool higthresd;
         bool isogr;
         bool strengr;
         bool scalegr;

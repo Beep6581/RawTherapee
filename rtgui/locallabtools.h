@@ -672,6 +672,8 @@ private:
     Gtk::Label* const maskunusable;
     Gtk::Label* const maskusable2;
     Gtk::Label* const maskunusable2;
+    Gtk::Label* const maskusable3;
+    Gtk::Label* const maskunusable3;
 
     Gtk::CheckButton* const usemask;
     Adjuster* const lnoiselow;
@@ -691,6 +693,11 @@ private:
     Gtk::Frame* const detailFrame;
     Adjuster* const detailthr;
     Adjuster* const adjblur;
+    MyExpander* const expdenoise3;
+    Adjuster* const recothresd;
+    Adjuster* const lowthresd;
+    Adjuster* const higthresd;
+    
     Adjuster* const bilateral;
     Adjuster* const sensiden;
     Gtk::Button* neutral;
