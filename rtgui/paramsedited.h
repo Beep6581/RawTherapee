@@ -614,6 +614,8 @@ public:
         bool guidbl;
         bool strbl;
         bool recothres;
+        bool lowthres;
+        bool higthres;
         bool isogr;
         bool strengr;
         bool scalegr;

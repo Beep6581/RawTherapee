@@ -654,7 +654,10 @@ private:
     Adjuster* const guidbl;
     Adjuster* const strbl;
     Adjuster* const epsbl;
+    MyExpander* const expdenoise2;
     Adjuster* const recothres;
+    Adjuster* const lowthres;
+    Adjuster* const higthres;
     Adjuster* const sensibn;
     MyComboBoxText* const blurMethod;
     Gtk::CheckButton* const invbl;
@@ -667,6 +670,8 @@ private:
     MyExpander* const expdenoise1;
     Gtk::Label* const maskusable;
     Gtk::Label* const maskunusable;
+    Gtk::Label* const maskusable2;
+    Gtk::Label* const maskunusable2;
 
     Gtk::CheckButton* const usemask;
     Adjuster* const lnoiselow;

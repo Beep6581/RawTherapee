@@ -1277,6 +1277,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).guidbl = locallab.spots.at(j).guidbl && pSpot.guidbl == otherSpot.guidbl;
                 locallab.spots.at(j).strbl = locallab.spots.at(j).strbl && pSpot.strbl == otherSpot.strbl;
                 locallab.spots.at(j).recothres = locallab.spots.at(j).recothres && pSpot.recothres == otherSpot.recothres;
+                locallab.spots.at(j).lowthres = locallab.spots.at(j).lowthres && pSpot.lowthres == otherSpot.lowthres;
+                locallab.spots.at(j).higthres = locallab.spots.at(j).higthres && pSpot.higthres == otherSpot.higthres;
                 locallab.spots.at(j).isogr = locallab.spots.at(j).isogr && pSpot.isogr == otherSpot.isogr;
                 locallab.spots.at(j).strengr = locallab.spots.at(j).strengr && pSpot.strengr == otherSpot.strengr;
                 locallab.spots.at(j).scalegr = locallab.spots.at(j).scalegr && pSpot.scalegr == otherSpot.scalegr;
@@ -4029,6 +4031,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).recothres = mods.locallab.spots.at(i).recothres;
         }
 
+        if (locallab.spots.at(i).lowthres) {
+            toEdit.locallab.spots.at(i).lowthres = mods.locallab.spots.at(i).lowthres;
+        }
+
+        if (locallab.spots.at(i).higthres) {
+            toEdit.locallab.spots.at(i).higthres = mods.locallab.spots.at(i).higthres;
+        }
+
         if (locallab.spots.at(i).isogr) {
             toEdit.locallab.spots.at(i).isogr = mods.locallab.spots.at(i).isogr;
         }
@@ -6586,6 +6596,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     guidbl(v),
     strbl(v),
     recothres(v),
+    lowthres(v),
+    higthres(v),
     isogr(v),
     strengr(v),
     scalegr(v),
@@ -7106,6 +7118,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     guidbl = v;
     strbl = v;
     recothres = v;
+    lowthres = v;
+    higthres = v;
     isogr = v;
     strengr = v;
     scalegr = v;

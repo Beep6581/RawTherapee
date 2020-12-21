@@ -557,6 +557,9 @@ struct local_params {
     float noiself2;
     float noiseldetail;
     int detailthr;
+    float recothr;
+    float lowthr;
+    float higthr;
     int noiselequal;
     float noisechrodetail;
     float bilat;
@@ -992,6 +995,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float local_noisechrodetail = (float)locallab.spots.at(sp).noisechrodetail;
     int local_sensiden = locallab.spots.at(sp).sensiden;
     float local_detailthr = (float)locallab.spots.at(sp).detailthr;
+    float local_recothr = (float)locallab.spots.at(sp).recothres;
+    float local_lowthr = (float)locallab.spots.at(sp).lowthres;
+    float local_higthr = (float)locallab.spots.at(sp).higthres;
 
     float local_noisecf = ((float)locallab.spots.at(sp).noisechrof) / 10.f;
     float local_noisecc = ((float)locallab.spots.at(sp).noisechroc) / 10.f;
@@ -1339,6 +1345,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.noiself2 = local_noiself2;
     lp.noiseldetail = local_noiseldetail;
     lp.detailthr = local_detailthr;
+    lp.recothr = local_recothr;
+    lp.lowthr = local_lowthr;
+    lp.higthr = local_higthr;
     lp.noiselequal = local_noiselequal;
     lp.noisechrodetail = local_noisechrodetail;
     lp.noiselc = local_noiselc;
@@ -10705,6 +10714,8 @@ void ImProcFunctions::Lab_Local(
  //   if (((radius > 1.5 * GAUSS_SKIP && lp.rad > 1.6) || lp.stren > 0.1 || lp.blmet == 1 || lp.guidb > 0 || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.blurena) { // radius < GAUSS_SKIP means no gauss, just copy of original image
         std::unique_ptr<LabImage> tmp1;
         std::unique_ptr<LabImage> tmp2;
+        std::unique_ptr<LabImage> tmp3;
+        std::unique_ptr<LabImage> maskk;
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
@@ -10734,6 +10745,8 @@ void ImProcFunctions::Lab_Local(
                 if (lp.blurmet == 0) {
                     if (bfw > 0 && bfh > 0) {
                         tmp1.reset(new LabImage(bfw, bfh));
+                        tmp3.reset(new LabImage(bfw, bfh));
+                        maskk.reset(new LabImage(bfw, bfh));
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -10968,6 +10981,10 @@ void ImProcFunctions::Lab_Local(
                                 tmp1->L[y - ystart][x - xstart] = original->L[y][x];
                                 tmp1->a[y - ystart][x - xstart] = original->a[y][x];
                                 tmp1->b[y - ystart][x - xstart] = original->b[y][x];
+                                tmp3->L[y - ystart][x - xstart] = original->L[y][x];
+                                tmp3->a[y - ystart][x - xstart] = original->a[y][x];
+                                tmp3->b[y - ystart][x - xstart] = original->b[y][x];
+                              //  maskk->L[y - ystart][x - xstart] = bufmaskblurbl->L[y][x];
                                 bufgb->L[y - ystart][x - xstart] = original->L[y][x];
                             }
                         }
@@ -11045,12 +11062,63 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
 
+                        if(lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {
+                            array2D<float> masklum;
+                            masklum(bfw, bfh);
+                            for (int ir = 0; ir < bfh; ir++)
+                                for (int jr = 0; jr < bfw; jr++) {
+                                    masklum[ir][jr] = 1.f;
+                                }
+                            float hig = lp.higthr;
+                            if(lp.higthr < lp.lowthr) {
+                                hig = lp.lowthr + 0.01f;
+                            }
+                            float th = (lp.recothr - 1.f);
+                            float ahigh = th / (hig - 100.f);
+                            float bhigh = 1.f - hig * ahigh;
+                            
+                            float alow = th /lp.lowthr; 
+                            float blow = 1.f - th;
+#ifdef _OPENMP
+                    #pragma omp parallel for if (multiThread)
+#endif
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                                const float lM = bufmaskblurbl->L[ir + ystart][jr + xstart];
+                                const float lmr = lM / 327.68f;
+                                if (lM < 327.68f * lp.lowthr) {
+                                    masklum[ir][jr] = alow * lmr + blow;
+                                } else if (lM < 327.68f * hig) {
+                                    
+                                } else {
+                                    masklum[ir][jr] = (ahigh * lmr + bhigh);
+                                }
+                            }
+                            
+                            for (int i = 0; i < 3; ++i) {
+                                boxblur(masklum, masklum, 10 / sk, bfw, bfh, false);
+                            }
+                            
+#ifdef _OPENMP
+                    #pragma omp parallel for if (multiThread)
+#endif
+                            for (int i = 0; i < bfh; ++i) {
+                                for (int j = 0; j < bfw; ++j) {
+                                    tmp1->L[i][j] = (tmp1->L[i][j] - tmp3->L[i][j]) *  masklum[i][j] + tmp3->L[i][j];
+                                    tmp1->a[i][j] = (tmp1->a[i][j] - tmp3->a[i][j]) *  masklum[i][j] + tmp3->a[i][j];
+                                    tmp1->b[i][j] = (tmp1->b[i][j] - tmp3->b[i][j]) *  masklum[i][j] + tmp3->b[i][j];
+                                }
+                            }
+                    
+                        }
+
                         delete tmpImage;
                     }
 
                 } else if (lp.blurmet == 1 && lp.blmet == 2) {
 
                     if (lp.guidb > 0) {
+ 
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -11250,8 +11318,7 @@ void ImProcFunctions::Lab_Local(
     }
 
 //local denoise
-
-    if (lp.denoiena) {
+    if (lp.denoiena && (lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f )) {//disable denoise if not used
         float slidL[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}; 
         float slida[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
         float slidb[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};

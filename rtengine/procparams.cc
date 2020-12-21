@@ -3298,7 +3298,9 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     itera(1),
     guidbl(0),
     strbl(50),
-    recothres(0),
+    recothres(1.),
+    lowthres(12),
+    higthres(85),
     isogr(400),
     strengr(0),
     scalegr(100),
@@ -4344,6 +4346,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && guidbl == other.guidbl
         && strbl == other.strbl
         && recothres == other.recothres
+        && lowthres == other.lowthres
+        && higthres == other.higthres
         && isogr == other.isogr
         && strengr == other.strengr
         && scalegr == other.scalegr
@@ -5931,6 +5935,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->guidbl, "Locallab", "Guidbl_" + index_str, spot.guidbl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strbl, "Locallab", "Strbl_" + index_str, spot.strbl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->recothres, "Locallab", "Recothres_" + index_str, spot.recothres, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lowthres, "Locallab", "Lowthres_" + index_str, spot.lowthres, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->higthres, "Locallab", "Higthres_" + index_str, spot.higthres, keyFile);
                     saveToKeyfile(!pedited || spot_edited->isogr, "Locallab", "Isogr_" + index_str, spot.isogr, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strengr, "Locallab", "Strengr_" + index_str, spot.strengr, keyFile);
                     saveToKeyfile(!pedited || spot_edited->scalegr, "Locallab", "Scalegr_" + index_str, spot.scalegr, keyFile);
@@ -7734,6 +7740,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Guidbl_" + index_str, pedited, spot.guidbl, spotEdited.guidbl);
                 assignFromKeyfile(keyFile, "Locallab", "Strbl_" + index_str, pedited, spot.strbl, spotEdited.strbl);
                 assignFromKeyfile(keyFile, "Locallab", "Recothres_" + index_str, pedited, spot.recothres, spotEdited.recothres);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthres_" + index_str, pedited, spot.lowthres, spotEdited.lowthres);
+                assignFromKeyfile(keyFile, "Locallab", "Higthres_" + index_str, pedited, spot.higthres, spotEdited.higthres);
                 assignFromKeyfile(keyFile, "Locallab", "Isogr_" + index_str, pedited, spot.isogr, spotEdited.isogr);
                 assignFromKeyfile(keyFile, "Locallab", "Strengr_" + index_str, pedited, spot.strengr, spotEdited.strengr);
                 assignFromKeyfile(keyFile, "Locallab", "Scalegr_" + index_str, pedited, spot.scalegr, spotEdited.scalegr);
