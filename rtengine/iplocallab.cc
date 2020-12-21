@@ -10761,12 +10761,16 @@ void ImProcFunctions::Lab_Local(
                 } else if (lp.blurmet == 1) {
                     tmp1.reset(new LabImage(transformed->W, transformed->H));
                     tmp2.reset(new LabImage(transformed->W, transformed->H));
+                    tmp3.reset(new LabImage(transformed->W, transformed->H));
 
                     for (int y = 0; y < GH ; y++) {
                         for (int x = 0; x < GW; x++) {
                             tmp2->L[y][x] = original->L[y][x];
                             tmp2->a[y][x] = original->a[y][x];
                             tmp2->b[y][x] = original->b[y][x];
+                            tmp3->L[y][x] = original->L[y][x];
+                            tmp3->a[y][x] = original->a[y][x];
+                            tmp3->b[y][x] = original->b[y][x];
                             tmp1->L[y][x] = original->L[y][x];
                             tmp1->a[y][x] = original->a[y][x];
                             tmp1->b[y][x] = original->b[y][x];
@@ -11082,18 +11086,18 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
-                        for (int ir = 0; ir < bfh; ir++)
-                            for (int jr = 0; jr < bfw; jr++) {
-                                const float lM = bufmaskblurbl->L[ir + ystart][jr + xstart];
-                                const float lmr = lM / 327.68f;
-                                if (lM < 327.68f * lp.lowthr) {
-                                    masklum[ir][jr] = alow * lmr + blow;
-                                } else if (lM < 327.68f * hig) {
+                            for (int ir = 0; ir < bfh; ir++)
+                                for (int jr = 0; jr < bfw; jr++) {
+                                    const float lM = bufmaskblurbl->L[ir + ystart][jr + xstart];
+                                    const float lmr = lM / 327.68f;
+                                    if (lM < 327.68f * lp.lowthr) {
+                                        masklum[ir][jr] = alow * lmr + blow;
+                                    } else if (lM < 327.68f * hig) {
                                     
-                                } else {
-                                    masklum[ir][jr] = (ahigh * lmr + bhigh);
+                                    } else {
+                                        masklum[ir][jr] = (ahigh * lmr + bhigh);
+                                    }
                                 }
-                            }
                             
                             for (int i = 0; i < 3; ++i) {
                                 boxblur(masklum, masklum, 10 / sk, bfw, bfh, false);
@@ -11109,7 +11113,7 @@ void ImProcFunctions::Lab_Local(
                                     tmp1->b[i][j] = (tmp1->b[i][j] - tmp3->b[i][j]) *  masklum[i][j] + tmp3->b[i][j];
                                 }
                             }
-                    
+                            masklum.free();
                         }
 
                         delete tmpImage;
@@ -11128,6 +11132,9 @@ void ImProcFunctions::Lab_Local(
                                 tmp1->a[y][x] = original->a[y][x];
                                 tmp1->b[y][x] = original->b[y][x];
                                 tmp2->L[y][x] = original->L[y][x];
+                                tmp3->L[y][x] = original->L[y][x];
+                                tmp3->a[y][x] = original->a[y][x];
+                                tmp3->b[y][x] = original->b[y][x];
                             }
                         }
 
@@ -11203,6 +11210,59 @@ void ImProcFunctions::Lab_Local(
                                 }
                             }
                         }
+                        
+                        if(lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {
+                            array2D<float> masklum;
+                            masklum(GW, GH);
+                            for (int ir = 0; ir < GH; ir++)
+                                for (int jr = 0; jr < GW; jr++) {
+                                    masklum[ir][jr] = 1.f;
+                                }
+                                
+                            float hig = lp.higthr;
+                            if(lp.higthr < lp.lowthr) {
+                                hig = lp.lowthr + 0.01f;
+                            }
+                            float th = (lp.recothr - 1.f);
+                            float ahigh = th / (hig - 100.f);
+                            float bhigh = 1.f - hig * ahigh;
+                            
+                            float alow = th /lp.lowthr; 
+                            float blow = 1.f - th;
+#ifdef _OPENMP
+                    #pragma omp parallel for if (multiThread)
+#endif
+                            for (int ir = 0; ir < GH; ir++)
+                                for (int jr = 0; jr < GW; jr++) {
+                                    const float lM = bufmaskblurbl->L[ir][jr];
+                                    const float lmr = lM / 327.68f;
+                                    if (lM < 327.68f * lp.lowthr) {
+                                        masklum[ir][jr] = alow * lmr + blow;
+                                    } else if (lM < 327.68f * hig) {
+                                    
+                                    } else {
+                                        masklum[ir][jr] = (ahigh * lmr + bhigh);
+                                    }
+                                }
+                            
+                            for (int i = 0; i < 3; ++i) {
+                                boxblur(masklum, masklum, 10 / sk, GW, GH, false);
+                            }
+                            
+#ifdef _OPENMP
+                    #pragma omp parallel for if (multiThread)
+#endif
+                            for (int i = 0; i < GH; ++i) {
+                                for (int j = 0; j < GW; ++j) {
+                                    tmp1->L[i][j] = (tmp1->L[i][j] - tmp3->L[i][j]) *  masklum[i][j] + tmp3->L[i][j];
+                                    tmp1->a[i][j] = (tmp1->a[i][j] - tmp3->a[i][j]) *  masklum[i][j] + tmp3->a[i][j];
+                                    tmp1->b[i][j] = (tmp1->b[i][j] - tmp3->b[i][j]) *  masklum[i][j] + tmp3->b[i][j];
+                                }
+                            }
+                            masklum.free();
+                    
+                        }
+                        
                         delete tmpImage;
                     }
                 }
