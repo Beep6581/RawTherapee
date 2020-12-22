@@ -867,6 +867,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.invmaskd = true;
     }
 
+
     if (locallab.spots.at(sp).showmaskblMethodtyp == "blur") {
         lp.smasktyp = 0;
     } else if (locallab.spots.at(sp).showmaskblMethodtyp == "nois") {
@@ -9384,7 +9385,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
             }
 
            // DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
-                if(lp.smasktyp != 0) {
+            if(lp.smasktyp != 0) {
                     if(lp.enablMask && lp.recothrd != 1.f && lp.smasktyp != 0) {
                         LabImage tmp3(GW, GH);
 
@@ -9453,7 +9454,9 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         masklum.free();
                     
                     }
+                    
                
+                
                 DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
             } else {
                 DeNoise_Local(call, lp,  original, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
@@ -10073,11 +10076,12 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         
                         array2D<float> masklum;
                         masklum(bfw, bfh);
-                        for (int ir = 0; ir < bfh; ir++)
+                        for (int ir = 0; ir < bfh; ir++){
                             for (int jr = 0; jr < bfw; jr++) {
                                 masklum[ir][jr] = 1.f;
                             }
-
+                        }
+                        
                         float hig = lp.higthrd;
                         if(lp.higthrd < lp.lowthrd) {
                             hig = lp.lowthrd + 0.01f;
@@ -10120,16 +10124,30 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
+                        /*
                         for (int y = ystart; y < yend; y++) {
-                            for (int x = xstart, lox = cx + x; x < xend; x++, lox++) 
+                            for (int x = xstart, lox = cx + x; x < xend; x++, lox++) {
                                 bufwv.L[y-ystart][x-xstart] = (bufwv.L[y-ystart][x-xstart] - tmp3.L[y-ystart][x-xstart]) *  masklum[y-ystart][x-xstart] + tmp3.L[y-ystart][x-xstart];
                                 bufwv.a[y-ystart][x-xstart] = (bufwv.a[y-ystart][x-xstart] - tmp3.a[y-ystart][x-xstart]) *  masklum[y-ystart][x-xstart] + tmp3.a[y-ystart][x-xstart];
                                 bufwv.b[y-ystart][x-xstart] = (bufwv.b[y-ystart][x-xstart] - tmp3.b[y-ystart][x-xstart]) *  masklum[y-ystart][x-xstart] + tmp3.b[y-ystart][x-xstart];
                             }
                         }
+                        */
+                        for (int y = 0; y < bfh; y++) {
+                            for (int x = 0; x < bfw; x++) {
+                                bufwv.L[y][x] = (bufwv.L[y][x] - tmp3.L[y][x]) *  masklum[y][x] + tmp3.L[y][x];
+                                bufwv.a[y][x] = (bufwv.a[y][x] - tmp3.a[y][x]) *  masklum[y][x] + tmp3.a[y][x];
+                                bufwv.b[y][x] = (bufwv.b[y][x] - tmp3.b[y][x]) *  masklum[y][x] + tmp3.b[y][x];
+                            }
+                        }
+                        
                         masklum.free();
                     }
-
+                    
+                    
+                    
+                    
+                    
                     DeNoise_Local2(lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, bufwv, cx, cy, sk);
                 } else {
                     DeNoise_Local2(lp,  original, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, bufwv, cx, cy, sk);
@@ -11161,7 +11179,6 @@ void ImProcFunctions::Lab_Local(
                                 tmp3->L[y - ystart][x - xstart] = original->L[y][x];
                                 tmp3->a[y - ystart][x - xstart] = original->a[y][x];
                                 tmp3->b[y - ystart][x - xstart] = original->b[y][x];
-                              //  maskk->L[y - ystart][x - xstart] = bufmaskblurbl->L[y][x];
                                 bufgb->L[y - ystart][x - xstart] = original->L[y][x];
                             }
                         }
@@ -11238,7 +11255,6 @@ void ImProcFunctions::Lab_Local(
                                 }
                             }
                         }
-
                         if(lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {
                             array2D<float> masklum;
                             masklum(bfw, bfh);
@@ -11299,7 +11315,6 @@ void ImProcFunctions::Lab_Local(
                 } else if (lp.blurmet == 1 && lp.blmet == 2) {
 
                     if (lp.guidb > 0) {
- 
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -11387,7 +11402,6 @@ void ImProcFunctions::Lab_Local(
                                 }
                             }
                         }
-                        
                         if(lp.enablMask && lp.recothr != 1.f && lp.smasktyp != 1) {
                             array2D<float> masklum;
                             masklum(GW, GH);
@@ -11414,6 +11428,7 @@ void ImProcFunctions::Lab_Local(
                                     const float lM = bufmaskblurbl->L[ir][jr];
                                     const float lmr = lM / 327.68f;
                                     if (lM < 327.68f * lp.lowthr) {
+                                        masklum[ir][jr] = alow * lmr + blow;
                                         masklum[ir][jr] = alow * lmr + blow;
                                     } else if (lM < 327.68f * hig) {
                                     
