@@ -697,6 +697,10 @@ private:
     Adjuster* const recothresd;
     Adjuster* const lowthresd;
     Adjuster* const higthresd;
+    Adjuster* const decayd;
+    
+    Gtk::CheckButton* const invmaskd;
+    Gtk::CheckButton* const invmask;
     
     Adjuster* const bilateral;
     Adjuster* const sensiden;
@@ -728,7 +732,7 @@ private:
     ThresholdAdjuster* const csThresholdblur;
 
     sigc::connection blMethodConn, fftwblConn, invblConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
-    sigc::connection  quamethodconn, usemaskConn, neutralconn;
+    sigc::connection  quamethodconn, usemaskConn, invmaskdConn, invmaskConn, neutralconn;
 public:
     LocallabBlur();
     ~LocallabBlur();
@@ -766,6 +770,8 @@ private:
     void blMethodChanged();
     void fftwblChanged();
     void usemaskChanged();
+    void invmaskdChanged();
+    void invmaskChanged();
     void invblChanged();
     void medMethodChanged();
     void blurMethodChanged();

@@ -1234,6 +1234,11 @@ HISTORY_MSG_986;Local - denoise reinforce
 HISTORY_MSG_987;Local - GF recovery threshold
 HISTORY_MSG_988;Local - GF threshold mask low
 HISTORY_MSG_989;Local - GF threshold mask high
+HISTORY_MSG_990;Local - Denoise recovery threshold
+HISTORY_MSG_991;Local - Denoise threshold mask low
+HISTORY_MSG_992;Local - Denoise threshold mask high
+HISTORY_MSG_993;Local - Denoise Inverse algo
+HISTORY_MSG_994;Local - GF Inverse algo
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2676,6 +2681,7 @@ TP_LOCALLAB_INVBL;Inverse
 TP_LOCALLAB_INVBL_TOOLTIP;Alternative to ‘Inverse’ mode: use two spots\nFirst Spot:\n full image - delimiter outside preview\n RT-spot shape: rectangle. Transition 100\n\nSecond spot : Excluding spot
 TP_LOCALLAB_INVERS;Inverse
 TP_LOCALLAB_INVERS_TOOLTIP;Fewer possibilities if selected (Inverse).\n\nAlternative: use two spots\nFirst Spot:\n full image - delimiter outside preview\n RT-spot shape: rectangle. Transition 100\n\nSecond spot: Excluding spot
+TP_LOCALLAB_INVMASK;Inverse algorithm
 TP_LOCALLAB_ISOGR;Coarseness (ISO)
 TP_LOCALLAB_LABBLURM;Blur Mask
 TP_LOCALLAB_LABEL;Local Adjustments
@@ -2764,9 +2770,12 @@ TP_LOCALLAB_MASKCOM;Common Color Mask
 TP_LOCALLAB_MASKCOM_TOOLNAME;Common Color Mask  - 13
 TP_LOCALLAB_MASKCOM_TOOLTIP;A tool in its own right.\nCan be used to adjust the image appearance (chrominance, luminance, contrast) and texture as a function of Scope.
 TP_LOCALLAB_MASKCURVE_TOOLTIP;The 3 curves are set to 1 (maximum) by default:\nC=f(C) the chroma varies according to the chrominance. You can decrease the chroma to improve the selection. By setting this curve close to zero (with a low value of C  to activate the curve) you can desaturate the background in Inverse mode.\nL=f(L) the luminance varies according to the luminance, so you can decrease the brightness to improve the selection.\nL and C = f(H) luminance and chroma vary with hue, so you can decrease luminance and chroma to improve selection
+TP_LOCALLAB_MASKDDECAY;Decay strength
 TP_LOCALLAB_MASKH;Hue curve
 TP_LOCALLAB_MASKLC_TOOLTIP;This allows you to target the denoise based on the image luminance information contained in the L(L) or LC(H) mask (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n if the mask is very dark - below the threshold 'dark' - denoise will be increased if reinforce > 1.\n if the mask is clear - above the threshold 'light' - denoise will be progressively cancelled.\n between the two, denoise will be maintained at the settings without mask.
-TP_LOCALLAB_MASKGF_TOOLTIP;This allows you to target the GuidedFilter based on the image luminance information contained in the L(L) or LC(H) mask (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n if the mask is very dark - below the threshold 'dark' - GF will be decreased.\n if the mask is clear - above the threshold 'light' - GF will be progressively cancelled.\n between the two, GF will be maintained at the settings without mask.
+TP_LOCALLAB_MASKGF_TOOLTIP;This allows you to target the GuidedFilter based on the image luminance information contained in the L(L) or LC(H) mask (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n if the mask is very dark - below the threshold 'dark' - GF will be maintained.\n if the mask is very clear - above the threshold 'light' - GF will be progressively maintained.\n between the two, the image will be maintained at the settings without GF.
+TP_LOCALLAB_MASKDE_TOOLTIP;This allows you to target the Denoise based on the image luminance information contained in the L(L) or LC(H) mask (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n if the mask is very dark - below the threshold 'dark' - Denoise will be maintained.\n if the mask is very clear - above the threshold 'light' - Denoise will be progressively maintained.\n between the two, the image will be maintained at the settings without Denoise.
+TP_LOCALLAB_MASKDEINV_TOOLTIP;Reverses the algorithm for use of the mask.\nIf unchecked black and very clear areas will be decreased.
 TP_LOCALLAB_MASKLCTHR;Light area luminance % threshold
 TP_LOCALLAB_MASKLCTHRLOW; Dark area luminance % threshold
 TP_LOCALLAB_MASKLNOISELOW;Reinforce denoise in dark areas

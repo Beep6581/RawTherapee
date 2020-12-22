@@ -619,6 +619,7 @@ public:
         bool recothresd;
         bool lowthresd;
         bool higthresd;
+        bool decayd;
         bool isogr;
         bool strengr;
         bool scalegr;
@@ -627,6 +628,8 @@ public:
         bool chroMethod;
         bool quamethod;
         bool usemask;
+        bool invmaskd;
+        bool invmask;
         bool levelthr;
         bool lnoiselow;
         bool levelthrlow;

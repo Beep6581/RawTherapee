@@ -1211,6 +1211,7 @@ struct LocallabParams {
         double recothresd;
         double lowthresd;
         double higthresd;
+        double decayd;
         int isogr;
         int strengr;
         int scalegr;
@@ -1221,6 +1222,8 @@ struct LocallabParams {
         Glib::ustring blurMethod; // norm, inv
         Glib::ustring medMethod; // none, 33, 55, 77, 99
         bool usemask;
+        bool invmaskd;
+        bool invmask;
         double levelthr;
         double lnoiselow;
         double levelthrlow;
