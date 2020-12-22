@@ -7595,12 +7595,12 @@ void LocallabBlur::updateBlurGUI()
         itera->hide();
         guidbl->hide();
         strbl->hide();
-        recothres->hide();
-        lowthres->hide();
-        higthres->hide();
-        recothresd->hide();
-        lowthresd->hide();
-        higthresd->hide();
+     //   recothres->hide();
+     //   lowthres->hide();
+     //   higthres->hide();
+      //  recothresd->hide();
+      //  lowthresd->hide();
+      //  higthresd->hide();
         decayd->hide();
         epsbl->hide();
         activlum->show();
@@ -7613,12 +7613,12 @@ void LocallabBlur::updateBlurGUI()
         itera->show();
         guidbl->hide();
         strbl->hide();
-        recothres->hide();
-        lowthres->hide();
-        higthres->hide();
-        recothresd->hide();
-        lowthresd->hide();
-        higthresd->hide();
+    //    recothres->hide();
+     //   lowthres->hide();
+     //   higthres->hide();
+     //   recothresd->hide();
+     //   lowthresd->hide();
+     //   higthresd->hide();
         decayd->hide();
         epsbl->hide();
         activlum->show();
@@ -7631,12 +7631,14 @@ void LocallabBlur::updateBlurGUI()
         itera->hide();
         guidbl->show();
         strbl->show();
+        /*
         recothres->show();
         lowthres->show();
         higthres->show();
         recothresd->show();
         lowthresd->show();
         higthresd->show();
+        */
         decayd->show();
         epsbl->show();
         activlum->hide();
