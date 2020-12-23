@@ -6323,11 +6323,11 @@ void LocallabBlur::neutral_pressed ()
     invmask->set_active(defSpot.invmask);
     recothresd->setValue(defSpot.recothresd);
     lowthresd->setValue(defSpot.lowthresd);
-    higthresd->setValue(defSpot.highthresd);
+    higthresd->setValue(defSpot.higthresd);
     decayd->setValue(defSpot.decayd);
     recothres->setValue(defSpot.recothres);
     lowthres->setValue(defSpot.lowthres);
-    higthres->setValue(defSpot.highthres);
+    higthres->setValue(defSpot.higthres);
     
 
 }

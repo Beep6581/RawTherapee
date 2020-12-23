@@ -9384,7 +9384,6 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
             }
 
-           // DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
             if(lp.smasktyp != 0) {
                     if(lp.enablMask && lp.recothrd != 1.f && lp.smasktyp != 0) {
                         LabImage tmp3(GW, GH);
@@ -9426,7 +9425,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                                 } else if (lM < 327.68f * hig) {
                                     
                                 } else {
-                                        masklum[ir][jr] = (ahigh * lmr + bhigh);
+                                        masklum[ir][jr] = ahigh * lmr + bhigh;
                                 }
                                 float k = masklum[ir][jr];
                                 if(lp.invmaskd == true) {
@@ -9440,28 +9439,20 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         for (int i = 0; i < 3; ++i) {
                             boxblur(masklum, masklum, 10 / sk, GW, GH, false);
                         }
-                   //   float minlum = 10000.f;
-                   //   float maxlum = -10000.f;
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
                         for (int i = 0; i < GH; ++i) {
-                            for (int j = 0; j < GW; ++j) {
-                              //  if(masklum[i][j] > maxlum) maxlum = masklum[i][j];
-                              //  if(masklum[i][j] < minlum) minlum = masklum[i][j];
-                                
+                            for (int j = 0; j < GW; ++j) {                              
                                 tmp1.L[i][j] = (tmp3.L[i][j] - tmp1.L[i][j]) *  LIM01(masklum[i][j]) + tmp1.L[i][j];
                                 tmp1.a[i][j] = (tmp3.a[i][j] - tmp1.a[i][j]) *  LIM01(masklum[i][j]) + tmp1.a[i][j];
                                 tmp1.b[i][j] = (tmp3.b[i][j] - tmp1.b[i][j]) *  LIM01(masklum[i][j]) + tmp1.b[i][j];
                             }
                         }
-                     //   printf("max=%f min=%f \n", maxlum, minlum);
                         masklum.free();
                     
                     }
-                    
-               
-                
+
                 DeNoise_Local(call, lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
             } else {
                 DeNoise_Local(call, lp,  original, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, tmp1, cx, cy, sk);
@@ -10078,7 +10069,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
                             }
                         }
-                        
+
                         array2D<float> masklum;
                         masklum(bfw, bfh);
                         for (int ir = 0; ir < bfh; ir++){
@@ -10086,7 +10077,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                                 masklum[ir][jr] = 1.f;
                             }
                         }
-                        
+
                         float hig = lp.higthrd;
                         if(lp.higthrd < lp.lowthrd) {
                             hig = lp.lowthrd + 0.01f;
@@ -10097,7 +10088,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
                         float alow = th /lp.lowthrd; 
                         float blow = 1.f - th;
-                        
+
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
@@ -10109,9 +10100,9 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                                 if (lM < 327.68f * lp.lowthrd) {
                                     masklum[y-ystart][x-xstart] = alow * lmr + blow;
                                 } else if (lM < 327.68f * hig) {
-                                    
+
                                 } else {
-                                    masklum[y-ystart][x-xstart] = (ahigh * lmr + bhigh);
+                                    masklum[y-ystart][x-xstart] = ahigh * lmr + bhigh;
                                 }
                                 float k = masklum[y-ystart][x-xstart];
                                 if(lp.invmaskd == true) {
@@ -10119,7 +10110,6 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                                 } else {
                                     masklum[y-ystart][x-xstart] = pow(k, lp.decayd);
                                 }
-
                             }
                         }
                         for (int i = 0; i < 3; ++i) {
@@ -10136,14 +10126,10 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                                 bufwv.b[y][x] = (tmp3.b[y][x] - bufwv.b[y][x]) *  LIM01(masklum[y][x]) + bufwv.b[y][x];
                             }
                         }
-                        
+
                         masklum.free();
                     }
-                    
-                    
-                    
-                    
-                    
+
                     DeNoise_Local2(lp,  originalmaskbl, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, bufwv, cx, cy, sk);
                 } else {
                     DeNoise_Local2(lp,  original, levred, huerefblur, lumarefblur, chromarefblur, original, transformed, bufwv, cx, cy, sk);
@@ -11280,18 +11266,18 @@ void ImProcFunctions::Lab_Local(
                                     } else if (lM < 327.68f * hig) {
                                     
                                     } else {
-                                        masklum[ir][jr] = (ahigh * lmr + bhigh);
+                                        masklum[ir][jr] = ahigh * lmr + bhigh;
                                     }
                                     if(lp.invmask == true) {
                                         float k = masklum[ir][jr];
                                         masklum[ir][jr] = 1 - k*k;
                                     }
                                 }
-                            
+
                             for (int i = 0; i < 3; ++i) {
                                 boxblur(masklum, masklum, 10 / sk, bfw, bfh, false);
                             }
-                            
+
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
@@ -11405,7 +11391,7 @@ void ImProcFunctions::Lab_Local(
                                 for (int jr = 0; jr < GW; jr++) {
                                     masklum[ir][jr] = 1.f;
                                 }
-                                
+
                             float hig = lp.higthr;
                             if(lp.higthr < lp.lowthr) {
                                 hig = lp.lowthr + 0.01f;
@@ -11413,7 +11399,7 @@ void ImProcFunctions::Lab_Local(
                             float th = (lp.recothr - 1.f);
                             float ahigh = th / (hig - 100.f);
                             float bhigh = 1.f - hig * ahigh;
-                            
+
                             float alow = th /lp.lowthr; 
                             float blow = 1.f - th;
 #ifdef _OPENMP
@@ -11432,11 +11418,11 @@ void ImProcFunctions::Lab_Local(
                                         masklum[ir][jr] = (ahigh * lmr + bhigh);
                                     }
                                 }
-                            
+
                             for (int i = 0; i < 3; ++i) {
                                 boxblur(masklum, masklum, 10 / sk, GW, GH, false);
                             }
-                            
+
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
@@ -11448,9 +11434,9 @@ void ImProcFunctions::Lab_Local(
                                 }
                             }
                             masklum.free();
-                    
+
                         }
-                        
+
                         delete tmpImage;
                     }
                 }
