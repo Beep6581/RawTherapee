@@ -9440,17 +9440,22 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         for (int i = 0; i < 3; ++i) {
                             boxblur(masklum, masklum, 10 / sk, GW, GH, false);
                         }
-                            
+                   //   float minlum = 10000.f;
+                   //   float maxlum = -10000.f;
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
                         for (int i = 0; i < GH; ++i) {
                             for (int j = 0; j < GW; ++j) {
-                                tmp1.L[i][j] = (tmp1.L[i][j] - tmp3.L[i][j]) *  masklum[i][j] + tmp3.L[i][j];
-                                tmp1.a[i][j] = (tmp1.a[i][j] - tmp3.a[i][j]) *  masklum[i][j] + tmp3.a[i][j];
-                                tmp1.b[i][j] = (tmp1.b[i][j] - tmp3.b[i][j]) *  masklum[i][j] + tmp3.b[i][j];
+                              //  if(masklum[i][j] > maxlum) maxlum = masklum[i][j];
+                              //  if(masklum[i][j] < minlum) minlum = masklum[i][j];
+                                
+                                tmp1.L[i][j] = (tmp3.L[i][j] - tmp1.L[i][j]) *  LIM01(masklum[i][j]) + tmp1.L[i][j];
+                                tmp1.a[i][j] = (tmp3.a[i][j] - tmp1.a[i][j]) *  LIM01(masklum[i][j]) + tmp1.a[i][j];
+                                tmp1.b[i][j] = (tmp3.b[i][j] - tmp1.b[i][j]) *  LIM01(masklum[i][j]) + tmp1.b[i][j];
                             }
                         }
+                     //   printf("max=%f min=%f \n", maxlum, minlum);
                         masklum.free();
                     
                     }
@@ -10124,20 +10129,11 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
-                        /*
-                        for (int y = ystart; y < yend; y++) {
-                            for (int x = xstart, lox = cx + x; x < xend; x++, lox++) {
-                                bufwv.L[y-ystart][x-xstart] = (bufwv.L[y-ystart][x-xstart] - tmp3.L[y-ystart][x-xstart]) *  masklum[y-ystart][x-xstart] + tmp3.L[y-ystart][x-xstart];
-                                bufwv.a[y-ystart][x-xstart] = (bufwv.a[y-ystart][x-xstart] - tmp3.a[y-ystart][x-xstart]) *  masklum[y-ystart][x-xstart] + tmp3.a[y-ystart][x-xstart];
-                                bufwv.b[y-ystart][x-xstart] = (bufwv.b[y-ystart][x-xstart] - tmp3.b[y-ystart][x-xstart]) *  masklum[y-ystart][x-xstart] + tmp3.b[y-ystart][x-xstart];
-                            }
-                        }
-                        */
                         for (int y = 0; y < bfh; y++) {
                             for (int x = 0; x < bfw; x++) {
-                                bufwv.L[y][x] = (bufwv.L[y][x] - tmp3.L[y][x]) *  masklum[y][x] + tmp3.L[y][x];
-                                bufwv.a[y][x] = (bufwv.a[y][x] - tmp3.a[y][x]) *  masklum[y][x] + tmp3.a[y][x];
-                                bufwv.b[y][x] = (bufwv.b[y][x] - tmp3.b[y][x]) *  masklum[y][x] + tmp3.b[y][x];
+                                bufwv.L[y][x] = (tmp3.L[y][x] - bufwv.L[y][x]) *  LIM01(masklum[y][x]) + bufwv.L[y][x];
+                                bufwv.a[y][x] = (tmp3.a[y][x] - bufwv.a[y][x]) *  LIM01(masklum[y][x]) + bufwv.a[y][x];
+                                bufwv.b[y][x] = (tmp3.b[y][x] - bufwv.b[y][x]) *  LIM01(masklum[y][x]) + bufwv.b[y][x];
                             }
                         }
                         
@@ -11301,9 +11297,9 @@ void ImProcFunctions::Lab_Local(
 #endif
                             for (int i = 0; i < bfh; ++i) {
                                 for (int j = 0; j < bfw; ++j) {
-                                    tmp1->L[i][j] = (tmp1->L[i][j] - tmp3->L[i][j]) *  masklum[i][j] + tmp3->L[i][j];
-                                    tmp1->a[i][j] = (tmp1->a[i][j] - tmp3->a[i][j]) *  masklum[i][j] + tmp3->a[i][j];
-                                    tmp1->b[i][j] = (tmp1->b[i][j] - tmp3->b[i][j]) *  masklum[i][j] + tmp3->b[i][j];
+                                    tmp1->L[i][j] = (tmp3->L[i][j] - tmp1->L[i][j]) *  LIM01(masklum[i][j]) + tmp1->L[i][j];
+                                    tmp1->a[i][j] = (tmp3->a[i][j] - tmp1->a[i][j]) *  LIM01(masklum[i][j]) + tmp1->a[i][j];
+                                    tmp1->b[i][j] = (tmp3->b[i][j] - tmp1->b[i][j]) *  LIM01(masklum[i][j]) + tmp1->b[i][j];
                                 }
                             }
                             masklum.free();
@@ -11446,9 +11442,9 @@ void ImProcFunctions::Lab_Local(
 #endif
                             for (int i = 0; i < GH; ++i) {
                                 for (int j = 0; j < GW; ++j) {
-                                    tmp1->L[i][j] = (tmp1->L[i][j] - tmp3->L[i][j]) *  masklum[i][j] + tmp3->L[i][j];
-                                    tmp1->a[i][j] = (tmp1->a[i][j] - tmp3->a[i][j]) *  masklum[i][j] + tmp3->a[i][j];
-                                    tmp1->b[i][j] = (tmp1->b[i][j] - tmp3->b[i][j]) *  masklum[i][j] + tmp3->b[i][j];
+                                    tmp1->L[i][j] = (tmp3->L[i][j] - tmp1->L[i][j]) *  LIM01(masklum[i][j]) + tmp1->L[i][j];
+                                    tmp1->a[i][j] = (tmp3->a[i][j] - tmp1->a[i][j]) *  LIM01(masklum[i][j]) + tmp1->a[i][j];
+                                    tmp1->b[i][j] = (tmp3->b[i][j] - tmp1->b[i][j]) *  LIM01(masklum[i][j]) + tmp1->b[i][j];
                                 }
                             }
                             masklum.free();

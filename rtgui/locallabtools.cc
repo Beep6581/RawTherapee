@@ -7101,6 +7101,9 @@ void LocallabBlur::convertParamToNormal()
 
     // Disable all listeners
     disableListener();
+    invmask->set_active(defSpot.invmask);
+    invmaskd->set_active(defSpot.invmaskd);
+
 
     // Set hidden GUI widgets in Normal mode to default spot values
     fftwbl->set_active(defSpot.fftwbl);
@@ -7123,6 +7126,8 @@ void LocallabBlur::convertParamToSimple()
 
     // Disable all listeners
     disableListener();
+    invmask->set_active(defSpot.invmask);
+    invmaskd->set_active(defSpot.invmaskd);
 
     // Set hidden specific GUI widgets in Simple mode to default spot values
     showmaskblMethod->set_active(0);
@@ -7180,6 +7185,9 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             maskusable3->hide();
             maskunusable3->hide();
             decayd->hide();
+            invmask->hide();
+            invmaskd->hide();
+
 
             break;
 
@@ -7203,6 +7211,8 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             }
 
             decayd->hide();
+            invmask->hide();
+            invmaskd->hide();
             if(lnoiselow->getValue()!= 1.) {
                 if (showmaskblMethodtyp->get_active_row_number() == 0) {
                     showmaskblMethodtyp->set_active(2);
@@ -7243,9 +7253,11 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             // Show widgets hidden in Normal and Simple mode
             if (blMethod->get_active_row_number() == 0) { // Keep widget hidden when blMethod is > 0
                 fftwbl->show();
+                expdenoise2->hide();
             }
-            expdenoise2->hide();
-            
+            if (blMethod->get_active_row_number() == 1) {
+                expdenoise2->hide();
+            }
             if (blMethod->get_active_row_number() == 2) {
                 expdenoise2->show();
             }
@@ -7253,6 +7265,8 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             expdenoise1->show();
             expdenoise3->show();
             decayd->show();
+            invmask->show();
+            invmaskd->show();
 
             expmaskbl->show();
             strumaskbl->show();
@@ -7633,10 +7647,13 @@ void LocallabBlur::updateBlurGUI()
         itera->hide();
         guidbl->show();
         strbl->show();
-        expdenoise2->show();
-        recothres->show();
-        lowthres->show();
-        higthres->show();
+        expdenoise2->hide();
+        if (mode == Expert  || mode == Normal){
+            expdenoise2->show();
+            recothres->show();
+            lowthres->show();
+            higthres->show();
+        }
         epsbl->show();
         activlum->hide();
     }
