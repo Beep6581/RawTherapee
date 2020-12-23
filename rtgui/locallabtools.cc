@@ -6321,6 +6321,15 @@ void LocallabBlur::neutral_pressed ()
     usemask->set_active(defSpot.usemask);
     invmaskd->set_active(defSpot.invmaskd);
     invmask->set_active(defSpot.invmask);
+    recothresd->setValue(defSpot.recothresd);
+    lowthresd->setValue(defSpot.lowthresd);
+    higthresd->setValue(defSpot.highthresd);
+    decayd->setValue(defSpot.decayd);
+    recothres->setValue(defSpot.recothres);
+    lowthres->setValue(defSpot.lowthres);
+    higthres->setValue(defSpot.highthres);
+    
+
 }
 
 void LocallabBlur::setDefaultExpanderVisibility()
@@ -6785,7 +6794,7 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
 
         if (a == recothresd) {
             if(recothresd->getValue()!= 1.) {
-                if (showmaskblMethodtyp->get_active_row_number() == 1) {
+                if (showmaskblMethodtyp->get_active_row_number() == 0) {
                     showmaskblMethodtyp->set_active(2);
                 }
             }
@@ -7103,8 +7112,6 @@ void LocallabBlur::convertParamToNormal()
     disableListener();
     invmask->set_active(defSpot.invmask);
     invmaskd->set_active(defSpot.invmaskd);
-
-
     // Set hidden GUI widgets in Normal mode to default spot values
     fftwbl->set_active(defSpot.fftwbl);
     strumaskbl->setValue(defSpot.strumaskbl);
@@ -7187,8 +7194,6 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             decayd->hide();
             invmask->hide();
             invmaskd->hide();
-
-
             break;
 
         case Normal:
