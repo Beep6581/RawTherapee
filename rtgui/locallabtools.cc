@@ -6239,6 +6239,11 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         lapmaskbl->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
         csThresholdblur->set_tooltip_text(M("TP_LOCALLAB_WAVEMASK_LEVEL_TOOLTIP"));
         sensiden->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+        lowthres->set_tooltip_text(M("TP_LOCALLAB_MASKLOWTHRES_TOOLTIP"));
+        lowthresd->set_tooltip_text(M("TP_LOCALLAB_MASKLOWTHRES_TOOLTIP"));
+        higthresd->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRES_TOOLTIP"));
+        higthres->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRES_TOOLTIP"));
+        decayd->set_tooltip_text(M("TP_LOCALLAB_MASKDECAY_TOOLTIP"));
     } else {
         
         expblnoise->set_tooltip_markup("");
@@ -6295,6 +6300,11 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         shadmaskblsha->set_tooltip_text("");
         csThresholdblur->set_tooltip_text("");
         sensiden->set_tooltip_text("");
+        lowthres->set_tooltip_text("");
+        lowthresd->set_tooltip_text("");
+        higthresd->set_tooltip_text("");
+        higthres->set_tooltip_text("");
+        decayd->set_tooltip_text("");
 
     }
 }

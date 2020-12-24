@@ -150,6 +150,26 @@ constexpr float exclusion(float a, float b)
     return a + b - 2.f * a * b;
 }
 
+void calcdif(float lmr, float &lmrc)
+{   //approximative change between gamma sRGB g=2.4 s=12.92 and gamma LAB g=3.0 s=9.03
+    //useful to calculate action with dark and light area mask
+    //differences in 3 parts linear...very small diffrences with real...
+    float a0 = 7.6f / 11.6f;//11.6 sRGB  - 7.6 Lab...11.6 max difference
+    float a01 = 62.f - 7.6f; //60 sRGB 62 Lab   60 max difference
+    float a11 = 60.f - 11.6f;
+    float a1 = a01 / a11;
+    float b1 = 62.f - a1 * 60.f;
+    float a2 = (100.f - 62.f) / (100.f - 60.f);
+    float b2 = 100.f - a2 * 100.f;
+    if(lmr < 11.6f) {
+        lmrc = a0 * lmr; 
+    } else if (lmr < 60.) {
+        lmrc = a1 * lmr + b1;
+    } else {
+        lmrc = a2 * lmr + b2;
+    }
+}
+
 void calcGammaLut(double gamma, double ts, LUTf &gammaLut)
 {
     double pwr = 1.0 / gamma;
@@ -9404,14 +9424,20 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                             }
 
                         float hig = lp.higthrd;
-                        if(lp.higthrd < lp.lowthrd) {
-                            hig = lp.lowthrd + 0.01f;
+                        float higc;
+                        calcdif(hig, higc);
+                        float low = lp.lowthrd;
+                        float lowc;
+                        calcdif(low, lowc);
+
+                        if(higc < lowc) {
+                            higc = lowc + 0.01f;
                         }
                         float th = (lp.recothrd - 1.f);
-                        float ahigh = th / (hig - 100.f);
-                        float bhigh = 1.f - hig * ahigh;
+                        float ahigh = th / (higc - 100.f);
+                        float bhigh = 1.f - higc * ahigh;
 
-                        float alow = th /lp.lowthrd; 
+                        float alow = th / lowc; 
                         float blow = 1.f - th;
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
@@ -9420,9 +9446,9 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                             for (int jr = 0; jr < GW; jr++) {
                                 const float lM = bufmaskblurbl->L[ir][jr];
                                 const float lmr = lM / 327.68f;
-                                if (lM < 327.68f * lp.lowthrd) {
+                                if (lM < 327.68f * lowc) {
                                     masklum[ir][jr] = alow * lmr + blow;
-                                } else if (lM < 327.68f * hig) {
+                                } else if (lM < 327.68f * higc) {
                                     
                                 } else {
                                         masklum[ir][jr] = ahigh * lmr + bhigh;
@@ -10077,7 +10103,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                                 masklum[ir][jr] = 1.f;
                             }
                         }
-
+/*
                         float hig = lp.higthrd;
                         if(lp.higthrd < lp.lowthrd) {
                             hig = lp.lowthrd + 0.01f;
@@ -10088,6 +10114,23 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
                         float alow = th /lp.lowthrd; 
                         float blow = 1.f - th;
+*/
+                        float hig = lp.higthrd;
+                        float higc;
+                        calcdif(hig, higc);
+                        float low = lp.lowthrd;
+                        float lowc;
+                        calcdif(low, lowc);
+
+                        if(higc < lowc) {
+                            higc = lowc + 0.01f;
+                        }
+                        float th = (lp.recothrd - 1.f);
+                        float ahigh = th / (higc - 100.f);
+                        float bhigh = 1.f - higc * ahigh;
+
+                        float alow = th / lowc; 
+                        float blow = 1.f - th;
 
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
@@ -10097,9 +10140,9 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
                                 const float lM = bufmaskblurbl->L[y][x]; 
                                 const float lmr = lM / 327.68f;
-                                if (lM < 327.68f * lp.lowthrd) {
+                                if (lM < 327.68f * lowc) {
                                     masklum[y-ystart][x-xstart] = alow * lmr + blow;
-                                } else if (lM < 327.68f * hig) {
+                                } else if (lM < 327.68f * higc) {
 
                                 } else {
                                     masklum[y-ystart][x-xstart] = ahigh * lmr + bhigh;
@@ -11244,6 +11287,7 @@ void ImProcFunctions::Lab_Local(
                                 for (int jr = 0; jr < bfw; jr++) {
                                     masklum[ir][jr] = 1.f;
                                 }
+                                /*
                             float hig = lp.higthr;
                             if(lp.higthr < lp.lowthr) {
                                 hig = lp.lowthr + 0.01f;
@@ -11254,6 +11298,24 @@ void ImProcFunctions::Lab_Local(
                             
                             float alow = th /lp.lowthr; 
                             float blow = 1.f - th;
+                            */
+                            float hig = lp.higthr;
+                            float higc;
+                            calcdif(hig, higc);
+                            float low = lp.lowthr;
+                            float lowc;
+                            calcdif(low, lowc);
+
+                            if(higc < lowc) {
+                                higc = lowc + 0.01f;
+                            }
+                            float th = (lp.recothr - 1.f);
+                            float ahigh = th / (higc - 100.f);
+                            float bhigh = 1.f - higc * ahigh;
+
+                            float alow = th / lowc; 
+                            float blow = 1.f - th;
+                            
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
@@ -11261,9 +11323,9 @@ void ImProcFunctions::Lab_Local(
                                 for (int jr = 0; jr < bfw; jr++) {
                                     const float lM = bufmaskblurbl->L[ir + ystart][jr + xstart];
                                     const float lmr = lM / 327.68f;
-                                    if (lM < 327.68f * lp.lowthr) {
+                                    if (lM < 327.68f * lowc) {
                                         masklum[ir][jr] = alow * lmr + blow;
-                                    } else if (lM < 327.68f * hig) {
+                                    } else if (lM < 327.68f * higc) {
                                     
                                     } else {
                                         masklum[ir][jr] = ahigh * lmr + bhigh;
@@ -11391,7 +11453,7 @@ void ImProcFunctions::Lab_Local(
                                 for (int jr = 0; jr < GW; jr++) {
                                     masklum[ir][jr] = 1.f;
                                 }
-
+                            /*
                             float hig = lp.higthr;
                             if(lp.higthr < lp.lowthr) {
                                 hig = lp.lowthr + 0.01f;
@@ -11402,6 +11464,24 @@ void ImProcFunctions::Lab_Local(
 
                             float alow = th /lp.lowthr; 
                             float blow = 1.f - th;
+                            */
+                            float hig = lp.higthr;
+                            float higc;
+                            calcdif(hig, higc);
+                            float low = lp.lowthr;
+                            float lowc;
+                            calcdif(low, lowc);
+
+                            if(higc < lowc) {
+                                higc = lowc + 0.01f;
+                            }
+                            float th = (lp.recothr - 1.f);
+                            float ahigh = th / (higc - 100.f);
+                            float bhigh = 1.f - higc * ahigh;
+
+                            float alow = th / lowc; 
+                            float blow = 1.f - th;
+                            
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
@@ -11409,10 +11489,10 @@ void ImProcFunctions::Lab_Local(
                                 for (int jr = 0; jr < GW; jr++) {
                                     const float lM = bufmaskblurbl->L[ir][jr];
                                     const float lmr = lM / 327.68f;
-                                    if (lM < 327.68f * lp.lowthr) {
+                                    if (lM < 327.68f * lowc) {
                                         masklum[ir][jr] = alow * lmr + blow;
                                         masklum[ir][jr] = alow * lmr + blow;
-                                    } else if (lM < 327.68f * hig) {
+                                    } else if (lM < 327.68f * higc) {
                                     
                                     } else {
                                         masklum[ir][jr] = (ahigh * lmr + bhigh);
