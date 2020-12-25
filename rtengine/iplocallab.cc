@@ -8989,14 +8989,22 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
                     if(lp.enablMask && lp.lnoiselow !=1.f && lp.smasktyp != 0) {
                         //this code has been reviewed by Ingo in september 2020 PR5903
+                        float higc;
                         float hig = lp.thrhigh;
-                        if(lp.thrhigh < lp.thrlow) {
-                            hig = lp.thrlow + 0.01f;
+                        calcdif(hig, higc);
+                        float low = lp.thrlow;
+                        float lowc;
+                        calcdif(low, lowc);
+                         
+                        if(higc < lowc) {
+                            higc = lowc + 0.01f;
                         }
-                        float alow = -(lp.lnoiselow - 1.f) / lp.thrlow;
+
+                        float alow = -(lp.lnoiselow - 1.f) / lowc;
                         float blow = lp.lnoiselow;
-                        float ahigh = 0.9999f / (hig - 100.f);
-                        float bhigh = 1.f - hig * ahigh;
+                        float ahigh = 0.9999f / (higc - 100.f);
+                        float bhigh = 1.f - higc * ahigh;
+                        
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
@@ -9005,12 +9013,12 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                                 const float lM = bufmaskblurbl->L[ir][jr];
                                 const float lmr = lM / 327.68f;
 
-                                if (lM < 327.68f * lp.thrlow) {
-                                    noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] *= alow * lmr + blow; //3.f;//increase denoise
-                                } else if (lM < 327.68f * hig) {
+                                if (lM < 327.68f * lowc) {
+                                    noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] *= alow * lmr + blow;
+                                } else if (lM < 327.68f * higc) {
                                     // do nothing - denoise not change
                                 } else {
-                                    noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] *= ahigh * lmr + bhigh; //0.01f;//quasi suppress denoise
+                                    noisevarlum[(ir >> 1) * GW2 + (jr >> 1)] *= ahigh * lmr + bhigh;
                                 }
                         }
                     }
@@ -9664,15 +9672,21 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     if(lp.enablMask && lp.lnoiselow != 1.f  && lp.smasktyp != 0) {
                          //this code has been reviewed by Ingo in september 2020 PR5903
                          //i just change parameters to better progressivity
+                        float higc;
                         float hig = lp.thrhigh;
-                        if(lp.thrhigh < lp.thrlow) {
-                            hig = lp.thrlow + 0.01f;
+                        calcdif(hig, higc);
+                        float low = lp.thrlow;
+                        float lowc;
+                        calcdif(low, lowc);
+                         
+                        if(higc < lowc) {
+                            higc = lowc + 0.01f;
                         }
 
-                        float alow = -(lp.lnoiselow - 1.f) / lp.thrlow;
+                        float alow = -(lp.lnoiselow - 1.f) / lowc;
                         float blow = lp.lnoiselow;
-                        float ahigh = 0.9999f / (hig - 100.f);
-                        float bhigh = 1.f - hig * ahigh;
+                        float ahigh = 0.9999f / (higc - 100.f);
+                        float bhigh = 1.f - higc * ahigh;
 
 
 #ifdef _OPENMP
@@ -9682,9 +9696,9 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                             for (int jr = 0; jr < bfw; jr++) {
                                 const float lM = bufmaskblurbl->L[ir + ystart][jr + xstart];
                                 const float lmr = lM / 327.68f;
-                                if (lM < 327.68f * lp.thrlow) {
+                                if (lM < 327.68f * lowc) {
                                     noisevarlum[(ir >> 1) * bfw2 + (jr >> 1)] *= alow * lmr + blow; 
-                                } else if (lM < 327.68f * hig) {
+                                } else if (lM < 327.68f * higc) {
                                     // do nothing
                                 } else {
                                     noisevarlum[(ir >> 1) * bfw2 + (jr >> 1)] *= ahigh * lmr + bhigh;
@@ -10103,18 +10117,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                                 masklum[ir][jr] = 1.f;
                             }
                         }
-/*
-                        float hig = lp.higthrd;
-                        if(lp.higthrd < lp.lowthrd) {
-                            hig = lp.lowthrd + 0.01f;
-                        }
-                        float th = (lp.recothrd - 1.f);
-                        float ahigh = th / (hig - 100.f);
-                        float bhigh = 1.f - hig * ahigh;
 
-                        float alow = th /lp.lowthrd; 
-                        float blow = 1.f - th;
-*/
                         float hig = lp.higthrd;
                         float higc;
                         calcdif(hig, higc);
@@ -11287,18 +11290,7 @@ void ImProcFunctions::Lab_Local(
                                 for (int jr = 0; jr < bfw; jr++) {
                                     masklum[ir][jr] = 1.f;
                                 }
-                                /*
-                            float hig = lp.higthr;
-                            if(lp.higthr < lp.lowthr) {
-                                hig = lp.lowthr + 0.01f;
-                            }
-                            float th = (lp.recothr - 1.f);
-                            float ahigh = th / (hig - 100.f);
-                            float bhigh = 1.f - hig * ahigh;
-                            
-                            float alow = th /lp.lowthr; 
-                            float blow = 1.f - th;
-                            */
+
                             float hig = lp.higthr;
                             float higc;
                             calcdif(hig, higc);
@@ -11453,18 +11445,7 @@ void ImProcFunctions::Lab_Local(
                                 for (int jr = 0; jr < GW; jr++) {
                                     masklum[ir][jr] = 1.f;
                                 }
-                            /*
-                            float hig = lp.higthr;
-                            if(lp.higthr < lp.lowthr) {
-                                hig = lp.lowthr + 0.01f;
-                            }
-                            float th = (lp.recothr - 1.f);
-                            float ahigh = th / (hig - 100.f);
-                            float bhigh = 1.f - hig * ahigh;
 
-                            float alow = th /lp.lowthr; 
-                            float blow = 1.f - th;
-                            */
                             float hig = lp.higthr;
                             float higc;
                             calcdif(hig, higc);
