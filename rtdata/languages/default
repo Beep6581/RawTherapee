@@ -2783,7 +2783,7 @@ TP_LOCALLAB_MASKHIGTHRES_TOOLTIP;Light limit above which the GuidedFilter will b
 TP_LOCALLAB_MASKHIGTHRESD_TOOLTIP;Light limit above which the denoise will be applied progressively.\n You can used some tools in 'mask and modifications' to change the gray levels: 'structure mask', 'Smooth radius', 'Gamma and slope', 'Contrast curve', 'Local contrast wavelet'.\n You can use 'lockable color picker' on mask to see what areas will be take into account. Be carefull in 'settings' to Background color mask = 0
 TP_LOCALLAB_MASKLCTHR;Light area luminance threshold
 TP_LOCALLAB_MASKLCTHRLOW;Dark area luminance threshold
-TP_LOCALLAB_MASKLNOISELOW;Reinforce denoise in dark areas
+TP_LOCALLAB_MASKLNOISELOW;Reinforce denoise in dark and light areas
 TP_LOCALLAB_MASKLOWTHRES_TOOLTIP;Dark-tone limit below which 'Guided Filter' will be progressively applied.\n You can use certain tools in ‘Mask and modifications’ to change the gray levels: ‘structure mask’, ‘Smooth radius’, ‘Gamma and slope’, ‘Contrast curve’, ‘Local contrast wavelet’.\n Use a ‘lockable color picker’ on the mask to see which areas will be affected. Be carefull in 'settings' to Background color mask = 0
 TP_LOCALLAB_MASKLOWTHRESD_TOOLTIP;Dark-tone limit below which denoise will be progressively applied.\n You can use certain tools in ‘Mask and modifications’ to change the gray levels: ‘structure mask’, ‘Smooth radius’, ‘Gamma and slope’, ‘Contrast curve’, ‘Local contrast wavelet’.\n Use a ‘lockable color picker’ on the mask to see which areas will be affected. Be carefull in 'settings' to Background color mask = 0
 TP_LOCALLAB_MASKUSABLE;Mask enabled (Mask & modifications)

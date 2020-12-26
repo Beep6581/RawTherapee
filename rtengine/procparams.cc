@@ -3317,7 +3317,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     usemask(false),
     invmaskd(false),
     invmask(false),
-    levelthr(40.),
+    levelthr(85.),
     lnoiselow(1.),
     levelthrlow(12.),
     activlum(true),
