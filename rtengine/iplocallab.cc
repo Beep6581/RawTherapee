@@ -1024,7 +1024,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         if (lp.denoiena) {
             local_noiself0 = 250.f * locwavCurveden[0];
             local_noiself = 250.f * locwavCurveden[166];
-            local_noiself2 = 250.f * locwavCurveden[323];
+            local_noiself2 = 250.f * locwavCurveden[333];
             local_noiselc = 200.f * locwavCurveden[500];
         }
     }
