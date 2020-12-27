@@ -5751,6 +5751,10 @@ LocallabBlur::LocallabBlur():
     guidbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDBL"), 0, 1000, 1, 0))),
     strbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRBL"), 0, 100, 1, 50))),
     epsbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EPSBL"), -10, 10, 1, 0))),
+    expdenoise2(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
+    recothres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+    lowthres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
+    higthres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
     sensibn(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 40))),
     blurMethod(Gtk::manage(new MyComboBoxText())),
     invbl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVBL")))),
@@ -5763,10 +5767,14 @@ LocallabBlur::LocallabBlur():
     expdenoise1(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI1_EXP")))),
     maskusable(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusable(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
+    maskusable2(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
+    maskunusable2(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
+    maskusable3(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
+    maskunusable3(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
     usemask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_USEMASK")))),
     lnoiselow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLNOISELOW"), 0.7, 2., 0.01, 1.))),
-    levelthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 10., 100., 1., 40.))),
-    levelthrlow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 100., 1., 12.))),
+    levelthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
+    levelthrlow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
     noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noiselumf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noiselumf2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINETWO"), MINCHRO, MAXCHRO, 0.01, 0.))),
@@ -5781,6 +5789,13 @@ LocallabBlur::LocallabBlur():
     detailFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DETAILFRA")))),
     detailthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAILTHR"), 0, 100, 1, 50))),
     adjblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJ"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-yellow-small.png")), Gtk::manage(new RTImage("circle-red-green-small.png"))))),
+    expdenoise3(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
+    recothresd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+    lowthresd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
+    higthresd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
+    decayd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
+    invmaskd(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVMASK")))),
+    invmask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVMASK")))),
     bilateral(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BILATERAL"), 0, 100, 1, 0))),
     sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     neutral(Gtk::manage (new Gtk::Button (M ("TP_RETINEX_NEUTRAL")))),
@@ -5832,6 +5847,8 @@ LocallabBlur::LocallabBlur():
     fftwblConn = fftwbl->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::fftwblChanged));
     usemaskConn = usemask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::usemaskChanged));
     invblConn = invbl->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::invblChanged));
+    invmaskdConn = invmaskd->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::invmaskdChanged));
+    invmaskConn = invmask->signal_toggled().connect(sigc::mem_fun(*this, &LocallabBlur::invmaskChanged));
 
     radius->setAdjusterListener(this);
 
@@ -5861,6 +5878,10 @@ LocallabBlur::LocallabBlur():
     strbl->setAdjusterListener(this);
 
     epsbl->setAdjusterListener(this);
+    setExpandAlignProperties(expdenoise2, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    recothres->setAdjusterListener(this);
+    lowthres->setAdjusterListener(this);
+    higthres->setAdjusterListener(this);
 
     sensibn->setAdjusterListener(this);
 
@@ -5936,6 +5957,11 @@ LocallabBlur::LocallabBlur():
     detailthr->setAdjusterListener(this);
 
     adjblur->setAdjusterListener(this);
+    setExpandAlignProperties(expdenoise3, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    recothresd->setAdjusterListener(this);
+    lowthresd->setAdjusterListener(this);
+    higthresd->setAdjusterListener(this);
+    decayd->setAdjusterListener(this);
 
     bilateral->setAdjusterListener(this);
 
@@ -6039,6 +6065,15 @@ LocallabBlur::LocallabBlur():
     blnoisebox->pack_start(*guidbl);
     blnoisebox->pack_start(*strbl);
     blnoisebox->pack_start(*epsbl);
+    ToolParamBlock* const wavBox2 = Gtk::manage(new ToolParamBlock());
+    wavBox2->pack_start(*maskusable2, Gtk::PACK_SHRINK, 0);
+    wavBox2->pack_start(*maskunusable2, Gtk::PACK_SHRINK, 0);
+    wavBox2->pack_start(*recothres);
+    wavBox2->pack_start(*lowthres);
+    wavBox2->pack_start(*higthres);
+    wavBox2->pack_start(*invmask);
+    expdenoise2->add(*wavBox2, false);
+    blnoisebox->pack_start(*expdenoise2);
     blnoisebox->pack_start(*sensibn);
 //    blnoisebox->pack_start(*blurMethod);
     blnoisebox->pack_start(*invbl);
@@ -6077,6 +6112,16 @@ LocallabBlur::LocallabBlur():
     wavBox->pack_start(*detailFrame);
     wavFrame->add(*wavBox);
     denoisebox->pack_start(*wavFrame);
+    ToolParamBlock* const wavBox3 = Gtk::manage(new ToolParamBlock());
+    wavBox3->pack_start(*maskusable3, Gtk::PACK_SHRINK, 0);
+    wavBox3->pack_start(*maskunusable3, Gtk::PACK_SHRINK, 0);
+    wavBox3->pack_start(*recothresd);
+    wavBox3->pack_start(*lowthresd);
+    wavBox3->pack_start(*higthresd);
+    wavBox3->pack_start(*decayd);
+    wavBox3->pack_start(*invmaskd);
+    expdenoise3->add(*wavBox3, false);
+    denoisebox->pack_start(*expdenoise3);
     denoisebox->pack_start(*bilateral);
     denoisebox->pack_start(*sensiden);
     denoisebox->pack_start(*neutral);
@@ -6158,6 +6203,10 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         wavshapeden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
         wavhue->setTooltip(M("TP_LOCALLAB_WAVHUE_TOOLTIP"));
         expdenoise1->set_tooltip_markup(M("TP_LOCALLAB_MASKLC_TOOLTIP"));
+        expdenoise2->set_tooltip_markup(M("TP_LOCALLAB_MASKGF_TOOLTIP"));
+        expdenoise3->set_tooltip_markup(M("TP_LOCALLAB_MASKDE_TOOLTIP"));
+        invmask->set_tooltip_text(M("TP_LOCALLAB_MASKDEINV_TOOLTIP"));
+        invmaskd->set_tooltip_text(M("TP_LOCALLAB_MASKDEINV_TOOLTIP"));
         LocalcurveEditorwavden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
         noiselequal->set_tooltip_text(M("TP_LOCALLAB_DENOIEQUAL_TOOLTIP"));
         noiselumdetail->set_tooltip_text(M("TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP"));
@@ -6190,6 +6239,11 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         lapmaskbl->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
         csThresholdblur->set_tooltip_text(M("TP_LOCALLAB_WAVEMASK_LEVEL_TOOLTIP"));
         sensiden->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+        lowthres->set_tooltip_text(M("TP_LOCALLAB_MASKLOWTHRES_TOOLTIP"));
+        lowthresd->set_tooltip_text(M("TP_LOCALLAB_MASKLOWTHRESD_TOOLTIP"));
+        higthresd->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRESD_TOOLTIP"));
+        higthres->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRES_TOOLTIP"));
+        decayd->set_tooltip_text(M("TP_LOCALLAB_MASKDECAY_TOOLTIP"));
     } else {
         
         expblnoise->set_tooltip_markup("");
@@ -6207,6 +6261,10 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         quamethod->set_tooltip_markup("");
         wavhue->setTooltip("");
         expdenoise1->set_tooltip_markup("");
+        expdenoise2->set_tooltip_markup("");
+        expdenoise3->set_tooltip_markup("");
+        invmask->set_tooltip_text("");
+        invmaskd->set_tooltip_text("");
         LocalcurveEditorwavden->setTooltip("");
         noiselequal->set_tooltip_text("");
         noiselumdetail->set_tooltip_text("");
@@ -6242,6 +6300,11 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         shadmaskblsha->set_tooltip_text("");
         csThresholdblur->set_tooltip_text("");
         sensiden->set_tooltip_text("");
+        lowthres->set_tooltip_text("");
+        lowthresd->set_tooltip_text("");
+        higthresd->set_tooltip_text("");
+        higthres->set_tooltip_text("");
+        decayd->set_tooltip_text("");
 
     }
 }
@@ -6266,6 +6329,17 @@ void LocallabBlur::neutral_pressed ()
     wavshapeden->setCurve(defSpot.locwavcurveden);
     wavhue->setCurve(defSpot.locwavcurvehue);
     usemask->set_active(defSpot.usemask);
+    invmaskd->set_active(defSpot.invmaskd);
+    invmask->set_active(defSpot.invmask);
+    recothresd->setValue(defSpot.recothresd);
+    lowthresd->setValue(defSpot.lowthresd);
+    higthresd->setValue(defSpot.higthresd);
+    decayd->setValue(defSpot.decayd);
+    recothres->setValue(defSpot.recothres);
+    lowthres->setValue(defSpot.lowthres);
+    higthres->setValue(defSpot.higthres);
+    
+
 }
 
 void LocallabBlur::setDefaultExpanderVisibility()
@@ -6273,6 +6347,8 @@ void LocallabBlur::setDefaultExpanderVisibility()
     expblnoise->set_expanded(false);
     expdenoise->set_expanded(false);
     expdenoise1->set_expanded(false);
+    expdenoise2->set_expanded(false);
+    expdenoise3->set_expanded(false);
     expmaskbl->set_expanded(false);
 }
 
@@ -6283,6 +6359,8 @@ void LocallabBlur::disableListener()
     blMethodConn.block(true);
     fftwblConn.block(true);
     usemaskConn.block(true);
+    invmaskdConn.block(true);
+    invmaskConn.block(true);
     invblConn.block(true);
     medMethodConn.block(true);
     blurMethodConn.block(true);
@@ -6302,6 +6380,8 @@ void LocallabBlur::enableListener()
     blMethodConn.block(false);
     fftwblConn.block(false);
     usemaskConn.block(false);
+    invmaskdConn.block(false);
+    invmaskConn.block(false);
     invblConn.block(false);
     medMethodConn.block(false);
     blurMethodConn.block(false);
@@ -6341,6 +6421,8 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
 
         fftwbl->set_active(spot.fftwbl);
         usemask->set_active(spot.usemask);
+        invmaskd->set_active(spot.invmaskd);
+        invmask->set_active(spot.invmask);
         invbl->set_active(spot.invbl);
         radius->setValue(spot.radius);
         strength->setValue(spot.strength);
@@ -6363,8 +6445,15 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         itera->setValue((double)spot.itera);
         guidbl->setValue((double)spot.guidbl);
         strbl->setValue((double)spot.strbl);
+        recothres->setValue((double)spot.recothres);
+        lowthres->setValue((double)spot.lowthres);
+        higthres->setValue((double)spot.higthres);
         epsbl->setValue((double)spot.epsbl);
         sensibn->setValue((double)spot.sensibn);
+        recothresd->setValue((double)spot.recothresd);
+        lowthresd->setValue((double)spot.lowthresd);
+        higthresd->setValue((double)spot.higthresd);
+        decayd->setValue((double)spot.decayd);
 
         if (spot.blurMethod == "norm") {
             blurMethod->set_active(0);
@@ -6466,6 +6555,8 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
         spot.fftwbl = fftwbl->get_active();
         spot.usemask = usemask->get_active();
+        spot.invmaskd = invmaskd->get_active();
+        spot.invmask = invmask->get_active();
         spot.invbl = invbl->get_active();
         spot.radius = radius->getValue();
         spot.strength = strength->getIntValue();
@@ -6488,8 +6579,15 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.itera = itera->getIntValue();
         spot.guidbl = guidbl->getIntValue();
         spot.strbl = strbl->getIntValue();
+        spot.recothres = recothres->getValue();
+        spot.lowthres = lowthres->getValue();
+        spot.higthres = higthres->getValue();
         spot.epsbl = epsbl->getIntValue();
         spot.sensibn = sensibn->getIntValue();
+        spot.recothresd = recothresd->getValue();
+        spot.lowthresd = lowthresd->getValue();
+        spot.higthresd = higthresd->getValue();
+        spot.decayd = decayd->getValue();
 
         if (blurMethod->get_active_row_number() == 0) {
             spot.blurMethod = "norm";
@@ -6578,8 +6676,15 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         itera->setDefault((double)defSpot.itera);
         guidbl->setDefault((double)defSpot.guidbl);
         strbl->setDefault((double)defSpot.strbl);
+        recothres->setDefault((double)defSpot.recothres);
+        lowthres->setDefault((double)defSpot.lowthres);
+        higthres->setDefault((double)defSpot.higthres);
         epsbl->setDefault((double)defSpot.epsbl);
         sensibn->setDefault((double)defSpot.sensibn);
+        recothresd->setDefault((double)defSpot.recothresd);
+        lowthresd->setDefault((double)defSpot.lowthresd);
+        higthresd->setDefault((double)defSpot.higthresd);
+        decayd->setDefault((double)defSpot.decayd);
         noiselumf0->setDefault(defSpot.noiselumf0);
         noiselumf->setDefault(defSpot.noiselumf);
         noiselumf2->setDefault(defSpot.noiselumf2);
@@ -6667,6 +6772,67 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabstrbl,
                                        strbl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == recothres) {
+            if(recothres->getValue()!= 1.) {
+                if (showmaskblMethodtyp->get_active_row_number() == 1) {
+                    showmaskblMethodtyp->set_active(2);
+                }
+            }
+            
+            if (listener) {
+                listener->panelChanged(Evlocallabrecothres,
+                                       recothres->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == lowthres) {
+            if (listener) {
+                listener->panelChanged(Evlocallablowthres,
+                                       lowthres->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == higthres) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhigthres,
+                                       higthres->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == recothresd) {
+            if(recothresd->getValue()!= 1.) {
+                if (showmaskblMethodtyp->get_active_row_number() == 0) {
+                    showmaskblMethodtyp->set_active(2);
+                }
+            }
+            
+            if (listener) {
+                listener->panelChanged(Evlocallabrecothresd,
+                                       recothresd->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == lowthresd) {
+            if (listener) {
+                listener->panelChanged(Evlocallablowthresd,
+                                       lowthresd->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == higthresd) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhigthresd,
+                                       higthresd->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == decayd) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdecayd,
+                                       decayd->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -6954,11 +7120,13 @@ void LocallabBlur::convertParamToNormal()
 
     // Disable all listeners
     disableListener();
-
+    invmask->set_active(defSpot.invmask);
+    invmaskd->set_active(defSpot.invmaskd);
     // Set hidden GUI widgets in Normal mode to default spot values
     fftwbl->set_active(defSpot.fftwbl);
     strumaskbl->setValue(defSpot.strumaskbl);
     toolbl->set_active(defSpot.toolbl);
+    decayd->setValue(defSpot.decayd);
     lapmaskbl->setValue(defSpot.lapmaskbl);
     shadmaskbl->setValue((double)defSpot.shadmaskbl);
     shadmaskblsha->setValue((double)defSpot.shadmaskblsha);
@@ -6975,6 +7143,8 @@ void LocallabBlur::convertParamToSimple()
 
     // Disable all listeners
     disableListener();
+    invmask->set_active(defSpot.invmask);
+    invmaskd->set_active(defSpot.invmaskd);
 
     // Set hidden specific GUI widgets in Simple mode to default spot values
     showmaskblMethod->set_active(0);
@@ -7001,6 +7171,15 @@ void LocallabBlur::convertParamToSimple()
     lnoiselow->setValue(defSpot.lnoiselow);
     levelthrlow->setValue(defSpot.levelthrlow);
     usemask->set_active(defSpot.usemask);
+    invmaskd->set_active(defSpot.invmaskd);
+    invmask->set_active(defSpot.invmask);
+    recothresd->setValue(defSpot.recothresd);
+    lowthresd->setValue(defSpot.lowthresd);
+    higthresd->setValue(defSpot.higthresd);
+    decayd->setValue(defSpot.decayd);
+    recothres->setValue(defSpot.recothres);
+    lowthres->setValue(defSpot.lowthres);
+    higthres->setValue(defSpot.higthres);
 
     // Enable all listeners
     enableListener();
@@ -7014,9 +7193,17 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             fftwbl->hide();
             expmaskbl->hide();
             expdenoise1->hide();
+            expdenoise2->hide();
+            expdenoise3->hide();
             maskusable->hide();
             maskunusable->hide();
-
+            maskusable2->hide();
+            maskunusable2->hide();
+            maskusable3->hide();
+            maskunusable3->hide();
+            decayd->hide();
+            invmask->hide();
+            invmaskd->hide();
             break;
 
         case Normal:
@@ -7032,17 +7219,46 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             // Specific Simple mode widgets are shown in Normal mode
             expmaskbl->show();
             expdenoise1->show();
+            expdenoise2->hide();
+            expdenoise3->show();
+            if (blMethod->get_active_row_number() == 2) {
+                expdenoise2->show();
+            }
+
+            decayd->hide();
+            invmask->hide();
+            invmaskd->hide();
             if(lnoiselow->getValue()!= 1.) {
                 if (showmaskblMethodtyp->get_active_row_number() == 0) {
                     showmaskblMethodtyp->set_active(2);
                 }
             }
+            if(recothres->getValue()!= 1.) {
+                if (showmaskblMethodtyp->get_active_row_number() == 1) {
+                    showmaskblMethodtyp->set_active(2);
+                }
+            }
+            if(recothresd->getValue()!= 1.) {
+                if (showmaskblMethodtyp->get_active_row_number() == 0) {
+                    showmaskblMethodtyp->set_active(2);
+                }
+            }
+            
             if (enablMask->get_active()) {
                 maskusable->show();
                 maskunusable->hide();
+                maskusable2->show();
+                maskunusable2->hide();
+                maskusable3->show();
+                maskunusable3->hide();
+                
             } else {
                 maskusable->hide();
                 maskunusable->show();
+                maskusable2->hide();
+                maskunusable2->show();
+                maskusable3->hide();
+                maskunusable3->show();
             }
 
             break;
@@ -7052,8 +7268,20 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             // Show widgets hidden in Normal and Simple mode
             if (blMethod->get_active_row_number() == 0) { // Keep widget hidden when blMethod is > 0
                 fftwbl->show();
+                expdenoise2->hide();
             }
+            if (blMethod->get_active_row_number() == 1) {
+                expdenoise2->hide();
+            }
+            if (blMethod->get_active_row_number() == 2) {
+                expdenoise2->show();
+            }
+
             expdenoise1->show();
+            expdenoise3->show();
+            decayd->show();
+            invmask->show();
+            invmaskd->show();
 
             expmaskbl->show();
             strumaskbl->show();
@@ -7068,12 +7296,31 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
                     showmaskblMethodtyp->set_active(2);
                 }
             }
+            if(recothres->getValue()!= 1.) {
+                if (showmaskblMethodtyp->get_active_row_number() == 1) {
+                    showmaskblMethodtyp->set_active(2);
+                }
+            }
+            if(recothresd->getValue()!= 1.) {
+                if (showmaskblMethodtyp->get_active_row_number() == 0) {
+                    showmaskblMethodtyp->set_active(2);
+                }
+            }
+            
             if (enablMask->get_active()) {
                 maskusable->show();
                 maskunusable->hide();
+                maskusable2->show();
+                maskunusable2->hide();
+                maskusable3->show();
+                maskunusable3->hide();
             } else {
                 maskusable->hide();
                 maskunusable->show();
+                maskusable2->hide();
+                maskunusable2->show();
+                maskusable3->show();
+                maskunusable3->hide();
             }
             
     }
@@ -7151,6 +7398,37 @@ void LocallabBlur::usemaskChanged()
         }
     }
 }
+
+void LocallabBlur::invmaskdChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (invmaskd->get_active()) {
+                listener->panelChanged(Evlocallabinvmaskd,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            } else {
+                listener->panelChanged(Evlocallabinvmaskd,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+    }
+}
+
+void LocallabBlur::invmaskChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (invmask->get_active()) {
+                listener->panelChanged(Evlocallabinvmask,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            } else {
+                listener->panelChanged(Evlocallabinvmask,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+    }
+}
+
 
 void LocallabBlur::invblChanged()
 {
@@ -7257,6 +7535,16 @@ void LocallabBlur::showmaskblMethodtypChanged()
             showmaskblMethodtyp->set_active(2);
         }
     }
+    if(recothres->getValue()!= 1.) {
+        if (showmaskblMethodtyp->get_active_row_number() == 1) {
+            showmaskblMethodtyp->set_active(2);
+        }
+    }
+    if(recothresd->getValue()!= 1.) {
+        if (showmaskblMethodtyp->get_active_row_number() == 0) {
+            showmaskblMethodtyp->set_active(2);
+        }
+    }
 
     // If mask preview is activated, deactivate all other tool mask preview
     if (locToolListener) {
@@ -7274,9 +7562,17 @@ void LocallabBlur::enablMaskChanged()
     if (enablMask->get_active()) {
         maskusable->show();
         maskunusable->hide();
+        maskusable2->show();
+        maskunusable2->hide();
+        maskusable3->show();
+        maskunusable3->hide();
     } else {
         maskusable->hide();
         maskunusable->show();
+        maskusable2->hide();
+        maskunusable2->show();
+        maskusable3->hide();
+        maskunusable3->show();
     }
 
     if (isLocActivated && exp->getEnabled()) {
@@ -7329,7 +7625,7 @@ void LocallabBlur::updateBlurGUI()
         if (mode == Expert) { // Keep widget hidden in Normal and Simple mode
             fftwbl->show();
         }
-
+        expdenoise2->hide();
         radius->show();
         strength->show();
         grainFrame->show();
@@ -7337,6 +7633,9 @@ void LocallabBlur::updateBlurGUI()
         itera->hide();
         guidbl->hide();
         strbl->hide();
+        recothres->hide();
+        lowthres->hide();
+        higthres->hide();
         epsbl->hide();
         activlum->show();
     } else if (blMethod->get_active_row_number() == 1) {
@@ -7348,6 +7647,10 @@ void LocallabBlur::updateBlurGUI()
         itera->show();
         guidbl->hide();
         strbl->hide();
+        expdenoise2->hide();
+        recothres->hide();
+        lowthres->hide();
+        higthres->hide();
         epsbl->hide();
         activlum->show();
     } else if (blMethod->get_active_row_number() == 2) {
@@ -7359,6 +7662,13 @@ void LocallabBlur::updateBlurGUI()
         itera->hide();
         guidbl->show();
         strbl->show();
+        expdenoise2->hide();
+        if (mode == Expert  || mode == Normal){
+            expdenoise2->show();
+            recothres->show();
+            lowthres->show();
+            higthres->show();
+        }
         epsbl->show();
         activlum->hide();
     }

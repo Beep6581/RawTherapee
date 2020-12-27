@@ -1007,8 +1007,17 @@ enum ProcEventCode {
     EvlocallabwavCurvehue = 981,
     Evlocallablevelthr = 982,
     Evlocallablevelthrlow = 983,
-   Evlocallabusemask1 = 984,
+    Evlocallabusemask1 = 984,
     Evlocallablnoiselow = 985,
+    Evlocallabrecothres = 986,
+    Evlocallablowthres = 987,
+    Evlocallabhigthres = 988,
+    Evlocallabrecothresd = 989,
+    Evlocallablowthresd = 990,
+    Evlocallabhigthresd = 991,
+    Evlocallabinvmaskd = 992,
+    Evlocallabinvmask = 993,
+    Evlocallabdecayd = 994,
     NUMOFEVENTS
 };
 

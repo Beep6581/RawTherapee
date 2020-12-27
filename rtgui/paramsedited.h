@@ -613,6 +613,13 @@ public:
         bool itera;
         bool guidbl;
         bool strbl;
+        bool recothres;
+        bool lowthres;
+        bool higthres;
+        bool recothresd;
+        bool lowthresd;
+        bool higthresd;
+        bool decayd;
         bool isogr;
         bool strengr;
         bool scalegr;
@@ -621,6 +628,8 @@ public:
         bool chroMethod;
         bool quamethod;
         bool usemask;
+        bool invmaskd;
+        bool invmask;
         bool levelthr;
         bool lnoiselow;
         bool levelthrlow;

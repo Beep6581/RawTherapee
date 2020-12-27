@@ -654,6 +654,10 @@ private:
     Adjuster* const guidbl;
     Adjuster* const strbl;
     Adjuster* const epsbl;
+    MyExpander* const expdenoise2;
+    Adjuster* const recothres;
+    Adjuster* const lowthres;
+    Adjuster* const higthres;
     Adjuster* const sensibn;
     MyComboBoxText* const blurMethod;
     Gtk::CheckButton* const invbl;
@@ -666,6 +670,10 @@ private:
     MyExpander* const expdenoise1;
     Gtk::Label* const maskusable;
     Gtk::Label* const maskunusable;
+    Gtk::Label* const maskusable2;
+    Gtk::Label* const maskunusable2;
+    Gtk::Label* const maskusable3;
+    Gtk::Label* const maskunusable3;
 
     Gtk::CheckButton* const usemask;
     Adjuster* const lnoiselow;
@@ -685,6 +693,15 @@ private:
     Gtk::Frame* const detailFrame;
     Adjuster* const detailthr;
     Adjuster* const adjblur;
+    MyExpander* const expdenoise3;
+    Adjuster* const recothresd;
+    Adjuster* const lowthresd;
+    Adjuster* const higthresd;
+    Adjuster* const decayd;
+    
+    Gtk::CheckButton* const invmaskd;
+    Gtk::CheckButton* const invmask;
+    
     Adjuster* const bilateral;
     Adjuster* const sensiden;
     Gtk::Button* neutral;
@@ -715,7 +732,7 @@ private:
     ThresholdAdjuster* const csThresholdblur;
 
     sigc::connection blMethodConn, fftwblConn, invblConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
-    sigc::connection  quamethodconn, usemaskConn, neutralconn;
+    sigc::connection  quamethodconn, usemaskConn, invmaskdConn, invmaskConn, neutralconn;
 public:
     LocallabBlur();
     ~LocallabBlur();
@@ -753,6 +770,8 @@ private:
     void blMethodChanged();
     void fftwblChanged();
     void usemaskChanged();
+    void invmaskdChanged();
+    void invmaskChanged();
     void invblChanged();
     void medMethodChanged();
     void blurMethodChanged();
