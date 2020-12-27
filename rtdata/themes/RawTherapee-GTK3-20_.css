@@ -747,6 +747,10 @@ button.radio#histButton:hover {
     margin-right: 1em;
 }
 
+#MyExpander.withScrollbar #MyExpander { /* No margin for nested expanders */
+    margin-right: 0;
+}
+
 /* Borders around tools and subtools */
 #MyExpander {
     border-top: 0.0833333333333333em solid rgba(0,0,0,0.3);
@@ -767,7 +771,6 @@ button.radio#histButton:hover {
 #ExpanderBox > box,
 #ExpanderBox > grid {
     background-color: rgba(255,255,255,0.075);
-    margin: 0.5em;
     padding: 0.3em 0.5em 0.6em 0.5em;
     border-top: 0.0833333333333333em solid rgba(255,255,255,0.1);
     border-bottom: none;
