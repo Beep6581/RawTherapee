@@ -93,7 +93,7 @@ Wavelet::Wavelet() :
     offset(Gtk::manage(new Adjuster(M("TP_WAVELET_WAVOFFSET"), 0.33, 1.66, 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     lowthr(Gtk::manage(new Adjuster(M("TP_WAVELET_WAVLOWTHR"), 20., 100., 0.5, 40.))),
     rescon(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCON"), -100, 100, 1, 0))),
-    resconH(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCONH"), -100, 100, 1, 0))),
+    resconH(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCONH"), 0, 100, 1, 0))),
     reschro(Gtk::manage(new Adjuster(M("TP_WAVELET_RESCHRO"), -100, 100, 1, 0))),
     resblur(Gtk::manage(new Adjuster(M("TP_WAVELET_RESBLUR"), 0, 100, 1, 0))),
     resblurc(Gtk::manage(new Adjuster(M("TP_WAVELET_RESBLURC"), 0, 100, 1, 0))),
@@ -3248,15 +3248,15 @@ void Wavelet::convertParamToNormal()
     //denoise
     chromfi->setValue(def_params.chromfi);
     chromco->setValue(def_params.chromco);
-    denmethod->set_active(0);
+    denmethod->set_active(4);
     mixmethod->set_active(2);
     slimethod->set_active(0);
     levelsigm->setValue<double>(def_params.levelsigm);
     leveldenoise->setValue<double>(def_params.leveldenoise);
     limden->setValue(def_params.limden);
-
+    thrden->setValue(def_params.thrden);
 //    quamethod->set_active(0);
-//    sigm->setValue(def_params.sigm);
+    sigm->setValue(def_params.sigm);
     //toning
     exptoning->setEnabled(def_params.exptoning);
     //gamut
@@ -3309,12 +3309,12 @@ void Wavelet::updateGUIToMode(int mode)
         denHBox->hide();
         mixHBox->hide();
         sliHBox->hide();
-        sigm->show();
+        sigm->hide();
         levelsigm->hide();
         CurveEditorwavnoiseh->hide();
         CurveEditorwavnoise->hide();
        // levden->hide();
-        thrden->show();
+        thrden->hide();
         leveldenoise->hide();
         limden->hide();
     } else {
@@ -3339,7 +3339,7 @@ void Wavelet::updateGUIToMode(int mode)
         sigm->hide();
         levelsigm->show();
         limden->show();
-       // levden->show();
+        levden->show();
         sliHBox->show();
         if (slimethod->get_active_row_number() == 0){
             leveldenoise->show();
@@ -3353,7 +3353,7 @@ void Wavelet::updateGUIToMode(int mode)
             CurveEditorwavnoise->show();
         }
         disableListener();
-        denmethod->set_active(0);
+        denmethod->set_active(4);
         enableListener();
 
     }
@@ -3730,6 +3730,13 @@ void Wavelet::adjusterChanged(Adjuster* a, double newval)
             } else {
                 sup->hide();
             }
+            if(z >= 8 ) {
+                expnoise->setEnabled(false);
+                expnoise->set_sensitive(false);
+            } else {
+              //  expnoise->setEnabled(pp->wavelet.expnoise);
+                expnoise->set_sensitive(true);
+            }
 
             listener->panelChanged(EvWavthres, thres->getTextValue());
              updateGUImaxlev();
@@ -3851,6 +3858,13 @@ void Wavelet::enabledUpdateUI()
         } else {
             sup->hide();
         }
+
+            if(z >= 8) {
+                expnoise->setEnabled(false);
+                expnoise->set_sensitive(false);
+            } else {
+                expnoise->set_sensitive(true);
+            }
 
 //      adjusterUpdateUI(tmrs);
     }

@@ -952,12 +952,19 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 
 
         float cz, wh, pfl;
-        Ciecam02::initcam1float (yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
+        int c16 = 1;
+        if (params->colorappearance.modelmethod == "02") {
+            c16 = 1;
+        }else if (params->colorappearance.modelmethod == "16") {
+            c16 = 16;
+        }
+
+        Ciecam02::initcam1float (yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c, c16);
         //printf ("wh=%f \n", wh);
 
         const float pow1 = pow_F(1.64f - pow_F(0.29f, n), 0.73f);
         float nj, nbbj, ncbj, czj, awj, flj;
-        Ciecam02::initcam2float (yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
+        Ciecam02::initcam2float (yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj, c16);
 #ifdef __SSE2__
         const float reccmcz = 1.f / (c2 * czj);
 #endif
@@ -1048,7 +1055,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                                                        Q,  M,  s, F2V(aw), F2V(fl), F2V(wh),
                                                        x,  y,  z,
                                                        F2V(xw1), F2V(yw1),  F2V(zw1),
-                                                       F2V(c),  F2V(nc), F2V(pow1), F2V(nbb), F2V(ncb), F2V(pfl), F2V(cz), F2V(d));
+                                                       F2V(c),  F2V(nc), F2V(pow1), F2V(nbb), F2V(ncb), F2V(pfl), F2V(cz), F2V(d), c16);
                     STVF(Jbuffer[k], J);
                     STVF(Cbuffer[k], C);
                     STVF(hbuffer[k], h);
@@ -1072,7 +1079,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                                                        Q,  M,  s, aw, fl, wh,
                                                        x,  y,  z,
                                                        xw1, yw1,  zw1,
-                                                         c,  nc, pow1, nbb, ncb, pfl, cz, d);
+                                                         c,  nc, pow1, nbb, ncb, pfl, cz, d, c16);
                     Jbuffer[k] = J;
                     Cbuffer[k] = C;
                     hbuffer[k] = h;
@@ -1110,7 +1117,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                                                        Q,  M,  s, aw, fl, wh,
                                                        x,  y,  z,
                                                        xw1, yw1,  zw1,
-                                                         c,  nc, pow1, nbb, ncb, pfl, cz, d);
+                                                         c,  nc, pow1, nbb, ncb, pfl, cz, d, c16);
 #endif
                     float Jpro, Cpro, hpro, Qpro, Mpro, spro;
                     Jpro = J;
@@ -1521,7 +1528,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             Ciecam02::jch2xyz_ciecam02float(xx, yy, zz,
                                                             J,  C, h,
                                                             xw2, yw2,  zw2,
-                                                              c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj);
+                                                              c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj, c16);
                             float x, y, z;
                             x = xx * 655.35f;
                             y = yy * 655.35f;
@@ -1573,7 +1580,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     Ciecam02::jch2xyz_ciecam02float(x, y, z,
                                                     LVF(Jbuffer[k]), LVF(Cbuffer[k]), LVF(hbuffer[k]),
                                                     F2V(xw2), F2V(yw2), F2V(zw2),
-                                                    F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz));
+                                                    F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz), c16);
                     STVF(xbuffer[k], x * c655d35);
                     STVF(ybuffer[k], y * c655d35);
                     STVF(zbuffer[k], z * c655d35);
@@ -1830,7 +1837,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         Ciecam02::jch2xyz_ciecam02float(xx, yy, zz,
                                                         ncie->J_p[i][j],  ncie_C_p, ncie->h_p[i][j],
                                                         xw2, yw2,  zw2,
-                                                          c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj);
+                                                          c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj, c16);
                         float x = (float)xx * 655.35f;
                         float y = (float)yy * 655.35f;
                         float z = (float)zz * 655.35f;
@@ -1878,7 +1885,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         Ciecam02::jch2xyz_ciecam02float(x, y, z,
                                                         LVF(Jbuffer[k]), LVF(Cbuffer[k]), LVF(hbuffer[k]),
                                                         F2V(xw2), F2V(yw2), F2V(zw2),
-                                                        F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz));
+                                                        F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz), c16);
                         x *= c655d35;
                         y *= c655d35;
                         z *= c655d35;
@@ -5218,7 +5225,7 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
 
     /* Debuggery. Saves L for toying with outside of RT.
     char nm[64];
-    sprintf(nm, "%ux%ufloat.bin", lab->W, lab->H);
+    snprintf(nm, sizeof(nm), "%ux%ufloat.bin", lab->W, lab->H);
     FILE *f = fopen(nm, "wb");
     fwrite(L, N, sizeof(float), f);
     fclose(f);*/
@@ -5712,6 +5719,116 @@ void ImProcFunctions::rgb2lab(const Imagefloat &src, LabImage &dst, const Glib::
             Color::rgbxyz(src.r(i, j), src.g(i, j), src.b(i, j), X, Y, Z, wp);
             //convert Lab
             Color::XYZ2Lab(X, Y, Z, dst.L[i][j], dst.a[i][j], dst.b[i][j]);
+        }
+    }
+}
+
+void ImProcFunctions::rgb2lab(const Image8 &src, int x, int y, int w, int h, float L[], float a[], float b[], const procparams::ColorManagementParams &icm, bool consider_histogram_settings) const
+{ // Adapted from ImProcFunctions::lab2rgb
+    const int src_width = src.getWidth();
+    const int src_height = src.getHeight();
+
+    if (x < 0) {
+        x = 0;
+    }
+
+    if (y < 0) {
+        y = 0;
+    }
+
+    if (x + w > src_width) {
+        w = src_width - x;
+    }
+
+    if (y + h > src_height) {
+        h = src_height - y;
+    }
+
+    Glib::ustring profile;
+
+    cmsHPROFILE oprof = nullptr;
+
+    if (settings->HistogramWorking && consider_histogram_settings) {
+        profile = icm.workingProfile;
+    } else {
+        profile = icm.outputProfile;
+
+        if (icm.outputProfile.empty() || icm.outputProfile == ColorManagementParams::NoICMString) {
+            profile = "sRGB";
+        }
+        oprof = ICCStore::getInstance()->getProfile(profile);
+    }
+
+    if (oprof) {
+        cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE; // NOCACHE is important for thread safety
+
+        if (icm.outputBPC) {
+            flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
+        }
+
+        lcmsMutex->lock();
+        cmsHPROFILE LabIProf  = cmsCreateLab4Profile(nullptr);
+        cmsHTRANSFORM hTransform = cmsCreateTransform (oprof, TYPE_RGB_8, LabIProf, TYPE_Lab_FLT, icm.outputIntent, flags);
+        cmsCloseProfile(LabIProf);
+        lcmsMutex->unlock();
+
+        // cmsDoTransform is relatively expensive
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            AlignedBuffer<float> oBuf(3 * w);
+            float *outbuffer = oBuf.data;
+            int condition = y + h;
+
+#ifdef _OPENMP
+            #pragma omp for schedule(dynamic,16)
+#endif
+
+            for (int i = y; i < condition; i++) {
+                const int ix = 3 * (x + i * src_width);
+                int iy = 0;
+                float* rL = L + (i - y) * w;
+                float* ra = a + (i - y) * w;
+                float* rb = b + (i - y) * w;
+
+                cmsDoTransform (hTransform, src.data + ix, outbuffer, w);
+
+                for (int j = 0; j < w; j++) {
+                    rL[j] = outbuffer[iy++] * 327.68f;
+                    ra[j] = outbuffer[iy++] * 327.68f;
+                    rb[j] = outbuffer[iy++] * 327.68f;
+                }
+            }
+        } // End of parallelization
+
+        cmsDeleteTransform(hTransform);
+    } else {
+        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(profile);
+        const float wp[3][3] = {
+            {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
+            {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
+            {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
+        };
+
+        const int x2 = x + w;
+        const int y2 = y + h;
+        constexpr float rgb_factor = 65355.f / 255.f;
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+        for (int i = y; i < y2; i++) {
+            int offset = (i - y) * w;
+            for (int j = x; j < x2; j++) {
+                float X, Y, Z;
+                // lab2rgb uses gamma2curve, which is gammatab_srgb.
+                const auto& igamma = Color::igammatab_srgb;
+                Color::rgbxyz(igamma[rgb_factor * src.r(i, j)], igamma[rgb_factor * src.g(i, j)], igamma[rgb_factor * src.b(i, j)], X, Y, Z, wp);
+                Color::XYZ2Lab(X, Y, Z, L[offset], a[offset], b[offset]);
+                offset++;
+            }
         }
     }
 }

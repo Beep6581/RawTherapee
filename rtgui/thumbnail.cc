@@ -121,7 +121,7 @@ void Thumbnail::_generateThumbnailImage ()
     tpp = nullptr;
     delete [] lastImg;
     lastImg = nullptr;
-    tw = -1;
+    tw = options.maxThumbnailWidth;
     th = options.maxThumbnailHeight;
     imgRatio = -1.;
 
@@ -138,20 +138,20 @@ void Thumbnail::_generateThumbnailImage ()
 
     if (ext == "jpg" || ext == "jpeg") {
         infoFromImage (fname);
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams->wb.equal);
+        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal);
 
         if (tpp) {
             cfs.format = FT_Jpeg;
         }
     } else if (ext == "png") {
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams->wb.equal);
+        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal);
 
         if (tpp) {
             cfs.format = FT_Png;
         }
     } else if (ext == "tif" || ext == "tiff") {
         infoFromImage (fname);
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams->wb.equal);
+        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal);
 
         if (tpp) {
             cfs.format = FT_Tiff;
@@ -589,10 +589,13 @@ void Thumbnail::decreaseRef ()
     cachemgr->closeThumbnail (this);
 }
 
-int Thumbnail::getThumbnailWidth (const int h, const rtengine::procparams::ProcParams *pparams) const
+void Thumbnail::getThumbnailSize(int &w, int &h, const rtengine::procparams::ProcParams *pparams)
 {
+    MyMutex::MyLock lock(mutex);
+
     int tw_ = tw;
     int th_ = th;
+
     float imgRatio_ = imgRatio;
 
     if (pparams) {
@@ -617,10 +620,16 @@ int Thumbnail::getThumbnailWidth (const int h, const rtengine::procparams::ProcP
         }
     }
 
-    if (imgRatio_ > 0.f) {
-        return imgRatio_ * h;
+    if (imgRatio_ > 0.) {
+        w = imgRatio_ * static_cast<float>(h);
     } else {
-        return tw_ * h / th_;
+        w = tw_ * h / th_;
+    }
+
+    if (w > options.maxThumbnailWidth) {
+        const float s = static_cast<float>(options.maxThumbnailWidth) / w;
+        w = options.maxThumbnailWidth;
+        h = std::max<int>(h * s, 1);
     }
 }
 

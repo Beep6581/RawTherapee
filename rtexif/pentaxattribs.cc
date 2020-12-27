@@ -422,7 +422,7 @@ public:
             return "undef";
         }
 
-        sprintf (buffer, "%.1f", v );
+        snprintf(buffer, sizeof(buffer), "%.1f", v );
         return buffer;
     }
 };
@@ -626,7 +626,7 @@ public:
             return s.str();
         } else {
             char buffer[1024];
-            t->toString (buffer);
+            t->toString (buffer, sizeof(buffer));
             return std::string (buffer);
         }
     }
@@ -1341,7 +1341,7 @@ public:
         }
 
         char buffer[32];
-        sprintf (buffer, "%d", a );
+        snprintf(buffer, sizeof(buffer), "%d", a );
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -1369,7 +1369,7 @@ public:
 
         if (a > 1.) {
             char buffer[32];
-            sprintf (buffer, "%.2f", a / 100. );
+            snprintf(buffer, sizeof(buffer), "%.2f", a / 100. );
             return buffer;
         } else {
             return "n/a";
@@ -1399,7 +1399,7 @@ public:
 
         if (b > 1.0) {
             char buffer[32];
-            sprintf (buffer, "%.2f", b );
+            snprintf(buffer, sizeof(buffer), "%.2f", b );
             return buffer;
         } else {
             return "n/a";
@@ -1428,7 +1428,7 @@ public:
         int a = t->toInt (0, BYTE);
         char buffer[32];
         double v = 100.*exp (double (a - 32) * log (2.) / 8.);
-        sprintf (buffer, "%.1f", v );
+        snprintf(buffer, sizeof(buffer), "%.1f", v );
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -1456,7 +1456,7 @@ public:
                 return "undef";
             }
 
-            sprintf (buffer, "%.1f", v );
+            snprintf(buffer, sizeof(buffer), "%.1f", v );
             return buffer;
         } else {
             return "n/a";
@@ -1485,7 +1485,7 @@ public:
         int a = t->toInt (0, BYTE);
         char buffer[32];
         double v = double (a - 64) / 8.;
-        sprintf (buffer, "%.1f", v );
+        snprintf(buffer, sizeof(buffer), "%.1f", v );
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -1505,7 +1505,7 @@ public:
         int a = t->toInt (0, SBYTE);
         char buffer[32];
         double v = double (a) / 8.;
-        sprintf (buffer, "%.1f", v );
+        snprintf(buffer, sizeof(buffer), "%.1f", v );
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -1525,7 +1525,7 @@ public:
         int a = t->toInt (0, BYTE);
         char buffer[32];
         double v = exp ((double (a) - 68.) * log (2.) / 16.);
-        sprintf (buffer, "%.1f", v );
+        snprintf(buffer, sizeof(buffer), "%.1f", v );
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -1545,7 +1545,7 @@ public:
         int a = t->toInt (0, BYTE);
         char buffer[32];
         double v = 24.*exp (- (double (a) - 32.) * log (2.) / 8.);
-        sprintf (buffer, "%.6f", v );
+        snprintf(buffer, sizeof(buffer), "%.6f", v );
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -1565,7 +1565,7 @@ public:
         char buffer[32];
         int a = t->toInt (0, BYTE);
         int mina = a & 0x0F;
-        sprintf (buffer, "%.1f", double (int (pow (2.0, double (mina + 10) / 4.0) + 0.2)));
+        snprintf(buffer, sizeof(buffer), "%.1f", double (int (pow (2.0, double (mina + 10) / 4.0) + 0.2)));
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -1585,7 +1585,7 @@ public:
         char buffer[32];
         int a = t->toInt (0, BYTE);
         int maxa = (a & 0xF0) >> 4;
-        sprintf (buffer, "%.1f", double (int (pow (2.0, double (maxa) / 4.0) + 0.2)) );
+        snprintf(buffer, sizeof(buffer), "%.1f", double (int (pow (2.0, double (maxa) / 4.0) + 0.2)) );
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -1702,7 +1702,7 @@ public:
     {
         char buffer[32];
         int b = t->toInt (0, BYTE) & 0x1F;
-        sprintf (buffer, "%.0f", pow (2., b / 16. + 4) );
+        snprintf(buffer, sizeof(buffer), "%.0f", pow (2., b / 16. + 4) );
         return buffer;
     }
 };
@@ -1788,7 +1788,7 @@ public:
             return r->second;
         } else {
             char buffer[1024];
-            t->toString (buffer);
+            t->toString (buffer, sizeof(buffer));
             return std::string (buffer);
         }
     }

@@ -77,8 +77,9 @@ ControlSpotPanel::ControlSpotPanel():
     colorde_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COLORDE"), -15, 15, 2, 5, Gtk::manage(new RTImage("circle-blue-yellow-small.png")), Gtk::manage(new RTImage("circle-gray-green-small.png"))))),
     colorscope_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COLORSCOPE"), 0., 100.0, 1., 30.))),
     scopemask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCOPEMASK"), 0, 100, 1, 60))),
-    lumask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LUMASK"), 0, 30, 1, 10))),
+    lumask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LUMASK"), -50, 30, 1, 10, Gtk::manage(new RTImage("circle-yellow-small.png")), Gtk::manage(new RTImage("circle-gray-small.png")) ))),
 
+    hishow_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_PREVSHOW")))),
     activ_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIVSPOT")))),
     avoid_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOID")))),
     blwh_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BLWH")))),
@@ -108,6 +109,7 @@ ControlSpotPanel::ControlSpotPanel():
     maskPrevActive(false)
 {
     const bool showtooltip = options.showtooltip;
+    pack_start(*hishow_);
 
     Gtk::HBox* const ctboxprevmethod = Gtk::manage(new Gtk::HBox());
     prevMethod_->append(M("TP_LOCALLAB_PREVHIDE"));
@@ -117,7 +119,7 @@ ControlSpotPanel::ControlSpotPanel():
                           sigc::mem_fun(
                               *this, &ControlSpotPanel::prevMethodChanged));
     
-    ctboxprevmethod->pack_start(*prevMethod_);
+//    ctboxprevmethod->pack_start(*prevMethod_);
     pack_start(*ctboxprevmethod);
 
 
@@ -379,6 +381,9 @@ ControlSpotPanel::ControlSpotPanel():
     artifBox2->pack_start(*colorscope_);
     pack_start(*artifBox2);
     ToolParamBlock* const specCaseBox = Gtk::manage(new ToolParamBlock());
+
+    hishowconn_  = hishow_->signal_toggled().connect(
+                      sigc::mem_fun(*this, &ControlSpotPanel::hishowChanged));
 
     activConn_  = activ_->signal_toggled().connect(
                      sigc::mem_fun(*this, &ControlSpotPanel::activChanged));
@@ -819,6 +824,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     balanh_->setValue((double)row[spots_.balanh]);
     colorde_->setValue((double)row[spots_.colorde]);
     colorscope_->setValue((double)row[spots_.colorscope]);
+    hishow_->set_active(row[spots_.hishow]);
     activ_->set_active(row[spots_.activ]);
     avoid_->set_active(row[spots_.avoid]);
     blwh_->set_active(row[spots_.blwh]);
@@ -899,7 +905,7 @@ void ControlSpotPanel::prevMethodChanged()
     Gtk::TreeModel::Row row = *iter;
 
     row[spots_.prevMethod] = prevMethod_->get_active_row_number();
-
+/*
     // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with updateParamVisibility function)
     if (multiImage && prevMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
         expTransGrad_->show();
@@ -925,10 +931,10 @@ void ControlSpotPanel::prevMethodChanged()
         circrad_->show();
         ctboxshape->show();
     }
-
+*/
     // Raise event
     if (listener) {
-        listener->panelChanged(EvLocallabSpotprevMethod, prevMethod_->get_active_text());
+//        listener->panelChanged(EvLocallabSpotprevMethod, prevMethod_->get_active_text());
     }
 }
 
@@ -1179,7 +1185,7 @@ void ControlSpotPanel::updateParamVisibility()
         excluFrame->show();
     }
 
-
+/*
     if (multiImage && prevMethod_->get_active_text() == M("GENERAL_UNCHANGED")) {
         expTransGrad_->show();
         expShapeDetect_->show();
@@ -1188,6 +1194,8 @@ void ControlSpotPanel::updateParamVisibility()
         circrad_->show();
         ctboxshape->show();
     } else if (prevMethod_->get_active_row_number() == 0) { // Normal case
+    */
+    if (!hishow_->get_active()) { // Normal case
         expTransGrad_->hide();
         expShapeDetect_->hide();
         expSpecCases_->hide();
@@ -1432,6 +1440,50 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
+void ControlSpotPanel::hishowChanged()
+{
+    // printf("avoidChanged\n");
+
+    // Get selected control spot
+    const auto s = treeview_->get_selection();
+
+    if (!s->count_selected_rows()) {
+        return;
+    }
+
+    const auto iter = s->get_selected();
+    Gtk::TreeModel::Row row = *iter;
+    row[spots_.hishow] = hishow_->get_active();
+
+
+
+    if (!hishow_->get_active()) { // Normal case
+        expTransGrad_->hide();
+        expShapeDetect_->hide();
+        expSpecCases_->hide();
+        expMaskMerge_->hide();
+        circrad_->hide();
+        ctboxshape->hide();
+        shapeMethod_->set_active(0);
+
+    } else { // Excluding case
+        expTransGrad_->show();
+        expShapeDetect_->show();
+        expSpecCases_->show();
+        expMaskMerge_->show();
+        circrad_->show();
+        ctboxshape->show();
+    }
+
+    // Raise event
+    if (listener) {
+        if (hishow_->get_active()) {
+            listener->panelChanged(Evlocallabhishow, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(Evlocallabhishow, M("GENERAL_DISABLED"));
+        }
+    }
+}
 
 
 
@@ -1677,6 +1729,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     balanh_->block(cond);
     colorde_->block(cond);
     colorscope_->block(cond);
+    hishowconn_.block(cond);
     activConn_.block(cond);
     avoidConn_.block(cond);
     blwhConn_.block(cond);
@@ -1720,6 +1773,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     balanh_->set_sensitive(cond);
     colorde_->set_sensitive(cond);
     colorscope_->set_sensitive(cond);
+    hishow_->set_sensitive(cond);
     activ_->set_sensitive(cond);
     avoid_->set_sensitive(cond);
     blwh_->set_sensitive(cond);
@@ -2401,6 +2455,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int index)
             r->transitgrad = row[spots_.transitgrad];
             r->scopemask = row[spots_.scopemask];
             r->lumask = row[spots_.lumask];
+            r->hishow = row[spots_.hishow];
             r->activ = row[spots_.activ];
             r->avoid = row[spots_.avoid];
             r->blwh = row[spots_.blwh];
@@ -2531,6 +2586,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.balanh] = newSpot->balanh;
     row[spots_.colorde] = newSpot->colorde;
     row[spots_.colorscope] = newSpot->colorscope;
+    row[spots_.hishow] = newSpot->hishow;
     row[spots_.activ] = newSpot->activ;
     row[spots_.avoid] = newSpot->avoid;
     row[spots_.blwh] = newSpot->blwh;
@@ -2645,6 +2701,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(balanh);
     add(colorde);
     add(colorscope);
+    add(hishow);
     add(activ);
     add(avoid);
     add(blwh);

@@ -36,7 +36,7 @@ Dehaze::Dehaze(): FoldableToolPanel(this, "dehaze", M("TP_DEHAZE_LABEL"), false,
     EvDehazeStrength = m->newEvent(HDR, "HISTORY_MSG_DEHAZE_STRENGTH");
     EvDehazeShowDepthMap = m->newEvent(HDR, "HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP");
     EvDehazeDepth = m->newEvent(HDR, "HISTORY_MSG_DEHAZE_DEPTH");
-    EvDehazeLuminance = m->newEvent(HDR, "HISTORY_MSG_DEHAZE_LUMINANCE");
+    EvDehazeSaturation = m->newEvent(HDR, "HISTORY_MSG_DEHAZE_SATURATION");
     
     strength = Gtk::manage(new Adjuster(M("TP_DEHAZE_STRENGTH"), 0., 100., 1., 50.));
     strength->setAdjusterListener(this);
@@ -46,9 +46,9 @@ Dehaze::Dehaze(): FoldableToolPanel(this, "dehaze", M("TP_DEHAZE_LABEL"), false,
     depth->setAdjusterListener(this);
     depth->show();
 
-    luminance = Gtk::manage(new Gtk::CheckButton(M("TP_DEHAZE_LUMINANCE")));
-    luminance->signal_toggled().connect(sigc::mem_fun(*this, &Dehaze::luminanceChanged));
-    luminance->show();
+    saturation = Gtk::manage(new Adjuster(M("TP_DEHAZE_SATURATION"), 0., 100., 1., 50.));
+    saturation->setAdjusterListener(this);
+    saturation->show();
 
     showDepthMap = Gtk::manage(new Gtk::CheckButton(M("TP_DEHAZE_SHOW_DEPTH_MAP")));
     showDepthMap->signal_toggled().connect(sigc::mem_fun(*this, &Dehaze::showDepthMapChanged));
@@ -56,10 +56,9 @@ Dehaze::Dehaze(): FoldableToolPanel(this, "dehaze", M("TP_DEHAZE_LABEL"), false,
     
     pack_start(*strength);
     pack_start(*depth);
-    pack_start(*luminance);
+    pack_start(*saturation);
     pack_start(*showDepthMap);
 }
-
 
 void Dehaze::read(const ProcParams *pp, const ParamsEdited *pedited)
 {
@@ -67,53 +66,54 @@ void Dehaze::read(const ProcParams *pp, const ParamsEdited *pedited)
 
     if (pedited) {
         strength->setEditedState(pedited->dehaze.strength ? Edited : UnEdited);
+        saturation->setEditedState(pedited->dehaze.saturation ? Edited : UnEdited);
         depth->setEditedState(pedited->dehaze.depth ? Edited : UnEdited);
         set_inconsistent(multiImage && !pedited->dehaze.enabled);
         showDepthMap->set_inconsistent(!pedited->dehaze.showDepthMap);
-        luminance->set_inconsistent(!pedited->dehaze.luminance);
     }
 
     setEnabled(pp->dehaze.enabled);
     strength->setValue(pp->dehaze.strength);
+    saturation->setValue(pp->dehaze.saturation);
     depth->setValue(pp->dehaze.depth);
     showDepthMap->set_active(pp->dehaze.showDepthMap);
-    luminance->set_active(pp->dehaze.luminance);
 
     enableListener();
 }
 
-
 void Dehaze::write(ProcParams *pp, ParamsEdited *pedited)
 {
     pp->dehaze.strength = strength->getValue();
+    pp->dehaze.saturation = saturation->getValue();
     pp->dehaze.depth = depth->getValue();
     pp->dehaze.enabled = getEnabled();
     pp->dehaze.showDepthMap = showDepthMap->get_active();
-    pp->dehaze.luminance = luminance->get_active();
 
     if (pedited) {
         pedited->dehaze.strength = strength->getEditedState();
+        pedited->dehaze.saturation = saturation->getEditedState();
         pedited->dehaze.depth = depth->getEditedState();
         pedited->dehaze.enabled = !get_inconsistent();
         pedited->dehaze.showDepthMap = !showDepthMap->get_inconsistent();
-        pedited->dehaze.luminance = !luminance->get_inconsistent();
     }
 }
 
 void Dehaze::setDefaults(const ProcParams *defParams, const ParamsEdited *pedited)
 {
     strength->setDefault(defParams->dehaze.strength);
+    saturation->setDefault(defParams->dehaze.saturation);
     depth->setDefault(defParams->dehaze.depth);
 
     if (pedited) {
+        saturation->setDefaultEditedState(pedited->dehaze.saturation ? Edited : UnEdited);
         strength->setDefaultEditedState(pedited->dehaze.strength ? Edited : UnEdited);
         depth->setDefaultEditedState(pedited->dehaze.depth ? Edited : UnEdited);
     } else {
+        saturation->setDefaultEditedState(Irrelevant);
         strength->setDefaultEditedState(Irrelevant);
         depth->setDefaultEditedState(Irrelevant);
     }
 }
-
 
 void Dehaze::adjusterChanged(Adjuster* a, double newval)
 {
@@ -122,10 +122,11 @@ void Dehaze::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(EvDehazeStrength, a->getTextValue());
         } else if (a == depth) {
             listener->panelChanged(EvDehazeDepth, a->getTextValue());
+        } else if (a == saturation) {
+            listener->panelChanged(EvDehazeSaturation, a->getTextValue());
         }
     }
 }
-
 
 void Dehaze::enabledChanged ()
 {
@@ -140,18 +141,10 @@ void Dehaze::enabledChanged ()
     }
 }
 
-
 void Dehaze::showDepthMapChanged()
 {
     if (listener) {
         listener->panelChanged(EvDehazeShowDepthMap, showDepthMap->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
-    }
-}
-
-void Dehaze::luminanceChanged()
-{
-    if (listener) {
-        listener->panelChanged(EvDehazeLuminance, luminance->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
     }
 }
 
@@ -163,9 +156,7 @@ void Dehaze::setBatchMode(bool batchMode)
     depth->showEditedCB();
 }
 
-
 void Dehaze::setAdjusterBehavior(bool strengthAdd)
 {
     strength->setAddMode(strengthAdd);
 }
-

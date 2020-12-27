@@ -107,13 +107,13 @@ inline int getc (IMFILE* f)
     return fgetc(f);
 }
 
-inline int fread (void* dst, int es, int count, IMFILE* f)
+inline int fread (void* dst, size_t es, size_t count, IMFILE* f)
 {
 
-    int s = es * count;
-    int avail = f->size - f->pos;
+    size_t s = es * count;
+    size_t avail = static_cast<size_t>(f->size) - static_cast<size_t>(f->pos);
 
-    if (s <= avail) {
+    if (static_cast<ssize_t>(s) <= static_cast<ssize_t>(avail)) {
         memcpy (dst, f->data + f->pos, s);
         f->pos += s;
 

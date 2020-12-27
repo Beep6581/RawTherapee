@@ -24,14 +24,12 @@
 
 #include "rawimagesource.h"
 #include "rt_math.h"
-#define BENCHMARK
-#include "StopWatch.h"
 
 using namespace rtengine;
 
 void RawImageSource::bayer_bilinear_demosaic(const float* const * blend, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
 {
-BENCHFUN
+
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif

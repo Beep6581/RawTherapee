@@ -266,6 +266,8 @@ struct ColorAppearanceParamsEdited {
     bool curveMode;
     bool curveMode2;
     bool curveMode3;
+    bool complexmethod;
+    bool modelmethod;
     bool enabled;
     bool degree;
     bool autodegree;
@@ -415,6 +417,7 @@ public:
         bool colorscope;
         bool transitweak;
         bool transitgrad;
+        bool hishow;
         bool activ;
         bool avoid;
         bool blwh;
@@ -610,12 +613,26 @@ public:
         bool itera;
         bool guidbl;
         bool strbl;
+        bool recothres;
+        bool lowthres;
+        bool higthres;
+        bool recothresd;
+        bool lowthresd;
+        bool higthresd;
+        bool decayd;
         bool isogr;
         bool strengr;
         bool scalegr;
         bool epsbl;
         bool blMethod;
         bool chroMethod;
+        bool quamethod;
+        bool usemask;
+        bool invmaskd;
+        bool invmask;
+        bool levelthr;
+        bool lnoiselow;
+        bool levelthrlow;
         bool blurMethod;
         bool medMethod;
         bool activlum;
@@ -633,12 +650,14 @@ public:
         bool sensiden;
         bool detailthr;
         bool locwavcurveden;
+        bool locwavcurvehue;
         bool showmaskblMethodtyp;
         bool CCmaskblcurve;
         bool LLmaskblcurve;
         bool HHmaskblcurve;
         bool enablMask;
         bool fftwbl;
+        bool invbl;
         bool toolbl;
         bool blendmaskbl;
         bool radmaskbl;
@@ -696,7 +715,7 @@ public:
         bool inversret;
         bool equilret;
         bool loglin;
-        bool lumonly;
+        bool dehazeSaturation;
         bool softradiusret;
         bool CCmaskreticurve;
         bool LLmaskreticurve;
@@ -826,18 +845,41 @@ public:
         // Log encoding
         bool visilog;
         bool explog;
+        bool complexlog;
         bool autocompute;
         bool sourceGray;
+        bool sourceabs;
+        bool targabs;
         bool targetGray;
+        bool catad;
+        bool saturl;
+        bool lightl;
+        bool lightq;
+        bool contl;
+        bool contq;
+        bool colorfl;
+        bool LcurveL;
         bool Autogray;
         bool fullimage;
+        bool repar;
+        bool ciecam;
         bool blackEv;
         bool whiteEv;
         bool detail;
+        bool sursour;
+        bool surround;
         bool sensilog;
         bool baselog;
         bool strlog;
         bool anglog;
+        bool CCmaskcurveL;
+        bool LLmaskcurveL;
+        bool HHmaskcurveL;
+        bool enaLMask;
+        bool blendmaskL;
+        bool radmaskL;
+        bool chromaskL;
+        bool LmaskcurveL;
         //mask
         bool visimask;
         bool complexmask;
@@ -911,6 +953,7 @@ struct PerspectiveParamsEdited {
     bool projection_shift_horiz;
     bool projection_shift_vert;
     bool projection_yaw;
+    bool control_lines;
 };
 
 struct GradientParamsEdited {
@@ -1178,7 +1221,7 @@ struct DehazeParamsEdited {
     bool strength;
     bool showDepthMap;
     bool depth;
-    bool luminance;
+    bool saturation;
 };
 
 struct RAWParamsEdited {
@@ -1275,7 +1318,9 @@ struct FilmNegativeParamsEdited {
     bool redRatio;
     bool greenExp;
     bool blueRatio;
-    bool baseValues;
+    bool refInput;
+    bool refOutput;
+    bool colorSpace;
 
     bool isUnchanged() const;
 };

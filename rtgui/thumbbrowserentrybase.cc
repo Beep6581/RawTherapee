@@ -135,7 +135,6 @@ ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname) :
     textGap(6),
     sideMargin(8),
     lowerMargin(8),
-    preview(nullptr),
     dispname(Glib::path_get_basename(fname)),
     buttonSet(nullptr),
     width(0),
@@ -171,7 +170,6 @@ ThumbBrowserEntryBase::ThumbBrowserEntryBase (const Glib::ustring& fname) :
 
 ThumbBrowserEntryBase::~ThumbBrowserEntryBase ()
 {
-    delete[] preview;
     delete buttonSet;
 }
 
@@ -207,7 +205,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
 
     bbSelected = selected;
     bbFramed = framed;
-    bbPreview = preview;
+    bbPreview = preview.data();
 
     Cairo::RefPtr<Cairo::Context> cc = Cairo::Context::create(surface);
 
@@ -237,16 +235,20 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
 
     if (buttonSet) {
         int tmp;
-        buttonSet->getAllocatedDimensions (tmp, bsHeight);
+        buttonSet->getAllocatedDimensions(tmp, bsHeight);
     }
+
+    int infow, infoh;
+    getTextSizes(infow, infoh);
 
     // draw preview frame
     //backBuffer->draw_rectangle (cc, false, (exp_width-prew)/2, upperMargin+bsHeight, prew+1, preh+1);
     // draw thumbnail image
-    if (preview) {
+    if (!preview.empty()) {
         prex = borderWidth + (exp_width - prew) / 2;
-        prey = upperMargin + bsHeight + borderWidth;
-        backBuffer->copyRGBCharData(preview, 0, 0, prew, preh, prew * 3, prex, prey);
+        const int hh = exp_height - (upperMargin + bsHeight + borderWidth + infoh + lowerMargin);
+        prey = upperMargin + bsHeight + borderWidth + std::max((hh - preh) / 2, 0);
+        backBuffer->copyRGBCharData(preview.data(), 0, 0, prew, preh, prew * 3, prex, prey);
     }
 
     customBackBufferUpdate (cc);
@@ -254,9 +256,6 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
     // draw icons onto the thumbnail area
     bbIcons = getIconsOnImageArea ();
     bbSpecificityIcons = getSpecificityIconsOnImageArea ();
-
-    int infow, infoh;
-    getTextSizes (infow, infoh);
 
     int iofs_x = 4, iofs_y = 4;
     int istartx = prex;
@@ -356,7 +355,7 @@ void ThumbBrowserEntryBase::updateBackBuffer ()
                 textposx_dt = 0;
             }
 
-            textposy = upperMargin + bsHeight + 2 * borderWidth + preh + borderWidth + textGap;
+            textposy = exp_height - lowerMargin - infoh;
             textw = exp_width - 2 * textGap;
 
             if (selected) {
@@ -556,10 +555,7 @@ void ThumbBrowserEntryBase::resize (int h)
     }
 
     if (preh != old_preh || prew != old_prew) { // if new thumbnail height or new orientation
-        if (preview) {
-            delete [] preview;
-            preview = nullptr;
-        }
+        preview.clear();
         refreshThumbnailImage ();
     } else if (backBuffer) {
         backBuffer->setDirty(true);    // This will force a backBuffer update on queue_draw
@@ -620,7 +616,7 @@ void ThumbBrowserEntryBase::draw (Cairo::RefPtr<Cairo::Context> cc)
         bbHeight = backBuffer->getHeight();
     }
 
-    if (!backBuffer || selected != bbSelected || framed != bbFramed || preview != bbPreview
+    if (!backBuffer || selected != bbSelected || framed != bbFramed || preview.data() != bbPreview
             || exp_width != bbWidth || exp_height != bbHeight || getIconsOnImageArea () != bbIcons
             || getSpecificityIconsOnImageArea() != bbSpecificityIcons || backBuffer->isDirty())
     {
@@ -680,7 +676,7 @@ rtengine::Coord2D ThumbBrowserEntryBase::getPosInImgSpace (int x, int y) const
 {
     rtengine::Coord2D coord(-1., -1.);
 
-    if (preview) {
+    if (!preview.empty()) {
         x -= ofsX + startx;
         y -= ofsY + starty;
 

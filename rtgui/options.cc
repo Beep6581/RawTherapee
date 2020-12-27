@@ -400,6 +400,7 @@ void Options::setDefaults()
     overwriteOutputFile = false;        // if TRUE, existing output JPGs/PNGs are overwritten, instead of adding ..-1.jpg, -2.jpg etc.
     theme = "RawTherapee";
     maxThumbnailHeight = 250;
+    maxThumbnailWidth = 800;
     maxCacheEntries = 20000;
     thumbInterp = 1;
     autoSuffix = true;
@@ -446,12 +447,16 @@ void Options::setDefaults()
     histogramBlue = true;
     histogramLuma = false;
     histogramChroma = false;
-    histogramRAW = false;
     histogramBar = true;
     histogramHeight = 200;
     histogramDrawMode = 0;
+    histogramScopeType = ScopeType::HISTOGRAM;
+    histogramShowOptionButtons = false;
+    histogramTraceBrightness = 1;
     curvebboxpos = 1;
     complexity = 2;
+    inspectorWindow = false;
+    zoomOnScroll = true;
     prevdemo = PD_Sidecar;
 
     rgbDenoiseThreadLimit = 0;
@@ -1017,6 +1022,10 @@ void Options::readFromFile(Glib::ustring fname)
                     maxThumbnailHeight = keyFile.get_integer("File Browser", "MaxPreviewHeight");
                 }
 
+                if (keyFile.has_key("File Browser", "MaxPreviewWidth")) {
+                    maxThumbnailWidth = keyFile.get_integer("File Browser", "MaxPreviewWidth");
+                }
+
                 if (keyFile.has_key("File Browser", "MaxCacheEntries")) {
                     maxCacheEntries = keyFile.get_integer("File Browser", "MaxCacheEntries");
                 }
@@ -1417,7 +1426,10 @@ void Options::readFromFile(Glib::ustring fname)
                 }
 
                 if (keyFile.has_key("GUI", "HistogramRAW")) {
-                    histogramRAW = keyFile.get_boolean("GUI", "HistogramRAW");
+                    // Legacy option, replaced by HistogramScopeType.
+                    if (keyFile.get_boolean("GUI", "HistogramRAW")) {
+                        histogramScopeType = ScopeType::HISTOGRAM_RAW;
+                    }
                 }
 
                 if (keyFile.has_key("GUI", "HistogramBar")) {
@@ -1430,6 +1442,18 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("GUI", "HistogramDrawMode")) {
                     histogramDrawMode = keyFile.get_integer("GUI", "HistogramDrawMode");
+                }
+
+                if (keyFile.has_key("GUI", "HistogramScopeType")) {
+                    histogramScopeType = static_cast<ScopeType>(keyFile.get_integer("GUI", "HistogramScopeType"));
+                }
+
+                if (keyFile.has_key("GUI", "HistogramShowOptionButtons")) {
+                    histogramShowOptionButtons = keyFile.get_boolean("GUI", "HistogramShowOptionButtons");
+                }
+
+                if (keyFile.has_key("GUI", "HistogramTraceBrightness")) {
+                    histogramTraceBrightness = keyFile.get_double("GUI", "HistogramTraceBrightness");
                 }
 
                 if (keyFile.has_key("GUI", "NavigatorRGBUnit")) {
@@ -1469,6 +1493,13 @@ void Options::readFromFile(Glib::ustring fname)
                     complexity = keyFile.get_integer("GUI", "Complexity");
                 }
                 
+                if (keyFile.has_key("GUI", "InspectorWindow")) {
+                    inspectorWindow = keyFile.get_boolean("GUI", "InspectorWindow");
+                }
+
+                if (keyFile.has_key("GUI", "ZoomOnScroll")) {
+                    zoomOnScroll = keyFile.get_boolean("GUI", "ZoomOnScroll");
+                }
             }
 
             if (keyFile.has_group("Crop Settings")) {
@@ -2097,6 +2128,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("File Browser", "ThumbnailSizeQueue", thumbSizeQueue);
         keyFile.set_integer("File Browser", "SameThumbSize", sameThumbSize);
         keyFile.set_integer("File Browser", "MaxPreviewHeight", maxThumbnailHeight);
+        keyFile.set_integer("File Browser", "MaxPreviewWidth", maxThumbnailWidth);
         keyFile.set_integer("File Browser", "MaxCacheEntries", maxCacheEntries);
         Glib::ArrayHandle<Glib::ustring> pext = parseExtensions;
         keyFile.set_string_list("File Browser", "ParseExtensions", pext);
@@ -2251,10 +2283,12 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("GUI", "HistogramBlue", histogramBlue);
         keyFile.set_boolean("GUI", "HistogramLuma", histogramLuma);
         keyFile.set_boolean("GUI", "HistogramChroma", histogramChroma);
-        keyFile.set_boolean("GUI", "HistogramRAW", histogramRAW);
         keyFile.set_boolean("GUI", "HistogramBar", histogramBar);
         keyFile.set_integer("GUI", "HistogramHeight", histogramHeight);
         keyFile.set_integer("GUI", "HistogramDrawMode", histogramDrawMode);
+        keyFile.set_integer("GUI", "HistogramScopeType", rtengine::toUnderlying(histogramScopeType));
+        keyFile.set_boolean("GUI", "HistogramShowOptionButtons", histogramShowOptionButtons);
+        keyFile.set_double("GUI", "HistogramTraceBrightness", histogramTraceBrightness);
         keyFile.set_integer("GUI", "NavigatorRGBUnit", (int)navRGBUnit);
         keyFile.set_integer("GUI", "NavigatorHSVUnit", (int)navHSVUnit);
         keyFile.set_boolean("GUI", "ShowFilmStripToolBar", showFilmStripToolBar);
@@ -2264,6 +2298,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "CurveBBoxPosition", curvebboxpos);
         keyFile.set_boolean("GUI", "Showtooltip", showtooltip);
         keyFile.set_integer("GUI", "Complexity", complexity);
+        keyFile.set_boolean("GUI", "InspectorWindow", inspectorWindow);
+        keyFile.set_boolean("GUI", "ZoomOnScroll", zoomOnScroll);
 
         //Glib::ArrayHandle<int> crvopen = crvOpen;
         //keyFile.set_integer_list ("GUI", "CurvePanelsExpanded", crvopen);

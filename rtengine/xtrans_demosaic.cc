@@ -1027,6 +1027,67 @@ void RawImageSource::fast_xtrans_interpolate (const array2D<float> &rawData, arr
         plistener->setProgress (1.0);
     }
 }
+
+void RawImageSource::fast_xtrans_interpolate_blend (const float* const * blend, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue)
+{
+
+    if (plistener) {
+        plistener->setProgressStr(Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_XTRANSFAST")));
+        plistener->setProgress(0.0);
+    }
+
+    int xtrans[6][6];
+    ri->getXtransMatrix(xtrans);
+
+    const float weight[3][3] = {
+                                {0.25f, 0.5f, 0.25f},
+                                {0.5f,  0.f,  0.5f},
+                                {0.25f, 0.5f, 0.25f}
+                               };
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic, 16)
+#endif
+    for (int row = 8; row < H - 8; ++row) {
+        for (int col = 8; col < W - 8; ++col) {
+            float sum[3] = {};
+
+            for (int v = -1; v <= 1; v++) {
+                for (int h = -1; h <= 1; h++) {
+                    sum[fcol(row + v, col + h)] += rawData[row + v][(col + h)] * weight[v + 1][h + 1];
+                }
+            }
+
+            switch(fcol(row, col)) {
+            case 0: // red pixel
+                red[row][col] = intp(blend[row][col], red[row][col], rawData[row][col]);
+                green[row][col] = intp(blend[row][col], green[row][col], sum[1] * 0.5f);
+                blue[row][col] = intp(blend[row][col], blue[row][col], sum[2]);
+                break;
+
+            case 1: // green pixel
+                green[row][col] = intp(blend[row][col], green[row][col], rawData[row][col]);
+                if (fcol(row, col - 1) == fcol(row, col + 1)) { // Solitary green pixel always has exactly two direct red and blue neighbors in 3x3 grid
+                    red[row][col] = intp(blend[row][col], red[row][col], sum[0]);
+                    blue[row][col] = intp(blend[row][col], blue[row][col], sum[2]);
+                } else { // Non solitary green pixel always has one direct and one diagonal red and blue neighbor in 3x3 grid
+                    red[row][col] = intp(blend[row][col], red[row][col], sum[0] * 1.3333333f);
+                    blue[row][col] = intp(blend[row][col], blue[row][col], sum[2] * 1.3333333f);
+                }
+                break;
+
+            case 2: // blue pixel
+                red[row][col] = intp(blend[row][col], red[row][col], sum[0]);
+                green[row][col] = intp(blend[row][col], green[row][col], sum[1] * 0.5f);
+                blue[row][col] = intp(blend[row][col], blue[row][col], rawData[row][col]);
+                break;
+            }
+        }
+    }
+
+    if (plistener) {
+        plistener->setProgress (1.0);
+    }
+}
 #undef fcol
 #undef isgreen
 

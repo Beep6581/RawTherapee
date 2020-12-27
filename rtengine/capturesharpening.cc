@@ -127,12 +127,8 @@ void compute3x3kernel(float sigma, float kernel[3][3]) {
     float sum = 0.f;
     for (int i = -1; i <= 1; ++i) {
         for (int j = -1; j <= 1; ++j) {
-            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 0.84)) {
-                kernel[i + 1][j + 1] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
-                sum += kernel[i + 1][j + 1];
-            } else {
-                kernel[i + 1][j + 1] = 0.f;
-            }
+            kernel[i + 1][j + 1] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
+            sum += kernel[i + 1][j + 1];
         }
     }
 
@@ -647,7 +643,7 @@ float calcRadiusBayer(const float * const *rawData, int W, int H, float lowerLim
             }
         }
     }
-    return std::sqrt((1.f / (std::log(1.f / maxRatio) /  2.f)) / -2.f);
+    return std::sqrt(1.f / std::log(maxRatio));
 }
 
 float calcRadiusXtrans(const float * const *rawData, int W, int H, float lowerLimit, float upperLimit, unsigned int starty, unsigned int startx)
@@ -738,7 +734,7 @@ float calcRadiusXtrans(const float * const *rawData, int W, int H, float lowerLi
             }
         }
     }
-    return std::sqrt((1.f / (std::log(1.f / maxRatio) /  2.f)) / -2.f);
+    return std::sqrt(1.f / std::log(maxRatio));
 }
 
 bool checkForStop(float** tmpIThr, float** iterCheck, int fullTileSize, int border)

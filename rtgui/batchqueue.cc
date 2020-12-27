@@ -344,8 +344,9 @@ bool BatchQueue::loadBatchQueue ()
 
             auto job = rtengine::ProcessingJob::create (source, thumb->getType () == FT_Raw, pparams, fast);
 
-            const auto prevh = getMaxThumbnailHeight ();
-            const auto prevw = thumb->getThumbnailWidth(prevh, &pparams);
+            auto prevh = getMaxThumbnailHeight();
+            auto prevw = prevh;
+            thumb->getThumbnailSize(prevw, prevh, &pparams);
 
             auto entry = new BatchQueueEntry (job, pparams, source, prevw, prevh, thumb, options.overwriteOutputFile);
             thumb->decreaseRef ();  // Removing the refCount acquired by cacheMgr->getEntry
@@ -390,7 +391,7 @@ Glib::ustring BatchQueue::getTempFilenameForParams( const Glib::ustring &filenam
     timeval tv;
     gettimeofday(&tv, nullptr);
     char mseconds[11];
-    sprintf(mseconds, "%d", (int)(tv.tv_usec / 1000));
+    snprintf(mseconds, sizeof(mseconds), "%d", (int)(tv.tv_usec / 1000));
     time_t rawtime;
     struct tm *timeinfo;
     char stringTimestamp [80];
