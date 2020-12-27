@@ -492,6 +492,10 @@ public:
         bool Lmaskcurve;
         bool LLmaskcolcurvewav;
         bool csthresholdcol;
+        bool recothresc;
+        bool lowthresc;
+        bool higthresc;
+        bool decayc;
         // Exposure
         bool visiexpose;
         bool expexpose;

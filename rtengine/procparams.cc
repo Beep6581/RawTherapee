@@ -3026,6 +3026,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35
     },
     csthresholdcol(0, 0, 6, 5, false),
+    recothresc(1.),
+    lowthresc(12.),
+    higthresc(85.),
+    decayc(2.),
     // Exposure
     visiexpose(false),
     expexpose(false),
@@ -4222,6 +4226,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && Lmaskcurve == other.Lmaskcurve
         && LLmaskcolcurvewav == other.LLmaskcolcurvewav
         && csthresholdcol == other.csthresholdcol
+        && recothresc == other.recothresc
+        && lowthresc == other.lowthresc
+        && higthresc == other.higthresc
+        && decayc == other.decayc
         // Exposure
         && visiexpose == other.visiexpose
         && expexpose == other.expexpose
@@ -5817,6 +5825,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->Lmaskcurve, "Locallab", "LmaskCurve_" + index_str, spot.Lmaskcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LLmaskcolcurvewav, "Locallab", "LLmaskcolCurvewav_" + index_str, spot.LLmaskcolcurvewav, keyFile);
                     saveToKeyfile(!pedited || spot_edited->csthresholdcol, "Locallab", "CSThresholdcol_" + index_str, spot.csthresholdcol.toVector(), keyFile);
+                    saveToKeyfile(!pedited || spot_edited->recothresc, "Locallab", "Recothresc_" + index_str, spot.recothresc, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lowthresc, "Locallab", "Lowthresc_" + index_str, spot.lowthresc, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->higthresc, "Locallab", "Higthresc_" + index_str, spot.higthresc, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->decayc, "Locallab", "Decayc_" + index_str, spot.decayc, keyFile);
                 }
                 // Exposure
                 if ((!pedited || spot_edited->visiexpose) && spot.visiexpose) {
@@ -7600,6 +7612,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
                     spotEdited.csthresholdcol = true;
                 }
+                assignFromKeyfile(keyFile, "Locallab", "Recothresc_" + index_str, pedited, spot.recothresc, spotEdited.recothresc);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthresc_" + index_str, pedited, spot.lowthresc, spotEdited.lowthresc);
+                assignFromKeyfile(keyFile, "Locallab", "Higthresc_" + index_str, pedited, spot.higthresc, spotEdited.higthresc);
+                assignFromKeyfile(keyFile, "Locallab", "Decayc_" + index_str, pedited, spot.decayc, spotEdited.decayc);
 
                 // Exposure
                 spot.visiexpose = assignFromKeyfile(keyFile, "Locallab", "Expexpose_" + index_str, pedited, spot.expexpose, spotEdited.expexpose);

@@ -189,6 +189,11 @@ private:
     Adjuster* const structcol;
     Adjuster* const blurcolde;
     Adjuster* const softradiuscol;
+    MyExpander* const exprecov;
+    Adjuster* const recothresc;
+    Adjuster* const lowthresc;
+    Adjuster* const higthresc;
+    Adjuster* const decayc;
     Gtk::CheckButton* const invers;
     MyExpander* const expgradcol;
     Adjuster* const strcol;
