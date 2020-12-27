@@ -15392,6 +15392,7 @@ void ImProcFunctions::Lab_Local(
 
                         float alow = th / lowc; 
                         float blow = 1.f - th;
+                        bool invmaskc = false;
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
 #endif
@@ -15407,7 +15408,7 @@ void ImProcFunctions::Lab_Local(
                                         masklum[ir][jr] = ahigh * lmr + bhigh;
                                 }
                                 float k = masklum[ir][jr];
-                                if(lp.invmaskd == false) {
+                                if(invmaskc == false) {
                                     masklum[ir][jr] = 1 - pow(k, lp.decayc);
                                 } else {
                                     masklum[ir][jr] = pow(k, lp.decayc);
