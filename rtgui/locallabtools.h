@@ -190,6 +190,8 @@ private:
     Adjuster* const blurcolde;
     Adjuster* const softradiuscol;
     MyExpander* const exprecov;
+    Gtk::Label* const maskusablec;
+    Gtk::Label* const maskunusablec;
     Adjuster* const recothresc;
     Adjuster* const lowthresc;
     Adjuster* const higthresc;

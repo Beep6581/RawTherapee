@@ -425,6 +425,8 @@ LocallabColor::LocallabColor():
     blurcolde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     softradiuscol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
     exprecov(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
+    maskusablec(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
+    maskunusablec(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
     recothresc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
     lowthresc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
     higthresc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
@@ -799,8 +801,8 @@ LocallabColor::LocallabColor():
     pack_start(*softradiuscol);
     pack_start(*invers);
     ToolParamBlock* const colBox3 = Gtk::manage(new ToolParamBlock());
-   // colBox3->pack_start(*maskusable3, Gtk::PACK_SHRINK, 0);
-   // colBox3->pack_start(*maskunusable3, Gtk::PACK_SHRINK, 0);
+    colBox3->pack_start(*maskusablec, Gtk::PACK_SHRINK, 0);
+    colBox3->pack_start(*maskunusablec, Gtk::PACK_SHRINK, 0);
     colBox3->pack_start(*recothresc);
     colBox3->pack_start(*lowthresc);
     colBox3->pack_start(*higthresc);
@@ -945,6 +947,7 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         strengthgrid->set_tooltip_text(M("TP_LOCALLAB_STRENGRID_TOOLTIP"));
         blurcolde->set_tooltip_text(M("TP_LOCALLAB_BLURCOLDE_TOOLTIP"));
         softradiuscol->set_tooltip_text(M("TP_LOCALLAB_SOFTRADIUSCOL_TOOLTIP"));
+        exprecov->set_tooltip_markup(M("TP_LOCALLAB_MASKRECOL_TOOLTIP"));
         expgradcol->set_tooltip_text(M("TP_LOCALLAB_EXPGRADCOL_TOOLTIP"));
         rgbCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_RGBCURVE_TOOLTIP"));
         sensi->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
@@ -992,6 +995,7 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         strengthgrid->set_tooltip_text("");
         blurcolde->set_tooltip_text("");
         softradiuscol->set_tooltip_text("");
+        exprecov->set_tooltip_markup("");
         expgradcol->set_tooltip_text("");
         rgbCurveEditorG->set_tooltip_text("");
         sensi->set_tooltip_text("");
@@ -1998,6 +2002,8 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
             expmaskcol1->hide();
             expmaskcol->hide();
             exprecov->hide();
+            maskusablec->hide();
+            maskunusablec->hide();
 
             break;
 
@@ -2026,9 +2032,18 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
             csThresholdcol->hide();
             // Specific Simple mode widgets are shown in Normal mode
             softradiuscol->show();
+            if (enaColorMask->get_active()) {
+                maskusablec->show();
+                maskunusablec->hide();
+                
+            } else {
+                maskusablec->hide();
+                maskunusablec->show();
+            }
 
             if (!invers->get_active()) { // Keep widget hidden when invers is toggled
                 expgradcol->show();
+                exprecov->show();
             }
 
             expcurvcol->show();
@@ -2044,11 +2059,21 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
             if (!invers->get_active()) { // Keep widget hidden when invers is toggled
                 softradiuscol->show();
                 expgradcol->show();
+                exprecov->show();
             }
 
             strcolab->show();
             strcolh->show();
             expcurvcol->show();
+            if (enaColorMask->get_active()) {
+                maskusablec->show();
+                maskunusablec->hide();
+                
+            } else {
+                maskusablec->hide();
+                maskunusablec->show();
+            }
+
             exprecov->show();
 
             if (!invers->get_active()) { // Keep widgets hidden when invers is toggled
@@ -2248,6 +2273,15 @@ void LocallabColor::showmaskcolMethodChangedinv()
 
 void LocallabColor::enaColorMaskChanged()
 {
+    if (enaColorMask->get_active()) {
+        maskusablec->show();
+        maskunusablec->hide();
+
+    } else {
+        maskusablec->hide();
+        maskunusablec->show();
+    }
+    
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (enaColorMask->get_active()) {
@@ -2302,6 +2336,7 @@ void LocallabColor::updateColorGUI1()
         structcol->hide();
         softradiuscol->hide();
         expgradcol->hide();
+        exprecov->hide();
         labqualcurv->hide();
         qualitycurveMethod->hide();
         clCurveEditorG->hide();
@@ -2326,6 +2361,7 @@ void LocallabColor::updateColorGUI1()
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
             softradiuscol->show();
             expgradcol->show();
+            exprecov->show();
         }
 
         labqualcurv->show();

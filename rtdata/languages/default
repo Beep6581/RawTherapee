@@ -1239,6 +1239,11 @@ HISTORY_MSG_991;Local - Denoise threshold mask low
 HISTORY_MSG_992;Local - Denoise threshold mask high
 HISTORY_MSG_993;Local - Denoise Inverse algo
 HISTORY_MSG_994;Local - GF Inverse algo
+HISTORY_MSG_995;Local - Denoise decay
+HISTORY_MSG_996;Local - Color recovery threshold
+HISTORY_MSG_997;Local - Color threshold mask low
+HISTORY_MSG_998;Local - Color threshold mask high
+HISTORY_MSG_999;Local - Color decay
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2776,6 +2781,7 @@ TP_LOCALLAB_MASKH;Hue curve
 TP_LOCALLAB_MASKLC_TOOLTIP;This allows you to target the denoise based on the image luminance information contained in the L(L) or LC(H) mask (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n if the mask is very dark - below the threshold 'dark' - denoise will be increased if reinforce > 1.\n if the mask is clear - above the threshold 'light' - denoise will be progressively cancelled.\n between the two, denoise will be maintained at the settings without mask.
 TP_LOCALLAB_MASKDE_TOOLTIP;Used to direct the Denoise based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n If the mask is below the ‘dark’ threshold, then the Denoise will be applied progressively.\n if the mask is above the ‘light’ threshold, then the Denoise will be applied progressively.\n Between the two, the image settings without the Denoise will be maintained.
 TP_LOCALLAB_MASKGF_TOOLTIP;Used to direct the Guided Filter based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n If the mask is below the ‘dark’ threshold, then the GF will be applied progressively.\n if the mask is above the ‘light’ threshold, then the GF will be applied progressively.\n Between the two, the image settings without the GF will be maintained.
+TP_LOCALLAB_MASKRECOL_TOOLTIP;Used to direct the Color and Light based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n If the mask is below the ‘dark’ threshold, then the Color and Light will be progressively recovery as original.\n if the mask is above the ‘light’ threshold, then the Color and Light will be progressively recovery as original.\n Between the two, the image settings with Color and Light  will be applied.
 TP_LOCALLAB_MASKDEINV_TOOLTIP;Reverses the way the algorithm interprets the mask.\nIf checked black and very light areas will be decreased.
 TP_LOCALLAB_MASKHIGTHRESD_TOOLTIP;Light-tone limit above which denoise will be progressively applied.\n You can use certain tools in ‘Mask and modifications’ to change the gray levels: ‘structure mask’, ‘Smooth radius’, ‘Gamma and slope’, ‘Contrast curve’, ‘Local contrast wavelet’.\n Use a ‘lockable color picker’ on the mask to see which areas will be affected. Be carefull in 'settings' to Background color mask = 0
 TP_LOCALLAB_MASKHIGTHRES_TOOLTIP;Light-tone limit above which 'Guided Filter' will be progressively applied.\n You can use certain tools in ‘Mask and modifications’ to change the gray levels: ‘structure mask’, ‘Smooth radius’, ‘Gamma and slope’, ‘Contrast curve’, ‘Local contrast wavelet’.\n Use a ‘lockable color picker’ on the mask to see which areas will be affected. Be carefull in 'settings' to Background color mask = 0
