@@ -95,6 +95,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     inone->set_group(opts);
 
     dcpFrame = Gtk::manage(new Gtk::Frame("DCP"));
+    dcpFrame->set_label_align(0.025, 0.5);
 
     Gtk::Grid* dcpGrid = Gtk::manage(new Gtk::Grid());
     dcpGrid->set_column_homogeneous(false);

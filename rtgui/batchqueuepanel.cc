@@ -61,10 +61,12 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     batchQueueButtonBox->pack_start (*qStartStop, Gtk::PACK_SHRINK, 4);
     batchQueueButtonBox->pack_start (*qAutoStart, Gtk::PACK_SHRINK, 4);
     Gtk::Frame *bbox = Gtk::manage(new Gtk::Frame(M("MAIN_FRAME_QUEUE")));
+    bbox->set_label_align(0.025, 0.5);
     bbox->add(*batchQueueButtonBox);
 
     // Output directory selection
     fdir = Gtk::manage (new Gtk::Frame (M("QUEUE_LOCATION_TITLE")));
+    fdir->set_label_align(0.025, 0.5);
     Gtk::VBox* odvb = Gtk::manage (new Gtk::VBox ());
     Gtk::HBox* hb2 = Gtk::manage (new Gtk::HBox ());
     useTemplate = Gtk::manage (new Gtk::RadioButton (M("QUEUE_LOCATION_TEMPLATE") + ":"));
@@ -112,6 +114,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
 
     // Output file format selection
     fformat = Gtk::manage (new Gtk::Frame (M("QUEUE_FORMAT_TITLE")));
+    fformat->set_label_align(0.025, 0.5);
     saveFormatPanel = Gtk::manage (new SaveFormatPanel ());
     setExpandAlignProperties(saveFormatPanel, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     fformat->add (*saveFormatPanel);

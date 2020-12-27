@@ -27,6 +27,7 @@ FavoritBrowser::FavoritBrowser () : listener (NULL)
     scrollw->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
 
     Gtk::Frame* frame = Gtk::manage (new Gtk::Frame ("Favorite Folders"));
+    frame->set_label_align(0.025, 0.5);
     frame->add (*scrollw);
 
     pack_start (*frame);

@@ -627,6 +627,7 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
 
     // Crop
     Gtk::Frame *cropFrame = Gtk::manage(new Gtk::Frame(M("PREFERENCES_CROP")));
+    cropFrame->set_label_align (0.025, 0.5);
     Gtk::Grid *cropGrid = Gtk::manage(new Gtk::Grid());
     Gtk::Label *cropGuidesLbl = Gtk::manage(new Gtk::Label(M("PREFERENCES_CROP_GUIDES") + ": ", Gtk::ALIGN_START));
     cropGuidesCombo = Gtk::manage(new Gtk::ComboBoxText());
@@ -685,6 +686,7 @@ Gtk::Widget* Preferences::getPerformancePanel()
     vbPerformance->pack_start (*fclut, Gtk::PACK_SHRINK, 4);
 
     Gtk::Frame* fchunksize = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_CHUNKSIZES")) );
+    fchunksize->set_label_align(0.025, 0.5);
     Gtk::VBox* chunkSizeVB = Gtk::manage ( new Gtk::VBox () );
 
     Gtk::HBox* measureHB = Gtk::manage ( new Gtk::HBox () );
@@ -705,6 +707,7 @@ Gtk::Widget* Preferences::getPerformancePanel()
     vbPerformance->pack_start (*fchunksize, Gtk::PACK_SHRINK, 4);
 
     Gtk::Frame* finspect = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_INSPECT_LABEL")) );
+    finspect->set_label_align(0.025, 0.5);
     Gtk::VBox *inspectorvb = Gtk::manage(new Gtk::VBox());
     placeSpinBox(inspectorvb, maxInspectorBuffersSB, "PREFERENCES_INSPECT_MAXBUFFERS_LABEL", 0, 1, 5, 2, 1, 12, "PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP");
 
@@ -720,6 +723,7 @@ Gtk::Widget* Preferences::getPerformancePanel()
     vbPerformance->pack_start (*finspect, Gtk::PACK_SHRINK, 4);
 
     Gtk::Frame* threadsFrame = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_PERFORMANCE_THREADS")) );
+    threadsFrame->set_label_align(0.025, 0.5);
     Gtk::VBox* threadsVBox = Gtk::manage ( new Gtk::VBox (Gtk::PACK_SHRINK, 4) );
 
 #ifdef _OPENMP
