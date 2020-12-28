@@ -1980,9 +1980,9 @@ void LocallabColor::convertParamToSimple()
     showmaskcolMethod->set_active(0);
     showmaskcolMethodinv->set_active(0);
     enaColorMask->set_active(defSpot.enaColorMask);
-    CCmaskshape->setCurve(defSpot.CCmaskcurve);
-    LLmaskshape->setCurve(defSpot.LLmaskcurve);
-    HHmaskshape->setCurve(defSpot.HHmaskcurve);
+//    CCmaskshape->setCurve(defSpot.CCmaskcurve);
+//    LLmaskshape->setCurve(defSpot.LLmaskcurve);
+//    HHmaskshape->setCurve(defSpot.HHmaskcurve);
     blendmaskcol->setValue((double)defSpot.blendmaskcol);
     radmaskcol->setValue(defSpot.radmaskcol);
     chromaskcol->setValue(defSpot.chromaskcol);
