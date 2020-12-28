@@ -988,6 +988,9 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         blurcol->set_tooltip_text(M("TP_LOCALLAB_BLURRMASK_TOOLTIP"));
         lapmaskcol->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
         csThresholdcol->set_tooltip_text(M("TP_LOCALLAB_WAVEMASK_LEVEL_TOOLTIP"));
+        decayc->set_tooltip_text(M("TP_LOCALLAB_MASKDECAY_TOOLTIP"));
+        lowthresc->set_tooltip_text(M("TP_LOCALLAB_MASKLOWTHRESC_TOOLTIP"));
+        higthresc->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRESC_TOOLTIP"));
     } else {
         lumFrame->set_tooltip_text("");
         lightness->set_tooltip_text("");
@@ -1036,6 +1039,9 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         mask2CurveEditorGwav->set_tooltip_text("");
         LLmaskcolshapewav->setTooltip("");
         csThresholdcol->set_tooltip_text("");
+        decayc->set_tooltip_text("");
+        lowthresc->set_tooltip_text("");
+        higthresc->set_tooltip_text("");
     }
 }
 
@@ -1939,6 +1945,7 @@ void LocallabColor::convertParamToNormal()
     HHhmaskshape->setCurve(defSpot.HHhmaskcurve);
     LLmaskcolshapewav->setCurve(defSpot.LLmaskcolcurvewav);
     csThresholdcol->setValue<int>(defSpot.csthresholdcol);
+    decayc->setValue(defSpot.decayc);
 
     // Enable all listeners
     enableListener();
@@ -2004,7 +2011,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
             exprecov->hide();
             maskusablec->hide();
             maskunusablec->hide();
-
+            decayc->hide();
             break;
 
         case Normal:
@@ -2048,6 +2055,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
 
             expcurvcol->show();
             expmaskcol->show();
+            decayc->hide();
 
             break;
 
@@ -2075,6 +2083,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
             }
 
             exprecov->show();
+            decayc->show();
 
             if (!invers->get_active()) { // Keep widgets hidden when invers is toggled
                 clCurveEditorG->show();
