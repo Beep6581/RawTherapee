@@ -501,6 +501,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     profilep = Gtk::manage (new ProfilePanel ());
     ppframe = Gtk::manage(new Gtk::Frame());
+    ppframe->set_label_align(0.025, 0.5);
     ppframe->set_name ("ProfilePanel");
     ppframe->add (*profilep);
     ppframe->set_label (M ("PROFILEPANEL_LABEL"));
@@ -509,6 +510,9 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     navigator = Gtk::manage (new Navigator ());
     navigator->previewWindow->set_size_request (-1, 150 * RTScalable::getScale());
     leftsubbox->pack_start (*navigator, Gtk::PACK_SHRINK, 2);
+    
+    Gtk::Separator* historyseparator = Gtk::manage (new Gtk::Separator (Gtk::ORIENTATION_HORIZONTAL));
+    leftsubbox->pack_start (*historyseparator, Gtk::PACK_SHRINK, 2);
 
     history = Gtk::manage (new History ());
     leftsubbox->pack_start (*history);
@@ -777,6 +781,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     hpanedr->set_name ("EditorRightPaned");
     leftbox->reference ();
     vboxright->reference ();
+    vboxright->set_name ("EditorModules");
 
     if (options.showHistory) {
         hpanedl->pack1 (*leftbox, false, false);

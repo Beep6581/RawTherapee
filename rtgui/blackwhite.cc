@@ -89,6 +89,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     //----------- Auto and Reset buttons ------------------------------
 
     mixerFrame = Gtk::manage (new Gtk::Frame (M("TP_BWMIX_MET_CHANMIX")));
+    mixerFrame->set_label_align(0.025, 0.5);
     pack_start (*mixerFrame, Gtk::PACK_SHRINK, 0);
 
     mixerVBox = Gtk::manage (new Gtk::VBox ());
@@ -280,6 +281,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     //----------- Gamma sliders ------------------------------
 
     gammaFrame = Gtk::manage (new Gtk::Frame (M("TP_BWMIX_GAMMA")));
+    gammaFrame->set_label_align(0.025, 0.5);
     pack_start (*gammaFrame, Gtk::PACK_SHRINK, 0);
 
     Gtk::VBox *gammaVBox = Gtk::manage (new Gtk::VBox());
