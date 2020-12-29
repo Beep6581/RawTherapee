@@ -1151,6 +1151,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).Lmaskcurve = locallab.spots.at(j).Lmaskcurve && pSpot.Lmaskcurve == otherSpot.Lmaskcurve;
                 locallab.spots.at(j).LLmaskcolcurvewav = locallab.spots.at(j).LLmaskcolcurvewav && pSpot.LLmaskcolcurvewav == otherSpot.LLmaskcolcurvewav;
                 locallab.spots.at(j).csthresholdcol = locallab.spots.at(j).csthresholdcol && pSpot.csthresholdcol == otherSpot.csthresholdcol;
+                locallab.spots.at(j).recothresc = locallab.spots.at(j).recothresc && pSpot.recothresc == otherSpot.recothresc;
+                locallab.spots.at(j).lowthresc = locallab.spots.at(j).lowthresc && pSpot.lowthresc == otherSpot.lowthresc;
+                locallab.spots.at(j).higthresc = locallab.spots.at(j).higthresc && pSpot.higthresc == otherSpot.higthresc;
+                locallab.spots.at(j).decayc = locallab.spots.at(j).decayc && pSpot.decayc == otherSpot.decayc;
                 // Exposure
                 locallab.spots.at(j).visiexpose = locallab.spots.at(j).visiexpose && pSpot.visiexpose == otherSpot.visiexpose;
                 locallab.spots.at(j).expexpose = locallab.spots.at(j).expexpose && pSpot.expexpose == otherSpot.expexpose;
@@ -3560,6 +3564,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).csthresholdcol) {
             toEdit.locallab.spots.at(i).csthresholdcol = mods.locallab.spots.at(i).csthresholdcol;
+        }
+
+        if (locallab.spots.at(i).recothresc) {
+            toEdit.locallab.spots.at(i).recothresc = mods.locallab.spots.at(i).recothresc;
+        }
+
+        if (locallab.spots.at(i).lowthresc) {
+            toEdit.locallab.spots.at(i).lowthresc = mods.locallab.spots.at(i).lowthresc;
+        }
+
+        if (locallab.spots.at(i).higthresc) {
+            toEdit.locallab.spots.at(i).higthresc = mods.locallab.spots.at(i).higthresc;
+        }
+
+        if (locallab.spots.at(i).decayc) {
+            toEdit.locallab.spots.at(i).decayc = mods.locallab.spots.at(i).decayc;
         }
 
         // Exposure
@@ -6504,6 +6524,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     Lmaskcurve(v),
     LLmaskcolcurvewav(v),
     csthresholdcol(v),
+    recothresc(v),
+    lowthresc(v),
+    higthresc(v),
+    decayc(v),
     // Exposure
     visiexpose(v),
     expexpose(v),
@@ -7028,6 +7052,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     Lmaskcurve = v;
     LLmaskcolcurvewav = v;
     csthresholdcol = v;
+    recothresc = v;
+    lowthresc = v;
+    higthresc = v;
+    decayc = v;
     // Exposure
     visiexpose = v;
     expexpose = v;

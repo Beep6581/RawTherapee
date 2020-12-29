@@ -1084,6 +1084,10 @@ struct LocallabParams {
         std::vector<double> Lmaskcurve;
         std::vector<double> LLmaskcolcurvewav;
         Threshold<int> csthresholdcol;
+        double recothresc;
+        double lowthresc;
+        double higthresc;
+        double decayc;
         // Exposure
         bool visiexpose;
         bool expexpose;

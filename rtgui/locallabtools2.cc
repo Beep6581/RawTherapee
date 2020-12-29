@@ -555,13 +555,13 @@ void LocallabTone::convertParamToSimple()
     showmasktmMethod->set_active(0);
     enatmMask->set_active(defSpot.enatmMask);
     enatmMaskaft->set_active(defSpot.enatmMaskaft);
-    CCmasktmshape->setCurve(defSpot.CCmasktmcurve);
-    LLmasktmshape->setCurve(defSpot.LLmasktmcurve);
-    HHmasktmshape->setCurve(defSpot.HHmasktmcurve);
-    blendmasktm->setValue((double)defSpot.blendmasktm);
-    radmasktm->setValue(defSpot.radmasktm);
-    chromasktm->setValue(defSpot.chromasktm);
-    Lmasktmshape->setCurve(defSpot.Lmasktmcurve);
+//    CCmasktmshape->setCurve(defSpot.CCmasktmcurve);
+//    LLmasktmshape->setCurve(defSpot.LLmasktmcurve);
+//    HHmasktmshape->setCurve(defSpot.HHmasktmcurve);
+//    blendmasktm->setValue((double)defSpot.blendmasktm);
+//    radmasktm->setValue(defSpot.radmasktm);
+//    chromasktm->setValue(defSpot.chromasktm);
+//    Lmasktmshape->setCurve(defSpot.Lmasktmcurve);
 
     // Enable all listeners
     enableListener();
@@ -3584,13 +3584,13 @@ void LocallabContrast::convertParamToSimple()
 
     showmasklcMethod->set_active(0);
     enalcMask->set_active(defSpot.enalcMask);
-    CCmasklcshape->setCurve(defSpot.CCmasklccurve);
-    LLmasklcshape->setCurve(defSpot.LLmasklccurve);
-    HHmasklcshape->setCurve(defSpot.HHmasklccurve);
-    blendmasklc->setValue((double)defSpot.blendmasklc);
-    radmasklc->setValue(defSpot.radmasklc);
-    chromasklc->setValue(defSpot.chromasklc);
-    Lmasklcshape->setCurve(defSpot.Lmasklccurve);
+//    CCmasklcshape->setCurve(defSpot.CCmasklccurve);
+//    LLmasklcshape->setCurve(defSpot.LLmasklccurve);
+//    HHmasklcshape->setCurve(defSpot.HHmasklccurve);
+//    blendmasklc->setValue((double)defSpot.blendmasklc);
+//    radmasklc->setValue(defSpot.radmasklc);
+//    chromasklc->setValue(defSpot.chromasklc);
+//    Lmasklcshape->setCurve(defSpot.Lmasklccurve);
 
     // Enable all listeners
     enableListener();
@@ -4505,15 +4505,15 @@ void LocallabCBDL::convertParamToSimple()
     softradiuscb->setValue(defSpot.softradiuscb);
     showmaskcbMethod->set_active(0);
     enacbMask->set_active(defSpot.enacbMask);
-    CCmaskcbshape->setCurve(defSpot.CCmaskcbcurve);
-    LLmaskcbshape->setCurve(defSpot.LLmaskcbcurve);
-    HHmaskcbshape->setCurve(defSpot.HHmaskcbcurve);
-    blendmaskcb->setValue((double)defSpot.blendmaskcb);
-    radmaskcb->setValue(defSpot.radmaskcb);
-    chromaskcb->setValue(defSpot.chromaskcb);
-    gammaskcb->setValue(defSpot.gammaskcb);
-    slomaskcb->setValue(defSpot.slomaskcb);
-    Lmaskcbshape->setCurve(defSpot.Lmaskcbcurve);
+//    CCmaskcbshape->setCurve(defSpot.CCmaskcbcurve);
+//    LLmaskcbshape->setCurve(defSpot.LLmaskcbcurve);
+//    HHmaskcbshape->setCurve(defSpot.HHmaskcbcurve);
+//    blendmaskcb->setValue((double)defSpot.blendmaskcb);
+//    radmaskcb->setValue(defSpot.radmaskcb);
+//    chromaskcb->setValue(defSpot.chromaskcb);
+//    gammaskcb->setValue(defSpot.gammaskcb);
+//    slomaskcb->setValue(defSpot.slomaskcb);
+//    Lmaskcbshape->setCurve(defSpot.Lmaskcbcurve);
 
     // Enable all listers
     enableListener();
