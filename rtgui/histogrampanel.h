@@ -58,9 +58,9 @@ public:
     float factor;
     HistogramScaling() : factor(10.f) {} // factor(10.f) can be tuned if necessary - higher is flatter curve
 
-    float log(float vsize, float val) const
+    float log(float scale, float val) const
     {
-        return vsize * xlogf(factor / (factor + val)) / xlogf(factor / (factor + vsize));
+        return xlogf(factor / (factor + val)) / xlogf(factor / (factor + scale));
     }
 
     float logMult(float val, float mult) const
@@ -100,8 +100,6 @@ protected:
     bool barDisplayed;
 
     Gtk::Grid* parent;
-    
-    double padding = 5.0;
 
     HistogramRGBAreaIdleHelper* harih;
 
@@ -207,8 +205,6 @@ protected:
     bool isPressed;
     double movingPosition;
     bool needPointer;
-    
-    double padding = 5.0;
 
     HistogramAreaIdleHelper* haih;
 
@@ -256,7 +252,7 @@ public:
     type_signal_factor_changed signal_factor_changed();
 
 private:
-    void drawCurve(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, float scale, float hsize, float vsize);
+    void drawCurve(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, float scale);
     void drawMarks(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, double scale, int hsize, int & ui, int & oi);
     void drawParade(Cairo::RefPtr<Cairo::Context> &cr, int hsize, int vsize);
     void drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int hsize, int vsize);

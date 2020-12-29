@@ -961,9 +961,9 @@ void HistogramRGBAreaHori::drawBar(Cairo::RefPtr<Cairo::Context> cc, double valu
 {
     double pos;
     if (options.histogramDrawMode < 2) {
-        pos = padding + value * (winw - padding * 2.0) / max_value + 0.5 * scale;
+        pos = value * winw / max_value + 0.5 * scale;
     } else {
-        pos = padding + HistogramScaling::log (max_value, value) * (winw - padding * 2.0) / max_value + 0.5 * scale;
+        pos = HistogramScaling::log (max_value, value) * winw / max_value + 0.5 * scale;
     }
     cc->move_to(pos, 0.0);
     cc->line_to(pos, winh - 0.0);
@@ -999,9 +999,9 @@ void HistogramRGBAreaVert::drawBar(Cairo::RefPtr<Cairo::Context> cc, double valu
 {
     double pos;
     if (options.histogramDrawMode < 2 || options.histogramScopeType == ScopeType::PARADE || options.histogramScopeType == ScopeType::WAVEFORM) {
-        pos = padding + value * (winh - padding * 2.0 - 1) / max_value + 0.5 * scale;
+        pos = value * (winh - 1) / max_value + 0.5 * scale;
     } else {
-        pos = padding + HistogramScaling::log (max_value, value) * (winh - padding * 2.0) / max_value + 0.5 * scale;
+        pos = HistogramScaling::log (max_value, value) * winh / max_value + 0.5 * scale;
     }
     cc->move_to(0.0, winh - pos);
     cc->line_to(winw, winh - pos);
@@ -1098,7 +1098,6 @@ void HistogramArea::get_preferred_height_vfunc (int &minimum_height, int &natura
 
 void HistogramArea::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-
     int s = RTScalable::getScale();
     minimum_width = 200 * s;
     natural_width = 400 * s;
@@ -1106,7 +1105,6 @@ void HistogramArea::get_preferred_width_vfunc (int &minimum_width, int &natural_
 
 void HistogramArea::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
 {
-
     minimum_height = 0;
     natural_height = 0;
 }
@@ -1235,50 +1233,50 @@ void HistogramArea::updateBackBuffer ()
     window->get_geometry(winx, winy, winw, winh);
 
     // This will create or update the size of the BackBuffer::surface
-    setDrawRectangle(Cairo::FORMAT_ARGB32, 0, 0, winw, winh, true);
+    setDrawRectangle(Cairo::FORMAT_ARGB32, 0, 0, winw, winh, true); // sets w and h in the BackBuffer
 
     Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(surface);
     const Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
 
     // Setup drawing
-    cr->set_source_rgba (0., 0., 0., 0.);
-    cr->set_operator (Cairo::OPERATOR_CLEAR);
-    cr->paint ();
-    cr->set_operator (Cairo::OPERATOR_SOURCE);
+    cr->set_source_rgba(0., 0., 0., 0.);
+    cr->set_operator(Cairo::OPERATOR_CLEAR);
+    cr->paint();
+    cr->set_operator(Cairo::OPERATOR_SOURCE);
 
     // Prepare drawing gridlines first
-    cr->set_source_rgba (1., 1., 1., 0.25);
+    cr->set_source_rgba(1., 1., 1., 0.25);
     cr->set_line_width (RTScalable::getScale());
     cr->set_antialias(Cairo::ANTIALIAS_NONE);
     cr->set_line_join(Cairo::LINE_JOIN_MITER);
     cr->set_line_cap(Cairo::LINE_CAP_BUTT);
-    std::valarray<double> ch_ds (1);
+    std::valarray<double> ch_ds(1);
     ch_ds[0] = 4;
-    cr->set_dash (ch_ds, 0);
+    cr->set_dash(ch_ds, 0);
 
-    // determine the number of h-gridlines based on current h
+    // determine the number of horiztonal gridlines based on current height
     int nrOfHGridPartitions = static_cast<int>(rtengine::min (16.0, pow (2.0, floor ((h - 100) / 250) + 2)));
-    int nrOfVGridPartitions = 8; // always show 8 stops (lines at 1,3,7,15,31,63,127)
+    int nrOfVGridPartitions = 16; // always show 16 stops
 
     // draw vertical gridlines
     if (options.histogramScopeType == ScopeType::HISTOGRAM || options.histogramScopeType == ScopeType::HISTOGRAM_RAW) {
+        float xpos;
         for (int i = 0; i <= nrOfVGridPartitions; i++) {
-            double xpos = padding + 0.5;
             if (options.histogramDrawMode < 2) {
-                xpos += (pow(2.0,i) - 1) * (w - padding * 2.0) / 255.0;
+                xpos = (pow(2.0,i) - 1) / 65535.0 * (w - 1.0);
             } else {
-                xpos += HistogramScaling::log (255, pow(2.0,i) - 1) * (w - padding * 2.0) / 255.0;
+                xpos = HistogramScaling::log(65535.0, pow(2.0,i) - 1) * (w - 1.0);
             }
-            cr->move_to (xpos, 0.);
-            cr->line_to (xpos, h);
-            cr->stroke ();
+            cr->move_to(xpos + 1.0, 0);
+            cr->line_to(xpos + 1.0, h);
+            cr->stroke();
         }
     }
 
     // draw horizontal gridlines
-    if (options.histogramScopeType == ScopeType::PARADE || options.histogramScopeType == ScopeType::WAVEFORM) {
+    /*if (options.histogramScopeType == ScopeType::PARADE || options.histogramScopeType == ScopeType::WAVEFORM) {
         for (int i = 0; i <= nrOfVGridPartitions; i++) {
-            const double ypos = h - padding - (pow(2.0,i) - 1) * (h - 2 * padding - 1) / 255.0;
+            const double ypos = h - (pow(2.0,i) - 1) * (h - 1) / 255.0;
             cr->move_to(0, ypos);
             cr->line_to(w, ypos);
             cr->stroke();
@@ -1287,17 +1285,17 @@ void HistogramArea::updateBackBuffer ()
         // Vectorscope has no gridlines.
     } else if (options.histogramDrawMode == 0) {
         for (int i = 1; i < nrOfHGridPartitions; i++) {
-            cr->move_to (padding, i * static_cast<double>(h) / nrOfHGridPartitions + 0.5);
-            cr->line_to (w - padding, i * static_cast<double>(h) / nrOfHGridPartitions + 0.5);
+            cr->move_to (0, i * static_cast<double>(h) / nrOfHGridPartitions + 0.5);
+            cr->line_to (w, i * static_cast<double>(h) / nrOfHGridPartitions + 0.5);
             cr->stroke ();
         }
     } else {
         for (int i = 1; i < nrOfHGridPartitions; i++) {
-            cr->move_to (padding, h - HistogramScaling::log (h, i * static_cast<double>(h) / nrOfHGridPartitions) + 0.5);
-            cr->line_to (w - padding, h - HistogramScaling::log (h, i * static_cast<double>(h) / nrOfHGridPartitions) + 0.5);
+            cr->move_to (0, h - HistogramScaling::log (h, i * static_cast<double>(h) / nrOfHGridPartitions) + 0.5);
+            cr->line_to (w, h - HistogramScaling::log (h, i * static_cast<double>(h) / nrOfHGridPartitions) + 0.5);
             cr->stroke ();
         }
-    }
+    }*/
 
     cr->unset_dash();
 
@@ -1336,6 +1334,7 @@ void HistogramArea::updateBackBuffer ()
             }
         }
         
+        // Compute the first and last non-zero histogram bins
         int rgbFirst = -1, rgbLast = -1;
         for (int i = 0; i < 65536; i++) {
             if (needRed   && rgbFirst == -1 && rh[i] != 0) rgbFirst = i;
@@ -1351,54 +1350,17 @@ void HistogramArea::updateBackBuffer ()
         }
 
         cr->set_operator (Cairo::OPERATOR_OVER);
-
-        int ui = 0, oi = 0;
-
-        if (needLuma && !rawMode) {
-            drawCurve(cr, lhist, lumamax, w, h);
-            cr->set_source_rgb (0.7, 0.7, 0.7);
-            cr->stroke ();
-            drawMarks(cr, lhist, lumamax, w, ui, oi);
-        }
-
-        if (needChroma && !rawMode) {
-            drawCurve(cr, chist, chromamax, w, h);
-            cr->set_source_rgb (0.9, 0.9, 0.);
-            cr->stroke ();
-            drawMarks(cr, chist, chromamax, w, ui, oi);
-        }
-
-        if (needRed) {
-            drawCurve(cr, rh, rgbmax, w, h);
-            cr->set_source_rgb (1.0, 0.0, 0.0);
-            cr->stroke ();
-            drawMarks(cr, rh, rgbmax, w, ui, oi);
-        }
-
-        if (needGreen) {
-            drawCurve(cr, gh, rgbmax, w, h);
-            cr->set_source_rgb (0.0, 1.0, 0.0);
-            cr->stroke ();
-            drawMarks(cr, gh, rgbmax, w, ui, oi);
-        }
-
-        if (needBlue) {
-            drawCurve(cr, bh, rgbmax, w, h);
-            cr->set_source_rgb (0.0, 0.4, 1.0);
-            cr->stroke ();
-            drawMarks(cr, bh, rgbmax, w, ui, oi);
-        }
-        
+         
         if (rgbFirst != -1) { // Draw min/max marker lines
                 
             float posX = static_cast<float>(rgbFirst);
-            const float mult = 65535.f / xlogf(HistogramScaling::factor / (HistogramScaling::factor + 65535.0));
             if (drawMode == 2) {
+                const float mult = 65535.f / xlogf(HistogramScaling::factor / (HistogramScaling::factor + 65535.0));
                 posX = HistogramScaling::logMult(posX, mult);
             }
-            posX = posX * w / 65535.f + padding;// + 0.5;
-            cr->move_to (posX, 0);
-            cr->line_to (posX, h);
+            posX = posX * (w - 1.f) / 65535.f;
+            cr->move_to (posX + 1.f, 0);
+            cr->line_to (posX + 1.f, h);
             cr->set_source_rgba (1., 1., 1., 0.55);
             cr->stroke();
         }
@@ -1406,15 +1368,65 @@ void HistogramArea::updateBackBuffer ()
         if (rgbLast != -1) { // Draw min/max marker lines
         
             float posX = static_cast<float>(rgbLast);
-            const float mult = 65535.f / xlogf(HistogramScaling::factor / (HistogramScaling::factor + 65535.0));
             if (drawMode == 2) {
+                const float mult = 65535.f / xlogf(HistogramScaling::factor / (HistogramScaling::factor + 65535.0));
                 posX = HistogramScaling::logMult(posX, mult);
             }
-            posX = posX * w / 65535.f + padding;// + 0.5;
-            cr->move_to (posX, 0);
-            cr->line_to (posX, h);
+            posX = posX * (w - 1.f) / 65535.f;
+            cr->move_to (posX + 1.f, 0);
+            cr->line_to (posX + 1.f, h);
             cr->set_source_rgba (1., 1., 1., 0.55);
             cr->stroke();
+        }
+        
+        // Draw EV0 line
+        float posX = 32768.f; // TODO: Link directly to bitdepth
+        if (drawMode == 2) {
+            const float mult = 65535.f / xlogf(HistogramScaling::factor / (HistogramScaling::factor + 65535.0));
+            posX = HistogramScaling::logMult(posX, mult);
+        }
+        posX = posX * (w - 1.f) / 65535.f;
+        cr->move_to (posX + 1.f, 0);
+        cr->line_to (posX + 1.f, h);
+        cr->set_source_rgba (1., 1., 1., 0.55);
+        cr->stroke();
+        
+        // Draw all curves
+        int ui = 0, oi = 0;
+
+        if (needLuma && !rawMode) {
+            drawCurve(cr, lhist, lumamax);
+            cr->set_source_rgb (0.7, 0.7, 0.7);
+            cr->stroke ();
+            drawMarks(cr, lhist, lumamax, w, ui, oi);
+        }
+
+        if (needChroma && !rawMode) {
+            drawCurve(cr, chist, chromamax);
+            cr->set_source_rgb (0.9, 0.9, 0.);
+            cr->stroke ();
+            drawMarks(cr, chist, chromamax, w, ui, oi);
+        }
+
+        if (needRed) {
+            drawCurve(cr, rh, rgbmax);
+            cr->set_source_rgb (1.0, 0.0, 0.0);
+            cr->stroke ();
+            drawMarks(cr, rh, rgbmax, w, ui, oi);
+        }
+
+        if (needGreen) {
+            drawCurve(cr, gh, rgbmax);
+            cr->set_source_rgb (0.0, 1.0, 0.0);
+            cr->stroke ();
+            drawMarks(cr, gh, rgbmax, w, ui, oi);
+        }
+
+        if (needBlue) {
+            drawCurve(cr, bh, rgbmax);
+            cr->set_source_rgb (0.0, 0.4, 1.0);
+            cr->stroke ();
+            drawMarks(cr, bh, rgbmax, w, ui, oi);
         }
 
     } else if (scopeType == ScopeType::PARADE && rwave.getWidth() > 0) {
@@ -1424,9 +1436,6 @@ void HistogramArea::updateBackBuffer ()
     } else if (scopeType == ScopeType::VECTORSCOPE_HC || scopeType == ScopeType::VECTORSCOPE_HS) {
         drawVectorscope(cr, w, h);
     }
-
-    // Draw the frame's border
-    style->render_frame(cr, 0, 0, surface->get_width(), surface->get_height());
 
     oldwidth = w;
     oldheight = h;
@@ -1454,30 +1463,25 @@ bool HistogramArea::updatePointer(int r, int g, int b, const Glib::ustring &prof
 
 void HistogramArea::on_realize ()
 {
-
     Gtk::DrawingArea::on_realize();
     add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
 }
 
-void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
-                              const LUTu & data, float scale, float hsize, float vsize)
+void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & data, float scale)
 {
-    //BENCHFUNMICRO
-
     std::vector<float> iscaled(65536);
     std::vector<float> vals(65536);
 
-    const float scalef = rtengine::max(scale, 0.001f); // avoid division by zero and negative values
-    const float scaleFactor = vsize / scalef;
+    const float maxvalue = rtengine::max(scale, 0.001f); // avoid division by zero and negative values
+    
     if (drawMode > 0) { // scale y for single and double log-scale
-        const float mult = vsize / xlogf(HistogramScaling::factor / (HistogramScaling::factor + vsize));
+        const float mult = (h - 1.0f) / xlogf(HistogramScaling::factor / (HistogramScaling::factor + maxvalue));
 #ifdef __SSE2__
-        const vfloat scaleFactorv = F2V(scaleFactor);
         const vfloat multv = F2V(mult);
         for (int i = 0; i < 65536; i += 4) {
             const vfloat val = _mm_cvtepi32_ps(_mm_loadu_si128((__m128i_u*)&data[i]));
             if (_mm_movemask_ps(ZEROV - val)) {
-                STVFU(vals[i], HistogramScaling::logMult(val * scaleFactorv, multv));
+                STVFU(vals[i], HistogramScaling::logMult(val, multv));
             } else {
                 STVFU(vals[i], ZEROV);
             }
@@ -1485,20 +1489,21 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
 #else
         for (int i = 0; i < 65536; ++i) {
             if (data[i]) {
-                vals[i] = HistogramScaling::logMult(data[i] * scaleFactor, mult);
+                vals[i] = HistogramScaling::logMult(data[i], mult);
             } else {
                 vals[i] = 0.f;
             }
         }
 #endif
     } else {
+        const float mult = (h - 1.0f) / maxvalue;
         for (int i = 0; i < 65536; ++i) {
-            vals[i] = data[i] * scaleFactor;
+            vals[i] = data[i] * mult;
         }
     }
 
     if (drawMode == 2) { // scale x for double log-scale
-        const float mult = 65535.f / xlogf(HistogramScaling::factor / (HistogramScaling::factor + 65535.0));
+        const float mult = (w - 1.f) / xlogf(HistogramScaling::factor / (HistogramScaling::factor + 65535.f));
 #ifdef __SSE2__
         const vfloat multv = F2V(mult);
         const vfloat fourv = F2V(4.f);
@@ -1516,22 +1521,19 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
         }
 #endif
     } else {
+        const float mult = (w - 1.f) / 65535.f;
         for (int i = 0; i < 65536; ++i) {
-            iscaled[i] = i;
+            iscaled[i] = i * mult;
         }
     }
 
     for (int i = 0; i < 65536; i++) {
-        if (vals[i] == 0.f) {
+        if (vals[i] == 0.f)
             continue;
-        }
-        
-        const double posY = vsize - 2 + vals[i] * ((4 - vsize) / vsize);
-// remove me        if (vsize - 2 - posY >= 1) {
-            const double posX = padding + iscaled[i] * ((hsize - padding * 2.f) / 65535.f);
-            cr->move_to (posX, vsize - 2);
-            cr->line_to (posX, posY);
-// remove me        }
+        const float posY = h - 1.f - vals[i];
+        const float posX = 1.f + iscaled[i];
+        cr->move_to(posX, h);
+        cr->line_to(posX, posY);
     }
 }
 
@@ -1541,11 +1543,11 @@ void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
     int s = 8 * RTScalable::getScale();
 
     if(data[0] > scale) {
-        cr->rectangle(padding, (ui++)*s, s, s);
+        cr->rectangle(0, (ui++)*s, s, s);
     }
 
     if(data[65535] > scale) {
-        cr->rectangle(hsize - s - padding, (oi++)*s, s, s);
+        cr->rectangle(hsize - s, (oi++)*s, s, s);
     }
 
     cr->fill();
@@ -1652,8 +1654,8 @@ void HistogramArea::drawParade(Cairo::RefPtr<Cairo::Context> &cr, int w, int h)
     const double display_wave_width = static_cast<double>(w) / buffers.size();
     for (unsigned i = 0; i < buffers.size(); i++) {
         Cairo::RefPtr<Cairo::ImageSurface> surface;
-        cr->translate(i * display_wave_width, padding);
-        cr->scale(display_wave_width / wave_width, (h - 2 * padding) / wave_height);
+        cr->translate(i * display_wave_width, 0);
+        cr->scale(display_wave_width / wave_width, h / wave_height);
         surface = Cairo::ImageSurface::create(
             buffers[i], Cairo::FORMAT_ARGB32, wave_width, wave_height, cairo_stride);
         cr->set_source(surface, 0, 0);
@@ -1703,12 +1705,10 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
         vect_buffer_dirty = false;
     }
 
-    const bool fit_width =
-        vect_width * (h - 2 * padding) > vect_height * (w - 2 * padding);
-    const float scope_scale = fit_width ?
-        (w - 2 * padding) / vect_width : (h - 2 * padding) / vect_height;
+    const bool fit_width = vect_width * h > vect_height * w;
+    const float scope_scale = fit_width ? w / vect_width : h / vect_height;
     const float scope_size = (vectorscope_scale > 0) ?
-        scope_scale * std::max<double>(vect_width, vect_height) : std::min<float>(w, h) - 2 * padding;
+        scope_scale * std::max<double>(vect_width, vect_height) : std::min<float>(w, h);
     const float o_x = (w - scope_scale * vect_width) / 2;
     const float o_y = (h - scope_scale * vect_height) / 2;
     const double s = RTScalable::getScale();
@@ -1899,8 +1899,8 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
 
     Cairo::RefPtr<Cairo::ImageSurface> surface;
     auto orig_matrix = cr->get_matrix();
-    cr->translate(0, padding);
-    cr->scale(static_cast<double>(w) / wave_width, (h - 2 * padding) / wave_height);
+    cr->translate(0, 0);
+    cr->scale(static_cast<double>(w) / wave_width, h / wave_height);
     if (needLuma) {
         surface = Cairo::ImageSurface::create(
             wave_buffer_luma.data(), Cairo::FORMAT_ARGB32, wave_width, wave_height, cairo_stride);

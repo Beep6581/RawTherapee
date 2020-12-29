@@ -3769,7 +3769,7 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
     }
 }
 
-// Histogram MUST be 256 in size; gamma is applied, blackpoint and gain also
+// For histogram data gamma is applied, blackpoint and gain also
 void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw)
 {    
 //    BENCHFUN

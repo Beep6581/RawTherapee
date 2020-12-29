@@ -706,7 +706,8 @@ flowboxchild:selected {
 
 #HistogramArea,
 #HistogramRGBArea {
-    border-width: 0.083333333333333333em;
+    border: none;
+    /*border-width: 0.083333333333333333em;*/
 }
 
 #histButton {
