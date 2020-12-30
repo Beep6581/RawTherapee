@@ -584,6 +584,7 @@ struct local_params {
     float higthr;
     float recothrd;
     float lowthrd;
+    float midthrd;
     float higthrd;
     float decayd;
     float recothrc;
@@ -1043,6 +1044,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float local_higthr = (float)locallab.spots.at(sp).higthres;
     float local_recothrd = (float)locallab.spots.at(sp).recothresd;
     float local_lowthrd = (float)locallab.spots.at(sp).lowthresd;
+    float local_midthrd = (float)locallab.spots.at(sp).midthresd;
     float local_higthrd = (float)locallab.spots.at(sp).higthresd;
     float local_decayd = (float)locallab.spots.at(sp).decayd;
     float local_recothrc = (float)locallab.spots.at(sp).recothresc;
@@ -1400,6 +1402,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.lowthr = local_lowthr;
     lp.higthr = local_higthr;
     lp.recothrd = local_recothrd;
+    lp.midthrd = local_midthrd;
     lp.lowthrd = local_lowthrd;
     lp.higthrd = local_higthrd;
     lp.decayd = local_decayd;
@@ -9449,6 +9452,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         float low = lp.lowthrd;
                         float lowc;
                         calcdif(low, lowc);
+                        float mid = 0.01f * lp.midthrd;
 
                         if(higc < lowc) {
                             higc = lowc + 0.01f;
@@ -9469,9 +9473,9 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                                 if (lM < 327.68f * lowc) {
                                     masklum[ir][jr] = alow * lmr + blow;
                                 } else if (lM < 327.68f * higc) {
-                                    
+                                    masklum[ir][jr] = (1.f - mid);
                                 } else {
-                                        masklum[ir][jr] = ahigh * lmr + bhigh;
+                                    masklum[ir][jr] = ahigh * lmr + bhigh;
                                 }
                                 float k = masklum[ir][jr];
                                 if(lp.invmaskd == true) {
@@ -10136,6 +10140,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         float low = lp.lowthrd;
                         float lowc;
                         calcdif(low, lowc);
+                        float mid = 0.01f * lp.midthrd;
 
                         if(higc < lowc) {
                             higc = lowc + 0.01f;
@@ -10158,6 +10163,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                                 if (lM < 327.68f * lowc) {
                                     masklum[y-ystart][x-xstart] = alow * lmr + blow;
                                 } else if (lM < 327.68f * higc) {
+                                    masklum[y-ystart][x-xstart] = 1.f - mid;
 
                                 } else {
                                     masklum[y-ystart][x-xstart] = ahigh * lmr + bhigh;

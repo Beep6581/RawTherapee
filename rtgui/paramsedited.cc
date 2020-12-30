@@ -1285,6 +1285,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).higthres = locallab.spots.at(j).higthres && pSpot.higthres == otherSpot.higthres;
                 locallab.spots.at(j).recothresd = locallab.spots.at(j).recothresd && pSpot.recothresd == otherSpot.recothresd;
                 locallab.spots.at(j).lowthresd = locallab.spots.at(j).lowthresd && pSpot.lowthresd == otherSpot.lowthresd;
+                locallab.spots.at(j).midthresd = locallab.spots.at(j).midthresd && pSpot.midthresd == otherSpot.midthresd;
                 locallab.spots.at(j).higthresd = locallab.spots.at(j).higthresd && pSpot.higthresd == otherSpot.higthresd;
                 locallab.spots.at(j).decayd = locallab.spots.at(j).decayd && pSpot.decayd == otherSpot.decayd;
                 locallab.spots.at(j).isogr = locallab.spots.at(j).isogr && pSpot.isogr == otherSpot.isogr;
@@ -4073,6 +4074,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).lowthresd = mods.locallab.spots.at(i).lowthresd;
         }
 
+        if (locallab.spots.at(i).midthresd) {
+            toEdit.locallab.spots.at(i).midthresd = mods.locallab.spots.at(i).midthresd;
+        }
+
         if (locallab.spots.at(i).higthresd) {
             toEdit.locallab.spots.at(i).higthresd = mods.locallab.spots.at(i).higthresd;
         }
@@ -6654,6 +6659,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     higthres(v),
     recothresd(v),
     lowthresd(v),
+    midthresd(v),
     higthresd(v),
     decayd(v),
     isogr(v),
@@ -7186,6 +7192,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     higthres = v;
     recothresd = v;
     lowthresd = v;
+    midthresd = v;
     higthresd = v;
     decayd = v;
     isogr = v;
