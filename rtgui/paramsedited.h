@@ -622,6 +622,7 @@ public:
         bool higthres;
         bool recothresd;
         bool lowthresd;
+        bool midthresd;
         bool higthresd;
         bool decayd;
         bool isogr;

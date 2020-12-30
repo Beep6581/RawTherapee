@@ -703,6 +703,7 @@ private:
     MyExpander* const expdenoise3;
     Adjuster* const recothresd;
     Adjuster* const lowthresd;
+    Adjuster* const midthresd;
     Adjuster* const higthresd;
     Adjuster* const decayd;
     
