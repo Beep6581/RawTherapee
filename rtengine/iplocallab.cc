@@ -10577,6 +10577,7 @@ void ImProcFunctions::Lab_Local(
     constexpr int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
     struct local_params lp;
     calcLocalParams(sp, oW, oH, params->locallab, lp, prevDeltaE, llColorMask, llColorMaskinv, llExpMask, llExpMaskinv, llSHMask, llSHMaskinv, llvibMask, lllcMask, llsharMask, llcbMask, llretiMask, llsoftMask, lltmMask, llblMask, lllogMask, ll_Mask, locwavCurveden, locwavdenutili);
+    avoidcolshi(lp, sp, original, transformed, cy, cx);
 
     const float radius = lp.rad / (sk * 1.4f); //0 to 70 ==> see skip
     int levred;
