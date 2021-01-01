@@ -1477,6 +1477,10 @@ struct LocallabParams {
         double radmaskL;
         double chromaskL;
         std::vector<double> LmaskcurveL;
+        double recothresl;
+        double lowthresl;
+        double higthresl;
+        double decayl;
 
         // mask
         bool visimask;

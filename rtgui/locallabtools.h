@@ -1269,6 +1269,14 @@ private:
     Gtk::HBox* const surrHBox;
     
     Adjuster* const baselog;
+    MyExpander* const exprecovl;
+    Gtk::Label* const maskusablel;
+    Gtk::Label* const maskunusablel;
+    Adjuster* const recothresl;
+    Adjuster* const lowthresl;
+    Adjuster* const higthresl;
+    Adjuster* const decayl;
+    
     Adjuster* const sensilog;
     Gtk::Frame* const gradlogFrame;
     Adjuster* const strlog;

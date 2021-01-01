@@ -4017,6 +4017,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0,
         1.0
     },
+    recothresl(1.),
+    lowthresl(12.),
+    higthresl(85.),
+    decayl(2.),
     // mask
     visimask(false),
     complexmask(0),
@@ -4636,6 +4640,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && radmaskL == other.radmaskL
         && chromaskL == other.chromaskL
         && LmaskcurveL == other.LmaskcurveL
+        && recothresl == other.recothresl
+        && lowthresl == other.lowthresl
+        && higthresl == other.higthresl
+        && decayl == other.decayl
 
         // mask
         && visimask == other.visimask
@@ -6238,6 +6246,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->radmaskL, "Locallab", "radmaskL_" + index_str, spot.radmaskL, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chromaskL, "Locallab", "chromaskL_" + index_str, spot.chromaskL, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LmaskcurveL, "Locallab", "LmaskCurveL_" + index_str, spot.LmaskcurveL, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->recothresl, "Locallab", "Recothresl_" + index_str, spot.recothresl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lowthresl, "Locallab", "Lowthresl_" + index_str, spot.lowthresl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->higthresl, "Locallab", "Higthresl_" + index_str, spot.higthresl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->decayl, "Locallab", "Decayl_" + index_str, spot.decayl, keyFile);
 
                 }
                 //mask
@@ -8092,6 +8104,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "radmaskL_" + index_str, pedited, spot.radmaskL, spotEdited.radmaskL);
                 assignFromKeyfile(keyFile, "Locallab", "chromaskL_" + index_str, pedited, spot.chromaskL, spotEdited.chromaskL);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskCurveL_" + index_str, pedited, spot.LmaskcurveL, spotEdited.LmaskcurveL);
+                assignFromKeyfile(keyFile, "Locallab", "Recothresl_" + index_str, pedited, spot.recothresl, spotEdited.recothresl);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthresl_" + index_str, pedited, spot.lowthresl, spotEdited.lowthresl);
+                assignFromKeyfile(keyFile, "Locallab", "Higthresl_" + index_str, pedited, spot.higthresl, spotEdited.higthresl);
+                assignFromKeyfile(keyFile, "Locallab", "Decayl_" + index_str, pedited, spot.decayl, spotEdited.decayl);
 
                 // mask
                 spot.visimask = assignFromKeyfile(keyFile, "Locallab", "Expmask_" + index_str, pedited, spot.expmask, spotEdited.expmask);
