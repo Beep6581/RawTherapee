@@ -885,6 +885,10 @@ public:
         bool radmaskL;
         bool chromaskL;
         bool LmaskcurveL;
+        bool recothresl;
+        bool lowthresl;
+        bool higthresl;
+        bool decayl;
         //mask
         bool visimask;
         bool complexmask;

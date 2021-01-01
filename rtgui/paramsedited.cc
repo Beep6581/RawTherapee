@@ -1552,6 +1552,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).radmaskL = locallab.spots.at(j).radmaskL && pSpot.radmaskL == otherSpot.radmaskL;
                 locallab.spots.at(j).chromaskL = locallab.spots.at(j).chromaskL && pSpot.chromaskL == otherSpot.chromaskL;
                 locallab.spots.at(j).LmaskcurveL = locallab.spots.at(j).LmaskcurveL && pSpot.LmaskcurveL == otherSpot.LmaskcurveL;
+                locallab.spots.at(j).recothresl = locallab.spots.at(j).recothresl && pSpot.recothresl == otherSpot.recothresl;
+                locallab.spots.at(j).lowthresl = locallab.spots.at(j).lowthresl && pSpot.lowthresl == otherSpot.lowthresl;
+                locallab.spots.at(j).higthresl = locallab.spots.at(j).higthresl && pSpot.higthresl == otherSpot.higthresl;
+                locallab.spots.at(j).decayl = locallab.spots.at(j).decayl && pSpot.decayl == otherSpot.decayl;
 
 
                 //mask
@@ -5112,6 +5116,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).LmaskcurveL = mods.locallab.spots.at(i).LmaskcurveL;
         }
 
+        if (locallab.spots.at(i).recothresl) {
+            toEdit.locallab.spots.at(i).recothresl = mods.locallab.spots.at(i).recothresl;
+        }
+
+        if (locallab.spots.at(i).lowthresl) {
+            toEdit.locallab.spots.at(i).lowthresl = mods.locallab.spots.at(i).lowthresl;
+        }
+
+        if (locallab.spots.at(i).higthresl) {
+            toEdit.locallab.spots.at(i).higthresl = mods.locallab.spots.at(i).higthresl;
+        }
+
+        if (locallab.spots.at(i).decayl) {
+            toEdit.locallab.spots.at(i).decayl = mods.locallab.spots.at(i).decayl;
+        }
+
         // mask
         if (locallab.spots.at(i).visimask) {
             toEdit.locallab.spots.at(i).visimask = mods.locallab.spots.at(i).visimask;
@@ -6922,6 +6942,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     radmaskL(v),
     chromaskL(v),
     LmaskcurveL(v),
+    recothresl(v),
+    lowthresl(v),
+    higthresl(v),
+    decayl(v),
     // mask
     visimask(v),
     complexmask(v),
@@ -7458,6 +7482,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     radmaskL = v;
     chromaskL = v;
     LmaskcurveL = v;
+    recothresl = v;
+    lowthresl = v;
+    higthresl = v;
+    decayl = v;
     // mask
     visimask = v;
     complexmask = v;

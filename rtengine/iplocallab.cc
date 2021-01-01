@@ -591,6 +591,10 @@ struct local_params {
     float lowthrc;
     float higthrc;
     float decayc;
+    float recothrl;
+    float lowthrl;
+    float higthrl;
+    float decayl;
     int noiselequal;
     float noisechrodetail;
     float bilat;
@@ -1051,6 +1055,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float local_lowthrc = (float)locallab.spots.at(sp).lowthresc;
     float local_higthrc = (float)locallab.spots.at(sp).higthresc;
     float local_decayc = (float)locallab.spots.at(sp).decayc;
+    float local_recothrl = (float)locallab.spots.at(sp).recothresl;
+    float local_lowthrl = (float)locallab.spots.at(sp).lowthresl;
+    float local_higthrl = (float)locallab.spots.at(sp).higthresl;
+    float local_decayl = (float)locallab.spots.at(sp).decayl;
 
     float local_noisecf = ((float)locallab.spots.at(sp).noisechrof) / 10.f;
     float local_noisecc = ((float)locallab.spots.at(sp).noisechroc) / 10.f;
@@ -1410,6 +1418,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.lowthrc = local_lowthrc;
     lp.higthrc = local_higthrc;
     lp.decayc = local_decayc;
+    lp.recothrl = local_recothrl;
+    lp.lowthrl = local_lowthrl;
+    lp.higthrl = local_higthrl;
+    lp.decayl = local_decayl;
     lp.noiselequal = local_noiselequal;
     lp.noisechrodetail = local_noisechrodetail;
     lp.noiselc = local_noiselc;
@@ -10817,6 +10829,82 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
                 }
+
+
+                    if(lp.enaLMask && lp.recothrl != 1.f) {
+                        LabImage tmp3(bfw, bfh);
+
+                        for (int y = 0; y < bfh; y++){
+                            for (int x = 0; x < bfw; x++) {
+                                tmp3.L[y][x] = original->L[y + ystart][x + xstart];
+                                tmp3.a[y][x] = original->a[y + ystart][x + xstart];
+                                tmp3.b[y][x] = original->b[y + ystart][x + xstart];
+                            }
+                        }
+                        array2D<float> masklum;
+                        masklum(bfw, bfh);
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                                masklum[ir][jr] = 1.f;
+                            }
+
+                        float hig = lp.higthrl;
+                        float higc;
+                        calcdif(hig, higc);
+                        float low = lp.lowthrl;
+                        float lowc;
+                        calcdif(low, lowc);
+
+                        if(higc < lowc) {
+                            higc = lowc + 0.01f;
+                        }
+                        float th = (lp.recothrl - 1.f);
+                        float ahigh = th / (higc - 100.f);
+                        float bhigh = 1.f - higc * ahigh;
+
+                        float alow = th / lowc; 
+                        float blow = 1.f - th;
+                        bool invmaskl = false;
+#ifdef _OPENMP
+                    #pragma omp parallel for if (multiThread)
+#endif
+                        for (int ir = 0; ir < bfh; ir++)
+                            for (int jr = 0; jr < bfw; jr++) {
+                                const float lM = bufmaskoriglog->L[ir][jr];
+                                const float lmr = lM / 327.68f;
+                                if (lM < 327.68f * lowc) {
+                                    masklum[ir][jr] = alow * lmr + blow;
+                                } else if (lM < 327.68f * higc) {
+                                    
+                                } else {
+                                        masklum[ir][jr] = ahigh * lmr + bhigh;
+                                }
+                                float k = masklum[ir][jr];
+                                if(invmaskl == false) {
+                                    masklum[ir][jr] = 1 - pow(k, lp.decayl);
+                                } else {
+                                    masklum[ir][jr] = pow(k, lp.decayl);
+                                }
+
+                            }
+                            
+                        for (int i = 0; i < 3; ++i) {
+                            boxblur(masklum, masklum, 10 / sk, bfw, bfh, false);
+                        }
+                        
+#ifdef _OPENMP
+                    #pragma omp parallel for if (multiThread)
+#endif
+                        for (int i = 0; i < bfh; ++i) {
+                            for (int j = 0; j < bfw; ++j) {                              
+                                bufexpfin->L[i][j] = (tmp3.L[i][j] - bufexpfin->L[i][j]) *  LIM01(masklum[i][j]) + bufexpfin->L[i][j];
+                                bufexpfin->a[i][j] = (tmp3.a[i][j] - bufexpfin->a[i][j]) *  LIM01(masklum[i][j]) + bufexpfin->a[i][j];
+                                bufexpfin->b[i][j] = (tmp3.b[i][j] - bufexpfin->b[i][j]) *  LIM01(masklum[i][j]) + bufexpfin->b[i][j];
+                            }
+                        }
+                        masklum.free();
+                    
+                    }
 
             //end graduated
                 transit_shapedetect2(call, 11, bufexporig.get(), bufexpfin.get(), originalmasklog.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);

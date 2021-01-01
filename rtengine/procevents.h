@@ -1023,6 +1023,10 @@ enum ProcEventCode {
     Evlocallabhigthresc = 997,
     Evlocallabdecayc = 998,
     Evlocallabmidthresd = 999,
+    Evlocallabrecothresl = 1000,
+    Evlocallablowthresl = 1001,
+    Evlocallabhigthresl = 1002,
+    Evlocallabdecayl = 1003,
     NUMOFEVENTS
 };
 
