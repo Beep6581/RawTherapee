@@ -972,11 +972,11 @@ inline void RawImageSource::dcb_initTileLimits(int &colMin, int &rowMin, int &co
     }
 
     if( y0 + TILESIZE + TILEBORDER >= H - border) {
-        rowMax = TILEBORDER + H - border - y0;
+        rowMax = std::min(TILEBORDER + H - border - y0, rowMax);
     }
 
     if( x0 + TILESIZE + TILEBORDER >= W - border) {
-        colMax = TILEBORDER + W - border - x0;
+        colMax = std::min(TILEBORDER + W - border - x0, colMax);
     }
 }
 
