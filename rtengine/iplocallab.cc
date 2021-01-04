@@ -49,7 +49,7 @@
 #define BENCHMARK
 #include "StopWatch.h"
 #include "guidedfilter.h"
-#include "boxblural.h"
+#include "boxblur.h"
 
 
 #pragma GCC diagnostic warning "-Wall"
@@ -8742,7 +8742,7 @@ void ImProcFunctions::fftw_denoise(int sk, int GW, int GH, int max_numblox_W, in
                 }
             }
             for (int i = 0; i < 3; ++i) {
-                boxblur(mask, mask, 10 / sk, GW, GH, false);
+                boxblur(static_cast<float**>(mask), static_cast<float**>(mask), 10 / sk, GW, GH, false);
             }
             for (int i = 0; i < GH; ++i) {
                 for (int j = 0; j < GW; ++j) {
@@ -9499,7 +9499,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                             }
                             
                         for (int i = 0; i < 3; ++i) {
-                            boxblur(masklum, masklum, 10 / sk, GW, GH, false);
+                            boxblur(static_cast<float**>(masklum), static_cast<float**>(masklum), 10 / sk, GW, GH, false);
                         }
 #ifdef _OPENMP
                     #pragma omp parallel for if (multiThread)
@@ -10189,7 +10189,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                             }
                         }
                         for (int i = 0; i < 3; ++i) {
-                            boxblur(masklum, masklum, 10 / sk, bfw, bfh, false);
+                            boxblur(static_cast<float**>(masklum), static_cast<float**>(masklum), 10 / sk, bfw, bfh, false);
                         }
                            
 #ifdef _OPENMP
@@ -10889,7 +10889,7 @@ void ImProcFunctions::Lab_Local(
                             }
                             
                         for (int i = 0; i < 3; ++i) {
-                            boxblur(masklum, masklum, 10 / sk, bfw, bfh, false);
+                            boxblur(static_cast<float**>(masklum), static_cast<float**>(masklum), 10 / sk, bfw, bfh, false);
                         }
                         
 #ifdef _OPENMP
@@ -11436,7 +11436,7 @@ void ImProcFunctions::Lab_Local(
                                 }
 
                             for (int i = 0; i < 3; ++i) {
-                                boxblur(masklum, masklum, 10 / sk, bfw, bfh, false);
+                                boxblur(static_cast<float**>(masklum), static_cast<float**>(masklum), 10 / sk, bfw, bfh, false);
                             }
 
 #ifdef _OPENMP
@@ -11588,7 +11588,7 @@ void ImProcFunctions::Lab_Local(
                                 }
 
                             for (int i = 0; i < 3; ++i) {
-                                boxblur(masklum, masklum, 10 / sk, GW, GH, false);
+                                boxblur(static_cast<float**>(masklum), static_cast<float**>(masklum), 10 / sk, GW, GH, false);
                             }
 
 #ifdef _OPENMP
@@ -15512,7 +15512,7 @@ void ImProcFunctions::Lab_Local(
                             }
                             
                         for (int i = 0; i < 3; ++i) {
-                            boxblur(masklum, masklum, 10 / sk, bfw, bfh, false);
+                            boxblur(static_cast<float**>(masklum), static_cast<float**>(masklum), 10 / sk, bfw, bfh, false);
                         }
                         
 #ifdef _OPENMP
