@@ -2794,7 +2794,10 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
 //        expMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
 //        pdeFrame->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
         exppde->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
-        exprecove->set_tooltip_markup(M("TP_LOCALLAB_MASKRECOL_TOOLTIP"));
+        exprecove->set_tooltip_markup(M("TP_LOCALLAB_MASKREEXP_TOOLTIP"));
+        decaye->set_tooltip_text(M("TP_LOCALLAB_MASKDECAY_TOOLTIP"));
+        lowthrese->set_tooltip_text(M("TP_LOCALLAB_MASKLOWTHRESE_TOOLTIP"));
+        higthrese->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRESE_TOOLTIP"));
         blurexpde->set_tooltip_text(M("TP_LOCALLAB_BLURCOLDE_TOOLTIP"));
         laplacexp->set_tooltip_text(M("TP_LOCALLAB_EXPLAP_TOOLTIP"));
         linear->set_tooltip_text(M("TP_LOCALLAB_EXPLAPLIN_TOOLTIP"));
