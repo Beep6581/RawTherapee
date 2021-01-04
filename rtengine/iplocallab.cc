@@ -591,6 +591,10 @@ struct local_params {
     float lowthrc;
     float higthrc;
     float decayc;
+    float recothre;
+    float lowthre;
+    float higthre;
+    float decaye;
     float recothrl;
     float lowthrl;
     float higthrl;
@@ -1055,6 +1059,12 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float local_lowthrc = (float)locallab.spots.at(sp).lowthresc;
     float local_higthrc = (float)locallab.spots.at(sp).higthresc;
     float local_decayc = (float)locallab.spots.at(sp).decayc;
+
+    float local_recothre = (float)locallab.spots.at(sp).recothrese;
+    float local_lowthre = (float)locallab.spots.at(sp).lowthrese;
+    float local_higthre = (float)locallab.spots.at(sp).higthrese;
+    float local_decaye = (float)locallab.spots.at(sp).decaye;
+
     float local_recothrl = (float)locallab.spots.at(sp).recothresl;
     float local_lowthrl = (float)locallab.spots.at(sp).lowthresl;
     float local_higthrl = (float)locallab.spots.at(sp).higthresl;
@@ -1418,6 +1428,11 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.lowthrc = local_lowthrc;
     lp.higthrc = local_higthrc;
     lp.decayc = local_decayc;
+    lp.recothre = local_recothre;
+    lp.lowthre = local_lowthre;
+    lp.higthre = local_higthre;
+    lp.decaye = local_decaye;
+    
     lp.recothrl = local_recothrl;
     lp.lowthrl = local_lowthrl;
     lp.higthrl = local_higthrl;
@@ -10562,7 +10577,7 @@ void maskrecov(const LabImage * bufcolfin, LabImage * original, LabImage * bufma
     float alow = th / lowc; 
     float blow = 1.f - th;
 #ifdef _OPENMP
-                    #pragma omp parallel for if (multiThread)
+   #pragma omp parallel for if (multiThread)
 #endif
     for (int ir = 0; ir < bfh; ir++)
         for (int jr = 0; jr < bfw; jr++) {
@@ -10571,6 +10586,7 @@ void maskrecov(const LabImage * bufcolfin, LabImage * original, LabImage * bufma
             if (lM < 327.68f * lowc) {
                 masklum[ir][jr] = alow * lmr + blow;
             } else if (lM < 327.68f * higc) {
+                //nothing...but we can..
             } else {
                 masklum[ir][jr] = ahigh * lmr + bhigh;
             }
@@ -10905,12 +10921,12 @@ void ImProcFunctions::Lab_Local(
 
 
                     if(lp.enaLMask && lp.recothrl != 1.f) {
-                      float hig = lp.higthrl;
-                      float low = lp.lowthrl;
-                      float recoth = lp.recothrl;
-                      float decay = lp.decayl;
-                      bool invmask = false;
-                      maskrecov(bufexpfin.get(), original, bufmaskoriglog.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
+                        float hig = lp.higthrl;
+                        float low = lp.lowthrl;
+                        float recoth = lp.recothrl;
+                        float decay = lp.decayl;
+                        bool invmask = false;
+                        maskrecov(bufexpfin.get(), original, bufmaskoriglog.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
                     }
                 transit_shapedetect2(call, 11, bufexporig.get(), bufexpfin.get(), originalmasklog.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
             }
@@ -14312,6 +14328,16 @@ void ImProcFunctions::Lab_Local(
                     if (lp.softradiusexp > 0.f && lp.expmet == 0) {
                         softproc(buforig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.1, 0.001, 0.5f, sk, multiThread, 1);
                     }
+                    
+                    if(lp.enaExpMask && lp.recothre != 1.f) {
+                        float hig = lp.higthre;
+                        float low = lp.lowthre;
+                        float recoth = lp.recothre;
+                        float decay = lp.decaye;
+                        bool invmask = false;
+                        maskrecov(bufexpfin.get(), original, bufmaskblurexp.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
+                    }
+                    
                     float meansob = 0.f;
                     transit_shapedetect2(call, 1, bufexporig.get(), bufexpfin.get(), originalmaskexp.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
                 }
@@ -15460,12 +15486,12 @@ void ImProcFunctions::Lab_Local(
                     //mask recovery
 
                     if(lp.enaColorMask && lp.recothrc != 1.f) {
-                      float hig = lp.higthrc;
-                      float low = lp.lowthrc;
-                      float recoth = lp.recothrc;
-                      float decay = lp.decayc;
-                      bool invmask = false;
-                      maskrecov(bufcolfin.get(), original, bufmaskblurcol.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
+                        float hig = lp.higthrc;
+                        float low = lp.lowthrc;
+                        float recoth = lp.recothrc;
+                        float decay = lp.decayc;
+                        bool invmask = false;
+                        maskrecov(bufcolfin.get(), original, bufmaskblurcol.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
                     }
                         float meansob = 0.f;
                         transit_shapedetect2(call, 0, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
