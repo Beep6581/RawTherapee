@@ -8757,7 +8757,6 @@ void ImProcFunctions::fftw_denoise(int sk, int GW, int GH, int max_numblox_W, in
                 }
             }
             for (int i = 0; i < 3; ++i) {
-              //  boxblur(mask, mask, 10 / sk, GW, GH, false);
                 boxblur(static_cast<float**>(mask), static_cast<float**>(mask), 10 / sk, GW, GH, false);
                 
             }
