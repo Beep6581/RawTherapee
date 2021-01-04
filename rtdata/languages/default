@@ -1249,6 +1249,10 @@ HISTORY_MSG_1001;Local - Log recovery threshold
 HISTORY_MSG_1002;Local - Log threshold mask low
 HISTORY_MSG_1003;Local - Log threshold mask high
 HISTORY_MSG_1004;Local - Log decay
+HISTORY_MSG_1005;Local - Exp recovery threshold
+HISTORY_MSG_1006;Local - Exp threshold mask low
+HISTORY_MSG_1007;Local - Exp threshold mask high
+HISTORY_MSG_1008;Local - Exp decay
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance

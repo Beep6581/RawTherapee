@@ -1131,6 +1131,10 @@ struct LocallabParams {
         double fatdetail;
         double fatanchor;
         double fatlevel;
+        double recothrese;
+        double lowthrese;
+        double higthrese;
+        double decaye;
         // Shadow highlight
         bool visishadhigh;
         bool expshadhigh;
