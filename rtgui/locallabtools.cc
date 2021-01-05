@@ -2496,6 +2496,13 @@ LocallabExposure::LocallabExposure():
     expchroma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EXPCHROMA"), -50, 100, 1, 5))),
     curveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_CURVEEDITOR_TONES_LABEL"))),
     shapeexpos(static_cast<DiagonalCurveEditor*>(curveEditorG->addCurve(CT_Diagonal, ""))),
+    exprecove(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
+    maskusablee(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
+    maskunusablee(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
+    recothrese(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+    lowthrese(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
+    higthrese(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
+    decaye(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
     expgradexp(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_EXPGRAD")))),
     strexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4., 4., 0.05, 0.))),
     angexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180, 180, 0.1, 0.))),
@@ -2597,6 +2604,11 @@ LocallabExposure::LocallabExposure():
 
     softradiusexp->setLogScale(10, 0);
     softradiusexp->setAdjusterListener(this);
+    recothrese->setAdjusterListener(this);
+    lowthrese->setAdjusterListener(this);
+    higthrese->setAdjusterListener(this);
+    decaye->setAdjusterListener(this);
+    setExpandAlignProperties(exprecove, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     inversexConn  = inversex->signal_toggled().connect(sigc::mem_fun(*this, &LocallabExposure::inversexChanged));
     inversex->set_tooltip_text(M("TP_LOCALLAB_INVERS_TOOLTIP"));
@@ -2706,6 +2718,16 @@ LocallabExposure::LocallabExposure():
     toolBox->pack_start(*curveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     exptoolexp->add(*toolBox, false);
     pack_start(*exptoolexp);
+    ToolParamBlock* const expBox3 = Gtk::manage(new ToolParamBlock());
+    expBox3->pack_start(*maskusablee, Gtk::PACK_SHRINK, 0);
+    expBox3->pack_start(*maskunusablee, Gtk::PACK_SHRINK, 0);
+    expBox3->pack_start(*recothrese);
+    expBox3->pack_start(*lowthrese);
+    expBox3->pack_start(*higthrese);
+    expBox3->pack_start(*decaye);
+    exprecove->add(*expBox3, false);
+    pack_start(*exprecove, false, false);
+
     ToolParamBlock* const gradBox = Gtk::manage(new ToolParamBlock());
     gradBox->pack_start(*strexp);
     gradBox->pack_start(*angexp);
@@ -2772,6 +2794,10 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
 //        expMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
 //        pdeFrame->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
         exppde->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
+        exprecove->set_tooltip_markup(M("TP_LOCALLAB_MASKREEXP_TOOLTIP"));
+        decaye->set_tooltip_text(M("TP_LOCALLAB_MASKDECAY_TOOLTIP"));
+        lowthrese->set_tooltip_text(M("TP_LOCALLAB_MASKLOWTHRESE_TOOLTIP"));
+        higthrese->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRESE_TOOLTIP"));
         blurexpde->set_tooltip_text(M("TP_LOCALLAB_BLURCOLDE_TOOLTIP"));
         laplacexp->set_tooltip_text(M("TP_LOCALLAB_EXPLAP_TOOLTIP"));
         linear->set_tooltip_text(M("TP_LOCALLAB_EXPLAPLIN_TOOLTIP"));
@@ -2806,6 +2832,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         exp->set_tooltip_text("");
         exppde->set_tooltip_text("");
         blurexpde->set_tooltip_text("");
+        exprecove->set_tooltip_markup("");
         laplacexp->set_tooltip_text("");
         linear->set_tooltip_text("");
         balanexp->set_tooltip_text("");
@@ -2838,6 +2865,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
 void LocallabExposure::setDefaultExpanderVisibility()
 {
     exptoolexp->set_expanded(false);
+    exprecove->set_expanded(false);
     exppde->set_expanded(false);
     expfat->set_expanded(false);
     expgradexp->set_expanded(false);
@@ -2905,6 +2933,11 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
         } else if (spot.exnoiseMethod == "medhi") {
             exnoiseMethod->set_active(2);
         }
+
+        recothrese->setValue((double)spot.recothrese);
+        lowthrese->setValue((double)spot.lowthrese);
+        higthrese->setValue((double)spot.higthrese);
+        decaye->setValue((double)spot.decaye);
 
         fatamount->setValue(spot.fatamount);
         fatdetail->setValue(spot.fatdetail);
@@ -2988,6 +3021,10 @@ void LocallabExposure::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         } else if (exnoiseMethod->get_active_row_number() == 2) {
             spot.exnoiseMethod = "medhi";
         }
+        spot.recothrese = recothrese->getValue();
+        spot.lowthrese = lowthrese->getValue();
+        spot.higthrese = higthrese->getValue();
+        spot.decaye = decaye->getValue();
 
         spot.fatamount = fatamount->getValue();
         spot.fatdetail = fatdetail->getValue();
@@ -3064,6 +3101,10 @@ void LocallabExposure::setDefaults(const rtengine::procparams::ProcParams* defPa
         slomaskexp->setDefault(defSpot.slomaskexp);
         strmaskexp->setDefault(defSpot.strmaskexp);
         angmaskexp->setDefault(defSpot.angmaskexp);
+        recothrese->setDefault((double)defSpot.recothrese);
+        lowthrese->setDefault((double)defSpot.lowthrese);
+        higthrese->setDefault((double)defSpot.higthrese);
+        decaye->setDefault((double)defSpot.decaye);
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -3130,6 +3171,34 @@ void LocallabExposure::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabfatanchor,
                                        fatanchor->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == recothrese) {
+            if (listener) {
+                listener->panelChanged(Evlocallabrecothrese,
+                                       recothrese->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == lowthrese) {
+            if (listener) {
+                listener->panelChanged(Evlocallablowthrese,
+                                       lowthrese->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == higthrese) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhigthrese,
+                                       higthrese->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == decaye) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdecaye,
+                                       decaye->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -3352,6 +3421,7 @@ void LocallabExposure::convertParamToNormal()
     slomaskexp->setValue(defSpot.slomaskexp);
     strmaskexp->setValue(defSpot.strmaskexp);
     angmaskexp->setValue(defSpot.angmaskexp);
+    decaye->setValue(defSpot.decaye);
 
     // Enable all listeners
     enableListener();
@@ -3377,6 +3447,10 @@ void LocallabExposure::convertParamToSimple()
  //   radmaskexp->setValue(defSpot.radmaskexp);
 //    chromaskexp->setValue(defSpot.chromaskexp);
 //    Lmaskexpshape->setCurve(defSpot.Lmaskexpcurve);
+    recothrese->setValue(defSpot.recothrese);
+    lowthrese->setValue(defSpot.lowthrese);
+    higthrese->setValue(defSpot.higthrese);
+    decaye->setValue(defSpot.decaye);
 
     // Enable all listeners
     enableListener();
@@ -3391,6 +3465,10 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
             blurexpde->hide();
             expgradexp->hide();
             softradiusexp->hide();
+            exprecove->hide();
+            maskusablee->hide();
+            maskunusablee->hide();
+            decaye->hide();
             expmaskexp->hide();
 
             break;
@@ -3403,14 +3481,25 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
             gammaskexp->hide();
             slomaskexp->hide();
             gradFramemask->hide();
+            exprecove->show();
+            if (enaExpMask->get_active()) {
+                maskusablee->show();
+                maskunusablee->hide();
+                
+            } else {
+                maskusablee->hide();
+                maskunusablee->show();
+            }
 
             // Specific Simple mode widgets are shown in Normal mode
             if (!inversex->get_active()) { // Keep widget hidden when invers is toggled
                 expgradexp->show();
                 softradiusexp->show();
+                exprecove->show();
             }
 
             expmaskexp->show();
+            decaye->hide();
 
             break;
 
@@ -3425,6 +3514,15 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
             if (!inversex->get_active()) { // Keep widget hidden when invers is toggled
                 expgradexp->show();
                 softradiusexp->show();
+                exprecove->show();
+            }
+            if (enaExpMask->get_active()) {
+                maskusablee->show();
+                maskunusablee->hide();
+                
+            } else {
+                maskusablee->hide();
+                maskunusablee->show();
             }
 
             expmaskexp->show();
@@ -3432,6 +3530,7 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
             gammaskexp->show();
             slomaskexp->show();
             gradFramemask->show();
+            decaye->show();
     }
 }
 
@@ -3538,6 +3637,14 @@ void LocallabExposure::showmaskexpMethodChangedinv()
 
 void LocallabExposure::enaExpMaskChanged()
 {
+    if (enaExpMask->get_active()) {
+        maskusablee->show();
+        maskunusablee->hide();
+    } else {
+        maskusablee->hide();
+        maskunusablee->show();
+    }
+    
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (enaExpMask->get_active()) {
@@ -3605,6 +3712,7 @@ void LocallabExposure::updateExposureGUI3()
     if (inversex->get_active()) {
         expMethod->hide();
         expcomp->setLabel(M("TP_LOCALLAB_EXPCOMPINV"));
+        exprecove->hide();
 
         // Manage specific case where expMethod is different from 0
         if (expMethod->get_active_row_number() > 0) {
@@ -3631,6 +3739,7 @@ void LocallabExposure::updateExposureGUI3()
         if (mode == Expert || mode == Normal) { // Keep widgets hidden in Simple mode
             softradiusexp->show();
             expgradexp->show();
+            exprecove->show();
         }
 
         showmaskexpMethodinv->hide();

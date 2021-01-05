@@ -539,6 +539,10 @@ public:
         bool fatdetail;
         bool fatanchor;
         bool fatlevel;
+        bool recothrese;
+        bool lowthrese;
+        bool higthrese;
+        bool decaye;
         // Shadow highlight
         bool visishadhigh;
         bool expshadhigh;

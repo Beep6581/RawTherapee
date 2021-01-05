@@ -3126,6 +3126,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     fatdetail(40.0),
     fatanchor(1.0),
     fatlevel(1.),
+    recothrese(1.),
+    lowthrese(12.),
+    higthrese(85.),
+    decaye(2.),
     // Shadow highlight
     visishadhigh(false),
     expshadhigh(false),
@@ -4278,6 +4282,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && fatdetail == other.fatdetail
         && fatanchor == other.fatanchor
         && fatlevel == other.fatlevel
+        && recothrese == other.recothrese
+        && lowthrese == other.lowthrese
+        && higthrese == other.higthrese
+        && decaye == other.decaye
         // Shadow highlight
         && visishadhigh == other.visishadhigh
         && expshadhigh == other.expshadhigh
@@ -5883,6 +5891,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->fatdetail, "Locallab", "Fatdetail_" + index_str, spot.fatdetail, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatanchor, "Locallab", "Fatanchor_" + index_str, spot.fatanchor, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatlevel, "Locallab", "Fatlevel_" + index_str, spot.fatlevel, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->recothrese, "Locallab", "Recothrese_" + index_str, spot.recothrese, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lowthrese, "Locallab", "Lowthrese_" + index_str, spot.lowthrese, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->higthrese, "Locallab", "Higthrese_" + index_str, spot.higthrese, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->decaye, "Locallab", "Decaye_" + index_str, spot.decaye, keyFile);
                 }
                 // Shadow highlight
                 if ((!pedited || spot_edited->visishadhigh) && spot.visishadhigh) {
@@ -7679,6 +7691,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Fatdetail_" + index_str, pedited, spot.fatdetail, spotEdited.fatdetail);
                 assignFromKeyfile(keyFile, "Locallab", "Fatanchor_" + index_str, pedited, spot.fatanchor, spotEdited.fatanchor);
                 assignFromKeyfile(keyFile, "Locallab", "Fatlevel_" + index_str, pedited, spot.fatlevel, spotEdited.fatlevel);
+                assignFromKeyfile(keyFile, "Locallab", "Recothrese_" + index_str, pedited, spot.recothrese, spotEdited.recothrese);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthrese_" + index_str, pedited, spot.lowthrese, spotEdited.lowthrese);
+                assignFromKeyfile(keyFile, "Locallab", "Higthrese_" + index_str, pedited, spot.higthrese, spotEdited.higthrese);
+                assignFromKeyfile(keyFile, "Locallab", "Decaye_" + index_str, pedited, spot.decaye, spotEdited.decaye);
                 // Shadow highlight
                 spot.visishadhigh = assignFromKeyfile(keyFile, "Locallab", "Expshadhigh_" + index_str, pedited, spot.expshadhigh, spotEdited.expshadhigh);
 

@@ -354,6 +354,14 @@ private:
     Adjuster* const expchroma;
     CurveEditorGroup* const curveEditorG;
     DiagonalCurveEditor* shapeexpos;
+    MyExpander* const exprecove;
+    Gtk::Label* const maskusablee;
+    Gtk::Label* const maskunusablee;
+    Adjuster* const recothrese;
+    Adjuster* const lowthrese;
+    Adjuster* const higthrese;
+    Adjuster* const decaye;
+    
     MyExpander* const expgradexp;
     Adjuster* const strexp;
     Adjuster* const angexp;
