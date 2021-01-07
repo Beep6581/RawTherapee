@@ -39,7 +39,7 @@
 
 #define MINLA0 0.01
 #define MAXLA0 16384
-#define CENTERLA0 500
+//#define CENTERLA0 500
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -71,7 +71,7 @@ static double wbSlider2Temp (double sval)
 
     return temp;
 }
-
+/*
 static double wbSlider2la (double sval)
 {
 
@@ -99,7 +99,8 @@ static double wbSlider2la (double sval)
 
     return la;
 }
-
+*/
+/*
 static double wbla2Slider (double la)
 {
 
@@ -153,7 +154,7 @@ static double wbla2Slider (double la)
 
     return sval;
 }
-
+*/
 
 
 static double wbTemp2Slider (double temp)
@@ -363,7 +364,9 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
 
 //   adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), 0.01, 16384., 0.001, 2000.)); // EV -7  ==> EV 17
-    adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 1997.4, NULL, NULL, &wbSlider2la, &wbla2Slider));
+//   adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 1997.4, NULL, NULL, &wbSlider2la, &wbla2Slider));
+    adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 2000.));//, NULL, NULL, &wbSlider2la, &wbla2Slider));
+    adapscen->setLogScale(500, 0);
 
    // adapscen->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     adapscen->set_tooltip_markup (M ("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
@@ -638,8 +641,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
     Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("circle-magenta-small.png"));
     Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("circle-green-small.png"));
-//   adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), 0.1,  16384., 0.1,   16.));
-    adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 16, NULL, NULL, &wbSlider2la, &wbla2Slider));
+    adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 16.));//, NULL, NULL, &wbSlider2la, &wbla2Slider));
+    adaplum->setLogScale(500, 0);
 
   //  adaplum->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
@@ -672,7 +675,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
     tempout->set_tooltip_markup (M ("TP_COLORAPP_TEMP2_TOOLTIP"));
  //   tempout->throwOnButtonRelease();
-    tempout->addAutoButton (M ("TP_COLORAPP_TEMPOUT_TOOLTIP"));
+ //   tempout->addAutoButton (M ("TP_COLORAPP_TEMPOUT_TOOLTIP"));
 
     tempout->show();
     greenout->show();
@@ -813,7 +816,7 @@ void ColorAppearance::neutral_pressed ()
     qcontrast->resetValue (false);
     colorh->resetValue (false);
     tempout->resetValue (false);
-    tempout->setAutoValue (true);
+//   tempout->setAutoValue (true);
     greenout->resetValue (false);
     ybout->resetValue (false);
     tempsc->resetValue (false);
@@ -905,7 +908,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         adapscen->setAutoInconsistent (multiImage && !pedited->colorappearance.autoadapscen);
         ybscen->setAutoInconsistent (multiImage && !pedited->colorappearance.autoybscen);
         set_inconsistent              (multiImage && !pedited->colorappearance.enabled);
-        tempout->setAutoInconsistent   (multiImage && !pedited->colorappearance.autotempout);
+    //    tempout->setAutoInconsistent   (multiImage && !pedited->colorappearance.autotempout);
 
         shape->setUnChanged (!pedited->colorappearance.curve);
         shape2->setUnChanged (!pedited->colorappearance.curve2);
@@ -1078,7 +1081,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     lastAutoAdapscen = pp->colorappearance.autoadapscen;
     lastAutoDegreeout = pp->colorappearance.autodegreeout;
     lastAutoybscen = pp->colorappearance.autoybscen;
-    lastAutotempout = pp->colorappearance.autotempout;
+//    lastAutotempout = pp->colorappearance.autotempout;
 
     degree->setValue (pp->colorappearance.degree);
     degree->setAutoValue (pp->colorappearance.autodegree);
@@ -1101,7 +1104,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     qcontrast->setValue (pp->colorappearance.qcontrast);
     colorh->setValue (pp->colorappearance.colorh);
     tempout->setValue (pp->colorappearance.tempout);
-    tempout->setAutoValue (pp->colorappearance.autotempout);
+//    tempout->setAutoValue (pp->colorappearance.autotempout);
     greenout->setValue (pp->colorappearance.greenout);
     ybout->setValue (pp->colorappearance.ybout);
     tempsc->setValue (pp->colorappearance.tempsc);
@@ -1168,7 +1171,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorappearance.curve2        = shape2->getCurve ();
     pp->colorappearance.curve3        = shape3->getCurve ();
     pp->colorappearance.tempout        = tempout->getValue ();
-    pp->colorappearance.autotempout    = tempout->getAutoValue ();
+//    pp->colorappearance.autotempout    = tempout->getAutoValue ();
     pp->colorappearance.greenout        = greenout->getValue ();
     pp->colorappearance.ybout        = ybout->getValue ();
     pp->colorappearance.tempsc        = tempsc->getValue ();
@@ -1247,7 +1250,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorappearance.tempsc        = tempsc->getEditedState ();
         pedited->colorappearance.greensc        = greensc->getEditedState ();
         pedited->colorappearance.presetcat02        = presetcat02->get_inconsistent ();
-        pedited->colorappearance.autotempout    = !tempout->getAutoInconsistent();
+//        pedited->colorappearance.autotempout    = !tempout->getAutoInconsistent();
 
     }
 
@@ -1595,8 +1598,14 @@ void ColorAppearance::presetcat02pressed ()
     degreeout->setValue(90);
     ybout->setValue(18);
     tempout->setValue (nexttemp);
-    tempout->setAutoValue (true);
-
+    
+/*    if(tempout->getAutoValue()) {
+        tempout->resetValue (false);
+    } else {
+        tempout->setValue (nexttemp);
+        tempout->setAutoValue (true);
+    }
+*/
     greenout->setValue (nextgreen);
     enableListener();
  } else {
@@ -1956,6 +1965,16 @@ void ColorAppearance::adjusterChanged(Adjuster* a, double newval)
 
 void ColorAppearance::adjusterAutoToggled(Adjuster* a)
 {
+    /*
+    if(presetcat02->get_active ()){
+        if(tempout->getAutoValue()) {
+            tempout->resetValue (false);
+        } else {
+            tempout->setValue (nexttemp);
+            tempout->setAutoValue (true);
+        }
+    }
+*/    
     if (multiImage) {
         if (degree->getAutoInconsistent()) {
             degree->setAutoInconsistent (false);
@@ -1991,7 +2010,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
             ybscen->setAutoInconsistent (true);
         }
 
-        lastAutotempout = tempout->getAutoValue();
+/*        lastAutotempout = tempout->getAutoValue();
 
         if (tempout->getAutoInconsistent()) {
             tempout->setAutoInconsistent (false);
@@ -2001,9 +2020,8 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
         }
 
         lastAutotempout = tempout->getAutoValue();
-
+*/
     }
-
     if (listener && (multiImage || getEnabled()) ) {
 
         if (a == degree) {
@@ -2046,7 +2064,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
                 listener->panelChanged (EvCATAutoyb, M ("GENERAL_DISABLED"));
             }
         }
-
+/*
         if (a == tempout) {
             if (tempout->getAutoInconsistent()) {
                 listener->panelChanged (EvCATAutotempout, M ("GENERAL_UNCHANGED"));
@@ -2056,7 +2074,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
                 listener->panelChanged (EvCATAutotempout, M ("GENERAL_DISABLED"));
             }
         }
-
+*/
     }
 }
 void ColorAppearance::enabledChanged ()

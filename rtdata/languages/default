@@ -2062,7 +2062,7 @@ TP_COLORAPP_MOD16;CIECAM16
 TP_COLORAPP_NEUTRAL;Reset
 TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
 TP_COLORAPP_PRESETCAT02;Preset cat02/16 automatic - Symmetric mode
-TP_COLORAPP_PRESETCAT02_TIP;Set combobox, sliders, temp, green so that Cat02/16 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change Cat02/16 adaptation Viewing conditions if needed.\nYou can change Temperature and Tint Viewing conditions if needed, and other settings if needed. 
+TP_COLORAPP_PRESETCAT02_TIP;Set combobox, sliders, temp, green so that Cat02/16 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change Cat02/16 adaptation Viewing conditions if needed.\nYou can change Temperature and Tint Viewing conditions if needed, and other settings if needed.\nAll auto checkbox are disabled 
 TP_COLORAPP_RSTPRO;Red & skin-tones protection
 TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
 TP_COLORAPP_SOURCEF_TOOLTIP;Corresponds to the shooting conditions and how to bring the conditions and data back to a "normal" area. Normal" means average or standard conditions and data, i.e. without taking into account CIECAM corrections.
