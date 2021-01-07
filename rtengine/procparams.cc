@@ -3349,7 +3349,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.0,
         0.0,
         0.35,
-        0.66,
+        0.33,
         0.,
         0.35,
         0.35,
