@@ -3324,7 +3324,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     epsbl(0),
     blMethod("blur"),
     chroMethod("lum"),
-    quamethod("cons"),
+    quamethod("none"),
     blurMethod("norm"),
     medMethod("33"),
     usemask(false),
