@@ -607,6 +607,9 @@ struct local_params {
     float noisechrodetail;
     float bilat;
     float noiselc;
+    float noiselc4;
+    float noiselc5;
+    float noiselc6;
     float noisecf;
     float noisecc;
     float mulloc[6];
@@ -629,6 +632,7 @@ struct local_params {
     bool sfena;
     bool cbdlena;
     bool denoiena;
+    bool wavcurvedenoi;
     bool expvib;
     bool exposena;
     bool hsena;
@@ -859,6 +863,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.quamet = 0;
     } else if (locallab.spots.at(sp).quamethod == "agre") {
         lp.quamet = 1;
+    } else if (locallab.spots.at(sp).quamethod == "none") {
+        lp.quamet = 2;
     }
 
     if (locallab.spots.at(sp).shMethod == "std") {
@@ -1026,6 +1032,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float local_noiself0 = 0.f;
     float local_noiself2 = 0.f;
     float local_noiselc = 0.f;
+    float lnoiselc4 = 0.f;
+    float lnoiselc5 = 0.f;
+    float lnoiselc6 = 0.f;
 
     if (locwavCurveden && locwavdenutili) {
         if (lp.denoiena) {
@@ -1040,12 +1049,15 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     if (wavcurveden) {
         if (lp.denoiena) {
             local_noiself0 = 250.f * locwavCurveden[0];
-            local_noiself = 250.f * locwavCurveden[166];
-            local_noiself2 = 250.f * locwavCurveden[333];
-            local_noiselc = 200.f * locwavCurveden[500];
-        }
+            local_noiself = 250.f * locwavCurveden[83];
+            local_noiself2 = 250.f * locwavCurveden[166];
+            local_noiselc = 200.f * locwavCurveden[250];
+            lnoiselc4 = 250.f * locwavCurveden[333];
+            lnoiselc5 = 250.f * locwavCurveden[416];
+            lnoiselc6 = 250.f * locwavCurveden[500];
+       }
     }
-
+    lp.wavcurvedenoi = wavcurveden;
     float local_noiseldetail = (float)locallab.spots.at(sp).noiselumdetail;
     int local_noiselequal = locallab.spots.at(sp).noiselequal;
     float local_noisechrodetail = (float)locallab.spots.at(sp).noisechrodetail;
@@ -1453,6 +1465,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.noiselequal = local_noiselequal;
     lp.noisechrodetail = local_noisechrodetail;
     lp.noiselc = local_noiselc;
+    lp.noiselc4 = lnoiselc4;
+    lp.noiselc5 = lnoiselc5;
+    lp.noiselc6 = lnoiselc6;
+    
     lp.noisecf = local_noisecf;
     lp.noisecc = local_noisecc;
     lp.sensden = local_sensiden;
@@ -6273,11 +6289,11 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
         deltasobelL = new LabImage(spotSi, spotSi);
         bool isdenoise = false;
 
-        if ((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f) && lp.denoiena) {
+        if ((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f) && lp.denoiena) {
             isdenoise = true;
         }
 
-        if (isdenoise) {
+        if (isdenoise) { 
             origblur = new LabImage(spotSi, spotSi);
             blurorig = new LabImage(spotSi, spotSi);
 
@@ -8850,9 +8866,9 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
     bool execdenoi = noiscfactiv && ((lp.colorena && execcolor) || (lp.tonemapena && lp.strengt != 0.f) || (lp.cbdlena && execbdl) || (lp.sfena && lp.strng > 0.f) || (lp.lcena && lp.lcamount > 0.f) || (lp.sharpena && lp.shrad > 0.42) || (lp.retiena && lp.str > 0.f)  || (lp.exposena && lp.expcomp != 0.f)  || (lp.expvib && lp.past != 0.f));
     bool execmaskden = (lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.smasktyp != 0;
 
-    if (((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f
+    if (((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f
 //            || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4  || aut == 1 || aut == 2) && lp.denoiena) || execdenoi) {  // sk == 1 ??
-            || execmaskden || aut == 1 || aut == 2) && lp.denoiena) || execdenoi) {  // sk == 1 ??
+            || execmaskden || aut == 1 || aut == 2) && lp.denoiena && lp.quamet != 2) || execdenoi) {  // sk == 1 ??
 
         StopWatch Stop1("locallab Denoise called");
 
@@ -8948,9 +8964,9 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         vari[2] = 0.8f * SQR((lp.noiself2 / 125.0) * (1.0 + lp.noiself2 / 25.0));
 
                         vari[3] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                        vari[4] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                        vari[5] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                        vari[6] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                        vari[4] = 0.8f * SQR((lp.noiselc4 / 125.0) * (1.0 + lp.noiselc4 / 25.0));
+                        vari[5] = 0.8f * SQR((lp.noiselc5 / 125.0) * (1.0 + lp.noiselc5 / 25.0));
+                        vari[6] = 0.8f * SQR((lp.noiselc6 / 125.0) * (1.0 + lp.noiselc6 / 25.0));
                     } else if (levred == 4) {
                         edge = 3;
                         vari[0] = 0.8f * SQR((lp.noiself0 / 125.0) * (1.0 + lp.noiself0 / 25.0));
@@ -9009,6 +9025,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     vari[3] = rtengine::max(0.000001f, kr3 * vari[3]);
 
                     if (levred == 7) {
+                        kr3 = kr4 = kr5 = 1.f;
                         vari[4] = rtengine::max(0.000001f, kr4 * vari[4]);
                         vari[5] = rtengine::max(0.000001f, kr5 * vari[5]);
                         vari[6] = rtengine::max(0.000001f, kr5 * vari[6]);
@@ -9418,7 +9435,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
             }
 
             if (!Ldecomp.memory_allocation_failed() && aut == 0) {
-                if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f) {
+                if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.wavcurvedenoi || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f  && lp.quamet != 2) {
                     fftw_denoise(sk, GW, GH, max_numblox_W, min_numblox_W, tmp1.L, Lin,  numThreads, lp, 0);
                 }
             }
@@ -9629,9 +9646,9 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                             vari[2] = 0.8f * SQR((lp.noiself2 / 125.0) * (1.0 + lp.noiself2 / 25.0));
 
                             vari[3] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                            vari[4] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                            vari[5] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
-                            vari[6] = 0.8f * SQR((lp.noiselc / 125.0) * (1.0 + lp.noiselc / 25.0));
+                            vari[4] = 0.8f * SQR((lp.noiselc4 / 125.0) * (1.0 + lp.noiselc4 / 25.0));
+                            vari[5] = 0.8f * SQR((lp.noiselc5 / 125.0) * (1.0 + lp.noiselc5 / 25.0));
+                            vari[6] = 0.8f * SQR((lp.noiselc6 / 125.0) * (1.0 + lp.noiselc6 / 25.0));
                         } else if (levred == 4) {
                             edge = 3;
                             vari[0] = 0.8f * SQR((lp.noiself0 / 125.0) * (1.0 + lp.noiself0 / 25.0));
@@ -9691,6 +9708,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         vari[3] = rtengine::max(0.000001f, kr3 * vari[3]);
 
                         if (levred == 7) {
+                            kr3 = kr4 = kr5 = 1.f;
                             vari[4] = rtengine::max(0.000001f, kr4 * vari[4]);
                             vari[5] = rtengine::max(0.000001f, kr5 * vari[5]);
                             vari[6] = rtengine::max(0.000001f, kr5 * vari[6]);
@@ -10100,7 +10118,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                 if (!Ldecomp.memory_allocation_failed() && aut == 0) {
 
 
-                    if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f) {
+                    if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.wavcurvedenoi || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f && lp.quamet != 2) {
                         fftw_denoise(sk, bfw, bfh, max_numblox_W, min_numblox_W, bufwv.L, Lin,  numThreads, lp, 0);
                     }
                 }
@@ -10956,7 +10974,7 @@ void ImProcFunctions::Lab_Local(
 //Prepare mask for Blur and noise and Denoise
     bool denoiz = false;
 
-    if ((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f  || lp.bilat > 0.f) && lp.denoiena) {
+    if ((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.noiselc > 0.f || lp.wavcurvedenoi || lp.noisecf > 0.f || lp.noisecc > 0.f  || lp.bilat > 0.f) && lp.denoiena) {
         denoiz = true;
     }
 
@@ -11755,7 +11773,7 @@ void ImProcFunctions::Lab_Local(
     }
 
 //local denoise
-    if (lp.denoiena && (lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f )) {//disable denoise if not used
+    if (lp.denoiena && (lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f )) {//disable denoise if not used
         float slidL[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f}; 
         float slida[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
         float slidb[8] = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
