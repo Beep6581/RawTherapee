@@ -3210,6 +3210,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     fatanchorSH(50.0),
     gamSH(2.4),
     sloSH(12.92),
+    recothress(1.),
+    lowthress(12.),
+    higthress(85.),
+    decays(2.),
     // Vibrance
     visivibrance(false),
     expvibrance(false),
@@ -4326,6 +4330,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && fatanchorSH == other.fatanchorSH
         && gamSH == other.gamSH
         && sloSH == other.sloSH
+        && recothress == other.recothress
+        && lowthress == other.lowthress
+        && higthress == other.higthress
+        && decays == other.decays
         // Vibrance
         && visivibrance == other.visivibrance
         && expvibrance == other.expvibrance
@@ -5931,6 +5939,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->fatanchorSH, "Locallab", "FatanchorSH_" + index_str, spot.fatanchorSH, keyFile);
                     saveToKeyfile(!pedited || spot_edited->gamSH, "Locallab", "GamSH_" + index_str, spot.gamSH, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sloSH, "Locallab", "SloSH_" + index_str, spot.sloSH, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->recothress, "Locallab", "Recothress_" + index_str, spot.recothress, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lowthress, "Locallab", "Lowthress_" + index_str, spot.lowthress, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->higthress, "Locallab", "Higthress_" + index_str, spot.higthress, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->decays, "Locallab", "Decays_" + index_str, spot.decays, keyFile);
                 }
                 // Vibrance
                 if ((!pedited || spot_edited->visivibrance) && spot.visivibrance) {
@@ -7736,6 +7748,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "FatanchorSH_" + index_str, pedited, spot.fatanchorSH, spotEdited.fatanchorSH);
                 assignFromKeyfile(keyFile, "Locallab", "GamSH_" + index_str, pedited, spot.gamSH, spotEdited.gamSH);
                 assignFromKeyfile(keyFile, "Locallab", "SloSH_" + index_str, pedited, spot.sloSH, spotEdited.sloSH);
+                assignFromKeyfile(keyFile, "Locallab", "Recothress_" + index_str, pedited, spot.recothress, spotEdited.recothress);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthress_" + index_str, pedited, spot.lowthress, spotEdited.lowthress);
+                assignFromKeyfile(keyFile, "Locallab", "Higthress_" + index_str, pedited, spot.higthress, spotEdited.higthress);
+                assignFromKeyfile(keyFile, "Locallab", "Decays_" + index_str, pedited, spot.decays, spotEdited.decays);
                 // Vibrance
                 spot.visivibrance = assignFromKeyfile(keyFile, "Locallab", "Expvibrance_" + index_str, pedited, spot.expvibrance, spotEdited.expvibrance);
 

@@ -3784,6 +3784,13 @@ LocallabShadow::LocallabShadow():
     sh_radius(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_RADIUS"), 0, 100, 1, 40))),
     sensihs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
     blurSHde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
+    exprecovs(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
+    maskusables(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
+    maskunusables(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
+    recothress(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+    lowthress(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
+    higthress(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
+    decays(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
     gamFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GAMFRA")))),
     gamSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMSH"), 0.25, 15.0, 0.01, 2.4))),
     sloSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOSH"), 0.0, 500.0, 0.01, 12.92))),
@@ -3834,6 +3841,13 @@ LocallabShadow::LocallabShadow():
     s_tonalwidth->setAdjusterListener(this);
 
     sh_radius->setAdjusterListener(this);
+
+
+    recothress->setAdjusterListener(this);
+    lowthress->setAdjusterListener(this);
+    higthress->setAdjusterListener(this);
+    decays->setAdjusterListener(this);
+    setExpandAlignProperties(exprecovs, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     sensihs->setAdjusterListener(this);
 
@@ -3931,6 +3945,16 @@ LocallabShadow::LocallabShadow():
     pack_start(*sh_radius);
     // pack_start(*sensihs);
     pack_start(*blurSHde);
+    ToolParamBlock* const shBox3 = Gtk::manage(new ToolParamBlock());
+    shBox3->pack_start(*maskusables, Gtk::PACK_SHRINK, 0);
+    shBox3->pack_start(*maskunusables, Gtk::PACK_SHRINK, 0);
+    shBox3->pack_start(*recothress);
+    shBox3->pack_start(*lowthress);
+    shBox3->pack_start(*higthress);
+    shBox3->pack_start(*decays);
+   // colBox3->pack_start(*invmaskc);
+    exprecovs->add(*shBox3, false);
+    pack_start(*exprecovs, false, false);
     gamFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const gammBox = Gtk::manage(new ToolParamBlock());
     gammBox->pack_start(*gamSH);
@@ -4005,6 +4029,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         gamSH->set_tooltip_text(M("TP_LOCALLAB_SHTRC_TOOLTIP"));
         sloSH->set_tooltip_text(M("TP_LOCALLAB_SHTRC_TOOLTIP"));
         strSH->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
+        exprecovs->set_tooltip_markup(M("TP_LOCALLAB_MASKRESH_TOOLTIP"));
         expmasksh->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         blurSHde->set_tooltip_text(M("TP_LOCALLAB_BLURCOLDE_TOOLTIP"));
         CCmaskSHshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
@@ -4031,6 +4056,9 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         shadows->set_tooltip_text("");
         s_tonalwidth->set_tooltip_text("");
         sh_radius->set_tooltip_text("");
+        decays->set_tooltip_text(M("TP_LOCALLAB_MASKDECAY_TOOLTIP"));
+        lowthress->set_tooltip_text(M("TP_LOCALLAB_MASKLOWTHRESS_TOOLTIP"));
+        higthress->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRESS_TOOLTIP"));
         
     } else {
         exp->set_tooltip_text("");
@@ -4060,12 +4088,17 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         shadows->set_tooltip_text("");
         s_tonalwidth->set_tooltip_text("");
         sh_radius->set_tooltip_text("");
+        exprecovs->set_tooltip_markup("");
+        decays->set_tooltip_text("");
+        lowthress->set_tooltip_text("");
+        higthress->set_tooltip_text("");
         
     }
 }
 
 void LocallabShadow::setDefaultExpanderVisibility()
 {
+    exprecovs->set_expanded(false);
     expgradsh->set_expanded(false);
     expmasksh->set_expanded(false);
 }
@@ -4118,6 +4151,10 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         for (int i = 0; i < 5; i++) {
             multipliersh[i]->setValue((double)spot.multsh[i]);
         }
+        recothress->setValue((double)spot.recothress);
+        lowthress->setValue((double)spot.lowthress);
+        higthress->setValue((double)spot.higthress);
+        decays->setValue((double)spot.decays);
 
         detailSH->setValue((double)spot.detailSH);
         highlights->setValue((double)spot.highlights);
@@ -4209,6 +4246,10 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         spot.LmaskSHcurve = LmaskSHshape->getCurve();
         spot.fatamountSH = fatamountSH->getValue();
         spot.fatanchorSH = fatanchorSH->getValue();
+        spot.recothress = recothress->getValue();
+        spot.lowthress = lowthress->getValue();
+        spot.higthress = higthress->getValue();
+        spot.decays = decays->getValue();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -4246,6 +4287,10 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
         slomaskSH->setDefault(defSpot.slomaskSH);
         fatamountSH->setDefault(defSpot.fatamountSH);
         fatanchorSH->setDefault(defSpot.fatanchorSH);
+        recothress->setDefault((double)defSpot.recothress);
+        lowthress->setDefault((double)defSpot.lowthress);
+        higthress->setDefault((double)defSpot.higthress);
+        decays->setDefault((double)defSpot.decays);
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -4307,6 +4352,36 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
                                        sh_radius->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
+
+        if (a == recothress) {
+            
+            if (listener) {
+                listener->panelChanged(Evlocallabrecothress,
+                                       recothress->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == lowthress) {
+            if (listener) {
+                listener->panelChanged(Evlocallablowthress,
+                                       lowthress->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == higthress) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhigthress,
+                                       higthress->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == decays) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdecays,
+                                       decays->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
 
         if (a == sensihs) {
             if (listener) {
@@ -4471,6 +4546,7 @@ void LocallabShadow::convertParamToNormal()
     slomaskSH->setValue(defSpot.slomaskSH);
     fatamountSH->setValue(defSpot.fatamountSH);
     fatanchorSH->setValue(defSpot.fatanchorSH);
+    decays->setValue(defSpot.decays);
 
     // Enable all listeners
     enableListener();
@@ -4498,6 +4574,11 @@ void LocallabShadow::convertParamToSimple()
  //   radmaskSH->setValue(defSpot.radmaskSH);
  //   chromaskSH->setValue(defSpot.chromaskSH);
  //   LmaskSHshape->setCurve(defSpot.LmaskSHcurve);
+ 
+    recothress->setValue(defSpot.recothress);
+    lowthress->setValue(defSpot.lowthress);
+    higthress->setValue(defSpot.higthresc);
+    decays->setValue(defSpot.decays);
 
     // Enable all listeners
     enableListener();
@@ -4512,6 +4593,10 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             gamFrame->hide();
             expgradsh->hide();
             expmasksh->hide();
+            exprecovs->hide();
+            maskusables->hide();
+            maskunusables->hide();
+            decays->hide();
 
             break;
 
@@ -4522,17 +4607,29 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
             gammaskSH->hide();
             slomaskSH->hide();
             fatSHFrame->hide();
+            exprecovs->show();
 
             // Specific Simple mode widgets are shown in Normal mode
             if (shMethod->get_active_row_number() != 0) { // Keep widget hidden when shMethod is equal to 0
                 gamFrame->show();
             }
 
+            if (enaSHMask->get_active()) {
+                maskusables->show();
+                maskunusables->hide();
+                
+            } else {
+                maskusables->hide();
+                maskunusables->show();
+            }
+
             if (!inverssh->get_active()) { // Keep widget hidden when inverssh is toggled
                 expgradsh->show();
+                exprecovs->show();
             }
 
             expmasksh->show();
+            decays->hide();
 
             break;
 
@@ -4546,7 +4643,18 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
 
             if (!inverssh->get_active()) { // Keep widget hidden when inverssh is toggled
                 expgradsh->show();
+                exprecovs->show();
             }
+            if (enaSHMask->get_active()) {
+                maskusables->show();
+                maskunusables->hide();
+                
+            } else {
+                maskusables->hide();
+                maskunusables->show();
+            }
+            exprecovs->show();
+            decays->show();
 
             expmasksh->show();
             lapmaskSH->show();
@@ -4650,6 +4758,15 @@ void LocallabShadow::showmaskSHMethodChangedinv()
 
 void LocallabShadow::enaSHMaskChanged()
 {
+    if (enaSHMask->get_active()) {
+        maskusables->show();
+        maskunusables->hide();
+
+    } else {
+        maskusables->hide();
+        maskunusables->show();
+    }
+    
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (enaSHMask->get_active()) {
@@ -4676,9 +4793,11 @@ void LocallabShadow::updateShadowGUI1()
         showmaskSHMethod->set_active(0);
         showmaskSHMethodConn.block(false);
         showmaskSHMethodinv->show();
+        exprecovs->hide();
     } else {
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
             expgradsh->show();
+            exprecovs->show();
         }
 
         showmaskSHMethod->show();

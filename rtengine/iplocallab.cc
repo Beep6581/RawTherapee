@@ -595,6 +595,10 @@ struct local_params {
     float lowthre;
     float higthre;
     float decaye;
+    float recothrs;
+    float lowthrs;
+    float higthrs;
+    float decays;
     float recothrl;
     float lowthrl;
     float higthrl;
@@ -1065,6 +1069,11 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float local_higthre = (float)locallab.spots.at(sp).higthrese;
     float local_decaye = (float)locallab.spots.at(sp).decaye;
 
+    float local_recothrs = (float)locallab.spots.at(sp).recothress;
+    float local_lowthrs = (float)locallab.spots.at(sp).lowthress;
+    float local_higthrs = (float)locallab.spots.at(sp).higthress;
+    float local_decays = (float)locallab.spots.at(sp).decays;
+
     float local_recothrl = (float)locallab.spots.at(sp).recothresl;
     float local_lowthrl = (float)locallab.spots.at(sp).lowthresl;
     float local_higthrl = (float)locallab.spots.at(sp).higthresl;
@@ -1432,6 +1441,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.lowthre = local_lowthre;
     lp.higthre = local_higthre;
     lp.decaye = local_decaye;
+    lp.recothrs = local_recothrs;
+    lp.lowthrs = local_lowthrs;
+    lp.higthrs = local_higthrs;
+    lp.decays = local_decays;
     
     lp.recothrl = local_recothrl;
     lp.lowthrl = local_lowthrl;
@@ -12601,6 +12614,15 @@ void ImProcFunctions::Lab_Local(
                     delete tmpImage;
                 }
             }
+
+                    if(lp.enaSHMask && lp.recothrs != 1.f) {
+                        float hig = lp.higthrs;
+                        float low = lp.lowthrs;
+                        float recoth = lp.recothrs;
+                        float decay = lp.decays;
+                        bool invmask = false;
+                        maskrecov(bufexpfin.get(), original, bufmaskorigSH.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
+                    }
 
             transit_shapedetect2(call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
