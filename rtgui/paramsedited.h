@@ -575,6 +575,10 @@ public:
         bool fatanchorSH;
         bool gamSH;
         bool sloSH;
+        bool recothress;
+        bool lowthress;
+        bool higthress;
+        bool decays;
         // Vibrance
         bool visivibrance;
         bool expvibrance;
