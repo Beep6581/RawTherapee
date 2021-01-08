@@ -6252,6 +6252,7 @@ LocallabBlur::LocallabBlur():
 
     quamethod->append(M("TP_WAVELET_QUACONSER"));
     quamethod->append(M("TP_WAVELET_QUAAGRES"));
+    quamethod->append(M("TP_WAVELET_QUANONE"));
     quamethodconn = quamethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabBlur::quamethodChanged));
     Gtk::Label* const quaLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DENQUA") + ":"));
     quaHBox->pack_start(*quaLabel, Gtk::PACK_SHRINK, 4);
@@ -6828,6 +6829,8 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
             quamethod->set_active(0);
         } else if (spot.quamethod == "agre") {
             quamethod->set_active(1);
+        } else if (spot.quamethod == "none") {
+            quamethod->set_active(2);
         }
 
         activlum->set_active(spot.activlum);
@@ -6963,6 +6966,8 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
             spot.quamethod = "cons";
         } else if (quamethod->get_active_row_number() == 1) {
             spot.quamethod = "agre";
+        } else if (quamethod->get_active_row_number() == 2) {
+            spot.quamethod = "none";
         }
 
         spot.activlum = activlum->get_active();

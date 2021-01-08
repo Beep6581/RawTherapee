@@ -863,6 +863,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.quamet = 0;
     } else if (locallab.spots.at(sp).quamethod == "agre") {
         lp.quamet = 1;
+    } else if (locallab.spots.at(sp).quamethod == "none") {
+        lp.quamet = 2;
     }
 
     if (locallab.spots.at(sp).shMethod == "std") {
@@ -8866,7 +8868,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
     if (((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f
 //            || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4  || aut == 1 || aut == 2) && lp.denoiena) || execdenoi) {  // sk == 1 ??
-            || execmaskden || aut == 1 || aut == 2) && lp.denoiena) || execdenoi) {  // sk == 1 ??
+            || execmaskden || aut == 1 || aut == 2) && lp.denoiena && lp.quamet != 2) || execdenoi) {  // sk == 1 ??
 
         StopWatch Stop1("locallab Denoise called");
 
@@ -9433,7 +9435,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
             }
 
             if (!Ldecomp.memory_allocation_failed() && aut == 0) {
-                if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.wavcurvedenoi || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f) {
+                if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.wavcurvedenoi || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f  && lp.quamet != 2) {
                     fftw_denoise(sk, GW, GH, max_numblox_W, min_numblox_W, tmp1.L, Lin,  numThreads, lp, 0);
                 }
             }
@@ -10116,7 +10118,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                 if (!Ldecomp.memory_allocation_failed() && aut == 0) {
 
 
-                    if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.wavcurvedenoi || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f) {
+                    if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.wavcurvedenoi || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f && lp.quamet != 2) {
                         fftw_denoise(sk, bfw, bfh, max_numblox_W, min_numblox_W, bufwv.L, Lin,  numThreads, lp, 0);
                     }
                 }
