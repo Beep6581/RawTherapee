@@ -1238,6 +1238,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).fatanchorSH = locallab.spots.at(j).fatanchorSH && pSpot.fatanchorSH == otherSpot.fatanchorSH;
                 locallab.spots.at(j).gamSH = locallab.spots.at(j).gamSH && pSpot.gamSH == otherSpot.gamSH;
                 locallab.spots.at(j).sloSH = locallab.spots.at(j).sloSH && pSpot.sloSH == otherSpot.sloSH;
+                locallab.spots.at(j).recothress = locallab.spots.at(j).recothress && pSpot.recothress == otherSpot.recothress;
+                locallab.spots.at(j).lowthress = locallab.spots.at(j).lowthress && pSpot.lowthress == otherSpot.lowthress;
+                locallab.spots.at(j).higthress = locallab.spots.at(j).higthress && pSpot.higthress == otherSpot.higthress;
+                locallab.spots.at(j).decays = locallab.spots.at(j).decays && pSpot.decays == otherSpot.decays;
                 // Vibrance
                 locallab.spots.at(j).visivibrance = locallab.spots.at(j).visivibrance && pSpot.visivibrance == otherSpot.visivibrance;
                 locallab.spots.at(j).expvibrance = locallab.spots.at(j).expvibrance && pSpot.expvibrance == otherSpot.expvibrance;
@@ -3901,6 +3905,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).sloSH) {
             toEdit.locallab.spots.at(i).sloSH = mods.locallab.spots.at(i).sloSH;
+        }
+
+        if (locallab.spots.at(i).recothress) {
+            toEdit.locallab.spots.at(i).recothress = mods.locallab.spots.at(i).recothress;
+        }
+
+        if (locallab.spots.at(i).lowthress) {
+            toEdit.locallab.spots.at(i).lowthress = mods.locallab.spots.at(i).lowthress;
+        }
+
+        if (locallab.spots.at(i).higthress) {
+            toEdit.locallab.spots.at(i).higthress = mods.locallab.spots.at(i).higthress;
+        }
+
+        if (locallab.spots.at(i).decays) {
+            toEdit.locallab.spots.at(i).decays = mods.locallab.spots.at(i).decays;
         }
 
         // Vibrance
@@ -6652,6 +6672,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     fatanchorSH(v),
     gamSH(v),
     sloSH(v),
+    recothress(v),
+    lowthress(v),
+    higthress(v),
+    decays(v),
     // Vibrance
     visivibrance(v),
     expvibrance(v),
@@ -7193,6 +7217,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     fatanchorSH = v;
     gamSH = v;
     sloSH = v;
+    recothress = v;
+    lowthress = v;
+    higthress = v;
+    decays = v;
     // Vibrance
     visivibrance = v;
     expvibrance = v;

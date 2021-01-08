@@ -448,6 +448,13 @@ private:
     Adjuster* const sh_radius;
     Adjuster* const sensihs;
     Adjuster* const blurSHde;
+    MyExpander* const exprecovs;
+    Gtk::Label* const maskusables;
+    Gtk::Label* const maskunusables;
+    Adjuster* const recothress;
+    Adjuster* const lowthress;
+    Adjuster* const higthress;
+    Adjuster* const decays;
     Gtk::Frame* const gamFrame;
     Adjuster* const gamSH;
     Adjuster* const sloSH;

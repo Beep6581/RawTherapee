@@ -1167,6 +1167,10 @@ struct LocallabParams {
         double fatanchorSH;
         double gamSH;
         double sloSH;
+        double recothress;
+        double lowthress;
+        double higthress;
+        double decays;
         // Vibrance
         bool visivibrance;
         bool expvibrance;
