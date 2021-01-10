@@ -5292,7 +5292,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             surrHBox->show();
             expL->hide();
             surHBox->hide();
-            expmaskL->hide();
+            expmaskL->show();
             gradlogFrame->show();
             if (enaLMask->get_active()) {
                 maskusablel->show();
@@ -5379,7 +5379,7 @@ void LocallabLog::convertParamToNormal()
     lightl->setValue(defSpot.lightl);
     lightq->setValue(defSpot.lightq);
     sursour->set_active(0);
-    enaLMask->set_active(false);
+//    enaLMask->set_active(true);
     decayl->setValue(defSpot.decayl);
     // Enable all listeners
     enableListener();
