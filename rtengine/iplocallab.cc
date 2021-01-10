@@ -12235,7 +12235,8 @@ void ImProcFunctions::Lab_Local(
             const int bfh = yend - ystart;
             const int bfw = xend - xstart;
 
-            if (bfw >= mSP && bfh >= mSP) {
+            if (bfw >= mDEN && bfh >= mDEN) {
+               // printf("OK TM\n");
                 array2D<float> buflight(bfw, bfh);
                 JaggedArray<float> bufchro(bfw, bfh);
                 std::unique_ptr<LabImage> bufgb(new LabImage(bfw, bfh));
