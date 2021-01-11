@@ -3292,6 +3292,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0,
         1.0
     },
+    recothresv(1.),
+    lowthresv(12.),
+    higthresv(85.),
+    decayv(2.),
     // Soft Light
     visisoft(false),
     expsoft(false),
@@ -4362,6 +4366,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && strvibh == other.strvibh
         && angvib == other.angvib
         && Lmaskvibcurve == other.Lmaskvibcurve
+        && recothresv == other.recothresv
+        && lowthresv == other.lowthresv
+        && higthresv == other.higthresv
+        && decayv == other.decayv
         // Soft Light
         && visisoft == other.visisoft
         && expsoft == other.expsoft
@@ -5972,6 +5980,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->strvibh, "Locallab", "Strvibh_" + index_str, spot.strvibh, keyFile);
                     saveToKeyfile(!pedited || spot_edited->angvib, "Locallab", "Angvib_" + index_str, spot.angvib, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Lmaskvibcurve, "Locallab", "LmaskvibCurve_" + index_str, spot.Lmaskvibcurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->recothresv, "Locallab", "Recothresv_" + index_str, spot.recothresv, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lowthresv, "Locallab", "Lowthresv_" + index_str, spot.lowthresv, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->higthresv, "Locallab", "Higthresv_" + index_str, spot.higthresv, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->decayv, "Locallab", "Decayv_" + index_str, spot.decayv, keyFile);
                 }
                 // Soft Light
                 if ((!pedited || spot_edited->visisoft) && spot.visisoft) {
@@ -7794,6 +7806,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Strvibh_" + index_str, pedited, spot.strvibh, spotEdited.strvibh);
                 assignFromKeyfile(keyFile, "Locallab", "Angvib_" + index_str, pedited, spot.angvib, spotEdited.angvib);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskvibCurve_" + index_str, pedited, spot.Lmaskvibcurve, spotEdited.Lmaskvibcurve);
+                assignFromKeyfile(keyFile, "Locallab", "Recothresv_" + index_str, pedited, spot.recothresv, spotEdited.recothresv);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthresv_" + index_str, pedited, spot.lowthresv, spotEdited.lowthresv);
+                assignFromKeyfile(keyFile, "Locallab", "Higthresv_" + index_str, pedited, spot.higthresv, spotEdited.higthresv);
+                assignFromKeyfile(keyFile, "Locallab", "Decayv_" + index_str, pedited, spot.decayv, spotEdited.decayv);
                 // Soft Light
                 spot.visisoft = assignFromKeyfile(keyFile, "Locallab", "Expsoft_" + index_str, pedited, spot.expsoft, spotEdited.expsoft);
 

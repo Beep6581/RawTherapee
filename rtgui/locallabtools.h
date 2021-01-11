@@ -540,6 +540,13 @@ private:
     Adjuster* const sensiv;
     CurveEditorGroup* const curveEditorGG;
     DiagonalCurveEditor* const skinTonesCurve;
+    MyExpander* const exprecovv;
+    Gtk::Label* const maskusablev;
+    Gtk::Label* const maskunusablev;
+    Adjuster* const recothresv;
+    Adjuster* const lowthresv;
+    Adjuster* const higthresv;
+    Adjuster* const decayv;
     MyExpander* const expgradvib;
     Adjuster* const strvib;
     Adjuster* const strvibab;

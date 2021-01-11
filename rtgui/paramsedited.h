@@ -607,6 +607,10 @@ public:
         bool strvibh;
         bool angvib;
         bool Lmaskvibcurve;
+        bool recothresv;
+        bool lowthresv;
+        bool higthresv;
+        bool decayv;
         // Soft Light
         bool visisoft;
         bool expsoft;
