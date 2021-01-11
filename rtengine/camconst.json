@@ -400,6 +400,13 @@ Camera constants:
             ]
         }
     },
+    
+    { // Quality C, initial data by @agriggio, white frame samples provided by @noirsabb in #5862, color charts not processed yet
+        "make_model" : "CANON EOS-1D X MARK III",
+        "raw_crop": [ 72, 38, 5496, 3670 ],
+        "masked_areas" : [ 40, 10, 5534, 70 ],
+        "ranges" : { "white" : 16382 }
+    },
 
     { // Quality A
         "make_model": "Canon EOS 5D Mark III",
