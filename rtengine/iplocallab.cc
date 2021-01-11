@@ -595,6 +595,10 @@ struct local_params {
     float lowthre;
     float higthre;
     float decaye;
+    float recothrv;
+    float lowthrv;
+    float higthrv;
+    float decayv;
     float recothrs;
     float lowthrs;
     float higthrs;
@@ -1081,6 +1085,11 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float local_higthre = (float)locallab.spots.at(sp).higthrese;
     float local_decaye = (float)locallab.spots.at(sp).decaye;
 
+    float local_recothrv = (float)locallab.spots.at(sp).recothresv;
+    float local_lowthrv = (float)locallab.spots.at(sp).lowthresv;
+    float local_higthrv = (float)locallab.spots.at(sp).higthresv;
+    float local_decayv = (float)locallab.spots.at(sp).decayv;
+
     float local_recothrs = (float)locallab.spots.at(sp).recothress;
     float local_lowthrs = (float)locallab.spots.at(sp).lowthress;
     float local_higthrs = (float)locallab.spots.at(sp).higthress;
@@ -1457,6 +1466,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.lowthrs = local_lowthrs;
     lp.higthrs = local_higthrs;
     lp.decays = local_decays;
+    lp.recothrv = local_recothrv;
+    lp.lowthrv = local_lowthrv;
+    lp.higthrv = local_higthrv;
+    lp.decayv = local_decayv;
     
     lp.recothrl = local_recothrl;
     lp.lowthrl = local_lowthrl;
@@ -12205,6 +12218,15 @@ void ImProcFunctions::Lab_Local(
 
                     if (params->locallab.spots.at(sp).warm != 0) {
                         ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 2);
+                    }
+
+                    if(lp.enavibMask && lp.recothrv != 1.f) {
+                        float hig = lp.higthrv;
+                        float low = lp.lowthrv;
+                        float recoth = lp.recothrv;
+                        float decay = lp.decayv;
+                        bool invmask = false;
+                        maskrecov(bufexpfin.get(), original, bufmaskorigvib.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
                     }
 
 
