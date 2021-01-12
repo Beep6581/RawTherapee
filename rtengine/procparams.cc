@@ -3868,6 +3868,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0,
         1.0
     },
+    recothresw(1.),
+    lowthresw(12.),
+    higthresw(85.),
+    decayw(2.),
     // Contrast by detail levels
     visicbdl(false),
     expcbdl(false),
@@ -4596,6 +4600,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && radmasklc == other.radmasklc
         && chromasklc == other.chromasklc
         && Lmasklccurve == other.Lmasklccurve
+        && recothresw == other.recothresw
+        && lowthresw == other.lowthresw
+        && higthresw == other.higthresw
+        && decayw == other.decayw
         // Contrast by detail levels
         && visicbdl == other.visicbdl
         && expcbdl == other.expcbdl
@@ -6216,6 +6224,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->radmasklc, "Locallab", "Radmasklc_" + index_str, spot.radmasklc, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chromasklc, "Locallab", "Chromasklc_" + index_str, spot.chromasklc, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Lmasklccurve, "Locallab", "LmasklcCurve_" + index_str, spot.Lmasklccurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->recothresw, "Locallab", "Recothresw_" + index_str, spot.recothresw, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lowthresw, "Locallab", "Lowthresw_" + index_str, spot.lowthresw, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->higthresw, "Locallab", "Higthresw_" + index_str, spot.higthresw, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->decayw, "Locallab", "Decayw_" + index_str, spot.decayw, keyFile);
                 }
                 // Contrast by detail levels
                 if ((!pedited || spot_edited->visicbdl) && spot.visicbdl) {
@@ -8080,6 +8092,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Radmasklc_" + index_str, pedited, spot.radmasklc, spotEdited.radmasklc);
                 assignFromKeyfile(keyFile, "Locallab", "Chromasklc_" + index_str, pedited, spot.chromasklc, spotEdited.chromasklc);
                 assignFromKeyfile(keyFile, "Locallab", "LmasklcCurve_" + index_str, pedited, spot.Lmasklccurve, spotEdited.Lmasklccurve);
+                assignFromKeyfile(keyFile, "Locallab", "Recothresw_" + index_str, pedited, spot.recothresw, spotEdited.recothresw);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthresw_" + index_str, pedited, spot.lowthresw, spotEdited.lowthresw);
+                assignFromKeyfile(keyFile, "Locallab", "Higthresw_" + index_str, pedited, spot.higthresw, spotEdited.higthresw);
+                assignFromKeyfile(keyFile, "Locallab", "Decayw_" + index_str, pedited, spot.decayw, spotEdited.decayw);
                 // Contrast by detail levels
                 spot.visicbdl = assignFromKeyfile(keyFile, "Locallab", "Expcbdl_" + index_str, pedited, spot.expcbdl, spotEdited.expcbdl);
 
