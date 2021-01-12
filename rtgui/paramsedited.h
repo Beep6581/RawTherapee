@@ -837,6 +837,10 @@ public:
         bool radmasklc;
         bool chromasklc;
         bool Lmasklccurve;
+        bool recothresw;
+        bool lowthresw;
+        bool higthresw;
+        bool decayw;
         // Contrast by detail levels
         bool visicbdl;
         bool expcbdl;

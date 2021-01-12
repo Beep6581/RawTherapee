@@ -1500,6 +1500,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).radmasklc = locallab.spots.at(j).radmasklc && pSpot.radmaskcb == otherSpot.radmasklc;
                 locallab.spots.at(j).chromasklc = locallab.spots.at(j).chromasklc && pSpot.chromasklc == otherSpot.chromasklc;
                 locallab.spots.at(j).Lmasklccurve = locallab.spots.at(j).Lmasklccurve && pSpot.Lmasklccurve == otherSpot.Lmasklccurve;
+                locallab.spots.at(j).recothresw = locallab.spots.at(j).recothresw && pSpot.recothresw == otherSpot.recothresw;
+                locallab.spots.at(j).lowthresw = locallab.spots.at(j).lowthresw && pSpot.lowthresw == otherSpot.lowthresw;
+                locallab.spots.at(j).higthresw = locallab.spots.at(j).higthresw && pSpot.higthresw == otherSpot.higthresw;
+                locallab.spots.at(j).decayw = locallab.spots.at(j).decayw && pSpot.decayw == otherSpot.decayw;
                 // Contrast by detail levels
                 locallab.spots.at(j).visicbdl = locallab.spots.at(j).visicbdl && pSpot.visicbdl == otherSpot.visicbdl;
                 locallab.spots.at(j).expcbdl = locallab.spots.at(j).expcbdl && pSpot.expcbdl == otherSpot.expcbdl;
@@ -4940,6 +4944,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).Lmasklccurve = mods.locallab.spots.at(i).Lmasklccurve;
         }
 
+        if (locallab.spots.at(i).recothresw) {
+            toEdit.locallab.spots.at(i).recothresw = mods.locallab.spots.at(i).recothresw;
+        }
+
+        if (locallab.spots.at(i).lowthresw) {
+            toEdit.locallab.spots.at(i).lowthresw = mods.locallab.spots.at(i).lowthresw;
+        }
+
+        if (locallab.spots.at(i).higthresw) {
+            toEdit.locallab.spots.at(i).higthresw = mods.locallab.spots.at(i).higthresw;
+        }
+
+        if (locallab.spots.at(i).decayw) {
+            toEdit.locallab.spots.at(i).decayw = mods.locallab.spots.at(i).decayw;
+        }
+
         // Contrast by detail levels
         if (locallab.spots.at(i).visicbdl) {
             toEdit.locallab.spots.at(i).visicbdl = mods.locallab.spots.at(i).visicbdl;
@@ -6954,6 +6974,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     radmasklc(v),
     chromasklc(v),
     Lmasklccurve(v),
+    recothresw(v),
+    lowthresw(v),
+    higthresw(v),
+    decayw(v),
     // Contrast by detail levels
     visicbdl(v),
     expcbdl(v),
@@ -7502,6 +7526,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     radmasklc = v;
     chromasklc = v;
     Lmasklccurve = v;
+    recothresw = v;
+    lowthresw = v;
+    higthresw = v;
+    decayw = v;
     // Contrast by detail levels
     visicbdl = v;
     expcbdl = v;

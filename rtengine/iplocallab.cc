@@ -599,6 +599,10 @@ struct local_params {
     float lowthrv;
     float higthrv;
     float decayv;
+    float recothrw;
+    float lowthrw;
+    float higthrw;
+    float decayw;
     float recothrs;
     float lowthrs;
     float higthrs;
@@ -1090,6 +1094,11 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float local_higthrv = (float)locallab.spots.at(sp).higthresv;
     float local_decayv = (float)locallab.spots.at(sp).decayv;
 
+    float local_recothrw = (float)locallab.spots.at(sp).recothresw;
+    float local_lowthrw = (float)locallab.spots.at(sp).lowthresw;
+    float local_higthrw = (float)locallab.spots.at(sp).higthresw;
+    float local_decayw = (float)locallab.spots.at(sp).decayw;
+
     float local_recothrs = (float)locallab.spots.at(sp).recothress;
     float local_lowthrs = (float)locallab.spots.at(sp).lowthress;
     float local_higthrs = (float)locallab.spots.at(sp).higthress;
@@ -1470,6 +1479,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.lowthrv = local_lowthrv;
     lp.higthrv = local_higthrv;
     lp.decayv = local_decayv;
+    lp.recothrw = local_recothrw;
+    lp.lowthrw = local_lowthrw;
+    lp.higthrw = local_higthrw;
+    lp.decayw = local_decayw;
     
     lp.recothrl = local_recothrl;
     lp.lowthrl = local_lowthrl;
@@ -13289,6 +13302,14 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
 
+                    if(lp.enalcMask && lp.recothrw != 1.f) {
+                        float hig = lp.higthrw;
+                        float low = lp.lowthrw;
+                        float recoth = lp.recothrw;
+                        float decay = lp.decayw;
+                        bool invmask = false;
+                        maskrecov(tmp1.get(), original, bufmaskoriglc.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
+                    }
 
                 transit_shapedetect2(call, 10, bufgb.get(), tmp1.get(), originalmasklc.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                 tmp1.reset();

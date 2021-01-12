@@ -1429,6 +1429,10 @@ struct LocallabParams {
         double radmasklc;
         double chromasklc;
         std::vector<double> Lmasklccurve;
+        double recothresw;
+        double lowthresw;
+        double higthresw;
+        double decayw;
         // Contrast by detail levels
         bool visicbdl;
         bool expcbdl;

@@ -1111,6 +1111,13 @@ private:
     FlatCurveEditor* const wavshapecomp;
     Adjuster* const fatres;
     Gtk::CheckButton* const fftwlc;
+    MyExpander* const exprecovw;
+    Gtk::Label* const maskusablew;
+    Gtk::Label* const maskunusablew;
+    Adjuster* const recothresw;
+    Adjuster* const lowthresw;
+    Adjuster* const higthresw;
+    Adjuster* const decayw;
     MyExpander* const expmasklc;
     MyComboBoxText* const showmasklcMethod;
     Gtk::CheckButton* const enalcMask;
