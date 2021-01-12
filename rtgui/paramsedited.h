@@ -863,6 +863,10 @@ public:
         bool slomaskcb;
         bool lapmaskcb;
         bool Lmaskcbcurve;
+        bool recothrescb;
+        bool lowthrescb;
+        bool higthrescb;
+        bool decaycb;
         // Log encoding
         bool visilog;
         bool explog;

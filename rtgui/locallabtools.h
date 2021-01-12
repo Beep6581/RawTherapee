@@ -1201,6 +1201,13 @@ private:
     Adjuster* const contresid;
     Adjuster* const softradiuscb;
     Adjuster* const sensicb;
+    MyExpander* const exprecovcb;
+    Gtk::Label* const maskusablecb;
+    Gtk::Label* const maskunusablecb;
+    Adjuster* const recothrescb;
+    Adjuster* const lowthrescb;
+    Adjuster* const higthrescb;
+    Adjuster* const decaycb;
     MyExpander* const expmaskcb;
     MyComboBoxText* const showmaskcbMethod;
     Gtk::CheckButton* const enacbMask;
