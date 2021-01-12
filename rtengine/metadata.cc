@@ -130,7 +130,7 @@ void Exiv2Metadata::load() const
         }
 
         if (merge_xmp_) {
-            do_merge_xmp(image_.get());
+            do_merge_xmp(image_.get(), false);
         }
     }
 }
@@ -190,15 +190,19 @@ void Exiv2Metadata::setIptc(const rtengine::procparams::IPTCPairs &iptc)
     *iptc_ = iptc;
 }
 
-void Exiv2Metadata::do_merge_xmp(Exiv2::Image *dst) const
+void Exiv2Metadata::do_merge_xmp(Exiv2::Image *dst, bool keep_all) const
 {
     try { 
         auto xmp = getXmpSidecar(src_);
         Exiv2::ExifData exif;
         Exiv2::IptcData iptc;
         Exiv2::copyXmpToIptc(xmp, iptc);
-        Exiv2::copyXmpToExif(xmp, exif);
+        Exiv2::moveXmpToExif(xmp, exif);
 
+        if (!keep_all) {
+            remove_unwanted(exif);
+        }
+        
         for (auto &datum : exif) {
             dst->exifData()[datum.key()] = datum;
         }
@@ -224,7 +228,7 @@ void Exiv2Metadata::saveToImage(const Glib::ustring &path, bool preserve_all_tag
         dst->setIptcData(image_->iptcData());
         dst->setXmpData(image_->xmpData());
         if (merge_xmp_) {
-            do_merge_xmp(dst.get());
+            do_merge_xmp(dst.get(), preserve_all_tags);
         }
         auto srcexif = image_->exifData();
         if (!preserve_all_tags) {
@@ -258,7 +262,7 @@ void Exiv2Metadata::saveToImage(const Glib::ustring &path, bool preserve_all_tag
                     !dst->xmpData().empty()) {
                     dst->xmpData().clear();
                     if (!xmp_tried && merge_xmp_) {
-                        do_merge_xmp(dst.get());
+                        do_merge_xmp(dst.get(), preserve_all_tags);
                         xmp_tried = true;
                     }
                 } else if (msg.find("IPTC") != std::string::npos &&

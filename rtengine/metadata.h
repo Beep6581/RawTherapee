@@ -67,7 +67,7 @@ public:
     static void cleanup();
    
 private:
-    void do_merge_xmp(Exiv2::Image* dst) const;
+    void do_merge_xmp(Exiv2::Image* dst, bool keep_all) const;
     void import_exif_pairs(Exiv2::ExifData& out) const;
     void import_iptc_pairs(Exiv2::IptcData& out) const;
     void remove_unwanted(Exiv2::ExifData& dst) const;
