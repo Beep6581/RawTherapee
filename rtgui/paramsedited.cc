@@ -1378,6 +1378,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).slomasktm = locallab.spots.at(j).slomasktm && pSpot.slomasktm == otherSpot.slomasktm;
                 locallab.spots.at(j).lapmasktm = locallab.spots.at(j).lapmasktm && pSpot.lapmasktm == otherSpot.lapmasktm;
                 locallab.spots.at(j).Lmasktmcurve = locallab.spots.at(j).Lmasktmcurve && pSpot.Lmasktmcurve == otherSpot.Lmasktmcurve;
+                locallab.spots.at(j).recothrest = locallab.spots.at(j).recothrest && pSpot.recothrest == otherSpot.recothrest;
+                locallab.spots.at(j).lowthrest = locallab.spots.at(j).lowthrest && pSpot.lowthrest == otherSpot.lowthrest;
+                locallab.spots.at(j).higthrest = locallab.spots.at(j).higthrest && pSpot.higthrest == otherSpot.higthrest;
+                locallab.spots.at(j).decayt = locallab.spots.at(j).decayt && pSpot.decayt == otherSpot.decayt;
                 // Retinex
                 locallab.spots.at(j).visireti = locallab.spots.at(j).visireti && pSpot.visireti == otherSpot.visireti;
                 locallab.spots.at(j).expreti = locallab.spots.at(j).expreti && pSpot.expreti == otherSpot.expreti;
@@ -4465,6 +4469,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).Lmasktmcurve = mods.locallab.spots.at(i).Lmasktmcurve;
         }
 
+        if (locallab.spots.at(i).recothrest) {
+            toEdit.locallab.spots.at(i).recothrest = mods.locallab.spots.at(i).recothrest;
+        }
+
+        if (locallab.spots.at(i).lowthrest) {
+            toEdit.locallab.spots.at(i).lowthrest = mods.locallab.spots.at(i).lowthrest;
+        }
+
+        if (locallab.spots.at(i).higthrest) {
+            toEdit.locallab.spots.at(i).higthrest = mods.locallab.spots.at(i).higthrest;
+        }
+
+        if (locallab.spots.at(i).decayt) {
+            toEdit.locallab.spots.at(i).decayt = mods.locallab.spots.at(i).decayt;
+        }
+
         // Retinex
         if (locallab.spots.at(i).visireti) {
             toEdit.locallab.spots.at(i).visireti = mods.locallab.spots.at(i).visireti;
@@ -6857,6 +6877,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     slomasktm(v),
     lapmasktm(v),
     Lmasktmcurve(v),
+    recothrest(v),
+    lowthrest(v),
+    higthrest(v),
+    decayt(v),
     // Retinex
     visireti(v),
     expreti(v),
@@ -7410,6 +7434,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     slomasktm = v;
     lapmasktm = v;
     Lmasktmcurve = v;
+    recothrest = v;
+    lowthrest = v;
+    higthrest = v;
+    decayt = v;
     // Retinex
     visireti = v;
     expreti = v;
