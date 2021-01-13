@@ -635,6 +635,7 @@ public:
         bool recothresd;
         bool lowthresd;
         bool midthresd;
+        bool midthresdch;
         bool higthresd;
         bool decayd;
         bool isogr;

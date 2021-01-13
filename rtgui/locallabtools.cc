@@ -6253,6 +6253,7 @@ LocallabBlur::LocallabBlur():
     recothresd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
     lowthresd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
     midthresd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRMID"), 0., 100., 0.5, 0.))),
+    midthresdch(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRMIDCH"), 0., 100., 0.5, 0.))),
     higthresd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
     decayd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
     invmaskd(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVMASK")))),
@@ -6423,6 +6424,7 @@ LocallabBlur::LocallabBlur():
     recothresd->setAdjusterListener(this);
     lowthresd->setAdjusterListener(this);
     midthresd->setAdjusterListener(this);
+    midthresdch->setAdjusterListener(this);
     higthresd->setAdjusterListener(this);
     decayd->setAdjusterListener(this);
 
@@ -6581,6 +6583,7 @@ LocallabBlur::LocallabBlur():
     wavBox3->pack_start(*recothresd);
     wavBox3->pack_start(*lowthresd);
     wavBox3->pack_start(*midthresd);
+    wavBox3->pack_start(*midthresdch);
     wavBox3->pack_start(*higthresd);
     wavBox3->pack_start(*decayd);
     wavBox3->pack_start(*invmaskd);
@@ -6800,6 +6803,7 @@ void LocallabBlur::neutral_pressed ()
     recothresd->setValue(defSpot.recothresd);
     lowthresd->setValue(defSpot.lowthresd);
     midthresd->setValue(defSpot.midthresd);
+    midthresdch->setValue(defSpot.midthresdch);
     higthresd->setValue(defSpot.higthresd);
     decayd->setValue(defSpot.decayd);
     recothres->setValue(defSpot.recothres);
@@ -6920,6 +6924,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         recothresd->setValue((double)spot.recothresd);
         lowthresd->setValue((double)spot.lowthresd);
         midthresd->setValue((double)spot.midthresd);
+        midthresdch->setValue((double)spot.midthresdch);
         higthresd->setValue((double)spot.higthresd);
         decayd->setValue((double)spot.decayd);
 
@@ -7057,6 +7062,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.recothresd = recothresd->getValue();
         spot.lowthresd = lowthresd->getValue();
         spot.midthresd = midthresd->getValue();
+        spot.midthresdch = midthresdch->getValue();
         spot.higthresd = higthresd->getValue();
         spot.decayd = decayd->getValue();
 
@@ -7157,6 +7163,7 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         recothresd->setDefault((double)defSpot.recothresd);
         lowthresd->setDefault((double)defSpot.lowthresd);
         midthresd->setDefault((double)defSpot.midthresd);
+        midthresdch->setDefault((double)defSpot.midthresdch);
         higthresd->setDefault((double)defSpot.higthresd);
         decayd->setDefault((double)defSpot.decayd);
         noiselumf0->setDefault(defSpot.noiselumf0);
@@ -7300,6 +7307,13 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabmidthresd,
                                        midthresd->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == midthresdch) {
+            if (listener) {
+                listener->panelChanged(Evlocallabmidthresdch,
+                                       midthresdch->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -7657,6 +7671,7 @@ void LocallabBlur::convertParamToSimple()
     recothresd->setValue(defSpot.recothresd);
     lowthresd->setValue(defSpot.lowthresd);
     midthresd->setValue(defSpot.midthresd);
+    midthresdch->setValue(defSpot.midthresdch);
     higthresd->setValue(defSpot.higthresd);
     decayd->setValue(defSpot.decayd);
     recothres->setValue(defSpot.recothres);

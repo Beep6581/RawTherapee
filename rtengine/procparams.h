@@ -1227,6 +1227,7 @@ struct LocallabParams {
         double recothresd;
         double lowthresd;
         double midthresd;
+        double midthresdch;
         double higthresd;
         double decayd;
         int isogr;
