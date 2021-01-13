@@ -726,6 +726,7 @@ private:
     Adjuster* const recothresd;
     Adjuster* const lowthresd;
     Adjuster* const midthresd;
+    Adjuster* const midthresdch;
     Adjuster* const higthresd;
     Adjuster* const decayd;
     
