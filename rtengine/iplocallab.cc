@@ -600,6 +600,10 @@ struct local_params {
     float lowthrv;
     float higthrv;
     float decayv;
+    float recothrt;
+    float lowthrt;
+    float higthrt;
+    float decayt;
     float recothrw;
     float lowthrw;
     float higthrw;
@@ -1096,6 +1100,11 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float local_higthrv = (float)locallab.spots.at(sp).higthresv;
     float local_decayv = (float)locallab.spots.at(sp).decayv;
 
+    float local_recothrt = (float)locallab.spots.at(sp).recothrest;
+    float local_lowthrt = (float)locallab.spots.at(sp).lowthrest;
+    float local_higthrt = (float)locallab.spots.at(sp).higthrest;
+    float local_decayt = (float)locallab.spots.at(sp).decayt;
+
     float local_recothrw = (float)locallab.spots.at(sp).recothresw;
     float local_lowthrw = (float)locallab.spots.at(sp).lowthresw;
     float local_higthrw = (float)locallab.spots.at(sp).higthresw;
@@ -1486,6 +1495,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.lowthrw = local_lowthrw;
     lp.higthrw = local_higthrw;
     lp.decayw = local_decayw;
+    lp.recothrt = local_recothrt;
+    lp.lowthrt = local_lowthrt;
+    lp.higthrt = local_higthrt;
+    lp.decayt = local_decayt;
     
     lp.recothrl = local_recothrl;
     lp.lowthrl = local_lowthrl;
@@ -12491,6 +12504,15 @@ void ImProcFunctions::Lab_Local(
                             buflight[y][x] *= coef;
                             bufchro[y][x] *= coefC;
                         }
+                    }
+
+                    if(lp.enatmMask && lp.recothrt != 1.f) {
+                        float hig = lp.higthrt;
+                        float low = lp.lowthrt;
+                        float recoth = lp.recothrt;
+                        float decay = lp.decayt;
+                        bool invmask = false;
+                        maskrecov(tmp1.get(), original, bufmaskorigtm.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
                     }
 
                     //   transit_shapedetect_retinex(call, 4, bufgb.get(),bufmaskorigtm.get(), originalmasktm.get(), buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
