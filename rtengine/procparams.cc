@@ -3664,6 +3664,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0,
         1.0
     },
+    recothresr(1.),
+    lowthresr(12.),
+    higthresr(85.),
+    decayr(2.),
     // Sharpening
     visisharp(false),
     expsharp(false),
@@ -4529,6 +4533,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && cliptm == other.cliptm
         && fftwreti == other.fftwreti
         && Lmaskreticurve == other.Lmaskreticurve
+        && recothresr == other.recothresr
+        && lowthresr == other.lowthresr
+        && higthresr == other.higthresr
+        && decayr == other.decayr
         // Sharpening
         && visisharp == other.visisharp
         && expsharp == other.expsharp
@@ -6160,6 +6168,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->cliptm, "Locallab", "Cliptm_" + index_str, spot.cliptm, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fftwreti, "Locallab", "Fftwreti_" + index_str, spot.fftwreti, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Lmaskreticurve, "Locallab", "LmaskretiCurve_" + index_str, spot.Lmaskreticurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->recothresr, "Locallab", "Recothresr_" + index_str, spot.recothresr, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lowthresr, "Locallab", "Lowthresr_" + index_str, spot.lowthresr, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->higthresr, "Locallab", "Higthresr_" + index_str, spot.higthresr, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->decayr, "Locallab", "Decayr_" + index_str, spot.decayr, keyFile);
                 }
                 // Sharpening
                 if ((!pedited || spot_edited->visisharp) && spot.visisharp) {
@@ -8020,6 +8032,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Cliptm_" + index_str, pedited, spot.cliptm, spotEdited.cliptm);
                 assignFromKeyfile(keyFile, "Locallab", "Fftwreti_" + index_str, pedited, spot.fftwreti, spotEdited.fftwreti);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskretiCurve_" + index_str, pedited, spot.Lmaskreticurve, spotEdited.Lmaskreticurve);
+                assignFromKeyfile(keyFile, "Locallab", "Recothresr_" + index_str, pedited, spot.recothresr, spotEdited.recothresr);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthresr_" + index_str, pedited, spot.lowthresr, spotEdited.lowthresr);
+                assignFromKeyfile(keyFile, "Locallab", "Higthresr_" + index_str, pedited, spot.higthresr, spotEdited.higthresr);
+                assignFromKeyfile(keyFile, "Locallab", "Decayr_" + index_str, pedited, spot.decayr, spotEdited.decayr);
                 // Sharpening
                 spot.visisharp = assignFromKeyfile(keyFile, "Locallab", "Expsharp_" + index_str, pedited, spot.expsharp, spotEdited.expsharp);
 

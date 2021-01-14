@@ -930,6 +930,13 @@ private:
     Gtk::Label* const transLabels2;
     CurveEditorGroup* const LocalcurveEditorgainT;
     FlatCurveEditor* const cTgainshape;
+    MyExpander* const exprecovr;
+    Gtk::Label* const maskusabler;
+    Gtk::Label* const maskunusabler;
+    Adjuster* const recothresr;
+    Adjuster* const lowthresr;
+    Adjuster* const higthresr;
+    Adjuster* const decayr;
     MyExpander* const expmaskreti;
     MyComboBoxText* const showmaskretiMethod;
     Gtk::CheckButton* const enaretiMask;

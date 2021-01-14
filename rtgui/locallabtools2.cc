@@ -802,6 +802,13 @@ LocallabRetinex::LocallabRetinex():
     transLabels2(Gtk::manage(new Gtk::Label("---"))),
     LocalcurveEditorgainT(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_TRANSMISSIONGAIN"))),
     cTgainshape(static_cast<FlatCurveEditor*>(LocalcurveEditorgainT->addCurve(CT_Flat, "", nullptr, false, false))),
+    exprecovr(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
+    maskusabler(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
+    maskunusabler(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
+    recothresr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+    lowthresr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
+    higthresr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
+    decayr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
     expmaskreti(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWR")))),
     showmaskretiMethod(Gtk::manage(new MyComboBoxText())),
     enaretiMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
@@ -891,6 +898,12 @@ LocallabRetinex::LocallabRetinex():
     cTgainshape->setResetCurve(FlatCurveType(defSpot.localTgaincurve.at(0)), defSpot.localTgaincurve);
 
     LocalcurveEditorgainT->curveListComplete();
+
+    recothresr->setAdjusterListener(this);
+    lowthresr->setAdjusterListener(this);
+    higthresr->setAdjusterListener(this);
+    decayr->setAdjusterListener(this);
+    setExpandAlignProperties(exprecovr, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     setExpandAlignProperties(expmaskreti, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
@@ -987,6 +1000,16 @@ LocallabRetinex::LocallabRetinex():
     toolretiBox->pack_start(*LocalcurveEditorgainT, Gtk::PACK_SHRINK, 4);
     expretitools->add(*toolretiBox, false);
     retiBox->pack_start(*expretitools, false, false);
+    ToolParamBlock* const reBox3 = Gtk::manage(new ToolParamBlock());
+    reBox3->pack_start(*maskusabler, Gtk::PACK_SHRINK, 0);
+    reBox3->pack_start(*maskunusabler, Gtk::PACK_SHRINK, 0);
+    reBox3->pack_start(*recothresr);
+    reBox3->pack_start(*lowthresr);
+    reBox3->pack_start(*higthresr);
+    reBox3->pack_start(*decayr);
+   // colBox3->pack_start(*invmaskc);
+    exprecovr->add(*reBox3, false);
+
     ToolParamBlock* const maskretiBox = Gtk::manage(new ToolParamBlock());
     maskretiBox->pack_start(*showmaskretiMethod, Gtk::PACK_SHRINK, 4);
     maskretiBox->pack_start(*enaretiMask, Gtk::PACK_SHRINK, 0);
@@ -1000,6 +1023,7 @@ LocallabRetinex::LocallabRetinex():
     maskretiBox->pack_start(*slomaskreti, Gtk::PACK_SHRINK, 0);
     maskretiBox->pack_start(*mask2retiCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     expmaskreti->add(*maskretiBox, false);
+    retiBox->pack_start(*exprecovr, false, false);
     retiBox->pack_start(*expmaskreti, false, false);
     // retiBox->pack_start(*inversret);
     retitoolFrame->add(*retiBox);
@@ -1066,6 +1090,7 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
         dehaFrame->set_tooltip_text(M("TP_LOCALLAB_DEHAZFRAME_TOOLTIP"));
         dehaz->set_tooltip_text(M("TP_LOCALLAB_DEHAZ_TOOLTIP"));
         retiFrame->set_tooltip_text(M("TP_LOCALLAB_RETIFRAME_TOOLTIP"));
+        exprecovr->set_tooltip_markup(M("TP_LOCALLAB_MASKRESRETI_TOOLTIP"));
         loglin->set_tooltip_text(M("TP_LOCALLAB_RETI_LOGLIN_TOOLTIP"));
         sensih->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         fftwreti->set_tooltip_text(M("TP_LOCALLAB_LC_FFTW_TOOLTIP"));
@@ -1098,6 +1123,9 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
         chromaskreti->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
         slomaskreti->set_tooltip_text(M("TP_LOCALLAB_SLOMASK_TOOLTIP"));
         lapmaskreti->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
+        decayr->set_tooltip_text(M("TP_LOCALLAB_MASKDECAY_TOOLTIP"));
+        lowthresr->set_tooltip_text(M("TP_LOCALLAB_MASKLOWTHRESRETI_TOOLTIP"));
+        higthresr->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRESRETI_TOOLTIP"));
 
     } else {
         dehaFrame->set_tooltip_text("");
@@ -1135,11 +1163,16 @@ void LocallabRetinex::updateAdviceTooltips(const bool showTooltips)
         chromaskreti->set_tooltip_text("");
         slomaskreti->set_tooltip_text("");
         lapmaskreti->set_tooltip_text("");
+        exprecovr->set_tooltip_markup("");
+        decayr->set_tooltip_text("");
+        lowthresr->set_tooltip_text("");
+        higthresr->set_tooltip_text("");
     }
 }
 
 void LocallabRetinex::setDefaultExpanderVisibility()
 {
+    exprecovr->set_expanded(false);
     expretitools->set_expanded(false);
     expmaskreti->set_expanded(false);
 }
@@ -1231,6 +1264,10 @@ void LocallabRetinex::read(const rtengine::procparams::ProcParams* pp, const Par
         slomaskreti->setValue(spot.slomaskreti);
         Lmaskretishape->setCurve(spot.Lmaskreticurve);
         inversret->set_active(spot.inversret);
+        recothresr->setValue((double)spot.recothresr);
+        lowthresr->setValue((double)spot.lowthresr);
+        higthresr->setValue((double)spot.higthresr);
+        decayr->setValue((double)spot.decayr);
     }
 
     // Enable all listeners
@@ -1304,6 +1341,10 @@ void LocallabRetinex::write(rtengine::procparams::ProcParams* pp, ParamsEdited* 
         spot.slomaskreti = slomaskreti->getValue();
         spot.Lmaskreticurve = Lmaskretishape->getCurve();
         spot.inversret = inversret->get_active();
+        spot.recothresr = recothresr->getValue();
+        spot.lowthresr = lowthresr->getValue();
+        spot.higthresr = higthresr->getValue();
+        spot.decayr = decayr->getValue();
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -1338,6 +1379,10 @@ void LocallabRetinex::setDefaults(const rtengine::procparams::ProcParams* defPar
         chromaskreti->setDefault(defSpot.chromaskreti);
         gammaskreti->setDefault(defSpot.gammaskreti);
         slomaskreti->setDefault(defSpot.slomaskreti);
+        recothresr->setDefault((double)defSpot.recothresr);
+        lowthresr->setDefault((double)defSpot.lowthresr);
+        higthresr->setDefault((double)defSpot.higthresr);
+        decayr->setDefault((double)defSpot.decayr);
     }
 
     // Note: No need to manage pedited as batch mode is deactivated for Locallab
@@ -1458,6 +1503,35 @@ void LocallabRetinex::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabsoftradiusret,
                                        softradiusret->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == recothresr) {
+            
+            if (listener) {
+                listener->panelChanged(Evlocallabrecothresr,
+                                       recothresr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == lowthresr) {
+            if (listener) {
+                listener->panelChanged(Evlocallablowthresr,
+                                       lowthresr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == higthresr) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhigthresr,
+                                       higthresr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == decayr) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdecayr,
+                                       decayr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -1614,6 +1688,10 @@ void LocallabRetinex::convertParamToNormal()
     slomaskreti->setValue(defSpot.slomaskreti);
     Lmaskretishape->setCurve(defSpot.Lmaskreticurve);
     inversret->set_active(defSpot.inversret);
+    recothresr->setValue(defSpot.recothresr);
+    lowthresr->setValue(defSpot.lowthresr);
+    higthresr->setValue(defSpot.higthresr);
+    decayr->setValue(defSpot.decayr);
 
     // Enable all listeners
     enableListener();
@@ -1629,6 +1707,17 @@ void LocallabRetinex::convertParamToNormal()
 
 void LocallabRetinex::convertParamToSimple()
 {
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+
+    recothresr->setValue(defSpot.recothresr);
+    lowthresr->setValue(defSpot.lowthresr);
+    higthresr->setValue(defSpot.higthresr);
+    decayr->setValue(defSpot.decayr);
+    enableListener();
+    
 }
 
 void LocallabRetinex::updateGUIToMode(const modeType new_type)
@@ -1638,6 +1727,11 @@ void LocallabRetinex::updateGUIToMode(const modeType new_type)
             // Expert and Normal mode widgets are hidden in Simple mode
             retiFrame->hide();
             retitoolFrame->hide();
+            exprecovr->hide();
+            decayr->hide();
+            maskusabler->hide();
+            maskunusabler->hide();
+
             break;
 
         case Normal:
@@ -1645,12 +1739,27 @@ void LocallabRetinex::updateGUIToMode(const modeType new_type)
             retiFrame->hide();
             retitoolFrame->hide();
             // Specific Simple mode widgets are shown in Normal mode
+            exprecovr->hide();
+            decayr->hide();
+            maskusabler->hide();
+            maskunusabler->hide();
+
             break;
 
         case Expert:
             // Show widgets hidden in Normal and Simple mode
             retiFrame->show();
             retitoolFrame->show();
+            exprecovr->show();
+            decayr->show();
+            if (enaretiMask->get_active()) {
+                maskusabler->show();
+                maskunusabler->hide();
+                
+            } else {
+                maskusabler->hide();
+                maskunusabler->show();
+            }
     }
 }
 
@@ -1740,6 +1849,15 @@ void LocallabRetinex::showmaskretiMethodChanged()
 
 void LocallabRetinex::enaretiMaskChanged()
 {
+    if (enaretiMask->get_active()) {
+        maskusabler->show();
+        maskunusabler->hide();
+
+    } else {
+        maskusabler->hide();
+        maskunusabler->show();
+    }
+    
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (enaretiMask->get_active()) {
