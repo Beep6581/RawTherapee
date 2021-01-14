@@ -76,7 +76,7 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
     const unsigned int cfarray[2][2] = {{FC(0,0), FC(0,1)}, {FC(1,0), FC(1,1)}};
     constexpr int rcdBorder = 6;
     constexpr int tileBorder = 9;
-    constexpr int tileSize = 140;
+    constexpr int tileSize = 194;
     constexpr int tileSizeN = tileSize - 2 * tileBorder;
     const int numTh = H / (tileSizeN) + ((H % (tileSizeN)) ? 1 : 0);
     const int numTw = W / (tileSizeN) + ((W % (tileSizeN)) ? 1 : 0);
@@ -119,23 +119,15 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
             const int tilecols = std::min(colEnd - colStart, tileSize);
 
             for (int row = rowStart; row < rowEnd; row++) {
-                int indx = (row - rowStart) * tileSize;
                 const int c0 = fc(cfarray, row, colStart);
                 const int c1 = fc(cfarray, row, colStart + 1);
-                int col = colStart;
-                for (; col < colEnd - 1; col+=2, indx+=2) {
-                    cfa[indx] = rgb[c0][indx] = LIM01(rawData[row][col] / scale);
-                    cfa[indx + 1] = rgb[c1][indx + 1] = LIM01(rawData[row][col + 1] / scale);
-                }
-                if (col < colEnd) {
-                    cfa[indx] = rgb[c0][indx] = LIM01(rawData[row][col] / scale);
+                for (int col = colStart, indx = (row - rowStart) * tileSize; col < colEnd; ++col, ++indx) {
+                    cfa[indx] = rgb[c0][indx] = rgb[c1][indx] = LIM01(rawData[row][col] / scale);
                 }
             }
-
             /**
             * STEP 1: Find cardinal and diagonal interpolation directions
             */
-
             float bufferV[3][tileSize - 8];
 
             // Step 1.1: Calculate the square of the vertical and horizontal color difference high pass filter
@@ -314,12 +306,12 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
             }
 
             // For the outermost tiles in all directions we can use a smaller border margin
-            const int last_vertical =    rowEnd   - ((tr == numTh - 1)     ? rcdBorder : tileBorder);
-            const int first_horizontal = colStart + ((tc == 0) ? rcdBorder : tileBorder);
-            const int last_horizontal =  colEnd   - ((tc == numTw - 1) ? rcdBorder : tileBorder);
-            for(int row = rowStart + ((tr == 0) ? rcdBorder : tileBorder); row < last_vertical; row++) {
-//            for (int row = rowStart + tileBorder; row < rowEnd - tileBorder; ++row) {
-                for (int col = first_horizontal; col < last_horizontal; ++col) {
+            const int firstVertical = rowStart + ((tr == 0) ? rcdBorder : tileBorder);
+            const int lastVertical = rowEnd - ((tr == numTh - 1) ? rcdBorder : tileBorder);
+            const int firstHorizontal = colStart + ((tc == 0) ? rcdBorder : tileBorder);
+            const int lastHorizontal =  colEnd - ((tc == numTw - 1) ? rcdBorder : tileBorder);
+            for (int row = firstVertical; row < lastVertical; ++row) {
+                for (int col = firstHorizontal; col < lastHorizontal; ++col) {
                     int idx = (row - rowStart) * tileSize + col - colStart ;
                     red[row][col] = std::max(0.f, rgb[0][idx] * scale);
                     green[row][col] = std::max(0.f, rgb[1][idx] * scale);
