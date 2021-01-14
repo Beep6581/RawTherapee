@@ -3546,6 +3546,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0,
         1.0
     },
+    recothrest(1.),
+    lowthrest(12.),
+    higthrest(85.),
+    decayt(2.),
     // Retinex
     visireti(false),
     expreti(false),
@@ -4479,6 +4483,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && slomasktm == other.slomasktm
         && lapmasktm == other.lapmasktm
         && Lmasktmcurve == other.Lmasktmcurve
+        && recothrest == other.recothrest
+        && lowthrest == other.lowthrest
+        && higthrest == other.higthrest
+        && decayt == other.decayt
         // Retinex
         && visireti == other.visireti
         && expreti == other.expreti
@@ -6101,6 +6109,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->slomasktm, "Locallab", "Slomasktm_" + index_str, spot.slomasktm, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lapmasktm, "Locallab", "Lapmasktm_" + index_str, spot.lapmasktm, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Lmasktmcurve, "Locallab", "LmasktmCurve_" + index_str, spot.Lmasktmcurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->recothrest, "Locallab", "Recothrest_" + index_str, spot.recothrest, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lowthrest, "Locallab", "Lowthrest_" + index_str, spot.lowthrest, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->higthrest, "Locallab", "Higthrest_" + index_str, spot.higthrest, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->decayt, "Locallab", "Decayt_" + index_str, spot.decayt, keyFile);
                 }
                 // Retinex
                 if ((!pedited || spot_edited->visireti) && spot.visireti) {
@@ -7950,6 +7962,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Slomasktm_" + index_str, pedited, spot.slomasktm, spotEdited.slomasktm);
                 assignFromKeyfile(keyFile, "Locallab", "Lapmasktm_" + index_str, pedited, spot.lapmasktm, spotEdited.lapmasktm);
                 assignFromKeyfile(keyFile, "Locallab", "LmasktmCurve_" + index_str, pedited, spot.Lmasktmcurve, spotEdited.Lmasktmcurve);
+                assignFromKeyfile(keyFile, "Locallab", "Recothrest_" + index_str, pedited, spot.recothrest, spotEdited.recothrest);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthrest_" + index_str, pedited, spot.lowthrest, spotEdited.lowthrest);
+                assignFromKeyfile(keyFile, "Locallab", "Higthrest_" + index_str, pedited, spot.higthrest, spotEdited.higthrest);
+                assignFromKeyfile(keyFile, "Locallab", "Decayt_" + index_str, pedited, spot.decayt, spotEdited.decayt);
                 // Retinex
                 spot.visireti = assignFromKeyfile(keyFile, "Locallab", "Expreti_" + index_str, pedited, spot.expreti, spotEdited.expreti);
 
