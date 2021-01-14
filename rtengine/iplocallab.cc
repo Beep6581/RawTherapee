@@ -600,6 +600,10 @@ struct local_params {
     float lowthrv;
     float higthrv;
     float decayv;
+    float recothrcb;
+    float lowthrcb;
+    float higthrcb;
+    float decaycb;
     float recothrt;
     float lowthrt;
     float higthrt;
@@ -1100,6 +1104,11 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float local_higthrv = (float)locallab.spots.at(sp).higthresv;
     float local_decayv = (float)locallab.spots.at(sp).decayv;
 
+    float local_recothrcb = (float)locallab.spots.at(sp).recothrescb;
+    float local_lowthrcb = (float)locallab.spots.at(sp).lowthrescb;
+    float local_higthrcb = (float)locallab.spots.at(sp).higthresv;
+    float local_decaycb = (float)locallab.spots.at(sp).decaycb;
+
     float local_recothrt = (float)locallab.spots.at(sp).recothrest;
     float local_lowthrt = (float)locallab.spots.at(sp).lowthrest;
     float local_higthrt = (float)locallab.spots.at(sp).higthrest;
@@ -1499,6 +1508,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.lowthrt = local_lowthrt;
     lp.higthrt = local_higthrt;
     lp.decayt = local_decayt;
+    lp.recothrcb = local_recothrcb;
+    lp.lowthrcb = local_lowthrcb;
+    lp.higthrcb = local_higthrcb;
+    lp.decaycb = local_decaycb;
     
     lp.recothrl = local_recothrl;
     lp.lowthrl = local_lowthrl;
@@ -11989,6 +12002,16 @@ void ImProcFunctions::Lab_Local(
                     if (lp.softradiuscb > 0.f) {
                         softproc(origcbdl.get(), loctemp.get(), lp.softradiuscb, bfh, bfw, 0.001, 0.00001, 0.5f, sk, multiThread, 1);
                     }
+                    
+                    if(lp.enacbMask && lp.recothrcb != 1.f) {
+                        float hig = lp.higthrcb;
+                        float low = lp.lowthrcb;
+                        float recoth = lp.recothrcb;
+                        float decay = lp.decaycb;
+                        bool invmask = false;
+                        maskrecov(loctemp.get(), original, bufmaskorigcb.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
+                    }
+                    
 
                 }
 

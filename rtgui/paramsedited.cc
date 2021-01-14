@@ -1535,6 +1535,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).slomaskcb = locallab.spots.at(j).slomaskcb && pSpot.slomaskcb == otherSpot.slomaskcb;
                 locallab.spots.at(j).lapmaskcb = locallab.spots.at(j).lapmaskcb && pSpot.lapmaskcb == otherSpot.lapmaskcb;
                 locallab.spots.at(j).Lmaskcbcurve = locallab.spots.at(j).Lmaskcbcurve && pSpot.Lmaskcbcurve == otherSpot.Lmaskcbcurve;
+                locallab.spots.at(j).recothrescb = locallab.spots.at(j).recothrescb && pSpot.recothrescb == otherSpot.recothrescb;
+                locallab.spots.at(j).lowthrescb = locallab.spots.at(j).lowthrescb && pSpot.lowthrescb == otherSpot.lowthrescb;
+                locallab.spots.at(j).higthrescb = locallab.spots.at(j).higthrescb && pSpot.higthrescb == otherSpot.higthrescb;
+                locallab.spots.at(j).decaycb = locallab.spots.at(j).decaycb && pSpot.decaycb == otherSpot.decaycb;
                 // Log encoding
                 locallab.spots.at(j).visilog = locallab.spots.at(j).visilog && pSpot.visilog == otherSpot.visilog;
                 locallab.spots.at(j).explog = locallab.spots.at(j).explog && pSpot.explog == otherSpot.explog;
@@ -5072,6 +5076,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).Lmaskcbcurve = mods.locallab.spots.at(i).Lmaskcbcurve;
         }
 
+        if (locallab.spots.at(i).recothrescb) {
+            toEdit.locallab.spots.at(i).recothrescb = mods.locallab.spots.at(i).recothrescb;
+        }
+
+        if (locallab.spots.at(i).lowthrescb) {
+            toEdit.locallab.spots.at(i).lowthrescb = mods.locallab.spots.at(i).lowthrescb;
+        }
+
+        if (locallab.spots.at(i).higthrescb) {
+            toEdit.locallab.spots.at(i).higthrescb = mods.locallab.spots.at(i).higthrescb;
+        }
+
+        if (locallab.spots.at(i).decaycb) {
+            toEdit.locallab.spots.at(i).decaycb = mods.locallab.spots.at(i).decaycb;
+        }
+
         // Log encoding
         if (locallab.spots.at(i).visilog) {
             toEdit.locallab.spots.at(i).visilog = mods.locallab.spots.at(i).visilog;
@@ -7030,6 +7050,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     slomaskcb(v),
     lapmaskcb(v),
     Lmaskcbcurve(v),
+    recothrescb(v),
+    lowthrescb(v),
+    higthrescb(v),
+    decaycb(v),
     // Log encoding
     visilog(v),
     explog(v),
@@ -7591,6 +7615,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     slomaskcb = v;
     lapmaskcb = v;
     Lmaskcbcurve = v;
+    recothrescb = v;
+    lowthrescb = v;
+    higthrescb = v;
+    decaycb = v;
     // Log encoding
     visilog = v;
     explog = v;

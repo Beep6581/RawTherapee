@@ -1460,6 +1460,10 @@ struct LocallabParams {
         double slomaskcb;
         double lapmaskcb;
         std::vector<double> Lmaskcbcurve;
+        double recothrescb;
+        double lowthrescb;
+        double higthrescb;
+        double decaycb;
         // Log encoding
         bool visilog;
         bool explog;

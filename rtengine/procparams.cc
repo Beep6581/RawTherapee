@@ -3947,6 +3947,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0,
         1.0
     },
+    recothrescb(1.),
+    lowthrescb(12.),
+    higthrescb(85.),
+    decaycb(2.),
     // Log encoding
     visilog(false),
     explog(false),
@@ -4644,6 +4648,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && slomaskcb == other.slomaskcb
         && lapmaskcb == other.lapmaskcb
         && Lmaskcbcurve == other.Lmaskcbcurve
+        && recothrescb == other.recothrescb
+        && lowthrescb == other.lowthrescb
+        && higthrescb == other.higthrescb
+        && decaycb == other.decaycb
         // Log encoding
         && visilog == other.visilog
         && explog == other.explog
@@ -6270,6 +6278,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->slomaskcb, "Locallab", "Slomaskcb_" + index_str, spot.slomaskcb, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lapmaskcb, "Locallab", "Lapmaskcb_" + index_str, spot.lapmaskcb, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Lmaskcbcurve, "Locallab", "LmaskcbCurve_" + index_str, spot.Lmaskcbcurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->recothrescb, "Locallab", "Recothrescb_" + index_str, spot.recothrescb, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lowthrescb, "Locallab", "Lowthrescb_" + index_str, spot.lowthrescb, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->higthrescb, "Locallab", "Higthrescb_" + index_str, spot.higthrescb, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->decaycb, "Locallab", "Decaycb_" + index_str, spot.decaycb, keyFile);
                 }
                 // Log encoding
                 if ((!pedited || spot_edited->visilog) && spot.visilog) {
@@ -8146,6 +8158,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Slomaskcb_" + index_str, pedited, spot.slomaskcb, spotEdited.slomaskcb);
                 assignFromKeyfile(keyFile, "Locallab", "Lapmaskcb_" + index_str, pedited, spot.lapmaskcb, spotEdited.lapmaskcb);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskcbCurve_" + index_str, pedited, spot.Lmaskcbcurve, spotEdited.Lmaskcbcurve);
+                assignFromKeyfile(keyFile, "Locallab", "Recothrescb_" + index_str, pedited, spot.recothrescb, spotEdited.recothrescb);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthrescb_" + index_str, pedited, spot.lowthrescb, spotEdited.lowthrescb);
+                assignFromKeyfile(keyFile, "Locallab", "Higthrescb_" + index_str, pedited, spot.higthrescb, spotEdited.higthrescb);
+                assignFromKeyfile(keyFile, "Locallab", "Decaycb_" + index_str, pedited, spot.decaycb, spotEdited.decaycb);
                 // Log encoding
                 spot.visilog = assignFromKeyfile(keyFile, "Locallab", "Explog_" + index_str, pedited, spot.explog, spotEdited.explog);
 
