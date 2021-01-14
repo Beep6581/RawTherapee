@@ -1227,6 +1227,7 @@ struct LocallabParams {
         double recothresd;
         double lowthresd;
         double midthresd;
+        double midthresdch;
         double higthresd;
         double decayd;
         int isogr;
@@ -1306,6 +1307,10 @@ struct LocallabParams {
         double slomasktm;
         double lapmasktm;
         std::vector<double> Lmasktmcurve;
+        double recothrest;
+        double lowthrest;
+        double higthrest;
+        double decayt;
         // Retinex
         bool visireti;
         bool expreti;

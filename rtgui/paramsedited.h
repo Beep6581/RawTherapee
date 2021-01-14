@@ -635,6 +635,7 @@ public:
         bool recothresd;
         bool lowthresd;
         bool midthresd;
+        bool midthresdch;
         bool higthresd;
         bool decayd;
         bool isogr;
@@ -714,6 +715,10 @@ public:
         bool slomasktm;
         bool lapmasktm;
         bool Lmasktmcurve;
+        bool recothrest;
+        bool lowthrest;
+        bool higthrest;
+        bool decayt;
         // Retinex
         bool visireti;
         bool expreti;

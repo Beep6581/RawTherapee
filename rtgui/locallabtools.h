@@ -726,6 +726,7 @@ private:
     Adjuster* const recothresd;
     Adjuster* const lowthresd;
     Adjuster* const midthresd;
+    Adjuster* const midthresdch;
     Adjuster* const higthresd;
     Adjuster* const decayd;
     
@@ -833,6 +834,13 @@ private:
     Adjuster* const rewei;
     Adjuster* const softradiustm;
     Adjuster* const sensitm;
+    MyExpander* const exprecovt;
+    Gtk::Label* const maskusablet;
+    Gtk::Label* const maskunusablet;
+    Adjuster* const recothrest;
+    Adjuster* const lowthrest;
+    Adjuster* const higthrest;
+    Adjuster* const decayt;
     MyExpander* const expmasktm;
     MyComboBoxText* const showmasktmMethod;
     Gtk::CheckButton* const enatmMask;
