@@ -266,7 +266,7 @@ public:
          const LocCCmaskCurve & locccmasretiCurve, bool lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool lhmasretiutili,
          int llretiMask, bool retiMasktmap, bool retiMask, float rad, float lap, bool pde, float gamm, float slop, float chro, float blend,
          const LUTf & lmaskretilocalcurve, bool localmaskretiutili,
-         LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, bool multiThread,
+         LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, LabImage * bufmaskorigreti, bool multiThread,
          bool delt, const float hueref, const float chromaref, const float lumaref,
          float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float balanceh, float lumask);
 
@@ -275,7 +275,7 @@ public:
     void log_encode(Imagefloat *rgb, struct local_params & lp, bool multiThread, int bfw, int bfh);
     void getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, float *sourceab, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE);
 
-    void MSRLocal(int call, int sp, bool fftw, int lum, float** reducDE, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, const float* const *originalLuminance,
+    void MSRLocal(int call, int sp, bool fftw, int lum, float** reducDE, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, LabImage * bufmaskorigreti, float** luminance, const float* const *originalLuminance,
         const int width, const int height, int bfwr, int bfhr, const procparams::LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const LocretitransCurve &locRETtransCcurve,
         const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
         const LocCCmaskCurve & locccmasretiCurve, bool lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool lhmasretiutili, int llretiMask,
