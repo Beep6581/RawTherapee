@@ -782,7 +782,7 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
                                      const LocCCmaskCurve & locccmasretiCurve, bool lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool lhmasretiutili,
                                      int llretiMask, bool retiMasktmap, bool retiMask, float rad, float lap, bool pde, float gamm, float slop, float chro, float blend,
                                      const LUTf & lmaskretilocalcurve, bool localmaskretiutili,
-                                     LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, bool multiThread,
+                                     LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, LabImage * bufmaskorigreti, bool multiThread,
                                      bool delt, const float hueref, const float chromaref, const float lumaref,
                                      float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float balanceh, float lumask)
 {
@@ -793,11 +793,10 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
     array2D<float> guid(W_L, H_L);
     std::unique_ptr<LabImage> bufmaskblurreti;
     bufmaskblurreti.reset(new LabImage(W_L, H_L));
-    std::unique_ptr<LabImage> bufmaskorigreti;
-    bufmaskorigreti.reset(new LabImage(W_L, H_L));
+//    std::unique_ptr<LabImage> bufmaskorigreti;
+//    bufmaskorigreti.reset(new LabImage(W_L, H_L));
     std::unique_ptr<LabImage> bufprov;
     bufprov.reset(new LabImage(W_L, H_L));
-
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
 #endif
@@ -1124,7 +1123,7 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
 
 
 
-void ImProcFunctions::MSRLocal(int call, int sp, bool fftw, int lum, float** reducDE, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, float** luminance, const float* const *originalLuminance,
+void ImProcFunctions::MSRLocal(int call, int sp, bool fftw, int lum, float** reducDE, LabImage * bufreti, LabImage * bufmask, LabImage * buforig, LabImage * buforigmas, LabImage * bufmaskorigreti, float** luminance, const float* const *originalLuminance,
                                const int width, const int height, int bfwr, int bfhr, const procparams::LocallabParams &loc, const int skip, const LocretigainCurve &locRETgainCcurve, const LocretitransCurve &locRETtransCcurve,
                                const int chrome, const int scall, const float krad, float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
                                const LocCCmaskCurve & locccmasretiCurve, bool lcmasretiutili, const  LocLLmaskCurve & locllmasretiCurve, bool llmasretiutili, const  LocHHmaskCurve & lochhmasretiCurve, bool lhmasretiutili, int llretiMask,
@@ -1614,7 +1613,7 @@ void ImProcFunctions::MSRLocal(int call, int sp, bool fftw, int lum, float** red
                        locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask, retiMasktmap, retiMask,
                        rad, lap, pde, gamm, slop, chro, blend,
                        lmaskretilocalcurve, localmaskretiutili,
-                       bufreti, bufmask, buforig, buforigmas, multiThread,
+                       bufreti, bufmask, buforig, buforigmas, bufmaskorigreti, multiThread,
                        delt, hueref, chromaref, lumaref,
                        maxdE, mindE, maxdElim, mindElim, iterat, limscope, scope, balance, balanceh, lumask
                       );

@@ -1349,6 +1349,10 @@ struct LocallabParams {
         double cliptm;
         bool fftwreti;
         std::vector<double> Lmaskreticurve;
+        double recothresr;
+        double lowthresr;
+        double higthresr;
+        double decayr;
         // Sharpening
         bool visisharp;
         bool expsharp;

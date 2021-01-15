@@ -612,6 +612,10 @@ struct local_params {
     float lowthrw;
     float higthrw;
     float decayw;
+    float recothrr;
+    float lowthrr;
+    float higthrr;
+    float decayr;
     float recothrs;
     float lowthrs;
     float higthrs;
@@ -1106,8 +1110,13 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
 
     float local_recothrcb = (float)locallab.spots.at(sp).recothrescb;
     float local_lowthrcb = (float)locallab.spots.at(sp).lowthrescb;
-    float local_higthrcb = (float)locallab.spots.at(sp).higthresv;
+    float local_higthrcb = (float)locallab.spots.at(sp).higthrescb;
     float local_decaycb = (float)locallab.spots.at(sp).decaycb;
+
+    float local_recothrr = (float)locallab.spots.at(sp).recothresr;
+    float local_lowthrr = (float)locallab.spots.at(sp).lowthresr;
+    float local_higthrr = (float)locallab.spots.at(sp).higthresr;
+    float local_decayr = (float)locallab.spots.at(sp).decayr;
 
     float local_recothrt = (float)locallab.spots.at(sp).recothrest;
     float local_lowthrt = (float)locallab.spots.at(sp).lowthrest;
@@ -1512,6 +1521,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.lowthrcb = local_lowthrcb;
     lp.higthrcb = local_higthrcb;
     lp.decaycb = local_decaycb;
+    lp.recothrr = local_recothrr;
+    lp.lowthrr = local_lowthrr;
+    lp.higthrr = local_higthrr;
+    lp.decayr = local_decayr;
     
     lp.recothrl = local_recothrl;
     lp.lowthrl = local_lowthrl;
@@ -13513,6 +13526,7 @@ void ImProcFunctions::Lab_Local(
         LabImage *bufmask = nullptr;
         LabImage *buforig = nullptr;
         LabImage *buforigmas = nullptr;
+        LabImage *bufmaskorigreti = nullptr;
 
         if (GW >= mSP && GH >= mSP)
 
@@ -13527,10 +13541,12 @@ void ImProcFunctions::Lab_Local(
 
             bufreti = new LabImage(GW, GH);
             bufmask = new LabImage(GW, GH);
+                bufmaskorigreti = new LabImage(GW, GH);
 
             if (!lp.enaretiMasktmap && lp.enaretiMask) {
                 buforig = new LabImage(GW, GH);
                 buforigmas = new LabImage(GW, GH);
+              //  bufmaskorigreti = new LabImage(GW, GH);
             }
 
 #ifdef _OPENMP
@@ -13557,14 +13573,21 @@ void ImProcFunctions::Lab_Local(
                     bufmask->a[y][x] = original->a[y][x];
                     bufmask->b[y][x] = original->b[y][x];
 
+                
+
                     if (!lp.enaretiMasktmap && lp.enaretiMask) {
                         buforig->L[y][x] = original->L[y][x];
                         buforig->a[y][x] = original->a[y][x];
                         buforig->b[y][x] = original->b[y][x];
+
+                     //   bufmaskorigreti->L[y][x] = original->L[y][x];
+                     //   bufmaskorigreti->a[y][x] = original->a[y][x];
+                     //   bufmaskorigreti->b[y][x] = original->b[y][x];
+                        
+                        
                     }
 
                 }
-
             float raddE = params->locallab.spots.at(sp).softradiusret;
 
             //calc dE and reduction to use in MSR to reduce artifacts
@@ -13620,7 +13643,7 @@ void ImProcFunctions::Lab_Local(
             const float maxdE2 = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
             const float mindElim2 = 2.f + MINSCOPE * limscope * lp.thr;
             const float maxdElim2 = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
-            ImProcFunctions::MSRLocal(call, sp, fftw, 1, reducDE, bufreti, bufmask, buforig, buforigmas, orig, orig1,
+            ImProcFunctions::MSRLocal(call, sp, fftw, 1, reducDE, bufreti, bufmask, buforig, buforigmas, bufmaskorigreti, orig, orig1,
                                       Wd, Hd, Wd, Hd, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                       locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask,
                                       lmaskretilocalcurve, localmaskretiutili,
@@ -13661,6 +13684,14 @@ void ImProcFunctions::Lab_Local(
                 delete [] data;
             }
 
+            if(lp.enaretiMask && lp.recothrr != 1.f) {
+                float hig = lp.higthrr;
+                float low = lp.lowthrr;
+                float recoth = lp.recothrr;
+                float decay = lp.decayr;
+                bool invmask = false;
+                maskrecov(tmpl, original, bufmaskorigreti, Hd, Wd, 0, 0, hig, low, recoth, decay, invmask, sk, multiThread);
+            }
 
             float minL = tmpl->L[0][0] - bufreti->L[0][0];
             float maxL = minL;
@@ -13796,6 +13827,7 @@ void ImProcFunctions::Lab_Local(
 
             delete tmpl;
             delete bufmask;
+            delete bufmaskorigreti;
 
             if (!lp.enaretiMasktmap && lp.enaretiMask) {
                 if (buforig) {
@@ -13824,6 +13856,7 @@ void ImProcFunctions::Lab_Local(
         LabImage *bufmask = nullptr;
         LabImage *buforig = nullptr;
         LabImage *buforigmas = nullptr;
+        LabImage *bufmaskorigreti = nullptr;
         int bfhr = bfh;
         int bfwr = bfw;
 
@@ -13845,6 +13878,7 @@ void ImProcFunctions::Lab_Local(
                 Wd = bfw;
                 bufreti = new LabImage(bfw, bfh);
                 bufmask = new LabImage(bfw, bfh);
+                bufmaskorigreti = new LabImage(bfw, bfh);
 
                 if (!lp.enaretiMasktmap && lp.enaretiMask) {
                     buforig = new LabImage(bfw, bfh);
@@ -13945,7 +13979,7 @@ void ImProcFunctions::Lab_Local(
             const float mindElim2 = 2.f + MINSCOPE * limscope * lp.thr;
             const float maxdElim2 = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
 
-            ImProcFunctions::MSRLocal(call, sp, fftw, 1, reducDE, bufreti, bufmask, buforig, buforigmas, orig, orig1,
+            ImProcFunctions::MSRLocal(call, sp, fftw, 1, reducDE, bufreti, bufmask, buforig, buforigmas, bufmaskorigreti, orig, orig1,
                                       Wd, Hd, bfwr, bfhr, params->locallab, sk, locRETgainCcurve, locRETtransCcurve, 0, 4, 1.f, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                                       locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili, llretiMask,
                                       lmaskretilocalcurve, localmaskretiutili,
@@ -13984,6 +14018,14 @@ void ImProcFunctions::Lab_Local(
                         tmpl->L[ir][jr] = data[ir * Wd + jr];
                     }
                 }
+            }
+            if(lp.enaretiMask && lp.recothrr != 1.f) {
+                float hig = lp.higthrr;
+                float low = lp.lowthrr;
+                float recoth = lp.recothrr;
+                float decay = lp.decayr;
+                bool invmask = false;
+                maskrecov(tmpl, original, bufmaskorigreti, Hd, Wd, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
             }
 
             if (!lp.invret) {
@@ -14123,7 +14165,8 @@ void ImProcFunctions::Lab_Local(
 
             delete tmpl;
             delete bufmask;
-
+            delete bufmaskorigreti;
+            
             if (!lp.enaretiMasktmap && lp.enaretiMask) {
                 if (buforig) {
                     delete buforig;

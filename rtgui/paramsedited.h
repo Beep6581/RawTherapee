@@ -757,6 +757,10 @@ public:
         bool cliptm;
         bool fftwreti;
         bool Lmaskreticurve;
+        bool recothresr;
+        bool lowthresr;
+        bool higthresr;
+        bool decayr;
         // Sharpening
         bool visisharp;
         bool expsharp;
