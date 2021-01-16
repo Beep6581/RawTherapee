@@ -2632,7 +2632,7 @@ TP_LOCALLAB_EV_VIS_ALL;Show all
 TP_LOCALLAB_EXCLUF;Excluding
 TP_LOCALLAB_EXCLUF_TOOLTIP;‘Excluding’ mode prevents adjacent spots from influencing certain parts of the image. Adjusting ‘Scope’ will extend the range of colors.\n You can also add tools to an Excluding spot and use them in the same way as for a normal spot.
 TP_LOCALLAB_EXCLUTYPE;Spot method
-TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Normal spot uses recursive data.\n\nExcluding spot reinitializes all local adjustment data.\nCan be used to totally or partially cancel a previous action or to carry out operations in Inverse mode
+TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Normal spot uses recursive data.\n\nExcluding spot reinitializes all local adjustment data.\nCan be used to totally or partially cancel a previous action or to carry out operations in Inverse mode.\n\nFull image, allows you to used "Local adjustments" in "full image". Delimiters are sets out of preview, RT-spot shape is set to "rectangle", transition is set to 100.
 TP_LOCALLAB_EXECLU;Excluding spot
 TP_LOCALLAB_EXNORM;Normal spot
 TP_LOCALLAB_EXFULL;Full image
