@@ -35,7 +35,7 @@ unsigned fc(const unsigned int cfa[2][2], int r, int c) {
 namespace rtengine
 {
 
-/**
+/*
 * RATIO CORRECTED DEMOSAICING
 * Luis Sanz Rodriguez (luis.sanz.rodriguez(at)gmail(dot)com)
 *
@@ -44,7 +44,12 @@ namespace rtengine
 * Original code from https://github.com/LuisSR/RCD-Demosaicing
 * Licensed under the GNU GPL version 3
 */
+
 // Tiled version by Ingo Weyrich (heckflosse67@gmx.de)
+// Luis Sanz Rodriguez significantly optimised the v 2.3 code and simplified the directional
+// coefficients in an exact, shorter and more performant formula.
+// In cooperation with Hanno Schwalm (hanno@schwalm-bremen.de) and Luis Sanz Rodriguez this has been tuned for performance.
+
 void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
 {
     // Test for RGB cfa
@@ -60,7 +65,6 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
     }
 
     std::unique_ptr<StopWatch> stop;
-
     if (measure) {
         std::cout << "Demosaicing " << W << "x" << H << " image using rcd with " << chunkSize << " tiles per thread" << std::endl;
         stop.reset(new StopWatch("rcd demosaic"));
@@ -74,8 +78,8 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
     }
     
     const unsigned int cfarray[2][2] = {{FC(0,0), FC(0,1)}, {FC(1,0), FC(1,1)}};
-    constexpr int rcdBorder = 6;
-    constexpr int tileBorder = 9;
+    constexpr int tileBorder = 9; // avoid tile-overlap errors
+    constexpr int rcdBorder = 6;  // for the outermost tiles we can have a smaller outer border
     constexpr int tileSize = 194;
     constexpr int tileSizeN = tileSize - 2 * tileBorder;
     const int numTh = H / (tileSizeN) + ((H % (tileSizeN)) ? 1 : 0);
@@ -125,9 +129,8 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
                     cfa[indx] = rgb[c0][indx] = rgb[c1][indx] = LIM01(rawData[row][col] / scale);
                 }
             }
-            /**
-            * STEP 1: Find cardinal and diagonal interpolation directions
-            */
+
+            // Step 1: Find cardinal and diagonal interpolation directions
             float bufferV[3][tileSize - 8];
 
             // Step 1.1: Calculate the square of the vertical and horizontal color difference high pass filter
@@ -138,7 +141,6 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
             }
 
             // Step 1.2: Obtain the vertical and horizontal directional discrimination strength
-
             float bufferH[tileSize - 6] ALIGNED16;
             float* V0 = bufferV[0];
             float* V1 = bufferV[1];
@@ -162,11 +164,7 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
                 std::swap(V0, V1);
             }
 
-            /**
-            * STEP 2: Calculate the low pass filter
-            */
-            // Step 2.1: Low pass filter incorporating green, red and blue local samples from the raw data
-
+            // Step 2: Low pass filter incorporating green, red and blue local samples from the raw data
             for (int row = 2; row < tileRows - 2; ++row) {
                 for (int col = 2 + (fc(cfarray, row, 0) & 1), indx = row * tileSize + col, lpindx = indx / 2; col < tilecols - 2; col += 2, indx += 2, ++lpindx) {
                     lpf[lpindx] = cfa[indx] +
@@ -175,10 +173,7 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
                 }
             }
 
-            /**
-            * STEP 3: Populate the green channel
-            */
-            // Step 3.1: Populate the green channel at blue and red CFA positions
+            // Step 3: Populate the green channel at blue and red CFA positions
             for (int row = 4; row < tileRows - 4; ++row) {
                 for (int col = 4 + (fc(cfarray, row, 0) & 1), indx = row * tileSize + col, lpindx = indx / 2; col < tilecols - 4; col += 2, indx += 2, ++lpindx) {
                     // Cardinal gradients
