@@ -945,6 +945,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.excmet = 0;
     } else if (locallab.spots.at(sp).spotMethod == "exc") {
         lp.excmet = 1;
+    } else if (locallab.spots.at(sp).spotMethod == "full") {
+        lp.excmet = 2;
     }
 
     if (locallab.spots.at(sp).merMethod == "mone") {
