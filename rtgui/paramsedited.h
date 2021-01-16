@@ -492,6 +492,10 @@ public:
         bool Lmaskcurve;
         bool LLmaskcolcurvewav;
         bool csthresholdcol;
+        bool recothresc;
+        bool lowthresc;
+        bool higthresc;
+        bool decayc;
         // Exposure
         bool visiexpose;
         bool expexpose;
@@ -535,6 +539,10 @@ public:
         bool fatdetail;
         bool fatanchor;
         bool fatlevel;
+        bool recothrese;
+        bool lowthrese;
+        bool higthrese;
+        bool decaye;
         // Shadow highlight
         bool visishadhigh;
         bool expshadhigh;
@@ -567,6 +575,10 @@ public:
         bool fatanchorSH;
         bool gamSH;
         bool sloSH;
+        bool recothress;
+        bool lowthress;
+        bool higthress;
+        bool decays;
         // Vibrance
         bool visivibrance;
         bool expvibrance;
@@ -613,6 +625,14 @@ public:
         bool itera;
         bool guidbl;
         bool strbl;
+        bool recothres;
+        bool lowthres;
+        bool higthres;
+        bool recothresd;
+        bool lowthresd;
+        bool midthresd;
+        bool higthresd;
+        bool decayd;
         bool isogr;
         bool strengr;
         bool scalegr;
@@ -620,6 +640,12 @@ public:
         bool blMethod;
         bool chroMethod;
         bool quamethod;
+        bool usemask;
+        bool invmaskd;
+        bool invmask;
+        bool levelthr;
+        bool lnoiselow;
+        bool levelthrlow;
         bool blurMethod;
         bool medMethod;
         bool activlum;
@@ -867,6 +893,10 @@ public:
         bool radmaskL;
         bool chromaskL;
         bool LmaskcurveL;
+        bool recothresl;
+        bool lowthresl;
+        bool higthresl;
+        bool decayl;
         //mask
         bool visimask;
         bool complexmask;

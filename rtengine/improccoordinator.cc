@@ -1591,10 +1591,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     acListener->ybCamChanged((int) yb);    //real value Yb scene
                 }
 
-                if (params->colorappearance.enabled && params->colorappearance.presetcat02  && params->colorappearance.autotempout) {
+             //   if (params->colorappearance.enabled && params->colorappearance.presetcat02  && params->colorappearance.autotempout) {
+              //  if (params->colorappearance.enabled && params->colorappearance.presetcat02) {
               //      acListener->wbCamChanged(params->wb.temperature, params->wb.green);    //real temp and tint
-                    acListener->wbCamChanged(params->wb.temperature, 1.f);    //real temp and tint = 1.
-                }
+               //     acListener->wbCamChanged(params->wb.temperature, 1.f);    //real temp and tint = 1.
+               // }
                 
             } else {
                 // CIECAM is disabled, we free up its image buffer to save some space

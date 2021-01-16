@@ -189,6 +189,13 @@ private:
     Adjuster* const structcol;
     Adjuster* const blurcolde;
     Adjuster* const softradiuscol;
+    MyExpander* const exprecov;
+    Gtk::Label* const maskusablec;
+    Gtk::Label* const maskunusablec;
+    Adjuster* const recothresc;
+    Adjuster* const lowthresc;
+    Adjuster* const higthresc;
+    Adjuster* const decayc;
     Gtk::CheckButton* const invers;
     MyExpander* const expgradcol;
     Adjuster* const strcol;
@@ -278,6 +285,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+//    void adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop) override {};
     void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
@@ -346,6 +354,14 @@ private:
     Adjuster* const expchroma;
     CurveEditorGroup* const curveEditorG;
     DiagonalCurveEditor* shapeexpos;
+    MyExpander* const exprecove;
+    Gtk::Label* const maskusablee;
+    Gtk::Label* const maskunusablee;
+    Adjuster* const recothrese;
+    Adjuster* const lowthrese;
+    Adjuster* const higthrese;
+    Adjuster* const decaye;
+    
     MyExpander* const expgradexp;
     Adjuster* const strexp;
     Adjuster* const angexp;
@@ -432,6 +448,13 @@ private:
     Adjuster* const sh_radius;
     Adjuster* const sensihs;
     Adjuster* const blurSHde;
+    MyExpander* const exprecovs;
+    Gtk::Label* const maskusables;
+    Gtk::Label* const maskunusables;
+    Adjuster* const recothress;
+    Adjuster* const lowthress;
+    Adjuster* const higthress;
+    Adjuster* const decays;
     Gtk::Frame* const gamFrame;
     Adjuster* const gamSH;
     Adjuster* const sloSH;
@@ -558,6 +581,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+//    void adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop) override {};
     void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override;
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
@@ -633,6 +657,8 @@ class LocallabBlur:
     public Gtk::VBox,
     public LocallabTool,
     public ThresholdAdjusterListener
+//    public ThresholdCurveProvider
+    
 {
 private:
     // Blur & Noise specific widgets
@@ -650,6 +676,10 @@ private:
     Adjuster* const guidbl;
     Adjuster* const strbl;
     Adjuster* const epsbl;
+    MyExpander* const expdenoise2;
+    Adjuster* const recothres;
+    Adjuster* const lowthres;
+    Adjuster* const higthres;
     Adjuster* const sensibn;
     MyComboBoxText* const blurMethod;
     Gtk::CheckButton* const invbl;
@@ -659,6 +689,18 @@ private:
     MyComboBoxText* const quamethod;
     CurveEditorGroup* const LocalcurveEditorwavden;
     FlatCurveEditor* const wavshapeden;
+    MyExpander* const expdenoise1;
+    Gtk::Label* const maskusable;
+    Gtk::Label* const maskunusable;
+    Gtk::Label* const maskusable2;
+    Gtk::Label* const maskunusable2;
+    Gtk::Label* const maskusable3;
+    Gtk::Label* const maskunusable3;
+
+    Gtk::CheckButton* const usemask;
+    Adjuster* const lnoiselow;
+    Adjuster* const levelthr;
+    Adjuster* const levelthrlow;
     Adjuster* const noiselumf0;
     Adjuster* const noiselumf;
     Adjuster* const noiselumf2;
@@ -670,10 +712,22 @@ private:
     Adjuster* const noisechrof;
     Adjuster* const noisechroc;
     Adjuster* const noisechrodetail;
+    Gtk::Frame* const detailFrame;
     Adjuster* const detailthr;
     Adjuster* const adjblur;
+    MyExpander* const expdenoise3;
+    Adjuster* const recothresd;
+    Adjuster* const lowthresd;
+    Adjuster* const midthresd;
+    Adjuster* const higthresd;
+    Adjuster* const decayd;
+    
+    Gtk::CheckButton* const invmaskd;
+    Gtk::CheckButton* const invmask;
+    
     Adjuster* const bilateral;
     Adjuster* const sensiden;
+    Gtk::Button* neutral;
     MyExpander* const expmaskbl;
     MyComboBoxText* const showmaskblMethod;
     MyComboBoxText* const showmaskblMethodtyp;
@@ -701,7 +755,7 @@ private:
     ThresholdAdjuster* const csThresholdblur;
 
     sigc::connection blMethodConn, fftwblConn, invblConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
-    sigc::connection  quamethodconn;
+    sigc::connection  quamethodconn, usemaskConn, invmaskdConn, invmaskConn, neutralconn;
 public:
     LocallabBlur();
     ~LocallabBlur();
@@ -711,6 +765,7 @@ public:
     void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
+    void neutral_pressed();
 
     void setDefaultExpanderVisibility() override;
     void disableListener() override;
@@ -720,6 +775,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+//    void adjusterChanged3(ThresholdAdjuster* a, double newBotto, double newTo) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
@@ -736,6 +792,9 @@ private:
 
     void blMethodChanged();
     void fftwblChanged();
+    void usemaskChanged();
+    void invmaskdChanged();
+    void invmaskChanged();
     void invblChanged();
     void medMethodChanged();
     void blurMethodChanged();
@@ -969,6 +1028,7 @@ class LocallabContrast:
     public Gtk::VBox,
     public LocallabTool,
     public ThresholdAdjusterListener
+
 {
 private:
     MyComboBoxText* const localcontMethod;
@@ -1077,6 +1137,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+//    void adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop) override {};
     void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
@@ -1223,6 +1284,14 @@ private:
     Gtk::HBox* const surrHBox;
     
     Adjuster* const baselog;
+    MyExpander* const exprecovl;
+    Gtk::Label* const maskusablel;
+    Gtk::Label* const maskunusablel;
+    Adjuster* const recothresl;
+    Adjuster* const lowthresl;
+    Adjuster* const higthresl;
+    Adjuster* const decayl;
+    
     Adjuster* const sensilog;
     Gtk::Frame* const gradlogFrame;
     Adjuster* const strlog;
@@ -1347,6 +1416,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+//    void adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop) override {};
     void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
     void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used

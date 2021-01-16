@@ -1084,6 +1084,10 @@ struct LocallabParams {
         std::vector<double> Lmaskcurve;
         std::vector<double> LLmaskcolcurvewav;
         Threshold<int> csthresholdcol;
+        double recothresc;
+        double lowthresc;
+        double higthresc;
+        double decayc;
         // Exposure
         bool visiexpose;
         bool expexpose;
@@ -1127,6 +1131,10 @@ struct LocallabParams {
         double fatdetail;
         double fatanchor;
         double fatlevel;
+        double recothrese;
+        double lowthrese;
+        double higthrese;
+        double decaye;
         // Shadow highlight
         bool visishadhigh;
         bool expshadhigh;
@@ -1159,6 +1167,10 @@ struct LocallabParams {
         double fatanchorSH;
         double gamSH;
         double sloSH;
+        double recothress;
+        double lowthress;
+        double higthress;
+        double decays;
         // Vibrance
         bool visivibrance;
         bool expvibrance;
@@ -1205,6 +1217,14 @@ struct LocallabParams {
         int itera;
         int guidbl;
         int strbl;
+        double recothres;
+        double lowthres;
+        double higthres;
+        double recothresd;
+        double lowthresd;
+        double midthresd;
+        double higthresd;
+        double decayd;
         int isogr;
         int strengr;
         int scalegr;
@@ -1214,6 +1234,12 @@ struct LocallabParams {
         Glib::ustring quamethod; // cons agre
         Glib::ustring blurMethod; // norm, inv
         Glib::ustring medMethod; // none, 33, 55, 77, 99
+        bool usemask;
+        bool invmaskd;
+        bool invmask;
+        double levelthr;
+        double lnoiselow;
+        double levelthrlow;
         bool activlum;
         double noiselumf;
         double noiselumf0;
@@ -1459,6 +1485,10 @@ struct LocallabParams {
         double radmaskL;
         double chromaskL;
         std::vector<double> LmaskcurveL;
+        double recothresl;
+        double lowthresl;
+        double higthresl;
+        double decayl;
 
         // mask
         bool visimask;

@@ -318,12 +318,12 @@ fontchooser scrolledwindow,
 /*** end ***************************************************************************************/
 
 /*** Navigator *********************************************************************************/
-#Navigator {
+#Navigator box {
     padding-top: 0.75em;
     padding-bottom: 0.25em;
     background-color: @bg-dark-grey;
 }
-#Navigator label {
+#Navigator box label {
     padding: 0;
     margin: 0.083333333333333333em 0 0;
 }
@@ -1223,6 +1223,7 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     color: @headline-big;
     padding: 0;
     margin: 0.083333333333333333em 0.25em 0 0.166666666666666666em;
+    font-weight: bold;
 }
 
 #MyExpanderTitle:hover label {

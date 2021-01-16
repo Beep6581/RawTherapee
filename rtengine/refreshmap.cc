@@ -1008,7 +1008,39 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // Evlocallablightq
     LUMINANCECURVE,   // Evlocallabcolorfl
     LUMINANCECURVE,   // Evlocallabrepar
-    LUMINANCECURVE    //EvlocallabwavCurvehue
+    LUMINANCECURVE,   //EvlocallabwavCurvehue
+    LUMINANCECURVE,   // Evlocallablevelthr
+    LUMINANCECURVE,   // Evlocallablevelthrlow
+    LUMINANCECURVE,   //Evlocallabusemask1
+    LUMINANCECURVE,   // Evlocallablnoiselow
+    LUMINANCECURVE,   // Evlocallabrecothres
+    LUMINANCECURVE,   // Evlocallablowthres
+    LUMINANCECURVE,   // Evlocallabhigthres
+    LUMINANCECURVE,   // Evlocallabrecothresd
+    LUMINANCECURVE,   // Evlocallablowthresd
+    LUMINANCECURVE,   // Evlocallabhigthresd
+    LUMINANCECURVE,   // Evlocallabinvmaskd
+    LUMINANCECURVE,   // Evlocallabinvmask
+    LUMINANCECURVE,   // Evlocallabdecayd
+    LUMINANCECURVE,   // Evlocallabrecothresc
+    LUMINANCECURVE,   // Evlocallablowthresc
+    LUMINANCECURVE,   // Evlocallabhigthresc
+    LUMINANCECURVE,   // Evlocallabdecayc
+    LUMINANCECURVE,   // Evlocallabmidthresd
+    LUMINANCECURVE,   // Evlocallabrecothresl
+    LUMINANCECURVE,   // Evlocallablowthresl
+    LUMINANCECURVE,   // Evlocallabhigthresl
+    LUMINANCECURVE,  // Evlocallabdecayl
+    LUMINANCECURVE,   // Evlocallabrecothrese
+    LUMINANCECURVE,   // Evlocallablowthrese
+    LUMINANCECURVE,   // Evlocallabhigthrese
+    LUMINANCECURVE,   // Evlocallabdecaye
+    LUMINANCECURVE,   // Evlocallabrecothress
+    LUMINANCECURVE,   // Evlocallablowthress
+    LUMINANCECURVE,   // Evlocallabhigthress
+    LUMINANCECURVE   // Evlocallabdecays
+
+
 };
 
 

@@ -39,7 +39,7 @@
 
 #define MINLA0 0.01
 #define MAXLA0 16384
-#define CENTERLA0 500
+//#define CENTERLA0 500
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -50,12 +50,12 @@ static double wbSlider2Temp (double sval)
     // slider range: 0 - 10000
     double temp;
 
-    if (sval <= 5000) {
+    if (sval <= 5003) {
         // linear below center-temp
-        temp = MINTEMP0 + (sval / 5000.0) * (CENTERTEMP0 - MINTEMP0);
+        temp = MINTEMP0 + (sval / 5003.0) * (CENTERTEMP0 - MINTEMP0);
     } else {
         const double slope = (double) (CENTERTEMP0 - MINTEMP0) / (MAXTEMP0 - CENTERTEMP0);
-        double x = (sval - 5000) / 5000; // x 0..1
+        double x = (sval - 5003) / 5003; // x 0..1
         double y = x * slope + (1.0 - slope) * pow (x, 4.0);
         //double y = pow(x, 4.0);
         temp = CENTERTEMP0 + y * (MAXTEMP0 - CENTERTEMP0);
@@ -71,7 +71,7 @@ static double wbSlider2Temp (double sval)
 
     return temp;
 }
-
+/*
 static double wbSlider2la (double sval)
 {
 
@@ -99,7 +99,8 @@ static double wbSlider2la (double sval)
 
     return la;
 }
-
+*/
+/*
 static double wbla2Slider (double la)
 {
 
@@ -153,7 +154,7 @@ static double wbla2Slider (double la)
 
     return sval;
 }
-
+*/
 
 
 static double wbTemp2Slider (double temp)
@@ -162,7 +163,7 @@ static double wbTemp2Slider (double temp)
     double sval;
 
     if (temp <= CENTERTEMP0) {
-        sval = ((temp - MINTEMP0) / (CENTERTEMP0 - MINTEMP0)) * 5000.0;
+        sval = ((temp - MINTEMP0) / (CENTERTEMP0 - MINTEMP0)) * 5003.0;
     } else {
         const double slope = (double) (CENTERTEMP0 - MINTEMP0) / (MAXTEMP0 - CENTERTEMP0);
         const double y = (temp - CENTERTEMP0) / (MAXTEMP0 - CENTERTEMP0);
@@ -175,7 +176,7 @@ static double wbTemp2Slider (double temp)
         for (;;) {
             double y1 = x * slope + (1.0 - slope) * pow (x, 4.0);
 
-            if (5000 * fabs (y1 - y) < 0.1) {
+            if (5003 * fabs (y1 - y) < 0.1) {
                 break;
             }
 
@@ -196,7 +197,7 @@ static double wbTemp2Slider (double temp)
             }
         }
 
-        sval = 5000.0 + x * 5000.0;
+        sval = 5003.0 + x * 5003.0;
     }
 
     if (sval < 0) {
@@ -279,10 +280,11 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
     degree  = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CIECAT_DEGREE"),    0.,  100.,  1.,   90.));
     degree->set_tooltip_markup (M ("TP_COLORAPP_DEGREE_TOOLTIP"));
+    degree->setAdjusterListener(this);
 
-    degree->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+  //  degree->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    degree->throwOnButtonRelease();
+  //  degree->throwOnButtonRelease();
     degree->addAutoButton (M ("TP_COLORAPP_CAT02ADAPTATION_TOOLTIP"));
     p1VBox->pack_start (*degree);
 
@@ -362,21 +364,23 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
 
 //   adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), 0.01, 16384., 0.001, 2000.)); // EV -7  ==> EV 17
-    adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 1997.4, NULL, NULL, &wbSlider2la, &wbla2Slider));
+//   adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 1997.4, NULL, NULL, &wbSlider2la, &wbla2Slider));
+    adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 2000.));//, NULL, NULL, &wbSlider2la, &wbla2Slider));
+    adapscen->setLogScale(500, 0);
 
-    adapscen->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+   // adapscen->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     adapscen->set_tooltip_markup (M ("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
 
-    adapscen->throwOnButtonRelease();
+//    adapscen->throwOnButtonRelease();
     adapscen->addAutoButton();
     p1VBox->pack_start (*adapscen);
 
     ybscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_MEANLUMINANCE"), 1, 90, 1, 18));
     ybscen->set_tooltip_markup (M ("TP_COLORAPP_YBSCEN_TOOLTIP"));
 
-    ybscen->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+  //  ybscen->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    ybscen->throwOnButtonRelease();
+//    ybscen->throwOnButtonRelease();
     ybscen->addAutoButton();
     p1VBox->pack_start (*ybscen);
 
@@ -423,76 +427,77 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     p2VBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_EXPAND_WIDGET, 4);
 
     jlight = Gtk::manage (new Adjuster (M ("TP_COLORAPP_LIGHT"), -100.0, 100.0, 0.1, 0.));
+    jlight->setAdjusterListener  (this);
 
-    jlight->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+  //  jlight->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    jlight->throwOnButtonRelease();
+ //   jlight->throwOnButtonRelease();
     jlight->set_tooltip_markup (M ("TP_COLORAPP_LIGHT_TOOLTIP"));
     p2VBox->pack_start (*jlight);
 
     qbright = Gtk::manage (new Adjuster (M ("TP_COLORAPP_BRIGHT"), -100.0, 100.0, 0.1, 0.));
 
-    qbright->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+ //   qbright->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    qbright->throwOnButtonRelease();
+//    qbright->throwOnButtonRelease();
     qbright->set_tooltip_markup (M ("TP_COLORAPP_BRIGHT_TOOLTIP"));
     p2VBox->pack_start (*qbright);
 
     chroma = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA"), -100.0, 100.0, 0.1, 0.));
 
-    chroma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+  //  chroma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    chroma->throwOnButtonRelease();
+//    chroma->throwOnButtonRelease();
     chroma->set_tooltip_markup (M ("TP_COLORAPP_CHROMA_TOOLTIP"));
     p2VBox->pack_start (*chroma);
 
 
     schroma = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S"), -100.0, 100.0, 0.1, 0.));
 
-    schroma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+  //  schroma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    schroma->throwOnButtonRelease();
+//    schroma->throwOnButtonRelease();
     schroma->set_tooltip_markup (M ("TP_COLORAPP_CHROMA_S_TOOLTIP"));
     p2VBox->pack_start (*schroma);
 
     mchroma = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_M"), -100.0, 100.0, 0.1, 0.));
 
-    mchroma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+  //  mchroma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    mchroma->throwOnButtonRelease();
+//    mchroma->throwOnButtonRelease();
     mchroma->set_tooltip_markup (M ("TP_COLORAPP_CHROMA_M_TOOLTIP"));
     p2VBox->pack_start (*mchroma);
 
     rstprotection = Gtk::manage ( new Adjuster (M ("TP_COLORAPP_RSTPRO"), 0., 100., 0.1, 0.) );
 
-    rstprotection->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+  //  rstprotection->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    rstprotection->throwOnButtonRelease();
+ //   rstprotection->throwOnButtonRelease();
     rstprotection->set_tooltip_markup (M ("TP_COLORAPP_RSTPRO_TOOLTIP"));
     p2VBox->pack_start (*rstprotection);
 
     contrast = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CONTRAST"), -100.0, 100.0, 0.1, 0.));
 
-    contrast->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+  //  contrast->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    contrast->throwOnButtonRelease();
+//    contrast->throwOnButtonRelease();
     contrast->set_tooltip_markup (M ("TP_COLORAPP_CONTRAST_TOOLTIP"));
     p2VBox->pack_start (*contrast);
 
     qcontrast = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CONTRAST_Q"), -100.0, 100.0, 0.1, 0.));
 
-    qcontrast->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+ //   qcontrast->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    qcontrast->throwOnButtonRelease();
+  //  qcontrast->throwOnButtonRelease();
     qcontrast->set_tooltip_markup (M ("TP_COLORAPP_CONTRAST_Q_TOOLTIP"));
     p2VBox->pack_start (*qcontrast);
 
 
     colorh = Gtk::manage (new Adjuster (M ("TP_COLORAPP_HUE"), -100.0, 100.0, 0.1, 0.));
 
-    colorh->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+ //   colorh->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    colorh->throwOnButtonRelease();
+//    colorh->throwOnButtonRelease();
     colorh->set_tooltip_markup (M ("TP_COLORAPP_HUE_TOOLTIP"));
     p2VBox->pack_start (*colorh);
 
@@ -636,12 +641,12 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
     Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("circle-magenta-small.png"));
     Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("circle-green-small.png"));
-//   adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), 0.1,  16384., 0.1,   16.));
-    adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 16, NULL, NULL, &wbSlider2la, &wbla2Slider));
+    adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 16.));//, NULL, NULL, &wbSlider2la, &wbla2Slider));
+    adaplum->setLogScale(500, 0);
 
-    adaplum->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+  //  adaplum->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    adaplum->throwOnButtonRelease();
+ //   adaplum->throwOnButtonRelease();
     adaplum->set_tooltip_markup (M ("TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP"));
     p3VBox->pack_start (*adaplum);
 
@@ -650,9 +655,9 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
     degreeout  = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CIECAT_DEGREE"),    0.,  100.,  1.,   90.));
 
-    degreeout->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+ //   degreeout->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    degreeout->throwOnButtonRelease();
+  //  degreeout->throwOnButtonRelease();
     degreeout->set_tooltip_markup (M ("TP_COLORAPP_DEGREOUT_TOOLTIP"));
 
     degreeout->addAutoButton (M ("TP_COLORAPP_CAT02ADAPTATION_TOOLTIP"));
@@ -669,8 +674,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     ybout->set_tooltip_markup (M ("TP_COLORAPP_YBOUT_TOOLTIP"));
 
     tempout->set_tooltip_markup (M ("TP_COLORAPP_TEMP2_TOOLTIP"));
-    tempout->throwOnButtonRelease();
-    tempout->addAutoButton (M ("TP_COLORAPP_TEMPOUT_TOOLTIP"));
+ //   tempout->throwOnButtonRelease();
+ //   tempout->addAutoButton (M ("TP_COLORAPP_TEMPOUT_TOOLTIP"));
 
     tempout->show();
     greenout->show();
@@ -715,9 +720,9 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     */
     badpixsl = Gtk::manage (new Adjuster (M ("TP_COLORAPP_BADPIXSL"), 0,  2, 1,  0));
 
-    badpixsl->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+ //   badpixsl->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    badpixsl->throwOnButtonRelease();
+ //   badpixsl->throwOnButtonRelease();
     badpixsl->set_tooltip_markup (M ("TP_COLORAPP_BADPIXSL_TOOLTIP"));
     pack_start (*badpixsl, Gtk::PACK_SHRINK);
 
@@ -811,7 +816,7 @@ void ColorAppearance::neutral_pressed ()
     qcontrast->resetValue (false);
     colorh->resetValue (false);
     tempout->resetValue (false);
-    tempout->setAutoValue (true);
+//   tempout->setAutoValue (true);
     greenout->resetValue (false);
     ybout->resetValue (false);
     tempsc->resetValue (false);
@@ -903,7 +908,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         adapscen->setAutoInconsistent (multiImage && !pedited->colorappearance.autoadapscen);
         ybscen->setAutoInconsistent (multiImage && !pedited->colorappearance.autoybscen);
         set_inconsistent              (multiImage && !pedited->colorappearance.enabled);
-        tempout->setAutoInconsistent   (multiImage && !pedited->colorappearance.autotempout);
+    //    tempout->setAutoInconsistent   (multiImage && !pedited->colorappearance.autotempout);
 
         shape->setUnChanged (!pedited->colorappearance.curve);
         shape2->setUnChanged (!pedited->colorappearance.curve2);
@@ -1076,7 +1081,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     lastAutoAdapscen = pp->colorappearance.autoadapscen;
     lastAutoDegreeout = pp->colorappearance.autodegreeout;
     lastAutoybscen = pp->colorappearance.autoybscen;
-    lastAutotempout = pp->colorappearance.autotempout;
+//    lastAutotempout = pp->colorappearance.autotempout;
 
     degree->setValue (pp->colorappearance.degree);
     degree->setAutoValue (pp->colorappearance.autodegree);
@@ -1099,7 +1104,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     qcontrast->setValue (pp->colorappearance.qcontrast);
     colorh->setValue (pp->colorappearance.colorh);
     tempout->setValue (pp->colorappearance.tempout);
-    tempout->setAutoValue (pp->colorappearance.autotempout);
+//    tempout->setAutoValue (pp->colorappearance.autotempout);
     greenout->setValue (pp->colorappearance.greenout);
     ybout->setValue (pp->colorappearance.ybout);
     tempsc->setValue (pp->colorappearance.tempsc);
@@ -1166,7 +1171,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorappearance.curve2        = shape2->getCurve ();
     pp->colorappearance.curve3        = shape3->getCurve ();
     pp->colorappearance.tempout        = tempout->getValue ();
-    pp->colorappearance.autotempout    = tempout->getAutoValue ();
+//    pp->colorappearance.autotempout    = tempout->getAutoValue ();
     pp->colorappearance.greenout        = greenout->getValue ();
     pp->colorappearance.ybout        = ybout->getValue ();
     pp->colorappearance.tempsc        = tempsc->getValue ();
@@ -1245,7 +1250,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorappearance.tempsc        = tempsc->getEditedState ();
         pedited->colorappearance.greensc        = greensc->getEditedState ();
         pedited->colorappearance.presetcat02        = presetcat02->get_inconsistent ();
-        pedited->colorappearance.autotempout    = !tempout->getAutoInconsistent();
+//        pedited->colorappearance.autotempout    = !tempout->getAutoInconsistent();
 
     }
 
@@ -1593,8 +1598,14 @@ void ColorAppearance::presetcat02pressed ()
     degreeout->setValue(90);
     ybout->setValue(18);
     tempout->setValue (nexttemp);
-    tempout->setAutoValue (true);
-
+    
+/*    if(tempout->getAutoValue()) {
+        tempout->resetValue (false);
+    } else {
+        tempout->setValue (nexttemp);
+        tempout->setAutoValue (true);
+    }
+*/
     greenout->setValue (nextgreen);
     enableListener();
  } else {
@@ -1954,6 +1965,16 @@ void ColorAppearance::adjusterChanged(Adjuster* a, double newval)
 
 void ColorAppearance::adjusterAutoToggled(Adjuster* a)
 {
+    /*
+    if(presetcat02->get_active ()){
+        if(tempout->getAutoValue()) {
+            tempout->resetValue (false);
+        } else {
+            tempout->setValue (nexttemp);
+            tempout->setAutoValue (true);
+        }
+    }
+*/    
     if (multiImage) {
         if (degree->getAutoInconsistent()) {
             degree->setAutoInconsistent (false);
@@ -1989,7 +2010,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
             ybscen->setAutoInconsistent (true);
         }
 
-        lastAutotempout = tempout->getAutoValue();
+/*        lastAutotempout = tempout->getAutoValue();
 
         if (tempout->getAutoInconsistent()) {
             tempout->setAutoInconsistent (false);
@@ -1999,9 +2020,8 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
         }
 
         lastAutotempout = tempout->getAutoValue();
-
+*/
     }
-
     if (listener && (multiImage || getEnabled()) ) {
 
         if (a == degree) {
@@ -2044,7 +2064,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
                 listener->panelChanged (EvCATAutoyb, M ("GENERAL_DISABLED"));
             }
         }
-
+/*
         if (a == tempout) {
             if (tempout->getAutoInconsistent()) {
                 listener->panelChanged (EvCATAutotempout, M ("GENERAL_UNCHANGED"));
@@ -2054,7 +2074,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
                 listener->panelChanged (EvCATAutotempout, M ("GENERAL_DISABLED"));
             }
         }
-
+*/
     }
 }
 void ColorAppearance::enabledChanged ()
