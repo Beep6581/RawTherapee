@@ -1916,9 +1916,10 @@ TP_LOCALLAB_EV_VIS_ALL;Montrer tout
 TP_LOCALLAB_EXCLUF;Exclure
 TP_LOCALLAB_EXCLUF_TOOLTIP;Peut être utilsé pour exclure une partie des données - agir sur Etendue pour prendre en compte plus de couleurs.\n Vous pouvez utiliser tous les réglages pour ce type de RT-spot.
 TP_LOCALLAB_EXCLUTYPE;Spot méthode
-TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Spot Normal utilise les données récursives.\n\nSpot exclusion réinitialise les données d'origine.\nPeut être utilsé pour annuler totalement ou partiellement une action précédente ou pour  réaliser un mode inverse
+TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Spot Normal utilise les données récursives.\n\nSpot exclusion réinitialise les données d'origine.\nPeut être utilsé pour annuler totalement ou partiellement une action précédente ou pour réaliser un mode inverse.\n\nImage entière vous permet d'utiliser 'local adjustments" sur le totalité de l'image.\nLes délimiteurs sont positionnés au delà de la prévisualisation\nTransition est mis à 100.\nVous pouvez avoir à repositionner le Spot ainsi que sa taille pour obtenir les effets désirés.\nNotez que l'utilisation de De-bruite, ondelettes, FFTW en image entière va utiliser de grosses quantités de mémoire, et peut amener l'application à 'planter' sur des systèmes à faible capacité.
 TP_LOCALLAB_EXECLU;Spot Exclusion
 TP_LOCALLAB_EXNORM;Spot Normal
+TP_LOCALLAB_EXFULL;Image entière
 TP_LOCALLAB_EXPCBDL_TOOLTIP;Peut être utilisé pour retirer les marques sur le capteur ou la lentille.
 TP_LOCALLAB_EXPCHROMA;Chroma compensation
 TP_LOCALLAB_EXPCHROMA_TOOLTIP;Seulement en association avec compensation d'exposition et PDE Ipol.\nEvite la desaturation des couleurs
