@@ -1878,6 +1878,8 @@ TP_LOCALLAB_DENOIS;Ψ Réduction du bruit
 TP_LOCALLAB_DENOI_EXP;Réduction du bruit
 TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservatif préserve les fréquences basses, alors que agressif tend à les effacer
 TP_LOCALLAB_DENOIEQUAL_TOOLTIP;Equilibre l'action de denoise luminance entre les ombres et les lumières
+TP_LOCALLAB_DENOI1_EXP;De-bruite basé sur masque luminance 
+TP_LOCALLAB_DENOI2_EXP;Récupération basée based sur masque luminance
 TP_LOCALLAB_DENOI_TOOLTIP;Ce module peut être utilisé seul (à la fin du processus), ou en complément de Réduction du bruit (au début).\nEtendue(deltaE)permet de différencier l'action.\nVous pouvez compléter avec  "median" ou "Filtre guidé" (Adoucir Flou...).\nVous pouvez compléter l'action avec "Flou niveaux" "Ondelette pyramide" 
 TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP;Permet de récupérer les détails de luminance par mise en oeuvre progressive de la transformée de Fourier (DCT)
 TP_LOCALLAB_DENOICHROF_TOOLTIP;Agit sur les fins détails du bruit de chrominance 
@@ -1887,7 +1889,9 @@ TP_LOCALLAB_DENOITHR_TOOLTIP;Règle l'effet de bord pour privilégier l'action s
 TP_LOCALLAB_DENOIEQUALCHRO_TOOLTIP;Equilibre l'action de denoise chrominance entre les bleus-jaunes et les rouges-verts
 TP_LOCALLAB_DENOIBILAT_TOOLTIP;Traite le bruit d'impulsion (poivre et sel)
 TP_LOCALLAB_DEPTH;Profondeur
-TP_LOCALLAB_DETAIL;Contrast local
+TP_LOCALLAB_DETAIL;Contraste local
+TP_LOCALLAB_DETAILFRA;Détection de bord
+
 TP_LOCALLAB_DETAILSH;Details
 TP_LOCALLAB_DETAILTHR;Seuil Detail Luminance Chroma (DCT ƒ)
 TP_LOCALLAB_DUPLSPOTNAME;Copier
@@ -1999,6 +2003,7 @@ TP_LOCALLAB_INDSL;Independant (souris + curseurs)
 TP_LOCALLAB_INVERS;Inverse
 TP_LOCALLAB_INVERS_TOOLTIP;Si sélectionné (inverse) moins de possibilités.\n\nAlternative\nPremier Spot:\n image entière - delimiteurs en dehors de la prévisualisation\n RT-spot forme sélection : rectangle. Transition 100\n\nDeuxième spot : Spot Exclusion
 TP_LOCALLAB_INVBL_TOOLTIP;Alternative\nPremier Spot:\n image entière - delimiteurs en dehors de la prévisualisation\n RT-spot forme sélection : rectangle. Transition 100\n\nDeuxième spot : Spot Exclusion
+TP_LOCALLAB_INVMASK;Algorithme inverse
 TP_LOCALLAB_ISOGR;Plus gros (ISO)
 TP_LOCALLAB_LABBLURM;Masque Flouter
 TP_LOCALLAB_LABEL;Ajustements Locaux
@@ -2041,6 +2046,7 @@ TP_LOCALLAB_LOGAUTO_TOOLTIP;Presser ce bouton va amner une évaluation an evalua
 TP_LOCALLAB_LOGBASE_TOOLTIP;Défaut = 2.\nValeurs inférieures à 2 réduisent l'action de l'algorithme, les ombres sont plus sombres, les hautes lumières plus brillantes.\nValeurs supérieures à 2 changent l'action de l'algorithme, les ombres sont plus grises, les hautes lumières lavées
 TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Valeurs estimées de la plage Dynamique - Noir Ev et Blanc Ev
 TP_LOCALLAB_LOGENCOD_TOOLTIP;Autorise 'Tone Mapping' avec codage Logarithmique (ACES).\nUtile pour images ous-exposées, ou avec une plage dynamique élévée.\n\nDeux étapes dans le processus : 1) Calculer Plage Dynamique 2) Adaptation par utilisateur
+TP_LOCALLAB_LOGEXP;Tous les outils
 TP_LOCALLAB_LOGFRA;Point gris source
 TP_LOCALLAB_LOGFRAME_TOOLTIP;Calcule ou utilise le niveau d'Exposition de l'image tôt dans le processus:\n Noir Ev, Blanc Ev et Point gris source.\n Prend en compte la compensation d'exposition principale.
 TP_LOCALLAB_LOGLIN;Logarithme mode
@@ -2056,13 +2062,37 @@ TP_LOCALLAB_LUMAWHITESEST;Plus clair
 TP_LOCALLAB_LUMONLY;Luminance seulement
 TP_LOCALLAB_MASKCOM;Masque couleur Commun
 TP_LOCALLAB_MASKCOM_TOOLTIP;Ces masques travaillent comme les autres outils, ils prennet en compte Etendue.\nIls sont différents des autres masques qui complètent un outil (Couleur et Lumière, Exposition...)
+TP_LOCALLAB_MASKDDECAY;Force des transitions
+TP_LOCALLAB_MASKDECAY_TOOLTIP;Gère le taux des tranistions des niveaux gris dans le masque.\n Transition = 1 linéaire, Transition > 1 transitions paraboliques rapides, Transitions < 1 transitions progressives
+
 TP_LOCALLAB_MASFRAME;Masque et Fusion
 TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTake into account deltaE image to avoid retouching the selection area when sliders gamma mask, slope mask, chroma mask and curves contrast , levels contrasts, and mask blur, structure(if enabled tool) are used.\nDisabled in Inverse
 TP_LOCALLAB_MASK;Masque
 TP_LOCALLAB_MASK2;Courbe de Contraste
 TP_LOCALLAB_MASKCOL;Masque Courbes
 TP_LOCALLAB_MASKCURVE_TOOLTIP;Si la courbe est au sommet, le masque est compétement noir aucune transformation n'est réalisée par le masque sur l'image.\nQuand vous descendez la courbe, progressivement le masque va se colorer et s'éclaicir, l'image change de plus en plus.\n\nIl est recommendé (pas obligatoire) de positionner le sommet des courbes curves sur la ligne de transition grise qui représnte les références (chroma, luma, couleur).
+TP_LOCALLAB_MASKLCTHRMID;Zones grises pour de-bruite luminance 
+TP_LOCALLAB_MASKLCTHRMIDCH;Zones grises pour de-bruite chrominance 
+TP_LOCALLAB_MASKLCTHR;Seuil luminance zones claires
+TP_LOCALLAB_MASKLCTHRLOW;Seuil luminance zones sombres
+TP_LOCALLAB_MASKLNOISELOW;Renforce de-bruite dans les zones sombres et claires dark
 TP_LOCALLAB_MASKH;Courbe teinte
+TP_LOCALLAB_MASKRECOTHRES;Seuil de Récupération
+TP_LOCALLAB_MASKRECOL_TOOLTIP;Utilisé pour moduler l'action des réglages de Couleur et Lumières  en se basant sur les informations contenues dans les courbes des masques L(L) ou LC(H) (Masques et modifications).\n Les masques L(L) ou LC(H) doivent être activés pour utiliser cette fonction.\n Les zones ‘sombres’ et ‘claires’ en dessous du seuil sombre  et au dessus du seuil clair seront restaurés progressivement à leurs valeurs originales avant d'avoir été modifiées par Couleurs et Lumières \n Entre ces 2 valeurs, les valeurs de Couleurs et Lumières seront appliquées
+TP_LOCALLAB_MASKREEXP_TOOLTIP;Utilisé pour moduler l'action des réglages de Compression dynamique et Exposition  en se basant sur les informations contenues dans les courbes des masques L(L) ou LC(H) (Masques et modifications).\n Les masques L(L) ou LC(H) doivent être activés pour utiliser cette fonction.\n Les zones ‘sombres’ et ‘claires’ en dessous du seuil sombre  et au dessus du seuil clair seront restaurés progressivement à leurs valeurs originales avant d'avoir été modifiées par Compression dynamique et Exposition \n Entre ces 2 valeurs, les valeurs de Compression dynamique et Exposition seront appliquées
+TP_LOCALLAB_MASKRESH_TOOLTIP;Utilisé pour moduler l'action des réglages de Ombres et Lumières en se basant sur les informations contenues dans les courbes des masques L(L) ou LC(H) (Masques et modifications).\n Les masques L(L) ou LC(H) doivent être activés pour utiliser cette fonction.\n Les zones ‘sombres’ et ‘claires’ en dessous du seuil sombre  et au dessus du seuil clair seront restaurés progressivement à leurs valeurs originales avant d'avoir été modifiées par Ombres et Lumières \n Entre ces 2 valeurs, les valeurs de Ombres et Lumières seront appliquées
+TP_LOCALLAB_MASKRESCB_TOOLTIP;Utilisé pour moduler l'action des réglages de CBDL (Luminance) en se basant sur les informations contenues dans les courbes des masques L(L) ou LC(H) (Masques et modifications).\n Les masques L(L) ou LC(H) doivent être activés pour utiliser cette fonction.\n Les zones ‘sombres’ et ‘claires’ en dessous du seuil sombre  et au dessus du seuil clair seront restaurés progressivement à leurs valeurs originales avant d'avoir été modifiées par CBDL  \n Entre ces 2 valeurs, les valeurs de CBDL seront appliquées
+TP_LOCALLAB_MASKRESRETI_TOOLTIP;Utilisé pour moduler l'action des réglages de Retinex (Luminance) en se basant sur les informations contenues dans les courbes des masques L(L) ou LC(H) (Masques et modifications).\n Les masques L(L) ou LC(H) doivent être activés pour utiliser cette fonction.\n Les zones ‘sombres’ et ‘claires’ en dessous du seuil sombre  et au dessus du seuil clair seront restaurés progressivement à leurs valeurs originales avant d'avoir été modifiées par Retinex  \n Entre ces 2 valeurs, les valeurs de Retinex seront appliquées
+TP_LOCALLAB_MASKRESTM_TOOLTIP;Utilisé pour moduler l'action des réglages de Compression tonale en se basant sur les informations contenues dans les courbes des masques L(L) ou LC(H) (Masques et modifications).\n Les masques L(L) ou LC(H) doivent être activés pour utiliser cette fonction.\n Les zones ‘sombres’ et ‘claires’ en dessous du seuil sombre  et au dessus du seuil clair seront restaurés progressivement à leurs valeurs originales avant d'avoir été modifiées par Compression tonale \n Entre ces 2 valeurs, les valeurs de Compression tonale seront appliquées
+
+
+TP_LOCALLAB_MASKRESWAV_TOOLTIP;Utilisé pour moduler l'action des réglages de Contraste local et ondelettes en se basant sur les informations contenues dans les courbes des masques L(L) ou LC(H) (Masques et modifications).\n Les masques L(L) ou LC(H) doivent être activés pour utiliser cette fonction.\n Les zones ‘sombres’ et ‘claires’ en dessous du seuil sombre  et au dessus du seuil clair seront restaurés progressivement à leurs valeurs originales avant d'avoir été modifiées par Contraste local et ondelettes \n Entre ces 2 valeurs, les valeurs de Contraste local et Ondelettes seront appliquées
+TP_LOCALLAB_MASKRELOG_TOOLTIP;Utilisé pour moduler l'action des réglages de Codage Log en se basant sur les informations contenues dans les courbes des masques L(L) ou LC(H) (Masques et modifications).\n Les masques L(L) ou LC(H) doivent être activés pour utiliser cette fonction.\n Les zones ‘sombres’ et ‘claires’ en dessous du seuil sombre  et au dessus du seuil clair seront restaurés progressivement à leurs valeurs originales avant d'avoir été modifiées par Codage Log - peut être utilisé pour récupérer les hautes lumières de 'Couleur propagation' \n Entre ces 2 valeurs, les valeurs de Codage Log seront appliquées
+
+
+
+TP_LOCALLAB_MASKUSABLE;Masque activé (Masque & modifications)
+TP_LOCALLAB_MASKUNUSABLE;Masque désactivé (Masque & modifications)
 TP_LOCALLAB_MASK_TOOLTIP;Vous pouvez activer plusieurs masques pour un simple outil, ceci nécessite d'activer un autre outil (mais sans utilser l'outil : curseurs à 0,...)où est le masque que vous souhaitez activer.\n\nVous pouvez aussi dupliquer le RT-spot et le placer juste à côté de l'autre,les variations de références autorisent un travail fin sur les images. 
 TP_LOCALLAB_MED;Medium
 TP_LOCALLAB_MEDIAN;Median Bas
