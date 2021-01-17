@@ -218,7 +218,7 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
 
             // Step 4.1: Obtain the P/Q diagonals directional discrimination strength
             for (int row = 4; row < tileRows - 4; ++row) {
-                for (int col = 4 + FC(row, 0) & 1, indx = row * tileSize + col, indx2 = indx / 2, indx3 = (indx - w1 - 1) / 2, indx4 = (indx + w1 - 1) / 2; col < tilecols - 4; col += 2, indx += 2, indx2++, indx3++, indx4++ ) {
+                for (int col = 4 + (fc(cfarray, row, 0) & 1), indx = row * tileSize + col, indx2 = indx / 2, indx3 = (indx - w1 - 1) / 2, indx4 = (indx + w1 - 1) / 2; col < tilecols - 4; col += 2, indx += 2, indx2++, indx3++, indx4++ ) {
                     float P_Stat = std::max(epssq, P_CDiff_Hpf[indx3] + P_CDiff_Hpf[indx2] + P_CDiff_Hpf[indx4 + 1]);
                     float Q_Stat = std::max(epssq, Q_CDiff_Hpf[indx3 + 1] + Q_CDiff_Hpf[indx2] + Q_CDiff_Hpf[indx4]);
                     PQ_Dir[indx2] = P_Stat / (P_Stat + Q_Stat);
