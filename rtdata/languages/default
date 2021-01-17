@@ -3030,6 +3030,7 @@ TP_LOCALLAB_SHOWMASKTYP3;Blur & Noise  + Denoise
 TP_LOCALLAB_SHOWMASKTYP_TOOLTIP;Mask and modifications can be chosen.\nBlur and noise : in this case it is not used for 'denoise'.\nDenoise : in this case it is not used for 'blur and noise'.\n\nBlur and noise + denoise : mask is shared, be carefull to 'show modifications' and 'scope'
 TP_LOCALLAB_SHOWMNONE;Show modified image
 TP_LOCALLAB_SHOWMODIF;Show modified areas without mask
+TP_LOCALLAB_SHOWMODIF2;Show modified areas
 TP_LOCALLAB_SHOWMODIFMASK;Show modified areas with mask
 TP_LOCALLAB_SHOWNORMAL;No luminance normalization
 TP_LOCALLAB_SHOWPLUS;Mask and modifications (Blur & Denoise)

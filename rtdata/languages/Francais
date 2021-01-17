@@ -2298,6 +2298,7 @@ TP_LOCALLAB_SHOWMASKTYP3;Flouter & Bruit  + De-bruite
 TP_LOCALLAB_SHOWMASKTYP_TOOLTIP;Masque et modifications peuvent être choisis.\nFlouter et bruit: dans ce cas il n'est pas utilisé pour 'Réduction du bruit'.\nRéduction du bruit : dans ce cas il n'est pas utilisé pour 'flouter et bruit'.\n\nFlouter et bruit + Réduction du bruit : le masque est partagé, faire attention à 'montrer modifications' et 'Etendue'
 TP_LOCALLAB_SHOWMNONE;Montrer image modifiée
 TP_LOCALLAB_SHOWMODIF;Montrer modifications sans masque
+TP_LOCALLAB_SHOWMODIF2;Montrer modifications
 TP_LOCALLAB_SHOWMODIFMASK;Montrer modifications avec masque
 TP_LOCALLAB_SHOWNORMAL;Normalise luminance (non)
 TP_LOCALLAB_SHOWPLUS;Masque et modifications - Adoucir-flouter & De-bruite

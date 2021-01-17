@@ -5827,7 +5827,7 @@ LocallabSoft::LocallabSoft():
     showmasksoftMethod->append(M("TP_LOCALLAB_SHOWFOURIER"));
     showmasksoftMethod->append(M("TP_LOCALLAB_SHOWPOISSON"));
     showmasksoftMethod->append(M("TP_LOCALLAB_SHOWNORMAL"));
-    showmasksoftMethod->append(M("TP_LOCALLAB_SHOWMODIF"));
+    showmasksoftMethod->append(M("TP_LOCALLAB_SHOWMODIF2"));
     showmasksoftMethod->set_active(0);
     showmasksoftMethodConn = showmasksoftMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabSoft::showmasksoftMethodChanged));
 
