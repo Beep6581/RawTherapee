@@ -269,8 +269,10 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
 
         if (pp->locallab.spots.at(i).spotMethod == "norm") {
             r->spotMethod = 0;
-        } else {
+        } else if(pp->locallab.spots.at(i).spotMethod == "exc"){
             r->spotMethod = 1;
+        } else if (pp->locallab.spots.at(i).spotMethod == "full"){
+            r->spotMethod = 2;
         }
 
         r->sensiexclu = pp->locallab.spots.at(i).sensiexclu;
@@ -426,8 +428,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             if (newSpot->spotMethod == "norm") {
                 r->spotMethod = 0;
-            } else {
+            } else if(newSpot->spotMethod == "exc") {
                 r->spotMethod = 1;
+            } else if(newSpot->spotMethod == "full") {
+                r->spotMethod = 2;
             }
 
             r->sensiexclu = newSpot->sensiexclu;
@@ -711,8 +715,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             if (newSpot->spotMethod == "norm") {
                 r->spotMethod = 0;
-            } else {
+            } else if (newSpot->spotMethod == "exc") {
                 r->spotMethod = 1;
+            } else if (newSpot->spotMethod == "full") {
+                r->spotMethod = 2;
             }
 
             r->sensiexclu = newSpot->sensiexclu;
@@ -878,8 +884,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
                     if (r->spotMethod == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "norm";
-                    } else {
+                    } else if (r->spotMethod == 1){
                         pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "exc";
+                    } else if (r->spotMethod == 2) {
+                        pp->locallab.spots.at(pp->locallab.selspot).spotMethod = "full";
                     }
 
                     pp->locallab.spots.at(pp->locallab.selspot).sensiexclu = r->sensiexclu;
