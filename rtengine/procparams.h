@@ -1199,6 +1199,10 @@ struct LocallabParams {
         double strvibh;
         double angvib;
         std::vector<double> Lmaskvibcurve;
+        double recothresv;
+        double lowthresv;
+        double higthresv;
+        double decayv;
         // Soft Light
         bool visisoft;
         bool expsoft;
@@ -1223,6 +1227,7 @@ struct LocallabParams {
         double recothresd;
         double lowthresd;
         double midthresd;
+        double midthresdch;
         double higthresd;
         double decayd;
         int isogr;
@@ -1302,6 +1307,10 @@ struct LocallabParams {
         double slomasktm;
         double lapmasktm;
         std::vector<double> Lmasktmcurve;
+        double recothrest;
+        double lowthrest;
+        double higthrest;
+        double decayt;
         // Retinex
         bool visireti;
         bool expreti;
@@ -1340,6 +1349,10 @@ struct LocallabParams {
         double cliptm;
         bool fftwreti;
         std::vector<double> Lmaskreticurve;
+        double recothresr;
+        double lowthresr;
+        double higthresr;
+        double decayr;
         // Sharpening
         bool visisharp;
         bool expsharp;
@@ -1425,6 +1438,10 @@ struct LocallabParams {
         double radmasklc;
         double chromasklc;
         std::vector<double> Lmasklccurve;
+        double recothresw;
+        double lowthresw;
+        double higthresw;
+        double decayw;
         // Contrast by detail levels
         bool visicbdl;
         bool expcbdl;
@@ -1447,6 +1464,10 @@ struct LocallabParams {
         double slomaskcb;
         double lapmaskcb;
         std::vector<double> Lmaskcbcurve;
+        double recothrescb;
+        double lowthrescb;
+        double higthrescb;
+        double decaycb;
         // Log encoding
         bool visilog;
         bool explog;

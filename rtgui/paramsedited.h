@@ -607,6 +607,10 @@ public:
         bool strvibh;
         bool angvib;
         bool Lmaskvibcurve;
+        bool recothresv;
+        bool lowthresv;
+        bool higthresv;
+        bool decayv;
         // Soft Light
         bool visisoft;
         bool expsoft;
@@ -631,6 +635,7 @@ public:
         bool recothresd;
         bool lowthresd;
         bool midthresd;
+        bool midthresdch;
         bool higthresd;
         bool decayd;
         bool isogr;
@@ -710,6 +715,10 @@ public:
         bool slomasktm;
         bool lapmasktm;
         bool Lmasktmcurve;
+        bool recothrest;
+        bool lowthrest;
+        bool higthrest;
+        bool decayt;
         // Retinex
         bool visireti;
         bool expreti;
@@ -748,6 +757,10 @@ public:
         bool cliptm;
         bool fftwreti;
         bool Lmaskreticurve;
+        bool recothresr;
+        bool lowthresr;
+        bool higthresr;
+        bool decayr;
         // Sharpening
         bool visisharp;
         bool expsharp;
@@ -833,6 +846,10 @@ public:
         bool radmasklc;
         bool chromasklc;
         bool Lmasklccurve;
+        bool recothresw;
+        bool lowthresw;
+        bool higthresw;
+        bool decayw;
         // Contrast by detail levels
         bool visicbdl;
         bool expcbdl;
@@ -855,6 +872,10 @@ public:
         bool slomaskcb;
         bool lapmaskcb;
         bool Lmaskcbcurve;
+        bool recothrescb;
+        bool lowthrescb;
+        bool higthrescb;
+        bool decaycb;
         // Log encoding
         bool visilog;
         bool explog;

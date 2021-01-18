@@ -223,6 +223,7 @@ ControlSpotPanel::ControlSpotPanel():
 
     spotMethod_->append(M("TP_LOCALLAB_EXNORM"));
     spotMethod_->append(M("TP_LOCALLAB_EXECLU"));
+    spotMethod_->append(M("TP_LOCALLAB_EXFULL"));
     spotMethod_->set_active(0);
     spotMethodconn_ = spotMethod_->signal_changed().connect(
                           sigc::mem_fun(
@@ -942,7 +943,6 @@ void ControlSpotPanel::prevMethodChanged()
 
 void ControlSpotPanel::spotMethodChanged()
 {
-    // printf("spotMethodChanged\n");
 
     // Get selected control spot
     const auto s = treeview_->get_selection();
@@ -961,8 +961,47 @@ void ControlSpotPanel::spotMethodChanged()
         excluFrame->show();
     } else if (spotMethod_->get_active_row_number() == 0) { // Normal case
         excluFrame->hide();
-    } else { // Excluding case
+        locX_->setValue(150.);
+        adjusterChanged(locX_, 1.);
+        locXL_->setValue(150.);
+        adjusterChanged(locXL_, 1.);
+        locY_->setValue(150.);
+        adjusterChanged(locY_, 1.);
+        locYT_->setValue(150.);
+        adjusterChanged(locYT_, 1.);
+        shape_->set_active(0);
+        shapeChanged();
+        transit_->setValue(60.);
+        adjusterChanged(transit_, 1.);
+    } else if (spotMethod_->get_active_row_number() == 1) { // Excluding case
         excluFrame->show();
+        locX_->setValue(150.);
+        adjusterChanged(locX_, 1.);
+        locXL_->setValue(150.);
+        adjusterChanged(locXL_, 1.);
+        locY_->setValue(150.);
+        adjusterChanged(locY_, 1.);
+        locYT_->setValue(150.);
+        adjusterChanged(locYT_, 1.);
+        shape_->set_active(0);
+        shapeChanged();
+        transit_->setValue(60.);
+        adjusterChanged(transit_, 1.);
+    } else if (spotMethod_->get_active_row_number() == 2) { // Full image case
+        excluFrame->hide();
+        locX_->setValue(3000.);
+        adjusterChanged(locX_, 1.);
+        locXL_->setValue(3000.);
+        adjusterChanged(locXL_, 1.);
+        locY_->setValue(3000.);
+        adjusterChanged(locY_, 1.);
+        locYT_->setValue(3000.);
+        adjusterChanged(locYT_, 1.);
+        shape_->set_active(1);
+        shapeChanged();
+        transit_->setValue(100.);
+        adjusterChanged(transit_, 1.);
+        
     }
 
     // Raise event
@@ -1181,8 +1220,10 @@ void ControlSpotPanel::updateParamVisibility()
         excluFrame->show();
     } else if (spotMethod_->get_active_row_number() == 0) { // Normal case
         excluFrame->hide();
-    } else { // Excluding case
+    } else if (spotMethod_->get_active_row_number() == 1) { // Excluding case
         excluFrame->show();
+    } else if (spotMethod_->get_active_row_number() == 2) {//full image
+        excluFrame->hide();
     }
 
 /*

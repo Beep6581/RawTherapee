@@ -540,6 +540,13 @@ private:
     Adjuster* const sensiv;
     CurveEditorGroup* const curveEditorGG;
     DiagonalCurveEditor* const skinTonesCurve;
+    MyExpander* const exprecovv;
+    Gtk::Label* const maskusablev;
+    Gtk::Label* const maskunusablev;
+    Adjuster* const recothresv;
+    Adjuster* const lowthresv;
+    Adjuster* const higthresv;
+    Adjuster* const decayv;
     MyExpander* const expgradvib;
     Adjuster* const strvib;
     Adjuster* const strvibab;
@@ -719,6 +726,7 @@ private:
     Adjuster* const recothresd;
     Adjuster* const lowthresd;
     Adjuster* const midthresd;
+    Adjuster* const midthresdch;
     Adjuster* const higthresd;
     Adjuster* const decayd;
     
@@ -826,6 +834,13 @@ private:
     Adjuster* const rewei;
     Adjuster* const softradiustm;
     Adjuster* const sensitm;
+    MyExpander* const exprecovt;
+    Gtk::Label* const maskusablet;
+    Gtk::Label* const maskunusablet;
+    Adjuster* const recothrest;
+    Adjuster* const lowthrest;
+    Adjuster* const higthrest;
+    Adjuster* const decayt;
     MyExpander* const expmasktm;
     MyComboBoxText* const showmasktmMethod;
     Gtk::CheckButton* const enatmMask;
@@ -915,6 +930,13 @@ private:
     Gtk::Label* const transLabels2;
     CurveEditorGroup* const LocalcurveEditorgainT;
     FlatCurveEditor* const cTgainshape;
+    MyExpander* const exprecovr;
+    Gtk::Label* const maskusabler;
+    Gtk::Label* const maskunusabler;
+    Adjuster* const recothresr;
+    Adjuster* const lowthresr;
+    Adjuster* const higthresr;
+    Adjuster* const decayr;
     MyExpander* const expmaskreti;
     MyComboBoxText* const showmaskretiMethod;
     Gtk::CheckButton* const enaretiMask;
@@ -1104,6 +1126,13 @@ private:
     FlatCurveEditor* const wavshapecomp;
     Adjuster* const fatres;
     Gtk::CheckButton* const fftwlc;
+    MyExpander* const exprecovw;
+    Gtk::Label* const maskusablew;
+    Gtk::Label* const maskunusablew;
+    Adjuster* const recothresw;
+    Adjuster* const lowthresw;
+    Adjuster* const higthresw;
+    Adjuster* const decayw;
     MyExpander* const expmasklc;
     MyComboBoxText* const showmasklcMethod;
     Gtk::CheckButton* const enalcMask;
@@ -1187,6 +1216,13 @@ private:
     Adjuster* const contresid;
     Adjuster* const softradiuscb;
     Adjuster* const sensicb;
+    MyExpander* const exprecovcb;
+    Gtk::Label* const maskusablecb;
+    Gtk::Label* const maskunusablecb;
+    Adjuster* const recothrescb;
+    Adjuster* const lowthrescb;
+    Adjuster* const higthrescb;
+    Adjuster* const decaycb;
     MyExpander* const expmaskcb;
     MyComboBoxText* const showmaskcbMethod;
     Gtk::CheckButton* const enacbMask;

@@ -3292,6 +3292,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0,
         1.0
     },
+    recothresv(1.),
+    lowthresv(12.),
+    higthresv(85.),
+    decayv(2.),
     // Soft Light
     visisoft(false),
     expsoft(false),
@@ -3316,6 +3320,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     recothresd(1.),
     lowthresd(12.),
     midthresd(0.),
+    midthresdch(0.),
     higthresd(85.),
     decayd(2.),
     isogr(400),
@@ -3541,6 +3546,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0,
         1.0
     },
+    recothrest(1.),
+    lowthrest(12.),
+    higthrest(85.),
+    decayt(2.),
     // Retinex
     visireti(false),
     expreti(false),
@@ -3655,6 +3664,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0,
         1.0
     },
+    recothresr(1.),
+    lowthresr(12.),
+    higthresr(85.),
+    decayr(2.),
     // Sharpening
     visisharp(false),
     expsharp(false),
@@ -3864,6 +3877,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0,
         1.0
     },
+    recothresw(1.),
+    lowthresw(12.),
+    higthresw(85.),
+    decayw(2.),
     // Contrast by detail levels
     visicbdl(false),
     expcbdl(false),
@@ -3934,6 +3951,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0,
         1.0
     },
+    recothrescb(1.),
+    lowthrescb(12.),
+    higthrescb(85.),
+    decaycb(2.),
     // Log encoding
     visilog(false),
     explog(false),
@@ -4362,6 +4383,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && strvibh == other.strvibh
         && angvib == other.angvib
         && Lmaskvibcurve == other.Lmaskvibcurve
+        && recothresv == other.recothresv
+        && lowthresv == other.lowthresv
+        && higthresv == other.higthresv
+        && decayv == other.decayv
         // Soft Light
         && visisoft == other.visisoft
         && expsoft == other.expsoft
@@ -4386,6 +4411,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && recothresd == other.recothresd
         && lowthresd == other.lowthresd
         && midthresd == other.midthresd
+        && midthresdch == other.midthresdch
         && higthresd == other.higthresd
         && decayd == other.decayd
         && isogr == other.isogr
@@ -4465,6 +4491,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && slomasktm == other.slomasktm
         && lapmasktm == other.lapmasktm
         && Lmasktmcurve == other.Lmasktmcurve
+        && recothrest == other.recothrest
+        && lowthrest == other.lowthrest
+        && higthrest == other.higthrest
+        && decayt == other.decayt
         // Retinex
         && visireti == other.visireti
         && expreti == other.expreti
@@ -4503,6 +4533,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && cliptm == other.cliptm
         && fftwreti == other.fftwreti
         && Lmaskreticurve == other.Lmaskreticurve
+        && recothresr == other.recothresr
+        && lowthresr == other.lowthresr
+        && higthresr == other.higthresr
+        && decayr == other.decayr
         // Sharpening
         && visisharp == other.visisharp
         && expsharp == other.expsharp
@@ -4588,6 +4622,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && radmasklc == other.radmasklc
         && chromasklc == other.chromasklc
         && Lmasklccurve == other.Lmasklccurve
+        && recothresw == other.recothresw
+        && lowthresw == other.lowthresw
+        && higthresw == other.higthresw
+        && decayw == other.decayw
         // Contrast by detail levels
         && visicbdl == other.visicbdl
         && expcbdl == other.expcbdl
@@ -4618,6 +4656,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && slomaskcb == other.slomaskcb
         && lapmaskcb == other.lapmaskcb
         && Lmaskcbcurve == other.Lmaskcbcurve
+        && recothrescb == other.recothrescb
+        && lowthrescb == other.lowthrescb
+        && higthrescb == other.higthrescb
+        && decaycb == other.decaycb
         // Log encoding
         && visilog == other.visilog
         && explog == other.explog
@@ -5972,6 +6014,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->strvibh, "Locallab", "Strvibh_" + index_str, spot.strvibh, keyFile);
                     saveToKeyfile(!pedited || spot_edited->angvib, "Locallab", "Angvib_" + index_str, spot.angvib, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Lmaskvibcurve, "Locallab", "LmaskvibCurve_" + index_str, spot.Lmaskvibcurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->recothresv, "Locallab", "Recothresv_" + index_str, spot.recothresv, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lowthresv, "Locallab", "Lowthresv_" + index_str, spot.lowthresv, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->higthresv, "Locallab", "Higthresv_" + index_str, spot.higthresv, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->decayv, "Locallab", "Decayv_" + index_str, spot.decayv, keyFile);
                 }
                 // Soft Light
                 if ((!pedited || spot_edited->visisoft) && spot.visisoft) {
@@ -5998,6 +6044,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->recothresd, "Locallab", "Recothresd_" + index_str, spot.recothresd, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lowthresd, "Locallab", "Lowthresd_" + index_str, spot.lowthresd, keyFile);
                     saveToKeyfile(!pedited || spot_edited->midthresd, "Locallab", "Midthresd_" + index_str, spot.midthresd, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->midthresdch, "Locallab", "Midthresdch_" + index_str, spot.midthresdch, keyFile);
                     saveToKeyfile(!pedited || spot_edited->higthresd, "Locallab", "Higthresd_" + index_str, spot.higthresd, keyFile);
                     saveToKeyfile(!pedited || spot_edited->decayd, "Locallab", "Decayd_" + index_str, spot.decayd, keyFile);
                     saveToKeyfile(!pedited || spot_edited->isogr, "Locallab", "Isogr_" + index_str, spot.isogr, keyFile);
@@ -6078,6 +6125,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->slomasktm, "Locallab", "Slomasktm_" + index_str, spot.slomasktm, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lapmasktm, "Locallab", "Lapmasktm_" + index_str, spot.lapmasktm, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Lmasktmcurve, "Locallab", "LmasktmCurve_" + index_str, spot.Lmasktmcurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->recothrest, "Locallab", "Recothrest_" + index_str, spot.recothrest, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lowthrest, "Locallab", "Lowthrest_" + index_str, spot.lowthrest, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->higthrest, "Locallab", "Higthrest_" + index_str, spot.higthrest, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->decayt, "Locallab", "Decayt_" + index_str, spot.decayt, keyFile);
                 }
                 // Retinex
                 if ((!pedited || spot_edited->visireti) && spot.visireti) {
@@ -6117,6 +6168,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->cliptm, "Locallab", "Cliptm_" + index_str, spot.cliptm, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fftwreti, "Locallab", "Fftwreti_" + index_str, spot.fftwreti, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Lmaskreticurve, "Locallab", "LmaskretiCurve_" + index_str, spot.Lmaskreticurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->recothresr, "Locallab", "Recothresr_" + index_str, spot.recothresr, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lowthresr, "Locallab", "Lowthresr_" + index_str, spot.lowthresr, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->higthresr, "Locallab", "Higthresr_" + index_str, spot.higthresr, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->decayr, "Locallab", "Decayr_" + index_str, spot.decayr, keyFile);
                 }
                 // Sharpening
                 if ((!pedited || spot_edited->visisharp) && spot.visisharp) {
@@ -6204,6 +6259,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->radmasklc, "Locallab", "Radmasklc_" + index_str, spot.radmasklc, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chromasklc, "Locallab", "Chromasklc_" + index_str, spot.chromasklc, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Lmasklccurve, "Locallab", "LmasklcCurve_" + index_str, spot.Lmasklccurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->recothresw, "Locallab", "Recothresw_" + index_str, spot.recothresw, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lowthresw, "Locallab", "Lowthresw_" + index_str, spot.lowthresw, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->higthresw, "Locallab", "Higthresw_" + index_str, spot.higthresw, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->decayw, "Locallab", "Decayw_" + index_str, spot.decayw, keyFile);
                 }
                 // Contrast by detail levels
                 if ((!pedited || spot_edited->visicbdl) && spot.visicbdl) {
@@ -6231,6 +6290,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->slomaskcb, "Locallab", "Slomaskcb_" + index_str, spot.slomaskcb, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lapmaskcb, "Locallab", "Lapmaskcb_" + index_str, spot.lapmaskcb, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Lmaskcbcurve, "Locallab", "LmaskcbCurve_" + index_str, spot.Lmaskcbcurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->recothrescb, "Locallab", "Recothrescb_" + index_str, spot.recothrescb, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lowthrescb, "Locallab", "Lowthrescb_" + index_str, spot.lowthrescb, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->higthrescb, "Locallab", "Higthrescb_" + index_str, spot.higthrescb, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->decaycb, "Locallab", "Decaycb_" + index_str, spot.decaycb, keyFile);
                 }
                 // Log encoding
                 if ((!pedited || spot_edited->visilog) && spot.visilog) {
@@ -7794,6 +7857,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Strvibh_" + index_str, pedited, spot.strvibh, spotEdited.strvibh);
                 assignFromKeyfile(keyFile, "Locallab", "Angvib_" + index_str, pedited, spot.angvib, spotEdited.angvib);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskvibCurve_" + index_str, pedited, spot.Lmaskvibcurve, spotEdited.Lmaskvibcurve);
+                assignFromKeyfile(keyFile, "Locallab", "Recothresv_" + index_str, pedited, spot.recothresv, spotEdited.recothresv);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthresv_" + index_str, pedited, spot.lowthresv, spotEdited.lowthresv);
+                assignFromKeyfile(keyFile, "Locallab", "Higthresv_" + index_str, pedited, spot.higthresv, spotEdited.higthresv);
+                assignFromKeyfile(keyFile, "Locallab", "Decayv_" + index_str, pedited, spot.decayv, spotEdited.decayv);
                 // Soft Light
                 spot.visisoft = assignFromKeyfile(keyFile, "Locallab", "Expsoft_" + index_str, pedited, spot.expsoft, spotEdited.expsoft);
 
@@ -7826,6 +7893,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Recothresd_" + index_str, pedited, spot.recothresd, spotEdited.recothresd);
                 assignFromKeyfile(keyFile, "Locallab", "Lowthresd_" + index_str, pedited, spot.lowthresd, spotEdited.lowthresd);
                 assignFromKeyfile(keyFile, "Locallab", "Midthresd_" + index_str, pedited, spot.midthresd, spotEdited.midthresd);
+                assignFromKeyfile(keyFile, "Locallab", "Midthresdch_" + index_str, pedited, spot.midthresdch, spotEdited.midthresdch);
                 assignFromKeyfile(keyFile, "Locallab", "Higthresd_" + index_str, pedited, spot.higthresd, spotEdited.higthresd);
                 assignFromKeyfile(keyFile, "Locallab", "Decayd_" + index_str, pedited, spot.decayd, spotEdited.decayd);
                 assignFromKeyfile(keyFile, "Locallab", "Isogr_" + index_str, pedited, spot.isogr, spotEdited.isogr);
@@ -7918,6 +7986,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Slomasktm_" + index_str, pedited, spot.slomasktm, spotEdited.slomasktm);
                 assignFromKeyfile(keyFile, "Locallab", "Lapmasktm_" + index_str, pedited, spot.lapmasktm, spotEdited.lapmasktm);
                 assignFromKeyfile(keyFile, "Locallab", "LmasktmCurve_" + index_str, pedited, spot.Lmasktmcurve, spotEdited.Lmasktmcurve);
+                assignFromKeyfile(keyFile, "Locallab", "Recothrest_" + index_str, pedited, spot.recothrest, spotEdited.recothrest);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthrest_" + index_str, pedited, spot.lowthrest, spotEdited.lowthrest);
+                assignFromKeyfile(keyFile, "Locallab", "Higthrest_" + index_str, pedited, spot.higthrest, spotEdited.higthrest);
+                assignFromKeyfile(keyFile, "Locallab", "Decayt_" + index_str, pedited, spot.decayt, spotEdited.decayt);
                 // Retinex
                 spot.visireti = assignFromKeyfile(keyFile, "Locallab", "Expreti_" + index_str, pedited, spot.expreti, spotEdited.expreti);
 
@@ -7960,6 +8032,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Cliptm_" + index_str, pedited, spot.cliptm, spotEdited.cliptm);
                 assignFromKeyfile(keyFile, "Locallab", "Fftwreti_" + index_str, pedited, spot.fftwreti, spotEdited.fftwreti);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskretiCurve_" + index_str, pedited, spot.Lmaskreticurve, spotEdited.Lmaskreticurve);
+                assignFromKeyfile(keyFile, "Locallab", "Recothresr_" + index_str, pedited, spot.recothresr, spotEdited.recothresr);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthresr_" + index_str, pedited, spot.lowthresr, spotEdited.lowthresr);
+                assignFromKeyfile(keyFile, "Locallab", "Higthresr_" + index_str, pedited, spot.higthresr, spotEdited.higthresr);
+                assignFromKeyfile(keyFile, "Locallab", "Decayr_" + index_str, pedited, spot.decayr, spotEdited.decayr);
                 // Sharpening
                 spot.visisharp = assignFromKeyfile(keyFile, "Locallab", "Expsharp_" + index_str, pedited, spot.expsharp, spotEdited.expsharp);
 
@@ -8064,6 +8140,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Radmasklc_" + index_str, pedited, spot.radmasklc, spotEdited.radmasklc);
                 assignFromKeyfile(keyFile, "Locallab", "Chromasklc_" + index_str, pedited, spot.chromasklc, spotEdited.chromasklc);
                 assignFromKeyfile(keyFile, "Locallab", "LmasklcCurve_" + index_str, pedited, spot.Lmasklccurve, spotEdited.Lmasklccurve);
+                assignFromKeyfile(keyFile, "Locallab", "Recothresw_" + index_str, pedited, spot.recothresw, spotEdited.recothresw);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthresw_" + index_str, pedited, spot.lowthresw, spotEdited.lowthresw);
+                assignFromKeyfile(keyFile, "Locallab", "Higthresw_" + index_str, pedited, spot.higthresw, spotEdited.higthresw);
+                assignFromKeyfile(keyFile, "Locallab", "Decayw_" + index_str, pedited, spot.decayw, spotEdited.decayw);
                 // Contrast by detail levels
                 spot.visicbdl = assignFromKeyfile(keyFile, "Locallab", "Expcbdl_" + index_str, pedited, spot.expcbdl, spotEdited.expcbdl);
 
@@ -8094,6 +8174,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Slomaskcb_" + index_str, pedited, spot.slomaskcb, spotEdited.slomaskcb);
                 assignFromKeyfile(keyFile, "Locallab", "Lapmaskcb_" + index_str, pedited, spot.lapmaskcb, spotEdited.lapmaskcb);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskcbCurve_" + index_str, pedited, spot.Lmaskcbcurve, spotEdited.Lmaskcbcurve);
+                assignFromKeyfile(keyFile, "Locallab", "Recothrescb_" + index_str, pedited, spot.recothrescb, spotEdited.recothrescb);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthrescb_" + index_str, pedited, spot.lowthrescb, spotEdited.lowthrescb);
+                assignFromKeyfile(keyFile, "Locallab", "Higthrescb_" + index_str, pedited, spot.higthrescb, spotEdited.higthrescb);
+                assignFromKeyfile(keyFile, "Locallab", "Decaycb_" + index_str, pedited, spot.decaycb, spotEdited.decaycb);
                 // Log encoding
                 spot.visilog = assignFromKeyfile(keyFile, "Locallab", "Explog_" + index_str, pedited, spot.explog, spotEdited.explog);
 
