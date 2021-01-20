@@ -1602,6 +1602,22 @@ Camera constants:
         } // No significant influence of ISO
         // No aperture scaling reported
     },
+    
+    { // Quality B, samples provided by arvindpgh (#6066)
+      // Sensor shows some non-uniformity, need other sample to verify
+      // There seems to be some aperture scaling, but insufficient data to accurately determine
+        "make_model": "Nikon COOLPIX P950",
+        "dcraw_matrix": [ 13307,-5641,-1290,-2048,10581,1689,-64,1222,5176 ], // ColorMatrix2 from Adobe DNG Converter 13.1
+        "ranges": {
+            "black": 200,
+            "white": [
+                { "iso": [ 100 ], "levels": [ 3994, 4093, 3963 ] }, // LENR can be quite aggressive at higher ISO
+                { "iso": [ 200 ], "levels": [ 3993, 4092, 3962 ] },
+                { "iso": [ 400 ], "levels": [ 3992, 4091, 3961 ] },
+                { "iso": [ 800, 1600, 3200, 6400 ], "levels": [ 3996, 4095, 3965 ] }
+            ]
+        }
+    },
 
     { // Quality B, no LENR samples
         "make_model": "Nikon D5",
