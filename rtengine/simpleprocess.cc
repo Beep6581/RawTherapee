@@ -941,151 +941,14 @@ private:
 */
         // RGB processing
 
-        curve1(65536);
-        curve2(65536);
-        curve(65536, 0);
-        satcurve(65536, 0);
-        lhskcurve(65536, 0);
-        lumacurve(32770, 0);  // lumacurve[32768] and lumacurve[32769] will be set to 32768 and 32769 later to allow linear interpolation
-        clcurve(65536, 0);
-        wavclCurve(65536, 0);
-
-        //if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
-
-        CurveFactory::complexCurve(expcomp, black / 65535.0, hlcompr, hlcomprthresh, params.toneCurve.shcompr, bright, contr,
-                                   params.toneCurve.curve, params.toneCurve.curve2,
-                                   hist16, curve1, curve2, curve, dummy, customToneCurve1, customToneCurve2);
-
-        CurveFactory::RGBCurve(params.rgbCurves.rcurve, rCurve, 1);
-        CurveFactory::RGBCurve(params.rgbCurves.gcurve, gCurve, 1);
-        CurveFactory::RGBCurve(params.rgbCurves.bcurve, bCurve, 1);
-
-        bool opautili = false;
-
-        if (params.colorToning.enabled) {
-            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params.icm.workingProfile);
-            double wp[3][3] = {
-                {wprof[0][0], wprof[0][1], wprof[0][2]},
-                {wprof[1][0], wprof[1][1], wprof[1][2]},
-                {wprof[2][0], wprof[2][1], wprof[2][2]}
-            };
-            params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, opautili);
-            clToningcurve(65536, 0);
-            CurveFactory::diagonalCurve2Lut(params.colorToning.clcurve, clToningcurve, 1);
-            cl2Toningcurve(65536, 0);
-            CurveFactory::diagonalCurve2Lut(params.colorToning.cl2curve, cl2Toningcurve, 1);
-        }
-
         labView = new LabImage(fw, fh);
 
-        if (params.blackwhite.enabled) {
-            CurveFactory::curveBW(params.blackwhite.beforeCurve, params.blackwhite.afterCurve, hist16, dummy, customToneCurvebw1, customToneCurvebw2, 1);
-        }
-
-        double rrm, ggm, bbm;
-        float autor, autog, autob;
-        float satLimit = float (params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
-        float satLimitOpacity = 1.f - (float (params.colorToning.saturatedOpacity) / 100.f);
-
-        if (params.colorToning.enabled  && params.colorToning.autosat && params.colorToning.method != "LabGrid") { //for colortoning evaluation of saturation settings
-            float moyS = 0.f;
-            float eqty = 0.f;
-            ipf.moyeqt(baseImg, moyS, eqty); //return image : mean saturation and standard dev of saturation
-            float satp = ((moyS + 1.5f * eqty) - 0.3f) / 0.7f; //1.5 sigma ==> 93% pixels with high saturation -0.3 / 0.7 convert to Hombre scale
-
-            if (satp >= 0.92f) {
-                satp = 0.92f;    //avoid values too high (out of gamut)
-            }
-
-            if (satp <= 0.15f) {
-                satp = 0.15f;    //avoid too low values
-            }
-
-            satLimit = 100.f * satp;
-
-            satLimitOpacity = 100.f * (moyS - 0.85f * eqty); //-0.85 sigma==>20% pixels with low saturation
-        }
-
-        autor = -9000.f; // This will ask to compute the "auto" values for the B&W tool (have to be inferior to -5000)
-        DCPProfileApplyState as;
-        DCPProfile *dcpProf = imgsrc->getDCP(params.icm, as);
-
-        LUTu histToneCurve;
-
-        ipf.rgbProc(baseImg, labView, nullptr, curve1, curve2, curve, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve, options.chunkSizeRGB, options.measure);
-
-        if (settings->verbose) {
-            printf ("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", static_cast<double>(autor), static_cast<double>(autog), static_cast<double>(autob));
-        }
-
-        // if clut was used and size of clut cache == 1 we free the memory used by the clutstore (default clut cache size = 1 for 32 bit OS)
-        if (params.filmSimulation.enabled && !params.filmSimulation.clutFilename.empty() && options.clutCacheSize == 1) {
-            CLUTStore::getInstance().clearCache();
-        }
-
-        // freeing up some memory
-        customToneCurve1.Reset();
-        customToneCurve2.Reset();
-        ctColorCurve.Reset();
-        ctOpacityCurve.Reset();
-        noiseLCurve.Reset();
-        noiseCCurve.Reset();
-        customToneCurvebw1.Reset();
-        customToneCurvebw2.Reset();
-
-        // Freeing baseImg because not used anymore
-        delete baseImg;
-        baseImg = nullptr;
-
-        if (pl) {
-            pl->setProgress(0.55);
-        }
-
-        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        // start tile processing...???
-
-
-        if (params.labCurve.contrast != 0) { //only use hist16 for contrast
-            hist16.clear();
-
-#ifdef _OPENMP
-            #pragma omp parallel
-#endif
-            {
-                LUTu hist16thr(hist16.getSize());   // one temporary lookup table per thread
-                hist16thr.clear();
-#ifdef _OPENMP
-                #pragma omp for schedule(static) nowait
-#endif
-
-                for (int i = 0; i < fh; i++)
-                    for (int j = 0; j < fw; j++) {
-                        hist16thr[(int)((labView->L[i][j]))]++;
-                    }
-
-#ifdef _OPENMP
-                #pragma omp critical
-#endif
-                {
-                    hist16 += hist16thr;
-                }
-            }
-        }
-
-        bool utili;
-        CurveFactory::complexLCurve(params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, lumacurve, dummy, 1, utili);
-
-        const bool clcutili = CurveFactory::diagonalCurve2Lut(params.labCurve.clcurve, clcurve, 1);
-
-        bool ccutili, cclutili;
-        CurveFactory::complexsgnCurve(autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,
-                                      params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 1);
-
-
         if (params.locallab.enabled && params.locallab.spots.size() > 0) {
+            ipf.rgb2lab(*baseImg, *labView, params.icm.workingProfile);
+            
             MyTime t1, t2;
             t1.set();
+            
             const std::unique_ptr<LabImage> reservView(new LabImage(*labView, true));
             const std::unique_ptr<LabImage> lastorigView(new LabImage(*labView, true));
             LocretigainCurve locRETgainCurve;
@@ -1334,12 +1197,155 @@ private:
             }
 
             t2.set();
+            ipf.lab2rgb(*labView, *baseImg, params.icm.workingProfile);
 
             if (settings->verbose) {
                 printf("Total local:- %d usec\n", t2.etime(t1));
             }
 
         }
+
+
+        curve1(65536);
+        curve2(65536);
+        curve(65536, 0);
+        satcurve(65536, 0);
+        lhskcurve(65536, 0);
+        lumacurve(32770, 0);  // lumacurve[32768] and lumacurve[32769] will be set to 32768 and 32769 later to allow linear interpolation
+        clcurve(65536, 0);
+        wavclCurve(65536, 0);
+
+        //if(params.blackwhite.enabled) params.toneCurve.hrenabled=false;
+
+        CurveFactory::complexCurve(expcomp, black / 65535.0, hlcompr, hlcomprthresh, params.toneCurve.shcompr, bright, contr,
+                                   params.toneCurve.curve, params.toneCurve.curve2,
+                                   hist16, curve1, curve2, curve, dummy, customToneCurve1, customToneCurve2);
+
+        CurveFactory::RGBCurve(params.rgbCurves.rcurve, rCurve, 1);
+        CurveFactory::RGBCurve(params.rgbCurves.gcurve, gCurve, 1);
+        CurveFactory::RGBCurve(params.rgbCurves.bcurve, bCurve, 1);
+
+        bool opautili = false;
+
+        if (params.colorToning.enabled) {
+            TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params.icm.workingProfile);
+            double wp[3][3] = {
+                {wprof[0][0], wprof[0][1], wprof[0][2]},
+                {wprof[1][0], wprof[1][1], wprof[1][2]},
+                {wprof[2][0], wprof[2][1], wprof[2][2]}
+            };
+            params.colorToning.getCurves(ctColorCurve, ctOpacityCurve, wp, opautili);
+            clToningcurve(65536, 0);
+            CurveFactory::diagonalCurve2Lut(params.colorToning.clcurve, clToningcurve, 1);
+            cl2Toningcurve(65536, 0);
+            CurveFactory::diagonalCurve2Lut(params.colorToning.cl2curve, cl2Toningcurve, 1);
+        }
+
+//        labView = new LabImage(fw, fh);
+
+        if (params.blackwhite.enabled) {
+            CurveFactory::curveBW(params.blackwhite.beforeCurve, params.blackwhite.afterCurve, hist16, dummy, customToneCurvebw1, customToneCurvebw2, 1);
+        }
+
+        double rrm, ggm, bbm;
+        float autor, autog, autob;
+        float satLimit = float (params.colorToning.satProtectionThreshold) / 100.f * 0.7f + 0.3f;
+        float satLimitOpacity = 1.f - (float (params.colorToning.saturatedOpacity) / 100.f);
+
+        if (params.colorToning.enabled  && params.colorToning.autosat && params.colorToning.method != "LabGrid") { //for colortoning evaluation of saturation settings
+            float moyS = 0.f;
+            float eqty = 0.f;
+            ipf.moyeqt(baseImg, moyS, eqty); //return image : mean saturation and standard dev of saturation
+            float satp = ((moyS + 1.5f * eqty) - 0.3f) / 0.7f; //1.5 sigma ==> 93% pixels with high saturation -0.3 / 0.7 convert to Hombre scale
+
+            if (satp >= 0.92f) {
+                satp = 0.92f;    //avoid values too high (out of gamut)
+            }
+
+            if (satp <= 0.15f) {
+                satp = 0.15f;    //avoid too low values
+            }
+
+            satLimit = 100.f * satp;
+
+            satLimitOpacity = 100.f * (moyS - 0.85f * eqty); //-0.85 sigma==>20% pixels with low saturation
+        }
+
+        autor = -9000.f; // This will ask to compute the "auto" values for the B&W tool (have to be inferior to -5000)
+        DCPProfileApplyState as;
+        DCPProfile *dcpProf = imgsrc->getDCP(params.icm, as);
+
+        LUTu histToneCurve;
+
+        ipf.rgbProc(baseImg, labView, nullptr, curve1, curve2, curve, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve, options.chunkSizeRGB, options.measure);
+
+        if (settings->verbose) {
+            printf ("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", static_cast<double>(autor), static_cast<double>(autog), static_cast<double>(autob));
+        }
+
+        // if clut was used and size of clut cache == 1 we free the memory used by the clutstore (default clut cache size = 1 for 32 bit OS)
+        if (params.filmSimulation.enabled && !params.filmSimulation.clutFilename.empty() && options.clutCacheSize == 1) {
+            CLUTStore::getInstance().clearCache();
+        }
+
+        // freeing up some memory
+        customToneCurve1.Reset();
+        customToneCurve2.Reset();
+        ctColorCurve.Reset();
+        ctOpacityCurve.Reset();
+        noiseLCurve.Reset();
+        noiseCCurve.Reset();
+        customToneCurvebw1.Reset();
+        customToneCurvebw2.Reset();
+
+        // Freeing baseImg because not used anymore
+        delete baseImg;
+        baseImg = nullptr;
+
+        if (pl) {
+            pl->setProgress(0.55);
+        }
+
+        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        // start tile processing...???
+
+
+        if (params.labCurve.contrast != 0) { //only use hist16 for contrast
+            hist16.clear();
+
+#ifdef _OPENMP
+            #pragma omp parallel
+#endif
+            {
+                LUTu hist16thr(hist16.getSize());   // one temporary lookup table per thread
+                hist16thr.clear();
+#ifdef _OPENMP
+                #pragma omp for schedule(static) nowait
+#endif
+
+                for (int i = 0; i < fh; i++)
+                    for (int j = 0; j < fw; j++) {
+                        hist16thr[(int)((labView->L[i][j]))]++;
+                    }
+
+#ifdef _OPENMP
+                #pragma omp critical
+#endif
+                {
+                    hist16 += hist16thr;
+                }
+            }
+        }
+
+        bool utili;
+        CurveFactory::complexLCurve(params.labCurve.brightness, params.labCurve.contrast, params.labCurve.lcurve, hist16, lumacurve, dummy, 1, utili);
+
+        const bool clcutili = CurveFactory::diagonalCurve2Lut(params.labCurve.clcurve, clcurve, 1);
+
+        bool ccutili, cclutili;
+        CurveFactory::complexsgnCurve(autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,
+                                      params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 1);
 
         ipf.chromiLuminanceCurve(nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 

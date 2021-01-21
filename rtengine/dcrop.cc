@@ -810,57 +810,13 @@ void Crop::update(int todo)
 
     }
 
+
     if (todo & M_RGBCURVE) {
-        Imagefloat *workingCrop = baseCrop;
-/*
-        if (params.icm.workingTRC == "Custom") { //exec TRC IN free
-            const Glib::ustring profile = params.icm.workingProfile;
-
-            if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
-                const int cw = baseCrop->getWidth();
-                const int ch = baseCrop->getHeight();
-                workingCrop = new Imagefloat(cw, ch);
-                //first put gamma TRC to 1
-                parent->ipf.workingtrc(baseCrop, workingCrop, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310, parent->getCustomTransformIn(), true, false, true);
-                //adjust gamma TRC
-                parent->ipf.workingtrc(workingCrop, workingCrop, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope, parent->getCustomTransformOut(), false, true, true);
-            }
-        }
-*/
-        double rrm, ggm, bbm;
-        DCPProfileApplyState as;
-        DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, as);
-
-        LUTu histToneCurve;
-        parent->ipf.rgbProc (workingCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve,
-                            params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->colourToningSatLimit, parent->colourToningSatLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->opautili, parent->clToningcurve, parent->cl2Toningcurve,
-                            parent->customToneCurve1, parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW, rrm, ggm, bbm,
-                            parent->bwAutoR, parent->bwAutoG, parent->bwAutoB, dcpProf, as, histToneCurve);
-
-        if (workingCrop != baseCrop) {
-            delete workingCrop;
-        }
-    }
-
-    /*xref=000;yref=000;
-    if (colortest && cropw>115 && croph>115)
-    for(int j=1;j<5;j++){
-        xref+=j*30;yref+=j*30;
-        if (settings->verbose) {
-            printf("after rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f  \n",xref,yref,skip,
-                   baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,
-                   baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256,
-                   baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256);
-            printf("after rgbProc Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip,
-                   laboCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,
-                   laboCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,
-                   laboCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
-        }
-    }*/
-
-    // apply luminance operations
-    if (todo & (M_LUMINANCE + M_COLOR)) { //
+    
         //I made a little change here. Rather than have luminanceCurve (and others) use in/out lab images, we can do more if we copy right here.
+        parent->ipf.rgb2lab(*baseCrop, *laboCrop, params.icm.workingProfile);
+ 
+
         labnCrop->CopyFrom(laboCrop);
 
         if (params.locallab.enabled && !params.locallab.spots.empty()) {
@@ -1147,6 +1103,64 @@ void Crop::update(int todo)
                 }
             }
         }
+        parent->ipf.lab2rgb(*labnCrop, *baseCrop, params.icm.workingProfile);
+        
+    }
+
+
+
+    if (todo & M_RGBCURVE) {
+        Imagefloat *workingCrop = baseCrop;
+/*
+        if (params.icm.workingTRC == "Custom") { //exec TRC IN free
+            const Glib::ustring profile = params.icm.workingProfile;
+
+            if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
+                const int cw = baseCrop->getWidth();
+                const int ch = baseCrop->getHeight();
+                workingCrop = new Imagefloat(cw, ch);
+                //first put gamma TRC to 1
+                parent->ipf.workingtrc(baseCrop, workingCrop, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310, parent->getCustomTransformIn(), true, false, true);
+                //adjust gamma TRC
+                parent->ipf.workingtrc(workingCrop, workingCrop, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope, parent->getCustomTransformOut(), false, true, true);
+            }
+        }
+*/
+        double rrm, ggm, bbm;
+        DCPProfileApplyState as;
+        DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, as);
+
+        LUTu histToneCurve;
+        parent->ipf.rgbProc (workingCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve,
+                            params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->colourToningSatLimit, parent->colourToningSatLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->opautili, parent->clToningcurve, parent->cl2Toningcurve,
+                            parent->customToneCurve1, parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW, rrm, ggm, bbm,
+                            parent->bwAutoR, parent->bwAutoG, parent->bwAutoB, dcpProf, as, histToneCurve);
+
+        if (workingCrop != baseCrop) {
+            delete workingCrop;
+        }
+    }
+
+    /*xref=000;yref=000;
+    if (colortest && cropw>115 && croph>115)
+    for(int j=1;j<5;j++){
+        xref+=j*30;yref+=j*30;
+        if (settings->verbose) {
+            printf("after rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f  \n",xref,yref,skip,
+                   baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,
+                   baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256,
+                   baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256);
+            printf("after rgbProc Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip,
+                   laboCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,
+                   laboCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,
+                   laboCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
+        }
+    }*/
+
+    // apply luminance operations
+    if (todo & (M_LUMINANCE + M_COLOR)) { //
+        //I made a little change here. Rather than have luminanceCurve (and others) use in/out lab images, we can do more if we copy right here.
+        labnCrop->CopyFrom(laboCrop);
 
         bool utili = parent->utili;
         bool autili = parent->autili;
