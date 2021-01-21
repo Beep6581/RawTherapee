@@ -811,7 +811,7 @@ void Crop::update(int todo)
     }
 
 
-    if (todo & M_RGBCURVE) {
+    if (todo & (M_AUTOEXP | M_RGBCURVE)) {
     
         //I made a little change here. Rather than have luminanceCurve (and others) use in/out lab images, we can do more if we copy right here.
         parent->ipf.rgb2lab(*baseCrop, *laboCrop, params.icm.workingProfile);

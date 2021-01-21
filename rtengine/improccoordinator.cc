@@ -863,7 +863,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
 
       //  if ((todo & (M_LUMINANCE + M_COLOR)) || (todo & M_AUTOEXP)) {
-            if (todo & M_RGBCURVE) {
+        //    if (todo & M_RGBCURVE) {
+        if ((todo & (M_AUTOEXP | M_RGBCURVE)) || (todo & M_CROP)) {
             
             ipf.rgb2lab(*oprevi, *oprevl, params->icm.workingProfile);
 
