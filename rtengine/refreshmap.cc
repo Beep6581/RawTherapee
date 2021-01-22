@@ -60,9 +60,9 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     SHARPENING,       // EvShrDAmount,
     SHARPENING,       // EvShrDDamping,
     SHARPENING,       // EvShrDIterations,
-    TRANSFORM,        // EvLCPUseDist,
+    HDR,        // EvLCPUseDist,
     DARKFRAME,        // EvLCPUseVign,
-    TRANSFORM,        // EvLCPUseCA,
+    HDR,        // EvLCPUseCA,
     M_VOID,           // EvFixedExp
     ALLNORAW,         // EvWBMethod,
     ALLNORAW,         // EvWBTemp,
@@ -86,19 +86,19 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     ALLNORAW,         // EvCTRotate,
     ALLNORAW,         // EvCTHFlip,
     ALLNORAW,         // EvCTVFlip,
-    TRANSFORM,        // EvROTDegree,
-    TRANSFORM,        // EvTransAutoFill,
-    TRANSFORM,        // EvDISTAmount,
+    HDR,        // EvROTDegree,
+    HDR,        // EvTransAutoFill,
+    HDR,        // EvDISTAmount,
     ALL,              // EvBookmarkSelected,
     CROP,             // EvCrop,
-    TRANSFORM,        // EvCACorr,
+    HDR,        // EvCACorr,
     ALLNORAW,         // EvHREnabled,
     ALLNORAW,         // EvHRAmount,
     ALLNORAW,         // EvHRMethod,
     DEMOSAIC,         // EvWProfile,
     OUTPUTPROFILE,    // EvOProfile,
     ALLNORAW,         // EvIProfile,
-    TRANSFORM,        // EvVignettingAmount,
+    HDR,        // EvVignettingAmount,
     AUTOEXP,         // EvChMixer,
     RESIZE,           // EvResizeScale,
     RESIZE,           // EvResizeMethod,
@@ -110,7 +110,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RESIZE,           // EvResizeEnabled
     ALL,              // EvProfileChangeNotification
     RETINEX,          // EvShrHighQuality
-    TRANSFORM,        // EvPerspCorr
+    HDR,        // EvPerspCorr
     DARKFRAME,        // EvLCPFile
     AUTOEXP,         // EvRGBrCurveLumamode
     IMPULSEDENOISE,   // EvIDNEnabled,
@@ -156,7 +156,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     FLATFIELD,        // EvFlatFieldAutoSelect,
     FLATFIELD,        // EvFlatFieldBlurRadius,
     FLATFIELD,        // EvFlatFieldBlurType,
-    TRANSFORM,        // EvAutoDIST,
+    HDR,        // EvAutoDIST,
     ALLNORAW,         // EvDPDNLumCurve,
     ALLNORAW,         // EvDPDNChromCurve,
     GAMMA,            // EvGAMMA
@@ -236,10 +236,10 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DEFRINGE,         // EvPFCurve
     ALLNORAW,         // EvWBequal
     ALLNORAW,         // EvWBequalbo
-    TRANSFORM,        // EvGradientDegree
-    TRANSFORM,        // EvGradientEnabled
-    TRANSFORM,        // EvPCVignetteStrength
-    TRANSFORM,        // EvPCVignetteEnabled
+    HDR,        // EvGradientDegree
+    HDR,        // EvGradientEnabled
+    HDR,        // EvPCVignetteStrength
+    HDR,        // EvPCVignetteEnabled
     AUTOEXP,         // EvBWChmixEnabled
     AUTOEXP,         // EvBWred
     AUTOEXP,         // EvBWgreen
@@ -264,14 +264,14 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,         // EvAutoch
     0,                // --unused--
     AUTOEXP,         // EvNeutralBW
-    TRANSFORM,        // EvGradientFeather
-    TRANSFORM,        // EvGradientStrength
-    TRANSFORM,        // EvGradientCenter
-    TRANSFORM,        // EvPCVignetteFeather
-    TRANSFORM,        // EvPCVignetteRoundness
-    TRANSFORM,        // EvVignettingRadius,
-    TRANSFORM,        // EvVignettingStrength
-    TRANSFORM,        // EvVignettingCenter
+    HDR,        // EvGradientFeather
+    HDR,        // EvGradientStrength
+    HDR,        // EvGradientCenter
+    HDR,        // EvPCVignetteFeather
+    HDR,        // EvPCVignetteRoundness
+    HDR,        // EvVignettingRadius,
+    HDR,        // EvVignettingStrength
+    HDR,        // EvVignettingCenter
     LUMINANCECURVE,   // EvLCLCurve
     LUMINANCECURVE,   // EvLLHCurve
     LUMINANCECURVE,   // EvLHHCurve
