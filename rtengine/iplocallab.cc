@@ -6545,7 +6545,7 @@ void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct loc
     //optimize with size fftw
     bool reduW = false;
     bool reduH = false;
-
+    bool exec = true;
     if (ystart == 0 && yend < H) {
         lp.ly -= (bfh - ftsizeH);
     } else if (ystart != 0 && yend == H) {
@@ -6557,8 +6557,10 @@ void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct loc
             lp.ly -= (bfh - ftsizeH);
         }
     } else if (ystart == 0 && yend == H) {
-        bfhr = ftsizeH;
+       // bfhr = ftsizeH;
+        bfhr = bfh;
         reduH = true;
+        exec = false;
     }
 
     if (xstart == 0 && xend < W) {
@@ -6572,8 +6574,10 @@ void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct loc
             lp.lx -= (bfw - ftsizeW);
         }
     } else if (xstart == 0 && xend == W) {
-        bfwr = ftsizeW;
+       // bfwr = ftsizeW;
+        bfwr = bfw;
         reduW = true;
+        exec = false;
     }
 
     //new values optimized
@@ -6584,14 +6588,18 @@ void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct loc
     bfh = bfhr = yend - ystart;
     bfw = bfwr = xend - xstart;
 
-    if (reduH) {
+    if (reduH && exec) {
         bfhr = ftsizeH;
+    } else {
+        bfhr = bfh;
     }
 
-    if (reduW) {
+    if (reduW && exec) {
         bfwr = ftsizeW;
+    } else {
+        bfwr = bfw;
     }
-
+    
     if (settings->verbose) {
         printf("Nyst=%i Nyen=%i lp.yc=%f lp.lyT=%f  lp.ly=%f bfh=%i bfhr=%i origH=%i ftsizeH=%i\n", ystart, yend, lp.yc, lp.lyT, lp.ly, bfh, bfhr, H, ftsizeH);
         printf("Nxst=%i Nxen=%i lp.xc=%f lp.lxL=%f  lp.lx=%f bfw=%i bfwr=%i origW=%i ftsizeW=%i\n", xstart, xend, lp.xc, lp.lxL, lp.lx, bfw, bfwr, W, ftsizeW);
