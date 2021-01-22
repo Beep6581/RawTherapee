@@ -67,9 +67,9 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     ALLNORAW,         // EvWBMethod,
     ALLNORAW,         // EvWBTemp,
     ALLNORAW,         // EvWBGreen,
-    RGBCURVE,         // EvToneCurveMode1,
+    AUTOEXP,         // EvToneCurveMode1,
     AUTOEXP,         // EvToneCurve2,
-    RGBCURVE,         // EvToneCurveMode2,
+    AUTOEXP,         // EvToneCurveMode2,
     0,                // EvLDNRadius: obsolete,
     0,                // EvLDNEdgeTolerance: obsolete,
     0,                // EvCDNEnabled:obsolete,
@@ -99,7 +99,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     OUTPUTPROFILE,    // EvOProfile,
     ALLNORAW,         // EvIProfile,
     TRANSFORM,        // EvVignettingAmount,
-    RGBCURVE,         // EvChMixer,
+    AUTOEXP,         // EvChMixer,
     RESIZE,           // EvResizeScale,
     RESIZE,           // EvResizeMethod,
     EXIF,             // EvExif,
@@ -112,7 +112,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RETINEX,          // EvShrHighQuality
     TRANSFORM,        // EvPerspCorr
     DARKFRAME,        // EvLCPFile
-    RGBCURVE,         // EvRGBrCurveLumamode
+    AUTOEXP,         // EvRGBrCurveLumamode
     IMPULSEDENOISE,   // EvIDNEnabled,
     IMPULSEDENOISE,   // EvIDNThresh,
     ALLNORAW,         // EvDPDNEnabled,
@@ -126,15 +126,15 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // EvLbCurve,
     DEMOSAIC,         // EvDemosaicMethod
     DARKFRAME,        // EvPreProcessHotPixel
-    RGBCURVE,         // EvSaturation,
-    RGBCURVE,         // EvHSVEqualizerH,
-    RGBCURVE,         // EvHSVEqualizerS,
-    RGBCURVE,         // EvHSVEqualizerV,
-    RGBCURVE,         // EvHSVEqEnabled,
+    AUTOEXP,         // EvSaturation,
+    AUTOEXP,         // EvHSVEqualizerH,
+    AUTOEXP,         // EvHSVEqualizerS,
+    AUTOEXP,         // EvHSVEqualizerV,
+    AUTOEXP,         // EvHSVEqEnabled,
     DEFRINGE,         // EvDefringeEnabled,
     DEFRINGE,         // EvDefringeRadius,
     DEFRINGE,         // EvDefringeThreshold,
-    RGBCURVE,         // EvHLComprThreshold,
+    AUTOEXP,         // EvHLComprThreshold,
     RESIZE,           // EvResizeBoundingBox
     RESIZE,           // EvResizeAppliesTo
     LUMINANCECURVE,   // EvCBAvoidClip,
@@ -177,26 +177,26 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     SHARPENING,       // EvSharpenMicroEnabled
     SHARPENING,       // EvSharpenMicroMatrix
     DEMOSAIC,         // EvDemosaicALLEnhanced Disabled but not removed for now, may be reintroduced some day
-    RGBCURVE,         // EvVibranceEnabled
-    RGBCURVE,         // EvVibrancePastels
-    RGBCURVE,         // EvVibranceSaturated
-    RGBCURVE,         // EvVibranceProtectSkins
-    RGBCURVE,         // EvVibranceAvoidColorShift
-    RGBCURVE,         // EvVibrancePastSatTog
-    RGBCURVE,         // EvVibrancePastSatThreshold
+    AUTOEXP,         // EvVibranceEnabled
+    AUTOEXP,         // EvVibrancePastels
+    AUTOEXP,         // EvVibranceSaturated
+    AUTOEXP,         // EvVibranceProtectSkins
+    AUTOEXP,         // EvVibranceAvoidColorShift
+    AUTOEXP,         // EvVibrancePastSatTog
+    AUTOEXP,         // EvVibrancePastSatThreshold
     SHARPENING,       // EvEPDStrength
     SHARPENING,       // EvEPDEdgeStopping
     SHARPENING,       // EvEPDScale
     SHARPENING,       // EvEPDReweightingIterates
     SHARPENING,       // EvEPDEnabled
-    RGBCURVE,         // EvRGBrCurve
-    RGBCURVE,         // EvRGBgCurve
-    RGBCURVE,         // EvRGBbCurve
-    RGBCURVE,         // EvNeutralExp
+    AUTOEXP,         // EvRGBrCurve
+    AUTOEXP,         // EvRGBgCurve
+    AUTOEXP,         // EvRGBbCurve
+    AUTOEXP,         // EvNeutralExp
     DEMOSAIC | M_PREPROC, // EvDemosaicMethodPreProc
     LUMINANCECURVE,   // EvLCCurve
     LUMINANCECURVE,   // EvLCHCurve
-    RGBCURVE,         // EvVibranceSkinTonesCurve
+    AUTOEXP,         // EvVibranceSkinTonesCurve
     LUMINANCECURVE,   // EvLLCCurve
     LUMINANCECURVE,   // EvLLCredsk
     ALLNORAW,         // EvDPDNLdetail
@@ -240,30 +240,30 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     TRANSFORM,        // EvGradientEnabled
     TRANSFORM,        // EvPCVignetteStrength
     TRANSFORM,        // EvPCVignetteEnabled
-    RGBCURVE,         // EvBWChmixEnabled
-    RGBCURVE,         // EvBWred
-    RGBCURVE,         // EvBWgreen
-    RGBCURVE,         // EvBWblue
-    RGBCURVE,         // EvBWredgam
-    RGBCURVE,         // EvBWgreengam
-    RGBCURVE,         // EvBWbluegam
-    RGBCURVE,         // EvBWfilter
-    RGBCURVE,         // EvBWsetting
-    RGBCURVE,         // EvBWoran
-    RGBCURVE,         // EvBWyell
-    RGBCURVE,         // EvBWcyan
-    RGBCURVE,         // EvBWmag
-    RGBCURVE,         // EvBpur
-    RGBCURVE,         // EvBWLuminanceEqual
-    RGBCURVE,         // EvBWChmixEnabledLm
-    RGBCURVE,         // EvBWmethod
-    RGBCURVE,         // EvBWBeforeCurve
-    RGBCURVE,         // EvBWBeforeCurveMode
-    RGBCURVE,         // EvBWAfterCurve
-    RGBCURVE,         // EvBWAfterCurveMode
-    RGBCURVE,         // EvAutoch
+    AUTOEXP,         // EvBWChmixEnabled
+    AUTOEXP,         // EvBWred
+    AUTOEXP,         // EvBWgreen
+    AUTOEXP,         // EvBWblue
+    AUTOEXP,         // EvBWredgam
+    AUTOEXP,         // EvBWgreengam
+    AUTOEXP,         // EvBWbluegam
+    AUTOEXP,         // EvBWfilter
+    AUTOEXP,         // EvBWsetting
+    AUTOEXP,         // EvBWoran
+    AUTOEXP,         // EvBWyell
+    AUTOEXP,         // EvBWcyan
+    AUTOEXP,         // EvBWmag
+    AUTOEXP,         // EvBpur
+    AUTOEXP,         // EvBWLuminanceEqual
+    AUTOEXP,         // EvBWChmixEnabledLm
+    AUTOEXP,         // EvBWmethod
+    AUTOEXP,         // EvBWBeforeCurve
+    AUTOEXP,         // EvBWBeforeCurveMode
+    AUTOEXP,         // EvBWAfterCurve
+    AUTOEXP,         // EvBWAfterCurveMode
+    AUTOEXP,         // EvAutoch
     0,                // --unused--
-    RGBCURVE,         // EvNeutralBW
+    AUTOEXP,         // EvNeutralBW
     TRANSFORM,        // EvGradientFeather
     TRANSFORM,        // EvGradientStrength
     TRANSFORM,        // EvGradientCenter
@@ -277,40 +277,40 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // EvLHHCurve
     ALLNORAW,         // EvDirPyrEqualizerThreshold
     ALLNORAW,         // EvDPDNenhance
-    RGBCURVE,         // EvBWMethodalg
+    AUTOEXP,         // EvBWMethodalg
     ALLNORAW,         // EvDirPyrEqualizerSkin
     ALLNORAW,         // EvDirPyrEqlgamutlab
     ALLNORAW,         // EvDirPyrEqualizerHueskin
     ALLNORAW,         // EvDPDNmedian
     ALLNORAW,         // EvDPDNmedmet
-    RGBCURVE,         // EvColorToningEnabled
-    RGBCURVE,         // EvColorToningColor
-    RGBCURVE,         // EvColorToningOpacity
-    RGBCURVE,         // EvColorToningCLCurve
-    RGBCURVE,         // EvColorToningMethod
-    RGBCURVE,         // EvColorToningLLCurve
-    RGBCURVE,         // EvColorToningredlow
-    RGBCURVE,         // EvColorToninggreenlow
-    RGBCURVE,         // EvColorToningbluelow
-    RGBCURVE,         // EvColorToningredmed
-    RGBCURVE,         // EvColorToninggreenmed
-    RGBCURVE,         // EvColorToningbluemed
-    RGBCURVE,         // EvColorToningredhigh
-    RGBCURVE,         // EvColorToninggreenhigh
-    RGBCURVE,         // EvColorToningbluehigh
-    RGBCURVE,         // EvColorToningbalance
-    RGBCURVE,         // EvColorToningNeutral
-    RGBCURVE,         // EvColorToningsatlow
-    RGBCURVE,         // EvColorToningsathigh
-    RGBCURVE,         // EvColorToningTwocolor
-    RGBCURVE,         // EvColorToningNeutralcur
-    RGBCURVE,         // EvColorToningLumamode
-    RGBCURVE,         // EvColorToningShadows
-    RGBCURVE,         // EvColorToningHighights
-    RGBCURVE,         // EvColorToningSatProtection
-    RGBCURVE,         // EvColorToningSatThreshold
-    RGBCURVE,         // EvColorToningStrength
-    RGBCURVE,         // EvColorToningautosat
+    AUTOEXP,         // EvColorToningEnabled
+    AUTOEXP,         // EvColorToningColor
+    AUTOEXP,         // EvColorToningOpacity
+    AUTOEXP,         // EvColorToningCLCurve
+    AUTOEXP,         // EvColorToningMethod
+    AUTOEXP,         // EvColorToningLLCurve
+    AUTOEXP,         // EvColorToningredlow
+    AUTOEXP,         // EvColorToninggreenlow
+    AUTOEXP,         // EvColorToningbluelow
+    AUTOEXP,         // EvColorToningredmed
+    AUTOEXP,         // EvColorToninggreenmed
+    AUTOEXP,         // EvColorToningbluemed
+    AUTOEXP,         // EvColorToningredhigh
+    AUTOEXP,         // EvColorToninggreenhigh
+    AUTOEXP,         // EvColorToningbluehigh
+    AUTOEXP,         // EvColorToningbalance
+    AUTOEXP,         // EvColorToningNeutral
+    AUTOEXP,         // EvColorToningsatlow
+    AUTOEXP,         // EvColorToningsathigh
+    AUTOEXP,         // EvColorToningTwocolor
+    AUTOEXP,         // EvColorToningNeutralcur
+    AUTOEXP,         // EvColorToningLumamode
+    AUTOEXP,         // EvColorToningShadows
+    AUTOEXP,         // EvColorToningHighights
+    AUTOEXP,         // EvColorToningSatProtection
+    AUTOEXP,         // EvColorToningSatThreshold
+    AUTOEXP,         // EvColorToningStrength
+    AUTOEXP,         // EvColorToningautosat
     ALLNORAW,         // EvDPDNmetmed
     ALLNORAW,         // EvDPDNrgbmet
     ALLNORAW,         // EvDPDNpasses
@@ -319,9 +319,9 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DARKFRAME,        // EvPreProcessExpBlackRed
     DARKFRAME,        // EvPreProcessExpBlackGreen
     DARKFRAME,        // EvPreProcessExpBlackBlue
-    RGBCURVE,         // EvFilmSimulationEnabled
-    RGBCURVE,         // EvFilmSimulationStrength
-    RGBCURVE,         // EvFilmSimulationFilename
+    AUTOEXP,         // EvFilmSimulationEnabled
+    AUTOEXP,         // EvFilmSimulationStrength
+    AUTOEXP,         // EvFilmSimulationFilename
     ALLNORAW,         // EvDPDNLCurve
     ALLNORAW,         // EvDPDNsmet
     DARKFRAME,        // EvPreProcessDeadPixel
@@ -518,7 +518,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     HDR,              // EvTMFattalThreshold
     HDR,              // EvTMFattalAmount
     ALLNORAW,         // EvWBEnabled
-    RGBCURVE,         // EvRGBEnabled
+    AUTOEXP,         // EvRGBEnabled
     LUMINANCECURVE,   // EvLEnabled
     DEMOSAIC,         // EvPdShrEnabled
     CAPTURESHARPEN,    // EvPdShrMaskToggled
