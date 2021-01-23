@@ -2005,7 +2005,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
             }
         }
     }
-
+    maxVal *= 1.2f; //or 1.5f;slightly increase max
     //approximation sourcegray yb  source = 0.4 * yb
 
     if (maxVal > minVal) {
@@ -2071,9 +2071,12 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
                 }
             }
         }
+        constexpr float MIN_WHITE = 2.f;
+        constexpr float MAX_BLACK = -3.5f;
+
         const float gray = sourceg[sp] / 100.f;
-        whiteev[sp] = xlogf(maxVal / gray) / log2;
-        blackev[sp] = whiteev[sp] - dynamic_range;
+        whiteev[sp] = rtengine::max(xlogf(maxVal / gray) / log2, MIN_WHITE);
+        blackev[sp] = rtengine::min(whiteev[sp] - dynamic_range, MAX_BLACK);
 
 
         //calculate La - Absolute luminance shooting
