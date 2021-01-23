@@ -1974,7 +1974,10 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
     imgsrc->convertColorSpace(&img, params->icm, imgsrc->getWB());
     float minVal = RT_INFINITY;
     float maxVal = -RT_INFINITY;
-    const float ec = std::pow(2.f, params->toneCurve.expcomp);
+    float ec = 1.f;
+    if(params->toneCurve.autoexp) {//take into account exposure, only if autoexp, in other cases now it's after LA
+        ec = std::pow(2.f, params->toneCurve.expcomp);
+    }
 
     constexpr float noise = 1e-5;
     const int h = fh / SCALE;
@@ -2011,7 +2014,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
 
         if (settings->verbose) {
             std::cout << "AutoLog: min = " << minVal << ", max = " << maxVal
-                      << ", DR = " << dynamic_range << std::endl;
+                      << ", Dynamic Range = " << dynamic_range << std::endl;
         }
 
         if (Autogr[sp]) {
