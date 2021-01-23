@@ -1235,8 +1235,14 @@ Camera constants:
     { // Quality C
         "make_model": "Canon EOS R6",
         "dcraw_matrix" : [8293, -1611, -1132, -4759, 12710, 2275, -1013, 2415, 5508],
-        "raw_crop": [ 72, 38, 5496, 3670 ],
-        "masked_areas" : [ 40, 10, 5534, 70 ],
+        "raw_crop": [
+            { "frame": [5568, 3708], "crop" : [ 72, 38, 5496, 3670 ] },
+            { "frame": [3584, 2386], "crop" : [ 156, 108, 3404, 2270 ] }
+            ],
+        "masked_areas" : [
+            { "frame": [5568, 3708], "areas": [ 40, 10, 5534, 70 ] },
+            { "frame": [3584, 2386], "areas": [ 40, 10, 2374, 110 ] }
+        ],
         "ranges" : { "white" : 16382 }
     },
 
@@ -1378,7 +1384,11 @@ Camera constants:
     { // Quality C
         "make_model": [ "FUJIFILM GFX 100", "FUJIFILM GFX100S" ],
         "dcraw_matrix" : [ 16212, -8423, -1583, -4336, 12583, 1937, -195, 726, 6199 ], // taken from ART
-        "raw_crop": [ 0, 2, 11664, 8734 ]
+        "raw_crop": [
+            // multi-aspect crop to account for 16-shot pixel shift images
+            { "frame" : [11808, 8754], "crop" : [ 0, 2, 11664, 8734 ] },
+            { "frame" : [23616, 17508], "crop" : [ 0, 4, 23328, 17468 ] }
+        ]
     },
 
     { // Quality B
