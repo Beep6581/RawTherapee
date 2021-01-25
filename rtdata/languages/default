@@ -2519,7 +2519,7 @@ TP_LOCALLAB_CBDL;Contrast by Detail Levels
 TP_LOCALLAB_CBDLCLARI_TOOLTIP;Enhances local contrast of the midtones.
 TP_LOCALLAB_CBDL_ADJ_TOOLTIP;Same as wavelets.\nThe first level (0) acts on 2x2 pixel details.\nThe last level (5) acts on 64x64 pixel details.
 TP_LOCALLAB_CBDL_THRES_TOOLTIP;Prevents the sharpening of noise
-TP_LOCALLAB_CBDL_TOOLNAME;CBDL - 2
+TP_LOCALLAB_CBDL_TOOLNAME;Contrast by Detail Levels - 2
 TP_LOCALLAB_CENTER_X;Center X
 TP_LOCALLAB_CENTER_Y;Center Y
 TP_LOCALLAB_CH;Curves CL - LC
