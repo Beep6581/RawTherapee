@@ -646,7 +646,8 @@ void Crop::update(int todo)
                 parent->adnListener->noiseChanged(0.f, 0.f);
             }
 
-        if (todo & M_LINDENOISE) {
+        if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
+
             if (skip == 1 && denoiseParams.enabled) {
 
                 float nresi, highresi;
