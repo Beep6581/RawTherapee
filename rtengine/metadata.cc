@@ -363,9 +363,10 @@ void Exiv2Metadata::remove_unwanted(Exiv2::ExifData &dst) const
     }
     
     for (auto it = dst.begin(); it != dst.end(); ) {
-        if (badtags.find(it->key()) != badtags.end()) {
+        int relevant = exif_keys_ ? (exif_keys_->find(it->key()) != exif_keys_->end() ? 1 : 0) : -1;
+        if (badtags.find(it->key()) != badtags.end() && relevant != 1) {
             it = dst.erase(it);
-        } else if (exif_keys_ && exif_keys_->find(it->key()) == exif_keys_->end()) {
+        } else if (relevant == 0) {
             it = dst.erase(it);
         } else {
             bool found = false;
