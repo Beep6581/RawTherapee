@@ -2733,7 +2733,7 @@ TP_LOCALLAB_LAPLACC;ΔØ Mask Laplacian solve PDE
 TP_LOCALLAB_LAPLACE;Laplacian threshold ΔE
 TP_LOCALLAB_LAPLACEXP;Laplacian threshold
 TP_LOCALLAB_LAPMASKCOL;Laplacian threshold
-TP_LOCALLAB_LAPRAD1_TOOLTIP;Increases the clear values of the mask. Can be used in conjunction or not with the L(L) and LC(H) curves.
+TP_LOCALLAB_LAPRAD1_TOOLTIP;Increases the contrast of the mask by increasing the luminance values of the lighter areas. Can be used in conjunction with the L(L) and LC(H) curves.
 TP_LOCALLAB_LAPRAD2_TOOLTIP;Smooth radius uses a guided filter to decrease artifacts and smooth out the transition
 TP_LOCALLAB_LAPRAD_TOOLTIP;Smooth radius uses a guided filter to decrease artifacts and smooth out the transition
 TP_LOCALLAB_LAP_MASK_TOOLTIP;Solve PDE for all Laplacian masks.\nIf enabled Laplacian threshold mask reduce artifacts and smooth result.\nIf disabled linear response. 
