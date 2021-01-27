@@ -1098,6 +1098,7 @@ int ImageIO::saveJPEG (const Glib::ustring &fname, int quality, int subSamp) con
     return IMIO_SUCCESS;
 }
 
+
 int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool uncompressed) const
 {
     if (getWidth() < 1 || getHeight() < 1) {
@@ -1167,6 +1168,31 @@ int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool u
             delete default_tag;
         }
     }();*/
+
+    // somehow Exiv2 (tested with 0.27.3) doesn't seem to be able to update
+    // XResolution and YResolution, so we do it ourselves here....
+    constexpr float default_resolution = 300.f;
+    float x_res = default_resolution;
+    float y_res = default_resolution;
+    int res_unit = RESUNIT_INCH;
+    if (!metadataInfo.filename().empty()) {
+        auto exif = metadataInfo.getOutputExifData();
+        auto it = exif.findKey(Exiv2::ExifKey("Exif.Image.XResolution"));
+        if (it != exif.end()) {
+            x_res = it->toFloat();
+        }
+        it = exif.findKey(Exiv2::ExifKey("Exif.Image.YResolution"));
+        if (it != exif.end()) {
+            y_res = it->toFloat();
+        }
+        it = exif.findKey(Exiv2::ExifKey("Exif.Image.ResolutionUnit"));
+        if (it != exif.end()) {
+            res_unit = it->toLong();
+        }
+    }
+    TIFFSetField(out, TIFFTAG_XRESOLUTION, x_res);
+    TIFFSetField(out, TIFFTAG_YRESOLUTION, y_res);
+    TIFFSetField(out, TIFFTAG_RESOLUTIONUNIT, res_unit);
 
     if (!uncompressed) {
         TIFFSetField (out, TIFFTAG_PREDICTOR, (bps == 16 || bps == 32) && isFloat ? PREDICTOR_FLOATINGPOINT : PREDICTOR_HORIZONTAL);

@@ -390,7 +390,12 @@ void Exiv2Metadata::import_exif_pairs(Exiv2::ExifData &out) const
     for (auto &p : *exif_) {
         try {
             out[p.first] = p.second;
-        } catch (std::exception &exc) {}
+        } catch (std::exception &exc) {
+            if (settings->verbose) {
+                std::cout << "Error setting " << p.first << " to " << p.second
+                          << ": " << exc.what() << std::endl;
+            }
+        }
     }
 }
 
@@ -408,7 +413,12 @@ void Exiv2Metadata::import_iptc_pairs(Exiv2::IptcData &out) const
                     out.add(d);
                 }
             }
-        } catch (std::exception &exc) {}
+        } catch (std::exception &exc) {
+            if (settings->verbose) {
+                std::cout << "Error setting " << p.first
+                          << ": " << exc.what() << std::endl;
+            }
+        }
     }
 }
 
@@ -514,5 +524,31 @@ void Exiv2Metadata::cleanup()
 {
     Exiv2::XmpParser::terminate();
 }
+
+
+Exiv2::ExifData Exiv2Metadata::getOutputExifData() const
+{
+    Exiv2::ExifData exif = exifData();
+    try {
+        auto xmp = getXmpSidecar(src_);
+        Exiv2::moveXmpToExif(xmp, exif);
+    } catch (std::exception &exc) {
+        if (settings->verbose) {
+            std::cerr << "Error loading metadata from XMP sidecar: "
+                      << exc.what() << std::endl;
+        }
+    }
+    remove_unwanted(exif);
+    import_exif_pairs(exif);
+    for (auto it = exif.begin(); it != exif.end(); ) {
+        if (it->count() > 0) {
+            ++it;
+        } else {
+            it = exif.erase(it);
+        }
+    }
+    return exif;
+}
+
 
 } // namespace rtengine
