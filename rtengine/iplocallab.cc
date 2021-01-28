@@ -4087,7 +4087,7 @@ static void showmask(int lumask, const local_params& lp, int xstart, int ystart,
     }
 }
 //from A.Griggio...very similar to discrete_laplacian_threhold...some differences with ceiling and data format
-void laplacian(const array2D<float> &src, array2D<float> &dst, int bfw, int bfh, float threshold, float ceiling, float factor, bool multiThread)
+void ImProcFunctions::laplacian(const array2D<float> &src, array2D<float> &dst, int bfw, int bfh, float threshold, float ceiling, float factor, bool multiThread)
 {
     const int W = bfw;
     const int H = bfh;
@@ -4739,6 +4739,32 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                 }
             }
         }
+        if (lap > 0.f && pde) {
+            array2D<float> mask;
+            mask(bfw, bfh);
+            float amount = LIM01(float(lap)/100.f);
+            array2D<float> LL(bfw, bfh, bufcolorig->L, ARRAY2D_BYREFERENCE);
+            laplacian(LL, mask, bfw, bfh, 25.f, 20000.f, amount, false);
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+            for (int i = 0; i < bfh; ++i) {
+                for (int j = 0; j < bfw; ++j) {
+                    mask[i][j] = LIM01(mask[i][j]);
+                }
+            }
+            for (int i = 0; i < 3; ++i) {
+                boxblur(static_cast<float**>(mask), static_cast<float**>(mask), 5 / sk, bfw, bfh, false);
+            }
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+            for (int i = 0; i < bfh; ++i) {
+                for (int j = 0; j < bfw; ++j) {
+                    bufmaskblurcol->L[i][j] += clipLoc(100000.f * (mask[i][j]));//increase strongly result
+                }
+            }
+        }
 
         std::unique_ptr<LabImage> bufprov;
         if (delt) {
@@ -5019,7 +5045,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                 }
             }
         }
-
+/*
         if (lap > 0.f) {
             const float *datain = bufmaskblurcol->L[0];
             const std::unique_ptr<float[]> data_tmp(new float[bfh * bfw]);
@@ -5039,6 +5065,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                 }
             }
         }
+        */
     }
 
     const float radiusb = 1.f / sk;

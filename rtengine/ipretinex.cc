@@ -55,6 +55,7 @@
 #define BENCHMARK
 #include "StopWatch.h"
 #include "guidedfilter.h"
+#include "boxblur.h"
 
 #define clipretinex( val, minv, maxv )    (( val = (val < minv ? minv : val ) ) > maxv ? maxv : val )
 #define CLIPLOC(x) LIM(x,0.f,32767.f)
@@ -963,6 +964,33 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
             }
     }
 
+        if (lap > 0.f && pde) {
+            array2D<float> mask;
+            mask(W_L, H_L);
+            float amount = LIM01(float(lap)/100.f);
+            array2D<float> LL(W_L, H_L, bufreti->L, ARRAY2D_BYREFERENCE);
+            ImProcFunctions::laplacian(LL, mask, W_L, H_L, 25.f, 20000.f, amount, false);
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+            for (int i = 0; i < H_L; ++i) {
+                for (int j = 0; j < W_L; ++j) {
+                    mask[i][j] = LIM01(mask[i][j]);
+                }
+            }
+            for (int i = 0; i < 3; ++i) {
+                boxblur(static_cast<float**>(mask), static_cast<float**>(mask), 5 / skip, W_L, H_L, false);
+            }
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+            for (int i = 0; i < H_L; ++i) {
+                for (int j = 0; j < W_L; ++j) {
+                    bufmaskblurreti->L[i][j] += CLIPLOC(100000.f * (mask[i][j]));//increase strongly result
+                }
+            }
+        }
+
 
     if (delt) {
         float *rdE[H_L] ALIGNED16;
@@ -994,7 +1022,7 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
 
     }
 
-
+/*
     if (lap > 0.f) {
         float *datain = new float[H_L * W_L];
         float *data_tmp = new float[H_L * W_L];
@@ -1029,7 +1057,7 @@ void ImProcFunctions::maskforretinex(int sp, int before, float ** luminance, flo
         delete [] data_tmp;
 
     }
-
+*/
 //blend
 #ifdef _OPENMP
     #pragma omp parallel
