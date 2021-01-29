@@ -2034,7 +2034,7 @@ TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n
 TP_COLORAPP_BRIGHT;Brightness (Q)
 TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM02/16 is the amount of perceived light emanating from a stimulus and differs from L*a*b* and RGB brightness.
 TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;When setting manually, values above 65 are recommended.
-TP_COLORAPP_CATMET_TOOLTIP;Classic - traditional operation of Ciecam, the chromatic adaptations are carried out separately between 'Scene conditions' and the basic illuminant and between basic illuminant and 'viewing conditions'.\n\nSymmetric - 'Scene conditions', 'Image adjustments' and 'Viewing conditions' are neutralized - Chromatic adaptation take into account the settings of White Balance.\n\nMixed - As classic but chromatic adaptation take into account the settings of White Balance. 
+TP_COLORAPP_CATMET_TOOLTIP;Classic - traditional CIECAM operation. The chromatic adaptation transforms are applied separately on ‘Scene conditions’ and basic illuminant on the one hand, and on basic illuminant and ‘Viewing conditions’ on the other.\n\nSymmetric – The chromatic adaptation is based on the white balance. The ‘Scene conditions’, ‘Image adjustments’ and ‘Viewing conditions’ settings are neutralized.\n\nMixed – Same as the ‘Classic’ option but in this case, the chromatic adaptation is based on the white balance.
 TP_COLORAPP_CATMOD;Cat02/16 mode
 TP_COLORAPP_CATCLASSIC;Classic
 TP_COLORAPP_CATSYMGEN;Automatic Symmetric
