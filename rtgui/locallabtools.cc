@@ -6258,6 +6258,8 @@ LocallabBlur::LocallabBlur():
     decayd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
     invmaskd(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVMASK")))),
     invmask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVMASK")))),
+    nlstr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLLUM"), 0, 100, 1, 0))),
+    nldet(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLDET"), 0, 100, 1, 0))),
     bilateral(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BILATERAL"), 0, 100, 1, 0))),
     sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     neutral(Gtk::manage (new Gtk::Button (M ("TP_RETINEX_NEUTRAL")))),
@@ -6429,6 +6431,8 @@ LocallabBlur::LocallabBlur():
     decayd->setAdjusterListener(this);
 
     bilateral->setAdjusterListener(this);
+    nlstr->setAdjusterListener(this);
+    nldet->setAdjusterListener(this);
 
     sensiden->setAdjusterListener(this);
 
@@ -6589,6 +6593,8 @@ LocallabBlur::LocallabBlur():
     wavBox3->pack_start(*invmaskd);
     expdenoise3->add(*wavBox3, false);
     denoisebox->pack_start(*expdenoise3);
+    denoisebox->pack_start(*nlstr);
+    denoisebox->pack_start(*nldet);
     denoisebox->pack_start(*bilateral);
     denoisebox->pack_start(*sensiden);
     denoisebox->pack_start(*neutral);
@@ -6683,6 +6689,8 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         detailthr->set_tooltip_text(M("TP_LOCALLAB_DENOITHR_TOOLTIP"));
         adjblur->set_tooltip_text(M("TP_LOCALLAB_DENOIEQUALCHRO_TOOLTIP"));
         bilateral->set_tooltip_text(M("TP_LOCALLAB_DENOIBILAT_TOOLTIP"));
+        nlstr->set_tooltip_text(M("TP_LOCALLAB_DENOISENL_TOOLTIP"));
+        nldet->set_tooltip_text(M("TP_LOCALLAB_DENOISENL_TOOLTIP"));
         noiselumc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
         expmaskbl->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         showmaskblMethodtyp->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKTYP_TOOLTIP"));
@@ -6742,6 +6750,8 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         detailthr->set_tooltip_text("");
         adjblur->set_tooltip_text("");
         bilateral->set_tooltip_text("");
+        nlstr->set_tooltip_text("");
+        nldet->set_tooltip_text("");
         sensibn->set_tooltip_text("");
         blurMethod->set_tooltip_markup("");
         expdenoise->set_tooltip_markup("");
@@ -6793,6 +6803,8 @@ void LocallabBlur::neutral_pressed ()
     detailthr->setValue(defSpot.detailthr);;
     adjblur->setValue(defSpot.adjblur);
     bilateral->setValue(defSpot.bilateral);
+    nlstr->setValue(defSpot.nlstr);
+    nldet->setValue(defSpot.nldet);
     sensiden->setValue(defSpot.sensiden);
     quamethod->set_active (2);
     wavshapeden->setCurve(defSpot.locwavcurveden);
@@ -6968,6 +6980,8 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         detailthr->setValue((double)spot.detailthr);
         adjblur->setValue((double)spot.adjblur);
         bilateral->setValue((double)spot.bilateral);
+        nlstr->setValue((double)spot.nlstr);
+        nldet->setValue((double)spot.nldet);
         sensiden->setValue((double)spot.sensiden);
         
         if (spot.showmaskblMethodtyp == "blur") {
@@ -7107,6 +7121,8 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.adjblur = adjblur->getIntValue();
         spot.bilateral = bilateral->getIntValue();
         spot.sensiden = sensiden->getIntValue();
+        spot.nlstr = nlstr->getIntValue();
+        spot.nldet = nldet->getIntValue();
 
         if (showmaskblMethodtyp->get_active_row_number() == 0) {
             spot.showmaskblMethodtyp = "blur";
@@ -7181,6 +7197,8 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         detailthr->setDefault((double)defSpot.detailthr);
         adjblur->setDefault((double)defSpot.adjblur);
         bilateral->setDefault((double)defSpot.bilateral);
+        nlstr->setDefault((double)defSpot.nlstr);
+        nldet->setDefault((double)defSpot.nldet);
         sensiden->setDefault((double)defSpot.sensiden);
         strumaskbl->setDefault(defSpot.strumaskbl);
         blendmaskbl->setDefault((double)defSpot.blendmaskbl);
@@ -7452,6 +7470,20 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabbilateral,
                                        bilateral->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == nlstr) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnlstr,
+                                       nlstr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == nldet) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnldet,
+                                       nldet->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

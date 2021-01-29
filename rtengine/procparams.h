@@ -1257,6 +1257,8 @@ struct LocallabParams {
         double noisechrodetail;
         int adjblur;
         int bilateral;
+        int nlstr;
+        int nldet;
         int sensiden;
         int detailthr;
         std::vector<double> locwavcurveden;

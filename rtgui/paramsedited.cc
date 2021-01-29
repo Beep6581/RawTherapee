@@ -1328,6 +1328,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).noisechrodetail = locallab.spots.at(j).noisechrodetail && pSpot.noisechrodetail == otherSpot.noisechrodetail;
                 locallab.spots.at(j).adjblur = locallab.spots.at(j).adjblur && pSpot.adjblur == otherSpot.adjblur;
                 locallab.spots.at(j).bilateral = locallab.spots.at(j).bilateral && pSpot.bilateral == otherSpot.bilateral;
+                locallab.spots.at(j).nlstr = locallab.spots.at(j).nlstr && pSpot.nlstr == otherSpot.nlstr;
+                locallab.spots.at(j).nldet = locallab.spots.at(j).nldet && pSpot.nldet == otherSpot.nldet;
                 locallab.spots.at(j).sensiden = locallab.spots.at(j).sensiden && pSpot.sensiden == otherSpot.sensiden;
                 locallab.spots.at(j).detailthr = locallab.spots.at(j).detailthr && pSpot.detailthr == otherSpot.detailthr;
                 locallab.spots.at(j).locwavcurveden = locallab.spots.at(j).locwavcurveden && pSpot.locwavcurveden == otherSpot.locwavcurveden;
@@ -4279,6 +4281,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).bilateral = mods.locallab.spots.at(i).bilateral;
         }
 
+        if (locallab.spots.at(i).nlstr) {
+            toEdit.locallab.spots.at(i).nlstr = mods.locallab.spots.at(i).nlstr;
+        }
+
+        if (locallab.spots.at(i).nldet) {
+            toEdit.locallab.spots.at(i).nldet = mods.locallab.spots.at(i).nldet;
+        }
+
         if (locallab.spots.at(i).sensiden) {
             toEdit.locallab.spots.at(i).sensiden = mods.locallab.spots.at(i).sensiden;
         }
@@ -6867,6 +6877,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     noisechrodetail(v),
     adjblur(v),
     bilateral(v),
+    nlstr(v),
+    nldet(v),
     sensiden(v),
     detailthr(v),
     locwavcurveden(v),
@@ -7433,6 +7445,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     noisechrodetail = v;
     adjblur = v;
     bilateral = v;
+    nlstr = v;
+    nldet = v;
     sensiden = v;
     detailthr = v;
     locwavcurveden = v;

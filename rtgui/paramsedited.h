@@ -665,6 +665,8 @@ public:
         bool noisechrodetail;
         bool adjblur;
         bool bilateral;
+        bool nlstr;
+        bool nldet;
         bool sensiden;
         bool detailthr;
         bool locwavcurveden;

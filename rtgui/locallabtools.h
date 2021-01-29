@@ -732,7 +732,8 @@ private:
     
     Gtk::CheckButton* const invmaskd;
     Gtk::CheckButton* const invmask;
-    
+    Adjuster* const nlstr;
+    Adjuster* const nldet;
     Adjuster* const bilateral;
     Adjuster* const sensiden;
     Gtk::Button* neutral;
