@@ -2918,7 +2918,7 @@ TP_LOCALLAB_NEIGH;Radius
 TP_LOCALLAB_NLDENOISE_TOOLTIP;"Récupération des détails" agit sur un Laplacien pour privilégier l'action de denoise sur les aplats plutôt que sur les structures.
 TP_LOCALLAB_NLDENOISENLPAT_TOOLTIP;Agir sur ce curseur pour adapter le niveau de débruitage à la taille des objets à traiter.
 TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP;Plus la valeur sera importante, plus le débruitage sera intense.\nMais cela a une forte incidence sur les temps de traitement.
-TP_LOCALLAB_NLFRA;Non-local Means - Luminance
+TP_LOCALLAB_NLFRA;Denoise: Non-local Means - Luminance
 TP_LOCALLAB_NLFRAME_TOOLTIP;"Débruitage par morceaux" réalise une moyenne de la totalité des valeurs des pixels contenus dans l'image, pondérées en fonction de leur similarité avec le résultat attendu (pixel cible).\nL'algoritme permet d’amoindrir la perte de détails au sein de l'image.\nSeul le bruit de luminance est pris en compte, le bruit de chrominance est traité de manière plus performante par le couple ondelettes / Fourier (DCT).\nPeut être utilisé en conjonction avec 'ondelettes' ou isolé.
 TP_LOCALLAB_NLLUM;Strength
 TP_LOCALLAB_NLDET;Detail recovery
