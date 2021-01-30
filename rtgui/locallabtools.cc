@@ -6577,6 +6577,14 @@ LocallabBlur::LocallabBlur():
     wavBox1->pack_start(*levelthr, Gtk::PACK_SHRINK, 0);
     expdenoise1->add(*wavBox1, false);
     wavBox->pack_start(*expdenoise1);
+    ToolParamBlock* const nlbox = Gtk::manage(new ToolParamBlock());
+    nlbox->pack_start(*nlstr);
+    nlbox->pack_start(*nldet);
+    nlbox->pack_start(*nlpat);
+    nlbox->pack_start(*nlrad);
+    nlFrame->add(*nlbox);
+    wavBox->pack_start(*nlFrame);
+    
     wavBox->pack_start(*noisechrof);
     wavBox->pack_start(*noisechroc);
     wavBox->pack_start(*noisechrodetail);
@@ -6588,13 +6596,6 @@ LocallabBlur::LocallabBlur():
     wavBox->pack_start(*detailFrame);
     wavFrame->add(*wavBox);
     denoisebox->pack_start(*wavFrame);
-    ToolParamBlock* const nlbox = Gtk::manage(new ToolParamBlock());
-    nlbox->pack_start(*nlstr);
-    nlbox->pack_start(*nldet);
-    nlbox->pack_start(*nlpat);
-    nlbox->pack_start(*nlrad);
-    nlFrame->add(*nlbox);
-    denoisebox->pack_start(*nlFrame);
 
     ToolParamBlock* const wavBox3 = Gtk::manage(new ToolParamBlock());
     wavBox3->pack_start(*maskusable3, Gtk::PACK_SHRINK, 0);
