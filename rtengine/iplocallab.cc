@@ -10860,7 +10860,7 @@ void ImProcFunctions::detail_mask(const array2D<float> &src, array2D<float> &mas
 
 // thanks to Alberto Griggio for this wondeful code
 // thanks to Ingo Weyrich <heckflosse67@gmx.de> for many speedup suggestions!
-//adpted to Rawtherapee Local adjustments J.Desmis january 2021
+// adapted to Rawtherapee Local adjustments J.Desmis january 2021
 //
 
 void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int patch, int radius, int bfw, int bfh, float scale, bool multithread)
@@ -10871,14 +10871,14 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     BENCHFUN
     const int W = bfw;
     const int H = bfh;
-    //first change Lab L to pseudo linear with gamma = 3.f...and in range 0...65536 Its not excatly Lab encoding but less importance
+    //first change Lab L to pseudo linear with gamma = 3.f...and in range 0...65536 Its not exactly Lab encoding but less importance
 #ifdef _OPENMP
 #   pragma omp parallel for if (multithread)
 #endif
     for (int y = 0; y < H; ++y) {
         for (int x = 0; x < W; ++x) {
             float k = img[y][x] / 32768.f;
-            k = pow (k, 3.f);
+            k = pow (k, 3.f);//suppress gamma Lab
             img[y][x] = 65536.f * k;
         }
     }
@@ -11134,11 +11134,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     for (int i = 0; i < hei; ++i) {
         delete[] dst[i];
     }
-
     delete[] dst;
-
- //printf("OK END\n");
-
 }
 
 void ImProcFunctions::Lab_Local(
