@@ -2915,7 +2915,8 @@ TP_LOCALLAB_MRTHR;Original Image
 TP_LOCALLAB_MRTWO;Short Curves 'L' Mask
 TP_LOCALLAB_MULTIPL_TOOLTIP;Wide-range tone adjustment: -18EV to +4EV. The first slider acts on very dark tones between -18EV and -6EV. The last slider acts on light tones up to 4EV  
 TP_LOCALLAB_NEIGH;Radius
-TP_LOCALLAB_NLLUM;Strength luminance
+TP_LOCALLAB_NLFRA;Non-local Means - Luminance
+TP_LOCALLAB_NLLUM;Strength
 TP_LOCALLAB_NLDET;Detail recovery
 TP_LOCALLAB_NLPAT;Maximum size patch
 TP_LOCALLAB_NLRAD;Maximum size radius

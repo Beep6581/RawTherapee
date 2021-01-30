@@ -6258,6 +6258,7 @@ LocallabBlur::LocallabBlur():
     decayd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
     invmaskd(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVMASK")))),
     invmask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVMASK")))),
+    nlFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_NLFRA")))),
     nlstr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLLUM"), 0, 100, 1, 0))),
     nldet(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLDET"), 0, 100, 1, 0))),
     nlpat(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLPAT"), 1, 5, 1, 2))),
@@ -6433,6 +6434,8 @@ LocallabBlur::LocallabBlur():
     decayd->setAdjusterListener(this);
 
     bilateral->setAdjusterListener(this);
+    nlFrame->set_label_align(0.025, 0.5);
+
     nlstr->setAdjusterListener(this);
     nldet->setAdjusterListener(this);
     nlpat->setAdjusterListener(this);
@@ -6597,10 +6600,13 @@ LocallabBlur::LocallabBlur():
     wavBox3->pack_start(*invmaskd);
     expdenoise3->add(*wavBox3, false);
     denoisebox->pack_start(*expdenoise3);
-    denoisebox->pack_start(*nlstr);
-    denoisebox->pack_start(*nldet);
-    denoisebox->pack_start(*nlpat);
-    denoisebox->pack_start(*nlrad);
+    ToolParamBlock* const nlbox = Gtk::manage(new ToolParamBlock());
+    nlbox->pack_start(*nlstr);
+    nlbox->pack_start(*nldet);
+    nlbox->pack_start(*nlpat);
+    nlbox->pack_start(*nlrad);
+    nlFrame->add(*nlbox);
+    denoisebox->pack_start(*nlFrame);
     denoisebox->pack_start(*bilateral);
     denoisebox->pack_start(*sensiden);
     denoisebox->pack_start(*neutral);
