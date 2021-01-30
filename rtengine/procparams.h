@@ -1259,6 +1259,8 @@ struct LocallabParams {
         int bilateral;
         int nlstr;
         int nldet;
+        int nlpat;
+        int nlrad;
         int sensiden;
         int detailthr;
         std::vector<double> locwavcurveden;

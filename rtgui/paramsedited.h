@@ -667,6 +667,8 @@ public:
         bool bilateral;
         bool nlstr;
         bool nldet;
+        bool nlpat;
+        bool nlrad;
         bool sensiden;
         bool detailthr;
         bool locwavcurveden;

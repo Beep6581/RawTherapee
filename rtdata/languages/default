@@ -1278,6 +1278,10 @@ HISTORY_MSG_1030;Local - reti recovery threshold
 HISTORY_MSG_1031;Local - reti threshold mask low
 HISTORY_MSG_1032;Local - reti threshold mask high
 HISTORY_MSG_1033;Local - reti decay
+HISTORY_MSG_1034;Local - Nlmeans - strength
+HISTORY_MSG_1035;Local - Nlmeans - detail
+HISTORY_MSG_1036;Local - Nlmeans - patch
+HISTORY_MSG_1037;Local - Nlmeans - radius
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2911,6 +2915,10 @@ TP_LOCALLAB_MRTHR;Original Image
 TP_LOCALLAB_MRTWO;Short Curves 'L' Mask
 TP_LOCALLAB_MULTIPL_TOOLTIP;Wide-range tone adjustment: -18EV to +4EV. The first slider acts on very dark tones between -18EV and -6EV. The last slider acts on light tones up to 4EV  
 TP_LOCALLAB_NEIGH;Radius
+TP_LOCALLAB_NLLUM;Strength luminance
+TP_LOCALLAB_NLDET;Detail recovery
+TP_LOCALLAB_NLPAT;Maximum size patch
+TP_LOCALLAB_NLRAD;Maximum size radius
 TP_LOCALLAB_NOISECHROCOARSE;Coarse chroma (Wav)
 TP_LOCALLAB_NOISECHROC_TOOLTIP;If superior to zero, high quality algorithm is enabled.\nCoarse is for slider >=0.02
 TP_LOCALLAB_NOISECHRODETAIL;Chroma detail recovery (DCT ƒ)

@@ -3352,6 +3352,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     bilateral(0),
     nlstr(0),
     nldet(50),
+    nlpat(2),
+    nlrad(5),
     sensiden(60),
     detailthr(50),
     locwavcurveden{
@@ -4445,6 +4447,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && bilateral == other.bilateral
         && nlstr == other.nlstr
         && nldet == other.nldet
+        && nlpat == other.nlpat
+        && nlrad == other.nlrad
         && sensiden == other.sensiden
         && detailthr == other.detailthr
         && locwavcurveden == other.locwavcurveden
@@ -6080,6 +6084,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->bilateral, "Locallab", "Bilateral_" + index_str, spot.bilateral, keyFile);
                     saveToKeyfile(!pedited || spot_edited->nlstr, "Locallab", "Nlstr_" + index_str, spot.nlstr, keyFile);
                     saveToKeyfile(!pedited || spot_edited->nldet, "Locallab", "Nldet_" + index_str, spot.nldet, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->nlpat, "Locallab", "Nlpat_" + index_str, spot.nlpat, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->nlrad, "Locallab", "Nlrad_" + index_str, spot.nlrad, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sensiden, "Locallab", "Sensiden_" + index_str, spot.sensiden, keyFile);
                     saveToKeyfile(!pedited || spot_edited->detailthr, "Locallab", "Detailthr_" + index_str, spot.detailthr, keyFile);
                     saveToKeyfile(!pedited || spot_edited->locwavcurveden, "Locallab", "LocwavCurveden_" + index_str, spot.locwavcurveden, keyFile);
@@ -7931,6 +7937,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Bilateral_" + index_str, pedited, spot.bilateral, spotEdited.bilateral);
                 assignFromKeyfile(keyFile, "Locallab", "Nlstr_" + index_str, pedited, spot.nlstr, spotEdited.nlstr);
                 assignFromKeyfile(keyFile, "Locallab", "Nldet_" + index_str, pedited, spot.nldet, spotEdited.nldet);
+                assignFromKeyfile(keyFile, "Locallab", "Nlpat_" + index_str, pedited, spot.nlpat, spotEdited.nlpat);
+                assignFromKeyfile(keyFile, "Locallab", "Nlrad_" + index_str, pedited, spot.nlrad, spotEdited.nlrad);
                 assignFromKeyfile(keyFile, "Locallab", "Sensiden_" + index_str, pedited, spot.sensiden, spotEdited.sensiden);
                 assignFromKeyfile(keyFile, "Locallab", "Detailthr_" + index_str, pedited, spot.detailthr, spotEdited.detailthr);
                 assignFromKeyfile(keyFile, "Locallab", "LocwavCurveden_" + index_str, pedited, spot.locwavcurveden, spotEdited.locwavcurveden);

@@ -629,6 +629,8 @@ struct local_params {
     float bilat;
     int nlstr;
     int nldet;
+    int nlpat;
+    int nlrad;
     float noiselc;
     float noiselc4;
     float noiselc5;
@@ -1547,6 +1549,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.bilat = locallab.spots.at(sp).bilateral;
     lp.nldet = locallab.spots.at(sp).nldet;
     lp.nlstr = locallab.spots.at(sp).nlstr;
+    lp.nlpat = locallab.spots.at(sp).nlpat;
+    lp.nlrad = locallab.spots.at(sp).nlrad;
     lp.adjch = (float) locallab.spots.at(sp).adjblur;
     lp.strengt = streng;
     lp.gamm = gam;
@@ -9597,7 +9601,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
             }
 
             if(lp.nlstr > 0) {
-                NLMeans(tmp1.L, lp.nlstr, lp.nldet, GW, GH, float (sk), multiThread);
+                NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, GW, GH, float (sk), multiThread);
             }
             if(lp.smasktyp != 0) {
                     if(lp.enablMask && lp.recothrd != 1.f && lp.smasktyp != 0) {
@@ -10292,7 +10296,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
 
             if(lp.nlstr > 0) {
-                NLMeans(bufwv.L, lp.nlstr, lp.nldet, bfw, bfh, 1.f, multiThread);
+                NLMeans(bufwv.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, bfw, bfh, 1.f, multiThread);
             }
 
 
@@ -10859,7 +10863,7 @@ void ImProcFunctions::detail_mask(const array2D<float> &src, array2D<float> &mas
 //adpted to Rawtherapee Local adjustments J.Desmis january 2021
 //
 
-void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int bfw, int bfh, float scale, bool multithread)
+void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int patch, int radius, int bfw, int bfh, float scale, bool multithread)
 {
     if (!strength) {
         return;
@@ -10882,8 +10886,10 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     // these two can be changed if needed. increasing max_patch_radius doesn't
     // affect performance, whereas max_search_radius *really* does
     // (the complexity is O(max_search_radius^2 * W * H))
-    constexpr int max_patch_radius = 2;
-    constexpr int max_search_radius = 5;
+//    constexpr int max_patch_radius = 2;
+//    constexpr int max_search_radius = 5;
+    int max_patch_radius = patch;
+    int max_search_radius = radius;
     
     
     const int search_radius = int(std::ceil(float(max_search_radius) / scale));
