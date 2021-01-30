@@ -890,6 +890,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.quamet = 1;
     } else if (locallab.spots.at(sp).quamethod == "none") {
         lp.quamet = 2;
+    } else if (locallab.spots.at(sp).quamethod == "noneall") {
+        lp.quamet = 3;
     }
 
     if (locallab.spots.at(sp).shMethod == "std") {
@@ -8983,7 +8985,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
     if (((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.nlstr > 0 || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f
 //            || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4  || aut == 1 || aut == 2) && lp.denoiena) || execdenoi) {  // sk == 1 ??
-            || execmaskden || aut == 1 || aut == 2) && lp.denoiena && lp.quamet != 2) || execdenoi) {  // sk == 1 ??
+            || execmaskden || aut == 1 || aut == 2) && lp.denoiena && lp.quamet != 3) || execdenoi) {  // sk == 1 ??
 
         StopWatch Stop1("locallab Denoise called");
 
@@ -9231,7 +9233,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     if ((lp.quamet == 0  && aut == 0) || (mxsl < 1.f && (aut == 1 || aut == 2))) {
                         WaveletDenoiseAllL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
 
-                    } else {
+                    } else if (lp.quamet == 1){
 
                         WaveletDenoiseAll_BiShrinkL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
 
@@ -9522,7 +9524,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     if ((lp.quamet == 0  && aut == 0) || (maxccoarse < 0.1f && (aut == 1 || aut == 2)))  {
                         WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                         WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, numThreads);
-                    } else {
+                    } else if (lp.quamet == 1){
                         WaveletDenoiseAll_BiShrinkAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                         WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
 
@@ -9550,7 +9552,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
             }
 
             if (!Ldecomp.memory_allocation_failed() && aut == 0) {
-                if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.wavcurvedenoi || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f  && lp.quamet != 2) {
+                if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.wavcurvedenoi || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f  && lp.quamet >= 2) {
                     fftw_denoise(sk, GW, GH, max_numblox_W, min_numblox_W, tmp1.L, Lin,  numThreads, lp, 0);
                 }
             }
@@ -9600,7 +9602,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
             }
 
-            if(lp.nlstr > 0) {
+            if(lp.nlstr > 0 && lp.quamet != 3) {
                 NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, GW, GH, float (sk), multiThread);
             }
             if(lp.smasktyp != 0) {
@@ -9928,7 +9930,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
                         if ((lp.quamet == 0  && aut == 0) || (mxsl < 1.f && (aut == 1 || aut == 2))) {
                             WaveletDenoiseAllL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
-                        } else {
+                        } else if (lp.quamet == 1) {
                             WaveletDenoiseAll_BiShrinkL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
                             WaveletDenoiseAllL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
                         }
@@ -10216,7 +10218,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         if ((lp.quamet == 0  && aut == 0) || (maxccoarse < 0.1f && (aut == 1  || aut == 2)))  {
                             WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                             WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, numThreads);
-                        } else {
+                        } else if (lp.quamet == 1){
                             WaveletDenoiseAll_BiShrinkAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                             WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
 
@@ -10247,7 +10249,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                 if (!Ldecomp.memory_allocation_failed() && aut == 0) {
 
 
-                    if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.wavcurvedenoi || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f && lp.quamet != 2) {
+                    if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.wavcurvedenoi || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f && lp.quamet >= 2) {
                         fftw_denoise(sk, bfw, bfh, max_numblox_W, min_numblox_W, bufwv.L, Lin,  numThreads, lp, 0);
                     }
                 }
@@ -10295,7 +10297,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                 }
 
 
-            if(lp.nlstr > 0) {
+            if(lp.nlstr > 0 && lp.quamet != 3) {
                 NLMeans(bufwv.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, bfw, bfh, 1.f, multiThread);
             }
 

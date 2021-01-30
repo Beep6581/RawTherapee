@@ -6368,9 +6368,10 @@ LocallabBlur::LocallabBlur():
     setExpandAlignProperties(expdenoise, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
 
-    quamethod->append(M("TP_WAVELET_QUACONSER"));
-    quamethod->append(M("TP_WAVELET_QUAAGRES"));
-    quamethod->append(M("TP_WAVELET_QUANONE"));
+    quamethod->append(M("TP_LOCALLAB_QUACONSER"));
+    quamethod->append(M("TP_LOCALLAB_QUAAGRES"));
+    quamethod->append(M("TP_LOCALLAB_QUANONEWAV"));
+    quamethod->append(M("TP_LOCALLAB_QUANONEALL"));
     quamethodconn = quamethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabBlur::quamethodChanged));
     Gtk::Label* const quaLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DENQUA") + ":"));
     quaHBox->pack_start(*quaLabel, Gtk::PACK_SHRINK, 4);
@@ -6577,6 +6578,12 @@ LocallabBlur::LocallabBlur():
     wavBox1->pack_start(*levelthr, Gtk::PACK_SHRINK, 0);
     expdenoise1->add(*wavBox1, false);
     wavBox->pack_start(*expdenoise1);
+    ToolParamBlock* const detailBox = Gtk::manage(new ToolParamBlock());
+    detailBox->pack_start(*detailthr);
+    detailBox->pack_start(*usemask, Gtk::PACK_SHRINK, 0);
+    detailFrame->add(*detailBox);
+    wavBox->pack_start(*detailFrame);
+    
     ToolParamBlock* const nlbox = Gtk::manage(new ToolParamBlock());
     nlbox->pack_start(*nlstr);
     nlbox->pack_start(*nldet);
@@ -6589,11 +6596,6 @@ LocallabBlur::LocallabBlur():
     wavBox->pack_start(*noisechroc);
     wavBox->pack_start(*noisechrodetail);
     wavBox->pack_start(*adjblur);
-    ToolParamBlock* const detailBox = Gtk::manage(new ToolParamBlock());
-    detailBox->pack_start(*detailthr);
-    detailBox->pack_start(*usemask, Gtk::PACK_SHRINK, 0);
-    detailFrame->add(*detailBox);
-    wavBox->pack_start(*detailFrame);
     wavFrame->add(*wavBox);
     denoisebox->pack_start(*wavFrame);
 
@@ -6982,6 +6984,8 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
             quamethod->set_active(1);
         } else if (spot.quamethod == "none") {
             quamethod->set_active(2);
+        } else if (spot.quamethod == "noneall") {
+            quamethod->set_active(3);
         }
 
         activlum->set_active(spot.activlum);
@@ -7124,6 +7128,8 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
             spot.quamethod = "agre";
         } else if (quamethod->get_active_row_number() == 2) {
             spot.quamethod = "none";
+        } else if (quamethod->get_active_row_number() == 3) {
+            spot.quamethod = "noneall";
         }
 
         spot.activlum = activlum->get_active();
