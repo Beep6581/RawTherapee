@@ -627,6 +627,8 @@ struct local_params {
     int noiselequal;
     float noisechrodetail;
     float bilat;
+    int nlstr;
+    int nldet;
     float noiselc;
     float noiselc4;
     float noiselc5;
@@ -1543,6 +1545,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.noisecc = local_noisecc;
     lp.sensden = local_sensiden;
     lp.bilat = locallab.spots.at(sp).bilateral;
+    lp.nldet = locallab.spots.at(sp).nldet;
+    lp.nlstr = locallab.spots.at(sp).nlstr;
     lp.adjch = (float) locallab.spots.at(sp).adjblur;
     lp.strengt = streng;
     lp.gamm = gam;
@@ -8973,7 +8977,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
     bool execdenoi = noiscfactiv && ((lp.colorena && execcolor) || (lp.tonemapena && lp.strengt != 0.f) || (lp.cbdlena && execbdl) || (lp.sfena && lp.strng > 0.f) || (lp.lcena && lp.lcamount > 0.f) || (lp.sharpena && lp.shrad > 0.42) || (lp.retiena && lp.str > 0.f)  || (lp.exposena && lp.expcomp != 0.f)  || (lp.expvib && lp.past != 0.f));
     bool execmaskden = (lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.smasktyp != 0;
 
-    if (((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f
+    if (((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.nlstr > 0 || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f
 //            || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4  || aut == 1 || aut == 2) && lp.denoiena) || execdenoi) {  // sk == 1 ??
             || execmaskden || aut == 1 || aut == 2) && lp.denoiena && lp.quamet != 2) || execdenoi) {  // sk == 1 ??
 
@@ -9592,6 +9596,9 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
             }
 
+            if(lp.nlstr > 0) {
+                NLMeans(tmp1.L, lp.nlstr, lp.nldet, GW, GH, float (sk), multiThread);
+            }
             if(lp.smasktyp != 0) {
                     if(lp.enablMask && lp.recothrd != 1.f && lp.smasktyp != 0) {
                         LabImage tmp3(GW, GH);
@@ -10283,6 +10290,12 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     }
                 }
 
+
+            if(lp.nlstr > 0) {
+                NLMeans(bufwv.L, lp.nlstr, lp.nldet, bfw, bfh, 1.f, multiThread);
+            }
+
+
                 if (lp.smasktyp != 0) {
                     if(lp.enablMask && lp.recothrd != 1.f && lp.smasktyp != 0) {
                         LabImage tmp3(bfw, bfh);
@@ -10796,7 +10809,8 @@ void ImProcFunctions::detail_mask(const array2D<float> &src, array2D<float> &mas
             L2[y][x] = xlin2log(L2[y][x]/scaling, 50.f);
         }
     }
-    laplacian(L2, m2, bfw, bfh, threshold/scaling, ceiling/scaling, factor, multithread);
+    
+    laplacian(L2, m2, W / 4, H / 4, threshold/scaling, ceiling/scaling, factor, multithread);
 
     rescaleBilinear(m2, mask, multithread);
 
@@ -10833,23 +10847,38 @@ void ImProcFunctions::detail_mask(const array2D<float> &src, array2D<float> &mas
             }
         }
     }
+  
 }
 
 // basic idea taken from Algorithm 3 in the paper:
-// "Parameter-Free Fast Pixelwise Non-Local Means Denoising"
+// "Parameter-Free Fast Pixelwise Non-Local Means Denoising" http://www.ipol.im/pub/art/2014/120/
 // by Jacques Froment
 
 // thanks to Alberto Griggio for this wondeful code
 // thanks to Ingo Weyrich <heckflosse67@gmx.de> for many speedup suggestions!
+//adpted to Rawtherapee Local adjustments J.Desmis january 2021
 //
 
-void ImProcFunctions::NLMeans(LabImage *img, int strength, int detail_thresh, int bfw, int bfh, float scale, bool multithread)
+void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int bfw, int bfh, float scale, bool multithread)
 {
     if (!strength) {
         return;
     }
     BENCHFUN
-
+    const int W = bfw;
+    const int H = bfh;
+    //first change Lab L to pseudo linear with gamma = 3.f...and in range 0...65536 Its not excatly Lab encoding but less importance
+#ifdef _OPENMP
+#   pragma omp parallel for if (multithread)
+#endif
+    for (int y = 0; y < H; ++y) {
+        for (int x = 0; x < W; ++x) {
+            float k = img[y][x] / 32768.f;
+            k = pow (k, 3.f);
+            img[y][x] = 65536.f * k;
+        }
+    }
+    
     // these two can be changed if needed. increasing max_patch_radius doesn't
     // affect performance, whereas max_search_radius *really* does
     // (the complexity is O(max_search_radius^2 * W * H))
@@ -10859,8 +10888,6 @@ void ImProcFunctions::NLMeans(LabImage *img, int strength, int detail_thresh, in
     
     const int search_radius = int(std::ceil(float(max_search_radius) / scale));
     const int patch_radius = int(std::ceil(float(max_patch_radius) / scale));
-    const int W = img->W;
-    const int H = img->H;
 
     // the strength parameter controls the scaling of the weights
     // (called h^2 in the papers)
@@ -10879,18 +10906,32 @@ void ImProcFunctions::NLMeans(LabImage *img, int strength, int detail_thresh, in
     // where f = detail_thresh / 100
     float amount = LIM(float(detail_thresh)/100.f, 0.f, 0.99f);
     array2D<float> mask(W, H);// ARRAY2D_ALIGNED);
+    
     {
-        array2D<float> LL(W, H, img->L, ARRAY2D_BYREFERENCE);
-        ImProcFunctions::detail_mask(LL, mask, bfw, bfh, 1.f, 1e-3f, 1.f, amount, BlurType::GAUSS, 2.f / scale, multithread);
+        array2D<float> LL(W, H, img, ARRAY2D_BYREFERENCE);
+        ImProcFunctions::detail_mask(LL, mask, W, H, 1.f, 1e-3f, 1.f, amount, BlurType::GAUSS, 2.f / scale, multithread);
 
     }
+//allocate dst
+    float** dst;
+    int wid = W;
+    int hei = H;
+    dst = new float*[hei];
+    for (int i = 0; i < hei; ++i) {
+       dst[i] = new float[wid];
+    }
+    for (int y = 0; y < H; ++y) {
+        for (int x = 0; x < W; ++x) {
+            dst[y][x] = img[y][x];
+        }
+    }
 
-    LabImage *dst = img;
     const int border = search_radius + patch_radius;
     const int WW = W + border * 2;
     const int HH = H + border * 2;
 
     array2D<float> src(WW, HH);//, ARRAY2D_ALIGNED);
+    
 #ifdef _OPENMP
 #   pragma omp parallel for if (multithread)
 #endif
@@ -10898,7 +10939,7 @@ void ImProcFunctions::NLMeans(LabImage *img, int strength, int detail_thresh, in
         int yy = y <= border ? 0 : y >= H ? H-1 : y - border;
         for (int x = 0; x < WW; ++x) {
             int xx = x <= border ? 0 : x >= W ? W-1 : x - border;
-            float Y = img->L[yy][xx] / 32768.f;
+            float Y = img[yy][xx] / 65536.f;
             src[y][x] = Y;
         }
     }
@@ -10908,7 +10949,7 @@ void ImProcFunctions::NLMeans(LabImage *img, int strength, int detail_thresh, in
 #endif
     for (int y = 0; y < H; ++y) {
         for (int x = 0; x < W; ++x) {
-            dst->L[y][x] = 0.f;
+            dst[y][x] = 0.f;
         }
     }
 
@@ -10928,7 +10969,7 @@ void ImProcFunctions::NLMeans(LabImage *img, int strength, int detail_thresh, in
             mask[y][x] = (1.f / (mask[y][x] * h2)) / lutfactor;
         }
     }
-    
+   
     // process by tiles to avoid numerical accuracy errors in the computation
     // of the integral image
     const int tile_size = 150;
@@ -10939,7 +10980,7 @@ void ImProcFunctions::NLMeans(LabImage *img, int strength, int detail_thresh, in
 #ifdef __SSE2__
     const vfloat zerov = F2V(0.0);
     const vfloat v1e_5f = F2V(1e-5f);
-    const vfloat v32768f = F2V(32768.f);
+    const vfloat v65536f = F2V(65536.f);
 #endif
 
 #ifdef _OPENMP
@@ -11016,7 +11057,7 @@ void ImProcFunctions::NLMeans(LabImage *img, int strength, int detail_thresh, in
                         vfloat weight = explut[d];
                         STVFU(SW[y-start_y][x-start_x], LVFU(SW[y-start_y][x-start_x]) + weight);
                         vfloat Y = weight * LVFU(src[sy][sx]);
-                        STVFU(dst->L[y][x], LVFU(dst->L[y][x]) + Y);
+                        STVFU(dst[y][x], LVFU(dst[y][x]) + Y);
                     }
 #endif
                     for (; xx < end_x-border; ++xx) {
@@ -11033,10 +11074,10 @@ void ImProcFunctions::NLMeans(LabImage *img, int strength, int detail_thresh, in
                         float weight = explut[d];
                         SW[y-start_y][x-start_x] += weight;
                         float Y = weight * src[sy][sx];
-                        dst->L[y][x] += Y;
+                        dst[y][x] += Y;
 
-                        assert(!xisinff(dst->L[y][x]));
-                        assert(!xisnanf(dst->L[y][x]));
+                        assert(!xisinff(dst[y][x]));
+                        assert(!xisnanf(dst[y][x]));
                     }
                 }
             }
@@ -11050,19 +11091,19 @@ void ImProcFunctions::NLMeans(LabImage *img, int strength, int detail_thresh, in
             for (; xx < end_x-border-3; xx += 4) {
                 int x = xx - border;
             
-                const vfloat Y = LVFU(dst->L[y][x]);
+                const vfloat Y = LVFU(dst[y][x]);
                 const vfloat f = (v1e_5f + LVFU(SW[y-start_y][x-start_x]));
-                STVFU(dst->L[y][x], (Y / f) * v32768f);
+                STVFU(dst[y][x], (Y / f) * v65536f);
             }
 #endif
             for (; xx < end_x-border; ++xx) {
                 int x = xx - border;
             
-                const float Y = dst->L[y][x];
+                const float Y = dst[y][x];
                 const float f = (1e-5f + SW[y-start_y][x-start_x]);
-                dst->L[y][x] = (Y / f) * 32768.f;
+                dst[y][x] = (Y / f) * 65536.f;
 
-                assert(!xisnanf(dst->L[y][x]));
+                assert(!xisnanf(dst[y][x]));
             }
         }
     }
@@ -11070,8 +11111,28 @@ void ImProcFunctions::NLMeans(LabImage *img, int strength, int detail_thresh, in
 #ifdef __SSE2__
     _MM_SET_FLUSH_ZERO_MODE(oldMode);
 #endif
+
     } // omp parallel
-    
+#ifdef _OPENMP
+#   pragma omp parallel for if (multithread)
+#endif
+    for (int y = 0; y < H; ++y) {//apply inverse gamma 3.f and put result in range 32768.f
+        for (int x = 0; x < W; ++x) {
+            float k = dst[y][x] / 65536.f;
+            k = pow(k, 0.33333333f);
+            img[y][x] = 32768.f * k;
+        }
+    }
+
+//desallocate dst
+    for (int i = 0; i < hei; ++i) {
+        delete[] dst[i];
+    }
+
+    delete[] dst;
+
+ //printf("OK END\n");
+
 }
 
 void ImProcFunctions::Lab_Local(
