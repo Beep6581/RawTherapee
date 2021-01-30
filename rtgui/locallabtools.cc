@@ -6588,6 +6588,14 @@ LocallabBlur::LocallabBlur():
     wavBox->pack_start(*detailFrame);
     wavFrame->add(*wavBox);
     denoisebox->pack_start(*wavFrame);
+    ToolParamBlock* const nlbox = Gtk::manage(new ToolParamBlock());
+    nlbox->pack_start(*nlstr);
+    nlbox->pack_start(*nldet);
+    nlbox->pack_start(*nlpat);
+    nlbox->pack_start(*nlrad);
+    nlFrame->add(*nlbox);
+    denoisebox->pack_start(*nlFrame);
+
     ToolParamBlock* const wavBox3 = Gtk::manage(new ToolParamBlock());
     wavBox3->pack_start(*maskusable3, Gtk::PACK_SHRINK, 0);
     wavBox3->pack_start(*maskunusable3, Gtk::PACK_SHRINK, 0);
@@ -6600,13 +6608,6 @@ LocallabBlur::LocallabBlur():
     wavBox3->pack_start(*invmaskd);
     expdenoise3->add(*wavBox3, false);
     denoisebox->pack_start(*expdenoise3);
-    ToolParamBlock* const nlbox = Gtk::manage(new ToolParamBlock());
-    nlbox->pack_start(*nlstr);
-    nlbox->pack_start(*nldet);
-    nlbox->pack_start(*nlpat);
-    nlbox->pack_start(*nlrad);
-    nlFrame->add(*nlbox);
-    denoisebox->pack_start(*nlFrame);
     denoisebox->pack_start(*bilateral);
     denoisebox->pack_start(*sensiden);
     denoisebox->pack_start(*neutral);
@@ -6701,10 +6702,11 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         detailthr->set_tooltip_text(M("TP_LOCALLAB_DENOITHR_TOOLTIP"));
         adjblur->set_tooltip_text(M("TP_LOCALLAB_DENOIEQUALCHRO_TOOLTIP"));
         bilateral->set_tooltip_text(M("TP_LOCALLAB_DENOIBILAT_TOOLTIP"));
-        nlstr->set_tooltip_text(M("TP_LOCALLAB_DENOISENL_TOOLTIP"));
-        nldet->set_tooltip_text(M("TP_LOCALLAB_DENOISENL_TOOLTIP"));
-        nlpat->set_tooltip_text(M("TP_LOCALLAB_DENOISENLPAT_TOOLTIP"));
-        nlrad->set_tooltip_text(M("TP_LOCALLAB_DENOISENLRAD_TOOLTIP"));
+        nlFrame->set_tooltip_text(M("TP_LOCALLAB_NLFRAME_TOOLTIP"));
+        nlstr->set_tooltip_text(M("TP_LOCALLAB_NLDENOISE_TOOLTIP"));
+        nldet->set_tooltip_text(M("TP_LOCALLAB_NLDENOISE_TOOLTIP"));
+        nlpat->set_tooltip_text(M("TP_LOCALLAB_NLDENOISENLPAT_TOOLTIP"));
+        nlrad->set_tooltip_text(M("TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP"));
         noiselumc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
         expmaskbl->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         showmaskblMethodtyp->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKTYP_TOOLTIP"));
@@ -6764,6 +6766,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         detailthr->set_tooltip_text("");
         adjblur->set_tooltip_text("");
         bilateral->set_tooltip_text("");
+        nlFrame->set_tooltip_text("");
         nlstr->set_tooltip_text("");
         nldet->set_tooltip_text("");
         nlpat->set_tooltip_text("");
@@ -7698,7 +7701,9 @@ void LocallabBlur::convertParamToNormal()
     LLmaskblshapewav->setCurve(defSpot.LLmaskblcurvewav);
     csThresholdblur->setValue<int>(defSpot.csthresholdblur);
     lnoiselow->setValue(defSpot.lnoiselow);
-
+    nlpat->setValue(defSpot.nlpat);
+    nlrad->setValue(defSpot.nlrad);
+    
     // Enable all listeners
     enableListener();
 }
@@ -7750,6 +7755,9 @@ void LocallabBlur::convertParamToSimple()
     higthres->setValue(defSpot.higthres);
     adjblur->setValue(defSpot.adjblur);
     noisechrodetail->setValue(defSpot.noisechrodetail);
+    nlpat->setValue(defSpot.nlpat);
+    nlrad->setValue(defSpot.nlrad);
+    
     // Enable all listeners
     enableListener();
 }
@@ -7776,6 +7784,8 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             adjblur->hide();
             noisechrodetail->hide();
             usemask->hide();
+            nlpat->hide();
+            nlrad->hide();
             break;
 
         case Normal:
@@ -7796,6 +7806,9 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             adjblur->show();
             noisechrodetail->show();
             usemask->show();
+            nlpat->hide();
+            nlrad->hide();
+
             if (blMethod->get_active_row_number() == 2) {
                 expdenoise2->show();
             }
@@ -7869,6 +7882,9 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             shadmaskblsha->show();
             mask2blCurveEditorGwav->show();
             csThresholdblur->show();
+            nlpat->show();
+            nlrad->show();
+
             if(lnoiselow->getValue()!= 1.) {
                 if (showmaskblMethodtyp->get_active_row_number() == 0) {
                     showmaskblMethodtyp->set_active(2);
