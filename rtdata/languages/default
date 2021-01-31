@@ -2242,7 +2242,7 @@ TP_DIRPYRDENOISE_MAIN_GAMMA_TOOLTIP;Gamma varies noise reduction strength across
 TP_DIRPYRDENOISE_MAIN_MODE;Mode
 TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;Aggressive
 TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;Conservative
-TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;"Conservative" preserves low frequency chroma patterns, while "aggressive" obliterates them.
+TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;Conservative preserves low frequency chroma patterns, while aggressive obliterates them.
 TP_DIRPYRDENOISE_MEDIAN_METHOD;Median method
 TP_DIRPYRDENOISE_MEDIAN_METHOD_CHROMINANCE;Chroma only
 TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
@@ -2604,11 +2604,11 @@ TP_LOCALLAB_DENOIEQUAL_TOOLTIP;Allows you to carry out more or less noise reduct
 TP_LOCALLAB_DENOI1_EXP;Denoise based on luminance mask
 TP_LOCALLAB_DENOI2_EXP;Recovery based on luminance mask
 TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP;Allows you to recover luminance detail by progressively applying a Fourier transform (DCT). 
-TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative mode preserves low frequency detail. “Aggressive” mode removes low frequency detail.\n"Conservative" and Aggressive" use wavelets and DCT, can be used in conjonction with "Non-local Means - Luminance".
+TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative mode preserves low frequency detail. Aggressive mode removes low frequency detail.\nConservative and Aggressive use wavelets and DCT, can be used in conjunction with "Non-local Means - Luminance".
 TP_LOCALLAB_DENOIS;Ψ Denoise
 TP_LOCALLAB_DENOITHR_TOOLTIP;Adjusts edge detection to help reduce noise in uniform, low-contrast areas. 
 TP_LOCALLAB_DENOI_EXP;Denoise
-TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action  based on color (deltaE).\n\n You can refine the result with a "Median filter" or a "Guided Filter" (Soft radius).
+TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action  based on color (deltaE).
 TP_LOCALLAB_DEPTH;Depth 
 TP_LOCALLAB_DETAIL;Local contrast
 TP_LOCALLAB_DETAILFRA;Edge detection
@@ -2919,7 +2919,7 @@ TP_LOCALLAB_NLDENOISE_TOOLTIP;“Detail recovery” acts on a Laplacian transfor
 TP_LOCALLAB_NLDENOISENLPAT_TOOLTIP;Use this slider to adapt the amount of denoise to the size of the objects to be processed.
 TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP;Higher values increase denoise at the expense of processing time.
 TP_LOCALLAB_NLFRA;Non-local Means - Luminance
-TP_LOCALLAB_NLFRAME_TOOLTIP;Non-local means denoising takes a mean of all pixels in the image, weighted by how similar they are to the target pixel.\nReduces loss of detail compared with local mean algorithms.\nOnly luminance noise is taken into account. Chrominance noise is best processed using wavelets and Fourier transforms (DCT).\nCan be used in conjunction with wavelet denoise or on its own.
+TP_LOCALLAB_NLFRAME_TOOLTIP;Non-local means denoising takes a mean of all pixels in the image, weighted by how similar they are to the target pixel.\nReduces loss of detail compared with local mean algorithms.\nOnly luminance noise is taken into account. Chrominance noise is best processed using wavelets and Fourier transforms (DCT).\nCan be used in conjunction with 'Luminance denoise by level' or on its own.
 TP_LOCALLAB_NLLUM;Strength
 TP_LOCALLAB_NLDET;Detail recovery
 TP_LOCALLAB_NLPAT;Maximum patch size
@@ -2957,8 +2957,8 @@ TP_LOCALLAB_QUALCURV_METHOD;Curve type
 TP_LOCALLAB_QUAL_METHOD;Global quality
 TP_LOCALLAB_QUACONSER;Conservative
 TP_LOCALLAB_QUAAGRES;Aggressive
-TP_LOCALLAB_QUANONEWAV;Non-local means luminance only
-TP_LOCALLAB_QUANONEALL;None
+TP_LOCALLAB_QUANONEWAV;Non-local means only
+TP_LOCALLAB_QUANONEALL;Off
 TP_LOCALLAB_RADIUS;Radius
 TP_LOCALLAB_RADIUS_TOOLTIP;Uses a Fast Fourier Transform for radius > 30
 TP_LOCALLAB_RADMASKCOL;Smooth radius
@@ -3141,7 +3141,7 @@ TP_LOCALLAB_VIS_TOOLTIP;<b>Click</b> to show/hide selected Control Spot.\n<b>Ctr
 TP_LOCALLAB_WAMASKCOL;Ψ Mask Wavelet level
 TP_LOCALLAB_WARM;Warm/Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider uses the CIECAM algorithm and acts as a White Balance control to make the color temperature of the selected area warmer or cooler.\nIt can also reduce color artifacts in some cases.
-TP_LOCALLAB_WASDEN_TOOLTIP;Luminance noise reduction: the left-hand side of the curve including the 'separation point' corresponds to the first 3 levels 0, 1, 2 (fine detail). The right hand side of the curve corresponds to the coarser details (level 3, 4, 5, 6).
+TP_LOCALLAB_WASDEN_TOOLTIP;Luminance noise reduction: the left-hand side of the curve including the dark-gray/light-gray boundary corresponds to the first 3 levels 0, 1, 2 (fine detail). The right hand side of the curve corresponds to the coarser details (level 3, 4, 5, 6).
 TP_LOCALLAB_WAT_BALTHRES_TOOLTIP;Balances the action within each level.
 TP_LOCALLAB_WAT_BLURLC_TOOLTIP;The default blur setting affects all 3 L*a* b* components (luminance and colour).\nWhen checked, only luminance is blurred.
 TP_LOCALLAB_WAT_CLARIC_TOOLTIP;“Merge chroma” is used to select the intensity of the desired effect on chrominance.
@@ -3700,7 +3700,7 @@ TP_WAVELET_MIXNOISE;Noise
 TP_WAVELET_NEUTRAL;Neutral
 TP_WAVELET_NOIS;Denoise
 TP_WAVELET_NOISE;Denoise and Refine
-TP_WAVELET_NOISE_TOOLTIP;If level 4 luminance denoise superior to 50, mode Agressive is used.\nIf chrominance coarse superior to 20, mode Agressive is used.
+TP_WAVELET_NOISE_TOOLTIP;If level 4 luminance denoise superior to 50, mode Aggressive is used.\nIf chrominance coarse superior to 20, mode Aggressive is used.
 TP_WAVELET_NPHIGH;High
 TP_WAVELET_NPLOW;Low
 TP_WAVELET_NPNONE;None
@@ -3715,8 +3715,8 @@ TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the w
 TP_WAVELET_PASTEL;Pastel chroma
 TP_WAVELET_PROC;Process
 TP_WAVELET_PROTAB;Protection
-TP_WAVELET_QUAAGRES;Agressive
-TP_WAVELET_QUANONE;None
+TP_WAVELET_QUAAGRES;Aggressive
+TP_WAVELET_QUANONE;Off
 TP_WAVELET_QUACONSER;Conservative
 TP_WAVELET_RADIUS;Radius shadows - highlight
 TP_WAVELET_RANGEAB;Range a and b %

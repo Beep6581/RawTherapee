@@ -6368,10 +6368,10 @@ LocallabBlur::LocallabBlur():
     setExpandAlignProperties(expdenoise, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
 
+    quamethod->append(M("TP_LOCALLAB_QUANONEALL"));
     quamethod->append(M("TP_LOCALLAB_QUACONSER"));
     quamethod->append(M("TP_LOCALLAB_QUAAGRES"));
     quamethod->append(M("TP_LOCALLAB_QUANONEWAV"));
-    quamethod->append(M("TP_LOCALLAB_QUANONEALL"));
     quamethodconn = quamethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabBlur::quamethodChanged));
     Gtk::Label* const quaLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DENQUA") + ":"));
     quaHBox->pack_start(*quaLabel, Gtk::PACK_SHRINK, 4);
@@ -6830,7 +6830,7 @@ void LocallabBlur::neutral_pressed ()
     nlpat->setValue(defSpot.nlpat);
     nlrad->setValue(defSpot.nlrad);
     sensiden->setValue(defSpot.sensiden);
-    quamethod->set_active (2);
+    quamethod->set_active (0);
     wavshapeden->setCurve(defSpot.locwavcurveden);
     wavhue->setCurve(defSpot.locwavcurvehue);
     usemask->set_active(defSpot.usemask);
@@ -6978,13 +6978,13 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
             chroMethod->set_active(2);
         }
 
-        if (spot.quamethod == "cons") {
+        if (spot.quamethod == "none") {
             quamethod->set_active(0);
-        } else if (spot.quamethod == "agre") {
+        } else if (spot.quamethod == "cons") {
             quamethod->set_active(1);
-        } else if (spot.quamethod == "none") {
+        } else if (spot.quamethod == "agre") {
             quamethod->set_active(2);
-        } else if (spot.quamethod == "noneall") {
+        } else if (spot.quamethod == "nlmean") {
             quamethod->set_active(3);
         }
 
@@ -7123,13 +7123,13 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         }
 
         if (quamethod->get_active_row_number() == 0) {
-            spot.quamethod = "cons";
-        } else if (quamethod->get_active_row_number() == 1) {
-            spot.quamethod = "agre";
-        } else if (quamethod->get_active_row_number() == 2) {
             spot.quamethod = "none";
+        } else if (quamethod->get_active_row_number() == 1) {
+            spot.quamethod = "cons";
+        } else if (quamethod->get_active_row_number() == 2) {
+            spot.quamethod = "agre";
         } else if (quamethod->get_active_row_number() == 3) {
-            spot.quamethod = "noneall";
+            spot.quamethod = "nlmean";
         }
 
         spot.activlum = activlum->get_active();

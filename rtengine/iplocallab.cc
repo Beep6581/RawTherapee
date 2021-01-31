@@ -884,15 +884,19 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.chromet = 2;
     }
 
+
+
+
     if (locallab.spots.at(sp).quamethod == "cons") {
         lp.quamet = 0;
     } else if (locallab.spots.at(sp).quamethod == "agre") {
         lp.quamet = 1;
-    } else if (locallab.spots.at(sp).quamethod == "none") {
+    } else if (locallab.spots.at(sp).quamethod == "nlmean") {
         lp.quamet = 2;
-    } else if (locallab.spots.at(sp).quamethod == "noneall") {
+    } else if (locallab.spots.at(sp).quamethod == "none") {
         lp.quamet = 3;
     }
+//    printf("lpqualmet=%i\n", lp.quamet);
 
     if (locallab.spots.at(sp).shMethod == "std") {
         lp.shmeth = 0;
