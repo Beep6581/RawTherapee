@@ -2604,7 +2604,7 @@ TP_LOCALLAB_DENOIEQUAL_TOOLTIP;Allows you to carry out more or less noise reduct
 TP_LOCALLAB_DENOI1_EXP;Denoise based on luminance mask
 TP_LOCALLAB_DENOI2_EXP;Recovery based on luminance mask
 TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP;Allows you to recover luminance detail by progressively applying a Fourier transform (DCT). 
-TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative mode preserves low frequency detail. “Aggressive” mode removes low frequency detail.
+TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative mode preserves low frequency detail. “Aggressive” mode removes low frequency detail.\n"Conservative" and Aggressive" use wavelets and DCT, can be used in conjonction with "Non-local Means - Luminance".
 TP_LOCALLAB_DENOIS;Ψ Denoise
 TP_LOCALLAB_DENOITHR_TOOLTIP;Adjusts edge detection to help reduce noise in uniform, low-contrast areas. 
 TP_LOCALLAB_DENOI_EXP;Denoise
@@ -2955,9 +2955,9 @@ TP_LOCALLAB_PREVSHOW;Show additional settings
 TP_LOCALLAB_PROXI;ΔE decay
 TP_LOCALLAB_QUALCURV_METHOD;Curve type
 TP_LOCALLAB_QUAL_METHOD;Global quality
-TP_LOCALLAB_QUACONSER;Conservative Wavelet
-TP_LOCALLAB_QUAAGRES;Agressive Wavelet
-TP_LOCALLAB_QUANONEWAV;No Denoise Wavelet
+TP_LOCALLAB_QUACONSER;Conservative
+TP_LOCALLAB_QUAAGRES;Aggressive
+TP_LOCALLAB_QUANONEWAV;Non-local means luminance only
 TP_LOCALLAB_QUANONEALL;None
 TP_LOCALLAB_RADIUS;Radius
 TP_LOCALLAB_RADIUS_TOOLTIP;Uses a Fast Fourier Transform for radius > 30
