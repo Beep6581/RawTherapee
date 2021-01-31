@@ -137,7 +137,7 @@ public:
         return rgbSourceModified;   // tracks whether cached rgb output of demosaic has been modified
     }
 
-    void        processFlatField(const procparams::RAWParams &raw, const RawImage *riFlatFile, const float black[4]);
+    void        processFlatField(const procparams::RAWParams &raw, const RawImage *riFlatFile, array2D<float> &rawData, const float black[4]);
     void        copyOriginalPixels(const procparams::RAWParams &raw, RawImage *ri, RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData  );
     void        scaleColors (int winx, int winy, int winw, int winh, const procparams::RAWParams &raw, array2D<float> &rawData); // raw for cblack
     void        WBauto(double &tempref, double &greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, double &tempitc, double &greenitc, float &studgood, bool &twotimes, const procparams::WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const procparams::ColorManagementParams &cmp, const procparams::RAWParams &raw) override;
