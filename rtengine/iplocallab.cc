@@ -8977,7 +8977,7 @@ void ImProcFunctions::fftw_denoise(int sk, int GW, int GH, int max_numblox_W, in
 
 void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * slidb, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed, int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili)
 {
-
+    BENCHFUN
 //local denoise
     //all these variables are to prevent use of denoise when non necessary
     // but with qualmet = 2 (default for best quality) we must denoise chroma with little values to prevent artifacts due to variations of Hue
