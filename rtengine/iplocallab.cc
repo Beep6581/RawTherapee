@@ -10932,12 +10932,12 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     for (int i = 0; i < hei; ++i) {
        dst[i] = new float[wid];
     }
-    for (int y = 0; y < H; ++y) {
+/*    for (int y = 0; y < H; ++y) {
         for (int x = 0; x < W; ++x) {
             dst[y][x] = img[y][x];
         }
     }
-
+*/
     const int border = search_radius + patch_radius;
     const int WW = W + border * 2;
     const int HH = H + border * 2;
