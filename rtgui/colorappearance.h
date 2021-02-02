@@ -79,6 +79,7 @@ public:
     void neutral_pressed       ();
     void complexmethodChanged();
     void modelmethodChanged();
+    void catmethodChanged();
     void convertParamToNormal();
     void updateGUIToMode(int mode);
 
@@ -110,6 +111,7 @@ private:
     rtengine::ProcEvent EvCATillum;
     rtengine::ProcEvent EvCATcomplex;
     rtengine::ProcEvent EvCATmodel;
+    rtengine::ProcEvent EvCATcat;
     bool bgTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     bool srTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     void foldAllButMe (GdkEventButton* event, MyExpander *expander);
@@ -147,6 +149,7 @@ private:
     MyComboBoxText* toneCurveMode3;
     MyComboBoxText* complexmethod;
     MyComboBoxText* modelmethod;
+    MyComboBoxText* catmethod;
 
     //Adjuster* edge;
     Gtk::CheckButton* surrsource;
@@ -173,7 +176,7 @@ private:
     sigc::connection  surrconn;
     sigc::connection  gamutconn, datacieconn, tonecieconn /*,badpixconn , sharpcieconn*/;
     sigc::connection  tcmodeconn, tcmode2conn, tcmode3conn, neutralconn;
-    sigc::connection  complexmethodconn, modelmethodconn;
+    sigc::connection  complexmethodconn, modelmethodconn, catmethodconn;
     Gtk::HBox* alHBox;
     Gtk::HBox* wbmHBox;
     Gtk::HBox* illumHBox;

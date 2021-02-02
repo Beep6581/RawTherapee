@@ -1287,6 +1287,7 @@ HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
 HISTORY_MSG_BLUWAV;Attenuation response
+HISTORY_MSG_CATCAT;Cat02/16 mode
 HISTORY_MSG_CAT02PRESET;Cat02/16 automatic preset
 HISTORY_MSG_CATCOMPLEX;Ciecam complexity
 HISTORY_MSG_CATMODEL;CAM Model
@@ -2038,6 +2039,11 @@ TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n
 TP_COLORAPP_BRIGHT;Brightness (Q)
 TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM02/16 is the amount of perceived light emanating from a stimulus and differs from L*a*b* and RGB brightness.
 TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;When setting manually, values above 65 are recommended.
+TP_COLORAPP_CATMET_TOOLTIP;Classic - traditional CIECAM operation. The chromatic adaptation transforms are applied separately on ‘Scene conditions’ and basic illuminant on the one hand, and on basic illuminant and ‘Viewing conditions’ on the other.\n\nSymmetric – The chromatic adaptation is based on the white balance. The ‘Scene conditions’, ‘Image adjustments’ and ‘Viewing conditions’ settings are neutralized.\n\nMixed – Same as the ‘Classic’ option but in this case, the chromatic adaptation is based on the white balance.
+TP_COLORAPP_CATMOD;Cat02/16 mode
+TP_COLORAPP_CATCLASSIC;Classic
+TP_COLORAPP_CATSYMGEN;Automatic Symmetric
+TP_COLORAPP_CATSYMSPE;Mixed
 TP_COLORAPP_CHROMA;Chroma (C)
 TP_COLORAPP_CHROMA_M;Colorfulness (M)
 TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM02/16 is the perceived amount of hue in relation to gray, an indicator that a stimulus appears to be more or less colored.
@@ -2059,7 +2065,7 @@ TP_COLORAPP_DATACIE;CIECAM02/16 output histograms in curves
 TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02/16 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02/16 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02/16 curves show L*a*b* values before CIECAM02/16 adjustments.
 TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 is a chromatic adaptation, it converts the values of an image whose white point is that of a given illuminant (for example D65), into new values whose white point is that of the new illuminant - see WP Model (for example D50 or D55).
 TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02/16 is a chromatic adaptation, it converts the values of an image whose white point is that of a given illuminant (for example D50), into new values whose white point is that of the new illuminant - see WP model (for example D75).
-TP_COLORAPP_FREE;Free temp+green + CAT02/16 + [output]
+TP_COLORAPP_FREE;Free temp + tint + CAT02/16 +[output]
 TP_COLORAPP_GAMUT;Gamut control (L*a*b*)
 TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in L*a*b* mode.
 TP_COLORAPP_GEN;Settings - Preset
@@ -2075,7 +2081,7 @@ TP_COLORAPP_IL75;D75
 TP_COLORAPP_ILA;Incandescent StdA 2856K
 TP_COLORAPP_ILFREE;Free
 TP_COLORAPP_ILLUM;Illuminant
-TP_COLORAPP_ILLUM_TOOLTIP;Select the illuminant closest to the shooting conditions.\nIn general D50, but it can change depending on the time and lattitude.
+TP_COLORAPP_ILLUM_TOOLTIP;Select the illuminant closest to the shooting conditions.\nIn general D50, but it can change depending on the time and latitude.
 TP_COLORAPP_LABEL;Color Appearance & Lighting (CIECAM02/16)
 TP_COLORAPP_LABEL_CAM02;Image Adjustments
 TP_COLORAPP_LABEL_SCENE;Scene Conditions
@@ -2084,7 +2090,7 @@ TP_COLORAPP_LIGHT;Lightness (J)
 TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02/16 is the clarity of a stimulus relative to the clarity of a stimulus that appears white under similar viewing conditions, differs from L*a*b* and RGB lightness.
 TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
 TP_COLORAPP_MODEL;WP Model
-TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02/16 is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02/16] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp+green + CAT02/16 + [output]:</b> temp and green are selected by the user, the output device's white balance is set in Viewing Conditions.
+TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02/16 is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02/16] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp + tint + CAT02/16 + [output]:</b> temp and tint are selected by the user, the output device's white balance is set in Viewing Conditions.
 TP_COLORAPP_MODELCAT;CAM Model
 TP_COLORAPP_MODELCAT_TOOLTIP;Allows you to choose between CIECAM02 or CIECAM16.\n CIECAM02 will sometimes be more accurate.\n CIECAM16 should generate fewer artifacts
 TP_COLORAPP_MOD02;CIECAM02

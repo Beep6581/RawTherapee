@@ -225,6 +225,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     EvCATillum = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ILLUM");
     EvCATcomplex = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CATCOMPLEX");
     EvCATmodel = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CATMODEL");
+    EvCATcat = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CATCAT");
     //preset button cat02/16
     Gtk::Frame *genFrame;
     Gtk::VBox *genVBox;
@@ -255,11 +256,23 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     modelHBox->pack_start(*modelLabel, Gtk::PACK_SHRINK, 4);
     modelHBox->pack_start(*modelmethod);
     genVBox->pack_start (*modelHBox, Gtk::PACK_SHRINK);
+
+    catmethod = Gtk::manage (new MyComboBoxText ());
+    catmethod->append(M("TP_COLORAPP_CATCLASSIC"));
+    catmethod->append(M("TP_COLORAPP_CATSYMGEN"));
+    catmethod->append(M("TP_COLORAPP_CATSYMSPE"));
+    catmethodconn = catmethod->signal_changed().connect(sigc::mem_fun(*this, &ColorAppearance::catmethodChanged));
+    catmethod->set_tooltip_text(M("TP_COLORAPP_CATMET_TOOLTIP"));
+    Gtk::HBox* const catHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Label* const catLabel = Gtk::manage(new Gtk::Label(M("TP_COLORAPP_CATMOD") + ":"));
+    catHBox->pack_start(*catLabel, Gtk::PACK_SHRINK, 4);
+    catHBox->pack_start(*catmethod);
+    genVBox->pack_start (*catHBox, Gtk::PACK_SHRINK);
     
     presetcat02 = Gtk::manage (new Gtk::CheckButton  (M ("TP_COLORAPP_PRESETCAT02")));
     presetcat02->set_tooltip_markup (M("TP_COLORAPP_PRESETCAT02_TIP"));
     presetcat02conn = presetcat02->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::presetcat02pressed));
-    genVBox->pack_start (*presetcat02, Gtk::PACK_SHRINK);
+//    genVBox->pack_start (*presetcat02, Gtk::PACK_SHRINK);
 
     genFrame->add (*genVBox);
     pack_start (*genFrame, Gtk::PACK_EXPAND_WIDGET, 4);
@@ -859,6 +872,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     disableListener ();
     complexmethodconn.block(true);
     modelmethodconn.block(true);
+    catmethodconn.block(true);
     tcmodeconn.block (true);
     tcmode2conn.block (true);
     tcmode3conn.block (true);
@@ -923,6 +937,9 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         if (!pedited->colorappearance.modelmethod) {
             modelmethod->set_active_text(M("GENERAL_UNCHANGED"));
         }
+        if (!pedited->colorappearance.catmethod) {
+            catmethod->set_active_text(M("GENERAL_UNCHANGED"));
+        }
 
         if (!pedited->colorappearance.curveMode2) {
             toneCurveMode2->set_active (2);
@@ -950,6 +967,16 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         modelmethod->set_active(0);
     } else if (pp->colorappearance.modelmethod == "16") {
         modelmethod->set_active(1);
+    }
+
+    catmethod->set_active(0);
+
+    if (pp->colorappearance.catmethod == "clas") {
+        catmethod->set_active(0);
+    } else if (pp->colorappearance.catmethod == "symg") {
+        catmethod->set_active(1);
+    } else if (pp->colorappearance.catmethod == "symc") {
+        catmethod->set_active(2);
     }
 
     surrsrcconn.block (true);
@@ -1125,6 +1152,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     tcmode3conn.block (false);
     tcmode2conn.block (false);
     tcmodeconn.block (false);
+    catmethodconn.block(false);
     modelmethodconn.block(false);
     complexmethodconn.block(false);
     enableListener ();
@@ -1207,6 +1235,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     if (pedited) {
         pedited->colorappearance.complexmethod   = complexmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->colorappearance.modelmethod   = modelmethod->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->colorappearance.catmethod   = catmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->colorappearance.degree        = degree->getEditedState ();
         pedited->colorappearance.degreeout        = degreeout->getEditedState ();
         pedited->colorappearance.adapscen      = adapscen->getEditedState ();
@@ -1266,6 +1295,13 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pp->colorappearance.modelmethod = "16";
     }
 
+    if (catmethod->get_active_row_number() == 0) {
+        pp->colorappearance.catmethod = "clas";
+    } else if (catmethod->get_active_row_number() == 1) {
+        pp->colorappearance.catmethod = "symg";
+    } else if (catmethod->get_active_row_number() == 2) {
+        pp->colorappearance.catmethod = "symc";
+    }
 
     if (surrsrc->get_active_row_number() == 0) {
         pp->colorappearance.surrsrc = "Average";
@@ -1366,6 +1402,10 @@ void ColorAppearance::convertParamToNormal()
     if (presetcat02->get_active ()) {
         wbmodel->set_active (2);
     }
+    if (catmethod->get_active_row_number() == 1  || catmethod->get_active_row_number() == 2) {
+            wbmodel->set_active (2);
+    }
+
     greenout->setValue(def_params.greenout);
     badpixsl->setValue(def_params.badpixsl);
 
@@ -1394,6 +1434,123 @@ void ColorAppearance::modelmethodChanged()
 
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvCATmodel, modelmethod->get_active_text());
+    }
+}
+
+void ColorAppearance::catmethodChanged()
+{    
+
+    if (catmethod->get_active_row_number() == 1) {
+        disableListener();
+        jlight->resetValue (false);
+        qbright->resetValue (false);
+        chroma->resetValue (false);
+        schroma->resetValue (false);
+        mchroma->resetValue (false);
+        rstprotection->resetValue (false);
+        contrast->resetValue (false);
+        qcontrast->resetValue (false);
+        colorh->resetValue (false);
+        tempout->resetValue (false);
+        greenout->resetValue (false);
+        ybout->resetValue (false);
+        tempsc->resetValue (false);
+        greensc->resetValue (false);
+        badpixsl->resetValue (false);
+        illum->set_active (2);
+        toneCurveMode->set_active (0);
+        toneCurveMode2->set_active (0);
+        toneCurveMode3->set_active (0);
+        shape->reset();
+        shape2->reset();
+        shape3->reset();
+        gamutconn.block (true);
+        gamut->set_active (true);
+        gamutconn.block (false);
+        degree->setAutoValue (true);
+        degree->resetValue (false);
+        degree->setValue(90);
+        adapscen->resetValue (false);
+        adapscen->setAutoValue (true);
+        degreeout->resetValue (false);
+        degreeout->setAutoValue (true);
+        ybscen->resetValue (false);
+        ybscen->setAutoValue (true);
+        surrsrc->set_active (0);
+        wbmodel->set_active (2);
+        tempsc->resetValue (false);
+        greensc->resetValue (false);
+        adapscen->setValue(400.);
+        ybscen->setValue(18);
+        surround->set_active (0);
+        adaplum->setValue(400.);
+        degreeout->setValue(90);
+        ybout->setValue(18);
+        tempout->setValue (nexttemp);
+    
+/*    if(tempout->getAutoValue()) {
+        tempout->resetValue (false);
+    } else {
+        tempout->setValue (nexttemp);
+        tempout->setAutoValue (true);
+    }
+*/
+        greenout->setValue (nextgreen);
+        enableListener();
+    
+    }  else if (catmethod->get_active_row_number() == 0) {
+        disableListener();
+        degree->setAutoValue (true);
+        degree->resetValue (false);
+        adapscen->resetValue (false);
+        adapscen->setAutoValue (true);
+        degreeout->resetValue (false);
+        degreeout->setAutoValue (true);
+        ybscen->resetValue (false);
+        ybscen->setAutoValue (true);
+        surrsrc->set_active (0);
+        wbmodel->set_active (0);
+        illum->set_active (2);
+        tempsc->resetValue (false);
+        greensc->resetValue (false);
+        adapscen->resetValue (false);
+        ybscen->resetValue (false);
+        surround->set_active (0);
+        adaplum->resetValue (false);
+        degreeout->resetValue (false);
+        ybout->resetValue (false);
+        tempout->resetValue (false);
+        greenout->resetValue (false);
+        enableListener();
+    }  else if (catmethod->get_active_row_number() == 2) {
+        disableListener();
+        degree->setAutoValue (true);
+        degree->resetValue (false);
+        adapscen->resetValue (false);
+        adapscen->setAutoValue (true);
+        degreeout->resetValue (false);
+        degreeout->setAutoValue (true);
+        ybscen->resetValue (false);
+        ybscen->setAutoValue (true);
+        surrsrc->set_active (0);
+        wbmodel->set_active (2);
+        illum->set_active (2);
+        tempsc->resetValue (false);
+        greensc->resetValue (false);
+        adapscen->resetValue (false);
+        ybscen->resetValue (false);
+        surround->set_active (0);
+        adaplum->resetValue (false);
+        degreeout->resetValue (false);
+        ybout->resetValue (false);
+       // tempout->resetValue (false);
+        tempout->setValue (nexttemp);
+        greenout->resetValue (false);
+        enableListener();
+    }
+
+    if (listener && (multiImage || getEnabled())) {
+        listener->panelChanged(EvCATcat, catmethod->get_active_text());
     }
 }
 
@@ -1548,7 +1705,7 @@ void ColorAppearance::badpix_toggled () {
 
 }
 */
-void ColorAppearance::presetcat02pressed ()
+void ColorAppearance::presetcat02pressed () //keep in case of...
 {
  if (presetcat02->get_active ()) {
     disableListener();
@@ -2275,6 +2432,7 @@ void ColorAppearance::setBatchMode (bool batchMode)
 
     complexmethod->append(M("GENERAL_UNCHANGED"));
     modelmethod->append(M("GENERAL_UNCHANGED"));
+    catmethod->append(M("GENERAL_UNCHANGED"));
     surround->append (M ("GENERAL_UNCHANGED"));
     surrsrc->append (M ("GENERAL_UNCHANGED"));
     wbmodel->append (M ("GENERAL_UNCHANGED"));
