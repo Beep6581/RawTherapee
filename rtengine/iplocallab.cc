@@ -631,6 +631,7 @@ struct local_params {
     int nldet;
     int nlpat;
     int nlrad;
+    float nlgam;
     float noiselc;
     float noiselc4;
     float noiselc5;
@@ -1557,6 +1558,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.nlstr = locallab.spots.at(sp).nlstr;
     lp.nlpat = locallab.spots.at(sp).nlpat;
     lp.nlrad = locallab.spots.at(sp).nlrad;
+    lp.nlgam = locallab.spots.at(sp).nlgam;
     lp.adjch = (float) locallab.spots.at(sp).adjblur;
     lp.strengt = streng;
     lp.gamm = gam;
@@ -9607,7 +9609,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
             }
 
             if(lp.nlstr > 0) {
-                NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, GW, GH, float (sk), multiThread);
+                NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW, GH, float (sk), multiThread);
             }
             if(lp.smasktyp != 0) {
                     if(lp.enablMask && lp.recothrd != 1.f && lp.smasktyp != 0) {
@@ -10302,7 +10304,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
 
             if(lp.nlstr > 0) {
-                NLMeans(bufwv.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, bfw, bfh, 1.f, multiThread);
+                NLMeans(bufwv.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, bfw, bfh, 1.f, multiThread);
             }
 
 
@@ -10869,7 +10871,7 @@ void ImProcFunctions::detail_mask(const array2D<float> &src, array2D<float> &mas
 // adapted to Rawtherapee Local adjustments J.Desmis january 2021
 //
 
-void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int patch, int radius, int bfw, int bfh, float scale, bool multithread)
+void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int patch, int radius, float gam, int bfw, int bfh, float scale, bool multithread)
 {
     if (!strength) {
         return;
@@ -10877,6 +10879,8 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     BENCHFUN
     const int W = bfw;
     const int H = bfh;
+    float gamma = gam;
+    float igamma = 1.f / gamma;
     //first change Lab L to pseudo linear with gamma = 3.f...and in range 0...65536 Its not exactly Lab encoding but less importance
 #ifdef _OPENMP
 #   pragma omp parallel for if (multithread)
@@ -10884,7 +10888,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     for (int y = 0; y < H; ++y) {
         for (int x = 0; x < W; ++x) {
             float k = img[y][x] / 32768.f;
-            k = pow (k, 3.f);//suppress gamma Lab
+            k = pow (k, gamma);//suppress gamma Lab
             img[y][x] = 65536.f * k;
         }
     }
@@ -10924,7 +10928,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
         ImProcFunctions::detail_mask(LL, mask, W, H, 1.f, 1e-3f, 1.f, amount, BlurType::GAUSS, 2.f / scale, multithread);
 
     }
-//allocate dst
+//allocate dst - same type of datas as img
     float** dst;
     int wid = W;
     int hei = H;
@@ -10932,12 +10936,6 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     for (int i = 0; i < hei; ++i) {
        dst[i] = new float[wid];
     }
-/*    for (int y = 0; y < H; ++y) {
-        for (int x = 0; x < W; ++x) {
-            dst[y][x] = img[y][x];
-        }
-    }
-*/
     const int border = search_radius + patch_radius;
     const int WW = W + border * 2;
     const int HH = H + border * 2;
@@ -11131,7 +11129,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     for (int y = 0; y < H; ++y) {//apply inverse gamma 3.f and put result in range 32768.f
         for (int x = 0; x < W; ++x) {
             float k = dst[y][x] / 65536.f;
-            k = pow(k, 0.33333333f);
+            k = pow(k, igamma);
             img[y][x] = 32768.f * k;
         }
     }

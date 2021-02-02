@@ -737,6 +737,7 @@ private:
     Adjuster* const nldet;
     Adjuster* const nlpat;
     Adjuster* const nlrad;
+    Adjuster* const nlgam;
     Adjuster* const bilateral;
     Adjuster* const sensiden;
     Gtk::Button* neutral;

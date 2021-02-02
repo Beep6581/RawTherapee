@@ -6263,6 +6263,7 @@ LocallabBlur::LocallabBlur():
     nldet(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLDET"), 0, 100, 1, 50))),
     nlpat(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLPAT"), 1, 5, 1, 2))),
     nlrad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLRAD"), 3, 10, 1, 5))),
+    nlgam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLGAM"), 2., 5., 0.1, 3.))),
     bilateral(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BILATERAL"), 0, 100, 1, 0))),
     sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     neutral(Gtk::manage (new Gtk::Button (M ("TP_RETINEX_NEUTRAL")))),
@@ -6441,6 +6442,7 @@ LocallabBlur::LocallabBlur():
     nldet->setAdjusterListener(this);
     nlpat->setAdjusterListener(this);
     nlrad->setAdjusterListener(this);
+    nlgam->setAdjusterListener(this);
 
     sensiden->setAdjusterListener(this);
 
@@ -6587,6 +6589,7 @@ LocallabBlur::LocallabBlur():
     ToolParamBlock* const nlbox = Gtk::manage(new ToolParamBlock());
     nlbox->pack_start(*nlstr);
     nlbox->pack_start(*nldet);
+    nlbox->pack_start(*nlgam);
     nlbox->pack_start(*nlpat);
     nlbox->pack_start(*nlrad);
     nlFrame->add(*nlbox);
@@ -6710,6 +6713,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         nldet->set_tooltip_text(M("TP_LOCALLAB_NLDENOISE_TOOLTIP"));
         nlpat->set_tooltip_text(M("TP_LOCALLAB_NLDENOISENLPAT_TOOLTIP"));
         nlrad->set_tooltip_text(M("TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP"));
+        nlgam->set_tooltip_text(M("TP_LOCALLAB_NLDENOISENLGAM_TOOLTIP"));
         noiselumc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
         expmaskbl->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         showmaskblMethodtyp->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKTYP_TOOLTIP"));
@@ -6774,6 +6778,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         nldet->set_tooltip_text("");
         nlpat->set_tooltip_text("");
         nlrad->set_tooltip_text("");
+        nlgam->set_tooltip_text("");
         sensibn->set_tooltip_text("");
         blurMethod->set_tooltip_markup("");
         expdenoise->set_tooltip_markup("");
@@ -6829,6 +6834,7 @@ void LocallabBlur::neutral_pressed ()
     nldet->setValue(defSpot.nldet);
     nlpat->setValue(defSpot.nlpat);
     nlrad->setValue(defSpot.nlrad);
+    nlgam->setValue(defSpot.nlgam);
     sensiden->setValue(defSpot.sensiden);
     quamethod->set_active (0);
     wavshapeden->setCurve(defSpot.locwavcurveden);
@@ -7010,6 +7016,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         nldet->setValue((double)spot.nldet);
         nlpat->setValue((double)spot.nlpat);
         nlrad->setValue((double)spot.nlrad);
+        nlgam->setValue((double)spot.nlgam);
         sensiden->setValue((double)spot.sensiden);
         
         if (spot.showmaskblMethodtyp == "blur") {
@@ -7155,6 +7162,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.nldet = nldet->getIntValue();
         spot.nlpat = nlpat->getIntValue();
         spot.nlrad = nlrad->getIntValue();
+        spot.nlgam = nlgam->getValue();
 
         if (showmaskblMethodtyp->get_active_row_number() == 0) {
             spot.showmaskblMethodtyp = "blur";
@@ -7233,6 +7241,7 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         nldet->setDefault((double)defSpot.nldet);
         nlpat->setDefault((double)defSpot.nlpat);
         nlrad->setDefault((double)defSpot.nlrad);
+        nlgam->setDefault(defSpot.nlgam);
         sensiden->setDefault((double)defSpot.sensiden);
         strumaskbl->setDefault(defSpot.strumaskbl);
         blendmaskbl->setDefault((double)defSpot.blendmaskbl);
@@ -7535,6 +7544,13 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == nlgam) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnlgam,
+                                       nlgam->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
         if (a == sensiden) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensiden,
@@ -7708,7 +7724,6 @@ void LocallabBlur::convertParamToNormal()
     LLmaskblshapewav->setCurve(defSpot.LLmaskblcurvewav);
     csThresholdblur->setValue<int>(defSpot.csthresholdblur);
     lnoiselow->setValue(defSpot.lnoiselow);
-    nlpat->setValue(defSpot.nlpat);
     nlrad->setValue(defSpot.nlrad);
     
     // Enable all listeners
@@ -7764,6 +7779,7 @@ void LocallabBlur::convertParamToSimple()
     noisechrodetail->setValue(defSpot.noisechrodetail);
     nlpat->setValue(defSpot.nlpat);
     nlrad->setValue(defSpot.nlrad);
+    nlgam->setValue(defSpot.nlgam);
     
     // Enable all listeners
     enableListener();
@@ -7793,6 +7809,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             usemask->hide();
             nlpat->hide();
             nlrad->hide();
+            nlgam->hide();
             break;
 
         case Normal:
@@ -7813,8 +7830,9 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             adjblur->show();
             noisechrodetail->show();
             usemask->show();
-            nlpat->hide();
+            nlpat->show();
             nlrad->hide();
+            nlgam->show();
 
             if (blMethod->get_active_row_number() == 2) {
                 expdenoise2->show();
@@ -7891,6 +7909,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             csThresholdblur->show();
             nlpat->show();
             nlrad->show();
+            nlgam->show();
 
             if(lnoiselow->getValue()!= 1.) {
                 if (showmaskblMethodtyp->get_active_row_number() == 0) {

@@ -258,7 +258,7 @@ enum class BlurType {
     void discrete_laplacian_threshold(float * data_out, const float * data_in, size_t nx, size_t ny, float t);
     void laplacian(const array2D<float> &src, array2D<float> &dst, int bfw, int bfh, float threshold, float ceiling, float factor, bool multiThread);
     void detail_mask(const array2D<float> &src, array2D<float> &mask,  int bfw, int bfh, float scaling, float threshold, float ceiling, float factor, BlurType blur_type, float blur, bool multithread);
-    void NLMeans(float **img, int strength, int detail_thresh, int patch, int radius, int bfw, int bfh, float scale, bool multithread);
+    void NLMeans(float **img, int strength, int detail_thresh, int patch, int radius, float gam, int bfw, int bfh, float scale, bool multithread);
 
     void rex_poisson_dct(float * data, size_t nx, size_t ny, double m);
     void mean_dt(const float * data, size_t size, double& mean_p, double& dt_p);

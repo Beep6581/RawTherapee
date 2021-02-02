@@ -669,6 +669,7 @@ public:
         bool nldet;
         bool nlpat;
         bool nlrad;
+        bool nlgam;
         bool sensiden;
         bool detailthr;
         bool locwavcurveden;
