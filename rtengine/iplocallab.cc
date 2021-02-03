@@ -10838,6 +10838,7 @@ void ImProcFunctions::detail_mask(const array2D<float> &src, array2D<float> &mas
 #ifdef _OPENMP
 #   pragma omp parallel for if (multithread)
 #endif
+
     for (int y = 0; y < H; ++y) {
         for (int x = 0; x < W; ++x) {
             mask[y][x] = scurve(LIM01(mask[y][x] + thr));
@@ -10876,6 +10877,11 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     if (!strength) {
         return;
     }
+   // printf("Scale=%f\n", scale);
+    if(scale > 5.f) {//avoid to small values - leads to crash - but enough to evaluate noise 
+        return;
+    }
+
     BENCHFUN
     const int W = bfw;
     const int H = bfh;
@@ -10907,8 +10913,9 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
 
     // the strength parameter controls the scaling of the weights
     // (called h^2 in the papers)
-    const float h2 = SQR(std::pow(float(strength) / 100.f, 0.9f) / 30.f / scale);
-
+    float eps = 1e-6f;//to avoid too low values and divide near by zero...when  scale > 1
+    const float h2 = eps + SQR(std::pow(float(strength) / 100.f, 0.9f) / 30.f / scale);
+//    printf("h2=%f\n", h2);
     // this is the main difference between our version and more conventional
     // nl-means implementations: instead of varying the patch size, we control
     // the detail preservation by using a varying weight scaling for the
@@ -10928,6 +10935,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
         ImProcFunctions::detail_mask(LL, mask, W, H, 1.f, 1e-3f, 1.f, amount, BlurType::GAUSS, 2.f / scale, multithread);
 
     }
+   
 //allocate dst - same type of datas as img
     float** dst;
     int wid = W;
@@ -10979,7 +10987,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
             mask[y][x] = (1.f / (mask[y][x] * h2)) / lutfactor;
         }
     }
-   
+  
     // process by tiles to avoid numerical accuracy errors in the computation
     // of the integral image
     const int tile_size = 150;
@@ -11092,7 +11100,6 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
                 }
             }
         }
-
         // Compute final estimate at pixel x = (x1, x2)
         for (int yy = start_y+border; yy < end_y-border; ++yy) {
             int y = yy - border;
@@ -11123,6 +11130,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
 #endif
 
     } // omp parallel
+    
 #ifdef _OPENMP
 #   pragma omp parallel for if (multithread)
 #endif
@@ -11139,6 +11147,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
         delete[] dst[i];
     }
     delete[] dst;
+    
 }
 
 void ImProcFunctions::Lab_Local(
