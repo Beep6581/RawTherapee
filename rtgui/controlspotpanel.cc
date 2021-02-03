@@ -954,6 +954,7 @@ void ControlSpotPanel::spotMethodChanged()
     const auto iter = s->get_selected();
     Gtk::TreeModel::Row row = *iter;
 
+    const int oldSpotMethod = row[spots_.spotMethod];
     row[spots_.spotMethod] = spotMethod_->get_active_row_number();
 
     // Update Control Spot GUI according to spotMethod_ combobox state (to be compliant with updateParamVisibility function)
@@ -961,47 +962,61 @@ void ControlSpotPanel::spotMethodChanged()
         excluFrame->show();
     } else if (spotMethod_->get_active_row_number() == 0) { // Normal case
         excluFrame->hide();
-        locX_->setValue(150.);
-        adjusterChanged(locX_, 1.);
-        locXL_->setValue(150.);
-        adjusterChanged(locXL_, 1.);
-        locY_->setValue(150.);
-        adjusterChanged(locY_, 1.);
-        locYT_->setValue(150.);
-        adjusterChanged(locYT_, 1.);
-        shape_->set_active(0);
-        shapeChanged();
-        transit_->setValue(60.);
-        adjusterChanged(transit_, 1.);
+
+        // Reset spot shape only if previous spotMethod is Full image
+        if (oldSpotMethod == 2) {
+            disableParamlistener(true);
+            locX_->setValue(150.);
+            row[spots_.locX] = locX_->getIntValue();
+            locXL_->setValue(150.);
+            row[spots_.locXL] = locXL_->getIntValue();
+            locY_->setValue(150.);
+            row[spots_.locY] = locY_->getIntValue();
+            locYT_->setValue(150.);
+            row[spots_.locYT] = locYT_->getIntValue();
+            shape_->set_active(0);
+            row[spots_.shape] = shape_->get_active_row_number();
+            transit_->setValue(60.);
+            row[spots_.transit] = transit_->getValue();
+            disableParamlistener(false);
+            updateControlSpotCurve(row);
+        }
     } else if (spotMethod_->get_active_row_number() == 1) { // Excluding case
         excluFrame->show();
-        locX_->setValue(150.);
-        adjusterChanged(locX_, 1.);
-        locXL_->setValue(150.);
-        adjusterChanged(locXL_, 1.);
-        locY_->setValue(150.);
-        adjusterChanged(locY_, 1.);
-        locYT_->setValue(150.);
-        adjusterChanged(locYT_, 1.);
-        shape_->set_active(0);
-        shapeChanged();
-        transit_->setValue(60.);
-        adjusterChanged(transit_, 1.);
+
+        // Reset spot shape only if previous spotMethod is Full image
+        if (oldSpotMethod == 2) {
+            disableParamlistener(true);
+            locX_->setValue(150.);
+            row[spots_.locX] = locX_->getIntValue();
+            locXL_->setValue(150.);
+            row[spots_.locXL] = locXL_->getIntValue();
+            locY_->setValue(150.);
+            row[spots_.locY] = locY_->getIntValue();
+            locYT_->setValue(150.);
+            row[spots_.locYT] = locYT_->getIntValue();
+            shape_->set_active(0);
+            row[spots_.shape] = shape_->get_active_row_number();
+            transit_->setValue(60.);
+            row[spots_.transit] = transit_->getValue();
+            disableParamlistener(false);
+            updateControlSpotCurve(row);
+        }
     } else if (spotMethod_->get_active_row_number() == 2) { // Full image case
         excluFrame->hide();
+
         locX_->setValue(3000.);
-        adjusterChanged(locX_, 1.);
+        row[spots_.locX] = locX_->getIntValue();
         locXL_->setValue(3000.);
-        adjusterChanged(locXL_, 1.);
+        row[spots_.locXL] = locXL_->getIntValue();
         locY_->setValue(3000.);
-        adjusterChanged(locY_, 1.);
+        row[spots_.locY] = locY_->getIntValue();
         locYT_->setValue(3000.);
-        adjusterChanged(locYT_, 1.);
+        row[spots_.locYT] = locYT_->getIntValue();
         shape_->set_active(1);
-        shapeChanged();
+        row[spots_.shape] = shape_->get_active_row_number();
         transit_->setValue(100.);
-        adjusterChanged(transit_, 1.);
-        
+        row[spots_.transit] = transit_->getValue();
     }
 
     // Raise event
