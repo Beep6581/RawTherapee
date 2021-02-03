@@ -246,6 +246,7 @@ void ParamsEdited::set(bool v)
     colorappearance.curveMode3 = v;
     colorappearance.complexmethod = v;
     colorappearance.modelmethod = v;
+    colorappearance.catmethod = v;
     colorappearance.tempout     = v;
     colorappearance.autotempout = v;
     colorappearance.greenout     = v;
@@ -918,6 +919,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         colorappearance.curveMode3 = colorappearance.curveMode3 && p.colorappearance.curveMode3 == other.colorappearance.curveMode3;
         colorappearance.complexmethod = colorappearance.complexmethod && p.colorappearance.complexmethod == other.colorappearance.complexmethod;
         colorappearance.modelmethod = colorappearance.modelmethod && p.colorappearance.modelmethod == other.colorappearance.modelmethod;
+        colorappearance.catmethod = colorappearance.catmethod && p.colorappearance.catmethod == other.colorappearance.catmethod;
         colorappearance.tempout = colorappearance.tempout && p.colorappearance.tempout == other.colorappearance.tempout;
         colorappearance.autotempout = colorappearance.autotempout && p.colorappearance.autotempout == other.colorappearance.autotempout;
         colorappearance.greenout = colorappearance.greenout && p.colorappearance.greenout == other.colorappearance.greenout;
@@ -2694,6 +2696,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (colorappearance.modelmethod) {
         toEdit.colorappearance.modelmethod = mods.colorappearance.modelmethod;
+    }
+
+    if (colorappearance.catmethod) {
+        toEdit.colorappearance.catmethod = mods.colorappearance.catmethod;
     }
 
     if (colorappearance.enabled) {
