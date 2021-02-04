@@ -10872,6 +10872,16 @@ void ImProcFunctions::detail_mask(const array2D<float> &src, array2D<float> &mas
 // adapted to Rawtherapee Local adjustments J.Desmis january 2021
 //
 
+    static inline double igammalog    (double x, double p, double s, double g2, double g4)
+    {
+        return x <= g2 ? x / s : exp(log((x + g4) / (1.+ g4)) * p);//continuous
+    }
+
+    static inline double gammalog     (double x, double p, double s, double g3, double g4)
+    {
+        return x <= g3 ? x * s : (1. + g4) * exp(log(x) / p) - g4;//continuous
+    }
+
 void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int patch, int radius, float gam, int bfw, int bfh, float scale, bool multithread)
 {
     if (!strength) {
@@ -10889,15 +10899,19 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     const int W = bfw;
     const int H = bfh;
     float gamma = gam;
-    float igamma = 1.f / gamma;
-    //first change Lab L to pseudo linear with gamma = 3.f...and in range 0...65536 Its not exactly Lab encoding but less importance
+    rtengine::GammaValues g_a; //gamma parameters
+    double pwr = 1.0 / gam;//default 3.0 - gamma Lab
+    double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+    rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
+
+    //first change Lab L to pseudo linear with gamma = 3.f slope 9.032...and in range 0...65536, or with gamma slope Lab
 #ifdef _OPENMP
 #   pragma omp parallel for if (multithread)
 #endif
     for (int y = 0; y < H; ++y) {
         for (int x = 0; x < W; ++x) {
             float k = img[y][x] / 32768.f;
-            k = pow (k, gamma);//suppress gamma Lab
+            k= igammalog((double) k, gamma, ts, g_a[2], g_a[4]);
             img[y][x] = 65536.f * k;
         }
     }
@@ -10909,8 +10923,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
 //    constexpr int max_search_radius = 5;
     int max_patch_radius = patch;
     int max_search_radius = radius;
-    
-    
+
     const int search_radius = int(std::ceil(float(max_search_radius) / scale));
     const int patch_radius = int(std::ceil(float(max_patch_radius) / scale));
 
@@ -10938,7 +10951,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
         ImProcFunctions::detail_mask(LL, mask, W, H, 1.f, 1e-3f, 1.f, amount, BlurType::GAUSS, 2.f / scale, multithread);
 
     }
-   
+  
 //allocate dst - same type of datas as img
     float** dst;
     int wid = W;
@@ -11103,6 +11116,8 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
                 }
             }
         }
+//    printf("E\n");
+        
         // Compute final estimate at pixel x = (x1, x2)
         for (int yy = start_y+border; yy < end_y-border; ++yy) {
             int y = yy - border;
@@ -11140,7 +11155,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     for (int y = 0; y < H; ++y) {//apply inverse gamma 3.f and put result in range 32768.f
         for (int x = 0; x < W; ++x) {
             float k = dst[y][x] / 65536.f;
-            k = pow(k, igamma);
+            k = gammalog((double) k, gamma, ts, g_a[3], g_a[4]);
             img[y][x] = 32768.f * k;
         }
     }

@@ -1554,7 +1554,7 @@ void Color::calcGamma (double pwr, double ts, GammaValues &gamma)
     gamma[5] = g[5];
     gamma[6] = 0.;
    // if (rtengine::settings->verbose) {
-    //    printf("g0=%f g1=%f g2=%f g3=%f g4=%f g5=%f\n", g[0], g[1], g[2], g[3], g[4], g[5]);
+        printf("g0=%f g1=%f g2=%f g3=%f g4=%f g5=%f\n", g[0], g[1], g[2], g[3], g[4], g[5]);
    // }
 }
 void Color::gammaf2lut (LUTf &gammacurve, float gamma, float start, float slope, float divisor, float factor)
