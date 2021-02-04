@@ -2927,7 +2927,7 @@ TP_LOCALLAB_NLDENOISENLPAT_TOOLTIP;Use this slider to adapt the amount of denois
 TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP;Higher values increase denoise at the expense of processing time.
 TP_LOCALLAB_NLDENOISENLGAM_TOOLTIP;Lower values preserve details and texture, higher values increase denoise.
 TP_LOCALLAB_NLFRA;Non-local Means - Luminance
-TP_LOCALLAB_NLFRAME_TOOLTIP;Non-local means denoising takes a mean of all pixels in the image, weighted by how similar they are to the target pixel.\nReduces loss of detail compared with local mean algorithms.\nOnly luminance noise is taken into account. Chrominance noise is best processed using wavelets and Fourier transforms (DCT).\nCan be used in conjunction with 'Luminance denoise by level' or on its own.
+TP_LOCALLAB_NLFRAME_TOOLTIP;Non-local means denoising takes a mean of all pixels in the image, weighted by how similar they are to the target pixel.\nReduces loss of detail compared with local mean algorithms.\nOnly luminance noise is taken into account. Chrominance noise is best processed using wavelets and Fourier transforms (DCT).\nCan be used in conjunction with 'Luminance denoise by level' or on its own.\nRT-Spot size must be greater than 150x150 pixels (Output).
 TP_LOCALLAB_NLLUM;Strength
 TP_LOCALLAB_NLDET;Detail recovery
 TP_LOCALLAB_NLGAM;Gamma

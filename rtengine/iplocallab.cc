@@ -10881,6 +10881,9 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     if(scale > 5.f) {//avoid to small values - leads to crash - but enough to evaluate noise 
         return;
     }
+    if(bfh < 150 || bfw < 150) {
+        return;
+    }
 
     BENCHFUN
     const int W = bfw;
