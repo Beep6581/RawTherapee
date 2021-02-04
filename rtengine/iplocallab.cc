@@ -391,6 +391,16 @@ void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float radius
     }
 }
 
+float igammalog(float x, float p, float s, float g2, float g4)
+{
+    return x <= g2 ? x / s : pow_F((x + g4) / (1.f + g4), p);//continuous
+}
+
+float gammalog(float x, float p, float s, float g3, float g4)
+{
+    return x <= g3 ? x * s : (1.f + g4) * xexpf(xlogf(x) / p) - g4;//continuous
+}
+
 }
 
 namespace rtengine
@@ -10874,20 +10884,10 @@ void ImProcFunctions::detail_mask(const array2D<float> &src, array2D<float> &mas
 // "Parameter-Free Fast Pixelwise Non-Local Means Denoising" http://www.ipol.im/pub/art/2014/120/
 // by Jacques Froment
 
-// thanks to Alberto Griggio for this wondeful code
+// thanks to Alberto Griggio for this wonderful code
 // thanks to Ingo Weyrich <heckflosse67@gmx.de> for many speedup suggestions!
 // adapted to Rawtherapee Local adjustments J.Desmis january 2021
 //
-
-    static inline double igammalog    (double x, double p, double s, double g2, double g4)
-    {
-        return x <= g2 ? x / s : exp(log((x + g4) / (1.+ g4)) * p);//continuous
-    }
-
-    static inline double gammalog     (double x, double p, double s, double g3, double g4)
-    {
-        return x <= g3 ? x * s : (1. + g4) * exp(log(x) / p) - g4;//continuous
-    }
 
 void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int patch, int radius, float gam, int bfw, int bfh, float scale, bool multithread)
 {
@@ -10918,7 +10918,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     for (int y = 0; y < H; ++y) {
         for (int x = 0; x < W; ++x) {
             float k = img[y][x] / 32768.f;
-            k= igammalog((double) k, gamma, ts, g_a[2], g_a[4]);
+            k= igammalog(k, gamma, ts, g_a[2], g_a[4]);
             img[y][x] = 65536.f * k;
         }
     }
@@ -11155,14 +11155,14 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
 #endif
 
     } // omp parallel
-    
+
 #ifdef _OPENMP
 #   pragma omp parallel for if (multithread)
 #endif
     for (int y = 0; y < H; ++y) {//apply inverse gamma 3.f and put result in range 32768.f
         for (int x = 0; x < W; ++x) {
             float k = dst[y][x] / 65536.f;
-            k = gammalog((double) k, gamma, ts, g_a[3], g_a[4]);
+            k = gammalog(k, gamma, ts, g_a[3], g_a[4]);
             img[y][x] = 32768.f * k;
         }
     }
