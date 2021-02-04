@@ -396,11 +396,24 @@ float igammalog(float x, float p, float s, float g2, float g4)
     return x <= g2 ? x / s : pow_F((x + g4) / (1.f + g4), p);//continuous
 }
 
+#ifdef __SSE2__
+vfloat igammalog(vfloat x, vfloat p, vfloat s, vfloat g2, vfloat g4)
+{
+    return x <= g2 ? x / s : pow_F((x + g4) / (1.f + g4), p);//continuous
+}
+#endif
+
 float gammalog(float x, float p, float s, float g3, float g4)
 {
     return x <= g3 ? x * s : (1.f + g4) * xexpf(xlogf(x) / p) - g4;//continuous
 }
 
+#ifdef __SSE2__
+vfloat gammalog(vfloat x, vfloat p, vfloat s, vfloat g3, vfloat g4)
+{
+    return x <= g3 ? x * s : (1.f + g4) * xexpf(xlogf(x) / p) - g4;//continuous
+}
+#endif
 }
 
 namespace rtengine
@@ -10912,17 +10925,22 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
 
     //first change Lab L to pseudo linear with gamma = 3.f slope 9.032...and in range 0...65536, or with gamma slope Lab
+
 #ifdef _OPENMP
-#   pragma omp parallel for if (multithread)
+#   pragma omp parallel for schedule(dynamic,16) if (multithread)
 #endif
     for (int y = 0; y < H; ++y) {
-        for (int x = 0; x < W; ++x) {
-            float k = img[y][x] / 32768.f;
-            k= igammalog(k, gamma, ts, g_a[2], g_a[4]);
-            img[y][x] = 65536.f * k;
+        int x = 0;
+#ifdef __SSE2__
+        for (; x < W - 3; x += 4) {
+            STVFU(img[y][x], F2V(65536.f) * igammalog(LVFU(img[y][x]) / F2V(32768.f), F2V(gamma), F2V(ts), F2V(g_a[2]), F2V(g_a[4])));
+        }
+#endif
+        for (;x < W; ++x) {
+            img[y][x] = 65536.f * igammalog(img[y][x] / 32768.f, gamma, ts, g_a[2], g_a[4]);
         }
     }
-    
+
     // these two can be changed if needed. increasing max_patch_radius doesn't
     // affect performance, whereas max_search_radius *really* does
     // (the complexity is O(max_search_radius^2 * W * H))
@@ -11157,17 +11175,20 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     } // omp parallel
 
 #ifdef _OPENMP
-#   pragma omp parallel for if (multithread)
+#   pragma omp parallel for schedule(dynamic,16) if (multithread)
 #endif
     for (int y = 0; y < H; ++y) {//apply inverse gamma 3.f and put result in range 32768.f
-        for (int x = 0; x < W; ++x) {
-            float k = dst[y][x] / 65536.f;
-            k = gammalog(k, gamma, ts, g_a[3], g_a[4]);
-            img[y][x] = 32768.f * k;
+        int x = 0;
+#ifdef __SSE2__
+        for (; x < W - 3; x += 4) {
+            STVFU(img[y][x], F2V(32768.f) * gammalog(LVFU(dst[y][x]) / F2V(65536.f), F2V(gamma), F2V(ts), F2V(g_a[3]), F2V(g_a[4])));
+        }
+#endif
+        for (; x < W; ++x) {
+            img[y][x] = 32768.f * gammalog(dst[y][x] / 65536.f, gamma, ts, g_a[3], g_a[4]);
         }
     }
 
-//desallocate dst
     for (int i = 0; i < hei; ++i) {
         delete[] dst[i];
     }
