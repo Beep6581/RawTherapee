@@ -1278,6 +1278,11 @@ HISTORY_MSG_1030;Local - reti recovery threshold
 HISTORY_MSG_1031;Local - reti threshold mask low
 HISTORY_MSG_1032;Local - reti threshold mask high
 HISTORY_MSG_1033;Local - reti decay
+HISTORY_MSG_1034;Local - Nlmeans - strength
+HISTORY_MSG_1035;Local - Nlmeans - detail
+HISTORY_MSG_1036;Local - Nlmeans - patch
+HISTORY_MSG_1037;Local - Nlmeans - radius
+HISTORY_MSG_1038;Local - Nlmeans - gamma
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2244,7 +2249,7 @@ TP_DIRPYRDENOISE_MAIN_GAMMA_TOOLTIP;Gamma varies noise reduction strength across
 TP_DIRPYRDENOISE_MAIN_MODE;Mode
 TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;Aggressive
 TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;Conservative
-TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;"Conservative" preserves low frequency chroma patterns, while "aggressive" obliterates them.
+TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;Conservative preserves low frequency chroma patterns, while aggressive obliterates them.
 TP_DIRPYRDENOISE_MEDIAN_METHOD;Median method
 TP_DIRPYRDENOISE_MEDIAN_METHOD_CHROMINANCE;Chroma only
 TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
@@ -2606,11 +2611,11 @@ TP_LOCALLAB_DENOIEQUAL_TOOLTIP;Allows you to carry out more or less noise reduct
 TP_LOCALLAB_DENOI1_EXP;Denoise based on luminance mask
 TP_LOCALLAB_DENOI2_EXP;Recovery based on luminance mask
 TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP;Allows you to recover luminance detail by progressively applying a Fourier transform (DCT). 
-TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative mode preserves low frequency detail. “Aggressive” mode removes low frequency detail.
+TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative mode preserves low frequency detail. Aggressive mode removes low frequency detail.\nConservative and Aggressive use wavelets and DCT, can be used in conjunction with "Non-local Means - Luminance".
 TP_LOCALLAB_DENOIS;Ψ Denoise
 TP_LOCALLAB_DENOITHR_TOOLTIP;Adjusts edge detection to help reduce noise in uniform, low-contrast areas. 
 TP_LOCALLAB_DENOI_EXP;Denoise
-TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action  based on color (deltaE).\n\n You can refine the result with a "Median filter" or a "Guided Filter" (Soft radius).
+TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action  based on color (deltaE).
 TP_LOCALLAB_DEPTH;Depth 
 TP_LOCALLAB_DETAIL;Local contrast
 TP_LOCALLAB_DETAILFRA;Edge detection
@@ -2819,9 +2824,9 @@ TP_LOCALLAB_MASKCURVE_TOOLTIP;The 3 curves are set to 1 (maximum) by default:\nC
 TP_LOCALLAB_MASKDDECAY;Decay strength
 TP_LOCALLAB_MASKDECAY_TOOLTIP;Manages the rate of decay for the gray levels in the mask.\n Decay = 1 linear, Decay > 1 sharper parabolic transitions, Decay < 1 more gradual transitions
 TP_LOCALLAB_MASKH;Hue curve
-TP_LOCALLAB_MASKLC_TOOLTIP;This allows you to target the denoise based on the image luminance information contained in the L(L) or LC(H) mask (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n if the mask is very dark - below the threshold 'dark' - denoise will be increased if reinforce > 1.\n if the mask is clear - above the threshold 'light' - denoise will be progressively cancelled.\n between the two, denoise will be maintained at the settings without mask.
-TP_LOCALLAB_MASKDE_TOOLTIP;Used to direct the Denoise based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n If the mask is below the ‘dark’ threshold, then the Denoise will be applied progressively.\n if the mask is above the ‘light’ threshold, then the Denoise will be applied progressively.\n Between the two, the image settings without the Denoise will be maintained, unless you act on the sliders "Gray area luminance denoise" or "Gray area chrominance denoise".
-TP_LOCALLAB_MASKGF_TOOLTIP;Used to direct the Guided Filter based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n If the mask is below the ‘dark’ threshold, then the GF will be applied progressively.\n if the mask is above the ‘light’ threshold, then the GF will be applied progressively.\n Between the two, the image settings without the GF will be maintained.
+TP_LOCALLAB_MASKLC_TOOLTIP;This allows you to target the denoise based on the image luminance information contained in the L(L) or LC(H) mask (Mask and Modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n 'Dark area luminance threshold'. If 'Reinforce denoise in dark and light areas' > 1 the denoise is progressively increased from 0% at the threshold settings to 100% at the maximum black value (determined by mask).\n 'Light area luminance threshold' .The denoise is progressively decreased from 100% at the threshold setting to 0% at the maximum white value (determined by mask).\n In the area between the two thresholds, the denoise settings are not affected by the mask.
+TP_LOCALLAB_MASKDE_TOOLTIP;Used to target the denoise as a function of the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n If the mask is below the ‘dark’ threshold, then the Denoise will be applied progressively.\n if the mask is above the ‘light’ threshold, then the Denoise will be applied progressively.\n Between the two, the image settings without the Denoise will be maintained, unless you adjust the sliders "Gray area luminance denoise" or "Gray area chrominance denoise".
+TP_LOCALLAB_MASKGF_TOOLTIP;Used to target the Guided Filter as a function of the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n If the mask is below the ‘dark’ threshold, then the GF will be applied progressively.\n if the mask is above the ‘light’ threshold, then the GF will be applied progressively.\n Between the two, the image settings without the GF will be maintained.
 TP_LOCALLAB_MASKRECOL_TOOLTIP;Used to modulate the effect of the Color and Light settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The ‘dark’ and ‘light’ areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Color and Light settings \n In between these two areas, the full value of the Color and Light settings will be applied
 TP_LOCALLAB_MASKREEXP_TOOLTIP;Used to modulate the effect of the 'Dynamic range and Exposure' settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The ‘dark’ and ‘light’ areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the 'Dynamic range and Exposure' settings \n In between these two areas, the full value of the 'Dynamic range and Exposure' settings will be applied
 TP_LOCALLAB_MASKRESH_TOOLTIP;Used to modulate the effect of the Shadows Highlights settings based on the image luminance information contained in the L(L) or LC(H) masks (Mask and modifications).\n The L(L) mask or the LC(H) mask must be enabled to use this function.\n The ‘dark’ and ‘light’ areas below the dark threshold and above the light threshold will be restored progressively to their original values prior to being modified by the Shadows Highlights settings \n In between these two areas, the full value of the Shadows Highlights settings will be applied
@@ -2917,6 +2922,17 @@ TP_LOCALLAB_MRTHR;Original Image
 TP_LOCALLAB_MRTWO;Short Curves 'L' Mask
 TP_LOCALLAB_MULTIPL_TOOLTIP;Wide-range tone adjustment: -18EV to +4EV. The first slider acts on very dark tones between -18EV and -6EV. The last slider acts on light tones up to 4EV  
 TP_LOCALLAB_NEIGH;Radius
+TP_LOCALLAB_NLDENOISE_TOOLTIP;“Detail recovery” acts on a Laplacian transform to target uniform areas rather than areas with detail.
+TP_LOCALLAB_NLDENOISENLPAT_TOOLTIP;Use this slider to adapt the amount of denoise to the size of the objects to be processed.
+TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP;Higher values increase denoise at the expense of processing time.
+TP_LOCALLAB_NLDENOISENLGAM_TOOLTIP;Lower values preserve details and texture, higher values increase denoise.
+TP_LOCALLAB_NLFRA;Non-local Means - Luminance
+TP_LOCALLAB_NLFRAME_TOOLTIP;Non-local means denoising takes a mean of all pixels in the image, weighted by how similar they are to the target pixel.\nReduces loss of detail compared with local mean algorithms.\nOnly luminance noise is taken into account. Chrominance noise is best processed using wavelets and Fourier transforms (DCT).\nCan be used in conjunction with 'Luminance denoise by level' or on its own.\nRT-Spot size must be greater than 150x150 pixels (Output).
+TP_LOCALLAB_NLLUM;Strength
+TP_LOCALLAB_NLDET;Detail recovery
+TP_LOCALLAB_NLGAM;Gamma
+TP_LOCALLAB_NLPAT;Maximum patch size
+TP_LOCALLAB_NLRAD;Maximum radius size
 TP_LOCALLAB_NOISECHROCOARSE;Coarse chroma (Wav)
 TP_LOCALLAB_NOISECHROC_TOOLTIP;If superior to zero, high quality algorithm is enabled.\nCoarse is for slider >=0.02
 TP_LOCALLAB_NOISECHRODETAIL;Chroma detail recovery (DCT ƒ)
@@ -2948,6 +2964,10 @@ TP_LOCALLAB_PREVSHOW;Show additional settings
 TP_LOCALLAB_PROXI;ΔE decay
 TP_LOCALLAB_QUALCURV_METHOD;Curve type
 TP_LOCALLAB_QUAL_METHOD;Global quality
+TP_LOCALLAB_QUACONSER;Conservative
+TP_LOCALLAB_QUAAGRES;Aggressive
+TP_LOCALLAB_QUANONEWAV;Non-local means only
+TP_LOCALLAB_QUANONEALL;Off
 TP_LOCALLAB_RADIUS;Radius
 TP_LOCALLAB_RADIUS_TOOLTIP;Uses a Fast Fourier Transform for radius > 30
 TP_LOCALLAB_RADMASKCOL;Smooth radius
@@ -3130,7 +3150,7 @@ TP_LOCALLAB_VIS_TOOLTIP;<b>Click</b> to show/hide selected Control Spot.\n<b>Ctr
 TP_LOCALLAB_WAMASKCOL;Ψ Mask Wavelet level
 TP_LOCALLAB_WARM;Warm/Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider uses the CIECAM algorithm and acts as a White Balance control to make the color temperature of the selected area warmer or cooler.\nIt can also reduce color artifacts in some cases.
-TP_LOCALLAB_WASDEN_TOOLTIP;Luminance noise reduction: the left-hand side of the curve including the 'separation point' corresponds to the first 3 levels 0, 1, 2 (fine detail). The right hand side of the curve corresponds to the coarser details (level 3, 4, 5, 6).
+TP_LOCALLAB_WASDEN_TOOLTIP;Luminance noise reduction: the left-hand side of the curve including the dark-gray/light-gray boundary corresponds to the first 3 levels 0, 1, 2 (fine detail). The right hand side of the curve corresponds to the coarser details (level 3, 4, 5, 6).
 TP_LOCALLAB_WAT_BALTHRES_TOOLTIP;Balances the action within each level.
 TP_LOCALLAB_WAT_BLURLC_TOOLTIP;The default blur setting affects all 3 L*a* b* components (luminance and colour).\nWhen checked, only luminance is blurred.
 TP_LOCALLAB_WAT_CLARIC_TOOLTIP;“Merge chroma” is used to select the intensity of the desired effect on chrominance.
@@ -3689,7 +3709,7 @@ TP_WAVELET_MIXNOISE;Noise
 TP_WAVELET_NEUTRAL;Neutral
 TP_WAVELET_NOIS;Denoise
 TP_WAVELET_NOISE;Denoise and Refine
-TP_WAVELET_NOISE_TOOLTIP;If level 4 luminance denoise superior to 50, mode Agressive is used.\nIf chrominance coarse superior to 20, mode Agressive is used.
+TP_WAVELET_NOISE_TOOLTIP;If level 4 luminance denoise superior to 50, mode Aggressive is used.\nIf chrominance coarse superior to 20, mode Aggressive is used.
 TP_WAVELET_NPHIGH;High
 TP_WAVELET_NPLOW;Low
 TP_WAVELET_NPNONE;None
@@ -3704,8 +3724,8 @@ TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the w
 TP_WAVELET_PASTEL;Pastel chroma
 TP_WAVELET_PROC;Process
 TP_WAVELET_PROTAB;Protection
-TP_WAVELET_QUAAGRES;Agressive
-TP_WAVELET_QUANONE;None
+TP_WAVELET_QUAAGRES;Aggressive
+TP_WAVELET_QUANONE;Off
 TP_WAVELET_QUACONSER;Conservative
 TP_WAVELET_RADIUS;Radius shadows - highlight
 TP_WAVELET_RANGEAB;Range a and b %

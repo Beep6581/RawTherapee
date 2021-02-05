@@ -50,7 +50,7 @@
 #include "StopWatch.h"
 #include "guidedfilter.h"
 #include "boxblur.h"
-
+#include "rescale.h"
 
 #pragma GCC diagnostic warning "-Wall"
 #pragma GCC diagnostic warning "-Wextra"
@@ -391,6 +391,29 @@ void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float radius
     }
 }
 
+float igammalog(float x, float p, float s, float g2, float g4)
+{
+    return x <= g2 ? x / s : pow_F((x + g4) / (1.f + g4), p);//continuous
+}
+
+#ifdef __SSE2__
+vfloat igammalog(vfloat x, vfloat p, vfloat s, vfloat g2, vfloat g4)
+{
+    return x <= g2 ? x / s : pow_F((x + g4) / (1.f + g4), p);//continuous
+}
+#endif
+
+float gammalog(float x, float p, float s, float g3, float g4)
+{
+    return x <= g3 ? x * s : (1.f + g4) * xexpf(xlogf(x) / p) - g4;//continuous
+}
+
+#ifdef __SSE2__
+vfloat gammalog(vfloat x, vfloat p, vfloat s, vfloat g3, vfloat g4)
+{
+    return x <= g3 ? x * s : (1.f + g4) * xexpf(xlogf(x) / p) - g4;//continuous
+}
+#endif
 }
 
 namespace rtengine
@@ -627,6 +650,11 @@ struct local_params {
     int noiselequal;
     float noisechrodetail;
     float bilat;
+    int nlstr;
+    int nldet;
+    int nlpat;
+    int nlrad;
+    float nlgam;
     float noiselc;
     float noiselc4;
     float noiselc5;
@@ -880,13 +908,19 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.chromet = 2;
     }
 
+
+
+
     if (locallab.spots.at(sp).quamethod == "cons") {
         lp.quamet = 0;
     } else if (locallab.spots.at(sp).quamethod == "agre") {
         lp.quamet = 1;
-    } else if (locallab.spots.at(sp).quamethod == "none") {
+    } else if (locallab.spots.at(sp).quamethod == "nlmean") {
         lp.quamet = 2;
+    } else if (locallab.spots.at(sp).quamethod == "none") {
+        lp.quamet = 3;
     }
+//    printf("lpqualmet=%i\n", lp.quamet);
 
     if (locallab.spots.at(sp).shMethod == "std") {
         lp.shmeth = 0;
@@ -1543,6 +1577,11 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.noisecc = local_noisecc;
     lp.sensden = local_sensiden;
     lp.bilat = locallab.spots.at(sp).bilateral;
+    lp.nldet = locallab.spots.at(sp).nldet;
+    lp.nlstr = locallab.spots.at(sp).nlstr;
+    lp.nlpat = locallab.spots.at(sp).nlpat;
+    lp.nlrad = locallab.spots.at(sp).nlrad;
+    lp.nlgam = locallab.spots.at(sp).nlgam;
     lp.adjch = (float) locallab.spots.at(sp).adjblur;
     lp.strengt = streng;
     lp.gamm = gam;
@@ -3517,6 +3556,8 @@ void ImProcFunctions::InverseReti_Local(const struct local_params & lp, const fl
         }
     }
 }
+
+
 
 void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, const struct local_params & lp,  const float hueref, const float chromaref, const float lumaref, LabImage * original, LabImage * transformed, const LabImage * const tmp1, int cx, int cy, int sk)
 {
@@ -8967,7 +9008,7 @@ void ImProcFunctions::fftw_denoise(int sk, int GW, int GH, int max_numblox_W, in
 
 void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * slidb, int aut,  bool noiscfactiv, const struct local_params & lp, LabImage * originalmaskbl, LabImage *  bufmaskblurbl, int levred, float huerefblur, float lumarefblur, float chromarefblur, LabImage * original, LabImage * transformed, int cx, int cy, int sk, const LocwavCurve& locwavCurvehue, bool locwavhueutili)
 {
-
+    BENCHFUN
 //local denoise
     //all these variables are to prevent use of denoise when non necessary
     // but with qualmet = 2 (default for best quality) we must denoise chroma with little values to prevent artifacts due to variations of Hue
@@ -8977,9 +9018,16 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
     bool execdenoi = noiscfactiv && ((lp.colorena && execcolor) || (lp.tonemapena && lp.strengt != 0.f) || (lp.cbdlena && execbdl) || (lp.sfena && lp.strng > 0.f) || (lp.lcena && lp.lcamount > 0.f) || (lp.sharpena && lp.shrad > 0.42) || (lp.retiena && lp.str > 0.f)  || (lp.exposena && lp.expcomp != 0.f)  || (lp.expvib && lp.past != 0.f));
     bool execmaskden = (lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.smasktyp != 0;
 
-    if (((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f
+    const int ys = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+    const int ye = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+    const int xs = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+    const int xe = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+    const int hspot = ye - ys;
+    const int wspot = xe - xs;
+
+    if (((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.nlstr > 0 || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f
 //            || lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4  || aut == 1 || aut == 2) && lp.denoiena) || execdenoi) {  // sk == 1 ??
-            || execmaskden || aut == 1 || aut == 2) && lp.denoiena && lp.quamet != 2) || execdenoi) {  // sk == 1 ??
+            || execmaskden || aut == 1 || aut == 2) && lp.denoiena && lp.quamet != 3) || execdenoi) {  // sk == 1 ??
 
         StopWatch Stop1("locallab Denoise called");
 
@@ -9227,7 +9275,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     if ((lp.quamet == 0  && aut == 0) || (mxsl < 1.f && (aut == 1 || aut == 2))) {
                         WaveletDenoiseAllL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
 
-                    } else {
+                    } else if (lp.quamet == 1){
 
                         WaveletDenoiseAll_BiShrinkL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
 
@@ -9518,7 +9566,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     if ((lp.quamet == 0  && aut == 0) || (maxccoarse < 0.1f && (aut == 1 || aut == 2)))  {
                         WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                         WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, numThreads);
-                    } else {
+                    } else if (lp.quamet == 1){
                         WaveletDenoiseAll_BiShrinkAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                         WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
 
@@ -9546,7 +9594,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
             }
 
             if (!Ldecomp.memory_allocation_failed() && aut == 0) {
-                if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.wavcurvedenoi || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f  && lp.quamet != 2) {
+                if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.wavcurvedenoi || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f  && lp.quamet < 2) {
                     fftw_denoise(sk, GW, GH, max_numblox_W, min_numblox_W, tmp1.L, Lin,  numThreads, lp, 0);
                 }
             }
@@ -9596,6 +9644,9 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
             }
 
+            if(lp.nlstr > 0 && (hspot > 150 && wspot > 150)) {
+                NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW, GH, float (sk), multiThread);
+            }
             if(lp.smasktyp != 0) {
                     if(lp.enablMask && lp.recothrd != 1.f && lp.smasktyp != 0) {
                         LabImage tmp3(GW, GH);
@@ -9921,7 +9972,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
                         if ((lp.quamet == 0  && aut == 0) || (mxsl < 1.f && (aut == 1 || aut == 2))) {
                             WaveletDenoiseAllL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
-                        } else {
+                        } else if (lp.quamet == 1) {
                             WaveletDenoiseAll_BiShrinkL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
                             WaveletDenoiseAllL(Ldecomp, noisevarlum, madL, vari, edge, numThreads);
                         }
@@ -10209,7 +10260,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         if ((lp.quamet == 0  && aut == 0) || (maxccoarse < 0.1f && (aut == 1  || aut == 2)))  {
                             WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                             WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, numThreads);
-                        } else {
+                        } else if (lp.quamet == 1){
                             WaveletDenoiseAll_BiShrinkAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
                             WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, numThreads);
 
@@ -10240,7 +10291,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                 if (!Ldecomp.memory_allocation_failed() && aut == 0) {
 
 
-                    if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.wavcurvedenoi || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f && lp.quamet != 2) {
+                    if ((lp.noiself >= 0.01f ||  lp.noiself0 >= 0.01f ||  lp.noiself2 >= 0.01f || lp.wavcurvedenoi || lp.noiselc >= 0.01f) && levred == 7 && lp.noiseldetail != 100.f && lp.quamet < 2) {
                         fftw_denoise(sk, bfw, bfh, max_numblox_W, min_numblox_W, bufwv.L, Lin,  numThreads, lp, 0);
                     }
                 }
@@ -10286,6 +10337,12 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         fftw_denoise(sk, bfw, bfh, max_numblox_W, min_numblox_W, bufwv.b, Bin,  numThreads, lp, 1);
                     }
                 }
+
+
+            if(lp.nlstr > 0) {
+                NLMeans(bufwv.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, bfw, bfh, 1.f, multiThread);
+            }
+
 
                 if (lp.smasktyp != 0) {
                     if(lp.enablMask && lp.recothrd != 1.f && lp.smasktyp != 0) {
@@ -10782,7 +10839,368 @@ void maskrecov(const LabImage * bufcolfin, LabImage * original, LabImage * bufma
         masklum.free();
 }
 
+//thanks to Alberto Griggio
+void ImProcFunctions::detail_mask(const array2D<float> &src, array2D<float> &mask, int bfw, int bfh, float scaling, float threshold, float ceiling, float factor, BlurType blur_type, float blur, bool multithread)
+{
+    const int W = bfw;
+    const int H = bfh;
+    mask(W, H);
 
+    array2D<float> L2(W/4, H/4);//ARRAY2D_ALIGNED);
+    array2D<float> m2(W/4, H/4);//ARRAY2D_ALIGNED)
+    rescaleBilinear(src, L2, multithread);
+#ifdef _OPENMP
+#   pragma omp parallel for if (multithread)
+#endif
+    for (int y = 0; y < H/4; ++y) {
+        for (int x = 0; x < W/4; ++x) {
+            L2[y][x] = xlin2log(L2[y][x]/scaling, 50.f);
+        }
+    }
+    
+    laplacian(L2, m2, W / 4, H / 4, threshold/scaling, ceiling/scaling, factor, multithread);
+
+    rescaleBilinear(m2, mask, multithread);
+
+    const auto scurve =
+        [](float x) -> float
+        {
+            constexpr float b = 101.f;
+            constexpr float a = 2.23f;
+            return xlin2log(pow_F(x, a), b);
+        };
+
+    const float thr = 1.f - factor;
+#ifdef _OPENMP
+#   pragma omp parallel for if (multithread)
+#endif
+
+    for (int y = 0; y < H; ++y) {
+        for (int x = 0; x < W; ++x) {
+            mask[y][x] = scurve(LIM01(mask[y][x] + thr));
+        }
+    }
+
+    if (blur_type == BlurType::GAUSS) {
+        
+#ifdef _OPENMP
+#       pragma omp parallel if (multithread)
+#endif
+        {
+            gaussianBlur(mask, mask, W, H, blur);
+        }
+    } else if (blur_type == BlurType::BOX) {
+        if (int(blur) > 0) {
+            for (int i = 0; i < 3; ++i) {
+                boxblur(static_cast<float**>(mask), static_cast<float**>(mask), blur, W, H, multithread);
+            }
+        }
+    }
+  
+}
+
+// basic idea taken from Algorithm 3 in the paper:
+// "Parameter-Free Fast Pixelwise Non-Local Means Denoising" http://www.ipol.im/pub/art/2014/120/
+// by Jacques Froment
+
+// thanks to Alberto Griggio for this wonderful code
+// thanks to Ingo Weyrich <heckflosse67@gmx.de> for many speedup suggestions!
+// adapted to Rawtherapee Local adjustments J.Desmis january 2021
+//
+
+void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int patch, int radius, float gam, int bfw, int bfh, float scale, bool multithread)
+{
+    if (!strength) {
+        return;
+    }
+   // printf("Scale=%f\n", scale);
+    if(scale > 5.f) {//avoid to small values - leads to crash - but enough to evaluate noise 
+        return;
+    }
+    if(bfh < 150 || bfw < 150) {
+        return;
+    }
+
+    BENCHFUN
+    const int W = bfw;
+    const int H = bfh;
+    float gamma = gam;
+    rtengine::GammaValues g_a; //gamma parameters
+    double pwr = 1.0 / gam;//default 3.0 - gamma Lab
+    double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+    rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
+
+    //first change Lab L to pseudo linear with gamma = 3.f slope 9.032...and in range 0...65536, or with gamma slope Lab
+
+#ifdef _OPENMP
+#   pragma omp parallel for schedule(dynamic,16) if (multithread)
+#endif
+    for (int y = 0; y < H; ++y) {
+        int x = 0;
+#ifdef __SSE2__
+        for (; x < W - 3; x += 4) {
+            STVFU(img[y][x], F2V(65536.f) * igammalog(LVFU(img[y][x]) / F2V(32768.f), F2V(gamma), F2V(ts), F2V(g_a[2]), F2V(g_a[4])));
+        }
+#endif
+        for (;x < W; ++x) {
+            img[y][x] = 65536.f * igammalog(img[y][x] / 32768.f, gamma, ts, g_a[2], g_a[4]);
+        }
+    }
+
+    // these two can be changed if needed. increasing max_patch_radius doesn't
+    // affect performance, whereas max_search_radius *really* does
+    // (the complexity is O(max_search_radius^2 * W * H))
+//    constexpr int max_patch_radius = 2;
+//    constexpr int max_search_radius = 5;
+    int max_patch_radius = patch;
+    int max_search_radius = radius;
+
+    const int search_radius = int(std::ceil(float(max_search_radius) / scale));
+    const int patch_radius = int(std::ceil(float(max_patch_radius) / scale));
+
+    // the strength parameter controls the scaling of the weights
+    // (called h^2 in the papers)
+    float eps = 1e-6f;//to avoid too low values and divide near by zero...when  scale > 1
+    const float h2 = eps + SQR(std::pow(float(strength) / 100.f, 0.9f) / 30.f / scale);
+//    printf("h2=%f\n", h2);
+    // this is the main difference between our version and more conventional
+    // nl-means implementations: instead of varying the patch size, we control
+    // the detail preservation by using a varying weight scaling for the
+    // pixels, depending on our estimate of how much details there are in the
+    // pixel neighborhood. We do this by computing a "detail mask", using a
+    // laplacian filter with additional averaging and smoothing. The
+    // detail_thresh parameter controls the degree of detail preservation: the
+    // (averaged, smoothed) laplacian is first normalized to [0,1], and then
+    // modified by compression and offseting depending on the detail_thresh
+    // parameter, i.e. mask[y][x] = mask[y][x] * (1 - f) + f,
+    // where f = detail_thresh / 100
+    float amount = LIM(float(detail_thresh)/100.f, 0.f, 0.99f);
+    array2D<float> mask(W, H);// ARRAY2D_ALIGNED);
+    
+    {
+        array2D<float> LL(W, H, img, ARRAY2D_BYREFERENCE);
+        ImProcFunctions::detail_mask(LL, mask, W, H, 1.f, 1e-3f, 1.f, amount, BlurType::GAUSS, 2.f / scale, multithread);
+
+    }
+  
+//allocate dst - same type of datas as img
+    float** dst;
+    int wid = W;
+    int hei = H;
+    dst = new float*[hei];
+    for (int i = 0; i < hei; ++i) {
+       dst[i] = new float[wid];
+    }
+    const int border = search_radius + patch_radius;
+    const int WW = W + border * 2;
+    const int HH = H + border * 2;
+
+    array2D<float> src(WW, HH);//, ARRAY2D_ALIGNED);
+    
+#ifdef _OPENMP
+#   pragma omp parallel for if (multithread)
+#endif
+    for (int y = 0; y < HH; ++y) {
+        int yy = y <= border ? 0 : y >= H ? H-1 : y - border;
+        for (int x = 0; x < WW; ++x) {
+            int xx = x <= border ? 0 : x >= W ? W-1 : x - border;
+            float Y = img[yy][xx] / 65536.f;
+            src[y][x] = Y;
+        }
+    }
+
+#ifdef _OPENMP
+#   pragma omp parallel for if (multithread)
+#endif
+    for (int y = 0; y < H; ++y) {
+        for (int x = 0; x < W; ++x) {
+            dst[y][x] = 0.f;
+        }
+    }
+
+    constexpr int lutsz = 8192;
+    constexpr float lutfactor = 100.f / float(lutsz-1);
+    LUTf explut(lutsz);
+    for (int i = 0; i < lutsz; ++i) {
+        float x = float(i) * lutfactor;
+        explut[i] = xexpf(-x);
+    }
+
+#ifdef _OPENMP
+#   pragma omp parallel for if (multithread)
+#endif
+    for (int y = 0; y < H; ++y) {
+        for (int x = 0; x < W; ++x) {
+            mask[y][x] = (1.f / (mask[y][x] * h2)) / lutfactor;
+        }
+    }
+  
+    // process by tiles to avoid numerical accuracy errors in the computation
+    // of the integral image
+    const int tile_size = 150;
+    const int ntiles_x = int(std::ceil(float(WW) / (tile_size-2*border)));
+    const int ntiles_y = int(std::ceil(float(HH) / (tile_size-2*border)));
+    const int ntiles = ntiles_x * ntiles_y;
+
+#ifdef __SSE2__
+    const vfloat zerov = F2V(0.0);
+    const vfloat v1e_5f = F2V(1e-5f);
+    const vfloat v65536f = F2V(65536.f);
+#endif
+
+#ifdef _OPENMP
+#   pragma omp parallel if (multithread) 
+#endif
+    {
+
+#ifdef __SSE2__
+    // flush denormals to zero to avoid performance penalty
+    const auto oldMode = _MM_GET_FLUSH_ZERO_MODE();
+    _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
+#endif
+        
+#ifdef _OPENMP
+#   pragma omp for schedule(dynamic, 2)
+#endif
+    for (int tile = 0; tile < ntiles; ++tile) {
+        const int tile_y = tile / ntiles_x;
+        const int tile_x = tile % ntiles_x;
+
+        const int start_y = tile_y * (tile_size - 2*border);
+        const int end_y = std::min(start_y + tile_size, HH);
+        const int TH = end_y - start_y;
+
+        const int start_x = tile_x * (tile_size - 2*border);
+        const int end_x = std::min(start_x + tile_size, WW);
+        const int TW = end_x - start_x;
+
+        const auto Y = [=](int y) -> int { return LIM(y+start_y, 0, HH-1); };
+        const auto X = [=](int x) -> int { return LIM(x+start_x, 0, WW-1); };
+
+        const auto score =
+            [&](int tx, int ty, int zx, int zy) -> float
+            {
+                return SQR(src[Y(zy)][X(zx)] - src[Y(zy + ty)][X(zx + tx)]);
+            };
+
+        array2D<float> St(TW, TH);//, ARRAY2D_ALIGNED);
+        array2D<float> SW(TW, TH, ARRAY2D_CLEAR_DATA);//, ARRAY2D_ALIGNED|ARRAY2D_CLEAR_DATA);
+
+        for (int ty = -search_radius; ty <= search_radius; ++ty) {
+            for (int tx = -search_radius; tx <= search_radius; ++tx) {
+                // Step 1 — Compute the integral image St
+                St[0][0] = 0.f;
+                for (int xx = 1; xx < TW; ++xx) {
+                    St[0][xx] = St[0][xx-1] + score(tx, ty, xx, 0);
+                }
+                for (int yy = 1; yy < TH; ++yy) {
+                    St[yy][0] = St[yy-1][0] + score(tx, ty, 0, yy);
+                }
+                for (int yy = 1; yy < TH; ++yy) {
+                    for (int xx = 1; xx < TW; ++xx) {
+                        // operation grouping tuned for performance (empirically)
+                        St[yy][xx] = (St[yy][xx-1] + St[yy-1][xx]) - (St[yy-1][xx-1] - score(tx, ty, xx, yy));
+                    }
+                }
+                // Step 2 — Compute weight and estimate for patches
+                // V(x), V(y) with y = x + t
+                for (int yy = start_y+border; yy < end_y-border; ++yy) {
+                    int y = yy - border;
+                    int xx = start_x+border;
+#ifdef __SSE2__
+                    for (; xx < end_x-border-3; xx += 4) {
+                        int x = xx - border;
+                        int sx = xx + tx;
+                        int sy = yy + ty;
+
+                        int sty = yy - start_y;
+                        int stx = xx - start_x;
+                    
+                        vfloat dist2 = LVFU(St[sty + patch_radius][stx + patch_radius]) + LVFU(St[sty - patch_radius][stx - patch_radius]) - LVFU(St[sty + patch_radius][stx - patch_radius]) - LVFU(St[sty - patch_radius][stx + patch_radius]);
+                        dist2 = vmaxf(dist2, zerov);
+                        vfloat d = dist2 * LVFU(mask[y][x]);
+                        vfloat weight = explut[d];
+                        STVFU(SW[y-start_y][x-start_x], LVFU(SW[y-start_y][x-start_x]) + weight);
+                        vfloat Y = weight * LVFU(src[sy][sx]);
+                        STVFU(dst[y][x], LVFU(dst[y][x]) + Y);
+                    }
+#endif
+                    for (; xx < end_x-border; ++xx) {
+                        int x = xx - border;
+                        int sx = xx + tx;
+                        int sy = yy + ty;
+
+                        int sty = yy - start_y;
+                        int stx = xx - start_x;
+                    
+                        float dist2 = St[sty + patch_radius][stx + patch_radius] + St[sty - patch_radius][stx - patch_radius] - St[sty + patch_radius][stx - patch_radius] - St[sty - patch_radius][stx + patch_radius];
+                        dist2 = std::max(dist2, 0.f);
+                        float d = dist2 * mask[y][x];
+                        float weight = explut[d];
+                        SW[y-start_y][x-start_x] += weight;
+                        float Y = weight * src[sy][sx];
+                        dst[y][x] += Y;
+
+                        assert(!xisinff(dst[y][x]));
+                        assert(!xisnanf(dst[y][x]));
+                    }
+                }
+            }
+        }
+//    printf("E\n");
+        
+        // Compute final estimate at pixel x = (x1, x2)
+        for (int yy = start_y+border; yy < end_y-border; ++yy) {
+            int y = yy - border;
+            int xx = start_x+border;
+#ifdef __SSE2__
+            for (; xx < end_x-border-3; xx += 4) {
+                int x = xx - border;
+            
+                const vfloat Y = LVFU(dst[y][x]);
+                const vfloat f = (v1e_5f + LVFU(SW[y-start_y][x-start_x]));
+                STVFU(dst[y][x], (Y / f) * v65536f);
+            }
+#endif
+            for (; xx < end_x-border; ++xx) {
+                int x = xx - border;
+            
+                const float Y = dst[y][x];
+                const float f = (1e-5f + SW[y-start_y][x-start_x]);
+                dst[y][x] = (Y / f) * 65536.f;
+
+                assert(!xisnanf(dst[y][x]));
+            }
+        }
+    }
+
+#ifdef __SSE2__
+    _MM_SET_FLUSH_ZERO_MODE(oldMode);
+#endif
+
+    } // omp parallel
+
+#ifdef _OPENMP
+#   pragma omp parallel for schedule(dynamic,16) if (multithread)
+#endif
+    for (int y = 0; y < H; ++y) {//apply inverse gamma 3.f and put result in range 32768.f
+        int x = 0;
+#ifdef __SSE2__
+        for (; x < W - 3; x += 4) {
+            STVFU(img[y][x], F2V(32768.f) * gammalog(LVFU(dst[y][x]) / F2V(65536.f), F2V(gamma), F2V(ts), F2V(g_a[3]), F2V(g_a[4])));
+        }
+#endif
+        for (; x < W; ++x) {
+            img[y][x] = 32768.f * gammalog(dst[y][x] / 65536.f, gamma, ts, g_a[3], g_a[4]);
+        }
+    }
+
+    for (int i = 0; i < hei; ++i) {
+        delete[] dst[i];
+    }
+    delete[] dst;
+    
+}
 
 void ImProcFunctions::Lab_Local(
     int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, LabImage * lastorig, int cx, int cy, int oW, int oH, int sk,

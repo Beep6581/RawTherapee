@@ -6258,6 +6258,12 @@ LocallabBlur::LocallabBlur():
     decayd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
     invmaskd(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVMASK")))),
     invmask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVMASK")))),
+    nlFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_NLFRA")))),
+    nlstr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLLUM"), 0, 100, 1, 0))),
+    nldet(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLDET"), 0, 100, 1, 50))),
+    nlpat(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLPAT"), 1, 5, 1, 2))),
+    nlrad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLRAD"), 3, 10, 1, 5))),
+    nlgam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLGAM"), 2., 5., 0.1, 3.))),
     bilateral(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BILATERAL"), 0, 100, 1, 0))),
     sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     neutral(Gtk::manage (new Gtk::Button (M ("TP_RETINEX_NEUTRAL")))),
@@ -6363,9 +6369,10 @@ LocallabBlur::LocallabBlur():
     setExpandAlignProperties(expdenoise, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
 
-    quamethod->append(M("TP_WAVELET_QUACONSER"));
-    quamethod->append(M("TP_WAVELET_QUAAGRES"));
-    quamethod->append(M("TP_WAVELET_QUANONE"));
+    quamethod->append(M("TP_LOCALLAB_QUANONEALL"));
+    quamethod->append(M("TP_LOCALLAB_QUACONSER"));
+    quamethod->append(M("TP_LOCALLAB_QUAAGRES"));
+    quamethod->append(M("TP_LOCALLAB_QUANONEWAV"));
     quamethodconn = quamethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabBlur::quamethodChanged));
     Gtk::Label* const quaLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DENQUA") + ":"));
     quaHBox->pack_start(*quaLabel, Gtk::PACK_SHRINK, 4);
@@ -6429,6 +6436,13 @@ LocallabBlur::LocallabBlur():
     decayd->setAdjusterListener(this);
 
     bilateral->setAdjusterListener(this);
+    nlFrame->set_label_align(0.025, 0.5);
+
+    nlstr->setAdjusterListener(this);
+    nldet->setAdjusterListener(this);
+    nlpat->setAdjusterListener(this);
+    nlrad->setAdjusterListener(this);
+    nlgam->setAdjusterListener(this);
 
     sensiden->setAdjusterListener(this);
 
@@ -6566,17 +6580,28 @@ LocallabBlur::LocallabBlur():
     wavBox1->pack_start(*levelthr, Gtk::PACK_SHRINK, 0);
     expdenoise1->add(*wavBox1, false);
     wavBox->pack_start(*expdenoise1);
-    wavBox->pack_start(*noisechrof);
-    wavBox->pack_start(*noisechroc);
-    wavBox->pack_start(*noisechrodetail);
-    wavBox->pack_start(*adjblur);
     ToolParamBlock* const detailBox = Gtk::manage(new ToolParamBlock());
     detailBox->pack_start(*detailthr);
     detailBox->pack_start(*usemask, Gtk::PACK_SHRINK, 0);
     detailFrame->add(*detailBox);
     wavBox->pack_start(*detailFrame);
+    
+    ToolParamBlock* const nlbox = Gtk::manage(new ToolParamBlock());
+    nlbox->pack_start(*nlstr);
+    nlbox->pack_start(*nldet);
+    nlbox->pack_start(*nlgam);
+    nlbox->pack_start(*nlpat);
+    nlbox->pack_start(*nlrad);
+    nlFrame->add(*nlbox);
+    wavBox->pack_start(*nlFrame);
+    
+    wavBox->pack_start(*noisechrof);
+    wavBox->pack_start(*noisechroc);
+    wavBox->pack_start(*noisechrodetail);
+    wavBox->pack_start(*adjblur);
     wavFrame->add(*wavBox);
     denoisebox->pack_start(*wavFrame);
+
     ToolParamBlock* const wavBox3 = Gtk::manage(new ToolParamBlock());
     wavBox3->pack_start(*maskusable3, Gtk::PACK_SHRINK, 0);
     wavBox3->pack_start(*maskunusable3, Gtk::PACK_SHRINK, 0);
@@ -6683,6 +6708,12 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         detailthr->set_tooltip_text(M("TP_LOCALLAB_DENOITHR_TOOLTIP"));
         adjblur->set_tooltip_text(M("TP_LOCALLAB_DENOIEQUALCHRO_TOOLTIP"));
         bilateral->set_tooltip_text(M("TP_LOCALLAB_DENOIBILAT_TOOLTIP"));
+        nlFrame->set_tooltip_text(M("TP_LOCALLAB_NLFRAME_TOOLTIP"));
+        nlstr->set_tooltip_text(M("TP_LOCALLAB_NLDENOISE_TOOLTIP"));
+        nldet->set_tooltip_text(M("TP_LOCALLAB_NLDENOISE_TOOLTIP"));
+        nlpat->set_tooltip_text(M("TP_LOCALLAB_NLDENOISENLPAT_TOOLTIP"));
+        nlrad->set_tooltip_text(M("TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP"));
+        nlgam->set_tooltip_text(M("TP_LOCALLAB_NLDENOISENLGAM_TOOLTIP"));
         noiselumc->set_tooltip_text(M("TP_LOCALLAB_NOISECHROC_TOOLTIP"));
         expmaskbl->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
         showmaskblMethodtyp->set_tooltip_markup(M("TP_LOCALLAB_SHOWMASKTYP_TOOLTIP"));
@@ -6742,6 +6773,12 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         detailthr->set_tooltip_text("");
         adjblur->set_tooltip_text("");
         bilateral->set_tooltip_text("");
+        nlFrame->set_tooltip_text("");
+        nlstr->set_tooltip_text("");
+        nldet->set_tooltip_text("");
+        nlpat->set_tooltip_text("");
+        nlrad->set_tooltip_text("");
+        nlgam->set_tooltip_text("");
         sensibn->set_tooltip_text("");
         blurMethod->set_tooltip_markup("");
         expdenoise->set_tooltip_markup("");
@@ -6793,8 +6830,13 @@ void LocallabBlur::neutral_pressed ()
     detailthr->setValue(defSpot.detailthr);;
     adjblur->setValue(defSpot.adjblur);
     bilateral->setValue(defSpot.bilateral);
+    nlstr->setValue(defSpot.nlstr);
+    nldet->setValue(defSpot.nldet);
+    nlpat->setValue(defSpot.nlpat);
+    nlrad->setValue(defSpot.nlrad);
+    nlgam->setValue(defSpot.nlgam);
     sensiden->setValue(defSpot.sensiden);
-    quamethod->set_active (2);
+    quamethod->set_active (0);
     wavshapeden->setCurve(defSpot.locwavcurveden);
     wavhue->setCurve(defSpot.locwavcurvehue);
     usemask->set_active(defSpot.usemask);
@@ -6942,12 +6984,14 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
             chroMethod->set_active(2);
         }
 
-        if (spot.quamethod == "cons") {
+        if (spot.quamethod == "none") {
             quamethod->set_active(0);
-        } else if (spot.quamethod == "agre") {
+        } else if (spot.quamethod == "cons") {
             quamethod->set_active(1);
-        } else if (spot.quamethod == "none") {
+        } else if (spot.quamethod == "agre") {
             quamethod->set_active(2);
+        } else if (spot.quamethod == "nlmean") {
+            quamethod->set_active(3);
         }
 
         activlum->set_active(spot.activlum);
@@ -6968,6 +7012,11 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         detailthr->setValue((double)spot.detailthr);
         adjblur->setValue((double)spot.adjblur);
         bilateral->setValue((double)spot.bilateral);
+        nlstr->setValue((double)spot.nlstr);
+        nldet->setValue((double)spot.nldet);
+        nlpat->setValue((double)spot.nlpat);
+        nlrad->setValue((double)spot.nlrad);
+        nlgam->setValue((double)spot.nlgam);
         sensiden->setValue((double)spot.sensiden);
         
         if (spot.showmaskblMethodtyp == "blur") {
@@ -7081,11 +7130,13 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         }
 
         if (quamethod->get_active_row_number() == 0) {
-            spot.quamethod = "cons";
-        } else if (quamethod->get_active_row_number() == 1) {
-            spot.quamethod = "agre";
-        } else if (quamethod->get_active_row_number() == 2) {
             spot.quamethod = "none";
+        } else if (quamethod->get_active_row_number() == 1) {
+            spot.quamethod = "cons";
+        } else if (quamethod->get_active_row_number() == 2) {
+            spot.quamethod = "agre";
+        } else if (quamethod->get_active_row_number() == 3) {
+            spot.quamethod = "nlmean";
         }
 
         spot.activlum = activlum->get_active();
@@ -7107,6 +7158,11 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.adjblur = adjblur->getIntValue();
         spot.bilateral = bilateral->getIntValue();
         spot.sensiden = sensiden->getIntValue();
+        spot.nlstr = nlstr->getIntValue();
+        spot.nldet = nldet->getIntValue();
+        spot.nlpat = nlpat->getIntValue();
+        spot.nlrad = nlrad->getIntValue();
+        spot.nlgam = nlgam->getValue();
 
         if (showmaskblMethodtyp->get_active_row_number() == 0) {
             spot.showmaskblMethodtyp = "blur";
@@ -7181,6 +7237,11 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         detailthr->setDefault((double)defSpot.detailthr);
         adjblur->setDefault((double)defSpot.adjblur);
         bilateral->setDefault((double)defSpot.bilateral);
+        nlstr->setDefault((double)defSpot.nlstr);
+        nldet->setDefault((double)defSpot.nldet);
+        nlpat->setDefault((double)defSpot.nlpat);
+        nlrad->setDefault((double)defSpot.nlrad);
+        nlgam->setDefault(defSpot.nlgam);
         sensiden->setDefault((double)defSpot.sensiden);
         strumaskbl->setDefault(defSpot.strumaskbl);
         blendmaskbl->setDefault((double)defSpot.blendmaskbl);
@@ -7455,6 +7516,41 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == nlstr) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnlstr,
+                                       nlstr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == nldet) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnldet,
+                                       nldet->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == nlpat) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnlpat,
+                                       nlpat->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == nlrad) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnlrad,
+                                       nlrad->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == nlgam) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnlgam,
+                                       nlgam->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
         if (a == sensiden) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensiden,
@@ -7628,7 +7724,8 @@ void LocallabBlur::convertParamToNormal()
     LLmaskblshapewav->setCurve(defSpot.LLmaskblcurvewav);
     csThresholdblur->setValue<int>(defSpot.csthresholdblur);
     lnoiselow->setValue(defSpot.lnoiselow);
-
+    nlrad->setValue(defSpot.nlrad);
+    
     // Enable all listeners
     enableListener();
 }
@@ -7680,6 +7777,10 @@ void LocallabBlur::convertParamToSimple()
     higthres->setValue(defSpot.higthres);
     adjblur->setValue(defSpot.adjblur);
     noisechrodetail->setValue(defSpot.noisechrodetail);
+    nlpat->setValue(defSpot.nlpat);
+    nlrad->setValue(defSpot.nlrad);
+    nlgam->setValue(defSpot.nlgam);
+    
     // Enable all listeners
     enableListener();
 }
@@ -7706,6 +7807,9 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             adjblur->hide();
             noisechrodetail->hide();
             usemask->hide();
+            nlpat->hide();
+            nlrad->hide();
+            nlgam->hide();
             break;
 
         case Normal:
@@ -7726,6 +7830,10 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             adjblur->show();
             noisechrodetail->show();
             usemask->show();
+            nlpat->show();
+            nlrad->hide();
+            nlgam->show();
+
             if (blMethod->get_active_row_number() == 2) {
                 expdenoise2->show();
             }
@@ -7799,6 +7907,10 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             shadmaskblsha->show();
             mask2blCurveEditorGwav->show();
             csThresholdblur->show();
+            nlpat->show();
+            nlrad->show();
+            nlgam->show();
+
             if(lnoiselow->getValue()!= 1.) {
                 if (showmaskblMethodtyp->get_active_row_number() == 0) {
                     showmaskblMethodtyp->set_active(2);
