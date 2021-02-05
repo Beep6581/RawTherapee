@@ -7627,6 +7627,7 @@ void LocallabBlur::convertParamToNormal()
     shadmaskblsha->setValue((double)defSpot.shadmaskblsha);
     LLmaskblshapewav->setCurve(defSpot.LLmaskblcurvewav);
     csThresholdblur->setValue<int>(defSpot.csthresholdblur);
+    lnoiselow->setValue(defSpot.lnoiselow);
 
     // Enable all listeners
     enableListener();
@@ -7677,7 +7678,8 @@ void LocallabBlur::convertParamToSimple()
     recothres->setValue(defSpot.recothres);
     lowthres->setValue(defSpot.lowthres);
     higthres->setValue(defSpot.higthres);
-
+    adjblur->setValue(defSpot.adjblur);
+    noisechrodetail->setValue(defSpot.noisechrodetail);
     // Enable all listeners
     enableListener();
 }
@@ -7701,6 +7703,9 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             decayd->hide();
             invmask->hide();
             invmaskd->hide();
+            adjblur->hide();
+            noisechrodetail->hide();
+            usemask->hide();
             break;
 
         case Normal:
@@ -7715,9 +7720,12 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             csThresholdblur->hide();
             // Specific Simple mode widgets are shown in Normal mode
             expmaskbl->show();
-            expdenoise1->show();
+            expdenoise1->hide();
             expdenoise2->hide();
             expdenoise3->show();
+            adjblur->show();
+            noisechrodetail->show();
+            usemask->show();
             if (blMethod->get_active_row_number() == 2) {
                 expdenoise2->show();
             }
@@ -7779,6 +7787,9 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             decayd->show();
             invmask->show();
             invmaskd->show();
+            adjblur->show();
+            noisechrodetail->show();
+            usemask->show();
 
             expmaskbl->show();
             strumaskbl->show();

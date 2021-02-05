@@ -79,7 +79,7 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
     
     const unsigned int cfarray[2][2] = {{FC(0,0), FC(0,1)}, {FC(1,0), FC(1,1)}};
     constexpr int tileBorder = 9; // avoid tile-overlap errors
-    constexpr int rcdBorder = 6;  // for the outermost tiles we can have a smaller outer border
+    constexpr int rcdBorder = 9;
     constexpr int tileSize = 194;
     constexpr int tileSizeN = tileSize - 2 * tileBorder;
     const int numTh = H / (tileSizeN) + ((H % (tileSizeN)) ? 1 : 0);

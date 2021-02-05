@@ -948,7 +948,6 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
     array2D<float> gbuf(W2, H2);
     array2D<float> bbuf(W2, H2);
     array2D<float> guide(W2, H2);
-    array2D<float> Y(W2, H2);
    
     using rtengine::TMatrix;
     TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params.icm.workingProfile);
@@ -966,8 +965,7 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
 #endif
         for (int y = 0; y < H2; ++y) {
             for (int x = 0; x < W2; ++x) {
-                Y[y][x] = rtengine::Color::rgbLuminance(static_cast<double>(rbuf[y][x]), static_cast<double>(gbuf[y][x]), static_cast<double>(bbuf[y][x]), ws); 
-                guide[y][x] = Color::igamma_srgb(Y[y][x]);
+                guide[y][x] = Color::igamma_srgb(Color::rgbLuminance(static_cast<double>(rbuf[y][x]), static_cast<double>(gbuf[y][x]), static_cast<double>(bbuf[y][x]), ws));
             }
         }
     }

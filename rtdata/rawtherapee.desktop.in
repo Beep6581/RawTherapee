@@ -8,6 +8,7 @@ GenericName[fr]=Éditeur d'images raw
 GenericName[pl]=Edytor zdjęć raw
 Comment=An advanced raw photo development program
 Comment[cs]=Program pro konverzi a zpracování digitálních raw fotografií
+Comment[de]=Programm zur Konvertierung und Verarbeitung digitaler RAW-Fotos
 Comment[fr]=Logiciel de conversion et de traitement de photos numériques de format raw (but de capteur)
 Comment[pl]=Zaawansowany program do wywoływania zdjęć typu raw
 Icon=rawtherapee
