@@ -1878,7 +1878,7 @@ TP_LOCALLAB_DELTAD;Delta balance
 TP_LOCALLAB_DELTAEC;Masque ΔE Image
 TP_LOCALLAB_DENOIS;Ψ Réduction du bruit
 TP_LOCALLAB_DENOI_EXP;Réduction du bruit
-TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservatif préserve les fréquences basses, alors que agressif tend à les effacer
+TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservatif préserve les fréquences basses, alors que agressif tend à les effacer.\nConservatif et agressif utilisent les ondelletes et DCT et peuvent être utilisées en conjonction avec "débruitage par morceaux - luminance"
 TP_LOCALLAB_DENOIEQUAL_TOOLTIP;Equilibre l'action de denoise luminance entre les ombres et les lumières
 TP_LOCALLAB_DENOI1_EXP;De-bruite basé sur masque luminance 
 TP_LOCALLAB_DENOI2_EXP;Récupération basée sur masque luminance
@@ -2192,6 +2192,15 @@ TP_LOCALLAB_MRTHR;Image Originale
 TP_LOCALLAB_MRTWO;Short Curves 'L' Mask
 TP_LOCALLAB_MULTIPL_TOOLTIP;Autorise la retouche des tons sur une large plage : -18EV +4EV. Le remier curseur agit sur -18EV and -6EV. Le dernier curseur agit sur les tons au-dessus de 4EV  
 TP_LOCALLAB_NEIGH;Rayon
+TP_LOCALLAB_NLDENOISE_TOOLTIP;"Récupération des détails" agit sur un Laplacien pour privilégier l'action de denoise sur les aplats plutôt que sur les structures.
+TP_LOCALLAB_NLDENOISENLPAT_TOOLTIP;Agir sur ce curseur pour adapter le niveau de débruitage à la taille des objets à traiter.
+TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP;Plus la valeur sera importante, plus le débruitage sera intense.\nMais cela a une forte incidence sur les temps de traitement.
+TP_LOCALLAB_NLFRAME_TOOLTIP;"Débruitage par morceaux" réalise une moyenne de la totalité des valeurs des pixels contenus dans l'image, pondérées en fonction de leur similarité avec le résultat attendu (pixel cible).\nL'algoritme permet d’amoindrir la perte de détails au sein de l'image.\nSeul le bruit de luminance est pris en compte, le bruit de chrominance est traité de manière plus performante par le couple ondelettes / Fourier (DCT).\nPeut être utilisé en conjonction avec 'ondelettes' ou isolé.\nLa taille du RT-Spot doit être supérieure à 150x150 pixels (sortie TIF/JPG).
+TP_LOCALLAB_NLFRA;Débruitage par morceaux - Luminance
+TP_LOCALLAB_NLLUM;Force
+TP_LOCALLAB_NLDET;Récupération des détails
+TP_LOCALLAB_NLPAT;Taille maximum du morceau
+TP_LOCALLAB_NLRAD;Taille maximum du rayon
 TP_LOCALLAB_NOISE_TOOLTIP;Ajoute du bruit de luminance
 TP_LOCALLAB_NOISECHROCOARSE;Chroma gros (Ond)
 TP_LOCALLAB_NOISECHROC_TOOLTIP;Si supérieur à zéro, algorithme haute qualité est activé.\nGros est sélectionné si curseur >=0.2
@@ -2211,7 +2220,7 @@ TP_LOCALLAB_OFFSETWAV;Décalage
 TP_LOCALLAB_OPACOL;Opacité
 TP_LOCALLAB_ORIGLC;Fusion seulement avec image originale
 TP_LOCALLAB_ORRETILAP_TOOLTIP;Agit sur un deuxième seuil Laplacien, pour prendre en compte ΔE pour différencier l'action nottament avec l'arrière plan (différent de Etendue)
-TP_LOCALLAB_ORRETISTREN_TOOLTIP;Aagit sur un seuil Laplacien, plus grande est l'action, plus les différences de contraste seront réduites
+TP_LOCALLAB_ORRETISTREN_TOOLTIP;Agit sur un seuil Laplacien, plus grande est l'action, plus les différences de contraste seront réduites
 TP_LOCALLAB_PASTELS2;Vibrance
 TP_LOCALLAB_PDE;Atténuation de Contraste - Compression dynamique
 TP_LOCALLAB_PDEFRA;Contraste atténuation ƒ
@@ -2222,8 +2231,12 @@ TP_LOCALLAB_PREVSHOW;Montrer tous les réglages
 TP_LOCALLAB_PROXI;ΔE Affaiblissement
 TP_LOCALLAB_QUALCURV_METHOD;Types de Courbes
 TP_LOCALLAB_QUAL_METHOD;Qualité globale
+TP_LOCALLAB_QUACONSER;Conservatif
+TP_LOCALLAB_QUAAGRES;Aggressif
+TP_LOCALLAB_QUANONEWAV;Débruitage par morceaux - luminance seulement
+TP_LOCALLAB_QUANONEALL;Rien
 TP_LOCALLAB_RADIUS;Rayon
-TP_LOCALLAB_RADIUS_TOOLTIP;Above Radius 30 Use Fast Fourier Transform
+TP_LOCALLAB_RADIUS_TOOLTIP;Au-dessus de Rayon 30 Utilise 'Fast Fourier Transform'
 TP_LOCALLAB_RADMASKCOL;Rayon adoucir
 TP_LOCALLAB_RECT;Rectangle
 TP_LOCALLAB_RECURS;Réferences Récursives 
