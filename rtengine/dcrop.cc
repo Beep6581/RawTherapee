@@ -1046,6 +1046,10 @@ void Crop::update(int todo)
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 
                         parent->previewDeltaE, parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallvibMask,  parent->localllcMask, parent->locallsharMask, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask,
                         parent->localllogMask, parent->locall_Mask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+                        if(parent->previewDeltaE) {  
+                            params.blackwhite.enabled = false;
+                        }
+
             } else {
                 parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), lastorigCrop.get(), cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
                         lllocalcurve2,locallutili, 
@@ -1092,7 +1096,6 @@ void Crop::update(int todo)
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
             }
-
             if (sp + 1u < params.locallab.spots.size()) {
                 // do not copy for last spot as it is not needed anymore
                 lastorigCrop->CopyFrom(labnCrop);
