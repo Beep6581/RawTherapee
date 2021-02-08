@@ -235,6 +235,7 @@ LocallabTone::LocallabTone():
 
     // Add Tone Mapping specific widgets to GUI
     // pack_start(*amount); // To use if we change transit_shapedetect parameters
+    pack_start(*sensitm);
     pack_start(*stren);
     pack_start(*equiltm);
     pack_start(*gamma);
@@ -243,7 +244,7 @@ LocallabTone::LocallabTone():
     pack_start(*scaltm);
     pack_start(*rewei);
     // pack_start(*softradiustm); // Always bad with TM ??
-    pack_start(*sensitm);
+//    pack_start(*sensitm);
     ToolParamBlock* const tmBox3 = Gtk::manage(new ToolParamBlock());
     tmBox3->pack_start(*maskusablet, Gtk::PACK_SHRINK, 0);
     tmBox3->pack_start(*maskunusablet, Gtk::PACK_SHRINK, 0);
@@ -1992,13 +1993,14 @@ LocallabSharp::LocallabSharp():
     showmasksharMethodConn = showmasksharMethod->signal_changed().connect(sigc::mem_fun(*this, &LocallabSharp::showmasksharMethodChanged));
 
     // Add Sharpening specific widgets to GUI
+    pack_start(*sensisha);
     pack_start(*sharcontrast);
     pack_start(*sharblur);
     pack_start(*sharradius);
     pack_start(*sharamount);
     pack_start(*shardamping);
     pack_start(*shariter);
-    pack_start(*sensisha);
+//    pack_start(*sensisha);
     pack_start(*inverssha);
     sharFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const sharfBox = Gtk::manage(new ToolParamBlock());
@@ -2648,6 +2650,7 @@ LocallabContrast::LocallabContrast():
     mask2lcCurveEditorG->curveListComplete();
 
     // Add Local contrast specific widgets to GUI
+    pack_start(*sensilc);
     pack_start(*localcontMethod);
     pack_start(*lcradius);
     pack_start(*lcamount);
@@ -2675,7 +2678,7 @@ LocallabContrast::LocallabContrast():
     resiBox->pack_start(*shresFrame);
     expresidpyr->add(*resiBox, false);
     pack_start(*expresidpyr);
-    pack_start(*sensilc);
+//    pack_start(*sensilc);
     Gtk::HSeparator* const separatorcontr = Gtk::manage(new  Gtk::HSeparator());
     pack_start(*separatorcontr);
     ToolParamBlock* const clariBox = Gtk::manage(new ToolParamBlock());
@@ -4401,6 +4404,7 @@ LocallabCBDL::LocallabCBDL():
     lumaneutralPressedConn = lumaneutralButton->signal_pressed().connect(sigc::mem_fun(*this, &LocallabCBDL::lumaneutralPressed));
 
     lumacontrastPlusPressedConn = lumacontrastPlusButton->signal_pressed().connect(sigc::mem_fun(*this, &LocallabCBDL::lumacontrastPlusPressed));
+    pack_start(*sensicb);
 
     // Add CBDL specific widgets to GUI
     ToolParamBlock* const levBox = Gtk::manage(new ToolParamBlock());
@@ -4428,7 +4432,7 @@ LocallabCBDL::LocallabCBDL():
     residFrame->add(*residBox);
     pack_start(*residFrame);
     pack_start(*softradiuscb);
-    pack_start(*sensicb);
+//    pack_start(*sensicb);
     ToolParamBlock* const cbBox3 = Gtk::manage(new ToolParamBlock());
     cbBox3->pack_start(*maskusablecb, Gtk::PACK_SHRINK, 0);
     cbBox3->pack_start(*maskunusablecb, Gtk::PACK_SHRINK, 0);
@@ -5255,6 +5259,7 @@ LocallabLog::LocallabLog():
     mask2CurveEditorL->curveListComplete();
 
     // Add Log encoding specific widgets to GUI
+    pack_start(*sensilog);
     pack_start(*repar);
     pack_start(*ciecam);
     logPFrame->set_label_align(0.025, 0.5);
@@ -5323,7 +5328,7 @@ LocallabLog::LocallabLog():
     pack_start(*exprecovl, false, false);
     
 //    pack_start(*baselog);
-    pack_start(*sensilog);
+//    pack_start(*sensilog);
     pack_start(*expmaskL, false, false);
     
  //   Gtk::Frame* const gradlogFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRADLOGFRA")));
