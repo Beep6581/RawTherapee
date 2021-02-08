@@ -1053,6 +1053,13 @@ void Crop::update(int todo)
                             params.chmixer.enabled = false;
                             params.hsvequalizer.enabled = false;
                             params.filmSimulation.enabled = false;
+                            params.toneCurve.black = 0.f;
+                            params.toneCurve.saturation = 0.f;
+                            params.colorappearance.enabled = false;
+                            params.vibrance.enabled = false;
+                            params.labCurve.enabled = false;
+                            params.wavelet.enabled = false;
+                            params.epd.enabled = false;
                         }
             } else {
                 parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), lastorigCrop.get(), cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
