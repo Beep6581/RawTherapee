@@ -10113,7 +10113,6 @@ konica_400z:
     }
   } else if (!strcmp(model,"*ist D")) {
     load_raw = &CLASS unpacked_load_raw;
-    data_error = -1;
   } else if (!strcmp(model,"*ist DS")) {
     height -= 2;
   } else if (!strcmp(make,"Samsung") && raw_width == 4704) {
