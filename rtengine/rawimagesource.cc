@@ -636,6 +636,56 @@ float calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const flo
     return gain;
 }
 
+
+void RawImageSource::getWBMults (const ColorTemp &ctemp, const RAWParams &raw, std::array<float, 4>& out_scale_mul, float &autoGainComp, float &rm, float &gm, float &bm) const
+{
+    // compute channel multipliers
+    double r, g, b;
+    //float rm, gm, bm;
+
+    if (ctemp.getTemp() < 0) {
+        // no white balance, ie revert the pre-process white balance to restore original unbalanced raw camera color
+        rm = ri->get_pre_mul(0);
+        gm = ri->get_pre_mul(1);
+        bm = ri->get_pre_mul(2);
+    } else {
+        ctemp.getMultipliers (r, g, b);
+        rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
+        gm = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
+        bm = imatrices.cam_rgb[2][0] * r + imatrices.cam_rgb[2][1] * g + imatrices.cam_rgb[2][2] * b;
+    }
+
+    // adjust gain so the maximum raw value of the least scaled channel just hits max
+    const float new_pre_mul[4] = { ri->get_pre_mul(0) / rm, ri->get_pre_mul(1) / gm, ri->get_pre_mul(2) / bm, ri->get_pre_mul(3) / gm };
+    float new_scale_mul[4];
+
+    bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
+                    || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
+
+    float c_white[4];
+    for (int i = 0; i < 4; ++i) {
+        c_white[i] = (ri->get_white(i) - cblacksom[i]) / static_cast<float>(raw.expos) + cblacksom[i];
+    }
+
+    float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, isMono, ri->get_colors());
+    rm = new_scale_mul[0] / scale_mul[0] * gain;
+    gm = new_scale_mul[1] / scale_mul[1] * gain;
+    bm = new_scale_mul[2] / scale_mul[2] * gain;
+    //fprintf(stderr, "camera gain: %f, current wb gain: %f, diff in stops %f\n", camInitialGain, gain, log2(camInitialGain) - log2(gain));
+
+    const float expcomp = std::pow(2, ri->getBaselineExposure());
+    rm *= expcomp;
+    gm *= expcomp;
+    bm *= expcomp;
+
+    out_scale_mul[0] = scale_mul[0];
+    out_scale_mul[1] = scale_mul[1];
+    out_scale_mul[2] = scale_mul[2];
+    out_scale_mul[3] = scale_mul[3];
+
+    autoGainComp = camInitialGain / initialGain;
+}
+
 void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw)
 {
     MyMutex::MyLock lock(getImageMutex);
@@ -1578,8 +1628,11 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
             ahd_demosaic ();
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZE)) {
             amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue, options.chunkSizeAMAZE, options.measure);
-        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4)
+        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEBILINEAR)
+                   || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4)
+                   || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBBILINEAR)
                    || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBVNG4)
+                   || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDBILINEAR)
                    || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDVNG4)) {
             if (!autoContrast) {
                 double threshold = raw.bayersensor.dualDemosaicContrast;
@@ -1717,10 +1770,8 @@ void RawImageSource::retinexPrepareBuffers(const ColorManagementParams& cmp, con
             std::swap(pwr, gamm);
         }
 
-        int mode = 0;
-        Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
+        Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
 
-   //        printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
         double start;
         double add;
 
@@ -1948,12 +1999,12 @@ void RawImageSource::retinexPrepareCurves(const RetinexParams &retinexParams, LU
     useHsl = (retinexParams.retinexcolorspace == "HSLLOG" || retinexParams.retinexcolorspace == "HSLLIN");
 
     if (useHsl) {
-        CurveFactory::curveDehaContL (retinexcontlutili, retinexParams.cdHcurve, cdcurve, 1, lhist16RETI, histLRETI);
+        retinexcontlutili = CurveFactory::diagonalCurve2Lut(retinexParams.cdHcurve, cdcurve, 1, lhist16RETI, histLRETI);
     } else {
-        CurveFactory::curveDehaContL (retinexcontlutili, retinexParams.cdcurve, cdcurve, 1, lhist16RETI, histLRETI);
+        retinexcontlutili = CurveFactory::diagonalCurve2Lut(retinexParams.cdcurve, cdcurve, 1, lhist16RETI, histLRETI);
     }
 
-    CurveFactory::mapcurve(mapcontlutili, retinexParams.mapcurve, mapcurve, 1, lhist16RETI, histLRETI);
+    mapcontlutili = CurveFactory::diagonalCurve2Lut(retinexParams.mapcurve, mapcurve, 1, lhist16RETI, histLRETI);
     mapcurve *= 0.5f;
     retinexParams.getCurves(retinextransmissionCurve, retinexgaintransmissionCurve);
 }
@@ -1984,13 +2035,12 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
         double gamm = deh.gam;
         double gamm2 = gamm;
         double ts = deh.slope;
-        int mode = 0;
 
         if (gamm2 < 1.) {
             std::swap(pwr, gamm);
         }
 
-        Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
+        Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
 
         double mul = 1. + g_a[4];
         double add;
@@ -2258,15 +2308,8 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
                     }
 
                     float R, G, B;
-#ifdef _DEBUG
-                    bool neg = false;
-                    bool more_rgb = false;
-                    //gamut control : Lab values are in gamut
-                    Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
-#else
                     //gamut control : Lab values are in gamut
                     Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f);
-#endif
 
 
 
@@ -2407,10 +2450,11 @@ void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
  */
 void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData)
 {
-    const float black[4] = {
-                     static_cast<float>(ri->get_cblack(0)), static_cast<float>(ri->get_cblack(1)),
-                     static_cast<float>(ri->get_cblack(2)), static_cast<float>(ri->get_cblack(3))
-                     };
+    const auto tmpfilters = ri->get_filters();
+    ri->set_filters(ri->prefilters); // we need 4 blacks for bayer processing
+    float black[4];
+    ri->get_colorsCoeff(nullptr, nullptr, black, false);
+    ri->set_filters(tmpfilters);
 
     if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS) {
         if (!rawData) {
@@ -2451,7 +2495,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 
 
         if (riFlatFile && W == riFlatFile->get_width() && H == riFlatFile->get_height()) {
-            processFlatField(raw, riFlatFile, black);
+            processFlatField(raw, riFlatFile, rawData, black);
         }  // flatfield
     } else if (ri->get_colors() == 1) {
         // Monochrome
@@ -2473,7 +2517,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
             }
         }
         if (riFlatFile && W == riFlatFile->get_width() && H == riFlatFile->get_height()) {
-            processFlatField(raw, riFlatFile, black);
+            processFlatField(raw, riFlatFile, rawData, black);
         }  // flatfield
     } else {
         // No bayer pattern
@@ -4430,17 +4474,17 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     1) for the current raw file we create a table for each temp of RGB multipliers
     2) then, I choose the "camera temp" to initialize calculation (why not)
-    3) for this temp, I calculated XYZ values for the 201 spectral datas
+    3) for this temp, I calculated XYZ values for the 201 spectral data
     4) then I create for the image an "histogram", but for xyY (CIE 1931 color space or CIE 1964 (default))
-    5) for each pixel (in fact to accelerate only 1/5 for and 1/5 for y), I determine for each couple xy, the number of occurences, can be change by Itcwb_precis to 3 or 9
+    5) for each pixel (in fact to accelerate only 1/5 for and 1/5 for y), I determine for each couple xy, the number of occurrences, can be change by Itcwb_precis to 3 or 9
     6) I sort this result in ascending order
     7) in option we can sort in another manner to take into account chroma : chromax = x - white point x, chromay = y - white point y
-    8) then I compare this result, with spectral datas found above in 3) with deltaE (limited to chroma)
-    9) at this point we have xyY values that match Camera temp, and spectral datas associated
+    8) then I compare this result, with spectral data found above in 3) with deltaE (limited to chroma)
+    9) at this point we have xyY values that match Camera temp, and spectral data associated
     10) then I recalculate RGB values from xyY histogram
     11) after, I vary temp, between 2000K to 12000K
     12) RGB values are recalculated from 10) with RGB multipliers, and then xyY are calculated for each temp
-    13) spectral datas choose are recalculated with temp between 2000K to 12000K with matrix spectral calculation, that leads to xyY values
+    13) spectral data choose are recalculated with temp between 2000K to 12000K with matrix spectral calculation, that leads to xyY values
     14) I calculated for each couple xy, Student correlation (without Snedecor test)
     15) the good result, is the best correlation
     16) we have found the best temperature where color image and color references are correlate
@@ -4997,7 +5041,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     chrom wbchro[sizcu4];
     const float swpr = Txyz[repref].XX + Txyz[repref].ZZ + 1.f;
-    const float xwpr = Txyz[repref].XX / swpr;//white point for tt in xy coordiantes
+    const float xwpr = Txyz[repref].XX / swpr;//white point for tt in xy coordinates
     const float ywpr = 1.f / swpr;
 
     for (int i = 0; i < sizcu4; ++i) { //take the max values
@@ -5028,7 +5072,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
     }
 
-    const int maxval = rtengine::LIM(settings->itcwb_thres, 10, 55);//max values of color to find correllation
+    const int maxval = rtengine::LIM(settings->itcwb_thres, 10, 55);//max values of color to find correlation
 
     sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
 
@@ -5042,7 +5086,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
     }
 
-    //calculate deltaE xx to find best values of spectrals datas - limited to chroma values
+    //calculate deltaE xx to find best values of spectrals data - limited to chroma values
     int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
 
     if (settings->itcwb_thres > 55) {
@@ -5210,8 +5254,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                         reff_spect_xxyy[2 * kkg + 1][tt] = reff_spect_xxyy_prov[2 * i + 1][tt];
                     }
                 }
-                //now we have good spectral datas
-                //claculate student correlation
+                //now we have good spectral data
+                //calculate student correlation
                 const float abstudgr = std::fabs(studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * kkg, tt));
 
                 if (abstudgr < minstudgr) {  // find the minimum Student

@@ -296,6 +296,10 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     Gtk::Frame *chanMixerMidFrame = Gtk::manage (new Gtk::Frame(M("TP_COLORTONING_MIDTONES")));
     Gtk::Frame *chanMixerShadowsFrame = Gtk::manage (new Gtk::Frame(M("TP_COLORTONING_SHADOWS")));
 
+    chanMixerHLFrame->set_label_align (0.025, 0.5);
+    chanMixerMidFrame->set_label_align (0.025, 0.5);
+    chanMixerShadowsFrame->set_label_align (0.025, 0.5);
+    
     chanMixerHLFrame->add(*chanMixerHLBox);
     chanMixerMidFrame->add(*chanMixerMidBox);
     chanMixerShadowsFrame->add(*chanMixerShadowsBox);
@@ -488,11 +492,11 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
 
     pack_start(*labRegionBox, Gtk::PACK_EXPAND_WIDGET, 4);
 
-    labRegionSaturation->delay = options.adjusterMaxDelay;
-    labRegionSlope->delay = options.adjusterMaxDelay;
-    labRegionOffset->delay = options.adjusterMaxDelay;
-    labRegionPower->delay = options.adjusterMaxDelay;
-    labRegionMaskBlur->delay = options.adjusterMaxDelay;
+    labRegionSaturation->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    labRegionSlope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    labRegionOffset->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    labRegionPower->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    labRegionMaskBlur->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     //------------------------------------------------------------------------
 
     show_all();

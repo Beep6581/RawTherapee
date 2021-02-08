@@ -583,8 +583,10 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     setExpandAlignProperties(headerHBox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
     if (useEnabled) {
+        get_style_context()->add_class("OnOff");
         statusImage = Gtk::manage(new RTImage(disabledImage));
         imageEvBox = Gtk::manage(new Gtk::EventBox());
+        imageEvBox->set_name("MyExpanderStatus");
         imageEvBox->add(*statusImage);
         imageEvBox->set_above_child(true);
         imageEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_enabled_change) );
@@ -592,6 +594,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
         imageEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
         headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
     } else {
+        get_style_context()->add_class("Fold");
         statusImage = Gtk::manage(new RTImage(openedImage));
         headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
     }
@@ -606,7 +609,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
 
     titleEvBox = Gtk::manage(new Gtk::EventBox());
     titleEvBox->set_name("MyExpanderTitle");
-    titleEvBox->set_border_width(2);
+    titleEvBox->set_border_width(0);
     titleEvBox->add(*headerHBox);
     titleEvBox->set_above_child(false);  // this is the key! By making it below the child, they will get the events first.
     titleEvBox->set_can_focus(false);
@@ -634,8 +637,8 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
     headerHBox->set_can_focus(false);
     setExpandAlignProperties(headerHBox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
-
     if (useEnabled) {
+        get_style_context()->add_class("OnOff");
         statusImage = Gtk::manage(new RTImage(disabledImage));
         imageEvBox = Gtk::manage(new Gtk::EventBox());
         imageEvBox->set_name("MyExpanderStatus");
@@ -646,6 +649,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
         imageEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
         headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
     } else {
+        get_style_context()->add_class("Fold");
         statusImage = Gtk::manage(new RTImage(openedImage));
         headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
     }
@@ -654,12 +658,12 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
 
     label = Gtk::manage(new Gtk::Label());
     setExpandAlignProperties(label, true, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    label->set_markup(Glib::ustring("<b>") + escapeHtmlChars(titleLabel) + Glib::ustring("</b>"));
+    label->set_markup(escapeHtmlChars(titleLabel));
     headerHBox->pack_start(*label, Gtk::PACK_EXPAND_WIDGET, 0);
 
     titleEvBox = Gtk::manage(new Gtk::EventBox());
     titleEvBox->set_name("MyExpanderTitle");
-    titleEvBox->set_border_width(2);
+    titleEvBox->set_border_width(0);
     titleEvBox->add(*headerHBox);
     titleEvBox->set_above_child(false);  // this is the key! By make it below the child, they will get the events first.
     titleEvBox->set_can_focus(false);
@@ -736,7 +740,7 @@ void MyExpander::setLevel (int level)
 void MyExpander::setLabel (Glib::ustring newLabel)
 {
     if (label) {
-        label->set_markup(Glib::ustring("<b>") + escapeHtmlChars(newLabel) + Glib::ustring("</b>"));
+        label->set_markup(escapeHtmlChars(newLabel));
     }
 }
 
@@ -764,8 +768,10 @@ void MyExpander::set_inconsistent(bool isInconsistent)
             } else {
                 if (enabled) {
                     statusImage->set(enabledImage->get_surface());
+                    get_style_context()->add_class("enabledTool");
                 } else {
                     statusImage->set(disabledImage->get_surface());
+                    get_style_context()->remove_class("enabledTool");
                 }
             }
         }
@@ -792,6 +798,7 @@ void MyExpander::setEnabled(bool isEnabled)
 
                 if (!inconsistent) {
                     statusImage->set(disabledImage->get_surface());
+                    get_style_context()->remove_class("enabledTool");
                     message.emit();
                 }
             } else {
@@ -799,6 +806,7 @@ void MyExpander::setEnabled(bool isEnabled)
 
                 if (!inconsistent) {
                     statusImage->set(enabledImage->get_surface());
+                    get_style_context()->add_class("enabledTool");
                     message.emit();
                 }
             }
@@ -901,9 +909,11 @@ bool MyExpander::on_enabled_change(GdkEventButton* event)
         if (enabled) {
             enabled = false;
             statusImage->set(disabledImage->get_surface());
+            get_style_context()->remove_class("enabledTool");
         } else {
             enabled = true;
             statusImage->set(enabledImage->get_surface());
+            get_style_context()->add_class("enabledTool");
         }
 
         message.emit();

@@ -46,7 +46,8 @@ MyFlatCurve::MyFlatCurve () :
     deletedPointX(0.0),
     leftTanHandle({0.0, 0.0}),
     rightTanHandle({0.0, 0.0}),
-    draggingElement(false)
+    draggingElement(false),
+    locallabRef(0.0)
 {
 
     lit_point = -1;
@@ -168,6 +169,20 @@ void MyFlatCurve::draw ()
     Gdk::RGBA c;
 
     cr->set_line_width (1.0 * s);
+
+    // Draw Locallab reference value in the background
+    if (locallabRef > 0.0) {
+        cr->set_line_width(1.0);
+        cr->move_to(double(graphX + 1), double(graphY - 1));
+        c = style->get_color(state);
+        cr->set_source_rgba(c.get_red(), c.get_green(), c.get_blue(), 0.2);
+        cr->line_to(double(graphX + 1), double(graphY - 1) -  double(graphH - 2));
+        cr->line_to(double(graphX) + 1.5 + locallabRef*double(graphW -2), double(graphY - 1) - double(graphH - 2));
+        cr->line_to(double(graphX) + 1.5 + locallabRef*double(graphW -2), double(graphY - 1));
+        cr->close_path();
+        cr->fill();
+        cr->stroke();
+    }
 
     // draw the left colored bar
     if (leftBar) {
@@ -1868,6 +1883,35 @@ void MyFlatCurve::stopNumericalAdjustment()
         setDirty(true);
         draw();
     }
+}
+
+void MyFlatCurve::updateLocallabBackground(double ref)
+{
+    locallabRef = ref;
+
+     mcih->pending++;
+
+     idle_register.add(
+        [this]() -> bool
+        {
+            if (mcih->destroyed) {
+                if (mcih->pending == 1) {
+                    delete mcih;
+                } else {
+                    --mcih->pending;
+                }
+
+                 return false;
+            }
+
+             mcih->clearPixmap();
+            mcih->myCurve->queue_draw();
+
+             --mcih->pending;
+
+             return false;
+        }
+    );
 }
 
 void MyFlatCurve::setType (FlatCurveType t)

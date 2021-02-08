@@ -99,10 +99,11 @@ bool EditSubscriber::isPicking() const
 
 EditDataProvider::EditDataProvider() :
     currSubscriber(nullptr),
-    object(0),
+//    object(0),
     pipetteVal1(0.f),
     pipetteVal2(0.f),
     pipetteVal3(0.f),
+    object(0),
     posScreen(-1, -1),
     posImage(-1, -1),
     deltaScreen(0, 0),

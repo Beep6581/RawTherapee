@@ -61,16 +61,16 @@ void fillCurveArrayVib (DiagonalCurve* diagCurve, LUTf &outCurve)
  * copyright (c)2011  Jacques Desmis <jdesmis@gmail.com> and Jean-Christophe Frisch <natureh@free.fr>
  *
  */
-void ImProcFunctions::vibrance (LabImage* lab)
+void ImProcFunctions::vibrance (LabImage* lab, const procparams::VibranceParams &vibranceParams, bool highlight, const Glib::ustring &workingProfile)
 {
-    if (!params->vibrance.enabled) {
+    if (!vibranceParams.enabled) {
         return;
     }
     BENCHFUN
 
 //  int skip=1; //scale==1 ? 1 : 16;
     bool skinCurveIsSet = false;
-    DiagonalCurve* dcurve = new DiagonalCurve (params->vibrance.skintonescurve, CURVES_MIN_POLY_POINTS);
+    DiagonalCurve* dcurve = new DiagonalCurve (vibranceParams.skintonescurve, CURVES_MIN_POLY_POINTS);
 
     if (dcurve) {
         if (!dcurve->isIdentity()) {
@@ -81,7 +81,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
         }
     }
 
-    if (!skinCurveIsSet && !params->vibrance.pastels && !params->vibrance.saturated) {
+    if (!skinCurveIsSet && !vibranceParams.pastels && !vibranceParams.saturated) {
         if (dcurve) {
             delete dcurve;
             dcurve = nullptr;
@@ -96,10 +96,10 @@ void ImProcFunctions::vibrance (LabImage* lab)
     // skin hue curve
     // I use diagonal because I think it's better
 
-    const float chromaPastel = params->vibrance.pastels / 100.f;
-    const float chromaSatur = params->vibrance.saturated / 100.f;
+    const float chromaPastel = vibranceParams.pastels / 100.f;
+    const float chromaSatur = vibranceParams.saturated / 100.f;
     constexpr float p00 = 0.07f;
-    const float limitpastelsatur = (static_cast<float>(params->vibrance.psthreshold.getTopLeft()) / 100.f) * (1.f - p00) + p00;
+    const float limitpastelsatur = (static_cast<float>(vibranceParams.psthreshold.getTopLeft()) / 100.f) * (1.f - p00) + p00;
     const float maxdp = (limitpastelsatur - p00) / 4.f;
     const float maxds = (1.f - limitpastelsatur) / 4.f;
     const float p0 = p00 + maxdp;
@@ -108,7 +108,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
     const float s0 = limitpastelsatur + maxds;
     const float s1 = limitpastelsatur + 2.f * maxds;
     const float s2 = limitpastelsatur + 3.f * maxds;
-    const float transitionweighting = static_cast<float>(params->vibrance.psthreshold.getBottomLeft()) / 100.f;
+    const float transitionweighting = static_cast<float>(vibranceParams.psthreshold.getBottomLeft()) / 100.f;
     float chromamean = 0.f;
 
     if (chromaPastel != chromaSatur) {
@@ -144,6 +144,7 @@ void ImProcFunctions::vibrance (LabImage* lab)
     if (skinCurveIsSet) {
         fillCurveArrayVib (dcurve, skin_curve);
         skin_curve /= ask;
+//        skin_curve *= 2.f;
     }
 
     if (dcurve) {
@@ -151,12 +152,10 @@ void ImProcFunctions::vibrance (LabImage* lab)
         dcurve = nullptr;
     }
 
+    const bool protectskins = vibranceParams.protectskins;
+    const bool avoidcolorshift = vibranceParams.avoidcolorshift;
 
-    const bool highlight = params->toneCurve.hrenabled;//Get the value if "highlight reconstruction" is activated
-    const bool protectskins = params->vibrance.protectskins;
-    const bool avoidcolorshift = params->vibrance.avoidcolorshift;
-
-    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (params->icm.workingProfile);
+    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix (workingProfile);
     //inverse matrix user select
     const float wip[3][3] = {
         {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},

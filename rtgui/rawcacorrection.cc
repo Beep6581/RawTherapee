@@ -47,24 +47,18 @@ RAWCACorr::RAWCACorr () : FoldableToolPanel(this, "rawcacorrection", M("TP_RAWCA
     caAutoiterations->setAdjusterListener (this);
     caAutoiterations->set_tooltip_markup(M("TP_RAWCACORR_AUTOIT_TOOLTIP"));
 
-    if (caAutoiterations->delay < options.adjusterMaxDelay) {
-        caAutoiterations->delay = options.adjusterMaxDelay;
-    }
+    caAutoiterations->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     caRed = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CARED"), -4.0, 4.0, 0.1, 0, icaredL, icaredR));
     caRed->setAdjusterListener (this);
 
-    if (caRed->delay < options.adjusterMaxDelay) {
-        caRed->delay = options.adjusterMaxDelay;
-    }
+    caRed->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     caRed->show();
     caBlue = Gtk::manage(new Adjuster (M("TP_RAWCACORR_CABLUE"), -8.0, 8.0, 0.1, 0, icablueL, icablueR));
     caBlue->setAdjusterListener (this);
 
-    if (caBlue->delay < options.adjusterMaxDelay) {
-        caBlue->delay = options.adjusterMaxDelay;
-    }
+    caBlue->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     caBlue->show();
 

@@ -79,6 +79,7 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname)
 
         // if it is open, return it
         const auto iterator = openEntries.find (fname);
+
         if (iterator != openEntries.end ()) {
 
             auto cachedThumbnail = iterator->second;
@@ -102,9 +103,11 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname)
         CacheImageData imageData;
 
         const auto error = imageData.load (cacheName);
+
         if (error == 0 && imageData.supported) {
 
             thumbnail.reset (new Thumbnail (this, fname, &imageData));
+
             if (!thumbnail->isSupported ()) {
                 thumbnail.reset ();
             }
@@ -115,6 +118,7 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname)
     if (!thumbnail) {
 
         thumbnail.reset (new Thumbnail (this, fname, md5));
+
         if (!thumbnail->isSupported ()) {
             thumbnail.reset ();
         }
@@ -126,6 +130,7 @@ Thumbnail* CacheManager::getEntry (const Glib::ustring& fname)
         MyMutex::MyLock lock (mutex);
 
         const auto iterator = openEntries.find (fname);
+
         if (iterator != openEntries.end ()) {
 
             auto cachedThumbnail = iterator->second;
@@ -148,6 +153,7 @@ void CacheManager::deleteEntry (const Glib::ustring& fname)
 
     // check if it is opened
     auto iterator = openEntries.find (fname);
+
     if (iterator == openEntries.end ()) {
         deleteFiles (fname, getMD5 (fname), true, true);
         return;
@@ -195,6 +201,7 @@ void CacheManager::renameEntry (const std::string& oldfilename, const std::strin
     // check if it is opened
     // if it is open, update md5
     const auto iterator = openEntries.find (oldfilename);
+
     if (iterator == openEntries.end ()) {
         return;
     }
@@ -246,7 +253,9 @@ void CacheManager::clearProfiles () const
     MyMutex::MyLock lock (mutex);
 
     deleteDir ("profiles");
+
 }
+
 
 void CacheManager::deleteDir (const Glib::ustring& dirName) const
 {
@@ -255,6 +264,7 @@ void CacheManager::deleteDir (const Glib::ustring& dirName) const
         Glib::Dir dir (Glib::build_filename (baseDir, dirName));
 
         auto error = 0;
+
         for (auto entry = dir.begin (); entry != dir.end (); ++entry) {
             error |= g_remove (Glib::build_filename (baseDir, dirName, *entry).c_str ());
         }
@@ -325,9 +335,9 @@ std::string CacheManager::getMD5 (const Glib::ustring& fname)
 }
 
 Glib::ustring CacheManager::getCacheFileName (const Glib::ustring& subDir,
-                                              const Glib::ustring& fname,
-                                              const Glib::ustring& fext,
-                                              const Glib::ustring& md5) const
+        const Glib::ustring& fname,
+        const Glib::ustring& fext,
+        const Glib::ustring& md5) const
 {
     const auto dirName = Glib::build_filename (baseDir, subDir);
     const auto baseName = Glib::path_get_basename (fname) + "." + md5;

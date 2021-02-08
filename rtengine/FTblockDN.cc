@@ -43,7 +43,6 @@
 #include "procparams.h"
 #include "rt_math.h"
 #include "sleef.h"
-
 #include "../rtgui/threadutils.h"
 #include "../rtgui/options.h"
 
@@ -437,6 +436,7 @@ void ImProcFunctions::Median_Denoise(float **src, float **dst, float upperBound,
 }
 
 
+
 void ImProcFunctions::Tile_calc(int tilesize, int overlap, int kall, int imwidth, int imheight, int &numtiles_W, int &numtiles_H, int &tilewidth, int &tileheight, int &tileWskip, int &tileHskip)
 
 {
@@ -483,11 +483,9 @@ enum nrquality {QUALITY_STANDARD, QUALITY_HIGH};
 void ImProcFunctions::RGB_denoise(int kall, Imagefloat * src, Imagefloat * dst, Imagefloat * calclum, float * ch_M, float *max_r, float *max_b, bool isRAW, const procparams::DirPyrDenoiseParams & dnparams, const double expcomp, const NoiseCurve & noiseLCurve, const NoiseCurve & noiseCCurve, float &nresi, float &highresi)
 {
 BENCHFUN
-//#ifdef _DEBUG
     MyTime t1e, t2e;
     t1e.set();
 
-//#endif
     if (dnparams.luma == 0 && dnparams.chroma == 0  && !dnparams.median && !noiseLCurve && !noiseCCurve) {
         //nothing to do; copy src to dst or do nothing in case src == dst
         if (src != dst) {
@@ -955,13 +953,8 @@ BENCHFUN
                                         labdn->b[i1][j1] = B_ < 65535.f ? gamcurve[B_] : Color::gammanf(B_ / 65535.f, gam) * 32768.f;
 
                                         if (((i1 | j1) & 1) == 0) {
-                                            if (numTries == 1) {
-                                                noisevarlum[(i1 >> 1) * width2 + (j1 >> 1)] = useNoiseLCurve ? lumcalc[i >> 1][j >> 1] : noisevarL;
-                                                noisevarchrom[(i1 >> 1) * width2 + (j1 >> 1)] = useNoiseCCurve ? maxNoiseVarab * ccalc[i >> 1][j >> 1] : 1.f;
-                                            } else {
-                                                noisevarlum[(i1 >> 1) * width2 + (j1 >> 1)] = lumcalc[i >> 1][j >> 1];
-                                                noisevarchrom[(i1 >> 1) * width2 + (j1 >> 1)] = ccalc[i >> 1][j >> 1];
-                                            }
+                                            noisevarlum[(i1 >> 1) * width2 + (j1 >> 1)] = useNoiseLCurve ? lumcalc[i >> 1][j >> 1] : noisevarL;
+                                            noisevarchrom[(i1 >> 1) * width2 + (j1 >> 1)] = useNoiseCCurve ? maxNoiseVarab * ccalc[i >> 1][j >> 1] : 1.f;
                                         }
 
                                         //end chroma
@@ -993,13 +986,8 @@ BENCHFUN
                                         labdn->b[i1][j1] = (Y - Z);
 
                                         if (((i1 | j1) & 1) == 0) {
-                                            if (numTries == 1) {
-                                                noisevarlum[(i1 >> 1)*width2 + (j1 >> 1)] = useNoiseLCurve ? lumcalc[i >> 1][j >> 1] : noisevarL;
-                                                noisevarchrom[(i1 >> 1)*width2 + (j1 >> 1)] = useNoiseCCurve ? maxNoiseVarab * ccalc[i >> 1][j >> 1] : 1.f;
-                                            } else {
-                                                noisevarlum[(i1 >> 1)*width2 + (j1 >> 1)] = lumcalc[i >> 1][j >> 1];
-                                                noisevarchrom[(i1 >> 1)*width2 + (j1 >> 1)] = ccalc[i >> 1][j >> 1];
-                                            }
+                                            noisevarlum[(i1 >> 1)*width2 + (j1 >> 1)] = useNoiseLCurve ? lumcalc[i >> 1][j >> 1] : noisevarL;
+                                            noisevarchrom[(i1 >> 1)*width2 + (j1 >> 1)] = useNoiseCCurve ? maxNoiseVarab * ccalc[i >> 1][j >> 1] : 1.f;
                                         }
                                     }
                                 }
@@ -1111,9 +1099,6 @@ BENCHFUN
                         }
 
                         if (execwavelet) {//gain time if user choose only median  sliders L <=1  slider chrom master < 1
-                            wavelet_decomposition* Ldecomp;
-                            wavelet_decomposition* adecomp;
-
                             int levwav = 5;
                             float maxreal = max(realred, realblue);
 
@@ -1154,9 +1139,9 @@ BENCHFUN
                             levwav = min(maxlev2, levwav);
 
                             //  if (settings->verbose) printf("levwavelet=%i  noisevarA=%f noisevarB=%f \n",levwav, noisevarab_r, noisevarab_b);
-                            Ldecomp = new wavelet_decomposition(labdn->L[0], labdn->W, labdn->H, levwav, 1, 1, max(1, denoiseNestedLevels));
+                            const std::unique_ptr<wavelet_decomposition> Ldecomp(new wavelet_decomposition(labdn->L[0], labdn->W, labdn->H, levwav, 1, 1, max(1, denoiseNestedLevels)));
 
-                            if (Ldecomp->memoryAllocationFailed) {
+                            if (Ldecomp->memory_allocation_failed()) {
                                 memoryAllocationFailed = true;
                             }
 
@@ -1175,7 +1160,7 @@ BENCHFUN
                                         int Wlvl_L = Ldecomp->level_W(lvl);
                                         int Hlvl_L = Ldecomp->level_H(lvl);
 
-                                        float ** WavCoeffs_L = Ldecomp->level_coeffs(lvl);
+                                        const float* const* WavCoeffs_L = Ldecomp->level_coeffs(lvl);
 
                                         if (!denoiseMethodRgb) {
                                             madL[lvl][dir - 1] = SQR(Mad(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
@@ -1192,9 +1177,9 @@ BENCHFUN
                             float chmaxresid = 0.f;
                             float chmaxresidtemp = 0.f;
 
-                            adecomp = new wavelet_decomposition(labdn->a[0], labdn->W, labdn->H, levwav, 1, 1, max(1, denoiseNestedLevels));
+                            std::unique_ptr<wavelet_decomposition> adecomp(new wavelet_decomposition(labdn->a[0], labdn->W, labdn->H, levwav, 1, 1, max(1, denoiseNestedLevels)));
 
-                            if (adecomp->memoryAllocationFailed) {
+                            if (adecomp->memory_allocation_failed()) {
                                 memoryAllocationFailed = true;
                             }
 
@@ -1226,12 +1211,12 @@ BENCHFUN
                                 adecomp->reconstruct(labdn->a[0]);
                             }
 
-                            delete adecomp;
+                            adecomp.reset();
 
                             if (!memoryAllocationFailed) {
-                                wavelet_decomposition* bdecomp = new wavelet_decomposition(labdn->b[0], labdn->W, labdn->H, levwav, 1, 1, max(1, denoiseNestedLevels));
+                                std::unique_ptr<wavelet_decomposition> bdecomp(new wavelet_decomposition(labdn->b[0], labdn->W, labdn->H, levwav, 1, 1, max(1, denoiseNestedLevels)));
 
-                                if (bdecomp->memoryAllocationFailed) {
+                                if (bdecomp->memory_allocation_failed()) {
                                     memoryAllocationFailed = true;
                                 }
 
@@ -1266,7 +1251,7 @@ BENCHFUN
                                     bdecomp->reconstruct(labdn->b[0]);
                                 }
 
-                                delete bdecomp;
+                                bdecomp.reset();
 
                                 if (!memoryAllocationFailed) {
                                     if (denoiseLuminance) {
@@ -1306,8 +1291,6 @@ BENCHFUN
                                     }
                                 }
                             }
-
-                            delete Ldecomp;
                         }
 
                         if (!memoryAllocationFailed) {
@@ -2035,14 +2018,10 @@ BENCHFUN
         delete[] ccalc;
     }
 
-//#ifdef _DEBUG
     if (settings->verbose) {
         t2e.set();
         printf("Denoise performed in %d usec:\n", t2e.etime(t1e));
     }
-
-//#endif
-
 }//end of main RGB_denoise
 
 
@@ -2121,26 +2100,26 @@ float ImProcFunctions::Mad(const float * DataList, const int datalen)
     }
 
     //computes Median Absolute Deviation
-    //DataList values should mostly have abs val < 256 because we are in Lab mode
-    int histo[256] ALIGNED64 = {0};
+    //DataList values should mostly have abs val < 256 because we are in Lab mode (32768)
+    int histo[32768] ALIGNED64 = {0};
 
     //calculate histogram of absolute values of wavelet coeffs
     for (int i = 0; i < datalen; ++i) {
-        histo[static_cast<int>(rtengine::min(255.f, fabsf(DataList[i])))]++;
+        histo[static_cast<int>(rtengine::min(32768.f, fabsf(DataList[i])))]++;
     }
 
     //find median of histogram
-    int median = 0, count = 0;
+    int lmedian = 0, count = 0;
 
     while (count < datalen / 2) {
-        count += histo[median];
-        ++median;
+        count += histo[lmedian];
+        ++lmedian;
     }
 
-    int count_ = count - histo[median - 1];
+    int count_ = count - histo[lmedian - 1];
 
     // interpolate
-    return (((median - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745f);
+    return ((lmedian - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745f;
 }
 
 float ImProcFunctions::MadRgb(const float * DataList, const int datalen)
@@ -2163,18 +2142,18 @@ float ImProcFunctions::MadRgb(const float * DataList, const int datalen)
     }
 
     //find median of histogram
-    int median = 0, count = 0;
+    int lmedian = 0, count = 0;
 
     while (count < datalen / 2) {
-        count += histo[median];
-        ++median;
+        count += histo[lmedian];
+        ++lmedian;
     }
 
-    int count_ = count - histo[median - 1];
+    int count_ = count - histo[lmedian - 1];
 
     // interpolate
     delete[] histo;
-    return (((median - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745f);
+    return ((lmedian - 1) + (datalen / 2 - count_) / (static_cast<float>(count - count_))) / 0.6745f;
 }
 
 
@@ -2194,7 +2173,7 @@ void ImProcFunctions::Noise_residualAB(const wavelet_decomposition &WaveletCoeff
             const int Wlvl_ab = WaveletCoeffs_ab.level_W(lvl);
             const int Hlvl_ab = WaveletCoeffs_ab.level_H(lvl);
 
-            float ** WavCoeffs_ab = WaveletCoeffs_ab.level_coeffs(lvl);
+            const float* const* WavCoeffs_ab = WaveletCoeffs_ab.level_coeffs(lvl);
             const float madC = SQR(denoiseMethodRgb ? MadRgb(WavCoeffs_ab[dir], Wlvl_ab * Hlvl_ab) : Mad(WavCoeffs_ab[dir], Wlvl_ab * Hlvl_ab));
 
             resid += madC;
@@ -2209,13 +2188,17 @@ void ImProcFunctions::Noise_residualAB(const wavelet_decomposition &WaveletCoeff
     chmaxresid = maxresid;
 }
 
-bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(const wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3], float * vari, int edge, int denoiseNestedLevels)
+bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition& WaveletCoeffs_L, float *noisevarlum, float madL[8][3], float * vari, int edge, int denoiseNestedLevels)
 {
     int maxlvl = min(WaveletCoeffs_L.maxlevel(), 5);
     const float eps = 0.01f;
 
     if (edge == 1 || edge == 3 || edge == 4 || edge == 5) {
         maxlvl = 4;    //for refine denoise edge wavelet
+    }
+
+    if (edge == 6) {
+        maxlvl = 6;    //for wavelet denoise
     }
 
     if (edge == 2) {
@@ -2260,7 +2243,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(const wavelet_decomposition &W
                     int Wlvl_L = WaveletCoeffs_L.level_W(lvl);
                     int Hlvl_L = WaveletCoeffs_L.level_H(lvl);
 
-                    float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
+                    float* const* WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
 
                     if (lvl == maxlvl - 1) {
                         //  int edge = 0;
@@ -2286,7 +2269,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(const wavelet_decomposition &W
                         for (int i = 0; i < Hlvl_L * Wlvl_L; ++i) {
                             nvl[i] = 0.f;
                         }
-                        if ((edge == 1 || edge == 2 || edge == 3  || edge == 5) && vari) {
+                        if ((edge == 1 || edge == 2 || edge == 3  || edge == 5 || edge == 6) && vari) {
                             //  nvl = blurBuffer;       // we need one buffer, but fortunately we don't have to allocate a new one because we can use blurBuffer
                             if ((edge == 1 || edge == 3)) {
                                 for (int i = 0; i < Hlvl_L * Wlvl_L; ++i) {
@@ -2294,7 +2277,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(const wavelet_decomposition &W
                                 }
                             }
 
-                            if (edge == 2 || edge == 4 || edge == 5) {
+                            if (edge == 2 || edge == 4 || edge == 5 || edge == 6) {
                                 for (int i = 0; i < Hlvl_L * Wlvl_L; ++i) {
                                     nvl[i] = vari[lvl] * SQR(noisevarlum[i]);
                                 }
@@ -2392,10 +2375,15 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(const wavelet_decomposition &W
 }
 
 
-bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(const wavelet_decomposition &WaveletCoeffs_L, const wavelet_decomposition &WaveletCoeffs_ab, float *noisevarchrom, float madL[8][3], float *variC, int local, float noisevar_ab, const bool useNoiseCCurve,  bool autoch, bool denoiseMethodRgb, int denoiseNestedLevels)
-
+bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposition& WaveletCoeffs_L, wavelet_decomposition& WaveletCoeffs_ab, float *noisevarchrom, float madL[8][3], float *variC, int local, float noisevar_ab, const bool useNoiseCCurve,  bool autoch, bool denoiseMethodRgb, int denoiseNestedLevels)
 {
     int maxlvl = WaveletCoeffs_L.maxlevel();
+    printf("Ftblockdn ab bishrink\n");
+
+    if (local == 1) {
+        maxlvl = 6;    //for local denoise
+    }
+
 
     if (local == 2) {
         maxlvl = 7;    //for local denoise
@@ -2449,7 +2437,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(const wavelet_decomposition &
                     // compute median absolute deviation (MAD) of detail coefficients as robust noise estimator
                     int Wlvl_ab = WaveletCoeffs_ab.level_W(lvl);
                     int Hlvl_ab = WaveletCoeffs_ab.level_H(lvl);
-                    float ** WavCoeffs_ab = WaveletCoeffs_ab.level_coeffs(lvl);
+                    const float* const* WavCoeffs_ab = WaveletCoeffs_ab.level_coeffs(lvl);
 
                     if (!denoiseMethodRgb) {
                         madab[lvl][dir - 1] = SQR(Mad(WavCoeffs_ab[dir], Wlvl_ab * Hlvl_ab));
@@ -2468,10 +2456,11 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(const wavelet_decomposition &
                     int Wlvl_ab = WaveletCoeffs_ab.level_W(lvl);
                     int Hlvl_ab = WaveletCoeffs_ab.level_H(lvl);
 
-                    float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
-                    float ** WavCoeffs_ab = WaveletCoeffs_ab.level_coeffs(lvl);
+                    float* const* WavCoeffs_L = WaveletCoeffs_L.level_coeffs(lvl);
+                    float* const* WavCoeffs_ab = WaveletCoeffs_ab.level_coeffs(lvl);
 
                     if (lvl == maxlvl - 1) {
+                        //printf("Shrink ab bis\n");
                         ShrinkAllAB(WaveletCoeffs_L, WaveletCoeffs_ab, buffer, lvl, dir, noisevarchrom, noisevar_ab, useNoiseCCurve, autoch, denoiseMethodRgb, madL[lvl], nullptr, 0, madab[lvl], true);
                     } else {
                         //simple wavelet shrinkage
@@ -2563,7 +2552,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(const wavelet_decomposition &
 }
 
 
-bool ImProcFunctions::WaveletDenoiseAllL(const wavelet_decomposition &WaveletCoeffs_L, float *noisevarlum, float madL[8][3], float * vari, int edge, int denoiseNestedLevels)//mod JD
+bool ImProcFunctions::WaveletDenoiseAllL(wavelet_decomposition& WaveletCoeffs_L, float *noisevarlum, float madL[8][3], float * vari, int edge, int denoiseNestedLevels)//mod JD
 
 {
 
@@ -2571,6 +2560,10 @@ bool ImProcFunctions::WaveletDenoiseAllL(const wavelet_decomposition &WaveletCoe
 
     if (edge == 1 || edge == 3 || edge  == 5) {
         maxlvl = 4;    //for refine denoise edge wavelet
+    }
+
+    if (edge == 6) {
+        maxlvl = 6;    //for wavelet denoise
     }
 
     if (edge == 2) {
@@ -2588,7 +2581,6 @@ bool ImProcFunctions::WaveletDenoiseAllL(const wavelet_decomposition &WaveletCoe
             maxHL = WaveletCoeffs_L.level_H(lvl);
         }
     }
-
     bool memoryAllocationFailed = false;
 #ifdef _OPENMP
     #pragma omp parallel num_threads(denoiseNestedLevels) if (denoiseNestedLevels>1)
@@ -2624,12 +2616,16 @@ bool ImProcFunctions::WaveletDenoiseAllL(const wavelet_decomposition &WaveletCoe
 }
 
 
-bool ImProcFunctions::WaveletDenoiseAllAB(const wavelet_decomposition &WaveletCoeffs_L, const wavelet_decomposition &WaveletCoeffs_ab,
+bool ImProcFunctions::WaveletDenoiseAllAB(wavelet_decomposition& WaveletCoeffs_L, wavelet_decomposition& WaveletCoeffs_ab,
         float *noisevarchrom, float madL[8][3],  float *variC, int local, float noisevar_ab, const bool useNoiseCCurve, bool autoch, bool denoiseMethodRgb, int denoiseNestedLevels)//mod JD
 
 {
-
     int maxlvl = WaveletCoeffs_L.maxlevel();
+
+    if (local == 1) {
+        maxlvl = 6;    //for local denoise
+    }
+
 
     if (local == 2) {
         maxlvl = 7;    //for local denoise
@@ -2688,7 +2684,7 @@ bool ImProcFunctions::WaveletDenoiseAllAB(const wavelet_decomposition &WaveletCo
 
 
 
-void ImProcFunctions::ShrinkAllL(const wavelet_decomposition &WaveletCoeffs_L, float **buffer, int level, int dir,
+void ImProcFunctions::ShrinkAllL(wavelet_decomposition& WaveletCoeffs_L, float **buffer, int level, int dir,
         float *noisevarlum, float * madL, float * vari, int edge)
 
 {
@@ -2702,7 +2698,7 @@ void ImProcFunctions::ShrinkAllL(const wavelet_decomposition &WaveletCoeffs_L, f
     const int W_L = WaveletCoeffs_L.level_W(level);
     const int H_L = WaveletCoeffs_L.level_H(level);
 
-    float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(level);
+    float* const* WavCoeffs_L = WaveletCoeffs_L.level_coeffs(level);
     const float mad_L = madL[dir - 1] ;
     const float levelFactor = mad_L * 5.f / static_cast<float>(level + 1);
 
@@ -2713,15 +2709,15 @@ void ImProcFunctions::ShrinkAllL(const wavelet_decomposition &WaveletCoeffs_L, f
         nvl[i] = 0.f;
     }
 
-    if ((edge == 1 || edge == 2 || edge == 3 || edge == 5) && vari) {
+    if ((edge == 1 || edge == 2 || edge == 3 || edge == 5 || edge == 6) && vari) {
         //  nvl = blurBuffer;       // we need one buffer, but fortunately we don't have to allocate a new one because we can use blurBuffer
         if ((edge == 1 || edge == 3)) {
             for (int i = 0; i < W_L * H_L; ++i) {
                 nvl[i] = vari[level]; //* SQR(1.f + 4.f * noisevarchrom[p]);
             }
-        }
+        } 
 
-        if (edge == 2 || edge == 4 || edge == 5) {
+        if (edge == 2 || edge == 4 || edge == 5 || edge == 6) {
             for (int i = 0; i < W_L * H_L; ++i) {
                 nvl[i] = vari[level] * SQR(noisevarlum[i]);
             }
@@ -2779,7 +2775,7 @@ void ImProcFunctions::ShrinkAllL(const wavelet_decomposition &WaveletCoeffs_L, f
 }
 
 
-void ImProcFunctions::ShrinkAllAB(const wavelet_decomposition & WaveletCoeffs_L, const wavelet_decomposition & WaveletCoeffs_ab, float **buffer, int level, int dir,
+void ImProcFunctions::ShrinkAllAB(wavelet_decomposition& WaveletCoeffs_L, wavelet_decomposition& WaveletCoeffs_ab, float **buffer, int level, int dir,
         float * noisevarchrom, float noisevar_ab,  const bool useNoiseCCurve, bool autoch,
         bool denoiseMethodRgb, float * madL,  float * variC, int local, float * madaab,  bool madCalculated)
 
@@ -2798,8 +2794,8 @@ void ImProcFunctions::ShrinkAllAB(const wavelet_decomposition & WaveletCoeffs_L,
     int W_ab = WaveletCoeffs_ab.level_W(level);
     int H_ab = WaveletCoeffs_ab.level_H(level);
 
-    float ** WavCoeffs_L = WaveletCoeffs_L.level_coeffs(level);
-    float ** WavCoeffs_ab = WaveletCoeffs_ab.level_coeffs(level);
+    float* const* WavCoeffs_L = WaveletCoeffs_L.level_coeffs(level);
+    float* const* WavCoeffs_ab = WaveletCoeffs_ab.level_coeffs(level);
 
     float madab;
     float mad_L = madL[dir - 1];
@@ -2918,7 +2914,7 @@ void ImProcFunctions::ShrinkAllAB(const wavelet_decomposition & WaveletCoeffs_L,
     delete [] nvc;
 }
 
-void ImProcFunctions::ShrinkAll_info(float ** WavCoeffs_a, float ** WavCoeffs_b,
+void ImProcFunctions::ShrinkAll_info(const float* const* WavCoeffs_a, const float* const* WavCoeffs_b,
         int W_ab, int H_ab, float **noisevarlum, float **noisevarchrom, float **noisevarhue, float & chaut, int &Nb, float & redaut, float & blueaut,
         float & maxredaut, float & maxblueaut, float & minredaut, float & minblueaut, int schoice, int lvl, float & chromina, float & sigma, float & lumema, float & sigma_L, float & redyel, float & skinc, float & nsknc,
         float & maxchred, float & maxchblue, float & minchred, float & minchblue, int &nb, float & chau, float & chred, float & chblue, bool denoiseMethodRgb)
@@ -3048,8 +3044,8 @@ void ImProcFunctions::WaveletDenoiseAll_info(int levwav, const wavelet_decomposi
         int Wlvl_ab = WaveletCoeffs_a.level_W(lvl);
         int Hlvl_ab = WaveletCoeffs_a.level_H(lvl);
 
-        float ** WavCoeffs_a = WaveletCoeffs_a.level_coeffs(lvl);
-        float ** WavCoeffs_b = WaveletCoeffs_b.level_coeffs(lvl);
+        const float* const* WavCoeffs_a = WaveletCoeffs_a.level_coeffs(lvl);
+        const float* const* WavCoeffs_b = WaveletCoeffs_b.level_coeffs(lvl);
 
         ShrinkAll_info(WavCoeffs_a, WavCoeffs_b, Wlvl_ab, Hlvl_ab,
                        noisevarlum, noisevarchrom, noisevarhue, chaut, Nb, redaut, blueaut, maxredaut, maxblueaut, minredaut, minblueaut,

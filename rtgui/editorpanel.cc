@@ -21,6 +21,7 @@
 
 #include <iostream>
 
+#include "../rtengine/array2D.h"
 #include "../rtengine/imagesource.h"
 #include "../rtengine/iccstore.h"
 #include "batchqueue.h"
@@ -46,6 +47,8 @@
 #endif
 
 using namespace rtengine::procparams;
+
+using ScopeType = Options::ScopeType;
 
 namespace
 {
@@ -470,7 +473,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
       iBeforeLockON (nullptr), iBeforeLockOFF (nullptr), previewHandler (nullptr), beforePreviewHandler (nullptr),
       beforeIarea (nullptr), beforeBox (nullptr), afterBox (nullptr), beforeLabel (nullptr), afterLabel (nullptr),
       beforeHeaderBox (nullptr), afterHeaderBox (nullptr), parent (nullptr), parentWindow (nullptr), openThm (nullptr),
-      selectedFrame(0), isrc (nullptr), ipc (nullptr), beforeIpc (nullptr), err (0), isProcessing (false)
+      selectedFrame(0), isrc (nullptr), ipc (nullptr), beforeIpc (nullptr), err (0), isProcessing (false),
+      histogram_observable(nullptr), histogram_scope_type(ScopeType::NONE)
 {
 
     epih = new EditorPanelIdleHelper;
@@ -497,6 +501,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
 
     profilep = Gtk::manage (new ProfilePanel ());
     ppframe = Gtk::manage(new Gtk::Frame());
+    ppframe->set_label_align(0.025, 0.5);
     ppframe->set_name ("ProfilePanel");
     ppframe->add (*profilep);
     ppframe->set_label (M ("PROFILEPANEL_LABEL"));
@@ -505,6 +510,9 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     navigator = Gtk::manage (new Navigator ());
     navigator->previewWindow->set_size_request (-1, 150 * RTScalable::getScale());
     leftsubbox->pack_start (*navigator, Gtk::PACK_SHRINK, 2);
+    
+    Gtk::Separator* historyseparator = Gtk::manage (new Gtk::Separator (Gtk::ORIENTATION_HORIZONTAL));
+    leftsubbox->pack_start (*historyseparator, Gtk::PACK_SHRINK, 2);
 
     history = Gtk::manage (new History ());
     leftsubbox->pack_start (*history);
@@ -773,6 +781,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     hpanedr->set_name ("EditorRightPaned");
     leftbox->reference ();
     vboxright->reference ();
+    vboxright->set_name ("EditorModules");
 
     if (options.showHistory) {
         hpanedl->pack1 (*leftbox, false, false);
@@ -954,6 +963,13 @@ void EditorPanel::writeToolExpandedStatus (std::vector<int> &tpOpen)
 {
     if (tpc) {
         tpc->writeToolExpandedStatus (tpOpen);
+    }
+}
+
+void EditorPanel::updateShowtooltipVisibility (bool showtooltip)
+{
+    if (tpc) {
+        tpc->updateShowtooltipVisibility (showtooltip);
     }
 }
 
@@ -1674,6 +1690,11 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
                 case GDK_KEY_F5:
                     openThm->openDefaultViewer (3);
                     return true;
+
+                case GDK_KEY_f:
+                case GDK_KEY_F:
+                    // No action is performed to avoid Gtk-CRITICAL due to Locallab treeview when treeview isn't focused
+                    return true;
             }
         } //if (!ctrl)
     } //if (!alt)
@@ -1735,6 +1756,7 @@ void EditorPanel::procParamsChanged (Thumbnail* thm, int whoChangedIt)
         PartialProfile pp (true);
         pp.set (true);
         * (pp.pparams) = openThm->getProcParams();
+        pp.pedited->locallab.spots.resize(pp.pparams->locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
         tpc->profileChange (&pp, rtengine::EvProfileChangeNotification, M ("PROGRESSDLG_PROFILECHANGEDINBROWSER"));
         pp.deleteInstance();
     }
@@ -1782,7 +1804,7 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImagefloat*> *pc,
 
 bool EditorPanel::idle_imageSaved (ProgressConnector<int> *pc, rtengine::IImagefloat* img, Glib::ustring fname, SaveFormat sf, rtengine::procparams::ProcParams &pparams)
 {
-    img->free ();
+    delete img;
 
     if (! pc->returnValue() ) {
         openThm->imageDeveloped ();
@@ -1982,7 +2004,7 @@ bool EditorPanel::saveImmediately (const Glib::ustring &filename, const SaveForm
         err = 1;
     }
 
-    img->free();
+    delete img;
     return !err;
 }
 
@@ -2044,7 +2066,7 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
         }
 
         if (tries == 1000) {
-            img->free ();
+            delete img;
             return false;
         }
 
@@ -2065,7 +2087,7 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
 
 bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagefloat* img, Glib::ustring filename)
 {
-    img->free ();
+    delete img;
     int errore = pc->returnValue();
     setProgressState(false);
     delete pc;
@@ -2232,14 +2254,92 @@ void EditorPanel::histogramChanged(
     const LUTu& histGreenRaw,
     const LUTu& histBlueRaw,
     const LUTu& histChroma,
-    const LUTu& histLRETI
+    const LUTu& histLRETI,
+    int vectorscopeScale,
+    const array2D<int>& vectorscopeHC,
+    const array2D<int>& vectorscopeHS,
+    int waveformScale,
+    const array2D<int>& waveformRed,
+    const array2D<int>& waveformGreen,
+    const array2D<int>& waveformBlue,
+    const array2D<int>& waveformLuma
 )
 {
     if (histogramPanel) {
-        histogramPanel->histogramChanged(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw);
+        histogramPanel->histogramChanged(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, vectorscopeScale, vectorscopeHC, vectorscopeHS, waveformScale, waveformRed, waveformGreen, waveformBlue, waveformLuma);
     }
 
     tpc->updateCurveBackgroundHistogram(histToneCurve, histLCurve, histCCurve, histLCAM, histCCAM, histRed, histGreen, histBlue, histLuma, histLRETI);
+}
+
+void EditorPanel::setObservable(rtengine::HistogramObservable* observable)
+{
+    histogram_observable = observable;
+}
+
+bool EditorPanel::updateHistogram(void) const
+{
+    return histogram_scope_type == ScopeType::HISTOGRAM
+        || histogram_scope_type == ScopeType::NONE;
+}
+
+bool EditorPanel::updateHistogramRaw(void) const
+{
+    return histogram_scope_type == ScopeType::HISTOGRAM_RAW
+        || histogram_scope_type == ScopeType::NONE;
+}
+
+bool EditorPanel::updateVectorscopeHC(void) const
+{
+    return
+        histogram_scope_type == ScopeType::VECTORSCOPE_HC
+        || histogram_scope_type == ScopeType::NONE;
+}
+
+bool EditorPanel::updateVectorscopeHS(void) const
+{
+    return
+        histogram_scope_type == ScopeType::VECTORSCOPE_HS
+        || histogram_scope_type == ScopeType::NONE;
+}
+
+bool EditorPanel::updateWaveform(void) const
+{
+    return histogram_scope_type == ScopeType::WAVEFORM
+        || histogram_scope_type == ScopeType::PARADE
+        || histogram_scope_type == ScopeType::NONE;
+}
+
+void EditorPanel::scopeTypeChanged(ScopeType new_type)
+{
+    histogram_scope_type = new_type;
+
+    if (!histogram_observable) {
+        return;
+    }
+
+    // Make sure the new scope is updated since we only actively update the
+    // current scope.
+    switch (new_type) {
+        case ScopeType::HISTOGRAM:
+            histogram_observable->requestUpdateHistogram();
+            break;
+        case ScopeType::HISTOGRAM_RAW:
+            histogram_observable->requestUpdateHistogramRaw();
+            break;
+        case ScopeType::VECTORSCOPE_HC:
+            histogram_observable->requestUpdateVectorscopeHC();
+            break;
+        case ScopeType::VECTORSCOPE_HS:
+            histogram_observable->requestUpdateVectorscopeHS();
+            break;
+        case ScopeType::PARADE:
+        case ScopeType::WAVEFORM:
+            histogram_observable->requestUpdateWaveform();
+            break;
+        case ScopeType::NONE:
+            break;
+    }
 }
 
 bool EditorPanel::CheckSidePanelsVisibility()
@@ -2356,6 +2456,10 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
             vboxright->set_position(options.histogramHeight);
             histogramPanel->reorder (Gtk::POS_RIGHT);
             break;
+    }
+
+    if (histogramPanel) {
+        histogramPanel->setPanelListener(this);
     }
 
     iareapanel->imageArea->setPointerMotionHListener (histogramPanel);

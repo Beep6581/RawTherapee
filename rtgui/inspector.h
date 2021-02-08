@@ -47,11 +47,35 @@ private:
     rtengine::Coord center;
     std::vector<InspectorBuffer*> images;
     InspectorBuffer* currImage;
-    double zoom;
+    bool scaled;  // fit image into window
+    double scale; // current scale
+    double zoomScale, zoomScaleBegin; // scale during zoom
+    rtengine::Coord centerBegin, dcenterBegin; // center during zoom
     bool active;
+    bool pinned;
+    bool dirty;
+    bool initialized;
+    bool fullscreen;  // window is shown in fullscreen mode
 
     sigc::connection delayconn;
     Glib::ustring next_image_path;
+    rtengine::Coord2D next_image_pos;
+
+    Gtk::Window *window;
+    bool on_key_release(GdkEventKey *event);
+    bool on_key_press(GdkEventKey *event);
+
+    rtengine::Coord button_pos;
+    bool on_button_press_event(GdkEventButton *event) override;
+    bool on_motion_notify_event(GdkEventMotion *event) override;
+
+    bool on_scroll_event(GdkEventScroll *event) override;
+    void moveCenter(int delta_x, int delta_y, int imW, int imH, int deviceScale);
+
+    Glib::RefPtr<Gtk::GestureZoom> gestureZoom;
+    void beginZoom(double x, double y);
+    void on_zoom_begin(GdkEventSequence *);
+    void on_zoom_scale_changed(double zscale);
 
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
     void deleteBuffers();
@@ -61,6 +85,11 @@ private:
 public:
     Inspector();
     ~Inspector() override;
+
+    /** @brief Show or hide window
+     * @param scaled fit image into window
+     */
+    void showWindow(bool scaled, bool fullscreen = true);
 
     /** @brief Mouse movement to a new position
      * @param pos Location of the mouse, in percentage (i.e. [0;1] range) relative to the full size image ; -1,-1 == out of the image

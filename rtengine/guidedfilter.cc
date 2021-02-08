@@ -3,7 +3,6 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2018 Alberto Griggio <alberto.griggio@gmail.com>
- *  Optimized 2019 Ingo Weyrich <heckflosse67@gmx.de>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,10 +15,10 @@
  *  GNU General Public License for more details.
  *
  *  You should have received a copy of the GNU General Public License
- *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
-*/
+ *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-/*
+/**
  * This is a Fast Guided Filter implementation, derived directly from the
  * pseudo-code of the paper:
  *
@@ -27,22 +26,36 @@
  * by Kaiming He, Jian Sun
  *
  * available at https://arxiv.org/abs/1505.00996
-*/
+ */
 
 #include "array2D.h"
 #include "boxblur.h"
 #include "guidedfilter.h"
-#include "imagefloat.h"
+#include "boxblur.h"
+#include "sleef.h"
 #include "rescale.h"
+#include "imagefloat.h"
 
-#define BENCHMARK
-#include "StopWatch.h"
+namespace rtengine {
 
-namespace rtengine
-{
+#if 0
+#  define DEBUG_DUMP(arr)                                                 \
+    do {                                                                \
+        Imagefloat im(arr.width(), arr.height());                      \
+        const char *out = "/tmp/" #arr ".tif";                     \
+        for (int y = 0; y < im.getHeight(); ++y) {                      \
+            for (int x = 0; x < im.getWidth(); ++x) {                   \
+                im.r(y, x) = im.g(y, x) = im.b(y, x) = arr[y][x] * 65535.f; \
+            }                                                           \
+        }                                                               \
+        im.saveTIFF(out, 16);                                           \
+    } while (false)
+#else
+#  define DEBUG_DUMP(arr)
+#endif
 
-namespace
-{
+
+namespace {
 
 int calculate_subsampling(int w, int h, int r)
 {
@@ -65,54 +78,76 @@ int calculate_subsampling(int w, int h, int r)
 
 } // namespace
 
+
 void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2D<float> &dst, int r, float epsilon, bool multithread, int subsampling)
 {
-    enum Op {MUL, DIVEPSILON, SUBMUL};
+
+    const int W = src.getWidth();
+    const int H = src.getHeight();
+
+    if (subsampling <= 0) {
+        subsampling = calculate_subsampling(W, H, r);
+    }
+
+    enum Op { MUL, DIVEPSILON, ADD, SUB, ADDMUL, SUBMUL };
 
     const auto apply =
-#ifdef _OPENMP
-        [multithread, epsilon](Op op, array2D<float> &res, const array2D<float> &a, const array2D<float> &b, const array2D<float> &c=array2D<float>()) -> void
-#else
-        // removed multithread to fix clang warning on msys2 clang builds, which don't support OpenMp
-        [epsilon](Op op, array2D<float> &res, const array2D<float> &a, const array2D<float> &b, const array2D<float> &c=array2D<float>()) -> void
-#endif
+        [=](Op op, array2D<float> &res, const array2D<float> &a, const array2D<float> &b, const array2D<float> &c=array2D<float>()) -> void
         {
-            const int w = res.width();
-            const int h = res.height();
+            const int w = res.getWidth();
+            const int h = res.getHeight();
             
 #ifdef _OPENMP
             #pragma omp parallel for if (multithread)
 #endif
             for (int y = 0; y < h; ++y) {
                 for (int x = 0; x < w; ++x) {
+                    float r;
+                    float aa = a[y][x];
+                    float bb = b[y][x];
                     switch (op) {
-                        case MUL:
-                            res[y][x] = a[y][x] * b[y][x];
-                            break;
-                        case DIVEPSILON:
-                            res[y][x] = a[y][x] / (b[y][x] + epsilon); // note: the value of epsilon intentionally has an impact on the result. It is not only to avoid divisions by zero
-                            break;
-                        case SUBMUL:
-                            res[y][x] = c[y][x] - (a[y][x] * b[y][x]);
-                            break;
-                        default:
-                            assert(false);
-                            res[y][x] = 0;
-                            break;
+                    case MUL:
+                        r = aa * bb;
+                        break;
+                    case DIVEPSILON:
+                        r = aa / (bb + epsilon);
+                        break;
+                    case ADD:
+                        r = aa + bb;
+                        break;
+                    case SUB:
+                        r = aa - bb;
+                        break;
+                    case ADDMUL:
+                        r = aa * bb + c[y][x];
+                        break;
+                    case SUBMUL:
+                        r = c[y][x] - (aa * bb);
+                        break;
+                    default:
+                        assert(false);
+                        r = 0;
+                        break;
                     }
+                    res[y][x] = r;
                 }
             }
         };
 
+    // use the terminology of the paper (Algorithm 2)
+    const array2D<float> &I = guide;
+    const array2D<float> &p = src;
+    array2D<float> &q = dst;
+
     const auto f_subsample =
-        [multithread](array2D<float> &d, const array2D<float> &s) -> void
+        [=](array2D<float> &d, const array2D<float> &s) -> void
         {
-            if (d.width() == s.width() && d.height() == s.height()) {
+            if (d.getWidth() == s.getWidth() && d.getHeight() == s.getHeight()) {
 #ifdef _OPENMP
-                #pragma omp parallel for if (multithread)
+#               pragma omp parallel for if (multithread)
 #endif
-                for (int y = 0; y < s.height(); ++y) {
-                    for (int x = 0; x < s.width(); ++x) {
+                for (int y = 0; y < s.getHeight(); ++y) {
+                    for (int x = 0; x < s.getWidth(); ++x) {
                         d[y][x] = s[y][x];
                     }
                 }
@@ -121,84 +156,125 @@ void guidedFilter(const array2D<float> &guide, const array2D<float> &src, array2
             }
         };
 
+    // const auto f_upsample = f_subsample;
+    
+    const size_t w = W / subsampling;
+    const size_t h = H / subsampling;
+
     const auto f_mean =
         [multithread](array2D<float> &d, array2D<float> &s, int rad) -> void
         {
-            rad = LIM(rad, 0, (min(s.width(), s.height()) - 1) / 2 - 1);
-            boxblur(static_cast<float**>(s), static_cast<float**>(d), rad, s.width(), s.height(), multithread);
+            rad = LIM(rad, 0, (min(s.getWidth(), s.getHeight()) - 1) / 2 - 1);
+           // boxblur(s, d, rad, s.getWidth(), s.getHeight(), multithread);
+            boxblur(static_cast<float**>(s), static_cast<float**>(d), rad, s.getWidth(), s.getHeight(), multithread);
         };
-
-    const int W = src.width();
-    const int H = src.height();
-
-    if (subsampling <= 0) {
-        subsampling = calculate_subsampling(W, H, r);
-    }
-
-    const size_t w = W / subsampling;
-    const size_t h = H / subsampling;
-    const float r1 = float(r) / subsampling;
 
     array2D<float> I1(w, h);
     array2D<float> p1(w, h);
 
-    f_subsample(I1, guide);
+    f_subsample(I1, I);
+    f_subsample(p1, p);
 
-    if (&guide == &src) {
-        f_mean(p1, I1, r1);
+    DEBUG_DUMP(I);
+    DEBUG_DUMP(p);
+    DEBUG_DUMP(I1);
+    DEBUG_DUMP(p1);
 
-        apply(MUL, I1, I1, I1);        // I1 = I1 * I1
+    float r1 = float(r) / subsampling;
 
-        f_mean(I1, I1, r1);
+    array2D<float> meanI(w, h);
+    f_mean(meanI, I1, r1);
+    DEBUG_DUMP(meanI);
 
-        apply(SUBMUL, I1, p1, p1, I1); // I1 = I1 - p1 * p1
-        apply(DIVEPSILON, I1, I1, I1); // I1 = I1 / (I1 + epsilon)
-        apply(SUBMUL, p1, I1, p1, p1); // p1 = p1 - I1 * p1
+    array2D<float> meanp(w, h);
+    f_mean(meanp, p1, r1);
+    DEBUG_DUMP(meanp);
 
-    } else {
-        f_subsample(p1, src);
+    array2D<float> &corrIp = p1;
+    apply(MUL, corrIp, I1, p1);
+    f_mean(corrIp, corrIp, r1);
+    DEBUG_DUMP(corrIp);
 
-        array2D<float> meanI(w, h);
-        f_mean(meanI, I1, r1);
+    array2D<float> &corrI = I1;
+    apply(MUL, corrI, I1, I1);
+    f_mean(corrI, corrI, r1);
+    DEBUG_DUMP(corrI);
 
-        array2D<float> meanp(w, h);
-        f_mean(meanp, p1, r1);
+    array2D<float> &varI = corrI;
+    apply(SUBMUL, varI, meanI, meanI, corrI);
+    DEBUG_DUMP(varI);
 
-        apply(MUL, p1, I1, p1);
+    array2D<float> &covIp = corrIp;
+    apply(SUBMUL, covIp, meanI, meanp, corrIp);
+    DEBUG_DUMP(covIp);
 
-        f_mean(p1, p1, r1);
+    array2D<float> &a = varI;
+    apply(DIVEPSILON, a, covIp, varI);
+    DEBUG_DUMP(a);
 
-        apply(MUL, I1, I1, I1);
+    array2D<float> &b = covIp;
+    apply(SUBMUL, b, a, meanI, meanp);
+    DEBUG_DUMP(b);
 
-        f_mean(I1, I1, r1);
+    array2D<float> &meana = a;
+    f_mean(meana, a, r1);
+    DEBUG_DUMP(meana);
 
-        apply(SUBMUL, I1, meanI, meanI, I1);
-        apply(SUBMUL, p1, meanI, meanp, p1);
-        apply(DIVEPSILON, I1, p1, I1);
-        apply(SUBMUL, p1, I1, meanI, meanp);
-    }
+    array2D<float> &meanb = b;
+    f_mean(meanb, b, r1);
+    DEBUG_DUMP(meanb);
 
-    f_mean(I1, I1, r1);
-    f_mean(p1, p1, r1);
-
-    const int Ws = I1.width();
-    const int Hs = I1.height();
-    const int Wd = dst.width();
-    const int Hd = dst.height();
-
-    const float col_scale = static_cast<float>(Ws) / static_cast<float>(Wd);
-    const float row_scale = static_cast<float>(Hs) / static_cast<float>(Hd);
+    // speedup by heckflosse67
+    const int Ws = meana.getWidth();
+    const int Hs = meana.getHeight();
+    const int Wd = q.getWidth();
+    const int Hd = q.getHeight();
+    const float col_scale = float(Ws) / float(Wd);
+    const float row_scale = float(Hs) / float(Hd);
 
 #ifdef _OPENMP
-    #pragma omp parallel for if (multithread)
+#   pragma omp parallel for if (multithread)
 #endif
-
     for (int y = 0; y < Hd; ++y) {
-        const float ymrs = y * row_scale;
+        float ymrs = y * row_scale; 
         for (int x = 0; x < Wd; ++x) {
-            dst[y][x] = getBilinearValue(I1, x * col_scale, ymrs) * guide[y][x] + getBilinearValue(p1, x * col_scale, ymrs);
+            q[y][x] = getBilinearValue(meana, x * col_scale, ymrs) * I[y][x] + getBilinearValue(meanb, x * col_scale, ymrs);
         }
     }
 }
 
+
+void guidedFilterLog(const array2D<float> &guide, float base, array2D<float> &chan, int r, float eps, bool multithread, int subsampling)
+{
+#ifdef _OPENMP
+#    pragma omp parallel for if (multithread)
+#endif
+    for (int y = 0; y < chan.getHeight(); ++y) {
+        for (int x = 0; x < chan.getWidth(); ++x) {
+            chan[y][x] = xlin2log(max(chan[y][x], 0.f), base);
+        }
+    }
+
+    guidedFilter(guide, chan, chan, r, eps, multithread, subsampling);
+
+#ifdef _OPENMP
+#    pragma omp parallel for if (multithread)
+#endif
+    for (int y = 0; y < chan.getHeight(); ++y) {
+        for (int x = 0; x < chan.getWidth(); ++x) {
+            chan[y][x] = xlog2lin(max(chan[y][x], 0.f), base);
+        }
+    }
+}
+
+
+void guidedFilterLog(float base, array2D<float> &chan, int r, float eps, bool multithread, int subsampling)
+{
+    guidedFilterLog(chan, base, chan, r, eps, multithread, subsampling);
+}
+
 } // namespace rtengine
+
+
+
+

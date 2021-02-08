@@ -25,6 +25,7 @@
 #include "array2D.h"
 #include "cieimage.h"
 #include "color.h"
+#include "curves.h"
 #include "improcfun.h"
 #include "LUT.h"
 #include "opthelper.h"
@@ -36,6 +37,7 @@ namespace {
 float rangeFn(float i) {
     return 1.f / (i + 1000.f);
 }
+
 
 void dirpyr_channel(const float * const * data_fine, float ** data_coarse, int width, int height, int level, int scale)
 {
@@ -240,6 +242,22 @@ void fillLut(LUTf &irangefn, int level, double dirpyrThreshold, float mult, floa
             } else {
                 irangefn[i] = 1.f + offs + (multbis - 1.f) * (noisehi - abs(i - 0x10000)) / (noisehi - noiselo + 0.01f);
             }
+        }
+    }
+}
+
+void idirpyr_eq_channel_loc(float ** data_coarse, float ** data_fine, float ** buffer, int width, int height, int level, float mult, const double dirpyrThreshold, float ** hue, float ** chrom, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice, int scaleprev, bool multiThread)
+{
+    LUTf irangefn(0x20000);
+    fillLut(irangefn, level, dirpyrThreshold, mult, skinprot);
+
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic,16)
+#endif
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            const float hipass = data_fine[i][j] - data_coarse[i][j];
+            buffer[i][j] += irangefn[hipass + 0x10000] * hipass;
         }
     }
 }
@@ -502,6 +520,163 @@ void ImProcFunctions::dirpyr_equalizercam(const CieImage *ncie, float ** src, fl
                 dst[i][j] = buffer[i][j];
             } else {
                 dst[i][j] = src[i][j];
+            }
+        }
+    }
+}
+
+void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwidth, int srcheight, const float * mult, float kchro, const double dirpyrThreshold, const float mergeL, const float contres, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r, int choice, int scaleprev, bool multiThread)
+{
+    constexpr int maxlevelloc = 6;
+    constexpr int scalesloc[maxlevelloc] = {1, 2, 4, 8, 16, 32};
+    const float atten123 = rtengine::LIM<float>(settings->level123_cbdl, 0.f, 50.f);
+    const float atten0 = rtengine::LIM<float>(settings->level0_cbdl, 0.f, 40.f);
+    int lastlevel = maxlevelloc;
+
+    if (settings->verbose) { 
+        printf("Dirpyr scaleprev=%i\n", scaleprev);
+    }
+
+    while (lastlevel > 0 && fabs(mult[lastlevel - 1] - 1) < 0.001) {
+
+        lastlevel--;
+        //printf("last level to process %d \n",lastlevel);
+    }
+
+    if (lastlevel == 0) {
+        return;
+    }
+
+    float multi[6];
+
+    for (int lv = 0; lv < 6; ++lv) {
+        if (scalesloc[lv] < scaleprev) {
+            const float factor = lv >= 1 ? atten123 : atten0;
+            multi[lv] = (factor * ((float) mult[lv] - 1.f) / 100.f) + 1.f;    //modulate action if zoom < 100%
+        } else {
+            multi[lv] = mult[lv];
+        }
+    }
+
+    if (settings->verbose) {
+        printf("CbDL local mult0=%f  1=%f 2=%f 3=%f 4=%f 5%f\n", multi[0], multi[1], multi[2], multi[3], multi[4], multi[5]);
+    }
+
+    multi_array2D<float, maxlevelloc> dirpyrlo(srcwidth, srcheight);
+
+
+    dirpyr_channel(src, dirpyrlo[0], srcwidth, srcheight, 0, std::max(scalesloc[0] / scaleprev, 1));
+
+
+    for (int level = 1; level < lastlevel; ++level) {
+        dirpyr_channel(dirpyrlo[level - 1], dirpyrlo[level], srcwidth, srcheight, level, std::max(scalesloc[level] / scaleprev, 1));
+    }
+
+    // with the current implementation of idirpyr_eq_channel we can safely use the buffer from last level as buffer, saves some memory
+//    float ** buffer = dirpyrlo[lastlevel - 1];
+        array2D<float> residbuff(srcwidth, srcheight);
+        array2D<float> resid5(srcwidth, srcheight);
+        
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+        for (int i = 0; i < srcheight; i++)
+            for (int j = 0; j < srcwidth; j++) {
+                residbuff[i][j] = 0.f;
+            }
+
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+        for (int i = 0; i < srcheight; i++)
+            for (int j = 0; j < srcwidth; j++) {
+                residbuff[i][j] = dirpyrlo[lastlevel - 1][i][j];
+                resid5[i][j] = dirpyrlo[lastlevel - 1][i][j];               
+            }
+   
+    
+    double avg = 0.f;
+    if(contres != 0.f) {
+        int ng = 0;
+        
+#ifdef _OPENMP
+        #pragma omp parallel for reduction(+:avg, ng)
+#endif
+        for (int i = 0; i < srcheight; i++) {
+            for (int j = 0; j < srcwidth; j++) {
+                avg += residbuff[i][j];
+                ng++;
+            }
+        }
+        avg /= ng;
+        avg /= 32768.f;
+        avg = LIM01(avg);
+    }
+    float contreal = 0.3f * contres;
+    DiagonalCurve resid_contrast({
+        DCT_NURBS,
+            0, 0,
+            avg - avg * (0.6 - contreal / 250.0), avg - avg * (0.6 + contreal / 250.0),
+            avg + (1 - avg) * (0.6 - contreal / 250.0), avg + (1 - avg) * (0.6 + contreal / 250.0),
+            1, 1
+        });
+
+    if(contres != 0.f) {
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+        for (int i = 0; i < srcheight; i++)
+            for (int j = 0; j < srcwidth; j++) {
+                float buf = LIM01(residbuff[i][j] / 32768.f);
+                buf = resid_contrast.getVal(buf);
+                buf *= 32768.f;
+                residbuff[i][j] = buf;
+            }
+    }
+    
+    
+    for (int level = lastlevel - 1; level > 0; level--) {
+        idirpyr_eq_channel_loc(dirpyrlo[level], dirpyrlo[level - 1], residbuff, srcwidth, srcheight, level, multi[level], dirpyrThreshold, nullptr, nullptr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice, scaleprev, multiThread);
+    }
+
+    scale = scalesloc[0];
+
+    idirpyr_eq_channel_loc(dirpyrlo[0], src, residbuff, srcwidth, srcheight, 0, multi[0], dirpyrThreshold, nullptr, nullptr, skinprot, gamutlab, b_l, t_l, t_r, b_r, choice, scaleprev, multiThread);
+
+    array2D<float> loct(srcwidth, srcheight);
+#ifdef _OPENMP
+    #pragma omp parallel for
+#endif
+    for (int i = 0; i < srcheight; i++) {
+        for (int j = 0; j < srcwidth; j++) {
+            loct[i][j] = LIM(residbuff[i][j],0.f,32768.f);  // TODO: Really a clip necessary?
+        }
+    }
+
+    float clar = 0.01f * mergeL;
+
+/*
+    if(clar == 0.f) {
+        clar = 0.0f;
+    }
+//    printf("clar=%f \n", clar);
+*/
+    if(clar > 0.f) {
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+        for (int i = 0; i < srcheight; i++) {
+            for (int j = 0; j < srcwidth; j++) {
+                 loctemp[i][j] = LIM((1.f + clar) * loct[i][j] - clar * resid5[i][j],0.f,32768.f);
+            }
+        }
+    } else {
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
+        for (int i = 0; i < srcheight; i++) {
+            for (int j = 0; j < srcwidth; j++) {
+                loctemp[i][j] = LIM(loct[i][j],0.f,32768.f);
             }
         }
     }

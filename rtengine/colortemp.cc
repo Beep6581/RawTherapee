@@ -2898,15 +2898,15 @@ void ColorTemp::icieCAT02float(float Xw, float Yw, float Zw, float &iCAM02BB00, 
     float D = adap / 2.;
 
     //white destination Wd : RT use always D50
-    cam_dest[0] = INVCAT02[0][0] * whiteD50p[0] + INVCAT02[0][1] * whiteD50p[1] + INVCAT02[0][2] * whiteD50p[2]; //Cone reponse RoD
+    cam_dest[0] = INVCAT02[0][0] * whiteD50p[0] + INVCAT02[0][1] * whiteD50p[1] + INVCAT02[0][2] * whiteD50p[2]; //Cone response RoD
     cam_dest[1] = INVCAT02[1][0] * whiteD50p[0] + INVCAT02[1][1] * whiteD50p[1] + INVCAT02[1][2] * whiteD50p[2]; //GaD
     cam_dest[2] = INVCAT02[2][0] * whiteD50p[0] + INVCAT02[2][1] * whiteD50p[1] + INVCAT02[2][2] * whiteD50p[2]; //BeD
 
     //origin white Ws : A, D65, custom, etc.
-    cam_orig[0] = INVCAT02[0][0] * Xw + INVCAT02[0][1] * Yw + INVCAT02[0][2] * Zw; //Cone reponse RoS
+    cam_orig[0] = INVCAT02[0][0] * Xw + INVCAT02[0][1] * Yw + INVCAT02[0][2] * Zw; //Cone response RoS
     cam_orig[1] = INVCAT02[1][0] * Xw + INVCAT02[1][1] * Yw + INVCAT02[1][2] * Zw;
     cam_orig[2] = INVCAT02[2][0] * Xw + INVCAT02[2][1] * Yw + INVCAT02[2][2] * Zw;
-//   cam_orig[0] = CAT02[0][0] * Xw + CAT02[0][1] * Yw + CAT02[0][2] * Zw; //Cone reponse RoS
+//   cam_orig[0] = CAT02[0][0] * Xw + CAT02[0][1] * Yw + CAT02[0][2] * Zw; //Cone response RoS
 //   cam_orig[1] = CAT02[1][0] * Xw + CAT02[1][1] * Yw + CAT02[1][2] * Zw;
     //  cam_orig[2] = CAT02[2][0] * Xw + CAT02[2][1] * Yw + CAT02[2][2] * Zw;
 
@@ -3624,7 +3624,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         double XX;
         double ZZ;
     } WbTxyz;
-    //probbaly can be "passed" with rawimagesource.cc but I don't know how to do.
+    //probably can be "passed" with rawimagesource.cc but I don't know how to do this.
     constexpr WbTxyz Txyz[118] = {//temperature Xwb Zwb 118 values - same table as in Rawimagesource.cc  x wb and y wb are calculated after
         {2001., 1.273842, 0.145295},
         {2101., 1.244008, 0.167533},

@@ -38,14 +38,12 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab, bool ena, int labmode, in
     if (!ena || (!hightli && !shado)){
         return;
     }
-
     const int width = lab->W;
     const int height = lab->H;
     const bool lab_mode = labmode;
 
     array2D<float> mask(width, height);
     array2D<float> L(width, height);
-//    const float radius = params->sh.radius * 10 / scale;
     const float radius = float(rad) * 10 / scal;
     LUTf f(lab_mode ? 32768 : 65536);
 

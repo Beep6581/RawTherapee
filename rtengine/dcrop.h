@@ -41,11 +41,13 @@ protected:
     LabImage*    laboCrop;   // "one chunk" allocation
     LabImage*    labnCrop;   // "one chunk" allocation
     Image8*      cropImg;    // "one chunk" allocation ; displayed image in monitor color space, showing the output profile as well (soft-proofing enabled, which then correspond to workimg) or not
+    float *      shbuf_real;  // "one chunk" allocation
 
     // --- automatically allocated and deleted when necessary, and only renewed on size changes
     Imagefloat*  transCrop;    // "one chunk" allocation, allocated if necessary
     CieImage*    cieCrop;      // allocating 6 images, each in "one chunk" allocation
     // -----------------------------------------------------------------
+    float**         shbuffer;
 
     bool updating;         /// Flag telling if an updater thread is currently processing
     bool newUpdatePending; /// Flag telling the updater thread that a new update is pending
@@ -63,19 +65,19 @@ protected:
     ImProcCoordinator* const parent;
     const bool isDetailWindow;
     EditUniqueID getCurrEditID();
-    bool setCropSizes (int cropX, int cropY, int cropW, int cropH, int skip, bool internal);
-    void freeAll ();
+    bool setCropSizes(int cropX, int cropY, int cropW, int cropH, int skip, bool internal);
+    void freeAll();
 
 public:
-    Crop             (ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow);
+    Crop(ImProcCoordinator* parent, EditDataProvider *editDataProvider, bool isDetailWindow);
     ~Crop    () override;
-
+//   MyMutex* locMutex;
     void setEditSubscriber(EditSubscriber* newSubscriber);
     bool hasListener();
-    void update      (int todo);
+    void update(int todo);
     void setWindow   (int cropX, int cropY, int cropW, int cropH, int skip) override
     {
-        setCropSizes (cropX, cropY, cropW, cropH, skip, false);
+        setCropSizes(cropX, cropY, cropW, cropH, skip, false);
     }
 
     /** @brief Synchronously look out if a full update is necessary

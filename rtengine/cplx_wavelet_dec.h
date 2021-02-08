@@ -33,35 +33,36 @@ class wavelet_decomposition :
     public NonCopyable
 {
 public:
-
-    typedef float internal_type;
-    float *coeff0;
-    bool memoryAllocationFailed;
-
-private:
-
-    static const int maxlevels = 10;//should be greater than any conceivable order of decimation
-
-    int lvltot, subsamp;
-    int m_w, m_h;//dimensions
-
-    int wavfilt_len, wavfilt_offset;
-    float *wavfilt_anal;
-    float *wavfilt_synth;
-
-
-    wavelet_level<internal_type> * wavelet_decomp[maxlevels];
-
-public:
+    using internal_type = float;
 
     template<typename E>
     wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling, int skipcrop = 1, int numThreads = 1, int Daub4Len = 6);
 
     ~wavelet_decomposition();
 
-    internal_type ** level_coeffs(int level) const
+    bool memory_allocation_failed() const
+    {
+        return memoryAllocationFailed;
+    }
+
+    const internal_type* const* level_coeffs(int level) const
     {
         return wavelet_decomp[level]->subbands();
+    }
+
+    internal_type* const* level_coeffs(int level)
+    {
+        return wavelet_decomp[level]->subbands();
+    }
+
+    const internal_type* get_coeff0() const
+    {
+        return coeff0;
+    }
+
+    internal_type* get_coeff0()
+    {
+        return coeff0;
     }
 
     int level_W(int level) const
@@ -88,13 +89,47 @@ public:
     {
         return subsamp;
     }
+
     template<typename E>
     void reconstruct(E * dst, const float blend = 1.f);
+
+private:
+    static const int maxlevels = 10; // should be greater than any conceivable order of decimation
+
+    int lvltot;
+    int subsamp;
+    // Dimensions
+    int m_w;
+    int m_h;
+
+    int wavfilt_len;
+    int wavfilt_offset;
+    internal_type* wavfilt_anal;
+    internal_type* wavfilt_synth;
+
+    internal_type* coeff0;
+    bool memoryAllocationFailed;
+
+    wavelet_level<internal_type>* wavelet_decomp[maxlevels];
 };
 
 template<typename E>
-wavelet_decomposition::wavelet_decomposition(E * src, int width, int height, int maxlvl, int subsampling, int skipcrop, int numThreads, int Daub4Len)
-    : coeff0(nullptr), memoryAllocationFailed(false), lvltot(0), subsamp(subsampling), m_w(width), m_h(height)
+wavelet_decomposition::wavelet_decomposition(
+    E * src,
+    int width,
+    int height,
+    int maxlvl,
+    int subsampling,
+    int skipcrop,
+    int numThreads,
+    int Daub4Len
+) :
+    lvltot(0),
+    subsamp(subsampling),
+    m_w(width),
+    m_h(height),
+    coeff0(nullptr),
+    memoryAllocationFailed(false)
 {
 
     //initialize wavelet filters
@@ -135,6 +170,14 @@ wavelet_decomposition::wavelet_decomposition(E * src, int width, int height, int
                 //n=0 lopass, n=1 hipass
             }
         }
+/*    } else if(wavfilt_len == 22) {
+        for (int n = 0; n < 2; n++) {
+            for (int i = 0; i < wavfilt_len; i++) {
+                wavfilt_anal[wavfilt_len * (n) + i]  = Daub4_anal22[n][i];
+                wavfilt_synth[wavfilt_len * (n) + i] = Daub4_anal22[n][wavfilt_len - 1 - i];
+                //n=0 lopass, n=1 hipass
+            }
+        } */
     } else if(wavfilt_len == 4) {
         for (int n = 0; n < 2; n++) {
             for (int i = 0; i < wavfilt_len; i++) {
@@ -144,7 +187,7 @@ wavelet_decomposition::wavelet_decomposition(E * src, int width, int height, int
             }
         }
     }
-
+//printf("OK cplx\n");
     // after coefficient rotation, data structure is:
     // wavelet_decomp[scale][channel={lo,hi1,hi2,hi3}][pixel_array]
 

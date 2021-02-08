@@ -63,7 +63,7 @@ public:
     bool            gamutICC; // no longer used
     bool            gamutLch;
     bool            HistogramWorking;       // true: histogram is display the value of the image computed in the Working profile
-                                            // false: histogram is display the value of the image computed in the Output profile
+    // false: histogram is display the value of the image computed in the Output profile
     int             amchroma;
     int             protectred;
     double          protectredh;
@@ -81,6 +81,15 @@ public:
     double          level0_cbdl;
     double          level123_cbdl;
     Glib::ustring   lensfunDbDirectory; // The directory containing the lensfun database. If empty, the system defaults will be used, as described in https://lensfun.github.io/manual/latest/dbsearch.html
+    int             cropsleep;
+    double          reduchigh;
+    double          reduclow;
+    bool            detectshape;
+    bool            fftwsigma;
+    int             previewselection;
+    double          cbdlsensi;
+//    bool            showtooltip;
+
     int             itcwb_thres;
     bool            itcwb_sort;
     int             itcwb_greenrange;
@@ -90,6 +99,10 @@ public:
     int             itcwb_delta;
     bool            itcwb_stdobserver10;
     int             itcwb_precis;
+//wavelet levels
+    double          edghi;
+    double          edglo;
+    double          limrad;
 
 
     enum class ThumbnailInspectorMode {

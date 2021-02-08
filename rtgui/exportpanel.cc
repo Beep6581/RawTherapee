@@ -63,6 +63,7 @@ ExportPanel::ExportPanel () : listener (nullptr)
     // ---------------------- Bayer sensor frame -----------------------
 
     Gtk::Frame *bayerFrame = Gtk::manage ( new Gtk::Frame (M ("TP_RAW_SENSOR_BAYER_LABEL")));
+    bayerFrame->set_label_align(0.025, 0.5);
     Gtk::VBox* bayerFrameVBox = Gtk::manage (new Gtk::VBox ());
 
     Gtk::HBox* hb_raw_bayer_method = Gtk::manage (new Gtk::HBox ());
@@ -86,6 +87,7 @@ ExportPanel::ExportPanel () : listener (nullptr)
     // ---------------------- Bayer sensor frame -----------------------
 
     Gtk::Frame *xtransFrame = Gtk::manage ( new Gtk::Frame (M ("TP_RAW_SENSOR_XTRANS_LABEL")));
+    xtransFrame->set_label_align(0.025, 0.5);
     Gtk::VBox* xtransFrameVBox = Gtk::manage (new Gtk::VBox ());
 
     Gtk::HBox* hb_raw_xtrans_method = Gtk::manage (new Gtk::HBox ());

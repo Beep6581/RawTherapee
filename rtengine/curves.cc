@@ -37,9 +37,35 @@
 
 using namespace std;
 
+namespace {
+void fillCurveArray(const rtengine::DiagonalCurve* diagCurve, LUTf &outCurve, int skip, bool needed)
+{
+    if (needed) {
+        for (int i = 0; i <= 0xffff; i += i < 0xffff - skip ? skip : 1) {
+            // change to [0,1] range
+            // apply custom/parametric/NURBS curve, if any
+            outCurve[i] = diagCurve->getVal(i / 65535.f);
+        }
+
+        // if skip > 1, let apply linear interpolation in the skipped points of the curve
+        if (skip > 1) {
+            const float skipmul = 1.f / skip;
+
+            for (int i = 0; i <= 0x10000 - skip; i += skip) {
+                for (int j = 1; j < skip; j++) {
+                    outCurve[i + j] = (outCurve[i] * (skip - j) + outCurve[i + skip] * j) * skipmul;
+                }
+            }
+        }
+
+        outCurve *= 65535.f;
+    } else {
+        outCurve.makeIdentity();
+    }
+}
+}
 namespace rtengine
 {
-
 bool sanitizeCurve(std::vector<double>& curve)
 {
     // A curve is valid under one of the following conditions:
@@ -47,19 +73,19 @@ bool sanitizeCurve(std::vector<double>& curve)
     // 2) Number of curve entries is > 3 and odd
     // 3) curve[0] == DCT_Parametric and curve size is >= 8 and curve[1] .. curve[3] are ordered ascending and are distinct
     if (curve.empty()) {
-        curve.push_back (DCT_Linear);
+        curve.push_back(DCT_Linear);
         return true;
-    } else if(curve.size() == 1 && curve[0] != DCT_Linear) {
+    } else if (curve.size() == 1 && curve[0] != DCT_Linear) {
         curve[0] = DCT_Linear;
         return true;
-    } else if((curve.size() % 2 == 0 || curve.size() < 5) && curve[0] != DCT_Parametric) {
+    } else if ((curve.size() % 2 == 0 || curve.size() < 5) && curve[0] != DCT_Parametric) {
         curve.clear();
-        curve.push_back (DCT_Linear);
+        curve.push_back(DCT_Linear);
         return true;
-    } else if(curve[0] == DCT_Parametric) {
+    } else if (curve[0] == DCT_Parametric) {
         if (curve.size() < 8) {
             curve.clear();
-            curve.push_back (DCT_Linear);
+            curve.push_back(DCT_Linear);
             return true;
         } else {
             // curve[1] to curve[3] must be ordered ascending and distinct
@@ -73,12 +99,13 @@ bool sanitizeCurve(std::vector<double>& curve)
             }
         }
     }
+
     return false;
 }
 
-Curve::Curve () : N(0), ppn(0), x(nullptr), y(nullptr), mc(0.0), mfc(0.0), msc(0.0), mhc(0.0), hashSize(1000 /* has to be initialized to the maximum value */), ypp(nullptr), x1(0.0), y1(0.0), x2(0.0), y2(0.0), x3(0.0), y3(0.0), firstPointIncluded(false), increment(0.0), nbr_points(0) {}
+Curve::Curve() : N(0), ppn(0), x(nullptr), y(nullptr), mc(0.0), mfc(0.0), msc(0.0), mhc(0.0), hashSize(1000 /* has to be initialized to the maximum value */), ypp(nullptr), x1(0.0), y1(0.0), x2(0.0), y2(0.0), x3(0.0), y3(0.0), firstPointIncluded(false), increment(0.0), nbr_points(0) {}
 
-void Curve::AddPolygons ()
+void Curve::AddPolygons()
 {
     if (firstPointIncluded) {
         poly_x.push_back(x1);
@@ -93,8 +120,8 @@ void Curve::AddPolygons ()
         double tr2t = tr * 2 * t;
 
         // adding a point to the polyline
-        poly_x.push_back( tr2 * x1 + tr2t * x2 + t2 * x3);
-        poly_y.push_back( tr2 * y1 + tr2t * y2 + t2 * y3);
+        poly_x.push_back(tr2 * x1 + tr2t * x2 + t2 * x3);
+        poly_y.push_back(tr2 * y1 + tr2t * y2 + t2 * y3);
     }
 
     // adding the last point of the sub-curve
@@ -102,11 +129,11 @@ void Curve::AddPolygons ()
     poly_y.push_back(y3);
 }
 
-void Curve::fillDyByDx ()
+void Curve::fillDyByDx()
 {
     dyByDx.resize(poly_x.size() - 1);
 
-    for(unsigned int i = 0; i < poly_x.size() - 1; i++) {
+    for (unsigned int i = 0; i < poly_x.size() - 1; i++) {
         double dx = poly_x[i + 1] - poly_x[i];
         double dy = poly_y[i + 1] - poly_y[i];
         dyByDx[i] = dy / dx;
@@ -123,7 +150,7 @@ void Curve::fillHash()
     double milestone = 0.;
 
     for (unsigned short i = 0; i < (hashSize + 1);) {
-        while(poly_x[polyIter] <= milestone) {
+        while (poly_x[polyIter] <= milestone) {
             ++polyIter;
         }
 
@@ -136,7 +163,7 @@ void Curve::fillHash()
     polyIter = 0;
 
     for (unsigned int i = 0; i < hashSize + 1u;) {
-        while(poly_x[polyIter] < (milestone + increment)) {
+        while (poly_x[polyIter] < (milestone + increment)) {
             ++polyIter;
         }
 
@@ -173,7 +200,7 @@ void Curve::fillHash()
  * This method return the number of control points of a curve. Not suitable for parametric curves.
  * @return number of control points of the curve. 0 will be sent back for Parametric curves
  */
-int Curve::getSize () const
+int Curve::getSize() const
 {
     return N;
 }
@@ -200,37 +227,7 @@ void Curve::getControlPoint(int cpNum, double &x, double &y) const
 const double CurveFactory::sRGBGamma = 2.2;
 const double CurveFactory::sRGBGammaCurve = 2.4;
 
-void fillCurveArray(DiagonalCurve* diagCurve, LUTf &outCurve, int skip, bool needed)
-{
-    if (needed) {
-
-        for (int i = 0; i <= 0xffff; i += i < 0xffff - skip ? skip : 1 ) {
-            // change to [0,1] range
-            float val = (float)i / 65535.f;
-            // apply custom/parametric/NURBS curve, if any
-            val = diagCurve->getVal (val);
-            // store result in a temporary array
-            outCurve[i] = val;
-        }
-
-        // if skip>1, let apply linear interpolation in the skipped points of the curve
-        if (skip > 1) {
-            float skipmul = 1.f / (float) skip;
-
-            for (int i = 0; i <= 0x10000 - skip; i += skip) {
-                for(int j = 1; j < skip; j++) {
-                    outCurve[i + j] = ( outCurve[i] * (skip - j) + outCurve[i + skip] * j ) * skipmul;
-                }
-            }
-        }
-
-        outCurve *= 65535.f;
-    } else {
-        outCurve.makeIdentity();
-    }
-}
-
-void CurveFactory::curveLightBrightColor (const std::vector<double>& curvePoints1, const std::vector<double>& curvePoints2, const std::vector<double>& curvePoints3,
+void CurveFactory::curveLightBrightColor(const std::vector<double>& curvePoints1, const std::vector<double>& curvePoints2, const std::vector<double>& curvePoints3,
         const LUTu & histogram, LUTu & outBeforeCCurveHistogram,//for Luminance
         const LUTu & histogramC, LUTu & outBeforeCCurveHistogramC,//for chroma
         ColorAppearance & customColCurve1, ColorAppearance & customColCurve2, ColorAppearance & customColCurve3, int skip)
@@ -289,9 +286,9 @@ void CurveFactory::curveLightBrightColor (const std::vector<double>& curvePoints
     }
 }
 
-void CurveFactory::curveBW ( const std::vector<double>& curvePointsbw, const std::vector<double>& curvePointsbw2,
-                             const LUTu & histogrambw, LUTu & outBeforeCCurveHistogrambw,//for Luminance
-                             ToneCurve & customToneCurvebw1, ToneCurve & customToneCurvebw2, int skip)
+void CurveFactory::curveBW(const std::vector<double>& curvePointsbw, const std::vector<double>& curvePointsbw2,
+                           const LUTu & histogrambw, LUTu & outBeforeCCurveHistogrambw,//for Luminance
+                           ToneCurve & customToneCurvebw1, ToneCurve & customToneCurvebw2, int skip)
 {
 
     const float gamma_ = Color::sRGBGammaCurve;
@@ -319,7 +316,7 @@ void CurveFactory::curveBW ( const std::vector<double>& curvePointsbw, const std
     if (!curvePointsbw.empty() && curvePointsbw[0] > DCT_Linear && curvePointsbw[0] < DCT_Unchanged) {
         DiagonalCurve tcurve(curvePointsbw, CURVES_MIN_POLY_POINTS / skip);
 
-        if (outBeforeCCurveHistogrambw ) {
+        if (outBeforeCCurveHistogrambw) {
             histNeeded = true;
         }
 
@@ -335,32 +332,15 @@ void CurveFactory::curveBW ( const std::vector<double>& curvePointsbw, const std
     }
 }
 
-// add curve Lab : C=f(L)
-void CurveFactory::curveCL ( bool & clcutili, const std::vector<double>& clcurvePoints, LUTf & clCurve, int skip)
-{
-    clcutili = false;
-    std::unique_ptr<DiagonalCurve> dCurve;
-
-    if (!clcurvePoints.empty() && clcurvePoints[0] != 0) {
-        dCurve = std::unique_ptr<DiagonalCurve>(new DiagonalCurve(clcurvePoints, CURVES_MIN_POLY_POINTS / skip));
-
-        if (dCurve && !dCurve->isIdentity()) {
-            clcutili = true;
-        }
-    }
-
-    fillCurveArray(dCurve.get(), clCurve, skip, clcutili);
-}
-
-void CurveFactory::mapcurve ( bool & mapcontlutili, const std::vector<double>& mapcurvePoints, LUTf & mapcurve, int skip, const LUTu & histogram, LUTu & outBeforeCurveHistogram)
+bool CurveFactory::diagonalCurve2Lut(const std::vector<double>& curvePoints, LUTf & curve, int skip, const LUTu & histogram, LUTu & outBeforeCurveHistogram)
 {
     bool needed = false;
     std::unique_ptr<DiagonalCurve> dCurve;
     outBeforeCurveHistogram.clear();
     bool histNeeded = false;
 
-    if (!mapcurvePoints.empty() && mapcurvePoints[0] != 0) {
-        dCurve = std::unique_ptr<DiagonalCurve>(new DiagonalCurve(mapcurvePoints, CURVES_MIN_POLY_POINTS / skip));
+    if (!curvePoints.empty() && curvePoints[0] != 0) {
+        dCurve.reset(new DiagonalCurve(curvePoints, CURVES_MIN_POLY_POINTS / skip));
 
         if (outBeforeCurveHistogram) {
             histNeeded = true;
@@ -368,7 +348,6 @@ void CurveFactory::mapcurve ( bool & mapcontlutili, const std::vector<double>& m
 
         if (dCurve && !dCurve->isIdentity()) {
             needed = true;
-            mapcontlutili = true;
         }
     }
 
@@ -376,77 +355,32 @@ void CurveFactory::mapcurve ( bool & mapcontlutili, const std::vector<double>& m
         histogram.compressTo(outBeforeCurveHistogram, 32768);
     }
 
-    fillCurveArray(dCurve.get(), mapcurve, skip, needed);
+    fillCurveArray(dCurve.get(), curve, skip, needed);
+    return needed;
 }
 
-void CurveFactory::curveDehaContL ( bool & dehacontlutili, const std::vector<double>& dehaclcurvePoints, LUTf & dehaclCurve, int skip, const LUTu & histogram, LUTu & outBeforeCurveHistogram)
-{
-    bool needed = false;
-    std::unique_ptr<DiagonalCurve> dCurve;
-    outBeforeCurveHistogram.clear();
-    bool histNeeded = false;
-
-    if (!dehaclcurvePoints.empty() && dehaclcurvePoints[0] != 0) {
-        dCurve = std::unique_ptr<DiagonalCurve>(new DiagonalCurve(dehaclcurvePoints, CURVES_MIN_POLY_POINTS / skip));
-
-        if (outBeforeCurveHistogram) {
-            histNeeded = true;
-        }
-
-        if (dCurve && !dCurve->isIdentity()) {
-            needed = true;
-            dehacontlutili = true;
-        }
-    }
-
-    if (histNeeded) {
-        histogram.compressTo(outBeforeCurveHistogram, 32768);
-    }
-
-    fillCurveArray(dCurve.get(), dehaclCurve, skip, needed);
-}
-
-// add curve Lab wavelet : Cont=f(L)
-void CurveFactory::curveWavContL ( bool & wavcontlutili, const std::vector<double>& wavclcurvePoints, LUTf & wavclCurve, /*LUTu & histogramwavcl, LUTu & outBeforeWavCLurveHistogram,*/int skip)
-{
-    bool needed = false;
-    std::unique_ptr<DiagonalCurve> dCurve;
-
-    if (!wavclcurvePoints.empty() && wavclcurvePoints[0] != 0) {
-        dCurve = std::unique_ptr<DiagonalCurve>(new DiagonalCurve(wavclcurvePoints, CURVES_MIN_POLY_POINTS / skip));
-
-        if (dCurve && !dCurve->isIdentity()) {
-            needed = true;
-            wavcontlutili = true;
-        }
-    }
-
-    fillCurveArray(dCurve.get(), wavclCurve, skip, needed);
-}
-
-// add curve Colortoning : C=f(L) and CLf(L)
-void CurveFactory::curveToning ( const std::vector<double>& curvePoints, LUTf & ToningCurve, int skip)
+bool CurveFactory::diagonalCurve2Lut(const std::vector<double>& curvePoints, LUTf& curve, int skip)
 {
     bool needed = false;
     std::unique_ptr<DiagonalCurve> dCurve;
 
     if (!curvePoints.empty() && curvePoints[0] != 0) {
-        dCurve = std::unique_ptr<DiagonalCurve>(new DiagonalCurve(curvePoints, CURVES_MIN_POLY_POINTS / skip));
+        dCurve.reset(new DiagonalCurve(curvePoints, CURVES_MIN_POLY_POINTS / skip));
 
         if (dCurve && !dCurve->isIdentity()) {
             needed = true;
         }
     }
 
-    fillCurveArray(dCurve.get(), ToningCurve, skip, needed);
+    fillCurveArray(dCurve.get(), curve, skip, needed);
+    return needed;
+
 }
 
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-void CurveFactory::complexsgnCurve (bool & autili,  bool & butili, bool & ccutili, bool & cclutili,
-                                    const std::vector<double>& acurvePoints, const std::vector<double>& bcurvePoints, const std::vector<double>& cccurvePoints,
-                                    const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve,
-                                    int skip)
+void CurveFactory::complexsgnCurve(bool & autili,  bool & butili, bool & ccutili, bool & cclutili,
+                                   const std::vector<double>& acurvePoints, const std::vector<double>& bcurvePoints, const std::vector<double>& cccurvePoints,
+                                   const std::vector<double>& lccurvePoints, LUTf & aoutCurve, LUTf & boutCurve, LUTf & satCurve, LUTf & lhskCurve,
+                                   int skip)
 {
 
     autili = butili = ccutili = cclutili = false;
@@ -454,7 +388,7 @@ void CurveFactory::complexsgnCurve (bool & autili,  bool & butili, bool & ccutil
 
     // create a curve if needed
     if (!acurvePoints.empty() && acurvePoints[0] != 0) {
-        dCurve = std::unique_ptr<DiagonalCurve>(new DiagonalCurve(acurvePoints, CURVES_MIN_POLY_POINTS / skip));
+        dCurve.reset(new DiagonalCurve(acurvePoints, CURVES_MIN_POLY_POINTS / skip));
 
         if (dCurve && !dCurve->isIdentity()) {
             autili = true;
@@ -463,12 +397,12 @@ void CurveFactory::complexsgnCurve (bool & autili,  bool & butili, bool & ccutil
 
     fillCurveArray(dCurve.get(), aoutCurve, skip, autili);
 
-    dCurve = nullptr;
+    dCurve.reset();
 
     //-----------------------------------------------------
 
     if (!bcurvePoints.empty() && bcurvePoints[0] != 0) {
-        dCurve = std::unique_ptr<DiagonalCurve>(new DiagonalCurve(bcurvePoints, CURVES_MIN_POLY_POINTS / skip));
+        dCurve.reset(new DiagonalCurve(bcurvePoints, CURVES_MIN_POLY_POINTS / skip));
 
         if (dCurve && !dCurve->isIdentity()) {
             butili = true;
@@ -477,12 +411,12 @@ void CurveFactory::complexsgnCurve (bool & autili,  bool & butili, bool & ccutil
 
     fillCurveArray(dCurve.get(), boutCurve, skip, butili);
 
-    dCurve = nullptr;
+    dCurve.reset();
 
     //-----------------------------------------------
 
     if (!cccurvePoints.empty() && cccurvePoints[0] != 0) {
-        dCurve = std::unique_ptr<DiagonalCurve>(new DiagonalCurve(cccurvePoints, CURVES_MIN_POLY_POINTS / skip));
+        dCurve.reset(new DiagonalCurve(cccurvePoints, CURVES_MIN_POLY_POINTS / skip));
 
         if (dCurve && !dCurve->isIdentity()) {
             ccutili = true;
@@ -491,12 +425,12 @@ void CurveFactory::complexsgnCurve (bool & autili,  bool & butili, bool & ccutil
 
     fillCurveArray(dCurve.get(), satCurve, skip, ccutili);
 
-    dCurve = nullptr;
+    dCurve.reset();
 
     //----------------------------
 
     if (!lccurvePoints.empty() && lccurvePoints[0] != 0) {
-        dCurve = std::unique_ptr<DiagonalCurve>(new DiagonalCurve(lccurvePoints, CURVES_MIN_POLY_POINTS / skip));
+        dCurve.reset(new DiagonalCurve(lccurvePoints, CURVES_MIN_POLY_POINTS / skip));
 
         if (dCurve && !dCurve->isIdentity()) {
             cclutili = true;
@@ -522,20 +456,19 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
     // the curve shapes are defined in sRGB gamma, but the output curves will operate on linear floating point data,
     // hence we do both forward and inverse gamma conversions here.
     const float gamma_ = Color::sRGBGammaCurve;
-    const float start = expf(gamma_ * logf( -0.055 / ((1.0 / gamma_ - 1.0) * 1.055 )));
-    const float slope = 1.055 * powf (start, 1.0 / gamma_ - 1) - 0.055 / start;
+    const float start = expf(gamma_ * logf(-0.055 / ((1.0 / gamma_ - 1.0) * 1.055)));
+    const float slope = 1.055 * powf(start, 1.0 / gamma_ - 1) - 0.055 / start;
     const float mul = 1.055;
     const float add = 0.055;
 
+
     // a: slope of the curve, black: starting point at the x axis
-    const float a = powf (2.0, ecomp);
+    const float a = powf(2.0, ecomp);
 
     // clear array that stores histogram valid before applying the custom curve
     outBeforeCCurveHistogram.clear();
 
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // tone curve base. a: slope (from exp.comp.), b: black, def_mul: max. x value (can be>1), hr,sr: highlight,shadow recovery
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     std::unique_ptr<DiagonalCurve> brightcurve;
 
@@ -548,14 +481,14 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
         brightcurvePoints[1] = 0.; //black point.  Value in [0 ; 1] range
         brightcurvePoints[2] = 0.; //black point.  Value in [0 ; 1] range
 
-        if(br > 0) {
+        if (br > 0) {
             brightcurvePoints[3] = 0.1; //toe point
             brightcurvePoints[4] = 0.1 + br / 150.0; //value at toe point
 
             brightcurvePoints[5] = 0.7; //shoulder point
-            brightcurvePoints[6] = min(1.0, 0.7 + br / 300.0); //value at shoulder point
+            brightcurvePoints[6] = min(1.0, 0.7 + br / 300.0);  //value at shoulder point
         } else {
-            brightcurvePoints[3] = max(0.0, 0.1 - br / 150.0); //toe point
+            brightcurvePoints[3] = max(0.0, 0.1 - br / 150.0);  //toe point
             brightcurvePoints[4] = 0.1; //value at toe point
 
             brightcurvePoints[5] = 0.7 - br / 300.0; //shoulder point
@@ -565,12 +498,10 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
         brightcurvePoints[7] = 1.; // white point
         brightcurvePoints[8] = 1.; // value at white point
 
-        brightcurve = std::unique_ptr<DiagonalCurve>(new DiagonalCurve(brightcurvePoints, CURVES_MIN_POLY_POINTS / skip));
+        brightcurve.reset(new DiagonalCurve(brightcurvePoints, CURVES_MIN_POLY_POINTS / skip));
     }
 
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    hlCurve.setClip(LUT_CLIP_BELOW); // used LUT_CLIP_BELOW, because we want to have a baseline of 2^expcomp in this curve. If we don't clip the lut we get wrong values, see Issue 2621 #14 for details
+    hlCurve.setClip(LUT_CLIP_BELOW);  // used LUT_CLIP_BELOW, because we want to have a baseline of 2^expcomp in this curve. If we don't clip the lut we get wrong values, see Issue 2621 #14 for details
     float exp_scale = a;
     float scale = 65536.0;
     float comp = (max(0.0, ecomp) + 1.0) * hlcompr / 100.0;
@@ -586,11 +517,11 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 #ifdef __SSE2__
         int i = shoulder + 1;
 
-        if(i & 1) { // original formula, slower than optimized formulas below but only used once or none, so I let it as is for reference
+        if (i & 1) { // original formula, slower than optimized formulas below but only used once or none, so I let it as is for reference
             // change to [0,1] range
             float val = (float)i - shoulder;
             float R = val * comp / (scalemshoulder);
-            hlCurve[i] = xlog(1.0 + R * exp_scale) / R; // don't use xlogf or 1.f here. Leads to errors caused by too low precision
+            hlCurve[i] = xlog(1.0 + R * exp_scale) / R;  // don't use xlogf or 1.f here. Leads to errors caused by too low precision
             i++;
         }
 
@@ -615,7 +546,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 
         for (int i = shoulder + 1; i < 0x10000; i++) {
             // change to [0,1] range
-            hlCurve[i] = xlog(1.0 + R * exp_scale) / R; // don't use xlogf or 1.f here. Leads to errors caused by too low precision
+            hlCurve[i] = xlog(1.0 + R * exp_scale) / R;  // don't use xlogf or 1.f here. Leads to errors caused by too low precision
             R += increment;
         }
 
@@ -627,9 +558,8 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
     // curve without contrast
     LUTf dcurve(0x10000);
 
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%
     // change to [0,1] range
-    shCurve.setClip(LUT_CLIP_ABOVE); // used LUT_CLIP_ABOVE, because the curve converges to 1.0 at the upper end and we don't want to exceed this value.
+    shCurve.setClip(LUT_CLIP_ABOVE);  // used LUT_CLIP_ABOVE, because the curve converges to 1.0 at the upper end and we don't want to exceed this value.
     if (black == 0.0) {
         shCurve.makeConstant(1.f);
     } else {
@@ -667,11 +597,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
         dcurve[i] = val;
     }
 
-    brightcurve = nullptr;
-
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    brightcurve.reset();
 
     // check if contrast curve is needed
     if (contr > 0.00001 || contr < -0.00001) {
@@ -688,7 +614,6 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 
         avg /= sum;
 
-        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         std::vector<double> contrastcurvePoints(9);
         contrastcurvePoints[0] = DCT_NURBS;
 
@@ -706,14 +631,11 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 
         const DiagonalCurve contrastcurve(contrastcurvePoints, CURVES_MIN_POLY_POINTS / skip);
 
-        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         // apply contrast enhancement
         for (int i = 0; i <= 0xffff; i++) {
-            dcurve[i] = contrastcurve.getVal (dcurve[i]);
+            dcurve[i] = contrastcurve.getVal(dcurve[i]);
         }
     }
-
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     // create second curve if needed
     bool histNeeded = false;
@@ -726,14 +648,10 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
             customToneCurve2.Set(tcurve, gamma_);
         }
 
-        if (outBeforeCCurveHistogram ) {
+        if (outBeforeCCurveHistogram) {
             histNeeded = true;
         }
     }
-
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     // create first curve if needed
     customToneCurve1.Reset();
@@ -750,8 +668,6 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
         }
     }
 
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 #ifdef __SSE2__
     vfloat gamma_v = F2V(gamma_);
     vfloat startv = F2V(start);
@@ -762,7 +678,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 
     for (int i = 0; i <= 0xffff; i += 4) {
         vfloat valv = LVFU(dcurve[i]);
-        valv = igamma (valv, gamma_v, startv, slopev, mulv, addv);
+        valv = igamma(valv, gamma_v, startv, slopev, mulv, addv);
         STVFU(outCurve[i], c65535v * valv);
     }
 
@@ -770,7 +686,7 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 
     for (int i = 0; i <= 0xffff; i++) {
         float val = dcurve[i];
-        val = igamma (val, gamma_, start, slope, mul, add);
+        val = igamma(val, gamma_, start, slope, mul, add);
         outCurve[i] = (65535.f * val);
     }
 
@@ -788,55 +704,116 @@ void CurveFactory::complexCurve (double ecomp, double black, double hlcompr, dou
 }
 
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void CurveFactory::complexLCurve (double br, double contr, const std::vector<double>& curvePoints,
-                                  const LUTu & histogram, LUTf & outCurve,
-                                  LUTu & outBeforeCCurveHistogram, int skip, bool & utili)
+void CurveFactory::Curvelocalhl(double ecomp, double hlcompr, double hlcomprthresh, LUTf & hlCurve)
 {
 
-    utili = false;
-    // clear array that stores histogram valid before applying the custom curve
-    if (outBeforeCCurveHistogram) {
-        outBeforeCCurveHistogram.clear();
-    }
+    // a: slope of the curve
+    const float a = powf(2.0f, ecomp);
 
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    // tone curve base. a: slope (from exp.comp.), b: black, def_mul: max. x value (can be>1), hr,sr: highlight,shadow recovery
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+    hlCurve.setClip(LUT_CLIP_BELOW);  // used LUT_CLIP_BELOW, because we want to have a baseline of 2^expcomp in this curve. If we don't clip the lut we get wrong values, see Issue 2621 #14 for details
+    float exp_scale = a;
+    float maxran = 65536.f;
+    float scale = maxran;
+    float comp = (max(0.0, ecomp) + 1.0) * hlcompr / 100.0;
+    float shoulder = ((scale / max(1.0f, exp_scale)) * (hlcomprthresh / 200.0)) + 0.1;
+
+    if (comp <= 0.0f) {
+        hlCurve.makeConstant(exp_scale);
+    } else {
+        hlCurve.makeConstant(exp_scale, shoulder + 1);
+
+        float scalemshoulder = scale - shoulder;
+
+#ifdef __SSE2__
+        int i = shoulder + 1;
+
+        if (i & 1) { // original formula, slower than optimized formulas below but only used once or none, so I let it as is for reference
+            // change to [0,1] range
+            float val = (float)i - shoulder;
+            float R = val * comp / (scalemshoulder);
+            hlCurve[i] = xlog(1.0f + R * exp_scale) / R;  // don't use xlogf or 1.f here. Leads to errors caused by too low precision
+            i++;
+        }
+
+        vdouble onev = _mm_set1_pd(1.0);
+        vdouble Rv = _mm_set_pd((i + 1 - shoulder) * (double)comp / scalemshoulder, (i - shoulder) * (double)comp / scalemshoulder);
+        vdouble incrementv = _mm_set1_pd(2.0 * comp / scalemshoulder);
+        vdouble exp_scalev = _mm_set1_pd(exp_scale);
+
+        //  for (; i < 0x10000; i += 2) {
+        for (; i < maxran; i += 2) {
+            // change to [0,1] range
+            vdouble resultv = xlog(onev + Rv * exp_scalev) / Rv;
+            vfloat resultfv = _mm_cvtpd_ps(resultv);
+            _mm_store_ss(&hlCurve[i], resultfv);
+            resultfv = PERMUTEPS(resultfv, _MM_SHUFFLE(1, 1, 1, 1));
+            _mm_store_ss(&hlCurve[i + 1], resultfv);
+            Rv += incrementv;
+        }
+
+#else
+        float R = comp / scalemshoulder;
+        float increment = R;
+
+        // for (int i = shoulder + 1; i < 0x10000; i++) {
+        for (int i = shoulder + 1; i < maxran; i++) {
+            // change to [0,1] range
+            hlCurve[i] = xlog(1.0f + R * exp_scale) / R;  // don't use xlogf or 1.f here. Leads to errors caused by too low precision
+            R += increment;
+        }
+
+#endif
+
+    }
+}
+
+void CurveFactory::complexCurvelocal(double ecomp, double black, double hlcompr, double hlcomprthresh,
+                                     double shcompr, double br, double cont, double lumare,
+                                     LUTf & hlCurve, LUTf & shCurve, LUTf & outCurve, LUTf & lightCurveloc, float avg,
+                                     int skip)
+{
+
+    const float gamma_ = 2.22; //BT 709
+    const float start = expf(gamma_ * logf(-0.0954f / ((1.0f / gamma_ - 1.0f) * 1.0954f)));
+    const float slope = 1.0954f * powf(start, 1.0f / gamma_ - 1.f) - 0.0954f / start;
+    const float mul = 1.0954f;
+    const float add = 0.0954f;
+    float maxran = 65536.f; //65536
 
     // check if brightness curve is needed
     if (br > 0.00001 || br < -0.00001) {
-        utili = true;
-
+        //     utili = true;
+        if(br > 0) {
+            br /= 4.f;//to avoid artifacts in some cases
+        }
         std::vector<double> brightcurvePoints;
         brightcurvePoints.resize(9);
-        brightcurvePoints.at(0) = double(DCT_NURBS);
+        brightcurvePoints.at(0) = double (DCT_NURBS);
 
-        brightcurvePoints.at(1) = 0.; // black point.  Value in [0 ; 1] range
-        brightcurvePoints.at(2) = 0.; // black point.  Value in [0 ; 1] range
+        brightcurvePoints.at(1) = 0.;  // black point.  Value in [0 ; 1] range
+        brightcurvePoints.at(2) = 0.;  // black point.  Value in [0 ; 1] range
 
         if (br > 0) {
-            brightcurvePoints.at(3) = 0.1; // toe point
-            brightcurvePoints.at(4) = 0.1 + br / 150.0; //value at toe point
+            brightcurvePoints.at(3) = 0.2;  // toe point
+            brightcurvePoints.at(4) = 0.2 + br / 250.0;  //value at toe point
 
-            brightcurvePoints.at(5) = 0.7; // shoulder point
-            brightcurvePoints.at(6) = min(1.0, 0.7 + br / 300.0); //value at shoulder point
+            brightcurvePoints.at(5) = 0.6;  // shoulder point
+            brightcurvePoints.at(6) = min(1.0, 0.6 + br / 200.0);   //value at shoulder point
         } else {
-            brightcurvePoints.at(3) = 0.1 - br / 150.0; // toe point
-            brightcurvePoints.at(4) = 0.1; // value at toe point
+            brightcurvePoints.at(3) = 0.1 - br / 150.0;  // toe point
+            brightcurvePoints.at(4) = 0.1;  // value at toe point
 
-            brightcurvePoints.at(5) = min(1.0, 0.7 - br / 300.0); // shoulder point
-            brightcurvePoints.at(6) = 0.7; // value at shoulder point
+            brightcurvePoints.at(5) = min(1.0, 0.7 - br / 300.0);   // shoulder point
+            brightcurvePoints.at(6) = 0.7;  // value at shoulder point
         }
 
-        brightcurvePoints.at(7) = 1.; // white point
-        brightcurvePoints.at(8) = 1.; // value at white point
+        brightcurvePoints.at(7) = 1.;  // white point
+        brightcurvePoints.at(8) = 1.;  // value at white point
 
         DiagonalCurve brightcurve(brightcurvePoints, CURVES_MIN_POLY_POINTS / skip);
-        //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         // Applying brightness curve
         for (int i = 0; i < 32768; i++) { // L values range up to 32767, higher values are for highlight overflow
@@ -845,7 +822,211 @@ void CurveFactory::complexLCurve (double br, double contr, const std::vector<dou
             float val = (float)i / 32767.0;
 
             // apply brightness curve
-            val = brightcurve.getVal (val);
+            val = brightcurve.getVal(val);
+
+            // store result in a temporary array
+            lightCurveloc[i] = val;
+        }
+    } else {
+        lightCurveloc.makeIdentity(32767.f);
+    }
+
+    // check if contrast curve is needed
+    if (cont > 0.00001 || cont < -0.00001) {
+
+
+        int k = avg * 32768;
+        avg = lightCurveloc[k];
+        std::vector<double> contrastcurvePoints;
+        contrastcurvePoints.resize(9);
+        contrastcurvePoints.at(0) = double (DCT_NURBS);
+
+        contrastcurvePoints.at(1) = 0.;  // black point.  Value in [0 ; 1] range
+        contrastcurvePoints.at(2) = 0.;  // black point.  Value in [0 ; 1] range
+
+        contrastcurvePoints.at(3) = avg - avg * (0.6 - cont / 250.0);  // toe point
+        contrastcurvePoints.at(4) = avg - avg * (0.6 + cont / 250.0);  // value at toe point
+
+        contrastcurvePoints.at(5) = avg + (1 - avg) * (0.6 - cont / 250.0);  // shoulder point
+        contrastcurvePoints.at(6) = avg + (1 - avg) * (0.6 + cont / 250.0);  // value at shoulder point
+
+        contrastcurvePoints.at(7) = 1.;  // white point
+        contrastcurvePoints.at(8) = 1.;  // value at white point
+
+        DiagonalCurve contrastcurve(contrastcurvePoints, CURVES_MIN_POLY_POINTS / skip);
+
+        // apply contrast enhancement
+        for (int i = 0; i < 32768; i++) {
+            lightCurveloc[i] = contrastcurve.getVal(lightCurveloc[i]);
+        }
+
+    }
+
+    lightCurveloc *= 32767.f;
+
+    for (int i = 32768; i < 32770; i++) { // set last two elements of lut to 32768 and 32769 to allow linear interpolation
+        lightCurveloc[i] = (float)i;
+    }
+
+    // a: slope of the curve, black: starting point at the x axis
+    const float a = powf(2.0f, ecomp);
+
+    // tone curve base. a: slope (from exp.comp.), b: black, def_mul: max. x value (can be>1), hr,sr: highlight,shadow recovery
+    hlCurve.setClip(LUT_CLIP_BELOW);  // used LUT_CLIP_BELOW, because we want to have a baseline of 2^expcomp in this curve. If we don't clip the lut we get wrong values, see Issue 2621 #14 for details
+    float exp_scale = a;
+    float scale = maxran;
+    float comp = (max(0.0, ecomp) + 1.0) * hlcompr / 100.0;
+    float shoulder = ((scale / max(1.0f, exp_scale)) * (hlcomprthresh / 200.0)) + 0.1;
+
+    if (comp <= 0.0f) {
+        hlCurve.makeConstant(exp_scale);
+    } else {
+        hlCurve.makeConstant(exp_scale, shoulder + 1);
+
+        float scalemshoulder = scale - shoulder;
+
+#ifdef __SSE2__
+        int i = shoulder + 1;
+
+        if (i & 1) { // original formula, slower than optimized formulas below but only used once or none, so I let it as is for reference
+            // change to [0,1] range
+            float val = (float)i - shoulder;
+            float R = val * comp / (scalemshoulder);
+            hlCurve[i] = xlog(1.0f + R * exp_scale) / R;  // don't use xlogf or 1.f here. Leads to errors caused by too low precision
+            i++;
+        }
+
+        vdouble onev = _mm_set1_pd(1.0);
+        vdouble Rv = _mm_set_pd((i + 1 - shoulder) * (double)comp / scalemshoulder, (i - shoulder) * (double)comp / scalemshoulder);
+        vdouble incrementv = _mm_set1_pd(2.0 * comp / scalemshoulder);
+        vdouble exp_scalev = _mm_set1_pd(exp_scale);
+
+        //  for (; i < 0x10000; i += 2) {
+        for (; i < maxran; i += 2) {
+            // change to [0,1] range
+            vdouble resultv = xlog(onev + Rv * exp_scalev) / Rv;
+            vfloat resultfv = _mm_cvtpd_ps(resultv);
+            _mm_store_ss(&hlCurve[i], resultfv);
+            resultfv = PERMUTEPS(resultfv, _MM_SHUFFLE(1, 1, 1, 1));
+            _mm_store_ss(&hlCurve[i + 1], resultfv);
+            Rv += incrementv;
+        }
+
+#else
+        float R = comp / scalemshoulder;
+        float increment = R;
+
+        // for (int i = shoulder + 1; i < 0x10000; i++) {
+        for (int i = shoulder + 1; i < maxran; i++) {
+            // change to [0,1] range
+            hlCurve[i] = xlog(1.0f + R * exp_scale) / R;  // don't use xlogf or 1.f here. Leads to errors caused by too low precision
+            R += increment;
+        }
+
+#endif
+
+    }
+
+    // curve without contrast
+    LUTf dcurve(maxran);
+
+    // change to [0,1] range
+    shCurve.setClip(LUT_CLIP_ABOVE); // used LUT_CLIP_ABOVE, because the curve converges to 1.0 at the upper end and we don't want to exceed this value.
+    if (black == 0.0) {
+        shCurve.makeConstant(1.f);
+    } else {
+        const float val = 1.f / (maxran - 1.f);
+        shCurve[0] = simplebasecurve(val, black, 0.015 * shcompr) / val;
+    }
+
+    // gamma correction
+    float val = Color::gammatab_bt709[0] / maxran;
+    // store result in a temporary array
+    dcurve[0] = LIM01<float>(val);
+
+    for (int i = 1; i < maxran; i++) {
+        if (black != 0.0) {
+            const float bval = i / 65535.f;
+            shCurve[i] = simplebasecurve(bval, black, 0.015 * shcompr) / bval;
+        }
+
+        // gamma correction
+        dcurve[i] = Color::gammatab_bt709[i] / maxran;
+    }
+
+#ifdef __SSE2__
+    vfloat gamma_v = F2V(gamma_);
+    vfloat startv = F2V(start);
+    vfloat slopev = F2V(slope);
+    vfloat mulv = F2V(mul);
+    vfloat addv = F2V(add);
+    // vfloat c65535v = F2V (65535.f);
+    vfloat c65535v = F2V(maxran - 1.f);
+
+    for (int i = 0; i <= (maxran - 1.f); i += 4) {
+        vfloat valv = LVFU(dcurve[i]);
+        valv = igamma(valv, gamma_v, startv, slopev, mulv, addv);
+        STVFU(outCurve[i], c65535v * valv);
+    }
+#else
+    for (int i = 0; i <= (maxran - 1.f); i++) {
+        outCurve[i] = (maxran - 1.f) * igamma(dcurve[i], gamma_, start, slope, mul, add);
+    }
+#endif
+}
+
+void CurveFactory::complexLCurve(double br, double contr, const std::vector<double>& curvePoints,
+                                 const LUTu & histogram, LUTf & outCurve,
+                                 LUTu & outBeforeCCurveHistogram, int skip, bool & utili)
+{
+
+    utili = false;
+
+    // clear array that stores histogram valid before applying the custom curve
+    if (outBeforeCCurveHistogram) {
+        outBeforeCCurveHistogram.clear();
+    }
+
+    // tone curve base. a: slope (from exp.comp.), b: black, def_mul: max. x value (can be>1), hr,sr: highlight,shadow recovery
+
+    // check if brightness curve is needed
+    if (br > 0.00001 || br < -0.00001) {
+        utili = true;
+
+        std::vector<double> brightcurvePoints;
+        brightcurvePoints.resize(9);
+        brightcurvePoints.at(0) = double (DCT_NURBS);
+
+        brightcurvePoints.at(1) = 0.;  // black point.  Value in [0 ; 1] range
+        brightcurvePoints.at(2) = 0.;  // black point.  Value in [0 ; 1] range
+
+        if (br > 0) {
+            brightcurvePoints.at(3) = 0.1;  // toe point
+            brightcurvePoints.at(4) = 0.1 + br / 150.0;  //value at toe point
+
+            brightcurvePoints.at(5) = 0.7;  // shoulder point
+            brightcurvePoints.at(6) = min(1.0, 0.7 + br / 300.0);   //value at shoulder point
+        } else {
+            brightcurvePoints.at(3) = 0.1 - br / 150.0;  // toe point
+            brightcurvePoints.at(4) = 0.1;  // value at toe point
+
+            brightcurvePoints.at(5) = min(1.0, 0.7 - br / 300.0);   // shoulder point
+            brightcurvePoints.at(6) = 0.7;  // value at shoulder point
+        }
+
+        brightcurvePoints.at(7) = 1.;  // white point
+        brightcurvePoints.at(8) = 1.;  // value at white point
+
+        DiagonalCurve brightcurve(brightcurvePoints, CURVES_MIN_POLY_POINTS / skip);
+
+        // Applying brightness curve
+        for (int i = 0; i < 32768; i++) { // L values range up to 32767, higher values are for highlight overflow
+
+            // change to [0,1] range
+            float val = (float)i / 32767.0;
+
+            // apply brightness curve
+            val = brightcurve.getVal(val);
 
             // store result in a temporary array
             outCurve[i] = LIM01<float>(val);
@@ -854,10 +1035,6 @@ void CurveFactory::complexLCurve (double br, double contr, const std::vector<dou
     } else {
         outCurve.makeIdentity(32767.f);
     }
-
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     // check if contrast curve is needed
     if (contr > 0.00001 || contr < -0.00001) {
@@ -874,69 +1051,57 @@ void CurveFactory::complexLCurve (double br, double contr, const std::vector<dou
 
         std::vector<double> contrastcurvePoints;
 
-        if(sum) {
+        if (sum) {
             avg /= sum;
 
-            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             contrastcurvePoints.resize(9);
-            contrastcurvePoints.at(0) = double(DCT_NURBS);
+            contrastcurvePoints.at(0) = double (DCT_NURBS);
 
-            contrastcurvePoints.at(1) = 0.; // black point.  Value in [0 ; 1] range
-            contrastcurvePoints.at(2) = 0.; // black point.  Value in [0 ; 1] range
+            contrastcurvePoints.at(1) = 0.;  // black point.  Value in [0 ; 1] range
+            contrastcurvePoints.at(2) = 0.;  // black point.  Value in [0 ; 1] range
 
-            contrastcurvePoints.at(3) = avg - avg * (0.6 - contr / 250.0); // toe point
-            contrastcurvePoints.at(4) = avg - avg * (0.6 + contr / 250.0); // value at toe point
+            contrastcurvePoints.at(3) = avg - avg * (0.6 - contr / 250.0);  // toe point
+            contrastcurvePoints.at(4) = avg - avg * (0.6 + contr / 250.0);  // value at toe point
 
-            contrastcurvePoints.at(5) = avg + (1 - avg) * (0.6 - contr / 250.0); // shoulder point
-            contrastcurvePoints.at(6) = avg + (1 - avg) * (0.6 + contr / 250.0); // value at shoulder point
+            contrastcurvePoints.at(5) = avg + (1 - avg) * (0.6 - contr / 250.0);  // shoulder point
+            contrastcurvePoints.at(6) = avg + (1 - avg) * (0.6 + contr / 250.0);  // value at shoulder point
 
-            contrastcurvePoints.at(7) = 1.; // white point
-            contrastcurvePoints.at(8) = 1.; // value at white point
-
-            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            contrastcurvePoints.at(7) = 1.;  // white point
+            contrastcurvePoints.at(8) = 1.;  // value at white point
         } else {
-            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             // sum has an invalid value (next to 0, producing a division by zero, so we create a fake contrast curve, producing a white image
             contrastcurvePoints.resize(5);
-            contrastcurvePoints.at(0) = double(DCT_NURBS);
+            contrastcurvePoints.at(0) = double (DCT_NURBS);
 
-            contrastcurvePoints.at(1) = 0.; // black point.  Value in [0 ; 1] range
-            contrastcurvePoints.at(2) = 1.; // black point.  Value in [0 ; 1] range
+            contrastcurvePoints.at(1) = 0.;  // black point.  Value in [0 ; 1] range
+            contrastcurvePoints.at(2) = 1.;  // black point.  Value in [0 ; 1] range
 
-            contrastcurvePoints.at(3) = 1.; // white point
-            contrastcurvePoints.at(4) = 1.; // value at white point
-
-            //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            contrastcurvePoints.at(3) = 1.;  // white point
+            contrastcurvePoints.at(4) = 1.;  // value at white point
         }
 
         DiagonalCurve contrastcurve(contrastcurvePoints, CURVES_MIN_POLY_POINTS / skip);
 
         // apply contrast enhancement
         for (int i = 0; i < 32768; i++) {
-            outCurve[i] = contrastcurve.getVal (outCurve[i]);
+            outCurve[i] = contrastcurve.getVal(outCurve[i]);
         }
 
     }
-
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     // create a curve if needed
     std::unique_ptr<DiagonalCurve> tcurve;
     bool histNeeded = false;
 
     if (!curvePoints.empty() && curvePoints[0] != 0) {
-        tcurve = std::unique_ptr<DiagonalCurve>(new DiagonalCurve (curvePoints, CURVES_MIN_POLY_POINTS / skip));
+        tcurve.reset(new DiagonalCurve(curvePoints, CURVES_MIN_POLY_POINTS / skip));
 
         if (outBeforeCCurveHistogram) {
             histNeeded = true;
         }
     }
 
-    if (tcurve && tcurve->isIdentity()) {
-        tcurve = nullptr;
-    }
-
-    if (tcurve) {
+    if (tcurve && !tcurve->isIdentity()) {
         utili = true; //if active
 
         // L values go up to 32767, last stop is for highlight overflow
@@ -950,15 +1115,15 @@ void CurveFactory::complexLCurve (double br, double contr, const std::vector<dou
             }
 
             // apply custom/parametric/NURBS curve, if any
-            val = tcurve->getVal (outCurve[i]);
+            val = tcurve->getVal(outCurve[i]);
 
-            outCurve[i] = (32767.f * val);
+            outCurve[i] = 32767.f * val;
         }
     } else {
 
         // Skip the slow getval method if no curve is used (or an identity curve)
         // L values go up to 32767, last stop is for highlight overflow
-        if(histNeeded) {
+        if (histNeeded) {
             histogram.compressTo(outBeforeCCurveHistogram, 32768, outCurve);
         }
 
@@ -967,30 +1132,22 @@ void CurveFactory::complexLCurve (double br, double contr, const std::vector<dou
     }
 
     for (int i = 32768; i < 32770; i++) { // set last two elements of lut to 32768 and 32769 to allow linear interpolation
-        outCurve[i] = (float)i;
+        outCurve[i] = i;
     }
 
 }
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-void CurveFactory::RGBCurve (const std::vector<double>& curvePoints, LUTf & outCurve, int skip)
+void CurveFactory::RGBCurve(const std::vector<double>& curvePoints, LUTf & outCurve, int skip)
 {
 
     // create a curve if needed
     std::unique_ptr<DiagonalCurve> tcurve;
 
     if (!curvePoints.empty() && curvePoints[0] != 0) {
-        tcurve = std::unique_ptr<DiagonalCurve>(new DiagonalCurve(curvePoints, CURVES_MIN_POLY_POINTS / skip));
+        tcurve.reset(new DiagonalCurve(curvePoints, CURVES_MIN_POLY_POINTS / skip));
     }
 
-    if (tcurve && tcurve->isIdentity()) {
-        tcurve = nullptr;
-    }
-
-    if (tcurve) {
+    if (tcurve && !tcurve->isIdentity()) {
         if (!outCurve) {
             outCurve(65536, 0);
         }
@@ -1007,6 +1164,1328 @@ void CurveFactory::RGBCurve (const std::vector<double>& curvePoints, LUTf & outC
     }
 }
 
+LocretigainCurverab::LocretigainCurverab() : sum(0.f) {};
+
+void LocretigainCurverab::Reset()
+{
+    lutLocretigainCurverab.reset();
+    sum = 0.f;
+}
+
+void LocretigainCurverab::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocretigainCurverab(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocretigainCurverab[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocretigainCurverab[i] < 0.02f) {
+            lutLocretigainCurverab[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocretigainCurverab[i];
+    }
+
+    //lutLocCurve.dump("wav");
+}
+
+void LocretigainCurverab::Set(const std::vector<double> &curvePoints)
+{
+
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        tcurve.setIdentityValue(0.);
+        Set(tcurve);
+    } else {
+        Reset();
+    }
+}
+LocHHmaskblCurve::LocHHmaskblCurve() : sum(0.f) {};
+
+void LocHHmaskblCurve::Reset()
+{
+    lutLocHHmaskblCurve.reset();
+    sum = 0.f;
+}
+
+
+void LocHHmaskblCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocHHmaskblCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocHHmaskblCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocHHmaskblCurve[i] < 0.02f) {
+            lutLocHHmaskblCurve[i] = 0.02f;
+        }
+
+        sum += lutLocHHmaskblCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+void LocHHmaskblCurve::Set(const std::vector<double> &curvePoints, bool & lhmasblutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lhmasblutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+LocLLmaskblCurve::LocLLmaskblCurve() : sum(0.f) {};
+
+void LocLLmaskblCurve::Reset()
+{
+    lutLocLLmaskblCurve.reset();
+    sum = 0.f;
+}
+
+void LocLLmaskblCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocLLmaskblCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocLLmaskblCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocLLmaskblCurve[i] < 0.02f) {
+            lutLocLLmaskblCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocLLmaskblCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocLLmaskblCurve::Set(const std::vector<double> &curvePoints,  bool & llmasblutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        llmasblutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+LocCCmaskblCurve::LocCCmaskblCurve() : sum(0.f) {};
+
+void LocCCmaskblCurve::Reset()
+{
+    lutLocCCmaskblCurve.reset();
+    sum = 0.f;
+}
+
+void LocCCmaskblCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocCCmaskblCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocCCmaskblCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocCCmaskblCurve[i] < 0.02f) {
+            lutLocCCmaskblCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocCCmaskblCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocCCmaskblCurve::Set(const std::vector<double> &curvePoints,  bool & lcmasblutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lcmasblutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+
+
+LocHHmasktmCurve::LocHHmasktmCurve() : sum(0.f) {};
+
+void LocHHmasktmCurve::Reset()
+{
+    lutLocHHmasktmCurve.reset();
+    sum = 0.f;
+}
+
+
+void LocHHmasktmCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocHHmasktmCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocHHmasktmCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocHHmasktmCurve[i] < 0.02f) {
+            lutLocHHmasktmCurve[i] = 0.02f;
+        }
+
+        sum += lutLocHHmasktmCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+void LocHHmasktmCurve::Set(const std::vector<double> &curvePoints, bool & lhmastmutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lhmastmutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+LocLLmasktmCurve::LocLLmasktmCurve() : sum(0.f) {};
+
+void LocLLmasktmCurve::Reset()
+{
+    lutLocLLmasktmCurve.reset();
+    sum = 0.f;
+}
+
+void LocLLmasktmCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocLLmasktmCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocLLmasktmCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocLLmasktmCurve[i] < 0.02f) {
+            lutLocLLmasktmCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocLLmasktmCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocLLmasktmCurve::Set(const std::vector<double> &curvePoints,  bool & llmastmutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        llmastmutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+LocCCmasktmCurve::LocCCmasktmCurve() : sum(0.f) {};
+
+void LocCCmasktmCurve::Reset()
+{
+    lutLocCCmasktmCurve.reset();
+    sum = 0.f;
+}
+
+void LocCCmasktmCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocCCmasktmCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocCCmasktmCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocCCmasktmCurve[i] < 0.02f) {
+            lutLocCCmasktmCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocCCmasktmCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocCCmasktmCurve::Set(const std::vector<double> &curvePoints,  bool & lcmastmutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lcmastmutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+
+
+
+LocHHmaskretiCurve::LocHHmaskretiCurve() : sum(0.f) {};
+
+void LocHHmaskretiCurve::Reset()
+{
+    lutLocHHmaskretiCurve.reset();
+    sum = 0.f;
+}
+
+
+void LocHHmaskretiCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocHHmaskretiCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocHHmaskretiCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocHHmaskretiCurve[i] < 0.02f) {
+            lutLocHHmaskretiCurve[i] = 0.02f;
+        }
+
+        sum += lutLocHHmaskretiCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+void LocHHmaskretiCurve::Set(const std::vector<double> &curvePoints, bool & lhmasretiutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lhmasretiutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+LocLLmaskretiCurve::LocLLmaskretiCurve() : sum(0.f) {};
+
+void LocLLmaskretiCurve::Reset()
+{
+    lutLocLLmaskretiCurve.reset();
+    sum = 0.f;
+}
+
+void LocLLmaskretiCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocLLmaskretiCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocLLmaskretiCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocLLmaskretiCurve[i] < 0.02f) {
+            lutLocLLmaskretiCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocLLmaskretiCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocLLmaskretiCurve::Set(const std::vector<double> &curvePoints,  bool & llmasretiutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        llmasretiutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+LocCCmaskretiCurve::LocCCmaskretiCurve() : sum(0.f) {};
+
+void LocCCmaskretiCurve::Reset()
+{
+    lutLocCCmaskretiCurve.reset();
+    sum = 0.f;
+}
+
+void LocCCmaskretiCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocCCmaskretiCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocCCmaskretiCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocCCmaskretiCurve[i] < 0.02f) {
+            lutLocCCmaskretiCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocCCmaskretiCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocCCmaskretiCurve::Set(const std::vector<double> &curvePoints,  bool & lcmasretiutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lcmasretiutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+
+
+
+
+
+
+
+LocHHmaskcbCurve::LocHHmaskcbCurve() : sum(0.f) {};
+
+void LocHHmaskcbCurve::Reset()
+{
+    lutLocHHmaskcbCurve.reset();
+    sum = 0.f;
+}
+
+
+void LocHHmaskcbCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocHHmaskcbCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocHHmaskcbCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocHHmaskcbCurve[i] < 0.02f) {
+            lutLocHHmaskcbCurve[i] = 0.02f;
+        }
+
+        sum += lutLocHHmaskcbCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+void LocHHmaskcbCurve::Set(const std::vector<double> &curvePoints, bool & lhmascbutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lhmascbutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+LocLLmaskcbCurve::LocLLmaskcbCurve() : sum(0.f) {};
+
+void LocLLmaskcbCurve::Reset()
+{
+    lutLocLLmaskcbCurve.reset();
+    sum = 0.f;
+}
+
+void LocLLmaskcbCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocLLmaskcbCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocLLmaskcbCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocLLmaskcbCurve[i] < 0.02f) {
+            lutLocLLmaskcbCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocLLmaskcbCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocLLmaskcbCurve::Set(const std::vector<double> &curvePoints,  bool & llmascbutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        llmascbutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+LocCCmaskcbCurve::LocCCmaskcbCurve() : sum(0.f) {};
+
+void LocCCmaskcbCurve::Reset()
+{
+    lutLocCCmaskcbCurve.reset();
+    sum = 0.f;
+}
+
+void LocCCmaskcbCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocCCmaskcbCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocCCmaskcbCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocCCmaskcbCurve[i] < 0.02f) {
+            lutLocCCmaskcbCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocCCmaskcbCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocCCmaskcbCurve::Set(const std::vector<double> &curvePoints,  bool & lcmascbutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lcmascbutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+
+
+
+LocHHmaskSHCurve::LocHHmaskSHCurve() : sum(0.f) {};
+
+void LocHHmaskSHCurve::Reset()
+{
+    lutLocHHmaskSHCurve.reset();
+    sum = 0.f;
+}
+
+
+void LocHHmaskSHCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocHHmaskSHCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocHHmaskSHCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocHHmaskSHCurve[i] < 0.02f) {
+            lutLocHHmaskSHCurve[i] = 0.02f;
+        }
+
+        sum += lutLocHHmaskSHCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocHHmaskSHCurve::Set(const std::vector<double> &curvePoints, bool & lhmasSHutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lhmasSHutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+
+
+LocLLmaskSHCurve::LocLLmaskSHCurve() : sum(0.f) {};
+
+void LocLLmaskSHCurve::Reset()
+{
+    lutLocLLmaskSHCurve.reset();
+    sum = 0.f;
+}
+
+void LocLLmaskSHCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocLLmaskSHCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocLLmaskSHCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocLLmaskSHCurve[i] < 0.02f) {
+            lutLocLLmaskSHCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocLLmaskSHCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocLLmaskSHCurve::Set(const std::vector<double> &curvePoints,  bool & llmasSHutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        llmasSHutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+
+
+
+LocCCmaskSHCurve::LocCCmaskSHCurve() : sum(0.f) {};
+
+void LocCCmaskSHCurve::Reset()
+{
+    lutLocCCmaskSHCurve.reset();
+    sum = 0.f;
+}
+
+void LocCCmaskSHCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocCCmaskSHCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocCCmaskSHCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocCCmaskSHCurve[i] < 0.02f) {
+            lutLocCCmaskSHCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocCCmaskSHCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocCCmaskSHCurve::Set(const std::vector<double> &curvePoints,  bool & lcmasSHutili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lcmasSHutili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+
+
+
+
+LocHHmaskexpCurve::LocHHmaskexpCurve() : sum(0.f) {};
+
+void LocHHmaskexpCurve::Reset()
+{
+    lutLocHHmaskexpCurve.reset();
+    sum = 0.f;
+}
+
+
+void LocHHmaskexpCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocHHmaskexpCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocHHmaskexpCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocHHmaskexpCurve[i] < 0.02f) {
+            lutLocHHmaskexpCurve[i] = 0.02f;
+        }
+
+        sum += lutLocHHmaskexpCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocHHmaskexpCurve::Set(const std::vector<double> &curvePoints, bool & lhmasexputili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lhmasexputili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+
+
+LocLLmaskexpCurve::LocLLmaskexpCurve() : sum(0.f) {};
+
+void LocLLmaskexpCurve::Reset()
+{
+    lutLocLLmaskexpCurve.reset();
+    sum = 0.f;
+}
+
+void LocLLmaskexpCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocLLmaskexpCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocLLmaskexpCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocLLmaskexpCurve[i] < 0.02f) {
+            lutLocLLmaskexpCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocLLmaskexpCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocLLmaskexpCurve::Set(const std::vector<double> &curvePoints,  bool & llmasexputili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        llmasexputili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+
+
+
+LocCCmaskexpCurve::LocCCmaskexpCurve() : sum(0.f) {};
+
+void LocCCmaskexpCurve::Reset()
+{
+    lutLocCCmaskexpCurve.reset();
+    sum = 0.f;
+}
+
+void LocCCmaskexpCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocCCmaskexpCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocCCmaskexpCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocCCmaskexpCurve[i] < 0.02f) {
+            lutLocCCmaskexpCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocCCmaskexpCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+void LocCCmaskexpCurve::Set(const std::vector<double> &curvePoints,  bool & lcmasexputili)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        lcmasexputili = true;
+        Set(ttcurve);
+    } else {
+        Reset();
+    }
+}
+
+LocHHmaskCurve::LocHHmaskCurve() : sum(0.f) {};
+
+void LocHHmaskCurve::Reset()
+{
+    lutLocHHmaskCurve.reset();
+    sum = 0.f;
+}
+
+
+void LocHHmaskCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocHHmaskCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocHHmaskCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocHHmaskCurve[i] < 0.02f) {
+            lutLocHHmaskCurve[i] = 0.02f;
+        }
+
+        sum += lutLocHHmaskCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+bool LocHHmaskCurve::Set(const std::vector<double> &curvePoints)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        Set(ttcurve);
+        return true;
+    } else {
+        Reset();
+        return false;
+    }
+}
+
+
+
+
+LocCCmaskCurve::LocCCmaskCurve() : sum(0.f) {};
+
+void LocCCmaskCurve::Reset()
+{
+    lutLocCCmaskCurve.reset();
+    sum = 0.f;
+}
+
+
+void LocCCmaskCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocCCmaskCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocCCmaskCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocCCmaskCurve[i] < 0.02f) {
+            lutLocCCmaskCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocCCmaskCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+bool LocCCmaskCurve::Set(const std::vector<double> &curvePoints)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        Set(ttcurve);
+        return true;
+    } else {
+        Reset();
+        return false;
+    }
+}
+
+LocLLmaskCurve::LocLLmaskCurve() : sum(0.f) {};
+
+void LocLLmaskCurve::Reset()
+{
+    lutLocLLmaskCurve.reset();
+    sum = 0.f;
+}
+
+void LocLLmaskCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocLLmaskCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocLLmaskCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocLLmaskCurve[i] < 0.02f) {
+            lutLocLLmaskCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocLLmaskCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+bool LocLLmaskCurve::Set(const std::vector<double> &curvePoints)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        Set(ttcurve);
+        return true;
+    } else {
+        Reset();
+        return false;
+    }
+}
+
+
+
+
+LocHHCurve::LocHHCurve() : sum(0.f) {};
+
+void LocHHCurve::Reset()
+{
+    lutLocHHCurve.reset();
+    sum = 0.f;
+}
+void LocHHCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocHHCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocHHCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocHHCurve[i] < 0.02f) {
+            lutLocHHCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocHHCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+bool LocHHCurve::Set(const std::vector<double> &curvePoints)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        Set(ttcurve);
+        return true;
+    } else {
+        Reset();
+        return false;
+    }
+}
+
+
+LocLHCurve::LocLHCurve() : sum(0.f) {};
+
+void LocLHCurve::Reset()
+{
+    lutLocLHCurve.reset();
+    sum = 0.f;
+}
+
+void LocLHCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocLHCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocLHCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocLHCurve[i] < 0.02f) {
+            lutLocLHCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocLHCurve[i];
+    }
+
+    //lutLocCurve.dump("wav");
+}
+
+
+
+
+bool LocLHCurve::Set(const std::vector<double> &curvePoints)
+{
+
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+//    if (LHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        tcurve.setIdentityValue(0.);
+        Set(tcurve);
+        return true;
+    } else {
+        Reset();
+        return false;
+    }
+}
+
+LocCHCurve::LocCHCurve() : sum(0.f) {};
+
+void LocCHCurve::Reset()
+{
+    lutLocCHCurve.reset();
+    sum = 0.f;
+}
+void LocCHCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocCHCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocCHCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocCHCurve[i] < 0.02f) {
+            lutLocCHCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocCHCurve[i];
+    }
+
+    //lutLocHHCurve.dump("wav");
+}
+
+
+
+bool LocCHCurve::Set(const std::vector<double> &curvePoints)
+{
+    //  if (HHutili && !curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve ttcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        ttcurve.setIdentityValue(0.);
+        Set(ttcurve);
+        return true;
+    } else {
+        Reset();
+        return false;
+    }
+}
+
+
+
+
+
+LocwavCurve::LocwavCurve() : sum(0.f) {};
+
+void LocwavCurve::Reset()
+{
+    lutLocwavCurve.reset();
+    sum = 0.f;
+}
+
+void LocwavCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocwavCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocwavCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocwavCurve[i] < 0.02f) {
+            lutLocwavCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocwavCurve[i];
+    }
+
+    //lutLocCurve.dump("wav");
+}
+bool LocwavCurve::Set(const std::vector<double> &curvePoints)
+{
+
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        tcurve.setIdentityValue(0.);
+        Set(tcurve);
+        return true;
+    } else {
+        Reset();
+        return false;
+    }
+}
+
+LocretitransCurve::LocretitransCurve() : sum(0.f) {};
+
+void LocretitransCurve::Reset()
+{
+    lutLocretitransCurve.reset();
+    sum = 0.f;
+}
+
+void LocretitransCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocretitransCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocretitransCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocretitransCurve[i] < 0.02f) {
+            lutLocretitransCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocretitransCurve[i];
+    }
+
+    //lutLocCurve.dump("wav");
+}
+void LocretitransCurve::Set(const std::vector<double> &curvePoints)
+{
+
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        tcurve.setIdentityValue(0.);
+        Set(tcurve);
+    } else {
+        Reset();
+    }
+}
+
+
+LocretigainCurve::LocretigainCurve() : sum(0.f) {};
+
+void LocretigainCurve::Reset()
+{
+    lutLocretigainCurve.reset();
+    sum = 0.f;
+}
+
+void LocretigainCurve::Set(const Curve &pCurve)
+{
+    if (pCurve.isIdentity()) {
+        Reset(); // raise this value if the quality suffers from this number of samples
+        return;
+    }
+
+    lutLocretigainCurve(501);  // raise this value if the quality suffers from this number of samples
+    sum = 0.f;
+
+    for (int i = 0; i < 501; i++) {
+        lutLocretigainCurve[i] = pCurve.getVal(double (i) / 500.);
+
+        if (lutLocretigainCurve[i] < 0.02f) {
+            lutLocretigainCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
+        }
+
+        sum += lutLocretigainCurve[i];
+    }
+
+    //lutLocCurve.dump("wav");
+}
+void LocretigainCurve::Set(const std::vector<double> &curvePoints)
+{
+
+    if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
+        FlatCurve tcurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2);
+        tcurve.setIdentityValue(0.);
+        Set(tcurve);
+    } else {
+        Reset();
+    }
+}
+
+
 
 void ColorAppearance::Reset()
 {
@@ -1019,7 +2498,7 @@ void ColorAppearance::Set(const Curve &pCurve)
     lutColCurve(65536);
 
     for (int i = 0; i < 65536; i++) {
-        lutColCurve[i] = pCurve.getVal(double(i) / 65535.) * 65535.;
+        lutColCurve[i] = pCurve.getVal(double (i) / 65535.) * 65535.;
     }
 }
 
@@ -1038,10 +2517,10 @@ void RetinextransmissionCurve::Set(const Curve &pCurve)
         return;
     }
 
-    luttransmission(501); // raise this value if the quality suffers from this number of samples
+    luttransmission(501);  // raise this value if the quality suffers from this number of samples
 
     for (int i = 0; i < 501; i++) {
-        luttransmission[i] = pCurve.getVal(double(i) / 500.);
+        luttransmission[i] = pCurve.getVal(double (i) / 500.);
     }
 }
 
@@ -1071,10 +2550,10 @@ void RetinexgaintransmissionCurve::Set(const Curve &pCurve)
         return;
     }
 
-    lutgaintransmission(501); // raise this value if the quality suffers from this number of samples
+    lutgaintransmission(501);  // raise this value if the quality suffers from this number of samples
 
     for (int i = 0; i < 501; i++) {
-        lutgaintransmission[i] = pCurve.getVal(double(i) / 500.);
+        lutgaintransmission[i] = pCurve.getVal(double (i) / 500.);
     }
 }
 
@@ -1101,9 +2580,9 @@ void ToneCurve::Set(const Curve &pCurve, float gamma)
 
     if (gamma <= 0.0 || gamma == 1.) {
         for (int i = 0; i < 65536; i++) {
-            lutToneCurve[i] = (float)pCurve.getVal(float(i) / 65535.f) * 65535.f;
+            lutToneCurve[i] = (float)pCurve.getVal(float (i) / 65535.f) * 65535.f;
         }
-    } else if(gamma == (float)Color::sRGBGammaCurve) {
+    } else if (gamma == (float)Color::sRGBGammaCurve) {
         // for sRGB gamma we can use luts, which is much faster
         for (int i = 0; i < 65536; i++) {
             float val = Color::gammatab_srgb[i] / 65535.f;
@@ -1113,17 +2592,17 @@ void ToneCurve::Set(const Curve &pCurve, float gamma)
         }
 
     } else {
-        const float start = expf(gamma * logf( -0.055 / ((1.0 / gamma - 1.0) * 1.055 )));
-        const float slope = 1.055 * powf (start, 1.0 / gamma - 1) - 0.055 / start;
+        const float start = expf(gamma * logf(-0.055 / ((1.0 / gamma - 1.0) * 1.055)));
+        const float slope = 1.055 * powf(start, 1.0 / gamma - 1) - 0.055 / start;
         const float mul = 1.055;
         const float add = 0.055;
 
         // apply gamma, that is 'pCurve' is defined with the given gamma and here we convert it to a curve in linear space
         for (int i = 0; i < 65536; i++) {
-            float val = float(i) / 65535.f;
-            val = CurveFactory::gamma (val, gamma, start, slope, mul, add);
+            float val = float (i) / 65535.f;
+            val = CurveFactory::gamma(val, gamma, start, slope, mul, add);
             val = pCurve.getVal(val);
-            val = CurveFactory::igamma (val, gamma, start, slope, mul, add);
+            val = CurveFactory::igamma(val, gamma, start, slope, mul, add);
             lutToneCurve[i] = val * 65535.f;
         }
     }
@@ -1141,10 +2620,10 @@ void OpacityCurve::Set(const Curve *pCurve)
         return;
     }
 
-    lutOpacityCurve(501); // raise this value if the quality suffers from this number of samples
+    lutOpacityCurve(501);  // raise this value if the quality suffers from this number of samples
 
     for (int i = 0; i < 501; i++) {
-        lutOpacityCurve[i] = pCurve->getVal(double(i) / 500.);
+        lutOpacityCurve[i] = pCurve->getVal(double (i) / 500.);
     }
 
     //lutOpacityCurve.dump("opacity");
@@ -1155,17 +2634,12 @@ void OpacityCurve::Set(const std::vector<double> &curvePoints, bool &opautili)
     std::unique_ptr<FlatCurve> tcurve;
 
     if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-        tcurve = std::unique_ptr<FlatCurve>(new FlatCurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2));
+        tcurve.reset(new FlatCurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2));
         tcurve->setIdentityValue(0.);
-    }
-
-    if (tcurve) {
         Set(tcurve.get());
         opautili = true;
-        tcurve = nullptr;
     }
 }
-
 
 WavCurve::WavCurve() : sum(0.f) {}
 
@@ -1182,13 +2656,13 @@ void WavCurve::Set(const Curve &pCurve)
         return;
     }
 
-    lutWavCurve(501); // raise this value if the quality suffers from this number of samples
+    lutWavCurve(501);  // raise this value if the quality suffers from this number of samples
     sum = 0.f;
 
     for (int i = 0; i < 501; i++) {
-        lutWavCurve[i] = pCurve.getVal(double(i) / 500.);
+        lutWavCurve[i] = pCurve.getVal(double (i) / 500.);
 
-        if(lutWavCurve[i] < 0.02f) {
+        if (lutWavCurve[i] < 0.02f) {
             lutWavCurve[i] = 0.02f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
         }
 
@@ -1259,10 +2733,10 @@ void WavOpacityCurveRG::Set(const Curve &pCurve)
         return;
     }
 
-    lutOpacityCurveRG(501); // raise this value if the quality suffers from this number of samples
+    lutOpacityCurveRG(501);  // raise this value if the quality suffers from this number of samples
 
     for (int i = 0; i < 501; i++) {
-        lutOpacityCurveRG[i] = pCurve.getVal(double(i) / 500.);
+        lutOpacityCurveRG[i] = pCurve.getVal(double (i) / 500.);
     }
 }
 
@@ -1329,10 +2803,10 @@ void WavOpacityCurveBY::Set(const Curve &pCurve)
         return;
     }
 
-    lutOpacityCurveBY(501); // raise this value if the quality suffers from this number of samples
+    lutOpacityCurveBY(501);  // raise this value if the quality suffers from this number of samples
 
     for (int i = 0; i < 501; i++) {
-        lutOpacityCurveBY[i] = pCurve.getVal(double(i) / 500.);
+        lutOpacityCurveBY[i] = pCurve.getVal(double (i) / 500.);
     }
 }
 
@@ -1361,10 +2835,10 @@ void WavOpacityCurveW::Set(const Curve &pCurve)
         return;
     }
 
-    lutOpacityCurveW(501); // raise this value if the quality suffers from this number of samples
+    lutOpacityCurveW(501);  // raise this value if the quality suffers from this number of samples
 
     for (int i = 0; i < 501; i++) {
-        lutOpacityCurveW[i] = pCurve.getVal(double(i) / 500.);
+        lutOpacityCurveW[i] = pCurve.getVal(double (i) / 500.);
     }
 }
 
@@ -1393,10 +2867,10 @@ void WavOpacityCurveWL::Set(const Curve &pCurve)
         return;
     }
 
-    lutOpacityCurveWL(501); // raise this value if the quality suffers from this number of samples
+    lutOpacityCurveWL(501);  // raise this value if the quality suffers from this number of samples
 
     for (int i = 0; i < 501; i++) {
-        lutOpacityCurveWL[i] = pCurve.getVal(double(i) / 500.);
+        lutOpacityCurveWL[i] = pCurve.getVal(double (i) / 500.);
     }
 }
 
@@ -1427,13 +2901,13 @@ void NoiseCurve::Set(const Curve &pCurve)
         return;
     }
 
-    lutNoiseCurve(501); // raise this value if the quality suffers from this number of samples
+    lutNoiseCurve(501);  // raise this value if the quality suffers from this number of samples
     sum = 0.f;
 
     for (int i = 0; i < 501; i++) {
-        lutNoiseCurve[i] = pCurve.getVal(double(i) / 500.);
+        lutNoiseCurve[i] = pCurve.getVal(double (i) / 500.);
 
-        if(lutNoiseCurve[i] < 0.01f) {
+        if (lutNoiseCurve[i] < 0.01f) {
             lutNoiseCurve[i] = 0.01f;    //avoid 0.f for wavelet : under 0.01f quasi no action for each value
         }
 
@@ -1507,7 +2981,7 @@ void ColorGradientCurve::SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3],
     //lr1=low;
 
     for (int i = 0; i <= upperBound; ++i) {
-        double x = double(i) / double(upperBound);
+        double x = double (i) / double (upperBound);
 
         if (x > nextX) {
             ++ptNum;
@@ -1523,13 +2997,13 @@ void ColorGradientCurve::SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3],
         }
 
         if (!ptNum) {
-            Color::hsv2rgb(float(prevY), satur, lr1, r, g, b);
+            Color::hsv2rgb(float (prevY), satur, lr1, r, g, b);
             Color::rgbxyz(r, g, b, xx, yy, zz, xyz_rgb);
             lut1[i] = xx;
             lut2[i] = yy;
             lut3[i] = zz;
         } else if (ptNum >= nPoints) {
-            Color::hsv2rgb(float(nextY), satur, lr2, r, g, b);
+            Color::hsv2rgb(float (nextY), satur, lr2, r, g, b);
             Color::rgbxyz(r, g, b, xx, yy, zz, xyz_rgb);
             lut1[i] = xx;
             lut2[i] = yy;
@@ -1539,8 +3013,8 @@ void ColorGradientCurve::SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3],
 
             if (dY > 0.000001 || dY < -0.000001) {
                 float r1, g1, b1, r2, g2, b2;
-                Color::hsv2rgb(float(prevY), satur, lr1, r1, g1, b1);
-                Color::hsv2rgb(float(nextY), satur, lr2, r2, g2, b2);
+                Color::hsv2rgb(float (prevY), satur, lr1, r1, g1, b1);
+                Color::hsv2rgb(float (nextY), satur, lr2, r2, g2, b2);
                 LUTf dum;
                 float X1, X2, Y1, Y2, Z1, Z2, L1, a_1, b_1, c1, h1;
                 Color::rgbxyz(r2, g2, b2, X2, Y2, Z2, xyz_rgb);
@@ -1548,34 +3022,27 @@ void ColorGradientCurve::SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3],
                 //I use XYZ to mix color 1 and 2 rather than rgb (gamut) and rather than Lab artifacts
                 X1 = X1 + (X2 - X1) * currY / dY;
 
-                if(X1 < 0.f) {
+                if (X1 < 0.f) {
                     X1 = 0.f;    //negative value not good
                 }
 
                 Y1 = Y1 + (Y2 - Y1) * currY / dY;
 
-                if(Y1 < 0.f) {
+                if (Y1 < 0.f) {
                     Y1 = 0.f;
                 }
 
                 Z1 = Z1 + (Z2 - Z1) * currY / dY;
 
-                if(Z1 < 0.f) {
+                if (Z1 < 0.f) {
                     Z1 = 0.f;
                 }
 
-                Color::XYZ2Lab(X1, Y1, Z1, L1, a_1, b_1);//prepare to gamut control
+                Color::XYZ2Lab(X1, Y1, Z1, L1, a_1, b_1);  //prepare to gamut control
                 Color::Lab2Lch(a_1, b_1, c1, h1);
                 float Lr = L1 / 327.68f;
                 float RR, GG, BB;
-#ifndef NDEBUG
-                bool neg = false;
-                bool more_rgb = false;
-                //gamut control : Lab values are in gamut
-                Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f, neg, more_rgb);
-#else
                 Color::gamutLchonly(h1, Lr, c1, RR, GG, BB, xyz_rgb, false, 0.15f, 0.96f);
-#endif
                 L1 = Lr * 327.68f;
                 float La, Lb, X, Y, Z;
                 // converting back to rgb
@@ -1585,7 +3052,7 @@ void ColorGradientCurve::SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3],
                 lut2[i] = Y;
                 lut3[i] = Z;
             } else {
-                Color::hsv2rgb(float(nextY), satur, lumin, r, g, b);
+                Color::hsv2rgb(float (nextY), satur, lumin, r, g, b);
                 Color::rgbxyz(r, g, b, xx, yy, zz, xyz_rgb);
                 lut1[i] = xx;
                 lut2[i] = yy;
@@ -1593,14 +3060,6 @@ void ColorGradientCurve::SetXYZ(const Curve *pCurve, const double xyz_rgb[3][3],
             }
         }
     }
-
-    /*
-    #ifndef NDEBUG
-    lutRed.dump("red");
-    lutGreen.dump("green");
-    lutBlue.dump("blue");
-    #endif
-    */
 }
 
 void ColorGradientCurve::SetXYZ(const std::vector<double> &curvePoints, const double xyz_rgb[3][3], float satur, float lumin)
@@ -1608,10 +3067,7 @@ void ColorGradientCurve::SetXYZ(const std::vector<double> &curvePoints, const do
     std::unique_ptr<FlatCurve> tcurve;
 
     if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-        tcurve = std::unique_ptr<FlatCurve>(new FlatCurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2));
-    }
-
-    if (tcurve) {
+        tcurve.reset(new FlatCurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2));
         SetXYZ(tcurve.get(), xyz_rgb, satur, lumin);
     }
 }
@@ -1644,7 +3100,7 @@ void ColorGradientCurve::SetRGB(const Curve *pCurve)
     Color::eInterpolationDirection dir = Color::ID_DOWN;
 
     for (int i = 0; i <= upperBound; ++i) {
-        double x = double(i) / double(upperBound);
+        double x = double (i) / double (upperBound);
 
         if (x > nextX) {
             ++ptNum;
@@ -1658,12 +3114,12 @@ void ColorGradientCurve::SetRGB(const Curve *pCurve)
         }
 
         if (!ptNum) {
-            Color::hsv2rgb(float(prevY), 1.f, 1.f, r, g, b);
+            Color::hsv2rgb(float (prevY), 1.f, 1.f, r, g, b);
             lut1[i] = r;
             lut2[i] = g;
             lut3[i] = b;
         } else if (ptNum >= nPoints) {
-            Color::hsv2rgb(float(nextY), 1.f, 1.f, r, g, b);
+            Color::hsv2rgb(float (nextY), 1.f, 1.f, r, g, b);
             lut1[i] = r;
             lut2[i] = g;
             lut3[i] = b;
@@ -1677,29 +3133,21 @@ void ColorGradientCurve::SetRGB(const Curve *pCurve)
                 Color::hsv2rgb(h2, 1.f, 1.f, ro, go, bo);
 #else
                 float r1, g1, b1, r2, g2, b2, ro, go, bo;
-                Color::hsv2rgb(float(prevY), 1., 1., r1, g1, b1);
-                Color::hsv2rgb(float(nextY), 1., 1., r2, g2, b2);
+                Color::hsv2rgb(float (prevY), 1., 1., r1, g1, b1);
+                Color::hsv2rgb(float (nextY), 1., 1., r2, g2, b2);
                 Color::interpolateRGBColor(currY / dY, r1, g1, b1, r2, g2, b2, Color::CHANNEL_LIGHTNESS | Color::CHANNEL_CHROMATICITY | Color::CHANNEL_HUE, xyz_rgb, rgb_xyz, ro, go, bo);
 #endif
                 lut1[i] = ro;
                 lut2[i] = go;
                 lut3[i] = bo;
             } else {
-                Color::hsv2rgb(float(nextY), 1.f, 1.f, r, g, b);
+                Color::hsv2rgb(float (nextY), 1.f, 1.f, r, g, b);
                 lut1[i] = r;
                 lut2[i] = g;
                 lut3[i] = b;
             }
         }
     }
-
-    /*
-    #ifndef NDEBUG
-    lut1.dump("red");
-    lut2.dump("green");
-    lut3.dump("blue");
-    #endif
-    */
 }
 
 void ColorGradientCurve::SetRGB(const std::vector<double> &curvePoints)
@@ -1707,10 +3155,7 @@ void ColorGradientCurve::SetRGB(const std::vector<double> &curvePoints)
     std::unique_ptr<FlatCurve> tcurve;
 
     if (!curvePoints.empty() && curvePoints[0] > FCT_Linear && curvePoints[0] < FCT_Unchanged) {
-        tcurve = std::unique_ptr<FlatCurve>(new FlatCurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2));
-    }
-
-    if (tcurve) {
+        tcurve.reset(new FlatCurve(curvePoints, false, CURVES_MIN_POLY_POINTS / 2));
         SetRGB(tcurve.get());
     }
 }
@@ -1753,18 +3198,18 @@ void PerceptualToneCurve::cubic_spline(const float x[], const float y[], const i
         A[i][len - 1] = 6 * (b[i + 1] - b[i]);
     }
 
-    for(i = 1; i < len - 2; i++) {
+    for (i = 1; i < len - 2; i++) {
         float v = A[i + 1][i] / A[i][i];
 
-        for(j = 1; j <= len - 1; j++) {
+        for (j = 1; j <= len - 1; j++) {
             A[i + 1][j] -= v * A[i][j];
         }
     }
 
-    for(i = len - 2; i > 0; i--) {
+    for (i = len - 2; i > 0; i--) {
         float acc = 0;
 
-        for(j = i; j <= len - 2; j++) {
+        for (j = i; j <= len - 2; j++) {
             acc += A[i][j] * c[j];
         }
 
@@ -1884,7 +3329,7 @@ float PerceptualToneCurve::calculateToneCurveContrastValue() const
 
     // Note: the analysis is made on the gamma encoded curve, as the LUT is linear we make backwards gamma to
     struct find_tc_slope_fun_arg arg = { this };
-    float k = find_minimum_interval_halving(find_tc_slope_fun, &arg, 0.1, 5.0, 0.01, 20); // normally found in 8 iterations
+    float k = find_minimum_interval_halving(find_tc_slope_fun, &arg, 0.1, 5.0, 0.01, 20);  // normally found in 8 iterations
     //fprintf(stderr, "average slope: %f\n", k);
 
     float maxslope = 0;
@@ -1941,7 +3386,7 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
         if (oog_r && oog_g && oog_b) {
             continue;
         }
-        
+
         float r = CLIP(rc[i]);
         float g = CLIP(gc[i]);
         float b = CLIP(bc[i]);
@@ -1964,17 +3409,35 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
         if (ar >= 65535.f && ag >= 65535.f && ab >= 65535.f) {
             // clip fast path, will also avoid strange colours of clipped highlights
             //rc[i] = gc[i] = bc[i] = 65535.f;
-            if (!oog_r) rc[i] = 65535.f;
-            if (!oog_g) gc[i] = 65535.f;
-            if (!oog_b) bc[i] = 65535.f;
+            if (!oog_r) {
+                rc[i] = 65535.f;
+            }
+
+            if (!oog_g) {
+                gc[i] = 65535.f;
+            }
+
+            if (!oog_b) {
+                bc[i] = 65535.f;
+            }
+
             continue;
         }
 
         if (ar <= 0.f && ag <= 0.f && ab <= 0.f) {
             //rc[i] = gc[i] = bc[i] = 0;
-            if (!oog_r) rc[i] = 0.f;
-            if (!oog_g) gc[i] = 0.f;
-            if (!oog_b) bc[i] = 0.f;
+            if (!oog_r) {
+                rc[i] = 0.f;
+            }
+
+            if (!oog_g) {
+                gc[i] = 0.f;
+            }
+
+            if (!oog_b) {
+                bc[i] = 0.f;
+            }
+
             continue;
         }
 
@@ -1997,11 +3460,12 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
         Color::Prophotoxyz(r, g, b, x, y, z);
 
         float J, C, h;
-        Ciecam02::xyz2jch_ciecam02float( J, C, h,
-                                         aw, fl,
-                                         x * 0.0015259022f,  y * 0.0015259022f,  z * 0.0015259022f,
-                                         xw, yw,  zw,
-                                         c,  nc, pow1, nbb, ncb, cz, d);
+        int c16 = 1;
+        Ciecam02::xyz2jch_ciecam02float(J, C, h,
+                                        aw, fl,
+                                        x * 0.0015259022f,  y * 0.0015259022f,  z * 0.0015259022f,
+                                        xw, yw,  zw,
+                                        c,  nc, pow1, nbb, ncb, cz, d, c16);
 
 
         if (!isfinite(J) || !isfinite(C) || !isfinite(h)) {
@@ -2014,9 +3478,18 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
                 g = newg;
                 b = newb;
             }
-            if (!oog_r) rc[i] = r;
-            if (!oog_g) gc[i] = g;
-            if (!oog_b) bc[i] = b;
+
+            if (!oog_r) {
+                rc[i] = r;
+            }
+
+            if (!oog_g) {
+                gc[i] = g;
+            }
+
+            if (!oog_b) {
+                bc[i] = b;
+            }
 
             continue;
         }
@@ -2107,11 +3580,10 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
         }
 
         C *= cmul;
-
-        Ciecam02::jch2xyz_ciecam02float( x, y, z,
-                                         J, C, h,
-                                         xw, yw,  zw,
-                                         c, nc, pow1, nbb, ncb, fl, cz, d, aw );
+        Ciecam02::jch2xyz_ciecam02float(x, y, z,
+                                        J, C, h,
+                                        xw, yw,  zw,
+                                        c, nc, pow1, nbb, ncb, fl, cz, d, aw, c16);
 
         if (!isfinite(x) || !isfinite(y) || !isfinite(z)) {
             // can happen for colours on the rim of being outside gamut, that worked without chroma scaling but not with. Then we return only the curve's result.
@@ -2124,9 +3596,17 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
                 b = newb;
             }
 
-            if (!oog_r) rc[i] = r;
-            if (!oog_g) gc[i] = g;
-            if (!oog_b) bc[i] = b;
+            if (!oog_r) {
+                rc[i] = r;
+            }
+
+            if (!oog_g) {
+                gc[i] = g;
+            }
+
+            if (!oog_b) {
+                bc[i] = b;
+            }
 
             continue;
         }
@@ -2187,9 +3667,18 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
             g = newg;
             b = newb;
         }
-        if (!oog_r) rc[i] = r;
-        if (!oog_g) gc[i] = g;
-        if (!oog_b) bc[i] = b;
+
+        if (!oog_r) {
+            rc[i] = r;
+        }
+
+        if (!oog_g) {
+            gc[i] = g;
+        }
+
+        if (!oog_b) {
+            bc[i] = b;
+        }
     }
 }
 float PerceptualToneCurve::cf_range[2];
@@ -2209,10 +3698,10 @@ void PerceptualToneCurve::init()
     f  = 1.00f;
     c  = 0.69f;
     nc = 1.00f;
-
+    int c16 = 1;//with cat02 for compatibility
     Ciecam02::initcam1float(yb, 1.f, f, la, xw, yw, zw, n, d, nbb, ncb,
-                            cz, aw, wh, pfl, fl, c);
-    pow1 = pow_F( 1.64f - pow_F( 0.29f, n ), 0.73f );
+                            cz, aw, wh, pfl, fl, c, c16);
+    pow1 = pow_F(1.64f - pow_F(0.29f, n), 0.73f);
 
     {
         // init contrast-value-to-chroma-scaling conversion curve
@@ -2280,7 +3769,7 @@ void PerceptualToneCurve::initApplyState(PerceptualToneCurveState & state, const
                     state.Working2Prophoto[i][j] += prophoto_xyz[i][k] * Work[k][j];
                 }
 
-        Work = ICCStore::getInstance()->workingSpaceInverseMatrix (workingSpace);
+        Work = ICCStore::getInstance()->workingSpaceInverseMatrix(workingSpace);
         memset(state.Prophoto2Working, 0, sizeof(state.Prophoto2Working));
 
         for (int i = 0; i < 3; i++)
