@@ -1055,11 +1055,19 @@ void Crop::update(int todo)
                             params.filmSimulation.enabled = false;
                             params.toneCurve.black = 0.f;
                             params.toneCurve.saturation = 0.f;
+                            params.toneCurve.brightness= 0.f;
+                            params.toneCurve.contrast = 0.f;
+                            params.toneCurve.hlcompr = 0.f;
+                            //these 3 are "before" LA
+                            //params.toneCurve.expcomp = 0;
+                            //params.toneCurve.curve = { 0 };
+                            //params.toneCurve.curve2 = { 0 };
                             params.colorappearance.enabled = false;
                             params.vibrance.enabled = false;
                             params.labCurve.enabled = false;
                             params.wavelet.enabled = false;
                             params.epd.enabled = false;
+                            params.softlight.enabled = false;
                         }
             } else {
                 parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), lastorigCrop.get(), cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
