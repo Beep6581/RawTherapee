@@ -1,4 +1,5 @@
 /*
+ *
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>frame
@@ -5838,6 +5839,7 @@ LocallabSoft::LocallabSoft():
     sensisf->setAdjusterListener(this);
 
     // Add Soft light specific widgets to GUI
+    pack_start(*sensisf);
     pack_start(*softMethod);
     Gtk::Label* const labelsoftmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SHOWDCT") + ":"));
     ctboxsoftmethod->pack_start(*labelsoftmethod, Gtk::PACK_SHRINK, 4);
@@ -5845,7 +5847,6 @@ LocallabSoft::LocallabSoft():
     pack_start(*ctboxsoftmethod);
     pack_start(*streng);
     pack_start(*laplace);
-    pack_start(*sensisf);
 }
 
 bool LocallabSoft::isMaskViewActive()
@@ -6529,6 +6530,7 @@ LocallabBlur::LocallabBlur():
 
     // Add Blur, Noise & Denoise specific widgets to GUI
     ToolParamBlock* const blnoisebox = Gtk::manage(new ToolParamBlock());
+    blnoisebox->pack_start(*sensibn);
     blnoisebox->pack_start(*blMethod);
     blnoisebox->pack_start(*fftwbl, Gtk::PACK_SHRINK, 0);
     blnoisebox->pack_start(*radius);
@@ -6553,7 +6555,7 @@ LocallabBlur::LocallabBlur():
     wavBox2->pack_start(*invmask);
     expdenoise2->add(*wavBox2, false);
     blnoisebox->pack_start(*expdenoise2);
-    blnoisebox->pack_start(*sensibn);
+//    blnoisebox->pack_start(*sensibn);
 //    blnoisebox->pack_start(*blurMethod);
     blnoisebox->pack_start(*invbl);
     blnoisebox->pack_start(*chroMethod);
@@ -6585,6 +6587,7 @@ LocallabBlur::LocallabBlur():
     detailBox->pack_start(*usemask, Gtk::PACK_SHRINK, 0);
     detailFrame->add(*detailBox);
     wavBox->pack_start(*detailFrame);
+    denoisebox->pack_start(*sensiden);
     
     ToolParamBlock* const nlbox = Gtk::manage(new ToolParamBlock());
     nlbox->pack_start(*nlstr);
@@ -6615,7 +6618,6 @@ LocallabBlur::LocallabBlur():
     expdenoise3->add(*wavBox3, false);
     denoisebox->pack_start(*expdenoise3);
     denoisebox->pack_start(*bilateral);
-    denoisebox->pack_start(*sensiden);
     denoisebox->pack_start(*neutral);
 
     expdenoise->add(*denoisebox, false);
