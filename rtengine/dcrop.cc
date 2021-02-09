@@ -1046,10 +1046,29 @@ void Crop::update(int todo)
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 
                         parent->previewDeltaE, parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallvibMask,  parent->localllcMask, parent->locallsharMask, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask,
                         parent->localllogMask, parent->locall_Mask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
-                        if(parent->previewDeltaE) {  
+                        if(parent->previewDeltaE || parent->locallColorMask == 5 || parent->locallvibMask == 4 || parent->locallExpMask == 5 || parent->locallSHMask == 4 || parent->localllcMask == 4 || parent->localltmMask == 4 || parent->localllogMask == 4 || parent->locallsoftMask == 6 || parent->localllcMask == 4) {  
                             params.blackwhite.enabled = false;
+                            params.colorToning.enabled = false;
+                            params.rgbCurves.enabled = false;
+                            params.chmixer.enabled = false;
+                            params.hsvequalizer.enabled = false;
+                            params.filmSimulation.enabled = false;
+                            params.toneCurve.black = 0.f;
+                            params.toneCurve.saturation = 0.f;
+                            params.toneCurve.brightness= 0.f;
+                            params.toneCurve.contrast = 0.f;
+                            params.toneCurve.hlcompr = 0.f;
+                            //these 3 are "before" LA
+                            //params.toneCurve.expcomp = 0;
+                            //params.toneCurve.curve = { 0 };
+                            //params.toneCurve.curve2 = { 0 };
+                            params.colorappearance.enabled = false;
+                            params.vibrance.enabled = false;
+                            params.labCurve.enabled = false;
+                            params.wavelet.enabled = false;
+                            params.epd.enabled = false;
+                            params.softlight.enabled = false;
                         }
-
             } else {
                 parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), lastorigCrop.get(), cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
                         lllocalcurve2,locallutili, 
