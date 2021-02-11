@@ -1181,12 +1181,11 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
         }
     }
 
-    if (plistener) {
-        progress += 0.05;
-        plistener->setProgress(progress);
-    }
-
     if (bl > 0) {
+        if (plistener) {
+            progress += 0.05;
+            plistener->setProgress(progress);
+        }
         bl = rtengine::LIM(bl - 1, 0, 4);
 
         constexpr float vals[5][3] = {{4.0f, 0.3f, 0.3f},
@@ -1201,9 +1200,25 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
         const float th = vals[bl][2];
 
         guidedFilter(guide, mask, mask, rad1, th, true, 1);
+        if (plistener) {
+            progress += 0.03;
+            plistener->setProgress(progress);
+        }
         guidedFilter(guide, rbuf, rbuf, rad2, 0.01f * 65535.f, true, 1);
+        if (plistener) {
+            progress += 0.03;
+            plistener->setProgress(progress);
+        }
         guidedFilter(guide, gbuf, gbuf, rad2, 0.01f * 65535.f, true, 1);
+        if (plistener) {
+            progress += 0.03;
+            plistener->setProgress(progress);
+        }
         guidedFilter(guide, bbuf, bbuf, rad2, 0.01f * 65535.f, true, 1);
+        if (plistener) {
+            progress += 0.03;
+            plistener->setProgress(progress);
+        }
 
 #ifdef _OPENMP
         #pragma omp parallel for
