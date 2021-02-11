@@ -385,7 +385,7 @@ ToneCurveParams::ToneCurveParams() :
     saturation(0),
     shcompr(50),
     hlcompr(0),
-    hlbl(5),
+    hlbl(1),
     hlcomprthresh(0),
     histmatching(false),
     fromHistMatching(false),

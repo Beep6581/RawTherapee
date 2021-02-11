@@ -2009,6 +2009,7 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     if (toneCurve.method) {
         toEdit.toneCurve.method = mods.toneCurve.method;
     }
+
     if (toneCurve.hlbl) {
         toEdit.toneCurve.hlbl = mods.toneCurve.hlbl;
     }

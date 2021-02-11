@@ -1190,33 +1190,33 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
 // #ifdef _OPENMP
 // #pragma omp parallel
 // #endif
-bl = 6 - bl;
-printf("BL=%i\n", bl);
+    bl = 6 - bl;
+    printf("Blur Color Propagation=%i\n", bl);
 
-float rad1 = 2.f;
-float rad2 = 3.f;
-float th = 0.001f;
-if(bl == 1 ){
-    rad1 = 2.f;
-    rad2 = 3.f;
-    th = 0.001f;
-} else if(bl == 2 ){
-    rad1 = 3.f;
-    rad2 = 2.f;
-    th = 0.01f;
-} else if(bl == 3 ){
-    rad1 = 3.f;
-    rad2 = 1.f;
-    th = 0.1f;
-} else if(bl == 4 ){
-    rad1 = 3.5f;
-    rad2 = 0.5f;
-    th = 0.2f;
-} else if(bl == 5 ){
-    rad1 = 4.f;
-    rad2 = 0.5f;
-    th = 0.3f;
-}
+    float rad1 = 2.f;
+    float rad2 = 3.f;
+    float th = 0.001f;
+    if(bl == 1){
+        rad1 = 2.f;
+        rad2 = 3.f;
+        th = 0.001f;
+    } else if(bl == 2){
+        rad1 = 3.f;
+        rad2 = 2.f;
+        th = 0.01f;
+    } else if(bl == 3){
+        rad1 = 3.f;
+        rad2 = 1.f;
+        th = 0.1f;
+    } else if(bl == 4){
+        rad1 = 3.5f;
+        rad2 = 0.5f;
+        th = 0.2f;
+    } else if(bl == 5){
+        rad1 = 4.f;
+        rad2 = 0.3f;
+        th = 0.3f;
+    }
 
 
     {

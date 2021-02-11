@@ -687,6 +687,7 @@ void ToneCurve::neutral_pressed ()
 
     expcomp->setValue(0);
     hlcompr->setValue(0);
+    hlbl->setValue(0);
     hlcomprthresh->setValue(0);
     brightness->setValue(0);
     black->setValue(0);
