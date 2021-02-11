@@ -47,6 +47,7 @@ protected:
     sigc::connection    methconn;
     sigc::connection    enaconn;
     bool                lasthrEnabled;
+    Adjuster* hlbl;
 
     Gtk::HBox* abox;
     Gtk::HBox* hlrbox;

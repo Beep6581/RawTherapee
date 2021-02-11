@@ -106,6 +106,8 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
     Gtk::Label* lab = Gtk::manage (new Gtk::Label (M("TP_HLREC_METHOD")));
     hlrbox->pack_start (*lab, Gtk::PACK_SHRINK, 4);
     hlrbox->pack_start (*method);
+    hlbl = Gtk::manage (new Adjuster (M("TP_HLREC_HLBLUR"), 1, 5, 1, 1));
+    hlrbox->pack_start (*hlbl);
     pack_start (*hlrbox);
 
     enaconn  = hrenabled->signal_toggled().connect( sigc::mem_fun(*this, &ToneCurve::hrenabledChanged) );
@@ -211,6 +213,7 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
     brightness->setAdjusterListener (this);
     black->setAdjusterListener (this);
     hlcompr->setAdjusterListener (this);
+    hlbl->setAdjusterListener (this);
     hlcomprthresh->setAdjusterListener (this);
     shcompr->setAdjusterListener (this);
     contrast->setAdjusterListener (this);
@@ -241,6 +244,7 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
     expcomp->setValue (pp->toneCurve.expcomp);
     black->setValue (pp->toneCurve.black);
     hlcompr->setValue (pp->toneCurve.hlcompr);
+    hlbl->setValue (pp->toneCurve.hlbl);
     hlcomprthresh->setValue (pp->toneCurve.hlcomprthresh);
     shcompr->setValue (pp->toneCurve.shcompr);
 
@@ -269,6 +273,7 @@ void ToneCurve::read (const ProcParams* pp, const ParamsEdited* pedited)
         expcomp->setEditedState (pedited->toneCurve.expcomp ? Edited : UnEdited);
         black->setEditedState (pedited->toneCurve.black ? Edited : UnEdited);
         hlcompr->setEditedState (pedited->toneCurve.hlcompr ? Edited : UnEdited);
+        hlbl->setEditedState (pedited->toneCurve.hlbl ? Edited : UnEdited);
         hlcomprthresh->setEditedState (pedited->toneCurve.hlcomprthresh ? Edited : UnEdited);
         shcompr->setEditedState (pedited->toneCurve.shcompr ? Edited : UnEdited);
         brightness->setEditedState (pedited->toneCurve.brightness ? Edited : UnEdited);
@@ -345,6 +350,7 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited)
     pp->toneCurve.expcomp = expcomp->getValue ();
     pp->toneCurve.black = (int)black->getValue ();
     pp->toneCurve.hlcompr = (int)hlcompr->getValue ();
+    pp->toneCurve.hlbl = (int)hlbl->getValue ();
     pp->toneCurve.hlcomprthresh = (int)hlcomprthresh->getValue ();
     pp->toneCurve.shcompr = (int)shcompr->getValue ();
     pp->toneCurve.brightness = (int)brightness->getValue ();
@@ -393,6 +399,7 @@ void ToneCurve::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->toneCurve.expcomp    = expcomp->getEditedState ();
         pedited->toneCurve.black      = black->getEditedState ();
         pedited->toneCurve.hlcompr    = hlcompr->getEditedState ();
+        pedited->toneCurve.hlbl    = hlbl->getEditedState ();
         pedited->toneCurve.hlcomprthresh = hlcomprthresh->getEditedState ();
         pedited->toneCurve.shcompr    = shcompr->getEditedState ();
         pedited->toneCurve.brightness = brightness->getEditedState ();
@@ -468,7 +475,11 @@ void ToneCurve::hrenabledChanged ()
 }
 void ToneCurve::methodChanged ()
 {
-
+    if (method->get_active_row_number() == 2) {
+        hlbl->show();
+    } else {
+        hlbl->hide();    
+    }
     if (listener) {
         setHistmatching(false);
         if (hrenabled->get_active ()) {
@@ -492,6 +503,7 @@ void ToneCurve::setRaw (bool raw)
 
     disableListener ();
     method->set_sensitive (raw);
+    hlbl->set_sensitive (raw);
     hrenabled->set_sensitive (raw);
     histmatching->set_sensitive(raw);
     enableListener ();
@@ -505,6 +517,7 @@ void ToneCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pe
     brightness->setDefault (defParams->toneCurve.brightness);
     black->setDefault (defParams->toneCurve.black);
     hlcompr->setDefault (defParams->toneCurve.hlcompr);
+    hlbl->setDefault (defParams->toneCurve.hlbl);
     hlcomprthresh->setDefault (defParams->toneCurve.hlcomprthresh);
     shcompr->setDefault (defParams->toneCurve.shcompr);
     contrast->setDefault (defParams->toneCurve.contrast);
@@ -514,6 +527,7 @@ void ToneCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pe
         expcomp->setDefaultEditedState (pedited->toneCurve.expcomp ? Edited : UnEdited);
         black->setDefaultEditedState (pedited->toneCurve.black ? Edited : UnEdited);
         hlcompr->setDefaultEditedState (pedited->toneCurve.hlcompr ? Edited : UnEdited);
+        hlbl->setDefaultEditedState (pedited->toneCurve.hlbl ? Edited : UnEdited);
         hlcomprthresh->setDefaultEditedState (pedited->toneCurve.hlcomprthresh ? Edited : UnEdited);
         shcompr->setDefaultEditedState (pedited->toneCurve.shcompr ? Edited : UnEdited);
         brightness->setDefaultEditedState (pedited->toneCurve.brightness ? Edited : UnEdited);
@@ -523,6 +537,7 @@ void ToneCurve::setDefaults (const ProcParams* defParams, const ParamsEdited* pe
         expcomp->setDefaultEditedState (Irrelevant);
         black->setDefaultEditedState (Irrelevant);
         hlcompr->setDefaultEditedState (Irrelevant);
+        hlbl->setDefaultEditedState (Irrelevant);
         hlcomprthresh->setDefaultEditedState (Irrelevant);
         shcompr->setDefaultEditedState (Irrelevant);
         brightness->setDefaultEditedState (Irrelevant);
@@ -636,6 +651,8 @@ void ToneCurve::adjusterChanged(Adjuster* a, double newval)
         listener->panelChanged (EvContrast, costr);
     } else if (a == saturation) {
         listener->panelChanged (EvSaturation, costr);
+    } else if (a == hlbl) {
+        listener->panelChanged (EvHLbl, costr);
     } else if (a == hlcompr) {
         listener->panelChanged (EvHLCompr, costr);
 
@@ -813,6 +830,7 @@ void ToneCurve::waitForAutoExp ()
     toneCurveMode2->set_sensitive (false);
     hrenabled->set_sensitive(false);
     method->set_sensitive(false);
+    hlbl->set_sensitive(false);
     histmatching->set_sensitive(false);
 }
 
@@ -824,6 +842,7 @@ void ToneCurve::enableAll ()
     brightness->setEnabled (true);
     black->setEnabled (true);
     hlcompr->setEnabled (true);
+    hlbl->setEnabled (true);
     hlcomprthresh->setEnabled (true);
     shcompr->setEnabled (true);
     contrast->setEnabled (true);
@@ -834,6 +853,7 @@ void ToneCurve::enableAll ()
     toneCurveMode2->set_sensitive (true);
     hrenabled->set_sensitive(true);
     method->set_sensitive(true);
+    hlbl->set_sensitive(true);
     histmatching->set_sensitive(true);
 }
 
@@ -852,6 +872,7 @@ void ToneCurve::setBatchMode (bool batchMode)
     expcomp->showEditedCB ();
     black->showEditedCB ();
     hlcompr->showEditedCB ();
+    hlbl->showEditedCB ();
     hlcomprthresh->showEditedCB ();
     shcompr->showEditedCB ();
     brightness->showEditedCB ();

@@ -1283,6 +1283,7 @@ HISTORY_MSG_1035;Local - Nlmeans - detail
 HISTORY_MSG_1036;Local - Nlmeans - patch
 HISTORY_MSG_1037;Local - Nlmeans - radius
 HISTORY_MSG_1038;Local - Nlmeans - gamma
+HISTORY_MSG_1039;Color propagation - blur
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2367,6 +2368,7 @@ TP_GRADIENT_STRENGTH_TOOLTIP;Filter strength in stops.
 TP_HLREC_BLEND;Blend
 TP_HLREC_CIELAB;CIELab Blending
 TP_HLREC_COLOR;Color Propagation
+TP_HLREC_HLBLUR;Blur
 TP_HLREC_ENA_TOOLTIP;Could be activated by Auto Levels.
 TP_HLREC_LABEL;Highlight reconstruction
 TP_HLREC_LUMINANCE;Luminance Recovery

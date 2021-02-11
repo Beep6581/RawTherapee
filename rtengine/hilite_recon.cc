@@ -299,7 +299,7 @@ extern const Settings *settings;
 using namespace procparams;
     const ProcParams params;
 
-void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue)
+void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue, int bl)
 {  
     BENCHFUN
     double progress = 0.0;
@@ -308,7 +308,9 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
         plistener->setProgressStr("PROGRESSBAR_HLREC");
         plistener->setProgress(progress);
     }
-
+  //  int bl = (int) params.toneCurve.hlbl;
+  //  printf("bll=%i\n", bl);
+  //  printf("bllo=%i\n",params.toneCurve.hlbl); 
     const int height = H;
     const int width = W;
 
@@ -1188,15 +1190,44 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
 // #ifdef _OPENMP
 // #pragma omp parallel
 // #endif
+bl = 6 - bl;
+printf("BL=%i\n", bl);
+
+float rad1 = 2.f;
+float rad2 = 3.f;
+float th = 0.001f;
+if(bl == 1 ){
+    rad1 = 2.f;
+    rad2 = 3.f;
+    th = 0.001f;
+} else if(bl == 2 ){
+    rad1 = 3.f;
+    rad2 = 2.f;
+    th = 0.01f;
+} else if(bl == 3 ){
+    rad1 = 3.f;
+    rad2 = 1.f;
+    th = 0.1f;
+} else if(bl == 4 ){
+    rad1 = 3.5f;
+    rad2 = 0.5f;
+    th = 0.2f;
+} else if(bl == 5 ){
+    rad1 = 4.f;
+    rad2 = 0.5f;
+    th = 0.3f;
+}
+
+
     {
         //gaussianBlur(mask, mask, W/2, H/2, 5);
         // gaussianBlur(rbuf, rbuf, W/2, H/2, 1);
         // gaussianBlur(gbuf, gbuf, W/2, H/2, 1);
         // gaussianBlur(bbuf, bbuf, W/2, H/2, 1);
-        guidedFilter(guide, mask, mask, 2, 0.001f, true, 1);
-        guidedFilter(guide, rbuf, rbuf, 3, 0.01f * 65535.f, true, 1);
-        guidedFilter(guide, gbuf, gbuf, 3, 0.01f * 65535.f, true, 1);
-        guidedFilter(guide, bbuf, bbuf, 3, 0.01f * 65535.f, true, 1);
+        guidedFilter(guide, mask, mask, rad1, th, true, 1);
+        guidedFilter(guide, rbuf, rbuf, rad2, 0.01f * 65535.f, true, 1);
+        guidedFilter(guide, gbuf, gbuf, rad2, 0.01f * 65535.f, true, 1);
+        guidedFilter(guide, bbuf, bbuf, rad2, 0.01f * 65535.f, true, 1);
     }
 
     {
