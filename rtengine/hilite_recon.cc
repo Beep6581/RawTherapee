@@ -299,7 +299,7 @@ extern const Settings *settings;
 using namespace procparams;
     const ProcParams params;
 
-void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue, int bl)
+void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue, int blur)
 {  
     BENCHFUN
     double progress = 0.0;
@@ -308,9 +308,7 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
         plistener->setProgressStr("PROGRESSBAR_HLREC");
         plistener->setProgress(progress);
     }
-  //  int bl = (int) params.toneCurve.hlbl;
-  //  printf("bll=%i\n", bl);
-  //  printf("bllo=%i\n",params.toneCurve.hlbl); 
+
     const int height = H;
     const int width = W;
 
@@ -943,15 +941,15 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // now reconstruct clipped channels using color ratios
     //using code from ART - thanks to Alberto Griggio
-    const int W2 = bl > 0 ? float(W) / 2.f + 0.5f : 0;
-    const int H2 = bl > 0 ? float(H) / 2.f + 0.5f : 0;
+    const int W2 = blur > 0 ? float(W) / 2.f + 0.5f : 0;
+    const int H2 = blur > 0 ? float(H) / 2.f + 0.5f : 0;
     array2D<float> mask(W2, H2, ARRAY2D_CLEAR_DATA);
     array2D<float> rbuf(W2, H2);
     array2D<float> gbuf(W2, H2);
     array2D<float> bbuf(W2, H2);
     array2D<float> guide(W2, H2);
    
-    if (bl > 0) {
+    if (blur > 0) {
         array2D<float> rsrc(W, H, red, ARRAY2D_BYREFERENCE);
         array2D<float> gsrc(W, H, green, ARRAY2D_BYREFERENCE);
         array2D<float> bsrc(W, H, blue, ARRAY2D_BYREFERENCE);
@@ -1170,7 +1168,7 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
                 blue[yy][xx]  *= mult;
             }
 
-            if (bl > 0) {
+            if (blur > 0) {
                 int ii = (yy) / 2;
                 int jj = (xx) / 2;
                 rbuf[ii][jj] = red[yy][xx];
@@ -1181,12 +1179,12 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
         }
     }
 
-    if (bl > 0) {
+    if (blur > 0) {
         if (plistener) {
             progress += 0.05;
             plistener->setProgress(progress);
         }
-        bl = rtengine::LIM(bl - 1, 0, 4);
+        blur = rtengine::LIM(blur - 1, 0, 4);
 
         constexpr float vals[5][3] = {{4.0f, 0.3f, 0.3f},
                                       {3.5f, 0.5f, 0.2f},
@@ -1195,9 +1193,9 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
                                       {2.0f, 3.0f, 0.001f}
                                      };
 
-        const float rad1 = vals[bl][0];
-        const float rad2 = vals[bl][1];
-        const float th = vals[bl][2];
+        const float rad1 = vals[blur][0];
+        const float rad2 = vals[blur][1];
+        const float th = vals[blur][2];
 
         guidedFilter(guide, mask, mask, rad1, th, true, 1);
         if (plistener) {
