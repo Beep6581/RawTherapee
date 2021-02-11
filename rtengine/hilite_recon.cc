@@ -943,18 +943,15 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
     //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // now reconstruct clipped channels using color ratios
     //using code from ART - thanks to Alberto Griggio
-    const int W2 = float(W) / 2.f + 0.5f;
-    const int H2 = float(H) / 2.f + 0.5f;
+    const int W2 = bl > 0 ? float(W) / 2.f + 0.5f : 0;
+    const int H2 = bl > 0 ? float(H) / 2.f + 0.5f : 0;
     array2D<float> mask(W2, H2, ARRAY2D_CLEAR_DATA);
     array2D<float> rbuf(W2, H2);
     array2D<float> gbuf(W2, H2);
     array2D<float> bbuf(W2, H2);
     array2D<float> guide(W2, H2);
    
-    using rtengine::TMatrix;
-  //  TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params.icm.workingProfile);
-
-    {
+    if (bl > 0) {
         array2D<float> rsrc(W, H, red, ARRAY2D_BYREFERENCE);
         array2D<float> gsrc(W, H, green, ARRAY2D_BYREFERENCE);
         array2D<float> bsrc(W, H, blue, ARRAY2D_BYREFERENCE);
@@ -1173,12 +1170,14 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
                 blue[yy][xx]  *= mult;
             }
 
-            int ii = (yy) / 2;
-            int jj = (xx) / 2;
-            rbuf[ii][jj] = red[yy][xx];
-            gbuf[ii][jj] = green[yy][xx];
-            bbuf[ii][jj] = blue[yy][xx];
-            mask[ii][jj] = maskval;
+            if (bl > 0) {
+                int ii = (yy) / 2;
+                int jj = (xx) / 2;
+                rbuf[ii][jj] = red[yy][xx];
+                gbuf[ii][jj] = green[yy][xx];
+                bbuf[ii][jj] = blue[yy][xx];
+                mask[ii][jj] = maskval;
+            }
         }
     }
 
@@ -1186,51 +1185,26 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
         progress += 0.05;
         plistener->setProgress(progress);
     }
-    
-// #ifdef _OPENMP
-// #pragma omp parallel
-// #endif
-    bl = 6 - bl;
-    printf("Blur Color Propagation=%i\n", bl);
 
-    float rad1 = 2.f;
-    float rad2 = 3.f;
-    float th = 0.001f;
-    if(bl == 1){
-        rad1 = 2.f;
-        rad2 = 3.f;
-        th = 0.001f;
-    } else if(bl == 2){
-        rad1 = 3.f;
-        rad2 = 2.f;
-        th = 0.01f;
-    } else if(bl == 3){
-        rad1 = 3.f;
-        rad2 = 1.f;
-        th = 0.1f;
-    } else if(bl == 4){
-        rad1 = 3.5f;
-        rad2 = 0.5f;
-        th = 0.2f;
-    } else if(bl == 5){
-        rad1 = 4.f;
-        rad2 = 0.3f;
-        th = 0.3f;
-    }
+    if (bl > 0) {
+        bl = rtengine::LIM(bl - 1, 0, 4);
 
+        constexpr float vals[5][3] = {{4.0f, 0.3f, 0.3f},
+                                      {3.5f, 0.5f, 0.2f},
+                                      {3.0f, 1.0f, 0.1f},
+                                      {3.0f, 2.0f, 0.01f},
+                                      {2.0f, 3.0f, 0.001f}
+                                     };
 
-    {
-        //gaussianBlur(mask, mask, W/2, H/2, 5);
-        // gaussianBlur(rbuf, rbuf, W/2, H/2, 1);
-        // gaussianBlur(gbuf, gbuf, W/2, H/2, 1);
-        // gaussianBlur(bbuf, bbuf, W/2, H/2, 1);
+        const float rad1 = vals[bl][0];
+        const float rad2 = vals[bl][1];
+        const float th = vals[bl][2];
+
         guidedFilter(guide, mask, mask, rad1, th, true, 1);
         guidedFilter(guide, rbuf, rbuf, rad2, 0.01f * 65535.f, true, 1);
         guidedFilter(guide, gbuf, gbuf, rad2, 0.01f * 65535.f, true, 1);
         guidedFilter(guide, bbuf, bbuf, rad2, 0.01f * 65535.f, true, 1);
-    }
 
-    {
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -1249,9 +1223,6 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
             }
         }
     }
-
-
-
 
     if (plistener) {
         plistener->setProgress(1.00);
