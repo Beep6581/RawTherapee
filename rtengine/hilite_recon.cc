@@ -1219,16 +1219,16 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
         }
 
 #ifdef _OPENMP
-        #pragma omp parallel for
+        #pragma omp parallel for schedule(dynamic,16)
 #endif
         for (int y = 0; y < H; ++y) {
-            float fy = y * 0.5f;
-            int yy = y / 2;
+            const float fy = y * 0.5f;
+            const int yy = y / 2;
             for (int x = 0; x < W; ++x) {
-                float fx = x * 0.5f;
-                int xx = x / 2;
-                float m = mask[yy][xx];
+                const int xx = x / 2;
+                const float m = mask[yy][xx];
                 if (m > 0.f) {
+                    const float fx = x * 0.5f;
                     red[y][x] = intp(m, getBilinearValue(rbuf, fx, fy), red[y][x]);
                     green[y][x] = intp(m, getBilinearValue(gbuf, fx, fy), green[y][x]);
                     blue[y][x] = intp(m, getBilinearValue(bbuf, fx, fy), blue[y][x]);
