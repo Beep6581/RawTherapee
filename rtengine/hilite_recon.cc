@@ -318,7 +318,7 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
     constexpr float threshpct = 0.25f;
     constexpr float maxpct = 0.95f;
     constexpr float epsilon = 0.00001f;
-    //%%%%%%%%%%%%%%%%%%%%
+
     //for blend algorithm:
     constexpr float blendthresh = 1.0;
     // Transform matrixes rgb>lab and back
@@ -424,11 +424,6 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
         return;
     }
 
- //   if (plistener) {
- //       progress += 0.05;
- //       plistener->setProgress(progress);
- //   }
-
     constexpr int blurBorder = 256;
     minx = std::max(0, minx - blurBorder);
     miny = std::max(0, miny - blurBorder);
@@ -444,19 +439,7 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
     // blur RGB channels
 
     boxblur2(red, channelblur[0], temp, miny, minx, blurHeight, blurWidth, bufferWidth, 4);
-
-  //  if (plistener) {
-  //      progress += 0.07;
-  //      plistener->setProgress(progress);
-  //  }
-
     boxblur2(green, channelblur[1], temp, miny, minx, blurHeight, blurWidth, bufferWidth, 4);
-
- //   if (plistener) {
-//        progress += 0.07;
- //       plistener->setProgress(progress);
- //   }
-
     boxblur2(blue, channelblur[2], temp, miny, minx, blurHeight, blurWidth, bufferWidth, 4);
  
     if (plistener) {
@@ -529,7 +512,7 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
     }
 
     array2D<float> hilite_full4(bufferWidth, blurHeight);
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
     //blur highlight data
     boxblur2(hilite_full[3], hilite_full4, temp, 0, 0, blurHeight, blurWidth, bufferWidth, 1);
 
@@ -566,9 +549,7 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
 
     multi_array2D<float, 4> hilite(hfw + 1, hfh + 1, ARRAY2D_CLEAR_DATA, 48);
 
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // blur and resample highlight data; range=size of blur, pitch=sample spacing
-
     array2D<float> temp2(blurWidth / pitch + (blurWidth % pitch == 0 ? 0 : 1), blurHeight);
 
     for (int m = 0; m < 4; ++m) {
@@ -938,11 +919,10 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
         hilite[c].free();
     }
 
-    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     // now reconstruct clipped channels using color ratios
     //using code from ART - thanks to Alberto Griggio
-    const int W2 = blur > 0 ? float(W) / 2.f + 0.5f : 0;
-    const int H2 = blur > 0 ? float(H) / 2.f + 0.5f : 0;
+    const int W2 = blur > 0 ? float(blurWidth) / 2.f + 0.5f : 0;
+    const int H2 = blur > 0 ? float(blurHeight) / 2.f + 0.5f : 0;
     array2D<float> mask(W2, H2, ARRAY2D_CLEAR_DATA);
     array2D<float> rbuf(W2, H2);
     array2D<float> gbuf(W2, H2);
@@ -950,12 +930,13 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
     array2D<float> guide(W2, H2);
    
     if (blur > 0) {
-        array2D<float> rsrc(W, H, red, ARRAY2D_BYREFERENCE);
-        array2D<float> gsrc(W, H, green, ARRAY2D_BYREFERENCE);
-        array2D<float> bsrc(W, H, blue, ARRAY2D_BYREFERENCE);
-        rescaleNearest(rsrc, rbuf, true);
-        rescaleNearest(gsrc, gbuf, true);
-        rescaleNearest(bsrc, bbuf, true);
+        array2D<float> rbuffer(blurWidth, blurHeight, minx, miny, red, ARRAY2D_BYREFERENCE);
+        rescaleNearest(rbuffer, rbuf, true);
+        array2D<float> gbuffer(blurWidth, blurHeight, minx, miny, green, ARRAY2D_BYREFERENCE);
+        rescaleNearest(gbuffer, gbuf, true);
+        array2D<float> bbuffer(blurWidth, blurHeight, minx, miny, blue, ARRAY2D_BYREFERENCE);
+        rescaleNearest(bbuffer, bbuf, true);
+
         LUTf gamma(65536);
         for (int i = 0; i < 65536; ++i) {
             gamma[i] = pow_F(float(i)/65535.f, 2.2f);
@@ -971,7 +952,7 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
             }
         }
     }
-//end addind code ART    
+//end adding code ART    
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
@@ -1066,7 +1047,6 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
             }
 
             //end of HLRecovery_blend estimation
-            //%%%%%%%%%%%%%%%%%%%%%%%
 
             //there are clipped highlights
             //first, determine weighted average of unclipped extensions (weighting is by 'hue' proximity)
@@ -1169,8 +1149,8 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
             }
 
             if (blur > 0) {
-                int ii = (yy) / 2;
-                int jj = (xx) / 2;
+                int ii = i / 2;
+                int jj = j / 2;
                 rbuf[ii][jj] = red[yy][xx];
                 gbuf[ii][jj] = green[yy][xx];
                 bbuf[ii][jj] = blue[yy][xx];
@@ -1221,17 +1201,17 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
 #endif
-        for (int y = 0; y < H; ++y) {
+        for (int y = 0; y < blurHeight; ++y) {
             const float fy = y * 0.5f;
             const int yy = y / 2;
-            for (int x = 0; x < W; ++x) {
+            for (int x = 0; x < blurWidth; ++x) {
                 const int xx = x / 2;
                 const float m = mask[yy][xx];
                 if (m > 0.f) {
                     const float fx = x * 0.5f;
-                    red[y][x] = intp(m, getBilinearValue(rbuf, fx, fy), red[y][x]);
-                    green[y][x] = intp(m, getBilinearValue(gbuf, fx, fy), green[y][x]);
-                    blue[y][x] = intp(m, getBilinearValue(bbuf, fx, fy), blue[y][x]);
+                    red[y + miny][x + minx] = intp(m, getBilinearValue(rbuf, fx, fy), red[y + miny][x + minx]);
+                    green[y + miny][x + minx] = intp(m, getBilinearValue(gbuf, fx, fy), green[y + miny][x + minx]);
+                    blue[y + miny][x + minx] = intp(m, getBilinearValue(bbuf, fx, fy), blue[y + miny][x + minx]);
                 }
             }
         }

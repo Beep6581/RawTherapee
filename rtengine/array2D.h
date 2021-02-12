@@ -124,6 +124,26 @@ public:
         }
     }
 
+    // creator type 3
+    array2D(int w, int h, int startx, int starty, T ** source, unsigned int flags = 0) : width(w)
+    {
+        rows.resize(h);
+        if (!(flags & ARRAY2D_BYREFERENCE)) {
+            buffer.resize(h * width);
+            T* start = buffer.data();
+            for (ssize_t i = 0; i < h; ++i) {
+                rows[i] = start + i * width;
+                for (ssize_t j = 0; j < width; ++j) {
+                    rows[i][j] = source[i + starty][j + startx];
+                }
+            }
+        } else {
+            for (ssize_t i = 0; i < h; ++i) {
+                rows[i] = source[i + starty] + startx;
+            }
+        }
+    }
+
     array2D(const array2D& other) :
         width(other.width),
         buffer(other.buffer)
