@@ -451,11 +451,11 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
 
     Gtk::Box* hbmain = Gtk::manage (new Gtk::Box ());
     hbmain->pack_start (*vbCol1);
-    Gtk::VSeparator *vsep1 = Gtk::manage (new Gtk::VSeparator ());
+    Gtk::Separator *vsep1 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
     setExpandAlignProperties(vsep1, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     hbmain->pack_start (*vsep1);
     hbmain->pack_start (*vbCol2);
-    Gtk::VSeparator *vsep2 = Gtk::manage (new Gtk::VSeparator ());
+    Gtk::Separator *vsep2 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
     setExpandAlignProperties(vsep2, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     hbmain->pack_start (*vsep2);
     hbmain->pack_start (*vbCol3);

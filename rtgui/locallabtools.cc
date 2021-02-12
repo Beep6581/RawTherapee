@@ -156,7 +156,7 @@ LocallabTool::LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustr
         titleBox->pack_end(*complexity, Gtk::PACK_SHRINK, 2);
     }
 
-    Gtk::VSeparator* const separator = Gtk::manage(new Gtk::VSeparator());
+    Gtk::Separator* const separator = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
     titleBox->pack_end(*separator, Gtk::PACK_SHRINK, 0);
 
     if (need100Percent) {

@@ -81,7 +81,7 @@ private:
     Gtk::Box* fltrRecentlySavedBox;
     Gtk::VBox* fltrVbox2;
 
-    Gtk::VSeparator* vSepiLeftPanel;
+    Gtk::Separator* vSepiLeftPanel;
 
     Gtk::ToggleButton* tbLeftPanel_1;
     Gtk::ToggleButton* tbRightPanel_1;

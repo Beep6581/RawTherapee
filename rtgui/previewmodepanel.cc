@@ -105,7 +105,7 @@ PreviewModePanel::PreviewModePanel (ImageArea* ia) : imageArea(ia)
     pack_start (*backColor3, Gtk::PACK_SHRINK, 0);
     pack_start (*backColor2, Gtk::PACK_SHRINK, 0);
 
-    pack_start (*Gtk::manage (new Gtk::VSeparator ()), Gtk::PACK_SHRINK, 2);
+    pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)), Gtk::PACK_SHRINK, 2);
 
     pack_start (*previewR, Gtk::PACK_SHRINK, 0);
     pack_start (*previewG, Gtk::PACK_SHRINK, 0);

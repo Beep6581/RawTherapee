@@ -1097,7 +1097,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
     pseudoHiDPI = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_APPEARANCE_PSEUDOHIDPI") + Glib::ustring (" (") + M ("PREFERENCES_APPLNEXTSTARTUP") + ")"));
     setExpandAlignProperties(pseudoHiDPI, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
 
-    Gtk::VSeparator *vSep = Gtk::manage(new Gtk::VSeparator());
+    Gtk::Separator *vSep = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
     
 
     appearanceGrid->attach(*themeLbl,           0, 0, 1, 1);
