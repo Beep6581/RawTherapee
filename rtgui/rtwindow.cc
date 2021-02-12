@@ -354,7 +354,7 @@ RTWindow::RTWindow ()
 
         mainNB->set_current_page (mainNB->page_num (*fpanel));
 
-        //Gtk::VBox* mainBox = Gtk::manage (new Gtk::VBox ());
+        //Gtk::Box* mainBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
         //mainBox->pack_start (*mainNB);
 
         // filling bottom box

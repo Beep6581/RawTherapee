@@ -996,7 +996,7 @@ void EditorPanel::setAspect ()
 void EditorPanel::on_realize ()
 {
     realized = true;
-    Gtk::VBox::on_realize ();
+    Gtk::Box::on_realize ();
     // This line is needed to avoid autoexpansion of the window :-/
     //vboxright->set_size_request (options.toolPanelWidth, -1);
     tpc->updateToolState();
@@ -2190,7 +2190,7 @@ void EditorPanel::beforeAfterToggled ()
         history->blistenerLock ? tbBeforeLock->set_image (*iBeforeLockON) : tbBeforeLock->set_image (*iBeforeLockOFF);
         tbBeforeLock->set_active (history->blistenerLock);
 
-        beforeBox = Gtk::manage (new Gtk::VBox ());
+        beforeBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
         beforeBox->pack_start (*beforeHeaderBox, Gtk::PACK_SHRINK, 2);
         beforeBox->pack_start (*beforeIarea);
 

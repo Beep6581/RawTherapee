@@ -394,7 +394,7 @@ private:
     Gtk::Box* const sliHBox;
     Gtk::Box* const denHBox;
     Gtk::Box* const mixHBox;
-    Gtk::VBox* const ctboxBA;// = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* const ctboxBA;// = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     sigc::connection enableChromaConn, enableContrastConn, enableEdgeConn, enabletmConn, enableFinalConn, enableclariConn;
     sigc::connection enableNoiseConn, enableResidConn, enableToningConn;

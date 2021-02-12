@@ -43,7 +43,7 @@ ExportPanel::ExportPanel () : listener (nullptr)
     Gtk::RadioButton::Group pipeline_group;
     use_fast_pipeline       = Gtk::manage ( new Gtk::RadioButton (pipeline_group, M ("EXPORT_USE_FAST_PIPELINE")));
     use_normal_pipeline     = Gtk::manage ( new Gtk::RadioButton (pipeline_group, M ("EXPORT_USE_NORMAL_PIPELINE")));
-    bypass_box = Gtk::manage (new Gtk::VBox());
+    bypass_box = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     bypass_ALL              = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_ALL")));
     use_fast_pipeline->set_tooltip_text (M ("EXPORT_USE_FAST_PIPELINE_TIP"));
     bypass_sharpening       = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_SHARPENING")));
@@ -64,7 +64,7 @@ ExportPanel::ExportPanel () : listener (nullptr)
 
     Gtk::Frame *bayerFrame = Gtk::manage ( new Gtk::Frame (M ("TP_RAW_SENSOR_BAYER_LABEL")));
     bayerFrame->set_label_align(0.025, 0.5);
-    Gtk::VBox* bayerFrameVBox = Gtk::manage (new Gtk::VBox ());
+    Gtk::Box* bayerFrameVBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     Gtk::Box* hb_raw_bayer_method = Gtk::manage (new Gtk::Box ());
     hb_raw_bayer_method->pack_start (*Gtk::manage (new Gtk::Label ( M ("EXPORT_RAW_DMETHOD") + ": ")), Gtk::PACK_SHRINK, 4);
@@ -88,7 +88,7 @@ ExportPanel::ExportPanel () : listener (nullptr)
 
     Gtk::Frame *xtransFrame = Gtk::manage ( new Gtk::Frame (M ("TP_RAW_SENSOR_XTRANS_LABEL")));
     xtransFrame->set_label_align(0.025, 0.5);
-    Gtk::VBox* xtransFrameVBox = Gtk::manage (new Gtk::VBox ());
+    Gtk::Box* xtransFrameVBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     Gtk::Box* hb_raw_xtrans_method = Gtk::manage (new Gtk::Box ());
     hb_raw_xtrans_method->pack_start (*Gtk::manage (new Gtk::Label ( M ("EXPORT_RAW_DMETHOD") + ": ")), Gtk::PACK_SHRINK, 4);
@@ -189,7 +189,7 @@ ExportPanel::ExportPanel () : listener (nullptr)
 
 
     // add panel ending
-    Gtk::VBox* vboxpe = Gtk::manage (new Gtk::VBox ());
+    Gtk::Box* vboxpe = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     Gtk::Separator* hseptpe = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     Gtk::Image* peImg = Gtk::manage (new RTImage ("ornament1.png"));
     vboxpe->pack_start (*hseptpe, Gtk::PACK_SHRINK, 4);

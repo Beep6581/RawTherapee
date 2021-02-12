@@ -62,7 +62,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     Gtk::Frame *iFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_INPUTPROFILE")));
     iFrame->set_label_align(0.025, 0.5);
 
-    iVBox = Gtk::manage(new Gtk::VBox());
+    iVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     inone = Gtk::manage(new Gtk::RadioButton(M("TP_ICM_INPUTNONE")));
     inone->set_tooltip_text(M("TP_ICM_INPUTNONE_TOOLTIP"));
@@ -171,7 +171,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     Gtk::Frame *wFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_WORKINGPROFILE")));
     wFrame->set_label_align(0.025, 0.5);
 
-    Gtk::VBox *wProfVBox = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* wProfVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     wProfNames = Gtk::manage(new MyComboBoxText());
     wProfVBox->pack_start(*wProfNames, Gtk::PACK_SHRINK);
@@ -230,7 +230,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     Gtk::Frame *oFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_OUTPUTPROFILE")));
     oFrame->set_label_align(0.025, 0.5);
 
-    Gtk::VBox *oProfVBox = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* oProfVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     oProfNames = Gtk::manage(new MyComboBoxText());
     oProfVBox->pack_start(*oProfNames, Gtk::PACK_SHRINK);

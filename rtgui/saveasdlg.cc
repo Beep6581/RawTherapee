@@ -127,7 +127,7 @@ SaveAsDialog::SaveAsDialog (const Glib::ustring &initialDir, Gtk::Window* parent
 
 // pack everything
 // ~~~~~~~~~~~~~~~
-    Gtk::VBox* vbox_bottomRight = Gtk::manage(new Gtk::VBox ());
+    Gtk::Box* vbox_bottomRight = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     // There is no queue in simple mode, so no need to choose
     if (!simpleEditor) {

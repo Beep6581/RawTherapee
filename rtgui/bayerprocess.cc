@@ -54,7 +54,7 @@ BayerProcess::BayerProcess () :
     hb1->pack_end (*method, Gtk::PACK_EXPAND_WIDGET, 4);
     pack_start( *hb1, Gtk::PACK_SHRINK, 4);
 
-    dualDemosaicOptions = Gtk::manage(new Gtk::VBox());
+    dualDemosaicOptions = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     dualDemosaicContrast = Gtk::manage(new Adjuster(M("TP_RAW_DUALDEMOSAICCONTRAST"), 0, 100, 1, 20));
     dualDemosaicContrast->setAdjusterListener(this);
@@ -97,7 +97,7 @@ BayerProcess::BayerProcess () :
     ccSteps->show();
     pack_start( *ccSteps, Gtk::PACK_SHRINK, 4);
 
-    dcbOptions = Gtk::manage (new Gtk::VBox ());
+    dcbOptions = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     dcbIterations = Gtk::manage (new Adjuster (M("TP_RAW_DCBITERATIONS"), 0, 5, 1, 2));
     dcbIterations->setAdjusterListener (this);
@@ -111,7 +111,7 @@ BayerProcess::BayerProcess () :
     dcbOptions->pack_start(*dcbEnhance);
     pack_start( *dcbOptions, Gtk::PACK_SHRINK, 4);
 
-    lmmseOptions = Gtk::manage (new Gtk::VBox ());
+    lmmseOptions = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     lmmseIterations = Gtk::manage (new Adjuster (M("TP_RAW_LMMSEITERATIONS"), 0, 6, 1, 2));
     lmmseIterations->setAdjusterListener (this);
@@ -128,7 +128,7 @@ BayerProcess::BayerProcess () :
 
     pixelShiftFrame = Gtk::manage(new Gtk::Frame(M("TP_RAW_PIXELSHIFT")));
 
-    Gtk::VBox *pixelShiftMainVBox = Gtk::manage (new Gtk::VBox ());
+    Gtk::Box *pixelShiftMainVBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     pixelShiftMainVBox->set_border_width(0);
 
     pixelShiftEqualBright = Gtk::manage (new CheckBox(M("TP_RAW_PIXELSHIFTEQUALBRIGHT"), multiImage));
@@ -152,7 +152,7 @@ BayerProcess::BayerProcess () :
     hb3->pack_start(*pixelShiftMotionMethod);
     pixelShiftMainVBox->pack_start(*hb3);
 
-    pixelShiftOptions = Gtk::manage (new Gtk::VBox ());
+    pixelShiftOptions = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     pixelShiftOptions->set_border_width(0);
 
     pixelShiftShowMotion = Gtk::manage (new CheckBox(M("TP_RAW_PIXELSHIFTSHOWMOTION"), multiImage));

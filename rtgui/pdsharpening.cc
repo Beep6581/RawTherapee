@@ -57,7 +57,7 @@ PdSharpening::PdSharpening() :
 
     pack_start(*hb);
 
-    Gtk::VBox* rld = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* rld = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     dradius = Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS"), 0.4, 2.0, 0.01, 0.75));
     dradius->addAutoButton();
     dradius->setAutoValue(true);

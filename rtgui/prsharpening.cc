@@ -52,7 +52,7 @@ PrSharpening::PrSharpening () : FoldableToolPanel(this, "prsharpening", M("TP_PR
     hb->pack_start(*method);
     pack_start (*hb);
 
-    rld = new Gtk::VBox ();
+    rld = new Gtk::Box(Gtk::ORIENTATION_VERTICAL);
     dradius = Gtk::manage (new Adjuster (M("TP_SHARPENING_EDRADIUS"), 0.4, 2.5, 0.01, 0.45));
     damount = Gtk::manage (new Adjuster (M("TP_SHARPENING_RLD_AMOUNT"), 0.0, 100, 1, 100));
     ddamping = Gtk::manage (new Adjuster (M("TP_SHARPENING_RLD_DAMPING"), 0, 100, 1, 0));
@@ -67,7 +67,7 @@ PrSharpening::PrSharpening () : FoldableToolPanel(this, "prsharpening", M("TP_PR
     diter->show ();
     rld->show ();
 
-    usm = new Gtk::VBox ();
+    usm = new Gtk::Box(Gtk::ORIENTATION_VERTICAL);
     usm->show ();
 
     Gtk::Separator* hsep6a = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
@@ -91,7 +91,7 @@ PrSharpening::PrSharpening () : FoldableToolPanel(this, "prsharpening", M("TP_PR
     Gtk::Separator* hsep6 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     edgesonly = Gtk::manage (new Gtk::CheckButton (M("TP_SHARPENING_ONLYEDGES")));
     edgesonly->set_active (false);
-    edgebox = new Gtk::VBox ();
+    edgebox = new Gtk::Box(Gtk::ORIENTATION_VERTICAL);
     eradius = Gtk::manage (new Adjuster (M("TP_SHARPENING_EDRADIUS"), 0.5, 2.5, 0.1, 1.9));
     etolerance = Gtk::manage (new Adjuster (M("TP_SHARPENING_EDTOLERANCE"), 10, 10000, 100, 1800));
     usm->pack_start(*hsep6, Gtk::PACK_SHRINK, 2);
@@ -99,7 +99,7 @@ PrSharpening::PrSharpening () : FoldableToolPanel(this, "prsharpening", M("TP_PR
     edgebox->pack_start(*eradius);
     edgebox->pack_start(*etolerance);
     edgebox->show ();
-    edgebin = Gtk::manage (new Gtk::VBox ());
+    edgebin = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     usm->pack_start (*edgebin);
     edgebin->show ();
     hsep6->show();
@@ -110,13 +110,13 @@ PrSharpening::PrSharpening () : FoldableToolPanel(this, "prsharpening", M("TP_PR
     Gtk::Separator* hsep6b = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     halocontrol = Gtk::manage (new Gtk::CheckButton (M("TP_SHARPENING_HALOCONTROL")));
     halocontrol->set_active (false);
-    hcbox = new Gtk::VBox ();
+    hcbox = new Gtk::Box(Gtk::ORIENTATION_VERTICAL);
     hcamount = Gtk::manage (new Adjuster (M("TP_SHARPENING_HCAMOUNT"), 1, 100, 1, 75));
     usm->pack_start(*hsep6b, Gtk::PACK_SHRINK, 2);
     usm->pack_start(*halocontrol);
     hcbox->pack_start(*hcamount);
     hcbox->show ();
-    hcbin = Gtk::manage (new Gtk::VBox ());
+    hcbin = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     usm->pack_start (*hcbin);
     hcbin->show ();
     hsep6b->show ();

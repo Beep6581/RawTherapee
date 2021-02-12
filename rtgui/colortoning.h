@@ -92,7 +92,7 @@ private:
     Gtk::Box* ctbox;
     Gtk::Frame *p1Frame;
 
-    Gtk::VBox* chanMixerBox;
+    Gtk::Box* chanMixerBox;
     MyComboBoxText* method;
     sigc::connection methodconn;
     MyComboBoxText* twocolor;
@@ -147,7 +147,7 @@ private:
     rtengine::ProcEvent EvLabRegionShowMask;
     rtengine::ProcEvent EvLabRegionChannel;
 
-    Gtk::VBox *labRegionBox;
+    Gtk::Box* labRegionBox;
     Gtk::ListViewText *labRegionList;
     Gtk::Button *labRegionAdd;
     Gtk::Button *labRegionRemove;

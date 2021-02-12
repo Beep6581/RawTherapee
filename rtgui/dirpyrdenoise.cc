@@ -48,7 +48,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     Gtk::Frame* lumaFrame = Gtk::manage (new Gtk::Frame (M("TP_DIRPYRDENOISE_LUMINANCE_FRAME")) );
     lumaFrame->set_label_align(0.025, 0.5);
 
-    Gtk::VBox * lumaVBox = Gtk::manage ( new Gtk::VBox());
+    Gtk::Box*  lumaVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     lumaVBox->set_spacing(2);
 
     ctboxL = Gtk::manage (new Gtk::Box ());
@@ -83,7 +83,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     Gtk::Frame* chromaFrame = Gtk::manage (new Gtk::Frame (M("TP_DIRPYRDENOISE_CHROMINANCE_FRAME")) );
     chromaFrame->set_label_align(0.025, 0.5);
 
-    Gtk::VBox *chromaVBox = Gtk::manage ( new Gtk::VBox());
+    Gtk::Box* chromaVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     chromaVBox->set_spacing(2);
 
     ctboxC = Gtk::manage (new Gtk::Box ());
@@ -166,7 +166,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
 
     Gtk::Frame* medianFrame = Gtk::manage (new Gtk::Frame ());
 
-    Gtk::VBox *medianVBox = Gtk::manage ( new Gtk::VBox());
+    Gtk::Box* medianVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     medianVBox->set_spacing(2);
 
     median = Gtk::manage (new Gtk::CheckButton (M("TP_DIRPYRDENOISE_MEDIAN_METHOD_LABEL") + ":"));

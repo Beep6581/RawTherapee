@@ -73,7 +73,7 @@ Navigator::Navigator() :
 
     set_label (M("MAIN_MSG_NAVIGATOR"));
     set_name("Navigator");
-    Gtk::VBox* mbox = Gtk::manage (new Gtk::VBox ());
+    Gtk::Box* mbox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     previewWindow = Gtk::manage (new PreviewWindow ());
     mbox->pack_start (*previewWindow, Gtk::PACK_SHRINK, 2);
     dimension = Gtk::manage (new Gtk::Label ());

@@ -144,7 +144,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     method_hbox->pack_start(*method);
     pack_start(*method_hbox);
 
-    simple = Gtk::manage( new Gtk::VBox() );
+    simple = Gtk::manage( new Gtk::Box(Gtk::ORIENTATION_VERTICAL) );
 
     vert = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_VERTICAL"), -100, 100, 0.1, 0, ipersVL, ipersVR));
     vert->setAdjusterListener (this);
@@ -152,13 +152,13 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     horiz = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_HORIZONTAL"), -100, 100, 0.1, 0, ipersHL, ipersHR));
     horiz->setAdjusterListener (this);
 
-    camera_based = Gtk::manage( new Gtk::VBox() );
+    camera_based = Gtk::manage( new Gtk::Box(Gtk::ORIENTATION_VERTICAL) );
 
     Gtk::Frame* camera_frame = Gtk::manage (new Gtk::Frame
             (M("TP_PERSPECTIVE_CAMERA_FRAME")));
     camera_frame->set_label_align(0.025, 0.5);
 
-    Gtk::VBox* camera_vbox = Gtk::manage (new Gtk::VBox());
+    Gtk::Box* camera_vbox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     camera_focal_length = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_FOCAL_LENGTH"), 0.5, 2000, 0.01, 24));
     camera_focal_length->setAdjusterListener (this);
@@ -236,7 +236,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
             (M("TP_PERSPECTIVE_POST_CORRECTION_ADJUSTMENT_FRAME")));
     pca_frame->set_label_align(0.025, 0.5);
 
-    Gtk::VBox* pca_vbox = Gtk::manage (new Gtk::VBox());
+    Gtk::Box* pca_vbox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     projection_shift_horiz = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_PROJECTION_SHIFT_HORIZONTAL"), -100, 100, 0.01, 0));
     projection_shift_horiz->setAdjusterListener (this);
@@ -251,7 +251,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
             (M("TP_PERSPECTIVE_RECOVERY_FRAME")));
     recovery_frame->set_label_align(0.025, 0.5);
 
-    Gtk::VBox* recovery_vbox = Gtk::manage (new Gtk::VBox());
+    Gtk::Box* recovery_vbox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     projection_pitch = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_PROJECTION_PITCH"), -60, 60, 0.1, 0, ipers_proj_pitch_left, ipers_proj_pitch_right));
     projection_pitch->setAdjusterListener (this);

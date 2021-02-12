@@ -80,7 +80,7 @@ private:
     rtengine::ProcEvent EvICMslop;
     rtengine::ProcEvent EvICMtrcinMethod;
 
-    Gtk::VBox* iVBox;
+    Gtk::Box* iVBox;
     Gtk::Box* wTRCHBox;
 
     Gtk::CheckButton* obpc;

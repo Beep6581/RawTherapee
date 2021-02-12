@@ -75,11 +75,11 @@ private:
 
     Gtk::Box* fltrRankbox;
     Gtk::Box* fltrLabelbox;
-    Gtk::VBox* fltrVbox1;
+    Gtk::Box* fltrVbox1;
 
     Gtk::Box* fltrEditedBox;
     Gtk::Box* fltrRecentlySavedBox;
-    Gtk::VBox* fltrVbox2;
+    Gtk::Box* fltrVbox2;
 
     Gtk::Separator* vSepiLeftPanel;
 
@@ -119,7 +119,7 @@ private:
     double vScrollPos[18];
     int lastScrollPos;
 
-    Gtk::VBox* trashButtonBox;
+    Gtk::Box* trashButtonBox;
 
     Gtk::Button* zoomInButton;
     Gtk::Button* zoomOutButton;

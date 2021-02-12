@@ -311,11 +311,11 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     //---
     raw_preprocwb       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCWB")));
 
-    Gtk::VBox* vboxes[9];
+    Gtk::Box* vboxes[9];
     Gtk::Separator* hseps[9];
 
     for (int i = 0; i < 9; i++) {
-        vboxes[i] = Gtk::manage (new Gtk::VBox ());
+        vboxes[i] = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
         vboxes[i]->set_name("PartialPasteGroupContainer");
         hseps[i] = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
         hseps[i]->set_name("PartialPasteHeaderSep");
@@ -428,9 +428,9 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[8]->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*captureSharpening, Gtk::PACK_SHRINK, 2);
 
-    Gtk::VBox* vbCol1 = Gtk::manage (new Gtk::VBox ());
-    Gtk::VBox* vbCol2 = Gtk::manage (new Gtk::VBox ());
-    Gtk::VBox* vbCol3 = Gtk::manage (new Gtk::VBox ());
+    Gtk::Box* vbCol1 = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Box* vbCol2 = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Box* vbCol3 = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     for (int i = 0; i < 3; i++) {
         vbCol1->pack_start (*vboxes[i], Gtk::PACK_SHRINK, 2);
@@ -444,7 +444,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
         vbCol3->pack_start (*vboxes[i], Gtk::PACK_SHRINK, 2);
     }
 
-    Gtk::VBox* vbtop = Gtk::manage (new Gtk::VBox ());
+    Gtk::Box* vbtop = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     vbtop->pack_start (*everything, Gtk::PACK_SHRINK, 2);
 
     Gtk::Dialog::get_content_area()->pack_start (*vbtop, Gtk::PACK_SHRINK, 2);

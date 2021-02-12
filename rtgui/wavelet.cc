@@ -216,7 +216,7 @@ Wavelet::Wavelet() :
     sliHBox(Gtk::manage(new Gtk::Box())),
     denHBox(Gtk::manage(new Gtk::Box())),
     mixHBox(Gtk::manage(new Gtk::Box())),
-    ctboxBA(Gtk::manage(new Gtk::VBox()))
+    ctboxBA(Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL)))
 
 {
     CurveListener::setMulti(true);
@@ -460,7 +460,7 @@ Wavelet::Wavelet() :
     wavLabels->show();
     levBox->pack_start(*wavLabels);
 
-    Gtk::VBox* const contrastSHVBox = Gtk::manage(new Gtk::VBox);
+    Gtk::Box* const contrastSHVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     contrastSHVBox->set_spacing(2);
 
     HSmethod->append(M("TP_WAVELET_HS1"));
@@ -900,7 +900,7 @@ Wavelet::Wavelet() :
     edgeampli->setAdjusterListener(this);
     edgBox->pack_start(*edgeampli);
 
-    Gtk::VBox* const ctboxES = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* const ctboxES = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     ctboxES->set_spacing(2);
 
@@ -1110,9 +1110,9 @@ Wavelet::Wavelet() :
     // Toning and Color Balance
     Gtk::Separator* const separatorCB = Gtk::manage(new  Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
 
-    Gtk::VBox* const chanMixerHLBox = Gtk::manage(new Gtk::VBox());
-    Gtk::VBox* const chanMixerMidBox = Gtk::manage(new Gtk::VBox());
-    Gtk::VBox* const chanMixerShadowsBox = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* const chanMixerHLBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Box* const chanMixerMidBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Box* const chanMixerShadowsBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     cbenab->set_active(true);
     cbenabConn = cbenab->signal_toggled().connect(sigc::mem_fun(*this, &Wavelet::cbenabToggled));
@@ -1176,7 +1176,7 @@ Wavelet::Wavelet() :
     resBox->pack_start(*neutrHBox);
 
 // Final Touchup
- //   Gtk::VBox* const ctboxBA = Gtk::manage(new Gtk::VBox());
+ //   Gtk::Box* const ctboxBA = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     ctboxBA->set_spacing(2);
 

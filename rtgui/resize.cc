@@ -76,7 +76,7 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
 
     pack_start (*scale, Gtk::PACK_SHRINK, 4);
 
-    sizeBox = Gtk::manage (new Gtk::VBox ());
+    sizeBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     Gtk::Box* sbox = Gtk::manage (new Gtk::Box ());
     Gtk::Box* wbox = Gtk::manage (new Gtk::Box ());

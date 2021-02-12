@@ -50,7 +50,7 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
     placespaned->set_size_request(250, 100);
     placespaned->set_position (options.dirBrowserHeight);
 
-    Gtk::VBox* obox = Gtk::manage (new Gtk::VBox ());
+    Gtk::Box* obox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     obox->get_style_context()->add_class ("plainback");
     obox->pack_start (*recentBrowser, Gtk::PACK_SHRINK, 4);
     obox->pack_start (*dirBrowser);
@@ -83,7 +83,7 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
     rightBox->set_size_request(350, 100);
     rightNotebook = Gtk::manage ( new Gtk::Notebook () );
     rightNotebookSwitchConn = rightNotebook->signal_switch_page().connect_notify( sigc::mem_fun(*this, &FilePanel::on_NB_switch_page) );
-    //Gtk::VBox* taggingBox = Gtk::manage ( new Gtk::VBox () );
+    //Gtk::Box* taggingBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL) );
 
     history = Gtk::manage ( new History (false) );
 

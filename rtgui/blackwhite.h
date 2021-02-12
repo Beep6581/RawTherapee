@@ -128,7 +128,7 @@ private:
     MyComboBoxText*   setting;
     sigc::connection  settingconn;
     Gtk::Frame* mixerFrame;
-    Gtk::VBox * mixerVBox;
+    Gtk::Box*  mixerVBox;
     Gtk::Frame* gammaFrame;
 
     Gtk::Image *imgIcon[11];

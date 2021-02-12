@@ -147,12 +147,12 @@ Gtk::Widget* Preferences::getBatchProcPanel()
     swBatchProc = Gtk::manage(new Gtk::ScrolledWindow());
     swBatchProc->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
-    Gtk::VBox* vbBatchProc = Gtk::manage (new Gtk::VBox ());
+    Gtk::Box* vbBatchProc = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     Gtk::ScrolledWindow* behscrollw = Gtk::manage(new Gtk::ScrolledWindow());
     behscrollw->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     behscrollw->set_size_request(-1, 60);
-    Gtk::VBox* vbbeh = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* vbbeh = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     vbbeh->pack_start(*behscrollw, Gtk::PACK_EXPAND_WIDGET);
     Gtk::Frame* behFrame = Gtk::manage(new Gtk::Frame(M("PREFERENCES_BEHAVIOR")));
     behFrame->add(*vbbeh);
@@ -510,10 +510,10 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     swImageProcessing = Gtk::manage(new Gtk::ScrolledWindow());
     swImageProcessing->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
-    Gtk::VBox* vbImageProcessing = Gtk::manage (new Gtk::VBox ());
+    Gtk::Box* vbImageProcessing = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     Gtk::Frame* fpp = Gtk::manage(new Gtk::Frame(M("PREFERENCES_IMPROCPARAMS")));
-    Gtk::VBox* vbpp = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* vbpp = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     Gtk::Label* drlab = Gtk::manage(new Gtk::Label(M("PREFERENCES_FORRAW") + ":", Gtk::ALIGN_START));
     rprofiles = Gtk::manage(new ProfileStoreComboBox());
     const ProfileStoreEntry* dynpse = ProfileStore::getInstance()->getInternalDynamicPSE();
@@ -654,7 +654,7 @@ Gtk::Widget* Preferences::getPerformancePanel()
     swPerformance = Gtk::manage(new Gtk::ScrolledWindow());
     swPerformance->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
-    Gtk::VBox* vbPerformance = Gtk::manage ( new Gtk::VBox () );
+    Gtk::Box* vbPerformance = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL) );
     vbPerformance->set_spacing (4);
 
     Gtk::Frame* fprevdemo = Gtk::manage(new Gtk::Frame(M("PREFERENCES_PREVDEMO")));
@@ -689,7 +689,7 @@ Gtk::Widget* Preferences::getPerformancePanel()
 
     Gtk::Frame* fchunksize = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_CHUNKSIZES")) );
     fchunksize->set_label_align(0.025, 0.5);
-    Gtk::VBox* chunkSizeVB = Gtk::manage ( new Gtk::VBox () );
+    Gtk::Box* chunkSizeVB = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL) );
 
     Gtk::Box* measureHB = Gtk::manage ( new Gtk::Box () );
     measureHB->set_spacing (4);
@@ -710,7 +710,7 @@ Gtk::Widget* Preferences::getPerformancePanel()
 
     Gtk::Frame* finspect = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_INSPECT_LABEL")) );
     finspect->set_label_align(0.025, 0.5);
-    Gtk::VBox *inspectorvb = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* inspectorvb = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     placeSpinBox(inspectorvb, maxInspectorBuffersSB, "PREFERENCES_INSPECT_MAXBUFFERS_LABEL", 0, 1, 5, 2, 1, 12, "PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP");
 
     Gtk::Box* insphb = Gtk::manage(new Gtk::Box());
@@ -726,7 +726,7 @@ Gtk::Widget* Preferences::getPerformancePanel()
 
     Gtk::Frame* threadsFrame = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_PERFORMANCE_THREADS")) );
     threadsFrame->set_label_align(0.025, 0.5);
-    Gtk::VBox* threadsVBox = Gtk::manage ( new Gtk::VBox (Gtk::PACK_SHRINK, 4) );
+    Gtk::Box* threadsVBox = Gtk::manage ( new Gtk::VBox (Gtk::PACK_SHRINK, 4) );
 
 #ifdef _OPENMP
     int maxThreadNumber = omp_get_max_threads();
@@ -750,7 +750,7 @@ Gtk::Widget* Preferences::getColorManPanel ()
     swColorMan = Gtk::manage(new Gtk::ScrolledWindow());
     swColorMan->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
-    Gtk::VBox* vbColorMan = Gtk::manage (new Gtk::VBox ());
+    Gtk::Box* vbColorMan = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     vbColorMan->set_spacing (4);
 
     iccDir = Gtk::manage(new MyFileChooserButton(M("PREFERENCES_ICCDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
@@ -1254,7 +1254,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     swFileBrowser = Gtk::manage(new Gtk::ScrolledWindow());
     swFileBrowser->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
-    Gtk::VBox* vbFileBrowser = Gtk::manage ( new Gtk::VBox () );
+    Gtk::Box* vbFileBrowser = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL) );
 
     Gtk::Frame* fsd = Gtk::manage(new Gtk::Frame(M("PREFERENCES_STARTUPIMDIR")));
 
@@ -1272,7 +1272,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     sdhome->set_group(opts);
     sdother->set_group(opts);
 
-    Gtk::VBox* vbsd = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* vbsd = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     vbsd->pack_start(*sdcurrent, Gtk::PACK_SHRINK, 0);
     vbsd->pack_start(*sdlast, Gtk::PACK_SHRINK, 0);
     vbsd->pack_start(*sdhome, Gtk::PACK_SHRINK, 0);
@@ -1294,7 +1294,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     showDateTime = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_SHOWDATETIME")));
     showBasicExif = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_SHOWBASICEXIF")));
     showExpComp = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_SHOWEXPOSURECOMPENSATION")));
-    Gtk::VBox* vbro = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* vbro = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     Gtk::Box* hbro1 = Gtk::manage(new Gtk::Box());
     Gtk::Box* hbro0 = Gtk::manage(new Gtk::Box());
     overlayedFileNames = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_OVERLAY_FILENAMES")));
@@ -1360,7 +1360,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
 
 
     Gtk::Frame* fre = Gtk::manage(new Gtk::Frame(M("PREFERENCES_PARSEDEXT")));
-    Gtk::VBox* vbre = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* vbre = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     Gtk::Box* hb0 = Gtk::manage(new Gtk::Box());
     Gtk::Label* elab = Gtk::manage (new Gtk::Label (M("PREFERENCES_PARSEDEXTADD") + ":", Gtk::ALIGN_START));
     hb0->pack_start(*elab, Gtk::PACK_SHRINK, 4);
@@ -1405,7 +1405,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     // Cache
 
     Gtk::Frame* frc = Gtk::manage (new Gtk::Frame(M("PREFERENCES_CACHEOPTS")));
-    Gtk::VBox* vbc = Gtk::manage (new Gtk::VBox());
+    Gtk::Box* vbc = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     frc->add(*vbc);
 
     Gtk::Grid* cacheGrid = Gtk::manage(new Gtk::Grid());
@@ -1465,7 +1465,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     vbc->pack_start(*clearSafetyLbl, Gtk::PACK_SHRINK, 4);
 
     Gtk::Box* hb6 = Gtk::manage(new Gtk::Box());
-    Gtk::VBox* vb6 = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* vb6 = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     vb6->pack_start(*fro);
     vb6->pack_start(*frmnu);
@@ -1496,7 +1496,7 @@ Gtk::Widget* Preferences::getSoundsPanel ()
     swSounds = Gtk::manage(new Gtk::ScrolledWindow());
     swSounds->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 
-    Gtk::VBox* vbSounds = Gtk::manage(new Gtk::VBox ());
+    Gtk::Box* vbSounds = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     ckbSndEnable = Gtk::manage(new Gtk::CheckButton(M("GENERAL_ENABLE")));
     sndEnableConn = ckbSndEnable->signal_toggled().connect(sigc::mem_fun(*this, &Preferences::sndEnableToggled));

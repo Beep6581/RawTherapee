@@ -92,7 +92,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     mixerFrame->set_label_align(0.025, 0.5);
     pack_start (*mixerFrame, Gtk::PACK_SHRINK, 0);
 
-    mixerVBox = Gtk::manage (new Gtk::VBox ());
+    mixerVBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     mixerVBox->set_spacing(4);
 
     autoHBox = Gtk::manage (new Gtk::Box ());
@@ -284,7 +284,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     gammaFrame->set_label_align(0.025, 0.5);
     pack_start (*gammaFrame, Gtk::PACK_SHRINK, 0);
 
-    Gtk::VBox *gammaVBox = Gtk::manage (new Gtk::VBox());
+    Gtk::Box* gammaVBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     gammaVBox->set_spacing(4);
 
 

@@ -2733,7 +2733,7 @@ LocallabContrast::LocallabContrast():
     Gtk::Frame* const blurlevelFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_BLURLEVELFRA")));
     blurlevelFrame->set_label_align(0.025, 0.5);
     blurlevelFrame->set_label_widget(*wavblur);
-    Gtk::VBox* const blurlevcontBox = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* const blurlevcontBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     blurlevcontBox->set_spacing(2);
     blurlevcontBox->pack_start(*levelblur);
     blurlevcontBox->pack_start(*sigmabl);
@@ -2751,7 +2751,7 @@ LocallabContrast::LocallabContrast():
     Gtk::Frame* const contFrame2 = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CONTFRA")));
     contFrame2->set_label_align(0.025, 0.5);
     contFrame2->set_label_widget(*wavcont);
-    Gtk::VBox* const contlevBox = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* const contlevBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     contlevBox->set_spacing(2);
     contlevBox->pack_start(*sigma);
     contlevBox->pack_start(*offset);
@@ -2762,7 +2762,7 @@ LocallabContrast::LocallabContrast():
     Gtk::Frame* const compreFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_COMPREFRA")));
     compreFrame->set_label_align(0.025, 0.5);
     compreFrame->set_label_widget(*wavcompre);
-    Gtk::VBox* const compreBox = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* const compreBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     compreBox->set_spacing(2);
     compreBox->pack_start(*LocalcurveEditorwavcompre, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     compreBox->pack_start(*sigmadr);
@@ -2773,7 +2773,7 @@ LocallabContrast::LocallabContrast():
     Gtk::Frame* const compFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_COMPFRA")));
     compFrame->set_label_align(0.025, 0.5);
     compFrame->set_label_widget(*wavcomp);
-    Gtk::VBox* const compBox = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* const compBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     compBox->set_spacing(2);
     compBox->pack_start(*sigmadc);
     compBox->pack_start(*deltad);

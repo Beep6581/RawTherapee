@@ -39,7 +39,7 @@ protected:
     Gtk::Box* borderbox;
     Adjuster* border;
     Adjuster* ccSteps;
-    Gtk::VBox *dualDemosaicOptions;
+    Gtk::Box* dualDemosaicOptions;
     Adjuster* dualDemosaicContrast;
     bool lastAutoContrast;
 

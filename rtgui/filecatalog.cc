@@ -78,7 +78,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 
     set_size_request(0, 250);
     // construct trash panel with the extra "empty trash" button
-    trashButtonBox = Gtk::manage( new Gtk::VBox );
+    trashButtonBox = Gtk::manage( new Gtk::Box(Gtk::ORIENTATION_VERTICAL) );
     Gtk::Button* emptyT = Gtk::manage( new Gtk::Button ());
     emptyT->set_tooltip_markup (M("FILEBROWSER_EMPTYTRASHHINT"));
     emptyT->set_image (*Gtk::manage(new RTImage ("trash-delete.png")));
@@ -174,7 +174,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     buttonBar->pack_start (*bFilterClear, Gtk::PACK_SHRINK);
     buttonBar->pack_start (*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)), Gtk::PACK_SHRINK);
 
-    fltrVbox1 = Gtk::manage (new Gtk::VBox());
+    fltrVbox1 = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     fltrRankbox = Gtk::manage (new Gtk::Box());
     fltrRankbox->get_style_context()->add_class("smallbuttonbox");
     fltrLabelbox = Gtk::manage (new Gtk::Box());
@@ -255,7 +255,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
 
     buttonBar->pack_start (*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)), Gtk::PACK_SHRINK);
 
-    fltrVbox2 = Gtk::manage (new Gtk::VBox());
+    fltrVbox2 = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     fltrEditedBox = Gtk::manage (new Gtk::Box());
     fltrEditedBox->get_style_context()->add_class("smallbuttonbox");
     fltrRecentlySavedBox = Gtk::manage (new Gtk::Box());
@@ -525,7 +525,7 @@ void FileCatalog::exifInfoButtonToggled()
 void FileCatalog::on_realize()
 {
 
-    Gtk::VBox::on_realize();
+    Gtk::Box::on_realize();
     Pango::FontDescription fontd = get_pango_context()->get_font_description ();
     fileBrowser->get_pango_context()->set_font_description (fontd);
 //    batchQueue->get_pango_context()->set_font_description (fontd);

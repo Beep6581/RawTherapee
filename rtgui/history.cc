@@ -116,7 +116,7 @@ History::History (bool bookmarkSupport) : historyVPaned (nullptr), blistener (nu
 
     Gtk::Frame* bmFrame = Gtk::manage (new Gtk::Frame (M ("HISTORY_SNAPSHOTS")));
     bmFrame->set_name ("Snapshots");
-    Gtk::VBox* bmBox = Gtk::manage (new Gtk::VBox ());
+    Gtk::Box* bmBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     bmFrame->add (*bmBox);
     bmBox->pack_start (*bscrollw, Gtk::PACK_EXPAND_WIDGET, 4);
     bmBox->pack_end (*ahbox, Gtk::PACK_SHRINK, 4);
