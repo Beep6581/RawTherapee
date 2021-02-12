@@ -35,7 +35,7 @@ PrSharpening::PrSharpening () : FoldableToolPanel(this, "prsharpening", M("TP_PR
 
     //setEnabledTooltipMarkup(M("TP_PRSHARPENING_TOOLTIP"));
 
-    Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hb = Gtk::manage (new Gtk::Box ());
     hb->show ();
     contrast = Gtk::manage(new Adjuster (M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 15));
     contrast->setAdjusterListener (this);

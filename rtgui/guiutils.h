@@ -199,7 +199,7 @@ private:
     bool enabled;               /// Enabled feature (default to true)
     bool inconsistent;          /// True if the enabled button is inconsistent
     Gtk::EventBox *titleEvBox;  /// EventBox of the title, to get a connector from it
-    Gtk::HBox *headerHBox;
+    Gtk::Box *headerHBox;
     bool flushEvent;            /// Flag to control the weird event mechanism of Gtk (please prove me wrong!)
     ExpanderBox* expBox;        /// Frame that includes the child and control its visibility
     Gtk::EventBox *imageEvBox;  /// Enable/Disable or Open/Close arrow event box
@@ -391,7 +391,7 @@ private:
 
     Glib::ustring title_;
     Gtk::FileChooserAction action_;
-    Gtk::HBox box_;
+    Gtk::Box box_;
     Gtk::Label lbl_;
     std::string filename_;
     std::string current_folder_;
@@ -473,7 +473,7 @@ typedef enum RTNav {
 /**
  * @brief Handle the switch between text and image to be displayed in the HBox (to be used in a button/toolpanel)
  */
-class TextOrIcon final : public Gtk::HBox
+class TextOrIcon final : public Gtk::Box
 {
 
 public:

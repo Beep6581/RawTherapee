@@ -37,8 +37,8 @@ class BayerProcess final :
 protected:
 
     MyComboBoxText* method;
-    Gtk::HBox* borderbox;
-    Gtk::HBox *imageNumberBox;
+    Gtk::Box* borderbox;
+    Gtk::Box *imageNumberBox;
     Adjuster* border;
     MyComboBoxText* imageNumber;
     Adjuster* ccSteps;

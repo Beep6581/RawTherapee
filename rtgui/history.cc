@@ -91,7 +91,7 @@ History::History (bool bookmarkSupport) : historyVPaned (nullptr), blistener (nu
     // Bookmark List
     // ~~~~~~~~~~~~~
 
-    Gtk::HBox* ahbox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* ahbox = Gtk::manage (new Gtk::Box ());
     addBookmark = Gtk::manage (new Gtk::Button ());  // M("HISTORY_NEWSNAPSHOT")
     setExpandAlignProperties (addBookmark, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     //addBookmark->get_style_context()->set_junction_sides(Gtk::JUNCTION_RIGHT);
@@ -450,7 +450,7 @@ bool History::on_query_tooltip (int x, int y, bool keyboard_tooltip, const Glib:
                 Gtk::Label *left = Gtk::manage (new Gtk::Label(param+" :"));
                 Gtk::Label *right = Gtk::manage (new Gtk::Label(val));
                 right->set_justify(Gtk::JUSTIFY_LEFT);
-                Gtk::HBox *hbox = Gtk::manage (new Gtk::HBox());
+                Gtk::Box *hbox = Gtk::manage (new Gtk::Box());
                 hbox->set_spacing(5);
                 hbox->pack_start(*left, Gtk::PACK_SHRINK, 0);
                 hbox->pack_start(*right, Gtk::PACK_SHRINK, 0);

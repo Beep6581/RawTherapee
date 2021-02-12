@@ -78,9 +78,9 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
 
     sizeBox = Gtk::manage (new Gtk::VBox ());
 
-    Gtk::HBox* sbox = Gtk::manage (new Gtk::HBox ());
-    Gtk::HBox* wbox = Gtk::manage (new Gtk::HBox ());
-    Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* sbox = Gtk::manage (new Gtk::Box ());
+    Gtk::Box* wbox = Gtk::manage (new Gtk::Box ());
+    Gtk::Box* hbox = Gtk::manage (new Gtk::Box ());
     w = Gtk::manage (new MySpinButton ());
     h = Gtk::manage (new MySpinButton ());
     wbox->set_spacing(3);

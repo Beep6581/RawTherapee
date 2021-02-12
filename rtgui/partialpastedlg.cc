@@ -449,7 +449,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
 
     Gtk::Dialog::get_content_area()->pack_start (*vbtop, Gtk::PACK_SHRINK, 2);
 
-    Gtk::HBox* hbmain = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hbmain = Gtk::manage (new Gtk::Box ());
     hbmain->pack_start (*vbCol1);
     Gtk::VSeparator *vsep1 = Gtk::manage (new Gtk::VSeparator ());
     setExpandAlignProperties(vsep1, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);

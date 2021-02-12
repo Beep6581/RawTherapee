@@ -48,7 +48,7 @@ public:
     Gtk::Paned* placespaned;
     Gtk::HPaned* dirpaned;
 
-    Gtk::HBox* rightBox;
+    Gtk::Box* rightBox;
 
     DirBrowser* dirBrowser;
     FilterPanel* filterPanel;

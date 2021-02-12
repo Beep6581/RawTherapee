@@ -424,8 +424,8 @@ private:
     Gtk::ToggleButton* const preview_;
     sigc::connection previewConn_;
 
-    Gtk::HBox* const ctboxshape;
-    Gtk::HBox* const ctboxshapemethod;
+    Gtk::Box* const ctboxshape;
+    Gtk::Box* const ctboxshapemethod;
 
     // Internal variables
     ControlPanelListener* controlPanelListener;

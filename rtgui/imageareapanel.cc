@@ -23,7 +23,7 @@ ImageAreaPanel::ImageAreaPanel () : before(nullptr), after(nullptr)
 
     imageArea = new ImageArea (this);
 
-    Gtk::HBox*  hb1   = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box*  hb1   = Gtk::manage (new Gtk::Box ());
     Gtk::Frame* frame = Gtk::manage (new Gtk::Frame ());
 
     frame->add (*imageArea);

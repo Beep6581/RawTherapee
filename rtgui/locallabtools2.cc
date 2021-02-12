@@ -2316,7 +2316,7 @@ LocallabContrast::LocallabContrast():
     wavshape(static_cast<FlatCurveEditor*>(LocalcurveEditorwav->addCurve(CT_Flat, "", nullptr, false, false))),
     csThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLD"), 0, 9, 0, 0, 6, 6, 0, false))),
     levelwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LEVELWAV"), 1, 9, 1, 4))),
-    expresidpyr(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::HBox())))),
+    expresidpyr(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
     residcont(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCONT"), -100, 100, 1, 0))),
     residchro(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDCHRO"), -100., 100., 1., 0.))),
     residsha(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDSHA"), -100., 100., 1., 0.))),
@@ -2329,7 +2329,7 @@ LocallabContrast::LocallabContrast():
     claricres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARICRES"), -20., 100., 0.5, 0.))),
     clarisoft(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 1.))),
     origlc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ORIGLC")))),
-    expcontrastpyr(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::HBox())))),
+    expcontrastpyr(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
     wavgradl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_GRALWFRA")))),
     sigmalc2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     strwav(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -4.0, 4.0, 0.05, 0.))),
@@ -2358,7 +2358,7 @@ LocallabContrast::LocallabContrast():
     wavshapelev(static_cast<FlatCurveEditor*>(LocalcurveEditorwavlev->addCurve(CT_Flat, "", nullptr, false, false))),
     residblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDBLUR"), 0., 100., 0.5, 0.))),
     blurlc(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BLURLC")))),
-    expcontrastpyr2(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::HBox())))),
+    expcontrastpyr2(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
     wavcont(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_CONTFRA")))),
     sigma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
     offset(Gtk::manage(new Adjuster(M("TP_LOCALLAB_OFFSETWAV"), 0.33, 1.66, 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
@@ -2431,7 +2431,7 @@ LocallabContrast::LocallabContrast():
 
     levelwav->setAdjusterListener(this);
 
-    Gtk::HBox* const LresTitleHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const LresTitleHBox = Gtk::manage(new Gtk::Box());
     Gtk::Label* const LresLabel = Gtk::manage(new Gtk::Label());
     LresLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_LOC_RESIDPYR")) + Glib::ustring("</b>"));
     LresLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -2464,7 +2464,7 @@ LocallabContrast::LocallabContrast():
 
     origlcConn = origlc->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::origlcChanged));
 
-    Gtk::HBox* const LCTitleHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const LCTitleHBox = Gtk::manage(new Gtk::Box());
     Gtk::Label* const LCLabel = Gtk::manage(new Gtk::Label());
     LCLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_LOC_CONTRASTPYR")) + Glib::ustring("</b>") + escapeHtmlChars(M("TP_LOCALLAB_LOC_CONTRASTPYRLAB")));
     LCLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -2541,7 +2541,7 @@ LocallabContrast::LocallabContrast():
 
     blurlcConn = blurlc->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::blurlcChanged));
 
-    Gtk::HBox* const LCTitleHBox2 = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const LCTitleHBox2 = Gtk::manage(new Gtk::Box());
     Gtk::Label* const LCLabel2 = Gtk::manage(new Gtk::Label());
     LCLabel2->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_LOC_CONTRASTPYR2")) + Glib::ustring("</b>") + escapeHtmlChars(M("TP_LOCALLAB_LOC_CONTRASTPYR2LAB")));
     LCLabel2->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -2709,7 +2709,7 @@ LocallabContrast::LocallabContrast():
     edgsBox->pack_start(*waveshow);
     edgsBoxshow->pack_start(*radiusw);
     edgsBoxshow->pack_start(*detailw);
-    Gtk::HBox* const edbox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const edbox = Gtk::manage(new Gtk::Box());
     Gtk::Label* const labmedgr = Gtk::manage(new Gtk::Label(M("TP_WAVELET_MEDGREINF") + ":"));
     edbox->pack_start(*labmedgr, Gtk::PACK_SHRINK, 1);
     edbox->pack_start(*localedgMethod);
@@ -2722,7 +2722,7 @@ LocallabContrast::LocallabContrast():
     edgsBoxshow->pack_start(*separatoredg);
     edgsBoxshow->pack_start(*edgw);
     edgsBoxshow->pack_start(*basew);
-    Gtk::HBox* const ctboxNP = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const ctboxNP = Gtk::manage(new Gtk::Box());
     Gtk::Label* const labmNP = Gtk::manage(new Gtk::Label(M("TP_WAVELET_NPTYPE") + ":"));
     ctboxNP->pack_start(*labmNP, Gtk::PACK_SHRINK, 1);
     ctboxNP->pack_start(*localneiMethod);
@@ -4408,7 +4408,9 @@ LocallabCBDL::LocallabCBDL():
 
     // Add CBDL specific widgets to GUI
     ToolParamBlock* const levBox = Gtk::manage(new ToolParamBlock());
-    Gtk::HBox* buttonBox = Gtk::manage(new Gtk::HBox(true, 10));
+    Gtk::Box* buttonBox = Gtk::manage(new Gtk::Box());
+    buttonBox->set_spacing(10);
+    buttonBox->set_homogeneous(true);
     buttonBox->pack_start(*lumacontrastMinusButton);
     buttonBox->pack_start(*lumaneutralButton);
     buttonBox->pack_start(*lumacontrastPlusButton);
@@ -5077,7 +5079,7 @@ LocallabLog::LocallabLog():
     sourceGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 10.0))),
     sourceabs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 2000.0))),
     sursour(Gtk::manage (new MyComboBoxText ())),
-    surHBox(Gtk::manage(new Gtk::HBox())),
+    surHBox(Gtk::manage(new Gtk::Box())),
     log1Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG1FRA")))),
     log2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
     targetGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
@@ -5094,7 +5096,7 @@ LocallabLog::LocallabLog():
     LshapeL(static_cast<DiagonalCurveEditor*>(CurveEditorL->addCurve(CT_Diagonal, "Q(Q)"))),
     targabs(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 16.0))),
     surround(Gtk::manage (new MyComboBoxText ())),
-    surrHBox(Gtk::manage(new Gtk::HBox())),
+    surrHBox(Gtk::manage(new Gtk::Box())),
     baselog(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BASELOG"), 1.3, 3., 0.05, 2.))),//, Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     exprecovl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusablel(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
@@ -5202,7 +5204,6 @@ LocallabLog::LocallabLog():
 
 
 
-//    Gtk::HBox* surrHBox = Gtk::manage (new Gtk::HBox ());
     surrHBox->set_spacing (2);
     surrHBox->set_tooltip_markup (M ("TP_COLORAPP_SURROUND_TOOLTIP"));
     Gtk::Label* surrLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));

@@ -45,7 +45,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 
     //----------- Method combobox ------------------------------
 
-    Gtk::HBox* metHBox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* metHBox = Gtk::manage (new Gtk::Box ());
     metHBox->set_spacing (2);
     Gtk::Label* metLabel = Gtk::manage (new Gtk::Label (M("TP_BWMIX_MET") + ":"));
     metHBox->pack_start (*metLabel, Gtk::PACK_SHRINK);
@@ -95,7 +95,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     mixerVBox = Gtk::manage (new Gtk::VBox ());
     mixerVBox->set_spacing(4);
 
-    autoHBox = Gtk::manage (new Gtk::HBox ());
+    autoHBox = Gtk::manage (new Gtk::Box ());
 
     autoch = Gtk::manage (new Gtk::ToggleButton (M("TP_BWMIX_AUTOCH")));
     autoconn = autoch->signal_toggled().connect( sigc::mem_fun(*this, &BlackWhite::autoch_toggled) );
@@ -113,7 +113,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 
     mixerVBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()));
 
-    settingHBox = Gtk::manage (new Gtk::HBox ());
+    settingHBox = Gtk::manage (new Gtk::Box ());
     settingHBox->set_spacing (2);
     settingHBox->set_tooltip_markup (M("TP_BWMIX_SETTING_TOOLTIP"));
     Gtk::Label *settingLabel = Gtk::manage (new Gtk::Label (M("TP_BWMIX_SETTING") + ":"));
@@ -164,7 +164,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     filterSep = Gtk::manage (new  Gtk::HSeparator());
     mixerVBox->pack_start (*filterSep);
 
-    filterHBox = Gtk::manage (new Gtk::HBox ());
+    filterHBox = Gtk::manage (new Gtk::Box ());
     filterHBox->set_spacing (2);
     filterHBox->set_tooltip_markup (M("TP_BWMIX_FILTER_TOOLTIP"));
     Gtk::Label *filterLabel = Gtk::manage (new Gtk::Label (M("TP_BWMIX_FILTER") + ":"));
@@ -226,7 +226,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     filterSep2 = Gtk::manage (new  Gtk::HSeparator());
     mixerVBox->pack_start (*filterSep2);
 
-    algoHBox = Gtk::manage (new Gtk::HBox ());
+    algoHBox = Gtk::manage (new Gtk::Box ());
     algoHBox->set_spacing (2);
     algoHBox->set_tooltip_markup (M("TP_BWMIX_ALGO_TOOLTIP"));
 

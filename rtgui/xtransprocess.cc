@@ -34,7 +34,7 @@ XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP
     EvDemosaicContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_DUALDEMOSAIC_CONTRAST");
     EvDemosaicAutoContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST");
 
-    Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hb1 = Gtk::manage (new Gtk::Box ());
     hb1->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_DMETHOD") + ": ")), Gtk::PACK_SHRINK, 4);
     method = Gtk::manage (new MyComboBoxText ());
 
@@ -85,7 +85,7 @@ XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP
     dualDemosaicOptions->pack_start(*dualDemosaicContrast);
     pack_start( *dualDemosaicOptions, Gtk::PACK_SHRINK, 4);
 
-    borderbox = Gtk::manage(new Gtk::HBox());
+    borderbox = Gtk::manage(new Gtk::Box());
     border = Gtk::manage(new Adjuster(M("TP_RAW_BORDER"), 0, 16, 1, 7));
     border->setAdjusterListener (this);
 

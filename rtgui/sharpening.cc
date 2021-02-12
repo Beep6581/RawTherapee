@@ -29,7 +29,7 @@ Sharpening::Sharpening () : FoldableToolPanel(this, "sharpening", M("TP_SHARPENI
     EvSharpenContrast = m->newEvent(SHARPENING, "HISTORY_MSG_SHARPENING_CONTRAST");
     EvSharpenBlur = m->newEvent(SHARPENING, "HISTORY_MSG_SHARPENING_BLUR");
 
-    Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hb = Gtk::manage (new Gtk::Box ());
     hb->show ();
     contrast = Gtk::manage(new Adjuster (M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20));
     contrast->setAdjusterListener (this);

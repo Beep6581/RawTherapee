@@ -387,13 +387,13 @@ private:
     MyExpander* const expclari;
     MyExpander* const expbl;
 
-    Gtk::HBox* const neutrHBox;
-    Gtk::HBox* const usharpHBox;
-    Gtk::HBox* const ctboxch;
-    Gtk::HBox* const quaHBox;
-    Gtk::HBox* const sliHBox;
-    Gtk::HBox* const denHBox;
-    Gtk::HBox* const mixHBox;
+    Gtk::Box* const neutrHBox;
+    Gtk::Box* const usharpHBox;
+    Gtk::Box* const ctboxch;
+    Gtk::Box* const quaHBox;
+    Gtk::Box* const sliHBox;
+    Gtk::Box* const denHBox;
+    Gtk::Box* const mixHBox;
     Gtk::VBox* const ctboxBA;// = Gtk::manage(new Gtk::VBox());
 
     sigc::connection enableChromaConn, enableContrastConn, enableEdgeConn, enabletmConn, enableFinalConn, enableclariConn;

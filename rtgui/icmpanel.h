@@ -50,7 +50,7 @@ protected:
     Adjuster* wSlope;
 
     Gtk::Label* labmga;
-    Gtk::HBox* gabox;
+    Gtk::Box* gabox;
 
 
     //bool freegamma;
@@ -81,7 +81,7 @@ private:
     rtengine::ProcEvent EvICMtrcinMethod;
 
     Gtk::VBox* iVBox;
-    Gtk::HBox* wTRCHBox;
+    Gtk::Box* wTRCHBox;
 
     Gtk::CheckButton* obpc;
     Gtk::RadioButton* inone;

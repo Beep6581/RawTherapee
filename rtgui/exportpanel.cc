@@ -66,7 +66,7 @@ ExportPanel::ExportPanel () : listener (nullptr)
     bayerFrame->set_label_align(0.025, 0.5);
     Gtk::VBox* bayerFrameVBox = Gtk::manage (new Gtk::VBox ());
 
-    Gtk::HBox* hb_raw_bayer_method = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hb_raw_bayer_method = Gtk::manage (new Gtk::Box ());
     hb_raw_bayer_method->pack_start (*Gtk::manage (new Gtk::Label ( M ("EXPORT_RAW_DMETHOD") + ": ")), Gtk::PACK_SHRINK, 4);
     raw_bayer_method = Gtk::manage (new MyComboBoxText ());
 
@@ -90,7 +90,7 @@ ExportPanel::ExportPanel () : listener (nullptr)
     xtransFrame->set_label_align(0.025, 0.5);
     Gtk::VBox* xtransFrameVBox = Gtk::manage (new Gtk::VBox ());
 
-    Gtk::HBox* hb_raw_xtrans_method = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hb_raw_xtrans_method = Gtk::manage (new Gtk::Box ());
     hb_raw_xtrans_method->pack_start (*Gtk::manage (new Gtk::Label ( M ("EXPORT_RAW_DMETHOD") + ": ")), Gtk::PACK_SHRINK, 4);
     raw_xtrans_method = Gtk::manage (new MyComboBoxText ());
 
@@ -104,14 +104,14 @@ ExportPanel::ExportPanel () : listener (nullptr)
     // ----------------------------------------------------------------
 
     // start global packing
-    Gtk::HBox* lblbox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* lblbox = Gtk::manage (new Gtk::Box ());
     lblbox->pack_start (*Gtk::manage (new Gtk::Label (M ("EXPORT_PIPELINE"))), Gtk::PACK_SHRINK, 4);
     pack_start (*lblbox, Gtk::PACK_SHRINK, 4);
     pack_start (*use_fast_pipeline, Gtk::PACK_SHRINK, 4);
     pack_start (*use_normal_pipeline, Gtk::PACK_SHRINK, 4);
 
     bypass_box->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 4);
-    lblbox = Gtk::manage (new Gtk::HBox ());
+    lblbox = Gtk::manage (new Gtk::Box ());
     lblbox->pack_start (*Gtk::manage (new Gtk::Label (M ("EXPORT_BYPASS"))), Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*lblbox, Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*bypass_ALL, Gtk::PACK_SHRINK, 4);
@@ -152,12 +152,12 @@ ExportPanel::ExportPanel () : listener (nullptr)
 
     // Resize options
 
-    Gtk::HBox* rmbox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* rmbox = Gtk::manage (new Gtk::Box ());
     rmbox->pack_start (*Gtk::manage (new Gtk::Label (M ("TP_RESIZE_LABEL"))), Gtk::PACK_SHRINK, 4);
     pack_start (*rmbox, Gtk::PACK_SHRINK, 4);
 
-    Gtk::HBox* wbox = Gtk::manage (new Gtk::HBox ());
-    Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* wbox = Gtk::manage (new Gtk::Box ());
+    Gtk::Box* hbox = Gtk::manage (new Gtk::Box ());
     MaxWidth = Gtk::manage (new MySpinButton ());
     MaxHeight = Gtk::manage (new MySpinButton ());
     wbox->pack_start (*Gtk::manage (new Gtk::Label (M ("EXPORT_MAXWIDTH"))), Gtk::PACK_SHRINK, 4);

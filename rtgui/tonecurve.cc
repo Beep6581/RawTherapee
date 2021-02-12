@@ -56,7 +56,7 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
     clampOOG->signal_toggled().connect(sigc::mem_fun(*this, &ToneCurve::clampOOGChanged));
 
 //----------- Auto Levels ----------------------------------
-    abox = Gtk::manage (new Gtk::HBox ());
+    abox = Gtk::manage (new Gtk::Box ());
     abox->set_spacing (4);
 
     autolevels = Gtk::manage (new Gtk::ToggleButton (M("TP_EXPOSURE_AUTOLEVELS")));
@@ -102,7 +102,7 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
     method->append (M("TP_HLREC_BLEND"));
 
     method->set_active (0);
-    hlrbox = Gtk::manage (new Gtk::HBox ());
+    hlrbox = Gtk::manage (new Gtk::Box ());
     Gtk::Label* lab = Gtk::manage (new Gtk::Label (M("TP_HLREC_METHOD")));
     hlrbox->pack_start (*lab, Gtk::PACK_SHRINK, 4);
     hlrbox->pack_start (*method);

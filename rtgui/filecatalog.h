@@ -55,7 +55,7 @@ public:
 
 private:
     FilePanel* filepanel;
-    Gtk::HBox* hBox;
+    Gtk::Box* hBox;
     Glib::ustring selectedDirectory;
     int selectedDirectoryId;
     bool enabled;
@@ -69,16 +69,16 @@ private:
     ImageAreaToolListener* iatlistener;
     DirSelectionSlot selectDir;
 
-    Gtk::HBox* buttonBar;
-    Gtk::HBox* hbToolBar1;
+    Gtk::Box* buttonBar;
+    Gtk::Box* hbToolBar1;
     MyScrolledToolbar* hbToolBar1STB;
 
-    Gtk::HBox* fltrRankbox;
-    Gtk::HBox* fltrLabelbox;
+    Gtk::Box* fltrRankbox;
+    Gtk::Box* fltrLabelbox;
     Gtk::VBox* fltrVbox1;
 
-    Gtk::HBox* fltrEditedBox;
-    Gtk::HBox* fltrRecentlySavedBox;
+    Gtk::Box* fltrEditedBox;
+    Gtk::Box* fltrRecentlySavedBox;
     Gtk::VBox* fltrVbox2;
 
     Gtk::VSeparator* vSepiLeftPanel;

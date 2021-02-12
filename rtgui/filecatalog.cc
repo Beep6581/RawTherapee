@@ -88,7 +88,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     trashButtonBox->show ();
 
     //initialize hbToolBar1
-    hbToolBar1 = Gtk::manage(new Gtk::HBox ());
+    hbToolBar1 = Gtk::manage(new Gtk::Box ());
 
     //setup BrowsePath
     iRefreshWhite = new RTImage("refresh-small.png");
@@ -97,7 +97,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     BrowsePath = Gtk::manage(new Gtk::Entry ());
     BrowsePath->set_width_chars (50);
     BrowsePath->set_tooltip_markup (M("FILEBROWSER_BROWSEPATHHINT"));
-    Gtk::HBox* hbBrowsePath = Gtk::manage(new Gtk::HBox ());
+    Gtk::Box* hbBrowsePath = Gtk::manage(new Gtk::Box ());
     buttonBrowsePath = Gtk::manage(new Gtk::Button ());
     buttonBrowsePath->set_image (*iRefreshWhite);
     buttonBrowsePath->set_tooltip_markup (M("FILEBROWSER_BROWSEPATHBUTTONHINT"));
@@ -118,7 +118,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     Query->set_width_chars (20); // TODO !!! add this value to options?
     Query->set_max_width_chars (20);
     Query->set_tooltip_markup (M("FILEBROWSER_QUERYHINT"));
-    Gtk::HBox* hbQuery = Gtk::manage(new Gtk::HBox ());
+    Gtk::Box* hbQuery = Gtk::manage(new Gtk::Box ());
     buttonQueryClear = Gtk::manage(new Gtk::Button ());
     buttonQueryClear->set_image (*iQueryClear);
     buttonQueryClear->set_tooltip_markup (M("FILEBROWSER_QUERYBUTTONHINT"));
@@ -141,7 +141,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     }
 
     // setup button bar
-    buttonBar = Gtk::manage( new Gtk::HBox () );
+    buttonBar = Gtk::manage( new Gtk::Box () );
     buttonBar->set_name ("ToolBarPanelFileBrowser");
     MyScrolledToolbar *stb = Gtk::manage(new MyScrolledToolbar());
     stb->set_name("FileBrowserIconToolbar");
@@ -175,9 +175,9 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
 
     fltrVbox1 = Gtk::manage (new Gtk::VBox());
-    fltrRankbox = Gtk::manage (new Gtk::HBox());
+    fltrRankbox = Gtk::manage (new Gtk::Box());
     fltrRankbox->get_style_context()->add_class("smallbuttonbox");
-    fltrLabelbox = Gtk::manage (new Gtk::HBox());
+    fltrLabelbox = Gtk::manage (new Gtk::Box());
     fltrLabelbox->get_style_context()->add_class("smallbuttonbox");
 
     iUnRanked = new RTImage ("star-gold-hollow-small.png");
@@ -256,9 +256,9 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     buttonBar->pack_start (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK);
 
     fltrVbox2 = Gtk::manage (new Gtk::VBox());
-    fltrEditedBox = Gtk::manage (new Gtk::HBox());
+    fltrEditedBox = Gtk::manage (new Gtk::Box());
     fltrEditedBox->get_style_context()->add_class("smallbuttonbox");
-    fltrRecentlySavedBox = Gtk::manage (new Gtk::HBox());
+    fltrRecentlySavedBox = Gtk::manage (new Gtk::Box());
     fltrRecentlySavedBox->get_style_context()->add_class("smallbuttonbox");
 
     // bEdited
@@ -406,7 +406,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     buttonBar->pack_start (*exifInfo, Gtk::PACK_SHRINK);
 
     // thumbnail zoom
-    Gtk::HBox* zoomBox = Gtk::manage( new Gtk::HBox () );
+    Gtk::Box* zoomBox = Gtk::manage( new Gtk::Box () );
     zoomInButton  = Gtk::manage(  new Gtk::Button () );
     zoomInButton->set_image (*Gtk::manage(new RTImage ("magnifier-plus.png")));
     zoomInButton->signal_pressed().connect (sigc::mem_fun(*this, &FileCatalog::zoomIn));
@@ -448,7 +448,7 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     buttonBar->pack_end (*Gtk::manage(new Gtk::VSeparator), Gtk::PACK_SHRINK, 4);
 
     // add default panel
-    hBox = Gtk::manage( new Gtk::HBox () );
+    hBox = Gtk::manage( new Gtk::Box () );
     hBox->show ();
     hBox->pack_end (*fileBrowser);
     hBox->set_name ("FilmstripPanel");

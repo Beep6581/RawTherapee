@@ -81,7 +81,7 @@ void ThresholdAdjuster::initObject (Glib::ustring label, bool editedcb)
 
     set_name("ThresholdAdjuster");
 
-    hbox = Gtk::manage (new Gtk::HBox ());
+    hbox = Gtk::manage (new Gtk::Box ());
 
     this->label = Gtk::manage (new Gtk::Label (label, Gtk::ALIGN_START));
 

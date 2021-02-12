@@ -89,7 +89,7 @@ private:
     FlatCurveEditor* colorShape;
     DiagonalCurveEditor* clshape;
     DiagonalCurveEditor* cl2shape;
-    Gtk::HBox* ctbox;
+    Gtk::Box* ctbox;
     Gtk::Frame *p1Frame;
 
     Gtk::VBox* chanMixerBox;
@@ -116,7 +116,7 @@ private:
     Gtk::Image* irg;
 
     Gtk::Button* neutral;
-    Gtk::HBox* neutrHBox;
+    Gtk::Box* neutrHBox;
     int nextbw;
     int nextsatth;
     int nextsatpr;

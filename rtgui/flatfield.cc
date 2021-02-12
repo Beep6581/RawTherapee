@@ -32,7 +32,7 @@ using namespace rtengine::procparams;
 
 FlatField::FlatField () : FoldableToolPanel(this, "flatfield", M("TP_FLATFIELD_LABEL"))
 {
-    hbff = Gtk::manage(new Gtk::HBox());
+    hbff = Gtk::manage(new Gtk::Box());
     flatFieldFile = Gtk::manage(new MyFileChooserButton(M("TP_FLATFIELD_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
     bindCurrentFolder (*flatFieldFile, options.lastFlatfieldDir);
     ffLabel = Gtk::manage(new Gtk::Label(M("GENERAL_FILE")));
@@ -51,7 +51,7 @@ FlatField::FlatField () : FoldableToolPanel(this, "flatfield", M("TP_FLATFIELD_L
 
     flatFieldBlurRadius->show();
 
-    Gtk::HBox* hbffbt = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hbffbt = Gtk::manage (new Gtk::Box ());
     hbffbt->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_FLATFIELD_BLURTYPE") + ":")), Gtk::PACK_SHRINK);
     flatFieldBlurType = Gtk::manage (new MyComboBoxText ());
     flatFieldBlurType->append(M("TP_FLATFIELD_BT_AREA"));

@@ -52,7 +52,7 @@ FoldableToolPanel::FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, 
 
 //  exp->set_use_markup (true);
     if (need11) {
-        Gtk::HBox *titleHBox = Gtk::manage(new Gtk::HBox());
+        Gtk::Box *titleHBox = Gtk::manage(new Gtk::Box());
 
         Gtk::Label *label = Gtk::manage(new Gtk::Label());
         label->set_markup(escapeHtmlChars(UILabel));

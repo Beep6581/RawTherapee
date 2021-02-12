@@ -81,7 +81,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     iVBox->pack_start(*icameraICC, Gtk::PACK_SHRINK);
 
     ifromfile = Gtk::manage(new Gtk::RadioButton(M("TP_ICM_INPUTCUSTOM") + ":"));
-    Gtk::HBox* ffbox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* ffbox = Gtk::manage(new Gtk::Box());
     ifromfile->set_tooltip_text(M("TP_ICM_INPUTCUSTOM_TOOLTIP"));
     ffbox->pack_start(*ifromfile, Gtk::PACK_SHRINK);
     ffbox->pack_start(*ipDialog);
@@ -188,7 +188,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
     //-----------------gamma TRC working
 
-    wTRCHBox = Gtk::manage(new Gtk::HBox());
+    wTRCHBox = Gtk::manage(new Gtk::Box());
 
     Gtk::Label* wtrclab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_TRC")));
 
@@ -247,7 +247,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     oProfNames->set_active(0);
 
     // Rendering intent
-    Gtk::HBox *riHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box *riHBox = Gtk::manage(new Gtk::Box());
     Gtk::Label* outputIntentLbl = Gtk::manage(new Gtk::Label(M("TP_ICM_PROFILEINTENT")));
     riHBox->pack_start(*outputIntentLbl, Gtk::PACK_SHRINK);
     oRendIntent.reset(new PopUpButton());
@@ -964,7 +964,7 @@ void ICMPanel::saveReferencePressed()
 
     Gtk::CheckButton applyWB(M("TP_ICM_SAVEREFERENCE_APPLYWB"));
     applyWB.set_tooltip_text(M("TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP"));
-    Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* hbox = Gtk::manage(new Gtk::Box());
     hbox->pack_end(applyWB, Gtk::PACK_SHRINK, 2);
     Gtk::Box *box = dialog.get_content_area();
     box->pack_end(*hbox, Gtk::PACK_SHRINK, 2);

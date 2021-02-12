@@ -23,7 +23,7 @@
 #include "toolpanel.h"
 
 class CoarsePanel final :
-    public Gtk::HBox,
+    public Gtk::Box,
     public ToolPanel
 {
 

@@ -39,7 +39,7 @@ RenameDialog::RenameDialog (Gtk::Window* parent)
     get_content_area()->pack_start (*names, Gtk::PACK_SHRINK, 4);
 
 // Issue 316
-//    Gtk::HBox* tbox = Gtk::manage (new Gtk::HBox());
+//    Gtk::Box* tbox = Gtk::manage (new Gtk::Box());
 //    useTmpl = Gtk::manage (new Gtk::CheckButton (M("FILEBROWSER_USETEMPLATE")));
 //    templates = Gtk::manage (new MyComboBox ());
 //    templateModel = Gtk::ListStore::create (templateColumns);

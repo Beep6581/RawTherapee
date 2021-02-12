@@ -240,7 +240,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     complexmethod->append(M("TP_WAVELET_COMPEXPERT"));
     complexmethodconn = complexmethod->signal_changed().connect(sigc::mem_fun(*this, &ColorAppearance::complexmethodChanged));
     complexmethod->set_tooltip_text(M("TP_WAVELET_COMPLEX_TOOLTIP"));
-    Gtk::HBox* const complexHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const complexHBox = Gtk::manage(new Gtk::Box());
     Gtk::Label* const complexLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_COMPLEXLAB") + ":"));
     complexHBox->pack_start(*complexLabel, Gtk::PACK_SHRINK, 4);
     complexHBox->pack_start(*complexmethod);
@@ -251,7 +251,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     modelmethod->append(M("TP_COLORAPP_MOD16"));
     modelmethodconn = modelmethod->signal_changed().connect(sigc::mem_fun(*this, &ColorAppearance::modelmethodChanged));
     modelmethod->set_tooltip_text(M("TP_COLORAPP_MODELCAT_TOOLTIP"));
-    Gtk::HBox* const modelHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const modelHBox = Gtk::manage(new Gtk::Box());
     Gtk::Label* const modelLabel = Gtk::manage(new Gtk::Label(M("TP_COLORAPP_MODELCAT") + ":"));
     modelHBox->pack_start(*modelLabel, Gtk::PACK_SHRINK, 4);
     modelHBox->pack_start(*modelmethod);
@@ -263,7 +263,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     catmethod->append(M("TP_COLORAPP_CATSYMSPE"));
     catmethodconn = catmethod->signal_changed().connect(sigc::mem_fun(*this, &ColorAppearance::catmethodChanged));
     catmethod->set_tooltip_text(M("TP_COLORAPP_CATMET_TOOLTIP"));
-    Gtk::HBox* const catHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const catHBox = Gtk::manage(new Gtk::Box());
     Gtk::Label* const catLabel = Gtk::manage(new Gtk::Label(M("TP_COLORAPP_CATMOD") + ":"));
     catHBox->pack_start(*catLabel, Gtk::PACK_SHRINK, 4);
     catHBox->pack_start(*catmethod);
@@ -305,7 +305,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     // surrsource->set_tooltip_markup (M ("TP_COLORAPP_SURSOURCE_TOOLTIP"));
 
 
-    Gtk::HBox* surrHBox1 = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* surrHBox1 = Gtk::manage (new Gtk::Box ());
     surrHBox1->set_spacing (2);
     surrHBox1->set_tooltip_markup (M ("TP_COLORAPP_SURSOURCE_TOOLTIP"));
     Gtk::Label* surrLabel1 = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUNDSRC") + ":"));
@@ -323,8 +323,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
 
 
-//    Gtk::HBox* wbmHBox = Gtk::manage (new Gtk::HBox ());
-    wbmHBox = Gtk::manage (new Gtk::HBox ());
+    wbmHBox = Gtk::manage (new Gtk::Box ());
     
     wbmHBox->set_spacing (2);
     wbmHBox->set_tooltip_markup (M ("TP_COLORAPP_MODEL_TOOLTIP"));
@@ -340,8 +339,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     p1VBox->pack_start (*wbmHBox);
 
 
-//    Gtk::HBox* illumHBox = Gtk::manage (new Gtk::HBox ());
-    illumHBox = Gtk::manage (new Gtk::HBox ());
+    illumHBox = Gtk::manage (new Gtk::Box ());
     illumHBox->set_spacing (2);
     illumHBox->set_tooltip_markup (M ("TP_COLORAPP_ILLUM_TOOLTIP"));
     Gtk::Label* illumLab = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_ILLUM") + ":"));
@@ -422,8 +420,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     p2VBox = Gtk::manage ( new Gtk::VBox());
     p2VBox->set_spacing (2);
 
-//    Gtk::HBox* alHBox = Gtk::manage (new Gtk::HBox ());
-    alHBox = Gtk::manage (new Gtk::HBox ());
+    alHBox = Gtk::manage (new Gtk::Box ());
     alHBox->set_spacing (2);
     alHBox->set_tooltip_markup (M ("TP_COLORAPP_ALGO_TOOLTIP"));
     Gtk::Label* alLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_ALGO") + ":"));
@@ -697,7 +694,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     p3VBox->pack_start (*greenout);
     p3VBox->pack_start (*ybout);
 
-    Gtk::HBox* surrHBox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* surrHBox = Gtk::manage (new Gtk::Box ());
     surrHBox->set_spacing (2);
     surrHBox->set_tooltip_markup (M ("TP_COLORAPP_SURROUND_TOOLTIP"));
     Gtk::Label* surrLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));

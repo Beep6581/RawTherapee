@@ -215,7 +215,7 @@ void EditWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
     ep->setParentWindow(this);
 
     // construct closeable tab for the image
-    Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hb = Gtk::manage (new Gtk::Box ());
     hb->pack_start (*Gtk::manage (new RTImage ("aperture.png")));
     hb->pack_start (*Gtk::manage (new Gtk::Label (Glib::path_get_basename (name))));
     hb->set_tooltip_markup (name);

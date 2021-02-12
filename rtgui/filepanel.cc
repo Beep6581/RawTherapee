@@ -79,7 +79,7 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
     recentBrowser->setDirSelector (sigc::mem_fun (dirBrowser, &DirBrowser::selectDir));
     fileCatalog->setFileSelectionListener (this);
 
-    rightBox = Gtk::manage ( new Gtk::HBox () );
+    rightBox = Gtk::manage ( new Gtk::Box () );
     rightBox->set_size_request(350, 100);
     rightNotebook = Gtk::manage ( new Gtk::Notebook () );
     rightNotebookSwitchConn = rightNotebook->signal_switch_page().connect_notify( sigc::mem_fun(*this, &FilePanel::on_NB_switch_page) );

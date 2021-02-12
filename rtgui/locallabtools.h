@@ -621,7 +621,7 @@ class LocallabSoft:
 private:
     // Soft light specific widgets
     MyComboBoxText* const softMethod;
-    Gtk::HBox* const ctboxsoftmethod;
+    Gtk::Box* const ctboxsoftmethod;
     MyComboBoxText* const showmasksoftMethod;
     Adjuster* const streng;
     Adjuster* const laplace;
@@ -764,7 +764,7 @@ private:
     DiagonalCurveEditor* const Lmaskblshape;
     CurveEditorGroup* const mask2blCurveEditorGwav;
     FlatCurveEditor* const LLmaskblshapewav;
-    Gtk::HBox* const quaHBox;
+    Gtk::Box* const quaHBox;
     ThresholdAdjuster* const csThresholdblur;
 
     sigc::connection blMethodConn, fftwblConn, invblConn, medMethodConn, blurMethodConn, chroMethodConn, activlumConn, showmaskblMethodConn, showmaskblMethodtypConn, enablMaskConn, toolblConn;
@@ -1305,7 +1305,7 @@ private:
     Adjuster* const sourceGray;
     Adjuster* const sourceabs;
     MyComboBoxText*  const sursour;
-    Gtk::HBox* const surHBox;
+    Gtk::Box* const surHBox;
     Gtk::Frame* const log1Frame;
     Gtk::Frame* const log2Frame;
     Adjuster* const targetGray;
@@ -1322,7 +1322,7 @@ private:
     DiagonalCurveEditor* const LshapeL;
     Adjuster* const targabs;
     MyComboBoxText*  const surround;
-    Gtk::HBox* const surrHBox;
+    Gtk::Box* const surrHBox;
     
     Adjuster* const baselog;
     MyExpander* const exprecovl;

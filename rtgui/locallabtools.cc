@@ -132,7 +132,7 @@ LocallabTool::LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustr
     complexity(Gtk::manage(new MyComboBoxText()))
 {
     // Create expander title bar
-    Gtk::HBox* const titleBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const titleBox = Gtk::manage(new Gtk::Box());
     Gtk::Label* const titleLabel = Gtk::manage(new Gtk::Label());
     titleLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(UILabel) + Glib::ustring("</b>"));
     titleLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -821,7 +821,7 @@ LocallabColor::LocallabColor():
     expgradcol->add(*gradcolBox, false);
     pack_start(*expgradcol, false, false);
     ToolParamBlock* const curvBox = Gtk::manage(new ToolParamBlock());
-    Gtk::HBox* const qualcurvbox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const qualcurvbox = Gtk::manage(new Gtk::Box());
     qualcurvbox->pack_start(*labqualcurv, Gtk::PACK_SHRINK, 4);
     qualcurvbox->pack_start(*qualitycurveMethod);
     curvBox->pack_start(*qualcurvbox);
@@ -2687,7 +2687,7 @@ LocallabExposure::LocallabExposure():
     pdeBox->pack_start(*linear);
     pdeBox->pack_start(*balanexp);
     pdeBox->pack_start(*gamm);
-    Gtk::HBox* const ctboxexpmethod = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const ctboxexpmethod = Gtk::manage(new Gtk::Box());
 //    Gtk::Label* const labelexpmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_NOISEMETH") + ":"));
     ctboxexpmethod->pack_start(*labelexpmethod, Gtk::PACK_SHRINK, 4);
     ctboxexpmethod->pack_start(*exnoiseMethod);
@@ -5811,7 +5811,7 @@ LocallabSoft::LocallabSoft():
 
     // Soft light specific widgets
     softMethod(Gtk::manage(new MyComboBoxText())),
-    ctboxsoftmethod(Gtk::manage(new Gtk::HBox())),
+    ctboxsoftmethod(Gtk::manage(new Gtk::Box())),
     showmasksoftMethod(Gtk::manage(new MyComboBoxText())),
     streng(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENG"), 1, 100, 1, 1))),
     laplace(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACE"), 0., 100., 0.5, 25.))),
@@ -6291,7 +6291,7 @@ LocallabBlur::LocallabBlur():
     Lmaskblshape(static_cast<DiagonalCurveEditor*>(mask2blCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     mask2blCurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
     LLmaskblshapewav(static_cast<FlatCurveEditor*>(mask2blCurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
-    quaHBox(Gtk::manage(new Gtk::HBox())),
+    quaHBox(Gtk::manage(new Gtk::Box())),
     csThresholdblur(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
 {
     const LocallabParams::LocallabSpot defSpot;

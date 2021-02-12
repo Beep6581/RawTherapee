@@ -68,7 +68,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     fdir = Gtk::manage (new Gtk::Frame (M("QUEUE_LOCATION_TITLE")));
     fdir->set_label_align(0.025, 0.5);
     Gtk::VBox* odvb = Gtk::manage (new Gtk::VBox ());
-    Gtk::HBox* hb2 = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hb2 = Gtk::manage (new Gtk::Box ());
     useTemplate = Gtk::manage (new Gtk::RadioButton (M("QUEUE_LOCATION_TEMPLATE") + ":"));
     hb2->pack_start (*useTemplate, Gtk::PACK_SHRINK, 4);
     outdirTemplate = Gtk::manage (new Gtk::Entry ());
@@ -76,7 +76,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     odvb->pack_start (*hb2, Gtk::PACK_SHRINK, 4);
     outdirTemplate->set_tooltip_markup (M("QUEUE_LOCATION_TEMPLATE_TOOLTIP"));
     useTemplate->set_tooltip_markup (M("QUEUE_LOCATION_TEMPLATE_TOOLTIP"));
-    Gtk::HBox* hb3 = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hb3 = Gtk::manage (new Gtk::Box ());
     useFolder = Gtk::manage (new Gtk::RadioButton (M("QUEUE_LOCATION_FOLDER") + ":"));
     hb3->pack_start (*useFolder, Gtk::PACK_SHRINK, 4);
 
@@ -130,7 +130,7 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     saveFormatPanel->setListener (this);
 
     // setup button bar
-    topBox = Gtk::manage (new Gtk::HBox ());
+    topBox = Gtk::manage (new Gtk::Box ());
     pack_start (*topBox, Gtk::PACK_SHRINK);
     topBox->set_name("BatchQueueButtonsMainContainer");
 
@@ -142,11 +142,11 @@ BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
     pack_start (*batchQueue);
 
     // lower box with thumbnail zoom
-    bottomBox = Gtk::manage (new Gtk::HBox ());
+    bottomBox = Gtk::manage (new Gtk::Box ());
     pack_start (*bottomBox, Gtk::PACK_SHRINK);
 
     // thumbnail zoom
-    Gtk::HBox* zoomBox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* zoomBox = Gtk::manage (new Gtk::Box ());
     zoomBox->pack_start (*Gtk::manage (new Gtk::VSeparator), Gtk::PACK_SHRINK, 4);
     Gtk::Label* zoomLabel = Gtk::manage (new Gtk::Label (Glib::ustring("<b>") + M("FILEBROWSER_THUMBSIZE") + ":</b>"));
     zoomLabel->set_use_markup (true);

@@ -41,7 +41,7 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
     complexmethod->append(M("TP_WAVELET_COMPEXPERT"));
     complexmethodconn = complexmethod->signal_changed().connect(sigc::mem_fun(*this, &Retinex::complexmethodChanged));
     complexmethod->set_tooltip_text(M("TP_WAVELET_COMPLEX_TOOLTIP"));
-    Gtk::HBox* const complexHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const complexHBox = Gtk::manage(new Gtk::Box());
     Gtk::Label* const complexLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_COMPLEXLAB") + ":"));
     complexHBox->pack_start(*complexLabel, Gtk::PACK_SHRINK, 4);
     complexHBox->pack_start(*complexmethod);

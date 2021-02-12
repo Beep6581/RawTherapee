@@ -66,7 +66,7 @@ FavoritBrowser::FavoritBrowser () : listener (NULL)
     del->set_valign(Gtk::ALIGN_START);
     del->set_image (*Gtk::manage (new RTImage ("remove-small.png")));
     del->get_style_context()->add_class("Right");
-    Gtk::HBox* buttonBox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* buttonBox = Gtk::manage (new Gtk::Box ());
     buttonBox->pack_start (*add);
     buttonBox->pack_start (*del);
 

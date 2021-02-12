@@ -99,13 +99,13 @@ private:
     DiagonalCurveEditor* afterCurve;
     MyComboBoxText*      afterCurveMode;
     Gtk::ToggleButton*   autoch;
-    Gtk::HBox*           autoHBox;
+    Gtk::Box*            autoHBox;
     Gtk::Button*         neutral;
     Gtk::Label*          RGBLabels;
     MyComboBoxText*      algo;
     sigc::connection     algoconn;
     Gtk::Label*          alLabel;
-    Gtk::HBox*           algoHBox;
+    Gtk::Box*            algoHBox;
 
     Adjuster *mixerRed;
     Adjuster *mixerGreen;
@@ -120,11 +120,11 @@ private:
     Adjuster *mixerPurple;
     MyComboBoxText*   method;
     sigc::connection  methodconn;
-    Gtk::HBox*        filterHBox;
+    Gtk::Box*         filterHBox;
     Gtk::HSeparator*  filterSep, *filterSep2;
     MyComboBoxText*   filter;
     sigc::connection  filterconn;
-    Gtk::HBox*        settingHBox;
+    Gtk::Box*         settingHBox;
     MyComboBoxText*   setting;
     sigc::connection  settingconn;
     Gtk::Frame* mixerFrame;

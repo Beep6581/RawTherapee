@@ -57,7 +57,7 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer",
     cbVBox->set_border_width(4);
     cbVBox->set_spacing(2);
 
-    cdbox = Gtk::manage (new Gtk::HBox ());
+    cdbox = Gtk::manage (new Gtk::Box ());
     labmcd = Gtk::manage (new Gtk::Label (M("TP_CBDL_METHOD") + ":"));
     cdbox->pack_start (*labmcd, Gtk::PACK_SHRINK, 1);
 
@@ -71,7 +71,9 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer",
     cbVBox->pack_start(*cdbox);
     pack_start(*cbVBox);
 
-    Gtk::HBox * buttonBox1 = Gtk::manage (new Gtk::HBox(true, 10));
+    Gtk::Box * buttonBox1 = Gtk::manage (new Gtk::Box());
+    buttonBox1->set_spacing(10);
+    buttonBox1->set_homogeneous(true);
     pack_start(*buttonBox1);
 
     Gtk::Button * lumacontrastMinusButton = Gtk::manage (new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS")));
@@ -116,7 +118,7 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer",
     Gtk::HSeparator *separator4 = Gtk::manage (new  Gtk::HSeparator());
     pack_start(*separator4, Gtk::PACK_SHRINK, 2);
     /*
-        algoHBox = Gtk::manage (new Gtk::HBox ());
+        algoHBox = Gtk::manage (new Gtk::Box ());
         algoHBox->set_spacing (2);
         algoHBox->set_tooltip_markup (M("TP_DIRPYREQUALIZER_ALGO_TOOLTIP"));
     */

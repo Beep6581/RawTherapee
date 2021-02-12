@@ -48,7 +48,7 @@ BayerPreProcess::BayerPreProcess() : FoldableToolPanel(this, "bayerpreprocess", 
 
     greenEqThreshold->show();
 
-    Gtk::HBox *hb = Gtk::manage(new Gtk::HBox());
+    Gtk::Box *hb = Gtk::manage(new Gtk::Box());
     hb->pack_start(*Gtk::manage(new Gtk::Label(M("TP_PREPROCESS_LINEDENOISE_DIRECTION") + ": ")), Gtk::PACK_SHRINK, 0);
     lineDenoiseDirection = Gtk::manage(new MyComboBoxText());
     lineDenoiseDirection->append(M("TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL"));

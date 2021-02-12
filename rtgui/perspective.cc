@@ -135,7 +135,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     Gtk::Image* ipers_rotate_left = Gtk::manage(new RTImage("rotate-right-small.png"));
     Gtk::Image* ipers_rotate_right = Gtk::manage(new RTImage("rotate-left-small.png"));
 
-    Gtk::HBox* method_hbox = Gtk::manage (new Gtk::HBox());
+    Gtk::Box* method_hbox = Gtk::manage (new Gtk::Box());
     Gtk::Label* method_label = Gtk::manage (new Gtk::Label (M("TP_PERSPECTIVE_METHOD") + ": "));
     method = Gtk::manage (new MyComboBoxText ());
     method->append (M("TP_PERSPECTIVE_METHOD_SIMPLE"));
@@ -207,7 +207,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     lines = std::unique_ptr<ControlLineManager>(new ControlLineManager());
     lines->callbacks = std::make_shared<LinesCallbacks>(this);
 
-    Gtk::HBox* control_lines_box = Gtk::manage (new Gtk::HBox());
+    Gtk::Box* control_lines_box = Gtk::manage (new Gtk::Box());
     Gtk::Label* control_lines_label = Gtk::manage (new Gtk::Label (M("TP_PERSPECTIVE_CONTROL_LINES") + ": "));
     control_lines_label->set_tooltip_markup( M("TP_PERSPECTIVE_CONTROL_LINES_TOOLTIP") );
     control_lines_box->pack_start(*control_lines_label, Gtk::PACK_SHRINK);
@@ -228,7 +228,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     auto_pitch_yaw->set_image(*ipers_auto_pitch_yaw);
     auto_pitch_yaw->signal_pressed().connect( sigc::bind(sigc::mem_fun(*this, &PerspCorrection::autoCorrectionPressed), auto_pitch_yaw) );
 
-    Gtk::HBox* auto_hbox = Gtk::manage (new Gtk::HBox());
+    Gtk::Box* auto_hbox = Gtk::manage (new Gtk::Box());
     Gtk::Label* auto_label = Gtk::manage (new Gtk::Label (M("GENERAL_AUTO") + ": "));
     auto_hbox->pack_start(*auto_label, Gtk::PACK_SHRINK);
 

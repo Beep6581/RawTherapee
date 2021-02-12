@@ -140,7 +140,7 @@ SaveAsDialog::SaveAsDialog (const Glib::ustring &initialDir, Gtk::Window* parent
     vbox_bottomRight->pack_start (*forceFormatOpts, Gtk::PACK_SHRINK, 4);
     vbox_bottomRight->pack_start (*autoSuffix, Gtk::PACK_SHRINK, 4);
 
-    Gtk::HBox* hbox_bottom = Gtk::manage( new Gtk::HBox() );
+    Gtk::Box* hbox_bottom = Gtk::manage( new Gtk::Box() );
     hbox_bottom->pack_start (*formatOpts, Gtk::PACK_EXPAND_WIDGET, 2);
     hbox_bottom->pack_start (*Gtk::manage(new Gtk::VSeparator ()), Gtk::PACK_SHRINK, 2);
     hbox_bottom->pack_start (*vbox_bottomRight, Gtk::PACK_EXPAND_WIDGET, 2);

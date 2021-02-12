@@ -178,7 +178,7 @@ Navigator::Navigator() :
 
     // RGB
     Gtk::EventBox *evBox1 = Gtk::manage (new Gtk::EventBox());
-    Gtk::HBox* hbox1 = Gtk::manage (new Gtk::HBox ()); // container
+    Gtk::Box* hbox1 = Gtk::manage (new Gtk::Box ());
     Gtk::Table* table1 = Gtk::manage (new Gtk::Table (3, 2));
 
     table1->attach (*lR, 0, 1, 0, 1, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
@@ -199,7 +199,7 @@ Navigator::Navigator() :
 
     // HSV
     Gtk::EventBox *evBox2 = Gtk::manage (new Gtk::EventBox());
-    Gtk::HBox* hbox2 = Gtk::manage (new Gtk::HBox ()); // container
+    Gtk::Box* hbox2 = Gtk::manage (new Gtk::Box ());
     Gtk::Table* table2 = Gtk::manage (new Gtk::Table (3, 2));
 
     table2->attach (*lH, 0, 1, 0, 1, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
@@ -219,7 +219,7 @@ Navigator::Navigator() :
     table0->attach (*hbox2, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 0, 0);
 
     // LAB
-    Gtk::HBox* hbox3 = Gtk::manage (new Gtk::HBox ()); // container
+    Gtk::Box* hbox3 = Gtk::manage (new Gtk::Box ());
     Gtk::Table* table3 = Gtk::manage (new Gtk::Table (3, 2));
 
     table3->attach (*lLAB_L, 0, 1, 0, 1, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
@@ -232,7 +232,7 @@ Navigator::Navigator() :
     table3->attach (*LAB_B,  1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 0, 0);
 
     hbox3->pack_start (*table3, Gtk::PACK_EXPAND_WIDGET, 4);
-    hbox3->pack_start (*Gtk::manage (new  Gtk::HBox()), Gtk::PACK_SHRINK, 2);
+    hbox3->pack_start (*Gtk::manage (new  Gtk::Box()), Gtk::PACK_SHRINK, 2);
     table0->attach (*hbox3, 2, 3, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 0, 0);
 
     table0->set_homogeneous(true); // all cells will be the same size as the largest cell.

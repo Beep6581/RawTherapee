@@ -51,7 +51,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     method->set_active (0);
     method->set_tooltip_text (M("TP_COLORTONING_METHOD_TOOLTIP"));
 
-    ctbox = Gtk::manage (new Gtk::HBox ());
+    ctbox = Gtk::manage (new Gtk::Box ());
     Gtk::Label* lab = Gtk::manage (new Gtk::Label (M("TP_COLORTONING_METHOD")));
     ctbox->pack_start (*lab, Gtk::PACK_SHRINK, 4);
     ctbox->pack_start (*method);
@@ -312,7 +312,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     pack_start( *strength, Gtk::PACK_SHRINK, 2); //I have moved after Chanmixer
 
     //--------------------- Reset sliders  ---------------------------
-    neutrHBox = Gtk::manage (new Gtk::HBox ());
+    neutrHBox = Gtk::manage (new Gtk::Box());
 
     neutral = Gtk::manage (new Gtk::Button (M("TP_COLORTONING_NEUTRAL")));
     neutral->set_tooltip_text (M("TP_COLORTONING_NEUTRAL_TIP"));
@@ -388,7 +388,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     labRegionList->set_column_title(2, M("TP_COLORTONING_LABREGION_MASK"));
     labRegionList->set_activate_on_single_click(true);
     labRegionSelectionConn = labRegionList->get_selection()->signal_changed().connect(sigc::mem_fun(this, &ColorToning::onLabRegionSelectionChanged));
-    Gtk::HBox *hb = Gtk::manage(new Gtk::HBox());
+    Gtk::Box *hb = Gtk::manage(new Gtk::Box());
     hb->pack_start(*labRegionList, Gtk::PACK_EXPAND_WIDGET);
     Gtk::VBox *vb = Gtk::manage(new Gtk::VBox());
     labRegionAdd = Gtk::manage(new Gtk::Button());
@@ -433,7 +433,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     labRegionPower->setLogScale(4, 0.1);
     labRegionBox->pack_start(*labRegionPower);
 
-    hb = Gtk::manage(new Gtk::HBox());
+    hb = Gtk::manage(new Gtk::Box());
     labRegionChannel = Gtk::manage(new MyComboBoxText());
     labRegionChannel->append(M("TP_COLORTONING_LABREGION_CHANNEL_ALL"));
     labRegionChannel->append(M("TP_COLORTONING_LABREGION_CHANNEL_R"));

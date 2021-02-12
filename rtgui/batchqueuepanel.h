@@ -51,8 +51,8 @@ class BatchQueuePanel : public Gtk::VBox,
 
     RTWindow* parent;
     BatchQueue* batchQueue;
-    Gtk::HBox* bottomBox;
-    Gtk::HBox* topBox;
+    Gtk::Box* bottomBox;
+    Gtk::Box* topBox;
 
     std::atomic<bool> queueShouldRun;
 

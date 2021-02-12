@@ -341,7 +341,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     equal->show ();
     tempBias->show ();
 
-    /*  Gtk::HBox* boxgreen = Gtk::manage (new Gtk::HBox ());
+    /*  Gtk::Box* boxgreen = Gtk::manage (new Gtk::Box ());
     boxgreen->show ();
 
     boxgreen->pack_start(*igreenL);
