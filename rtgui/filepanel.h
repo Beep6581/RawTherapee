@@ -37,7 +37,7 @@ class RTWindow;
 class DirBrowser;
 
 class FilePanel final :
-    public Gtk::HPaned,
+    public Gtk::Paned,
     public FileSelectionListener,
     public rtengine::NonCopyable
 {
@@ -46,7 +46,7 @@ public:
     ~FilePanel () override;
 
     Gtk::Paned* placespaned;
-    Gtk::HPaned* dirpaned;
+    Gtk::Paned* dirpaned;
 
     Gtk::Box* rightBox;
 

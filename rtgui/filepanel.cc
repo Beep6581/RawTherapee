@@ -34,7 +34,7 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
 {
 
     // Contains everything except for the batch Tool Panel and tabs (Fast Export, Inspect, etc)
-    dirpaned = Gtk::manage ( new Gtk::HPaned () );
+    dirpaned = Gtk::manage ( new Gtk::Paned () );
     dirpaned->set_position (options.dirBrowserWidth);
 
     // The directory tree
@@ -177,7 +177,7 @@ FilePanel::~FilePanel ()
 
 void FilePanel::on_realize ()
 {
-    Gtk::HPaned::on_realize ();
+    Gtk::Paned::on_realize ();
     tpc->closeAllTools();
 }
 
