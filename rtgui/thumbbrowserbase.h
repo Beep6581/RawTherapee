@@ -116,7 +116,7 @@ protected:
     virtual int  getThumbnailHeight () = 0;
 
     Internal internal;
-    Gtk::HScrollbar hscroll;
+    Gtk::Scrollbar hscroll;
     Gtk::VScrollbar vscroll;
 
     int inW, inH;

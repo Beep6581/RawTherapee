@@ -34,6 +34,8 @@ ThumbBrowserBase::ThumbBrowserBase ()
 {
     inW = -1;
     inH = -1;
+    
+    hscroll.set_orientation(Gtk::ORIENTATION_HORIZONTAL);
 
     setExpandAlignProperties(&internal, true, true, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     setExpandAlignProperties(&hscroll, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
