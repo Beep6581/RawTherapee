@@ -117,7 +117,7 @@ protected:
 
     Internal internal;
     Gtk::Scrollbar hscroll;
-    Gtk::VScrollbar vscroll;
+    Gtk::Scrollbar vscroll;
 
     int inW, inH;
 
