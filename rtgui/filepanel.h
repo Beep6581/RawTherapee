@@ -90,7 +90,7 @@ private:
     RecentBrowser* recentBrowser;
 
     Inspector* inspectorPanel;
-    Gtk::VPaned* tpcPaned;
+    Gtk::Paned* tpcPaned;
     BatchToolPanelCoordinator* tpc;
     History* history;
     RTWindow* parent;

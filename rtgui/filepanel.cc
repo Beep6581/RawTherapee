@@ -45,7 +45,7 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
     recentBrowser = Gtk::manage ( new RecentBrowser () );
 
     // The whole left panel. Contains Places, Recent Folders and Folders.
-    placespaned = Gtk::manage ( new Gtk::VPaned () );
+    placespaned = Gtk::manage ( new Gtk::Paned (Gtk::ORIENTATION_VERTICAL) );
     placespaned->set_name ("PlacesPaned");
     placespaned->set_size_request(250, 100);
     placespaned->set_position (options.dirBrowserHeight);
@@ -130,7 +130,7 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
     exportLab->set_name ("LabelRightNotebook");
     exportLab->set_angle (90);
 
-    tpcPaned = Gtk::manage ( new Gtk::VPaned () );
+    tpcPaned = Gtk::manage ( new Gtk::Paned (Gtk::ORIENTATION_VERTICAL) );
     tpcPaned->pack1 (*tpc->toolPanelNotebook, false, true);
     tpcPaned->pack2 (*history, true, false);
 

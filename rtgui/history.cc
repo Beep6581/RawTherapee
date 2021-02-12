@@ -123,7 +123,7 @@ History::History (bool bookmarkSupport) : historyVPaned (nullptr), blistener (nu
     bmBox->set_size_request (-1, 60);
 
     if (bookmarkSupport) {
-        historyVPaned = Gtk::manage ( new Gtk::VPaned () );
+        historyVPaned = Gtk::manage ( new Gtk::Paned (Gtk::ORIENTATION_VERTICAL) );
         historyVPaned->pack1 (*histFrame, true, true);
         historyVPaned->pack2 (*bmFrame, false, false);
         pack_start (*historyVPaned);

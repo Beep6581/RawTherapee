@@ -72,7 +72,7 @@ public:
     BookmarkColumns bookmarkColumns;
 
 protected:
-    Gtk::VPaned*            historyVPaned;
+    Gtk::Paned*            historyVPaned;
     Gtk::TreeView*          hTreeView;
     Glib::RefPtr<Gtk::ListStore> historyModel;
 
