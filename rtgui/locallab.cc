@@ -177,7 +177,7 @@ Locallab::Locallab():
     panel->pack_start(*expsettings->getExpander(), false, false);
 
     // Add separator
-    Gtk::HSeparator* const separator = Gtk::manage(new Gtk::HSeparator());
+    Gtk::Separator* const separator = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     panel->pack_start(*separator, false, false);
 
     // Add tool list widget
@@ -203,7 +203,7 @@ Locallab::Locallab():
     panel->pack_start(*toolpanel, false, false);
 
     // Add separator
- //   Gtk::HSeparator* const separator2 = Gtk::manage(new Gtk::HSeparator());
+ //   Gtk::Separator* const separator2 = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
  //   panel->pack_start(*separator2, false, false);
 
     // Add mask reset button to panel widget

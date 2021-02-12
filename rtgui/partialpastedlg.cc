@@ -312,12 +312,12 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     raw_preprocwb       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCWB")));
 
     Gtk::VBox* vboxes[9];
-    Gtk::HSeparator* hseps[9];
+    Gtk::Separator* hseps[9];
 
     for (int i = 0; i < 9; i++) {
         vboxes[i] = Gtk::manage (new Gtk::VBox ());
         vboxes[i]->set_name("PartialPasteGroupContainer");
-        hseps[i] = Gtk::manage (new Gtk::HSeparator ());
+        hseps[i] = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
         hseps[i]->set_name("PartialPasteHeaderSep");
     }
 
@@ -402,30 +402,30 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[8]->pack_start (*raw_dcb_iterations, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_dcb_enhance, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_lmmse_iterations, Gtk::PACK_SHRINK, 2);
-    vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
+    vboxes[8]->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*raw_linenoise, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_greenthresh, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_hotpix_filt, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_deadpix_filt, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_pdaf_lines_filter, Gtk::PACK_SHRINK, 2);
-    vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
+    vboxes[8]->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*raw_expos, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_black, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_preprocwb, Gtk::PACK_SHRINK, 2);
-    vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
+    vboxes[8]->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*df_file, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*df_AutoSelect, Gtk::PACK_SHRINK, 2);
-    vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
+    vboxes[8]->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*ff_file, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_AutoSelect, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_BlurType, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_BlurRadius, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_ClipControl, Gtk::PACK_SHRINK, 2);
-    vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
+    vboxes[8]->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*raw_ca_autocorrect, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_caredblue, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_ca_avoid_colourshift, Gtk::PACK_SHRINK, 2);
-    vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
+    vboxes[8]->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*captureSharpening, Gtk::PACK_SHRINK, 2);
 
     Gtk::VBox* vbCol1 = Gtk::manage (new Gtk::VBox ());

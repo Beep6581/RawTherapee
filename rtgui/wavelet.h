@@ -197,8 +197,8 @@ private:
     CurveEditorGroup* const curveEditorbl;
     CurveEditorGroup* const curveEditorRES;
     CurveEditorGroup* const curveEditorGAM;
-    Gtk::HSeparator* const separatorNeutral;
-    Gtk::HSeparator* const separatoredge;
+    Gtk::Separator* const separatorNeutral;
+    Gtk::Separator* const separatoredge;
 
     CurveEditorGroup* const opaCurveEditorG;
     FlatCurveEditor* opacityShapeRG;

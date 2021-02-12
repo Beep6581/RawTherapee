@@ -32,7 +32,7 @@ ExportPanel::ExportPanel () : listener (nullptr)
 
     /*enabled = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_ENABLE")) );
     pack_start(*enabled, Gtk::PACK_SHRINK, 4);
-    pack_start (*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 2);*/
+    pack_start (*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 2);*/
 
     Gtk::Label* labExportTitle = Gtk::manage ( new Gtk::Label (M ("EXPORT_FASTEXPORTOPTIONS")) );
     labExportTitle->set_use_markup (true);
@@ -110,12 +110,12 @@ ExportPanel::ExportPanel () : listener (nullptr)
     pack_start (*use_fast_pipeline, Gtk::PACK_SHRINK, 4);
     pack_start (*use_normal_pipeline, Gtk::PACK_SHRINK, 4);
 
-    bypass_box->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 4);
+    bypass_box->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 4);
     lblbox = Gtk::manage (new Gtk::Box ());
     lblbox->pack_start (*Gtk::manage (new Gtk::Label (M ("EXPORT_BYPASS"))), Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*lblbox, Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*bypass_ALL, Gtk::PACK_SHRINK, 4);
-    // bypass_box->pack_start(*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 4);
+    // bypass_box->pack_start(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*bypass_sharpening, Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*bypass_sharpenEdge, Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*bypass_sharpenMicro, Gtk::PACK_SHRINK, 4);
@@ -148,7 +148,7 @@ ExportPanel::ExportPanel () : listener (nullptr)
 
     pack_start (*bypass_box, Gtk::PACK_SHRINK);
 
-    pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 2);
+    pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 2);
 
     // Resize options
 
@@ -190,7 +190,7 @@ ExportPanel::ExportPanel () : listener (nullptr)
 
     // add panel ending
     Gtk::VBox* vboxpe = Gtk::manage (new Gtk::VBox ());
-    Gtk::HSeparator* hseptpe = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Separator* hseptpe = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     Gtk::Image* peImg = Gtk::manage (new RTImage ("ornament1.png"));
     vboxpe->pack_start (*hseptpe, Gtk::PACK_SHRINK, 4);
     vboxpe->pack_start (*peImg);

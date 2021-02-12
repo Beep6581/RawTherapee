@@ -90,7 +90,7 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer",
 
     buttonBox1->show_all_children();
 
-    Gtk::HSeparator *separator2 = Gtk::manage (new  Gtk::HSeparator());
+    Gtk::Separator *separator2 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     pack_start(*separator2, Gtk::PACK_SHRINK, 2);
 
     for(int i = 0; i < 6; i++) {
@@ -108,14 +108,14 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer",
         pack_start(*multiplier[i]);
     }
 
-    Gtk::HSeparator *separator3 = Gtk::manage (new  Gtk::HSeparator());
+    Gtk::Separator *separator3 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     pack_start(*separator3, Gtk::PACK_SHRINK, 2);
 
     threshold = Gtk::manage ( new Adjuster (M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1, 0.01, 0.2) );
     threshold->setAdjusterListener(this);
     pack_start(*threshold);
 
-    Gtk::HSeparator *separator4 = Gtk::manage (new  Gtk::HSeparator());
+    Gtk::Separator *separator4 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     pack_start(*separator4, Gtk::PACK_SHRINK, 2);
     /*
         algoHBox = Gtk::manage (new Gtk::Box ());

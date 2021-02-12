@@ -28,7 +28,7 @@ FilterPanel::FilterPanel () : listener (nullptr)
 
     enabled = Gtk::manage (new Gtk::CheckButton (M("EXIFFILTER_METADATAFILTER")));
     pack_start (*enabled, Gtk::PACK_SHRINK, 2);
-    pack_start (*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 2);
+    pack_start (*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 2);
 
     enaFNumber = Gtk::manage (new Gtk::CheckButton (M("EXIFFILTER_APERTURE") + ":"));
     Gtk::VBox* fnvb = Gtk::manage(new Gtk::VBox ());
@@ -136,7 +136,7 @@ FilterPanel::FilterPanel () : listener (nullptr)
 
     // add panel ending
     Gtk::VBox* vboxpe = Gtk::manage (new Gtk::VBox ());
-    Gtk::HSeparator* hseptpe = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Separator* hseptpe = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     Gtk::Image* peImg = Gtk::manage (new RTImage("ornament1.png"));
     vboxpe->pack_start(*hseptpe, Gtk::PACK_SHRINK, 4);
     vboxpe->pack_start(*peImg);

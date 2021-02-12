@@ -134,7 +134,7 @@ SaveAsDialog::SaveAsDialog (const Glib::ustring &initialDir, Gtk::Window* parent
         vbox_bottomRight->pack_start (*saveMethod[0], Gtk::PACK_SHRINK, 2);
         vbox_bottomRight->pack_start (*saveMethod[1], Gtk::PACK_SHRINK, 2);
         vbox_bottomRight->pack_start (*saveMethod[2], Gtk::PACK_SHRINK, 2);
-        vbox_bottomRight->pack_start (*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 5);
+        vbox_bottomRight->pack_start (*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 5);
     }
 
     vbox_bottomRight->pack_start (*forceFormatOpts, Gtk::PACK_SHRINK, 4);

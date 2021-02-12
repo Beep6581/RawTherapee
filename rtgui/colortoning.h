@@ -79,8 +79,8 @@ private:
     void labRegionShow(int idx, bool list_only=false);
     void labRegionGet(int idx);
 
-    //Gtk::HSeparator* satLimiterSep;
-    Gtk::HSeparator* colorSep;
+    //Gtk::Separator* satLimiterSep;
+    Gtk::Separator* colorSep;
     CurveEditorGroup* colorCurveEditorG;
     CurveEditorGroup* opacityCurveEditorG;
     CurveEditorGroup* clCurveEditorG;

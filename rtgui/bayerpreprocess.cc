@@ -63,7 +63,7 @@ BayerPreProcess::BayerPreProcess() : FoldableToolPanel(this, "bayerpreprocess", 
     pack_start(*lineDenoise, Gtk::PACK_SHRINK, 4);
     pack_start(*hb, Gtk::PACK_SHRINK, 4);
 
-    pack_start(*Gtk::manage(new  Gtk::HSeparator()));
+    pack_start(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
 
     pack_start(*greenEqThreshold, Gtk::PACK_SHRINK, 4);
 
@@ -71,7 +71,7 @@ BayerPreProcess::BayerPreProcess() : FoldableToolPanel(this, "bayerpreprocess", 
     pdafLinesFilter->show();
     pdafLinesFilter->signal_toggled().connect(sigc::mem_fun(*this, &BayerPreProcess::pdafLinesFilterChanged), true);
 
-    pack_start(*Gtk::manage(new Gtk::HSeparator()));
+    pack_start(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
     pack_start(*pdafLinesFilter, Gtk::PACK_SHRINK, 4);
 }
 

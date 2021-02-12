@@ -90,7 +90,7 @@ private:
     void hideGamma();
 
     FlatCurveEditor*     luminanceCurve;
-    Gtk::HSeparator*     luminanceSep;
+    Gtk::Separator*     luminanceSep;
     CurveEditorGroup*    luminanceCEG;
     CurveEditorGroup*    beforeCurveCEG;
     DiagonalCurveEditor* beforeCurve;
@@ -121,7 +121,7 @@ private:
     MyComboBoxText*   method;
     sigc::connection  methodconn;
     Gtk::Box*         filterHBox;
-    Gtk::HSeparator*  filterSep, *filterSep2;
+    Gtk::Separator*  filterSep, *filterSep2;
     MyComboBoxText*   filter;
     sigc::connection  filterconn;
     Gtk::Box*         settingHBox;
@@ -133,7 +133,7 @@ private:
 
     Gtk::Image *imgIcon[11];
 
-    Gtk::HSeparator* enabledccSep;
+    Gtk::Separator* enabledccSep;
     Gtk::CheckButton* enabledcc;
     bool lastEnabledcc, lastAuto;
     sigc::connection enaccconn, tcmodeconn, tcmodeconn2, autoconn, neutralconn;
