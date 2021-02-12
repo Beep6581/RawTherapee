@@ -51,8 +51,8 @@ RenameDialog::RenameDialog (Gtk::Window* parent)
 
 //    get_content_area()->pack_start (*tbox, Gtk::PACK_SHRINK, 4);
 
-    add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK);
-    add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+    add_button ("_OK", Gtk::RESPONSE_OK);
+    add_button ("_Cancel", Gtk::RESPONSE_CANCEL);
 // Issue 316
 //    all = add_button ("All", RESPONSE_ALL);
 
