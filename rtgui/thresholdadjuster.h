@@ -46,7 +46,7 @@ public:
 };
 
 
-class ThresholdAdjuster : public Gtk::VBox
+class ThresholdAdjuster : public Gtk::Box
 {
 
 protected:

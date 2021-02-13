@@ -31,7 +31,7 @@ public:
     virtual void exportRequested() = 0;
 };
 
-class ExportPanel : public Gtk::VBox
+class ExportPanel : public Gtk::Box
 {
 
 protected:

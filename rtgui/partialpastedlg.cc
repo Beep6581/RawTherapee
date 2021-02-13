@@ -35,6 +35,9 @@ PartialSpotWidget::PartialSpotWidget():
     // Widget listener
     selListener(nullptr)
 {
+    
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     // Configure tree view
     treeview->set_model(treemodel);
     treeview->set_enable_search(false);

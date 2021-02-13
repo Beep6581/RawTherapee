@@ -185,7 +185,7 @@ public:
  *
  * Warning: once you've instantiated this class with a text label or a widget label, you won't be able to revert to the other solution.
  */
-class MyExpander final : public Gtk::VBox
+class MyExpander final : public Gtk::Box
 {
 public:
     typedef sigc::signal<void> type_signal_enabled_toggled;
@@ -373,13 +373,15 @@ public:
 };
 
 /**
- * @brief subclass of Gtk::HScale in order to handle the scrollwheel
+ * @brief subclass of Gtk::Scale in order to handle the scrollwheel
  */
-class MyHScale final : public Gtk::HScale
+class MyHScale final : public Gtk::Scale
 {
 
+protected:
     bool on_scroll_event (GdkEventScroll* event) override;
     bool on_key_press_event (GdkEventKey* event) override;
+
 };
 
 /**

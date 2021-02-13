@@ -30,6 +30,7 @@ using namespace rtengine::procparams;
 ExportPanel::ExportPanel () : listener (nullptr)
 {
 
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     /*enabled = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_ENABLE")) );
     pack_start(*enabled, Gtk::PACK_SHRINK, 4);
     pack_start (*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 2);*/

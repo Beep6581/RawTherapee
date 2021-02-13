@@ -573,6 +573,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     child(nullptr), headerWidget(nullptr), statusImage(nullptr),
     label(nullptr), useEnabled(useEnabled)
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     set_spacing(0);
     set_name("MyExpander");
     set_can_focus(false);
@@ -628,6 +629,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
     child(nullptr), headerWidget(nullptr),
     label(nullptr), useEnabled(useEnabled)
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     set_spacing(0);
     set_name("MyExpander");
     set_can_focus(false);
@@ -1237,7 +1239,7 @@ bool MyHScale::on_scroll_event (GdkEventScroll* event)
 //            event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
     // If Shift is pressed, the widget is modified
     if (event->state & GDK_SHIFT_MASK) {
-        Gtk::HScale::on_scroll_event(event);
+        Gtk::Scale::on_scroll_event(event);
         return true;
     }
 

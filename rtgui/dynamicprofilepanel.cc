@@ -231,10 +231,13 @@ DynamicProfilePanel::DynamicProfilePanel():
     button_edit_ (M ("DYNPROFILEEDITOR_EDIT")),
     button_delete_ (M ("DYNPROFILEEDITOR_DELETE"))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     add (vbox_);
 
     treeview_.set_grid_lines (Gtk::TREE_VIEW_GRID_LINES_VERTICAL);
     scrolledwindow_.add (treeview_);
+    scrolledwindow_.set_vexpand();
 
     scrolledwindow_.set_policy (Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 

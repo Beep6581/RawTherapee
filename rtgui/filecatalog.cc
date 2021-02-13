@@ -66,6 +66,8 @@ FileCatalog::FileCatalog (CoarsePanel* cp, ToolBar* tb, FilePanel* filepanel) :
     toolBar(tb)
 {
 
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+
     inTabMode = false;
 
     set_name ("FileBrowser");

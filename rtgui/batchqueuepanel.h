@@ -30,7 +30,7 @@ class RTWindow;
 class FileCatalog;
 class Thumbnail;
 
-class BatchQueuePanel : public Gtk::VBox,
+class BatchQueuePanel : public Gtk::Box,
     public BatchQueueListener,
     public FormatChangeListener
 {

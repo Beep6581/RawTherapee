@@ -33,6 +33,7 @@ ExifPanel::ExifPanel() :
     changeList(new rtengine::procparams::ExifPairs),
     defChangeList(new rtengine::procparams::ExifPairs)
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     recursiveOp = true;
 
     exifTree = Gtk::manage (new Gtk::TreeView());

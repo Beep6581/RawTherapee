@@ -20,6 +20,7 @@
 
 ImageAreaPanel::ImageAreaPanel () : before(nullptr), after(nullptr)
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     imageArea = new ImageArea (this);
 

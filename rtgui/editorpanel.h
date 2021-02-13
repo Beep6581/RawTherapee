@@ -55,7 +55,7 @@ struct EditorPanelIdleHelper {
 class RTWindow;
 
 class EditorPanel final :
-    public Gtk::VBox,
+    public Gtk::Box,
     public PParamsChangeListener,
     public rtengine::ProgressListener,
     public ThumbnailListener,

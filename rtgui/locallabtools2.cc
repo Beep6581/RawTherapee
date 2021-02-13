@@ -152,6 +152,8 @@ LocallabTone::LocallabTone():
     mask2tmCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmasktmshape(static_cast<DiagonalCurveEditor*>(mask2tmCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Tone Mapping specific widgets
@@ -828,6 +830,8 @@ LocallabRetinex::LocallabRetinex():
     Lmaskretishape(static_cast<DiagonalCurveEditor*>(mask2retiCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     inversret(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVERS"))))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Retinex specific widgets
@@ -1968,6 +1972,8 @@ LocallabSharp::LocallabSharp():
     sharFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHARFRAME")))),
     showmasksharMethod(Gtk::manage(new MyComboBoxText()))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     // Parameter Sharpening specific widgets
     sharcontrast->setAdjusterListener(this);
 
@@ -2399,6 +2405,8 @@ LocallabContrast::LocallabContrast():
     mask2lcCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmasklcshape(static_cast<DiagonalCurveEditor*>(mask2lcCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Local contrast specific widgets
@@ -4325,6 +4333,8 @@ LocallabCBDL::LocallabCBDL():
     lumaneutralButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMANEUTRAL")))),
     lumacontrastPlusButton(Gtk::manage(new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS"))))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter CBDL specific widgets
@@ -5125,6 +5135,8 @@ LocallabLog::LocallabLog():
   
     
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     // Parameter Log encoding specific widgets
     autoconn = autocompute->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::autocomputeToggled));
     const LocallabParams::LocallabSpot defSpot;
@@ -6379,6 +6391,9 @@ LocallabMask::LocallabMask():
     str_mask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADSTR"), -2., 2., 0.05, 0.))),
     ang_mask(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GRADANG"), -180., 180., 0.1, 0.)))
 {
+    
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Mask common specific widgets

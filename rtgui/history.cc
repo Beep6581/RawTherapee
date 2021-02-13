@@ -31,6 +31,7 @@ using namespace rtengine::procparams;
 
 History::History (bool bookmarkSupport) : historyVPaned (nullptr), blistener (nullptr), tpc (nullptr), bmnum (1)
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     blistenerLock = false; // sets default that the Before preview will not be locked
     /*

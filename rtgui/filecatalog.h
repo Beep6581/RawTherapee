@@ -43,7 +43,7 @@ class ToolBar;
  *   - handling the thumbnail toolbar,
  *   - monitoring the directory (for any change)
  */
-class FileCatalog final : public Gtk::VBox,
+class FileCatalog final : public Gtk::Box,
     public PreviewLoaderListener,
     public FilterPanelListener,
     public FileBrowserListener,

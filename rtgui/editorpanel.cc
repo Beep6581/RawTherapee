@@ -477,6 +477,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
       histogram_observable(nullptr), histogram_scope_type(ScopeType::NONE)
 {
 
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     epih = new EditorPanelIdleHelper;
     epih->epanel = this;
     epih->destroyed = false;

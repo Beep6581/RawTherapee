@@ -170,7 +170,7 @@ private:
 
 /* ==== LocallabColor ==== */
 class LocallabColor:
-    public Gtk::VBox,
+    public Gtk::Box,
     public LocallabTool,
     public ThresholdAdjusterListener
 {
@@ -321,7 +321,7 @@ private:
 
 /* ==== LocallabExposure ==== */
 class LocallabExposure:
-    public Gtk::VBox,
+    public Gtk::Box,
     public LocallabTool
 {
 private:
@@ -433,7 +433,7 @@ private:
 
 /* ==== LocallabShadow ==== */
 class LocallabShadow:
-    public Gtk::VBox,
+    public Gtk::Box,
     public LocallabTool
 {
 private:
@@ -523,7 +523,7 @@ private:
 
 /* ==== LocallabVibrance ==== */
 class LocallabVibrance:
-    public Gtk::VBox,
+    public Gtk::Box,
     public LocallabTool,
     public ThresholdAdjusterListener,
     public ThresholdCurveProvider
@@ -615,7 +615,7 @@ private:
 
 /* ==== LocallabSoft ==== */
 class LocallabSoft:
-    public Gtk::VBox,
+    public Gtk::Box,
     public LocallabTool
 {
 private:
@@ -661,7 +661,7 @@ private:
 
 /* ==== LocallabBlur ==== */
 class LocallabBlur:
-    public Gtk::VBox,
+    public Gtk::Box,
     public LocallabTool,
     public ThresholdAdjusterListener
 //    public ThresholdCurveProvider
@@ -824,7 +824,7 @@ private:
 
 /* ==== LocallabTone ==== */
 class LocallabTone:
-    public Gtk::VBox,
+    public Gtk::Box,
     public LocallabTool
 {
 private:
@@ -900,7 +900,7 @@ private:
 
 /* ==== LocallabRetinex ==== */
 class LocallabRetinex:
-    public Gtk::VBox,
+    public Gtk::Box,
     public LocallabTool
 {
 private:
@@ -1007,7 +1007,7 @@ private:
 
 /* ==== LocallabSharp ==== */
 class LocallabSharp:
-    public Gtk::VBox,
+    public Gtk::Box,
     public LocallabTool
 {
 private:
@@ -1052,7 +1052,7 @@ private:
 
 /* ==== LocallabContrast ==== */
 class LocallabContrast:
-    public Gtk::VBox,
+    public Gtk::Box,
     public LocallabTool,
     public ThresholdAdjusterListener
 
@@ -1209,7 +1209,7 @@ private:
 
 /* ==== LocallabCBDL ==== */
 class LocallabCBDL:
-    public Gtk::VBox,
+    public Gtk::Box,
     public LocallabTool
 {
 private:
@@ -1289,7 +1289,7 @@ private:
 
 /* ==== LocallabLog ==== */
 class LocallabLog:
-    public Gtk::VBox,
+    public Gtk::Box,
     public LocallabTool
 {
 private:
@@ -1398,7 +1398,7 @@ private:
 
 /* ==== LocallabMask ==== */
 class LocallabMask:
-    public Gtk::VBox,
+    public Gtk::Box,
     public LocallabTool,
     public ThresholdAdjusterListener
 {

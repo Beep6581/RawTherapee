@@ -42,7 +42,7 @@ static Glib::ustring makeFolderLabel(Glib::ustring path)
 
 BatchQueuePanel::BatchQueuePanel (FileCatalog* aFileCatalog) : parent(nullptr)
 {
-
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     batchQueue = Gtk::manage( new BatchQueue(aFileCatalog) );
 
     Gtk::Box* batchQueueButtonBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));

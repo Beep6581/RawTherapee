@@ -25,6 +25,7 @@ using namespace rtengine;
 
 FilterPanel::FilterPanel () : listener (nullptr)
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     enabled = Gtk::manage (new Gtk::CheckButton (M("EXIFFILTER_METADATAFILTER")));
     pack_start (*enabled, Gtk::PACK_SHRINK, 2);

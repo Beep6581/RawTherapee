@@ -38,6 +38,7 @@ LocallabToolList::LocallabToolList():
     // Tool list listener
     listListener(nullptr)
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     list->set_model(listTreeModel);
     list->pack_start(toolRow.name);
     listConn = list->signal_changed().connect(sigc::mem_fun(*this, &LocallabToolList::toolRowSelected));
@@ -167,6 +168,8 @@ Locallab::Locallab():
     // Other widgets
     resetshowButton(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_RESETSHOW"))))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     // Create panel widget to receive Locallab GUI elements
     ToolVBox* const panel = Gtk::manage(new ToolVBox());
     panel->set_spacing(2);

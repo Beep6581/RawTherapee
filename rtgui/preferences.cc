@@ -732,7 +732,7 @@ Gtk::Widget* Preferences::getPerformancePanel()
 
     Gtk::Frame* threadsFrame = Gtk::manage ( new Gtk::Frame (M ("PREFERENCES_PERFORMANCE_THREADS")) );
     threadsFrame->set_label_align(0.025, 0.5);
-    Gtk::Box* threadsVBox = Gtk::manage ( new Gtk::VBox (Gtk::PACK_SHRINK, 4) );
+    Gtk::Box* threadsVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL) );
 
 #ifdef _OPENMP
     int maxThreadNumber = omp_get_max_threads();

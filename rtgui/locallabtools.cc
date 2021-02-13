@@ -499,6 +499,9 @@ LocallabColor::LocallabColor():
     LLmaskcolshapewav(static_cast<FlatCurveEditor*>(mask2CurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
     csThresholdcol(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
 {
+    
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     float R, G, B;
 
     std::vector<GradientMilestone> six_shape;
@@ -2530,6 +2533,8 @@ LocallabExposure::LocallabExposure():
     mask2expCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmaskexpshape(static_cast<DiagonalCurveEditor*>(mask2expCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Exposure specific widgets
@@ -3819,6 +3824,8 @@ LocallabShadow::LocallabShadow():
     fatamountSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATAMOUNT"), 1., 100., 1., 1.))),
     fatanchorSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png")))))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Shadow highlight specific widgets
@@ -4888,6 +4895,8 @@ LocallabVibrance::LocallabVibrance():
     mask2vibCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmaskvibshape(static_cast<DiagonalCurveEditor*>(mask2vibCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     float R, G, B;
 
     const LocallabParams::LocallabSpot defSpot;
@@ -5817,6 +5826,8 @@ LocallabSoft::LocallabSoft():
     laplace(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACE"), 0., 100., 0.5, 25.))),
     sensisf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 1, 100, 1, 30)))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     // Parameter Soft light specific widgets
     softMethod->append(M("TP_LOCALLAB_SOFTM"));
     softMethod->append(M("TP_LOCALLAB_RETIM"));
@@ -6294,6 +6305,8 @@ LocallabBlur::LocallabBlur():
     quaHBox(Gtk::manage(new Gtk::Box())),
     csThresholdblur(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Blur, Noise & Denoise specific widgets
