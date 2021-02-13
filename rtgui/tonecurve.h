@@ -51,8 +51,6 @@ protected:
 
     Gtk::HBox* abox;
     Gtk::HBox* hlrbox;
-//    ToolParamBlock* hlrbox;// = Gtk::manage(new ToolParamBlock());
-
     Gtk::ToggleButton* autolevels;
     Gtk::Label* lclip;
     MySpinButton* sclip;

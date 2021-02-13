@@ -947,12 +947,11 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
 #endif
         for (int y = 0; y < H2; ++y) {
             for (int x = 0; x < W2; ++x) {
-               // guide[y][x] = Color::igamma_srgb(Color::rgbLuminance(static_cast<double>(rbuf[y][x]), static_cast<double>(gbuf[y][x]), static_cast<double>(bbuf[y][x]), ws));
                 guide[y][x] = gamma[CLIP(Color::rgbLuminance(static_cast<double>(rbuf[y][x]), static_cast<double>(gbuf[y][x]), static_cast<double>(bbuf[y][x]), imatrices.xyz_cam))];
             }
         }
     }
-//end adding code ART    
+//end adding code ART
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
@@ -1182,22 +1181,23 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
             progress += 0.03;
             plistener->setProgress(progress);
         }
-        guidedFilter(guide, rbuf, rbuf, rad2, 0.01f * 65535.f, true, 1);
-        if (plistener) {
-            progress += 0.03;
-            plistener->setProgress(progress);
+        if(blur > 0) {//no use of 2nd guidedFilter if Blur = 0 (slider to 1)..spped-up and very small differences.
+            guidedFilter(guide, rbuf, rbuf, rad2, 0.01f * 65535.f, true, 1);
+            if (plistener) {
+                progress += 0.03;
+                plistener->setProgress(progress);
+            }
+            guidedFilter(guide, gbuf, gbuf, rad2, 0.01f * 65535.f, true, 1);
+            if (plistener) {
+                progress += 0.03;
+                plistener->setProgress(progress);
+            }
+            guidedFilter(guide, bbuf, bbuf, rad2, 0.01f * 65535.f, true, 1);
+            if (plistener) {
+                progress += 0.03;
+                plistener->setProgress(progress);
+            }
         }
-        guidedFilter(guide, gbuf, gbuf, rad2, 0.01f * 65535.f, true, 1);
-        if (plistener) {
-            progress += 0.03;
-            plistener->setProgress(progress);
-        }
-        guidedFilter(guide, bbuf, bbuf, rad2, 0.01f * 65535.f, true, 1);
-        if (plistener) {
-            progress += 0.03;
-            plistener->setProgress(progress);
-        }
-
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
 #endif
