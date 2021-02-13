@@ -527,12 +527,15 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     iprofiles->set_size_request(50, -1);
     setExpandAlignProperties(iprofiles, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     ipconn = iprofiles->signal_changed().connect(sigc::mem_fun(*this, &Preferences::forImageComboChanged));
-    Gtk::Table* defpt = Gtk::manage(new Gtk::Table(2, 2));
-    defpt->attach(*drlab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    defpt->attach(*rprofiles, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    defpt->attach(*drimg, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    defpt->attach(*iprofiles, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    
+    Gtk::Grid* defpt = Gtk::manage(new Gtk::Grid());
+    defpt->set_row_spacing(2);
+    defpt->attach(*drlab, 0, 0);
+    defpt->attach(*rprofiles, 1, 0);
+    defpt->attach(*drimg, 0, 1);
+    defpt->attach(*iprofiles, 1, 1);
     vbpp->pack_start(*defpt, Gtk::PACK_SHRINK, 4);
+    
     useBundledProfiles = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_USEBUNDLEDPROFILES")));
     bpconn = useBundledProfiles->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::bundledProfilesChanged));
     vbpp->pack_start(*useBundledProfiles, Gtk::PACK_SHRINK, 4);
@@ -544,34 +547,37 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     Gtk::Label* cplab = Gtk::manage(new Gtk::Label(M("PREFERENCES_CUSTPROFBUILDPATH") + ":", Gtk::ALIGN_START));
     txtCustProfBuilderPath = Gtk::manage(new Gtk::Entry());
     txtCustProfBuilderPath->set_tooltip_markup(M("PREFERENCES_CUSTPROFBUILDHINT"));
+    txtCustProfBuilderPath->set_hexpand();
     Gtk::Label* cpltypelab = Gtk::manage(new Gtk::Label(M("PREFERENCES_CUSTPROFBUILDKEYFORMAT") + ":", Gtk::ALIGN_START));
     custProfBuilderLabelType = Gtk::manage(new Gtk::ComboBoxText());
     custProfBuilderLabelType->append(M("PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID"));
     custProfBuilderLabelType->append(M("PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME"));
     custProfBuilderLabelType->append(M("PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID") + "_" + M("PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME"));
-    Gtk::Table* cpbt = Gtk::manage(new Gtk::Table(2, 2));
-    cpbt->attach(*cplab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    cpbt->attach(*txtCustProfBuilderPath, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    cpbt->attach(*cpltypelab, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    cpbt->attach(*custProfBuilderLabelType, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    Gtk::Grid* cpbt = Gtk::manage(new Gtk::Grid());
+    cpbt->set_row_spacing(2);
+    cpbt->attach(*cplab, 0, 0);
+    cpbt->attach(*txtCustProfBuilderPath, 1, 0);
+    cpbt->attach(*cpltypelab, 0, 1);
+    cpbt->attach(*custProfBuilderLabelType, 1, 1);
     cpfrm->add(*cpbt);
     vbImageProcessing->pack_start (*cpfrm, Gtk::PACK_SHRINK, 4);
 
     Gtk::Frame* fdp = Gtk::manage(new Gtk::Frame(M("PREFERENCES_PROFILEHANDLING")));
-    Gtk::Table* vbdp = Gtk::manage(new Gtk::Table(2, 2));
+    Gtk::Grid* vbdp = Gtk::manage(new Gtk::Grid());
     saveParamsPreference = Gtk::manage(new Gtk::ComboBoxText());
     saveParamsPreference->append(M("PREFERENCES_PROFILESAVEINPUT"));
     saveParamsPreference->append(M("PREFERENCES_PROFILESAVECACHE"));
     saveParamsPreference->append(M("PREFERENCES_PROFILESAVEBOTH"));
     Gtk::Label *splab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_PROFILESAVELOCATION") + ":", Gtk::ALIGN_START));
-    vbdp->attach(*splab, 0, 1, 0, 1, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    vbdp->attach(*saveParamsPreference, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
     Gtk::Label* lplab = Gtk::manage (new Gtk::Label (M ("PREFERENCES_PROFILELOADPR") + ":", Gtk::ALIGN_START));
     loadParamsPreference = Gtk::manage(new Gtk::ComboBoxText());
     loadParamsPreference->append(M("PREFERENCES_PROFILEPRCACHE"));
     loadParamsPreference->append(M("PREFERENCES_PROFILEPRFILE"));
-    vbdp->attach(*lplab, 0, 1, 1, 2, Gtk::FILL, Gtk::SHRINK, 2, 2);
-    vbdp->attach(*loadParamsPreference, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL | Gtk::SHRINK, Gtk::SHRINK, 2, 2);
+    vbdp->set_row_spacing(2);
+    vbdp->attach(*splab, 0, 0);
+    vbdp->attach(*saveParamsPreference, 1, 0);
+    vbdp->attach(*lplab, 0, 1);
+    vbdp->attach(*loadParamsPreference, 1, 1);
     fdp->add(*vbdp);
     vbImageProcessing->pack_start (*fdp, Gtk::PACK_SHRINK, 4);
 

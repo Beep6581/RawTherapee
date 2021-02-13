@@ -25,16 +25,21 @@ RenameDialog::RenameDialog (Gtk::Window* parent)
     : Gtk::Dialog (M("FILEBROWSER_RENAMEDLGLABEL"), *parent, true), p(parent), imageData(nullptr)
 {
 
-    Gtk::Table* names = Gtk::manage (new Gtk::Table (2, 2));
+    Gtk::Grid* names = Gtk::manage (new Gtk::Grid());
     Gtk::Label* onlab = Gtk::manage (new Gtk::Label (M("FILEBROWSER_CURRENT_NAME")));
+    onlab->set_halign(Gtk::ALIGN_START);
     Gtk::Label* nnlab = Gtk::manage (new Gtk::Label (M("FILEBROWSER_NEW_NAME")));
-    oldName = Gtk::manage (new Gtk::Label ("alma"));
-    newName = Gtk::manage (new Gtk::Entry ());
-
-    names->attach (*onlab, 0, 1, 0, 1, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    names->attach (*oldName, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
-    names->attach (*nnlab, 0, 1, 1, 2, Gtk::SHRINK, Gtk::SHRINK, 2, 2);
-    names->attach (*newName, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
+    nnlab->set_halign(Gtk::ALIGN_START);
+    oldName = Gtk::manage (new Gtk::Label("alma"));
+    oldName->set_halign(Gtk::ALIGN_START);
+    newName = Gtk::manage (new Gtk::Entry());
+    newName->set_hexpand();
+    newName->set_halign(Gtk::ALIGN_FILL);
+    
+    names->attach(*onlab, 0, 0);
+    names->attach(*oldName, 1, 0);
+    names->attach(*nnlab, 0, 1);
+    names->attach(*newName, 1, 1);
 
     get_content_area()->pack_start (*names, Gtk::PACK_SHRINK, 4);
 
