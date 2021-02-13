@@ -437,7 +437,6 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
     array2D<float> temp(bufferWidth, blurHeight); // allocate temporary buffer
 
     // blur RGB channels
-
     boxblur2(red, channelblur[0], temp, miny, minx, blurHeight, blurWidth, bufferWidth, 4);
     boxblur2(green, channelblur[1], temp, miny, minx, blurHeight, blurWidth, bufferWidth, 4);
     boxblur2(blue, channelblur[2], temp, miny, minx, blurHeight, blurWidth, bufferWidth, 4);
@@ -453,7 +452,7 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
 #endif
     for (int i = 0; i < blurHeight; ++i) {
         for (int j = 0; j < blurWidth; ++j) {
-            channelblur[0][i][j] = fabsf(channelblur[0][i][j] - red[i + miny][j + minx]) + fabsf(channelblur[1][i][j] - green[i + miny][j + minx]) + fabsf(channelblur[2][i][j] - blue[i + miny][j + minx]);
+            channelblur[0][i][j] = std::fabs(channelblur[0][i][j] - red[i + miny][j + minx]) + std::fabs(channelblur[1][i][j] - green[i + miny][j + minx]) + std::fabs(channelblur[2][i][j] - blue[i + miny][j + minx]);
         }
     }
 
@@ -632,11 +631,11 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
                 }
 
                 if (hilite[3][2][j] <= epsilon) {
-                    hilite_dir[0 + c][0][j]  = hilite_dir0[c][j][2];
+                    hilite_dir[0 + c][0][j] = hilite_dir0[c][j][2];
                 }
 
                 if (hilite[3][3][j] <= epsilon) {
-                    hilite_dir[0 + c][1][j]  = hilite_dir0[c][j][3];
+                    hilite_dir[0 + c][1][j] = hilite_dir0[c][j][3];
                 }
 
                 if (hilite[3][hfh - 3][j] <= epsilon) {
@@ -921,8 +920,8 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
 
     // now reconstruct clipped channels using color ratios
     //using code from ART - thanks to Alberto Griggio
-    const int W2 = blur > 0 ? float(blurWidth) / 2.f + 0.5f : 0;
-    const int H2 = blur > 0 ? float(blurHeight) / 2.f + 0.5f : 0;
+    const int W2 = blur > 0 ? blurWidth / 2.f + 0.5f : 0;
+    const int H2 = blur > 0 ? blurHeight / 2.f + 0.5f : 0;
     array2D<float> mask(W2, H2, ARRAY2D_CLEAR_DATA);
     array2D<float> rbuf(W2, H2);
     array2D<float> gbuf(W2, H2);
@@ -938,16 +937,20 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
         rescaleNearest(bbuffer, bbuf, true);
 
         LUTf gamma(65536);
+#ifdef _OPENMP
+        #pragma omp parallel for
+#endif
         for (int i = 0; i < 65536; ++i) {
-            gamma[i] = pow_F(float(i)/65535.f, 2.2f);
+            gamma[i] = pow_F(i / 65535.f, 2.2f);
         }
 
+        const float xyzcam[3] = {static_cast<float>(imatrices.xyz_cam[1][0]), static_cast<float>(imatrices.xyz_cam[1][1]), static_cast<float>(imatrices.xyz_cam[1][2])};
 #ifdef _OPENMP
-#       pragma omp parallel for
+        #pragma omp parallel for
 #endif
         for (int y = 0; y < H2; ++y) {
             for (int x = 0; x < W2; ++x) {
-                guide[y][x] = gamma[CLIP(Color::rgbLuminance(static_cast<double>(rbuf[y][x]), static_cast<double>(gbuf[y][x]), static_cast<double>(bbuf[y][x]), imatrices.xyz_cam))];
+                guide[y][x] = gamma[Color::rgbLuminance(rbuf[y][x], gbuf[y][x], bbuf[y][x], xyzcam)];
             }
         }
     }
@@ -1032,17 +1035,17 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
             // Copy converted pixel back
             if (pixel[0] > blendpt) {
                 const float rfrac = LIM01(medFactor[0] * (pixel[0] - blendpt));
-                rgb_blend[0] = rfrac * rgb[0] + (1.f - rfrac) * pixel[0];
+                rgb_blend[0] = intp(rfrac, rgb[0], pixel[0]);
             }
 
             if (pixel[1] > blendpt) {
                 const float gfrac = LIM01(medFactor[1] * (pixel[1] - blendpt));
-                rgb_blend[1] = gfrac * rgb[1] + (1.f - gfrac) * pixel[1];
+                rgb_blend[1] = intp(gfrac, rgb[1], pixel[1]);
             }
 
             if (pixel[2] > blendpt) {
                 const float bfrac = LIM01(medFactor[2] * (pixel[2] - blendpt));
-                rgb_blend[2] = bfrac * rgb[2] + (1.f - bfrac) * pixel[2];
+                rgb_blend[2] = intp(bfrac, rgb[2], pixel[2]);
             }
 
             //end of HLRecovery_blend estimation
@@ -1071,7 +1074,7 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
             }
 
             for (int dir = 0; dir < 2; ++dir) {
-                const float Yhi2 = 1.f / ( hilite_dir[dir * 4 + 0][i1][j1] + hilite_dir[dir * 4 + 1][i1][j1] + hilite_dir[dir * 4 + 2][i1][j1]);
+                const float Yhi2 = 1.f / (hilite_dir[dir * 4 + 0][i1][j1] + hilite_dir[dir * 4 + 1][i1][j1] + hilite_dir[dir * 4 + 2][i1][j1]);
 
                 if (Yhi2 < 2.f) {
                     const float dirwt = 1.f / ((1.f + 65535.f * (SQR(rgb_blend[0] - hilite_dir[dir * 4 + 0][i1][j1] * Yhi2) +
@@ -1100,10 +1103,11 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
             if (UNLIKELY(!totwt)) {
                 continue;
             }
+
            //using code from ART - thanks to Alberto Griggio
             float maskval = 1.f;
-            int yy = i + miny;
-            int xx = j + minx;
+            const int yy = i + miny;
+            const int xx = j + minx;
 
             //now correct clipped channels
             if (pixel[0] > max_f[0] && pixel[1] > max_f[1] && pixel[2] > max_f[2]) {
@@ -1141,15 +1145,14 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
 
             if (Y > whitept) {
                 const float mult = whitept / Y;
-
-                red[yy][xx]   *= mult;
+                red[yy][xx] *= mult;
                 green[yy][xx] *= mult;
-                blue[yy][xx]  *= mult;
+                blue[yy][xx] *= mult;
             }
 
             if (blur > 0) {
-                int ii = i / 2;
-                int jj = j / 2;
+                const int ii = i / 2;
+                const int jj = j / 2;
                 rbuf[ii][jj] = red[yy][xx];
                 gbuf[ii][jj] = green[yy][xx];
                 bbuf[ii][jj] = blue[yy][xx];
@@ -1181,7 +1184,7 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
             progress += 0.03;
             plistener->setProgress(progress);
         }
-        if(blur > 0) {//no use of 2nd guidedFilter if Blur = 0 (slider to 1)..spped-up and very small differences.
+        if (blur > 0) { //no use of 2nd guidedFilter if Blur = 0 (slider to 1)..speed-up and very small differences.
             guidedFilter(guide, rbuf, rbuf, rad2, 0.01f * 65535.f, true, 1);
             if (plistener) {
                 progress += 0.03;
