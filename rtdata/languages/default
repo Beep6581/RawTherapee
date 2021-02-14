@@ -1283,7 +1283,6 @@ HISTORY_MSG_1035;Local - Nlmeans - detail
 HISTORY_MSG_1036;Local - Nlmeans - patch
 HISTORY_MSG_1037;Local - Nlmeans - radius
 HISTORY_MSG_1038;Local - Nlmeans - gamma
-HISTORY_MSG_1039;Color propagation - blur
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -1323,6 +1322,7 @@ HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
 HISTORY_MSG_FILMNEGATIVE_REF_SPOT;FN - Reference input
 HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
 HISTORY_MSG_HISTMATCHING;Auto-matched tone curve
+HISTORY_MSG_HLBL;Color propagation - blur
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
 HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 illuminant D
 HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Type

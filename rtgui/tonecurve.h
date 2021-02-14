@@ -80,6 +80,7 @@ protected:
     rtengine::ProcEvent EvHistMatching;
     rtengine::ProcEvent EvHistMatchingBatch;
     rtengine::ProcEvent EvClampOOG;
+    rtengine::ProcEvent EvHLbl;
 
     // used temporarily in eventing
     double nextExpcomp;

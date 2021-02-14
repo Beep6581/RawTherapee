@@ -42,6 +42,7 @@ ToneCurve::ToneCurve () : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LA
     EvHistMatching = m->newEvent(AUTOEXP, "HISTORY_MSG_HISTMATCHING");
     EvHistMatchingBatch = m->newEvent(M_VOID, "HISTORY_MSG_HISTMATCHING");
     EvClampOOG = m->newEvent(DARKFRAME, "HISTORY_MSG_CLAMPOOG");
+    EvHLbl = m->newEvent(DEMOSAIC, "HISTORY_MSG_HLBL");
 
     CurveListener::setMulti(true);
 
