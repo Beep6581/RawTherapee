@@ -178,7 +178,7 @@ void Curve::fillHash()
     /*
      * Uncomment the code below to dump the polygon points and the hash table in files
     if (poly_x.size() > 500) {
-        printf("Files generated (%d points)\n", poly_x.size());
+        fprintf(stderr,"Files generated (%d points)\n", poly_x.size());
         FILE* f = fopen ("hash.txt", "wt");
         for (unsigned int i=0; i<hashSize;i++) {
             unsigned short s = hash.at(i).smallerValue;

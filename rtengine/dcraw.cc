@@ -4779,10 +4779,10 @@ void CLASS colorcheck()
       FORCC gmb_cam[sq][c] *= balance[c];
   }
   if (verbose) {
-    printf ("    { \"%s %s\", %d,\n\t{", make, model, black);
+    fprintf(stderr,"    { \"%s %s\", %d,\n\t{", make, model, black);
     num = 10000 / (cam_xyz[1][0] + cam_xyz[1][1] + cam_xyz[1][2]);
     FORCC for (j=0; j < 3; j++)
-      printf ("%c%d", (c | j) ? ',':' ', (int) (cam_xyz[c][j] * num + 0.5));
+      fprintf(stderr,"%c%d", (c | j) ? ',':' ', (int) (cam_xyz[c][j] * num + 0.5));
     puts (" } },");
   }
 #undef NSQ

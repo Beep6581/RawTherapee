@@ -161,7 +161,7 @@ void ProfileStore::_parseProfiles ()
         options.setDefProfRawMissing (true);
 
         if (settings->verbose) {
-            printf ("WARNING: Default profile \"%s\" for raw images not found!\n", options.defProfRaw.c_str());
+            fprintf(stderr,"WARNING: Default profile \"%s\" for raw images not found!\n", options.defProfRaw.c_str());
         }
     }
 
@@ -169,7 +169,7 @@ void ProfileStore::_parseProfiles ()
         options.setDefProfImgMissing (true);
 
         if (settings->verbose) {
-            printf ("WARNING: Default profile \"%s\" for standard images not found!\n", options.defProfImg.c_str());
+            fprintf(stderr,"WARNING: Default profile \"%s\" for standard images not found!\n", options.defProfImg.c_str());
         }
     }
 }
@@ -221,7 +221,7 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
                 if (lastdot != Glib::ustring::npos && lastdot == currDir.length() - 4 && currDir.substr (lastdot).casefold() == paramFileExtension) {
                     // file found
                     if (settings->verbose) {
-                        printf ("Processing file %s...", fname.c_str());
+                        fprintf(stderr,"Processing file %s...", fname.c_str());
                     }
 
                     Glib::ustring name = currDir.substr (0, lastdot);
@@ -234,7 +234,7 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
                         fileFound = true;
 
                         if (settings->verbose) {
-                            printf ("OK\n");
+                            fprintf(stderr,"OK\n");
                         }
 
                         // adding this file to the list
@@ -245,7 +245,7 @@ bool ProfileStore::parseDir (Glib::ustring& realPath, Glib::ustring& virtualPath
                         partProfiles[filePSE] = pProf;
                         //partProfiles.insert( std::pair<ProfileStoreEntry*, rtengine::procparams::AutoPartialProfile*> (filePSE, pProf) );
                     } else if (settings->verbose) {
-                        printf ("failed!\n");
+                        fprintf(stderr,"failed!\n");
                     }
                 }
             }
@@ -390,7 +390,7 @@ const PartialProfile* ProfileStore::getProfile (const ProfileStoreEntry* entry)
     } else {
         // This shouldn't happen!
 #ifndef NDEBUG
-        printf ("WARNING! Profile not found!\n");
+        fprintf(stderr,"WARNING! Profile not found!\n");
 #endif
         return nullptr;
     }
@@ -499,13 +499,13 @@ void ProfileStore::removeListener (ProfileStoreListener *listener)
 
 void ProfileStore::dumpFolderList()
 {
-    printf ("Folder list:\n------------\n");
+    fprintf(stderr,"Folder list:\n------------\n");
 
     for (unsigned int i = 0; i < folders.size(); i++) {
-        printf (" #%3ud - %s\n", i, folders.at (i).c_str());
+        fprintf(stderr," #%3ud - %s\n", i, folders.at (i).c_str());
     }
 
-    printf ("\n");
+    fprintf(stderr,"\n");
 }
 
 PartialProfile *ProfileStore::loadDynamicProfile (const FramesMetaData *im)
@@ -523,7 +523,7 @@ PartialProfile *ProfileStore::loadDynamicProfile (const FramesMetaData *im)
     for (auto rule : dynamicRules) {
         if (rule.matches (im)) {
             if (settings->verbose) {
-                printf ("found matching profile %s\n", rule.profilepath.c_str());
+                fprintf(stderr,"found matching profile %s\n", rule.profilepath.c_str());
             }
 
             const PartialProfile *p = getProfile (rule.profilepath);
@@ -531,7 +531,7 @@ PartialProfile *ProfileStore::loadDynamicProfile (const FramesMetaData *im)
             if (p != nullptr) {
                 p->applyTo (ret->pparams);
             } else {
-                printf ("ERROR loading matching profile from: %s\n", rule.profilepath.c_str());
+                fprintf(stderr,"ERROR loading matching profile from: %s\n", rule.profilepath.c_str());
             }
         }
     }

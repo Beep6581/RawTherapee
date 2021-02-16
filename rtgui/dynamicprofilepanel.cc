@@ -615,8 +615,8 @@ void DynamicProfilePanel::save()
     ProfileStore::getInstance()->setRules (rules);
 
     if (!ProfileStore::getInstance()->storeRules()) {
-        printf ("Error in saving dynamic profile rules\n");
+        fprintf(stderr,"Error in saving dynamic profile rules\n");
     } else if (rtengine::settings->verbose) {
-        printf ("Saved %d dynamic profile rules\n", int (rules.size()));
+        fprintf(stderr,"Saved %d dynamic profile rules\n", int (rules.size()));
     }
 }

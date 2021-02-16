@@ -30,7 +30,7 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
 #ifndef NDEBUG
 
     if (!display) {
-        printf("Error: no default display!\n");
+        fprintf(stderr,"Error: no default display!\n");
     }
 
 #endif
@@ -200,7 +200,7 @@ void CursorManager::setWidgetCursor (Glib::RefPtr<Gdk::Window> window, CursorSha
 
 #ifndef NDEBUG
     else {
-        printf("CursorManager::setWidgetCursor  /  Error: Display not found!\n");
+        fprintf(stderr,"CursorManager::setWidgetCursor  /  Error: Display not found!\n");
     }
 
 #endif
@@ -216,7 +216,7 @@ void CursorManager::setCursorOfMainWindow (Glib::RefPtr<Gdk::Window> window, Cur
 
 #ifndef NDEBUG
     else {
-        printf("CursorManager::setCursorOfMainWindow  /  Error: Display not found!\n");
+        fprintf(stderr,"CursorManager::setCursorOfMainWindow  /  Error: Display not found!\n");
     }
 
 #endif

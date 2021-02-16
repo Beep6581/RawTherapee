@@ -121,7 +121,7 @@ float *SparseConjugateGradient(void Ax(float *Product, float *x, void *Pass), fl
 
     if(iterate == MaximumIterates)
         if(iterate != n && RMSResidual != 0.0f) {
-            printf("Warning: MaximumIterates (%u) reached in SparseConjugateGradient.\n", MaximumIterates);
+            fprintf(stderr,"Warning: MaximumIterates (%u) reached in SparseConjugateGradient.\n", MaximumIterates);
         }
 
     if(ax != b) {
@@ -181,13 +181,13 @@ bool MultiDiagonalSymmetricMatrix::CreateDiagonal(int index, int StartRow)
     }
 
     if(index >= m) {
-        printf("Error in MultiDiagonalSymmetricMatrix::CreateDiagonal: invalid index.\n");
+        fprintf(stderr,"Error in MultiDiagonalSymmetricMatrix::CreateDiagonal: invalid index.\n");
         return false;
     }
 
     if(index > 0)
         if(StartRow <= StartRows[index - 1]) {
-            printf("Error in MultiDiagonalSymmetricMatrix::CreateDiagonal: each StartRow must exceed the previous.\n");
+            fprintf(stderr,"Error in MultiDiagonalSymmetricMatrix::CreateDiagonal: each StartRow must exceed the previous.\n");
             return false;
         }
 
@@ -197,7 +197,7 @@ bool MultiDiagonalSymmetricMatrix::CreateDiagonal(int index, int StartRow)
         Diagonals[index] = new float[DiagonalLength(StartRow)];
 
         if(Diagonals[index] == nullptr) {
-            printf("Error in MultiDiagonalSymmetricMatrix::CreateDiagonal: memory allocation failed. Out of memory?\n");
+            fprintf(stderr,"Error in MultiDiagonalSymmetricMatrix::CreateDiagonal: memory allocation failed. Out of memory?\n");
             return false;
         }
 
@@ -360,12 +360,12 @@ void MultiDiagonalSymmetricMatrix::VectorProduct(float* RESTRICT Product, float*
 bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int MaxFillAbove)
 {
     if(m == 1) {
-        printf("Error in MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization: just one diagonal? Can you divide?\n");
+        fprintf(stderr,"Error in MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization: just one diagonal? Can you divide?\n");
         return false;
     }
 
     if(StartRows[0] != 0) {
-        printf("Error in MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization: main diagonal required to exist for this math.\n");
+        fprintf(stderr,"Error in MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization: main diagonal required to exist for this math.\n");
         return false;
     }
 
@@ -394,7 +394,7 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
         while(j-- != 0)
             if(!ic->CreateDiagonal(mic++, StartRows[ii] - j)) {
                 //Beware of out of memory, possible for large, sparse problems if you ask for too much fill.
-                printf("Error in MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization: Out of memory. Ask for less fill?\n");
+                fprintf(stderr,"Error in MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization: Out of memory. Ask for less fill?\n");
                 delete ic;
                 return false;
             }
@@ -474,7 +474,7 @@ bool MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization(int Max
         }
 
         if(UNLIKELY(d[j] == 0.0f)) {
-            printf("Error in MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization: division by zero. Matrix not decomposable.\n");
+            fprintf(stderr,"Error in MultiDiagonalSymmetricMatrix::CreateIncompleteCholeskyFactorization: division by zero. Matrix not decomposable.\n");
             delete ic;
             delete[] DiagMap;
             delete[] MaxIndizes;
@@ -634,7 +634,7 @@ EdgePreservingDecomposition::EdgePreservingDecomposition(int width, int height) 
                 A->CreateDiagonal(4, w + 1))) {
         delete A;
         A = nullptr;
-        printf("Error in EdgePreservingDecomposition construction: out of memory.\n");
+        fprintf(stderr,"Error in EdgePreservingDecomposition construction: out of memory.\n");
     } else {
         a0    = A->Diagonals[0];
         a_1   = A->Diagonals[1];

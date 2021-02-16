@@ -309,7 +309,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
         Glib::ustring cmdLine = options.CPBPath + Glib::ustring(" \"") + tmpFileName + Glib::ustring("\"");
 
         if (rtengine::settings->verbose) {
-            printf("Custom profile builder's command line: %s\n", Glib::ustring(cmdLine).c_str());
+            fprintf(stderr,"Custom profile builder's command line: %s\n", Glib::ustring(cmdLine).c_str());
         }
 
         bool success = ExtProgStore::spawnCommandSync (cmdLine);
@@ -1087,14 +1087,14 @@ bool Thumbnail::openDefaultViewer(int destination)
             ShellExecuteW(NULL, L"open", wfilename, NULL, NULL, SW_SHOWMAXIMIZED );
             g_free(wfilename);
         } else {
-            printf("%s not found\n", openFName.data());
+            fprintf(stderr,"%s not found\n", openFName.data());
             return false;
         }
     } else {
         openFName = destination == 3 ? fname
                     : Glib::ustring::compose ("%1.%2", BatchQueue::calcAutoFileNameBase(fname), options.saveFormatBatch.format);
 
-        printf("Opening %s\n", openFName.c_str());
+        fprintf(stderr,"Opening %s\n", openFName.c_str());
 
         if (Glib::file_test (openFName, Glib::FILE_TEST_EXISTS)) {
             // Output file exists, so open explorer and select output file
@@ -1123,7 +1123,7 @@ bool Thumbnail::openDefaultViewer(int destination)
             ShellExecuteW(NULL, L"explore", wfilename, NULL, NULL, SW_SHOWNORMAL );
             g_free(wfilename);
         } else {
-            printf("File and dir not found\n");
+            fprintf(stderr,"File and dir not found\n");
             return false;
         }
     }
@@ -1132,7 +1132,7 @@ bool Thumbnail::openDefaultViewer(int destination)
 
 #else
     // TODO: Add more OSes here
-    printf("Automatic opening not supported on this OS\n");
+    fprintf(stderr,"Automatic opening not supported on this OS\n");
     return false;
 #endif
 

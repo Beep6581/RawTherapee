@@ -280,15 +280,15 @@ void FFManager::init(const Glib::ustring& pathname)
 
         if( settings->verbose ) {
             if( !i.pathname.empty() ) {
-                printf( "%s:  %s\n", i.key().c_str(), i.pathname.c_str());
+                fprintf(stderr, "%s:  %s\n", i.key().c_str(), i.pathname.c_str());
             } else {
-                printf( "%s: MEAN of \n    ", i.key().c_str());
+                fprintf(stderr, "%s: MEAN of \n    ", i.key().c_str());
 
                 for(std::list<Glib::ustring>::iterator path = i.pathNames.begin(); path != i.pathNames.end(); ++path) {
-                    printf("%s, ", path->c_str());
+                    fprintf(stderr,"%s, ", path->c_str());
                 }
 
-                printf("\n");
+                fprintf(stderr,"\n");
             }
         }
     }

@@ -6675,8 +6675,8 @@ void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct loc
     }
     
     if (settings->verbose) {
-        printf("Nyst=%i Nyen=%i lp.yc=%f lp.lyT=%f  lp.ly=%f bfh=%i bfhr=%i origH=%i ftsizeH=%i\n", ystart, yend, lp.yc, lp.lyT, lp.ly, bfh, bfhr, H, ftsizeH);
-        printf("Nxst=%i Nxen=%i lp.xc=%f lp.lxL=%f  lp.lx=%f bfw=%i bfwr=%i origW=%i ftsizeW=%i\n", xstart, xend, lp.xc, lp.lxL, lp.lx, bfw, bfwr, W, ftsizeW);
+        fprintf(stderr,"Nyst=%i Nyen=%i lp.yc=%f lp.lyT=%f  lp.ly=%f bfh=%i bfhr=%i origH=%i ftsizeH=%i\n", ystart, yend, lp.yc, lp.lyT, lp.ly, bfh, bfhr, H, ftsizeH);
+        fprintf(stderr,"Nxst=%i Nxen=%i lp.xc=%f lp.lxL=%f  lp.lx=%f bfw=%i bfwr=%i origW=%i ftsizeW=%i\n", xstart, xend, lp.xc, lp.lxL, lp.lx, bfw, bfwr, W, ftsizeW);
     }
 }
 
@@ -13877,7 +13877,7 @@ void ImProcFunctions::Lab_Local(
           //  printf("bfw=%i bfh=%i\n", bfw, bfh);
 
             if (bfw < mSPsharp || bfh < mSPsharp) {
-                printf("too small RT-spot - minimum size 39 * 39\n");
+                fprintf(stderr,"too small RT-spot - minimum size 39 * 39\n");
                 return;
             }
 

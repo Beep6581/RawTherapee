@@ -721,7 +721,7 @@ void ICCProfileCreator::savePressed()
         } else {
             // Should not occurs
             if (rtengine::settings->verbose) {
-                printf("\"%s\": unknown working profile! - use LCMS2 substitution\n", primariesPreset.c_str());
+                fprintf(stderr,"\"%s\": unknown working profile! - use LCMS2 substitution\n", primariesPreset.c_str());
             }
 
             return;
@@ -758,7 +758,7 @@ void ICCProfileCreator::savePressed()
     //begin adaptation rTRC gTRC bTRC
     //"newProfile" profile has the same characteristics than RGB values, but TRC are adapted... for applying profile
     if (rtengine::settings->verbose) {
-        printf("Output Gamma - profile Primaries as RT profile: \"%s\"\n", sNewProfile.c_str());
+        fprintf(stderr,"Output Gamma - profile Primaries as RT profile: \"%s\"\n", sNewProfile.c_str());
     }
 
     if (!v2except) {
@@ -772,7 +772,7 @@ void ICCProfileCreator::savePressed()
         if (newProfile == nullptr ) {
 
             if (rtengine::settings->verbose) {
-                printf("\"%s\" ICC output profile not found!\n", sNewProfile.c_str());
+                fprintf(stderr,"\"%s\" ICC output profile not found!\n", sNewProfile.c_str());
             }
 
             return;
@@ -1349,11 +1349,11 @@ void ICCProfileCreator::savePressed()
             if (cmsMLUsetASCII(dmdd, "en", "US", sGammaSlopeParam.c_str())) {
                 if (!v2except) {
                     if (!cmsWriteTag(newProfile, cmsSigProfileDescriptionTag, dmdd)) {
-                        printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
+                        fprintf(stderr,"Error: Can't write cmsSigProfileDescriptionTag!\n");
                     }
                 } else {
                     if (!cmsWriteTag(profile_v2_except, cmsSigDeviceModelDescTag, dmdd)) {
-                        printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
+                        fprintf(stderr,"Error: Can't write cmsSigProfileDescriptionTag!\n");
                     }
 
                 }
@@ -1361,15 +1361,15 @@ void ICCProfileCreator::savePressed()
         } else if (cmsMLUsetWide(dmdd, "en", "US", wGammaSlopeParam.str().c_str())) {
             if (!v2except) {
                 if (!cmsWriteTag(newProfile, cmsSigDeviceModelDescTag, dmdd)) {
-                    printf("Error: Can't write cmsSigDeviceModelDescTag!\n");
+                    fprintf(stderr,"Error: Can't write cmsSigDeviceModelDescTag!\n");
                 }
             } else {
                 if (!cmsWriteTag(profile_v2_except, cmsSigDeviceModelDescTag, dmdd)) {
-                    printf("Error: Can't write cmsSigDeviceModelDescTag!\n");
+                    fprintf(stderr,"Error: Can't write cmsSigDeviceModelDescTag!\n");
                 }
             }
         } else {
-            printf("Error: cmsMLUsetWide failed for dmdd \"%s\" !\n", sGammaSlopeParam.c_str());
+            fprintf(stderr,"Error: cmsMLUsetWide failed for dmdd \"%s\" !\n", sGammaSlopeParam.c_str());
         }
 
         cmsMLUfree(dmdd);
@@ -1405,11 +1405,11 @@ void ICCProfileCreator::savePressed()
         if (cmsMLUsetASCII(descMLU, "en", "US", sDescription.c_str())) {
             if (!v2except) {
                 if (!cmsWriteTag(newProfile, cmsSigProfileDescriptionTag, descMLU)) {
-                    printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
+                    fprintf(stderr,"Error: Can't write cmsSigProfileDescriptionTag!\n");
                 }
             } else {
                 if (!cmsWriteTag(profile_v2_except, cmsSigProfileDescriptionTag, descMLU)) {
-                    printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
+                    fprintf(stderr,"Error: Can't write cmsSigProfileDescriptionTag!\n");
                 }
             }
         }
@@ -1418,15 +1418,15 @@ void ICCProfileCreator::savePressed()
         if (!v2except) {
 
             if (!cmsWriteTag(newProfile, cmsSigProfileDescriptionTag, descMLU)) {
-                printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
+                fprintf(stderr,"Error: Can't write cmsSigProfileDescriptionTag!\n");
             }
         } else {
             if (!cmsWriteTag(profile_v2_except, cmsSigProfileDescriptionTag, descMLU)) {
-                printf("Error: Can't write cmsSigProfileDescriptionTag!\n");
+                fprintf(stderr,"Error: Can't write cmsSigProfileDescriptionTag!\n");
             }
         }
     } else {
-        printf("Error: cmsMLUsetWide failed for desc \"%s\" !\n", sDescription.c_str());
+        fprintf(stderr,"Error: cmsMLUsetWide failed for desc \"%s\" !\n", sDescription.c_str());
     }
 
     cmsMLUfree(descMLU);
@@ -1442,16 +1442,16 @@ void ICCProfileCreator::savePressed()
         if (!v2except) {
 
             if (!cmsWriteTag(newProfile, cmsSigCopyrightTag, copyMLU)) {
-                printf("Error: Can't write cmsSigCopyrightTag!\n");
+                fprintf(stderr,"Error: Can't write cmsSigCopyrightTag!\n");
             }
         } else {
             if (!cmsWriteTag(profile_v2_except, cmsSigCopyrightTag, copyMLU)) {
-                printf("Error: Can't write cmsSigCopyrightTag!\n");
+                fprintf(stderr,"Error: Can't write cmsSigCopyrightTag!\n");
             }
 
         }
     } else {
-        printf("Error: cmsMLUsetWide failed for cprt \"%s\" !\n", copyright.c_str());
+        fprintf(stderr,"Error: cmsMLUsetWide failed for cprt \"%s\" !\n", copyright.c_str());
     }
 
     cmsMLUfree(copyMLU);
@@ -1461,7 +1461,7 @@ void ICCProfileCreator::savePressed()
         cmsCIEXYZ *redT = static_cast<cmsCIEXYZ*>(cmsReadTag(newProfile, cmsSigRedMatrixColumnTag));
         cmsCIEXYZ *greenT  = static_cast<cmsCIEXYZ*>(cmsReadTag(newProfile, cmsSigGreenMatrixColumnTag));
         cmsCIEXYZ *blueT  = static_cast<cmsCIEXYZ*>(cmsReadTag(newProfile, cmsSigBlueMatrixColumnTag));
-        printf("rx=%f gx=%f bx=%f ry=%f gy=%f by=%f rz=%f gz=%f bz=%f\n", redT->X, greenT->X, blueT->X, redT->Y, greenT->Y, blueT->Y, redT->Z, greenT->Z, blueT->Z);
+        fprintf(stderr,"rx=%f gx=%f bx=%f ry=%f gy=%f by=%f rz=%f gz=%f bz=%f\n", redT->X, greenT->X, blueT->X, redT->Y, greenT->Y, blueT->Y, redT->Z, greenT->Z, blueT->Z);
     */
     if (!v2except) {
         cmsSaveProfileToFile(newProfile,  absoluteFName.c_str());

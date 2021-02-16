@@ -705,7 +705,7 @@ BENCHFUN
         int numTries = 0;
 
         if (ponder) {
-            printf("Tiled denoise processing caused by Automatic Multizone mode\n");
+            fprintf(stderr,"Tiled denoise processing caused by Automatic Multizone mode\n");
         }
 
         bool memoryAllocationFailed = false;
@@ -714,7 +714,7 @@ BENCHFUN
             ++numTries;
 
             if (numTries == 2) {
-                printf("1st denoise pass failed due to insufficient memory, starting 2nd (tiled) pass now...\n");
+                fprintf(stderr,"1st denoise pass failed due to insufficient memory, starting 2nd (tiled) pass now...\n");
             }
 
             int numtiles_W, numtiles_H, tilewidth, tileheight, tileWskip, tileHskip;
@@ -805,7 +805,7 @@ BENCHFUN
 #endif
 
             if (settings->verbose) {
-                printf("RGB_denoise uses %d main thread(s) and up to %d nested thread(s) for each main thread\n", numthreads, denoiseNestedLevels);
+                fprintf(stderr,"RGB_denoise uses %d main thread(s) and up to %d nested thread(s) for each main thread\n", numthreads, denoiseNestedLevels);
             }
 
 #endif
@@ -1764,7 +1764,7 @@ BENCHFUN
         } while (memoryAllocationFailed && numTries < 2 && (options.rgbDenoiseThreadLimit == 0) && !ponder);
 
         if (memoryAllocationFailed) {
-            printf("tiled denoise failed due to isufficient memory. Output is not denoised!\n");
+            fprintf(stderr,"tiled denoise failed due to isufficient memory. Output is not denoised!\n");
         }
 
     }
@@ -2020,7 +2020,7 @@ BENCHFUN
 
     if (settings->verbose) {
         t2e.set();
-        printf("Denoise performed in %d usec:\n", t2e.etime(t1e));
+        fprintf(stderr,"Denoise performed in %d usec:\n", t2e.etime(t1e));
     }
 }//end of main RGB_denoise
 
@@ -2378,7 +2378,7 @@ bool ImProcFunctions::WaveletDenoiseAll_BiShrinkL(wavelet_decomposition& Wavelet
 bool ImProcFunctions::WaveletDenoiseAll_BiShrinkAB(wavelet_decomposition& WaveletCoeffs_L, wavelet_decomposition& WaveletCoeffs_ab, float *noisevarchrom, float madL[8][3], float *variC, int local, float noisevar_ab, const bool useNoiseCCurve,  bool autoch, bool denoiseMethodRgb, int denoiseNestedLevels)
 {
     int maxlvl = WaveletCoeffs_L.maxlevel();
-    printf("Ftblockdn ab bishrink\n");
+    fprintf(stderr,"Ftblockdn ab bishrink\n");
 
     if (local == 1) {
         maxlvl = 6;    //for local denoise

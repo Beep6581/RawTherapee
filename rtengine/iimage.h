@@ -745,7 +745,7 @@ public:
         dest->allocate(width, height);
 
         if (dest->width == -1) {
-            printf("ERROR: PlanarRGBData::copyData >>> allocation failed!\n");
+            fprintf(stderr,"ERROR: PlanarRGBData::copyData >>> allocation failed!\n");
             return;
         }
 
@@ -1385,7 +1385,7 @@ public:
         dest->allocate(width, height);
 
         if (dest->width == -1) {
-            printf("ERROR: ChunkyRGBData::copyData >>> allocation failed!\n");
+            fprintf(stderr,"ERROR: ChunkyRGBData::copyData >>> allocation failed!\n");
             return;
         }
 

@@ -98,7 +98,7 @@ IMFILE* fopen (const char* fname)
     struct stat stat_buffer;
 
     if ( fstat(fd, &stat_buffer) < 0 ) {
-        printf("no stat\n");
+        fprintf(stderr,"no stat\n");
         close (fd);
         return nullptr;
     }
@@ -106,7 +106,7 @@ IMFILE* fopen (const char* fname)
     void* data = mmap(nullptr, stat_buffer.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
 
     if ( data == MAP_FAILED ) {
-        printf("no mmap %s\n", fname);
+        fprintf(stderr,"no mmap %s\n", fname);
         close(fd);
         return nullptr;
     }

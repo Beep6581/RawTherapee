@@ -744,7 +744,7 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
     FILE* const file = g_fopen(filename.c_str(), "rb");
 
     if (file == nullptr) {
-        printf ("Unable to load DCP profile '%s' !", filename.c_str());
+        fprintf(stderr,"Unable to load DCP profile '%s' !", filename.c_str());
         return;
     }
 
@@ -1881,7 +1881,7 @@ DCPProfile* DCPStore::getProfile(const Glib::ustring& filename) const
         // Add profile
         profile_cache[key] = res;
         if (settings->verbose) {
-            printf("DCP profile '%s' loaded from disk\n", filename.c_str());
+            fprintf(stderr,"DCP profile '%s' loaded from disk\n", filename.c_str());
         }
         return res;
     }

@@ -115,7 +115,7 @@ public:
 #ifndef NDEBUG
 
         if (s <= 0) {
-            printf("s<=0!\n");
+            fprintf(stderr,"s<=0!\n");
         }
 
         assert (s > 0);
@@ -159,7 +159,7 @@ public:
 #ifndef NDEBUG
 
         if (input.empty()) {
-            printf("s=0!\n");
+            fprintf(stderr,"s=0!\n");
         }
 
         assert(!input.empty());
@@ -172,7 +172,7 @@ public:
 #ifndef NDEBUG
 
         if (s <= 0) {
-            printf("s<=0!\n");
+            fprintf(stderr,"s<=0!\n");
         }
 
         assert (s > 0);

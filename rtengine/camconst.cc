@@ -708,7 +708,7 @@ bool CameraConstantsStore::parse_camera_constants_file(const Glib::ustring& file
 
             if (entry.second) { // entry inserted into map
                 if (settings->verbose) {
-                    printf("Add camera constants for \"%s\"\n", make_model.c_str());
+                    fprintf(stderr,"Add camera constants for \"%s\"\n", make_model.c_str());
                 }
             } else {
                 // The CameraConst already exist for this camera make/model -> we merge the values
@@ -726,7 +726,7 @@ bool CameraConstantsStore::parse_camera_constants_file(const Glib::ustring& file
                 }
 
                 if (settings->verbose) {
-                    printf("Merging camera constants for \"%s\"\n", make_model.c_str());
+                    fprintf(stderr,"Merging camera constants for \"%s\"\n", make_model.c_str());
                 }
             }
 

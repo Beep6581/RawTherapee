@@ -101,7 +101,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, const array2D<flo
     float *buffer = (float *)calloc(static_cast<size_t>(rr1) * cc1 * 5 * sizeof(float), 1);
 
     if (buffer == nullptr) { // allocation of big block of memory failed, try to get 5 smaller ones
-        printf("lmmse_interpolate_omp: allocation of big memory block failed, try to get 5 smaller ones now...\n");
+        fprintf(stderr,"lmmse_interpolate_omp: allocation of big memory block failed, try to get 5 smaller ones now...\n");
         bool allocationFailed = false;
 
         for (int i = 0; i < 5; i++) {
@@ -113,7 +113,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, const array2D<flo
         }
 
         if (allocationFailed) { // fall back to igv_interpolate
-            printf("lmmse_interpolate_omp: allocation of 5 small memory blocks failed, falling back to igv_interpolate...\n");
+            fprintf(stderr,"lmmse_interpolate_omp: allocation of 5 small memory blocks failed, falling back to igv_interpolate...\n");
 
             for (int i = 0; i < 5; i++) { // free the already allocated buffers
                 if (qix[i]) {

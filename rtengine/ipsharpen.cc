@@ -512,8 +512,8 @@ BENCHFUN
     const float amount = (k == 1 ? 2.7 : 1.) * params->sharpenMicro.amount / 1500.0; //amount 2000.0 quasi no artifacts ==> 1500 = maximum, after artifacts, 25/9 if 3x3
 
     if (settings->verbose) {
-        printf ("Micro-contrast amount %f\n", static_cast<double>(amount));
-        printf ("Micro-contrast uniformity %i\n", unif);
+        fprintf(stderr,"Micro-contrast amount %f\n", static_cast<double>(amount));
+        fprintf(stderr,"Micro-contrast uniformity %i\n", unif);
     }
 
     //modulation uniformity in function of luminance

@@ -100,7 +100,7 @@ int calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int nrow
     }
 
     if (n < 5) {
-        printf ("Not sufficient features.\n");
+        fprintf(stderr,"Not sufficient features.\n");
         distortion = 0.0;
         KLTFreeFeatureTable(ft);
         KLTFreeFeatureList(fl);
@@ -152,10 +152,10 @@ int calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int nrow
         total_delta += delta;
     }
 
-    printf ("distortion amount=%lf scale=%lf deviation=%lf, rxy=%lf\n", a, b, total_delta / n, rxy);
+    fprintf(stderr,"distortion amount=%lf scale=%lf deviation=%lf, rxy=%lf\n", a, b, total_delta / n, rxy);
 
     if (new_n < 5) {
-        printf ("Not sufficient features.\n");
+        fprintf(stderr,"Not sufficient features.\n");
         distortion = 0.0;
         KLTFreeFeatureTable(ft);
         KLTFreeFeatureList(fl);
@@ -163,7 +163,7 @@ int calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int nrow
         return -1;
     }
 
-    printf ("Removed %d outstading data points\n", n - new_n);
+    fprintf(stderr,"Removed %d outstading data points\n", n - new_n);
     avg_r10 = total_r10 / new_n;
     avg_r0  = total_r0  / new_n;
     Sxx = 0.0;
@@ -253,10 +253,10 @@ int calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int nrow
         total_delta += delta;
     }
 
-    printf ("distortion amount=%lf scale=%lf deviation=%lf, rxy=%lf\n", a, b, total_delta / n, rxy);
+    fprintf(stderr,"distortion amount=%lf scale=%lf deviation=%lf, rxy=%lf\n", a, b, total_delta / n, rxy);
 
     if (total_delta / new_n > DELTA_2) {
-        printf ("Deviation is too big.\n");
+        fprintf(stderr,"Deviation is too big.\n");
         distortion = 0.0;
         KLTFreeFeatureTable(ft);
         KLTFreeFeatureList(fl);
@@ -265,7 +265,7 @@ int calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int nrow
     }
 
     if (rxy < RXY_LIMIT) {
-        printf ("Not linear enough\n");
+        fprintf(stderr,"Not linear enough\n");
         distortion = 0.0;
         KLTFreeFeatureTable(ft);
         KLTFreeFeatureList(fl);
@@ -273,7 +273,7 @@ int calcDistortion(unsigned char* img1, unsigned char* img2, int ncols, int nrow
         return -3;
     }
 
-    printf ("distortion amount=%lf scale=%lf deviation=%lf, rxy=%lf\n", a, b, total_delta / n, rxy);
+    fprintf(stderr,"distortion amount=%lf scale=%lf deviation=%lf, rxy=%lf\n", a, b, total_delta / n, rxy);
     distortion = a;
 
     KLTFreeFeatureTable(ft);

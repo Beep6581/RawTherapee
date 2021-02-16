@@ -335,7 +335,7 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
 
     if (settings->verbose) {
         for (int c = 0; c < 3; ++c) {
-            printf("chmax[%d] : %f\tclmax[%d] : %f\tratio[%d] : %f\n", c, static_cast<double>(chmax[c]), c, static_cast<double>(clmax[c]), c, static_cast<double>(chmax[c] / clmax[c]));
+            fprintf(stderr,"chmax[%d] : %f\tclmax[%d] : %f\tratio[%d] : %f\n", c, static_cast<double>(chmax[c]), c, static_cast<double>(clmax[c]), c, static_cast<double>(chmax[c] / clmax[c]));
         }
     }
 
@@ -378,7 +378,7 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
 
     if (settings->verbose) {
         for (int c = 0; c < 3; ++c) {
-            printf("correction factor[%d] : %f\n", c, static_cast<double>(factor[c]));
+            fprintf(stderr,"correction factor[%d] : %f\n", c, static_cast<double>(factor[c]));
         }
     }
 

@@ -65,7 +65,7 @@ namespace rtengine { extern const Settings *settings; }
 #define _(msg) (msg)
 #define dt_control_log(msg) \
     if (settings->verbose) { \
-        printf("%s\n", msg);       \
+        fprintf(stderr,"%s\n", msg);       \
         fflush(stdout);            \
     }
 

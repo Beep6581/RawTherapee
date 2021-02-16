@@ -2041,7 +2041,7 @@ void Options::readFromFile(Glib::ustring fname)
         Glib::ustring msg = Glib::ustring::compose("Options::readFromFile / Error code %1 while reading values from \"%2\":\n%3", err.code(), fname, err.what());
 
         if (options.rtSettings.verbose) {
-            printf("%s\n", msg.c_str());
+            fprintf(stderr,"%s\n", msg.c_str());
         }
 
         throw Error(msg);
@@ -2049,7 +2049,7 @@ void Options::readFromFile(Glib::ustring fname)
         Glib::ustring msg = Glib::ustring::compose("Options::readFromFile / Unknown exception while trying to load \"%1\"!", fname);
 
         if (options.rtSettings.verbose) {
-            printf("%s\n", msg.c_str());
+            fprintf(stderr,"%s\n", msg.c_str());
         }
 
         throw Error(msg);
@@ -2504,7 +2504,7 @@ void Options::load(bool lightweight)
     }
 
     if (options.rtSettings.verbose) {
-        printf("Settings directory (rtdir) = %s\n", rtdir.c_str());
+        fprintf(stderr,"Settings directory (rtdir) = %s\n", rtdir.c_str());
     }
 
     // Set the cache folder in RT's base folder
@@ -2568,7 +2568,7 @@ void Options::load(bool lightweight)
 #endif
 
     if (options.rtSettings.verbose) {
-        printf("Cache directory (cacheBaseDir) = %s\n", cacheBaseDir.c_str());
+        fprintf(stderr,"Cache directory (cacheBaseDir) = %s\n", cacheBaseDir.c_str());
     }
 
     // Update profile's path and recreate it if necessary

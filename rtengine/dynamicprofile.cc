@@ -182,7 +182,7 @@ bool DynamicProfileRules::loadRules()
     }
 
     if (settings->verbose) {
-        printf ("loading dynamic profiles...\n");
+        fprintf(stderr,"loading dynamic profiles...\n");
     }
 
     auto groups = kf.get_groups();
@@ -201,7 +201,7 @@ bool DynamicProfileRules::loadRules()
         }
 
         if (settings->verbose) {
-            printf (" loading rule %d\n", serial);
+            fprintf(stderr," loading rule %d\n", serial);
         }
 
         dynamicRules.emplace_back (DynamicProfileRule());
@@ -231,7 +231,7 @@ bool DynamicProfileRules::loadRules()
 bool DynamicProfileRules::storeRules()
 {
     if (settings->verbose) {
-        printf ("saving dynamic profiles...\n");
+        fprintf(stderr,"saving dynamic profiles...\n");
     }
 
     Glib::KeyFile kf;

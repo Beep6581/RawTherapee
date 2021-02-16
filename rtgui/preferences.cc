@@ -2376,9 +2376,9 @@ void Preferences::switchThemeTo(Glib::ustring newTheme)
     try {
         themecss->load_from_path(filename);
     } catch (Glib::Error &err) {
-        printf("Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
+        fprintf(stderr,"Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
     } catch (...) {
-        printf("Error: Can't load css file \"%s\"\n", filename.c_str());
+        fprintf(stderr,"Error: Can't load css file \"%s\"\n", filename.c_str());
     }
 }
 
@@ -2414,9 +2414,9 @@ void Preferences::switchFontTo(const Glib::ustring &newFontFamily, const int new
 //#endif
             //GTK318
         } catch (Glib::Error &err) {
-            printf("Error: \"%s\"\n", err.what().c_str());
+            fprintf(stderr,"Error: \"%s\"\n", err.what().c_str());
         } catch (...) {
-            printf("Error: Can't find the font named \"%s\"\n", newFontFamily.c_str());
+            fprintf(stderr,"Error: Can't find the font named \"%s\"\n", newFontFamily.c_str());
         }
     } else {
         if (fontcss) {

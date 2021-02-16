@@ -1717,7 +1717,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 
                     /*
                     if(params->colorappearance.badpixsl > 0) if(execsharp){ int mode=params->colorappearance.badpixsl;
-                    printf("BADPIX");
+                    fprintf(stderr,"BADPIX");
                                                                 ImProcFunctions::badpixcam (ncie, 8.0, 10, mode);//for bad pixels
                                                             }
                                                             */
@@ -2236,30 +2236,30 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     /*
     // Debug output - Color LUTf points
     if (ctColorCurve) {
-        printf("\nColor curve:");
+        fprintf(stderr,"\nColor curve:");
         for (size_t i=0; i<501; i++) {
             if (i==0 || i==250 || i==500)
-                printf("\n(%.1f)[", float(i)/500.f);
-            printf("%.3f ", ctColorCurve.lutHueCurve[float(i)]);
+                fprintf(stderr,"\n(%.1f)[", float(i)/500.f);
+            fprintf(stderr,"%.3f ", ctColorCurve.lutHueCurve[float(i)]);
             if (i==0 || i==250 || i==500)
-            printf("]\n");
+            fprintf(stderr,"]\n");
         }
-        printf("\n");
+        fprintf(stderr,"\n");
     }
     */
 
     /*
     // Debug output - Opacity LUTf points
     if (ctOpacityCurve) {
-        printf("\nOpacity curve:");
+        fprintf(stderr,"\nOpacity curve:");
         for (size_t i=0; i<501; i++) {
             if (i==0 || i==250 || i==500)
-                printf("\n(%.1f)[", float(i)/500.f);
-            printf("%.3f ", ctOpacityCurve.lutOpacityCurve[float(i)]);
+                fprintf(stderr,"\n(%.1f)[", float(i)/500.f);
+            fprintf(stderr,"%.3f ", ctOpacityCurve.lutOpacityCurve[float(i)]);
             if (i==0 || i==250 || i==500)
-            printf("]\n");
+            fprintf(stderr,"]\n");
         }
-        printf("\n");
+        fprintf(stderr,"\n");
     }
     */
 
@@ -5078,7 +5078,7 @@ void ImProcFunctions::EPDToneMapCIE(CieImage *ncie, float a_w, float c_, int Wid
     float *Qpr = ncie->Q_p[0];
 
     if (settings->verbose) {
-        printf ("minQ=%f maxQ=%f  Qpro=%f\n", static_cast<double>(minQ), static_cast<double>(maxQ), static_cast<double>(Qpro));
+        fprintf(stderr,"minQ=%f maxQ=%f  Qpro=%f\n", static_cast<double>(minQ), static_cast<double>(maxQ), static_cast<double>(Qpro));
     }
 
     if (maxQ > Qpro) {
@@ -5570,20 +5570,20 @@ void ImProcFunctions::getAutoExp(const LUTu &histogram, int histcompr, double cl
     //printf ("**************** AUTO LEVELS ****************\n");
     /*
     if (settings->verbose) {
-        printf("sum=%i clip=%f clippable=%i  clipWh=%i  clipBl=%i\n",somm, clip, clippable,clipwh, clipbl);
-        printf ("expcomp1= %f   expcomp2= %f gain= %f  expcomp=%f\n",expcomp1,expcomp2,gain,expcomp);
-        printf ("expo=%f\n",expo);
-        printf ("median: %i  average: %f    median/average: %f\n",median,ave, median/ave);
-        printf ("average: %f\n",ave);
-        printf("comp=%f hlcomp: %i\n",comp, hlcompr);
-        printf ("median/average: %f\n",median/ave);
-        printf ("lodev: %f   hidev: %f      hidev/lodev: %f\n",lodev,hidev,hidev/lodev);
-        printf ("lodev: %f\n",lodev);
-        printf ("hidev: %f\n",hidev);
-        printf ("imax=%d rawmax= %d  whiteclip= %d  gain= %f\n",imax,rawmax,whiteclip,gain);
-        printf ("octiles: %f %f %f %f %f %f %f %f\n",octile[0],octile[1],octile[2],octile[3],octile[4],octile[5],octile[6],octile[7]);
-        printf ("ospread= %f\n",ospread);
-        printf ("overexp= %i\n",overex);
+        fprintf(stderr,"sum=%i clip=%f clippable=%i  clipWh=%i  clipBl=%i\n",somm, clip, clippable,clipwh, clipbl);
+        fprintf(stderr,"expcomp1= %f   expcomp2= %f gain= %f  expcomp=%f\n",expcomp1,expcomp2,gain,expcomp);
+        fprintf(stderr,"expo=%f\n",expo);
+        fprintf(stderr,"median: %i  average: %f    median/average: %f\n",median,ave, median/ave);
+        fprintf(stderr,"average: %f\n",ave);
+        fprintf(stderr,"comp=%f hlcomp: %i\n",comp, hlcompr);
+        fprintf(stderr,"median/average: %f\n",median/ave);
+        fprintf(stderr,"lodev: %f   hidev: %f      hidev/lodev: %f\n",lodev,hidev,hidev/lodev);
+        fprintf(stderr,"lodev: %f\n",lodev);
+        fprintf(stderr,"hidev: %f\n",hidev);
+        fprintf(stderr,"imax=%d rawmax= %d  whiteclip= %d  gain= %f\n",imax,rawmax,whiteclip,gain);
+        fprintf(stderr,"octiles: %f %f %f %f %f %f %f %f\n",octile[0],octile[1],octile[2],octile[3],octile[4],octile[5],octile[6],octile[7]);
+        fprintf(stderr,"ospread= %f\n",ospread);
+        fprintf(stderr,"overexp= %i\n",overex);
     }
     */
     /*

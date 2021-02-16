@@ -644,7 +644,7 @@ static inline int vec3isnull(const float *const v)
 #ifdef ASHIFT_DEBUG
 static void print_roi(const dt_iop_roi_t *roi, const char *label)
 {
-  printf("{ %5d  %5d  %5d  %5d  %.6f } %s\n", roi->x, roi->y, roi->width, roi->height, roi->scale, label);
+  fprintf(stderr,"{ %5d  %5d  %5d  %5d  %.6f } %s\n", roi->x, roi->y, roi->width, roi->height, roi->scale, label);
 }
 #endif
 
@@ -1494,7 +1494,7 @@ static int line_detect(float *in, const int width, const int height, const int x
     }
   }
 #ifdef ASHIFT_DEBUG
-    printf("%d lines (vertical %d, horizontal %d, not relevant %d)\n", lines_count, vertical_count,
+    fprintf(stderr,"%d lines (vertical %d, horizontal %d, not relevant %d)\n", lines_count, vertical_count,
            horizontal_count, lct - vertical_count - horizontal_count);
     float xmin = FLT_MAX, xmax = FLT_MIN, ymin = FLT_MAX, ymax = FLT_MIN;
     for(int n = 0; n < lct; n++)
@@ -1503,14 +1503,14 @@ static int line_detect(float *in, const int width, const int height, const int x
       xmax = fmax(xmax, fmax(ashift_lines[n].p1[0], ashift_lines[n].p2[0]));
       ymin = fmin(ymin, fmin(ashift_lines[n].p1[1], ashift_lines[n].p2[1]));
       ymax = fmax(ymax, fmax(ashift_lines[n].p1[1], ashift_lines[n].p2[1]));
-      printf("x1 %.0f, y1 %.0f, x2 %.0f, y2 %.0f, length %.0f, width %f, X %f, Y %f, Z %f, type %d, scalars %f %f\n",
+      fprintf(stderr,"x1 %.0f, y1 %.0f, x2 %.0f, y2 %.0f, length %.0f, width %f, X %f, Y %f, Z %f, type %d, scalars %f %f\n",
              ashift_lines[n].p1[0], ashift_lines[n].p1[1], ashift_lines[n].p2[0], ashift_lines[n].p2[1],
              ashift_lines[n].length, ashift_lines[n].width,
              ashift_lines[n].L[0], ashift_lines[n].L[1], ashift_lines[n].L[2], ashift_lines[n].type,
              vec3scalar(ashift_lines[n].p1, ashift_lines[n].L),
              vec3scalar(ashift_lines[n].p2, ashift_lines[n].L));
     }
-    printf("xmin %.0f, xmax %.0f, ymin %.0f, ymax %.0f\n", xmin, xmax, ymin, ymax);
+    fprintf(stderr,"xmin %.0f, xmax %.0f, ymin %.0f, ymax %.0f\n", xmin, xmax, ymin, ymax);
 #endif
 
   // store results in provided locations
@@ -1786,7 +1786,7 @@ static void ransac(const dt_iop_ashift_line_t *lines, int *index_set, int *inout
       if((r % RANSAC_OPTIMIZATION_DRY_RUNS) == (RANSAC_OPTIMIZATION_DRY_RUNS - 1) && (valid_runs > 0))
       {
 #ifdef ASHIFT_DEBUG
-        printf("ransac self-tuning (run %d): epsilon %f", r, epsilon);
+        fprintf(stderr,"ransac self-tuning (run %d): epsilon %f", r, epsilon);
 #endif
         // average ratio of lines that we eliminated with the given epsilon
         float ratio = 100.0f * (float)lines_eliminated / ((float)set_count * valid_runs);
@@ -1796,7 +1796,7 @@ static void ransac(const dt_iop_ashift_line_t *lines, int *index_set, int *inout
         else if(ratio > RANSAC_ELIMINATION_RATIO)
           epsilon = pow(10.0f, log10(epsilon) + epsilon_step);
 #ifdef ASHIFT_DEBUG
-        printf(" (elimination ratio %f) -> %f\n", ratio, epsilon);
+        fprintf(stderr," (elimination ratio %f) -> %f\n", ratio, epsilon);
 #endif
         // reduce step-size for next optimization round
         epsilon_step /= 2.0f;
@@ -1820,7 +1820,7 @@ static void ransac(const dt_iop_ashift_line_t *lines, int *index_set, int *inout
     int count = 0, lastcount = 0;
     for(int n = 0; n < set_count; n++) count += best_inout[n];
     for(int n = 0; n < set_count; n++) lastcount += inout[n];
-    printf("ransac run %d: best qual %.6f, eps %.6f, line count %d of %d (this run: qual %.5f, count %d (%2f%%))\n", r,
+    fprintf(stderr,"ransac run %d: best qual %.6f, eps %.6f, line count %d of %d (this run: qual %.5f, count %d (%2f%%))\n", r,
            best_quality, epsilon, count, set_count, quality, lastcount, 100.0f * lastcount / (float)set_count);
 #endif
   }
@@ -2100,10 +2100,10 @@ static double model_fitness(double *params, void *data)
 
 #ifdef ASHIFT_DEBUG
   /*
-  printf("fitness with rotation %f, lensshift_v %f, lensshift_h %f, shear %f -> lines %d, quality %10f\n",
+  fprintf(stderr,"fitness with rotation %f, lensshift_v %f, lensshift_h %f, shear %f -> lines %d, quality %10f\n",
          rotation, lensshift_v, lensshift_h, shear, count, sum);
   */
-  printf("fitness with rotation %f, camera_pitch %f, camera_yaw %f -> lines %d, quality %10f\n",
+  fprintf(stderr,"fitness with rotation %f, camera_pitch %f, camera_yaw %f -> lines %d, quality %10f\n",
          rotation, camera_pitch, camera_yaw, count, sum);
 #endif
 
@@ -2251,7 +2251,7 @@ static dt_iop_ashift_nmsresult_t nmsfit(dt_iop_module_t *module, dt_iop_ashift_p
   if(!enough_lines)
   {
 #ifdef ASHIFT_DEBUG
-    printf("optimization not possible: insufficient number of lines\n");
+    fprintf(stderr,"optimization not possible: insufficient number of lines\n");
 #endif
     return NMS_NOT_ENOUGH_LINES;
   }
@@ -2263,7 +2263,7 @@ static dt_iop_ashift_nmsresult_t nmsfit(dt_iop_module_t *module, dt_iop_ashift_p
   if(iter >= NMS_ITERATIONS)
   {
 #ifdef ASHIFT_DEBUG
-    printf("optimization not successful: maximum number of iterations reached (%d)\n", iter);
+    fprintf(stderr,"optimization not successful: maximum number of iterations reached (%d)\n", iter);
 #endif
     return NMS_DID_NOT_CONVERGE;
   }
@@ -2280,10 +2280,10 @@ static dt_iop_ashift_nmsresult_t nmsfit(dt_iop_module_t *module, dt_iop_ashift_p
   fit.camera_yaw = isnan(fit.camera_yaw) ? ilogit(params[pcount++], -fit.camera_yaw_range, fit.camera_yaw_range) : fit.camera_yaw;
 #ifdef ASHIFT_DEBUG
   /*
-  printf("params after optimization (%d iterations): rotation %f, lensshift_v %f, lensshift_h %f, shear %f\n",
+  fprintf(stderr,"params after optimization (%d iterations): rotation %f, lensshift_v %f, lensshift_h %f, shear %f\n",
          iter, fit.rotation, fit.lensshift_v, fit.lensshift_h, fit.shear);
   */
-  printf("params after optimization (%d iterations): rotation %f, camera_pitch %f, camera_yaw %f\n",
+  fprintf(stderr,"params after optimization (%d iterations): rotation %f, camera_pitch %f, camera_yaw %f\n",
          iter, fit.rotation, fit.camera_pitch, fit.camera_yaw);
 #endif
 
@@ -2315,7 +2315,7 @@ static dt_iop_ashift_nmsresult_t nmsfit(dt_iop_module_t *module, dt_iop_ashift_p
   if((xM - xm) * (yM - ym) > 4.0f * fit.width * fit.height)
   {
 #ifdef ASHIFT_DEBUG
-    printf("optimization not successful: degenerate case with area growth factor (%f) exceeding limits\n",
+    fprintf(stderr,"optimization not successful: degenerate case with area growth factor (%f) exceeding limits\n",
            (xM - xm) * (yM - ym) / (fit.width * fit.height));
 #endif
     return NMS_INSANE;
@@ -2407,7 +2407,7 @@ static void model_probe(dt_iop_module_t *module, dt_iop_ashift_params_t *p, dt_i
 
   double quality = model_fitness(params, (void *)&fit);
 
-  printf("model fitness: %.8f (rotation %f, lensshift_v %f, lensshift_h %f, shear %f)\n",
+  fprintf(stderr,"model fitness: %.8f (rotation %f, lensshift_v %f, lensshift_h %f, shear %f)\n",
          quality, p->rotation, p->lensshift_v, p->lensshift_h, p->shear);
 }
 #endif
@@ -2504,7 +2504,7 @@ static double crop_fitness(double *params, void *data)
   const float A = 2.0f * d2min * sin(2.0f * alpha);
 
 #ifdef ASHIFT_DEBUG
-  printf("crop fitness with x %f, y %f, angle %f -> distance %f, area %f\n",
+  fprintf(stderr,"crop fitness with x %f, y %f, angle %f -> distance %f, area %f\n",
          x, y, alpha, d2min, A);
 #endif
   // and return -A to allow Nelder-Mead simplex to search for the minimum
@@ -2663,7 +2663,7 @@ static void do_crop(dt_iop_module_t *module, dt_iop_ashift_params_t *p)
   g->fitting = 0;
 
 #ifdef ASHIFT_DEBUG
-  printf("margins after crop fitting: iter %d, x %f, y %f, angle %f, crop area (%f %f %f %f), width %f, height %f\n",
+  fprintf(stderr,"margins after crop fitting: iter %d, x %f, y %f, angle %f, crop area (%f %f %f %f), width %f, height %f\n",
          iter, cropfit.x, cropfit.y, cropfit.alpha, p->cl, p->cr, p->ct, p->cb, wd, ht);
 #endif
 //-----------------------------------------------------------------------------
@@ -2816,7 +2816,7 @@ static void crop_adjust(dt_iop_module_t *module, dt_iop_ashift_params_t *p, cons
   p->cb = CLAMP((P[1] + d * sin(alpha)) / oht, 0.0f, 1.0f);
 
 #ifdef ASHIFT_DEBUG
-  printf("margins after crop adjustment: x %f, y %f, angle %f, crop area (%f %f %f %f), width %f, height %f\n",
+  fprintf(stderr,"margins after crop adjustment: x %f, y %f, angle %f, crop area (%f %f %f %f), width %f, height %f\n",
          0.5f * (p->cl + p->cr), 0.5f * (p->ct + p->cb), alpha, p->cl, p->cr, p->ct, p->cb, wd, ht);
 #endif
   dt_control_queue_redraw_center();
@@ -2855,7 +2855,7 @@ static int do_get_structure(dt_iop_module_t *module, dt_iop_ashift_params_t *p,
     dt_control_log(_("could not detect structural data in image"));
 #ifdef ASHIFT_DEBUG
     // find out more
-    printf("do_get_structure: buf %p, buf_hash %lu, buf_width %d, buf_height %d, lines %p, lines_count %d\n",
+    fprintf(stderr,"do_get_structure: buf %p, buf_hash %lu, buf_width %d, buf_height %d, lines %p, lines_count %d\n",
            g->buf, g->buf_hash, g->buf_width, g->buf_height, g->lines, g->lines_count);
 #endif
     goto error;
@@ -2866,7 +2866,7 @@ static int do_get_structure(dt_iop_module_t *module, dt_iop_ashift_params_t *p,
     dt_control_log(_("could not run outlier removal"));
 #ifdef ASHIFT_DEBUG
     // find out more
-    printf("remove_outliers: buf %p, buf_hash %lu, buf_width %d, buf_height %d, lines %p, lines_count %d\n",
+    fprintf(stderr,"remove_outliers: buf %p, buf_hash %lu, buf_width %d, buf_height %d, lines %p, lines_count %d\n",
            g->buf, g->buf_hash, g->buf_width, g->buf_height, g->lines, g->lines_count);
 #endif
     goto error;

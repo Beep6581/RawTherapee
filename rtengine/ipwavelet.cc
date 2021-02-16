@@ -827,7 +827,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 #endif
 
     if (settings->verbose) {
-        printf("Ip Wavelet uses %d main thread(s) and up to %d nested thread(s) for each main thread\n", numthreads, wavNestedLevels);
+        fprintf(stderr,"Ip Wavelet uses %d main thread(s) and up to %d nested thread(s) for each main thread\n", numthreads, wavNestedLevels);
     }
 
     #pragma omp parallel num_threads(numthreads)
@@ -1078,7 +1078,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                 levwavL = rtengine::min(maxlev2, levwavL);
 
                 if (settings->verbose) {
-                    printf("Level decomp L=%i\n", levwavL);
+                    fprintf(stderr,"Level decomp L=%i\n", levwavL);
                 }
 
                 if (levwavL > 0) {
@@ -1172,7 +1172,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             const std::unique_ptr<wavelet_decomposition> Ldecomp2(new wavelet_decomposition(labco->data, labco->W, labco->H, levwavL, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
                             if(!Ldecomp2->memory_allocation_failed()){
                                 if (settings->verbose) {
-                                    printf("LUM var0=%f var1=%f var2=%f var3=%f var4=%f\n", vari[0], vari[1], vari[2], vari[3], vari[4]);
+                                    fprintf(stderr,"LUM var0=%f var1=%f var2=%f var3=%f var4=%f\n", vari[0], vari[1], vari[2], vari[3], vari[4]);
                                 }
 
                             //     float* noisevarlum = nullptr;  // we need a dummy to pass it to WaveletDenoiseAllL
@@ -1226,12 +1226,12 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                                 if(cp.quamet == 0) {
                                     if (settings->verbose) {
-                                        printf("denoise standard L\n");
+                                        fprintf(stderr,"denoise standard L\n");
                                     }
                                     WaveletDenoiseAllL(*Ldecomp, noisevarlum, madL, vari, edge, 1);
                                 } else {
                                     if (settings->verbose) {
-                                        printf("denoise bishrink L\n");
+                                        fprintf(stderr,"denoise bishrink L\n");
                                     }
                                     WaveletDenoiseAll_BiShrinkL(*Ldecomp, noisevarlum, madL, vari, edge, 1);
 
@@ -1245,7 +1245,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 for (int dir = 1; dir < 4; dir++) {
                                     for (int level = 0; level < levwavL; level++) {
                                         if(mean[level] < 0.1f || meand[level] < 0.1f || sigma[level] < 0.1f || sigmad[level] < 0.1f) {
-                                            printf("near zero - exit\n");
+                                            fprintf(stderr,"near zero - exit\n");
                                             exitifzero = false;
                                         }
                                     }
@@ -1355,7 +1355,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                             const auto WavL42 = Ldecomp2->level_coeffs(k4)[dir];
                                             const auto WavL52 = Ldecomp2->level_coeffs(k5)[dir];
                                             if (settings->verbose) {
-                                                printf("level=%i mean=%.0f meanden=%.0f sigma=%.0f  sigmaden=%.0f Max=%.0f Maxden=%.0f\n", level, mean[level], meand[level], sigma[level], sigmad[level],MaxP[level], MaxPd[level]);
+                                                fprintf(stderr,"level=%i mean=%.0f meanden=%.0f sigma=%.0f  sigmaden=%.0f Max=%.0f Maxden=%.0f\n", level, mean[level], meand[level], sigma[level], sigmad[level],MaxP[level], MaxPd[level]);
                                             }
 
                                             //find local contrast
@@ -1498,7 +1498,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                         Evaluate2(*Ldecomp, meand, meanNd, sigmad, sigmaNd, MaxPd, MaxNd, wavNestedLevels);
                                             for (int dir = 1; dir < 4; dir++) {
                                                 for (int level = 0; level < levref; level++) {
-                                                        printf("AFTER LC level=%i mean=%.0f meanden=%.0f sigma=%.0f  sigmaden=%.0f Max=%.0f Maxden=%.0f\n", level, mean[level], meand[level], sigma[level], sigmad[level],MaxP[level], MaxPd[level]);
+                                                        fprintf(stderr,"AFTER LC level=%i mean=%.0f meanden=%.0f sigma=%.0f  sigmaden=%.0f Max=%.0f Maxden=%.0f\n", level, mean[level], meand[level], sigma[level], sigmad[level],MaxP[level], MaxPd[level]);
                                                 }
                                             }
                                     }
@@ -1708,12 +1708,12 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         variCb[6] = max(0.00001f, k6 * variCb[6]);
 
                         if (settings->verbose) {
-                            printf("CHRO var0=%f va1=%f va2=%f va3=%f va4=%f val5=%f va6=%f\n", variC[0], variC[1], variC[2], variC[3], variC[4], variC[5], variC[6]);
+                            fprintf(stderr,"CHRO var0=%f va1=%f va2=%f va3=%f va4=%f val5=%f va6=%f\n", variC[0], variC[1], variC[2], variC[3], variC[4], variC[5], variC[6]);
                         }
 
                         /*
                                                 for (int y = 0; y < 7; y++) {
-                                                    printf("y=%i madL=%f varia=%f variab=%f\n", y, madL[y][1], variC[y], variCb[y]);
+                                                    fprintf(stderr,"y=%i madL=%f varia=%f variab=%f\n", y, madL[y][1], variC[y], variCb[y]);
                                                 }
                         */
                         float nvch = 0.6f;//high value
@@ -1783,7 +1783,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             levwava = rtengine::min(maxlevelcrop, levwava);
                             levwava = rtengine::min(maxlev2, levwava);
                             if (settings->verbose) {
-                                printf("Leval decomp a=%i\n", levwava);
+                                fprintf(stderr,"Leval decomp a=%i\n", levwava);
                             }
 
                             if (levwava > 0) {
@@ -1794,14 +1794,14 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                     }
                                     if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.quamet == 0 && isdenoisL)) {
                                         if (settings->verbose) {
-                                            printf("denoise standard a \n");
+                                            fprintf(stderr,"denoise standard a \n");
                                         }
 
                                        WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
 
                                     } else if (cp.noiseena && ((cp.chromfi > 0.f && cp.chromco >= 0.f) && cp.quamet == 1 && isdenoisL)){
                                         if (settings->verbose) {
-                                            printf("denoise bishrink a \n");
+                                            fprintf(stderr,"denoise bishrink a \n");
                                         }
 
                                         WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
@@ -1837,7 +1837,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             levwavb = rtengine::min(maxlev2, levwavb);
 
                             if (settings->verbose) {
-                                printf("Leval decomp b=%i\n", levwavb);
+                                fprintf(stderr,"Leval decomp b=%i\n", levwavb);
                             }
 
                             if (levwavb > 0) {
@@ -1851,14 +1851,14 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                     if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) &&  cp.quamet == 0 && isdenoisL)) {
                                         WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                         if (settings->verbose) {
-                                            printf("Denoise standard b\n");
+                                            fprintf(stderr,"Denoise standard b\n");
                                         }
                                     } else if (cp.noiseena && ((cp.chromfi > 0.f && cp.chromco >= 0.f) && cp.quamet == 1 && isdenoisL)){
 
                                         WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                         WaveletDenoiseAllAB(*Ldecomp, *bdecomp, noisevarchrom, madL, variCb, edge, noisevarab_r, true, false, false, 1);
                                         if (settings->verbose) {
-                                            printf("Denoise bishrink b\n");
+                                            fprintf(stderr,"Denoise bishrink b\n");
                                         }
 
                                     }
@@ -1885,13 +1885,13 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                     if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.quamet == 0 && isdenoisL)) {
                                         WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
                                         if (settings->verbose) {
-                                            printf("Denoise standard ab\n");
+                                            fprintf(stderr,"Denoise standard ab\n");
                                         }
                                     } else if (cp.noiseena && ((cp.chromfi > 0.f || cp.chromco > 0.f) && cp.quamet == 1 && isdenoisL)) { 
                                         WaveletDenoiseAll_BiShrinkAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
                                         WaveletDenoiseAllAB(*Ldecomp, *adecomp, noisevarchrom, madL, variC, edge, noisevarab_r, true, false, false, 1);
                                         if (settings->verbose) {
-                                            printf("Denoise bishrink ab\n");
+                                            fprintf(stderr,"Denoise bishrink ab\n");
                                         }
                                     }
 
@@ -2223,7 +2223,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                     float* const* WavCoeffs_L = LdecompLL->level_coeffs(level);//first decomp denoised
                     float* const* WavCoeffs_L2 = Ldecompdst->level_coeffs(level);//second decomp before denoise
                     if (settings->verbose) {
-                        printf("level=%i mean=%.0f meanden=%.0f sigma=%.0f  sigmaden=%.0f Max=%.0f Maxden=%.0f\n", level, mean[level], meang[level], sigma[level], sigmag[level],MaxP[level], MaxPg[level]);
+                        fprintf(stderr,"level=%i mean=%.0f meanden=%.0f sigma=%.0f  sigmaden=%.0f Max=%.0f Maxden=%.0f\n", level, mean[level], meang[level], sigma[level], sigmag[level],MaxP[level], MaxPg[level]);
                     }
 
                                             //find local contrast
@@ -3605,7 +3605,7 @@ void ImProcFunctions::ContAllL(float *koeLi[12], float maxkoeLi, bool lipschitz,
     }
 /*
     if (settings->verbose) {
-        printf("level=%i mean=%f sigma=%f maxp=%f\n", level, mean[level], sigma[level], MaxP[level]);
+        fprintf(stderr,"level=%i mean=%f sigma=%f maxp=%f\n", level, mean[level], sigma[level], MaxP[level]);
     }
 */
     constexpr float t_r = 40.f;

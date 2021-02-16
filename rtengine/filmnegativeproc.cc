@@ -80,7 +80,7 @@ void getSpotAvgMax(ImageSource *imgsrc, ColorTemp currWB, const std::unique_ptr<
     PreviewProps pp(x1, y1, spotSize, spotSize, 1);
 
     if (settings->verbose) {
-        printf("Spot: %d,%d   %d,%d\n", x1, y1, x1 + spotSize / 2, y1 + spotSize / 2);
+        fprintf(stderr,"Spot: %d,%d   %d,%d\n", x1, y1, x1 + spotSize / 2, y1 + spotSize / 2);
     }
 
     rtengine::Imagefloat spotImg(spotSize, spotSize);
@@ -129,7 +129,7 @@ void getSpotAvgMax(ImageSource *imgsrc, ColorTemp currWB, const std::unique_ptr<
     avg.b = MAX(avg.b, 1.f);
 
     if (settings->verbose) {
-        printf("Average Spot RGB: %f,%f,%f\n", avg.r, avg.g, avg.b);
+        fprintf(stderr,"Average Spot RGB: %f,%f,%f\n", avg.r, avg.g, avg.b);
     }
 }
 
@@ -178,7 +178,7 @@ RGB getMedians(const rtengine::Imagefloat* input, int borderPercent)
                 rmed, gmed, bmed);
 
     if (settings->verbose) {
-        printf("Channel medians: R=%g, G=%g, B=%g\n", rmed, gmed, bmed);
+        fprintf(stderr,"Channel medians: R=%g, G=%g, B=%g\n", rmed, gmed, bmed);
     }
 
     return { rmed, gmed, bmed };
@@ -368,7 +368,7 @@ bool rtengine::ImProcFunctions::filmNegativeProcess(
     }
 
     if (settings->verbose && fnp.backCompat != FilmNegativeParams::BackCompat::CURRENT) {
-        printf("Upgraded from V%d - refIn: R=%g G=%g B=%g refOut: R=%g G=%g B=%g\n",
+        fprintf(stderr,"Upgraded from V%d - refIn: R=%g G=%g B=%g refOut: R=%g G=%g B=%g\n",
                (int)fnp.backCompat,
                static_cast<double>(refIn.r), static_cast<double>(refIn.g), static_cast<double>(refIn.b),
                static_cast<double>(refOut.r), static_cast<double>(refOut.g), static_cast<double>(refOut.b));
@@ -460,7 +460,7 @@ void rtengine::Thumbnail::processFilmNegative(
     calcMedians(baseImg, 0, 0, rwidth, rheight, rmed, gmed, bmed);
 
     if (settings->verbose) {
-        printf("FilmNeg legacy V1 :: Thumbnail input channel medians: %g %g %g\n", rmed, gmed, bmed);
+        fprintf(stderr,"FilmNeg legacy V1 :: Thumbnail input channel medians: %g %g %g\n", rmed, gmed, bmed);
     }
 
     // Calculate output medians
@@ -494,7 +494,7 @@ void rtengine::Thumbnail::processFilmNegative(
     bmult /= gavg / bavg;
 
     if (settings->verbose) {
-        printf("FilmNeg legacy V1 :: Thumbnail computed multipliers: %g %g %g\n", static_cast<double>(rmult), static_cast<double>(gmult), static_cast<double>(bmult));
+        fprintf(stderr,"FilmNeg legacy V1 :: Thumbnail computed multipliers: %g %g %g\n", static_cast<double>(rmult), static_cast<double>(gmult), static_cast<double>(bmult));
     }
 
 #ifdef __SSE2__
@@ -561,7 +561,7 @@ void rtengine::Thumbnail::processFilmNegativeV2(
         calcMedians(baseImg, bW, bH, rwidth - bW, rheight - bH, rmed, gmed, bmed);
 
         if (settings->verbose) {
-            printf("FilmNeg legacy V2 :: Thumbnail input channel medians: %g %g %g\n", rmed, gmed, bmed);
+            fprintf(stderr,"FilmNeg legacy V2 :: Thumbnail input channel medians: %g %g %g\n", rmed, gmed, bmed);
         }
 
         // Calculate output medians
@@ -591,7 +591,7 @@ void rtengine::Thumbnail::processFilmNegativeV2(
         bbase *= (blueMultiplier / camwbBlue)   * scaleGain;
 
         if (settings->verbose) {
-            printf("FilmNeg legacy V2 :: Thumbnail input film base values: %g %g %g\n", rbase, gbase, bbase);
+            fprintf(stderr,"FilmNeg legacy V2 :: Thumbnail input film base values: %g %g %g\n", rbase, gbase, bbase);
         }
 
         // Apply exponents to get output film base values
@@ -625,7 +625,7 @@ void rtengine::Thumbnail::processFilmNegativeV2(
 
 
     if (settings->verbose) {
-        printf("FilmNeg legacy V2 :: Thumbnail computed multipliers: %g %g %g\n", static_cast<double>(rmult), static_cast<double>(gmult), static_cast<double>(bmult));
+        fprintf(stderr,"FilmNeg legacy V2 :: Thumbnail computed multipliers: %g %g %g\n", static_cast<double>(rmult), static_cast<double>(gmult), static_cast<double>(bmult));
     }
 
 

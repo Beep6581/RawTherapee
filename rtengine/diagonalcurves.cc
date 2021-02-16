@@ -243,10 +243,10 @@ void DiagonalCurve::NURBS_set ()
 
         if (nbr_points < 0) {
             for(unsigned int it = 0; it < sc_x.size(); it += 3) { // used unsigned int instead of size_t to avoid %zu in printf
-                printf("sc_length[%u/3]=%f \n", it, sc_length[it / 3]);
+                fprintf(stderr,"sc_length[%u/3]=%f \n", it, sc_length[it / 3]);
             }
 
-            printf("NURBS diagonal curve: error detected!\n i=%u nbr_points=%d ppn=%d N=%d sc_length[i/3]=%f total_length=%f", i, nbr_points, ppn, N, sc_length[i / 3], total_length);
+            fprintf(stderr,"NURBS diagonal curve: error detected!\n i=%u nbr_points=%d ppn=%d N=%d sc_length[i/3]=%f total_length=%f", i, nbr_points, ppn, N, sc_length[i / 3], total_length);
             exit(0);
         }
 
@@ -512,7 +512,7 @@ double DiagonalCurve::getVal (double t) const
 
         if (UNLIKELY(i > (hashSize + 1))) {
             //printf("\nOVERFLOW: hash #%d is used while seeking for value %.8f, corresponding polygon's point #%d (out of %d point) x value: %.8f\n\n", i, t, hash.at(i), poly_x.size(), poly_x[hash.at(i)]);
-            printf("\nOVERFLOW: hash #%d is used while seeking for value %.8f\n\n", i, t);
+            fprintf(stderr,"\nOVERFLOW: hash #%d is used while seeking for value %.8f\n\n", i, t);
             return t;
         }
 

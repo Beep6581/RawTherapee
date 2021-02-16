@@ -3206,7 +3206,7 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
             if (settings->verbose) {
                 double correl_temp = 0.0;
                 XYZtoCorColorTemp(Xwb, Ywb, Zwb, correl_temp);
-                printf("Correlated temperature (lamp)=%i\n", (int) correl_temp); //use only for lamp...otherwise It give an information!!
+                fprintf(stderr,"Correlated temperature (lamp)=%i\n", (int) correl_temp); //use only for lamp...otherwise It give an information!!
             }
 
             double Xwb_bb = x / y; //white balance for blackbody
@@ -3311,9 +3311,9 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
 
             //display value to verify calculus
             if(settings->CRI_color != 0) {
-                printf("Color Number %i\n", numero_color);
-                printf("L_refer=%2.2f a=%2.2f b=%2.2f\n", Lbb[numero_color], abb[numero_color], bbb[numero_color]);
-                printf("L_lamp=%2.2f al=%2.2f bl=%2.2f\n", Llamp[numero_color], alamp[numero_color], blamp[numero_color]);
+                fprintf(stderr,"Color Number %i\n", numero_color);
+                fprintf(stderr,"L_refer=%2.2f a=%2.2f b=%2.2f\n", Lbb[numero_color], abb[numero_color], bbb[numero_color]);
+                fprintf(stderr,"L_lamp=%2.2f al=%2.2f bl=%2.2f\n", Llamp[numero_color], alamp[numero_color], blamp[numero_color]);
             }
 
             //then calculate DeltaE CIE 1976
@@ -3358,8 +3358,8 @@ void ColorTemp::temp2mul (double temp, double green, double equal, double& rmul,
             quadCRI /= N_c;
 
             if(settings->CRI_color != 0) {
-                printf("CRI_standard=%i CRI:1->8=%i %i %i %i %i %i %i %i  Sigma=%2.1f\n", (int) CRI_RTs, (int) CRIs[0], (int) CRIs[1], (int) CRIs[2], (int) CRIs[3], (int) CRIs[4], (int) CRIs[5], (int) CRIs[6], (int) CRIs[7], sqrt(static_cast<double>(quadCRIs)));
-                printf("CRI_RT_exten=%i CRI:9->20=%i %i %i %i %i %i %i %i %i %i %i %i Sigma=%2.1f\n", (int) CRI_RT, (int) CRI[8], (int) CRI[9], (int) CRI[10], (int) CRI[11], (int) CRI[12], (int) CRI[13], (int) CRI[14], (int) CRI[15], (int) CRI[16], (int) CRI[17], (int) CRI[18], (int) CRI[19], static_cast<double>(sqrt(quadCRI)));
+                fprintf(stderr,"CRI_standard=%i CRI:1->8=%i %i %i %i %i %i %i %i  Sigma=%2.1f\n", (int) CRI_RTs, (int) CRIs[0], (int) CRIs[1], (int) CRIs[2], (int) CRIs[3], (int) CRIs[4], (int) CRIs[5], (int) CRIs[6], (int) CRIs[7], sqrt(static_cast<double>(quadCRIs)));
+                fprintf(stderr,"CRI_RT_exten=%i CRI:9->20=%i %i %i %i %i %i %i %i %i %i %i %i Sigma=%2.1f\n", (int) CRI_RT, (int) CRI[8], (int) CRI[9], (int) CRI[10], (int) CRI[11], (int) CRI[12], (int) CRI[13], (int) CRI[14], (int) CRI[15], (int) CRI[16], (int) CRI[17], (int) CRI[18], (int) CRI[19], static_cast<double>(sqrt(quadCRI)));
             }
         }
     }
@@ -3763,9 +3763,9 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
 
     if (settings->verbose) {
         if (settings->itcwb_stdobserver10 == false) {
-            printf("Use standard observer 2°\n");
+            fprintf(stderr,"Use standard observer 2°\n");
         } else {
-            printf("Use standard observer 10°\n");
+            fprintf(stderr,"Use standard observer 10°\n");
         }
     }
 

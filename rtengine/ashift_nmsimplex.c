@@ -158,12 +158,12 @@ static int simplex(double (*objfunc)(double[], void *params), double start[], in
   k = n + 1;
 #if 0
   /* print out the initial values */
-  printf("Initial Values\n");
+  fprintf(stderr,"Initial Values\n");
   for(j = 0; j <= n; j++)
   {
     for(i = 0; i < n; i++)
     {
-      printf("%f %f\n", v[j][i], f[j]);
+      fprintf(stderr,"%f %f\n", v[j][i], f[j]);
     }
   }
 #endif
@@ -350,12 +350,12 @@ static int simplex(double (*objfunc)(double[], void *params), double start[], in
     }
 #if 0
     /* print out the value at each iteration */
-    printf("Iteration %d\n", itr);
+    fprintf(stderr,"Iteration %d\n", itr);
     for(j = 0; j <= n; j++)
     {
       for(i = 0; i < n; i++)
       {
-        printf("%f %f\n", v[j][i], f[j]);
+        fprintf(stderr,"%f %f\n", v[j][i], f[j]);
       }
     }
 #endif
@@ -386,17 +386,17 @@ static int simplex(double (*objfunc)(double[], void *params), double start[], in
     }
   }
 #if 0
-  printf("The minimum was found at\n");
+  fprintf(stderr,"The minimum was found at\n");
   for(j = 0; j < n; j++)
   {
-    printf("%e\n", v[vs][j]);
+    fprintf(stderr,"%e\n", v[vs][j]);
     start[j] = v[vs][j];
   }
   double min = objfunc(v[vs], params);
   k++;
-  printf("The minimum value is %f\n", min);
-  printf("%d Function Evaluations\n", k);
-  printf("%d Iterations through program\n", itr);
+  fprintf(stderr,"The minimum value is %f\n", min);
+  fprintf(stderr,"%d Function Evaluations\n", k);
+  fprintf(stderr,"%d Iterations through program\n", itr);
 #else
   for(j = 0; j < n; j++)
   {

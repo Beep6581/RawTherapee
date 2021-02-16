@@ -306,7 +306,7 @@ void DFManager::init(const Glib::ustring& pathname)
             int n = scanBadPixelsFile( names[i] );
 
             if( n > 0 && settings->verbose) {
-                printf("Loaded %s: %d pixels\n", names[i].c_str(), n);
+                fprintf(stderr,"Loaded %s: %d pixels\n", names[i].c_str(), n);
             }
 
             continue;
@@ -328,15 +328,15 @@ void DFManager::init(const Glib::ustring& pathname)
 
         if( settings->verbose ) {
             if( !i.pathname.empty() ) {
-                printf( "%s:  %s\n", i.key().c_str(), i.pathname.c_str());
+                fprintf(stderr, "%s:  %s\n", i.key().c_str(), i.pathname.c_str());
             } else {
-                printf( "%s: MEAN of \n    ", i.key().c_str());
+                fprintf(stderr, "%s: MEAN of \n    ", i.key().c_str());
 
                 for(std::list<Glib::ustring>::iterator path = i.pathNames.begin(); path != i.pathNames.end(); ++path) {
-                    printf("%s, ", path->c_str());
+                    fprintf(stderr,"%s, ", path->c_str());
                 }
 
-                printf("\n");
+                fprintf(stderr,"\n");
             }
         }
     }
@@ -524,10 +524,10 @@ std::vector<badPix> *DFManager::getHotPixels ( const std::string &mak, const std
     if( df ) {
         if( settings->verbose ) {
             if( !df->pathname.empty() ) {
-                printf( "Searched hotpixels from %s\n", df->pathname.c_str());
+                fprintf(stderr, "Searched hotpixels from %s\n", df->pathname.c_str());
             } else {
                 if( !df->pathNames.empty() ) {
-                    printf( "Searched hotpixels from template (first %s)\n", df->pathNames.begin()->c_str());
+                    fprintf(stderr, "Searched hotpixels from template (first %s)\n", df->pathNames.begin()->c_str());
                 }
             }
         }
@@ -607,9 +607,9 @@ std::vector<badPix> *DFManager::getBadPixels ( const std::string &mak, const std
 
         if( settings->verbose ) {
             if(found) {
-                printf("%s.badpixels found\n", s.str().c_str());
+                fprintf(stderr,"%s.badpixels found\n", s.str().c_str());
             } else {
-                printf("%s.badpixels not found\n", s.str().c_str());
+                fprintf(stderr,"%s.badpixels not found\n", s.str().c_str());
             }
         }
 
@@ -627,9 +627,9 @@ std::vector<badPix> *DFManager::getBadPixels ( const std::string &mak, const std
 
         if( settings->verbose ) {
             if(found) {
-                printf("%s.badpixels found\n", s.str().c_str());
+                fprintf(stderr,"%s.badpixels found\n", s.str().c_str());
             } else {
-                printf("%s.badpixels not found\n", s.str().c_str());
+                fprintf(stderr,"%s.badpixels not found\n", s.str().c_str());
             }
         }
     }

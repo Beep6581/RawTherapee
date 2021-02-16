@@ -164,7 +164,7 @@ void EditWindow::setAppIcon()
     try {
         set_default_icon(pixbuf);
     } catch(Glib::Exception& ex) {
-        printf ("%s\n", ex.what().c_str());
+        fprintf(stderr,"%s\n", ex.what().c_str());
     }
 }
 

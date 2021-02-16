@@ -226,7 +226,7 @@ rtengine::LCPProfile::LCPProfile(const Glib::ustring& fname) :
     XML_ParserFree(parser);
 
     if (settings->verbose) {
-        std::printf("Parsing %s\n", fname.c_str());
+        std::fprintf(stderr, "Parsing %s\n", fname.c_str());
     }
     // Two phase filter: first filter out the very rough ones, that distord the average a lot
     // force it, even if there are few frames (community profiles)
@@ -515,7 +515,7 @@ void rtengine::LCPProfile::calcParams(
         }
 
         if (settings->verbose) {
-            std::printf("LCP mode=%i, dist: %g found frames: Fno %g-%g; FocLen %g-%g; Dist %g-%g with weight %g\n",
+            std::fprintf(stderr, "LCP mode=%i, dist: %g found frames: Fno %g-%g; FocLen %g-%g; Dist %g-%g with weight %g\n",
                         toUnderlying(mode),
                         static_cast<double>(focusDist),
                         static_cast<double>(pLow->aperture),
@@ -528,7 +528,7 @@ void rtengine::LCPProfile::calcParams(
         }
     } else {
         if (settings->verbose) {
-            std::printf("Error: LCP file contained no %s parameters\n", mode == LCPCorrectionMode::VIGNETTE ? "vignette" : mode == LCPCorrectionMode::DISTORTION ? "distortion" : "CA" );
+            std::fprintf(stderr, "Error: LCP file contained no %s parameters\n", mode == LCPCorrectionMode::VIGNETTE ? "vignette" : mode == LCPCorrectionMode::DISTORTION ? "distortion" : "CA" );
         }
     }
 }
@@ -609,7 +609,7 @@ int rtengine::LCPProfile::filterBadFrames(LCPCorrectionMode mode, double maxAvgD
         }
 
         if (settings->verbose && count) {
-            std::printf("Filtered %.1f%% frames for maxAvgDevFac %g leaving %i\n", filtered * 100.0 / count, maxAvgDevFac, count - filtered);
+            std::fprintf(stderr, "Filtered %.1f%% frames for maxAvgDevFac %g leaving %i\n", filtered * 100.0 / count, maxAvgDevFac, count - filtered);
         }
     }
 
@@ -967,7 +967,7 @@ rtengine::LCPMapper::LCPMapper(
     const bool mirrorX = (rot == 90  || rot == 180);
     const bool mirrorY = (rot == 180 || rot == 270);
     if (settings->verbose) {
-        std::printf("Vign: %i, fullWidth: %i/%i, focLen %g SwapXY: %i / MirX/Y %i / %i on rot:%i from %i\n",vignette, fullWidth, fullHeight, static_cast<double>(focalLength), swapXY, mirrorX, mirrorY, rot, rawRotationDeg);
+        std::fprintf(stderr, "Vign: %i, fullWidth: %i/%i, focLen %g SwapXY: %i / MirX/Y %i / %i on rot:%i from %i\n",vignette, fullWidth, fullHeight, static_cast<double>(focalLength), swapXY, mirrorX, mirrorY, rot, rawRotationDeg);
     }
 
     pProf->calcParams(vignette ? LCPCorrectionMode::VIGNETTE : LCPCorrectionMode::DISTORTION, focalLength, focusDist, aperture, &mc, nullptr, nullptr);

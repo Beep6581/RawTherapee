@@ -162,9 +162,9 @@ RTWindow::RTWindow ()
             cssRT->load_from_path (filename);
             Gtk::StyleContext::add_provider_for_screen (screen, cssRT, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
         } catch (Glib::Error &err) {
-            printf ("Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
+            fprintf(stderr,"Error: Can't load css file \"%s\"\nMessage: %s\n", filename.c_str(), err.what().c_str());
         } catch (...) {
-            printf ("Error: Can't load css file \"%s\"\n", filename.c_str());
+            fprintf(stderr,"Error: Can't load css file \"%s\"\n", filename.c_str());
         }
 
         // Set the font face and size
@@ -181,7 +181,7 @@ RTWindow::RTWindow ()
                 fontScale = options.fontSize / (float)RTScalable::baseFontSize;
             }
             if (rtengine::settings->verbose) {
-                printf("\"Non-Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", options.fontSize, (int)initialGdkScale, static_cast<double>(fontScale));
+                fprintf(stderr,"\"Non-Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", options.fontSize, (int)initialGdkScale, static_cast<double>(fontScale));
             }
         } else {
             Glib::RefPtr<Gtk::StyleContext> style = Gtk::StyleContext::create();
@@ -211,14 +211,14 @@ RTWindow::RTWindow ()
                 if ((int)initialGdkScale > 1 || pt != RTScalable::baseFontSize) {
                     css = Glib::ustring::compose ("* { font-size: %1pt}", pt * (int)initialGdkScale);
                     if (rtengine::settings->verbose) {
-                        printf("\"Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", pt, (int)initialGdkScale, static_cast<double>(fontScale));
+                        fprintf(stderr,"\"Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", pt, (int)initialGdkScale, static_cast<double>(fontScale));
                     }
                 }
             }
         }
         if (!css.empty()) {
             if (rtengine::settings->verbose) {
-                printf("CSS:\n%s\n\n", css.c_str());
+                fprintf(stderr,"CSS:\n%s\n\n", css.c_str());
             }
             try {
                 cssForced = Gtk::CssProvider::create();
@@ -227,9 +227,9 @@ RTWindow::RTWindow ()
                 Gtk::StyleContext::add_provider_for_screen (screen, cssForced, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
             } catch (Glib::Error &err) {
-                printf ("Error: \"%s\"\n", err.what().c_str());
+                fprintf(stderr,"Error: \"%s\"\n", err.what().c_str());
             } catch (...) {
-                printf ("Error: Can't find the font named \"%s\"\n", options.fontFamily.c_str());
+                fprintf(stderr,"Error: Can't find the font named \"%s\"\n", options.fontFamily.c_str());
             }
         }
     }
@@ -253,7 +253,7 @@ RTWindow::RTWindow ()
     try {
         set_default_icon_list(appIcons);
     } catch (Glib::Exception& ex) {
-        printf ("%s\n", ex.what().c_str());
+        fprintf(stderr,"%s\n", ex.what().c_str());
     }
 #endif
 

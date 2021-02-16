@@ -534,7 +534,7 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
     int lastlevel = maxlevelloc;
 
     if (settings->verbose) { 
-        printf("Dirpyr scaleprev=%i\n", scaleprev);
+        fprintf(stderr,"Dirpyr scaleprev=%i\n", scaleprev);
     }
 
     while (lastlevel > 0 && fabs(mult[lastlevel - 1] - 1) < 0.001) {
@@ -559,7 +559,7 @@ void ImProcFunctions::cbdl_local_temp(float ** src, float ** loctemp, int srcwid
     }
 
     if (settings->verbose) {
-        printf("CbDL local mult0=%f  1=%f 2=%f 3=%f 4=%f 5%f\n", multi[0], multi[1], multi[2], multi[3], multi[4], multi[5]);
+        fprintf(stderr,"CbDL local mult0=%f  1=%f 2=%f 3=%f 4=%f 5%f\n", multi[0], multi[1], multi[2], multi[3], multi[4], multi[5]);
     }
 
     multi_array2D<float, maxlevelloc> dirpyrlo(srcwidth, srcheight);

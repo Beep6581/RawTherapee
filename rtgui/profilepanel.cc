@@ -475,7 +475,7 @@ void ProfilePanel::load_clicked (GdkEventButton* event)
 
     if (result == Gtk::RESPONSE_OK) {
         Glib::ustring fname = dialog.get_filename();
-		printf("fname=%s\n", fname.c_str());
+		fprintf(stderr,"fname=%s\n", fname.c_str());
 
         bool customCreated = false;
 

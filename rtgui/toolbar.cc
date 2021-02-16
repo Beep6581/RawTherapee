@@ -206,7 +206,7 @@ void ToolBar::startEditMode()
 
 #ifndef NDEBUG
     else {
-        printf("Editing mode already active!\n");
+        fprintf(stderr,"Editing mode already active!\n");
     }
 
 #endif

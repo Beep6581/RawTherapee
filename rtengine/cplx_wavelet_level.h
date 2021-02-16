@@ -170,7 +170,7 @@ T ** wavelet_level<T>::create(int n)
             subbands[j] = new (std::nothrow) T[n];
 
             if(subbands[j] == nullptr) {
-                printf("Couldn't allocate memory in level %d of wavelet\n", lvl);
+                fprintf(stderr,"Couldn't allocate memory in level %d of wavelet\n", lvl);
                 memoryAllocationFailed = true;
             }
         }

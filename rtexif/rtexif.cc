@@ -217,11 +217,11 @@ void TagDirectory::printAll (unsigned int level) const
         TagDirectory* currTagDir;
         if (tags[i]->isDirectory()) {
             for (int j = 0; (currTagDir = tags[i]->getDirectory (j)) != nullptr; j++) {
-                printf ("%s+-- DIRECTORY %s[%d]:\n", prefixStr, name.c_str(), j);
+                fprintf(stderr,"%s+-- DIRECTORY %s[%d]:\n", prefixStr, name.c_str(), j);
                 currTagDir->printAll (level + 1);
             }
         } else {
-            printf ("%s- %s\n", prefixStr, name.c_str());
+            fprintf(stderr,"%s- %s\n", prefixStr, name.c_str());
         }
     }
 }
@@ -280,7 +280,7 @@ bool TagDirectory::CPBDump (const Glib::ustring &commFName, const Glib::ustring 
         f = g_fopen (commFName.c_str (), "wt");
 
         if (f == nullptr) {
-            printf ("TagDirectory::keyFileDump(\"%s\") >>> Error: unable to open file with write access!\n", commFName.c_str());
+            fprintf(stderr,"TagDirectory::keyFileDump(\"%s\") >>> Error: unable to open file with write access!\n", commFName.c_str());
             delete kf;
             return false;
         }
@@ -3080,7 +3080,7 @@ void ExifManager::parse (bool isRaw, bool skipIgnored, bool parseJpeg)
             frameRootDetected = true;
 
 #if PRINT_METADATA_TREE
-            printf("\n--------------- FRAME (RAWIMAGESEGMENTATION) ---------------\n\n");
+            fprintf(stderr,"\n--------------- FRAME (RAWIMAGESEGMENTATION) ---------------\n\n");
             ris->getParent()->printAll ();
 #endif
         }
@@ -3095,7 +3095,7 @@ void ExifManager::parse (bool isRaw, bool skipIgnored, bool parseJpeg)
                         frameRootDetected = true;
 
 #if PRINT_METADATA_TREE
-                        printf("\n--------------- FRAME (SUBFILETYPE) ---------------\n\n");
+                        fprintf(stderr,"\n--------------- FRAME (SUBFILETYPE) ---------------\n\n");
                         sft->getParent()->printAll ();
 #endif
                     }
@@ -3113,7 +3113,7 @@ void ExifManager::parse (bool isRaw, bool skipIgnored, bool parseJpeg)
                         frameRootDetected = true;
 
 #if PRINT_METADATA_TREE
-                        printf("\n--------------- FRAME (OSUBFILETYPE) ---------------\n\n");
+                        fprintf(stderr,"\n--------------- FRAME (OSUBFILETYPE) ---------------\n\n");
                         sft->getParent()->printAll ();
 #endif
                     }
@@ -3131,7 +3131,7 @@ void ExifManager::parse (bool isRaw, bool skipIgnored, bool parseJpeg)
                         //frameRootDetected = true;  not used afterward
 
 #if PRINT_METADATA_TREE
-                        printf("\n--------------- FRAME (PHOTOMETRIC) ---------------\n\n");
+                        fprintf(stderr,"\n--------------- FRAME (PHOTOMETRIC) ---------------\n\n");
                         pi->getParent()->printAll ();
 #endif
                     }
@@ -3146,7 +3146,7 @@ void ExifManager::parse (bool isRaw, bool skipIgnored, bool parseJpeg)
         roots.push_back(root);
 
 #if PRINT_METADATA_TREE
-        printf("\n~~~~~~~~~ ROOT ~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
+        fprintf(stderr,"\n~~~~~~~~~ ROOT ~~~~~~~~~~~~~~~~~~~~~~~~\n\n");
         root->printAll ();
 #endif
 

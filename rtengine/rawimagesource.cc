@@ -992,7 +992,7 @@ DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfileA
 
     if (dcpProf == nullptr) {
         if (settings->verbose) {
-            printf("Can't load DCP profile '%s'!\n", cmp.inputProfile.c_str());
+            fprintf(stderr,"Can't load DCP profile '%s'!\n", cmp.inputProfile.c_str());
         }
         return nullptr;
     }
@@ -1212,7 +1212,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
     camera_wb = ColorTemp (cam_r, cam_g, cam_b, 1.); // as shot WB
 
     if (settings->verbose) {
-        printf("Raw As Shot White balance: temp %f, tint %f\n", camera_wb.getTemp(), camera_wb.getGreen());
+        fprintf(stderr,"Raw As Shot White balance: temp %f, tint %f\n", camera_wb.getTemp(), camera_wb.getGreen());
     }
 
     /*{
@@ -1268,7 +1268,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
     t2.set();
 
     if (settings->verbose) {
-        printf("Load %s: %d usec\n", fname.c_str(), t2.etime(t1));
+        fprintf(stderr,"Load %s: %d usec\n", fname.c_str(), t2.etime(t1));
     }
 
     return 0; // OK!
@@ -1299,7 +1299,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         const ColorTemp ReferenceWB = ColorTemp (ref_r, ref_g, ref_b, 1.);
 
         if (settings->verbose) {
-            printf("Raw Reference white balance: temp %f, tint %f, multipliers [%f %f %f | %f %f %f]\n", ReferenceWB.getTemp(), ReferenceWB.getGreen(), ref_r, ref_g, ref_b, refwb_red, refwb_blue, refwb_green);
+            fprintf(stderr,"Raw Reference white balance: temp %f, tint %f, multipliers [%f %f %f | %f %f %f]\n", ReferenceWB.getTemp(), ReferenceWB.getGreen(), ref_r, ref_g, ref_b, refwb_red, refwb_blue, refwb_green);
         }
     }
 
@@ -1316,7 +1316,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
 
     if (rid && settings->verbose) {
-        printf("Subtracting Darkframe:%s\n", rid->get_filename().c_str());
+        fprintf(stderr,"Subtracting Darkframe:%s\n", rid->get_filename().c_str());
     }
 
     std::unique_ptr<PixelsMap> bitmapBads;
@@ -1328,7 +1328,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         totBP = findZeroPixels(*(bitmapBads.get()));
 
         if (settings->verbose) {
-            printf("%d pixels with value zero marked as bad pixels\n", totBP);
+            fprintf(stderr,"%d pixels with value zero marked as bad pixels\n", totBP);
         }
     }
 
@@ -1347,7 +1347,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     bool hasFlatField = (rif != nullptr);
 
     if (hasFlatField && settings->verbose) {
-        printf("Flat Field Correction:%s\n", rif->get_filename().c_str());
+        fprintf(stderr,"Flat Field Correction:%s\n", rif->get_filename().c_str());
     }
 
     if (numFrames == 4) {
@@ -1473,7 +1473,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         totBP += nFound;
 
         if (settings->verbose && nFound > 0) {
-            printf("Correcting %d hot/dead pixels found inside image\n", nFound);
+            fprintf(stderr,"Correcting %d hot/dead pixels found inside image\n", nFound);
         }
     }
 
@@ -1489,7 +1489,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
         if (n > 0) {
             if (settings->verbose) {
-                printf("Marked %d hot pixels from PDAF lines\n", n);            
+                fprintf(stderr,"Marked %d hot pixels from PDAF lines\n", n);            
             }
 
             auto &thresh = f.greenEqThreshold();        
@@ -1514,7 +1514,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     
     if (ri->getSensorType() == ST_BAYER && (raw.bayersensor.greenthresh || (globalGreenEq() && raw.bayersensor.method != RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::VNG4)))) {
         if (settings->verbose) {
-            printf("Performing global green equilibration...\n");
+            fprintf(stderr,"Performing global green equilibration...\n");
         }
         // global correction
         if (numFrames == 4) {
@@ -1606,7 +1606,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     t2.set();
 
     if (settings->verbose) {
-        printf("Preprocessing: %d usec\n", t2.etime(t1));
+        fprintf(stderr,"Preprocessing: %d usec\n", t2.etime(t1));
     }
 
     rawDirty = true;
@@ -1733,9 +1733,9 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
     }
     if (settings->verbose) {
         if (getSensorType() == ST_BAYER) {
-            printf("Demosaicing Bayer data: %s - %d usec\n", raw.bayersensor.method.c_str(), t2.etime(t1));
+            fprintf(stderr,"Demosaicing Bayer data: %s - %d usec\n", raw.bayersensor.method.c_str(), t2.etime(t1));
         } else if (getSensorType() == ST_FUJI_XTRANS) {
-            printf("Demosaicing X-Trans data: %s - %d usec\n", raw.xtranssensor.method.c_str(), t2.etime(t1));
+            fprintf(stderr,"Demosaicing X-Trans data: %s - %d usec\n", raw.xtranssensor.method.c_str(), t2.etime(t1));
         }
     }
 }
@@ -1809,15 +1809,15 @@ void RawImageSource::retinexPrepareBuffers(const ColorManagementParams& cmp, con
     rr=red[50][2300];
     gg=green[50][2300];
     bb=blue[50][2300];
-    printf("rr=%f gg=%f bb=%f \n",rr,gg,bb);
+    fprintf(stderr,"rr=%f gg=%f bb=%f \n",rr,gg,bb);
     rr=red[1630][370];
     gg=green[1630][370];
     bb=blue[1630][370];
-    printf("rr1=%f gg1=%f bb1=%f \n",rr,gg,bb);
+    fprintf(stderr,"rr1=%f gg1=%f bb1=%f \n",rr,gg,bb);
     rr=red[380][1630];
     gg=green[380][1630];
     bb=blue[380][1630];
-    printf("rr2=%f gg2=%f bb2=%f \n",rr,gg,bb);
+    fprintf(stderr,"rr2=%f gg2=%f bb2=%f \n",rr,gg,bb);
     */
     /*
     if (retinexParams.highlig < 100 && retinexParams.retinexMethod == "highliplus") {//try to recover magenta...very difficult !
@@ -2015,7 +2015,7 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
     t4.set();
 
     if (settings->verbose) {
-        printf ("Applying Retinex\n");
+        fprintf(stderr,"Applying Retinex\n");
     }
 
     LUTf lutToneireti;
@@ -2390,7 +2390,7 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
     t5.set();
 
     if (settings->verbose) {
-        printf("Retinex=%d usec\n",  t5.etime(t4));
+        fprintf(stderr,"Retinex=%d usec\n",  t5.etime(t4));
     }
 
 }
@@ -2435,7 +2435,7 @@ void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
     if (hrp.hrenabled && hrp.method == "Color") {
         if (!rgbSourceModified) {
             if (settings->verbose) {
-                printf ("Applying Highlight Recovery: Color propagation...\n");
+                fprintf(stderr,"Applying Highlight Recovery: Color propagation...\n");
             }
 
             HLRecovery_inpaint (red, green, blue);
@@ -5066,7 +5066,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     estimchrom /= sizcu4;
     if (settings->verbose) {   
-        printf("estimchrom=%f\n", estimchrom);
+        fprintf(stderr,"estimchrom=%f\n", estimchrom);
     }
     if (settings->itcwb_sort) { //sort in ascending with chroma values
         std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
@@ -5329,7 +5329,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
     //now we have temp green and student
     if (settings->verbose) {
-        printf("ITCWB tempitc=%f gritc=%f stud=%f \n", tempitc, greenitc, studgood);
+        fprintf(stderr,"ITCWB tempitc=%f gritc=%f stud=%f \n", tempitc, greenitc, studgood);
     }
 }
 
@@ -5644,7 +5644,7 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
     blueloc(0, 0);
 
     if (settings->verbose) {
-        printf ("AVG: %g %g %g\n", avg_r / std::max(1, rn), avg_g / std::max(1, gn), avg_b / std::max(1, bn));
+        fprintf(stderr,"AVG: %g %g %g\n", avg_r / std::max(1, rn), avg_g / std::max(1, gn), avg_b / std::max(1, bn));
     }
 
     if (wbpar.method == "autitcgreen") {
@@ -5865,7 +5865,7 @@ void RawImageSource::getAutoWBMultipliers (double &rm, double &gm, double &bm)
     }
 
     if (settings->verbose) {
-        printf ("AVG: %g %g %g\n", avg_r / std::max(1, rn), avg_g / std::max(1, gn), avg_b / std::max(1, bn));
+        fprintf(stderr,"AVG: %g %g %g\n", avg_r / std::max(1, rn), avg_g / std::max(1, gn), avg_b / std::max(1, bn));
     }
 
     //    return ColorTemp (pow(avg_r/rn, 1.0/6.0)*img_r, pow(avg_g/gn, 1.0/6.0)*img_g, pow(avg_b/bn, 1.0/6.0)*img_b);

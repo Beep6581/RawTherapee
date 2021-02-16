@@ -416,18 +416,18 @@ skip_block:
             asn[c] /= static_cast<float>(dmax);
         }
 
-        printf("cam_mul:[%f %f %f %f], AsShotNeutral:[%f %f %f %f]\n",
+        fprintf(stderr,"cam_mul:[%f %f %f %f], AsShotNeutral:[%f %f %f %f]\n",
                static_cast<double>(cam_mul[0]), static_cast<double>(cam_mul[1]),
                static_cast<double>(cam_mul[2]), static_cast<double>(cam_mul[3]),
                static_cast<double>(asn[0]), static_cast<double>(asn[1]), static_cast<double>(asn[2]), static_cast<double>(asn[3]));
-        printf("pre_mul:[%f %f %f %f], scale_mul:[%f %f %f %f], cblack:[%f %f %f %f]\n",
+        fprintf(stderr,"pre_mul:[%f %f %f %f], scale_mul:[%f %f %f %f], cblack:[%f %f %f %f]\n",
                static_cast<double>(pre_mul_[0]), static_cast<double>(pre_mul_[1]),
                static_cast<double>(pre_mul_[2]), static_cast<double>(pre_mul_[3]),
                static_cast<double>(scale_mul_[0]), static_cast<double>(scale_mul_[1]),
                static_cast<double>(scale_mul_[2]), static_cast<double>(scale_mul_[3]),
                static_cast<double>(cblack_[0]), static_cast<double>(cblack_[1]),
                static_cast<double>(cblack_[2]), static_cast<double>(cblack_[3]));
-        printf("rgb_cam:[ [ %f %f %f], [%f %f %f], [%f %f %f] ]%s\n",
+        fprintf(stderr,"rgb_cam:[ [ %f %f %f], [%f %f %f], [%f %f %f] ]%s\n",
                static_cast<double>(rgb_cam[0][0]), static_cast<double>(rgb_cam[1][0]), static_cast<double>(rgb_cam[2][0]),
                static_cast<double>(rgb_cam[0][1]), static_cast<double>(rgb_cam[1][1]), static_cast<double>(rgb_cam[2][1]),
                static_cast<double>(rgb_cam[0][2]), static_cast<double>(rgb_cam[1][2]), static_cast<double>(rgb_cam[2][2]),
@@ -508,7 +508,7 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
         shrink = 0;
 
         if (settings->verbose) {
-            printf("Loading %s %s image from %s...\n", make, model, filename.c_str());
+            fprintf(stderr,"Loading %s %s image from %s...\n", make, model, filename.c_str());
         }
 
         iheight = height;
@@ -687,17 +687,17 @@ int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, Prog
 
         if (settings->verbose) {
             if (cc) {
-                printf("constants exists for \"%s %s\" in camconst.json\n", make, model);
+                fprintf(stderr,"constants exists for \"%s %s\" in camconst.json\n", make, model);
             } else {
-                printf("no constants in camconst.json exists for \"%s %s\" (relying only on dcraw defaults)\n", make, model);
+                fprintf(stderr,"no constants in camconst.json exists for \"%s %s\" (relying only on dcraw defaults)\n", make, model);
             }
 
-            printf("black levels: R:%d G1:%d B:%d G2:%d (%s)\n", get_cblack(0), get_cblack(1), get_cblack(2), get_cblack(3),
+            fprintf(stderr,"black levels: R:%d G1:%d B:%d G2:%d (%s)\n", get_cblack(0), get_cblack(1), get_cblack(2), get_cblack(3),
                    black_from_cc ? "provided by camconst.json" : "provided by dcraw");
-            printf("white levels: R:%d G1:%d B:%d G2:%d (%s)\n", get_white(0), get_white(1), get_white(2), get_white(3),
+            fprintf(stderr,"white levels: R:%d G1:%d B:%d G2:%d (%s)\n", get_white(0), get_white(1), get_white(2), get_white(3),
                    white_from_cc ? "provided by camconst.json" : "provided by dcraw");
-            printf("raw crop: %d %d %d %d (provided by %s)\n", left_margin, top_margin, iwidth, iheight, (cc && cc->has_rawCrop()) ? "camconst.json" : "dcraw");
-            printf("color matrix provided by %s\n", (cc && cc->has_dcrawMatrix()) ? "camconst.json" : "dcraw");
+            fprintf(stderr,"raw crop: %d %d %d %d (provided by %s)\n", left_margin, top_margin, iwidth, iheight, (cc && cc->has_rawCrop()) ? "camconst.json" : "dcraw");
+            fprintf(stderr,"color matrix provided by %s\n", (cc && cc->has_dcrawMatrix()) ? "camconst.json" : "dcraw");
         }
     }
 

@@ -381,9 +381,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             if (settings->verbose) {
                 if (imgsrc->getSensorType() == ST_BAYER) {
-                    printf("Demosaic Bayer image n.%d using method: %s\n", rp.bayersensor.imageNum + 1, rp.bayersensor.method.c_str());
+                    fprintf(stderr,"Demosaic Bayer image n.%d using method: %s\n", rp.bayersensor.imageNum + 1, rp.bayersensor.method.c_str());
                 } else if (imgsrc->getSensorType() == ST_FUJI_XTRANS) {
-                    printf("Demosaic X-Trans image with using method: %s\n", rp.xtranssensor.method.c_str());
+                    fprintf(stderr,"Demosaic X-Trans image with using method: %s\n", rp.xtranssensor.method.c_str());
                 }
             }
 
@@ -470,7 +470,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         const bool autowb = (params->wb.method == "autold" || params->wb.method == "autitcgreen");
         if (settings->verbose) {
-            printf("automethod=%s \n", params->wb.method.c_str());
+            fprintf(stderr,"automethod=%s \n", params->wb.method.c_str());
         }
         if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
             MyMutex::MyLock initLock(minit);  // Also used in crop window
@@ -479,7 +479,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
 
             if (settings->verbose) {
-                printf("Applying white balance, color correction & sRBG conversion...\n");
+                fprintf(stderr,"Applying white balance, color correction & sRBG conversion...\n");
             }
 
             currWB = ColorTemp(params->wb.temperature, params->wb.green, params->wb.equal, params->wb.method);
@@ -499,7 +499,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     double tempref = currWBitc.getTemp() * (1. + params->wb.tempBias);
                     double greenref = currWBitc.getGreen();
                     if (settings->verbose && params->wb.method ==  "autitcgreen") {
-                        printf("tempref=%f greref=%f\n", tempref, greenref);
+                        fprintf(stderr,"tempref=%f greref=%f\n", tempref, greenref);
                     }
 
                     imgsrc->getAutoWBMultipliersitc(tempref, greenref, tempitc, greenitc, studgood, 0, 0, fh, fw, 0, 0, fh, fw, rm, gm, bm,  params->wb, params->icm, params->raw);
@@ -556,7 +556,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                     int mode = 0;
                     Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
-                        printf("ga[0]=%f ga[1]=%f ga[2]=%f ga[3]=%f ga[4]=%f\n", g_a[0],g_a[1],g_a[2],g_a[3],g_a[4]);
+                        fprintf(stderr,"ga[0]=%f ga[1]=%f ga[2]=%f ga[3]=%f ga[4]=%f\n", g_a[0],g_a[1],g_a[2],g_a[3],g_a[4]);
 
                         Glib::ustring datal;
                         datal = "lutsrgb.txt";
@@ -1220,7 +1220,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 if (params->blackwhite.enabled && params->blackwhite.autoc && abwListener) {
                     if (settings->verbose) {
-                        printf("ImProcCoordinator / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", static_cast<double>(bwAutoR), static_cast<double>(bwAutoG), static_cast<double>(bwAutoB));
+                        fprintf(stderr,"ImProcCoordinator / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", static_cast<double>(bwAutoR), static_cast<double>(bwAutoG), static_cast<double>(bwAutoB));
                     }
 
                     abwListener->BWChanged((float) rrm, (float) ggm, (float) bbm);

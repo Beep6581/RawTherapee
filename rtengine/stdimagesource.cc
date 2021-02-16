@@ -254,7 +254,7 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
 
     if (!skipTransform && in) {
         if(in == embedded && cmsGetColorSpace(in) != cmsSigRgbData) { // if embedded profile is not an RGB profile, use sRGB
-            printf("embedded profile is not an RGB profile, using sRGB as input profile\n");
+            fprintf(stderr,"embedded profile is not an RGB profile, using sRGB as input profile\n");
             in = ICCStore::getInstance()->getsRGBProfile ();
         }
 
@@ -274,7 +274,7 @@ void StdImageSource::colorSpaceConversion (Imagefloat* im, const ColorManagement
 
             cmsDeleteTransform(hTransform);
         } else {
-            printf("Could not convert from %s to %s\n", in == embedded ? "embedded profile" : cmp.inputProfile.data(), cmp.workingProfile.data());
+            fprintf(stderr,"Could not convert from %s to %s\n", in == embedded ? "embedded profile" : cmp.inputProfile.data(), cmp.workingProfile.data());
         }
     }
 }
@@ -357,7 +357,7 @@ ColorTemp StdImageSource::getSpotWB (std::vector<Coord2D> &red, std::vector<Coor
     wb.getMultipliers (img_r, img_g, img_b);
 
     if( settings->verbose ) {
-        printf ("AVG: %g %g %g\n", reds / rn, greens / gn, blues / bn);
+        fprintf(stderr,"AVG: %g %g %g\n", reds / rn, greens / gn, blues / bn);
     }
 
     return ColorTemp (reds / rn * img_r, greens / gn * img_g, blues / bn * img_b, equal);

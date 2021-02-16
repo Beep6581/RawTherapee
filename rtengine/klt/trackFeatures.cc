@@ -1005,7 +1005,7 @@ static int _am_trackFeatureAffine(
 #ifdef DEBUG_AFFINE_MAPPING
   char fname[80];
   _KLT_FloatImage aff_diff_win = _KLTCreateFloatImage(width,height);
-  printf("starting location x2=%f y2=%f\n", *x2, *y2);
+  fprintf(stderr,"starting location x2=%f y2=%f\n", *x2, *y2);
 #endif
 
   /* Allocate memory for windows */
@@ -1045,9 +1045,9 @@ static int _am_trackFeatureAffine(
 #ifdef DEBUG_AFFINE_MAPPING
       aff_diff_win->data = imgdiff;
       snprintf(fname, sizeof(fname), "./debug/kltimg_trans_diff_win%03d.%03d.pgm", glob_index, counter);
-      printf("%s\n", fname);
+      fprintf(stderr,"%s\n", fname);
       _KLTWriteAbsFloatImageToPGM(aff_diff_win, fname,256.0);
-      printf("iter = %d translation tracker res: %f\n", iteration, _sumAbsFloatWindow(imgdiff, width, height)/(width*height));
+      fprintf(stderr,"iter = %d translation tracker res: %f\n", iteration, _sumAbsFloatWindow(imgdiff, width, height)/(width*height));
 #endif
 
       /* Use these windows to construct matrices */
@@ -1096,13 +1096,13 @@ static int _am_trackFeatureAffine(
       _am_computeAffineMappedImage(img1, x1, y1,  1.0, 0.0 , 0.0, 1.0, width, height, imgdiff);
       aff_diff_win->data = imgdiff;
       snprintf(fname, sizeof(fname), "./debug/kltimg_aff_diff_win%03d.%03d_1.pgm", glob_index, counter);
-      printf("%s\n", fname);
+      fprintf(stderr,"%s\n", fname);
       _KLTWriteAbsFloatImageToPGM(aff_diff_win, fname,256.0);
 
       _am_computeAffineMappedImage(img2, *x2, *y2,  *Axx, *Ayx , *Axy, *Ayy, width, height, imgdiff);
       aff_diff_win->data = imgdiff;
       snprintf(fname, sizeof(fname), "./debug/kltimg_aff_diff_win%03d.%03d_2.pgm", glob_index, counter);
-      printf("%s\n", fname);
+      fprintf(stderr,"%s\n", fname);
       _KLTWriteAbsFloatImageToPGM(aff_diff_win, fname,256.0);
 #endif
 
@@ -1111,10 +1111,10 @@ static int _am_trackFeatureAffine(
 #ifdef DEBUG_AFFINE_MAPPING
       aff_diff_win->data = imgdiff;
       snprintf(fname, sizeof(fname), "./debug/kltimg_aff_diff_win%03d.%03d_3.pgm", glob_index,counter);
-      printf("%s\n", fname);
+      fprintf(stderr,"%s\n", fname);
       _KLTWriteAbsFloatImageToPGM(aff_diff_win, fname,256.0);
 
-      printf("iter = %d affine tracker res: %f\n", iteration, _sumAbsFloatWindow(imgdiff, width, height)/(width*height));
+      fprintf(stderr,"iter = %d affine tracker res: %f\n", iteration, _sumAbsFloatWindow(imgdiff, width, height)/(width*height));
 #endif
 
       _am_getGradientWinAffine(gradx2, grady2, *x2, *y2, *Axx, *Ayx , *Axy, *Ayy,
@@ -1170,7 +1170,7 @@ static int _am_trackFeatureAffine(
       lr_y -=  *Ayx *   hw  + *Ayy * (-hh) + *y2;
 
 #ifdef DEBUG_AFFINE_MAPPING
-      printf ("iter = %d, ul_x=%f ul_y=%f ll_x=%f ll_y=%f ur_x=%f ur_y=%f lr_x=%f lr_y=%f \n",
+      fprintf(stderr,"iter = %d, ul_x=%f ul_y=%f ll_x=%f ll_y=%f ur_x=%f ur_y=%f lr_x=%f lr_y=%f \n",
 	      iteration, ul_x, ul_y, ll_x, ll_y, ur_x, ur_y, lr_x, lr_y);
 #endif
 
@@ -1184,7 +1184,7 @@ static int _am_trackFeatureAffine(
     if (status == KLT_SMALL_DET)  break;
     iteration++;
 #ifdef DEBUG_AFFINE_MAPPING
-    printf ("iter = %d, x1=%f, y1=%f, x2=%f, y2=%f,  Axx=%f, Ayx=%f , Axy=%f, Ayy=%f \n",iteration, x1, y1, *x2, *y2,  *Axx, *Ayx , *Axy, *Ayy);
+    fprintf(stderr,"iter = %d, x1=%f, y1=%f, x2=%f, y2=%f,  Axx=%f, Ayx=%f , Axy=%f, Ayy=%f \n",iteration, x1, y1, *x2, *y2,  *Axx, *Ayx , *Axy, *Ayy);
 #endif
     }  while ( !convergence  && iteration < max_iterations);
     /*}  while ( (fabs(dx)>=th || fabs(dy)>=th || (affine_map && iteration < 8) ) && iteration < max_iterations); */
@@ -1210,7 +1210,7 @@ static int _am_trackFeatureAffine(
 					   width, height, imgdiff);
     }
 #ifdef DEBUG_AFFINE_MAPPING
-    printf("iter = %d final_res = %f\n", iteration, _sumAbsFloatWindow(imgdiff, width, height)/(width*height));
+    fprintf(stderr,"iter = %d final_res = %f\n", iteration, _sumAbsFloatWindow(imgdiff, width, height)/(width*height));
 #endif
     if (_sumAbsFloatWindow(imgdiff, width, height)/(width*height) > max_residue)
       status = KLT_LARGE_RESIDUE;
@@ -1220,7 +1220,7 @@ static int _am_trackFeatureAffine(
   free(imgdiff);  free(gradx);  free(grady);
 
 #ifdef DEBUG_AFFINE_MAPPING
-  printf("iter = %d status=%d\n", iteration, status);
+  fprintf(stderr,"iter = %d status=%d\n", iteration, status);
   _KLTFreeFloatImage( aff_diff_win );
 #endif
 

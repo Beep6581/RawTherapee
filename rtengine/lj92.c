@@ -98,7 +98,7 @@ static int parseHuff(ljp* self) {
     for (int hix=0;hix<(hufflen-19);hix++) {
         huffval[hix] = self->data[self->ix+19+hix];
 #ifdef DEBUG
-        printf("huffval[%d]=%d\n",hix,huffval[hix]);
+        fprintf(stderr,"huffval[%d]=%d\n",hix,huffval[hix]);
 #endif
     }
     self->ix += hufflen;
@@ -233,7 +233,7 @@ static int parseHuff(ljp* self) {
     int hcode;
     int bitsused = 1;
 #ifdef DEBUG
-    printf("%04x:%x:%d:%x\n",i,huffvals[hv],bitsused,1<<(maxbits-bitsused));
+    fprintf(stderr,"%04x:%x:%d:%x\n",i,huffvals[hv],bitsused,1<<(maxbits-bitsused));
 #endif
     while (i<1<<maxbits) {
         if (bitsused>maxbits) {
@@ -249,7 +249,7 @@ static int parseHuff(ljp* self) {
             vl++;
             hv++;
 #ifdef DEBUG
-            printf("%04x:%x:%d:%x\n",i,huffvals[hv],bitsused,1<<(maxbits-bitsused));
+            fprintf(stderr,"%04x:%x:%d:%x\n",i,huffvals[hv],bitsused,1<<(maxbits-bitsused));
 #endif
             continue;
         }
@@ -580,7 +580,7 @@ static int parseScan(ljp* self) {
     }
     if (c >= pixels) ret = LJ92_ERROR_NONE;
     /*for (int h=0;h<17;h++) {
-        printf("ssss:%d=%d (%f)\n",h,self->sssshist[h],(float)self->sssshist[h]/(float)(pixels));
+        fprintf(stderr,"ssss:%d=%d (%f)\n",h,self->sssshist[h],(float)self->sssshist[h]/(float)(pixels));
     }*/
     return ret;
 }

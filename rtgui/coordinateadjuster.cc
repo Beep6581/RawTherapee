@@ -110,7 +110,7 @@ void CoordinateAdjuster::createWidgets(const std::vector<Axis> &axis)
     unsigned int count = axis.size();
 
     if (!count) {
-        printf("CoordinateAdjuster - Error: the Axis list is empty!\n");
+        fprintf(stderr,"CoordinateAdjuster - Error: the Axis list is empty!\n");
         return;
     }
 

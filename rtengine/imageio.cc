@@ -360,7 +360,7 @@ int ImageIO::loadPNG  (const Glib::ustring &fname)
         // we don't support interlaced png or png with palette
         png_destroy_read_struct (&png, &info, &end_info);
         fclose (file);
-        printf("%s uses an unsupported feature: <palette-indexed colors|interlacing>. Skipping.\n", fname.data());
+        fprintf(stderr,"%s uses an unsupported feature: <palette-indexed colors|interlacing>. Skipping.\n", fname.data());
         return IMIO_VARIANTNOTSUPPORTED;
     }
 
@@ -818,36 +818,36 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
      * effective minimum and maximum values
      */
     if (settings->verbose) {
-        printf("Information of \"%s\":\n", fname.c_str());
+        fprintf(stderr,"Information of \"%s\":\n", fname.c_str());
         uint16 tiffDefaultScale, tiffBaselineExposure, tiffLinearResponseLimit;
         if (TIFFGetField(in, TIFFTAG_DEFAULTSCALE, &tiffDefaultScale)) {
-            printf("   DefaultScale: %d\n", tiffDefaultScale);
+            fprintf(stderr,"   DefaultScale: %d\n", tiffDefaultScale);
         }
         else
-            printf("   No DefaultScale value!\n");
+            fprintf(stderr,"   No DefaultScale value!\n");
         if (TIFFGetField(in, TIFFTAG_BASELINEEXPOSURE, &tiffBaselineExposure)) {
-            printf("   BaselineExposure: %d\n", tiffBaselineExposure);
+            fprintf(stderr,"   BaselineExposure: %d\n", tiffBaselineExposure);
         }
         else
-            printf("   No BaselineExposure value!\n");
+            fprintf(stderr,"   No BaselineExposure value!\n");
         if (TIFFGetField(in, TIFFTAG_LINEARRESPONSELIMIT, &tiffLinearResponseLimit)) {
-            printf("   LinearResponseLimit: %d\n", tiffLinearResponseLimit);
+            fprintf(stderr,"   LinearResponseLimit: %d\n", tiffLinearResponseLimit);
         }
         else
-            printf("   No LinearResponseLimit value!\n");
+            fprintf(stderr,"   No LinearResponseLimit value!\n");
 
         uint16 tiffMinValue, tiffMaxValue;
         if (TIFFGetField(in, TIFFTAG_SMINSAMPLEVALUE, &tiffMinValue)) {
-            printf("   MinValue: %d\n", tiffMinValue);
+            fprintf(stderr,"   MinValue: %d\n", tiffMinValue);
         }
         else
-            printf("   No minimum value!\n");
+            fprintf(stderr,"   No minimum value!\n");
         if (TIFFGetField(in, TIFFTAG_SMAXSAMPLEVALUE, &tiffMaxValue)) {
-            printf("   MaxValue: %d\n\n", tiffMaxValue);
+            fprintf(stderr,"   MaxValue: %d\n\n", tiffMaxValue);
         }
         else
-            printf("   No maximum value!\n\n");
-        printf("   Those values are not taken into account, the image data are normalized to a [0;1] range\n\n");
+            fprintf(stderr,"   No maximum value!\n\n");
+        fprintf(stderr,"   Those values are not taken into account, the image data are normalized to a [0;1] range\n\n");
     }
 
     char* profdata;

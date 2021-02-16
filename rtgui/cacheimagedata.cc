@@ -226,11 +226,11 @@ int CacheImageData::load (const Glib::ustring& fname)
         }
     } catch (Glib::Error &err) {
         if (rtengine::settings->verbose) {
-            printf("CacheImageData::load / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
+            fprintf(stderr,"CacheImageData::load / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }
     } catch (...) {
         if (rtengine::settings->verbose) {
-            printf("CacheImageData::load / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
+            fprintf(stderr,"CacheImageData::load / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
         }
     }
 
@@ -308,11 +308,11 @@ int CacheImageData::save (const Glib::ustring& fname)
 
     } catch (Glib::Error &err) {
         if (rtengine::settings->verbose) {
-            printf("CacheImageData::save / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
+            fprintf(stderr,"CacheImageData::save / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }
     } catch (...) {
         if (rtengine::settings->verbose) {
-            printf("CacheImageData::save / Unknown exception while trying to save \"%s\"!\n", fname.c_str());
+            fprintf(stderr,"CacheImageData::save / Unknown exception while trying to save \"%s\"!\n", fname.c_str());
         }
     }
 
@@ -324,7 +324,7 @@ int CacheImageData::save (const Glib::ustring& fname)
 
     if (!f) {
         if (rtengine::settings->verbose) {
-            printf("CacheImageData::save / Error: unable to open file \"%s\" with write access!\n", fname.c_str());
+            fprintf(stderr,"CacheImageData::save / Error: unable to open file \"%s\" with write access!\n", fname.c_str());
         }
 
         return 1;

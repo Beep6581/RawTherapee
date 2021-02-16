@@ -195,7 +195,7 @@ void HSVEqualizer::colorForValue (double valX, double valY, enum ColorCaller::El
         caller->ccGreen = double(g);
         caller->ccBlue = double(b);
     } else {
-        printf("Error: no curve displayed!\n");
+        fprintf(stderr,"Error: no curve displayed!\n");
     }
 
 }

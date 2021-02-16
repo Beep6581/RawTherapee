@@ -742,7 +742,7 @@ void BlackWhite::colorForValue (double valX, double valY, enum ColorCaller::Elem
         caller->ccGreen = double(g);
         caller->ccBlue = double(b);
     } else {
-        printf("Error: no curve displayed!\n");
+        fprintf(stderr,"Error: no curve displayed!\n");
     }
 }
 

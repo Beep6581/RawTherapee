@@ -616,7 +616,7 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
             if (hdr->toInt() > 0) {
                 isHDR = true;
 #if PRINT_HDR_PS_DETECTION
-                printf("HDR detected ! -> \"HDR\" tag found\n");
+                fprintf(stderr,"HDR detected ! -> \"HDR\" tag found\n");
 #endif
             }
         } else {
@@ -630,7 +630,7 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                 if (!strcmp(buffer, "HDR")) {
                     isHDR = true;
 #if PRINT_HDR_PS_DETECTION
-                    printf("HDR detected ! -> DriveMode = \"HDR\"\n");
+                    fprintf(stderr,"HDR detected ! -> DriveMode = \"HDR\"\n");
 #endif
                 }
             }
@@ -641,7 +641,7 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
             if (q && (q->toInt() == 7 || q->toInt() == 8)) {
                 isPixelShift = true;
 #if PRINT_HDR_PS_DETECTION
-                printf("PixelShift detected ! -> \"Quality\" = 7\n");
+                fprintf(stderr,"PixelShift detected ! -> \"Quality\" = 7\n");
 #endif
             }
         }
@@ -695,21 +695,21 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                 sampleFormat = IIOSF_FLOAT16;
                 isHDR = true;
 #if PRINT_HDR_PS_DETECTION
-                printf("HDR detected ! -> sampleFormat = %d   (16-bit)\n", sampleFormat);
+                fprintf(stderr,"HDR detected ! -> sampleFormat = %d   (16-bit)\n", sampleFormat);
 #endif
             }
             else if (bitspersample == 24) {
                 sampleFormat = IIOSF_FLOAT24;
                 isHDR = true;
 #if PRINT_HDR_PS_DETECTION
-                printf("HDR detected ! -> sampleFormat = %d   (24-bit)\n", sampleFormat);
+                fprintf(stderr,"HDR detected ! -> sampleFormat = %d   (24-bit)\n", sampleFormat);
 #endif
             }
             else if (bitspersample == 32) {
                 sampleFormat = IIOSF_FLOAT32;
                 isHDR = true;
 #if PRINT_HDR_PS_DETECTION
-                printf("HDR detected ! -> sampleFormat = %d   (32-bit)\n", sampleFormat);
+                fprintf(stderr,"HDR detected ! -> sampleFormat = %d   (32-bit)\n", sampleFormat);
 #endif
             }
         }
@@ -719,21 +719,21 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                 sampleFormat = IIOSF_FLOAT16;
                 isHDR = true;
 #if PRINT_HDR_PS_DETECTION
-                printf("HDR detected ! -> sampleFormat = %d   (16-bit)\n", sampleFormat);
+                fprintf(stderr,"HDR detected ! -> sampleFormat = %d   (16-bit)\n", sampleFormat);
 #endif
             }
             else if (bitspersample == 24) {
                 sampleFormat = IIOSF_FLOAT24;
                 isHDR = true;
 #if PRINT_HDR_PS_DETECTION
-                printf("HDR detected ! -> sampleFormat = %d   (24-bit)\n", sampleFormat);
+                fprintf(stderr,"HDR detected ! -> sampleFormat = %d   (24-bit)\n", sampleFormat);
 #endif
             }
             else if (bitspersample == 32) {
                 sampleFormat = IIOSF_FLOAT32;
                 isHDR = true;
 #if PRINT_HDR_PS_DETECTION
-                printf("HDR detected ! -> sampleFormat = %d   (32-bit)\n", sampleFormat);
+                fprintf(stderr,"HDR detected ! -> sampleFormat = %d   (32-bit)\n", sampleFormat);
 #endif
             }
         } else if (sampleformat == SAMPLEFORMAT_INT || sampleformat == SAMPLEFORMAT_UINT) {
@@ -748,7 +748,7 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
             sampleFormat = IIOSF_FLOAT32;
             isHDR = true;
 #if PRINT_HDR_PS_DETECTION
-            printf("HDR detected ! -> sampleFormat = %d\n", sampleFormat);
+            fprintf(stderr,"HDR detected ! -> sampleFormat = %d\n", sampleFormat);
 #endif
         } else if (sampleformat == SAMPLEFORMAT_INT || sampleformat == SAMPLEFORMAT_UINT) {
             if (bitspersample == 8) {   // shouldn't occur...
@@ -759,7 +759,7 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                 if (mnote && (!make.compare(0, 4, "SONY")) && bitspersample >= 12 && samplesperpixel == 4) {
                     isPixelShift = true;
 #if PRINT_HDR_PS_DETECTION
-                    printf("PixelShift detected ! -> \"Make\" = SONY, bitsPerPixel > 8, samplesPerPixel == 4\n");
+                    fprintf(stderr,"PixelShift detected ! -> \"Make\" = SONY, bitsPerPixel > 8, samplesPerPixel == 4\n");
 #endif
                 }
             }
@@ -769,13 +769,13 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
             sampleFormat = IIOSF_LOGLUV24;
             isHDR = true;
 #if PRINT_HDR_PS_DETECTION
-            printf("HDR detected ! -> sampleFormat = %d\n", sampleFormat);
+            fprintf(stderr,"HDR detected ! -> sampleFormat = %d\n", sampleFormat);
 #endif
         } else if (compression == COMPRESSION_SGILOG) {
             sampleFormat = IIOSF_LOGLUV32;
             isHDR = true;
 #if PRINT_HDR_PS_DETECTION
-            printf("HDR detected ! -> sampleFormat = %d\n", sampleFormat);
+            fprintf(stderr,"HDR detected ! -> sampleFormat = %d\n", sampleFormat);
 #endif
         }
     }

@@ -601,7 +601,7 @@ void Crop::update(int todo)
 
             if (settings->verbose) {
                 t2aue.set();
-                printf("Info denoise auto performed in %d usec:\n", t2aue.etime(t1aue));
+                fprintf(stderr,"Info denoise auto performed in %d usec:\n", t2aue.etime(t1aue));
             }
 
             //end evaluate noise
@@ -1164,11 +1164,11 @@ void Crop::update(int todo)
     for(int j=1;j<5;j++){
         xref+=j*30;yref+=j*30;
         if (settings->verbose) {
-            printf("after rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f  \n",xref,yref,skip,
+            fprintf(stderr,"after rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f  \n",xref,yref,skip,
                    baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,
                    baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256,
                    baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256);
-            printf("after rgbProc Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip,
+            fprintf(stderr,"after rgbProc Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip,
                    laboCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,
                    laboCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,
                    laboCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);

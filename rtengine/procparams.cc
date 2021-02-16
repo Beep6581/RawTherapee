@@ -9328,11 +9328,11 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         return 0;
     } catch (const Glib::Error& e) {
-        printf("-->%s\n", e.what().c_str());
+        fprintf(stderr,"-->%s\n", e.what().c_str());
         setDefaults();
         return 1;
     } catch (...) {
-        printf("-->unknown exception!\n");
+        fprintf(stderr,"-->unknown exception!\n");
         setDefaults();
         return 1;
     }

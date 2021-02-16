@@ -522,7 +522,7 @@ private:
 
                 if (settings->verbose) {
                     t2pone.set();
-                    printf("Info denoise ponderated performed in %d usec:\n", t2pone.etime(t1pone));
+                    fprintf(stderr,"Info denoise ponderated performed in %d usec:\n", t2pone.etime(t1pone));
                 }
 
             }
@@ -745,7 +745,7 @@ private:
 
             if (settings->verbose) {
                 t2aue.set();
-                printf("Info denoise auto performed in %d usec:\n", t2aue.etime(t1aue));
+                fprintf(stderr,"Info denoise auto performed in %d usec:\n", t2aue.etime(t1aue));
             }
 
             //end evaluate noise
@@ -1200,7 +1200,7 @@ private:
             ipf.lab2rgb(*labView, *baseImg, params.icm.workingProfile);
 
             if (settings->verbose) {
-                printf("Total local:- %d usec\n", t2.etime(t1));
+                fprintf(stderr,"Total local:- %d usec\n", t2.etime(t1));
             }
 
         }
@@ -1280,7 +1280,7 @@ private:
         ipf.rgbProc(baseImg, labView, nullptr, curve1, curve2, curve, params.toneCurve.saturation, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili, clToningcurve, cl2Toningcurve, customToneCurve1, customToneCurve2, customToneCurvebw1, customToneCurvebw2, rrm, ggm, bbm, autor, autog, autob, expcomp, hlcompr, hlcomprthresh, dcpProf, as, histToneCurve, options.chunkSizeRGB, options.measure);
 
         if (settings->verbose) {
-            printf ("Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", static_cast<double>(autor), static_cast<double>(autog), static_cast<double>(autob));
+            fprintf(stderr,"Output image / Auto B&W coefs:   R=%.2f   G=%.2f   B=%.2f\n", static_cast<double>(autor), static_cast<double>(autog), static_cast<double>(autob));
         }
 
         // if clut was used and size of clut cache == 1 we free the memory used by the clutstore (default clut cache size = 1 for 32 bit OS)
@@ -1684,7 +1684,7 @@ private:
         Imagefloat* readyImg = ipf.lab2rgbOut(labView, cx, cy, cw, ch, params.icm);
 
         if (settings->verbose) {
-            printf("Output profile_: \"%s\"\n", params.icm.outputProfile.c_str());
+            fprintf(stderr,"Output profile_: \"%s\"\n", params.icm.outputProfile.c_str());
         }
 
         delete labView;
@@ -1692,7 +1692,7 @@ private:
 
         if (bwonly) { //force BW r=g=b
             if (settings->verbose) {
-                printf("Force BW\n");
+                fprintf(stderr,"Force BW\n");
             }
 
             for (int ccw = 0; ccw < cw; ccw++) {
@@ -1743,11 +1743,11 @@ private:
 
             if (jprof == nullptr) {
                 if (settings->verbose) {
-                    printf("\"%s\" ICC output profile not found!\n - use LCMS2 substitution\n", params.icm.outputProfile.c_str());
+                    fprintf(stderr,"\"%s\" ICC output profile not found!\n - use LCMS2 substitution\n", params.icm.outputProfile.c_str());
                 }
             } else {
                 if (settings->verbose) {
-                    printf("Using \"%s\" output profile\n", params.icm.outputProfile.c_str());
+                    fprintf(stderr,"Using \"%s\" output profile\n", params.icm.outputProfile.c_str());
                 }
 
                 ProfileContent pc = ICCStore::getInstance()->getContent(params.icm.outputProfile);

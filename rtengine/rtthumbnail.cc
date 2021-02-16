@@ -294,7 +294,7 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
             Imagefloat *image = static_cast<Imagefloat*> (img);
             image->computeHistogramAutoWB (avg_r, avg_g, avg_b, n, tpp->aeHistogram, tpp->aeHistCompression);
         } else {
-            printf ("loadFromImage: Unsupported image type \"%s\"!\n", img->getType());
+            fprintf(stderr,"loadFromImage: Unsupported image type \"%s\"!\n", img->getType());
         }
 
         ProcParams paramsForAutoExp; // Dummy for constructor
@@ -1726,7 +1726,7 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
             Imagefloat *image = static_cast<Imagefloat*> (thumbImg);
             image->calcGrayscaleHist (hist16);
         } else {
-            printf ("getGrayscaleHistEQ #1: Unsupported image type \"%s\"!\n", thumbImg->getType());
+            fprintf(stderr,"getGrayscaleHistEQ #1: Unsupported image type \"%s\"!\n", thumbImg->getType());
         }
 
         // Go down till we cut off that many pixels
@@ -1909,7 +1909,7 @@ unsigned char* Thumbnail::getGrayscaleHistEQ (int trim_width)
                     tmpdata[ix++] = (r * 19595 + g * 38469 + b * 7472) >> 16;
                 }
         } else {
-            printf ("getGrayscaleHistEQ #2: Unsupported image type \"%s\"!\n", thumbImg->getType());
+            fprintf(stderr,"getGrayscaleHistEQ #2: Unsupported image type \"%s\"!\n", thumbImg->getType());
         }
     }
 
@@ -2032,7 +2032,7 @@ bool Thumbnail::readImage (const Glib::ustring& fname)
             thumbImg = image;
             success = true;
         } else {
-            printf ("readImage: Unsupported image type \"%s\"!\n", imgType);
+            fprintf(stderr,"readImage: Unsupported image type \"%s\"!\n", imgType);
         }
     }
     fclose(f);
@@ -2160,11 +2160,11 @@ bool Thumbnail::readData  (const Glib::ustring& fname)
         return true;
     } catch (Glib::Error &err) {
         if (settings->verbose) {
-            printf ("Thumbnail::readData / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
+            fprintf(stderr,"Thumbnail::readData / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }
     } catch (...) {
         if (settings->verbose) {
-            printf ("Thumbnail::readData / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
+            fprintf(stderr,"Thumbnail::readData / Unknown exception while trying to load \"%s\"!\n", fname.c_str());
         }
     }
 
@@ -2212,11 +2212,11 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
 
     } catch (Glib::Error& err) {
         if (settings->verbose) {
-            printf ("Thumbnail::writeData / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
+            fprintf(stderr,"Thumbnail::writeData / Error code %d while reading values from \"%s\":\n%s\n", err.code(), fname.c_str(), err.what().c_str());
         }
     } catch (...) {
         if (settings->verbose) {
-            printf ("Thumbnail::writeData / Unknown exception while trying to save \"%s\"!\n", fname.c_str());
+            fprintf(stderr,"Thumbnail::writeData / Unknown exception while trying to save \"%s\"!\n", fname.c_str());
         }
     }
 
@@ -2228,7 +2228,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
 
     if (!f) {
         if (settings->verbose) {
-            printf ("Thumbnail::writeData / Error: unable to open file \"%s\" with write access!\n", fname.c_str());
+            fprintf(stderr,"Thumbnail::writeData / Error: unable to open file \"%s\" with write access!\n", fname.c_str());
         }
 
         return false;

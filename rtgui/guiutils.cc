@@ -85,19 +85,19 @@ void IdleRegister::destroy()
 /*
 gboolean giveMeAGo(void* data) {
     GThreadLock *threadMutex = static_cast<GThreadLock*>(data);
-    printf("A\n");
+    fprintf(stderr,"A\n");
     Glib::Threads::Mutex::Lock GUILock(threadMutex->GUI);
-    printf("B\n");
+    fprintf(stderr,"B\n");
     {
     Glib::Threads::Mutex::Lock operationLock(threadMutex->operation);
-    printf("C\n");
+    fprintf(stderr,"C\n");
 
     threadMutex->operationCond.signal();
-    printf("D\n");
+    fprintf(stderr,"D\n");
     operationLock.release();  // because we're not sure that "lock" destructor happens here...
     }
     threadMutex->GUICond.wait(threadMutex->GUI);
-    printf("E\n");
+    fprintf(stderr,"E\n");
 
     GUILock.release();
 
@@ -110,27 +110,27 @@ GThreadLock::GThreadLock() : sameThread(false) {
         return;
     }
 
-    printf("10\n");
+    fprintf(stderr,"10\n");
     {
     Glib::Threads::Mutex::Lock operationLock(operation);
 
-    printf("20\n");
+    fprintf(stderr,"20\n");
     gdk_threads_add_idle(giveMeAGo, this);
 
-    printf("30\n");
+    fprintf(stderr,"30\n");
     operationCond.wait(operation);
-    printf("40\n");
+    fprintf(stderr,"40\n");
     operationLock.release();
     }
 }
 
 GThreadLock::~GThreadLock() {
     if (!sameThread) {
-        printf("50\n");
+        fprintf(stderr,"50\n");
         Glib::Threads::Mutex::Lock lock(GUI);
-        printf("60\n");
+        fprintf(stderr,"60\n");
         GUICond.signal();
-        printf("Fin\n");
+        fprintf(stderr,"Fin\n");
     }
 }
 */
