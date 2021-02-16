@@ -321,13 +321,13 @@ bool LFDatabase::init(const Glib::ustring &dbdir)
     instance_.data_ = lfDatabase::Create();
 
     if (settings->verbose) {
-        std::cout << "Loading lensfun database from ";
+        std::cerr << "Loading lensfun database from ";
         if (dbdir.empty()) {
-            std::cout << "the default directories";
+            std::cerr << "the default directories";
         } else {
-            std::cout << "'" << dbdir << "'";
+            std::cerr << "'" << dbdir << "'";
         }
-        std::cout << "..." << std::flush;
+        std::cerr << "..." << std::flush;
     }
 
     bool ok = false;
@@ -338,7 +338,7 @@ bool LFDatabase::init(const Glib::ustring &dbdir)
     }
 
     if (settings->verbose) {
-        std::cout << (ok ? "OK" : "FAIL") << std::endl;
+        std::cerr << (ok ? "OK" : "FAIL") << std::endl;
     }
     
     return ok;
@@ -570,7 +570,7 @@ std::unique_ptr<LFModifier> LFDatabase::findModifier(
     );
 
     if (settings->verbose) {
-        std::cout << "LENSFUN:\n"
+        std::cerr << "LENSFUN:\n"
                   << "  camera: " << c.getDisplayString() << "\n"
                   << "  lens: " << l.getDisplayString() << "\n"
                   << "  correction: "

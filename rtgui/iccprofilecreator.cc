@@ -1137,7 +1137,7 @@ void ICCProfileCreator::savePressed()
 
             //printf("in=%f in01=%f in22=%f\n", input_prim[0][0], input_prim[0][1], input_prim[2][2]);
             if (!rtengine::invertMatrix(input_prim, inv_input_prim)) {
-                std::cout << "Matrix is not invertible, skipping" << std::endl;
+                std::cerr << "Matrix is not invertible, skipping" << std::endl;
             }
 
             //printf("inv=%f inv01=%f inv22=%f\n", inv_input_prim[0][0], inv_input_prim[0][1], inv_input_prim[2][2]);

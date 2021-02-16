@@ -613,7 +613,7 @@ LensProfilePanel::LFDbHelper::LFDbHelper()
 void LensProfilePanel::LFDbHelper::fillLensfunCameras()
 {
     if (settings->verbose) {
-        std::cout << "LENSFUN, scanning cameras:" << std::endl;
+        std::cerr << "LENSFUN, scanning cameras:" << std::endl;
     }
 
     std::map<Glib::ustring, std::set<Glib::ustring>> camnames;
@@ -623,7 +623,7 @@ void LensProfilePanel::LFDbHelper::fillLensfunCameras()
         camnames[c.getMake()].insert(c.getModel());
 
         if (settings->verbose) {
-            std::cout << "  found: " << c.getDisplayString().c_str() << std::endl;
+            std::cerr << "  found: " << c.getDisplayString().c_str() << std::endl;
         }
     }
 
@@ -643,7 +643,7 @@ void LensProfilePanel::LFDbHelper::fillLensfunCameras()
 void LensProfilePanel::LFDbHelper::fillLensfunLenses()
 {
     if (settings->verbose) {
-        std::cout << "LENSFUN, scanning lenses:" << std::endl;
+        std::cerr << "LENSFUN, scanning lenses:" << std::endl;
     }
 
     std::map<Glib::ustring, std::set<Glib::ustring>> lenses;
@@ -655,7 +655,7 @@ void LensProfilePanel::LFDbHelper::fillLensfunLenses()
         lenses[make].insert(name);
 
         if (settings->verbose) {
-            std::cout << "  found: " << l.getDisplayString().c_str() << std::endl;
+            std::cerr << "  found: " << l.getDisplayString().c_str() << std::endl;
         }
     }
 

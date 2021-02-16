@@ -2457,7 +2457,7 @@ void Options::saveToFile(Glib::ustring fname)
     FILE *f = g_fopen(fname.c_str(), "wt");
 
     if (f == nullptr) {
-        std::cout << "Warning! Unable to save your preferences to: " << fname << std::endl;
+        std::cerr << "Warning! Unable to save your preferences to: " << fname << std::endl;
         Glib::ustring msg_ = Glib::ustring::compose(M("MAIN_MSG_WRITEFAILED"), fname.c_str());
         throw Error(msg_);
     } else {
@@ -2580,7 +2580,7 @@ void Options::load(bool lightweight)
     } else {
         if (!options.findProfilePath(options.defProfRaw).empty()) {
             if (options.rtSettings.verbose) {
-                std::cout << "Default profile for raw images \"" << options.defProfRaw << "\" found" << std::endl;
+                std::cerr << "Default profile for raw images \"" << options.defProfRaw << "\" found" << std::endl;
             }
         } else {
             if (options.defProfRaw != DEFPROFILE_RAW) {
@@ -2602,7 +2602,7 @@ void Options::load(bool lightweight)
     } else {
         if (!options.findProfilePath(options.defProfImg).empty()) {
             if (options.rtSettings.verbose) {
-                std::cout << "Default profile for non-raw images \"" << options.defProfImg << "\" found" << std::endl;
+                std::cerr << "Default profile for non-raw images \"" << options.defProfImg << "\" found" << std::endl;
             }
         } else {
             if (options.defProfImg != DEFPROFILE_IMG) {

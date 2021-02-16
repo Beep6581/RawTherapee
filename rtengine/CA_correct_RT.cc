@@ -137,7 +137,7 @@ float* RawImageSource::CA_correct_RT(
     std::unique_ptr<StopWatch> stop;
 
     if (measure) {
-        std::cout << "CA correcting " << W << "x" << H << " image with " << chunkSize << " tiles per thread" << std::endl;
+        std::cerr << "CA correcting " << W << "x" << H << " image with " << chunkSize << " tiles per thread" << std::endl;
         stop.reset(new StopWatch("CA correction"));
     }
 
@@ -154,7 +154,7 @@ float* RawImageSource::CA_correct_RT(
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 2; j++) {
             if (fc(cfa, i, j) == 3) {
-                std::cout << "CA correction supports only RGB Colour filter arrays" << std::endl;
+                std::cerr << "CA correction supports only RGB Colour filter arrays" << std::endl;
                 return buffer;
             }
         }
@@ -711,7 +711,7 @@ float* RawImageSource::CA_correct_RT(
                             } else {
                                 processpasstwo = false;
                                 if (settings->verbose) {
-                                    std::cout << "blockdenom vanishes" << std::endl;
+                                    std::cerr << "blockdenom vanishes" << std::endl;
                                 }
                                 break;
                             }
@@ -813,7 +813,7 @@ float* RawImageSource::CA_correct_RT(
 
                             if (numblox[1] < 10) {
                                 if (settings->verbose) {
-                                    std::cout << "numblox = " << numblox[1] << std::endl;
+                                    std::cerr << "numblox = " << numblox[1] << std::endl;
                                 }
                                 processpasstwo = false;
                             }
@@ -824,7 +824,7 @@ float* RawImageSource::CA_correct_RT(
                             for (int c = 0; c < 2; c++) {
                                 for (int dir = 0; dir < 2; dir++) {
                                     if (!LinEqSolve(numpar, polymat[c][dir], shiftmat[c][dir], fitparams[c][dir])) {
-                                        std::cout << "CA correction pass failed -- can't solve linear equations for colour %d direction " << c << std::endl;
+                                        std::cerr << "CA correction pass failed -- can't solve linear equations for colour %d direction " << c << std::endl;
                                         processpasstwo = false;
                                     }
                                 }

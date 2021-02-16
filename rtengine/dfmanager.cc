@@ -267,7 +267,7 @@ void dfInfo::updateBadPixelList( RawImage *df )
     }
 
     if( settings->verbose ) {
-        std::cout << "Extracted " << badPixels.size() << " pixels from darkframe:" << df->get_filename().c_str() << std::endl;
+        std::cerr << "Extracted " << badPixels.size() << " pixels from darkframe:" << df->get_filename().c_str() << std::endl;
     }
 }
 

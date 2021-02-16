@@ -110,12 +110,12 @@ public:
 
     void print() const
     {
-        std::cout << "PDAFGreenEqulibrateThreshold:\n";
+        std::cerr << "PDAFGreenEqulibrateThreshold:\n";
         for (size_t row = 0; row < tiles_.size(); ++row) {
             for (size_t col = 0; col < tiles_.size(); ++col) {
-                std::cout << " " << tile_factor(row, col);
+                std::cerr << " " << tile_factor(row, col);
             }
-            std::cout << std::endl;
+            std::cerr << std::endl;
         }
     }
 
@@ -263,7 +263,7 @@ int PDAFLinesFilter::mark(const array2D<float> &rawData, PixelsMap &bpMap)
 
     if (pattern_.empty()) {
         if (settings->verbose) {
-            std::cout << "no PDAF pattern known for " << ri_->get_maker() << " " << ri_->get_model() << std::endl;
+            std::cerr << "no PDAF pattern known for " << ri_->get_maker() << " " << ri_->get_model() << std::endl;
         }
         return 0;
     }
@@ -279,7 +279,7 @@ int PDAFLinesFilter::mark(const array2D<float> &rawData, PixelsMap &bpMap)
             if (n) {
                 found += n;
                 if (settings->verbose) {
-                    std::cout << "marked " << n << " pixels in PDAF line at " << y << std::endl;
+                    std::cerr << "marked " << n << " pixels in PDAF line at " << y << std::endl;
                 }
             }
         } else if (y > yy) {

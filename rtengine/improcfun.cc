@@ -2038,7 +2038,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     std::unique_ptr<StopWatch> stop;
 
     if (measure) {
-        std::cout << "rgb processing " << working->getWidth() << "x" << working->getHeight() << " image with " << chunkSize << " tiles per thread" << std::endl;
+        std::cerr << "rgb processing " << working->getWidth() << "x" << working->getHeight() << " image with " << chunkSize << " tiles per thread" << std::endl;
         stop.reset(new StopWatch("rgb processing"));
     }
 

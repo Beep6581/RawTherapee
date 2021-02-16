@@ -668,7 +668,7 @@ void FileCatalog::dirSelected (const Glib::ustring& dirname, const Glib::ustring
         dirMonitor = dir->monitor_directory ();
         dirMonitor->signal_changed().connect (sigc::bind(sigc::mem_fun(*this, &FileCatalog::on_dir_changed), false));
     } catch (Glib::Exception& ex) {
-        std::cout << ex.what();
+        std::cerr << ex.what();
     }
 }
 

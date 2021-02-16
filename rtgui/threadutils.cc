@@ -156,7 +156,7 @@ std::ostream& trace (const char* file, int line)
 {
     const auto currentThread = Glib::Threads::Thread::self ();
 
-    return std::cout << currentThread << ":" << file << ":" << line << ": ";
+    return std::cerr << currentThread << ":" << file << ":" << line << ": ";
 }
 
 }

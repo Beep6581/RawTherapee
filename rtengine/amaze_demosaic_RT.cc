@@ -51,7 +51,7 @@ void RawImageSource::amaze_demosaic_RT(int winx, int winy, int winw, int winh, c
     std::unique_ptr<StopWatch> stop;
 
     if (measure) {
-        std::cout << "Demosaicing " << W << "x" << H << " image using AMaZE with " << chunkSize << " Tiles per Thread" << std::endl;
+        std::cerr << "Demosaicing " << W << "x" << H << " image using AMaZE with " << chunkSize << " Tiles per Thread" << std::endl;
         stop.reset(new StopWatch("amaze demosaic"));
     }
 

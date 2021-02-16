@@ -374,10 +374,10 @@ cmsHPROFILE rtengine::ProfileContent::toProfile() const
                 cmsFreeToneCurve(GammaTRC);
 
                 if (settings->verbose) {
-                    std::cout << "ICCStore: rebuilt TRC for RTv2 profile " << get_profile_description(profile) << ": gamma=" << gammatag << ", slope=" << slopetag << std::endl;
+                    std::cerr << "ICCStore: rebuilt TRC for RTv2 profile " << get_profile_description(profile) << ": gamma=" << gammatag << ", slope=" << slopetag << std::endl;
                 }
             } else if (settings->verbose) {
-                std::cout << "ICCStore: no gamma/slope info found for RTv2 profile " << get_profile_description(profile) << std::endl;
+                std::cerr << "ICCStore: no gamma/slope info found for RTv2 profile " << get_profile_description(profile) << std::endl;
             }
         }
     }
@@ -830,12 +830,12 @@ private:
         FILE* const f = g_fopen(fileName.c_str(), "r");
 
         if (settings->verbose) {
-            std::cout << "trying to load extra working spaces from " << fileName << std::flush;
+            std::cerr << "trying to load extra working spaces from " << fileName << std::flush;
         }
 
         if (!f) {
             if (settings->verbose) {
-                std::cout << " FAIL" << std::endl;
+                std::cerr << " FAIL" << std::endl;
             }
 
             return false;
@@ -846,7 +846,7 @@ private:
 
         if (length <= 0) {
             if (settings->verbose) {
-                std::cout << " FAIL" << std::endl;
+                std::cerr << " FAIL" << std::endl;
             }
 
             fclose(f);
@@ -865,7 +865,7 @@ private:
 
         if (!root) {
             if (settings->verbose) {
-                std::cout << " FAIL" << std::endl;
+                std::cerr << " FAIL" << std::endl;
             }
 
             return false;
@@ -932,7 +932,7 @@ private:
 
             if (!found_matrix) {
                 if (settings->verbose) {
-                    std::cout << "Could not find suitable matrix for working space: " << name << std::endl;
+                    std::cerr << "Could not find suitable matrix for working space: " << name << std::endl;
                 }
 
                 continue;
@@ -945,7 +945,7 @@ private:
 
             if (!rtengine::invertMatrix(pMatrices.back()->toMatrix(), b)) {
                 if (settings->verbose) {
-                    std::cout << "Matrix for working space: " << name << " is not invertible, skipping" << std::endl;
+                    std::cerr << "Matrix for working space: " << name << " is not invertible, skipping" << std::endl;
                 }
 
                 pMatrices.pop_back();
@@ -957,20 +957,20 @@ private:
                 wProfiles[name] = createFromMatrix(w);
 
                 if (settings->verbose) {
-                    std::cout << "Added working space: " << name << std::endl;
-                    std::cout << "  matrix: [";
+                    std::cerr << "Added working space: " << name << std::endl;
+                    std::cerr << "  matrix: [";
 
                     for (int i = 0; i < 3; ++i) {
-                        std::cout << " [";
+                        std::cerr << " [";
 
                         for (int j = 0; j < 3; ++j) {
-                            std::cout << " " << w[i][j];
+                            std::cerr << " " << w[i][j];
                         }
 
-                        std::cout << "]";
+                        std::cerr << "]";
                     }
 
-                    std::cout << " ]" << std::endl;
+                    std::cerr << " ]" << std::endl;
                 }
             }
         }
@@ -978,7 +978,7 @@ private:
         cJSON_Delete(root);
 
         if (settings->verbose) {
-            std::cout << " OK" << std::endl;
+            std::cerr << " OK" << std::endl;
         }
 
         return true;
@@ -986,7 +986,7 @@ private:
 parse_error:
 
         if (settings->verbose) {
-            std::cout << " ERROR in parsing " << fileName << std::endl;
+            std::cerr << " ERROR in parsing " << fileName << std::endl;
         }
 
         cJSON_Delete(root);

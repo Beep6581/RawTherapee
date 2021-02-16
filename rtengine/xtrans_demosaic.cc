@@ -184,7 +184,7 @@ void RawImageSource::xtrans_interpolate (const int passes, const bool useCieLab,
     std::unique_ptr<StopWatch> stop;
 
     if (measure) {
-        std::cout << passes << "-pass Xtrans Demosaicing " << W << "x" << H << " image with " << chunkSize << " tiles per thread" << std::endl;
+        std::cerr << passes << "-pass Xtrans Demosaicing " << W << "x" << H << " image with " << chunkSize << " tiles per thread" << std::endl;
         stop.reset(new StopWatch("xtrans demosaic"));
     }
 

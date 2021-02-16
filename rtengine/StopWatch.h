@@ -55,7 +55,7 @@ public:
     {
         stopTime.set();
         const long elapsedTime = stopTime.etime(startTime) / divisor;
-        std::cout << message << " took " << elapsedTime << unit << std::endl;
+        std::cerr << message << " took " << elapsedTime << unit << std::endl;
         stopped = true;
     }
 

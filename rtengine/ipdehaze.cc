@@ -227,7 +227,7 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
     }
 
     if (settings->verbose) {
-        std::cout << "dehaze: computing ambient light from " << patches.size()
+        std::cerr << "dehaze: computing ambient light from " << patches.size()
                   << " patches" << std::endl;
     }
 
@@ -352,7 +352,7 @@ void ImProcFunctions::dehaze(Imagefloat *img, const DehazeParams &dehazeParams)
 
         if (min(ambient[0], ambient[1], ambient[2]) < 0.01f) {
             if (settings->verbose) {
-                std::cout << "dehaze: no haze detected" << std::endl;
+                std::cerr << "dehaze: no haze detected" << std::endl;
             }
             restore(img, maxChannel, multiThread);
             return; // probably no haze at all
@@ -360,7 +360,7 @@ void ImProcFunctions::dehaze(Imagefloat *img, const DehazeParams &dehazeParams)
         patchsize = max(max(W, H) / 600, 2);
 
         if (settings->verbose) {
-            std::cout << "dehaze: ambient light is "
+            std::cerr << "dehaze: ambient light is "
                       << ambient[0] << ", " << ambient[1] << ", " << ambient[2]
                       << std::endl;
         }
@@ -375,7 +375,7 @@ void ImProcFunctions::dehaze(Imagefloat *img, const DehazeParams &dehazeParams)
     guidedFilter(guideB, dark, dark, radius, epsilon, multiThread);
         
     if (settings->verbose) {
-        std::cout << "dehaze: max distance is " << maxDistance << std::endl;
+        std::cerr << "dehaze: max distance is " << maxDistance << std::endl;
     }
 
     const float depth = -float(dehazeParams.depth) / 100.f;
@@ -505,7 +505,7 @@ void ImProcFunctions::dehazeloc(Imagefloat *img, const DehazeParams &dehazeParam
 
         if (min(ambient[0], ambient[1], ambient[2]) < 0.01f) {
             if (settings->verbose) {
-                std::cout << "dehaze: no haze detected" << std::endl;
+                std::cerr << "dehaze: no haze detected" << std::endl;
             }
 
             restore(img, maxChannel, multiThread);
@@ -515,7 +515,7 @@ void ImProcFunctions::dehazeloc(Imagefloat *img, const DehazeParams &dehazeParam
         patchsize = max(max(W, H) / 600, 2);
 
         if (settings->verbose) {
-            std::cout << "dehaze: ambient light is "
+            std::cerr << "dehaze: ambient light is "
                       << ambient[0] << ", " << ambient[1] << ", " << ambient[2]
                       << std::endl;
         }
@@ -531,7 +531,7 @@ void ImProcFunctions::dehazeloc(Imagefloat *img, const DehazeParams &dehazeParam
     guidedFilter(guideB, dark, dark, radius, epsilon, multiThread);
 
     if (settings->verbose) {
-        std::cout << "dehaze: max distance is " << maxDistance << std::endl;
+        std::cerr << "dehaze: max distance is " << maxDistance << std::endl;
     }
 
     const float depth = -float(dehazeParams.depth) / 100.f;

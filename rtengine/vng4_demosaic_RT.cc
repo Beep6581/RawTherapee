@@ -68,7 +68,7 @@ void RawImageSource::vng4_demosaic (const array2D<float> &rawData, array2D<float
         for (int j = 0; j < 2; j++) {
             if (FC(i, j) == 3) {
                 // avoid crash
-                std::cout << "vng4_demosaic supports only RGB Colour filter arrays. Falling back to igv_interpolate" << std::endl;
+                std::cerr << "vng4_demosaic supports only RGB Colour filter arrays. Falling back to igv_interpolate" << std::endl;
                 igv_interpolate(W, H);
                 return;
             }

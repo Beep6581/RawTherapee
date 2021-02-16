@@ -46,7 +46,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, const array2D<flo
         for (int j = 0; j < 2; j++) {
             if (FC(i, j) == 3) {
                 // avoid crash
-                std::cout << "lmmse_interpolate_omp supports only RGB Colour filter arrays. Falling back to igv_interpolate" << std::endl;
+                std::cerr << "lmmse_interpolate_omp supports only RGB Colour filter arrays. Falling back to igv_interpolate" << std::endl;
                 igv_interpolate(winw, winh);
                 return;
             }

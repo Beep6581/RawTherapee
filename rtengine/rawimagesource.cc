@@ -1395,7 +1395,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         totBP += bitmapBads->set(*bp);
 
         if (settings->verbose) {
-            std::cout << "Correcting " << bp->size() << " pixels from .badpixels" << std::endl;
+            std::cerr << "Correcting " << bp->size() << " pixels from .badpixels" << std::endl;
         }
     }
 
@@ -1416,7 +1416,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         totBP += bitmapBads->set(*bp);
 
         if (settings->verbose && !bp->empty()) {
-            std::cout << "Correcting " << bp->size() << " hotpixels from darkframe" << std::endl;
+            std::cerr << "Correcting " << bp->size() << " hotpixels from darkframe" << std::endl;
         }
     }
 
@@ -3156,7 +3156,7 @@ void RawImageSource::colorSpaceConversion_ (Imagefloat* im, const ColorManagemen
                         working_space_is_prophoto = true;
                         prophoto = ICCStore::getInstance()->workingSpace(cmp.workingProfile);
                         if (settings->verbose) {
-                            std::cout << "colorSpaceConversion_: converting directly to " << cmp.workingProfile << " instead of passing through ProPhoto" << std::endl;
+                            std::cerr << "colorSpaceConversion_: converting directly to " << cmp.workingProfile << " instead of passing through ProPhoto" << std::endl;
                         }
                         break;
                     }

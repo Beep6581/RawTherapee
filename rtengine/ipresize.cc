@@ -433,7 +433,7 @@ void ImProcFunctions::resize (Imagefloat* src, Imagefloat* dst, float dScale)
 
 #ifdef PROFILE
     time_t t2 = clock();
-    std::cout << "Resize: " << params->resize.method << ": "
+    std::cerr << "Resize: " << params->resize.method << ": "
               << (float) (t2 - t1) / CLOCKS_PER_SEC << std::endl;
 #endif
 }

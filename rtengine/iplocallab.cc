@@ -2052,7 +2052,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
         const float dynamic_range = -xlogf(minVal / maxVal) / log2;
 
         if (settings->verbose) {
-            std::cout << "AutoLog: min = " << minVal << ", max = " << maxVal
+            std::cerr << "AutoLog: min = " << minVal << ", max = " << maxVal
                       << ", Dynamic Range = " << dynamic_range << std::endl;
         }
 
@@ -2063,7 +2063,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
             const float gmin = rtengine::max(minVal * std::pow(2.f, rtengine::max((dynamic_range - 1.f) / 2.f, 1.f)), 0.05f);
 
             if (settings->verbose) {
-                std::cout << "         gray boundaries: " << gmin << ", " << gmax << std::endl;
+                std::cerr << "         gray boundaries: " << gmin << ", " << gmax << std::endl;
             }
 
             for (int y = ysta; y < yend; ++y) {
@@ -2081,7 +2081,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
                 sourceg[sp] = tot / n * 100.0;
 
                 if (settings->verbose) {
-                    std::cout << "         computed gray point from " << n << " samples: " << sourceg[sp] << std::endl;
+                    std::cerr << "         computed gray point from " << n << " samples: " << sourceg[sp] << std::endl;
                 }
             } else {
                 mean /= (nc * 65535.0);
@@ -2106,7 +2106,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
                 }
                 sourceg[sp] = 0.4f * yb;
                 if (settings->verbose) {
-                    std::cout << "         no samples found in range, resorting to Yb gray point value " << sourceg[sp]  << std::endl;
+                    std::cerr << "         no samples found in range, resorting to Yb gray point value " << sourceg[sp]  << std::endl;
                 }
             }
         }

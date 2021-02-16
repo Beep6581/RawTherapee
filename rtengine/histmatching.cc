@@ -234,7 +234,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
     BENCHFUN
 
     if (settings->verbose) {
-        std::cout << "performing histogram matching for " << getFileName() << " on the embedded thumbnail" << std::endl;
+        std::cerr << "performing histogram matching for " << getFileName() << " on the embedded thumbnail" << std::endl;
     }
 
     const auto same_profile =
@@ -250,7 +250,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
 
     if (!histMatchingCache.empty() && same_profile(*histMatchingParams, cp)) {
         if (settings->verbose) {
-            std::cout << "tone curve found in cache" << std::endl;
+            std::cerr << "tone curve found in cache" << std::endl;
         }
         outCurve = histMatchingCache;
         return;
@@ -266,7 +266,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
     int skip = 3;
 
     if (settings->verbose) {
-        std::cout << "histogram matching: full raw image size is " << fw << "x" << fh << std::endl;
+        std::cerr << "histogram matching: full raw image size is " << fw << "x" << fh << std::endl;
     }
 
     ProcParams neutral;
@@ -283,7 +283,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
         std::unique_ptr<Thumbnail> thumb(Thumbnail::loadQuickFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, true, true));
         if (!thumb) {
             if (settings->verbose) {
-                std::cout << "histogram matching: no thumbnail found, generating a neutral curve" << std::endl;
+                std::cerr << "histogram matching: no thumbnail found, generating a neutral curve" << std::endl;
             }
             histMatchingCache = outCurve;
             *histMatchingParams = cp;
@@ -293,7 +293,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
              // For them we skip histogram matching.
              // With 160x120 thumbs from RICOH GR DIGITAL 2 it works fine, so we use 19200 as limit.
             if (settings->verbose) {
-                std::cout << "histogram matching: the embedded thumbnail is too small: " << w << "x" << h << std::endl;
+                std::cerr << "histogram matching: the embedded thumbnail is too small: " << w << "x" << h << std::endl;
             }
             histMatchingCache = outCurve;
             *histMatchingParams = cp;
@@ -303,7 +303,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
         source.reset(thumb->quickProcessImage(neutral, fh / skip, TI_Nearest));
 
         if (settings->verbose) {
-            std::cout << "histogram matching: extracted embedded thumbnail" << std::endl;
+            std::cerr << "histogram matching: extracted embedded thumbnail" << std::endl;
         }
     }
 
@@ -316,7 +316,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
         std::unique_ptr<Thumbnail> thumb(Thumbnail::loadFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, false, true));
         if (!thumb) {
             if (settings->verbose) {
-                std::cout << "histogram matching: raw decoding failed, generating a neutral curve" << std::endl;
+                std::cerr << "histogram matching: raw decoding failed, generating a neutral curve" << std::endl;
             }
             histMatchingCache = outCurve;
             *histMatchingParams = cp;
@@ -342,7 +342,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
                 tw -= cw;
             }
             if (settings->verbose) {
-                std::cout << "histogram matching: cropping target to get an aspect ratio of " << round(thumb_ratio * 100)/100.f << ":1, new size is " << tw << "x" << th << std::endl;
+                std::cerr << "histogram matching: cropping target to get an aspect ratio of " << round(thumb_ratio * 100)/100.f << ":1, new size is " << tw << "x" << th << std::endl;
             }
 
             if (cx || cy) {
@@ -362,7 +362,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
         }
 
         if (settings->verbose) {
-            std::cout << "histogram matching: generated neutral rendering" << std::endl;
+            std::cerr << "histogram matching: generated neutral rendering" << std::endl;
         }
     }
     if (target->getWidth() != source->getWidth() || target->getHeight() != source->getHeight()) {
@@ -387,7 +387,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
     mappingToCurve(mapping, outCurve);
 
     if (settings->verbose) {
-        std::cout << "histogram matching: generated curve with " << outCurve.size()/2 << " control points" << std::endl;
+        std::cerr << "histogram matching: generated curve with " << outCurve.size()/2 << " control points" << std::endl;
     }
 
     histMatchingCache = outCurve;

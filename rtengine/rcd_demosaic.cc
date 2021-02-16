@@ -57,7 +57,7 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
         for (int j = 0; j < 2; j++) {
             if (FC(i, j) == 3) {
                 // avoid crash
-                std::cout << "rcd_demosaic supports only RGB Colour filter arrays. Falling back to igv_interpolate" << std::endl;
+                std::cerr << "rcd_demosaic supports only RGB Colour filter arrays. Falling back to igv_interpolate" << std::endl;
                 igv_interpolate(W, H);
                 return;
             }
@@ -66,7 +66,7 @@ void RawImageSource::rcd_demosaic(size_t chunkSize, bool measure)
 
     std::unique_ptr<StopWatch> stop;
     if (measure) {
-        std::cout << "Demosaicing " << W << "x" << H << " image using rcd with " << chunkSize << " tiles per thread" << std::endl;
+        std::cerr << "Demosaicing " << W << "x" << H << " image using rcd with " << chunkSize << " tiles per thread" << std::endl;
         stop.reset(new StopWatch("rcd demosaic"));
     }
 

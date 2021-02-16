@@ -408,7 +408,7 @@ std::map<std::string, std::string> getAliases(const Glib::ustring& profile_dir)
     const std::unique_ptr<cJSON, decltype(&cJSON_Delete)> root(cJSON_Parse(buffer.get()), cJSON_Delete);
     if (!root || !root->child) {
         if (settings->verbose) {
-            std::cout << "Could not parse 'camera_model_aliases.json' file." << std::endl;
+            std::cerr << "Could not parse 'camera_model_aliases.json' file." << std::endl;
         }
         return {};
     }

@@ -440,7 +440,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     // did we succeed?
     if ( err ) {
         if (settings->verbose) {
-            std::cout << "Could not extract thumb from " << fname.c_str() << std::endl;
+            std::cerr << "Could not extract thumb from " << fname.c_str() << std::endl;
         }
         delete tpp;
         delete img;
