@@ -204,7 +204,7 @@ int main (int argc, char **argv)
     // Move the old path to the new one if the new does not exist
     if (Glib::file_test (Glib::build_filename (options.rtdir, "cache"), Glib::FILE_TEST_IS_DIR) && !Glib::file_test (options.cacheBaseDir, Glib::FILE_TEST_IS_DIR)) {
         if (g_rename (Glib::build_filename (options.rtdir, "cache").c_str (), options.cacheBaseDir.c_str ()) == -1) {
-            std::cout << "g_rename " <<  Glib::build_filename (options.rtdir, "cache").c_str () << " => " << options.cacheBaseDir.c_str () << " failed." << std::endl;
+            std::cerr << "g_rename " <<  Glib::build_filename (options.rtdir, "cache").c_str () << " => " << options.cacheBaseDir.c_str () << " failed." << std::endl;
         }
     }
 
@@ -213,12 +213,12 @@ int main (int argc, char **argv)
     int ret = 0;
 
     // printing RT's version in all case, particularly useful for the 'verbose' mode, but also for the batch processing
-    std::cout << "RawTherapee, version " << RTVERSION << ", command line." << std::endl;
+    std::cerr << "RawTherapee, version " << RTVERSION << ", command line." << std::endl;
 
     if (argc > 1) {
         ret = processLineParams (argc, argv);
     } else {
-        std::cout << "Terminating without anything to do." << std::endl;
+        std::cerr << "Terminating without anything to do." << std::endl;
     }
 
     return ret;
@@ -441,7 +441,7 @@ int processLineParams ( int argc, char **argv )
 #endif
 
                         if (!Glib::file_test (argument, Glib::FILE_TEST_EXISTS)) {
-                            std::cout << "\"" << argument << "\"  doesn't exist!" << std::endl;
+                            std::cerr << "\"" << argument << "\"  doesn't exist!" << std::endl;
                             continue;
                         }
 
@@ -451,9 +451,9 @@ int processLineParams ( int argc, char **argv )
 
                             if (notAll || notRetained) {
                                 if (notAll) {
-                                    std::cout << "\"" << argument << "\"  is not one of the parsed extensions. Image skipped." << std::endl;
+                                    std::cerr << "\"" << argument << "\"  is not one of the parsed extensions. Image skipped." << std::endl;
                                 } else if (notRetained) {
-                                    std::cout << "\"" << argument << "\"  is not one of the selected parsed extensions. Image skipped." << std::endl;
+                                    std::cerr << "\"" << argument << "\"  is not one of the selected parsed extensions. Image skipped." << std::endl;
                                 }
                             } else {
                                 inputFiles.emplace_back (argument);
@@ -484,11 +484,11 @@ int processLineParams ( int argc, char **argv )
 
                                     if (isDir || notAll || notRetained) {
                                         if (isDir) {
-                                            std::cout << "\"" << fileName << "\"  is a folder. Folder skipped" << std::endl;
+                                            std::cerr << "\"" << fileName << "\"  is a folder. Folder skipped" << std::endl;
                                         } else if (notAll) {
-                                            std::cout << "\"" << fileName << "\"  is not one of the parsed extensions. Image skipped." << std::endl;
+                                            std::cerr << "\"" << fileName << "\"  is not one of the parsed extensions. Image skipped." << std::endl;
                                         } else if (notRetained) {
-                                            std::cout << "\"" << fileName << "\"  is not one of the selected parsed extensions. Image skipped." << std::endl;
+                                            std::cerr << "\"" << fileName << "\"  is not one of the selected parsed extensions. Image skipped." << std::endl;
                                         }
 
                                         continue;
@@ -498,7 +498,7 @@ int processLineParams ( int argc, char **argv )
                                     if (sideProcParams && skipIfNoSidecar) {
                                         // look for the sidecar proc params
                                         if (!Glib::file_test (fileName + paramFileExtension, Glib::FILE_TEST_EXISTS)) {
-                                            std::cout << "\"" << fileName << "\"  has no side-car file. Image skipped." << std::endl;
+                                            std::cerr << "\"" << fileName << "\"  has no side-car file. Image skipped." << std::endl;
                                             continue;
                                         }
                                     }
@@ -678,8 +678,8 @@ int processLineParams ( int argc, char **argv )
         rtengine::procparams::ProcParams currentParams;
 
         Glib::ustring inputFile = inputFiles[iFile];
-        std::cout << "Output is " << bits << "-bit " << (isFloat ? "floating-point" : "integer") << "." << std::endl;
-        std::cout << "Processing: " << inputFile << std::endl;
+        std::cerr << "Output is " << bits << "-bit " << (isFloat ? "floating-point" : "integer") << "." << std::endl;
+        std::cerr << "Processing: " << inputFile << std::endl;
 
         rtengine::InitialImage* ii = nullptr;
         rtengine::ProcessingJob* job = nullptr;
@@ -744,7 +744,7 @@ int processLineParams ( int argc, char **argv )
                     rawParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData());
                 }
 
-                std::cout << "  Merging default raw processing profile." << std::endl;
+                std::cerr << "  Merging default raw processing profile." << std::endl;
                 rawParams->applyTo (&currentParams);
             } else {
                 if (options.defProfImg == DEFPROFILE_DYNAMIC) {
@@ -753,7 +753,7 @@ int processLineParams ( int argc, char **argv )
                     imgParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData());
                 }
 
-                std::cout << "  Merging default non-raw processing profile." << std::endl;
+                std::cerr << "  Merging default non-raw processing profile." << std::endl;
                 imgParams->applyTo (&currentParams);
             }
         }
@@ -772,12 +772,12 @@ int processLineParams ( int argc, char **argv )
                     std::cerr << "Warning: sidecar file requested but not found for: " << sideProcessingParams << std::endl;
                 } else {
                     sideCarFound = true;
-                    std::cout << "  Merging sidecar procparams." << std::endl;
+                    std::cerr << "  Merging sidecar procparams." << std::endl;
                 }
             }
 
             if ( processingParams.size() > i  ) {
-                std::cout << "  Merging procparams #" << i << std::endl;
+                std::cerr << "  Merging procparams #" << i << std::endl;
                 processingParams[i]->applyTo (&currentParams);
             }
 
