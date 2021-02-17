@@ -91,22 +91,31 @@ ToneCurve::ToneCurve() : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LAB
     hrenabled = Gtk::manage(new Gtk::CheckButton(M("TP_HLREC_LABEL")));
     hrenabled->set_active(false);
     hrenabled->set_tooltip_markup(M("TP_HLREC_ENA_TOOLTIP"));
-    pack_start(*hrenabled);
 
     method = Gtk::manage(new MyComboBoxText());
     method->append(M("TP_HLREC_LUMINANCE"));
     method->append(M("TP_HLREC_CIELAB"));
     method->append(M("TP_HLREC_COLOR"));
     method->append(M("TP_HLREC_BLEND"));
+    Gtk::VBox *hrVBox;
+    hrVBox = Gtk::manage ( new Gtk::VBox());
+    hrVBox->set_spacing (2);
 
     method->set_active(0);
+    Gtk::Frame* const hrFrame = Gtk::manage(new Gtk::Frame());
+    hrFrame->set_label_align(0.025, 0.5);
+    hrFrame->set_label_widget(*hrenabled);
+
     hlrbox = Gtk::manage(new Gtk::HBox());
     Gtk::Label* lab = Gtk::manage(new Gtk::Label(M("TP_HLREC_METHOD")));
-    hlrbox->pack_start(*lab, Gtk::PACK_SHRINK, 4);
+    hlrbox->pack_start(*lab, Gtk::PACK_SHRINK);
     hlrbox->pack_start(*method);
     hlbl = Gtk::manage(new Adjuster(M("TP_HLREC_HLBLUR"), 0, 5, 1, 0));
-    hlrbox->pack_start(*hlbl);
-    pack_start(*hlrbox);
+
+    hrVBox->pack_start(*hlrbox, Gtk::PACK_SHRINK);
+    hrVBox->pack_start(*hlbl);
+    hrFrame->add(*hrVBox);
+    pack_start(*hrFrame);
 
     enaconn = hrenabled->signal_toggled().connect(sigc::mem_fun(*this, &ToneCurve::hrenabledChanged));
     methconn = method->signal_changed().connect(sigc::mem_fun(*this, &ToneCurve::methodChanged));
@@ -311,13 +320,7 @@ void ToneCurve::read(const ProcParams* pp, const ParamsEdited* pedited)
         method->set_active(3);
     }
 
-    if (!batchMode) {
-        if (hrenabled->get_active()) {
-            hlrbox->show();
-        } else {
-            hlrbox->hide();
-        }
-    }
+    hrenabledChanged();
 
     lasthrEnabled = pp->toneCurve.hrenabled;
 
@@ -448,10 +451,18 @@ void ToneCurve::hrenabledChanged()
     if (!batchMode) {
         if (hrenabled->get_active()) {
             hlrbox->show();
+            hlrbox->set_sensitive(true);
+            if (method->get_active_row_number() == 2) {
+                hlbl->show();
+            } else {
+                hlbl->hide();
+            }
         } else {
-            hlrbox->hide();
+            hlrbox->show();
+            hlrbox->set_sensitive(false);
+            hlbl->hide();
         }
-    }
+   }
 
     if (listener) {
         // Switch off auto exposure if user changes enabled manually
@@ -473,6 +484,7 @@ void ToneCurve::hrenabledChanged()
 }
 void ToneCurve::methodChanged()
 {
+
     if (method->get_active_row_number() == 2) {
         hlbl->show();
     } else {
@@ -538,6 +550,7 @@ void ToneCurve::setDefaults(const ProcParams* defParams, const ParamsEdited* ped
         contrast->setDefaultEditedState(Irrelevant);
         saturation->setDefaultEditedState(Irrelevant);
     }
+
 }
 
 void ToneCurve::curveChanged(CurveEditor* ce)
@@ -689,7 +702,9 @@ void ToneCurve::neutral_pressed()
     enaconn.block(false);
 
     if (!batchMode) {
-        hlrbox->hide();
+        hlrbox->show();
+        hlrbox->set_sensitive(false);
+        hlbl->hide();
     }
 
     if (!black->getAddMode() && !batchMode) {
@@ -709,7 +724,6 @@ void ToneCurve::neutral_pressed()
 void ToneCurve::autolevels_toggled()
 {
     setHistmatching(false);
-
     if (batchMode) {
         if (autolevels->get_inconsistent()) {
             autolevels->set_inconsistent(false);
@@ -979,8 +993,16 @@ void ToneCurve::autoExpChanged(double expcomp, int bright, int contr, int black,
 
             if (nextHLRecons) {
                 hlrbox->show();
+                hlrbox->set_sensitive(true);
+                if (method->get_active_row_number() == 2) {
+                    hlbl->show();
+                } else {
+                    hlbl->hide();
+                }
             } else if (!batchMode) {
-                hlrbox->hide();
+                hlrbox->show();
+                hlrbox->set_sensitive(false);
+                hlbl->hide();
             }
 
             if (!this->black->getAddMode() && !batchMode) {
