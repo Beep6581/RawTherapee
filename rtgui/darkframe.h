@@ -49,7 +49,7 @@ class DarkFrame final:
 protected:
 
     MyFileChooserButton *darkFrameFile;
-    Gtk::HBox *hbdf;
+    Gtk::Box *hbdf;
     Gtk::Button *btnReset;
     Gtk::Label *dfLabel;
     Gtk::Label *dfInfo;

@@ -15,7 +15,7 @@ using namespace rtengine::procparams;
 Gradient::Gradient () : FoldableToolPanel(this, "gradient", M("TP_GRADIENT_LABEL"), false, true), EditSubscriber(ET_OBJECTS), lastObject(-1), draggedPointOldAngle(-1000.)
 {
 
-    editHBox = Gtk::manage (new Gtk::HBox());
+    editHBox = Gtk::manage (new Gtk::Box());
     edit = Gtk::manage (new Gtk::ToggleButton());
     edit->get_style_context()->add_class("independent");
     edit->add (*Gtk::manage (new RTImage ("crosshair-adjust.png")));

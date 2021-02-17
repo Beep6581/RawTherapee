@@ -177,9 +177,9 @@ private:
     sigc::connection  gamutconn, datacieconn, tonecieconn /*,badpixconn , sharpcieconn*/;
     sigc::connection  tcmodeconn, tcmode2conn, tcmode3conn, neutralconn;
     sigc::connection  complexmethodconn, modelmethodconn, catmethodconn;
-    Gtk::HBox* alHBox;
-    Gtk::HBox* wbmHBox;
-    Gtk::HBox* illumHBox;
+    Gtk::Box* alHBox;
+    Gtk::Box* wbmHBox;
+    Gtk::Box* illumHBox;
     CurveEditorGroup* curveEditorG;
     CurveEditorGroup* curveEditorG2;
     CurveEditorGroup* curveEditorG3;

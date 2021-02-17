@@ -215,7 +215,7 @@ public:
     {
         return doubleThresh;
     }
-    void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
+    void styleChanged (const Glib::RefPtr<Gtk::StyleContext>& style);
     unsigned int getPrecision ()
     {
         return precisionTop;

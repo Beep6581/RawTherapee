@@ -95,8 +95,8 @@ ControlSpotPanel::ControlSpotPanel():
     expMaskMerge_(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_MASFRAME")))),
 
     preview_(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_PREVIEW")))),
-    ctboxshape(Gtk::manage(new Gtk::HBox())),
-    ctboxshapemethod(Gtk::manage(new Gtk::HBox())),
+    ctboxshape(Gtk::manage(new Gtk::Box())),
+    ctboxshapemethod(Gtk::manage(new Gtk::Box())),
 
     controlPanelListener(nullptr),
     lastObject_(-1),
@@ -111,7 +111,7 @@ ControlSpotPanel::ControlSpotPanel():
     const bool showtooltip = options.showtooltip;
     pack_start(*hishow_);
 
-    Gtk::HBox* const ctboxprevmethod = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const ctboxprevmethod = Gtk::manage(new Gtk::Box());
     prevMethod_->append(M("TP_LOCALLAB_PREVHIDE"));
     prevMethod_->append(M("TP_LOCALLAB_PREVSHOW"));
     prevMethod_->set_active(0);
@@ -123,7 +123,9 @@ ControlSpotPanel::ControlSpotPanel():
     pack_start(*ctboxprevmethod);
 
 
-    Gtk::HBox* const hbox1_ = Gtk::manage(new Gtk::HBox(true, 4));
+    Gtk::Box* const hbox1_ = Gtk::manage(new Gtk::Box());
+    hbox1_->set_spacing(4);
+    hbox1_->set_homogeneous(true);
     buttonaddconn_ = button_add_->signal_clicked().connect(
                          sigc::mem_fun(*this, &ControlSpotPanel::on_button_add));
     buttondeleteconn_ = button_delete_->signal_clicked().connect(
@@ -136,7 +138,9 @@ ControlSpotPanel::ControlSpotPanel():
     hbox1_->pack_start(*button_duplicate_);
     pack_start(*hbox1_);
 
-    Gtk::HBox* const hbox2_ = Gtk::manage(new Gtk::HBox(true, 4));
+    Gtk::Box* const hbox2_ = Gtk::manage(new Gtk::Box());
+    hbox2_->set_spacing(4);
+    hbox2_->set_homogeneous(true);
     buttonrenameconn_ = button_rename_->signal_clicked().connect(
                             sigc::mem_fun(*this, &ControlSpotPanel::on_button_rename));
     buttonvisibilityconn_ = button_visibility_->signal_button_release_event().connect(
@@ -194,11 +198,10 @@ ControlSpotPanel::ControlSpotPanel():
     scrolledwindow_->set_min_content_height(150);
     pack_start(*scrolledwindow_);
 
-    Gtk::HBox* const ctboxactivmethod = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const ctboxactivmethod = Gtk::manage(new Gtk::Box());
     ctboxactivmethod->pack_start(*activ_);
     pack_start(*ctboxactivmethod);
 
-//    Gtk::HBox* const ctboxshape = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelshape = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SHAPETYPE") + ":"));
     ctboxshape->pack_start(*labelshape, Gtk::PACK_SHRINK, 4);
     shape_->append(M("TP_LOCALLAB_ELI"));
@@ -213,7 +216,7 @@ ControlSpotPanel::ControlSpotPanel():
         shape_->set_tooltip_text(M("TP_LOCALLAB_SHAPE_TOOLTIP"));
     }
 
-    Gtk::HBox* const ctboxspotmethod = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const ctboxspotmethod = Gtk::manage(new Gtk::Box());
     Gtk::Label* const labelspotmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_EXCLUTYPE") + ":"));
     ctboxspotmethod->pack_start(*labelspotmethod, Gtk::PACK_SHRINK, 4);
 
@@ -254,7 +257,6 @@ ControlSpotPanel::ControlSpotPanel():
     pack_start(*excluFrame);
 
 
-//    Gtk::HBox* const ctboxshapemethod = Gtk::manage(new Gtk::HBox());
     Gtk::Label* const labelshapemethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_STYPE") + ":"));
     ctboxshapemethod->pack_start(*labelshapemethod, Gtk::PACK_SHRINK, 4);
 
@@ -298,7 +300,7 @@ ControlSpotPanel::ControlSpotPanel():
         circrad_->set_tooltip_text(M("TP_LOCALLAB_CIRCRAD_TOOLTIP"));
     }
 
-    Gtk::HBox* const ctboxqualitymethod = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const ctboxqualitymethod = Gtk::manage(new Gtk::Box());
     Gtk::Label* const labelqualitymethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_QUAL_METHOD") + ":"));
     ctboxqualitymethod->pack_start(*labelqualitymethod, Gtk::PACK_SHRINK, 4);
 
@@ -413,7 +415,7 @@ ControlSpotPanel::ControlSpotPanel():
     specCaseBox->pack_start(*recurs_);
     specCaseBox->pack_start(*ctboxshapemethod);
 
-    Gtk::HBox* const ctboxwavmethod = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const ctboxwavmethod = Gtk::manage(new Gtk::Box());
     Gtk::Label* const labelwavmethod = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DAUBLOCAL") + ":"));
     ctboxwavmethod->pack_start(*labelwavmethod, Gtk::PACK_SHRINK, 4);
 
@@ -472,10 +474,10 @@ ControlSpotPanel::ControlSpotPanel():
     expMaskMerge_->add(*maskBox, false);
     pack_start(*expMaskMerge_, false, false);
 
-    Gtk::HSeparator *separatormet = Gtk::manage(new  Gtk::HSeparator());
+    Gtk::Separator *separatormet = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     pack_start(*separatormet, Gtk::PACK_SHRINK, 2);
 
-    Gtk::HBox* const ctboxcomplexmethod = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const ctboxcomplexmethod = Gtk::manage(new Gtk::Box());
 
     if (showtooltip) {
         ctboxcomplexmethod->set_tooltip_markup(M("TP_LOCALLAB_COMPLEXMETHOD_TOOLTIP"));
@@ -498,7 +500,7 @@ ControlSpotPanel::ControlSpotPanel():
     ctboxcomplexmethod->pack_start(*complexMethod_);
     // pack_start(*ctboxcomplexmethod);
 /*
-    Gtk::HBox* const ctboxwavmethod = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const ctboxwavmethod = Gtk::manage(new Gtk::Box());
     Gtk::Label* const labelwavmethod = Gtk::manage(new Gtk::Label(M("TP_WAVELET_DAUBLOCAL") + ":"));
     ctboxwavmethod->pack_start(*labelwavmethod, Gtk::PACK_SHRINK, 4);
 
@@ -2782,7 +2784,7 @@ ControlSpotPanel::RenameDialog::RenameDialog(const Glib::ustring &actualname, Gt
     newname_(Gtk::manage(new Gtk::Entry()))
 {
     // Entry widget
-    Gtk::HBox* const hb = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const hb = Gtk::manage(new Gtk::Box());
     hb->pack_start(*Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_REN_DIALOG_LAB"))), false, false, 4);
     newname_->set_text(actualname);
     hb->pack_start(*newname_);

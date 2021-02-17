@@ -23,7 +23,7 @@
 #include "guiutils.h"
 
 class RecentBrowser :
-    public Gtk::VBox
+    public Gtk::Box
 {
 public:
     typedef sigc::slot<void, const Glib::ustring&> DirSelectionSlot;

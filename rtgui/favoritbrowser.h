@@ -24,7 +24,7 @@
 #include "dirselectionlistener.h"
 
 class FavoritBrowser :
-    public Gtk::VBox,
+    public Gtk::Box,
     public DirSelectionListener
 {
     class FavoritColumns :

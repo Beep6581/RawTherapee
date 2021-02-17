@@ -29,7 +29,7 @@ public:
     virtual void exifFilterChanged () = 0;
 };
 
-class FilterPanel : public Gtk::VBox
+class FilterPanel : public Gtk::Box
 {
 
 protected:
