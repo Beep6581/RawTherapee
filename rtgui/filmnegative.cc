@@ -259,7 +259,7 @@ FilmNegative::FilmNegative() :
 
 //    pack_start(*oldMethod, Gtk::PACK_SHRINK, 0);
 
-    Gtk::HSeparator* const sep = Gtk::manage(new  Gtk::HSeparator());
+    Gtk::Separator* const sep = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     sep->get_style_context()->add_class("grid-row-separator");
     pack_start(*sep, Gtk::PACK_SHRINK, 0);
 

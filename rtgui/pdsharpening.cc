@@ -45,7 +45,7 @@ PdSharpening::PdSharpening() :
     EvPdShrAutoContrast = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST");
     EvPdShrAutoRadius = m->newEvent(CAPTURESHARPEN, "HISTORY_MSG_PDSHARPEN_AUTO_RADIUS");
 
-    Gtk::HBox* hb = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* hb = Gtk::manage(new Gtk::Box());
     hb->show();
     contrast = Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 10));
     contrast->setAdjusterListener(this);
@@ -57,7 +57,7 @@ PdSharpening::PdSharpening() :
 
     pack_start(*hb);
 
-    Gtk::VBox* rld = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* rld = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     dradius = Gtk::manage(new Adjuster(M("TP_SHARPENING_RADIUS"), 0.4, 2.0, 0.01, 0.75));
     dradius->addAutoButton();
     dradius->setAutoValue(true);

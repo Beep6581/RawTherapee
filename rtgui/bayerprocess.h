@@ -37,18 +37,18 @@ class BayerProcess final :
 protected:
 
     MyComboBoxText* method;
-    Gtk::HBox* borderbox;
-    Gtk::HBox *imageNumberBox;
+    Gtk::Box* borderbox;
+    Gtk::Box *imageNumberBox;
     Adjuster* border;
     MyComboBoxText* imageNumber;
     Adjuster* ccSteps;
-    Gtk::VBox *dcbOptions;
+    Gtk::Box *dcbOptions;
     Adjuster* dcbIterations;
     CheckBox* dcbEnhance;
-    Gtk::VBox *lmmseOptions;
+    Gtk::Box *lmmseOptions;
     Adjuster* lmmseIterations;
     Gtk::Frame *pixelShiftFrame;
-    Gtk::VBox *pixelShiftOptions;
+    Gtk::Box *pixelShiftOptions;
     MyComboBoxText* pixelShiftMotionMethod;
     MyComboBoxText* pixelShiftDemosaicMethod;
     CheckBox* pixelShiftShowMotion;
@@ -63,7 +63,7 @@ protected:
     Adjuster* pixelShiftSmooth;
     Adjuster* pixelShiftEperIso;
     Adjuster* pixelShiftSigma;
-    Gtk::VBox *dualDemosaicOptions;
+    Gtk::Box *dualDemosaicOptions;
     Adjuster* dualDemosaicContrast;
     int oldMethod;
     bool lastAutoContrast;

@@ -31,12 +31,12 @@ public:
     virtual void exportRequested() = 0;
 };
 
-class ExportPanel : public Gtk::VBox
+class ExportPanel : public Gtk::Box
 {
 
 protected:
 
-    Gtk::VBox *bypass_box;
+    Gtk::Box* bypass_box;
     //Gtk::CheckButton* enabled;
     Gtk::RadioButton* use_fast_pipeline;
     Gtk::RadioButton* use_normal_pipeline;

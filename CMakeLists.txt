@@ -144,6 +144,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=delete-incomplete")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-math-errno")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-math-errno")
 
+# suppress warning https://github.com/Beep6581/RawTherapee/issues/6105
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-attributes")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-attributes")
+
 # Special treatment for x87 and x86-32 SSE (see GitHub issue #4324)
 include(FindX87Math)
 if(HAVE_X87_MATH)

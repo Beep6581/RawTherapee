@@ -191,7 +191,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
 
     // load panel endings
     for (int i = 0; i < 8; i++) {
-        vbPanelEnd[i] = Gtk::manage (new Gtk::VBox ());
+        vbPanelEnd[i] = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
         imgPanelEnd[i] = Gtk::manage (new RTImage ("ornament1.png"));
         imgPanelEnd[i]->show();
         vbPanelEnd[i]->pack_start(*imgPanelEnd[i], Gtk::PACK_SHRINK);

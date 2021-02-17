@@ -573,12 +573,13 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     child(nullptr), headerWidget(nullptr), statusImage(nullptr),
     label(nullptr), useEnabled(useEnabled)
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     set_spacing(0);
     set_name("MyExpander");
     set_can_focus(false);
     setExpandAlignProperties(this, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
-    headerHBox = Gtk::manage( new Gtk::HBox());
+    headerHBox = Gtk::manage( new Gtk::Box());
     headerHBox->set_can_focus(false);
     setExpandAlignProperties(headerHBox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
@@ -628,12 +629,13 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
     child(nullptr), headerWidget(nullptr),
     label(nullptr), useEnabled(useEnabled)
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     set_spacing(0);
     set_name("MyExpander");
     set_can_focus(false);
     setExpandAlignProperties(this, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
-    headerHBox = Gtk::manage( new Gtk::HBox());
+    headerHBox = Gtk::manage( new Gtk::Box());
     headerHBox->set_can_focus(false);
     setExpandAlignProperties(headerHBox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
@@ -1237,7 +1239,7 @@ bool MyHScale::on_scroll_event (GdkEventScroll* event)
 //            event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
     // If Shift is pressed, the widget is modified
     if (event->state & GDK_SHIFT_MASK) {
-        Gtk::HScale::on_scroll_event(event);
+        Gtk::Scale::on_scroll_event(event);
         return true;
     }
 
@@ -1267,7 +1269,7 @@ MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileCh
     box_.pack_start(lbl_, true, true);
     Gtk::Image *img = Gtk::manage(new Gtk::Image());
     img->set_from_icon_name("folder-open", Gtk::ICON_SIZE_BUTTON);
-    box_.pack_start(*Gtk::manage(new Gtk::VSeparator()), false, false, 5);
+    box_.pack_start(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)), false, false, 5);
     box_.pack_start(*img, false, false);
     box_.show_all_children();
     add(box_);

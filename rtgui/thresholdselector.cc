@@ -714,7 +714,7 @@ void ThresholdSelector::findSecondaryMovedCursor(guint state)
     }
 }
 
-void ThresholdSelector::styleChanged (const Glib::RefPtr<Gtk::Style>& style)
+void ThresholdSelector::styleChanged (const Glib::RefPtr<Gtk::StyleContext>& style)
 {
 
     queue_draw ();

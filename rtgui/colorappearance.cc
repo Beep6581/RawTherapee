@@ -228,11 +228,11 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     EvCATcat = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CATCAT");
     //preset button cat02/16
     Gtk::Frame *genFrame;
-    Gtk::VBox *genVBox;
+    Gtk::Box* genVBox;
     genFrame = Gtk::manage (new Gtk::Frame (M ("TP_COLORAPP_GEN")) );
     genFrame->set_label_align (0.025, 0.5);
     genFrame->set_tooltip_markup (M ("TP_COLORAPP_GEN_TOOLTIP"));
-    genVBox = Gtk::manage ( new Gtk::VBox());
+    genVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     genVBox->set_spacing (2);
     
     complexmethod = Gtk::manage (new MyComboBoxText ());
@@ -240,7 +240,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     complexmethod->append(M("TP_WAVELET_COMPEXPERT"));
     complexmethodconn = complexmethod->signal_changed().connect(sigc::mem_fun(*this, &ColorAppearance::complexmethodChanged));
     complexmethod->set_tooltip_text(M("TP_WAVELET_COMPLEX_TOOLTIP"));
-    Gtk::HBox* const complexHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const complexHBox = Gtk::manage(new Gtk::Box());
     Gtk::Label* const complexLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_COMPLEXLAB") + ":"));
     complexHBox->pack_start(*complexLabel, Gtk::PACK_SHRINK, 4);
     complexHBox->pack_start(*complexmethod);
@@ -251,7 +251,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     modelmethod->append(M("TP_COLORAPP_MOD16"));
     modelmethodconn = modelmethod->signal_changed().connect(sigc::mem_fun(*this, &ColorAppearance::modelmethodChanged));
     modelmethod->set_tooltip_text(M("TP_COLORAPP_MODELCAT_TOOLTIP"));
-    Gtk::HBox* const modelHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const modelHBox = Gtk::manage(new Gtk::Box());
     Gtk::Label* const modelLabel = Gtk::manage(new Gtk::Label(M("TP_COLORAPP_MODELCAT") + ":"));
     modelHBox->pack_start(*modelLabel, Gtk::PACK_SHRINK, 4);
     modelHBox->pack_start(*modelmethod);
@@ -263,7 +263,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     catmethod->append(M("TP_COLORAPP_CATSYMSPE"));
     catmethodconn = catmethod->signal_changed().connect(sigc::mem_fun(*this, &ColorAppearance::catmethodChanged));
     catmethod->set_tooltip_text(M("TP_COLORAPP_CATMET_TOOLTIP"));
-    Gtk::HBox* const catHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const catHBox = Gtk::manage(new Gtk::Box());
     Gtk::Label* const catLabel = Gtk::manage(new Gtk::Label(M("TP_COLORAPP_CATMOD") + ":"));
     catHBox->pack_start(*catLabel, Gtk::PACK_SHRINK, 4);
     catHBox->pack_start(*catmethod);
@@ -283,12 +283,12 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     // Process 1 frame
     Gtk::Frame *p1Frame;
     // Vertical box container for the content of the Process 1 frame
-    Gtk::VBox *p1VBox;
+    Gtk::Box* p1VBox;
 
     p1Frame = Gtk::manage (new Gtk::Frame (M ("TP_COLORAPP_LABEL_SCENE")) );
     p1Frame->set_label_align (0.025, 0.5);
     p1Frame->set_tooltip_markup (M ("TP_COLORAPP_SOURCEF_TOOLTIP"));
-    p1VBox = Gtk::manage ( new Gtk::VBox());
+    p1VBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     p1VBox->set_spacing (2);
 
     degree  = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CIECAT_DEGREE"),    0.,  100.,  1.,   90.));
@@ -305,7 +305,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     // surrsource->set_tooltip_markup (M ("TP_COLORAPP_SURSOURCE_TOOLTIP"));
 
 
-    Gtk::HBox* surrHBox1 = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* surrHBox1 = Gtk::manage (new Gtk::Box ());
     surrHBox1->set_spacing (2);
     surrHBox1->set_tooltip_markup (M ("TP_COLORAPP_SURSOURCE_TOOLTIP"));
     Gtk::Label* surrLabel1 = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUNDSRC") + ":"));
@@ -323,8 +323,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
 
 
-//    Gtk::HBox* wbmHBox = Gtk::manage (new Gtk::HBox ());
-    wbmHBox = Gtk::manage (new Gtk::HBox ());
+    wbmHBox = Gtk::manage (new Gtk::Box ());
     
     wbmHBox->set_spacing (2);
     wbmHBox->set_tooltip_markup (M ("TP_COLORAPP_MODEL_TOOLTIP"));
@@ -340,8 +339,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     p1VBox->pack_start (*wbmHBox);
 
 
-//    Gtk::HBox* illumHBox = Gtk::manage (new Gtk::HBox ());
-    illumHBox = Gtk::manage (new Gtk::HBox ());
+    illumHBox = Gtk::manage (new Gtk::Box ());
     illumHBox->set_spacing (2);
     illumHBox->set_tooltip_markup (M ("TP_COLORAPP_ILLUM_TOOLTIP"));
     Gtk::Label* illumLab = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_ILLUM") + ":"));
@@ -412,18 +410,17 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     /*
         Gtk::Frame *p2Frame;
         // Vertical box container for the content of the Process 1 frame
-        Gtk::VBox *p2VBox;
+        Gtk::Box* p2VBox;
 
         p2Frame = Gtk::manage (new Gtk::Frame (M ("TP_COLORAPP_LABEL_CAM02")) );
         p2Frame->set_label_align (0.025, 0.5);
     */
-    Gtk::VBox *p2VBox;
+    Gtk::Box* p2VBox;
 
-    p2VBox = Gtk::manage ( new Gtk::VBox());
+    p2VBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     p2VBox->set_spacing (2);
 
-//    Gtk::HBox* alHBox = Gtk::manage (new Gtk::HBox ());
-    alHBox = Gtk::manage (new Gtk::HBox ());
+    alHBox = Gtk::manage (new Gtk::Box ());
     alHBox->set_spacing (2);
     alHBox->set_tooltip_markup (M ("TP_COLORAPP_ALGO_TOOLTIP"));
     Gtk::Label* alLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_ALGO") + ":"));
@@ -437,7 +434,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     alHBox->pack_start (*algo);
     p2VBox->pack_start (*alHBox);
 
-    p2VBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_EXPAND_WIDGET, 4);
+    p2VBox->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_EXPAND_WIDGET, 4);
 
     jlight = Gtk::manage (new Adjuster (M ("TP_COLORAPP_LIGHT"), -100.0, 100.0, 0.1, 0.));
     jlight->setAdjusterListener  (this);
@@ -524,7 +521,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
         sharpcieconn = sharpcie->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::sharpcie_toggled) );
         p2VBox->pack_start (*sharpcie);
     */
-    p2VBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_EXPAND_WIDGET, 4);
+    p2VBox->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_EXPAND_WIDGET, 4);
 
     toneCurveMode = Gtk::manage (new MyComboBoxText ());
     toneCurveMode->append (M ("TP_COLORAPP_TCMODE_LIGHTNESS"));
@@ -641,13 +638,13 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     // Process 3 frame
     Gtk::Frame *p3Frame;
     // Vertical box container for the content of the Process 3 frame
-    Gtk::VBox *p3VBox;
+    Gtk::Box* p3VBox;
 
     p3Frame = Gtk::manage (new Gtk::Frame (M ("TP_COLORAPP_LABEL_VIEWING")) ); // "Editing viewing conditions" ???
     p3Frame->set_label_align (0.025, 0.5);
     p3Frame->set_tooltip_markup (M ("TP_COLORAPP_VIEWINGF_TOOLTIP"));
 
-    p3VBox = Gtk::manage ( new Gtk::VBox());
+    p3VBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     p3VBox->set_spacing (2);
 
     Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("circle-blue-small.png"));
@@ -697,7 +694,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     p3VBox->pack_start (*greenout);
     p3VBox->pack_start (*ybout);
 
-    Gtk::HBox* surrHBox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* surrHBox = Gtk::manage (new Gtk::Box ());
     surrHBox->set_spacing (2);
     surrHBox->set_tooltip_markup (M ("TP_COLORAPP_SURROUND_TOOLTIP"));
     Gtk::Label* surrLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));

@@ -49,8 +49,9 @@ protected:
     bool                lasthrEnabled;
     Adjuster* hlbl;
 
-    Gtk::HBox* abox;
-    Gtk::HBox* hlrbox;
+    Gtk::Box* abox;
+    Gtk::Box* hlrbox;
+
     Gtk::ToggleButton* autolevels;
     Gtk::Label* lclip;
     MySpinButton* sclip;

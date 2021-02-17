@@ -138,7 +138,7 @@ class Preferences final :
     Gtk::ComboBoxText* dnliss;
 
     Gtk::Frame* waveletFrame;
-    Gtk::HBox* waveletTileSizeHBox;
+    Gtk::Box* waveletTileSizeHBox;
     Gtk::Label* waveletTileSizeLabel;
     Gtk::ComboBoxText* waveletTileSizeCombo;
 

@@ -42,13 +42,13 @@ class PerspCorrection final :
 protected:
     bool render = true;
     MyComboBoxText* method;
-    Gtk::VBox* simple;
+    Gtk::Box* simple;
     Adjuster* horiz;
     Adjuster* vert;
     Gtk::Button* auto_pitch;
     Gtk::Button* auto_yaw;
     Gtk::Button* auto_pitch_yaw;
-    Gtk::VBox* camera_based;
+    Gtk::Box* camera_based;
     Adjuster* camera_crop_factor;
     Adjuster* camera_focal_length;
     Adjuster* camera_pitch;

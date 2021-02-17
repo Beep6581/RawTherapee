@@ -50,12 +50,12 @@ ToneCurve::ToneCurve() : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LAB
 //----------- OOG clamping ----------------------------------
     clampOOG = Gtk::manage(new Gtk::CheckButton(M("TP_EXPOSURE_CLAMPOOG")));
     pack_start(*clampOOG);
-    pack_start(*Gtk::manage(new Gtk::HSeparator()));
+    pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
     clampOOG->signal_toggled().connect(sigc::mem_fun(*this, &ToneCurve::clampOOGChanged));
 
 //----------- Auto Levels ----------------------------------
-    abox = Gtk::manage(new Gtk::HBox());
-    abox->set_spacing(4);
+    abox = Gtk::manage (new Gtk::Box ());
+    abox->set_spacing (4);
 
     autolevels = Gtk::manage(new Gtk::ToggleButton(M("TP_EXPOSURE_AUTOLEVELS")));
     autolevels->set_tooltip_markup(M("TP_EXPOSURE_AUTOLEVELS_TIP"));
@@ -86,17 +86,17 @@ ToneCurve::ToneCurve() : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LAB
     pack_start(*abox);
 
 //-------------- Highlight Reconstruction -----------------
-    pack_start(*Gtk::manage(new Gtk::HSeparator()));
+    pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
 
-    hrenabled = Gtk::manage(new Gtk::CheckButton(M("TP_HLREC_LABEL")));
-    hrenabled->set_active(false);
-    hrenabled->set_tooltip_markup(M("TP_HLREC_ENA_TOOLTIP"));
+    hrenabled = Gtk::manage (new Gtk::CheckButton (M("TP_HLREC_LABEL")));
+    hrenabled->set_active (false);
+    hrenabled->set_tooltip_markup (M("TP_HLREC_ENA_TOOLTIP"));
 
-    method = Gtk::manage(new MyComboBoxText());
-    method->append(M("TP_HLREC_LUMINANCE"));
-    method->append(M("TP_HLREC_CIELAB"));
-    method->append(M("TP_HLREC_COLOR"));
-    method->append(M("TP_HLREC_BLEND"));
+    method = Gtk::manage (new MyComboBoxText ());
+    method->append (M("TP_HLREC_LUMINANCE"));
+    method->append (M("TP_HLREC_CIELAB"));
+    method->append (M("TP_HLREC_COLOR"));
+    method->append (M("TP_HLREC_BLEND"));
     Gtk::Box *hrVBox;
     hrVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     hrVBox->set_spacing(2);
@@ -106,10 +106,10 @@ ToneCurve::ToneCurve() : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LAB
     hrFrame->set_label_align(0.025, 0.5);
     hrFrame->set_label_widget(*hrenabled);
 
-    hlrbox = Gtk::manage(new Gtk::HBox());
-    Gtk::Label* lab = Gtk::manage(new Gtk::Label(M("TP_HLREC_METHOD")));
-    hlrbox->pack_start(*lab, Gtk::PACK_SHRINK);
-    hlrbox->pack_start(*method);
+    hlrbox = Gtk::manage (new Gtk::Box ());
+    Gtk::Label* lab = Gtk::manage (new Gtk::Label (M("TP_HLREC_METHOD")));
+    hlrbox->pack_start (*lab, Gtk::PACK_SHRINK);
+    hlrbox->pack_start (*method);
     hlbl = Gtk::manage(new Adjuster(M("TP_HLREC_HLBLUR"), 0, 5, 1, 0));
 
     hrVBox->pack_start(*hlrbox, Gtk::PACK_SHRINK);
@@ -117,11 +117,11 @@ ToneCurve::ToneCurve() : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LAB
     hrFrame->add(*hrVBox);
     pack_start(*hrFrame);
 
-    enaconn = hrenabled->signal_toggled().connect(sigc::mem_fun(*this, &ToneCurve::hrenabledChanged));
-    methconn = method->signal_changed().connect(sigc::mem_fun(*this, &ToneCurve::methodChanged));
+    enaconn  = hrenabled->signal_toggled().connect( sigc::mem_fun(*this, &ToneCurve::hrenabledChanged) );
+    methconn = method->signal_changed().connect ( sigc::mem_fun(*this, &ToneCurve::methodChanged) );
 
     //----------- Exposure Compensation ---------------------
-    pack_start(*Gtk::manage(new Gtk::HSeparator()));
+    pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
 
     expcomp = Gtk::manage(new Adjuster(M("TP_EXPOSURE_EXPCOMP"), -5, 12, 0.05, 0));
     expcomp->setLogScale(2, 0, true);
@@ -140,7 +140,7 @@ ToneCurve::ToneCurve() : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LAB
     shcompr = Gtk::manage(new Adjuster(M("TP_EXPOSURE_COMPRSHADOWS"), 0, 100, 1, 50));
     pack_start(*shcompr);
 
-    pack_start(*Gtk::manage(new Gtk::HSeparator()));
+    pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
 
 //---------Brightness / Contrast -------------------------
     brightness = Gtk::manage(new Adjuster(M("TP_EXPOSURE_BRIGHTNESS"), -100, 100, 1, 0));
@@ -155,7 +155,7 @@ ToneCurve::ToneCurve() : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LAB
     saturation->setLogScale(2, 0, true);
 
 //----------- Curve 1 ------------------------------
-    pack_start(*Gtk::manage(new Gtk::HSeparator()));
+    pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
 
     histmatching = Gtk::manage(new Gtk::ToggleButton(M("TP_EXPOSURE_HISTMATCHING")));
     histmatching->set_tooltip_markup(M("TP_EXPOSURE_HISTMATCHING_TOOLTIP"));

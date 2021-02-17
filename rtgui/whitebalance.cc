@@ -311,7 +311,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     spotgrid->attach (*wbsizehelper, 2, 0, 1, 1);
     pack_start (*spotgrid, Gtk::PACK_SHRINK, 0 );
 
-    Gtk::HSeparator *separator = Gtk::manage (new  Gtk::HSeparator());
+    Gtk::Separator *separator = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     separator->get_style_context()->add_class("grid-row-separator");
     pack_start (*separator, Gtk::PACK_SHRINK, 0);
 
@@ -341,7 +341,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     equal->show ();
     tempBias->show ();
 
-    /*  Gtk::HBox* boxgreen = Gtk::manage (new Gtk::HBox ());
+    /*  Gtk::Box* boxgreen = Gtk::manage (new Gtk::Box ());
     boxgreen->show ();
 
     boxgreen->pack_start(*igreenL);
