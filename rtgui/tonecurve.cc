@@ -97,9 +97,9 @@ ToneCurve::ToneCurve() : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LAB
     method->append(M("TP_HLREC_CIELAB"));
     method->append(M("TP_HLREC_COLOR"));
     method->append(M("TP_HLREC_BLEND"));
-    Gtk::VBox *hrVBox;
-    hrVBox = Gtk::manage ( new Gtk::VBox());
-    hrVBox->set_spacing (2);
+    Gtk::Box *hrVBox;
+    hrVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    hrVBox->set_spacing(2);
 
     method->set_active(0);
     Gtk::Frame* const hrFrame = Gtk::manage(new Gtk::Frame());
