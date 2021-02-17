@@ -25,7 +25,7 @@
 #include "../rtengine/dynamicprofile.h"
 
 class DynamicProfilePanel :
-    public Gtk::VBox
+    public Gtk::Box
 {
 public:
     DynamicProfilePanel();

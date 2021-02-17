@@ -43,7 +43,7 @@ class ToolBar;
  *   - handling the thumbnail toolbar,
  *   - monitoring the directory (for any change)
  */
-class FileCatalog final : public Gtk::VBox,
+class FileCatalog final : public Gtk::Box,
     public PreviewLoaderListener,
     public FilterPanelListener,
     public FileBrowserListener,
@@ -55,7 +55,7 @@ public:
 
 private:
     FilePanel* filepanel;
-    Gtk::HBox* hBox;
+    Gtk::Box* hBox;
     Glib::ustring selectedDirectory;
     int selectedDirectoryId;
     bool enabled;
@@ -69,19 +69,19 @@ private:
     ImageAreaToolListener* iatlistener;
     DirSelectionSlot selectDir;
 
-    Gtk::HBox* buttonBar;
-    Gtk::HBox* hbToolBar1;
+    Gtk::Box* buttonBar;
+    Gtk::Box* hbToolBar1;
     MyScrolledToolbar* hbToolBar1STB;
 
-    Gtk::HBox* fltrRankbox;
-    Gtk::HBox* fltrLabelbox;
-    Gtk::VBox* fltrVbox1;
+    Gtk::Box* fltrRankbox;
+    Gtk::Box* fltrLabelbox;
+    Gtk::Box* fltrVbox1;
 
-    Gtk::HBox* fltrEditedBox;
-    Gtk::HBox* fltrRecentlySavedBox;
-    Gtk::VBox* fltrVbox2;
+    Gtk::Box* fltrEditedBox;
+    Gtk::Box* fltrRecentlySavedBox;
+    Gtk::Box* fltrVbox2;
 
-    Gtk::VSeparator* vSepiLeftPanel;
+    Gtk::Separator* vSepiLeftPanel;
 
     Gtk::ToggleButton* tbLeftPanel_1;
     Gtk::ToggleButton* tbRightPanel_1;
@@ -119,7 +119,7 @@ private:
     double vScrollPos[18];
     int lastScrollPos;
 
-    Gtk::VBox* trashButtonBox;
+    Gtk::Box* trashButtonBox;
 
     Gtk::Button* zoomInButton;
     Gtk::Button* zoomOutButton;

@@ -33,7 +33,7 @@ public:
     virtual void historyBeforeLineChanged(const rtengine::procparams::ProcParams& params) = 0;
 };
 
-class History : public Gtk::VBox, public PParamsChangeListener
+class History : public Gtk::Box, public PParamsChangeListener
 {
 
 public:
@@ -72,7 +72,7 @@ public:
     BookmarkColumns bookmarkColumns;
 
 protected:
-    Gtk::VPaned*            historyVPaned;
+    Gtk::Paned*            historyVPaned;
     Gtk::TreeView*          hTreeView;
     Glib::RefPtr<Gtk::ListStore> historyModel;
 

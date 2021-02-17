@@ -36,10 +36,10 @@ class XTransProcess final :
 protected:
 
     MyComboBoxText* method;
-    Gtk::HBox* borderbox;
+    Gtk::Box* borderbox;
     Adjuster* border;
     Adjuster* ccSteps;
-    Gtk::VBox *dualDemosaicOptions;
+    Gtk::Box* dualDemosaicOptions;
     Adjuster* dualDemosaicContrast;
     bool lastAutoContrast;
 

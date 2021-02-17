@@ -39,7 +39,7 @@ public:
     virtual void editModeSwitchedOff() = 0;
 };
 
-class ToolBar final : public Gtk::HBox
+class ToolBar final : public Gtk::Box
 {
 private:
     std::unique_ptr<RTImage> handimg;

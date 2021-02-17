@@ -132,7 +132,7 @@ LocallabTool::LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustr
     complexity(Gtk::manage(new MyComboBoxText()))
 {
     // Create expander title bar
-    Gtk::HBox* const titleBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const titleBox = Gtk::manage(new Gtk::Box());
     Gtk::Label* const titleLabel = Gtk::manage(new Gtk::Label());
     titleLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(UILabel) + Glib::ustring("</b>"));
     titleLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -156,7 +156,7 @@ LocallabTool::LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustr
         titleBox->pack_end(*complexity, Gtk::PACK_SHRINK, 2);
     }
 
-    Gtk::VSeparator* const separator = Gtk::manage(new Gtk::VSeparator());
+    Gtk::Separator* const separator = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
     titleBox->pack_end(*separator, Gtk::PACK_SHRINK, 0);
 
     if (need100Percent) {
@@ -499,6 +499,9 @@ LocallabColor::LocallabColor():
     LLmaskcolshapewav(static_cast<FlatCurveEditor*>(mask2CurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
     csThresholdcol(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
 {
+    
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     float R, G, B;
 
     std::vector<GradientMilestone> six_shape;
@@ -821,7 +824,7 @@ LocallabColor::LocallabColor():
     expgradcol->add(*gradcolBox, false);
     pack_start(*expgradcol, false, false);
     ToolParamBlock* const curvBox = Gtk::manage(new ToolParamBlock());
-    Gtk::HBox* const qualcurvbox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const qualcurvbox = Gtk::manage(new Gtk::Box());
     qualcurvbox->pack_start(*labqualcurv, Gtk::PACK_SHRINK, 4);
     qualcurvbox->pack_start(*qualitycurveMethod);
     curvBox->pack_start(*qualcurvbox);
@@ -839,7 +842,7 @@ LocallabColor::LocallabColor():
     Gtk::Frame* const merge1colFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGE1COLFRA")));
     merge1colFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const mergecolBox = Gtk::manage(new ToolParamBlock());
-    Gtk::HSeparator* const separatormer = Gtk::manage(new  Gtk::HSeparator());
+    Gtk::Separator* const separatormer = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     mergecolBox->pack_start(*separatormer, Gtk::PACK_SHRINK, 2);
     mergecolBox->pack_start(*mergecolMethod);
     mergecolBox->pack_start(*mercol);
@@ -2530,6 +2533,8 @@ LocallabExposure::LocallabExposure():
     mask2expCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmaskexpshape(static_cast<DiagonalCurveEditor*>(mask2expCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Exposure specific widgets
@@ -2687,7 +2692,7 @@ LocallabExposure::LocallabExposure():
     pdeBox->pack_start(*linear);
     pdeBox->pack_start(*balanexp);
     pdeBox->pack_start(*gamm);
-    Gtk::HBox* const ctboxexpmethod = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const ctboxexpmethod = Gtk::manage(new Gtk::Box());
 //    Gtk::Label* const labelexpmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_NOISEMETH") + ":"));
     ctboxexpmethod->pack_start(*labelexpmethod, Gtk::PACK_SHRINK, 4);
     ctboxexpmethod->pack_start(*exnoiseMethod);
@@ -3819,6 +3824,8 @@ LocallabShadow::LocallabShadow():
     fatamountSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATAMOUNT"), 1., 100., 1., 1.))),
     fatanchorSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png")))))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Shadow highlight specific widgets
@@ -4888,6 +4895,8 @@ LocallabVibrance::LocallabVibrance():
     mask2vibCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmaskvibshape(static_cast<DiagonalCurveEditor*>(mask2vibCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     float R, G, B;
 
     const LocallabParams::LocallabSpot defSpot;
@@ -5811,12 +5820,14 @@ LocallabSoft::LocallabSoft():
 
     // Soft light specific widgets
     softMethod(Gtk::manage(new MyComboBoxText())),
-    ctboxsoftmethod(Gtk::manage(new Gtk::HBox())),
+    ctboxsoftmethod(Gtk::manage(new Gtk::Box())),
     showmasksoftMethod(Gtk::manage(new MyComboBoxText())),
     streng(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENG"), 1, 100, 1, 1))),
     laplace(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACE"), 0., 100., 0.5, 25.))),
     sensisf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 1, 100, 1, 30)))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     // Parameter Soft light specific widgets
     softMethod->append(M("TP_LOCALLAB_SOFTM"));
     softMethod->append(M("TP_LOCALLAB_RETIM"));
@@ -6291,9 +6302,11 @@ LocallabBlur::LocallabBlur():
     Lmaskblshape(static_cast<DiagonalCurveEditor*>(mask2blCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     mask2blCurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
     LLmaskblshapewav(static_cast<FlatCurveEditor*>(mask2blCurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
-    quaHBox(Gtk::manage(new Gtk::HBox())),
+    quaHBox(Gtk::manage(new Gtk::Box())),
     csThresholdblur(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Blur, Noise & Denoise specific widgets
@@ -6629,7 +6642,7 @@ LocallabBlur::LocallabBlur():
     maskblBox->pack_start(*maskblCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskblBox->pack_start(*strumaskbl, Gtk::PACK_SHRINK, 0);
     maskblBox->pack_start(*toolbl, Gtk::PACK_SHRINK, 0);
-    Gtk::HSeparator* const separatorstrubl = Gtk::manage(new  Gtk::HSeparator());
+    Gtk::Separator* const separatorstrubl = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     maskblBox->pack_start(*separatorstrubl, Gtk::PACK_SHRINK, 2);
     maskblBox->pack_start(*blendmaskbl, Gtk::PACK_SHRINK, 0);
     toolblFrame->set_label_align(0.025, 0.5);

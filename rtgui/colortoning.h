@@ -79,8 +79,8 @@ private:
     void labRegionShow(int idx, bool list_only=false);
     void labRegionGet(int idx);
 
-    //Gtk::HSeparator* satLimiterSep;
-    Gtk::HSeparator* colorSep;
+    //Gtk::Separator* satLimiterSep;
+    Gtk::Separator* colorSep;
     CurveEditorGroup* colorCurveEditorG;
     CurveEditorGroup* opacityCurveEditorG;
     CurveEditorGroup* clCurveEditorG;
@@ -89,10 +89,10 @@ private:
     FlatCurveEditor* colorShape;
     DiagonalCurveEditor* clshape;
     DiagonalCurveEditor* cl2shape;
-    Gtk::HBox* ctbox;
+    Gtk::Box* ctbox;
     Gtk::Frame *p1Frame;
 
-    Gtk::VBox* chanMixerBox;
+    Gtk::Box* chanMixerBox;
     MyComboBoxText* method;
     sigc::connection methodconn;
     MyComboBoxText* twocolor;
@@ -116,7 +116,7 @@ private:
     Gtk::Image* irg;
 
     Gtk::Button* neutral;
-    Gtk::HBox* neutrHBox;
+    Gtk::Box* neutrHBox;
     int nextbw;
     int nextsatth;
     int nextsatpr;
@@ -147,7 +147,7 @@ private:
     rtengine::ProcEvent EvLabRegionShowMask;
     rtengine::ProcEvent EvLabRegionChannel;
 
-    Gtk::VBox *labRegionBox;
+    Gtk::Box* labRegionBox;
     Gtk::ListViewText *labRegionList;
     Gtk::Button *labRegionAdd;
     Gtk::Button *labRegionRemove;

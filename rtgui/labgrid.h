@@ -96,7 +96,7 @@ public:
 };
 
 
-class LabGrid: public Gtk::HBox {
+class LabGrid: public Gtk::Box {
 private:
     LabGridArea grid;
 

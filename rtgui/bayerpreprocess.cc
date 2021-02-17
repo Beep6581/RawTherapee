@@ -48,7 +48,7 @@ BayerPreProcess::BayerPreProcess() : FoldableToolPanel(this, "bayerpreprocess", 
 
     greenEqThreshold->show();
 
-    Gtk::HBox *hb = Gtk::manage(new Gtk::HBox());
+    Gtk::Box *hb = Gtk::manage(new Gtk::Box());
     hb->pack_start(*Gtk::manage(new Gtk::Label(M("TP_PREPROCESS_LINEDENOISE_DIRECTION") + ": ")), Gtk::PACK_SHRINK, 0);
     lineDenoiseDirection = Gtk::manage(new MyComboBoxText());
     lineDenoiseDirection->append(M("TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL"));
@@ -63,7 +63,7 @@ BayerPreProcess::BayerPreProcess() : FoldableToolPanel(this, "bayerpreprocess", 
     pack_start(*lineDenoise, Gtk::PACK_SHRINK, 4);
     pack_start(*hb, Gtk::PACK_SHRINK, 4);
 
-    pack_start(*Gtk::manage(new  Gtk::HSeparator()));
+    pack_start(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
 
     pack_start(*greenEqThreshold, Gtk::PACK_SHRINK, 4);
 
@@ -71,7 +71,7 @@ BayerPreProcess::BayerPreProcess() : FoldableToolPanel(this, "bayerpreprocess", 
     pdafLinesFilter->show();
     pdafLinesFilter->signal_toggled().connect(sigc::mem_fun(*this, &BayerPreProcess::pdafLinesFilterChanged), true);
 
-    pack_start(*Gtk::manage(new Gtk::HSeparator()));
+    pack_start(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
     pack_start(*pdafLinesFilter, Gtk::PACK_SHRINK, 4);
 }
 

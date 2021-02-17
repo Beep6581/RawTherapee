@@ -38,6 +38,7 @@ LocallabToolList::LocallabToolList():
     // Tool list listener
     listListener(nullptr)
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     list->set_model(listTreeModel);
     list->pack_start(toolRow.name);
     listConn = list->signal_changed().connect(sigc::mem_fun(*this, &LocallabToolList::toolRowSelected));
@@ -167,6 +168,8 @@ Locallab::Locallab():
     // Other widgets
     resetshowButton(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_RESETSHOW"))))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     // Create panel widget to receive Locallab GUI elements
     ToolVBox* const panel = Gtk::manage(new ToolVBox());
     panel->set_spacing(2);
@@ -177,7 +180,7 @@ Locallab::Locallab():
     panel->pack_start(*expsettings->getExpander(), false, false);
 
     // Add separator
-    Gtk::HSeparator* const separator = Gtk::manage(new Gtk::HSeparator());
+    Gtk::Separator* const separator = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     panel->pack_start(*separator, false, false);
 
     // Add tool list widget
@@ -203,7 +206,7 @@ Locallab::Locallab():
     panel->pack_start(*toolpanel, false, false);
 
     // Add separator
- //   Gtk::HSeparator* const separator2 = Gtk::manage(new Gtk::HSeparator());
+ //   Gtk::Separator* const separator2 = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
  //   panel->pack_start(*separator2, false, false);
 
     // Add mask reset button to panel widget
