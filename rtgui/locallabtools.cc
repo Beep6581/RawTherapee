@@ -6551,7 +6551,7 @@ LocallabBlur::LocallabBlur():
     ToolParamBlock* const grainBox = Gtk::manage(new ToolParamBlock());
     grainBox->pack_start(*isogr);
     grainBox->pack_start(*strengr);
-    grainBox->pack_start(*scalegr);
+//    grainBox->pack_start(*scalegr);
     grainFrame->add(*grainBox);
     blnoisebox->pack_start(*grainFrame);
     blnoisebox->pack_start(*medMethod);
