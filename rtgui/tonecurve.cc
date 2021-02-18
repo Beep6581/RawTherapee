@@ -110,7 +110,7 @@ ToneCurve::ToneCurve() : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LAB
     Gtk::Label* lab = Gtk::manage (new Gtk::Label (M("TP_HLREC_METHOD")));
     hlrbox->pack_start (*lab, Gtk::PACK_SHRINK);
     hlrbox->pack_start (*method);
-    hlbl = Gtk::manage(new Adjuster(M("TP_HLREC_HLBLUR"), 0, 5, 1, 0));
+    hlbl = Gtk::manage(new Adjuster(M("TP_HLREC_HLBLUR"), 0, 4, 1, 0));
 
     hrVBox->pack_start(*hlrbox, Gtk::PACK_SHRINK);
     hrVBox->pack_start(*hlbl);

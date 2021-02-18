@@ -1166,10 +1166,10 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
             progress += 0.05;
             plistener->setProgress(progress);
         }
-        blur = rtengine::LIM(blur - 1, 0, 4);
+        blur = rtengine::LIM(blur - 1, 0, 3);
 
-        constexpr float vals[5][3] = {{4.0f, 0.3f, 0.3f},
-                                      {3.5f, 0.5f, 0.2f},
+        constexpr float vals[4][3] = {{4.0f, 0.3f, 0.3f},
+                                  //    {3.5f, 0.5f, 0.2f},
                                       {3.0f, 1.0f, 0.1f},
                                       {3.0f, 2.0f, 0.01f},
                                       {2.0f, 3.0f, 0.001f}
