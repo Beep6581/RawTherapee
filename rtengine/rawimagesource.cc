@@ -2438,7 +2438,7 @@ void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
                 printf ("Applying Highlight Recovery: Color propagation...\n");
             }
 
-            HLRecovery_inpaint (red, green, blue);
+            HLRecovery_inpaint (red, green, blue, hrp.hlbl);
             rgbSourceModified = true;
         }
     }

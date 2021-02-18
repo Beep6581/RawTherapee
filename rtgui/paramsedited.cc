@@ -47,6 +47,7 @@ void ParamsEdited::set(bool v)
     toneCurve.saturation = v;
     toneCurve.shcompr    = v;
     toneCurve.hlcompr    = v;
+    toneCurve.hlbl    = v;
     toneCurve.hlcomprthresh = v;
     toneCurve.autoexp    = v;
     toneCurve.clip       = v;
@@ -720,6 +721,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         toneCurve.saturation = toneCurve.saturation && p.toneCurve.saturation == other.toneCurve.saturation;
         toneCurve.shcompr = toneCurve.shcompr && p.toneCurve.shcompr == other.toneCurve.shcompr;
         toneCurve.hlcompr = toneCurve.hlcompr && p.toneCurve.hlcompr == other.toneCurve.hlcompr;
+        toneCurve.hlbl = toneCurve.hlbl && p.toneCurve.hlbl == other.toneCurve.hlbl;
         toneCurve.hlcomprthresh = toneCurve.hlcomprthresh && p.toneCurve.hlcomprthresh == other.toneCurve.hlcomprthresh;
         toneCurve.autoexp = toneCurve.autoexp && p.toneCurve.autoexp == other.toneCurve.autoexp;
         toneCurve.clip = toneCurve.clip && p.toneCurve.clip == other.toneCurve.clip;
@@ -2006,6 +2008,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (toneCurve.method) {
         toEdit.toneCurve.method = mods.toneCurve.method;
+    }
+
+    if (toneCurve.hlbl) {
+        toEdit.toneCurve.hlbl = mods.toneCurve.hlbl;
     }
 
     if (toneCurve.histmatching) {
