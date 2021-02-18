@@ -47,6 +47,7 @@ protected:
     sigc::connection    methconn;
     sigc::connection    enaconn;
     bool                lasthrEnabled;
+    Adjuster* hlbl;
 
     Gtk::Box* abox;
     Gtk::Box* hlrbox;
@@ -80,6 +81,7 @@ protected:
     rtengine::ProcEvent EvHistMatching;
     rtengine::ProcEvent EvHistMatchingBatch;
     rtengine::ProcEvent EvClampOOG;
+    rtengine::ProcEvent EvHLbl;
 
     // used temporarily in eventing
     double nextExpcomp;

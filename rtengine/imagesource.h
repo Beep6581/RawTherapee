@@ -98,7 +98,6 @@ public:
     virtual void        retinexPrepareBuffers      (const procparams::ColorManagementParams& cmp, const procparams::RetinexParams &retinexParams, multi_array2D<float, 4> &conversionBuffer, LUTu &lhist16RETI) {};
     virtual void        flush           () = 0;
     virtual void        HLRecovery_Global  (const procparams::ToneCurveParams &hrp) {};
-    virtual void        HLRecovery_inpaint (float** red, float** green, float** blue) {};
 
     virtual bool        isRGBSourceModified () const = 0; // tracks whether cached rgb output of demosaic has been modified
 
