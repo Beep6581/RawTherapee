@@ -11654,7 +11654,7 @@ void ImProcFunctions::Lab_Local(
 
         bool fft = params->locallab.spots.at(sp).fftwbl;
         int isogr = params->locallab.spots.at(sp).isogr;
-        int scalegr = 100;//params->locallab.spots.at(sp).scalegr;
+        int scalegr = params->locallab.spots.at(sp).scalegr;
 
 
 
