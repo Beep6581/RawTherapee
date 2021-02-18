@@ -32,8 +32,8 @@
 #include "opthelper.h"
 #include "rawimagesource.h"
 #include "rt_math.h"
-#define BENCHMARK
-#include "StopWatch.h"
+//#define BENCHMARK
+//#include "StopWatch.h"
 #include "guidedfilter.h"
 #include "settings.h"
 #include "gauss.h"
@@ -301,7 +301,7 @@ using namespace procparams;
 
 void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue, int blur)
 {  
-    BENCHFUN
+  //  BENCHFUN
     double progress = 0.0;
 
     if (plistener) {
