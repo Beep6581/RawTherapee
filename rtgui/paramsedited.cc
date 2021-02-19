@@ -1306,6 +1306,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).isogr = locallab.spots.at(j).isogr && pSpot.isogr == otherSpot.isogr;
                 locallab.spots.at(j).strengr = locallab.spots.at(j).strengr && pSpot.strengr == otherSpot.strengr;
                 locallab.spots.at(j).scalegr = locallab.spots.at(j).scalegr && pSpot.scalegr == otherSpot.scalegr;
+                locallab.spots.at(j).divgr = locallab.spots.at(j).divgr && pSpot.divgr == otherSpot.divgr;
                 locallab.spots.at(j).epsbl = locallab.spots.at(j).epsbl && pSpot.epsbl == otherSpot.epsbl;
                 locallab.spots.at(j).blMethod = locallab.spots.at(j).blMethod && pSpot.blMethod == otherSpot.blMethod;
                 locallab.spots.at(j).chroMethod = locallab.spots.at(j).chroMethod && pSpot.chroMethod == otherSpot.chroMethod;
@@ -4194,6 +4195,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).scalegr = mods.locallab.spots.at(i).scalegr;
         }
 
+        if (locallab.spots.at(i).divgr) {
+            toEdit.locallab.spots.at(i).divgr = mods.locallab.spots.at(i).divgr;
+        }
+
         if (locallab.spots.at(i).epsbl) {
             toEdit.locallab.spots.at(i).epsbl = mods.locallab.spots.at(i).epsbl;
         }
@@ -6874,6 +6879,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     isogr(v),
     strengr(v),
     scalegr(v),
+    divgr(v),
     epsbl(v),
     blMethod(v),
     chroMethod(v),
@@ -7445,6 +7451,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     isogr = v;
     strengr = v;
     scalegr = v;
+    divgr = v;
     epsbl = v;
     blMethod = v;
     chroMethod = v;

@@ -642,6 +642,7 @@ public:
         bool isogr;
         bool strengr;
         bool scalegr;
+        bool divgr;
         bool epsbl;
         bool blMethod;
         bool chroMethod;

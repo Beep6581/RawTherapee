@@ -280,7 +280,7 @@ enum class BlurType {
          float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float balanceh, float lumask);
 
     //3 functions from Alberto Griggio, adapted J.Desmis 2019
-    void filmGrain(Imagefloat *rgb, int isogr, int strengr, int scalegr, int bfw, int bfh);
+    void filmGrain(Imagefloat *rgb, int isogr, int strengr, int scalegr,float divgr, int bfw, int bfh);
     void log_encode(Imagefloat *rgb, struct local_params & lp, bool multiThread, int bfw, int bfh);
     void getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, float *sourceab, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE);
 

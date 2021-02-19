@@ -678,6 +678,7 @@ private:
     Adjuster* const isogr;
     Adjuster* const strengr;
     Adjuster* const scalegr;
+    Adjuster* const divgr;
     MyComboBoxText* const medMethod;
     Adjuster* const itera;
     Adjuster* const guidbl;

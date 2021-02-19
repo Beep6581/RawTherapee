@@ -1283,6 +1283,7 @@ HISTORY_MSG_1035;Local - Nlmeans - detail
 HISTORY_MSG_1036;Local - Nlmeans - patch
 HISTORY_MSG_1037;Local - Nlmeans - radius
 HISTORY_MSG_1038;Local - Nlmeans - gamma
+HISTORY_MSG_1039;Local - Grain - gamma
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2621,6 +2622,7 @@ TP_LOCALLAB_DETAIL;Local contrast
 TP_LOCALLAB_DETAILFRA;Edge detection
 TP_LOCALLAB_DETAILSH;Details
 TP_LOCALLAB_DETAILTHR;Luminance & chroma detail threshold (DCT ƒ)
+TP_LOCALLAB_DIVGR;Gamma
 TP_LOCALLAB_DUPLSPOTNAME;Copy
 TP_LOCALLAB_EDGFRA;Edge sharpness
 TP_LOCALLAB_EDGSHOW;Show all tools

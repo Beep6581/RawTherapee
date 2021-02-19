@@ -6218,6 +6218,7 @@ LocallabBlur::LocallabBlur():
     isogr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ISOGR"), 20, 6400, 1, 400))),
     strengr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGR"), 0, 100, 1, 0))),
     scalegr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALEGR"), 0, 100, 1, 80))),
+    divgr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DIVGR"), 0.2, 2., 0.1, 1.))),
     medMethod(Gtk::manage(new MyComboBoxText())),
     itera(Gtk::manage(new Adjuster(M("TP_DIRPYRDENOISE_MEDIAN_PASSES"), 1, 4, 1, 1))),
     guidbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDBL"), 0, 1000, 1, 0))),
@@ -6343,6 +6344,7 @@ LocallabBlur::LocallabBlur():
     strengr->setAdjusterListener(this);
 
     scalegr->setAdjusterListener(this);
+    divgr->setAdjusterListener(this);
 
     medMethod->append(M("TP_LOCALLAB_MEDNONE"));
     medMethod->append(M("TP_DIRPYRDENOISE_TYPE_3X3"));
@@ -6552,6 +6554,7 @@ LocallabBlur::LocallabBlur():
     grainBox->pack_start(*isogr);
     grainBox->pack_start(*strengr);
     grainBox->pack_start(*scalegr);
+    grainBox->pack_start(*divgr);
     grainFrame->add(*grainBox);
     blnoisebox->pack_start(*grainFrame);
     blnoisebox->pack_start(*medMethod);
@@ -6957,6 +6960,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         isogr->setValue((double)spot.isogr);
         strengr->setValue((double)spot.strengr);
         scalegr->setValue((double)spot.scalegr);
+        divgr->setValue((double)spot.divgr);
 
         if (spot.medMethod == "none") {
             medMethod->set_active(0);
@@ -7102,6 +7106,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.isogr = isogr->getIntValue();
         spot.strengr = strengr->getIntValue();
         spot.scalegr = scalegr->getIntValue();
+        spot.divgr = divgr->getValue();
 
         if (medMethod->get_active_row_number() == 0) {
             spot.medMethod = "none";
@@ -7223,6 +7228,7 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         isogr->setDefault((double)defSpot.isogr);
         strengr->setDefault((double)defSpot.strengr);
         scalegr->setDefault((double)defSpot.scalegr);
+        divgr->setDefault((double)defSpot.divgr);
         itera->setDefault((double)defSpot.itera);
         guidbl->setDefault((double)defSpot.guidbl);
         strbl->setDefault((double)defSpot.strbl);
@@ -7308,6 +7314,13 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabscalegr,
                                        scalegr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == divgr) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdivgr,
+                                       divgr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

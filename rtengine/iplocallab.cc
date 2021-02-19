@@ -6781,8 +6781,8 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, c
 
                 float difL = (tmp1->L[y - ystart][x - xstart] - original->L[y][x]) * localFactor * reducdE;
                 transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                const float difa = tmp1->a[y - ystart][x - xstart] - original->a[y][x] * localFactor * reducdE;
-                const float difb = tmp1->b[y - ystart][x - xstart] - original->b[y][x] * localFactor * reducdE;
+                const float difa = (tmp1->a[y - ystart][x - xstart] - original->a[y][x]) * localFactor * reducdE;
+                const float difb = (tmp1->b[y - ystart][x - xstart] - original->b[y][x]) * localFactor * reducdE;
 
                 transformed->a[y][x] = clipC(original->a[y][x] + difa);
                 transformed->b[y][x] = clipC(original->b[y][x] + difb);
@@ -11655,7 +11655,7 @@ void ImProcFunctions::Lab_Local(
         bool fft = params->locallab.spots.at(sp).fftwbl;
         int isogr = params->locallab.spots.at(sp).isogr;
         int scalegr = params->locallab.spots.at(sp).scalegr;
-
+        float  divgr = params->locallab.spots.at(sp).divgr;
 
 
         if (bfw >= mSP && bfh >= mSP) {
@@ -11819,7 +11819,7 @@ void ImProcFunctions::Lab_Local(
                         }
 
 
-                        filmGrain(tmpImage, isogr, strengr, scalegr, wi, he);
+                        filmGrain(tmpImage, isogr, strengr, scalegr, divgr, wi, he);
 
                         for (int y = 0; y < he ; y++) {
                             for (int x = 0; x < wi; x++) {
