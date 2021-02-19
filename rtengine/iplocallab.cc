@@ -6781,8 +6781,8 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, c
 
                 float difL = (tmp1->L[y - ystart][x - xstart] - original->L[y][x]) * localFactor * reducdE;
                 transformed->L[y][x] = CLIP(original->L[y][x] + difL);
-                const float difa = tmp1->a[y - ystart][x - xstart] - original->a[y][x] * localFactor * reducdE;
-                const float difb = tmp1->b[y - ystart][x - xstart] - original->b[y][x] * localFactor * reducdE;
+                const float difa = (tmp1->a[y - ystart][x - xstart] - original->a[y][x]) * localFactor * reducdE;
+                const float difb = (tmp1->b[y - ystart][x - xstart] - original->b[y][x]) * localFactor * reducdE;
 
                 transformed->a[y][x] = clipC(original->a[y][x] + difa);
                 transformed->b[y][x] = clipC(original->b[y][x] + difb);
