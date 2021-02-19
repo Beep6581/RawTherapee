@@ -6217,7 +6217,7 @@ LocallabBlur::LocallabBlur():
     grainFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRAINFRA")))),
     isogr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ISOGR"), 20, 6400, 1, 400))),
     strengr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGR"), 0, 100, 1, 0))),
-    scalegr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALEGR"), 0, 100, 1, 100))),
+    scalegr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALEGR"), 0, 100, 1, 80))),
     medMethod(Gtk::manage(new MyComboBoxText())),
     itera(Gtk::manage(new Adjuster(M("TP_DIRPYRDENOISE_MEDIAN_PASSES"), 1, 4, 1, 1))),
     guidbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDBL"), 0, 1000, 1, 0))),
@@ -6551,7 +6551,7 @@ LocallabBlur::LocallabBlur():
     ToolParamBlock* const grainBox = Gtk::manage(new ToolParamBlock());
     grainBox->pack_start(*isogr);
     grainBox->pack_start(*strengr);
-//    grainBox->pack_start(*scalegr);
+    grainBox->pack_start(*scalegr);
     grainFrame->add(*grainBox);
     blnoisebox->pack_start(*grainFrame);
     blnoisebox->pack_start(*medMethod);

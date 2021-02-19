@@ -3330,7 +3330,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     decayd(2.),
     isogr(400),
     strengr(0),
-    scalegr(100),
+    scalegr(80),
     epsbl(0),
     blMethod("blur"),
     chroMethod("lum"),
