@@ -2715,6 +2715,8 @@ TP_LOCALLAB_GRADSTRHUE_TOOLTIP;Adjusts hue gradient strength
 TP_LOCALLAB_GRADSTRLUM;Luminance gradient strength
 TP_LOCALLAB_GRADSTR_TOOLTIP;Filter strength in stops
 TP_LOCALLAB_GRAINFRA;Film Grain   1:1
+TP_LOCALLAB_GRAINFRA2;Coarseness
+
 TP_LOCALLAB_GRAIN_TOOLTIP;Adds film-like grain to the image
 TP_LOCALLAB_GRALWFRA;Graduated filter (local contrast)
 TP_LOCALLAB_GRIDFRAME_TOOLTIP;You can use this tool as a brush. Use small spot and adapt transition and transition decay\nOnly mode NORMAL and eventually Hue, Saturation, Color, Luminosity are concerned by Merge background (ΔE)
@@ -2737,7 +2739,7 @@ TP_LOCALLAB_INVBL_TOOLTIP;Alternative to ‘Inverse’ mode: use two spots\nFirs
 TP_LOCALLAB_INVERS;Inverse
 TP_LOCALLAB_INVERS_TOOLTIP;Fewer possibilities if selected (Inverse).\n\nAlternative: use two spots\nFirst Spot:\n full image - delimiter outside preview\n RT-spot shape: rectangle. Transition 100\n\nSecond spot: Excluding spot
 TP_LOCALLAB_INVMASK;Inverse algorithm
-TP_LOCALLAB_ISOGR;Coarseness (ISO)
+TP_LOCALLAB_ISOGR;Distribution (ISO)
 TP_LOCALLAB_LABBLURM;Blur Mask
 TP_LOCALLAB_LABEL;Local Adjustments
 TP_LOCALLAB_LABGRID;Color correction grid

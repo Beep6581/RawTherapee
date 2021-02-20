@@ -24,6 +24,7 @@
 /*
     This file is part of darktable,
     copyright (c) 2010-2012 Henrik Andersson.
+    adaptation to Rawtherapee 2021 Jacques Desmis jdesmis@gmail.com
 
     darktable is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -96,7 +97,7 @@ public:
         scale(scale)
     {
         simplex_noise_init();
-        constexpr float mb = 100.f;
+        constexpr float mb = 100.f;// * divgr;
         evaluate_grain_lut(mb, divgr);
     }
     
@@ -301,6 +302,9 @@ private:
     float paper_resp(float exposure, float mb, float gp, float divgr)
     {   
         float dived = 1.f;
+        if(divgr > 1.8f) {
+            dived = 1.f + (divgr - 1.8f);
+        }
         const float delta = dived * GRAIN_LUT_DELTA_MAX * expf((mb / 100.0f) * logf(GRAIN_LUT_DELTA_MIN / dived));
         const float density = (1.0f + 2.0f * delta) / (1.0f + expf( (4.0f * gp * (0.5f - exposure)) / (1.0f + 2.0f * delta) )) - delta;
         return density;
@@ -309,6 +313,9 @@ private:
     float paper_resp_inverse(float density, float mb, float gp, float divgr)
     {
         float dived = 1.f;
+        if(divgr > 1.8f) {
+            dived = 1.f + (divgr - 1.8f);
+        }
         const float delta =  dived * GRAIN_LUT_DELTA_MAX * expf((mb / 100.0f) * logf(GRAIN_LUT_DELTA_MIN / dived));
         const float exposure = -logf((1.0f + 2.0f * delta) / (density + delta) - 1.0f) * (1.0f + 2.0f * delta) / (4.0f * gp) + 0.5f;
         return exposure;
@@ -366,7 +373,9 @@ private:
 
 void ImProcFunctions::filmGrain(Imagefloat *rgb, int isogr, int strengr, int scalegr, float divgr, int bfw, int bfh)
 {
-    //printf("is=%i str=%i sca=%i\n", isogr, strengr, scalegr);
+    if (settings->verbose) {
+        printf("iso=%i strength=%i scale=%i gamma=%f\n", isogr, strengr, scalegr, divgr);
+    }
 
     GrainEvaluator ge(0, 0, bfw, bfh, scale, divgr);
     ge(isogr, strengr, scalegr, divgr, rgb, multiThread);

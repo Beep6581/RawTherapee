@@ -6215,10 +6215,11 @@ LocallabBlur::LocallabBlur():
     radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), MINRAD, MAXRAD, 0.1, 1.5, nullptr, nullptr, &blurSlider2radius, &blurRadius2Slider))),
     strength(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0))),
     grainFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRAINFRA")))),
+    grainFrame2(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRAINFRA2")))),
     isogr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ISOGR"), 20, 6400, 1, 400))),
     strengr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGR"), 0, 100, 1, 0))),
     scalegr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALEGR"), 0, 100, 1, 80))),
-    divgr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DIVGR"), 0.2, 2., 0.1, 1.))),
+    divgr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DIVGR"), 0.2, 3., 0.1, 1.))),
     medMethod(Gtk::manage(new MyComboBoxText())),
     itera(Gtk::manage(new Adjuster(M("TP_DIRPYRDENOISE_MEDIAN_PASSES"), 1, 4, 1, 1))),
     guidbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDBL"), 0, 1000, 1, 0))),
@@ -6338,6 +6339,7 @@ LocallabBlur::LocallabBlur():
     strength->setAdjusterListener(this);
 
     grainFrame->set_label_align(0.025, 0.5);
+    grainFrame2->set_label_align(0.025, 0.5);
 
     isogr->setAdjusterListener(this);
 
@@ -6550,11 +6552,16 @@ LocallabBlur::LocallabBlur():
     blnoisebox->pack_start(*fftwbl, Gtk::PACK_SHRINK, 0);
     blnoisebox->pack_start(*radius);
     blnoisebox->pack_start(*strength);
+
+    ToolParamBlock* const grain2Box = Gtk::manage(new ToolParamBlock());
+    grain2Box->pack_start(*isogr);
+    grain2Box->pack_start(*divgr);
+    grainFrame2->add(*grain2Box);
+
     ToolParamBlock* const grainBox = Gtk::manage(new ToolParamBlock());
-    grainBox->pack_start(*isogr);
+    grainBox->pack_start(*grainFrame2);
     grainBox->pack_start(*strengr);
     grainBox->pack_start(*scalegr);
-    grainBox->pack_start(*divgr);
     grainFrame->add(*grainBox);
     blnoisebox->pack_start(*grainFrame);
     blnoisebox->pack_start(*medMethod);
