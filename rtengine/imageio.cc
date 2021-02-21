@@ -678,14 +678,17 @@ int ImageIO::getTIFFSampleFormat (const Glib::ustring &fname, IIOSampleFormat &s
         return IMIO_VARIANTNOTSUPPORTED;
     }
 
-    if (!TIFFGetField(in, TIFFTAG_SAMPLEFORMAT, &sampleformat))
+    if (!TIFFGetField(in, TIFFTAG_SAMPLEFORMAT, &sampleformat)) {
         /*
          * WARNING: This is a dirty hack!
          * We assume that files which doesn't contain the TIFFTAG_SAMPLEFORMAT tag
          * (which is the case with uncompressed TIFFs produced by RT!) are RGB files,
          * but that may be not true.   --- Hombre
          */
-    {
+        sampleformat = SAMPLEFORMAT_UINT;
+    } else if (sampleformat == SAMPLEFORMAT_VOID) {
+        // according to https://www.awaresystems.be/imaging/tiff/tifftags/sampleformat.html
+        // we assume SAMPLEFORMAT_UINT if SAMPLEFORMAT_VOID is set
         sampleformat = SAMPLEFORMAT_UINT;
     }
 
