@@ -5667,14 +5667,8 @@ double ImProcFunctions::getAutoDistor(const Glib::ustring &fname, int thumb_size
         rawGray = raw->getGrayscaleHistEQ(width);
 
         if (!thumbGray || !rawGray) {
-            if (thumbGray) {
-                delete thumbGray;
-            }
-
-            if (rawGray) {
-                delete rawGray;
-            }
-
+            delete[] thumbGray;
+            delete[] rawGray;
             delete thumb;
             delete raw;
             return 0.0;
@@ -5687,8 +5681,8 @@ double ImProcFunctions::getAutoDistor(const Glib::ustring &fname, int thumb_size
             calcDistortion(thumbGray, rawGray, width, h_thumb, 4, dist_amount);
         }
 
-        delete thumbGray;
-        delete rawGray;
+        delete[] thumbGray;
+        delete[] rawGray;
         delete thumb;
         delete raw;
         return dist_amount;
