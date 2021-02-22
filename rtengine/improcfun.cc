@@ -51,6 +51,7 @@
 
 #include "../rtgui/editcallbacks.h"
 
+#pragma GCC diagnostic warning "-Wextra"
 #pragma GCC diagnostic warning "-Wdouble-promotion"
 
 namespace {
@@ -2234,36 +2235,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     //  float satLimit = float(params->colorToning.satProtectionThreshold)/100.f*0.7f+0.3f;
     //  float satLimitOpacity = 1.f-(float(params->colorToning.saturatedOpacity)/100.f);
     float strProtect = pow_F((float (params->colorToning.strength) / 100.f), 0.4f);
-
-    /*
-    // Debug output - Color LUTf points
-    if (ctColorCurve) {
-        printf("\nColor curve:");
-        for (size_t i=0; i<501; i++) {
-            if (i==0 || i==250 || i==500)
-                printf("\n(%.1f)[", float(i)/500.f);
-            printf("%.3f ", ctColorCurve.lutHueCurve[float(i)]);
-            if (i==0 || i==250 || i==500)
-            printf("]\n");
-        }
-        printf("\n");
-    }
-    */
-
-    /*
-    // Debug output - Opacity LUTf points
-    if (ctOpacityCurve) {
-        printf("\nOpacity curve:");
-        for (size_t i=0; i<501; i++) {
-            if (i==0 || i==250 || i==500)
-                printf("\n(%.1f)[", float(i)/500.f);
-            printf("%.3f ", ctOpacityCurve.lutOpacityCurve[float(i)]);
-            if (i==0 || i==250 || i==500)
-            printf("]\n");
-        }
-        printf("\n");
-    }
-    */
 
     float RedLow = params->colorToning.redlow / 100.0;
     float GreenLow = params->colorToning.greenlow / 100.0;
@@ -5896,7 +5867,7 @@ void ImProcFunctions::colorToningLabGrid(LabImage *lab, int xstart, int xend, in
     float b_base = params->colorToning.labgridBLow / scaling;
 
     #ifdef _OPENMP
-    #pragma omp parallel for if (multiThread)
+    #pragma omp parallel for if (MultiThread)
 #endif
 
     for (int y = ystart; y < yend; ++y) {
