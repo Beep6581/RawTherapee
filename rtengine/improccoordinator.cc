@@ -1646,8 +1646,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 // Computing the internal image for analysis, i.e. conversion from WCS->Output profile
                 delete workimg;
+                workimg = nullptr;
+
                 workimg = ipf.lab2rgb(nprevl, 0, 0, pW, pH, params->icm);
-            } catch (char * str) {
+            } catch (std::exception&) {
                 return;
             }
         }
@@ -1722,6 +1724,7 @@ void ImProcCoordinator::freeAll()
         }
 
         delete workimg;
+        workimg = nullptr;
 
     }
 
