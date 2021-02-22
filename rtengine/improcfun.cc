@@ -51,6 +51,8 @@
 
 #include "../rtgui/editcallbacks.h"
 
+#pragma GCC diagnostic warning "-Wdouble-promotion"
+
 namespace {
 
 using namespace rtengine;
