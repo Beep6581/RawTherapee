@@ -5130,9 +5130,9 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
     float *L = lab->L[0];
     float *a = lab->a[0];
     float *b = lab->b[0];
-    std::size_t N = lab->W * lab->H;
+    std::size_t N = static_cast<size_t>(lab->W) * static_cast<size_t>(lab->H);
     int WW = lab->W ;
-//   int HH = lab->H ;
+
     EdgePreservingDecomposition epd(lab->W, lab->H);
 
     //Due to the taking of logarithms, L must be nonnegative. Further, scale to 0 to 1 using nominal range of L, 0 to 15 bit.
