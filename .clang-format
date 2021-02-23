@@ -10,3 +10,4 @@ AlignAfterOpenBracket: DontAlign
 BreakConstructorInitializers: AfterColon
 NamespaceIndentation: None
 IndentCaseLabels: true
+SortIncludes: Never
