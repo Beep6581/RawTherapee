@@ -108,7 +108,7 @@ public:
         const double wd = std::min(fw, fh);
         const double zoom = (1.0 + 8 * (double(isogr) / GRAIN_SCALE_FACTOR) / 100.0) / 800.0;
         const double s = std::max(scale / 3.0, 1.0) / (double(std::max(scalegr, 1)) / 100.0);
-
+      //      printf("s=%f \n", s);
         const int W = lab->getWidth();
         const int H = lab->getHeight();
         float **lab_L = lab->g.ptrs;

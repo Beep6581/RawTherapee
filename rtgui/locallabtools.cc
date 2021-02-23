@@ -6218,7 +6218,7 @@ LocallabBlur::LocallabBlur():
     grainFrame2(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRAINFRA2")))),
     isogr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ISOGR"), 20, 6400, 1, 400))),
     strengr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGR"), 0, 100, 1, 0))),
-    scalegr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALEGR"), 0, 100, 1, 80))),
+    scalegr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALEGR"), 0, 100, 1, 100))),
     divgr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DIVGR"), 0.2, 3., 0.1, 1.))),
     medMethod(Gtk::manage(new MyComboBoxText())),
     itera(Gtk::manage(new Adjuster(M("TP_DIRPYRDENOISE_MEDIAN_PASSES"), 1, 4, 1, 1))),
@@ -7773,7 +7773,7 @@ void LocallabBlur::convertParamToSimple()
     disableListener();
     invmask->set_active(defSpot.invmask);
     invmaskd->set_active(defSpot.invmaskd);
-
+    scalegr->setValue(defSpot.scalegr);
     // Set hidden specific GUI widgets in Simple mode to default spot values
     showmaskblMethod->set_active(0);
 
@@ -7845,6 +7845,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             nlpat->hide();
             nlrad->hide();
             nlgam->hide();
+            scalegr->hide();
             break;
 
         case Normal:
@@ -7868,6 +7869,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             nlpat->show();
             nlrad->hide();
             nlgam->show();
+            scalegr->show();
 
             if (blMethod->get_active_row_number() == 2) {
                 expdenoise2->show();
@@ -7933,6 +7935,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             adjblur->show();
             noisechrodetail->show();
             usemask->show();
+            scalegr->show();
 
             expmaskbl->show();
             strumaskbl->show();
