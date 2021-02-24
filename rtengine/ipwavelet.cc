@@ -2203,7 +2203,6 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
             Evaluate2(*LdecompLL, meang, meanNg, sigmag, sigmaNg, MaxPg, MaxNg, wavNestedLevels);
             Evaluate2(*Ldecompdst, mean, meanN, sigma, sigmaN, MaxP, MaxN, wavNestedLevels);
-            float sig = 2.f;
             float thr = 0.f;
             if(thrend < 0.02f) thr = 0.5f;
             else if(thrend < 0.1f) thr = 0.2f;
@@ -2236,11 +2235,11 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         float insigma = 0.666f; //SD
                         float logmax = log(tempmax); //log Max
                                                 //cp.sigmm change the "wider" of sigma
-                        float rapX = (tempmean + sig * tempsig) / (tempmax); //rapport between sD / max
+                        float rapX = (tempmean + 2.f * tempsig) / (tempmax); //rapport between sD / max
                         float inx = log(insigma);
                         float iny = log(rapX);
                         float rap = inx / iny; //koef
-                        float asig = 0.166f / (tempsig * sig);
+                        float asig = 0.166f / (tempsig * 2.f);
                         float bsig = 0.5f - asig * tempmean;
                         float amean = 0.5f / (tempmean);
                     
@@ -2254,7 +2253,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                             float tempwav = 0.f;
                             tempwav = 0.7f * WavCoeffs_L[dir][i] + 0.3f * WavCoeffs_L2[dir][i];
 
-                            if (std::fabs(tempwav) >= (tempmean + sig * tempsig)) { //for max
+                            if (std::fabs(tempwav) >= (tempmean + 2.f * tempsig)) { //for max
                                 float valcour = xlogf(std::fabs(tempwav));
                                 float valc = valcour - logmax;
                                 float vald = valc * rap;
@@ -2263,8 +2262,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 absciss = asig * std::fabs(tempwav) + bsig;
                             } else {
                                 absciss = amean * std::fabs(tempwav);
-                                float abs = pow(2.f * absciss, (1.f / SQR(sig)));
-                                absciss = 0.5f * abs;
+                                absciss = 0.5f * std::sqrt(std::sqrt(2.f * absciss));
                             }
                             float kc = wavguid.getVal(absciss) -1.f;
 
