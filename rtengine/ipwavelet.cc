@@ -2196,19 +2196,19 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         
         
     if (thrend > 0.f) {
-        StopWatch Stop0("final touchup");
-            //2 decomposition LL after guidefilter and dst before (perhaps dst no need)
+        StopWatch Stop0("Final touchup");
+        //2 decomposition LL after guidefilter and dst before (perhaps dst no need)
         const std::unique_ptr<wavelet_decomposition> LdecompLL(new wavelet_decomposition(LL[0], ww, hh, levwavL, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
         const std::unique_ptr<wavelet_decomposition> Ldecompdst(new wavelet_decomposition(dst->L[0], ww, hh, levwavL, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
         if (!LdecompLL->memory_allocation_failed() && !Ldecompdst->memory_allocation_failed()) {
-            StopWatch Stop1("Evaluate2");
+StopWatch Stop1("evaluate");
             Evaluate2(*LdecompLL, meang, meanNg, sigmag, sigmaNg, MaxPg, MaxNg, wavNestedLevels);
             Evaluate2(*Ldecompdst, mean, meanN, sigma, sigmaN, MaxP, MaxN, wavNestedLevels);
-            Stop1.stop();
-            float sig = 2.f;
+Stop1.stop();
+            constexpr float sig = 2.f;
             float thr = 0.f;
-            if(thrend < 0.02f) thr = 0.5f;
-            else if(thrend < 0.1f) thr = 0.2f;
+            if (thrend < 0.02f) thr = 0.5f;
+            else if (thrend < 0.1f) thr = 0.2f;
             else thr = 0.f;
 
             FlatCurve wavguid({
@@ -2219,34 +2219,29 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
             StopWatch Stop2("level loops");
             for (int dir = 1; dir < 4; dir++) {
                 for (int level = 0; level < levwavL-1; level++) {
-                    int Wlvl_L = LdecompLL->level_W(level);
-                    int Hlvl_L = LdecompLL->level_H(level);
+                    const int Wlvl_L = LdecompLL->level_W(level);
+                    const int Hlvl_L = LdecompLL->level_H(level);
                     float* const* WavCoeffs_L = LdecompLL->level_coeffs(level);//first decomp denoised
                     float* const* WavCoeffs_L2 = Ldecompdst->level_coeffs(level);//second decomp before denoise
                     if (settings->verbose) {
                         printf("level=%i mean=%.0f meanden=%.0f sigma=%.0f  sigmaden=%.0f Max=%.0f Maxden=%.0f\n", level, mean[level], meang[level], sigma[level], sigmag[level],MaxP[level], MaxPg[level]);
                     }
 
-                                            //find local contrast
-                    float tempmean = 0.f;
-                    float tempsig = 0.f;
-                    float tempmax = 0.f;
-                    tempmean = 0.3f * mean[level] + 0.7f * meang[level] ;
-                    tempsig = 0.3f * sigma[level] + 0.7f * sigmag[level] ;
-                    tempmax = 0.3f * MaxP[level] + 0.7f * MaxPg[level] ;
+                    //find local contrast
+                    const float tempmean = 0.3f * mean[level] + 0.7f * meang[level];
+                    const float tempsig = 0.3f * sigma[level] + 0.7f * sigmag[level];
+                    const float tempmax = 0.3f * MaxP[level] + 0.7f * MaxPg[level];
                                             
                     if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) { //curve
-                        float insigma = 0.666f; //SD
-                        float logmax = log(tempmax); //log Max
-                                                //cp.sigmm change the "wider" of sigma
-                        float rapX = (tempmean + sig * tempsig) / (tempmax); //rapport between sD / max
-                        float inx = log(insigma);
-                        float iny = log(rapX);
-                        float rap = inx / iny; //koef
-                        float asig = 0.166f / (tempsig * sig);
-                        float bsig = 0.5f - asig * tempmean;
-                        float amean = 0.5f / (tempmean);
-                    
+                        constexpr float insigma = 0.666f; //SD
+                        const float logmax = log(tempmax); //log Max
+                        const float rapX = (tempmean + sig * tempsig) / tempmax; //rapport between sD / max
+                        constexpr float inx = log(insigma);
+                        const float iny = log(rapX);
+                        const float rap = inx / iny; //koef
+                        const float asig = 0.166f / (tempsig * sig);
+                        const float bsig = 0.5f - asig * tempmean;
+                        const float amean = 1.f / tempmean;
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic, Wlvl_L * 16) num_threads(wavNestedLevels) if (wavNestedLevels>1)
@@ -2254,32 +2249,27 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                         for (int i = 0; i < Wlvl_L * Hlvl_L; i++) {
                             float absciss;
-                            float tempwav = 0.f;
-                            tempwav = 0.7f * WavCoeffs_L[dir][i] + 0.3f * WavCoeffs_L2[dir][i];
+                            const float tempwav = std::fabs(0.7f * WavCoeffs_L[dir][i] + 0.3f * WavCoeffs_L2[dir][i]);
 
-                            if (std::fabs(tempwav) >= (tempmean + sig * tempsig)) { //for max
-                                float valcour = xlogf(std::fabs(tempwav));
-                                float valc = valcour - logmax;
-                                float vald = valc * rap;
+                            if (tempwav >= tempmean + sig * tempsig) { //for max
+                                const float vald = (xlogf(tempwav) - logmax) * rap;
                                 absciss = xexpf(vald);
-                            } else if (std::fabs(tempwav) >= tempmean) {
-                                absciss = asig * std::fabs(tempwav) + bsig;
+                            } else if (tempwav >= tempmean) {
+                                absciss = asig * tempwav + bsig;
                             } else {
-                                absciss = amean * std::fabs(tempwav);
-                                float abs = pow(2.f * absciss, (1.f / SQR(sig)));
-                                absciss = 0.5f * abs;
+                                absciss = amean * tempwav;
+                                if (sig == 2.f) { // for sig = 2.f we can use a faster calculation because the exponent in this case is 0.25
+                                    absciss = 0.5f * std::sqrt(std::sqrt(absciss));
+                                } else {
+                                    absciss = 0.5f * pow_F(absciss, 1.f / SQR(sig));
+                                }
                             }
-                            float kc = wavguid.getVal(absciss) -1.f;
+                            float kc = wavguid.getVal(absciss) - 1.f;
+                            kc = kc < 0.f ? -SQR(kc) : kc; // approximation to simulate sliders denoise
 
-                            if(kc < 0) {
-                                kc = -SQR(kc);//approximation to simulate sliders denoise
-                            }
-                            float reduceeffect = kc <= 0.f ? 1.f : 1.2f;//1.2 allows to increase denoise (not used)
-
-                            float kinterm = 1.f + reduceeffect * kc;
-                            kinterm = kinterm <= 0.f ? 0.01f : kinterm;
-                            float prov = WavCoeffs_L2[dir][i];//save before denoise
-                            WavCoeffs_L[dir][i] = prov + (WavCoeffs_L[dir][i] - prov) * kinterm;//only apply local contrast on difference between denoise and normal
+                            const float reduceeffect = kc <= 0.f ? 1.f : 1.2f;//1.2 allows to increase denoise (not used)
+                            const float kinterm = rtengine::max(1.f + reduceeffect * kc, 0.f);
+                            WavCoeffs_L[dir][i] = intp(kinterm, WavCoeffs_L[dir][i], WavCoeffs_L2[dir][i]); // interpolate using kinterm
                         }
                     }
                 }
