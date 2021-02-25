@@ -2196,13 +2196,15 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         
         
     if (thrend > 0.f) {
+        StopWatch Stop0("final touchup");
             //2 decomposition LL after guidefilter and dst before (perhaps dst no need)
         const std::unique_ptr<wavelet_decomposition> LdecompLL(new wavelet_decomposition(LL[0], ww, hh, levwavL, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
         const std::unique_ptr<wavelet_decomposition> Ldecompdst(new wavelet_decomposition(dst->L[0], ww, hh, levwavL, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
         if (!LdecompLL->memory_allocation_failed() && !Ldecompdst->memory_allocation_failed()) {
-
+            StopWatch Stop1("Evaluate2");
             Evaluate2(*LdecompLL, meang, meanNg, sigmag, sigmaNg, MaxPg, MaxNg, wavNestedLevels);
             Evaluate2(*Ldecompdst, mean, meanN, sigma, sigmaN, MaxP, MaxN, wavNestedLevels);
+            Stop1.stop();
             float sig = 2.f;
             float thr = 0.f;
             if(thrend < 0.02f) thr = 0.5f;
@@ -2214,6 +2216,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                 0, 1, 0.35, 0.35,thrend, 1.0, 0.35, 0.35, thrend + 0.01f, thr, 0.35, 0.35, 1, thr, 0.35, 0.35
             });
 
+            StopWatch Stop2("level loops");
             for (int dir = 1; dir < 4; dir++) {
                 for (int level = 0; level < levwavL-1; level++) {
                     int Wlvl_L = LdecompLL->level_W(level);
@@ -2281,6 +2284,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                     }
                 }
             }
+            Stop2.stop();
             LdecompLL->reconstruct(LL[0], cp.strength);
         }
     }
