@@ -36,10 +36,10 @@ RenameDialog::RenameDialog (Gtk::Window* parent)
     newName->set_hexpand();
     newName->set_halign(Gtk::ALIGN_FILL);
     
-    names->attach(*onlab, 0, 0);
-    names->attach(*oldName, 1, 0);
-    names->attach(*nnlab, 0, 1);
-    names->attach(*newName, 1, 1);
+    names->attach(*onlab, 0, 0, 1, 1);
+    names->attach(*oldName, 1, 0, 1, 1);
+    names->attach(*nnlab, 0, 1, 1, 1);
+    names->attach(*newName, 1, 1, 1, 1);
 
     get_content_area()->pack_start (*names, Gtk::PACK_SHRINK, 4);
 

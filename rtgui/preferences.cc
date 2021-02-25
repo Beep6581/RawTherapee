@@ -530,10 +530,10 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     
     Gtk::Grid* defpt = Gtk::manage(new Gtk::Grid());
     defpt->set_row_spacing(2);
-    defpt->attach(*drlab, 0, 0);
-    defpt->attach(*rprofiles, 1, 0);
-    defpt->attach(*drimg, 0, 1);
-    defpt->attach(*iprofiles, 1, 1);
+    defpt->attach(*drlab, 0, 0, 1, 1);
+    defpt->attach(*rprofiles, 1, 0, 1, 1);
+    defpt->attach(*drimg, 0, 1, 1, 1);
+    defpt->attach(*iprofiles, 1, 1, 1, 1);
     vbpp->pack_start(*defpt, Gtk::PACK_SHRINK, 4);
     
     useBundledProfiles = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_USEBUNDLEDPROFILES")));
@@ -555,10 +555,10 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     custProfBuilderLabelType->append(M("PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID") + "_" + M("PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME"));
     Gtk::Grid* cpbt = Gtk::manage(new Gtk::Grid());
     cpbt->set_row_spacing(2);
-    cpbt->attach(*cplab, 0, 0);
-    cpbt->attach(*txtCustProfBuilderPath, 1, 0);
-    cpbt->attach(*cpltypelab, 0, 1);
-    cpbt->attach(*custProfBuilderLabelType, 1, 1);
+    cpbt->attach(*cplab, 0, 0, 1, 1);
+    cpbt->attach(*txtCustProfBuilderPath, 1, 0, 1, 1);
+    cpbt->attach(*cpltypelab, 0, 1, 1, 1);
+    cpbt->attach(*custProfBuilderLabelType, 1, 1, 1, 1);
     cpfrm->add(*cpbt);
     vbImageProcessing->pack_start (*cpfrm, Gtk::PACK_SHRINK, 4);
 
@@ -574,10 +574,10 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     loadParamsPreference->append(M("PREFERENCES_PROFILEPRCACHE"));
     loadParamsPreference->append(M("PREFERENCES_PROFILEPRFILE"));
     vbdp->set_row_spacing(2);
-    vbdp->attach(*splab, 0, 0);
-    vbdp->attach(*saveParamsPreference, 1, 0);
-    vbdp->attach(*lplab, 0, 1);
-    vbdp->attach(*loadParamsPreference, 1, 1);
+    vbdp->attach(*splab, 0, 0, 1, 1);
+    vbdp->attach(*saveParamsPreference, 1, 0, 1, 1);
+    vbdp->attach(*lplab, 0, 1, 1, 1);
+    vbdp->attach(*loadParamsPreference, 1, 1, 1, 1);
     fdp->add(*vbdp);
     vbImageProcessing->pack_start (*fdp, Gtk::PACK_SHRINK, 4);
 

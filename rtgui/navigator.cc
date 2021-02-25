@@ -192,53 +192,53 @@ Navigator::Navigator() :
     Gtk::Box* hbox1 = Gtk::manage (new Gtk::Box ());
     Gtk::Grid* table1 = Gtk::manage (new Gtk::Grid());
     
-    table1->attach(*lR, 0, 0);
-    table1->attach(*R, 1, 0);
-    table1->attach(*lG, 0, 1);
-    table1->attach(*G, 1, 1);
-    table1->attach(*lB, 0, 2);
-    table1->attach(*B, 1, 2);
+    table1->attach(*lR, 0, 0, 1, 1);
+    table1->attach(*R, 1, 0, 1, 1);
+    table1->attach(*lG, 0, 1, 1, 1);
+    table1->attach(*G, 1, 1, 1, 1);
+    table1->attach(*lB, 0, 2, 1, 1);
+    table1->attach(*B, 1, 2, 1, 1);
 
     evBox1->add (*table1);
     evBox1->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &Navigator::cycleUnitsRGB));
 
     hbox1->pack_start (*evBox1, Gtk::PACK_EXPAND_WIDGET, 4);
     hbox1->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)), Gtk::PACK_SHRINK, 4);
-    table0->attach(*hbox1, 0, 0);
+    table0->attach(*hbox1, 0, 0, 1, 1);
 
     // HSV
     Gtk::EventBox *evBox2 = Gtk::manage (new Gtk::EventBox());
     Gtk::Box* hbox2 = Gtk::manage (new Gtk::Box ());
     Gtk::Grid* table2 = Gtk::manage (new Gtk::Grid());
 
-    table2->attach(*lH, 0, 0);
-    table2->attach(*H, 1, 0);
-    table2->attach(*lS, 0, 1);
-    table2->attach(*S, 1, 1);
-    table2->attach(*lV, 0, 2);
-    table2->attach(*V, 1, 2);
+    table2->attach(*lH, 0, 0, 1, 1);
+    table2->attach(*H, 1, 0, 1, 1);
+    table2->attach(*lS, 0, 1, 1, 1);
+    table2->attach(*S, 1, 1, 1, 1);
+    table2->attach(*lV, 0, 2, 1, 1);
+    table2->attach(*V, 1, 2, 1, 1);
 
     evBox2->add (*table2);
     evBox2->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &Navigator::cycleUnitsHSV));
 
     hbox2->pack_start (*evBox2, Gtk::PACK_EXPAND_WIDGET, 4);
     hbox2->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)), Gtk::PACK_SHRINK, 4);
-    table0->attach(*hbox2, 1, 0);
+    table0->attach(*hbox2, 1, 0, 1, 1);
 
     // LAB
     Gtk::Box* hbox3 = Gtk::manage (new Gtk::Box ());
     Gtk::Grid* table3 = Gtk::manage (new Gtk::Grid());
 
-    table3->attach(*lLAB_L, 0, 0);
-    table3->attach(*LAB_L, 1, 0);
-    table3->attach(*lLAB_A, 0, 1);
-    table3->attach(*LAB_A, 1, 1);
-    table3->attach(*lLAB_B, 0, 2);
-    table3->attach(*LAB_B, 1, 2);
+    table3->attach(*lLAB_L, 0, 0, 1, 1);
+    table3->attach(*LAB_L, 1, 0, 1, 1);
+    table3->attach(*lLAB_A, 0, 1, 1, 1);
+    table3->attach(*LAB_A, 1, 1, 1, 1);
+    table3->attach(*lLAB_B, 0, 2, 1, 1);
+    table3->attach(*LAB_B, 1, 2, 1, 1);
 
     hbox3->pack_start (*table3, Gtk::PACK_EXPAND_WIDGET, 4);
     hbox3->pack_start (*Gtk::manage (new  Gtk::Box()), Gtk::PACK_SHRINK, 2);
-    table0->attach(*hbox3, 2, 0);
+    table0->attach(*hbox3, 2, 0, 1, 1);
 
     table0->set_column_homogeneous(true); // all cells will have equal width
 
