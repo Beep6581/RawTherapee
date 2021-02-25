@@ -1427,7 +1427,7 @@ Camera constants:
         "make_model": "FUJIFILM X-PRO2",
         "dcraw_matrix": [ 11434,-4948,-1210,-3746,12042,1903,-666,1479,5235 ], // DNG_v9.4 D65
         "raw_crop": [ 0, 5, 6032, 4026 ], // see X-T2
-        "ranges": { "white": [ 16105, 16270, 16082 ] } // These values are the lowest pixel values >16000 for all ISOs. LENR has a negligble effect.
+        "ranges": { "white": [ 16105, 16270, 16082 ] } // These values are the lowest pixel values >16000 for all ISOs. LENR has a negligible effect.
         // No aperture scaling data provided, but likely negligible
     },
     
