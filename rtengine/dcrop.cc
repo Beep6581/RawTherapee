@@ -1191,6 +1191,10 @@ void Crop::update(int todo)
         parent->ipf.chromiLuminanceCurve(this, 1, labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
         parent->ipf.vibrance(labnCrop, params.vibrance, params.toneCurve.hrenabled, params.icm.workingProfile);
         parent->ipf.labColorCorrectionRegions(labnCrop);
+        if (params.localContrast.enabled) {
+        // Alberto's local contrast
+            parent->ipf.localContrast(labnCrop, labnCrop->L, params.localContrast, false, skip);
+        }
 
         if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
             parent->ipf.EPDToneMap(labnCrop, 0, skip);

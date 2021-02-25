@@ -1443,6 +1443,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     ipf.vibrance (labView, params.vibrance, params.toneCurve.hrenabled, params.icm.workingProfile);
     ipf.labColorCorrectionRegions(labView);
+    if (params.localContrast.enabled) {
+        // Alberto's local contrast
+        ipf.localContrast(labView, labView->L, params.localContrast, false, 16);
+    }
+
 
     if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) {
         ipf.EPDToneMap (labView, 5, 6);
