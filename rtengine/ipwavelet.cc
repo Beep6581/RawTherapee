@@ -2196,16 +2196,19 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         
         
     if (thrend > 0.f) {
-        StopWatch Stop0("Final touchup");
         //2 decomposition LL after guidefilter and dst before (perhaps dst no need)
         const std::unique_ptr<wavelet_decomposition> LdecompLL(new wavelet_decomposition(LL[0], ww, hh, levwavL, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
         const std::unique_ptr<wavelet_decomposition> Ldecompdst(new wavelet_decomposition(dst->L[0], ww, hh, levwavL, 1, skip, rtengine::max(1, wavNestedLevels), DaubLen));
         if (!LdecompLL->memory_allocation_failed() && !Ldecompdst->memory_allocation_failed()) {
-StopWatch Stop1("evaluate");
             Evaluate2(*LdecompLL, meang, meanNg, sigmag, sigmaNg, MaxPg, MaxNg, wavNestedLevels);
             Evaluate2(*Ldecompdst, mean, meanN, sigma, sigmaN, MaxP, MaxN, wavNestedLevels);
-Stop1.stop();
             constexpr float sig = 2.f;
+            /* original code for variable sig
+            float k = sig;
+            if (sig > 1.f) {
+                k = SQR(sig);
+            }
+            */
             float thr = 0.f;
             if (thrend < 0.02f) thr = 0.5f;
             else if (thrend < 0.1f) thr = 0.2f;
@@ -2216,7 +2219,6 @@ Stop1.stop();
                 0, 1, 0.35, 0.35,thrend, 1.0, 0.35, 0.35, thrend + 0.01f, thr, 0.35, 0.35, 1, thr, 0.35, 0.35
             });
 
-            StopWatch Stop2("level loops");
             for (int dir = 1; dir < 4; dir++) {
                 for (int level = 0; level < levwavL-1; level++) {
                     const int Wlvl_L = LdecompLL->level_W(level);
@@ -2258,11 +2260,15 @@ Stop1.stop();
                                 absciss = asig * tempwav + bsig;
                             } else {
                                 absciss = amean * tempwav;
+                                /*
                                 if (sig == 2.f) { // for sig = 2.f we can use a faster calculation because the exponent in this case is 0.25
-                                    absciss = 0.5f * std::sqrt(std::sqrt(absciss));
+                                */
+                                absciss = 0.5f * std::sqrt(std::sqrt(absciss));
+                                /* original code for variable sig
                                 } else {
-                                    absciss = 0.5f * pow_F(absciss, 1.f / SQR(sig));
+                                    absciss = 0.5f * pow_F(absciss, 1.f / k);
                                 }
+                                */
                             }
                             float kc = wavguid.getVal(absciss) - 1.f;
                             kc = kc < 0.f ? -SQR(kc) : kc; // approximation to simulate sliders denoise
@@ -2274,12 +2280,10 @@ Stop1.stop();
                     }
                 }
             }
-            Stop2.stop();
             LdecompLL->reconstruct(LL[0], cp.strength);
         }
     }
 
-        
         //end local contrast
 #ifdef _OPENMP
         #pragma omp parallel for
