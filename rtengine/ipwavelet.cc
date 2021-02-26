@@ -2203,12 +2203,13 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
             Evaluate2(*LdecompLL, meang, meanNg, sigmag, sigmaNg, MaxPg, MaxNg, wavNestedLevels);
             Evaluate2(*Ldecompdst, mean, meanN, sigma, sigmaN, MaxP, MaxN, wavNestedLevels);
             constexpr float sig = 2.f;
-            /* original code for variable sig
+
+            // original code for variable sig
             float k = sig;
             if (sig > 1.f) {
                 k = SQR(sig);
             }
-            */
+
             float thr = 0.f;
             if (thrend < 0.02f) thr = 0.5f;
             else if (thrend < 0.1f) thr = 0.2f;
@@ -2260,15 +2261,11 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 absciss = asig * tempwav + bsig;
                             } else {
                                 absciss = amean * tempwav;
-                                /*
                                 if (sig == 2.f) { // for sig = 2.f we can use a faster calculation because the exponent in this case is 0.25
-                                */
-                                absciss = 0.5f * std::sqrt(std::sqrt(absciss));
-                                /* original code for variable sig
-                                } else {
+                                    absciss = 0.5f * std::sqrt(std::sqrt(absciss));
+                                } else { // original code for variable sig
                                     absciss = 0.5f * pow_F(absciss, 1.f / k);
                                 }
-                                */
                             }
                             float kc = wavguid.getVal(absciss) - 1.f;
                             kc = kc < 0.f ? -SQR(kc) : kc; // approximation to simulate sliders denoise
