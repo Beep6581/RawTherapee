@@ -2206,6 +2206,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
             // original code for variable sig
             float k = sig;
+            // cppcheck-suppress knownConditionTrueFalse
             if (sig > 1.f) {
                 k = SQR(sig);
             }
