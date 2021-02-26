@@ -1780,6 +1780,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                             levwava = rtengine::min(maxlevelcrop, levwava);
                             levwava = rtengine::min(maxlev2, levwava);
+                            levwava = rtengine::min(levwav, levwava);
                             if (settings->verbose) {
                                 printf("Leval decomp a=%i\n", levwava);
                             }
@@ -1833,6 +1834,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                             levwavb = rtengine::min(maxlevelcrop, levwavb);
                             levwavb = rtengine::min(maxlev2, levwavb);
+                            levwavb = rtengine::min(levwav, levwavb);
 
                             if (settings->verbose) {
                                 printf("Leval decomp b=%i\n", levwavb);
