@@ -2238,7 +2238,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         constexpr float insigma = 0.666f; //SD
                         const float logmax = log(tempmax); //log Max
                         const float rapX = (tempmean + sig * tempsig) / tempmax; //rapport between sD / max
-                        constexpr float inx = log(insigma);
+                        const float inx = log(insigma);
                         const float iny = log(rapX);
                         const float rap = inx / iny; //koef
                         const float asig = 0.166f / (tempsig * sig);
