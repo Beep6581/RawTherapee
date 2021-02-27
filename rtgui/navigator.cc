@@ -75,7 +75,7 @@ Navigator::Navigator() :
     set_name("Navigator");
     Gtk::Box* mbox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     previewWindow = Gtk::manage (new PreviewWindow ());
-    mbox->pack_start (*previewWindow, Gtk::PACK_SHRINK, 2);
+    mbox->pack_start (*previewWindow, Gtk::PACK_EXPAND_WIDGET, 2);
     dimension = Gtk::manage (new Gtk::Label ());
     mbox->pack_start (*dimension, Gtk::PACK_SHRINK, 2);
     position = Gtk::manage (new Gtk::Label ());
@@ -242,7 +242,7 @@ Navigator::Navigator() :
 
     table0->set_column_homogeneous(true); // all cells will have equal width
 
-    mbox->pack_start (*table0, Gtk::PACK_EXPAND_WIDGET, 2);
+    mbox->pack_start (*table0, Gtk::PACK_SHRINK, 2);
     add (*mbox);
 
     setInvalid ();
