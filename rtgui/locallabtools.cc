@@ -6215,9 +6215,11 @@ LocallabBlur::LocallabBlur():
     radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), MINRAD, MAXRAD, 0.1, 1.5, nullptr, nullptr, &blurSlider2radius, &blurRadius2Slider))),
     strength(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0))),
     grainFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRAINFRA")))),
+    grainFrame2(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRAINFRA2")))),
     isogr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ISOGR"), 20, 6400, 1, 400))),
     strengr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGR"), 0, 100, 1, 0))),
-    scalegr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALEGR"), 0, 100, 1, 80))),
+    scalegr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALEGR"), 0, 100, 1, 100))),
+    divgr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DIVGR"), 0.2, 3., 0.1, 1.))),
     medMethod(Gtk::manage(new MyComboBoxText())),
     itera(Gtk::manage(new Adjuster(M("TP_DIRPYRDENOISE_MEDIAN_PASSES"), 1, 4, 1, 1))),
     guidbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDBL"), 0, 1000, 1, 0))),
@@ -6337,12 +6339,14 @@ LocallabBlur::LocallabBlur():
     strength->setAdjusterListener(this);
 
     grainFrame->set_label_align(0.025, 0.5);
+    grainFrame2->set_label_align(0.025, 0.5);
 
     isogr->setAdjusterListener(this);
 
     strengr->setAdjusterListener(this);
 
     scalegr->setAdjusterListener(this);
+    divgr->setAdjusterListener(this);
 
     medMethod->append(M("TP_LOCALLAB_MEDNONE"));
     medMethod->append(M("TP_DIRPYRDENOISE_TYPE_3X3"));
@@ -6548,8 +6552,14 @@ LocallabBlur::LocallabBlur():
     blnoisebox->pack_start(*fftwbl, Gtk::PACK_SHRINK, 0);
     blnoisebox->pack_start(*radius);
     blnoisebox->pack_start(*strength);
+
+    ToolParamBlock* const grain2Box = Gtk::manage(new ToolParamBlock());
+    grain2Box->pack_start(*isogr);
+    grain2Box->pack_start(*divgr);
+    grainFrame2->add(*grain2Box);
+
     ToolParamBlock* const grainBox = Gtk::manage(new ToolParamBlock());
-    grainBox->pack_start(*isogr);
+    grainBox->pack_start(*grainFrame2);
     grainBox->pack_start(*strengr);
     grainBox->pack_start(*scalegr);
     grainFrame->add(*grainBox);
@@ -6957,6 +6967,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         isogr->setValue((double)spot.isogr);
         strengr->setValue((double)spot.strengr);
         scalegr->setValue((double)spot.scalegr);
+        divgr->setValue((double)spot.divgr);
 
         if (spot.medMethod == "none") {
             medMethod->set_active(0);
@@ -7102,6 +7113,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.isogr = isogr->getIntValue();
         spot.strengr = strengr->getIntValue();
         spot.scalegr = scalegr->getIntValue();
+        spot.divgr = divgr->getValue();
 
         if (medMethod->get_active_row_number() == 0) {
             spot.medMethod = "none";
@@ -7223,6 +7235,7 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         isogr->setDefault((double)defSpot.isogr);
         strengr->setDefault((double)defSpot.strengr);
         scalegr->setDefault((double)defSpot.scalegr);
+        divgr->setDefault((double)defSpot.divgr);
         itera->setDefault((double)defSpot.itera);
         guidbl->setDefault((double)defSpot.guidbl);
         strbl->setDefault((double)defSpot.strbl);
@@ -7308,6 +7321,13 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabscalegr,
                                        scalegr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == divgr) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdivgr,
+                                       divgr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -7753,7 +7773,7 @@ void LocallabBlur::convertParamToSimple()
     disableListener();
     invmask->set_active(defSpot.invmask);
     invmaskd->set_active(defSpot.invmaskd);
-
+    scalegr->setValue(defSpot.scalegr);
     // Set hidden specific GUI widgets in Simple mode to default spot values
     showmaskblMethod->set_active(0);
 
@@ -7825,6 +7845,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             nlpat->hide();
             nlrad->hide();
             nlgam->hide();
+            scalegr->hide();
             break;
 
         case Normal:
@@ -7848,6 +7869,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             nlpat->show();
             nlrad->hide();
             nlgam->show();
+            scalegr->show();
 
             if (blMethod->get_active_row_number() == 2) {
                 expdenoise2->show();
@@ -7913,6 +7935,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             adjblur->show();
             noisechrodetail->show();
             usemask->show();
+            scalegr->show();
 
             expmaskbl->show();
             strumaskbl->show();

@@ -1235,6 +1235,7 @@ struct LocallabParams {
         int isogr;
         int strengr;
         int scalegr;
+        double divgr;
         int epsbl;
         Glib::ustring blMethod; // blur, med, guid
         Glib::ustring chroMethod; // lum, chr, all
