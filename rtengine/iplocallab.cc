@@ -11525,7 +11525,7 @@ void ImProcFunctions::Lab_Local(
         bool fft = params->locallab.spots.at(sp).fftwbl;
         int isogr = params->locallab.spots.at(sp).isogr;
         int scalegr = params->locallab.spots.at(sp).scalegr;
-
+        float  divgr = params->locallab.spots.at(sp).divgr;
 
 
         if (bfw >= mSP && bfh >= mSP) {
@@ -11671,7 +11671,7 @@ void ImProcFunctions::Lab_Local(
                         }
 
 
-                        filmGrain(tmpImage, isogr, strengr, scalegr, wi, he);
+                        filmGrain(tmpImage, isogr, strengr, scalegr, divgr, wi, he);
 
                         for (int y = 0; y < he ; y++) {
                             for (int x = 0; x < wi; x++) {

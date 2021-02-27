@@ -675,9 +675,11 @@ private:
     Adjuster* const radius;
     Adjuster* const strength;
     Gtk::Frame* const grainFrame;
+    Gtk::Frame* const grainFrame2;
     Adjuster* const isogr;
     Adjuster* const strengr;
     Adjuster* const scalegr;
+    Adjuster* const divgr;
     MyComboBoxText* const medMethod;
     Adjuster* const itera;
     Adjuster* const guidbl;

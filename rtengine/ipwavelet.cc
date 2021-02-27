@@ -1182,30 +1182,28 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 float* noisevarhue = new float[GHL * GWL];
                                 int GW2L = (GWL + 1) / 2;
 
-                                float nvlh[13] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 0.7f, 0.5f}; //high value
-                                float nvll[13] = {0.1f, 0.15f, 0.2f, 0.25f, 0.3f, 0.35f, 0.4f, 0.45f, 0.7f, 0.8f, 1.f, 1.f, 1.f}; //low value
+                                constexpr float nvlh[13] = {1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 1.f, 0.7f, 0.5f}; //high value
+                                constexpr float nvll[13] = {0.1f, 0.15f, 0.2f, 0.25f, 0.3f, 0.35f, 0.4f, 0.45f, 0.7f, 0.8f, 1.f, 1.f, 1.f}; //low value
 
-                                float seuillow = 3000.f;//low
-                                float seuilhigh = 18000.f;//high
-                                int i = 10 - cp.ballum;
-                                float ac = (nvlh[i] - nvll[i]) / (seuillow - seuilhigh);
-                                float bc = nvlh[i] - seuillow * ac;
+                                constexpr float seuillow = 3000.f;//low
+                                constexpr float seuilhigh = 18000.f;//high
+                                const int index = 10 - cp.ballum;
+                                const float ac = (nvlh[index] - nvll[index]) / (seuillow - seuilhigh);
+                                const float bc = nvlh[index] - seuillow * ac;
 
 #ifdef _OPENMP
                                 #pragma omp parallel for
-
 #endif
-
                                 for (int ir = 0; ir < GHL; ir++)
                                     for (int jr = 0; jr < GWL; jr++) {
                                         float lN = labco->L[ir][jr];
 
                                         if (lN < seuillow) {
-                                            noisevarlum[(ir >> 1)*GW2L + (jr >> 1)] =  nvlh[i];
+                                            noisevarlum[(ir >> 1)*GW2L + (jr >> 1)] =  nvlh[index];
                                         } else if (lN < seuilhigh) {
                                             noisevarlum[(ir >> 1)*GW2L + (jr >> 1)] = ac * lN + bc;
                                         } else {
-                                            noisevarlum[(ir >> 1)*GW2L + (jr >> 1)] =  nvll[i];
+                                            noisevarlum[(ir >> 1)*GW2L + (jr >> 1)] =  nvll[index];
                                         }
                                     }
 
@@ -1782,6 +1780,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                             levwava = rtengine::min(maxlevelcrop, levwava);
                             levwava = rtengine::min(maxlev2, levwava);
+                            levwava = rtengine::min(levwav, levwava);
                             if (settings->verbose) {
                                 printf("Leval decomp a=%i\n", levwava);
                             }
@@ -1835,6 +1834,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                             levwavb = rtengine::min(maxlevelcrop, levwavb);
                             levwavb = rtengine::min(maxlev2, levwavb);
+                            levwavb = rtengine::min(levwav, levwavb);
 
                             if (settings->verbose) {
                                 printf("Leval decomp b=%i\n", levwavb);
@@ -2265,11 +2265,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 absciss = asig * std::fabs(tempwav) + bsig;
                             } else {
                                 absciss = amean * std::fabs(tempwav);
-                                float k = sig;
-                                if(sig > 1.f) {
-                                    k = SQR(sig);
-                                }
-                                float abs = pow(2.f * absciss, (1.f / k));
+                                float abs = pow(2.f * absciss, (1.f / SQR(sig)));
                                 absciss = 0.5f * abs;
                             }
                             float kc = wavguid.getVal(absciss) -1.f;

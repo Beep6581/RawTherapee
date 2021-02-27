@@ -224,7 +224,7 @@ private:
     Gtk::Image *iShowHideSidePanels_exit;
     Gtk::Image *iBeforeLockON, *iBeforeLockOFF;
     Gtk::Paned *leftbox;
-    Gtk::Box *leftsubbox;
+    Gtk::Paned *leftsubpaned;
     Gtk::Paned *vboxright;
     Gtk::Box *vsubboxright;
 

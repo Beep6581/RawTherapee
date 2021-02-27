@@ -3330,7 +3330,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     decayd(2.),
     isogr(400),
     strengr(0),
-    scalegr(80),
+    scalegr(100),
+    divgr(1.),
     epsbl(0),
     blMethod("blur"),
     chroMethod("lum"),
@@ -4427,6 +4428,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && isogr == other.isogr
         && strengr == other.strengr
         && scalegr == other.scalegr
+        && divgr == other.divgr
         && epsbl == other.epsbl
         && blMethod == other.blMethod
         && chroMethod == other.chroMethod
@@ -6067,6 +6069,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->isogr, "Locallab", "Isogr_" + index_str, spot.isogr, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strengr, "Locallab", "Strengr_" + index_str, spot.strengr, keyFile);
                     saveToKeyfile(!pedited || spot_edited->scalegr, "Locallab", "Scalegr_" + index_str, spot.scalegr, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->divgr, "Locallab", "Divgr_" + index_str, spot.divgr, keyFile);
                     saveToKeyfile(!pedited || spot_edited->epsbl, "Locallab", "Epsbl_" + index_str, spot.epsbl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blMethod, "Locallab", "BlMethod_" + index_str, spot.blMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chroMethod, "Locallab", "ChroMethod_" + index_str, spot.chroMethod, keyFile);
@@ -7923,6 +7926,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Isogr_" + index_str, pedited, spot.isogr, spotEdited.isogr);
                 assignFromKeyfile(keyFile, "Locallab", "Strengr_" + index_str, pedited, spot.strengr, spotEdited.strengr);
                 assignFromKeyfile(keyFile, "Locallab", "Scalegr_" + index_str, pedited, spot.scalegr, spotEdited.scalegr);
+                assignFromKeyfile(keyFile, "Locallab", "Divgr_" + index_str, pedited, spot.divgr, spotEdited.divgr);
                 assignFromKeyfile(keyFile, "Locallab", "Epsbl_" + index_str, pedited, spot.epsbl, spotEdited.epsbl);
                 assignFromKeyfile(keyFile, "Locallab", "BlMethod_" + index_str, pedited, spot.blMethod, spotEdited.blMethod);
                 assignFromKeyfile(keyFile, "Locallab", "ChroMethod_" + index_str, pedited, spot.chroMethod, spotEdited.chroMethod);

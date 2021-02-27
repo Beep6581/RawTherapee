@@ -1021,6 +1021,14 @@ Camera constants:
             ]
         }
     },
+    
+    { // Quality C, samples provided by falket #5495
+        "make_model": [ "Canon EOS 2000D", "Canon EOS Rebel T7", "Canon EOS Kiss X90" ],
+        // raw_crop is handled by dcraw
+        // "dcraw_matrix": [ 8532, -701, -1167, -4095, 11879, 2508, -797, 2424, 7010 ], // Adobe DNG v.10.3
+        "dcraw_matrix": [ 8300, -2110, -1120, -4917, 12694, 2482, -938, 2141, 5666 ], // Adobe DNG v.10.3 (v2)
+        "ranges": { "white": 15300 } // typical value, very non-linear behavior near clipping
+    },
 
 // Canon MILC (mirrorless interchangeable-lens camera)
 
@@ -1427,7 +1435,7 @@ Camera constants:
         "make_model": "FUJIFILM X-PRO2",
         "dcraw_matrix": [ 11434,-4948,-1210,-3746,12042,1903,-666,1479,5235 ], // DNG_v9.4 D65
         "raw_crop": [ 0, 5, 6032, 4026 ], // see X-T2
-        "ranges": { "white": [ 16105, 16270, 16082 ] } // These values are the lowest pixel values >16000 for all ISOs. LENR has a negligble effect.
+        "ranges": { "white": [ 16105, 16270, 16082 ] } // These values are the lowest pixel values >16000 for all ISOs. LENR has a negligible effect.
         // No aperture scaling data provided, but likely negligible
     },
     

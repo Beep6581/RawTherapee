@@ -494,34 +494,32 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     // build left side panel
     leftbox = new Gtk::Paned (Gtk::ORIENTATION_VERTICAL);
 
-    // make a subbox to allow resizing of the histogram (if it's on the left)
-    leftsubbox = new Gtk::Box (Gtk::ORIENTATION_VERTICAL);
-    leftsubbox->set_size_request (230, 250);
+    // make a subpaned to allow resizing of the histogram (if it's on the left)
+    leftsubpaned = new Gtk::Paned(Gtk::ORIENTATION_VERTICAL);
+    leftsubpaned->set_size_request(230, 250);
 
     histogramPanel = nullptr;
 
-    profilep = Gtk::manage (new ProfilePanel ());
+    profilep = Gtk::manage(new ProfilePanel());
     ppframe = Gtk::manage(new Gtk::Frame());
     ppframe->set_label_align(0.025, 0.5);
     ppframe->set_name ("ProfilePanel");
     ppframe->add (*profilep);
-    ppframe->set_label (M ("PROFILEPANEL_LABEL"));
-    //leftsubbox->pack_start (*ppframe, Gtk::PACK_SHRINK, 4);
+    ppframe->set_label(M("PROFILEPANEL_LABEL"));
+    //leftsubpaned->pack_start (*ppframe, Gtk::PACK_SHRINK, 4);
 
-    navigator = Gtk::manage (new Navigator ());
-    navigator->previewWindow->set_size_request (-1, 150 * RTScalable::getScale());
-    leftsubbox->pack_start (*navigator, Gtk::PACK_SHRINK, 2);
-    
-    Gtk::Separator* historyseparator = Gtk::manage (new Gtk::Separator (Gtk::ORIENTATION_HORIZONTAL));
-    leftsubbox->pack_start (*historyseparator, Gtk::PACK_SHRINK, 2);
+    navigator = Gtk::manage(new Navigator());
+    navigator->previewWindow->set_size_request(-1, 150 * RTScalable::getScale());
+    leftsubpaned->pack1(*navigator, false, false);
 
-    history = Gtk::manage (new History ());
-    leftsubbox->pack_start (*history);
+    history = Gtk::manage(new History());
+    leftsubpaned->pack2(*history, true, false);
 
-    leftsubbox->show_all ();
+    leftsubpaned->set_position(0);
+    leftsubpaned->show_all();
 
-    leftbox->pack2 (*leftsubbox, true, true);
-    leftbox->show_all ();
+    leftbox->pack2(*leftsubpaned, true, true);
+    leftbox->show_all();
 
     // build the middle of the screen
     Gtk::Box* editbox = Gtk::manage (new Gtk::Box (Gtk::ORIENTATION_VERTICAL));
@@ -905,7 +903,7 @@ EditorPanel::~EditorPanel ()
 
     delete tpc;
 
-    delete leftsubbox;
+    delete leftsubpaned;
     delete leftbox;
     delete vsubboxright;
     delete vboxright;
