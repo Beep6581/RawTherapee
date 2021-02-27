@@ -1438,15 +1438,14 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,
                                    params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 16);
 
-
-	ipf.chromiLuminanceCurve (nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
-
-    ipf.vibrance (labView, params.vibrance, params.toneCurve.hrenabled, params.icm.workingProfile);
-    ipf.labColorCorrectionRegions(labView);
     if (params.localContrast.enabled) {
         // Alberto's local contrast
         ipf.localContrast(labView, labView->L, params.localContrast, false, 16);
     }
+    ipf.chromiLuminanceCurve (nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
+
+    ipf.vibrance (labView, params.vibrance, params.toneCurve.hrenabled, params.icm.workingProfile);
+    ipf.labColorCorrectionRegions(labView);
 
 
     if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) {
