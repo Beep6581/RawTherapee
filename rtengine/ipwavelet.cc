@@ -1327,11 +1327,10 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 }
                                // }
                                 if (execut && exitifzero) {
-                                    StopWatch Stop1("levels loop");
                                     for (int dir = 1; dir < 4; dir++) {
                                         for (int level = 0; level < levref; level++) {
-                                            int Wlvl_L = Ldecomp->level_W(level);
-                                            int Hlvl_L = Ldecomp->level_H(level);
+                                            const int Wlvl_L = Ldecomp->level_W(level);
+                                            const int Hlvl_L = Ldecomp->level_H(level);
                                             const float* const WavCoeffs_L = Ldecomp->level_coeffs(level)[dir];//first decomp denoised
                                             const float* const WavCoeffs_L2 = Ldecomp2->level_coeffs(level)[dir];//second decomp before denoise
                                             const int k4 = cp.complex == 1 ? 4 : 3;
@@ -1355,32 +1354,12 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                             }
 
                                             //find local contrast
-                                            float tempmean = 0.f;
-                                            float tempsig = 0.f;
-                                            float tempmax = 0.f;
-                                            float weightL = 1.f;
-                                            if(cp.mixmet == 0){
-                                                weightL = 0.f;
-                                                tempmean = mean[level];
-                                                tempsig = sigma[level];
-                                                tempmax = MaxP[level];
-                                            } else if(cp.mixmet == 1){
-                                                weightL = 0.5f;
-                                                tempmean = 0.5f * mean[level] + 0.5f * meand[level] ;
-                                                tempsig = 0.5f * sigma[level] + 0.5f * sigmad[level] ;
-                                                tempmax = 0.5f * MaxP[level] + 0.5f * MaxPd[level] ;
-                                            } else if(cp.mixmet == 2){
-                                                weightL = 0.7f;
-                                                tempmean = 0.3f * mean[level] + 0.7f * meand[level] ;
-                                                tempsig = 0.3f * sigma[level] + 0.7f * sigmad[level] ;
-                                                tempmax = 0.3f * MaxP[level] + 0.7f * MaxPd[level] ;
-                                            } else if(cp.mixmet == 3){
-                                                weightL = 1.f;
-                                                tempmean = meand[level]; 
-                                                tempsig = sigmad[level]; 
-                                                tempmax = MaxPd[level];
-                                            }
-                                            
+                                            constexpr float weights[4] = {0.f, 0.5f, 0.7f, 1.f};
+                                            const float weightL = weights[rtengine::LIM(cp.mixmet, 0, 3)];
+                                            const float tempmean = intp(weightL, meand[level], mean[level]);
+                                            const float tempsig = intp(weightL, sigmad[level], sigma[level]);
+                                            const float tempmax = intp(weightL, MaxPd[level], MaxP[level]);
+
                                             if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) { //curve
                                                 constexpr float insigma = 0.666f; //SD
                                                 const float logmax = log(tempmax); //log Max
