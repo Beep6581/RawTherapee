@@ -10497,7 +10497,7 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
             {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
         };
         const bool highlight = params->toneCurve.hrenabled;
-        const bool needHH = (lp.chro != 0.f);
+        const bool needHH =  true; //always Munsell to avoid bad behavior //(lp.chro != 0.f);
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
 #endif
