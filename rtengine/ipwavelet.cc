@@ -1412,7 +1412,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                                         kcFactor = 0.3f;
                                                     }
                                                 }
-                                                const float k = 1.f / siglh[level] > 1.f ? SQR(siglh[level]) : siglh[level];
+                                                const float k = 1.f / (siglh[level] > 1.f ? SQR(siglh[level]) : siglh[level]);
                                                 const float maxVal = tempmean + siglh[level] * tempsig;
 
 #ifdef _OPENMP
