@@ -10647,27 +10647,12 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
         }
         //Guidedfilter to reduce artifacts in transitions
         if (softr != 0.f) {//soft for L a b because we change color...
-
+StopWatch Stop1("softr");
             int bw = transformed->W;
             int bh = transformed->H;
-            array2D<float> blechro(bw, bh);
             array2D<float> ble(bw, bh);
-            array2D<float> hue(bw, bh);
             array2D<float> guid(bw, bh);
-        
-#ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
 
-            for (int y = 0; y < bh ; y++) {
-                for (int x = 0; x < bw; x++) {
-                    hue[y][x] = xatan2f(transformed->b[y][x], transformed->a[y][x]);
-                    const float chromah = std::sqrt(SQR(transformed->b[y][x]) + SQR(transformed->a[y][x]));
-                    ble[y][x] = transformed->L[y][x] / 32768.f;
-                    blechro[y][x] = chromah / 32768.f;
-                    guid[y][x] = original->L[y][x] / 32768.f;
-                }
-            }
             const float tmpblur = softr < 0.f ? -1.f / softr : 1.f + softr;
             const int r1 = rtengine::max<int>(4 / sk * tmpblur + 0.5f, 1);
             const int r2 = rtengine::max<int>(25 / sk * tmpblur + 0.5f, 1);
@@ -10679,16 +10664,45 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
             constexpr float bepsil = epsilmin;
             const float epsil = softr < 0.f ? 0.001f : aepsil * softr + bepsil;
 
-            rtengine::guidedFilter(guid, blechro, blechro, r1, epsil, multiThread);
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+            for (int y = 0; y < bh ; y++) {
+                for (int x = 0; x < bw; x++) {
+                    ble[y][x] = transformed->L[y][x] / 32768.f;
+                    guid[y][x] = original->L[y][x] / 32768.f;
+                }
+            }
             rtengine::guidedFilter(guid, ble, ble, r2, 0.2f * epsil, multiThread);
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+            for (int y = 0; y < bh; y++) {
+                for (int x = 0; x < bw; x++) {
+                    transformed->L[y][x] = 32768.f * ble[y][x];
+                }
+            }
+
+            array2D<float> &blechro = ble; // reuse buffer
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+            for (int y = 0; y < bh ; y++) {
+                for (int x = 0; x < bw; x++) {
+                    blechro[y][x] = std::sqrt(SQR(transformed->b[y][x]) + SQR(transformed->a[y][x])) / 32768.f;
+                }
+            }
+            rtengine::guidedFilter(guid, blechro, blechro, r1, epsil, multiThread);
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
             for (int y = 0; y < bh; y++) {
                 for (int x = 0; x < bw; x++) {
-                    float2 sincosval = xsincosf(hue[y][x]);
-                    transformed->L[y][x] = 32768.f * ble[y][x];
+                    float2 sincosval = xsincosf(xatan2f(transformed->b[y][x], transformed->a[y][x]));
                     transformed->a[y][x] = 32768.f * blechro[y][x] * sincosval.y;
                     transformed->b[y][x] = 32768.f * blechro[y][x] * sincosval.x;
                 }
