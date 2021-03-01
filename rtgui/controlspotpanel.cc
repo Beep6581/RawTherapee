@@ -76,6 +76,7 @@ ControlSpotPanel::ControlSpotPanel():
     balanh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANH"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16.png")), Gtk::manage(new RTImage("circle-red-green-small.png"))))),
     colorde_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COLORDE"), -15, 15, 2, 5, Gtk::manage(new RTImage("circle-blue-yellow-small.png")), Gtk::manage(new RTImage("circle-gray-green-small.png"))))),
     colorscope_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COLORSCOPE"), 0., 100.0, 1., 30.))),
+    avoidrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_AVOIDRAD"), 0., 30.0, 0.1, 0.7))),
     scopemask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCOPEMASK"), 0, 100, 1, 60))),
     lumask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LUMASK"), -50, 30, 1, 10, Gtk::manage(new RTImage("circle-yellow-small.png")), Gtk::manage(new RTImage("circle-gray-small.png")) ))),
 
@@ -354,6 +355,7 @@ ControlSpotPanel::ControlSpotPanel():
     balanh_->setAdjusterListener(this);
     colorde_->setAdjusterListener(this);
     colorscope_->setAdjusterListener(this);
+    avoidrad_->setAdjusterListener(this);
 
     preview_->set_active(false);
     previewConn_ = preview_->signal_clicked().connect(
@@ -393,7 +395,14 @@ ControlSpotPanel::ControlSpotPanel():
 
     avoidConn_  = avoid_->signal_toggled().connect(
                       sigc::mem_fun(*this, &ControlSpotPanel::avoidChanged));
-    specCaseBox->pack_start(*avoid_);
+    
+    Gtk::Frame* const avFrame = Gtk::manage(new Gtk::Frame());
+    ToolParamBlock* const avbox = Gtk::manage(new ToolParamBlock());
+    avFrame->set_label_align(0.025, 0.5);
+    avFrame->set_label_widget(*avoid_);
+    avbox->pack_start(*avoidrad_);
+    avFrame->add(*avbox);
+    specCaseBox->pack_start(*avFrame);
 
     blwhConn_  = blwh_->signal_toggled().connect(
                      sigc::mem_fun(*this, &ControlSpotPanel::blwhChanged));
@@ -827,6 +836,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     balanh_->setValue((double)row[spots_.balanh]);
     colorde_->setValue((double)row[spots_.colorde]);
     colorscope_->setValue((double)row[spots_.colorscope]);
+    avoidrad_->setValue((double)row[spots_.avoidrad]);
     hishow_->set_active(row[spots_.hishow]);
     activ_->set_active(row[spots_.activ]);
     avoid_->set_active(row[spots_.avoid]);
@@ -1481,6 +1491,14 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
         }
     }
 
+    if (a == avoidrad_) {
+        row[spots_.avoidrad] = avoidrad_->getValue();
+
+        if (listener) {
+            listener->panelChanged(EvLocallabSpotavoidrad, avoidrad_->getTextValue());
+        }
+    }
+
     if (a == scopemask_) {
         row[spots_.scopemask] = scopemask_->getIntValue();
 
@@ -1787,6 +1805,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     balanh_->block(cond);
     colorde_->block(cond);
     colorscope_->block(cond);
+    avoidrad_->block(cond);
     hishowconn_.block(cond);
     activConn_.block(cond);
     avoidConn_.block(cond);
@@ -1831,6 +1850,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     balanh_->set_sensitive(cond);
     colorde_->set_sensitive(cond);
     colorscope_->set_sensitive(cond);
+    avoidrad_->set_sensitive(cond);
     hishow_->set_sensitive(cond);
     activ_->set_sensitive(cond);
     avoid_->set_sensitive(cond);
@@ -2509,6 +2529,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int index)
             r->balanh = row[spots_.balanh];
             r->colorde = row[spots_.colorde];
             r->colorscope = row[spots_.colorscope];
+            r->avoidrad = row[spots_.avoidrad];
             r->transitweak = row[spots_.transitweak];
             r->transitgrad = row[spots_.transitgrad];
             r->scopemask = row[spots_.scopemask];
@@ -2644,6 +2665,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.balanh] = newSpot->balanh;
     row[spots_.colorde] = newSpot->colorde;
     row[spots_.colorscope] = newSpot->colorscope;
+    row[spots_.avoidrad] = newSpot->avoidrad;
     row[spots_.hishow] = newSpot->hishow;
     row[spots_.activ] = newSpot->activ;
     row[spots_.avoid] = newSpot->avoid;
@@ -2717,6 +2739,7 @@ void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defP
         balanh_->setDefault(defSpot.balanh);
         colorde_->setDefault(defSpot.colorde);
         colorscope_->setDefault(defSpot.colorscope);
+        avoidrad_->setDefault(defSpot.avoidrad);
         scopemask_->setDefault((double)defSpot.scopemask);
         lumask_->setDefault((double)defSpot.lumask);
     }
@@ -2759,6 +2782,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(balanh);
     add(colorde);
     add(colorscope);
+    add(avoidrad);
     add(hishow);
     add(activ);
     add(avoid);

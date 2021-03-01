@@ -10491,11 +10491,17 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
         const float ach = lp.trans / 100.f;
 
         TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
-        const float wip[3][3] = {
-            {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
-            {static_cast<float>(wiprof[1][0]), static_cast<float>(wiprof[1][1]), static_cast<float>(wiprof[1][2])},
-            {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
+        const double wip[3][3] = {//improve precision with double
+            {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+            {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+            {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
         };
+
+        float softr = params->locallab.spots.at(sp).avoidrad;//max softr = 30
+        //improve precision with mint and maxt
+        float mint = 0.15f - 0.004f * softr;//between 0.15f and 0.03f 
+        float maxt = 0.96f + 0.001f * softr;//between 0.96f and 0.99f
+
         const bool highlight = params->toneCurve.hrenabled;
         const bool needHH =  true; //always Munsell to avoid bad behavior //(lp.chro != 0.f);
 #ifdef _OPENMP
@@ -10612,7 +10618,9 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
 
                     Color::pregamutlab(Lprov1, HH, chr);
                     Chprov1 = rtengine::min(Chprov1, chr);
-                    Color::gamutLchonly(sincosval, Lprov1, Chprov1, wip, highlight, 0.15f, 0.92f);
+                    float R, G, B;
+                  //  Color::gamutLchonly(sincosval, Lprov1, Chprov1, wip, highlight, 0.15f, 0.92f);
+                    Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, mint, maxt);//replace for best results
                     transformed->L[y][x] = Lprov1 * 327.68f;
                     transformed->a[y][x] = 327.68f * Chprov1 * sincosval.y;
                     transformed->b[y][x] = 327.68f * Chprov1 * sincosval.x;
@@ -10626,7 +10634,7 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
                         Color::AllMunsellLch(true, Lprov1, Lprov2, HH, Chprov, memChprov, correctionHue, correctlum);
 
                         if (std::fabs(correctionHue) < 0.015f) {
-                            HH += correctlum;    // correct only if correct Munsell chroma very little.
+                            HH += correctlum;    // correct only if correct Munsell chroma very small.
                         }
 
                         sincosval = xsincosf(HH + correctionHue);
@@ -10637,7 +10645,6 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
             }
         }
         //Guidedfilter to reduce artifacts in transitions
-        const float softr = 0.7f;//try others values...between 0.1f and 2.f
         if (softr != 0.f) {//soft for L a b because we change color...
 
             int bw = transformed->W;
