@@ -1326,19 +1326,16 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                     }
                                 }
                                // }
-                                if (execut  && exitifzero) {
+                                if (execut && exitifzero) {
                                     for (int dir = 1; dir < 4; dir++) {
                                         for (int level = 0; level < levref; level++) {
-                                            int Wlvl_L = Ldecomp->level_W(level);
-                                            int Hlvl_L = Ldecomp->level_H(level);
-                                            float* const* WavCoeffs_L = Ldecomp->level_coeffs(level);//first decomp denoised
-                                            float* const* WavCoeffs_L2 = Ldecomp2->level_coeffs(level);//second decomp before denoise
-                                            int k4 = 3;
-                                            int k5 = 3;
-                                            if(cp.complex == 1){
-                                                k4= 4;
-                                                k5= 5;
-                                            }
+                                            const int Wlvl_L = Ldecomp->level_W(level);
+                                            const int Hlvl_L = Ldecomp->level_H(level);
+                                            const float* const WavCoeffs_L = Ldecomp->level_coeffs(level)[dir];//first decomp denoised
+                                            const float* const WavCoeffs_L2 = Ldecomp2->level_coeffs(level)[dir];//second decomp before denoise
+                                            const int k4 = cp.complex == 1 ? 4 : 3;
+                                            const int k5 = cp.complex == 1 ? 5 : 3;
+
                                             auto WavL0 = Ldecomp->level_coeffs(0)[dir];
                                             auto WavL1 = Ldecomp->level_coeffs(1)[dir];
                                             auto WavL2 = Ldecomp->level_coeffs(2)[dir];
@@ -1357,134 +1354,95 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                             }
 
                                             //find local contrast
-                                            float tempmean = 0.f;
-                                            float tempsig = 0.f;
-                                            float tempmax = 0.f;
-                                            if(cp.mixmet == 0){
-                                                tempmean = mean[level];
-                                                tempsig = sigma[level];
-                                                tempmax = MaxP[level];
-                                            } else if(cp.mixmet == 1){
-                                                tempmean = 0.5f * mean[level] + 0.5f * meand[level] ;
-                                                tempsig = 0.5f * sigma[level] + 0.5f * sigmad[level] ;
-                                                tempmax = 0.5f * MaxP[level] + 0.5f * MaxPd[level] ;
-                                            } else if(cp.mixmet == 2){
-                                                tempmean = 0.3f * mean[level] + 0.7f * meand[level] ;
-                                                tempsig = 0.3f * sigma[level] + 0.7f * sigmad[level] ;
-                                                tempmax = 0.3f * MaxP[level] + 0.7f * MaxPd[level] ;
-                                            } else if(cp.mixmet == 3){
-                                                tempmean = meand[level]; 
-                                                tempsig = sigmad[level]; 
-                                                tempmax = MaxPd[level];
-                                            }
-                                            
+                                            constexpr float weights[4] = {0.f, 0.5f, 0.7f, 1.f};
+                                            const float weightL = weights[rtengine::LIM(cp.mixmet, 0, 3)];
+                                            const float tempmean = intp(weightL, meand[level], mean[level]);
+                                            const float tempsig = intp(weightL, sigmad[level], sigma[level]);
+                                            const float tempmax = intp(weightL, MaxPd[level], MaxP[level]);
+
                                             if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) { //curve
-                                                float insigma = 0.666f; //SD
-                                                float logmax = log(tempmax); //log Max
+                                                constexpr float insigma = 0.666f; //SD
+                                                const float logmax = log(tempmax); //log Max
                                                 //cp.sigmm change the "wider" of sigma
-                                                float rapX = (tempmean + siglh[level] * tempsig) / (tempmax); //rapport between sD / max
-                                                float inx = log(insigma);
-                                                float iny = log(rapX);
-                                                float rap = inx / iny; //koef
-                                                float asig = 0.166f / (tempsig * siglh[level]);
-                                                float bsig = 0.5f - asig * tempmean;
-                                                float amean = 0.5f / (tempmean);
+                                                const float rapX = (tempmean + siglh[level] * tempsig) / tempmax; //rapport between sD / max
+                                                const float inx = log(insigma);
+                                                const float iny = log(rapX);
+                                                const float rap = inx / iny; //koef
+                                                const float asig = 0.166f / (tempsig * siglh[level]);
+                                                const float bsig = 0.5f - asig * tempmean;
+                                                const float amean = 1.f / tempmean;
+
+                                                //equalizer for levels 0 1 and 3...  1.33 and 0.75 arbitrary values
+                                                float kcFactor = 1.f;
+                                                if(cp.denmet == 1) {
+                                                    if(level == 0 || level == 3) {
+                                                        kcFactor = 1.7f;
+                                                    }
+                                                } else if(cp.denmet == 2) {
+                                                    if(level == 0 || level == 3) {
+                                                        kcFactor = 0.3f;
+                                                    }
+                                                } else if(cp.denmet == 3) {
+                                                    if(level == 0 || level == 1) {
+                                                        kcFactor = 1.7f;
+                                                    }
+                                                } else if(cp.denmet == 4) {
+                                                    if(level == 0 || level == 1) {
+                                                        kcFactor = 0.3f;
+                                                    }
+                                                }
+                                                const float k = 1.f / (siglh[level] > 1.f ? SQR(siglh[level]) : siglh[level]);
+                                                const float maxVal = tempmean + siglh[level] * tempsig;
 
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic, Wlvl_L * 16) num_threads(wavNestedLevels) if (wavNestedLevels>1)
+                                                #pragma omp parallel for schedule(dynamic, Wlvl_L * 16) num_threads(wavNestedLevels) if (wavNestedLevels>1)
 #endif
-
                                                 for (int i = 0; i < Wlvl_L * Hlvl_L; i++) {
                                                     float absciss;
-                                                    float tempwav = 0.f;
-                                                    if(cp.mixmet == 0){
-                                                        tempwav = WavCoeffs_L2[dir][i];
-                                                    } else if(cp.mixmet == 1){
-                                                        tempwav = 0.5f * WavCoeffs_L[dir][i] + 0.5f * WavCoeffs_L2[dir][i];
-                                                    } else if(cp.mixmet == 2){
-                                                        tempwav = 0.7f * WavCoeffs_L[dir][i] + 0.3f * WavCoeffs_L2[dir][i];
-                                                    } else if(cp.mixmet == 3){
-                                                        tempwav = WavCoeffs_L[dir][i]; 
+                                                    const float tempwav = std::fabs(intp(weightL, WavCoeffs_L[i], WavCoeffs_L2[i]));
+
+                                                    if (tempwav >= maxVal) { //for max
+                                                        absciss = xexpf((xlogf(tempwav) - logmax) * rap);
+                                                    } else if (tempwav >= tempmean) {
+                                                        absciss = asig * tempwav + bsig;
+                                                    } else {
+                                                        absciss = 0.5f * pow_F(amean * tempwav, k);
                                                     }
 
-                                                    if (std::fabs(tempwav) >= (tempmean + siglh[level] * tempsig)) { //for max
-                                                        float valcour = xlogf(std::fabs(tempwav));
-                                                        float valc = valcour - logmax;
-                                                        float vald = valc * rap;
-                                                        absciss = xexpf(vald);
-                                                    } else if (std::fabs(tempwav) >= tempmean) {
-                                                        absciss = asig * std::fabs(tempwav) + bsig;
-                                                    } else {
-                                                        absciss = amean * std::fabs(tempwav);
-                                                        float k = siglh[level];
-                                                        if(siglh[level] > 1.f) {
-                                                            k = SQR(siglh[level]);
-                                                        }
-                                                        float abs = pow(2.f * absciss, (1.f / k));
-                                                        absciss = 0.5f * abs;
-                                                    }
-                                                    float kc = 0.f;
-                                                    if(cp.slimet == 0) {
-                                                        kc = wavlow.getVal(absciss) -1.f;
+                                                    float kc;
+                                                    if (cp.slimet == 0) {
+                                                        kc = wavlow.getVal(absciss) - 1.f;
                                                     } else {
                                                         kc = wavdenoise[absciss * 500.f] - 1.f;
                                                     }
-
-                                                    float kchigh = 0.f;
-                                                    kchigh = wavhigh.getVal(absciss) -1.f;
-                                                    kchigh = -SQR(kchigh);
-
-                                                    float kcmed = 0.f;
-                                                    kcmed = wavmed.getVal(absciss) -1.f;
-                                                    kcmed = -SQR(kcmed);
-                                                    
-                                                    if(kc < 0) {
-                                                        kc = -SQR(kc);//approximation to simulate sliders denoise
+                                                    if (kc < 0) {
+                                                        kc = -SQR(kc); //approximation to simulate sliders denoise
                                                     }
-                                                    //equalizer for levels 0 1 and 3...  1.33 and 0.75 arbitrary values
-                                                    if(cp.denmet == 1) {
-                                                        if(level == 0 || level == 3) {
-                                                            kc *= 1.7f;
-                                                        }
-                                                    } else if(cp.denmet == 2) {
-                                                        if(level == 0 || level == 3) {
-                                                            kc *= 0.3f;
-                                                        }
-                                                    } else if(cp.denmet == 3) {
-                                                        if(level == 0 || level == 1) {
-                                                            kc *= 1.7f;
-                                                        }
-                                                    } else if(cp.denmet == 4) {
-                                                        if(level == 0 || level == 1) {
-                                                            kc *= 0.3f;
-                                                        }
-                                                    }
-                                                                            
-                                                    float reduceeffect = kc <= 0.f ? 1.f : 1.2f;//1.2 allows to increase denoise (not used)
+                                                    kc *= kcFactor;
 
-                                                    float kinterm = 1.f + reduceeffect * kc;
-                                                    kinterm = kinterm <= 0.f ? 0.01f : kinterm;
-                                                    
-                                                    float kintermhigh = 1.f + reduceeffect * kchigh;
-                                                    kintermhigh = kintermhigh <= 0.f ? 0.01f : kintermhigh;
+                                                    const float reduceeffect = kc <= 0.f ? 1.f : 1.2f; //1.2 allows to increase denoise (not used)
 
-                                                    float kintermed = 1.f + reduceeffect * kcmed;
-                                                    kintermed = kintermed <= 0.f ? 0.01f : kintermed;
-
-                                                    float kintermlow = kinterm;
-                                                    if(level < 4) {
+                                                    if (level < 4) {
+                                                        float kintermlow = 1.f + reduceeffect * kc;
+                                                        kintermlow = kintermlow <= 0.f ? 0.01f : kintermlow;
                                                         WavL0[i] = WavL02[i] + (WavL0[i] - WavL02[i]) * kintermlow;
                                                         WavL1[i] = WavL12[i] + (WavL1[i] - WavL12[i]) * kintermlow;
                                                         WavL2[i] = WavL22[i] + (WavL2[i] - WavL22[i]) * kintermlow;
                                                         WavL3[i] = WavL32[i] + (WavL3[i] - WavL32[i]) * kintermlow;
                                                     } 
-                                                    if(cp.complex == 1){
-                                                        if(cp.limden > 0.f) {
+                                                    if (cp.complex == 1){
+                                                        if (cp.limden > 0.f) {
+                                                            const float kcmed = -SQR(wavmed.getVal(absciss) - 1.f);
+                                                            float kintermed = 1.f + reduceeffect * kcmed;
+                                                            kintermed = kintermed <= 0.f ? 0.01f : kintermed;
                                                             WavL0[i] = WavL02[i] + (WavL0[i] - WavL02[i]) * kintermed;
                                                             WavL1[i] = WavL12[i] + (WavL1[i] - WavL12[i]) * kintermed;
                                                             WavL2[i] = WavL22[i] + (WavL2[i] - WavL22[i]) * kintermed;
                                                             WavL3[i] = WavL32[i] + (WavL3[i] - WavL32[i]) * kintermed;
                                                         }
+                                                        const float kchigh = -SQR(wavhigh.getVal(absciss) - 1.f);
+                                                        float kintermhigh = 1.f + reduceeffect * kchigh;
+                                                        kintermhigh = kintermhigh <= 0.f ? 0.01f : kintermhigh;
                                                         WavL4[i] = WavL42[i] + (WavL4[i] - WavL42[i]) * kintermhigh;
                                                         WavL5[i] = WavL52[i] + (WavL5[i] - WavL52[i]) * kintermhigh;
                                                     }
