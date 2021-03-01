@@ -1492,6 +1492,11 @@ Camera constants:
         "raw_crop": [ 0, 0, 0, -18 ] // 18 rows at bottom are garbage
     },
 
+    { // Quality C, only raw crop
+        "make_model": "Leica SL2-S",
+        "raw_crop": [ 0, 2, 6024, 4042 ] // 2 rows at top and 4 rows at bottom are black
+    },
+
     { // Quality B, Matrix from ART
         "make_model" : "LEICA V-LUX 5",
         "dcraw_matrix" : [9803, -4185, -992, -4066, 12578, 1628, -838, 1824, 5288]
