@@ -10647,7 +10647,6 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
         }
         //Guidedfilter to reduce artifacts in transitions
         if (softr != 0.f) {//soft for L a b because we change color...
-StopWatch Stop1("softr");
             int bw = transformed->W;
             int bh = transformed->H;
             array2D<float> ble(bw, bh);
