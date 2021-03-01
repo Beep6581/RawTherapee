@@ -1205,8 +1205,11 @@ bool MySpinButton::on_key_press_event (GdkEventKey* event)
     double vMin, vMax;
     get_range(vMin, vMax);
 
-    if (event->keyval == GDK_KEY_plus || (event->keyval == GDK_KEY_minus && vMin >= 0)) {
-        return true; // Event is not propagated further
+    if ((event->keyval >= GDK_KEY_a && event->keyval <= GDK_KEY_z)
+            || (event->keyval >= GDK_KEY_A && event->keyval <= GDK_KEY_Z)
+            || event->keyval == GDK_KEY_equal || event->keyval == GDK_KEY_underscore
+            || event->keyval == GDK_KEY_plus || (event->keyval == GDK_KEY_minus && vMin >= 0)) {
+        return false; // Event is propagated further
     } else {
         if (event->keyval == GDK_KEY_comma || event->keyval == GDK_KEY_KP_Decimal) {
             set_text(get_text() + ".");
