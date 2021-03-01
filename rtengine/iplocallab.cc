@@ -10701,7 +10701,17 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
 #endif
             for (int y = 0; y < bh; y++) {
                 for (int x = 0; x < bw; x++) {
-                    float2 sincosval = xsincosf(xatan2f(transformed->b[y][x], transformed->a[y][x]));
+                    const float Chprov1 = sqrtf(SQR(transformed->a[y][x]) + SQR(transformed->b[y][x]));
+                    float2  sincosval;
+
+                    if (Chprov1 == 0.0f) {
+                        sincosval.y = 1.f;
+                        sincosval.x = 0.0f;
+                    } else {
+                        sincosval.y = transformed->a[y][x] / Chprov1;
+                        sincosval.x = transformed->b[y][x] / Chprov1;
+                    }
+
                     transformed->a[y][x] = 32768.f * blechro[y][x] * sincosval.y;
                     transformed->b[y][x] = 32768.f * blechro[y][x] * sincosval.x;
                 }
