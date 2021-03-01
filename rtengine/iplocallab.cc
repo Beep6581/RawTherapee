@@ -10701,7 +10701,7 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
 #endif
             for (int y = 0; y < bh; y++) {
                 for (int x = 0; x < bw; x++) {
-                    const float Chprov1 = sqrtf(SQR(transformed->a[y][x]) + SQR(transformed->b[y][x]));
+                    const float Chprov1 = std::sqrt(SQR(transformed->a[y][x]) + SQR(transformed->b[y][x]));
                     float2  sincosval;
 
                     if (Chprov1 == 0.0f) {
