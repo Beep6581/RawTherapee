@@ -10497,12 +10497,12 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
             {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
         };
 
-        float softr = params->locallab.spots.at(sp).avoidrad;//max softr = 30
+        const float softr = params->locallab.spots.at(sp).avoidrad;//max softr = 30
         bool muns = params->locallab.spots.at(sp).avoidmun;//Munsell control with 200 LUT
         //improve precision with mint and maxt
-        float tr = std::min(4.f, softr);
-        float mint = 0.15f - 0.03f * tr;//between 0.15f and 0.03f 
-        float maxt = 0.96f + 0.008f * tr;//between 0.96f and 0.992f
+        const float tr = std::min(4.f, softr);
+        const float mint = 0.15f - 0.03f * tr;//between 0.15f and 0.03f 
+        const float maxt = 0.96f + 0.008f * tr;//between 0.96f and 0.992f
 
         const bool highlight = params->toneCurve.hrenabled;
         const bool needHH =  true; //always Munsell to avoid bad behavior //(lp.chro != 0.f);
@@ -10647,13 +10647,9 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
                 }
             }
         }
+
         //Guidedfilter to reduce artifacts in transitions
         if (softr != 0.f) {//soft for L a b because we change color...
-            int bw = transformed->W;
-            int bh = transformed->H;
-            array2D<float> ble(bw, bh);
-            array2D<float> guid(bw, bh);
-
             const float tmpblur = softr < 0.f ? -1.f / softr : 1.f + softr;
             const int r1 = rtengine::max<int>(4 / sk * tmpblur + 0.5f, 1);
             const int r2 = rtengine::max<int>(25 / sk * tmpblur + 0.5f, 1);
@@ -10665,8 +10661,13 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
             constexpr float bepsil = epsilmin;
             const float epsil = softr < 0.f ? 0.001f : aepsil * softr + bepsil;
 
+            const int bw = transformed->W;
+            const int bh = transformed->H;
+            array2D<float> ble(bw, bh);
+            array2D<float> guid(bw, bh);
+
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
             for (int y = 0; y < bh ; y++) {
@@ -10677,7 +10678,7 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
             }
             rtengine::guidedFilter(guid, ble, ble, r2, 0.2f * epsil, multiThread);
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
             for (int y = 0; y < bh; y++) {
                 for (int x = 0; x < bw; x++) {
@@ -10686,9 +10687,8 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
             }
 
             array2D<float> &blechro = ble; // reuse buffer
-
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
 
             for (int y = 0; y < bh ; y++) {
@@ -10699,11 +10699,11 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
             rtengine::guidedFilter(guid, blechro, blechro, r1, epsil, multiThread);
 
 #ifdef _OPENMP
-        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
             for (int y = 0; y < bh; y++) {
                 for (int x = 0; x < bw; x++) {
-                    const float Chprov1 = sqrtf(SQR(transformed->a[y][x]) + SQR(transformed->b[y][x]));
+                    const float Chprov1 = std::sqrt(SQR(transformed->a[y][x]) + SQR(transformed->b[y][x]));
                     float2  sincosval;
 
                     if (Chprov1 == 0.0f) {
