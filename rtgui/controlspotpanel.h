@@ -79,6 +79,7 @@ public:
         bool hishow;
         bool activ;
         bool avoid;
+        bool avoidmun;
         bool blwh;
         bool recurs;
         bool laplac;
@@ -250,6 +251,7 @@ private:
     void hishowChanged();
     void activChanged();
     void avoidChanged();
+    void avoidmunChanged();
     void blwhChanged();
     void recursChanged();
     void laplacChanged();
@@ -312,6 +314,7 @@ private:
         Gtk::TreeModelColumn<bool> hishow;
         Gtk::TreeModelColumn<bool> activ;
         Gtk::TreeModelColumn<bool> avoid;
+        Gtk::TreeModelColumn<bool> avoidmun;
         Gtk::TreeModelColumn<bool> blwh;
         Gtk::TreeModelColumn<bool> recurs;
         Gtk::TreeModelColumn<bool> laplac;
@@ -406,6 +409,8 @@ private:
     sigc::connection activConn_;
     Gtk::CheckButton* const avoid_;
     sigc::connection avoidConn_;
+    Gtk::CheckButton* const avoidmun_;
+    sigc::connection avoidmunConn_;
     Gtk::CheckButton* const blwh_;
     sigc::connection blwhConn_;
     Gtk::CheckButton* const recurs_;

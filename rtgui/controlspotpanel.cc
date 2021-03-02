@@ -83,6 +83,7 @@ ControlSpotPanel::ControlSpotPanel():
     hishow_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_PREVSHOW")))),
     activ_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIVSPOT")))),
     avoid_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOID")))),
+    avoidmun_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AVOIDMUN")))),
     blwh_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BLWH")))),
     recurs_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_RECURS")))),
     laplac_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LAPLACC")))),
@@ -395,12 +396,15 @@ ControlSpotPanel::ControlSpotPanel():
 
     avoidConn_  = avoid_->signal_toggled().connect(
                       sigc::mem_fun(*this, &ControlSpotPanel::avoidChanged));
+    avoidmunConn_  = avoidmun_->signal_toggled().connect(
+                      sigc::mem_fun(*this, &ControlSpotPanel::avoidmunChanged));
     
     Gtk::Frame* const avFrame = Gtk::manage(new Gtk::Frame());
     ToolParamBlock* const avbox = Gtk::manage(new ToolParamBlock());
     avFrame->set_label_align(0.025, 0.5);
     avFrame->set_label_widget(*avoid_);
     avbox->pack_start(*avoidrad_);
+    avbox->pack_start(*avoidmun_);
     avFrame->add(*avbox);
     specCaseBox->pack_start(*avFrame);
 
@@ -840,6 +844,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     hishow_->set_active(row[spots_.hishow]);
     activ_->set_active(row[spots_.activ]);
     avoid_->set_active(row[spots_.avoid]);
+    avoidmun_->set_active(row[spots_.avoidmun]);
     blwh_->set_active(row[spots_.blwh]);
     recurs_->set_active(row[spots_.recurs]);
    // laplac_->set_active(row[spots_.laplac]);
@@ -1588,6 +1593,31 @@ void ControlSpotPanel::avoidChanged()
     }
 }
 
+void ControlSpotPanel::avoidmunChanged()
+{
+    // printf("avoidmunChanged\n");
+
+    // Get selected control spot
+    const auto s = treeview_->get_selection();
+
+    if (!s->count_selected_rows()) {
+        return;
+    }
+
+    const auto iter = s->get_selected();
+    Gtk::TreeModel::Row row = *iter;
+    row[spots_.avoidmun] = avoidmun_->get_active();
+
+    // Raise event
+    if (listener) {
+        if (avoidmun_->get_active()) {
+            listener->panelChanged(EvLocallabSpotavoidmun, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(EvLocallabSpotavoidmun, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
 void ControlSpotPanel::activChanged()
 {
     // printf("activChanged\n");
@@ -1809,6 +1839,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     hishowconn_.block(cond);
     activConn_.block(cond);
     avoidConn_.block(cond);
+    avoidmunConn_.block(cond);
     blwhConn_.block(cond);
     recursConn_.block(cond);
     laplacConn_.block(cond);
@@ -1854,6 +1885,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     hishow_->set_sensitive(cond);
     activ_->set_sensitive(cond);
     avoid_->set_sensitive(cond);
+    avoidmun_->set_sensitive(cond);
     blwh_->set_sensitive(cond);
     recurs_->set_sensitive(cond);
     laplac_->set_sensitive(cond);
@@ -2537,6 +2569,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int index)
             r->hishow = row[spots_.hishow];
             r->activ = row[spots_.activ];
             r->avoid = row[spots_.avoid];
+            r->avoidmun = row[spots_.avoidmun];
             r->blwh = row[spots_.blwh];
             r->recurs = row[spots_.recurs];
             r->laplac = row[spots_.laplac];
@@ -2669,6 +2702,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.hishow] = newSpot->hishow;
     row[spots_.activ] = newSpot->activ;
     row[spots_.avoid] = newSpot->avoid;
+    row[spots_.avoidmun] = newSpot->avoidmun;
     row[spots_.blwh] = newSpot->blwh;
     row[spots_.recurs] = newSpot->recurs;
     row[spots_.laplac] = newSpot->laplac;
@@ -2786,6 +2820,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(hishow);
     add(activ);
     add(avoid);
+    add(avoidmun);
     add(blwh);
     add(recurs);
     add(laplac);

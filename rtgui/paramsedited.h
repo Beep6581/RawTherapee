@@ -423,6 +423,7 @@ public:
         bool hishow;
         bool activ;
         bool avoid;
+        bool avoidmun;
         bool blwh;
         bool recurs;
         bool laplac;

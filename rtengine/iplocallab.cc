@@ -10498,6 +10498,7 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
         };
 
         float softr = params->locallab.spots.at(sp).avoidrad;//max softr = 30
+        bool muns = params->locallab.spots.at(sp).avoidmun;//Munsell control with 200 LUT
         //improve precision with mint and maxt
         float tr = std::min(4.f, softr);
         float mint = 0.15f - 0.03f * tr;//between 0.15f and 0.03f 
@@ -10620,8 +10621,9 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
                     Color::pregamutlab(Lprov1, HH, chr);
                     Chprov1 = rtengine::min(Chprov1, chr);
                     float R, G, B;
-                  //  Color::gamutLchonly(sincosval, Lprov1, Chprov1, wip, highlight, 0.15f, 0.92f);
-                    Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, mint, maxt);//replace for best results
+                    if(!muns) {
+                        Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, mint, maxt);//replace for best results
+                    }
                     transformed->L[y][x] = Lprov1 * 327.68f;
                     transformed->a[y][x] = 327.68f * Chprov1 * sincosval.y;
                     transformed->b[y][x] = 327.68f * Chprov1 * sincosval.x;
@@ -11214,6 +11216,7 @@ void ImProcFunctions::Lab_Local(
     constexpr int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
     struct local_params lp;
     calcLocalParams(sp, oW, oH, params->locallab, lp, prevDeltaE, llColorMask, llColorMaskinv, llExpMask, llExpMaskinv, llSHMask, llSHMaskinv, llvibMask, lllcMask, llsharMask, llcbMask, llretiMask, llsoftMask, lltmMask, llblMask, lllogMask, ll_Mask, locwavCurveden, locwavdenutili);
+
     avoidcolshi(lp, sp, original, transformed, cy, cx, sk);
 
     const float radius = lp.rad / (sk * 1.4); //0 to 70 ==> see skip

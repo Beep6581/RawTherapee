@@ -1285,6 +1285,7 @@ HISTORY_MSG_1037;Local - Nlmeans - radius
 HISTORY_MSG_1038;Local - Nlmeans - gamma
 HISTORY_MSG_1039;Local - Grain - gamma
 HISTORY_MSG_1040;Local - Spot - soft radius
+HISTORY_MSG_1041;Local - Spot - Munsell
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2422,7 +2423,7 @@ TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Threshold
 TP_LABCURVE_AVOIDCOLORSHIFT;Avoid color shift
-TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction.
+TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).
 TP_LABCURVE_BRIGHTNESS;Lightness
 TP_LABCURVE_CHROMATICITY;Chromaticity
 TP_LABCURVE_CHROMA_TOOLTIP;To apply B&amp;W toning, set Chromaticity to -100.
@@ -2488,6 +2489,7 @@ TP_LOCALLAB_ARTIF_TOOLTIP;ΔE scope threshold increases the range of deltaE scop
 TP_LOCALLAB_AUTOGRAY;Auto mean luminance (Yb%)
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_AVOIDRAD;Soft radius
+TP_LOCALLAB_AVOIDMUN;Munsell correction only
 TP_LOCALLAB_BALAN;ab-L balance (ΔE)
 TP_LOCALLAB_BALANEXP;Laplacian balance
 TP_LOCALLAB_BALANH;C-H balance (ΔE)
