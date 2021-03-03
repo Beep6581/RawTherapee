@@ -2183,7 +2183,6 @@ void Color::gamutLchonly (float HH, float &Lprov1, float &Chprov1, float &R, flo
     const float ClipLevel = 65535.0f;
     bool inGamut;
     float2  sincosval = xsincosf(HH);
-
     do {
         inGamut = true;
 
@@ -2351,7 +2350,8 @@ void Color::gamutLchonly (float HH, float2 sincosval, float &Lprov1, float &Chpr
                     }
             }
 
-            Chprov1 *= higherCoef; // decrease the chromaticity value
+                Chprov1 *= higherCoef; // decrease the chromaticity value
+           
 
             if (Chprov1 <= 3.0f) {
                 Lprov1 += lowerCoef;

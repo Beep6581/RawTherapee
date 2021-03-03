@@ -10500,9 +10500,9 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
         const float softr = params->locallab.spots.at(sp).avoidrad;//max softr = 30
         bool muns = params->locallab.spots.at(sp).avoidmun;//Munsell control with 200 LUT
         //improve precision with mint and maxt
-        const float tr = std::min(4.f, softr);
-        const float mint = 0.15f - 0.03f * tr;//between 0.15f and 0.03f 
-        const float maxt = 0.96f + 0.008f * tr;//between 0.96f and 0.992f
+        const float tr = std::min(2.f, softr);
+        const float mint = 0.15f - 0.06f * tr;//between 0.15f and 0.03f 
+        const float maxt = 0.96f + 0.016f * tr;//between 0.96f and 0.992f
 
         const bool highlight = params->toneCurve.hrenabled;
         const bool needHH =  true; //always Munsell to avoid bad behavior //(lp.chro != 0.f);
@@ -10651,8 +10651,8 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
         //Guidedfilter to reduce artifacts in transitions
         if (softr != 0.f) {//soft for L a b because we change color...
             const float tmpblur = softr < 0.f ? -1.f / softr : 1.f + softr;
-            const int r1 = rtengine::max<int>(4 / sk * tmpblur + 0.5f, 1);
-            const int r2 = rtengine::max<int>(25 / sk * tmpblur + 0.5f, 1);
+            const int r1 = rtengine::max<int>(6 / sk * tmpblur + 0.5f, 1);
+            const int r2 = rtengine::max<int>(10 / sk * tmpblur + 0.5f, 1);
 
             constexpr float epsilmax = 0.005f;
             constexpr float epsilmin = 0.00001f;
