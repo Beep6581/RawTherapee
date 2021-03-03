@@ -10485,17 +10485,25 @@ void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabIm
     }
 }
 
-void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * original, LabImage *transformed, int cy, int cx)
+void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * original, LabImage *transformed, int cy, int cx, int sk)
 {
     if (params->locallab.spots.at(sp).avoid  && lp.islocal) {
         const float ach = lp.trans / 100.f;
 
         TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
-        const float wip[3][3] = {
-            {static_cast<float>(wiprof[0][0]), static_cast<float>(wiprof[0][1]), static_cast<float>(wiprof[0][2])},
-            {static_cast<float>(wiprof[1][0]), static_cast<float>(wiprof[1][1]), static_cast<float>(wiprof[1][2])},
-            {static_cast<float>(wiprof[2][0]), static_cast<float>(wiprof[2][1]), static_cast<float>(wiprof[2][2])}
+        const double wip[3][3] = {//improve precision with double
+            {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+            {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+            {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
         };
+
+        const float softr = params->locallab.spots.at(sp).avoidrad;//max softr = 30
+        const bool muns = params->locallab.spots.at(sp).avoidmun;//Munsell control with 200 LUT
+        //improve precision with mint and maxt
+        const float tr = std::min(2.f, softr);
+        const float mint = 0.15f - 0.06f * tr;//between 0.15f and 0.03f 
+        const float maxt = 0.98f + 0.008f * tr;//between 0.98f and 0.996f
+
         const bool highlight = params->toneCurve.hrenabled;
         const bool needHH =  true; //always Munsell to avoid bad behavior //(lp.chro != 0.f);
 #ifdef _OPENMP
@@ -10612,7 +10620,10 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
 
                     Color::pregamutlab(Lprov1, HH, chr);
                     Chprov1 = rtengine::min(Chprov1, chr);
-                    Color::gamutLchonly(sincosval, Lprov1, Chprov1, wip, highlight, 0.15f, 0.92f);
+                    float R, G, B;
+                    if(!muns) {
+                        Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, mint, maxt);//replace for best results
+                    }
                     transformed->L[y][x] = Lprov1 * 327.68f;
                     transformed->a[y][x] = 327.68f * Chprov1 * sincosval.y;
                     transformed->b[y][x] = 327.68f * Chprov1 * sincosval.x;
@@ -10626,13 +10637,85 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
                         Color::AllMunsellLch(true, Lprov1, Lprov2, HH, Chprov, memChprov, correctionHue, correctlum);
 
                         if (std::fabs(correctionHue) < 0.015f) {
-                            HH += correctlum;    // correct only if correct Munsell chroma very little.
+                            HH += correctlum;    // correct only if correct Munsell chroma very small.
                         }
 
                         sincosval = xsincosf(HH + correctionHue);
                         transformed->a[y][x] = 327.68f * Chprov * sincosval.y; // apply Munsell
                         transformed->b[y][x] = 327.68f * Chprov * sincosval.x;
                     }
+                }
+            }
+        }
+
+        //Guidedfilter to reduce artifacts in transitions
+        if (softr != 0.f) {//soft for L a b because we change color...
+            const float tmpblur = softr < 0.f ? -1.f / softr : 1.f + softr;
+            const int r1 = rtengine::max<int>(6 / sk * tmpblur + 0.5f, 1);
+            const int r2 = rtengine::max<int>(10 / sk * tmpblur + 0.5f, 1);
+
+            constexpr float epsilmax = 0.005f;
+            constexpr float epsilmin = 0.00001f;
+
+            constexpr float aepsil = (epsilmax - epsilmin) / 100.f;
+            constexpr float bepsil = epsilmin;
+            const float epsil = softr < 0.f ? 0.001f : aepsil * softr + bepsil;
+
+            const int bw = transformed->W;
+            const int bh = transformed->H;
+            array2D<float> ble(bw, bh);
+            array2D<float> guid(bw, bh);
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+            for (int y = 0; y < bh ; y++) {
+                for (int x = 0; x < bw; x++) {
+                    ble[y][x] = transformed->L[y][x] / 32768.f;
+                    guid[y][x] = original->L[y][x] / 32768.f;
+                }
+            }
+            rtengine::guidedFilter(guid, ble, ble, r2, 0.2f * epsil, multiThread);
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+            for (int y = 0; y < bh; y++) {
+                for (int x = 0; x < bw; x++) {
+                    transformed->L[y][x] = 32768.f * ble[y][x];
+                }
+            }
+
+            array2D<float> &blechro = ble; // reuse buffer
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+            for (int y = 0; y < bh ; y++) {
+                for (int x = 0; x < bw; x++) {
+                    blechro[y][x] = std::sqrt(SQR(transformed->b[y][x]) + SQR(transformed->a[y][x])) / 32768.f;
+                }
+            }
+            rtengine::guidedFilter(guid, blechro, blechro, r1, epsil, multiThread);
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+            for (int y = 0; y < bh; y++) {
+                for (int x = 0; x < bw; x++) {
+                    const float Chprov1 = std::sqrt(SQR(transformed->a[y][x]) + SQR(transformed->b[y][x]));
+                    float2  sincosval;
+
+                    if (Chprov1 == 0.0f) {
+                        sincosval.y = 1.f;
+                        sincosval.x = 0.0f;
+                    } else {
+                        sincosval.y = transformed->a[y][x] / Chprov1;
+                        sincosval.x = transformed->b[y][x] / Chprov1;
+                    }
+
+                    transformed->a[y][x] = 32768.f * blechro[y][x] * sincosval.y;
+                    transformed->b[y][x] = 32768.f * blechro[y][x] * sincosval.x;
                 }
             }
         }
@@ -11133,7 +11216,8 @@ void ImProcFunctions::Lab_Local(
     constexpr int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
     struct local_params lp;
     calcLocalParams(sp, oW, oH, params->locallab, lp, prevDeltaE, llColorMask, llColorMaskinv, llExpMask, llExpMaskinv, llSHMask, llSHMaskinv, llvibMask, lllcMask, llsharMask, llcbMask, llretiMask, llsoftMask, lltmMask, llblMask, lllogMask, ll_Mask, locwavCurveden, locwavdenutili);
-    avoidcolshi(lp, sp, original, transformed, cy, cx);
+
+    avoidcolshi(lp, sp, original, transformed, cy, cx, sk);
 
     const float radius = lp.rad / (sk * 1.4); //0 to 70 ==> see skip
     int levred;
@@ -16207,7 +16291,7 @@ void ImProcFunctions::Lab_Local(
 //end common mask
 
 // Gamut and Munsell control - very important do not deactivated to avoid crash
-    avoidcolshi(lp, sp, original, transformed, cy, cx);
+    avoidcolshi(lp, sp, original, transformed, cy, cx, sk);
 }
 
 }

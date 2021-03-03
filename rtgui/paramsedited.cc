@@ -1078,11 +1078,13 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).balanh = locallab.spots.at(j).balanh && pSpot.balanh == otherSpot.balanh;
                 locallab.spots.at(j).colorde = locallab.spots.at(j).colorde && pSpot.colorde == otherSpot.colorde;
                 locallab.spots.at(j).colorscope = locallab.spots.at(j).colorscope && pSpot.colorscope == otherSpot.colorscope;
+                locallab.spots.at(j).avoidrad = locallab.spots.at(j).avoidrad && pSpot.avoidrad == otherSpot.avoidrad;
                 locallab.spots.at(j).transitweak = locallab.spots.at(j).transitweak && pSpot.transitweak == otherSpot.transitweak;
                 locallab.spots.at(j).transitgrad = locallab.spots.at(j).transitgrad && pSpot.transitgrad == otherSpot.transitgrad;
                 locallab.spots.at(j).hishow = locallab.spots.at(j).hishow && pSpot.hishow == otherSpot.hishow;
                 locallab.spots.at(j).activ = locallab.spots.at(j).activ && pSpot.activ == otherSpot.activ;
                 locallab.spots.at(j).avoid = locallab.spots.at(j).avoid && pSpot.avoid == otherSpot.avoid;
+                locallab.spots.at(j).avoidmun = locallab.spots.at(j).avoidmun && pSpot.avoidmun == otherSpot.avoidmun;
                 locallab.spots.at(j).blwh = locallab.spots.at(j).blwh && pSpot.blwh == otherSpot.blwh;
                 locallab.spots.at(j).recurs = locallab.spots.at(j).recurs && pSpot.recurs == otherSpot.recurs;
                 locallab.spots.at(j).laplac = locallab.spots.at(j).laplac && pSpot.laplac == otherSpot.laplac;
@@ -3313,6 +3315,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).colorscope = mods.locallab.spots.at(i).colorscope;
         }
 
+        if (locallab.spots.at(i).avoidrad) {
+            toEdit.locallab.spots.at(i).avoidrad = mods.locallab.spots.at(i).avoidrad;
+        }
+
         if (locallab.spots.at(i).transitweak) {
             toEdit.locallab.spots.at(i).transitweak = mods.locallab.spots.at(i).transitweak;
         }
@@ -3331,6 +3337,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).avoid) {
             toEdit.locallab.spots.at(i).avoid = mods.locallab.spots.at(i).avoid;
+        }
+
+        if (locallab.spots.at(i).avoidmun) {
+            toEdit.locallab.spots.at(i).avoidmun = mods.locallab.spots.at(i).avoidmun;
         }
 
         if (locallab.spots.at(i).blwh) {
@@ -6659,11 +6669,13 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     balanh(v),
     colorde(v),
     colorscope(v),
+    avoidrad(v),
     transitweak(v),
     transitgrad(v),
     hishow(v),
     activ(v),
     avoid(v),
+    avoidmun(v),
     blwh(v),
     recurs(v),
     laplac(v),
@@ -7227,11 +7239,13 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     balanh = v;
     colorde = v;
     colorscope = v;
+    avoidrad = v;
     transitweak = v;
     transitgrad = v;
     hishow = v;
     activ = v;
     avoid = v;
+    avoidmun = v;
     blwh = v;
     recurs = v;
     laplac = v;
