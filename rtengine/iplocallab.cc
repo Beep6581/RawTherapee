@@ -10498,11 +10498,11 @@ void ImProcFunctions::avoidcolshi(struct local_params& lp, int sp, LabImage * or
         };
 
         const float softr = params->locallab.spots.at(sp).avoidrad;//max softr = 30
-        bool muns = params->locallab.spots.at(sp).avoidmun;//Munsell control with 200 LUT
+        const bool muns = params->locallab.spots.at(sp).avoidmun;//Munsell control with 200 LUT
         //improve precision with mint and maxt
         const float tr = std::min(2.f, softr);
         const float mint = 0.15f - 0.06f * tr;//between 0.15f and 0.03f 
-        const float maxt = 0.96f + 0.016f * tr;//between 0.96f and 0.992f
+        const float maxt = 0.98f + 0.008f * tr;//between 0.98f and 0.996f
 
         const bool highlight = params->toneCurve.hrenabled;
         const bool needHH =  true; //always Munsell to avoid bad behavior //(lp.chro != 0.f);
