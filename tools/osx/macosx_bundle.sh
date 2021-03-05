@@ -249,10 +249,10 @@ done
 
 # Build GTK3 pixbuf loaders & immodules database
 msg "Build GTK3 databases:"
-"${LOCAL_PREFIX}"/local/bin/gdk-pixbuf-query-loaders "${LIB}/libpix*.so" > "${ETC}/gtk-3.0/gdk-pixbuf.loaders"
-"${LOCAL_PREFIX}/bin/gtk-query-immodules-3.0" "${LIB}/im-*" > "${ETC}/gtk-3.0/gtk.immodules"
-sed -i.bak -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
-sed -i.bak -e "s|/opt/local/|/Applications/RawTherapee.app/Contents/Frameworks/|" "${ETC}/gtk-3.0/gtk.immodules"
+"${LOCAL_PREFIX}"/bin/gdk-pixbuf-query-loaders "${LIB}"/libpixbufloader-*.so > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
+"${LOCAL_PREFIX}"/bin/gtk-query-immodules-3.0 "${LIB}"/im-* > "${ETC}"/gtk-3.0/gtk.immodules
+sed -i.bak -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}"/gtk-3.0/gdk-pixbuf.loaders "${ETC}/gtk-3.0/gtk.immodules"
+sed -i.bak -e "s|/opt/local/|/Applications/RawTherapee.app/Contents/Frameworks/|" "${ETC}"/gtk-3.0/gtk.immodules
 
 # Install names
 ModifyInstallNames
