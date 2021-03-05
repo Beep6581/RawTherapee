@@ -2776,7 +2776,7 @@ TP_LOCALLAB_LOCCONT;Unsharp Mask
 TP_LOCALLAB_LOC_CONTRAST;Local Contrast & Wavelets
 TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramid 1:
 TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramid 2:
-TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by level- Tone Mapping - Dir.Contrast
+TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by level - TM - D.Contrast
 TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter - Edge Sharpness - Blur
 TP_LOCALLAB_LOC_RESIDPYR;Residual image (Main)
 TP_LOCALLAB_LOG;Log Encoding

@@ -2039,8 +2039,8 @@ TP_LOCALLAB_LOCCONT;Masque Flou
 TP_LOCALLAB_LOC_CONTRAST;Contraste Local & Ondelettes
 TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramide 1:
 TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramide 2:
-TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contr. par niveaux- Tone Mapping - Cont.Dir.
-TP_LOCALLAB_LOC_CONTRASTPYRLAB; Filtre Gradué - Netteté bords - Flouter
+TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contr. par niveaux- TM - Cont.Dir.
+TP_LOCALLAB_LOC_CONTRASTPYRLAB; Filtre Gradué - Netteté bords - Flou
 TP_LOCALLAB_LOC_RESIDPYR;Image Residuelle
 TP_LOCALLAB_LOG;Codage log
 TP_LOCALLAB_LOG1FRA;Ajustements Image
