@@ -297,6 +297,7 @@ struct ToneCurveParams {
     int saturation;
     int shcompr;
     int hlcompr; // Highlight Recovery's compression
+    int hlbl; // Highlight Recovery's compression
     int hlcomprthresh; // Highlight Recovery's threshold
     bool histmatching; // histogram matching
     bool fromHistMatching;
@@ -1008,11 +1009,13 @@ struct LocallabParams {
         double balanh;
         double colorde;
         double colorscope;
+        double avoidrad;
         double transitweak;
         double transitgrad;
         bool hishow;
         bool activ;
         bool avoid;
+        bool avoidmun;
         bool blwh;
         bool recurs;
         bool laplac;
@@ -1234,6 +1237,7 @@ struct LocallabParams {
         int isogr;
         int strengr;
         int scalegr;
+        double divgr;
         int epsbl;
         Glib::ustring blMethod; // blur, med, guid
         Glib::ustring chroMethod; // lum, chr, all

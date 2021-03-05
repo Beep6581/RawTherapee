@@ -573,12 +573,13 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     child(nullptr), headerWidget(nullptr), statusImage(nullptr),
     label(nullptr), useEnabled(useEnabled)
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     set_spacing(0);
     set_name("MyExpander");
     set_can_focus(false);
     setExpandAlignProperties(this, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
-    headerHBox = Gtk::manage( new Gtk::HBox());
+    headerHBox = Gtk::manage( new Gtk::Box());
     headerHBox->set_can_focus(false);
     setExpandAlignProperties(headerHBox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
@@ -628,12 +629,13 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
     child(nullptr), headerWidget(nullptr),
     label(nullptr), useEnabled(useEnabled)
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     set_spacing(0);
     set_name("MyExpander");
     set_can_focus(false);
     setExpandAlignProperties(this, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
-    headerHBox = Gtk::manage( new Gtk::HBox());
+    headerHBox = Gtk::manage( new Gtk::Box());
     headerHBox->set_can_focus(false);
     setExpandAlignProperties(headerHBox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
@@ -1170,6 +1172,7 @@ MySpinButton::MySpinButton ()
     set_numeric(true);
     set_wrap(false);
     set_alignment(Gtk::ALIGN_END);
+    set_update_policy(Gtk::SpinButtonUpdatePolicy::UPDATE_IF_VALID); // Avoid updating text if input is not a numeric
 }
 
 void MySpinButton::updateSize()
@@ -1202,19 +1205,19 @@ bool MySpinButton::on_key_press_event (GdkEventKey* event)
     double vMin, vMax;
     get_range(vMin, vMax);
 
-    if ( (event->string[0] >= 'a' && event->string[0] <= 'z')
-            || (event->string[0] >= 'A' && event->string[0] <= 'Z')
-            || event->string[0] == '+' || (event->string[0] == '-' && vMin >= 0)
-            || event->string[0] == '=' || event->string[0] == '_'
-       ) {
-        return false;
+    if ((event->keyval >= GDK_KEY_a && event->keyval <= GDK_KEY_z)
+            || (event->keyval >= GDK_KEY_A && event->keyval <= GDK_KEY_Z)
+            || event->keyval == GDK_KEY_equal || event->keyval == GDK_KEY_underscore
+            || event->keyval == GDK_KEY_plus || (event->keyval == GDK_KEY_minus && vMin >= 0)) {
+        return false; // Event is propagated further
     } else {
-        if(event->string[0] == ',') {
-            event->keyval = GDK_KEY_period;
-            event->string[0] = '.';
+        if (event->keyval == GDK_KEY_comma || event->keyval == GDK_KEY_KP_Decimal) {
+            set_text(get_text() + ".");
+            set_position(get_text().length()); // When setting text, cursor position is reseted at text start. Avoiding this with this code
+            return true; // Event is not propagated further
         }
 
-        return Gtk::Widget::on_key_press_event(event);
+        return Gtk::SpinButton::on_key_press_event(event); // Event is propagated normally
     }
 }
 
@@ -1237,7 +1240,7 @@ bool MyHScale::on_scroll_event (GdkEventScroll* event)
 //            event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
     // If Shift is pressed, the widget is modified
     if (event->state & GDK_SHIFT_MASK) {
-        Gtk::HScale::on_scroll_event(event);
+        Gtk::Scale::on_scroll_event(event);
         return true;
     }
 
@@ -1267,7 +1270,7 @@ MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileCh
     box_.pack_start(lbl_, true, true);
     Gtk::Image *img = Gtk::manage(new Gtk::Image());
     img->set_from_icon_name("folder-open", Gtk::ICON_SIZE_BUTTON);
-    box_.pack_start(*Gtk::manage(new Gtk::VSeparator()), false, false, 5);
+    box_.pack_start(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)), false, false, 5);
     box_.pack_start(*img, false, false);
     box_.show_all_children();
     add(box_);

@@ -1,4 +1,5 @@
 /*
+ *
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>frame
@@ -131,7 +132,7 @@ LocallabTool::LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustr
     complexity(Gtk::manage(new MyComboBoxText()))
 {
     // Create expander title bar
-    Gtk::HBox* const titleBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const titleBox = Gtk::manage(new Gtk::Box());
     Gtk::Label* const titleLabel = Gtk::manage(new Gtk::Label());
     titleLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(UILabel) + Glib::ustring("</b>"));
     titleLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -155,7 +156,7 @@ LocallabTool::LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustr
         titleBox->pack_end(*complexity, Gtk::PACK_SHRINK, 2);
     }
 
-    Gtk::VSeparator* const separator = Gtk::manage(new Gtk::VSeparator());
+    Gtk::Separator* const separator = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
     titleBox->pack_end(*separator, Gtk::PACK_SHRINK, 0);
 
     if (need100Percent) {
@@ -498,6 +499,9 @@ LocallabColor::LocallabColor():
     LLmaskcolshapewav(static_cast<FlatCurveEditor*>(mask2CurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
     csThresholdcol(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
 {
+    
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     float R, G, B;
 
     std::vector<GradientMilestone> six_shape;
@@ -820,7 +824,7 @@ LocallabColor::LocallabColor():
     expgradcol->add(*gradcolBox, false);
     pack_start(*expgradcol, false, false);
     ToolParamBlock* const curvBox = Gtk::manage(new ToolParamBlock());
-    Gtk::HBox* const qualcurvbox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const qualcurvbox = Gtk::manage(new Gtk::Box());
     qualcurvbox->pack_start(*labqualcurv, Gtk::PACK_SHRINK, 4);
     qualcurvbox->pack_start(*qualitycurveMethod);
     curvBox->pack_start(*qualcurvbox);
@@ -838,7 +842,7 @@ LocallabColor::LocallabColor():
     Gtk::Frame* const merge1colFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_MERGE1COLFRA")));
     merge1colFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const mergecolBox = Gtk::manage(new ToolParamBlock());
-    Gtk::HSeparator* const separatormer = Gtk::manage(new  Gtk::HSeparator());
+    Gtk::Separator* const separatormer = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     mergecolBox->pack_start(*separatormer, Gtk::PACK_SHRINK, 2);
     mergecolBox->pack_start(*mergecolMethod);
     mergecolBox->pack_start(*mercol);
@@ -2529,6 +2533,8 @@ LocallabExposure::LocallabExposure():
     mask2expCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmaskexpshape(static_cast<DiagonalCurveEditor*>(mask2expCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Exposure specific widgets
@@ -2686,7 +2692,7 @@ LocallabExposure::LocallabExposure():
     pdeBox->pack_start(*linear);
     pdeBox->pack_start(*balanexp);
     pdeBox->pack_start(*gamm);
-    Gtk::HBox* const ctboxexpmethod = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const ctboxexpmethod = Gtk::manage(new Gtk::Box());
 //    Gtk::Label* const labelexpmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_NOISEMETH") + ":"));
     ctboxexpmethod->pack_start(*labelexpmethod, Gtk::PACK_SHRINK, 4);
     ctboxexpmethod->pack_start(*exnoiseMethod);
@@ -3818,6 +3824,8 @@ LocallabShadow::LocallabShadow():
     fatamountSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATAMOUNT"), 1., 100., 1., 1.))),
     fatanchorSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 1., 100., 1., 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png")))))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Shadow highlight specific widgets
@@ -4887,6 +4895,8 @@ LocallabVibrance::LocallabVibrance():
     mask2vibCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmaskvibshape(static_cast<DiagonalCurveEditor*>(mask2vibCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     float R, G, B;
 
     const LocallabParams::LocallabSpot defSpot;
@@ -5810,12 +5820,14 @@ LocallabSoft::LocallabSoft():
 
     // Soft light specific widgets
     softMethod(Gtk::manage(new MyComboBoxText())),
-    ctboxsoftmethod(Gtk::manage(new Gtk::HBox())),
+    ctboxsoftmethod(Gtk::manage(new Gtk::Box())),
     showmasksoftMethod(Gtk::manage(new MyComboBoxText())),
     streng(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENG"), 1, 100, 1, 1))),
     laplace(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACE"), 0., 100., 0.5, 25.))),
     sensisf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 1, 100, 1, 30)))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     // Parameter Soft light specific widgets
     softMethod->append(M("TP_LOCALLAB_SOFTM"));
     softMethod->append(M("TP_LOCALLAB_RETIM"));
@@ -5838,6 +5850,7 @@ LocallabSoft::LocallabSoft():
     sensisf->setAdjusterListener(this);
 
     // Add Soft light specific widgets to GUI
+    pack_start(*sensisf);
     pack_start(*softMethod);
     Gtk::Label* const labelsoftmethod = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SHOWDCT") + ":"));
     ctboxsoftmethod->pack_start(*labelsoftmethod, Gtk::PACK_SHRINK, 4);
@@ -5845,7 +5858,6 @@ LocallabSoft::LocallabSoft():
     pack_start(*ctboxsoftmethod);
     pack_start(*streng);
     pack_start(*laplace);
-    pack_start(*sensisf);
 }
 
 bool LocallabSoft::isMaskViewActive()
@@ -6203,9 +6215,11 @@ LocallabBlur::LocallabBlur():
     radius(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADIUS"), MINRAD, MAXRAD, 0.1, 1.5, nullptr, nullptr, &blurSlider2radius, &blurRadius2Slider))),
     strength(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGTH"), 0, 100, 1, 0))),
     grainFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRAINFRA")))),
-    isogr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ISOGR"), 20, 6400, 1, 0))),
+    grainFrame2(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_GRAINFRA2")))),
+    isogr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ISOGR"), 20, 6400, 1, 400))),
     strengr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRENGR"), 0, 100, 1, 0))),
     scalegr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCALEGR"), 0, 100, 1, 100))),
+    divgr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DIVGR"), 0.2, 3., 0.1, 1.))),
     medMethod(Gtk::manage(new MyComboBoxText())),
     itera(Gtk::manage(new Adjuster(M("TP_DIRPYRDENOISE_MEDIAN_PASSES"), 1, 4, 1, 1))),
     guidbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GUIDBL"), 0, 1000, 1, 0))),
@@ -6290,9 +6304,11 @@ LocallabBlur::LocallabBlur():
     Lmaskblshape(static_cast<DiagonalCurveEditor*>(mask2blCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     mask2blCurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
     LLmaskblshapewav(static_cast<FlatCurveEditor*>(mask2blCurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
-    quaHBox(Gtk::manage(new Gtk::HBox())),
+    quaHBox(Gtk::manage(new Gtk::Box())),
     csThresholdblur(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     const LocallabParams::LocallabSpot defSpot;
 
     // Parameter Blur, Noise & Denoise specific widgets
@@ -6323,12 +6339,14 @@ LocallabBlur::LocallabBlur():
     strength->setAdjusterListener(this);
 
     grainFrame->set_label_align(0.025, 0.5);
+    grainFrame2->set_label_align(0.025, 0.5);
 
     isogr->setAdjusterListener(this);
 
     strengr->setAdjusterListener(this);
 
     scalegr->setAdjusterListener(this);
+    divgr->setAdjusterListener(this);
 
     medMethod->append(M("TP_LOCALLAB_MEDNONE"));
     medMethod->append(M("TP_DIRPYRDENOISE_TYPE_3X3"));
@@ -6529,14 +6547,21 @@ LocallabBlur::LocallabBlur():
 
     // Add Blur, Noise & Denoise specific widgets to GUI
     ToolParamBlock* const blnoisebox = Gtk::manage(new ToolParamBlock());
+    blnoisebox->pack_start(*sensibn);
     blnoisebox->pack_start(*blMethod);
     blnoisebox->pack_start(*fftwbl, Gtk::PACK_SHRINK, 0);
     blnoisebox->pack_start(*radius);
     blnoisebox->pack_start(*strength);
+
+    ToolParamBlock* const grain2Box = Gtk::manage(new ToolParamBlock());
+    grain2Box->pack_start(*isogr);
+    grain2Box->pack_start(*divgr);
+    grainFrame2->add(*grain2Box);
+
     ToolParamBlock* const grainBox = Gtk::manage(new ToolParamBlock());
-    grainBox->pack_start(*isogr);
+    grainBox->pack_start(*grainFrame2);
     grainBox->pack_start(*strengr);
-//    grainBox->pack_start(*scalegr);
+    grainBox->pack_start(*scalegr);
     grainFrame->add(*grainBox);
     blnoisebox->pack_start(*grainFrame);
     blnoisebox->pack_start(*medMethod);
@@ -6553,7 +6578,7 @@ LocallabBlur::LocallabBlur():
     wavBox2->pack_start(*invmask);
     expdenoise2->add(*wavBox2, false);
     blnoisebox->pack_start(*expdenoise2);
-    blnoisebox->pack_start(*sensibn);
+//    blnoisebox->pack_start(*sensibn);
 //    blnoisebox->pack_start(*blurMethod);
     blnoisebox->pack_start(*invbl);
     blnoisebox->pack_start(*chroMethod);
@@ -6585,6 +6610,7 @@ LocallabBlur::LocallabBlur():
     detailBox->pack_start(*usemask, Gtk::PACK_SHRINK, 0);
     detailFrame->add(*detailBox);
     wavBox->pack_start(*detailFrame);
+    denoisebox->pack_start(*sensiden);
     
     ToolParamBlock* const nlbox = Gtk::manage(new ToolParamBlock());
     nlbox->pack_start(*nlstr);
@@ -6615,7 +6641,6 @@ LocallabBlur::LocallabBlur():
     expdenoise3->add(*wavBox3, false);
     denoisebox->pack_start(*expdenoise3);
     denoisebox->pack_start(*bilateral);
-    denoisebox->pack_start(*sensiden);
     denoisebox->pack_start(*neutral);
 
     expdenoise->add(*denoisebox, false);
@@ -6627,7 +6652,7 @@ LocallabBlur::LocallabBlur():
     maskblBox->pack_start(*maskblCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskblBox->pack_start(*strumaskbl, Gtk::PACK_SHRINK, 0);
     maskblBox->pack_start(*toolbl, Gtk::PACK_SHRINK, 0);
-    Gtk::HSeparator* const separatorstrubl = Gtk::manage(new  Gtk::HSeparator());
+    Gtk::Separator* const separatorstrubl = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     maskblBox->pack_start(*separatorstrubl, Gtk::PACK_SHRINK, 2);
     maskblBox->pack_start(*blendmaskbl, Gtk::PACK_SHRINK, 0);
     toolblFrame->set_label_align(0.025, 0.5);
@@ -6942,6 +6967,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         isogr->setValue((double)spot.isogr);
         strengr->setValue((double)spot.strengr);
         scalegr->setValue((double)spot.scalegr);
+        divgr->setValue((double)spot.divgr);
 
         if (spot.medMethod == "none") {
             medMethod->set_active(0);
@@ -7087,6 +7113,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.isogr = isogr->getIntValue();
         spot.strengr = strengr->getIntValue();
         spot.scalegr = scalegr->getIntValue();
+        spot.divgr = divgr->getValue();
 
         if (medMethod->get_active_row_number() == 0) {
             spot.medMethod = "none";
@@ -7208,6 +7235,7 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         isogr->setDefault((double)defSpot.isogr);
         strengr->setDefault((double)defSpot.strengr);
         scalegr->setDefault((double)defSpot.scalegr);
+        divgr->setDefault((double)defSpot.divgr);
         itera->setDefault((double)defSpot.itera);
         guidbl->setDefault((double)defSpot.guidbl);
         strbl->setDefault((double)defSpot.strbl);
@@ -7293,6 +7321,13 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabscalegr,
                                        scalegr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == divgr) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdivgr,
+                                       divgr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -7738,7 +7773,7 @@ void LocallabBlur::convertParamToSimple()
     disableListener();
     invmask->set_active(defSpot.invmask);
     invmaskd->set_active(defSpot.invmaskd);
-
+    scalegr->setValue(defSpot.scalegr);
     // Set hidden specific GUI widgets in Simple mode to default spot values
     showmaskblMethod->set_active(0);
 
@@ -7810,6 +7845,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             nlpat->hide();
             nlrad->hide();
             nlgam->hide();
+            scalegr->hide();
             break;
 
         case Normal:
@@ -7833,6 +7869,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             nlpat->show();
             nlrad->hide();
             nlgam->show();
+            scalegr->show();
 
             if (blMethod->get_active_row_number() == 2) {
                 expdenoise2->show();
@@ -7898,6 +7935,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             adjblur->show();
             noisechrodetail->show();
             usemask->show();
+            scalegr->show();
 
             expmaskbl->show();
             strumaskbl->show();

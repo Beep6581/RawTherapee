@@ -1046,10 +1046,29 @@ void Crop::update(int todo)
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 
                         parent->previewDeltaE, parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallvibMask,  parent->localllcMask, parent->locallsharMask, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask,
                         parent->localllogMask, parent->locall_Mask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
-                        if(parent->previewDeltaE) {  
+                        if(parent->previewDeltaE || parent->locallColorMask == 5 || parent->locallvibMask == 4 || parent->locallExpMask == 5 || parent->locallSHMask == 4 || parent->localllcMask == 4 || parent->localltmMask == 4 || parent->localllogMask == 4 || parent->locallsoftMask == 6 || parent->localllcMask == 4) {  
                             params.blackwhite.enabled = false;
+                            params.colorToning.enabled = false;
+                            params.rgbCurves.enabled = false;
+                            params.chmixer.enabled = false;
+                            params.hsvequalizer.enabled = false;
+                            params.filmSimulation.enabled = false;
+                            params.toneCurve.black = 0.f;
+                            params.toneCurve.saturation = 0.f;
+                            params.toneCurve.brightness= 0.f;
+                            params.toneCurve.contrast = 0.f;
+                            params.toneCurve.hlcompr = 0.f;
+                            //these 3 are "before" LA
+                            //params.toneCurve.expcomp = 0;
+                            //params.toneCurve.curve = { 0 };
+                            //params.toneCurve.curve2 = { 0 };
+                            params.colorappearance.enabled = false;
+                            params.vibrance.enabled = false;
+                            params.labCurve.enabled = false;
+                            params.wavelet.enabled = false;
+                            params.epd.enabled = false;
+                            params.softlight.enabled = false;
                         }
-
             } else {
                 parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), lastorigCrop.get(), cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
                         lllocalcurve2,locallutili, 
@@ -1113,7 +1132,6 @@ void Crop::update(int todo)
 /*
         if (params.icm.workingTRC == "Custom") { //exec TRC IN free
             const Glib::ustring profile = params.icm.workingProfile;
-
             if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
                 const int cw = baseCrop->getWidth();
                 const int ch = baseCrop->getHeight();
@@ -1139,22 +1157,6 @@ void Crop::update(int todo)
             delete workingCrop;
         }
     }
-
-    /*xref=000;yref=000;
-    if (colortest && cropw>115 && croph>115)
-    for(int j=1;j<5;j++){
-        xref+=j*30;yref+=j*30;
-        if (settings->verbose) {
-            printf("after rgbProc RGB Xr%i Yr%i Skip=%d  R=%f  G=%f  B=%f  \n",xref,yref,skip,
-                   baseCrop->r[(int)(xref/skip)][(int)(yref/skip)]/256,
-                   baseCrop->g[(int)(xref/skip)][(int)(yref/skip)]/256,
-                   baseCrop->b[(int)(xref/skip)][(int)(yref/skip)]/256);
-            printf("after rgbProc Lab Xr%i Yr%i Skip=%d  l=%f  a=%f  b=%f  \n",xref,yref,skip,
-                   laboCrop->L[(int)(xref/skip)][(int)(yref/skip)]/327,
-                   laboCrop->a[(int)(xref/skip)][(int)(yref/skip)]/327,
-                   laboCrop->b[(int)(xref/skip)][(int)(yref/skip)]/327);
-        }
-    }*/
 
     // apply luminance operations
     if (todo & (M_LUMINANCE + M_COLOR)) { //

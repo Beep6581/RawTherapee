@@ -73,9 +73,9 @@ Navigator::Navigator() :
 
     set_label (M("MAIN_MSG_NAVIGATOR"));
     set_name("Navigator");
-    Gtk::VBox* mbox = Gtk::manage (new Gtk::VBox ());
+    Gtk::Box* mbox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     previewWindow = Gtk::manage (new PreviewWindow ());
-    mbox->pack_start (*previewWindow, Gtk::PACK_SHRINK, 2);
+    mbox->pack_start (*previewWindow, Gtk::PACK_EXPAND_WIDGET, 2);
     dimension = Gtk::manage (new Gtk::Label ());
     mbox->pack_start (*dimension, Gtk::PACK_SHRINK, 2);
     position = Gtk::manage (new Gtk::Label ());
@@ -102,6 +102,17 @@ Navigator::Navigator() :
     lLAB_A->set_alignment(Gtk::ALIGN_START);
     lLAB_B->set_alignment(Gtk::ALIGN_START);
     lLAB_L->set_alignment(Gtk::ALIGN_START);
+    
+    // expand labels
+    lR->set_hexpand();
+    lG->set_hexpand();
+    lB->set_hexpand();
+    lH->set_hexpand();
+    lS->set_hexpand();
+    lV->set_hexpand();
+    lLAB_A->set_hexpand();
+    lLAB_B->set_hexpand();
+    lLAB_L->set_hexpand();
 
     //values
     R = Gtk::manage (new Gtk::Label ());
@@ -172,72 +183,66 @@ Navigator::Navigator() :
     */
 
     // setup the tables
-    Gtk::Table* table0 = Gtk::manage (new Gtk::Table (1, 3)); //rows, cols The main table container
+    Gtk::Grid* table0 = Gtk::manage (new Gtk::Grid()); //rows, cols The main table container
     // let's pack tables1,2-3 into table0
 
 
     // RGB
     Gtk::EventBox *evBox1 = Gtk::manage (new Gtk::EventBox());
-    Gtk::HBox* hbox1 = Gtk::manage (new Gtk::HBox ()); // container
-    Gtk::Table* table1 = Gtk::manage (new Gtk::Table (3, 2));
-
-    table1->attach (*lR, 0, 1, 0, 1, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
-    table1->attach (*R,  1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 0, 0);
-
-    table1->attach (*lG, 0, 1, 1, 2, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
-    table1->attach (*G,  1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 0, 0);
-
-    table1->attach (*lB, 0, 1, 2, 3, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
-    table1->attach (*B,  1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 0, 0);
+    Gtk::Box* hbox1 = Gtk::manage (new Gtk::Box ());
+    Gtk::Grid* table1 = Gtk::manage (new Gtk::Grid());
+    
+    table1->attach(*lR, 0, 0, 1, 1);
+    table1->attach(*R, 1, 0, 1, 1);
+    table1->attach(*lG, 0, 1, 1, 1);
+    table1->attach(*G, 1, 1, 1, 1);
+    table1->attach(*lB, 0, 2, 1, 1);
+    table1->attach(*B, 1, 2, 1, 1);
 
     evBox1->add (*table1);
     evBox1->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &Navigator::cycleUnitsRGB));
 
     hbox1->pack_start (*evBox1, Gtk::PACK_EXPAND_WIDGET, 4);
-    hbox1->pack_start (*Gtk::manage (new  Gtk::VSeparator()), Gtk::PACK_SHRINK, 4);
-    table0->attach (*hbox1, 0, 1, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 0, 0);
+    hbox1->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)), Gtk::PACK_SHRINK, 4);
+    table0->attach(*hbox1, 0, 0, 1, 1);
 
     // HSV
     Gtk::EventBox *evBox2 = Gtk::manage (new Gtk::EventBox());
-    Gtk::HBox* hbox2 = Gtk::manage (new Gtk::HBox ()); // container
-    Gtk::Table* table2 = Gtk::manage (new Gtk::Table (3, 2));
+    Gtk::Box* hbox2 = Gtk::manage (new Gtk::Box ());
+    Gtk::Grid* table2 = Gtk::manage (new Gtk::Grid());
 
-    table2->attach (*lH, 0, 1, 0, 1, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
-    table2->attach (*H,  1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 0, 0);
-
-    table2->attach (*lS, 0, 1, 1, 2, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
-    table2->attach (*S,  1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 0, 0);
-
-    table2->attach (*lV, 0, 1, 2, 3, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
-    table2->attach (*V,  1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 0, 0);
+    table2->attach(*lH, 0, 0, 1, 1);
+    table2->attach(*H, 1, 0, 1, 1);
+    table2->attach(*lS, 0, 1, 1, 1);
+    table2->attach(*S, 1, 1, 1, 1);
+    table2->attach(*lV, 0, 2, 1, 1);
+    table2->attach(*V, 1, 2, 1, 1);
 
     evBox2->add (*table2);
     evBox2->signal_button_release_event().connect_notify( sigc::mem_fun(*this, &Navigator::cycleUnitsHSV));
 
     hbox2->pack_start (*evBox2, Gtk::PACK_EXPAND_WIDGET, 4);
-    hbox2->pack_start (*Gtk::manage (new  Gtk::VSeparator()), Gtk::PACK_SHRINK, 4);
-    table0->attach (*hbox2, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 0, 0);
+    hbox2->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)), Gtk::PACK_SHRINK, 4);
+    table0->attach(*hbox2, 1, 0, 1, 1);
 
     // LAB
-    Gtk::HBox* hbox3 = Gtk::manage (new Gtk::HBox ()); // container
-    Gtk::Table* table3 = Gtk::manage (new Gtk::Table (3, 2));
+    Gtk::Box* hbox3 = Gtk::manage (new Gtk::Box ());
+    Gtk::Grid* table3 = Gtk::manage (new Gtk::Grid());
 
-    table3->attach (*lLAB_L, 0, 1, 0, 1, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
-    table3->attach (*LAB_L,  1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 0, 0);
-
-    table3->attach (*lLAB_A, 0, 1, 1, 2, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
-    table3->attach (*LAB_A,  1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 0, 0);
-
-    table3->attach (*lLAB_B, 0, 1, 2, 3, Gtk::SHRINK, Gtk::SHRINK, 4, 0);
-    table3->attach (*LAB_B,  1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 0, 0);
+    table3->attach(*lLAB_L, 0, 0, 1, 1);
+    table3->attach(*LAB_L, 1, 0, 1, 1);
+    table3->attach(*lLAB_A, 0, 1, 1, 1);
+    table3->attach(*LAB_A, 1, 1, 1, 1);
+    table3->attach(*lLAB_B, 0, 2, 1, 1);
+    table3->attach(*LAB_B, 1, 2, 1, 1);
 
     hbox3->pack_start (*table3, Gtk::PACK_EXPAND_WIDGET, 4);
-    hbox3->pack_start (*Gtk::manage (new  Gtk::HBox()), Gtk::PACK_SHRINK, 2);
-    table0->attach (*hbox3, 2, 3, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 0, 0);
+    hbox3->pack_start (*Gtk::manage (new  Gtk::Box()), Gtk::PACK_SHRINK, 2);
+    table0->attach(*hbox3, 2, 0, 1, 1);
 
-    table0->set_homogeneous(true); // all cells will be the same size as the largest cell.
+    table0->set_column_homogeneous(true); // all cells will have equal width
 
-    mbox->pack_start (*table0, Gtk::PACK_EXPAND_WIDGET, 2);
+    mbox->pack_start (*table0, Gtk::PACK_SHRINK, 2);
     add (*mbox);
 
     setInvalid ();

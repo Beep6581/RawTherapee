@@ -47,6 +47,7 @@ void ParamsEdited::set(bool v)
     toneCurve.saturation = v;
     toneCurve.shcompr    = v;
     toneCurve.hlcompr    = v;
+    toneCurve.hlbl    = v;
     toneCurve.hlcomprthresh = v;
     toneCurve.autoexp    = v;
     toneCurve.clip       = v;
@@ -720,6 +721,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         toneCurve.saturation = toneCurve.saturation && p.toneCurve.saturation == other.toneCurve.saturation;
         toneCurve.shcompr = toneCurve.shcompr && p.toneCurve.shcompr == other.toneCurve.shcompr;
         toneCurve.hlcompr = toneCurve.hlcompr && p.toneCurve.hlcompr == other.toneCurve.hlcompr;
+        toneCurve.hlbl = toneCurve.hlbl && p.toneCurve.hlbl == other.toneCurve.hlbl;
         toneCurve.hlcomprthresh = toneCurve.hlcomprthresh && p.toneCurve.hlcomprthresh == other.toneCurve.hlcomprthresh;
         toneCurve.autoexp = toneCurve.autoexp && p.toneCurve.autoexp == other.toneCurve.autoexp;
         toneCurve.clip = toneCurve.clip && p.toneCurve.clip == other.toneCurve.clip;
@@ -1076,11 +1078,13 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).balanh = locallab.spots.at(j).balanh && pSpot.balanh == otherSpot.balanh;
                 locallab.spots.at(j).colorde = locallab.spots.at(j).colorde && pSpot.colorde == otherSpot.colorde;
                 locallab.spots.at(j).colorscope = locallab.spots.at(j).colorscope && pSpot.colorscope == otherSpot.colorscope;
+                locallab.spots.at(j).avoidrad = locallab.spots.at(j).avoidrad && pSpot.avoidrad == otherSpot.avoidrad;
                 locallab.spots.at(j).transitweak = locallab.spots.at(j).transitweak && pSpot.transitweak == otherSpot.transitweak;
                 locallab.spots.at(j).transitgrad = locallab.spots.at(j).transitgrad && pSpot.transitgrad == otherSpot.transitgrad;
                 locallab.spots.at(j).hishow = locallab.spots.at(j).hishow && pSpot.hishow == otherSpot.hishow;
                 locallab.spots.at(j).activ = locallab.spots.at(j).activ && pSpot.activ == otherSpot.activ;
                 locallab.spots.at(j).avoid = locallab.spots.at(j).avoid && pSpot.avoid == otherSpot.avoid;
+                locallab.spots.at(j).avoidmun = locallab.spots.at(j).avoidmun && pSpot.avoidmun == otherSpot.avoidmun;
                 locallab.spots.at(j).blwh = locallab.spots.at(j).blwh && pSpot.blwh == otherSpot.blwh;
                 locallab.spots.at(j).recurs = locallab.spots.at(j).recurs && pSpot.recurs == otherSpot.recurs;
                 locallab.spots.at(j).laplac = locallab.spots.at(j).laplac && pSpot.laplac == otherSpot.laplac;
@@ -1306,6 +1310,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).isogr = locallab.spots.at(j).isogr && pSpot.isogr == otherSpot.isogr;
                 locallab.spots.at(j).strengr = locallab.spots.at(j).strengr && pSpot.strengr == otherSpot.strengr;
                 locallab.spots.at(j).scalegr = locallab.spots.at(j).scalegr && pSpot.scalegr == otherSpot.scalegr;
+                locallab.spots.at(j).divgr = locallab.spots.at(j).divgr && pSpot.divgr == otherSpot.divgr;
                 locallab.spots.at(j).epsbl = locallab.spots.at(j).epsbl && pSpot.epsbl == otherSpot.epsbl;
                 locallab.spots.at(j).blMethod = locallab.spots.at(j).blMethod && pSpot.blMethod == otherSpot.blMethod;
                 locallab.spots.at(j).chroMethod = locallab.spots.at(j).chroMethod && pSpot.chroMethod == otherSpot.chroMethod;
@@ -2006,6 +2011,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (toneCurve.method) {
         toEdit.toneCurve.method = mods.toneCurve.method;
+    }
+
+    if (toneCurve.hlbl) {
+        toEdit.toneCurve.hlbl = mods.toneCurve.hlbl;
     }
 
     if (toneCurve.histmatching) {
@@ -3306,6 +3315,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).colorscope = mods.locallab.spots.at(i).colorscope;
         }
 
+        if (locallab.spots.at(i).avoidrad) {
+            toEdit.locallab.spots.at(i).avoidrad = mods.locallab.spots.at(i).avoidrad;
+        }
+
         if (locallab.spots.at(i).transitweak) {
             toEdit.locallab.spots.at(i).transitweak = mods.locallab.spots.at(i).transitweak;
         }
@@ -3324,6 +3337,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).avoid) {
             toEdit.locallab.spots.at(i).avoid = mods.locallab.spots.at(i).avoid;
+        }
+
+        if (locallab.spots.at(i).avoidmun) {
+            toEdit.locallab.spots.at(i).avoidmun = mods.locallab.spots.at(i).avoidmun;
         }
 
         if (locallab.spots.at(i).blwh) {
@@ -4192,6 +4209,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).scalegr) {
             toEdit.locallab.spots.at(i).scalegr = mods.locallab.spots.at(i).scalegr;
+        }
+
+        if (locallab.spots.at(i).divgr) {
+            toEdit.locallab.spots.at(i).divgr = mods.locallab.spots.at(i).divgr;
         }
 
         if (locallab.spots.at(i).epsbl) {
@@ -6648,11 +6669,13 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     balanh(v),
     colorde(v),
     colorscope(v),
+    avoidrad(v),
     transitweak(v),
     transitgrad(v),
     hishow(v),
     activ(v),
     avoid(v),
+    avoidmun(v),
     blwh(v),
     recurs(v),
     laplac(v),
@@ -6874,6 +6897,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     isogr(v),
     strengr(v),
     scalegr(v),
+    divgr(v),
     epsbl(v),
     blMethod(v),
     chroMethod(v),
@@ -7215,11 +7239,13 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     balanh = v;
     colorde = v;
     colorscope = v;
+    avoidrad = v;
     transitweak = v;
     transitgrad = v;
     hishow = v;
     activ = v;
     avoid = v;
+    avoidmun = v;
     blwh = v;
     recurs = v;
     laplac = v;
@@ -7445,6 +7471,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     isogr = v;
     strengr = v;
     scalegr = v;
+    divgr = v;
     epsbl = v;
     blMethod = v;
     chroMethod = v;

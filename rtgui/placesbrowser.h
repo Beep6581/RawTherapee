@@ -23,7 +23,7 @@
 #include <giomm.h>
 
 class PlacesBrowser :
-    public Gtk::VBox
+    public Gtk::Box
 {
 public:
     typedef sigc::slot<void, const Glib::ustring&> DirSelectionSlot;

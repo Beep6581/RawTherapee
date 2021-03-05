@@ -132,7 +132,7 @@ Adjuster::Adjuster(
         // A label is provided, spreading the widgets in 2 rows
         attach_next_to(*label, Gtk::POS_LEFT, 1, 1);
         attach_next_to(*spin, Gtk::POS_RIGHT, 1, 1);
-        // A second HBox is necessary
+        // A second Grid is necessary
         grid = Gtk::manage(new Gtk::Grid());
         grid->attach_next_to(*slider, Gtk::POS_LEFT, 1, 1);
 
