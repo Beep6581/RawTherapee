@@ -42,7 +42,7 @@ ExifPanel::ExifPanel() :
     exifTree->set_headers_visible (false);
     exifTree->set_rules_hint (false);
     exifTree->set_reorderable (false);
-    exifTree->set_enable_search (true);
+    exifTree->set_enable_search (false);
     exifTree->get_selection()->set_mode (Gtk::SELECTION_MULTIPLE);
     scrolledWindow->set_shadow_type (Gtk::SHADOW_NONE);
     scrolledWindow->set_policy (Gtk::POLICY_ALWAYS, Gtk::POLICY_ALWAYS);

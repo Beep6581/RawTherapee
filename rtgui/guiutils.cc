@@ -1172,6 +1172,7 @@ MySpinButton::MySpinButton ()
     set_numeric(true);
     set_wrap(false);
     set_alignment(Gtk::ALIGN_END);
+    set_update_policy(Gtk::SpinButtonUpdatePolicy::UPDATE_IF_VALID); // Avoid updating text if input is not a numeric
 }
 
 void MySpinButton::updateSize()
@@ -1204,19 +1205,19 @@ bool MySpinButton::on_key_press_event (GdkEventKey* event)
     double vMin, vMax;
     get_range(vMin, vMax);
 
-    if ( (event->string[0] >= 'a' && event->string[0] <= 'z')
-            || (event->string[0] >= 'A' && event->string[0] <= 'Z')
-            || event->string[0] == '+' || (event->string[0] == '-' && vMin >= 0)
-            || event->string[0] == '=' || event->string[0] == '_'
-       ) {
-        return false;
+    if ((event->keyval >= GDK_KEY_a && event->keyval <= GDK_KEY_z)
+            || (event->keyval >= GDK_KEY_A && event->keyval <= GDK_KEY_Z)
+            || event->keyval == GDK_KEY_equal || event->keyval == GDK_KEY_underscore
+            || event->keyval == GDK_KEY_plus || (event->keyval == GDK_KEY_minus && vMin >= 0)) {
+        return false; // Event is propagated further
     } else {
-        if(event->string[0] == ',') {
-            event->keyval = GDK_KEY_period;
-            event->string[0] = '.';
+        if (event->keyval == GDK_KEY_comma || event->keyval == GDK_KEY_KP_Decimal) {
+            set_text(get_text() + ".");
+            set_position(get_text().length()); // When setting text, cursor position is reseted at text start. Avoiding this with this code
+            return true; // Event is not propagated further
         }
 
-        return Gtk::Widget::on_key_press_event(event);
+        return Gtk::SpinButton::on_key_press_event(event); // Event is propagated normally
     }
 }
 

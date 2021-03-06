@@ -543,8 +543,8 @@ BENCHFUN
 
     // calculate contrast based blend factors to reduce sharpening in regions with low contrast
     JaggedArray<float> blend(W, H);
-    float contrast = params->sharpenMicro.contrast / 100.0;
-    buildBlendMask(luminance, blend, W, H, contrast);
+    float contrastThreshold = params->sharpenMicro.contrast / 100.0;
+    buildBlendMask(luminance, blend, W, H, contrastThreshold);
 
 #ifdef _OPENMP
     #pragma omp parallel

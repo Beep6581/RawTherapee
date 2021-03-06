@@ -184,13 +184,13 @@ public:
     // use with indices
     T * operator[](int index)
     {
-        assert((index >= 0) && (index < rows.size()));
+        assert((index >= 0) && (std::size_t(index) < rows.size()));
         return rows[index];
     }
 
     const T * operator[](int index) const
     {
-        assert((index >= 0) && (index < rows.size()));
+        assert((index >= 0) && (std::size_t(index) < rows.size()));
         return rows[index];
     }
 
