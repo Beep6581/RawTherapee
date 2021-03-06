@@ -316,9 +316,11 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         r->balanh = pp->locallab.spots.at(i).balanh;
         r->colorde = pp->locallab.spots.at(i).colorde;
         r->colorscope = pp->locallab.spots.at(i).colorscope;
+        r->avoidrad = pp->locallab.spots.at(i).avoidrad;
         r->hishow = pp->locallab.spots.at(i).hishow;
         r->activ = pp->locallab.spots.at(i).activ;
         r->avoid = pp->locallab.spots.at(i).avoid;
+        r->avoidmun = pp->locallab.spots.at(i).avoidmun;
         r->blwh = pp->locallab.spots.at(i).blwh;
         r->recurs = pp->locallab.spots.at(i).recurs;
         r->laplac = true; //pp->locallab.spots.at(i).laplac;
@@ -494,9 +496,11 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->balanh = newSpot->balanh;
             r->colorde = newSpot->colorde;
             r->colorscope = newSpot->colorscope;
+            r->avoidrad = newSpot->avoidrad;
             r->hishow = newSpot->hishow;
             r->activ = newSpot->activ;
             r->avoid = newSpot->avoid;
+            r->avoidmun = newSpot->avoidmun;
             r->blwh = newSpot->blwh;
             r->recurs = newSpot->recurs;
             r->laplac = newSpot->laplac;
@@ -781,8 +785,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->balanh = newSpot->balanh;
             r->colorde = newSpot->colorde;
             r->colorscope = newSpot->colorscope;
+            r->avoidrad = newSpot->avoidrad;
             r->activ = newSpot->activ;
             r->avoid = newSpot->avoid;
+            r->avoidmun = newSpot->avoidmun;
             r->blwh = newSpot->blwh;
             r->recurs = newSpot->recurs;
             r->laplac = newSpot->laplac;
@@ -931,9 +937,11 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).balanh = r->balanh;
                     pp->locallab.spots.at(pp->locallab.selspot).colorde = r->colorde;
                     pp->locallab.spots.at(pp->locallab.selspot).colorscope = r->colorscope;
+                    pp->locallab.spots.at(pp->locallab.selspot).avoidrad = r->avoidrad;
                     pp->locallab.spots.at(pp->locallab.selspot).hishow = r->hishow;
                     pp->locallab.spots.at(pp->locallab.selspot).activ = r->activ;
                     pp->locallab.spots.at(pp->locallab.selspot).avoid = r->avoid;
+                    pp->locallab.spots.at(pp->locallab.selspot).avoidmun = r->avoidmun;
                     pp->locallab.spots.at(pp->locallab.selspot).blwh = r->blwh;
                     pp->locallab.spots.at(pp->locallab.selspot).recurs = r->recurs;
                     pp->locallab.spots.at(pp->locallab.selspot).laplac = r->laplac;

@@ -417,11 +417,13 @@ public:
         bool balanh;
         bool colorde;
         bool colorscope;
+        bool avoidrad;
         bool transitweak;
         bool transitgrad;
         bool hishow;
         bool activ;
         bool avoid;
+        bool avoidmun;
         bool blwh;
         bool recurs;
         bool laplac;

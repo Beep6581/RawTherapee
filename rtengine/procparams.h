@@ -1009,11 +1009,13 @@ struct LocallabParams {
         double balanh;
         double colorde;
         double colorscope;
+        double avoidrad;
         double transitweak;
         double transitgrad;
         bool hishow;
         bool activ;
         bool avoid;
+        bool avoidmun;
         bool blwh;
         bool recurs;
         bool laplac;

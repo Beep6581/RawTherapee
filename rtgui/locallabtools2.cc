@@ -2472,13 +2472,26 @@ LocallabContrast::LocallabContrast():
 
     origlcConn = origlc->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::origlcChanged));
 
+    Gtk::Box *TittleVBox;
+    TittleVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    TittleVBox->set_spacing(2);
+
     Gtk::Box* const LCTitleHBox = Gtk::manage(new Gtk::Box());
+    Gtk::Box* const LCTitleHBox11 = Gtk::manage(new Gtk::Box());
     Gtk::Label* const LCLabel = Gtk::manage(new Gtk::Label());
-    LCLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_LOC_CONTRASTPYR")) + Glib::ustring("</b>") + escapeHtmlChars(M("TP_LOCALLAB_LOC_CONTRASTPYRLAB")));
+    Gtk::Label* const LCLabel11 = Gtk::manage(new Gtk::Label());
+
+    LCLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_LOC_CONTRASTPYR")) + Glib::ustring("</b>"));
+    LCLabel11->set_markup(escapeHtmlChars(M("TP_LOCALLAB_LOC_CONTRASTPYRLAB")));
     LCLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    LCLabel11->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     LCTitleHBox->pack_start(*LCLabel, Gtk::PACK_EXPAND_WIDGET, 0);
-    expcontrastpyr->setLabel(LCTitleHBox);
+    LCTitleHBox11->pack_start(*LCLabel11, Gtk::PACK_EXPAND_WIDGET, 0);
+    TittleVBox->pack_start(*LCTitleHBox, Gtk::PACK_SHRINK);
+    TittleVBox->pack_start(*LCTitleHBox11, Gtk::PACK_SHRINK);
+    expcontrastpyr->setLabel(TittleVBox);
     setExpandAlignProperties(expcontrastpyr, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
 
     wavgradlConn = wavgradl->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavgradlChanged));
 
@@ -2549,12 +2562,25 @@ LocallabContrast::LocallabContrast():
 
     blurlcConn = blurlc->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::blurlcChanged));
 
+    Gtk::Box *TittleVBox2;
+    TittleVBox2 = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    TittleVBox2->set_spacing(2);
+
     Gtk::Box* const LCTitleHBox2 = Gtk::manage(new Gtk::Box());
+    Gtk::Box* const LCTitleHBox22 = Gtk::manage(new Gtk::Box());
     Gtk::Label* const LCLabel2 = Gtk::manage(new Gtk::Label());
-    LCLabel2->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_LOC_CONTRASTPYR2")) + Glib::ustring("</b>") + escapeHtmlChars(M("TP_LOCALLAB_LOC_CONTRASTPYR2LAB")));
+    Gtk::Label* const LCLabel22 = Gtk::manage(new Gtk::Label());
+
+    LCLabel2->set_markup(Glib::ustring("<b>") + escapeHtmlChars(M("TP_LOCALLAB_LOC_CONTRASTPYR2")) + Glib::ustring("</b>"));
+    LCLabel22->set_markup(escapeHtmlChars(M("TP_LOCALLAB_LOC_CONTRASTPYR2LAB")));
     LCLabel2->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    LCLabel22->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     LCTitleHBox2->pack_start(*LCLabel2, Gtk::PACK_EXPAND_WIDGET, 0);
-    expcontrastpyr2->setLabel(LCTitleHBox2);
+    LCTitleHBox22->pack_start(*LCLabel22, Gtk::PACK_EXPAND_WIDGET, 0);
+    TittleVBox2->pack_start(*LCTitleHBox2, Gtk::PACK_SHRINK);
+    TittleVBox2->pack_start(*LCTitleHBox22, Gtk::PACK_SHRINK);
+    expcontrastpyr2->setLabel(TittleVBox2);
+    
     setExpandAlignProperties(expcontrastpyr2, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     wavcontConn = wavcont->signal_toggled().connect(sigc::mem_fun(*this, &LocallabContrast::wavcontChanged));
