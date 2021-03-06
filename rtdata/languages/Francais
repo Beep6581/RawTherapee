@@ -2294,7 +2294,7 @@ TP_LOCALLAB_SH1;Ombres Lumières
 TP_LOCALLAB_SH2;Egaliseur
 TP_LOCALLAB_SHADEX;Ombres
 TP_LOCALLAB_SHADEXCOMP;Compression ombres & profondeur tonale
-TP_LOCALLAB_SHADHIGH;Ombres/Lumières - Egaliseur
+TP_LOCALLAB_SHADHIGH;Ombres/Lumières-Egaliseur
 TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Peut être utilisé - ou en complement - du module Exposition dans les cas difficiles.\nUtiliser réduction du bruit Denoise peut être nécessaire : éclaicir les ombres.\n\nPeut être utilisé comme  un filtre gradué (augmenter Etendue)
 TP_LOCALLAB_SHAMASKCOL;Ombres
 TP_LOCALLAB_SHADMASK_TOOLTIP;Relève les ombres du masque de la même manière que l'algorithme "ombres/lumières"
