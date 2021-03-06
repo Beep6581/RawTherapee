@@ -7,13 +7,8 @@ set(PROC_TARGET_1_FLAGS "-mtune=generic" CACHE STRING "Processor-1 flags")
 # This second choice should be used for your own build only
 set(PROC_TARGET_2_LABEL native CACHE STRING "Processor-2 label - use it for your own build")
 
-# Get the architecture on an Apple system (x86 or arm64)
-if(APPLE)
-    execute_process(COMMAND uname -m OUTPUT_VARIABLE APPLE_ARCHITECTURE OUTPUT_STRIP_TRAILING_WHITESPACE)
-endif()
-
-# On Apple's M1 processor and with Apple's clang compiler, the native flag is different
-if(CMAKE_CXX_COMPILER_ID STREQUAL AppleClang AND APPLE_ARCHITECTURE STREQUAL arm64)
+# The flag is different on x86 and Arm based processors
+if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL arm64)
     set(PROC_TARGET_2_FLAGS "-mcpu=native" CACHE STRING "Processor-2 flags")
 else()
     set(PROC_TARGET_2_FLAGS "-march=native" CACHE STRING "Processor-2 flags")
