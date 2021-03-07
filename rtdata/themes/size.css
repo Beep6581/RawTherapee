@@ -313,38 +313,6 @@ window.csd:not(.fullscreen) #MainNotebook > header.top {
     margin: 0.083333333333333333em 0 0.166666666666666666em 0;
 }
 
-#ToolPanelNotebook > stack > scrolledwindow > viewport.frame {
-    padding: 0 0.25em;
-}
-
-#MyExpander {
-    margin: 0;
-    padding: 0;
-}
-#ExpanderBox > box, #ExpanderBox > grid {
-    border-width: 0.083333333333333333em;
-    border-radius: 0.416666666666666666em;
-    margin: 0;
-    padding: 0.5em 0.333333333333333333em;
-}
-
-/* Sub-tool (MyExpander) */
-#ExpanderBox2 > box, #ExpanderBox2 > grid {
-    border-width: 0.083333333333333333em;
-    border-radius: 0.416666666666666666em;
-    margin: 0 0.19em;
-    padding: 0.333333333333333333em;
-}
-
-#MyExpanderTitle > box {
-    margin: 0;
-    padding: 0.25em 0;
-}
-
-#MyExpanderTitle label {
-    padding: 0;
-    margin: 0.083333333333333333em 0.25em 0 0.166666666666666666em;
-}
 /*** end ***************************************************************************************/
 
 /*** Context & popups menus *****************************************************************************/
@@ -366,8 +334,8 @@ menu > arrow.top:hover,
 menu > arrow.bottom,
 menu > arrow.bottom:hover {
     border: none;
-    padding: 0.5em;
-    min-height: 1.5em;
+    padding: 0.25em;
+    min-height: 1em;
 }
 
 menuitem {

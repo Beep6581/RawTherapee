@@ -28,8 +28,9 @@ using namespace rtengine::procparams;
 
 MetaDataPanel::MetaDataPanel() : EvMetaDataMode(ProcEventMapper::getInstance()->newEvent(M_VOID, "HISTORY_MSG_METADATA_MODE"))
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
 
-    Gtk::HBox *box = Gtk::manage(new Gtk::HBox());
+    Gtk::Box *box = Gtk::manage(new Gtk::Box());
     box->pack_start(*Gtk::manage(new Gtk::Label(M("TP_METADATA_MODE") + ": ")), Gtk::PACK_SHRINK, 4);
     metadataMode = Gtk::manage(new MyComboBoxText());
     metadataMode->append(M("TP_METADATA_TUNNEL"));

@@ -31,6 +31,7 @@ using namespace rtengine::procparams;
 
 History::History (bool bookmarkSupport) : historyVPaned (nullptr), blistener (nullptr), tpc (nullptr), bmnum (1)
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     blistenerLock = false; // sets default that the Before preview will not be locked
     /*
@@ -91,7 +92,7 @@ History::History (bool bookmarkSupport) : historyVPaned (nullptr), blistener (nu
     // Bookmark List
     // ~~~~~~~~~~~~~
 
-    Gtk::HBox* ahbox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* ahbox = Gtk::manage (new Gtk::Box ());
     addBookmark = Gtk::manage (new Gtk::Button ());  // M("HISTORY_NEWSNAPSHOT")
     setExpandAlignProperties (addBookmark, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
     //addBookmark->get_style_context()->set_junction_sides(Gtk::JUNCTION_RIGHT);
@@ -116,15 +117,15 @@ History::History (bool bookmarkSupport) : historyVPaned (nullptr), blistener (nu
 
     Gtk::Frame* bmFrame = Gtk::manage (new Gtk::Frame (M ("HISTORY_SNAPSHOTS")));
     bmFrame->set_name ("Snapshots");
-    Gtk::VBox* bmBox = Gtk::manage (new Gtk::VBox ());
+    Gtk::Box* bmBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     bmFrame->add (*bmBox);
     bmBox->pack_start (*bscrollw, Gtk::PACK_EXPAND_WIDGET, 4);
     bmBox->pack_end (*ahbox, Gtk::PACK_SHRINK, 4);
     bmBox->set_size_request (-1, 60);
 
     if (bookmarkSupport) {
-        historyVPaned = Gtk::manage ( new Gtk::VPaned () );
-        historyVPaned->pack1 (*histFrame, true, true);
+        historyVPaned = Gtk::manage ( new Gtk::Paned (Gtk::ORIENTATION_VERTICAL) );
+        historyVPaned->pack1 (*histFrame, true, false);
         historyVPaned->pack2 (*bmFrame, false, false);
         pack_start (*historyVPaned);
     } else {
@@ -450,7 +451,7 @@ bool History::on_query_tooltip (int x, int y, bool keyboard_tooltip, const Glib:
                 Gtk::Label *left = Gtk::manage (new Gtk::Label(param+" :"));
                 Gtk::Label *right = Gtk::manage (new Gtk::Label(val));
                 right->set_justify(Gtk::JUSTIFY_LEFT);
-                Gtk::HBox *hbox = Gtk::manage (new Gtk::HBox());
+                Gtk::Box *hbox = Gtk::manage (new Gtk::Box());
                 hbox->set_spacing(5);
                 hbox->pack_start(*left, Gtk::PACK_SHRINK, 0);
                 hbox->pack_start(*right, Gtk::PACK_SHRINK, 0);

@@ -24,7 +24,7 @@
 #include "exifpanel.h"
 #include "iptcpanel.h"
 
-class MetaDataPanel: public Gtk::VBox, public ToolPanel {
+class MetaDataPanel: public Gtk::Box, public ToolPanel {
 private:
     rtengine::ProcEvent EvMetaDataMode;
     MyComboBoxText *metadataMode;

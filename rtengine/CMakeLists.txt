@@ -57,6 +57,10 @@ link_directories("${PROJECT_SOURCE_DIR}/rtexif"
     "${RSVG_LIBRARY_DIRS}"
 )
 
+if(OpenMP_FOUND)
+    include_directories(${OpenMP_CXX_INCLUDE_DIRS})
+endif()
+
 set(CAMCONSTSFILE "camconst.json")
 
 set(RTENGINESOURCEFILES
@@ -224,5 +228,9 @@ target_link_libraries(rtengine rtexif
     ${RSVG_LIBRARIES}
     ${KLT_LIBRARIES}
 )
+
+if(OpenMP_FOUND)
+    target_link_libraries(rtengine ${OpenMP_CXX_LIBRARIES})
+endif()
 
 install(FILES ${CAMCONSTSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)

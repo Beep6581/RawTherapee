@@ -65,7 +65,7 @@ public:
         virtual void onDestroy() = 0;
     };
 
-    Cache(unsigned long _size, Hook* _hook = nullptr) :
+    explicit Cache(unsigned long _size, Hook* _hook = nullptr) :
         store_size(_size),
         hook(_hook)
     {

@@ -27,6 +27,7 @@ using namespace rtengine::procparams;
 
 
 ToolVBox::ToolVBox() {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
     set_spacing(1);       // Vertical space between tools
@@ -36,6 +37,7 @@ ToolVBox::ToolVBox() {
 }
 
 ToolParamBlock::ToolParamBlock() {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
     set_spacing(2);       // Vertical space between parameters in a single tool
@@ -52,10 +54,10 @@ FoldableToolPanel::FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, 
 
 //  exp->set_use_markup (true);
     if (need11) {
-        Gtk::HBox *titleHBox = Gtk::manage(new Gtk::HBox());
+        Gtk::Box *titleHBox = Gtk::manage(new Gtk::Box());
 
         Gtk::Label *label = Gtk::manage(new Gtk::Label());
-        label->set_markup(Glib::ustring("<b>") + escapeHtmlChars(UILabel) + Glib::ustring("</b>"));
+        label->set_markup(escapeHtmlChars(UILabel));
         label->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
         titleHBox->pack_start(*label, Gtk::PACK_EXPAND_WIDGET, 0);
 

@@ -2438,7 +2438,7 @@ void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
                 printf ("Applying Highlight Recovery: Color propagation...\n");
             }
 
-            HLRecovery_inpaint (red, green, blue);
+            HLRecovery_inpaint (red, green, blue, hrp.hlbl);
             rgbSourceModified = true;
         }
     }
@@ -2495,7 +2495,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 
 
         if (riFlatFile && W == riFlatFile->get_width() && H == riFlatFile->get_height()) {
-            processFlatField(raw, riFlatFile, black);
+            processFlatField(raw, riFlatFile, rawData, black);
         }  // flatfield
     } else if (ri->get_colors() == 1) {
         // Monochrome
@@ -2517,7 +2517,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
             }
         }
         if (riFlatFile && W == riFlatFile->get_width() && H == riFlatFile->get_height()) {
-            processFlatField(raw, riFlatFile, black);
+            processFlatField(raw, riFlatFile, rawData, black);
         }  // flatfield
     } else {
         // No bayer pattern

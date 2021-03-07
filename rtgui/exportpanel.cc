@@ -30,9 +30,10 @@ using namespace rtengine::procparams;
 ExportPanel::ExportPanel () : listener (nullptr)
 {
 
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     /*enabled = Gtk::manage ( new Gtk::CheckButton (M("EXPORT_ENABLE")) );
     pack_start(*enabled, Gtk::PACK_SHRINK, 4);
-    pack_start (*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 2);*/
+    pack_start (*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 2);*/
 
     Gtk::Label* labExportTitle = Gtk::manage ( new Gtk::Label (M ("EXPORT_FASTEXPORTOPTIONS")) );
     labExportTitle->set_use_markup (true);
@@ -43,7 +44,7 @@ ExportPanel::ExportPanel () : listener (nullptr)
     Gtk::RadioButton::Group pipeline_group;
     use_fast_pipeline       = Gtk::manage ( new Gtk::RadioButton (pipeline_group, M ("EXPORT_USE_FAST_PIPELINE")));
     use_normal_pipeline     = Gtk::manage ( new Gtk::RadioButton (pipeline_group, M ("EXPORT_USE_NORMAL_PIPELINE")));
-    bypass_box = Gtk::manage (new Gtk::VBox());
+    bypass_box = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     bypass_ALL              = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_ALL")));
     use_fast_pipeline->set_tooltip_text (M ("EXPORT_USE_FAST_PIPELINE_TIP"));
     bypass_sharpening       = Gtk::manage ( new Gtk::CheckButton (M ("EXPORT_BYPASS_SHARPENING")));
@@ -63,9 +64,10 @@ ExportPanel::ExportPanel () : listener (nullptr)
     // ---------------------- Bayer sensor frame -----------------------
 
     Gtk::Frame *bayerFrame = Gtk::manage ( new Gtk::Frame (M ("TP_RAW_SENSOR_BAYER_LABEL")));
-    Gtk::VBox* bayerFrameVBox = Gtk::manage (new Gtk::VBox ());
+    bayerFrame->set_label_align(0.025, 0.5);
+    Gtk::Box* bayerFrameVBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
-    Gtk::HBox* hb_raw_bayer_method = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hb_raw_bayer_method = Gtk::manage (new Gtk::Box ());
     hb_raw_bayer_method->pack_start (*Gtk::manage (new Gtk::Label ( M ("EXPORT_RAW_DMETHOD") + ": ")), Gtk::PACK_SHRINK, 4);
     raw_bayer_method = Gtk::manage (new MyComboBoxText ());
 
@@ -86,9 +88,10 @@ ExportPanel::ExportPanel () : listener (nullptr)
     // ---------------------- Bayer sensor frame -----------------------
 
     Gtk::Frame *xtransFrame = Gtk::manage ( new Gtk::Frame (M ("TP_RAW_SENSOR_XTRANS_LABEL")));
-    Gtk::VBox* xtransFrameVBox = Gtk::manage (new Gtk::VBox ());
+    xtransFrame->set_label_align(0.025, 0.5);
+    Gtk::Box* xtransFrameVBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
-    Gtk::HBox* hb_raw_xtrans_method = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hb_raw_xtrans_method = Gtk::manage (new Gtk::Box ());
     hb_raw_xtrans_method->pack_start (*Gtk::manage (new Gtk::Label ( M ("EXPORT_RAW_DMETHOD") + ": ")), Gtk::PACK_SHRINK, 4);
     raw_xtrans_method = Gtk::manage (new MyComboBoxText ());
 
@@ -102,18 +105,18 @@ ExportPanel::ExportPanel () : listener (nullptr)
     // ----------------------------------------------------------------
 
     // start global packing
-    Gtk::HBox* lblbox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* lblbox = Gtk::manage (new Gtk::Box ());
     lblbox->pack_start (*Gtk::manage (new Gtk::Label (M ("EXPORT_PIPELINE"))), Gtk::PACK_SHRINK, 4);
     pack_start (*lblbox, Gtk::PACK_SHRINK, 4);
     pack_start (*use_fast_pipeline, Gtk::PACK_SHRINK, 4);
     pack_start (*use_normal_pipeline, Gtk::PACK_SHRINK, 4);
 
-    bypass_box->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 4);
-    lblbox = Gtk::manage (new Gtk::HBox ());
+    bypass_box->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 4);
+    lblbox = Gtk::manage (new Gtk::Box ());
     lblbox->pack_start (*Gtk::manage (new Gtk::Label (M ("EXPORT_BYPASS"))), Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*lblbox, Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*bypass_ALL, Gtk::PACK_SHRINK, 4);
-    // bypass_box->pack_start(*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 4);
+    // bypass_box->pack_start(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*bypass_sharpening, Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*bypass_sharpenEdge, Gtk::PACK_SHRINK, 4);
     bypass_box->pack_start (*bypass_sharpenMicro, Gtk::PACK_SHRINK, 4);
@@ -146,16 +149,16 @@ ExportPanel::ExportPanel () : listener (nullptr)
 
     pack_start (*bypass_box, Gtk::PACK_SHRINK);
 
-    pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 2);
+    pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 2);
 
     // Resize options
 
-    Gtk::HBox* rmbox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* rmbox = Gtk::manage (new Gtk::Box ());
     rmbox->pack_start (*Gtk::manage (new Gtk::Label (M ("TP_RESIZE_LABEL"))), Gtk::PACK_SHRINK, 4);
     pack_start (*rmbox, Gtk::PACK_SHRINK, 4);
 
-    Gtk::HBox* wbox = Gtk::manage (new Gtk::HBox ());
-    Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* wbox = Gtk::manage (new Gtk::Box ());
+    Gtk::Box* hbox = Gtk::manage (new Gtk::Box ());
     MaxWidth = Gtk::manage (new MySpinButton ());
     MaxHeight = Gtk::manage (new MySpinButton ());
     wbox->pack_start (*Gtk::manage (new Gtk::Label (M ("EXPORT_MAXWIDTH"))), Gtk::PACK_SHRINK, 4);
@@ -187,8 +190,8 @@ ExportPanel::ExportPanel () : listener (nullptr)
 
 
     // add panel ending
-    Gtk::VBox* vboxpe = Gtk::manage (new Gtk::VBox ());
-    Gtk::HSeparator* hseptpe = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Box* vboxpe = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Separator* hseptpe = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     Gtk::Image* peImg = Gtk::manage (new RTImage ("ornament1.png"));
     vboxpe->pack_start (*hseptpe, Gtk::PACK_SHRINK, 4);
     vboxpe->pack_start (*peImg);

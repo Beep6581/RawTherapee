@@ -10045,7 +10045,7 @@ canon_a5:
     } else if (!strncmp(model, "X-A3", 4) || !strncmp(model, "X-A5", 4)) {
         width = raw_width = 6016;
         height = raw_height = 4014;
-    } else if (!strcmp(model, "X-Pro3") || !strcmp(model, "X-T3") || !strcmp(model, "X-T30") || !strcmp(model, "X-T4") || !strcmp(model, "X100V")) {
+    } else if (!strcmp(model, "X-Pro3") || !strcmp(model, "X-T3") || !strcmp(model, "X-T30") || !strcmp(model, "X-T4") || !strcmp(model, "X100V") || !strcmp(model, "X-S10")) {
         width = raw_width = 6384;
         height = raw_height = 4182;
     }
@@ -10108,7 +10108,6 @@ konica_400z:
     }
   } else if (!strcmp(model,"*ist D")) {
     load_raw = &CLASS unpacked_load_raw;
-    data_error = -1;
   } else if (!strcmp(model,"*ist DS")) {
     height -= 2;
   } else if (!strcmp(make,"Samsung") && raw_width == 4704) {
