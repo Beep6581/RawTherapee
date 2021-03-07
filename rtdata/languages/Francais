@@ -2079,7 +2079,7 @@ TP_LOCALLAB_LOG_TOOLNAME;Codage log - 0
 TP_LOCALLAB_LOGVIEWING_TOOLTIP;Correspond au medium sur lequel l'image finale sera vue (moniteur, TV, projecteur, imprimante,..), ainsi que son environnement.
 TP_LOCALLAB_LUM;Courbes LL - CC
 TP_LOCALLAB_LUMADARKEST;Plus Sombre
-TP_LOCALLAB_LUMASK;Maqsue Luminance arrière plan
+TP_LOCALLAB_LUMASK;Masque Luminance arrière plan
 TP_LOCALLAB_LUMASK_TOOLTIP;Ajuste le gris de l'arrière plan du masque dans Montrer Masque (Masque et modifications)
 TP_LOCALLAB_LUMAWHITESEST;Plus clair
 TP_LOCALLAB_LUMONLY;Luminance seulement
