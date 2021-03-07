@@ -2817,7 +2817,7 @@ TP_LOCALLAB_LOGVIEWING_TOOLTIP;Corresponds to the medium on which the final imag
 TP_LOCALLAB_LOG_TOOLNAME;Log Encoding - 0
 TP_LOCALLAB_LUM;Curves LL - CC
 TP_LOCALLAB_LUMADARKEST;Darkest
-TP_LOCALLAB_LUMASK;Background color for luminance and color masks
+TP_LOCALLAB_LUMASK;Background color for luminance mask
 TP_LOCALLAB_LUMASK_TOOLTIP;Adjusts the shade of gray or color of the mask background in Show Mask (Mask and modifications)
 TP_LOCALLAB_LUMAWHITESEST;Lightest
 TP_LOCALLAB_LUMFRA;L*a*b* standard
