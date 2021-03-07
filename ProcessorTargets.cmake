@@ -43,8 +43,5 @@ set(PROC_TARGET_8_FLAGS "-march=athlon64" CACHE STRING "Processor-8 flags")
 set(PROC_TARGET_9_LABEL phenomX4 CACHE STRING "Processor-9 label - use it to provide a phenomX4 optimized build, if you have this processor")
 set(PROC_TARGET_9_FLAGS "-march=amdfam10" CACHE STRING "Processor-9 flags")
 
-set(PROC_TARGET_10_LABEL cpu-native CACHE STRING "Processor-10 label - use it to provide an arm64 (Apple ARM) native build with llvm-clang, if you have this processor")
-set(PROC_TARGET_10_FLAGS "-mcpu=native" CACHE STRING "Processor-10 flags")
-
 #set(PROC_TARGET__LABEL procLabel CACHE STRING "Processor- label")
 #set(PROC_TARGET__FLAGS "procFlags" CACHE STRING "Processor- flags")
