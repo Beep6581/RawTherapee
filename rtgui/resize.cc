@@ -37,26 +37,33 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     cropw = 0;
     croph = 0;
 
-    Gtk::Table* combos = Gtk::manage (new Gtk::Table (2, 2));
+    Gtk::Grid* combos = Gtk::manage (new Gtk::Grid());
+    combos->set_row_spacing(4);
 
     appliesTo = Gtk::manage (new MyComboBoxText ());
     appliesTo->append (M("TP_RESIZE_CROPPEDAREA"));
     appliesTo->append (M("TP_RESIZE_FULLIMAGE"));
     appliesTo->set_active (0);
+    appliesTo->set_hexpand();
+    appliesTo->set_halign(Gtk::ALIGN_FILL);
 
     Gtk::Label *label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_APPLIESTO"), Gtk::ALIGN_START));
-    combos->attach (*label, 0, 1, 0, 1, Gtk::SHRINK | Gtk::FILL, Gtk::SHRINK, 2, 2);
-    combos->attach (*appliesTo, 1, 2, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
+    
+    combos->attach(*label, 0, 0, 1, 1);
+    combos->attach(*appliesTo, 1, 0, 1, 1);
 
     // See Resize::methodChanged() when adding a new method.
     method = Gtk::manage (new MyComboBoxText ());
     method->append (M("TP_RESIZE_LANCZOS"));
     method->append (M("TP_RESIZE_NEAREST"));
     method->set_active (0);
+    method->set_hexpand();
+    method->set_halign(Gtk::ALIGN_FILL);
 
     label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_METHOD"), Gtk::ALIGN_START));
-    combos->attach (*label, 0, 1, 1, 2, Gtk::SHRINK | Gtk::FILL, Gtk::SHRINK, 2, 2);
-    combos->attach (*method, 1, 2, 1, 2, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
+    
+    combos->attach(*label, 0, 1, 1, 1);
+    combos->attach(*method, 1, 1, 1, 1);
 
     spec = Gtk::manage (new MyComboBoxText ());
     spec->append (M("TP_RESIZE_SCALE"));
@@ -64,10 +71,13 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     spec->append (M("TP_RESIZE_HEIGHT"));
     spec->append (M("TP_RESIZE_FITBOX"));
     spec->set_active (0);
+    spec->set_hexpand();
+    spec->set_halign(Gtk::ALIGN_FILL);
 
     label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_SPECIFY"), Gtk::ALIGN_START));
-    combos->attach (*label, 0, 1, 2, 3, Gtk::SHRINK | Gtk::FILL, Gtk::SHRINK, 2, 2);
-    combos->attach (*spec, 1, 2, 2, 3, Gtk::EXPAND | Gtk::FILL, Gtk::SHRINK, 2, 2);
+
+    combos->attach(*label, 0, 2, 1, 1);
+    combos->attach(*spec, 1, 2, 1, 1);
 
     pack_start (*combos, Gtk::PACK_SHRINK, 4);
 
@@ -76,11 +86,11 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
 
     pack_start (*scale, Gtk::PACK_SHRINK, 4);
 
-    sizeBox = Gtk::manage (new Gtk::VBox ());
+    sizeBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
-    Gtk::HBox* sbox = Gtk::manage (new Gtk::HBox ());
-    Gtk::HBox* wbox = Gtk::manage (new Gtk::HBox ());
-    Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* sbox = Gtk::manage (new Gtk::Box ());
+    Gtk::Box* wbox = Gtk::manage (new Gtk::Box ());
+    Gtk::Box* hbox = Gtk::manage (new Gtk::Box ());
     w = Gtk::manage (new MySpinButton ());
     h = Gtk::manage (new MySpinButton ());
     wbox->set_spacing(3);

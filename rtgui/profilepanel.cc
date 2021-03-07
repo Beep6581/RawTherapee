@@ -531,6 +531,9 @@ void ProfilePanel::load_clicked (GdkEventButton* event)
 
                 if (!fillMode->get_active()) {
                     *custom->pedited = pe;
+                } else {
+                    // Resize custom->pedited to be compliant with pe spot size
+                    custom->pedited->locallab.spots.resize(pe.locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
                 }
             }
 

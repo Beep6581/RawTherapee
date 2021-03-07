@@ -34,6 +34,7 @@ ThresholdAdjuster::ThresholdAdjuster (Glib::ustring label,
     : tSelector(minValueBottom, maxValueBottom, defBottom, labelBottom, precisionBottom, minValueTop, maxValueTop, defTop, labelTop, precisionTop, curveProvider)
 
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     initialDefaultVal[ThresholdSelector::TS_BOTTOMLEFT] = defBottom;
     initialDefaultVal[ThresholdSelector::TS_TOPLEFT] = defTop;
     initialDefaultVal[ThresholdSelector::TS_BOTTOMRIGHT] = 0.; // unused
@@ -46,6 +47,7 @@ ThresholdAdjuster::ThresholdAdjuster (Glib::ustring label, double minValue, doub
                                       double defTop, unsigned int precision, bool startAtOne, bool editedCheckBox)
     : tSelector(minValue, maxValue, defBottom, defTop, precision, startAtOne)
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     initialDefaultVal[ThresholdSelector::TS_BOTTOMLEFT] = defBottom;
     initialDefaultVal[ThresholdSelector::TS_TOPLEFT] = defTop;
     initialDefaultVal[ThresholdSelector::TS_BOTTOMRIGHT] = maxValue;
@@ -60,6 +62,7 @@ ThresholdAdjuster::ThresholdAdjuster (Glib::ustring label, double minValue, doub
     : tSelector(minValue, maxValue, defBottomLeft, defTopLeft,
                 defBottomRight, defTopRight, precision, startAtOne)
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     initialDefaultVal[ThresholdSelector::TS_BOTTOMLEFT] = defBottomLeft;
     initialDefaultVal[ThresholdSelector::TS_TOPLEFT] = defTopLeft;
     initialDefaultVal[ThresholdSelector::TS_BOTTOMRIGHT] = defBottomRight;
@@ -81,7 +84,7 @@ void ThresholdAdjuster::initObject (Glib::ustring label, bool editedcb)
 
     set_name("ThresholdAdjuster");
 
-    hbox = Gtk::manage (new Gtk::HBox ());
+    hbox = Gtk::manage (new Gtk::Box ());
 
     this->label = Gtk::manage (new Gtk::Label (label, Gtk::ALIGN_START));
 

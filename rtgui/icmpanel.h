@@ -60,7 +60,7 @@ protected:
     Adjuster* preser;
 
     Gtk::Label* labmga;
-    Gtk::HBox* gabox;
+    Gtk::Box* gabox;
 
 
     //bool freegamma;
@@ -99,17 +99,17 @@ private:
     rtengine::ProcEvent EvICMbluy;
     rtengine::ProcEvent EvaIntent;
     rtengine::ProcEvent EvICMpreser;
-    Gtk::VBox* iVBox;
-    Gtk::HBox* wTRCHBox;
-    Gtk::HBox* willuBox;
+    Gtk::Box* willuBox;
     Gtk::Label* willulab;
-    Gtk::HBox* wprimBox;
+    Gtk::Box* wprimBox;
     Gtk::Label* wprimlab;
-    Gtk::HBox* redBox;
-    Gtk::HBox* greBox;
-    Gtk::HBox* bluBox;
-    Gtk::HBox* riaHBox;
-    Gtk::HBox* preBox;
+    Gtk::Box* redBox;
+    Gtk::Box* greBox;
+    Gtk::Box* bluBox;
+    Gtk::Box* riaHBox;
+    Gtk::Box* preBox;
+    Gtk::Box* iVBox;
+    Gtk::Box* wTRCBox;
 
     Gtk::CheckButton* obpc;
     Gtk::RadioButton* inone;

@@ -322,7 +322,7 @@ void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, float **buff
                         hfnbrave += fabs(ncie->sh_p[i1][j1] - lpf[i1][j1]);
                     }
 
-                impish[i][j] = (hpfabs > ((hfnbrave - hpfabs) * impthrDiv24));
+                impish[i][j] = static_cast<float>(hpfabs > ((hfnbrave - hpfabs) * impthrDiv24));
             }
 
 #ifdef __SSE2__
@@ -353,7 +353,7 @@ void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, float **buff
                         hfnbrave += fabs(ncie->sh_p[i1][j1] - lpf[i1][j1]);
                     }
 
-                impish[i][j] = (hpfabs > ((hfnbrave - hpfabs) * impthrDiv24));
+                impish[i][j] = static_cast<float>(hpfabs > ((hfnbrave - hpfabs) * impthrDiv24));
             }
 
             for (; j < width; j++) {
@@ -365,7 +365,7 @@ void ImProcFunctions::impulse_nrcam (CieImage* ncie, double thresh, float **buff
                         hfnbrave += fabs(ncie->sh_p[i1][j1] - lpf[i1][j1]);
                     }
 
-                impish[i][j] = (hpfabs > ((hfnbrave - hpfabs) * impthrDiv24));
+                impish[i][j] = static_cast<float>(hpfabs > ((hfnbrave - hpfabs) * impthrDiv24));
             }
         }
     }

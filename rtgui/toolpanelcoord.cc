@@ -191,7 +191,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
 
     // load panel endings
     for (int i = 0; i < 8; i++) {
-        vbPanelEnd[i] = Gtk::manage (new Gtk::VBox ());
+        vbPanelEnd[i] = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
         imgPanelEnd[i] = Gtk::manage (new RTImage ("ornament1.png"));
         imgPanelEnd[i]->show();
         vbPanelEnd[i]->pack_start(*imgPanelEnd[i], Gtk::PACK_SHRINK);
@@ -200,37 +200,29 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     if(favoriteCount > 0) {
         favoritePanelSW = Gtk::manage(new MyScrolledWindow());
         favoritePanelSW->add(*favoritePanel);
-        favoritePanel->pack_start(*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
         favoritePanel->pack_start(*vbPanelEnd[0], Gtk::PACK_SHRINK, 4);
     }
     updateVScrollbars(options.hideTPVScrollbar);
 
     exposurePanelSW->add  (*exposurePanel);
-    exposurePanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
     exposurePanel->pack_start (*vbPanelEnd[1], Gtk::PACK_SHRINK, 4);
 
     detailsPanelSW->add   (*detailsPanel);
-    detailsPanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
     detailsPanel->pack_start (*vbPanelEnd[2], Gtk::PACK_SHRINK, 4);
 
     colorPanelSW->add     (*colorPanel);
-    colorPanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
     colorPanel->pack_start (*vbPanelEnd[3], Gtk::PACK_SHRINK, 4);
 
     advancedPanelSW->add       (*advancedPanel);
-    advancedPanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
     advancedPanel->pack_start (*vbPanelEnd[6], Gtk::PACK_SHRINK, 0);
 
     locallabPanelSW->add(*locallabPanel);
-    locallabPanel->pack_start(*Gtk::manage(new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
     locallabPanel->pack_start(*vbPanelEnd[7], Gtk::PACK_SHRINK, 4);
     
     transformPanelSW->add (*transformPanel);
-    transformPanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
     transformPanel->pack_start (*vbPanelEnd[4], Gtk::PACK_SHRINK, 4);
 
     rawPanelSW->add       (*rawPanel);
-    rawPanel->pack_start (*Gtk::manage (new Gtk::HSeparator), Gtk::PACK_SHRINK, 0);
     rawPanel->pack_start (*vbPanelEnd[5], Gtk::PACK_SHRINK, 0);
 
     toiF = Gtk::manage (new TextOrIcon ("star.png", M ("MAIN_TAB_FAVORITES"), M ("MAIN_TAB_FAVORITES_TOOLTIP")));
@@ -1168,13 +1160,11 @@ void ToolPanelCoordinator::updateVScrollbars(bool hide)
     rawPanelSW->set_policy          (Gtk::POLICY_AUTOMATIC, policy);
     advancedPanelSW->set_policy      (Gtk::POLICY_AUTOMATIC, policy);
     locallabPanelSW->set_policy(Gtk::POLICY_AUTOMATIC, policy);
-    
 
     for (auto currExp : expList) {
         currExp->updateVScrollbars(hide);
     }
 }
-
 
 void ToolPanelCoordinator::updateTPVScrollbar(bool hide)
 {

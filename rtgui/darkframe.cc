@@ -32,7 +32,7 @@ using namespace rtengine::procparams;
 
 DarkFrame::DarkFrame () : FoldableToolPanel(this, "darkframe", M("TP_DARKFRAME_LABEL")), dfChanged(false), lastDFauto(false), dfp(nullptr), israw(true)
 {
-    hbdf = Gtk::manage(new Gtk::HBox());
+    hbdf = Gtk::manage(new Gtk::Box());
     hbdf->set_spacing(4);
     darkFrameFile = Gtk::manage(new MyFileChooserButton(M("TP_DARKFRAME_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
     bindCurrentFolder (*darkFrameFile, options.lastDarkframeDir);

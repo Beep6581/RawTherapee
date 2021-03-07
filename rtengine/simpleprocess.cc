@@ -926,6 +926,271 @@ private:
 
         // RGB processing
 
+        labView = new LabImage(fw, fh);
+
+        if (params.locallab.enabled && params.locallab.spots.size() > 0) {
+            ipf.rgb2lab(*baseImg, *labView, params.icm.workingProfile);
+            
+            MyTime t1, t2;
+            t1.set();
+            
+            const std::unique_ptr<LabImage> reservView(new LabImage(*labView, true));
+            const std::unique_ptr<LabImage> lastorigView(new LabImage(*labView, true));
+            LocretigainCurve locRETgainCurve;
+            LocretitransCurve locRETtransCurve;
+            LocLHCurve loclhCurve;
+            LocHHCurve lochhCurve;
+            LocCHCurve locchCurve;
+            LocCCmaskCurve locccmasCurve;
+            LocLLmaskCurve locllmasCurve;
+            LocHHmaskCurve lochhmasCurve;
+            LocHHmaskCurve lochhhmasCurve;
+            LocCCmaskCurve locccmasexpCurve;
+            LocLLmaskCurve locllmasexpCurve;
+            LocHHmaskCurve lochhmasexpCurve;
+            LocCCmaskCurve locccmasSHCurve;
+            LocLLmaskCurve locllmasSHCurve;
+            LocHHmaskCurve lochhmasSHCurve;
+            LocCCmaskCurve locccmasvibCurve;
+            LocLLmaskCurve locllmasvibCurve;
+            LocHHmaskCurve lochhmasvibCurve;
+            LocCCmaskCurve locccmaslcCurve;
+            LocLLmaskCurve locllmaslcCurve;
+            LocHHmaskCurve lochhmaslcCurve;
+            LocCCmaskCurve locccmascbCurve;
+            LocLLmaskCurve locllmascbCurve;
+            LocHHmaskCurve lochhmascbCurve;
+            LocCCmaskCurve locccmasretiCurve;
+            LocLLmaskCurve locllmasretiCurve;
+            LocHHmaskCurve lochhmasretiCurve;
+            LocCCmaskCurve locccmastmCurve;
+            LocLLmaskCurve locllmastmCurve;
+            LocHHmaskCurve lochhmastmCurve;
+            LocCCmaskCurve locccmasblCurve;
+            LocLLmaskCurve locllmasblCurve;
+            LocHHmaskCurve lochhmasblCurve;
+            LocCCmaskCurve locccmaslogCurve;
+            LocLLmaskCurve locllmaslogCurve;
+            LocHHmaskCurve lochhmaslogCurve;
+
+            LocCCmaskCurve locccmas_Curve;
+            LocLLmaskCurve locllmas_Curve;
+            LocHHmaskCurve lochhmas_Curve;
+            LocHHmaskCurve lochhhmas_Curve;
+            
+            LocwavCurve loclmasCurveblwav;
+            LocwavCurve loclmasCurvecolwav;
+            LocwavCurve loclmasCurve_wav;
+            LocwavCurve locwavCurve;
+            LocwavCurve loclevwavCurve;
+            LocwavCurve locconwavCurve;
+            LocwavCurve loccompwavCurve;
+            LocwavCurve loccomprewavCurve;
+            LocwavCurve locedgwavCurve;
+            LocwavCurve locwavCurvehue;
+            LocwavCurve locwavCurveden;
+            LUTf lllocalcurve(65536, LUT_CLIP_OFF);
+            LUTf lclocalcurve(65536, LUT_CLIP_OFF);
+            LUTf cllocalcurve(65536, LUT_CLIP_OFF);
+            LUTf cclocalcurve(65536, LUT_CLIP_OFF);
+            LUTf rgblocalcurve(65536, LUT_CLIP_OFF);
+            LUTf hltonecurveloc(65536, LUT_CLIP_OFF);
+            LUTf shtonecurveloc(65536, LUT_CLIP_OFF);
+            LUTf tonecurveloc(65536, LUT_CLIP_OFF);
+            LUTf lightCurveloc(32770, LUT_CLIP_OFF);
+            LUTf exlocalcurve(65536, LUT_CLIP_OFF);
+            LUTf lmasklocalcurve(65536, LUT_CLIP_OFF);
+            LUTf lmaskexplocalcurve(65536, LUT_CLIP_OFF);
+            LUTf lmaskSHlocalcurve(65536, LUT_CLIP_OFF);
+            LUTf lmaskviblocalcurve(65536, LUT_CLIP_OFF);
+            LUTf lmasktmlocalcurve(65536, LUT_CLIP_OFF);
+            LUTf lmaskretilocalcurve(65536, LUT_CLIP_OFF);
+            LUTf lmaskcblocalcurve(65536, LUT_CLIP_OFF);
+            LUTf lmaskbllocalcurve(65536, LUT_CLIP_OFF);
+            LUTf lmasklclocalcurve(65536, LUT_CLIP_OFF);
+            LUTf lmaskloglocalcurve(65536, LUT_CLIP_OFF);
+            LUTf lmasklocal_curve(65536, LUT_CLIP_OFF);
+
+            array2D<float> shbuffer;
+            for (size_t sp = 0; sp < params.locallab.spots.size(); sp++) {
+                if (params.locallab.spots.at(sp).inverssha) {
+                    shbuffer(fw, fh);
+                    break;
+                }
+            }
+
+            for (size_t sp = 0; sp < params.locallab.spots.size(); sp++) {
+                // Set local curves of current spot to LUT
+                locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
+                locRETtransCurve.Set(params.locallab.spots.at(sp).localTtranscurve);
+                const bool LHutili = loclhCurve.Set(params.locallab.spots.at(sp).LHcurve);
+                const bool HHutili = lochhCurve.Set(params.locallab.spots.at(sp).HHcurve);
+                const bool CHutili = locchCurve.Set(params.locallab.spots.at(sp).CHcurve);
+                const bool lcmasutili = locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve);
+                const bool llmasutili = locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve);
+                const bool lhmasutili = lochhmasCurve.Set(params.locallab.spots.at(sp).HHmaskcurve);
+                const bool lhhmasutili = lochhhmasCurve.Set(params.locallab.spots.at(sp).HHhmaskcurve);
+                const bool lcmasexputili = locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve);
+                const bool llmasexputili = locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve);
+                const bool lhmasexputili = lochhmasexpCurve.Set(params.locallab.spots.at(sp).HHmaskexpcurve);
+                const bool lcmasSHutili = locccmasSHCurve.Set(params.locallab.spots.at(sp).CCmaskSHcurve);
+                const bool llmasSHutili = locllmasSHCurve.Set(params.locallab.spots.at(sp).LLmaskSHcurve);
+                const bool lhmasSHutili = lochhmasSHCurve.Set(params.locallab.spots.at(sp).HHmaskSHcurve);
+                const bool lcmasvibutili = locccmasvibCurve.Set(params.locallab.spots.at(sp).CCmaskvibcurve);
+                const bool llmasvibutili = locllmasvibCurve.Set(params.locallab.spots.at(sp).LLmaskvibcurve);
+                const bool lhmasvibutili = lochhmasvibCurve.Set(params.locallab.spots.at(sp).HHmaskvibcurve);
+                const bool lcmascbutili = locccmascbCurve.Set(params.locallab.spots.at(sp).CCmaskcbcurve);
+                const bool llmascbutili = locllmascbCurve.Set(params.locallab.spots.at(sp).LLmaskcbcurve);
+                const bool lhmascbutili = lochhmascbCurve.Set(params.locallab.spots.at(sp).HHmaskcbcurve);
+                const bool lcmasretiutili = locccmasretiCurve.Set(params.locallab.spots.at(sp).CCmaskreticurve);
+                const bool llmasretiutili = locllmasretiCurve.Set(params.locallab.spots.at(sp).LLmaskreticurve);
+                const bool lhmasretiutili = lochhmasretiCurve.Set(params.locallab.spots.at(sp).HHmaskreticurve);
+                const bool lcmastmutili = locccmastmCurve.Set(params.locallab.spots.at(sp).CCmasktmcurve);
+                const bool lhmaslcutili = lochhmaslcCurve.Set(params.locallab.spots.at(sp).HHmasklccurve);
+                const bool llmastmutili = locllmastmCurve.Set(params.locallab.spots.at(sp).LLmasktmcurve);
+                const bool lhmastmutili = lochhmastmCurve.Set(params.locallab.spots.at(sp).HHmasktmcurve);
+                const bool lcmasblutili = locccmasblCurve.Set(params.locallab.spots.at(sp).CCmaskblcurve);
+                const bool llmasblutili = locllmasblCurve.Set(params.locallab.spots.at(sp).LLmaskblcurve);
+                const bool lhmasblutili = lochhmasblCurve.Set(params.locallab.spots.at(sp).HHmaskblcurve);
+                const bool lcmaslogutili = locccmaslogCurve.Set(params.locallab.spots.at(sp).CCmaskcurveL);
+                const bool llmaslogutili = locllmaslogCurve.Set(params.locallab.spots.at(sp).LLmaskcurveL);
+                const bool lhmaslogutili = lochhmaslogCurve.Set(params.locallab.spots.at(sp).HHmaskcurveL);
+                
+                const bool lcmas_utili = locccmas_Curve.Set(params.locallab.spots.at(sp).CCmask_curve);
+                const bool llmas_utili = locllmas_Curve.Set(params.locallab.spots.at(sp).LLmask_curve);
+                const bool lhmas_utili = lochhmas_Curve.Set(params.locallab.spots.at(sp).HHmask_curve);
+                const bool lhhmas_utili = lochhhmas_Curve.Set(params.locallab.spots.at(sp).HHhmask_curve);
+                const bool lmasutiliblwav = loclmasCurveblwav.Set(params.locallab.spots.at(sp).LLmaskblcurvewav);
+                const bool lmasutilicolwav = loclmasCurvecolwav.Set(params.locallab.spots.at(sp).LLmaskcolcurvewav);
+                const bool lcmaslcutili = locccmaslcCurve.Set(params.locallab.spots.at(sp).CCmasklccurve);
+                const bool llmaslcutili = locllmaslcCurve.Set(params.locallab.spots.at(sp).LLmasklccurve);
+                const bool lmasutili_wav = loclmasCurve_wav.Set(params.locallab.spots.at(sp).LLmask_curvewav);
+                const bool locwavutili = locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve);
+                const bool locwavhueutili = locwavCurvehue.Set(params.locallab.spots.at(sp).locwavcurvehue);
+                const bool locwavdenutili = locwavCurveden.Set(params.locallab.spots.at(sp).locwavcurveden);
+                const bool loclevwavutili = loclevwavCurve.Set(params.locallab.spots.at(sp).loclevwavcurve);
+                const bool locconwavutili = locconwavCurve.Set(params.locallab.spots.at(sp).locconwavcurve);
+                const bool loccompwavutili = loccompwavCurve.Set(params.locallab.spots.at(sp).loccompwavcurve);
+                const bool loccomprewavutili = loccomprewavCurve.Set(params.locallab.spots.at(sp).loccomprewavcurve);
+                const bool locedgwavutili = locedgwavCurve.Set(params.locallab.spots.at(sp).locedgwavcurve);
+                const bool locallutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
+                const bool localclutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).clcurve, cllocalcurve, 1);
+                const bool locallcutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).lccurve, lclocalcurve, 1);
+                const bool localcutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).cccurve, cclocalcurve, 1);
+                const bool localrgbutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).rgbcurve, rgblocalcurve, 1);
+                const bool localexutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).excurve, exlocalcurve, 1);
+                const bool localmaskutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve, 1);
+                const bool localmaskexputili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve, 1);
+                const bool localmaskSHutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).LmaskSHcurve, lmaskSHlocalcurve, 1);
+                const bool localmaskvibutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskvibcurve, lmaskviblocalcurve, 1);
+                const bool localmasktmutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmasktmcurve, lmasktmlocalcurve, 1);
+                const bool localmaskretiutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskreticurve, lmaskretilocalcurve, 1);
+                const bool localmaskcbutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskcbcurve, lmaskcblocalcurve, 1);
+                const bool localmaskblutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskblcurve, lmaskbllocalcurve, 1);
+                const bool localmasklcutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmasklccurve, lmasklclocalcurve, 1);
+                const bool localmasklogutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).LmaskcurveL, lmaskloglocalcurve, 1);
+                const bool localmask_utili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmask_curve, lmasklocal_curve, 1);
+
+                //provisory
+                double ecomp = params.locallab.spots.at(sp).expcomp;
+                double lblack = params.locallab.spots.at(sp).black;
+                double lhlcompr = params.locallab.spots.at(sp).hlcompr;
+                double lhlcomprthresh = params.locallab.spots.at(sp).hlcomprthresh;
+                double shcompr = params.locallab.spots.at(sp).shcompr;
+                double br = params.locallab.spots.at(sp).lightness;
+                double cont = params.locallab.spots.at(sp).contrast;
+                if (lblack < 0. && params.locallab.spots.at(sp).expMethod == "pde" ) {
+                    lblack *= 1.5;
+                }
+
+                // Reference parameters computation
+                double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
+                int lastsav;
+                float avge;
+                if (params.locallab.spots.at(sp).spotMethod == "exc") {
+                    ipf.calc_ref(sp, reservView.get(), reservView.get(), 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
+                } else {
+                    ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
+                }
+                CurveFactory::complexCurvelocal(ecomp, lblack / 65535., lhlcompr, lhlcomprthresh, shcompr, br, cont, lumare,
+                                                hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avge,
+                                                1);
+                float minCD;
+                float maxCD;
+                float mini;
+                float maxi;
+                float Tmean;
+                float Tsigma;
+                float Tmin;
+                float Tmax;
+
+                // No Locallab mask is shown in exported picture
+                ipf.Lab_Local(2, sp, shbuffer, labView, labView, reservView.get(), lastorigView.get(), 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, 
+                        lllocalcurve, locallutili, 
+                        cllocalcurve, localclutili,
+                        lclocalcurve, locallcutili,
+                        loclhCurve, lochhCurve, locchCurve,
+                        lmasklocalcurve, localmaskutili,
+                        lmaskexplocalcurve, localmaskexputili,
+                        lmaskSHlocalcurve, localmaskSHutili,
+                        lmaskviblocalcurve, localmaskvibutili,
+                        lmasktmlocalcurve, localmasktmutili,
+                        lmaskretilocalcurve, localmaskretiutili,
+                        lmaskcblocalcurve, localmaskcbutili,
+                        lmaskbllocalcurve, localmaskblutili,
+                        lmasklclocalcurve, localmasklcutili,
+                        lmaskloglocalcurve, localmasklogutili,
+                        lmasklocal_curve, localmask_utili,
+                        
+                        locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
+                        locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
+                        locccmasvibCurve, lcmasvibutili, locllmasvibCurve, llmasvibutili, lochhmasvibCurve, lhmasvibutili,
+                        locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
+                        locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,
+                        locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
+                        locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
+                        locccmaslcCurve, lcmaslcutili, locllmaslcCurve, llmaslcutili, lochhmaslcCurve, lhmaslcutili,
+                        locccmaslogCurve, lcmaslogutili, locllmaslogCurve, llmaslogutili, lochhmaslogCurve, lhmaslogutili,
+
+                        locccmas_Curve, lcmas_utili, locllmas_Curve, llmas_utili, lochhmas_Curve, lhmas_utili,
+                        lochhhmas_Curve, lhhmas_utili,
+                        loclmasCurveblwav,lmasutiliblwav,
+                        loclmasCurvecolwav,lmasutilicolwav,
+                        locwavCurve, locwavutili,
+                        loclevwavCurve, loclevwavutili,
+                        locconwavCurve, locconwavutili,
+                        loccompwavCurve, loccompwavutili,
+                        loccomprewavCurve, loccomprewavutili,
+                        locwavCurvehue, locwavhueutili,
+                        locwavCurveden, locwavdenutili,
+                        locedgwavCurve, locedgwavutili,
+                        loclmasCurve_wav,lmasutili_wav,
+                        LHutili, HHutili, CHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
+                        huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+
+                if (sp + 1u < params.locallab.spots.size()) {
+                    // do not copy for last spot as it is not needed anymore
+                    lastorigView->CopyFrom(labView);
+                }
+
+                if (params.locallab.spots.at(sp).spotMethod == "exc") {
+                    ipf.calc_ref(sp, reservView.get(), reservView.get(), 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
+                } else {
+                    ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
+                }
+            }
+
+            t2.set();
+            ipf.lab2rgb(*labView, *baseImg, params.icm.workingProfile);
+
+            if (settings->verbose) {
+                printf("Total local:- %d usec\n", t2.etime(t1));
+            }
+
+        }
+
+
         curve1(65536);
         curve2(65536);
         curve(65536, 0);
@@ -961,7 +1226,7 @@ private:
             CurveFactory::diagonalCurve2Lut(params.colorToning.cl2curve, cl2Toningcurve, 1);
         }
 
-        labView = new LabImage(fw, fh);
+//        labView = new LabImage(fw, fh);
 
         if (params.blackwhite.enabled) {
             CurveFactory::curveBW(params.blackwhite.beforeCurve, params.blackwhite.afterCurve, hist16, dummy, customToneCurvebw1, customToneCurvebw2, 1);
@@ -1066,262 +1331,6 @@ private:
         bool ccutili, cclutili;
         CurveFactory::complexsgnCurve(autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,
                                       params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 1);
-
-
-        if (params.locallab.enabled && params.locallab.spots.size() > 0) {
-            MyTime t1, t2;
-            t1.set();
-            const std::unique_ptr<LabImage> reservView(new LabImage(*labView, true));
-            const std::unique_ptr<LabImage> lastorigView(new LabImage(*labView, true));
-            LocretigainCurve locRETgainCurve;
-            LocretitransCurve locRETtransCurve;
-            LocLHCurve loclhCurve;
-            LocHHCurve lochhCurve;
-            LocCHCurve locchCurve;
-            LocCCmaskCurve locccmasCurve;
-            LocLLmaskCurve locllmasCurve;
-            LocHHmaskCurve lochhmasCurve;
-            LocHHmaskCurve lochhhmasCurve;
-            LocCCmaskCurve locccmasexpCurve;
-            LocLLmaskCurve locllmasexpCurve;
-            LocHHmaskCurve lochhmasexpCurve;
-            LocCCmaskCurve locccmasSHCurve;
-            LocLLmaskCurve locllmasSHCurve;
-            LocHHmaskCurve lochhmasSHCurve;
-            LocCCmaskCurve locccmasvibCurve;
-            LocLLmaskCurve locllmasvibCurve;
-            LocHHmaskCurve lochhmasvibCurve;
-            LocCCmaskCurve locccmaslcCurve;
-            LocLLmaskCurve locllmaslcCurve;
-            LocHHmaskCurve lochhmaslcCurve;
-            LocCCmaskCurve locccmascbCurve;
-            LocLLmaskCurve locllmascbCurve;
-            LocHHmaskCurve lochhmascbCurve;
-            LocCCmaskCurve locccmasretiCurve;
-            LocLLmaskCurve locllmasretiCurve;
-            LocHHmaskCurve lochhmasretiCurve;
-            LocCCmaskCurve locccmastmCurve;
-            LocLLmaskCurve locllmastmCurve;
-            LocHHmaskCurve lochhmastmCurve;
-            LocCCmaskCurve locccmasblCurve;
-            LocLLmaskCurve locllmasblCurve;
-            LocHHmaskCurve lochhmasblCurve;
-            LocCCmaskCurve locccmaslogCurve;
-            LocLLmaskCurve locllmaslogCurve;
-            LocHHmaskCurve lochhmaslogCurve;
-
-            LocCCmaskCurve locccmas_Curve;
-            LocLLmaskCurve locllmas_Curve;
-            LocHHmaskCurve lochhmas_Curve;
-            LocHHmaskCurve lochhhmas_Curve;
-            
-            LocwavCurve loclmasCurveblwav;
-            LocwavCurve loclmasCurvecolwav;
-            LocwavCurve loclmasCurve_wav;
-            LocwavCurve locwavCurve;
-            LocwavCurve loclevwavCurve;
-            LocwavCurve locconwavCurve;
-            LocwavCurve loccompwavCurve;
-            LocwavCurve loccomprewavCurve;
-            LocwavCurve locedgwavCurve;
-            LocwavCurve locwavCurveden;
-            LUTf lllocalcurve(65536, LUT_CLIP_OFF);
-            LUTf lclocalcurve(65536, LUT_CLIP_OFF);
-            LUTf cllocalcurve(65536, LUT_CLIP_OFF);
-            LUTf cclocalcurve(65536, LUT_CLIP_OFF);
-            LUTf rgblocalcurve(65536, LUT_CLIP_OFF);
-            LUTf hltonecurveloc(65536, LUT_CLIP_OFF);
-            LUTf shtonecurveloc(65536, LUT_CLIP_OFF);
-            LUTf tonecurveloc(65536, LUT_CLIP_OFF);
-            LUTf lightCurveloc(32770, LUT_CLIP_OFF);
-            LUTf exlocalcurve(65536, LUT_CLIP_OFF);
-            LUTf lmasklocalcurve(65536, LUT_CLIP_OFF);
-            LUTf lmaskexplocalcurve(65536, LUT_CLIP_OFF);
-            LUTf lmaskSHlocalcurve(65536, LUT_CLIP_OFF);
-            LUTf lmaskviblocalcurve(65536, LUT_CLIP_OFF);
-            LUTf lmasktmlocalcurve(65536, LUT_CLIP_OFF);
-            LUTf lmaskretilocalcurve(65536, LUT_CLIP_OFF);
-            LUTf lmaskcblocalcurve(65536, LUT_CLIP_OFF);
-            LUTf lmaskbllocalcurve(65536, LUT_CLIP_OFF);
-            LUTf lmasklclocalcurve(65536, LUT_CLIP_OFF);
-            LUTf lmaskloglocalcurve(65536, LUT_CLIP_OFF);
-            LUTf lmasklocal_curve(65536, LUT_CLIP_OFF);
-
-            array2D<float> shbuffer;
-            for (size_t sp = 0; sp < params.locallab.spots.size(); sp++) {
-                if (params.locallab.spots.at(sp).inverssha) {
-                    shbuffer(fw, fh);
-                    break;
-                }
-            }
-
-            for (size_t sp = 0; sp < params.locallab.spots.size(); sp++) {
-                // Set local curves of current spot to LUT
-                locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
-                locRETtransCurve.Set(params.locallab.spots.at(sp).localTtranscurve);
-                const bool LHutili = loclhCurve.Set(params.locallab.spots.at(sp).LHcurve);
-                const bool HHutili = lochhCurve.Set(params.locallab.spots.at(sp).HHcurve);
-                const bool CHutili = locchCurve.Set(params.locallab.spots.at(sp).CHcurve);
-                const bool lcmasutili = locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve);
-                const bool llmasutili = locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve);
-                const bool lhmasutili = lochhmasCurve.Set(params.locallab.spots.at(sp).HHmaskcurve);
-                const bool lhhmasutili = lochhhmasCurve.Set(params.locallab.spots.at(sp).HHhmaskcurve);
-                const bool lcmasexputili = locccmasexpCurve.Set(params.locallab.spots.at(sp).CCmaskexpcurve);
-                const bool llmasexputili = locllmasexpCurve.Set(params.locallab.spots.at(sp).LLmaskexpcurve);
-                const bool lhmasexputili = lochhmasexpCurve.Set(params.locallab.spots.at(sp).HHmaskexpcurve);
-                const bool lcmasSHutili = locccmasSHCurve.Set(params.locallab.spots.at(sp).CCmaskSHcurve);
-                const bool llmasSHutili = locllmasSHCurve.Set(params.locallab.spots.at(sp).LLmaskSHcurve);
-                const bool lhmasSHutili = lochhmasSHCurve.Set(params.locallab.spots.at(sp).HHmaskSHcurve);
-                const bool lcmasvibutili = locccmasvibCurve.Set(params.locallab.spots.at(sp).CCmaskvibcurve);
-                const bool llmasvibutili = locllmasvibCurve.Set(params.locallab.spots.at(sp).LLmaskvibcurve);
-                const bool lhmasvibutili = lochhmasvibCurve.Set(params.locallab.spots.at(sp).HHmaskvibcurve);
-                const bool lcmascbutili = locccmascbCurve.Set(params.locallab.spots.at(sp).CCmaskcbcurve);
-                const bool llmascbutili = locllmascbCurve.Set(params.locallab.spots.at(sp).LLmaskcbcurve);
-                const bool lhmascbutili = lochhmascbCurve.Set(params.locallab.spots.at(sp).HHmaskcbcurve);
-                const bool lcmasretiutili = locccmasretiCurve.Set(params.locallab.spots.at(sp).CCmaskreticurve);
-                const bool llmasretiutili = locllmasretiCurve.Set(params.locallab.spots.at(sp).LLmaskreticurve);
-                const bool lhmasretiutili = lochhmasretiCurve.Set(params.locallab.spots.at(sp).HHmaskreticurve);
-                const bool lcmastmutili = locccmastmCurve.Set(params.locallab.spots.at(sp).CCmasktmcurve);
-                const bool lhmaslcutili = lochhmaslcCurve.Set(params.locallab.spots.at(sp).HHmasklccurve);
-                const bool llmastmutili = locllmastmCurve.Set(params.locallab.spots.at(sp).LLmasktmcurve);
-                const bool lhmastmutili = lochhmastmCurve.Set(params.locallab.spots.at(sp).HHmasktmcurve);
-                const bool lcmasblutili = locccmasblCurve.Set(params.locallab.spots.at(sp).CCmaskblcurve);
-                const bool llmasblutili = locllmasblCurve.Set(params.locallab.spots.at(sp).LLmaskblcurve);
-                const bool lhmasblutili = lochhmasblCurve.Set(params.locallab.spots.at(sp).HHmaskblcurve);
-                const bool lcmaslogutili = locccmaslogCurve.Set(params.locallab.spots.at(sp).CCmaskcurveL);
-                const bool llmaslogutili = locllmaslogCurve.Set(params.locallab.spots.at(sp).LLmaskcurveL);
-                const bool lhmaslogutili = lochhmaslogCurve.Set(params.locallab.spots.at(sp).HHmaskcurveL);
-                
-                const bool lcmas_utili = locccmas_Curve.Set(params.locallab.spots.at(sp).CCmask_curve);
-                const bool llmas_utili = locllmas_Curve.Set(params.locallab.spots.at(sp).LLmask_curve);
-                const bool lhmas_utili = lochhmas_Curve.Set(params.locallab.spots.at(sp).HHmask_curve);
-                const bool lhhmas_utili = lochhhmas_Curve.Set(params.locallab.spots.at(sp).HHhmask_curve);
-                const bool lmasutiliblwav = loclmasCurveblwav.Set(params.locallab.spots.at(sp).LLmaskblcurvewav);
-                const bool lmasutilicolwav = loclmasCurvecolwav.Set(params.locallab.spots.at(sp).LLmaskcolcurvewav);
-                const bool lcmaslcutili = locccmaslcCurve.Set(params.locallab.spots.at(sp).CCmasklccurve);
-                const bool llmaslcutili = locllmaslcCurve.Set(params.locallab.spots.at(sp).LLmasklccurve);
-                const bool lmasutili_wav = loclmasCurve_wav.Set(params.locallab.spots.at(sp).LLmask_curvewav);
-                const bool locwavutili = locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve);
-                const bool locwavdenutili = locwavCurveden.Set(params.locallab.spots.at(sp).locwavcurveden);
-                const bool loclevwavutili = loclevwavCurve.Set(params.locallab.spots.at(sp).loclevwavcurve);
-                const bool locconwavutili = locconwavCurve.Set(params.locallab.spots.at(sp).locconwavcurve);
-                const bool loccompwavutili = loccompwavCurve.Set(params.locallab.spots.at(sp).loccompwavcurve);
-                const bool loccomprewavutili = loccomprewavCurve.Set(params.locallab.spots.at(sp).loccomprewavcurve);
-                const bool locedgwavutili = locedgwavCurve.Set(params.locallab.spots.at(sp).locedgwavcurve);
-                const bool locallutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).llcurve, lllocalcurve, 1);
-                const bool localclutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).clcurve, cllocalcurve, 1);
-                const bool locallcutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).lccurve, lclocalcurve, 1);
-                const bool localcutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).cccurve, cclocalcurve, 1);
-                const bool localrgbutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).rgbcurve, rgblocalcurve, 1);
-                const bool localexutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).excurve, exlocalcurve, 1);
-                const bool localmaskutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskcurve, lmasklocalcurve, 1);
-                const bool localmaskexputili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskexpcurve, lmaskexplocalcurve, 1);
-                const bool localmaskSHutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).LmaskSHcurve, lmaskSHlocalcurve, 1);
-                const bool localmaskvibutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskvibcurve, lmaskviblocalcurve, 1);
-                const bool localmasktmutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmasktmcurve, lmasktmlocalcurve, 1);
-                const bool localmaskretiutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskreticurve, lmaskretilocalcurve, 1);
-                const bool localmaskcbutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskcbcurve, lmaskcblocalcurve, 1);
-                const bool localmaskblutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskblcurve, lmaskbllocalcurve, 1);
-                const bool localmasklcutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmasklccurve, lmasklclocalcurve, 1);
-                const bool localmasklogutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).LmaskcurveL, lmaskloglocalcurve, 1);
-                const bool localmask_utili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmask_curve, lmasklocal_curve, 1);
-
-                //provisory
-                double ecomp = params.locallab.spots.at(sp).expcomp;
-                double lblack = params.locallab.spots.at(sp).black;
-                double lhlcompr = params.locallab.spots.at(sp).hlcompr;
-                double lhlcomprthresh = params.locallab.spots.at(sp).hlcomprthresh;
-                double shcompr = params.locallab.spots.at(sp).shcompr;
-                double br = params.locallab.spots.at(sp).lightness;
-                double cont = params.locallab.spots.at(sp).contrast;
-                if (lblack < 0. && params.locallab.spots.at(sp).expMethod == "pde" ) {
-                    lblack *= 1.5;
-                }
-
-                // Reference parameters computation
-                double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
-                int lastsav;
-                float avge;
-                if (params.locallab.spots.at(sp).spotMethod == "exc") {
-                    ipf.calc_ref(sp, reservView.get(), reservView.get(), 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
-                } else {
-                    ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
-                }
-                CurveFactory::complexCurvelocal(ecomp, lblack / 65535., lhlcompr, lhlcomprthresh, shcompr, br, cont, lumare,
-                                                hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avge,
-                                                1);
-                float minCD;
-                float maxCD;
-                float mini;
-                float maxi;
-                float Tmean;
-                float Tsigma;
-                float Tmin;
-                float Tmax;
-
-                // No Locallab mask is shown in exported picture
-                ipf.Lab_Local(2, sp, shbuffer, labView, labView, reservView.get(), lastorigView.get(), 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, 
-                        lllocalcurve, locallutili, 
-                        cllocalcurve, localclutili,
-                        lclocalcurve, locallcutili,
-                        loclhCurve, lochhCurve, locchCurve,
-                        lmasklocalcurve, localmaskutili,
-                        lmaskexplocalcurve, localmaskexputili,
-                        lmaskSHlocalcurve, localmaskSHutili,
-                        lmaskviblocalcurve, localmaskvibutili,
-                        lmasktmlocalcurve, localmasktmutili,
-                        lmaskretilocalcurve, localmaskretiutili,
-                        lmaskcblocalcurve, localmaskcbutili,
-                        lmaskbllocalcurve, localmaskblutili,
-                        lmasklclocalcurve, localmasklcutili,
-                        lmaskloglocalcurve, localmasklogutili,
-                        lmasklocal_curve, localmask_utili,
-                        
-                        locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
-                        locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
-                        locccmasvibCurve, lcmasvibutili, locllmasvibCurve, llmasvibutili, lochhmasvibCurve, lhmasvibutili,
-                        locccmascbCurve, lcmascbutili, locllmascbCurve, llmascbutili, lochhmascbCurve, lhmascbutili,
-                        locccmasretiCurve, lcmasretiutili, locllmasretiCurve, llmasretiutili, lochhmasretiCurve, lhmasretiutili,
-                        locccmastmCurve, lcmastmutili, locllmastmCurve, llmastmutili, lochhmastmCurve, lhmastmutili,
-                        locccmasblCurve, lcmasblutili, locllmasblCurve, llmasblutili, lochhmasblCurve, lhmasblutili,
-                        locccmaslcCurve, lcmaslcutili, locllmaslcCurve, llmaslcutili, lochhmaslcCurve, lhmaslcutili,
-                        locccmaslogCurve, lcmaslogutili, locllmaslogCurve, llmaslogutili, lochhmaslogCurve, lhmaslogutili,
-                        
-                        locccmas_Curve, lcmas_utili, locllmas_Curve, llmas_utili, lochhmas_Curve, lhmas_utili,
-                        lochhhmas_Curve, lhhmas_utili,
-                        loclmasCurveblwav,lmasutiliblwav,
-                        loclmasCurvecolwav,lmasutilicolwav,
-                        locwavCurve, locwavutili,
-                        loclevwavCurve, loclevwavutili,
-                        locconwavCurve, locconwavutili,
-                        loccompwavCurve, loccompwavutili,
-                        loccomprewavCurve, loccomprewavutili,
-                        locwavCurveden, locwavdenutili,
-                        locedgwavCurve, locedgwavutili,
-                        loclmasCurve_wav,lmasutili_wav,
-                        LHutili, HHutili, CHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                        huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                        minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
-
-                if (sp + 1u < params.locallab.spots.size()) {
-                    // do not copy for last spot as it is not needed anymore
-                    lastorigView->CopyFrom(labView);
-                }
-
-                if (params.locallab.spots.at(sp).spotMethod == "exc") {
-                    ipf.calc_ref(sp, reservView.get(), reservView.get(), 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
-                } else {
-                    ipf.calc_ref(sp, labView, labView, 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
-                }
-            }
-
-            t2.set();
-
-            if (settings->verbose) {
-                printf("Total local:- %d usec\n", t2.etime(t1));
-            }
-
-        }
 
         ipf.chromiLuminanceCurve(nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 

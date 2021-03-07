@@ -297,6 +297,7 @@ struct ToneCurveParams {
     int saturation;
     int shcompr;
     int hlcompr; // Highlight Recovery's compression
+    int hlbl; // Highlight Recovery's compression
     int hlcomprthresh; // Highlight Recovery's threshold
     bool histmatching; // histogram matching
     bool fromHistMatching;
@@ -674,6 +675,7 @@ struct ColorAppearanceParams {
     CtcMode    curveMode3;
     Glib::ustring complexmethod;
     Glib::ustring modelmethod;
+    Glib::ustring catmethod;
 
     Glib::ustring surround;
     Glib::ustring surrsrc;
@@ -1007,11 +1009,13 @@ struct LocallabParams {
         double balanh;
         double colorde;
         double colorscope;
+        double avoidrad;
         double transitweak;
         double transitgrad;
         bool hishow;
         bool activ;
         bool avoid;
+        bool avoidmun;
         bool blwh;
         bool recurs;
         bool laplac;
@@ -1084,6 +1088,10 @@ struct LocallabParams {
         std::vector<double> Lmaskcurve;
         std::vector<double> LLmaskcolcurvewav;
         Threshold<int> csthresholdcol;
+        double recothresc;
+        double lowthresc;
+        double higthresc;
+        double decayc;
         // Exposure
         bool visiexpose;
         bool expexpose;
@@ -1127,6 +1135,10 @@ struct LocallabParams {
         double fatdetail;
         double fatanchor;
         double fatlevel;
+        double recothrese;
+        double lowthrese;
+        double higthrese;
+        double decaye;
         // Shadow highlight
         bool visishadhigh;
         bool expshadhigh;
@@ -1159,6 +1171,10 @@ struct LocallabParams {
         double fatanchorSH;
         double gamSH;
         double sloSH;
+        double recothress;
+        double lowthress;
+        double higthress;
+        double decays;
         // Vibrance
         bool visivibrance;
         bool expvibrance;
@@ -1187,6 +1203,10 @@ struct LocallabParams {
         double strvibh;
         double angvib;
         std::vector<double> Lmaskvibcurve;
+        double recothresv;
+        double lowthresv;
+        double higthresv;
+        double decayv;
         // Soft Light
         bool visisoft;
         bool expsoft;
@@ -1205,15 +1225,31 @@ struct LocallabParams {
         int itera;
         int guidbl;
         int strbl;
+        double recothres;
+        double lowthres;
+        double higthres;
+        double recothresd;
+        double lowthresd;
+        double midthresd;
+        double midthresdch;
+        double higthresd;
+        double decayd;
         int isogr;
         int strengr;
         int scalegr;
+        double divgr;
         int epsbl;
         Glib::ustring blMethod; // blur, med, guid
         Glib::ustring chroMethod; // lum, chr, all
         Glib::ustring quamethod; // cons agre
         Glib::ustring blurMethod; // norm, inv
         Glib::ustring medMethod; // none, 33, 55, 77, 99
+        bool usemask;
+        bool invmaskd;
+        bool invmask;
+        double levelthr;
+        double lnoiselow;
+        double levelthrlow;
         bool activlum;
         double noiselumf;
         double noiselumf0;
@@ -1226,9 +1262,15 @@ struct LocallabParams {
         double noisechrodetail;
         int adjblur;
         int bilateral;
+        int nlstr;
+        int nldet;
+        int nlpat;
+        int nlrad;
+        double nlgam;
         int sensiden;
         int detailthr;
         std::vector<double> locwavcurveden;
+        std::vector<double> locwavcurvehue;
         Glib::ustring showmaskblMethodtyp;
         std::vector<double> CCmaskblcurve;
         std::vector<double> LLmaskblcurve;
@@ -1275,6 +1317,10 @@ struct LocallabParams {
         double slomasktm;
         double lapmasktm;
         std::vector<double> Lmasktmcurve;
+        double recothrest;
+        double lowthrest;
+        double higthrest;
+        double decayt;
         // Retinex
         bool visireti;
         bool expreti;
@@ -1313,6 +1359,10 @@ struct LocallabParams {
         double cliptm;
         bool fftwreti;
         std::vector<double> Lmaskreticurve;
+        double recothresr;
+        double lowthresr;
+        double higthresr;
+        double decayr;
         // Sharpening
         bool visisharp;
         bool expsharp;
@@ -1398,6 +1448,10 @@ struct LocallabParams {
         double radmasklc;
         double chromasklc;
         std::vector<double> Lmasklccurve;
+        double recothresw;
+        double lowthresw;
+        double higthresw;
+        double decayw;
         // Contrast by detail levels
         bool visicbdl;
         bool expcbdl;
@@ -1420,6 +1474,10 @@ struct LocallabParams {
         double slomaskcb;
         double lapmaskcb;
         std::vector<double> Lmaskcbcurve;
+        double recothrescb;
+        double lowthrescb;
+        double higthrescb;
+        double decaycb;
         // Log encoding
         bool visilog;
         bool explog;
@@ -1458,6 +1516,10 @@ struct LocallabParams {
         double radmaskL;
         double chromaskL;
         std::vector<double> LmaskcurveL;
+        double recothresl;
+        double lowthresl;
+        double higthresl;
+        double decayl;
 
         // mask
         bool visimask;

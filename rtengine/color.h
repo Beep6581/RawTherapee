@@ -206,6 +206,11 @@ public:
         return static_cast<double>(r) * workingspace[1][0] + static_cast<double>(g) * workingspace[1][1] + static_cast<double>(b) * workingspace[1][2];
     }
 
+    static float rgbLuminance(float r, float g, float b, const float workingspace[3])
+    {
+        return r * workingspace[0] + g * workingspace[1] + b * workingspace[2];
+    }
+
 #ifdef __SSE2__
     static vfloat rgbLuminance(vfloat r, vfloat g, vfloat b, const vfloat workingspace[3])
     {

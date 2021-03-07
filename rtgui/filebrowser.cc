@@ -985,11 +985,19 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
         }
 
         for (size_t i = 0; i < mselected.size(); i++)  {
-            mselected[i]->thumbnail->createProcParamsForUpdate (false, true);
+            const auto thumbnail = mselected[i]->thumbnail;
+            const auto rank = thumbnail->getRank();
+            const auto colorLabel = thumbnail->getColorLabel();
+            const auto stage = thumbnail->getStage();
+
+            thumbnail->createProcParamsForUpdate (false, true);
+            thumbnail->setRank(rank);
+            thumbnail->setColorLabel(colorLabel);
+            thumbnail->setStage(stage);
 
             // Empty run to update the thumb
-            rtengine::procparams::ProcParams params = mselected[i]->thumbnail->getProcParams ();
-            mselected[i]->thumbnail->setProcParams (params, nullptr, FILEBROWSER, true, true);
+            rtengine::procparams::ProcParams params = thumbnail->getProcParams ();
+            thumbnail->setProcParams (params, nullptr, FILEBROWSER, true, true);
         }
 
         if (!mselected.empty() && bppcl) {

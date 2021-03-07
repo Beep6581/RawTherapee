@@ -329,7 +329,7 @@ HistogramPanel::HistogramPanel () :
     optionButtons->add(*showBAR);
     optionButtons->add(*brightnessWidget);
 
-    Gtk::VSeparator* separator = Gtk::manage(new Gtk::VSeparator());
+    Gtk::Separator* separator = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
     setExpandAlignProperties(separator, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     persistentButtons->add(*scopeHistBtn);
     persistentButtons->add(*scopeHistRawBtn);

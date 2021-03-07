@@ -96,7 +96,8 @@ inline void copyAndClamp(const LabImage *src, unsigned char *dst, const double r
             gbuffer[j] = Color::gamma2curve[G];
             bbuffer[j] = Color::gamma2curve[B];
         }
-        for (int j = 0; j < W; ++j) {
+
+        for (j = 0; j < W; ++j) {
             dst[ix++] = uint16ToUint8Rounded(rbuffer[j]);
             dst[ix++] = uint16ToUint8Rounded(gbuffer[j]);
             dst[ix++] = uint16ToUint8Rounded(bbuffer[j]);

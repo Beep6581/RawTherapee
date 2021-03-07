@@ -71,7 +71,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     Gtk::Frame *iFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_INPUTPROFILE")));
     iFrame->set_label_align(0.025, 0.5);
 
-    iVBox = Gtk::manage(new Gtk::VBox());
+    iVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     inone = Gtk::manage(new Gtk::RadioButton(M("TP_ICM_INPUTNONE")));
     inone->set_tooltip_text(M("TP_ICM_INPUTNONE_TOOLTIP"));
@@ -90,7 +90,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     iVBox->pack_start(*icameraICC, Gtk::PACK_SHRINK);
 
     ifromfile = Gtk::manage(new Gtk::RadioButton(M("TP_ICM_INPUTCUSTOM") + ":"));
-    Gtk::HBox* ffbox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* ffbox = Gtk::manage(new Gtk::Box());
     ifromfile->set_tooltip_text(M("TP_ICM_INPUTCUSTOM_TOOLTIP"));
     ffbox->pack_start(*ifromfile, Gtk::PACK_SHRINK);
     ffbox->pack_start(*ipDialog);
@@ -104,6 +104,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     inone->set_group(opts);
 
     dcpFrame = Gtk::manage(new Gtk::Frame("DCP"));
+    dcpFrame->set_label_align(0.025, 0.5);
 
     Gtk::Grid* dcpGrid = Gtk::manage(new Gtk::Grid());
     dcpGrid->set_column_homogeneous(false);
@@ -179,7 +180,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     Gtk::Frame *wFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_WORKINGPROFILE")));
     wFrame->set_label_align(0.025, 0.5);
 
-    Gtk::VBox *wProfVBox = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* wProfVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     wProfNames = Gtk::manage(new MyComboBoxText());
     wProfVBox->pack_start(*wProfNames, Gtk::PACK_SHRINK);
@@ -200,14 +201,14 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     Gtk::VBox *trcProfVBox = Gtk::manage(new Gtk::VBox());
     trcFrame->set_tooltip_text(M("TP_ICM_TRCFRAME_TOOLTIP"));
 
-    wTRCHBox = Gtk::manage(new Gtk::HBox());
+    wTRCBox = Gtk::manage(new Gtk::Box());
 
 //    Gtk::Label* wtrclab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_TRC")));
 
 //    wTRCHBox->pack_start(*wtrclab, Gtk::PACK_SHRINK);
     wTRC = Gtk::manage(new MyComboBoxText());
-    wTRCHBox->pack_start(*wTRC, Gtk::PACK_EXPAND_WIDGET);
-    trcProfVBox->pack_start(*wTRCHBox, Gtk::PACK_EXPAND_WIDGET);
+    wTRCBox->pack_start(*wTRC, Gtk::PACK_EXPAND_WIDGET);
+    trcProfVBox->pack_start(*wTRCBox, Gtk::PACK_EXPAND_WIDGET);
     wTRC->append(M("TP_ICM_WORKING_TRC_NONE"));
     wTRC->append(M("TP_ICM_WORKING_TRC_CUSTOM"));
     wTRC->append(M("TP_ICM_WORKING_TRC_BT709"));
@@ -230,7 +231,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     trcProfVBox->pack_start(*wSlope, Gtk::PACK_SHRINK);
     wSlope->show();
 
-    willuBox = Gtk::manage(new Gtk::HBox());
+    willuBox = Gtk::manage(new Gtk::Box());
     willulab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_ILLU")));
 
     willuBox->pack_start(*willulab, Gtk::PACK_SHRINK);
@@ -249,7 +250,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     will->set_tooltip_text(M("TP_ICM_ILLUMPRIM_TOOLTIP"));
 
 
-    wprimBox = Gtk::manage(new Gtk::HBox());
+    wprimBox = Gtk::manage(new Gtk::Box());
     wprimlab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_PRIM")));
 
     wprimBox->pack_start(*wprimlab, Gtk::PACK_SHRINK);
@@ -286,7 +287,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     grex->set_tooltip_text(M("TP_ICM_PRIMGRE_TOOLTIP"));
     blux->set_tooltip_text(M("TP_ICM_PRIMBLU_TOOLTIP"));
 
-    redBox = Gtk::manage(new Gtk::HBox());
+    redBox = Gtk::manage(new Gtk::Box());
     redBox->pack_start(*redx, Gtk::PACK_SHRINK);
     redBox->pack_start(*redy, Gtk::PACK_SHRINK);
     redFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_REDFRAME")));
@@ -294,18 +295,18 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     Gtk::VBox *redVBox = Gtk::manage(new Gtk::VBox());
     redVBox->pack_start(*redBox, Gtk::PACK_EXPAND_WIDGET);
 
-    greBox = Gtk::manage(new Gtk::HBox());
+    greBox = Gtk::manage(new Gtk::Box());
     greBox->pack_start(*grex, Gtk::PACK_SHRINK);
     greBox->pack_start(*grey, Gtk::PACK_SHRINK);
     redVBox->pack_start(*greBox, Gtk::PACK_EXPAND_WIDGET);
 
-    bluBox = Gtk::manage(new Gtk::HBox());
+    bluBox = Gtk::manage(new Gtk::Box());
     bluBox->pack_start(*blux, Gtk::PACK_SHRINK);
     bluBox->pack_start(*bluy, Gtk::PACK_SHRINK);
     redVBox->pack_start(*bluBox, Gtk::PACK_EXPAND_WIDGET);
     preser = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_PRESER"), 0., 100., 0.5, 0.));
     preser->setAdjusterListener(this);
-    preBox = Gtk::manage(new Gtk::HBox());
+    preBox = Gtk::manage(new Gtk::Box());
     preBox->pack_start(*preser, Gtk::PACK_SHRINK);
     redVBox->pack_start(*preBox, Gtk::PACK_EXPAND_WIDGET);    
     redFrame->add(*redVBox);
@@ -325,7 +326,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wSlope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     // Rendering intent
-    riaHBox = Gtk::manage(new Gtk::HBox());
+    riaHBox = Gtk::manage(new Gtk::Box());
     Gtk::Label* abIntentLbl = Gtk::manage(new Gtk::Label(M("TP_ICM_PROFILEINTENT")));
     riaHBox->pack_start(*abIntentLbl, Gtk::PACK_SHRINK);
     aRendIntent.reset(new PopUpButton());
@@ -355,7 +356,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     oFrame->set_label_align(0.025, 0.5);
     oFrame->set_tooltip_text(M("TP_ICM_OUTPUTPROFILE_TOOLTIP"));
 
-    Gtk::VBox *oProfVBox = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* oProfVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     oProfNames = Gtk::manage(new MyComboBoxText());
     oProfVBox->pack_start(*oProfNames, Gtk::PACK_SHRINK);
@@ -372,7 +373,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     oProfNames->set_active(0);
 
     // Rendering intent
-    Gtk::HBox *riHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box *riHBox = Gtk::manage(new Gtk::Box());
     Gtk::Label* outputIntentLbl = Gtk::manage(new Gtk::Label(M("TP_ICM_PROFILEINTENT")));
     riHBox->pack_start(*outputIntentLbl, Gtk::PACK_SHRINK);
     oRendIntent.reset(new PopUpButton());
@@ -1601,7 +1602,7 @@ void ICMPanel::saveReferencePressed()
 
     Gtk::CheckButton applyWB(M("TP_ICM_SAVEREFERENCE_APPLYWB"));
     applyWB.set_tooltip_text(M("TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP"));
-    Gtk::HBox* hbox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* hbox = Gtk::manage(new Gtk::Box());
     hbox->pack_end(applyWB, Gtk::PACK_SHRINK, 2);
     Gtk::Box *box = dialog.get_content_area();
     box->pack_end(*hbox, Gtk::PACK_SHRINK, 2);

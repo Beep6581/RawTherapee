@@ -51,6 +51,9 @@
 
 #include "../rtgui/editcallbacks.h"
 
+#pragma GCC diagnostic warning "-Wextra"
+#pragma GCC diagnostic warning "-Wdouble-promotion"
+
 namespace {
 
 using namespace rtengine;
@@ -2233,36 +2236,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     //  float satLimitOpacity = 1.f-(float(params->colorToning.saturatedOpacity)/100.f);
     float strProtect = pow_F((float (params->colorToning.strength) / 100.f), 0.4f);
 
-    /*
-    // Debug output - Color LUTf points
-    if (ctColorCurve) {
-        printf("\nColor curve:");
-        for (size_t i=0; i<501; i++) {
-            if (i==0 || i==250 || i==500)
-                printf("\n(%.1f)[", float(i)/500.f);
-            printf("%.3f ", ctColorCurve.lutHueCurve[float(i)]);
-            if (i==0 || i==250 || i==500)
-            printf("]\n");
-        }
-        printf("\n");
-    }
-    */
-
-    /*
-    // Debug output - Opacity LUTf points
-    if (ctOpacityCurve) {
-        printf("\nOpacity curve:");
-        for (size_t i=0; i<501; i++) {
-            if (i==0 || i==250 || i==500)
-                printf("\n(%.1f)[", float(i)/500.f);
-            printf("%.3f ", ctOpacityCurve.lutOpacityCurve[float(i)]);
-            if (i==0 || i==250 || i==500)
-            printf("]\n");
-        }
-        printf("\n");
-    }
-    */
-
     float RedLow = params->colorToning.redlow / 100.0;
     float GreenLow = params->colorToning.greenlow / 100.0;
     float BlueLow = params->colorToning.bluelow / 100.0;
@@ -2805,7 +2778,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                     //colortoning with shift color XYZ or Lch
                     else if (params->colorToning.method == "Lab" && opautili) {
-                        int algm = 0;
+                        int algo = 0;
                         bool twocol = true;//true=500 color   false=2 color
                         int metchrom = 0;
 
@@ -2839,19 +2812,19 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         }
 
                         if (params->colorToning.method == "Lab") {
-                            algm = 1;
+                            algo = 1;
                         } else if (params->colorToning.method == "Lch") {
-                            algm = 2;    //in case of
+                            algo = 2;    //in case of
                         }
 
-                        if (algm <= 2) {
+                        if (algo <= 2) {
                             for (int i = istart, ti = 0; i < tH; i++, ti++) {
                                 for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                     float r = rtemp[ti * TS + tj];
                                     float g = gtemp[ti * TS + tj];
                                     float b = btemp[ti * TS + tj];
                                     float ro, go, bo;
-                                    labtoning(r, g, b, ro, go, bo, algm, metchrom, twoc, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, clToningcurve, cl2Toningcurve, iplow, iphigh, wp, wip);
+                                    labtoning(r, g, b, ro, go, bo, algo, metchrom, twoc, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, clToningcurve, cl2Toningcurve, iplow, iphigh, wp, wip);
                                     setUnlessOOG(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], ro, go, bo);
                                 }
                             }
@@ -3466,7 +3439,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
             //colortoning with shift color Lab
             else if (params->colorToning.method == "Lab"  && opautili) {
-                int algm = 0;
+                int algo = 0;
                 bool twocol = true;
                 int metchrom = 0;
 
@@ -3501,12 +3474,12 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 }
 
                 if (params->colorToning.method == "Lab") {
-                    algm = 1;
+                    algo = 1;
                 } else if (params->colorToning.method == "Lch") {
-                    algm = 2;    //in case of
+                    algo = 2;    //in case of
                 }
 
-                if (algm <= 2) {
+                if (algo <= 2) {
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic, 5)
 #endif
@@ -3517,7 +3490,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                             float g = tmpImage->g(i, j);
                             float b = tmpImage->b(i, j);
                             float ro, bo, go;
-                            labtoning(r, g, b, ro, go, bo, algm, metchrom,  twoc, satLimit, satLimitOpacity, ctColorCurve,  ctOpacityCurve, clToningcurve, cl2Toningcurve,  iplow, iphigh,  wp,  wip);
+                            labtoning(r, g, b, ro, go, bo, algo, metchrom,  twoc, satLimit, satLimitOpacity, ctColorCurve,  ctOpacityCurve, clToningcurve, cl2Toningcurve,  iplow, iphigh,  wp,  wip);
                             setUnlessOOG(tmpImage->r(i, j), tmpImage->g(i, j), tmpImage->b(i, j), ro, go, bo);
                         }
                     }
@@ -4329,36 +4302,17 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
     const bool avoidColorShift = (params->labCurve.avoidcolorshift || (params->colorappearance.gamut && params->colorappearance.enabled)) && !bwToning ;
     const float protectRed = (float)settings->protectred;
     const double protectRedH = settings->protectredh;
-    float protect_red, protect_redh;
-    protect_red = protectRed;//default=60  chroma: one can put more or less if necessary...in 'option'  40...160
+    const float protect_red = rtengine::LIM<float>(protectRed, 20.f, 180.f); //default=60  chroma: one can put more or less if necessary...in 'option'  40...160
 
-    if (protect_red < 20.0f) {
-        protect_red = 20.0;    // avoid too low value
-    }
+    // default=0.4 rad : one can put more or less if necessary...in 'option'  0.2 ..1.0
+    // avoid divide by 0 and negatives values
+    // avoid too big values
+    const float protect_redh = rtengine::LIM<float>(protectRedH, 0.1f, 1.f);
 
-    if (protect_red > 180.0f) {
-        protect_red = 180.0;    // avoid too high value
-    }
-
-    protect_redh = float (protectRedH); //default=0.4 rad : one can put more or less if necessary...in 'option'  0.2 ..1.0
-
-    if (protect_redh < 0.1f) {
-        protect_redh = 0.1f;    //avoid divide by 0 and negatives values
-    }
-
-    if (protect_redh > 1.0f) {
-        protect_redh = 1.0f;    //avoid too big values
-    }
-
-    float protect_redhcur = protectRedH;//default=0.4 rad : one can put more or less if necessary...in 'option'  0.2 ..1
-
-    if (protect_redhcur < 0.1f) {
-        protect_redhcur = 0.1f;    //avoid divide by 0 and negatives values:minimal protection for transition
-    }
-
-    if (protect_redhcur > 3.5f) {
-        protect_redhcur = 3.5f;    //avoid too big values
-    }
+    // default=0.4 rad : one can put more or less if necessary...in 'option'  0.2 ..1
+    // avoid divide by 0 and negatives values:minimal protection for transition
+    // avoid too big values
+    const float protect_redhcurg = rtengine::LIM<float>(protectRedH, 0.1f, 3.5f);
 
     //increase saturation after denoise : ...approximation
     float factnoise = 1.f;
@@ -4618,21 +4572,21 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                 }
 
                 if (!bwToning) {
-                    float factorskin, factorsat, factorskinext;
+                    float factorskinc, factorsatc, factorskinextc;
 
                     if (chromapro > 1.f) {
                         float scale = scaleConst;//reduction in normal zone
                         float scaleext = 1.f;//reduction in transition zone
                         Color::scalered(rstprotection, chromapro, 0.0, HH, protect_redh, scale, scaleext);  //1.0
                         float interm = (chromapro - 1.f);
-                        factorskin = 1.f + (interm * scale);
-                        factorskinext = 1.f + (interm * scaleext);
+                        factorskinc = 1.f + (interm * scale);
+                        factorskinextc = 1.f + (interm * scaleext);
                     } else {
-                        factorskin = chromapro ; // +(chromapro)*scale;
-                        factorskinext = chromapro ;// +(chromapro)*scaleext;
+                        factorskinc = chromapro ; // +(chromapro)*scale;
+                        factorskinextc = chromapro ;// +(chromapro)*scaleext;
                     }
 
-                    factorsat = chromapro * factnoise;
+                    factorsatc = chromapro * factnoise;
 
                     //simulate very approximative gamut f(L) : with pyramid transition
                     float dred /*=55.f*/;//C red value limit
@@ -4652,9 +4606,9 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                     // end pyramid
 
                     // Test if chroma is in the normal range first
-                    Color::transitred(HH, Chprov1, dred, factorskin, protect_red, factorskinext, protect_redh, factorsat, factorsat);
-                    atmp *= factorsat;
-                    btmp *= factorsat;
+                    Color::transitred(HH, Chprov1, dred, factorskinc, protect_red, factorskinextc, protect_redh, factorsatc, factorsatc);
+                    atmp *= factorsatc;
+                    btmp *= factorsatc;
 
                     if (editPipette && editID == EUID_Lab_CLCurve) {
                         editWhatever->v(i, j) = LIM01<float> (LL / 100.f);   // Lab C=f(L) pipette
@@ -4793,7 +4747,7 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                     const float xx = 0.25f; //soft : between 0.2 and 0.4
                     float skdeltaHH;
 
-                    skdeltaHH = protect_redhcur; //transition hue
+                    skdeltaHH = protect_redhcurg; //transition hue
 
                     float skbeg = -0.05f; //begin hue skin
                     float skend = 1.60f; //end hue skin
@@ -5194,9 +5148,9 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
     float *L = lab->L[0];
     float *a = lab->a[0];
     float *b = lab->b[0];
-    unsigned int i, N = lab->W * lab->H;
+    std::size_t N = static_cast<size_t>(lab->W) * static_cast<size_t>(lab->H);
     int WW = lab->W ;
-//   int HH = lab->H ;
+
     EdgePreservingDecomposition epd(lab->W, lab->H);
 
     //Due to the taking of logarithms, L must be nonnegative. Further, scale to 0 to 1 using nominal range of L, 0 to 15 bit.
@@ -5206,7 +5160,7 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
 #ifdef _OPENMP
     #pragma omp parallel for reduction(max:maxL) reduction(min:minL) schedule(dynamic,16)
 #endif
-    for (i = 0; i < N; i++) {
+    for (std::size_t i = 0; i < N; i++) {
         minL = rtengine::min(minL, L[i]);
         maxL = rtengine::max(maxL, L[i]);
     }
@@ -5218,14 +5172,14 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
     if (maxL == 0.f) { // avoid division by zero
         maxL = 1.f;
     }
-    
+
+    const float mult = gamm / maxL;
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
-    for (i = 0; i < N; i++)
+    for (std::size_t i = 0; i < N; i++)
     {
-        L[i] = (L[i] - minL) / maxL;
-        L[i] *= gamm;
+        L[i] = (L[i] - minL) * mult;
     }
 
     //Some interpretations.
@@ -5931,7 +5885,7 @@ void ImProcFunctions::colorToningLabGrid(LabImage *lab, int xstart, int xend, in
     float b_base = params->colorToning.labgridBLow / scaling;
 
     #ifdef _OPENMP
-    #pragma omp parallel for if (multiThread)
+    #pragma omp parallel for if (MultiThread)
 #endif
 
     for (int y = ystart; y < yend; ++y) {

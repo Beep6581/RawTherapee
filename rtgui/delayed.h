@@ -80,7 +80,7 @@ public:
     {
     }
 
-    DelayedCall(unsigned int _min_delay_ms, unsigned int _max_delay_ms = 0) :
+    explicit DelayedCall(unsigned int _min_delay_ms, unsigned int _max_delay_ms = 0) :
         DelayedCall({}, _min_delay_ms, _max_delay_ms)
     {
     }
@@ -152,7 +152,7 @@ class DelayedConnection final :
     public rtengine::NonCopyable
 {
 public:
-    DelayedConnection(unsigned int _min_delay_ms, unsigned int _max_delay_ms = 0) :
+    explicit DelayedConnection(unsigned int _min_delay_ms, unsigned int _max_delay_ms = 0) :
         min_delay_ms(_min_delay_ms),
         max_delay_ms(_max_delay_ms)
     {
