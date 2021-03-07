@@ -462,7 +462,7 @@ void Spot::deleteSelectedEntry()
 CursorShape Spot::getCursor (int objectID, int xPos, int yPos) const
 {
     const EditDataProvider* editProvider = getEditProvider();
-    if (editProvider) {
+    if (editProvider && activeSpot > -1) {
         if (draggedSide != DraggedSide::NONE) {
             return CSEmpty;
         }
