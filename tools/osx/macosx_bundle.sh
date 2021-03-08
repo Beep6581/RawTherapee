@@ -272,6 +272,7 @@ ditto "${PROJECT_SOURCE_DATA_DIR}/PkgInfo" "${CONTENTS}"
 install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/Info.plist.in" "${CONTENTS}/Info.plist"
 sed -i.bak "" -e "s|@version@|${PROJECT_FULL_VERSION}|s|@shortVersion@|${PROJECT_VERSION}|s|@arch@|${arch}|" "${CONTENTS}/Info.plist"
 update-mime-database -V  "${RESOURCES}/share/mime"
+ditto "${LOCAL_PREFIX}/share/locale" "${RESOURCES}/share/locale"
 
 msg "Build glib database:"
 mkdir -p ${RESOURCES}/share/glib-2.0
