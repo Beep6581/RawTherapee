@@ -343,7 +343,7 @@ void Options::setDefaults()
     dirBrowserSortType = Gtk::SORT_ASCENDING;
     preferencesWidth = 800;
     preferencesHeight = 600;
-    toolPanelWidth = 465;
+    toolPanelWidth = 460;
     browserToolPanelWidth = 465;
     browserToolPanelHeight = 600;
     browserToolPanelOpened = true;;
@@ -351,7 +351,7 @@ void Options::setDefaults()
     editorFilmStripOpened = true;
     historyPanelWidth = 330;
     fontFamily = "default";
-    fontSize = 10;
+    fontSize = 8;
     CPFontFamily = "default";
     CPFontSize = 8;
     pseudoHiDPISupport = false;
