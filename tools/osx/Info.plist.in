@@ -29,8 +29,6 @@
             <string>similar</string>
             <key>GTK_OVERLAY_SCROLLING</key>
             <string>0</string>
-            <key>GDK_NATIVE_WINDOWS</key>
-            <string>1</string>
         </dict>
         <key>ATSApplicationFontsPath</key>
         <string>etc/fonts</string>
