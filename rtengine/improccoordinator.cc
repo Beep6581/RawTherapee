@@ -1287,6 +1287,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             histCCurve.clear();
             histLCurve.clear();
+            if (params->localContrast.enabled) {
+            // Alberto's local contrast
+                ipf.localContrast(nprevl, nprevl->L, params->localContrast, false, scale);
+            }
             ipf.chromiLuminanceCurve(nullptr, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histLCurve);
             ipf.vibrance(nprevl, params->vibrance, params->toneCurve.hrenabled, params->icm.workingProfile);
             ipf.labColorCorrectionRegions(nprevl);

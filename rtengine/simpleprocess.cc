@@ -1346,6 +1346,10 @@ private:
         bool ccutili, cclutili;
         CurveFactory::complexsgnCurve(autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,
                                       params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 1);
+        if (params.localContrast.enabled) {
+            // Alberto's local contrast
+                ipf.localContrast(labView, labView->L, params.localContrast, false, 1);//scale);
+        }
 
         ipf.chromiLuminanceCurve(nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
