@@ -12256,7 +12256,6 @@ void ImProcFunctions::Lab_Local(
             if (bfw > 65 && bfh > 65) {
                 array2D<float> bufsh(bfw, bfh);
                 JaggedArray<float> bufchrom(bfw, bfh, true);
-                const std::unique_ptr<LabImage> tmp1m(new LabImage(original->W, original->H));
                 const std::unique_ptr<LabImage> loctemp(new LabImage(bfw, bfh));
                 const std::unique_ptr<LabImage> origcbdl(new LabImage(bfw, bfh));
                 std::unique_ptr<LabImage> bufmaskorigcb;
