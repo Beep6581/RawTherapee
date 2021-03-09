@@ -5713,7 +5713,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
     const int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
     const int bfw = xend - xstart;
     const int bfh = yend - ystart;
-    // printf("h=%f l=%f c=%f s=%f\n", hueref, lumaref, chromaref, sobelref);
+//    printf("h=%f l=%f c=%f s=%f\n", hueref, lumaref, chromaref, sobelref);
+//    printf("bfh=%i bfw=%i\n", bfh, bfw);
     const float ach = lp.trans / 100.f;
     float varsens = lp.sensex;
 
@@ -12252,10 +12253,10 @@ void ImProcFunctions::Lab_Local(
             const int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
             int bfh = yend - ystart;
             int bfw = xend - xstart;
-
             if (bfw > 65 && bfh > 65) {
                 array2D<float> bufsh(bfw, bfh);
                 JaggedArray<float> bufchrom(bfw, bfh, true);
+                const std::unique_ptr<LabImage> tmp1m(new LabImage(original->W, original->H));
                 const std::unique_ptr<LabImage> loctemp(new LabImage(bfw, bfh));
                 const std::unique_ptr<LabImage> origcbdl(new LabImage(bfw, bfh));
                 std::unique_ptr<LabImage> bufmaskorigcb;
@@ -12271,9 +12272,9 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-                for (int y = 0; y < bfh; y++) {
-                    for (int x = 0; x < bfw; x++) {
-                        loctemp->L[y][x] = original->L[y + ystart][x + xstart];
+                for (int y = ystart; y < yend; y++) {
+                    for (int x = xstart; x < xend; x++) {
+                        loctemp->L[y - ystart][x - xstart] = original->L[y][x];
                     }
                 }
 
@@ -12360,6 +12361,7 @@ void ImProcFunctions::Lab_Local(
                             bufsh[y - ystart][x - xstart] = origcbdl->L[y - ystart][x - xstart] = original->L[y][x];
                             loctemp->a[y - ystart][x - xstart] = origcbdl->a[y - ystart][x - xstart] = original->a[y][x];
                             loctemp->b[y - ystart][x - xstart] = origcbdl->b[y - ystart][x - xstart] = original->b[y][x];
+                            loctemp->L[y - ystart][x - xstart] = origcbdl->b[y - ystart][x - xstart] = original->L[y][x];
                         }
                     }
 
@@ -12373,6 +12375,7 @@ void ImProcFunctions::Lab_Local(
 
                     ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, lp.clarityml, lp.contresid, skinprot, false, b_l, t_l, t_r, b_r, choice, sk, multiThread);
 
+                    
                     if (lp.softradiuscb > 0.f) {
                         softproc(origcbdl.get(), loctemp.get(), lp.softradiuscb, bfh, bfw, 0.001, 0.00001, 0.5f, sk, multiThread, 1);
                     }
@@ -12385,6 +12388,7 @@ void ImProcFunctions::Lab_Local(
                         bool invmask = false;
                         maskrecov(loctemp.get(), original, bufmaskorigcb.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
                     }
+                    
                 }
 
                 transit_shapedetect(6, loctemp.get(), originalmaskcb.get(), bufchrom, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
@@ -12393,6 +12397,7 @@ void ImProcFunctions::Lab_Local(
 
                 //chroma CBDL begin here
                 if (lp.chromacb > 0.f && !nochroma) {
+
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -12448,14 +12453,15 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     transit_shapedetect(7, loctemp.get(), nullptr, bufchrom, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
-                    bufsh.free();
-
-                    if (lp.recur) {
-                        original->CopyFrom(transformed, multiThread);
-                        float avge;
-                        calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
-                    }
                 }
+                bufsh.free();
+                
+                if (lp.recur) {
+                    original->CopyFrom(transformed, multiThread);
+                    float avge;
+                    calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
+                }
+                
             }
         }
     }

@@ -1285,6 +1285,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         if ((todo & (M_LUMINANCE + M_COLOR)) || (todo & M_AUTOEXP)) {
             nprevl->CopyFrom(oprevl);
 
+            ipf.shadowsHighlights(nprevl, params->sh.enabled, params->sh.lab,params->sh.highlights ,params->sh.shadows, params->sh.radius, scale, params->sh.htonalwidth, params->sh.stonalwidth);
+
             histCCurve.clear();
             histLCurve.clear();
             if (params->localContrast.enabled) {
