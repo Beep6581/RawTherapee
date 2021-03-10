@@ -228,7 +228,7 @@ Glib::ustring MultiLangMgr::getOSUserLanguage ()
 
     langName = localeToLang (localeName);
 
-#elif defined (__linux__) || defined (__APPLE__)
+#elif defined (__linux__)
 
     // Query the current locale and force decimal point to dot.
     const char *locale = getenv("LANG");
@@ -238,6 +238,16 @@ Glib::ustring MultiLangMgr::getOSUserLanguage ()
 
     setlocale (LC_NUMERIC, "C");
 
+#elif defined (__APPLE__)
+
+    int status = std::system("defaults read -g AppleLocale > mylocale");
+    std::ifstream input("mylocale");
+    std::stringstream sstr;
+    while(input >> sstr.rdbuf());
+    std::string locale = sstr.str();
+    langName = localeToLang (locale);
+    setlocale (LC_NUMERIC, "C");
+    
 #endif
 
     return langName;
