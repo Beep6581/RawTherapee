@@ -153,7 +153,7 @@ msg "Copying binary executable files."
 ditto "${CMAKE_BUILD_TYPE}/MacOS" "${MACOS}"
 
 msg "Copying Resources directory."
-cp AboutThisBuild.txt "${RESOURCES}"
+#cp AboutThisBuild.txt "${RESOURCES}"
 ditto "${CMAKE_BUILD_TYPE}/Resources" "${RESOURCES}"
 
 echo "\n--------\n" >> "${RESOURCES}/AboutThisBuild.txt"
@@ -201,11 +201,11 @@ ditto ${LOCAL_PREFIX}/lib/libpng16.16.dylib "${CONTENTS}/Frameworks/libpng16.16.
 ditto ${LOCAL_PREFIX}/lib/libtiff.5.dylib "${CONTENTS}/Frameworks/libtiff.5.dylib"
 
 # Copy the Lensfun database into the app bundle
-mkdir -p "${RESOURCES}/share/lensfun"
-ditto ${LOCAL_PREFIX}/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
+#mkdir -p "${RESOURCES}/share/lensfun"
+#ditto ${LOCAL_PREFIX}/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
 
 # Copy liblensfun to Frameworks
-ditto ${LOCAL_PREFIX}/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks/liblensfun.2.dylib"
+#ditto ${LOCAL_PREFIX}/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks/liblensfun.2.dylib"
 
 # Copy libomp to Frameworks
 ditto ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
@@ -263,14 +263,14 @@ ditto {"${LOCAL_PREFIX}","${RESOURCES}"}/share/mime
 
 msg "Installing required application bundle files:"
 PROJECT_SOURCE_DATA_DIR="${PROJECT_SOURCE_DIR}/tools/osx"
-ditto "${CMAKE_BUILD_TYPE}/Resources" "${RESOURCES}"
+#ditto "${CMAKE_BUILD_TYPE}/Resources" "${RESOURCES}"
 ditto "${PROJECT_SOURCE_DIR}/rtdata/fonts" "${ETC}/fonts"
 
 # App bundle resources
 ditto "${PROJECT_SOURCE_DATA_DIR}/"{rawtherapee,profile}.icns "${RESOURCES}"
 ditto "${PROJECT_SOURCE_DATA_DIR}/PkgInfo" "${CONTENTS}"
 install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/Info.plist.in" "${CONTENTS}/Info.plist"
-sed -i.bak "" -e "s|@version@|${PROJECT_FULL_VERSION}|s|@shortVersion@|${PROJECT_VERSION}|s|@arch@|${arch}|" "${CONTENTS}/Info.plist"
+sed -i "" -e "s|@version@|${PROJECT_FULL_VERSION}|s|@shortVersion@|${PROJECT_VERSION}|s|@arch@|${arch}|" "${CONTENTS}/Info.plist"
 update-mime-database -V  "${RESOURCES}/share/mime"
 ditto "${LOCAL_PREFIX}/share/locale" "${RESOURCES}/share/locale"
 
