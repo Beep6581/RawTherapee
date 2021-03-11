@@ -991,7 +991,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
             }
 
             if (CAMBrightCurveJ.dirty) {
-                Ciecam02::curveJfloat(params->colorappearance.jlight, params->colorappearance.contrast, hist16J, CAMBrightCurveJ); //lightness and contrast J
+                Ciecam02::curveJfloat(params->colorappearance.jlight, params->colorappearance.contrast, 0.6f, hist16J, CAMBrightCurveJ); //lightness and contrast J
                 CAMBrightCurveJ /= 327.68f;
                 CAMBrightCurveJ.dirty = false;
             }
@@ -1003,7 +1003,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
             }
 
             if (CAMBrightCurveQ.dirty) {
-                Ciecam02::curveJfloat(params->colorappearance.qbright, params->colorappearance.qcontrast, hist16Q, CAMBrightCurveQ); //brightness and contrast Q
+                Ciecam02::curveJfloat(params->colorappearance.qbright, params->colorappearance.qcontrast, 0.6f, hist16Q, CAMBrightCurveQ); //brightness and contrast Q
                 //  CAMBrightCurveQ /= coefQ;
                 CAMBrightCurveQ.dirty = false;
             }

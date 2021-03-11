@@ -2482,11 +2482,18 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         const float lightL = 0.4 * params->locallab.spots.at(sp).lightl; //0.4 less effect, no need 1.
         const float contQ = 0.5 * params->locallab.spots.at(sp).contq; //0.5 less effect, no need 1.
         const float lightQ = 0.4 * params->locallab.spots.at(sp).lightq; //0.4 less effect, no need 1.
-   
-        Ciecam02::curveJfloat(lightL, contL, hist16J, CAMBrightCurveJ); //lightness J and contrast J
+        const float contthres = params->locallab.spots.at(sp).contthres;
+        float th = 0.6f;
+        if(contthres < 0.f) {
+            th = 0.19f * contthres + 0.6f;
+        } else {
+            th = 0.3f * contthres + 0.6f;
+        }
+
+        Ciecam02::curveJfloat(lightL, contL, th, hist16J, CAMBrightCurveJ); //lightness J and contrast J
         CAMBrightCurveJ /= 327.68f;
         
-        Ciecam02::curveJfloat(lightQ, contQ, hist16Q, CAMBrightCurveQ); //brightness Q and contrast Q
+        Ciecam02::curveJfloat(lightQ, contQ, th, hist16Q, CAMBrightCurveQ); //brightness Q and contrast Q
     }
     int tempo = 5000;
     if(params->locallab.spots.at(sp).expvibrance && call == 2) {

@@ -48,7 +48,7 @@ void Ciecam02::curvecolorfloat (float satind, float satval, float &sres, float p
     }
 }
 
-void Ciecam02::curveJfloat (float br, float contr, const LUTu & histogram, LUTf & outCurve)
+void Ciecam02::curveJfloat (float br, float contr, float thr, const LUTu & histogram, LUTf & outCurve)
 {
 
     // check if brightness curve is needed
@@ -117,11 +117,11 @@ void Ciecam02::curveJfloat (float br, float contr, const LUTu & histogram, LUTf 
         contrastcurvePoints[1] = 0.f; // black point.  Value in [0 ; 1] range
         contrastcurvePoints[2] = 0.f; // black point.  Value in [0 ; 1] range
 
-        contrastcurvePoints[3] = avg - avg * (0.6f - contr / 250.0f); // toe point
-        contrastcurvePoints[4] = avg - avg * (0.6f + contr / 250.0f); // value at toe point
+        contrastcurvePoints[3] = avg - avg * (thr - contr / 250.0f); // toe point
+        contrastcurvePoints[4] = avg - avg * (thr + contr / 250.0f); // value at toe point
 
-        contrastcurvePoints[5] = avg + (1 - avg) * (0.6f - contr / 250.0f); // shoulder point
-        contrastcurvePoints[6] = avg + (1 - avg) * (0.6f + contr / 250.0f); // value at shoulder point
+        contrastcurvePoints[5] = avg + (1 - avg) * (thr - contr / 250.0f); // shoulder point
+        contrastcurvePoints[6] = avg + (1 - avg) * (thr + contr / 250.0f); // value at shoulder point
 
         contrastcurvePoints[7] = 1.f; // white point
         contrastcurvePoints[8] = 1.f; // value at white point

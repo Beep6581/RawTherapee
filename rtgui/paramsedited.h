@@ -900,6 +900,7 @@ public:
         bool lightl;
         bool lightq;
         bool contl;
+        bool contthres;
         bool contq;
         bool colorfl;
         bool LcurveL;
