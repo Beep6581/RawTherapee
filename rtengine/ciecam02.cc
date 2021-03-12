@@ -97,7 +97,6 @@ void Ciecam02::curveJfloat (float br, float contr, float thr, const LUTu & histo
         outCurve.makeIdentity (32767.f);
     }
 
-
     if (contr > 0.00001f || contr < -0.00001f) {
 
         // compute mean luminance of the image with the curve applied
@@ -110,6 +109,9 @@ void Ciecam02::curveJfloat (float br, float contr, float thr, const LUTu & histo
         }
 
         avg /= sum;
+        float thrmin = (thr - contr / 250.0f);
+        float thrmax = (thr + contr / 250.0f);
+        
         std::vector<double> contrastcurvePoints (9);
 
         contrastcurvePoints[0] = double (DCT_NURBS);
@@ -117,11 +119,11 @@ void Ciecam02::curveJfloat (float br, float contr, float thr, const LUTu & histo
         contrastcurvePoints[1] = 0.f; // black point.  Value in [0 ; 1] range
         contrastcurvePoints[2] = 0.f; // black point.  Value in [0 ; 1] range
 
-        contrastcurvePoints[3] = avg - avg * (thr - contr / 250.0f); // toe point
-        contrastcurvePoints[4] = avg - avg * (thr + contr / 250.0f); // value at toe point
+        contrastcurvePoints[3] = avg - avg * thrmin; // toe point
+        contrastcurvePoints[4] = avg - avg * thrmax;// value at toe point
 
-        contrastcurvePoints[5] = avg + (1 - avg) * (thr - contr / 250.0f); // shoulder point
-        contrastcurvePoints[6] = avg + (1 - avg) * (thr + contr / 250.0f); // value at shoulder point
+        contrastcurvePoints[5] = avg + (1.f - avg) * thrmin; // shoulder point
+        contrastcurvePoints[6] = avg + (1.f - avg) * thrmax; // value at shoulder point
 
         contrastcurvePoints[7] = 1.f; // white point
         contrastcurvePoints[8] = 1.f; // value at white point

@@ -2793,9 +2793,10 @@ TP_LOCALLAB_LOGCOLORFL;Colorfulness (M)
 TP_LOCALLAB_LOGCOLORF_TOOLTIP;Perceived amount of hue in relation to gray.\nIndicator that a stimulus appears more or less colored.
 TP_LOCALLAB_LOGCONQL;Contrast (Q)
 TP_LOCALLAB_LOGCONTL;Contrast (J)
-TP_LOCALLAB_LOGCONTHRES;Threshold Contrast (J & Q)
+TP_LOCALLAB_LOGCONTHRES;Contrast threshold (J & Q)
 TP_LOCALLAB_LOGCONTL_TOOLTIP;Contrast (J) in CIECAM16 takes into account the increase in perceived coloration with luminance.
 TP_LOCALLAB_LOGCONTQ_TOOLTIP;Contrast (Q) in CIECAM16 takes into account the increase in perceived coloration with brightness.
+TP_LOCALLAB_LOGCONTTHRES_TOOLTIP;Adjusts the mid-tone contrast range (J & Q)
 TP_LOCALLAB_LOGDETAIL_TOOLTIP;Acts mainly on high frequencies.
 TP_LOCALLAB_LOGENCOD_TOOLTIP;Tone Mapping with Logarithmic encoding (ACES).\nUseful for underexposed images or images with high dynamic range.\n\nTwo-step process : 1) Dynamic Range calculation 2) Manual adjustment
 TP_LOCALLAB_LOGEXP;All tools

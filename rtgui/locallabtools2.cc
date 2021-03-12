@@ -5423,6 +5423,7 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         anglog->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
         contl->set_tooltip_text(M("TP_LOCALLAB_LOGCONTL_TOOLTIP"));
         contq->set_tooltip_text(M("TP_LOCALLAB_LOGCONTQ_TOOLTIP"));
+        contthres->set_tooltip_text(M("TP_LOCALLAB_LOGCONTTHRES_TOOLTIP"));
         colorfl->set_tooltip_text(M("TP_LOCALLAB_LOGCOLORF_TOOLTIP"));
         lightl->set_tooltip_text(M("TP_LOCALLAB_LOGLIGHTL_TOOLTIP"));        
         lightq->set_tooltip_text(M("TP_LOCALLAB_LOGLIGHTQ_TOOLTIP"));        
@@ -5473,6 +5474,7 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         lightl->set_tooltip_text("");
         lightq->set_tooltip_text("");
         contq->set_tooltip_text("");
+        contthres->set_tooltip_text("");
         colorfl->set_tooltip_text("");
         saturl->set_tooltip_text("");
         catad->set_tooltip_text("");
