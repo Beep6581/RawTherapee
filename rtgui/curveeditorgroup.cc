@@ -34,7 +34,7 @@ CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring group
 {
 
     // We set the label to the one provided as parameter, even if it's an empty string
-    curveGroupLabel = Gtk::manage (new Gtk::Label (groupLabel + ":", Gtk::ALIGN_START));
+    curveGroupLabel = Gtk::manage (new Gtk::Label (groupLabel, Gtk::ALIGN_START));
     setExpandAlignProperties(curveGroupLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     set_row_spacing(RTScalable::getScale());
 }
