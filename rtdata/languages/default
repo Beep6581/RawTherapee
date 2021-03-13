@@ -1965,8 +1965,8 @@ TP_BWMIX_AUTOCH;Auto
 TP_BWMIX_CC_ENABLED;Adjust complementary color
 TP_BWMIX_CC_TOOLTIP;Enable to allow automatic adjustment of complementary colors in ROYGCBPM mode.
 TP_BWMIX_CHANNEL;Luminance equalizer
-TP_BWMIX_CURVEEDITOR1;'Before' curve
-TP_BWMIX_CURVEEDITOR2;'After' curve
+TP_BWMIX_CURVEEDITOR1;'Before' curve:
+TP_BWMIX_CURVEEDITOR2;'After' curve:
 TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tone curve, after B&amp;W conversion, at the end of treatment.
 TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tone curve, just before B&amp;W conversion.\nMay take into account the color components.
 TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Luminance according to hue L=f(H).\nPay attention to extreme values as they may cause artifacts.
@@ -2059,9 +2059,9 @@ TP_COLORAPP_CONTRAST;Contrast (J)
 TP_COLORAPP_CONTRAST_Q;Contrast (Q)
 TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast (Q) in CIECAM02/16 is based on brightness, differs from L*a*b* and RGB contrast.
 TP_COLORAPP_CONTRAST_TOOLTIP;Contrast (J) in CIECAM02/16 is based on lightness, differs from L*a*b* and RGB contrast.
-TP_COLORAPP_CURVEEDITOR1;Tone curve 1
+TP_COLORAPP_CURVEEDITOR1;Tone curve 1:
 TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L* (L*a*b*) before CIECAM02/16.\nIf the "CIECAM02/16 output histograms in curves" checkbox is enabled, shows the histogram of J or Q after CIECAM02/16.\n\nJ and Q are not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel.
-TP_COLORAPP_CURVEEDITOR2;Tone curve 2
+TP_COLORAPP_CURVEEDITOR2;Tone curve 2:
 TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the second exposure tone curve.
 TP_COLORAPP_CURVEEDITOR3;Color curve
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM02/16.\nIf the "CIECAM02/16 output histograms in curves" checkbox is enabled, shows the histogram of C, S or M after CIECAM02/16.\n\nC, S and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
@@ -2307,8 +2307,8 @@ TP_EXPOSURE_COMPRHIGHLIGHTS;Highlight compression
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Highlight compression threshold
 TP_EXPOSURE_COMPRSHADOWS;Shadow compression
 TP_EXPOSURE_CONTRAST;Contrast
-TP_EXPOSURE_CURVEEDITOR1;Tone curve 1
-TP_EXPOSURE_CURVEEDITOR2;Tone curve 2
+TP_EXPOSURE_CURVEEDITOR1;Tone curve 1:
+TP_EXPOSURE_CURVEEDITOR2;Tone curve 2:
 TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Please refer to the "Exposure > Tone Curves" RawPedia article to learn how to achieve the best results by using two tone curves.
 TP_EXPOSURE_EXPCOMP;Exposure compensation
 TP_EXPOSURE_HISTMATCHING;Auto-Matched Tone Curve
@@ -2376,7 +2376,7 @@ TP_HLREC_ENA_TOOLTIP;Could be activated by Auto Levels.
 TP_HLREC_LABEL;Highlight reconstruction
 TP_HLREC_LUMINANCE;Luminance Recovery
 TP_HLREC_METHOD;Method:
-TP_HSVEQUALIZER_CHANNEL;Channel
+TP_HSVEQUALIZER_CHANNEL;Channel:
 TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;HSV Equalizer
 TP_HSVEQUALIZER_SAT;S
@@ -2540,7 +2540,7 @@ TP_LOCALLAB_CBDL_THRES_TOOLTIP;Prevents the sharpening of noise
 TP_LOCALLAB_CBDL_TOOLNAME;Contrast by Detail Levels - 2
 TP_LOCALLAB_CENTER_X;Center X
 TP_LOCALLAB_CENTER_Y;Center Y
-TP_LOCALLAB_CH;Curves CL - LC
+TP_LOCALLAB_CH;Curves CL - LC:
 TP_LOCALLAB_CHROMA;Chrominance
 TP_LOCALLAB_CHROMABLU;Chroma levels
 TP_LOCALLAB_CHROMABLU_TOOLTIP;Increases or reduces the effect depending on the luma settings.\nValues under 1 reduce the effect. Values greater than 1 increase the effect.
@@ -2735,7 +2735,7 @@ TP_LOCALLAB_GUIDFILTER_TOOLTIP;Can reduce or increase artifacts.
 TP_LOCALLAB_GUIDSTRBL_TOOLTIP;Intensity of the guided filter
 TP_LOCALLAB_HHMASK_TOOLTIP;Fine hue adjustments for example for the skin.
 TP_LOCALLAB_HIGHMASKCOL;Highlights
-TP_LOCALLAB_HLH;Curves H
+TP_LOCALLAB_HLH;Curves H:
 TP_LOCALLAB_IND;Independent (mouse)
 TP_LOCALLAB_INDSL;Independent (mouse + sliders)
 TP_LOCALLAB_INVBL;Inverse
@@ -2815,7 +2815,7 @@ TP_LOCALLAB_LOGSURSOUR_TOOLTIP;Changes tones and colors to take into account the
 TP_LOCALLAB_LOGTARGGREY_TOOLTIP;You can adjust this value to suit.
 TP_LOCALLAB_LOGVIEWING_TOOLTIP;Corresponds to the medium on which the final image will be viewed (monitor, TV, projector, printer,..), as well as its environment.
 TP_LOCALLAB_LOG_TOOLNAME;Log Encoding - 0
-TP_LOCALLAB_LUM;Curves LL - CC
+TP_LOCALLAB_LUM;Curves LL - CC:
 TP_LOCALLAB_LUMADARKEST;Darkest
 TP_LOCALLAB_LUMASK;Background color for luminance mask
 TP_LOCALLAB_LUMASK_TOOLTIP;Adjusts the shade of gray or color of the mask background in Show Mask (Mask and modifications)
@@ -2825,7 +2825,7 @@ TP_LOCALLAB_LUMONLY;Luminance only
 TP_LOCALLAB_MASFRAME;Mask and Merge
 TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTakes into account the deltaE image to avoid modifying the selection area when the following Mask Tools are used: Gamma , Slope , Chroma, Contrast curve , Local contrast (by wavelet level), Blur Mask and Structure Mask (if enabled ) .\nDisabled when Inverse mode is used
 TP_LOCALLAB_MASK;Curves
-TP_LOCALLAB_MASK2;Contrast curve
+TP_LOCALLAB_MASK2;Contrast curve:
 TP_LOCALLAB_MASKCOL; 
 TP_LOCALLAB_MASKCOM;Common Color Mask
 TP_LOCALLAB_MASKCOM_TOOLNAME;Common Color Mask  - 13
@@ -3204,7 +3204,7 @@ TP_LOCALLAB_WAVHIGH;Ψ Wavelet high
 TP_LOCALLAB_WAVHUE_TOOLTIP;Allows you to reduce or increase the denoise based on hue.
 TP_LOCALLAB_WAVLEV;Blur by level
 TP_LOCALLAB_WAVLOW;Ψ Wavelet low
-TP_LOCALLAB_WAVMASK;Ψ Local contrast (by Ψ level)
+TP_LOCALLAB_WAVMASK;Ψ Local contrast (by Ψ level):
 TP_LOCALLAB_WAVMASK_TOOLTIP;Uses wavelets to modify the local contrast of the mask and reinforce or reduce the structure (skin, buildings...)
 TP_LOCALLAB_WAVMED;Ψ Wavelet normal
 TP_LOCALLAB_WEDIANHI;Median Hi
@@ -3458,7 +3458,7 @@ TP_RETINEX_VIEW_TRAN;Transmission - Auto
 TP_RETINEX_VIEW_TRAN2;Transmission - Fixed
 TP_RETINEX_VIEW_UNSHARP;Unsharp mask
 TP_RGBCURVES_BLUE;B
-TP_RGBCURVES_CHANNEL;Channel
+TP_RGBCURVES_CHANNEL;Channel:
 TP_RGBCURVES_GREEN;G
 TP_RGBCURVES_LABEL;RGB Curves
 TP_RGBCURVES_LUMAMODE;Luminosity mode
@@ -3510,7 +3510,7 @@ TP_TM_FATTAL_LABEL;Dynamic Range Compression
 TP_TM_FATTAL_THRESHOLD;Detail
 TP_VIBRANCE_AVOIDCOLORSHIFT;Avoid color shift
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
-TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin-tones
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Skin-tones:
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Red/Purple
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;Red
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;Red/Yellow
