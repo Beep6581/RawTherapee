@@ -2773,7 +2773,7 @@ TP_LOCALLAB_LIST_TOOLTIP;You can select 3 levels of complexity for each tool: Ba
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Allows you to decrease or increase the effect on particular levels of detail in the mask by targeting certain luminance zones (in general the lightest).
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Allows you to freely change the contrast of the mask.\n Has a similar function to the Gamma and Slope sliders.\n It allows you to target certain parts of the image (usually the lightest parts of the mask by using the curve to exclude the darker parts). May create artifacts.
 TP_LOCALLAB_LOCCONT;Unsharp Mask
-TP_LOCALLAB_LOC_CONTRAST;Local Contrast & Wavelets
+TP_LOCALLAB_LOC_CONTRAST;Local Contrast-Wavelets
 TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramid 1:
 TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramid 2:
 TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by level - TM - Directional contrast
