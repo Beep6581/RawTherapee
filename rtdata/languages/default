@@ -2063,7 +2063,7 @@ TP_COLORAPP_CURVEEDITOR1;Tone curve 1:
 TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L* (L*a*b*) before CIECAM02/16.\nIf the "CIECAM02/16 output histograms in curves" checkbox is enabled, shows the histogram of J or Q after CIECAM02/16.\n\nJ and Q are not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel.
 TP_COLORAPP_CURVEEDITOR2;Tone curve 2:
 TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the second exposure tone curve.
-TP_COLORAPP_CURVEEDITOR3;Color curve
+TP_COLORAPP_CURVEEDITOR3;Color curve:
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM02/16.\nIf the "CIECAM02/16 output histograms in curves" checkbox is enabled, shows the histogram of C, S or M after CIECAM02/16.\n\nC, S and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
 TP_COLORAPP_DATACIE;CIECAM02/16 output histograms in curves
 TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02/16 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02/16 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02/16 curves show L*a*b* values before CIECAM02/16 adjustments.
@@ -2138,7 +2138,7 @@ TP_COLORTONING_AUTOSAT;Automatic
 TP_COLORTONING_BALANCE;Balance
 TP_COLORTONING_BY;o C/L
 TP_COLORTONING_CHROMAC;Opacity
-TP_COLORTONING_COLOR;Color
+TP_COLORTONING_COLOR;Color:
 TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Chroma opacity as a function of luminance oC=f(L)
 TP_COLORTONING_HIGHLIGHT;Highlights
 TP_COLORTONING_HUE;Hue
@@ -2173,7 +2173,7 @@ TP_COLORTONING_METHOD_TOOLTIP;"L*a*b* blending", "RGB sliders" and "RGB curves" 
 TP_COLORTONING_MIDTONES;Midtones
 TP_COLORTONING_NEUTRAL;Reset sliders
 TP_COLORTONING_NEUTRAL_TIP;Reset all values (Shadows, Midtones, Highlights) to default.
-TP_COLORTONING_OPACITY;Opacity
+TP_COLORTONING_OPACITY;Opacity:
 TP_COLORTONING_RGBCURVES;RGB - Curves
 TP_COLORTONING_RGBSLIDERS;RGB - Sliders
 TP_COLORTONING_SA;Saturation Protection
@@ -3392,7 +3392,7 @@ TP_RETINEX_EQUAL;Equalizer
 TP_RETINEX_FREEGAMMA;Free gamma
 TP_RETINEX_GAIN;Gain
 TP_RETINEX_GAINOFFS;Gain and Offset (brightness)
-TP_RETINEX_GAINTRANSMISSION;Gain transmission
+TP_RETINEX_GAINTRANSMISSION;Gain transmission:
 TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Increase or reduce the transmission map to achieve the desired luminance. The x-axis is the transmission. The y-axis is the gain.
 TP_RETINEX_GAMMA;Gamma
 TP_RETINEX_GAMMA_FREE;Free
@@ -3445,7 +3445,7 @@ TP_RETINEX_TLABEL;TM Datas Min=%1 Max=%2 Mean=%3 Sigma=%4
 TP_RETINEX_TLABEL2;TM Effective Tm=%1 TM=%2
 TP_RETINEX_TLABEL_TOOLTIP;ransmission map result.\nMin and Max are used by Variance.\nTm=Min TM=Max of Transmission Map.\nYou can normalize the results with the threshold slider.
 TP_RETINEX_TRANF;Transmission
-TP_RETINEX_TRANSMISSION;Transmission map 
+TP_RETINEX_TRANSMISSION;Transmission map: 
 TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positives values (max).\nOrdinate: amplification or reduction.
 TP_RETINEX_UNIFORM;Uniform
 TP_RETINEX_VARIANCE;Contrast
@@ -3563,7 +3563,7 @@ TP_WAVELET_BLURFRAME;Blur
 TP_WAVELET_BLUWAV;Attenuation response
 TP_WAVELET_CBENAB;Toning and Color balance
 TP_WAVELET_CB_TOOLTIP;With high values you can create special effects, similar to those achieved with the Chroma Module, but focused on the residual image\nWith moderate values you can manually correct the white balance
-TP_WAVELET_CCURVE;Local contrast
+TP_WAVELET_CCURVE;Local contrast:
 TP_WAVELET_CH1;Whole chroma range
 TP_WAVELET_CH2;Saturated/pastel
 TP_WAVELET_CH3;Link contrast levels
@@ -3590,7 +3590,7 @@ TP_WAVELET_COMPLEXLAB;Complexity
 TP_WAVELET_COMPLEX_TOOLTIP;Standard: shows a reduced set of tools suitable for most processing operations.\nAdvanced: shows the complete set of tools for advanced processing operations
 TP_WAVELET_COMPNORMAL;Standard
 TP_WAVELET_COMPTM;Tone mapping
-TP_WAVELET_CONTEDIT;'After' contrast curve
+TP_WAVELET_CONTEDIT;'After' contrast curve:
 TP_WAVELET_CONTFRAME;Contrast - Compression
 TP_WAVELET_CONTR;Gamut
 TP_WAVELET_CONTRA;Contrast
@@ -3630,7 +3630,7 @@ TP_WAVELET_DENLH;Guided threshold by detail levels 1-4
 TP_WAVELET_DENLOCAL_TOOLTIP;Use a curve in order to guide the denoising according to the local contrast.\nThe areas are denoised, the structures are maintained
 TP_WAVELET_DENMIX_TOOLTIP;Balances the action of the guide taking into account the original image and the denoised image
 TP_WAVELET_DENOISE;Guide curve based on Local contrast
-TP_WAVELET_DENOISEGUID;Guided threshold based on hue
+TP_WAVELET_DENOISEGUID;Guided threshold based on hue:
 TP_WAVELET_DENOISEH;High levels Curve Local contrast
 TP_WAVELET_DENOISEHUE;Denoise hue equalizer
 TP_WAVELET_DENQUA;Mode
@@ -3729,7 +3729,7 @@ TP_WAVELET_OFFSET_TOOLTIP;Offset modifies the balance between low contrast and h
 TP_WAVELET_OLDSH;Algorithm using negatives values
 TP_WAVELET_OPACITY;Opacity blue-yellow
 TP_WAVELET_OPACITYW;Contrast balance d/v-h curve
-TP_WAVELET_OPACITYWL;Local contrast
+TP_WAVELET_OPACITYWL;Local contrast:
 TP_WAVELET_OPACITYWL_TOOLTIP;Modify the final local contrast at the end of the wavelet treatment.\n\nThe left side represents the smallest local contrast, progressing to the largest local contrast on the right.
 TP_WAVELET_PASTEL;Pastel chroma
 TP_WAVELET_PROC;Process
