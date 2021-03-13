@@ -3590,7 +3590,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     }
 
   //  shadowsHighlights(lab);
-    shadowsHighlights(lab, params->sh.enabled, params->sh.lab,params->sh.highlights ,params->sh.shadows, params->sh.radius, scale, params->sh.htonalwidth, params->sh.stonalwidth);
+ //   shadowsHighlights(lab, params->sh.enabled, params->sh.lab,params->sh.highlights ,params->sh.shadows, params->sh.radius, scale, params->sh.htonalwidth, params->sh.stonalwidth);
 /*
     if (params->localContrast.enabled) {
         // Alberto's local contrast
