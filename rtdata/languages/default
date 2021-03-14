@@ -2222,7 +2222,7 @@ TP_DEHAZE_STRENGTH;Strength
 TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zones
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatic global
 TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Chrominance - Blue-Yellow
-TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Chrominance curve
+TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Chrominance curve:
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
 TP_DIRPYRDENOISE_CHROMINANCE_FRAME;Chrominance
 TP_DIRPYRDENOISE_CHROMINANCE_MANUAL;Manual
@@ -2240,7 +2240,7 @@ TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;Tile size=%1, Center: Tx=%2  Ty=%3
 TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Chrominance - Red-Green
 TP_DIRPYRDENOISE_LABEL;Noise Reduction
 TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Luminance control
-TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminance curve
+TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminance curve:
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Detail recovery
 TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminance
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminance
@@ -2555,7 +2555,7 @@ TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM color appearanc
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Contains the references of the RT-spot, useful for shape detection (hue, luma, chroma, Sobel).\nLow values may be useful for treating foliage.\nHigh values may be useful for treating skin
 TP_LOCALLAB_CLARICRES;Merge chroma
-TP_LOCALLAB_CLARIFRA;Clarity & Sharp mask - Blend & Soften Images 
+TP_LOCALLAB_CLARIFRA;Clarity & Sharp mask/Blend & Soften Images 
 TP_LOCALLAB_CLARILRES;Merge luma
 TP_LOCALLAB_CLARISOFT;Soft radius
 TP_LOCALLAB_CLARISOFT_TOOLTIP;The "Soft radius" slider (guided filter algorithm) reduces halos and irregularities for both Clarity and Sharp Mask and for all pyramid wavelet processes. To deactivate, set slider to zero.
@@ -2773,11 +2773,11 @@ TP_LOCALLAB_LIST_TOOLTIP;You can select 3 levels of complexity for each tool: Ba
 TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Allows you to decrease or increase the effect on particular levels of detail in the mask by targeting certain luminance zones (in general the lightest).
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Allows you to freely change the contrast of the mask.\n Has a similar function to the Gamma and Slope sliders.\n It allows you to target certain parts of the image (usually the lightest parts of the mask by using the curve to exclude the darker parts). May create artifacts.
 TP_LOCALLAB_LOCCONT;Unsharp Mask
-TP_LOCALLAB_LOC_CONTRAST;Local Contrast-Wavelets
+TP_LOCALLAB_LOC_CONTRAST;Local Contrast & Wavelets
 TP_LOCALLAB_LOC_CONTRASTPYR;Pyramid 1:
 TP_LOCALLAB_LOC_CONTRASTPYR2;Pyramid 2:
-TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by level - TM - Directional contrast
-TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter - Edge Sharpness - Blur
+TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by level/TM/Directional contrast
+TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter/Edge Sharpness/Blur
 TP_LOCALLAB_LOC_RESIDPYR;Residual image (Main)
 TP_LOCALLAB_LOG;Log Encoding
 TP_LOCALLAB_LOG1FRA;Image Adjustments
@@ -3032,7 +3032,7 @@ TP_LOCALLAB_SH1;Shadows Highlights
 TP_LOCALLAB_SH2;Equalizer
 TP_LOCALLAB_SHADEX;Shadows
 TP_LOCALLAB_SHADEXCOMP;Shadow compression & tonal width
-TP_LOCALLAB_SHADHIGH;Shadows/Highlights-Equalizer
+TP_LOCALLAB_SHADHIGH;Shadows/Highlights&Equalizer
 TP_LOCALLAB_SHADHMASK_TOOLTIP;Lowers the highlights of the mask in the same way as the shadows/highlights algorithm
 TP_LOCALLAB_SHADMASK_TOOLTIP;Lifts the shadows of the mask in the same way as the shadows/highlights algorithm
 TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Adjust shadows and highlights either with shadows & highlights sliders or with a tone equalizer.\nCan be used instead of, or in conjunction with the Exposure module.\nCan also be used as a graduated filter.
@@ -3148,8 +3148,8 @@ TP_LOCALLAB_TRANSITVALUE;Transition value
 TP_LOCALLAB_TRANSITWEAK;Transition decay (linear-log)
 TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Adjust transition decay function: 1 linear , 2 parabolic, 3 cubic up to ^25.\nCan be used in conjunction with very low transition values to reduce defects (CBDL, Wavelets, Color & Light)
 TP_LOCALLAB_TRANSIT_TOOLTIP;Adjust smoothness of transition between affected and unaffected areas as a percentage of the "radius" 
-TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
-TP_LOCALLAB_TRANSMISSIONMAP;Transmission map
+TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain:
+TP_LOCALLAB_TRANSMISSIONMAP;Transmission map:
 TP_LOCALLAB_TRANSMISSION_TOOLTIP;Transmission according to transmission.\nAbscissa: transmission from negative values (min), mean, and positive values (max).\nOrdinate: amplification or reduction.\nYou can adjust this curve to change the Transmission and reduce artifacts
 TP_LOCALLAB_USEMASK;Laplacian
 TP_LOCALLAB_VART;Variance (contrast)
@@ -3202,7 +3202,7 @@ TP_LOCALLAB_WAVEMASK_LEVEL_TOOLTIP;Range of wavelet levels used in “Local cont
 TP_LOCALLAB_WAVGRAD_TOOLTIP;Allows the local contrast to be varied according to a chosen gradient and angle.  The variation of the luminance signal is taken into account and not the luminance.
 TP_LOCALLAB_WAVHIGH;Wavelet high
 TP_LOCALLAB_WAVHUE_TOOLTIP;Allows you to reduce or increase the denoise based on hue.
-TP_LOCALLAB_WAVLEV;Blur by level
+TP_LOCALLAB_WAVLEV;Blur by level:
 TP_LOCALLAB_WAVLOW;Wavelet low
 TP_LOCALLAB_WAVMASK;Local contrast (by level):
 TP_LOCALLAB_WAVMASK_TOOLTIP;Uses wavelets to modify the local contrast of the mask and reinforce or reduce the structure (skin, buildings...)
@@ -3381,7 +3381,7 @@ TP_RESIZE_W;Width:
 TP_RESIZE_WIDTH;Width
 TP_RETINEX_CONTEDIT_HSL;HSL histogram
 TP_RETINEX_CONTEDIT_LAB;L*a*b* histogram
-TP_RETINEX_CONTEDIT_LH;Hue
+TP_RETINEX_CONTEDIT_LH;Hue:
 TP_RETINEX_CONTEDIT_MAP;Equalizer
 TP_RETINEX_CURVEEDITOR_CD;L=f(L)
 TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminance according to luminance L=f(L)\nCorrect raw data to reduce halos and artifacts.
@@ -3552,7 +3552,7 @@ TP_WAVELET_BACUR;Curve
 TP_WAVELET_BALANCE;Contrast balance d/v-h
 TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the wavelet directions: vertical-horizontal and diagonal.\nIf contrast, chroma or residual tone mapping are activated, the effect due to balance is amplified.
 TP_WAVELET_BALCHRO;Chroma balance
-TP_WAVELET_BALCHROM;Denoise equalizer  Blue-Yellow/Red-Green
+TP_WAVELET_BALCHROM;Denoise equalizer  B-Y/R-G
 TP_WAVELET_BALCHRO_TOOLTIP;If enabled, the 'Contrast balance' curve or slider also modifies chroma balance.
 TP_WAVELET_BALLUM;Denoise equalizer  White-Black
 TP_WAVELET_BANONE;None
@@ -3712,10 +3712,10 @@ TP_WAVELET_MEDILEV;Edge detection
 TP_WAVELET_MEDILEV_TOOLTIP;When you enable Edge Detection, it is recommanded:\n- to disabled low contrast levels to avoid artifacts,\n- to use high values of gradient sensitivity.\n\nYou can modulate the strength with 'refine' from Denoise and Refine.
 TP_WAVELET_MERGEC;Merge chroma
 TP_WAVELET_MERGEL;Merge luma
-TP_WAVELET_MIXCONTRAST;Reference local contrast
+TP_WAVELET_MIXCONTRAST;Ref. local contrast
 TP_WAVELET_MIXDENOISE;Denoise
-TP_WAVELET_MIXMIX;Mixed 50% noise - 50% denoise
-TP_WAVELET_MIXMIX70;Mixed 30% noise - 70% denoise
+TP_WAVELET_MIXMIX;Mixed 50%noise-50%denoise
+TP_WAVELET_MIXMIX70;Mixed 30%noise-70%denoise
 TP_WAVELET_MIXNOISE;Noise
 TP_WAVELET_NEUTRAL;Neutral
 TP_WAVELET_NOIS;Denoise
