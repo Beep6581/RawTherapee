@@ -2587,8 +2587,8 @@ TP_LOCALLAB_CONTRESID;Contrast
 TP_LOCALLAB_CONTTHMASK_TOOLTIP;Allows you to determine which parts of the image will be impacted based on the texture.
 TP_LOCALLAB_CONTTHR;Contrast Threshold
 TP_LOCALLAB_CONTWFRA;Local contrast
-TP_LOCALLAB_CSTHRESHOLD;Ψ Wavelet levels 
-TP_LOCALLAB_CSTHRESHOLDBLUR;Ψ Wavelet level selection
+TP_LOCALLAB_CSTHRESHOLD;Wavelet levels 
+TP_LOCALLAB_CSTHRESHOLDBLUR;Wavelet level selection
 TP_LOCALLAB_CURV;Lightness - Contrast - Chrominance "Super"
 TP_LOCALLAB_CURVCURR;Normal
 TP_LOCALLAB_CURVEEDITORM_CC_TOOLTIP;If curves at the top, mask is completely black no transformation is made by the mask on the image.\nAs you go down the curve, the mask gradually more colorful and brilliant, the image is changing more and more.\n\nThe gray transition line which represents the references (chroma, luma, hue).\nYou can choose or not to position the top of the curves on this transition.
@@ -2627,7 +2627,7 @@ TP_LOCALLAB_DEPTH;Depth
 TP_LOCALLAB_DETAIL;Local contrast
 TP_LOCALLAB_DETAILFRA;Edge detection - DCT
 TP_LOCALLAB_DETAILSH;Details
-TP_LOCALLAB_DETAILTHR;Luminance-chroma detail threshold
+TP_LOCALLAB_DETAILTHR;Luma-chroma detail threshold
 TP_LOCALLAB_DIVGR;Gamma
 TP_LOCALLAB_DUPLSPOTNAME;Copy
 TP_LOCALLAB_EDGFRA;Edge sharpness
@@ -2691,7 +2691,7 @@ TP_LOCALLAB_FATLEVEL;Sigma
 TP_LOCALLAB_FATRES;Amount Residual Image
 TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask ƒ
 TP_LOCALLAB_FEATH_TOOLTIP;Gradient width as a percentage of the Spot diagonal\nUsed by all graduated filters in all tools.\nNo action if a graduated filter hasn’t been activated.
-TP_LOCALLAB_FEATVALUE;Feather gradient (Graduated Filters)
+TP_LOCALLAB_FEATVALUE;Feather gradient (Grad. Filters)
 TP_LOCALLAB_FFTCOL_MASK;FFTW ƒ
 TP_LOCALLAB_FFTMASK_TOOLTIP;Use a Fourier transform for better quality (increased processing time and memory requirements)
 TP_LOCALLAB_FFTW;ƒ - Use Fast Fourier Transform
@@ -2761,7 +2761,7 @@ TP_LOCALLAB_LAP_MASK_TOOLTIP;Solve PDE for all Laplacian masks.\nIf enabled Lapl
 TP_LOCALLAB_LC_FFTW_TOOLTIP;FFT improves quality and allows the use of large radii, but increases processing time (depends on the area to be processed). Preferable to use only for large radii. The size of the area can be reduced by a few pixels to optimize the FFTW. This can reduce the processing time by a factor of 1.5 to 10.
 TP_LOCALLAB_LC_TOOLNAME;Local Contrast & Wavelets - 7
 TP_LOCALLAB_LEVELBLUR;Maximum blur levels
-TP_LOCALLAB_LEVELWAV;Ψ Wavelet levels
+TP_LOCALLAB_LEVELWAV;Wavelet levels
 TP_LOCALLAB_LEVELWAV_TOOLTIP;The Level is automatically adapted to the size of the spot and the preview.\nFrom level 9 size max 512 to level 1 size max = 4
 TP_LOCALLAB_LEVFRA;Levels
 TP_LOCALLAB_LIGHTNESS;Lightness
@@ -2774,8 +2774,8 @@ TP_LOCALLAB_LMASK_LEVEL_TOOLTIP;Allows you to decrease or increase the effect on
 TP_LOCALLAB_LMASK_LL_TOOLTIP;Allows you to freely change the contrast of the mask.\n Has a similar function to the Gamma and Slope sliders.\n It allows you to target certain parts of the image (usually the lightest parts of the mask by using the curve to exclude the darker parts). May create artifacts.
 TP_LOCALLAB_LOCCONT;Unsharp Mask
 TP_LOCALLAB_LOC_CONTRAST;Local Contrast-Wavelets
-TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramid 1:
-TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramid 2:
+TP_LOCALLAB_LOC_CONTRASTPYR;Pyramid 1:
+TP_LOCALLAB_LOC_CONTRASTPYR2;Pyramid 2:
 TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by level - TM - Directional contrast
 TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter - Edge Sharpness - Blur
 TP_LOCALLAB_LOC_RESIDPYR;Residual image (Main)
@@ -2860,7 +2860,7 @@ TP_LOCALLAB_MASKHIGTHRESD_TOOLTIP; The denoise is progressively decreased from 1
 TP_LOCALLAB_MASKHIGTHRES_TOOLTIP; The Guided Filter is progressively decreased from 100% at the threshold setting to 0% at the maximum white value (as determined by the mask).\n You can use certain tools in ‘Mask and modifications’ to change the gray levels: ‘structure mask’, ‘Smooth radius’, ‘Gamma and slope’, ‘Contrast curve’, ‘Local contrast wavelet’.\n Use a ‘lockable color picker’ on the mask to see which areas will be affected. Be carefull in 'settings' to Background color mask = 0
 TP_LOCALLAB_MASKLCTHR;Light area luminance threshold
 TP_LOCALLAB_MASKLCTHRLOW;Dark area luminance threshold
-TP_LOCALLAB_MASKLNOISELOW;Reinforce denoise in dark and light areas
+TP_LOCALLAB_MASKLNOISELOW;Reinforce deno. dark/light areas
 TP_LOCALLAB_MASKLOWTHRES_TOOLTIP;The Guided Filter is progressively increased from 0% at the threshold setting to 100% at the maximum black value (as determined by the mask).\n You can use certain tools in ‘Mask and modifications’ to change the gray levels: ‘structure mask’, ‘Smooth radius’, ‘Gamma and slope’, ‘Contrast curve’, ‘Local contrast wavelet’.\n Use a ‘lockable color picker’ on the mask to see which areas will be affected. Be carefull in 'settings' to Background color mask = 0
 TP_LOCALLAB_MASKLOWTHRESD_TOOLTIP;The denoise is progressively increased from 0% at the threshold setting to 100% at the maximum black value (as determined by the mask).\n You can use certain tools in ‘Mask and modifications’ to change the gray levels: ‘structure mask’, ‘Smooth radius’, ‘Gamma and slope’, ‘Contrast curve’, ‘Local contrast wavelet’.\n Use a ‘lockable color picker’ on the mask to see which areas will be affected. Be carefull in 'settings' to Background color mask = 0
 TP_LOCALLAB_MASKLOWTHRESC_TOOLTIP;Dark-tone limit below which Color and Light will be restored progressively to their original values prior to being modified by the Color and Light settings.\n You can use certain tools in ‘Mask and modifications’ to change the gray levels: ‘structure mask’, 'blur mask', ‘Smooth radius’, ‘Gamma and slope’, ‘Contrast curve’, ‘Local contrast wavelet’.\n Use a ‘lockable color picker’ on the mask to see which areas will be affected. Be carefull in 'settings' to Background color mask = 0
@@ -2945,12 +2945,12 @@ TP_LOCALLAB_NLPAT;Maximum patch size
 TP_LOCALLAB_NLRAD;Maximum radius size
 TP_LOCALLAB_NOISECHROCOARSE;Coarse chroma (Wav)
 TP_LOCALLAB_NOISECHROC_TOOLTIP;If superior to zero, high quality algorithm is enabled.\nCoarse is for slider >=0.02
-TP_LOCALLAB_NOISECHRODETAIL;Chroma detail recovery (DCT ƒ)
+TP_LOCALLAB_NOISECHRODETAIL;Chroma detail recovery(DCT)
 TP_LOCALLAB_NOISECHROFINE;Fine chroma (Wav)
 TP_LOCALLAB_NOISEDETAIL_TOOLTIP;Disabled if slider = 100
 TP_LOCALLAB_NOISELEQUAL;Equalizer white-black
 TP_LOCALLAB_NOISELUMCOARSE;Luminance coarse (Wav)
-TP_LOCALLAB_NOISELUMDETAIL;Luminance detail recovery (DCT)
+TP_LOCALLAB_NOISELUMDETAIL;Lumin. detail recovery(DCT)
 TP_LOCALLAB_NOISELUMFINE;Luminance fine 1 (Wav)
 TP_LOCALLAB_NOISELUMFINETWO;Luminance fine 2 (Wav)
 TP_LOCALLAB_NOISELUMFINEZERO;Luminance fine 0 (Wav)
@@ -3157,7 +3157,7 @@ TP_LOCALLAB_VIBRANCE;Vibrance & Warm/Cool
 TP_LOCALLAB_VIBRA_TOOLTIP;Adjusts vibrance (essentially the same as the global adjustment).\nCarries out the equivalent of a white-balance adjustment using a CIECAM algorithm.
 TP_LOCALLAB_VIB_TOOLNAME;Vibrance & Warm/Cool - 3
 TP_LOCALLAB_VIS_TOOLTIP;<b>Click</b> to show/hide selected Control Spot.\n<b>Ctrl</b>+<b>click</b> to show/hide all Control Spot.
-TP_LOCALLAB_WAMASKCOL;Ψ Mask Wavelet level
+TP_LOCALLAB_WAMASKCOL;Mask Wavelet level
 TP_LOCALLAB_WARM;Warm/Cool & Color artifacts
 TP_LOCALLAB_WARM_TOOLTIP;This slider uses the CIECAM algorithm and acts as a White Balance control to make the color temperature of the selected area warmer or cooler.\nIt can also reduce color artifacts in some cases.
 TP_LOCALLAB_WASDEN_TOOLTIP;Luminance noise reduction: the left-hand side of the curve including the dark-gray/light-gray boundary corresponds to the first 3 levels 0, 1, 2 (fine detail). The right hand side of the curve corresponds to the coarser details (level 3, 4, 5, 6).
@@ -3195,18 +3195,19 @@ TP_LOCALLAB_WAVCOMP_TOOLTIP;Allows you to apply local contrast based on the dire
 TP_LOCALLAB_WAVCON;Contrast by level
 TP_LOCALLAB_WAVCONTF_TOOLTIP;Similar to Contrast By Detail Levels. Fine to coarse detail levels from left to right on the x-axis.
 TP_LOCALLAB_WAVDEN;Luminance denoise by level
-TP_LOCALLAB_WAVE;Ψ Wavelets
+TP_LOCALLAB_WAVE;Wavelets
 TP_LOCALLAB_WAVEDG;Local contrast
 TP_LOCALLAB_WAVEEDG_TOOLTIP;Improves sharpness by targeting the action of local contrast on the edges. It has the same functions as the corresponding module in Wavelet Levels and uses the same settings.
 TP_LOCALLAB_WAVEMASK_LEVEL_TOOLTIP;Range of wavelet levels used in “Local contrast (by wavelet level)”
 TP_LOCALLAB_WAVGRAD_TOOLTIP;Allows the local contrast to be varied according to a chosen gradient and angle.  The variation of the luminance signal is taken into account and not the luminance.
-TP_LOCALLAB_WAVHIGH;Ψ Wavelet high
+TP_LOCALLAB_WAVHIGH;Wavelet high
 TP_LOCALLAB_WAVHUE_TOOLTIP;Allows you to reduce or increase the denoise based on hue.
 TP_LOCALLAB_WAVLEV;Blur by level
-TP_LOCALLAB_WAVLOW;Ψ Wavelet low
-TP_LOCALLAB_WAVMASK;Ψ Local contrast (by Ψ level):
+TP_LOCALLAB_WAVLOW;Wavelet low
+TP_LOCALLAB_WAVMASK;Local contrast (by level):
 TP_LOCALLAB_WAVMASK_TOOLTIP;Uses wavelets to modify the local contrast of the mask and reinforce or reduce the structure (skin, buildings...)
-TP_LOCALLAB_WAVMED;Ψ Wavelet normal
+//TP_LOCALLAB_WAVMED;Ψ Wavelet normal
+TP_LOCALLAB_WAVMED;Wavelet normal
 TP_LOCALLAB_WEDIANHI;Median Hi
 TP_LOCALLAB_WHITE_EV;White Ev
 TP_LOCAL_HEIGHT;Bottom

@@ -637,7 +637,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     vboxright = new Gtk::Paned (Gtk::ORIENTATION_VERTICAL);
 
     vsubboxright = new Gtk::Box (Gtk::ORIENTATION_VERTICAL, 0);
-    int rightsize = options.fontSize * 46;
+    int rightsize = options.fontSize * 45;
     vsubboxright->set_size_request (rightsize, rightsize - 50);
 
     vsubboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 2);
