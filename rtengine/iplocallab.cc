@@ -9558,7 +9558,28 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
             }
 
             if(lp.nlstr > 0 && (hspot > 150 && wspot > 150)) {
-                NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW, GH, float (sk), multiThread);
+                array2D<float> *nlm = nullptr;
+                int addsiz = 5 + lp.nlrad;
+                nlm = new array2D<float>(GW + addsiz, GH + addsiz);
+#ifdef _OPENMP
+                #pragma omp parallel for if (multiThread)
+#endif
+                for (int i = 0; i < GH; ++i) {
+                    for (int j = 0; j < GW; ++j) {
+                        (*nlm)[i][j] = tmp1.L[i][j];
+                    }
+                }
+              //  NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW, GH, float (sk), multiThread);
+                NLMeans(*nlm, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW + addsiz, GH + addsiz, float (sk), multiThread);
+#ifdef _OPENMP
+                #pragma omp parallel for if (multiThread)
+#endif
+                for (int i = 0; i < GH; ++i) {
+                    for (int j = 0; j < GW; ++j) {
+                       tmp1.L[i][j] = (*nlm)[i][j];
+                    }
+                }
+
             }
             if(lp.smasktyp != 0) {
                 if(lp.enablMask && lp.recothrd != 1.f) {
@@ -10229,7 +10250,29 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
 
             if(lp.nlstr > 0) {
-                NLMeans(bufwv.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, bfw, bfh, 1.f, multiThread);
+                array2D<float> *nlm = nullptr;
+                int addsiz = 5 + lp.nlrad;
+                nlm = new array2D<float>(bfw + addsiz, bfh + addsiz);
+#ifdef _OPENMP
+                #pragma omp parallel for if (multiThread)
+#endif
+                for (int i = 0; i < bfh; ++i) {
+                    for (int j = 0; j < bfw; ++j) {
+                        (*nlm)[i][j] = bufwv.L[i][j];
+                    }
+                }
+              //  NLMeans(bufwv.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, bfw, bfh, 1.f, multiThread);
+                NLMeans(*nlm, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, bfw + addsiz, bfh + addsiz, 1.f, multiThread);
+
+#ifdef _OPENMP
+                #pragma omp parallel for if (multiThread)
+#endif
+                for (int i = 0; i < bfh; ++i) {
+                    for (int j = 0; j < bfw; ++j) {
+                       bufwv.L[i][j] = (*nlm)[i][j];
+                    }
+                }
+                
             }
 
 
@@ -10896,6 +10939,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     BENCHFUN
     const int W = bfw;
     const int H = bfh;
+//    printf("W=%i H=%i\n", W, H);
     float gamma = gam;
     rtengine::GammaValues g_a; //gamma parameters
     double pwr = 1.0 / static_cast<double>(gam);//default 3.0 - gamma Lab
@@ -10918,7 +10962,6 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
             img[y][x] = 65536.f * igammalog(img[y][x] / 32768.f, gamma, ts, g_a[2], g_a[4]);
         }
     }
-
     // these two can be changed if needed. increasing max_patch_radius doesn't
     // affect performance, whereas max_search_radius *really* does
     // (the complexity is O(max_search_radius^2 * W * H))
@@ -11006,7 +11049,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
             mask[y][x] = (1.f / (mask[y][x] * h2)) / lutfactor;
         }
     }
-  
+ 
     // process by tiles to avoid numerical accuracy errors in the computation
     // of the integral image
     const int tile_size = 150;
@@ -11120,7 +11163,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
             }
         }
 //    printf("E\n");
-        
+       
         // Compute final estimate at pixel x = (x1, x2)
         for (int yy = start_y+border; yy < end_y-border; ++yy) {
             int y = yy - border;
