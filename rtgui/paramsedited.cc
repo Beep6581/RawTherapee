@@ -1569,6 +1569,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).lightl = locallab.spots.at(j).lightl && pSpot.lightl == otherSpot.lightl;
                 locallab.spots.at(j).lightq = locallab.spots.at(j).lightq && pSpot.lightq == otherSpot.lightq;
                 locallab.spots.at(j).contl = locallab.spots.at(j).contl && pSpot.contl == otherSpot.contl;
+                locallab.spots.at(j).contthres = locallab.spots.at(j).contthres && pSpot.contthres == otherSpot.contthres;
                 locallab.spots.at(j).contq = locallab.spots.at(j).contq && pSpot.contq == otherSpot.contq;
                 locallab.spots.at(j).colorfl = locallab.spots.at(j).colorfl && pSpot.colorfl == otherSpot.colorfl;
                 locallab.spots.at(j).LcurveL = locallab.spots.at(j).LcurveL && pSpot.LcurveL == otherSpot.LcurveL;
@@ -5217,6 +5218,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).contl = mods.locallab.spots.at(i).contl;
         }
 
+        if (locallab.spots.at(i).contthres) {
+            toEdit.locallab.spots.at(i).contthres = mods.locallab.spots.at(i).contthres;
+        }
+
         if (locallab.spots.at(i).contq) {
             toEdit.locallab.spots.at(i).contq = mods.locallab.spots.at(i).contq;
         }
@@ -7152,6 +7157,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     lightl(v),
     lightq(v),
     contl(v),
+    contthres(v),
     contq(v),
     colorfl(v),
     LcurveL(v),
@@ -7729,6 +7735,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     lightl = v;
     lightq = v;
     contl = v;
+    contthres = v;
     contq = v;
     colorfl = v;
     LcurveL = v;

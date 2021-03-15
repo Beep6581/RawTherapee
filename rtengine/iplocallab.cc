@@ -2404,8 +2404,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     LUTu hist16J(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE, true);
     LUTu hist16Q(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE, true);
     //for J light and contrast
-    LUTf CAMBrightCurveJ(32768, LUT_CLIP_ABOVE);
-    LUTf CAMBrightCurveQ(32768, LUT_CLIP_ABOVE);
+    LUTf CAMBrightCurveJ(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
+    LUTf CAMBrightCurveQ(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
 
 #ifdef _OPENMP
     const int numThreads = min(max(width * height / 65536, 1), omp_get_max_threads());
@@ -2482,11 +2482,24 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         const float lightL = 0.4 * params->locallab.spots.at(sp).lightl; //0.4 less effect, no need 1.
         const float contQ = 0.5 * params->locallab.spots.at(sp).contq; //0.5 less effect, no need 1.
         const float lightQ = 0.4 * params->locallab.spots.at(sp).lightq; //0.4 less effect, no need 1.
-   
-        Ciecam02::curveJfloat(lightL, contL, hist16J, CAMBrightCurveJ); //lightness J and contrast J
+        
+        float contthresL = params->locallab.spots.at(sp).contthres;
+        float contthresQ = contthresL;
+        if(contL < 0.f) {
+            contthresL *= -1;
+        } 
+        float thL = 0.6f;
+        thL = 0.3f * contthresL + 0.6f;
+        
+        if(contQ < 0.f) {
+            contthresQ *= -1;
+        } 
+        float thQ = 0.6f;
+        thQ = 0.3f * contthresQ + 0.6f;
+        Ciecam02::curveJfloat(lightL, contL, thL, hist16J, CAMBrightCurveJ); //lightness J and contrast J
         CAMBrightCurveJ /= 327.68f;
         
-        Ciecam02::curveJfloat(lightQ, contQ, hist16Q, CAMBrightCurveQ); //brightness Q and contrast Q
+        Ciecam02::curveJfloat(lightQ, contQ, thQ, hist16Q, CAMBrightCurveQ); //brightness Q and contrast Q
     }
     int tempo = 5000;
     if(params->locallab.spots.at(sp).expvibrance && call == 2) {
