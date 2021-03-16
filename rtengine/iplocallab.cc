@@ -9559,7 +9559,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
             if(lp.nlstr > 0 && (hspot > 150 && wspot > 150)) {
                 array2D<float> *nlm = nullptr;
-                int addsiz = 5 + lp.nlrad;
+                int addsiz = 10 + lp.nlrad;
                 nlm = new array2D<float>(GW + addsiz, GH + addsiz);
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
@@ -10251,7 +10251,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
             if(lp.nlstr > 0) {
                 array2D<float> *nlm = nullptr;
-                int addsiz = 5 + lp.nlrad;
+                int addsiz = 10 + lp.nlrad;
                 nlm = new array2D<float>(bfw + addsiz, bfh + addsiz);
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
