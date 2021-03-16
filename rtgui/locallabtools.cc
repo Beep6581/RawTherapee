@@ -486,6 +486,7 @@ LocallabColor::LocallabColor():
     blurcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCOL"), 0.2, 100., 0.5, 0.2))),
     blendmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     toolcolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK")))),
+    toolcolFrame2(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK_2")))),
     radmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     lapmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     chromaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
@@ -881,6 +882,7 @@ LocallabColor::LocallabColor():
     maskcolBox->pack_start(*blendmaskcol, Gtk::PACK_SHRINK, 0);
 //    Gtk::Frame* const toolcolFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK")));
     toolcolFrame->set_label_align(0.025, 0.5);
+    toolcolFrame2->set_label_align(0.025, 0.5);
     ToolParamBlock* const toolcolBox = Gtk::manage(new ToolParamBlock());
     toolcolBox->pack_start(*radmaskcol, Gtk::PACK_SHRINK, 0);
     toolcolBox->pack_start(*lapmaskcol, Gtk::PACK_SHRINK, 0);
@@ -890,10 +892,13 @@ LocallabColor::LocallabColor():
     toolcolBox->pack_start(*shadmaskcol, Gtk::PACK_SHRINK, 0);
     toolcolBox->pack_start(*maskHCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     toolcolBox->pack_start(*mask2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    toolcolBox->pack_start(*mask2CurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    toolcolBox->pack_start(*csThresholdcol, Gtk::PACK_SHRINK, 0);
-    toolcolFrame->add(*toolcolBox);
+    ToolParamBlock* const toolcolBox2 = Gtk::manage(new ToolParamBlock());
+    toolcolBox2->pack_start(*mask2CurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    toolcolBox2->pack_start(*csThresholdcol, Gtk::PACK_SHRINK, 0);
+    toolcolFrame2->add(*toolcolBox2);
+    toolcolBox->pack_start(*toolcolFrame2);
     maskcolBox->pack_start(*toolcolFrame);
+    toolcolFrame->add(*toolcolBox);
     mergecolFrame->add(*maskcolBox);
     expmaskcol->add(*mergecolFrame, false);
     pack_start(*expmaskcol, false, false);
@@ -2043,6 +2048,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
             maskHCurveEditorG->hide();
             mask2CurveEditorGwav->hide();
             csThresholdcol->hide();
+            toolcolFrame2->hide();
             // Specific Simple mode widgets are shown in Normal mode
             softradiuscol->show();
             if (enaColorMask->get_active()) {
@@ -2115,6 +2121,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
             maskHCurveEditorG->show();
             mask2CurveEditorGwav->show();
             csThresholdcol->show();
+            toolcolFrame2->show();
     }
 }
 

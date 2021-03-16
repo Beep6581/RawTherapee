@@ -2826,7 +2826,7 @@ TP_LOCALLAB_MASFRAME;Mask and Merge
 TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTakes into account the deltaE image to avoid modifying the selection area when the following Mask Tools are used: Gamma , Slope , Chroma, Contrast curve , Local contrast (by wavelet level), Blur Mask and Structure Mask (if enabled ) .\nDisabled when Inverse mode is used
 TP_LOCALLAB_MASK;Curves
 TP_LOCALLAB_MASK2;Contrast curve:
-TP_LOCALLAB_MASKCOL; 
+TP_LOCALLAB_MASKCOL;
 TP_LOCALLAB_MASKCOM;Common Color Mask
 TP_LOCALLAB_MASKCOM_TOOLNAME;Common Color Mask  - 13
 TP_LOCALLAB_MASKCOM_TOOLTIP;A tool in its own right.\nCan be used to adjust the image appearance (chrominance, luminance, contrast) and texture as a function of Scope.
@@ -2920,7 +2920,7 @@ TP_LOCALLAB_MERTHR;Difference
 TP_LOCALLAB_MERTWE;Exclusion
 TP_LOCALLAB_MERTWO;Subtract
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
-TP_LOCALLAB_MLABEL;Resto. data Min=%1 Max=%2(Clip/Offset)
+TP_LOCALLAB_MLABEL;Restored data Min=%1 Max=%2
 TP_LOCALLAB_MLABEL_TOOLTIP;The values should be close to Min=0 Max=32768 (log mode) but other values are possible.You can adjust ‘Clip restored data (gain)’ and ‘Offset’ to normalize.\nRecovers image data without blending.
 TP_LOCALLAB_MODE_EXPERT;Advanced
 TP_LOCALLAB_MODE_NORMAL;Standard
@@ -3032,7 +3032,7 @@ TP_LOCALLAB_SH1;Shadows Highlights
 TP_LOCALLAB_SH2;Equalizer
 TP_LOCALLAB_SHADEX;Shadows
 TP_LOCALLAB_SHADEXCOMP;Shadow compression & tonal width
-TP_LOCALLAB_SHADHIGH;Shadows/Highlights&Equalizer
+TP_LOCALLAB_SHADHIGH;Shadows/Highlights & Equalizer
 TP_LOCALLAB_SHADHMASK_TOOLTIP;Lowers the highlights of the mask in the same way as the shadows/highlights algorithm
 TP_LOCALLAB_SHADMASK_TOOLTIP;Lifts the shadows of the mask in the same way as the shadows/highlights algorithm
 TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Adjust shadows and highlights either with shadows & highlights sliders or with a tone equalizer.\nCan be used instead of, or in conjunction with the Exposure module.\nCan also be used as a graduated filter.
@@ -3126,7 +3126,7 @@ TP_LOCALLAB_THRES;Threshold structure
 TP_LOCALLAB_THRESDELTAE;ΔE scope threshold 
 TP_LOCALLAB_THRESRETI;Threshold
 TP_LOCALLAB_THRESWAV;Balance threshold
-TP_LOCALLAB_TLABEL;TM Data Min=%1 Max=%2 Mea=%3 Sig=%4(thr)
+TP_LOCALLAB_TLABEL;TM Data Min=%1 Max=%2 Mean=%3 Sig=%4
 TP_LOCALLAB_TLABEL2;TM Effective Tm=%1 TM=%2
 TP_LOCALLAB_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nTm=Min TM=Max of Transmission Map.\nYou can normalize the results with the threshold slider.
 TP_LOCALLAB_TM;Tone Mapping
@@ -3140,6 +3140,7 @@ TP_LOCALLAB_TONE_TOOLNAME;Tone Mapping - 4
 TP_LOCALLAB_TOOLCOL;Structure mask as tool
 TP_LOCALLAB_TOOLCOLFRMASK_TOOLTIP;Allows you to modify the mask, if one exists
 TP_LOCALLAB_TOOLMASK;Mask Tools
+TP_LOCALLAB_TOOLMASK_2;Wavelets
 TP_LOCALLAB_TOOLMASK_TOOLTIP;Structure mask (slider) with the checkbox "Structure mask as tool" checked: in this case a mask showing the structure will be generated after one or more of the 2 curves L(L) or LC(H) has been modified.\n Here, the "Structure mask" behaves like the other Mask tools : Gamma, Slope, etc.\n It allows you to vary the action on the mask according to the structure of the image.
 TP_LOCALLAB_TRANSIT;Transition Gradient
 TP_LOCALLAB_TRANSITGRAD;Transition differentiation XY
@@ -3204,7 +3205,7 @@ TP_LOCALLAB_WAVHIGH;Wavelet high
 TP_LOCALLAB_WAVHUE_TOOLTIP;Allows you to reduce or increase the denoise based on hue.
 TP_LOCALLAB_WAVLEV;Blur by level:
 TP_LOCALLAB_WAVLOW;Wavelet low
-TP_LOCALLAB_WAVMASK;Local contrast (by level):
+TP_LOCALLAB_WAVMASK;Local contrast:
 TP_LOCALLAB_WAVMASK_TOOLTIP;Uses wavelets to modify the local contrast of the mask and reinforce or reduce the structure (skin, buildings...)
 //TP_LOCALLAB_WAVMED;Ψ Wavelet normal
 TP_LOCALLAB_WAVMED;Wavelet normal
@@ -3552,7 +3553,7 @@ TP_WAVELET_BACUR;Curve
 TP_WAVELET_BALANCE;Contrast balance d/v-h
 TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the wavelet directions: vertical-horizontal and diagonal.\nIf contrast, chroma or residual tone mapping are activated, the effect due to balance is amplified.
 TP_WAVELET_BALCHRO;Chroma balance
-TP_WAVELET_BALCHROM;Denoise equalizer  B-Y/R-G
+TP_WAVELET_BALCHROM;Equalizer  Blue-Yellow/Red-Green
 TP_WAVELET_BALCHRO_TOOLTIP;If enabled, the 'Contrast balance' curve or slider also modifies chroma balance.
 TP_WAVELET_BALLUM;Denoise equalizer  White-Black
 TP_WAVELET_BANONE;None
@@ -3712,7 +3713,7 @@ TP_WAVELET_MEDILEV;Edge detection
 TP_WAVELET_MEDILEV_TOOLTIP;When you enable Edge Detection, it is recommanded:\n- to disabled low contrast levels to avoid artifacts,\n- to use high values of gradient sensitivity.\n\nYou can modulate the strength with 'refine' from Denoise and Refine.
 TP_WAVELET_MERGEC;Merge chroma
 TP_WAVELET_MERGEL;Merge luma
-TP_WAVELET_MIXCONTRAST;Ref. local contrast
+TP_WAVELET_MIXCONTRAST;Reference LC
 TP_WAVELET_MIXDENOISE;Denoise
 TP_WAVELET_MIXMIX;Mixed 50%noise-50%denoise
 TP_WAVELET_MIXMIX70;Mixed 30%noise-70%denoise
