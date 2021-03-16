@@ -154,8 +154,10 @@ LocallabTool::LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustr
         complexity->append(M("TP_LOCALLAB_MODE_NORMAL"));
         complexity->append(M("TP_LOCALLAB_MODE_SIMPLE"));
         complexity->set_active(2);
-     //   complexity->setPreferredWidth(options.fontSize * 8.5, -1);
-        complexity->setPreferredWidth(105, -1);
+     //
+
+        complexity->setPreferredWidth(options.fontSize * 11.7, -1);
+      //  complexity->setPreferredWidth(105, -1);
         complexityConn = complexity->signal_changed().connect(sigc::mem_fun(*this, &LocallabTool::complexityModeChanged));
        // titleBox->pack_end(*complexity, Gtk::PACK_SHRINK, 1);
         titleBox->add(*complexity);
