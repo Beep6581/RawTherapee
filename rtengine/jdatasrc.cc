@@ -4,6 +4,13 @@
 #include "jpeg.h"
 
 /*
+ * HA 2021-03-12
+ * Modification according to
+ * https://github.com/Beep6581/RawTherapee/commit/be67261d0bdeb21ffe15fe968dd5bc16edd407e0
+ * because otherwise it won't compile.
+ */
+  
+/*
  * jdatasrc.c
  *
  * Copyright (C) 1994-1996, Thomas G. Lane.
@@ -257,7 +264,19 @@ my_error_exit (j_common_ptr cinfo)
 //#include "jerror.h"
 //  NULL
 //};
+
+#ifdef WIN32
+#define JVERSION	"6b  27-Mar-1998"
+#define JCOPYRIGHT_SHORT	"(C) 1998, Thomas G. Lane"
+#define JMESSAGE(code,string)	string ,
+
+const char * const jpeg_std_message_table[] = {
+#include "jerror.h"
+  NULL
+};
+#else
 extern const char * const jpeg_std_message_table[];
+#endif
 
 
 /*
