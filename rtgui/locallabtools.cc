@@ -897,8 +897,8 @@ LocallabColor::LocallabColor():
     toolcolBox2->pack_start(*csThresholdcol, Gtk::PACK_SHRINK, 0);
     toolcolFrame2->add(*toolcolBox2);
     toolcolBox->pack_start(*toolcolFrame2);
-    maskcolBox->pack_start(*toolcolFrame);
     toolcolFrame->add(*toolcolBox);
+    maskcolBox->pack_start(*toolcolFrame);
     mergecolFrame->add(*maskcolBox);
     expmaskcol->add(*mergecolFrame, false);
     pack_start(*expmaskcol, false, false);
@@ -6305,6 +6305,7 @@ LocallabBlur::LocallabBlur():
     strumaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0., 200., 0.1, 0.))),
     toolbl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TOOLCOL")))),
     toolblFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK")))),
+    toolblFrame2(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK_2")))),
     blendmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     radmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     lapmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
@@ -6669,6 +6670,7 @@ LocallabBlur::LocallabBlur():
     maskblBox->pack_start(*separatorstrubl, Gtk::PACK_SHRINK, 2);
     maskblBox->pack_start(*blendmaskbl, Gtk::PACK_SHRINK, 0);
     toolblFrame->set_label_align(0.025, 0.5);
+    toolblFrame2->set_label_align(0.025, 0.5);
     ToolParamBlock* const toolblBox = Gtk::manage(new ToolParamBlock());
     toolblBox->pack_start(*radmaskbl, Gtk::PACK_SHRINK, 0);
     toolblBox->pack_start(*lapmaskbl, Gtk::PACK_SHRINK, 0);
@@ -6678,8 +6680,11 @@ LocallabBlur::LocallabBlur():
     toolblBox->pack_start(*shadmaskblsha, Gtk::PACK_SHRINK, 0);
     toolblBox->pack_start(*shadmaskbl, Gtk::PACK_SHRINK, 0);
     toolblBox->pack_start(*mask2blCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    toolblBox->pack_start(*mask2blCurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    toolblBox->pack_start(*csThresholdblur, Gtk::PACK_SHRINK, 0);
+    ToolParamBlock* const toolblBox2 = Gtk::manage(new ToolParamBlock());
+    toolblBox2->pack_start(*mask2blCurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    toolblBox2->pack_start(*csThresholdblur, Gtk::PACK_SHRINK, 0);
+    toolblFrame2->add(*toolblBox2);
+    toolblBox->pack_start(*toolblFrame2);
     toolblFrame->add(*toolblBox);
     maskblBox->pack_start(*toolblFrame);
     expmaskbl->add(*maskblBox, false);
@@ -7871,6 +7876,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             shadmaskblsha->hide();
             mask2blCurveEditorGwav->hide();
             csThresholdblur->hide();
+            toolblFrame2->hide();
             // Specific Simple mode widgets are shown in Normal mode
             expmaskbl->show();
             expdenoise1->hide();
@@ -7958,6 +7964,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             shadmaskblsha->show();
             mask2blCurveEditorGwav->show();
             csThresholdblur->show();
+            toolblFrame2->show();
             nlpat->show();
             nlrad->show();
             nlgam->show();
