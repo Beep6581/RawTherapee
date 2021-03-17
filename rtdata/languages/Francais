@@ -809,7 +809,7 @@ ICCPROFCREATOR_PROF_V2;ICC v2
 ICCPROFCREATOR_PROF_V4;ICC v4
 ICCPROFCREATOR_SAVEDIALOG_TITLE;Enregistrer le profil ICC sous...
 ICCPROFCREATOR_SLOPE;Pente
-ICCPROFCREATOR_TRC_PRESET;Courbe de réponse tonale:
+ICCPROFCREATOR_TRC_PRESET;Courbe de réponse tonale
 IPTCPANEL_CATEGORY;Catégorie
 IPTCPANEL_CATEGORYHINT;Identifie le sujet de l'image selon l'opinion du fournisseur.
 IPTCPANEL_CITY;Ville
@@ -1386,11 +1386,11 @@ TP_COLORAPP_CONTRAST;Contraste (J)
 TP_COLORAPP_CONTRAST_Q;Contraste (Q)
 TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contraste dans CIECAM02 pour le curseur (Q); est différent du contraste Lab et RVB
 TP_COLORAPP_CONTRAST_TOOLTIP;Contraste dans CIECAM02 pour le curseur (J); est différent du contraste Lab et RVB
-TP_COLORAPP_CURVEEDITOR1;Courbe tonale 1:
+TP_COLORAPP_CURVEEDITOR1;Courbe tonale 1
 TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Histogramme affiche L (lab) avant CIECAM02.\nOn peut voir le résultat dans la fenêtre histogramme.\n Histogramme de J/Q avant/après si la case à cocher "Données CIECAM" est activée.\n (J,Q) ne sont pas affichés dans le panneau histogramme
-TP_COLORAPP_CURVEEDITOR2;Courbe tonale 2:
+TP_COLORAPP_CURVEEDITOR2;Courbe tonale 2
 TP_COLORAPP_CURVEEDITOR2_TOOLTIP;usage similaire aux courbes tonales exposition
-TP_COLORAPP_CURVEEDITOR3;Courbes chroma:
+TP_COLORAPP_CURVEEDITOR3;Courbes chroma
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Vous pouvez choisir entre chroma -saturation- niveau couleurs.\n Histogramme affiche la chromaticité Lab avant CIECAM.\n On peut voir le résultat final dans la fenêtre histogramme.\n Histogramme de C,s,M avant/après si la cas à cocher "Données CIECAM" est activée.\n (C,s,M) ne sont pas affichés dans le panneau histogramme
 TP_COLORAPP_DATACIE;Histogrammes post CIECAM dans les courbes
 TP_COLORAPP_DATACIE_TOOLTIP;Quand activé, les histogrammes de fond des courbes CIECAM02 montrent des valeurs/amplitudes approximatives de J/Q, ou de C:s/M après les ajustements CIECAM.\nCette sélection n'a pas d'incidence sur l'histogramme général.\n\nQuand désactivé, les histogrammes de fond des courbes CIECAM affichent les valeurs Lab avant les ajustements CIECAM
@@ -1605,8 +1605,8 @@ TP_EXPOSURE_COMPRHIGHLIGHTS;Compression hautes lumières
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Seuil de compression\ndes hautes lumières
 TP_EXPOSURE_COMPRSHADOWS;Compression des ombres
 TP_EXPOSURE_CONTRAST;Contraste
-TP_EXPOSURE_CURVEEDITOR1;Courbe Tonale 1:
-TP_EXPOSURE_CURVEEDITOR2;Courbe Tonale 2:
+TP_EXPOSURE_CURVEEDITOR1;Courbe Tonale 1
+TP_EXPOSURE_CURVEEDITOR2;Courbe Tonale 2
 TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Référez-vous à la section suivante du manuel pour en savoir plus sur les manières d'obtenir les meilleurs résultats avec l'option de double courbe:\nThe Toolbox > Exposure Tab > Exposure Panel > Tone Curve
 TP_EXPOSURE_EXPCOMP;Compensation d'exposition
 TP_EXPOSURE_HISTMATCHING;Calcul Courbe Tonale svt Aperçu
@@ -1811,7 +1811,7 @@ TP_LOCALLAB_CBDL_THRES_TOOLTIP;Empêche d'augmenter le bruit
 TP_LOCALLAB_CBDL_TOOLNAME;Contraste par niveaux de détail - 2
 TP_LOCALLAB_CENTER_X;Centre X
 TP_LOCALLAB_CENTER_Y;Centre Y
-TP_LOCALLAB_CH;Courbes CL - LC:
+TP_LOCALLAB_CH;Courbes CL - LC
 TP_LOCALLAB_CHROMA;Chrominance
 TP_LOCALLAB_CHROMABLU;Niveaux Chroma
 TP_LOCALLAB_CHROMABLU_TOOLTIP;Agit comme un amplificateur-reducteur d'action en comparant aux réglages de luma.\nEn dessous de 1 reduit, au dessus de 1 amplifie
@@ -2077,7 +2077,7 @@ TP_LOCALLAB_LOGSRCGREY_TOOLTIP;Estime la valeur du point gris de l'image, tôt d
 TP_LOCALLAB_LOGTARGGREY_TOOLTIP;Vous pouvez changer cette valeur pour l'adapter à votre goût.
 TP_LOCALLAB_LOG_TOOLNAME;Codage log - 0
 TP_LOCALLAB_LOGVIEWING_TOOLTIP;Correspond au medium sur lequel l'image finale sera vue (moniteur, TV, projecteur, imprimante,..), ainsi que son environnement.
-TP_LOCALLAB_LUM;Courbes LL - CC:
+TP_LOCALLAB_LUM;Courbes LL - CC
 TP_LOCALLAB_LUMADARKEST;Plus Sombre
 TP_LOCALLAB_LUMASK;Masque Luminance arrière plan
 TP_LOCALLAB_LUMASK_TOOLTIP;Ajuste le gris de l'arrière plan du masque dans Montrer Masque (Masque et modifications)
@@ -2410,8 +2410,8 @@ TP_LOCALLAB_TRANSITVALUE;Transition valeur
 TP_LOCALLAB_TRANSITWEAK;Transition affaiblissement (linéaire-log)
 TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Ajuste l'affaiblissement de la transition : change le processus d'affaiblissement - 1 linéaire - 2 parabolique - 3 cubique - ^25.\nPeut être utilisé en conjonction avec de très faibles valeurs de transition pour traiter/réduire les défauts (CBDL, Ondelettes, Couleur et lumière)
 TP_LOCALLAB_TRANSIT_TOOLTIP;Ajuste la progressions de la transition enttre les zones affectées ou non affectées, comme un pourcentage du "rayon" 
-TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain:
-TP_LOCALLAB_TRANSMISSIONMAP;Transmission map:
+TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
+TP_LOCALLAB_TRANSMISSIONMAP;Transmission map
 TP_LOCALLAB_TRANSMISSION_TOOLTIP;Transmission en accord  à transmission.\nAbscisse: transmission pour les valeurs négatives (min), mean, et les valeurs positives (max).\nOrdonnée: amplification ou réduction.\nVous pouvez agir sur cette courbe pour chnager la Transmission et réduire les artefacts
 TP_LOCALLAB_USEMASK;Utiliser masque
 TP_LOCALLAB_VART;Variance (contraste)
@@ -2471,7 +2471,7 @@ TP_LOCALLAB_WAVEDG;Contrast Local
 TP_LOCALLAB_WAVEEDG_TOOLTIP;Améliore la netteté prenant en compte la notion de "ondelettes bords".\nNécessite au moins que les 4 premiers niveaux sont utilisables
 TP_LOCALLAB_WAVGRAD_TOOLTIP;Filtre gradué pour Contraste local "luminance"
 TP_LOCALLAB_WAVHIGH;Ondelette haut
-TP_LOCALLAB_WAVLEV;Flou par niveau:
+TP_LOCALLAB_WAVLEV;Flou par niveau
 TP_LOCALLAB_WAVLOW;Ondelette bas
 TP_LOCALLAB_WAVMASK;Contr. local (par niveau)
 TP_LOCALLAB_WAVEMASK_LEVEL_TOOLTIP;Amplitude des niveaux d'ondelettes utilisés par “Local contrast”
@@ -2604,7 +2604,7 @@ TP_RESIZE_APPLIESTO;S'applique à:
 TP_RESIZE_CROPPEDAREA;La zone recadrée
 TP_RESIZE_FITBOX;Boîte englobante
 TP_RESIZE_FULLIMAGE;L'image entière
-TP_RESIZE_H;H:
+TP_RESIZE_H;H
 TP_RESIZE_HEIGHT;Hauteur
 TP_RESIZE_LABEL;Redimensionnement
 TP_RESIZE_LANCZOS;Lanczos
@@ -2694,7 +2694,7 @@ TP_RETINEX_VIEW_TRAN;Transmission - Auto
 TP_RETINEX_VIEW_TRAN2;Transmission - Fixé
 TP_RETINEX_VIEW_UNSHARP;Masque flou
 TP_RGBCURVES_BLUE;B
-TP_RGBCURVES_CHANNEL;Canal:
+TP_RGBCURVES_CHANNEL;Canal
 TP_RGBCURVES_GREEN;V
 TP_RGBCURVES_LABEL;Courbes RVB
 TP_RGBCURVES_LUMAMODE;Mode Lominosité
@@ -2744,7 +2744,7 @@ TP_TM_FATTAL_LABEL;Compression de Plage Dynamique
 TP_TM_FATTAL_THRESHOLD;Détail
 TP_VIBRANCE_AVOIDCOLORSHIFT;Éviter les dérives de teinte
 TP_VIBRANCE_CURVEEDITOR_SKINTONES;TT
-TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Tons chair:
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Tons chair
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Rouge/Pourpre
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;Rouge
 TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;Rouge/Jaune
@@ -2791,7 +2791,7 @@ TP_WAVELET_BASLI;Curseur
 TP_WAVELET_BATYPE;Bal. du contraste par
 TP_WAVELET_CBENAB;Virage Partiel et Balance Couleur
 TP_WAVELET_CB_TOOLTIP;Pour les valeurs élevées, produit un virage partiel en les combinant ou non avec les valeurs (courbes) spécifiées dans 'Virage'\nPour les faible valeurs, vous pouvez changer la balance des blancs du fond (ciel, ...) sans changer celui du premier plan, généralement plus contrasté.
-TP_WAVELET_CCURVE;Contraste local:
+TP_WAVELET_CCURVE;Contraste local
 TP_WAVELET_CH1;Plage chromatique complète
 TP_WAVELET_CH2;Saturé/pastel
 TP_WAVELET_CH3;Lier avec les niveaux de contraste
@@ -2809,7 +2809,7 @@ TP_WAVELET_COMPCONT;Contraste
 TP_WAVELET_COMPGAMMA;Compression gamma
 TP_WAVELET_COMPGAMMA_TOOLTIP;Ajuster le gamma de l'image résiduelle vous permet d'équiilibrer les données de l'histogramme.
 TP_WAVELET_COMPTM;Compression tonale
-TP_WAVELET_CONTEDIT;Courbe contraste 'Après':
+TP_WAVELET_CONTEDIT;Courbe contraste 'Après'
 TP_WAVELET_CONTR;Gamut
 TP_WAVELET_CONTRA;Contraste
 TP_WAVELET_CONTRAST_MINUS;Contraste -
@@ -2897,7 +2897,7 @@ TP_WAVELET_NPTYPE;Pixels voisins
 TP_WAVELET_NPTYPE_TOOLTIP;Cet algorithme utilise la proximité d'un pixel et huit de ses voisins. Si moins de différence, les bords sont renforcés.
 TP_WAVELET_OPACITY;Opacité Bleu-Jaune
 TP_WAVELET_OPACITYW;Courbe de contraste d/v-h
-TP_WAVELET_OPACITYWL;Contraste local:
+TP_WAVELET_OPACITYWL;Contraste local
 TP_WAVELET_OPACITYWL_TOOLTIP;Modifie le contraste local final à la fin du traitement par ondelettes.\n\nLe côté gauche représente les plus faibles contrastes locaaux, progressant jusqu'aux plus grands contrastes locaux vers la droite.
 TP_WAVELET_PASTEL;Chroma des Pastels
 TP_WAVELET_PROC;Procédé
