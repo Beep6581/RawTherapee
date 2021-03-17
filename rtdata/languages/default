@@ -2222,7 +2222,7 @@ TP_DEHAZE_STRENGTH;Strength
 TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zones
 TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatic global
 TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Chrominance - Blue-Yellow
-TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Chrominance curve:
+TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Chrominance curve
 TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Increase (multiply) the value of all chrominance sliders.\nThis curve lets you adjust the strength of chromatic noise reduction as a function of chromaticity, for instance to increase the action in areas of low saturation and to decrease it in those of high saturation.
 TP_DIRPYRDENOISE_CHROMINANCE_FRAME;Chrominance
 TP_DIRPYRDENOISE_CHROMINANCE_MANUAL;Manual
@@ -2240,7 +2240,7 @@ TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;Tile size=%1, Center: Tx=%2  Ty=%3
 TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Chrominance - Red-Green
 TP_DIRPYRDENOISE_LABEL;Noise Reduction
 TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Luminance control
-TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminance curve:
+TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminance curve
 TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Detail recovery
 TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminance
 TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminance
@@ -2376,7 +2376,7 @@ TP_HLREC_ENA_TOOLTIP;Could be activated by Auto Levels.
 TP_HLREC_LABEL;Highlight reconstruction
 TP_HLREC_LUMINANCE;Luminance Recovery
 TP_HLREC_METHOD;Method:
-TP_HSVEQUALIZER_CHANNEL;Channel:
+TP_HSVEQUALIZER_CHANNEL;Channel
 TP_HSVEQUALIZER_HUE;H
 TP_HSVEQUALIZER_LABEL;HSV Equalizer
 TP_HSVEQUALIZER_SAT;S
@@ -3628,9 +3628,9 @@ TP_WAVELET_DENCURV;Curve
 TP_WAVELET_DENEQUAL;1 2 3 4 Equal
 TP_WAVELET_DENH;Threshold
 TP_WAVELET_DENL;Correction structure
-TP_WAVELET_DENLH;Guided threshold by detail levels 1-4
+TP_WAVELET_DENLH;Guided threshold for detail levels 1-4
 TP_WAVELET_DENLOCAL_TOOLTIP;Use a curve in order to guide the denoising according to the local contrast.\nThe areas are denoised, the structures are maintained
-TP_WAVELET_DENMIX_TOOLTIP;Balances the action of the guide taking into account the original image and the denoised image
+TP_WAVELET_DENMIX_TOOLTIP;The local-contrast reference value used by the guided filter.\nDepending on the image, results can vary depending on whether the noise is measured before or after the noise reduction. These four choices allow you to take into account various combinations of the original and modified (denoised) images to find the best compromise.
 TP_WAVELET_DENOISE;Guide curve based on Local contrast
 TP_WAVELET_DENOISEGUID;Guided threshold based on hue
 TP_WAVELET_DENOISEH;High levels Curve Local contrast
@@ -3770,7 +3770,7 @@ TP_WAVELET_STREND;Strength
 TP_WAVELET_STRENGTH;Strength
 TP_WAVELET_SUPE;Extra
 TP_WAVELET_THR;Shadows threshold
-TP_WAVELET_THRDEN_TOOLTIP;Generates a stepped curve in order to guide the denoising according to the local contrast.\nThe areas are denoised, the structures are maintained
+TP_WAVELET_THRDEN_TOOLTIP;Generates a stepped curve used to guide the noise reduction as a function of local contrast. The denoise will be applied to uniform low local-contrast areas. Areas with detail (higher local contrast) will be preserved.
 TP_WAVELET_THREND;Local contrast threshold  
 TP_WAVELET_THRESHOLD;Finer levels
 TP_WAVELET_THRESHOLD2;Coarser levels
@@ -3860,4 +3860,4 @@ ZOOMPANEL_ZOOMOUT;Zoom Out\nShortcut: <b>-</b>
 //TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM color appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nOnly the third Ciecam process (Viewing conditions - Target) is taken into account, as well as part of the second (contrast J, saturation s) , as well as some data from the first process (Scene conditions - Source) which is used for the Log encoding.\nIt also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment. 
 //TP_WAVELET_DENH;Low levels (1234)- Finest details
 //TP_WAVELET_DENL;High levels - Coarsest details
-//TP_WAVELET_DENLH;Guided threshold by detail levels 1-4
+//TP_WAVELET_DENLH;Guided threshold for detail levels 1-4
