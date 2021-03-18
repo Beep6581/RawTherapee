@@ -70,7 +70,6 @@ protected:
     char* profileData;
     int profileLength;
     char* loadedProfileData;
-    bool loadedProfileDataJpg;
     int loadedProfileLength;
     const std::unique_ptr<procparams::ExifPairs> exifChange;
     IptcData* iptc;

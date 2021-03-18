@@ -196,7 +196,7 @@ rtengine::LCPProfile::LCPProfile(const Glib::ustring& fname) :
     XML_Parser parser = XML_ParserCreate(nullptr);
 
     if (!parser) {
-        throw "Couldn't allocate memory for XML parser";
+        throw std::runtime_error("Couldn't allocate memory for XML parser");
     }
 
     XML_SetElementHandler(parser, XmlStartHandler, XmlEndHandler);
@@ -216,7 +216,7 @@ rtengine::LCPProfile::LCPProfile(const Glib::ustring& fname) :
 
             if (XML_Parse(parser, buf, bytesRead, done) == XML_STATUS_ERROR) {
                 XML_ParserFree(parser);
-                throw "Invalid XML in LCP file";
+                throw std::runtime_error("Invalid XML in LCP file");
             }
         } while (!done);
 

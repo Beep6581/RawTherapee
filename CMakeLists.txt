@@ -683,7 +683,7 @@ if(WIN32)
 elseif(APPLE)
     set(
          ABOUT_COMMAND_WITH_ARGS
-         cmake
+         ${CMAKE_COMMAND}
              -DPROJECT_SOURCE_DIR:STRING=${PROJECT_SOURCE_DIR}
              -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
              -P ${PROJECT_SOURCE_DIR}/UpdateInfo.cmake

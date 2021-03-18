@@ -1347,6 +1347,13 @@ private:
         CurveFactory::complexsgnCurve(autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,
                                       params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 1);
 
+        ipf.shadowsHighlights(labView, params.sh.enabled, params.sh.lab,params.sh.highlights ,params.sh.shadows, params.sh.radius, 1, params.sh.htonalwidth, params.sh.stonalwidth);
+
+        if (params.localContrast.enabled) {
+            // Alberto's local contrast
+                ipf.localContrast(labView, labView->L, params.localContrast, false, 1);//scale);
+        }
+
         ipf.chromiLuminanceCurve(nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
         if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {

@@ -991,7 +991,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
             }
 
             if (CAMBrightCurveJ.dirty) {
-                Ciecam02::curveJfloat(params->colorappearance.jlight, params->colorappearance.contrast, hist16J, CAMBrightCurveJ); //lightness and contrast J
+                Ciecam02::curveJfloat(params->colorappearance.jlight, params->colorappearance.contrast, 0.6f, hist16J, CAMBrightCurveJ); //lightness and contrast J
                 CAMBrightCurveJ /= 327.68f;
                 CAMBrightCurveJ.dirty = false;
             }
@@ -1003,7 +1003,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
             }
 
             if (CAMBrightCurveQ.dirty) {
-                Ciecam02::curveJfloat(params->colorappearance.qbright, params->colorappearance.qcontrast, hist16Q, CAMBrightCurveQ); //brightness and contrast Q
+                Ciecam02::curveJfloat(params->colorappearance.qbright, params->colorappearance.qcontrast, 0.6f, hist16Q, CAMBrightCurveQ); //brightness and contrast Q
                 //  CAMBrightCurveQ /= coefQ;
                 CAMBrightCurveQ.dirty = false;
             }
@@ -3590,12 +3590,13 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     }
 
   //  shadowsHighlights(lab);
-    shadowsHighlights(lab, params->sh.enabled, params->sh.lab,params->sh.highlights ,params->sh.shadows, params->sh.radius, scale, params->sh.htonalwidth, params->sh.stonalwidth);
-
+ //   shadowsHighlights(lab, params->sh.enabled, params->sh.lab,params->sh.highlights ,params->sh.shadows, params->sh.radius, scale, params->sh.htonalwidth, params->sh.stonalwidth);
+/*
     if (params->localContrast.enabled) {
         // Alberto's local contrast
         localContrast(lab, lab->L, params->localContrast, false, scale);
     }
+    */
 }
 
 /**
@@ -5621,14 +5622,8 @@ double ImProcFunctions::getAutoDistor(const Glib::ustring &fname, int thumb_size
         rawGray = raw->getGrayscaleHistEQ(width);
 
         if (!thumbGray || !rawGray) {
-            if (thumbGray) {
-                delete thumbGray;
-            }
-
-            if (rawGray) {
-                delete rawGray;
-            }
-
+            delete[] thumbGray;
+            delete[] rawGray;
             delete thumb;
             delete raw;
             return 0.0;
@@ -5641,8 +5636,8 @@ double ImProcFunctions::getAutoDistor(const Glib::ustring &fname, int thumb_size
             calcDistortion(thumbGray, rawGray, width, h_thumb, 4, dist_amount);
         }
 
-        delete thumbGray;
-        delete rawGray;
+        delete[] thumbGray;
+        delete[] rawGray;
         delete thumb;
         delete raw;
         return dist_amount;
