@@ -132,13 +132,15 @@ LocallabTool::LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustr
     complexity(Gtk::manage(new MyComboBoxText()))
 {
     // Create expander title bar
-   // Gtk::Box* const titleBox = Gtk::manage(new Gtk::Box());
-    Gtk::FlowBox* const titleBox = Gtk::manage(new Gtk::FlowBox());
+    Gtk::Box *titVBox;
+    titVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    titVBox->set_spacing(2);
+
+    Gtk::Box* const titleBox = Gtk::manage(new Gtk::Box());
     Gtk::Label* const titleLabel = Gtk::manage(new Gtk::Label());
     titleLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(UILabel) + Glib::ustring("</b>"));
     titleLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-  //  titleBox->pack_start(*titleLabel, Gtk::PACK_EXPAND_WIDGET, 0);
-    titleBox->add(*titleLabel);
+    titleBox->pack_start(*titleLabel, Gtk::PACK_EXPAND_WIDGET, 0);
     
     Gtk::EventBox* const removeEvBox = Gtk::manage(new Gtk::EventBox()); // Glue to manage mouse clicking event on remove image
     removeEvBox->set_can_focus(false);
@@ -146,34 +148,27 @@ LocallabTool::LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustr
     removeEvBox->signal_button_release_event().connect(sigc::mem_fun(this, &LocallabTool::on_remove_change));
     RTImage* const removeImage = Gtk::manage(new RTImage("cancel-small.png"));
     removeEvBox->add(*removeImage);
- //   titleBox->pack_end(*removeEvBox, Gtk::PACK_SHRINK, 1);
-    titleBox->add(*removeEvBox);
-    
+    titleBox->pack_end(*removeEvBox, Gtk::PACK_SHRINK, 1);
     if (needMode) {
         complexity->append(M("TP_LOCALLAB_MODE_EXPERT"));
         complexity->append(M("TP_LOCALLAB_MODE_NORMAL"));
         complexity->append(M("TP_LOCALLAB_MODE_SIMPLE"));
         complexity->set_active(2);
-     //
-
-        complexity->setPreferredWidth(options.fontSize * 11.7, -1);
-      //  complexity->setPreferredWidth(105, -1);
         complexityConn = complexity->signal_changed().connect(sigc::mem_fun(*this, &LocallabTool::complexityModeChanged));
-       // titleBox->pack_end(*complexity, Gtk::PACK_SHRINK, 1);
-        titleBox->add(*complexity);
     }
 
- //   Gtk::Separator* const separator = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
- //   titleBox->pack_end(*separator, Gtk::PACK_SHRINK, 0);
+    Gtk::Separator* const separator = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
+    titleBox->pack_end(*separator, Gtk::PACK_SHRINK, 0);
 
     if (need100Percent) {
         RTImage* const titleImage = Gtk::manage(new RTImage("one-to-one-small.png"));
         titleImage->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
-       // titleBox->pack_end(*titleImage, Gtk::PACK_SHRINK, 0);
-        titleBox->add(*titleImage);
+        titleBox->pack_end(*titleImage, Gtk::PACK_SHRINK, 0);
     }
+    titVBox->pack_start(*titleBox, Gtk::PACK_SHRINK, 1);
+    titVBox->pack_start(*complexity, Gtk::PACK_SHRINK, 1);
 
-    exp = Gtk::manage(new MyExpander(true, titleBox));
+    exp = Gtk::manage(new MyExpander(true, titVBox));
     exp->signal_button_release_event().connect_notify(sigc::mem_fun(this, &LocallabTool::foldThemAll));
     enaExpConn = exp->signal_enabled_toggled().connect(sigc::mem_fun(*this, &LocallabTool::enabledChanged));
 
