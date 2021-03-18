@@ -2481,7 +2481,7 @@ TP_LOCALCONTRAST_LIGHTNESS;Lightness level
 TP_LOCALCONTRAST_RADIUS;Radius
 TP_LOCALLAB_ACTIV;Luminance only
 TP_LOCALLAB_ACTIVSPOT;Enable Spot
-TP_LOCALLAB_ADJ;Equalizer Blue-Yellow/Red-Green
+TP_LOCALLAB_ADJ;Equalizer Color
 TP_LOCALLAB_ALL;All rubrics
 TP_LOCALLAB_AMOUNT;Amount
 TP_LOCALLAB_ARTIF;Shape detection
@@ -2859,8 +2859,11 @@ TP_LOCALLAB_MASKHIGTHRESL_TOOLTIP;Light-tone limit above which the parameters wi
 TP_LOCALLAB_MASKHIGTHRESD_TOOLTIP; The denoise is progressively decreased from 100% at the threshold setting to 0% at the maximum white value (as determined by the mask).\n You can use certain tools in ‘Mask and modifications’ to change the gray levels: ‘structure mask’, ‘Smooth radius’, ‘Gamma and slope’, ‘Contrast curve’, ‘Local contrast wavelet’.\n Use a ‘lockable color picker’ on the mask to see which areas will be affected. Be carefull in 'settings' to Background color mask = 0
 TP_LOCALLAB_MASKHIGTHRES_TOOLTIP; The Guided Filter is progressively decreased from 100% at the threshold setting to 0% at the maximum white value (as determined by the mask).\n You can use certain tools in ‘Mask and modifications’ to change the gray levels: ‘structure mask’, ‘Smooth radius’, ‘Gamma and slope’, ‘Contrast curve’, ‘Local contrast wavelet’.\n Use a ‘lockable color picker’ on the mask to see which areas will be affected. Be carefull in 'settings' to Background color mask = 0
 TP_LOCALLAB_MASKLCTHR;Light area luminance threshold
+TP_LOCALLAB_MASKLCTHR2;Light area luma threshold
+
 TP_LOCALLAB_MASKLCTHRLOW;Dark area luminance threshold
-TP_LOCALLAB_MASKLNOISELOW;Reinforce deno. dark/light areas
+TP_LOCALLAB_MASKLCTHRLOW2;Dark area luma threshold
+TP_LOCALLAB_MASKLNOISELOW;Reinforce in dark/light areas
 TP_LOCALLAB_MASKLOWTHRES_TOOLTIP;The Guided Filter is progressively increased from 0% at the threshold setting to 100% at the maximum black value (as determined by the mask).\n You can use certain tools in ‘Mask and modifications’ to change the gray levels: ‘structure mask’, ‘Smooth radius’, ‘Gamma and slope’, ‘Contrast curve’, ‘Local contrast wavelet’.\n Use a ‘lockable color picker’ on the mask to see which areas will be affected. Be carefull in 'settings' to Background color mask = 0
 TP_LOCALLAB_MASKLOWTHRESD_TOOLTIP;The denoise is progressively increased from 0% at the threshold setting to 100% at the maximum black value (as determined by the mask).\n You can use certain tools in ‘Mask and modifications’ to change the gray levels: ‘structure mask’, ‘Smooth radius’, ‘Gamma and slope’, ‘Contrast curve’, ‘Local contrast wavelet’.\n Use a ‘lockable color picker’ on the mask to see which areas will be affected. Be carefull in 'settings' to Background color mask = 0
 TP_LOCALLAB_MASKLOWTHRESC_TOOLTIP;Dark-tone limit below which the parameters will be restored progressively to their original values prior to being modified by the Color and Light settings.\n You can use certain tools in ‘Mask and modifications’ to change the gray levels: ‘structure mask’, 'blur mask', ‘Smooth radius’, ‘Gamma and slope’, ‘Contrast curve’, ‘Local contrast wavelet’.\n Use a ‘lockable color picker’ on the mask to see which areas will be affected. Be carefull in 'settings' to Background color mask = 0
@@ -2872,8 +2875,8 @@ TP_LOCALLAB_MASKLOWTHRESRETI_TOOLTIP;Dark-tone limit below which Retinex (Lumina
 TP_LOCALLAB_MASKLOWTHRESTM_TOOLTIP;Dark-tone limit below which the parameters will be restored progressively to their original values prior to being modified by the Tone Mapping settings.\n You can use certain tools in ‘Mask and modifications’ to change the gray levels: ‘Smooth radius’, ‘Gamma and slope’, ‘Contrast curve’.\n Use a ‘lockable color picker’ on the mask to see which areas will be affected. Be carefull in 'settings' to Background color mask = 0
 TP_LOCALLAB_MASKLOWTHRESVIB_TOOLTIP;Dark-tone limit below which the parameters will be restored progressively to their original values prior to being modified by the Vibrance and Warm Cool settings.\n You can use certain tools in ‘Mask and modifications’ to change the gray levels: ‘Smooth radius’, ‘Gamma and slope’, ‘Contrast curve’.\n Use a ‘lockable color picker’ on the mask to see which areas will be affected. Be carefull in 'settings' to Background color mask = 0
 TP_LOCALLAB_MASKLOWTHRESWAV_TOOLTIP;Dark-tone limit below which the parameters will be restored progressively to their original values prior to being modified by the Local contrast and Wavelet settings.\n You can use certain tools in ‘Mask and modifications’ to change the gray levels: ‘Smooth radius’, ‘Gamma and slope’, ‘Contrast curve’.\n Use a ‘lockable color picker’ on the mask to see which areas will be affected. Be carefull in 'settings' to Background color mask = 0
-TP_LOCALLAB_MASKLCTHRMID;Gray area luminance denoise 
-TP_LOCALLAB_MASKLCTHRMIDCH;Gray area chrominance denoise 
+TP_LOCALLAB_MASKLCTHRMID;Gray area luma denoise 
+TP_LOCALLAB_MASKLCTHRMIDCH;Gray area chroma denoise 
 TP_LOCALLAB_MASKUSABLE;Mask enabled (Mask & modifications)
 TP_LOCALLAB_MASKUNUSABLE;Mask disabled (Mask & modifications)
 TP_LOCALLAB_MASKRECOTHRES;Recovery threshold
@@ -3195,7 +3198,7 @@ TP_LOCALLAB_WAVCOMPRE_TOOLTIP;Allows you to apply tone mapping or reduce local c
 TP_LOCALLAB_WAVCOMP_TOOLTIP;Allows you to apply local contrast based on the direction of the wavelet decomposition : horizontal, vertical, diagonal
 TP_LOCALLAB_WAVCON;Contrast by level
 TP_LOCALLAB_WAVCONTF_TOOLTIP;Similar to Contrast By Detail Levels. Fine to coarse detail levels from left to right on the x-axis.
-TP_LOCALLAB_WAVDEN;Luminance denoise by level
+TP_LOCALLAB_WAVDEN;Luminance denoise
 TP_LOCALLAB_WAVE;Wavelets
 TP_LOCALLAB_WAVEDG;Local contrast
 TP_LOCALLAB_WAVEEDG_TOOLTIP;Improves sharpness by targeting the action of local contrast on the edges. It has the same functions as the corresponding module in Wavelet Levels and uses the same settings.
@@ -3553,7 +3556,7 @@ TP_WAVELET_BACUR;Curve
 TP_WAVELET_BALANCE;Contrast balance d/v-h
 TP_WAVELET_BALANCE_TOOLTIP;Alters the balance between the wavelet directions: vertical-horizontal and diagonal.\nIf contrast, chroma or residual tone mapping are activated, the effect due to balance is amplified.
 TP_WAVELET_BALCHRO;Chroma balance
-TP_WAVELET_BALCHROM;Equalizer  Blue-Yellow/Red-Green
+TP_WAVELET_BALCHROM;Equalizer Color
 TP_WAVELET_BALCHRO_TOOLTIP;If enabled, the 'Contrast balance' curve or slider also modifies chroma balance.
 TP_WAVELET_BALLUM;Denoise equalizer  White-Black
 TP_WAVELET_BANONE;None
@@ -3628,7 +3631,7 @@ TP_WAVELET_DENCURV;Curve
 TP_WAVELET_DENEQUAL;1 2 3 4 Equal
 TP_WAVELET_DENH;Threshold
 TP_WAVELET_DENL;Correction structure
-TP_WAVELET_DENLH;Guided threshold detail levels 1-4
+TP_WAVELET_DENLH;Guided threshold levels 1-4
 TP_WAVELET_DENLOCAL_TOOLTIP;Use a curve in order to guide the denoising according to the local contrast.\nThe areas are denoised, the structures are maintained
 TP_WAVELET_DENMIX_TOOLTIP;The local-contrast reference value used by the guided filter.\nDepending on the image, results can vary depending on whether the noise is measured before or after the noise reduction. These four choices allow you to take into account various combinations of the original and modified (denoised) images to find the best compromise.
 TP_WAVELET_DENOISE;Guide curve based on Local contrast
