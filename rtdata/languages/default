@@ -3628,7 +3628,7 @@ TP_WAVELET_DENCURV;Curve
 TP_WAVELET_DENEQUAL;1 2 3 4 Equal
 TP_WAVELET_DENH;Threshold
 TP_WAVELET_DENL;Correction structure
-TP_WAVELET_DENLH;Guided threshold for detail levels 1-4
+TP_WAVELET_DENLH;Guided threshold detail levels 1-4
 TP_WAVELET_DENLOCAL_TOOLTIP;Use a curve in order to guide the denoising according to the local contrast.\nThe areas are denoised, the structures are maintained
 TP_WAVELET_DENMIX_TOOLTIP;The local-contrast reference value used by the guided filter.\nDepending on the image, results can vary depending on whether the noise is measured before or after the noise reduction. These four choices allow you to take into account various combinations of the original and modified (denoised) images to find the best compromise.
 TP_WAVELET_DENOISE;Guide curve based on Local contrast
