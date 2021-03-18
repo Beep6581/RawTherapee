@@ -2499,8 +2499,8 @@ TP_LOCALLAB_BILATERAL;Bilateral filter
 TP_LOCALLAB_BLACK_EV;Black Ev
 TP_LOCALLAB_BLCO;Chrominance only
 TP_LOCALLAB_BLENDMASKCOL;Blend
-TP_LOCALLAB_BLENDMASKMASK;Add/subtract luminance mask
-TP_LOCALLAB_BLENDMASKMASKAB;Add/subtract chrominance mask
+TP_LOCALLAB_BLENDMASKMASK;Add/subtract luma mask
+TP_LOCALLAB_BLENDMASKMASKAB;Add/subtract chroma mask
 TP_LOCALLAB_BLENDMASKMASK_TOOLTIP;If this slider = 0 no action.\nAdd or subtract the mask from the original image
 TP_LOCALLAB_BLENDMASK_TOOLTIP;If blend = 0 only shape detection is improved.\nIf blend > 0 the mask is added to the image. If blend < 0 the mask is subtracted from the image
 TP_LOCALLAB_BLGUID;Guided Filter
@@ -2532,7 +2532,7 @@ TP_LOCALLAB_BUTTON_DEL;Delete
 TP_LOCALLAB_BUTTON_DUPL;Duplicate
 TP_LOCALLAB_BUTTON_REN;Rename
 TP_LOCALLAB_BUTTON_VIS;Show/Hide
-TP_LOCALLAB_CATAD;Chromatic adaptation - Cat16
+TP_LOCALLAB_CATAD;Chromatic adaptation/Cat16
 TP_LOCALLAB_CBDL;Contrast by Detail Levels
 TP_LOCALLAB_CBDLCLARI_TOOLTIP;Enhances local contrast of the midtones.
 TP_LOCALLAB_CBDL_ADJ_TOOLTIP;Same as wavelets.\nThe first level (0) acts on 2x2 pixel details.\nThe last level (5) acts on 64x64 pixel details.
@@ -2540,7 +2540,7 @@ TP_LOCALLAB_CBDL_THRES_TOOLTIP;Prevents the sharpening of noise
 TP_LOCALLAB_CBDL_TOOLNAME;Contrast by Detail Levels - 2
 TP_LOCALLAB_CENTER_X;Center X
 TP_LOCALLAB_CENTER_Y;Center Y
-TP_LOCALLAB_CH;Curves CL - LC
+TP_LOCALLAB_CH;CL - LC
 TP_LOCALLAB_CHROMA;Chrominance
 TP_LOCALLAB_CHROMABLU;Chroma levels
 TP_LOCALLAB_CHROMABLU_TOOLTIP;Increases or reduces the effect depending on the luma settings.\nValues under 1 reduce the effect. Values greater than 1 increase the effect.
@@ -2627,7 +2627,7 @@ TP_LOCALLAB_DEPTH;Depth
 TP_LOCALLAB_DETAIL;Local contrast
 TP_LOCALLAB_DETAILFRA;Edge detection - DCT
 TP_LOCALLAB_DETAILSH;Details
-TP_LOCALLAB_DETAILTHR;Luma-chroma detail threshold
+TP_LOCALLAB_DETAILTHR;Luma-chro detail threshold
 TP_LOCALLAB_DIVGR;Gamma
 TP_LOCALLAB_DUPLSPOTNAME;Copy
 TP_LOCALLAB_EDGFRA;Edge sharpness
@@ -2712,11 +2712,11 @@ TP_LOCALLAB_GRADGEN_TOOLTIP;Adjusts luminance gradient strength
 TP_LOCALLAB_GRADLOGFRA;Graduated Filter Luminance 
 TP_LOCALLAB_GRADSTR;Gradient strength
 TP_LOCALLAB_GRADSTRAB_TOOLTIP;Adjusts chroma gradient strength
-TP_LOCALLAB_GRADSTRCHRO;Chrominance gradient strength 
+TP_LOCALLAB_GRADSTRCHRO;Chroma gradient strength 
 TP_LOCALLAB_GRADSTRHUE;Hue gradient strength
 TP_LOCALLAB_GRADSTRHUE2;Hue gradient strength
 TP_LOCALLAB_GRADSTRHUE_TOOLTIP;Adjusts hue gradient strength
-TP_LOCALLAB_GRADSTRLUM;Luminance gradient strength
+TP_LOCALLAB_GRADSTRLUM;Luma gradient strength
 TP_LOCALLAB_GRADSTR_TOOLTIP;Filter strength in stops
 TP_LOCALLAB_GRAINFRA;Film Grain   1:1
 TP_LOCALLAB_GRAINFRA2;Coarseness
@@ -2735,7 +2735,7 @@ TP_LOCALLAB_GUIDFILTER_TOOLTIP;Can reduce or increase artifacts.
 TP_LOCALLAB_GUIDSTRBL_TOOLTIP;Intensity of the guided filter
 TP_LOCALLAB_HHMASK_TOOLTIP;Fine hue adjustments for example for the skin.
 TP_LOCALLAB_HIGHMASKCOL;Highlights
-TP_LOCALLAB_HLH;Curves H
+TP_LOCALLAB_HLH;H
 TP_LOCALLAB_IND;Independent (mouse)
 TP_LOCALLAB_INDSL;Independent (mouse + sliders)
 TP_LOCALLAB_INVBL;Inverse
@@ -2815,9 +2815,9 @@ TP_LOCALLAB_LOGSURSOUR_TOOLTIP;Changes tones and colors to take into account the
 TP_LOCALLAB_LOGTARGGREY_TOOLTIP;You can adjust this value to suit.
 TP_LOCALLAB_LOGVIEWING_TOOLTIP;Corresponds to the medium on which the final image will be viewed (monitor, TV, projector, printer,..), as well as its environment.
 TP_LOCALLAB_LOG_TOOLNAME;Log Encoding - 0
-TP_LOCALLAB_LUM;Curves LL - CC
+TP_LOCALLAB_LUM;LL - CC
 TP_LOCALLAB_LUMADARKEST;Darkest
-TP_LOCALLAB_LUMASK;Background color for luminance mask
+TP_LOCALLAB_LUMASK;Background color/luma mask
 TP_LOCALLAB_LUMASK_TOOLTIP;Adjusts the shade of gray or color of the mask background in Show Mask (Mask and modifications)
 TP_LOCALLAB_LUMAWHITESEST;Lightest
 TP_LOCALLAB_LUMFRA;L*a*b* standard
@@ -2863,7 +2863,7 @@ TP_LOCALLAB_MASKLCTHR2;Light area luma threshold
 
 TP_LOCALLAB_MASKLCTHRLOW;Dark area luminance threshold
 TP_LOCALLAB_MASKLCTHRLOW2;Dark area luma threshold
-TP_LOCALLAB_MASKLNOISELOW;Reinforce in dark/light areas
+TP_LOCALLAB_MASKLNOISELOW;Reinforce dark/light areas
 TP_LOCALLAB_MASKLOWTHRES_TOOLTIP;The Guided Filter is progressively increased from 0% at the threshold setting to 100% at the maximum black value (as determined by the mask).\n You can use certain tools in ‘Mask and modifications’ to change the gray levels: ‘structure mask’, ‘Smooth radius’, ‘Gamma and slope’, ‘Contrast curve’, ‘Local contrast wavelet’.\n Use a ‘lockable color picker’ on the mask to see which areas will be affected. Be carefull in 'settings' to Background color mask = 0
 TP_LOCALLAB_MASKLOWTHRESD_TOOLTIP;The denoise is progressively increased from 0% at the threshold setting to 100% at the maximum black value (as determined by the mask).\n You can use certain tools in ‘Mask and modifications’ to change the gray levels: ‘structure mask’, ‘Smooth radius’, ‘Gamma and slope’, ‘Contrast curve’, ‘Local contrast wavelet’.\n Use a ‘lockable color picker’ on the mask to see which areas will be affected. Be carefull in 'settings' to Background color mask = 0
 TP_LOCALLAB_MASKLOWTHRESC_TOOLTIP;Dark-tone limit below which the parameters will be restored progressively to their original values prior to being modified by the Color and Light settings.\n You can use certain tools in ‘Mask and modifications’ to change the gray levels: ‘structure mask’, 'blur mask', ‘Smooth radius’, ‘Gamma and slope’, ‘Contrast curve’, ‘Local contrast wavelet’.\n Use a ‘lockable color picker’ on the mask to see which areas will be affected. Be carefull in 'settings' to Background color mask = 0
@@ -2892,7 +2892,7 @@ TP_LOCALLAB_MERELE;Lighten only
 TP_LOCALLAB_MERFIV;Addition
 TP_LOCALLAB_MERFOR;Color Dodge
 TP_LOCALLAB_MERFOU;Multiply
-TP_LOCALLAB_MERGE1COLFRA;Merge with Original or Previous or Background
+TP_LOCALLAB_MERGE1COLFRA;Merge with Original/Previous/Background
 TP_LOCALLAB_MERGECOLFRA;Mask: LCh & Structure
 TP_LOCALLAB_MERGECOLFRMASK_TOOLTIP;Allows you to create masks based on the 3 LCh curves and/or a structure-detection algorithm
 TP_LOCALLAB_MERGEFIV;Previous Spot(Mask 7) + Mask LCh
@@ -2948,12 +2948,12 @@ TP_LOCALLAB_NLPAT;Maximum patch size
 TP_LOCALLAB_NLRAD;Maximum radius size
 TP_LOCALLAB_NOISECHROCOARSE;Coarse chroma (Wav)
 TP_LOCALLAB_NOISECHROC_TOOLTIP;If superior to zero, high quality algorithm is enabled.\nCoarse is for slider >=0.02
-TP_LOCALLAB_NOISECHRODETAIL;Chroma detail recovery(DCT)
+TP_LOCALLAB_NOISECHRODETAIL;Chroma detail recovery
 TP_LOCALLAB_NOISECHROFINE;Fine chroma (Wav)
 TP_LOCALLAB_NOISEDETAIL_TOOLTIP;Disabled if slider = 100
 TP_LOCALLAB_NOISELEQUAL;Equalizer white-black
 TP_LOCALLAB_NOISELUMCOARSE;Luminance coarse (Wav)
-TP_LOCALLAB_NOISELUMDETAIL;Lumin. detail recovery(DCT)
+TP_LOCALLAB_NOISELUMDETAIL;Luma detail recovery
 TP_LOCALLAB_NOISELUMFINE;Luminance fine 1 (Wav)
 TP_LOCALLAB_NOISELUMFINETWO;Luminance fine 2 (Wav)
 TP_LOCALLAB_NOISELUMFINEZERO;Luminance fine 0 (Wav)
@@ -3034,7 +3034,7 @@ TP_LOCALLAB_SETTINGS;Settings
 TP_LOCALLAB_SH1;Shadows Highlights
 TP_LOCALLAB_SH2;Equalizer
 TP_LOCALLAB_SHADEX;Shadows
-TP_LOCALLAB_SHADEXCOMP;Shadow compression & tonal width
+TP_LOCALLAB_SHADEXCOMP;Shadow compression
 TP_LOCALLAB_SHADHIGH;Shadows/Highlights & Tone Equalizer
 TP_LOCALLAB_SHADHMASK_TOOLTIP;Lowers the highlights of the mask in the same way as the shadows/highlights algorithm
 TP_LOCALLAB_SHADMASK_TOOLTIP;Lifts the shadows of the mask in the same way as the shadows/highlights algorithm
@@ -3129,7 +3129,7 @@ TP_LOCALLAB_THRES;Threshold structure
 TP_LOCALLAB_THRESDELTAE;ΔE scope threshold 
 TP_LOCALLAB_THRESRETI;Threshold
 TP_LOCALLAB_THRESWAV;Balance threshold
-TP_LOCALLAB_TLABEL;TM Data Min=%1 Max=%2 Mean=%3 Sig=%4
+TP_LOCALLAB_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sig=%4
 TP_LOCALLAB_TLABEL2;TM Effective Tm=%1 TM=%2
 TP_LOCALLAB_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nTm=Min TM=Max of Transmission Map.\nYou can normalize the results with the threshold slider.
 TP_LOCALLAB_TM;Tone Mapping
