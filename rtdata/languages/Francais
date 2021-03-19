@@ -1755,7 +1755,7 @@ TP_LOCALCONTRAST_LIGHTNESS;Niveau des hautes-lumières
 TP_LOCALCONTRAST_RADIUS;Rayon
 TP_LOCALLAB_ACTIV;Luminosité seulement
 TP_LOCALLAB_ACTIVSPOT;Activer le Spot
-TP_LOCALLAB_ADJ;Egalisateur Bleu-jaune Rouge-vert
+TP_LOCALLAB_ADJ;Egalisateur couleur
 TP_LOCALLAB_ALL;Toutes les rubriques
 TP_LOCALLAB_AMOUNT;Quantité
 TP_LOCALLAB_ARTIF;Détection de forme
@@ -1811,7 +1811,7 @@ TP_LOCALLAB_CBDL_THRES_TOOLTIP;Empêche d'augmenter le bruit
 TP_LOCALLAB_CBDL_TOOLNAME;Contraste par niveaux de détail - 2
 TP_LOCALLAB_CENTER_X;Centre X
 TP_LOCALLAB_CENTER_Y;Centre Y
-TP_LOCALLAB_CH;Courbes CL - LC
+TP_LOCALLAB_CH;CL - LC
 TP_LOCALLAB_CHROMA;Chrominance
 TP_LOCALLAB_CHROMABLU;Niveaux Chroma
 TP_LOCALLAB_CHROMABLU_TOOLTIP;Agit comme un amplificateur-reducteur d'action en comparant aux réglages de luma.\nEn dessous de 1 reduit, au dessus de 1 amplifie
@@ -1824,7 +1824,7 @@ TP_LOCALLAB_CHRRT;Chroma
 TP_LOCALLAB_CIRCRADIUS;Taille Spot
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Contient les références du RT-spot, utile pour la détection de forme (couleur, luma, chroma, Sobel).\nLes faibles valeurs peuvent être utiles pour les feuillages.\nLes valeurs élevées peuvent être utile pour la peau
 TP_LOCALLAB_CLARICRES;Fusion Chroma
-TP_LOCALLAB_CLARIFRA;Clarté & Masque netteté/Fusion & adoucir images 
+TP_LOCALLAB_CLARIFRA;Clarté & Masque netteté/Fusion & adoucir
 TP_LOCALLAB_CLARILRES;Fusion Luma
 TP_LOCALLAB_CLARISOFT;Rayon adoucir
 TP_LOCALLAB_CLARISOFT_TOOLTIP;Actif pour Clarté et Masque de netteté si différent de zéro.\n\nActif pour toutes les pyramides ondelettes.\nInactif si rayon = 0
@@ -1832,7 +1832,7 @@ TP_LOCALLAB_CLARITYML;Clarté
 TP_LOCALLAB_CLARI_TOOLTIP;En dessous ou égal à 4, 'Masque netteté' est actif.\nAu dessus du niveau ondelettes 5 'Clarté' est actif.\nUtilesu=i vous utilisez 'Compression dynamique des niveaux'
 TP_LOCALLAB_CLIPTM;Clip Recupère données (gain)
 TP_LOCALLAB_COFR;Couleur & Lumière
-TP_LOCALLAB_COLORDE;Couleur prévisualisation sélection ΔE - Intensité
+TP_LOCALLAB_COLORDE;Couleur prévis. sélection ΔE - Intensité
 TP_LOCALLAB_COLORDEPREV_TOOLTIP;Bouton Prévisualisation ΔE a besoin qu'un seul outil soit activé (expander).\nPour pouvoir avoir une Prévisualisation ΔE avec plusieurs outils activés utiliser Masque et modifications - Prévisualisation ΔE
 TP_LOCALLAB_COLORDE_TOOLTIP;Affiche la prévisualisation ΔE en bleu si négatif et en vert si positif.\n\nMasque et modifications (montre modifications sans masque): montre les modifications réelles si positf, montre les modifications améliorées (luminance seule) en bleu et jaune si négatif.
 TP_LOCALLAB_COLORSCOPE;Etendue Outils Couleur
@@ -1999,7 +1999,7 @@ TP_LOCALLAB_GUIDSTRBL_TOOLTIP;Force du filtre guidé
 TP_LOCALLAB_GUIDEPSBL_TOOLTIP;Détail - agit sur la répartition du filtre guidé, les valeurs négatives simulent un flou gaussien
 TP_LOCALLAB_HHMASK_TOOLTIP;Ajustements fin de la teinte par exemple pour la peau.
 TP_LOCALLAB_HIGHMASKCOL;Hautes lumières masque
-TP_LOCALLAB_HLH;Courbes H
+TP_LOCALLAB_HLH;H
 TP_LOCALLAB_IND;Independant (souris)
 TP_LOCALLAB_INDSL;Independant (souris + curseurs)
 TP_LOCALLAB_INVERS;Inverse
@@ -2077,7 +2077,7 @@ TP_LOCALLAB_LOGSRCGREY_TOOLTIP;Estime la valeur du point gris de l'image, tôt d
 TP_LOCALLAB_LOGTARGGREY_TOOLTIP;Vous pouvez changer cette valeur pour l'adapter à votre goût.
 TP_LOCALLAB_LOG_TOOLNAME;Codage log - 0
 TP_LOCALLAB_LOGVIEWING_TOOLTIP;Correspond au medium sur lequel l'image finale sera vue (moniteur, TV, projecteur, imprimante,..), ainsi que son environnement.
-TP_LOCALLAB_LUM;Courbes LL - CC
+TP_LOCALLAB_LUM;LL - CC
 TP_LOCALLAB_LUMADARKEST;Plus Sombre
 TP_LOCALLAB_LUMASK;Masque Luminance arrière plan
 TP_LOCALLAB_LUMASK_TOOLTIP;Ajuste le gris de l'arrière plan du masque dans Montrer Masque (Masque et modifications)
@@ -2093,8 +2093,8 @@ TP_LOCALLAB_MASK;Masque
 TP_LOCALLAB_MASK2;Courbe de Contraste
 TP_LOCALLAB_MASKCOL;Masque Courbes
 TP_LOCALLAB_MASKCURVE_TOOLTIP;Si la courbe est au sommet, le masque est compétement noir aucune transformation n'est réalisée par le masque sur l'image.\nQuand vous descendez la courbe, progressivement le masque va se colorer et s'éclaicir, l'image change de plus en plus.\n\nIl est recommendé (pas obligatoire) de positionner le sommet des courbes curves sur la ligne de transition grise qui représnte les références (chroma, luma, couleur).
-TP_LOCALLAB_MASKLCTHRMID;Zones grises de-bruite luminance 
-TP_LOCALLAB_MASKLCTHRMIDCH;Zones grises de-bruite chrominance 
+TP_LOCALLAB_MASKLCTHRMID;Zones grises de-bruite lumina 
+TP_LOCALLAB_MASKLCTHRMIDCH;Zones grises de-bruite chroma 
 TP_LOCALLAB_MASKLC_TOOLTIP;Vous autorise à cibler le de-bruite en se basant sur les informations du masque dans L(L) ou LC(H) (Masque et Modifications).\n Les masques L(L) ou LC(H) doivent être activés pour utiliser cette fonction.\n si le masque est très sombre - sous le seuil 'sombre' - de-bruite sera accru si renforce > 1.\n si le masque est clair - au-dessus du seuil 'clair' - de-bruite sera progressivement réduit.\n entre les deux, de-bruite sera maintenu aux réglages sans masques.
 TP_LOCALLAB_MASKLCTHR;Seuil luminance zones claires
 TP_LOCALLAB_MASKLCTHRLOW;Seuil luminance zones sombres
@@ -2181,7 +2181,7 @@ TP_LOCALLAB_MERTHR;Difference
 TP_LOCALLAB_MERTWE;Exclusion
 TP_LOCALLAB_MERTWO;Soustrait
 TP_LOCALLAB_METHOD_TOOLTIP;'Enhanced + chroma denoise' significantly increases processing times.\nBut reduce artifacts.
-TP_LOCALLAB_MLABEL;Réc. données  Min=%1 Max=%2(Clip/décal)
+TP_LOCALLAB_MLABEL;Réc. données  Min=%1 Max=%2
 TP_LOCALLAB_MLABEL_TOOLTIP;'Doit être' près de min=0 max=32768 (log mode) mais d'autres valeurs sont possibles.\nVous pouvez agir sur les données récupérées (CLIP) et décalage pour normaliser.\n\nRécupère les données image sans mélange.
 TP_LOCALLAB_MODE_EXPERT;Avancé
 TP_LOCALLAB_MODE_NORMAL;Standard
@@ -2233,7 +2233,7 @@ TP_LOCALLAB_QUALCURV_METHOD;Types de Courbes
 TP_LOCALLAB_QUAL_METHOD;Qualité globale
 TP_LOCALLAB_QUACONSER;Conservatif
 TP_LOCALLAB_QUAAGRES;Aggressif
-TP_LOCALLAB_QUANONEWAV;Débruitage par morceaux - luminance seulement
+TP_LOCALLAB_QUANONEWAV;Débruit. par morceaux-luminance seulement
 TP_LOCALLAB_QUANONEALL;Rien
 TP_LOCALLAB_RADIUS;Rayon
 TP_LOCALLAB_RADIUS_TOOLTIP;Au-dessus de Rayon 30 Utilise 'Fast Fourier Transform'
@@ -2331,7 +2331,7 @@ TP_LOCALLAB_SHOWMODIF;Montrer modifications sans masque
 TP_LOCALLAB_SHOWMODIF2;Montrer modifications
 TP_LOCALLAB_SHOWMODIFMASK;Montrer modifications avec masque
 TP_LOCALLAB_SHOWNORMAL;Normalise luminance (non)
-TP_LOCALLAB_SHOWPLUS;Masque et modif. -Adoucir-flouter/De-bruite
+TP_LOCALLAB_SHOWPLUS;Masque et modifications
 TP_LOCALLAB_SHOWPOISSON;Poisson (pde ƒ)
 TP_LOCALLAB_SHOWR;Masque et modifications
 TP_LOCALLAB_SHOWREF;Prévisualisation ΔE
@@ -2388,7 +2388,7 @@ TP_LOCALLAB_THRES;Seuil structure
 TP_LOCALLAB_THRESDELTAE;Seuil ΔE-Etendue
 TP_LOCALLAB_THRESRETI;Seuil
 TP_LOCALLAB_THRESWAV;Balance Seuil
-TP_LOCALLAB_TLABEL;TM Data Min=%1 Max=%2 Mea=%3 Sig=%4(Seuil)
+TP_LOCALLAB_TLABEL;TM Min=%1 Max=%2 Mea=%3 Sig=%4
 TP_LOCALLAB_TLABEL2;TM Effectif Tm=%1 TM=%2
 TP_LOCALLAB_TLABEL_TOOLTIP;Transmission map result.\nMin and Max are used by Variance.\nTm=Min TM=Max of Transmission Map.\nYou can act on Threshold to normalize
 TP_LOCALLAB_TM;Compression tonale
@@ -2407,7 +2407,7 @@ TP_LOCALLAB_TRANSIT;Transition - Gradient
 TP_LOCALLAB_TRANSITGRAD;Transition différentiation XY
 TP_LOCALLAB_TRANSITGRAD_TOOLTIP;Change la transition des abscisses vers les ordonnées 
 TP_LOCALLAB_TRANSITVALUE;Transition valeur
-TP_LOCALLAB_TRANSITWEAK;Transition affaiblissement (linéaire-log)
+TP_LOCALLAB_TRANSITWEAK;Transition affaiblissement (lin-log)
 TP_LOCALLAB_TRANSITWEAK_TOOLTIP;Ajuste l'affaiblissement de la transition : change le processus d'affaiblissement - 1 linéaire - 2 parabolique - 3 cubique - ^25.\nPeut être utilisé en conjonction avec de très faibles valeurs de transition pour traiter/réduire les défauts (CBDL, Ondelettes, Couleur et lumière)
 TP_LOCALLAB_TRANSIT_TOOLTIP;Ajuste la progressions de la transition enttre les zones affectées ou non affectées, comme un pourcentage du "rayon" 
 TP_LOCALLAB_TRANSMISSIONGAIN;Transmission gain
@@ -2426,7 +2426,7 @@ TP_LOCALLAB_SHARP_TOOLNAME;Netteté - 8
 TP_LOCALLAB_LC_TOOLNAME;Constraste local & Ondelettes (Défauts) - 7
 TP_LOCALLAB_CBDL_TOOLNAME;Contraste par Niveau détail - 2
 TP_LOCALLAB_LOG_TOOLNAME;Codage log - 0
-TP_LOCALLAB_MASKCOM_TOOLNAME;Masque Commun Couleur  - 13
+TP_LOCALLAB_MASKCOM_TOOLNAME;Masque Commun Couleur  - 12
 TP_LOCALLAB_VIS_TOOLTIP;<b>Click</b> pour montrer/cacher le Spot sélectionné.\n<b>Ctrl</b>+<b>click</b> pour montrer/cacher tous les Spot.
 TP_LOCALLAB_WAMASKCOL;Niveau Ondelettes
 TP_LOCALLAB_WARM;Chaud - Froid & Artefacts de couleur
