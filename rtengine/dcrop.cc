@@ -1171,6 +1171,10 @@ void Crop::update(int todo)
         bool cclutili = parent->cclutili;
 
         LUTu dummy;
+        bool hasColorToningLabGrid = params.colorToning.enabled && params.colorToning.method == "LabGrid";
+        if (hasColorToningLabGrid) {
+            parent->ipf.colorToningLabGrid(labnCrop, 0,labnCrop->W , 0, labnCrop->H, false);
+        }
 
         parent->ipf.shadowsHighlights(labnCrop, params.sh.enabled, params.sh.lab,params.sh.highlights ,params.sh.shadows, params.sh.radius, skip, params.sh.htonalwidth, params.sh.stonalwidth);
         
