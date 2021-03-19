@@ -2947,8 +2947,10 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
 
         fatamount->setValue(spot.fatamount);
         fatdetail->setValue(spot.fatdetail);
-        fatlevel->setValue(spot.fatlevel);
-        fatanchor->setValue(spot.fatanchor);
+    //    fatlevel->setValue(spot.fatlevel);
+    //    fatanchor->setValue(spot.fatanchor);
+        fatlevel->setValue(1.);
+        fatanchor->setValue(1.);
         sensiex->setValue(spot.sensiex);
         structexp->setValue(spot.structexp);
         blurexpde->setValue(spot.blurexpde);
@@ -3427,6 +3429,8 @@ void LocallabExposure::convertParamToNormal()
     slomaskexp->setValue(defSpot.slomaskexp);
     strmaskexp->setValue(defSpot.strmaskexp);
     angmaskexp->setValue(defSpot.angmaskexp);
+    fatlevel->setValue(defSpot.fatlevel);
+    fatanchor->setValue(defSpot.fatanchor);
     decaye->setValue(defSpot.decaye);
 
     // Enable all listeners
@@ -3439,6 +3443,8 @@ void LocallabExposure::convertParamToSimple()
 
     // Disable all listeners
     disableListener();
+    fatlevel->setValue(defSpot.fatlevel);
+    fatanchor->setValue(defSpot.fatanchor);
 
     // Set hidden specific GUI widgets in Simple mode to default spot values
     strexp->setValue(defSpot.strexp);
@@ -3476,6 +3482,8 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
             maskunusablee->hide();
             decaye->hide();
             expmaskexp->hide();
+            fatlevel->hide();
+            fatanchor->hide();
 
             break;
 
@@ -3496,6 +3504,8 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
                 maskusablee->hide();
                 maskunusablee->show();
             }
+            fatlevel->hide();
+            fatanchor->hide();
 
             // Specific Simple mode widgets are shown in Normal mode
             if (!inversex->get_active()) { // Keep widget hidden when invers is toggled
@@ -3516,6 +3526,8 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
             }
 
             blurexpde->show();
+            fatlevel->hide();
+            fatanchor->hide();
 
             if (!inversex->get_active()) { // Keep widget hidden when invers is toggled
                 expgradexp->show();
