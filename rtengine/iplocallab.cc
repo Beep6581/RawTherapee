@@ -9558,27 +9558,8 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
             }
 
             if(lp.nlstr > 0 && (hspot > 150 && wspot > 150)) {
-                array2D<float> *nlm = nullptr;
-                int addsiz = 10 + lp.nlrad;
-                nlm = new array2D<float>(GW + addsiz, GH + addsiz);
-#ifdef _OPENMP
-                #pragma omp parallel for if (multiThread)
-#endif
-                for (int i = 0; i < GH; ++i) {
-                    for (int j = 0; j < GW; ++j) {
-                        (*nlm)[i][j] = tmp1.L[i][j];
-                    }
-                }
-              //  NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW, GH, float (sk), multiThread);
-                NLMeans(*nlm, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW + addsiz, GH + addsiz, float (sk), multiThread);
-#ifdef _OPENMP
-                #pragma omp parallel for if (multiThread)
-#endif
-                for (int i = 0; i < GH; ++i) {
-                    for (int j = 0; j < GW; ++j) {
-                       tmp1.L[i][j] = (*nlm)[i][j];
-                    }
-                }
+                NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW, GH, float (sk), multiThread);
+              //  NLMeans(*nlm, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW + addsiz, GH + addsiz, float (sk), multiThread);
 
             }
             if(lp.smasktyp != 0) {
@@ -10250,28 +10231,9 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
 
             if(lp.nlstr > 0) {
-                array2D<float> *nlm = nullptr;
-                int addsiz = 10 + lp.nlrad;
-                nlm = new array2D<float>(bfw + addsiz, bfh + addsiz);
-#ifdef _OPENMP
-                #pragma omp parallel for if (multiThread)
-#endif
-                for (int i = 0; i < bfh; ++i) {
-                    for (int j = 0; j < bfw; ++j) {
-                        (*nlm)[i][j] = bufwv.L[i][j];
-                    }
-                }
-              //  NLMeans(bufwv.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, bfw, bfh, 1.f, multiThread);
-                NLMeans(*nlm, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, bfw + addsiz, bfh + addsiz, 1.f, multiThread);
+                NLMeans(bufwv.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, bfw, bfh, 1.f, multiThread);
+               // NLMeans(*nlm, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, bfw + addsiz, bfh + addsiz, 1.f, multiThread);
 
-#ifdef _OPENMP
-                #pragma omp parallel for if (multiThread)
-#endif
-                for (int i = 0; i < bfh; ++i) {
-                    for (int j = 0; j < bfw; ++j) {
-                       bufwv.L[i][j] = (*nlm)[i][j];
-                    }
-                }
                 
             }
 
@@ -11016,9 +10978,9 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
 #   pragma omp parallel for if (multithread)
 #endif
     for (int y = 0; y < HH; ++y) {
-        int yy = y <= border ? 0 : y >= H ? H-1 : y - border;
+        int yy = y <= border ? 0 : y - border >= H ? H-1 : y - border;
         for (int x = 0; x < WW; ++x) {
-            int xx = x <= border ? 0 : x >= W ? W-1 : x - border;
+            int xx = x <= border ? 0 : x - border >= W ? W-1 : x - border;
             float Y = img[yy][xx] / 65536.f;
             src[y][x] = Y;
         }
