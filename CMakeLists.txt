@@ -175,7 +175,7 @@ if(APPLE) # TODO make -mtune generic conditional and/or specifiable.
     if(CMAKE_CXX_COMPILER MATCHES "g\\+\\+-mp-4.[5-8]"
        OR CMAKE_CXX_COMPILER_ARG1 MATCHES "g\\+\\+-mp-4.[5-8]")
         set(CMAKE_EXE_LINKER_FLAGS
-            "${CMAKE_EXE_LINKER_FLAGS} /usr/lib/libstdc++.6.dylib -Wl,-headerpad_max_install_names -mtune=generic"
+            "${CMAKE_EXE_LINKER_FLAGS} /usr/lib/libstdc++.6.dylib -Wl,-headerpad_max_install_names -mtune=generic -framework Foundation"
         )
         message(
             STATUS
