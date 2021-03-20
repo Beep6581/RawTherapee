@@ -236,11 +236,11 @@ msg "Copy Adwaita icons"
 iconfolders=("16x16/actions" "16x16/devices" "16x16/mimetypes" "16x16/places" "16x16/status" "16x16/ui" "48x48/devices")
 for f in "${iconfolders[@]}"; do
     mkdir -p ${RESOURCES}/share/icons/Adwaita/${f}
-    ditto ${LOCAL_PREFIX}/share/icons/Adwaita/${f}/* "${RESOURCES}"/share/icons/Adwaita/${f}
+    cp -RL ${LOCAL_PREFIX}/share/icons/Adwaita/${f}/* "${RESOURCES}"/share/icons/Adwaita/${f}
 done
-ditto {"${LOCAL_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/index.theme
+cp -RL {"${LOCAL_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/index.theme
 "${LOCAL_PREFIX}/bin/gtk-update-icon-cache" "${RESOURCES}/share/icons/Adwaita" || "${LOCAL_PREFIX}/bin/gtk-update-icon-cache-3.0" "${RESOURCES}/share/icons/Adwaita"
-ditto "${LOCAL_PREFIX}/share/icons/hicolor" "${RESOURCES}/share/icons/hicolor"
+cp -RL "${LOCAL_PREFIX}/share/icons/hicolor" "${RESOURCES}/share/icons/hicolor"
 
 # fix libfreetype install name
 for lib in "${LIB}"/*; do
@@ -275,11 +275,11 @@ ditto "${PROJECT_SOURCE_DATA_DIR}/PkgInfo" "${CONTENTS}"
 #sed -i.bak "" -e "s|@version@|${PROJECT_FULL_VERSION}|s|@shortVersion@|${PROJECT_VERSION}|s|@arch@|${arch}|" "${CONTENTS}/Info.plist"
 cmake -DPROJECT_SOURCE_DATA_DIR=${PROJECT_SOURCE_DATA_DIR} -DCONTENTS=${CONTENTS} -Dversion=${PROJECT_FULL_VERSION} -DshortVersion=${PROJECT_VERSION} -Darch=${arch} -P "${PROJECT_SOURCE_DATA_DIR}/info-plist.cmake"
 update-mime-database -V  "${RESOURCES}/share/mime"
-ditto "${LOCAL_PREFIX}/share/locale" "${RESOURCES}/share/locale"
+cp -RL "${LOCAL_PREFIX}/share/locale" "${RESOURCES}/share/locale"
 
 msg "Build glib database:"
 mkdir -p ${RESOURCES}/share/glib-2.0
-ditto {"${LOCAL_PREFIX}","${RESOURCES}"}/share/glib-2.0/schemas
+cp -LR {"${LOCAL_PREFIX}","${RESOURCES}"}/share/glib-2.0/schemas
 "${LOCAL_PREFIX}/bin/glib-compile-schemas" "${RESOURCES}/share/glib-2.0/schemas"
 
 # Append an LC_RPATH
