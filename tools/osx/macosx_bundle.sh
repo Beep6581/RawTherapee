@@ -200,13 +200,6 @@ ditto ${LOCAL_PREFIX}/lib/libpng16.16.dylib "${CONTENTS}/Frameworks/libpng16.16.
 # Copy libtiff 5 into the app bundle
 ditto ${LOCAL_PREFIX}/lib/libtiff.5.dylib "${CONTENTS}/Frameworks/libtiff.5.dylib"
 
-# Copy the Lensfun database into the app bundle
-#mkdir -p "${RESOURCES}/share/lensfun"
-#ditto ${LOCAL_PREFIX}/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
-
-# Copy liblensfun to Frameworks
-#ditto ${LOCAL_PREFIX}/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks/liblensfun.2.dylib"
-
 # Copy libomp to Frameworks
 ditto ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
 
@@ -265,14 +258,11 @@ ditto {"${LOCAL_PREFIX}","${RESOURCES}"}/share/mime
 
 msg "Installing required application bundle files:"
 PROJECT_SOURCE_DATA_DIR="${PROJECT_SOURCE_DIR}/tools/osx"
-#ditto "${CMAKE_BUILD_TYPE}/Resources" "${RESOURCES}"
 ditto "${PROJECT_SOURCE_DIR}/rtdata/fonts" "${ETC}/fonts"
 
 # App bundle resources
 ditto "${PROJECT_SOURCE_DATA_DIR}/"{rawtherapee,profile}.icns "${RESOURCES}"
 ditto "${PROJECT_SOURCE_DATA_DIR}/PkgInfo" "${CONTENTS}"
-#install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/Info.plist.in" "${CONTENTS}/Info.plist"
-#sed -i.bak "" -e "s|@version@|${PROJECT_FULL_VERSION}|s|@shortVersion@|${PROJECT_VERSION}|s|@arch@|${arch}|" "${CONTENTS}/Info.plist"
 cmake -DPROJECT_SOURCE_DATA_DIR=${PROJECT_SOURCE_DATA_DIR} -DCONTENTS=${CONTENTS} -Dversion=${PROJECT_FULL_VERSION} -DshortVersion=${PROJECT_VERSION} -Darch=${arch} -P "${PROJECT_SOURCE_DATA_DIR}/info-plist.cmake"
 update-mime-database -V  "${RESOURCES}/share/mime"
 cp -RL "${LOCAL_PREFIX}/share/locale" "${RESOURCES}/share/locale"
@@ -303,9 +293,6 @@ if [[ -n $CODESIGNID ]]; then
     msg "Codesigning Application."
     iconv -f UTF-8 -t ASCII "${PROJECT_SOURCE_DATA_DIR}"/rt.entitlements > "${CMAKE_BUILD_TYPE}"/rt.entitlements
     mv "${EXECUTABLE}"-cli "${LIB}"
- #   for frameworklibs in "${LIB}"/*{dylib,so}; do
- #       codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee --force --verbose -o runtime --timestamp --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${frameworklibs}"
- #   done
     codesign --force --deep --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"
     spctl -a -vvvv "${APP}"
 fi
@@ -422,9 +409,6 @@ function CreateDmg {
     mkdir "${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}_folder"
         ditto {"${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}.dmg","rawtherapee-cli","${PROJECT_SOURCE_DATA_DIR}/INSTALL.readme.rtf"} "${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}_folder"
     zip -r "${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}.zip" "${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}_folder/"
-    # rm "${dmg_name}.dmg"
-    # msg "Removing disk image caches:"
-    # rm -rf "${srcDir}"
 }
 CreateDmg
 msg "Finishing build:"
