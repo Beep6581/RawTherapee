@@ -1286,6 +1286,7 @@ HISTORY_MSG_1038;Local - Nlmeans - gamma
 HISTORY_MSG_1039;Local - Grain - gamma
 HISTORY_MSG_1040;Local - Spot - soft radius
 HISTORY_MSG_1041;Local - Spot - Munsell
+HISTORY_MSG_1042;Local - Log encoding - threshold
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2776,7 +2777,7 @@ TP_LOCALLAB_LOCCONT;Unsharp Mask
 TP_LOCALLAB_LOC_CONTRAST;Local Contrast & Wavelets
 TP_LOCALLAB_LOC_CONTRASTPYR;Ψ Pyramid 1:
 TP_LOCALLAB_LOC_CONTRASTPYR2;Ψ Pyramid 2:
-TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by level- Tone Mapping - Dir.Contrast
+TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by level - TM - Directional contrast
 TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter - Edge Sharpness - Blur
 TP_LOCALLAB_LOC_RESIDPYR;Residual image (Main)
 TP_LOCALLAB_LOG;Log Encoding
@@ -2792,8 +2793,10 @@ TP_LOCALLAB_LOGCOLORFL;Colorfulness (M)
 TP_LOCALLAB_LOGCOLORF_TOOLTIP;Perceived amount of hue in relation to gray.\nIndicator that a stimulus appears more or less colored.
 TP_LOCALLAB_LOGCONQL;Contrast (Q)
 TP_LOCALLAB_LOGCONTL;Contrast (J)
+TP_LOCALLAB_LOGCONTHRES;Contrast threshold (J & Q)
 TP_LOCALLAB_LOGCONTL_TOOLTIP;Contrast (J) in CIECAM16 takes into account the increase in perceived coloration with luminance.
 TP_LOCALLAB_LOGCONTQ_TOOLTIP;Contrast (Q) in CIECAM16 takes into account the increase in perceived coloration with brightness.
+TP_LOCALLAB_LOGCONTTHRES_TOOLTIP;Adjusts the mid-tone contrast range (J & Q).\nPositive values progressively reduce the effect of the Contrast sliders (J & Q). Negative values progressively increase the effect of the Contrast sliders.
 TP_LOCALLAB_LOGDETAIL_TOOLTIP;Acts mainly on high frequencies.
 TP_LOCALLAB_LOGENCOD_TOOLTIP;Tone Mapping with Logarithmic encoding (ACES).\nUseful for underexposed images or images with high dynamic range.\n\nTwo-step process : 1) Dynamic Range calculation 2) Manual adjustment
 TP_LOCALLAB_LOGEXP;All tools
@@ -2817,7 +2820,7 @@ TP_LOCALLAB_LOGVIEWING_TOOLTIP;Corresponds to the medium on which the final imag
 TP_LOCALLAB_LOG_TOOLNAME;Log Encoding - 0
 TP_LOCALLAB_LUM;Curves LL - CC
 TP_LOCALLAB_LUMADARKEST;Darkest
-TP_LOCALLAB_LUMASK;Background color for luminance and color masks
+TP_LOCALLAB_LUMASK;Background color for luminance mask
 TP_LOCALLAB_LUMASK_TOOLTIP;Adjusts the shade of gray or color of the mask background in Show Mask (Mask and modifications)
 TP_LOCALLAB_LUMAWHITESEST;Lightest
 TP_LOCALLAB_LUMFRA;L*a*b* standard
@@ -3032,7 +3035,7 @@ TP_LOCALLAB_SH1;Shadows Highlights
 TP_LOCALLAB_SH2;Equalizer
 TP_LOCALLAB_SHADEX;Shadows
 TP_LOCALLAB_SHADEXCOMP;Shadow compression & tonal width
-TP_LOCALLAB_SHADHIGH;Shadows/Highlights & Tone equalizer
+TP_LOCALLAB_SHADHIGH;Shadows/Highlights-Equalizer
 TP_LOCALLAB_SHADHMASK_TOOLTIP;Lowers the highlights of the mask in the same way as the shadows/highlights algorithm
 TP_LOCALLAB_SHADMASK_TOOLTIP;Lifts the shadows of the mask in the same way as the shadows/highlights algorithm
 TP_LOCALLAB_SHADOWHIGHLIGHT_TOOLTIP;Adjust shadows and highlights either with shadows & highlights sliders or with a tone equalizer.\nCan be used instead of, or in conjunction with the Exposure module.\nCan also be used as a graduated filter.

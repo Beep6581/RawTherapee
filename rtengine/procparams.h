@@ -1492,6 +1492,7 @@ struct LocallabParams {
         double lightl;
         double lightq;
         double contl;
+        double contthres;
         double contq;
         double colorfl;
         std::vector<double> LcurveL;

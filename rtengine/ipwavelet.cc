@@ -2785,7 +2785,7 @@ void ImProcFunctions::WaveletcontAllL(LabImage * labco, float ** varhue, float *
         float eddlipinfl = 0.005f * cp.edgsens + 0.4f;
         float eddlipampl = 1.f + cp.edgampl / 50.f;
 
-        if (cp.detectedge) { //enabled Lipschitz control...more memory..more time...
+        if (cp.detectedge && cp.val > 0) { //enabled Lipschitz control...more memory..more time...
             const std::unique_ptr<float[]> tmCBuffer(new float[H_L * W_L]);
             float *tmC[H_L];
 

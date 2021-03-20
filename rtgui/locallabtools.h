@@ -1317,6 +1317,7 @@ private:
     Adjuster* const lightq;
     Adjuster* const contl;
     Adjuster* const contq;
+    Adjuster* const contthres;
     Adjuster* const colorfl;
     Adjuster* const saturl;
     MyExpander* const expL;

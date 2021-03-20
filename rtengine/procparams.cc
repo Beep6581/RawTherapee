@@ -3981,6 +3981,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lightl(0.),
     lightq(0.),
     contl(0.),
+    contthres(0.),
     contq(0.),
     colorfl(0.),
     LcurveL{
@@ -4695,6 +4696,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && lightl == other.lightl
         && lightq == other.lightq
         && contl == other.contl
+        && contthres == other.contthres
         && contq == other.contq
         && colorfl == other.colorfl
         && LcurveL == other.LcurveL
@@ -6341,6 +6343,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->lightl, "Locallab", "Lightl_" + index_str, spot.lightl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lightq, "Locallab", "Brightq_" + index_str, spot.lightq, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contl, "Locallab", "Contl_" + index_str, spot.contl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->contthres, "Locallab", "Contthres_" + index_str, spot.contthres, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contq, "Locallab", "Contq_" + index_str, spot.contq, keyFile);
                     saveToKeyfile(!pedited || spot_edited->colorfl, "Locallab", "Colorfl_" + index_str, spot.colorfl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Autogray, "Locallab", "Autogray_" + index_str, spot.Autogray, keyFile);
@@ -8237,6 +8240,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Lightl_" + index_str, pedited, spot.lightl, spotEdited.lightl);
                 assignFromKeyfile(keyFile, "Locallab", "Brightq_" + index_str, pedited, spot.lightq, spotEdited.lightq);
                 assignFromKeyfile(keyFile, "Locallab", "Contl_" + index_str, pedited, spot.contl, spotEdited.contl);
+                assignFromKeyfile(keyFile, "Locallab", "Contthres_" + index_str, pedited, spot.contthres, spotEdited.contthres);
                 assignFromKeyfile(keyFile, "Locallab", "Contq_" + index_str, pedited, spot.contq, spotEdited.contq);
                 assignFromKeyfile(keyFile, "Locallab", "Colorfl_" + index_str, pedited, spot.colorfl, spotEdited.colorfl);
                 assignFromKeyfile(keyFile, "Locallab", "LCurveL_" + index_str, pedited, spot.LcurveL, spotEdited.LcurveL);
