@@ -190,7 +190,7 @@ if(APPLE) # TODO make -mtune generic conditional and/or specifiable.
     set(CMAKE_C_FLAGS
         "${CMAKE_C_FLAGS} -mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
     set(CMAKE_EXE_LINKER_FLAGS
-        "${CMAKE_EXE_LINKER_FLAGS} -Wl,-headerpad_max_install_names -mtune=generic"
+        "${CMAKE_EXE_LINKER_FLAGS} -Wl,-headerpad_max_install_names -mtune=generic -framework Foundation"
     )
 endif()
 
