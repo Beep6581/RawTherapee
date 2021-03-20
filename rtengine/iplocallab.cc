@@ -4308,7 +4308,7 @@ void ImProcFunctions::mean_dt(const float* data, size_t size, double& mean_p, do
     dt_p = std::sqrt(dt);
 }
 
-void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, size_t size, float mod, float sigm)
+void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, size_t size, float mod, float sigm, float mdef, float sdef)
 {
     /*
      * Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
@@ -4331,7 +4331,11 @@ void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, size_t 
     /* compute mean and variance of the two arrays */
     mean_dt(ref, size, mean_ref, dt_ref);
     mean_dt(data, size, mean_data, dt_data);
-
+    if(mdef!= 0.f && sdef != 0.f) {
+       // printf("OK shortcut\n");
+        mean_ref = mdef;
+        dt_ref = sdef;
+    }
     /* compute the normalization coefficients */
     const double a = dt_ref / dt_data;
     const double b = mean_ref - a * mean_data;
@@ -4474,7 +4478,7 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
     fftwf_free(data_fft);
 
     if (show != 4 && normalize == 1) {
-        normalize_mean_dt(data_tmp, datain, bfw * bfh, 1.f, 1.f);
+        normalize_mean_dt(data_tmp, datain, bfw * bfh, 1.f, 1.f, 0.f, 0.f);
     }
 
     if (show == 0 || show == 4) {
@@ -5800,7 +5804,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                 data[(y - ystart)* bfw + (x - xstart)] = bufexporig->L[y - ystart][x - xstart];
             }
 
-        normalize_mean_dt(data, datain, bfh * bfw, 1.f, 1.f);
+        normalize_mean_dt(data, datain, bfh * bfw, 1.f, 1.f, 0.f, 0.f);
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
@@ -6916,7 +6920,7 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                 data[(y - ystart)* bfw + (x - xstart)] = bufexpfin->L[y - ystart][x - xstart];
             }
 
-        normalize_mean_dt(data, datain, bfh * bfw, 1.f, 1.f);
+        normalize_mean_dt(data, datain, bfh * bfw, 1.f, 1.f, 0.f, 0.f);
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -7166,7 +7170,7 @@ void ImProcFunctions::exposure_pde(float * dataor, float * datain, float * datao
     }
 #endif
 
-    normalize_mean_dt(data, dataor, bfw * bfh, mod, 1.f);
+    normalize_mean_dt(data, dataor, bfw * bfh, mod, 1.f, 0.f, 0.f);
     {
 
 #ifdef _OPENMP
@@ -14022,7 +14026,7 @@ void ImProcFunctions::Lab_Local(
                         data[ir * Wd + jr] = orig[ir][jr];
                     }
 
-                normalize_mean_dt(data, datain, Hd * Wd, 1.f, 1.f);
+                normalize_mean_dt(data, datain, Hd * Wd, 1.f, 1.f, 0.f, 0.f);
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
@@ -14359,7 +14363,7 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
 
-                normalize_mean_dt(data.get(), datain.get(), Hd * Wd, 1.f, 1.f);
+                normalize_mean_dt(data.get(), datain.get(), Hd * Wd, 1.f, 1.f, 0.f, 0.f);
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
@@ -14746,7 +14750,36 @@ void ImProcFunctions::Lab_Local(
                                     datain[y * bfwr + x] = bufexpfin->L[y][x];
                                 }
                             }
+/*
+                            if(call == 3){//not for dcrop.cc and only with improccoordinator.cc
+                                meanfat = 0.f;
+                                int nbfat = 0;
+#ifdef _OPENMP
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                                for (int y = 0; y < bfhr; y++) {
+                                    for (int x = 0; x < bfwr; x++) {
+                                        meanfat += bufexpfin->L[y][x];
+                                        nbfat++;
+                                    }
+                                }
+                                meanfat /= nbfat;
+                                stdfat = 0.f;
+                                int nsfat = 0;
+#ifdef _OPENMP
+                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                                for (int y = 0; y < bfhr; y++) {
+                                    for (int x = 0; x < bfwr; x++) {
+                                        stdfat += SQR(bufexpfin->L[y][x] - meanfat);
+                                        nsfat++;
+                                    }
+                                }
+                                stdfat /= nsfat;
+                                stdfat = sqrt(stdfat);
 
+                            }
+*/                            
                             FattalToneMappingParams fatParams;
                             fatParams.enabled = true;
                             fatParams.threshold = params->locallab.spots.at(sp).fatdetail;
@@ -14768,7 +14801,16 @@ void ImProcFunctions::Lab_Local(
                             }
 
                             if(params->locallab.spots.at(sp).norm){
-                                normalize_mean_dt(dataout.get(), datain.get(), bfwr * bfhr, mean, sigm);
+                                if(call == 3 || call == 2) {//improccoordinator and simpleprocess
+                                    normalize_mean_dt(dataout.get(), datain.get(), bfwr * bfhr, mean, sigm, 0.f, 0.f);
+                                } else if(call == 1) {//dcrop
+                                    float ma =  (float) params->locallab.spots.at(sp).sensihs;
+                                    float sa = (float) params->locallab.spots.at(sp).sensiv;
+                                    printf("ma=%f sa=%f \n", (double) ma, (double) sa);
+                                    //use normalize with mean and stdv from fullimage give less bad result
+                                    normalize_mean_dt(dataout.get(), datain.get(), bfwr * bfhr, mean, sigm, ma, sa);
+
+                                }
                             }
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)

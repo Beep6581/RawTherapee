@@ -264,7 +264,7 @@ enum class BlurType {
     void mean_dt(const float * data, size_t size, double& mean_p, double& dt_p);
     float *cos_table(size_t size);
 
-    void normalize_mean_dt(float *data, const float *ref, size_t size, float mod, float sigm);
+    void normalize_mean_dt(float *data, const float *ref, size_t size, float mod, float sigm, float mdef, float sdef);
     void retinex_pde(const float *datain, float * dataout, int bfw, int bfh, float thresh, float multy, float *dE, int show, int dEenable, int normalize);
     void exposure_pde(float *dataor, float *datain, float * dataout, int bfw, int bfh, float thresh, float mod);
     void fftw_convol_blur(float *input, float *output, int bfw, int bfh, float radius, int fftkern, int algo);

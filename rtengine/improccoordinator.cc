@@ -799,7 +799,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         }
 
                         ipf.getAutoLogloc(sp, imgsrc, sourceg, blackev, whiteev, Autogr, sourceab, fw, fh, xsta, xend, ysta, yend, SCALE);
-                        printf("sg=%f sab=%f\n", sourceg[sp], sourceab[sp]);
+                        //printf("sg=%f sab=%f\n", sourceg[sp], sourceab[sp]);
                         params->locallab.spots.at(sp).blackEv = blackev[sp];
                         params->locallab.spots.at(sp).whiteEv = whiteev[sp];
                         params->locallab.spots.at(sp).sourceGray = sourceg[sp];
@@ -999,6 +999,33 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     ipf.calc_ref(sp, reserv.get(), reserv.get(), 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 } else {
                     ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
+                }
+                      //
+
+                {//calculate mean and sigma on full image for use by normalize_mean_dt
+                    float meanfat = 0.f;
+                    int nbfat = 0;
+                    for (int y = 0; y < pH; y++) {
+                        for (int x = 0; x < pW; x++) {
+                            meanfat += nprevl->L[y][x];
+                            nbfat++;
+                        }
+                    }
+                    meanfat /= nbfat;
+                    float stdfat = 0.f;
+                    int nsfat = 0;
+                    for (int y = 0; y < pH; y++) {
+                        for (int x = 0; x < pW; x++) {
+                            stdfat += SQR(nprevl->L[y][x] - meanfat);
+                            nsfat++;
+                        }
+                    }
+                    stdfat /= nsfat;
+                    stdfat = sqrt(stdfat);
+                    //using 2 unused variables  sensihs ans sensiv  
+                    params->locallab.spots.at(sp).sensihs = (int) meanfat;
+                    params->locallab.spots.at(sp).sensiv = (int) stdfat;
+
                 }
 
                 double huerblu = huerefblurs[sp] = huerefblu;
