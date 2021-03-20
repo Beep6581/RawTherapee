@@ -2485,6 +2485,7 @@ LocallabExposure::LocallabExposure():
     expfat(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_FATFRA")))),
     fatamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATAMOUNT"), 1., 100., 1., 1.))),
     fatdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATDETAIL"), -100., 300., 1., 0.))),
+    norm(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
     fatlevel(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATLEVEL"), 0.25, 2.5, 0.05, 1.))),
     fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHORA"), 0.1, 3.0, 0.05, 1.))),
     sensiex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
@@ -2615,6 +2616,7 @@ LocallabExposure::LocallabExposure():
     higthrese->setAdjusterListener(this);
     decaye->setAdjusterListener(this);
     setExpandAlignProperties(exprecove, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    normConn  = norm->signal_toggled().connect(sigc::mem_fun(*this, &LocallabExposure::normChanged));
 
     inversexConn  = inversex->signal_toggled().connect(sigc::mem_fun(*this, &LocallabExposure::inversexChanged));
     inversex->set_tooltip_text(M("TP_LOCALLAB_INVERS_TOOLTIP"));
@@ -2704,6 +2706,7 @@ LocallabExposure::LocallabExposure():
     ToolParamBlock* const fatBox = Gtk::manage(new ToolParamBlock());
     fatBox->pack_start(*fatamount);
     fatBox->pack_start(*fatdetail);
+    fatBox->pack_start(*norm);
     fatBox->pack_start(*fatlevel);
     fatBox->pack_start(*fatanchor);
 //    fatFrame->add(*fatBox);
@@ -2885,6 +2888,7 @@ void LocallabExposure::disableListener()
     expMethodConn.block(true);
     exnoiseMethodConn.block(true);
     inversexConn.block(true);
+    normConn.block(true);
     showmaskexpMethodConn.block(true);
     showmaskexpMethodConninv.block(true);
     enaExpMaskConn.block(true);
@@ -2898,6 +2902,7 @@ void LocallabExposure::enableListener()
     expMethodConn.block(false);
     exnoiseMethodConn.block(false);
     inversexConn.block(false);
+    normConn.block(false);
     showmaskexpMethodConn.block(false);
     showmaskexpMethodConninv.block(false);
     enaExpMaskConn.block(false);
@@ -2947,10 +2952,10 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
 
         fatamount->setValue(spot.fatamount);
         fatdetail->setValue(spot.fatdetail);
-    //    fatlevel->setValue(spot.fatlevel);
-    //    fatanchor->setValue(spot.fatanchor);
-        fatlevel->setValue(1.);
-        fatanchor->setValue(1.);
+        fatlevel->setValue(spot.fatlevel);
+        fatanchor->setValue(spot.fatanchor);
+   //     fatlevel->setValue(1.);
+   //     fatanchor->setValue(1.);
         sensiex->setValue(spot.sensiex);
         structexp->setValue(spot.structexp);
         blurexpde->setValue(spot.blurexpde);
@@ -2965,6 +2970,7 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
         strexp->setValue(spot.strexp);
         angexp->setValue(spot.angexp);
         softradiusexp->setValue(spot.softradiusexp);
+        norm->set_active(spot.norm);
         inversex->set_active(spot.inversex);
         enaExpMask->set_active(spot.enaExpMask);
         enaExpMaskaft->set_active(spot.enaExpMaskaft);
@@ -3053,6 +3059,7 @@ void LocallabExposure::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.angexp = angexp->getValue();
         spot.softradiusexp = softradiusexp->getValue();
         spot.inversex = inversex->get_active();
+        spot.norm = norm->get_active();
         spot.enaExpMask = enaExpMask->get_active();
         spot.enaExpMaskaft = enaExpMaskaft->get_active();
         spot.CCmaskexpcurve = CCmaskexpshape->getCurve();
@@ -3429,9 +3436,12 @@ void LocallabExposure::convertParamToNormal()
     slomaskexp->setValue(defSpot.slomaskexp);
     strmaskexp->setValue(defSpot.strmaskexp);
     angmaskexp->setValue(defSpot.angmaskexp);
+//   fatlevel->setValue(defSpot.fatlevel);
+//    fatanchor->setValue(defSpot.fatanchor);
+    decaye->setValue(defSpot.decaye);
+//    norm->set_active(defSpot.enaExpMask);
     fatlevel->setValue(defSpot.fatlevel);
     fatanchor->setValue(defSpot.fatanchor);
-    decaye->setValue(defSpot.decaye);
 
     // Enable all listeners
     enableListener();
@@ -3445,7 +3455,7 @@ void LocallabExposure::convertParamToSimple()
     disableListener();
     fatlevel->setValue(defSpot.fatlevel);
     fatanchor->setValue(defSpot.fatanchor);
-
+    norm->set_active(false);
     // Set hidden specific GUI widgets in Simple mode to default spot values
     strexp->setValue(defSpot.strexp);
     angexp->setValue(defSpot.angexp);
@@ -3482,6 +3492,7 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
             maskunusablee->hide();
             decaye->hide();
             expmaskexp->hide();
+            norm->hide();
             fatlevel->hide();
             fatanchor->hide();
 
@@ -3504,6 +3515,7 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
                 maskusablee->hide();
                 maskunusablee->show();
             }
+            norm->show();
             fatlevel->hide();
             fatanchor->hide();
 
@@ -3526,8 +3538,9 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
             }
 
             blurexpde->show();
-            fatlevel->hide();
-            fatanchor->hide();
+            norm->show();
+            fatlevel->show();
+            fatanchor->show();
 
             if (!inversex->get_active()) { // Keep widget hidden when invers is toggled
                 expgradexp->show();
@@ -3591,6 +3604,23 @@ void LocallabExposure::exnoiseMethodChanged()
         }
     }
 }
+
+void LocallabExposure::normChanged()
+{
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (norm->get_active()) {
+                listener->panelChanged(Evlocallabnorm,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            } else {
+                listener->panelChanged(Evlocallabnorm,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+    }
+}
+
 
 void LocallabExposure::inversexChanged()
 {

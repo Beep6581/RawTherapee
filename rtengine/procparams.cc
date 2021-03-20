@@ -3060,6 +3060,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0,
         1.0
     },
+    norm(true),
     inversex(false),
     enaExpMask(false),
     enaExpMaskaft(false),
@@ -4297,6 +4298,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && strexp == other.strexp
         && angexp == other.angexp
         && excurve == other.excurve
+        && norm == other.norm
         && inversex == other.inversex
         && enaExpMask == other.enaExpMask
         && enaExpMaskaft == other.enaExpMaskaft
@@ -5942,6 +5944,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->strexp, "Locallab", "Strexp_" + index_str, spot.strexp, keyFile);
                     saveToKeyfile(!pedited || spot_edited->angexp, "Locallab", "Angexp_" + index_str, spot.angexp, keyFile);
                     saveToKeyfile(!pedited || spot_edited->excurve, "Locallab", "ExCurve_" + index_str, spot.excurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->norm, "Locallab", "Norm_" + index_str, spot.norm, keyFile);
                     saveToKeyfile(!pedited || spot_edited->inversex, "Locallab", "Inversex_" + index_str, spot.inversex, keyFile);
                     saveToKeyfile(!pedited || spot_edited->enaExpMask, "Locallab", "EnaExpMask_" + index_str, spot.enaExpMask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->enaExpMaskaft, "Locallab", "EnaExpMaskaft_" + index_str, spot.enaExpMaskaft, keyFile);
@@ -7778,6 +7781,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Strexp_" + index_str, pedited, spot.strexp, spotEdited.strexp);
                 assignFromKeyfile(keyFile, "Locallab", "Angexp_" + index_str, pedited, spot.angexp, spotEdited.angexp);
                 assignFromKeyfile(keyFile, "Locallab", "ExCurve_" + index_str, pedited, spot.excurve, spotEdited.excurve);
+                assignFromKeyfile(keyFile, "Locallab", "Norm_" + index_str, pedited, spot.norm, spotEdited.norm);
                 assignFromKeyfile(keyFile, "Locallab", "Inversex_" + index_str, pedited, spot.inversex, spotEdited.inversex);
                 assignFromKeyfile(keyFile, "Locallab", "EnaExpMask_" + index_str, pedited, spot.enaExpMask, spotEdited.enaExpMask);
                 assignFromKeyfile(keyFile, "Locallab", "EnaExpMaskaft_" + index_str, pedited, spot.enaExpMaskaft, spotEdited.enaExpMaskaft);

@@ -14767,7 +14767,9 @@ void ImProcFunctions::Lab_Local(
                                 }
                             }
 
-                            normalize_mean_dt(dataout.get(), datain.get(), bfwr * bfhr, mean, sigm);
+                            if(params->locallab.spots.at(sp).norm){
+                                normalize_mean_dt(dataout.get(), datain.get(), bfwr * bfhr, mean, sigm);
+                            }
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif

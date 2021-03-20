@@ -1287,6 +1287,7 @@ HISTORY_MSG_1039;Local - Grain - gamma
 HISTORY_MSG_1040;Local - Spot - soft radius
 HISTORY_MSG_1041;Local - Spot - Munsell
 HISTORY_MSG_1042;Local - Log encoding - threshold
+HISTORY_MSG_1043;Local - Exp - normalize
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
