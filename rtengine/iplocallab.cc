@@ -1830,6 +1830,26 @@ float find_gray(float source_gray, float target_gray)
     return 0.f; // not found
 }
 
+void ImProcFunctions::mean_sig (LabImage* savenormdr, float &meanfat2, float &stdfat2, int pH, int pW){
+    int nbfat2 = 0;
+    for (int y = 0; y < pH; y++) {
+        for (int x = 0; x < pW; x++) {
+            meanfat2 += savenormdr->L[y][x];
+            nbfat2++;
+        }
+    }
+    meanfat2 /= nbfat2;
+    int nsfat2 = 0;
+    for (int y = 0; y < pH; y++) {
+        for (int x = 0; x < pW; x++) {
+            stdfat2 += SQR(savenormdr->L[y][x] - meanfat2);
+            nsfat2++;
+        }
+    }
+    stdfat2 /= nsfat2;
+    stdfat2 = sqrt(stdfat2);
+}
+
 
 // basic log encoding taken from ACESutil.Lin_to_Log2, from
 // https://github.com/ampas/aces-dev
@@ -6779,7 +6799,7 @@ void ImProcFunctions::BlurNoise_Local(LabImage *tmp1, LabImage * originalmask, c
     }
 }
 
-void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImage * bufexporig, const LabImage * bufexpfin, LabImage * originalmask, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
+void ImProcFunctions::transit_shapedetect2(int sp, int call, int senstype, const LabImage * bufexporig, const LabImage * bufexpfin, LabImage * originalmask, const float hueref, const float chromaref, const float lumaref, float sobelref, float meansobel, float ** blend2, struct local_params & lp, LabImage * original, LabImage * transformed, int cx, int cy, int sk)
 {
     //initialize coordinates
     int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
@@ -6926,7 +6946,22 @@ void ImProcFunctions::transit_shapedetect2(int call, int senstype, const LabImag
                 data[(y - ystart)* bfw + (x - xstart)] = bufexpfin->L[y - ystart][x - xstart];
             }
 
-        normalize_mean_dt(data, datain, bfh * bfw, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
+      //  normalize_mean_dt(data, datain, bfh * bfw, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
+        if(call == 3 || call == 2) {//improccoordinator and simpleprocess
+            normalize_mean_dt(data, datain, bfw * bfh, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
+        } else if(call == 1) {//dcrop
+            float ma =  (float) params->locallab.spots.at(sp).noiselumf;
+            float sa = (float) params->locallab.spots.at(sp).noiselumf2;
+            float ma2 =  (float) params->locallab.spots.at(sp).noiselumc;
+            float sa2 = (float) params->locallab.spots.at(sp).softradiustm;
+            printf("ma=%f sa=%f ma2=%f sa2=%f\n", (double) ma, (double) sa, (double) ma2, (double) sa2);
+            //use normalize with mean and stdv from fullimage give less bad result
+            normalize_mean_dt(data, datain, bfw * bfh, 1.f, 1.f, ma, sa, ma2, sa2);
+        }
+       
+        
+        
+        
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -11190,7 +11225,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
 }
 
 void ImProcFunctions::Lab_Local(
-    int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, LabImage * savenormdr, LabImage * lastorig, int cx, int cy, int oW, int oH, int sk,
+    int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, LabImage * savenormdr, LabImage * savenormtm, LabImage * lastorig, int cx, int cy, int oW, int oH, int sk,
     const LocretigainCurve& locRETgainCcurve, const LocretitransCurve& locRETtransCcurve,
     const LUTf& lllocalcurve, bool locallutili,
     const LUTf& cllocalcurve, bool localclutili,
@@ -11498,7 +11533,7 @@ void ImProcFunctions::Lab_Local(
                         bool invmask = false;
                         maskrecov(bufexpfin.get(), original, bufmaskoriglog.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
                     }
-                transit_shapedetect2(call, 11, bufexporig.get(), bufexpfin.get(), originalmasklog.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect2(sp, call, 11, bufexporig.get(), bufexpfin.get(), originalmasklog.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
             }
             
             if (lp.recur) {
@@ -12703,7 +12738,7 @@ void ImProcFunctions::Lab_Local(
                     }
 
 
-                    transit_shapedetect2(call, 2, bufexporig.get(), bufexpfin.get(), originalmaskvib.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect2(sp, call, 2, bufexporig.get(), bufexpfin.get(), originalmaskvib.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
 
                 }
@@ -12838,7 +12873,8 @@ void ImProcFunctions::Lab_Local(
                     constexpr int itera = 0;
                     ImProcFunctions::EPDToneMaplocal(sp, bufgb.get(), tmp1.get(), itera, sk);//iterate to 0 calculate with edgstopping, improve result, call=1 dcrop we can put iterate to 5
 
-                    tmp1m->CopyFrom(tmp1.get(), multiThread); //save current result
+                    tmp1m->CopyFrom(tmp1.get(), multiThread); //save current result7
+                    savenormtm->CopyFrom(tmp1.get(), multiThread);
                     bool enatmMasktmap = params->locallab.spots.at(sp).enatmMaskaft;
 
                     if (enatmMasktmap) {
@@ -12929,7 +12965,7 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     //   transit_shapedetect_retinex(call, 4, bufgb.get(),bufmaskorigtm.get(), originalmasktm.get(), buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
-                    transit_shapedetect2(call, 8, bufgb.get(), tmp1.get(), originalmasktm.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect2(sp, call, 8, bufgb.get(), tmp1.get(), originalmasktm.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
                     //  transit_shapedetect(8, tmp1.get(), originalmasktm.get(), bufchro, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                     bufgb.reset();
@@ -13135,7 +13171,7 @@ void ImProcFunctions::Lab_Local(
                 maskrecov(bufexpfin.get(), original, bufmaskorigSH.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
             }
 
-            transit_shapedetect2(call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+            transit_shapedetect2(sp, call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
             if (lp.recur) {
                 original->CopyFrom(transformed, multiThread);
@@ -13298,7 +13334,7 @@ void ImProcFunctions::Lab_Local(
                 }
             }
 
-            transit_shapedetect2(call, 3, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+            transit_shapedetect2(sp, call, 3, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
             if (lp.recur) {
                 original->CopyFrom(transformed, multiThread);
@@ -13761,7 +13797,7 @@ void ImProcFunctions::Lab_Local(
                         maskrecov(tmp1.get(), original, bufmaskoriglc.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
                     }
 
-                transit_shapedetect2(call, 10, bufgb.get(), tmp1.get(), originalmasklc.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect2(sp, call, 10, bufgb.get(), tmp1.get(), originalmasklc.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                 tmp1.reset();
             }
 
@@ -13875,7 +13911,7 @@ void ImProcFunctions::Lab_Local(
             dehazeloc(tmpImage.get(), dehazeParams);
             rgb2lab(*tmpImage.get(), *bufexpfin, params->icm.workingProfile);
 
-            transit_shapedetect2(call, 30, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+            transit_shapedetect2(sp, call, 30, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
             if (lp.recur) {
                 original->CopyFrom(transformed, multiThread);
@@ -14908,7 +14944,7 @@ void ImProcFunctions::Lab_Local(
                     }
                     
                     float meansob = 0.f;
-                    transit_shapedetect2(call, 1, bufexporig.get(), bufexpfin.get(), originalmaskexp.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
+                    transit_shapedetect2(sp, call, 1, bufexporig.get(), bufexpfin.get(), originalmaskexp.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
                 }
 
                 if (lp.recur) {
@@ -15971,7 +16007,7 @@ void ImProcFunctions::Lab_Local(
                             softproc(bufcolreserv.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.001, 0.00001, 0.5f, sk, multiThread, 1);
                         }
                         float meansob = 0.f;
-                        transit_shapedetect2(call, 0, bufcolreserv.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
+                        transit_shapedetect2(sp, call, 0, bufcolreserv.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
                     }
 
                     if (!nottransit) {
@@ -16054,7 +16090,7 @@ void ImProcFunctions::Lab_Local(
                         maskrecov(bufcolfin.get(), original, bufmaskblurcol.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
                     }
                         float meansob = 0.f;
-                        transit_shapedetect2(call, 0, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
+                        transit_shapedetect2(sp, call, 0, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
                     }
 
                 }
@@ -16323,7 +16359,7 @@ void ImProcFunctions::Lab_Local(
 
 
                 float meansob = 0.f;
-                transit_shapedetect2(call, 20, bufcolorigsav.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, nullptr, lp, origsav, transformed, cx, cy, sk);
+                transit_shapedetect2(sp, call, 20, bufcolorigsav.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, nullptr, lp, origsav, transformed, cx, cy, sk);
                 delete origsav;
                 origsav    = NULL;
                     
