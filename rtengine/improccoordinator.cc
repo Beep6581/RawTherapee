@@ -896,6 +896,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
              */
             const std::unique_ptr<LabImage> reserv(new LabImage(*oprevl, true));
             const std::unique_ptr<LabImage> lastorigimp(new LabImage(*oprevl, true));
+            const std::unique_ptr<LabImage> savenormdr(new LabImage(*oprevl, true));
             float **shbuffer = nullptr;
             int sca = 1;
             double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
@@ -1002,7 +1003,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
                       //
 
-                {//calculate mean and sigma on full image for use by normalize_mean_dt
+                if(params->locallab.spots.at(sp).norm && params->locallab.spots.at(sp).fatamount > 1.0) {//calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanfat = 0.f;
                     int nbfat = 0;
                     for (int y = 0; y < pH; y++) {
@@ -1025,7 +1026,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     //using 2 unused variables  sensihs ans sensiv  
                     params->locallab.spots.at(sp).sensihs = (int) meanfat;
                     params->locallab.spots.at(sp).sensiv = (int) stdfat;
-
                 }
 
                 double huerblu = huerefblurs[sp] = huerefblu;
@@ -1061,7 +1061,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Tmin;
                 float Tmax;
                 int lastsav;
-                ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), lastorigimp.get(), 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
+                ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), savenormdr.get(), lastorigimp.get(), 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
                               lllocalcurve, locallutili,
                               cllocalcurve, localclutili,
                               lclocalcurve, locallcutili,
@@ -1104,6 +1104,31 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               LHutili, HHutili, CHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+                if(params->locallab.spots.at(sp).norm  && params->locallab.spots.at(sp).fatamount > 1.0) { //calculate mean and sigma on full image for use by normalize_mean_dt
+                    float meanfat2 = 0.f;
+                    int nbfat2 = 0;
+                    for (int y = 0; y < pH; y++) {
+                        for (int x = 0; x < pW; x++) {
+                            meanfat2 += savenormdr->L[y][x];
+                            nbfat2++;
+                        }
+                    }
+                    meanfat2 /= nbfat2;
+                    float stdfat2 = 0.f;
+                    int nsfat2 = 0;
+                    for (int y = 0; y < pH; y++) {
+                        for (int x = 0; x < pW; x++) {
+                            stdfat2 += SQR(savenormdr->L[y][x] - meanfat2);
+                            nsfat2++;
+                        }
+                    }
+                    stdfat2 /= nsfat2;
+                    stdfat2 = sqrt(stdfat2);
+                    //using 2 unused variables  sensi and noiselumf0  
+                    params->locallab.spots.at(sp).sensi = (int) meanfat2;
+                    params->locallab.spots.at(sp).noiselumf0 = stdfat2 ;
+
+                }
 
                 if (sp + 1u < params->locallab.spots.size()) {
                     // do not copy for last spot as it is not needed anymore

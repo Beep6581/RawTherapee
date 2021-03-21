@@ -951,6 +951,7 @@ private:
             
             const std::unique_ptr<LabImage> reservView(new LabImage(*labView, true));
             const std::unique_ptr<LabImage> lastorigView(new LabImage(*labView, true));
+            const std::unique_ptr<LabImage> savenormdrView(new LabImage(*labView, true));
             LocretigainCurve locRETgainCurve;
             LocretitransCurve locRETtransCurve;
             LocLHCurve loclhCurve;
@@ -1140,7 +1141,7 @@ private:
                 float Tmax;
 
                 // No Locallab mask is shown in exported picture
-                ipf.Lab_Local(2, sp, shbuffer, labView, labView, reservView.get(), lastorigView.get(), 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, 
+                ipf.Lab_Local(2, sp, shbuffer, labView, labView, reservView.get(), savenormdrView.get(), lastorigView.get(), 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, 
                         lllocalcurve, locallutili, 
                         cllocalcurve, localclutili,
                         lclocalcurve, locallcutili,

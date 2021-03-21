@@ -822,6 +822,7 @@ void Crop::update(int todo)
 
         const std::unique_ptr<LabImage> reservCrop(new LabImage(*laboCrop, true));
         const std::unique_ptr<LabImage> lastorigCrop(new LabImage(*laboCrop, true));
+        const std::unique_ptr<LabImage> savenormdrCrop(new LabImage(*laboCrop, true));
         auto& lllocalcurve2 = parent->lllocalcurve;
         auto& cllocalcurve2 = parent->cllocalcurve;
         auto& lclocalcurve2 = parent->lclocalcurve;
@@ -1002,7 +1003,7 @@ void Crop::update(int todo)
                                             skip);
             // Locallab mask are only shown for selected spot
             if (sp == params.locallab.selspot) {
-                parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), lastorigCrop.get(), cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
+                parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), savenormdrCrop.get(), lastorigCrop.get(), cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
                         lllocalcurve2,locallutili, 
                         cllocalcurve2, localclutili,
                         lclocalcurve2, locallcutili,
@@ -1070,7 +1071,7 @@ void Crop::update(int todo)
                             params.softlight.enabled = false;
                         }
             } else {
-                parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), lastorigCrop.get(), cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
+                parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), savenormdrCrop.get(), lastorigCrop.get(), cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
                         lllocalcurve2,locallutili, 
                         cllocalcurve2, localclutili,
                         lclocalcurve2, locallcutili,

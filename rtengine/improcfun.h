@@ -264,7 +264,7 @@ enum class BlurType {
     void mean_dt(const float * data, size_t size, double& mean_p, double& dt_p);
     float *cos_table(size_t size);
 
-    void normalize_mean_dt(float *data, const float *ref, size_t size, float mod, float sigm, float mdef, float sdef);
+    void normalize_mean_dt(float *data, const float *ref, size_t size, float mod, float sigm, float mdef, float sdef, float mdef2, float sdef2);
     void retinex_pde(const float *datain, float * dataout, int bfw, int bfh, float thresh, float multy, float *dE, int show, int dEenable, int normalize);
     void exposure_pde(float *dataor, float *datain, float * dataout, int bfw, int bfh, float thresh, float mod);
     void fftw_convol_blur(float *input, float *output, int bfw, int bfh, float radius, int fftkern, int algo);
@@ -297,7 +297,7 @@ enum class BlurType {
     void calc_ref(int sp, LabImage* original, LabImage* transformed, int cx, int cy, int oW, int oH, int sk, double &huerefblur, double &chromarefblur, double &lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, float &avg, const LocwavCurve & locwavCurveden, bool locwavdenutili);
     void copy_ref(LabImage* spotbuffer, LabImage* original, LabImage* transformed, int cx, int cy, int sk, const struct local_params & lp, double &huerefspot, double &chromarefspot, double &lumarefspot);
     void paste_ref(LabImage* spotbuffer, LabImage* transformed, int cx, int cy, int sk, const struct local_params & lp);
-    void Lab_Local(int call, int sp, float** shbuffer, LabImage* original, LabImage* transformed, LabImage* reserved, LabImage* lastorig, int cx, int cy, int oW, int oH, int sk, const LocretigainCurve& locRETgainCcurve, const LocretitransCurve &locRETtransCcurve,
+    void Lab_Local(int call, int sp, float** shbuffer, LabImage* original, LabImage* transformed, LabImage* reserved, LabImage * savenormdr, LabImage* lastorig, int cx, int cy, int oW, int oH, int sk, const LocretigainCurve& locRETgainCcurve, const LocretitransCurve &locRETtransCcurve,
                 const LUTf& lllocalcurve, bool locallutili, 
                 const LUTf& cllocalcurve, bool localclutili,
                 const LUTf& lclocalcurve, bool locallcutili,
