@@ -12874,7 +12874,9 @@ void ImProcFunctions::Lab_Local(
                     ImProcFunctions::EPDToneMaplocal(sp, bufgb.get(), tmp1.get(), itera, sk);//iterate to 0 calculate with edgstopping, improve result, call=1 dcrop we can put iterate to 5
 
                     tmp1m->CopyFrom(tmp1.get(), multiThread); //save current result7
-                    savenormtm->CopyFrom(tmp1.get(), multiThread);
+                    if(params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap) {
+                        savenormtm->CopyFrom(tmp1.get(), multiThread);
+                    }
                     bool enatmMasktmap = params->locallab.spots.at(sp).enatmMaskaft;
 
                     if (enatmMasktmap) {
@@ -14053,7 +14055,9 @@ void ImProcFunctions::Lab_Local(
             for (int ir = 0; ir < Hd; ir += 1) {
                 for (int jr = 0; jr < Wd; jr += 1) {
                     tmpl->L[ir][jr] = orig[ir][jr];
-                    savenormreti->L[ir][jr] = tmpl->L[ir][jr];
+                    if(params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) {
+                        savenormreti->L[ir][jr] = tmpl->L[ir][jr];
+                    }
                 }
             }
 
@@ -14852,7 +14856,9 @@ void ImProcFunctions::Lab_Local(
                             for (int y = 0; y < bfhr; y++) {
                                 for (int x = 0; x < bfwr; x++) {
                                     bufexpfin->L[y][x] = dataout[y * bfwr + x];
-                                    savenormdr->L[y][x] = bufexpfin->L[y][x];
+                                    if(params->locallab.spots.at(sp).norm && params->locallab.spots.at(sp).fatamount > 1.0){
+                                        savenormdr->L[y][x] = bufexpfin->L[y][x];
+                                    }
                                 }
                             }
                         }

@@ -896,9 +896,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
              */
             const std::unique_ptr<LabImage> reserv(new LabImage(*oprevl, true));
             const std::unique_ptr<LabImage> lastorigimp(new LabImage(*oprevl, true));
-            const std::unique_ptr<LabImage> savenormdr(new LabImage(*oprevl, true));
-            const std::unique_ptr<LabImage> savenormtm(new LabImage(*oprevl, true));
-            const std::unique_ptr<LabImage> savenormreti(new LabImage(*oprevl, true));
+            std::unique_ptr<LabImage> savenormdr;
+            std::unique_ptr<LabImage> savenormtm;
+            std::unique_ptr<LabImage> savenormreti;
             float **shbuffer = nullptr;
             int sca = 1;
             double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
@@ -921,6 +921,15 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             stdretis.resize(params->locallab.spots.size());
 
             for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
+                if(params->locallab.spots.at(sp).norm && params->locallab.spots.at(sp).fatamount > 1.0  && params->locallab.spots.at(sp).expexpose) {//calculate mean and sigma on full image for use by normalize_mean_dt
+                    savenormdr.reset(new LabImage(*oprevl, true));
+                }
+                if(params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap) {
+                    savenormtm.reset(new LabImage(*oprevl, true));
+                }
+                if(params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) {
+                    savenormreti.reset(new LabImage(*oprevl, true));
+                }
                 // Set local curves of current spot to LUT
                 locRETgainCurve.Set(params->locallab.spots.at(sp).localTgaincurve);
                 locRETtransCurve.Set(params->locallab.spots.at(sp).localTtranscurve);
@@ -1019,21 +1028,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 if(params->locallab.spots.at(sp).norm && params->locallab.spots.at(sp).fatamount > 1.0  && params->locallab.spots.at(sp).expexpose) {//calculate mean and sigma on full image for use by normalize_mean_dt
                     ipf.mean_sig (nprevl, meandre, stddre, pH, pW);
-                    //using 2 unused variables  sensihs ans sensiv  
-                  //  params->locallab.spots.at(sp).sensihs = (int) meanfat;
-                  //  params->locallab.spots.at(sp).sensiv = (int) stdfat;
                 }
                 if(params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     ipf.mean_sig (nprevl, meantme, stdtme, pH, pW);
-                    //using 2 unused variables  sensi and noiselumf0  
-                  //  params->locallab.spots.at(sp).noiselumf = (int) meanfat;
-                  //  params->locallab.spots.at(sp).noiselumf2 = (int) stdfat ;
                 }
                 if(params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     ipf.mean_sig (nprevl, meanretie, stdretie, pH, pW);
-                    //using 2 unused variables  sensi and noiselumf0  
-                  //  params->locallab.spots.at(sp).noiselumf = (int) meanfat;
-                  //  params->locallab.spots.at(sp).noiselumf2 = (int) stdfat ;
                 }
 
                 double huerblu = huerefblurs[sp] = huerefblu;
@@ -1135,7 +1135,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float stdfat2 = 0.f;
 
                     ipf.mean_sig (savenormtm.get(), meanfat2, stdfat2, pH, pW);
-                    //using 2 unused variables  sensi and noiselumf0  
+                    //using 2 unused variables  noiselumc and softradiustm  
                     params->locallab.spots.at(sp).noiselumc = (int) meanfat2;
                     params->locallab.spots.at(sp).softradiustm = stdfat2 ;
                 }
@@ -1144,7 +1144,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float meanfat2 = 0.f;
                     float stdfat2 = 0.f;
                     ipf.mean_sig (savenormreti.get(), meanfat2, stdfat2, pH, pW);
-                    //using 2 unused variables  sensi and noiselumf0  
+                    //using 2 unused variables  sensihs and sensiv  
                     params->locallab.spots.at(sp).sensihs = (int) meanfat2;
                     params->locallab.spots.at(sp).sensiv = (int) stdfat2 ;
                 }
