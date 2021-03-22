@@ -953,6 +953,7 @@ private:
             const std::unique_ptr<LabImage> lastorigView(new LabImage(*labView, true));
             const std::unique_ptr<LabImage> savenormdrView(new LabImage(*labView, true));
             const std::unique_ptr<LabImage> savenormtmView(new LabImage(*labView, true));
+            const std::unique_ptr<LabImage> savenormretiView(new LabImage(*labView, true));
             LocretigainCurve locRETgainCurve;
             LocretitransCurve locRETtransCurve;
             LocLHCurve loclhCurve;
@@ -1124,6 +1125,13 @@ private:
                 double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
                 int lastsav;
                 float avge;
+                float meandre;
+                float stddre;
+                float meantme;
+                float stdtme;
+                float meanretie;
+                float stdretie;
+                
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reservView.get(), reservView.get(), 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 } else {
@@ -1142,7 +1150,7 @@ private:
                 float Tmax;
 
                 // No Locallab mask is shown in exported picture
-                ipf.Lab_Local(2, sp, shbuffer, labView, labView, reservView.get(), savenormdrView.get(), savenormtmView.get(), lastorigView.get(), 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, 
+                ipf.Lab_Local(2, sp, shbuffer, labView, labView, reservView.get(), savenormdrView.get(), savenormtmView.get(), savenormretiView.get(), lastorigView.get(), 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, 
                         lllocalcurve, locallutili, 
                         cllocalcurve, localclutili,
                         lclocalcurve, locallcutili,
@@ -1184,7 +1192,9 @@ private:
                         loclmasCurve_wav,lmasutili_wav,
                         LHutili, HHutili, CHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                        minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+                        minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+                        meandre, stddre, meantme, stdtme, meanretie, stdretie
+);
 
                 if (sp + 1u < params.locallab.spots.size()) {
                     // do not copy for last spot as it is not needed anymore
