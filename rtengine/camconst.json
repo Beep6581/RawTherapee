@@ -1423,6 +1423,11 @@ Camera constants:
         "ranges": { "white": 16100 }
     },
     
+    { // Quality C
+        "make_model": "FUJIFILM X-E4",
+        "raw_crop": [ 0, 5, 6252, 4126 ]
+    },
+    
     { // Quality B, samples provided by Daniel Catalina #5824
         "make_model": "FUJIFILM X-T2",
         "dcraw_matrix": [ 11434,-4948,-1210,-3746,12042,1903,-666,1479,5235 ], // DNG_v9.4 D65
