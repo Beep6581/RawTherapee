@@ -8992,12 +8992,12 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
     bool execdenoi = noiscfactiv && ((lp.colorena && execcolor) || (lp.tonemapena && lp.strengt != 0.f) || (lp.cbdlena && execbdl) || (lp.sfena && lp.strng > 0.f) || (lp.lcena && lp.lcamount > 0.f) || (lp.sharpena && lp.shrad > 0.42) || (lp.retiena && lp.str > 0.f)  || (lp.exposena && lp.expcomp != 0.f)  || (lp.expvib && lp.past != 0.f));
     bool execmaskden = (lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.smasktyp != 0;
 
-    const int ys = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-    const int ye = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-    const int xs = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-    const int xe = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-    const int hspot = ye - ys;
-    const int wspot = xe - xs;
+//    const int ys = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+//    const int ye = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+//    const int xs = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+//    const int xe = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+//    const int hspot = ye - ys;
+//    const int wspot = xe - xs;
 
     if (((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.nlstr > 0 || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f
             || execmaskden || aut == 1 || aut == 2) && lp.denoiena && lp.quamet != 3) || execdenoi) {  // sk == 1 ??
@@ -9604,7 +9604,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
             }
 
-            if(lp.nlstr > 0 && (hspot > 150 && wspot > 150)) {
+            if(lp.nlstr > 0) {
                 NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW, GH, float (sk), multiThread);
               //  NLMeans(*nlm, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW + addsiz, GH + addsiz, float (sk), multiThread);
 
