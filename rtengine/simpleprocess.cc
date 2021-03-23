@@ -1347,6 +1347,11 @@ private:
         CurveFactory::complexsgnCurve(autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,
                                       params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 1);
 
+
+        if (params.colorToning.enabled && params.colorToning.method == "LabGrid") {
+            ipf.colorToningLabGrid(labView, 0,labView->W , 0, labView->H, false);
+        }
+
         ipf.shadowsHighlights(labView, params.sh.enabled, params.sh.lab,params.sh.highlights ,params.sh.shadows, params.sh.radius, 1, params.sh.htonalwidth, params.sh.stonalwidth);
 
         if (params.localContrast.enabled) {

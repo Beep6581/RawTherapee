@@ -1286,6 +1286,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             nprevl->CopyFrom(oprevl);
             histCCurve.clear();
             histLCurve.clear();
+            if (params->colorToning.enabled && params->colorToning.method == "LabGrid") {
+            ipf.colorToningLabGrid(nprevl, 0, nprevl->W, 0, nprevl->H, false);
+            }
 
             ipf.shadowsHighlights(nprevl, params->sh.enabled, params->sh.lab,params->sh.highlights ,params->sh.shadows, params->sh.radius, scale, params->sh.htonalwidth, params->sh.stonalwidth);
 
