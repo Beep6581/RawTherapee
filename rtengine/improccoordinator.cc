@@ -924,9 +924,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if(params->locallab.spots.at(sp).norm && params->locallab.spots.at(sp).fatamount > 1.0  && params->locallab.spots.at(sp).expexpose) {//calculate mean and sigma on full image for use by normalize_mean_dt
                     savenormdr.reset(new LabImage(*oprevl, true));
                 }
+
                 if(params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap) {
                     savenormtm.reset(new LabImage(*oprevl, true));
                 }
+
                 if(params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) {
                     savenormreti.reset(new LabImage(*oprevl, true));
                 }
@@ -1029,9 +1031,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if(params->locallab.spots.at(sp).norm && params->locallab.spots.at(sp).fatamount > 1.0  && params->locallab.spots.at(sp).expexpose) {//calculate mean and sigma on full image for use by normalize_mean_dt
                     ipf.mean_sig (nprevl, meandre, stddre, pH, pW);
                 }
+
                 if(params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     ipf.mean_sig (nprevl, meantme, stdtme, pH, pW);
                 }
+
                 if(params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     ipf.mean_sig (nprevl, meanretie, stdretie, pH, pW);
                 }
@@ -1120,10 +1124,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meandr, stddr, meantm, stdtm, meanreti, stdreti);
+
+
                 if(params->locallab.spots.at(sp).norm  && params->locallab.spots.at(sp).fatamount > 1.0 && params->locallab.spots.at(sp).expexpose) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanfat2 = 0.f;
                     float stdfat2 = 0.f;
-
                     ipf.mean_sig (savenormdr.get(), meanfat2, stdfat2, pH, pW);
                     //using 2 unused variables  sensi and noiselumf0  
                     params->locallab.spots.at(sp).sensi = (int) meanfat2;
@@ -1133,7 +1138,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if(params->locallab.spots.at(sp).equiltm && params->locallab.spots.at(sp).exptonemap) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanfat2 = 0.f;
                     float stdfat2 = 0.f;
-
                     ipf.mean_sig (savenormtm.get(), meanfat2, stdfat2, pH, pW);
                     //using 2 unused variables  noiselumc and softradiustm  
                     params->locallab.spots.at(sp).noiselumc = (int) meanfat2;
@@ -1148,7 +1152,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     params->locallab.spots.at(sp).sensihs = (int) meanfat2;
                     params->locallab.spots.at(sp).sensiv = (int) stdfat2 ;
                 }
-                
+
 
                 if (sp + 1u < params->locallab.spots.size()) {
                     // do not copy for last spot as it is not needed anymore

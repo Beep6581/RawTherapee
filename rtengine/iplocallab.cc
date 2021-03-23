@@ -4338,7 +4338,7 @@ void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, size_t 
      * @brief laplacian, DFT and Poisson routines
      *
      * @author Nicolas Limare <nicolas.limare@cmla.ens-cachan.fr>
-     * adapted for Rawtherapee - jacques Desmis july 2019
+     * adapted for Rawtherapee - jacques Desmis july 2019 - march 2021
      */
 
     if (NULL == data || NULL == ref) {
@@ -4349,19 +4349,20 @@ void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, size_t 
     double mean_ref, mean_data, dt_ref, dt_data;
 
     /* compute mean and variance of the two arrays */
-    mean_dt(ref, size, mean_ref, dt_ref);
-    mean_dt(data, size, mean_data, dt_data);
     if(mdef!= 0.f && sdef != 0.f) {
-       // printf("OK shortcut\n");
         mean_ref = mdef;
         dt_ref = sdef;
+    } else {
+        mean_dt(ref, size, mean_ref, dt_ref);
     }
     if(mdef2!= 0.f && sdef2 != 0.f) {
        // printf("OK shortcut\n");
         mean_data = mdef2;
         dt_data = sdef2;
+    } else {
+        mean_dt(data, size, mean_data, dt_data);
     }
-    
+
     /* compute the normalization coefficients */
     const double a = dt_ref / dt_data;
     const double b = mean_ref - a * mean_data;
@@ -6946,16 +6947,15 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 data[(y - ystart)* bfw + (x - xstart)] = bufexpfin->L[y - ystart][x - xstart];
             }
 
-      //  normalize_mean_dt(data, datain, bfh * bfw, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
         if(call == 3 || call == 2) {//improccoordinator and simpleprocess
             normalize_mean_dt(data, datain, bfw * bfh, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
         } else if(call == 1) {//dcrop
-            float ma = meantm;// (float) params->locallab.spots.at(sp).noiselumf;
-            float sa = stdtm;//(float) params->locallab.spots.at(sp).noiselumf2;
+            float ma = meantm;
+            float sa = stdtm;
             float ma2 =  (float) params->locallab.spots.at(sp).noiselumc;
             float sa2 = (float) params->locallab.spots.at(sp).softradiustm;
-            printf("ma=%f sa=%f ma2=%f sa2=%f\n", (double) ma, (double) sa, (double) ma2, (double) sa2);
-            //use normalize with mean and stdv from fullimage give less bad result
+            //printf("ma=%f sa=%f ma2=%f sa2=%f\n", (double) ma, (double) sa, (double) ma2, (double) sa2);
+            //use normalize with mean and stdv
             normalize_mean_dt(data, datain, bfw * bfh, 1.f, 1.f, ma, sa, ma2, sa2);
         }
        
@@ -12875,7 +12875,9 @@ void ImProcFunctions::Lab_Local(
 
                     tmp1m->CopyFrom(tmp1.get(), multiThread); //save current result7
                     if(params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap) {
-                        savenormtm->CopyFrom(tmp1.get(), multiThread);
+                        if(call == 3 || call == 1) {
+                            savenormtm->CopyFrom(tmp1.get(), multiThread);
+                        }
                     }
                     bool enatmMasktmap = params->locallab.spots.at(sp).enatmMaskaft;
 
@@ -14056,7 +14058,9 @@ void ImProcFunctions::Lab_Local(
                 for (int jr = 0; jr < Wd; jr += 1) {
                     tmpl->L[ir][jr] = orig[ir][jr];
                     if(params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) {
-                        savenormreti->L[ir][jr] = tmpl->L[ir][jr];
+                        if(call == 3 || call == 1) {
+                            savenormreti->L[ir][jr] = tmpl->L[ir][jr];
+                        }
                     }
                 }
             }
@@ -14073,17 +14077,16 @@ void ImProcFunctions::Lab_Local(
                         data[ir * Wd + jr] = orig[ir][jr];
                     }
 
-             //   normalize_mean_dt(data, datain, Hd * Wd, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
                 if(params->locallab.spots.at(sp).equilret){
                     if(call == 3 || call == 2) {//improccoordinator and simpleprocess
                         normalize_mean_dt(data, datain, Hd * Wd, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
                     } else if(call == 1) {//dcrop
-                        float ma =  meanreti; //(float) params->locallab.spots.at(sp).sensihs;
-                        float sa = stdreti; //(float) params->locallab.spots.at(sp).sensiv;
+                        float ma =  meanreti;
+                        float sa = stdreti;
                         float ma2 =  (float) params->locallab.spots.at(sp).sensihs;
                         float sa2 = (float) params->locallab.spots.at(sp).sensiv;
-                        printf("ma=%f sa=%f ma2=%f sa2=%f\n", (double) ma, (double) sa, (double) ma2, (double) sa2);
-                                    //use normalize with mean and stdv from fullimage give less bad result
+                        //printf("ma=%f sa=%f ma2=%f sa2=%f\n", (double) ma, (double) sa, (double) ma2, (double) sa2);
+                        //use normalize with mean and stdv
                         normalize_mean_dt(data, datain, Hd * Wd, 1.f, 1.F, ma, sa, ma2, sa2);
 
                     }
@@ -14821,8 +14824,8 @@ void ImProcFunctions::Lab_Local(
                             fatParams.threshold = params->locallab.spots.at(sp).fatdetail;
                             fatParams.amount = params->locallab.spots.at(sp).fatamount;
                             fatParams.anchor = 50.f; //params->locallab.spots.at(sp).fatanchor;
-                            const float sigm = params->locallab.spots.at(sp).fatlevel;
-                            const float mean = params->locallab.spots.at(sp).fatanchor;
+                            const float sigm = 1.f; //params->locallab.spots.at(sp).fatlevel;
+                            const float mean = 1.f;// params->locallab.spots.at(sp).fatanchor;
                             const std::unique_ptr<Imagefloat> tmpImagefat(new Imagefloat(bfwr, bfhr));
                             lab2rgb(*bufexpfin, *(tmpImagefat.get()), params->icm.workingProfile);
                             ToneMapFattal02(tmpImagefat.get(), fatParams, 3, 0, nullptr, 0, 0, 1);//last parameter = 1 ==>ART algorithm
@@ -14837,18 +14840,23 @@ void ImProcFunctions::Lab_Local(
                             }
 
                             if(params->locallab.spots.at(sp).norm){
-                                if(call == 3 || call == 2) {//improccoordinator and simpleprocess
+                           //     if(call == 3 || call == 2) {//improccoordinator and simpleprocess
                                     normalize_mean_dt(dataout.get(), datain.get(), bfwr * bfhr, mean, sigm, 0.f, 0.f, 0.f, 0.f);
+                                    if (settings->verbose) {
+                                        printf("mdr=%f sdr=%f \n", (double) meandr, (double) stddr);
+                                    }
+                                    /*
                                 } else if(call == 1) {//dcrop
-                                    float ma =  meandr; //(float) params->locallab.spots.at(sp).sensihs;
-                                    float sa = stddr; //(float) params->locallab.spots.at(sp).sensiv;
+                                    float ma =  meandr;
+                                    float sa = stddr;
                                     float ma2 =  (float) params->locallab.spots.at(sp).sensi;
                                     float sa2 = (float) params->locallab.spots.at(sp).noiselumf0;
                                     printf("ma=%f sa=%f ma2=%f sa2=%f\n", (double) ma, (double) sa, (double) ma2, (double) sa2);
-                                    //use normalize with mean and stdv from fullimage give less bad result
+                                    //use normalize with mean and stdv
                                     normalize_mean_dt(dataout.get(), datain.get(), bfwr * bfhr, mean, sigm, ma, sa, ma2, sa2);
 
                                 }
+                                */
                             }
 #ifdef _OPENMP
                             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -14857,7 +14865,9 @@ void ImProcFunctions::Lab_Local(
                                 for (int x = 0; x < bfwr; x++) {
                                     bufexpfin->L[y][x] = dataout[y * bfwr + x];
                                     if(params->locallab.spots.at(sp).norm && params->locallab.spots.at(sp).fatamount > 1.0){
-                                        savenormdr->L[y][x] = bufexpfin->L[y][x];
+                                       if(call == 3 || call == 1) {
+                                            savenormdr->L[y][x] = bufexpfin->L[y][x];
+                                       }
                                     }
                                 }
                             }

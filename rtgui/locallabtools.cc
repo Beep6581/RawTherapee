@@ -2706,9 +2706,9 @@ LocallabExposure::LocallabExposure():
     ToolParamBlock* const fatBox = Gtk::manage(new ToolParamBlock());
     fatBox->pack_start(*fatamount);
     fatBox->pack_start(*fatdetail);
-    fatBox->pack_start(*norm);
-    fatBox->pack_start(*fatlevel);
-    fatBox->pack_start(*fatanchor);
+//    fatBox->pack_start(*norm);
+//    fatBox->pack_start(*fatlevel);
+//    fatBox->pack_start(*fatanchor);
 //    fatFrame->add(*fatBox);
     expfat->add(*fatBox, false);
 //    pack_start(*fatFrame);
