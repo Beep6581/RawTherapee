@@ -1348,8 +1348,7 @@ private:
                                       params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 1);
 
 
-        bool hasColorToningLabGrid = params.colorToning.enabled && params.colorToning.method == "LabGrid";
-        if (hasColorToningLabGrid) {
+        if (params.colorToning.enabled && params.colorToning.method == "LabGrid") {
             ipf.colorToningLabGrid(labView, 0,labView->W , 0, labView->H, false);
         }
 

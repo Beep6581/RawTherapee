@@ -1286,8 +1286,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             nprevl->CopyFrom(oprevl);
             histCCurve.clear();
             histLCurve.clear();
-            bool hasColorToningLabGrid = params->colorToning.enabled && params->colorToning.method == "LabGrid";
-            if (hasColorToningLabGrid) {
+            if (params->colorToning.enabled && params->colorToning.method == "LabGrid") {
             ipf.colorToningLabGrid(nprevl, 0, nprevl->W, 0, nprevl->H, false);
             }
 
