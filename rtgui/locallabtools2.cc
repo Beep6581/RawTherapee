@@ -993,7 +993,7 @@ LocallabRetinex::LocallabRetinex():
     retiBox->pack_start(*limd);
     retiBox->pack_start(*offs);
     ToolParamBlock* const toolretiBox = Gtk::manage(new ToolParamBlock());
-    toolretiBox->pack_start(*chrrt);
+  //  toolretiBox->pack_start(*chrrt);
     toolretiBox->pack_start(*darkness);
     toolretiBox->pack_start(*lightnessreti);
     toolretiBox->pack_start(*cliptm);
@@ -1249,7 +1249,8 @@ void LocallabRetinex::read(const rtengine::procparams::ProcParams* pp, const Par
         scalereti->setValue(spot.scalereti);
         limd->setValue(spot.limd);
         offs->setValue(spot.offs);
-        chrrt->setValue(spot.chrrt);
+        chrrt->setValue(0.);
+       // chrrt->setValue(spot.chrrt);
         darkness->setValue(spot.darkness);
         lightnessreti->setValue(spot.lightnessreti);
         cliptm->setValue(spot.cliptm);

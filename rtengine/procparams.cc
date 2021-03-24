@@ -3609,7 +3609,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     },
     inversret(false),
     equilret(true),
-    loglin(false),
+    loglin(true),
     dehazeSaturation(50.0),
     softradiusret(40.0),
     CCmaskreticurve{
