@@ -1038,20 +1038,6 @@ private:
             }
 
             for (size_t sp = 0; sp < params.locallab.spots.size(); sp++) {
-                if(params.locallab.spots.at(sp).norm && params.locallab.spots.at(sp).fatamount > 1.0  && params.locallab.spots.at(sp).expexpose) {//calculate mean and sigma on full image for use by normalize_mean_dt
-                   // savenormdrView.reset(new LabImage(*labView, true));
-                    savenormdrView.reset(new LabImage(5, 5));//5 very small values for memory but not used, just to initialize pipeline
-                }
-
-                if(params.locallab.spots.at(sp).equiltm  && params.locallab.spots.at(sp).exptonemap) {
-                   // savenormtmView.reset(new LabImage(*labView, true));
-                    savenormtmView.reset(new LabImage(5, 5));//5 very small values for memory but not used, just to initialize pipeline
-                }
-
-                if(params.locallab.spots.at(sp).equilret  && params.locallab.spots.at(sp).expreti) {
-                  //  savenormretiView.reset(new LabImage(*labView, true));
-                    savenormretiView.reset(new LabImage(5, 5));//5 very small values for memory but not used, but just to initialize pipeline
-                }
 
                 // Set local curves of current spot to LUT
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);

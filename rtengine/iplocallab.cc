@@ -1830,24 +1830,24 @@ float find_gray(float source_gray, float target_gray)
     return 0.f; // not found
 }
 
-void ImProcFunctions::mean_sig (LabImage* savenormdr, float &meanfat2, float &stdfat2, int pH, int pW){
-    int nbfat2 = 0;
+void ImProcFunctions::mean_sig (LabImage* savenorm, float &meanf, float &stdf, int pH, int pW){
+    int nbf = 0;
     for (int y = 0; y < pH; y++) {
         for (int x = 0; x < pW; x++) {
-            meanfat2 += savenormdr->L[y][x];
-            nbfat2++;
+            meanf += savenorm->L[y][x];
+            nbf++;
         }
     }
-    meanfat2 /= nbfat2;
-    int nsfat2 = 0;
+    meanf /= nbf;
+    int nsf = 0;
     for (int y = 0; y < pH; y++) {
         for (int x = 0; x < pW; x++) {
-            stdfat2 += SQR(savenormdr->L[y][x] - meanfat2);
-            nsfat2++;
+            stdf += SQR(savenorm->L[y][x] - meanf);
+            nsf++;
         }
     }
-    stdfat2 /= nsfat2;
-    stdfat2 = sqrt(stdfat2);
+    stdf /= nsf;
+    stdf = sqrt(stdf);
 }
 
 
@@ -12875,7 +12875,7 @@ void ImProcFunctions::Lab_Local(
 
                     tmp1m->CopyFrom(tmp1.get(), multiThread); //save current result7
                     if(params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap) {
-                        if(call == 3 || call == 1) {
+                        if(call == 3) {
                             savenormtm->CopyFrom(tmp1.get(), multiThread);
                         }
                     }
@@ -14058,7 +14058,7 @@ void ImProcFunctions::Lab_Local(
                 for (int jr = 0; jr < Wd; jr += 1) {
                     tmpl->L[ir][jr] = orig[ir][jr];
                     if(params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) {
-                        if(call == 3 || call == 1) {
+                        if(call == 3) {
                             savenormreti->L[ir][jr] = tmpl->L[ir][jr];
                         }
                     }
@@ -14824,53 +14824,13 @@ void ImProcFunctions::Lab_Local(
                             fatParams.threshold = params->locallab.spots.at(sp).fatdetail;
                             fatParams.amount = params->locallab.spots.at(sp).fatamount;
                             fatParams.anchor = 50.f; //params->locallab.spots.at(sp).fatanchor;
-                            const float sigm = 1.f; //params->locallab.spots.at(sp).fatlevel;
-                            const float mean = 1.f;// params->locallab.spots.at(sp).fatanchor;
+                            //const float sigm = 1.f; //params->locallab.spots.at(sp).fatlevel;
+                            //const float mean = 1.f;// params->locallab.spots.at(sp).fatanchor;
                             const std::unique_ptr<Imagefloat> tmpImagefat(new Imagefloat(bfwr, bfhr));
                             lab2rgb(*bufexpfin, *(tmpImagefat.get()), params->icm.workingProfile);
                             ToneMapFattal02(tmpImagefat.get(), fatParams, 3, 0, nullptr, 0, 0, 1);//last parameter = 1 ==>ART algorithm
                             rgb2lab(*(tmpImagefat.get()), *bufexpfin, params->icm.workingProfile);
-#ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-                            for (int y = 0; y < bfhr; y++) {
-                                for (int x = 0; x < bfwr; x++) {
-                                    dataout[y * bfwr + x] = bufexpfin->L[y][x];
-                                }
-                            }
 
-                            if(params->locallab.spots.at(sp).norm){
-                           //     if(call == 3 || call == 2) {//improccoordinator and simpleprocess
-                                    normalize_mean_dt(dataout.get(), datain.get(), bfwr * bfhr, mean, sigm, 0.f, 0.f, 0.f, 0.f);
-                                    if (settings->verbose) {
-                                        printf("mdr=%f sdr=%f \n", (double) meandr, (double) stddr);
-                                    }
-                                    /*
-                                } else if(call == 1) {//dcrop
-                                    float ma =  meandr;
-                                    float sa = stddr;
-                                    float ma2 =  (float) params->locallab.spots.at(sp).sensi;
-                                    float sa2 = (float) params->locallab.spots.at(sp).noiselumf0;
-                                    printf("ma=%f sa=%f ma2=%f sa2=%f\n", (double) ma, (double) sa, (double) ma2, (double) sa2);
-                                    //use normalize with mean and stdv
-                                    normalize_mean_dt(dataout.get(), datain.get(), bfwr * bfhr, mean, sigm, ma, sa, ma2, sa2);
-
-                                }
-                                */
-                            }
-#ifdef _OPENMP
-                            #pragma omp parallel for schedule(dynamic,16) if (multiThread)
-#endif
-                            for (int y = 0; y < bfhr; y++) {
-                                for (int x = 0; x < bfwr; x++) {
-                                    bufexpfin->L[y][x] = dataout[y * bfwr + x];
-                                    if(params->locallab.spots.at(sp).norm && params->locallab.spots.at(sp).fatamount > 1.0){
-                                       if(call == 3 || call == 1) {
-                                            savenormdr->L[y][x] = bufexpfin->L[y][x];
-                                       }
-                                    }
-                                }
-                            }
                         }
 
                         if (lp.laplacexp > 0.1f) {

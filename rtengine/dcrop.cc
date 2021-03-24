@@ -900,18 +900,6 @@ void Crop::update(int todo)
         auto& loclmasCurve_wav = parent->loclmasCurve_wav;
 
         for (int sp = 0; sp < (int)params.locallab.spots.size(); sp++) {
-            if(params.locallab.spots.at(sp).norm && params.locallab.spots.at(sp).fatamount > 1.0  && params.locallab.spots.at(sp).expexpose) {//calculate mean and sigma on full image for use by normalize_mean_dt
-                savenormdrCrop.reset(new LabImage(*laboCrop, true));
-            }
-
-            if(params.locallab.spots.at(sp).equiltm  && params.locallab.spots.at(sp).exptonemap) {
-                savenormtmCrop.reset(new LabImage(*laboCrop, true));
-            }
-
-            if(params.locallab.spots.at(sp).equilret  && params.locallab.spots.at(sp).expreti) {
-                savenormretiCrop.reset(new LabImage(*laboCrop, true));
-            }
-            
             locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
             locRETtransCurve.Set(params.locallab.spots.at(sp).localTtranscurve);
             const bool LHutili = loclhCurve.Set(params.locallab.spots.at(sp).LHcurve);
