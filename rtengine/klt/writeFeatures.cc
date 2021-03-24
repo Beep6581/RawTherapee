@@ -559,19 +559,19 @@ static structureType _readHeader(
   if (id == FEATURE_TABLE)  {
     fscanf(fp, "%s", line);
     if (strcmp(line, ",") != 0) {
-      KLTError("(_readFeatures) File '%s' is corrupted -- "
+      KLTError("(_readFeatures) File is corrupted -- "
                "(Expected 'comma', found '%s' instead)", line);
       exit(1);
     }
     fscanf(fp, "%s", line);
     if (strcmp(line, "nFeatures") != 0) {
-      KLTError("(_readFeatures) File '%s' is corrupted -- "
+      KLTError("(_readFeatures) File is corrupted -- "
                "(2 Expected 'nFeatures ', found '%s' instead)", line);
       exit(1);
     }
     fscanf(fp, "%s", line);
     if (strcmp(line, "=") != 0) {
-      KLTError("(_readFeatures) File '%s' is corrupted -- "
+      KLTError("(_readFeatures) File is corrupted -- "
                "(2 Expected '= ', found '%s' instead)", line);
       exit(1);
     }

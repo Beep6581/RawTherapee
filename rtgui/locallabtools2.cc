@@ -5125,6 +5125,7 @@ LocallabLog::LocallabLog():
     lightq(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTQ"), -100., 100., 0.5, 0.))),
     contl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTL"), -100., 100., 0.5, 0.))),
     contq(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),
+    contthres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTHRES"), -1., 1., 0.01, 0.))),
     colorfl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCOLORFL"), -100., 100., 0.5, 0.))),
     saturl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
     expL(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_LOGEXP")))),
@@ -5199,6 +5200,7 @@ LocallabLog::LocallabLog():
 
     lightq->setAdjusterListener(this);
     contl->setAdjusterListener(this);
+    contthres->setAdjusterListener(this);
 
     contq->setAdjusterListener(this);
     colorfl->setAdjusterListener(this);
@@ -5323,6 +5325,7 @@ LocallabLog::LocallabLog():
     ToolParamBlock* const logP1Box = Gtk::manage(new ToolParamBlock());
     logP1Box->pack_start(*detail);
     logP1Box->pack_start(*contl);
+    logP1Box->pack_start(*contthres);
     logP1Box->pack_start(*saturl);
     ToolParamBlock* const logP11Box = Gtk::manage(new ToolParamBlock());
     logP11Box->pack_start(*lightl);
@@ -5420,6 +5423,7 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         anglog->set_tooltip_text(M("TP_LOCALLAB_GRADANG_TOOLTIP"));
         contl->set_tooltip_text(M("TP_LOCALLAB_LOGCONTL_TOOLTIP"));
         contq->set_tooltip_text(M("TP_LOCALLAB_LOGCONTQ_TOOLTIP"));
+        contthres->set_tooltip_text(M("TP_LOCALLAB_LOGCONTTHRES_TOOLTIP"));
         colorfl->set_tooltip_text(M("TP_LOCALLAB_LOGCOLORF_TOOLTIP"));
         lightl->set_tooltip_text(M("TP_LOCALLAB_LOGLIGHTL_TOOLTIP"));        
         lightq->set_tooltip_text(M("TP_LOCALLAB_LOGLIGHTQ_TOOLTIP"));        
@@ -5470,6 +5474,7 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         lightl->set_tooltip_text("");
         lightq->set_tooltip_text("");
         contq->set_tooltip_text("");
+        contthres->set_tooltip_text("");
         colorfl->set_tooltip_text("");
         saturl->set_tooltip_text("");
         catad->set_tooltip_text("");
@@ -5594,6 +5599,7 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         lightl->setValue(spot.lightl);
         lightq->setValue(spot.lightq);
         contl->setValue(spot.contl);
+        contthres->setValue(spot.contthres);
         contq->setValue(spot.contq);
         colorfl->setValue(spot.colorfl);
         LshapeL->setCurve(spot.LcurveL);
@@ -5656,6 +5662,7 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.lightl = lightl->getValue();
         spot.lightq = lightq->getValue();
         spot.contl = contl->getValue();
+        spot.contthres = contthres->getValue();
         spot.contq = contq->getValue();
         spot.colorfl = colorfl->getValue();
         spot.LcurveL = LshapeL->getCurve();
@@ -5737,6 +5744,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             targabs->hide();
             saturl->hide();
             contl->hide();
+            contthres->hide();
             lightl->hide();
             lightq->hide();
             contq->hide();
@@ -5765,6 +5773,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             lightl->show();
             lightq->show();
             contl->show();
+            contthres->show();
             contq->show();
             colorfl->show();
             surrHBox->show();
@@ -5797,6 +5806,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             lightl->show();
             lightq->show();
             contl->show();
+            contthres->show();
             contq->show();
             colorfl->show();
             surrHBox->show();
@@ -5829,6 +5839,7 @@ void LocallabLog::convertParamToSimple()
     disableListener();
     ciecam->set_active(false);
     contq->setValue(defSpot.contq);
+    contthres->setValue(defSpot.contthres);
     colorfl->setValue(defSpot.colorfl);
     lightl->setValue(defSpot.lightl);
     lightq->setValue(defSpot.lightq);
@@ -5941,6 +5952,7 @@ void LocallabLog::setDefaults(const rtengine::procparams::ProcParams* defParams,
         lightl->setDefault(defSpot.lightl);
         lightq->setDefault(defSpot.lightq);
         contl->setDefault(defSpot.contl);
+        contthres->setDefault(defSpot.contthres);
         contq->setDefault(defSpot.contq);
         colorfl->setDefault(defSpot.colorfl);
         detail->setDefault(defSpot.detail);
@@ -6047,6 +6059,13 @@ void LocallabLog::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabcontl,
                                        contl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == contthres) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcontthres,
+                                       contthres->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

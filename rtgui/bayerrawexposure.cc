@@ -137,8 +137,8 @@ void BayerRAWExposure::adjusterChanged(Adjuster* a, double newval)
             if(!PextwoGreen->getLastActive()) {
                 listener->panelChanged (EvPreProcessExpBlackthree,  value );
             } else {
-                listener->panelChanged (EvPreProcessExpBlackthree,  value );
                 PexBlack0->setValue (PexBlack3->getValue());
+                listener->panelChanged (EvPreProcessExpBlackthree,  value );
             }
         }
     }

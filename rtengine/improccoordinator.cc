@@ -1284,9 +1284,18 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         if ((todo & (M_LUMINANCE + M_COLOR)) || (todo & M_AUTOEXP)) {
             nprevl->CopyFrom(oprevl);
-
             histCCurve.clear();
             histLCurve.clear();
+            if (params->colorToning.enabled && params->colorToning.method == "LabGrid") {
+            ipf.colorToningLabGrid(nprevl, 0, nprevl->W, 0, nprevl->H, false);
+            }
+
+            ipf.shadowsHighlights(nprevl, params->sh.enabled, params->sh.lab,params->sh.highlights ,params->sh.shadows, params->sh.radius, scale, params->sh.htonalwidth, params->sh.stonalwidth);
+
+            if (params->localContrast.enabled) {
+            // Alberto's local contrast
+                ipf.localContrast(nprevl, nprevl->L, params->localContrast, false, scale);
+            }
             ipf.chromiLuminanceCurve(nullptr, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histLCurve);
             ipf.vibrance(nprevl, params->vibrance, params->toneCurve.hrenabled, params->icm.workingProfile);
             ipf.labColorCorrectionRegions(nprevl);
@@ -1646,8 +1655,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 // Computing the internal image for analysis, i.e. conversion from WCS->Output profile
                 delete workimg;
+                workimg = nullptr;
+
                 workimg = ipf.lab2rgb(nprevl, 0, 0, pW, pH, params->icm);
-            } catch (char * str) {
+            } catch (std::exception&) {
                 return;
             }
         }
@@ -1722,6 +1733,7 @@ void ImProcCoordinator::freeAll()
         }
 
         delete workimg;
+        workimg = nullptr;
 
     }
 

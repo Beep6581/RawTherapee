@@ -1021,6 +1021,7 @@ void ControlSpotPanel::spotMethodChanged()
         }
     } else if (spotMethod_->get_active_row_number() == 2) { // Full image case
         excluFrame->hide();
+        shape_->set_active(0);
 
         locX_->setValue(3000.);
         row[spots_.locX] = locX_->getIntValue();

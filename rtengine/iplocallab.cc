@@ -435,6 +435,7 @@ struct local_params {
     float balanceh;
     int colorde;
     int cir;
+    bool recur;
     float thr;
     float stru;
     int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex, sensexclu, sensden, senslc, senssf, senshs, senscolor;
@@ -772,6 +773,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int w = oW;
     int h = oH;
     int circr = locallab.spots.at(sp).circrad;
+    bool recur = locallab.spots.at(sp).recurs;
     float streng = ((float)locallab.spots.at(sp).stren);
     float gam = ((float)locallab.spots.at(sp).gamma);
     float est = ((float)locallab.spots.at(sp).estop);
@@ -1355,6 +1357,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.deltaem = locallab.spots.at(sp).deltae;
     lp.scalereti = scaleret;
     lp.cir = circr;
+    lp.recur = recur;
     lp.actsp = acti;
     lp.xc = w * local_center_x;
     lp.yc = h * local_center_y;
@@ -2401,8 +2404,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     LUTu hist16J(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE, true);
     LUTu hist16Q(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE, true);
     //for J light and contrast
-    LUTf CAMBrightCurveJ(32768, LUT_CLIP_ABOVE);
-    LUTf CAMBrightCurveQ(32768, LUT_CLIP_ABOVE);
+    LUTf CAMBrightCurveJ(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
+    LUTf CAMBrightCurveQ(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
 
 #ifdef _OPENMP
     const int numThreads = min(max(width * height / 65536, 1), omp_get_max_threads());
@@ -2479,11 +2482,24 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         const float lightL = 0.4 * params->locallab.spots.at(sp).lightl; //0.4 less effect, no need 1.
         const float contQ = 0.5 * params->locallab.spots.at(sp).contq; //0.5 less effect, no need 1.
         const float lightQ = 0.4 * params->locallab.spots.at(sp).lightq; //0.4 less effect, no need 1.
-   
-        Ciecam02::curveJfloat(lightL, contL, hist16J, CAMBrightCurveJ); //lightness J and contrast J
+        
+        float contthresL = params->locallab.spots.at(sp).contthres;
+        float contthresQ = contthresL;
+        if(contL < 0.f) {
+            contthresL *= -1;
+        } 
+        float thL = 0.6f;
+        thL = 0.3f * contthresL + 0.6f;
+        
+        if(contQ < 0.f) {
+            contthresQ *= -1;
+        } 
+        float thQ = 0.6f;
+        thQ = 0.3f * contthresQ + 0.6f;
+        Ciecam02::curveJfloat(lightL, contL, thL, hist16J, CAMBrightCurveJ); //lightness J and contrast J
         CAMBrightCurveJ /= 327.68f;
         
-        Ciecam02::curveJfloat(lightQ, contQ, hist16Q, CAMBrightCurveQ); //brightness Q and contrast Q
+        Ciecam02::curveJfloat(lightQ, contQ, thQ, hist16Q, CAMBrightCurveQ); //brightness Q and contrast Q
     }
     int tempo = 5000;
     if(params->locallab.spots.at(sp).expvibrance && call == 2) {
@@ -5710,7 +5726,8 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
     const int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
     const int bfw = xend - xstart;
     const int bfh = yend - ystart;
-    // printf("h=%f l=%f c=%f s=%f\n", hueref, lumaref, chromaref, sobelref);
+//    printf("h=%f l=%f c=%f s=%f\n", hueref, lumaref, chromaref, sobelref);
+//    printf("bfh=%i bfw=%i\n", bfh, bfw);
     const float ach = lp.trans / 100.f;
     float varsens = lp.sensex;
 
@@ -8930,12 +8947,12 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
     bool execdenoi = noiscfactiv && ((lp.colorena && execcolor) || (lp.tonemapena && lp.strengt != 0.f) || (lp.cbdlena && execbdl) || (lp.sfena && lp.strng > 0.f) || (lp.lcena && lp.lcamount > 0.f) || (lp.sharpena && lp.shrad > 0.42) || (lp.retiena && lp.str > 0.f)  || (lp.exposena && lp.expcomp != 0.f)  || (lp.expvib && lp.past != 0.f));
     bool execmaskden = (lp.showmaskblmet == 2 || lp.enablMask || lp.showmaskblmet == 3 || lp.showmaskblmet == 4) && lp.smasktyp != 0;
 
-    const int ys = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
-    const int ye = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
-    const int xs = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
-    const int xe = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
-    const int hspot = ye - ys;
-    const int wspot = xe - xs;
+//    const int ys = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+//    const int ye = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+//    const int xs = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+//    const int xe = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+//    const int hspot = ye - ys;
+//    const int wspot = xe - xs;
 
     if (((lp.noiself > 0.f || lp.noiself0 > 0.f || lp.noiself2 > 0.f || lp.nlstr > 0 || lp.wavcurvedenoi || lp.noiselc > 0.f || lp.noisecf > 0.f || lp.noisecc > 0.f
             || execmaskden || aut == 1 || aut == 2) && lp.denoiena && lp.quamet != 3) || execdenoi) {  // sk == 1 ??
@@ -8971,8 +8988,24 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
         const int numThreads = 1;
 
 #endif
+            int minwin = rtengine::min(GW, GH);
+            int maxlevelspot = 10;//maximum possible
+            bool isnois = true;
+            // adap maximum level wavelet to size of crop
+            while ((1 << maxlevelspot) >= (minwin * sk) && maxlevelspot  > 1) {
+                --maxlevelspot ;
+            }
 
-        if (call == 1 && GW >= mDEN && GH >= mDEN) {
+            levred = rtengine::min(levred, maxlevelspot);
+            if(levred < 7) {//If windows preview or detail window too small exit to avoid artifacts
+                isnois = false;
+                if(lp.quamet == 2) {
+                    isnois = true;
+                }
+            }
+
+     //   if (call == 1 && GW >= mDEN && GH >= mDEN) {
+        if (call == 1 && ((GW >= mDEN && GH >= mDEN  && isnois) || lp.quamet == 2)) {
 
 
             LabImage tmp1(transformed->W, transformed->H);
@@ -9540,8 +9573,10 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
             }
 
-            if(lp.nlstr > 0 && (hspot > 150 && wspot > 150)) {
+            if(lp.nlstr > 0) {
                 NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW, GH, float (sk), multiThread);
+              //  NLMeans(*nlm, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW + addsiz, GH + addsiz, float (sk), multiThread);
+
             }
             if(lp.smasktyp != 0) {
                 if(lp.enablMask && lp.recothrd != 1.f) {
@@ -10213,6 +10248,9 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
             if(lp.nlstr > 0) {
                 NLMeans(bufwv.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, bfw, bfh, 1.f, multiThread);
+               // NLMeans(*nlm, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, bfw + addsiz, bfh + addsiz, 1.f, multiThread);
+
+                
             }
 
 
@@ -10872,13 +10910,11 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     if(scale > 5.f) {//avoid to small values - leads to crash - but enough to evaluate noise 
         return;
     }
-    if(bfh < 150 || bfw < 150) {
-        return;
-    }
 
     BENCHFUN
     const int W = bfw;
     const int H = bfh;
+//    printf("W=%i H=%i\n", W, H);
     float gamma = gam;
     rtengine::GammaValues g_a; //gamma parameters
     double pwr = 1.0 / static_cast<double>(gam);//default 3.0 - gamma Lab
@@ -10901,7 +10937,6 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
             img[y][x] = 65536.f * igammalog(img[y][x] / 32768.f, gamma, ts, g_a[2], g_a[4]);
         }
     }
-
     // these two can be changed if needed. increasing max_patch_radius doesn't
     // affect performance, whereas max_search_radius *really* does
     // (the complexity is O(max_search_radius^2 * W * H))
@@ -10956,9 +10991,9 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
 #   pragma omp parallel for if (multithread)
 #endif
     for (int y = 0; y < HH; ++y) {
-        int yy = y <= border ? 0 : y >= H ? H-1 : y - border;
+        int yy = y <= border ? 0 : y - border >= H ? H-1 : y - border;
         for (int x = 0; x < WW; ++x) {
-            int xx = x <= border ? 0 : x >= W ? W-1 : x - border;
+            int xx = x <= border ? 0 : x - border >= W ? W-1 : x - border;
             float Y = img[yy][xx] / 65536.f;
             src[y][x] = Y;
         }
@@ -10989,7 +11024,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
             mask[y][x] = (1.f / (mask[y][x] * h2)) / lutfactor;
         }
     }
-  
+ 
     // process by tiles to avoid numerical accuracy errors in the computation
     // of the integral image
     const int tile_size = 150;
@@ -11103,7 +11138,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
             }
         }
 //    printf("E\n");
-        
+       
         // Compute final estimate at pixel x = (x1, x2)
         for (int yy = start_y+border; yy < end_y-border; ++yy) {
             int y = yy - border;
@@ -11469,7 +11504,7 @@ void ImProcFunctions::Lab_Local(
                 transit_shapedetect2(call, 11, bufexporig.get(), bufexpfin.get(), originalmasklog.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
             }
             
-            if (params->locallab.spots.at(sp).recurs) {
+            if (lp.recur) {
                 original->CopyFrom(transformed, multiThread);
                 float avge;
                 calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -12152,7 +12187,7 @@ void ImProcFunctions::Lab_Local(
                             BlurNoise_Local(tmp1.get(), original, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
                         }
 
-                        if (params->locallab.spots.at(sp).recurs) {
+                        if (lp.recur) {
                             original->CopyFrom(transformed, multiThread);
                             float avge;
                             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -12165,7 +12200,7 @@ void ImProcFunctions::Lab_Local(
                             InverseBlurNoise_Local(original, lp, hueref, chromaref, lumaref, original, transformed, tmp1.get(), cx, cy, sk);
                         }
 
-                        if (params->locallab.spots.at(sp).recurs) {
+                        if (lp.recur) {
                             original->CopyFrom(transformed, multiThread);
                             float avge;
                             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -12217,7 +12252,7 @@ void ImProcFunctions::Lab_Local(
 
         DeNoise_Local(call, lp,  originalmaskbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, *(bufwv.get()), cx, cy, sk);
 
-        if (params->locallab.spots.at(sp).recurs) {
+        if (lp.recur) {
             original->CopyFrom(transformed, multiThread);
             float avge;
             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -12232,7 +12267,7 @@ void ImProcFunctions::Lab_Local(
         constexpr int aut = 0;
         DeNoise(call, slidL, slida, slidb, aut, noiscfactiv, lp, originalmaskbl.get(), bufmaskblurbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, cx, cy, sk, locwavCurvehue, locwavhueutili);
 
-        if (params->locallab.spots.at(sp).recurs) {
+        if (lp.recur) {
             original->CopyFrom(transformed, multiThread);
             float avge;
             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -12249,7 +12284,6 @@ void ImProcFunctions::Lab_Local(
             const int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
             int bfh = yend - ystart;
             int bfw = xend - xstart;
-
             if (bfw > 65 && bfh > 65) {
                 array2D<float> bufsh(bfw, bfh);
                 JaggedArray<float> bufchrom(bfw, bfh, true);
@@ -12268,9 +12302,9 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-                for (int y = 0; y < bfh; y++) {
-                    for (int x = 0; x < bfw; x++) {
-                        loctemp->L[y][x] = original->L[y + ystart][x + xstart];
+                for (int y = ystart; y < yend; y++) {
+                    for (int x = xstart; x < xend; x++) {
+                        loctemp->L[y - ystart][x - xstart] = original->L[y][x];
                     }
                 }
 
@@ -12357,6 +12391,7 @@ void ImProcFunctions::Lab_Local(
                             bufsh[y - ystart][x - xstart] = origcbdl->L[y - ystart][x - xstart] = original->L[y][x];
                             loctemp->a[y - ystart][x - xstart] = origcbdl->a[y - ystart][x - xstart] = original->a[y][x];
                             loctemp->b[y - ystart][x - xstart] = origcbdl->b[y - ystart][x - xstart] = original->b[y][x];
+                            loctemp->L[y - ystart][x - xstart] = origcbdl->b[y - ystart][x - xstart] = original->L[y][x];
                         }
                     }
 
@@ -12370,6 +12405,7 @@ void ImProcFunctions::Lab_Local(
 
                     ImProcFunctions::cbdl_local_temp(bufsh, loctemp->L, bfw, bfh, lp.mulloc, 1.f, lp.threshol, lp.clarityml, lp.contresid, skinprot, false, b_l, t_l, t_r, b_r, choice, sk, multiThread);
 
+                    
                     if (lp.softradiuscb > 0.f) {
                         softproc(origcbdl.get(), loctemp.get(), lp.softradiuscb, bfh, bfw, 0.001, 0.00001, 0.5f, sk, multiThread, 1);
                     }
@@ -12382,6 +12418,7 @@ void ImProcFunctions::Lab_Local(
                         bool invmask = false;
                         maskrecov(loctemp.get(), original, bufmaskorigcb.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
                     }
+                    
                 }
 
                 transit_shapedetect(6, loctemp.get(), originalmaskcb.get(), bufchrom, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
@@ -12390,6 +12427,7 @@ void ImProcFunctions::Lab_Local(
 
                 //chroma CBDL begin here
                 if (lp.chromacb > 0.f && !nochroma) {
+
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -12445,14 +12483,15 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     transit_shapedetect(7, loctemp.get(), nullptr, bufchrom, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
-                    bufsh.free();
-
-                    if (params->locallab.spots.at(sp).recurs) {
-                        original->CopyFrom(transformed, multiThread);
-                        float avge;
-                        calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
-                    }
                 }
+                bufsh.free();
+                
+                if (lp.recur) {
+                    original->CopyFrom(transformed, multiThread);
+                    float avge;
+                    calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
+                }
+                
             }
         }
     }
@@ -12673,7 +12712,7 @@ void ImProcFunctions::Lab_Local(
                 }
 
 
-                if (params->locallab.spots.at(sp).recurs) {
+                if (lp.recur) {
                     original->CopyFrom(transformed, multiThread);
                     float avge;
                     calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -12898,7 +12937,7 @@ void ImProcFunctions::Lab_Local(
                     //  transit_shapedetect(8, tmp1.get(), originalmasktm.get(), bufchro, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                     bufgb.reset();
 
-                    if (params->locallab.spots.at(sp).recurs) {
+                    if (lp.recur) {
                         original->CopyFrom(transformed, multiThread);
                         float avge;
                         calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -13101,7 +13140,7 @@ void ImProcFunctions::Lab_Local(
 
             transit_shapedetect2(call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
-            if (params->locallab.spots.at(sp).recurs) {
+            if (lp.recur) {
                 original->CopyFrom(transformed, multiThread);
                 float avge;
                 calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -13186,7 +13225,7 @@ void ImProcFunctions::Lab_Local(
         float adjustr = 2.f;
         InverseColorLight_Local(tonequ, tonecurv, sp, 2, lp, originalmaskSH.get(), lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
 
-        if (params->locallab.spots.at(sp).recurs) {
+        if (lp.recur) {
             original->CopyFrom(transformed, multiThread);
             float avge;
             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -13264,7 +13303,7 @@ void ImProcFunctions::Lab_Local(
 
             transit_shapedetect2(call, 3, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
-            if (params->locallab.spots.at(sp).recurs) {
+            if (lp.recur) {
                 original->CopyFrom(transformed, multiThread);
                 float avge;
                 calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -13729,7 +13768,7 @@ void ImProcFunctions::Lab_Local(
                 tmp1.reset();
             }
 
-            if (params->locallab.spots.at(sp).recurs) {
+            if (lp.recur) {
                 original->CopyFrom(transformed, multiThread);
                 float avge;
                 calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -13780,7 +13819,7 @@ void ImProcFunctions::Lab_Local(
         //sharpen ellipse and transition
         Sharp_Local(call, loctemp, 0, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
-        if (params->locallab.spots.at(sp).recurs) {
+        if (lp.recur) {
             original->CopyFrom(transformed, multiThread);
             float avge;
             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -13795,7 +13834,7 @@ void ImProcFunctions::Lab_Local(
 
         InverseSharp_Local(loctemp, hueref, lumaref, chromaref, lp, original, transformed, cx, cy, sk);
 
-        if (params->locallab.spots.at(sp).recurs) {
+        if (lp.recur) {
             original->CopyFrom(transformed, multiThread);
             float avge;
             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -13841,7 +13880,7 @@ void ImProcFunctions::Lab_Local(
 
             transit_shapedetect2(call, 30, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
-            if (params->locallab.spots.at(sp).recurs) {
+            if (lp.recur) {
                 original->CopyFrom(transformed, multiThread);
                 float avge;
                 calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -14041,7 +14080,7 @@ void ImProcFunctions::Lab_Local(
 
             transit_shapedetect_retinex(call, 4, bufreti, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
-            if (params->locallab.spots.at(sp).recurs) {
+            if (lp.recur) {
                 original->CopyFrom(transformed, multiThread);
                 float avge;
                 calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -14143,7 +14182,7 @@ void ImProcFunctions::Lab_Local(
 
                 transit_shapedetect_retinex(call, 5, tmpl, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
-                if (params->locallab.spots.at(sp).recurs) {
+                if (lp.recur) {
                     original->CopyFrom(transformed, multiThread);
                     float avge;
                     calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -14382,7 +14421,7 @@ void ImProcFunctions::Lab_Local(
 
                 transit_shapedetect_retinex(call, 4, bufreti, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
-                if (params->locallab.spots.at(sp).recurs) {
+                if (lp.recur) {
                     original->CopyFrom(transformed, multiThread);
                     float avge;
                     calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -14479,7 +14518,7 @@ void ImProcFunctions::Lab_Local(
                 if (!lp.invret) {
                     transit_shapedetect_retinex(call, 5, tmpl, tmpl, bufmask, buforigmas, buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
 
-                    if (params->locallab.spots.at(sp).recurs) {
+                    if (lp.recur) {
                         original->CopyFrom(transformed, multiThread);
                         float avge;
                         calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -14862,7 +14901,7 @@ void ImProcFunctions::Lab_Local(
                     transit_shapedetect2(call, 1, bufexporig.get(), bufexpfin.get(), originalmaskexp.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
                 }
 
-                if (params->locallab.spots.at(sp).recurs) {
+                if (lp.recur) {
                     original->CopyFrom(transformed, multiThread);
                     float avge;
                     calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -14948,7 +14987,7 @@ void ImProcFunctions::Lab_Local(
 
         InverseColorLight_Local(false, false, sp, 1, lp, originalmaskexp.get(), lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
 
-        if (params->locallab.spots.at(sp).recurs) {
+        if (lp.recur) {
             original->CopyFrom(transformed, multiThread);
             float avge;
             calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -16010,7 +16049,7 @@ void ImProcFunctions::Lab_Local(
 
                 }
 
-                if (params->locallab.spots.at(sp).recurs) {
+                if (lp.recur) {
                     original->CopyFrom(transformed, multiThread);
                     float avge;
                     calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -16109,7 +16148,7 @@ void ImProcFunctions::Lab_Local(
         if (lp.showmaskcolmetinv == 0 || lp.enaColorMaskinv) {
             InverseColorLight_Local(false, false, sp, 0, lp, originalmaskcol.get(), lightCurveloc, hltonecurveloc, shtonecurveloc, tonecurveloc, exlocalcurve, cclocalcurve, adjustr, localcutili, lllocalcurve, locallutili, original, transformed, cx, cy, hueref, chromaref, lumaref, sk);
 
-            if (params->locallab.spots.at(sp).recurs) {
+            if (lp.recur) {
                 original->CopyFrom(transformed, multiThread);
                 float avge;
                 calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
@@ -16278,7 +16317,7 @@ void ImProcFunctions::Lab_Local(
                 delete origsav;
                 origsav    = NULL;
                     
-                if (params->locallab.spots.at(sp).recurs) {
+                if (lp.recur) {
                     original->CopyFrom(transformed, multiThread);
                     float avge;
                     calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);

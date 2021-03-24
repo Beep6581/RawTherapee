@@ -65,7 +65,7 @@ private:
 public:
     Ciecam02 () {}
     static void curvecolorfloat (float satind, float satval, float &sres, float parsat);
-    static void curveJfloat (float br, float contr, const LUTu & histogram, LUTf & outCurve ) ;
+    static void curveJfloat (float br, float contr, float thr, const LUTu & histogram, LUTf & outCurve ) ;
 
     /**
      * Inverse transform from CIECAM02 JCh to XYZ.
