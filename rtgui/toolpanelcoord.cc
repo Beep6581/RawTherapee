@@ -351,6 +351,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     rawPanelSW->set_sensitive(true);
                     sensorxtrans->FoldableToolPanel::hide();
                     xtransprocess->FoldableToolPanel::hide();
+                    bayerrawexposure->FoldableToolPanel::show();
                     xtransrawexposure->FoldableToolPanel::hide();
                     sensorbayer->FoldableToolPanel::show();
                     bayerprocess->FoldableToolPanel::show();
@@ -372,6 +373,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     sensorxtrans->FoldableToolPanel::show();
                     xtransprocess->FoldableToolPanel::show();
                     xtransrawexposure->FoldableToolPanel::show();
+                    bayerrawexposure->FoldableToolPanel::hide();
                     sensorbayer->FoldableToolPanel::hide();
                     bayerprocess->FoldableToolPanel::hide();
                     bayerpreprocess->FoldableToolPanel::hide();
