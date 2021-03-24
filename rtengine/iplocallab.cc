@@ -11224,7 +11224,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
 }
 
 void ImProcFunctions::Lab_Local(
-    int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, LabImage * savenormdr, LabImage * savenormtm, LabImage * savenormreti, LabImage * lastorig, int cx, int cy, int oW, int oH, int sk,
+    int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, LabImage * savenormtm, LabImage * savenormreti, LabImage * lastorig, int cx, int cy, int oW, int oH, int sk,
     const LocretigainCurve& locRETgainCcurve, const LocretitransCurve& locRETtransCcurve,
     const LUTf& lllocalcurve, bool locallutili,
     const LUTf& cllocalcurve, bool localclutili,
@@ -11270,7 +11270,7 @@ void ImProcFunctions::Lab_Local(
     double& huerefblur, double& chromarefblur, double& lumarefblur, double& hueref, double& chromaref, double& lumaref, double& sobelref, int &lastsav,
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
-    float& meandr, float& stddr, float& meantm, float& stdtm, float& meanreti, float& stdreti
+    float& meantm, float& stdtm, float& meanreti, float& stdreti
     )
 {
     //general call of others functions : important return hueref, chromaref, lumaref

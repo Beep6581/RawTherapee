@@ -421,7 +421,7 @@ LocallabColor::LocallabColor():
     labgrid(Gtk::manage(new LabGrid(EvLocallabLabGridValue, M("TP_LOCALLAB_LABGRID_VALUES")))),
     gridMethod(Gtk::manage(new MyComboBoxText())),
     strengthgrid(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRGRID"), 0, 100, 1, 30))),
-    sensi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),//unused here, but used for normalize_mean_dt 
+    sensi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 15))),
     structcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL1"), 0, 100, 1, 0))),
     blurcolde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
     softradiuscol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
@@ -799,7 +799,7 @@ LocallabColor::LocallabColor():
     superBox->pack_start(*gridFrame);
     superFrame->add(*superBox);
     pack_start(*superFrame);
-    // pack_start(*sensi);//unused here, but used for normalize_mean_dt 
+    // pack_start(*sensi);
     pack_start(*structcol);
     pack_start(*blurcolde);
     pack_start(*softradiuscol);
@@ -6291,7 +6291,7 @@ LocallabBlur::LocallabBlur():
     lnoiselow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLNOISELOW"), 0.7, 2., 0.01, 1.))),
     levelthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
     levelthrlow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
-    noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 0.01, 0.))),//unused here, but used for normalize_mean_dt 
+    noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noiselumf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noiselumf2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINETWO"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noiselumc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMCOARSE"), MINCHRO, MAXCHROCC, 0.01, 0.))),//unused here, but used for normalize_mean_dt 
@@ -6632,7 +6632,7 @@ LocallabBlur::LocallabBlur():
     ToolParamBlock* const wavBox = Gtk::manage(new ToolParamBlock());
     wavBox->pack_start(*quaHBox);
     wavBox->pack_start(*LocalcurveEditorwavden, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    // wavBox->pack_start(*noiselumf0);//unused here, but used for normalize_mean_dt 
+    // wavBox->pack_start(*noiselumf0);
     // wavBox->pack_start(*noiselumf);
     // wavBox->pack_start(*noiselumf2);
     // wavBox->pack_start(*noiselumc);//unused here, but used for normalize_mean_dt 

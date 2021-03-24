@@ -339,8 +339,6 @@ protected:
     std::vector<float> lumarefs;
     std::vector<float> sobelrefs;
     std::vector<float> avgs;
-    std::vector<float> meandrs;
-    std::vector<float> stddrs;
     std::vector<float> meantms;
     std::vector<float> stdtms;
     std::vector<float> meanretis;

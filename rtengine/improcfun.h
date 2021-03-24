@@ -293,12 +293,12 @@ enum class BlurType {
         bool delt, const float hueref, const float chromaref, const float lumaref,
         float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, float balance, float balanceh, float lumask);
 
-    void mean_sig (LabImage* savenormdr, float &meanfat2, float &stdfat2, int pH, int pW);
+    void mean_sig (LabImage* savenorm, float &meanf, float &stdf, int pH, int pW);
 
     void calc_ref(int sp, LabImage* original, LabImage* transformed, int cx, int cy, int oW, int oH, int sk, double &huerefblur, double &chromarefblur, double &lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, float &avg, const LocwavCurve & locwavCurveden, bool locwavdenutili);
     void copy_ref(LabImage* spotbuffer, LabImage* original, LabImage* transformed, int cx, int cy, int sk, const struct local_params & lp, double &huerefspot, double &chromarefspot, double &lumarefspot);
     void paste_ref(LabImage* spotbuffer, LabImage* transformed, int cx, int cy, int sk, const struct local_params & lp);
-    void Lab_Local(int call, int sp, float** shbuffer, LabImage* original, LabImage* transformed, LabImage* reserved, LabImage * savenormdr, LabImage * savenormtm, LabImage * savenormreti, LabImage* lastorig, int cx, int cy, int oW, int oH, int sk, const LocretigainCurve& locRETgainCcurve, const LocretitransCurve &locRETtransCcurve,
+    void Lab_Local(int call, int sp, float** shbuffer, LabImage* original, LabImage* transformed, LabImage* reserved, LabImage * savenormtm, LabImage * savenormreti, LabImage* lastorig, int cx, int cy, int oW, int oH, int sk, const LocretigainCurve& locRETgainCcurve, const LocretitransCurve &locRETtransCcurve,
                 const LUTf& lllocalcurve, bool locallutili, 
                 const LUTf& cllocalcurve, bool localclutili,
                 const LUTf& lclocalcurve, bool locallcutili,
@@ -343,7 +343,7 @@ enum class BlurType {
                 double& huerefblur, double &chromarefblur, double& lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, int &lastsav,
                 bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask,
                 float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
-                float &meandr, float &stddr, float& meantm, float& stdtm, float& meanreti, float& stdreti);
+                float& meantm, float& stdtm, float& meanreti, float& stdreti);
 
     void addGaNoise(LabImage *lab, LabImage *dst, const float mean, const float variance, const int sk);
     void BlurNoise_Localold(int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy);
