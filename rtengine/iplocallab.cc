@@ -1830,21 +1830,25 @@ float find_gray(float source_gray, float target_gray)
     return 0.f; // not found
 }
 
-void ImProcFunctions::mean_sig (LabImage* savenorm, float &meanf, float &stdf, int xxs, int xxe, int yys, int yye){
-    int size = (yye - yys) * (xxe - xxs);
+void ImProcFunctions::mean_sig (const float* const * const savenormL, float &meanf, float &stdf, int xStart, int xEnd, int yStart, int yEnd) const {
+    const int size = (yEnd - yStart) * (xEnd - xStart);
+    // use double precision for large accumulations
+    double meand = 0.0;
+    double stdd = 0.0;
 #ifdef _OPENMP
-    #pragma omp parallel for reduction(+:meanf, stdf) if(multiThread)
+    #pragma omp parallel for reduction(+:meand, stdd) if(multiThread)
 #endif
-    for (int y = yys; y < yye; y++) {
-        for (int  x = xxs; x < xxe; x++) {
-            meanf += savenorm->L[y][x];
-            stdf += SQR(savenorm->L[y][x]);
+    for (int y = yStart; y < yEnd; ++y) {
+        for (int x = xStart; x < xEnd; ++x) {
+            meand += static_cast<double>(savenormL[y][x]);
+            stdd += SQR(static_cast<double>(savenormL[y][x]));
         }
     }
-    meanf /= size;
-    stdf /= size;
-    stdf -= SQR(meanf);
-    stdf = std::sqrt(stdf);
+    meand /= size;
+    stdd /= size;
+    stdd -= SQR(meand);
+    stdf = std::sqrt(stdd);
+    meanf = meand;
 }
 
 

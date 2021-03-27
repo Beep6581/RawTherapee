@@ -1055,10 +1055,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 int yye = yend * hh;
                         
                 if(istm) { //calculate mean and sigma on full image for RT-spot use by normalize_mean_dt
-                    ipf.mean_sig (nprevl, meantme, stdtme, xxs, xxe, yys, yye);
+                    ipf.mean_sig (nprevl->L, meantme, stdtme, xxs, xxe, yys, yye);
                 }
                 if(isreti) { //calculate mean and sigma on full image for RT-spot use by normalize_mean_dt
-                    ipf.mean_sig (nprevl, meanretie, stdretie,xxs, xxe, yys, yye) ;
+                    ipf.mean_sig (nprevl->L, meanretie, stdretie,xxs, xxe, yys, yye) ;
                 }
 
                 double huerblu = huerefblurs[sp] = huerefblu;
@@ -1149,7 +1149,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if(istm) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;
                     float stdf = 0.f;
-                    ipf.mean_sig (savenormtm.get(), meanf, stdf, xxs, xxe, yys, yye);
+                    ipf.mean_sig (savenormtm.get()->L, meanf, stdf, xxs, xxe, yys, yye);
                     
                     //using 2 unused variables  noiselumc and softradiustm  
                     params->locallab.spots.at(sp).noiselumc = (int) meanf;
@@ -1159,7 +1159,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if(isreti) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;
                     float stdf = 0.f;
-                    ipf.mean_sig (savenormreti.get(), meanf, stdf,xxs, xxe, yys, yye );
+                    ipf.mean_sig (savenormreti.get()->L, meanf, stdf,xxs, xxe, yys, yye );
                     //using 2 unused variables  sensihs and sensiv  
                     params->locallab.spots.at(sp).sensihs = (int) meanf;
                     params->locallab.spots.at(sp).sensiv = (int) stdf;
