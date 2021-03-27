@@ -1831,23 +1831,20 @@ float find_gray(float source_gray, float target_gray)
 }
 
 void ImProcFunctions::mean_sig (LabImage* savenorm, float &meanf, float &stdf, int xxs, int xxe, int yys, int yye){
-    int nbf = 0;
+    int size = (yye - yys) * (xxe - xxs);
+#ifdef _OPENMP
+    #pragma omp parallel for reduction(+:meanf, stdf) if(multiThread)
+#endif
     for (int y = yys; y < yye; y++) {
         for (int  x = xxs; x < xxe; x++) {
             meanf += savenorm->L[y][x];
-            nbf++;
+            stdf += SQR(savenorm->L[y][x]);
         }
     }
-    meanf /= nbf;
-    int nsf = 0;
-    for (int y = yys; y < yye; y++) {
-        for (int x = xxs; x < xxe; x++) {
-            stdf += SQR(savenorm->L[y][x] - meanf);
-            nsf++;
-        }
-    }
-    stdf /= nsf;
-    stdf = sqrt(stdf);
+    meanf /= size;
+    stdf /= size;
+    stdf -= SQR(meanf);
+    stdf = std::sqrt(stdf);
 }
 
 

@@ -1045,7 +1045,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     yend = std::min(static_cast<float>(centy + locy), 1.f);
                     xsta = std::max(static_cast<float>(centx - locxl), 0.f);
                     xend = std::min(static_cast<float>(centx + locx), 1.f);
-                    printf("xsta=%f xend=%f ysta=%f yend=%f \n", xsta, xend, ysta, yend);
+                   // printf("xsta=%f xend=%f ysta=%f yend=%f \n", xsta, xend, ysta, yend);
                 }
                 int ww = nprevl->W;
                 int hh = nprevl->H;
