@@ -1021,13 +1021,44 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 meanretie = 0.f;
                 stdretie = 0.f;
 
-
-                if(params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap) { //calculate mean and sigma on full image for use by normalize_mean_dt
-                    ipf.mean_sig (nprevl, meantme, stdtme, pH, pW);
+                bool istm = params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap;
+                bool isreti = params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti;
+                //preparation for mean and sigma on current RT-spot
+                float locx = 0.f;
+                float locy = 0.f;
+                float locxl = 0.f;
+                float locyt = 0.f;
+                float centx = 0.f;
+                float centy = 0.f;
+                float ysta = 0.f;
+                float yend = 1.f;
+                float xsta = 0.f;
+                float xend = 1.f;
+                if(istm || isreti) {
+                    locx = params->locallab.spots.at(sp).loc.at(0) / 2000.0;
+                    locy = params->locallab.spots.at(sp).loc.at(2) / 2000.0;
+                    locxl= params->locallab.spots.at(sp).loc.at(1) / 2000.0;
+                    locyt = params->locallab.spots.at(sp).loc.at(3) / 2000.0;
+                    centx = params->locallab.spots.at(sp).centerX / 2000.0 + 0.5;
+                    centy = params->locallab.spots.at(sp).centerY / 2000.0 + 0.5;
+                    ysta = std::max(static_cast<float>(centy - locyt), 0.f);
+                    yend = std::min(static_cast<float>(centy + locy), 1.f);
+                    xsta = std::max(static_cast<float>(centx - locxl), 0.f);
+                    xend = std::min(static_cast<float>(centx + locx), 1.f);
+                    printf("xsta=%f xend=%f ysta=%f yend=%f \n", xsta, xend, ysta, yend);
                 }
-
-                if(params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) { //calculate mean and sigma on full image for use by normalize_mean_dt
-                    ipf.mean_sig (nprevl, meanretie, stdretie, pH, pW);
+                int ww = nprevl->W;
+                int hh = nprevl->H;
+                int xxs = xsta * ww;
+                int xxe = xend * ww;
+                int yys = ysta * hh;
+                int yye = yend * hh;
+                        
+                if(istm) { //calculate mean and sigma on full image for RT-spot use by normalize_mean_dt
+                    ipf.mean_sig (nprevl, meantme, stdtme, xxs, xxe, yys, yye);
+                }
+                if(isreti) { //calculate mean and sigma on full image for RT-spot use by normalize_mean_dt
+                    ipf.mean_sig (nprevl, meanretie, stdretie,xxs, xxe, yys, yye) ;
                 }
 
                 double huerblu = huerefblurs[sp] = huerefblu;
@@ -1115,19 +1146,20 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
 
                 
-                if(params->locallab.spots.at(sp).equiltm && params->locallab.spots.at(sp).exptonemap) { //calculate mean and sigma on full image for use by normalize_mean_dt
+                if(istm) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;
                     float stdf = 0.f;
-                    ipf.mean_sig (savenormtm.get(), meanf, stdf, pH, pW);
+                    ipf.mean_sig (savenormtm.get(), meanf, stdf, xxs, xxe, yys, yye);
+                    
                     //using 2 unused variables  noiselumc and softradiustm  
                     params->locallab.spots.at(sp).noiselumc = (int) meanf;
                     params->locallab.spots.at(sp).softradiustm = stdf ;
                 }
 
-                if(params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) { //calculate mean and sigma on full image for use by normalize_mean_dt
+                if(isreti) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;
                     float stdf = 0.f;
-                    ipf.mean_sig (savenormreti.get(), meanf, stdf, pH, pW);
+                    ipf.mean_sig (savenormreti.get(), meanf, stdf,xxs, xxe, yys, yye );
                     //using 2 unused variables  sensihs and sensiv  
                     params->locallab.spots.at(sp).sensihs = (int) meanf;
                     params->locallab.spots.at(sp).sensiv = (int) stdf;

@@ -1830,18 +1830,18 @@ float find_gray(float source_gray, float target_gray)
     return 0.f; // not found
 }
 
-void ImProcFunctions::mean_sig (LabImage* savenorm, float &meanf, float &stdf, int pH, int pW){
+void ImProcFunctions::mean_sig (LabImage* savenorm, float &meanf, float &stdf, int xxs, int xxe, int yys, int yye){
     int nbf = 0;
-    for (int y = 0; y < pH; y++) {
-        for (int x = 0; x < pW; x++) {
+    for (int y = yys; y < yye; y++) {
+        for (int  x = xxs; x < xxe; x++) {
             meanf += savenorm->L[y][x];
             nbf++;
         }
     }
     meanf /= nbf;
     int nsf = 0;
-    for (int y = 0; y < pH; y++) {
-        for (int x = 0; x < pW; x++) {
+    for (int y = yys; y < yye; y++) {
+        for (int x = xxs; x < xxe; x++) {
             stdf += SQR(savenorm->L[y][x] - meanf);
             nsf++;
         }
@@ -2051,7 +2051,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
 
     const int wsta = xsta * w;
     const int wend = xend * w;
-
+    
     double mean = 0.0;
     int nc = 0;
     for (int y = hsta; y < hend; ++y) {
@@ -6946,7 +6946,6 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                 datain[(y - ystart) * bfw + (x - xstart)] = original->L[y][x];
                 data[(y - ystart)* bfw + (x - xstart)] = bufexpfin->L[y - ystart][x - xstart];
             }
-
         if(call == 3 || call == 2) {//improccoordinator and simpleprocess
             normalize_mean_dt(data, datain, bfw * bfh, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
         } else if(call == 1) {//dcrop
@@ -12428,7 +12427,16 @@ void ImProcFunctions::Lab_Local(
                     tmp1m->CopyFrom(tmp1.get(), multiThread); //save current result7
                     if(params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap) {
                         if(call == 3) {
-                            savenormtm->CopyFrom(tmp1.get(), multiThread);
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                            for (int y = ystart; y < yend; y++) {
+                                for (int x = xstart; x < xend; x++) {
+                                    savenormtm->L[y][x] = tmp1->L[y - ystart][x - xstart];
+                                    savenormtm->a[y][x] = tmp1->a[y - ystart][x - xstart];
+                                    savenormtm->b[y][x] = tmp1->b[y - ystart][x - xstart];
+                                }
+                            }
                         }
                     }
                     bool enatmMasktmap = params->locallab.spots.at(sp).enatmMaskaft;
