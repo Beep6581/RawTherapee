@@ -3608,7 +3608,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35
     },
     inversret(false),
-    equilret(true),
+    equilret(false),
     loglin(true),
     dehazeSaturation(50.0),
     softradiusret(40.0),

@@ -12747,7 +12747,7 @@ void ImProcFunctions::Lab_Local(
                     }
 
                 if(params->locallab.spots.at(sp).equilret){
-                    if(call == 3 || call == 2) {//improccoordinator and simpleprocess
+                    if(call == 3) {//improccoordinator
                         normalize_mean_dt(data, datain, Hd * Wd, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
                     } else if(call == 1) {//dcrop
                         float ma =  meanreti;
@@ -12756,15 +12756,11 @@ void ImProcFunctions::Lab_Local(
                         float sa2 = (float) params->locallab.spots.at(sp).sensiv;
                         //printf("ma=%f sa=%f ma2=%f sa2=%f\n", (double) ma, (double) sa, (double) ma2, (double) sa2);
                         //use normalize with mean and stdv
-                        normalize_mean_dt(data, datain, Hd * Wd, 1.f, 1.F, ma, sa, ma2, sa2);
+                        normalize_mean_dt(data, datain, Hd * Wd, 1.f, 1.f, ma, sa, ma2, sa2);
 
                     }
                 }
-                
-                
-                
-                
-                
+
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
