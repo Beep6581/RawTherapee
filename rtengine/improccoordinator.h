@@ -339,6 +339,10 @@ protected:
     std::vector<float> lumarefs;
     std::vector<float> sobelrefs;
     std::vector<float> avgs;
+    std::vector<float> meantms;
+    std::vector<float> stdtms;
+    std::vector<float> meanretis;
+    std::vector<float> stdretis;
     bool lastspotdup;
     bool previewDeltaE;
     int locallColorMask;

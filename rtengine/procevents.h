@@ -1065,6 +1065,7 @@ enum ProcEventCode {
     EvLocallabSpotavoidrad = 1039,
     EvLocallabSpotavoidmun = 1040,
     Evlocallabcontthres = 1041,
+    Evlocallabnorm = 1042,
     NUMOFEVENTS
 };
 

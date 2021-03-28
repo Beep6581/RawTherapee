@@ -1109,6 +1109,7 @@ struct LocallabParams {
         double strexp;
         double angexp;
         std::vector<double> excurve;
+        bool norm;
         bool inversex;
         bool enaExpMask;
         bool enaExpMaskaft;
