@@ -339,6 +339,7 @@ private:
     MyExpander* const expfat;
     Adjuster* const fatamount;
     Adjuster* const fatdetail;
+    Gtk::CheckButton* const norm;
     Adjuster* const fatlevel;
     Adjuster* const fatanchor;
     Adjuster* const sensiex;
@@ -388,7 +389,7 @@ private:
     CurveEditorGroup* const mask2expCurveEditorG;
     DiagonalCurveEditor* const Lmaskexpshape;
 
-    sigc::connection expMethodConn, exnoiseMethodConn, inversexConn, showmaskexpMethodConn, showmaskexpMethodConninv, enaExpMaskConn, enaExpMaskaftConn;
+    sigc::connection expMethodConn, exnoiseMethodConn, inversexConn, normConn, showmaskexpMethodConn, showmaskexpMethodConninv, enaExpMaskConn, enaExpMaskaftConn;
 
 public:
     LocallabExposure();
@@ -420,6 +421,7 @@ private:
     void expMethodChanged();
     void exnoiseMethodChanged();
     void inversexChanged();
+    void normChanged();
     void showmaskexpMethodChanged();
     void showmaskexpMethodChangedinv();
     void enaExpMaskChanged();

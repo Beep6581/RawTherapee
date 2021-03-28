@@ -517,6 +517,7 @@ public:
         bool strexp;
         bool angexp;
         bool excurve;
+        bool norm;
         bool inversex;
         bool enaExpMask;
         bool enaExpMaskaft;
