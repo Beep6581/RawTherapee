@@ -12336,19 +12336,38 @@ void ImProcFunctions::Lab_Local(
                     originalmasktm.reset(new LabImage(bfw, bfh));
                 }
 
+                // 3 loops to avoid performance penalty on machines with 4-way L1 cache
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+                #pragma omp parallel if (multiThread)
+                {
+                #pragma omp for schedule(dynamic,16) nowait
 #endif
                 for (int y = ystart; y < yend; y++) {
                     for (int x = xstart; x < xend; x++) {
-                        bufgb->L[y - ystart][x - xstart] = original->L[y][x];
-                        bufgb->a[y - ystart][x - xstart] = original->a[y][x];
-                        bufgb->b[y - ystart][x - xstart] = original->b[y][x];
-                        bufgbm->L[y - ystart][x - xstart] = original->L[y][x];
-                        bufgbm->a[y - ystart][x - xstart] = original->a[y][x];
-                        bufgbm->b[y - ystart][x - xstart] = original->b[y][x];
+                        bufgbm->L[y - ystart][x - xstart] = bufgb->L[y - ystart][x - xstart] = original->L[y][x];
                     }
                 }
+
+#ifdef _OPENMP
+                #pragma omp for schedule(dynamic,16) nowait
+#endif
+                for (int y = ystart; y < yend; y++) {
+                    for (int x = xstart; x < xend; x++) {
+                        bufgbm->a[y - ystart][x - xstart] = bufgb->a[y - ystart][x - xstart] = original->a[y][x];
+                    }
+                }
+
+#ifdef _OPENMP
+                #pragma omp for schedule(dynamic,16)
+#endif
+                for (int y = ystart; y < yend; y++) {
+                    for (int x = xstart; x < xend; x++) {
+                        bufgbm->b[y - ystart][x - xstart] = bufgb->b[y - ystart][x - xstart] = original->b[y][x];
+                    }
+                }
+#ifdef _OPENMP
+                }
+#endif
 
                 int inv = 0;
                 bool showmaske = false;
