@@ -313,6 +313,9 @@ static int decode(ljp* self) {
 }
 
 static int receive(ljp* self,int ssss) {
+    if (ssss == 16) {
+        return 1 << 15;
+    }
     int i = 0;
     int v = 0;
     while (i != ssss) {
@@ -365,24 +368,29 @@ inline static int nextdiff(ljp* self, int Px) {
     cnt -= usedbits;
     int keepbitsmask = (1 << cnt)-1;
     b &= keepbitsmask;
-    while (cnt < t) {
-        next = *(u16*)&self->data[ix];
-        int one = next&0xFF;
-        int two = next>>8;
-        b = (b<<16)|(one<<8)|two;
-        cnt += 16;
-        ix += 2;
-        if (one==0xFF) {
-            b >>= 8;
-            cnt -= 8;
-        } else if (two==0xFF) ix++;
-    }
-    cnt -= t;
-    int diff = b >> cnt;
-    int vt = 1<<(t-1);
-    if (diff < vt) {
-        vt = (-1 << t) + 1;
-        diff += vt;
+    int diff;
+    if (t == 16) {
+        diff = 1 << 15;
+    } else {
+        while (cnt < t) {
+            next = *(u16*)&self->data[ix];
+            int one = next&0xFF;
+            int two = next>>8;
+            b = (b<<16)|(one<<8)|two;
+            cnt += 16;
+            ix += 2;
+            if (one==0xFF) {
+                b >>= 8;
+                cnt -= 8;
+            } else if (two==0xFF) ix++;
+        }
+        cnt -= t;
+        diff = b >> cnt;
+        int vt = 1<<(t-1);
+        if (diff < vt) {
+            vt = (-1 << t) + 1;
+            diff += vt;
+        }
     }
     keepbitsmask = (1 << cnt)-1;
     self->b = b & keepbitsmask;
@@ -424,6 +432,7 @@ static int parsePred6(ljp* self) {
     diff = nextdiff(self,0);
     Px = 1 << (self->bits-1);
     left = Px + diff;
+    left = (u16) (left % 65536);
     if (self->linearize)
         linear = self->linearize[left];
     else
@@ -437,6 +446,7 @@ static int parsePred6(ljp* self) {
         diff = nextdiff(self,0);
         Px = left;
         left = Px + diff;
+        left = (u16) (left % 65536);
         if (self->linearize)
             linear = self->linearize[left];
         else
@@ -460,6 +470,7 @@ static int parsePred6(ljp* self) {
         diff = nextdiff(self,0);
         Px = lastrow[col]; // Use value above for first pixel in row
         left = Px + diff;
+        left = (u16) (left % 65536);
         if (self->linearize) {
             if (left>self->linlen) return LJ92_ERROR_CORRUPT;
             linear = self->linearize[left];
@@ -478,6 +489,7 @@ static int parsePred6(ljp* self) {
             diff = nextdiff(self,0);
             Px = lastrow[col] + ((left - lastrow[col-1])>>1);
             left = Px + diff;
+            left = (u16) (left % 65536);
             //printf("%d %d %d %d %d %x\n",col,diff,left,lastrow[col],lastrow[col-1],&lastrow[col]);
             if (self->linearize) {
                 if (left>self->linlen) return LJ92_ERROR_CORRUPT;
@@ -556,6 +568,7 @@ static int parseScan(ljp* self) {
         }
         diff = nextdiff(self,Px);
         left = Px + diff;
+        left = (u16) (left % 65536);
         //printf("%d %d %d\n",c,diff,left);
         int linear;
         if (self->linearize) {
