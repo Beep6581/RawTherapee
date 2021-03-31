@@ -62,6 +62,7 @@ set(NONCLISOURCEFILES
     exiffiltersettings.cc
     exifpanel.cc
     exportpanel.cc
+    externaleditorpreferences.cc
     extprog.cc
     fattaltonemap.cc
     filebrowser.cc
