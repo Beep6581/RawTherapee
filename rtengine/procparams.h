@@ -1109,6 +1109,7 @@ struct LocallabParams {
         double strexp;
         double angexp;
         std::vector<double> excurve;
+        bool norm;
         bool inversex;
         bool enaExpMask;
         bool enaExpMaskaft;
@@ -1492,6 +1493,7 @@ struct LocallabParams {
         double lightl;
         double lightq;
         double contl;
+        double contthres;
         double contq;
         double colorfl;
         std::vector<double> LcurveL;

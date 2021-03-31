@@ -517,6 +517,7 @@ public:
         bool strexp;
         bool angexp;
         bool excurve;
+        bool norm;
         bool inversex;
         bool enaExpMask;
         bool enaExpMaskaft;
@@ -900,6 +901,7 @@ public:
         bool lightl;
         bool lightq;
         bool contl;
+        bool contthres;
         bool contq;
         bool colorfl;
         bool LcurveL;

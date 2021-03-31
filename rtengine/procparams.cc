@@ -3080,6 +3080,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0,
         1.0
     },
+    norm(true),
     inversex(false),
     enaExpMask(false),
     enaExpMaskaft(false),
@@ -3627,8 +3628,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35
     },
     inversret(false),
-    equilret(true),
-    loglin(false),
+    equilret(false),
+    loglin(true),
     dehazeSaturation(50.0),
     softradiusret(40.0),
     CCmaskreticurve{
@@ -4001,6 +4002,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lightl(0.),
     lightq(0.),
     contl(0.),
+    contthres(0.),
     contq(0.),
     colorfl(0.),
     LcurveL{
@@ -4316,6 +4318,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && strexp == other.strexp
         && angexp == other.angexp
         && excurve == other.excurve
+        && norm == other.norm
         && inversex == other.inversex
         && enaExpMask == other.enaExpMask
         && enaExpMaskaft == other.enaExpMaskaft
@@ -4715,6 +4718,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && lightl == other.lightl
         && lightq == other.lightq
         && contl == other.contl
+        && contthres == other.contthres
         && contq == other.contq
         && colorfl == other.colorfl
         && LcurveL == other.LcurveL
@@ -5960,6 +5964,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->strexp, "Locallab", "Strexp_" + index_str, spot.strexp, keyFile);
                     saveToKeyfile(!pedited || spot_edited->angexp, "Locallab", "Angexp_" + index_str, spot.angexp, keyFile);
                     saveToKeyfile(!pedited || spot_edited->excurve, "Locallab", "ExCurve_" + index_str, spot.excurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->norm, "Locallab", "Norm_" + index_str, spot.norm, keyFile);
                     saveToKeyfile(!pedited || spot_edited->inversex, "Locallab", "Inversex_" + index_str, spot.inversex, keyFile);
                     saveToKeyfile(!pedited || spot_edited->enaExpMask, "Locallab", "EnaExpMask_" + index_str, spot.enaExpMask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->enaExpMaskaft, "Locallab", "EnaExpMaskaft_" + index_str, spot.enaExpMaskaft, keyFile);
@@ -6361,6 +6366,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->lightl, "Locallab", "Lightl_" + index_str, spot.lightl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lightq, "Locallab", "Brightq_" + index_str, spot.lightq, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contl, "Locallab", "Contl_" + index_str, spot.contl, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->contthres, "Locallab", "Contthres_" + index_str, spot.contthres, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contq, "Locallab", "Contq_" + index_str, spot.contq, keyFile);
                     saveToKeyfile(!pedited || spot_edited->colorfl, "Locallab", "Colorfl_" + index_str, spot.colorfl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Autogray, "Locallab", "Autogray_" + index_str, spot.Autogray, keyFile);
@@ -7819,6 +7825,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Strexp_" + index_str, pedited, spot.strexp, spotEdited.strexp);
                 assignFromKeyfile(keyFile, "Locallab", "Angexp_" + index_str, pedited, spot.angexp, spotEdited.angexp);
                 assignFromKeyfile(keyFile, "Locallab", "ExCurve_" + index_str, pedited, spot.excurve, spotEdited.excurve);
+                assignFromKeyfile(keyFile, "Locallab", "Norm_" + index_str, pedited, spot.norm, spotEdited.norm);
                 assignFromKeyfile(keyFile, "Locallab", "Inversex_" + index_str, pedited, spot.inversex, spotEdited.inversex);
                 assignFromKeyfile(keyFile, "Locallab", "EnaExpMask_" + index_str, pedited, spot.enaExpMask, spotEdited.enaExpMask);
                 assignFromKeyfile(keyFile, "Locallab", "EnaExpMaskaft_" + index_str, pedited, spot.enaExpMaskaft, spotEdited.enaExpMaskaft);
@@ -8281,6 +8288,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Lightl_" + index_str, pedited, spot.lightl, spotEdited.lightl);
                 assignFromKeyfile(keyFile, "Locallab", "Brightq_" + index_str, pedited, spot.lightq, spotEdited.lightq);
                 assignFromKeyfile(keyFile, "Locallab", "Contl_" + index_str, pedited, spot.contl, spotEdited.contl);
+                assignFromKeyfile(keyFile, "Locallab", "Contthres_" + index_str, pedited, spot.contthres, spotEdited.contthres);
                 assignFromKeyfile(keyFile, "Locallab", "Contq_" + index_str, pedited, spot.contq, spotEdited.contq);
                 assignFromKeyfile(keyFile, "Locallab", "Colorfl_" + index_str, pedited, spot.colorfl, spotEdited.colorfl);
                 assignFromKeyfile(keyFile, "Locallab", "LCurveL_" + index_str, pedited, spot.LcurveL, spotEdited.LcurveL);

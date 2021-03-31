@@ -1188,6 +1188,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).strexp = locallab.spots.at(j).strexp && pSpot.strexp == otherSpot.strexp;
                 locallab.spots.at(j).angexp = locallab.spots.at(j).angexp && pSpot.angexp == otherSpot.angexp;
                 locallab.spots.at(j).excurve = locallab.spots.at(j).excurve && pSpot.excurve == otherSpot.excurve;
+                locallab.spots.at(j).norm = locallab.spots.at(j).norm && pSpot.norm == otherSpot.norm;
                 locallab.spots.at(j).inversex = locallab.spots.at(j).inversex && pSpot.inversex == otherSpot.inversex;
                 locallab.spots.at(j).enaExpMask = locallab.spots.at(j).enaExpMask && pSpot.enaExpMask == otherSpot.enaExpMask;
                 locallab.spots.at(j).enaExpMaskaft = locallab.spots.at(j).enaExpMaskaft && pSpot.enaExpMaskaft == otherSpot.enaExpMaskaft;
@@ -1579,6 +1580,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).lightl = locallab.spots.at(j).lightl && pSpot.lightl == otherSpot.lightl;
                 locallab.spots.at(j).lightq = locallab.spots.at(j).lightq && pSpot.lightq == otherSpot.lightq;
                 locallab.spots.at(j).contl = locallab.spots.at(j).contl && pSpot.contl == otherSpot.contl;
+                locallab.spots.at(j).contthres = locallab.spots.at(j).contthres && pSpot.contthres == otherSpot.contthres;
                 locallab.spots.at(j).contq = locallab.spots.at(j).contq && pSpot.contq == otherSpot.contq;
                 locallab.spots.at(j).colorfl = locallab.spots.at(j).colorfl && pSpot.colorfl == otherSpot.colorfl;
                 locallab.spots.at(j).LcurveL = locallab.spots.at(j).LcurveL && pSpot.LcurveL == otherSpot.LcurveL;
@@ -3729,6 +3731,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).excurve = mods.locallab.spots.at(i).excurve;
         }
 
+        if (locallab.spots.at(i).norm) {
+            toEdit.locallab.spots.at(i).norm = mods.locallab.spots.at(i).norm;
+        }
+
         if (locallab.spots.at(i).inversex) {
             toEdit.locallab.spots.at(i).inversex = mods.locallab.spots.at(i).inversex;
         }
@@ -5235,6 +5241,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).contl) {
             toEdit.locallab.spots.at(i).contl = mods.locallab.spots.at(i).contl;
+        }
+
+        if (locallab.spots.at(i).contthres) {
+            toEdit.locallab.spots.at(i).contthres = mods.locallab.spots.at(i).contthres;
         }
 
         if (locallab.spots.at(i).contq) {
@@ -6829,6 +6839,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     strexp(v),
     angexp(v),
     excurve(v),
+    norm(v),
     inversex(v),
     enaExpMask(v),
     enaExpMaskaft(v),
@@ -7212,6 +7223,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     lightl(v),
     lightq(v),
     contl(v),
+    contthres(v),
     contq(v),
     colorfl(v),
     LcurveL(v),
@@ -7399,6 +7411,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     strexp = v;
     angexp = v;
     excurve = v;
+    norm = v;
     inversex = v;
     enaExpMask = v;
     enaExpMaskaft = v;
@@ -7789,6 +7802,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     lightl = v;
     lightq = v;
     contl = v;
+    contthres = v;
     contq = v;
     colorfl = v;
     LcurveL = v;

@@ -799,7 +799,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         }
 
                         ipf.getAutoLogloc(sp, imgsrc, sourceg, blackev, whiteev, Autogr, sourceab, fw, fh, xsta, xend, ysta, yend, SCALE);
-
+                        //printf("sg=%f sab=%f\n", sourceg[sp], sourceab[sp]);
                         params->locallab.spots.at(sp).blackEv = blackev[sp];
                         params->locallab.spots.at(sp).whiteEv = whiteev[sp];
                         params->locallab.spots.at(sp).sourceGray = sourceg[sp];
@@ -868,10 +868,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
              */
             const std::unique_ptr<LabImage> reserv(new LabImage(*oprevl, true));
             const std::unique_ptr<LabImage> lastorigimp(new LabImage(*oprevl, true));
+            std::unique_ptr<LabImage> savenormdr;
+            std::unique_ptr<LabImage> savenormtm;
+            std::unique_ptr<LabImage> savenormreti;
             float **shbuffer = nullptr;
             int sca = 1;
             double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
-            float avge;
+            float avge, meantme, stdtme, meanretie, stdretie;
             std::vector<LocallabListener::locallabRef> locallref;
             std::vector<LocallabListener::locallabRetiMinMax> locallretiminmax;
             huerefs.resize(params->locallab.spots.size());
@@ -882,8 +885,20 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             lumarefs.resize(params->locallab.spots.size());
             sobelrefs.resize(params->locallab.spots.size());
             avgs.resize(params->locallab.spots.size());
+            meantms.resize(params->locallab.spots.size());
+            stdtms.resize(params->locallab.spots.size());
+            meanretis.resize(params->locallab.spots.size());
+            stdretis.resize(params->locallab.spots.size());
 
             for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
+
+                if(params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap) {
+                    savenormtm.reset(new LabImage(*oprevl, true));
+                }
+
+                if(params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) {
+                    savenormreti.reset(new LabImage(*oprevl, true));
+                }
                 // Set local curves of current spot to LUT
                 locRETgainCurve.Set(params->locallab.spots.at(sp).localTgaincurve);
                 locRETtransCurve.Set(params->locallab.spots.at(sp).localTtranscurve);
@@ -972,6 +987,51 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 } else {
                     ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 }
+                      //
+                meantme = 0.f;
+                stdtme = 0.f;
+                meanretie = 0.f;
+                stdretie = 0.f;
+
+                bool istm = params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap;
+                bool isreti = params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti;
+                //preparation for mean and sigma on current RT-spot
+                float locx = 0.f;
+                float locy = 0.f;
+                float locxl = 0.f;
+                float locyt = 0.f;
+                float centx = 0.f;
+                float centy = 0.f;
+                float ysta = 0.f;
+                float yend = 1.f;
+                float xsta = 0.f;
+                float xend = 1.f;
+                if(istm || isreti) {
+                    locx = params->locallab.spots.at(sp).loc.at(0) / 2000.0;
+                    locy = params->locallab.spots.at(sp).loc.at(2) / 2000.0;
+                    locxl= params->locallab.spots.at(sp).loc.at(1) / 2000.0;
+                    locyt = params->locallab.spots.at(sp).loc.at(3) / 2000.0;
+                    centx = params->locallab.spots.at(sp).centerX / 2000.0 + 0.5;
+                    centy = params->locallab.spots.at(sp).centerY / 2000.0 + 0.5;
+                    ysta = std::max(static_cast<float>(centy - locyt), 0.f);
+                    yend = std::min(static_cast<float>(centy + locy), 1.f);
+                    xsta = std::max(static_cast<float>(centx - locxl), 0.f);
+                    xend = std::min(static_cast<float>(centx + locx), 1.f);
+                   // printf("xsta=%f xend=%f ysta=%f yend=%f \n", xsta, xend, ysta, yend);
+                }
+                int ww = nprevl->W;
+                int hh = nprevl->H;
+                int xxs = xsta * ww;
+                int xxe = xend * ww;
+                int yys = ysta * hh;
+                int yye = yend * hh;
+                        
+                if(istm) { //calculate mean and sigma on full image for RT-spot use by normalize_mean_dt
+                    ipf.mean_sig (nprevl->L, meantme, stdtme, xxs, xxe, yys, yye);
+                }
+                if(isreti) { //calculate mean and sigma on full image for RT-spot use by normalize_mean_dt
+                    ipf.mean_sig (nprevl->L, meanretie, stdretie,xxs, xxe, yys, yye) ;
+                }
 
                 double huerblu = huerefblurs[sp] = huerefblu;
                 double chromarblu = chromarefblurs[sp] = chromarefblu;
@@ -981,6 +1041,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 double lumar = lumarefs[sp] = lumare ;
                 double sobeler = sobelrefs[sp] = sobelre;
                 float avg = avgs[sp] = avge;
+                float meantm = meantms[sp] = meantme;
+                float stdtm = stdtms[sp] = stdtme;
+                float meanreti = meanretis[sp] = meanretie;
+                float stdreti = stdretis[sp] = stdretie;
+                
                 CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lumar,
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avg,
                                                 sca);
@@ -1006,7 +1071,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Tmin;
                 float Tmax;
                 int lastsav;
-                ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), lastorigimp.get(), 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
+                ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), savenormtm.get(), savenormreti.get(), lastorigimp.get(), 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
                               lllocalcurve, locallutili,
                               cllocalcurve, localclutili,
                               lclocalcurve, locallcutili,
@@ -1048,7 +1113,30 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               loclmasCurve_wav, lmasutili_wav,
                               LHutili, HHutili, CHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                              minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+                              minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+                              meantm, stdtm, meanreti, stdreti);
+
+
+                
+                if(istm) { //calculate mean and sigma on full image for use by normalize_mean_dt
+                    float meanf = 0.f;
+                    float stdf = 0.f;
+                    ipf.mean_sig (savenormtm.get()->L, meanf, stdf, xxs, xxe, yys, yye);
+                    
+                    //using 2 unused variables  noiselumc and softradiustm  
+                    params->locallab.spots.at(sp).noiselumc = (int) meanf;
+                    params->locallab.spots.at(sp).softradiustm = stdf ;
+                }
+
+                if(isreti) { //calculate mean and sigma on full image for use by normalize_mean_dt
+                    float meanf = 0.f;
+                    float stdf = 0.f;
+                    ipf.mean_sig (savenormreti.get()->L, meanf, stdf,xxs, xxe, yys, yye );
+                    //using 2 unused variables  sensihs and sensiv  
+                    params->locallab.spots.at(sp).sensihs = (int) meanf;
+                    params->locallab.spots.at(sp).sensiv = (int) stdf;
+                }
+
 
                 if (sp + 1u < params->locallab.spots.size()) {
                     // do not copy for last spot as it is not needed anymore
@@ -1256,9 +1344,18 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         if ((todo & (M_LUMINANCE + M_COLOR)) || (todo & M_AUTOEXP)) {
             nprevl->CopyFrom(oprevl);
-
             histCCurve.clear();
             histLCurve.clear();
+            if (params->colorToning.enabled && params->colorToning.method == "LabGrid") {
+            ipf.colorToningLabGrid(nprevl, 0, nprevl->W, 0, nprevl->H, false);
+            }
+
+            ipf.shadowsHighlights(nprevl, params->sh.enabled, params->sh.lab,params->sh.highlights ,params->sh.shadows, params->sh.radius, scale, params->sh.htonalwidth, params->sh.stonalwidth);
+
+            if (params->localContrast.enabled) {
+            // Alberto's local contrast
+                ipf.localContrast(nprevl, nprevl->L, params->localContrast, false, scale);
+            }
             ipf.chromiLuminanceCurve(nullptr, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histLCurve);
             ipf.vibrance(nprevl, params->vibrance, params->toneCurve.hrenabled, params->icm.workingProfile);
             ipf.labColorCorrectionRegions(nprevl);
@@ -1689,8 +1786,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 // Computing the internal image for analysis, i.e. conversion from WCS->Output profile
                 delete workimg;
+                workimg = nullptr;
+
                 workimg = ipf.lab2rgb(nprevl, 0, 0, pW, pH, params->icm);
-            } catch (char * str) {
+            } catch (std::exception&) {
                 return;
             }
         }
@@ -1765,6 +1864,7 @@ void ImProcCoordinator::freeAll()
         }
 
         delete workimg;
+        workimg = nullptr;
 
     }
 

@@ -991,7 +991,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
             }
 
             if (CAMBrightCurveJ.dirty) {
-                Ciecam02::curveJfloat(params->colorappearance.jlight, params->colorappearance.contrast, hist16J, CAMBrightCurveJ); //lightness and contrast J
+                Ciecam02::curveJfloat(params->colorappearance.jlight, params->colorappearance.contrast, 0.6f, hist16J, CAMBrightCurveJ); //lightness and contrast J
                 CAMBrightCurveJ /= 327.68f;
                 CAMBrightCurveJ.dirty = false;
             }
@@ -1003,7 +1003,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
             }
 
             if (CAMBrightCurveQ.dirty) {
-                Ciecam02::curveJfloat(params->colorappearance.qbright, params->colorappearance.qcontrast, hist16Q, CAMBrightCurveQ); //brightness and contrast Q
+                Ciecam02::curveJfloat(params->colorappearance.qbright, params->colorappearance.qcontrast, 0.6f, hist16Q, CAMBrightCurveQ); //brightness and contrast Q
                 //  CAMBrightCurveQ /= coefQ;
                 CAMBrightCurveQ.dirty = false;
             }
@@ -2231,7 +2231,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     }
 
     bool hasColorToning = params->colorToning.enabled && bool (ctOpacityCurve) &&  bool (ctColorCurve) && params->colorToning.method != "LabGrid";
-    bool hasColorToningLabGrid = params->colorToning.enabled && params->colorToning.method == "LabGrid";
+//    bool hasColorToningLabGrid = params->colorToning.enabled && params->colorToning.method == "LabGrid";
     //  float satLimit = float(params->colorToning.satProtectionThreshold)/100.f*0.7f+0.3f;
     //  float satLimitOpacity = 1.f-(float(params->colorToning.saturatedOpacity)/100.f);
     float strProtect = pow_F((float (params->colorToning.strength) / 100.f), 0.4f);
@@ -3184,9 +3184,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         Color::RGB2Lab(&rtemp[ti * TS], &gtemp[ti * TS], &btemp[ti * TS], &(lab->L[i][jstart]), &(lab->a[i][jstart]), &(lab->b[i][jstart]), toxyz, tW - jstart);
                     }
 
-                    if (hasColorToningLabGrid) {
-                        colorToningLabGrid(lab, jstart, tW, istart, tH, false);
-                    }
+                   // if (hasColorToningLabGrid) {
+                   //     colorToningLabGrid(lab, jstart, tW, istart, tH, false);
+                   // }
                 } else { // black & white
                     // Auto channel mixer needs whole image, so we now copy to tmpImage and close the tiled processing
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -3565,9 +3565,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         for (int i = 0; i < tH; i++) {
             Color::RGB2Lab(tmpImage->r(i), tmpImage->g(i), tmpImage->b(i), lab->L[i], lab->a[i], lab->b[i], toxyz, tW);
 
-            if (hasColorToningLabGrid) {
-                colorToningLabGrid(lab, 0, tW, i, i + 1, false);
-            }
+           // if (hasColorToningLabGrid) {
+               // colorToningLabGrid(lab, 0, tW, i, i + 1, false);
+           // }
         }
 
 
@@ -3590,7 +3590,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     }
 
   //  shadowsHighlights(lab);
-    shadowsHighlights(lab, params->sh.enabled, params->sh.lab,params->sh.highlights ,params->sh.shadows, params->sh.radius, scale, params->sh.htonalwidth, params->sh.stonalwidth);
+ //   shadowsHighlights(lab, params->sh.enabled, params->sh.lab,params->sh.highlights ,params->sh.shadows, params->sh.radius, scale, params->sh.htonalwidth, params->sh.stonalwidth);
 /*
     if (params->icm.workingTRC == "Custom") {
         int GW = lab->W;
@@ -3606,7 +3606,6 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
             workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, params->icm.workingProfile, 2.4, 12.92310, dummy, true, false, false);
             workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, params->icm.workingProfile, gamtone, slotone, dummy, false, true, true);
         }
-
         rgb2lab(*tmpImage1, *lab, params->icm.workingProfile);
     }
 */
@@ -3614,6 +3613,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         // Alberto's local contrast
         localContrast(lab, lab->L, params->localContrast, false, scale);
     }
+    */
 }
 
 /**
@@ -5639,14 +5639,8 @@ double ImProcFunctions::getAutoDistor(const Glib::ustring &fname, int thumb_size
         rawGray = raw->getGrayscaleHistEQ(width);
 
         if (!thumbGray || !rawGray) {
-            if (thumbGray) {
-                delete thumbGray;
-            }
-
-            if (rawGray) {
-                delete rawGray;
-            }
-
+            delete[] thumbGray;
+            delete[] rawGray;
             delete thumb;
             delete raw;
             return 0.0;
@@ -5659,8 +5653,8 @@ double ImProcFunctions::getAutoDistor(const Glib::ustring &fname, int thumb_size
             calcDistortion(thumbGray, rawGray, width, h_thumb, 4, dist_amount);
         }
 
-        delete thumbGray;
-        delete rawGray;
+        delete[] thumbGray;
+        delete[] rawGray;
         delete thumb;
         delete raw;
         return dist_amount;

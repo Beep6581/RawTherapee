@@ -936,6 +936,8 @@ private:
             
             const std::unique_ptr<LabImage> reservView(new LabImage(*labView, true));
             const std::unique_ptr<LabImage> lastorigView(new LabImage(*labView, true));
+            std::unique_ptr<LabImage> savenormtmView;
+            std::unique_ptr<LabImage> savenormretiView;
             LocretigainCurve locRETgainCurve;
             LocretitransCurve locRETtransCurve;
             LocLHCurve loclhCurve;
@@ -1020,6 +1022,7 @@ private:
             }
 
             for (size_t sp = 0; sp < params.locallab.spots.size(); sp++) {
+
                 // Set local curves of current spot to LUT
                 locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
                 locRETtransCurve.Set(params.locallab.spots.at(sp).localTtranscurve);
@@ -1107,6 +1110,11 @@ private:
                 double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
                 int lastsav;
                 float avge;
+                float meantme;
+                float stdtme;
+                float meanretie;
+                float stdretie;
+                
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reservView.get(), reservView.get(), 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 } else {
@@ -1125,7 +1133,7 @@ private:
                 float Tmax;
 
                 // No Locallab mask is shown in exported picture
-                ipf.Lab_Local(2, sp, shbuffer, labView, labView, reservView.get(), lastorigView.get(), 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, 
+                ipf.Lab_Local(2, sp, shbuffer, labView, labView, reservView.get(), savenormtmView.get(), savenormretiView.get(), lastorigView.get(), 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, 
                         lllocalcurve, locallutili, 
                         cllocalcurve, localclutili,
                         lclocalcurve, locallcutili,
@@ -1167,7 +1175,9 @@ private:
                         loclmasCurve_wav,lmasutili_wav,
                         LHutili, HHutili, CHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                        minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+                        minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+                        meantme, stdtme, meanretie, stdretie
+);
 
                 if (sp + 1u < params.locallab.spots.size()) {
                     // do not copy for last spot as it is not needed anymore
@@ -1331,6 +1341,18 @@ private:
         bool ccutili, cclutili;
         CurveFactory::complexsgnCurve(autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,
                                       params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 1);
+
+
+        if (params.colorToning.enabled && params.colorToning.method == "LabGrid") {
+            ipf.colorToningLabGrid(labView, 0,labView->W , 0, labView->H, false);
+        }
+
+        ipf.shadowsHighlights(labView, params.sh.enabled, params.sh.lab,params.sh.highlights ,params.sh.shadows, params.sh.radius, 1, params.sh.htonalwidth, params.sh.stonalwidth);
+
+        if (params.localContrast.enabled) {
+            // Alberto's local contrast
+                ipf.localContrast(labView, labView->L, params.localContrast, false, 1);//scale);
+        }
 
         ipf.chromiLuminanceCurve(nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 

@@ -195,7 +195,6 @@ ImageIO::ImageIO() :
     profileData(nullptr),
     profileLength(0),
     loadedProfileData(nullptr),
-    loadedProfileDataJpg(false),
     loadedProfileLength(0),
     exifChange(new procparams::ExifPairs),
     iptc(nullptr),
@@ -517,7 +516,6 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
     jpeg_read_header(&cinfo, TRUE);
 
     deleteLoadedProfileData();
-    loadedProfileDataJpg = true;
     bool hasprofile = read_icc_profile (&cinfo, (JOCTET**)&loadedProfileData, (unsigned int*)&loadedProfileLength);
 
     if (hasprofile) {
@@ -602,7 +600,6 @@ int ImageIO::loadJPEG (const Glib::ustring &fname)
         cinfo.out_color_space = JCS_RGB;
 
         deleteLoadedProfileData();
-        loadedProfileDataJpg = true;
         bool hasprofile = read_icc_profile (&cinfo, (JOCTET**)&loadedProfileData, (unsigned int*)&loadedProfileLength);
 
         if (hasprofile) {
@@ -855,7 +852,6 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
 
     char* profdata;
     deleteLoadedProfileData();
-    loadedProfileDataJpg = false;
 
     if (TIFFGetField(in, TIFFTAG_ICCPROFILE, &loadedProfileLength, &profdata)) {
         embProfile = cmsOpenProfileFromMem (profdata, loadedProfileLength);
@@ -1710,11 +1706,7 @@ MyMutex& ImageIO::mutex ()
 void ImageIO::deleteLoadedProfileData( )
 {
     if(loadedProfileData) {
-        if(loadedProfileDataJpg) {
-            free(loadedProfileData);
-        } else {
-            delete[] loadedProfileData;
-        }
+        delete[] loadedProfileData;
     }
 
     loadedProfileData = nullptr;
