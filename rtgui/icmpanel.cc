@@ -833,7 +833,19 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         if (wprim->get_active_row_number() == 0) {
             redFrame->hide();
         } else {
+            printf("wprim=%i \n", wprim->get_active_row_number());
             redFrame->show();
+            if (wprim->get_active_row_number() != 7) {
+              redBox->set_sensitive(false);
+              greBox->set_sensitive(false);
+              bluBox->set_sensitive(false);
+
+            } else {
+              redBox->set_sensitive(true);
+              greBox->set_sensitive(true);
+              bluBox->set_sensitive(true);
+            }
+            
         }
         riaHBox->set_sensitive(true);
 
@@ -1163,6 +1175,17 @@ void ICMPanel::wtrcinChanged()
             redFrame->hide();
         } else {
             redFrame->show();
+            if (wprim->get_active_row_number() != 7) {
+               redBox->set_sensitive(false);
+               greBox->set_sensitive(false);
+               bluBox->set_sensitive(false);
+
+            } else {
+               redBox->set_sensitive(true);
+               greBox->set_sensitive(true);
+               bluBox->set_sensitive(true);
+            }
+            
         }
         riaHBox->set_sensitive(true);
 
@@ -1186,6 +1209,17 @@ void ICMPanel::wtrcinChanged()
             redFrame->hide();
         } else {
             redFrame->show();
+            if (wprim->get_active_row_number() != 7) {
+                redBox->set_sensitive(false);
+                greBox->set_sensitive(false);
+                bluBox->set_sensitive(false);
+
+            } else {
+                redBox->set_sensitive(true);
+                greBox->set_sensitive(true);
+                bluBox->set_sensitive(true);
+            }
+            
         }
         riaHBox->set_sensitive(true);
         
@@ -1201,6 +1235,17 @@ void ICMPanel::wtrcinChanged()
             redFrame->hide();
         } else {
             redFrame->show();
+            if (wprim->get_active_row_number() != 7) {
+                redBox->set_sensitive(false);
+                greBox->set_sensitive(false);
+                bluBox->set_sensitive(false);
+
+            } else {
+                redBox->set_sensitive(true);
+                greBox->set_sensitive(true);
+                bluBox->set_sensitive(true);
+            }
+            
         }
     } else if(wTRC->get_active_row_number() == 4) {
         wGamma->setValue(2.2);
@@ -1216,6 +1261,17 @@ void ICMPanel::wtrcinChanged()
             redFrame->hide();
         } else {
             redFrame->show();
+            if (wprim->get_active_row_number() != 7) {
+                redBox->set_sensitive(false);
+                greBox->set_sensitive(false);
+                bluBox->set_sensitive(false);
+
+            } else {
+                redBox->set_sensitive(true);
+                greBox->set_sensitive(true);
+                bluBox->set_sensitive(true);
+            }
+            
         }
     } else if(wTRC->get_active_row_number() == 5) {
         wGamma->setValue(1.8);
@@ -1231,6 +1287,17 @@ void ICMPanel::wtrcinChanged()
             redFrame->hide();
         } else {
             redFrame->show();
+             if (wprim->get_active_row_number() != 7) {
+                redBox->set_sensitive(false);
+                greBox->set_sensitive(false);
+                bluBox->set_sensitive(false);
+
+            } else {
+                redBox->set_sensitive(true);
+                greBox->set_sensitive(true);
+                bluBox->set_sensitive(true);
+            }
+           
         }
     } else if(wTRC->get_active_row_number() == 6) {
         wGamma->setValue(1.0);
@@ -1246,6 +1313,17 @@ void ICMPanel::wtrcinChanged()
             redFrame->hide();
         } else {
             redFrame->show();
+            if (wprim->get_active_row_number() != 7) {
+                redBox->set_sensitive(false);
+                greBox->set_sensitive(false);
+                bluBox->set_sensitive(false);
+
+            } else {
+                redBox->set_sensitive(true);
+                greBox->set_sensitive(true);
+                bluBox->set_sensitive(true);
+            }
+            
         }
     }
 
@@ -1314,6 +1392,17 @@ void ICMPanel::wprimChanged()
     } else {
       //  redFrame->hide();
         redFrame->show();
+            if (wprim->get_active_row_number() != 7) {
+                redBox->set_sensitive(false);
+                greBox->set_sensitive(false);
+                bluBox->set_sensitive(false);
+
+            } else {
+                redBox->set_sensitive(true);
+                greBox->set_sensitive(true);
+                bluBox->set_sensitive(true);
+            }
+        
     }
 
     if (listener) {
