@@ -1340,6 +1340,8 @@ void ICMPanel::willChanged()
     }
 }
 
+
+
 void ICMPanel::wprimChanged()
 {
     if (wprim->get_active_row_number() == 1) {
@@ -1349,6 +1351,7 @@ void ICMPanel::wprimChanged()
         grey->setValue(0.60);
         blux->setValue(0.15);
         bluy->setValue(0.06);
+        will->set_active(5);
     } else if (wprim->get_active_row_number() == 2) {
         redx->setValue(0.64);
         redy->setValue(0.33);
@@ -1356,6 +1359,7 @@ void ICMPanel::wprimChanged()
         grey->setValue(0.71);
         blux->setValue(0.15);
         bluy->setValue(0.06);
+        will->set_active(5);
     } else if (wprim->get_active_row_number() == 3) {
         redx->setValue(0.7347);
         redy->setValue(0.2653);
@@ -1363,6 +1367,7 @@ void ICMPanel::wprimChanged()
         grey->setValue(0.8404);
         blux->setValue(0.0366);
         bluy->setValue(0.0001);
+        will->set_active(2);
     } else if (wprim->get_active_row_number() == 4) {
         redx->setValue(0.708);
         redy->setValue(0.292);
@@ -1370,6 +1375,7 @@ void ICMPanel::wprimChanged()
         grey->setValue(0.797);
         blux->setValue(0.131);
         bluy->setValue(0.046);
+        will->set_active(5);
     } else if (wprim->get_active_row_number() == 5) {
         redx->setValue(0.713);
         redy->setValue(0.293);
@@ -1377,6 +1383,7 @@ void ICMPanel::wprimChanged()
         grey->setValue(0.830);
         blux->setValue(0.128);
         bluy->setValue(0.044);
+        will->set_active(4);
     } else if (wprim->get_active_row_number() == 6) {
         redx->setValue(0.735);
         redy->setValue(0.265);
@@ -1384,6 +1391,7 @@ void ICMPanel::wprimChanged()
         grey->setValue(0.826);
         blux->setValue(0.1570);
         bluy->setValue(0.018);
+        will->set_active(2);
     }
    
     if (wprim->get_active_row_number() == 0) {
