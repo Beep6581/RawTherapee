@@ -120,6 +120,19 @@ inline void copyAndClamp(const LabImage *src, unsigned char *dst, const double r
 
 } // namespace
 
+
+float gammalog(float x, float p, float s, float g3, float g4)
+{
+    return x <= g3 ? x * s : (1.f + g4) * xexpf(xlogf(x) / p) - g4;//continuous
+}
+
+#ifdef __SSE2__
+vfloat gammalog(vfloat x, vfloat p, vfloat s, vfloat g3, vfloat g4)
+{
+    return x <= g3 ? x * s : (1.f + g4) * xexpf(xlogf(x) / p) - g4;//continuous
+}
+#endif
+
 // Used in ImProcCoordinator::updatePreviewImage  (rtengine/improccoordinator.cc)
 //         Crop::update                           (rtengine/dcrop.cc)
 //         Thumbnail::processImage                (rtengine/rtthumbnail.cc)
@@ -448,7 +461,34 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
                 }
        return;
 
-    } 
+    }
+
+    if(params->icm.wprim == "def" && params->icm.will == "def") {//shortcut and speedup when no call primaries and illuminant - no gamut control...in this case be carefull
+        GammaValues g_a; //gamma parameters
+        double pwr = 1.0 / static_cast<double>(gampos);
+        Color::calcGamma(pwr, slpos, g_a); // call to calcGamma with selected gamma and slope
+
+#ifdef _OPENMP
+#   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+        for (int y = 0; y < ch; ++y) {//apply inverse gamma 3.f and put result in range 32768.f
+            int x = 0;
+#ifdef __SSE2__
+            for (; x < cw - 3; x += 4) {
+                STVFU(dst->r(y,x), F2V(65536.f) * gammalog(LVFU(src->r(y,x)), F2V(gampos), F2V(slpos), F2V(g_a[3]), F2V(g_a[4])));
+                STVFU(dst->g(y,x), F2V(65536.f) * gammalog(LVFU(src->g(y,x)), F2V(gampos), F2V(slpos), F2V(g_a[3]), F2V(g_a[4])));
+                STVFU(dst->b(y,x), F2V(65536.f) * gammalog(LVFU(src->b(y,x)), F2V(gampos), F2V(slpos), F2V(g_a[3]), F2V(g_a[4])));
+           }
+#endif
+            for (; x < cw; ++x) {
+                dst->r(y,x) = 65536.f * gammalog(src->r(y,x), gampos, slpos, g_a[3], g_a[4]);
+                dst->g(y,x) = 65536.f * gammalog(src->g(y,x), gampos, slpos, g_a[3], g_a[4]);
+                dst->b(y,x) = 65536.f * gammalog(src->b(y,x), gampos, slpos, g_a[3], g_a[4]);
+            }
+        }
+        return;
+    }
+        
 
     float redxx = params->icm.redx;
     float redyy = params->icm.redy;

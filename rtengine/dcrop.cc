@@ -1137,20 +1137,6 @@ void Crop::update(int todo)
 
     if (todo & M_RGBCURVE) {
         Imagefloat *workingCrop = baseCrop;
-/*
-        if (params.icm.workingTRC == "Custom") { //exec TRC IN free
-            const Glib::ustring profile = params.icm.workingProfile;
-            if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
-                const int cw = baseCrop->getWidth();
-                const int ch = baseCrop->getHeight();
-                workingCrop = new Imagefloat(cw, ch);
-                //first put gamma TRC to 1
-                parent->ipf.workingtrc(baseCrop, workingCrop, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310, parent->getCustomTransformIn(), true, false, true);
-                //adjust gamma TRC
-                parent->ipf.workingtrc(workingCrop, workingCrop, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope, parent->getCustomTransformOut(), false, true, true);
-            }
-        }
-*/
         double rrm, ggm, bbm;
         DCPProfileApplyState as;
         DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, as);

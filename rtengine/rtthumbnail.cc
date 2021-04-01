@@ -1462,60 +1462,6 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     }
 
     ipf.softLight(labView, params.softlight);
-/*
-    if (params.icm.workingTRC != "none") {
-        int GW = labView->W;
-        int GH = labView->H;
-        const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
-
-        ipf.lab2rgb(*labView, *tmpImage1, params.icm.workingProfile);
-
-            const float gamtone = params.icm.workingTRCGamma;
-            const float slotone = params.icm.workingTRCSlope;
-            int illum = 0;
-            if(params.icm.will == "def"){
-                illum = 0; 
-            } else if(params.icm.will == "D41"){
-                illum = 1; 
-            } else if(params.icm.will == "D50"){
-                illum = 2; 
-            } else if(params.icm.will == "D55"){
-                illum = 3; 
-            } else if(params.icm.will == "D60"){
-                illum = 4; 
-            } else if(params.icm.will == "D65"){
-                illum = 5; 
-            } else if(params.icm.will == "D80"){
-                illum = 6; 
-            } else if(params.icm.will == "stda"){
-                illum = 7; 
-            }
-                //printf("IMP gam=%f slo=%f\n", gamtone, slotone);
-            int prim = 0;
-            if(params.icm.wprim == "def"){
-                prim = 0; 
-            } else if(params.icm.wprim == "srgb"){
-                prim = 1; 
-            } else if(params.icm.wprim == "adob"){
-                prim = 2; 
-            } else if(params.icm.wprim == "prop"){
-                prim = 3; 
-            } else if(params.icm.wprim == "rec"){
-                prim = 4; 
-            } else if(params.icm.wprim == "aces"){
-                prim = 5; 
-            } else if(params.icm.wprim == "wid"){
-                prim = 6; 
-            }
-        Glib::ustring prof = params.icm.workingProfile;
-        
-        cmsHTRANSFORM dummy = nullptr;
-        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, 0, dummy, true, false, false);
-        ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
-
-        ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
-    }
-*/
 
 
     if (params.colorappearance.enabled) {
