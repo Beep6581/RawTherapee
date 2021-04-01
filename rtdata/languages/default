@@ -2436,7 +2436,7 @@ TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only
 TP_ICM_TRCFRAME;Abstract Profile
 TP_ICM_TRCFRAME_TOOLTIP;Also known as ‘synthetic’ or ‘virtual’ profiles, which are applied at the end of the processing pipeline (prior to ciecam) allowing you to create custom image effects.\nYou can make changes to the:\n ‘Tone response curve’, which modifies the tones of the image.\n ‘Illuminant’ : which allows you to change the profile primaries to adapt them to the shooting conditions.\n ‘Destination space (primaries)’: which allows you to change the destination profile primaries.
 TP_ICM_WORKINGPROFILE;Working Profile
-TP_ICM_WORKING_PRESER;Preserves neutral tones
+TP_ICM_WORKING_PRESER;Preserves neutral chroma tones
 TP_ICM_WORKING_TRC;Tone response curve:
 TP_ICM_WORKING_TRC_BT709;BT709 g=2.22 s=4.5
 TP_ICM_WORKING_TRC_SRGB;sRGB g=2.4 s=12.92
