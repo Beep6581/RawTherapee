@@ -833,7 +833,6 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         if (wprim->get_active_row_number() == 0) {
             redFrame->hide();
         } else {
-            printf("wprim=%i \n", wprim->get_active_row_number());
             redFrame->show();
             if (wprim->get_active_row_number() != 7) {
               redBox->set_sensitive(false);

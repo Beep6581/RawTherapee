@@ -1562,7 +1562,7 @@ private:
             int GH = labView->H;
             LabImage *provis = nullptr;
             float pres = 0.01f * params.icm.preser;
-            if(pres > 0.f) {
+            if(pres > 0.f && params.icm.wprim != "def") {
                 provis = new LabImage(GW, GH);
                 provis->CopyFrom(labView);
             }

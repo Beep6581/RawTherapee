@@ -1643,7 +1643,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 ipf.rgb2lab(*tmpImage1, *nprevl, params->icm.workingProfile);
                 //nprevl and provis
-                if(pres > 0.f) {
+                if(pres > 0.f  && params->icm.wprim != "def") {
                     ipf.preserv(nprevl, provis, GW, GH);
                     delete provis;
                     provis = nullptr;
