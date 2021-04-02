@@ -1455,15 +1455,15 @@ ICCPROFCREATOR_PRIM_ACESP1;ACES AP1
 ICCPROFCREATOR_PRIM_ADOBE;Adobe RGB (1998)
 ICCPROFCREATOR_PRIM_BEST;BestRGB
 ICCPROFCREATOR_PRIM_BETA;BetaRGB
-ICCPROFCREATOR_PRIM_BLUX;Blue X
-ICCPROFCREATOR_PRIM_BLUY;Blue Y
+ICCPROFCREATOR_PRIM_BLUX;Blue: X
+ICCPROFCREATOR_PRIM_BLUY;Y
 ICCPROFCREATOR_PRIM_BRUCE;BruceRGB
-ICCPROFCREATOR_PRIM_GREX;Green X
-ICCPROFCREATOR_PRIM_GREY;Green Y
+ICCPROFCREATOR_PRIM_GREX;Green: X
+ICCPROFCREATOR_PRIM_GREY;Y
 ICCPROFCREATOR_PRIM_PROPH;Prophoto
 ICCPROFCREATOR_PRIM_REC2020;Rec2020
-ICCPROFCREATOR_PRIM_REDX;Red X
-ICCPROFCREATOR_PRIM_REDY;Red Y
+ICCPROFCREATOR_PRIM_REDX;Red: X
+ICCPROFCREATOR_PRIM_REDY;Y
 ICCPROFCREATOR_PRIM_SRGB;sRGB
 ICCPROFCREATOR_PRIM_TOOLTIP;You can set custom primaries for ICC v4 profiles and also for ICC v2 profiles.
 ICCPROFCREATOR_PRIM_WIDEG;Widegamut
@@ -2436,7 +2436,7 @@ TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only
 TP_ICM_TRCFRAME;Abstract Profile
 TP_ICM_TRCFRAME_TOOLTIP;Also known as ‘synthetic’ or ‘virtual’ profiles, which are applied at the end of the processing pipeline (prior to ciecam) allowing you to create custom image effects.\nYou can make changes to the:\n ‘Tone response curve’, which modifies the tones of the image.\n ‘Illuminant’ : which allows you to change the profile primaries to adapt them to the shooting conditions.\n ‘Destination space (primaries)’: which allows you to change the destination profile primaries.
 TP_ICM_WORKINGPROFILE;Working Profile
-TP_ICM_WORKING_PRESER;Preserves neutral chroma tones
+TP_ICM_WORKING_PRESER;Preserves Pastel tones
 TP_ICM_WORKING_TRC;Tone response curve:
 TP_ICM_WORKING_TRC_BT709;BT709 g=2.22 s=4.5
 TP_ICM_WORKING_TRC_SRGB;sRGB g=2.4 s=12.92
@@ -2457,7 +2457,7 @@ TP_ICM_WORKING_ILLU_D60;D60
 TP_ICM_WORKING_ILLU_D65;D65
 TP_ICM_WORKING_ILLU_D80;D80
 TP_ICM_WORKING_ILLU_STDA;stdA 2875K
-TP_ICM_WORKING_PRIM;Destination space (primaries)
+TP_ICM_WORKING_PRIM;Destination - primaries
 TP_ICM_PRIMILLUM_TOOLTIP;You can change an image from its original mode (‘working profile’) to a different mode (‘destination profile’). When you choose a different color mode for an image, you permanently change the color values in the image.\n\nChanging the ‘primaries’ is complex and difficult to use. It requires a lot of experimenting.\n It is capable of making exotic color adjustments but it’s much harder to predict and control.\n Allows you to improve camera calibration.
 TP_ICM_WORKING_PRIM_NONE;Default
 TP_ICM_WORKING_PRIM_SRGB;sRGB
