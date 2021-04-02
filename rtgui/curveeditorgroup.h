@@ -71,7 +71,7 @@ public:
      *                 dialogs.
      */
 
-    explicit CurveEditorGroup(Glib::ustring& curveDir, Glib::ustring groupLabel = "");
+    explicit CurveEditorGroup(Glib::ustring& curveDir, Glib::ustring groupLabel = "", int blank = 0);
     ~CurveEditorGroup() override;
     void newLine();
     void curveListComplete();
