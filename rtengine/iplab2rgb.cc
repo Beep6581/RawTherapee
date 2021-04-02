@@ -463,7 +463,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 
     }
 
-    if(params->icm.wprim == "def" && params->icm.will == "def") {//shortcut and speedup when no call primaries and illuminant - no gamut control...in this case be carefull
+    if((params->icm.wprim == "def" && params->icm.will == "def") || mul == 1) {//shortcut and speedup when no call primaries and illuminant - no gamut control...in this case be carefull
         GammaValues g_a; //gamma parameters
         double pwr = 1.0 / static_cast<double>(gampos);
         Color::calcGamma(pwr, slpos, g_a); // call to calcGamma with selected gamma and slope

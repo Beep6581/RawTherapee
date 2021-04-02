@@ -6065,7 +6065,8 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
                 const int illum = 0;
                 cmsHTRANSFORM dummy = nullptr;
                 workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, -5, prof, 2.4, 12.92310, illum, 0, dummy, true, false, false);
-                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, 5, prof, gamtone, slotone, illum, 0, dummy, false, true, true);
+              //  workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, 5, prof, gamtone, slotone, illum, 0, dummy, false, true, true);//to keep if we want improve with illuminant and primaries
+                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, 1, prof, gamtone, slotone, illum, 0, dummy, false, true, true);//be carefull no gamut control
 
             }
 
@@ -13916,8 +13917,8 @@ void ImProcFunctions::Lab_Local(
                         float slotone = params->locallab.spots.at(sp).sloSH;
                         cmsHTRANSFORM dummy = nullptr;
                         workingtrc(tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, 0, 0, dummy, true, false, false);
-                        workingtrc(tmpImage, tmpImage, bfw, bfh, 5, prof, gamtone, slotone, 0, 0, dummy, false, true, true);
-
+                     //   workingtrc(tmpImage, tmpImage, bfw, bfh, 5, prof, gamtone, slotone, 0, 0, dummy, false, true, true); //to keep if we want improve with illuminant and primaries
+                        workingtrc(tmpImage, tmpImage, bfw, bfh, 1, prof, gamtone, slotone, 0, 0, dummy, false, true, true);//be carefull no gamut control
                     }
 
                     if (tonequ) {
