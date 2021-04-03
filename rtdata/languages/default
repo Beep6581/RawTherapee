@@ -2461,11 +2461,15 @@ TP_ICM_WORKING_PRIM;Destination - primaries
 TP_ICM_PRIMILLUM_TOOLTIP;You can change an image from its original mode (‘working profile’) to a different mode (‘destination profile’). When you choose a different color mode for an image, you permanently change the color values in the image.\n\nChanging the ‘primaries’ is complex and difficult to use. It requires a lot of experimenting.\n It is capable of making exotic color adjustments but it’s much harder to predict and control.\n Allows you to improve camera calibration.
 TP_ICM_WORKING_PRIM_NONE;Default
 TP_ICM_WORKING_PRIM_SRGB;sRGB
-TP_ICM_WORKING_PRIM_ADOB;Adobe
+TP_ICM_WORKING_PRIM_ADOB;Adobe RGB
 TP_ICM_WORKING_PRIM_PROP;Prophoto
 TP_ICM_WORKING_PRIM_REC;Rec2020
 TP_ICM_WORKING_PRIM_ACE;ACESp1
 TP_ICM_WORKING_PRIM_WID;WideGamut
+TP_ICM_WORKING_PRIM_AC0;ACESp0
+TP_ICM_WORKING_PRIM_BRU;BruceRGB
+TP_ICM_WORKING_PRIM_BET;Beta RGB
+TP_ICM_WORKING_PRIM_BST;BestRGB
 TP_ICM_WORKING_PRIM_CUS;Custom
 TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction

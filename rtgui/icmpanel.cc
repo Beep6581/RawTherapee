@@ -264,6 +264,10 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprim->append(M("TP_ICM_WORKING_PRIM_REC"));
     wprim->append(M("TP_ICM_WORKING_PRIM_ACE"));
     wprim->append(M("TP_ICM_WORKING_PRIM_WID"));
+    wprim->append(M("TP_ICM_WORKING_PRIM_AC0"));
+    wprim->append(M("TP_ICM_WORKING_PRIM_BRU"));
+    wprim->append(M("TP_ICM_WORKING_PRIM_BET"));
+    wprim->append(M("TP_ICM_WORKING_PRIM_BST"));
     wprim->append(M("TP_ICM_WORKING_PRIM_CUS"));
     wprim->set_active(0);
 
@@ -721,8 +725,16 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprim->set_active(5);
     } else if (pp->icm.wprim == "wid") {
         wprim->set_active(6);
-    } else if (pp->icm.wprim == "cus") {
+    } else if (pp->icm.wprim == "ac0") {
         wprim->set_active(7);
+    } else if (pp->icm.wprim == "bru") {
+        wprim->set_active(8);
+    } else if (pp->icm.wprim == "bet") {
+        wprim->set_active(9);
+    } else if (pp->icm.wprim == "bst") {
+        wprim->set_active(10);
+    } else if (pp->icm.wprim == "cus") {
+        wprim->set_active(11);
     }
     wtrcinChanged();
     willChanged();
@@ -834,7 +846,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             redFrame->hide();
         } else {
             redFrame->show();
-            if (wprim->get_active_row_number() != 7) {
+            if (wprim->get_active_row_number() != 11) {
               redBox->set_sensitive(false);
               greBox->set_sensitive(false);
               bluBox->set_sensitive(false);
@@ -1035,6 +1047,14 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     } else if (wprim->get_active_row_number() == 6) {
         pp->icm.wprim = "wid";
     } else if (wprim->get_active_row_number() == 7) {
+        pp->icm.wprim = "ac0";
+    } else if (wprim->get_active_row_number() == 8) {
+        pp->icm.wprim = "bru";
+    } else if (wprim->get_active_row_number() == 9) {
+        pp->icm.wprim = "bet";
+    } else if (wprim->get_active_row_number() == 10) {
+        pp->icm.wprim = "bst";
+    } else if (wprim->get_active_row_number() == 11) {
         pp->icm.wprim = "cus";
     }
 
@@ -1173,7 +1193,7 @@ void ICMPanel::wtrcinChanged()
             redFrame->hide();
         } else {
             redFrame->show();
-            if (wprim->get_active_row_number() != 7) {
+            if (wprim->get_active_row_number() != 11) {
                redBox->set_sensitive(false);
                greBox->set_sensitive(false);
                bluBox->set_sensitive(false);
@@ -1204,7 +1224,7 @@ void ICMPanel::wtrcinChanged()
             redFrame->hide();
         } else {
             redFrame->show();
-            if (wprim->get_active_row_number() != 7) {
+            if (wprim->get_active_row_number() != 11) {
                 redBox->set_sensitive(false);
                 greBox->set_sensitive(false);
                 bluBox->set_sensitive(false);
@@ -1227,7 +1247,7 @@ void ICMPanel::wtrcinChanged()
             redFrame->hide();
         } else {
             redFrame->show();
-            if (wprim->get_active_row_number() != 7) {
+            if (wprim->get_active_row_number() != 11) {
                 redBox->set_sensitive(false);
                 greBox->set_sensitive(false);
                 bluBox->set_sensitive(false);
@@ -1251,7 +1271,7 @@ void ICMPanel::wtrcinChanged()
             redFrame->hide();
         } else {
             redFrame->show();
-            if (wprim->get_active_row_number() != 7) {
+            if (wprim->get_active_row_number() != 11) {
                 redBox->set_sensitive(false);
                 greBox->set_sensitive(false);
                 bluBox->set_sensitive(false);
@@ -1275,7 +1295,7 @@ void ICMPanel::wtrcinChanged()
             redFrame->hide();
         } else {
             redFrame->show();
-             if (wprim->get_active_row_number() != 7) {
+             if (wprim->get_active_row_number() != 11) {
                 redBox->set_sensitive(false);
                 greBox->set_sensitive(false);
                 bluBox->set_sensitive(false);
@@ -1299,7 +1319,7 @@ void ICMPanel::wtrcinChanged()
             redFrame->hide();
         } else {
             redFrame->show();
-            if (wprim->get_active_row_number() != 7) {
+            if (wprim->get_active_row_number() != 11) {
                 redBox->set_sensitive(false);
                 greBox->set_sensitive(false);
                 bluBox->set_sensitive(false);
@@ -1378,6 +1398,38 @@ void ICMPanel::wprimChanged()
         blux->setValue(0.1570);
         bluy->setValue(0.018);
         will->set_active(2);
+    } else if (wprim->get_active_row_number() == 7) {
+        redx->setValue(0.7347);
+        redy->setValue(0.2653);
+        grex->setValue(0.);
+        grey->setValue(1.0);
+        blux->setValue(0.0001);
+        bluy->setValue(-0.077);
+        will->set_active(4);
+    } else if (wprim->get_active_row_number() == 8) {
+        redx->setValue(0.64);
+        redy->setValue(0.33);
+        grex->setValue(0.28);
+        grey->setValue(0.65);
+        blux->setValue(0.15);
+        bluy->setValue(0.06);
+        will->set_active(5);
+    } else if (wprim->get_active_row_number() == 9) {
+        redx->setValue(0.688);
+        redy->setValue(0.3112);
+        grex->setValue(0.1986);
+        grey->setValue(0.7551);
+        blux->setValue(0.1265);
+        bluy->setValue(0.0352);
+        will->set_active(2);
+    } else if (wprim->get_active_row_number() == 10) {
+        redx->setValue(0.7347);
+        redy->setValue(0.2653);
+        grex->setValue(0.2150);
+        grey->setValue(0.7750);
+        blux->setValue(0.131);
+        bluy->setValue(0.046);
+        will->set_active(5);
     }
 
    
@@ -1430,12 +1482,44 @@ void ICMPanel::wprimChanged()
             blux->setValue(0.1570);
             bluy->setValue(0.018);
             will->set_active(2);
+        } else if(wProfNames->get_active_text() == "ACESp0") {
+            redx->setValue(0.7347);
+            redy->setValue(0.2653);
+            grex->setValue(0.);
+            grey->setValue(1.0);
+            blux->setValue(0.0001);
+            bluy->setValue(-0.077);
+            will->set_active(4);
+        } else if(wProfNames->get_active_text() == "BruceRGB") {
+            redx->setValue(0.64);
+            redy->setValue(0.33);
+            grex->setValue(0.28);
+            grey->setValue(0.65);
+            blux->setValue(0.15);
+            bluy->setValue(0.06);
+            will->set_active(5);
+        } else if(wProfNames->get_active_text() == "Beta RGB") {
+            redx->setValue(0.688);
+            redy->setValue(0.3112);
+            grex->setValue(0.1986);
+            grey->setValue(0.7551);
+            blux->setValue(0.1265);
+            bluy->setValue(0.0352);
+            will->set_active(2);
+        } else if(wProfNames->get_active_text() == "BestRGB") {
+            redx->setValue(0.7347);
+            redy->setValue(0.2653);
+            grex->setValue(0.2150);
+            grey->setValue(0.7750);
+            blux->setValue(0.131);
+            bluy->setValue(0.046);
+            will->set_active(5);
         }
 
         redFrame->hide();
     } else {
         redFrame->show();
-        if (wprim->get_active_row_number() != 7) {
+        if (wprim->get_active_row_number() != 11) {
             redBox->set_sensitive(false);
             greBox->set_sensitive(false);
             bluBox->set_sensitive(false);
