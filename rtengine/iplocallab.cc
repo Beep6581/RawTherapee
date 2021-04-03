@@ -15089,7 +15089,6 @@ void ImProcFunctions::Lab_Local(
     const float a_basemerg = lp.lowAmerg / scaling;
     const float b_scalemerg = (lp.highBmerg - lp.lowBmerg) / factor / scaling;
     const float b_basemerg = lp.lowBmerg / scaling;
-    const bool ctoningmerg = (a_scalemerg != 0.f || b_scalemerg != 0.f || a_basemerg != 0.f || b_basemerg != 0.f);
 
     if (!lp.inv && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.mergemet > 0 ||  lp.strcol != 0.f ||  lp.strcolab != 0.f || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5 || lp.prevdE) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
@@ -15564,7 +15563,7 @@ void ImProcFunctions::Lab_Local(
                                     bufcolreserv->L[y][x] = lastorig->L[y + ystart][x + xstart];
                                     bufcolreserv->a[y][x] = lastorig->a[y + ystart][x + xstart];
                                     bufcolreserv->b[y][x] = lastorig->b[y + ystart][x + xstart];
-                                } else if (lp.mergemet == 4 && ctoningmerg) {
+                                } else if (lp.mergemet == 4) {
                                         bufcolreserv->L[y][x] = merlucol * 327.68f;
                                         bufcolreserv->a[y][x] = 9.f * scaledirect * a_scalemerg;
                                         bufcolreserv->b[y][x] = 9.f * scaledirect * b_scalemerg;
