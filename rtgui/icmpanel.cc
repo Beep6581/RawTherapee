@@ -232,7 +232,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wSlope->show();
 
     willuBox = Gtk::manage(new Gtk::Box());
-    willulab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_ILLU")));
+    willulab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_ILLU") + ":"));
 
     willuBox->pack_start(*willulab, Gtk::PACK_SHRINK);
     will = Gtk::manage(new MyComboBoxText());
@@ -251,7 +251,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
 
     wprimBox = Gtk::manage(new Gtk::Box());
-    wprimlab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_PRIM")));
+    wprimlab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_PRIM") + ":"));
 
     wprimBox->pack_start(*wprimlab, Gtk::PACK_SHRINK);
     wprim = Gtk::manage(new MyComboBoxText());
