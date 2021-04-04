@@ -785,9 +785,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float laplac = ((float)locallab.spots.at(sp).laplace);
     float thre = locallab.spots.at(sp).thresh;
 
-    if (thre > 8.f || thre < 0.f) {//to avoid artifacts if user does not clear cache with new settings. Can be suppressed after
-        thre = 2.f;
-    }
+//    if (thre > 8.f || thre < 0.f) {//to avoid artifacts if user does not clear cache with new settings. Can be suppressed after
+//        thre = 2.f;
+//    }
+    thre = LIM(thre, 0.f, 10.0f);
 
     double local_x = locallab.spots.at(sp).loc.at(0) / 2000.0;
     double local_y = locallab.spots.at(sp).loc.at(2) / 2000.0;
@@ -800,9 +801,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float balanch = (float) locallab.spots.at(sp).balanh;
     int colorde = (int) locallab.spots.at(sp).colorde;
 
-    if (iterati > 4.f || iterati < 0.2f) {//to avoid artifacts if user does not clear cache with new settings Can be suppressed after
-        iterati = 2.f;
-    }
+//    if (iterati > 4.f || iterati < 0.2f) {//to avoid artifacts if user does not clear cache with new settings Can be suppressed after
+//       iterati = 2.f;
+//    }
+    iterati = LIM(iterati, 0.2f, 10.0f);
 
     float neigh = float (locallab.spots.at(sp).neigh);
     float chromaPastel = float (locallab.spots.at(sp).pastels)   / 100.0f;
