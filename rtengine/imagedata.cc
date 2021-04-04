@@ -773,7 +773,7 @@ void FramesData::fillBasicTags(Exiv2::ExifData &exif) const
     }
     set_exif(exif, "Exif.Photo.ExposureTime", s);
     set_exif(exif, "Exif.Photo.FocalLength", Exiv2::URationalValue(Exiv2::URational(getFocalLen() * 10, 10)));
-    set_exif(exif, "Exif.Photo.ExposureBiasValue", Exiv2::DoubleValue(round(getExpComp() * 100) / 100.0));
+    set_exif(exif, "Exif.Photo.ExposureBiasValue", Exiv2::RationalValue(Exiv2::Rational(round(getExpComp() * 100), 100)));
     set_exif(exif, "Exif.Image.Make", getMake());
     set_exif(exif, "Exif.Image.Model", getModel());
     set_exif(exif, "Exif.Photo.LensModel", getLens());
