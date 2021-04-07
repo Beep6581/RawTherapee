@@ -517,6 +517,9 @@ void Exiv2Metadata::init()
 {
     cache_.reset(new ImageCache(IMAGE_CACHE_SIZE));
     Exiv2::XmpParser::initialize();
+#ifdef EXV_ENABLE_BMFF
+    Exiv2::enableBMFF(true);
+#endif
 }
 
 
