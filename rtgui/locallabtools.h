@@ -249,6 +249,7 @@ private:
     Adjuster* const blurcol;
     Adjuster* const blendmaskcol;
     Gtk::Frame* const toolcolFrame;
+    Gtk::Frame* const toolcolFrame2;
     Adjuster* const radmaskcol;
     Adjuster* const lapmaskcol;
     Adjuster* const chromaskcol;
@@ -756,6 +757,7 @@ private:
     Adjuster* const strumaskbl;
     Gtk::CheckButton* const toolbl;
     Gtk::Frame* const toolblFrame;
+    Gtk::Frame* const toolblFrame2;
     Adjuster* const blendmaskbl;
     Adjuster* const radmaskbl;
     Adjuster* const lapmaskbl;

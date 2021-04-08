@@ -132,28 +132,29 @@ LocallabTool::LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustr
     complexity(Gtk::manage(new MyComboBoxText()))
 {
     // Create expander title bar
+    Gtk::Box *titVBox;
+    titVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    titVBox->set_spacing(2);
+
     Gtk::Box* const titleBox = Gtk::manage(new Gtk::Box());
     Gtk::Label* const titleLabel = Gtk::manage(new Gtk::Label());
     titleLabel->set_markup(Glib::ustring("<b>") + escapeHtmlChars(UILabel) + Glib::ustring("</b>"));
     titleLabel->set_alignment(Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     titleBox->pack_start(*titleLabel, Gtk::PACK_EXPAND_WIDGET, 0);
-
+    
     Gtk::EventBox* const removeEvBox = Gtk::manage(new Gtk::EventBox()); // Glue to manage mouse clicking event on remove image
     removeEvBox->set_can_focus(false);
     removeEvBox->set_above_child(false); // To have priority over expander title bar when mouse clicking on remove image
     removeEvBox->signal_button_release_event().connect(sigc::mem_fun(this, &LocallabTool::on_remove_change));
     RTImage* const removeImage = Gtk::manage(new RTImage("cancel-small.png"));
     removeEvBox->add(*removeImage);
-    titleBox->pack_end(*removeEvBox, Gtk::PACK_SHRINK, 4);
-
+    titleBox->pack_end(*removeEvBox, Gtk::PACK_SHRINK, 1);
     if (needMode) {
         complexity->append(M("TP_LOCALLAB_MODE_EXPERT"));
         complexity->append(M("TP_LOCALLAB_MODE_NORMAL"));
         complexity->append(M("TP_LOCALLAB_MODE_SIMPLE"));
         complexity->set_active(2);
-        complexity->setPreferredWidth(100, -1);
         complexityConn = complexity->signal_changed().connect(sigc::mem_fun(*this, &LocallabTool::complexityModeChanged));
-        titleBox->pack_end(*complexity, Gtk::PACK_SHRINK, 2);
     }
 
     Gtk::Separator* const separator = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
@@ -164,8 +165,10 @@ LocallabTool::LocallabTool(Gtk::Box* content, Glib::ustring toolName, Glib::ustr
         titleImage->set_tooltip_text(M("TP_GENERAL_11SCALE_TOOLTIP"));
         titleBox->pack_end(*titleImage, Gtk::PACK_SHRINK, 0);
     }
+    titVBox->pack_start(*titleBox, Gtk::PACK_SHRINK, 1);
+    titVBox->pack_start(*complexity, Gtk::PACK_SHRINK, 1);
 
-    exp = Gtk::manage(new MyExpander(true, titleBox));
+    exp = Gtk::manage(new MyExpander(true, titVBox));
     exp->signal_button_release_event().connect_notify(sigc::mem_fun(this, &LocallabTool::foldThemAll));
     enaExpConn = exp->signal_enabled_toggled().connect(sigc::mem_fun(*this, &LocallabTool::enabledChanged));
 
@@ -448,11 +451,11 @@ LocallabColor::LocallabColor():
     clshape(static_cast<DiagonalCurveEditor*>(clCurveEditorG->addCurve(CT_Diagonal, "C(L)"))),
     lcshape(static_cast<DiagonalCurveEditor*>(clCurveEditorG->addCurve(CT_Diagonal, "L(C)"))),
     HCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_HLH"))),
-    LHshape(static_cast<FlatCurveEditor*>(HCurveEditorG->addCurve(CT_Flat, "L(H)", nullptr, false, true))),
+    LHshape(static_cast<FlatCurveEditor*>(HCurveEditorG->addCurve(CT_Flat, "L(h)", nullptr, false, true))),
     H3CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_HLH"))),
-    CHshape(static_cast<FlatCurveEditor*>(H3CurveEditorG->addCurve(CT_Flat, "C(H)", nullptr, false, true))),
+    CHshape(static_cast<FlatCurveEditor*>(H3CurveEditorG->addCurve(CT_Flat, "C(h)", nullptr, false, true))),
     H2CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_HLH"))),
-    HHshape(static_cast<FlatCurveEditor*>(H2CurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true))),
+    HHshape(static_cast<FlatCurveEditor*>(H2CurveEditorG->addCurve(CT_Flat, "h(h)", nullptr, false, true))),
     rgbCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_RGB"))),
     toneMethod(Gtk::manage(new MyComboBoxText())),
     rgbshape(static_cast<DiagonalCurveEditor*>(rgbCurveEditorG->addCurve(CT_Diagonal, "", toneMethod))),
@@ -472,10 +475,11 @@ LocallabColor::LocallabColor():
     showmaskcolMethod(Gtk::manage(new MyComboBoxText())),
     showmaskcolMethodinv(Gtk::manage(new MyComboBoxText())),
     enaColorMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
-    maskCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASKCOL"))),
-    CCmaskshape(static_cast<FlatCurveEditor*>(maskCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
-    LLmaskshape(static_cast<FlatCurveEditor*>(maskCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
-    HHmaskshape(static_cast<FlatCurveEditor *>(maskCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
+//    maskCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASKCOL"))),
+    maskCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir,"", 1)),
+    CCmaskshape(static_cast<FlatCurveEditor*>(maskCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
+    LLmaskshape(static_cast<FlatCurveEditor*>(maskCurveEditorG->addCurve(CT_Flat, "L", nullptr, false, false))),
+    HHmaskshape(static_cast<FlatCurveEditor *>(maskCurveEditorG->addCurve(CT_Flat, "LC(h)", nullptr, false, true))),
     struFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABSTRUM")))),
     strumaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0., 200., 0.1, 0.))),
     toolcol(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TOOLCOL")))),
@@ -485,14 +489,16 @@ LocallabColor::LocallabColor():
     blurcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCOL"), 0.2, 100., 0.5, 0.2))),
     blendmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     toolcolFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK")))),
+    toolcolFrame2(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK_2")))),
     radmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     lapmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     chromaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
     gammaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
     slomaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
     shadmaskcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHAMASKCOL"), 0, 100, 1, 0))),
-    maskHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASKH"))),
-    HHhmaskshape(static_cast<FlatCurveEditor *>(maskHCurveEditorG->addCurve(CT_Flat, "H(H)", nullptr, false, true))),
+ //   maskHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASKH"))),
+    maskHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "")),
+    HHhmaskshape(static_cast<FlatCurveEditor *>(maskHCurveEditorG->addCurve(CT_Flat, "h(h)", nullptr, false, true))),
     mask2CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmaskshape(static_cast<DiagonalCurveEditor*>(mask2CurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     mask2CurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
@@ -879,6 +885,7 @@ LocallabColor::LocallabColor():
     maskcolBox->pack_start(*blendmaskcol, Gtk::PACK_SHRINK, 0);
 //    Gtk::Frame* const toolcolFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK")));
     toolcolFrame->set_label_align(0.025, 0.5);
+    toolcolFrame2->set_label_align(0.025, 0.5);
     ToolParamBlock* const toolcolBox = Gtk::manage(new ToolParamBlock());
     toolcolBox->pack_start(*radmaskcol, Gtk::PACK_SHRINK, 0);
     toolcolBox->pack_start(*lapmaskcol, Gtk::PACK_SHRINK, 0);
@@ -888,8 +895,11 @@ LocallabColor::LocallabColor():
     toolcolBox->pack_start(*shadmaskcol, Gtk::PACK_SHRINK, 0);
     toolcolBox->pack_start(*maskHCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     toolcolBox->pack_start(*mask2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    toolcolBox->pack_start(*mask2CurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    toolcolBox->pack_start(*csThresholdcol, Gtk::PACK_SHRINK, 0);
+    ToolParamBlock* const toolcolBox2 = Gtk::manage(new ToolParamBlock());
+    toolcolBox2->pack_start(*mask2CurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    toolcolBox2->pack_start(*csThresholdcol, Gtk::PACK_SHRINK, 0);
+    toolcolFrame2->add(*toolcolBox2);
+    toolcolBox->pack_start(*toolcolFrame2);
     toolcolFrame->add(*toolcolBox);
     maskcolBox->pack_start(*toolcolFrame);
     mergecolFrame->add(*maskcolBox);
@@ -2041,6 +2051,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
             maskHCurveEditorG->hide();
             mask2CurveEditorGwav->hide();
             csThresholdcol->hide();
+            toolcolFrame2->hide();
             // Specific Simple mode widgets are shown in Normal mode
             softradiuscol->show();
             if (enaColorMask->get_active()) {
@@ -2113,6 +2124,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
             maskHCurveEditorG->show();
             mask2CurveEditorGwav->show();
             csThresholdcol->show();
+            toolcolFrame2->show();
     }
 }
 
@@ -2518,10 +2530,11 @@ LocallabExposure::LocallabExposure():
     showmaskexpMethodinv(Gtk::manage(new MyComboBoxText())),
     enaExpMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
     enaExpMaskaft(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASKAFT")))),
-    maskexpCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
-    CCmaskexpshape(static_cast<FlatCurveEditor*>(maskexpCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
-    LLmaskexpshape(static_cast<FlatCurveEditor*>(maskexpCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
-    HHmaskexpshape(static_cast<FlatCurveEditor *>(maskexpCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
+ //   maskexpCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+    maskexpCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
+    CCmaskexpshape(static_cast<FlatCurveEditor*>(maskexpCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
+    LLmaskexpshape(static_cast<FlatCurveEditor*>(maskexpCurveEditorG->addCurve(CT_Flat, "L", nullptr, false, false))),
+    HHmaskexpshape(static_cast<FlatCurveEditor *>(maskexpCurveEditorG->addCurve(CT_Flat, "LC(h)", nullptr, false, true))),
     blendmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     radmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     lapmaskexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
@@ -3850,10 +3863,11 @@ LocallabShadow::LocallabShadow():
     showmaskSHMethod(Gtk::manage(new MyComboBoxText())),
     showmaskSHMethodinv(Gtk::manage(new MyComboBoxText())),
     enaSHMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
-    maskSHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
-    CCmaskSHshape(static_cast<FlatCurveEditor*>(maskSHCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
-    LLmaskSHshape(static_cast<FlatCurveEditor*>(maskSHCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
-    HHmaskSHshape(static_cast<FlatCurveEditor*>(maskSHCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
+//    maskSHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+    maskSHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
+    CCmaskSHshape(static_cast<FlatCurveEditor*>(maskSHCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
+    LLmaskSHshape(static_cast<FlatCurveEditor*>(maskSHCurveEditorG->addCurve(CT_Flat, "L", nullptr, false, false))),
+    HHmaskSHshape(static_cast<FlatCurveEditor*>(maskSHCurveEditorG->addCurve(CT_Flat, "LC(h)", nullptr, false, true))),
     blendmaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     radmaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     lapmaskSH(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
@@ -4924,10 +4938,11 @@ LocallabVibrance::LocallabVibrance():
     expmaskvib(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWVI")))),
     showmaskvibMethod(Gtk::manage(new MyComboBoxText())),
     enavibMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
-    maskvibCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
-    CCmaskvibshape(static_cast<FlatCurveEditor*>(maskvibCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
-    LLmaskvibshape(static_cast<FlatCurveEditor*>(maskvibCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
-    HHmaskvibshape(static_cast<FlatCurveEditor *>(maskvibCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
+ //   maskvibCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+    maskvibCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
+    CCmaskvibshape(static_cast<FlatCurveEditor*>(maskvibCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
+    LLmaskvibshape(static_cast<FlatCurveEditor*>(maskvibCurveEditorG->addCurve(CT_Flat, "L", nullptr, false, false))),
+    HHmaskvibshape(static_cast<FlatCurveEditor *>(maskvibCurveEditorG->addCurve(CT_Flat, "LC(h)", nullptr, false, true))),
     blendmaskvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     radmaskvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     lapmaskvib(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
@@ -6269,8 +6284,8 @@ LocallabBlur::LocallabBlur():
     epsbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_EPSBL"), -10, 10, 1, 0))),
     expdenoise2(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     recothres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
-    lowthres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
-    higthres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
+    lowthres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW2"), 1., 80., 0.5, 12.))),
+    higthres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR2"), 20., 99., 0.5, 85.))),
     sensibn(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 40))),
     blurMethod(Gtk::manage(new MyComboBoxText())),
     invbl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVBL")))),
@@ -6289,8 +6304,8 @@ LocallabBlur::LocallabBlur():
     maskunusable3(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
     usemask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_USEMASK")))),
     lnoiselow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLNOISELOW"), 0.7, 2., 0.01, 1.))),
-    levelthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
-    levelthrlow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
+    levelthr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR2"), 20., 99., 0.5, 85.))),
+    levelthrlow(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW2"), 1., 80., 0.5, 12.))),
     noiselumf0(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINEZERO"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noiselumf(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
     noiselumf2(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMFINETWO"), MINCHRO, MAXCHRO, 0.01, 0.))),
@@ -6307,10 +6322,10 @@ LocallabBlur::LocallabBlur():
     adjblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ADJ"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-yellow-small.png")), Gtk::manage(new RTImage("circle-red-green-small.png"))))),
     expdenoise3(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     recothresd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
-    lowthresd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
+    lowthresd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW2"), 1., 80., 0.5, 12.))),
     midthresd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRMID"), 0., 100., 0.5, 0.))),
     midthresdch(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRMIDCH"), 0., 100., 0.5, 0.))),
-    higthresd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
+    higthresd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR2"), 20., 99., 0.5, 85.))),
     decayd(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
     invmaskd(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVMASK")))),
     invmask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_INVMASK")))),
@@ -6327,13 +6342,15 @@ LocallabBlur::LocallabBlur():
     showmaskblMethod(Gtk::manage(new MyComboBoxText())),
     showmaskblMethodtyp(Gtk::manage(new MyComboBoxText())),
     enablMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
-    maskblCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
-    CCmaskblshape(static_cast<FlatCurveEditor*>(maskblCurveEditorG->addCurve(CT_Flat, "C(C)", nullptr, false, false))),
-    LLmaskblshape(static_cast<FlatCurveEditor*>(maskblCurveEditorG->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
-    HHmaskblshape(static_cast<FlatCurveEditor *>(maskblCurveEditorG->addCurve(CT_Flat, "LC(H)", nullptr, false, true))),
+//    maskblCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK"))),
+    maskblCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
+    CCmaskblshape(static_cast<FlatCurveEditor*>(maskblCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
+    LLmaskblshape(static_cast<FlatCurveEditor*>(maskblCurveEditorG->addCurve(CT_Flat, "L", nullptr, false, false))),
+    HHmaskblshape(static_cast<FlatCurveEditor *>(maskblCurveEditorG->addCurve(CT_Flat, "LC(h)", nullptr, false, true))),
     strumaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0., 200., 0.1, 0.))),
     toolbl(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TOOLCOL")))),
     toolblFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK")))),
+    toolblFrame2(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK_2")))),
     blendmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     radmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     lapmaskbl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
@@ -6698,6 +6715,7 @@ LocallabBlur::LocallabBlur():
     maskblBox->pack_start(*separatorstrubl, Gtk::PACK_SHRINK, 2);
     maskblBox->pack_start(*blendmaskbl, Gtk::PACK_SHRINK, 0);
     toolblFrame->set_label_align(0.025, 0.5);
+    toolblFrame2->set_label_align(0.025, 0.5);
     ToolParamBlock* const toolblBox = Gtk::manage(new ToolParamBlock());
     toolblBox->pack_start(*radmaskbl, Gtk::PACK_SHRINK, 0);
     toolblBox->pack_start(*lapmaskbl, Gtk::PACK_SHRINK, 0);
@@ -6707,8 +6725,11 @@ LocallabBlur::LocallabBlur():
     toolblBox->pack_start(*shadmaskblsha, Gtk::PACK_SHRINK, 0);
     toolblBox->pack_start(*shadmaskbl, Gtk::PACK_SHRINK, 0);
     toolblBox->pack_start(*mask2blCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    toolblBox->pack_start(*mask2blCurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    toolblBox->pack_start(*csThresholdblur, Gtk::PACK_SHRINK, 0);
+    ToolParamBlock* const toolblBox2 = Gtk::manage(new ToolParamBlock());
+    toolblBox2->pack_start(*mask2blCurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    toolblBox2->pack_start(*csThresholdblur, Gtk::PACK_SHRINK, 0);
+    toolblFrame2->add(*toolblBox2);
+    toolblBox->pack_start(*toolblFrame2);
     toolblFrame->add(*toolblBox);
     maskblBox->pack_start(*toolblFrame);
     expmaskbl->add(*maskblBox, false);
@@ -7900,6 +7921,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             shadmaskblsha->hide();
             mask2blCurveEditorGwav->hide();
             csThresholdblur->hide();
+            toolblFrame2->hide();
             // Specific Simple mode widgets are shown in Normal mode
             expmaskbl->show();
             expdenoise1->hide();
@@ -7987,6 +8009,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             shadmaskblsha->show();
             mask2blCurveEditorGwav->show();
             csThresholdblur->show();
+            toolblFrame2->show();
             nlpat->show();
             nlrad->show();
             nlgam->show();
