@@ -2076,6 +2076,8 @@ ResizeParams::ResizeParams() :
     dataspec(3),
     width(900),
     height(900),
+    longedge(900),
+    shortedge(900),
     allowUpscaling(false)
 {
 }
@@ -2090,6 +2092,8 @@ bool ResizeParams::operator ==(const ResizeParams& other) const
         && dataspec == other.dataspec
         && width == other.width
         && height == other.height
+        && longedge == other.longedge
+        && shortedge == other.shortedge
         && allowUpscaling == other.allowUpscaling;
 }
 
@@ -3379,6 +3383,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->resize.dataspec, "Resize", "DataSpecified", resize.dataspec, keyFile);
         saveToKeyfile(!pedited || pedited->resize.width, "Resize", "Width", resize.width, keyFile);
         saveToKeyfile(!pedited || pedited->resize.height, "Resize", "Height", resize.height, keyFile);
+        saveToKeyfile(!pedited || pedited->resize.longedge, "Resize", "LongEdge", resize.longedge, keyFile);
+        saveToKeyfile(!pedited || pedited->resize.shortedge, "Resize", "ShortEdge", resize.shortedge, keyFile);
         saveToKeyfile(!pedited || pedited->resize.allowUpscaling, "Resize", "AllowUpscaling", resize.allowUpscaling, keyFile);
 
 // Post demosaic sharpening
@@ -4466,6 +4472,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Resize", "DataSpecified", pedited, resize.dataspec, pedited->resize.dataspec);
             assignFromKeyfile(keyFile, "Resize", "Width", pedited, resize.width, pedited->resize.width);
             assignFromKeyfile(keyFile, "Resize", "Height", pedited, resize.height, pedited->resize.height);
+            assignFromKeyfile(keyFile, "Resize", "LongEdge", pedited, resize.longedge, pedited->resize.longedge);
+            assignFromKeyfile(keyFile, "Resize", "ShortEdge", pedited, resize.shortedge, pedited->resize.shortedge);
             if (ppVersion >= 339) {
                 assignFromKeyfile(keyFile, "Resize", "AllowUpscaling", pedited, resize.allowUpscaling, pedited->resize.allowUpscaling);
             } else {

@@ -297,8 +297,8 @@ HISTORY_MSG_42;Exposure - Tone curve 2
 HISTORY_MSG_43;Exposure - Tone curve 2 mode
 HISTORY_MSG_44;Lum. denoising radius
 HISTORY_MSG_45;Lum. denoising edge tolerance
-HISTORY_MSG_46;Color denoising
-HISTORY_MSG_47;Blend ICC highlights with matrix
+HISTORY_MSG_46;Resize - Long Edge
+HISTORY_MSG_47;Resize - Short Edge
 HISTORY_MSG_48;DCP - Tone curve
 HISTORY_MSG_49;DCP illuminant
 HISTORY_MSG_50;Shadows/Highlights
@@ -1924,10 +1924,14 @@ TP_RESIZE_H;Height:
 TP_RESIZE_HEIGHT;Height
 TP_RESIZE_LABEL;Resize
 TP_RESIZE_LANCZOS;Lanczos
+TP_RESIZE_LE;Long Edge:
+TP_RESIZE_LONG;Long Edge
 TP_RESIZE_METHOD;Method:
 TP_RESIZE_NEAREST;Nearest
 TP_RESIZE_SCALE;Scale
 TP_RESIZE_SPECIFY;Specify:
+TP_RESIZE_SE;Short Edge:
+TP_RESIZE_SHORT;Short Edge
 TP_RESIZE_W;Width:
 TP_RESIZE_WIDTH;Width
 TP_RETINEX_CONTEDIT_HSL;HSL histogram

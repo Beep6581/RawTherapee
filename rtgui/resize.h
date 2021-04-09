@@ -48,6 +48,8 @@ public:
     void adjusterChanged  (Adjuster* a, double newval) override;
     void entryWChanged    ();
     void entryHChanged    ();
+    void entryLEChanged   ();
+    void entrySEChanged   ();
     void appliesToChanged ();
     void methodChanged    ();
     void specChanged      ();
@@ -76,11 +78,13 @@ private:
     MyComboBoxText*    spec;
     MySpinButton*      w;
     MySpinButton*      h;
+    MySpinButton*      le;
+    MySpinButton*      se;
     Gtk::CheckButton *allowUpscaling;
     int                maxw, maxh;
     int                cropw, croph;
-    sigc::connection   sconn, aconn, wconn, hconn;
-    bool               wDirty, hDirty;
+    sigc::connection   sconn, aconn, wconn, hconn, leconn, seconn;
+    bool               wDirty, hDirty, leDirty, seDirty;
     ToolParamBlock*    packBox;
     IdleRegister       idle_register;
 

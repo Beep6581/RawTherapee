@@ -63,6 +63,8 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     spec->append (M("TP_RESIZE_WIDTH"));
     spec->append (M("TP_RESIZE_HEIGHT"));
     spec->append (M("TP_RESIZE_FITBOX"));
+    spec->append (M("TP_RESIZE_LONG"));
+    spec->append (M("TP_RESIZE_SHORT"));
     spec->set_active (0);
 
     label = Gtk::manage (new Gtk::Label (M("TP_RESIZE_SPECIFY"), Gtk::ALIGN_START));
@@ -81,19 +83,46 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     Gtk::HBox* sbox = Gtk::manage (new Gtk::HBox ());
     Gtk::HBox* wbox = Gtk::manage (new Gtk::HBox ());
     Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
+    Gtk::HBox* ebox = Gtk::manage (new Gtk::HBox ());
+    Gtk::HBox* lebox = Gtk::manage (new Gtk::HBox ());
+    Gtk::HBox* sebox = Gtk::manage (new Gtk::HBox ());
+
     w = Gtk::manage (new MySpinButton ());
+    w->set_width_chars(5);
+    setExpandAlignProperties(w, false, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
     h = Gtk::manage (new MySpinButton ());
-    wbox->set_spacing(3);
+    h->set_width_chars(5);
+    setExpandAlignProperties(h, false, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+    le = Gtk::manage (new MySpinButton ());
+    le->set_width_chars(5);
+    setExpandAlignProperties(le, false, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+    se = Gtk::manage (new MySpinButton ());
+    se->set_width_chars(5);
+    setExpandAlignProperties(se, false, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
+
     wbox->pack_start (*Gtk::manage (new Gtk::Label (M("TP_RESIZE_W"))), Gtk::PACK_SHRINK, 0);
     wbox->pack_start (*w);
     hbox->set_spacing(3);
     hbox->pack_start (*Gtk::manage (new Gtk::Label (M("TP_RESIZE_H"))), Gtk::PACK_SHRINK, 0);
     hbox->pack_start (*h);
+    lebox->set_spacing(3);
+    lebox->pack_start (*Gtk::manage (new Gtk::Label (M("TP_RESIZE_LE"))), Gtk::PACK_SHRINK, 0);
+    lebox->pack_start (*le);
+    sebox->set_spacing(3);
+    sebox->pack_start (*Gtk::manage (new Gtk::Label (M("TP_RESIZE_SE"))), Gtk::PACK_SHRINK, 0);
+    sebox->pack_start (*se);
+
     sbox->set_spacing(4);
     sbox->pack_start (*wbox);
     sbox->pack_start (*hbox);
+    sbox->set_homogeneous();
+    ebox->set_spacing(4);
+    ebox->pack_start (*lebox);
+    ebox->pack_start (*sebox);
+    ebox->set_homogeneous();
 
     sizeBox->pack_start (*sbox, Gtk::PACK_SHRINK, 0);
+    sizeBox->pack_start (*ebox, Gtk::PACK_SHRINK, 0);
     sizeBox->show_all ();
     sizeBox->reference ();
 
@@ -103,16 +132,28 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
 
     w->set_digits (0);
     w->set_increments (1, 100);
-    w->set_value (800);
     w->set_range (32, MAX_SCALE * maxw);
+    w->set_value (800);           // Doesn't seem to have any effect (overwritten in Resize::read)
 
     h->set_digits (0);
     h->set_increments (1, 100);
-    h->set_value (600);
     h->set_range (32, MAX_SCALE * maxh);
+    h->set_value (600);           // Doesn't seem to have any effect (overwritten in Resize::read)
+
+    se->set_digits (0);
+    le->set_increments (1, 100);
+    le->set_range (32, MAX_SCALE * maxw);
+    le->set_value (900);
+
+    se->set_digits (0);
+    se->set_increments (1, 100);
+    se->set_range (32, MAX_SCALE * maxh);
+    se->set_value (900);
 
     wconn = w->signal_value_changed().connect ( sigc::mem_fun(*this, &Resize::entryWChanged), true);
     hconn = h->signal_value_changed().connect ( sigc::mem_fun(*this, &Resize::entryHChanged), true);
+    leconn = le->signal_value_changed().connect ( sigc::mem_fun(*this, &Resize::entryLEChanged), true);
+    seconn = se->signal_value_changed().connect ( sigc::mem_fun(*this, &Resize::entrySEChanged), true);
     aconn = appliesTo->signal_changed().connect ( sigc::mem_fun(*this, &Resize::appliesToChanged) );
     method->signal_changed().connect ( sigc::mem_fun(*this, &Resize::methodChanged) );
     sconn = spec->signal_changed().connect ( sigc::mem_fun(*this, &Resize::specChanged) );
@@ -139,6 +180,8 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
     aconn.block (true);
     wconn.block (true);
     hconn.block (true);
+    leconn.block (true);
+    seconn.block (true);
     sconn.block (true);
     scale->block(true);
 
@@ -168,10 +211,14 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     wDirty = false;
     hDirty = false;
+    leDirty = false;
+    seDirty = false;
 
     if (pedited) {
         wDirty = pedited->resize.width;
         hDirty = pedited->resize.height;
+        leDirty = pedited->resize.longedge;
+        seDirty = pedited->resize.shortedge;
         scale->setEditedState (pedited->resize.scale ? Edited : UnEdited);
 
         if (!pedited->resize.appliesTo) {
@@ -183,7 +230,8 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
         }
 
         if (!pedited->resize.dataspec) {
-            spec->set_active (4);
+            // HIER EDITED spec->set_active (4);
+            spec->set_active (6);
         }
 
         allowUpscaling->set_inconsistent(!pedited->resize.allowUpscaling);
@@ -194,6 +242,8 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
     sconn.block (false);
     wconn.block (false);
     hconn.block (false);
+    leconn.block (false);
+    seconn.block (false);
     aconn.block (false);
     enableListener ();
 }
@@ -201,6 +251,14 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
 void Resize::write (ProcParams* pp, ParamsEdited* pedited)
 {
     int dataSpec = spec->get_active_row_number();
+    
+    // HIER das ist nur vorübergehend. Ohne diese Krücke ist der Export nicht korrekt:
+    // Die Werte werden zwar im GUI richtig angezeigt, aber die exportierte Datei hat
+    // andere Maße.
+    // Vermutlich gibt es irgendwo eine Abfrage auf diesen Wert, und 4 bzw. 5 sind unbekannt.
+    printf("write in -- dataSpec before = %d\n", dataSpec);
+    // if (dataSpec == 4) dataSpec = 1;
+    printf("write in -- dataSpec after = %d\n", dataSpec);
 
     pp->resize.scale  = scale->getValue();
 
@@ -223,6 +281,8 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited)
     pp->resize.dataspec = dataSpec;
     pp->resize.width = w->get_value_as_int ();
     pp->resize.height = h->get_value_as_int ();
+    pp->resize.longedge = le->get_value_as_int ();
+    pp->resize.shortedge = se->get_value_as_int ();
     pp->resize.enabled = getEnabled ();
     //printf("  L:%d   H:%d\n", pp->resize.width, pp->resize.height);
 
@@ -230,7 +290,7 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited)
 
     if (pedited) {
         pedited->resize.enabled   = !get_inconsistent();
-        pedited->resize.dataspec  = dataSpec != MAX_SCALE;
+        pedited->resize.dataspec  = dataSpec != 6;
         pedited->resize.appliesTo = appliesTo->get_active_row_number() != 2;
         pedited->resize.method    = method->get_active_row_number() != 3;
 
@@ -238,13 +298,19 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited)
             pedited->resize.scale     = scale->getEditedState ();
             pedited->resize.width     = wDirty;
             pedited->resize.height    = hDirty;
+            pedited->resize.longedge  = leDirty;
+            pedited->resize.shortedge = seDirty;
         } else {
             pedited->resize.scale     = false;
             pedited->resize.width     = false;
             pedited->resize.height    = false;
+            pedited->resize.longedge  = false;
+            pedited->resize.shortedge = false;
         }
         pedited->resize.allowUpscaling = !allowUpscaling->get_inconsistent();
     }
+    printf("write out -- dataSpec = %d\n", dataSpec);
+
 }
 
 void Resize::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
@@ -364,11 +430,15 @@ void Resize::sizeChanged(int mw, int mh, int ow, int oh)
 
 void Resize::setDimensions ()
 {
+// HIER
+printf("setDimensions()\n");
     idle_register.add(
         [this]() -> bool
         {
             wconn.block(true);
             hconn.block(true);
+            leconn.block(true);
+            seconn.block(true);
             scale->block(true);
 
             int refw, refh;
@@ -421,6 +491,27 @@ void Resize::setDimensions ()
                     break;
                 }
 
+                case 4: {
+                    // Long edge mode
+                    // HIER
+                    if (refw > refh) {
+                        w->set_value (le->get_value ());
+                        // entryWChanged(); // hiermit funktioniert es, aber gibt die entryWChanged-Meldung aus
+                        const double tmp_scale = le->get_value() / static_cast<double>(refw);
+                        scale->setValue(tmp_scale);
+                        w->set_value(le->get_value());
+                        h->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
+                    } else {
+                        h->set_value (le->get_value ());
+                        // entryHChanged(); // hiermit funktioniert es, aber gibt die entryHChanged-Meldung aus
+                        const double tmp_scale = le->get_value() / static_cast<double>(refh);
+                        scale->setValue(tmp_scale);
+                        h->set_value(le->get_value());
+                        w->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * tmp_scale + 0.5)));
+                    }
+                    break;
+                }
+
                 default: {
                     break;
                 }
@@ -429,6 +520,8 @@ void Resize::setDimensions ()
             scale->block(false);
             wconn.block(false);
             hconn.block(false);
+            leconn.block(false);
+            seconn.block(false);
 
             return false;
         }
@@ -496,6 +589,7 @@ void Resize::entryWChanged ()
             }
         }
     }
+printf("entryWchanged w: %f; h: %f; scale: %2.5f\n", w->get_value(), h->get_value(), scale->getValue());
 }
 
 void Resize::entryHChanged ()
@@ -529,32 +623,99 @@ void Resize::entryHChanged ()
             }
         }
     }
+printf("entryHchanged w: %f; h: %f; scale: %2.5f\n", w->get_value(), h->get_value(), scale->getValue());
+}
+
+void Resize::entryLEChanged ()
+{
+ printf("entryLEChanged in\n");
+
+    leDirty = true;
+    // wDirty = true;
+    // hDirty = true;
+
+    // updating long edge
+    if (!batchMode && listener) {
+        int refw, refh;
+        
+        leconn.block (true);
+        wconn.block (true);
+        hconn.block(true);
+        scale->block (true);
+        
+        if (cropw && appliesTo->get_active_row_number() == 0) {
+            // we use the crop dimensions
+            refw = cropw;
+            refh = croph;
+        } else {
+            // we use the image dimensions
+            refw = maxw;
+            refh = maxh;
+        } 
+ printf("entryLEChanged - refw: %d, refh: %d\n", refw, refh);
+
+        if (refw > refh) {
+            w->set_value (le->get_value ());
+            // entryWChanged(); // hiermit funktioniert es, aber gibt die entryWChanged-Meldung aus
+            h->set_value ((double)(getComputedHeight()));
+            scale->setValue (w->get_value () / (cropw && appliesTo->get_active_row_number() == 0 ? (double)cropw : (double)maxw));
+        } else {
+            h->set_value (le->get_value());
+            // entryHChanged(); // hiermit funktioniert es, aber gibt die entryHChanged-Meldung aus
+            w->set_value ((double)(getComputedWidth()));
+            scale->setValue (h->get_value () / (croph && appliesTo->get_active_row_number() == 0 ? (double)croph : (double)maxh));
+         }
+
+        scale->block (false);
+        leconn.block (false);
+        wconn.block (false);
+        hconn.block (false);
+    }
+
+    if (listener) {
+        if (getEnabled () || batchMode) {
+           listener->panelChanged (EvResizeLongedge, Glib::ustring::compose("%1 (%2x%3)",
+                                   (int)le->get_value(), (int)w->get_value(), (int)h->get_value()));
+       }
+    }
+printf("entryLEchanged out - w: %f; h: %f; scale: %2.5f\n", w->get_value(), h->get_value(), scale->getValue());
+}
+
+void Resize::entrySEChanged ()
+{
+/*
+*/
 }
 
 void Resize::specChanged ()
 {
-
+// HIER
     switch (spec->get_active_row_number()) {
     case (0):
         // Scale mode
-        scale->sliderChanged ();
+        scale->sliderChanged();
         break;
 
     case (1):
         // Width mode
         w->set_value((double)(getComputedWidth()));
-        entryWChanged ();
+        entryWChanged();
         break;
 
     case (2):
         // Height mode
         h->set_value((double)(getComputedHeight()));
-        entryHChanged ();
+        entryHChanged();
         break;
 
     case (3):
         // Bounding box mode
         notifyBBox();
+        break;
+
+    case (4):
+        // Long edge mode
+        entryLEChanged();
         break;
 
     default:
@@ -583,6 +744,8 @@ void Resize::updateGUI ()
         reorder_child(*allowUpscaling, 4);
         w->set_sensitive (true);
         h->set_sensitive (false);
+        le->set_sensitive (false);
+        se->set_sensitive (false);
         break;
 
     case (2):
@@ -591,6 +754,8 @@ void Resize::updateGUI ()
         reorder_child(*allowUpscaling, 4);
         w->set_sensitive (false);
         h->set_sensitive (true);
+        le->set_sensitive (false);
+        se->set_sensitive (false);
         break;
 
     case (3):
@@ -599,6 +764,28 @@ void Resize::updateGUI ()
         reorder_child(*allowUpscaling, 4);
         w->set_sensitive (true);
         h->set_sensitive (true);
+        le->set_sensitive (false);
+        se->set_sensitive (false);
+        break;
+
+    case (4):
+        // Long edge mode
+        pack_start (*sizeBox, Gtk::PACK_SHRINK, 4);
+        reorder_child(*allowUpscaling, 4);
+        w->set_sensitive (false);
+        h->set_sensitive (false);
+        le->set_sensitive (true);
+        se->set_sensitive (false);
+        break;
+
+    case (5):
+        // Short edge mode
+        pack_start (*sizeBox, Gtk::PACK_SHRINK, 4);
+        reorder_child(*allowUpscaling, 4);
+        w->set_sensitive (false);
+        h->set_sensitive (false);
+        le->set_sensitive (false);
+        se->set_sensitive (true);
         break;
 
     default:
