@@ -63,7 +63,7 @@ bool LabGridArea::notifyListener()
 }
 
 
-LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low):
+LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low, bool ciexy):
     Gtk::DrawingArea(),
     evt(evt), evtMsg(msg),
     litPoint(NONE),
@@ -72,7 +72,9 @@ LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool
     listener(nullptr),
     edited(false),
     isDragged(false),
-    low_enabled(enable_low)
+    low_enabled(enable_low),
+    ciexy_enabled(ciexy)
+    
 {
     set_can_focus(false); // prevent moving the grid while you're moving a point
     add_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK);
@@ -86,6 +88,7 @@ void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb) cons
     ha = high_a;
     lb = low_b;
     hb = high_b;
+    printf("la=%f ha=%f lb=%f hb=%f\n", la, ha, lb, hb);
 }
 
 
@@ -195,39 +198,125 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         // flip y:
         cr->translate(0, height);
         cr->scale(1., -1.);
-        const int cells = 8;
-        float step = 12000.f / float(cells/2);
-        double cellW = double(width) / double(cells);
-        double cellH = double(height) / double(cells);
-        double cellYMin = 0.;
-        double cellYMax = std::floor(cellH);
-        for (int j = 0; j < cells; j++) {
-            double cellXMin = 0.;
-            double cellXMax = std::floor(cellW);
-            for (int i = 0; i < cells; i++) {
-                float R, G, B;
-                float x, y, z;
-                int ii = i - cells/2;
-                int jj = j - cells/2;
-                float a = step * (ii + 0.5f);
-                float b = step * (jj + 0.5f);
-                Color::Lab2XYZ(25000.f, a, b, x, y, z);
-                Color::xyz2srgb(x, y, z, R, G, B);
-                cr->set_source_rgb(R / 65535.f, G / 65535.f, B / 65535.f);
-                cr->rectangle(
-                        cellXMin,
-                        cellYMin,
-                        cellXMax - cellXMin - (i == cells-1 ? 0. : double(s)),
-                        cellYMax - cellYMin - (j == cells-1 ? 0. : double(s))
-                        );
-                cellXMin = cellXMax;
-                cellXMax = std::floor(cellW * double(i+2) + 0.01);
-                cr->fill();
-            }
-            cellYMin = cellYMax;
-            cellYMax = std::floor(cellH * double(j+2) + 0.01);
-        }
 
+        if (! ciexy_enabled) {
+            int cells = 8;
+            float step = 12000.f / float(cells/2);
+            double cellW = double(width) / double(cells);
+            double cellH = double(height) / double(cells);
+            double cellYMin = 0.;
+            double cellYMax = std::floor(cellH);
+            for (int j = 0; j < cells; j++) {
+                double cellXMin = 0.;
+                double cellXMax = std::floor(cellW);
+                for (int i = 0; i < cells; i++) {
+                    float R, G, B;
+                    float x, y, z;
+                    int ii = i - cells/2;
+                    int jj = j - cells/2;
+                    float a = step * (ii + 0.5f);
+                    float b = step * (jj + 0.5f);
+                    Color::Lab2XYZ(25000.f, a, b, x, y, z);
+                    Color::xyz2srgb(x, y, z, R, G, B);
+                    cr->set_source_rgb(R / 65535.f, G / 65535.f, B / 65535.f);
+                    cr->rectangle(
+                            cellXMin,
+                            cellYMin,
+                            cellXMax - cellXMin - (i == cells-1 ? 0. : double(s)),
+                            cellYMax - cellYMin - (j == cells-1 ? 0. : double(s))
+                            );
+                    cellXMin = cellXMax;
+                    cellXMax = std::floor(cellW * double(i+2) + 0.01);
+                    cr->fill();
+                }
+                cellYMin = cellYMax;
+                cellYMax = std::floor(cellH * double(j+2) + 0.01);
+            }
+        } else {
+            int cells = 600;
+            float step = 1.f / float(cells);
+            double cellW = double(width) / double(cells);
+            double cellH = double(height) / double(cells);
+            double cellYMin = 0.;
+            double cellYMax = std::floor(cellH);
+            
+            float xa = 0.2653f / (0.7357f - 0.2653f);
+            float xb = -0.17f * xa;
+            float ax = (0.1f - 0.6f) / 0.07f;
+            float bx = 0.6f;
+            float ax0 = -0.1f / (0.17f - 0.07f);
+            float bx0 = -0.17f* ax0;
+            float axs = (0.2653f - 0.65f) / (0.7357f - 0.35f);
+            float bxs = 0.65f - axs * 0.35f;
+            float axss = (0.65f - 0.83f) / (0.35f - 0.1f);
+            float bxss = 0.65f - 0.35f * axss;
+            float bxsss = 0.65f;
+            float axsss = (0.83f - bxsss) / 0.05f;
+            float bx4s = 0.83f;
+            float ay = 0.4f;
+            float by = 0.4f;
+            for (int j = 0; j < cells; j++) {
+                double cellXMin = 0.;
+                double cellXMax = std::floor(cellW);
+                for (int i = 0; i < cells; i++) {
+                    float R, G, B;
+                    float XX, YY, ZZ;
+                    float x = 1.f * step * i - 0.05f;
+                    float y = 1.f * step * j - 0.05f;
+                    if(y > 0.5f) {
+                        YY = 0.6f;
+                    } else {
+                        YY = ay * y + by;
+                    }
+                    XX = (x * YY) / y;
+                    ZZ = ((1.f - x - y)* YY) / y;
+                    float yr = xa * x + xb;
+                    float y0 = ax0 * x + bx0;
+                    float y1 = ax * x + bx;
+                    float y2 = axs * x + bxs;
+                    float y3 = axss * x + bxss;
+                    float y4 = axsss * x + bxsss;
+                    float y5 = bx4s;
+                
+                    Color::xyz2srgb(XX, YY, ZZ, R, G, B);
+                    if(y < yr && x > 0.17f) {
+                        R = 0.7f; G = 0.7f; B = 0.7f;
+                    } 
+                    if(y < y0 && x <= 0.17f && x >= 0.07f) {
+                        R = 0.7f; G = 0.7f; B = 0.7f;
+                    }
+                    if(y < y1  && x < 0.07f) {
+                        R = 0.7f; G = 0.7f; B = 0.7f;
+                    }
+                    if(y > y2  && x > 0.35f) {
+                        R = 0.7f; G = 0.7f; B = 0.7f;
+                    }
+                    if(y > y3  && x <= 0.35f) {
+                        R = 0.7f; G = 0.7f; B = 0.7f;
+                    }
+                    if(y > y4  && x < 0.06f) {
+                        R = 0.7f; G = 0.7f; B = 0.7f;
+                    }
+                    if(y > y5  && x > 0.05f && x <= 0.1f) {
+                        R = 0.7f; G = 0.7f; B = 0.7f;
+                    }
+
+                    cr->set_source_rgb(R , G , B);
+
+                    cr->rectangle(
+                            cellXMin,
+                            cellYMin,
+                            cellXMax - cellXMin - (i == cells-1 ? 0. : 0.f * double(s)),
+                            cellYMax - cellYMin - (j == cells-1 ? 0. : 0.f * double(s))
+                            );
+                    cellXMin = cellXMax;
+                    cellXMax = std::floor(cellW * double(i+2) + 0.001);
+                    cr->fill();
+                }
+                cellYMin = cellYMax;
+                cellYMax = std::floor(cellH * double(j+2) + 0.001);
+            }
+        }
         // drawing the connection line
         cr->set_antialias(Cairo::ANTIALIAS_DEFAULT);
         float loa, hia, lob, hib;
@@ -235,11 +324,26 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         hia = .5 * (width + width * high_a);
         lob = .5 * (height + height * low_b);
         hib = .5 * (height + height * high_b);
-        cr->set_line_width(2. * double(s));
+        cr->set_line_width(2.f * double(s));
         cr->set_source_rgb(0.6, 0.6, 0.6);
         cr->move_to(loa, lob);
         cr->line_to(hia, hib);
         cr->stroke();
+
+        cr->set_line_width(0.2f * double(s));
+        cr->set_source_rgb(0.1, 0.1, 0.1);
+
+       for(int i = 0; i < 21; i++) {
+            cr->move_to(0.0476f + 0.0476f * i * width, 0.);
+            cr->line_to(0.0476f * i * width, height);
+        }
+        for(int i = 0; i < 21; i++) {
+            cr->move_to(0., 0.05f + 0.05f * i * height );
+            cr->line_to(width, 0.05f * i * height);
+        }
+
+        cr->stroke(); 
+
 
         // drawing points
         if (low_enabled) {
@@ -391,6 +495,10 @@ bool LabGridArea::lowEnabled() const
     return low_enabled;
 }
 
+bool LabGridArea::ciexyEnabled() const
+{
+    return ciexy_enabled;
+}
 
 void LabGridArea::setLowEnabled(bool yes)
 {
@@ -400,13 +508,20 @@ void LabGridArea::setLowEnabled(bool yes)
     }
 }
 
+void LabGridArea::setciexyEnabled(bool yes)
+{
+    if (ciexy_enabled != yes) {
+        ciexy_enabled = yes;
+        queue_draw();
+    }
+}
 
 //-----------------------------------------------------------------------------
 // LabGrid
 //-----------------------------------------------------------------------------
 
-LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low):
-    grid(evt, msg, enable_low)
+LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low, bool ciexy):
+    grid(evt, msg, enable_low, ciexy)
 {
     Gtk::Button *reset = Gtk::manage(new Gtk::Button());
     reset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));

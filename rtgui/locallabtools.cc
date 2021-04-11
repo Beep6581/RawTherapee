@@ -1132,7 +1132,7 @@ void LocallabColor::read(const rtengine::procparams::ProcParams* pp, const Param
                            spot.labgridAHigh / LocallabParams::LABGRIDL_CORR_MAX,
                            spot.labgridBHigh / LocallabParams::LABGRIDL_CORR_MAX,
                            false);
-
+        printf("labgridlow=%f \n", spot.labgridALow);
         if (spot.gridMethod == "one") {
             gridMethod->set_active(0);
         } else if (spot.gridMethod == "two") {

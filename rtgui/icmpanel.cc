@@ -25,6 +25,7 @@
 #include "options.h"
 #include "pathutils.h"
 #include "rtimage.h"
+#include "labgrid.h"
 
 #include "../rtengine/dcp.h"
 #include "../rtengine/iccstore.h"
@@ -64,6 +65,10 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     ipDialog->set_tooltip_text(M("TP_ICM_INPUTCUSTOM_TOOLTIP"));
     bindCurrentFolder(*ipDialog, options.lastIccDir);
 
+//    EvColorToningLabGridValue = m->newEvent(RGBCURVE, "HISTORY_MSG_COLORTONING_LABGRID_VALUE");
+    EvICMLabGridciexy = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICL_LABGRIDCIEXY");
+    labgridcie = Gtk::manage(new LabGrid(EvICMLabGridciexy, M("TP_ICM_LABGRID_CIEXY"), true, true));
+//    pack_start(*labgridcie, Gtk::PACK_EXPAND_WIDGET, 4);
 
     // ------------------------------- Input profile
 
@@ -312,6 +317,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     preser->setAdjusterListener(this);
     preBox = Gtk::manage(new Gtk::Box());
     preBox->pack_start(*preser, Gtk::PACK_SHRINK);
+    redVBox->pack_start(*labgridcie, Gtk::PACK_EXPAND_WIDGET, 4);
     redVBox->pack_start(*preBox, Gtk::PACK_EXPAND_WIDGET);    
     redFrame->add(*redVBox);
 
@@ -496,6 +502,12 @@ void ICMPanel::updateRenderingIntent(const Glib::ustring &profile)
 
     }
 }
+
+void ICMPanel::setListener(ToolPanelListener *tpl)
+{
+    labgridcie->setListener(tpl);
+}
+
 
 void ICMPanel::updateDCP(int dcpIlluminant, Glib::ustring dcp_name)
 {
@@ -812,6 +824,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         if (!pedited->icm.wprim) {
             wprim->set_active_text(M("GENERAL_UNCHANGED"));
         }
+        labgridcie->setEdited(pedited->icm.labgridcieALow || pedited->icm.labgridcieBLow || pedited->icm.labgridcieAHigh || pedited->icm.labgridcieBHigh);
 
         wGamma->setEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
         wSlope->setEditedState(pedited->icm.workingTRCSlope  ? Edited : UnEdited);
@@ -824,6 +837,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         preser->setEditedState(pedited->icm.preser  ? Edited : UnEdited);
 
     }
+    labgridcie->setParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh, false);
 
     if (pp->icm.workingTRC == "none") {
         wSlope->set_sensitive(false);
@@ -974,6 +988,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.workingTRC = wTRC->get_active_text();
     pp->icm.will = will->get_active_text();
     pp->icm.wprim = wprim->get_active_text();
+    labgridcie->getParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh);
 
     if (oProfNames->get_active_text() == M("TP_ICM_NOICM")) {
         pp->icm.outputProfile  = ColorManagementParams::NoICMString;
@@ -1093,6 +1108,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.wprim = wprim->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.redx = redx->getEditedState();
         pedited->icm.redy = redy->getEditedState();
+        pedited->icm.labgridcieALow = pedited->icm.labgridcieBLow = pedited->icm.labgridcieAHigh = pedited->icm.labgridcieBHigh = labgridcie->getEdited();
     }
 }
 
@@ -1107,6 +1123,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
     blux->setDefault(defParams->icm.blux);
     bluy->setDefault(defParams->icm.bluy);
     preser->setDefault(defParams->icm.preser);
+    labgridcie->setDefault(defParams->icm.labgridcieALow, defParams->icm.labgridcieBLow , defParams->icm.labgridcieAHigh, defParams->icm.labgridcieBHigh);
 
     if (pedited) {
         wGamma->setDefaultEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
@@ -1118,6 +1135,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
         blux->setDefaultEditedState(pedited->icm.blux ? Edited : UnEdited);
         bluy->setDefaultEditedState(pedited->icm.bluy ? Edited : UnEdited);
         preser->setDefaultEditedState(pedited->icm.preser ? Edited : UnEdited);
+        labgridcie->setEdited((pedited->icm.labgridcieALow || pedited->icm.labgridcieBLow || pedited->icm.labgridcieAHigh || pedited->icm.labgridcieBHigh) ? Edited : UnEdited);
 
     } else {
         wGamma->setDefaultEditedState(Irrelevant);
@@ -1129,6 +1147,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
         blux->setDefaultEditedState(Irrelevant);
         bluy->setDefaultEditedState(Irrelevant);
         preser->setDefaultEditedState(Irrelevant);
+        labgridcie->setEdited(Edited);
 
     }
 }

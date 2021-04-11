@@ -67,12 +67,13 @@ private:
     static const int inset = 5;
 
     bool low_enabled;
+    bool ciexy_enabled;
 
     bool notifyListener();
     void getLitPoint();
 
 public:
-    LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true);
+    LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false);
 
     void getParams(double &la, double &lb, double &ha, double &hb) const;
     void setParams(double la, double lb, double ha, double hb, bool notify);
@@ -84,6 +85,8 @@ public:
 
     bool lowEnabled() const;
     void setLowEnabled(bool yes);
+    bool ciexyEnabled() const;
+    void setciexyEnabled(bool yes);
 
     bool on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf) override;
     void on_style_updated () override;
@@ -103,7 +106,7 @@ private:
     bool resetPressed(GdkEventButton *event);
     
 public:
-    LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true);
+    LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_low=true, bool ciexy=false);
 
     void getParams(double &la, double &lb, double &ha, double &hb) const { return grid.getParams(la, lb, ha, hb); }
     void setParams(double la, double lb, double ha, double hb, bool notify) { grid.setParams(la, lb, ha, hb, notify); }
@@ -114,5 +117,7 @@ public:
     void setListener(ToolPanelListener *l) { grid.setListener(l); }
     bool lowEnabled() const { return grid.lowEnabled(); }
     void setLowEnabled(bool yes) { grid.setLowEnabled(yes); }
+    bool ciexyEnabled() const { return grid.ciexyEnabled(); }
+    void setciexyEnabled(bool yes) { grid.setciexyEnabled(yes); }
 };
 

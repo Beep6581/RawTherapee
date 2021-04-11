@@ -1714,6 +1714,10 @@ struct ColorManagementParams {
     double blux;
     double bluy;
     double preser;
+    double labgridcieALow;
+    double labgridcieBLow;
+    double labgridcieAHigh;
+    double labgridcieBHigh;
     RenderingIntent aRendIntent;
 
     Glib::ustring outputProfile;

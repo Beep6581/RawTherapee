@@ -35,6 +35,7 @@ public:
     virtual ~ICMPanelListener() = default;
     virtual void saveInputICCReference(const Glib::ustring& fname, bool apply_wb) = 0;
 };
+class LabGrid;
 
 class ICMPanel final :
     public ToolParamBlock,
@@ -110,6 +111,8 @@ private:
     Gtk::Box* preBox;
     Gtk::Box* iVBox;
     Gtk::Box* wTRCBox;
+    LabGrid *labgridcie;
+    rtengine::ProcEvent EvICMLabGridciexy;
 
     Gtk::CheckButton* obpc;
     Gtk::RadioButton* inone;
@@ -161,6 +164,7 @@ public:
     void setBatchMode(bool batchMode) override;
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
+    void setListener(ToolPanelListener *tpl) override;
 
     void wpChanged();
     void wtrcinChanged();

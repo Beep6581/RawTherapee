@@ -446,6 +446,11 @@ void ParamsEdited::set(bool v)
     icm.blux = v;
     icm.bluy = v;
     icm.preser = v;
+    icm.labgridcieALow = v;
+    icm.labgridcieBLow = v;
+    icm.labgridcieAHigh = v;
+    icm.labgridcieBHigh = v;
+    
     icm.aRendIntent = v;
     icm.workingTRC = v;
     icm.will = v;
@@ -1719,6 +1724,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.grey = icm.grey && p.icm.grey == other.icm.grey;
         icm.blux = icm.blux && p.icm.blux == other.icm.blux;
         icm.bluy = icm.bluy && p.icm.bluy == other.icm.bluy;
+        icm.labgridcieALow = icm.labgridcieALow && p.icm.labgridcieALow == other.icm.labgridcieALow;
+        icm.labgridcieBLow = icm.labgridcieBLow && p.icm.labgridcieBLow == other.icm.labgridcieBLow;
+        icm.labgridcieAHigh = icm.labgridcieAHigh && p.icm.labgridcieAHigh == other.icm.labgridcieAHigh;
+        icm.labgridcieBHigh = icm.labgridcieBHigh && p.icm.labgridcieBHigh == other.icm.labgridcieBHigh;
         icm.preser = icm.preser && p.icm.preser == other.icm.preser;
         icm.aRendIntent = icm.aRendIntent && p.icm.aRendIntent == other.icm.aRendIntent;
         icm.workingTRC = icm.workingTRC && p.icm.workingTRC == other.icm.workingTRC;
@@ -5734,6 +5743,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (icm.preser) {
         toEdit.icm.preser = mods.icm.preser;
+    }
+
+    if (icm.labgridcieALow) {
+        toEdit.icm.labgridcieALow = mods.icm.labgridcieALow;
+    }
+
+    if (icm.labgridcieBLow) {
+        toEdit.icm.labgridcieBLow = mods.icm.labgridcieBLow;
+    }
+
+    if (icm.labgridcieAHigh) {
+        toEdit.icm.labgridcieAHigh = mods.icm.labgridcieAHigh;
+    }
+
+    if (icm.labgridcieBHigh) {
+        toEdit.icm.labgridcieBHigh = mods.icm.labgridcieBHigh;
     }
 
     if (icm.aRendIntent) {

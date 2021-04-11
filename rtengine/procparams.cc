@@ -2227,6 +2227,10 @@ ColorManagementParams::ColorManagementParams() :
     blux(0.15),
     bluy(0.06),
     preser(0.),
+    labgridcieALow(0.0),
+    labgridcieBLow(0.0),
+    labgridcieAHigh(0.0),
+    labgridcieBHigh(0.0),
     aRendIntent(RI_RELATIVE),
     outputProfile(options.rtSettings.srgb),
     outputIntent(RI_RELATIVE),
@@ -2255,6 +2259,10 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && grey == other.grey
         && blux == other.blux
         && bluy == other.bluy
+        && labgridcieALow == other.labgridcieALow
+        && labgridcieBLow == other.labgridcieBLow
+        && labgridcieAHigh == other.labgridcieAHigh
+        && labgridcieBHigh == other.labgridcieBHigh
         && preser == other.preser
         && aRendIntent == other.aRendIntent
         && outputProfile == other.outputProfile
@@ -6502,6 +6510,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.grey, "Color Management", "Grey", icm.grey, keyFile);
         saveToKeyfile(!pedited || pedited->icm.blux, "Color Management", "Blux", icm.blux, keyFile);
         saveToKeyfile(!pedited || pedited->icm.bluy, "Color Management", "Bluy", icm.bluy, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.labgridcieALow, "Color Management", "LabGridcieALow", icm.labgridcieALow, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.labgridcieBLow, "Color Management", "LabGridcieBLow", icm.labgridcieBLow, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.labgridcieAHigh, "Color Management", "LabGridcieAHigh", icm.labgridcieAHigh, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.labgridcieBHigh, "Color Management", "LabGridcieBHigh", icm.labgridcieBHigh, keyFile);
         saveToKeyfile(!pedited || pedited->icm.preser, "Color Management", "Preser", icm.preser, keyFile);
         saveToKeyfile(!pedited || pedited->icm.outputProfile, "Color Management", "OutputProfile", icm.outputProfile, keyFile);
         saveToKeyfile(
@@ -8484,6 +8496,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "Blux", pedited, icm.blux, pedited->icm.blux);
             assignFromKeyfile(keyFile, "Color Management", "Bluy", pedited, icm.bluy, pedited->icm.bluy);
             assignFromKeyfile(keyFile, "Color Management", "Preser", pedited, icm.preser, pedited->icm.preser);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieALow", pedited, icm.labgridcieALow, pedited->icm.labgridcieALow);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieBLow", pedited, icm.labgridcieBLow, pedited->icm.labgridcieBLow);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieAHigh", pedited, icm.labgridcieAHigh, pedited->icm.labgridcieAHigh);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieBHigh", pedited, icm.labgridcieBHigh, pedited->icm.labgridcieBHigh);
             if (keyFile.has_key("Color Management", "aIntent")) {
                 Glib::ustring intent = keyFile.get_string("Color Management", "aIntent");
 
