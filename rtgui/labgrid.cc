@@ -240,13 +240,13 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
             double cellYMin = 0.;
             double cellYMax = std::floor(cellH);
             
-            float xa = 0.2653f / (0.7357f - 0.2653f);
+            float xa = 0.2653f / (0.7347f - 0.17f);
             float xb = -0.17f * xa;
             float ax = (0.1f - 0.6f) / 0.07f;
             float bx = 0.6f;
             float ax0 = -0.1f / (0.17f - 0.07f);
             float bx0 = -0.17f* ax0;
-            float axs = (0.2653f - 0.65f) / (0.7357f - 0.35f);
+            float axs = (0.2653f - 0.65f) / (0.7347f - 0.35f);
             float bxs = 0.65f - axs * 0.35f;
             float axss = (0.65f - 0.83f) / (0.35f - 0.1f);
             float bxss = 0.65f - 0.35f * axss;
@@ -261,8 +261,8 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                 for (int i = 0; i < cells; i++) {
                     float R, G, B;
                     float XX, YY, ZZ;
-                    float x = 1.f * step * i - 0.05f;
-                    float y = 1.f * step * j - 0.05f;
+                    float x = 1.f * step * i;
+                    float y = 1.f * step * j;
                     if(y > 0.5f) {
                         YY = 0.6f;
                     } else {
@@ -333,12 +333,12 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         cr->set_line_width(0.2f * double(s));
         cr->set_source_rgb(0.1, 0.1, 0.1);
 
-       for(int i = 0; i < 21; i++) {
-            cr->move_to(0.0476f + 0.0476f * i * width, 0.);
-            cr->line_to(0.0476f * i * width, height);
+       for(int i = 0; i < 20; i++) {
+            cr->move_to(0.05f * i * width, 0.);
+            cr->line_to(0.05f * i * width, height);
         }
-        for(int i = 0; i < 21; i++) {
-            cr->move_to(0., 0.05f + 0.05f * i * height );
+        for(int i = 0; i < 20; i++) {
+            cr->move_to(0., 0.05f * i * height );
             cr->line_to(width, 0.05f * i * height);
         }
 
