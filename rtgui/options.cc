@@ -413,6 +413,8 @@ void Options::setDefaults()
     gimpDir = "";
     psDir = "";
     customEditorProg = "";
+    externalEditors.clear();
+    externalEditorIndex = -1;
     CPBKeys = CPBKT_TID;
     editorToSendTo = 1;
     favoriteDirs.clear();
@@ -808,6 +810,7 @@ void Options::readFromFile(Glib::ustring fname)
                 }
             }
 
+            // TODO: Remove.
             if (keyFile.has_group("External Editor")) {
                 if (keyFile.has_key("External Editor", "EditorKind")) {
                     editorToSendTo = keyFile.get_integer("External Editor", "EditorKind");
@@ -823,6 +826,138 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("External Editor", "CustomEditor")) {
                     customEditorProg = keyFile.get_string("External Editor", "CustomEditor");
+                }
+            }
+
+            if (keyFile.has_group("External Editor")) {
+                if (keyFile.has_key("External Editor", "Names")
+                        || keyFile.has_key("External Editor", "Commands")
+                        || keyFile.has_key("External Editor", "IconNames")) {
+                    // Multiple external editors.
+
+                    const auto & names =
+                        !keyFile.has_key("External Editor", "Names") ?
+                            std::vector<Glib::ustring>() :
+                            static_cast<std::vector<Glib::ustring>>(
+                                keyFile.get_string_list("External Editor", "Names"));
+                    const auto & commands =
+                        !keyFile.has_key("External Editor", "Commands") ?
+                            std::vector<Glib::ustring>() :
+                            static_cast<std::vector<Glib::ustring>>(
+                                keyFile.get_string_list("External Editor", "Commands"));
+                    const auto & icon_names =
+                        !keyFile.has_key("External Editor", "IconNames") ?
+                            std::vector<Glib::ustring>() :
+                            static_cast<std::vector<Glib::ustring>>(
+                                keyFile.get_string_list("External Editor", "IconNames"));
+                    externalEditors = std::vector<ExternalEditor>(std::max(std::max(
+                        names.size(), commands.size()), icon_names.size()));
+                    for (unsigned i = 0; i < names.size(); i++) {
+                        externalEditors[i].name = names[i];
+                    }
+                    for (unsigned i = 0; i < commands.size(); i++) {
+                        externalEditors[i].command = commands[i];
+                    }
+                    for (unsigned i = 0; i < icon_names.size(); i++) {
+                        externalEditors[i].icon_name = icon_names[i];
+                    }
+
+                    if (keyFile.has_key("External Editor", "EditorIndex")) {
+                        int index = keyFile.get_integer("External Editor", "EditorIndex");
+                        externalEditorIndex = std::min(
+                            std::max(-1, index),
+                            static_cast<int>(externalEditors.size())
+                        );
+                    }
+                } else if (keyFile.has_key("External Editor", "EditorKind")) {
+                    // Legacy fixed external editors. Convert to flexible.
+
+                    // GIMP == 1, Photoshop == 2, Custom == 3.
+                    editorToSendTo = keyFile.get_integer("External Editor", "EditorKind");
+
+ #ifdef WIN32
+                    Glib::ustring gimpDir = "";
+                    if (keyFile.has_key("External Editor", "GimpDir")) {
+                        gimpDir = keyFile.get_string("External Editor", "GimpDir");
+                    }
+                    auto executable = Glib::build_filename(options.gimpDir, "bin", "gimp-win-remote");
+                    if (Glib::file_test(executable, Glib::FILE_TEST_IS_EXECUTABLE)) {
+                        if (editorToSendTo == 1) {
+                            externalEditorIndex = externalEditors.size();
+                        }
+                        externalEditors.push_back(ExternalEditor("GIMP", executable, "gimp"));
+                    } else {
+                        for (auto ver = 12; ver >= 0; --ver) {
+                            executable = Glib::build_filename(gimpDir, "bin", Glib::ustring::compose(Glib::ustring("gimp-2.%1.exe"), ver));
+                            if (Glib::file_test(executable, Glib::FILE_TEST_IS_EXECUTABLE)) {
+                                if (editorToSendTo == 1) {
+                                    externalEditorIndex = externalEditors.size();
+                                }
+                                externalEditors.push_back(ExternalEditor("GIMP", executable, "gimp"));
+                                break;
+                            }
+                        }
+                    }
+
+                    Glib::ustring psDir = "";
+                    if (keyFile.has_key("External Editor", "PhotoshopDir")) {
+                        psDir = keyFile.get_string("External Editor", "PhotoshopDir");
+                    }
+                    auto executable = Glib::build_filename(psDir, "Photoshop.exe");
+                    if (Glib::file_test(executable, Glib::FILE_TEST_IS_EXECUTABLE)) {
+                        if (editorToSendTo == 2) {
+                            externalEditorIndex = externalEditors.size();
+                        }
+                        externalEditors.push_back(ExternalEditor("Photoshop", executable, ""));
+                    }
+
+                    if (keyFile.has_key("External Editor", "CustomEditor")) {
+                        executable = keyFile.get_string("External Editor", "CustomEditor");
+                        if (editorToSendTo == 3) {
+                            externalEditorIndex = externalEditors.size();
+                        }
+                        externalEditors.push_back(ExternalEditor("-", executable, "");
+                    }
+ #elif defined __APPLE__
+                    if (editorToSendTo == 1) {
+                        externalEditorIndex = externalEditors.size();
+                    }
+                    externalEditors.push_back(ExternalEditor("GIMP", "open -a GIMP", "gimp"));
+                    externalEditors.push_back(ExternalEditor("GIMP-dev", "open -a GIMP-dev", "gimp"));
+
+                    if (editorToSendTo == 2) {
+                        externalEditorIndex = externalEditors.size();
+                    }
+                    externalEditors.push_back(ExternalEditor("Photoshop", "open -a Photoshop", ""));
+
+                    if (keyFile.has_key("External Editor", "CustomEditor")) {
+                        auto executable = keyFile.get_string("External Editor", "CustomEditor");
+                        if (editorToSendTo == 3) {
+                            externalEditorIndex = externalEditors.size();
+                        }
+                        externalEditors.push_back(ExternalEditor("-", executable, ""));
+                    }
+ #else
+                    if (Glib::find_program_in_path("gimp").compare("")) {
+                        if (editorToSendTo == 1) {
+                            externalEditorIndex = externalEditors.size();
+                        }
+                        externalEditors.push_back(ExternalEditor("GIMP", "gimp", "gimp"));
+                    } else if (Glib::find_program_in_path("gimp-remote").compare("")) {
+                        if (editorToSendTo == 1) {
+                            externalEditorIndex = externalEditors.size();
+                        }
+                        externalEditors.push_back(ExternalEditor("GIMP", "gimp-remote", "gimp"));
+                    }
+
+                    if (keyFile.has_key("External Editor", "CustomEditor")) {
+                        auto executable = keyFile.get_string("External Editor", "CustomEditor");
+                        if (editorToSendTo == 3) {
+                            externalEditorIndex = externalEditors.size();
+                        }
+                        externalEditors.push_back(ExternalEditor("-", executable, ""));
+                    }
+ #endif
                 }
             }
 
@@ -2111,10 +2246,29 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("General", "Detectshape", rtSettings.detectshape);
         keyFile.set_boolean("General", "Fftwsigma", rtSettings.fftwsigma);
 
+        // TODO: Remove.
         keyFile.set_integer("External Editor", "EditorKind", editorToSendTo);
         keyFile.set_string("External Editor", "GimpDir", gimpDir);
         keyFile.set_string("External Editor", "PhotoshopDir", psDir);
         keyFile.set_string("External Editor", "CustomEditor", customEditorProg);
+
+        {
+        std::vector<Glib::ustring> names;
+        std::vector<Glib::ustring> commands;
+        std::vector<Glib::ustring> icon_names;
+
+        for (const auto & editor : externalEditors) {
+            names.push_back(editor.name);
+            commands.push_back(editor.command);
+            icon_names.push_back(editor.icon_name);
+        }
+
+        keyFile.set_string_list("External Editor", "Names", names);
+        keyFile.set_string_list("External Editor", "Commands", commands);
+        keyFile.set_string_list("External Editor", "IconNames", icon_names);
+
+        keyFile.set_integer("External Editor", "EditorIndex", externalEditorIndex);
+        }
 
         keyFile.set_boolean("File Browser", "BrowseOnlyRaw", fbOnlyRaw);
         keyFile.set_boolean("File Browser", "BrowserShowsDate", fbShowDateTime);
@@ -2777,4 +2931,20 @@ Glib::ustring Options::getICCProfileCopyright()
     Glib::Date now;
     now.set_time_current();
     return Glib::ustring::compose("Copyright RawTherapee %1, CC0", now.get_year());
+}
+
+ExternalEditor::ExternalEditor() {}
+
+ExternalEditor::ExternalEditor(
+    const Glib::ustring &name, const Glib::ustring &command, const Glib::ustring &icon_name
+): name(name), command(command), icon_name(icon_name) {}
+
+bool ExternalEditor::operator==(const ExternalEditor &other) const
+{
+    return this->name == other.name && this->command == other.command && this->icon_name == other.icon_name;
+}
+
+bool ExternalEditor::operator!=(const ExternalEditor &other) const
+{
+    return !(*this == other);
 }

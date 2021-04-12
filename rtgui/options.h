@@ -52,6 +52,17 @@
 // Special name for the Dynamic profile
 #define DEFPROFILE_DYNAMIC  "Dynamic"
 
+struct ExternalEditor {
+    ExternalEditor();
+    ExternalEditor(const Glib::ustring &name, const Glib::ustring &command, const Glib::ustring &icon_name);
+    Glib::ustring name;
+    Glib::ustring command;
+    Glib::ustring icon_name;
+
+    bool operator==(const ExternalEditor & other) const;
+    bool operator!=(const ExternalEditor & other) const;
+};
+
 struct SaveFormat {
     SaveFormat(
         const Glib::ustring& _format,
@@ -277,6 +288,8 @@ public:
     Glib::ustring gimpDir;
     Glib::ustring psDir;
     Glib::ustring customEditorProg;
+    std::vector<ExternalEditor> externalEditors;
+    int externalEditorIndex;
     Glib::ustring CPBPath; // Custom Profile Builder's path
     CPBKeyType CPBKeys; // Custom Profile Builder's key type
     int editorToSendTo;
