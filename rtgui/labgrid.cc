@@ -261,8 +261,8 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                 for (int i = 0; i < cells; i++) {
                     float R, G, B;
                     float XX, YY, ZZ;
-                    float x = 1.f * step * i;
-                    float y = 1.f * step * j;
+                    float x = 1.1f * step * i - 0.1f;
+                    float y = 1.1f * step * j - 0.1;
                     if(y > 0.5f) {
                         YY = 0.6f;
                     } else {
@@ -333,15 +333,22 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         cr->set_line_width(0.2f * double(s));
         cr->set_source_rgb(0.1, 0.1, 0.1);
 
-       for(int i = 0; i < 20; i++) {
-            cr->move_to(0.05f * i * width, 0.);
-            cr->line_to(0.05f * i * width, height);
+       for(int i = 0; i < 22; i++) {
+            cr->move_to(0.04545f * i * width, 0.);
+            cr->line_to(0.04545f * i * width, height);
         }
-        for(int i = 0; i < 20; i++) {
-            cr->move_to(0., 0.05f * i * height );
-            cr->line_to(width, 0.05f * i * height);
+        for(int i = 0; i < 22; i++) {
+            cr->move_to(0., 0.04545f * i * height );
+            cr->line_to(width, 0.04545f * i * height);
         }
 
+        cr->stroke(); 
+        cr->set_line_width(1.f * double(s));
+        cr->set_source_rgb(0.4, 0., 0.);
+        cr->move_to(0.04545f * 2 * width, 0.);
+        cr->line_to(0.04545f * 2 * width, height);
+        cr->move_to(0., 0.04545f * 2 * height );
+        cr->line_to(width, 0.04545f * 2 * height);
         cr->stroke(); 
 
 

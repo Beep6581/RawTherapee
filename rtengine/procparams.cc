@@ -2227,10 +2227,10 @@ ColorManagementParams::ColorManagementParams() :
     blux(0.15),
     bluy(0.06),
     preser(0.),
-    labgridcieALow(0.0),
-    labgridcieBLow(0.0),
-    labgridcieAHigh(0.0),
-    labgridcieBHigh(0.0),
+    labgridcieALow(0.51763),//Prophoto red = (0.7347+0.1) * 1.81818 - 1
+    labgridcieBLow(-0.33582),
+    labgridcieAHigh(-0.75163),//Prophoto blue
+    labgridcieBHigh(-0.8180),
     aRendIntent(RI_RELATIVE),
     outputProfile(options.rtSettings.srgb),
     outputIntent(RI_RELATIVE),
