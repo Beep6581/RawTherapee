@@ -88,7 +88,7 @@ void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb) cons
     ha = high_a;
     lb = low_b;
     hb = high_b;
-    printf("la=%f ha=%f lb=%f hb=%f\n", la, ha, lb, hb);
+  //  printf("la=%f ha=%f lb=%f hb=%f\n", la, ha, lb, hb);
 }
 
 
@@ -118,7 +118,7 @@ void LabGridArea::setDefault (double la, double lb, double ha, double hb)
 void LabGridArea::reset(bool toInitial)
 {
     if (toInitial) {
-        setParams(defaultLow_a, defaultLow_b, defaultHigh_a, defaultHigh_b, true);
+        setParams(defaultLow_a, defaultLow_b, defaultHigh_a, defaultHigh_b,  true);
     } else {
         setParams(0., 0., 0., 0., true);
     }
@@ -330,26 +330,28 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         cr->line_to(hia, hib);
         cr->stroke();
 
-        cr->set_line_width(0.2f * double(s));
-        cr->set_source_rgb(0.1, 0.1, 0.1);
+        if (ciexy_enabled) {
+            cr->set_line_width(0.2f * double(s));
+            cr->set_source_rgb(0.1, 0.1, 0.1);
 
-       for(int i = 0; i < 22; i++) {
-            cr->move_to(0.04545f * i * width, 0.);
-            cr->line_to(0.04545f * i * width, height);
-        }
-        for(int i = 0; i < 22; i++) {
-            cr->move_to(0., 0.04545f * i * height );
-            cr->line_to(width, 0.04545f * i * height);
-        }
+            for(int i = 0; i < 22; i++) {
+                cr->move_to(0.04545f * i * width, 0.);
+                cr->line_to(0.04545f * i * width, height);
+            }
+            for(int i = 0; i < 22; i++) {
+                cr->move_to(0., 0.04545f * i * height );
+                cr->line_to(width, 0.04545f * i * height);
+            }
 
-        cr->stroke(); 
-        cr->set_line_width(1.f * double(s));
-        cr->set_source_rgb(0.4, 0., 0.);
-        cr->move_to(0.04545f * 2 * width, 0.);
-        cr->line_to(0.04545f * 2 * width, height);
-        cr->move_to(0., 0.04545f * 2 * height );
-        cr->line_to(width, 0.04545f * 2 * height);
-        cr->stroke(); 
+            cr->stroke(); 
+            cr->set_line_width(1.f * double(s));
+            cr->set_source_rgb(0.4, 0., 0.);
+            cr->move_to(0.04545f * 2 * width, 0.);
+            cr->line_to(0.04545f * 2 * width, height);
+            cr->move_to(0., 0.04545f * 2 * height );
+            cr->line_to(width, 0.04545f * 2 * height);
+            cr->stroke(); 
+        }
 
 
         // drawing points

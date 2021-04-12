@@ -1342,6 +1342,7 @@ HISTORY_MSG_ICM_GREX;Primaries Green X
 HISTORY_MSG_ICM_GREY;Primaries Green Y
 HISTORY_MSG_ICM_BLUX;Primaries Blue X
 HISTORY_MSG_ICM_BLUY;Primaries Blue Y
+HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy Red - Blue
 HISTORY_MSG_ICM_AINTENT;Abstract profile intent
 HISTORY_MSG_ILLUM;Illuminant
 HISTORY_MSG_ICM_PRESER;Preserve neutral
@@ -2419,6 +2420,7 @@ TP_ICM_INPUTNONE;No profile
 TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all.\nUse only in special cases.
 TP_ICM_INPUTPROFILE;Input Profile
 TP_ICM_LABEL;Color Management
+TP_ICM_LABGRID_CIEXY;Red(x)=%1 Red(y)=%2\nBlue(x)=%3 Blue(y)=%4
 TP_ICM_NOICM;No ICM: sRGB Output
 TP_ICM_OUTPUTPROFILE;Output Profile
 TP_ICM_OUTPUTPROFILE_TOOLTIP;By default all RTv4 or RTv2 profiles are with TRC - sRGB: g=2.4 s=12.92\n\nWith 'ICC Profile Creator' you can generate v4 or v2 profiles with the following choices;\n-Primaries: Aces AP0, Aces AP1, AdobeRGB, Prophoto, Rec2020, sRGB, Widegamut, BestRGB, BetaRGB, BruceRGB, Custom\n-TRC: BT709, sRGB, linear, standard g=2.2, standard g=1.8, Custom\n-Illuminant: D41, D50, D55, D60, D65, D80, stdA 2856K

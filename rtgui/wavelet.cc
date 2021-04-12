@@ -1749,7 +1749,7 @@ void Wavelet::read(const ProcParams* pp, const ParamsEdited* pedited)
     strend->setValue(pp->wavelet.strend);
     detend->setValue(pp->wavelet.detend);
     thrend->setValue(pp->wavelet.thrend);
-    labgrid->setParams(pp->wavelet.labgridALow / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridBLow / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridAHigh / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridBHigh / WaveletParams::LABGRID_CORR_MAX, false);
+    labgrid->setParams(pp->wavelet.labgridALow / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridBLow / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridAHigh / WaveletParams::LABGRID_CORR_MAX, pp->wavelet.labgridBHigh / WaveletParams::LABGRID_CORR_MAX,  false);
 
     sigm->setValue(pp->wavelet.sigm);
     levden->setValue(pp->wavelet.levden);
