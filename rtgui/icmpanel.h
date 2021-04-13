@@ -26,6 +26,7 @@
 #include "guiutils.h"
 #include "popupbutton.h"
 #include "toolpanel.h"
+#include "labgrid.h"
 
 #include "../rtengine/imagedata.h"
 
@@ -35,7 +36,7 @@ public:
     virtual ~ICMPanelListener() = default;
     virtual void saveInputICCReference(const Glib::ustring& fname, bool apply_wb) = 0;
 };
-class LabGrid;
+
 
 class ICMPanel final :
     public ToolParamBlock,
@@ -100,6 +101,10 @@ private:
     rtengine::ProcEvent EvICMbluy;
     rtengine::ProcEvent EvaIntent;
     rtengine::ProcEvent EvICMpreser;
+    rtengine::ProcEvent EvICMLabGridciexy;
+
+    LabGrid *labgridcie;
+
     Gtk::Box* willuBox;
     Gtk::Label* willulab;
     Gtk::Box* wprimBox;
@@ -111,8 +116,6 @@ private:
     Gtk::Box* preBox;
     Gtk::Box* iVBox;
     Gtk::Box* wTRCBox;
-    LabGrid *labgridcie;
-    rtengine::ProcEvent EvICMLabGridciexy;
 
     Gtk::CheckButton* obpc;
     Gtk::RadioButton* inone;
@@ -150,7 +153,8 @@ private:
     sigc::connection ipc;
     Glib::ustring oldip;
     ICMPanelListener* icmplistener;
-
+    ToolPanelListener* icmtoollistener;
+    
     double dcpTemperatures[2];
     Glib::ustring lastRefFilename;
     Glib::ustring camName;
@@ -164,7 +168,6 @@ public:
     void setBatchMode(bool batchMode) override;
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
-    void setListener(ToolPanelListener *tpl) override;
 
     void wpChanged();
     void wtrcinChanged();
@@ -184,9 +187,12 @@ public:
 
     void setRawMeta(bool raw, const rtengine::FramesData* pMeta);
     void saveReferencePressed();
+//    void setListener(ToolPanelListener* tpl) override;
 
     void setICMPanelListener(ICMPanelListener* ipl)
     {
         icmplistener = ipl;
     }
+
 };
+

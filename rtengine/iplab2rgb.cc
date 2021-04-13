@@ -492,10 +492,22 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 
     float redxx = params->icm.redx;
     float redyy = params->icm.redy;
-    float grexx = params->icm.grex;
-    float greyy = params->icm.grey;
     float bluxx = params->icm.blux;
     float bluyy = params->icm.bluy;
+   // if(params->icm.wprim == "cusgr") {
+    if(prim == 8) {
+        printf("OK grap\n");
+        float redgraphx =  params->icm.labgridcieALow;//(0.51763),//Prophoto red = (0.7347+0.1) * 1.81818 - 1
+        float redgraphy =  params->icm.labgridcieBLow;//(-0.33582),
+        float blugraphx =  params->icm.labgridcieAHigh;//(-0.75163),//Prophoto blue
+        float blugraphy =  params->icm.labgridcieBHigh;//(-0.8180),
+        redxx = 0.55f * (redgraphx + 1.f) - 0.1f;
+        redyy = 0.55f * (redgraphy + 1.f) - 0.1f;
+        bluxx = 0.55f * (blugraphx + 1.f) - 0.1f;
+        bluyy = 0.55f * (blugraphy + 1.f) - 0.1f;
+    }
+    float grexx = params->icm.grex;
+    float greyy = params->icm.grey;
 
     if(prim != 0) {
         if(prim == 1) {
@@ -510,7 +522,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             profile = "ACESp1";
         } else if(prim == 6) {
             profile = "WideGamut";
-        } else if(prim == 7) {
+        } else if(prim == 7 || prim == 8) {
             profile = "Custom";
         }
     }

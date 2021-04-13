@@ -1629,6 +1629,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     prim = 6; 
                 } else if(params->icm.wprim == "cus"){
                     prim = 7; 
+                } else if(params->icm.wprim == "cusgr"){
+                    prim = 8; 
                 }
                 Glib::ustring prof = params->icm.workingProfile;
                 cmsHTRANSFORM dummy = nullptr;

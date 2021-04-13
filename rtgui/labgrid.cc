@@ -355,23 +355,25 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
 
 
         // drawing points
-        if (low_enabled) {
-            cr->set_source_rgb(0.1, 0.1, 0.1);
-            if (litPoint == LOW) {
-                cr->arc(loa, lob, 5 * s, 0, 2. * rtengine::RT_PI);
+       if (! ciexy_enabled) {//to re-enabled if someone found a solution with setListener(ToolPanelListener* tpl)
+            if (low_enabled) {
+                cr->set_source_rgb(0.1, 0.1, 0.1);
+                if (litPoint == LOW) {
+                    cr->arc(loa, lob, 5 * s, 0, 2. * rtengine::RT_PI);
+                } else {
+                    cr->arc(loa, lob, 3 * s, 0, 2. * rtengine::RT_PI);
+                }
+                cr->fill();
+            }
+
+            cr->set_source_rgb(0.9, 0.9, 0.9);
+            if (litPoint == HIGH) {
+                cr->arc(hia, hib, 5 * s, 0, 2. * rtengine::RT_PI);
             } else {
-                cr->arc(loa, lob, 3 * s, 0, 2. * rtengine::RT_PI);
+                cr->arc(hia, hib, 3 * s, 0, 2. * rtengine::RT_PI);
             }
             cr->fill();
         }
-
-        cr->set_source_rgb(0.9, 0.9, 0.9);
-        if (litPoint == HIGH) {
-            cr->arc(hia, hib, 5 * s, 0, 2. * rtengine::RT_PI);
-        } else {
-            cr->arc(hia, hib, 3 * s, 0, 2. * rtengine::RT_PI);
-        }
-        cr->fill();
     }
 
     copySurface(crf);
@@ -534,7 +536,9 @@ LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_
 {
     Gtk::Button *reset = Gtk::manage(new Gtk::Button());
     reset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));
-    reset->add(*Gtk::manage(new RTImage("undo-small.png", "redo-small.png")));
+    if (! ciexy){//to re-enabled if someone found a solution with setListener(ToolPanelListener* tpl)
+        reset->add(*Gtk::manage(new RTImage("undo-small.png", "redo-small.png")));
+    }
     reset->signal_button_release_event().connect(sigc::mem_fun(*this, &LabGrid::resetPressed));
 
     setExpandAlignProperties(reset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
