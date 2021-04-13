@@ -342,7 +342,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         if (ciexy_enabled) {
             cr->set_line_width(0.2f * double(s));
             cr->set_source_rgb(0.1, 0.1, 0.1);
-
+            //draw horiz and vertical lines
             for(int i = 0; i < 22; i++) {
                 cr->move_to(0.04545f * i * width, 0.);
                 cr->line_to(0.04545f * i * width, height);
@@ -353,6 +353,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
             }
 
             cr->stroke(); 
+            //draw abciss and ordonate
             cr->set_line_width(1.f * double(s));
             cr->set_source_rgb(0.4, 0., 0.);
             cr->move_to(0.04545f * 2 * width, 0.);
@@ -361,10 +362,11 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
             cr->line_to(width, 0.04545f * 2 * height);
             cr->stroke(); 
 
-            cr->set_line_width(1.5f * double(s));
+            //draw 0 and 1
+            cr->set_line_width(1.2f * double(s));
             cr->set_source_rgb(0.4, 0., 0.);
-            cr->arc(0.07 * width, 0.07 * height, 7 * s, 0, 2. * rtengine::RT_PI);
-            cr->stroke();             
+            cr->arc(0.06 * width, 0.06 * height, 7 * s, 0, 2. * rtengine::RT_PI);
+            cr->stroke();
             cr->set_line_width(1.5f * double(s));
             cr->set_source_rgb(0.4, 0., 0.);
             cr->move_to(0.985 * width, 0.085 * height);
@@ -373,13 +375,10 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
             cr->move_to(0.07 * width, 0.99 * height);
             cr->line_to(0.07 * width,  0.965 * height);
 
-            cr->stroke();             
+            cr->stroke();
              
         }
 
-             //   cr->set_source_rgb(0.4, 0., 0.);
-            //    cr->arc(0.06 * width, 0.06 * height, 6 * s, 0, 2. * rtengine::RT_PI);
-             //   cr->stroke();             
 
         // drawing points
        if (! ciexy_enabled) {//to re-enabled if someone found a solution with setListener(ToolPanelListener* tpl)
