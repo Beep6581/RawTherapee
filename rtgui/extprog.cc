@@ -339,3 +339,8 @@ bool ExtProgStore::openInCustomEditor (const Glib::ustring& fileName)
 #endif
 
 }
+
+bool ExtProgStore::openInExternalEditor(const Glib::ustring &fileName, const Glib::RefPtr<Gio::AppInfo> &editorInfo)
+{
+    return editorInfo->launch(Gio::File::create_for_path(fileName));
+}
