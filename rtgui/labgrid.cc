@@ -362,15 +362,15 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
             cr->line_to(width, 0.04545f * 2 * height);
             cr->stroke(); 
 
-            //draw 0 and 1
+            //draw 0 and 1 with circle and lines
             cr->set_line_width(1.2f * double(s));
             cr->set_source_rgb(0.4, 0., 0.);
-            cr->arc(0.06 * width, 0.06 * height, 7 * s, 0, 2. * rtengine::RT_PI);
+            cr->arc(0.06 * width, 0.06 * height, 0.016 * width, 0, 2. * rtengine::RT_PI);
             cr->stroke();
             cr->set_line_width(1.5f * double(s));
             cr->set_source_rgb(0.4, 0., 0.);
-            cr->move_to(0.985 * width, 0.085 * height);
-            cr->line_to(0.985* width,  0.06 * height);
+            cr->move_to(0.985 * width, 0.08 * height);
+            cr->line_to(0.985* width,  0.055 * height);
 
             cr->move_to(0.07 * width, 0.99 * height);
             cr->line_to(0.07 * width,  0.965 * height);
