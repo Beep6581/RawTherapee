@@ -1467,12 +1467,27 @@ TextOrIcon::TextOrIcon (const Glib::ustring &fname, const Glib::ustring &labelTx
 
 MyImageMenuItem::MyImageMenuItem(Glib::ustring label, Glib::ustring imageFileName)
 {
+    RTImage* itemImage = nullptr;
+
+    if (!imageFileName.empty()) {
+        itemImage = Gtk::manage(new RTImage(imageFileName));
+    }
+
+    construct(label, itemImage);
+}
+
+MyImageMenuItem::MyImageMenuItem(Glib::ustring label, RTImage* itemImage) {
+    construct(label, itemImage);
+}
+
+void MyImageMenuItem::construct(Glib::ustring label, RTImage* itemImage)
+{
     box = Gtk::manage (new Gtk::Grid());
     this->label = Gtk::manage( new Gtk::Label(label));
     box->set_orientation(Gtk::ORIENTATION_HORIZONTAL);
 
-    if (!imageFileName.empty()) {
-        image = Gtk::manage( new RTImage(imageFileName) );
+    if (itemImage) {
+        image = itemImage;
         box->attach_next_to(*image, Gtk::POS_LEFT, 1, 1);
     } else {
         image = nullptr;
