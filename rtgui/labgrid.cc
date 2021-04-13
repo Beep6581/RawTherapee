@@ -169,6 +169,15 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
     Gtk::Border padding = getPadding(style);  // already scaled
     Cairo::RefPtr<Cairo::Context> cr = getContext();
 
+/*
+        Glib::RefPtr<Pango::Context> pangoContext = get_pango_context ();
+        Pango::FontDescription fontd = pangoContext->get_font_description();
+        fontd.set_family(options.CPFontFamily == "default" ? "sans" : options.CPFontFamily);
+        fontd.set_size((options.CPFontFamily == "default" ? 8 : options.CPFontSize) * Pango::SCALE);
+        fontd.set_weight(Pango::WEIGHT_NORMAL);
+        pangoContext->set_font_description (fontd);
+*/
+
     if (isDirty()) {
         int width = allocation.get_width();
         int height = allocation.get_height();
@@ -351,8 +360,26 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
             cr->move_to(0., 0.04545f * 2 * height );
             cr->line_to(width, 0.04545f * 2 * height);
             cr->stroke(); 
+
+            cr->set_line_width(1.5f * double(s));
+            cr->set_source_rgb(0.4, 0., 0.);
+            cr->arc(0.07 * width, 0.07 * height, 7 * s, 0, 2. * rtengine::RT_PI);
+            cr->stroke();             
+            cr->set_line_width(1.5f * double(s));
+            cr->set_source_rgb(0.4, 0., 0.);
+            cr->move_to(0.985 * width, 0.085 * height);
+            cr->line_to(0.985* width,  0.06 * height);
+
+            cr->move_to(0.07 * width, 0.99 * height);
+            cr->line_to(0.07 * width,  0.965 * height);
+
+            cr->stroke();             
+             
         }
 
+             //   cr->set_source_rgb(0.4, 0., 0.);
+            //    cr->arc(0.06 * width, 0.06 * height, 6 * s, 0, 2. * rtengine::RT_PI);
+             //   cr->stroke();             
 
         // drawing points
        if (! ciexy_enabled) {//to re-enabled if someone found a solution with setListener(ToolPanelListener* tpl)
