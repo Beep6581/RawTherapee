@@ -381,7 +381,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
 
 
         // drawing points
- //      if (! ciexy_enabled) {//to re-enabled if someone found a solution with setListener(ToolPanelListener* tpl)
+ //      if (! ciexy_enabled) {
             if (low_enabled) {
                 cr->set_source_rgb(0.1, 0.1, 0.1);
                 if (litPoint == LOW) {
@@ -562,9 +562,7 @@ LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_
 {
     Gtk::Button *reset = Gtk::manage(new Gtk::Button());
     reset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));
-   // if (! ciexy){//to re-enabled if someone found a solution with setListener(ToolPanelListener* tpl)
-        reset->add(*Gtk::manage(new RTImage("undo-small.png", "redo-small.png")));
-   // }
+    reset->add(*Gtk::manage(new RTImage("undo-small.png", "redo-small.png")));
     reset->signal_button_release_event().connect(sigc::mem_fun(*this, &LabGrid::resetPressed));
 
     setExpandAlignProperties(reset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);

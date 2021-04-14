@@ -1646,25 +1646,38 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
                 
                 delete tmpImage1;
+                if(prim == 8) {
+                    float redgraphx =  params->icm.labgridcieALow;
+                    float redgraphy =  params->icm.labgridcieBLow;
+                    float blugraphx =  params->icm.labgridcieAHigh;
+                    float blugraphy =  params->icm.labgridcieBHigh;
+                    float redxx = 0.55f * (redgraphx + 1.f) - 0.1f;
+                    redxx = rtengine::LIM(redxx, 0.41f, 1.f);
+                    float redyy = 0.55f * (redgraphy + 1.f) - 0.1f;
+                    redyy = rtengine::LIM(redyy, 0.f, 0.7f);
+                    float bluxx = 0.55f * (blugraphx + 1.f) - 0.1f;
+                    bluxx = rtengine::LIM(bluxx, -0.1f, 0.5f);
+                    float bluyy = 0.55f * (blugraphy + 1.f) - 0.1f;
+                    bluyy = rtengine::LIM(bluyy, -0.1f, 0.5f);
 
-                float redgraphx =  params->icm.labgridcieALow;
-                float redgraphy =  params->icm.labgridcieBLow;
-                float blugraphx =  params->icm.labgridcieAHigh;
-                float blugraphy =  params->icm.labgridcieBHigh;
-                float redxx = 0.55f * (redgraphx + 1.f) - 0.1f;
-                redxx = rtengine::LIM(redxx, 0.41f, 1.f);
-                float redyy = 0.55f * (redgraphy + 1.f) - 0.1f;
-                redyy = rtengine::LIM(redyy, 0.f, 0.7f);
-                float bluxx = 0.55f * (blugraphx + 1.f) - 0.1f;
-                bluxx = rtengine::LIM(bluxx, -0.1f, 0.5f);
-                float bluyy = 0.55f * (blugraphy + 1.f) - 0.1f;
-                bluyy = rtengine::LIM(bluyy, -0.1f, 0.5f);
+                    if (primListener && prim == 8) {
+                        primListener->primChanged (redxx, redyy, bluxx, bluyy);
+                    }
+                }
+                    
+                if(prim == 7) {
+                    float r_x =  params->icm.redx;
+                    float r_y =  params->icm.redy;
+                    float b_x =  params->icm.blux;
+                    float b_y =  params->icm.bluy;
 
-                if (primListener && prim == 8) {
-                    primListener->primChanged (redxx, redyy, bluxx, bluyy);
+                    if (primListener && prim == 7) {
+                        primListener->iprimChanged (r_x, r_y, b_x, b_y);
+                    }
+                    
                 }
                 
-      }
+            }
 
             if (params->colorappearance.enabled) {
                 // L histo  and Chroma histo for ciecam

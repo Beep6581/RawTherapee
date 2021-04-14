@@ -66,7 +66,6 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     ipDialog->set_tooltip_text(M("TP_ICM_INPUTCUSTOM_TOOLTIP"));
     bindCurrentFolder(*ipDialog, options.lastIccDir);
     labgridcie = Gtk::manage(new LabGrid(EvICMLabGridciexy, M("TP_ICM_LABGRID_CIEXY"), true, true));
-    //labgridcie is disabled because I don't know how to do with "void setListener(ToolPanelListener* tpl) override;"..this function disabled alla others events
 
 
     // ------------------------------- Input profile
@@ -529,6 +528,29 @@ void ICMPanel::primChanged (float rx, float ry, float bx, float by)
     );
 }
 
+void ICMPanel::iprimChanged (float r_x, float r_y, float b_x, float b_y)
+{
+    nextrx = r_x;
+    nextry = r_y;
+    nextbx = b_x;
+    nextby = b_y;
+    
+    nextrx = 1.81818f * (nextrx + 0.1f) - 1.f;
+    nextry = 1.81818f * (nextry + 0.1f) - 1.f;
+    nextbx = 1.81818f * (nextbx + 0.1f) - 1.f;
+    nextby = 1.81818f * (nextby + 0.1f) - 1.f;
+
+    idle_register.add(
+        [this]() -> bool
+        {
+            disableListener();
+            labgridcie->setParams(nextrx, nextry, nextbx, nextby, false);
+            enableListener();
+            return false;
+        }
+    );
+}
+
 
 void ICMPanel::setEditProvider(EditDataProvider *provider)
 {
@@ -872,7 +894,6 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         preser->setEditedState(pedited->icm.preser  ? Edited : UnEdited);
 
     }
-//    labgridcie->setParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh, false);
 
     if (pp->icm.workingTRC == "none") {
         wSlope->set_sensitive(false);

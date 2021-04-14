@@ -454,6 +454,7 @@ class AutoprimListener
 public:
     virtual ~AutoprimListener() = default;
     virtual void primChanged(float rx, float ry, float bx, float by) = 0;
+    virtual void iprimChanged(float r_x, float r_y, float b_x, float b_y) = 0;
 };
 
 
