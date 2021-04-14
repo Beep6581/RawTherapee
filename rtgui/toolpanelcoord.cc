@@ -714,6 +714,7 @@ void ToolPanelCoordinator::initImage(rtengine::StagedImageProcessor* ipc_, bool 
         ipc->setpdSharpenAutoRadiusListener (pdSharpening);
         ipc->setAutoWBListener(whitebalance);
         ipc->setAutoColorTonListener(colortoning);
+        ipc->setAutoprimListener(icm);
         ipc->setAutoChromaListener(dirpyrdenoise);
         ipc->setWaveletListener(wavelet);
         ipc->setRetinexListener(retinex);

@@ -1646,6 +1646,24 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
                 
                 delete tmpImage1;
+
+                float redgraphx =  params->icm.labgridcieALow;
+                float redgraphy =  params->icm.labgridcieBLow;
+                float blugraphx =  params->icm.labgridcieAHigh;
+                float blugraphy =  params->icm.labgridcieBHigh;
+                float redxx = 0.55f * (redgraphx + 1.f) - 0.1f;
+                redxx = rtengine::LIM(redxx, 0.41f, 1.f);
+                float redyy = 0.55f * (redgraphy + 1.f) - 0.1f;
+                redyy = rtengine::LIM(redyy, 0.f, 0.7f);
+                float bluxx = 0.55f * (blugraphx + 1.f) - 0.1f;
+                bluxx = rtengine::LIM(bluxx, -0.1f, 0.5f);
+                float bluyy = 0.55f * (blugraphy + 1.f) - 0.1f;
+                bluyy = rtengine::LIM(bluyy, -0.1f, 0.5f);
+
+                if (primListener && prim == 8) {
+                    primListener->primChanged (redxx, redyy, bluxx, bluyy);
+                }
+                
       }
 
             if (params->colorappearance.enabled) {

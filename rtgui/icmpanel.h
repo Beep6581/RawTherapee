@@ -26,7 +26,8 @@
 #include "guiutils.h"
 #include "popupbutton.h"
 #include "toolpanel.h"
-#include "labgrid.h"
+//#include "labgrid.h"
+#include "../rtengine/procparams.h"
 
 #include "../rtengine/imagedata.h"
 
@@ -37,14 +38,17 @@ public:
     virtual void saveInputICCReference(const Glib::ustring& fname, bool apply_wb) = 0;
 };
 
+class LabGrid;
 
 class ICMPanel final :
     public ToolParamBlock,
-    public AdjusterListener,
-    public FoldableToolPanel
+    public FoldableToolPanel,
+    public rtengine::AutoprimListener,
+    public AdjusterListener
 {
 
-protected:
+//protected:
+private:
     Gtk::Frame* dcpFrame;
     Gtk::Frame* coipFrame;
     Gtk::Frame* redFrame;
@@ -78,7 +82,7 @@ protected:
     sigc::connection obpcconn;
     bool isBatchMode;
 
-private:
+//private:
     rtengine::ProcEvent EvICMprimariMethod;
     rtengine::ProcEvent EvICMprofileMethod;
     rtengine::ProcEvent EvICMtempMethod;
@@ -104,6 +108,7 @@ private:
     rtengine::ProcEvent EvICMLabGridciexy;
 
     LabGrid *labgridcie;
+    IdleRegister idle_register;
 
     Gtk::Box* willuBox;
     Gtk::Label* willulab;
@@ -153,21 +158,28 @@ private:
     sigc::connection ipc;
     Glib::ustring oldip;
     ICMPanelListener* icmplistener;
-    ToolPanelListener* icmtoollistener;
     
     double dcpTemperatures[2];
     Glib::ustring lastRefFilename;
     Glib::ustring camName;
     void updateDCP(int dcpIlluminant, Glib::ustring dcp_name);
     void updateRenderingIntent(const Glib::ustring &profile);
+    
+    float nextrx;
+    float nextry;
+    float nextbx;
+    float nextby;
+    
 public:
     ICMPanel();
+    ~ICMPanel() override;
 
     void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setBatchMode(bool batchMode) override;
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
+    void primChanged (float rx, float ry, float bx, float by) override;
 
     void wpChanged();
     void wtrcinChanged();
@@ -187,7 +199,8 @@ public:
 
     void setRawMeta(bool raw, const rtengine::FramesData* pMeta);
     void saveReferencePressed();
-//    void setListener(ToolPanelListener* tpl) override;
+    void setListener(ToolPanelListener* tpl) override;
+    void setEditProvider(EditDataProvider *provider) override;
 
     void setICMPanelListener(ICMPanelListener* ipl)
     {

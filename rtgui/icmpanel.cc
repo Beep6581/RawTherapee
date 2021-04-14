@@ -25,7 +25,7 @@
 #include "options.h"
 #include "pathutils.h"
 #include "rtimage.h"
-//#include "labgrid.h"
+#include "labgrid.h"
 
 #include "../rtengine/dcp.h"
 #include "../rtengine/iccstore.h"
@@ -273,22 +273,23 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprim->append(M("TP_ICM_WORKING_PRIM_BET"));
     wprim->append(M("TP_ICM_WORKING_PRIM_BST"));
     wprim->append(M("TP_ICM_WORKING_PRIM_CUS"));
+    wprim->append(M("TP_ICM_WORKING_PRIM_CUSGR"));
     wprim->set_active(0);
 
     wprim->set_tooltip_text(M("TP_ICM_PRIMILLUM_TOOLTIP"));
 
 
-    redx = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_REDX"), 0.6000, 0.80, 0.0001, 0.6400));
+    redx = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_REDX"), 0.41, 1.0, 0.0001, 0.6400));
     setExpandAlignProperties(redx, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    redy = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_REDY"), 0.20, 0.40, 0.0001, 0.3300));
+    redy = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_REDY"), 0.0, 0.70, 0.0001, 0.3300));
     setExpandAlignProperties(redy, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     grex = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_GREX"), -0.1000, 0.400, 0.0001, 0.2100));
     setExpandAlignProperties(grex, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     grey = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_GREY"), 0.500, 1.0000, 0.0001, 0.7100));
     setExpandAlignProperties(grey, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    blux = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_BLUX"), -0.1, 0.20, 0.0001, 0.1500));
+    blux = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_BLUX"), -0.1, 0.4, 0.0001, 0.1500));
     setExpandAlignProperties(blux, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    bluy = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_BLUY"), -0.100, 0.200, 0.0001, 0.060));
+    bluy = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_BLUY"), -0.1, 0.5, 0.0001, 0.060));
     setExpandAlignProperties(bluy, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
     redx->set_tooltip_text(M("TP_ICM_PRIMRED_TOOLTIP"));
@@ -501,12 +502,44 @@ void ICMPanel::updateRenderingIntent(const Glib::ustring &profile)
 
     }
 }
-/*
+
+ICMPanel::~ICMPanel()
+{
+    idle_register.destroy();
+}
+
+void ICMPanel::primChanged (float rx, float ry, float bx, float by)
+{
+    nextrx = rx;
+    nextry = ry;
+    nextbx = bx;
+    nextby = by;
+
+    idle_register.add(
+        [this]() -> bool
+        {
+            disableListener();
+            redx->setValue(nextrx);
+            redy->setValue(nextry);
+            blux->setValue(nextbx);
+            bluy->setValue(nextby);
+            enableListener();
+            return false;
+        }
+    );
+}
+
+
+void ICMPanel::setEditProvider(EditDataProvider *provider)
+{
+}
+
 void ICMPanel::setListener(ToolPanelListener *tpl)
 {
-    labgridcie->setListener(tpl);
+        ToolPanel::setListener(tpl);
+        labgridcie->setListener(tpl);
 }
-*/
+
 void ICMPanel::updateDCP(int dcpIlluminant, Glib::ustring dcp_name)
 {
     ConnectionBlocker dcpillconn_(dcpillconn);
@@ -640,6 +673,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     ConnectionBlocker obpcconn_(obpcconn);
     ConnectionBlocker ipc_(ipc);
+//    ConnectionBlocker tpl_(tpl);
     ConnectionBlocker tcurveconn_(tcurveconn);
     ConnectionBlocker ltableconn_(ltableconn);
     ConnectionBlocker beoconn_(beoconn);
@@ -745,6 +779,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprim->set_active(10);
     } else if (pp->icm.wprim == "cus") {
         wprim->set_active(11);
+    } else if (pp->icm.wprim == "cusgr") {
+        wprim->set_active(12);
     }
     wtrcinChanged();
     willChanged();
@@ -782,6 +818,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     blux->setValue(pp->icm.blux);
     bluy->setValue(pp->icm.bluy);
     preser->setValue(pp->icm.preser);
+    labgridcie->setParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh, false);
 
     if (pedited) {
         iunchanged->set_active(!pedited->icm.inputProfile);
@@ -822,7 +859,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         if (!pedited->icm.wprim) {
             wprim->set_active_text(M("GENERAL_UNCHANGED"));
         }
-//        labgridcie->setEdited(pedited->icm.labgridcieALow || pedited->icm.labgridcieBLow || pedited->icm.labgridcieAHigh || pedited->icm.labgridcieBHigh);
+        labgridcie->setEdited(pedited->icm.labgridcieALow || pedited->icm.labgridcieBLow || pedited->icm.labgridcieAHigh || pedited->icm.labgridcieBHigh);
 
         wGamma->setEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
         wSlope->setEditedState(pedited->icm.workingTRCSlope  ? Edited : UnEdited);
@@ -858,7 +895,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             redFrame->hide();
         } else {
             redFrame->show();
-            if (wprim->get_active_row_number() != 11) {
+            if (wprim->get_active_row_number() < 11) {
               redBox->set_sensitive(false);
               greBox->set_sensitive(false);
               bluBox->set_sensitive(false);
@@ -986,7 +1023,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.workingTRC = wTRC->get_active_text();
     pp->icm.will = will->get_active_text();
     pp->icm.wprim = wprim->get_active_text();
-//    labgridcie->getParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh);
+    labgridcie->getParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh);
 
     if (oProfNames->get_active_text() == M("TP_ICM_NOICM")) {
         pp->icm.outputProfile  = ColorManagementParams::NoICMString;
@@ -1069,6 +1106,8 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pp->icm.wprim = "bst";
     } else if (wprim->get_active_row_number() == 11) {
         pp->icm.wprim = "cus";
+    } else if (wprim->get_active_row_number() == 12) {
+        pp->icm.wprim = "cusgr";
     }
 
     pp->icm.toneCurve = ckbToneCurve->get_active();
@@ -1106,7 +1145,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.wprim = wprim->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.redx = redx->getEditedState();
         pedited->icm.redy = redy->getEditedState();
-//        pedited->icm.labgridcieALow = pedited->icm.labgridcieBLow = pedited->icm.labgridcieAHigh = pedited->icm.labgridcieBHigh = labgridcie->getEdited();
+        pedited->icm.labgridcieALow = pedited->icm.labgridcieBLow = pedited->icm.labgridcieAHigh = pedited->icm.labgridcieBHigh = labgridcie->getEdited();
    }
 }
 
@@ -1121,7 +1160,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
     blux->setDefault(defParams->icm.blux);
     bluy->setDefault(defParams->icm.bluy);
     preser->setDefault(defParams->icm.preser);
-//    labgridcie->setDefault(defParams->icm.labgridcieALow, defParams->icm.labgridcieBLow , defParams->icm.labgridcieAHigh, defParams->icm.labgridcieBHigh);
+    labgridcie->setDefault(defParams->icm.labgridcieALow, defParams->icm.labgridcieBLow , defParams->icm.labgridcieAHigh, defParams->icm.labgridcieBHigh);
 
     if (pedited) {
         wGamma->setDefaultEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
@@ -1132,7 +1171,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
         grey->setDefaultEditedState(pedited->icm.grey ? Edited : UnEdited);
         blux->setDefaultEditedState(pedited->icm.blux ? Edited : UnEdited);
         bluy->setDefaultEditedState(pedited->icm.bluy ? Edited : UnEdited);
-//        labgridcie->setEdited((pedited->icm.labgridcieALow || pedited->icm.labgridcieBLow || pedited->icm.labgridcieAHigh || pedited->icm.labgridcieBHigh) ? Edited : UnEdited);
+        labgridcie->setEdited((pedited->icm.labgridcieALow || pedited->icm.labgridcieBLow || pedited->icm.labgridcieAHigh || pedited->icm.labgridcieBHigh) ? Edited : UnEdited);
         preser->setDefaultEditedState(pedited->icm.preser ? Edited : UnEdited);
 
     } else {
@@ -1145,7 +1184,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
         blux->setDefaultEditedState(Irrelevant);
         bluy->setDefaultEditedState(Irrelevant);
         preser->setDefaultEditedState(Irrelevant);
-//        labgridcie->setEdited(Edited);
+        labgridcie->setEdited(Edited);
 
     }
 }
@@ -1210,7 +1249,7 @@ void ICMPanel::wtrcinChanged()
             redFrame->hide();
         } else {
             redFrame->show();
-            if (wprim->get_active_row_number() != 11) {
+            if (wprim->get_active_row_number() < 11) {
                redBox->set_sensitive(false);
                greBox->set_sensitive(false);
                bluBox->set_sensitive(false);
@@ -1241,7 +1280,7 @@ void ICMPanel::wtrcinChanged()
             redFrame->hide();
         } else {
             redFrame->show();
-            if (wprim->get_active_row_number() != 11) {
+            if (wprim->get_active_row_number() < 11) {
                 redBox->set_sensitive(false);
                 greBox->set_sensitive(false);
                 bluBox->set_sensitive(false);
@@ -1264,7 +1303,7 @@ void ICMPanel::wtrcinChanged()
             redFrame->hide();
         } else {
             redFrame->show();
-            if (wprim->get_active_row_number() != 11) {
+            if (wprim->get_active_row_number() < 11) {
                 redBox->set_sensitive(false);
                 greBox->set_sensitive(false);
                 bluBox->set_sensitive(false);
@@ -1288,7 +1327,7 @@ void ICMPanel::wtrcinChanged()
             redFrame->hide();
         } else {
             redFrame->show();
-            if (wprim->get_active_row_number() != 11) {
+            if (wprim->get_active_row_number() < 11) {
                 redBox->set_sensitive(false);
                 greBox->set_sensitive(false);
                 bluBox->set_sensitive(false);
@@ -1312,7 +1351,7 @@ void ICMPanel::wtrcinChanged()
             redFrame->hide();
         } else {
             redFrame->show();
-             if (wprim->get_active_row_number() != 11) {
+             if (wprim->get_active_row_number() < 11) {
                 redBox->set_sensitive(false);
                 greBox->set_sensitive(false);
                 bluBox->set_sensitive(false);
@@ -1336,7 +1375,7 @@ void ICMPanel::wtrcinChanged()
             redFrame->hide();
         } else {
             redFrame->show();
-            if (wprim->get_active_row_number() != 11) {
+            if (wprim->get_active_row_number() < 11) {
                 redBox->set_sensitive(false);
                 greBox->set_sensitive(false);
                 bluBox->set_sensitive(false);
@@ -1536,7 +1575,7 @@ void ICMPanel::wprimChanged()
         redFrame->hide();
     } else {
         redFrame->show();
-        if (wprim->get_active_row_number() != 11) {
+        if (wprim->get_active_row_number() < 11) {
             redBox->set_sensitive(false);
             greBox->set_sensitive(false);
             bluBox->set_sensitive(false);

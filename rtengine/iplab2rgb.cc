@@ -494,17 +494,19 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     float redyy = params->icm.redy;
     float bluxx = params->icm.blux;
     float bluyy = params->icm.bluy;
-   // if(params->icm.wprim == "cusgr") {
     if(prim == 8) {
-        printf("OK grap\n");
-        float redgraphx =  params->icm.labgridcieALow;//(0.51763),//Prophoto red = (0.7347+0.1) * 1.81818 - 1
-        float redgraphy =  params->icm.labgridcieBLow;//(-0.33582),
-        float blugraphx =  params->icm.labgridcieAHigh;//(-0.75163),//Prophoto blue
-        float blugraphy =  params->icm.labgridcieBHigh;//(-0.8180),
+        float redgraphx =  params->icm.labgridcieALow;
+        float redgraphy =  params->icm.labgridcieBLow;
+        float blugraphx =  params->icm.labgridcieAHigh;
+        float blugraphy =  params->icm.labgridcieBHigh;
         redxx = 0.55f * (redgraphx + 1.f) - 0.1f;
+        redxx = rtengine::LIM(redxx, 0.41f, 1.f);
         redyy = 0.55f * (redgraphy + 1.f) - 0.1f;
+        redyy = rtengine::LIM(redyy, 0.f, 0.7f);
         bluxx = 0.55f * (blugraphx + 1.f) - 0.1f;
+        bluxx = rtengine::LIM(bluxx, -0.1f, 0.5f);
         bluyy = 0.55f * (blugraphy + 1.f) - 0.1f;
+        bluyy = rtengine::LIM(bluyy, -0.1f, 0.5f);
     }
     float grexx = params->icm.grex;
     float greyy = params->icm.grey;
