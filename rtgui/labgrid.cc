@@ -562,7 +562,9 @@ LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_
 {
     Gtk::Button *reset = Gtk::manage(new Gtk::Button());
     reset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));
-    reset->add(*Gtk::manage(new RTImage("undo-small.png", "redo-small.png")));
+    if(!ciexy) {
+        reset->add(*Gtk::manage(new RTImage("undo-small.png", "redo-small.png")));
+    }
     reset->signal_button_release_event().connect(sigc::mem_fun(*this, &LabGrid::resetPressed));
 
     setExpandAlignProperties(reset, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_START);
