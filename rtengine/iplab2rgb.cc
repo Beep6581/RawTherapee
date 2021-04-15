@@ -494,11 +494,15 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     float redyy = params->icm.redy;
     float bluxx = params->icm.blux;
     float bluyy = params->icm.bluy;
-    if(prim == 8) {
+    float grexx = params->icm.grex;
+    float greyy = params->icm.grey;
+   if(prim == 8) {
         float redgraphx =  params->icm.labgridcieALow;
         float redgraphy =  params->icm.labgridcieBLow;
         float blugraphx =  params->icm.labgridcieAHigh;
         float blugraphy =  params->icm.labgridcieBHigh;
+        float gregraphx =  params->icm.labgridcieGx;
+        float gregraphy =  params->icm.labgridcieGy;
         redxx = 0.55f * (redgraphx + 1.f) - 0.1f;
         redxx = rtengine::LIM(redxx, 0.41f, 1.f);
         redyy = 0.55f * (redgraphy + 1.f) - 0.1f;
@@ -507,9 +511,11 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         bluxx = rtengine::LIM(bluxx, -0.1f, 0.5f);
         bluyy = 0.55f * (blugraphy + 1.f) - 0.1f;
         bluyy = rtengine::LIM(bluyy, -0.1f, 0.5f);
+        grexx = 0.55f * (gregraphx + 1.f) - 0.1f;
+        grexx = rtengine::LIM(grexx, -0.1f, 0.4f);
+        greyy = 0.55f * (gregraphy + 1.f) - 0.1f;
+        greyy = rtengine::LIM(greyy, 0.5f, 1.f);
     }
-    float grexx = params->icm.grex;
-    float greyy = params->icm.grey;
 
     if(prim != 0) {
         if(prim == 1) {

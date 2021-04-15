@@ -507,12 +507,14 @@ ICMPanel::~ICMPanel()
     idle_register.destroy();
 }
 
-void ICMPanel::primChanged (float rx, float ry, float bx, float by)
+void ICMPanel::primChanged (float rx, float ry, float bx, float by, float gx, float gy)
 {
     nextrx = rx;
     nextry = ry;
     nextbx = bx;
     nextby = by;
+    nextgx = gx;
+    nextgy = gy;
 
     idle_register.add(
         [this]() -> bool
@@ -522,29 +524,35 @@ void ICMPanel::primChanged (float rx, float ry, float bx, float by)
             redy->setValue(nextry);
             blux->setValue(nextbx);
             bluy->setValue(nextby);
+            grex->setValue(nextgx);
+            grey->setValue(nextgy);
             enableListener();
             return false;
         }
     );
 }
 
-void ICMPanel::iprimChanged (float r_x, float r_y, float b_x, float b_y)
+void ICMPanel::iprimChanged (float r_x, float r_y, float b_x, float b_y, float g_x, float g_y)
 {
     nextrx = r_x;
     nextry = r_y;
     nextbx = b_x;
     nextby = b_y;
+    nextgx = g_x;
+    nextgy = g_y;
     
     nextrx = 1.81818f * (nextrx + 0.1f) - 1.f;
     nextry = 1.81818f * (nextry + 0.1f) - 1.f;
     nextbx = 1.81818f * (nextbx + 0.1f) - 1.f;
     nextby = 1.81818f * (nextby + 0.1f) - 1.f;
+    nextgx = 1.81818f * (nextgx + 0.1f) - 1.f;
+    nextgy = 1.81818f * (nextgy + 0.1f) - 1.f;
 
     idle_register.add(
         [this]() -> bool
         {
             disableListener();
-            labgridcie->setParams(nextrx, nextry, nextbx, nextby, 0, 0,  false);
+            labgridcie->setParams(nextrx, nextry, nextbx, nextby, nextgx, nextgy,  false);
             enableListener();
             return false;
         }

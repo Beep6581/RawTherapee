@@ -169,6 +169,8 @@ private:
     float nextry;
     float nextbx;
     float nextby;
+    float nextgx;
+    float nextgy;
     
 public:
     ICMPanel();
@@ -179,8 +181,8 @@ public:
     void setBatchMode(bool batchMode) override;
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
-    void primChanged (float rx, float ry, float bx, float by) override;
-    void iprimChanged (float r_x, float r_y, float b_x, float b_y) override;
+    void primChanged (float rx, float ry, float bx, float by, float gx, float gy) override;
+    void iprimChanged (float r_x, float r_y, float b_x, float b_y, float g_x, float g_y) override;
 
     void wpChanged();
     void wtrcinChanged();

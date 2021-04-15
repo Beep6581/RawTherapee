@@ -90,7 +90,9 @@ void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb, doub
     ha = high_a;
     lb = low_b;
     hb = high_b;
-  //  printf("la=%f ha=%f lb=%f hb=%f\n", la, ha, lb, hb);
+    gx = gre_x;
+    gy = gre_y;
+ //  printf("la=%f ha=%f lb=%f hb=%f gx=%f gy=%f\n", la, ha, lb, hb, gx, gy);
 }
 
 
@@ -102,6 +104,9 @@ void LabGridArea::setParams(double la, double lb, double ha, double hb, double g
     low_b = rtengine::LIM(lb, lo, hi);
     high_a = rtengine::LIM(ha, lo, hi);
     high_b = rtengine::LIM(hb, lo, hi);
+    gre_x = rtengine::LIM(gx, lo, hi);
+    gre_y = rtengine::LIM(gy, lo, hi);
+    
     queue_draw();
     if (notify) {
         notifyListener();
@@ -114,6 +119,8 @@ void LabGridArea::setDefault (double la, double lb, double ha, double hb, double
     defaultLow_b = lb;
     defaultHigh_a = ha;
     defaultHigh_b = hb;
+    defaultgre_x = gx;
+    defaultgre_y = gy;
 }
 
 
@@ -330,14 +337,20 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         }
         // drawing the connection line
         cr->set_antialias(Cairo::ANTIALIAS_DEFAULT);
-        float loa, hia, lob, hib;
+        float loa, hia, lob, hib, grx, gry;
         loa = .5 * (width + width * low_a);
         hia = .5 * (width + width * high_a);
         lob = .5 * (height + height * low_b);
         hib = .5 * (height + height * high_b);
+        grx = .5 * (width + width * gre_x);
+        gry = .5 * (height + height * gre_y);
         cr->set_line_width(2.f * double(s));
         cr->set_source_rgb(0.6, 0.6, 0.6);
         cr->move_to(loa, lob);
+        cr->line_to(hia, hib);
+        cr->move_to(loa, lob);
+        cr->line_to(grx, gry);
+        cr->move_to(grx, gry);
         cr->line_to(hia, hib);
         cr->stroke();
 
@@ -386,13 +399,22 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
 
 
         // drawing points
- //      if (! ciexy_enabled) {
             if (low_enabled) {
                 cr->set_source_rgb(0.1, 0.1, 0.1);
                 if (litPoint == LOW) {
                     cr->arc(loa, lob, 5 * s, 0, 2. * rtengine::RT_PI);
                 } else {
                     cr->arc(loa, lob, 3 * s, 0, 2. * rtengine::RT_PI);
+                }
+                cr->fill();
+            }
+
+            if (ciexy_enabled) {
+                cr->set_source_rgb(0.5, 0.5, 0.5);
+                if (litPoint == GRE) {
+                    cr->arc(grx, gry, 5 * s, 0, 2. * rtengine::RT_PI);
+                } else {
+                    cr->arc(grx, gry, 3 * s, 0, 2. * rtengine::RT_PI);
                 }
                 cr->fill();
             }
@@ -418,13 +440,16 @@ bool LabGridArea::on_button_press_event(GdkEventButton *event)
         if (event->type == GDK_2BUTTON_PRESS) {
             switch (litPoint) {
             case NONE:
-                low_a = low_b = high_a = high_b = 0.f;
+                low_a = low_b = high_a = high_b = gre_x = gre_y = 0.f;
                 break;
             case LOW:
                 low_a = low_b = 0.f;
                 break;
             case HIGH:
                 high_a = high_b = 0.f;
+                break;
+            case GRE:
+                gre_x = gre_y = 0.f;
                 break;
             }
             edited = true;
@@ -474,6 +499,9 @@ bool LabGridArea::on_motion_notify_event(GdkEventMotion *event)
         } else if (litPoint == HIGH) {
             high_a = ma;
             high_b = mb;
+        } else if (litPoint == GRE) {
+            gre_x = ma;
+            gre_y = mb;
         }
         edited = true;
         grab_focus();
@@ -489,13 +517,18 @@ bool LabGridArea::on_motion_notify_event(GdkEventMotion *event)
         float lb = low_b;
         float ha = high_a;
         float hb = high_b;
+        float gx = gre_x;
+        float gy = gre_y;
         const float thrs = 0.05f;
         const float distlo = (la - ma) * (la - ma) + (lb - mb) * (lb - mb);
         const float disthi = (ha - ma) * (ha - ma) + (hb - mb) * (hb - mb);
+        const float distgxy = (gx - ma) * (gx - ma) + (gy - mb) * (gy - mb);
         if (low_enabled && distlo < thrs * thrs && distlo < disthi) {
             litPoint = LOW;
         } else if (disthi < thrs * thrs && disthi <= distlo) {
             litPoint = HIGH;
+        } else if (ciexy_enabled && distgxy < thrs * thrs && distgxy <= distlo) {
+            litPoint = GRE;
         }
         if ((oldLitPoint == NONE && litPoint != NONE) || (oldLitPoint != NONE && litPoint == NONE)) {
             queue_draw();

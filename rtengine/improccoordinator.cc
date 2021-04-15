@@ -1651,6 +1651,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float redgraphy =  params->icm.labgridcieBLow;
                     float blugraphx =  params->icm.labgridcieAHigh;
                     float blugraphy =  params->icm.labgridcieBHigh;
+                    float gregraphx =  params->icm.labgridcieGx;
+                    float gregraphy =  params->icm.labgridcieGy;
                     float redxx = 0.55f * (redgraphx + 1.f) - 0.1f;
                     redxx = rtengine::LIM(redxx, 0.41f, 1.f);
                     float redyy = 0.55f * (redgraphy + 1.f) - 0.1f;
@@ -1660,8 +1662,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float bluyy = 0.55f * (blugraphy + 1.f) - 0.1f;
                     bluyy = rtengine::LIM(bluyy, -0.1f, 0.5f);
 
+                    float grexx = 0.55f * (gregraphx + 1.f) - 0.1f;
+                    grexx = rtengine::LIM(grexx, -0.1f, 0.4f);
+                    float greyy = 0.55f * (gregraphy + 1.f) - 0.1f;
+                    greyy = rtengine::LIM(greyy, 0.5f, 1.f);
+
                     if (primListener && prim == 8) {
-                        primListener->primChanged (redxx, redyy, bluxx, bluyy);
+                        primListener->primChanged (redxx, redyy, bluxx, bluyy, grexx, greyy);
                     }
                 }
                     
@@ -1670,9 +1677,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float r_y =  params->icm.redy;
                     float b_x =  params->icm.blux;
                     float b_y =  params->icm.bluy;
+                    float g_x =  params->icm.grex;
+                    float g_y =  params->icm.grey;
 
                     if (primListener && prim == 7) {
-                        primListener->iprimChanged (r_x, r_y, b_x, b_y);
+                        primListener->iprimChanged (r_x, r_y, b_x, b_y, g_x, g_y);
                     }
                     
                 }
