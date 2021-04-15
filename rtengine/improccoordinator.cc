@@ -1665,7 +1665,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
                 }
                     
-                if(prim == 7) {
+                if(prim != 8) {
                     float r_x =  params->icm.redx;
                     float r_y =  params->icm.redy;
                     float b_x =  params->icm.blux;

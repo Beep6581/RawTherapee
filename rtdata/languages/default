@@ -2420,7 +2420,7 @@ TP_ICM_INPUTNONE;No profile
 TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all.\nUse only in special cases.
 TP_ICM_INPUTPROFILE;Input Profile
 TP_ICM_LABEL;Color Management
-TP_ICM_LABGRID_CIEXY;Red(x)=%1 Red(y)=%2\nBlue(x)=%3 Blue(y)=%4
+TP_ICM_LABGRID_CIEXY;CoorR(x)=%1 CoorR(y)=%2\nCoorB(x)=%3 CoorB(y)=%4
 TP_ICM_NOICM;No ICM: sRGB Output
 TP_ICM_OUTPUTPROFILE;Output Profile
 TP_ICM_OUTPUTPROFILE_TOOLTIP;By default all RTv4 or RTv2 profiles are with TRC - sRGB: g=2.4 s=12.92\n\nWith 'ICC Profile Creator' you can generate v4 or v2 profiles with the following choices;\n-Primaries: Aces AP0, Aces AP1, AdobeRGB, Prophoto, Rec2020, sRGB, Widegamut, BestRGB, BetaRGB, BruceRGB, Custom\n-TRC: BT709, sRGB, linear, standard g=2.2, standard g=1.8, Custom\n-Illuminant: D41, D50, D55, D60, D65, D80, stdA 2856K
@@ -2472,8 +2472,8 @@ TP_ICM_WORKING_PRIM_AC0;ACESp0
 TP_ICM_WORKING_PRIM_BRU;BruceRGB
 TP_ICM_WORKING_PRIM_BET;Beta RGB
 TP_ICM_WORKING_PRIM_BST;BestRGB
-TP_ICM_WORKING_PRIM_CUS;Custom
-TP_ICM_WORKING_PRIM_CUSGR;Ciexy Red blue 
+TP_ICM_WORKING_PRIM_CUS;Custom Sliders
+TP_ICM_WORKING_PRIM_CUSGR;Custom Ciexy Graph
 TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Threshold
