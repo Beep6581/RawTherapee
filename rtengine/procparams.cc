@@ -2218,8 +2218,8 @@ ColorManagementParams::ColorManagementParams() :
     workingTRC("none"),
     will("def"),
     wprim("def"),
-    workingTRCGamma(2.222),
-    workingTRCSlope(4.5),
+    workingTRCGamma(2.4),//gamma sRGB
+    workingTRCSlope(12.92),
     redx(0.64),
     redy(0.33),
     grex(0.21),
@@ -2231,7 +2231,7 @@ ColorManagementParams::ColorManagementParams() :
     labgridcieBLow(-0.33582),
     labgridcieAHigh(-0.75163),//Prophoto blue
     labgridcieBHigh(-0.8180),
-    labgridcieGx(-0.69164),//0.1596
+    labgridcieGx(-0.69164),//Prophoto green 0.1596
     labgridcieGy(-0.70909),//0.84
     aRendIntent(RI_RELATIVE),
     outputProfile(options.rtSettings.srgb),
