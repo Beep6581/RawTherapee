@@ -67,8 +67,8 @@ LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool
     Gtk::DrawingArea(),
     evt(evt), evtMsg(msg),
     litPoint(NONE),
-    low_a(0.f), high_a(0.f), low_b(0.f), high_b(0.f),
-    defaultLow_a(0.f), defaultHigh_a(0.f), defaultLow_b(0.f), defaultHigh_b(0.f),
+    low_a(0.f), high_a(0.f), low_b(0.f), high_b(0.f), gre_x(0.f), gre_y(0.f),
+    defaultLow_a(0.f), defaultHigh_a(0.f), defaultLow_b(0.f), defaultHigh_b(0.f), defaultgre_x(0.f), defaultgre_y(0.f),
     listener(nullptr),
     edited(false),
     isDragged(false),
@@ -82,7 +82,7 @@ LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool
     get_style_context()->add_class("drawingarea");
 }
 
-void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb) const
+void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb, double &gx, double &gy) const
 {
     la = low_a;
     ha = high_a;
@@ -92,7 +92,7 @@ void LabGridArea::getParams(double &la, double &lb, double &ha, double &hb) cons
 }
 
 
-void LabGridArea::setParams(double la, double lb, double ha, double hb, bool notify)
+void LabGridArea::setParams(double la, double lb, double ha, double hb, double gx, double gy, bool notify)
 {
     const double lo = -1.0;
     const double hi = 1.0;
@@ -106,7 +106,7 @@ void LabGridArea::setParams(double la, double lb, double ha, double hb, bool not
     }
 }
 
-void LabGridArea::setDefault (double la, double lb, double ha, double hb)
+void LabGridArea::setDefault (double la, double lb, double ha, double hb, double gx, double gy)
 {
     defaultLow_a = la;
     defaultLow_b = lb;
@@ -118,9 +118,9 @@ void LabGridArea::setDefault (double la, double lb, double ha, double hb)
 void LabGridArea::reset(bool toInitial)
 {
     if (toInitial) {
-        setParams(defaultLow_a, defaultLow_b, defaultHigh_a, defaultHigh_b,  true);
+        setParams(defaultLow_a, defaultLow_b, defaultHigh_a, defaultHigh_b, defaultgre_x, defaultgre_y, true);
     } else {
-        setParams(0., 0., 0., 0., true);
+        setParams(0., 0., 0., 0., 0., 0., true);
     }
 }
 

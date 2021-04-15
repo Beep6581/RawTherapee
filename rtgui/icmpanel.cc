@@ -544,7 +544,7 @@ void ICMPanel::iprimChanged (float r_x, float r_y, float b_x, float b_y)
         [this]() -> bool
         {
             disableListener();
-            labgridcie->setParams(nextrx, nextry, nextbx, nextby, false);
+            labgridcie->setParams(nextrx, nextry, nextbx, nextby, 0, 0,  false);
             enableListener();
             return false;
         }
@@ -840,7 +840,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     blux->setValue(pp->icm.blux);
     bluy->setValue(pp->icm.bluy);
     preser->setValue(pp->icm.preser);
-    labgridcie->setParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh, false);
+    labgridcie->setParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh, 0, 0,  false);
 
     if (pedited) {
         iunchanged->set_active(!pedited->icm.inputProfile);
@@ -1044,7 +1044,9 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.workingTRC = wTRC->get_active_text();
     pp->icm.will = will->get_active_text();
     pp->icm.wprim = wprim->get_active_text();
-    labgridcie->getParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh);
+    double zerox = 0.;
+    double zeroy = 0.;
+    labgridcie->getParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh, zerox, zeroy);
 
     if (oProfNames->get_active_text() == M("TP_ICM_NOICM")) {
         pp->icm.outputProfile  = ColorManagementParams::NoICMString;
@@ -1181,7 +1183,7 @@ void ICMPanel::setDefaults(const ProcParams* defParams, const ParamsEdited* pedi
     blux->setDefault(defParams->icm.blux);
     bluy->setDefault(defParams->icm.bluy);
     preser->setDefault(defParams->icm.preser);
-    labgridcie->setDefault(defParams->icm.labgridcieALow, defParams->icm.labgridcieBLow , defParams->icm.labgridcieAHigh, defParams->icm.labgridcieBHigh);
+    labgridcie->setDefault(defParams->icm.labgridcieALow, defParams->icm.labgridcieBLow , defParams->icm.labgridcieAHigh, defParams->icm.labgridcieBHigh, 0, 0);
 
     if (pedited) {
         wGamma->setDefaultEditedState(pedited->icm.workingTRCGamma ? Edited : UnEdited);
