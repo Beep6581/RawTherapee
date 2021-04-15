@@ -1646,7 +1646,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
                 
                 delete tmpImage1;
-                if(prim == 8) {
+                if(prim == 8) {//pass red gre blue xy in function of area dats Ciexy
                     float redgraphx =  params->icm.labgridcieALow;
                     float redgraphy =  params->icm.labgridcieBLow;
                     float blugraphx =  params->icm.labgridcieAHigh;
@@ -1672,7 +1672,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
                 }
                     
-                if(prim != 8) {
+                if(prim != 8) {//all other cases - pass Cie xy to update graph Ciexy
                     float r_x =  params->icm.redx;
                     float r_y =  params->icm.redy;
                     float b_x =  params->icm.blux;

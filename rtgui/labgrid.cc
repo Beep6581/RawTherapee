@@ -69,7 +69,7 @@ LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool
     Gtk::DrawingArea(),
     evt(evt), evtMsg(msg),
     litPoint(NONE),
-    low_a(0.f), high_a(0.f), low_b(0.f), high_b(0.f), gre_x(0.f), gre_y(0.f),
+    low_a(0.f), high_a(0.f), low_b(0.f), high_b(0.f), gre_x(0.f), gre_y(0.f),//these variables are used as xy in Ciexy - no change labels
     defaultLow_a(0.f), defaultHigh_a(0.f), defaultLow_b(0.f), defaultHigh_b(0.f), defaultgre_x(0.f), defaultgre_y(0.f),
     listener(nullptr),
     edited(false),
@@ -178,14 +178,6 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
     Gtk::Border padding = getPadding(style);  // already scaled
     Cairo::RefPtr<Cairo::Context> cr = getContext();
 
-/*
-        Glib::RefPtr<Pango::Context> pangoContext = get_pango_context ();
-        Pango::FontDescription fontd = pangoContext->get_font_description();
-        fontd.set_family(options.CPFontFamily == "default" ? "sans" : options.CPFontFamily);
-        fontd.set_size((options.CPFontFamily == "default" ? 8 : options.CPFontSize) * Pango::SCALE);
-        fontd.set_weight(Pango::WEIGHT_NORMAL);
-        pangoContext->set_font_description (fontd);
-*/
 
     if (isDirty()) {
         int width = allocation.get_width();
@@ -217,7 +209,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         cr->translate(0, height);
         cr->scale(1., -1.);
 
-        if (! ciexy_enabled) {
+        if (! ciexy_enabled) {//draw cells for Labgrid 
             int cells = 8;
             float step = 12000.f / float(cells/2);
             double cellW = double(width) / double(cells);
@@ -250,14 +242,14 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                 cellYMin = cellYMax;
                 cellYMax = std::floor(cellH * double(j+2) + 0.01);
             }
-        } else {//CIE xy
+        } else {//cells for CIE xy
             int cells = 600;
             float step = 1.f / float(cells);
             double cellW = double(width) / double(cells);
             double cellH = double(height) / double(cells);
             double cellYMin = 0.;
             double cellYMax = std::floor(cellH);
-            
+            //various approximations to simulate Ciexy curves graph
             float xa = 0.2653f / (0.7347f - 0.17f);
             float xb = -0.17f * xa;
             float ax = (0.1f - 0.6f) / 0.07f;
@@ -279,8 +271,8 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                 for (int i = 0; i < cells; i++) {
                     float R, G, B;
                     float XX, YY, ZZ;
-                    float x = 1.1f * step * i - 0.1f;//Graph CIExy with -0.1 to 1
-                    float y = 1.1f * step * j - 0.1;//Graph CIExy with -0.1 to 1
+                    float x = 1.1f * step * i - 0.1f;//Graph CIExy with -0.1 to 1 - must be enough
+                    float y = 1.1f * step * j - 0.1;//Graph CIExy with -0.1 to 1 - must be enough
                     if(y > 0.5f) {
                         YY = 0.6f;
                     } else {
@@ -297,6 +289,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                     float y5 = bx4s;
                 
                     Color::xyz2srgb(XX, YY, ZZ, R, G, B);
+                    //replace color by gray
                     if(y < yr && x > 0.17f) {
                         R = 0.7f; G = 0.7f; B = 0.7f;
                     } 
@@ -402,7 +395,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
 
         // drawing points
             if (low_enabled) {
-                cr->set_source_rgb(0.1, 0.1, 0.1);
+                cr->set_source_rgb(0.1, 0.1, 0.1);//black for red in Ciexy
                 if (litPoint == LOW) {
                     cr->arc(loa, lob, 5 * s, 0, 2. * rtengine::RT_PI);
                 } else {
@@ -412,7 +405,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
             }
 
             if (ciexy_enabled) {
-                cr->set_source_rgb(0.5, 0.5, 0.5);
+                cr->set_source_rgb(0.5, 0.5, 0.5);//gray for green
                 if (litPoint == GRE) {
                     cr->arc(grx, gry, 5 * s, 0, 2. * rtengine::RT_PI);
                 } else {
@@ -421,7 +414,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                 cr->fill();
             }
 
-            cr->set_source_rgb(0.9, 0.9, 0.9);
+            cr->set_source_rgb(0.9, 0.9, 0.9);//white for blue en Ciexy
             if (litPoint == HIGH) {
                 cr->arc(hia, hib, 5 * s, 0, 2. * rtengine::RT_PI);
             } else {
@@ -601,7 +594,7 @@ LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_
 {
     Gtk::Button *reset = Gtk::manage(new Gtk::Button());
     reset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));
-    if(!ciexy) {
+    if(!ciexy) {//disabled for Cie xy
         reset->add(*Gtk::manage(new RTImage("undo-small.png", "redo-small.png")));
     }
     reset->signal_button_release_event().connect(sigc::mem_fun(*this, &LabGrid::resetPressed));

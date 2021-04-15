@@ -206,9 +206,6 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
     wTRCBox = Gtk::manage(new Gtk::Box());
 
-//    Gtk::Label* wtrclab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_TRC")));
-
-//    wTRCHBox->pack_start(*wtrclab, Gtk::PACK_SHRINK);
     wTRC = Gtk::manage(new MyComboBoxText());
     wTRCBox->pack_start(*wTRC, Gtk::PACK_EXPAND_WIDGET);
     trcProfVBox->pack_start(*wTRCBox, Gtk::PACK_EXPAND_WIDGET);
@@ -347,15 +344,12 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     aRendIntent->setSelected(1);
     aRendIntent->show();
     riaHBox->pack_start(*aRendIntent->buttonGroup, Gtk::PACK_EXPAND_PADDING);
- //   trcProfVBox->pack_start(*riaHBox, Gtk::PACK_SHRINK);
 
     trcFrame->add(*trcProfVBox);
 
     pack_start(*wFrame, Gtk::PACK_EXPAND_WIDGET);
     pack_start(*trcFrame, Gtk::PACK_EXPAND_WIDGET);
     pack_start(*redFrame, Gtk::PACK_EXPAND_WIDGET);
-  //  pack_start(*greFrame, Gtk::PACK_EXPAND_WIDGET);
-   // pack_start(*bluFrame, Gtk::PACK_EXPAND_WIDGET);
 
 
     // ---------------------------- Output profile
@@ -508,7 +502,7 @@ ICMPanel::~ICMPanel()
 }
 
 void ICMPanel::primChanged (float rx, float ry, float bx, float by, float gx, float gy)
-{
+{ //update sliders R G B Ciexy
     nextrx = rx;
     nextry = ry;
     nextbx = bx;
@@ -533,14 +527,14 @@ void ICMPanel::primChanged (float rx, float ry, float bx, float by, float gx, fl
 }
 
 void ICMPanel::iprimChanged (float r_x, float r_y, float b_x, float b_y, float g_x, float g_y)
-{
+{//update CIE xy graph
     nextrx = r_x;
     nextry = r_y;
     nextbx = b_x;
     nextby = b_y;
     nextgx = g_x;
     nextgy = g_y;
-    
+    //convert xy datas in datas for labgrid areas
     nextrx = 1.81818f * (nextrx + 0.1f) - 1.f;
     nextry = 1.81818f * (nextry + 0.1f) - 1.f;
     nextbx = 1.81818f * (nextbx + 0.1f) - 1.f;
@@ -562,10 +556,11 @@ void ICMPanel::iprimChanged (float r_x, float r_y, float b_x, float b_y, float g
 
 void ICMPanel::setEditProvider(EditDataProvider *provider)
 {
+    //in case of
 }
 
 void ICMPanel::setListener(ToolPanelListener *tpl)
-{
+{//enable listener Toolpanel and Labgridcie
         ToolPanel::setListener(tpl);
         labgridcie->setListener(tpl);
 }
@@ -703,7 +698,6 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     ConnectionBlocker obpcconn_(obpcconn);
     ConnectionBlocker ipc_(ipc);
-//    ConnectionBlocker tpl_(tpl);
     ConnectionBlocker tcurveconn_(tcurveconn);
     ConnectionBlocker ltableconn_(ltableconn);
     ConnectionBlocker beoconn_(beoconn);
@@ -912,8 +906,6 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         wprimlab->set_sensitive(false);
         riaHBox->set_sensitive(false);
         redFrame->hide();
-      //  greFrame->hide();
-      //  bluFrame->hide();
 
     } else if (pp->icm.workingTRC == "Custom") {
         will->set_sensitive(true);
@@ -1052,8 +1044,6 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.workingTRC = wTRC->get_active_text();
     pp->icm.will = will->get_active_text();
     pp->icm.wprim = wprim->get_active_text();
-//    double zerox = 0.;
-//    double zeroy = 0.;
     labgridcie->getParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh, pp->icm.labgridcieGx, pp->icm.labgridcieGy);
 
     if (oProfNames->get_active_text() == M("TP_ICM_NOICM")) {

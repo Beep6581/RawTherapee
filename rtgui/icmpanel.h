@@ -26,7 +26,6 @@
 #include "guiutils.h"
 #include "popupbutton.h"
 #include "toolpanel.h"
-//#include "labgrid.h"
 #include "../rtengine/procparams.h"
 
 #include "../rtengine/imagedata.h"
@@ -47,13 +46,10 @@ class ICMPanel final :
     public AdjusterListener
 {
 
-//protected:
-private:
+protected:
     Gtk::Frame* dcpFrame;
     Gtk::Frame* coipFrame;
     Gtk::Frame* redFrame;
-//    Gtk::Frame* greFrame;
-//    Gtk::Frame* bluFrame;
 
     Adjuster* wGamma;
     Adjuster* wSlope;
@@ -82,7 +78,7 @@ private:
     sigc::connection obpcconn;
     bool isBatchMode;
 
-//private:
+private:
     rtengine::ProcEvent EvICMprimariMethod;
     rtengine::ProcEvent EvICMprofileMethod;
     rtengine::ProcEvent EvICMtempMethod;

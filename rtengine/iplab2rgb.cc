@@ -396,18 +396,18 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic, 16) nowait
 #endif
-            for (int i = 0; i < ch; ++i) 
-                for (int j = 0; j < cw; ++j) {
-                    float neu = SQR(provis->a[i][j]) + SQR(provis->b[i][j]);
-                    if(neu < medneutral) {//plein effect
-                        nprevl->a[i][j] = intp(pres, provis->a[i][j], nprevl->a[i][j]); 
-                        nprevl->b[i][j] = intp(pres, provis->b[i][j], nprevl->b[i][j]); 
-                    } else if (neu < neutral) {//decrease effect
-                        float presred = aaneu * neu + bbneu;
-                        nprevl->a[i][j] = intp(pres * presred, provis->a[i][j], nprevl->a[i][j]); 
-                        nprevl->b[i][j] = intp(pres * presred, provis->b[i][j], nprevl->b[i][j]); 
-                    } 
-                }
+    for (int i = 0; i < ch; ++i) 
+        for (int j = 0; j < cw; ++j) {
+            float neu = SQR(provis->a[i][j]) + SQR(provis->b[i][j]);
+            if(neu < medneutral) {//plein effect
+                nprevl->a[i][j] = intp(pres, provis->a[i][j], nprevl->a[i][j]); 
+                nprevl->b[i][j] = intp(pres, provis->b[i][j], nprevl->b[i][j]); 
+            } else if (neu < neutral) {//decrease effect
+                float presred = aaneu * neu + bbneu;
+                nprevl->a[i][j] = intp(pres * presred, provis->a[i][j], nprevl->a[i][j]); 
+                nprevl->b[i][j] = intp(pres * presred, provis->b[i][j], nprevl->b[i][j]); 
+            } 
+        }
 }
 
 void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int illum, int prim, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm) const
@@ -496,7 +496,8 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     float bluyy = params->icm.bluy;
     float grexx = params->icm.grex;
     float greyy = params->icm.grey;
-   if(prim == 8) {
+
+    if(prim == 8) {//convert datas area to xy
         float redgraphx =  params->icm.labgridcieALow;
         float redgraphy =  params->icm.labgridcieBLow;
         float blugraphx =  params->icm.labgridcieAHigh;
@@ -504,7 +505,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         float gregraphx =  params->icm.labgridcieGx;
         float gregraphy =  params->icm.labgridcieGy;
         redxx = 0.55f * (redgraphx + 1.f) - 0.1f;
-        redxx = rtengine::LIM(redxx, 0.41f, 1.f);
+        redxx = rtengine::LIM(redxx, 0.41f, 1.f);//limit values for xy (arbitrary)
         redyy = 0.55f * (redgraphy + 1.f) - 0.1f;
         redyy = rtengine::LIM(redyy, 0.f, 0.7f);
         bluxx = 0.55f * (blugraphx + 1.f) - 0.1f;
@@ -717,7 +718,6 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         cmsToneCurve* GammaTRC[3];
         GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, five, gammaParams);//5 = more smoother than 4
         cmsHPROFILE oprofdef = nullptr;
-       // cmsSetProfileVersion(oprofdef, 4.3);
 
         const cmsCIExyYTRIPLE Primaries = {
             {p[0], p[1], 1.0}, // red
@@ -730,7 +730,6 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         cmsWriteTag(oprofdef, cmsSigBlueTRCTag, GammaTRC[2]);
 
         cmsFreeToneCurve(GammaTRC[0]);
-        //printf("indent=%i \n", params->icm.aRendIntent);
         if (oprofdef) {
             constexpr cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE | cmsFLAGS_BLACKPOINTCOMPENSATION | cmsFLAGS_GAMUTCHECK;
             const cmsHPROFILE iprof = ICCStore::getInstance()->getXYZProfile();
