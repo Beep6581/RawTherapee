@@ -348,10 +348,12 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         cr->set_source_rgb(0.6, 0.6, 0.6);
         cr->move_to(loa, lob);
         cr->line_to(hia, hib);
-        cr->move_to(loa, lob);
-        cr->line_to(grx, gry);
-        cr->move_to(grx, gry);
-        cr->line_to(hia, hib);
+        if (ciexy_enabled) {
+            cr->move_to(loa, lob);
+            cr->line_to(grx, gry);
+            cr->move_to(grx, gry);
+            cr->line_to(hia, hib);
+        }
         cr->stroke();
 
         if (ciexy_enabled) {
@@ -426,7 +428,6 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                 cr->arc(hia, hib, 3 * s, 0, 2. * rtengine::RT_PI);
             }
             cr->fill();
-    //    }
     }
 
     copySurface(crf);
