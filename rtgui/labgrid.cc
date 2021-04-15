@@ -4,6 +4,8 @@
  *
  *  Copyright (c) 2017 Alberto Griggio <alberto.griggio@gmail.com>
  *
+ *  Copyright (c) 2021 Jacques Desmis <jdesmis@gmail.com> for CIE xy graph
+ *
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -241,7 +243,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                 cellYMin = cellYMax;
                 cellYMax = std::floor(cellH * double(j+2) + 0.01);
             }
-        } else {
+        } else {//CIE xy
             int cells = 600;
             float step = 1.f / float(cells);
             double cellW = double(width) / double(cells);
@@ -270,8 +272,8 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                 for (int i = 0; i < cells; i++) {
                     float R, G, B;
                     float XX, YY, ZZ;
-                    float x = 1.1f * step * i - 0.1f;
-                    float y = 1.1f * step * j - 0.1;
+                    float x = 1.1f * step * i - 0.1f;//Graph CIExy with -0.1 to 1
+                    float y = 1.1f * step * j - 0.1;//Graph CIExy with -0.1 to 1
                     if(y > 0.5f) {
                         YY = 0.6f;
                     } else {
@@ -340,6 +342,9 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         cr->stroke();
 
         if (ciexy_enabled) {
+            //to convert from / to Ciexy <=> area
+            // pos_area = 1.81818 * (x + 0.1) - 1
+            // x = 0.55 * (pos_area + 1) - 0.1
             cr->set_line_width(0.2f * double(s));
             cr->set_source_rgb(0.1, 0.1, 0.1);
             //draw horiz and vertical lines
