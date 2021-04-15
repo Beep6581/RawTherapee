@@ -1680,7 +1680,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float g_x =  params->icm.grex;
                     float g_y =  params->icm.grey;
 
-                    if (primListener && prim == 7) {
+                    if (primListener) {
                         primListener->iprimChanged (r_x, r_y, b_x, b_y, g_x, g_y);
                     }
                     

@@ -344,7 +344,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         hib = .5 * (height + height * high_b);
         grx = .5 * (width + width * gre_x);
         gry = .5 * (height + height * gre_y);
-        cr->set_line_width(2.f * double(s));
+        cr->set_line_width(1.5f * double(s));
         cr->set_source_rgb(0.6, 0.6, 0.6);
         cr->move_to(loa, lob);
         cr->line_to(hia, hib);
