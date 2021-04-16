@@ -1615,7 +1615,8 @@ private:
             Glib::ustring prof = params.icm.workingProfile;
 
             cmsHTRANSFORM dummy = nullptr;
-            ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, 0, dummy, true, false, false);
+            int ill = 0;
+            ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
             ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
 
             ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);

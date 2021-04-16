@@ -1594,40 +1594,22 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 const float slotone = params->icm.workingTRCSlope;
           //      printf("ga=%f slo=%f\n", gamtone, slotone);
                 int illum = 0;
-                float wx = 0.3457f;
-                float wy = 0.3585f;
                 if(params->icm.will == "def"){
                     illum = 0; 
-                    wx = 0.3457f;
-                    wy = 0.3585f;
                 } else if(params->icm.will == "D41"){
                     illum = 1; 
-                    wx = 0.37798f;
-                    wy = 0.38123f;
                 } else if(params->icm.will == "D50"){
                     illum = 2; 
-                    wx = 0.3457f;
-                    wy = 0.3585f;
                 } else if(params->icm.will == "D55"){
                     illum = 3; 
-                    wx = 0.3324f;
-                    wy = 0.3474f;
                 } else if(params->icm.will == "D60"){
                     illum = 4;
-                    wx = 0.3217f;
-                    wy = 0.3377f;
                 } else if(params->icm.will == "D65"){
                     illum = 5;
-                    wx = 0.3127f;
-                    wy = 0.3290f;
                 } else if(params->icm.will == "D80"){
                     illum = 6; 
-                    wx = 0.2937f;
-                    wy = 0.3092f;
                 } else if(params->icm.will == "stda"){
                     illum = 7; 
-                    wx = 0.4476f;
-                    wy = 0.4074f;
                 }
 
                 int prim = 0;
@@ -1652,7 +1634,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
                 Glib::ustring prof = params->icm.workingProfile;
                 cmsHTRANSFORM dummy = nullptr;
-                ipf.workingtrc(tmpImage1, tmpImage1, GW, GH, -5, prof, 2.4, 12.92310, 0, 0, dummy, true, false, false);
+                int ill = 0;
+                ipf.workingtrc(tmpImage1, tmpImage1, GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
                 ipf.workingtrc(tmpImage1, tmpImage1, GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
 
                 ipf.rgb2lab(*tmpImage1, *nprevl, params->icm.workingProfile);
@@ -1697,6 +1680,31 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float b_y =  params->icm.bluy;
                     float g_x =  params->icm.grex;
                     float g_y =  params->icm.grey;
+                    float wx = 0.33f;
+                    float wy = 0.33f;
+                    if(illum == 1) { //D41
+                        wx = 0.37798f;
+                        wy = 0.38123f;
+                    } else if(illum == 2) {//D50 
+                        wx = 0.3457f;
+                        wy = 0.3585f;
+                    } else if(illum == 3) { //D55
+                        wx = 0.3324f;
+                        wy = 0.3474f;
+                    } else if(illum == 4) {//D60
+                        wx = 0.3217f;
+                        wy = 0.3377f;
+                    } else if(illum == 5) {//D65
+                        wx = 0.3127f;
+                        wy = 0.3290f;
+                    } else if(illum == 6) {//D80
+                        wx = 0.2937f;
+                        wy = 0.3092f;
+                    } else if(illum == 7) {//stdA
+                        wx = 0.4476f;
+                        wy = 0.4074f;
+                    }
+
 
                     if (primListener) {
                         primListener->iprimChanged (r_x, r_y, b_x, b_y, g_x, g_y, wx, wy);

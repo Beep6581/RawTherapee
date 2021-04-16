@@ -410,7 +410,7 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
         }
 }
 
-void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int illum, int prim, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm) const
+void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int &illum, int prim, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm) const
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
@@ -574,6 +574,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = 0.8260;
             p[4] = 0.1570;
             p[5] = 0.0180;
+            illum = 2;
         } else if (profile == "Adobe RGB") {
             p[0] = 0.6400;    //Adobe primaries
             p[1] = 0.3300;
@@ -582,6 +583,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.1500;
             p[5] = 0.0600;
             tempv4 = 6504.;
+            illum = 5;
         } else if (profile == "sRGB") {
             p[0] = 0.6400;    // sRGB primaries
             p[1] = 0.3300;
@@ -590,6 +592,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.1500;
             p[5] = 0.0600;
             tempv4 = 6504.;
+            illum = 5;
         } else if (profile == "BruceRGB") {
             p[0] = 0.6400;    // Bruce primaries
             p[1] = 0.3300;
@@ -598,13 +601,15 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.1500;
             p[5] = 0.0600;
             tempv4 = 6504.;
-        } else if (profile == "Beta RGB") {
+            illum = 5;
+       } else if (profile == "Beta RGB") {
             p[0] = 0.6888;    // Beta primaries
             p[1] = 0.3112;
             p[2] = 0.1986;
             p[3] = 0.7551;
             p[4] = 0.1265;
             p[5] = 0.0352;
+            illum = 2;
         } else if (profile == "BestRGB") {
             p[0] = 0.7347;    // Best primaries
             p[1] = 0.2653;
@@ -612,6 +617,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = 0.7750;
             p[4] = 0.1300;
             p[5] = 0.0350;
+            illum = 2;
         } else if (profile == "Rec2020") {
             p[0] = 0.7080;    // Rec2020 primaries
             p[1] = 0.2920;
@@ -620,6 +626,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.1310;
             p[5] = 0.0460;
             tempv4 = 6504.;
+            illum = 5;
         } else if (profile == "ACESp0") {
             p[0] = 0.7347;    // ACES P0 primaries
             p[1] = 0.2653;
@@ -628,6 +635,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.0001;
             p[5] = -0.0770;
             tempv4 = 6004.;
+            illum = 4;
         } else if (profile == "ACESp1") {
             p[0] = 0.713;    // ACES P1 primaries
             p[1] = 0.293;
@@ -636,6 +644,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.128;
             p[5] = 0.044;
             tempv4 = 6004.;
+            illum = 4;
         } else if (profile == "ProPhoto") {
             p[0] = 0.7347;    //ProPhoto and default primaries
             p[1] = 0.2653;
@@ -643,6 +652,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = 0.8404;
             p[4] = 0.0366;
             p[5] = 0.0001;
+            illum = 2;
         } else if (profile == "Custom") {
             p[0] = redxx;   
             p[1] = redyy;
