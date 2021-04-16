@@ -452,6 +452,8 @@ void ParamsEdited::set(bool v)
     icm.labgridcieBHigh = v;
     icm.labgridcieGx = v;
     icm.labgridcieGy = v;
+    icm.labgridcieWx = v;
+    icm.labgridcieWy = v;
     icm.aRendIntent = v;
     icm.workingTRC = v;
     icm.will = v;
@@ -1731,6 +1733,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.labgridcieBHigh = icm.labgridcieBHigh && p.icm.labgridcieBHigh == other.icm.labgridcieBHigh;
         icm.labgridcieGx = icm.labgridcieGx && p.icm.labgridcieGx == other.icm.labgridcieGx;
         icm.labgridcieGy = icm.labgridcieGy && p.icm.labgridcieGy == other.icm.labgridcieGy;
+        icm.labgridcieWx = icm.labgridcieWx && p.icm.labgridcieWx == other.icm.labgridcieWx;
+        icm.labgridcieWy = icm.labgridcieWy && p.icm.labgridcieWy == other.icm.labgridcieWy;
         icm.preser = icm.preser && p.icm.preser == other.icm.preser;
         icm.aRendIntent = icm.aRendIntent && p.icm.aRendIntent == other.icm.aRendIntent;
         icm.workingTRC = icm.workingTRC && p.icm.workingTRC == other.icm.workingTRC;
@@ -5770,6 +5774,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (icm.labgridcieGy) {
         toEdit.icm.labgridcieGy = mods.icm.labgridcieGy;
+    }
+
+    if (icm.labgridcieWx) {
+        toEdit.icm.labgridcieWx = mods.icm.labgridcieWx;
+    }
+
+    if (icm.labgridcieWy) {
+        toEdit.icm.labgridcieWy = mods.icm.labgridcieWy;
     }
 
     if (icm.aRendIntent) {

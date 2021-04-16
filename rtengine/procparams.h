@@ -1720,6 +1720,8 @@ struct ColorManagementParams {
     double labgridcieBHigh;
     double labgridcieGx;
     double labgridcieGy;
+    double labgridcieWx;
+    double labgridcieWy;
     RenderingIntent aRendIntent;
 
     Glib::ustring outputProfile;

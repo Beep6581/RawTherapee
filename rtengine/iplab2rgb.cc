@@ -713,8 +713,10 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         if (illum == 7) {//stdA
             xyD = {0.447573, 0.407440, 1.0};
         }
-        
-        
+        //D41  0.377984  0.381229
+        //D55  0.332424  0.347426
+        //D80  0.293755  0.309185
+        //D75  0.299021  0.314852
         cmsToneCurve* GammaTRC[3];
         GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, five, gammaParams);//5 = more smoother than 4
         cmsHPROFILE oprofdef = nullptr;

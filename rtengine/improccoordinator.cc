@@ -1594,22 +1594,40 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 const float slotone = params->icm.workingTRCSlope;
           //      printf("ga=%f slo=%f\n", gamtone, slotone);
                 int illum = 0;
+                float wx = 0.33f;
+                float wy = 0.33f;
                 if(params->icm.will == "def"){
                     illum = 0; 
+                    wx = 0.3457f;
+                    wy = 0.3585f;
                 } else if(params->icm.will == "D41"){
                     illum = 1; 
+                    wx = 0.37798f;
+                    wy = 0.38123f;
                 } else if(params->icm.will == "D50"){
                     illum = 2; 
+                    wx = 0.3457f;
+                    wy = 0.3585f;
                 } else if(params->icm.will == "D55"){
                     illum = 3; 
+                    wx = 0.3324f;
+                    wy = 0.3474f;
                 } else if(params->icm.will == "D60"){
-                    illum = 4; 
+                    illum = 4;
+                    wx = 0.3217f;
+                    wy = 0.3377f;
                 } else if(params->icm.will == "D65"){
-                    illum = 5; 
+                    illum = 5;
+                    wx = 0.3127f;
+                    wy = 0.3290f;
                 } else if(params->icm.will == "D80"){
                     illum = 6; 
+                    wx = 0.2937f;
+                    wy = 0.3092f;
                 } else if(params->icm.will == "stda"){
                     illum = 7; 
+                    wx = 0.4476f;
+                    wy = 0.4074f;
                 }
 
                 int prim = 0;
@@ -1681,7 +1699,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float g_y =  params->icm.grey;
 
                     if (primListener) {
-                        primListener->iprimChanged (r_x, r_y, b_x, b_y, g_x, g_y);
+                        primListener->iprimChanged (r_x, r_y, b_x, b_y, g_x, g_y, wx, wy);
                     }
                     
                 }

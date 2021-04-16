@@ -167,7 +167,9 @@ private:
     float nextby;
     float nextgx;
     float nextgy;
-    
+    float nextwx;
+    float nextwy;
+
 public:
     ICMPanel();
     ~ICMPanel() override;
@@ -178,7 +180,7 @@ public:
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
     void primChanged (float rx, float ry, float bx, float by, float gx, float gy) override;
-    void iprimChanged (float r_x, float r_y, float b_x, float b_y, float g_x, float g_y) override;
+    void iprimChanged (float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y) override;
 
     void wpChanged();
     void wtrcinChanged();
