@@ -1594,8 +1594,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 const float slotone = params->icm.workingTRCSlope;
           //      printf("ga=%f slo=%f\n", gamtone, slotone);
                 int illum = 0;
-                float wx = 0.33f;
-                float wy = 0.33f;
+                float wx = 0.3457f;
+                float wy = 0.3585f;
                 if(params->icm.will == "def"){
                     illum = 0; 
                     wx = 0.3457f;

@@ -299,6 +299,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     redFrame->set_label_align(0.025, 0.5);
     Gtk::VBox *redVBox = Gtk::manage(new Gtk::VBox());
     redVBox->pack_start(*redBox, Gtk::PACK_EXPAND_WIDGET);
+    redFrame->set_tooltip_text(M("TP_ICM_WORKING_PRIMFRAME_TOOLTIP"));
 
     greBox = Gtk::manage(new Gtk::Box());
     greBox->pack_start(*grex, Gtk::PACK_SHRINK);
@@ -1422,6 +1423,7 @@ void ICMPanel::wtrcinChanged()
 
 void ICMPanel::willChanged()
 {
+
     if (listener) {
         listener->panelChanged(EvICMwillMethod, will->get_active_text());
     }
@@ -1611,7 +1613,6 @@ void ICMPanel::wprimChanged()
         }
         
     }
-  //  willChanged();
 
     if (listener) {
         listener->panelChanged(EvICMwprimMethod, wprim->get_active_text());

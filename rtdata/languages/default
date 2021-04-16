@@ -2439,6 +2439,7 @@ TP_ICM_TRCFRAME;Abstract Profile
 TP_ICM_TRCFRAME_TOOLTIP;Also known as ‘synthetic’ or ‘virtual’ profiles, which are applied at the end of the processing pipeline (prior to ciecam) allowing you to create custom image effects.\nYou can make changes to the:\n ‘Tone response curve’, which modifies the tones of the image.\n ‘Illuminant’ : which allows you to change the profile primaries to adapt them to the shooting conditions.\n ‘Destination space (primaries)’: which allows you to change the destination profile primaries.
 TP_ICM_WORKINGPROFILE;Working Profile
 TP_ICM_WORKING_PRESER;Preserves Pastel tones
+TP_ICM_WORKING_PRIMFRAME_TOOLTIP;The 'CIE xy' diagram is not updated - primaries and white point - when the 'Destination- primaries' selection is 'Custom CIE xy diagram'.\nOnly in this last mode, you can freely change the values of the 3 primaries on the diagram. 
 TP_ICM_WORKING_TRC;Tone response curve:
 TP_ICM_WORKING_TRC_BT709;BT709 g=2.22 s=4.5
 TP_ICM_WORKING_TRC_SRGB;sRGB g=2.4 s=12.92
@@ -2473,7 +2474,7 @@ TP_ICM_WORKING_PRIM_BRU;BruceRGB
 TP_ICM_WORKING_PRIM_BET;Beta RGB
 TP_ICM_WORKING_PRIM_BST;BestRGB
 TP_ICM_WORKING_PRIM_CUS;Custom Sliders
-TP_ICM_WORKING_PRIM_CUSGR;Custom Ciexy Graph
+TP_ICM_WORKING_PRIM_CUSGR;Custom CIE xy Diagram
 TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Threshold

@@ -423,9 +423,9 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                 cr->fill();
             }
 
-            if (ciexy_enabled) {//WP
-                cr->set_source_rgb(1., 1., 1.);//WP
-                cr->arc(whx, why, 5 * s, 0, 2. * rtengine::RT_PI);
+            if (ciexy_enabled) {//White Point
+                cr->set_source_rgb(1., 1., 1.);//White
+                cr->arc(whx, why, 3 * s, 0, 2. * rtengine::RT_PI);
                 cr->fill();
             }
 
