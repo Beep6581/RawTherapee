@@ -250,16 +250,17 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
             double cellYMin = 0.;
             double cellYMax = std::floor(cellH);
             //various approximations to simulate Ciexy curves graph
+            // this graph is not accurate...I replace curve by polygon 
             float xa = 0.2653f / (0.7347f - 0.17f);
             float xb = -0.17f * xa;
-            float ax = (0.1f - 0.6f) / 0.07f;
+            float ax = (0.1f - 0.6f) / 0.08f;
             float bx = 0.6f;
-            float ax0 = -0.1f / (0.17f - 0.07f);
+            float ax0 = -0.1f / (0.17f - 0.08f);
             float bx0 = -0.17f* ax0;
-            float axs = (0.2653f - 0.65f) / (0.7347f - 0.35f);
-            float bxs = 0.65f - axs * 0.35f;
-            float axss = (0.65f - 0.83f) / (0.35f - 0.1f);
-            float bxss = 0.65f - 0.35f * axss;
+            float axs = (0.2653f - 0.7f) / (0.7347f - 0.3f);
+            float bxs = 0.7f - axs * 0.3f;
+            float axss = (0.7f - 0.83f) / (0.3f - 0.1f);
+            float bxss = 0.7f - 0.3f * axss;
             float bxsss = 0.65f;
             float axsss = (0.83f - bxsss) / 0.05f;
             float bx4s = 0.83f;
@@ -293,16 +294,16 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                     if(y < yr && x > 0.17f) {
                         R = 0.7f; G = 0.7f; B = 0.7f;
                     } 
-                    if(y < y0 && x <= 0.17f && x >= 0.07f) {
+                    if(y < y0 && x <= 0.17f && x >= 0.08f) {
                         R = 0.7f; G = 0.7f; B = 0.7f;
                     }
-                    if(y < y1  && x < 0.07f) {
+                    if(y < y1  && x < 0.08f) {
                         R = 0.7f; G = 0.7f; B = 0.7f;
                     }
-                    if(y > y2  && x > 0.35f) {
+                    if(y > y2  && x > 0.3f) {//0.35
                         R = 0.7f; G = 0.7f; B = 0.7f;
                     }
-                    if(y > y3  && x <= 0.35f) {
+                    if(y > y3  && x <= 0.3f) {//0.35
                         R = 0.7f; G = 0.7f; B = 0.7f;
                     }
                     if(y > y4  && x < 0.06f) {
