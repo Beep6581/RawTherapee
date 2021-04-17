@@ -268,9 +268,9 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
             float bxs = 0.65f - axs * 0.35f;
             // float axss = (0.7f - 0.83f) / (0.3f - 0.1f);
             // float bxss = 0.7f - 0.3f * axss;
-            float bxsss = 0.65f;
-            float axsss = (0.83f - bxsss) / 0.05f;
-            float bx4s = 0.83f;
+            //float bxsss = 0.65f;
+            //float axsss = (0.83f - bxsss) / 0.05f;
+            //float bx4s = 0.83f;
             float ay = 0.4f;
             float by = 0.4f;
             for (int j = 0; j < cells; j++) {
@@ -292,12 +292,13 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                   //  float y0 = ax0 * x + bx0;
                   //  float y1 = ax * x + bx;
                     float y2 = axs * x + bxs;
-                   // float y3 = axss * x + bxss;
-                    float y4 = axsss * x + bxsss;
-                    float y5 = bx4s;
+                    // float y3 = axss * x + bxss;
+                    // float y4 = axsss * x + bxsss;
+                    // float y5 = bx4s;
                     float y6 = 22.52f * x * x - 7.652f * x + 0.65f;//parabolic passing in x=0.17 y=0 - x=0.1 y =0.11 - x=0 y= 0.65 
                     float y3 = -1.266666f * x * x -0.170002f * x + 0.859686f;//other parabolic for green passing in x=0.35 y=0.65 - x=0.20 y=0.775 - x=0.1 y=0.83
-                    //float y4 = 60.71428f * x * x - 3.17857f * x + 0.65f;//not working ...linear
+                    float y4 = -60.71428f * x * x + 6.821428f * x + 0.65f;//other parabolic x=0 y=0.65 - x=0.03 y=0.8 - x=0.07 y=0.83
+                    //small difference  in the connection of the 2 last parabolic
                 
                     Color::xyz2srgb(XX, YY, ZZ, R, G, B);
                     //replace color by gray
@@ -319,15 +320,15 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                     if(y > y2  && x > 0.35f) {//0.35
                         R = 0.7f; G = 0.7f; B = 0.7f;
                     }
-                    if(y > y3  && x <= 0.35f) {//0.35
+                    if(y > y3  && x <= 0.35f && x > 0.06f) {//0.35
                         R = 0.7f; G = 0.7f; B = 0.7f;
                     }
-                    if(y > y4  && x < 0.06f) {
+                    if(y > y4  && x <= 0.06f) {
                         R = 0.7f; G = 0.7f; B = 0.7f;
                     }
-                    if(y > y5  && x > 0.05f && x <= 0.1f) {
-                        R = 0.7f; G = 0.7f; B = 0.7f;
-                    }
+                  //  if(y > y5  && x >= 0.07f && x <= 0.1f) {
+                  //      R = 0.7f; G = 0.7f; B = 0.7f;
+                   // }
 
                     cr->set_source_rgb(R , G , B);
 
