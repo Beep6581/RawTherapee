@@ -723,6 +723,11 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         if (illum == 7) {//stdA
             xyD = {0.447573, 0.407440, 1.0};
         }
+
+        if (illum == 8) {//2000K
+            xyD = {0.526591, 0.41331, 1.0};
+        }
+
         //D41  0.377984  0.381229
         //D55  0.332424  0.347426
         //D80  0.293755  0.309185

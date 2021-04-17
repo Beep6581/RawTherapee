@@ -1497,6 +1497,8 @@ void Crop::update(int todo)
                 illum = 6; 
             } else if(params.icm.will == "stda"){
                 illum = 7; 
+            } else if(params.icm.will == "2000"){
+                illum = 8; 
             }
 
             int prim = 0;
