@@ -703,7 +703,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         } else if (illum == 6) {
             tempv4 = 8000.;
         } else if (illum == 7) {
-            tempv4 = 5003.;//it is not an error
+            tempv4 = 12000.;
         }
 
         cmsWhitePointFromTemp(&xyD, tempv4);
@@ -720,11 +720,15 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             xyD = {0.3457, 0.3585, 1.0};//white D50      near LCMS values but not perfect...it's a compromise!!
         }
 
-        if (illum == 7) {//stdA
+        if (illum == 7) {//D120
+            xyD = {0.269669, 0.28078, 1.0};
+        }
+
+        if (illum == 8) {//stdA
             xyD = {0.447573, 0.407440, 1.0};
         }
 
-        if (illum == 8) {//2000K
+        if (illum == 9) {//2000K
             xyD = {0.526591, 0.41331, 1.0};
         }
 

@@ -245,6 +245,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     will->append(M("TP_ICM_WORKING_ILLU_D60"));
     will->append(M("TP_ICM_WORKING_ILLU_D65"));
     will->append(M("TP_ICM_WORKING_ILLU_D80"));
+    will->append(M("TP_ICM_WORKING_ILLU_D120"));
     will->append(M("TP_ICM_WORKING_ILLU_STDA"));
     will->append(M("TP_ICM_WORKING_ILLU_2000"));
     will->set_active(0);
@@ -782,10 +783,12 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         will->set_active(5);
     } else if (pp->icm.will == "D80") {
         will->set_active(6);
-    } else if (pp->icm.will == "stda") {
+    } else if (pp->icm.will == "D120") {
         will->set_active(7);
-    } else if (pp->icm.will == "2000") {
+    } else if (pp->icm.will == "stda") {
         will->set_active(8);
+    } else if (pp->icm.will == "2000") {
+        will->set_active(9);
     }
 
     if (pp->icm.wprim == "def") {
@@ -1109,8 +1112,10 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     } else if (will->get_active_row_number() == 6) {
         pp->icm.will = "D80";
     } else if (will->get_active_row_number() == 7) {
-        pp->icm.will = "stda";
+        pp->icm.will = "D120";
     } else if (will->get_active_row_number() == 8) {
+        pp->icm.will = "stda";
+    } else if (will->get_active_row_number() == 9) {
         pp->icm.will = "2000";
     }
 

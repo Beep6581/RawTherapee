@@ -1608,10 +1608,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     illum = 5;
                 } else if(params->icm.will == "D80"){
                     illum = 6; 
-                } else if(params->icm.will == "stda"){
+                } else if(params->icm.will == "D120"){
                     illum = 7; 
-                } else if(params->icm.will == "2000"){
+                } else if(params->icm.will == "stda"){
                     illum = 8; 
+                } else if(params->icm.will == "2000"){
+                    illum = 9; 
                 }
 
                 int prim = 0;
@@ -1702,10 +1704,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     } else if(illum == 6) {//D80
                         wx = 0.2937f;
                         wy = 0.3092f;
-                    } else if(illum == 7) {//stdA
+                    } else if(illum == 7) {//D120
+                        wx = 0.2697f;
+                        wy = 0.2808f;
+                    } else if(illum == 8) {//stdA
                         wx = 0.4476f;
                         wy = 0.4074f;
-                    } else if(illum == 8) {//2000K
+                    } else if(illum == 9) {//2000K
                         wx = 0.5266f;
                         wy = 0.4133f;
                     }
