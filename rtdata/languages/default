@@ -2406,7 +2406,7 @@ TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only available if a dual-illuminant DCP with interpolation support is selected.
 TP_ICM_GREFRAME;Green Primaries
-TP_ICM_ILLUMPRIM_TOOLTIP;Choose the illuminant closest to the shooting conditions.\nChanges can only be used when the 'Destination primaries' selection is set to 'Custom Sliders'.
+TP_ICM_ILLUMPRIM_TOOLTIP;Choose the illuminant closest to the shooting conditions.\nChanges can only be made when the ‘Destination primaries’ selection is set to ‘Custom: Primaries sliders & Illuminant’.
 TP_ICM_INPUTCAMERA;Camera standard
 TP_ICM_INPUTCAMERAICC;Auto-matched camera profile
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
@@ -2439,7 +2439,6 @@ TP_ICM_TRCFRAME;Abstract Profile
 TP_ICM_TRCFRAME_TOOLTIP;Also known as ‘synthetic’ or ‘virtual’ profiles, which are applied at the end of the processing pipeline (prior to ciecam) allowing you to create custom image effects.\nYou can make changes to the:\n ‘Tone response curve’, which modifies the tones of the image.\n ‘Illuminant’ : which allows you to change the profile primaries to adapt them to the shooting conditions.\n ‘Destination space (primaries)’: which allows you to change the destination profile primaries.
 TP_ICM_WORKINGPROFILE;Working Profile
 TP_ICM_WORKING_PRESER;Preserves Pastel tones
-TP_ICM_WORKING_PRIMFRAME_TOOLTIP;The 'CIE xy' diagram is not updated - primaries and white point - when the 'Destination- primaries' selection is 'Custom CIE xy diagram'.\nOnly in this last mode, you can freely change the values of the 3 primaries on the diagram. 
 TP_ICM_WORKING_TRC;Tone response curve:
 TP_ICM_WORKING_TRC_BT709;BT709 g=2.22 s=4.5
 TP_ICM_WORKING_TRC_SRGB;sRGB g=2.4 s=12.92
@@ -2477,6 +2476,7 @@ TP_ICM_WORKING_PRIM_BET;Beta RGB
 TP_ICM_WORKING_PRIM_BST;BestRGB
 TP_ICM_WORKING_PRIM_CUS;Custom : Primaries sliders & Illuminant
 TP_ICM_WORKING_PRIM_CUSGR;Custom : CIE xy Diagram - Primaries
+TP_ICM_WORKING_PRIMFRAME_TOOLTIP;When ‘Custom CIE xy diagram’ is selected in ‘Destination- primaries’’ combobox, you can modify the values of the 3 primaries directly on the graph.\nNote that in this case, the white point position on the graph will not be updated. 
 TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Threshold
