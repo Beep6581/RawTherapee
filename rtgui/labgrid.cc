@@ -256,17 +256,18 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
             double cellYMin = 0.;
             double cellYMax = std::floor(cellH);
             //various approximations to simulate Ciexy curves graph
-            // this graph is not accurate...I replace curve by polygon 
+            // this graph is not accurate...I replace curve by polygon or parabolic
             float xa = 0.2653f / (0.7347f - 0.17f);
             float xb = -0.17f * xa;
-         //  float ax = (0.1f - 0.6f) / 0.08f;
-          //  float bx = 0.6f;
-         //   float ax0 = -0.1f / (0.17f - 0.08f);
-         //   float bx0 = -0.17f* ax0;
-            float axs = (0.2653f - 0.7f) / (0.7347f - 0.3f);
-            float bxs = 0.7f - axs * 0.3f;
-            float axss = (0.7f - 0.83f) / (0.3f - 0.1f);
-            float bxss = 0.7f - 0.3f * axss;
+            //linaer values 
+            //  float ax = (0.1f - 0.6f) / 0.08f;
+            //  float bx = 0.6f;
+            //   float ax0 = -0.1f / (0.17f - 0.08f);
+            //   float bx0 = -0.17f* ax0;
+            float axs = (0.2653f - 0.65f) / (0.7347f - 0.35f);
+            float bxs = 0.65f - axs * 0.35f;
+            // float axss = (0.7f - 0.83f) / (0.3f - 0.1f);
+            // float bxss = 0.7f - 0.3f * axss;
             float bxsss = 0.65f;
             float axsss = (0.83f - bxsss) / 0.05f;
             float bx4s = 0.83f;
@@ -291,12 +292,12 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                   //  float y0 = ax0 * x + bx0;
                   //  float y1 = ax * x + bx;
                     float y2 = axs * x + bxs;
-                    float y3 = axss * x + bxss;
+                   // float y3 = axss * x + bxss;
                     float y4 = axsss * x + bxsss;
                     float y5 = bx4s;
                     float y6 = 22.52f * x * x - 7.652f * x + 0.65f;//parabolic passing in x=0.17 y=0 - x=0.1 y =0.11 - x=0 y= 0.65 
-                    //float y3 = -1.266666f * x * x -0.1170002f * x + 0.854366f;//other parabolic for green
-                    
+                    float y3 = -1.266666f * x * x -0.170002f * x + 0.859686f;//other parabolic for green passing in x=0.35 y=0.65 - x=0.20 y=0.775 - x=0.1 y=0.83
+                    //float y4 = 60.71428f * x * x - 3.17857f * x + 0.65f;//not working ...linear
                 
                     Color::xyz2srgb(XX, YY, ZZ, R, G, B);
                     //replace color by gray
@@ -315,10 +316,10 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                         R = 0.7f; G = 0.7f; B = 0.7f;
                     }
                         
-                    if(y > y2  && x > 0.3f) {//0.35
+                    if(y > y2  && x > 0.35f) {//0.35
                         R = 0.7f; G = 0.7f; B = 0.7f;
                     }
-                    if(y > y3  && x <= 0.3f) {//0.35
+                    if(y > y3  && x <= 0.35f) {//0.35
                         R = 0.7f; G = 0.7f; B = 0.7f;
                     }
                     if(y > y4  && x < 0.06f) {
