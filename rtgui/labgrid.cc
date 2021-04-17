@@ -295,6 +295,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                     float y4 = axsss * x + bxsss;
                     float y5 = bx4s;
                     float y6 = 22.52f * x * x - 7.652f * x + 0.65f;//parabolic passing in x=0.17 y=0 - x=0.1 y =0.11 - x=0 y= 0.65 
+                    //float y3 = -1.266666f * x * x -0.1170002f * x + 0.854366f;//other parabolic for green
                     
                 
                     Color::xyz2srgb(XX, YY, ZZ, R, G, B);
