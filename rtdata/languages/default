@@ -235,6 +235,7 @@ GENERAL_NO;No
 GENERAL_NONE;None
 GENERAL_OK;OK
 GENERAL_OPEN;Open
+GENERAL_OTHER;Other
 GENERAL_PORTRAIT;Portrait
 GENERAL_RESET;Reset
 GENERAL_SAVE;Save
@@ -1513,7 +1514,7 @@ MAIN_BUTTON_PREFERENCES;Preferences
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue.\nShortcut: <b>Ctrl+b</b>
 MAIN_BUTTON_SAVE_TOOLTIP;Save current image.\nShortcut: <b>Ctrl+s</b>\nSave current profile (.pp3).\nShortcut: <b>Ctrl+Shift+s</b>
 MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
-MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+e</b>
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+e</b>\nCurrent editor:
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels.\nShortcut: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
 MAIN_FRAME_EDITOR;Editor

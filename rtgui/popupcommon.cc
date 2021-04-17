@@ -251,7 +251,7 @@ void PopUpCommon::setButtonHint()
         auto item = dynamic_cast<MyImageMenuItem*>(widget);
 
         if (item) {
-            hint += item->getLabel ()->get_text ();
+            hint += escapeHtmlChars(item->getLabel()->get_text());
         }
     }
 

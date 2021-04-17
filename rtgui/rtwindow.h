@@ -33,6 +33,7 @@
 class BatchQueueEntry;
 class BatchQueuePanel;
 class EditorPanel;
+class ExternalEditor;
 class FilePanel;
 class PLDBridge;
 class RTWindow final :
@@ -114,6 +115,7 @@ public:
     void MoveFileBrowserToEditor();
     void MoveFileBrowserToMain();
 
+    void updateExternalEditorWidget(int selectedIndex, const std::vector<ExternalEditor> &editors);
     void updateProfiles (const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC);
     void updateTPVScrollbar (bool hide);
     void updateHistogramPosition (int oldPosition, int newPosition);

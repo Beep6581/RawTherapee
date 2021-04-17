@@ -43,6 +43,7 @@ class EditorPanel;
 class FilePanel;
 class MyProgressBar;
 class Navigator;
+class PopUpButton;
 class Thumbnail;
 class ToolPanelCoordinator;
 
@@ -162,7 +163,9 @@ public:
     void tbBeforeLock_toggled();
     void saveAsPressed ();
     void queueImgPressed ();
-    void sendToGimpPressed ();
+    void sendToExternal();
+    void sendToExternalChanged(int);
+    void sendToExternalPressed();
     void openNextEditorImage ();
     void openPreviousEditorImage ();
     void syncFileBrowser ();
@@ -182,6 +185,7 @@ public:
     {
         return isProcessing;
     }
+    void updateExternalEditorWidget(int selectedIndex, const std::vector<ExternalEditor> &editors);
     void updateProfiles (const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC);
     void updateTPVScrollbar (bool hide);
     void updateHistogramPosition (int oldPosition, int newPosition);
@@ -201,6 +205,8 @@ private:
     bool                idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *pc, Glib::ustring fname);
     bool                idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagefloat* img, Glib::ustring filename);
     void                histogramProfile_toggled ();
+    Gtk::AppChooserDialog *getAppChooserDialog();
+    void onAppChooserDialogResponse(int resposneId);
 
 
     Glib::ustring lastSaveAsFileName;
@@ -230,10 +236,12 @@ private:
 
     Gtk::Button* queueimg;
     Gtk::Button* saveimgas;
-    Gtk::Button* sendtogimp;
+    PopUpButton* send_to_external;
     Gtk::Button* navSync;
     Gtk::Button* navNext;
     Gtk::Button* navPrev;
+    Glib::RefPtr<Gio::AppInfo> external_editor_info;
+    std::unique_ptr<Gtk::AppChooserDialog> app_chooser_dialog;
 
     class ColorManagementToolbar;
     std::unique_ptr<ColorManagementToolbar> colorMgmtToolBar;

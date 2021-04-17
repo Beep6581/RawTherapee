@@ -666,12 +666,15 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     queueimg->set_tooltip_markup (M ("MAIN_BUTTON_PUTTOQUEUE_TOOLTIP"));
     setExpandAlignProperties (queueimg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
-    Gtk::Image *sendToEditorButtonImage = Gtk::manage (new RTImage ("palette-brush.png"));
-    sendtogimp = Gtk::manage (new Gtk::Button ());
-    sendtogimp->set_relief(Gtk::RELIEF_NONE);
-    sendtogimp->add (*sendToEditorButtonImage);
-    sendtogimp->set_tooltip_markup (M ("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
-    setExpandAlignProperties (sendtogimp, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+    send_to_external = Gtk::make_managed<PopUpButton>("", false);
+    send_to_external->set_tooltip_text(M("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
+    setExpandAlignProperties(send_to_external->buttonGroup, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
+    send_to_external->addEntry("palette-brush.png", M("GENERAL_OTHER"));
+    updateExternalEditorWidget(
+        options.externalEditorIndex >= 0 ? options.externalEditorIndex : options.externalEditors.size(),
+        options.externalEditors
+    );
+    send_to_external->show();
 
     // Status box
     progressLabel = Gtk::manage (new MyProgressBar (300));
@@ -736,7 +739,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     iops->attach_next_to (*vsep1, Gtk::POS_LEFT, 1, 1);
 
     if (!gimpPlugin) {
-        iops->attach_next_to (*sendtogimp, Gtk::POS_LEFT, 1, 1);
+        iops->attach_next_to(*send_to_external->buttonGroup, Gtk::POS_LEFT, 1, 1);
     }
 
     if (!gimpPlugin && !simpleEditor) {
@@ -840,7 +843,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     tbRightPanel_1->signal_toggled().connect ( sigc::mem_fun (*this, &EditorPanel::tbRightPanel_1_toggled) );
     saveimgas->signal_pressed().connect ( sigc::mem_fun (*this, &EditorPanel::saveAsPressed) );
     queueimg->signal_pressed().connect ( sigc::mem_fun (*this, &EditorPanel::queueImgPressed) );
-    sendtogimp->signal_pressed().connect ( sigc::mem_fun (*this, &EditorPanel::sendToGimpPressed) );
+    send_to_external->signal_changed().connect(sigc::mem_fun(*this, &EditorPanel::sendToExternalChanged));
+    send_to_external->signal_pressed().connect(sigc::mem_fun(*this, &EditorPanel::sendToExternalPressed));
     toggleHistogramProfile->signal_toggled().connect( sigc::mem_fun (*this, &EditorPanel::histogramProfile_toggled) );
 
     if (navPrev) {
@@ -1673,7 +1677,7 @@ bool EditorPanel::handleShortcutKey (GdkEventKey* event)
 
                 case GDK_KEY_e:
                     if (!gimpPlugin) {
-                        sendToGimpPressed();
+                        sendToExternalPressed();
                     }
 
                     return true;
@@ -1791,7 +1795,7 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImagefloat*> *pc,
         msgd.run ();
 
         saveimgas->set_sensitive (true);
-        sendtogimp->set_sensitive (true);
+        send_to_external->set_sensitive(true);
         isProcessing = false;
 
     }
@@ -1819,7 +1823,7 @@ bool EditorPanel::idle_imageSaved (ProgressConnector<int> *pc, rtengine::IImagef
     }
 
     saveimgas->set_sensitive (true);
-    sendtogimp->set_sensitive (true);
+    send_to_external->set_sensitive(true);
 
     parent->setProgressStr ("");
     parent->setProgress (0.);
@@ -1930,7 +1934,7 @@ void EditorPanel::saveAsPressed ()
                 ld->startFunc (sigc::bind (sigc::ptr_fun (&rtengine::processImage), job, err, parent->getProgressListener(), false ),
                                sigc::bind (sigc::mem_fun ( *this, &EditorPanel::idle_saveImage ), ld, fnameOut, sf, pparams));
                 saveimgas->set_sensitive (false);
-                sendtogimp->set_sensitive (false);
+                send_to_external->set_sensitive(false);
             }
         } else {
             BatchQueueEntry* bqe = createBatchQueueEntry ();
@@ -1961,7 +1965,7 @@ void EditorPanel::queueImgPressed ()
     parent->addBatchQueueJob (createBatchQueueEntry ());
 }
 
-void EditorPanel::sendToGimpPressed ()
+void EditorPanel::sendToExternal()
 {
     if (!ipc || !openThm) {
         return;
@@ -1975,7 +1979,29 @@ void EditorPanel::sendToGimpPressed ()
     ld->startFunc (sigc::bind (sigc::ptr_fun (&rtengine::processImage), job, err, parent->getProgressListener(), false ),
                    sigc::bind (sigc::mem_fun ( *this, &EditorPanel::idle_sendToGimp ), ld, openThm->getFileName() ));
     saveimgas->set_sensitive (false);
-    sendtogimp->set_sensitive (false);
+    send_to_external->set_sensitive(false);
+}
+
+void EditorPanel::sendToExternalChanged(int)
+{
+    int index = send_to_external->getSelected();
+    if (index >= 0 && static_cast<unsigned>(index) == options.externalEditors.size()) {
+        index = -1;
+    }
+    options.externalEditorIndex = index;
+}
+
+void EditorPanel::sendToExternalPressed()
+{
+    if (options.externalEditorIndex == -1) {
+        // "Other" external editor. Show app chooser dialog to let user pick.
+        Gtk::AppChooserDialog *dialog = getAppChooserDialog();
+        dialog->show();
+    } else {
+        struct ExternalEditor editor = options.externalEditors.at(options.externalEditorIndex);
+        external_editor_info = Gio::AppInfo::create_from_commandline(editor.command, editor.name, Gio::APP_INFO_CREATE_NONE);
+        sendToExternal();
+    }
 }
 
 
@@ -2078,7 +2104,7 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
         Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
         msgd.run ();
         saveimgas->set_sensitive (true);
-        sendtogimp->set_sensitive (true);
+        send_to_external->set_sensitive(true);
     }
 
     return false;
@@ -2093,18 +2119,12 @@ bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagef
 
     if (!errore) {
         saveimgas->set_sensitive (true);
-        sendtogimp->set_sensitive (true);
+        send_to_external->set_sensitive(true);
         parent->setProgressStr ("");
         parent->setProgress (0.);
         bool success = false;
 
-        if (options.editorToSendTo == 1) {
-            success = ExtProgStore::openInGimp (filename);
-        } else if (options.editorToSendTo == 2) {
-            success = ExtProgStore::openInPhotoshop (filename);
-        } else if (options.editorToSendTo == 3) {
-            success = ExtProgStore::openInCustomEditor (filename);
-        }
+        success = ExtProgStore::openInExternalEditor(filename, external_editor_info);
 
         if (!success) {
             Gtk::MessageDialog msgd (*parent, M ("MAIN_MSG_CANNOTSTARTEDITOR"), false, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
@@ -2115,6 +2135,36 @@ bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagef
     }
 
     return false;
+}
+
+Gtk::AppChooserDialog *EditorPanel::getAppChooserDialog()
+{
+    if (!app_chooser_dialog.get()) {
+        app_chooser_dialog.reset(new Gtk::AppChooserDialog("image/tiff"));
+        app_chooser_dialog->signal_response().connect(
+            sigc::mem_fun(*this, &EditorPanel::onAppChooserDialogResponse)
+        );
+        app_chooser_dialog->set_modal();
+    }
+
+    return app_chooser_dialog.get();
+}
+
+void EditorPanel::onAppChooserDialogResponse(int responseId)
+{
+    switch (responseId) {
+        case Gtk::RESPONSE_OK:
+            getAppChooserDialog()->close();
+            external_editor_info = getAppChooserDialog()->get_app_info();
+            sendToExternal();
+            break;
+        case Gtk::RESPONSE_CANCEL:
+        case Gtk::RESPONSE_CLOSE:
+            getAppChooserDialog()->close();
+            break;
+        default:
+            break;
+    }
 }
 
 void EditorPanel::historyBeforeLineChanged (const rtengine::procparams::ProcParams& params)
@@ -2390,6 +2440,26 @@ void EditorPanel::tbShowHideSidePanels_managestate()
     tbShowHideSidePanels->set_active (!bAllSidePanelsVisible);
 
     ShowHideSidePanelsconn.block (false);
+}
+
+void EditorPanel::updateExternalEditorWidget(int selectedIndex, const std::vector<ExternalEditor> &editors)
+{
+    // Remove the editors and leave the "Other" entry.
+    while (send_to_external->getEntryCount() > 1) {
+        send_to_external->removeEntry(0);
+    }
+    // Add the editors.
+    for (unsigned i = 0; i < editors.size(); i++) {
+        const auto & name = editors[i].name.empty() ? Glib::ustring(" ") : editors[i].name;
+        if (!editors[i].icon_name.empty()) {
+            Glib::RefPtr<Gio::Icon> gioIcon = Gio::Icon::create(editors[i].icon_name);
+            send_to_external->insertEntry(i, gioIcon, name);
+        } else {
+            send_to_external->insertEntry(i, "palette-brush.png", name);
+        }
+    }
+    send_to_external->setSelected(selectedIndex);
+    send_to_external->show();
 }
 
 void EditorPanel::updateProfiles (const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC)

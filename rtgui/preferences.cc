@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <sigc++/slot.h>
+#include "externaleditorpreferences.h"
 #include "preferences.h"
 #include "multilangmgr.h"
 #include "splash.h"
@@ -32,6 +33,8 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+//#define EXT_EDITORS_RADIOS // TODO: Remove the corresponding code after testing.
 
 namespace {
 void placeSpinBox(Gtk::Container* where, Gtk::SpinButton* &spin, const std::string &labelText, int digits, int inc0, int inc1, int maxLength, int range0, int range1, const std::string &toolTip = "") {
@@ -1188,6 +1191,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
 
     Gtk::Frame* fdg = Gtk::manage(new Gtk::Frame(M("PREFERENCES_EXTERNALEDITOR")));
     setExpandAlignProperties(fdg, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+#ifdef EXT_EDITORS_RADIOS
     Gtk::Grid* externaleditorGrid = Gtk::manage(new Gtk::Grid());
     externaleditorGrid->set_column_spacing(4);
     externaleditorGrid->set_row_spacing(4);
@@ -1243,8 +1247,17 @@ Gtk::Widget* Preferences::getGeneralPanel()
     externaleditorGrid->attach_next_to(*edOther, *edGimp, Gtk::POS_BOTTOM, 1, 1);
     externaleditorGrid->attach_next_to(*editorToSendTo, *edOther, Gtk::POS_RIGHT, 1, 1);
 #endif
+#endif
+
+    externalEditors = Gtk::make_managed<ExternalEditorPreferences>();
+    externalEditors->set_size_request(-1, 200);
+#ifdef EXT_EDITORS_RADIOS
+    externaleditorGrid->attach_next_to(*externalEditors, *edOther, Gtk::POS_BOTTOM, 2, 1);
 
     fdg->add(*externaleditorGrid);
+#else
+    fdg->add(*externalEditors);
+#endif
     vbGeneral->attach_next_to (*fdg, *fclip, Gtk::POS_BOTTOM, 2, 1);
     langAutoDetectConn = ckbLangAutoDetect->signal_toggled().connect(sigc::mem_fun(*this, &Preferences::langAutoDetectToggled));
     tconn = themeCBT->signal_changed().connect ( sigc::mem_fun (*this, &Preferences::themeChanged) );
@@ -1700,6 +1713,7 @@ void Preferences::storePreferences()
 
     moptions.pseudoHiDPISupport = pseudoHiDPI->get_active();
 
+#ifdef EXT_EDITORS_RADIOS
 #ifdef WIN32
     moptions.gimpDir = gimpDir->get_filename();
     moptions.psDir = psDir->get_filename();
@@ -1725,6 +1739,20 @@ void Preferences::storePreferences()
 #endif
     else if (edOther->get_active()) {
         moptions.editorToSendTo = 3;
+    }
+#endif
+
+    const std::vector<ExternalEditorPreferences::EditorInfo> &editors = externalEditors->getEditors();
+    moptions.externalEditors.resize(editors.size());
+    moptions.externalEditorIndex = -1;
+    for (unsigned i = 0; i < editors.size(); i++) {
+        moptions.externalEditors[i] = (ExternalEditor(
+            editors[i].name, editors[i].command, editors[i].icon_name));
+        if (editors[i].other_data) {
+            // The current editor was marked before the list was edited. We
+            // found the mark, so this is the editor that was active.
+            moptions.externalEditorIndex = i;
+        }
     }
 
     moptions.CPBPath = txtCustProfBuilderPath->get_text();
@@ -1981,6 +2009,7 @@ void Preferences::fillPreferences()
     hlThresh->set_value(moptions.highlightThreshold);
     shThresh->set_value(moptions.shadowThreshold);
 
+#ifdef EXT_EDITORS_RADIOS
     edGimp->set_active(moptions.editorToSendTo == 1);
     edOther->set_active(moptions.editorToSendTo == 3);
 #ifdef WIN32
@@ -2009,6 +2038,18 @@ void Preferences::fillPreferences()
 
 #endif
     editorToSendTo->set_text(moptions.customEditorProg);
+#endif
+
+    std::vector<ExternalEditorPreferences::EditorInfo> editorInfos;
+    for (const auto &editor : moptions.externalEditors) {
+        editorInfos.push_back(ExternalEditorPreferences::EditorInfo(
+                    editor.name, editor.command, editor.icon_name));
+    }
+    if (moptions.externalEditorIndex >= 0) {
+        // Mark the current editor so we can track it.
+        editorInfos[moptions.externalEditorIndex].other_data = (void *)1;
+    }
+    externalEditors->setEditors(editorInfos);
 
     txtCustProfBuilderPath->set_text(moptions.CPBPath);
     custProfBuilderLabelType->set_active(moptions.CPBKeys);
@@ -2472,6 +2513,23 @@ void Preferences::workflowUpdate()
             || moptions.rtSettings.printerIntent  != options.rtSettings.printerIntent) {
         // Update the position of the Histogram
         parent->updateProfiles (moptions.rtSettings.printerProfile, rtengine::RenderingIntent(moptions.rtSettings.printerIntent), moptions.rtSettings.printerBPC);
+    }
+
+    bool changed = moptions.externalEditorIndex != options.externalEditorIndex
+        || moptions.externalEditors.size() != options.externalEditors.size();
+    if (!changed) {
+        auto &editors = options.externalEditors;
+        auto &meditors = moptions.externalEditors;
+        for (unsigned i = 0; i < editors.size(); i++) {
+            if (editors[i] != meditors[i]) {
+                changed = true;
+                break;
+            }
+        }
+    }
+    if (changed) {
+        // Update the send to external editor widget.
+        parent->updateExternalEditorWidget(moptions.externalEditorIndex, moptions.externalEditors);
     }
 
 }

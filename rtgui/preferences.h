@@ -26,6 +26,7 @@
 #include "options.h"
 #include "../rtengine/profilestore.h"
 
+class ExternalEditorPreferences;
 class RTWindow;
 class Splash;
 
@@ -101,6 +102,7 @@ class Preferences final :
     Gtk::RadioButton* edGimp;
     Gtk::RadioButton* edPS;
     Gtk::RadioButton* edOther;
+    ExternalEditorPreferences *externalEditors;
     MyFileChooserButton* darkFrameDir;
     MyFileChooserButton* flatFieldDir;
     MyFileChooserButton* clutsDir;
