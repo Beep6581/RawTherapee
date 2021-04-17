@@ -920,7 +920,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         redFrame->hide();
 
     } else if (pp->icm.workingTRC == "Custom") {
-        will->set_sensitive(false);
+        will->set_sensitive(true);
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
         wprimlab->set_sensitive(true);
@@ -929,7 +929,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         } else {
             redFrame->show();
             if (wprim->get_active_row_number() < 11) {
-              will->set_sensitive(false);
+              will->set_sensitive(true);
               redBox->set_sensitive(false);
               greBox->set_sensitive(false);
               bluBox->set_sensitive(false);
