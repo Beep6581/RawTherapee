@@ -175,6 +175,7 @@ Resize::~Resize ()
 
 void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
 {
+    printf("read in\n");
 
     disableListener ();
     aconn.block (true);
@@ -188,6 +189,8 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
     scale->setValue (pp->resize.scale);
     w->set_value (pp->resize.width);
     h->set_value (pp->resize.height);
+    le->set_value (pp->resize.longedge);
+    se->set_value (pp->resize.shortedge);
     setEnabled (pp->resize.enabled);
     spec->set_active (pp->resize.dataspec);
     allowUpscaling->set_active(pp->resize.allowUpscaling);
@@ -230,7 +233,6 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
         }
 
         if (!pedited->resize.dataspec) {
-            // HIER EDITED spec->set_active (4);
             spec->set_active (6);
         }
 
@@ -252,13 +254,7 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited)
 {
     int dataSpec = spec->get_active_row_number();
     
-    // HIER das ist nur vorübergehend. Ohne diese Krücke ist der Export nicht korrekt:
-    // Die Werte werden zwar im GUI richtig angezeigt, aber die exportierte Datei hat
-    // andere Maße.
-    // Vermutlich gibt es irgendwo eine Abfrage auf diesen Wert, und 4 bzw. 5 sind unbekannt.
-    printf("write in -- dataSpec before = %d\n", dataSpec);
-    // if (dataSpec == 4) dataSpec = 1;
-    printf("write in -- dataSpec after = %d\n", dataSpec);
+    printf("write in -- dataSpec = %d\n", dataSpec);
 
     pp->resize.scale  = scale->getValue();
 
@@ -431,7 +427,7 @@ void Resize::sizeChanged(int mw, int mh, int ow, int oh)
 void Resize::setDimensions ()
 {
 // HIER
-printf("setDimensions()\n");
+printf("setDimensions() in - spec %d\n", spec->get_active_row_number());
     idle_register.add(
         [this]() -> bool
         {
@@ -493,22 +489,37 @@ printf("setDimensions()\n");
 
                 case 4: {
                     // Long edge mode
-                    // HIER
+                    printf("setDimensions case 4 - refw: %d, refh: %d\n", refw, refh);
                     if (refw > refh) {
                         w->set_value (le->get_value ());
-                        // entryWChanged(); // hiermit funktioniert es, aber gibt die entryWChanged-Meldung aus
                         const double tmp_scale = le->get_value() / static_cast<double>(refw);
                         scale->setValue(tmp_scale);
-                        w->set_value(le->get_value());
                         h->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
                     } else {
                         h->set_value (le->get_value ());
-                        // entryHChanged(); // hiermit funktioniert es, aber gibt die entryHChanged-Meldung aus
                         const double tmp_scale = le->get_value() / static_cast<double>(refh);
                         scale->setValue(tmp_scale);
-                        h->set_value(le->get_value());
                         w->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * tmp_scale + 0.5)));
                     }
+                    printf("setDimensions case 4 - w: %f; h: %f; scale: %2.5f\n", w->get_value(), h->get_value(), scale->getValue());
+                    break;
+                }
+
+                case 5: {
+                    // Short edge mode
+                    printf("setDimensions case 5 - refw: %d, refh: %d\n", refw, refh);
+                    if (refw > refh) {
+                        h->set_value (se->get_value ());
+                        const double tmp_scale = se->get_value() / static_cast<double>(refh);
+                        scale->setValue(tmp_scale);
+                        w->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * tmp_scale + 0.5)));
+                    } else {
+                        w->set_value (se->get_value ());
+                        const double tmp_scale = se->get_value() / static_cast<double>(refw);
+                        scale->setValue(tmp_scale);
+                        h->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
+                    }
+                    printf("setDimensions case 5 - w: %f; h: %f; scale: %2.5f\n", w->get_value(), h->get_value(), scale->getValue());
                     break;
                 }
 
@@ -589,7 +600,6 @@ void Resize::entryWChanged ()
             }
         }
     }
-printf("entryWchanged w: %f; h: %f; scale: %2.5f\n", w->get_value(), h->get_value(), scale->getValue());
 }
 
 void Resize::entryHChanged ()
@@ -623,16 +633,12 @@ void Resize::entryHChanged ()
             }
         }
     }
-printf("entryHchanged w: %f; h: %f; scale: %2.5f\n", w->get_value(), h->get_value(), scale->getValue());
 }
 
 void Resize::entryLEChanged ()
 {
- printf("entryLEChanged in\n");
 
     leDirty = true;
-    // wDirty = true;
-    // hDirty = true;
 
     // updating long edge
     if (!batchMode && listener) {
@@ -652,16 +658,13 @@ void Resize::entryLEChanged ()
             refw = maxw;
             refh = maxh;
         } 
- printf("entryLEChanged - refw: %d, refh: %d\n", refw, refh);
 
         if (refw > refh) {
             w->set_value (le->get_value ());
-            // entryWChanged(); // hiermit funktioniert es, aber gibt die entryWChanged-Meldung aus
             h->set_value ((double)(getComputedHeight()));
             scale->setValue (w->get_value () / (cropw && appliesTo->get_active_row_number() == 0 ? (double)cropw : (double)maxw));
         } else {
             h->set_value (le->get_value());
-            // entryHChanged(); // hiermit funktioniert es, aber gibt die entryHChanged-Meldung aus
             w->set_value ((double)(getComputedWidth()));
             scale->setValue (h->get_value () / (croph && appliesTo->get_active_row_number() == 0 ? (double)croph : (double)maxh));
          }
@@ -674,22 +677,61 @@ void Resize::entryLEChanged ()
 
     if (listener) {
         if (getEnabled () || batchMode) {
-           listener->panelChanged (EvResizeLongedge, Glib::ustring::compose("%1 (%2x%3)",
-                                   (int)le->get_value(), (int)w->get_value(), (int)h->get_value()));
+           listener->panelChanged (EvResizeLongedge, Glib::ustring::format (le->get_value_as_int()));
        }
     }
-printf("entryLEchanged out - w: %f; h: %f; scale: %2.5f\n", w->get_value(), h->get_value(), scale->getValue());
 }
 
 void Resize::entrySEChanged ()
 {
-/*
-*/
+
+    seDirty = true;
+
+    // updating short edge
+    if (!batchMode && listener) {
+        int refw, refh;
+        
+        seconn.block (true);
+        wconn.block (true);
+        hconn.block(true);
+        scale->block (true);
+        
+        if (cropw && appliesTo->get_active_row_number() == 0) {
+            // we use the crop dimensions
+            refw = cropw;
+            refh = croph;
+        } else {
+            // we use the image dimensions
+            refw = maxw;
+            refh = maxh;
+        } 
+
+        if (refw > refh) {
+            h->set_value (se->get_value ());
+            w->set_value ((double)(getComputedWidth()));
+            scale->setValue (h->get_value () / (croph && appliesTo->get_active_row_number() == 0 ? (double)croph : (double)maxh));
+        } else {
+            w->set_value (se->get_value());
+            h->set_value ((double)(getComputedHeight()));
+            scale->setValue (w->get_value () / (cropw && appliesTo->get_active_row_number() == 0 ? (double)cropw : (double)maxw));
+         }
+
+        scale->block (false);
+        seconn.block (false);
+        wconn.block (false);
+        hconn.block (false);
+    }
+
+    if (listener) {
+        if (getEnabled () || batchMode) {
+           listener->panelChanged (EvResizeShortedge, Glib::ustring::format (se->get_value_as_int()));
+       }
+    }
 }
 
 void Resize::specChanged ()
 {
-// HIER
+
     switch (spec->get_active_row_number()) {
     case (0):
         // Scale mode
@@ -716,6 +758,11 @@ void Resize::specChanged ()
     case (4):
         // Long edge mode
         entryLEChanged();
+        break;
+
+    case (5):
+        // Short edge mode
+        entrySEChanged();
         break;
 
     default:

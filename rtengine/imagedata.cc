@@ -316,14 +316,17 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                 lens = exif->getTag ("LensModel")->valueToString ();
             }
         } else if(!make.compare (0, 4, "SONY")) {
+            // <HA> The following if-clause fixes the issue that Sony lenses
+            // are displayed as, e.g., "Unknown (28mm f/2.0)"
+            if(exif->getTag ("LensModel")) {
+                lens = exif->getTag ("LensModel")->valueToString ();
+            }
             if (iso_speed == 65535 || iso_speed == 0) {
                 rtexif::Tag* isoTag = exif->getTag ("RecommendedExposureIndex");
-
                 if(isoTag) {
                     iso_speed = isoTag->toDouble();
                 }
             }
-
         }
 
         if (lens == "Unknown") {
