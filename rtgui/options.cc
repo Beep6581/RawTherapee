@@ -916,7 +916,7 @@ void Options::readFromFile(Glib::ustring fname)
                         if (editorToSendTo == 3) {
                             externalEditorIndex = externalEditors.size();
                         }
-                        externalEditors.push_back(ExternalEditor("-", executable, "");
+                        externalEditors.push_back(ExternalEditor("-", executable, ""));
                     }
  #elif defined __APPLE__
                     if (editorToSendTo == 1) {
