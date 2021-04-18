@@ -1432,7 +1432,9 @@ void ICMPanel::wtrcinChanged()
         }
     }
     wprimChanged();
-
+    if (wTRC->get_active_row_number() == 0) {
+        redFrame->hide();
+    }
     if (listener) {
         listener->panelChanged(EvICMtrcinMethod, wTRC->get_active_text());
     }

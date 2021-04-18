@@ -2475,8 +2475,8 @@ TP_ICM_WORKING_PRIM_AC0;ACESp0
 TP_ICM_WORKING_PRIM_BRU;BruceRGB
 TP_ICM_WORKING_PRIM_BET;Beta RGB
 TP_ICM_WORKING_PRIM_BST;BestRGB
-TP_ICM_WORKING_PRIM_CUS;Custom settings (sliders)
-TP_ICM_WORKING_PRIM_CUSGR;Custom settings (CIE xy Diagram)
+TP_ICM_WORKING_PRIM_CUS;Custom (sliders)
+TP_ICM_WORKING_PRIM_CUSGR;Custom (CIE xy Diagram)
 TP_ICM_WORKING_PRIMFRAME_TOOLTIP;When ‘Custom CIE xy diagram’ is selected in ‘Destination- primaries’’ combobox, you can modify the values of the 3 primaries directly on the graph.\nNote that in this case, the white point position on the graph will not be updated. 
 TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
