@@ -175,7 +175,6 @@ Resize::~Resize ()
 
 void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
 {
-    printf("read in\n");
 
     disableListener ();
     aconn.block (true);
@@ -194,6 +193,7 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
     setEnabled (pp->resize.enabled);
     spec->set_active (pp->resize.dataspec);
     allowUpscaling->set_active(pp->resize.allowUpscaling);
+    setDimensions();    // <HA> Sets Width/Height in the GUI according to value of Specify after loading a .pp3 profile (same behavior as if changed manually)
     updateGUI();
 
     appliesTo->set_active (0);
@@ -254,8 +254,6 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited)
 {
     int dataSpec = spec->get_active_row_number();
     
-    printf("write in -- dataSpec = %d\n", dataSpec);
-
     pp->resize.scale  = scale->getValue();
 
     pp->resize.appliesTo = "Cropped area";
@@ -305,8 +303,6 @@ void Resize::write (ProcParams* pp, ParamsEdited* pedited)
         }
         pedited->resize.allowUpscaling = !allowUpscaling->get_inconsistent();
     }
-    printf("write out -- dataSpec = %d\n", dataSpec);
-
 }
 
 void Resize::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
@@ -426,8 +422,6 @@ void Resize::sizeChanged(int mw, int mh, int ow, int oh)
 
 void Resize::setDimensions ()
 {
-// HIER
-printf("setDimensions() in - spec %d\n", spec->get_active_row_number());
     idle_register.add(
         [this]() -> bool
         {
@@ -489,7 +483,6 @@ printf("setDimensions() in - spec %d\n", spec->get_active_row_number());
 
                 case 4: {
                     // Long edge mode
-                    printf("setDimensions case 4 - refw: %d, refh: %d\n", refw, refh);
                     if (refw > refh) {
                         w->set_value (le->get_value ());
                         const double tmp_scale = le->get_value() / static_cast<double>(refw);
@@ -501,13 +494,11 @@ printf("setDimensions() in - spec %d\n", spec->get_active_row_number());
                         scale->setValue(tmp_scale);
                         w->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * tmp_scale + 0.5)));
                     }
-                    printf("setDimensions case 4 - w: %f; h: %f; scale: %2.5f\n", w->get_value(), h->get_value(), scale->getValue());
                     break;
                 }
 
                 case 5: {
                     // Short edge mode
-                    printf("setDimensions case 5 - refw: %d, refh: %d\n", refw, refh);
                     if (refw > refh) {
                         h->set_value (se->get_value ());
                         const double tmp_scale = se->get_value() / static_cast<double>(refh);
@@ -519,7 +510,6 @@ printf("setDimensions() in - spec %d\n", spec->get_active_row_number());
                         scale->setValue(tmp_scale);
                         h->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
                     }
-                    printf("setDimensions case 5 - w: %f; h: %f; scale: %2.5f\n", w->get_value(), h->get_value(), scale->getValue());
                     break;
                 }
 
