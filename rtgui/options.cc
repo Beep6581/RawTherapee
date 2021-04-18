@@ -875,7 +875,7 @@ void Options::readFromFile(Glib::ustring fname)
                     // GIMP == 1, Photoshop == 2, Custom == 3.
                     editorToSendTo = keyFile.get_integer("External Editor", "EditorKind");
 
- #ifdef WIN32
+#ifdef WIN32
                     Glib::ustring gimpDir = "";
                     if (keyFile.has_key("External Editor", "GimpDir")) {
                         gimpDir = keyFile.get_string("External Editor", "GimpDir");
@@ -903,7 +903,7 @@ void Options::readFromFile(Glib::ustring fname)
                     if (keyFile.has_key("External Editor", "PhotoshopDir")) {
                         psDir = keyFile.get_string("External Editor", "PhotoshopDir");
                     }
-                    auto executable = Glib::build_filename(psDir, "Photoshop.exe");
+                    executable = Glib::build_filename(psDir, "Photoshop.exe");
                     if (Glib::file_test(executable, Glib::FILE_TEST_IS_EXECUTABLE)) {
                         if (editorToSendTo == 2) {
                             externalEditorIndex = externalEditors.size();
@@ -913,12 +913,14 @@ void Options::readFromFile(Glib::ustring fname)
 
                     if (keyFile.has_key("External Editor", "CustomEditor")) {
                         executable = keyFile.get_string("External Editor", "CustomEditor");
-                        if (editorToSendTo == 3) {
-                            externalEditorIndex = externalEditors.size();
+                        if (!executable.empty()) {
+                            if (editorToSendTo == 3) {
+                                externalEditorIndex = externalEditors.size();
+                            }
+                            externalEditors.push_back(ExternalEditor("-", executable, ""));
                         }
-                        externalEditors.push_back(ExternalEditor("-", executable, ""));
                     }
- #elif defined __APPLE__
+#elif defined __APPLE__
                     if (editorToSendTo == 1) {
                         externalEditorIndex = externalEditors.size();
                     }
@@ -932,12 +934,14 @@ void Options::readFromFile(Glib::ustring fname)
 
                     if (keyFile.has_key("External Editor", "CustomEditor")) {
                         auto executable = keyFile.get_string("External Editor", "CustomEditor");
-                        if (editorToSendTo == 3) {
-                            externalEditorIndex = externalEditors.size();
+                        if (!executable.empty()) {
+                            if (editorToSendTo == 3) {
+                                externalEditorIndex = externalEditors.size();
+                            }
+                            externalEditors.push_back(ExternalEditor("-", executable, ""));
                         }
-                        externalEditors.push_back(ExternalEditor("-", executable, ""));
                     }
- #else
+#else
                     if (Glib::find_program_in_path("gimp").compare("")) {
                         if (editorToSendTo == 1) {
                             externalEditorIndex = externalEditors.size();
@@ -952,12 +956,14 @@ void Options::readFromFile(Glib::ustring fname)
 
                     if (keyFile.has_key("External Editor", "CustomEditor")) {
                         auto executable = keyFile.get_string("External Editor", "CustomEditor");
-                        if (editorToSendTo == 3) {
-                            externalEditorIndex = externalEditors.size();
+                        if (!executable.empty()) {
+                            if (editorToSendTo == 3) {
+                                externalEditorIndex = externalEditors.size();
+                            }
+                            externalEditors.push_back(ExternalEditor("-", executable, ""));
                         }
-                        externalEditors.push_back(ExternalEditor("-", executable, ""));
                     }
- #endif
+#endif
                 }
             }
 
