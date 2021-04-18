@@ -1308,8 +1308,8 @@ Camera constants:
     },
 
     { // Quality C
-        "make_model": "FUJIFILM GFX 100",
-        "dcraw_matrix" : [16212, -8423, -1583, -4336, 12583, 1937, -195, 726, 6199], // taken from ART
+        "make_model": [ "FUJIFILM GFX 100", "FUJIFILM GFX100S" ],
+        "dcraw_matrix" : [ 16212, -8423, -1583, -4336, 12583, 1937, -195, 726, 6199 ], // taken from ART
         "raw_crop": [ 0, 2, 11664, 8734 ]
     },
 
