@@ -377,22 +377,22 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
             cr->set_source_rgb(0.1, 0.1, 0.1);
             //draw horiz and vertical lines
             for(int i = 0; i < 22; i++) {
-                cr->move_to(0.04545f * i * width, 0.);
-                cr->line_to(0.04545f * i * width, height);
+                cr->move_to(0.04545 * i * width, 0.);
+                cr->line_to(0.04545 * i * width, height);
             }
             for(int i = 0; i < 22; i++) {
-                cr->move_to(0., 0.04545f * i * height );
-                cr->line_to(width, 0.04545f * i * height);
+                cr->move_to(0., 0.04545 * i * height );
+                cr->line_to(width, 0.04545 * i * height);
             }
 
             cr->stroke(); 
             //draw abciss and ordonate
             cr->set_line_width(1.f * double(s));
             cr->set_source_rgb(0.4, 0., 0.);
-            cr->move_to(0.04545f * 2 * width, 0.);
-            cr->line_to(0.04545f * 2 * width, height);
-            cr->move_to(0., 0.04545f * 2 * height );
-            cr->line_to(width, 0.04545f * 2 * height);
+            cr->move_to(0.04545 * 2 * width, 0.);
+            cr->line_to(0.04545 * 2 * width, height);
+            cr->move_to(0., 0.04545 * 2 * height );
+            cr->line_to(width, 0.04545 * 2 * height);
             cr->stroke(); 
 
             //draw 0 and 1 with circle and lines
@@ -403,7 +403,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
             cr->set_line_width(1.5f * double(s));
             cr->set_source_rgb(0.4, 0., 0.);
             cr->move_to(0.985 * width, 0.08 * height);
-            cr->line_to(0.985* width,  0.055 * height);
+            cr->line_to(0.985 * width,  0.055 * height);
 
             cr->move_to(0.07 * width, 0.99 * height);
             cr->line_to(0.07 * width,  0.965 * height);

@@ -1621,7 +1621,7 @@ void ICMPanel::wprimChanged()
         redFrame->hide();
     } else {
         redFrame->show();
-        if (wprim->get_active_row_number() < 11) {
+        if (wprim->get_active_row_number() < 11 || wprim->get_active_row_number() == 12) {
             redBox->set_sensitive(false);
             greBox->set_sensitive(false);
             bluBox->set_sensitive(false);
