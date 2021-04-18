@@ -317,6 +317,11 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     preBox = Gtk::manage(new Gtk::Box());
     preBox->pack_start(*preser, Gtk::PACK_SHRINK);
     redVBox->pack_start(*preBox, Gtk::PACK_EXPAND_WIDGET);
+
+    cielab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_CIEDIAG") + ":"));
+
+    redVBox->pack_start(*cielab, Gtk::PACK_SHRINK);
+
     redVBox->pack_start(*labgridcie, Gtk::PACK_EXPAND_WIDGET, 4);
     
     redFrame->add(*redVBox);

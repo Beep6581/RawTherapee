@@ -110,6 +110,7 @@ private:
     Gtk::Label* willulab;
     Gtk::Box* wprimBox;
     Gtk::Label* wprimlab;
+    Gtk::Label* cielab;
     Gtk::Box* redBox;
     Gtk::Box* greBox;
     Gtk::Box* bluBox;
