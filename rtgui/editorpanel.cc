@@ -1974,6 +1974,14 @@ void EditorPanel::sendToExternal()
     // develop image
     rtengine::procparams::ProcParams pparams;
     ipc->getParams (&pparams);
+
+    if (!cached_exported_filename.empty() && pparams == cached_exported_pparams && Glib::file_test(cached_exported_filename, Glib::FILE_TEST_IS_REGULAR)) {
+        idle_sentToGimp(nullptr, nullptr, cached_exported_filename);
+        return;
+    }
+
+    cached_exported_pparams = pparams;
+    cached_exported_filename.clear();
     rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
     ProgressConnector<rtengine::IImagefloat*> *ld = new ProgressConnector<rtengine::IImagefloat*>();
     ld->startFunc (sigc::bind (sigc::ptr_fun (&rtengine::processImage), job, err, parent->getProgressListener(), false ),
@@ -2112,12 +2120,18 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
 
 bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagefloat* img, Glib::ustring filename)
 {
-    delete img;
-    int errore = pc->returnValue();
+    if (img) {
+        delete img;
+        cached_exported_filename = filename;
+    }
+    int errore = 0;
     setProgressState(false);
-    delete pc;
+    if (pc) {
+        errore = pc->returnValue();
+        delete pc;
+    }
 
-    if (!errore) {
+    if ((!img && Glib::file_test(filename, Glib::FILE_TEST_IS_REGULAR)) || (img && !errore)) {
         saveimgas->set_sensitive (true);
         send_to_external->set_sensitive(true);
         parent->setProgressStr ("");
