@@ -396,21 +396,21 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
 #ifdef _OPENMP
             #pragma omp for schedule(dynamic, 16) nowait
 #endif
-            for (int i = 0; i < ch; ++i) 
-                for (int j = 0; j < cw; ++j) {
-                    float neu = SQR(provis->a[i][j]) + SQR(provis->b[i][j]);
-                    if(neu < medneutral) {//plein effect
-                        nprevl->a[i][j] = intp(pres, provis->a[i][j], nprevl->a[i][j]); 
-                        nprevl->b[i][j] = intp(pres, provis->b[i][j], nprevl->b[i][j]); 
-                    } else if (neu < neutral) {//decrease effect
-                        float presred = aaneu * neu + bbneu;
-                        nprevl->a[i][j] = intp(pres * presred, provis->a[i][j], nprevl->a[i][j]); 
-                        nprevl->b[i][j] = intp(pres * presred, provis->b[i][j], nprevl->b[i][j]); 
-                    } 
-                }
+    for (int i = 0; i < ch; ++i) 
+        for (int j = 0; j < cw; ++j) {
+            float neu = SQR(provis->a[i][j]) + SQR(provis->b[i][j]);
+            if(neu < medneutral) {//plein effect
+                nprevl->a[i][j] = intp(pres, provis->a[i][j], nprevl->a[i][j]); 
+                nprevl->b[i][j] = intp(pres, provis->b[i][j], nprevl->b[i][j]); 
+            } else if (neu < neutral) {//decrease effect
+                float presred = aaneu * neu + bbneu;
+                nprevl->a[i][j] = intp(pres * presred, provis->a[i][j], nprevl->a[i][j]); 
+                nprevl->b[i][j] = intp(pres * presred, provis->b[i][j], nprevl->b[i][j]); 
+            } 
+        }
 }
 
-void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int illum, int prim, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm) const
+void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int &illum, int prim, cmsHTRANSFORM &transform, bool normalizeIn, bool normalizeOut, bool keepTransForm) const
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
@@ -492,10 +492,31 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 
     float redxx = params->icm.redx;
     float redyy = params->icm.redy;
-    float grexx = params->icm.grex;
-    float greyy = params->icm.grey;
     float bluxx = params->icm.blux;
     float bluyy = params->icm.bluy;
+    float grexx = params->icm.grex;
+    float greyy = params->icm.grey;
+
+    if(prim == 8) {//convert datas area to xy
+        float redgraphx =  params->icm.labgridcieALow;
+        float redgraphy =  params->icm.labgridcieBLow;
+        float blugraphx =  params->icm.labgridcieAHigh;
+        float blugraphy =  params->icm.labgridcieBHigh;
+        float gregraphx =  params->icm.labgridcieGx;
+        float gregraphy =  params->icm.labgridcieGy;
+        redxx = 0.55f * (redgraphx + 1.f) - 0.1f;
+        redxx = rtengine::LIM(redxx, 0.41f, 1.f);//limit values for xy (arbitrary)
+        redyy = 0.55f * (redgraphy + 1.f) - 0.1f;
+        redyy = rtengine::LIM(redyy, 0.f, 0.7f);
+        bluxx = 0.55f * (blugraphx + 1.f) - 0.1f;
+        bluxx = rtengine::LIM(bluxx, -0.1f, 0.5f);
+        bluyy = 0.55f * (blugraphy + 1.f) - 0.1f;
+        bluyy = rtengine::LIM(bluyy, -0.1f, 0.5f);
+        grexx = 0.55f * (gregraphx + 1.f) - 0.1f;
+        grexx = rtengine::LIM(grexx, -0.1f, 0.4f);
+        greyy = 0.55f * (gregraphy + 1.f) - 0.1f;
+        greyy = rtengine::LIM(greyy, 0.5f, 1.f);
+    }
 
     if(prim != 0) {
         if(prim == 1) {
@@ -510,7 +531,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             profile = "ACESp1";
         } else if(prim == 6) {
             profile = "WideGamut";
-        } else if(prim == 7) {
+        } else if(prim == 7 || prim == 8) {
             profile = "Custom";
         }
     }
@@ -553,6 +574,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = 0.8260;
             p[4] = 0.1570;
             p[5] = 0.0180;
+            illum = 2;
         } else if (profile == "Adobe RGB") {
             p[0] = 0.6400;    //Adobe primaries
             p[1] = 0.3300;
@@ -561,6 +583,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.1500;
             p[5] = 0.0600;
             tempv4 = 6504.;
+            illum = 5;
         } else if (profile == "sRGB") {
             p[0] = 0.6400;    // sRGB primaries
             p[1] = 0.3300;
@@ -569,6 +592,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.1500;
             p[5] = 0.0600;
             tempv4 = 6504.;
+            illum = 5;
         } else if (profile == "BruceRGB") {
             p[0] = 0.6400;    // Bruce primaries
             p[1] = 0.3300;
@@ -577,13 +601,15 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.1500;
             p[5] = 0.0600;
             tempv4 = 6504.;
-        } else if (profile == "Beta RGB") {
+            illum = 5;
+       } else if (profile == "Beta RGB") {
             p[0] = 0.6888;    // Beta primaries
             p[1] = 0.3112;
             p[2] = 0.1986;
             p[3] = 0.7551;
             p[4] = 0.1265;
             p[5] = 0.0352;
+            illum = 2;
         } else if (profile == "BestRGB") {
             p[0] = 0.7347;    // Best primaries
             p[1] = 0.2653;
@@ -591,6 +617,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = 0.7750;
             p[4] = 0.1300;
             p[5] = 0.0350;
+            illum = 2;
         } else if (profile == "Rec2020") {
             p[0] = 0.7080;    // Rec2020 primaries
             p[1] = 0.2920;
@@ -599,6 +626,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.1310;
             p[5] = 0.0460;
             tempv4 = 6504.;
+            illum = 5;
         } else if (profile == "ACESp0") {
             p[0] = 0.7347;    // ACES P0 primaries
             p[1] = 0.2653;
@@ -607,6 +635,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.0001;
             p[5] = -0.0770;
             tempv4 = 6004.;
+            illum = 4;
         } else if (profile == "ACESp1") {
             p[0] = 0.713;    // ACES P1 primaries
             p[1] = 0.293;
@@ -615,6 +644,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.128;
             p[5] = 0.044;
             tempv4 = 6004.;
+            illum = 4;
         } else if (profile == "ProPhoto") {
             p[0] = 0.7347;    //ProPhoto and default primaries
             p[1] = 0.2653;
@@ -622,6 +652,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = 0.8404;
             p[4] = 0.0366;
             p[5] = 0.0001;
+            illum = 2;
         } else if (profile == "Custom") {
             p[0] = redxx;   
             p[1] = redyy;
@@ -672,7 +703,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         } else if (illum == 6) {
             tempv4 = 8000.;
         } else if (illum == 7) {
-            tempv4 = 5003.;//it is not an error
+            tempv4 = 12000.;
         }
 
         cmsWhitePointFromTemp(&xyD, tempv4);
@@ -689,15 +720,25 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             xyD = {0.3457, 0.3585, 1.0};//white D50      near LCMS values but not perfect...it's a compromise!!
         }
 
-        if (illum == 7) {//stdA
+        if (illum == 7) {//D120
+            xyD = {0.269669, 0.28078, 1.0};
+        }
+
+        if (illum == 8) {//stdA
             xyD = {0.447573, 0.407440, 1.0};
         }
-        
-        
+
+        if (illum == 9) {//2000K
+            xyD = {0.526591, 0.41331, 1.0};
+        }
+
+        //D41  0.377984  0.381229
+        //D55  0.332424  0.347426
+        //D80  0.293755  0.309185
+        //D75  0.299021  0.314852
         cmsToneCurve* GammaTRC[3];
         GammaTRC[0] = GammaTRC[1] = GammaTRC[2] = cmsBuildParametricToneCurve(NULL, five, gammaParams);//5 = more smoother than 4
         cmsHPROFILE oprofdef = nullptr;
-       // cmsSetProfileVersion(oprofdef, 4.3);
 
         const cmsCIExyYTRIPLE Primaries = {
             {p[0], p[1], 1.0}, // red
@@ -710,7 +751,6 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         cmsWriteTag(oprofdef, cmsSigBlueTRCTag, GammaTRC[2]);
 
         cmsFreeToneCurve(GammaTRC[0]);
-        //printf("indent=%i \n", params->icm.aRendIntent);
         if (oprofdef) {
             constexpr cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE | cmsFLAGS_BLACKPOINTCOMPENSATION | cmsFLAGS_GAMUTCHECK;
             const cmsHPROFILE iprof = ICCStore::getInstance()->getXYZProfile();

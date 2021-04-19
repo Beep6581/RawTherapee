@@ -449,6 +449,15 @@ public:
     virtual void autoColorTonChanged(int bwct, int satthres, int satprot) = 0;
 };
 
+class AutoprimListener
+{
+public:
+    virtual ~AutoprimListener() = default;
+    virtual void primChanged(float rx, float ry, float bx, float by, float gx, float gy) = 0;
+    virtual void iprimChanged(float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y) = 0;
+};
+
+
 class AutoBWListener
 {
 public:
@@ -621,6 +630,8 @@ public:
     virtual void        setAutoBWListener       (AutoBWListener* l) = 0;
     virtual void        setAutoWBListener       (AutoWBListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;
+    virtual void        setAutoprimListener     (AutoprimListener* l) = 0;
+
     virtual void        setAutoChromaListener   (AutoChromaListener* l) = 0;
     virtual void        setRetinexListener      (RetinexListener* l) = 0;
     virtual void        setWaveletListener      (WaveletListener* l) = 0;

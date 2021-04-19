@@ -1588,8 +1588,12 @@ private:
                 illum = 5; 
             } else if(params.icm.will == "D80"){
                 illum = 6; 
-            } else if(params.icm.will == "stda"){
+            } else if(params.icm.will == "D120"){
                 illum = 7; 
+            } else if(params.icm.will == "stda"){
+                illum = 8; 
+            } else if(params.icm.will == "2000"){
+                illum = 9; 
             }
 
             int prim = 0;
@@ -1609,11 +1613,14 @@ private:
                 prim = 6; 
             } else if(params.icm.wprim == "cus"){
                 prim = 7; 
+            } else if(params.icm.wprim == "cusgr"){
+                prim = 8; 
             }
             Glib::ustring prof = params.icm.workingProfile;
 
             cmsHTRANSFORM dummy = nullptr;
-            ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, 0, 0, dummy, true, false, false);
+            int ill = 0;
+            ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
             ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
 
             ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);

@@ -1603,13 +1603,17 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 } else if(params->icm.will == "D55"){
                     illum = 3; 
                 } else if(params->icm.will == "D60"){
-                    illum = 4; 
+                    illum = 4;
                 } else if(params->icm.will == "D65"){
-                    illum = 5; 
+                    illum = 5;
                 } else if(params->icm.will == "D80"){
                     illum = 6; 
-                } else if(params->icm.will == "stda"){
+                } else if(params->icm.will == "D120"){
                     illum = 7; 
+                } else if(params->icm.will == "stda"){
+                    illum = 8; 
+                } else if(params->icm.will == "2000"){
+                    illum = 9; 
                 }
 
                 int prim = 0;
@@ -1629,10 +1633,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     prim = 6; 
                 } else if(params->icm.wprim == "cus"){
                     prim = 7; 
+                } else if(params->icm.wprim == "cusgr"){
+                    prim = 8; 
                 }
                 Glib::ustring prof = params->icm.workingProfile;
                 cmsHTRANSFORM dummy = nullptr;
-                ipf.workingtrc(tmpImage1, tmpImage1, GW, GH, -5, prof, 2.4, 12.92310, 0, 0, dummy, true, false, false);
+                int ill = 0;
+                ipf.workingtrc(tmpImage1, tmpImage1, GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
                 ipf.workingtrc(tmpImage1, tmpImage1, GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
 
                 ipf.rgb2lab(*tmpImage1, *nprevl, params->icm.workingProfile);
@@ -1644,7 +1651,78 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
                 
                 delete tmpImage1;
-      }
+                if(prim == 8) {//pass red gre blue xy in function of area dats Ciexy
+                    float redgraphx =  params->icm.labgridcieALow;
+                    float redgraphy =  params->icm.labgridcieBLow;
+                    float blugraphx =  params->icm.labgridcieAHigh;
+                    float blugraphy =  params->icm.labgridcieBHigh;
+                    float gregraphx =  params->icm.labgridcieGx;
+                    float gregraphy =  params->icm.labgridcieGy;
+                    float redxx = 0.55f * (redgraphx + 1.f) - 0.1f;
+                    redxx = rtengine::LIM(redxx, 0.41f, 1.f);
+                    float redyy = 0.55f * (redgraphy + 1.f) - 0.1f;
+                    redyy = rtengine::LIM(redyy, 0.f, 0.7f);
+                    float bluxx = 0.55f * (blugraphx + 1.f) - 0.1f;
+                    bluxx = rtengine::LIM(bluxx, -0.1f, 0.5f);
+                    float bluyy = 0.55f * (blugraphy + 1.f) - 0.1f;
+                    bluyy = rtengine::LIM(bluyy, -0.1f, 0.5f);
+
+                    float grexx = 0.55f * (gregraphx + 1.f) - 0.1f;
+                    grexx = rtengine::LIM(grexx, -0.1f, 0.4f);
+                    float greyy = 0.55f * (gregraphy + 1.f) - 0.1f;
+                    greyy = rtengine::LIM(greyy, 0.5f, 1.f);
+
+                    if (primListener && prim == 8) {
+                        primListener->primChanged (redxx, redyy, bluxx, bluyy, grexx, greyy);
+                    }
+                }
+                    
+                if(prim != 8) {//all other cases - pass Cie xy to update graph Ciexy
+                    float r_x =  params->icm.redx;
+                    float r_y =  params->icm.redy;
+                    float b_x =  params->icm.blux;
+                    float b_y =  params->icm.bluy;
+                    float g_x =  params->icm.grex;
+                    float g_y =  params->icm.grey;
+                    float wx = 0.33f;
+                    float wy = 0.33f;
+                    if(illum == 1) { //D41
+                        wx = 0.37798f;
+                        wy = 0.38123f;
+                    } else if(illum == 2) {//D50 
+                        wx = 0.3457f;
+                        wy = 0.3585f;
+                    } else if(illum == 3) { //D55
+                        wx = 0.3324f;
+                        wy = 0.3474f;
+                    } else if(illum == 4) {//D60
+                        wx = 0.3217f;
+                        wy = 0.3377f;
+                    } else if(illum == 5) {//D65
+                        wx = 0.3127f;
+                        wy = 0.3290f;
+                    } else if(illum == 6) {//D80
+                        wx = 0.2937f;
+                        wy = 0.3092f;
+                    } else if(illum == 7) {//D120
+                        wx = 0.2697f;
+                        wy = 0.2808f;
+                    } else if(illum == 8) {//stdA
+                        wx = 0.4476f;
+                        wy = 0.4074f;
+                    } else if(illum == 9) {//2000K
+                        wx = 0.5266f;
+                        wy = 0.4133f;
+                    }
+
+
+                    if (primListener) {
+                        primListener->iprimChanged (r_x, r_y, b_x, b_y, g_x, g_y, wx, wy);
+                    }
+                    
+                }
+                
+            }
 
             if (params->colorappearance.enabled) {
                 // L histo  and Chroma histo for ciecam

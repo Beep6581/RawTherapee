@@ -1495,8 +1495,12 @@ void Crop::update(int todo)
                 illum = 5; 
             } else if(params.icm.will == "D80"){
                 illum = 6; 
-            } else if(params.icm.will == "stda"){
+            } else if(params.icm.will == "D120"){
                 illum = 7; 
+            } else if(params.icm.will == "stda"){
+                illum = 8; 
+            } else if(params.icm.will == "2000"){
+                illum = 9; 
             }
 
             int prim = 0;
@@ -1516,13 +1520,16 @@ void Crop::update(int todo)
                 prim = 6; 
             } else if(params.icm.wprim == "cus"){
                 prim = 7; 
+            } else if(params.icm.wprim == "cusgr"){
+                prim = 8; 
             }
 
            // printf("DCROP gam=%f slo=%f\n", gamtone, slotone);
             Glib::ustring prof = params.icm.workingProfile;
 
             cmsHTRANSFORM dummy = nullptr;
-            parent->ipf.workingtrc(tmpImage1, tmpImage1, GW, GH, -5, prof, 2.4, 12.92310, 0, 0, dummy, true, false, false);
+            int ill = 0;
+            parent->ipf.workingtrc(tmpImage1, tmpImage1, GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
             parent->ipf.workingtrc(tmpImage1, tmpImage1, GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
 
             parent->ipf.rgb2lab(*tmpImage1, *labnCrop, params.icm.workingProfile);

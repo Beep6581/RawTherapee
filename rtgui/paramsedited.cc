@@ -446,6 +446,14 @@ void ParamsEdited::set(bool v)
     icm.blux = v;
     icm.bluy = v;
     icm.preser = v;
+    icm.labgridcieALow = v;
+    icm.labgridcieBLow = v;
+    icm.labgridcieAHigh = v;
+    icm.labgridcieBHigh = v;
+    icm.labgridcieGx = v;
+    icm.labgridcieGy = v;
+    icm.labgridcieWx = v;
+    icm.labgridcieWy = v;
     icm.aRendIntent = v;
     icm.workingTRC = v;
     icm.will = v;
@@ -1719,6 +1727,14 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.grey = icm.grey && p.icm.grey == other.icm.grey;
         icm.blux = icm.blux && p.icm.blux == other.icm.blux;
         icm.bluy = icm.bluy && p.icm.bluy == other.icm.bluy;
+        icm.labgridcieALow = icm.labgridcieALow && p.icm.labgridcieALow == other.icm.labgridcieALow;
+        icm.labgridcieBLow = icm.labgridcieBLow && p.icm.labgridcieBLow == other.icm.labgridcieBLow;
+        icm.labgridcieAHigh = icm.labgridcieAHigh && p.icm.labgridcieAHigh == other.icm.labgridcieAHigh;
+        icm.labgridcieBHigh = icm.labgridcieBHigh && p.icm.labgridcieBHigh == other.icm.labgridcieBHigh;
+        icm.labgridcieGx = icm.labgridcieGx && p.icm.labgridcieGx == other.icm.labgridcieGx;
+        icm.labgridcieGy = icm.labgridcieGy && p.icm.labgridcieGy == other.icm.labgridcieGy;
+        icm.labgridcieWx = icm.labgridcieWx && p.icm.labgridcieWx == other.icm.labgridcieWx;
+        icm.labgridcieWy = icm.labgridcieWy && p.icm.labgridcieWy == other.icm.labgridcieWy;
         icm.preser = icm.preser && p.icm.preser == other.icm.preser;
         icm.aRendIntent = icm.aRendIntent && p.icm.aRendIntent == other.icm.aRendIntent;
         icm.workingTRC = icm.workingTRC && p.icm.workingTRC == other.icm.workingTRC;
@@ -5734,6 +5750,38 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (icm.preser) {
         toEdit.icm.preser = mods.icm.preser;
+    }
+
+    if (icm.labgridcieALow) {
+        toEdit.icm.labgridcieALow = mods.icm.labgridcieALow;
+    }
+
+    if (icm.labgridcieBLow) {
+        toEdit.icm.labgridcieBLow = mods.icm.labgridcieBLow;
+    }
+
+    if (icm.labgridcieAHigh) {
+        toEdit.icm.labgridcieAHigh = mods.icm.labgridcieAHigh;
+    }
+
+    if (icm.labgridcieBHigh) {
+        toEdit.icm.labgridcieBHigh = mods.icm.labgridcieBHigh;
+    }
+
+    if (icm.labgridcieGx) {
+        toEdit.icm.labgridcieGx = mods.icm.labgridcieGx;
+    }
+
+    if (icm.labgridcieGy) {
+        toEdit.icm.labgridcieGy = mods.icm.labgridcieGy;
+    }
+
+    if (icm.labgridcieWx) {
+        toEdit.icm.labgridcieWx = mods.icm.labgridcieWx;
+    }
+
+    if (icm.labgridcieWy) {
+        toEdit.icm.labgridcieWy = mods.icm.labgridcieWy;
     }
 
     if (icm.aRendIntent) {

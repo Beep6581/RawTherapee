@@ -477,7 +477,7 @@ enum class BlurType {
     void rgb2lab(const Image8 &src, int x, int y, int w, int h, float L[], float a[], float b[], const procparams::ColorManagementParams &icm, bool consider_histogram_settings = true) const;
     Imagefloat*    lab2rgbOut(LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm);
     // CieImage *ciec;
-    void workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int illum, int prim, cmsHTRANSFORM &transform, bool normalizeIn = true, bool normalizeOut = true, bool keepTransForm = false) const;
+    void workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int &illum, int prim, cmsHTRANSFORM &transform, bool normalizeIn = true, bool normalizeOut = true, bool keepTransForm = false) const;
     void preserv(LabImage *nprevl, LabImage *provis, int cw, int ch);
 
     bool transCoord(int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1, const LensCorrection *pLCPMap = nullptr) const;

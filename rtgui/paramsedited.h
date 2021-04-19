@@ -1101,6 +1101,14 @@ struct ColorManagementParamsEdited {
     bool blux;
     bool bluy;
     bool preser;
+    bool labgridcieALow;
+    bool labgridcieBLow;
+    bool labgridcieAHigh;
+    bool labgridcieBHigh;
+    bool labgridcieGx;
+    bool labgridcieGy;
+    bool labgridcieWx;
+    bool labgridcieWy;
     bool aRendIntent;
     bool outputProfile;
     bool outputIntent;
