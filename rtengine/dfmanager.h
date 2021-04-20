@@ -37,17 +37,17 @@ public:
 
     Glib::ustring pathname; // filename of dark frame
     std::list<Glib::ustring> pathNames; // other similar dark frames, used for average
-    std::string maker;  ///< manufacturer
-    std::string model;  ///< model
-    int iso;      ///< ISO (gain)
-    double shutter;     ///< shutter or exposure time in sec
-    time_t timestamp;   ///< seconds since 1 Jan 1970
+    std::string maker; // manufacturer
+    std::string model; // model
+    int iso; // ISO (gain)
+    double shutter; // shutter or exposure time in sec
+    time_t timestamp; // seconds since 1 Jan 1970
 
 
     dfInfo(const Glib::ustring &name, const std::string &mak, const std::string &mod, int iso, double shut, time_t t)
         : pathname(name), maker(mak), model(mod), iso(iso), shutter(shut), timestamp(t), ri(nullptr) {}
 
-    dfInfo( const dfInfo &o)
+    dfInfo(const dfInfo &o)
         : pathname(o.pathname), maker(o.maker), model(o.model), iso(o.iso), shutter(o.shutter), timestamp(o.timestamp), ri(nullptr) {}
     ~dfInfo();
 
@@ -57,20 +57,20 @@ public:
     // Calculate virtual distance between two shots; different model return infinite
     double distance(const std::string &mak, const std::string &mod, int iso, double shutter) const;
 
-    static std::string key(const std::string &mak, const std::string &mod, int iso, double shut );
-    std::string key()
+    static std::string key(const std::string &mak, const std::string &mod, int iso, double shut);
+    std::string key() const
     {
-        return key( maker, model, iso, shutter);
+        return key(maker, model, iso, shutter);
     }
 
     RawImage *getRawImage();
     std::vector<badPix> &getHotPixels();
 
 protected:
-    RawImage *ri; ///< Dark Frame raw data
-    std::vector<badPix> badPixels; ///< Extracted hot pixels
+    RawImage *ri; // Dark Frame raw data
+    std::vector<badPix> badPixels; // Extracted hot pixels
 
-    void updateBadPixelList( RawImage *df );
+    void updateBadPixelList(RawImage *df);
     void updateRawImage();
 };
 
@@ -78,16 +78,16 @@ class DFManager final
 {
 public:
     void init(const Glib::ustring &pathname);
-    Glib::ustring getPathname()
+    Glib::ustring getPathname() const
     {
         return currentPath;
     };
-    void getStat( int &totFiles, int &totTemplate);
-    RawImage *searchDarkFrame( const std::string &mak, const std::string &mod, int iso, double shut, time_t t );
-    RawImage *searchDarkFrame( const Glib::ustring filename );
-    std::vector<badPix> *getHotPixels ( const std::string &mak, const std::string &mod, int iso, double shut, time_t t );
-    std::vector<badPix> *getHotPixels ( const Glib::ustring filename );
-    std::vector<badPix> *getBadPixels ( const std::string &mak, const std::string &mod, const std::string &serial);
+    void getStat(int &totFiles, int &totTemplates) const;
+    RawImage *searchDarkFrame(const std::string &mak, const std::string &mod, int iso, double shut, time_t t);
+    RawImage *searchDarkFrame(const Glib::ustring &filename);
+    std::vector<badPix> *getHotPixels(const std::string &mak, const std::string &mod, int iso, double shut, time_t t);
+    std::vector<badPix> *getHotPixels(const Glib::ustring &filename);
+    const std::vector<badPix> *getBadPixels(const std::string &mak, const std::string &mod, const std::string &serial) const;
 
 protected:
     typedef std::multimap<std::string, dfInfo> dfList_t;
@@ -96,9 +96,9 @@ protected:
     bpList_t bpList;
     bool initialized;
     Glib::ustring currentPath;
-    dfInfo *addFileInfo(const Glib::ustring &filename, bool pool = true );
-    dfInfo *find( const std::string &mak, const std::string &mod, int isospeed, double shut, time_t t );
-    int scanBadPixelsFile( Glib::ustring filename );
+    dfInfo *addFileInfo(const Glib::ustring &filename, bool pool = true);
+    dfInfo *find(const std::string &mak, const std::string &mod, int isospeed, double shut, time_t t);
+    int scanBadPixelsFile(const Glib::ustring &filename);
 };
 
 extern DFManager dfm;

@@ -1385,7 +1385,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
 
     // Always correct camera badpixels from .badpixels file
-    std::vector<badPix> *bp = dfm.getBadPixels(ri->get_maker(), ri->get_model(), idata->getSerialNumber());
+    const std::vector<badPix> *bp = dfm.getBadPixels(ri->get_maker(), ri->get_model(), idata->getSerialNumber());
 
     if (bp) {
         if (!bitmapBads) {
