@@ -759,10 +759,18 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 }
             }
 
-            r->locX = newSpot->loc.at(0);
-            r->locXL = newSpot->loc.at(1);
-            r->locY = newSpot->loc.at(2);
-            r->locYT = newSpot->loc.at(3);
+            if(r->spotMethod != 2) {
+                r->locX = newSpot->loc.at(0);
+                r->locXL = newSpot->loc.at(1);
+                r->locY = newSpot->loc.at(2);
+                r->locYT = newSpot->loc.at(3);
+            } else {
+                r->locX = 3000.;
+                r->locXL = 3000.;
+                r->locY = 3000.;
+                r->locYT = 3000.;
+            }
+
             r->centerX = newSpot->centerX;
             r->centerY = newSpot->centerY;
 
