@@ -38,14 +38,12 @@
 
 #include "../rtgui/options.h"
 
-namespace rtengine
+namespace
 {
 
-class dfInfo final :
-    public NonCopyable
+class dfInfo final
 {
 public:
-
     Glib::ustring pathname; // filename of dark frame
     std::list<Glib::ustring> pathNames; // other similar dark frames, used for average
     std::string maker; // manufacturer
@@ -63,7 +61,6 @@ public:
     ~dfInfo();
 
     dfInfo &operator =(const dfInfo &o);
-    bool operator <(const dfInfo &e2) const;
 
     // Calculate virtual distance between two shots; different model return infinite
     double distance(const std::string &mak, const std::string &mod, int iso, double shutter) const;
@@ -74,18 +71,17 @@ public:
         return key(maker, model, iso, shutter);
     }
 
-    RawImage *getRawImage();
-    std::vector<badPix> &getHotPixels();
+    rtengine::RawImage* getRawImage();
+    std::vector<rtengine::badPix>& getHotPixels();
 
-protected:
-    RawImage *ri; // Dark Frame raw data
-    std::vector<badPix> badPixels; // Extracted hot pixels
+private:
+    rtengine::RawImage* ri; // Dark Frame raw data
+    std::vector<rtengine::badPix> badPixels; // Extracted hot pixels
 
-    void updateBadPixelList(RawImage *df);
+    void updateBadPixelList(rtengine::RawImage* df);
     void updateRawImage();
 };
 
-// *********************** class dfInfo **************************************
 dfInfo::~dfInfo()
 {
     delete ri;
@@ -108,31 +104,6 @@ inline dfInfo& dfInfo::operator = (const dfInfo &o)
     }
 
     return *this;
-}
-
-bool dfInfo::operator < (const dfInfo &e2) const
-{
-    if (this->maker.compare(e2.maker) >= 0) {
-        return false;
-    }
-
-    if (this->model.compare(e2.model) >= 0) {
-        return false;
-    }
-
-    if (this->iso >= e2.iso) {
-        return false;
-    }
-
-    if (this->shutter >= e2.shutter) {
-        return false;
-    }
-
-    if (this->timestamp >= e2.timestamp) {
-        return false;
-    }
-
-    return true;
 }
 
 std::string dfInfo::key(const std::string &mak, const std::string &mod, int iso, double shut)
@@ -162,7 +133,7 @@ double dfInfo::distance(const std::string &mak, const std::string &mod, int iso,
     return std::sqrt(dISO * dISO +  dShutter * dShutter);
 }
 
-RawImage* dfInfo::getRawImage()
+rtengine::RawImage* dfInfo::getRawImage()
 {
     if (ri) {
         return ri;
@@ -174,7 +145,7 @@ RawImage* dfInfo::getRawImage()
     return ri;
 }
 
-std::vector<badPix>& dfInfo::getHotPixels()
+std::vector<rtengine::badPix>& dfInfo::getHotPixels()
 {
     if (!ri) {
         updateRawImage();
@@ -193,7 +164,7 @@ void dfInfo::updateRawImage()
 
     if (!pathNames.empty()) {
         std::list<Glib::ustring>::const_iterator iName = pathNames.begin();
-        ri = new RawImage(*iName); // First file used also for extra pixels information (width,height, shutter, filters etc.. )
+        ri = new rtengine::RawImage(*iName); // First file used also for extra pixels information (width,height, shutter, filters etc.. )
 
         if (ri->loadRaw(true)) {
             delete ri;
@@ -202,8 +173,8 @@ void dfInfo::updateRawImage()
             const int H = ri->get_height();
             const int W = ri->get_width();
             ri->compress_image(0);
-            const int rSize = W * ((ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS) ? 1 : 3);
-            JaggedArray<float> acc(W, H);
+            const int rSize = W * ((ri->getSensorType() == rtengine::ST_BAYER || ri->getSensorType() == rtengine::ST_FUJI_XTRANS) ? 1 : 3);
+            rtengine::JaggedArray<float> acc(W, H);
 
             // copy first image into accumulators
             for (int row = 0; row < H; row++) {
@@ -215,13 +186,13 @@ void dfInfo::updateRawImage()
             int nFiles = 1; // First file data already loaded
 
             for (++iName; iName != pathNames.end(); ++iName) {
-                RawImage temp(*iName);
+                rtengine::RawImage temp(*iName);
 
                 if (!temp.loadRaw(true)) {
                     temp.compress_image(0);     //\ TODO would be better working on original, because is temporary
                     nFiles++;
 
-                    if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS) {
+                    if (ri->getSensorType() == rtengine::ST_BAYER || ri->getSensorType() == rtengine::ST_FUJI_XTRANS) {
                         for (int row = 0; row < H; row++) {
                             for (int col = 0; col < W; col++) {
                                 acc[row][col] += temp.data[row][col];
@@ -246,7 +217,7 @@ void dfInfo::updateRawImage()
             }
         }
     } else {
-        ri = new RawImage(pathname);
+        ri = new rtengine::RawImage(pathname);
 
         if (ri->loadRaw(true)) {
             delete ri;
@@ -257,21 +228,21 @@ void dfInfo::updateRawImage()
     }
 }
 
-void dfInfo::updateBadPixelList(RawImage *df)
+void dfInfo::updateBadPixelList(rtengine::RawImage *df)
 {
     if (!df) {
         return;
     }
     constexpr float threshold = 10.f / 8.f;
 
-    if (df->getSensorType() == ST_BAYER || df->getSensorType() == ST_FUJI_XTRANS) {
-        std::vector<badPix> badPixelsTemp;
+    if (df->getSensorType() == rtengine::ST_BAYER || df->getSensorType() == rtengine::ST_FUJI_XTRANS) {
+        std::vector<rtengine::badPix> badPixelsTemp;
 
 #ifdef _OPENMP
         #pragma omp parallel
 #endif
         {
-            std::vector<badPix> badPixelsThread;
+            std::vector<rtengine::badPix> badPixelsThread;
 #ifdef _OPENMP
             #pragma omp for nowait
 #endif
@@ -312,31 +283,29 @@ void dfInfo::updateBadPixelList(RawImage *df)
         }
     }
 
-    if (settings->verbose) {
+    if (rtengine::settings->verbose) {
         std::cout << "Extracted " << badPixels.size() << " pixels from darkframe:" << df->get_filename().c_str() << std::endl;
     }
 }
 
 
-// ************************* class DFManager *********************************
+}
 
-class DFManager::Implementation final :
+class rtengine::DFManager::Implementation final :
     public NonCopyable
 {
 public:
-    static DFManager& getInstance();
-
-    void init(const Glib::ustring &pathname);
+    void init(const Glib::ustring& pathname);
     Glib::ustring getPathname() const
     {
         return currentPath;
     };
-    void getStat(int &totFiles, int &totTemplates) const;
-    RawImage *searchDarkFrame(const std::string &mak, const std::string &mod, int iso, double shut, time_t t);
-    RawImage *searchDarkFrame(const Glib::ustring &filename);
-    std::vector<badPix> *getHotPixels(const std::string &mak, const std::string &mod, int iso, double shut, time_t t);
-    std::vector<badPix> *getHotPixels(const Glib::ustring &filename);
-    const std::vector<badPix> *getBadPixels(const std::string &mak, const std::string &mod, const std::string &serial) const;
+    void getStat(int& totFiles, int& totTemplates) const;
+    RawImage* searchDarkFrame(const std::string& mak, const std::string& mod, int iso, double shut, time_t t);
+    RawImage* searchDarkFrame(const Glib::ustring& filename);
+    std::vector<badPix>* getHotPixels(const std::string& mak, const std::string& mod, int iso, double shut, time_t t);
+    std::vector<badPix>* getHotPixels(const Glib::ustring& filename);
+    const std::vector<badPix>* getBadPixels(const std::string& mak, const std::string& mod, const std::string& serial) const;
 
 private:
     typedef std::multimap<std::string, dfInfo> dfList_t;
@@ -345,13 +314,13 @@ private:
     bpList_t bpList;
     bool initialized;
     Glib::ustring currentPath;
-    dfInfo *addFileInfo(const Glib::ustring &filename, bool pool = true);
-    dfInfo *find(const std::string &mak, const std::string &mod, int isospeed, double shut, time_t t);
+    dfInfo* addFileInfo(const Glib::ustring &filename, bool pool = true);
+    dfInfo* find(const std::string &mak, const std::string &mod, int isospeed, double shut, time_t t);
     int scanBadPixelsFile(const Glib::ustring &filename);
 };
 
 
-void DFManager::Implementation::init(const Glib::ustring& pathname)
+void rtengine::DFManager::Implementation::init(const Glib::ustring& pathname)
 {
     if (pathname.empty()) {
         return;
@@ -422,7 +391,138 @@ void DFManager::Implementation::init(const Glib::ustring& pathname)
     return;
 }
 
-dfInfo* DFManager::Implementation::addFileInfo(const Glib::ustring& filename, bool pool)
+void rtengine::DFManager::Implementation::getStat(int& totFiles, int& totTemplates) const
+{
+    totFiles = 0;
+    totTemplates = 0;
+
+    for (const auto &df : dfList) {
+        const dfInfo &i = df.second;
+
+        if (i.pathname.empty()) {
+            totTemplates++;
+            totFiles += i.pathNames.size();
+        } else {
+            totFiles++;
+        }
+    }
+}
+
+/*  The search for the best match is twofold:
+ *  if perfect matches for iso and shutter are found, then the list is scanned for lesser distance in time
+ *  otherwise if no match is found, the whole list is searched for lesser distance in iso and shutter
+ */
+rtengine::RawImage* rtengine::DFManager::Implementation::searchDarkFrame(const std::string& mak, const std::string& mod, int iso, double shut, time_t t)
+{
+    dfInfo *df = find(((Glib::ustring)mak).uppercase(), ((Glib::ustring)mod).uppercase(), iso, shut, t);
+
+    if (df) {
+        return df->getRawImage();
+    } else {
+        return nullptr;
+    }
+}
+
+rtengine::RawImage* rtengine::DFManager::Implementation::searchDarkFrame(const Glib::ustring& filename)
+{
+    for (auto& df : dfList) {
+        if (df.second.pathname.compare(filename) == 0) {
+            return df.second.getRawImage();
+        }
+    }
+
+    dfInfo *df = addFileInfo(filename, false);
+
+    if (df) {
+        return df->getRawImage();
+    }
+
+    return nullptr;
+}
+
+std::vector<rtengine::badPix>* rtengine::DFManager::Implementation::getHotPixels(const Glib::ustring& filename)
+{
+    for (auto& df : dfList) {
+        if (df.second.pathname.compare(filename) == 0) {
+            return &df.second.getHotPixels();
+        }
+    }
+
+    return nullptr;
+}
+
+std::vector<rtengine::badPix>* rtengine::DFManager::Implementation::getHotPixels(const std::string& mak, const std::string& mod, int iso, double shut, time_t t)
+{
+    dfInfo *df = find(((Glib::ustring)mak).uppercase(), ((Glib::ustring)mod).uppercase(), iso, shut, t);
+
+    if (df) {
+        if (settings->verbose) {
+            if (!df->pathname.empty()) {
+                printf("Searched hotpixels from %s\n", df->pathname.c_str());
+            } else {
+                if (!df->pathNames.empty()) {
+                    printf("Searched hotpixels from template (first %s)\n", df->pathNames.begin()->c_str());
+                }
+            }
+        }
+
+        return &df->getHotPixels();
+    } else {
+        return nullptr;
+    }
+}
+
+const std::vector<rtengine::badPix>* rtengine::DFManager::Implementation::getBadPixels(const std::string& mak, const std::string& mod, const std::string& serial) const
+{
+    bpList_t::const_iterator iter;
+    bool found = false;
+
+    if (!serial.empty()) {
+        // search with serial number first
+        std::ostringstream s;
+        s << mak << " " << mod << " " << serial;
+        iter = bpList.find(s.str());
+
+        if (iter != bpList.end()) {
+            found = true;
+        }
+
+        if (settings->verbose) {
+            if (found) {
+                printf("%s.badpixels found\n", s.str().c_str());
+            } else {
+                printf("%s.badpixels not found\n", s.str().c_str());
+            }
+        }
+    }
+
+    if (!found) {
+        // search without serial number
+        std::ostringstream s;
+        s << mak << " " << mod;
+        iter = bpList.find(s.str());
+
+        if (iter != bpList.end()) {
+            found = true;
+        }
+
+        if (settings->verbose) {
+            if (found) {
+                printf("%s.badpixels found\n", s.str().c_str());
+            } else {
+                printf("%s.badpixels not found\n", s.str().c_str());
+            }
+        }
+    }
+
+    if (!found) {
+        return nullptr;
+    } else {
+        return &(iter->second);
+    }
+}
+
+dfInfo* rtengine::DFManager::Implementation::addFileInfo(const Glib::ustring& filename, bool pool)
 {
     const auto ext = getFileExtension(filename);
 
@@ -492,28 +592,7 @@ dfInfo* DFManager::Implementation::addFileInfo(const Glib::ustring& filename, bo
     return nullptr;
 }
 
-void DFManager::Implementation::getStat(int &totFiles, int &totTemplates) const
-{
-    totFiles = 0;
-    totTemplates = 0;
-
-    for (const auto &df : dfList) {
-        const dfInfo &i = df.second;
-
-        if (i.pathname.empty()) {
-            totTemplates++;
-            totFiles += i.pathNames.size();
-        } else {
-            totFiles++;
-        }
-    }
-}
-
-/*  The search for the best match is twofold:
- *  if perfect matches for iso and shutter are found, then the list is scanned for lesser distance in time
- *  otherwise if no match is found, the whole list is searched for lesser distance in iso and shutter
- */
-dfInfo* DFManager::Implementation::find(const std::string &mak, const std::string &mod, int isospeed, double shut, time_t t)
+dfInfo* rtengine::DFManager::Implementation::find(const std::string& mak, const std::string& mod, int isospeed, double shut, time_t t)
 {
     if (dfList.empty()) {
         return nullptr;
@@ -554,67 +633,7 @@ dfInfo* DFManager::Implementation::find(const std::string &mak, const std::strin
     }
 }
 
-RawImage* DFManager::Implementation::searchDarkFrame(const std::string &mak, const std::string &mod, int iso, double shut, time_t t)
-{
-    dfInfo *df = find(((Glib::ustring)mak).uppercase(), ((Glib::ustring)mod).uppercase(), iso, shut, t);
-
-    if (df) {
-        return df->getRawImage();
-    } else {
-        return nullptr;
-    }
-}
-
-RawImage* DFManager::Implementation::searchDarkFrame(const Glib::ustring &filename)
-{
-    for (auto& df : dfList) {
-        if (df.second.pathname.compare(filename) == 0) {
-            return df.second.getRawImage();
-        }
-    }
-
-    dfInfo *df = addFileInfo(filename, false);
-
-    if (df) {
-        return df->getRawImage();
-    }
-
-    return nullptr;
-}
-
-std::vector<badPix> *DFManager::Implementation::getHotPixels(const Glib::ustring &filename)
-{
-    for (auto& df : dfList) {
-        if (df.second.pathname.compare(filename) == 0) {
-            return &df.second.getHotPixels();
-        }
-    }
-
-    return nullptr;
-}
-
-std::vector<badPix> *DFManager::Implementation::getHotPixels(const std::string &mak, const std::string &mod, int iso, double shut, time_t t)
-{
-    dfInfo *df = find(((Glib::ustring)mak).uppercase(), ((Glib::ustring)mod).uppercase(), iso, shut, t);
-
-    if (df) {
-        if (settings->verbose) {
-            if (!df->pathname.empty()) {
-                printf("Searched hotpixels from %s\n", df->pathname.c_str());
-            } else {
-                if (!df->pathNames.empty()) {
-                    printf("Searched hotpixels from template (first %s)\n", df->pathNames.begin()->c_str());
-                }
-            }
-        }
-
-        return &df->getHotPixels();
-    } else {
-        return nullptr;
-    }
-}
-
-int DFManager::Implementation::scanBadPixelsFile(const Glib::ustring &filename)
+int rtengine::DFManager::Implementation::scanBadPixelsFile(const Glib::ustring& filename)
 {
     FILE *file = fopen(filename.c_str(), "r");
 
@@ -666,107 +685,55 @@ int DFManager::Implementation::scanBadPixelsFile(const Glib::ustring &filename)
     return numPixels;
 }
 
-const std::vector<badPix> *DFManager::Implementation::getBadPixels(const std::string &mak, const std::string &mod, const std::string &serial) const
-{
-    bpList_t::const_iterator iter;
-    bool found = false;
-
-    if (!serial.empty()) {
-        // search with serial number first
-        std::ostringstream s;
-        s << mak << " " << mod << " " << serial;
-        iter = bpList.find(s.str());
-
-        if (iter != bpList.end()) {
-            found = true;
-        }
-
-        if (settings->verbose) {
-            if (found) {
-                printf("%s.badpixels found\n", s.str().c_str());
-            } else {
-                printf("%s.badpixels not found\n", s.str().c_str());
-            }
-        }
-    }
-
-    if (!found) {
-        // search without serial number
-        std::ostringstream s;
-        s << mak << " " << mod;
-        iter = bpList.find(s.str());
-
-        if (iter != bpList.end()) {
-            found = true;
-        }
-
-        if (settings->verbose) {
-            if (found) {
-                printf("%s.badpixels found\n", s.str().c_str());
-            } else {
-                printf("%s.badpixels not found\n", s.str().c_str());
-            }
-        }
-    }
-
-    if (!found) {
-        return nullptr;
-    } else {
-        return &(iter->second);
-    }
-}
-
-DFManager& DFManager::getInstance()
+rtengine::DFManager& rtengine::DFManager::getInstance()
 {
     static DFManager instance;
     return instance;
 }
 
-void DFManager::init(const Glib::ustring& pathname)
+void rtengine::DFManager::init(const Glib::ustring& pathname)
 {
     implementation->init(pathname);
 }
 
-Glib::ustring DFManager::getPathname() const
+Glib::ustring rtengine::DFManager::getPathname() const
 {
     return implementation->getPathname();
 }
 
-void DFManager::getStat(int& totFiles, int& totTemplates) const
+void rtengine::DFManager::getStat(int& totFiles, int& totTemplates) const
 {
     implementation->getStat(totFiles, totTemplates);
 }
 
-RawImage* DFManager::searchDarkFrame(const std::string& mak, const std::string& mod, int iso, double shut, time_t t)
+rtengine::RawImage* rtengine::DFManager::searchDarkFrame(const std::string& mak, const std::string& mod, int iso, double shut, time_t t)
 {
     return implementation->searchDarkFrame(mak, mod, iso, shut, t);
 }
 
-RawImage* DFManager::searchDarkFrame(const Glib::ustring& filename)
+rtengine::RawImage* rtengine::DFManager::searchDarkFrame(const Glib::ustring& filename)
 {
     return implementation->searchDarkFrame(filename);
 }
 
-std::vector<badPix>* DFManager::getHotPixels(const std::string& mak, const std::string& mod, int iso, double shut, time_t t)
+std::vector<rtengine::badPix>* rtengine::DFManager::getHotPixels(const std::string& mak, const std::string& mod, int iso, double shut, time_t t)
 {
     return implementation->getHotPixels(mak, mod, iso, shut, t);
 }
 
-std::vector<badPix>* DFManager::getHotPixels(const Glib::ustring& filename)
+std::vector<rtengine::badPix>* rtengine::DFManager::getHotPixels(const Glib::ustring& filename)
 {
     return implementation->getHotPixels(filename);
 }
 
-const std::vector<badPix>* DFManager::getBadPixels(const std::string& mak, const std::string& mod, const std::string& serial) const
+const std::vector<rtengine::badPix>* rtengine::DFManager::getBadPixels(const std::string& mak, const std::string& mod, const std::string& serial) const
 {
     return implementation->getBadPixels(mak, mod, serial);
 }
 
-DFManager::DFManager() :
+rtengine::DFManager::DFManager() :
     implementation(new Implementation)
 {
 }
 
-DFManager::~DFManager() = default;
-
-}
+rtengine::DFManager::~DFManager() = default;
