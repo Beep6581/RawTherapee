@@ -41,6 +41,11 @@
 namespace
 {
 
+std::string toUppercase(const std::string& string)
+{
+    return Glib::ustring(string).uppercase();
+}
+
 class dfInfo final
 {
 public:
@@ -414,7 +419,7 @@ void rtengine::DFManager::Implementation::getStat(int& totFiles, int& totTemplat
  */
 const rtengine::RawImage* rtengine::DFManager::Implementation::searchDarkFrame(const std::string& mak, const std::string& mod, int iso, double shut, time_t t)
 {
-    dfInfo* df = find(((Glib::ustring)mak).uppercase(), ((Glib::ustring)mod).uppercase(), iso, shut, t);
+    dfInfo* df = find(toUppercase(mak), toUppercase(mod), iso, shut, t);
 
     if (df) {
         return df->getRawImage();
@@ -453,7 +458,7 @@ const std::vector<rtengine::badPix>* rtengine::DFManager::Implementation::getHot
 
 const std::vector<rtengine::badPix>* rtengine::DFManager::Implementation::getHotPixels(const std::string& mak, const std::string& mod, int iso, double shut, time_t t)
 {
-    dfInfo* df = find(((Glib::ustring)mak).uppercase(), ((Glib::ustring)mod).uppercase(), iso, shut, t);
+    dfInfo* df = find(toUppercase(mak), toUppercase(mod), iso, shut, t);
 
     if (df) {
         if (settings->verbose) {
@@ -566,11 +571,11 @@ dfInfo* rtengine::DFManager::Implementation::addFileInfo(const Glib::ustring& fi
 
         FramesData idata(filename, std::unique_ptr<RawMetaDataLocation>(new RawMetaDataLocation(ri.get_exifBase(), ri.get_ciffBase(), ri.get_ciffLen())), true);
         /* Files are added in the map, divided by same maker/model,ISO and shutter*/
-        std::string key(dfInfo::key(((Glib::ustring)idata.getMake()).uppercase(), ((Glib::ustring)idata.getModel()).uppercase(), idata.getISOSpeed(), idata.getShutterSpeed()));
+        std::string key(dfInfo::key(toUppercase(idata.getMake()), toUppercase(idata.getModel()), idata.getISOSpeed(), idata.getShutterSpeed()));
         auto iter = dfList.find(key);
 
         if (iter == dfList.end()) {
-            dfInfo n(filename, ((Glib::ustring)idata.getMake()).uppercase(), ((Glib::ustring)idata.getModel()).uppercase(), idata.getISOSpeed(), idata.getShutterSpeed(), idata.getDateTimeAsTS());
+            dfInfo n(filename, toUppercase(idata.getMake()), toUppercase(idata.getModel()), idata.getISOSpeed(), idata.getShutterSpeed(), idata.getDateTimeAsTS());
             iter = dfList.emplace(key, n);
         } else {
             while(iter != dfList.end() && iter->second.key() == key && ABS(iter->second.timestamp - idata.getDateTimeAsTS()) > 60 * 60 * 6) { // 6 hour difference
@@ -580,7 +585,7 @@ dfInfo* rtengine::DFManager::Implementation::addFileInfo(const Glib::ustring& fi
             if (iter != dfList.end()) {
                 iter->second.pathNames.push_back(filename);
             } else {
-                dfInfo n(filename, ((Glib::ustring)idata.getMake()).uppercase(), ((Glib::ustring)idata.getModel()).uppercase(), idata.getISOSpeed(), idata.getShutterSpeed(), idata.getDateTimeAsTS());
+                dfInfo n(filename, toUppercase(idata.getMake()), toUppercase(idata.getModel()), idata.getISOSpeed(), idata.getShutterSpeed(), idata.getDateTimeAsTS());
                 iter = dfList.emplace(key, n);
             }
         }
