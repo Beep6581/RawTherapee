@@ -34,6 +34,7 @@
 #include "median.h"
 #include "mytime.h"
 #include "pdaflinesfilter.h"
+#include "pixelsmap.h"
 #include "procparams.h"
 #include "rawimage.h"
 #include "rawimagesource_i.h"
@@ -41,6 +42,7 @@
 #include "rt_math.h"
 #include "rtengine.h"
 #include "rtlensfun.h"
+
 #include "../rtgui/options.h"
 
 #define BENCHMARK

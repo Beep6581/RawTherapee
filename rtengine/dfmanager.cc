@@ -17,21 +17,73 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <sstream>
-#include <iostream>
+#include <cmath>
 #include <cstdio>
+#include <iostream>
+#include <list>
+#include <map>
+#include <sstream>
+
 #include <giomm.h>
 #include <glibmm/ustring.h>
 
 #include "dfmanager.h"
-#include "../rtgui/options.h"
-#include "rawimage.h"
+
 #include "imagedata.h"
 #include "jaggedarray.h"
+#include "noncopyable.h"
+#include "pixelsmap.h"
+#include "rawimage.h"
 #include "utils.h"
+
+#include "../rtgui/options.h"
 
 namespace rtengine
 {
+
+class dfInfo final :
+    public NonCopyable
+{
+public:
+
+    Glib::ustring pathname; // filename of dark frame
+    std::list<Glib::ustring> pathNames; // other similar dark frames, used for average
+    std::string maker; // manufacturer
+    std::string model; // model
+    int iso; // ISO (gain)
+    double shutter; // shutter or exposure time in sec
+    time_t timestamp; // seconds since 1 Jan 1970
+
+
+    dfInfo(const Glib::ustring &name, const std::string &mak, const std::string &mod, int iso, double shut, time_t t)
+        : pathname(name), maker(mak), model(mod), iso(iso), shutter(shut), timestamp(t), ri(nullptr) {}
+
+    dfInfo(const dfInfo &o)
+        : pathname(o.pathname), maker(o.maker), model(o.model), iso(o.iso), shutter(o.shutter), timestamp(o.timestamp), ri(nullptr) {}
+    ~dfInfo();
+
+    dfInfo &operator =(const dfInfo &o);
+    bool operator <(const dfInfo &e2) const;
+
+    // Calculate virtual distance between two shots; different model return infinite
+    double distance(const std::string &mak, const std::string &mod, int iso, double shutter) const;
+
+    static std::string key(const std::string &mak, const std::string &mod, int iso, double shut);
+    std::string key() const
+    {
+        return key(maker, model, iso, shutter);
+    }
+
+    RawImage *getRawImage();
+    std::vector<badPix> &getHotPixels();
+
+protected:
+    RawImage *ri; // Dark Frame raw data
+    std::vector<badPix> badPixels; // Extracted hot pixels
+
+    void updateBadPixelList(RawImage *df);
+    void updateRawImage();
+};
 
 // *********************** class dfInfo **************************************
 dfInfo::~dfInfo()
@@ -268,13 +320,38 @@ void dfInfo::updateBadPixelList(RawImage *df)
 
 // ************************* class DFManager *********************************
 
-DFManager& DFManager::getInstance()
+class DFManager::Implementation final :
+    public NonCopyable
 {
-    static DFManager instance;
-    return instance;
-}
+public:
+    static DFManager& getInstance();
 
-void DFManager::init(const Glib::ustring& pathname)
+    void init(const Glib::ustring &pathname);
+    Glib::ustring getPathname() const
+    {
+        return currentPath;
+    };
+    void getStat(int &totFiles, int &totTemplates) const;
+    RawImage *searchDarkFrame(const std::string &mak, const std::string &mod, int iso, double shut, time_t t);
+    RawImage *searchDarkFrame(const Glib::ustring &filename);
+    std::vector<badPix> *getHotPixels(const std::string &mak, const std::string &mod, int iso, double shut, time_t t);
+    std::vector<badPix> *getHotPixels(const Glib::ustring &filename);
+    const std::vector<badPix> *getBadPixels(const std::string &mak, const std::string &mod, const std::string &serial) const;
+
+private:
+    typedef std::multimap<std::string, dfInfo> dfList_t;
+    typedef std::map<std::string, std::vector<badPix> > bpList_t;
+    dfList_t dfList;
+    bpList_t bpList;
+    bool initialized;
+    Glib::ustring currentPath;
+    dfInfo *addFileInfo(const Glib::ustring &filename, bool pool = true);
+    dfInfo *find(const std::string &mak, const std::string &mod, int isospeed, double shut, time_t t);
+    int scanBadPixelsFile(const Glib::ustring &filename);
+};
+
+
+void DFManager::Implementation::init(const Glib::ustring& pathname)
 {
     if (pathname.empty()) {
         return;
@@ -345,7 +422,7 @@ void DFManager::init(const Glib::ustring& pathname)
     return;
 }
 
-dfInfo* DFManager::addFileInfo(const Glib::ustring& filename, bool pool)
+dfInfo* DFManager::Implementation::addFileInfo(const Glib::ustring& filename, bool pool)
 {
     const auto ext = getFileExtension(filename);
 
@@ -415,7 +492,7 @@ dfInfo* DFManager::addFileInfo(const Glib::ustring& filename, bool pool)
     return nullptr;
 }
 
-void DFManager::getStat(int &totFiles, int &totTemplates) const
+void DFManager::Implementation::getStat(int &totFiles, int &totTemplates) const
 {
     totFiles = 0;
     totTemplates = 0;
@@ -436,7 +513,7 @@ void DFManager::getStat(int &totFiles, int &totTemplates) const
  *  if perfect matches for iso and shutter are found, then the list is scanned for lesser distance in time
  *  otherwise if no match is found, the whole list is searched for lesser distance in iso and shutter
  */
-dfInfo* DFManager::find(const std::string &mak, const std::string &mod, int isospeed, double shut, time_t t)
+dfInfo* DFManager::Implementation::find(const std::string &mak, const std::string &mod, int isospeed, double shut, time_t t)
 {
     if (dfList.empty()) {
         return nullptr;
@@ -477,7 +554,7 @@ dfInfo* DFManager::find(const std::string &mak, const std::string &mod, int isos
     }
 }
 
-RawImage* DFManager::searchDarkFrame(const std::string &mak, const std::string &mod, int iso, double shut, time_t t)
+RawImage* DFManager::Implementation::searchDarkFrame(const std::string &mak, const std::string &mod, int iso, double shut, time_t t)
 {
     dfInfo *df = find(((Glib::ustring)mak).uppercase(), ((Glib::ustring)mod).uppercase(), iso, shut, t);
 
@@ -488,7 +565,7 @@ RawImage* DFManager::searchDarkFrame(const std::string &mak, const std::string &
     }
 }
 
-RawImage* DFManager::searchDarkFrame(const Glib::ustring &filename)
+RawImage* DFManager::Implementation::searchDarkFrame(const Glib::ustring &filename)
 {
     for (auto& df : dfList) {
         if (df.second.pathname.compare(filename) == 0) {
@@ -505,7 +582,7 @@ RawImage* DFManager::searchDarkFrame(const Glib::ustring &filename)
     return nullptr;
 }
 
-std::vector<badPix> *DFManager::getHotPixels(const Glib::ustring &filename)
+std::vector<badPix> *DFManager::Implementation::getHotPixels(const Glib::ustring &filename)
 {
     for (auto& df : dfList) {
         if (df.second.pathname.compare(filename) == 0) {
@@ -516,7 +593,7 @@ std::vector<badPix> *DFManager::getHotPixels(const Glib::ustring &filename)
     return nullptr;
 }
 
-std::vector<badPix> *DFManager::getHotPixels(const std::string &mak, const std::string &mod, int iso, double shut, time_t t)
+std::vector<badPix> *DFManager::Implementation::getHotPixels(const std::string &mak, const std::string &mod, int iso, double shut, time_t t)
 {
     dfInfo *df = find(((Glib::ustring)mak).uppercase(), ((Glib::ustring)mod).uppercase(), iso, shut, t);
 
@@ -537,7 +614,7 @@ std::vector<badPix> *DFManager::getHotPixels(const std::string &mak, const std::
     }
 }
 
-int DFManager::scanBadPixelsFile(const Glib::ustring &filename)
+int DFManager::Implementation::scanBadPixelsFile(const Glib::ustring &filename)
 {
     FILE *file = fopen(filename.c_str(), "r");
 
@@ -589,7 +666,7 @@ int DFManager::scanBadPixelsFile(const Glib::ustring &filename)
     return numPixels;
 }
 
-const std::vector<badPix> *DFManager::getBadPixels(const std::string &mak, const std::string &mod, const std::string &serial) const
+const std::vector<badPix> *DFManager::Implementation::getBadPixels(const std::string &mak, const std::string &mod, const std::string &serial) const
 {
     bpList_t::const_iterator iter;
     bool found = false;
@@ -639,5 +716,57 @@ const std::vector<badPix> *DFManager::getBadPixels(const std::string &mak, const
     }
 }
 
+DFManager& DFManager::getInstance()
+{
+    static DFManager instance;
+    return instance;
 }
 
+void DFManager::init(const Glib::ustring& pathname)
+{
+    implementation->init(pathname);
+}
+
+Glib::ustring DFManager::getPathname() const
+{
+    return implementation->getPathname();
+}
+
+void DFManager::getStat(int& totFiles, int& totTemplates) const
+{
+    implementation->getStat(totFiles, totTemplates);
+}
+
+RawImage* DFManager::searchDarkFrame(const std::string& mak, const std::string& mod, int iso, double shut, time_t t)
+{
+    return implementation->searchDarkFrame(mak, mod, iso, shut, t);
+}
+
+RawImage* DFManager::searchDarkFrame(const Glib::ustring& filename)
+{
+    return implementation->searchDarkFrame(filename);
+}
+
+std::vector<badPix>* DFManager::getHotPixels(const std::string& mak, const std::string& mod, int iso, double shut, time_t t)
+{
+    return implementation->getHotPixels(mak, mod, iso, shut, t);
+}
+
+std::vector<badPix>* DFManager::getHotPixels(const Glib::ustring& filename)
+{
+    return implementation->getHotPixels(filename);
+}
+
+const std::vector<badPix>* DFManager::getBadPixels(const std::string& mak, const std::string& mod, const std::string& serial) const
+{
+    return implementation->getBadPixels(mak, mod, serial);
+}
+
+DFManager::DFManager() :
+    implementation(new Implementation)
+{
+}
+
+DFManager::~DFManager() = default;
+
+}
