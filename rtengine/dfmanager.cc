@@ -268,6 +268,12 @@ void dfInfo::updateBadPixelList(RawImage *df)
 
 // ************************* class DFManager *********************************
 
+DFManager& DFManager::getInstance()
+{
+    static DFManager instance;
+    return instance;
+}
+
 void DFManager::init(const Glib::ustring& pathname)
 {
     if (pathname.empty()) {
@@ -632,10 +638,6 @@ const std::vector<badPix> *DFManager::getBadPixels(const std::string &mak, const
         return &(iter->second);
     }
 }
-
-// Global variable
-DFManager dfm;
-
 
 }
 

@@ -77,6 +77,8 @@ protected:
 class DFManager final
 {
 public:
+    static DFManager& getInstance();
+
     void init(const Glib::ustring &pathname);
     Glib::ustring getPathname() const
     {
@@ -100,7 +102,5 @@ protected:
     dfInfo *find(const std::string &mak, const std::string &mod, int isospeed, double shut, time_t t);
     int scanBadPixelsFile(const Glib::ustring &filename);
 };
-
-extern DFManager dfm;
 
 }

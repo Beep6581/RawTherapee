@@ -1309,10 +1309,10 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     if (!raw.df_autoselect) {
         if (!raw.dark_frame.empty()) {
-            rid = dfm.searchDarkFrame(raw.dark_frame);
+            rid = DFManager::getInstance().searchDarkFrame(raw.dark_frame);
         }
     } else {
-        rid = dfm.searchDarkFrame(idata->getMake(), idata->getModel(), idata->getISOSpeed(), idata->getShutterSpeed(), idata->getDateTimeAsTS());
+        rid = DFManager::getInstance().searchDarkFrame(idata->getMake(), idata->getModel(), idata->getISOSpeed(), idata->getShutterSpeed(), idata->getDateTimeAsTS());
     }
 
     if (rid && settings->verbose) {
@@ -1385,7 +1385,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
 
     // Always correct camera badpixels from .badpixels file
-    const std::vector<badPix> *bp = dfm.getBadPixels(ri->get_maker(), ri->get_model(), idata->getSerialNumber());
+    const std::vector<badPix> *bp = DFManager::getInstance().getBadPixels(ri->get_maker(), ri->get_model(), idata->getSerialNumber());
 
     if (bp) {
         if (!bitmapBads) {
@@ -1403,9 +1403,9 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     bp = nullptr;
 
     if (raw.df_autoselect) {
-        bp = dfm.getHotPixels(idata->getMake(), idata->getModel(), idata->getISOSpeed(), idata->getShutterSpeed(), idata->getDateTimeAsTS());
+        bp = DFManager::getInstance().getHotPixels(idata->getMake(), idata->getModel(), idata->getISOSpeed(), idata->getShutterSpeed(), idata->getDateTimeAsTS());
     } else if (!raw.dark_frame.empty()) {
-        bp = dfm.getHotPixels(raw.dark_frame);
+        bp = DFManager::getInstance().getHotPixels(raw.dark_frame);
     }
 
     if (bp) {

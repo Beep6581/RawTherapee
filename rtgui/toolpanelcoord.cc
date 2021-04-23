@@ -929,7 +929,7 @@ rtengine::RawImage* ToolPanelCoordinator::getDF()
         std::string model(imd->getModel());
         time_t timestamp = imd->getDateTimeAsTS();
 
-        return rtengine::dfm.searchDarkFrame(maker, model, iso, shutter, timestamp);
+        return rtengine::DFManager::getInstance().searchDarkFrame(maker, model, iso, shutter, timestamp);
     }
 
     return nullptr;
