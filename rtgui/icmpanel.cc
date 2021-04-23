@@ -938,12 +938,14 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
               redBox->set_sensitive(false);
               greBox->set_sensitive(false);
               bluBox->set_sensitive(false);
+              labgridcie->set_sensitive(false);
 
             } else {
               will->set_sensitive(true);
               redBox->set_sensitive(true);
               greBox->set_sensitive(true);
               bluBox->set_sensitive(true);
+              labgridcie->set_sensitive(true);
             }
             
         }
@@ -1032,6 +1034,11 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             redFrame->hide();
         } else {
             redFrame->show();
+        }
+        if(wprim->get_active_row_number() == 12 ) {
+            labgridcie->set_sensitive(true);
+        } else {
+            labgridcie->set_sensitive(false);
         }
     
     }
@@ -1432,6 +1439,12 @@ void ICMPanel::wtrcinChanged()
         }
     }
     wprimChanged();
+    if(wprim->get_active_row_number() == 12 ) {
+        labgridcie->set_sensitive(true);
+    } else {
+        labgridcie->set_sensitive(false);
+    }
+    
     if (wTRC->get_active_row_number() == 0) {
         redFrame->hide();
     }
@@ -1625,10 +1638,15 @@ void ICMPanel::wprimChanged()
             redBox->set_sensitive(false);
             greBox->set_sensitive(false);
             bluBox->set_sensitive(false);
+            labgridcie->set_sensitive(false);
+            if(wprim->get_active_row_number() == 12 ) {
+                labgridcie->set_sensitive(true);
+            }
         } else {
             redBox->set_sensitive(true);
             greBox->set_sensitive(true);
             bluBox->set_sensitive(true);
+            labgridcie->set_sensitive(false);
         }
         
     }
