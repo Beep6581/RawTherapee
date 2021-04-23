@@ -283,20 +283,20 @@ void calcFrameBrightnessFactor(unsigned int frame, uint32_t datalen, LUTu *histo
 {
     float medians[4];
 
-    for(int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 4; ++i) {
         //find median of histogram
-        uint32_t median = 0, count = 0;
+        uint32_t lmedian = 0, count = 0;
 
-        while(count < datalen / 2) {
-            count += (*histo[i])[median];
-            ++median;
+        while (count < datalen / 2) {
+            count += (*histo[i])[lmedian];
+            ++lmedian;
         }
 
-        const float weight = (count - datalen / 2.f) / (*histo[i])[median - 1];
-        medians[i] = rtengine::intp(weight, (float)(median - 2), (float)(median - 1));
+        const float weight = (count - datalen / 2.f) / (*histo[i])[lmedian - 1];
+        medians[i] = rtengine::intp(weight, (float)(lmedian - 2), (float)(lmedian - 1));
     }
 
-    for(int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 4; ++i) {
         brightnessFactor[i] = medians[frame] / medians[i];
     }
 

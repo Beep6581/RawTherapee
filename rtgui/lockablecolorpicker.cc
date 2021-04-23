@@ -37,7 +37,7 @@ void LockableColorPicker::updateBackBuffer ()
     int newW, newH;
 
     // -------------------- setting some key constants ---------------------
-    constexpr float circlePadding = 3.f;  // keep this value odd
+    constexpr double circlePadding = 3.0;  // keep this value odd
     constexpr double opacity = 0.62;
     // ---------------------------------------------------------------------
 
@@ -121,18 +121,18 @@ void LockableColorPicker::updateBackBuffer ()
         bbcr->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
         bbcr->set_line_width (0.);
 
-        float center = (float)size / 2.f + circlePadding;
+        double center = static_cast<double>(size) / 2.0 + circlePadding;
 
         // black background of the whole color picker
         bbcr->set_line_width (0.);
         bbcr->set_source_rgba (0., 0., 0., opacity);
-        bbcr->arc_negative (center, center, center, 0., (double)rtengine::RT_PI);
+        bbcr->arc_negative (center, center, center, 0., rtengine::RT_PI);
         bbcr->line_to (0, 2. * center + textHeight);
-        bbcr->arc_negative (2. * textPadding, 2. * center + textHeight, 2. * textPadding, (double)rtengine::RT_PI, (double)rtengine::RT_PI / 2.);
+        bbcr->arc_negative (2. * textPadding, 2. * center + textHeight, 2. * textPadding, rtengine::RT_PI, rtengine::RT_PI / 2.);
         bbcr->line_to (textWidth, 2. * center + textHeight + 2. * textPadding);
-        bbcr->arc_negative (textWidth, 2. * center + textHeight, 2. * textPadding, (double)rtengine::RT_PI / 2., 0.);
+        bbcr->arc_negative (textWidth, 2. * center + textHeight, 2. * textPadding, rtengine::RT_PI / 2., 0.);
         bbcr->line_to (textWidth + 2. * textPadding, 2. * center + 2. * textPadding);
-        bbcr->arc_negative (textWidth, 2. * center + 2. * textPadding, 2. * textPadding, 0., (double)rtengine::RT_PI * 1.5);
+        bbcr->arc_negative (textWidth, 2. * center + 2. * textPadding, 2. * textPadding, 0., rtengine::RT_PI * 1.5);
         bbcr->line_to (2. * center, 2. * center);
         bbcr->close_path();
         bbcr->set_line_join (Cairo::LINE_JOIN_BEVEL);
@@ -222,7 +222,7 @@ void LockableColorPicker::updateBackBuffer ()
 
         bbcr->set_antialias(Cairo::ANTIALIAS_SUBPIXEL);
 
-        float center = (float)size / 2.f + circlePadding;
+        double center = static_cast<double>(size) / 2. + circlePadding;
 
         // light grey circle around the color mark
         bbcr->arc (center, center, center - circlePadding / 2., 0., 2. * (double)rtengine::RT_PI);

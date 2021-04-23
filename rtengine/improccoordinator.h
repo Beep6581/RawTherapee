@@ -27,7 +27,6 @@
 #include "imagesource.h"
 #include "improcfun.h"
 #include "LUT.h"
-#include "procevents.h"
 #include "rtengine.h"
 
 #include "../rtgui/threadutils.h"
@@ -55,7 +54,7 @@ class Crop;
   * but using this class' LUT and other precomputed parameters. The main preview area is displaying a non framed Crop object,
   * while detail windows are framed Crop objects.
   */
-class ImProcCoordinator : public StagedImageProcessor
+class ImProcCoordinator final : public StagedImageProcessor, public HistogramObservable
 {
 
     friend class Crop;
@@ -74,9 +73,13 @@ protected:
 
     ColorTemp currWB;
     ColorTemp autoWB;
+    ColorTemp currWBloc;
+    ColorTemp autoWBloc;
+    ColorTemp currWBitc;
 
     double lastAwbEqual;
     double lastAwbTempBias;
+    Glib::ustring lastAwbauto;
 
     Glib::ustring monitorProfile;
     RenderingIntent monitorIntent;
@@ -89,7 +92,7 @@ protected:
     bool highDetailRawComputed;
     bool allocated;
 
-    void freeAll ();
+    void freeAll();
 
     // Precomputed values used by DetailedCrop ----------------------------------------------
 
@@ -123,6 +126,16 @@ protected:
     LUTu histBlue, histBlueRaw;
     LUTu histLuma, histToneCurve, histToneCurveBW, histLCurve, histCCurve;
     LUTu histLLCurve, histLCAM, histCCAM, histClad, bcabhist, histChroma, histLRETI;
+    bool hist_lrgb_dirty;
+    /// Used to simulate a lazy update of the raw histogram.
+    bool hist_raw_dirty;
+    int vectorscopeScale;
+    bool vectorscope_hc_dirty, vectorscope_hs_dirty;
+    array2D<int> vectorscope_hc, vectorscope_hs;
+    /// Waveform's intensity. Same as height of reference image.
+    int waveformScale;
+    bool waveform_dirty;
+    array2D<int> waveformRed, waveformGreen, waveformBlue, waveformLuma;
 
     LUTf CAMBrightCurveJ, CAMBrightCurveQ;
 
@@ -136,7 +149,11 @@ protected:
     NoiseCurve noiseLCurve;
     NoiseCurve noiseCCurve;
     WavCurve wavCLVCurve;
+    WavCurve wavdenoise;
+    WavCurve wavdenoiseh;
+    Wavblcurve wavblcurve;
     WavOpacityCurveRG waOpacityCurveRG;
+    WavOpacityCurveSH waOpacityCurveSH;
     WavOpacityCurveBY waOpacityCurveBY;
     WavOpacityCurveW waOpacityCurveW;
     WavOpacityCurveWL waOpacityCurveWL;
@@ -171,12 +188,14 @@ protected:
     AutoRadiusListener *pdSharpenAutoRadiusListener;
     FrameCountListener *frameCountListener;
     ImageTypeListener *imageTypeListener;
-
+    FilmNegListener *filmNegListener;
     AutoColorTonListener* actListener;
     AutoChromaListener* adnListener;
     WaveletListener* awavListener;
     RetinexListener* dehaListener;
+//    LocallabListener* locallListener;
 
+    
     HistogramListener* hListener;
     std::vector<SizeListener*> sizeListeners;
 
@@ -186,9 +205,17 @@ protected:
 
     MyMutex minit;  // to gain mutually exclusive access to ... to what exactly?
 
-    void reallocAll ();
-    void updateLRGBHistograms ();
-    void setScale (int prevscale);
+    void notifyHistogramChanged();
+    void reallocAll();
+    /// Updates L, R, G, and B histograms. Returns true unless not updated.
+    bool updateLRGBHistograms();
+    /// Updates the H-C vectorscope. Returns true unless not updated.
+    bool updateVectorscopeHC();
+    /// Updates the H-S vectorscope. Returns true unless not updated.
+    bool updateVectorscopeHS();
+    /// Updates all waveforms. Returns true unless not updated.
+    bool updateWaveforms();
+    void setScale(int prevscale);
     void updatePreviewImage (int todo, bool panningRelatedChange);
 
     MyMutex mProcessing;
@@ -217,15 +244,123 @@ protected:
     bool clcutili;
     bool opautili;
     bool wavcontlutili;
-    void startProcessing ();
-    void process ();
+    void startProcessing();
+    void process();
     float colourToningSatLimit;
     float colourToningSatLimitOpacity;
     bool highQualityComputed;
     cmsHTRANSFORM customTransformIn;
     cmsHTRANSFORM customTransformOut;
-
     ImProcFunctions ipf;
+    
+    //locallab
+    LocallabListener* locallListener;
+    LUTf lllocalcurve;
+    LUTf cllocalcurve;
+    LUTf lclocalcurve;
+    LUTf cclocalcurve;
+    LUTf rgblocalcurve;
+    LUTf exlocalcurve;
+    LUTf hltonecurveloc;
+    LUTf shtonecurveloc;
+    LUTf tonecurveloc;
+    LUTf lightCurveloc;
+    LUTf lmasklocalcurve;
+    LUTf lmaskexplocalcurve;
+    LUTf lmaskSHlocalcurve;
+    LUTf lmaskviblocalcurve;
+    LUTf lmasktmlocalcurve;
+    LUTf lmaskretilocalcurve;
+    LUTf lmaskcblocalcurve;
+    LUTf lmaskbllocalcurve;
+    LUTf lmasklclocalcurve;
+    LUTf lmaskloglocalcurve;
+    LUTf lmasklocal_curve;
+    
+    LocretigainCurve locRETgainCurve;
+    LocretitransCurve locRETtransCurve;
+    LocretigainCurverab locRETgainCurverab;
+    LocLHCurve loclhCurve;
+    LocHHCurve lochhCurve;
+    LocCHCurve locchCurve;
+    LocCCmaskCurve locccmasCurve;
+    LocLLmaskCurve locllmasCurve;
+    LocHHmaskCurve lochhmasCurve;
+    LocHHmaskCurve lochhhmasCurve;
+    LocCCmaskCurve locccmasexpCurve;
+    LocLLmaskCurve locllmasexpCurve;
+    LocHHmaskCurve lochhmasexpCurve;
+    LocCCmaskCurve locccmasSHCurve;
+    LocLLmaskCurve locllmasSHCurve;
+    LocHHmaskCurve lochhmasSHCurve;
+    LocCCmaskCurve locccmasvibCurve;
+    LocLLmaskCurve locllmasvibCurve;
+    LocHHmaskCurve lochhmasvibCurve;
+    LocCCmaskCurve locccmaslcCurve;
+    LocLLmaskCurve locllmaslcCurve;
+    LocHHmaskCurve lochhmaslcCurve;
+    LocCCmaskCurve locccmascbCurve;
+    LocLLmaskCurve locllmascbCurve;
+    LocHHmaskCurve lochhmascbCurve;
+    LocCCmaskCurve locccmasretiCurve;
+    LocLLmaskCurve locllmasretiCurve;
+    LocHHmaskCurve lochhmasretiCurve;
+    LocCCmaskCurve locccmastmCurve;
+    LocLLmaskCurve locllmastmCurve;
+    LocHHmaskCurve lochhmastmCurve;
+    LocCCmaskCurve locccmasblCurve;
+    LocLLmaskCurve locllmasblCurve;
+    LocHHmaskCurve lochhmasblCurve;
+    LocCCmaskCurve locccmas_Curve;
+    LocLLmaskCurve locllmas_Curve;
+    LocHHmaskCurve lochhmas_Curve;
+    LocHHmaskCurve lochhhmas_Curve;
+    LocCCmaskCurve locccmaslogCurve;
+    LocLLmaskCurve locllmaslogCurve;
+    LocHHmaskCurve lochhmaslogCurve;
+    
+    LocwavCurve locwavCurve;
+    LocwavCurve loclmasCurveblwav;
+    LocwavCurve loclmasCurvecolwav;
+    LocwavCurve loclevwavCurve;
+    LocwavCurve locconwavCurve;
+    LocwavCurve loccompwavCurve;
+    LocwavCurve loccomprewavCurve;
+    LocwavCurve locwavCurveden;
+    LocwavCurve locedgwavCurve;
+    LocwavCurve loclmasCurve_wav;
+    LocwavCurve locwavCurvehue;
+
+    std::vector<float> huerefs;
+    std::vector<float> huerefblurs;
+    std::vector<float> chromarefblurs;
+    std::vector<float> lumarefblurs;
+    std::vector<float> chromarefs;
+    std::vector<float> lumarefs;
+    std::vector<float> sobelrefs;
+    std::vector<float> avgs;
+    std::vector<float> meantms;
+    std::vector<float> stdtms;
+    std::vector<float> meanretis;
+    std::vector<float> stdretis;
+    bool lastspotdup;
+    bool previewDeltaE;
+    int locallColorMask;
+    int locallColorMaskinv;
+    int locallExpMask;
+    int locallExpMaskinv;
+    int locallSHMask;
+    int locallSHMaskinv;
+    int locallvibMask;
+    int localllcMask;
+    int locallcbMask;
+    int locallretiMask;
+    int locallsoftMask;
+    int localltmMask;
+    int locallblMask;
+    int locallsharMask;
+    int localllogMask;
+    int locall_Mask;
 
 public:
 
@@ -241,10 +376,11 @@ public:
     void        endUpdateParams (int changeFlags) override;
     void        stopProcessing () override;
 
+    std::string *retistrsav;
 
     void setPreviewScale    (int scale) override
     {
-        setScale (scale);
+        setScale(scale);
     }
     int  getPreviewScale    () override
     {
@@ -276,7 +412,7 @@ public:
     bool getAutoWB   (double& temp, double& green, double equal, double tempBias) override;
     void getCamWB    (double& temp, double& green) override;
     void getSpotWB   (int x, int y, int rectSize, double& temp, double& green) override;
-    bool getFilmNegativeExponents(int xA, int yA, int xB, int yB, std::array<float, 3>& newExps) override;
+    bool getFilmNegativeSpot(int x, int y, int spotSize, FilmNegativeParams::RGB &refInput, FilmNegativeParams::RGB &refOutput) override;
     void getAutoCrop (double ratio, int &x, int &y, int &w, int &h) override;
     bool getHighQualComputed() override;
     void setHighQualComputed() override;
@@ -294,6 +430,27 @@ public:
         updaterThreadStart.unlock();
     }
 
+    void setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int localllogMask, int locall_Mask) override
+    {
+        this->previewDeltaE = previewDeltaE;
+        this->locallColorMask = locallColorMask;
+        this->locallColorMaskinv = locallColorMaskinv;
+        this->locallExpMask = locallExpMask;
+        this->locallExpMaskinv = locallExpMaskinv;
+        this->locallSHMask = locallSHMask;
+        this->locallSHMaskinv = locallSHMaskinv;
+        this->locallvibMask = locallvibMask;
+        this->locallsoftMask = locallsoftMask;
+        this->locallblMask = locallblMask;
+        this->localltmMask = localltmMask;
+        this->locallretiMask = locallretiMask;
+        this->locallsharMask = locallsharMask;
+        this->localllcMask = localllcMask;
+        this->locallcbMask = locallcbMask;
+        this->localllogMask = localllogMask;
+        this->locall_Mask = locall_Mask;
+    }
+
     void setProgressListener (ProgressListener* pl) override
     {
         plistener = pl;
@@ -304,14 +461,14 @@ public:
     }
     void setSizeListener     (SizeListener* il) override
     {
-        sizeListeners.push_back (il);
+        sizeListeners.push_back(il);
     }
     void delSizeListener     (SizeListener* il) override
     {
-        std::vector<SizeListener*>::iterator it = std::find (sizeListeners.begin(), sizeListeners.end(), il);
+        std::vector<SizeListener*>::iterator it = std::find(sizeListeners.begin(), sizeListeners.end(), il);
 
         if (it != sizeListeners.end()) {
-            sizeListeners.erase (it);
+            sizeListeners.erase(it);
         }
     }
     void setAutoExpListener  (AutoExpListener* ael) override
@@ -320,7 +477,13 @@ public:
     }
     void setHistogramListener (HistogramListener *h) override
     {
+        if (hListener) {
+            hListener->setObservable(nullptr);
+        }
         hListener = h;
+        if (h) {
+            h->setObservable(this);
+        }
     }
     void setAutoCamListener  (AutoCamListener* acl) override
     {
@@ -345,6 +508,10 @@ public:
     void setRetinexListener  (RetinexListener* adh) override
     {
         dehaListener = adh;
+    }
+    void setLocallabListener  (LocallabListener* lla) override
+    {
+        locallListener = lla;
     }
     void setWaveletListener  (WaveletListener* awa) override
     {
@@ -385,6 +552,11 @@ public:
         imageTypeListener = itl;
     }
 
+    void setFilmNegListener  (FilmNegListener* fnl) override
+    {
+        filmNegListener = fnl;
+    }
+
     void saveInputICCReference (const Glib::ustring& fname, bool apply_wb) override;
 
     InitialImage*  getInitialImage () override
@@ -403,7 +575,7 @@ public:
     }
 
     struct DenoiseInfoStore {
-        DenoiseInfoStore () : chM (0), max_r{}, max_b{}, ch_M{}, valid (false)  {}
+        DenoiseInfoStore() : chM(0), max_r{}, max_b{}, ch_M{}, valid(false)  {}
         float chM;
         float max_r[9];
         float max_b[9];
@@ -412,6 +584,11 @@ public:
 
     } denoiseInfoStore;
 
+    void requestUpdateHistogram() override;
+    void requestUpdateHistogramRaw() override;
+    void requestUpdateVectorscopeHC() override;
+    void requestUpdateVectorscopeHS() override;
+    void requestUpdateWaveform() override;
 };
 
 }

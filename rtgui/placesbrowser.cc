@@ -31,7 +31,8 @@
 
 PlacesBrowser::PlacesBrowser ()
 {
-
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     scrollw = Gtk::manage (new Gtk::ScrolledWindow ());
     scrollw->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
     pack_start (*scrollw);

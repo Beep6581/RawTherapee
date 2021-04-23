@@ -25,7 +25,7 @@
 /**
  * @brief A derived class of Gtk::Image in order to handle theme-related icon sets.
  */
-class RTImage : public Gtk::Image, public RTScalable
+class RTImage final : public Gtk::Image, public RTScalable
 {
     static double dpiBack; // used to keep track of master dpi change
     static int scaleBack;  // used to keep track of master scale change

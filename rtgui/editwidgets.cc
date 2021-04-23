@@ -76,7 +76,7 @@ void Circle::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer
             color = outerLineColor;
         }
 
-        cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+        cr->set_source_rgba (color.getR(), color.getG(), color.getB(), opacity / 100.);
         cr->set_line_width( getOuterLineWidth() );
 
         rtengine::Coord center_ = center;
@@ -107,7 +107,7 @@ void Circle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer
                 color = innerLineColor;
             }
 
-            cr->set_source_rgb(color.getR(), color.getG(), color.getB());
+            cr->set_source_rgba(color.getR(), color.getG(), color.getB(), opacity / 100.);
         }
 
         cr->set_line_width( innerLineWidth );
@@ -126,13 +126,13 @@ void Circle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer
         if (filled && state != INSENSITIVE) {
             cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0., 2.*rtengine::RT_PI);
 
-            if (innerLineWidth > 0.) {
+            if (innerLineWidth > 0.f) {
                 cr->fill_preserve();
                 cr->stroke();
             } else {
                 cr->fill();
             }
-        } else if (innerLineWidth > 0.) {
+        } else if (innerLineWidth > 0.f) {
             cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0., 2.*rtengine::RT_PI);
 
             if (state == INSENSITIVE) {
@@ -176,7 +176,7 @@ void Circle::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short 
         cr->arc(center_.x + 0.5, center_.y + 0.5, radius_, 0, 2.*rtengine::RT_PI);
 
         if (filled) {
-            if (innerLineWidth > 0.) {
+            if (innerLineWidth > 0.f) {
                 cr->fill_preserve();
                 cr->stroke();
             } else {
@@ -199,7 +199,7 @@ void Line::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *
             color = outerLineColor;
         }
 
-        cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+        cr->set_source_rgba (color.getR(), color.getG(), color.getB(), opacity / 100.0);
         cr->set_line_width( getOuterLineWidth() );
 
         rtengine::Coord begin_ = begin;
@@ -224,7 +224,7 @@ void Line::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *
 
 void Line::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
 {
-    if ((flags & F_VISIBLE) && innerLineWidth > 0.) {
+    if ((flags & F_VISIBLE) && innerLineWidth > 0.f) {
         if (state != INSENSITIVE) {
             RGBColor color;
 
@@ -234,7 +234,7 @@ void Line::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *
                 color = innerLineColor;
             }
 
-            cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+            cr->set_source_rgba (color.getR(), color.getG(), color.getB(), opacity / 100.);
         }
 
         cr->set_line_width(innerLineWidth);
@@ -313,7 +313,7 @@ void Polyline::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuff
             color = outerLineColor;
         }
 
-        cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+        cr->set_source_rgba (color.getR(), color.getG(), color.getB(), opacity / 100.);
         cr->set_line_width( getOuterLineWidth() );
 
         rtengine::Coord currPos;
@@ -357,7 +357,7 @@ void Polyline::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuff
                 color = innerLineColor;
             }
 
-            cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+            cr->set_source_rgba (color.getR(), color.getG(), color.getB(), opacity / 100.);
         }
 
         cr->set_line_width( innerLineWidth );
@@ -383,13 +383,13 @@ void Polyline::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuff
                 }
             }
 
-            if (innerLineWidth > 0.) {
+            if (innerLineWidth > 0.f) {
                 cr->fill_preserve();
                 cr->stroke();
             } else {
                 cr->fill();
             }
-        } else if (innerLineWidth > 0.) {
+        } else if (innerLineWidth > 0.f) {
             rtengine::Coord currPos;
 
             for (unsigned int i = 0; i < points.size(); ++i) {
@@ -459,7 +459,7 @@ void Polyline::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned shor
         }
 
         if (filled) {
-            if (innerLineWidth > 0.) {
+            if (innerLineWidth > 0.f) {
                 cr->fill_preserve();
                 cr->stroke();
             } else {
@@ -506,7 +506,7 @@ void Rectangle::drawOuterGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuf
             color = outerLineColor;
         }
 
-        cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+        cr->set_source_rgba (color.getR(), color.getG(), color.getB(), opacity / 100.);
         cr->set_line_width( getOuterLineWidth() );
 
         rtengine::Coord tl, br;
@@ -550,7 +550,7 @@ void Rectangle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuf
                 color = innerLineColor;
             }
 
-            cr->set_source_rgb (color.getR(), color.getG(), color.getB());
+            cr->set_source_rgba (color.getR(), color.getG(), color.getB(), opacity / 100.);
         }
 
         cr->set_line_width( innerLineWidth );
@@ -576,13 +576,13 @@ void Rectangle::drawInnerGeometry(Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuf
         if (filled && state != INSENSITIVE) {
             cr->rectangle(tl.x + 0.5, tl.y + 0.5, br.x - tl.x, br.y - tl.y);
 
-            if (innerLineWidth > 0.) {
+            if (innerLineWidth > 0.f) {
                 cr->fill_preserve();
                 cr->stroke();
             } else {
                 cr->fill();
             }
-        } else if (innerLineWidth > 0.) {
+        } else if (innerLineWidth > 0.f) {
             cr->rectangle(tl.x + 0.5, tl.y + 0.5, br.x - tl.x, br.y - tl.y);
 
             if (state == INSENSITIVE) {
@@ -632,6 +632,292 @@ void Rectangle::drawToMOChannel(Cairo::RefPtr<Cairo::Context> &cr, unsigned shor
             cr->set_source_rgba (0., 0., 0., (id + 1) / 65535.);
         }
         cr->rectangle(tl.x + 0.5, tl.y + 0.5, br.x - tl.x, br.y - tl.y);
+
+        if (filled) {
+            if (innerLineWidth > 0.f) {
+                cr->fill_preserve();
+                cr->stroke();
+            } else {
+                cr->fill();
+            }
+        } else {
+            cr->stroke();
+        }
+    }
+}
+
+void Ellipse::drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
+{
+    if ((flags & F_VISIBLE) && state != INSENSITIVE) {
+        RGBColor color;
+
+        if (flags & F_AUTO_COLOR) {
+            color = getOuterLineColor();
+        } else {
+            color = outerLineColor;
+        }
+
+        cr->set_source_rgba (color.getR(), color.getG(), color.getB(), opacity / 100.);
+        cr->set_line_width ( getOuterLineWidth() );
+
+        rtengine::Coord center_ = center;
+        double radYT_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radYT)) : double (radYT);
+        double radY_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radY)) : double (radY);
+        double radXL_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radXL)) : double (radXL);
+        double radX_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radX)) : double (radX);
+
+        if (datum == IMAGE) {
+            coordSystem.imageCoordToScreen (center.x, center.y, center_.x, center_.y);
+        } else if (datum == CLICKED_POINT) {
+            center_ += objectBuffer->getDataProvider()->posScreen;
+        } else if (datum == CURSOR) {
+            center_ += objectBuffer->getDataProvider()->posScreen + objectBuffer->getDataProvider()->deltaScreen;
+        }
+
+        if (radYT_ > 0 && radY_ > 0 && radXL_ > 0 && radX_ > 0) {
+            // To have an ellipse with radius of (radX, radX), a circle of radius 1. shall be twisted with a scale
+            // of radX for x-axis, radY for y-axis
+            // Center of coordinates (x, y) in previous coordinates system becomes (X, Y) = (radX * x, radY * y) in new one
+            // To go back to previous location, center shall be translated to tx = -X * (1 - 1 / radX) in x-axis (x = tx + X)
+            // and ty = -Y * (1 - 1 / radY) in y-axis (y = ty + Y)
+            cr->save();
+
+            // Drawing bottom-right part
+            cr->scale (radX_, radY_);
+            cr->translate(- center_.x * (1 - 1 / radX_), - center_.y * (1 - 1 / radY_));
+            cr->arc (center_.x, center_.y, 1.0, 0.0, rtengine::RT_PI_2);
+
+            cr->restore ();
+            cr->save();
+
+            // Drawing bottom-left part
+            cr->scale (radXL_, radY_);
+            cr->translate(- center_.x * (1 - 1 / radXL_), - center_.y * (1 - 1 / radY_));
+            cr->arc (center_.x, center_.y, 1.0, rtengine::RT_PI_2, rtengine::RT_PI);
+            cr->scale (radXL_, radY_);
+
+            cr->restore ();
+            cr->save();
+
+            // Drawing top-left part
+            cr->scale (radXL_, radYT_);
+            cr->translate(- center_.x * (1 - 1 / radXL_), - center_.y * (1 - 1 / radYT_));
+            cr->arc (center_.x, center_.y, 1.0, rtengine::RT_PI, 3. * rtengine::RT_PI_2);
+
+            cr->restore ();
+            cr->save();
+
+            // Drawing top-right part
+            cr->scale (radX_, radYT_);
+            cr->translate(- center_.x * (1 - 1 / radX_), - center_.y * (1 - 1 / radYT_));
+            cr->arc (center_.x, center_.y, 1.0, 3. * rtengine::RT_PI_2, 2. * rtengine::RT_PI);
+
+            cr->restore ();
+            cr->stroke ();
+        }
+    }
+}
+
+void Ellipse::drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
+{
+    if (flags & F_VISIBLE) {
+        if (state != INSENSITIVE) {
+            RGBColor color;
+
+            if (flags & F_AUTO_COLOR) {
+                color = getInnerLineColor();
+            } else {
+                color = innerLineColor;
+            }
+
+            cr->set_source_rgba (color.getR(), color.getG(), color.getB(), opacity / 100.);
+        }
+
+        cr->set_line_width ( innerLineWidth );
+
+        rtengine::Coord center_ = center;
+        double radYT_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radYT)) : double (radYT);
+        double radY_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radY)) : double (radY);
+        double radXL_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radXL)) : double (radXL);
+        double radX_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radX)) : double (radX);
+
+        if (datum == IMAGE) {
+            coordSystem.imageCoordToScreen (center.x, center.y, center_.x, center_.y);
+        } else if (datum == CLICKED_POINT) {
+            center_ += objectBuffer->getDataProvider()->posScreen;
+        } else if (datum == CURSOR) {
+            center_ += objectBuffer->getDataProvider()->posScreen + objectBuffer->getDataProvider()->deltaScreen;
+        }
+
+        if (filled && state != INSENSITIVE) {
+            if (radYT_ > 0 && radY_ > 0 && radXL_ > 0 && radX_ > 0) {
+                // To have an ellipse with radius of (radX, radX), a circle of radius 1. shall be twisted with a scale
+                // of radX for x-axis, radY for y-axis
+                // Center of coordinates (x, y) in previous coordinates system becomes (X, Y) = (radX * x, radY * y) in new one
+                // To go back to previous location, center shall be translated to tx = -X * (1 - 1 / radX) in x-axis (x = tx + X)
+                // and ty = -Y * (1 - 1 / radY) in y-axis (y = ty + Y)
+                cr->save();
+
+                // Drawing bottom-right part
+                cr->scale (radX_, radY_);
+                cr->translate(- center_.x * (1 - 1 / radX_), - center_.y * (1 - 1 / radY_));
+                cr->arc (center_.x, center_.y, 1.0, 0.0, rtengine::RT_PI_2);
+
+                cr->restore ();
+                cr->save();
+
+                // Drawing bottom-left part
+                cr->scale (radXL_, radY_);
+                cr->translate(- center_.x * (1 - 1 / radXL_), - center_.y * (1 - 1 / radY_));
+                cr->arc (center_.x, center_.y, 1.0, rtengine::RT_PI_2, rtengine::RT_PI);
+                cr->scale (radXL_, radY_);
+
+                cr->restore ();
+                cr->save();
+
+                // Drawing top-left part
+                cr->scale (radXL_, radYT_);
+                cr->translate(- center_.x * (1 - 1 / radXL_), - center_.y * (1 - 1 / radYT_));
+                cr->arc (center_.x, center_.y, 1.0, rtengine::RT_PI, 3. * rtengine::RT_PI_2);
+
+                cr->restore ();
+                cr->save();
+
+                // Drawing top-right part
+                cr->scale (radX_, radYT_);
+                cr->translate(- center_.x * (1 - 1 / radX_), - center_.y * (1 - 1 / radYT_));
+                cr->arc (center_.x, center_.y, 1.0, 3. * rtengine::RT_PI_2, 2. * rtengine::RT_PI);
+
+                cr->restore ();
+                cr->stroke ();
+            }
+
+            if (innerLineWidth > 0.) {
+                cr->fill_preserve();
+                cr->stroke();
+            } else {
+                cr->fill();
+            }
+        } else if (innerLineWidth > 0.) {
+            if (radYT_ > 0 && radY_ > 0 && radXL_ > 0 && radX_ > 0) {
+                // To have an ellipse with radius of (radX, radX), a circle of radius 1. shall be twisted with a scale
+                // of radX for x-axis, radY for y-axis
+                // Center of coordinates (x, y) in previous coordinates system becomes (X, Y) = (radX * x, radY * y) in new one
+                // To go back to previous location, center shall be translated to tx = -X * (1 - 1 / radX) in x-axis (x = tx + X)
+                // and ty = -Y * (1 - 1 / radY) in y-axis (y = ty + Y)
+                cr->save();
+
+                // Drawing bottom-right part
+                cr->scale (radX_, radY_);
+                cr->translate(- center_.x * (1 - 1 / radX_), - center_.y * (1 - 1 / radY_));
+                cr->arc (center_.x, center_.y, 1.0, 0.0, rtengine::RT_PI_2);
+
+                cr->restore ();
+                cr->save();
+
+                // Drawing bottom-left part
+                cr->scale (radXL_, radY_);
+                cr->translate(- center_.x * (1 - 1 / radXL_), - center_.y * (1 - 1 / radY_));
+                cr->arc (center_.x, center_.y, 1.0, rtengine::RT_PI_2, rtengine::RT_PI);
+                cr->scale (radXL_, radY_);
+
+                cr->restore ();
+                cr->save();
+
+                // Drawing top-left part
+                cr->scale (radXL_, radYT_);
+                cr->translate(- center_.x * (1 - 1 / radXL_), - center_.y * (1 - 1 / radYT_));
+                cr->arc (center_.x, center_.y, 1.0, rtengine::RT_PI, 3. * rtengine::RT_PI_2);
+
+                cr->restore ();
+                cr->save();
+
+                // Drawing top-right part
+                cr->scale (radX_, radYT_);
+                cr->translate(- center_.x * (1 - 1 / radX_), - center_.y * (1 - 1 / radYT_));
+                cr->arc (center_.x, center_.y, 1.0, 3. * rtengine::RT_PI_2, 2. * rtengine::RT_PI);
+
+                cr->restore ();
+                cr->stroke ();
+            }
+
+            if (state == INSENSITIVE) {
+                std::valarray<double> ds (1);
+                ds[0] = 4;
+                cr->set_source_rgba (1.0, 1.0, 1.0, 0.618);
+                cr->stroke_preserve();
+                cr->set_source_rgba (0.0, 0.0, 0.0, 0.618);
+                cr->set_dash (ds, 0);
+                cr->stroke();
+                ds.resize (0);
+                cr->set_dash (ds, 0);
+            } else {
+                cr->stroke();
+            }
+        }
+    }
+}
+
+void Ellipse::drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem)
+{
+    if (flags & F_HOVERABLE) {
+        cr->set_line_width ( getMouseOverLineWidth() );
+
+        rtengine::Coord center_ = center;
+        double radYT_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radYT)) : double (radYT);
+        double radY_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radY)) : double (radY);
+        double radXL_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radXL)) : double (radXL);
+        double radX_ = radiusInImageSpace ? coordSystem.scaleValueToCanvas (double (radX)) : double (radX);
+
+        if (datum == IMAGE) {
+            coordSystem.imageCoordToCropCanvas (center.x, center.y, center_.x, center_.y);
+        } else if (datum == CLICKED_POINT) {
+            center_ += objectBuffer->getDataProvider()->posScreen;
+        } else if (datum == CURSOR) {
+            center_ += objectBuffer->getDataProvider()->posScreen + objectBuffer->getDataProvider()->deltaScreen;
+        }
+
+        if (radYT_ > 0 && radY_ > 0 && radXL_ > 0 && radX_ > 0) {
+            // To have an ellipse with radius of (radX, radX), a circle of radius 1. shall be twisted with a scale
+            // of radX for x-axis, radY for y-axis
+            // Center of coordinates (x, y) in previous coordinates system becomes (X, Y) = (radX * x, radY * y) in new one
+            // To go back to previous location, center shall be translated to tx = -X * (1 - 1 / radX) in x-axis (x = tx + X)
+            // and ty = -Y * (1 - 1 / radY) in y-axis (y = ty + Y)
+            cr->save();
+
+            // Drawing bottom-right part
+            cr->scale (radX_, radY_);
+            cr->translate(- center_.x * (1 - 1 / radX_), - center_.y * (1 - 1 / radY_));
+            cr->arc (center_.x, center_.y, 1.0, 0.0, rtengine::RT_PI_2);
+
+            cr->restore ();
+            cr->save();
+
+            // Drawing bottom-left part
+            cr->scale (radXL_, radY_);
+            cr->translate(- center_.x * (1 - 1 / radXL_), - center_.y * (1 - 1 / radY_));
+            cr->arc (center_.x, center_.y, 1.0, rtengine::RT_PI_2, rtengine::RT_PI);
+            cr->scale (radXL_, radY_);
+
+            cr->restore ();
+            cr->save();
+
+            // Drawing top-left part
+            cr->scale (radXL_, radYT_);
+            cr->translate(- center_.x * (1 - 1 / radXL_), - center_.y * (1 - 1 / radYT_));
+            cr->arc (center_.x, center_.y, 1.0, rtengine::RT_PI, 3. * rtengine::RT_PI_2);
+
+            cr->restore ();
+            cr->save();
+
+            // Drawing top-right part
+            cr->scale (radX_, radYT_);
+            cr->translate(- center_.x * (1 - 1 / radX_), - center_.y * (1 - 1 / radYT_));
+            cr->arc (center_.x, center_.y, 1.0, 3. * rtengine::RT_PI_2, 2. * rtengine::RT_PI);
+
+            cr->restore ();
+            cr->stroke ();
+        }
 
         if (filled) {
             if (innerLineWidth > 0.) {

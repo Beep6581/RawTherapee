@@ -16,8 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _PENTAXATTRIBS_
-#define _PENTAXATTRIBS_
 
 #include <cmath>
 #include <cstdio>
@@ -424,7 +422,7 @@ public:
             return "undef";
         }
 
-        sprintf (buffer, "%.1f", v );
+        snprintf(buffer, sizeof(buffer), "%.1f", v );
         return buffer;
     }
 };
@@ -628,7 +626,7 @@ public:
             return s.str();
         } else {
             char buffer[1024];
-            t->toString (buffer);
+            t->toString (buffer, sizeof(buffer));
             return std::string (buffer);
         }
     }
@@ -696,7 +694,7 @@ public:
 };
 PAColorSpaceInterpreter paColorSpaceInterpreter;
 
-class PALensTypeInterpreter : public IntLensInterpreter< int >
+class PALensTypeInterpreter final: public IntLensInterpreter< int >
 {
 public:
     PALensTypeInterpreter ()
@@ -784,6 +782,7 @@ public:
         choices.insert (p_t (256 * 4 + 2, "smc PENTAX-FA 80-320mm f/4.5-5.6"));
         choices.insert (p_t (256 * 4 + 3, "smc PENTAX-FA 43mm f/1.9 Limited"));
         choices.insert (p_t (256 * 4 + 6, "smc PENTAX-FA 35-80mm f/4-5.6"));
+        choices.insert (p_t (256 * 4 + 8, "Irix 150mm f/2.8 Macro"));
         choices.insert (p_t (256 * 4 + 9, "Irix 11mm f/4 Firefly"));
         choices.insert (p_t (256 * 4 + 10, "Irix 15mm f/2.4"));
         choices.insert (p_t (256 * 4 + 12, "smc PENTAX-FA 50mm f/1.4"));
@@ -940,6 +939,7 @@ public:
         choices.insert (p_t (256 * 8 + 62, "HD PENTAX-D FA 24-70mm f/2.8 ED SDM WR"));
         choices.insert (p_t (256 * 8 + 63, "HD PENTAX-D FA 15-30mm f/2.8 ED SDM WR"));
         choices.insert (p_t (256 * 8 + 64, "HD PENTAX-D FA* 50mm f/1.4 SDM AW"));
+        choices.insert (p_t (256 * 8 + 65, "HD PENTAX-D FA 70-210mm f/4 ED SDM WR"));
         choices.insert (p_t (256 * 8 + 196, "HD PENTAX-DA* 11-18mm f/2.8 ED DC AW"));
         choices.insert (p_t (256 * 8 + 197, "HD PENTAX-DA 55-300mm f/4.5-6.3 ED PLM WR RE"));
         choices.insert (p_t (256 * 8 + 198, "smc PENTAX-DA L 18-50mm f/4-5.6 DC WR RE"));
@@ -1341,7 +1341,7 @@ public:
         }
 
         char buffer[32];
-        sprintf (buffer, "%d", a );
+        snprintf(buffer, sizeof(buffer), "%d", a );
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -1369,7 +1369,7 @@ public:
 
         if (a > 1.) {
             char buffer[32];
-            sprintf (buffer, "%.2f", a / 100. );
+            snprintf(buffer, sizeof(buffer), "%.2f", a / 100. );
             return buffer;
         } else {
             return "n/a";
@@ -1395,11 +1395,11 @@ public:
     std::string toString (const Tag* t) const override
     {
         int a = t->toInt (0, BYTE);
-        float b = float (10 * int (a >> 2)) * pow (4.f, float (int (a & 0x03) - 2));
+        double b = static_cast<double>(10 * (a >> 2)) * std::pow(4.0, static_cast<double>((a & 0x03) - 2));
 
-        if (b > 1.f) {
+        if (b > 1.0) {
             char buffer[32];
-            sprintf (buffer, "%.2f", b );
+            snprintf(buffer, sizeof(buffer), "%.2f", b );
             return buffer;
         } else {
             return "n/a";
@@ -1408,9 +1408,9 @@ public:
     double toDouble (const Tag* t, int ofs) override
     {
         int a = t->toInt (ofs, BYTE);
-        float b = float (10 * int (a >> 2)) * pow (4.f, float (int (a & 0x03) - 2));
+        double b = static_cast<double>(10 * (a >> 2)) * std::pow(4.0, static_cast<double>((a & 0x03) - 2));
 
-        if (b > 1.f) {
+        if (b > 1.0) {
             return b;
         } else {
             return 0.;
@@ -1428,7 +1428,7 @@ public:
         int a = t->toInt (0, BYTE);
         char buffer[32];
         double v = 100.*exp (double (a - 32) * log (2.) / 8.);
-        sprintf (buffer, "%.1f", v );
+        snprintf(buffer, sizeof(buffer), "%.1f", v );
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -1456,7 +1456,7 @@ public:
                 return "undef";
             }
 
-            sprintf (buffer, "%.1f", v );
+            snprintf(buffer, sizeof(buffer), "%.1f", v );
             return buffer;
         } else {
             return "n/a";
@@ -1485,7 +1485,7 @@ public:
         int a = t->toInt (0, BYTE);
         char buffer[32];
         double v = double (a - 64) / 8.;
-        sprintf (buffer, "%.1f", v );
+        snprintf(buffer, sizeof(buffer), "%.1f", v );
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -1505,7 +1505,7 @@ public:
         int a = t->toInt (0, SBYTE);
         char buffer[32];
         double v = double (a) / 8.;
-        sprintf (buffer, "%.1f", v );
+        snprintf(buffer, sizeof(buffer), "%.1f", v );
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -1525,7 +1525,7 @@ public:
         int a = t->toInt (0, BYTE);
         char buffer[32];
         double v = exp ((double (a) - 68.) * log (2.) / 16.);
-        sprintf (buffer, "%.1f", v );
+        snprintf(buffer, sizeof(buffer), "%.1f", v );
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -1545,7 +1545,7 @@ public:
         int a = t->toInt (0, BYTE);
         char buffer[32];
         double v = 24.*exp (- (double (a) - 32.) * log (2.) / 8.);
-        sprintf (buffer, "%.6f", v );
+        snprintf(buffer, sizeof(buffer), "%.6f", v );
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -1565,7 +1565,7 @@ public:
         char buffer[32];
         int a = t->toInt (0, BYTE);
         int mina = a & 0x0F;
-        sprintf (buffer, "%.1f", double (int (pow (2.0, double (mina + 10) / 4.0) + 0.2)));
+        snprintf(buffer, sizeof(buffer), "%.1f", double (int (pow (2.0, double (mina + 10) / 4.0) + 0.2)));
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -1585,7 +1585,7 @@ public:
         char buffer[32];
         int a = t->toInt (0, BYTE);
         int maxa = (a & 0xF0) >> 4;
-        sprintf (buffer, "%.1f", double (int (pow (2.0, double (maxa) / 4.0) + 0.2)) );
+        snprintf(buffer, sizeof(buffer), "%.1f", double (int (pow (2.0, double (maxa) / 4.0) + 0.2)) );
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -1702,7 +1702,7 @@ public:
     {
         char buffer[32];
         int b = t->toInt (0, BYTE) & 0x1F;
-        sprintf (buffer, "%.0f", pow (2., b / 16. + 4) );
+        snprintf(buffer, sizeof(buffer), "%.0f", pow (2., b / 16. + 4) );
         return buffer;
     }
 };
@@ -1788,7 +1788,7 @@ public:
             return r->second;
         } else {
             char buffer[1024];
-            t->toString (buffer);
+            t->toString (buffer, sizeof(buffer));
             return std::string (buffer);
         }
     }
@@ -2216,7 +2216,6 @@ const TagAttrib pentaxCameraInfoAttribs[] = {
 };
 
 }
-#endif
 
 
 

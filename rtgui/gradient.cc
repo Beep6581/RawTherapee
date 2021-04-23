@@ -15,7 +15,7 @@ using namespace rtengine::procparams;
 Gradient::Gradient () : FoldableToolPanel(this, "gradient", M("TP_GRADIENT_LABEL"), false, true), EditSubscriber(ET_OBJECTS), lastObject(-1), draggedPointOldAngle(-1000.)
 {
 
-    editHBox = Gtk::manage (new Gtk::HBox());
+    editHBox = Gtk::manage (new Gtk::Box());
     edit = Gtk::manage (new Gtk::ToggleButton());
     edit->get_style_context()->add_class("independent");
     edit->add (*Gtk::manage (new RTImage ("crosshair-adjust.png")));
@@ -151,6 +151,8 @@ void Gradient::updateGeometry(const int centerX, const int centerY, const double
 
     int imW=0;
     int imH=0;
+	
+	
     if (fullWidth != -1 && fullHeight != -1) {
         imW = fullWidth;
         imH = fullHeight;
@@ -164,7 +166,7 @@ void Gradient::updateGeometry(const int centerX, const int centerY, const double
     const auto decay = feather * rtengine::norm2<double> (imW, imH) / 200.0;
     rtengine::Coord origin (imW / 2 + centerX * imW / 200, imH / 2 + centerY * imH / 200);
 
-    const auto updateLine = [&](Geometry* geometry, const float radius, const float begin, const float end)
+    const auto updateLine = [&](Geometry* geometry, const double radius, const double begin, const double end)
     {
         const auto line = static_cast<Line*>(geometry);
         line->begin = PolarCoord(radius, -degree + begin);
@@ -173,7 +175,7 @@ void Gradient::updateGeometry(const int centerX, const int centerY, const double
         line->end += origin;
     };
 
-    const auto updateLineWithDecay = [&](Geometry* geometry, const float radius, const float offSetAngle)
+    const auto updateLineWithDecay = [&](Geometry* geometry, const double radius, const double offSetAngle)
     {
         const auto line = static_cast<Line*>(geometry);
         line->begin = PolarCoord (radius, -degree + 180.) + PolarCoord (decay, -degree + offSetAngle);

@@ -50,7 +50,7 @@ struct BatchQueueEntryIdleHelper {
     int pending;
 };
 
-class BatchQueueEntry : public ThumbBrowserEntryBase, public BQEntryUpdateListener, public rtengine::NonCopyable
+class BatchQueueEntry final : public ThumbBrowserEntryBase, public BQEntryUpdateListener, public rtengine::NonCopyable
 {
 
     guint8* opreview;

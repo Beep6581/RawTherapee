@@ -179,7 +179,7 @@ void mappingToCurve(const std::vector<int> &mapping, std::vector<double> &curve)
         };
     idx = -1;
     for (ssize_t i = curve.size()-1; i > 0; i -= 2) {
-        if (curve[i] <= 0.f) {
+        if (curve[i] <= 0.0) {
             idx = i+1;
             break;
         }
@@ -279,7 +279,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
     {
         RawMetaDataLocation rml;
         eSensorType sensor_type;
-        int w, h;
+        int w = 0, h = 0;
         std::unique_ptr<Thumbnail> thumb(Thumbnail::loadQuickFromRaw(getFileName(), rml, sensor_type, w, h, 1, false, true, true));
         if (!thumb) {
             if (settings->verbose) {
@@ -328,7 +328,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
         int tw = target->getWidth(), th = target->getHeight();
         float thumb_ratio = float(std::max(sw, sh)) / float(std::min(sw, sh));
         float target_ratio = float(std::max(tw, th)) / float(std::min(tw, th));
-        if (std::abs(thumb_ratio - target_ratio) > 0.01) {
+        if (std::abs(thumb_ratio - target_ratio) > 0.01f) {
             int cx = 0, cy = 0;
             if (thumb_ratio > target_ratio) {
                 // crop the height
@@ -342,7 +342,7 @@ void RawImageSource::getAutoMatchedToneCurve(const ColorManagementParams &cp, st
                 tw -= cw;
             }
             if (settings->verbose) {
-                std::cout << "histogram matching: cropping target to get an aspect ratio of " << round(thumb_ratio * 100)/100.0 << ":1, new size is " << tw << "x" << th << std::endl;
+                std::cout << "histogram matching: cropping target to get an aspect ratio of " << round(thumb_ratio * 100)/100.f << ":1, new size is " << tw << "x" << th << std::endl;
             }
 
             if (cx || cy) {

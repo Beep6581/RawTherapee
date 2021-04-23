@@ -16,8 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _OLYMPUSATTRIBS_
-#define _OLYMPUSATTRIBS_
 
 #include <string>
 #include <cmath>
@@ -133,6 +131,7 @@ public:
         lenses["00 32 10"] = "Olympus M.Zuiko Digital ED 12-200mm f/3.5-6.3";
         lenses["00 33 00"] = "Olympus Zuiko Digital 25mm f/2.8";
         lenses["00 34 00"] = "Olympus Zuiko Digital ED 9-18mm f/4.0-5.6";
+        lenses["00 34 10"] = "Olympus M.Zuiko Digital ED 12-45mm f/4.0 Pro";
         lenses["00 35 00"] = "Olympus Zuiko Digital 14-54mm f/2.8-3.5 II";
         lenses["01 01 00"] = "Sigma 18-50mm f/3.5-5.6 DC";
         lenses["01 01 10"] = "Sigma 30mm f/2.8 EX DN";
@@ -193,7 +192,10 @@ public:
         lenses["02 28 10"] = "Lumix G Vario 12-60mm f/3.5-5.6 Asph. Power OIS";
         lenses["02 29 10"] = "Leica DG Summilux 12mm f/1.4 Asph.";
         lenses["02 30 10"] = "Leica DG Vario-Elmarit 12-60mm f/2.8-4 Asph. Power OIS";
+        lenses["02 31 10"] = "Lumix G Vario 45-200mm f/4.0-5.6 II";
+        lenses["02 32 10"] = "Lumix G Vario 100-300mm f/4.0-5.6 II";
         lenses["02 33 10"] = "Lumix G X Vario 12-35mm f/2.8 II Asph. Power OIS";
+        lenses["02 34 10"] = "Lumix G Vario 35-100mm f/2.8 II";
         lenses["02 35 10"] = "Leica DG Vario-Elmarit 8-18mm f/2.8-4 Asph.";
         lenses["02 36 10"] = "Leica DG Elmarit 200mm f/2.8 Power OIS";
         lenses["02 37 10"] = "Leica DG Vario-Elmarit 50-200mm f/2.8-4 Asph. Power OIS";
@@ -201,6 +203,7 @@ public:
         lenses["03 01 00"] = "Leica D Vario Elmarit 14-50mm f/2.8-3.5 Asph.";
         lenses["03 02 00"] = "Leica D Summilux 25mm f/1.4 Asph.";
         lenses["05 01 10"] = "Tamron 14-150mm f/3.5-5.8 Di III";
+        lenses["024 01 10"] = "Venus Optics Laowa 50mm f/2.8 2x Macro";
     }
     std::string toString (const Tag* t) const override
     {
@@ -850,5 +853,3 @@ const TagAttrib olympusAttribs[] = {
     { -1, AC_DONTWRITE, 0,  nullptr, 0, AUTO, "", nullptr}
 };
 }
-#endif
-

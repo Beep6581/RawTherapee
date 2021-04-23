@@ -44,7 +44,7 @@ struct PreviewHandlerIdleHelper {
     int pending;
 };
 
-class PreviewHandler : public rtengine::PreviewImageListener, public rtengine::NonCopyable
+class PreviewHandler final : public rtengine::PreviewImageListener, public rtengine::NonCopyable
 {
 private:
     friend int setImageUI   (void* data);

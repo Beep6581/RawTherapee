@@ -47,7 +47,7 @@ void RawImageSource::green_equilibrate_global(array2D<float> &rawData)
     for (int i = border; i < H - border; i++) {
         double avgg = 0.;
         for (int j = border + ((FC(i, border) & 1) ^ 1); j < W - border; j += 2) {
-            avgg += rawData[i][j];
+            avgg += static_cast<double>(rawData[i][j]);
         }
 
         int ng = (W - 2 * border + (FC(i, border) & 1)) / 2;
@@ -71,15 +71,15 @@ void RawImageSource::green_equilibrate_global(array2D<float> &rawData)
         avgg2 = 1.0;
     }
 
-    double corrg1 = (avgg1 / ng1 + avgg2 / ng2) / 2.0 / (avgg1 / ng1);
-    double corrg2 = (avgg1 / ng1 + avgg2 / ng2) / 2.0 / (avgg2 / ng2);
+    const float corrg1 = (avgg1 / ng1 + avgg2 / ng2) / 2.0 / (avgg1 / ng1);
+    const float corrg2 = (avgg1 / ng1 + avgg2 / ng2) / 2.0 / (avgg2 / ng2);
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic,16)
 #endif
 
     for (int i = border; i < H - border; i++) {
-        double corrg = (i & 1) ? corrg2 : corrg1;
+        const float corrg = (i & 1) ? corrg2 : corrg1;
 
         for (int j = border + ((FC(i, border) & 1) ^ 1); j < W - border; j += 2) {
             rawData[i][j] *= corrg;
@@ -220,7 +220,7 @@ void RawImageSource::green_equilibrate(const GreenEqulibrateThreshold &thresh, a
 
                 float tf = thresh(rr, cc);
 
-                if (c1 + c2 < 6 * tf * fabs(d1 - d2)) {
+                if (c1 + c2 < 6 * tf * std::fabs(d1 - d2)) {
                     //pixel interpolation
                     float gin = cfa[rr][cc >> 1];
 

@@ -16,8 +16,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _CANONATTRIBS_
-#define _CANONATTRIBS_
 
 #include <cstdio>
 #include <cmath>
@@ -72,7 +70,7 @@ public:
             return "undef";
         }
 
-        sprintf (buffer, "%.1f", v );
+        snprintf(buffer, sizeof(buffer), "%.1f", v );
         return buffer;
     }
 };
@@ -101,7 +99,7 @@ public:
         }
 
         char buffer[32];
-        sprintf (buffer, "%.1fs %s", sec / 10., (sec & 0x4000) ? ",Custom" : "");
+        snprintf(buffer, sizeof(buffer), "%.1fs %s", sec / 10., (sec & 0x4000) ? ",Custom" : "");
         return buffer;
     }
 };
@@ -544,7 +542,7 @@ public:
         }
 
         char buffer[32];
-        sprintf (buffer, "%.1f", v );
+        snprintf(buffer, sizeof(buffer), "%.1f", v );
         return buffer;
     }
 };
@@ -847,7 +845,7 @@ public:
             {195, "Canon EF 35-105mm f/4.5-5.6 USM"},
             {196, "Canon EF 75-300mm f/4-5.6 USM"},
             {197, "Canon EF 75-300mm f/4-5.6 IS USM or Sigma Lens"},
-            {197, "Sigma 18-300mm f/3.5-6.3 DC Macro OS HS"},
+            {197, "Sigma 18-300mm f/3.5-6.3 DC Macro OS HSM"},
             {198, "Canon EF 50mm f/1.4 USM or Other Lens"},
             {198, "Zeiss Otus 55mm f/1.4 ZE"},
             {198, "Zeiss Otus 85mm f/1.4 ZE"},
@@ -919,10 +917,11 @@ public:
             {253, "Canon EF 70-200mm f/2.8L IS II USM + 2x"},
             {253, "Canon EF 70-200mm f/2.8L IS III USM + 2x"},
             {254, "Canon EF 100mm f/2.8L Macro IS USM"},
-            {255, "Sigma 24-105mm f/4 DG OS HSM | A or Other Sigma Lens"},
+            {255, "Sigma 24-105mm f/4 DG OS HSM | A or Other Lens"},
             {255, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"},
+            {255, "Tamron SP 70-200mm f/2.8 Di VC USD"},
             {368, "Sigma 14-24mm f/2.8 DG HSM | A or other Sigma Lens"},
-            {368, "Sigma 20mm f/1.4 DG HSM | A"},
+            {368, "Sigma 35mm f/1.4 DG HSM | A"},
             {368, "Sigma 50mm f/1.4 DG HSM | A"},
             {368, "Sigma 40mm f/1.4 DG HSM | A"},
             {368, "Sigma 60-600mm f/4.5-6.3 DG OS HSM | S"},
@@ -968,13 +967,14 @@ public:
             {749, "Tamron 100-400mm f/4.5-6.3 Di VC USD A035E + 2x"},
             {750, "Canon EF 35mm f/1.4L II USM or Tamron Lens"},
             {750, "Tamron SP 85mm f/1.8 Di VC USD (F016)"},
+            {750, "Tamron SP 45mm f/1.8 Di VC USD (F013)"},
             {751, "Canon EF 16-35mm f/2.8L III USM"},
             {752, "Canon EF 24-105mm f/4L IS II USM"},
             {753, "Canon EF 85mm f/1.4L IS USM"},
             {754, "Canon EF 70-200mm f/4L IS II USM"},
             {757, "Canon EF 400mm f/2.8L IS III USM"},
             {758, "Canon EF 600mm f/4L IS III USM"},
-            {1136, "Sigma 24-70mm f/2.8 DG OS HSM | Art 017"},
+            {1136, "Sigma 24-70mm f/2.8 DG OS HSM | A"},
             {4142, "Canon EF-S 18-135mm f/3.5-5.6 IS STM"},
             {4143, "Canon EF-M 18-55mm f/3.5-5.6 IS STM or Tamron Lens"},
             {4143, "Tamron 18-200mm f/3.5-6.3 Di III VC"},
@@ -1175,7 +1175,7 @@ public:
         }
 
         char buffer[32];
-        sprintf (buffer, "%.2fmm", val * 25.4 / 1000);
+        snprintf(buffer, sizeof(buffer), "%.2fmm", val * 25.4 / 1000);
         return buffer;
     }
 };
@@ -1188,7 +1188,7 @@ public:
     {
         char buffer[32];
         double d = pow (2, - t->toInt() / 32.0);
-        sprintf (buffer, "%.3f", d);
+        snprintf(buffer, sizeof(buffer), "%.3f", d);
         return buffer;
     }
 };
@@ -1199,7 +1199,7 @@ class CAEVInterpreter : public Interpreter
     std::string toString (const Tag* t) const override
     {
         char buffer[32];
-        sprintf (buffer, "%.1f", t->toDouble() / 32.0  );
+        snprintf(buffer, sizeof(buffer), "%.1f", t->toDouble() / 32.0  );
         return buffer;
     }
 };
@@ -1212,7 +1212,7 @@ public:
     {
         char buffer[32];
         int a = t->toInt();
-        sprintf (buffer, "%d", a);
+        snprintf(buffer, sizeof(buffer), "%d", a);
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -1231,7 +1231,7 @@ public:
         int a = Interpreter::toInt (t, ofs, astype);
 
         if (a > 1) {
-            int i = int (double (powf (2.f, float (a) / 32.f - 4.f)) * 50.f + 0.5f);
+            int i = static_cast<double>(powf (2.f, static_cast<float>(a) / 32.f - 4.f)) * 50.0 + 0.5;
             return i;
         } else {
             return 0;
@@ -1354,7 +1354,7 @@ public:
         }
 
         char buffer[32];
-        sprintf (buffer, "%.0f", n / 32. );
+        snprintf(buffer, sizeof(buffer), "%.0f", n / 32. );
         return buffer;
     }
 };
@@ -1409,7 +1409,7 @@ public:
     std::string toString (const Tag* t) const override
     {
         char buffer[32];
-        sprintf (buffer, "%.2f", t->toDouble() / 100 );
+        snprintf(buffer, sizeof(buffer), "%.2f", t->toDouble() / 100 );
         return buffer;
     }
 };
@@ -1421,7 +1421,7 @@ public:
     std::string toString (const Tag* t) const override
     {
         char buffer[32];
-        sprintf (buffer, "%.1f", t->toDouble() / 8 - 6 );
+        snprintf(buffer, sizeof(buffer), "%.1f", t->toDouble() / 8 - 6 );
         return buffer;
     }
 };
@@ -1557,7 +1557,7 @@ public:
     {
         unsigned long val = t->toInt (0, LONG);
         char buffer[32];
-        sprintf (buffer, "%ld", ((val & 0xffc0) >> 6) * 10000 + ((val >> 16) & 0xff) + ((val & 0x3f) << 8) );
+        snprintf(buffer, sizeof(buffer), "%ld", ((val & 0xffc0) >> 6) * 10000 + ((val >> 16) & 0xff) + ((val & 0x3f) << 8) );
         return buffer;
     }
 };
@@ -1903,6 +1903,7 @@ public:
         choices[2147484712] = "EOS-1D X Mark III";
         choices[2147484722] = "EOS Rebel T7 / 2000D / 1500D / Kiss X90";
         choices[2147484723] = "EOS RP";
+        choices[2147484725] = "EOS Rebel T8i / 850D / X10i";
         choices[2147484726] = "EOS SL3 / 250D / Kiss X10";
         choices[2147484727] = "EOS 90D";
         choices[2147484960] = "EOS D2000C";
@@ -2142,5 +2143,4 @@ const TagAttrib canonAttribs[] = {
     { -1, AC_DONTWRITE, 0,  nullptr, 0, AUTO, "", nullptr}
 };
 }
-#endif
 

@@ -20,7 +20,7 @@
 
 #include <gtkmm.h>
 
-class SplashImage :
+class SplashImage final :
     public Gtk::DrawingArea
 {
 
@@ -39,7 +39,7 @@ public:
 };
 
 //class Splash : public Gtk::Window {
-class Splash : public Gtk::Dialog
+class Splash final : public Gtk::Dialog
 {
 
 private:

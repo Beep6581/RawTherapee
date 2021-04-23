@@ -18,6 +18,7 @@
  */
 
 // Code adapted from ART
+// https://bitbucket.org/agriggio/art/
 /*
  *
  *  This file is part of ART.
@@ -37,11 +38,16 @@
 */
 
 // Code adapted from libraw
-/* -*- C++ -*-
- * Copyright 2019 LibRaw LLC (info@libraw.org)
+// https://github.com/LibRaw/LibRaw/
+/*
+ * File: libraw_crxdec.cpp
+ * Copyright (C) 2018-2019 Alexey Danilchenko
+ * Copyright (C) 2019 Alex Tutubalin, LibRaw LLC
  *
- LibRaw is free software; you can redistribute it and/or modify
- it under the terms of the one of two licenses as you choose:
+   Canon CR3 file decoder
+
+LibRaw is free software; you can redistribute it and/or modify
+it under the terms of the one of two licenses as you choose:
 
 1. GNU LESSER GENERAL PUBLIC LICENSE version 2.1
    (See file LICENSE.LGPL provided in LibRaw distribution archive for details).
@@ -49,7 +55,7 @@
 2. COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.0
    (See file LICENSE.CDDL provided in LibRaw distribution archive for details).
 
-*/
+ */
 
 #include <algorithm>
 #include <cstdint>
@@ -596,7 +602,9 @@ int DCraw::parseCR3(
                             relpos_inBox += lTag;
                         }
                     }
-
+                    if (!szItem) {
+                        goto fin;
+                    }
                     relpos_inDir += szItem;
                 }
 
@@ -835,7 +843,7 @@ inline void crxFillBuffer(CrxBitstream* bitStrm)
 #endif
 
             if (bitStrm->curBufSize < 1) {  // nothing read
-                throw std::exception();
+                throw std::runtime_error("Unexpected end of file in CRX bitstream");
             }
 
             bitStrm->mdatSize -= bitStrm->curBufSize;
@@ -3036,11 +3044,11 @@ bool crxSetupImageData(
 
 void crxFreeImageData(CrxImage* img)
 {
-    CrxTile* tile = img->tiles;
-    const int nTiles = img->tileRows * img->tileCols;
-
     if (img->tiles) {
-        for (std::int32_t curTile = 0; curTile < nTiles; curTile++, tile++) {
+        CrxTile* const tile = img->tiles;
+        const int nTiles = img->tileRows * img->tileCols;
+
+        for (std::int32_t curTile = 0; curTile < nTiles; ++curTile) {
             if (tile[curTile].comps) {
                 for (std::int32_t curPlane = 0; curPlane < img->nPlanes; ++curPlane) {
                     crxFreeSubbandData(img, tile[curTile].comps + curPlane);
@@ -3124,7 +3132,8 @@ void DCraw::crxLoadRaw()
         hdr.tileHeight >>= 1;
     }
 
-//  /*imgdata.color.*/maximum = (1 << hdr.nBits) - 1;
+    //  /*imgdata.color.*/maximum = (1 << hdr.nBits) - 1;
+    tiff_bps = hdr.nBits;
 
     std::uint8_t* const hdrBuf = static_cast<std::uint8_t*>(malloc(hdr.mdatHdrSize));
 

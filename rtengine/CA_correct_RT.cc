@@ -123,7 +123,7 @@ float* RawImageSource::CA_correct_RT(
     double cared,
     double cablue,
     bool avoidColourshift,
-    const array2D<float> &rawData,
+    array2D<float> &rawData,
     double* fitParamsTransfer,
     bool fitParamsIn,
     bool fitParamsOut,
@@ -790,12 +790,12 @@ float* RawImageSource::CA_correct_RT(
                                                 for (int m = 0; m < polyord; m++) {
                                                     double powHblock = powHblockInit;
                                                     for (int n = 0; n < polyord; n++) {
-                                                        polymat[c][dir][numpar * (polyord * i + j) + (polyord * m + n)] += powVblock * powHblock * blockwt[vblock * hblsz + hblock];
+                                                        polymat[c][dir][numpar * (polyord * i + j) + (polyord * m + n)] += powVblock * powHblock * static_cast<double>(blockwt[vblock * hblsz + hblock]);
                                                         powHblock *= hblock;
                                                     }
                                                     powVblock *= vblock;
                                                 }
-                                                shiftmat[c][dir][(polyord * i + j)] += powVblockInit * powHblockInit * bstemp[dir] * blockwt[vblock * hblsz + hblock];
+                                                shiftmat[c][dir][(polyord * i + j)] += powVblockInit * powHblockInit * static_cast<double>(bstemp[dir]) * static_cast<double>(blockwt[vblock * hblsz + hblock]);
                                                 powHblockInit *= hblock;
                                             }
                                             powVblockInit *= vblock;
@@ -848,7 +848,7 @@ float* RawImageSource::CA_correct_RT(
                 for (int top = -border; top < height; top += ts - border2) {
                     for (int left = -border; left < width - (W & 1); left += ts - border2) {
                         memset(bufferThr, 0, buffersizePassTwo);
-                        float lblockshifts[2][2];
+                        double lblockshifts[2][2];
                         const int vblock = ((top + border) / (ts - border2)) + 1;
                         const int hblock = ((left + border) / (ts - border2)) + 1;
                         const int bottom = min(top + ts, height + border);
@@ -1036,8 +1036,8 @@ float* RawImageSource::CA_correct_RT(
                         }
 
                         if (!autoCA) {
-                            float hfrac = -((float)(hblock - 0.5) / (hblsz - 2) - 0.5);
-                            float vfrac = -((float)(vblock - 0.5) / (vblsz - 2) - 0.5) * height / width;
+                            double hfrac = -((hblock - 0.5) / (hblsz - 2) - 0.5);
+                            double vfrac = -((vblock - 0.5) / (vblsz - 2) - 0.5) * height / width;
                             lblockshifts[0][0] = 2 * vfrac * cared;
                             lblockshifts[0][1] = 2 * hfrac * cared;
                             lblockshifts[1][0] = 2 * vfrac * cablue;
@@ -1058,7 +1058,7 @@ float* RawImageSource::CA_correct_RT(
                                 }
                                 powVblock *= vblock;
                             }
-                            constexpr float bslim = 3.99; //max allowed CA shift
+                            constexpr double bslim = 3.99f; //max allowed CA shift
                             lblockshifts[0][0] = LIM(lblockshifts[0][0], -bslim, bslim);
                             lblockshifts[0][1] = LIM(lblockshifts[0][1], -bslim, bslim);
                             lblockshifts[1][0] = LIM(lblockshifts[1][0], -bslim, bslim);
@@ -1070,14 +1070,14 @@ float* RawImageSource::CA_correct_RT(
                             //some parameters for the bilinear interpolation
                             shiftvfloor[c] = floor((float)lblockshifts[c>>1][0]);
                             shiftvceil[c] = ceil((float)lblockshifts[c>>1][0]);
-                            if (lblockshifts[c>>1][0] < 0.f) {
+                            if (lblockshifts[c>>1][0] < 0.0) {
                                 std::swap(shiftvfloor[c], shiftvceil[c]);
                             }
                             shiftvfrac[c] = fabs(lblockshifts[c>>1][0] - shiftvfloor[c]);
 
                             shifthfloor[c] = floor((float)lblockshifts[c>>1][1]);
                             shifthceil[c] = ceil((float)lblockshifts[c>>1][1]);
-                            if (lblockshifts[c>>1][1] < 0.f) {
+                            if (lblockshifts[c>>1][1] < 0.0) {
                                 std::swap(shifthfloor[c], shifthceil[c]);
                             }
                             shifthfrac[c] = fabs(lblockshifts[c>>1][1] - shifthfloor[c]);
@@ -1291,7 +1291,7 @@ float* RawImageSource::CA_correct_RT(
                 for (int i = 0; i < H - 2 * cb; ++i) {
                     const int firstCol = fc(cfa, i, 0) & 1;
                     const int colour = fc(cfa, i, firstCol);
-                    const array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
+                    array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
                     int j = firstCol;
 #ifdef __SSE2__
                     for (; j < W - 7 - 2 * cb; j += 8) {
@@ -1325,7 +1325,7 @@ float* RawImageSource::CA_correct_RT(
                         const int ngRow = 1 - (fc(cfa, 0, 0) & 1);
                         const int ngCol = fc(cfa, ngRow, 0) & 1;
                         const int colour = fc(cfa, ngRow, ngCol);
-                        const array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
+                        array2D<float>* nonGreen = colour == 0 ? redFactor : blueFactor;
                         for (int i = 0; i < (H + 1 - 2 * cb) / 2; ++i) {
                             (*nonGreen)[i][(W - 2 * cb + 1) / 2 - 1] = (*nonGreen)[i][(W - 2* cb + 1) / 2 - 2];
                         }

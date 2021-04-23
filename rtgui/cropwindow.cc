@@ -37,6 +37,7 @@
 #include "rtsurface.h"
 
 #include "../rtengine/dcrop.h"
+#include "../rtengine/imagesource.h"
 #include "../rtengine/procparams.h"
 #include "../rtengine/rt_math.h"
 
@@ -123,14 +124,14 @@ void CropWindow::initZoomSteps()
     zoomSteps.push_back(ZoomStep("  8%", 1.0/12.0, 120, true));
     char lbl[64];
     for (int s = 100; s >= 11; --s) {
-        float z = 10./float(s);
-        sprintf(lbl, "% 2d%%", int(z * 100));
+        float z = 10.f / s;
+        snprintf(lbl, sizeof(lbl), "% 2d%%", int(z * 100));
         bool is_major = (s == s/10 * 10);
         zoomSteps.push_back(ZoomStep(lbl, z, s, is_major));
     }
     zoom11index = zoomSteps.size();
     for (int s = 1; s <= 8; ++s) {
-        sprintf(lbl, "%d00%%", s);
+        snprintf(lbl, sizeof(lbl), "%d00%%", s);
         zoomSteps.push_back(ZoomStep(lbl, s, s * 1000, true));
     }
     zoomSteps.push_back(ZoomStep("1600%", 16, 16000, true));
@@ -294,7 +295,7 @@ void CropWindow::flawnOver (bool isFlawnOver)
 void CropWindow::scroll (int state, GdkScrollDirection direction, int x, int y, double deltaX, double deltaY)
 {
     double delta = 0.0;
-    if (abs(deltaX) > abs(deltaY)) {
+    if (std::fabs(deltaX) > std::fabs(deltaY)) {
         delta = deltaX;
     } else {
         delta = deltaY;
@@ -303,7 +304,7 @@ void CropWindow::scroll (int state, GdkScrollDirection direction, int x, int y, 
     if (direction == GDK_SCROLL_SMOOTH) {
         scrollAccum += delta;
         //Only change zoom level if we've accumulated +/- 1.0 of deltas.  This conditional handles the previous delta=0.0 case
-        if (abs(scrollAccum) < 1.0) {
+        if (std::fabs(scrollAccum) < 1.0) {
             return;
         }
     }
@@ -413,7 +414,8 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                             action_y = 0;
                             needRedraw = true;
                         }
-                    } else if (iarea->getToolMode () == TMHand
+                    } else if ((iarea->getToolMode () == TMHand
+                                || iarea->getToolMode() == TMPerspective)
                                && editSubscriber
                                && cropgl
                                && cropgl->inImageArea(iarea->posImage.x, iarea->posImage.y)
@@ -428,6 +430,8 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                                 state = SEditPick1;
                                 pickedObject = iarea->getObject();
                                 pickModifierKey = bstate;
+                            } else if (iarea->getToolMode() == TMPerspective) {
+                                state = SCropImgMove;
                             }
                             press_x = x;
                             press_y = y;
@@ -591,7 +595,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
             }
         }
     } else if (button == 3) {
-        if (iarea->getToolMode () == TMHand) {
+        if (iarea->getToolMode () == TMHand || iarea->getToolMode() == TMPerspective) {
             EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
             if (editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS) {
                 needRedraw = editSubscriber->button3Pressed(bstate);
@@ -763,7 +767,10 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
 
             iarea->setObject(ObjectMOBuffer::getObjectID(cropPos));
 
-            bool elemPicked = iarea->getObject() == pickedObject && bstate == pickModifierKey;
+            int buttonMask = ((state == SEditPick1) ? GDK_BUTTON1_MASK : 0)
+                           | ((state == SEditPick2) ? GDK_BUTTON2_MASK : 0)
+                           | ((state == SEditPick3) ? GDK_BUTTON3_MASK : 0);
+            bool elemPicked = iarea->getObject() == pickedObject && bstate == (pickModifierKey | buttonMask);
 
             if        (state == SEditPick1) {
                 needRedraw = editSubscriber->pick1 (elemPicked);

@@ -1,0 +1,3 @@
+To install the RawTherapee application, open the .dmg and drag the RawTherapee app onto the /Applications folder.
+
+To use the optional rawtherapee-cli command line interface, move rawtherapee-cli into a folder in your $PATH and install the RawTherapee app as above.

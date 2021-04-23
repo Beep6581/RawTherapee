@@ -24,10 +24,12 @@ using namespace rtengine;
 
 RecentBrowser::RecentBrowser ()
 {
-
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     recentDirs = Gtk::manage (new MyComboBoxText ());
 
     Gtk::Frame* frame = Gtk::manage (new Gtk::Frame (M("MAIN_FRAME_RECENT")));
+    frame->set_label_align(0.025, 0.5);
     frame->add (*recentDirs);
 
     for(size_t i = 0; i < options.recentFolders.size(); i++) {

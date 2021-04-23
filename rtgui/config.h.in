@@ -22,10 +22,20 @@
 
 #cmakedefine BUILD_BUNDLE
 #cmakedefine HAVE_UNALIGNED_MALLOC
+#cmakedefine OSX_DEV_BUILD
+
+#if defined(__APPLE__) && !defined(OSX_DEV_BUILD)
+#define DATA_SEARCH_PATH "/Applications/RawTherapee.app/Contents/Resources/share"
+#define DOC_SEARCH_PATH "/Applications/RawTherapee.app/Contents/Resources"
+#define CREDITS_SEARCH_PATH "/Applications/RawTherapee.app/Contents/Resources"
+#define LICENCE_SEARCH_PATH "/Applications/RawTherapee.app/Contents/Resources"
+#define LENSFUN_DB_PATH "${LENSFUNDBDIR}"
+#else
 #define DATA_SEARCH_PATH "${DATADIR}"
 #define DOC_SEARCH_PATH "${DOCDIR}"
 #define CREDITS_SEARCH_PATH "${CREDITSDIR}"
 #define LICENCE_SEARCH_PATH "${LICENCEDIR}"
 #define LENSFUN_DB_PATH "${LENSFUNDBDIR}"
+#endif
 
 #endif

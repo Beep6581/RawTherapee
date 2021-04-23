@@ -51,7 +51,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     method->set_active (0);
     method->set_tooltip_text (M("TP_COLORTONING_METHOD_TOOLTIP"));
 
-    ctbox = Gtk::manage (new Gtk::HBox ());
+    ctbox = Gtk::manage (new Gtk::Box ());
     Gtk::Label* lab = Gtk::manage (new Gtk::Label (M("TP_COLORTONING_METHOD")));
     ctbox->pack_start (*lab, Gtk::PACK_SHRINK, 4);
     ctbox->pack_start (*method);
@@ -61,7 +61,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
 
     //----------- Color curve ------------------------------
 
-    colorSep = Gtk::manage (new  Gtk::HSeparator());
+    colorSep = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     pack_start (*colorSep);
 
     colorCurveEditorG = new CurveEditorGroup (options.lastColorToningCurvesDir, M("TP_COLORTONING_COLOR"));
@@ -74,7 +74,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     // whole hue range
     for (int i = 0; i < 7; i++) {
         float R, G, B;
-        float x = float(i) * (1.0f / 6.0);
+        float x = float(i) * (1.0f / 6.f);
         Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
         milestones.push_back( GradientMilestone(double(x), double(R), double(G), double(B)) );
     }
@@ -202,18 +202,18 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
 
     //----------- Saturation and strength ------------------------------
 
-//  satLimiterSep = Gtk::manage (new Gtk::HSeparator());
+//  satLimiterSep = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
 
 
 //  pack_start (*satLimiterSep, Gtk::PACK_SHRINK);
 
 //  Gtk::Frame *p1Frame;
     // Vertical box container for the content of the Process 1 frame
-    Gtk::VBox *p1VBox;
+    Gtk::Box* p1VBox;
     p1Frame = Gtk::manage (new Gtk::Frame(M("TP_COLORTONING_SA")) );
     p1Frame->set_label_align(0.025, 0.5);
 
-    p1VBox = Gtk::manage ( new Gtk::VBox());
+    p1VBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     p1VBox->set_spacing(2);
 
     autosat = Gtk::manage (new Gtk::CheckButton (M("TP_COLORTONING_AUTOSAT")));
@@ -244,10 +244,10 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
 
     //  --------------------Sliders BW Colortoning -------------------
 
-    chanMixerBox = Gtk::manage (new Gtk::VBox());
-    Gtk::VBox *chanMixerHLBox = Gtk::manage (new Gtk::VBox());
-    Gtk::VBox *chanMixerMidBox = Gtk::manage (new Gtk::VBox());
-    Gtk::VBox *chanMixerShadowsBox = Gtk::manage (new Gtk::VBox());
+    chanMixerBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Box* chanMixerHLBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Box* chanMixerMidBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Box* chanMixerShadowsBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     Gtk::Image* iblueR   = Gtk::manage (new RTImage ("circle-blue-small.png"));
     Gtk::Image* iyelL    = Gtk::manage (new RTImage ("circle-yellow-small.png"));
@@ -296,6 +296,10 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     Gtk::Frame *chanMixerMidFrame = Gtk::manage (new Gtk::Frame(M("TP_COLORTONING_MIDTONES")));
     Gtk::Frame *chanMixerShadowsFrame = Gtk::manage (new Gtk::Frame(M("TP_COLORTONING_SHADOWS")));
 
+    chanMixerHLFrame->set_label_align (0.025, 0.5);
+    chanMixerMidFrame->set_label_align (0.025, 0.5);
+    chanMixerShadowsFrame->set_label_align (0.025, 0.5);
+    
     chanMixerHLFrame->add(*chanMixerHLBox);
     chanMixerMidFrame->add(*chanMixerMidBox);
     chanMixerShadowsFrame->add(*chanMixerShadowsBox);
@@ -308,7 +312,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     pack_start( *strength, Gtk::PACK_SHRINK, 2); //I have moved after Chanmixer
 
     //--------------------- Reset sliders  ---------------------------
-    neutrHBox = Gtk::manage (new Gtk::HBox ());
+    neutrHBox = Gtk::manage (new Gtk::Box());
 
     neutral = Gtk::manage (new Gtk::Button (M("TP_COLORTONING_NEUTRAL")));
     neutral->set_tooltip_text (M("TP_COLORTONING_NEUTRAL_TIP"));
@@ -342,7 +346,8 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     //------------------------------------------------------------------------
     // LAB grid
     auto m = ProcEventMapper::getInstance();
-    EvColorToningLabGridValue = m->newEvent(RGBCURVE, "HISTORY_MSG_COLORTONING_LABGRID_VALUE");
+//    EvColorToningLabGridValue = m->newEvent(RGBCURVE, "HISTORY_MSG_COLORTONING_LABGRID_VALUE");
+    EvColorToningLabGridValue = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_COLORTONING_LABGRID_VALUE");
     labgrid = Gtk::manage(new LabGrid(EvColorToningLabGridValue, M("TP_COLORTONING_LABGRID_VALUES")));
     pack_start(*labgrid, Gtk::PACK_EXPAND_WIDGET, 4);
     //------------------------------------------------------------------------
@@ -374,7 +379,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     EvLabRegionMaskBlur = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_COLORTONING_LABREGION_MASKBLUR");
     EvLabRegionShowMask = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK");
     EvLabRegionChannel = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_COLORTONING_LABREGION_CHANNEL");
-    labRegionBox = Gtk::manage(new Gtk::VBox());
+    labRegionBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     labRegionList = Gtk::manage(new Gtk::ListViewText(3));
     labRegionList->set_size_request(-1, 150);
@@ -384,9 +389,9 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     labRegionList->set_column_title(2, M("TP_COLORTONING_LABREGION_MASK"));
     labRegionList->set_activate_on_single_click(true);
     labRegionSelectionConn = labRegionList->get_selection()->signal_changed().connect(sigc::mem_fun(this, &ColorToning::onLabRegionSelectionChanged));
-    Gtk::HBox *hb = Gtk::manage(new Gtk::HBox());
+    Gtk::Box *hb = Gtk::manage(new Gtk::Box());
     hb->pack_start(*labRegionList, Gtk::PACK_EXPAND_WIDGET);
-    Gtk::VBox *vb = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* vb = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     labRegionAdd = Gtk::manage(new Gtk::Button());
     labRegionAdd->add(*Gtk::manage(new RTImage("add-small.png")));
     labRegionAdd->signal_clicked().connect(sigc::mem_fun(*this, &ColorToning::labRegionAddPressed));
@@ -429,7 +434,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     labRegionPower->setLogScale(4, 0.1);
     labRegionBox->pack_start(*labRegionPower);
 
-    hb = Gtk::manage(new Gtk::HBox());
+    hb = Gtk::manage(new Gtk::Box());
     labRegionChannel = Gtk::manage(new MyComboBoxText());
     labRegionChannel->append(M("TP_COLORTONING_LABREGION_CHANNEL_ALL"));
     labRegionChannel->append(M("TP_COLORTONING_LABREGION_CHANNEL_R"));
@@ -442,7 +447,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     hb->pack_start(*labRegionChannel);
     labRegionBox->pack_start(*hb);
 
-    labRegionBox->pack_start(*Gtk::manage(new Gtk::HSeparator()));
+    labRegionBox->pack_start(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
 
     CurveEditorGroup *labRegionEditorG = Gtk::manage(new CurveEditorGroup(options.lastColorToningCurvesDir, M("TP_COLORTONING_LABREGION_MASK")));
     labRegionEditorG->setCurveListener(this);
@@ -488,11 +493,11 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
 
     pack_start(*labRegionBox, Gtk::PACK_EXPAND_WIDGET, 4);
 
-    labRegionSaturation->delay = options.adjusterMaxDelay;
-    labRegionSlope->delay = options.adjusterMaxDelay;
-    labRegionOffset->delay = options.adjusterMaxDelay;
-    labRegionPower->delay = options.adjusterMaxDelay;
-    labRegionMaskBlur->delay = options.adjusterMaxDelay;
+    labRegionSaturation->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    labRegionSlope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    labRegionOffset->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    labRegionPower->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    labRegionMaskBlur->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
     //------------------------------------------------------------------------
 
     show_all();
@@ -1203,11 +1208,11 @@ void ColorToning::colorForValue (double valX, double valY, enum ColorCaller::Ele
             // the strength applied to the current hue
             double strength, hue;
             hlColSat->getValue(strength, hue);
-            Color::hsv2rgb01(hue / 360.f, 1.f, 1.f, R, G, B);
+            Color::hsv2rgb01(hue / 360.0, 1.f, 1.f, R, G, B);
             const double gray = 0.46;
-            R = (gray * (1.0 - valX)) + R * valX;
-            G = (gray * (1.0 - valX)) + G * valX;
-            B = (gray * (1.0 - valX)) + B * valX;
+            R = (gray * (1.0 - valX)) + static_cast<double>(R) * valX;
+            G = (gray * (1.0 - valX)) + static_cast<double>(G) * valX;
+            B = (gray * (1.0 - valX)) + static_cast<double>(B) * valX;
         }
     } else if (callerId == 3) {  // Slider 2 background
         if (valY <= 0.5)
@@ -1218,17 +1223,17 @@ void ColorToning::colorForValue (double valX, double valY, enum ColorCaller::Ele
             // the strength applied to the current hue
             double strength, hue;
             shadowsColSat->getValue(strength, hue);
-            Color::hsv2rgb01(hue / 360.f, 1.f, 1.f, R, G, B);
+            Color::hsv2rgb01(hue / 360.0, 1.f, 1.f, R, G, B);
             const double gray = 0.46;
-            R = (gray * (1.0 - valX)) + R * valX;
-            G = (gray * (1.0 - valX)) + G * valX;
-            B = (gray * (1.0 - valX)) + B * valX;
+            R = (gray * (1.0 - valX)) + static_cast<double>(R) * valX;
+            G = (gray * (1.0 - valX)) + static_cast<double>(G) * valX;
+            B = (gray * (1.0 - valX)) + static_cast<double>(B) * valX;
         }
     } else if (callerId == 4) {  // color curve vertical and horizontal crosshair
         Color::hsv2rgb01(float(valY), 1.0f, 0.5f, R, G, B);
     } else if (callerId == ID_LABREGION_HUE) {
         // TODO
-        float x = valX - 1.f/6.f;
+        float x = valX - 1.0/6.0;
         if (x < 0.f) {
             x += 1.f;
         }

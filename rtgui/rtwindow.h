@@ -35,7 +35,7 @@ class BatchQueuePanel;
 class EditorPanel;
 class FilePanel;
 class PLDBridge;
-class RTWindow :
+class RTWindow final :
     public Gtk::Window,
     public rtengine::ProgressListener,
     public rtengine::NonCopyable
@@ -119,10 +119,12 @@ public:
     void updateHistogramPosition (int oldPosition, int newPosition);
     void updateFBQueryTB (bool singleRow);
     void updateFBToolBarVisibility (bool showFilmStripToolBar);
+    void updateShowtooltipVisibility (bool showtooltip);
     bool getIsFullscreen()
     {
         return is_fullscreen;
     }
+    void setWindowSize ();
     void set_title_decorated (Glib::ustring fname);
     void closeOpenEditors();
     void setEditorMode (bool tabbedUI);

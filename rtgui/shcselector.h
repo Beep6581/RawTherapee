@@ -29,7 +29,7 @@ public:
     virtual void shcChanged() = 0;
 };
 
-class SHCSelector : public Gtk::DrawingArea, BackBuffer
+class SHCSelector final : public Gtk::DrawingArea, BackBuffer
 {
 
 protected:
@@ -78,7 +78,7 @@ public:
     void setDefaults (double spos, double cpos, double hpos);
     void setPositions (double spos, double cpos, double hpos);
     void getPositions (double& spos, double& cpos, double& hpos);
-    void styleChanged (const Glib::RefPtr<Gtk::Style>& style);
+    void styleChanged (const Glib::RefPtr<Gtk::StyleContext>& style);
     bool reset ();
     void refresh();
 };

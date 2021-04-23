@@ -209,8 +209,8 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                 float x, y, z;
                 int ii = i - cells/2;
                 int jj = j - cells/2;
-                float a = step * (ii + 0.5);
-                float b = step * (jj + 0.5);
+                float a = step * (ii + 0.5f);
+                float b = step * (jj + 0.5f);
                 Color::Lab2XYZ(25000.f, a, b, x, y, z);
                 Color::xyz2srgb(x, y, z, R, G, B);
                 cr->set_source_rgb(R / 65535.f, G / 65535.f, B / 65535.f);
@@ -231,10 +231,10 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         // drawing the connection line
         cr->set_antialias(Cairo::ANTIALIAS_DEFAULT);
         float loa, hia, lob, hib;
-        loa = .5f * (width + width * low_a);
-        hia = .5f * (width + width * high_a);
-        lob = .5f * (height + height * low_b);
-        hib = .5f * (height + height * high_b);
+        loa = .5 * (width + width * low_a);
+        hia = .5 * (width + width * high_a);
+        lob = .5 * (height + height * low_b);
+        hib = .5 * (height + height * high_b);
         cr->set_line_width(2. * double(s));
         cr->set_source_rgb(0.6, 0.6, 0.6);
         cr->move_to(loa, lob);
@@ -319,8 +319,8 @@ bool LabGridArea::on_motion_notify_event(GdkEventMotion *event)
     int height = get_allocated_height() - 2 * inset * s - padding.get_top() - padding.get_bottom();
     const float mouse_x = std::min(double(std::max(event->x - inset * s - padding.get_right(), 0.)), double(width));
     const float mouse_y = std::min(double(std::max(get_allocated_height() - 1 - event->y - inset * s - padding.get_bottom(), 0.)), double(height));
-    const float ma = (2.0 * mouse_x - width) / (float)width;
-    const float mb = (2.0 * mouse_y - height) / (float)height;
+    const float ma = (2.f * mouse_x - width) / width;
+    const float mb = (2.f * mouse_y - height) / height;
     if (isDragged) {
         if (litPoint == LOW) {
             low_a = ma;

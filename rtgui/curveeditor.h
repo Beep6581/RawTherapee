@@ -18,8 +18,8 @@
  */
 #pragma once
 
-#include "coloredbar.h"
 #include "editcallbacks.h"
+#include "guiutils.h"
 
 #include "../rtengine/diagonalcurvetypes.h"
 #include "../rtengine/flatcurvetypes.h"
@@ -28,6 +28,7 @@
 
 class CurveEditorGroup;
 class CurveEditorSubGroup;
+class ColorProvider;
 class PopUpToggleButton;
 
 /*
@@ -58,7 +59,7 @@ protected:
     PopUpToggleButton* curveType;
     LUTu histogram; // histogram values
     bool bgHistValid;
-
+    double locallabRef; // Locallab reference value
     bool remoteDrag;
 
     int selected;
@@ -94,7 +95,7 @@ public:
     bool isUnChanged ();
     void setUnChanged (bool uc);
     void updateBackgroundHistogram(const LUTu& hist);
-
+    void updateLocallabBackground(double ref);
     void setLeftBarColorProvider(ColorProvider* cp, int callerId);
     void setBottomBarColorProvider(ColorProvider* cp, int callerId);
     void setCurveColorProvider(ColorProvider* cp, int callerId);

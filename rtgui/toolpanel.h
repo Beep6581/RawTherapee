@@ -49,7 +49,7 @@ public:
 
 /// @brief This class control the space around the group of tools inside a tab, as well as the space separating each tool. */
 class ToolVBox :
-    public Gtk::VBox
+    public Gtk::Box
 {
 public:
     ToolVBox();
@@ -57,7 +57,7 @@ public:
 
 /// @brief This class control the space around a tool's block of parameter. */
 class ToolParamBlock :
-    public Gtk::VBox
+    public Gtk::Box
 {
 public:
     ToolParamBlock();
@@ -143,7 +143,7 @@ public:
         this->batchMode = batchMode;
     }
 
-    virtual Glib::ustring getToolName () {
+    Glib::ustring getToolName () {
         return toolName;
     }
 };
@@ -164,11 +164,11 @@ public:
 
     FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, Glib::ustring UILabel, bool need11 = false, bool useEnabled = false);
 
-    MyExpander* getExpander() override
+    MyExpander* getExpander() final
     {
         return exp;
     }
-    void setExpanded (bool expanded) override
+    void setExpanded (bool expanded) final
     {
         if (exp) {
             exp->set_expanded( expanded );
@@ -186,7 +186,7 @@ public:
             exp->show();
         }
     }
-    bool getExpanded () override
+    bool getExpanded () final
     {
         if (exp) {
             return exp->get_expanded();
@@ -194,11 +194,11 @@ public:
 
         return false;
     }
-    void setParent (Gtk::Box* parent) override
+    void setParent (Gtk::Box* parent) final
     {
         parentContainer = parent;
     }
-    Gtk::Box* getParent () override
+    Gtk::Box* getParent () final
     {
         return parentContainer;
     }

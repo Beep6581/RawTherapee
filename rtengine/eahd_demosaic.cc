@@ -360,8 +360,8 @@ void RawImageSource::eahd_demosaic ()
 
             int wh = 0;
 
-            for (int dmi = 0; dmi < 9; dmi++) {
-                wh += (dLmaph[dmi] <= eL) * (dCamaph[dmi] <= eCa) * (dCbmaph[dmi] <= eCb);
+            for (int d = 0; d < 9; ++d) {
+                wh += (dLmaph[d] <= eL) * (dCamaph[d] <= eCa) * (dCbmaph[d] <= eCb);
             }
 
             homh[imx][j - 1] += wh;
@@ -376,8 +376,8 @@ void RawImageSource::eahd_demosaic ()
 
             int wv = 0;
 
-            for (int dmi = 0; dmi < 9; dmi++) {
-                wv += (dLmapv[dmi] <= eL) * (dCamapv[dmi] <= eCa) * (dCbmapv[dmi] <= eCb);
+            for (int d = 0; d < 9; ++d) {
+                wv += (dLmapv[d] <= eL) * (dCamapv[d] <= eCa) * (dCbmapv[d] <= eCb);
             }
 
             homv[imx][j - 1] += wv;

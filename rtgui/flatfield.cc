@@ -32,7 +32,7 @@ using namespace rtengine::procparams;
 
 FlatField::FlatField () : FoldableToolPanel(this, "flatfield", M("TP_FLATFIELD_LABEL"))
 {
-    hbff = Gtk::manage(new Gtk::HBox());
+    hbff = Gtk::manage(new Gtk::Box());
     flatFieldFile = Gtk::manage(new MyFileChooserButton(M("TP_FLATFIELD_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
     bindCurrentFolder (*flatFieldFile, options.lastFlatfieldDir);
     ffLabel = Gtk::manage(new Gtk::Label(M("GENERAL_FILE")));
@@ -47,13 +47,11 @@ FlatField::FlatField () : FoldableToolPanel(this, "flatfield", M("TP_FLATFIELD_L
     flatFieldBlurRadius = Gtk::manage(new Adjuster (M("TP_FLATFIELD_BLURRADIUS"), 0, 200, 2, 32));
     flatFieldBlurRadius->setAdjusterListener (this);
 
-    if (flatFieldBlurRadius->delay < options.adjusterMaxDelay) {
-        flatFieldBlurRadius->delay = options.adjusterMaxDelay;
-    }
+    flatFieldBlurRadius->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     flatFieldBlurRadius->show();
 
-    Gtk::HBox* hbffbt = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hbffbt = Gtk::manage (new Gtk::Box ());
     hbffbt->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_FLATFIELD_BLURTYPE") + ":")), Gtk::PACK_SHRINK);
     flatFieldBlurType = Gtk::manage (new MyComboBoxText ());
     flatFieldBlurType->append(M("TP_FLATFIELD_BT_AREA"));
@@ -67,9 +65,7 @@ FlatField::FlatField () : FoldableToolPanel(this, "flatfield", M("TP_FLATFIELD_L
     flatFieldClipControl->setAdjusterListener(this);
     flatFieldClipControl->addAutoButton("");
 
-    if (flatFieldClipControl->delay < options.adjusterMaxDelay) {
-        flatFieldClipControl->delay = options.adjusterMaxDelay;
-    }
+    flatFieldClipControl->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     flatFieldClipControl->show();
     flatFieldClipControl->set_tooltip_markup (M("TP_FLATFIELD_CLIPCONTROL_TOOLTIP"));

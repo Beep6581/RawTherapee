@@ -29,7 +29,7 @@ namespace rtengine
 class Image8;
 class Imagefloat;
 
-class Image16 : public IImage16, public ImageIO
+class Image16 final : public IImage16, public ImageIO
 {
 
 public:
@@ -39,8 +39,6 @@ public:
     ~Image16() override;
 
     Image16* copy() const;
-
-    Image8* to8() const;
 
     void getStdImage(const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const override;
 
@@ -65,11 +63,6 @@ public:
     cmsHPROFILE getProfile() const override
     {
         return getEmbeddedProfile();
-    }
-
-    int getBitsPerPixel() const override
-    {
-        return 8 * sizeof(unsigned short);
     }
 
     int saveToFile(const Glib::ustring &fname) const override
@@ -97,10 +90,6 @@ public:
         setProgressListener(pl);
     }
 
-    void free() override
-    {
-        delete this;
-    }
     void ExecCMSTransform(cmsHTRANSFORM hTransform);
 
     /* void                 ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy); */

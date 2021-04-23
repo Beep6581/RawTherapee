@@ -972,11 +972,11 @@ inline void RawImageSource::dcb_initTileLimits(int &colMin, int &rowMin, int &co
     }
 
     if( y0 + TILESIZE + TILEBORDER >= H - border) {
-        rowMax = TILEBORDER + H - border - y0;
+        rowMax = std::min(TILEBORDER + H - border - y0, rowMax);
     }
 
     if( x0 + TILESIZE + TILEBORDER >= W - border) {
-        colMax = TILEBORDER + W - border - x0;
+        colMax = std::min(TILEBORDER + W - border - x0, colMax);
     }
 }
 
@@ -1069,7 +1069,7 @@ void RawImageSource::dcb_hid(float (*image)[3], int x0, int y0)
         for (int col = colMin + (FC(y0 - TILEBORDER + row, x0 - TILEBORDER + colMin) & 1), indx = row * CACHESIZE + col; col < colMax; col += 2, indx += 2) {
             assert(indx - u - 1 >= 0 && indx + u + 1 < u * u);
 
-            image[indx][1] = 0.25*(image[indx-1][1]+image[indx+1][1]+image[indx-u][1]+image[indx+u][1]);
+            image[indx][1] = 0.25f * (image[indx-1][1]+image[indx+1][1]+image[indx-u][1]+image[indx+u][1]);
         }
 }
 

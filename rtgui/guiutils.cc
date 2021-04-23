@@ -20,7 +20,6 @@
 
 #include "guiutils.h"
 #include "options.h"
-#include "../rtengine/rt_math.h"
 #include "../rtengine/utils.h"
 #include "../rtengine/procparams.h"
 #include "rtimage.h"
@@ -574,18 +573,21 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
     child(nullptr), headerWidget(nullptr), statusImage(nullptr),
     label(nullptr), useEnabled(useEnabled)
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     set_spacing(0);
     set_name("MyExpander");
     set_can_focus(false);
     setExpandAlignProperties(this, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
-    headerHBox = Gtk::manage( new Gtk::HBox());
+    headerHBox = Gtk::manage( new Gtk::Box());
     headerHBox->set_can_focus(false);
     setExpandAlignProperties(headerHBox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
     if (useEnabled) {
+        get_style_context()->add_class("OnOff");
         statusImage = Gtk::manage(new RTImage(disabledImage));
         imageEvBox = Gtk::manage(new Gtk::EventBox());
+        imageEvBox->set_name("MyExpanderStatus");
         imageEvBox->add(*statusImage);
         imageEvBox->set_above_child(true);
         imageEvBox->signal_button_release_event().connect( sigc::mem_fun(this, & MyExpander::on_enabled_change) );
@@ -593,6 +595,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
         imageEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
         headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
     } else {
+        get_style_context()->add_class("Fold");
         statusImage = Gtk::manage(new RTImage(openedImage));
         headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
     }
@@ -607,7 +610,7 @@ MyExpander::MyExpander(bool useEnabled, Gtk::Widget* titleWidget) :
 
     titleEvBox = Gtk::manage(new Gtk::EventBox());
     titleEvBox->set_name("MyExpanderTitle");
-    titleEvBox->set_border_width(2);
+    titleEvBox->set_border_width(0);
     titleEvBox->add(*headerHBox);
     titleEvBox->set_above_child(false);  // this is the key! By making it below the child, they will get the events first.
     titleEvBox->set_can_focus(false);
@@ -626,17 +629,18 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
     child(nullptr), headerWidget(nullptr),
     label(nullptr), useEnabled(useEnabled)
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     set_spacing(0);
     set_name("MyExpander");
     set_can_focus(false);
     setExpandAlignProperties(this, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
-    headerHBox = Gtk::manage( new Gtk::HBox());
+    headerHBox = Gtk::manage( new Gtk::Box());
     headerHBox->set_can_focus(false);
     setExpandAlignProperties(headerHBox, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
 
-
     if (useEnabled) {
+        get_style_context()->add_class("OnOff");
         statusImage = Gtk::manage(new RTImage(disabledImage));
         imageEvBox = Gtk::manage(new Gtk::EventBox());
         imageEvBox->set_name("MyExpanderStatus");
@@ -647,6 +651,7 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
         imageEvBox->signal_leave_notify_event().connect( sigc::mem_fun(this, & MyExpander::on_enter_leave_enable), false );
         headerHBox->pack_start(*imageEvBox, Gtk::PACK_SHRINK, 0);
     } else {
+        get_style_context()->add_class("Fold");
         statusImage = Gtk::manage(new RTImage(openedImage));
         headerHBox->pack_start(*statusImage, Gtk::PACK_SHRINK, 0);
     }
@@ -655,12 +660,12 @@ MyExpander::MyExpander(bool useEnabled, Glib::ustring titleLabel) :
 
     label = Gtk::manage(new Gtk::Label());
     setExpandAlignProperties(label, true, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    label->set_markup(Glib::ustring("<b>") + escapeHtmlChars(titleLabel) + Glib::ustring("</b>"));
+    label->set_markup(escapeHtmlChars(titleLabel));
     headerHBox->pack_start(*label, Gtk::PACK_EXPAND_WIDGET, 0);
 
     titleEvBox = Gtk::manage(new Gtk::EventBox());
     titleEvBox->set_name("MyExpanderTitle");
-    titleEvBox->set_border_width(2);
+    titleEvBox->set_border_width(0);
     titleEvBox->add(*headerHBox);
     titleEvBox->set_above_child(false);  // this is the key! By make it below the child, they will get the events first.
     titleEvBox->set_can_focus(false);
@@ -737,7 +742,7 @@ void MyExpander::setLevel (int level)
 void MyExpander::setLabel (Glib::ustring newLabel)
 {
     if (label) {
-        label->set_markup(Glib::ustring("<b>") + escapeHtmlChars(newLabel) + Glib::ustring("</b>"));
+        label->set_markup(escapeHtmlChars(newLabel));
     }
 }
 
@@ -765,8 +770,10 @@ void MyExpander::set_inconsistent(bool isInconsistent)
             } else {
                 if (enabled) {
                     statusImage->set(enabledImage->get_surface());
+                    get_style_context()->add_class("enabledTool");
                 } else {
                     statusImage->set(disabledImage->get_surface());
+                    get_style_context()->remove_class("enabledTool");
                 }
             }
         }
@@ -793,6 +800,7 @@ void MyExpander::setEnabled(bool isEnabled)
 
                 if (!inconsistent) {
                     statusImage->set(disabledImage->get_surface());
+                    get_style_context()->remove_class("enabledTool");
                     message.emit();
                 }
             } else {
@@ -800,6 +808,7 @@ void MyExpander::setEnabled(bool isEnabled)
 
                 if (!inconsistent) {
                     statusImage->set(enabledImage->get_surface());
+                    get_style_context()->add_class("enabledTool");
                     message.emit();
                 }
             }
@@ -824,12 +833,6 @@ void MyExpander::setEnabledTooltipText(Glib::ustring tooltipText)
 void MyExpander::set_expanded( bool expanded )
 {
     if (!expBox) {
-        return;
-    }
-
-    bool isVisible = expBox->is_visible();
-
-    if (isVisible == expanded) {
         return;
     }
 
@@ -908,9 +911,11 @@ bool MyExpander::on_enabled_change(GdkEventButton* event)
         if (enabled) {
             enabled = false;
             statusImage->set(disabledImage->get_surface());
+            get_style_context()->remove_class("enabledTool");
         } else {
             enabled = true;
             statusImage->set(enabledImage->get_surface());
+            get_style_context()->add_class("enabledTool");
         }
 
         message.emit();
@@ -1167,6 +1172,7 @@ MySpinButton::MySpinButton ()
     set_numeric(true);
     set_wrap(false);
     set_alignment(Gtk::ALIGN_END);
+    set_update_policy(Gtk::SpinButtonUpdatePolicy::UPDATE_IF_VALID); // Avoid updating text if input is not a numeric
 }
 
 void MySpinButton::updateSize()
@@ -1199,19 +1205,19 @@ bool MySpinButton::on_key_press_event (GdkEventKey* event)
     double vMin, vMax;
     get_range(vMin, vMax);
 
-    if ( (event->string[0] >= 'a' && event->string[0] <= 'z')
-            || (event->string[0] >= 'A' && event->string[0] <= 'Z')
-            || event->string[0] == '+' || (event->string[0] == '-' && vMin >= 0)
-            || event->string[0] == '=' || event->string[0] == '_'
-       ) {
-        return false;
+    if ((event->keyval >= GDK_KEY_a && event->keyval <= GDK_KEY_z)
+            || (event->keyval >= GDK_KEY_A && event->keyval <= GDK_KEY_Z)
+            || event->keyval == GDK_KEY_equal || event->keyval == GDK_KEY_underscore
+            || event->keyval == GDK_KEY_plus || (event->keyval == GDK_KEY_minus && vMin >= 0)) {
+        return false; // Event is propagated further
     } else {
-        if(event->string[0] == ',') {
-            event->keyval = GDK_KEY_period;
-            event->string[0] = '.';
+        if (event->keyval == GDK_KEY_comma || event->keyval == GDK_KEY_KP_Decimal) {
+            set_text(get_text() + ".");
+            set_position(get_text().length()); // When setting text, cursor position is reseted at text start. Avoiding this with this code
+            return true; // Event is not propagated further
         }
 
-        return Gtk::Widget::on_key_press_event(event);
+        return Gtk::SpinButton::on_key_press_event(event); // Event is propagated normally
     }
 }
 
@@ -1234,7 +1240,7 @@ bool MyHScale::on_scroll_event (GdkEventScroll* event)
 //            event->delta_x, event->delta_y, (int)event->direction, (int)event->type, event->send_event);
     // If Shift is pressed, the widget is modified
     if (event->state & GDK_SHIFT_MASK) {
-        Gtk::HScale::on_scroll_event(event);
+        Gtk::Scale::on_scroll_event(event);
         return true;
     }
 
@@ -1264,7 +1270,7 @@ MyFileChooserButton::MyFileChooserButton(const Glib::ustring &title, Gtk::FileCh
     box_.pack_start(lbl_, true, true);
     Gtk::Image *img = Gtk::manage(new Gtk::Image());
     img->set_from_icon_name("folder-open", Gtk::ICON_SIZE_BUTTON);
-    box_.pack_start(*Gtk::manage(new Gtk::VSeparator()), false, false, 5);
+    box_.pack_start(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL)), false, false, 5);
     box_.pack_start(*img, false, false);
     box_.show_all_children();
     add(box_);

@@ -29,12 +29,17 @@
 #include "options.h"
 #include "pathutils.h"
 
-CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring groupLabel) : curveDir(curveDir), line(0), curve_reset(nullptr),
+CurveEditorGroup::CurveEditorGroup (Glib::ustring& curveDir, Glib::ustring groupLabel, int blank) : curveDir(curveDir), line(0), curve_reset(nullptr),
     displayedCurve(nullptr), flatSubGroup(nullptr), diagonalSubGroup(nullptr), cl(nullptr), numberOfPackedCurve(0)
 {
 
     // We set the label to the one provided as parameter, even if it's an empty string
-    curveGroupLabel = Gtk::manage (new Gtk::Label (groupLabel + ":", Gtk::ALIGN_START));
+    if(blank == 0) {
+        curveGroupLabel = Gtk::manage (new Gtk::Label (groupLabel + ":", Gtk::ALIGN_START));
+    } else if(blank == 1){
+        curveGroupLabel = Gtk::manage (new Gtk::Label (groupLabel, Gtk::ALIGN_START));
+    }
+    
     setExpandAlignProperties(curveGroupLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     set_row_spacing(RTScalable::getScale());
 }
@@ -274,6 +279,7 @@ void CurveEditorGroup::curveTypeToggled(CurveEditor* ce)
 
         if (ct < ce->subGroup->valUnchanged) {
             ce->subGroup->restoreDisplayedHistogram();
+            ce->subGroup->restoreLocallabBackground();
         }
     } else {
         // The button is now released, so we have to hide this CurveEditor

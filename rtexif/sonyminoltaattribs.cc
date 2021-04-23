@@ -15,8 +15,6 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#ifndef _SONYMINOLTAATTRIBS_
-#define _SONYMINOLTAATTRIBS_
 
 #include <cmath>
 
@@ -541,7 +539,7 @@ public:
 };
 SAAntiBlurInterpreter saAntiBlurInterpreter;
 
-class SALensIDInterpreter : public IntLensInterpreter<int>
+class SALensIDInterpreter final : public IntLensInterpreter<int>
 {
 public:
     SALensIDInterpreter ()
@@ -1015,7 +1013,7 @@ public:
 };
 SALensIDInterpreter saLensIDInterpreter;
 
-class SALensID2Interpreter : public IntLensInterpreter< int >
+class SALensID2Interpreter final : public IntLensInterpreter< int >
 {
 public:
     SALensID2Interpreter ()
@@ -1100,6 +1098,7 @@ public:
         choices.insert (p_t (32853, "Sony E 16-55mm f/2.8 G"));
         choices.insert (p_t (32854, "Sony E 70-350mm f/4.5-6.3 G OSS"));
         choices.insert (p_t (32858, "Sony FE 35mm f/1.8"));
+        choices.insert (p_t (32859, "Sony FE 20mm f/1.8 G"));
         choices.insert (p_t (33072, "Sony FE 70-200mm f/2.8 GM OSS + 1.4X Teleconverter"));
         choices.insert (p_t (33073, "Sony FE 70-200mm f/2.8 GM OSS + 2X Teleconverter"));
         choices.insert (p_t (33076, "Sony FE 100mm f/2.8 STF GM OSS (macro mode)"));
@@ -1128,6 +1127,9 @@ public:
         choices.insert (p_t (49458, "Tamron 17-28mm f/2.8 Di III RXD"));
         choices.insert (p_t (49459, "Tamron 35mm f/2.8 Di III OSD M1:2"));
         choices.insert (p_t (49460, "Tamron 24mm f/2.8 Di III OSD M1:2"));
+        choices.insert (p_t (49461, "Tamron 20mm f/2.8 Di III OSD M1:2"));
+        choices.insert (p_t (49462, "Tamron 70-180mm f/2.8 Di III VXD"));
+        choices.insert (p_t (49463, "Tamron 28-200mm f/2.8-5.6 Di III RXD"));
         choices.insert (p_t (49712, "Tokina FiRIN 20mm f/2 FE AF"));
         choices.insert (p_t (49713, "Tokina FiRIN 100mm f/2.8 FE MACRO"));
         choices.insert (p_t (50480, "Sigma 30mm f/1.4 DC DN | C"));
@@ -1154,6 +1156,8 @@ public:
         choices.insert (p_t (50514, "Sigma 45mm f/2.8 DG DN | C"));
         choices.insert (p_t (50515, "Sigma 35mm f/1.2 DG DN | A"));
         choices.insert (p_t (50516, "Sigma 14-24mm f/2.8 DG DN | A"));
+        choices.insert (p_t (50517, "Sigma 24-70mm f/2.8 DG DN | A"));
+        choices.insert (p_t (50518, "Sigma 100-400mm f/5-6.3 DG DN OS"));
         choices.insert (p_t (50992, "Voigtlander SUPER WIDE-HELIAR 15mm f/4.5 III"));
         choices.insert (p_t (50993, "Voigtlander HELIAR-HYPER WIDE 10mm f/5.6"));
         choices.insert (p_t (50994, "Voigtlander ULTRA WIDE-HELIAR 12mm f/5.6 III"));
@@ -1165,12 +1169,14 @@ public:
         choices.insert (p_t (51000, "Voigtlander NOKTON 50mm f/1.2 Aspherical"));
         choices.insert (p_t (51001, "Voigtlander NOKTON 21mm f/1.4 Aspherical"));
         choices.insert (p_t (51002, "Voigtlander APO-LANTHAR 50mm f/2 Aspherical"));
+        choices.insert (p_t (51003, "Voigtlander NOKTON 35mm f/1.2 Aspherical SE"));
         choices.insert (p_t (51504, "Samyang AF 50mm f/1.4"));
         choices.insert (p_t (51505, "Samyang AF 14mm f/2.8 or Samyang AF 35mm f/2.8"));
         choices.insert (p_t (51505, "Samyang AF 35mm f/2.8"));
         choices.insert (p_t (51507, "Samyang AF 35mm f/1.4"));
         choices.insert (p_t (51508, "Samyang AF 45mm f/1.8"));
         choices.insert (p_t (51510, "Samyang AF 18mm f/2.8"));
+        choices.insert (p_t (51512, "Samyang AF 75mm f/1.8"));
     }
 
     std::string toString (const Tag* t) const override
@@ -1973,7 +1979,7 @@ public:
 
         if (a > 0) {
             char buffer[32];
-            sprintf (buffer, "%.4f", a);
+            snprintf(buffer, sizeof(buffer), "%.4f", a);
             return buffer;
         } else {
             return "n/a";
@@ -2033,7 +2039,7 @@ public:
 
         if (a) {
             char buffer[32];
-            sprintf (buffer, "%.1f", a / 100. );
+            snprintf(buffer, sizeof(buffer), "%.1f", a / 100. );
             return buffer;
         } else {
             return "n/a";
@@ -2093,7 +2099,7 @@ public:
 
         if (a) {
             char buffer[32];
-            sprintf (buffer, "%d", a );
+            snprintf(buffer, sizeof(buffer), "%d", a );
             return buffer;
         } else {
             return "Auto";
@@ -2116,7 +2122,7 @@ public:
 
         // Decode the value
         if (a && a != 254) { // 254 = 'Auto' for CameraSettings3, but we might say the same for CameraSettings & CameraSettings2 (?)
-            return int (expf ((double (a) / 8.f - 6.f) * logf (2.f)) * 100.f + 0.5f);
+            return std::exp((a / 8.f - 6.f) * std::log(2.f)) * 100.f + 0.5f;
         } else {
             return 0;
         }
@@ -2132,7 +2138,7 @@ public:
     {
         double a = t->toDouble();
         char buffer[32];
-        sprintf (buffer, "%.2f", a );
+        snprintf(buffer, sizeof(buffer), "%.2f", a );
         return buffer;
     }
     double toDouble (const Tag* t, int ofs) override
@@ -2152,7 +2158,7 @@ public:
     std::string toString (const Tag* t) const override
     {
         char buffer[32];
-        sprintf (buffer, "%d", t->getValue()[0] - 20);
+        snprintf(buffer, sizeof(buffer), "%d", t->getValue()[0] - 20);
         return buffer;
     }
     int toInt (const Tag* t, int ofs, TagType astype) override
@@ -2191,7 +2197,7 @@ public:
     std::string toString (const Tag* t) const override
     {
         char buffer[32];
-        sprintf (buffer, "%d", t->getValue()[0] & 0x7f);
+        snprintf(buffer, sizeof(buffer), "%d", t->getValue()[0] & 0x7f);
         return buffer;
     }
     int toInt (const Tag* t, int ofs, TagType astype) override
@@ -2247,7 +2253,7 @@ public:
     std::string toString (const Tag* t) const override
     {
         char buffer[32];
-        sprintf (buffer, "%d", t->toInt());
+        snprintf(buffer, sizeof(buffer), "%d", t->toInt());
         return buffer;
     }
     int toInt (const Tag* t, int ofs, TagType astype) override
@@ -2499,6 +2505,4 @@ const TagAttrib sonyCameraSettingsAttribs3[] = {
  {-1, AC_DONTWRITE, 0,  0, 0, AUTO, "", NULL}};*/
 
 }
-#endif
-
 

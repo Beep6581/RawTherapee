@@ -20,37 +20,21 @@
 #pragma once
 
 #include <array>
-#include <glibmm/ustring.h>
 
 #include "rt_math.h"
 #include "LUT.h"
-#include "iccmatrices.h"
 #include "lcms2.h"
 #include "sleef.h"
 
-#define SAT(a,b,c) ((float)max(a,b,c)-(float)min(a,b,c))/(float)max(a,b,c)
+namespace Glib
+{
+class ustring;
+}
 
 namespace rtengine
 {
 
 typedef std::array<double, 7> GammaValues;
-
-#ifdef _DEBUG
-
-class MunsellDebugInfo
-{
-public:
-    float maxdhuelum[4];
-    float maxdhue[4];
-    unsigned int depass;
-    unsigned int depassLum;
-
-    MunsellDebugInfo();
-    void reinitValues();
-};
-
-#endif
-
 
 class Color
 {
@@ -100,7 +84,6 @@ private:
 #endif
 
     static float computeXYZ2Lab(float f);
-    static float computeXYZ2LabY(float f);
 
 public:
 
@@ -132,7 +115,7 @@ public:
     constexpr static double sRGBGammaCurve = 2.4;
 
     constexpr static double eps = 216.0 / 24389.0; //0.008856
-    constexpr static double eps_max = MAXVALF * eps; //580.40756;
+    constexpr static double eps_max = MAXVALD * eps; //580.40756;
     constexpr static double kappa = 24389.0 / 27.0; //903.29630;
     constexpr static double kappaInv = 27.0 / 24389.0;
     constexpr static double epsilonExpInv3 = 6.0 / 29.0;
@@ -144,9 +127,10 @@ public:
 
     constexpr static float D50x = 0.9642f; //0.96422;
     constexpr static float D50z = 0.8249f; //0.82521;
-    constexpr static double u0 = 4.0 * D50x / (D50x + 15 + 3 * D50z);
-    constexpr static double v0 = 9.0 / (D50x + 15 + 3 * D50z);
+    constexpr static double u0 = 4.0 * static_cast<double>(D50x) / (static_cast<double>(D50x) + 15 + 3 * static_cast<double>(D50z));
+    constexpr static double v0 = 9.0 / (static_cast<double>(D50x) + 15 + 3 * static_cast<double>(D50z));
     constexpr static double epskap = 8.0;
+    constexpr static float epskapf = epskap;
 
     constexpr static float c1By116 = 1.0 / 116.0;
     constexpr static float c16By116 = 16.0 / 116.0;
@@ -161,12 +145,15 @@ public:
     static LUTf igammatab_srgb;
     static LUTf igammatab_srgb1;
     static LUTf gammatab_srgb;
+    static LUTf gammatab_srgb327;
     static LUTf gammatab_srgb1;
+    static LUTf gammatab_bt709;
 
     static LUTf denoiseGammaTab;
     static LUTf denoiseIGammaTab;
 
     static LUTf igammatab_24_17;
+    static LUTf igammatab_bt709;
     static LUTf gammatab_24_17a;
     static LUTf gammatab_13_2;
     static LUTf igammatab_13_2;
@@ -183,6 +170,16 @@ public:
     static void init ();
     static void cleanup ();
 
+    static inline float computeXYZ2LabY(float f)
+    {
+        if (f < 0.f) {
+            return 327.68f * (kappa * f / MAXVALF);
+        } else if (f > 65535.f) {
+            return 327.68f * (116.f * xcbrtf(f / MAXVALF) - 16.f);
+        } else {
+            return cachefy[f];
+        }
+    }
 
     /**
     * @brief Extract luminance "sRGB" from red/green/blue values
@@ -206,7 +203,12 @@ public:
 
     static float rgbLuminance(float r, float g, float b, const double workingspace[3][3])
     {
-        return r * workingspace[1][0] + g * workingspace[1][1] + b * workingspace[1][2];
+        return static_cast<double>(r) * workingspace[1][0] + static_cast<double>(g) * workingspace[1][1] + static_cast<double>(b) * workingspace[1][2];
+    }
+
+    static float rgbLuminance(float r, float g, float b, const float workingspace[3])
+    {
+        return r * workingspace[0] + g * workingspace[1] + b * workingspace[2];
     }
 
 #ifdef __SSE2__
@@ -573,9 +575,20 @@ public:
     */
     static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const double rgb_xyz[3][3]);
     static void xyz2r (float x, float y, float z, float &r, const double rgb_xyz[3][3]);
-    static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const float rgb_xyz[3][3]);
+    static inline void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const float rgb_xyz[3][3])
+    {
+        r = ((rgb_xyz[0][0] * x + rgb_xyz[0][1] * y + rgb_xyz[0][2] * z)) ;
+        g = ((rgb_xyz[1][0] * x + rgb_xyz[1][1] * y + rgb_xyz[1][2] * z)) ;
+        b = ((rgb_xyz[2][0] * x + rgb_xyz[2][1] * y + rgb_xyz[2][2] * z)) ;
+    }
+
 #ifdef __SSE2__
-    static void xyz2rgb (vfloat x, vfloat y, vfloat z, vfloat &r, vfloat &g, vfloat &b, const vfloat rgb_xyz[3][3]);
+    static inline void xyz2rgb (vfloat x, vfloat y, vfloat z, vfloat &r, vfloat &g, vfloat &b, const vfloat rgb_xyz[3][3])
+    {
+        r = ((rgb_xyz[0][0] * x + rgb_xyz[0][1] * y + rgb_xyz[0][2] * z)) ;
+        g = ((rgb_xyz[1][0] * x + rgb_xyz[1][1] * y + rgb_xyz[1][2] * z)) ;
+        b = ((rgb_xyz[2][0] * x + rgb_xyz[2][1] * y + rgb_xyz[2][2] * z)) ;
+    }
 #endif
 
 
@@ -591,6 +604,7 @@ public:
     * @param xyz_rgb[3][3] transformation matrix to use for the conversion
     */
     static void rgbxyz (float r, float g, float b, float &x, float &y, float &z, const double xyz_rgb[3][3]);
+    static void rgbxyY(float r, float g, float b, float &x, float &y, float &Y, const float xyz_rgb[3][3]);
     static void rgbxyz (float r, float g, float b, float &x, float &y, float &z, const float xyz_rgb[3][3]);
 #ifdef __SSE2__
     static void rgbxyz (vfloat r, vfloat g, vfloat b, vfloat &x, vfloat &y, vfloat &z, const vfloat xyz_rgb[3][3]);
@@ -605,11 +619,40 @@ public:
     * @param y Y coordinate [0 ; 65535] ; can be negative! (return value)
     * @param z Z coordinate [0 ; 65535] ; can be negative! (return value)
     */
-    static void Lab2XYZ(float L, float a, float b, float &x, float &y, float &z);
+    static inline void Lab2XYZ(float L, float a, float b, float &x, float &y, float &z)
+    {
+        float LL = L / 327.68f;
+        float aa = a / 327.68f;
+        float bb = b / 327.68f;
+        float fy = (c1By116 * LL) + c16By116; // (L+16)/116
+        float fx = (0.002f * aa) + fy;
+        float fz = fy - (0.005f * bb);
+        x = 65535.f * f2xyz(fx) * D50x;
+        z = 65535.f * f2xyz(fz) * D50z;
+        y = (LL > epskapf) ? 65535.f * fy * fy * fy : 65535.f * LL / kappaf;
+    }
+
     static void L2XYZ(float L, float &x, float &y, float &z);
+    static float L2Y(float L);
 
 #ifdef __SSE2__
-    static void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &z);
+static inline void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &z)
+{
+    vfloat c327d68 = F2V(327.68f);
+    L /= c327d68;
+    a /= c327d68;
+    b /= c327d68;
+    vfloat fy = F2V(c1By116) * L + F2V(c16By116);
+    vfloat fx = F2V(0.002f) * a + fy;
+    vfloat fz = fy - (F2V(0.005f) * b);
+    vfloat c65535 = F2V(65535.f);
+    x = c65535 * f2xyz(fx) * F2V(D50x);
+    z = c65535 * f2xyz(fz) * F2V(D50z);
+    vfloat res1 = fy * fy * fy;
+    vfloat res2 = L / F2V(kappa);
+    y = vself(vmaskf_gt(L, F2V(epskap)), res1, res2);
+    y *= c65535;
+}
 #endif // __SSE2__
 
     /**
@@ -624,7 +667,7 @@ public:
     static void XYZ2Lab(float x, float y, float z, float &L, float &a, float &b);
     static void RGB2Lab(float *X, float *Y, float *Z, float *L, float *a, float *b, const float wp[3][3], int width);
     static void Lab2RGBLimit(float *L, float *a, float *b, float *R, float *G, float *B, const float wp[3][3], float limit, float afactor, float bfactor, int width);
-    static void RGB2L(float *X, float *Y, float *Z, float *L, const float wp[3][3], int width);
+    static void RGB2L(const float *R, const float *G, const float *B, float *L, const float wp[3][3], int width);
 
     /**
     * @brief Convert Lab in Yuv
@@ -972,10 +1015,10 @@ public:
     template <typename T, typename U>
     static inline T interpolatePolarHue_PI (T h1, T h2, U balance)
     {
-        float d = h2 - h1;
-        float f;
+        T d = h2 - h1;
+        T f;
         f = T(balance);
-        double h;
+        T h;
 
         if (h1 > h2) {
             std::swap(h1, h2);
@@ -986,7 +1029,7 @@ public:
         if (d < T(0) || d < T(0.5) || d > T(1.)) { //there was an inversion here !! d > T(rtengine::RT_PI)
             h1 += T(1.);
             h = h1 + f * (h2 - h1);
-            h = std::fmod(h, 1.);
+            h = std::fmod(h, T(1.));
         } else {
             h = h1 + f * d;
         }
@@ -1007,8 +1050,6 @@ public:
     * @brief Get the gamma curves' parameters used by LCMS2
     * @param pwr gamma value [>1]
     * @param ts slope [0 ; 20]
-    * @param mode [always 0]
-    * @imax imax [always 0]
     * @param gamma a pointer to an array of 6 double gamma values:
     *        gamma0 used in ip2Lab2rgb [0 ; 1], usually near 0.5 (return value)
     *        gamma1 used in ip2Lab2rgb [0 ; 20], can be superior to 20, but it's quite unusual(return value)
@@ -1017,7 +1058,7 @@ public:
     *        gamma4 used in ip2Lab2rgb [0 ; 1], usually near 0.03(return value)
     *        gamma5 used in ip2Lab2rgb [0 ; 1], usually near 0.5 (return value)
     */
-    static void calcGamma (double pwr, double ts, int mode, GammaValues &gamma);
+    static void calcGamma (double pwr, double ts, GammaValues &gamma);
 
 
     /**
@@ -1137,23 +1178,25 @@ public:
     }
 
 
-    /*
+/*
     * @brief Get the gamma value for Gamma=2.2 Slope=4.5
     * @param x red, green or blue channel's value [0 ; 1]
     * @return the gamma modified's value [0 ; 1]
     *
+*/
     static inline double gamma709     (double x) {
                                             return x <= 0.0176 ? x*4.5 : 1.0954*exp(log(x)/2.2)-0.0954;
                                     }
-
+/*
     * @brief Get the inverse gamma value for Gamma=2.2 Slope=4.5
     * @param x red, green or blue channel's value [0 ; 1]
     * @return the inverse gamma modified's value [0 ; 1]
     *
+*/
     static inline double igamma709    (double x) {
                                         return x <= 0.0795 ? x/4.5 : exp(log((x+0.0954)/1.0954)*2.2);
                                     }
-    */
+
 
 
 
@@ -1377,11 +1420,7 @@ public:
     * @param munsDbgInfo (Debug target only) object to collect information
     */
 
-#ifdef _DEBUG
-    static void AllMunsellLch (bool lumaMuns, float Lprov1, float Loldd, float HH, float Chprov1, float CC, float &correctionHueChroma, float &correctlum, MunsellDebugInfo* munsDbgInfo);
-#else
     static void AllMunsellLch (bool lumaMuns, float Lprov1, float Loldd, float HH, float Chprov1, float CC, float &correctionHueChroma, float &correctlum);
-#endif
     static void AllMunsellLch (float Lprov1, float HH, float Chprov1, float CC, float &correctionHueChroma);
 
 
@@ -1406,15 +1445,9 @@ public:
     * @param neg (Debug target only) to calculate iterations for negatives values
     * @param moreRGB (Debug target only) to calculate iterations for values >65535
     */
-#ifdef _DEBUG
-    static void gamutLchonly  (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef, bool &neg, bool &more_rgb);
-    static void gamutLchonly  (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef, bool &neg, bool &more_rgb);
-    static void gamutLchonly  (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef, bool &neg, bool &more_rgb);
-#else
     static void gamutLchonly  (float HH, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef);
     static void gamutLchonly  (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &R, float &G, float &B, const double wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef);
     static void gamutLchonly  (float2 sincosval, float &Lprov1, float &Chprov1, const float wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef);
-#endif
     static void gamutLchonly  (float HH, float2 sincosval, float &Lprov1, float &Chprov1, float &saturation, const float wip[3][3], bool isHLEnabled, float lowerCoef, float higherCoef);
 
 
@@ -1477,9 +1510,58 @@ public:
 
     static void scalered ( float rstprotection, float param, float limit, float HH, float deltaHH, float &scale, float &scaleext);
     static void transitred (float HH, float Chprov1, float dred, float factorskin, float protect_red, float factorskinext, float deltaHH, float factorsat, float &factor);
-    static void skinred ( double J, double h, double sres, double Sp, float dred, float protect_red, int sk, float rstprotection, float ko, double &s);
     static void skinredfloat ( float J, float h, float sres, float Sp, float dred, float protect_red, int sk, float rstprotection, float ko, float &s);
-//  static void scaleredcdbl ( float skinprot, float param, float limit, float HH, float deltaHH, float &scale,float &scaleext);
+
+    static inline void pregamutlab(float lum, float hue, float &chr) //big approximation to limit gamut (Prophoto) before good gamut procedure for locallab chroma, to avoid crash
+    {
+        if (lum >= 95.0f) {
+            if (hue > 1.5f && hue < 2.f) {
+                chr = 120.f;
+            } else if (hue > 0.7f && hue <= 1.5f) {
+                chr = 60.f;
+            } else {
+                chr = 40.f;
+            }
+        }   else if (lum > 75.f) {
+            if (hue > 1.f && hue < 3.14f) {
+                chr = 130.f;
+            } else if (hue > -0.4f && hue <= 1.f) {
+                chr = 80.f;
+            } else if (hue > -3.15f && hue < -2.f) {
+                chr = 80.f;
+            } else {
+                chr = 60.f;
+            }
+
+        } else if (lum > 35.f) {
+            chr = 100.f;
+        }   else if (lum > 20.f) {
+            if (hue < -1.f && hue > -2.f) {
+                chr = 120.f;
+            } else {
+                chr = 80.f;
+            }
+        }   else if (lum > 7.f) {
+            if (hue < -1.f && hue > -1.8f) {
+                chr = 120.f;
+            } else {
+                chr = 60.f;
+            }
+
+        }   else {
+            if (hue < -1.f && hue > -1.6f) {
+                chr = 80.f;
+            } else {
+                chr = 40.f;
+            }
+
+        }
+
+        //      if(lum < 4.f) {
+        //          chr = 0.1f;
+        //      }
+    }
+
 
     static inline void SkinSatCbdl (float lum, float hue, float chrom, float skinprot, float &scale, bool neg, float b_l, float t_l, float t_r)
     {
@@ -1759,11 +1841,11 @@ public:
     /**
     * @brief Gamut correction in the XYZ color space
     * @param X X channel input value and corrected output value [0 ; 65535]
-    * @param Y Y channel input value and corrected output value [0 ; 65535]
+    * @param Y Y channel input value[0 ; 65535]
     * @param Z Z channel input value and corrected output value [0 ; 65535]
     * @param p working profile
     */
-    static void gamutmap(float &X, float &Y, float &Z, const double p[3][3]);
+    static void gamutmap(float &X, float Y, float &Z, const double p[3][3]);
 
 
     /**
@@ -1797,7 +1879,6 @@ public:
         } else if (HH >= -0.1f     && HH < 0.f     ) {
             hr = 0.1    * double(HH) + 0.93;    //hr 0.92  0.93    red
         }
-
         // in case of !
         if     (hr < 0.0) {
             hr += 1.0;

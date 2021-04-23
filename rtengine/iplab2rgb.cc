@@ -32,8 +32,6 @@
 namespace rtengine
 {
 
-extern void filmlike_clip(float *r, float *g, float *b);
-
 namespace {
 
 inline void copyAndClampLine(const float *src, unsigned char *dst, const int W)
@@ -46,9 +44,26 @@ inline void copyAndClampLine(const float *src, unsigned char *dst, const int W)
 
 inline void copyAndClamp(const LabImage *src, unsigned char *dst, const double rgb_xyz[3][3], bool multiThread)
 {
-    int W = src->W;
-    int H = src->H;
+    const int W = src->W;
+    const int H = src->H;
 
+    float rgb_xyzf[3][3];
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            rgb_xyzf[i][j] = rgb_xyz[i][j];
+        }
+    }
+
+#ifdef __SSE2__
+    vfloat rgb_xyzv[3][3];
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            rgb_xyzv[i][j] = F2V(rgb_xyzf[i][j]);
+        }
+    }
+#endif
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -58,17 +73,48 @@ inline void copyAndClamp(const LabImage *src, unsigned char *dst, const double r
         float* rb = src->b[i];
         int ix = i * 3 * W;
 
-        float R, G, B;
-        float x_, y_, z_;
-
-        for (int j = 0; j < W; ++j) {
+#ifdef __SSE2__
+        float rbuffer[W] ALIGNED16;
+        float gbuffer[W] ALIGNED16;
+        float bbuffer[W] ALIGNED16;
+        int j = 0;
+        for (; j < W - 3; j += 4) {
+            vfloat R, G, B;
+            vfloat x_, y_, z_;
+            Color::Lab2XYZ(LVFU(rL[j]), LVFU(ra[j]), LVFU(rb[j]), x_, y_, z_ );
+            Color::xyz2rgb(x_, y_, z_, R, G, B, rgb_xyzv);
+            STVF(rbuffer[j], Color::gamma2curve[R]);
+            STVF(gbuffer[j], Color::gamma2curve[G]);
+            STVF(bbuffer[j], Color::gamma2curve[B]);
+        }
+        for (; j < W; ++j) {
+            float R, G, B;
+            float x_, y_, z_;
             Color::Lab2XYZ(rL[j], ra[j], rb[j], x_, y_, z_ );
-            Color::xyz2rgb(x_, y_, z_, R, G, B, rgb_xyz);
+            Color::xyz2rgb(x_, y_, z_, R, G, B, rgb_xyzf);
+            rbuffer[j] = Color::gamma2curve[R];
+            gbuffer[j] = Color::gamma2curve[G];
+            bbuffer[j] = Color::gamma2curve[B];
+        }
+
+        for (j = 0; j < W; ++j) {
+            dst[ix++] = uint16ToUint8Rounded(rbuffer[j]);
+            dst[ix++] = uint16ToUint8Rounded(gbuffer[j]);
+            dst[ix++] = uint16ToUint8Rounded(bbuffer[j]);
+        }
+
+#else
+        for (int j = 0; j < W; ++j) {
+            float R, G, B;
+            float x_, y_, z_;
+            Color::Lab2XYZ(rL[j], ra[j], rb[j], x_, y_, z_ );
+            Color::xyz2rgb(x_, y_, z_, R, G, B, rgb_xyzf);
 
             dst[ix++] = uint16ToUint8Rounded(Color::gamma2curve[R]);
             dst[ix++] = uint16ToUint8Rounded(Color::gamma2curve[G]);
             dst[ix++] = uint16ToUint8Rounded(Color::gamma2curve[B]);
         }
+#endif
     }
 }
 
@@ -151,8 +197,6 @@ void ImProcFunctions::lab2monitorRgb(LabImage* lab, Image8* image)
 // otherwise divide by 327.68, convert to xyz and apply the RGB transform, before converting with gamma2curve
 Image8* ImProcFunctions::lab2rgb(LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm, bool consider_histogram_settings)
 {
-    //gamutmap(lab);
-
     if (cx < 0) {
         cx = 0;
     }
@@ -172,11 +216,10 @@ Image8* ImProcFunctions::lab2rgb(LabImage* lab, int cx, int cy, int cw, int ch, 
     Image8* image = new Image8(cw, ch);
     Glib::ustring profile;
 
-    bool standard_gamma;
+    cmsHPROFILE oprof = nullptr;
 
     if (settings->HistogramWorking && consider_histogram_settings) {
         profile = icm.workingProfile;
-        standard_gamma = true;
     } else {
         profile = icm.outputProfile;
 
@@ -184,27 +227,15 @@ Image8* ImProcFunctions::lab2rgb(LabImage* lab, int cx, int cy, int cw, int ch, 
             profile = "sRGB";
         }
 
-        standard_gamma = false;
+        oprof = ICCStore::getInstance()->getProfile(profile);
     }
 
-    cmsHPROFILE oprof = ICCStore::getInstance()->getProfile(profile);
-
     if (oprof) {
-        cmsHPROFILE oprofG = oprof;
-
-        if (standard_gamma) {
-            oprofG = ICCStore::makeStdGammaProfile(oprof);
-        }
-
-        cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE;
-
-        if (icm.outputBPC) {
-            flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
-        }
+        const cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE | (icm.outputBPC ? cmsFLAGS_BLACKPOINTCOMPENSATION : 0); // NOCACHE is important for thread safety
 
         lcmsMutex->lock();
         cmsHPROFILE LabIProf  = cmsCreateLab4Profile(nullptr);
-        cmsHTRANSFORM hTransform = cmsCreateTransform (LabIProf, TYPE_Lab_DBL, oprofG, TYPE_RGB_FLT, icm.outputIntent, flags);  // NOCACHE is important for thread safety
+        cmsHTRANSFORM hTransform = cmsCreateTransform (LabIProf, TYPE_Lab_DBL, oprof, TYPE_RGB_FLT, icm.outputIntent, flags);
         cmsCloseProfile(LabIProf);
         lcmsMutex->unlock();
 
@@ -245,9 +276,6 @@ Image8* ImProcFunctions::lab2rgb(LabImage* lab, int cx, int cy, int cw, int ch, 
 
         cmsDeleteTransform(hTransform);
 
-        if (oprofG != oprof) {
-            cmsCloseProfile(oprofG);
-        }
     } else {
         const auto xyz_rgb = ICCStore::getInstance()->workingSpaceInverseMatrix(profile);
         copyAndClamp(lab, image->data, xyz_rgb, multiThread);
@@ -370,7 +398,6 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     if (transform) {
         hTransform = transform;
     } else {
-
         double pwr = 1.0 / gampos;
         double ts = slpos;
         int five = mul;
@@ -486,8 +513,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         }
 
         GammaValues g_a; //gamma parameters
-        constexpr int mode = 0;
-        Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
+        Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
 
 
         cmsFloat64Number gammaParams[7];

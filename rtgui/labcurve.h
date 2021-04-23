@@ -53,7 +53,7 @@ protected:
     FlatCurveEditor*   lhshape;
     FlatCurveEditor*   hhshape;
     Gtk::Label* labmdh;
-    Gtk::HBox* dhbox;
+    Gtk::Box* dhbox;
 
     DiagonalCurveEditor* clshape;
     DiagonalCurveEditor* cdshape;

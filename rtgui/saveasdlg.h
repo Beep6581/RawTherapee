@@ -22,7 +22,7 @@
 
 #include "saveformatpanel.h"
 
-class SaveAsDialog :
+class SaveAsDialog final :
     public Gtk::Dialog,
     public FormatChangeListener
 {

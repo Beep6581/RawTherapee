@@ -22,11 +22,13 @@
 
 FavoritBrowser::FavoritBrowser () : listener (NULL)
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     scrollw = Gtk::manage (new Gtk::ScrolledWindow ());
     scrollw->set_policy (Gtk::POLICY_NEVER, Gtk::POLICY_AUTOMATIC);
 
     Gtk::Frame* frame = Gtk::manage (new Gtk::Frame ("Favorite Folders"));
+    frame->set_label_align(0.025, 0.5);
     frame->add (*scrollw);
 
     pack_start (*frame);
@@ -65,7 +67,7 @@ FavoritBrowser::FavoritBrowser () : listener (NULL)
     del->set_valign(Gtk::ALIGN_START);
     del->set_image (*Gtk::manage (new RTImage ("remove-small.png")));
     del->get_style_context()->add_class("Right");
-    Gtk::HBox* buttonBox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* buttonBox = Gtk::manage (new Gtk::Box ());
     buttonBox->pack_start (*add);
     buttonBox->pack_start (*del);
 

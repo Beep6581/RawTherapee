@@ -59,7 +59,7 @@ protected:
 
     MyRWMutex lockRW;  // Locks access to all image thumb changing actions
 
-    guint8* preview;  // holds the preview image. used in updateBackBuffer. TODO Olli: Make a cache to reduce mem significantly
+    std::vector<guint8> preview;  // holds the preview image. used in updateBackBuffer.
 
     Glib::ustring dispname;
 

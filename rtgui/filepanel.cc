@@ -34,7 +34,7 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
 {
 
     // Contains everything except for the batch Tool Panel and tabs (Fast Export, Inspect, etc)
-    dirpaned = Gtk::manage ( new Gtk::HPaned () );
+    dirpaned = Gtk::manage ( new Gtk::Paned () );
     dirpaned->set_position (options.dirBrowserWidth);
 
     // The directory tree
@@ -45,12 +45,12 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
     recentBrowser = Gtk::manage ( new RecentBrowser () );
 
     // The whole left panel. Contains Places, Recent Folders and Folders.
-    placespaned = Gtk::manage ( new Gtk::VPaned () );
+    placespaned = Gtk::manage ( new Gtk::Paned (Gtk::ORIENTATION_VERTICAL) );
     placespaned->set_name ("PlacesPaned");
     placespaned->set_size_request(250, 100);
     placespaned->set_position (options.dirBrowserHeight);
 
-    Gtk::VBox* obox = Gtk::manage (new Gtk::VBox ());
+    Gtk::Box* obox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     obox->get_style_context()->add_class ("plainback");
     obox->pack_start (*recentBrowser, Gtk::PACK_SHRINK, 4);
     obox->pack_start (*dirBrowser);
@@ -79,11 +79,11 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
     recentBrowser->setDirSelector (sigc::mem_fun (dirBrowser, &DirBrowser::selectDir));
     fileCatalog->setFileSelectionListener (this);
 
-    rightBox = Gtk::manage ( new Gtk::HBox () );
+    rightBox = Gtk::manage ( new Gtk::Box () );
     rightBox->set_size_request(350, 100);
     rightNotebook = Gtk::manage ( new Gtk::Notebook () );
     rightNotebookSwitchConn = rightNotebook->signal_switch_page().connect_notify( sigc::mem_fun(*this, &FilePanel::on_NB_switch_page) );
-    //Gtk::VBox* taggingBox = Gtk::manage ( new Gtk::VBox () );
+    //Gtk::Box* taggingBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL) );
 
     history = Gtk::manage ( new History (false) );
 
@@ -115,9 +115,12 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
     Gtk::Label* devLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_DEVELOP")) );
     devLab->set_name ("LabelRightNotebook");
     devLab->set_angle (90);
-    Gtk::Label* inspectLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_INSPECT")) );
-    inspectLab->set_name ("LabelRightNotebook");
-    inspectLab->set_angle (90);
+    Gtk::Label* inspectLab = nullptr;
+    if (!options.inspectorWindow) {
+        inspectLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_INSPECT")) );
+        inspectLab->set_name ("LabelRightNotebook");
+        inspectLab->set_angle (90);
+    }
     Gtk::Label* filtLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_FILTER")) );
     filtLab->set_name ("LabelRightNotebook");
     filtLab->set_angle (90);
@@ -127,12 +130,13 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
     exportLab->set_name ("LabelRightNotebook");
     exportLab->set_angle (90);
 
-    tpcPaned = Gtk::manage ( new Gtk::VPaned () );
+    tpcPaned = Gtk::manage ( new Gtk::Paned (Gtk::ORIENTATION_VERTICAL) );
     tpcPaned->pack1 (*tpc->toolPanelNotebook, false, true);
     tpcPaned->pack2 (*history, true, false);
 
     rightNotebook->append_page (*sFilterPanel, *filtLab);
-    rightNotebook->append_page (*inspectorPanel, *inspectLab);
+    if (!options.inspectorWindow)
+        rightNotebook->append_page (*inspectorPanel, *inspectLab);
     rightNotebook->append_page (*tpcPaned, *devLab);
     //rightNotebook->append_page (*taggingBox, *tagLab); commented out: currently the tab is empty ...
     rightNotebook->append_page (*sExportPanel, *exportLab);
@@ -173,7 +177,7 @@ FilePanel::~FilePanel ()
 
 void FilePanel::on_realize ()
 {
-    Gtk::HPaned::on_realize ();
+    Gtk::Paned::on_realize ();
     tpc->closeAllTools();
 }
 

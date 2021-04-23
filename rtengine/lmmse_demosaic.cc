@@ -41,6 +41,18 @@ namespace rtengine
 // TODO Tiles to reduce memory consumption
 void RawImageSource::lmmse_interpolate_omp(int winw, int winh, const array2D<float> &rawData, array2D<float> &red, array2D<float> &green, array2D<float> &blue, int iterations)
 {
+    // Test for RGB cfa
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            if (FC(i, j) == 3) {
+                // avoid crash
+                std::cout << "lmmse_interpolate_omp supports only RGB Colour filter arrays. Falling back to igv_interpolate" << std::endl;
+                igv_interpolate(winw, winh);
+                return;
+            }
+        }
+    }
+
     const int width = winw, height = winh;
     const int ba = 10;
     const int rr1 = height + 2 * ba;
@@ -334,7 +346,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, const array2D<flo
                 float p8 = rix[2][ 3];
                 float p9 = rix[2][ 4];
                 float mu = (p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9) / 9.f;
-                float vx = 1e-7 + SQR(p1 - mu) + SQR(p2 - mu) + SQR(p3 - mu) + SQR(p4 - mu) + SQR(p5 - mu) + SQR(p6 - mu) + SQR(p7 - mu) + SQR(p8 - mu) + SQR(p9 - mu);
+                float vx = 1e-7f + SQR(p1 - mu) + SQR(p2 - mu) + SQR(p3 - mu) + SQR(p4 - mu) + SQR(p5 - mu) + SQR(p6 - mu) + SQR(p7 - mu) + SQR(p8 - mu) + SQR(p9 - mu);
                 p1 -= rix[0][-4];
                 p2 -= rix[0][-3];
                 p3 -= rix[0][-2];
@@ -344,7 +356,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, const array2D<flo
                 p7 -= rix[0][ 2];
                 p8 -= rix[0][ 3];
                 p9 -= rix[0][ 4];
-                float vn = 1e-7 + SQR(p1) + SQR(p2) + SQR(p3) + SQR(p4) + SQR(p5) + SQR(p6) + SQR(p7) + SQR(p8) + SQR(p9);
+                float vn = 1e-7f + SQR(p1) + SQR(p2) + SQR(p3) + SQR(p4) + SQR(p5) + SQR(p6) + SQR(p7) + SQR(p8) + SQR(p9);
                 float xh = (rix[0][0] * vx + rix[2][0] * vn) / (vx + vn);
                 float vh = vx * vn / (vx + vn);
 
@@ -359,7 +371,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, const array2D<flo
                 p8 = rix[3][ w3];
                 p9 = rix[3][ w4];
                 mu = (p1 + p2 + p3 + p4 + p5 + p6 + p7 + p8 + p9) / 9.f;
-                vx = 1e-7 + SQR(p1 - mu) + SQR(p2 - mu) + SQR(p3 - mu) + SQR(p4 - mu) + SQR(p5 - mu) + SQR(p6 - mu) + SQR(p7 - mu) + SQR(p8 - mu) + SQR(p9 - mu);
+                vx = 1e-7f + SQR(p1 - mu) + SQR(p2 - mu) + SQR(p3 - mu) + SQR(p4 - mu) + SQR(p5 - mu) + SQR(p6 - mu) + SQR(p7 - mu) + SQR(p8 - mu) + SQR(p9 - mu);
                 p1 -= rix[1][-w4];
                 p2 -= rix[1][-w3];
                 p3 -= rix[1][-w2];
@@ -369,7 +381,7 @@ void RawImageSource::lmmse_interpolate_omp(int winw, int winh, const array2D<flo
                 p7 -= rix[1][ w2];
                 p8 -= rix[1][ w3];
                 p9 -= rix[1][ w4];
-                vn = 1e-7 + SQR(p1) + SQR(p2) + SQR(p3) + SQR(p4) + SQR(p5) + SQR(p6) + SQR(p7) + SQR(p8) + SQR(p9);
+                vn = 1e-7f + SQR(p1) + SQR(p2) + SQR(p3) + SQR(p4) + SQR(p5) + SQR(p6) + SQR(p7) + SQR(p8) + SQR(p9);
                 float xv = (rix[1][0] * vx + rix[3][0] * vn) / (vx + vn);
                 float vv = vx * vn / (vx + vn);
                 // interpolated G-R(B)

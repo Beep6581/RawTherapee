@@ -29,7 +29,7 @@
 class RTWindow;
 class Splash;
 
-class Preferences :
+class Preferences final :
     public Gtk::Dialog,
     public ProfileStoreListener
 {
@@ -138,13 +138,18 @@ class Preferences :
     Gtk::ComboBoxText* dnliss;
 
     Gtk::Frame* waveletFrame;
-    Gtk::HBox* waveletTileSizeHBox;
+    Gtk::Box* waveletTileSizeHBox;
     Gtk::Label* waveletTileSizeLabel;
     Gtk::ComboBoxText* waveletTileSizeCombo;
 
     Gtk::ComboBoxText* cprevdemo;
     Gtk::CheckButton* ctiffserialize;
     Gtk::ComboBoxText* curveBBoxPosC;
+
+    Gtk::ComboBoxText* complexitylocal;
+
+    Gtk::CheckButton* inspectorWindowCB;
+    Gtk::CheckButton* zoomOnScrollCB;
 
     Gtk::ComboBoxText* themeCBT;
     Gtk::FontButton* mainFontFB;
@@ -208,6 +213,7 @@ class Preferences :
     Gtk::CheckButton* ckbFileBrowserToolbarSingleRow;
     Gtk::CheckButton* ckbShowFilmStripToolBar;
     Gtk::CheckButton* ckbHideTPVScrollbar;
+    Gtk::CheckButton* ckbshowtooltiplocallab;
 
     Gtk::CheckButton* ckbAutoSaveTpOpen;
     Gtk::Button* btnSaveTpOpenNow;

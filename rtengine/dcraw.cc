@@ -62,12 +62,8 @@
    $Date: 2018/06/01 20:36:25 $
  */
 
-#define DCRAW_VERSION "9.28"
+//#define DCRAW_VERSION "9.28"
 
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
-#define _USE_MATH_DEFINES
 #include <cctype>
 #include <cerrno>
 #include <fcntl.h>
@@ -94,9 +90,12 @@
 #ifdef WIN32
 #include <sys/utime.h>
 #include <winsock2.h>
-#define snprintf _snprintf
+#ifndef strcasecmp
 #define strcasecmp stricmp
+#endif
+#ifndef strncasecmp
 #define strncasecmp strnicmp
+#endif
 typedef __int64 INT64;
 typedef unsigned __int64 UINT64;
 #else
@@ -158,7 +157,6 @@ const float d65_white[3] = { 0.950456, 1, 1.088754 };
 #define MIN(a,b) rtengine::min(a,static_cast<__typeof__(a)>(b))
 #define MAX(a,b) rtengine::max(a,static_cast<__typeof__(a)>(b))
 #define LIM(x,min,max) rtengine::LIM(x,static_cast<__typeof__(x)>(min),static_cast<__typeof__(x)>(max))
-#define ULIM(x,y,z) rtengine::median(x,static_cast<__typeof__(x)>(y),static_cast<__typeof__(x)>(z))
 #define CLIP(x) rtengine::CLIP(x)
 #define SWAP(a,b) { a=a+b; b=a-b; a=a-b; }
 
@@ -275,11 +273,7 @@ void CLASS derror()
     if (feof(ifp))
       fprintf (stderr,_("Unexpected end of file\n"));
     else
-#ifdef WIN32
-      fprintf (stderr,_("Corrupt data near 0x%I64x\n"), (INT64) ftello(ifp));
-#else
       fprintf (stderr,_("Corrupt data near 0x%llx\n"), (INT64) ftello(ifp));
-#endif
   }
   data_error++;
 /*RT Issue 2467  longjmp (failure, 1);*/
@@ -1405,7 +1399,7 @@ void CLASS nikon_load_raw()
 
 void CLASS nikon_yuv_load_raw()
 {
-  int row, col, yuv[4], rgb[3], b, c;
+  int row, col, yuv[4] = {}, rgb[3], b, c;
   UINT64 bitbuf=0;
 
   for (row=0; row < raw_height; row++)
@@ -2052,9 +2046,8 @@ void CLASS phase_one_load_raw_c()
             } else if ((col & 7) == 0) {
                 for (int i = 0; i < 2; i++) {
                     int j;
-                    for (j = 0; j < 5 && !ph1_bits(1); j++)
-                        ;
-	                if (j--) {
+                    for (j = 0; j < 5 && !ph1_bits(1); j++) ;
+                    if (j--) {
                         len[i] = length[j * 2 + ph1_bits(1)];
 	                }
 	            }
@@ -4092,7 +4085,7 @@ void CLASS foveon_interpolate()
     FORC3 diag[c][i] = LAST(1,1)*LAST(2,2) - LAST(1,2)*LAST(2,1);
   #undef LAST
   FORC3 div[c] = diag[c][0]*0.3127 + diag[c][1]*0.329 + diag[c][2]*0.3583;
-  sprintf (str, "%sRGBNeutral", model2);
+  snprintf(str, sizeof(str), "%sRGBNeutral", model2);
   if (foveon_camf_param ("IncludeBlocks", str))
     foveon_fixed (div, 3, str);
   num = 0;
@@ -5627,7 +5620,7 @@ nf: order = 0x4949;
     if (tag == 2 && strstr(make,"NIKON") && !iso_speed)
       iso_speed = (get2(),get2());
     if ((tag == 0x25 || tag == 0x28) && strstr(make,"NIKON") && !iso_speed) { // Nikon ISOInfo Tags/ISO & ISO2
-      uchar iso[1];
+      uchar iso[1] = {};
       fread (iso, 1, 1, ifp);
       iso_speed = 100 * pow(2,(float)iso[0]/12.0-5);
     }
@@ -6209,8 +6202,8 @@ void CLASS parse_exif (int base)
       case 36867:
       case 36868:  get_timestamp(0);			break;
       case 37377:  if ((expo = -getreal(type)) < 128)
-             tiff_ifd[tiff_nifds-1].shutter =
-		     shutter = pow (2, expo);		break;
+                     tiff_ifd[tiff_nifds-1].shutter = shutter = pow (2, expo);
+                   break;
       case 37378:  aperture = pow (2, getreal(type)/2);	break;
       case 37386:  focal_len = getreal(type);		break;
       case 37500:  parse_makernote (base, 0);		break;
@@ -6730,7 +6723,7 @@ int CLASS parse_tiff_ifd (int base)
 	  raw_height = height;
 	  left_margin = top_margin = filters = flip = 0;
 	}
-	sprintf (model, "Ixpress %d-Mp", height*width/1000000);
+	snprintf(model, sizeof(model), "Ixpress %d-Mp", height*width/1000000);
 	load_raw = &CLASS imacon_full_load_raw;
 	if (filters) {
 	  if (left_margin & 1) filters = 0x61616161;
@@ -6900,7 +6893,7 @@ it under the terms of the one of two licenses as you choose:
 	break;
       case 50778:
       case 50779:
-         if( get2() == 21 )
+         if( get2() != 17 ) // 17 is Standard light A
             cm_D65 = (tag-50778);
          break;
       case 50829:			/* ActiveArea */
@@ -7095,7 +7088,8 @@ void CLASS apply_tiff()
 	  load_flags = 24;
 	if (!strcmp(make,"SONY") && tiff_bps < 14 &&
 		tiff_ifd[raw].bytes == raw_width*raw_height*2)
-	    tiff_bps = 14;	if (tiff_ifd[raw].bytes*5 == raw_width*raw_height*8) {
+	    tiff_bps = 14;
+    if (tiff_ifd[raw].bytes*5 == raw_width*raw_height*8) {
 	  load_flags = 81;
 	  tiff_bps = 12;
 	} slr:
@@ -7168,7 +7162,8 @@ void CLASS apply_tiff()
 	    // load_raw = &CLASS packed_load_raw;
             load_raw = &CLASS nikon_14bit_load_raw;
 	} else
-	  load_raw = &CLASS nikon_load_raw;			break;
+	  load_raw = &CLASS nikon_load_raw;
+    break;
       case 65535:
 	load_raw = &CLASS pentax_load_raw;			break;
       case 65000:
@@ -7722,7 +7717,7 @@ void CLASS parse_smal (int offset, int fsize)
   raw_height = height = get2();
   raw_width  = width  = get2();
   strcpy (make, "SMaL");
-  sprintf (model, "v%d %dx%d", ver, width, height);
+  snprintf(model, sizeof(model), "v%d %dx%d", ver, width, height);
   if (ver == 6) load_raw = &CLASS smal_v6_load_raw;
   if (ver == 9) load_raw = &CLASS smal_v9_load_raw;
 }
@@ -7750,7 +7745,7 @@ void CLASS parse_cine()
   }
   fseek (ifp, off_setup+792, SEEK_SET);
   strcpy (make, "CINE");
-  sprintf (model, "%d", get4());
+  snprintf(model, sizeof(model), "%d", get4());
   fseek (ifp, 12, SEEK_CUR);
   switch ((i=get4()) & 0xffffff) {
     case  3:  filters = 0x94949494;  break;
@@ -9063,7 +9058,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
   char name[130];
   int i, j;
 
-  sprintf (name, "%s %s", make, model);
+  snprintf(name, sizeof(name), "%s %s", make, model);
 
 
   // -- RT --------------------------------------------------------------------
@@ -9098,6 +9093,8 @@ void CLASS adobe_coeff (const char *make, const char *model)
   if (load_raw == &CLASS sony_arw2_load_raw) { // RT: arw2 scale fix
       black <<= 2;
       tiff_bps += 2;
+  } else if (load_raw == &CLASS panasonic_load_raw) {
+      tiff_bps = RT_pana_info.bpp;
   }
   { /* Check for RawTherapee table overrides and extensions */
       int black_level, white_level;
@@ -9571,7 +9568,7 @@ void CLASS identify()
     apply_tiff();
     if (!strcmp(model, "X-T3")) {
         height = raw_height - 2;
-    } else if (!strcmp(model, "GFX 100")) {
+    } else if (!strcmp(model, "GFX 100") || !strcmp(model, "GFX100S")) {
         load_flags = 0;
     }
     if (!load_raw) {
@@ -9868,6 +9865,7 @@ void CLASS identify()
     filters = 0;
     tiff_samples = colors = 3;
     load_raw = &CLASS canon_sraw_load_raw;
+    FORC4 cblack[c] = 0; // ALB
   } else if (!strcmp(model,"PowerShot 600")) {
     height = 613;
     width  = 854;
@@ -10047,6 +10045,9 @@ canon_a5:
     } else if (!strncmp(model, "X-A3", 4) || !strncmp(model, "X-A5", 4)) {
         width = raw_width = 6016;
         height = raw_height = 4014;
+    } else if (!strcmp(model, "X-Pro3") || !strcmp(model, "X-T3") || !strcmp(model, "X-T30") || !strcmp(model, "X-T4") || !strcmp(model, "X100V") || !strcmp(model, "X-S10")) {
+        width = raw_width = 6384;
+        height = raw_height = 4182;
     }
     top_margin = (raw_height - height) >> 2 << 1;
     left_margin = (raw_width - width ) >> 2 << 1;
@@ -10107,7 +10108,6 @@ konica_400z:
     }
   } else if (!strcmp(model,"*ist D")) {
     load_raw = &CLASS unpacked_load_raw;
-    data_error = -1;
   } else if (!strcmp(model,"*ist DS")) {
     height -= 2;
   } else if (!strcmp(make,"Samsung") && raw_width == 4704) {
@@ -10521,7 +10521,7 @@ bw:   colors = 1;
     load_raw = &CLASS rollei_load_raw;
   }
   if (!model[0])
-    sprintf (model, "%dx%d", width, height);
+    snprintf(model, sizeof(model), "%dx%d", width, height);
   if (filters == UINT_MAX) filters = 0x94949494;
   if (thumb_offset && !thumb_height) {
     fseek (ifp, thumb_offset, SEEK_SET);
@@ -11021,7 +11021,6 @@ void CLASS nikon_14bit_load_raw()
 /*RT*/#undef MIN
 /*RT*/#undef ABS
 /*RT*/#undef LIM
-/*RT*/#undef ULIM
 /*RT*/#undef CLIP
 #ifdef __GNUC__
 #pragma GCC diagnostic pop

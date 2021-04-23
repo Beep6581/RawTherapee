@@ -99,6 +99,8 @@ RTWindow::RTWindow ()
     , bpanel (nullptr)
     , splash (nullptr)
     , btn_fullscreen (nullptr)
+    , iFullscreen (nullptr)
+    , iFullscreen_exit (nullptr)
     , epanel (nullptr)
     , fpanel (nullptr)
 {
@@ -179,7 +181,7 @@ RTWindow::RTWindow ()
                 fontScale = options.fontSize / (float)RTScalable::baseFontSize;
             }
             if (rtengine::settings->verbose) {
-                printf("\"Non-Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", options.fontSize, (int)initialGdkScale, fontScale);
+                printf("\"Non-Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", options.fontSize, (int)initialGdkScale, static_cast<double>(fontScale));
             }
         } else {
             Glib::RefPtr<Gtk::StyleContext> style = Gtk::StyleContext::create();
@@ -209,7 +211,7 @@ RTWindow::RTWindow ()
                 if ((int)initialGdkScale > 1 || pt != RTScalable::baseFontSize) {
                     css = Glib::ustring::compose ("* { font-size: %1pt}", pt * (int)initialGdkScale);
                     if (rtengine::settings->verbose) {
-                        printf("\"Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", pt, (int)initialGdkScale, fontScale);
+                        printf("\"Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", pt, (int)initialGdkScale, static_cast<double>(fontScale));
                     }
                 }
             }
@@ -277,23 +279,6 @@ RTWindow::RTWindow ()
     set_decorated (true);
     set_default_size (options.windowWidth, options.windowHeight);
     set_modal (false);
-
-    Gdk::Rectangle lMonitorRect;
-    get_screen()->get_monitor_geometry (std::min (options.windowMonitor, Gdk::Screen::get_default()->get_n_monitors() - 1), lMonitorRect);
-
-    if (options.windowMaximized) {
-        move (lMonitorRect.get_x(), lMonitorRect.get_y());
-        maximize();
-    } else {
-        unmaximize();
-        resize (options.windowWidth, options.windowHeight);
-
-        if (options.windowX <= lMonitorRect.get_x() + lMonitorRect.get_width() && options.windowY <= lMonitorRect.get_y() + lMonitorRect.get_height()) {
-            move (options.windowX, options.windowY);
-        } else {
-            move (lMonitorRect.get_x(), lMonitorRect.get_y());
-        }
-    }
 
     on_delete_has_run = false;
     is_fullscreen = false;
@@ -369,7 +354,7 @@ RTWindow::RTWindow ()
 
         mainNB->set_current_page (mainNB->page_num (*fpanel));
 
-        //Gtk::VBox* mainBox = Gtk::manage (new Gtk::VBox ());
+        //Gtk::Box* mainBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
         //mainBox->pack_start (*mainNB);
 
         // filling bottom box
@@ -1079,6 +1064,17 @@ void RTWindow::updateFBToolBarVisibility (bool showFilmStripToolBar)
     fpanel->fileCatalog->updateFBToolBarVisibility (showFilmStripToolBar);
 }
 
+void RTWindow::updateShowtooltipVisibility (bool showtooltip)
+{
+    if (epanel) {
+        epanel->updateShowtooltipVisibility (showtooltip);
+    }
+
+    for (auto panel : epanels) {
+        panel.second->updateShowtooltipVisibility (showtooltip);
+    }
+}
+
 void RTWindow::updateHistogramPosition (int oldPosition, int newPosition)
 {
     if (epanel) {
@@ -1096,6 +1092,44 @@ bool RTWindow::splashClosed (GdkEventAny* event)
     splash = nullptr;
     showErrors();
     return true;
+}
+
+void RTWindow::setWindowSize ()
+{
+    Gdk::Rectangle lMonitorRect;
+    get_screen()->get_monitor_geometry (std::min (options.windowMonitor, Gdk::Screen::get_default()->get_n_monitors() - 1), lMonitorRect);
+
+#ifdef __APPLE__
+    // Get macOS menu bar height
+    const Gdk::Rectangle lWorkAreaRect = get_screen()->get_monitor_workarea (std::min (options.windowMonitor, Gdk::Screen::get_default()->get_n_monitors() - 1));
+    const int macMenuBarHeight = lWorkAreaRect.get_y();
+#endif
+
+    if (options.windowMaximized) {
+#ifdef __APPLE__
+        move (lMonitorRect.get_x(), lMonitorRect.get_y() + macMenuBarHeight);
+#else
+        move (lMonitorRect.get_x(), lMonitorRect.get_y());
+#endif
+        maximize();
+    } else {
+        unmaximize();
+        resize (options.windowWidth, options.windowHeight);
+
+#ifdef __APPLE__
+        if (options.windowX <= lMonitorRect.get_x() + lMonitorRect.get_width() && options.windowY <= lMonitorRect.get_y() + lMonitorRect.get_height() - macMenuBarHeight) {
+            move (options.windowX, options.windowY + macMenuBarHeight);
+        } else {
+            move (lMonitorRect.get_x(), lMonitorRect.get_y() + macMenuBarHeight);
+        }
+#else
+        if (options.windowX <= lMonitorRect.get_x() + lMonitorRect.get_width() && options.windowY <= lMonitorRect.get_y() + lMonitorRect.get_height()) {
+            move (options.windowX, options.windowY);
+        } else {
+            move (lMonitorRect.get_x(), lMonitorRect.get_y());
+        }
+#endif
+    }
 }
 
 void RTWindow::set_title_decorated (Glib::ustring fname)

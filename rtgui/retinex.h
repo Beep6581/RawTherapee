@@ -28,6 +28,7 @@ class Retinex final :
 {
 private:
     IdleRegister idle_register;
+    rtengine::ProcEvent EvReticomplex;
 
 protected:
     CurveEditorGroup* curveEditorGD;
@@ -72,6 +73,9 @@ protected:
     MyComboBoxText*   mapMethod;
     MyComboBoxText*   viewMethod;
     Gtk::CheckButton* medianmap;
+    MyComboBoxText* complexmethod;
+    sigc::connection  complexmethodconn;
+    
     double nextmin;
     double nextmax;
     double nextminiT;
@@ -87,6 +91,7 @@ protected:
     Gtk::Frame *gainFrame;
     Gtk::Frame *tranFrame;
     Gtk::Frame *iterFrame;
+    Gtk::Frame *maskFrame;
     Gtk::Frame *equalFrame;
 
     DiagonalCurveEditor* cdshape;
@@ -104,32 +109,32 @@ protected:
     sigc::connection medianmapConn;
 
 public:
-    Retinex   ();
-    ~Retinex  () override;
+    Retinex();
+    ~Retinex() override;
 
-    void read                  (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
-    void write                 (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
-    void setBatchMode          (bool batchMode) override;
-    void setDefaults           (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
-    void trimValues            (rtengine::procparams::ProcParams* pp) override;
-    void adjusterChanged       (Adjuster* a, double newval) override;
-    void autoOpenCurve         () override;
-    void medianmapChanged        ();
-    void minmaxChanged (double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax) override;
-    void updateLabel      ();
-    void updateTrans      ();
-    void neutral_pressed       ();
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setBatchMode(bool batchMode) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void trimValues(rtengine::procparams::ProcParams* pp) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
+    void autoOpenCurve() override;
+    void medianmapChanged();
+    void minmaxChanged(double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax) override;
+    void updateLabel();
+    void updateTrans();
+    void neutral_pressed();
 
-    void enabledChanged        () override;
-    void curveChanged          (CurveEditor* ce) override;
+    void enabledChanged() override;
+    void curveChanged(CurveEditor* ce) override;
     void retinexMethodChanged();
     void mapMethodChanged();
     void viewMethodChanged();
     void retinexColorSpaceChanged();
     void gammaretinexChanged();
     void ColorSpaceUpdateUI();
-    void writeOptions (std::vector<int> &tpOpen);
-    void updateToolState (std::vector<int> &tpOpen);
+    void writeOptions(std::vector<int> &tpOpen);
+    void updateToolState(const std::vector<int>& tpOpen);
     void setAdjusterBehavior (bool strAdd, bool neighAdd, bool limdAdd, bool offsAdd, bool vartAdd, bool gamAdd, bool slopeAdd);
     void updateCurveBackgroundHistogram(
         const LUTu& histToneCurve,
@@ -144,9 +149,11 @@ public:
         const LUTu& histLRETI
     );
 
-    void colorForValue (double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
+    void colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller) override;
 
 private:
-    void foldAllButMe (GdkEventButton* event, MyExpander *expander);
-
+    void foldAllButMe(GdkEventButton* event, MyExpander *expander);
+    void convertParamToNormal();
+    void updateGUIToMode(int mode);
+    void complexmethodChanged();
 };

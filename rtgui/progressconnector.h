@@ -28,7 +28,7 @@
 
 #undef THREAD_PRIORITY_NORMAL
 
-class PLDBridge :
+class PLDBridge final :
     public rtengine::ProgressListener
 {
 public:
