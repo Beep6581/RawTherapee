@@ -71,14 +71,14 @@ public:
         return key(maker, model, iso, shutter);
     }
 
-    rtengine::RawImage* getRawImage();
-    std::vector<rtengine::badPix>& getHotPixels();
+    const rtengine::RawImage* getRawImage();
+    const std::vector<rtengine::badPix>& getHotPixels();
 
 private:
     rtengine::RawImage* ri; // Dark Frame raw data
     std::vector<rtengine::badPix> badPixels; // Extracted hot pixels
 
-    void updateBadPixelList(rtengine::RawImage* df);
+    void updateBadPixelList(const rtengine::RawImage* df);
     void updateRawImage();
 };
 
@@ -133,7 +133,7 @@ double dfInfo::distance(const std::string &mak, const std::string &mod, int iso,
     return std::sqrt(dISO * dISO +  dShutter * dShutter);
 }
 
-rtengine::RawImage* dfInfo::getRawImage()
+const rtengine::RawImage* dfInfo::getRawImage()
 {
     if (ri) {
         return ri;
@@ -145,7 +145,7 @@ rtengine::RawImage* dfInfo::getRawImage()
     return ri;
 }
 
-std::vector<rtengine::badPix>& dfInfo::getHotPixels()
+const std::vector<rtengine::badPix>& dfInfo::getHotPixels()
 {
     if (!ri) {
         updateRawImage();
@@ -228,7 +228,7 @@ void dfInfo::updateRawImage()
     }
 }
 
-void dfInfo::updateBadPixelList(rtengine::RawImage *df)
+void dfInfo::updateBadPixelList(const rtengine::RawImage *df)
 {
     if (!df) {
         return;
@@ -301,10 +301,10 @@ public:
         return currentPath;
     };
     void getStat(int& totFiles, int& totTemplates) const;
-    RawImage* searchDarkFrame(const std::string& mak, const std::string& mod, int iso, double shut, time_t t);
-    RawImage* searchDarkFrame(const Glib::ustring& filename);
-    std::vector<badPix>* getHotPixels(const std::string& mak, const std::string& mod, int iso, double shut, time_t t);
-    std::vector<badPix>* getHotPixels(const Glib::ustring& filename);
+    const RawImage* searchDarkFrame(const std::string& mak, const std::string& mod, int iso, double shut, time_t t);
+    const RawImage* searchDarkFrame(const Glib::ustring& filename);
+    const std::vector<badPix>* getHotPixels(const std::string& mak, const std::string& mod, int iso, double shut, time_t t);
+    const std::vector<badPix>* getHotPixels(const Glib::ustring& filename);
     const std::vector<badPix>* getBadPixels(const std::string& mak, const std::string& mod, const std::string& serial) const;
 
 private:
@@ -412,9 +412,9 @@ void rtengine::DFManager::Implementation::getStat(int& totFiles, int& totTemplat
  *  if perfect matches for iso and shutter are found, then the list is scanned for lesser distance in time
  *  otherwise if no match is found, the whole list is searched for lesser distance in iso and shutter
  */
-rtengine::RawImage* rtengine::DFManager::Implementation::searchDarkFrame(const std::string& mak, const std::string& mod, int iso, double shut, time_t t)
+const rtengine::RawImage* rtengine::DFManager::Implementation::searchDarkFrame(const std::string& mak, const std::string& mod, int iso, double shut, time_t t)
 {
-    dfInfo *df = find(((Glib::ustring)mak).uppercase(), ((Glib::ustring)mod).uppercase(), iso, shut, t);
+    dfInfo* df = find(((Glib::ustring)mak).uppercase(), ((Glib::ustring)mod).uppercase(), iso, shut, t);
 
     if (df) {
         return df->getRawImage();
@@ -423,7 +423,7 @@ rtengine::RawImage* rtengine::DFManager::Implementation::searchDarkFrame(const s
     }
 }
 
-rtengine::RawImage* rtengine::DFManager::Implementation::searchDarkFrame(const Glib::ustring& filename)
+const rtengine::RawImage* rtengine::DFManager::Implementation::searchDarkFrame(const Glib::ustring& filename)
 {
     for (auto& df : dfList) {
         if (df.second.pathname.compare(filename) == 0) {
@@ -440,7 +440,7 @@ rtengine::RawImage* rtengine::DFManager::Implementation::searchDarkFrame(const G
     return nullptr;
 }
 
-std::vector<rtengine::badPix>* rtengine::DFManager::Implementation::getHotPixels(const Glib::ustring& filename)
+const std::vector<rtengine::badPix>* rtengine::DFManager::Implementation::getHotPixels(const Glib::ustring& filename)
 {
     for (auto& df : dfList) {
         if (df.second.pathname.compare(filename) == 0) {
@@ -451,9 +451,9 @@ std::vector<rtengine::badPix>* rtengine::DFManager::Implementation::getHotPixels
     return nullptr;
 }
 
-std::vector<rtengine::badPix>* rtengine::DFManager::Implementation::getHotPixels(const std::string& mak, const std::string& mod, int iso, double shut, time_t t)
+const std::vector<rtengine::badPix>* rtengine::DFManager::Implementation::getHotPixels(const std::string& mak, const std::string& mod, int iso, double shut, time_t t)
 {
-    dfInfo *df = find(((Glib::ustring)mak).uppercase(), ((Glib::ustring)mod).uppercase(), iso, shut, t);
+    dfInfo* df = find(((Glib::ustring)mak).uppercase(), ((Glib::ustring)mod).uppercase(), iso, shut, t);
 
     if (df) {
         if (settings->verbose) {
@@ -706,22 +706,22 @@ void rtengine::DFManager::getStat(int& totFiles, int& totTemplates) const
     implementation->getStat(totFiles, totTemplates);
 }
 
-rtengine::RawImage* rtengine::DFManager::searchDarkFrame(const std::string& mak, const std::string& mod, int iso, double shut, time_t t)
+const rtengine::RawImage* rtengine::DFManager::searchDarkFrame(const std::string& mak, const std::string& mod, int iso, double shut, time_t t)
 {
     return implementation->searchDarkFrame(mak, mod, iso, shut, t);
 }
 
-rtengine::RawImage* rtengine::DFManager::searchDarkFrame(const Glib::ustring& filename)
+const rtengine::RawImage* rtengine::DFManager::searchDarkFrame(const Glib::ustring& filename)
 {
     return implementation->searchDarkFrame(filename);
 }
 
-std::vector<rtengine::badPix>* rtengine::DFManager::getHotPixels(const std::string& mak, const std::string& mod, int iso, double shut, time_t t)
+const std::vector<rtengine::badPix>* rtengine::DFManager::getHotPixels(const std::string& mak, const std::string& mod, int iso, double shut, time_t t)
 {
     return implementation->getHotPixels(mak, mod, iso, shut, t);
 }
 
-std::vector<rtengine::badPix>* rtengine::DFManager::getHotPixels(const Glib::ustring& filename)
+const std::vector<rtengine::badPix>* rtengine::DFManager::getHotPixels(const Glib::ustring& filename)
 {
     return implementation->getHotPixels(filename);
 }

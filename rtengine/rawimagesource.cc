@@ -1307,7 +1307,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
 
     Glib::ustring newDF = raw.dark_frame;
-    RawImage *rid = nullptr;
+    const RawImage* rid = nullptr;
 
     if (!raw.df_autoselect) {
         if (!raw.dark_frame.empty()) {
@@ -2450,7 +2450,7 @@ void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
 /* Copy original pixel data and
  * subtract dark frame (if present) from current image and apply flat field correction (if present)
  */
-void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData)
+void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, const RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData)
 {
     const auto tmpfilters = ri->get_filters();
     ri->set_filters(ri->prefilters); // we need 4 blacks for bayer processing

@@ -914,7 +914,7 @@ void ToolPanelCoordinator::autoCropRequested()
     crop->cropManipReady();
 }
 
-rtengine::RawImage* ToolPanelCoordinator::getDF()
+const rtengine::RawImage* ToolPanelCoordinator::getDF()
 {
     if (!ipc) {
         return nullptr;

@@ -39,10 +39,10 @@ public:
     void init(const Glib::ustring& pathname);
     Glib::ustring getPathname() const;
     void getStat(int& totFiles, int& totTemplates) const;
-    RawImage* searchDarkFrame(const std::string& mak, const std::string& mod, int iso, double shut, time_t t);
-    RawImage* searchDarkFrame(const Glib::ustring& filename);
-    std::vector<badPix>* getHotPixels(const std::string& mak, const std::string& mod, int iso, double shut, time_t t);
-    std::vector<badPix>* getHotPixels(const Glib::ustring& filename);
+    const RawImage* searchDarkFrame(const std::string& mak, const std::string& mod, int iso, double shut, time_t t);
+    const RawImage* searchDarkFrame(const Glib::ustring& filename);
+    const std::vector<badPix>* getHotPixels(const std::string& mak, const std::string& mod, int iso, double shut, time_t t);
+    const std::vector<badPix>* getHotPixels(const Glib::ustring& filename);
     const std::vector<badPix>* getBadPixels(const std::string& mak, const std::string& mod, const std::string& serial) const;
 
 private:
