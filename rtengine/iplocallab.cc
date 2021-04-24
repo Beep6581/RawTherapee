@@ -785,9 +785,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float laplac = ((float)locallab.spots.at(sp).laplace);
     float thre = locallab.spots.at(sp).thresh;
 
-    if (thre > 8.f || thre < 0.f) {//to avoid artifacts if user does not clear cache with new settings. Can be suppressed after
-        thre = 2.f;
-    }
+//    if (thre > 8.f || thre < 0.f) {//to avoid artifacts if user does not clear cache with new settings. Can be suppressed after
+//        thre = 2.f;
+//    }
+    thre = LIM(thre, 0.f, 10.0f);
 
     double local_x = locallab.spots.at(sp).loc.at(0) / 2000.0;
     double local_y = locallab.spots.at(sp).loc.at(2) / 2000.0;
@@ -800,9 +801,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float balanch = (float) locallab.spots.at(sp).balanh;
     int colorde = (int) locallab.spots.at(sp).colorde;
 
-    if (iterati > 4.f || iterati < 0.2f) {//to avoid artifacts if user does not clear cache with new settings Can be suppressed after
-        iterati = 2.f;
-    }
+//    if (iterati > 4.f || iterati < 0.2f) {//to avoid artifacts if user does not clear cache with new settings Can be suppressed after
+//       iterati = 2.f;
+//    }
+    iterati = LIM(iterati, 0.2f, 10.0f);
 
     float neigh = float (locallab.spots.at(sp).neigh);
     float chromaPastel = float (locallab.spots.at(sp).pastels)   / 100.0f;
@@ -15092,10 +15094,7 @@ void ImProcFunctions::Lab_Local(
     const float b_base = lp.lowB / scaling;
     const bool ctoning = (a_scale != 0.f || b_scale != 0.f || a_base != 0.f || b_base != 0.f);
     const float a_scalemerg = (lp.highAmerg - lp.lowAmerg) / factor / scaling;
-    const float a_basemerg = lp.lowAmerg / scaling;
     const float b_scalemerg = (lp.highBmerg - lp.lowBmerg) / factor / scaling;
-    const float b_basemerg = lp.lowBmerg / scaling;
-    const bool ctoningmerg = (a_scalemerg != 0.f || b_scalemerg != 0.f || a_basemerg != 0.f || b_basemerg != 0.f);
 
     if (!lp.inv && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.mergemet > 0 ||  lp.strcol != 0.f ||  lp.strcolab != 0.f || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5 || lp.prevdE) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
@@ -15570,7 +15569,7 @@ void ImProcFunctions::Lab_Local(
                                     bufcolreserv->L[y][x] = lastorig->L[y + ystart][x + xstart];
                                     bufcolreserv->a[y][x] = lastorig->a[y + ystart][x + xstart];
                                     bufcolreserv->b[y][x] = lastorig->b[y + ystart][x + xstart];
-                                } else if (lp.mergemet == 4 && ctoningmerg) {
+                                } else if (lp.mergemet == 4) {
                                         bufcolreserv->L[y][x] = merlucol * 327.68f;
                                         bufcolreserv->a[y][x] = 9.f * scaledirect * a_scalemerg;
                                         bufcolreserv->b[y][x] = 9.f * scaledirect * b_scalemerg;

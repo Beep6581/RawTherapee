@@ -720,7 +720,7 @@ void Crop::update(int todo)
                 parent->imgsrc->getImage(parent->currWB, tr, f, pp, params.toneCurve, params.raw);
                 parent->imgsrc->convertColorSpace(f, params.icm, parent->currWB);
 
-                if (params.dirpyrDenoise.enabled) {
+                if (params.dirpyrDenoise.enabled || params.filmNegative.enabled) {
                     // copy the denoised crop
                     int oy = trafy / skip;
                     int ox = trafx / skip;

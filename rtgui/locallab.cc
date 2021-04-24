@@ -740,6 +740,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             } else {
                 r->shapeMethod = 3;
             }
+            //printf("n0=%f n1=%f n2=%f n3=%f\n", (double) newSpot->loc.at(0), (double) newSpot->loc.at(1), (double) newSpot->loc.at(2), (double) newSpot->loc.at(3));
 
             // Calculate spot size and center position according to preview area
             if (provider && !batchMode) {
@@ -752,17 +753,27 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     newSpot->centerX = rtengine::LIM(int(int((double)prX - (double)imW / 2.) * 2000. / (double)imW), -1000, 1000);
                     newSpot->centerY = rtengine::LIM(int(int((double)prY - (double)imH / 2.) * 2000. / (double)imH), -1000, 1000);
                     // Ellipse/rectangle size computation
+                    /*
                     newSpot->loc.at(0) = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->loc.at(0));
                     newSpot->loc.at(1) = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->loc.at(1));
                     newSpot->loc.at(2) = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->loc.at(2));
                     newSpot->loc.at(3) = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->loc.at(3));
+                    */
                 }
             }
 
-            r->locX = newSpot->loc.at(0);
-            r->locXL = newSpot->loc.at(1);
-            r->locY = newSpot->loc.at(2);
-            r->locYT = newSpot->loc.at(3);
+            if(r->spotMethod != 2) {
+                r->locX = newSpot->loc.at(0);
+                r->locXL = newSpot->loc.at(1);
+                r->locY = newSpot->loc.at(2);
+                r->locYT = newSpot->loc.at(3);
+            } else {
+                r->locX = 3000.;
+                r->locXL = 3000.;
+                r->locY = 3000.;
+                r->locYT = 3000.;
+            }
+
             r->centerX = newSpot->centerX;
             r->centerY = newSpot->centerY;
 
