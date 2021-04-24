@@ -2436,7 +2436,7 @@ TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile
 TP_ICM_TONECURVE;Tone curve
 TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only available if the selected DCP has a tone curve.
 TP_ICM_TRCFRAME;Abstract Profile
-TP_ICM_TRCFRAME_TOOLTIP;Also known as ‘synthetic’ or ‘virtual’ profiles, which are applied at the end of the processing pipeline (prior to ciecam) allowing you to create custom image effects.\nYou can make changes to the:\n ‘Tone response curve’, which modifies the tones of the image.\n ‘Illuminant’ : which allows you to change the profile primaries to adapt them to the shooting conditions.\n ‘Destination space (primaries)’: which allows you to change the destination profile primaries.
+TP_ICM_TRCFRAME_TOOLTIP;Also known as ‘synthetic’ or ‘virtual’ profiles, which are applied at the end of the processing pipeline (prior to ciecam) allowing you to create custom image effects.\nYou can make changes to the:\n ‘Tone response curve’, which modifies the tones of the image.\n ‘Illuminant’ : which allows you to change the profile primaries to adapt them to the shooting conditions.\n ‘Destination primaries’: which allows you to change the destination primaries with two main uses - channel mixer and calibration.
 TP_ICM_WORKING_CIEDIAG;CIE xy diagram
 TP_ICM_WORKINGPROFILE;Working Profile
 TP_ICM_WORKING_PRESER;Preserves Pastel tones
@@ -2463,7 +2463,7 @@ TP_ICM_WORKING_ILLU_D120;D120
 TP_ICM_WORKING_ILLU_STDA;stdA 2875K
 TP_ICM_WORKING_ILLU_2000;Tungsten 2000K
 TP_ICM_WORKING_PRIM;Destination primaries
-TP_ICM_PRIMILLUM_TOOLTIP;You can change an image from its original mode (‘working profile’) to a different mode (‘destination profile’). When you choose a different color mode for an image, you permanently change the color values in the image.\n\nChanging the ‘primaries’ is complex and difficult to use. It requires a lot of experimenting.\n It is capable of making exotic color adjustments but it’s much harder to predict and control.\n Allows you to modify the camera calibration.
+TP_ICM_PRIMILLUM_TOOLTIP;You can change an image from its original mode (‘working profile’) to a different mode (‘destination primaries’). When you choose a different color mode for an image, you permanently change the color values in the image.\n\nChanging the ‘primaries’ is quite complex and difficult to use. It requires a lot of experimenting.\n It is capable of making exotic color adjustments as Channel Mixer primaries.\n Allows you to modify the camera calibration.
 TP_ICM_WORKING_PRIM_NONE;Default
 TP_ICM_WORKING_PRIM_SRGB;sRGB
 TP_ICM_WORKING_PRIM_ADOB;Adobe RGB
