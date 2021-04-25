@@ -1670,6 +1670,7 @@ void ICMPanel::wprimChanged()
         }
         
     }
+    willChanged ();
 
     if(wprim->get_active_row_number() == 12) {
         labgridcie->set_sensitive(true);

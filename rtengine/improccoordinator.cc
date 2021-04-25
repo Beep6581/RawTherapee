@@ -1631,10 +1631,18 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     prim = 5; 
                 } else if(params->icm.wprim == "wid"){
                     prim = 6; 
-                } else if(params->icm.wprim == "cus"){
+                } else if(params->icm.wprim == "ac0"){
                     prim = 7; 
-                } else if(params->icm.wprim == "cusgr"){
+                } else if(params->icm.wprim == "bru"){
                     prim = 8; 
+                } else if(params->icm.wprim == "bet"){
+                    prim = 9; 
+                } else if(params->icm.wprim == "bst"){
+                    prim = 10; 
+                } else if(params->icm.wprim == "cus"){
+                    prim = 11; 
+                } else if(params->icm.wprim == "cusgr"){
+                    prim = 12; 
                 }
                 Glib::ustring prof = params->icm.workingProfile;
                 cmsHTRANSFORM dummy = nullptr;
@@ -1651,7 +1659,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
                 
                 delete tmpImage1;
-                if(prim == 8) {//pass red gre blue xy in function of area dats Ciexy
+                if(prim == 12) {//pass red gre blue xy in function of area dats Ciexy
                     float redgraphx =  params->icm.labgridcieALow;
                     float redgraphy =  params->icm.labgridcieBLow;
                     float blugraphx =  params->icm.labgridcieAHigh;
@@ -1672,12 +1680,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float greyy = 0.55f * (gregraphy + 1.f) - 0.1f;
                     greyy = rtengine::LIM(greyy, 0.5f, 1.f);
 
-                    if (primListener && prim == 8) {
+                    if (primListener && prim == 12) {
                         primListener->primChanged (redxx, redyy, bluxx, bluyy, grexx, greyy);
                     }
                 }
                     
-                if(prim != 8) {//all other cases - pass Cie xy to update graph Ciexy
+                if(prim != 12) {//all other cases - pass Cie xy to update graph Ciexy
                     float r_x =  params->icm.redx;
                     float r_y =  params->icm.redy;
                     float b_x =  params->icm.blux;

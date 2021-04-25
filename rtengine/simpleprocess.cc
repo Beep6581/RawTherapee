@@ -1611,10 +1611,18 @@ private:
                 prim = 5; 
             } else if(params.icm.wprim == "wid"){
                 prim = 6; 
-            } else if(params.icm.wprim == "cus"){
+            } else if(params.icm.wprim == "ac0"){
                 prim = 7; 
-            } else if(params.icm.wprim == "cusgr"){
+            } else if(params.icm.wprim == "bru"){
                 prim = 8; 
+            } else if(params.icm.wprim == "bet"){
+                prim = 9; 
+            } else if(params.icm.wprim == "bst"){
+                prim = 10; 
+            } else if(params.icm.wprim == "cus"){
+                prim = 11; 
+            } else if(params.icm.wprim == "cusgr"){
+                prim = 1; 
             }
             Glib::ustring prof = params.icm.workingProfile;
 
