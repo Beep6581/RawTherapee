@@ -1550,7 +1550,7 @@ void ICMPanel::wprimChanged()
         bluy->setValue(0.06);
         will->set_active(5);
     } else if (wprim->get_active_row_number() == 9) {//BetaRGB
-        redx->setValue(0.688);
+        redx->setValue(0.6888);
         redy->setValue(0.3112);
         grex->setValue(0.1986);
         grey->setValue(0.7551);
@@ -1562,8 +1562,8 @@ void ICMPanel::wprimChanged()
         redy->setValue(0.2653);
         grex->setValue(0.2150);
         grey->setValue(0.7750);
-        blux->setValue(0.131);
-        bluy->setValue(0.046);
+        blux->setValue(0.130);
+        bluy->setValue(0.035);
         will->set_active(5);
     }
 
@@ -1634,7 +1634,7 @@ void ICMPanel::wprimChanged()
             bluy->setValue(0.06);
             will->set_active(5);
         } else if(wProfNames->get_active_text() == "Beta RGB") {
-            redx->setValue(0.688);
+            redx->setValue(0.6888);
             redy->setValue(0.3112);
             grex->setValue(0.1986);
             grey->setValue(0.7551);
@@ -1646,8 +1646,8 @@ void ICMPanel::wprimChanged()
             redy->setValue(0.2653);
             grex->setValue(0.2150);
             grey->setValue(0.7750);
-            blux->setValue(0.131);
-            bluy->setValue(0.046);
+            blux->setValue(0.130);
+            bluy->setValue(0.035);
             will->set_active(5);
         }
 
