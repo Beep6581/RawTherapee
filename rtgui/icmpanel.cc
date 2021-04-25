@@ -1280,13 +1280,6 @@ void ICMPanel::adjusterChanged(Adjuster* a, double newval)
         }
 
     }
-    if(wprim->get_active_row_number() == 12) {
-        labgridcie->set_sensitive(true);
-    } else {
-        labgridcie->set_sensitive(false);
-    }
-    
-    
 }
 
 void ICMPanel::wpChanged()
@@ -1352,7 +1345,6 @@ void ICMPanel::wtrcinChanged()
                 greBox->set_sensitive(false);
                 bluBox->set_sensitive(false);
             } else {
-
             }
         }
         riaHBox->set_sensitive(true);
@@ -1459,7 +1451,7 @@ void ICMPanel::wtrcinChanged()
     } else {
         labgridcie->set_sensitive(false);
     }
-    
+
     if (wTRC->get_active_row_number() == 0) {
         redFrame->hide();
     }
@@ -1567,7 +1559,6 @@ void ICMPanel::wprimChanged()
         will->set_active(2);
     }
 
-   
     if (wprim->get_active_row_number() == 0) {
         if(wProfNames->get_active_text() == "Rec2020") {
             redx->setValue(0.708);

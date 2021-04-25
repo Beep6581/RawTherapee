@@ -68,7 +68,7 @@ bool LabGridArea::notifyListener()
             float low_b1 = 0.55f * (low_b + 1.f) - 0.1f;
             float gre_x1 = 0.55f * (gre_x + 1.f) - 0.1f;
             float gre_y1 = 0.55f * (gre_y + 1.f) - 0.1f;
-            listener->panelChanged(evt, Glib::ustring::compose(evtMsg, round(high_a1), round(high_b1), round(low_a1), round(low_b1), round(gre_x1), round(gre_y1)));
+            listener->panelChanged(evt, Glib::ustring::compose(evtMsg, round(low_a1), round(low_b1), round(gre_x1), round(gre_y1), round(high_a1), round(high_b1)));
         }
     }
     return false;
