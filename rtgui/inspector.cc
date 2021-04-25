@@ -21,6 +21,7 @@
 #include <gtkmm.h>
 #include "cursormanager.h"
 #include "guiutils.h"
+#include "multilangmgr.h"
 #include "options.h"
 #include "pathutils.h"
 #include "rtscalable.h"
@@ -91,7 +92,7 @@ Inspector::Inspector () : currImage(nullptr), scaled(false), scale(1.0), zoomSca
     }
     else {
         window = new Gtk::Window();
-        window->set_title("RawTherapee Inspector");
+        window->set_title("RawTherapee " + M("INSPECTOR_WINDOW_TITLE"));
         window->set_visible(false);
         window->add_events(Gdk::KEY_PRESS_MASK);
         window->signal_key_release_event().connect(sigc::mem_fun(*this, &Inspector::on_key_release));
