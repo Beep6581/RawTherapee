@@ -2450,7 +2450,7 @@ TP_ICM_WORKING_TRC_CUSTOM;Custom
 TP_ICM_WORKING_TRC_GAMMA;Gamma
 TP_ICM_WORKING_TRC_NONE;None
 TP_ICM_WORKING_TRC_SLOPE;Slope
-TP_ICM_TRC_TOOLTIP;Allows you to change the default sRGB ‘Tone response curve’ in RT (g=2.4 s=12.92).\nThis TRC modifies the tones of the image. The RGB and Lab values, histogram and output (screen, TIF, JPG) are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.
+TP_ICM_TRC_TOOLTIP;Allows you to change the default sRGB ‘Tone response curve’ in RT (g=2.4 s=12.92).\nThis TRC modifies the tones of the image. The RGB and Lab values, histogram and output (screen, TIF, JPG) are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nA selection other than 'none' activates the 'Illuminant' and 'Destination primaries' menus.
 TP_ICM_WORKING_ILLU;Illuminant
 TP_ICM_WORKING_ILLU_NONE;Default
 TP_ICM_WORKING_ILLU_D41;D41
