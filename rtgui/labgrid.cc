@@ -59,7 +59,17 @@ bool LabGridArea::notifyListener()
             {
                 return int(v * 1000) / 1000.f;
             };
-        listener->panelChanged(evt, Glib::ustring::compose(evtMsg, round(high_a), round(high_b), round(low_a), round(low_b)));
+        if (! ciexy_enabled){
+            listener->panelChanged(evt, Glib::ustring::compose(evtMsg, round(high_a), round(high_b), round(low_a), round(low_b)));
+        } else {
+            float high_a1 = 0.55f * (high_a + 1.f) - 0.1f;
+            float high_b1 = 0.55f * (high_b + 1.f) - 0.1f;
+            float low_a1 = 0.55f * (low_a + 1.f) - 0.1f;
+            float low_b1 = 0.55f * (low_b + 1.f) - 0.1f;
+            float gre_x1 = 0.55f * (gre_x + 1.f) - 0.1f;
+            float gre_y1 = 0.55f * (gre_y + 1.f) - 0.1f;
+            listener->panelChanged(evt, Glib::ustring::compose(evtMsg, round(high_a1), round(high_b1), round(low_a1), round(low_b1), round(gre_x1), round(gre_y1)));
+        }
     }
     return false;
 }
@@ -135,6 +145,7 @@ void LabGridArea::reset(bool toInitial)
     if (toInitial) {
         setParams(defaultLow_a, defaultLow_b, defaultHigh_a, defaultHigh_b, defaultgre_x, defaultgre_y, defaultwhi_x, defaultwhi_y, true);
     } else {
+        printf("RESET \n");
         setParams(0., 0., 0., 0., 0., 0., 0., 0., true);
     }
 }
@@ -457,6 +468,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
 bool LabGridArea::on_button_press_event(GdkEventButton *event)
 {
     if (event->button == 1) {
+      if (!ciexy_enabled) {        
         if (event->type == GDK_2BUTTON_PRESS) {
             switch (litPoint) {
             case NONE:
@@ -478,6 +490,16 @@ bool LabGridArea::on_button_press_event(GdkEventButton *event)
         } else if (event->type == GDK_BUTTON_PRESS && litPoint != NONE) {
             isDragged = true;
         }
+      } else {
+        if (event->type == GDK_2BUTTON_PRESS) {
+            edited = true;
+            notifyListener();
+            queue_draw();
+        } else if (event->type == GDK_BUTTON_PRESS && litPoint != NONE) {
+            isDragged = true;
+        }
+
+      }
         return false;
     }
     return true;
