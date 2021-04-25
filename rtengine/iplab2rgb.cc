@@ -497,7 +497,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     float grexx = params->icm.grex;
     float greyy = params->icm.grey;
 
-    if(prim == 8) {//convert datas area to xy
+    if(prim == 12) {//convert datas area to xy
         float redgraphx =  params->icm.labgridcieALow;
         float redgraphy =  params->icm.labgridcieBLow;
         float blugraphx =  params->icm.labgridcieAHigh;
@@ -531,7 +531,15 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             profile = "ACESp1";
         } else if(prim == 6) {
             profile = "WideGamut";
-        } else if(prim == 7 || prim == 8) {
+        } else if(prim == 7) {
+            profile = "ACESp0";
+        } else if(prim == 8) {
+            profile = "BruceRGB";
+        } else if(prim == 9) {
+            profile = "Beta RGB";
+        } else if(prim == 10) {
+            profile = "BestRGB";
+        } else if(prim == 11 || prim == 12) {
             profile = "Custom";
         }
     }

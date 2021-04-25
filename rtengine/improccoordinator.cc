@@ -1692,6 +1692,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float b_y =  params->icm.bluy;
                     float g_x =  params->icm.grex;
                     float g_y =  params->icm.grey;
+                    //printf("rx=%f ry=%f \n", (double) r_x, (double) r_y);
                     float wx = 0.33f;
                     float wy = 0.33f;
                     if(illum == 1) { //D41

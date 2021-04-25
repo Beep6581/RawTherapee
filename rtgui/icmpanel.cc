@@ -1485,7 +1485,7 @@ void ICMPanel::willChanged()
 
 void ICMPanel::wprimChanged()
 {
-    if (wprim->get_active_row_number() == 1) {
+    if (wprim->get_active_row_number() == 1) {//sRGB
         redx->setValue(0.64);
         redy->setValue(0.33);
         grex->setValue(0.30);
@@ -1493,7 +1493,7 @@ void ICMPanel::wprimChanged()
         blux->setValue(0.15);
         bluy->setValue(0.06);
         will->set_active(5);
-    } else if (wprim->get_active_row_number() == 2) {
+    } else if (wprim->get_active_row_number() == 2) {//Adobe
         redx->setValue(0.64);
         redy->setValue(0.33);
         grex->setValue(0.21);
@@ -1501,7 +1501,7 @@ void ICMPanel::wprimChanged()
         blux->setValue(0.15);
         bluy->setValue(0.06);
         will->set_active(5);
-    } else if (wprim->get_active_row_number() == 3) {
+    } else if (wprim->get_active_row_number() == 3) {//Prophoto
         redx->setValue(0.7347);
         redy->setValue(0.2653);
         grex->setValue(0.1596);
@@ -1509,7 +1509,7 @@ void ICMPanel::wprimChanged()
         blux->setValue(0.0366);
         bluy->setValue(0.0001);
         will->set_active(2);
-    } else if (wprim->get_active_row_number() == 4) {
+    } else if (wprim->get_active_row_number() == 4) {//Rec2020
         redx->setValue(0.708);
         redy->setValue(0.292);
         grex->setValue(0.17);
@@ -1517,7 +1517,7 @@ void ICMPanel::wprimChanged()
         blux->setValue(0.131);
         bluy->setValue(0.046);
         will->set_active(5);
-    } else if (wprim->get_active_row_number() == 5) {
+    } else if (wprim->get_active_row_number() == 5) {//ACES p1
         redx->setValue(0.713);
         redy->setValue(0.293);
         grex->setValue(0.165);
@@ -1525,7 +1525,7 @@ void ICMPanel::wprimChanged()
         blux->setValue(0.128);
         bluy->setValue(0.044);
         will->set_active(4);
-    } else if (wprim->get_active_row_number() == 6) {
+    } else if (wprim->get_active_row_number() == 6) {//Widegamut
         redx->setValue(0.735);
         redy->setValue(0.265);
         grex->setValue(0.115);
@@ -1533,7 +1533,7 @@ void ICMPanel::wprimChanged()
         blux->setValue(0.1570);
         bluy->setValue(0.018);
         will->set_active(2);
-    } else if (wprim->get_active_row_number() == 7) {
+    } else if (wprim->get_active_row_number() == 7) {//ACESp0
         redx->setValue(0.7347);
         redy->setValue(0.2653);
         grex->setValue(0.);
@@ -1541,7 +1541,7 @@ void ICMPanel::wprimChanged()
         blux->setValue(0.0001);
         bluy->setValue(-0.077);
         will->set_active(4);
-    } else if (wprim->get_active_row_number() == 8) {
+    } else if (wprim->get_active_row_number() == 8) {//BruceRGB
         redx->setValue(0.64);
         redy->setValue(0.33);
         grex->setValue(0.28);
@@ -1549,7 +1549,7 @@ void ICMPanel::wprimChanged()
         blux->setValue(0.15);
         bluy->setValue(0.06);
         will->set_active(5);
-    } else if (wprim->get_active_row_number() == 9) {
+    } else if (wprim->get_active_row_number() == 9) {//BetaRGB
         redx->setValue(0.688);
         redy->setValue(0.3112);
         grex->setValue(0.1986);
@@ -1557,7 +1557,7 @@ void ICMPanel::wprimChanged()
         blux->setValue(0.1265);
         bluy->setValue(0.0352);
         will->set_active(2);
-    } else if (wprim->get_active_row_number() == 10) {
+    } else if (wprim->get_active_row_number() == 10) {//Best RGB
         redx->setValue(0.7347);
         redy->setValue(0.2653);
         grex->setValue(0.2150);
