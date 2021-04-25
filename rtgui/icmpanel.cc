@@ -1564,7 +1564,7 @@ void ICMPanel::wprimChanged()
         grey->setValue(0.7750);
         blux->setValue(0.130);
         bluy->setValue(0.035);
-        will->set_active(5);
+        will->set_active(2);
     }
 
    
@@ -1648,7 +1648,7 @@ void ICMPanel::wprimChanged()
             grey->setValue(0.7750);
             blux->setValue(0.130);
             bluy->setValue(0.035);
-            will->set_active(5);
+            will->set_active(2);
         }
 
         redFrame->hide();

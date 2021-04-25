@@ -625,7 +625,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = 0.7750;
             p[4] = 0.1300;
             p[5] = 0.0350;
-            illum = 5;
+            illum = 2;
         } else if (profile == "Rec2020") {
             p[0] = 0.7080;    // Rec2020 primaries
             p[1] = 0.2920;
