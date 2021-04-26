@@ -117,7 +117,7 @@ Inspector::~Inspector()
         delete window;
 }
 
-void Inspector::showWindow(bool scaled, bool fullscreen)
+void Inspector::showWindow(bool scaled, bool fullscreen, bool pinned)
 {
     if (!window)
         return;
@@ -137,7 +137,7 @@ void Inspector::showWindow(bool scaled, bool fullscreen)
         window->unfullscreen();
     this->fullscreen = fullscreen;
     window->set_visible(true);
-    pinned = false;
+    this->pinned = pinned;
 
     // update content when becoming visible
     switchImage(next_image_path);

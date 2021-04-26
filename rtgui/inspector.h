@@ -89,7 +89,7 @@ public:
     /** @brief Show or hide window
      * @param scaled fit image into window
      */
-    void showWindow(bool scaled, bool fullscreen = true);
+    void showWindow(bool scaled, bool fullscreen = true, bool pinned = false);
 
     /**
      * Hide the window.
