@@ -92,6 +92,7 @@ Inspector::Inspector () : currImage(nullptr), scaled(false), scale(1.0), zoomSca
     }
     else {
         window = new Gtk::Window();
+        window->set_name("InspectorWindow");
         window->set_title("RawTherapee " + M("INSPECTOR_WINDOW_TITLE"));
         window->set_visible(false);
         window->add_events(Gdk::KEY_PRESS_MASK);
@@ -449,15 +450,6 @@ bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         if (!window) {
             // draw the background
             style->render_background(cr, 0, 0, get_width(), get_height());
-        }
-        else {
-            ///* --- old method (the new method does not seem to work)
-            c = style->get_background_color (Gtk::STATE_FLAG_NORMAL);
-            cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
-            cr->set_line_width (0);
-            cr->rectangle (0, 0, availableSize.x, availableSize.y);
-            cr->fill ();
-            //*/
         }
 
         bool scaledImage = scale != 1.0;
