@@ -2406,7 +2406,7 @@ TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only available if a dual-illuminant DCP with interpolation support is selected.
 TP_ICM_GREFRAME;Green Primaries
-TP_ICM_ILLUMPRIM_TOOLTIP;Choose the illuminant closest to the shooting conditions.\nChanges can only be made when the ‘Destination primaries’ selection is set to ‘Custom: Primaries sliders & Illuminant’.
+TP_ICM_ILLUMPRIM_TOOLTIP;Choose the illuminant closest to the shooting conditions.\nChanges can only be made when the ‘Destination primaries’ selection is set to ‘Custom (sliders)’.
 TP_ICM_INPUTCAMERA;Camera standard
 TP_ICM_INPUTCAMERAICC;Auto-matched camera profile
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
@@ -2463,7 +2463,7 @@ TP_ICM_WORKING_ILLU_D120;D120
 TP_ICM_WORKING_ILLU_STDA;stdA 2875K
 TP_ICM_WORKING_ILLU_2000;Tungsten 2000K
 TP_ICM_WORKING_PRIM;Destination primaries
-TP_ICM_PRIMILLUM_TOOLTIP;You can change an image from its original mode (‘working profile’) to a different mode (‘destination primaries’). When you choose a different color mode for an image, you permanently change the color values in the image.\n\nChanging the ‘primaries’ is quite complex and difficult to use. It requires a lot of experimenting.\n It is capable of making exotic color adjustments as Channel Mixer primaries.\n Allows you to modify the camera calibration.
+TP_ICM_PRIMILLUM_TOOLTIP;You can change an image from its original mode (‘working profile’) to a different mode (‘destination primaries’). When you choose a different color mode for an image, you permanently change the color values in the image.\n\nChanging the ‘primaries’ is quite complex and difficult to use. It requires a lot of experimenting.\n It is capable of making exotic color adjustments as Channel Mixer primaries.\n Allows you to modify the camera calibration with Custom (sliders).
 TP_ICM_WORKING_PRIM_NONE;Default
 TP_ICM_WORKING_PRIM_SRGB;sRGB
 TP_ICM_WORKING_PRIM_ADOB;Adobe RGB
