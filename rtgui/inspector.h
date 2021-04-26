@@ -91,6 +91,11 @@ public:
      */
     void showWindow(bool scaled, bool fullscreen = true);
 
+    /**
+     * Hide the window.
+     */
+    void hideWindow();
+
     /** @brief Mouse movement to a new position
      * @param pos Location of the mouse, in percentage (i.e. [0;1] range) relative to the full size image ; -1,-1 == out of the image
      * @param transform H/V flip and coarse rotation transformation

@@ -144,6 +144,11 @@ void Inspector::showWindow(bool scaled, bool fullscreen)
     mouseMove(next_image_pos, 0);
 }
 
+void Inspector::hideWindow()
+{
+    window->set_visible(false);
+}
+
 bool Inspector::on_key_release(GdkEventKey *event)
 {
     if (!window)

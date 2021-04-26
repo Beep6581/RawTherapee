@@ -2524,6 +2524,21 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
     return fileBrowser->keyPressed(event);
 }
 
+bool FileCatalog::handleShortcutKeyRelease(GdkEventKey* event)
+{
+    bool ctrl = event->state & GDK_CONTROL_MASK;
+    bool alt = event->state & GDK_MOD1_MASK;
+
+    if (!ctrl && !alt) {
+        switch (event->keyval) {
+        case GDK_KEY_f:
+        case GDK_KEY_F:
+            fileBrowser->getInspector()->hideWindow();
+            return true;
+        }
+    }
+}
+
 void FileCatalog::showToolBar()
 {
     if (hbToolBar1STB) {
