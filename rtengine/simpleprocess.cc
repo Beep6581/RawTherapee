@@ -1282,7 +1282,7 @@ private:
         }
 
         autor = -9000.f; // This will ask to compute the "auto" values for the B&W tool (have to be inferior to -5000)
-        DCPProfileApplyState as;
+        DCPProfile::ApplyState as;
         DCPProfile *dcpProf = imgsrc->getDCP(params.icm, as);
 
         LUTu histToneCurve;

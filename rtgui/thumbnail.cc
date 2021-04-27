@@ -46,9 +46,6 @@
 #include "profilestorecombobox.h"
 #include "version.h"
 
-#include "../rtengine/mytime.h"
-
-using namespace rtengine::procparams;
 
 namespace {
 
@@ -108,6 +105,8 @@ bool CPBDump(
 }
 
 } // namespace
+
+using namespace rtengine::procparams;
 
 Thumbnail::Thumbnail(CacheManager* cm, const Glib::ustring& fname, CacheImageData* cf) :
     fname(fname),

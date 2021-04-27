@@ -449,6 +449,7 @@ std::map<std::string, std::string> getAliases(const Glib::ustring& profile_dir)
 
 class DCPMetadata
 {
+private:
     enum TagType {
         INVALID = 0,
         BYTE = 1,
@@ -472,16 +473,18 @@ class DCPMetadata
     };
 
 public:
-    explicit DCPMetadata(FILE *file): order_(UNKNOWN), file_(file) {}
+    explicit DCPMetadata(FILE *file) :
+        file_(file),
+        order_(UNKNOWN)
+    {
+    }
 
     bool parse()
     {
-        int offset = 0;
-        FILE *f = file_;
-        if (!f) {
+        if (!file_) {
 #ifndef NDEBUG
             if (settings->verbose) {
-                std::cerr << "ERROR : no file opened !" << std::endl;
+                std::cerr << "ERROR: No file opened." << std::endl;
             } 
 #endif
             return false;
@@ -490,31 +493,28 @@ public:
         setlocale(LC_NUMERIC, "C"); // to set decimal point in sscanf
 
         // read tiff header
-        fseek(f, 0, SEEK_SET);
-        unsigned short bo;
-        fread(&bo, 1, 2, f);
-        order_ = ByteOrder(int(bo));
+        std::fseek(file_, 0, SEEK_SET);
+        std::uint16_t bo;
+        std::fread(&bo, 1, 2, file_);
+        order_ = ByteOrder(bo);
         
-        get2(f, order_);
-        if (!offset) {
-            offset = get4(f, order_);
-        }
+        get2(); // Skip
 
-        // seek to IFD
-        fseek(f, offset, SEEK_SET);
+        // Seek to IFD
+        const std::size_t offset = get4();
+        std::fseek(file_, offset, SEEK_SET);
 
-        // first read the IFD directory
-        int numtags = get2(f, order_);
+        // First read the IFD directory
+        const std::uint16_t numtags = get2();
 
-        if (numtags <= 0 || numtags > 1000) { // KodakIfd has lots of tags, thus 1000 as the limit
+        if (numtags > 1000) { // KodakIfd has lots of tags, thus 1000 as the limit
             return false;
         }
 
-        int base = 0;
-        for (int i = 0; i < numtags; i++) {
-            Tag t;
-            if (parse_tag(t, f, base, order_)) {
-                tags_[t.id] = std::move(t);
+        for (std::uint16_t i = 0; i < numtags; ++i) {
+            Tag tag;
+            if (parseTag(tag)) {
+                tags_[tag.id] = std::move(tag);
             }
         }
 
@@ -526,215 +526,283 @@ public:
         return tags_.find(id) != tags_.end();
     }
     
-    std::string toString(int id)
+    std::string toString(int id) const
     {
-        auto it = tags_.find(id);
-        if (it != tags_.end()) {
-            auto &t = it->second;
-            if (t.type == ASCII) {
-                std::ostringstream buf;
-                unsigned char *value = &(t.value[0]);
-                buf << value;
-                return buf.str();
+        const Tags::const_iterator tag = tags_.find(id);
+        if (tag != tags_.end()) {
+            if (tag->second.type == ASCII) {
+                return std::string(tag->second.value.begin(), tag->second.value.end()).c_str();
             }
         }
-        return "";
+        return {};
     }
 
-    int toInt(int id, int ofs=0, TagType astype=INVALID)
+    std::int32_t toInt(int id, std::size_t offset = 0, TagType as_type = INVALID) const
     {
-        auto it = tags_.find(id);
-        if (it == tags_.end()) {
+        const Tags::const_iterator tag = tags_.find(id);
+        if (tag == tags_.end()) {
             return 0;
         }
 
-        auto &t = it->second;
-        int a;
-        unsigned char *value = &(t.value[0]);
-
-        if (astype == INVALID) {
-            astype = t.type;
+        if (as_type == INVALID) {
+            as_type = tag->second.type;
         }
 
-        switch (astype) {
-        case SBYTE:                            
-            return reinterpret_cast<signed char *>(value)[ofs];
-        case BYTE:                                 
-            return value[ofs];
-        case SSHORT:                                
-            return int2_to_signed(sget2(value + ofs, order_));
-        case SHORT:                                  
-            return sget2(value + ofs, order_);
-        case SLONG:
-        case LONG:                                  
-            return sget4 (value + ofs, order_);
-        case SRATIONAL:
-        case RATIONAL:                                    
-            a = sget4(value + ofs + 4, order_);
-            return a == 0 ? 0 : int(sget4(value + ofs, order_)) / a;
-        case FLOAT:
-            return toDouble(id, ofs);
-        default:
-            return 0;
-             
+        switch (as_type) {
+            case SBYTE: {
+                if (offset < tag->second.value.size()) {
+                    return static_cast<signed char>(tag->second.value[offset]);
+                }
+                return 0;
+            }
+            case BYTE: {
+                if (offset < tag->second.value.size()) {
+                    return tag->second.value[offset];
+                }
+                return 0;
+            }
+            case SSHORT: {
+                if (offset + 1 < tag->second.value.size()) {
+                    return static_cast<std::int16_t>(sget2(tag->second.value.data() + offset));
+                }
+                return 0;
+            }
+            case SHORT: {
+                if (offset + 1 < tag->second.value.size()) {
+                    return sget2(tag->second.value.data() + offset);
+                }
+                return 0;
+            }
+            case SLONG:
+            case LONG: {
+                if (offset + 3 < tag->second.value.size()) {
+                    return sget4(tag->second.value.data() + offset);
+                }
+                return 0;
+            }
+            case SRATIONAL:
+            case RATIONAL: {
+                if (offset + 7 < tag->second.value.size()) {
+                    const std::uint32_t denominator = sget4(tag->second.value.data() + offset + 4);
+                    return
+                        denominator == 0
+                            ? 0
+                            : static_cast<std::int32_t>(sget4(tag->second.value.data() + offset)) / denominator;
+                }
+                return 0;
+            }
+            case FLOAT: {
+                return toDouble(id, offset);
+            }
+            default: {
+                return 0;
+            }
         }
     }
     
-    int toShort(int id, int ofs=0)
+    int toShort(int id, std::size_t offset = 0) const
     {
-        return toInt(id, ofs, SHORT);
+        return toInt(id, offset, SHORT);
     }
     
-    double toDouble(int id, int ofs=0)
+    double toDouble(int id, std::size_t offset = 0) const
     {
-        auto it = tags_.find(id);
-        if (it == tags_.end()) {
+        const Tags::const_iterator tag = tags_.find(id);
+        if (tag == tags_.end()) {
             return 0.0;
         }
-
-        auto &t = it->second;
         
-        union IntFloat {
-            uint32_t i;
-            float f;
-        } conv;
-
-        int ud, dd;
-        unsigned char *value = &(t.value[0]);
-        
-        switch (t.type) {
-        case SBYTE:
-            return int((reinterpret_cast<signed char*> (value))[ofs]);
-        case BYTE:
-            return int(value[ofs]);
-        case SSHORT:
-            return int2_to_signed(sget2(value + ofs, order_));
-        case SHORT:                                        
-            return sget2(value + ofs, order_);
-        case SLONG:
-        case LONG:                                        
-            return sget4(value + ofs, order_);
-        case SRATIONAL:
-        case RATIONAL:
-            ud = sget4(value + ofs, order_);
-            dd = sget4(value + ofs + 4, order_);
-            return (dd ? double(ud)/double(dd) : 0.0);
-        case FLOAT:
-            conv.i = sget4(value + ofs, order_);
-            return conv.f;  // IEEE FLOATs are already C format, they just need a recast
-        default:
-            return 0.;
-             
+        switch (tag->second.type) {
+            case SBYTE: {
+                if (offset < tag->second.value.size()) {
+                    return static_cast<signed char>(tag->second.value[offset]);
+                }
+                return 0.0;
+            }
+            case BYTE: {
+                if (offset < tag->second.value.size()) {
+                    return tag->second.value[offset];
+                }
+                return 0.0;
+            }
+            case SSHORT: {
+                if (offset + 1 < tag->second.value.size()) {
+                    return static_cast<std::int16_t>(sget2(tag->second.value.data() + offset));
+                }
+                return 0.0;
+            }
+            case SHORT: {
+                if (offset + 1 < tag->second.value.size()) {
+                    return sget2(tag->second.value.data() + offset);
+                }
+                return 0.0;
+            }
+            case SLONG:
+            case LONG: {
+                if (offset + 3 < tag->second.value.size()) {
+                    return sget4(tag->second.value.data() + offset);
+                }
+                return 0.0;
+            }
+            case SRATIONAL:
+            case RATIONAL: {
+                if (offset + 7 < tag->second.value.size()) {
+                    const std::int32_t numerator = sget4(tag->second.value.data() + offset);
+                    const std::int32_t denominator = sget4(tag->second.value.data() + offset + 4);
+                    return
+                        denominator == 0
+                            ? 0.0
+                            : static_cast<double>(numerator) / static_cast<double>(denominator);
+                }
+                return 0.0;
+            }
+            case FLOAT: {
+                union IntFloat {
+                    std::uint32_t i;
+                    float f;
+                } conv;
+                conv.i = sget4(tag->second.value.data() + offset);
+                return conv.f; // IEEE FLOATs are already C format, they just need a recast
+            }
+            default: {
+                return 0.0;
+            }
         }
     }
 
-    unsigned int getCount(int id)
+    unsigned int getCount(int id) const
     {
-        auto it = tags_.find(id);
-        if (it != tags_.end()) {
-            return it->second.count;
+        const Tags::const_iterator tag = tags_.find(id);
+        if (tag != tags_.end()) {
+            return tag->second.count;
         }
         return 0;
     }
 
 private:
-    static unsigned short sget2(unsigned char *s, ByteOrder order)
+    struct Tag {
+        int id;
+        std::vector<unsigned char> value;
+        TagType type;
+        unsigned int count;
+    };
+    
+    using Tags = std::unordered_map<int, Tag>;
+    
+    std::uint16_t sget2(const std::uint8_t* s) const
     {
-        if (order == INTEL) {
+        if (order_ == INTEL) {
             return s[0] | s[1] << 8;
         } else {
             return s[0] << 8 | s[1];
         }
     }
     
-    static int sget4(unsigned char *s, ByteOrder order)
+    std::uint32_t sget4(const std::uint8_t* s) const
     {
-        if (order == INTEL) {
+        if (order_ == INTEL) {
             return s[0] | s[1] << 8 | s[2] << 16 | s[3] << 24;
         } else {
             return s[0] << 24 | s[1] << 16 | s[2] << 8 | s[3];
         }
     }
     
-    static unsigned short get2(FILE* f, ByteOrder order)
+    std::uint16_t get2()
     { 
-        unsigned char str[2] = { 0xff, 0xff };
-        fread (str, 1, 2, f);
-        return sget2(str, order);
+        std::uint16_t res = std::numeric_limits<std::uint16_t>::max();
+        std::fread(&res, 1, 2, file_);
+        return sget2(reinterpret_cast<const std::uint8_t*>(&res));
     }
     
-    static int get4(FILE *f, ByteOrder order)
+    std::uint32_t get4()
     { 
-        unsigned char str[4] = { 0xff, 0xff, 0xff, 0xff };
-        fread (str, 1, 4, f);
-        return sget4 (str, order);
-    }
-    
-    static short int int2_to_signed(short unsigned int i)
-    {
-        union {
-            short unsigned int i;
-            short int s;
-        } u;
-        u.i = i;
-        return u.s;
+        std::uint32_t res = std::numeric_limits<std::uint32_t>::max();
+        std::fread(&res, 1, 4, file_);
+        return sget4(reinterpret_cast<const std::uint8_t*>(&res));
     }
 
     static int getTypeSize(TagType type)
     {
-        return ("11124811248484"[type < 14 ? type : 0] - '0');
+        switch (type) {
+            case INVALID:
+            case BYTE:
+            case ASCII:
+            case SBYTE:
+            case UNDEFINED: {
+                return 1;
+            }
+            
+            case SHORT:
+            case SSHORT: {
+                return 2;
+            }
+            
+            case LONG:
+            case SLONG:
+            case FLOAT: {
+                return 4;
+            }
+            
+            case RATIONAL:
+            case SRATIONAL:
+            case DOUBLE: {
+                return 8;
+            }
+        }
+        
+        return 1;
     }
 
-    struct Tag {
-        int id;
-        std::vector<unsigned char> value;
-        TagType type;
-        unsigned int count;
-
-        Tag(): id(0), value(), type(INVALID), count(0) {}
-    };
-
-    bool parse_tag(Tag &t, FILE *f, int base, ByteOrder order)
+    bool parseTag(Tag& tag)
     {
-        t.id = get2(f, order);
-        t.type  = (TagType)get2(f, order);
-        t.count = get4(f, order);
+        tag.id = get2();
+        tag.type = TagType(get2());
+        tag.count = std::max(1U, get4());
 
-        if (!t.count) {
-            t.count = 1;
-        }
-
-        // filter out invalid tags
-        // note the large count is to be able to pass LeafData ASCII tag which can be up to almost 10 megabytes,
+        // Filter out invalid tags
+        // Note: The large count is to be able to pass LeafData ASCII tag which can be up to almost 10 megabytes,
         // (only a small part of it will actually be parsed though)
-        if ((int)t.type < 1 || (int)t.type > 12 || t.count > 10 * 1024 * 1024) {
-            t.type = INVALID;
+        if (
+            tag.type == INVALID
+            || tag.type > DOUBLE 
+            || tag.count > 10 * 1024 * 1024
+        ) {
+            tag.type = INVALID;
             return false;
         }
 
-        // store next Tag's position in file
-        int save = ftell(f) + 4;
+        // Store next Tag's position in file
+        const std::size_t saved_position = std::ftell(file_) + 4;
 
-        // load value field (possibly seek before)
-        int valuesize = t.count * getTypeSize(t.type);
+        // Load value field (possibly seek before)
+        const std::size_t value_size = tag.count * getTypeSize(tag.type);
 
-        if (valuesize > 4) {
-            fseek(f, get4(f, order) + base, SEEK_SET);
+        if (value_size > 4) {
+            if (std::fseek(file_, get4(), SEEK_SET) == -1) {
+                tag.type = INVALID;
+                return false;
+            }
         }
 
-        // read value
-        t.value.resize(valuesize + 1);
-        auto readSize = fread(&(t.value[0]), 1, valuesize, f);
-        t.value[readSize] = '\0';
+        // Read value
+        tag.value.resize(value_size + 1);
+        const std::size_t read = std::fread(tag.value.data(), 1, value_size, file_);
+        if (read != value_size) {
+            tag.type = INVALID;
+            return false;
+        }
+        tag.value[read] = '\0';
 
-        // seek back to the saved position
-        fseek(f, save, SEEK_SET);
+        // Seek back to the saved position
+        std::fseek(file_, saved_position, SEEK_SET);
+        
         return true;
     }
-
-    std::unordered_map<int, Tag> tags_;
+    
+    FILE* const file_;
+    
+    Tags tags_;
     ByteOrder order_;
-    FILE *file_;
 };
 
 } // namespace
@@ -772,22 +840,22 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
     constexpr int tiff_float_size = 4;
 
     enum TagKey {
-        COLOR_MATRIX_1 = 50721,
-        COLOR_MATRIX_2 = 50722,
-        PROFILE_HUE_SAT_MAP_DIMS = 50937,
-        PROFILE_HUE_SAT_MAP_DATA_1 = 50938,
-        PROFILE_HUE_SAT_MAP_DATA_2 = 50939,
-        PROFILE_TONE_CURVE = 50940,
-        PROFILE_TONE_COPYRIGHT = 50942,
-        CALIBRATION_ILLUMINANT_1 = 50778,
-        CALIBRATION_ILLUMINANT_2 = 50779,
-        FORWARD_MATRIX_1 = 50964,
-        FORWARD_MATRIX_2 = 50965,
-        PROFILE_LOOK_TABLE_DIMS = 50981, // ProfileLookup is the low quality variant
-        PROFILE_LOOK_TABLE_DATA = 50982,
-        PROFILE_HUE_SAT_MAP_ENCODING = 51107,
-        PROFILE_LOOK_TABLE_ENCODING = 51108,
-        BASELINE_EXPOSURE_OFFSET = 51109
+        TAG_KEY_COLOR_MATRIX_1 = 50721,
+        TAG_KEY_COLOR_MATRIX_2 = 50722,
+        TAG_KEY_PROFILE_HUE_SAT_MAP_DIMS = 50937,
+        TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_1 = 50938,
+        TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_2 = 50939,
+        TAG_KEY_PROFILE_TONE_CURVE = 50940,
+        TAG_KEY_PROFILE_TONE_COPYRIGHT = 50942,
+        TAG_KEY_CALIBRATION_ILLUMINANT_1 = 50778,
+        TAG_KEY_CALIBRATION_ILLUMINANT_2 = 50779,
+        TAG_KEY_FORWARD_MATRIX_1 = 50964,
+        TAG_KEY_FORWARD_MATRIX_2 = 50965,
+        TAG_KEY_PROFILE_LOOK_TABLE_DIMS = 50981, // ProfileLookup is the low quality variant
+        TAG_KEY_PROFILE_LOOK_TABLE_DATA = 50982,
+        TAG_KEY_PROFILE_HUE_SAT_MAP_ENCODING = 51107,
+        TAG_KEY_PROFILE_LOOK_TABLE_ENCODING = 51108,
+        TAG_KEY_BASELINE_EXPOSURE_OFFSET = 51109
     };
 
     static const float adobe_camera_raw_default_curve[] = {
@@ -1059,46 +1127,46 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
 
     DCPMetadata md(file);
     if (!md.parse()) {
-        //printf ("Unable to load DCP profile '%s' !", filename.c_str());
+        printf ("Unable to load DCP profile '%s'.", filename.c_str());
         return;
     }
 
     light_source_1 =
-        md.find(CALIBRATION_ILLUMINANT_1) ?
-        md.toShort(CALIBRATION_ILLUMINANT_1) :
-        -1;
+        md.find(TAG_KEY_CALIBRATION_ILLUMINANT_1)
+            ? md.toShort(TAG_KEY_CALIBRATION_ILLUMINANT_1)
+            : -1;
     light_source_2 =
-        md.find(CALIBRATION_ILLUMINANT_2) ?
-        md.toShort(CALIBRATION_ILLUMINANT_2) :
-        -1;
+        md.find(TAG_KEY_CALIBRATION_ILLUMINANT_2)
+            ? md.toShort(TAG_KEY_CALIBRATION_ILLUMINANT_2)
+            : -1;
     temperature_1 = calibrationIlluminantToTemperature(light_source_1);
     temperature_2 = calibrationIlluminantToTemperature(light_source_2);
 
-    const bool has_second_hue_sat = md.find(PROFILE_HUE_SAT_MAP_DATA_2); // Some profiles have two matrices, but just one huesat
+    const bool has_second_hue_sat = md.find(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_2); // Some profiles have two matrices, but just one huesat
 
     // Fetch Forward Matrices, if any
-    has_forward_matrix_1 = md.find(FORWARD_MATRIX_1);
+    has_forward_matrix_1 = md.find(TAG_KEY_FORWARD_MATRIX_1);
 
     if (has_forward_matrix_1) {
         for (int row = 0; row < 3; ++row) {
             for (int col = 0; col < 3; ++col) {
-                forward_matrix_1[row][col] = md.toDouble(FORWARD_MATRIX_1, (col + row * 3) * 8);
+                forward_matrix_1[row][col] = md.toDouble(TAG_KEY_FORWARD_MATRIX_1, (col + row * 3) * 8);
             }
         }
     }
 
-    has_forward_matrix_2 = md.find(FORWARD_MATRIX_2);
+    has_forward_matrix_2 = md.find(TAG_KEY_FORWARD_MATRIX_2);
 
     if (has_forward_matrix_2) {
         for (int row = 0; row < 3; ++row) {
             for (int col = 0; col < 3; ++col) {
-                forward_matrix_2[row][col] = md.toDouble(FORWARD_MATRIX_2, (col + row * 3) * 8);
+                forward_matrix_2[row][col] = md.toDouble(TAG_KEY_FORWARD_MATRIX_2, (col + row * 3) * 8);
             }
         }
     }
 
     // Color Matrix (one is always there)
-    if (!md.find(COLOR_MATRIX_1)) {
+    if (!md.find(TAG_KEY_COLOR_MATRIX_1)) {
         if (settings->verbose) {
             std::cerr << "DCP '" << filename << "' is missing 'ColorMatrix1'. Skipped." << std::endl;
         }
@@ -1110,24 +1178,24 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
 
     for (int row = 0; row < 3; ++row) {
         for (int col = 0; col < 3; ++col) {
-            color_matrix_1[row][col] = md.toDouble(COLOR_MATRIX_1, (col + row * 3) * 8);
+            color_matrix_1[row][col] = md.toDouble(TAG_KEY_COLOR_MATRIX_1, (col + row * 3) * 8);
         }
     }
 
-    if (md.find(PROFILE_LOOK_TABLE_DIMS)) {
-        look_info.hue_divisions = md.toInt(PROFILE_LOOK_TABLE_DIMS, 0);
-        look_info.sat_divisions = md.toInt(PROFILE_LOOK_TABLE_DIMS, 4);
-        look_info.val_divisions = md.toInt(PROFILE_LOOK_TABLE_DIMS, 8);
+    if (md.find(TAG_KEY_PROFILE_LOOK_TABLE_DIMS)) {
+        look_info.hue_divisions = md.toInt(TAG_KEY_PROFILE_LOOK_TABLE_DIMS, 0);
+        look_info.sat_divisions = md.toInt(TAG_KEY_PROFILE_LOOK_TABLE_DIMS, 4);
+        look_info.val_divisions = md.toInt(TAG_KEY_PROFILE_LOOK_TABLE_DIMS, 8);
 
-        look_info.srgb_gamma = md.find(PROFILE_LOOK_TABLE_ENCODING) && md.toInt(PROFILE_LOOK_TABLE_ENCODING);
+        look_info.srgb_gamma = md.find(TAG_KEY_PROFILE_LOOK_TABLE_ENCODING) && md.toInt(TAG_KEY_PROFILE_LOOK_TABLE_ENCODING);
 
-        look_info.array_count = md.getCount(PROFILE_LOOK_TABLE_DATA) / 3;
+        look_info.array_count = md.getCount(TAG_KEY_PROFILE_LOOK_TABLE_DATA) / 3;
         look_table.resize(look_info.array_count);
 
         for (unsigned int i = 0; i < look_info.array_count; i++) {
-            look_table[i].hue_shift = md.toDouble(PROFILE_LOOK_TABLE_DATA, (i * 3) * tiff_float_size);
-            look_table[i].sat_scale = md.toDouble(PROFILE_LOOK_TABLE_DATA, (i * 3 + 1) * tiff_float_size);
-            look_table[i].val_scale = md.toDouble(PROFILE_LOOK_TABLE_DATA, (i * 3 + 2) * tiff_float_size);
+            look_table[i].hue_shift = md.toDouble(TAG_KEY_PROFILE_LOOK_TABLE_DATA, (i * 3) * tiff_float_size);
+            look_table[i].sat_scale = md.toDouble(TAG_KEY_PROFILE_LOOK_TABLE_DATA, (i * 3 + 1) * tiff_float_size);
+            look_table[i].val_scale = md.toDouble(TAG_KEY_PROFILE_LOOK_TABLE_DATA, (i * 3 + 2) * tiff_float_size);
         }
 
         // Precalculated constants for table application
@@ -1144,20 +1212,20 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
         look_info.pc.val_step = look_info.hue_divisions * look_info.pc.hue_step;
     }
 
-    if (md.find(PROFILE_HUE_SAT_MAP_DIMS)) {
-        delta_info.hue_divisions = md.toInt(PROFILE_HUE_SAT_MAP_DIMS, 0);
-        delta_info.sat_divisions = md.toInt(PROFILE_HUE_SAT_MAP_DIMS, 4);
-        delta_info.val_divisions = md.toInt(PROFILE_HUE_SAT_MAP_DIMS, 8);
+    if (md.find(TAG_KEY_PROFILE_HUE_SAT_MAP_DIMS)) {
+        delta_info.hue_divisions = md.toInt(TAG_KEY_PROFILE_HUE_SAT_MAP_DIMS, 0);
+        delta_info.sat_divisions = md.toInt(TAG_KEY_PROFILE_HUE_SAT_MAP_DIMS, 4);
+        delta_info.val_divisions = md.toInt(TAG_KEY_PROFILE_HUE_SAT_MAP_DIMS, 8);
 
-        delta_info.srgb_gamma = md.find(PROFILE_HUE_SAT_MAP_ENCODING) && md.toInt(PROFILE_HUE_SAT_MAP_ENCODING);
+        delta_info.srgb_gamma = md.find(TAG_KEY_PROFILE_HUE_SAT_MAP_ENCODING) && md.toInt(TAG_KEY_PROFILE_HUE_SAT_MAP_ENCODING);
 
-        delta_info.array_count = md.getCount(PROFILE_HUE_SAT_MAP_DATA_1) / 3;
+        delta_info.array_count = md.getCount(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_1) / 3;
         deltas_1.resize(delta_info.array_count);
 
         for (unsigned int i = 0; i < delta_info.array_count; ++i) {
-            deltas_1[i].hue_shift = md.toDouble(PROFILE_HUE_SAT_MAP_DATA_1, (i * 3) * tiff_float_size);
-            deltas_1[i].sat_scale = md.toDouble(PROFILE_HUE_SAT_MAP_DATA_1, (i * 3 + 1) * tiff_float_size);
-            deltas_1[i].val_scale = md.toDouble(PROFILE_HUE_SAT_MAP_DATA_1, (i * 3 + 2) * tiff_float_size);
+            deltas_1[i].hue_shift = md.toDouble(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_1, (i * 3) * tiff_float_size);
+            deltas_1[i].sat_scale = md.toDouble(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_1, (i * 3 + 1) * tiff_float_size);
+            deltas_1[i].val_scale = md.toDouble(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_1, (i * 3 + 2) * tiff_float_size);
         }
 
         delta_info.pc.h_scale =
@@ -1177,14 +1245,14 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
         // Second matrix
         has_color_matrix_2 = true;
 
-        bool cm2 = md.find(COLOR_MATRIX_2);
+        const bool cm2 = md.find(TAG_KEY_COLOR_MATRIX_2);
 
         for (int row = 0; row < 3; ++row) {
             for (int col = 0; col < 3; ++col) {
                 color_matrix_2[row][col] =
                     cm2
-                    ? md.toDouble(COLOR_MATRIX_2, (col + row * 3) * 8)
-                    : color_matrix_1[row][col];
+                        ? md.toDouble(TAG_KEY_COLOR_MATRIX_2, (col + row * 3) * 8)
+                        : color_matrix_1[row][col];
             }
         }
 
@@ -1194,20 +1262,20 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
 
             // Saturation maps. Need to be unwinded.
             for (unsigned int i = 0; i < delta_info.array_count; ++i) {
-                deltas_2[i].hue_shift = md.toDouble(PROFILE_HUE_SAT_MAP_DATA_2, (i * 3) * tiff_float_size);
-                deltas_2[i].sat_scale = md.toDouble(PROFILE_HUE_SAT_MAP_DATA_2, (i * 3 + 1) * tiff_float_size);
-                deltas_2[i].val_scale = md.toDouble(PROFILE_HUE_SAT_MAP_DATA_2, (i * 3 + 2) * tiff_float_size);
+                deltas_2[i].hue_shift = md.toDouble(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_2, (i * 3) * tiff_float_size);
+                deltas_2[i].sat_scale = md.toDouble(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_2, (i * 3 + 1) * tiff_float_size);
+                deltas_2[i].val_scale = md.toDouble(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_2, (i * 3 + 2) * tiff_float_size);
             }
         }
     }
 
-    has_baseline_exposure_offset = md.find(BASELINE_EXPOSURE_OFFSET);
+    has_baseline_exposure_offset = md.find(TAG_KEY_BASELINE_EXPOSURE_OFFSET);
     if (has_baseline_exposure_offset) {
-        baseline_exposure_offset = md.toDouble(BASELINE_EXPOSURE_OFFSET);
+        baseline_exposure_offset = md.toDouble(TAG_KEY_BASELINE_EXPOSURE_OFFSET);
     }
 
     // Read tone curve points, if any, but disable to RTs own profiles
-    if (md.find(PROFILE_TONE_CURVE)) {
+    if (md.find(TAG_KEY_PROFILE_TONE_CURVE)) {
         std::vector<double> curve_points = {
             static_cast<double>(DCT_Spline) // The first value is the curve type
         };
@@ -1215,9 +1283,9 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
         // Push back each X/Y coordinates in a loop
         bool curve_is_linear = true;
 
-        for (unsigned int i = 0, n = md.getCount(PROFILE_TONE_CURVE); i < n; i += 2) {
-            const double x = md.toDouble(PROFILE_TONE_CURVE, (i + 0) * tiff_float_size);
-            const double y = md.toDouble(PROFILE_TONE_CURVE, (i + 1) * tiff_float_size);
+        for (unsigned int i = 0, n = md.getCount(TAG_KEY_PROFILE_TONE_CURVE); i < n; i += 2) {
+            const double x = md.toDouble(TAG_KEY_PROFILE_TONE_CURVE, (i + 0) * tiff_float_size);
+            const double y = md.toDouble(TAG_KEY_PROFILE_TONE_CURVE, (i + 1) * tiff_float_size);
 
             if (x != y) {
                 curve_is_linear = false;
@@ -1233,7 +1301,7 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
             tone_curve.Set(DiagonalCurve(curve_points, CURVES_MIN_POLY_POINTS));
         }
     } else {
-        if (md.find(PROFILE_TONE_COPYRIGHT) && md.toString(PROFILE_TONE_COPYRIGHT).find("Adobe Systems") != std::string::npos) {
+        if (md.find(TAG_KEY_PROFILE_TONE_COPYRIGHT) && md.toString(TAG_KEY_PROFILE_TONE_COPYRIGHT).find("Adobe Systems") != std::string::npos) {
             // An Adobe profile without tone curve is expected to have the Adobe Default Curve, we add that
             std::vector<double> curve_points = {
                 static_cast<double>(DCT_Spline)

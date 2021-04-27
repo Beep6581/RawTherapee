@@ -1175,27 +1175,27 @@ void RawImageSource::HLRecovery_inpaint(float** red, float** green, float** blue
                                       {2.0f, 3.0f, 0.001f}
                                      };
 
-        const float rad1 = vals[blur][0];
-        const float rad2 = vals[blur][1];
+        const float radius1 = vals[blur][0];
+        const float radius2 = vals[blur][1];
         const float th = vals[blur][2];
 
-        guidedFilter(guide, mask, mask, rad1, th, true, 1);
+        guidedFilter(guide, mask, mask, radius1, th, true, 1);
         if (plistener) {
             progress += 0.03;
             plistener->setProgress(progress);
         }
         if (blur > 0) { //no use of 2nd guidedFilter if Blur = 0 (slider to 1)..speed-up and very small differences.
-            guidedFilter(guide, rbuf, rbuf, rad2, 0.01f * 65535.f, true, 1);
+            guidedFilter(guide, rbuf, rbuf, radius2, 0.01f * 65535.f, true, 1);
             if (plistener) {
                 progress += 0.03;
                 plistener->setProgress(progress);
             }
-            guidedFilter(guide, gbuf, gbuf, rad2, 0.01f * 65535.f, true, 1);
+            guidedFilter(guide, gbuf, gbuf, radius2, 0.01f * 65535.f, true, 1);
             if (plistener) {
                 progress += 0.03;
                 plistener->setProgress(progress);
             }
-            guidedFilter(guide, bbuf, bbuf, rad2, 0.01f * 65535.f, true, 1);
+            guidedFilter(guide, bbuf, bbuf, radius2, 0.01f * 65535.f, true, 1);
             if (plistener) {
                 progress += 0.03;
                 plistener->setProgress(progress);

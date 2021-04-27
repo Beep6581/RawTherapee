@@ -42,7 +42,6 @@ ExifPanel::ExifPanel() :
     }
 {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
-    recursiveOp = true;
 
     exifTree = Gtk::manage (new Gtk::TreeView());
     scrolledWindow = Gtk::manage (new Gtk::ScrolledWindow());
