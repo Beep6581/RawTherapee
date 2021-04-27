@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -17,8 +15,8 @@
    inkscape:export-filename="/tmp/template.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
-   inkscape:version="0.92.2 2405546, 2018-03-11"
-   sodipodi:docname="histogram-bayer-off-small.svg">
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   sodipodi:docname="histogram-type-histogram-small.svg">
   <sodipodi:namedview
      id="base"
      pagecolor="#E0E1E2"
@@ -26,14 +24,14 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="50.75"
-     inkscape:cx="8"
-     inkscape:cy="8"
+     inkscape:zoom="27.621949"
+     inkscape:cx="7.1257597"
+     inkscape:cy="9.4855375"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:window-width="1920"
-     inkscape:window-height="1019"
+     inkscape:window-height="1041"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
@@ -44,7 +42,8 @@
      inkscape:snap-others="false"
      inkscape:object-nodes="false"
      inkscape:snap-grids="true"
-     inkscape:snap-bbox-midpoints="false">
+     inkscape:snap-bbox-midpoints="false"
+     inkscape:document-rotation="0">
     <inkscape:grid
        type="xygrid"
        id="grid1374"
@@ -63,10 +62,10 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
         <dc:creator>
           <cc:Agent>
-            <dc:title>Maciej Dworak</dc:title>
+            <dc:title>Lawrence Lee</dc:title>
           </cc:Agent>
         </dc:creator>
         <dc:rights>
@@ -100,40 +99,24 @@
      inkscape:groupmode="layer"
      inkscape:label="Layer 1"
      transform="translate(0,-8)">
+    <path
+       style="fill:#2a7fff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 2,22 c 0,0 1.5857864,-4 3,-4 1.4142136,0 2,2 3,2 1,0 1,-10 2.5,-10 1.5,0 2.5,12 2.5,12 z"
+       id="path851"
+       sodipodi:nodetypes="cszzcc" />
     <rect
-       style="opacity:1;fill:none;fill-opacity:0.94495413;fill-rule:nonzero;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-       id="rect937"
-       width="9"
-       height="9"
-       x="3.4999998"
-       y="11.5" />
+       y="10"
+       x="2"
+       height="12"
+       width="12"
+       id="rect1467"
+       style="opacity:0.3;fill:#2a7fff;stroke-linecap:square;fill-opacity:1" />
     <rect
-       style="opacity:1;fill:#30d043;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-       id="rect1869"
-       width="4"
-       height="4"
-       x="4"
-       y="12" />
-    <rect
-       y="12"
-       x="8"
-       height="4"
-       width="4"
-       id="rect1871"
-       style="opacity:1;fill:#d03030;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal" />
-    <rect
-       y="16"
-       x="8"
-       height="4"
-       width="4"
-       id="rect2416"
-       style="opacity:1;fill:#30d043;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal" />
-    <rect
-       style="opacity:1;fill:#3030d0;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-       id="rect2418"
-       width="4"
-       height="4"
-       x="4"
-       y="16" />
+       style="opacity:1;fill:none;fill-opacity:0.3;stroke:#000000;stroke-width:0.999999;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect849"
+       width="13"
+       height="13.000001"
+       x="1.5"
+       y="9.5" />
   </g>
 </svg>

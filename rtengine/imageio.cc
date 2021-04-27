@@ -24,6 +24,8 @@
 #include <cstdio>
 #include <cstring>
 #include <fcntl.h>
+#include <libiptcdata/iptc-jpeg.h>
+#include <memory>
 #include "rt_math.h"
 #include "procparams.h"
 #include "utils.h"
@@ -125,7 +127,6 @@ ImageIO::ImageIO() :
     embProfile(nullptr),
     profileLength(0),
     loadedProfileData(nullptr),
-    loadedProfileDataJpg(false),
     loadedProfileLength(0),
     sampleFormat(IIOSF_UNKNOWN),
     sampleArrangement(IIOSA_UNKNOWN)
@@ -442,7 +443,6 @@ int ImageIO::loadJPEGFromMemory (const char* buffer, int bufsize)
     jpeg_read_header(&cinfo, TRUE);
 
     deleteLoadedProfileData();
-    loadedProfileDataJpg = true;
     bool hasprofile = read_icc_profile (&cinfo, (JOCTET**)&loadedProfileData, (unsigned int*)&loadedProfileLength);
 
     if (hasprofile) {
@@ -527,7 +527,6 @@ int ImageIO::loadJPEG (const Glib::ustring &fname)
         cinfo.out_color_space = JCS_RGB;
 
         deleteLoadedProfileData();
-        loadedProfileDataJpg = true;
         bool hasprofile = read_icc_profile (&cinfo, (JOCTET**)&loadedProfileData, (unsigned int*)&loadedProfileLength);
 
         if (hasprofile) {
@@ -603,14 +602,17 @@ int ImageIO::getTIFFSampleFormat (const Glib::ustring &fname, IIOSampleFormat &s
         return IMIO_VARIANTNOTSUPPORTED;
     }
 
-    if (!TIFFGetField(in, TIFFTAG_SAMPLEFORMAT, &sampleformat))
+    if (!TIFFGetField(in, TIFFTAG_SAMPLEFORMAT, &sampleformat)) {
         /*
          * WARNING: This is a dirty hack!
          * We assume that files which doesn't contain the TIFFTAG_SAMPLEFORMAT tag
          * (which is the case with uncompressed TIFFs produced by RT!) are RGB files,
          * but that may be not true.   --- Hombre
          */
-    {
+        sampleformat = SAMPLEFORMAT_UINT;
+    } else if (sampleformat == SAMPLEFORMAT_VOID) {
+        // according to https://www.awaresystems.be/imaging/tiff/tifftags/sampleformat.html
+        // we assume SAMPLEFORMAT_UINT if SAMPLEFORMAT_VOID is set
         sampleformat = SAMPLEFORMAT_UINT;
     }
 
@@ -718,6 +720,8 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
     if (!hasTag) {
         // These are needed
         TIFFClose(in);
+        fprintf(stderr, "Error 1 loading %s\n", fname.c_str());
+        fflush(stderr);
         return IMIO_VARIANTNOTSUPPORTED;
     }
 
@@ -726,6 +730,8 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
 
     if (config != PLANARCONFIG_CONTIG) {
         TIFFClose(in);
+        fprintf(stderr, "Error 2 loading %s\n", fname.c_str());
+        fflush(stderr);
         return IMIO_VARIANTNOTSUPPORTED;
     }
 
@@ -773,7 +779,6 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
 
     char* profdata;
     deleteLoadedProfileData();
-    loadedProfileDataJpg = false;
 
     if (TIFFGetField(in, TIFFTAG_ICCPROFILE, &loadedProfileLength, &profdata)) {
         embProfile = cmsOpenProfileFromMem (profdata, loadedProfileLength);
@@ -785,32 +790,33 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
 
     allocate (width, height);
 
-    unsigned char* linebuffer = new unsigned char[TIFFScanlineSize(in) * (samplesperpixel == 1 ? 3 : 1)];
+    std::unique_ptr<unsigned char[]> linebuffer(new unsigned char[TIFFScanlineSize(in) * (samplesperpixel == 1 ? 3 : 1)]);
 
     for (int row = 0; row < height; row++) {
-        if (TIFFReadScanline(in, linebuffer, row, 0) < 0) {
+        if (TIFFReadScanline(in, linebuffer.get(), row, 0) < 0) {
             TIFFClose(in);
-            delete [] linebuffer;
+            fprintf(stderr, "Error 3 loading %s\n", fname.c_str());
+            fflush(stderr);
             return IMIO_READERROR;
         }
 
         if (samplesperpixel > 3) {
             for (int i = 0; i < width; i++) {
-                memcpy (linebuffer + i * 3 * bitspersample / 8, linebuffer + i * samplesperpixel * bitspersample / 8, 3 * bitspersample / 8);
+                memcpy(linebuffer.get() + i * 3 * bitspersample / 8, linebuffer.get() + i * samplesperpixel * bitspersample / 8, 3 * bitspersample / 8);
             }
         }
         else if (samplesperpixel == 1) {
             const size_t bytes = bitspersample / 8;
             for (int i = width - 1; i >= 0; --i) {
-                const unsigned char* const src = linebuffer + i * bytes;
-                unsigned char* const dest = linebuffer + i * 3 * bytes;
+                const unsigned char* const src = linebuffer.get() + i * bytes;
+                unsigned char* const dest = linebuffer.get() + i * 3 * bytes;
                 memcpy(dest + 2 * bytes, src, bytes);
                 memcpy(dest + 1 * bytes, src, bytes);
                 memcpy(dest + 0 * bytes, src, bytes);
             }
         }
 
-        setScanline (row, linebuffer, bitspersample);
+        setScanline (row, linebuffer.get(), bitspersample);
 
         if (pl && !(row % 100)) {
             pl->setProgress ((double)(row + 1) / height);
@@ -818,7 +824,6 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
     }
 
     TIFFClose(in);
-    delete [] linebuffer;
 
     if (pl) {
         pl->setProgressStr ("PROGRESSBAR_READY");
@@ -1371,11 +1376,7 @@ MyMutex& ImageIO::mutex ()
 void ImageIO::deleteLoadedProfileData( )
 {
     if(loadedProfileData) {
-        if(loadedProfileDataJpg) {
-            free(loadedProfileData);
-        } else {
-            delete[] loadedProfileData;
-        }
+        delete[] loadedProfileData;
     }
 
     loadedProfileData = nullptr;

@@ -41,6 +41,8 @@ ExifPanel::ExifPanel() :
         {"Exif.Image.ImageDescription", "Image Description"}
     }
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    recursiveOp = true;
 
     exifTree = Gtk::manage (new Gtk::TreeView());
     scrolledWindow = Gtk::manage (new Gtk::ScrolledWindow());
@@ -48,7 +50,7 @@ ExifPanel::ExifPanel() :
     exifTree->set_headers_visible (false);
     exifTree->set_rules_hint (false);
     exifTree->set_reorderable (false);
-    exifTree->set_enable_search (true);
+    exifTree->set_enable_search (false);
     exifTree->get_selection()->set_mode (Gtk::SELECTION_MULTIPLE);
     scrolledWindow->set_shadow_type (Gtk::SHADOW_NONE);
     scrolledWindow->set_policy (Gtk::POLICY_ALWAYS, Gtk::POLICY_ALWAYS);
@@ -319,11 +321,11 @@ void ExifPanel::addPressed ()
 {
 
     Gtk::Dialog* dialog = new Gtk::Dialog (M ("EXIFPANEL_ADDTAGDLG_TITLE"), * ((Gtk::Window*)get_toplevel()), true);
-    dialog->add_button (Gtk::Stock::OK, Gtk::RESPONSE_OK);
-    dialog->add_button (Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+    dialog->add_button ("_OK", Gtk::RESPONSE_OK);
+    dialog->add_button ("_Cancel", Gtk::RESPONSE_CANCEL);
 
-    Gtk::HBox* hb1 = new Gtk::HBox ();
-    Gtk::HBox* hb2 = new Gtk::HBox ();
+    Gtk::Box* hb1 = new Gtk::Box ();
+    Gtk::Box* hb2 = new Gtk::Box ();
 
     Gtk::Label* tlabel = new Gtk::Label (M ("EXIFPANEL_ADDTAGDLG_SELECTTAG") + ":");
     MyComboBoxText* tcombo = new MyComboBoxText ();

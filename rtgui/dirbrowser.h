@@ -23,7 +23,7 @@
 
 #include "guiutils.h"
 
-class DirBrowser : public Gtk::VBox
+class DirBrowser : public Gtk::Box
 {
 public:
     typedef sigc::signal<void, const Glib::ustring&, const Glib::ustring&> DirSelectionSignal;

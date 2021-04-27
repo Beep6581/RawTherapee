@@ -32,11 +32,17 @@ using namespace rtengine::procparams;
 LocalContrast::LocalContrast(): FoldableToolPanel(this, "localcontrast", M("TP_LOCALCONTRAST_LABEL"), false, true)
 {
     auto m = ProcEventMapper::getInstance();
-    EvLocalContrastEnabled = m->newEvent(RGBCURVE, "HISTORY_MSG_LOCALCONTRAST_ENABLED");
+/*    EvLocalContrastEnabled = m->newEvent(RGBCURVE, "HISTORY_MSG_LOCALCONTRAST_ENABLED");
     EvLocalContrastRadius = m->newEvent(RGBCURVE, "HISTORY_MSG_LOCALCONTRAST_RADIUS");
     EvLocalContrastAmount = m->newEvent(RGBCURVE, "HISTORY_MSG_LOCALCONTRAST_AMOUNT");
     EvLocalContrastDarkness = m->newEvent(RGBCURVE, "HISTORY_MSG_LOCALCONTRAST_DARKNESS");
     EvLocalContrastLightness = m->newEvent(RGBCURVE, "HISTORY_MSG_LOCALCONTRAST_LIGHTNESS");
+*/
+    EvLocalContrastEnabled = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCALCONTRAST_ENABLED");
+    EvLocalContrastRadius = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCALCONTRAST_RADIUS");
+    EvLocalContrastAmount = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCALCONTRAST_AMOUNT");
+    EvLocalContrastDarkness = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCALCONTRAST_DARKNESS");
+    EvLocalContrastLightness = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_LOCALCONTRAST_LIGHTNESS");
     
     radius = Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_RADIUS"), 20., 200., 1., 80.));
     amount = Gtk::manage(new Adjuster(M("TP_LOCALCONTRAST_AMOUNT"), 0., 1., 0.01, 0.2));

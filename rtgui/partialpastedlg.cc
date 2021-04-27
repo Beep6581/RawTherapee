@@ -35,6 +35,9 @@ PartialSpotWidget::PartialSpotWidget():
     // Widget listener
     selListener(nullptr)
 {
+    
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
     // Configure tree view
     treeview->set_model(treemodel);
     treeview->set_enable_search(false);
@@ -311,13 +314,13 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     //---
     raw_preprocwb       = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_PREPROCWB")));
 
-    Gtk::VBox* vboxes[9];
-    Gtk::HSeparator* hseps[9];
+    Gtk::Box* vboxes[9];
+    Gtk::Separator* hseps[9];
 
     for (int i = 0; i < 9; i++) {
-        vboxes[i] = Gtk::manage (new Gtk::VBox ());
+        vboxes[i] = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
         vboxes[i]->set_name("PartialPasteGroupContainer");
-        hseps[i] = Gtk::manage (new Gtk::HSeparator ());
+        hseps[i] = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
         hseps[i]->set_name("PartialPasteHeaderSep");
     }
 
@@ -355,6 +358,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[2]->pack_start (*blackwhite, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*hsveq, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*filmSimulation, Gtk::PACK_SHRINK, 2);
+    vboxes[2]->pack_start (*filmNegative, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*softlight, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*rgbcurves, Gtk::PACK_SHRINK, 2);
     vboxes[2]->pack_start (*colortoning, Gtk::PACK_SHRINK, 2);
@@ -401,36 +405,35 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     vboxes[8]->pack_start (*raw_dcb_iterations, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_dcb_enhance, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_lmmse_iterations, Gtk::PACK_SHRINK, 2);
-    vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
+    vboxes[8]->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*raw_linenoise, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_greenthresh, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_hotpix_filt, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_deadpix_filt, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_pdaf_lines_filter, Gtk::PACK_SHRINK, 2);
-    vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
+    vboxes[8]->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*raw_expos, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_black, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_preprocwb, Gtk::PACK_SHRINK, 2);
-    vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
+    vboxes[8]->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*df_file, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*df_AutoSelect, Gtk::PACK_SHRINK, 2);
-    vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
+    vboxes[8]->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*ff_file, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_AutoSelect, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_BlurType, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_BlurRadius, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*ff_ClipControl, Gtk::PACK_SHRINK, 2);
-    vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
+    vboxes[8]->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*raw_ca_autocorrect, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_caredblue, Gtk::PACK_SHRINK, 2);
     vboxes[8]->pack_start (*raw_ca_avoid_colourshift, Gtk::PACK_SHRINK, 2);
-    vboxes[8]->pack_start (*Gtk::manage (new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 0);
-    vboxes[8]->pack_start (*filmNegative, Gtk::PACK_SHRINK, 2);
+    vboxes[8]->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 0);
     vboxes[8]->pack_start (*captureSharpening, Gtk::PACK_SHRINK, 2);
 
-    Gtk::VBox* vbCol1 = Gtk::manage (new Gtk::VBox ());
-    Gtk::VBox* vbCol2 = Gtk::manage (new Gtk::VBox ());
-    Gtk::VBox* vbCol3 = Gtk::manage (new Gtk::VBox ());
+    Gtk::Box* vbCol1 = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Box* vbCol2 = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Box* vbCol3 = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     for (int i = 0; i < 3; i++) {
         vbCol1->pack_start (*vboxes[i], Gtk::PACK_SHRINK, 2);
@@ -444,18 +447,18 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
         vbCol3->pack_start (*vboxes[i], Gtk::PACK_SHRINK, 2);
     }
 
-    Gtk::VBox* vbtop = Gtk::manage (new Gtk::VBox ());
+    Gtk::Box* vbtop = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     vbtop->pack_start (*everything, Gtk::PACK_SHRINK, 2);
 
     Gtk::Dialog::get_content_area()->pack_start (*vbtop, Gtk::PACK_SHRINK, 2);
 
-    Gtk::HBox* hbmain = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hbmain = Gtk::manage (new Gtk::Box ());
     hbmain->pack_start (*vbCol1);
-    Gtk::VSeparator *vsep1 = Gtk::manage (new Gtk::VSeparator ());
+    Gtk::Separator *vsep1 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
     setExpandAlignProperties(vsep1, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     hbmain->pack_start (*vsep1);
     hbmain->pack_start (*vbCol2);
-    Gtk::VSeparator *vsep2 = Gtk::manage (new Gtk::VSeparator ());
+    Gtk::Separator *vsep2 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
     setExpandAlignProperties(vsep2, false, true, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     hbmain->pack_start (*vsep2);
     hbmain->pack_start (*vbCol3);
@@ -655,7 +658,6 @@ void PartialPasteDlg::rawToggled ()
     ConnectionBlocker raw_ca_autocorrectBlocker(raw_ca_autocorrectConn);
     ConnectionBlocker raw_caredblueBlocker(raw_caredblueConn);
     ConnectionBlocker raw_ca_avoid_colourshiftBlocker(raw_ca_avoid_colourshiftconn);
-    ConnectionBlocker filmNegativeBlocker(filmNegativeConn);
     ConnectionBlocker captureSharpeningBlocker(captureSharpeningConn);
     ConnectionBlocker raw_preprocwbBlocker(raw_preprocwbConn);
 
@@ -686,7 +688,6 @@ void PartialPasteDlg::rawToggled ()
     raw_ca_autocorrect->set_active (raw->get_active ());
     raw_caredblue->set_active (raw->get_active ());
     raw_ca_avoid_colourshift->set_active (raw->get_active ());
-    filmNegative->set_active (raw->get_active());
     captureSharpening->set_active (raw->get_active());
     raw_preprocwb->set_active (raw->get_active());
 }
@@ -764,6 +765,7 @@ void PartialPasteDlg::colorToggled ()
     ConnectionBlocker chmixerbwBlocker(chmixerbwConn);
     ConnectionBlocker hsveqBlocker(hsveqConn);
     ConnectionBlocker filmSimulationBlocker(filmSimulationConn);
+    ConnectionBlocker filmNegativeBlocker(filmNegativeConn);
     ConnectionBlocker softlightBlocker(softlightConn);
     ConnectionBlocker rgbcurvesBlocker(rgbcurvesConn);
     ConnectionBlocker colortoningBlocker(colortoningConn);
@@ -776,6 +778,7 @@ void PartialPasteDlg::colorToggled ()
     blackwhite->set_active (color->get_active ());
     hsveq->set_active (color->get_active ());
     filmSimulation->set_active (color->get_active ());
+    filmNegative->set_active (color->get_active());
     softlight->set_active (color->get_active ());
     rgbcurves->set_active (color->get_active ());
     colortoning->set_active(color->get_active ());
@@ -1178,7 +1181,9 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
         filterPE.filmNegative.redRatio   = falsePE.filmNegative.redRatio;
         filterPE.filmNegative.greenExp  = falsePE.filmNegative.greenExp;
         filterPE.filmNegative.blueRatio   = falsePE.filmNegative.blueRatio;
-        filterPE.filmNegative.baseValues   = falsePE.filmNegative.baseValues;
+        filterPE.filmNegative.refInput   = falsePE.filmNegative.refInput;
+        filterPE.filmNegative.refOutput   = falsePE.filmNegative.refOutput;
+        filterPE.filmNegative.colorSpace   = falsePE.filmNegative.colorSpace;
     }
 
     if (!captureSharpening->get_active ()) {

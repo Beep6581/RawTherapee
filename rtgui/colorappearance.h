@@ -77,6 +77,11 @@ public:
     void curveMode3Changed   ();
     bool curveMode3Changed_  ();
     void neutral_pressed       ();
+    void complexmethodChanged();
+    void modelmethodChanged();
+    void catmethodChanged();
+    void convertParamToNormal();
+    void updateGUIToMode(int mode);
 
     void expandCurve         (bool isExpanded);
     bool isCurveExpanded     ();
@@ -104,6 +109,9 @@ private:
     rtengine::ProcEvent Evcatpreset;
     rtengine::ProcEvent EvCATAutotempout;
     rtengine::ProcEvent EvCATillum;
+    rtengine::ProcEvent EvCATcomplex;
+    rtengine::ProcEvent EvCATmodel;
+    rtengine::ProcEvent EvCATcat;
     bool bgTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     bool srTTipQuery (int x, int y, bool keyboard_tooltip, const Glib::RefPtr<Gtk::Tooltip>& tooltip);
     void foldAllButMe (GdkEventButton* event, MyExpander *expander);
@@ -139,6 +147,9 @@ private:
     MyComboBoxText* toneCurveMode;
     MyComboBoxText* toneCurveMode2;
     MyComboBoxText* toneCurveMode3;
+    MyComboBoxText* complexmethod;
+    MyComboBoxText* modelmethod;
+    MyComboBoxText* catmethod;
 
     //Adjuster* edge;
     Gtk::CheckButton* surrsource;
@@ -165,6 +176,10 @@ private:
     sigc::connection  surrconn;
     sigc::connection  gamutconn, datacieconn, tonecieconn /*,badpixconn , sharpcieconn*/;
     sigc::connection  tcmodeconn, tcmode2conn, tcmode3conn, neutralconn;
+    sigc::connection  complexmethodconn, modelmethodconn, catmethodconn;
+    Gtk::Box* alHBox;
+    Gtk::Box* wbmHBox;
+    Gtk::Box* illumHBox;
     CurveEditorGroup* curveEditorG;
     CurveEditorGroup* curveEditorG2;
     CurveEditorGroup* curveEditorG3;

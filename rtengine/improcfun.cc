@@ -51,6 +51,9 @@
 
 #include "../rtgui/editcallbacks.h"
 
+#pragma GCC diagnostic warning "-Wextra"
+#pragma GCC diagnostic warning "-Wdouble-promotion"
+
 namespace {
 
 using namespace rtengine;
@@ -952,12 +955,19 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
 
 
         float cz, wh, pfl;
-        Ciecam02::initcam1float (yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c);
+        int c16 = 1;
+        if (params->colorappearance.modelmethod == "02") {
+            c16 = 1;
+        }else if (params->colorappearance.modelmethod == "16") {
+            c16 = 16;
+        }
+
+        Ciecam02::initcam1float (yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c, c16);
         //printf ("wh=%f \n", wh);
 
         const float pow1 = pow_F(1.64f - pow_F(0.29f, n), 0.73f);
         float nj, nbbj, ncbj, czj, awj, flj;
-        Ciecam02::initcam2float (yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj);
+        Ciecam02::initcam2float (yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj, c16);
 #ifdef __SSE2__
         const float reccmcz = 1.f / (c2 * czj);
 #endif
@@ -981,7 +991,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
             }
 
             if (CAMBrightCurveJ.dirty) {
-                Ciecam02::curveJfloat(params->colorappearance.jlight, params->colorappearance.contrast, hist16J, CAMBrightCurveJ); //lightness and contrast J
+                Ciecam02::curveJfloat(params->colorappearance.jlight, params->colorappearance.contrast, 0.6f, hist16J, CAMBrightCurveJ); //lightness and contrast J
                 CAMBrightCurveJ /= 327.68f;
                 CAMBrightCurveJ.dirty = false;
             }
@@ -993,7 +1003,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
             }
 
             if (CAMBrightCurveQ.dirty) {
-                Ciecam02::curveJfloat(params->colorappearance.qbright, params->colorappearance.qcontrast, hist16Q, CAMBrightCurveQ); //brightness and contrast Q
+                Ciecam02::curveJfloat(params->colorappearance.qbright, params->colorappearance.qcontrast, 0.6f, hist16Q, CAMBrightCurveQ); //brightness and contrast Q
                 //  CAMBrightCurveQ /= coefQ;
                 CAMBrightCurveQ.dirty = false;
             }
@@ -1048,7 +1058,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                                                        Q,  M,  s, F2V(aw), F2V(fl), F2V(wh),
                                                        x,  y,  z,
                                                        F2V(xw1), F2V(yw1),  F2V(zw1),
-                                                       F2V(c),  F2V(nc), F2V(pow1), F2V(nbb), F2V(ncb), F2V(pfl), F2V(cz), F2V(d));
+                                                       F2V(c),  F2V(nc), F2V(pow1), F2V(nbb), F2V(ncb), F2V(pfl), F2V(cz), F2V(d), c16);
                     STVF(Jbuffer[k], J);
                     STVF(Cbuffer[k], C);
                     STVF(hbuffer[k], h);
@@ -1072,7 +1082,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                                                        Q,  M,  s, aw, fl, wh,
                                                        x,  y,  z,
                                                        xw1, yw1,  zw1,
-                                                         c,  nc, pow1, nbb, ncb, pfl, cz, d);
+                                                         c,  nc, pow1, nbb, ncb, pfl, cz, d, c16);
                     Jbuffer[k] = J;
                     Cbuffer[k] = C;
                     hbuffer[k] = h;
@@ -1110,7 +1120,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                                                        Q,  M,  s, aw, fl, wh,
                                                        x,  y,  z,
                                                        xw1, yw1,  zw1,
-                                                         c,  nc, pow1, nbb, ncb, pfl, cz, d);
+                                                         c,  nc, pow1, nbb, ncb, pfl, cz, d, c16);
 #endif
                     float Jpro, Cpro, hpro, Qpro, Mpro, spro;
                     Jpro = J;
@@ -1521,7 +1531,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             Ciecam02::jch2xyz_ciecam02float(xx, yy, zz,
                                                             J,  C, h,
                                                             xw2, yw2,  zw2,
-                                                              c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj);
+                                                              c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj, c16);
                             float x, y, z;
                             x = xx * 655.35f;
                             y = yy * 655.35f;
@@ -1573,7 +1583,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     Ciecam02::jch2xyz_ciecam02float(x, y, z,
                                                     LVF(Jbuffer[k]), LVF(Cbuffer[k]), LVF(hbuffer[k]),
                                                     F2V(xw2), F2V(yw2), F2V(zw2),
-                                                    F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz));
+                                                    F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz), c16);
                     STVF(xbuffer[k], x * c655d35);
                     STVF(ybuffer[k], y * c655d35);
                     STVF(zbuffer[k], z * c655d35);
@@ -1830,7 +1840,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         Ciecam02::jch2xyz_ciecam02float(xx, yy, zz,
                                                         ncie->J_p[i][j],  ncie_C_p, ncie->h_p[i][j],
                                                         xw2, yw2,  zw2,
-                                                          c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj);
+                                                          c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj, c16);
                         float x = (float)xx * 655.35f;
                         float y = (float)yy * 655.35f;
                         float z = (float)zz * 655.35f;
@@ -1878,7 +1888,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         Ciecam02::jch2xyz_ciecam02float(x, y, z,
                                                         LVF(Jbuffer[k]), LVF(Cbuffer[k]), LVF(hbuffer[k]),
                                                         F2V(xw2), F2V(yw2), F2V(zw2),
-                                                        F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz));
+                                                        F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz), c16);
                         x *= c655d35;
                         y *= c655d35;
                         z *= c655d35;
@@ -2221,40 +2231,10 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     }
 
     bool hasColorToning = params->colorToning.enabled && bool (ctOpacityCurve) &&  bool (ctColorCurve) && params->colorToning.method != "LabGrid";
-    bool hasColorToningLabGrid = params->colorToning.enabled && params->colorToning.method == "LabGrid";
+//    bool hasColorToningLabGrid = params->colorToning.enabled && params->colorToning.method == "LabGrid";
     //  float satLimit = float(params->colorToning.satProtectionThreshold)/100.f*0.7f+0.3f;
     //  float satLimitOpacity = 1.f-(float(params->colorToning.saturatedOpacity)/100.f);
     float strProtect = pow_F((float (params->colorToning.strength) / 100.f), 0.4f);
-
-    /*
-    // Debug output - Color LUTf points
-    if (ctColorCurve) {
-        printf("\nColor curve:");
-        for (size_t i=0; i<501; i++) {
-            if (i==0 || i==250 || i==500)
-                printf("\n(%.1f)[", float(i)/500.f);
-            printf("%.3f ", ctColorCurve.lutHueCurve[float(i)]);
-            if (i==0 || i==250 || i==500)
-            printf("]\n");
-        }
-        printf("\n");
-    }
-    */
-
-    /*
-    // Debug output - Opacity LUTf points
-    if (ctOpacityCurve) {
-        printf("\nOpacity curve:");
-        for (size_t i=0; i<501; i++) {
-            if (i==0 || i==250 || i==500)
-                printf("\n(%.1f)[", float(i)/500.f);
-            printf("%.3f ", ctOpacityCurve.lutOpacityCurve[float(i)]);
-            if (i==0 || i==250 || i==500)
-            printf("]\n");
-        }
-        printf("\n");
-    }
-    */
 
     float RedLow = params->colorToning.redlow / 100.0;
     float GreenLow = params->colorToning.greenlow / 100.0;
@@ -2798,7 +2778,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
                     //colortoning with shift color XYZ or Lch
                     else if (params->colorToning.method == "Lab" && opautili) {
-                        int algm = 0;
+                        int algo = 0;
                         bool twocol = true;//true=500 color   false=2 color
                         int metchrom = 0;
 
@@ -2832,19 +2812,19 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         }
 
                         if (params->colorToning.method == "Lab") {
-                            algm = 1;
+                            algo = 1;
                         } else if (params->colorToning.method == "Lch") {
-                            algm = 2;    //in case of
+                            algo = 2;    //in case of
                         }
 
-                        if (algm <= 2) {
+                        if (algo <= 2) {
                             for (int i = istart, ti = 0; i < tH; i++, ti++) {
                                 for (int j = jstart, tj = 0; j < tW; j++, tj++) {
                                     float r = rtemp[ti * TS + tj];
                                     float g = gtemp[ti * TS + tj];
                                     float b = btemp[ti * TS + tj];
                                     float ro, go, bo;
-                                    labtoning(r, g, b, ro, go, bo, algm, metchrom, twoc, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, clToningcurve, cl2Toningcurve, iplow, iphigh, wp, wip);
+                                    labtoning(r, g, b, ro, go, bo, algo, metchrom, twoc, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, clToningcurve, cl2Toningcurve, iplow, iphigh, wp, wip);
                                     setUnlessOOG(rtemp[ti * TS + tj], gtemp[ti * TS + tj], btemp[ti * TS + tj], ro, go, bo);
                                 }
                             }
@@ -3204,9 +3184,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                         Color::RGB2Lab(&rtemp[ti * TS], &gtemp[ti * TS], &btemp[ti * TS], &(lab->L[i][jstart]), &(lab->a[i][jstart]), &(lab->b[i][jstart]), toxyz, tW - jstart);
                     }
 
-                    if (hasColorToningLabGrid) {
-                        colorToningLabGrid(lab, jstart, tW, istart, tH, false);
-                    }
+                   // if (hasColorToningLabGrid) {
+                   //     colorToningLabGrid(lab, jstart, tW, istart, tH, false);
+                   // }
                 } else { // black & white
                     // Auto channel mixer needs whole image, so we now copy to tmpImage and close the tiled processing
                     for (int i = istart, ti = 0; i < tH; i++, ti++) {
@@ -3459,7 +3439,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
 
             //colortoning with shift color Lab
             else if (params->colorToning.method == "Lab"  && opautili) {
-                int algm = 0;
+                int algo = 0;
                 bool twocol = true;
                 int metchrom = 0;
 
@@ -3494,12 +3474,12 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                 }
 
                 if (params->colorToning.method == "Lab") {
-                    algm = 1;
+                    algo = 1;
                 } else if (params->colorToning.method == "Lch") {
-                    algm = 2;    //in case of
+                    algo = 2;    //in case of
                 }
 
-                if (algm <= 2) {
+                if (algo <= 2) {
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic, 5)
 #endif
@@ -3510,7 +3490,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                             float g = tmpImage->g(i, j);
                             float b = tmpImage->b(i, j);
                             float ro, bo, go;
-                            labtoning(r, g, b, ro, go, bo, algm, metchrom,  twoc, satLimit, satLimitOpacity, ctColorCurve,  ctOpacityCurve, clToningcurve, cl2Toningcurve,  iplow, iphigh,  wp,  wip);
+                            labtoning(r, g, b, ro, go, bo, algo, metchrom,  twoc, satLimit, satLimitOpacity, ctColorCurve,  ctOpacityCurve, clToningcurve, cl2Toningcurve,  iplow, iphigh,  wp,  wip);
                             setUnlessOOG(tmpImage->r(i, j), tmpImage->g(i, j), tmpImage->b(i, j), ro, go, bo);
                         }
                     }
@@ -3585,9 +3565,9 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
         for (int i = 0; i < tH; i++) {
             Color::RGB2Lab(tmpImage->r(i), tmpImage->g(i), tmpImage->b(i), lab->L[i], lab->a[i], lab->b[i], toxyz, tW);
 
-            if (hasColorToningLabGrid) {
-                colorToningLabGrid(lab, 0, tW, i, i + 1, false);
-            }
+           // if (hasColorToningLabGrid) {
+               // colorToningLabGrid(lab, 0, tW, i, i + 1, false);
+           // }
         }
 
 
@@ -3610,12 +3590,13 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     }
 
   //  shadowsHighlights(lab);
-    shadowsHighlights(lab, params->sh.enabled, params->sh.lab,params->sh.highlights ,params->sh.shadows, params->sh.radius, scale, params->sh.htonalwidth, params->sh.stonalwidth);
-
+ //   shadowsHighlights(lab, params->sh.enabled, params->sh.lab,params->sh.highlights ,params->sh.shadows, params->sh.radius, scale, params->sh.htonalwidth, params->sh.stonalwidth);
+/*
     if (params->localContrast.enabled) {
         // Alberto's local contrast
         localContrast(lab, lab->L, params->localContrast, false, scale);
     }
+    */
 }
 
 /**
@@ -4304,36 +4285,17 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
     const bool avoidColorShift = (params->labCurve.avoidcolorshift || (params->colorappearance.gamut && params->colorappearance.enabled)) && !bwToning ;
     const float protectRed = (float)settings->protectred;
     const double protectRedH = settings->protectredh;
-    float protect_red, protect_redh;
-    protect_red = protectRed;//default=60  chroma: one can put more or less if necessary...in 'option'  40...160
+    const float protect_red = rtengine::LIM<float>(protectRed, 20.f, 180.f); //default=60  chroma: one can put more or less if necessary...in 'option'  40...160
 
-    if (protect_red < 20.0f) {
-        protect_red = 20.0;    // avoid too low value
-    }
+    // default=0.4 rad : one can put more or less if necessary...in 'option'  0.2 ..1.0
+    // avoid divide by 0 and negatives values
+    // avoid too big values
+    const float protect_redh = rtengine::LIM<float>(protectRedH, 0.1f, 1.f);
 
-    if (protect_red > 180.0f) {
-        protect_red = 180.0;    // avoid too high value
-    }
-
-    protect_redh = float (protectRedH); //default=0.4 rad : one can put more or less if necessary...in 'option'  0.2 ..1.0
-
-    if (protect_redh < 0.1f) {
-        protect_redh = 0.1f;    //avoid divide by 0 and negatives values
-    }
-
-    if (protect_redh > 1.0f) {
-        protect_redh = 1.0f;    //avoid too big values
-    }
-
-    float protect_redhcur = protectRedH;//default=0.4 rad : one can put more or less if necessary...in 'option'  0.2 ..1
-
-    if (protect_redhcur < 0.1f) {
-        protect_redhcur = 0.1f;    //avoid divide by 0 and negatives values:minimal protection for transition
-    }
-
-    if (protect_redhcur > 3.5f) {
-        protect_redhcur = 3.5f;    //avoid too big values
-    }
+    // default=0.4 rad : one can put more or less if necessary...in 'option'  0.2 ..1
+    // avoid divide by 0 and negatives values:minimal protection for transition
+    // avoid too big values
+    const float protect_redhcurg = rtengine::LIM<float>(protectRedH, 0.1f, 3.5f);
 
     //increase saturation after denoise : ...approximation
     float factnoise = 1.f;
@@ -4593,21 +4555,21 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                 }
 
                 if (!bwToning) {
-                    float factorskin, factorsat, factorskinext;
+                    float factorskinc, factorsatc, factorskinextc;
 
                     if (chromapro > 1.f) {
                         float scale = scaleConst;//reduction in normal zone
                         float scaleext = 1.f;//reduction in transition zone
                         Color::scalered(rstprotection, chromapro, 0.0, HH, protect_redh, scale, scaleext);  //1.0
                         float interm = (chromapro - 1.f);
-                        factorskin = 1.f + (interm * scale);
-                        factorskinext = 1.f + (interm * scaleext);
+                        factorskinc = 1.f + (interm * scale);
+                        factorskinextc = 1.f + (interm * scaleext);
                     } else {
-                        factorskin = chromapro ; // +(chromapro)*scale;
-                        factorskinext = chromapro ;// +(chromapro)*scaleext;
+                        factorskinc = chromapro ; // +(chromapro)*scale;
+                        factorskinextc = chromapro ;// +(chromapro)*scaleext;
                     }
 
-                    factorsat = chromapro * factnoise;
+                    factorsatc = chromapro * factnoise;
 
                     //simulate very approximative gamut f(L) : with pyramid transition
                     float dred /*=55.f*/;//C red value limit
@@ -4627,9 +4589,9 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                     // end pyramid
 
                     // Test if chroma is in the normal range first
-                    Color::transitred(HH, Chprov1, dred, factorskin, protect_red, factorskinext, protect_redh, factorsat, factorsat);
-                    atmp *= factorsat;
-                    btmp *= factorsat;
+                    Color::transitred(HH, Chprov1, dred, factorskinc, protect_red, factorskinextc, protect_redh, factorsatc, factorsatc);
+                    atmp *= factorsatc;
+                    btmp *= factorsatc;
 
                     if (editPipette && editID == EUID_Lab_CLCurve) {
                         editWhatever->v(i, j) = LIM01<float> (LL / 100.f);   // Lab C=f(L) pipette
@@ -4768,7 +4730,7 @@ void ImProcFunctions::chromiLuminanceCurve (PipetteBuffer *pipetteBuffer, int pW
                     const float xx = 0.25f; //soft : between 0.2 and 0.4
                     float skdeltaHH;
 
-                    skdeltaHH = protect_redhcur; //transition hue
+                    skdeltaHH = protect_redhcurg; //transition hue
 
                     float skbeg = -0.05f; //begin hue skin
                     float skend = 1.60f; //end hue skin
@@ -5169,9 +5131,9 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
     float *L = lab->L[0];
     float *a = lab->a[0];
     float *b = lab->b[0];
-    unsigned int i, N = lab->W * lab->H;
+    std::size_t N = static_cast<size_t>(lab->W) * static_cast<size_t>(lab->H);
     int WW = lab->W ;
-//   int HH = lab->H ;
+
     EdgePreservingDecomposition epd(lab->W, lab->H);
 
     //Due to the taking of logarithms, L must be nonnegative. Further, scale to 0 to 1 using nominal range of L, 0 to 15 bit.
@@ -5181,7 +5143,7 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
 #ifdef _OPENMP
     #pragma omp parallel for reduction(max:maxL) reduction(min:minL) schedule(dynamic,16)
 #endif
-    for (i = 0; i < N; i++) {
+    for (std::size_t i = 0; i < N; i++) {
         minL = rtengine::min(minL, L[i]);
         maxL = rtengine::max(maxL, L[i]);
     }
@@ -5193,14 +5155,14 @@ void ImProcFunctions::EPDToneMaplocal(int sp, LabImage *lab, LabImage *tmp1, uns
     if (maxL == 0.f) { // avoid division by zero
         maxL = 1.f;
     }
-    
+
+    const float mult = gamm / maxL;
 #ifdef _OPENMP
     #pragma omp parallel for
 #endif
-    for (i = 0; i < N; i++)
+    for (std::size_t i = 0; i < N; i++)
     {
-        L[i] = (L[i] - minL) / maxL;
-        L[i] *= gamm;
+        L[i] = (L[i] - minL) * mult;
     }
 
     //Some interpretations.
@@ -5660,14 +5622,8 @@ double ImProcFunctions::getAutoDistor(const Glib::ustring &fname, int thumb_size
         rawGray = raw->getGrayscaleHistEQ(width);
 
         if (!thumbGray || !rawGray) {
-            if (thumbGray) {
-                delete thumbGray;
-            }
-
-            if (rawGray) {
-                delete rawGray;
-            }
-
+            delete[] thumbGray;
+            delete[] rawGray;
             delete thumb;
             delete raw;
             return 0.0;
@@ -5680,8 +5636,8 @@ double ImProcFunctions::getAutoDistor(const Glib::ustring &fname, int thumb_size
             calcDistortion(thumbGray, rawGray, width, h_thumb, 4, dist_amount);
         }
 
-        delete thumbGray;
-        delete rawGray;
+        delete[] thumbGray;
+        delete[] rawGray;
         delete thumb;
         delete raw;
         return dist_amount;
@@ -5712,6 +5668,116 @@ void ImProcFunctions::rgb2lab(const Imagefloat &src, LabImage &dst, const Glib::
             Color::rgbxyz(src.r(i, j), src.g(i, j), src.b(i, j), X, Y, Z, wp);
             //convert Lab
             Color::XYZ2Lab(X, Y, Z, dst.L[i][j], dst.a[i][j], dst.b[i][j]);
+        }
+    }
+}
+
+void ImProcFunctions::rgb2lab(const Image8 &src, int x, int y, int w, int h, float L[], float a[], float b[], const procparams::ColorManagementParams &icm, bool consider_histogram_settings) const
+{ // Adapted from ImProcFunctions::lab2rgb
+    const int src_width = src.getWidth();
+    const int src_height = src.getHeight();
+
+    if (x < 0) {
+        x = 0;
+    }
+
+    if (y < 0) {
+        y = 0;
+    }
+
+    if (x + w > src_width) {
+        w = src_width - x;
+    }
+
+    if (y + h > src_height) {
+        h = src_height - y;
+    }
+
+    Glib::ustring profile;
+
+    cmsHPROFILE oprof = nullptr;
+
+    if (settings->HistogramWorking && consider_histogram_settings) {
+        profile = icm.workingProfile;
+    } else {
+        profile = icm.outputProfile;
+
+        if (icm.outputProfile.empty() || icm.outputProfile == ColorManagementParams::NoICMString) {
+            profile = "sRGB";
+        }
+        oprof = ICCStore::getInstance()->getProfile(profile);
+    }
+
+    if (oprof) {
+        cmsUInt32Number flags = cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE; // NOCACHE is important for thread safety
+
+        if (icm.outputBPC) {
+            flags |= cmsFLAGS_BLACKPOINTCOMPENSATION;
+        }
+
+        lcmsMutex->lock();
+        cmsHPROFILE LabIProf  = cmsCreateLab4Profile(nullptr);
+        cmsHTRANSFORM hTransform = cmsCreateTransform (oprof, TYPE_RGB_8, LabIProf, TYPE_Lab_FLT, icm.outputIntent, flags);
+        cmsCloseProfile(LabIProf);
+        lcmsMutex->unlock();
+
+        // cmsDoTransform is relatively expensive
+#ifdef _OPENMP
+        #pragma omp parallel
+#endif
+        {
+            AlignedBuffer<float> oBuf(3 * w);
+            float *outbuffer = oBuf.data;
+            int condition = y + h;
+
+#ifdef _OPENMP
+            #pragma omp for schedule(dynamic,16)
+#endif
+
+            for (int i = y; i < condition; i++) {
+                const int ix = 3 * (x + i * src_width);
+                int iy = 0;
+                float* rL = L + (i - y) * w;
+                float* ra = a + (i - y) * w;
+                float* rb = b + (i - y) * w;
+
+                cmsDoTransform (hTransform, src.data + ix, outbuffer, w);
+
+                for (int j = 0; j < w; j++) {
+                    rL[j] = outbuffer[iy++] * 327.68f;
+                    ra[j] = outbuffer[iy++] * 327.68f;
+                    rb[j] = outbuffer[iy++] * 327.68f;
+                }
+            }
+        } // End of parallelization
+
+        cmsDeleteTransform(hTransform);
+    } else {
+        TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(profile);
+        const float wp[3][3] = {
+            {static_cast<float>(wprof[0][0]), static_cast<float>(wprof[0][1]), static_cast<float>(wprof[0][2])},
+            {static_cast<float>(wprof[1][0]), static_cast<float>(wprof[1][1]), static_cast<float>(wprof[1][2])},
+            {static_cast<float>(wprof[2][0]), static_cast<float>(wprof[2][1]), static_cast<float>(wprof[2][2])}
+        };
+
+        const int x2 = x + w;
+        const int y2 = y + h;
+        constexpr float rgb_factor = 65355.f / 255.f;
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+
+        for (int i = y; i < y2; i++) {
+            int offset = (i - y) * w;
+            for (int j = x; j < x2; j++) {
+                float X, Y, Z;
+                // lab2rgb uses gamma2curve, which is gammatab_srgb.
+                const auto& igamma = Color::igammatab_srgb;
+                Color::rgbxyz(igamma[rgb_factor * src.r(i, j)], igamma[rgb_factor * src.g(i, j)], igamma[rgb_factor * src.b(i, j)], X, Y, Z, wp);
+                Color::XYZ2Lab(X, Y, Z, L[offset], a[offset], b[offset]);
+                offset++;
+            }
         }
     }
 }
@@ -5796,7 +5862,7 @@ void ImProcFunctions::colorToningLabGrid(LabImage *lab, int xstart, int xend, in
     float b_base = params->colorToning.labgridBLow / scaling;
 
     #ifdef _OPENMP
-    #pragma omp parallel for if (multiThread)
+    #pragma omp parallel for if (MultiThread)
 #endif
 
     for (int y = ystart; y < yend; ++y) {

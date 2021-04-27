@@ -80,7 +80,6 @@ protected:
     std::string profileData;
     int profileLength;
     char* loadedProfileData;
-    bool loadedProfileDataJpg;
     int loadedProfileLength;
     MyMutex imutex;
     IIOSampleFormat sampleFormat;

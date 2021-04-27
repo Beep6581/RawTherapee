@@ -2,7 +2,7 @@
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
- *
+ *  Changes in Ciecam02 with Ciecam16 Jacques Desmis jdesmis@gmail.com   12/2020 
  *  RawTherapee is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -48,7 +48,7 @@ void Ciecam02::curvecolorfloat (float satind, float satval, float &sres, float p
     }
 }
 
-void Ciecam02::curveJfloat (float br, float contr, const LUTu & histogram, LUTf & outCurve)
+void Ciecam02::curveJfloat (float br, float contr, float thr, const LUTu & histogram, LUTf & outCurve)
 {
 
     // check if brightness curve is needed
@@ -97,7 +97,6 @@ void Ciecam02::curveJfloat (float br, float contr, const LUTu & histogram, LUTf 
         outCurve.makeIdentity (32767.f);
     }
 
-
     if (contr > 0.00001f || contr < -0.00001f) {
 
         // compute mean luminance of the image with the curve applied
@@ -110,6 +109,9 @@ void Ciecam02::curveJfloat (float br, float contr, const LUTu & histogram, LUTf 
         }
 
         avg /= sum;
+        float thrmin = (thr - contr / 250.0f);
+        float thrmax = (thr + contr / 250.0f);
+        
         std::vector<double> contrastcurvePoints (9);
 
         contrastcurvePoints[0] = double (DCT_NURBS);
@@ -117,11 +119,11 @@ void Ciecam02::curveJfloat (float br, float contr, const LUTu & histogram, LUTf 
         contrastcurvePoints[1] = 0.f; // black point.  Value in [0 ; 1] range
         contrastcurvePoints[2] = 0.f; // black point.  Value in [0 ; 1] range
 
-        contrastcurvePoints[3] = avg - avg * (0.6f - contr / 250.0f); // toe point
-        contrastcurvePoints[4] = avg - avg * (0.6f + contr / 250.0f); // value at toe point
+        contrastcurvePoints[3] = avg - avg * thrmin; // toe point
+        contrastcurvePoints[4] = avg - avg * thrmax;// value at toe point
 
-        contrastcurvePoints[5] = avg + (1 - avg) * (0.6f - contr / 250.0f); // shoulder point
-        contrastcurvePoints[6] = avg + (1 - avg) * (0.6f + contr / 250.0f); // value at shoulder point
+        contrastcurvePoints[5] = avg + (1.f - avg) * thrmin; // shoulder point
+        contrastcurvePoints[6] = avg + (1.f - avg) * thrmax; // value at shoulder point
 
         contrastcurvePoints[7] = 1.f; // white point
         contrastcurvePoints[8] = 1.f; // value at white point
@@ -182,26 +184,30 @@ float Ciecam02::calculate_fl_from_la_ciecam02float ( float la )
     return (0.2f * k * la5) + (0.1f * (1.0f - k) * (1.0f - k) * std::cbrt (la5));
 }
 
-float Ciecam02::achromatic_response_to_whitefloat ( float x, float y, float z, float d, float fl, float nbb )
+float Ciecam02::achromatic_response_to_whitefloat ( float x, float y, float z, float d, float fl, float nbb, int c16)
 {
     float r, g, b;
     float rc, gc, bc;
     float rp, gp, bp;
     float rpa, gpa, bpa;
 //    gamu = 1;
-    xyz_to_cat02float ( r, g, b, x, y, z);
+    xyz_to_cat02float ( r, g, b, x, y, z, c16);
 
     rc = r * (((y * d) / r) + (1.0f - d));
     gc = g * (((y * d) / g) + (1.0f - d));
     bc = b * (((y * d) / b) + (1.0f - d));
 
-    cat02_to_hpefloat ( rp, gp, bp, rc, gc, bc);
 
-//    if (gamu == 1) { //gamut correction M.H.Brill S.Susstrunk
-    rp = MAXR (rp, 0.0f);
-    gp = MAXR (gp, 0.0f);
-    bp = MAXR (bp, 0.0f);
-//    }
+    if(c16 == 1) {
+        cat02_to_hpefloat ( rp, gp, bp, rc, gc, bc, c16);
+        rp = MAXR (rp, 0.0f);
+        gp = MAXR (gp, 0.0f);
+        bp = MAXR (bp, 0.0f);
+    } else {
+        rp = MAXR (rc, 0.0f);
+        gp = MAXR (gc, 0.0f);
+        bp = MAXR (bc, 0.0f);
+    }
 
     rpa = nonlinear_adaptationfloat ( rp, fl );
     gpa = nonlinear_adaptationfloat ( gp, fl );
@@ -210,97 +216,121 @@ float Ciecam02::achromatic_response_to_whitefloat ( float x, float y, float z, f
     return ((2.0f * rpa) + gpa + ((1.0f / 20.0f) * bpa) - 0.305f) * nbb;
 }
 
-void Ciecam02::xyz_to_cat02float ( float &r, float &g, float &b, float x, float y, float z)
+void Ciecam02::xyz_to_cat02float ( float &r, float &g, float &b, float x, float y, float z, int c16)
 {
-//    gamu = 1;
-//
-//    if (gamu == 0) {
-//        r = ( 0.7328f * x) + (0.4296f * y) - (0.1624f * z);
-//        g = (-0.7036f * x) + (1.6975f * y) + (0.0061f * z);
-//        b = ( 0.0030f * x) + (0.0136f * y) + (0.9834f * z);
-//    } else if (gamu == 1) { //gamut correction M.H.Brill S.Susstrunk
+    //original cat02
     //r = ( 0.7328 * x) + (0.4296 * y) - (0.1624 * z);
     //g = (-0.7036 * x) + (1.6975 * y) + (0.0061 * z);
     //b = ( 0.0000 * x) + (0.0000 * y) + (1.0000 * z);
-    r = ( 1.007245f * x) + (0.011136f * y) - (0.018381f * z); //Changjun Li
-    g = (-0.318061f * x) + (1.314589f * y) + (0.003471f * z);
-    b = ( 0.0000f * x) + (0.0000f * y) + (1.0000f * z);
-//    }
+    if(c16 == 1) {//cat02
+        r = ( 1.007245f * x) + (0.011136f * y) - (0.018381f * z); //Changjun Li
+        g = (-0.318061f * x) + (1.314589f * y) + (0.003471f * z);
+        b = ( 0.0000f * x) + (0.0000f * y) + (1.0000f * z);
+    } else {//cat16
+        r = ( 0.401288f * x) + (0.650173f * y) - (0.051461f * z); //cat16
+        g = (-0.250268f * x) + (1.204414f * y) + (0.045854f * z);
+        b = ( -0.002079f * x) + (0.048952f * y) + (0.953127f * z);
+    }
+
 }
 #ifdef __SSE2__
-void Ciecam02::xyz_to_cat02float ( vfloat &r, vfloat &g, vfloat &b, vfloat x, vfloat y, vfloat z )
+void Ciecam02::xyz_to_cat02float ( vfloat &r, vfloat &g, vfloat &b, vfloat x, vfloat y, vfloat z, int c16)
 {
     //gamut correction M.H.Brill S.Susstrunk
-    r = ( F2V (1.007245f) * x) + (F2V (0.011136f) * y) - (F2V (0.018381f) * z); //Changjun Li
-    g = (F2V (-0.318061f) * x) + (F2V (1.314589f) * y) + (F2V (0.003471f) * z);
-    b = z;
+    if(c16 == 1) {
+        r = ( F2V (1.007245f) * x) + (F2V (0.011136f) * y) - (F2V (0.018381f) * z); //Changjun Li
+        g = (F2V (-0.318061f) * x) + (F2V (1.314589f) * y) + (F2V (0.003471f) * z);
+        b = z;
+    } else {
+    //cat16
+        r = ( F2V (0.401288f) * x) + (F2V (0.650173f) * y) - (F2V (0.051461f) * z); //Changjun Li
+        g = -(F2V (0.250268f) * x) + (F2V (1.204414f) * y) + (F2V (0.045854f) * z);
+        b = -(F2V(0.002079f) * x) + (F2V(0.048952f) * y) + (F2V(0.953127f) * z);
+    }
 }
 #endif
 
-void Ciecam02::cat02_to_xyzfloat ( float &x, float &y, float &z, float r, float g, float b)
+void Ciecam02::cat02_to_xyzfloat ( float &x, float &y, float &z, float r, float g, float b, int c16)
 {
-//    gamu = 1;
-//
-//    if (gamu == 0) {
-//        x = ( 1.096124f * r) - (0.278869f * g) + (0.182745f * b);
-//        y = ( 0.454369f * r) + (0.473533f * g) + (0.072098f * b);
-//        z = (-0.009628f * r) - (0.005698f * g) + (1.015326f * b);
-//    } else if (gamu == 1) { //gamut correction M.H.Brill S.Susstrunk
+    //original cat02
     //x = ( 1.0978566 * r) - (0.277843 * g) + (0.179987 * b);
     //y = ( 0.455053 * r) + (0.473938 * g) + (0.0710096* b);
     //z = ( 0.000000 * r) - (0.000000 * g) + (1.000000 * b);
-    x = ( 0.99015849f * r) - (0.00838772f * g) + (0.018229217f * b); //Changjun Li
-    y = ( 0.239565979f * r) + (0.758664642f * g) + (0.001770137f * b);
-    z = ( 0.000000f * r) - (0.000000f * g) + (1.000000f * b);
-//    }
+    if(c16 == 1) {
+        x = ( 0.99015849f * r) - (0.00838772f * g) + (0.018229217f * b); //Changjun Li
+        y = ( 0.239565979f * r) + (0.758664642f * g) + (0.001770137f * b);
+        z = ( 0.000000f * r) - (0.000000f * g) + (1.000000f * b);
+    } else {//cat16
+        x = ( 1.86206786f * r) - (1.01125463f * g) + (0.14918677f * b); //Cat16
+        y = ( 0.38752654f * r) + (0.62144744f * g) + (-0.00897398f * b);
+        z = ( -0.0158415f * r) - (0.03412294f * g) + (1.04996444f * b);
+    }
+
 }
 #ifdef __SSE2__
-void Ciecam02::cat02_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vfloat g, vfloat b )
+void Ciecam02::cat02_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vfloat g, vfloat b, int c16 )
 {
     //gamut correction M.H.Brill S.Susstrunk
-    x = ( F2V (0.99015849f) * r) - (F2V (0.00838772f) * g) + (F2V (0.018229217f) * b); //Changjun Li
-    y = ( F2V (0.239565979f) * r) + (F2V (0.758664642f) * g) + (F2V (0.001770137f) * b);
-    z = b;
+    if(c16 == 1) {//cat02
+        x = ( F2V (0.99015849f) * r) - (F2V (0.00838772f) * g) + (F2V (0.018229217f) * b); //Changjun Li
+        y = ( F2V (0.239565979f) * r) + (F2V (0.758664642f) * g) + (F2V (0.001770137f) * b);
+        z = b;
+        } else {
+        //cat16  
+        x = ( F2V (1.86206786f) * r) - (F2V (1.01125463f) * g) + (F2V (0.14918677f) * b);
+        y = ( F2V (0.38752654f) * r) + (F2V (0.621447744f) * g) - (F2V (0.00897398f) * b);
+        z = -(F2V(0.0158415f) * r) - (F2V(0.03412294f) * g) + (F2V(1.04996444f) * b);
+    }
 }
 #endif
 
-void Ciecam02::hpe_to_xyzfloat ( float &x, float &y, float &z, float r, float g, float b )
+void Ciecam02::hpe_to_xyzfloat ( float &x, float &y, float &z, float r, float g, float b, int c16)
 {
-    x = (1.910197f * r) - (1.112124f * g) + (0.201908f * b);
-    y = (0.370950f * r) + (0.629054f * g) - (0.000008f * b);
-    z = b;
+        x = (1.910197f * r) - (1.112124f * g) + (0.201908f * b);
+        y = (0.370950f * r) + (0.629054f * g) - (0.000008f * b);
+        z = b;
 }
 #ifdef __SSE2__
-void Ciecam02::hpe_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vfloat g, vfloat b )
+void Ciecam02::hpe_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vfloat g, vfloat b, int c16)
 {
-    x = (F2V (1.910197f) * r) - (F2V (1.112124f) * g) + (F2V (0.201908f) * b);
-    y = (F2V (0.370950f) * r) + (F2V (0.629054f) * g) - (F2V (0.000008f) * b);
-    z = b;
+        x = (F2V (1.910197f) * r) - (F2V (1.112124f) * g) + (F2V (0.201908f) * b);
+        y = (F2V (0.370950f) * r) + (F2V (0.629054f) * g) - (F2V (0.000008f) * b);
+        z = b;
 }
 #endif
 
-void Ciecam02::cat02_to_hpefloat ( float &rh, float &gh, float &bh, float r, float g, float b)
+void Ciecam02::cat02_to_hpefloat ( float &rh, float &gh, float &bh, float r, float g, float b, int c16)
 {
-//    gamu = 1;
-//
-//    if (gamu == 0) {
+// original cat02
 //        rh = ( 0.7409792f * r) + (0.2180250f * g) + (0.0410058f * b);
 //        gh = ( 0.2853532f * r) + (0.6242014f * g) + (0.0904454f * b);
 //        bh = (-0.0096280f * r) - (0.0056980f * g) + (1.0153260f * b);
-//    } else if (gamu == 1) { //Changjun Li
-    rh = ( 0.550930835f * r) + (0.519435987f * g) - ( 0.070356303f * b);
-    gh = ( 0.055954056f * r) + (0.89973132f * g) + (0.044315524f * b);
-    bh = (0.0f * r) - (0.0f * g) + (1.0f * b);
-//    }
+    if(c16 == 1) {//cat02
+        rh = ( 0.550930835f * r) + (0.519435987f * g) - ( 0.070356303f * b);
+        gh = ( 0.055954056f * r) + (0.89973132f * g) + (0.044315524f * b);
+        bh = (0.0f * r) - (0.0f * g) + (1.0f * b);
+    } else {//cat16
+        rh = ( 1.f * r) + (0.f * g) + ( 0.f * b);
+        gh = ( 0.f * r) + (1.f * g) + (0.f * b);
+        bh = (0.0f * r) + (0.0f * g) + (1.0f * b);
+    }
+
 }
 
 #ifdef __SSE2__
-void Ciecam02::cat02_to_hpefloat ( vfloat &rh, vfloat &gh, vfloat &bh, vfloat r, vfloat g, vfloat b)
+void Ciecam02::cat02_to_hpefloat ( vfloat &rh, vfloat &gh, vfloat &bh, vfloat r, vfloat g, vfloat b, int c16)
 {
+    if(c16 == 1) {
     //Changjun Li
-    rh = ( F2V (0.550930835f) * r) + (F2V (0.519435987f) * g) - ( F2V (0.070356303f) * b);
-    gh = ( F2V (0.055954056f) * r) + (F2V (0.89973132f) * g) + (F2V (0.044315524f) * b);
-    bh = b;
+        rh = ( F2V (0.550930835f) * r) + (F2V (0.519435987f) * g) - ( F2V (0.070356303f) * b);
+        gh = ( F2V (0.055954056f) * r) + (F2V (0.89973132f) * g) + (F2V (0.044315524f) * b);
+        bh = b;
+    } else {//cat16
+        rh = ( F2V (1.f) * r) + (F2V (0.f) * g) + ( F2V (0.f) * b);
+        gh = ( F2V (0.f) * r) + (F2V (1.f) * g) + (F2V (0.f) * b);
+        bh = b;
+        
+    }
 }
 #endif
 
@@ -399,7 +429,7 @@ void Ciecam02::calculate_abfloat ( vfloat &aa, vfloat &bb, vfloat h, vfloat e, v
 #endif
 
 void Ciecam02::initcam1float (float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
-                              float &cz, float &aw, float &wh, float &pfl, float &fl, float c)
+                              float &cz, float &aw, float &wh, float &pfl, float &fl, float c, int c16)
 {
     n = yb / yw;
 
@@ -412,13 +442,13 @@ void Ciecam02::initcam1float (float yb, float pilotd, float f, float la, float x
     fl = calculate_fl_from_la_ciecam02float ( la );
     nbb = ncb = 0.725f * pow_F ( 1.0f / n, 0.2f );
     cz = 1.48f + sqrt ( n );
-    aw = achromatic_response_to_whitefloat ( xw, yw, zw, d, fl, nbb);
+    aw = achromatic_response_to_whitefloat ( xw, yw, zw, d, fl, nbb, c16);
     wh = ( 4.0f / c ) * ( aw + 4.0f ) * pow_F ( fl, 0.25f );
     pfl = pow_F ( fl, 0.25f );
 }
 
 void Ciecam02::initcam2float (float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
-                              float &cz, float &aw, float &fl)
+                              float &cz, float &aw, float &fl, int c16)
 {
     n = yb / yw;
 
@@ -432,12 +462,12 @@ void Ciecam02::initcam2float (float yb, float pilotd, float f, float la, float x
     fl = calculate_fl_from_la_ciecam02float ( la );
     nbb = ncb = 0.725f * pow_F ( 1.0f / n, 0.2f );
     cz = 1.48f + sqrt ( n );
-    aw = achromatic_response_to_whitefloat ( xw, yw, zw, d, fl, nbb);
+    aw = achromatic_response_to_whitefloat ( xw, yw, zw, d, fl, nbb, c16);
 }
 
 void Ciecam02::xyz2jchqms_ciecam02float ( float &J, float &C, float &h, float &Q, float &M, float &s, float aw, float fl, float wh,
         float x, float y, float z, float xw, float yw, float zw,
-        float c, float nc, float pow1, float nbb, float ncb, float pfl, float cz, float d)
+        float c, float nc, float pow1, float nbb, float ncb, float pfl, float cz, float d, int c16)
 
 {
     float r, g, b;
@@ -448,20 +478,23 @@ void Ciecam02::xyz2jchqms_ciecam02float ( float &J, float &C, float &h, float &Q
     float a, ca, cb;
     float e, t;
     float myh;
-//    gamu = 1;
-    xyz_to_cat02float ( r, g, b, x, y, z);
-    xyz_to_cat02float ( rw, gw, bw, xw, yw, zw);
+    xyz_to_cat02float ( r, g, b, x, y, z, c16);
+    xyz_to_cat02float ( rw, gw, bw, xw, yw, zw, c16);
     rc = r * (((yw * d) / rw) + (1.f - d));
     gc = g * (((yw * d) / gw) + (1.f - d));
     bc = b * (((yw * d) / bw) + (1.f - d));
 
-    cat02_to_hpefloat ( rp, gp, bp, rc, gc, bc);
+    cat02_to_hpefloat ( rp, gp, bp, rc, gc, bc, c16);
 
-//    if (gamu == 1) { //gamut correction M.H.Brill S.Susstrunk
-    rp = MAXR (rp, 0.0f);
-    gp = MAXR (gp, 0.0f);
-    bp = MAXR (bp, 0.0f);
-//    }
+    if(c16 == 1) {//cat02
+        rp = MAXR (rp, 0.0f);
+        gp = MAXR (gp, 0.0f);
+        bp = MAXR (bp, 0.0f);
+    } else {//cat16
+        rp = MAXR (rc, 0.0f);
+        gp = MAXR (gc, 0.0f);
+        bp = MAXR (bc, 0.0f);
+    }
 
     rpa = nonlinear_adaptationfloat ( rp, fl );
     gpa = nonlinear_adaptationfloat ( gp, fl );
@@ -478,9 +511,7 @@ void Ciecam02::xyz2jchqms_ciecam02float ( float &J, float &C, float &h, float &Q
 
     a = ((2.0f * rpa) + gpa + (0.05f * bpa) - 0.305f) * nbb;
 
-//    if (gamu == 1) {
     a = MAXR (a, 0.0f); //gamut correction M.H.Brill S.Susstrunk
-//    }
 
     J = pow_F ( a / aw, c * cz * 0.5f);
 
@@ -499,7 +530,7 @@ void Ciecam02::xyz2jchqms_ciecam02float ( float &J, float &C, float &h, float &Q
 #ifdef __SSE2__
 void Ciecam02::xyz2jchqms_ciecam02float ( vfloat &J, vfloat &C, vfloat &h, vfloat &Q, vfloat &M, vfloat &s, vfloat aw, vfloat fl, vfloat wh,
         vfloat x, vfloat y, vfloat z, vfloat xw, vfloat yw, vfloat zw,
-        vfloat c, vfloat nc, vfloat pow1, vfloat nbb, vfloat ncb, vfloat pfl, vfloat cz, vfloat d)
+        vfloat c, vfloat nc, vfloat pow1, vfloat nbb, vfloat ncb, vfloat pfl, vfloat cz, vfloat d, int c16)
 
 {
     vfloat r, g, b;
@@ -510,18 +541,26 @@ void Ciecam02::xyz2jchqms_ciecam02float ( vfloat &J, vfloat &C, vfloat &h, vfloa
     vfloat a, ca, cb;
     vfloat e, t;
 
-    xyz_to_cat02float ( r, g, b, x, y, z);
-    xyz_to_cat02float ( rw, gw, bw, xw, yw, zw);
+    xyz_to_cat02float ( r, g, b, x, y, z, c16);
+    xyz_to_cat02float ( rw, gw, bw, xw, yw, zw, c16);
     vfloat onev = F2V (1.f);
     rc = r * (((yw * d) / rw) + (onev - d));
     gc = g * (((yw * d) / gw) + (onev - d));
     bc = b * (((yw * d) / bw) + (onev - d));
 
-    cat02_to_hpefloat ( rp, gp, bp, rc, gc, bc);
+    cat02_to_hpefloat ( rp, gp, bp, rc, gc, bc, c16);
+
     //gamut correction M.H.Brill S.Susstrunk
-    rp = vmaxf (rp, ZEROV);
-    gp = vmaxf (gp, ZEROV);
-    bp = vmaxf (bp, ZEROV);
+    if(c16 == 1) {//cat02
+        rp = vmaxf (rp, ZEROV);
+        gp = vmaxf (gp, ZEROV);
+        bp = vmaxf (bp, ZEROV);
+    } else {//cat16
+        rp = vmaxf (rc, ZEROV);
+        gp = vmaxf (gc, ZEROV);
+        bp = vmaxf (bc, ZEROV);
+    }
+
     rpa = nonlinear_adaptationfloat ( rp, fl );
     gpa = nonlinear_adaptationfloat ( gp, fl );
     bpa = nonlinear_adaptationfloat ( bp, fl );
@@ -556,7 +595,7 @@ void Ciecam02::xyz2jchqms_ciecam02float ( vfloat &J, vfloat &C, vfloat &h, vfloa
 
 void Ciecam02::xyz2jch_ciecam02float ( float &J, float &C, float &h, float aw, float fl,
                                        float x, float y, float z, float xw, float yw, float zw,
-                                       float c, float nc, float pow1, float nbb, float ncb, float cz, float d)
+                                       float c, float nc, float pow1, float nbb, float ncb, float cz, float d, int c16)
 
 {
     float r, g, b;
@@ -567,20 +606,24 @@ void Ciecam02::xyz2jch_ciecam02float ( float &J, float &C, float &h, float aw, f
     float a, ca, cb;
     float e, t;
     float myh;
-//    int gamu = 1;
-    xyz_to_cat02float ( r, g, b, x, y, z);
-    xyz_to_cat02float ( rw, gw, bw, xw, yw, zw);
+    xyz_to_cat02float ( r, g, b, x, y, z, c16);
+    xyz_to_cat02float ( rw, gw, bw, xw, yw, zw, c16);
     rc = r * (((yw * d) / rw) + (1.f - d));
     gc = g * (((yw * d) / gw) + (1.f - d));
     bc = b * (((yw * d) / bw) + (1.f - d));
 
-    cat02_to_hpefloat ( rp, gp, bp, rc, gc, bc);
+    cat02_to_hpefloat ( rp, gp, bp, rc, gc, bc, c16);
 
-//    if (gamu == 1) { //gamut correction M.H.Brill S.Susstrunk
-    rp = MAXR (rp, 0.0f);
-    gp = MAXR (gp, 0.0f);
-    bp = MAXR (bp, 0.0f);
-//    }
+    if(c16 == 1) {//cat02
+        rp = MAXR (rp, 0.0f);
+        gp = MAXR (gp, 0.0f);
+        bp = MAXR (bp, 0.0f);
+    } else {//cat16
+        rp = MAXR (rc, 0.0f);
+        gp = MAXR (gc, 0.0f);
+        bp = MAXR (bc, 0.0f);
+    }
+
 
 #ifdef __SSE2__
     vfloat pv = _mm_setr_ps(rp, gp, bp, 1.f);
@@ -606,9 +649,7 @@ void Ciecam02::xyz2jch_ciecam02float ( float &J, float &C, float &h, float aw, f
 
     a = ((2.0f * rpa) + gpa + (0.05f * bpa) - 0.305f) * nbb;
 
-//    if (gamu == 1) {
     a = MAXR (a, 0.0f); //gamut correction M.H.Brill S.Susstrunk
-//    }
 
     J = pow_F ( a / aw, c * cz * 0.5f);
 
@@ -623,7 +664,7 @@ void Ciecam02::xyz2jch_ciecam02float ( float &J, float &C, float &h, float aw, f
 
 void Ciecam02::jch2xyz_ciecam02float ( float &x, float &y, float &z, float J, float C, float h,
                                        float xw, float yw, float zw,
-                                       float c, float nc, float pow1, float nbb, float ncb, float fl, float cz, float d, float aw)
+                                       float c, float nc, float pow1, float nbb, float ncb, float fl, float cz, float d, float aw, int c16)
 {
     float r, g, b;
     float rc, gc, bc;
@@ -632,8 +673,7 @@ void Ciecam02::jch2xyz_ciecam02float ( float &x, float &y, float &z, float J, fl
     float rw, gw, bw;
     float a, ca, cb;
     float e, t;
-//    gamu = 1;
-    xyz_to_cat02float(rw, gw, bw, xw, yw, zw);
+    xyz_to_cat02float(rw, gw, bw, xw, yw, zw, c16);
     e = ((961.53846f) * nc * ncb) * (xcosf(h * rtengine::RT_PI_F_180 + 2.0f) + 3.8f);
 
 #ifdef __SSE2__
@@ -662,20 +702,27 @@ void Ciecam02::jch2xyz_ciecam02float ( float &x, float &y, float &z, float J, fl
     gp = inverse_nonlinear_adaptationfloat(gpa, fl);
     bp = inverse_nonlinear_adaptationfloat(bpa, fl);
 #endif
-    hpe_to_xyzfloat(x, y, z, rp, gp, bp);
-    xyz_to_cat02float(rc, gc, bc, x, y, z);
 
-    r = rc / (((yw * d) / rw) + (1.0f - d));
-    g = gc / (((yw * d) / gw) + (1.0f - d));
-    b = bc / (((yw * d) / bw) + (1.0f - d));
+    if(c16 == 1) {//cat02
+        hpe_to_xyzfloat(x, y, z, rp, gp, bp, c16);
+        xyz_to_cat02float(rc, gc, bc, x, y, z, c16);
 
-    cat02_to_xyzfloat(x, y, z, r, g, b);
+        r = rc / (((yw * d) / rw) + (1.0f - d));
+        g = gc / (((yw * d) / gw) + (1.0f - d));
+        b = bc / (((yw * d) / bw) + (1.0f - d));
+    } else {//cat16
+        r = rp / (((yw * d) / rw) + (1.0f - d));
+        g = gp / (((yw * d) / gw) + (1.0f - d));
+        b = bp / (((yw * d) / bw) + (1.0f - d));
+    }
+
+    cat02_to_xyzfloat(x, y, z, r, g, b, c16);
 }
 
 #ifdef __SSE2__
 void Ciecam02::jch2xyz_ciecam02float ( vfloat &x, vfloat &y, vfloat &z, vfloat J, vfloat C, vfloat h,
                                        vfloat xw, vfloat yw, vfloat zw,
-                                       vfloat nc, vfloat pow1, vfloat nbb, vfloat ncb, vfloat fl, vfloat d, vfloat aw, vfloat reccmcz)
+                                       vfloat nc, vfloat pow1, vfloat nbb, vfloat ncb, vfloat fl, vfloat d, vfloat aw, vfloat reccmcz, int c16)
 {
     vfloat r, g, b;
     vfloat rc, gc, bc;
@@ -684,7 +731,7 @@ void Ciecam02::jch2xyz_ciecam02float ( vfloat &x, vfloat &y, vfloat &z, vfloat J
     vfloat rw, gw, bw;
     vfloat a, ca, cb;
     vfloat e, t;
-    xyz_to_cat02float ( rw, gw, bw, xw, yw, zw);
+    xyz_to_cat02float ( rw, gw, bw, xw, yw, zw, c16);
     e = ((F2V (961.53846f)) * nc * ncb) * (xcosf ( ((h * F2V (rtengine::RT_PI)) / F2V (180.0f)) + F2V (2.0f) ) + F2V (3.8f));
     a = pow_F ( J / F2V (100.0f), reccmcz ) * aw;
     t = pow_F ( F2V (10.f) * C / (vsqrtf ( J ) * pow1), F2V (1.1111111f) );
@@ -696,14 +743,20 @@ void Ciecam02::jch2xyz_ciecam02float ( vfloat &x, vfloat &y, vfloat &z, vfloat J
     gp = inverse_nonlinear_adaptationfloat ( gpa, fl );
     bp = inverse_nonlinear_adaptationfloat ( bpa, fl );
 
-    hpe_to_xyzfloat ( x, y, z, rp, gp, bp );
-    xyz_to_cat02float ( rc, gc, bc, x, y, z );
+    if(c16 == 1) {//cat02
+        hpe_to_xyzfloat ( x, y, z, rp, gp, bp, c16);
+        xyz_to_cat02float ( rc, gc, bc, x, y, z, c16 );
 
-    r = rc / (((yw * d) / rw) + (F2V (1.0f) - d));
-    g = gc / (((yw * d) / gw) + (F2V (1.0f) - d));
-    b = bc / (((yw * d) / bw) + (F2V (1.0f) - d));
+        r = rc / (((yw * d) / rw) + (F2V (1.0f) - d));
+        g = gc / (((yw * d) / gw) + (F2V (1.0f) - d));
+        b = bc / (((yw * d) / bw) + (F2V (1.0f) - d));
+    } else {//cat16
+        r = rp / (((yw * d) / rw) + (F2V (1.0f) - d));
+        g = gp / (((yw * d) / gw) + (F2V (1.0f) - d));
+        b = bp / (((yw * d) / bw) + (F2V (1.0f) - d));
+    }
 
-    cat02_to_xyzfloat ( x, y, z, r, g, b );
+    cat02_to_xyzfloat ( x, y, z, r, g, b, c16 );
 }
 #endif
 
@@ -761,6 +814,4 @@ vfloat Ciecam02::inverse_nonlinear_adaptationfloat ( vfloat c, vfloat fl )
     return (F2V (100.0f) / fl) * pow_F ( (F2V (27.13f) * c) / (F2V (400.0f) - c), F2V (2.38095238f) );
 }
 #endif
-//end CIECAM Billy Bigg
-
 }

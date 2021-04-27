@@ -24,6 +24,7 @@
 /*
     This file is part of darktable,
     copyright (c) 2010-2012 Henrik Andersson.
+    adaptation to Rawtherapee 2021 Jacques Desmis jdesmis@gmail.com
 
     darktable is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -88,7 +89,7 @@ const int permutation[]
 
 class GrainEvaluator {
 public:
-    GrainEvaluator(int offset_x, int offset_y, int full_width, int full_height, double scale):
+    GrainEvaluator(int offset_x, int offset_y, int full_width, int full_height, double scale, float divgr):
         ox(offset_x),
         oy(offset_y),
         fw(full_width),
@@ -96,18 +97,18 @@ public:
         scale(scale)
     {
         simplex_noise_init();
-        constexpr float mb = 100.f;
-        evaluate_grain_lut(mb);
+        constexpr float mb = 100.f;// * divgr;
+        evaluate_grain_lut(mb, divgr);
     }
     
-    void operator()(int isogr, int strengr, int scalegr, Imagefloat *lab, bool multithread)
+    void operator()(int isogr, int strengr, int scalegr, float divgr, Imagefloat *lab, bool multithread)
     {
         const double strength = (strengr / 100.0);
-        const double octaves = 3;
+        const double octaves = 3.;
         const double wd = std::min(fw, fh);
         const double zoom = (1.0 + 8 * (double(isogr) / GRAIN_SCALE_FACTOR) / 100.0) / 800.0;
         const double s = std::max(scale / 3.0, 1.0) / (double(std::max(scalegr, 1)) / 100.0);
-
+      //      printf("s=%f \n", s);
         const int W = lab->getWidth();
         const int H = lab->getHeight();
         float **lab_L = lab->g.ptrs;
@@ -298,29 +299,38 @@ private:
         return total;
     }
 
-    float paper_resp(float exposure, float mb, float gp)
-    {
-        const float delta = GRAIN_LUT_DELTA_MAX * expf((mb / 100.0f) * logf(GRAIN_LUT_DELTA_MIN));
+    float paper_resp(float exposure, float mb, float gp, float divgr)
+    {   
+        float dived = 1.f;
+        if(divgr > 1.8f) {
+            dived = 1.f + (divgr - 1.8f);
+        }
+        const float delta = dived * GRAIN_LUT_DELTA_MAX * expf((mb / 100.0f) * logf(GRAIN_LUT_DELTA_MIN / dived));
         const float density = (1.0f + 2.0f * delta) / (1.0f + expf( (4.0f * gp * (0.5f - exposure)) / (1.0f + 2.0f * delta) )) - delta;
         return density;
     }
 
-    float paper_resp_inverse(float density, float mb, float gp)
+    float paper_resp_inverse(float density, float mb, float gp, float divgr)
     {
-        const float delta = GRAIN_LUT_DELTA_MAX * expf((mb / 100.0f) * logf(GRAIN_LUT_DELTA_MIN));
+        float dived = 1.f;
+        if(divgr > 1.8f) {
+            dived = 1.f + (divgr - 1.8f);
+        }
+        const float delta =  dived * GRAIN_LUT_DELTA_MAX * expf((mb / 100.0f) * logf(GRAIN_LUT_DELTA_MIN / dived));
         const float exposure = -logf((1.0f + 2.0f * delta) / (density + delta) - 1.0f) * (1.0f + 2.0f * delta) / (4.0f * gp) + 0.5f;
         return exposure;
     }
 
-    void evaluate_grain_lut(const float mb)
+    void evaluate_grain_lut(const float mb, float divgr)
     {
         for(int i = 0; i < GRAIN_LUT_SIZE; i++)
         {
             for(int j = 0; j < GRAIN_LUT_SIZE; j++)
             {
-                const float gu = (float)i / (GRAIN_LUT_SIZE - 1) - 0.5;
-                const float l = (float)j / (GRAIN_LUT_SIZE - 1);
-                grain_lut[j * GRAIN_LUT_SIZE + i] = 32768.f * (paper_resp(gu + paper_resp_inverse(l, mb, GRAIN_LUT_PAPER_GAMMA), mb, GRAIN_LUT_PAPER_GAMMA) - l);
+                float gu = (float)i / (GRAIN_LUT_SIZE - 1) - 0.5;
+                float l = (float)j / (GRAIN_LUT_SIZE - 1);
+                float divg = divgr; //1.f
+                grain_lut[j * GRAIN_LUT_SIZE + i] = 32768.f * (paper_resp(gu + paper_resp_inverse(l, mb, divg * GRAIN_LUT_PAPER_GAMMA, divgr), mb, divg * GRAIN_LUT_PAPER_GAMMA, divgr) - l);
             }
         }
     }
@@ -361,11 +371,14 @@ private:
 } // namespace
 
 
-void ImProcFunctions::filmGrain(Imagefloat *rgb, int isogr, int strengr, int scalegr, int bfw, int bfh)
+void ImProcFunctions::filmGrain(Imagefloat *rgb, int isogr, int strengr, int scalegr, float divgr, int bfw, int bfh)
 {
+    if (settings->verbose) {
+        printf("iso=%i strength=%i scale=%i gamma=%f\n", isogr, strengr, scalegr, divgr);
+    }
 
-    GrainEvaluator ge(0, 0, bfw, bfh, scale);
-    ge(isogr, strengr, scalegr, rgb, multiThread);
+    GrainEvaluator ge(0, 0, bfw, bfh, scale, divgr);
+    ge(isogr, strengr, scalegr, divgr, rgb, multiThread);
 }
 
 } // namespace rtengine

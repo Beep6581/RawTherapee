@@ -42,7 +42,7 @@ protected:
     //  MyComboBoxText*   algo;
     //  sigc::connection  algoconn;
     //  Gtk::Label*       alLabel;
-    //  Gtk::HBox*        algoHBox;
+    //  Gtk::Box*         algoHBox;
 
     sigc::connection  gamutlabConn;
     sigc::connection lumaneutralPressedConn;
@@ -50,7 +50,7 @@ protected:
     sigc::connection lumacontrastMinusPressedConn;
     sigc::connection  cbdlMethodConn;
     Gtk::Label* labmcd;
-    Gtk::HBox* cdbox;
+    Gtk::Box* cdbox;
     MyComboBoxText*   cbdlMethod;
 
     bool lastgamutlab;

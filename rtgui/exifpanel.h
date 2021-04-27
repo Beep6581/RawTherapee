@@ -37,7 +37,7 @@ class ExifPairs;
 }
 
 class ExifPanel final :
-    public Gtk::VBox,
+    public Gtk::Box,
     public ToolPanel
 {
 

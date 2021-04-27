@@ -64,8 +64,7 @@ constexpr unsigned int ARRAY2D_BYREFERENCE = 2;
 
 
 template<typename T>
-class array2D :
-    public rtengine::NonCopyable
+class array2D
 {
 
 private:
@@ -125,6 +124,45 @@ public:
         }
     }
 
+    // creator type 3
+    array2D(int w, int h, int startx, int starty, T ** source, unsigned int flags = 0) : width(w)
+    {
+        rows.resize(h);
+        if (!(flags & ARRAY2D_BYREFERENCE)) {
+            buffer.resize(h * width);
+            T* start = buffer.data();
+            for (ssize_t i = 0; i < h; ++i) {
+                rows[i] = start + i * width;
+                for (ssize_t j = 0; j < width; ++j) {
+                    rows[i][j] = source[i + starty][j + startx];
+                }
+            }
+        } else {
+            for (ssize_t i = 0; i < h; ++i) {
+                rows[i] = source[i + starty] + startx;
+            }
+        }
+    }
+
+    array2D(const array2D& other) :
+        width(other.width),
+        buffer(other.buffer)
+    {
+        initRows(other.rows.size());
+    }
+
+    array2D& operator =(const array2D& other)
+    {
+        if (this != &other) {
+            free();
+            width = other.width;
+            buffer = other.buffer;
+            initRows(other.rows.size());
+        }
+
+        return *this;
+    }
+
     void fill(const T val, bool multiThread = false)
     {
         const ssize_t height = rows.size();
@@ -140,18 +178,19 @@ public:
     {
         buffer.clear();
         rows.clear();
+        width = 0;
     }
 
     // use with indices
     T * operator[](int index)
     {
-        assert((index >= 0) && (index < rows.size()));
+        assert((index >= 0) && (std::size_t(index) < rows.size()));
         return rows[index];
     }
 
     const T * operator[](int index) const
     {
-        assert((index >= 0) && (index < rows.size()));
+        assert((index >= 0) && (std::size_t(index) < rows.size()));
         return rows[index];
     }
 
@@ -191,6 +230,24 @@ public:
             fill(0);
         }
     }
+
+    array2D<T>& operator+=(const array2D<T>& rhs)
+    {
+        if (rhs.getWidth() == this->getWidth() && rhs.getHeight() == this->getHeight()) {
+            for (int i = 0; i < getHeight(); ++i) {
+#ifdef _OPENMP
+                #pragma omp simd
+#endif
+
+                for (int j = 0; j < getWidth(); ++j) {
+                    rows[i][j] += rhs[i][j];
+                }
+            }
+        }
+
+        return *this;
+    }
+
 
     int getWidth() const
     {

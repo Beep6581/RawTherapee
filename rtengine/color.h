@@ -206,6 +206,11 @@ public:
         return static_cast<double>(r) * workingspace[1][0] + static_cast<double>(g) * workingspace[1][1] + static_cast<double>(b) * workingspace[1][2];
     }
 
+    static float rgbLuminance(float r, float g, float b, const float workingspace[3])
+    {
+        return r * workingspace[0] + g * workingspace[1] + b * workingspace[2];
+    }
+
 #ifdef __SSE2__
     static vfloat rgbLuminance(vfloat r, vfloat g, vfloat b, const vfloat workingspace[3])
     {
@@ -570,9 +575,20 @@ public:
     */
     static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const double rgb_xyz[3][3]);
     static void xyz2r (float x, float y, float z, float &r, const double rgb_xyz[3][3]);
-    static void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const float rgb_xyz[3][3]);
+    static inline void xyz2rgb (float x, float y, float z, float &r, float &g, float &b, const float rgb_xyz[3][3])
+    {
+        r = ((rgb_xyz[0][0] * x + rgb_xyz[0][1] * y + rgb_xyz[0][2] * z)) ;
+        g = ((rgb_xyz[1][0] * x + rgb_xyz[1][1] * y + rgb_xyz[1][2] * z)) ;
+        b = ((rgb_xyz[2][0] * x + rgb_xyz[2][1] * y + rgb_xyz[2][2] * z)) ;
+    }
+
 #ifdef __SSE2__
-    static void xyz2rgb (vfloat x, vfloat y, vfloat z, vfloat &r, vfloat &g, vfloat &b, const vfloat rgb_xyz[3][3]);
+    static inline void xyz2rgb (vfloat x, vfloat y, vfloat z, vfloat &r, vfloat &g, vfloat &b, const vfloat rgb_xyz[3][3])
+    {
+        r = ((rgb_xyz[0][0] * x + rgb_xyz[0][1] * y + rgb_xyz[0][2] * z)) ;
+        g = ((rgb_xyz[1][0] * x + rgb_xyz[1][1] * y + rgb_xyz[1][2] * z)) ;
+        b = ((rgb_xyz[2][0] * x + rgb_xyz[2][1] * y + rgb_xyz[2][2] * z)) ;
+    }
 #endif
 
 
@@ -603,12 +619,40 @@ public:
     * @param y Y coordinate [0 ; 65535] ; can be negative! (return value)
     * @param z Z coordinate [0 ; 65535] ; can be negative! (return value)
     */
-    static void Lab2XYZ(float L, float a, float b, float &x, float &y, float &z);
+    static inline void Lab2XYZ(float L, float a, float b, float &x, float &y, float &z)
+    {
+        float LL = L / 327.68f;
+        float aa = a / 327.68f;
+        float bb = b / 327.68f;
+        float fy = (c1By116 * LL) + c16By116; // (L+16)/116
+        float fx = (0.002f * aa) + fy;
+        float fz = fy - (0.005f * bb);
+        x = 65535.f * f2xyz(fx) * D50x;
+        z = 65535.f * f2xyz(fz) * D50z;
+        y = (LL > epskapf) ? 65535.f * fy * fy * fy : 65535.f * LL / kappaf;
+    }
+
     static void L2XYZ(float L, float &x, float &y, float &z);
     static float L2Y(float L);
 
 #ifdef __SSE2__
-    static void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &z);
+static inline void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, vfloat &z)
+{
+    vfloat c327d68 = F2V(327.68f);
+    L /= c327d68;
+    a /= c327d68;
+    b /= c327d68;
+    vfloat fy = F2V(c1By116) * L + F2V(c16By116);
+    vfloat fx = F2V(0.002f) * a + fy;
+    vfloat fz = fy - (F2V(0.005f) * b);
+    vfloat c65535 = F2V(65535.f);
+    x = c65535 * f2xyz(fx) * F2V(D50x);
+    z = c65535 * f2xyz(fz) * F2V(D50z);
+    vfloat res1 = fy * fy * fy;
+    vfloat res2 = L / F2V(kappa);
+    y = vself(vmaskf_gt(L, F2V(epskap)), res1, res2);
+    y *= c65535;
+}
 #endif // __SSE2__
 
     /**

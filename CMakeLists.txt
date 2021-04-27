@@ -144,6 +144,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=delete-incomplete")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-math-errno")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-math-errno")
 
+# suppress warning https://github.com/Beep6581/RawTherapee/issues/6105
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-attributes")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-attributes")
+
 # Special treatment for x87 and x86-32 SSE (see GitHub issue #4324)
 include(FindX87Math)
 if(HAVE_X87_MATH)
@@ -456,13 +460,13 @@ if(GTK_VERSION VERSION_GREATER "3.24.1" AND GTK_VERSION VERSION_LESS "3.24.7")
     )
 endif()
 
-pkg_check_modules(GLIB2 REQUIRED glib-2.0>=2.44)
-pkg_check_modules(GLIBMM REQUIRED glibmm-2.4>=2.44)
+pkg_check_modules(GLIB2 REQUIRED glib-2.0>=2.48)
+pkg_check_modules(GLIBMM REQUIRED glibmm-2.4>=2.48)
 pkg_check_modules(CAIROMM REQUIRED cairomm-1.0)
-pkg_check_modules(GIO REQUIRED gio-2.0>=2.44)
-pkg_check_modules(GIOMM REQUIRED giomm-2.4>=2.44)
-pkg_check_modules(GTHREAD REQUIRED gthread-2.0>=2.44)
-pkg_check_modules(GOBJECT REQUIRED gobject-2.0>=2.44)
+pkg_check_modules(GIO REQUIRED gio-2.0>=2.48)
+pkg_check_modules(GIOMM REQUIRED giomm-2.4>=2.48)
+pkg_check_modules(GTHREAD REQUIRED gthread-2.0>=2.48)
+pkg_check_modules(GOBJECT REQUIRED gobject-2.0>=2.48)
 pkg_check_modules(SIGC REQUIRED sigc++-2.0>=2.3.1)
 pkg_check_modules(LENSFUN REQUIRED lensfun>=0.2)
 pkg_check_modules(RSVG REQUIRED librsvg-2.0>=2.40)
@@ -500,7 +504,8 @@ endif()
 pkg_check_modules(LCMS REQUIRED lcms2>=2.6)
 pkg_check_modules(EXPAT REQUIRED expat>=2.1)
 pkg_check_modules(FFTW3F REQUIRED fftw3f)
-pkg_check_modules(TIFF REQUIRED libtiff-4>=4.0.4)
+pkg_check_modules(IPTCDATA REQUIRED libiptcdata)
+find_package(TIFF 4.0.4 REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
 find_package(ZLIB REQUIRED)
@@ -697,7 +702,7 @@ if(WIN32)
 elseif(APPLE)
     set(
          ABOUT_COMMAND_WITH_ARGS
-         cmake
+         ${CMAKE_COMMAND}
              -DPROJECT_SOURCE_DIR:STRING=${PROJECT_SOURCE_DIR}
              -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
              -P ${PROJECT_SOURCE_DIR}/UpdateInfo.cmake

@@ -53,11 +53,11 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer",
     Color::hsv2rgb01(0.3240, 0.5, 0.5, r, g, b);
     milestones.push_back( GradientMilestone(1.    , r, g, b) ); // hsv: 0.324  rad:  2.5
 
-    Gtk::VBox * cbVBox = Gtk::manage ( new Gtk::VBox());
+    Gtk::Box*  cbVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     cbVBox->set_border_width(4);
     cbVBox->set_spacing(2);
 
-    cdbox = Gtk::manage (new Gtk::HBox ());
+    cdbox = Gtk::manage (new Gtk::Box ());
     labmcd = Gtk::manage (new Gtk::Label (M("TP_CBDL_METHOD") + ":"));
     cdbox->pack_start (*labmcd, Gtk::PACK_SHRINK, 1);
 
@@ -71,7 +71,9 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer",
     cbVBox->pack_start(*cdbox);
     pack_start(*cbVBox);
 
-    Gtk::HBox * buttonBox1 = Gtk::manage (new Gtk::HBox(true, 10));
+    Gtk::Box * buttonBox1 = Gtk::manage (new Gtk::Box());
+    buttonBox1->set_spacing(10);
+    buttonBox1->set_homogeneous(true);
     pack_start(*buttonBox1);
 
     Gtk::Button * lumacontrastMinusButton = Gtk::manage (new Gtk::Button(M("TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS")));
@@ -88,7 +90,7 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer",
 
     buttonBox1->show_all_children();
 
-    Gtk::HSeparator *separator2 = Gtk::manage (new  Gtk::HSeparator());
+    Gtk::Separator *separator2 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     pack_start(*separator2, Gtk::PACK_SHRINK, 2);
 
     for(int i = 0; i < 6; i++) {
@@ -106,17 +108,17 @@ DirPyrEqualizer::DirPyrEqualizer () : FoldableToolPanel(this, "dirpyrequalizer",
         pack_start(*multiplier[i]);
     }
 
-    Gtk::HSeparator *separator3 = Gtk::manage (new  Gtk::HSeparator());
+    Gtk::Separator *separator3 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     pack_start(*separator3, Gtk::PACK_SHRINK, 2);
 
     threshold = Gtk::manage ( new Adjuster (M("TP_DIRPYREQUALIZER_THRESHOLD"), 0, 1, 0.01, 0.2) );
     threshold->setAdjusterListener(this);
     pack_start(*threshold);
 
-    Gtk::HSeparator *separator4 = Gtk::manage (new  Gtk::HSeparator());
+    Gtk::Separator *separator4 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     pack_start(*separator4, Gtk::PACK_SHRINK, 2);
     /*
-        algoHBox = Gtk::manage (new Gtk::HBox ());
+        algoHBox = Gtk::manage (new Gtk::Box ());
         algoHBox->set_spacing (2);
         algoHBox->set_tooltip_markup (M("TP_DIRPYREQUALIZER_ALGO_TOOLTIP"));
     */

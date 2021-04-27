@@ -32,6 +32,12 @@
 #include "../rtengine/noncopyable.h"
 #include "../rtengine/rtengine.h"
 
+namespace rtengine
+{
+template<typename T>
+class array2D;
+}
+
 class BatchQueueEntry;
 class EditorPanel;
 class FilePanel;
@@ -49,12 +55,13 @@ struct EditorPanelIdleHelper {
 class RTWindow;
 
 class EditorPanel final :
-    public Gtk::VBox,
+    public Gtk::Box,
     public PParamsChangeListener,
     public rtengine::ProgressListener,
     public ThumbnailListener,
     public HistoryBeforeLineListener,
     public rtengine::HistogramListener,
+    public HistogramPanelListener,
     public rtengine::NonCopyable
 {
 public:
@@ -126,8 +133,25 @@ public:
         const LUTu& histGreenRaw,
         const LUTu& histBlueRaw,
         const LUTu& histChroma,
-        const LUTu& histLRETI
+        const LUTu& histLRETI,
+        int vectorscopeScale,
+        const array2D<int>& vectorscopeHC,
+        const array2D<int>& vectorscopeHS,
+        int waveformScale,
+        const array2D<int>& waveformRed,
+        const array2D<int>& waveformGreen,
+        const array2D<int>& waveformBlue,
+        const array2D<int>& waveformLuma
     ) override;
+    void setObservable(rtengine::HistogramObservable* observable) override;
+    bool updateHistogram(void) const override;
+    bool updateHistogramRaw(void) const override;
+    bool updateVectorscopeHC(void) const override;
+    bool updateVectorscopeHS(void) const override;
+    bool updateWaveform(void) const override;
+
+    // HistogramPanelListener
+    void scopeTypeChanged(Options::ScopeType new_type) override;
 
     // event handlers
     void info_toggled ();
@@ -200,7 +224,7 @@ private:
     Gtk::Image *iShowHideSidePanels_exit;
     Gtk::Image *iBeforeLockON, *iBeforeLockOFF;
     Gtk::Paned *leftbox;
-    Gtk::Box *leftsubbox;
+    Gtk::Paned *leftsubpaned;
     Gtk::Paned *vboxright;
     Gtk::Box *vsubboxright;
 
@@ -260,4 +284,7 @@ private:
     bool isProcessing;
 
     IdleRegister idle_register;
+
+    rtengine::HistogramObservable* histogram_observable;
+    Options::ScopeType histogram_scope_type;
 };

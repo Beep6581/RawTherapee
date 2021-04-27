@@ -33,17 +33,17 @@ namespace rtengine
 {
 
 class Ciecam02
-{
+{//also used with Ciecam16
 private:
     static float d_factorfloat ( float f, float la );
     static float calculate_fl_from_la_ciecam02float ( float la );
-    static float achromatic_response_to_whitefloat ( float x, float y, float z, float d, float fl, float nbb);
-    static void xyz_to_cat02float ( float &r,  float &g,  float &b,  float x, float y, float z);
-    static void cat02_to_hpefloat ( float &rh, float &gh, float &bh, float r, float g, float b);
+    static float achromatic_response_to_whitefloat ( float x, float y, float z, float d, float fl, float nbb, int c16);
+    static void xyz_to_cat02float ( float &r,  float &g,  float &b,  float x, float y, float z, int c16);
+    static void cat02_to_hpefloat ( float &rh, float &gh, float &bh, float r, float g, float b, int c16);
 
 #ifdef __SSE2__
-    static void xyz_to_cat02float ( vfloat &r,  vfloat &g,  vfloat &b,  vfloat x, vfloat y, vfloat z );
-    static void cat02_to_hpefloat ( vfloat &rh, vfloat &gh, vfloat &bh, vfloat r, vfloat g, vfloat b );
+    static void xyz_to_cat02float ( vfloat &r,  vfloat &g,  vfloat &b,  vfloat x, vfloat y, vfloat z, int c16);
+    static void cat02_to_hpefloat ( vfloat &rh, vfloat &gh, vfloat &bh, vfloat r, vfloat g, vfloat b, int c16);
     static vfloat nonlinear_adaptationfloat ( vfloat c, vfloat fl );
 #endif
 
@@ -52,20 +52,20 @@ private:
     static float inverse_nonlinear_adaptationfloat ( float c, float fl );
     static void calculate_abfloat ( float &aa, float &bb, float h, float e, float t, float nbb, float a );
     static void Aab_to_rgbfloat ( float &r, float &g, float &b, float A, float aa, float bb, float nbb );
-    static void hpe_to_xyzfloat   ( float &x,  float &y,  float &z,  float r, float g, float b );
-    static void cat02_to_xyzfloat ( float &x,  float &y,  float &z,  float r, float g, float b);
+    static void hpe_to_xyzfloat   ( float &x,  float &y,  float &z,  float r, float g, float b, int c16);
+    static void cat02_to_xyzfloat ( float &x,  float &y,  float &z,  float r, float g, float b, int c16);
 #ifdef __SSE2__
     static vfloat inverse_nonlinear_adaptationfloat ( vfloat c, vfloat fl );
     static void calculate_abfloat ( vfloat &aa, vfloat &bb, vfloat h, vfloat e, vfloat t, vfloat nbb, vfloat a );
     static void Aab_to_rgbfloat ( vfloat &r, vfloat &g, vfloat &b, vfloat A, vfloat aa, vfloat bb, vfloat nbb );
-    static void hpe_to_xyzfloat   ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vfloat g, vfloat b );
-    static void cat02_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vfloat g, vfloat b );
+    static void hpe_to_xyzfloat   ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vfloat g, vfloat b, int c16);
+    static void cat02_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vfloat g, vfloat b, int c16);
 #endif
 
 public:
     Ciecam02 () {}
     static void curvecolorfloat (float satind, float satval, float &sres, float parsat);
-    static void curveJfloat (float br, float contr, const LUTu & histogram, LUTf & outCurve ) ;
+    static void curveJfloat (float br, float contr, float thr, const LUTu & histogram, LUTf & outCurve ) ;
 
     /**
      * Inverse transform from CIECAM02 JCh to XYZ.
@@ -73,40 +73,40 @@ public:
     static void jch2xyz_ciecam02float ( float &x, float &y, float &z,
                                         float J, float C, float h,
                                         float xw, float yw, float zw,
-                                        float c, float nc, float n, float nbb, float ncb, float fl, float cz, float d, float aw );
+                                        float c, float nc, float n, float nbb, float ncb, float fl, float cz, float d, float aw, int c16);
 #ifdef __SSE2__
     static void jch2xyz_ciecam02float ( vfloat &x, vfloat &y, vfloat &z,
                                         vfloat J, vfloat C, vfloat h,
                                         vfloat xw, vfloat yw, vfloat zw,
-                                        vfloat nc, vfloat n, vfloat nbb, vfloat ncb, vfloat fl, vfloat d, vfloat aw, vfloat reccmcz );
+                                        vfloat nc, vfloat n, vfloat nbb, vfloat ncb, vfloat fl, vfloat d, vfloat aw, vfloat reccmcz, int c16 );
 #endif
     /**
      * Forward transform from XYZ to CIECAM02 JCh.
      */
     static void initcam1float (float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
-                               float &cz, float &aw, float &wh, float &pfl, float &fl, float c);
+                               float &cz, float &aw, float &wh, float &pfl, float &fl, float c, int c16);
 
     static void initcam2float (float yb, float pilotd, float f, float la, float xw, float yw, float zw, float &n, float &d, float &nbb, float &ncb,
-                               float &cz, float &aw, float &fl);
+                               float &cz, float &aw, float &fl, int c16);
 
     static void xyz2jch_ciecam02float ( float &J, float &C, float &h,
                                         float aw, float fl,
                                         float x, float y, float z,
                                         float xw, float yw, float zw,
-                                        float c, float nc, float n, float nbb, float ncb, float cz, float d  );
+                                        float c, float nc, float n, float nbb, float ncb, float cz, float d, int c16);
 
     static void xyz2jchqms_ciecam02float ( float &J, float &C, float &h,
                                            float &Q, float &M, float &s, float aw, float fl, float wh,
                                            float x, float y, float z,
                                            float xw, float yw, float zw,
-                                           float c, float nc, float n, float nbb, float ncb, float pfl, float cz, float d  );
+                                           float c, float nc, float n, float nbb, float ncb, float pfl, float cz, float d, int c16);
 
 #ifdef __SSE2__
     static void xyz2jchqms_ciecam02float ( vfloat &J, vfloat &C, vfloat &h,
                                            vfloat &Q, vfloat &M, vfloat &s, vfloat aw, vfloat fl, vfloat wh,
                                            vfloat x, vfloat y, vfloat z,
                                            vfloat xw, vfloat yw, vfloat zw,
-                                           vfloat c, vfloat nc, vfloat n, vfloat nbb, vfloat ncb, vfloat pfl, vfloat cz, vfloat d  );
+                                           vfloat c, vfloat nc, vfloat n, vfloat nbb, vfloat ncb, vfloat pfl, vfloat cz, vfloat d, int c16);
 
 
 #endif

@@ -41,7 +41,7 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
     complexmethod->append(M("TP_WAVELET_COMPEXPERT"));
     complexmethodconn = complexmethod->signal_changed().connect(sigc::mem_fun(*this, &Retinex::complexmethodChanged));
     complexmethod->set_tooltip_text(M("TP_WAVELET_COMPLEX_TOOLTIP"));
-    Gtk::HBox* const complexHBox = Gtk::manage(new Gtk::HBox());
+    Gtk::Box* const complexHBox = Gtk::manage(new Gtk::Box());
     Gtk::Label* const complexLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_COMPLEXLAB") + ":"));
     complexHBox->pack_start(*complexLabel, Gtk::PACK_SHRINK, 4);
     complexHBox->pack_start(*complexmethod);
@@ -132,6 +132,7 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
 
  //   Gtk::Frame *maskFrame = Gtk::manage (new Gtk::Frame (M ("TP_RETINEX_LABEL_MASK")) );
     maskFrame = Gtk::manage (new Gtk::Frame (M ("TP_RETINEX_LABEL_MASK")) );
+    maskFrame->set_label_align(0.025, 0.5);
     setExpandAlignProperties (maskFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     Gtk::Grid *maskGrid = Gtk::manage ( new Gtk::Grid());
@@ -242,6 +243,7 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
 
 
     equalFrame = Gtk::manage (new Gtk::Frame (M ("TP_RETINEX_EQUAL")));
+    equalFrame->set_label_align(0.025, 0.5);
     setExpandAlignProperties (equalFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
@@ -345,6 +347,7 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
 
 
     iterFrame = Gtk::manage (new Gtk::Frame (M ("TP_RETINEX_ITERF")));
+    iterFrame->set_label_align(0.025, 0.5);
     setExpandAlignProperties (iterFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
@@ -389,6 +392,7 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
 
 
     tranFrame = Gtk::manage (new Gtk::Frame (M ("TP_RETINEX_TRANF")));
+    tranFrame->set_label_align(0.025, 0.5);
     setExpandAlignProperties (tranFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
@@ -444,6 +448,7 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
 
 
     gainFrame = Gtk::manage (new Gtk::Frame (M ("TP_RETINEX_GAINOFFS")));
+    gainFrame->set_label_align(0.025, 0.5);
     setExpandAlignProperties (gainFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20

@@ -60,6 +60,10 @@ link_directories(
     "${RSVG_LIBRARY_DIRS}"
 )
 
+if(OpenMP_FOUND)
+    include_directories(${OpenMP_CXX_INCLUDE_DIRS})
+endif()
+
 set(CAMCONSTSFILE "camconst.json")
 
 set(RTENGINESOURCEFILES
@@ -97,7 +101,6 @@ set(RTENGINESOURCEFILES
     fast_demo.cc
     ffmanager.cc
     filmnegativeproc.cc
-    filmnegativethumb.cc
     flatcurves.cc
     FTblockDN.cc
     gamutwarning.cc
@@ -227,5 +230,9 @@ target_link_libraries(rtengine
     ${KLT_LIBRARIES}
     ${EXIV2_LIBRARIES}
     )
+
+if(OpenMP_FOUND)
+    target_link_libraries(rtengine ${OpenMP_CXX_LIBRARIES})
+endif()
 
 install(FILES ${CAMCONSTSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)

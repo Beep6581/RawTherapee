@@ -39,7 +39,7 @@
 
 #define MINLA0 0.01
 #define MAXLA0 16384
-#define CENTERLA0 500
+//#define CENTERLA0 500
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -50,12 +50,12 @@ static double wbSlider2Temp (double sval)
     // slider range: 0 - 10000
     double temp;
 
-    if (sval <= 5000) {
+    if (sval <= 5003) {
         // linear below center-temp
-        temp = MINTEMP0 + (sval / 5000.0) * (CENTERTEMP0 - MINTEMP0);
+        temp = MINTEMP0 + (sval / 5003.0) * (CENTERTEMP0 - MINTEMP0);
     } else {
         const double slope = (double) (CENTERTEMP0 - MINTEMP0) / (MAXTEMP0 - CENTERTEMP0);
-        double x = (sval - 5000) / 5000; // x 0..1
+        double x = (sval - 5003) / 5003; // x 0..1
         double y = x * slope + (1.0 - slope) * pow (x, 4.0);
         //double y = pow(x, 4.0);
         temp = CENTERTEMP0 + y * (MAXTEMP0 - CENTERTEMP0);
@@ -71,7 +71,7 @@ static double wbSlider2Temp (double sval)
 
     return temp;
 }
-
+/*
 static double wbSlider2la (double sval)
 {
 
@@ -99,7 +99,8 @@ static double wbSlider2la (double sval)
 
     return la;
 }
-
+*/
+/*
 static double wbla2Slider (double la)
 {
 
@@ -153,7 +154,7 @@ static double wbla2Slider (double la)
 
     return sval;
 }
-
+*/
 
 
 static double wbTemp2Slider (double temp)
@@ -162,7 +163,7 @@ static double wbTemp2Slider (double temp)
     double sval;
 
     if (temp <= CENTERTEMP0) {
-        sval = ((temp - MINTEMP0) / (CENTERTEMP0 - MINTEMP0)) * 5000.0;
+        sval = ((temp - MINTEMP0) / (CENTERTEMP0 - MINTEMP0)) * 5003.0;
     } else {
         const double slope = (double) (CENTERTEMP0 - MINTEMP0) / (MAXTEMP0 - CENTERTEMP0);
         const double y = (temp - CENTERTEMP0) / (MAXTEMP0 - CENTERTEMP0);
@@ -175,7 +176,7 @@ static double wbTemp2Slider (double temp)
         for (;;) {
             double y1 = x * slope + (1.0 - slope) * pow (x, 4.0);
 
-            if (5000 * fabs (y1 - y) < 0.1) {
+            if (5003 * fabs (y1 - y) < 0.1) {
                 break;
             }
 
@@ -196,7 +197,7 @@ static double wbTemp2Slider (double temp)
             }
         }
 
-        sval = 5000.0 + x * 5000.0;
+        sval = 5003.0 + x * 5003.0;
     }
 
     if (sval < 0) {
@@ -222,11 +223,59 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     Evcatpreset = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CAT02PRESET");
     EvCATAutotempout = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_TEMPOUT");
     EvCATillum = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ILLUM");
-    //preset button cat02
+    EvCATcomplex = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CATCOMPLEX");
+    EvCATmodel = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CATMODEL");
+    EvCATcat = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_CATCAT");
+    //preset button cat02/16
+    Gtk::Frame *genFrame;
+    Gtk::Box* genVBox;
+    genFrame = Gtk::manage (new Gtk::Frame (M ("TP_COLORAPP_GEN")) );
+    genFrame->set_label_align (0.025, 0.5);
+    genFrame->set_tooltip_markup (M ("TP_COLORAPP_GEN_TOOLTIP"));
+    genVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    genVBox->set_spacing (2);
+    
+    complexmethod = Gtk::manage (new MyComboBoxText ());
+    complexmethod->append(M("TP_WAVELET_COMPNORMAL"));
+    complexmethod->append(M("TP_WAVELET_COMPEXPERT"));
+    complexmethodconn = complexmethod->signal_changed().connect(sigc::mem_fun(*this, &ColorAppearance::complexmethodChanged));
+    complexmethod->set_tooltip_text(M("TP_WAVELET_COMPLEX_TOOLTIP"));
+    Gtk::Box* const complexHBox = Gtk::manage(new Gtk::Box());
+    Gtk::Label* const complexLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_COMPLEXLAB") + ":"));
+    complexHBox->pack_start(*complexLabel, Gtk::PACK_SHRINK, 4);
+    complexHBox->pack_start(*complexmethod);
+    genVBox->pack_start (*complexHBox, Gtk::PACK_SHRINK);
+    
+    modelmethod = Gtk::manage (new MyComboBoxText ());
+    modelmethod->append(M("TP_COLORAPP_MOD02"));
+    modelmethod->append(M("TP_COLORAPP_MOD16"));
+    modelmethodconn = modelmethod->signal_changed().connect(sigc::mem_fun(*this, &ColorAppearance::modelmethodChanged));
+    modelmethod->set_tooltip_text(M("TP_COLORAPP_MODELCAT_TOOLTIP"));
+    Gtk::Box* const modelHBox = Gtk::manage(new Gtk::Box());
+    Gtk::Label* const modelLabel = Gtk::manage(new Gtk::Label(M("TP_COLORAPP_MODELCAT") + ":"));
+    modelHBox->pack_start(*modelLabel, Gtk::PACK_SHRINK, 4);
+    modelHBox->pack_start(*modelmethod);
+    genVBox->pack_start (*modelHBox, Gtk::PACK_SHRINK);
+
+    catmethod = Gtk::manage (new MyComboBoxText ());
+    catmethod->append(M("TP_COLORAPP_CATCLASSIC"));
+    catmethod->append(M("TP_COLORAPP_CATSYMGEN"));
+    catmethod->append(M("TP_COLORAPP_CATSYMSPE"));
+    catmethodconn = catmethod->signal_changed().connect(sigc::mem_fun(*this, &ColorAppearance::catmethodChanged));
+    catmethod->set_tooltip_text(M("TP_COLORAPP_CATMET_TOOLTIP"));
+    Gtk::Box* const catHBox = Gtk::manage(new Gtk::Box());
+    Gtk::Label* const catLabel = Gtk::manage(new Gtk::Label(M("TP_COLORAPP_CATMOD") + ":"));
+    catHBox->pack_start(*catLabel, Gtk::PACK_SHRINK, 4);
+    catHBox->pack_start(*catmethod);
+    genVBox->pack_start (*catHBox, Gtk::PACK_SHRINK);
+    
     presetcat02 = Gtk::manage (new Gtk::CheckButton  (M ("TP_COLORAPP_PRESETCAT02")));
     presetcat02->set_tooltip_markup (M("TP_COLORAPP_PRESETCAT02_TIP"));
     presetcat02conn = presetcat02->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::presetcat02pressed));
-    pack_start (*presetcat02, Gtk::PACK_SHRINK);
+//    genVBox->pack_start (*presetcat02, Gtk::PACK_SHRINK);
+
+    genFrame->add (*genVBox);
+    pack_start (*genFrame, Gtk::PACK_EXPAND_WIDGET, 4);
 
     // ----------------------- Process #1: Converting to CIECAM
 
@@ -234,19 +283,21 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     // Process 1 frame
     Gtk::Frame *p1Frame;
     // Vertical box container for the content of the Process 1 frame
-    Gtk::VBox *p1VBox;
+    Gtk::Box* p1VBox;
 
     p1Frame = Gtk::manage (new Gtk::Frame (M ("TP_COLORAPP_LABEL_SCENE")) );
     p1Frame->set_label_align (0.025, 0.5);
-
-    p1VBox = Gtk::manage ( new Gtk::VBox());
+    p1Frame->set_tooltip_markup (M ("TP_COLORAPP_SOURCEF_TOOLTIP"));
+    p1VBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     p1VBox->set_spacing (2);
 
     degree  = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CIECAT_DEGREE"),    0.,  100.,  1.,   90.));
+    degree->set_tooltip_markup (M ("TP_COLORAPP_DEGREE_TOOLTIP"));
+    degree->setAdjusterListener(this);
 
-    degree->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+  //  degree->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    degree->throwOnButtonRelease();
+  //  degree->throwOnButtonRelease();
     degree->addAutoButton (M ("TP_COLORAPP_CAT02ADAPTATION_TOOLTIP"));
     p1VBox->pack_start (*degree);
 
@@ -254,10 +305,10 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     // surrsource->set_tooltip_markup (M ("TP_COLORAPP_SURSOURCE_TOOLTIP"));
 
 
-    Gtk::HBox* surrHBox1 = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* surrHBox1 = Gtk::manage (new Gtk::Box ());
     surrHBox1->set_spacing (2);
-    surrHBox1->set_tooltip_markup (M ("TP_COLORAPP_SURROUND_TOOLTIP"));
-    Gtk::Label* surrLabel1 = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
+    surrHBox1->set_tooltip_markup (M ("TP_COLORAPP_SURSOURCE_TOOLTIP"));
+    Gtk::Label* surrLabel1 = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUNDSRC") + ":"));
     surrHBox1->pack_start (*surrLabel1, Gtk::PACK_SHRINK);
     surrsrc = Gtk::manage (new MyComboBoxText ());
     surrsrc->append (M ("TP_COLORAPP_SURROUND_AVER"));
@@ -270,7 +321,10 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
 //   p1VBox->pack_start (*surrsource, Gtk::PACK_SHRINK);
 
-    Gtk::HBox* wbmHBox = Gtk::manage (new Gtk::HBox ());
+
+
+    wbmHBox = Gtk::manage (new Gtk::Box ());
+    
     wbmHBox->set_spacing (2);
     wbmHBox->set_tooltip_markup (M ("TP_COLORAPP_MODEL_TOOLTIP"));
     Gtk::Label* wbmLab = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_MODEL") + ":"));
@@ -285,7 +339,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     p1VBox->pack_start (*wbmHBox);
 
 
-    Gtk::HBox* illumHBox = Gtk::manage (new Gtk::HBox ());
+    illumHBox = Gtk::manage (new Gtk::Box ());
     illumHBox->set_spacing (2);
     illumHBox->set_tooltip_markup (M ("TP_COLORAPP_ILLUM_TOOLTIP"));
     Gtk::Label* illumLab = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_ILLUM") + ":"));
@@ -321,19 +375,23 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
 
 //   adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), 0.01, 16384., 0.001, 2000.)); // EV -7  ==> EV 17
-    adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 1997.4, NULL, NULL, &wbSlider2la, &wbla2Slider));
+//   adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 1997.4, NULL, NULL, &wbSlider2la, &wbla2Slider));
+    adapscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 2000.));//, NULL, NULL, &wbSlider2la, &wbla2Slider));
+    adapscen->setLogScale(500, 0);
 
-    adapscen->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+   // adapscen->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+    adapscen->set_tooltip_markup (M ("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
 
-    adapscen->throwOnButtonRelease();
+//    adapscen->throwOnButtonRelease();
     adapscen->addAutoButton();
     p1VBox->pack_start (*adapscen);
 
     ybscen = Gtk::manage (new Adjuster (M ("TP_COLORAPP_MEANLUMINANCE"), 1, 90, 1, 18));
+    ybscen->set_tooltip_markup (M ("TP_COLORAPP_YBSCEN_TOOLTIP"));
 
-    ybscen->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+  //  ybscen->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    ybscen->throwOnButtonRelease();
+//    ybscen->throwOnButtonRelease();
     ybscen->addAutoButton();
     p1VBox->pack_start (*ybscen);
 
@@ -352,17 +410,17 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     /*
         Gtk::Frame *p2Frame;
         // Vertical box container for the content of the Process 1 frame
-        Gtk::VBox *p2VBox;
+        Gtk::Box* p2VBox;
 
         p2Frame = Gtk::manage (new Gtk::Frame (M ("TP_COLORAPP_LABEL_CAM02")) );
         p2Frame->set_label_align (0.025, 0.5);
     */
-    Gtk::VBox *p2VBox;
+    Gtk::Box* p2VBox;
 
-    p2VBox = Gtk::manage ( new Gtk::VBox());
+    p2VBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     p2VBox->set_spacing (2);
 
-    Gtk::HBox* alHBox = Gtk::manage (new Gtk::HBox ());
+    alHBox = Gtk::manage (new Gtk::Box ());
     alHBox->set_spacing (2);
     alHBox->set_tooltip_markup (M ("TP_COLORAPP_ALGO_TOOLTIP"));
     Gtk::Label* alLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_ALGO") + ":"));
@@ -376,79 +434,80 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     alHBox->pack_start (*algo);
     p2VBox->pack_start (*alHBox);
 
-    p2VBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_EXPAND_WIDGET, 4);
+    p2VBox->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_EXPAND_WIDGET, 4);
 
     jlight = Gtk::manage (new Adjuster (M ("TP_COLORAPP_LIGHT"), -100.0, 100.0, 0.1, 0.));
+    jlight->setAdjusterListener  (this);
 
-    jlight->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+  //  jlight->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    jlight->throwOnButtonRelease();
+ //   jlight->throwOnButtonRelease();
     jlight->set_tooltip_markup (M ("TP_COLORAPP_LIGHT_TOOLTIP"));
     p2VBox->pack_start (*jlight);
 
     qbright = Gtk::manage (new Adjuster (M ("TP_COLORAPP_BRIGHT"), -100.0, 100.0, 0.1, 0.));
 
-    qbright->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+ //   qbright->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    qbright->throwOnButtonRelease();
+//    qbright->throwOnButtonRelease();
     qbright->set_tooltip_markup (M ("TP_COLORAPP_BRIGHT_TOOLTIP"));
     p2VBox->pack_start (*qbright);
 
     chroma = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA"), -100.0, 100.0, 0.1, 0.));
 
-    chroma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+  //  chroma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    chroma->throwOnButtonRelease();
+//    chroma->throwOnButtonRelease();
     chroma->set_tooltip_markup (M ("TP_COLORAPP_CHROMA_TOOLTIP"));
     p2VBox->pack_start (*chroma);
 
 
     schroma = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_S"), -100.0, 100.0, 0.1, 0.));
 
-    schroma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+  //  schroma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    schroma->throwOnButtonRelease();
+//    schroma->throwOnButtonRelease();
     schroma->set_tooltip_markup (M ("TP_COLORAPP_CHROMA_S_TOOLTIP"));
     p2VBox->pack_start (*schroma);
 
     mchroma = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CHROMA_M"), -100.0, 100.0, 0.1, 0.));
 
-    mchroma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+  //  mchroma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    mchroma->throwOnButtonRelease();
+//    mchroma->throwOnButtonRelease();
     mchroma->set_tooltip_markup (M ("TP_COLORAPP_CHROMA_M_TOOLTIP"));
     p2VBox->pack_start (*mchroma);
 
     rstprotection = Gtk::manage ( new Adjuster (M ("TP_COLORAPP_RSTPRO"), 0., 100., 0.1, 0.) );
 
-    rstprotection->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+  //  rstprotection->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    rstprotection->throwOnButtonRelease();
+ //   rstprotection->throwOnButtonRelease();
     rstprotection->set_tooltip_markup (M ("TP_COLORAPP_RSTPRO_TOOLTIP"));
     p2VBox->pack_start (*rstprotection);
 
     contrast = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CONTRAST"), -100.0, 100.0, 0.1, 0.));
 
-    contrast->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+  //  contrast->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    contrast->throwOnButtonRelease();
+//    contrast->throwOnButtonRelease();
     contrast->set_tooltip_markup (M ("TP_COLORAPP_CONTRAST_TOOLTIP"));
     p2VBox->pack_start (*contrast);
 
     qcontrast = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CONTRAST_Q"), -100.0, 100.0, 0.1, 0.));
 
-    qcontrast->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+ //   qcontrast->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    qcontrast->throwOnButtonRelease();
+  //  qcontrast->throwOnButtonRelease();
     qcontrast->set_tooltip_markup (M ("TP_COLORAPP_CONTRAST_Q_TOOLTIP"));
     p2VBox->pack_start (*qcontrast);
 
 
     colorh = Gtk::manage (new Adjuster (M ("TP_COLORAPP_HUE"), -100.0, 100.0, 0.1, 0.));
 
-    colorh->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+ //   colorh->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    colorh->throwOnButtonRelease();
+//    colorh->throwOnButtonRelease();
     colorh->set_tooltip_markup (M ("TP_COLORAPP_HUE_TOOLTIP"));
     p2VBox->pack_start (*colorh);
 
@@ -462,7 +521,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
         sharpcieconn = sharpcie->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::sharpcie_toggled) );
         p2VBox->pack_start (*sharpcie);
     */
-    p2VBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()), Gtk::PACK_EXPAND_WIDGET, 4);
+    p2VBox->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_EXPAND_WIDGET, 4);
 
     toneCurveMode = Gtk::manage (new MyComboBoxText ());
     toneCurveMode->append (M ("TP_COLORAPP_TCMODE_LIGHTNESS"));
@@ -579,24 +638,25 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     // Process 3 frame
     Gtk::Frame *p3Frame;
     // Vertical box container for the content of the Process 3 frame
-    Gtk::VBox *p3VBox;
+    Gtk::Box* p3VBox;
 
     p3Frame = Gtk::manage (new Gtk::Frame (M ("TP_COLORAPP_LABEL_VIEWING")) ); // "Editing viewing conditions" ???
     p3Frame->set_label_align (0.025, 0.5);
+    p3Frame->set_tooltip_markup (M ("TP_COLORAPP_VIEWINGF_TOOLTIP"));
 
-    p3VBox = Gtk::manage ( new Gtk::VBox());
+    p3VBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     p3VBox->set_spacing (2);
 
     Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("circle-blue-small.png"));
     Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
     Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("circle-magenta-small.png"));
     Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("circle-green-small.png"));
-//   adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), 0.1,  16384., 0.1,   16.));
-    adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 16, NULL, NULL, &wbSlider2la, &wbla2Slider));
+    adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 16.));//, NULL, NULL, &wbSlider2la, &wbla2Slider));
+    adaplum->setLogScale(500, 0);
 
-    adaplum->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+  //  adaplum->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    adaplum->throwOnButtonRelease();
+ //   adaplum->throwOnButtonRelease();
     adaplum->set_tooltip_markup (M ("TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP"));
     p3VBox->pack_start (*adaplum);
 
@@ -605,9 +665,11 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
     degreeout  = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CIECAT_DEGREE"),    0.,  100.,  1.,   90.));
 
-    degreeout->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+ //   degreeout->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    degreeout->throwOnButtonRelease();
+  //  degreeout->throwOnButtonRelease();
+    degreeout->set_tooltip_markup (M ("TP_COLORAPP_DEGREOUT_TOOLTIP"));
+
     degreeout->addAutoButton (M ("TP_COLORAPP_CAT02ADAPTATION_TOOLTIP"));
     p3VBox->pack_start (*degreeout);
     /*
@@ -619,9 +681,11 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     tempout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempR1, itempL1, &wbSlider2Temp, &wbTemp2Slider));
     greenout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_GREEN"), MINGREEN0, MAXGREEN0, 0.001, 1.0, igreenR1, igreenL1));
     ybout = Gtk::manage (new Adjuster (M ("TP_COLORAPP_MEANLUMINANCE"), 5, 90, 1, 18));
+    ybout->set_tooltip_markup (M ("TP_COLORAPP_YBOUT_TOOLTIP"));
+
     tempout->set_tooltip_markup (M ("TP_COLORAPP_TEMP2_TOOLTIP"));
-    tempout->throwOnButtonRelease();
-    tempout->addAutoButton (M ("TP_COLORAPP_TEMPOUT_TOOLTIP"));
+ //   tempout->throwOnButtonRelease();
+ //   tempout->addAutoButton (M ("TP_COLORAPP_TEMPOUT_TOOLTIP"));
 
     tempout->show();
     greenout->show();
@@ -630,7 +694,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     p3VBox->pack_start (*greenout);
     p3VBox->pack_start (*ybout);
 
-    Gtk::HBox* surrHBox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* surrHBox = Gtk::manage (new Gtk::Box ());
     surrHBox->set_spacing (2);
     surrHBox->set_tooltip_markup (M ("TP_COLORAPP_SURROUND_TOOLTIP"));
     Gtk::Label* surrLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
@@ -666,9 +730,9 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     */
     badpixsl = Gtk::manage (new Adjuster (M ("TP_COLORAPP_BADPIXSL"), 0,  2, 1,  0));
 
-    badpixsl->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
+ //   badpixsl->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
-    badpixsl->throwOnButtonRelease();
+ //   badpixsl->throwOnButtonRelease();
     badpixsl->set_tooltip_markup (M ("TP_COLORAPP_BADPIXSL_TOOLTIP"));
     pack_start (*badpixsl, Gtk::PACK_SHRINK);
 
@@ -762,7 +826,7 @@ void ColorAppearance::neutral_pressed ()
     qcontrast->resetValue (false);
     colorh->resetValue (false);
     tempout->resetValue (false);
-    tempout->setAutoValue (true);
+//   tempout->setAutoValue (true);
     greenout->resetValue (false);
     ybout->resetValue (false);
     tempsc->resetValue (false);
@@ -803,6 +867,9 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
 {
 
     disableListener ();
+    complexmethodconn.block(true);
+    modelmethodconn.block(true);
+    catmethodconn.block(true);
     tcmodeconn.block (true);
     tcmode2conn.block (true);
     tcmode3conn.block (true);
@@ -852,7 +919,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         adapscen->setAutoInconsistent (multiImage && !pedited->colorappearance.autoadapscen);
         ybscen->setAutoInconsistent (multiImage && !pedited->colorappearance.autoybscen);
         set_inconsistent              (multiImage && !pedited->colorappearance.enabled);
-        tempout->setAutoInconsistent   (multiImage && !pedited->colorappearance.autotempout);
+    //    tempout->setAutoInconsistent   (multiImage && !pedited->colorappearance.autotempout);
 
         shape->setUnChanged (!pedited->colorappearance.curve);
         shape2->setUnChanged (!pedited->colorappearance.curve2);
@@ -860,6 +927,15 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
         if (!pedited->colorappearance.curveMode) {
             toneCurveMode->set_active (2);
+        }
+        if (!pedited->colorappearance.complexmethod) {
+            complexmethod->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+        if (!pedited->colorappearance.modelmethod) {
+            modelmethod->set_active_text(M("GENERAL_UNCHANGED"));
+        }
+        if (!pedited->colorappearance.catmethod) {
+            catmethod->set_active_text(M("GENERAL_UNCHANGED"));
         }
 
         if (!pedited->colorappearance.curveMode2) {
@@ -875,6 +951,30 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     }
 
     setEnabled (pp->colorappearance.enabled);
+
+    if (pp->colorappearance.complexmethod == "normal") {
+        complexmethod->set_active(0);
+    } else if (pp->colorappearance.complexmethod == "expert") {
+        complexmethod->set_active(1);
+    }
+    
+    modelmethod->set_active(0);
+
+    if (pp->colorappearance.modelmethod == "02") {
+        modelmethod->set_active(0);
+    } else if (pp->colorappearance.modelmethod == "16") {
+        modelmethod->set_active(1);
+    }
+
+    catmethod->set_active(0);
+
+    if (pp->colorappearance.catmethod == "clas") {
+        catmethod->set_active(0);
+    } else if (pp->colorappearance.catmethod == "symg") {
+        catmethod->set_active(1);
+    } else if (pp->colorappearance.catmethod == "symc") {
+        catmethod->set_active(2);
+    }
 
     surrsrcconn.block (true);
 
@@ -1005,7 +1105,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     lastAutoAdapscen = pp->colorappearance.autoadapscen;
     lastAutoDegreeout = pp->colorappearance.autodegreeout;
     lastAutoybscen = pp->colorappearance.autoybscen;
-    lastAutotempout = pp->colorappearance.autotempout;
+//    lastAutotempout = pp->colorappearance.autotempout;
 
     degree->setValue (pp->colorappearance.degree);
     degree->setAutoValue (pp->colorappearance.autodegree);
@@ -1028,7 +1128,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     qcontrast->setValue (pp->colorappearance.qcontrast);
     colorh->setValue (pp->colorappearance.colorh);
     tempout->setValue (pp->colorappearance.tempout);
-    tempout->setAutoValue (pp->colorappearance.autotempout);
+//    tempout->setAutoValue (pp->colorappearance.autotempout);
     greenout->setValue (pp->colorappearance.greenout);
     ybout->setValue (pp->colorappearance.ybout);
     tempsc->setValue (pp->colorappearance.tempsc);
@@ -1038,9 +1138,20 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     presetcat02conn.block (false);
     lastpresetcat02 = pp->colorappearance.presetcat02;
 
+    if (complexmethod->get_active_row_number() == 0) {
+        updateGUIToMode(0);
+        convertParamToNormal();
+
+    } else {
+        updateGUIToMode(1);
+    }
+
     tcmode3conn.block (false);
     tcmode2conn.block (false);
     tcmodeconn.block (false);
+    catmethodconn.block(false);
+    modelmethodconn.block(false);
+    complexmethodconn.block(false);
     enableListener ();
 }
 void ColorAppearance::autoOpenCurve  ()
@@ -1085,7 +1196,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorappearance.curve2        = shape2->getCurve ();
     pp->colorappearance.curve3        = shape3->getCurve ();
     pp->colorappearance.tempout        = tempout->getValue ();
-    pp->colorappearance.autotempout    = tempout->getAutoValue ();
+//    pp->colorappearance.autotempout    = tempout->getAutoValue ();
     pp->colorappearance.greenout        = greenout->getValue ();
     pp->colorappearance.ybout        = ybout->getValue ();
     pp->colorappearance.tempsc        = tempsc->getValue ();
@@ -1119,6 +1230,9 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     }
 
     if (pedited) {
+        pedited->colorappearance.complexmethod   = complexmethod->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->colorappearance.modelmethod   = modelmethod->get_active_text() != M("GENERAL_UNCHANGED");
+        pedited->colorappearance.catmethod   = catmethod->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->colorappearance.degree        = degree->getEditedState ();
         pedited->colorappearance.degreeout        = degreeout->getEditedState ();
         pedited->colorappearance.adapscen      = adapscen->getEditedState ();
@@ -1162,8 +1276,28 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorappearance.tempsc        = tempsc->getEditedState ();
         pedited->colorappearance.greensc        = greensc->getEditedState ();
         pedited->colorappearance.presetcat02        = presetcat02->get_inconsistent ();
-        pedited->colorappearance.autotempout    = !tempout->getAutoInconsistent();
+//        pedited->colorappearance.autotempout    = !tempout->getAutoInconsistent();
 
+    }
+
+    if (complexmethod->get_active_row_number() == 0) {
+        pp->colorappearance.complexmethod = "normal";
+    } else if (complexmethod->get_active_row_number() == 1) {
+        pp->colorappearance.complexmethod = "expert";
+    }
+
+    if (modelmethod->get_active_row_number() == 0) {
+        pp->colorappearance.modelmethod = "02";
+    } else if (modelmethod->get_active_row_number() == 1) {
+        pp->colorappearance.modelmethod = "16";
+    }
+
+    if (catmethod->get_active_row_number() == 0) {
+        pp->colorappearance.catmethod = "clas";
+    } else if (catmethod->get_active_row_number() == 1) {
+        pp->colorappearance.catmethod = "symg";
+    } else if (catmethod->get_active_row_number() == 2) {
+        pp->colorappearance.catmethod = "symc";
     }
 
     if (surrsrc->get_active_row_number() == 0) {
@@ -1224,6 +1358,199 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     }
 
 }
+
+
+void ColorAppearance::updateGUIToMode(int mode)
+{
+    if(mode ==0) {
+        alHBox->hide();
+        wbmHBox->hide();
+        curveEditorG->hide();
+        curveEditorG2->hide();
+        curveEditorG3->hide();
+        greenout->hide();
+        badpixsl->hide();
+        datacie->hide();
+    } else {
+        alHBox->show(); 
+        wbmHBox->show();
+        curveEditorG->show();
+        curveEditorG2->show();
+        curveEditorG3->show();
+        greenout->show();
+        badpixsl->show();
+        datacie->show();
+    }
+
+}
+
+void ColorAppearance::convertParamToNormal()
+{
+    const ColorAppearanceParams def_params;
+    disableListener();
+    algo->set_active (0);
+    shape->setCurve(def_params.curve);
+    shape2->setCurve(def_params.curve2);
+    shape3->setCurve(def_params.curve3);
+    shape->reset();
+    shape2->reset();
+    shape3->reset();
+    wbmodel->set_active (0);
+    if (presetcat02->get_active ()) {
+        wbmodel->set_active (2);
+    }
+    if (catmethod->get_active_row_number() == 1  || catmethod->get_active_row_number() == 2) {
+            wbmodel->set_active (2);
+    }
+
+    greenout->setValue(def_params.greenout);
+    badpixsl->setValue(def_params.badpixsl);
+
+    enableListener();
+
+    // Update GUI based on converted widget parameters:
+}
+
+void ColorAppearance::complexmethodChanged()
+{    
+    if (complexmethod->get_active_row_number() == 0) {
+        updateGUIToMode(0);
+        convertParamToNormal();
+
+    } else {
+        updateGUIToMode(1);
+    }
+
+    if (listener && (multiImage || getEnabled())) {
+        listener->panelChanged(EvCATcomplex, complexmethod->get_active_text());
+    }
+}
+
+void ColorAppearance::modelmethodChanged()
+{    
+
+    if (listener && (multiImage || getEnabled())) {
+        listener->panelChanged(EvCATmodel, modelmethod->get_active_text());
+    }
+}
+
+void ColorAppearance::catmethodChanged()
+{    
+
+    if (catmethod->get_active_row_number() == 1) {
+        disableListener();
+        jlight->resetValue (false);
+        qbright->resetValue (false);
+        chroma->resetValue (false);
+        schroma->resetValue (false);
+        mchroma->resetValue (false);
+        rstprotection->resetValue (false);
+        contrast->resetValue (false);
+        qcontrast->resetValue (false);
+        colorh->resetValue (false);
+        tempout->resetValue (false);
+        greenout->resetValue (false);
+        ybout->resetValue (false);
+        tempsc->resetValue (false);
+        greensc->resetValue (false);
+        badpixsl->resetValue (false);
+        illum->set_active (2);
+        toneCurveMode->set_active (0);
+        toneCurveMode2->set_active (0);
+        toneCurveMode3->set_active (0);
+        shape->reset();
+        shape2->reset();
+        shape3->reset();
+        gamutconn.block (true);
+        gamut->set_active (true);
+        gamutconn.block (false);
+        degree->setAutoValue (true);
+        degree->resetValue (false);
+        degree->setValue(90);
+        adapscen->resetValue (false);
+        adapscen->setAutoValue (true);
+        degreeout->resetValue (false);
+        degreeout->setAutoValue (true);
+        ybscen->resetValue (false);
+        ybscen->setAutoValue (true);
+        surrsrc->set_active (0);
+        wbmodel->set_active (2);
+        tempsc->resetValue (false);
+        greensc->resetValue (false);
+        adapscen->setValue(400.);
+        ybscen->setValue(18);
+        surround->set_active (0);
+        adaplum->setValue(400.);
+        degreeout->setValue(90);
+        ybout->setValue(18);
+        tempout->setValue (nexttemp);
+    
+/*    if(tempout->getAutoValue()) {
+        tempout->resetValue (false);
+    } else {
+        tempout->setValue (nexttemp);
+        tempout->setAutoValue (true);
+    }
+*/
+        greenout->setValue (nextgreen);
+        enableListener();
+    
+    }  else if (catmethod->get_active_row_number() == 0) {
+        disableListener();
+        degree->setAutoValue (true);
+        degree->resetValue (false);
+        adapscen->resetValue (false);
+        adapscen->setAutoValue (true);
+        degreeout->resetValue (false);
+        degreeout->setAutoValue (true);
+        ybscen->resetValue (false);
+        ybscen->setAutoValue (true);
+        surrsrc->set_active (0);
+        wbmodel->set_active (0);
+        illum->set_active (2);
+        tempsc->resetValue (false);
+        greensc->resetValue (false);
+        adapscen->resetValue (false);
+        ybscen->resetValue (false);
+        surround->set_active (0);
+        adaplum->resetValue (false);
+        degreeout->resetValue (false);
+        ybout->resetValue (false);
+        tempout->resetValue (false);
+        greenout->resetValue (false);
+        enableListener();
+    }  else if (catmethod->get_active_row_number() == 2) {
+        disableListener();
+        degree->setAutoValue (true);
+        degree->resetValue (false);
+        adapscen->resetValue (false);
+        adapscen->setAutoValue (true);
+        degreeout->resetValue (false);
+        degreeout->setAutoValue (true);
+        ybscen->resetValue (false);
+        ybscen->setAutoValue (true);
+        surrsrc->set_active (0);
+        wbmodel->set_active (2);
+        illum->set_active (2);
+        tempsc->resetValue (false);
+        greensc->resetValue (false);
+        adapscen->resetValue (false);
+        ybscen->resetValue (false);
+        surround->set_active (0);
+        adaplum->resetValue (false);
+        degreeout->resetValue (false);
+        ybout->resetValue (false);
+       // tempout->resetValue (false);
+        tempout->setValue (nexttemp);
+        greenout->resetValue (false);
+        enableListener();
+    }
+
+    if (listener && (multiImage || getEnabled())) {
+        listener->panelChanged(EvCATcat, catmethod->get_active_text());
+    }
+}
+
 void ColorAppearance::curveChanged (CurveEditor* ce)
 {
 
@@ -1375,7 +1702,7 @@ void ColorAppearance::badpix_toggled () {
 
 }
 */
-void ColorAppearance::presetcat02pressed ()
+void ColorAppearance::presetcat02pressed () //keep in case of...
 {
  if (presetcat02->get_active ()) {
     disableListener();
@@ -1425,6 +1752,14 @@ void ColorAppearance::presetcat02pressed ()
     degreeout->setValue(90);
     ybout->setValue(18);
     tempout->setValue (nexttemp);
+    
+/*    if(tempout->getAutoValue()) {
+        tempout->resetValue (false);
+    } else {
+        tempout->setValue (nexttemp);
+        tempout->setAutoValue (true);
+    }
+*/
     greenout->setValue (nextgreen);
     enableListener();
  } else {
@@ -1784,6 +2119,16 @@ void ColorAppearance::adjusterChanged(Adjuster* a, double newval)
 
 void ColorAppearance::adjusterAutoToggled(Adjuster* a)
 {
+    /*
+    if(presetcat02->get_active ()){
+        if(tempout->getAutoValue()) {
+            tempout->resetValue (false);
+        } else {
+            tempout->setValue (nexttemp);
+            tempout->setAutoValue (true);
+        }
+    }
+*/    
     if (multiImage) {
         if (degree->getAutoInconsistent()) {
             degree->setAutoInconsistent (false);
@@ -1819,7 +2164,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
             ybscen->setAutoInconsistent (true);
         }
 
-        lastAutotempout = tempout->getAutoValue();
+/*        lastAutotempout = tempout->getAutoValue();
 
         if (tempout->getAutoInconsistent()) {
             tempout->setAutoInconsistent (false);
@@ -1829,9 +2174,8 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
         }
 
         lastAutotempout = tempout->getAutoValue();
-
+*/
     }
-
     if (listener && (multiImage || getEnabled()) ) {
 
         if (a == degree) {
@@ -1874,7 +2218,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
                 listener->panelChanged (EvCATAutoyb, M ("GENERAL_DISABLED"));
             }
         }
-
+/*
         if (a == tempout) {
             if (tempout->getAutoInconsistent()) {
                 listener->panelChanged (EvCATAutotempout, M ("GENERAL_UNCHANGED"));
@@ -1884,7 +2228,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
                 listener->panelChanged (EvCATAutotempout, M ("GENERAL_DISABLED"));
             }
         }
-
+*/
     }
 }
 void ColorAppearance::enabledChanged ()
@@ -1924,6 +2268,7 @@ void ColorAppearance::wbmodelChanged ()
 {
     if (wbmodel->get_active_row_number() == 0 || wbmodel->get_active_row_number() == 1) {
         illum->hide();
+        illumHBox->hide();
         tempsc->hide();
         greensc->hide();
         tempsc->setValue (5003);
@@ -1931,6 +2276,7 @@ void ColorAppearance::wbmodelChanged ()
     }
 
     if (wbmodel->get_active_row_number() == 2) {
+        illumHBox->show();
         tempsc->show();
         greensc->show();
         illum->show();
@@ -2081,6 +2427,9 @@ void ColorAppearance::setBatchMode (bool batchMode)
     tempsc->showEditedCB ();
     greensc->showEditedCB ();
 
+    complexmethod->append(M("GENERAL_UNCHANGED"));
+    modelmethod->append(M("GENERAL_UNCHANGED"));
+    catmethod->append(M("GENERAL_UNCHANGED"));
     surround->append (M ("GENERAL_UNCHANGED"));
     surrsrc->append (M ("GENERAL_UNCHANGED"));
     wbmodel->append (M ("GENERAL_UNCHANGED"));

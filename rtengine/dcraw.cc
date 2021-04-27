@@ -1399,7 +1399,7 @@ void CLASS nikon_load_raw()
 
 void CLASS nikon_yuv_load_raw()
 {
-  int row, col, yuv[4], rgb[3], b, c;
+  int row, col, yuv[4] = {}, rgb[3], b, c;
   UINT64 bitbuf=0;
 
   for (row=0; row < raw_height; row++)
@@ -5620,7 +5620,7 @@ nf: order = 0x4949;
     if (tag == 2 && strstr(make,"NIKON") && !iso_speed)
       iso_speed = (get2(),get2());
     if ((tag == 0x25 || tag == 0x28) && strstr(make,"NIKON") && !iso_speed) { // Nikon ISOInfo Tags/ISO & ISO2
-      uchar iso[1];
+      uchar iso[1] = {};
       fread (iso, 1, 1, ifp);
       iso_speed = 100 * pow(2,(float)iso[0]/12.0-5);
     }
@@ -9568,7 +9568,7 @@ void CLASS identify()
     apply_tiff();
     if (!strcmp(model, "X-T3")) {
         height = raw_height - 2;
-    } else if (!strcmp(model, "GFX 100")) {
+    } else if (!strcmp(model, "GFX 100") || !strcmp(model, "GFX100S")) {
         load_flags = 0;
     }
     if (!load_raw) {
@@ -10045,7 +10045,7 @@ canon_a5:
     } else if (!strncmp(model, "X-A3", 4) || !strncmp(model, "X-A5", 4)) {
         width = raw_width = 6016;
         height = raw_height = 4014;
-    } else if (!strcmp(model, "X-Pro3") || !strcmp(model, "X-T3") || !strcmp(model, "X-T30") || !strcmp(model, "X-T4") || !strcmp(model, "X100V")) {
+    } else if (!strcmp(model, "X-Pro3") || !strcmp(model, "X-T3") || !strcmp(model, "X-T30") || !strcmp(model, "X-T4") || !strcmp(model, "X100V") || !strcmp(model, "X-S10")) {
         width = raw_width = 6384;
         height = raw_height = 4182;
     }
@@ -10108,7 +10108,6 @@ konica_400z:
     }
   } else if (!strcmp(model,"*ist D")) {
     load_raw = &CLASS unpacked_load_raw;
-    data_error = -1;
   } else if (!strcmp(model,"*ist DS")) {
     height -= 2;
   } else if (!strcmp(make,"Samsung") && raw_width == 4704) {

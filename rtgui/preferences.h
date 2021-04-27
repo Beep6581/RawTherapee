@@ -138,7 +138,7 @@ class Preferences final :
     Gtk::ComboBoxText* dnliss;
 
     Gtk::Frame* waveletFrame;
-    Gtk::HBox* waveletTileSizeHBox;
+    Gtk::Box* waveletTileSizeHBox;
     Gtk::Label* waveletTileSizeLabel;
     Gtk::ComboBoxText* waveletTileSizeCombo;
 
@@ -147,6 +147,9 @@ class Preferences final :
     Gtk::ComboBoxText* curveBBoxPosC;
 
     Gtk::ComboBoxText* complexitylocal;
+
+    Gtk::CheckButton* inspectorWindowCB;
+    Gtk::CheckButton* zoomOnScrollCB;
 
     Gtk::ComboBoxText* themeCBT;
     Gtk::FontButton* mainFontFB;

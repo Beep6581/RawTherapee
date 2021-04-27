@@ -33,7 +33,7 @@ using namespace rtengine::procparams;
 namespace
 {
 
-const int ISO_MAX = 512000;
+const int ISO_MAX = 819200;
 const double FNUMBER_MAX = 100.0;
 const double FOCALLEN_MAX = 10000.0;
 const double SHUTTERSPEED_MAX = 1000.0;

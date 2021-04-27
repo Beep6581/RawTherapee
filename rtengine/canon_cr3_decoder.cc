@@ -843,7 +843,7 @@ inline void crxFillBuffer(CrxBitstream* bitStrm)
 #endif
 
             if (bitStrm->curBufSize < 1) {  // nothing read
-                throw std::exception();
+                throw std::runtime_error("Unexpected end of file in CRX bitstream");
             }
 
             bitStrm->mdatSize -= bitStrm->curBufSize;

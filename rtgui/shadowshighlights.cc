@@ -28,9 +28,9 @@ using namespace rtengine::procparams;
 ShadowsHighlights::ShadowsHighlights () : FoldableToolPanel(this, "shadowshighlights", M("TP_SHADOWSHLIGHTS_LABEL"), false, true)
 {
     auto m = ProcEventMapper::getInstance();
-    EvSHColorspace = m->newEvent(RGBCURVE, "HISTORY_MSG_SH_COLORSPACE");
+    EvSHColorspace = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_SH_COLORSPACE");
 
-    Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hb = Gtk::manage (new Gtk::Box ());
     hb->pack_start(*Gtk::manage(new Gtk::Label(M("TP_DIRPYRDENOISE_MAIN_COLORSPACE") + ": ")), Gtk::PACK_SHRINK);
     colorspace = Gtk::manage(new MyComboBoxText());
     colorspace->append(M("TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB"));
@@ -38,21 +38,21 @@ ShadowsHighlights::ShadowsHighlights () : FoldableToolPanel(this, "shadowshighli
     hb->pack_start(*colorspace);
     pack_start(*hb);
 
-    pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+    pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
 
     highlights   = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0, 100, 1, 0));
     h_tonalwidth = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_HLTONALW"), 10, 100, 1, 70));
     pack_start (*highlights);
     pack_start (*h_tonalwidth);
 
-    pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+    pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
 
     shadows      = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_SHADOWS"), 0, 100, 1, 0));
     s_tonalwidth = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_SHTONALW"), 10, 100, 1, 30));
     pack_start (*shadows);
     pack_start (*s_tonalwidth);
 
-    pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+    pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
 
     radius = Gtk::manage (new Adjuster (M("TP_SHADOWSHLIGHTS_RADIUS"), 1, 100, 1, 40));
     pack_start (*radius);

@@ -25,14 +25,15 @@ using namespace rtengine;
 
 FilterPanel::FilterPanel () : listener (nullptr)
 {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
 
     enabled = Gtk::manage (new Gtk::CheckButton (M("EXIFFILTER_METADATAFILTER")));
     pack_start (*enabled, Gtk::PACK_SHRINK, 2);
-    pack_start (*Gtk::manage(new Gtk::HSeparator ()), Gtk::PACK_SHRINK, 2);
+    pack_start (*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 2);
 
     enaFNumber = Gtk::manage (new Gtk::CheckButton (M("EXIFFILTER_APERTURE") + ":"));
-    Gtk::VBox* fnvb = Gtk::manage(new Gtk::VBox ());
-    Gtk::HBox* fnhb = Gtk::manage(new Gtk::HBox ());
+    Gtk::Box* fnvb = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Box* fnhb = Gtk::manage(new Gtk::Box ());
     fnvb->pack_start (*enaFNumber, Gtk::PACK_SHRINK, 0);
     fnumberFrom = Gtk::manage(new Gtk::Entry ());
     fnumberFrom->set_width_chars(1);
@@ -45,8 +46,8 @@ FilterPanel::FilterPanel () : listener (nullptr)
     pack_start (*fnvb, Gtk::PACK_SHRINK, 4);
 
     enaShutter = Gtk::manage(new Gtk::CheckButton(M("EXIFFILTER_SHUTTER") + ":"));
-    Gtk::VBox* svb = Gtk::manage(new Gtk::VBox ());
-    Gtk::HBox* shb = Gtk::manage(new Gtk::HBox ());
+    Gtk::Box* svb = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Box* shb = Gtk::manage(new Gtk::Box ());
     svb->pack_start (*enaShutter, Gtk::PACK_SHRINK, 0);
     shutterFrom = Gtk::manage(new Gtk::Entry ());
     shutterFrom->set_width_chars(1);
@@ -59,8 +60,8 @@ FilterPanel::FilterPanel () : listener (nullptr)
     pack_start (*svb, Gtk::PACK_SHRINK, 4);
 
     enaISO = Gtk::manage(new Gtk::CheckButton(M("EXIFFILTER_ISO") + ":"));
-    Gtk::VBox* ivb = Gtk::manage(new Gtk::VBox ());
-    Gtk::HBox* ihb = Gtk::manage(new Gtk::HBox ());
+    Gtk::Box* ivb = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Box* ihb = Gtk::manage(new Gtk::Box ());
     ivb->pack_start (*enaISO, Gtk::PACK_SHRINK, 0);
     isoFrom = Gtk::manage(new Gtk::Entry ());
     isoFrom->set_width_chars(1);
@@ -73,8 +74,8 @@ FilterPanel::FilterPanel () : listener (nullptr)
     pack_start (*ivb, Gtk::PACK_SHRINK, 4);
 
     enaFocalLen = Gtk::manage(new Gtk::CheckButton(M("EXIFFILTER_FOCALLEN") + ":"));
-    Gtk::VBox* fvb = Gtk::manage(new Gtk::VBox ());
-    Gtk::HBox* fhb = Gtk::manage(new Gtk::HBox ());
+    Gtk::Box* fvb = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Box* fhb = Gtk::manage(new Gtk::Box ());
     fvb->pack_start (*enaFocalLen, Gtk::PACK_SHRINK, 0);
     focalFrom = Gtk::manage(new Gtk::Entry ());
     focalFrom->set_width_chars(1);
@@ -87,7 +88,7 @@ FilterPanel::FilterPanel () : listener (nullptr)
     pack_start (*fvb, Gtk::PACK_SHRINK, 4);
 
     enaExpComp = Gtk::manage(new Gtk::CheckButton(M("EXIFFILTER_EXPOSURECOMPENSATION") + ":"));
-    Gtk::VBox* evb = Gtk::manage(new Gtk::VBox ());
+    Gtk::Box* evb = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     evb->pack_start (*enaExpComp, Gtk::PACK_SHRINK, 0);
     expcomp = Gtk::manage(new Gtk::ListViewText (1, false, Gtk::SELECTION_MULTIPLE));
     expcomp->set_headers_visible (false);
@@ -99,7 +100,7 @@ FilterPanel::FilterPanel () : listener (nullptr)
     pack_start (*evb, Gtk::PACK_SHRINK, 4);
 
     enaCamera = Gtk::manage(new Gtk::CheckButton(M("EXIFFILTER_CAMERA") + ":"));
-    Gtk::VBox* cvb = Gtk::manage(new Gtk::VBox ());
+    Gtk::Box* cvb = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     cvb->pack_start (*enaCamera, Gtk::PACK_SHRINK, 0);
     camera = Gtk::manage(new Gtk::ListViewText (1, false, Gtk::SELECTION_MULTIPLE));
     camera->set_headers_visible (false);
@@ -111,7 +112,7 @@ FilterPanel::FilterPanel () : listener (nullptr)
     pack_start (*cvb, Gtk::PACK_EXPAND_WIDGET, 4);
 
     enaLens = Gtk::manage(new Gtk::CheckButton(M("EXIFFILTER_LENS") + ":"));
-    Gtk::VBox* lvb = Gtk::manage(new Gtk::VBox ());
+    Gtk::Box* lvb = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     lvb->pack_start (*enaLens, Gtk::PACK_SHRINK, 0);
     lens = Gtk::manage(new Gtk::ListViewText (1, false, Gtk::SELECTION_MULTIPLE));
     lens->set_headers_visible (false);
@@ -123,7 +124,7 @@ FilterPanel::FilterPanel () : listener (nullptr)
     pack_start (*lvb, Gtk::PACK_EXPAND_WIDGET, 4);
 
     enaFiletype = Gtk::manage(new Gtk::CheckButton(M("EXIFFILTER_FILETYPE") + ":"));
-    Gtk::VBox* ftvb = Gtk::manage(new Gtk::VBox ());
+    Gtk::Box* ftvb = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     ftvb->pack_start (*enaFiletype, Gtk::PACK_SHRINK, 0);
     filetype = Gtk::manage(new Gtk::ListViewText (1, false, Gtk::SELECTION_MULTIPLE));
     filetype->set_headers_visible (false);
@@ -135,8 +136,8 @@ FilterPanel::FilterPanel () : listener (nullptr)
     pack_start (*ftvb, Gtk::PACK_EXPAND_WIDGET, 4);
 
     // add panel ending
-    Gtk::VBox* vboxpe = Gtk::manage (new Gtk::VBox ());
-    Gtk::HSeparator* hseptpe = Gtk::manage (new Gtk::HSeparator ());
+    Gtk::Box* vboxpe = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Separator* hseptpe = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     Gtk::Image* peImg = Gtk::manage (new RTImage("ornament1.png"));
     vboxpe->pack_start(*hseptpe, Gtk::PACK_SHRINK, 4);
     vboxpe->pack_start(*peImg);

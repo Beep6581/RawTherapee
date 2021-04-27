@@ -46,11 +46,11 @@ public:
 };
 
 
-class ThresholdAdjuster : public Gtk::VBox
+class ThresholdAdjuster : public Gtk::Box
 {
 
 protected:
-    Gtk::HBox* hbox;
+    Gtk::Box* hbox;
     Gtk::Label* label;
     ThresholdSelector tSelector;
     //MySpinButton* spin;

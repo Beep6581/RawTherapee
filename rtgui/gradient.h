@@ -21,7 +21,7 @@ private:
     int lastObject;
 
 protected:
-    Gtk::HBox *editHBox;
+    Gtk::Box *editHBox;
     Gtk::ToggleButton* edit;
     Adjuster* degree;
     Adjuster* feather;

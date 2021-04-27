@@ -460,7 +460,7 @@ static int _trackFeature(
 
   /* Check whether window is out of bounds */
   if (*x2-hw < 0.0f || nc-(*x2+hw) < one_plus_eps ||
-      *y2-hh < 0.0f || nr-(*y2+hh) < one_plus_eps)
+      *y2-hh < 0.0f || nr-(*y2+hh) < one_plus_eps || std::isnan(*x2) || std::isnan(*y2))
     status = KLT_OOB;
 
   /* Check whether residue is too large */

@@ -35,23 +35,22 @@ inline float getBilinearValue(const array2D<float> &src, float x, float y)
     const int H = src.getHeight();
     
     // Get integer and fractional parts of numbers
-    int xi = x;
-    int yi = y;
-    float xf = x - xi;
-    float yf = y - yi;
-    int xi1 = std::min(xi + 1, W - 1);
-    int yi1 = std::min(yi + 1, H - 1);
+    const int xi = x;
+    const int yi = y;
+    const float xf = x - xi;
+    const float yf = y - yi;
+    const int xi1 = std::min(xi + 1, W - 1);
+    const int yi1 = std::min(yi + 1, H - 1);
 
-    float bl = src[yi][xi];
-    float br = src[yi][xi1];
-    float tl = src[yi1][xi];
-    float tr = src[yi1][xi1];
+    const float bl = src[yi][xi];
+    const float br = src[yi][xi1];
+    const float tl = src[yi1][xi];
+    const float tr = src[yi1][xi1];
 
     // interpolate
-    float b = xf * br + (1.f - xf) * bl;
-    float t = xf * tr + (1.f - xf) * tl;
-    float pxf = yf * t + (1.f - yf) * b;
-    return pxf;
+    const float b = intp(xf, br, bl);
+    const float t = intp(xf, tr, tl);
+    return intp(yf, t, b);
 }
 
 

@@ -48,10 +48,10 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     Gtk::Frame* lumaFrame = Gtk::manage (new Gtk::Frame (M("TP_DIRPYRDENOISE_LUMINANCE_FRAME")) );
     lumaFrame->set_label_align(0.025, 0.5);
 
-    Gtk::VBox * lumaVBox = Gtk::manage ( new Gtk::VBox());
+    Gtk::Box*  lumaVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     lumaVBox->set_spacing(2);
 
-    ctboxL = Gtk::manage (new Gtk::HBox ());
+    ctboxL = Gtk::manage (new Gtk::Box ());
     Gtk::Label* labmL = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_LUMINANCE_CONTROL") + ":"));
     ctboxL->pack_start (*labmL, Gtk::PACK_SHRINK, 1);
 
@@ -83,10 +83,10 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     Gtk::Frame* chromaFrame = Gtk::manage (new Gtk::Frame (M("TP_DIRPYRDENOISE_CHROMINANCE_FRAME")) );
     chromaFrame->set_label_align(0.025, 0.5);
 
-    Gtk::VBox *chromaVBox = Gtk::manage ( new Gtk::VBox());
+    Gtk::Box* chromaVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     chromaVBox->set_spacing(2);
 
-    ctboxC = Gtk::manage (new Gtk::HBox ());
+    ctboxC = Gtk::manage (new Gtk::Box ());
     Gtk::Label* labmC = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_CHROMINANCE_METHOD") + ":"));
     ctboxC->pack_start (*labmC, Gtk::PACK_SHRINK, 1);
 
@@ -99,7 +99,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     Cmethodconn = Cmethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::CmethodChanged) );
     Cmethod->set_tooltip_markup (M("TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP"));
 
-    ctboxC2 = Gtk::manage (new Gtk::HBox ());
+    ctboxC2 = Gtk::manage (new Gtk::Box ());
     Gtk::Label* labmC2 = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_CHROMINANCE_METHOD") + ":"));
     ctboxC2->pack_start (*labmC2, Gtk::PACK_SHRINK, 1);
     ctboxC2->set_tooltip_markup (M("TP_DIRPYRDENOISE_CHROMINANCE_METHODADVANCED_TOOLTIP"));
@@ -121,7 +121,7 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     redchro    = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN"), -100, 100, 0.1, 0));
     bluechro    = Gtk::manage (new Adjuster (M("TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW"), -100, 100, 0.1, 0));
 
-    Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hb1 = Gtk::manage (new Gtk::Box ());
     hb1->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_DIRPYRDENOISE_MAIN_COLORSPACE") + ": ")), Gtk::PACK_SHRINK, 1);
     hb1->set_tooltip_markup (M("TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP"));
 
@@ -165,9 +165,8 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     // ---- Median FIltering ----
 
     Gtk::Frame* medianFrame = Gtk::manage (new Gtk::Frame ());
-    medianFrame->set_label_align(0.025, 0.5);
 
-    Gtk::VBox *medianVBox = Gtk::manage ( new Gtk::VBox());
+    Gtk::Box* medianVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     medianVBox->set_spacing(2);
 
     median = Gtk::manage (new Gtk::CheckButton (M("TP_DIRPYRDENOISE_MEDIAN_METHOD_LABEL") + ":"));
@@ -204,19 +203,19 @@ DirPyrDenoise::DirPyrDenoise () : FoldableToolPanel(this, "dirpyrdenoise", M("TP
     medmethod->set_tooltip_text (M("TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP"));
     medmethodconn = medmethod->signal_changed().connect ( sigc::mem_fun(*this, &DirPyrDenoise::medmethodChanged) );
 
-    ctboxm = Gtk::manage (new Gtk::HBox ());
+    ctboxm = Gtk::manage (new Gtk::Box ());
     Gtk::Label* labmm = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_MEDIAN_METHOD") + ":"));
     ctboxm->pack_start (*labmm, Gtk::PACK_SHRINK, 1);
 
-    ctbox = Gtk::manage (new Gtk::HBox ());
+    ctbox = Gtk::manage (new Gtk::Box ());
     Gtk::Label* labm = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_MEDIAN_TYPE") + ":"));
     ctbox->pack_start (*labm, Gtk::PACK_SHRINK, 1);
 
-    ctboxrgb = Gtk::manage (new Gtk::HBox ());
+    ctboxrgb = Gtk::manage (new Gtk::Box ());
     Gtk::Label* labrgb = Gtk::manage (new Gtk::Label (M("TP_DIRPYRDENOISE_MEDIAN_TYPE") + ":"));
     ctboxrgb->pack_start (*labrgb, Gtk::PACK_SHRINK, 1);
 
-    Gtk::HBox* hb11 = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hb11 = Gtk::manage (new Gtk::Box ());
     hb11->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_DIRPYRDENOISE_MAIN_MODE") + ": ")), Gtk::PACK_SHRINK, 1);
     hb11->set_tooltip_markup (M("TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP"));
 
