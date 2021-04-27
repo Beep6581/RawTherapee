@@ -63,6 +63,9 @@ protected:
 
     Gtk::Label* labmga;
     Gtk::Box* gabox;
+    Gtk::Label* blr;
+    Gtk::Label* blg;
+    Gtk::Label* blb;
 
 
     //bool freegamma;

@@ -277,26 +277,30 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprim->set_tooltip_text(M("TP_ICM_PRIMILLUM_TOOLTIP"));
 
 
-    redx = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_REDX"), 0.41, 1.0, 0.0001, 0.6400));
+    redx = Gtk::manage(new Adjuster(M("TC_PRIM_REDX"), 0.41, 1.0, 0.0001, 0.6400));
     setExpandAlignProperties(redx, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    redy = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_REDY"), 0.0, 0.70, 0.0001, 0.3300));
+    redy = Gtk::manage(new Adjuster(M("TC_PRIM_REDY"), 0.0, 0.70, 0.0001, 0.3300));
     setExpandAlignProperties(redy, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    grex = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_GREX"), -0.1000, 0.400, 0.0001, 0.2100));
+    grex = Gtk::manage(new Adjuster(M("TC_PRIM_GREX"), -0.1, 0.4, 0.0001, 0.2100));
     setExpandAlignProperties(grex, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    grey = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_GREY"), 0.500, 1.0000, 0.0001, 0.7100));
+    grey = Gtk::manage(new Adjuster(M("TC_PRIM_GREY"), 0.50, 1.0, 0.0001, 0.7100));
     setExpandAlignProperties(grey, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    blux = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_BLUX"), -0.1, 0.4, 0.0001, 0.1500));
+    blux = Gtk::manage(new Adjuster(M("TC_PRIM_BLUX"), -0.1, 0.4, 0.0001, 0.1500));
     setExpandAlignProperties(blux, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    bluy = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_BLUY"), -0.1, 0.5, 0.0001, 0.060));
+    bluy = Gtk::manage(new Adjuster(M("TC_PRIM_BLUY"), -0.1, 0.5, 0.0001, 0.060));
     setExpandAlignProperties(bluy, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
     redx->set_tooltip_text(M("TP_ICM_PRIMRED_TOOLTIP"));
     grex->set_tooltip_text(M("TP_ICM_PRIMGRE_TOOLTIP"));
     blux->set_tooltip_text(M("TP_ICM_PRIMBLU_TOOLTIP"));
+    blr = Gtk::manage(new Gtk::Label(M(" ")));
+    blg = Gtk::manage(new Gtk::Label(M(" ")));
+    blb = Gtk::manage(new Gtk::Label(M("   ")));
 
     redBox = Gtk::manage(new Gtk::Box());
-    redBox->pack_start(*redx, Gtk::PACK_SHRINK);
-    redBox->pack_start(*redy, Gtk::PACK_SHRINK);
+    redBox->pack_start(*redx);//, Gtk::PACK_SHRINK);
+    redBox->pack_start(*blr, Gtk::PACK_SHRINK);
+    redBox->pack_start(*redy);//, Gtk::PACK_SHRINK);
     redFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_REDFRAME")));
     redFrame->set_label_align(0.025, 0.5);
     Gtk::VBox *redVBox = Gtk::manage(new Gtk::VBox());
@@ -304,19 +308,25 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     redFrame->set_tooltip_text(M("TP_ICM_WORKING_PRIMFRAME_TOOLTIP"));
 
     greBox = Gtk::manage(new Gtk::Box());
-    greBox->pack_start(*grex, Gtk::PACK_SHRINK);
-    greBox->pack_start(*grey, Gtk::PACK_SHRINK);
+    greBox->pack_start(*grex);//, Gtk::PACK_SHRINK, 2);
+    greBox->pack_start(*blg, Gtk::PACK_SHRINK);
+    greBox->pack_start(*grey);//, Gtk::PACK_SHRINK, 2);
     redVBox->pack_start(*greBox, Gtk::PACK_EXPAND_WIDGET);
+    Gtk::Separator* const separator1 = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
+    Gtk::Separator* const separator2 = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
 
     bluBox = Gtk::manage(new Gtk::Box());
-    bluBox->pack_start(*blux, Gtk::PACK_SHRINK);
-    bluBox->pack_start(*bluy, Gtk::PACK_SHRINK);
+    bluBox->pack_start(*blux);//, Gtk::PACK_SHRINK);
+    bluBox->pack_start(*blb, Gtk::PACK_SHRINK);
+    bluBox->pack_start(*bluy);//, Gtk::PACK_SHRINK);
     redVBox->pack_start(*bluBox, Gtk::PACK_EXPAND_WIDGET);
     preser = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_PRESER"), 0., 100., 0.5, 0.));
     preser->setAdjusterListener(this);
     preBox = Gtk::manage(new Gtk::Box());
     preBox->pack_start(*preser, Gtk::PACK_SHRINK);
+    redVBox->pack_start(*separator1, Gtk::PACK_SHRINK);
     redVBox->pack_start(*preBox, Gtk::PACK_EXPAND_WIDGET);
+    redVBox->pack_start(*separator2, Gtk::PACK_SHRINK);
 
     cielab = Gtk::manage(new Gtk::Label(M("TP_ICM_WORKING_CIEDIAG") + ":"));
 
