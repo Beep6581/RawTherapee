@@ -248,6 +248,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     will->append(M("TP_ICM_WORKING_ILLU_D120"));
     will->append(M("TP_ICM_WORKING_ILLU_STDA"));
     will->append(M("TP_ICM_WORKING_ILLU_2000"));
+    will->append(M("TP_ICM_WORKING_ILLU_1500"));
     will->set_active(0);
     will->set_tooltip_text(M("TP_ICM_ILLUMPRIM_TOOLTIP"));
 
@@ -804,6 +805,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         will->set_active(8);
     } else if (pp->icm.will == "2000") {
         will->set_active(9);
+    } else if (pp->icm.will == "1500") {
+        will->set_active(10);
     }
 
     if (pp->icm.wprim == "def") {
@@ -1150,6 +1153,8 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pp->icm.will = "stda";
     } else if (will->get_active_row_number() == 9) {
         pp->icm.will = "2000";
+    } else if (will->get_active_row_number() == 10) {
+        pp->icm.will = "1500";
     }
 
     if (wprim->get_active_row_number() == 0) {

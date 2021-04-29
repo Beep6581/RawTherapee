@@ -1614,6 +1614,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     illum = 8; 
                 } else if(params->icm.will == "2000"){
                     illum = 9; 
+                } else if(params->icm.will == "1500"){
+                    illum = 10; 
                 }
 
                 int prim = 0;
@@ -1722,8 +1724,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     } else if(illum == 9) {//2000K
                         wx = 0.5266f;
                         wy = 0.4133f;
+                    } else if(illum == 10) {//1500K
+                        wx = 0.5857f;
+                        wy = 0.3932f;
                     }
-
 
                     if (primListener) {
                         primListener->iprimChanged (r_x, r_y, b_x, b_y, g_x, g_y, wx, wy);

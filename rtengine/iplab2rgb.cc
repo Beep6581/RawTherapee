@@ -697,21 +697,28 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 
         // 7 parameters for smoother curves
         cmsCIExyY xyD;
-
+        Glib::ustring ills = "D50";
         if (illum == 1) {
             tempv4 = 4100.;
+            ills = "D41";
         } else if (illum == 2) {
             tempv4 = 5003.;
+            ills = "D50";
         } else if (illum == 3) {
             tempv4 = 5500.;
+            ills = "D55";
         } else if (illum == 4) {
             tempv4 = 6004.;
+            ills = "D60";
         } else if (illum == 5) {
             tempv4 = 6504.;
+            ills = "D65";
         } else if (illum == 6) {
             tempv4 = 8000.;
+            ills = "D80";
         } else if (illum == 7) {
             tempv4 = 12000.;
+            ills = "D120";
         }
 
         cmsWhitePointFromTemp(&xyD, tempv4);
@@ -734,10 +741,18 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 
         if (illum == 8) {//stdA
             xyD = {0.447573, 0.407440, 1.0};
+            ills = "stdA 2875K";
+
         }
 
         if (illum == 9) {//2000K
+            ills = "Tungsten 2000K";
             xyD = {0.526591, 0.41331, 1.0};
+        }
+
+        if (illum == 10) {//1500K
+            ills = "Tungsten 1500K";
+            xyD = {0.585703, 0.393157, 1.0};
         }
 
         //D41  0.377984  0.381229
@@ -757,6 +772,17 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         cmsWriteTag(oprofdef, cmsSigRedTRCTag, GammaTRC[0]);
         cmsWriteTag(oprofdef, cmsSigGreenTRCTag, GammaTRC[1]);
         cmsWriteTag(oprofdef, cmsSigBlueTRCTag, GammaTRC[2]);
+
+      //to read XYZ values and illuminant
+        if (rtengine::settings->verbose) {
+            cmsCIEXYZ *redT = static_cast<cmsCIEXYZ*>(cmsReadTag(oprofdef, cmsSigRedMatrixColumnTag));
+            cmsCIEXYZ *greenT  = static_cast<cmsCIEXYZ*>(cmsReadTag(oprofdef, cmsSigGreenMatrixColumnTag));
+            cmsCIEXYZ *blueT  = static_cast<cmsCIEXYZ*>(cmsReadTag(oprofdef, cmsSigBlueMatrixColumnTag));
+            printf("Illuminant=%s\n", ills.c_str());
+            printf("rX=%f gX=%f bX=%f\n", redT->X, greenT->X, blueT->X);
+            printf("rY=%f gY=%f bY=%f\n", redT->Y, greenT->Y, blueT->Y);
+            printf("rZ=%f gZ=%f bZ=%f\n", redT->Z, greenT->Z, blueT->Z);
+        }
 
         cmsFreeToneCurve(GammaTRC[0]);
         if (oprofdef) {

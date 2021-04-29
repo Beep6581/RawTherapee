@@ -2462,6 +2462,7 @@ TP_ICM_WORKING_ILLU_D80;D80
 TP_ICM_WORKING_ILLU_D120;D120
 TP_ICM_WORKING_ILLU_STDA;stdA 2875K
 TP_ICM_WORKING_ILLU_2000;Tungsten 2000K
+TP_ICM_WORKING_ILLU_1500;Tungsten 1500K
 TP_ICM_WORKING_PRIM;Destination primaries
 TP_ICM_PRIMILLUM_TOOLTIP;You can change an image from its original mode (‘working profile’) to a different mode (‘destination primaries’). When you choose a different color mode for an image, you permanently change the color values in the image.\n\nChanging the ‘primaries’ is quite complex and difficult to use. It requires a lot of experimenting.\n It is capable of making exotic color adjustments as Channel Mixer primaries.\n Allows you to modify the camera calibration with Custom (sliders).
 TP_ICM_WORKING_PRIM_NONE;Default

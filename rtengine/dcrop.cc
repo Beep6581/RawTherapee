@@ -1501,6 +1501,8 @@ void Crop::update(int todo)
                 illum = 8; 
             } else if(params.icm.will == "2000"){
                 illum = 9; 
+            } else if(params.icm.will == "1500"){
+                illum = 10; 
             }
 
             int prim = 0;
