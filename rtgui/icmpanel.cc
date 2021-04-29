@@ -938,7 +938,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         redFrame->hide();
 
     } else if (pp->icm.workingTRC == "Custom") {
-        will->set_sensitive(true);
+        will->set_sensitive(false);
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
         wprimlab->set_sensitive(true);
@@ -947,14 +947,17 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         } else {
             redFrame->show();
             if (wprim->get_active_row_number() < 11) {
-              will->set_sensitive(true);
+              will->set_sensitive(false);
               redBox->set_sensitive(false);
               greBox->set_sensitive(false);
               bluBox->set_sensitive(false);
               labgridcie->set_sensitive(false);
 
             } else {
-              will->set_sensitive(true);
+              will->set_sensitive(false);
+              if (wprim->get_active_row_number() == 11) {
+                will->set_sensitive(true);
+              }
               redBox->set_sensitive(true);
               greBox->set_sensitive(true);
               bluBox->set_sensitive(true);
@@ -1052,6 +1055,11 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
             labgridcie->set_sensitive(true);
         } else {
             labgridcie->set_sensitive(false);
+        }
+        if (wprim->get_active_row_number() == 11) {
+            will->set_sensitive(true);
+        } else {
+            will->set_sensitive(false);
         }
     
     }
@@ -1316,7 +1324,7 @@ void ICMPanel::wtrcinChanged()
         redFrame->hide();
         riaHBox->set_sensitive(false);
     } else if(wTRC->get_active_row_number() == 1) {
-        will->set_sensitive(true);
+        will->set_sensitive(false);
         wprim->set_sensitive(true);
         wprimlab->set_sensitive(true);
         willulab->set_sensitive(true);
@@ -1345,7 +1353,7 @@ void ICMPanel::wtrcinChanged()
     } else if(wTRC->get_active_row_number() == 2) {
         wGamma->setValue(2.222);
         wSlope->setValue(4.5);
-        will->set_sensitive(true);
+        will->set_sensitive(false);
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
         wprimlab->set_sensitive(true);
@@ -1366,7 +1374,7 @@ void ICMPanel::wtrcinChanged()
     } else if(wTRC->get_active_row_number() == 3) {
         wGamma->setValue(2.4);
         wSlope->setValue(12.92);
-        will->set_sensitive(true);
+        will->set_sensitive(false);
         willulab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
@@ -1388,7 +1396,7 @@ void ICMPanel::wtrcinChanged()
     } else if(wTRC->get_active_row_number() == 4) {
         wGamma->setValue(2.2);
         wSlope->setValue(0.);
-        will->set_sensitive(true);
+        will->set_sensitive(false);
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
         wprimlab->set_sensitive(true);
@@ -1412,7 +1420,7 @@ void ICMPanel::wtrcinChanged()
     } else if(wTRC->get_active_row_number() == 5) {
         wGamma->setValue(1.8);
         wSlope->setValue(0.);
-        will->set_sensitive(true);
+        will->set_sensitive(false);
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
         wprimlab->set_sensitive(true);
@@ -1436,7 +1444,7 @@ void ICMPanel::wtrcinChanged()
     } else if(wTRC->get_active_row_number() == 6) {
         wGamma->setValue(1.0);
         wSlope->setValue(1.);
-        will->set_sensitive(true);
+        will->set_sensitive(false);
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
         wprimlab->set_sensitive(true);
@@ -1466,6 +1474,11 @@ void ICMPanel::wtrcinChanged()
     } else {
         labgridcie->set_sensitive(false);
     }
+    if (wprim->get_active_row_number() == 11) {
+        will->set_sensitive(true);
+    } else {
+        will->set_sensitive(false);
+    }
 
     if (wTRC->get_active_row_number() == 0) {
         redFrame->hide();
@@ -1481,6 +1494,11 @@ void ICMPanel::willChanged()
         labgridcie->set_sensitive(true);
     } else {
         labgridcie->set_sensitive(false);
+    }
+    if (wprim->get_active_row_number() == 11) {
+        will->set_sensitive(true);
+    } else {
+        will->set_sensitive(false);
     }
 
     if (listener) {
@@ -1665,6 +1683,7 @@ void ICMPanel::wprimChanged()
             greBox->set_sensitive(false);
             bluBox->set_sensitive(false);
             labgridcie->set_sensitive(false);
+            will->set_sensitive(false);
             if(wprim->get_active_row_number() == 12) {
                 labgridcie->set_sensitive(true);
             }
@@ -1673,6 +1692,11 @@ void ICMPanel::wprimChanged()
             greBox->set_sensitive(true);
             bluBox->set_sensitive(true);
             labgridcie->set_sensitive(false);
+            will->set_sensitive(false);
+            if (wprim->get_active_row_number() == 11) {
+                will->set_sensitive(true);
+            }
+            
         }
         
     }
