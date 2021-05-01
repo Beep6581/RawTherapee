@@ -16056,6 +16056,21 @@ void ImProcFunctions::Lab_Local(
                             softproc(bufcolreserv.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.001, 0.00001, 0.5f, sk, multiThread, 1);
                         }
                         float meansob = 0.f;
+                        const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).reparcol;
+                        int bw = bufcolreserv->W;
+                        int bh = bufcolreserv->H;
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if(multiThread)
+#endif
+                    for (int x = 0; x < bh; x++) {
+                        for (int y = 0; y < bw; y++) {
+                            bufcolfin->L[x][y] = intp(repart, bufcolreserv->L[x][y], bufcolfin->L[x][y]);
+                            bufcolfin->a[x][y] = intp(repart, bufcolreserv->a[x][y], bufcolfin->a[x][y]);
+                            bufcolfin->b[x][y] = intp(repart, bufcolreserv->b[x][y], bufcolfin->b[x][y]);
+                        }
+                    }
+                        
                         transit_shapedetect2(sp, 0.f, 0.f, call, 0, bufcolreserv.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
                     }
 
@@ -16138,6 +16153,21 @@ void ImProcFunctions::Lab_Local(
                         bool invmask = false;
                         maskrecov(bufcolfin.get(), original, bufmaskblurcol.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
                     }
+                    const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).reparcol;
+                    int bw = bufcolorig->W;
+                    int bh = bufcolorig->H;
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if(multiThread)
+#endif
+                    for (int x = 0; x < bh; x++) {
+                        for (int y = 0; y < bw; y++) {
+                            bufcolfin->L[x][y] = intp(repart, bufcolorig->L[x][y], bufcolfin->L[x][y]);
+                            bufcolfin->a[x][y] = intp(repart, bufcolorig->a[x][y], bufcolfin->a[x][y]);
+                            bufcolfin->b[x][y] = intp(repart, bufcolorig->b[x][y], bufcolfin->b[x][y]);
+                        }
+                    }
+                    
                         float meansob = 0.f;
                         transit_shapedetect2(sp, 0.f, 0.f, call, 0, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
                     }

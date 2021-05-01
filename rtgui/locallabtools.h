@@ -177,6 +177,7 @@ class LocallabColor:
 private:
     // Color & Light specific widgets
     Gtk::Frame* const lumFrame;
+    Adjuster* const reparcol;
     Adjuster* const lightness;
     Adjuster* const contrast;
     Adjuster* const chroma;

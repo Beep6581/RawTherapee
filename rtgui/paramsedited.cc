@@ -3399,6 +3399,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).lightness = mods.locallab.spots.at(i).lightness;
         }
 
+        if (locallab.spots.at(i).reparcol) {
+            toEdit.locallab.spots.at(i).reparcol = mods.locallab.spots.at(i).reparcol;
+        }
+
         if (locallab.spots.at(i).contrast) {
             toEdit.locallab.spots.at(i).contrast = mods.locallab.spots.at(i).contrast;
         }
@@ -6705,6 +6709,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     complexcolor(v),
     curvactiv(v),
     lightness(v),
+    reparcol(v),
     contrast(v),
     chroma(v),
     labgridALow(v),
@@ -7278,6 +7283,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     complexcolor = v;
     curvactiv = v;
     lightness = v;
+    reparcol = v;
     contrast = v;
     chroma = v;
     labgridALow = v;

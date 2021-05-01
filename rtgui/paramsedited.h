@@ -438,6 +438,7 @@ public:
         bool complexcolor;
         bool curvactiv;
         bool lightness;
+        bool reparcol;
         bool contrast;
         bool chroma;
         bool labgridALow;

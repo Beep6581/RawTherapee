@@ -416,6 +416,7 @@ LocallabColor::LocallabColor():
 
     // Color & Light specific widgets
     lumFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LUMFRA")))),
+    reparcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     lightness(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIGHTNESS"), -100, 500, 1, 0))),
     contrast(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRAST"), -100, 100, 1, 0))),
     chroma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMA"), -100, 150, 1, 0))),
@@ -524,6 +525,8 @@ LocallabColor::LocallabColor():
     lumFrame->set_label_align(0.025, 0.5);
 
     lightness->setAdjusterListener(this);
+
+    reparcol->setAdjusterListener(this);
 
     contrast->setAdjusterListener(this);
 
@@ -787,6 +790,7 @@ LocallabColor::LocallabColor():
     csThresholdcol->setAdjusterListener(this);
 
     // Add Color & Light specific widgets to GUI
+    pack_start(*reparcol);
     ToolParamBlock* const lumBox = Gtk::manage(new ToolParamBlock());
     lumBox->pack_start(*lightness);
     lumBox->pack_start(*contrast);
@@ -957,6 +961,7 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         lumFrame->set_tooltip_text(M("TP_LOCALLAB_EXPCOLOR_TOOLTIP"));
         lightness->set_tooltip_text(M("TP_LOCALLAB_LIGHTN_TOOLTIP"));
+        reparcol->set_tooltip_text(M("TP_LOCALLAB_REPARCOL_TOOLTIP"));
         gridMethod->set_tooltip_text(M("TP_LOCALLAB_GRIDMETH_TOOLTIP"));
         strengthgrid->set_tooltip_text(M("TP_LOCALLAB_STRENGRID_TOOLTIP"));
         blurcolde->set_tooltip_text(M("TP_LOCALLAB_BLURCOLDE_TOOLTIP"));
@@ -1008,6 +1013,7 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
     } else {
         lumFrame->set_tooltip_text("");
         lightness->set_tooltip_text("");
+        reparcol->set_tooltip_text("");
         gridMethod->set_tooltip_text("");
         strengthgrid->set_tooltip_text("");
         blurcolde->set_tooltip_text("");
@@ -1124,6 +1130,7 @@ void LocallabColor::read(const rtengine::procparams::ProcParams* pp, const Param
         complexity->set_active(spot.complexcolor);
 
         lightness->setValue(spot.lightness);
+        reparcol->setValue(spot.reparcol);
         contrast->setValue(spot.contrast);
         chroma->setValue(spot.chroma);
         curvactiv->set_active(spot.curvactiv);
@@ -1298,6 +1305,7 @@ void LocallabColor::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         spot.complexcolor = complexity->get_active_row_number();
 
         spot.lightness = lightness->getIntValue();
+        spot.reparcol = reparcol->getValue();
         spot.contrast = contrast->getIntValue();
         spot.chroma = chroma->getIntValue();
         spot.curvactiv = curvactiv->get_active();
@@ -1461,6 +1469,7 @@ void LocallabColor::setDefaults(const rtengine::procparams::ProcParams* defParam
 
         // Set default value for adjuster, labgrid and threshold adjuster widgets
         lightness->setDefault((double)defSpot.lightness);
+        reparcol->setDefault(defSpot.reparcol);
         contrast->setDefault((double)defSpot.contrast);
         chroma->setDefault((double)defSpot.chroma);
         labgrid->setDefault(defSpot.labgridALow / LocallabParams::LABGRIDL_CORR_MAX,
@@ -1512,6 +1521,13 @@ void LocallabColor::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallablightness,
                                        lightness->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == reparcol) {
+            if (listener) {
+                listener->panelChanged(Evlocallabreparcol,
+                                       reparcol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -2376,6 +2392,7 @@ void LocallabColor::updateColorGUI1()
         showmaskcolMethodinv->show();
         contcol->hide();
         blurcol->hide();
+        reparcol->hide();
     } else {
         gridFrame->show();
 
@@ -2407,6 +2424,7 @@ void LocallabColor::updateColorGUI1()
         showmaskcolMethodConninv.block(false);
         contcol->show();
         blurcol->show();
+        reparcol->show();
     }
 }
 

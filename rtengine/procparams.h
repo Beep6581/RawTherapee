@@ -1030,6 +1030,7 @@ struct LocallabParams {
         int complexcolor;
         bool curvactiv;
         int lightness;
+        double reparcol;
         int contrast;
         int chroma;
         double labgridALow;
