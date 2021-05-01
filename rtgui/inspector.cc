@@ -227,13 +227,15 @@ bool Inspector::on_motion_notify_event(GdkEventMotion *event)
         return false;
 
     int deviceScale = get_scale_factor();
-    int delta_x = (button_pos.x - event->x)*deviceScale;
-    int delta_y = (button_pos.y - event->y)*deviceScale;
+    int event_x = round(event->x);
+    int event_y = round(event->y);
+    int delta_x = (button_pos.x - event_x) * deviceScale;
+    int delta_y = (button_pos.y - event_y) * deviceScale;
     int imW = currImage->imgBuffer.getWidth();
     int imH = currImage->imgBuffer.getHeight();
 
     moveCenter(delta_x, delta_y, imW, imH, deviceScale);
-    button_pos.set(event->x, event->y);
+    button_pos.set(event_x, event_y);
 
     if (!dirty) {
         dirty = true;
@@ -316,8 +318,8 @@ void Inspector::moveCenter(int delta_x, int delta_y, int imW, int imH, int devic
     rtengine::Coord margin; // limit to image size
     margin.x = rtengine::min<int>(window->get_width() * deviceScale / scale, imW) / 2;
     margin.y = rtengine::min<int>(window->get_height() * deviceScale / scale, imH) / 2;
-    center.set(rtengine::LIM<int>(center.x + delta_x, margin.x, imW - margin.x),
-               rtengine::LIM<int>(center.y + delta_y, margin.y, imH - margin.y));
+    center.set(rtengine::LIM<double>(center.x + delta_x / scale, margin.x, imW - margin.x),
+               rtengine::LIM<double>(center.y + delta_y / scale, margin.y, imH - margin.y));
 }
 
 void Inspector::beginZoom(double x, double y)
