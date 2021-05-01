@@ -1421,6 +1421,7 @@ struct LocallabParams {
         double edgw;
         double basew;
         int sensilc;
+        double reparw;
         bool fftwlc;
         bool blurlc;
         bool wavblur;

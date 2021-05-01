@@ -1288,6 +1288,7 @@ HISTORY_MSG_1040;Local - Spot - soft radius
 HISTORY_MSG_1041;Local - Spot - Munsell
 HISTORY_MSG_1042;Local - Log encoding - threshold
 HISTORY_MSG_1043;Local - Exp - normalize
+HISTORY_MSG_1044;Local - Local contrast strength
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2992,6 +2993,7 @@ TP_LOCALLAB_RECURS_TOOLTIP;Forces the algorithm to recalculate the references af
 TP_LOCALLAB_REFLABEL;Ref. (0..1) Chroma=%1 Luma=%2 Hue=%3
 TP_LOCALLAB_REN_DIALOG_LAB;Enter the new Control Spot name
 TP_LOCALLAB_REN_DIALOG_NAME;Renaming Control Spot
+TP_LOCALLAB_REPARW_TOOLTIP;Allows you to adjust the relative strength of the local contrast and wavelet image with respect to the original image.
 TP_LOCALLAB_RESETSHOW;Reset All Show Modifications
 TP_LOCALLAB_RESID;Residual Image
 TP_LOCALLAB_RESIDBLUR;Blur residual image

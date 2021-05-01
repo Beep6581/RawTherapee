@@ -3739,6 +3739,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     edgw(60.0),
     basew(10.0),
     sensilc(60),
+    reparw(100.),
     fftwlc(false),
     blurlc(true),
     wavblur(false),
@@ -4618,6 +4619,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && edgw == other.edgw
         && basew == other.basew
         && sensilc == other.sensilc
+        && reparw == other.reparw
         && fftwlc == other.fftwlc
         && blurlc == other.blurlc
         && wavblur == other.wavblur
@@ -6267,6 +6269,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->edgw, "Locallab", "Edgw_" + index_str, spot.edgw, keyFile);
                     saveToKeyfile(!pedited || spot_edited->basew, "Locallab", "Basew_" + index_str, spot.basew, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sensilc, "Locallab", "Sensilc_" + index_str, spot.sensilc, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->reparw, "Locallab", "Reparw_" + index_str, spot.reparw, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fftwlc, "Locallab", "Fftwlc_" + index_str, spot.fftwlc, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blurlc, "Locallab", "Blurlc_" + index_str, spot.blurlc, keyFile);
                     saveToKeyfile(!pedited || spot_edited->wavblur, "Locallab", "Wavblur_" + index_str, spot.wavblur, keyFile);
@@ -8149,6 +8152,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Edgw_" + index_str, pedited, spot.edgw, spotEdited.edgw);
                 assignFromKeyfile(keyFile, "Locallab", "Basew_" + index_str, pedited, spot.basew, spotEdited.basew);
                 assignFromKeyfile(keyFile, "Locallab", "Sensilc_" + index_str, pedited, spot.sensilc, spotEdited.sensilc);
+                assignFromKeyfile(keyFile, "Locallab", "Reparw_" + index_str, pedited, spot.reparw, spotEdited.reparw);
                 assignFromKeyfile(keyFile, "Locallab", "Fftwlc_" + index_str, pedited, spot.fftwlc, spotEdited.fftwlc);
                 assignFromKeyfile(keyFile, "Locallab", "Blurlc_" + index_str, pedited, spot.blurlc, spotEdited.blurlc);
                 assignFromKeyfile(keyFile, "Locallab", "Wavblur_" + index_str, pedited, spot.wavblur, spotEdited.wavblur);

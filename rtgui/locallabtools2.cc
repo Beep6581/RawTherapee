@@ -2333,6 +2333,7 @@ LocallabContrast::LocallabContrast():
     residhi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDHI"), -100., 100., 1., 0.))),
     residhithr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDHITHR"), 0., 100., 1., 70.))),
     sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    reparw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
     clarilres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARILRES"), -20., 100., 0.5, 0.))),
     claricres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARICRES"), -20., 100., 0.5, 0.))),
@@ -2464,6 +2465,8 @@ LocallabContrast::LocallabContrast():
     residhithr->setAdjusterListener(this);
 
     sensilc->setAdjusterListener(this);
+
+    reparw->setAdjusterListener(this);
 
     clariFrame->set_label_align(0.025, 0.5);
 
@@ -2689,6 +2692,7 @@ LocallabContrast::LocallabContrast():
 
     // Add Local contrast specific widgets to GUI
     pack_start(*sensilc);
+    pack_start(*reparw);
     pack_start(*localcontMethod);
     pack_start(*lcradius);
     pack_start(*lcamount);
@@ -2945,6 +2949,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         masklcCurveEditorG->set_tooltip_markup(M("TP_LOCALLAB_MASKCURVE_TOOLTIP"));
         chromasklc->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
         sensilc->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+        reparw->set_tooltip_text(M("TP_LOCALLAB_REPARW_TOOLTIP"));
         decayw->set_tooltip_text(M("TP_LOCALLAB_MASKDECAY_TOOLTIP"));
         lowthresw->set_tooltip_text(M("TP_LOCALLAB_MASKLOWTHRESWAV_TOOLTIP"));
         higthresw->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRESWAV_TOOLTIP"));
@@ -2977,6 +2982,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         masklcCurveEditorG->set_tooltip_markup("");
         chromasklc->set_tooltip_text("");
         sensilc->set_tooltip_text("");
+        reparw->set_tooltip_text("");
 
         wavshape->setTooltip("");
         clarilres->set_tooltip_text("");
@@ -3113,6 +3119,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         residhi->setValue(spot.residhi);
         residhithr->setValue(spot.residhithr);
         sensilc->setValue((double)spot.sensilc);
+        reparw->setValue(spot.reparw);
         clarilres->setValue(spot.clarilres);
         claricres->setValue(spot.claricres);
         clarisoft->setValue(spot.clarisoft);
@@ -3234,6 +3241,7 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.residhi = residhi->getValue();
         spot.residhithr = residhithr->getValue();
         spot.sensilc = sensilc->getIntValue();
+        spot.reparw = reparw->getValue();
         spot.clarilres = clarilres->getValue();
         spot.claricres = claricres->getValue();
         spot.clarisoft = clarisoft->getValue();
@@ -3334,6 +3342,7 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         residhi->setDefault(defSpot.residhi);
         residhithr->setDefault(defSpot.residhithr);
         sensilc->setDefault((double)defSpot.sensilc);
+        reparw->setDefault(defSpot.reparw);
         clarilres->setDefault(defSpot.clarilres);
         claricres->setDefault(defSpot.claricres);
         clarisoft->setDefault(defSpot.clarisoft);
@@ -3465,6 +3474,13 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabsensilc,
                                        sensilc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == reparw) {
+            if (listener) {
+                listener->panelChanged(Evlocallabreparw,
+                                       reparw->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

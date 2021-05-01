@@ -829,6 +829,7 @@ public:
         bool edgw;
         bool basew;
         bool sensilc;
+        bool reparw;
         bool fftwlc;
         bool blurlc;
         bool wavblur;

@@ -1083,6 +1083,7 @@ private:
     Adjuster* const residhi;
     Adjuster* const residhithr;
     Adjuster* const sensilc;
+    Adjuster* const reparw;
     Gtk::Frame* const clariFrame;
     Adjuster* const clarilres;
     Adjuster* const claricres;
