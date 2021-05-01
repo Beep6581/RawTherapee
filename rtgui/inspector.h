@@ -22,7 +22,6 @@
 
 #include "guiutils.h"
 
-#include "../rtengine/coord.h"
 #include "../rtengine/coord2d.h"
 
 class InspectorBuffer
@@ -44,13 +43,13 @@ class Inspector final : public Gtk::DrawingArea
 {
 
 private:
-    rtengine::Coord center;
+    rtengine::Coord2D center;
     std::vector<InspectorBuffer*> images;
     InspectorBuffer* currImage;
     bool scaled;  // fit image into window
     double scale; // current scale
     double zoomScale, zoomScaleBegin; // scale during zoom
-    rtengine::Coord centerBegin, dcenterBegin; // center during zoom
+    rtengine::Coord2D centerBegin, dcenterBegin; // center during zoom
     bool active;
     bool pinned;
     bool dirty;

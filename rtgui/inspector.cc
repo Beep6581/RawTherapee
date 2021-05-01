@@ -333,8 +333,17 @@ void Inspector::beginZoom(double x, double y)
     moveCenter(0, 0, imW, imH, deviceScale);
 
     // store center and current position for zooming
-    dcenterBegin.x = (x - window->get_width()/2) / scale * deviceScale;
-    dcenterBegin.y = (y - window->get_height()/2) / scale * deviceScale;
+    double cur_scale = zoomScale;
+    if (scaled) {
+        Glib::RefPtr<Gdk::Window> win = get_window();
+        double winW = win->get_width() * deviceScale;
+        double winH = win->get_height() * deviceScale;
+        int imW = rtengine::max<int>(currImage->imgBuffer.getWidth(), 1);
+        int imH = rtengine::max<int>(currImage->imgBuffer.getHeight(), 1);
+        cur_scale *= rtengine::min<double>(winW / imW, winH / imH);
+    }
+    dcenterBegin.x = (x - window->get_width() / 2.) / cur_scale * deviceScale;
+    dcenterBegin.y = (y - window->get_height() / 2.) / cur_scale * deviceScale;
     centerBegin = center;
     zoomScaleBegin = zoomScale;
 
@@ -385,15 +394,16 @@ bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         // this will eventually create/update the off-screen pixmap
 
         // compute the displayed area
-        rtengine::Coord availableSize;
-        rtengine::Coord topLeft;
-        rtengine::Coord dest(0, 0);
+        rtengine::Coord2D availableSize;
+        rtengine::Coord2D topLeft;
+        rtengine::Coord topLeftInt;
+        rtengine::Coord2D dest(0, 0);
         int deviceScale = window? get_scale_factor(): 1;
         availableSize.x = win->get_width() * deviceScale;
         availableSize.y = win->get_height() * deviceScale;
         int imW = rtengine::max<int>(currImage->imgBuffer.getWidth(), 1);
         int imH = rtengine::max<int>(currImage->imgBuffer.getHeight(), 1);
-        scale = rtengine::min<double>((double)availableSize.x / imW, (double)availableSize.y / imH);
+        scale = rtengine::min<double>(availableSize.x / imW, availableSize.y / imH);
         if (scaled) {
             // reduce size of image to fit into window, no further zoom down
             zoomScale = rtengine::max<double>(zoomScale, 1.0);
@@ -410,33 +420,36 @@ bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         if (imW < availableSize.x) {
             // center the image in the available space along X
             topLeft.x = 0;
-            dest.x = (availableSize.x - imW) / 2;
+            dest.x = (availableSize.x - imW) / 2.;
         } else {
             // partial image display
             // double clamp
-            topLeft.x = center.x + availableSize.x / 2;
-            topLeft.x = rtengine::min<int>(topLeft.x, imW);
+            topLeft.x = center.x + availableSize.x / 2.;
+            topLeft.x = rtengine::min<double>(topLeft.x, imW);
             topLeft.x -= availableSize.x;
-            topLeft.x = rtengine::max<int>(topLeft.x, 0);
+            topLeft.x = rtengine::max<double>(topLeft.x, 0);
         }
 
         if (imH < availableSize.y) {
             // center the image in the available space along Y
             topLeft.y = 0;
-            dest.y = (availableSize.y - imH) / 2;
+            dest.y = (availableSize.y - imH) / 2.;
         } else {
             // partial image display
             // double clamp
-            topLeft.y = center.y + availableSize.y / 2;
-            topLeft.y = rtengine::min<int>(topLeft.y, imH);
+            topLeft.y = center.y + availableSize.y / 2.;
+            topLeft.y = rtengine::min<double>(topLeft.y, imH);
             topLeft.y -= availableSize.y;
-            topLeft.y = rtengine::max<int>(topLeft.y, 0);
+            topLeft.y = rtengine::max<double>(topLeft.y, 0);
         }
         //printf("center: %d, %d   (img: %d, %d)  (availableSize: %d, %d)  (topLeft: %d, %d)\n", center.x, center.y, imW, imH, availableSize.x, availableSize.y, topLeft.x, topLeft.y);
 
+        topLeftInt.x = floor(topLeft.x);
+        topLeftInt.y = floor(topLeft.y);
+
         // define the destination area
-        currImage->imgBuffer.setDrawRectangle(win, dest.x, dest.y, rtengine::min<int>(availableSize.x - dest.x, imW), rtengine::min<int>(availableSize.y - dest.y, imH), false);
-        currImage->imgBuffer.setSrcOffset(topLeft.x, topLeft.y);
+        currImage->imgBuffer.setDrawRectangle(win, dest.x, dest.y, rtengine::min<int>(ceil(availableSize.x + (topLeft.x - topLeftInt.x) - 2 * dest.x), imW), rtengine::min<int>(ceil(availableSize.y + (topLeft.y - topLeftInt.y) - 2 * dest.y), imH), false);
+        currImage->imgBuffer.setSrcOffset(topLeftInt.x, topLeftInt.y);
 
         if (!currImage->imgBuffer.surfaceCreated()) {
             return false;
@@ -464,16 +477,18 @@ bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
                 cairo_surface_set_device_scale(cr->get_target()->cobj(), scale, scale);
                 scaledImage = false;
             }
-            int viewW = rtengine::min<int>(imW, availableSize.x);
-            int viewH = rtengine::min<int>(imH, availableSize.y);
-            Glib::RefPtr<Gdk::Pixbuf> crop = Gdk::Pixbuf::create(currImage->imgBuffer.getSurface(), topLeft.x, topLeft.y, viewW, viewH);
+            int viewW = rtengine::min<int>(imW, ceil(availableSize.x + (topLeft.x - topLeftInt.x)));
+            int viewH = rtengine::min<int>(imH, ceil(availableSize.y + (topLeft.y - topLeftInt.y)));
+            Glib::RefPtr<Gdk::Pixbuf> crop = Gdk::Pixbuf::create(currImage->imgBuffer.getSurface(), topLeftInt.x, topLeftInt.y, viewW, viewH);
             if (!scaledImage) {
                 Gdk::Cairo::set_source_pixbuf(cr, crop, dest.x, dest.y);
             }
             else {
+                double dx = scale * (dest.x + topLeftInt.x - topLeft.x);
+                double dy = scale * (dest.y + topLeftInt.y - topLeft.y);
                 // scale crop as the device does not seem to support it (Linux)
-                crop = crop->scale_simple(viewW*scale, viewH*scale, Gdk::INTERP_BILINEAR);
-                Gdk::Cairo::set_source_pixbuf(cr, crop, dest.x*scale, dest.y*scale);
+                crop = crop->scale_simple(round(viewW*scale), round(viewH*scale), Gdk::INTERP_BILINEAR);
+                Gdk::Cairo::set_source_pixbuf(cr, crop, dx, dy);
             }
             cr->paint();
         }
@@ -504,7 +519,7 @@ void Inspector::mouseMove (rtengine::Coord2D pos, int transform)
         return;
 
     if (currImage) {
-        center.set(int(rtengine::LIM01(pos.x)*double(currImage->imgBuffer.getWidth())), int(rtengine::LIM01(pos.y)*double(currImage->imgBuffer.getHeight())));
+        center.set(rtengine::LIM01(pos.x)*double(currImage->imgBuffer.getWidth()), rtengine::LIM01(pos.y)*double(currImage->imgBuffer.getHeight()));
     } else {
         center.set(0, 0);
     }
