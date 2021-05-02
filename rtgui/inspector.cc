@@ -485,9 +485,13 @@ bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         else {
             // consider device scale and image scale
             if (deviceScale > 1) {
+#ifdef __APPLE__
                 // use full device resolution and let it scale the image (macOS)
                 cairo_surface_set_device_scale(cr->get_target()->cobj(), scale, scale);
                 scaledImage = false;
+#else
+                cr->scale(1. / deviceScale, 1. / deviceScale);
+#endif
             }
             int viewW = rtengine::min<int>(imW, ceil(availableSize.x + (topLeft.x - topLeftInt.x)));
             int viewH = rtengine::min<int>(imH, ceil(availableSize.y + (topLeft.y - topLeftInt.y)));
