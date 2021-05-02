@@ -1376,6 +1376,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).gamma = locallab.spots.at(j).gamma && pSpot.gamma == otherSpot.gamma;
                 locallab.spots.at(j).estop = locallab.spots.at(j).estop && pSpot.estop == otherSpot.estop;
                 locallab.spots.at(j).scaltm = locallab.spots.at(j).scaltm && pSpot.scaltm == otherSpot.scaltm;
+                locallab.spots.at(j).repartm = locallab.spots.at(j).repartm && pSpot.repartm == otherSpot.repartm;
                 locallab.spots.at(j).rewei = locallab.spots.at(j).rewei && pSpot.rewei == otherSpot.rewei;
                 locallab.spots.at(j).satur = locallab.spots.at(j).satur && pSpot.satur == otherSpot.satur;
                 locallab.spots.at(j).sensitm = locallab.spots.at(j).sensitm && pSpot.sensitm == otherSpot.sensitm;
@@ -4483,6 +4484,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).scaltm = mods.locallab.spots.at(i).scaltm;
         }
 
+        if (locallab.spots.at(i).repartm) {
+            toEdit.locallab.spots.at(i).repartm = mods.locallab.spots.at(i).repartm;
+        }
+
         if (locallab.spots.at(i).rewei) {
             toEdit.locallab.spots.at(i).rewei = mods.locallab.spots.at(i).rewei;
         }
@@ -6998,6 +7003,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     gamma(v),
     estop(v),
     scaltm(v),
+    repartm(v),
     rewei(v),
     satur(v),
     sensitm(v),
@@ -7578,6 +7584,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     gamma = v;
     estop = v;
     scaltm = v;
+    repartm = v;
     rewei = v;
     satur = v;
     sensitm = v;

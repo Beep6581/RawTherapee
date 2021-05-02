@@ -712,6 +712,7 @@ public:
         bool gamma;
         bool estop;
         bool scaltm;
+        bool repartm;
         bool rewei;
         bool satur;
         bool sensitm;

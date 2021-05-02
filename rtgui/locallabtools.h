@@ -839,6 +839,7 @@ class LocallabTone:
 {
 private:
     // Tone Mapping specific widgets
+    Adjuster* const repartm;
     Adjuster* const amount;
     Adjuster* const stren;
     Gtk::CheckButton* const equiltm;

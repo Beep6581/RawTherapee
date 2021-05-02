@@ -1291,9 +1291,9 @@ HISTORY_MSG_1043;Local - Exp - normalize
 HISTORY_MSG_1044;Local - Local contrast strength
 HISTORY_MSG_1045;Local - Color and Light strength
 HISTORY_MSG_1046;Local - Denoise strength
-HISTORY_MSG_1047;Local - SH strength
-HISTORY_MSG_1048;Local - DR and exposure strength
-
+HISTORY_MSG_1047;Local - SH and Tone Equalizer strength
+HISTORY_MSG_1048;Local - DR and Exposure strength
+HISTORY_MSG_1049;Local - TM strength
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -3003,7 +3003,7 @@ TP_LOCALLAB_REPARCOL_TOOLTIP;Allows you to adjust the relative strength of the C
 TP_LOCALLAB_REPARDEN_TOOLTIP;Allows you to adjust the relative strength of the Denoise image with respect to the original image.
 TP_LOCALLAB_REPARSH_TOOLTIP;Allows you to adjust the relative strength of the Shadows/Highlights and Tone Equalizer image with respect to the original image.
 TP_LOCALLAB_REPAREXP_TOOLTIP;Allows you to adjust the relative strength of the Dynamic Range and Exposure image with respect to the original image.
-
+TP_LOCALLAB_REPARTM_TOOLTIP;Allows you to adjust the relative strength of the Tone mapping image with respect to the original image.
 TP_LOCALLAB_RESETSHOW;Reset All Show Modifications
 TP_LOCALLAB_RESID;Residual Image
 TP_LOCALLAB_RESIDBLUR;Blur residual image

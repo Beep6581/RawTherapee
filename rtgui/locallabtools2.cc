@@ -118,6 +118,7 @@ LocallabTone::LocallabTone():
     LocallabTool(this, M("TP_LOCALLAB_TONE_TOOLNAME"), M("TP_LOCALLAB_TM"), true),
 
     // Tone mapping specific widgets
+    repartm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     amount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_AMOUNT"), 50., 100.0, 0.5, 95.))),
     stren(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STREN"), -0.5, 2.0, 0.01, 0.5))),
     equiltm(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
@@ -159,6 +160,8 @@ LocallabTone::LocallabTone():
 
     // Parameter Tone Mapping specific widgets
     amount->setAdjusterListener(this);
+
+    repartm->setAdjusterListener(this);
 
     stren->setAdjusterListener(this);
 
@@ -235,10 +238,13 @@ LocallabTone::LocallabTone():
     Lmasktmshape->setLeftBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
     mask2tmCurveEditorG->curveListComplete();
+    Gtk::Separator* const separatortm = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
 
     // Add Tone Mapping specific widgets to GUI
     // pack_start(*amount); // To use if we change transit_shapedetect parameters
     pack_start(*sensitm);
+    pack_start(*repartm);
+    pack_start(*separatortm);
     pack_start(*stren);
     pack_start(*equiltm);
     pack_start(*gamma);
@@ -304,6 +310,7 @@ void LocallabTone::updateAdviceTooltips(const bool showTooltips)
         exp->set_tooltip_text(M("TP_LOCALLAB_TONEMAP_TOOLTIP"));
         exprecovt->set_tooltip_markup(M("TP_LOCALLAB_MASKRESTM_TOOLTIP"));
         equiltm->set_tooltip_text(M("TP_LOCALLAB_EQUILTM_TOOLTIP"));
+        repartm->set_tooltip_text(M("TP_LOCALLAB_REPARTM_TOOLTIP"));
         gamma->set_tooltip_text(M("TP_LOCALLAB_TONEMAPGAM_TOOLTIP"));
         estop->set_tooltip_text(M("TP_LOCALLAB_TONEMAPESTOP_TOOLTIP"));
         scaltm->set_tooltip_text(M("TP_LOCALLAB_TONEMASCALE_TOOLTIP"));
@@ -329,6 +336,7 @@ void LocallabTone::updateAdviceTooltips(const bool showTooltips)
     } else {
         exp->set_tooltip_text("");
         equiltm->set_tooltip_text("");
+        repartm->set_tooltip_text("");
         gamma->set_tooltip_text("");
         estop->set_tooltip_text("");
         scaltm->set_tooltip_text("");
@@ -401,6 +409,7 @@ void LocallabTone::read(const rtengine::procparams::ProcParams* pp, const Params
 
         amount->setValue(spot.amount);
         stren->setValue(spot.stren);
+        repartm->setValue(spot.repartm);
         equiltm->set_active(spot.equiltm);
         gamma->setValue(spot.gamma);
         satur->setValue(spot.satur);
@@ -449,6 +458,7 @@ void LocallabTone::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
         spot.amount = amount->getValue();
         spot.stren = stren->getValue();
+        spot.repartm = repartm->getValue();
         spot.equiltm = equiltm->get_active();
         spot.gamma = gamma->getValue();
         spot.satur = satur->getValue();
@@ -492,6 +502,7 @@ void LocallabTone::setDefaults(const rtengine::procparams::ProcParams* defParams
         satur->setDefault(defSpot.satur);
         estop->setDefault(defSpot.estop);
         scaltm->setDefault(defSpot.scaltm);
+        repartm->setDefault(defSpot.repartm);
         rewei->setDefault((double)defSpot.rewei);
         softradiustm->setDefault(defSpot.softradiustm);
         sensitm->setDefault((double)defSpot.sensitm);
@@ -527,6 +538,8 @@ void LocallabTone::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(Evlocallabestop, estop->getTextValue() + spName);
         } else if (a == scaltm) {
             listener->panelChanged(Evlocallabscaltm, scaltm->getTextValue() + spName);
+        } else if (a == repartm) {
+            listener->panelChanged(Evlocallabrepartm, repartm->getTextValue() + spName);
         } else if (a == rewei) {
             listener->panelChanged(Evlocallabrewei, rewei->getTextValue() + spName);
         } else if (a == softradiustm) {

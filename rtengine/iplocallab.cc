@@ -440,6 +440,7 @@ struct local_params {
     float stru;
     int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex, sensexclu, sensden, senslc, senssf, senshs, senscolor;
     float reparden;
+    float repartm;
     float clarityml;
     float contresid;
     bool deltaem;
@@ -1126,6 +1127,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float local_noisechrodetail = (float)locallab.spots.at(sp).noisechrodetail;
     int local_sensiden = locallab.spots.at(sp).sensiden;
     float local_reparden = locallab.spots.at(sp).reparden;
+    float local_repartm = locallab.spots.at(sp).repartm;
     float local_detailthr = (float)locallab.spots.at(sp).detailthr;
     float local_recothr = (float)locallab.spots.at(sp).recothres;
     float local_lowthr = (float)locallab.spots.at(sp).lowthres;
@@ -1585,6 +1587,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.noisecc = local_noisecc;
     lp.sensden = local_sensiden;
     lp.reparden = local_reparden;
+    lp.repartm = local_repartm;
     lp.bilat = locallab.spots.at(sp).bilateral;
     lp.nldet = locallab.spots.at(sp).nldet;
     lp.nlstr = locallab.spots.at(sp).nlstr;
@@ -6943,6 +6946,8 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
         }
     }
 
+
+
     if (lp.equtm && senstype == 8) { //normalize luminance for Tone mapping , at this place we can use for others senstype!
         float *datain = new float[bfh * bfw];
         float *data = new float[bfh * bfw];
@@ -6981,6 +6986,24 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
         delete [] datain;
         delete [] data;
     }
+
+
+    if (senstype == 8) {//strength Tone mapping
+        const float repart = 1.0f - 0.01f * lp.repartm;
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if(multiThread)
+#endif
+
+        for (int y = ystart; y < yend; y++){
+            for (int x = xstart; x < xend; x++) {
+                bufexpfin->L[y - ystart][x - xstart]= intp(repart, original->L[y][x], bufexpfin->L[y - ystart][x - xstart]);
+                bufexpfin->a[y - ystart][x - xstart]= intp(repart, original->a[y][x], bufexpfin->a[y - ystart][x - xstart]);
+                bufexpfin->b[y - ystart][x - xstart]= intp(repart, original->b[y][x], bufexpfin->b[y - ystart][x - xstart]);
+            }
+        }
+    }
+
 
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
@@ -7083,6 +7106,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                         rsob =  1.1f * lp.struco * rs;
                     }
                 }
+
 
                 //deltaE
                 float abdelta2 = SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x]);
@@ -12573,6 +12597,8 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     //   transit_shapedetect_retinex(call, 4, bufgb.get(),bufmaskorigtm.get(), originalmasktm.get(), buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+
+
                     transit_shapedetect2(sp, meantm, stdtm, call, 8, bufgb.get(), tmp1.get(), originalmasktm.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
                     //  transit_shapedetect(8, tmp1.get(), originalmasktm.get(), bufchro, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);

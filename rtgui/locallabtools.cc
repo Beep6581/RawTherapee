@@ -2721,6 +2721,7 @@ LocallabExposure::LocallabExposure():
     mask2expCurveEditorG->curveListComplete();
 
     // Add Color & Light specific widgets to GUI
+    pack_start(*sensiex);
     pack_start(*reparexp);
     ToolParamBlock* const pdeBox = Gtk::manage(new ToolParamBlock());
     pdeBox->pack_start(*laplacexp);
@@ -2747,7 +2748,6 @@ LocallabExposure::LocallabExposure():
 //    pack_start(*fatFrame);
     pack_start(*expfat);
     pack_start(*expcomp);
-    pack_start(*sensiex);
     pack_start(*structexp);
     pack_start(*blurexpde);
     ToolParamBlock* const toolBox = Gtk::manage(new ToolParamBlock());

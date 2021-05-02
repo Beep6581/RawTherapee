@@ -3498,6 +3498,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     gamma(1.0),
     estop(1.4),
     scaltm(1.0),
+    repartm(100.0),
     rewei(0),
     satur(0.),
     sensitm(60),
@@ -4506,6 +4507,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && gamma == other.gamma
         && estop == other.estop
         && scaltm == other.scaltm
+        && repartm == other.repartm
         && rewei == other.rewei
         && satur == other.satur
         && sensitm == other.sensitm
@@ -6157,6 +6159,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->gamma, "Locallab", "Gamma_" + index_str, spot.gamma, keyFile);
                     saveToKeyfile(!pedited || spot_edited->estop, "Locallab", "Estop_" + index_str, spot.estop, keyFile);
                     saveToKeyfile(!pedited || spot_edited->scaltm, "Locallab", "Scaltm_" + index_str, spot.scaltm, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->repartm, "Locallab", "Repartm_" + index_str, spot.repartm, keyFile);
                     saveToKeyfile(!pedited || spot_edited->rewei, "Locallab", "Rewei_" + index_str, spot.rewei, keyFile);
                     saveToKeyfile(!pedited || spot_edited->satur, "Locallab", "Satur_" + index_str, spot.satur, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sensitm, "Locallab", "Sensitm_" + index_str, spot.sensitm, keyFile);
@@ -8035,6 +8038,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Gamma_" + index_str, pedited, spot.gamma, spotEdited.gamma);
                 assignFromKeyfile(keyFile, "Locallab", "Estop_" + index_str, pedited, spot.estop, spotEdited.estop);
                 assignFromKeyfile(keyFile, "Locallab", "Scaltm_" + index_str, pedited, spot.scaltm, spotEdited.scaltm);
+                assignFromKeyfile(keyFile, "Locallab", "Repartm_" + index_str, pedited, spot.repartm, spotEdited.repartm);
                 assignFromKeyfile(keyFile, "Locallab", "Rewei_" + index_str, pedited, spot.rewei, spotEdited.rewei);
                 assignFromKeyfile(keyFile, "Locallab", "Satur_" + index_str, pedited, spot.satur, spotEdited.satur);
                 assignFromKeyfile(keyFile, "Locallab", "Sensitm_" + index_str, pedited, spot.sensitm, spotEdited.sensitm);

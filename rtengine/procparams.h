@@ -1304,6 +1304,7 @@ struct LocallabParams {
         double gamma;
         double estop;
         double scaltm;
+        double repartm;
         int rewei;
         double satur;
         int sensitm;
