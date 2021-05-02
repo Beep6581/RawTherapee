@@ -55,6 +55,7 @@ private:
     bool dirty;
     bool initialized;
     bool fullscreen;  // window is shown in fullscreen mode
+    bool keyDown;
 
     sigc::connection delayconn;
     Glib::ustring next_image_path;

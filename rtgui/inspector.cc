@@ -83,7 +83,7 @@ InspectorBuffer::~InspectorBuffer() {
 //    return deg;
 //}
 
-Inspector::Inspector () : currImage(nullptr), scaled(false), scale(1.0), zoomScale(1.0), zoomScaleBegin(1.0), active(false), pinned(false), dirty(false)
+Inspector::Inspector () : currImage(nullptr), scaled(false), scale(1.0), zoomScale(1.0), zoomScaleBegin(1.0), active(false), pinned(false), dirty(false), keyDown(false)
 {
     set_name("Inspector");
 
@@ -152,6 +152,8 @@ void Inspector::hideWindow()
 
 bool Inspector::on_key_release(GdkEventKey *event)
 {
+    keyDown = false;
+
     if (!window)
         return false;
 
@@ -171,6 +173,12 @@ bool Inspector::on_key_press(GdkEventKey *event)
 {
     if (!window)
         return false;
+
+    if (keyDown) {
+        return true;
+    }
+
+    keyDown = true;
 
     switch (event->keyval) {
     case GDK_KEY_z:
@@ -202,6 +210,8 @@ bool Inspector::on_key_press(GdkEventKey *event)
         window->set_visible(false);
         return true;
     }
+
+    keyDown = false;
 
     return false;
 }
