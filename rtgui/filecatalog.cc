@@ -2539,6 +2539,8 @@ bool FileCatalog::handleShortcutKeyRelease(GdkEventKey* event)
             return true;
         }
     }
+
+    return false;
 }
 
 void FileCatalog::showToolBar()
