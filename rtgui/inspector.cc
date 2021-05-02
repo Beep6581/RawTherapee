@@ -147,6 +147,9 @@ void Inspector::showWindow(bool scaled, bool fullscreen, bool pinned)
 
 void Inspector::hideWindow()
 {
+    if (!window) {
+        return;
+    }
     window->set_visible(false);
 }
 
