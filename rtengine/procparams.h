@@ -1270,6 +1270,7 @@ struct LocallabParams {
         int nlrad;
         double nlgam;
         int sensiden;
+        double reparden;
         int detailthr;
         std::vector<double> locwavcurveden;
         std::vector<double> locwavcurvehue;

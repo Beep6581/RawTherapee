@@ -439,6 +439,7 @@ struct local_params {
     float thr;
     float stru;
     int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex, sensexclu, sensden, senslc, senssf, senshs, senscolor;
+    float reparden;
     float clarityml;
     float contresid;
     bool deltaem;
@@ -1124,6 +1125,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int local_noiselequal = locallab.spots.at(sp).noiselequal;
     float local_noisechrodetail = (float)locallab.spots.at(sp).noisechrodetail;
     int local_sensiden = locallab.spots.at(sp).sensiden;
+    float local_reparden = locallab.spots.at(sp).reparden;
     float local_detailthr = (float)locallab.spots.at(sp).detailthr;
     float local_recothr = (float)locallab.spots.at(sp).recothres;
     float local_lowthr = (float)locallab.spots.at(sp).lowthres;
@@ -1582,6 +1584,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.noisecf = local_noisecf;
     lp.noisecc = local_noisecc;
     lp.sensden = local_sensiden;
+    lp.reparden = local_reparden;
     lp.bilat = locallab.spots.at(sp).bilateral;
     lp.nldet = locallab.spots.at(sp).nldet;
     lp.nlstr = locallab.spots.at(sp).nlstr;
@@ -3263,6 +3266,11 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
                     difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
                     difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
                 } else  { //dcrop
+                    const float repart = 1.0f - 0.01f * lp.reparden;
+                    tmp1.L[y][x] = intp(repart, original->L[y][x], tmp1.L[y][x]);
+                    tmp1.a[y][x] = intp(repart, original->a[y][x], tmp1.a[y][x]);
+                    tmp1.b[y][x] = intp(repart, original->b[y][x], tmp1.b[y][x]);
+
                     difL = tmp1.L[y][x] - original->L[y][x];
                     difa = tmp1.a[y][x] - original->a[y][x];
                     difb = tmp1.b[y][x] - original->b[y][x];
@@ -3409,16 +3417,14 @@ void ImProcFunctions::DeNoise_Local2(const struct local_params& lp, LabImage* or
 
                 float difL, difa, difb;
 
- //               if (call == 2  /*|| call == 1  || call == 3 */) { //simpleprocess
- //                   difL = tmp1.L[loy - begy][lox - begx] - original->L[y][x];
- //                   difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
- //                   difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
- //               } else  { //dcrop
+                const float repart = 1.0f - 0.01f * lp.reparden;
+                tmp1.L[y-ystart][x-xstart] = intp(repart, original->L[y][x], tmp1.L[y-ystart][x-xstart]);
+                tmp1.a[y-ystart][x-xstart] = intp(repart, original->a[y][x], tmp1.a[y-ystart][x-xstart]);
+                tmp1.b[y-ystart][x-xstart] = intp(repart, original->b[y][x], tmp1.b[y-ystart][x-xstart]);
               
-                    difL = tmp1.L[y-ystart][x-xstart] - original->L[y][x];
-                    difa = tmp1.a[y-ystart][x-xstart] - original->a[y][x];
-                    difb = tmp1.b[y-ystart][x-xstart] - original->b[y][x];
- //               }
+                difL = tmp1.L[y-ystart][x-xstart] - original->L[y][x];
+                difa = tmp1.a[y-ystart][x-xstart] - original->a[y][x];
+                difb = tmp1.b[y-ystart][x-xstart] - original->b[y][x];
 
                 difL *= localFactor * reducdEL;
                 difa *= localFactor * reducdEa;

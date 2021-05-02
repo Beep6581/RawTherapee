@@ -6355,6 +6355,7 @@ LocallabBlur::LocallabBlur():
     nlgam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLGAM"), 2., 5., 0.1, 3.))),
     bilateral(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BILATERAL"), 0, 100, 1, 0))),
     sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    reparden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     neutral(Gtk::manage (new Gtk::Button (M ("TP_RETINEX_NEUTRAL")))),
     expmaskbl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWPLUS")))),
     showmaskblMethod(Gtk::manage(new MyComboBoxText())),
@@ -6540,6 +6541,7 @@ LocallabBlur::LocallabBlur():
     nlgam->setAdjusterListener(this);
 
     sensiden->setAdjusterListener(this);
+    reparden->setAdjusterListener(this);
 
 
     setExpandAlignProperties (neutral, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
@@ -6688,7 +6690,8 @@ LocallabBlur::LocallabBlur():
     detailFrame->add(*detailBox);
     wavBox->pack_start(*detailFrame);
     denoisebox->pack_start(*sensiden);
-    
+    denoisebox->pack_start(*reparden);
+   
     ToolParamBlock* const nlbox = Gtk::manage(new ToolParamBlock());
     nlbox->pack_start(*nlstr);
     nlbox->pack_start(*nldet);
@@ -6788,6 +6791,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         strength->set_tooltip_text(M("TP_LOCALLAB_NOISE_TOOLTIP"));
         grainFrame->set_tooltip_text(M("TP_LOCALLAB_GRAIN_TOOLTIP"));
         sensibn->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+        reparden->set_tooltip_text(M("TP_LOCALLAB_REPARDEN_TOOLTIP"));
         medMethod->set_tooltip_text(M("TP_LOCALLAB_MEDIAN_TOOLTIP"));
         itera->set_tooltip_text(M("TP_LOCALLAB_MEDIANITER_TOOLTIP"));
         fftwbl->set_tooltip_text(M("TP_LOCALLAB_FFTMASK_TOOLTIP"));
@@ -6856,6 +6860,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         strength->set_tooltip_text("");
         grainFrame->set_tooltip_text("");
         sensibn->set_tooltip_text("");
+        reparden->set_tooltip_text("");
         medMethod->set_tooltip_text("");
         itera->set_tooltip_text("");
         fftwbl->set_tooltip_text("");
@@ -6885,7 +6890,6 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         nlpat->set_tooltip_text("");
         nlrad->set_tooltip_text("");
         nlgam->set_tooltip_text("");
-        sensibn->set_tooltip_text("");
         blurMethod->set_tooltip_markup("");
         expdenoise->set_tooltip_markup("");
         wavshapeden->setTooltip("");
@@ -7070,6 +7074,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         higthres->setValue((double)spot.higthres);
         epsbl->setValue((double)spot.epsbl);
         sensibn->setValue((double)spot.sensibn);
+        reparden->setValue(spot.reparden);
         recothresd->setValue((double)spot.recothresd);
         lowthresd->setValue((double)spot.lowthresd);
         midthresd->setValue((double)spot.midthresd);
@@ -7216,6 +7221,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.higthres = higthres->getValue();
         spot.epsbl = epsbl->getIntValue();
         spot.sensibn = sensibn->getIntValue();
+        spot.reparden = reparden->getValue();
         spot.recothresd = recothresd->getValue();
         spot.lowthresd = lowthresd->getValue();
         spot.midthresd = midthresd->getValue();
@@ -7325,6 +7331,7 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         higthres->setDefault((double)defSpot.higthres);
         epsbl->setDefault((double)defSpot.epsbl);
         sensibn->setDefault((double)defSpot.sensibn);
+        reparden->setDefault(defSpot.reparden);
         recothresd->setDefault((double)defSpot.recothresd);
         lowthresd->setDefault((double)defSpot.lowthresd);
         midthresd->setDefault((double)defSpot.midthresd);
@@ -7671,6 +7678,13 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabsensiden,
                                        sensiden->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == reparden) {
+            if (listener) {
+                listener->panelChanged(Evlocallabreparden,
+                                       reparden->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

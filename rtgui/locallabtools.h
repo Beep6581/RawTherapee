@@ -746,6 +746,7 @@ private:
     Adjuster* const nlgam;
     Adjuster* const bilateral;
     Adjuster* const sensiden;
+    Adjuster* const reparden;
     Gtk::Button* neutral;
     MyExpander* const expmaskbl;
     MyComboBoxText* const showmaskblMethod;
