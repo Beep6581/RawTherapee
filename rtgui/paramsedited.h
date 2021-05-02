@@ -576,6 +576,7 @@ public:
         bool slomaskSH;
         bool lapmaskSH;
         bool detailSH;
+        bool reparsh;
         bool LmaskSHcurve;
         bool fatamountSH;
         bool fatanchorSH;

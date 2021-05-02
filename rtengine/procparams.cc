@@ -3208,6 +3208,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     slomaskSH(0.0),
     lapmaskSH(0.0),
     detailSH(0),
+    reparsh(100.),
     LmaskSHcurve{
         static_cast<double>(DCT_NURBS),
         0.0,
@@ -4368,6 +4369,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && slomaskSH == other.slomaskSH
         && lapmaskSH == other.lapmaskSH
         && detailSH == other.detailSH
+        && reparsh == other.reparsh
         && LmaskSHcurve == other.LmaskSHcurve
         && fatamountSH == other.fatamountSH
         && fatanchorSH == other.fatanchorSH
@@ -6013,6 +6015,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->gammaskSH, "Locallab", "GammaskSH_" + index_str, spot.gammaskSH, keyFile);
                     saveToKeyfile(!pedited || spot_edited->slomaskSH, "Locallab", "SlomaskSH_" + index_str, spot.slomaskSH, keyFile);
                     saveToKeyfile(!pedited || spot_edited->detailSH, "Locallab", "DetailSH_" + index_str, spot.detailSH, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->reparsh, "Locallab", "Reparsh_" + index_str, spot.reparsh, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LmaskSHcurve, "Locallab", "LmaskSHCurve_" + index_str, spot.LmaskSHcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatamountSH, "Locallab", "FatamountSH_" + index_str, spot.fatamountSH, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatanchorSH, "Locallab", "FatanchorSH_" + index_str, spot.fatanchorSH, keyFile);
@@ -7858,6 +7861,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "SlomaskSH_" + index_str, pedited, spot.slomaskSH, spotEdited.slomaskSH);
                 assignFromKeyfile(keyFile, "Locallab", "LapmaskSH_" + index_str, pedited, spot.lapmaskSH, spotEdited.lapmaskSH);
                 assignFromKeyfile(keyFile, "Locallab", "DetailSH_" + index_str, pedited, spot.detailSH, spotEdited.detailSH);
+                assignFromKeyfile(keyFile, "Locallab", "Reparsh_" + index_str, pedited, spot.reparsh, spotEdited.reparsh);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskSHCurve_" + index_str, pedited, spot.LmaskSHcurve, spotEdited.LmaskSHcurve);
                 assignFromKeyfile(keyFile, "Locallab", "FatamountSH_" + index_str, pedited, spot.fatamountSH, spotEdited.fatamountSH);
                 assignFromKeyfile(keyFile, "Locallab", "FatanchorSH_" + index_str, pedited, spot.fatanchorSH, spotEdited.fatanchorSH);

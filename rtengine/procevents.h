@@ -1069,6 +1069,7 @@ enum ProcEventCode {
     Evlocallabreparw = 1043,
     Evlocallabreparcol = 1044,
     Evlocallabreparden = 1045,
+    Evlocallabreparsh = 1046,
     NUMOFEVENTS
 };
 

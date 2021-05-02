@@ -1240,6 +1240,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).slomaskSH = locallab.spots.at(j).slomaskSH && pSpot.slomaskSH == otherSpot.slomaskSH;
                 locallab.spots.at(j).lapmaskSH = locallab.spots.at(j).lapmaskSH && pSpot.lapmaskSH == otherSpot.lapmaskSH;
                 locallab.spots.at(j).detailSH = locallab.spots.at(j).detailSH && pSpot.detailSH == otherSpot.detailSH;
+                locallab.spots.at(j).reparsh = locallab.spots.at(j).reparsh && pSpot.reparsh == otherSpot.reparsh;
                 locallab.spots.at(j).LmaskSHcurve = locallab.spots.at(j).LmaskSHcurve && pSpot.LmaskSHcurve == otherSpot.LmaskSHcurve;
                 locallab.spots.at(j).fatamountSH = locallab.spots.at(j).fatamountSH && pSpot.fatamountSH == otherSpot.fatamountSH;
                 locallab.spots.at(j).fatanchorSH = locallab.spots.at(j).fatanchorSH && pSpot.fatanchorSH == otherSpot.fatanchorSH;
@@ -3946,6 +3947,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).detailSH) {
             toEdit.locallab.spots.at(i).detailSH = mods.locallab.spots.at(i).detailSH;
+        }
+
+        if (locallab.spots.at(i).reparsh) {
+            toEdit.locallab.spots.at(i).reparsh = mods.locallab.spots.at(i).reparsh;
         }
 
         if (locallab.spots.at(i).LmaskSHcurve) {
@@ -6852,6 +6857,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     slomaskSH(v),
     lapmaskSH(v),
     detailSH(v),
+    reparsh(v),
     LmaskSHcurve(v),
     fatamountSH(v),
     fatanchorSH(v),
@@ -7431,6 +7437,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     slomaskSH = v;
     lapmaskSH = v;
     detailSH = v;
+    reparsh = v;
     LmaskSHcurve = v;
     fatamountSH = v;
     fatanchorSH = v;

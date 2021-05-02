@@ -3836,6 +3836,7 @@ LocallabShadow::LocallabShadow():
 
     // Shadow highlight specific widgets
     shMethod(Gtk::manage(new MyComboBoxText())),
+    reparsh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     multipliersh([]() -> std::array<Adjuster *, 5>
     {
     std::array<Adjuster*, 5> res = {};
@@ -3913,6 +3914,7 @@ LocallabShadow::LocallabShadow():
     }
 
     detailSH->setAdjusterListener(this);
+    reparsh->setAdjusterListener(this);
 
     highlights->setAdjusterListener(this);
 
@@ -4013,6 +4015,7 @@ LocallabShadow::LocallabShadow():
     fatanchorSH->setAdjusterListener(this);
 
     // Add Shadow highlight specific widgets to GUI
+    pack_start(*reparsh);
     pack_start(*shMethod);
 
     for (const auto multiplier : multipliersh) {
@@ -4109,6 +4112,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         }
 
         gamSH->set_tooltip_text(M("TP_LOCALLAB_SHTRC_TOOLTIP"));
+        reparsh->set_tooltip_text(M("TP_LOCALLAB_REPARSH_TOOLTIP"));
         sloSH->set_tooltip_text(M("TP_LOCALLAB_SHTRC_TOOLTIP"));
         strSH->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
         exprecovs->set_tooltip_markup(M("TP_LOCALLAB_MASKRESH_TOOLTIP"));
@@ -4149,6 +4153,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
             multiplier->set_tooltip_text("");
         }
         gamSH->set_tooltip_text("");
+        reparsh->set_tooltip_text("");
         sloSH->set_tooltip_text("");
         strSH->set_tooltip_text("");
         blurSHde->set_tooltip_text("");
@@ -4239,6 +4244,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         decays->setValue((double)spot.decays);
 
         detailSH->setValue((double)spot.detailSH);
+        reparsh->setValue(spot.reparsh);
         highlights->setValue((double)spot.highlights);
         h_tonalwidth->setValue((double)spot.h_tonalwidth);
         shadows->setValue(spot.shadows);
@@ -4303,6 +4309,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         }
 
         spot.detailSH = detailSH->getIntValue();
+        spot.reparsh = reparsh->getValue();
         spot.highlights = highlights->getIntValue();
         spot.h_tonalwidth = h_tonalwidth->getIntValue();
         spot.shadows = shadows->getIntValue();
@@ -4350,6 +4357,7 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
         }
 
         detailSH->setDefault((double)defSpot.detailSH);
+        reparsh->setDefault(defSpot.reparsh);
         highlights->setDefault((double)defSpot.highlights);
         h_tonalwidth->setDefault((double)defSpot.h_tonalwidth);
         shadows->setDefault((double)defSpot.shadows);
@@ -4397,6 +4405,13 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(EvlocallabdetailSH,
                                        detailSH->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == reparsh) {
+            if (listener) {
+                listener->panelChanged(Evlocallabreparsh,
+                                       reparsh->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -4876,11 +4891,13 @@ void LocallabShadow::updateShadowGUI1()
         showmaskSHMethodConn.block(false);
         showmaskSHMethodinv->show();
         exprecovs->hide();
+        reparsh->hide();
     } else {
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
             expgradsh->show();
             exprecovs->show();
         }
+        reparsh->show();
 
         showmaskSHMethod->show();
         showmaskSHMethodinv->hide();

@@ -443,6 +443,7 @@ class LocallabShadow:
 private:
     // Shadow highlight specific widgets
     MyComboBoxText* const shMethod;
+    Adjuster* const reparsh;
     const std::array<Adjuster*, 5> multipliersh;
     Adjuster* const detailSH;
     Adjuster* const highlights;

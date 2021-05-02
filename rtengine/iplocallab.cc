@@ -13948,6 +13948,21 @@ void ImProcFunctions::Lab_Local(
                 maskrecov(bufexpfin.get(), original, bufmaskorigSH.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
             }
 
+            const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).reparsh;
+            int bw = bufexporig->W;
+            int bh = bufexporig->H;
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if(multiThread)
+#endif
+            for (int x = 0; x < bh; x++) {
+                for (int y = 0; y < bw; y++) {
+                    bufexpfin->L[x][y] = intp(repart, bufexporig->L[x][y], bufexpfin->L[x][y]);
+                    bufexpfin->a[x][y] = intp(repart, bufexporig->a[x][y], bufexpfin->a[x][y]);
+                    bufexpfin->b[x][y] = intp(repart, bufexporig->b[x][y], bufexpfin->b[x][y]);
+                }
+            }
+
             transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
             if (lp.recur) {
