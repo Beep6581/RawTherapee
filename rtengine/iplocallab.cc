@@ -15017,6 +15017,22 @@ void ImProcFunctions::Lab_Local(
                     }
                     
                     float meansob = 0.f;
+
+                    const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).reparexp;
+                    int bw = bufexporig->W;
+                    int bh = bufexporig->H;
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if(multiThread)
+#endif
+                    for (int x = 0; x < bh; x++) {
+                        for (int y = 0; y < bw; y++) {
+                            bufexpfin->L[x][y] = intp(repart, bufexporig->L[x][y], bufexpfin->L[x][y]);
+                            bufexpfin->a[x][y] = intp(repart, bufexporig->a[x][y], bufexpfin->a[x][y]);
+                            bufexpfin->b[x][y] = intp(repart, bufexporig->b[x][y], bufexpfin->b[x][y]);
+                        }
+                    }
+
                     transit_shapedetect2(sp, 0.f, 0.f, call, 1, bufexporig.get(), bufexpfin.get(), originalmaskexp.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
                 }
 

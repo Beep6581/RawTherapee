@@ -332,6 +332,7 @@ private:
 //    Gtk::Frame* const pdeFrame;
     MyExpander* const exppde;
     Adjuster* const laplacexp;
+    Adjuster* const reparexp;
     Adjuster* const linear;
     Adjuster* const balanexp;
     Adjuster* const gamm;

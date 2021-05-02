@@ -538,6 +538,7 @@ public:
         bool expMethod;
         bool exnoiseMethod;
         bool laplacexp;
+        bool reparexp;
         bool balanexp;
         bool linear;
         bool gamm;

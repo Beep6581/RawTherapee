@@ -2506,6 +2506,7 @@ LocallabExposure::LocallabExposure():
 //    pdeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PDEFRA")))),
     exppde(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_PDEFRA")))),
     laplacexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACEXP"), 0.0, 100.0, 0.1, 0.))),
+    reparexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     linear(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LINEAR"), 0.01, 1., 0.01, 0.05))),
     balanexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANEXP"), 0.5, 1.5, 0.01, 1.0))),
     gamm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMM"), 0.2, 1.3, 0.01, 0.4))),
@@ -2580,6 +2581,7 @@ LocallabExposure::LocallabExposure():
     setExpandAlignProperties(expfat, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     laplacexp->setAdjusterListener(this);
+    reparexp->setAdjusterListener(this);
 
     linear->setAdjusterListener(this);
 
@@ -2719,7 +2721,7 @@ LocallabExposure::LocallabExposure():
     mask2expCurveEditorG->curveListComplete();
 
     // Add Color & Light specific widgets to GUI
-//    pack_start(*expMethod);
+    pack_start(*reparexp);
     ToolParamBlock* const pdeBox = Gtk::manage(new ToolParamBlock());
     pdeBox->pack_start(*laplacexp);
     pdeBox->pack_start(*linear);
@@ -2840,6 +2842,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         higthrese->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRESE_TOOLTIP"));
         blurexpde->set_tooltip_text(M("TP_LOCALLAB_BLURCOLDE_TOOLTIP"));
         laplacexp->set_tooltip_text(M("TP_LOCALLAB_EXPLAP_TOOLTIP"));
+        reparexp->set_tooltip_text(M("TP_LOCALLAB_REPAREXP_TOOLTIP"));
         linear->set_tooltip_text(M("TP_LOCALLAB_EXPLAPLIN_TOOLTIP"));
         balanexp->set_tooltip_text(M("TP_LOCALLAB_EXPLAPBAL_TOOLTIP"));
         gamm->set_tooltip_text(M("TP_LOCALLAB_EXPLAPGAMM_TOOLTIP"));
@@ -2874,6 +2877,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         blurexpde->set_tooltip_text("");
         exprecove->set_tooltip_markup("");
         laplacexp->set_tooltip_text("");
+        reparexp->set_tooltip_text("");
         linear->set_tooltip_text("");
         balanexp->set_tooltip_text("");
         gamm->set_tooltip_text("");
@@ -2964,6 +2968,7 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
         }
 */
         laplacexp->setValue(spot.laplacexp);
+        reparexp->setValue(spot.reparexp);
         linear->setValue(spot.linear);
         balanexp->setValue(spot.balanexp);
         gamm->setValue(spot.gamm);
@@ -3055,6 +3060,7 @@ void LocallabExposure::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         }
 */
         spot.laplacexp = laplacexp->getValue();
+        spot.reparexp = reparexp->getValue();
         spot.linear = linear->getValue();
         spot.balanexp = balanexp->getValue();
         spot.gamm = gamm->getValue();
@@ -3119,6 +3125,7 @@ void LocallabExposure::setDefaults(const rtengine::procparams::ProcParams* defPa
 
         // Set default values for adjuster widgets
         laplacexp->setDefault(defSpot.laplacexp);
+        reparexp->setDefault(defSpot.reparexp);
         linear->setDefault(defSpot.linear);
         balanexp->setDefault(defSpot.balanexp);
         gamm->setDefault(defSpot.gamm);
@@ -3168,6 +3175,13 @@ void LocallabExposure::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallablaplacexp,
                                        laplacexp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == reparexp) {
+            if (listener) {
+                listener->panelChanged(Evlocallabreparexp,
+                                       reparexp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -3792,6 +3806,7 @@ void LocallabExposure::updateExposureGUI3()
         expMethod->hide();
         expcomp->setLabel(M("TP_LOCALLAB_EXPCOMPINV"));
         exprecove->hide();
+        reparexp->hide();
 
         // Manage specific case where expMethod is different from 0
         if (expMethod->get_active_row_number() > 0) {
@@ -3820,6 +3835,7 @@ void LocallabExposure::updateExposureGUI3()
             expgradexp->show();
             exprecove->show();
         }
+        reparexp->show();
 
         showmaskexpMethodinv->hide();
         // Reset hidden mask combobox

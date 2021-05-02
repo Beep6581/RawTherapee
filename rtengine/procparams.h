@@ -1130,6 +1130,7 @@ struct LocallabParams {
         Glib::ustring expMethod; // std, pde
         Glib::ustring exnoiseMethod; // none, med, medhi
         double laplacexp;
+        double reparexp;
         double balanexp;
         double linear;
         double gamm;

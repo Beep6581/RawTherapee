@@ -1198,6 +1198,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).expMethod = locallab.spots.at(j).expMethod && pSpot.expMethod == otherSpot.expMethod;
                 locallab.spots.at(j).exnoiseMethod = locallab.spots.at(j).exnoiseMethod && pSpot.exnoiseMethod == otherSpot.exnoiseMethod;
                 locallab.spots.at(j).laplacexp = locallab.spots.at(j).laplacexp && pSpot.laplacexp == otherSpot.laplacexp;
+                locallab.spots.at(j).reparexp = locallab.spots.at(j).reparexp && pSpot.reparexp == otherSpot.reparexp;
                 locallab.spots.at(j).balanexp = locallab.spots.at(j).balanexp && pSpot.balanexp == otherSpot.balanexp;
                 locallab.spots.at(j).linear = locallab.spots.at(j).linear && pSpot.linear == otherSpot.linear;
                 locallab.spots.at(j).gamm = locallab.spots.at(j).gamm && pSpot.gamm == otherSpot.gamm;
@@ -3798,8 +3799,12 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).laplacexp = mods.locallab.spots.at(i).laplacexp;
         }
 
-        if (locallab.spots.at(i).balanexp) {
-            toEdit.locallab.spots.at(i).balanexp = mods.locallab.spots.at(i).balanexp;
+        if (locallab.spots.at(i).laplacexp) {
+            toEdit.locallab.spots.at(i).laplacexp = mods.locallab.spots.at(i).laplacexp;
+        }
+
+        if (locallab.spots.at(i).reparexp) {
+            toEdit.locallab.spots.at(i).reparexp = mods.locallab.spots.at(i).reparexp;
         }
 
         if (locallab.spots.at(i).linear) {
@@ -6819,6 +6824,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     expMethod(v),
     exnoiseMethod(v),
     laplacexp(v),
+    reparexp(v),
     balanexp(v),
     linear(v),
     gamm(v),
@@ -7395,6 +7401,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     expMethod = v;
     exnoiseMethod = v;
     laplacexp = v;
+    reparexp = v;
     balanexp = v;
     linear = v;
     gamm = v;

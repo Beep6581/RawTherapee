@@ -3128,6 +3128,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     expMethod("std"),
     exnoiseMethod("none"),
     laplacexp(0.0),
+    reparexp(100.0),
     balanexp(1.0),
     linear(0.05),
     gamm(0.4),
@@ -4323,6 +4324,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && expMethod == other.expMethod
         && exnoiseMethod == other.exnoiseMethod
         && laplacexp == other.laplacexp
+        && reparexp == other.reparexp
         && balanexp == other.balanexp
         && linear == other.linear
         && gamm == other.gamm
@@ -5973,6 +5975,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->expMethod, "Locallab", "ExpMethod_" + index_str, spot.expMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->exnoiseMethod, "Locallab", "ExnoiseMethod_" + index_str, spot.exnoiseMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->laplacexp, "Locallab", "Laplacexp_" + index_str, spot.laplacexp, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->reparexp, "Locallab", "Reparexp_" + index_str, spot.reparexp, keyFile);
                     saveToKeyfile(!pedited || spot_edited->balanexp, "Locallab", "Balanexp_" + index_str, spot.balanexp, keyFile);
                     saveToKeyfile(!pedited || spot_edited->linear, "Locallab", "Linearexp_" + index_str, spot.linear, keyFile);
                     saveToKeyfile(!pedited || spot_edited->gamm, "Locallab", "Gamm_" + index_str, spot.gamm, keyFile);
@@ -7814,6 +7817,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "ExpMethod_" + index_str, pedited, spot.expMethod, spotEdited.expMethod);
                 assignFromKeyfile(keyFile, "Locallab", "ExnoiseMethod_" + index_str, pedited, spot.exnoiseMethod, spotEdited.exnoiseMethod);
                 assignFromKeyfile(keyFile, "Locallab", "Laplacexp_" + index_str, pedited, spot.laplacexp, spotEdited.laplacexp);
+                assignFromKeyfile(keyFile, "Locallab", "Reparexp_" + index_str, pedited, spot.reparexp, spotEdited.reparexp);
                 assignFromKeyfile(keyFile, "Locallab", "Balanexp_" + index_str, pedited, spot.balanexp, spotEdited.balanexp);
                 assignFromKeyfile(keyFile, "Locallab", "Linearexp_" + index_str, pedited, spot.linear, spotEdited.linear);
                 assignFromKeyfile(keyFile, "Locallab", "Gamm_" + index_str, pedited, spot.gamm, spotEdited.gamm);
