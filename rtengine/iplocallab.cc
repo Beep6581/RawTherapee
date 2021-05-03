@@ -14926,12 +14926,16 @@ void ImProcFunctions::Lab_Local(
                             fatParams.enabled = true;
                             fatParams.threshold = params->locallab.spots.at(sp).fatdetail;
                             fatParams.amount = params->locallab.spots.at(sp).fatamount;
-                            fatParams.anchor = 50.f; //params->locallab.spots.at(sp).fatanchor;
+                            fatParams.anchor = params->locallab.spots.at(sp).fatanchor;
                             //const float sigm = 1.f; //params->locallab.spots.at(sp).fatlevel;
                             //const float mean = 1.f;// params->locallab.spots.at(sp).fatanchor;
                             const std::unique_ptr<Imagefloat> tmpImagefat(new Imagefloat(bfwr, bfhr));
                             lab2rgb(*bufexpfin, *(tmpImagefat.get()), params->icm.workingProfile);
-                            ToneMapFattal02(tmpImagefat.get(), fatParams, 3, 0, nullptr, 0, 0, 1);//last parameter = 1 ==>ART algorithm
+                            int alg = 0;
+                            if(fatParams.anchor == 50.f) {
+                                alg = 1;
+                            }
+                            ToneMapFattal02(tmpImagefat.get(), fatParams, 3, 0, nullptr, 0, 0, alg);//last parameter = 1 ==>ART algorithm
                             rgb2lab(*(tmpImagefat.get()), *bufexpfin, params->icm.workingProfile);
 
                         }

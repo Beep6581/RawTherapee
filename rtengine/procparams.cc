@@ -3134,7 +3134,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     gamm(0.4),
     fatamount(1.0),
     fatdetail(40.0),
-    fatanchor(1.0),
+    fatanchor(50.0),
     fatlevel(1.),
     recothrese(1.),
     lowthrese(12.),

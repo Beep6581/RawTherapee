@@ -2518,7 +2518,7 @@ LocallabExposure::LocallabExposure():
     fatdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATDETAIL"), -100., 300., 1., 0.))),
     norm(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
     fatlevel(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATLEVEL"), 0.5, 2.0, 0.01, 1.))),
-    fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHORA"), 0.5, 2.0, 0.01, 1.))),
+    fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 0.1, 100.0, 0.01, 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     sensiex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     structexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
     blurexpde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
@@ -2742,7 +2742,7 @@ LocallabExposure::LocallabExposure():
     fatBox->pack_start(*fatdetail);
 //    fatBox->pack_start(*norm);
 //    fatBox->pack_start(*fatlevel);
-//    fatBox->pack_start(*fatanchor);
+    fatBox->pack_start(*fatanchor);
 //    fatFrame->add(*fatBox);
     expfat->add(*fatBox, false);
 //    pack_start(*fatFrame);
@@ -3481,12 +3481,9 @@ void LocallabExposure::convertParamToNormal()
     slomaskexp->setValue(defSpot.slomaskexp);
     strmaskexp->setValue(defSpot.strmaskexp);
     angmaskexp->setValue(defSpot.angmaskexp);
-//   fatlevel->setValue(defSpot.fatlevel);
-//    fatanchor->setValue(defSpot.fatanchor);
     decaye->setValue(defSpot.decaye);
 //    norm->set_active(defSpot.enaExpMask);
     fatlevel->setValue(defSpot.fatlevel);
-    fatanchor->setValue(defSpot.fatanchor);
 
     // Enable all listeners
     enableListener();
@@ -3562,7 +3559,7 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
             }
             norm->show();
             fatlevel->hide();
-            fatanchor->hide();
+            fatanchor->show();
 
             // Specific Simple mode widgets are shown in Normal mode
             if (!inversex->get_active()) { // Keep widget hidden when invers is toggled
