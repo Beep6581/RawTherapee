@@ -2565,6 +2565,10 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
             f  = 0.9f;
             c  = 0.59f;
             nc = 0.9f;
+        } else if (params->locallab.spots.at(sp).sursour == "Dark") {
+            f  = 0.8f;
+            c  = 0.525f;
+            nc = 0.8f;
         }
 
         //viewing condition for surround
@@ -2617,8 +2621,15 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     
     float schr = 0.f;
     float mchr = 0.f;
+    float cchr = 0.f;
 
     if (ciec) {
+        
+        cchr = params->locallab.spots.at(sp).chroml;
+        if (cchr == -100.0f) {
+                cchr = -99.8f;
+        }
+
         schr = params->locallab.spots.at(sp).saturl;
 
         if (schr > 0.f) {
@@ -2773,7 +2784,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                 if(ciec) {
                     Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
                     float rstprotection = 50.f;//default value to avoid 1 slider
-                    float chr = 0.f;//no use of chroma 
+                   // float chr = 0.f;//no use of chroma 
                     float Mp, sres;
                     Mp = Mpro / 100.0f;
                     Ciecam02::curvecolorfloat(mchr, Mp, sres, 2.5f);
@@ -2801,7 +2812,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                     Qpro = QproFactor * sqrtf(Jpro);
                     float Cp = (spro * spro * Qpro) / (1000000.f);
                     Cpro = Cp * 100.f;
-                    Ciecam02::curvecolorfloat(chr, Cp, sres, 1.8f);
+                    Ciecam02::curvecolorfloat(cchr, Cp, sres, 1.8f);
                     Color::skinredfloat(Jpro, hpro, sres, Cp, 55.f, 30.f, 1, rstprotection, 100.f, Cpro);
                 }
 

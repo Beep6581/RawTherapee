@@ -1496,6 +1496,7 @@ struct LocallabParams {
         double targetGray;
         double catad;
         double saturl;
+        double chroml;
         double lightl;
         double lightq;
         double contl;

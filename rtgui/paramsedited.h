@@ -904,6 +904,7 @@ public:
         bool targetGray;
         bool catad;
         bool saturl;
+        bool chroml;
         bool lightl;
         bool lightq;
         bool contl;
