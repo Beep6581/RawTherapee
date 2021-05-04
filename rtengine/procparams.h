@@ -1030,6 +1030,7 @@ struct LocallabParams {
         int complexcolor;
         bool curvactiv;
         int lightness;
+        double reparcol;
         int contrast;
         int chroma;
         double labgridALow;
@@ -1129,6 +1130,7 @@ struct LocallabParams {
         Glib::ustring expMethod; // std, pde
         Glib::ustring exnoiseMethod; // none, med, medhi
         double laplacexp;
+        double reparexp;
         double balanexp;
         double linear;
         double gamm;
@@ -1167,6 +1169,7 @@ struct LocallabParams {
         double slomaskSH;
         double lapmaskSH;
         int detailSH;
+        double reparsh;
         std::vector<double> LmaskSHcurve;
         double fatamountSH;
         double fatanchorSH;
@@ -1269,6 +1272,7 @@ struct LocallabParams {
         int nlrad;
         double nlgam;
         int sensiden;
+        double reparden;
         int detailthr;
         std::vector<double> locwavcurveden;
         std::vector<double> locwavcurvehue;
@@ -1300,6 +1304,7 @@ struct LocallabParams {
         double gamma;
         double estop;
         double scaltm;
+        double repartm;
         int rewei;
         double satur;
         int sensitm;
@@ -1421,6 +1426,7 @@ struct LocallabParams {
         double edgw;
         double basew;
         int sensilc;
+        double reparw;
         bool fftwlc;
         bool blurlc;
         bool wavblur;

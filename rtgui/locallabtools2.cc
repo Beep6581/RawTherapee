@@ -118,6 +118,7 @@ LocallabTone::LocallabTone():
     LocallabTool(this, M("TP_LOCALLAB_TONE_TOOLNAME"), M("TP_LOCALLAB_TM"), true),
 
     // Tone mapping specific widgets
+    repartm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     amount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_AMOUNT"), 50., 100.0, 0.5, 95.))),
     stren(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STREN"), -0.5, 2.0, 0.01, 0.5))),
     equiltm(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
@@ -159,6 +160,8 @@ LocallabTone::LocallabTone():
 
     // Parameter Tone Mapping specific widgets
     amount->setAdjusterListener(this);
+
+    repartm->setAdjusterListener(this);
 
     stren->setAdjusterListener(this);
 
@@ -235,10 +238,13 @@ LocallabTone::LocallabTone():
     Lmasktmshape->setLeftBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
     mask2tmCurveEditorG->curveListComplete();
+    Gtk::Separator* const separatortm = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
 
     // Add Tone Mapping specific widgets to GUI
     // pack_start(*amount); // To use if we change transit_shapedetect parameters
     pack_start(*sensitm);
+    pack_start(*repartm);
+    pack_start(*separatortm);
     pack_start(*stren);
     pack_start(*equiltm);
     pack_start(*gamma);
@@ -304,6 +310,7 @@ void LocallabTone::updateAdviceTooltips(const bool showTooltips)
         exp->set_tooltip_text(M("TP_LOCALLAB_TONEMAP_TOOLTIP"));
         exprecovt->set_tooltip_markup(M("TP_LOCALLAB_MASKRESTM_TOOLTIP"));
         equiltm->set_tooltip_text(M("TP_LOCALLAB_EQUILTM_TOOLTIP"));
+        repartm->set_tooltip_text(M("TP_LOCALLAB_REPARTM_TOOLTIP"));
         gamma->set_tooltip_text(M("TP_LOCALLAB_TONEMAPGAM_TOOLTIP"));
         estop->set_tooltip_text(M("TP_LOCALLAB_TONEMAPESTOP_TOOLTIP"));
         scaltm->set_tooltip_text(M("TP_LOCALLAB_TONEMASCALE_TOOLTIP"));
@@ -329,6 +336,7 @@ void LocallabTone::updateAdviceTooltips(const bool showTooltips)
     } else {
         exp->set_tooltip_text("");
         equiltm->set_tooltip_text("");
+        repartm->set_tooltip_text("");
         gamma->set_tooltip_text("");
         estop->set_tooltip_text("");
         scaltm->set_tooltip_text("");
@@ -401,6 +409,7 @@ void LocallabTone::read(const rtengine::procparams::ProcParams* pp, const Params
 
         amount->setValue(spot.amount);
         stren->setValue(spot.stren);
+        repartm->setValue(spot.repartm);
         equiltm->set_active(spot.equiltm);
         gamma->setValue(spot.gamma);
         satur->setValue(spot.satur);
@@ -449,6 +458,7 @@ void LocallabTone::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
 
         spot.amount = amount->getValue();
         spot.stren = stren->getValue();
+        spot.repartm = repartm->getValue();
         spot.equiltm = equiltm->get_active();
         spot.gamma = gamma->getValue();
         spot.satur = satur->getValue();
@@ -492,6 +502,7 @@ void LocallabTone::setDefaults(const rtengine::procparams::ProcParams* defParams
         satur->setDefault(defSpot.satur);
         estop->setDefault(defSpot.estop);
         scaltm->setDefault(defSpot.scaltm);
+        repartm->setDefault(defSpot.repartm);
         rewei->setDefault((double)defSpot.rewei);
         softradiustm->setDefault(defSpot.softradiustm);
         sensitm->setDefault((double)defSpot.sensitm);
@@ -527,6 +538,8 @@ void LocallabTone::adjusterChanged(Adjuster* a, double newval)
             listener->panelChanged(Evlocallabestop, estop->getTextValue() + spName);
         } else if (a == scaltm) {
             listener->panelChanged(Evlocallabscaltm, scaltm->getTextValue() + spName);
+        } else if (a == repartm) {
+            listener->panelChanged(Evlocallabrepartm, repartm->getTextValue() + spName);
         } else if (a == rewei) {
             listener->panelChanged(Evlocallabrewei, rewei->getTextValue() + spName);
         } else if (a == softradiustm) {
@@ -2333,6 +2346,7 @@ LocallabContrast::LocallabContrast():
     residhi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDHI"), -100., 100., 1., 0.))),
     residhithr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDHITHR"), 0., 100., 1., 70.))),
     sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    reparw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
     clarilres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARILRES"), -20., 100., 0.5, 0.))),
     claricres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CLARICRES"), -20., 100., 0.5, 0.))),
@@ -2464,6 +2478,8 @@ LocallabContrast::LocallabContrast():
     residhithr->setAdjusterListener(this);
 
     sensilc->setAdjusterListener(this);
+
+    reparw->setAdjusterListener(this);
 
     clariFrame->set_label_align(0.025, 0.5);
 
@@ -2689,6 +2705,7 @@ LocallabContrast::LocallabContrast():
 
     // Add Local contrast specific widgets to GUI
     pack_start(*sensilc);
+    pack_start(*reparw);
     pack_start(*localcontMethod);
     pack_start(*lcradius);
     pack_start(*lcamount);
@@ -2945,6 +2962,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         masklcCurveEditorG->set_tooltip_markup(M("TP_LOCALLAB_MASKCURVE_TOOLTIP"));
         chromasklc->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
         sensilc->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+        reparw->set_tooltip_text(M("TP_LOCALLAB_REPARW_TOOLTIP"));
         decayw->set_tooltip_text(M("TP_LOCALLAB_MASKDECAY_TOOLTIP"));
         lowthresw->set_tooltip_text(M("TP_LOCALLAB_MASKLOWTHRESWAV_TOOLTIP"));
         higthresw->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRESWAV_TOOLTIP"));
@@ -2977,6 +2995,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         masklcCurveEditorG->set_tooltip_markup("");
         chromasklc->set_tooltip_text("");
         sensilc->set_tooltip_text("");
+        reparw->set_tooltip_text("");
 
         wavshape->setTooltip("");
         clarilres->set_tooltip_text("");
@@ -3113,6 +3132,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         residhi->setValue(spot.residhi);
         residhithr->setValue(spot.residhithr);
         sensilc->setValue((double)spot.sensilc);
+        reparw->setValue(spot.reparw);
         clarilres->setValue(spot.clarilres);
         claricres->setValue(spot.claricres);
         clarisoft->setValue(spot.clarisoft);
@@ -3234,6 +3254,7 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.residhi = residhi->getValue();
         spot.residhithr = residhithr->getValue();
         spot.sensilc = sensilc->getIntValue();
+        spot.reparw = reparw->getValue();
         spot.clarilres = clarilres->getValue();
         spot.claricres = claricres->getValue();
         spot.clarisoft = clarisoft->getValue();
@@ -3334,6 +3355,7 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         residhi->setDefault(defSpot.residhi);
         residhithr->setDefault(defSpot.residhithr);
         sensilc->setDefault((double)defSpot.sensilc);
+        reparw->setDefault(defSpot.reparw);
         clarilres->setDefault(defSpot.clarilres);
         claricres->setDefault(defSpot.claricres);
         clarisoft->setDefault(defSpot.clarisoft);
@@ -3465,6 +3487,13 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabsensilc,
                                        sensilc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == reparw) {
+            if (listener) {
+                listener->panelChanged(Evlocallabreparw,
+                                       reparw->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

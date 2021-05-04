@@ -2795,6 +2795,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     complexcolor(2),
     curvactiv(false),
     lightness(0),
+    reparcol(100.),
     contrast(0),
     chroma(0),
     labgridALow(0.0),
@@ -3127,12 +3128,13 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     expMethod("std"),
     exnoiseMethod("none"),
     laplacexp(0.0),
+    reparexp(100.0),
     balanexp(1.0),
     linear(0.05),
     gamm(0.4),
     fatamount(1.0),
     fatdetail(40.0),
-    fatanchor(1.0),
+    fatanchor(50.0),
     fatlevel(1.),
     recothrese(1.),
     lowthrese(12.),
@@ -3207,6 +3209,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     slomaskSH(0.0),
     lapmaskSH(0.0),
     detailSH(0),
+    reparsh(100.),
     LmaskSHcurve{
         static_cast<double>(DCT_NURBS),
         0.0,
@@ -3365,6 +3368,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     nlrad(5),
     nlgam(3.),
     sensiden(60),
+    reparden(100.),
     detailthr(50),
     locwavcurveden{
         static_cast<double>(FCT_MinMaxCPoints),
@@ -3494,6 +3498,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     gamma(1.0),
     estop(1.4),
     scaltm(1.0),
+    repartm(100.0),
     rewei(0),
     satur(0.),
     sensitm(60),
@@ -3739,6 +3744,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     edgw(60.0),
     basew(10.0),
     sensilc(60),
+    reparw(100.),
     fftwlc(false),
     blurlc(true),
     wavblur(false),
@@ -4219,6 +4225,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && complexcolor == other.complexcolor
         && curvactiv == other.curvactiv
         && lightness == other.lightness
+        && reparcol == other.reparcol
         && contrast == other.contrast
         && chroma == other.chroma
         && labgridALow == other.labgridALow
@@ -4318,6 +4325,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && expMethod == other.expMethod
         && exnoiseMethod == other.exnoiseMethod
         && laplacexp == other.laplacexp
+        && reparexp == other.reparexp
         && balanexp == other.balanexp
         && linear == other.linear
         && gamm == other.gamm
@@ -4364,6 +4372,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && slomaskSH == other.slomaskSH
         && lapmaskSH == other.lapmaskSH
         && detailSH == other.detailSH
+        && reparsh == other.reparsh
         && LmaskSHcurve == other.LmaskSHcurve
         && fatamountSH == other.fatamountSH
         && fatanchorSH == other.fatanchorSH
@@ -4466,6 +4475,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && nlrad == other.nlrad
         && nlgam == other.nlgam
         && sensiden == other.sensiden
+        && reparden == other.reparden
         && detailthr == other.detailthr
         && locwavcurveden == other.locwavcurveden
         && locwavcurvehue == other.locwavcurvehue
@@ -4497,6 +4507,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && gamma == other.gamma
         && estop == other.estop
         && scaltm == other.scaltm
+        && repartm == other.repartm
         && rewei == other.rewei
         && satur == other.satur
         && sensitm == other.sensitm
@@ -4618,6 +4629,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && edgw == other.edgw
         && basew == other.basew
         && sensilc == other.sensilc
+        && reparw == other.reparw
         && fftwlc == other.fftwlc
         && blurlc == other.blurlc
         && wavblur == other.wavblur
@@ -5864,6 +5876,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->complexcolor, "Locallab", "Complexcolor_" + index_str, spot.complexcolor, keyFile);
                     saveToKeyfile(!pedited || spot_edited->curvactiv, "Locallab", "Curvactiv_" + index_str, spot.curvactiv, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lightness, "Locallab", "Lightness_" + index_str, spot.lightness, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->reparcol, "Locallab", "Reparcol_" + index_str, spot.reparcol, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contrast, "Locallab", "Contrast_" + index_str, spot.contrast, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chroma, "Locallab", "Chroma_" + index_str, spot.chroma, keyFile);
                     saveToKeyfile(!pedited || spot_edited->labgridALow, "Locallab", "labgridALow_" + index_str, spot.labgridALow, keyFile);
@@ -5964,6 +5977,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->expMethod, "Locallab", "ExpMethod_" + index_str, spot.expMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->exnoiseMethod, "Locallab", "ExnoiseMethod_" + index_str, spot.exnoiseMethod, keyFile);
                     saveToKeyfile(!pedited || spot_edited->laplacexp, "Locallab", "Laplacexp_" + index_str, spot.laplacexp, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->reparexp, "Locallab", "Reparexp_" + index_str, spot.reparexp, keyFile);
                     saveToKeyfile(!pedited || spot_edited->balanexp, "Locallab", "Balanexp_" + index_str, spot.balanexp, keyFile);
                     saveToKeyfile(!pedited || spot_edited->linear, "Locallab", "Linearexp_" + index_str, spot.linear, keyFile);
                     saveToKeyfile(!pedited || spot_edited->gamm, "Locallab", "Gamm_" + index_str, spot.gamm, keyFile);
@@ -6006,6 +6020,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->gammaskSH, "Locallab", "GammaskSH_" + index_str, spot.gammaskSH, keyFile);
                     saveToKeyfile(!pedited || spot_edited->slomaskSH, "Locallab", "SlomaskSH_" + index_str, spot.slomaskSH, keyFile);
                     saveToKeyfile(!pedited || spot_edited->detailSH, "Locallab", "DetailSH_" + index_str, spot.detailSH, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->reparsh, "Locallab", "Reparsh_" + index_str, spot.reparsh, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LmaskSHcurve, "Locallab", "LmaskSHCurve_" + index_str, spot.LmaskSHcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatamountSH, "Locallab", "FatamountSH_" + index_str, spot.fatamountSH, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fatanchorSH, "Locallab", "FatanchorSH_" + index_str, spot.fatanchorSH, keyFile);
@@ -6111,6 +6126,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->nlrad, "Locallab", "Nlrad_" + index_str, spot.nlrad, keyFile);
                     saveToKeyfile(!pedited || spot_edited->nlgam, "Locallab", "Nlgam_" + index_str, spot.nlgam, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sensiden, "Locallab", "Sensiden_" + index_str, spot.sensiden, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->reparden, "Locallab", "Reparden_" + index_str, spot.reparden, keyFile);
                     saveToKeyfile(!pedited || spot_edited->detailthr, "Locallab", "Detailthr_" + index_str, spot.detailthr, keyFile);
                     saveToKeyfile(!pedited || spot_edited->locwavcurveden, "Locallab", "LocwavCurveden_" + index_str, spot.locwavcurveden, keyFile);
                     saveToKeyfile(!pedited || spot_edited->locwavcurvehue, "Locallab", "LocwavCurvehue_" + index_str, spot.locwavcurvehue, keyFile);
@@ -6143,6 +6159,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->gamma, "Locallab", "Gamma_" + index_str, spot.gamma, keyFile);
                     saveToKeyfile(!pedited || spot_edited->estop, "Locallab", "Estop_" + index_str, spot.estop, keyFile);
                     saveToKeyfile(!pedited || spot_edited->scaltm, "Locallab", "Scaltm_" + index_str, spot.scaltm, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->repartm, "Locallab", "Repartm_" + index_str, spot.repartm, keyFile);
                     saveToKeyfile(!pedited || spot_edited->rewei, "Locallab", "Rewei_" + index_str, spot.rewei, keyFile);
                     saveToKeyfile(!pedited || spot_edited->satur, "Locallab", "Satur_" + index_str, spot.satur, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sensitm, "Locallab", "Sensitm_" + index_str, spot.sensitm, keyFile);
@@ -6267,6 +6284,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->edgw, "Locallab", "Edgw_" + index_str, spot.edgw, keyFile);
                     saveToKeyfile(!pedited || spot_edited->basew, "Locallab", "Basew_" + index_str, spot.basew, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sensilc, "Locallab", "Sensilc_" + index_str, spot.sensilc, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->reparw, "Locallab", "Reparw_" + index_str, spot.reparw, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fftwlc, "Locallab", "Fftwlc_" + index_str, spot.fftwlc, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blurlc, "Locallab", "Blurlc_" + index_str, spot.blurlc, keyFile);
                     saveToKeyfile(!pedited || spot_edited->wavblur, "Locallab", "Wavblur_" + index_str, spot.wavblur, keyFile);
@@ -7688,6 +7706,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Complexcolor_" + index_str, pedited, spot.complexcolor, spotEdited.complexcolor);
                 assignFromKeyfile(keyFile, "Locallab", "Curvactiv_" + index_str, pedited, spot.curvactiv, spotEdited.curvactiv);
                 assignFromKeyfile(keyFile, "Locallab", "Lightness_" + index_str, pedited, spot.lightness, spotEdited.lightness);
+                assignFromKeyfile(keyFile, "Locallab", "Reparcol_" + index_str, pedited, spot.reparcol, spotEdited.reparcol);
                 assignFromKeyfile(keyFile, "Locallab", "Contrast_" + index_str, pedited, spot.contrast, spotEdited.contrast);
                 assignFromKeyfile(keyFile, "Locallab", "Chroma_" + index_str, pedited, spot.chroma, spotEdited.chroma);
                 assignFromKeyfile(keyFile, "Locallab", "labgridALow_" + index_str, pedited, spot.labgridALow, spotEdited.labgridALow);
@@ -7801,6 +7820,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "ExpMethod_" + index_str, pedited, spot.expMethod, spotEdited.expMethod);
                 assignFromKeyfile(keyFile, "Locallab", "ExnoiseMethod_" + index_str, pedited, spot.exnoiseMethod, spotEdited.exnoiseMethod);
                 assignFromKeyfile(keyFile, "Locallab", "Laplacexp_" + index_str, pedited, spot.laplacexp, spotEdited.laplacexp);
+                assignFromKeyfile(keyFile, "Locallab", "Reparexp_" + index_str, pedited, spot.reparexp, spotEdited.reparexp);
                 assignFromKeyfile(keyFile, "Locallab", "Balanexp_" + index_str, pedited, spot.balanexp, spotEdited.balanexp);
                 assignFromKeyfile(keyFile, "Locallab", "Linearexp_" + index_str, pedited, spot.linear, spotEdited.linear);
                 assignFromKeyfile(keyFile, "Locallab", "Gamm_" + index_str, pedited, spot.gamm, spotEdited.gamm);
@@ -7848,6 +7868,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "SlomaskSH_" + index_str, pedited, spot.slomaskSH, spotEdited.slomaskSH);
                 assignFromKeyfile(keyFile, "Locallab", "LapmaskSH_" + index_str, pedited, spot.lapmaskSH, spotEdited.lapmaskSH);
                 assignFromKeyfile(keyFile, "Locallab", "DetailSH_" + index_str, pedited, spot.detailSH, spotEdited.detailSH);
+                assignFromKeyfile(keyFile, "Locallab", "Reparsh_" + index_str, pedited, spot.reparsh, spotEdited.reparsh);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskSHCurve_" + index_str, pedited, spot.LmaskSHcurve, spotEdited.LmaskSHcurve);
                 assignFromKeyfile(keyFile, "Locallab", "FatamountSH_" + index_str, pedited, spot.fatamountSH, spotEdited.fatamountSH);
                 assignFromKeyfile(keyFile, "Locallab", "FatanchorSH_" + index_str, pedited, spot.fatanchorSH, spotEdited.fatanchorSH);
@@ -7972,6 +7993,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Nlrad_" + index_str, pedited, spot.nlrad, spotEdited.nlrad);
                 assignFromKeyfile(keyFile, "Locallab", "Nlgam_" + index_str, pedited, spot.nlgam, spotEdited.nlgam);
                 assignFromKeyfile(keyFile, "Locallab", "Sensiden_" + index_str, pedited, spot.sensiden, spotEdited.sensiden);
+                assignFromKeyfile(keyFile, "Locallab", "Reparden_" + index_str, pedited, spot.reparden, spotEdited.reparden);
                 assignFromKeyfile(keyFile, "Locallab", "Detailthr_" + index_str, pedited, spot.detailthr, spotEdited.detailthr);
                 assignFromKeyfile(keyFile, "Locallab", "LocwavCurveden_" + index_str, pedited, spot.locwavcurveden, spotEdited.locwavcurveden);
                 assignFromKeyfile(keyFile, "Locallab", "LocwavCurvehue_" + index_str, pedited, spot.locwavcurvehue, spotEdited.locwavcurvehue);
@@ -8016,6 +8038,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Gamma_" + index_str, pedited, spot.gamma, spotEdited.gamma);
                 assignFromKeyfile(keyFile, "Locallab", "Estop_" + index_str, pedited, spot.estop, spotEdited.estop);
                 assignFromKeyfile(keyFile, "Locallab", "Scaltm_" + index_str, pedited, spot.scaltm, spotEdited.scaltm);
+                assignFromKeyfile(keyFile, "Locallab", "Repartm_" + index_str, pedited, spot.repartm, spotEdited.repartm);
                 assignFromKeyfile(keyFile, "Locallab", "Rewei_" + index_str, pedited, spot.rewei, spotEdited.rewei);
                 assignFromKeyfile(keyFile, "Locallab", "Satur_" + index_str, pedited, spot.satur, spotEdited.satur);
                 assignFromKeyfile(keyFile, "Locallab", "Sensitm_" + index_str, pedited, spot.sensitm, spotEdited.sensitm);
@@ -8149,6 +8172,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Edgw_" + index_str, pedited, spot.edgw, spotEdited.edgw);
                 assignFromKeyfile(keyFile, "Locallab", "Basew_" + index_str, pedited, spot.basew, spotEdited.basew);
                 assignFromKeyfile(keyFile, "Locallab", "Sensilc_" + index_str, pedited, spot.sensilc, spotEdited.sensilc);
+                assignFromKeyfile(keyFile, "Locallab", "Reparw_" + index_str, pedited, spot.reparw, spotEdited.reparw);
                 assignFromKeyfile(keyFile, "Locallab", "Fftwlc_" + index_str, pedited, spot.fftwlc, spotEdited.fftwlc);
                 assignFromKeyfile(keyFile, "Locallab", "Blurlc_" + index_str, pedited, spot.blurlc, spotEdited.blurlc);
                 assignFromKeyfile(keyFile, "Locallab", "Wavblur_" + index_str, pedited, spot.wavblur, spotEdited.wavblur);

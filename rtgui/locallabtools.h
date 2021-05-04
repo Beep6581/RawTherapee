@@ -177,6 +177,7 @@ class LocallabColor:
 private:
     // Color & Light specific widgets
     Gtk::Frame* const lumFrame;
+    Adjuster* const reparcol;
     Adjuster* const lightness;
     Adjuster* const contrast;
     Adjuster* const chroma;
@@ -331,6 +332,7 @@ private:
 //    Gtk::Frame* const pdeFrame;
     MyExpander* const exppde;
     Adjuster* const laplacexp;
+    Adjuster* const reparexp;
     Adjuster* const linear;
     Adjuster* const balanexp;
     Adjuster* const gamm;
@@ -442,6 +444,7 @@ class LocallabShadow:
 private:
     // Shadow highlight specific widgets
     MyComboBoxText* const shMethod;
+    Adjuster* const reparsh;
     const std::array<Adjuster*, 5> multipliersh;
     Adjuster* const detailSH;
     Adjuster* const highlights;
@@ -745,6 +748,7 @@ private:
     Adjuster* const nlgam;
     Adjuster* const bilateral;
     Adjuster* const sensiden;
+    Adjuster* const reparden;
     Gtk::Button* neutral;
     MyExpander* const expmaskbl;
     MyComboBoxText* const showmaskblMethod;
@@ -835,6 +839,7 @@ class LocallabTone:
 {
 private:
     // Tone Mapping specific widgets
+    Adjuster* const repartm;
     Adjuster* const amount;
     Adjuster* const stren;
     Gtk::CheckButton* const equiltm;
@@ -1083,6 +1088,7 @@ private:
     Adjuster* const residhi;
     Adjuster* const residhithr;
     Adjuster* const sensilc;
+    Adjuster* const reparw;
     Gtk::Frame* const clariFrame;
     Adjuster* const clarilres;
     Adjuster* const claricres;
