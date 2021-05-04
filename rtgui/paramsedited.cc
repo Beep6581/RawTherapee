@@ -1572,6 +1572,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).targetGray = locallab.spots.at(j).targetGray && pSpot.targetGray == otherSpot.targetGray;
                 locallab.spots.at(j).catad = locallab.spots.at(j).catad && pSpot.catad == otherSpot.catad;
                 locallab.spots.at(j).saturl = locallab.spots.at(j).saturl && pSpot.saturl == otherSpot.saturl;
+                locallab.spots.at(j).chroml = locallab.spots.at(j).chroml && pSpot.chroml == otherSpot.chroml;
                 locallab.spots.at(j).lightl = locallab.spots.at(j).lightl && pSpot.lightl == otherSpot.lightl;
                 locallab.spots.at(j).lightq = locallab.spots.at(j).lightq && pSpot.lightq == otherSpot.lightq;
                 locallab.spots.at(j).contl = locallab.spots.at(j).contl && pSpot.contl == otherSpot.contl;
@@ -5240,6 +5241,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).saturl = mods.locallab.spots.at(i).saturl;
         }
 
+        if (locallab.spots.at(i).chroml) {
+            toEdit.locallab.spots.at(i).chroml = mods.locallab.spots.at(i).chroml;
+        }
+
         if (locallab.spots.at(i).lightl) {
             toEdit.locallab.spots.at(i).lightl = mods.locallab.spots.at(i).lightl;
         }
@@ -7195,6 +7200,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     targetGray(v),
     catad(v),
     saturl(v),
+    chroml(v),
     lightl(v),
     lightq(v),
     contl(v),
@@ -7780,6 +7786,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     targetGray = v;
     catad = v;
     saturl = v;
+    chroml = v;
     lightl = v;
     lightq = v;
     contl = v;

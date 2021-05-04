@@ -5162,6 +5162,7 @@ LocallabLog::LocallabLog():
     contthres(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTHRES"), -1., 1., 0.01, 0.))),
     colorfl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCOLORFL"), -100., 100., 0.5, 0.))),
     saturl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
+    chroml(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROML"), -100., 100., 0.5, 0.))),
     expL(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_LOGEXP")))),
     CurveEditorL(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_LOGCONTQ"))),
     LshapeL(static_cast<DiagonalCurveEditor*>(CurveEditorL->addCurve(CT_Diagonal, "Q(Q)"))),
@@ -5231,6 +5232,8 @@ LocallabLog::LocallabLog():
 
     saturl->setAdjusterListener(this);
 
+    chroml->setAdjusterListener(this);
+
     lightl->setAdjusterListener(this);
 
     lightq->setAdjusterListener(this);
@@ -5272,7 +5275,7 @@ LocallabLog::LocallabLog():
     surHBox->pack_start (*surLabel, Gtk::PACK_SHRINK);
     sursour->append (M ("TP_COLORAPP_SURROUND_AVER"));
     sursour->append (M ("TP_COLORAPP_SURROUND_DIM"));
-//    sursour->append (M ("TP_COLORAPP_SURROUND_DARK"));
+    sursour->append (M ("TP_COLORAPP_SURROUND_DARK"));
     sursour->set_active (0);
     surHBox->pack_start (*sursour);
     sursourconn = sursour->signal_changed().connect ( sigc::mem_fun (*this, &LocallabLog::sursourChanged) );
@@ -5362,10 +5365,13 @@ LocallabLog::LocallabLog():
     logP1Box->pack_start(*contl);
     logP1Box->pack_start(*contthres);
     logP1Box->pack_start(*saturl);
+    Gtk::Separator* const separatorchro = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     ToolParamBlock* const logP11Box = Gtk::manage(new ToolParamBlock());
     logP11Box->pack_start(*lightl);
     logP11Box->pack_start(*lightq);
     logP11Box->pack_start(*contq);
+    logP11Box->pack_start(*separatorchro);
+    logP11Box->pack_start(*chroml);
     logP11Box->pack_start(*colorfl);
     expL->add(*logP11Box, false);
     logP1Box->pack_start(*expL, false, false);
@@ -5463,6 +5469,7 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         lightl->set_tooltip_text(M("TP_LOCALLAB_LOGLIGHTL_TOOLTIP"));        
         lightq->set_tooltip_text(M("TP_LOCALLAB_LOGLIGHTQ_TOOLTIP"));        
         saturl->set_tooltip_text(M("TP_LOCALLAB_LOGSATURL_TOOLTIP"));
+        chroml->set_tooltip_text(M("TP_COLORAPP_CHROMA_TOOLTIP"));
         detail->set_tooltip_text(M("TP_LOCALLAB_LOGDETAIL_TOOLTIP"));
         catad->set_tooltip_text(M("TP_LOCALLAB_LOGCATAD_TOOLTIP"));
         sensilog->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
@@ -5512,6 +5519,7 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         contthres->set_tooltip_text("");
         colorfl->set_tooltip_text("");
         saturl->set_tooltip_text("");
+        chroml->set_tooltip_text("");
         catad->set_tooltip_text("");
         expmaskL->set_tooltip_markup("");
         CCmaskshapeL->setTooltip("");
@@ -5607,6 +5615,8 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             sursour->set_active (0);
         } else if (spot.sursour == "Dim") {
             sursour->set_active (1);
+        } else if (spot.sursour == "Dark") {
+            sursour->set_active (2);
         }
 
 
@@ -5631,6 +5641,7 @@ void LocallabLog::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         sourceabs->setValue(spot.sourceabs);
         catad->setValue(spot.catad);
         saturl->setValue(spot.saturl);
+        chroml->setValue(spot.chroml);
         lightl->setValue(spot.lightl);
         lightq->setValue(spot.lightq);
         contl->setValue(spot.contl);
@@ -5694,6 +5705,7 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.targetGray = targetGray->getValue();
         spot.catad = catad->getValue();
         spot.saturl = saturl->getValue();
+        spot.chroml = chroml->getValue();
         spot.lightl = lightl->getValue();
         spot.lightq = lightq->getValue();
         spot.contl = contl->getValue();
@@ -5724,6 +5736,8 @@ void LocallabLog::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.sursour = "Average";
         } else if (sursour->get_active_row_number() == 1) {
             spot.sursour = "Dim";
+        } else if (sursour->get_active_row_number() == 2) {
+            spot.sursour = "Dark";
         }
 
         if (surround->get_active_row_number() == 0) {
@@ -5778,6 +5792,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             sourceabs->hide();
             targabs->hide();
             saturl->hide();
+            chroml->hide();
             contl->hide();
             contthres->hide();
             lightl->hide();
@@ -5805,6 +5820,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             targabs->show();
             catad->show();
             saturl->show();
+            chroml->show();
             lightl->show();
             lightq->show();
             contl->show();
@@ -5838,6 +5854,7 @@ void LocallabLog::updateGUIToMode(const modeType new_type)
             targabs->show();
             catad->show();
             saturl->show();
+            chroml->show();
             lightl->show();
             lightq->show();
             contl->show();
@@ -5984,6 +6001,7 @@ void LocallabLog::setDefaults(const rtengine::procparams::ProcParams* defParams,
         targetGray->setDefault(defSpot.targetGray);
         catad->setDefault(defSpot.catad);
         saturl->setDefault(defSpot.saturl);
+        chroml->setDefault(defSpot.chroml);
         lightl->setDefault(defSpot.lightl);
         lightq->setDefault(defSpot.lightq);
         contl->setDefault(defSpot.contl);
@@ -6072,6 +6090,13 @@ void LocallabLog::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabsaturl,
                                        saturl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == chroml) {
+            if (listener) {
+                listener->panelChanged(Evlocallabchroml,
+                                       chroml->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

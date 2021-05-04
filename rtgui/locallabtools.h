@@ -1330,6 +1330,7 @@ private:
     Adjuster* const contthres;
     Adjuster* const colorfl;
     Adjuster* const saturl;
+    Adjuster* const chroml;
     MyExpander* const expL;
     CurveEditorGroup* const CurveEditorL;
     DiagonalCurveEditor* const LshapeL;
