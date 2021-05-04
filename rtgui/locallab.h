@@ -40,7 +40,7 @@ public:
 
 /* ==== LocallabToolList ==== */
 class LocallabToolList:
-    public Gtk::VBox
+    public Gtk::Box
 {
 private:
     // Tree model to manage ComboBox rows

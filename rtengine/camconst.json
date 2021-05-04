@@ -400,6 +400,13 @@ Camera constants:
             ]
         }
     },
+    
+    { // Quality C, initial data by @agriggio, white frame samples provided by @noirsabb in #5862, color charts not processed yet
+        "make_model" : "CANON EOS-1D X MARK III",
+        "raw_crop": [ 72, 38, 5496, 3670 ],
+        "masked_areas" : [ 40, 10, 5534, 70 ],
+        "ranges" : { "white" : 16382 }
+    },
 
     { // Quality A
         "make_model": "Canon EOS 5D Mark III",
@@ -1014,6 +1021,14 @@ Camera constants:
             ]
         }
     },
+    
+    { // Quality C, samples provided by falket #5495
+        "make_model": [ "Canon EOS 2000D", "Canon EOS Rebel T7", "Canon EOS Kiss X90" ],
+        // raw_crop is handled by dcraw
+        // "dcraw_matrix": [ 8532, -701, -1167, -4095, 11879, 2508, -797, 2424, 7010 ], // Adobe DNG v.10.3
+        "dcraw_matrix": [ 8300, -2110, -1120, -4917, 12694, 2482, -938, 2141, 5666 ], // Adobe DNG v.10.3 (v2)
+        "ranges": { "white": 15300 } // typical value, very non-linear behavior near clipping
+    },
 
 // Canon MILC (mirrorless interchangeable-lens camera)
 
@@ -1420,7 +1435,7 @@ Camera constants:
         "make_model": "FUJIFILM X-PRO2",
         "dcraw_matrix": [ 11434,-4948,-1210,-3746,12042,1903,-666,1479,5235 ], // DNG_v9.4 D65
         "raw_crop": [ 0, 5, 6032, 4026 ], // see X-T2
-        "ranges": { "white": [ 16105, 16270, 16082 ] } // These values are the lowest pixel values >16000 for all ISOs. LENR has a negligble effect.
+        "ranges": { "white": [ 16105, 16270, 16082 ] } // These values are the lowest pixel values >16000 for all ISOs. LENR has a negligible effect.
         // No aperture scaling data provided, but likely negligible
     },
     
@@ -1433,7 +1448,7 @@ Camera constants:
     },
     
     { // Quality B
-        "make_model": [ "FUJIFILM X-T30", "FUJIFILM X100V", "FUJIFILM X-T4" ],
+        "make_model": [ "FUJIFILM X-T30", "FUJIFILM X100V", "FUJIFILM X-T4", "FUJIFILM X-S10" ],
         "dcraw_matrix": [ 13426,-6334,-1177,-4244,12136,2371,-580,1303,5980 ], // DNG_v11, standard_v2 d65
         "raw_crop": [ 0, 5, 6252, 4176]
     },
@@ -1475,6 +1490,11 @@ Camera constants:
     { // Quality C, only raw crop
         "make_model": "Leica SL2",
         "raw_crop": [ 0, 0, 0, -18 ] // 18 rows at bottom are garbage
+    },
+
+    { // Quality C, only raw crop
+        "make_model": "Leica SL2-S",
+        "raw_crop": [ 0, 2, 6024, 4042 ] // 2 rows at top and 4 rows at bottom are black
     },
 
     { // Quality B, Matrix from ART
@@ -1594,6 +1614,22 @@ Camera constants:
             "white": [ 4000, 4050, 3950 ] // Typical values without LENR: 4009, 4093, 3963
         } // No significant influence of ISO
         // No aperture scaling reported
+    },
+    
+    { // Quality B, samples provided by arvindpgh (#6066)
+      // Sensor shows some non-uniformity, need other sample to verify
+      // There seems to be some aperture scaling, but insufficient data to accurately determine
+        "make_model": "Nikon COOLPIX P950",
+        "dcraw_matrix": [ 13307,-5641,-1290,-2048,10581,1689,-64,1222,5176 ], // ColorMatrix2 from Adobe DNG Converter 13.1
+        "ranges": {
+            "black": 200,
+            "white": [
+                { "iso": [ 100 ], "levels": [ 3994, 4093, 3963 ] }, // LENR can be quite aggressive at higher ISO
+                { "iso": [ 200 ], "levels": [ 3993, 4092, 3962 ] },
+                { "iso": [ 400 ], "levels": [ 3992, 4091, 3961 ] },
+                { "iso": [ 800, 1600, 3200, 6400 ], "levels": [ 3996, 4095, 3965 ] }
+            ]
+        }
     },
 
     { // Quality B, no LENR samples

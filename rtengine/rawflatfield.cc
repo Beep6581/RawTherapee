@@ -263,7 +263,7 @@ void cfaboxblur(const float* const * riFlatFile, float* cfablur, int boxH, int b
 namespace rtengine
 {
 
-void RawImageSource::processFlatField(const procparams::RAWParams &raw, const RawImage *riFlatFile, const float black[4])
+void RawImageSource::processFlatField(const procparams::RAWParams &raw, const RawImage *riFlatFile, array2D<float> &rawData, const float black[4])
 {
 //    BENCHFUN
     std::unique_ptr<float[]> cfablur(new float[H * W]);

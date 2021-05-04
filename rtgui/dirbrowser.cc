@@ -91,7 +91,7 @@ DirBrowser::DirBrowser () : dirTreeModel(),
     , volumes(0)
 #endif
 {
-
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
     dirtree = Gtk::manage ( new Gtk::TreeView() );
     scrolledwindow4 = Gtk::manage ( new Gtk::ScrolledWindow() );
     crt.property_ellipsize() = Pango::ELLIPSIZE_END;

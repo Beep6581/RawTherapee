@@ -95,7 +95,7 @@ Spot::Spot() :
 
     auto m = ProcEventMapper::getInstance();
     EvSpotEnabled = m->newEvent(ALLNORAW, "TP_SPOT_LABEL");
-    EvSpotEnabledOPA = m->newEvent(SPOTADJUST, "");
+    EvSpotEnabledOPA = m->newEvent(SPOTADJUST, "TP_SPOT_LABEL");
     EvSpotEntry = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT_ENTRY");
     EvSpotEntryOPA = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT_ENTRY");
 
@@ -462,7 +462,7 @@ void Spot::deleteSelectedEntry()
 CursorShape Spot::getCursor (int objectID, int xPos, int yPos) const
 {
     const EditDataProvider* editProvider = getEditProvider();
-    if (editProvider) {
+    if (editProvider && activeSpot > -1) {
         if (draggedSide != DraggedSide::NONE) {
             return CSEmpty;
         }

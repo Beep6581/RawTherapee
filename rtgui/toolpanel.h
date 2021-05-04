@@ -58,7 +58,7 @@ public:
 
 /// @brief This class control the space around the group of tools inside a tab, as well as the space separating each tool. */
 class ToolVBox :
-    public Gtk::VBox
+    public Gtk::Box
 {
 public:
     ToolVBox();
@@ -66,7 +66,7 @@ public:
 
 /// @brief This class control the space around a tool's block of parameter. */
 class ToolParamBlock :
-    public Gtk::VBox
+    public Gtk::Box
 {
 public:
     ToolParamBlock();

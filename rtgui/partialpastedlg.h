@@ -54,7 +54,7 @@ public:
 
 /* ==== PartialSpotWidget ==== */
 class PartialSpotWidget:
-    public Gtk::VBox
+    public Gtk::Box
 {
 private:
     // Tree model to manage spot selection widget

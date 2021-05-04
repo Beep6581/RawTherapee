@@ -55,7 +55,7 @@ protected:
     Adjuster* flatFieldClipControl;
     Adjuster* flatFieldBlurRadius;
     MyComboBoxText* flatFieldBlurType;
-    Gtk::HBox *hbff;
+    Gtk::Box *hbff;
     bool ffChanged;
     bool lastFFAutoSelect;
     bool lastFFAutoClipCtrl;

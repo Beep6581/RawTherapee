@@ -193,6 +193,7 @@ if(WIN32)
         ${GTK_INCLUDE_DIRS}
         ${LENSFUN_INCLUDE_DIRS}
         ${RSVG_INCLUDE_DIRS}
+        ${TIFF_INCLUDE_DIRS}
         )
     link_directories(. "${PROJECT_SOURCE_DIR}/rtexif"
         ${EXTRA_LIBDIR}
@@ -204,6 +205,7 @@ if(WIN32)
         ${GTK_LIBRARY_DIRS}
         ${LENSFUN_LIBRARY_DIRS}
         ${RSVG_LIBRARY_DIRS}
+        ${TIFF_LIBRARY_DIRS}
         )
 else()
     include_directories(${EXTRA_INCDIR}
@@ -222,6 +224,7 @@ else()
         ${LCMS_INCLUDE_DIRS}
         ${LENSFUN_INCLUDE_DIRS}
         ${RSVG_INCLUDE_DIRS}
+        ${TIFF_INCLUDE_DIRS}
         )
     link_directories(${EXTRA_LIBDIR}
         ${CANBERRA-GTK_LIBRARY_DIRS}
@@ -239,6 +242,7 @@ else()
         ${LCMS_LIBRARY_DIRS}
         ${LENSFUN_LIBRARY_DIRS}
         ${RSVG_LIBRARY_DIRS}
+        ${TIFF_LIBRARY_DIRS}
         )
 endif()
 

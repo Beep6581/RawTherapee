@@ -90,7 +90,7 @@ private:
     void hideGamma();
 
     FlatCurveEditor*     luminanceCurve;
-    Gtk::HSeparator*     luminanceSep;
+    Gtk::Separator*     luminanceSep;
     CurveEditorGroup*    luminanceCEG;
     CurveEditorGroup*    beforeCurveCEG;
     DiagonalCurveEditor* beforeCurve;
@@ -99,13 +99,13 @@ private:
     DiagonalCurveEditor* afterCurve;
     MyComboBoxText*      afterCurveMode;
     Gtk::ToggleButton*   autoch;
-    Gtk::HBox*           autoHBox;
+    Gtk::Box*            autoHBox;
     Gtk::Button*         neutral;
     Gtk::Label*          RGBLabels;
     MyComboBoxText*      algo;
     sigc::connection     algoconn;
     Gtk::Label*          alLabel;
-    Gtk::HBox*           algoHBox;
+    Gtk::Box*            algoHBox;
 
     Adjuster *mixerRed;
     Adjuster *mixerGreen;
@@ -120,20 +120,20 @@ private:
     Adjuster *mixerPurple;
     MyComboBoxText*   method;
     sigc::connection  methodconn;
-    Gtk::HBox*        filterHBox;
-    Gtk::HSeparator*  filterSep, *filterSep2;
+    Gtk::Box*         filterHBox;
+    Gtk::Separator*  filterSep, *filterSep2;
     MyComboBoxText*   filter;
     sigc::connection  filterconn;
-    Gtk::HBox*        settingHBox;
+    Gtk::Box*         settingHBox;
     MyComboBoxText*   setting;
     sigc::connection  settingconn;
     Gtk::Frame* mixerFrame;
-    Gtk::VBox * mixerVBox;
+    Gtk::Box*  mixerVBox;
     Gtk::Frame* gammaFrame;
 
     Gtk::Image *imgIcon[11];
 
-    Gtk::HSeparator* enabledccSep;
+    Gtk::Separator* enabledccSep;
     Gtk::CheckButton* enabledcc;
     bool lastEnabledcc, lastAuto;
     sigc::connection enaccconn, tcmodeconn, tcmodeconn2, autoconn, neutralconn;
