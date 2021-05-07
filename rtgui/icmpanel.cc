@@ -769,50 +769,24 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     wProfNames->set_active_text(pp->icm.workingProfile);
 
-    if (pp->icm.workingTRC == "none") {
-        wTRC->set_active(0);
-    } else if (pp->icm.workingTRC == "Custom") {
-        wTRC->set_active(1);
-    } else if (pp->icm.workingTRC == "bt709") {
-        wTRC->set_active(2);
-    } else if (pp->icm.workingTRC == "srgb") {
-        wTRC->set_active(3);
-    } else if (pp->icm.workingTRC == "22") {
-        wTRC->set_active(4);
-    } else if (pp->icm.workingTRC == "18") {
-        wTRC->set_active(5);
-    } else if (pp->icm.workingTRC == "lin") {
-        wTRC->set_active(6);
+    int wTRCActiveRow = 0;
+    const auto it1 = std::find(workingTRCs.begin(), workingTRCs.end(), pp->icm.workingTRC);
+    if (it1 != wprims.end()) {
+        wTRCActiveRow = std::distance(workingTRCs.begin(), it1);
     }
+    wTRC->set_active(wTRCActiveRow);
 
-    if (pp->icm.will == "def") {
-        will->set_active(0);
-    } else if (pp->icm.will == "D41") {
-        will->set_active(1);
-    } else if (pp->icm.will == "D50") {
-        will->set_active(2);
-    } else if (pp->icm.will == "D55") {
-        will->set_active(3);
-    } else if (pp->icm.will == "D60") {
-        will->set_active(4);
-    } else if (pp->icm.will == "D65") {
-        will->set_active(5);
-    } else if (pp->icm.will == "D80") {
-        will->set_active(6);
-    } else if (pp->icm.will == "D120") {
-        will->set_active(7);
-    } else if (pp->icm.will == "stda") {
-        will->set_active(8);
-    } else if (pp->icm.will == "2000") {
-        will->set_active(9);
-    } else if (pp->icm.will == "1500") {
-        will->set_active(10);
+    int willActiveRow = 0;
+    const auto it2 = std::find(wills.begin(), wills.end(), pp->icm.will);
+    if (it2 != wills.end()) {
+        willActiveRow = std::distance(wills.begin(), it2);
     }
+    will->set_active(willActiveRow);
 
     int wprimActiveRow = 0;
-    const auto it = std::find(wprims.begin(), wprims.end(), pp->icm.wprim);
-    if (it != wprims.end()) {
-        wprimActiveRow = std::distance(wprims.begin(), it);
+    const auto it3 = std::find(wprims.begin(), wprims.end(), pp->icm.wprim);
+    if (it3 != wprims.end()) {
+        wprimActiveRow = std::distance(wprims.begin(), it3);
     }
     wprim->set_active(wprimActiveRow);
 
@@ -1104,46 +1078,17 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pp->icm.aRendIntent  = rtengine::RI_RELATIVE;
     }
 
-    if (wTRC->get_active_row_number() == 0) {
-        pp->icm.workingTRC = "none";
-    } else if (wTRC->get_active_row_number() == 1) {
-        pp->icm.workingTRC = "Custom";
-    } else if (wTRC->get_active_row_number() == 2) {
-        pp->icm.workingTRC = "bt709";
-    } else if (wTRC->get_active_row_number() == 3) {
-        pp->icm.workingTRC = "srgb";
-    } else if (wTRC->get_active_row_number() == 4) {
-        pp->icm.workingTRC = "22";
-    } else if (wTRC->get_active_row_number() == 5) {
-        pp->icm.workingTRC = "18";
-    } else if (wTRC->get_active_row_number() == 6) {
-        pp->icm.workingTRC = "lin";
+    auto workingTRCsActiveRow = wTRC->get_active_row_number();
+    if (workingTRCsActiveRow < 0 || workingTRCsActiveRow >= static_cast<int>(workingTRCs.size())) {
+        workingTRCsActiveRow = 0;
     }
+    pp->icm.workingTRC = workingTRCs[workingTRCsActiveRow];
 
-
-    if (will->get_active_row_number() == 0) {
-        pp->icm.will = "def";
-    } else if (will->get_active_row_number() == 1) {
-        pp->icm.will = "D41";
-    } else if (will->get_active_row_number() == 2) {
-        pp->icm.will = "D50";
-    } else if (will->get_active_row_number() == 3) {
-        pp->icm.will = "D55";
-    } else if (will->get_active_row_number() == 4) {
-        pp->icm.will = "D60";
-    } else if (will->get_active_row_number() == 5) {
-        pp->icm.will = "D65";
-    } else if (will->get_active_row_number() == 6) {
-        pp->icm.will = "D80";
-    } else if (will->get_active_row_number() == 7) {
-        pp->icm.will = "D120";
-    } else if (will->get_active_row_number() == 8) {
-        pp->icm.will = "stda";
-    } else if (will->get_active_row_number() == 9) {
-        pp->icm.will = "2000";
-    } else if (will->get_active_row_number() == 10) {
-        pp->icm.will = "1500";
+    auto willActiveRow = will->get_active_row_number();
+    if (willActiveRow < 0 || willActiveRow >= static_cast<int>(wills.size())) {
+        willActiveRow = 0;
     }
+    pp->icm.will = wills[willActiveRow];
 
     auto wprimActiveRow = wprim->get_active_row_number();
     if (wprimActiveRow < 0 || wprimActiveRow >= static_cast<int>(wprims.size())) {
