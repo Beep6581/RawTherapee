@@ -126,7 +126,6 @@ void Inspector::showWindow(bool scaled, bool fullscreen, bool pinned)
     // initialize when shown first
     if (!initialized) {
         window->show_all();
-        window->set_visible(false);
         initialized = true;
     }
 
