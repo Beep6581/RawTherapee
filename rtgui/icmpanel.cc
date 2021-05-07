@@ -1164,34 +1164,9 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     } else if (will->get_active_row_number() == 10) {
         pp->icm.will = "1500";
     }
-    
-    if (wprim->get_active_row_number() == 0) {
-        pp->icm.wprim = "def";
-    } else if (wprim->get_active_row_number() == 1) {
-        pp->icm.wprim = "srgb";
-    } else if (wprim->get_active_row_number() == 2) {
-        pp->icm.wprim = "adob";
-    } else if (wprim->get_active_row_number() == 3) {
-        pp->icm.wprim = "prop";
-    } else if (wprim->get_active_row_number() == 4) {
-        pp->icm.wprim = "rec";
-    } else if (wprim->get_active_row_number() == 5) {
-        pp->icm.wprim = "aces";
-    } else if (wprim->get_active_row_number() == 6) {
-        pp->icm.wprim = "wid";
-    } else if (wprim->get_active_row_number() == 7) {
-        pp->icm.wprim = "ac0";
-    } else if (wprim->get_active_row_number() == 8) {
-        pp->icm.wprim = "bru";
-    } else if (wprim->get_active_row_number() == 9) {
-        pp->icm.wprim = "bet";
-    } else if (wprim->get_active_row_number() == 10) {
-        pp->icm.wprim = "bst";
-    } else if (wprim->get_active_row_number() == 11) {
-        pp->icm.wprim = "cus";
-    } else if (wprim->get_active_row_number() == 12) {
-        pp->icm.wprim = "cusgr";
-    }
+//static constexpr std::string wprims[13] = {"def", "srgb", "adob", "prop", "rec", "aces", "wid", "ac0", "bru", "bet", "bst", "cus", "cusgr"};
+    static const char* wprims[] = {"def", "srgb", "adob", "prop", "rec", "aces", "wid", "ac0", "bru", "bet", "bst", "cus", "cusgr"};
+    pp->icm.wprim = wprims[rtengine::LIM(wprim->get_active_row_number(), 0, 12)];
 
     pp->icm.toneCurve = ckbToneCurve->get_active();
     pp->icm.applyLookTable = ckbApplyLookTable->get_active();
