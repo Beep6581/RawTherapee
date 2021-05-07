@@ -809,33 +809,13 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         will->set_active(10);
     }
 
-    if (pp->icm.wprim == "def") {
-        wprim->set_active(0);
-    } else if (pp->icm.wprim == "srgb") {
-        wprim->set_active(1);
-    } else if (pp->icm.wprim == "adob") {
-        wprim->set_active(2);
-    } else if (pp->icm.wprim == "prop") {
-        wprim->set_active(3);
-    } else if (pp->icm.wprim == "rec") {
-        wprim->set_active(4);
-    } else if (pp->icm.wprim == "aces") {
-        wprim->set_active(5);
-    } else if (pp->icm.wprim == "wid") {
-        wprim->set_active(6);
-    } else if (pp->icm.wprim == "ac0") {
-        wprim->set_active(7);
-    } else if (pp->icm.wprim == "bru") {
-        wprim->set_active(8);
-    } else if (pp->icm.wprim == "bet") {
-        wprim->set_active(9);
-    } else if (pp->icm.wprim == "bst") {
-        wprim->set_active(10);
-    } else if (pp->icm.wprim == "cus") {
-        wprim->set_active(11);
-    } else if (pp->icm.wprim == "cusgr") {
-        wprim->set_active(12);
+    int wprimActiveRow = 0;
+    const auto it = std::find(wprims.begin(), wprims.end(), pp->icm.wprim);
+    if (it != wprims.end()) {
+        wprimActiveRow = std::distance(wprims.begin(), it);
     }
+    wprim->set_active(wprimActiveRow);
+
     wtrcinChanged();
     willChanged();
     wprimChanged();
@@ -1164,9 +1144,12 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     } else if (will->get_active_row_number() == 10) {
         pp->icm.will = "1500";
     }
-//static constexpr std::string wprims[13] = {"def", "srgb", "adob", "prop", "rec", "aces", "wid", "ac0", "bru", "bet", "bst", "cus", "cusgr"};
-    static const char* wprims[] = {"def", "srgb", "adob", "prop", "rec", "aces", "wid", "ac0", "bru", "bet", "bst", "cus", "cusgr"};
-    pp->icm.wprim = wprims[rtengine::LIM(wprim->get_active_row_number(), 0, 12)];
+
+    auto wprimActiveRow = wprim->get_active_row_number();
+    if (wprimActiveRow < 0 || wprimActiveRow >= static_cast<int>(wprims.size())) {
+        wprimActiveRow = 0;
+    }
+    pp->icm.wprim = wprims[wprimActiveRow];
 
     pp->icm.toneCurve = ckbToneCurve->get_active();
     pp->icm.applyLookTable = ckbApplyLookTable->get_active();

@@ -67,8 +67,6 @@ protected:
     Gtk::Label* blg;
     Gtk::Label* blb;
 
-
-    //bool freegamma;
     bool lastToneCurve;
     sigc::connection tcurveconn;
     bool lastApplyLookTable;
@@ -173,6 +171,9 @@ private:
     float nextgy;
     float nextwx;
     float nextwy;
+
+    const std::vector<std::string> wprims {{"def", "srgb", "adob", "prop", "rec", "aces", "wid", "ac0", "bru", "bet", "bst", "cus", "cusgr"}};
+
 
 public:
     ICMPanel();
