@@ -1757,7 +1757,7 @@ void EditorPanel::procParamsChanged (Thumbnail* thm, int whoChangedIt)
         PartialProfile pp (true);
         pp.set (true);
         * (pp.pparams) = openThm->getProcParams();
-        pp.pedited->locallab.spots.resize(pp.pparams->locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
+        pp.pedited->locallab.spots.resize(pp.pparams->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
         tpc->profileChange (&pp, rtengine::EvProfileChangeNotification, M ("PROGRESSDLG_PROFILECHANGEDINBROWSER"));
         pp.deleteInstance();
     }

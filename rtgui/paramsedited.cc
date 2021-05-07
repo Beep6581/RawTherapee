@@ -704,7 +704,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
 
     // Resize LocallabSpotEdited according to src[0]
     locallab.spots.clear();
-    locallab.spots.resize(p.locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
+    locallab.spots.resize(p.locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
 
     // Variable used to determined if Locallab spots number is equal and so spots can be combined
     bool isSpotNumberEqual = true;
@@ -1642,7 +1642,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         if (!isSpotNumberEqual) {
             // All LocallabSpotEdited are set to false because cannot be combined
             locallab.spots.clear();
-            locallab.spots.resize(p.locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(false));
+            locallab.spots.resize(p.locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(false));
         }
 
         pcvignette.enabled = pcvignette.enabled && p.pcvignette.enabled == other.pcvignette.enabled;
