@@ -145,7 +145,7 @@ void LabGridArea::reset(bool toInitial)
     if (toInitial) {
         setParams(defaultLow_a, defaultLow_b, defaultHigh_a, defaultHigh_b, defaultgre_x, defaultgre_y, defaultwhi_x, defaultwhi_y, true);
     } else {
-        printf("RESET \n");
+   //     printf("RESET \n");
         setParams(0., 0., 0., 0., 0., 0., 0., 0., true);
     }
 }

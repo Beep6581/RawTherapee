@@ -201,7 +201,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     //-----------------gamma TRC working
     Gtk::Frame *trcFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_TRCFRAME")));
     trcFrame->set_label_align(0.025, 0.5);
-    Gtk::VBox *trcProfVBox = Gtk::manage(new Gtk::VBox());
+    Gtk::Box *trcProfVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     trcFrame->set_tooltip_text(M("TP_ICM_TRCFRAME_TOOLTIP"));
 
     wTRCBox = Gtk::manage(new Gtk::Box());
@@ -304,7 +304,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     redBox->pack_start(*redy);//, Gtk::PACK_SHRINK);
     redFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_REDFRAME")));
     redFrame->set_label_align(0.025, 0.5);
-    Gtk::VBox *redVBox = Gtk::manage(new Gtk::VBox());
+    Gtk::Box *redVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     redVBox->pack_start(*redBox, Gtk::PACK_EXPAND_WIDGET);
     redFrame->set_tooltip_text(M("TP_ICM_WORKING_PRIMFRAME_TOOLTIP"));
 
@@ -1164,7 +1164,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     } else if (will->get_active_row_number() == 10) {
         pp->icm.will = "1500";
     }
-
+    
     if (wprim->get_active_row_number() == 0) {
         pp->icm.wprim = "def";
     } else if (wprim->get_active_row_number() == 1) {
