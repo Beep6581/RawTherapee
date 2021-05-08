@@ -83,7 +83,7 @@ InspectorBuffer::~InspectorBuffer() {
 //    return deg;
 //}
 
-Inspector::Inspector () : currImage(nullptr), scaled(false), scale(1.0), zoomScale(1.0), zoomScaleBegin(1.0), active(false), pinned(false), dirty(false), keyDown(false)
+Inspector::Inspector () : currImage(nullptr), scaled(false), scale(1.0), zoomScale(1.0), zoomScaleBegin(1.0), active(false), pinned(false), dirty(false), keyDown(false), windowShowing(false)
 {
     set_name("Inspector");
 
@@ -98,6 +98,7 @@ Inspector::Inspector () : currImage(nullptr), scaled(false), scale(1.0), zoomSca
         window->add_events(Gdk::KEY_PRESS_MASK);
         window->signal_key_release_event().connect(sigc::mem_fun(*this, &Inspector::on_key_release));
         window->signal_key_press_event().connect(sigc::mem_fun(*this, &Inspector::on_key_press));
+        window->signal_hide().connect(sigc::mem_fun(*this, &Inspector::on_window_hide));
 
         add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_MOTION_MASK | Gdk::SCROLL_MASK | Gdk::SMOOTH_SCROLL_MASK);
         gestureZoom = Gtk::GestureZoom::create(*this);
@@ -120,7 +121,7 @@ Inspector::~Inspector()
 
 void Inspector::showWindow(bool scaled, bool fullscreen, bool pinned)
 {
-    if (!window)
+    if (!window || windowShowing)
         return;
 
     // initialize when shown first
@@ -138,6 +139,7 @@ void Inspector::showWindow(bool scaled, bool fullscreen, bool pinned)
     this->fullscreen = fullscreen;
     window->set_visible(true);
     this->pinned = pinned;
+    windowShowing = true;
 
     // update content when becoming visible
     switchImage(next_image_path);
@@ -216,6 +218,11 @@ bool Inspector::on_key_press(GdkEventKey *event)
     keyDown = false;
 
     return false;
+}
+
+void Inspector::on_window_hide()
+{
+    windowShowing = false;
 }
 
 bool Inspector::on_button_press_event(GdkEventButton *event)

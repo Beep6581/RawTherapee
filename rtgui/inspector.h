@@ -56,6 +56,7 @@ private:
     bool initialized;
     bool fullscreen;  // window is shown in fullscreen mode
     bool keyDown;
+    bool windowShowing;
 
     sigc::connection delayconn;
     Glib::ustring next_image_path;
@@ -64,6 +65,8 @@ private:
     Gtk::Window *window;
     bool on_key_release(GdkEventKey *event);
     bool on_key_press(GdkEventKey *event);
+
+    void on_window_hide();
 
     rtengine::Coord button_pos;
     bool on_button_press_event(GdkEventButton *event) override;
