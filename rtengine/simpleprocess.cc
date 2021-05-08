@@ -1558,13 +1558,13 @@ private:
 
 
         if (params.icm.workingTRC != "none") {
-            int GW = labView->W;
-            int GH = labView->H;
-            LabImage *provis = nullptr;
-            float pres = 0.01f * params.icm.preser;
-            if(pres > 0.f && params.icm.wprim != "def") {
-                provis = new LabImage(GW, GH);
-                provis->CopyFrom(labView);
+            const int GW = labView->W;
+            const int GH = labView->H;
+            std::unique_ptr<LabImage> provis;
+            const float pres = 0.01f * params.icm.preser;
+            if (pres > 0.f && params.icm.wprim != "def") {
+                provis.reset(new LabImage(GW, GH));
+                provis.get()->CopyFrom(labView);
             }
 
             const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
@@ -1573,59 +1573,10 @@ private:
 
             const float gamtone = params.icm.workingTRCGamma;
             const float slotone = params.icm.workingTRCSlope;
-            int illum = 0;
-            if(params.icm.will == "def"){
-                illum = 0; 
-            } else if(params.icm.will == "D41"){
-                illum = 1; 
-            } else if(params.icm.will == "D50"){
-                illum = 2; 
-            } else if(params.icm.will == "D55"){
-                illum = 3; 
-            } else if(params.icm.will == "D60"){
-                illum = 4; 
-            } else if(params.icm.will == "D65"){
-                illum = 5; 
-            } else if(params.icm.will == "D80"){
-                illum = 6; 
-            } else if(params.icm.will == "D120"){
-                illum = 7; 
-            } else if(params.icm.will == "stda"){
-                illum = 8; 
-            } else if(params.icm.will == "2000"){
-                illum = 9; 
-            } else if(params.icm.will == "1500"){
-                illum = 10; 
-            }
 
-            int prim = 0;
-            if(params.icm.wprim == "def"){
-                prim = 0; 
-            } else if(params.icm.wprim == "srgb"){
-                prim = 1; 
-            } else if(params.icm.wprim == "adob"){
-                prim = 2; 
-            } else if(params.icm.wprim == "prop"){
-                prim = 3; 
-            } else if(params.icm.wprim == "rec"){
-                prim = 4; 
-            } else if(params.icm.wprim == "aces"){
-                prim = 5; 
-            } else if(params.icm.wprim == "wid"){
-                prim = 6; 
-            } else if(params.icm.wprim == "ac0"){
-                prim = 7; 
-            } else if(params.icm.wprim == "bru"){
-                prim = 8; 
-            } else if(params.icm.wprim == "bet"){
-                prim = 9; 
-            } else if(params.icm.wprim == "bst"){
-                prim = 10; 
-            } else if(params.icm.wprim == "cus"){
-                prim = 11; 
-            } else if(params.icm.wprim == "cusgr"){
-                prim = 1; 
-            }
+            int illum = params.posInArray(params.icm.wills, params.icm.will);
+            int prim = params.posInArray(params.icm.wprims, params.icm.wprim);
+
             Glib::ustring prof = params.icm.workingProfile;
 
             cmsHTRANSFORM dummy = nullptr;
@@ -1636,9 +1587,7 @@ private:
             ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
             // labView and provis
             if(pres > 0.f) {
-                ipf.preserv(labView, provis, GW, GH);
-                delete provis;
-                provis = nullptr;
+                ipf.preserv(labView, provis.get(), GW, GH);
             }
         }
 

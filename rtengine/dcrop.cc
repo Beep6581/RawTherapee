@@ -1463,95 +1463,38 @@ void Crop::update(int todo)
         parent->ipf.softLight(labnCrop, params.softlight);
 
         if (params.icm.workingTRC != "none") {
-            int GW = labnCrop->W;
-            int GH = labnCrop->H;
-            LabImage *provis = nullptr;
-            float pres = 0.01f * params.icm.preser;
-            if(pres > 0.f) {
-                provis = new LabImage(GW, GH);
-                provis->CopyFrom(labnCrop);
+            const int GW = labnCrop->W;
+            const int GH = labnCrop->H;
+            std::unique_ptr<LabImage> provis;
+            const float pres = 0.01f * params.icm.preser;
+            if (pres > 0.f && params.icm.wprim != "def") {
+                provis.reset(new LabImage(GW, GH));
+                provis.get()->CopyFrom(labnCrop);
             }
 
-            Imagefloat *tmpImage1 = nullptr;
-            tmpImage1 = new Imagefloat(GW, GH);
+            std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
 
-            parent->ipf.lab2rgb(*labnCrop, *tmpImage1, params.icm.workingProfile);
+            parent->ipf.lab2rgb(*labnCrop, *(tmpImage1.get()), params.icm.workingProfile);
 
             const float gamtone = parent->params->icm.workingTRCGamma;
             const float slotone = parent->params->icm.workingTRCSlope;
-            //printf("Dcrop gam=%f slo=%f\n",gamtone, slotone); 
-            int illum = 0;
-            if(params.icm.will == "def"){
-                illum = 0; 
-            } else if(params.icm.will == "D41"){
-                illum = 1; 
-            } else if(params.icm.will == "D50"){
-                illum = 2; 
-            } else if(params.icm.will == "D55"){
-                illum = 3; 
-            } else if(params.icm.will == "D60"){
-                illum = 4; 
-            } else if(params.icm.will == "D65"){
-                illum = 5; 
-            } else if(params.icm.will == "D80"){
-                illum = 6; 
-            } else if(params.icm.will == "D120"){
-                illum = 7; 
-            } else if(params.icm.will == "stda"){
-                illum = 8; 
-            } else if(params.icm.will == "2000"){
-                illum = 9; 
-            } else if(params.icm.will == "1500"){
-                illum = 10; 
-            }
 
-            int prim = 0;
-            if(params.icm.wprim == "def"){
-                prim = 0; 
-            } else if(params.icm.wprim == "srgb"){
-                prim = 1; 
-            } else if(params.icm.wprim == "adob"){
-                prim = 2; 
-            } else if(params.icm.wprim == "prop"){
-                prim = 3; 
-            } else if(params.icm.wprim == "rec"){
-                prim = 4; 
-            } else if(params.icm.wprim == "aces"){
-                prim = 5; 
-            } else if(params.icm.wprim == "wid"){
-                prim = 6; 
-            } else if(params.icm.wprim == "ac0"){
-                prim = 7; 
-            } else if(params.icm.wprim == "bru"){
-                prim = 8; 
-            } else if(params.icm.wprim == "bet"){
-                prim = 9; 
-            } else if(params.icm.wprim == "bst"){
-                prim = 10; 
-            } else if(params.icm.wprim == "cus"){
-                prim = 11; 
-            } else if(params.icm.wprim == "cusgr"){
-                prim = 12; 
-            }
+            int illum = params.posInArray(params.icm.wills, params.icm.will);
+            int prim = params.posInArray(params.icm.wprims, params.icm.wprim);
 
-           // printf("DCROP gam=%f slo=%f\n", gamtone, slotone);
             Glib::ustring prof = params.icm.workingProfile;
 
             cmsHTRANSFORM dummy = nullptr;
             int ill = 0;
-            parent->ipf.workingtrc(tmpImage1, tmpImage1, GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
-            parent->ipf.workingtrc(tmpImage1, tmpImage1, GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
+            parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
+            parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
 
-            parent->ipf.rgb2lab(*tmpImage1, *labnCrop, params.icm.workingProfile);
+            parent->ipf.rgb2lab(*(tmpImage1.get()), *labnCrop, params.icm.workingProfile);
             //labnCrop and provis
             if(pres > 0.f && params.icm.wprim != "def") {
-                parent->ipf.preserv(labnCrop, provis, GW, GH);
-                delete provis;
-                provis = nullptr;
+                parent->ipf.preserv(labnCrop, provis.get(), GW, GH);
             }
-            delete tmpImage1;
         }
-        
 
         if (params.colorappearance.enabled) {
             float fnum = parent->imgsrc->getMetaData()->getFNumber();          // F number

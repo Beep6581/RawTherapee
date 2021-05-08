@@ -2204,7 +2204,9 @@ bool ResizeParams::operator !=(const ResizeParams& other) const
 {
     return !(*this == other);
 }
-
+const std::array<std::string, 13> ColorManagementParams::wprims = {{"def", "srgb", "adob", "prop", "rec", "aces", "wid", "ac0", "bru", "bet", "bst", "cus", "cusgr"}};
+const std::array<std::string, 7> ColorManagementParams::workingTRCs = {{"none", "Custom", "bt709", "srgb", "22", "18", "lin"}};
+const std::array<std::string, 11> ColorManagementParams::wills = {{"def", "D41", "D50", "D55", "D60", "D65", "D80", "D120", "stda", "2000", "1500"}};
 const Glib::ustring ColorManagementParams::NoICMString = Glib::ustring("No ICM: sRGB output");
 
 ColorManagementParams::ColorManagementParams() :
@@ -2215,9 +2217,9 @@ ColorManagementParams::ColorManagementParams() :
     applyHueSatMap(true),
     dcpIlluminant(0),
     workingProfile("ProPhoto"),
-    workingTRC("none"),
-    will("def"),
-    wprim("def"),
+    workingTRC(workingTRCs[0]),
+    will(wills[0]),
+    wprim(wprims[0]),
     workingTRCGamma(2.4),//gamma sRGB
     workingTRCSlope(12.92),
     redx(0.64),

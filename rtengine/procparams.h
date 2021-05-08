@@ -18,6 +18,7 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <map>
@@ -1728,6 +1729,10 @@ struct ColorManagementParams {
     RenderingIntent outputIntent;
     bool outputBPC;
 
+    static const std::array<std::string, 13> wprims;
+    static const std::array<std::string, 7> workingTRCs;
+    static const std::array<std::string, 11> wills;
+
     static const Glib::ustring NoICMString;
 
     ColorManagementParams();
@@ -2396,6 +2401,14 @@ public:
 
     bool operator ==(const ProcParams& other) const;
     bool operator !=(const ProcParams& other) const;
+    template <class T1, class T2, size_t N> int posInArray(const std::array<T1,N>& arr, const T2& val, int defaultValue = 0) const {
+        static_assert(N > 0, "array size has to be > 0");
+        const auto it = std::find(arr.begin(), arr.end(), val);
+        if (it != arr.end()) {
+            return std::distance(arr.begin(), it);
+        }
+        return defaultValue;
+    }
 
 private:
     /** Write the ProcParams's text in the file of the given name.

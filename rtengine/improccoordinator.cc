@@ -1577,91 +1577,38 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             ipf.softLight(nprevl, params->softlight);
 
             if (params->icm.workingTRC != "none") {
-                int GW = nprevl->W;
-                int GH = nprevl->H;
-                LabImage *provis = nullptr;
-                float pres = 0.01f * params->icm.preser;
-                if(pres > 0.f) {
-                    provis = new LabImage(GW, GH);
-                    provis->CopyFrom(nprevl);
+                const int GW = nprevl->W;
+                const int GH = nprevl->H;
+                std::unique_ptr<LabImage> provis;
+                const float pres = 0.01f * params->icm.preser;
+                if (pres > 0.f && params->icm.wprim != "def") {
+                    provis.reset(new LabImage(GW, GH));
+                    provis.get()->CopyFrom(nprevl);
                 }
-                Imagefloat *tmpImage1 = nullptr;
-                tmpImage1 = new Imagefloat(GW, GH);
+                std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
 
-                ipf.lab2rgb(*nprevl, *tmpImage1, params->icm.workingProfile);
+                ipf.lab2rgb(*nprevl, *(tmpImage1.get()), params->icm.workingProfile);
 
                 const float gamtone = params->icm.workingTRCGamma;
                 const float slotone = params->icm.workingTRCSlope;
-          //      printf("ga=%f slo=%f\n", gamtone, slotone);
-                int illum = 0;
-                if(params->icm.will == "def"){
-                    illum = 0; 
-                } else if(params->icm.will == "D41"){
-                    illum = 1; 
-                } else if(params->icm.will == "D50"){
-                    illum = 2; 
-                } else if(params->icm.will == "D55"){
-                    illum = 3; 
-                } else if(params->icm.will == "D60"){
-                    illum = 4;
-                } else if(params->icm.will == "D65"){
-                    illum = 5;
-                } else if(params->icm.will == "D80"){
-                    illum = 6; 
-                } else if(params->icm.will == "D120"){
-                    illum = 7; 
-                } else if(params->icm.will == "stda"){
-                    illum = 8; 
-                } else if(params->icm.will == "2000"){
-                    illum = 9; 
-                } else if(params->icm.will == "1500"){
-                    illum = 10; 
-                }
 
-                int prim = 0;
-                if(params->icm.wprim == "def"){
-                    prim = 0; 
-                } else if(params->icm.wprim == "srgb"){
-                    prim = 1; 
-                } else if(params->icm.wprim == "adob"){
-                    prim = 2; 
-                } else if(params->icm.wprim == "prop"){
-                    prim = 3; 
-                } else if(params->icm.wprim == "rec"){
-                    prim = 4; 
-                } else if(params->icm.wprim == "aces"){
-                    prim = 5; 
-                } else if(params->icm.wprim == "wid"){
-                    prim = 6; 
-                } else if(params->icm.wprim == "ac0"){
-                    prim = 7; 
-                } else if(params->icm.wprim == "bru"){
-                    prim = 8; 
-                } else if(params->icm.wprim == "bet"){
-                    prim = 9; 
-                } else if(params->icm.wprim == "bst"){
-                    prim = 10; 
-                } else if(params->icm.wprim == "cus"){
-                    prim = 11; 
-                } else if(params->icm.wprim == "cusgr"){
-                    prim = 12; 
-                }
+                int illum = params->posInArray(params->icm.wills, params->icm.will);
+                int prim = params->posInArray(params->icm.wprims, params->icm.wprim);
+
                 Glib::ustring prof = params->icm.workingProfile;
                 cmsHTRANSFORM dummy = nullptr;
                 int ill = 0;
-                ipf.workingtrc(tmpImage1, tmpImage1, GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
-                ipf.workingtrc(tmpImage1, tmpImage1, GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
+                ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
+                ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
 
-                ipf.rgb2lab(*tmpImage1, *nprevl, params->icm.workingProfile);
+                ipf.rgb2lab(*(tmpImage1.get()), *nprevl, params->icm.workingProfile);
                 //nprevl and provis
-                if(pres > 0.f  && params->icm.wprim != "def") {
-                    ipf.preserv(nprevl, provis, GW, GH);
-                    delete provis;
-                    provis = nullptr;
+                if(pres > 0.f && params->icm.wprim != "def") {
+                    ipf.preserv(nprevl, provis.get(), GW, GH);
                 }
                 
-                delete tmpImage1;
-                if(prim == 12) {//pass red gre blue xy in function of area dats Ciexy
+                tmpImage1.reset();
+                if (prim == 12) {//pass red gre blue xy in function of area dats Ciexy
                     float redgraphx =  params->icm.labgridcieALow;
                     float redgraphy =  params->icm.labgridcieBLow;
                     float blugraphx =  params->icm.labgridcieAHigh;
@@ -1682,12 +1629,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     float greyy = 0.55f * (gregraphy + 1.f) - 0.1f;
                     greyy = rtengine::LIM(greyy, 0.5f, 1.f);
 
-                    if (primListener && prim == 12) {
+                    if (primListener) {
                         primListener->primChanged (redxx, redyy, bluxx, bluyy, grexx, greyy);
                     }
-                }
-                    
-                if(prim != 12) {//all other cases - pass Cie xy to update graph Ciexy
+                } else {//all other cases - pass Cie xy to update graph Ciexy
                     float r_x =  params->icm.redx;
                     float r_y =  params->icm.redy;
                     float b_x =  params->icm.blux;
@@ -1697,34 +1642,34 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     //printf("rx=%f ry=%f \n", (double) r_x, (double) r_y);
                     float wx = 0.33f;
                     float wy = 0.33f;
-                    if(illum == 1) { //D41
+                    if (illum == 1) { //D41
                         wx = 0.37798f;
                         wy = 0.38123f;
-                    } else if(illum == 2) {//D50 
+                    } else if (illum == 2) {//D50
                         wx = 0.3457f;
                         wy = 0.3585f;
-                    } else if(illum == 3) { //D55
+                    } else if (illum == 3) {//D55
                         wx = 0.3324f;
                         wy = 0.3474f;
-                    } else if(illum == 4) {//D60
+                    } else if (illum == 4) {//D60
                         wx = 0.3217f;
                         wy = 0.3377f;
-                    } else if(illum == 5) {//D65
+                    } else if (illum == 5) {//D65
                         wx = 0.3127f;
                         wy = 0.3290f;
-                    } else if(illum == 6) {//D80
+                    } else if (illum == 6) {//D80
                         wx = 0.2937f;
                         wy = 0.3092f;
-                    } else if(illum == 7) {//D120
+                    } else if (illum == 7) {//D120
                         wx = 0.2697f;
                         wy = 0.2808f;
-                    } else if(illum == 8) {//stdA
+                    } else if (illum == 8) {//stdA
                         wx = 0.4476f;
                         wy = 0.4074f;
-                    } else if(illum == 9) {//2000K
+                    } else if (illum == 9) {//2000K
                         wx = 0.5266f;
                         wy = 0.4133f;
-                    } else if(illum == 10) {//1500K
+                    } else if (illum == 10) {//1500K
                         wx = 0.5857f;
                         wy = 0.3932f;
                     }
@@ -1732,9 +1677,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     if (primListener) {
                         primListener->iprimChanged (r_x, r_y, b_x, b_y, g_x, g_y, wx, wy);
                     }
-                    
                 }
-                
             }
 
             if (params->colorappearance.enabled) {

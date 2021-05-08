@@ -769,25 +769,13 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     wProfNames->set_active_text(pp->icm.workingProfile);
 
-    int wTRCActiveRow = 0;
-    const auto it1 = std::find(workingTRCs.begin(), workingTRCs.end(), pp->icm.workingTRC);
-    if (it1 != wprims.end()) {
-        wTRCActiveRow = std::distance(workingTRCs.begin(), it1);
-    }
+    const int wTRCActiveRow = pp->posInArray(pp->icm.workingTRCs, pp->icm.workingTRC);
     wTRC->set_active(wTRCActiveRow);
 
-    int willActiveRow = 0;
-    const auto it2 = std::find(wills.begin(), wills.end(), pp->icm.will);
-    if (it2 != wills.end()) {
-        willActiveRow = std::distance(wills.begin(), it2);
-    }
+    const int willActiveRow = pp->posInArray(pp->icm.wills, pp->icm.will);
     will->set_active(willActiveRow);
 
-    int wprimActiveRow = 0;
-    const auto it3 = std::find(wprims.begin(), wprims.end(), pp->icm.wprim);
-    if (it3 != wprims.end()) {
-        wprimActiveRow = std::distance(wprims.begin(), it3);
-    }
+    const int wprimActiveRow = pp->posInArray(pp->icm.wprims, pp->icm.wprim);
     wprim->set_active(wprimActiveRow);
 
     wtrcinChanged();
@@ -1079,22 +1067,22 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     }
 
     auto workingTRCsActiveRow = wTRC->get_active_row_number();
-    if (workingTRCsActiveRow < 0 || workingTRCsActiveRow >= static_cast<int>(workingTRCs.size())) {
+    if (workingTRCsActiveRow < 0 || workingTRCsActiveRow >= static_cast<int>(pp->icm.workingTRCs.size())) {
         workingTRCsActiveRow = 0;
     }
-    pp->icm.workingTRC = workingTRCs[workingTRCsActiveRow];
+    pp->icm.workingTRC = pp->icm.workingTRCs[workingTRCsActiveRow];
 
     auto willActiveRow = will->get_active_row_number();
-    if (willActiveRow < 0 || willActiveRow >= static_cast<int>(wills.size())) {
+    if (willActiveRow < 0 || willActiveRow >= static_cast<int>(pp->icm.wills.size())) {
         willActiveRow = 0;
     }
-    pp->icm.will = wills[willActiveRow];
+    pp->icm.will = pp->icm.wills[willActiveRow];
 
     auto wprimActiveRow = wprim->get_active_row_number();
-    if (wprimActiveRow < 0 || wprimActiveRow >= static_cast<int>(wprims.size())) {
+    if (wprimActiveRow < 0 || wprimActiveRow >= static_cast<int>(pp->icm.wprims.size())) {
         wprimActiveRow = 0;
     }
-    pp->icm.wprim = wprims[wprimActiveRow];
+    pp->icm.wprim = pp->icm.wprims[wprimActiveRow];
 
     pp->icm.toneCurve = ckbToneCurve->get_active();
     pp->icm.applyLookTable = ckbApplyLookTable->get_active();
