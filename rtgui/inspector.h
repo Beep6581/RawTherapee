@@ -67,6 +67,7 @@ private:
     bool on_key_press(GdkEventKey *event);
 
     void on_window_hide();
+    bool on_inspector_window_state_event(GdkEventWindowState *event);
 
     rtengine::Coord button_pos;
     bool on_button_press_event(GdkEventButton *event) override;
@@ -90,9 +91,10 @@ public:
     ~Inspector() override;
 
     /** @brief Show or hide window
+     * @param pinned pin window
      * @param scaled fit image into window
      */
-    void showWindow(bool scaled, bool fullscreen = true, bool pinned = false);
+    void showWindow(bool pinned, bool scaled = true);
 
     /**
      * Hide the window.

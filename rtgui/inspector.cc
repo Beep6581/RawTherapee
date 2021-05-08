@@ -83,7 +83,7 @@ InspectorBuffer::~InspectorBuffer() {
 //    return deg;
 //}
 
-Inspector::Inspector () : currImage(nullptr), scaled(false), scale(1.0), zoomScale(1.0), zoomScaleBegin(1.0), active(false), pinned(false), dirty(false), keyDown(false), windowShowing(false)
+Inspector::Inspector () : currImage(nullptr), scaled(false), scale(1.0), zoomScale(1.0), zoomScaleBegin(1.0), active(false), pinned(false), dirty(false), fullscreen(true), keyDown(false), windowShowing(false)
 {
     set_name("Inspector");
 
@@ -99,6 +99,7 @@ Inspector::Inspector () : currImage(nullptr), scaled(false), scale(1.0), zoomSca
         window->signal_key_release_event().connect(sigc::mem_fun(*this, &Inspector::on_key_release));
         window->signal_key_press_event().connect(sigc::mem_fun(*this, &Inspector::on_key_press));
         window->signal_hide().connect(sigc::mem_fun(*this, &Inspector::on_window_hide));
+        window->signal_window_state_event().connect(sigc::mem_fun(*this, &Inspector::on_inspector_window_state_event));
 
         add_events(Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_MOTION_MASK | Gdk::SCROLL_MASK | Gdk::SMOOTH_SCROLL_MASK);
         gestureZoom = Gtk::GestureZoom::create(*this);
@@ -107,6 +108,7 @@ Inspector::Inspector () : currImage(nullptr), scaled(false), scale(1.0), zoomSca
 
         window->add(*this);
         window->set_size_request(500, 500);
+        window->fullscreen();
         initialized = false; // delay init to avoid flickering on some systems
         active = true; // always track inspected thumbnails
     }
@@ -119,7 +121,7 @@ Inspector::~Inspector()
         delete window;
 }
 
-void Inspector::showWindow(bool scaled, bool fullscreen, bool pinned)
+void Inspector::showWindow(bool pinned, bool scaled)
 {
     if (!window || windowShowing)
         return;
@@ -132,11 +134,6 @@ void Inspector::showWindow(bool scaled, bool fullscreen, bool pinned)
 
     // show inspector window
     this->scaled = scaled;
-    if (fullscreen)
-        window->fullscreen();
-    else
-        window->unfullscreen();
-    this->fullscreen = fullscreen;
     window->set_visible(true);
     this->pinned = pinned;
     windowShowing = true;
@@ -223,6 +220,17 @@ bool Inspector::on_key_press(GdkEventKey *event)
 void Inspector::on_window_hide()
 {
     windowShowing = false;
+}
+
+bool Inspector::on_inspector_window_state_event(GdkEventWindowState *event)
+{
+    if (!window->get_window() || window->get_window()->gobj() != event->window) {
+        return false;
+    }
+
+    fullscreen = event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN;
+
+    return true;
 }
 
 bool Inspector::on_button_press_event(GdkEventButton *event)

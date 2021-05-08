@@ -2100,5 +2100,5 @@ void FileBrowser::openRequested( std::vector<FileBrowserEntry*> mselected)
 
 void FileBrowser::inspectRequested(std::vector<FileBrowserEntry*> mselected)
 {
-    getInspector()->showWindow(false, false, true);
+    getInspector()->showWindow(true);
 }

@@ -2515,10 +2515,10 @@ bool FileCatalog::handleShortcutKey (GdkEventKey* event)
     if (!ctrl && !alt) {
         switch (event->keyval) {
         case GDK_KEY_f:
-            fileBrowser->getInspector()->showWindow(true);
+            fileBrowser->getInspector()->showWindow(false, true);
             return true;
         case GDK_KEY_F:
-            fileBrowser->getInspector()->showWindow(false);
+            fileBrowser->getInspector()->showWindow(false, false);
             return true;
         }
     }
