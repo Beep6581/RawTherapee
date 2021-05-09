@@ -277,6 +277,8 @@ bool Inspector::on_scroll_event(GdkEventScroll *event)
     if (!currImage || !window)
         return false;
 
+    pinned = true;
+
     bool alt = event->state & GDK_MOD1_MASK;
     int deviceScale = get_scale_factor();
     int imW = currImage->imgBuffer.getWidth();
@@ -381,6 +383,7 @@ void Inspector::beginZoom(double x, double y)
 void Inspector::on_zoom_begin(GdkEventSequence *s)
 {
     double x, y;
+    pinned = true;
     if (gestureZoom->get_point(s, x, y))
         beginZoom(x, y);
 }
