@@ -432,7 +432,7 @@ bool Inspector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
         availableSize.y = win->get_height() * deviceScale;
         int imW = rtengine::max<int>(currImage->imgBuffer.getWidth(), 1);
         int imH = rtengine::max<int>(currImage->imgBuffer.getHeight(), 1);
-        scale = rtengine::min<double>(availableSize.x / imW, availableSize.y / imH);
+        scale = rtengine::min(1., rtengine::min<double>(availableSize.x / imW, availableSize.y / imH));
         if (scaled) {
             // reduce size of image to fit into window, no further zoom down
             zoomScale = rtengine::max<double>(zoomScale, 1.0);
