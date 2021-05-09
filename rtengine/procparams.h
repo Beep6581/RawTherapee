@@ -1718,6 +1718,7 @@ struct ColorManagementParams {
     bool outputBPC;
 
     static const Glib::ustring NoICMString;
+    static const Glib::ustring NoProfileString;
 
     ColorManagementParams();
 

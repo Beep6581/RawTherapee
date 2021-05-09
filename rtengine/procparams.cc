@@ -2206,6 +2206,7 @@ bool ResizeParams::operator !=(const ResizeParams& other) const
 }
 
 const Glib::ustring ColorManagementParams::NoICMString = Glib::ustring("No ICM: sRGB output");
+const Glib::ustring ColorManagementParams::NoProfileString = Glib::ustring("(none)");
 
 ColorManagementParams::ColorManagementParams() :
     inputProfile("(cameraICC)"),
