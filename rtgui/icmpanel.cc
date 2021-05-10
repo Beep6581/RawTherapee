@@ -1086,16 +1086,16 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.applyBaselineExposureOffset = ckbApplyBaselineExposureOffset->get_active();
     pp->icm.applyHueSatMap = ckbApplyHueSatMap->get_active();
     pp->icm.outputBPC = obpc->get_active();
-    pp->icm.workingTRCGamma = (double) wGamma->getValue();
-    pp->icm.workingTRCSlope = (double) wSlope->getValue();
-    pp->icm.redx = (double) redx->getValue();
-    pp->icm.redy = (double) redy->getValue();
-    pp->icm.grex = (double) grex->getValue();
-    pp->icm.grey = (double) grey->getValue();
-    pp->icm.blux = (double) blux->getValue();
-    pp->icm.bluy = (double) bluy->getValue();
+    pp->icm.workingTRCGamma =  wGamma->getValue();
+    pp->icm.workingTRCSlope =  wSlope->getValue();
+    pp->icm.redx =  redx->getValue();
+    pp->icm.redy =  redy->getValue();
+    pp->icm.grex =  grex->getValue();
+    pp->icm.grey =  grey->getValue();
+    pp->icm.blux =  blux->getValue();
+    pp->icm.bluy =  bluy->getValue();
     pp->toneCurve.fromHistMatching = false;
-    pp->icm.preser = (double) preser->getValue();
+    pp->icm.preser =  preser->getValue();
 
     if (pedited) {
         pedited->icm.inputProfile = !iunchanged->get_active();

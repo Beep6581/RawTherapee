@@ -830,7 +830,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
 
 
-        if (((todo & (M_AUTOEXP | M_RGBCURVE)) || (todo & M_CROP)) && params->locallab.enabled && !params->locallab.spots.empty()) {
+      //  if (((todo & (M_AUTOEXP | M_RGBCURVE)) || (todo & M_CROP)) && params->locallab.enabled && !params->locallab.spots.empty()) {
+        if ((todo & (M_AUTOEXP | M_RGBCURVE | M_CROP)) && params->locallab.enabled && !params->locallab.spots.empty()) {
             
             ipf.rgb2lab(*oprevi, *oprevl, params->icm.workingProfile);
 
