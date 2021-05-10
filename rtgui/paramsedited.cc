@@ -722,7 +722,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
 
     // Resize LocallabSpotEdited according to src[0]
     locallab.spots.clear();
-    locallab.spots.resize(p.locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
+    locallab.spots.resize(p.locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
 
     // Variable used to determined if Locallab spots number is equal and so spots can be combined
     bool isSpotNumberEqual = true;
@@ -1216,6 +1216,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).expMethod = locallab.spots.at(j).expMethod && pSpot.expMethod == otherSpot.expMethod;
                 locallab.spots.at(j).exnoiseMethod = locallab.spots.at(j).exnoiseMethod && pSpot.exnoiseMethod == otherSpot.exnoiseMethod;
                 locallab.spots.at(j).laplacexp = locallab.spots.at(j).laplacexp && pSpot.laplacexp == otherSpot.laplacexp;
+                locallab.spots.at(j).reparexp = locallab.spots.at(j).reparexp && pSpot.reparexp == otherSpot.reparexp;
                 locallab.spots.at(j).balanexp = locallab.spots.at(j).balanexp && pSpot.balanexp == otherSpot.balanexp;
                 locallab.spots.at(j).linear = locallab.spots.at(j).linear && pSpot.linear == otherSpot.linear;
                 locallab.spots.at(j).gamm = locallab.spots.at(j).gamm && pSpot.gamm == otherSpot.gamm;
@@ -1258,6 +1259,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).slomaskSH = locallab.spots.at(j).slomaskSH && pSpot.slomaskSH == otherSpot.slomaskSH;
                 locallab.spots.at(j).lapmaskSH = locallab.spots.at(j).lapmaskSH && pSpot.lapmaskSH == otherSpot.lapmaskSH;
                 locallab.spots.at(j).detailSH = locallab.spots.at(j).detailSH && pSpot.detailSH == otherSpot.detailSH;
+                locallab.spots.at(j).reparsh = locallab.spots.at(j).reparsh && pSpot.reparsh == otherSpot.reparsh;
                 locallab.spots.at(j).LmaskSHcurve = locallab.spots.at(j).LmaskSHcurve && pSpot.LmaskSHcurve == otherSpot.LmaskSHcurve;
                 locallab.spots.at(j).fatamountSH = locallab.spots.at(j).fatamountSH && pSpot.fatamountSH == otherSpot.fatamountSH;
                 locallab.spots.at(j).fatanchorSH = locallab.spots.at(j).fatanchorSH && pSpot.fatanchorSH == otherSpot.fatanchorSH;
@@ -1360,6 +1362,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).nlrad = locallab.spots.at(j).nlrad && pSpot.nlrad == otherSpot.nlrad;
                 locallab.spots.at(j).nlgam = locallab.spots.at(j).nlgam && pSpot.nlgam == otherSpot.nlgam;
                 locallab.spots.at(j).sensiden = locallab.spots.at(j).sensiden && pSpot.sensiden == otherSpot.sensiden;
+                locallab.spots.at(j).reparden = locallab.spots.at(j).reparden && pSpot.reparden == otherSpot.reparden;
                 locallab.spots.at(j).detailthr = locallab.spots.at(j).detailthr && pSpot.detailthr == otherSpot.detailthr;
                 locallab.spots.at(j).locwavcurveden = locallab.spots.at(j).locwavcurveden && pSpot.locwavcurveden == otherSpot.locwavcurveden;
                 locallab.spots.at(j).locwavcurvehue = locallab.spots.at(j).locwavcurvehue && pSpot.locwavcurvehue == otherSpot.locwavcurvehue;
@@ -1391,6 +1394,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).gamma = locallab.spots.at(j).gamma && pSpot.gamma == otherSpot.gamma;
                 locallab.spots.at(j).estop = locallab.spots.at(j).estop && pSpot.estop == otherSpot.estop;
                 locallab.spots.at(j).scaltm = locallab.spots.at(j).scaltm && pSpot.scaltm == otherSpot.scaltm;
+                locallab.spots.at(j).repartm = locallab.spots.at(j).repartm && pSpot.repartm == otherSpot.repartm;
                 locallab.spots.at(j).rewei = locallab.spots.at(j).rewei && pSpot.rewei == otherSpot.rewei;
                 locallab.spots.at(j).satur = locallab.spots.at(j).satur && pSpot.satur == otherSpot.satur;
                 locallab.spots.at(j).sensitm = locallab.spots.at(j).sensitm && pSpot.sensitm == otherSpot.sensitm;
@@ -1512,6 +1516,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).edgw = locallab.spots.at(j).edgw && pSpot.edgw == otherSpot.edgw;
                 locallab.spots.at(j).basew = locallab.spots.at(j).basew && pSpot.basew == otherSpot.basew;
                 locallab.spots.at(j).sensilc = locallab.spots.at(j).sensilc && pSpot.sensilc == otherSpot.sensilc;
+                locallab.spots.at(j).reparw = locallab.spots.at(j).reparw && pSpot.reparw == otherSpot.reparw;
                 locallab.spots.at(j).fftwlc = locallab.spots.at(j).fftwlc && pSpot.fftwlc == otherSpot.fftwlc;
                 locallab.spots.at(j).blurlc = locallab.spots.at(j).blurlc && pSpot.blurlc == otherSpot.blurlc;
                 locallab.spots.at(j).wavblur = locallab.spots.at(j).wavblur && pSpot.wavblur == otherSpot.wavblur;
@@ -1585,6 +1590,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).targetGray = locallab.spots.at(j).targetGray && pSpot.targetGray == otherSpot.targetGray;
                 locallab.spots.at(j).catad = locallab.spots.at(j).catad && pSpot.catad == otherSpot.catad;
                 locallab.spots.at(j).saturl = locallab.spots.at(j).saturl && pSpot.saturl == otherSpot.saturl;
+                locallab.spots.at(j).chroml = locallab.spots.at(j).chroml && pSpot.chroml == otherSpot.chroml;
                 locallab.spots.at(j).lightl = locallab.spots.at(j).lightl && pSpot.lightl == otherSpot.lightl;
                 locallab.spots.at(j).lightq = locallab.spots.at(j).lightq && pSpot.lightq == otherSpot.lightq;
                 locallab.spots.at(j).contl = locallab.spots.at(j).contl && pSpot.contl == otherSpot.contl;
@@ -1654,7 +1660,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         if (!isSpotNumberEqual) {
             // All LocallabSpotEdited are set to false because cannot be combined
             locallab.spots.clear();
-            locallab.spots.resize(p.locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(false));
+            locallab.spots.resize(p.locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(false));
         }
 
         pcvignette.enabled = pcvignette.enabled && p.pcvignette.enabled == other.pcvignette.enabled;
@@ -3434,6 +3440,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).lightness = mods.locallab.spots.at(i).lightness;
         }
 
+        if (locallab.spots.at(i).reparcol) {
+            toEdit.locallab.spots.at(i).reparcol = mods.locallab.spots.at(i).reparcol;
+        }
+
         if (locallab.spots.at(i).contrast) {
             toEdit.locallab.spots.at(i).contrast = mods.locallab.spots.at(i).contrast;
         }
@@ -3827,8 +3837,12 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).laplacexp = mods.locallab.spots.at(i).laplacexp;
         }
 
-        if (locallab.spots.at(i).balanexp) {
-            toEdit.locallab.spots.at(i).balanexp = mods.locallab.spots.at(i).balanexp;
+        if (locallab.spots.at(i).laplacexp) {
+            toEdit.locallab.spots.at(i).laplacexp = mods.locallab.spots.at(i).laplacexp;
+        }
+
+        if (locallab.spots.at(i).reparexp) {
+            toEdit.locallab.spots.at(i).reparexp = mods.locallab.spots.at(i).reparexp;
         }
 
         if (locallab.spots.at(i).linear) {
@@ -3976,6 +3990,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).detailSH) {
             toEdit.locallab.spots.at(i).detailSH = mods.locallab.spots.at(i).detailSH;
+        }
+
+        if (locallab.spots.at(i).reparsh) {
+            toEdit.locallab.spots.at(i).reparsh = mods.locallab.spots.at(i).reparsh;
         }
 
         if (locallab.spots.at(i).LmaskSHcurve) {
@@ -4377,6 +4395,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).sensiden = mods.locallab.spots.at(i).sensiden;
         }
 
+        if (locallab.spots.at(i).reparden) {
+            toEdit.locallab.spots.at(i).reparden = mods.locallab.spots.at(i).reparden;
+        }
+
         if (locallab.spots.at(i).detailthr) {
             toEdit.locallab.spots.at(i).detailthr = mods.locallab.spots.at(i).detailthr;
         }
@@ -4497,6 +4519,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).scaltm) {
             toEdit.locallab.spots.at(i).scaltm = mods.locallab.spots.at(i).scaltm;
+        }
+
+        if (locallab.spots.at(i).repartm) {
+            toEdit.locallab.spots.at(i).repartm = mods.locallab.spots.at(i).repartm;
         }
 
         if (locallab.spots.at(i).rewei) {
@@ -4975,6 +5001,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).sensilc   = mods.locallab.spots.at(i).sensilc;
         }
 
+        if (locallab.spots.at(i).reparw) {
+            toEdit.locallab.spots.at(i).reparw   = mods.locallab.spots.at(i).reparw;
+        }
+
         if (locallab.spots.at(i).fftwlc) {
             toEdit.locallab.spots.at(i).fftwlc = mods.locallab.spots.at(i).fftwlc;
         }
@@ -5245,6 +5275,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).saturl) {
             toEdit.locallab.spots.at(i).saturl = mods.locallab.spots.at(i).saturl;
+        }
+
+        if (locallab.spots.at(i).chroml) {
+            toEdit.locallab.spots.at(i).chroml = mods.locallab.spots.at(i).chroml;
         }
 
         if (locallab.spots.at(i).lightl) {
@@ -6808,6 +6842,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     complexcolor(v),
     curvactiv(v),
     lightness(v),
+    reparcol(v),
     contrast(v),
     chroma(v),
     labgridALow(v),
@@ -6907,6 +6942,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     expMethod(v),
     exnoiseMethod(v),
     laplacexp(v),
+    reparexp(v),
     balanexp(v),
     linear(v),
     gamm(v),
@@ -6945,6 +6981,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     slomaskSH(v),
     lapmaskSH(v),
     detailSH(v),
+    reparsh(v),
     LmaskSHcurve(v),
     fatamountSH(v),
     fatanchorSH(v),
@@ -7047,6 +7084,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     nlrad(v),
     nlgam(v),
     sensiden(v),
+    reparden(v),
     detailthr(v),
     locwavcurveden(v),
     locwavcurvehue(v),
@@ -7078,6 +7116,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     gamma(v),
     estop(v),
     scaltm(v),
+    repartm(v),
     rewei(v),
     satur(v),
     sensitm(v),
@@ -7199,6 +7238,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     edgw(v),
     basew(v),
     sensilc(v),
+    reparw(v),
     fftwlc(v),
     blurlc(v),
     wavblur(v),
@@ -7268,6 +7308,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     targetGray(v),
     catad(v),
     saturl(v),
+    chroml(v),
     lightl(v),
     lightq(v),
     contl(v),
@@ -7380,6 +7421,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     complexcolor = v;
     curvactiv = v;
     lightness = v;
+    reparcol = v;
     contrast = v;
     chroma = v;
     labgridALow = v;
@@ -7479,6 +7521,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     expMethod = v;
     exnoiseMethod = v;
     laplacexp = v;
+    reparexp = v;
     balanexp = v;
     linear = v;
     gamm = v;
@@ -7521,6 +7564,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     slomaskSH = v;
     lapmaskSH = v;
     detailSH = v;
+    reparsh = v;
     LmaskSHcurve = v;
     fatamountSH = v;
     fatanchorSH = v;
@@ -7623,6 +7667,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     nlrad = v;
     nlgam = v;
     sensiden = v;
+    reparden = v;
     detailthr = v;
     locwavcurveden = v;
     showmaskblMethodtyp = v;
@@ -7653,6 +7698,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     gamma = v;
     estop = v;
     scaltm = v;
+    repartm = v;
     rewei = v;
     satur = v;
     sensitm = v;
@@ -7774,6 +7820,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     edgw = v;
     basew = v;
     sensilc = v;
+    reparw = v;
     fftwlc = v;
     blurlc = v;
     wavblur = v;
@@ -7847,6 +7894,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     targetGray = v;
     catad = v;
     saturl = v;
+    chroml = v;
     lightl = v;
     lightq = v;
     contl = v;

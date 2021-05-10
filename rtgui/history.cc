@@ -180,7 +180,7 @@ void History::historySelectionChanged ()
         if (row && tpc) {
             ProcParams pparams = row[historyColumns.params];
             ParamsEdited pe (true);
-            pe.locallab.spots.resize(pparams.locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
+            pe.locallab.spots.resize(pparams.locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
             PartialProfile pp (&pparams, &pe);
             ParamsEdited paramsEdited = row[historyColumns.paramsEdited];
 
@@ -215,7 +215,7 @@ void History::bookmarkSelectionChanged ()
         if (row && tpc) {
             ProcParams pparams = row[bookmarkColumns.params];
             ParamsEdited pe (true);
-            pe.locallab.spots.resize(pparams.locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
+            pe.locallab.spots.resize(pparams.locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
             PartialProfile pp (&pparams, &pe);
             ParamsEdited paramsEdited = row[bookmarkColumns.paramsEdited];
             tpc->profileChange (&pp, EvBookmarkSelected, row[bookmarkColumns.text], &paramsEdited);

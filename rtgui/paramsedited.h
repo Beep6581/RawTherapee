@@ -438,6 +438,7 @@ public:
         bool complexcolor;
         bool curvactiv;
         bool lightness;
+        bool reparcol;
         bool contrast;
         bool chroma;
         bool labgridALow;
@@ -537,6 +538,7 @@ public:
         bool expMethod;
         bool exnoiseMethod;
         bool laplacexp;
+        bool reparexp;
         bool balanexp;
         bool linear;
         bool gamm;
@@ -575,6 +577,7 @@ public:
         bool slomaskSH;
         bool lapmaskSH;
         bool detailSH;
+        bool reparsh;
         bool LmaskSHcurve;
         bool fatamountSH;
         bool fatanchorSH;
@@ -677,6 +680,7 @@ public:
         bool nlrad;
         bool nlgam;
         bool sensiden;
+        bool reparden;
         bool detailthr;
         bool locwavcurveden;
         bool locwavcurvehue;
@@ -708,6 +712,7 @@ public:
         bool gamma;
         bool estop;
         bool scaltm;
+        bool repartm;
         bool rewei;
         bool satur;
         bool sensitm;
@@ -829,6 +834,7 @@ public:
         bool edgw;
         bool basew;
         bool sensilc;
+        bool reparw;
         bool fftwlc;
         bool blurlc;
         bool wavblur;
@@ -898,6 +904,7 @@ public:
         bool targetGray;
         bool catad;
         bool saturl;
+        bool chroml;
         bool lightl;
         bool lightq;
         bool contl;

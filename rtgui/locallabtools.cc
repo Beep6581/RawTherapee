@@ -416,6 +416,7 @@ LocallabColor::LocallabColor():
 
     // Color & Light specific widgets
     lumFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LUMFRA")))),
+    reparcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     lightness(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIGHTNESS"), -100, 500, 1, 0))),
     contrast(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRAST"), -100, 100, 1, 0))),
     chroma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMA"), -100, 150, 1, 0))),
@@ -524,6 +525,8 @@ LocallabColor::LocallabColor():
     lumFrame->set_label_align(0.025, 0.5);
 
     lightness->setAdjusterListener(this);
+
+    reparcol->setAdjusterListener(this);
 
     contrast->setAdjusterListener(this);
 
@@ -787,6 +790,7 @@ LocallabColor::LocallabColor():
     csThresholdcol->setAdjusterListener(this);
 
     // Add Color & Light specific widgets to GUI
+    pack_start(*reparcol);
     ToolParamBlock* const lumBox = Gtk::manage(new ToolParamBlock());
     lumBox->pack_start(*lightness);
     lumBox->pack_start(*contrast);
@@ -957,6 +961,7 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         lumFrame->set_tooltip_text(M("TP_LOCALLAB_EXPCOLOR_TOOLTIP"));
         lightness->set_tooltip_text(M("TP_LOCALLAB_LIGHTN_TOOLTIP"));
+        reparcol->set_tooltip_text(M("TP_LOCALLAB_REPARCOL_TOOLTIP"));
         gridMethod->set_tooltip_text(M("TP_LOCALLAB_GRIDMETH_TOOLTIP"));
         strengthgrid->set_tooltip_text(M("TP_LOCALLAB_STRENGRID_TOOLTIP"));
         blurcolde->set_tooltip_text(M("TP_LOCALLAB_BLURCOLDE_TOOLTIP"));
@@ -1008,6 +1013,7 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
     } else {
         lumFrame->set_tooltip_text("");
         lightness->set_tooltip_text("");
+        reparcol->set_tooltip_text("");
         gridMethod->set_tooltip_text("");
         strengthgrid->set_tooltip_text("");
         blurcolde->set_tooltip_text("");
@@ -1124,6 +1130,7 @@ void LocallabColor::read(const rtengine::procparams::ProcParams* pp, const Param
         complexity->set_active(spot.complexcolor);
 
         lightness->setValue(spot.lightness);
+        reparcol->setValue(spot.reparcol);
         contrast->setValue(spot.contrast);
         chroma->setValue(spot.chroma);
         curvactiv->set_active(spot.curvactiv);
@@ -1298,6 +1305,7 @@ void LocallabColor::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         spot.complexcolor = complexity->get_active_row_number();
 
         spot.lightness = lightness->getIntValue();
+        spot.reparcol = reparcol->getValue();
         spot.contrast = contrast->getIntValue();
         spot.chroma = chroma->getIntValue();
         spot.curvactiv = curvactiv->get_active();
@@ -1465,6 +1473,7 @@ void LocallabColor::setDefaults(const rtengine::procparams::ProcParams* defParam
 
         // Set default value for adjuster, labgrid and threshold adjuster widgets
         lightness->setDefault((double)defSpot.lightness);
+        reparcol->setDefault(defSpot.reparcol);
         contrast->setDefault((double)defSpot.contrast);
         chroma->setDefault((double)defSpot.chroma);
         labgrid->setDefault(defSpot.labgridALow / LocallabParams::LABGRIDL_CORR_MAX,
@@ -1516,6 +1525,13 @@ void LocallabColor::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallablightness,
                                        lightness->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == reparcol) {
+            if (listener) {
+                listener->panelChanged(Evlocallabreparcol,
+                                       reparcol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -2380,6 +2396,7 @@ void LocallabColor::updateColorGUI1()
         showmaskcolMethodinv->show();
         contcol->hide();
         blurcol->hide();
+        reparcol->hide();
     } else {
         gridFrame->show();
 
@@ -2411,6 +2428,7 @@ void LocallabColor::updateColorGUI1()
         showmaskcolMethodConninv.block(false);
         contcol->show();
         blurcol->show();
+        reparcol->show();
     }
 }
 
@@ -2492,6 +2510,7 @@ LocallabExposure::LocallabExposure():
 //    pdeFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_PDEFRA")))),
     exppde(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_PDEFRA")))),
     laplacexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPLACEXP"), 0.0, 100.0, 0.1, 0.))),
+    reparexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     linear(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LINEAR"), 0.01, 1., 0.01, 0.05))),
     balanexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANEXP"), 0.5, 1.5, 0.01, 1.0))),
     gamm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMM"), 0.2, 1.3, 0.01, 0.4))),
@@ -2503,7 +2522,7 @@ LocallabExposure::LocallabExposure():
     fatdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATDETAIL"), -100., 300., 1., 0.))),
     norm(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
     fatlevel(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATLEVEL"), 0.5, 2.0, 0.01, 1.))),
-    fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHORA"), 0.5, 2.0, 0.01, 1.))),
+    fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 0.1, 100.0, 0.01, 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     sensiex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     structexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
     blurexpde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
@@ -2566,6 +2585,7 @@ LocallabExposure::LocallabExposure():
     setExpandAlignProperties(expfat, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     laplacexp->setAdjusterListener(this);
+    reparexp->setAdjusterListener(this);
 
     linear->setAdjusterListener(this);
 
@@ -2705,7 +2725,8 @@ LocallabExposure::LocallabExposure():
     mask2expCurveEditorG->curveListComplete();
 
     // Add Color & Light specific widgets to GUI
-//    pack_start(*expMethod);
+    pack_start(*sensiex);
+    pack_start(*reparexp);
     ToolParamBlock* const pdeBox = Gtk::manage(new ToolParamBlock());
     pdeBox->pack_start(*laplacexp);
     pdeBox->pack_start(*linear);
@@ -2725,13 +2746,12 @@ LocallabExposure::LocallabExposure():
     fatBox->pack_start(*fatdetail);
 //    fatBox->pack_start(*norm);
 //    fatBox->pack_start(*fatlevel);
-//    fatBox->pack_start(*fatanchor);
+    fatBox->pack_start(*fatanchor);
 //    fatFrame->add(*fatBox);
     expfat->add(*fatBox, false);
 //    pack_start(*fatFrame);
     pack_start(*expfat);
     pack_start(*expcomp);
-    pack_start(*sensiex);
     pack_start(*structexp);
     pack_start(*blurexpde);
     ToolParamBlock* const toolBox = Gtk::manage(new ToolParamBlock());
@@ -2826,6 +2846,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         higthrese->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRESE_TOOLTIP"));
         blurexpde->set_tooltip_text(M("TP_LOCALLAB_BLURCOLDE_TOOLTIP"));
         laplacexp->set_tooltip_text(M("TP_LOCALLAB_EXPLAP_TOOLTIP"));
+        reparexp->set_tooltip_text(M("TP_LOCALLAB_REPAREXP_TOOLTIP"));
         linear->set_tooltip_text(M("TP_LOCALLAB_EXPLAPLIN_TOOLTIP"));
         balanexp->set_tooltip_text(M("TP_LOCALLAB_EXPLAPBAL_TOOLTIP"));
         gamm->set_tooltip_text(M("TP_LOCALLAB_EXPLAPGAMM_TOOLTIP"));
@@ -2860,6 +2881,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         blurexpde->set_tooltip_text("");
         exprecove->set_tooltip_markup("");
         laplacexp->set_tooltip_text("");
+        reparexp->set_tooltip_text("");
         linear->set_tooltip_text("");
         balanexp->set_tooltip_text("");
         gamm->set_tooltip_text("");
@@ -2950,6 +2972,7 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
         }
 */
         laplacexp->setValue(spot.laplacexp);
+        reparexp->setValue(spot.reparexp);
         linear->setValue(spot.linear);
         balanexp->setValue(spot.balanexp);
         gamm->setValue(spot.gamm);
@@ -3041,6 +3064,7 @@ void LocallabExposure::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         }
 */
         spot.laplacexp = laplacexp->getValue();
+        spot.reparexp = reparexp->getValue();
         spot.linear = linear->getValue();
         spot.balanexp = balanexp->getValue();
         spot.gamm = gamm->getValue();
@@ -3105,6 +3129,7 @@ void LocallabExposure::setDefaults(const rtengine::procparams::ProcParams* defPa
 
         // Set default values for adjuster widgets
         laplacexp->setDefault(defSpot.laplacexp);
+        reparexp->setDefault(defSpot.reparexp);
         linear->setDefault(defSpot.linear);
         balanexp->setDefault(defSpot.balanexp);
         gamm->setDefault(defSpot.gamm);
@@ -3154,6 +3179,13 @@ void LocallabExposure::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallablaplacexp,
                                        laplacexp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == reparexp) {
+            if (listener) {
+                listener->panelChanged(Evlocallabreparexp,
+                                       reparexp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -3453,12 +3485,9 @@ void LocallabExposure::convertParamToNormal()
     slomaskexp->setValue(defSpot.slomaskexp);
     strmaskexp->setValue(defSpot.strmaskexp);
     angmaskexp->setValue(defSpot.angmaskexp);
-//   fatlevel->setValue(defSpot.fatlevel);
-//    fatanchor->setValue(defSpot.fatanchor);
     decaye->setValue(defSpot.decaye);
 //    norm->set_active(defSpot.enaExpMask);
     fatlevel->setValue(defSpot.fatlevel);
-    fatanchor->setValue(defSpot.fatanchor);
 
     // Enable all listeners
     enableListener();
@@ -3534,7 +3563,7 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
             }
             norm->show();
             fatlevel->hide();
-            fatanchor->hide();
+            fatanchor->show();
 
             // Specific Simple mode widgets are shown in Normal mode
             if (!inversex->get_active()) { // Keep widget hidden when invers is toggled
@@ -3778,6 +3807,7 @@ void LocallabExposure::updateExposureGUI3()
         expMethod->hide();
         expcomp->setLabel(M("TP_LOCALLAB_EXPCOMPINV"));
         exprecove->hide();
+        reparexp->hide();
 
         // Manage specific case where expMethod is different from 0
         if (expMethod->get_active_row_number() > 0) {
@@ -3806,6 +3836,7 @@ void LocallabExposure::updateExposureGUI3()
             expgradexp->show();
             exprecove->show();
         }
+        reparexp->show();
 
         showmaskexpMethodinv->hide();
         // Reset hidden mask combobox
@@ -3822,6 +3853,7 @@ LocallabShadow::LocallabShadow():
 
     // Shadow highlight specific widgets
     shMethod(Gtk::manage(new MyComboBoxText())),
+    reparsh(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     multipliersh([]() -> std::array<Adjuster *, 5>
     {
     std::array<Adjuster*, 5> res = {};
@@ -3899,6 +3931,7 @@ LocallabShadow::LocallabShadow():
     }
 
     detailSH->setAdjusterListener(this);
+    reparsh->setAdjusterListener(this);
 
     highlights->setAdjusterListener(this);
 
@@ -3999,6 +4032,7 @@ LocallabShadow::LocallabShadow():
     fatanchorSH->setAdjusterListener(this);
 
     // Add Shadow highlight specific widgets to GUI
+    pack_start(*reparsh);
     pack_start(*shMethod);
 
     for (const auto multiplier : multipliersh) {
@@ -4095,6 +4129,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         }
 
         gamSH->set_tooltip_text(M("TP_LOCALLAB_SHTRC_TOOLTIP"));
+        reparsh->set_tooltip_text(M("TP_LOCALLAB_REPARSH_TOOLTIP"));
         sloSH->set_tooltip_text(M("TP_LOCALLAB_SHTRC_TOOLTIP"));
         strSH->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
         exprecovs->set_tooltip_markup(M("TP_LOCALLAB_MASKRESH_TOOLTIP"));
@@ -4135,6 +4170,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
             multiplier->set_tooltip_text("");
         }
         gamSH->set_tooltip_text("");
+        reparsh->set_tooltip_text("");
         sloSH->set_tooltip_text("");
         strSH->set_tooltip_text("");
         blurSHde->set_tooltip_text("");
@@ -4225,6 +4261,7 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
         decays->setValue((double)spot.decays);
 
         detailSH->setValue((double)spot.detailSH);
+        reparsh->setValue(spot.reparsh);
         highlights->setValue((double)spot.highlights);
         h_tonalwidth->setValue((double)spot.h_tonalwidth);
         shadows->setValue(spot.shadows);
@@ -4289,6 +4326,7 @@ void LocallabShadow::write(rtengine::procparams::ProcParams* pp, ParamsEdited* p
         }
 
         spot.detailSH = detailSH->getIntValue();
+        spot.reparsh = reparsh->getValue();
         spot.highlights = highlights->getIntValue();
         spot.h_tonalwidth = h_tonalwidth->getIntValue();
         spot.shadows = shadows->getIntValue();
@@ -4336,6 +4374,7 @@ void LocallabShadow::setDefaults(const rtengine::procparams::ProcParams* defPara
         }
 
         detailSH->setDefault((double)defSpot.detailSH);
+        reparsh->setDefault(defSpot.reparsh);
         highlights->setDefault((double)defSpot.highlights);
         h_tonalwidth->setDefault((double)defSpot.h_tonalwidth);
         shadows->setDefault((double)defSpot.shadows);
@@ -4383,6 +4422,13 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(EvlocallabdetailSH,
                                        detailSH->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == reparsh) {
+            if (listener) {
+                listener->panelChanged(Evlocallabreparsh,
+                                       reparsh->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -4862,11 +4908,13 @@ void LocallabShadow::updateShadowGUI1()
         showmaskSHMethodConn.block(false);
         showmaskSHMethodinv->show();
         exprecovs->hide();
+        reparsh->hide();
     } else {
         if (mode == Expert || mode == Normal) { // Keep widget hidden in Simple mode
             expgradsh->show();
             exprecovs->show();
         }
+        reparsh->show();
 
         showmaskSHMethod->show();
         showmaskSHMethodinv->hide();
@@ -6341,6 +6389,7 @@ LocallabBlur::LocallabBlur():
     nlgam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NLGAM"), 2., 5., 0.1, 3.))),
     bilateral(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BILATERAL"), 0, 100, 1, 0))),
     sensiden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
+    reparden(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     neutral(Gtk::manage (new Gtk::Button (M ("TP_RETINEX_NEUTRAL")))),
     expmaskbl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWPLUS")))),
     showmaskblMethod(Gtk::manage(new MyComboBoxText())),
@@ -6526,6 +6575,7 @@ LocallabBlur::LocallabBlur():
     nlgam->setAdjusterListener(this);
 
     sensiden->setAdjusterListener(this);
+    reparden->setAdjusterListener(this);
 
 
     setExpandAlignProperties (neutral, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
@@ -6674,7 +6724,8 @@ LocallabBlur::LocallabBlur():
     detailFrame->add(*detailBox);
     wavBox->pack_start(*detailFrame);
     denoisebox->pack_start(*sensiden);
-    
+    denoisebox->pack_start(*reparden);
+   
     ToolParamBlock* const nlbox = Gtk::manage(new ToolParamBlock());
     nlbox->pack_start(*nlstr);
     nlbox->pack_start(*nldet);
@@ -6774,6 +6825,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         strength->set_tooltip_text(M("TP_LOCALLAB_NOISE_TOOLTIP"));
         grainFrame->set_tooltip_text(M("TP_LOCALLAB_GRAIN_TOOLTIP"));
         sensibn->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+        reparden->set_tooltip_text(M("TP_LOCALLAB_REPARDEN_TOOLTIP"));
         medMethod->set_tooltip_text(M("TP_LOCALLAB_MEDIAN_TOOLTIP"));
         itera->set_tooltip_text(M("TP_LOCALLAB_MEDIANITER_TOOLTIP"));
         fftwbl->set_tooltip_text(M("TP_LOCALLAB_FFTMASK_TOOLTIP"));
@@ -6842,6 +6894,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         strength->set_tooltip_text("");
         grainFrame->set_tooltip_text("");
         sensibn->set_tooltip_text("");
+        reparden->set_tooltip_text("");
         medMethod->set_tooltip_text("");
         itera->set_tooltip_text("");
         fftwbl->set_tooltip_text("");
@@ -6871,7 +6924,6 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         nlpat->set_tooltip_text("");
         nlrad->set_tooltip_text("");
         nlgam->set_tooltip_text("");
-        sensibn->set_tooltip_text("");
         blurMethod->set_tooltip_markup("");
         expdenoise->set_tooltip_markup("");
         wavshapeden->setTooltip("");
@@ -7056,6 +7108,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         higthres->setValue((double)spot.higthres);
         epsbl->setValue((double)spot.epsbl);
         sensibn->setValue((double)spot.sensibn);
+        reparden->setValue(spot.reparden);
         recothresd->setValue((double)spot.recothresd);
         lowthresd->setValue((double)spot.lowthresd);
         midthresd->setValue((double)spot.midthresd);
@@ -7202,6 +7255,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.higthres = higthres->getValue();
         spot.epsbl = epsbl->getIntValue();
         spot.sensibn = sensibn->getIntValue();
+        spot.reparden = reparden->getValue();
         spot.recothresd = recothresd->getValue();
         spot.lowthresd = lowthresd->getValue();
         spot.midthresd = midthresd->getValue();
@@ -7311,6 +7365,7 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         higthres->setDefault((double)defSpot.higthres);
         epsbl->setDefault((double)defSpot.epsbl);
         sensibn->setDefault((double)defSpot.sensibn);
+        reparden->setDefault(defSpot.reparden);
         recothresd->setDefault((double)defSpot.recothresd);
         lowthresd->setDefault((double)defSpot.lowthresd);
         midthresd->setDefault((double)defSpot.midthresd);
@@ -7657,6 +7712,13 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabsensiden,
                                        sensiden->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == reparden) {
+            if (listener) {
+                listener->panelChanged(Evlocallabreparden,
+                                       reparden->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

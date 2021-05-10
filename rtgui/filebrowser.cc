@@ -1431,7 +1431,7 @@ void FileBrowser::applyPartialMenuItemActivated (ProfileStoreLabel *label)
                 rtengine::procparams::PartialProfile dstProfile(true);
                 *dstProfile.pparams = (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getProcParams ();
                 dstProfile.set(true);
-                dstProfile.pedited->locallab.spots.resize(dstProfile.pparams->locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
+                dstProfile.pedited->locallab.spots.resize(dstProfile.pparams->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
                 partialPasteDlg.applyPaste (dstProfile.pparams, dstProfile.pedited, srcProfiles->pparams, srcProfiles->pedited);
                 (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->setProcParams (*dstProfile.pparams, dstProfile.pedited, FILEBROWSER);
                 dstProfile.deleteInstance();
