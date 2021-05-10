@@ -1564,7 +1564,7 @@ private:
             const float pres = 0.01f * params.icm.preser;
             if (pres > 0.f && params.icm.wprim != "def") {
                 provis.reset(new LabImage(GW, GH));
-                provis.get()->CopyFrom(labView);
+                provis->CopyFrom(labView);
             }
 
             const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));

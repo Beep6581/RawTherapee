@@ -19,6 +19,7 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdio>
 #include <map>
@@ -2401,7 +2402,10 @@ public:
 
     bool operator ==(const ProcParams& other) const;
     bool operator !=(const ProcParams& other) const;
-    template <class T1, class T2, size_t N> int posInArray(const std::array<T1,N>& arr, const T2& val, int defaultValue = 0) const {
+
+    template <typename T1, typename T2, std::size_t N>
+    int posInArray(const std::array<T1, N>& arr, const T2& val, int defaultValue = 0) const
+    {
         static_assert(N > 0, "array size has to be > 0");
         const auto it = std::find(arr.begin(), arr.end(), val);
         if (it != arr.end()) {

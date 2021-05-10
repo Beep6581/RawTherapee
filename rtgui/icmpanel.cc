@@ -769,14 +769,11 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     wProfNames->set_active_text(pp->icm.workingProfile);
 
-    const int wTRCActiveRow = pp->posInArray(pp->icm.workingTRCs, pp->icm.workingTRC);
-    wTRC->set_active(wTRCActiveRow);
+    wTRC->set_active(pp->posInArray(pp->icm.workingTRCs, pp->icm.workingTRC));
 
-    const int willActiveRow = pp->posInArray(pp->icm.wills, pp->icm.will);
-    will->set_active(willActiveRow);
+    will->set_active(pp->posInArray(pp->icm.wills, pp->icm.will));
 
-    const int wprimActiveRow = pp->posInArray(pp->icm.wprims, pp->icm.wprim);
-    wprim->set_active(wprimActiveRow);
+    wprim->set_active(pp->posInArray(pp->icm.wprims, pp->icm.wprim));
 
     wtrcinChanged();
     willChanged();

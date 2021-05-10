@@ -1469,12 +1469,12 @@ void Crop::update(int todo)
             const float pres = 0.01f * params.icm.preser;
             if (pres > 0.f && params.icm.wprim != "def") {
                 provis.reset(new LabImage(GW, GH));
-                provis.get()->CopyFrom(labnCrop);
+                provis->CopyFrom(labnCrop);
             }
 
             std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
 
-            parent->ipf.lab2rgb(*labnCrop, *(tmpImage1.get()), params.icm.workingProfile);
+            parent->ipf.lab2rgb(*labnCrop, *tmpImage1, params.icm.workingProfile);
 
             const float gamtone = parent->params->icm.workingTRCGamma;
             const float slotone = parent->params->icm.workingTRCSlope;
@@ -1489,7 +1489,7 @@ void Crop::update(int todo)
             parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
             parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
 
-            parent->ipf.rgb2lab(*(tmpImage1.get()), *labnCrop, params.icm.workingProfile);
+            parent->ipf.rgb2lab(*tmpImage1, *labnCrop, params.icm.workingProfile);
             //labnCrop and provis
             if(pres > 0.f && params.icm.wprim != "def") {
                 parent->ipf.preserv(labnCrop, provis.get(), GW, GH);

@@ -26,9 +26,9 @@
 #include "guiutils.h"
 #include "popupbutton.h"
 #include "toolpanel.h"
-#include "../rtengine/procparams.h"
 
 #include "../rtengine/imagedata.h"
+#include "../rtengine/procparams.h"
 
 class ICMPanelListener
 {
@@ -171,9 +171,6 @@ private:
     float nextgy;
     float nextwx;
     float nextwy;
-
-;
-
 
 public:
     ICMPanel();

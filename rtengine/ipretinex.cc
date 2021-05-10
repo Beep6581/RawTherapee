@@ -397,7 +397,7 @@ void RawImageSource::MSR(float** luminance, float** originalLuminance, float **e
         }
 
         std::unique_ptr<JaggedArray<float>> srcBuffer(new JaggedArray<float>(W_L, H_L));
-        float** src = *(srcBuffer.get());
+        float** src = *srcBuffer;
 
 #ifdef _OPENMP
         #pragma omp parallel for
@@ -1238,7 +1238,7 @@ void ImProcFunctions::MSRLocal(int call, int sp, bool fftw, int lum, float** red
     const int H_L = height;
     const int W_L = width;
     std::unique_ptr<JaggedArray<float>> srcBuffer(new JaggedArray<float>(W_L, H_L));
-    float** src = *(srcBuffer.get());
+    float** src = *srcBuffer;
 
 
 #ifdef _OPENMP

@@ -1115,7 +1115,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if(istm) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;
                     float stdf = 0.f;
-                    ipf.mean_sig (savenormtm.get()->L, meanf, stdf, xxs, xxe, yys, yye);
+                    ipf.mean_sig (savenormtm->L, meanf, stdf, xxs, xxe, yys, yye);
                     
                     //using 2 unused variables  noiselumc and softradiustm  
                     params->locallab.spots.at(sp).noiselumc = (int) meanf;
@@ -1125,7 +1125,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if(isreti) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;
                     float stdf = 0.f;
-                    ipf.mean_sig (savenormreti.get()->L, meanf, stdf,xxs, xxe, yys, yye );
+                    ipf.mean_sig (savenormreti->L, meanf, stdf,xxs, xxe, yys, yye );
                     //using 2 unused variables  sensihs and sensiv  
                     params->locallab.spots.at(sp).sensihs = (int) meanf;
                     params->locallab.spots.at(sp).sensiv = (int) stdf;
@@ -1583,11 +1583,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 const float pres = 0.01f * params->icm.preser;
                 if (pres > 0.f && params->icm.wprim != "def") {
                     provis.reset(new LabImage(GW, GH));
-                    provis.get()->CopyFrom(nprevl);
+                    provis->CopyFrom(nprevl);
                 }
                 std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
 
-                ipf.lab2rgb(*nprevl, *(tmpImage1.get()), params->icm.workingProfile);
+                ipf.lab2rgb(*nprevl, *tmpImage1, params->icm.workingProfile);
 
                 const float gamtone = params->icm.workingTRCGamma;
                 const float slotone = params->icm.workingTRCSlope;
@@ -1601,7 +1601,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
                 ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
 
-                ipf.rgb2lab(*(tmpImage1.get()), *nprevl, params->icm.workingProfile);
+                ipf.rgb2lab(*tmpImage1, *nprevl, params->icm.workingProfile);
                 //nprevl and provis
                 if(pres > 0.f && params->icm.wprim != "def") {
                     ipf.preserv(nprevl, provis.get(), GW, GH);
