@@ -980,7 +980,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     }
 }
 
-DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfileApplyState &as)
+DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfile::ApplyState &as)
 {
     if (cmp.inputProfile == "(camera)" || cmp.inputProfile == "(none)") {
         return nullptr;
@@ -1251,8 +1251,7 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
 
 
     // Load complete Exif information
-    std::unique_ptr<RawMetaDataLocation> rml(new RawMetaDataLocation (ri->get_exifBase(), ri->get_ciffBase(), ri->get_ciffLen()));
-    idata = new FramesData (fname, std::move(rml));
+    idata = new FramesData(fname); // TODO: std::unique_ptr<>
     idata->setDCRawFrameCount (numFrames);
 
     green(W, H);

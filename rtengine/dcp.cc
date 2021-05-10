@@ -21,9 +21,7 @@
 #include <cstdio>
 #include <cstring>
 #include <functional>
-#include <glib/gstdio.h>
-#include <glibmm/fileutils.h>
-#include <glibmm/miscutils.h>
+#include <unordered_map>
 
 #include "dcp.h"
 
@@ -35,11 +33,16 @@
 #include "rawimagesource.h"
 #include "rt_math.h"
 #include "utils.h"
-#include "../rtexif/rtexif.h"
 #include "../rtgui/options.h"
 
+namespace rtengine
+{
+
+extern const Settings* settings;
+
+}
+
 using namespace rtengine;
-using namespace rtexif;
 
 namespace
 {
@@ -49,7 +52,7 @@ namespace
 DCPProfile::Matrix invert3x3(const DCPProfile::Matrix& a)
 {
     DCPProfile::Matrix res = a;
-    if (!invertMatrix(a, res)) {
+    if (!invertMatrix(a, res) && settings->verbose) {
         std::cerr << "DCP matrix cannot be inverted! Expect weird output." << std::endl;
     }
     return res;
@@ -334,6 +337,8 @@ double xyCoordToTemperature(const std::array<double, 2>& white_xy)
 
     // Search for line pair coordinate is between.
     double last_dt = 0.0;
+    double last_dv = 0.0;
+    double last_du = 0.0;              
 
     for (uint32_t index = 1; index <= 30; ++index) {
         // Convert slope to delta-u and delta-v, with length 1.
@@ -369,11 +374,23 @@ double xyCoordToTemperature(const std::array<double, 2>& white_xy)
 
             // Interpolate the temperature.
             res = 1.0e6 / (temp_table[index - 1].r * f + temp_table[index].r * (1.0 - f));
+
+            // Find delta from black body point to test coordinate.
+            uu = u - (temp_table [index - 1].u * f + temp_table [index].u * (1.0 - f));
+            vv = v - (temp_table [index - 1].v * f + temp_table [index].v * (1.0 - f));
+            // Interpolate vectors along slope.
+            du = du * (1.0 - f) + last_du * f;
+            dv = dv * (1.0 - f) + last_dv * f;
+            len = sqrt (du * du + dv * dv);
+            du /= len;
+            dv /= len;
             break;
         }
 
         // Try next line pair.
         last_dt = dt;
+        last_du = du;
+        last_dv = dv;
     }
 
     return res;
@@ -430,9 +447,367 @@ std::map<std::string, std::string> getAliases(const Glib::ustring& profile_dir)
     return res;
 }
 
-}
+class DCPMetadata
+{
+private:
+    enum TagType {
+        INVALID = 0,
+        BYTE = 1,
+        ASCII = 2,
+        SHORT = 3,
+        LONG = 4,
+        RATIONAL = 5,
+        SBYTE = 6,
+        UNDEFINED = 7,
+        SSHORT = 8,
+        SLONG = 9,
+        SRATIONAL = 10,
+        FLOAT = 11,
+        DOUBLE = 12
+    };
 
-struct DCPProfileApplyState::Data {
+    enum ByteOrder {
+        UNKNOWN = 0,
+        INTEL = 0x4949,
+        MOTOROLA = 0x4D4D
+    };
+
+public:
+    explicit DCPMetadata(FILE *file) :
+        file_(file),
+        order_(UNKNOWN)
+    {
+    }
+
+    bool parse()
+    {
+        if (!file_) {
+#ifndef NDEBUG
+            if (settings->verbose) {
+                std::cerr << "ERROR: No file opened." << std::endl;
+            } 
+#endif
+            return false;
+        }
+
+        setlocale(LC_NUMERIC, "C"); // to set decimal point in sscanf
+
+        // read tiff header
+        std::fseek(file_, 0, SEEK_SET);
+        std::uint16_t bo;
+        std::fread(&bo, 1, 2, file_);
+        order_ = ByteOrder(bo);
+        
+        get2(); // Skip
+
+        // Seek to IFD
+        const std::size_t offset = get4();
+        std::fseek(file_, offset, SEEK_SET);
+
+        // First read the IFD directory
+        const std::uint16_t numtags = get2();
+
+        if (numtags > 1000) { // KodakIfd has lots of tags, thus 1000 as the limit
+            return false;
+        }
+
+        for (std::uint16_t i = 0; i < numtags; ++i) {
+            Tag tag;
+            if (parseTag(tag)) {
+                tags_[tag.id] = std::move(tag);
+            }
+        }
+
+        return true;
+    }
+
+    bool find(int id) const
+    {
+        return tags_.find(id) != tags_.end();
+    }
+    
+    std::string toString(int id) const
+    {
+        const Tags::const_iterator tag = tags_.find(id);
+        if (tag != tags_.end()) {
+            if (tag->second.type == ASCII) {
+                return std::string(tag->second.value.begin(), tag->second.value.end()).c_str();
+            }
+        }
+        return {};
+    }
+
+    std::int32_t toInt(int id, std::size_t offset = 0, TagType as_type = INVALID) const
+    {
+        const Tags::const_iterator tag = tags_.find(id);
+        if (tag == tags_.end()) {
+            return 0;
+        }
+
+        if (as_type == INVALID) {
+            as_type = tag->second.type;
+        }
+
+        switch (as_type) {
+            case SBYTE: {
+                if (offset < tag->second.value.size()) {
+                    return static_cast<signed char>(tag->second.value[offset]);
+                }
+                return 0;
+            }
+            case BYTE: {
+                if (offset < tag->second.value.size()) {
+                    return tag->second.value[offset];
+                }
+                return 0;
+            }
+            case SSHORT: {
+                if (offset + 1 < tag->second.value.size()) {
+                    return static_cast<std::int16_t>(sget2(tag->second.value.data() + offset));
+                }
+                return 0;
+            }
+            case SHORT: {
+                if (offset + 1 < tag->second.value.size()) {
+                    return sget2(tag->second.value.data() + offset);
+                }
+                return 0;
+            }
+            case SLONG:
+            case LONG: {
+                if (offset + 3 < tag->second.value.size()) {
+                    return sget4(tag->second.value.data() + offset);
+                }
+                return 0;
+            }
+            case SRATIONAL:
+            case RATIONAL: {
+                if (offset + 7 < tag->second.value.size()) {
+                    const std::uint32_t denominator = sget4(tag->second.value.data() + offset + 4);
+                    return
+                        denominator == 0
+                            ? 0
+                            : static_cast<std::int32_t>(sget4(tag->second.value.data() + offset)) / denominator;
+                }
+                return 0;
+            }
+            case FLOAT: {
+                return toDouble(id, offset);
+            }
+            default: {
+                return 0;
+            }
+        }
+    }
+    
+    int toShort(int id, std::size_t offset = 0) const
+    {
+        return toInt(id, offset, SHORT);
+    }
+    
+    double toDouble(int id, std::size_t offset = 0) const
+    {
+        const Tags::const_iterator tag = tags_.find(id);
+        if (tag == tags_.end()) {
+            return 0.0;
+        }
+        
+        switch (tag->second.type) {
+            case SBYTE: {
+                if (offset < tag->second.value.size()) {
+                    return static_cast<signed char>(tag->second.value[offset]);
+                }
+                return 0.0;
+            }
+            case BYTE: {
+                if (offset < tag->second.value.size()) {
+                    return tag->second.value[offset];
+                }
+                return 0.0;
+            }
+            case SSHORT: {
+                if (offset + 1 < tag->second.value.size()) {
+                    return static_cast<std::int16_t>(sget2(tag->second.value.data() + offset));
+                }
+                return 0.0;
+            }
+            case SHORT: {
+                if (offset + 1 < tag->second.value.size()) {
+                    return sget2(tag->second.value.data() + offset);
+                }
+                return 0.0;
+            }
+            case SLONG:
+            case LONG: {
+                if (offset + 3 < tag->second.value.size()) {
+                    return sget4(tag->second.value.data() + offset);
+                }
+                return 0.0;
+            }
+            case SRATIONAL:
+            case RATIONAL: {
+                if (offset + 7 < tag->second.value.size()) {
+                    const std::int32_t numerator = sget4(tag->second.value.data() + offset);
+                    const std::int32_t denominator = sget4(tag->second.value.data() + offset + 4);
+                    return
+                        denominator == 0
+                            ? 0.0
+                            : static_cast<double>(numerator) / static_cast<double>(denominator);
+                }
+                return 0.0;
+            }
+            case FLOAT: {
+                union IntFloat {
+                    std::uint32_t i;
+                    float f;
+                } conv;
+                conv.i = sget4(tag->second.value.data() + offset);
+                return conv.f; // IEEE FLOATs are already C format, they just need a recast
+            }
+            default: {
+                return 0.0;
+            }
+        }
+    }
+
+    unsigned int getCount(int id) const
+    {
+        const Tags::const_iterator tag = tags_.find(id);
+        if (tag != tags_.end()) {
+            return tag->second.count;
+        }
+        return 0;
+    }
+
+private:
+    struct Tag {
+        int id;
+        std::vector<unsigned char> value;
+        TagType type;
+        unsigned int count;
+    };
+    
+    using Tags = std::unordered_map<int, Tag>;
+    
+    std::uint16_t sget2(const std::uint8_t* s) const
+    {
+        if (order_ == INTEL) {
+            return s[0] | s[1] << 8;
+        } else {
+            return s[0] << 8 | s[1];
+        }
+    }
+    
+    std::uint32_t sget4(const std::uint8_t* s) const
+    {
+        if (order_ == INTEL) {
+            return s[0] | s[1] << 8 | s[2] << 16 | s[3] << 24;
+        } else {
+            return s[0] << 24 | s[1] << 16 | s[2] << 8 | s[3];
+        }
+    }
+    
+    std::uint16_t get2()
+    { 
+        std::uint16_t res = std::numeric_limits<std::uint16_t>::max();
+        std::fread(&res, 1, 2, file_);
+        return sget2(reinterpret_cast<const std::uint8_t*>(&res));
+    }
+    
+    std::uint32_t get4()
+    { 
+        std::uint32_t res = std::numeric_limits<std::uint32_t>::max();
+        std::fread(&res, 1, 4, file_);
+        return sget4(reinterpret_cast<const std::uint8_t*>(&res));
+    }
+
+    static int getTypeSize(TagType type)
+    {
+        switch (type) {
+            case INVALID:
+            case BYTE:
+            case ASCII:
+            case SBYTE:
+            case UNDEFINED: {
+                return 1;
+            }
+            
+            case SHORT:
+            case SSHORT: {
+                return 2;
+            }
+            
+            case LONG:
+            case SLONG:
+            case FLOAT: {
+                return 4;
+            }
+            
+            case RATIONAL:
+            case SRATIONAL:
+            case DOUBLE: {
+                return 8;
+            }
+        }
+        
+        return 1;
+    }
+
+    bool parseTag(Tag& tag)
+    {
+        tag.id = get2();
+        tag.type = TagType(get2());
+        tag.count = std::max(1U, get4());
+
+        // Filter out invalid tags
+        // Note: The large count is to be able to pass LeafData ASCII tag which can be up to almost 10 megabytes,
+        // (only a small part of it will actually be parsed though)
+        if (
+            tag.type == INVALID
+            || tag.type > DOUBLE 
+            || tag.count > 10 * 1024 * 1024
+        ) {
+            tag.type = INVALID;
+            return false;
+        }
+
+        // Store next Tag's position in file
+        const std::size_t saved_position = std::ftell(file_) + 4;
+
+        // Load value field (possibly seek before)
+        const std::size_t value_size = tag.count * getTypeSize(tag.type);
+
+        if (value_size > 4) {
+            if (std::fseek(file_, get4(), SEEK_SET) == -1) {
+                tag.type = INVALID;
+                return false;
+            }
+        }
+
+        // Read value
+        tag.value.resize(value_size + 1);
+        const std::size_t read = std::fread(tag.value.data(), 1, value_size, file_);
+        if (read != value_size) {
+            tag.type = INVALID;
+            return false;
+        }
+        tag.value[read] = '\0';
+
+        // Seek back to the saved position
+        std::fseek(file_, saved_position, SEEK_SET);
+        
+        return true;
+    }
+    
+    FILE* const file_;
+    
+    Tags tags_;
+    ByteOrder order_;
+};
+
+} // namespace
+
+struct DCPProfile::ApplyState::Data {
     float pro_photo[3][3];
     float work[3][3];
     bool already_pro_photo;
@@ -441,12 +816,14 @@ struct DCPProfileApplyState::Data {
     float bl_scale;
 };
 
-DCPProfileApplyState::DCPProfileApplyState() :
+DCPProfile::ApplyState::ApplyState() :
     data(new Data{})
 {
 }
 
-DCPProfileApplyState::~DCPProfileApplyState() = default;
+DCPProfile::ApplyState::~ApplyState()
+{
+}
 
 DCPProfile::DCPProfile(const Glib::ustring& filename) :
     has_color_matrix_1(false),
@@ -462,23 +839,23 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
     delta_info.hue_step = delta_info.val_step = look_info.hue_step = look_info.val_step = 0;
     constexpr int tiff_float_size = 4;
 
-    enum class TagKey : int {
-        COLOR_MATRIX_1 = 50721,
-        COLOR_MATRIX_2 = 50722,
-        PROFILE_HUE_SAT_MAP_DIMS = 50937,
-        PROFILE_HUE_SAT_MAP_DATA_1 = 50938,
-        PROFILE_HUE_SAT_MAP_DATA_2 = 50939,
-        PROFILE_TONE_CURVE = 50940,
-        PROFILE_TONE_COPYRIGHT = 50942,
-        CALIBRATION_ILLUMINANT_1 = 50778,
-        CALIBRATION_ILLUMINANT_2 = 50779,
-        FORWARD_MATRIX_1 = 50964,
-        FORWARD_MATRIX_2 = 50965,
-        PROFILE_LOOK_TABLE_DIMS = 50981, // ProfileLookup is the low quality variant
-        PROFILE_LOOK_TABLE_DATA = 50982,
-        PROFILE_HUE_SAT_MAP_ENCODING = 51107,
-        PROFILE_LOOK_TABLE_ENCODING = 51108,
-        BASELINE_EXPOSURE_OFFSET = 51109
+    enum TagKey {
+        TAG_KEY_COLOR_MATRIX_1 = 50721,
+        TAG_KEY_COLOR_MATRIX_2 = 50722,
+        TAG_KEY_PROFILE_HUE_SAT_MAP_DIMS = 50937,
+        TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_1 = 50938,
+        TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_2 = 50939,
+        TAG_KEY_PROFILE_TONE_CURVE = 50940,
+        TAG_KEY_PROFILE_TONE_COPYRIGHT = 50942,
+        TAG_KEY_CALIBRATION_ILLUMINANT_1 = 50778,
+        TAG_KEY_CALIBRATION_ILLUMINANT_2 = 50779,
+        TAG_KEY_FORWARD_MATRIX_1 = 50964,
+        TAG_KEY_FORWARD_MATRIX_2 = 50965,
+        TAG_KEY_PROFILE_LOOK_TABLE_DIMS = 50981, // ProfileLookup is the low quality variant
+        TAG_KEY_PROFILE_LOOK_TABLE_DATA = 50982,
+        TAG_KEY_PROFILE_HUE_SAT_MAP_ENCODING = 51107,
+        TAG_KEY_PROFILE_LOOK_TABLE_ENCODING = 51108,
+        TAG_KEY_BASELINE_EXPOSURE_OFFSET = 51109
     };
 
     static const float adobe_camera_raw_default_curve[] = {
@@ -744,59 +1121,55 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
     FILE* const file = g_fopen(filename.c_str(), "rb");
 
     if (file == nullptr) {
-        printf ("Unable to load DCP profile '%s' !", filename.c_str());
+        //printf ("Unable to load DCP profile '%s' !", filename.c_str());
         return;
     }
 
-    ExifManager exifManager(file, nullptr, true);
-    exifManager.parseTIFF(false);
-    std::unique_ptr<TagDirectory> tagDir(exifManager.roots.at(0));
+    DCPMetadata md(file);
+    if (!md.parse()) {
+        printf ("Unable to load DCP profile '%s'.", filename.c_str());
+        return;
+    }
 
-    Tag* tag = tagDir->getTag(toUnderlying(TagKey::CALIBRATION_ILLUMINANT_1));
     light_source_1 =
-        tag
-        ? tag->toInt(0, rtexif::SHORT)
-        : -1;
-    tag = tagDir->getTag(toUnderlying(TagKey::CALIBRATION_ILLUMINANT_2));
+        md.find(TAG_KEY_CALIBRATION_ILLUMINANT_1)
+            ? md.toShort(TAG_KEY_CALIBRATION_ILLUMINANT_1)
+            : -1;
     light_source_2 =
-        tag
-        ? tag->toInt(0, rtexif::SHORT)
-        : -1;
+        md.find(TAG_KEY_CALIBRATION_ILLUMINANT_2)
+            ? md.toShort(TAG_KEY_CALIBRATION_ILLUMINANT_2)
+            : -1;
     temperature_1 = calibrationIlluminantToTemperature(light_source_1);
     temperature_2 = calibrationIlluminantToTemperature(light_source_2);
 
-    const bool has_second_hue_sat = tagDir->getTag(toUnderlying(TagKey::PROFILE_HUE_SAT_MAP_DATA_2)); // Some profiles have two matrices, but just one huesat
+    const bool has_second_hue_sat = md.find(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_2); // Some profiles have two matrices, but just one huesat
 
     // Fetch Forward Matrices, if any
-    tag = tagDir->getTag(toUnderlying(TagKey::FORWARD_MATRIX_1));
+    has_forward_matrix_1 = md.find(TAG_KEY_FORWARD_MATRIX_1);
 
-    if (tag) {
-        has_forward_matrix_1 = true;
-
+    if (has_forward_matrix_1) {
         for (int row = 0; row < 3; ++row) {
             for (int col = 0; col < 3; ++col) {
-                forward_matrix_1[row][col] = tag->toDouble((col + row * 3) * 8);
+                forward_matrix_1[row][col] = md.toDouble(TAG_KEY_FORWARD_MATRIX_1, (col + row * 3) * 8);
             }
         }
     }
 
-    tag = tagDir->getTag(toUnderlying(TagKey::FORWARD_MATRIX_2));
+    has_forward_matrix_2 = md.find(TAG_KEY_FORWARD_MATRIX_2);
 
-    if (tag) {
-        has_forward_matrix_2 = true;
-
+    if (has_forward_matrix_2) {
         for (int row = 0; row < 3; ++row) {
             for (int col = 0; col < 3; ++col) {
-                forward_matrix_2[row][col] = tag->toDouble((col + row * 3) * 8);
+                forward_matrix_2[row][col] = md.toDouble(TAG_KEY_FORWARD_MATRIX_2, (col + row * 3) * 8);
             }
         }
     }
 
     // Color Matrix (one is always there)
-    tag = tagDir->getTag(toUnderlying(TagKey::COLOR_MATRIX_1));
-
-    if (!tag) {
-        std::cerr << "DCP '" << filename << "' is missing 'ColorMatrix1'. Skipped." << std::endl;
+    if (!md.find(TAG_KEY_COLOR_MATRIX_1)) {
+        if (settings->verbose) {
+            std::cerr << "DCP '" << filename << "' is missing 'ColorMatrix1'. Skipped." << std::endl;
+        }
         fclose(file);
         return;
     }
@@ -805,29 +1178,24 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
 
     for (int row = 0; row < 3; ++row) {
         for (int col = 0; col < 3; ++col) {
-            color_matrix_1[row][col] = tag->toDouble((col + row * 3) * 8);
+            color_matrix_1[row][col] = md.toDouble(TAG_KEY_COLOR_MATRIX_1, (col + row * 3) * 8);
         }
     }
 
-    tag = tagDir->getTag(toUnderlying(TagKey::PROFILE_LOOK_TABLE_DIMS));
+    if (md.find(TAG_KEY_PROFILE_LOOK_TABLE_DIMS)) {
+        look_info.hue_divisions = md.toInt(TAG_KEY_PROFILE_LOOK_TABLE_DIMS, 0);
+        look_info.sat_divisions = md.toInt(TAG_KEY_PROFILE_LOOK_TABLE_DIMS, 4);
+        look_info.val_divisions = md.toInt(TAG_KEY_PROFILE_LOOK_TABLE_DIMS, 8);
 
-    if (tag) {
-        look_info.hue_divisions = tag->toInt(0);
-        look_info.sat_divisions = tag->toInt(4);
-        look_info.val_divisions = tag->toInt(8);
+        look_info.srgb_gamma = md.find(TAG_KEY_PROFILE_LOOK_TABLE_ENCODING) && md.toInt(TAG_KEY_PROFILE_LOOK_TABLE_ENCODING);
 
-        tag = tagDir->getTag(toUnderlying(TagKey::PROFILE_LOOK_TABLE_ENCODING));
-        look_info.srgb_gamma = tag && tag->toInt(0);
-
-        tag = tagDir->getTag(toUnderlying(TagKey::PROFILE_LOOK_TABLE_DATA));
-        look_info.array_count = tag->getCount() / 3;
-
+        look_info.array_count = md.getCount(TAG_KEY_PROFILE_LOOK_TABLE_DATA) / 3;
         look_table.resize(look_info.array_count);
 
         for (unsigned int i = 0; i < look_info.array_count; i++) {
-            look_table[i].hue_shift = tag->toDouble((i * 3) * tiff_float_size);
-            look_table[i].sat_scale = tag->toDouble((i * 3 + 1) * tiff_float_size);
-            look_table[i].val_scale = tag->toDouble((i * 3 + 2) * tiff_float_size);
+            look_table[i].hue_shift = md.toDouble(TAG_KEY_PROFILE_LOOK_TABLE_DATA, (i * 3) * tiff_float_size);
+            look_table[i].sat_scale = md.toDouble(TAG_KEY_PROFILE_LOOK_TABLE_DATA, (i * 3 + 1) * tiff_float_size);
+            look_table[i].val_scale = md.toDouble(TAG_KEY_PROFILE_LOOK_TABLE_DATA, (i * 3 + 2) * tiff_float_size);
         }
 
         // Precalculated constants for table application
@@ -844,25 +1212,20 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
         look_info.pc.val_step = look_info.hue_divisions * look_info.pc.hue_step;
     }
 
-    tag = tagDir->getTag(toUnderlying(TagKey::PROFILE_HUE_SAT_MAP_DIMS));
+    if (md.find(TAG_KEY_PROFILE_HUE_SAT_MAP_DIMS)) {
+        delta_info.hue_divisions = md.toInt(TAG_KEY_PROFILE_HUE_SAT_MAP_DIMS, 0);
+        delta_info.sat_divisions = md.toInt(TAG_KEY_PROFILE_HUE_SAT_MAP_DIMS, 4);
+        delta_info.val_divisions = md.toInt(TAG_KEY_PROFILE_HUE_SAT_MAP_DIMS, 8);
 
-    if (tag) {
-        delta_info.hue_divisions = tag->toInt(0);
-        delta_info.sat_divisions = tag->toInt(4);
-        delta_info.val_divisions = tag->toInt(8);
+        delta_info.srgb_gamma = md.find(TAG_KEY_PROFILE_HUE_SAT_MAP_ENCODING) && md.toInt(TAG_KEY_PROFILE_HUE_SAT_MAP_ENCODING);
 
-        tag = tagDir->getTag(toUnderlying(TagKey::PROFILE_HUE_SAT_MAP_ENCODING));
-        delta_info.srgb_gamma = tag && tag->toInt(0);
-
-        tag = tagDir->getTag(toUnderlying(TagKey::PROFILE_HUE_SAT_MAP_DATA_1));
-        delta_info.array_count = tag->getCount() / 3;
-
+        delta_info.array_count = md.getCount(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_1) / 3;
         deltas_1.resize(delta_info.array_count);
 
         for (unsigned int i = 0; i < delta_info.array_count; ++i) {
-            deltas_1[i].hue_shift = tag->toDouble((i * 3) * tiff_float_size);
-            deltas_1[i].sat_scale = tag->toDouble((i * 3 + 1) * tiff_float_size);
-            deltas_1[i].val_scale = tag->toDouble((i * 3 + 2) * tiff_float_size);
+            deltas_1[i].hue_shift = md.toDouble(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_1, (i * 3) * tiff_float_size);
+            deltas_1[i].sat_scale = md.toDouble(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_1, (i * 3 + 1) * tiff_float_size);
+            deltas_1[i].val_scale = md.toDouble(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_1, (i * 3 + 2) * tiff_float_size);
         }
 
         delta_info.pc.h_scale =
@@ -882,14 +1245,14 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
         // Second matrix
         has_color_matrix_2 = true;
 
-        tag = tagDir->getTag(toUnderlying(TagKey::COLOR_MATRIX_2));
+        const bool cm2 = md.find(TAG_KEY_COLOR_MATRIX_2);
 
         for (int row = 0; row < 3; ++row) {
             for (int col = 0; col < 3; ++col) {
                 color_matrix_2[row][col] =
-                    tag
-                    ? tag->toDouble((col + row * 3) * 8)
-                    : color_matrix_1[row][col];
+                    cm2
+                        ? md.toDouble(TAG_KEY_COLOR_MATRIX_2, (col + row * 3) * 8)
+                        : color_matrix_1[row][col];
             }
         }
 
@@ -898,27 +1261,21 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
             deltas_2.resize(delta_info.array_count);
 
             // Saturation maps. Need to be unwinded.
-            tag = tagDir->getTag(toUnderlying(TagKey::PROFILE_HUE_SAT_MAP_DATA_2));
-
             for (unsigned int i = 0; i < delta_info.array_count; ++i) {
-                deltas_2[i].hue_shift = tag->toDouble((i * 3) * tiff_float_size);
-                deltas_2[i].sat_scale = tag->toDouble((i * 3 + 1) * tiff_float_size);
-                deltas_2[i].val_scale = tag->toDouble((i * 3 + 2) * tiff_float_size);
+                deltas_2[i].hue_shift = md.toDouble(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_2, (i * 3) * tiff_float_size);
+                deltas_2[i].sat_scale = md.toDouble(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_2, (i * 3 + 1) * tiff_float_size);
+                deltas_2[i].val_scale = md.toDouble(TAG_KEY_PROFILE_HUE_SAT_MAP_DATA_2, (i * 3 + 2) * tiff_float_size);
             }
         }
     }
 
-    tag = tagDir->getTag(toUnderlying(TagKey::BASELINE_EXPOSURE_OFFSET));
-
-    if (tag) {
-        has_baseline_exposure_offset = true;
-        baseline_exposure_offset = tag->toDouble();
+    has_baseline_exposure_offset = md.find(TAG_KEY_BASELINE_EXPOSURE_OFFSET);
+    if (has_baseline_exposure_offset) {
+        baseline_exposure_offset = md.toDouble(TAG_KEY_BASELINE_EXPOSURE_OFFSET);
     }
 
     // Read tone curve points, if any, but disable to RTs own profiles
-    tag = tagDir->getTag(toUnderlying(TagKey::PROFILE_TONE_CURVE));
-
-    if (tag) {
+    if (md.find(TAG_KEY_PROFILE_TONE_CURVE)) {
         std::vector<double> curve_points = {
             static_cast<double>(DCT_Spline) // The first value is the curve type
         };
@@ -926,9 +1283,9 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
         // Push back each X/Y coordinates in a loop
         bool curve_is_linear = true;
 
-        for (int i = 0; i < tag->getCount(); i += 2) {
-            const double x = tag->toDouble((i + 0) * tiff_float_size);
-            const double y = tag->toDouble((i + 1) * tiff_float_size);
+        for (unsigned int i = 0, n = md.getCount(TAG_KEY_PROFILE_TONE_CURVE); i < n; i += 2) {
+            const double x = md.toDouble(TAG_KEY_PROFILE_TONE_CURVE, (i + 0) * tiff_float_size);
+            const double y = md.toDouble(TAG_KEY_PROFILE_TONE_CURVE, (i + 1) * tiff_float_size);
 
             if (x != y) {
                 curve_is_linear = false;
@@ -944,9 +1301,7 @@ DCPProfile::DCPProfile(const Glib::ustring& filename) :
             tone_curve.Set(DiagonalCurve(curve_points, CURVES_MIN_POLY_POINTS));
         }
     } else {
-        tag = tagDir->getTag(toUnderlying(TagKey::PROFILE_TONE_COPYRIGHT));
-
-        if (tag && tag->valueToString().find("Adobe Systems") != std::string::npos) {
+        if (md.find(TAG_KEY_PROFILE_TONE_COPYRIGHT) && md.toString(TAG_KEY_PROFILE_TONE_COPYRIGHT).find("Adobe Systems") != std::string::npos) {
             // An Adobe profile without tone curve is expected to have the Adobe Default Curve, we add that
             std::vector<double> curve_points = {
                 static_cast<double>(DCT_Spline)
@@ -1050,25 +1405,25 @@ void DCPProfile::apply(
 
     const TMatrix work_matrix = ICCStore::getInstance()->workingSpaceInverseMatrix(working_space);
 
-    const Matrix xyz_cam = makeXyzCam(white_balance, pre_mul, cam_wb_matrix, preferred_illuminant); // Camera RGB to XYZ D50 matrix
-
     const std::vector<HsbModify> delta_base = makeHueSatMap(white_balance, preferred_illuminant);
 
     if (delta_base.empty()) {
         apply_hue_sat_map = false;
     }
 
+    const Matrix xyz_cam = makeXyzCam(white_balance, pre_mul, cam_wb_matrix, preferred_illuminant); // Camera RGB to XYZ D50 matrix
+    
     if (!apply_hue_sat_map) {
         // The fast path: No LUT --> Calculate matrix for direct conversion raw -> working space
         float mat[3][3] = {};
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
-                double temp = 0.0;
+                                  
                 for (int k = 0; k < 3; ++k) {
-                    temp += work_matrix[i][k] * xyz_cam[k][j];
+                    mat[i][j] += work_matrix[i][k] * xyz_cam[k][j];
                 }
-                mat[i][j] = temp;
+                                 
             }
         }
 
@@ -1094,11 +1449,11 @@ void DCPProfile::apply(
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
-                double temp = 0.0;
+                                  
                 for (int k = 0; k < 3; ++k) {
-                    temp += prophoto_xyz[i][k] * xyz_cam[k][j];
+                    pro_photo[i][j] += prophoto_xyz[i][k] * xyz_cam[k][j];
                 }
-                pro_photo[i][j] = temp;
+                                       
             }
         }
 
@@ -1106,11 +1461,11 @@ void DCPProfile::apply(
 
         for (int i = 0; i < 3; ++i) {
             for (int j = 0; j < 3; ++j) {
-                double temp = 0.0;
+                                  
                 for (int k = 0; k < 3; ++k) {
-                    temp += work_matrix[i][k] * xyz_prophoto[k][j];
+                    work[i][j] += work_matrix[i][k] * xyz_prophoto[k][j];
                 }
-                work[i][j] = temp;
+                                  
             }
         }
 
@@ -1152,7 +1507,7 @@ void DCPProfile::apply(
     }
 }
 
-void DCPProfile::setStep2ApplyState(const Glib::ustring& working_space, bool use_tone_curve, bool apply_look_table, bool apply_baseline_exposure, DCPProfileApplyState& as_out)
+void DCPProfile::setStep2ApplyState(const Glib::ustring& working_space, bool use_tone_curve, bool apply_look_table, bool apply_baseline_exposure, ApplyState& as_out)
 {
     as_out.data->use_tone_curve = use_tone_curve;
     as_out.data->apply_look_table = apply_look_table;
@@ -1181,11 +1536,9 @@ void DCPProfile::setStep2ApplyState(const Glib::ustring& working_space, bool use
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                double temp = 0.0;
                 for (int k = 0; k < 3; k++) {
-                    temp += prophoto_xyz[i][k] * mWork[k][j];
+                    as_out.data->pro_photo[i][j] += prophoto_xyz[i][k] * mWork[k][j];
                 }
-                as_out.data->pro_photo[i][j] = temp;
             }
         }
 
@@ -1194,20 +1547,18 @@ void DCPProfile::setStep2ApplyState(const Glib::ustring& working_space, bool use
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                double temp = 0.0;
                 for (int k = 0; k < 3; k++) {
-                    temp += mWork[i][k] * xyz_prophoto[k][j];
+                    as_out.data->work[i][j] += mWork[i][k] * xyz_prophoto[k][j];
                 }
-                as_out.data->work[i][j] = temp;
             }
         }
     }
 }
 
-void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int height, int tile_width, const DCPProfileApplyState& as_in) const
+void DCPProfile::step2ApplyTile(float* rc, float* gc, float* bc, int width, int height, int tile_width, const ApplyState& as_in) const
 {
 
-#define FCLIP(a) ((a)>0.f?((a)<65535.5f?(a):65535.5f):0.f)
+#define FCLIP(a) ((a)>0.0?((a)<65535.5?(a):65535.5):0.0)
 #define CLIP01(a) ((a)>0?((a)<1?(a):1):0)
 
     float exp_scale = as_in.data->bl_scale;
@@ -1646,7 +1997,7 @@ std::vector<DCPProfile::HsbModify> DCPProfile::makeHueSatMap(const ColorTemp& wh
     return res;
 }
 
-inline void DCPProfile::hsdApply(const HsdTableInfo& table_info, const std::vector<HsbModify>& table_base, float& h, float& s, float& v) const
+void DCPProfile::hsdApply(const HsdTableInfo& table_info, const std::vector<HsbModify>& table_base, float& h, float& s, float& v) const
 {
     // Apply the HueSatMap. Ported from Adobes reference implementation.
     float hue_shift;
@@ -1799,7 +2150,7 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
 
     std::deque<Glib::ustring> dirs = {
         rt_profile_dir,
-        Glib::build_filename(options.rtdir, "dcpprofiles")        
+        Glib::build_filename(options.rtdir, "dcpprofiles")
     };
 
     while (!dirs.empty()) {
@@ -1831,7 +2182,8 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
                     && lastdot <= sname.size() - 4
                     && !sname.casefold().compare(lastdot, 4, ".dcp")
                     ) {
-                    file_std_profiles[sname.substr(0, lastdot).casefold_collate_key()] = fname; // They will be loaded and cached on demand
+                    const Glib::ustring cam_short_name = sname.substr(0, lastdot).uppercase();
+                    file_std_profiles[cam_short_name] = fname; // They will be loaded and cached on demand
                 }
             } else {
                 // Directory
@@ -1842,10 +2194,11 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
 
         for (const auto& alias : getAliases(rt_profile_dir)) {
             const Glib::ustring alias_name = Glib::ustring(alias.first).uppercase();
-            const std::map<std::string, Glib::ustring>::const_iterator real = file_std_profiles.find(Glib::ustring(alias.second).casefold_collate_key());
+            const Glib::ustring real_name = Glib::ustring(alias.second).uppercase();
+            const std::map<Glib::ustring, Glib::ustring>::const_iterator real = file_std_profiles.find(real_name);
 
             if (real != file_std_profiles.end()) {
-                file_std_profiles[alias_name.casefold_collate_key()] = real->second;
+                file_std_profiles[alias_name] = real->second;
         }
     }
 }
@@ -1867,20 +2220,20 @@ bool DCPStore::isValidDCPFileName(const Glib::ustring& filename) const
 
 DCPProfile* DCPStore::getProfile(const Glib::ustring& filename) const
 {
-    const auto key = filename.casefold_collate_key();
     MyMutex::MyLock lock(mutex);
-    const std::map<std::string, DCPProfile*>::const_iterator iter = profile_cache.find(key);
 
-    if (iter != profile_cache.end()) {
-        return iter->second;
+    const std::map<Glib::ustring, DCPProfile*>::iterator r = profile_cache.find(filename);
+
+    if (r != profile_cache.end()) {
+        return r->second;
     }
 
     DCPProfile* const res = new DCPProfile(filename);
 
     if (res->isValid()) {
         // Add profile
-        profile_cache[key] = res;
-        if (settings->verbose) {
+        profile_cache[filename] = res;
+        if (options.rtSettings.verbose) {
             printf("DCP profile '%s' loaded from disk\n", filename.c_str());
         }
         return res;
@@ -1892,9 +2245,13 @@ DCPProfile* DCPStore::getProfile(const Glib::ustring& filename) const
 
 DCPProfile* DCPStore::getStdProfile(const Glib::ustring& requested_cam_short_name) const
 {
-    const std::map<std::string, Glib::ustring>::const_iterator iter = file_std_profiles.find(requested_cam_short_name.casefold_collate_key());
-    if (iter != file_std_profiles.end()) {
-        return getProfile(iter->second);
+    const Glib::ustring name = requested_cam_short_name.uppercase();
+
+    // Warning: do NOT use map.find(), since it does not seem to work reliably here
+    for (const auto& file_std_profile : file_std_profiles) {
+        if (file_std_profile.first == name) {
+            return getProfile(file_std_profile.second);
+        }
     }
 
     // profile not found, looking if we're in loadAll=false mode

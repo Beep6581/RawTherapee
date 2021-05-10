@@ -28,6 +28,7 @@
 #include "rtengine.h"
 #include "colortemp.h"
 #include "array2D.h"
+#include "dcp.h"
 
 template<typename T>
 class LUT;
@@ -41,9 +42,8 @@ namespace rtengine
 {
 
 class ColorTemp;
-class DCPProfile;
-class DCPProfileApplyState;
 class Imagefloat;
+class DCPProfile;
 class RetinexgaintransmissionCurve;
 class RetinextransmissionCurve;
 
@@ -137,7 +137,7 @@ public:
 
     virtual ImageMatrices* getImageMatrices () = 0;
     virtual bool           isRAW () const = 0;
-    virtual DCPProfile*    getDCP (const procparams::ColorManagementParams &cmp, DCPProfileApplyState &as)
+    virtual DCPProfile*    getDCP (const procparams::ColorManagementParams &cmp, DCPProfile::ApplyState &as)
     {
         return nullptr;
     };
@@ -170,7 +170,7 @@ public:
     {
         outCurve = { 0.0 };
     }
-    
+
     double getDirPyrDenoiseExpComp ( )
     {
         return dirpyrdenoiseExpComp;

@@ -26,8 +26,9 @@
 class Circle;
 class Line;
 class OPIcon;
-class Rectangle;
+class EditRectangle; 
 class RTSurface;
+
 
 struct ControlLine {
     static constexpr int OBJ_COUNT = 4;
@@ -45,7 +46,7 @@ class ControlLineManager: EditSubscriber
 
 protected:
     /** Hidden object for capturing mouse events. */
-    std::unique_ptr<Rectangle> canvas_area;
+    std::unique_ptr<EditRectangle> canvas_area;
     rtengine::Coord drag_delta;
     std::vector<std::unique_ptr<ControlLine>> control_lines;
     CursorShape cursor;

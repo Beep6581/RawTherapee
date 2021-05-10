@@ -323,10 +323,10 @@ Thumbnail* Thumbnail::loadFromImage (const Glib::ustring& fname, int &w, int &h,
 
 namespace {
 
-Image8 *load_inspector_mode(const Glib::ustring &fname, RawMetaDataLocation &rml, eSensorType &sensorType, int &w, int &h)
+Image8 *load_inspector_mode(const Glib::ustring &fname, eSensorType &sensorType, int &w, int &h)
 {
     BENCHFUN
-    
+
     RawImageSource src;
     int err = src.load(fname, true);
     if (err) {
@@ -335,7 +335,7 @@ Image8 *load_inspector_mode(const Glib::ustring &fname, RawMetaDataLocation &rml
 
     src.getFullSize(w, h);
     sensorType = src.getSensorType();
-    
+
     ProcParams neutral;
     neutral.raw.bayersensor.method = RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::FAST);
     neutral.raw.xtranssensor.method = RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::FAST);
@@ -379,7 +379,7 @@ Image8 *load_inspector_mode(const Glib::ustring &fname, RawMetaDataLocation &rml
 
 } // namespace
 
-Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, bool rotate, bool inspectorMode, bool forHistogramMatching)
+Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, eSensorType &sensorType, int &w, int &h, int fixwh, bool rotate, bool inspectorMode, bool forHistogramMatching)
 {
     Thumbnail* tpp = new Thumbnail ();
     tpp->isRaw = 1;
@@ -389,7 +389,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     tpp->colorMatrix[2][2] = 1.0;
 
     if (inspectorMode && !forHistogramMatching && settings->thumbnail_inspector_mode == Settings::ThumbnailInspectorMode::RAW) {
-        Image8 *img = load_inspector_mode(fname, rml, sensorType, w, h);
+        Image8 *img = load_inspector_mode(fname, sensorType, w, h);
         if (!img) {
             delete tpp;
             return nullptr;
@@ -400,7 +400,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
         return tpp;
     }
-    
+
     RawImage *ri = new RawImage (fname);
     unsigned int imageNum = 0;
     int r = ri->loadRaw (false, imageNum, false);
@@ -413,10 +413,6 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
     }
 
     sensorType = ri->getSensorType();
-
-    rml.exifBase = ri->get_exifBase();
-    rml.ciffBase = ri->get_ciffBase();
-    rml.ciffLength = ri->get_ciffLen();
 
     Image8* img = new Image8 ();
     // No sample format detection occurred earlier, so we set them here,
@@ -457,8 +453,8 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
         if (!forHistogramMatching && settings->thumbnail_inspector_mode == Settings::ThumbnailInspectorMode::RAW_IF_NOT_JPEG_FULLSIZE && float(std::max(w, h))/float(std::max(ri->get_width(), ri->get_height())) < 0.9f) {
             delete img;
             delete ri;
-            
-            img = load_inspector_mode(fname, rml, sensorType, w, h);
+
+            img = load_inspector_mode(fname, sensorType, w, h);
             if (!img) {
                 delete tpp;
                 return nullptr;
@@ -466,7 +462,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 
             tpp->scale = 1.;
             tpp->thumbImg = img;
-            
+
             return tpp;
         }
     } else {
@@ -522,28 +518,7 @@ Thumbnail* Thumbnail::loadQuickFromRaw (const Glib::ustring& fname, RawMetaDataL
 #define FISGREEN(filter,row,col) \
     ((filter >> ((((row) << 1 & 14) + ((col) & 1)) << 1) & 3)==1 || !filter)
 
-RawMetaDataLocation Thumbnail::loadMetaDataFromRaw (const Glib::ustring& fname)
-{
-    RawMetaDataLocation rml;
-    rml.exifBase = -1;
-    rml.ciffBase = -1;
-    rml.ciffLength = -1;
-
-    RawImage ri (fname);
-    unsigned int imageNum = 0;
-
-    int r = ri.loadRaw (false, imageNum);
-
-    if ( !r ) {
-        rml.exifBase = ri.get_exifBase();
-        rml.ciffBase = ri.get_ciffBase();
-        rml.ciffLength = ri.get_ciffLen();
-    }
-
-    return rml;
-}
-
-Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocation& rml, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate, bool forHistogramMatching)
+Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, eSensorType &sensorType, int &w, int &h, int fixwh, double wbEq, bool rotate, bool forHistogramMatching)
 {
     RawImage *ri = new RawImage (fname);
     unsigned int tempImageNum = 0;
@@ -591,10 +566,6 @@ Thumbnail* Thumbnail::loadFromRaw (const Glib::ustring& fname, RawMetaDataLocati
     scale_colors (ri, scale_mul, cblack, forHistogramMatching); // enable multithreading when forHistogramMatching is true
 
     ri->pre_interpolate();
-
-    rml.exifBase = ri->get_exifBase();
-    rml.ciffBase = ri->get_ciffBase();
-    rml.ciffLength = ri->get_ciffLen();
 
     tpp->camwbRed = tpp->redMultiplier / pre_mul[0]; //ri->get_pre_mul(0);
     tpp->camwbGreen = tpp->greenMultiplier / pre_mul[1]; //ri->get_pre_mul(1);
@@ -1107,20 +1078,12 @@ IImage8* Thumbnail::quickProcessImage (const procparams::ProcParams& params, int
 // Full thumbnail processing, second stage if complete profile exists
 IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorType sensorType, int rheight, TypeInterpolation interp, const FramesMetaData *metadata, double& myscale, bool forMonitor, bool forHistogramMatching)
 {
-    unsigned int imgNum = 0;
-    if (isRaw) {
-        if (sensorType == ST_BAYER) {
-            imgNum = rtengine::LIM<unsigned int>(params.raw.bayersensor.imageNum, 0, metadata->getFrameCount() - 1);
-        } else if (sensorType == ST_FUJI_XTRANS) {
-            //imgNum = rtengine::LIM<unsigned int>(params.raw.xtranssensor.imageNum, 0, metadata->getFrameCount() - 1)
-        }
-    }
-    std::string camName = metadata->getCamera(imgNum);
-    float shutter = metadata->getShutterSpeed(imgNum);
-    float fnumber = metadata->getFNumber(imgNum);
-    float iso = metadata->getISOSpeed(imgNum);
-    float fcomp = metadata->getExpComp(imgNum);
-    
+    const std::string camName = metadata->getCamera();
+    const float shutter = metadata->getShutterSpeed();
+    const float fnumber = metadata->getFNumber();
+    const float iso = metadata->getISOSpeed();
+    const float fcomp = metadata->getExpComp();
+
     // check if the WB's equalizer value has changed
     if (wbEqual < (params.wb.equal - 5e-4) || wbEqual > (params.wb.equal + 5e-4) || wbTempBias < (params.wb.tempBias - 5e-4) || wbTempBias > (params.wb.tempBias + 5e-4)) {
         wbEqual = params.wb.equal;
@@ -1226,7 +1189,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
             float red = baseImg->r (i, j) * rmi;
             float green = baseImg->g (i, j) * gmi;
             float blue = baseImg->b (i, j) * bmi;
-            
+
             // avoid magenta highlights if highlight recovery is enabled
             if (params.toneCurve.hrenabled && red > MAXVALF && blue > MAXVALF) {
                 baseImg->r(i, j) = baseImg->g(i, j) = baseImg->b(i, j) = CLIP((red + green + blue) / 3.f);
@@ -1392,7 +1355,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
 
     LabImage* labView = new LabImage (fw, fh);
     DCPProfile *dcpProf = nullptr;
-    DCPProfileApplyState as;
+    DCPProfile::ApplyState as;
 
     if (isRaw) {
         cmsHPROFILE dummy;
@@ -1424,7 +1387,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
             }
     }
 
-    
+
     // luminance processing
 //  ipf.EPDToneMap(labView,0,6);
 
@@ -1508,7 +1471,7 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         ipf.ciecam_02float (cieView, adap, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, sk, execsharp, d, dj, yb, rtt);
         delete cieView;
     }
-    
+
     // color processing
     //ipf.colorCurve (labView, labView);
 

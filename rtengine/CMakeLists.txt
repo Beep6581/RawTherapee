@@ -42,8 +42,11 @@ if(NOT WITH_SYSTEM_KLT)
 else()
     include_directories("${KLT_INCLUDE_DIRS}")
 endif()
+if(EXIV2_INCLUDE_DIRS)
+    include_directories("${EXIV2_INCLUDE_DIRS}")
+endif()
 
-link_directories("${PROJECT_SOURCE_DIR}/rtexif"
+link_directories(
     "${EXPAT_LIBRARY_DIRS}"
     "${EXTRA_LIBDIR}"
     "${FFTW3F_LIBRARY_DIRS}"
@@ -208,7 +211,7 @@ endif()
 
 set_target_properties(rtengine PROPERTIES COMPILE_FLAGS "${RTENGINE_CXX_FLAGS}")
 
-target_link_libraries(rtengine rtexif
+target_link_libraries(rtengine
     ${EXPAT_LIBRARIES}
     ${EXTRA_LIB}
     ${FFTW3F_LIBRARIES}
@@ -225,7 +228,8 @@ target_link_libraries(rtengine rtexif
     ${LENSFUN_LIBRARIES}
     ${RSVG_LIBRARIES}
     ${KLT_LIBRARIES}
-)
+    ${EXIV2_LIBRARIES}
+    )
 
 if(OpenMP_FOUND)
     target_link_libraries(rtengine ${OpenMP_CXX_LIBRARIES})
