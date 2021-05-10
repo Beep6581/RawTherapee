@@ -425,39 +425,39 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
 
 
         // drawing points
-            if (low_enabled) {
-                cr->set_source_rgb(0.1, 0.1, 0.1);//black for red in Ciexy
-                if (litPoint == LOW) {
-                    cr->arc(loa, lob, 5 * s, 0, 2. * rtengine::RT_PI);
-                } else {
-                    cr->arc(loa, lob, 3 * s, 0, 2. * rtengine::RT_PI);
-                }
-                cr->fill();
-            }
-
-            if (ciexy_enabled) {
-                cr->set_source_rgb(0.5, 0.5, 0.5);//gray for green
-                if (litPoint == GRE) {
-                    cr->arc(grx, gry, 5 * s, 0, 2. * rtengine::RT_PI);
-                } else {
-                    cr->arc(grx, gry, 3 * s, 0, 2. * rtengine::RT_PI);
-                }
-                cr->fill();
-            }
-
-            if (ciexy_enabled) {//White Point
-                cr->set_source_rgb(1., 1., 1.);//White
-                cr->arc(whx, why, 3 * s, 0, 2. * rtengine::RT_PI);
-                cr->fill();
-            }
-
-            cr->set_source_rgb(0.9, 0.9, 0.9);//white for blue en Ciexy
-            if (litPoint == HIGH) {
-                cr->arc(hia, hib, 5 * s, 0, 2. * rtengine::RT_PI);
+        if (low_enabled) {
+            cr->set_source_rgb(0.1, 0.1, 0.1);//black for red in Ciexy
+            if (litPoint == LOW) {
+                cr->arc(loa, lob, 5 * s, 0, 2. * rtengine::RT_PI);
             } else {
-                cr->arc(hia, hib, 3 * s, 0, 2. * rtengine::RT_PI);
+                cr->arc(loa, lob, 3 * s, 0, 2. * rtengine::RT_PI);
             }
             cr->fill();
+        }
+
+        if (ciexy_enabled) {
+            cr->set_source_rgb(0.5, 0.5, 0.5);//gray for green
+            if (litPoint == GRE) {
+                cr->arc(grx, gry, 5 * s, 0, 2. * rtengine::RT_PI);
+            } else {
+                cr->arc(grx, gry, 3 * s, 0, 2. * rtengine::RT_PI);
+            }
+            cr->fill();
+        }
+
+        if (ciexy_enabled) {//White Point
+            cr->set_source_rgb(1., 1., 1.);//White
+            cr->arc(whx, why, 3 * s, 0, 2. * rtengine::RT_PI);
+            cr->fill();
+        }
+
+        cr->set_source_rgb(0.9, 0.9, 0.9);//white for blue en Ciexy
+        if (litPoint == HIGH) {
+            cr->arc(hia, hib, 5 * s, 0, 2. * rtengine::RT_PI);
+        } else {
+            cr->arc(hia, hib, 3 * s, 0, 2. * rtengine::RT_PI);
+        }
+        cr->fill();
     }
 
     copySurface(crf);

@@ -28,7 +28,6 @@
 #include "toolpanel.h"
 
 #include "../rtengine/imagedata.h"
-#include "../rtengine/procparams.h"
 
 class ICMPanelListener
 {

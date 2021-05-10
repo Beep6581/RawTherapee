@@ -1608,6 +1608,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
                 
                 tmpImage1.reset();
+
                 if (prim == 12) {//pass red gre blue xy in function of area dats Ciexy
                     float redgraphx =  params->icm.labgridcieALow;
                     float redgraphy =  params->icm.labgridcieBLow;
@@ -1642,36 +1643,48 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     //printf("rx=%f ry=%f \n", (double) r_x, (double) r_y);
                     float wx = 0.33f;
                     float wy = 0.33f;
-                    if (illum == 1) { //D41
+
+                    switch (illum) {
+                    case 1://D41
                         wx = 0.37798f;
                         wy = 0.38123f;
-                    } else if (illum == 2) {//D50
+                        break;
+                    case 2://D50
                         wx = 0.3457f;
                         wy = 0.3585f;
-                    } else if (illum == 3) {//D55
+                        break;
+                    case 3://D55
                         wx = 0.3324f;
                         wy = 0.3474f;
-                    } else if (illum == 4) {//D60
+                        break;
+                    case 4://D60
                         wx = 0.3217f;
                         wy = 0.3377f;
-                    } else if (illum == 5) {//D65
+                        break;
+                    case 5://D65
                         wx = 0.3127f;
                         wy = 0.3290f;
-                    } else if (illum == 6) {//D80
+                        break;
+                    case 6://D80
                         wx = 0.2937f;
                         wy = 0.3092f;
-                    } else if (illum == 7) {//D120
+                        break;
+                    case 7://D120
                         wx = 0.2697f;
                         wy = 0.2808f;
-                    } else if (illum == 8) {//stdA
+                        break;
+                    case 8://stdA
                         wx = 0.4476f;
                         wy = 0.4074f;
-                    } else if (illum == 9) {//2000K
+                        break;
+                    case 9://2000K
                         wx = 0.5266f;
                         wy = 0.4133f;
-                    } else if (illum == 10) {//1500K
+                        break;
+                    case 10://1500K
                         wx = 0.5857f;
                         wy = 0.3932f;
+                        break;
                     }
 
                     if (primListener) {
