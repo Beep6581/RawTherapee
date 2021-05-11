@@ -1491,7 +1491,7 @@ void Crop::update(int todo)
 
             parent->ipf.rgb2lab(*tmpImage1, *labnCrop, params.icm.workingProfile);
             //labnCrop and provis
-            if(pres > 0.f && params.icm.wprim != "def") {
+            if(provis) {
                 parent->ipf.preserv(labnCrop, provis.get(), GW, GH);
             }
         }

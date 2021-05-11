@@ -519,28 +519,43 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     }
 
     if(prim != 0) {
-        if(prim == 1) {
+        switch (prim) {
+        case 1://sRGB
             profile = "sRGB";
-        } else if(prim == 2) {
+            break;
+        case 2:
             profile = "Adobe RGB";
-        } else if(prim == 3) {
+            break;
+        case 3:
             profile = "ProPhoto";
-        } else if(prim == 4) {
+            break;
+        case 4:
             profile = "Rec2020";
-        } else if(prim == 5) {
+            break;
+        case 5:
             profile = "ACESp1";
-        } else if(prim == 6) {
+            break;
+        case 6:
             profile = "WideGamut";
-        } else if(prim == 7) {
+            break;
+        case 7:
             profile = "ACESp0";
-        } else if(prim == 8) {
+            break;
+        case 8:
             profile = "BruceRGB";
-        } else if(prim == 9) {
+            break;
+        case 9:
             profile = "Beta RGB";
-        } else if(prim == 10) {
+            break;
+        case 10:
             profile = "BestRGB";
-        } else if(prim == 11 || prim == 12) {
+            break;
+        case 11:
             profile = "Custom";
+            break;
+        case 12:
+            profile = "Custom";
+            break;
         }
     }
     
@@ -698,27 +713,35 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         // 7 parameters for smoother curves
         cmsCIExyY xyD;
         Glib::ustring ills = "D50";
-        if (illum == 1) {
+        switch (illum) {
+        case 1:
             tempv4 = 4100.;
             ills = "D41";
-        } else if (illum == 2) {
+            break;
+        case 2:
             tempv4 = 5003.;
             ills = "D50";
-        } else if (illum == 3) {
+            break;
+        case 3:
             tempv4 = 5500.;
             ills = "D55";
-        } else if (illum == 4) {
+            break;
+        case 4:
             tempv4 = 6004.;
             ills = "D60";
-        } else if (illum == 5) {
+            break;
+        case 5:
             tempv4 = 6504.;
             ills = "D65";
-        } else if (illum == 6) {
+            break;
+        case 6:
             tempv4 = 8000.;
             ills = "D80";
-        } else if (illum == 7) {
+            break;
+        case 7:
             tempv4 = 12000.;
             ills = "D120";
+            break;
         }
 
         cmsWhitePointFromTemp(&xyD, tempv4);

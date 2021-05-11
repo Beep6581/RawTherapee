@@ -1586,7 +1586,7 @@ private:
 
             ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
             // labView and provis
-            if(pres > 0.f) {
+            if(provis) {
                 ipf.preserv(labView, provis.get(), GW, GH);
             }
         }
