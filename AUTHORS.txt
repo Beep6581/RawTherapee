@@ -33,6 +33,7 @@ Development contributors, in last name alphabetical order:
   Jan Rinze
   Alberto Romei
   Ben S.
+  Simon Segerblom Rex
   Andrey Skvortsov
   Fabio Suprani
   Anders Torger
