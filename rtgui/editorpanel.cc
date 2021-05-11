@@ -2080,12 +2080,25 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
 
         // TODO: Just list all file with a suitable name instead of brute force...
         int tries = 1;
-
         while (Glib::file_test (fileName, Glib::FILE_TEST_EXISTS) && tries < 1000) {
             fileName = Glib::ustring::compose ("%1-%2.%3", fname, tries, sf.format);
             tries++;
         }
 
+        bool foundwhitespace = true;
+        while (foundwhitespace) {
+            std::size_t foundws = fileName.find(' ');
+            std::string str2="_";//replace " " by "_" but we can replace with another
+            if (foundws!=std::string::npos){
+              //  std::cout << "ws found at: " << foundws << '\n';
+                fileName.replace(foundws, 1, str2);
+             //   printf("Filename new=%s \n", fileName.c_str());
+            } else {
+                foundwhitespace = false;
+            }
+            
+        }
+        
         if (tries == 1000) {
             delete img;
             return false;
