@@ -980,6 +980,7 @@ LocallabRetinex::LocallabRetinex():
     inversretConn = inversret->signal_toggled().connect(sigc::mem_fun(*this, &LocallabRetinex::inversretChanged));
 
     // Add Retinex specific widgets to GUI
+    pack_start(*sensih);
     ToolParamBlock* const auxBox = Gtk::manage(new ToolParamBlock());
 //    Gtk::Frame* const dehaFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_DEHAFRA")));
     dehaFrame->set_label_align(0.025, 0.5);
@@ -994,9 +995,9 @@ LocallabRetinex::LocallabRetinex():
     deharetiBox->pack_start(*loglin);
     retiFrame->add(*deharetiBox);
     auxBox->add(*retiFrame);
-    ToolParamBlock* const scopeBox = Gtk::manage(new ToolParamBlock());
-    scopeBox->pack_start(*sensih);
-    auxBox->add(*scopeBox);
+ //   ToolParamBlock* const scopeBox = Gtk::manage(new ToolParamBlock());
+ //   scopeBox->pack_start(*sensih);
+ //   auxBox->add(*scopeBox);
     pack_start(*auxBox);
     ToolParamBlock* const retiBox = Gtk::manage(new ToolParamBlock());
     retiBox->pack_start(*retinexMethod);
