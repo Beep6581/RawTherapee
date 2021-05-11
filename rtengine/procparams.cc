@@ -6561,7 +6561,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 {RI_RELATIVE, "Relative"},
                 {RI_SATURATION, "Saturation"},
                 {RI_ABSOLUTE, "Absolute"}
-
             },
             icm.aRendIntent,
             keyFile
@@ -6576,7 +6575,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 {RI_RELATIVE, "Relative"},
                 {RI_SATURATION, "Saturation"},
                 {RI_ABSOLUTE, "Absolute"}
-
             },
             icm.outputIntent,
             keyFile
