@@ -484,7 +484,7 @@ void Options::setDefaults()
     menuGroupFileOperations = true;
     menuGroupProfileOperations = true;
     menuGroupExtProg = true;
-    showtooltip = true;
+    showtooltip = false;
 
     ICCPC_primariesPreset = "sRGB",
     ICCPC_redPrimaryX = 0.6400;

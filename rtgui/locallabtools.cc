@@ -791,6 +791,7 @@ LocallabColor::LocallabColor():
 
     // Add Color & Light specific widgets to GUI
     pack_start(*reparcol);
+    pack_start(*invers);
     ToolParamBlock* const lumBox = Gtk::manage(new ToolParamBlock());
     lumBox->pack_start(*lightness);
     lumBox->pack_start(*contrast);
@@ -813,7 +814,7 @@ LocallabColor::LocallabColor():
     pack_start(*structcol);
     pack_start(*blurcolde);
     pack_start(*softradiuscol);
-    pack_start(*invers);
+//    pack_start(*invers);
     ToolParamBlock* const colBox3 = Gtk::manage(new ToolParamBlock());
     colBox3->pack_start(*maskusablec, Gtk::PACK_SHRINK, 0);
     colBox3->pack_start(*maskunusablec, Gtk::PACK_SHRINK, 0);
@@ -2723,6 +2724,7 @@ LocallabExposure::LocallabExposure():
     // Add Color & Light specific widgets to GUI
     pack_start(*sensiex);
     pack_start(*reparexp);
+    pack_start(*inversex);
     ToolParamBlock* const pdeBox = Gtk::manage(new ToolParamBlock());
     pdeBox->pack_start(*laplacexp);
     pdeBox->pack_start(*linear);
@@ -2776,7 +2778,7 @@ LocallabExposure::LocallabExposure():
     expgradexp->add(*gradBox, false);
     pack_start(*expgradexp);
     pack_start(*softradiusexp);
-    pack_start(*inversex);
+ //   pack_start(*inversex);
     ToolParamBlock* const maskexpBox = Gtk::manage(new ToolParamBlock());
     maskexpBox->pack_start(*showmaskexpMethod, Gtk::PACK_SHRINK, 4);
     maskexpBox->pack_start(*showmaskexpMethodinv, Gtk::PACK_SHRINK, 4);
@@ -4029,6 +4031,7 @@ LocallabShadow::LocallabShadow():
 
     // Add Shadow highlight specific widgets to GUI
     pack_start(*reparsh);
+    pack_start(*inverssh);
     pack_start(*shMethod);
 
     for (const auto multiplier : multipliersh) {
@@ -4064,7 +4067,7 @@ LocallabShadow::LocallabShadow():
     gradSHBox->pack_start(*angSH);
     expgradsh->add(*gradSHBox, false);
     pack_start(*expgradsh);
-    pack_start(*inverssh);
+//    pack_start(*inverssh);
     ToolParamBlock* const maskSHBox = Gtk::manage(new ToolParamBlock());
     maskSHBox->pack_start(*showmaskSHMethod, Gtk::PACK_SHRINK, 4);
     maskSHBox->pack_start(*showmaskSHMethodinv, Gtk::PACK_SHRINK, 4);
@@ -6657,6 +6660,7 @@ LocallabBlur::LocallabBlur():
     // Add Blur, Noise & Denoise specific widgets to GUI
     ToolParamBlock* const blnoisebox = Gtk::manage(new ToolParamBlock());
     blnoisebox->pack_start(*sensibn);
+    blnoisebox->pack_start(*invbl);
     blnoisebox->pack_start(*blMethod);
     blnoisebox->pack_start(*fftwbl, Gtk::PACK_SHRINK, 0);
     blnoisebox->pack_start(*radius);
@@ -6689,7 +6693,7 @@ LocallabBlur::LocallabBlur():
     blnoisebox->pack_start(*expdenoise2);
 //    blnoisebox->pack_start(*sensibn);
 //    blnoisebox->pack_start(*blurMethod);
-    blnoisebox->pack_start(*invbl);
+//    blnoisebox->pack_start(*invbl);
     blnoisebox->pack_start(*chroMethod);
     // blnoisebox->pack_start(*activlum);
     expblnoise->add(*blnoisebox, false);
