@@ -2085,21 +2085,25 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
             tries++;
         }
 
-        bool foundwhitespace = true;
-        while (foundwhitespace) {
-            std::size_t foundws = fileName.find(' ');
-            std::string str2="_";//replace " " by "_" but we can replace with another
-            if (foundws!=std::string::npos){
-                fileName.replace(foundws, 1, str2);
-                if (options.rtSettings.verbose) {
-                    printf("New file name without white-space=%s \n", fileName.c_str());
+#ifdef __WIN32__   //only for Windows
+        if(options.editorToSendTo == 1){//if user choose Gimp
+            bool foundwhitespace = true;
+            while (foundwhitespace) {
+                std::size_t foundws = fileName.find(' ');
+                std::string str2="_";//replace " " by "_" but we can replace with another
+                if (foundws!=std::string::npos){
+                    fileName.replace(foundws, 1, str2);
+                    if (options.rtSettings.verbose) {
+                        printf("New file name without white-space=%s \n", fileName.c_str());
+                    }
+                } else {
+                    foundwhitespace = false;
                 }
-            } else {
-                foundwhitespace = false;
-            }
             
+            }
         }
-        
+#endif
+
         if (tries == 1000) {
             delete img;
             return false;
