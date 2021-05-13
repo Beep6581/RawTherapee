@@ -52,8 +52,8 @@ private:
     PLDBridge* pldBridge;
     bool is_fullscreen;
     bool is_minimized;
+    sigc::connection onConfEventConn;
     bool on_delete_has_run;
-    bool on_conf_listener_active;
     Gtk::Button * btn_fullscreen;
 
     Gtk::Image *iFullscreen, *iFullscreen_exit;

@@ -283,9 +283,9 @@ RTWindow::RTWindow ()
     on_delete_has_run = false;
     is_fullscreen = false;
     is_minimized = false;
-    on_conf_listener_active = true;
     property_destroy_with_parent().set_value (false);
     signal_window_state_event().connect ( sigc::mem_fun (*this, &RTWindow::on_window_state_event) );
+    onConfEventConn = signal_configure_event().connect ( sigc::mem_fun (*this, &RTWindow::on_configure_event) );
     signal_key_press_event().connect ( sigc::mem_fun (*this, &RTWindow::keyPressed) );
 
     if (simpleEditor) {
@@ -523,11 +523,9 @@ void RTWindow::showErrors()
 
 bool RTWindow::on_configure_event (GdkEventConfigure* event)
 {
-    if (on_conf_listener_active) { // Avoid getting size and position while window is maximizing, getting fullscreen, ...
-        if (!options.windowMaximized && !is_fullscreen && !is_minimized) {
-            get_size (options.windowWidth, options.windowHeight);
-            get_position (options.windowX, options.windowY);
-        }
+    if (!options.windowMaximized && !is_fullscreen && !is_minimized) {
+        get_size (options.windowWidth, options.windowHeight);
+        get_position (options.windowX, options.windowY);
     }
     
     printf("Position: X=%d, Y=%d\n", options.windowX, options.windowY);
@@ -540,17 +538,10 @@ bool RTWindow::on_configure_event (GdkEventConfigure* event)
 
 bool RTWindow::on_window_state_event (GdkEventWindowState* event)
 {
-    if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED) {
-        options.windowMaximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
-    }
-    
-    if (event->changed_mask & GDK_WINDOW_STATE_ICONIFIED) {
-        is_minimized = event->new_window_state & GDK_WINDOW_STATE_ICONIFIED;
-    }
-    
-    if (event->changed_mask & GDK_WINDOW_STATE_FULLSCREEN) {
-        is_fullscreen = event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN;
-    }
+    // Retrieve RT window states
+    options.windowMaximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
+    is_minimized = event->new_window_state & GDK_WINDOW_STATE_ICONIFIED;
+    is_fullscreen = event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN;
     
     printf("is_minimized: %d\n", is_minimized);
     printf("is_maximized: %d\n", options.windowMaximized);
@@ -993,7 +984,7 @@ void RTWindow::error(const Glib::ustring& descr)
 
 void RTWindow::toggle_fullscreen ()
 {
-    on_conf_listener_active = false; // Avoid getting size and position while window is getting fullscreen
+    onConfEventConn.block(true); // Avoid getting size and position while window is getting fullscreen
     
     if (is_fullscreen) {
         unfullscreen();
@@ -1011,7 +1002,7 @@ void RTWindow::toggle_fullscreen ()
         }
     }
     
-    on_conf_listener_active = true;
+    onConfEventConn.block(false);
 }
 
 void RTWindow::SetEditorCurrent()
@@ -1117,7 +1108,7 @@ bool RTWindow::splashClosed (GdkEventAny* event)
 
 void RTWindow::setWindowSize ()
 {
-    on_conf_listener_active = false; // Avoid getting size and position while window is being moved, maximized, ...
+    onConfEventConn.block(true); // Avoid getting size and position while window is being moved, maximized, ...
     
     Gdk::Rectangle lMonitorRect;
     get_screen()->get_monitor_geometry (std::min (options.windowMonitor, Gdk::Screen::get_default()->get_n_monitors() - 1), lMonitorRect);
@@ -1154,7 +1145,7 @@ void RTWindow::setWindowSize ()
 #endif
     }
     
-    on_conf_listener_active = true;
+    onConfEventConn.block(false);
 }
 
 void RTWindow::get_position(int& x, int& y) const
