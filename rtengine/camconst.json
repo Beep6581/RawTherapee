@@ -815,7 +815,8 @@ Camera constants:
 // Canon mid-range DSLRs (Rebels)
 
     { // Quality C
-        "make_model": [ "Canon EOS 400D DIGITAL" ],
+        "make_model": "Canon EOS 400D DIGITAL",
+        "dcraw_matrix": [ 7054, -1501, -990, -8156, 15544, 2812, -1278, 1414, 7796 ],
         "ranges": {
             "white": 4056
         }
@@ -1264,6 +1265,7 @@ Camera constants:
 
     { // Quality C
         "make_model": "Canon PowerShot SX50 HS",
+        "dcraw_matrix": [ 12432, -4753, -1247, -2110, 10691, 1629, -412, 1623, 4926 ],
         "ranges": { "white": 4050 }
     },
 
@@ -1896,6 +1898,7 @@ Camera constants:
 
     { // Quality C, only raw crop for highres mode
         "make_model": "OLYMPUS E-M1X",
+        "dcraw_matrix": [ 11896, -5110, -1076, -3181, 11378, 2048, -519, 1224, 5165 ], // DNG v11.2
         "raw_crop": [ 0, 0, 10388, 0 ] // Highres mode largest valid, full 80Mp 10400X7792, works also for non highres mode because larger width will be ignored
     },
 
@@ -1916,6 +1919,7 @@ Camera constants:
 
     { // Quality C
         "make_model": [ "OLYMPUS E-PL9" ],
+        "dcraw_matrix": [ 8380, -2630, -639, -2887, 10725, 2496, -628, 1427, 5437 ],
         "ranges": { "white": 4080 } // nominal 4093
     },
 
@@ -2657,6 +2661,7 @@ Camera constants:
 
     { // Quality C, correction for frame width
         "make_model": [ "Sony DSC-RX0", "Sony DSC-RX0M2" ],
+        "dcraw_matrix": [ 9396, -3507, -843, -2497, 11111, 1572, -343, 1355, 5089 ],
         "raw_crop": [ 0, 0, -8, 0 ] // 8 rightmost columns are garbage
     },
 
@@ -2710,6 +2715,7 @@ Camera constants:
 
     { // Quality C,
         "make_model": "Sony ILCE-7RM4",
+        "dcraw_matrix": [ 7662, -2686, -660, -5240, 12965, 2530, -796, 1508, 6167 ],
         "raw_crop": [ 0, 0, -32, 0 ] // full raw frame 9600x6376 - 32 rightmost columns are garbage. Using -32 instead of 9568 to support also 16-shot pixelshift files
     },
 
@@ -2734,7 +2740,9 @@ Camera constants:
 
     { // Quality C
         "make_model": [ "Sony DSC-HX99" ],
-        "raw_crop": [ 0, 0, -8, 0 ] // 8 rightmost columns are garbage
+        "dcraw_matrix": [ 13076, -5686, -1481, -4027, 12851, 1251, -167, 725, 4937 ],
+        "raw_crop": [ 0, 0, -8, 0 ], // 8 rightmost columns are garbage
+        "ranges": { "black": 800, "white": 16300 }
     },
 
     { // Quality B
