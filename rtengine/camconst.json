@@ -314,7 +314,7 @@ Camera constants:
 
     { // Quality A
         "make_model": "Canon EOS 5D Mark II",
-        "dcraw_matrix": [ 4716,603,-830,-7798,15474,2480,-1496,1937,6651 ],
+        "dcraw_matrix": [ 4716,603,-830,-7799,15474,2480,-1496,1937,6651 ],
         "ranges": {
             // black levels are read from raw masked pixels
             // white levels are same for all colors, but vary on ISO
@@ -415,7 +415,7 @@ Camera constants:
 
     { // Quality A
         "make_model": "Canon EOS 5D Mark III",
-        "dcraw_matrix": [ 6722,-635,-963,-4287,12460,2028,-908,2162,5668 ],
+        "dcraw_matrix": [ 6722,-635,-963,-4287,12460,2028,-909,2162,5668 ],
         "ranges": {
             // black levels are read from raw masked pixels
             // white levels are same for all colors, but vary on ISO
@@ -443,7 +443,7 @@ Camera constants:
     { // Quality B, some intermediate ISO samples missing, LENR samples missing so White Levels not properly indicated, some aperture scaling missing
         "make_model": "Canon EOS 5D Mark IV",
         "global_green_equilibration" : true,
-        "dcraw_matrix": [ 6446,-366,-864,-4436,12204,2513,-952,2496,6348 ], // DNG_V9.7 D65
+        "dcraw_matrix": [ 6445,-366,-864,-4436,12204,2513,-953,2496,6348 ], // DNG v13.2
         "raw_crop": [ 136, 42, 6740, 4500 ], // full size 6880x4544, official crop 148,54,6867,4533
         "masked_areas": [ 54, 4, 4534, 132 ],
         "ranges": {
@@ -569,7 +569,7 @@ Camera constants:
     { // Quality A, ISO and aperture WL data by CharlyW at RawTherapee forums, missing samples safely guessed
         "make_model": "Canon EOS 7D",
         "dcraw_matrix": [ 5962,-171,-732,-4189,12307,2099,-911,1981,6304 ], // Colin Walker
-        //"dcraw_matrix": [ 6844,-996,-856,-3876,11761,2396,-593,1772,6198 ], // dcraw
+        //"dcraw_matrix": [ 6843,-996,-856,-3876,11761,2396,-593,1772,6198 ], // DNG v13.2
         "ranges": {
             "white": [
                 { "iso": [ 100, 125 ], "levels": 13480 }, // typical 13584
@@ -623,7 +623,7 @@ Camera constants:
 
     { // Quality A - ISO and aperture WL data by Ilias at Avclub gr forums
         "make_model": "Canon EOS 40D",
-        "dcraw_matrix": [ 6071,-747,-856,-7653,15365,2441,-2025,2553,7315 ],
+        "dcraw_matrix": [ 6070,-746,-856,-7652,15365,2442,-2026,2553,7314 ], // DNG v13.2
         "raw_crop": [ 30, 18, 3908, 2602 ],
         "masked_areas": [ 20, 2, 2616, 20 ],
         "ranges": {
@@ -652,7 +652,7 @@ Camera constants:
 
     { // Quality A, ISO and aperture WL data by Ayshih at Magic Lantern forums
         "make_model": "Canon EOS 50D",
-        "dcraw_matrix": [ 4920,616,-593,-6493,13964,2784,-1774,3178,7005 ],
+        "dcraw_matrix": [ 4920,616,-593,-6494,13965,2784,-1774,3178,7004 ], // DNG v13.2
         "ranges": {
             "white": [
                 { "iso": [ 100, 125 ], "levels": 13300 }, // typical 13432
@@ -702,7 +702,8 @@ Camera constants:
 
     { // Quality A, ISO and aperture WL data by Shalrath at RawTherapee forums
         "make_model": "Canon EOS 60D",
-        "dcraw_matrix": [ 6719,-994,-925,-4408,12426,2211,-887,2129,6051 ],
+        "dcraw_matrix": [ 6719,-994,-925,-4408,12426,2211,-887,2129,6051 ], // Origin unknown
+        //"dcraw_matrix": [ 6941, -1164, -857, -3825, 11597, 2534, -416, 1540, 6039 ], // DNG v13.2
         "ranges": {
             "white": [
                 { "iso": [ 100, 125 ], "levels": 13480 }, // typical 13583
@@ -755,7 +756,7 @@ Camera constants:
 
     { // Quality B, White Levels not properly indicated, aperture scaling..missing scaling factors are guessed
         "make_model": "Canon EOS 80D",
-        "dcraw_matrix": [ 7457,-671,-937,-4849,12495,2643,-1213,2354,5492 ], // DNG_V9.5 D65
+        "dcraw_matrix": [ 7457,-672,-937,-4849,12495,2643,-1213,2354,5492 ], // DNG v13.2
         "raw_crop": [ 264, 34, 6024, 4022 ], // full size 6288x4056, official crop 276,46,6275,4045
         "masked_areas": [ 40, 96, 4000, 260 ],
         "ranges": {
@@ -936,7 +937,7 @@ Camera constants:
 
     { // Quality C, white levels and aperture scaling copied from Canon EOS77d
         "make_model": [ "Canon EOS Rebel T7i", "Canon EOS 800D", "Canon EOS Kiss X9i" ],
-        "dcraw_matrix": [ 6970,-512,-968,-4425,12161,2553,-739,1982,5601 ], // DNG_V9.10.1 D65
+        "dcraw_matrix": [ 6969,-512,-968,-4425,12161,2553,-739,1981,5601 ], // DNG v13.2
         "raw_crop": [ 264, 36, 6024, 4020 ], // full size 6288x4056, official crop 276,48,6275,4047
         "masked_areas": [ 40, 96, 4000, 260 ],
         "ranges": {
@@ -1067,7 +1068,7 @@ Camera constants:
 
     { // Quality C, inconsistent WL per ISO, missing scaling factors
         "make_model": "Canon EOS M10",
-        "dcraw_matrix": [ 6400,-480,-888,-5294,13416,2047,-1296,2203,6137 ], // DNGv9.3 D65
+        "dcraw_matrix": [ 6400,-480,-888,-5294,13415,2047,-1296,2203,6137 ], // DNG v13.2
         "ranges": {
             "white": [
                 { "iso": [ 100, 125, 160, 320, 500, 2000, 4000, 6400 ], "levels": 16300 }, // typical 16383
@@ -1236,7 +1237,8 @@ Camera constants:
 
     { // Quality B
         "make_model": "Canon PowerShot G3 X",
-        "dcraw_matrix": [ 9701,-3857,-921,-3149,11537,1817,-786,1817,5147 ], // DNG_V9.1.1 D65
+        //"dcraw_matrix": [ 9701,-3857,-921,-3149,11537,1817,-786,1817,5147 ], // DNG_V9.1.1 D65
+        "dcraw_matrix": [ 6941, -1164, -857, -3825, 11597, 2534, -416, 1540, 6039 ], // DNG v13.2 - looks worse
         "raw_crop": [ 128, 36, 5480, 3656 ], // Default official 3/2 frame 5472X3648, 4pix borders, Left Border 132-4, Top border 40-4
         "masked_areas": [ 40, 4, 3680, 76 ],
         "ranges": { "white": 16300 }
@@ -1244,7 +1246,7 @@ Camera constants:
 
     { // Quality B,
         "make_model": "Canon PowerShot G7 X",
-        "dcraw_matrix": [ 9602,-3823,-937,-2984,11495,1675,-407,1415,5049 ], // DNG_V8.7 D65
+        "dcraw_matrix": [ 9602,-3823,-937,-2984,11495,1675,-407,1414,5049 ], // DNG v13.2
         //"raw_crop": [ 116, 24, 5504, 3680 ], // Sensor size 5632x3710. Largest useful frame 120-5616X28-3702 = 5504x3682, 4pix RTborders, Left Border 120-4, Top border 28-4
         "raw_crop": [ 128, 36, 5480, 3656 ], // Default official 3/2 frame 5472X3648, 4pix borders, Left Border 132-4, Top border 40-4
         "masked_areas": [ 40, 4, 3680, 76 ],
@@ -1252,17 +1254,27 @@ Camera constants:
     },
 
     { // Quality B,
-        "make_model": [ "Canon PowerShot G5 X", "Canon PowerShot G9 X", "Canon PowerShot G7 X Mark II", "Canon PowerShot G9 X Mark II" ],
-        "dcraw_matrix": [ 9602,-3823,-937,-2984,11495,1675,-407,1415,5049 ], // DNG_V8.7 D65
+        "make_model": [ "Canon PowerShot G5 X", "Canon PowerShot G7 X Mark II" ],
+        "dcraw_matrix": [ 9602,-3823,-937,-2984,11495,1675,-407,1414,5049 ], // DNG v13.2
         //"raw_crop": [ 116, 24, 5504, 3680 ], // Sensor size 5632x3710. Largest useful frame 120-5616X28-3702 = 5504x3682, 4pix RTborders, Left Border 120-4, Top border 28-4
         "raw_crop": [ 128, 36, 5480, 3656 ], // Default official 3/2 frame 5472X3648, 4pix borders, Left Border 132-4, Top border 40-4
         "masked_areas": [ 40, 4, 3680, 76 ],
         "ranges": { "white": 15500 } // some sporadic samples are clipped lower than 16383, one ISO125 sample at 15500
     },
 
+    { // Quality B, separated entry from above due to alternate color matrix (effect unsure)
+        "make_model": "Canon PowerShot G9 X Mark II",
+        "dcraw_matrix": [ 10056, -4131, -944, -2576, 11143, 1625, -239, 1293, 5179 ], // DNG v13.2
+        //"dcraw_matrix": [ 9602,-3823,-937,-2984,11495,1675,-407,1414,5049 ], // DNG v8.7
+        "raw_crop": [ 128, 36, 5480, 3656 ],
+        "masked_areas": [ 40, 4, 3680, 76 ],
+        "ranges": { "white": 15500 }
+    },
+
     { // Quality A, changes for raw crop which is wrong (larger) in dcraw
         "make_model": "Canon PowerShot S120",
-        "dcraw_matrix": [ 6961, -1685, -695, -4625, 12945, 1836, -1114, 2152, 5518 ], // ColorMatrix2 using illuminant D65 from Adobe DNG Converter 12.2
+        "dcraw_matrix": [ 6941, -1164, -857, -3825, 11597, 2534, -416, 1540, 6039 ], // Adobe DNG v13.2
+        //"dcraw_matrix": [ 6961, -1685, -695, -4625, 12945, 1836, -1114, 2152, 5518 ], // Adobe DNG v12.2
         "raw_crop": [ 120, 30, 4024, 3030 ],
         "masked_areas": [ 32, 2, 3028, 80 ],
         "ranges": { "white": 4050 }
@@ -1276,7 +1288,7 @@ Camera constants:
 
     { // Quality B
         "make_model": "Canon PowerShot SX60 HS",
-        "dcraw_matrix": [ 13161,-5451,-1344,-1989,10654,1531,-47,1271,4955 ], // DNG_V8.7 D65
+        "dcraw_matrix": [ 13161,-5451,-1344,-1989,10653,1531,-47,1271,4955 ], // DNG v13.2
         "raw_crop": [ 120, 34, 4616, 3464 ], // full raw 4768x3516, Usable 96,16,4672,3498 - Canon official 4608x3456 left 124 top 38,
         "masked_areas": [ 20, 2, 3480, 80 ],
         "ranges": { "white": 4050 } // nominal 4080-4093
@@ -1542,15 +1554,21 @@ Camera constants:
     },
 
     { // Quality A
-        "make_model": [ "Nikon 1 V3", "Nikon 1 J4" ], // Same format
+        "make_model": "Nikon 1 V3",
         "dcraw_matrix": [ 5958,-1559,-571,-4021,11453,2939,-634,1548,5087 ], // matrix from DNG_v8.5 d65
         //"dcraw_matrix": [ 5306,-1066,-469,-3865,11189,3076,-399,1341,5120 ], // matrix dXo D50,
         "ranges": { "white": 4080 } // Black is auto extracted from Exif, lower WL to 4080 from 4095 due to some non linearity detected at raw highlights
     },
 
+    { // Quality A
+        "make_model": "Nikon 1 J4", // Similar to V3, different matrix
+        "dcraw_matrix": [ 6588, -1305, -693, -3277, 10987, 2634, -355, 2016, 5106 ], // DNG v13.2
+        "ranges": { "white": 4080 }
+    },
+
     { // Quality B
         "make_model": "Nikon 1 J5", //
-        "dcraw_matrix": [ 7520,-2518,-645,-3844,12102,1945,-913,2249,6835 ], // DNG_v9.1 D65
+        "dcraw_matrix": [ 7520,-2519,-645,-3844,12102,1945,-914,2249,6835 ], // DNG v13.2
         //"dcraw_matrix": [ 7651,-2102,-751,-3299,11101,1651,-1011,2242,5770 ], // matrix from ICC converted to dcraw format XYZ on ImagingResource still life sample
         "ranges": {
             "white": [
@@ -1583,7 +1601,7 @@ Camera constants:
     { // Quality B, samples by Johan Thor at RT.Issues, measures at long exposures with LENR are missing
       // but a safety margin is included - aperture scaling makes no significant difference
         "make_model": "Nikon D3S",
-        "dcraw_matrix": [ 8828,-2406,-694,-4874,12603,2541,-660,1509,7587 ], // dcp d65
+        "dcraw_matrix": [ 8828,-2406,-694,-4874,12603,2541,-660,1509,7586 ], // DNG v13.2
         "ranges": {
             "white": [
                 { "iso": [ 100, 125, 160, 200, 250, 320, 400, 500 ], "levels": 15520 }, // typical G1,G2 15520-15800 R,B 16383
@@ -1618,6 +1636,7 @@ Camera constants:
     { // Quality B, lacks aperture and ISO scaling, known to exist, but little to gain as the levels are so close to white_max
         "make_model": "Nikon D7000",
         "dcraw_matrix": [ 7530,-1942,-255,-4318,11390,3362,-926,1694,7649 ], // matrix provided by Tanveer(tsk1979)
+        //"dcraw_matrix": [ 8198, -2239, -725, -4871, 12388, 2798, -1043, 2050, 7181 ], // DNG v13.2
         "ranges": {
             // measured at ISO 100. ISO differences not measured, but known to exist
             "white": [ 16300, 15700, 16300 ], // typical R 16383, G 15778, B 16383
@@ -1628,7 +1647,7 @@ Camera constants:
 
     { // Quality B
         "make_model": "NIKON COOLPIX A",
-        "dcraw_matrix": [ 8198,-2239,-724,-4871,12389,2798,-1043,2050,7181 ], // dng_d65
+        "dcraw_matrix": [ 8198,-2239,-725,-4871,12388,2798,-1043,2050,7181 ], // DNG v13.2
         "ranges": {
             "white": [
                 { "iso": [ 100, 125, 160, 200, 250, 320, 400, 500, 640, 800 ], "levels": [ 16300, 15700, 16300 ] }, // typical G1,G2 15760-15800 R,B 16383
@@ -1655,7 +1674,7 @@ Camera constants:
       // Sensor shows some non-uniformity, need other sample to verify
       // There seems to be some aperture scaling, but insufficient data to accurately determine
         "make_model": "Nikon COOLPIX P950",
-        "dcraw_matrix": [ 13307,-5641,-1290,-2048,10581,1689,-64,1222,5176 ], // ColorMatrix2 from Adobe DNG Converter 13.1
+        "dcraw_matrix": [ 13307,-5642,-1290,-2048,10581,1689,-64,1222,5175 ], // DNG v13.2
         "ranges": {
             "black": 200,
             "white": [
@@ -1669,7 +1688,7 @@ Camera constants:
 
     { // Quality B, no LENR samples
         "make_model": "Nikon D5",
-        "dcraw_matrix": [ 9200,-3522,-992,-5755,13803,2117,-753,1486,6338 ], // adobe dng_v9.5 d65
+        "dcraw_matrix": [ 9200,-3522,-992,-5755,13803,2117,-754,1486,6338 ], // DNG v13.2
         "ranges": { "black": 0, "white": 16300 } // WL typical 16383 set to 16300 for safety
     },
 
@@ -1754,7 +1773,7 @@ Camera constants:
 
     { // Quality B, data from RusselCottrell at RT forums. sensor is not uniform
         "make_model": "Nikon D700",
-        "dcraw_matrix": [ 8139,-2171,-663,-8747,16541,2295,-1925,2008,8093 ],
+        "dcraw_matrix": [ 8139,-2171,-664,-8748,16541,2296,-1924,2008,8093 ], // DNG v13.2
         //"dcraw_matrix": [ 9336,-3405,14,-7321,14779,2764,-914,1171,8248 ], // illuminant A
         "ranges": { "white": [ 15500, 15500, 15500 ] }
         // Non linearities start at 15500 (hi ISOs) 15850 (low ISOs) with long exposures (>2sec) and LENR ON .. nominal 15892
@@ -1763,7 +1782,7 @@ Camera constants:
 
     { // Quality B,
         "make_model": "Nikon D750",
-        "dcraw_matrix": [ 9020,-2890,-715,-4535,12436,2348,-934,1919,7086 ], // adobe dcp d65 DNGv8.7
+        "dcraw_matrix": [ 9020,-2890,-715,-4535,12436,2348,-934,1918,7086 ], // DNG v13.2
         "ranges": { "white": 16300 } // WL values for 14-bit files, RT auto adapts it for 12-bit files. TypicalWL 16383 set to 16300 for safety
     },
     
@@ -1798,7 +1817,7 @@ Camera constants:
 
     { // Quality A, Samples by zorgtool at RT forums
         "make_model": "Nikon D850",
-        "dcraw_matrix": [ 10405,-3755,-1270,-5461,13787,1793,-1040,2015,6785 ], // DNGv9.12.1 d65
+        "dcraw_matrix": [ 10405,-3755,-1270,-5461,13787,1792,-1040,2015,6785 ], // DNG v13.2
         "ranges": {
             "white": [
                 { "iso": [ 64, 80, 100, 125, 160, 200, 250, 320 ], "levels": [ 16250, 16050, 16250 ] }, // R,B 16383 G1,G2 16145-16155
@@ -1835,13 +1854,13 @@ Camera constants:
 
     { // Quality B
         "make_model": "Nikon D80",
-        "dcraw_matrix": [ 8629,-2410,-883,-9055,16940,2171,-1490,1363,8520 ], // Dcraw.c d65
+        "dcraw_matrix": [ 8628,-2410,-883,-9055,16940,2171,-1491,1363,8520 ], // DNG v13.2
         "ranges": { "white": 3980 } // 12-bit files.
     },
 
     { // Quality C, only color matrix and PDAF lines info
         "make_model" : "Nikon Z 7",
-        "dcraw_matrix" : [10405,-3755,-1270,-5461,13787,1793,-1040,2015,6785], // Adobe DNG Converter 11.0 ColorMatrix2
+        "dcraw_matrix" : [10405,-3755,-1270,-5461,13787,1792,-1040,2015,6785], // DNG v13.2
         "pdaf_pattern" : [0, 12],
         "pdaf_offset" : 29
     },
@@ -1853,7 +1872,7 @@ Camera constants:
 
     { // Quality C, only color matrix and PDAF lines info
         "make_model" : "Nikon Z 6",
-        "dcraw_matrix" : [8210, -2534, -683, -5355, 13338, 2212, -1143, 1929, 6464], // Adobe DNG Converter 11.1 Beta ColorMatrix2
+        "dcraw_matrix" : [8210, -2534, -683, -5355, 13338, 2212, -1143, 1928, 6464], // DNG v13.2
         "pdaf_pattern" : [0, 12],
         "pdaf_offset" : 32
     },
@@ -1863,9 +1882,9 @@ Camera constants:
         "dcraw_matrix" : [9943, -3270, -839, -5323, 13269, 2259, -1198, 2083, 7557] // DNG
     },
 
-    { // Quality C, only dcraw looted from ART commit ad88c7d97
+    { // Quality C
         "make_model" : "NIKON Z 5",
-        "dcraw_matrix" : [8695, -2558, -648, -5015, 12711, 2575, -1279, 2215, 7514]
+        "dcraw_matrix" : [8695, -2559, -648, -5015, 12710, 2575, -1280, 2215, 7514] // DNG v13.2
     },
 
     { // Quality A, white levels and PDAF lines measured by Yann Leprince #5851
@@ -1982,7 +2001,7 @@ Camera constants:
 
     { // Quality B, crop correction
         "make_model": [ "OLYMPUS E-M10", "OLYMPUS E-M10MarkII", "OLYMPUS E-M10 Mark III" ],
-        "dcraw_matrix": [ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 ],
+        "dcraw_matrix": [ 8380,-2630,-639,-2887,10725,2496,-628,1427,5437 ], // DNG v13.2
         "raw_crop": [ 0, 0, 4624, 3472 ], // largest valid - full frame is 4640x3472
         //"raw_crop": [ 4, 4, 4616, 3464 ], // olympus jpeg crop 8, 8, 4608, 3456
         "ranges": { "white": 4080 }
@@ -1997,7 +2016,7 @@ Camera constants:
     { // Quality A, white level correction
         "make_model": "OLYMPUS E-PM2",
         "global_green_equilibration" : true,
-        "dcraw_matrix": [ 8380,-2630,-639,-2887,10725,2496,-627,1427,5438 ],
+        "dcraw_matrix": [ 8380,-2630,-639,-2887,10725,2496,-628,1427,5437 ], // DNG v13.2
         "ranges": { "white": 4040 } // nominal 4056
     },
 
@@ -2015,13 +2034,13 @@ Camera constants:
     { // Quality B, with long exposure noise reduction White Level gets WL-BL = around 256_12-bit levels less
         "make_model": [ "OLYMPUS E-PL7", "OLYMPUS E-PL8" ],
         "global_green_equilibration" : true,
-        "dcraw_matrix": [ 9197,-3190,-659,-2606,10830,2039,-458,1250,5458 ], // DNG_v9.8 D65
+        "dcraw_matrix": [ 9197,-3190,-659,-2606,10830,2039,-458,1250,5457 ], // DNG v13.2
         "ranges": { "white": 4080 } // nominal 4093
     },
 
     { // Quality B, per ISO WL measures missing
         "make_model": [ "OLYMPUS SH-2", "Olympus SH-3" ],
-        "dcraw_matrix": [ 10156,-3425,-1077,-2611,11177,1624,-385,1592,5080 ], // DNG_V9.1 D65
+        "dcraw_matrix": [ 10156,-3426,-1077,-2611,11177,1624,-385,1592,5080 ], // DNG v13.2
         "ranges": { "white": 4050 } // safe for worst case detected, nominal is 4093
     },
 
@@ -2032,9 +2051,9 @@ Camera constants:
         "ranges": { "white": 4050 } // safe for worst case detected, nominal is 4093
     },
 
-    { // Quality C, only raw crop
+    { // Quality B
         "make_model": "OLYMPUS TG-6",
-        "dcraw_matrix" : [10899, -3832, -1082, -2112, 10736, 1575, -267, 1452, 5269], // taken from ART
+        "dcraw_matrix" : [10899, -3833, -1082, -2112, 10736, 1575, -267, 1452, 5269], // DNG v13.2
         "raw_crop": [ 0, 0, -24, 0 ] // 24 pixels at right are garbage
     },
 
@@ -2048,16 +2067,17 @@ Camera constants:
         "dcraw_matrix" : [8360, -2420, -880, -3928, 12353, 1739, -1381, 2416, 5173] // DNG
     },
 
-    { // Quality X
+    { // Quality B
         "make_model": [ "Panasonic DC-LX100M2" ],
-        "dcraw_matrix": [ 11577, -4230, -1106, -3967, 12211, 1957, -758, 1762, 5610 ], // Adobe DNG Converter 11.0 ColorMatrix2
+        "dcraw_matrix": [ 11577, -4230, -1106, -3967, 12211, 1957, -759, 1762, 5610 ], // DNG v13.2
+        //"dcraw_matrix": [ 8585, -3127, -833, -4005, 12250, 1953, -650, 1494, 4862 ], // DNG v13.2 alternate
         "raw_crop": [ 0, 0, 0, 0 ],
         "ranges": { "black": 15 }
     },
 
     { // Quality C, proper ISO 100-125-160 samples missing, pixelshift files have no black offset etc. #4574
         "make_model": [ "Panasonic DC-G9" ],
-        "dcraw_matrix": [ 7685, -2375, -634, -3687, 11700, 2249, -748, 1546, 5111 ], // Adobe DNG Converter 10.3 ColorMatrix2
+        "dcraw_matrix": [ 7685, -2375, -634, -3688, 11700, 2249, -748, 1545, 5111 ], // DNG v13.2
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT reads the base black from Exif and calculates total BL = BLbase+BLoffset
             "white": [
@@ -2080,11 +2100,9 @@ Camera constants:
 
     { // Quality C, only color matrix
         "make_model" : "Panasonic DC-GF10",
-        "dcraw_matrix": [ 7610, -2780, -576, -4614, 12195, 2733, -1375, 2393, 6490 ], // ColorMatrix2 from Adobe DNG Converter 11.3
+        "dcraw_matrix": [ 7610, -2781, -576, -4614, 12195, 2733, -1375, 2393, 6490 ], // DNG v13.2
         "raw_crop": [ 0, 0, 4600, 0 ], // SensorWidth=4816 SensorHeight=3464. Width=4600 to match DNG.
-        "ranges": {
-            "black": 15
-        }
+        "ranges": { "black": 15 }
     },
 
     { // Quality B, CameraPhone, some samples are missing but has the same sensor as FZ1000 ..
@@ -2102,7 +2120,7 @@ Camera constants:
 
     { // Quality B
         "make_model": [ "Panasonic DC-FZ80", "Panasonic DC-FZ81", "Panasonic DC-FZ82", "Panasonic DC-FZ83" ],
-        "dcraw_matrix": [ 8550,-2908,-842,-3195,11529,1881,-338,1603,4631 ], // DNGv9.10.1 D65
+        "dcraw_matrix": [ 11532, -4324, -1066, -2375, 10847, 1749, -564, 1699, 4351 ], // DNG v13.2
         "raw_crop": [ 0, 6, -8, -2 ], // fullraw4/3 5040x3688 official 8,8,4904,3680 = 4896X3672. Dcraw 0,0,4912,3688 RT's frame gets smaller than dcraw but works better with auto distortion
         "ranges": { "black": 15, "white": 4050 } // 15 is BL offset. dcraw/RT read the base offset from Exif and calculates total BL = BLbase+BLoffset
     },
@@ -2121,7 +2139,7 @@ Camera constants:
 
     { // Quality A, samples by helices at RT forums
         "make_model": [ "Panasonic DMC-FZ1000", "Leica V-LUX (Typ 114)" ],
-        "dcraw_matrix": [ 7830,-2696,-763,-3325,11667,1866,-641,1712,4824 ], // dcp_v8.6 d65
+        "dcraw_matrix": [ 7830,-2696,-764,-3325,11667,1865,-641,1712,4824 ], // DNG v13.2
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base BL from Exif and calculates total BL = BLbase+BLoffset
             "white": [
@@ -2134,7 +2152,7 @@ Camera constants:
 
     { // Quality B,
         "make_model": [ "Panasonic DMC-FZ2500", "Panasonic DMC-FZ2000", "Panasonic DMC-FZH1" ],
-        "dcraw_matrix": [ 7386,-2443,-743,-3437,11864,1757,-608,1660,4766 ], // dcp_v9.8 d65
+        "dcraw_matrix": [ 7386,-2443,-743,-3437,11863,1757,-608,1660,4766 ], // DNG v13.2
         "ranges": {
             "black": 15, // 15 is BL offset. dcraw/RT read the base BL from Exif and calculates total BL = BLbase+BLoffset
             "white": [
@@ -2309,7 +2327,7 @@ Camera constants:
 
     { // Quality B, some ISO WLevels are safely guessed
         "make_model": "Panasonic DMC-GH4",
-        "dcraw_matrix": [ 7122,-2108,-512,-3155,11201,2231,-541,1423,5045 ], // dng_v8.5 d65
+        "dcraw_matrix": [ 7122,-2108,-512,-3155,11201,2231,-541,1423,5044 ], // DNG v13.2
         "ranges": {
             "black": 16, // 16 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
             "white": [
@@ -2322,7 +2340,7 @@ Camera constants:
 
     { // Quality C
         "make_model": "Panasonic DC-GH5",
-        "dcraw_matrix": [ 7641,-2336,-605,-3218,11299,2187,-485,1338,5121 ], // DNG_v9.9 D65
+        "dcraw_matrix": [ 7641,-2336,-605,-3218,11298,2187,-485,1338,5121 ], // DNG v13.2
         "ranges": {
             "black": 15, // 16 is BL offset. dcraw/RT read the base BL from Exif and calculates total BL = BLbase+BLoffset
             "white": [
@@ -2373,7 +2391,7 @@ Camera constants:
 
     { // Quality A
         "make_model": [ "Panasonic DMC-G7", "Panasonic DMC-G70" ],
-        "dcraw_matrix": [ 7610,-2780,-576,-4614,12195,2733,-1375,2393,6490 ], // DNG_v9.1 D65
+        "dcraw_matrix": [ 7610,-2781,-576,-4614,12195,2733,-1375,2393,6490 ], // DNG v13.2
         "ranges": {
             "black": 16, // 16 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
             "white": [
@@ -2386,7 +2404,7 @@ Camera constants:
 
     { // Quality B
         "make_model": [ "Panasonic DMC-GX80", "Panasonic DMC-GX85", "Panasonic DMC-GX7MK2" ],
-        "dcraw_matrix": [ 7771,-3020,-629,-4029,11950,2345,-821,1977,6119 ], // DNG_v9.6 D65
+        "dcraw_matrix": [ 7771,-3020,-629,-4029,11950,2345,-822,1976,6119 ], // DNG v13.2
         "ranges": {
             "black": 16, // 16 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
             "white": [
@@ -2399,7 +2417,7 @@ Camera constants:
 
     { // Quality X, no white-frames nor black-frames yet, see #4550
         "make_model": [ "Panasonic DC-GX9" ],
-        "dcraw_matrix": [ 7564,-2263,-606,-3148,11239,2177,-540,1435,4853 ], // ColorMatrix2 from Adobe DNG Converter 10.3
+        "dcraw_matrix": [ 7564,-2263,-606,-3149,11238,2177,-540,1435,4853 ], // DNG v13.2
         "ranges": {
             "black": 16,
             "white": 4080
@@ -2408,7 +2426,7 @@ Camera constants:
 
     { // Quality B, Same as Panasonic G7
         "make_model": [ "Panasonic DMC-G8", "Panasonic DMC-G80", "Panasonic DMC-G81", "Panasonic DMC-G85" ],
-        "dcraw_matrix": [ 7610,-2780,-576,-4614,12195,2733,-1375,2393,6490 ], // DNG_v9.7 D65
+        "dcraw_matrix": [ 7610,-2781,-576,-4614,12195,2733,-1375,2393,6490 ], // DNG v13.2
         "ranges": {
             "black": 16, // 16 is BL offset. dcraw/RT read the base black from Exif and calculates total BL = BLbase+BLoffset
             "white": [
@@ -2421,7 +2439,7 @@ Camera constants:
 
     { // Quality B
         "make_model": "Panasonic DMC-GX8",
-        "dcraw_matrix": [ 7564,-2263,-606,-3148,11239,2177,-540,1435,4853 ], // DNG_v9.1.1 D65
+        "dcraw_matrix": [ 7564,-2263,-606,-3149,11238,2177,-540,1435,4853 ], // DNG v13.2
         "ranges": {
             "black": 15, // 16 is BL offset. dcraw/RT read the base BL from Exif and calculates total BL = BLbase+BLoffset
             "white": [
@@ -2554,7 +2572,7 @@ Camera constants:
 
     { // Quality B, Intemediate ISO samples missing, Pentax_DNG WLtags are after BL sutraction and not valid
         "make_model": [ "RICOH PENTAX K-1", "PENTAX K-1" ],
-        "dcraw_matrix": [ 8596,-2981,-639,-4202,12046,2431,-685,1424,6122 ], // adobe DNG v9.7 D65
+        "dcraw_matrix": [ 8596,-2981,-639,-4202,12045,2431,-685,1424,6122 ], // DNG v13.2
         //"dcraw_matrix": [ 8566,-2746,-1201,-3612,12204,1550,-893,1680,6264 ], // PENTAX DNG
         //"raw_crop": [ 6, 18, 7376, 4932 ], // full frame 7392x4950, cropped to official DNG raw_crop 6,18,7382,4950, official jpeg crop 8,10,7360x4912
         "ranges": {
@@ -2607,7 +2625,7 @@ Camera constants:
 
     { // Quality B, intermediate ISOs info missing, spread due to blackframe subtraction guessed to be around 10levels
         "make_model": "PENTAX K10D",
-        "dcraw_matrix": [ 9566,-2863,-803,-7170,15172,2112,-818,803,9705 ], // adobe DNG d65
+        "dcraw_matrix": [ 9679, -2965, -811, -8622, 16514, 2182, -975, 883, 9793 ], // DNG v13.2
         //"raw_crop": [ 0, , 3888, 2608 ],
         "ranges": {
             "white": [
@@ -2719,13 +2737,13 @@ Camera constants:
     { // Quality A, correction for color matrix from Colin Walker's d50 to dng d65
         "make_model": "Sony NEX-C3",
         //"dcraw_matrix": [ 5130,-1055,-269,-4473,11797,3050,-701,1310,7121 ], // Colin walker's d50 kept for possible consistency issues
-        "dcraw_matrix": [ 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 ],
+        "dcraw_matrix": [ 5991,-1456,-455,-4764,12135,2980,-707,1424,6701 ], // DNG v13.2
         "ranges": { "black": 512, "white": 16300 }
     },
 
     { // Quality A, correction for frame width
         "make_model": "Sony NEX-5N",
-        "dcraw_matrix": [ 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 ],
+        "dcraw_matrix": [ 5991,-1456,-455,-4764,12135,2980,-707,1424,6701 ], // DNG v13.2
         "raw_crop": [ 0, 0, 4920, 3276 ],
         "ranges": { "black": 512, "white": 16300 }
     },
@@ -2739,14 +2757,14 @@ Camera constants:
 
     { // Quality B
         "make_model": "Sony ILCA-68",
-        "dcraw_matrix": [ 6435,-1903,-536,-4722,12449,2550,-663,1363,6517 ], // adobe DNGv9.5 d65
+        "dcraw_matrix": [ 6435,-1903,-536,-4722,12448,2550,-663,1363,6516 ], // DNG v13.2
         "raw_crop": [ 0, 0, -30, 0 ],
         "ranges": { "black": 512, "white": 16300 }
     },
 
     { // Quality B, correction for frame width, crop modes covered
         "make_model": "Sony ILCA-99M2",
-        "dcraw_matrix": [ 6660,-1918,-471,-4613,12398,2485,-649,1433,6447 ], // DNG_v9.8 D65
+        "dcraw_matrix": [ 6660,-1918,-472,-4613,12398,2485,-649,1433,6447 ], // DNG v13.2
         "raw_crop": [ 0, 0, -36, 0 ], // full raw frame 8000x5320 - 36 rightmost columns are garbage
         "ranges": { "black": 512, "white": 16300 }
     },
@@ -2758,14 +2776,14 @@ Camera constants:
 
     { // Quality A, correction for frame width
         "make_model": [ "Sony ILCE-3000", "Sony ILCE-3500", "Sony ILCE-5000", "Sony ILCE-QX1" ],
-        "dcraw_matrix": [ 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 ], // adobe dcp d65
+        "dcraw_matrix": [ 5991,-1456,-455,-4764,12135,2980,-707,1424,6701 ], // DNG v13.2
         "ranges": { "black": 512, "white": 16300 },
         "raw_crop": [ 0, 0, 5476, 3656 ]
     },
 
     { // Quality A
         "make_model": "Sony ILCE-5100",
-        "dcraw_matrix": [ 5991,-1456,-455,-4764,12135,2980,-707,1425,6701 ], // adobe dcp d65
+        "dcraw_matrix": [ 5991,-1456,-455,-4764,12135,2980,-707,1424,6701 ], // DNG v13.2
         "raw_crop": [ 0, 0, 6024, 4024 ],
         "ranges": { "black": 512, "white": 16300 }
     },
@@ -2842,7 +2860,7 @@ Camera constants:
 
     { // Quality C, color matrix copied from ILCE-9, LongExposures 2-3sec only
         "make_model": "Sony ILCE-7M3",
-        "dcraw_matrix": [ 6389,-1703,-378,-4562,12265,2587,-670,1489,6550 ], // ILCE-9, DNG_v9.12 D65
+        "dcraw_matrix": [ 7374, -2389, -551, -5435, 13162, 2519, -1006, 1795, 6552 ], // DNG v13.2
         // "raw_crop": [ 8, 8, 6008, 4008 ], // full raw frame 6048x4024 Dcraw auto identify 6024x4024, jpeg 12,12,6000x4000
         // "ranges": { "black": 512, "white": 16300 }
         "ranges": {
@@ -2871,7 +2889,7 @@ Camera constants:
 
     { // Quality C,
         "make_model": "Sony ILCE-7RM3",
-        "dcraw_matrix": [ 6640,-1847,-503,-5238,13010,2474,-993,1673,6527 ], // DNG_v10.1 D65
+        "dcraw_matrix": [ 6640,-1847,-503,-5238,13010,2474,-993,1673,6526 ], // DNG v13.2
         "raw_crop": [ 0, 0, -36, 0 ], // full raw frame 8000x5320 - 36 rightmost columns are garbage
         "ranges": { "black": 512, "white": 16300 },
         "pdaf_pattern" : [0, 24, 36, 60, 84, 120, 132, 156, 192, 204, 240, 252, 276, 300, 324, 360, 372, 396, 420, 444, 480, 492, 504, 540, 564, 576, 612, 636, 660, 696, 720, 732, 756, 780, 804, 840],
@@ -2952,8 +2970,14 @@ Camera constants:
     },
 
     { // Quality B
-        "make_model": [ "Sony DSC-RX10M2", "Sony DSC-RX10M3", "Sony DSC-RX10M4" ],
-        "dcraw_matrix": [ 6679,-1825,-745,-5047,13256,1953,-1580,2422,5183 ], // DNG_v9.6 D65
+        "make_model": [ "Sony DSC-RX10M2", "Sony DSC-RX10M3" ],
+        "dcraw_matrix": [ 6679,-1825,-745,-5047,13255,1953,-1580,2422,5183 ], //DNG v13.2
+        "ranges": { "black": 800, "white": 16300 }
+    },
+
+    { // Quality B
+        "make_model": "Sony DSC-RX10M4", // Similar to M2 and M3, different matrix
+        "dcraw_matrix": [ 7699, -2566, -629, -2967, 11270, 1928, -378, 1286, 4807 ], // DNG v13.2
         "ranges": { "black": 800, "white": 16300 }
     },
 
@@ -3037,7 +3061,7 @@ Camera constants:
 
     { // Quality B
         "make_model": ["HASSELBLAD NEX-7", "SONY NEX-7"], // Hasselblad NEX-7 also known as Hasselblad Lunar
-        "dcraw_matrix": [ 5491,-1192,-363,-4951,12342,2948,-911,1722,7192 ], // adobe DNGv12.2 d65
+        "dcraw_matrix": [ 5491,-1192,-363,-4951,12342,2948,-911,1722,7191 ], // DNG v13.2
         "ranges": { "black": 512, "white": 16372 } // Typical white level (samples provided by @ggc on Pixls, influence from LENR unknown
     },
 
