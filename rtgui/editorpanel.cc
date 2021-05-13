@@ -2090,9 +2090,10 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
             std::size_t foundws = fileName.find(' ');
             std::string str2="_";//replace " " by "_" but we can replace with another
             if (foundws!=std::string::npos){
-              //  std::cout << "ws found at: " << foundws << '\n';
                 fileName.replace(foundws, 1, str2);
-             //   printf("Filename new=%s \n", fileName.c_str());
+                if (options.rtSettings.verbose) {
+                    printf("New file name without white-space=%s \n", fileName.c_str());
+                }
             } else {
                 foundwhitespace = false;
             }
