@@ -1111,38 +1111,36 @@ void RTWindow::setWindowSize ()
     onConfEventConn.block(true); // Avoid getting size and position while window is being moved, maximized, ...
     
     Gdk::Rectangle lMonitorRect;
-    get_screen()->get_monitor_geometry (std::min (options.windowMonitor, Gdk::Screen::get_default()->get_n_monitors() - 1), lMonitorRect);
+    auto display = get_screen()->get_display();
+    display->get_monitor (std::min (options.windowMonitor, display->get_n_monitors() - 1))->get_geometry(lMonitorRect);
 
 #ifdef __APPLE__
     // Get macOS menu bar height
-    const Gdk::Rectangle lWorkAreaRect = get_screen()->get_monitor_workarea (std::min (options.windowMonitor, Gdk::Screen::get_default()->get_n_monitors() - 1));
+    Gdk::Rectangle lWorkAreaRect;
+    display->get_monitor (std::min (options.windowMonitor, display->get_n_monitors() - 1))->get_workarea(lWorkAreaRect);
     const int macMenuBarHeight = lWorkAreaRect.get_y();
+
+    // Place RT window to saved one in options file
+    if (options.windowX <= lMonitorRect.get_x() + lMonitorRect.get_width() && options.windowY <= lMonitorRect.get_y() + lMonitorRect.get_height() - macMenuBarHeight) {
+        move (options.windowX, options.windowY + macMenuBarHeight);
+    } else {
+        move (lMonitorRect.get_x(), lMonitorRect.get_y() + macMenuBarHeight);
+    }
+#else
+    // Place RT window to saved one in options file
+    if (options.windowX <= lMonitorRect.get_x() + lMonitorRect.get_width() && options.windowY <= lMonitorRect.get_y() + lMonitorRect.get_height()) {
+        move (options.windowX, options.windowY);
+    } else {
+        move (lMonitorRect.get_x(), lMonitorRect.get_y());
+    }
 #endif
 
+    // Maximize RT window according to options file
     if (options.windowMaximized) {
-#ifdef __APPLE__
-        move (lMonitorRect.get_x(), lMonitorRect.get_y() + macMenuBarHeight);
-#else
-        move (lMonitorRect.get_x(), lMonitorRect.get_y());
-#endif
         maximize();
     } else {
         unmaximize();
         resize (options.windowWidth, options.windowHeight);
-
-#ifdef __APPLE__
-        if (options.windowX <= lMonitorRect.get_x() + lMonitorRect.get_width() && options.windowY <= lMonitorRect.get_y() + lMonitorRect.get_height() - macMenuBarHeight) {
-            move (options.windowX, options.windowY + macMenuBarHeight);
-        } else {
-            move (lMonitorRect.get_x(), lMonitorRect.get_y() + macMenuBarHeight);
-        }
-#else
-        if (options.windowX <= lMonitorRect.get_x() + lMonitorRect.get_width() && options.windowY <= lMonitorRect.get_y() + lMonitorRect.get_height()) {
-            move (options.windowX, options.windowY);
-        } else {
-            move (lMonitorRect.get_x(), lMonitorRect.get_y());
-        }
-#endif
     }
     
     onConfEventConn.block(false);
