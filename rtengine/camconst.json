@@ -360,6 +360,11 @@ Camera constants:
         }
     },
 
+    { // Quality C
+        "make_model": "Canon EOS-1Ds",
+        "dcraw_matrix": [ 3925, 4060, -1739, -8973, 16552, 2545, -3287, 3945, 8243 ] // DNG
+    },
+
     { // Quality C, INTERMEDIATE ISO SAMPLES MISSING
         "make_model": "Canon EOS-1D X Mark II",
         "dcraw_matrix": [ 7596,-978,-967,-4808,12571,2503,-1398,2567,5752 ],
