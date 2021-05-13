@@ -84,7 +84,7 @@ private:
     void resetPressed ();
 
 protected:
-    Gtk::HBox* labelBox;
+    Gtk::Box* labelBox;
     Gtk::CheckButton* editedCheckBox;
     Gtk::Label* countLabel;
     Gtk::ToggleButton* edit;
