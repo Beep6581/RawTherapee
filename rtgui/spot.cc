@@ -54,7 +54,7 @@ Spot::Spot() :
     reset->set_border_width (0);
     reset->signal_clicked().connect ( sigc::mem_fun (*this, &Spot::resetPressed) );
 
-    labelBox = Gtk::manage (new Gtk::HBox());
+    labelBox = Gtk::manage (new Gtk::Box());
     labelBox->set_spacing (2);
     labelBox->pack_start (*countLabel, false, false, 0);
     labelBox->pack_end (*edit, false, false, 0);
