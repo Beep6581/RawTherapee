@@ -76,6 +76,8 @@ protected:
     sigc::connection hsmconn;
     bool lastobpc;
     sigc::connection obpcconn;
+    bool lastfbw;
+    sigc::connection fbwconn;
     bool isBatchMode;
 
 private:
@@ -102,7 +104,7 @@ private:
     rtengine::ProcEvent EvaIntent;
     rtengine::ProcEvent EvICMpreser;
     rtengine::ProcEvent EvICMLabGridciexy;
-
+    rtengine::ProcEvent EvICMfbw;
     LabGrid *labgridcie;
     IdleRegister idle_register;
 
@@ -118,6 +120,7 @@ private:
     Gtk::Box* preBox;
     Gtk::Box* iVBox;
     Gtk::Box* wTRCBox;
+    Gtk::CheckButton* fbw;
 
     Gtk::CheckButton* obpc;
     Gtk::RadioButton* inone;
@@ -191,6 +194,7 @@ public:
     void oiChanged(int n);
     void aiChanged(int n);
     void oBPCChanged();
+    void fbwChanged();
     void ipChanged();
     void ipSelectionChanged();
     void dcpIlluminantChanged();

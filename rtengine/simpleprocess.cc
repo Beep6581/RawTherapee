@@ -1589,6 +1589,17 @@ private:
             if(provis) {
                 ipf.preserv(labView, provis.get(), GW, GH);
             }
+            if(params.icm.fbw) {
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+            for (int x = 0; x < GH; x++)
+                for (int y = 0; y < GW; y++) {
+                    labView->a[x][y] = 0.f;
+                    labView->b[x][y] = 0.f;
+                }
+            }
+           
         }
 
         //Colorappearance and tone-mapping associated

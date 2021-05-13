@@ -1494,6 +1494,16 @@ void Crop::update(int todo)
             if(provis) {
                 parent->ipf.preserv(labnCrop, provis.get(), GW, GH);
             }
+            if(params.icm.fbw) {
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+            for (int x = 0; x < GH; x++)
+                for (int y = 0; y < GW; y++) {
+                    labnCrop->a[x][y] = 0.f;
+                    labnCrop->b[x][y] = 0.f;
+                }
+            }
         }
 
         if (params.colorappearance.enabled) {

@@ -1108,6 +1108,7 @@ struct ColorManagementParamsEdited {
     bool blux;
     bool bluy;
     bool preser;
+    bool fbw;
     bool labgridcieALow;
     bool labgridcieBLow;
     bool labgridcieAHigh;

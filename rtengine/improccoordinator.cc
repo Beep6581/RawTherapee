@@ -1607,6 +1607,16 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if(provis) {
                     ipf.preserv(nprevl, provis.get(), GW, GH);
                 }
+                if(params->icm.fbw) {
+#ifdef _OPENMP
+                    #pragma omp parallel for
+#endif
+                    for (int x = 0; x < GH; x++)
+                        for (int y = 0; y < GW; y++) {
+                            nprevl->a[x][y] = 0.f;
+                            nprevl->b[x][y] = 0.f;
+                        }
+                }
                 
                 tmpImage1.reset();
 

@@ -60,6 +60,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     EvaIntent = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_AINTENT");
     EvICMpreser = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_PRESER");
     EvICMLabGridciexy = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICL_LABGRIDCIEXY");
+    EvICMfbw = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_FBW");
     isBatchMode = lastToneCurve = lastApplyLookTable = lastApplyBaselineExposureOffset = lastApplyHueSatMap = false;
 
     ipDialog = Gtk::manage(new MyFileChooserButton(M("TP_ICM_INPUTDLGLABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
@@ -259,7 +260,11 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     wprimBox->pack_start(*wprimlab, Gtk::PACK_SHRINK);
     wprim = Gtk::manage(new MyComboBoxText());
     wprimBox->pack_start(*wprim, Gtk::PACK_EXPAND_WIDGET);
+    fbw = Gtk::manage(new Gtk::CheckButton((M("TP_ICM_FBW"))));
+    fbw->set_active(true);
     trcProfVBox->pack_start(*wprimBox, Gtk::PACK_EXPAND_WIDGET);
+    trcProfVBox->pack_start(*fbw, Gtk::PACK_EXPAND_WIDGET);
+
     wprim->append(M("TP_ICM_WORKING_PRIM_NONE"));
     wprim->append(M("TP_ICM_WORKING_PRIM_SRGB"));
     wprim->append(M("TP_ICM_WORKING_PRIM_ADOB"));
@@ -323,6 +328,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     redVBox->pack_start(*bluBox, Gtk::PACK_EXPAND_WIDGET);
     preser = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_PRESER"), 0., 100., 0.5, 0.));
     preser->setAdjusterListener(this);
+    
     preBox = Gtk::manage(new Gtk::Box());
     preBox->pack_start(*preser, Gtk::PACK_SHRINK);
     redVBox->pack_start(*separator1, Gtk::PACK_SHRINK);
@@ -457,6 +463,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     willconn = will->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::willChanged));
     wprimconn = wprim->signal_changed().connect(sigc::mem_fun(*this, &ICMPanel::wprimChanged));
 
+    fbwconn = fbw->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::fbwChanged));
     obpcconn = obpc->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::oBPCChanged));
     tcurveconn = ckbToneCurve->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::toneCurveChanged));
     ltableconn = ckbApplyLookTable->signal_toggled().connect(sigc::mem_fun(*this, &ICMPanel::applyLookTableChanged));
@@ -721,6 +728,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     disableListener();
 
     ConnectionBlocker obpcconn_(obpcconn);
+    ConnectionBlocker fbwconn_(fbwconn);
     ConnectionBlocker ipc_(ipc);
     ConnectionBlocker tcurveconn_(tcurveconn);
     ConnectionBlocker ltableconn_(ltableconn);
@@ -793,6 +801,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     aRendIntent->setSelected(pp->icm.aRendIntent);
 
     obpc->set_active(pp->icm.outputBPC);
+    fbw->set_active(pp->icm.fbw);
     ckbToneCurve->set_active(pp->icm.toneCurve);
     lastToneCurve = pp->icm.toneCurve;
     ckbApplyLookTable->set_active(pp->icm.applyLookTable);
@@ -816,6 +825,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     if (pedited) {
         iunchanged->set_active(!pedited->icm.inputProfile);
         obpc->set_inconsistent(!pedited->icm.outputBPC);
+        fbw->set_inconsistent(!pedited->icm.fbw);
         ckbToneCurve->set_inconsistent(!pedited->icm.toneCurve);
         ckbApplyLookTable->set_inconsistent(!pedited->icm.applyLookTable);
         ckbApplyBaselineExposureOffset->set_inconsistent(!pedited->icm.applyBaselineExposureOffset);
@@ -873,6 +883,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         will->set_sensitive(false);
         willulab->set_sensitive(false);
         wprim->set_sensitive(false);
+        fbw->set_sensitive(false);
         wprimlab->set_sensitive(false);
         riaHBox->set_sensitive(false);
         redFrame->hide();
@@ -881,6 +892,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         will->set_sensitive(false);
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
+        fbw->set_sensitive(true);
         wprimlab->set_sensitive(true);
         if (wprim->get_active_row_number() == 0) {
             redFrame->hide();
@@ -921,6 +933,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         will->set_sensitive(true);
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
+        fbw->set_sensitive(true);
         wprimlab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
@@ -937,6 +950,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         will->set_sensitive(true);
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
+        fbw->set_sensitive(true);
         wprimlab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
@@ -953,6 +967,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         will->set_sensitive(true);
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
+        fbw->set_sensitive(true);
         wprimlab->set_sensitive(true);
         redFrame->show();
         wGamma->set_sensitive(false);
@@ -970,6 +985,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         will->set_sensitive(true);
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
+        fbw->set_sensitive(true);
         wprimlab->set_sensitive(true);
         riaHBox->set_sensitive(true);
         if (wprim->get_active_row_number() == 0) {
@@ -986,6 +1002,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         will->set_sensitive(true);
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
+        fbw->set_sensitive(true);
         wprimlab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
@@ -1091,6 +1108,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
     pp->icm.applyBaselineExposureOffset = ckbApplyBaselineExposureOffset->get_active();
     pp->icm.applyHueSatMap = ckbApplyHueSatMap->get_active();
     pp->icm.outputBPC = obpc->get_active();
+    pp->icm.fbw = fbw->get_active();
     pp->icm.workingTRCGamma =  wGamma->getValue();
     pp->icm.workingTRCSlope =  wSlope->getValue();
     pp->icm.redx =  redx->getValue();
@@ -1109,6 +1127,7 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->icm.outputIntent = oRendIntent->getSelected() < 4;
         pedited->icm.aRendIntent = aRendIntent->getSelected() < 4;
         pedited->icm.outputBPC = !obpc->get_inconsistent();
+        pedited->icm.fbw = !fbw->get_inconsistent();
         pedited->icm.dcpIlluminant = dcpIll->get_active_text() != M("GENERAL_UNCHANGED");
         pedited->icm.toneCurve = !ckbToneCurve->get_inconsistent();
         pedited->icm.applyLookTable = !ckbApplyLookTable->get_inconsistent();
@@ -1215,6 +1234,7 @@ void ICMPanel::wtrcinChanged()
         will->set_sensitive(false);
         willulab->set_sensitive(false);
         wprim->set_sensitive(false);
+        fbw->set_sensitive(false);
         wprimlab->set_sensitive(false);
         redFrame->hide();
         riaHBox->set_sensitive(false);
@@ -1222,6 +1242,7 @@ void ICMPanel::wtrcinChanged()
     case 1:
         will->set_sensitive(false);
         wprim->set_sensitive(true);
+        fbw->set_sensitive(true);
         wprimlab->set_sensitive(true);
         willulab->set_sensitive(true);
         if (wprim->get_active_row_number() == 0) {
@@ -1253,6 +1274,7 @@ void ICMPanel::wtrcinChanged()
         will->set_sensitive(false);
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
+        fbw->set_sensitive(true);
         wprimlab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
@@ -1298,6 +1320,7 @@ void ICMPanel::wtrcinChanged()
         will->set_sensitive(false);
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
+        fbw->set_sensitive(true);
         wprimlab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
@@ -1323,6 +1346,7 @@ void ICMPanel::wtrcinChanged()
         will->set_sensitive(false);
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
+        fbw->set_sensitive(true);
         wprimlab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
@@ -1348,6 +1372,7 @@ void ICMPanel::wtrcinChanged()
         will->set_sensitive(false);
         willulab->set_sensitive(true);
         wprim->set_sensitive(true);
+        fbw->set_sensitive(true);
         wprimlab->set_sensitive(true);
         wGamma->set_sensitive(false);
         wSlope->set_sensitive(false);
@@ -1875,6 +1900,32 @@ void ICMPanel::oBPCChanged()
             listener->panelChanged(EvOBPCompens, M("GENERAL_ENABLED"));
         } else {
             listener->panelChanged(EvOBPCompens, M("GENERAL_DISABLED"));
+        }
+    }
+}
+
+void ICMPanel::fbwChanged()
+{
+    if (multiImage) {
+        if (fbw->get_inconsistent()) {
+            fbw->set_inconsistent(false);
+            fbwconn.block(true);
+            fbw->set_active(false);
+            fbwconn.block(false);
+        } else if (lastfbw) {
+            fbw->set_inconsistent(true);
+        }
+
+        lastfbw = fbw->get_active();
+    }
+
+    if (listener) {
+        if (fbw->get_inconsistent()) {
+            listener->panelChanged(EvICMfbw, M("GENERAL_UNCHANGED"));
+        } else if (fbw->get_active()) {
+            listener->panelChanged(EvICMfbw, M("GENERAL_ENABLED"));
+        } else {
+            listener->panelChanged(EvICMfbw, M("GENERAL_DISABLED"));
         }
     }
 }
