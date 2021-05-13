@@ -51,7 +51,9 @@ private:
     Gtk::ProgressBar prProgBar;
     PLDBridge* pldBridge;
     bool is_fullscreen;
+    bool is_minimized;
     bool on_delete_has_run;
+    bool on_conf_listener_active;
     Gtk::Button * btn_fullscreen;
 
     Gtk::Image *iFullscreen, *iFullscreen_exit;
@@ -95,6 +97,7 @@ public:
     void showPreferences ();
     void on_realize () override;
     void toggle_fullscreen ();
+    void get_position(int& x, int& y) const;
 
     void setProgress(double p) override;
     void setProgressStr(const Glib::ustring& str) override;

@@ -282,6 +282,8 @@ RTWindow::RTWindow ()
 
     on_delete_has_run = false;
     is_fullscreen = false;
+    is_minimized = false;
+    on_conf_listener_active = true;
     property_destroy_with_parent().set_value (false);
     signal_window_state_event().connect ( sigc::mem_fun (*this, &RTWindow::on_window_state_event) );
     signal_key_press_event().connect ( sigc::mem_fun (*this, &RTWindow::keyPressed) );
@@ -521,10 +523,14 @@ void RTWindow::showErrors()
 
 bool RTWindow::on_configure_event (GdkEventConfigure* event)
 {
-    if (!is_maximized() && is_visible()) {
-        get_size (options.windowWidth, options.windowHeight);
-        get_position (options.windowX, options.windowY);
+    if (on_conf_listener_active) { // Avoid getting size and position while window is maximizing, getting fullscreen, ...
+        if (!options.windowMaximized && !is_fullscreen && !is_minimized) {
+            get_size (options.windowWidth, options.windowHeight);
+            get_position (options.windowX, options.windowY);
+        }
     }
+    
+    printf("Position: X=%d, Y=%d\n", options.windowX, options.windowY);
 
     RTImage::setDPInScale(RTScalable::getDPI(), RTScalable::getScale());   // will update the RTImage   on scale/resolution change
     RTSurface::setDPInScale(RTScalable::getDPI(), RTScalable::getScale()); // will update the RTSurface on scale/resolution change
@@ -537,7 +543,19 @@ bool RTWindow::on_window_state_event (GdkEventWindowState* event)
     if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED) {
         options.windowMaximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
     }
-
+    
+    if (event->changed_mask & GDK_WINDOW_STATE_ICONIFIED) {
+        is_minimized = event->new_window_state & GDK_WINDOW_STATE_ICONIFIED;
+    }
+    
+    if (event->changed_mask & GDK_WINDOW_STATE_FULLSCREEN) {
+        is_fullscreen = event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN;
+    }
+    
+    printf("is_minimized: %d\n", is_minimized);
+    printf("is_maximized: %d\n", options.windowMaximized);
+    printf("is_fullscreen: %d\n", is_fullscreen);
+    
     return Gtk::Widget::on_window_state_event (event);
 }
 
@@ -854,10 +872,13 @@ bool RTWindow::on_delete_event (GdkEventAny* event)
     FileBrowserEntry::hdr.reset();
     FileBrowserEntry::ps.reset();
 
-    if (!options.windowMaximized) {
+    if (!options.windowMaximized && !is_fullscreen && !is_minimized) {
         get_size (options.windowWidth, options.windowHeight);
         get_position (options.windowX, options.windowY);
     }
+    
+    printf("is_minimized: %d\n", is_minimized);
+    printf("Position: X=%d, Y=%d\n", options.windowX, options.windowY);
 
     options.windowMonitor = get_screen()->get_monitor_at_window (get_window());
 
@@ -972,25 +993,25 @@ void RTWindow::error(const Glib::ustring& descr)
 
 void RTWindow::toggle_fullscreen ()
 {
+    on_conf_listener_active = false; // Avoid getting size and position while window is getting fullscreen
+    
     if (is_fullscreen) {
         unfullscreen();
-        is_fullscreen = false;
 
         if (btn_fullscreen) {
-            //btn_fullscreen->set_label(M("MAIN_BUTTON_FULLSCREEN"));
             btn_fullscreen->set_tooltip_markup (M ("MAIN_BUTTON_FULLSCREEN"));
             btn_fullscreen->set_image (*iFullscreen);
         }
     } else {
         fullscreen();
-        is_fullscreen = true;
 
         if (btn_fullscreen) {
-            //btn_fullscreen->set_label(M("MAIN_BUTTON_UNFULLSCREEN"));
             btn_fullscreen->set_tooltip_markup (M ("MAIN_BUTTON_UNFULLSCREEN"));
             btn_fullscreen->set_image (*iFullscreen_exit);
         }
     }
+    
+    on_conf_listener_active = true;
 }
 
 void RTWindow::SetEditorCurrent()
@@ -1096,6 +1117,8 @@ bool RTWindow::splashClosed (GdkEventAny* event)
 
 void RTWindow::setWindowSize ()
 {
+    on_conf_listener_active = false; // Avoid getting size and position while window is being moved, maximized, ...
+    
     Gdk::Rectangle lMonitorRect;
     get_screen()->get_monitor_geometry (std::min (options.windowMonitor, Gdk::Screen::get_default()->get_n_monitors() - 1), lMonitorRect);
 
@@ -1130,6 +1153,25 @@ void RTWindow::setWindowSize ()
         }
 #endif
     }
+    
+    on_conf_listener_active = true;
+}
+
+void RTWindow::get_position(int& x, int& y) const
+{
+    // Call native function
+    Gtk::Window::get_position (x, y);
+    
+    // Retrieve monitor size
+    Gdk::Rectangle lMonitorRect;
+    auto display = get_screen()->get_display();
+    display->get_monitor(std::min (options.windowMonitor, display->get_n_monitors() - 1))->get_geometry(lMonitorRect);
+    
+    // Saturate position at monitor limits to avoid unexpected behavior (fixes #6233)
+    x = std::min(lMonitorRect.get_width(), std::max(0, x));
+    y = std::min(lMonitorRect.get_height(), std::max(0, y));
+    
+    printf("Monitor: W=%d, H=%d\n", lMonitorRect.get_width(), lMonitorRect.get_height());
 }
 
 void RTWindow::set_title_decorated (Glib::ustring fname)
