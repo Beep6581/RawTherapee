@@ -1012,26 +1012,26 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         } else {
             redFrame->show();
         }
-        if(wprim->get_active_row_number() == 12) {
-            labgridcie->set_sensitive(true);
-        } else {
-            labgridcie->set_sensitive(false);
-        }
-        if (wprim->get_active_row_number() == 11) {
-            will->set_sensitive(true);
-        } else {
-            will->set_sensitive(false);
-        }
         break;
     }
 
-    if(wprim->get_active_row_number() == 12) {
+    int wprimi = wprim->get_active_row_number();
+    switch (wprimi) {
+    case 12:
         labgridcie->set_sensitive(true);
         redBox->set_sensitive(false);
         greBox->set_sensitive(false);
         bluBox->set_sensitive(false);
-    } else {
+        will->set_sensitive(false);
+        break;
+    case 11:
+        will->set_sensitive(true);
         labgridcie->set_sensitive(false);
+        break;
+    default:
+        labgridcie->set_sensitive(false);
+        will->set_sensitive(false);
+        break;
     }
 
     enableListener();
