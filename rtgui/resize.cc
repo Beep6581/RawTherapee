@@ -33,6 +33,8 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
 {
     auto m = ProcEventMapper::getInstance();
     EvResizeAllowUpscaling = m->newEvent(RESIZE, "HISTORY_MSG_RESIZE_ALLOWUPSCALING");
+    EvResizeLongedge = m->newEvent (RESIZE, "HISTORY_MSG_RESIZE_LONGEDGE");
+    EvResizeShortedge = m->newEvent (RESIZE, "HISTORY_MSG_RESIZE_SHORTEDGE");   
 
     cropw = 0;
     croph = 0;
@@ -90,12 +92,12 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
 
     sizeBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
-    Gtk::HBox* sbox = Gtk::manage (new Gtk::HBox ());
-    Gtk::HBox* wbox = Gtk::manage (new Gtk::HBox ());
-    Gtk::HBox* hbox = Gtk::manage (new Gtk::HBox ());
-    Gtk::HBox* ebox = Gtk::manage (new Gtk::HBox ());
-    Gtk::HBox* lebox = Gtk::manage (new Gtk::HBox ());
-    Gtk::HBox* sebox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* sbox = Gtk::manage (new Gtk::Box ());
+    Gtk::Box* wbox = Gtk::manage (new Gtk::Box ());
+    Gtk::Box* hbox = Gtk::manage (new Gtk::Box ());
+    Gtk::Box* ebox = Gtk::manage (new Gtk::Box ());
+    Gtk::Box* lebox = Gtk::manage (new Gtk::Box ());
+    Gtk::Box* sebox = Gtk::manage (new Gtk::Box ());
 
     w = Gtk::manage (new MySpinButton ());
     w->set_width_chars(5);

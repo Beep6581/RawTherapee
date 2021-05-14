@@ -68,8 +68,8 @@ enum ProcEventCode {
     EvToneCurveMode2 = 42,
     obsolete_43 = 43, // obsolete
     obsolete_44 = 44, // obsolete
-    EvResizeLongedge = 45,
-    EvResizeShortedge = 46,
+    obsolete_45 = 45, // obsolete
+    obsolete_46 = 46, // obsolete
     EvDCPToneCurve = 47,
     EvDCPIlluminant = 48,
     EvSHEnabled = 49,

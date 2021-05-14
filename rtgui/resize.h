@@ -71,8 +71,10 @@ private:
     void allowUpscalingChanged();
 
     rtengine::ProcEvent EvResizeAllowUpscaling;
+    rtengine::ProcEvent EvResizeLongedge;
+    rtengine::ProcEvent EvResizeShortedge;
     Adjuster*          scale;
-    Gtk::Box*         sizeBox;
+    Gtk::Box*          sizeBox;
     MyComboBoxText*    appliesTo;
     MyComboBoxText*    method;
     MyComboBoxText*    spec;

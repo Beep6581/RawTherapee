@@ -309,8 +309,8 @@ HISTORY_MSG_42;Exposure - Tone curve 2
 HISTORY_MSG_43;Exposure - Tone curve 2 mode
 HISTORY_MSG_44;Lum. denoising radius
 HISTORY_MSG_45;Lum. denoising edge tolerance
-HISTORY_MSG_46;Resize - Long Edge
-HISTORY_MSG_47;Resize - Short Edge
+HISTORY_MSG_46;Color denoising
+HISTORY_MSG_47;Blend ICC highlights with matrix
 HISTORY_MSG_48;DCP - Tone curve
 HISTORY_MSG_49;DCP illuminant
 HISTORY_MSG_50;Shadows/Highlights
@@ -1368,6 +1368,8 @@ HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Correction - Iterations
 HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw CA Correction - Avoid color shift
 HISTORY_MSG_RAW_BORDER;Raw border
 HISTORY_MSG_RESIZE_ALLOWUPSCALING;Resize - Allow upscaling
+HISTORY_MSG_RESIZE_LONGEDGE;Resize - Long Edge
+HISTORY_MSG_RESIZE_SHORTEDGE;Resize - Short Edge
 HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
 HISTORY_MSG_SHARPENING_CONTRAST;Sharpening - Contrast threshold
 HISTORY_MSG_SH_COLORSPACE;S/H - Colorspace
