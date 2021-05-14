@@ -139,7 +139,6 @@ set(RTENGINESOURCEFILES
     jpeg_ijg/jpeg_memsrc.cc
     labimage.cc
     lcp.cc
-    lj92.c
     lmmse_demosaic.cc
     loadinitial.cc
     munselllch.cc
