@@ -400,7 +400,6 @@ void ImProcFunctions::removeSpots (Imagefloat* img, ImageSource* imgsrc, const s
             || !srcSpotBox->imageIntersects(*dstSpotBox, true))
         {
             continue;
-            ++i;
         }
 
         // If spot intersect the preview image, add it to the visible spots
