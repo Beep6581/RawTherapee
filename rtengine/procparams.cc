@@ -2205,9 +2205,6 @@ bool ResizeParams::operator !=(const ResizeParams& other) const
     return !(*this == other);
 }
 
-const std::array<std::string, 13> ColorManagementParams::wprims = {"def", "srgb", "adob", "prop", "rec", "aces", "wid", "ac0", "bru", "bet", "bst", "cus", "cusgr"};
-const std::array<std::string, 7> ColorManagementParams::workingTRCs = {"none", "Custom", "bt709", "srgb", "22", "18", "lin"};
-const std::array<std::string, 11> ColorManagementParams::wills = {"def", "D41", "D50", "D55", "D60", "D65", "D80", "D120", "stda", "2000", "1500"};
 const Glib::ustring ColorManagementParams::NoICMString = Glib::ustring("No ICM: sRGB output");
 
 ColorManagementParams::ColorManagementParams() :
@@ -2218,9 +2215,9 @@ ColorManagementParams::ColorManagementParams() :
     applyHueSatMap(true),
     dcpIlluminant(0),
     workingProfile("ProPhoto"),
-    workingTRC(workingTRCs[0]),
-    will(wills[0]),
-    wprim(wprims[0]),
+    workingTRC(WorkingTrc::NONE),
+    will(Illuminant::DEFAULT),
+    wprim(Primaries::DEFAULT),
     workingTRCGamma(2.4),//gamma sRGB
     workingTRCSlope(12.92),
     redx(0.64),
@@ -4019,6 +4016,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     // Log encoding
     visilog(false),
     explog(false),
+    complexlog(0),
     autocompute(false),
     sourceGray(10.),
     sourceabs(2000.),
@@ -6533,9 +6531,64 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.applyHueSatMap, "Color Management", "ApplyHueSatMap", icm.applyHueSatMap, keyFile);
         saveToKeyfile(!pedited || pedited->icm.dcpIlluminant, "Color Management", "DCPIlluminant", icm.dcpIlluminant, keyFile);
         saveToKeyfile(!pedited || pedited->icm.workingProfile, "Color Management", "WorkingProfile", icm.workingProfile, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.workingTRC, "Color Management", "WorkingTRC", icm.workingTRC, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.will, "Color Management", "Will", icm.will, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.wprim, "Color Management", "Wprim", icm.wprim, keyFile);
+        saveToKeyfile(
+            !pedited || pedited->icm.workingTRC,
+            "Color Management",
+            "WorkingTRC",
+            {
+                {ColorManagementParams::WorkingTrc::NONE, "none"},
+                {ColorManagementParams::WorkingTrc::CUSTOM, "Custom"},
+                {ColorManagementParams::WorkingTrc::BT709, "bt709"},
+                {ColorManagementParams::WorkingTrc::SRGB, "srgb"},
+                {ColorManagementParams::WorkingTrc::GAMMA_2_2, "22"},
+                {ColorManagementParams::WorkingTrc::GAMMA_1_8, "18"},
+                {ColorManagementParams::WorkingTrc::LINEAR, "lin"}
+            },
+            icm.workingTRC,
+            keyFile
+        );
+        saveToKeyfile(
+            !pedited || pedited->icm.will,
+            "Color Management",
+            "Will",
+            {
+                {ColorManagementParams::Illuminant::DEFAULT, "def"},
+                {ColorManagementParams::Illuminant::D41, "D41"},
+                {ColorManagementParams::Illuminant::D50, "D50"},
+                {ColorManagementParams::Illuminant::D55, "D55"},
+                {ColorManagementParams::Illuminant::D60, "D60"},
+                {ColorManagementParams::Illuminant::D65, "D65"},
+                {ColorManagementParams::Illuminant::D80, "D80"},
+                {ColorManagementParams::Illuminant::D120, "D120"},
+                {ColorManagementParams::Illuminant::STDA, "stda"},
+                {ColorManagementParams::Illuminant::TUNGSTEN_2000K, "2000"},
+                {ColorManagementParams::Illuminant::TUNGSTEN_1500K, "1500"}
+            },
+            icm.will,
+            keyFile
+        );
+        saveToKeyfile(
+            !pedited || pedited->icm.wprim,
+            "Color Management",
+            "Wprim",
+            {
+                {ColorManagementParams::Primaries::DEFAULT, "def"},
+                {ColorManagementParams::Primaries::SRGB, "srgb"},
+                {ColorManagementParams::Primaries::ADOBE_RGB, "adob"},
+                {ColorManagementParams::Primaries::PRO_PHOTO, "prop"},
+                {ColorManagementParams::Primaries::REC2020, "rec"},
+                {ColorManagementParams::Primaries::ACES_P1, "aces"},
+                {ColorManagementParams::Primaries::WIDE_GAMUT, "wid"},
+                {ColorManagementParams::Primaries::ACES_P0, "ac0"},
+                {ColorManagementParams::Primaries::BRUCE_RGB, "bru"},
+                {ColorManagementParams::Primaries::BETA_RGB, "bet"},
+                {ColorManagementParams::Primaries::BEST_RGB, "bst"},
+                {ColorManagementParams::Primaries::CUSTOM, "cus"},
+                {ColorManagementParams::Primaries::CUSTOM_GRID, "cusgr"}
+            },
+            icm.wprim,
+            keyFile
+        );
         saveToKeyfile(!pedited || pedited->icm.workingTRCGamma, "Color Management", "WorkingTRCGamma", icm.workingTRCGamma, keyFile);
         saveToKeyfile(!pedited || pedited->icm.workingTRCSlope, "Color Management", "WorkingTRCSlope", icm.workingTRCSlope, keyFile);
         saveToKeyfile(!pedited || pedited->icm.redx, "Color Management", "Redx", icm.redx, keyFile);
@@ -8527,9 +8580,88 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "ApplyHueSatMap", pedited, icm.applyHueSatMap, pedited->icm.applyHueSatMap);
             assignFromKeyfile(keyFile, "Color Management", "DCPIlluminant", pedited, icm.dcpIlluminant, pedited->icm.dcpIlluminant);
             assignFromKeyfile(keyFile, "Color Management", "WorkingProfile", pedited, icm.workingProfile, pedited->icm.workingProfile);
-            assignFromKeyfile(keyFile, "Color Management", "WorkingTRC", pedited, icm.workingTRC, pedited->icm.workingTRC);
-            assignFromKeyfile(keyFile, "Color Management", "Will", pedited, icm.will, pedited->icm.will);
-            assignFromKeyfile(keyFile, "Color Management", "Wprim", pedited, icm.wprim, pedited->icm.wprim);
+            if (
+                !assignFromKeyfile(
+                    keyFile,
+                    "Color Management",
+                    "WorkingTRC",
+                    pedited,
+                    {
+                        {"none", ColorManagementParams::WorkingTrc::NONE},
+                        {"Custom", ColorManagementParams::WorkingTrc::CUSTOM},
+                        {"bt709", ColorManagementParams::WorkingTrc::BT709},
+                        {"srgb", ColorManagementParams::WorkingTrc::SRGB},
+                        {"22", ColorManagementParams::WorkingTrc::GAMMA_2_2},
+                        {"18", ColorManagementParams::WorkingTrc::GAMMA_1_8},
+                        {"lin", ColorManagementParams::WorkingTrc::LINEAR}
+                    },
+                    icm.workingTRC,
+                    pedited->icm.workingTRC
+                )
+            ) {
+               icm.workingTRC = ColorManagementParams::WorkingTrc::NONE;
+               if (pedited) {
+                   pedited->icm.workingTRC = true;
+               }
+            }
+            if (
+                !assignFromKeyfile(
+                    keyFile,
+                    "Color Management",
+                    "Will",
+                    pedited,
+                    {
+                        {"def", ColorManagementParams::Illuminant::DEFAULT},
+                        {"D41", ColorManagementParams::Illuminant::D41},
+                        {"D50", ColorManagementParams::Illuminant::D50},
+                        {"D55", ColorManagementParams::Illuminant::D55},
+                        {"D60", ColorManagementParams::Illuminant::D60},
+                        {"D65", ColorManagementParams::Illuminant::D65},
+                        {"D80", ColorManagementParams::Illuminant::D80},
+                        {"D120", ColorManagementParams::Illuminant::D120},
+                        {"stda", ColorManagementParams::Illuminant::STDA},
+                        {"2000", ColorManagementParams::Illuminant::TUNGSTEN_2000K},
+                        {"1500", ColorManagementParams::Illuminant::TUNGSTEN_1500K}
+                    },
+                    icm.will,
+                    pedited->icm.will
+                )
+            ) {
+                icm.will = ColorManagementParams::Illuminant::DEFAULT;
+                if (pedited) {
+                    pedited->icm.will = true;
+                }
+            }
+            if (
+                !assignFromKeyfile(
+                    keyFile,
+                    "Color Management",
+                    "Wprim",
+                    pedited,
+                    {
+                        {"def", ColorManagementParams::Primaries::DEFAULT},
+                        {"srgb", ColorManagementParams::Primaries::SRGB},
+                        {"adob", ColorManagementParams::Primaries::ADOBE_RGB},
+                        {"prop", ColorManagementParams::Primaries::PRO_PHOTO},
+                        {"rec", ColorManagementParams::Primaries::REC2020},
+                        {"aces", ColorManagementParams::Primaries::ACES_P1},
+                        {"wid", ColorManagementParams::Primaries::WIDE_GAMUT},
+                        {"ac0", ColorManagementParams::Primaries::ACES_P0},
+                        {"bru", ColorManagementParams::Primaries::BRUCE_RGB},
+                        {"bet", ColorManagementParams::Primaries::BETA_RGB},
+                        {"bst", ColorManagementParams::Primaries::BEST_RGB},
+                        {"cus", ColorManagementParams::Primaries::CUSTOM},
+                        {"cusgr", ColorManagementParams::Primaries::CUSTOM_GRID}
+                    },
+                    icm.wprim,
+                    pedited->icm.wprim
+                )
+            ) {
+                icm.wprim = ColorManagementParams::Primaries::DEFAULT;
+                if (pedited) {
+                    pedited->icm.wprim = true;
+                }
+            }
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", pedited, icm.workingTRCGamma, pedited->icm.workingTRCGamma);
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", pedited, icm.workingTRCSlope, pedited->icm.workingTRCSlope);
 

@@ -18,8 +18,6 @@
  */
 #pragma once
 
-#include <algorithm>
-#include <array>
 #include <cmath>
 #include <cstdio>
 #include <map>
@@ -1703,6 +1701,46 @@ struct ResizeParams {
   * Parameters of the color spaces used during the processing
   */
 struct ColorManagementParams {
+    enum class WorkingTrc {
+        NONE,
+        CUSTOM,
+        BT709,
+        SRGB,
+        GAMMA_2_2,
+        GAMMA_1_8,
+        LINEAR
+    };
+
+    enum class Illuminant {
+        DEFAULT,
+        D41,
+        D50,
+        D55,
+        D60,
+        D65,
+        D80,
+        D120,
+        STDA,
+        TUNGSTEN_2000K,
+        TUNGSTEN_1500K
+    };
+
+    enum class Primaries {
+        DEFAULT,
+        SRGB,
+        ADOBE_RGB,
+        PRO_PHOTO,
+        REC2020,
+        ACES_P1,
+        WIDE_GAMUT,
+        ACES_P0,
+        BRUCE_RGB,
+        BETA_RGB,
+        BEST_RGB,
+        CUSTOM,
+        CUSTOM_GRID
+    };
+
     Glib::ustring inputProfile;
     bool toneCurve;
     bool applyLookTable;
@@ -1711,9 +1749,9 @@ struct ColorManagementParams {
     int dcpIlluminant;
 
     Glib::ustring workingProfile;
-    Glib::ustring workingTRC;
-    Glib::ustring will;
-    Glib::ustring wprim;
+    WorkingTrc workingTRC;
+    Illuminant will;
+    Primaries wprim;
     double workingTRCGamma;
     double workingTRCSlope;
     double redx;
@@ -1737,10 +1775,6 @@ struct ColorManagementParams {
     Glib::ustring outputProfile;
     RenderingIntent outputIntent;
     bool outputBPC;
-
-    static const std::array<std::string, 13> wprims;
-    static const std::array<std::string, 7> workingTRCs;
-    static const std::array<std::string, 11> wills;
 
     static const Glib::ustring NoICMString;
 
@@ -2410,17 +2444,6 @@ public:
 
     bool operator ==(const ProcParams& other) const;
     bool operator !=(const ProcParams& other) const;
-
-    template <typename T1, typename T2, std::size_t N>
-    int posInArray(const std::array<T1, N>& arr, const T2& val, int defaultValue = 0) const
-    {
-        static_assert(N > 0, "array size has to be > 0");
-        const auto it = std::find(arr.begin(), arr.end(), val);
-        if (it != arr.end()) {
-            return std::distance(arr.begin(), it);
-        }
-        return defaultValue;
-    }
 
 private:
     /** Write the ProcParams's text in the file of the given name.

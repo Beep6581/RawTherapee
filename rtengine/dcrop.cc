@@ -19,9 +19,11 @@
  */
 
 #include "cieimage.h"
+#include "color.h"
 #include "curves.h"
 #include "dcp.h"
 #include "dcrop.h"
+#include "guidedfilter.h"
 #include "image8.h"
 #include "imagefloat.h"
 #include "improccoordinator.h"
@@ -30,9 +32,9 @@
 #include "procparams.h"
 #include "refreshmap.h"
 #include "rt_math.h"
-#include "color.h"
+#include "utils.h"
+
 #include "../rtgui/editcallbacks.h"
-#include "guidedfilter.h"
 
 #pragma GCC diagnostic warning "-Wall"
 #pragma GCC diagnostic warning "-Wextra"
@@ -278,7 +280,7 @@ void Crop::update(int todo)
                     crW = 250;
                 }
 
-                //  if(settings->leveldnv ==2) {crW=int(tileWskip/2);crH=int((tileWskip/2));}//adapted to scale of preview
+                //  if (settings->leveldnv ==2) {crW=int(tileWskip/2);crH=int((tileWskip/2));}//adapted to scale of preview
                 if (settings->leveldnv == 2) {
                     crW = int (tileWskip / 2);
                 }
@@ -402,7 +404,7 @@ void Crop::update(int todo)
                 crH = 250;
             }
 
-            //  if(settings->leveldnv ==2) {crW=int(tileWskip/2);crH=int((tileWskip/2));}//adapted to scale of preview
+            //  if (settings->leveldnv ==2) {crW=int(tileWskip/2);crH=int((tileWskip/2));}//adapted to scale of preview
             if (settings->leveldnv == 2) {
                 crW = int (tileWskip / 2);
                 crH = int (tileHskip / 2);
@@ -607,7 +609,7 @@ void Crop::update(int todo)
             //end evaluate noise
         }
 
-        //  if(params.dirpyrDenoise.Cmethod=="AUT" || params.dirpyrDenoise.Cmethod=="PON") {//reinit origCrop after Auto
+        //  if (params.dirpyrDenoise.Cmethod=="AUT" || params.dirpyrDenoise.Cmethod=="PON") {//reinit origCrop after Auto
         if ((settings->leveldnautsimpl == 1 && params.dirpyrDenoise.Cmethod == "AUT")  || (settings->leveldnautsimpl == 0 && params.dirpyrDenoise.C2method == "AUTO")) { //reinit origCrop after Auto
             PreviewProps pp(trafx, trafy, trafw * skip, trafh * skip, skip);
             parent->imgsrc->getImage(parent->currWB, tr, origCrop, pp, params.toneCurve, params.raw);
@@ -975,7 +977,7 @@ void Crop::update(int todo)
             double hlcomprthresh = params.locallab.spots.at(sp).hlcomprthresh;
             double shcompr = params.locallab.spots.at(sp).shcompr;
             double br = params.locallab.spots.at(sp).lightness;
-            if(black < 0. && params.locallab.spots.at(sp).expMethod == "pde" ) {
+            if (black < 0. && params.locallab.spots.at(sp).expMethod == "pde" ) {
                 black *= 1.5;
             }
 
@@ -1053,7 +1055,7 @@ void Crop::update(int todo)
                         parent->previewDeltaE, parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallvibMask,  parent->localllcMask, parent->locallsharMask, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask,
                         parent->localllogMask, parent->locall_Mask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                         meantme, stdtme, meanretie, stdretie);
-                        if(parent->previewDeltaE || parent->locallColorMask == 5 || parent->locallvibMask == 4 || parent->locallExpMask == 5 || parent->locallSHMask == 4 || parent->localllcMask == 4 || parent->localltmMask == 4 || parent->localllogMask == 4 || parent->locallsoftMask == 6 || parent->localllcMask == 4) {  
+                        if (parent->previewDeltaE || parent->locallColorMask == 5 || parent->locallvibMask == 4 || parent->locallExpMask == 5 || parent->locallSHMask == 4 || parent->localllcMask == 4 || parent->localltmMask == 4 || parent->localllogMask == 4 || parent->locallsoftMask == 6 || parent->localllcMask == 4) {
                             params.blackwhite.enabled = false;
                             params.colorToning.enabled = false;
                             params.rgbCurves.enabled = false;
@@ -1214,7 +1216,7 @@ void Crop::update(int todo)
             int minwin = min(labnCrop->W, labnCrop->H);
             int maxlevelcrop = 10;
 
-            //  if(cp.mul[9]!=0)maxlevelcrop=10;
+            //  if (cp.mul[9]!=0)maxlevelcrop=10;
             // adap maximum level wavelet to size of crop
             if (minwin * skip < 1024) {
                 maxlevelcrop = 9;    //sampling wavelet 512
@@ -1300,7 +1302,7 @@ void Crop::update(int todo)
             bool proton = WaveParams.exptoning;
             bool pronois = WaveParams.expnoise; 
 
-            if(WaveParams.showmask) {
+            if (WaveParams.showmask) {
            //     WaveParams.showmask = false;
            //     WaveParams.expclari = true;
             }
@@ -1427,7 +1429,7 @@ void Crop::update(int todo)
                 }
 
                 float indic = 1.f;
-                if(WaveParams.showmask){
+                if (WaveParams.showmask){
                     mL0 = mC0 = -1.f;
                     indic = -1.f;
                     mL = fabs(mL);
@@ -1462,25 +1464,25 @@ void Crop::update(int todo)
         
         parent->ipf.softLight(labnCrop, params.softlight);
 
-        if (params.icm.workingTRC != "none") {
+        if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE) {
             const int GW = labnCrop->W;
             const int GH = labnCrop->H;
             std::unique_ptr<LabImage> provis;
             const float pres = 0.01f * params.icm.preser;
-            if (pres > 0.f && params.icm.wprim != "def") {
+            if (pres > 0.f && params.icm.wprim != ColorManagementParams::Primaries::DEFAULT) {
                 provis.reset(new LabImage(GW, GH));
                 provis->CopyFrom(labnCrop);
             }
 
-            std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
+            const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
 
             parent->ipf.lab2rgb(*labnCrop, *tmpImage1, params.icm.workingProfile);
 
             const float gamtone = parent->params->icm.workingTRCGamma;
             const float slotone = parent->params->icm.workingTRCSlope;
 
-            int illum = params.posInArray(params.icm.wills, params.icm.will);
-            int prim = params.posInArray(params.icm.wprims, params.icm.wprim);
+            int illum = rtengine::toUnderlying(params.icm.will);
+            const int prim = rtengine::toUnderlying(params.icm.wprim);
 
             Glib::ustring prof = params.icm.workingProfile;
 
@@ -1491,10 +1493,10 @@ void Crop::update(int todo)
 
             parent->ipf.rgb2lab(*tmpImage1, *labnCrop, params.icm.workingProfile);
             //labnCrop and provis
-            if(provis) {
+            if (provis) {
                 parent->ipf.preserv(labnCrop, provis.get(), GW, GH);
             }
-            if(params.icm.fbw) {
+            if (params.icm.fbw) {
 #ifdef _OPENMP
             #pragma omp parallel for
 #endif

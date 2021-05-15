@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <fstream>
+
 #include <glibmm/thread.h>
 
 #include "improccoordinator.h"
@@ -27,6 +28,7 @@
 #include "colortemp.h"
 #include "curves.h"
 #include "dcp.h"
+#include "guidedfilter.h"
 #include "iccstore.h"
 #include "image8.h"
 #include "imagefloat.h"
@@ -35,7 +37,7 @@
 #include "lcp.h"
 #include "procparams.h"
 #include "refreshmap.h"
-#include "guidedfilter.h"
+#include "utils.h"
 
 #include "../rtgui/options.h"
 
@@ -600,16 +602,16 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                             float max_r[nbw*nbh];
                             float max_b[nbw*nbh];
 
-                            if(denoiseParams.Lmethod == "CUR") {
-                                if(noiseLCurve)
+                            if (denoiseParams.Lmethod == "CUR") {
+                                if (noiseLCurve)
                                     denoiseParams.luma = 0.5f;
                                 else
                                     denoiseParams.luma = 0.0f;
-                            } else if(denoiseParams.Lmethod == "SLI")
+                            } else if (denoiseParams.Lmethod == "SLI")
                                 noiseLCurve.Reset();
 
 
-                            if(noiseLCurve || noiseCCurve){//only allocate memory if enabled and scale=1
+                            if (noiseLCurve || noiseCCurve){//only allocate memory if enabled and scale=1
                                 // we only need image reduced to 1/4 here
                                 calclum = new Imagefloat ((pW+1)/2, (pH+1)/2);//for luminance denoise curve
                                 for(int ii=0;ii<pH;ii+=2){
@@ -830,7 +832,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
 
 
-      //  if (((todo & (M_AUTOEXP | M_RGBCURVE)) || (todo & M_CROP)) && params->locallab.enabled && !params->locallab.spots.empty()) {
         if ((todo & (M_AUTOEXP | M_RGBCURVE | M_CROP)) && params->locallab.enabled && !params->locallab.spots.empty()) {
             
             ipf.rgb2lab(*oprevi, *oprevl, params->icm.workingProfile);
@@ -887,11 +888,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
 
-                if(params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap) {
+                if (params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap) {
                     savenormtm.reset(new LabImage(*oprevl, true));
                 }
 
-                if(params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) {
+                if (params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) {
                     savenormreti.reset(new LabImage(*oprevl, true));
                 }
                 // Set local curves of current spot to LUT
@@ -1001,7 +1002,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float yend = 1.f;
                 float xsta = 0.f;
                 float xend = 1.f;
-                if(istm || isreti) {
+                if (istm || isreti) {
                     locx = params->locallab.spots.at(sp).loc.at(0) / 2000.0;
                     locy = params->locallab.spots.at(sp).loc.at(2) / 2000.0;
                     locxl= params->locallab.spots.at(sp).loc.at(1) / 2000.0;
@@ -1021,10 +1022,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 int yys = ysta * hh;
                 int yye = yend * hh;
                         
-                if(istm) { //calculate mean and sigma on full image for RT-spot use by normalize_mean_dt
+                if (istm) { //calculate mean and sigma on full image for RT-spot use by normalize_mean_dt
                     ipf.mean_sig (nprevl->L, meantme, stdtme, xxs, xxe, yys, yye);
                 }
-                if(isreti) { //calculate mean and sigma on full image for RT-spot use by normalize_mean_dt
+                if (isreti) { //calculate mean and sigma on full image for RT-spot use by normalize_mean_dt
                     ipf.mean_sig (nprevl->L, meanretie, stdretie,xxs, xxe, yys, yye) ;
                 }
 
@@ -1113,7 +1114,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
 
                 
-                if(istm) { //calculate mean and sigma on full image for use by normalize_mean_dt
+                if (istm) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;
                     float stdf = 0.f;
                     ipf.mean_sig (savenormtm->L, meanf, stdf, xxs, xxe, yys, yye);
@@ -1123,7 +1124,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     params->locallab.spots.at(sp).softradiustm = stdf ;
                 }
 
-                if(isreti) { //calculate mean and sigma on full image for use by normalize_mean_dt
+                if (isreti) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;
                     float stdf = 0.f;
                     ipf.mean_sig (savenormreti->L, meanf, stdf,xxs, xxe, yys, yye );
@@ -1301,7 +1302,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             lhist16.clear();
 #ifdef _OPENMP
             const int numThreads = min(max(pW * pH / (int)lhist16.getSize(), 1), omp_get_max_threads());
-            #pragma omp parallel num_threads(numThreads) if(numThreads>1)
+            #pragma omp parallel num_threads(numThreads) if (numThreads>1)
 #endif
             {
                 LUTu lhist16thr(lhist16.getSize());
@@ -1354,6 +1355,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             ipf.chromiLuminanceCurve(nullptr, pW, nprevl, nprevl, chroma_acurve, chroma_bcurve, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, histCCurve, histLCurve);
             ipf.vibrance(nprevl, params->vibrance, params->toneCurve.hrenabled, params->icm.workingProfile);
             ipf.labColorCorrectionRegions(nprevl);
+
             if ((params->colorappearance.enabled && !params->colorappearance.tonecie) || (!params->colorappearance.enabled)) {
                 ipf.EPDToneMap(nprevl, 0, scale);
             }
@@ -1380,7 +1382,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 bool proton = WaveParams.exptoning;
                 bool pronois = WaveParams.expnoise; 
 
-                if(WaveParams.showmask) {
+                if (WaveParams.showmask) {
                  //   WaveParams.showmask = false;
                  //   WaveParams.expclari = true;
                 }
@@ -1506,7 +1508,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     }
                 float indic = 1.f;
 
-                if(WaveParams.showmask){
+                if (WaveParams.showmask){
                     mL0 = mC0 = -1.f;
                     indic = -1.f;
                     mL = fabs(mL);
@@ -1577,15 +1579,16 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
             ipf.softLight(nprevl, params->softlight);
 
-            if (params->icm.workingTRC != "none") {
+            if (params->icm.workingTRC != ColorManagementParams::WorkingTrc::NONE) {
                 const int GW = nprevl->W;
                 const int GH = nprevl->H;
                 std::unique_ptr<LabImage> provis;
                 const float pres = 0.01f * params->icm.preser;
-                if (pres > 0.f && params->icm.wprim != "def") {
+                if (pres > 0.f && params->icm.wprim != ColorManagementParams::Primaries::DEFAULT) {
                     provis.reset(new LabImage(GW, GH));
                     provis->CopyFrom(nprevl);
                 }
+
                 std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
 
                 ipf.lab2rgb(*nprevl, *tmpImage1, params->icm.workingProfile);
@@ -1593,8 +1596,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 const float gamtone = params->icm.workingTRCGamma;
                 const float slotone = params->icm.workingTRCSlope;
 
-                int illum = params->posInArray(params->icm.wills, params->icm.will);
-                int prim = params->posInArray(params->icm.wprims, params->icm.wprim);
+                int illum = toUnderlying(params->icm.will);
+                const int prim = toUnderlying(params->icm.wprim);
 
                 Glib::ustring prof = params->icm.workingProfile;
                 cmsHTRANSFORM dummy = nullptr;
@@ -1604,10 +1607,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 ipf.rgb2lab(*tmpImage1, *nprevl, params->icm.workingProfile);
                 //nprevl and provis
-                if(provis) {
+                if (provis) {
                     ipf.preserv(nprevl, provis.get(), GW, GH);
                 }
-                if(params->icm.fbw) {
+                if (params->icm.fbw) {
 #ifdef _OPENMP
                     #pragma omp parallel for
 #endif

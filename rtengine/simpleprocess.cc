@@ -16,27 +16,31 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#include <glibmm/thread.h>
+#include <glibmm/ustring.h>
+
 #include "cieimage.h"
-#include "dcp.h"
-#include "imagefloat.h"
-#include "labimage.h"
-#include "rtengine.h"
+#include "clutstore.h"
+#include "color.h"
 #include "colortemp.h"
+#include "curves.h"
+#include "dcp.h"
+#include "guidedfilter.h"
+#include "iccstore.h"
+#include "imagefloat.h"
 #include "imagesource.h"
 #include "improcfun.h"
-#include "curves.h"
-#include "iccstore.h"
-#include "clutstore.h"
+#include "labimage.h"
+#include "mytime.h"
 #include "processingjob.h"
 #include "procparams.h"
-#include <glibmm/ustring.h>
-#include <glibmm/thread.h>
-#include "../rtgui/options.h"
 #include "rawimagesource.h"
+#include "rtengine.h"
+#include "utils.h"
+
 #include "../rtgui/multilangmgr.h"
-#include "mytime.h"
-#include "guidedfilter.h"
-#include "color.h"
+#include "../rtgui/options.h"
 
 #undef THREAD_PRIORITY_NORMAL
 
@@ -1557,12 +1561,12 @@ private:
         ipf.softLight(labView, params.softlight);
 
 
-        if (params.icm.workingTRC != "none") {
+        if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE) {
             const int GW = labView->W;
             const int GH = labView->H;
             std::unique_ptr<LabImage> provis;
             const float pres = 0.01f * params.icm.preser;
-            if (pres > 0.f && params.icm.wprim != "def") {
+            if (pres > 0.f && params.icm.wprim != ColorManagementParams::Primaries::DEFAULT) {
                 provis.reset(new LabImage(GW, GH));
                 provis->CopyFrom(labView);
             }
@@ -1574,8 +1578,8 @@ private:
             const float gamtone = params.icm.workingTRCGamma;
             const float slotone = params.icm.workingTRCSlope;
 
-            int illum = params.posInArray(params.icm.wills, params.icm.will);
-            int prim = params.posInArray(params.icm.wprims, params.icm.wprim);
+            int illum = toUnderlying(params.icm.will);
+            const int prim = toUnderlying(params.icm.wprim);
 
             Glib::ustring prof = params.icm.workingProfile;
 

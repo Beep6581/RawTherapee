@@ -16,18 +16,20 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
-#include "rtengine.h"
-#include "image8.h"
-#include "imagefloat.h"
-#include "labimage.h"
-#include "improcfun.h"
 #include <glibmm/ustring.h>
-#include "iccstore.h"
-#include "iccmatrices.h"
-#include "settings.h"
+
 #include "alignedbuffer.h"
 #include "color.h"
+#include "iccmatrices.h"
+#include "iccstore.h"
+#include "image8.h"
+#include "imagefloat.h"
+#include "improcfun.h"
+#include "labimage.h"
 #include "procparams.h"
+#include "rtengine.h"
+#include "settings.h"
+#include "utils.h"
 
 namespace rtengine
 {
@@ -399,7 +401,7 @@ void ImProcFunctions::preserv(LabImage *nprevl, LabImage *provis, int cw, int ch
     for (int i = 0; i < ch; ++i) 
         for (int j = 0; j < cw; ++j) {
             float neu = SQR(provis->a[i][j]) + SQR(provis->b[i][j]);
-            if(neu < medneutral) {//plein effect
+            if (neu < medneutral) {//plein effect
                 nprevl->a[i][j] = intp(pres, provis->a[i][j], nprevl->a[i][j]); 
                 nprevl->b[i][j] = intp(pres, provis->b[i][j], nprevl->b[i][j]); 
             } else if (neu < neutral) {//decrease effect
@@ -441,7 +443,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         return;
     }
 
-    if(mul == -5 &&  gampos == 2.4 && slpos == 12.92310) {//must be change if we change settings RT sRGB
+    if (mul == -5 &&  gampos == 2.4 && slpos == 12.92310) {//must be change if we change settings RT sRGB
         //only in this case we can shortcut..all process..no gamut control..because we reduce...leads to very small differences, but big speedup
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16) if (multiThread) 
@@ -463,7 +465,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 
     }
  
-    if(mul == 1 ||(params->icm.wprim == "def" && params->icm.will == "def")) {//shortcut and speedup when no call primaries and illuminant - no gamut control...in this case be carefull
+    if (mul == 1 ||(params->icm.wprim == ColorManagementParams::Primaries::DEFAULT && params->icm.will == ColorManagementParams::Illuminant::DEFAULT)) {//shortcut and speedup when no call primaries and illuminant - no gamut control...in this case be carefull
         GammaValues g_a; //gamma parameters
         double pwr = 1.0 / static_cast<double>(gampos);
         Color::calcGamma(pwr, slpos, g_a); // call to calcGamma with selected gamma and slope
@@ -497,7 +499,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     float grexx = params->icm.grex;
     float greyy = params->icm.grey;
 
-    if(prim == 12) {//convert datas area to xy
+    if (prim == 12) {//convert datas area to xy
         float redgraphx =  params->icm.labgridcieALow;
         float redgraphy =  params->icm.labgridcieBLow;
         float blugraphx =  params->icm.labgridcieAHigh;
@@ -518,42 +520,67 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         greyy = rtengine::LIM(greyy, 0.5f, 1.f);
     }
 
-    if(prim != 0) {
-        switch (prim) {
-        case 1://sRGB
+    switch (ColorManagementParams::Primaries(prim)) {
+        case ColorManagementParams::Primaries::DEFAULT: {
+            break;
+        }
+
+        case ColorManagementParams::Primaries::SRGB: {
             profile = "sRGB";
             break;
-        case 2:
+        }
+
+        case ColorManagementParams::Primaries::ADOBE_RGB: {
             profile = "Adobe RGB";
             break;
-        case 3:
+        }
+
+        case ColorManagementParams::Primaries::PRO_PHOTO: {
             profile = "ProPhoto";
             break;
-        case 4:
+        }
+
+        case ColorManagementParams::Primaries::REC2020: {
             profile = "Rec2020";
             break;
-        case 5:
+        }
+
+        case ColorManagementParams::Primaries::ACES_P1: {
             profile = "ACESp1";
             break;
-        case 6:
+        }
+
+        case ColorManagementParams::Primaries::WIDE_GAMUT: {
             profile = "WideGamut";
             break;
-        case 7:
+        }
+
+        case ColorManagementParams::Primaries::ACES_P0: {
             profile = "ACESp0";
             break;
-        case 8:
+        }
+
+        case ColorManagementParams::Primaries::BRUCE_RGB: {
             profile = "BruceRGB";
             break;
-        case 9:
+        }
+
+        case ColorManagementParams::Primaries::BETA_RGB: {
             profile = "Beta RGB";
             break;
-        case 10:
+        }
+
+        case ColorManagementParams::Primaries::BEST_RGB: {
             profile = "BestRGB";
             break;
-        case 11:
+        }
+
+        case ColorManagementParams::Primaries::CUSTOM: {
             profile = "Custom";
             break;
-        case 12:
+        }
+
+        case ColorManagementParams::Primaries::CUSTOM_GRID: {
             profile = "Custom";
             break;
         }
@@ -597,7 +624,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = 0.8260;
             p[4] = 0.1570;
             p[5] = 0.0180;
-            illum = 2;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
         } else if (profile == "Adobe RGB") {
             p[0] = 0.6400;    //Adobe primaries
             p[1] = 0.3300;
@@ -606,7 +633,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.1500;
             p[5] = 0.0600;
             tempv4 = 6504.;
-            illum = 5;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D65);
         } else if (profile == "sRGB") {
             p[0] = 0.6400;    // sRGB primaries
             p[1] = 0.3300;
@@ -615,7 +642,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.1500;
             p[5] = 0.0600;
             tempv4 = 6504.;
-            illum = 5;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D65);
         } else if (profile == "BruceRGB") {
             p[0] = 0.6400;    // Bruce primaries
             p[1] = 0.3300;
@@ -624,7 +651,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.1500;
             p[5] = 0.0600;
             tempv4 = 6504.;
-            illum = 5;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D65);
        } else if (profile == "Beta RGB") {
             p[0] = 0.6888;    // Beta primaries
             p[1] = 0.3112;
@@ -632,7 +659,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = 0.7551;
             p[4] = 0.1265;
             p[5] = 0.0352;
-            illum = 2;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
         } else if (profile == "BestRGB") {
             p[0] = 0.7347;    // Best primaries
             p[1] = 0.2653;
@@ -640,7 +667,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = 0.7750;
             p[4] = 0.1300;
             p[5] = 0.0350;
-            illum = 2;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
         } else if (profile == "Rec2020") {
             p[0] = 0.7080;    // Rec2020 primaries
             p[1] = 0.2920;
@@ -649,7 +676,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.1310;
             p[5] = 0.0460;
             tempv4 = 6504.;
-            illum = 5;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D65);
         } else if (profile == "ACESp0") {
             p[0] = 0.7347;    // ACES P0 primaries
             p[1] = 0.2653;
@@ -658,7 +685,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.0001;
             p[5] = -0.0770;
             tempv4 = 6004.;
-            illum = 4;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D60);
         } else if (profile == "ACESp1") {
             p[0] = 0.713;    // ACES P1 primaries
             p[1] = 0.293;
@@ -667,7 +694,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.128;
             p[5] = 0.044;
             tempv4 = 6004.;
-            illum = 4;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D60);
         } else if (profile == "ProPhoto") {
             p[0] = 0.7347;    //ProPhoto and default primaries
             p[1] = 0.2653;
@@ -675,7 +702,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[3] = 0.8404;
             p[4] = 0.0366;
             p[5] = 0.0001;
-            illum = 2;
+            illum = toUnderlying(ColorManagementParams::Illuminant::D50);
         } else if (profile == "Custom") {
             p[0] = redxx;   
             p[1] = redyy;
@@ -713,69 +740,107 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         // 7 parameters for smoother curves
         cmsCIExyY xyD;
         Glib::ustring ills = "D50";
-        switch (illum) {
-        case 1:
-            tempv4 = 4100.;
-            ills = "D41";
-            break;
-        case 2:
-            tempv4 = 5003.;
-            ills = "D50";
-            break;
-        case 3:
-            tempv4 = 5500.;
-            ills = "D55";
-            break;
-        case 4:
-            tempv4 = 6004.;
-            ills = "D60";
-            break;
-        case 5:
-            tempv4 = 6504.;
-            ills = "D65";
-            break;
-        case 6:
-            tempv4 = 8000.;
-            ills = "D80";
-            break;
-        case 7:
-            tempv4 = 12000.;
-            ills = "D120";
-            break;
+        switch (ColorManagementParams::Illuminant(illum)) {
+            case ColorManagementParams::Illuminant::DEFAULT:
+            case ColorManagementParams::Illuminant::STDA:
+            case ColorManagementParams::Illuminant::TUNGSTEN_2000K:
+            case ColorManagementParams::Illuminant::TUNGSTEN_1500K: {
+                break;
+            }
+
+            case ColorManagementParams::Illuminant::D41: {
+                tempv4 = 4100.;
+                ills = "D41";
+                break;
+            }
+
+            case ColorManagementParams::Illuminant::D50: {
+                tempv4 = 5003.;
+                ills = "D50";
+                break;
+            }
+
+            case ColorManagementParams::Illuminant::D55: {
+                tempv4 = 5500.;
+                ills = "D55";
+                break;
+            }
+
+            case ColorManagementParams::Illuminant::D60: {
+                tempv4 = 6004.;
+                ills = "D60";
+                break;
+            }
+
+            case ColorManagementParams::Illuminant::D65: {
+                tempv4 = 6504.;
+                ills = "D65";
+                break;
+            }
+
+            case ColorManagementParams::Illuminant::D80: {
+                tempv4 = 8000.;
+                ills = "D80";
+                break;
+            }
+
+            case ColorManagementParams::Illuminant::D120: {
+                tempv4 = 12000.;
+                ills = "D120";
+                break;
+            }
         }
 
         cmsWhitePointFromTemp(&xyD, tempv4);
 
-        if (illum == 5) {
-            xyD = {0.312700492, 0.329000939, 1.0};
-        }
+        switch (ColorManagementParams::Illuminant(illum)) {
+            case ColorManagementParams::Illuminant::DEFAULT:
+            case ColorManagementParams::Illuminant::D55:
+            case ColorManagementParams::Illuminant::D80: {
+                break;
+            }
 
-        if (illum == 4) {
-            xyD = {0.32168, 0.33767, 1.0};
-        }
+            case ColorManagementParams::Illuminant::D41: {
+                break;
+            }
 
-        if (illum == 2) {
-            xyD = {0.3457, 0.3585, 1.0};//white D50      near LCMS values but not perfect...it's a compromise!!
-        }
+            case ColorManagementParams::Illuminant::D50: {
+                xyD = {0.3457, 0.3585, 1.0}; // near LCMS values but not perfect... it's a compromise!!
+                break;
+            }
 
-        if (illum == 7) {//D120
-            xyD = {0.269669, 0.28078, 1.0};
-        }
+            case ColorManagementParams::Illuminant::D60: {
+                xyD = {0.32168, 0.33767, 1.0};
+                break;
+            }
 
-        if (illum == 8) {//stdA
-            xyD = {0.447573, 0.407440, 1.0};
-            ills = "stdA 2875K";
+            case ColorManagementParams::Illuminant::D65: {
+                xyD = {0.312700492, 0.329000939, 1.0};
+                break;
+            }
 
-        }
+            case ColorManagementParams::Illuminant::D120: {
+                xyD = {0.269669, 0.28078, 1.0};
+                break;
+            }
 
-        if (illum == 9) {//2000K
-            ills = "Tungsten 2000K";
-            xyD = {0.526591, 0.41331, 1.0};
-        }
+            case ColorManagementParams::Illuminant::STDA: {
+                xyD = {0.447573, 0.407440, 1.0};
+                ills = "stdA 2875K";
+                break;
+            }
 
-        if (illum == 10) {//1500K
-            ills = "Tungsten 1500K";
-            xyD = {0.585703, 0.393157, 1.0};
+            case ColorManagementParams::Illuminant::TUNGSTEN_2000K: {
+                xyD = {0.526591, 0.41331, 1.0};
+                ills = "Tungsten 2000K";
+                break;
+            }
+
+            case ColorManagementParams::Illuminant::TUNGSTEN_1500K: {
+                xyD = {0.585703, 0.393157, 1.0};
+                ills = "Tungsten 1500K";
+                break;
+            }
         }
 
         //D41  0.377984  0.381229

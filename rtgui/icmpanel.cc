@@ -22,14 +22,15 @@
 
 #include "eventmapper.h"
 #include "guiutils.h"
+#include "labgrid.h"
 #include "options.h"
 #include "pathutils.h"
 #include "rtimage.h"
-#include "labgrid.h"
 
 #include "../rtengine/dcp.h"
 #include "../rtengine/iccstore.h"
 #include "../rtengine/procparams.h"
+#include "../rtengine/utils.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -777,11 +778,11 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
     wProfNames->set_active_text(pp->icm.workingProfile);
 
-    wTRC->set_active(pp->posInArray(pp->icm.workingTRCs, pp->icm.workingTRC));
+    wTRC->set_active(rtengine::toUnderlying(pp->icm.workingTRC));
 
-    will->set_active(pp->posInArray(pp->icm.wills, pp->icm.will));
+    will->set_active(rtengine::toUnderlying(pp->icm.will));
 
-    wprim->set_active(pp->posInArray(pp->icm.wprims, pp->icm.wprim));
+    wprim->set_active(rtengine::toUnderlying(pp->icm.wprim));
 
     wtrcinChanged();
     willChanged();
@@ -875,163 +876,184 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
         preser->setEditedState(pedited->icm.preser  ? Edited : UnEdited);
 
     }
-    int wtrci = wTRC->get_active_row_number();
-    switch (wtrci) {
-    case 0:
-        wSlope->set_sensitive(false);
-        wGamma->set_sensitive(false);
-        will->set_sensitive(false);
-        willulab->set_sensitive(false);
-        wprim->set_sensitive(false);
-        fbw->set_sensitive(false);
-        wprimlab->set_sensitive(false);
-        riaHBox->set_sensitive(false);
-        redFrame->hide();
-        break;
-    case 1:
-        will->set_sensitive(false);
-        willulab->set_sensitive(true);
-        wprim->set_sensitive(true);
-        fbw->set_sensitive(true);
-        wprimlab->set_sensitive(true);
-        if (wprim->get_active_row_number() == 0) {
-            redFrame->hide();
-        } else {
-            redFrame->show();
-            if (wprim->get_active_row_number() < 11) {
-              will->set_sensitive(false);
-              redBox->set_sensitive(false);
-              greBox->set_sensitive(false);
-              bluBox->set_sensitive(false);
-              labgridcie->set_sensitive(false);
 
-            } else {
-              will->set_sensitive(false);
-              if (wprim->get_active_row_number() == 11) {
-                will->set_sensitive(true);
-              }
-              redBox->set_sensitive(true);
-              greBox->set_sensitive(true);
-              bluBox->set_sensitive(true);
-              labgridcie->set_sensitive(true);
-            }
-            
-        }
-        riaHBox->set_sensitive(true);
-
-        if(pp->icm.workingTRCGamma <= 1.) {
-            wGamma->set_sensitive(true);
+    switch (ColorManagementParams::WorkingTrc(wTRC->get_active_row_number())) {
+        case ColorManagementParams::WorkingTrc::NONE: {
             wSlope->set_sensitive(false);
-        } else {
-            wGamma->set_sensitive(true);
-            wSlope->set_sensitive(true);
-        }
-        break;
-    case 2:
-        wGamma->setValue(2.222);
-        wSlope->setValue(4.5);
-        will->set_sensitive(true);
-        willulab->set_sensitive(true);
-        wprim->set_sensitive(true);
-        fbw->set_sensitive(true);
-        wprimlab->set_sensitive(true);
-        wGamma->set_sensitive(false);
-        wSlope->set_sensitive(false);
-        if (wprim->get_active_row_number() == 0) {
+            wGamma->set_sensitive(false);
+            will->set_sensitive(false);
+            willulab->set_sensitive(false);
+            wprim->set_sensitive(false);
+            fbw->set_sensitive(false);
+            wprimlab->set_sensitive(false);
+            riaHBox->set_sensitive(false);
             redFrame->hide();
-        } else {
-            redFrame->show();
+            break;
         }
-        riaHBox->set_sensitive(true);
-        break;
-    case 3:
-        wGamma->setValue(2.4);
-        wSlope->setValue(12.92);
-        will->set_sensitive(true);
-        willulab->set_sensitive(true);
-        wprim->set_sensitive(true);
-        fbw->set_sensitive(true);
-        wprimlab->set_sensitive(true);
-        wGamma->set_sensitive(false);
-        wSlope->set_sensitive(false);
-        riaHBox->set_sensitive(true);
-        if (wprim->get_active_row_number() == 0) {
-            redFrame->hide();
-        } else {
-            redFrame->show();
+
+        case ColorManagementParams::WorkingTrc::CUSTOM: {
+            will->set_sensitive(false);
+            willulab->set_sensitive(true);
+            wprim->set_sensitive(true);
+            fbw->set_sensitive(true);
+            wprimlab->set_sensitive(true);
+            if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
+                redFrame->hide();
+            } else {
+                redFrame->show();
+                if (
+                    ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
+                    && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
+                ) {
+                  will->set_sensitive(false);
+                  redBox->set_sensitive(false);
+                  greBox->set_sensitive(false);
+                  bluBox->set_sensitive(false);
+                  labgridcie->set_sensitive(false);
+
+                } else {
+                  will->set_sensitive(false);
+                  if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM) {
+                    will->set_sensitive(true);
+                  }
+                  redBox->set_sensitive(true);
+                  greBox->set_sensitive(true);
+                  bluBox->set_sensitive(true);
+                  labgridcie->set_sensitive(true);
+                }
+
+            }
+            riaHBox->set_sensitive(true);
+
+            if (pp->icm.workingTRCGamma <= 1.) {
+                wGamma->set_sensitive(true);
+                wSlope->set_sensitive(false);
+            } else {
+                wGamma->set_sensitive(true);
+                wSlope->set_sensitive(true);
+            }
+            break;
         }
-        break;
-    case 4:
-        wGamma->setValue(2.2);
-        wSlope->setValue(0.);
-        will->set_sensitive(true);
-        willulab->set_sensitive(true);
-        wprim->set_sensitive(true);
-        fbw->set_sensitive(true);
-        wprimlab->set_sensitive(true);
-        redFrame->show();
-        wGamma->set_sensitive(false);
-        wSlope->set_sensitive(false);
-        riaHBox->set_sensitive(true);
-        if (wprim->get_active_row_number() == 0) {
-            redFrame->hide();
-        } else {
+
+        case ColorManagementParams::WorkingTrc::BT709:
+            wGamma->setValue(2.222);
+            wSlope->setValue(4.5);
+            will->set_sensitive(true);
+            willulab->set_sensitive(true);
+            wprim->set_sensitive(true);
+            fbw->set_sensitive(true);
+            wprimlab->set_sensitive(true);
+            wGamma->set_sensitive(false);
+            wSlope->set_sensitive(false);
+            if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
+                redFrame->hide();
+            } else {
+                redFrame->show();
+            }
+            riaHBox->set_sensitive(true);
+            break;
+        case ColorManagementParams::WorkingTrc::SRGB:
+            wGamma->setValue(2.4);
+            wSlope->setValue(12.92);
+            will->set_sensitive(true);
+            willulab->set_sensitive(true);
+            wprim->set_sensitive(true);
+            fbw->set_sensitive(true);
+            wprimlab->set_sensitive(true);
+            wGamma->set_sensitive(false);
+            wSlope->set_sensitive(false);
+            riaHBox->set_sensitive(true);
+            if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
+                redFrame->hide();
+            } else {
+                redFrame->show();
+            }
+            break;
+        case ColorManagementParams::WorkingTrc::GAMMA_2_2:
+            wGamma->setValue(2.2);
+            wSlope->setValue(0.);
+            will->set_sensitive(true);
+            willulab->set_sensitive(true);
+            wprim->set_sensitive(true);
+            fbw->set_sensitive(true);
+            wprimlab->set_sensitive(true);
             redFrame->show();
-        }
-        break;
-    case 5:
-        wGamma->setValue(1.8);
-        wSlope->setValue(0.);
-        will->set_sensitive(true);
-        willulab->set_sensitive(true);
-        wprim->set_sensitive(true);
-        fbw->set_sensitive(true);
-        wprimlab->set_sensitive(true);
-        riaHBox->set_sensitive(true);
-        if (wprim->get_active_row_number() == 0) {
-            redFrame->hide();
-        } else {
-            redFrame->show();
-        }
-        wGamma->set_sensitive(false);
-        wSlope->set_sensitive(false);
-        break;
-    case 6:
-        wGamma->setValue(1.);
-        wSlope->setValue(1.);
-        will->set_sensitive(true);
-        willulab->set_sensitive(true);
-        wprim->set_sensitive(true);
-        fbw->set_sensitive(true);
-        wprimlab->set_sensitive(true);
-        wGamma->set_sensitive(false);
-        wSlope->set_sensitive(false);
-        riaHBox->set_sensitive(true);
-        if (wprim->get_active_row_number() == 0) {
-            redFrame->hide();
-        } else {
-            redFrame->show();
-        }
-        break;
+            wGamma->set_sensitive(false);
+            wSlope->set_sensitive(false);
+            riaHBox->set_sensitive(true);
+            if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
+                redFrame->hide();
+            } else {
+                redFrame->show();
+            }
+            break;
+        case ColorManagementParams::WorkingTrc::GAMMA_1_8:
+            wGamma->setValue(1.8);
+            wSlope->setValue(0.);
+            will->set_sensitive(true);
+            willulab->set_sensitive(true);
+            wprim->set_sensitive(true);
+            fbw->set_sensitive(true);
+            wprimlab->set_sensitive(true);
+            riaHBox->set_sensitive(true);
+            if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
+                redFrame->hide();
+            } else {
+                redFrame->show();
+            }
+            wGamma->set_sensitive(false);
+            wSlope->set_sensitive(false);
+            break;
+        case ColorManagementParams::WorkingTrc::LINEAR:
+            wGamma->setValue(1.);
+            wSlope->setValue(1.);
+            will->set_sensitive(true);
+            willulab->set_sensitive(true);
+            wprim->set_sensitive(true);
+            fbw->set_sensitive(true);
+            wprimlab->set_sensitive(true);
+            wGamma->set_sensitive(false);
+            wSlope->set_sensitive(false);
+            riaHBox->set_sensitive(true);
+            if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
+                redFrame->hide();
+            } else {
+                redFrame->show();
+            }
+            break;
     }
 
-    int wprimi = wprim->get_active_row_number();
-    switch (wprimi) {
-    case 12:
-        labgridcie->set_sensitive(true);
-        redBox->set_sensitive(false);
-        greBox->set_sensitive(false);
-        bluBox->set_sensitive(false);
-        will->set_sensitive(false);
-        break;
-    case 11:
-        will->set_sensitive(true);
-        labgridcie->set_sensitive(false);
-        break;
-    default:
-        labgridcie->set_sensitive(false);
-        will->set_sensitive(false);
-        break;
+    switch (ColorManagementParams::Primaries(wprim->get_active_row_number())) {
+        case ColorManagementParams::Primaries::DEFAULT:
+        case ColorManagementParams::Primaries::SRGB:
+        case ColorManagementParams::Primaries::ADOBE_RGB:
+        case ColorManagementParams::Primaries::PRO_PHOTO:
+        case ColorManagementParams::Primaries::REC2020:
+        case ColorManagementParams::Primaries::ACES_P1:
+        case ColorManagementParams::Primaries::WIDE_GAMUT:
+        case ColorManagementParams::Primaries::ACES_P0:
+        case ColorManagementParams::Primaries::BRUCE_RGB:
+        case ColorManagementParams::Primaries::BETA_RGB:
+        case ColorManagementParams::Primaries::BEST_RGB: {
+            labgridcie->set_sensitive(false);
+            will->set_sensitive(false);
+            break;
+        }
+
+        case ColorManagementParams::Primaries::CUSTOM: {
+            will->set_sensitive(true);
+            labgridcie->set_sensitive(false);
+            break;
+        }
+
+        case ColorManagementParams::Primaries::CUSTOM_GRID: {
+            labgridcie->set_sensitive(true);
+            redBox->set_sensitive(false);
+            greBox->set_sensitive(false);
+            bluBox->set_sensitive(false);
+            will->set_sensitive(false);
+            break;
+        }
     }
 
     enableListener();
@@ -1058,9 +1080,6 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
 
     pp->icm.workingProfile = wProfNames->get_active_text();
     pp->icm.dcpIlluminant = rtengine::max<int>(dcpIll->get_active_row_number(), 0);
-    pp->icm.workingTRC = wTRC->get_active_text();
-    pp->icm.will = will->get_active_text();
-    pp->icm.wprim = wprim->get_active_text();
     labgridcie->getParams(pp->icm.labgridcieALow, pp->icm.labgridcieBLow, pp->icm.labgridcieAHigh, pp->icm.labgridcieBHigh, pp->icm.labgridcieGx, pp->icm.labgridcieGy, pp->icm.labgridcieWx, pp->icm.labgridcieWy);
 
     if (oProfNames->get_active_text() == M("TP_ICM_NOICM")) {
@@ -1085,23 +1104,9 @@ void ICMPanel::write(ProcParams* pp, ParamsEdited* pedited)
         pp->icm.aRendIntent  = rtengine::RI_RELATIVE;
     }
 
-    auto workingTRCsActiveRow = wTRC->get_active_row_number();
-    if (workingTRCsActiveRow < 0 || workingTRCsActiveRow >= static_cast<int>(pp->icm.workingTRCs.size())) {
-        workingTRCsActiveRow = 0;
-    }
-    pp->icm.workingTRC = pp->icm.workingTRCs[workingTRCsActiveRow];
-
-    auto willActiveRow = will->get_active_row_number();
-    if (willActiveRow < 0 || willActiveRow >= static_cast<int>(pp->icm.wills.size())) {
-        willActiveRow = 0;
-    }
-    pp->icm.will = pp->icm.wills[willActiveRow];
-
-    auto wprimActiveRow = wprim->get_active_row_number();
-    if (wprimActiveRow < 0 || wprimActiveRow >= static_cast<int>(pp->icm.wprims.size())) {
-        wprimActiveRow = 0;
-    }
-    pp->icm.wprim = pp->icm.wprims[wprimActiveRow];
+    pp->icm.workingTRC = ColorManagementParams::WorkingTrc(wTRC->get_active_row_number());
+    pp->icm.will = ColorManagementParams::Illuminant(will->get_active_row_number());
+    pp->icm.wprim = ColorManagementParams::Primaries(wprim->get_active_row_number());
 
     pp->icm.toneCurve = ckbToneCurve->get_active();
     pp->icm.applyLookTable = ckbApplyLookTable->get_active();
@@ -1190,7 +1195,7 @@ void ICMPanel::adjusterChanged(Adjuster* a, double newval)
         Glib::ustring costr2 = Glib::ustring::format(std::setw(3), std::fixed, std::setprecision(2), newval);
 
         if (a == wGamma) {
-            if(wGamma->getValue() <= 1.) {
+            if (wGamma->getValue() <= 1.) {
                 wSlope->set_sensitive(false);
             } else {
                 wSlope->set_sensitive(true);
@@ -1226,196 +1231,239 @@ void ICMPanel::wpChanged()
 
 void ICMPanel::wtrcinChanged()
 {
-    int wtrci = wTRC->get_active_row_number();
-    switch (wtrci) {
-    case 0:
-        wGamma->set_sensitive(false);
-        wSlope->set_sensitive(false);
-        will->set_sensitive(false);
-        willulab->set_sensitive(false);
-        wprim->set_sensitive(false);
-        fbw->set_sensitive(false);
-        wprimlab->set_sensitive(false);
-        redFrame->hide();
-        riaHBox->set_sensitive(false);
-        break;
-    case 1:
-        will->set_sensitive(false);
-        wprim->set_sensitive(true);
-        fbw->set_sensitive(true);
-        wprimlab->set_sensitive(true);
-        willulab->set_sensitive(true);
-        if (wprim->get_active_row_number() == 0) {
-            redFrame->hide();
-        } else {
-            redFrame->show();
-            if (wprim->get_active_row_number() < 11) {
-               redBox->set_sensitive(false);
-               greBox->set_sensitive(false);
-               bluBox->set_sensitive(false);
-            } else {
-               redBox->set_sensitive(true);
-               greBox->set_sensitive(true);
-               bluBox->set_sensitive(true);
-            }
-        }
-        riaHBox->set_sensitive(true);
-        if(wGamma->getValue() <= 1.) {
-            wGamma->set_sensitive(true);
+    switch (ColorManagementParams::WorkingTrc(wTRC->get_active_row_number())) {
+        case ColorManagementParams::WorkingTrc::NONE: {
+            wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
-        } else {
-            wGamma->set_sensitive(true);
-            wSlope->set_sensitive(true);
-        }
-        break;
-    case 2:
-        wGamma->setValue(2.222);
-        wSlope->setValue(4.5);
-        will->set_sensitive(false);
-        willulab->set_sensitive(true);
-        wprim->set_sensitive(true);
-        fbw->set_sensitive(true);
-        wprimlab->set_sensitive(true);
-        wGamma->set_sensitive(false);
-        wSlope->set_sensitive(false);
-        if (wprim->get_active_row_number() == 0) {
+            will->set_sensitive(false);
+            willulab->set_sensitive(false);
+            wprim->set_sensitive(false);
+            fbw->set_sensitive(false);
+            wprimlab->set_sensitive(false);
             redFrame->hide();
-        } else {
-            redFrame->show();
-            if (wprim->get_active_row_number() < 11) {
-                redBox->set_sensitive(false);
-                greBox->set_sensitive(false);
-                bluBox->set_sensitive(false);
-            } else {
-            }
+            riaHBox->set_sensitive(false);
+            break;
         }
-        riaHBox->set_sensitive(true);
-        break;
-    case 3:
-        wGamma->setValue(2.4);
-        wSlope->setValue(12.92);
-        will->set_sensitive(false);
-        willulab->set_sensitive(true);
-        wGamma->set_sensitive(false);
-        wSlope->set_sensitive(false);
-        riaHBox->set_sensitive(true);
-        if (wprim->get_active_row_number() == 0) {
-            redFrame->hide();
-        } else {
-            redFrame->show();
-            if (wprim->get_active_row_number() < 11) {
-                redBox->set_sensitive(false);
-                greBox->set_sensitive(false);
-                bluBox->set_sensitive(false);
-            } else {
-                redBox->set_sensitive(true);
-                greBox->set_sensitive(true);
-                bluBox->set_sensitive(true);
-            }
-        }
-        break;
-    case 4:
-        wGamma->setValue(2.2);
-        wSlope->setValue(0.);
-        will->set_sensitive(false);
-        willulab->set_sensitive(true);
-        wprim->set_sensitive(true);
-        fbw->set_sensitive(true);
-        wprimlab->set_sensitive(true);
-        wGamma->set_sensitive(false);
-        wSlope->set_sensitive(false);
-        riaHBox->set_sensitive(true);
-        if (wprim->get_active_row_number() == 0) {
-            redFrame->hide();
-        } else {
-            redFrame->show();
-            if (wprim->get_active_row_number() < 11) {
-                redBox->set_sensitive(false);
-                greBox->set_sensitive(false);
-                bluBox->set_sensitive(false);
-            } else {
-                redBox->set_sensitive(true);
-                greBox->set_sensitive(true);
-                bluBox->set_sensitive(true);
-            }
-        }
-        break;
-    case 5:
-        wGamma->setValue(1.8);
-        wSlope->setValue(0.);
-        will->set_sensitive(false);
-        willulab->set_sensitive(true);
-        wprim->set_sensitive(true);
-        fbw->set_sensitive(true);
-        wprimlab->set_sensitive(true);
-        wGamma->set_sensitive(false);
-        wSlope->set_sensitive(false);
-        riaHBox->set_sensitive(true);
-        if (wprim->get_active_row_number() == 0) {
-            redFrame->hide();
-        } else {
-            redFrame->show();
-             if (wprim->get_active_row_number() < 11) {
-                redBox->set_sensitive(false);
-                greBox->set_sensitive(false);
-                bluBox->set_sensitive(false);
-            } else {
-                redBox->set_sensitive(true);
-                greBox->set_sensitive(true);
-                bluBox->set_sensitive(true);
-            }
-        }
-        break;
-    case 6:
-        wGamma->setValue(1.0);
-        wSlope->setValue(1.);
-        will->set_sensitive(false);
-        willulab->set_sensitive(true);
-        wprim->set_sensitive(true);
-        fbw->set_sensitive(true);
-        wprimlab->set_sensitive(true);
-        wGamma->set_sensitive(false);
-        wSlope->set_sensitive(false);
-        riaHBox->set_sensitive(true);
-        if (wprim->get_active_row_number() == 0) {
-            redFrame->hide();
-        } else {
-            redFrame->show();
-            if (wprim->get_active_row_number() < 11) {
-                redBox->set_sensitive(false);
-                greBox->set_sensitive(false);
-                bluBox->set_sensitive(false);
 
+        case ColorManagementParams::WorkingTrc::CUSTOM: {
+            will->set_sensitive(false);
+            wprim->set_sensitive(true);
+            fbw->set_sensitive(true);
+            wprimlab->set_sensitive(true);
+            willulab->set_sensitive(true);
+            if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
+                redFrame->hide();
             } else {
-                redBox->set_sensitive(true);
-                greBox->set_sensitive(true);
-                bluBox->set_sensitive(true);
+                redFrame->show();
+                if (
+                    ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
+                    && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
+                ) {
+                   redBox->set_sensitive(false);
+                   greBox->set_sensitive(false);
+                   bluBox->set_sensitive(false);
+                } else {
+                   redBox->set_sensitive(true);
+                   greBox->set_sensitive(true);
+                   bluBox->set_sensitive(true);
+                }
             }
+            riaHBox->set_sensitive(true);
+            if (wGamma->getValue() <= 1.) {
+                wGamma->set_sensitive(true);
+                wSlope->set_sensitive(false);
+            } else {
+                wGamma->set_sensitive(true);
+                wSlope->set_sensitive(true);
+            }
+            break;
         }
-        break;
+
+        case ColorManagementParams::WorkingTrc::BT709: {
+            wGamma->setValue(2.222);
+            wSlope->setValue(4.5);
+            will->set_sensitive(false);
+            willulab->set_sensitive(true);
+            wprim->set_sensitive(true);
+            fbw->set_sensitive(true);
+            wprimlab->set_sensitive(true);
+            wGamma->set_sensitive(false);
+            wSlope->set_sensitive(false);
+            if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
+                redFrame->hide();
+            } else {
+                redFrame->show();
+                if (
+                    ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
+                    && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
+                ) {
+                    redBox->set_sensitive(false);
+                    greBox->set_sensitive(false);
+                    bluBox->set_sensitive(false);
+                } else {
+                }
+            }
+            riaHBox->set_sensitive(true);
+            break;
+        }
+
+        case ColorManagementParams::WorkingTrc::SRGB: {
+            wGamma->setValue(2.4);
+            wSlope->setValue(12.92);
+            will->set_sensitive(false);
+            willulab->set_sensitive(true);
+            wGamma->set_sensitive(false);
+            wSlope->set_sensitive(false);
+            riaHBox->set_sensitive(true);
+            if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
+                redFrame->hide();
+            } else {
+                redFrame->show();
+                if (
+                    ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
+                    && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
+                ) {
+                    redBox->set_sensitive(false);
+                    greBox->set_sensitive(false);
+                    bluBox->set_sensitive(false);
+                } else {
+                    redBox->set_sensitive(true);
+                    greBox->set_sensitive(true);
+                    bluBox->set_sensitive(true);
+                }
+            }
+            break;
+        }
+
+        case ColorManagementParams::WorkingTrc::GAMMA_2_2: {
+            wGamma->setValue(2.2);
+            wSlope->setValue(0.);
+            will->set_sensitive(false);
+            willulab->set_sensitive(true);
+            wprim->set_sensitive(true);
+            fbw->set_sensitive(true);
+            wprimlab->set_sensitive(true);
+            wGamma->set_sensitive(false);
+            wSlope->set_sensitive(false);
+            riaHBox->set_sensitive(true);
+            if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
+                redFrame->hide();
+            } else {
+                redFrame->show();
+                if (
+                    ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
+                    && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
+                ) {
+                    redBox->set_sensitive(false);
+                    greBox->set_sensitive(false);
+                    bluBox->set_sensitive(false);
+                } else {
+                    redBox->set_sensitive(true);
+                    greBox->set_sensitive(true);
+                    bluBox->set_sensitive(true);
+                }
+            }
+            break;
+        }
+
+        case ColorManagementParams::WorkingTrc::GAMMA_1_8: {
+            wGamma->setValue(1.8);
+            wSlope->setValue(0.);
+            will->set_sensitive(false);
+            willulab->set_sensitive(true);
+            wprim->set_sensitive(true);
+            fbw->set_sensitive(true);
+            wprimlab->set_sensitive(true);
+            wGamma->set_sensitive(false);
+            wSlope->set_sensitive(false);
+            riaHBox->set_sensitive(true);
+            if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
+                redFrame->hide();
+            } else {
+                redFrame->show();
+                if (
+                    ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
+                    && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
+                ) {
+                    redBox->set_sensitive(false);
+                    greBox->set_sensitive(false);
+                    bluBox->set_sensitive(false);
+                } else {
+                    redBox->set_sensitive(true);
+                    greBox->set_sensitive(true);
+                    bluBox->set_sensitive(true);
+                }
+            }
+            break;
+        }
+
+        case ColorManagementParams::WorkingTrc::LINEAR: {
+            wGamma->setValue(1.0);
+            wSlope->setValue(1.);
+            will->set_sensitive(false);
+            willulab->set_sensitive(true);
+            wprim->set_sensitive(true);
+            fbw->set_sensitive(true);
+            wprimlab->set_sensitive(true);
+            wGamma->set_sensitive(false);
+            wSlope->set_sensitive(false);
+            riaHBox->set_sensitive(true);
+            if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
+                redFrame->hide();
+            } else {
+                redFrame->show();
+                if (
+                    ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
+                    && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
+                ) {
+                    redBox->set_sensitive(false);
+                    greBox->set_sensitive(false);
+                    bluBox->set_sensitive(false);
+                } else {
+                    redBox->set_sensitive(true);
+                    greBox->set_sensitive(true);
+                    bluBox->set_sensitive(true);
+                }
+            }
+            break;
+        }
     }
     wprimChanged();
 
+    switch (ColorManagementParams::Primaries(wprim->get_active_row_number())) {
+        case ColorManagementParams::Primaries::DEFAULT:
+        case ColorManagementParams::Primaries::SRGB:
+        case ColorManagementParams::Primaries::ADOBE_RGB:
+        case ColorManagementParams::Primaries::PRO_PHOTO:
+        case ColorManagementParams::Primaries::REC2020:
+        case ColorManagementParams::Primaries::ACES_P1:
+        case ColorManagementParams::Primaries::WIDE_GAMUT:
+        case ColorManagementParams::Primaries::ACES_P0:
+        case ColorManagementParams::Primaries::BRUCE_RGB:
+        case ColorManagementParams::Primaries::BETA_RGB:
+        case ColorManagementParams::Primaries::BEST_RGB: {
+            labgridcie->set_sensitive(false);
+            will->set_sensitive(false);
+            break;
+        }
 
-    int wprimi = wprim->get_active_row_number();
-    switch (wprimi) {
-    case 12:
-        labgridcie->set_sensitive(true);
-        will->set_sensitive(false);
-        break;
-    case 11:
-        will->set_sensitive(true);
-        labgridcie->set_sensitive(false);
-        break;
-    default:
-        labgridcie->set_sensitive(false);
-        will->set_sensitive(false);
-        break;
+        case ColorManagementParams::Primaries::CUSTOM: {
+            will->set_sensitive(true);
+            labgridcie->set_sensitive(false);
+            break;
+        }
+
+        case ColorManagementParams::Primaries::CUSTOM_GRID: {
+            labgridcie->set_sensitive(true);
+            will->set_sensitive(false);
+            break;
+        }
     }
 
-    if (wTRC->get_active_row_number() == 0) {
+    if (ColorManagementParams::WorkingTrc(wTRC->get_active_row_number()) == ColorManagementParams::WorkingTrc::NONE) {
         redFrame->hide();
     }
+
     if (listener) {
         listener->panelChanged(EvICMtrcinMethod, wTRC->get_active_text());
     }
@@ -1423,20 +1471,34 @@ void ICMPanel::wtrcinChanged()
 
 void ICMPanel::willChanged()
 {
-    int wprimi = wprim->get_active_row_number();
-    switch (wprimi) {
-    case 12:
-        labgridcie->set_sensitive(true);
-        will->set_sensitive(false);
-        break;
-    case 11:
-        will->set_sensitive(true);
-        labgridcie->set_sensitive(false);
-        break;
-    default:
-        labgridcie->set_sensitive(false);
-        will->set_sensitive(false);
-        break;
+    switch (ColorManagementParams::Primaries(wprim->get_active_row_number())) {
+        case ColorManagementParams::Primaries::DEFAULT:
+        case ColorManagementParams::Primaries::SRGB:
+        case ColorManagementParams::Primaries::ADOBE_RGB:
+        case ColorManagementParams::Primaries::PRO_PHOTO:
+        case ColorManagementParams::Primaries::REC2020:
+        case ColorManagementParams::Primaries::ACES_P1:
+        case ColorManagementParams::Primaries::WIDE_GAMUT:
+        case ColorManagementParams::Primaries::ACES_P0:
+        case ColorManagementParams::Primaries::BRUCE_RGB:
+        case ColorManagementParams::Primaries::BETA_RGB:
+        case ColorManagementParams::Primaries::BEST_RGB: {
+            labgridcie->set_sensitive(false);
+            will->set_sensitive(false);
+            break;
+        }
+
+        case ColorManagementParams::Primaries::CUSTOM: {
+            will->set_sensitive(true);
+            labgridcie->set_sensitive(false);
+            break;
+        }
+
+        case ColorManagementParams::Primaries::CUSTOM_GRID: {
+            labgridcie->set_sensitive(true);
+            will->set_sensitive(false);
+            break;
+        }
     }
 
     if (listener) {
@@ -1448,194 +1510,219 @@ void ICMPanel::willChanged()
 
 void ICMPanel::wprimChanged()
 {
-    int wprimi = wprim->get_active_row_number();
-    switch (wprimi) {
-    case 1://sRGB
-        redx->setValue(0.64);
-        redy->setValue(0.33);
-        grex->setValue(0.30);
-        grey->setValue(0.60);
-        blux->setValue(0.15);
-        bluy->setValue(0.06);
-        will->set_active(5);
-        break;
-    case 2://Adobe
-        redx->setValue(0.64);
-        redy->setValue(0.33);
-        grex->setValue(0.21);
-        grey->setValue(0.71);
-        blux->setValue(0.15);
-        bluy->setValue(0.06);
-        will->set_active(5);
-        break;
-    case 3: //ProPhoto
-        redx->setValue(0.7347);
-        redy->setValue(0.2653);
-        grex->setValue(0.1596);
-        grey->setValue(0.8404);
-        blux->setValue(0.0366);
-        bluy->setValue(0.0001);
-        will->set_active(2);
-        break;
-    case 4://Rec2020
-        redx->setValue(0.708);
-        redy->setValue(0.292);
-        grex->setValue(0.17);
-        grey->setValue(0.797);
-        blux->setValue(0.131);
-        bluy->setValue(0.046);
-        will->set_active(5);
-        break;
-    case 5://ACES p1
-        redx->setValue(0.713);
-        redy->setValue(0.293);
-        grex->setValue(0.165);
-        grey->setValue(0.830);
-        blux->setValue(0.128);
-        bluy->setValue(0.044);
-        will->set_active(4);
-        break;
-    case 6://Widegamut
-        redx->setValue(0.735);
-        redy->setValue(0.265);
-        grex->setValue(0.115);
-        grey->setValue(0.826);
-        blux->setValue(0.1570);
-        bluy->setValue(0.018);
-        will->set_active(2);
-        break;
-    case 7://ACES p0
-        redx->setValue(0.7347);
-        redy->setValue(0.2653);
-        grex->setValue(0.);
-        grey->setValue(1.0);
-        blux->setValue(0.0001);
-        bluy->setValue(-0.077);
-        will->set_active(4);
-        break;
-    case 8://Bruce RGB
-        redx->setValue(0.64);
-        redy->setValue(0.33);
-        grex->setValue(0.28);
-        grey->setValue(0.65);
-        blux->setValue(0.15);
-        bluy->setValue(0.06);
-        will->set_active(5);
-        break;
-    case 9: //beta rgb
-        redx->setValue(0.6888);
-        redy->setValue(0.3112);
-        grex->setValue(0.1986);
-        grey->setValue(0.7551);
-        blux->setValue(0.1265);
-        bluy->setValue(0.0352);
-        will->set_active(2);
-        break;
-    case 10://Best RGB
-        redx->setValue(0.7347);
-        redy->setValue(0.2653);
-        grex->setValue(0.2150);
-        grey->setValue(0.7750);
-        blux->setValue(0.130);
-        bluy->setValue(0.035);
-        will->set_active(2);
-        break;
-    }
-    
-    
-    if (wprim->get_active_row_number() == 0) {
-        if(wProfNames->get_active_text() == "Rec2020") {
-            redx->setValue(0.708);
-            redy->setValue(0.292);
-            grex->setValue(0.17);
-            grey->setValue(0.797);
-            blux->setValue(0.131);
-            bluy->setValue(0.046);
-            will->set_active(5);
-        } else if(wProfNames->get_active_text() == "sRGB") {
+    switch (ColorManagementParams::Primaries(wprim->get_active_row_number())) {
+        case ColorManagementParams::Primaries::DEFAULT:
+        case ColorManagementParams::Primaries::CUSTOM:
+        case ColorManagementParams::Primaries::CUSTOM_GRID: {
+            break;
+        }
+
+        case ColorManagementParams::Primaries::SRGB: {
             redx->setValue(0.64);
             redy->setValue(0.33);
             grex->setValue(0.30);
             grey->setValue(0.60);
             blux->setValue(0.15);
             bluy->setValue(0.06);
-            will->set_active(5);
-        } else if(wProfNames->get_active_text() == "Adobe RGB") {
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D65));
+            break;
+        }
+
+        case ColorManagementParams::Primaries::ADOBE_RGB: {
             redx->setValue(0.64);
             redy->setValue(0.33);
             grex->setValue(0.21);
             grey->setValue(0.71);
             blux->setValue(0.15);
             bluy->setValue(0.06);
-            will->set_active(5);
-        } else if(wProfNames->get_active_text() == "ProPhoto") {
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D65));
+            break;
+        }
+
+        case ColorManagementParams::Primaries::PRO_PHOTO: {
             redx->setValue(0.7347);
             redy->setValue(0.2653);
             grex->setValue(0.1596);
             grey->setValue(0.8404);
             blux->setValue(0.0366);
             bluy->setValue(0.0001);
-            will->set_active(2);
-        } else if(wProfNames->get_active_text() == "ACESp1") {
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D50));
+            break;
+        }
+
+        case ColorManagementParams::Primaries::REC2020: {
+            redx->setValue(0.708);
+            redy->setValue(0.292);
+            grex->setValue(0.17);
+            grey->setValue(0.797);
+            blux->setValue(0.131);
+            bluy->setValue(0.046);
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D65));
+            break;
+        }
+
+        case ColorManagementParams::Primaries::ACES_P1: {
             redx->setValue(0.713);
             redy->setValue(0.293);
             grex->setValue(0.165);
             grey->setValue(0.830);
             blux->setValue(0.128);
             bluy->setValue(0.044);
-            will->set_active(4);
-        } else if(wProfNames->get_active_text() == "WideGamut") {
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D60));
+            break;
+        }
+
+        case ColorManagementParams::Primaries::WIDE_GAMUT: {
             redx->setValue(0.735);
             redy->setValue(0.265);
             grex->setValue(0.115);
             grey->setValue(0.826);
             blux->setValue(0.1570);
             bluy->setValue(0.018);
-            will->set_active(2);
-        } else if(wProfNames->get_active_text() == "ACESp0") {
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D50));
+            break;
+        }
+
+        case ColorManagementParams::Primaries::ACES_P0: {
             redx->setValue(0.7347);
             redy->setValue(0.2653);
             grex->setValue(0.);
             grey->setValue(1.0);
             blux->setValue(0.0001);
             bluy->setValue(-0.077);
-            will->set_active(4);
-        } else if(wProfNames->get_active_text() == "BruceRGB") {
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D60));
+            break;
+        }
+
+        case ColorManagementParams::Primaries::BRUCE_RGB: {
             redx->setValue(0.64);
             redy->setValue(0.33);
             grex->setValue(0.28);
             grey->setValue(0.65);
             blux->setValue(0.15);
             bluy->setValue(0.06);
-            will->set_active(5);
-        } else if(wProfNames->get_active_text() == "Beta RGB") {
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D65));
+            break;
+        }
+
+        case ColorManagementParams::Primaries::BETA_RGB: {
             redx->setValue(0.6888);
             redy->setValue(0.3112);
             grex->setValue(0.1986);
             grey->setValue(0.7551);
             blux->setValue(0.1265);
             bluy->setValue(0.0352);
-            will->set_active(2);
-        } else if(wProfNames->get_active_text() == "BestRGB") {
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D50));
+            break;
+        }
+
+        case ColorManagementParams::Primaries::BEST_RGB: {
             redx->setValue(0.7347);
             redy->setValue(0.2653);
             grex->setValue(0.2150);
             grey->setValue(0.7750);
             blux->setValue(0.130);
             bluy->setValue(0.035);
-            will->set_active(2);
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D50));
+            break;
+        }
+    }
+    
+    
+    if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::DEFAULT) {
+        if (wProfNames->get_active_text() == "Rec2020") {
+            redx->setValue(0.708);
+            redy->setValue(0.292);
+            grex->setValue(0.17);
+            grey->setValue(0.797);
+            blux->setValue(0.131);
+            bluy->setValue(0.046);
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D65));
+        } else if (wProfNames->get_active_text() == "sRGB") {
+            redx->setValue(0.64);
+            redy->setValue(0.33);
+            grex->setValue(0.30);
+            grey->setValue(0.60);
+            blux->setValue(0.15);
+            bluy->setValue(0.06);
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D65));
+        } else if (wProfNames->get_active_text() == "Adobe RGB") {
+            redx->setValue(0.64);
+            redy->setValue(0.33);
+            grex->setValue(0.21);
+            grey->setValue(0.71);
+            blux->setValue(0.15);
+            bluy->setValue(0.06);
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D65));
+        } else if (wProfNames->get_active_text() == "ProPhoto") {
+            redx->setValue(0.7347);
+            redy->setValue(0.2653);
+            grex->setValue(0.1596);
+            grey->setValue(0.8404);
+            blux->setValue(0.0366);
+            bluy->setValue(0.0001);
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D50));
+        } else if (wProfNames->get_active_text() == "ACESp1") {
+            redx->setValue(0.713);
+            redy->setValue(0.293);
+            grex->setValue(0.165);
+            grey->setValue(0.830);
+            blux->setValue(0.128);
+            bluy->setValue(0.044);
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D60));
+        } else if (wProfNames->get_active_text() == "WideGamut") {
+            redx->setValue(0.735);
+            redy->setValue(0.265);
+            grex->setValue(0.115);
+            grey->setValue(0.826);
+            blux->setValue(0.1570);
+            bluy->setValue(0.018);
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D50));
+        } else if (wProfNames->get_active_text() == "ACESp0") {
+            redx->setValue(0.7347);
+            redy->setValue(0.2653);
+            grex->setValue(0.);
+            grey->setValue(1.0);
+            blux->setValue(0.0001);
+            bluy->setValue(-0.077);
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D60));
+        } else if (wProfNames->get_active_text() == "BruceRGB") {
+            redx->setValue(0.64);
+            redy->setValue(0.33);
+            grex->setValue(0.28);
+            grey->setValue(0.65);
+            blux->setValue(0.15);
+            bluy->setValue(0.06);
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D65));
+        } else if (wProfNames->get_active_text() == "Beta RGB") {
+            redx->setValue(0.6888);
+            redy->setValue(0.3112);
+            grex->setValue(0.1986);
+            grey->setValue(0.7551);
+            blux->setValue(0.1265);
+            bluy->setValue(0.0352);
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D50));
+        } else if (wProfNames->get_active_text() == "BestRGB") {
+            redx->setValue(0.7347);
+            redy->setValue(0.2653);
+            grex->setValue(0.2150);
+            grey->setValue(0.7750);
+            blux->setValue(0.130);
+            bluy->setValue(0.035);
+            will->set_active(toUnderlying(ColorManagementParams::Illuminant::D50));
         }
 
         redFrame->hide();
     } else {
         redFrame->show();
-        if (wprim->get_active_row_number() < 11 || wprim->get_active_row_number() == 12) {
+
+        if (ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM) {
             redBox->set_sensitive(false);
             greBox->set_sensitive(false);
             bluBox->set_sensitive(false);
             labgridcie->set_sensitive(false);
             will->set_sensitive(false);
-            if(wprim->get_active_row_number() == 12) {
+            if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM_GRID) {
                 labgridcie->set_sensitive(true);
             }
         } else {
@@ -1643,17 +1730,13 @@ void ICMPanel::wprimChanged()
             greBox->set_sensitive(true);
             bluBox->set_sensitive(true);
             labgridcie->set_sensitive(false);
-            will->set_sensitive(false);
-            if (wprim->get_active_row_number() == 11) {
-                will->set_sensitive(true);
-            }
-            
+            will->set_sensitive(true);
         }
         
     }
     willChanged ();
 
-    if(wprim->get_active_row_number() == 12) {
+    if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM_GRID) {
         labgridcie->set_sensitive(true);
     } else {
         labgridcie->set_sensitive(false);
