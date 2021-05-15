@@ -4,13 +4,6 @@
 #include "jpeg.h"
 
 /*
- * HA 2021-03-12
- * Modification according to
- * https://github.com/Beep6581/RawTherapee/commit/be67261d0bdeb21ffe15fe968dd5bc16edd407e0
- * because otherwise it won't compile.
- */
-  
-/*
  * jdatasrc.c
  *
  * Copyright (C) 1994-1996, Thomas G. Lane.
@@ -32,11 +25,6 @@
 
 #define JFREAD(file,buf,sizeofbuf)  \
   ((size_t) fread((void *) (buf), (size_t) 1, (size_t) (sizeofbuf), (file)))
-#define JFWRITE(file,buf,sizeofbuf)  \
-  ((size_t) fwrite((const void *) (buf), (size_t) 1, (size_t) (sizeofbuf), (file)))
-
-
-
 
 /* Expanded data source object for stdio input */
 namespace
@@ -260,11 +248,6 @@ my_error_exit (j_common_ptr cinfo)
 }
 
 
-//const char * const jpeg_std_message_table[] = {
-//#include "jerror.h"
-//  NULL
-//};
-
 #ifdef WIN32
 #define JVERSION	"6b  27-Mar-1998"
 #define JCOPYRIGHT_SHORT	"(C) 1998, Thomas G. Lane"
@@ -277,7 +260,6 @@ const char * const jpeg_std_message_table[] = {
 #else
 extern const char * const jpeg_std_message_table[];
 #endif
-
 
 /*
  * Actual output of an error or trace message.
@@ -397,9 +379,9 @@ format_message (j_common_ptr cinfo, char * buffer)
 
     /* Format the message into the passed buffer */
     if (isstring) {
-        sprintf(buffer, msgtext, err->msg_parm.s);
+        snprintf(buffer, JMSG_LENGTH_MAX, msgtext, err->msg_parm.s);
     } else
-        sprintf(buffer, msgtext,
+        snprintf(buffer, JMSG_LENGTH_MAX, msgtext,
                 err->msg_parm.i[0], err->msg_parm.i[1],
                 err->msg_parm.i[2], err->msg_parm.i[3],
                 err->msg_parm.i[4], err->msg_parm.i[5],
