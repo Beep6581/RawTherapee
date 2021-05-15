@@ -444,7 +444,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     if(mul == -5 &&  gampos == 2.4 && slpos == 12.92310) {//must be change if we change settings RT sRGB
         //only in this case we can shortcut..all process..no gamut control..because we reduce...leads to very small differences, but big speedup
 #ifdef _OPENMP
-            #pragma omp for schedule(dynamic, 16) nowait
+    #pragma omp parallel for schedule(dynamic, 16) if (multiThread) 
 #endif
 
             for (int i = 0; i < ch; ++i) 
