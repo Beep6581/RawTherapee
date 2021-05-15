@@ -131,7 +131,7 @@ float gammalog(float x, float p, float s, float g3, float g4)
 #ifdef __SSE2__
 vfloat gammalog(vfloat x, vfloat p, vfloat s, vfloat g3, vfloat g4)
 {
-    return x <= g3 ? x * s : (1.f + g4) * xexpf(xlogf(x) / p) - g4;//continuous
+    return vself(vmaskf_le(x, g3), x * s, (F2V(1.f) + g4) * xexpf(xlogf(x) / p) - g4);//continuous
 }
 #endif
 
