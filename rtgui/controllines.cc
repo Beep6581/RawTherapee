@@ -268,7 +268,7 @@ bool ControlLineManager::getEdited(void) const
     return edited;
 }
 
-CursorShape ControlLineManager::getCursor(int objectID) const
+CursorShape ControlLineManager::getCursor(int objectID, int xPos, int yPos) const
 {
     return cursor;
 }
