@@ -25,6 +25,40 @@
 #include "rt_math.h"
 #include <iostream>
 #include <set>
+#include <unordered_set>
+
+namespace rtengine
+{
+
+class SpotBox;
+
+}
+
+namespace
+{
+
+using Boxes = std::vector<std::shared_ptr<rtengine::SpotBox>>;
+
+/**
+ * Add the spot and its dependencies to a set of dependencies.
+ *
+ * @param spotNum The spot's index.
+ * @param dependencies A set to place the dependencies in. Spots that are
+ * already in the set must have all their dependencies included already.
+ * @param srcSpots Information on spot sources.
+ * @param dstSpots Information on spot destinations.
+ */
+void addSpotDependencies(int spotNum, std::unordered_set<int> &dependencies, const Boxes &srcSpots, const Boxes &dstSpots);
+
+/**
+ * Returns the supplied spots and all their dependencies.
+ *
+ * @param visibleSpots The spots to get dependencies for.
+ * @param srcSpots Information on spot sources.
+ * @param dstSpots Information on spot destinations.
+ */
+std::unordered_set<int> calcSpotDependencies(const std::set<int> &visibleSpots, const Boxes &srcSpots, const Boxes &dstSpots);
+}
 
 namespace rtengine
 {
@@ -461,18 +495,10 @@ void ImProcFunctions::removeSpots (Imagefloat* img, ImageSource* imgsrc, const s
 
     // Construct list of upstream dependancies
 
-    std::set<int> requiredSpots = visibleSpots;  // starting point, visible spots are necessarilly required spots
-    for (auto i = requiredSpots.rbegin(); i != requiredSpots.rend(); i++) {
-        int spotNbr = *i;
-        requiredSpots.insert(spotNbr);
-        if (spotNbr > 0) {
-            for (int j = spotNbr - 1; j >= 0; --j) {
-                if ((srcSpotBoxs.at(spotNbr))->imageIntersects(*dstSpotBoxs.at(j))) {
-                    requiredSpots.insert(spotNbr);
-                }
-            }
-        }
-    }
+    std::unordered_set<int> requiredSpotsSet = calcSpotDependencies(visibleSpots, srcSpotBoxs, dstSpotBoxs);
+    std::vector<int> requiredSpots(requiredSpotsSet.size());
+    std::copy(requiredSpotsSet.begin(), requiredSpotsSet.end(), requiredSpots.begin());
+    std::sort(requiredSpots.begin(), requiredSpots.end());
 
     // Process spots and copy them downstream
 
@@ -506,6 +532,48 @@ void ImProcFunctions::removeSpots (Imagefloat* img, ImageSource* imgsrc, const s
     for (auto i : visibleSpots) {
         f += dstSpotBoxs.at(i)->copyImgTo(cropBox) ? 1 : 0;
     }
+}
+
+}
+
+namespace
+{
+
+void addSpotDependencies(int spotNum, std::unordered_set<int> &dependencies, const Boxes &srcSpots, const Boxes &dstSpots)
+{
+    dependencies.insert(spotNum);
+
+    // Our spot can depend on previous spots.
+    for (int i = spotNum - 1; i >= 0; --i) {
+        if (dependencies.find(i) != dependencies.end()) {
+            continue; // Spot already has its dependencies added.
+        }
+
+        // Check if our spot depends on this previous spot.
+        if (srcSpots.at(spotNum)->imageIntersects(*dstSpots.at(i))) {
+            // If so, add it and its dependencies.
+            addSpotDependencies(i, dependencies, srcSpots, dstSpots);
+        }
+    }
+}
+
+std::unordered_set<int> calcSpotDependencies(const std::set<int> &visibleSpots, const Boxes &srcSpots, const Boxes &dstSpots)
+{
+    std::unordered_set<int> dependencies;
+    std::vector<int> visibleSpotsOrdered(visibleSpots.size());
+
+    std::copy(visibleSpots.begin(), visibleSpots.end(), visibleSpotsOrdered.begin());
+    std::sort(visibleSpotsOrdered.begin(), visibleSpotsOrdered.end());
+
+    // Add dependencies, starting with the last spot.
+    for (auto i = visibleSpotsOrdered.crbegin(); i != visibleSpotsOrdered.crend(); ++i) {
+        if (dependencies.find(*i) != dependencies.end()) {
+            continue; // Spot already has its dependencies added.
+        }
+        addSpotDependencies(*i, dependencies, srcSpots, dstSpots);
+    }
+
+    return dependencies;
 }
 
 }
