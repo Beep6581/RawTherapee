@@ -1300,7 +1300,6 @@ void ICMPanel::wtrcinChanged()
                     redBox->set_sensitive(false);
                     greBox->set_sensitive(false);
                     bluBox->set_sensitive(false);
-                } else {
                 }
             }
             riaHBox->set_sensitive(true);
