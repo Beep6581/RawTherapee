@@ -573,7 +573,7 @@ void ProfilePanel::paste_clicked (GdkEventButton* event)
 
             // Setting LocallabSpotEdited number coherent with spots number in lastsaved->pparams
             custom->pedited->locallab.spots.clear();
-            custom->pedited->locallab.spots.resize(custom->pparams->locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(false));
+            custom->pedited->locallab.spots.resize(custom->pparams->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(false));
         } else {
             const ProfileStoreEntry* entry = profiles->getSelectedEntry();
 
@@ -583,7 +583,7 @@ void ProfilePanel::paste_clicked (GdkEventButton* event)
 
                 // Setting LocallabSpotEdited number coherent with spots number in partProfile->pparams
                 custom->pedited->locallab.spots.clear();
-                custom->pedited->locallab.spots.resize(custom->pparams->locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(false));
+                custom->pedited->locallab.spots.resize(custom->pparams->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(false));
             }
         }
 
@@ -601,7 +601,7 @@ void ProfilePanel::paste_clicked (GdkEventButton* event)
 
                 // Setting LocallabSpotEdited number coherent with spots number in lastsaved->pparams
                 custom->pedited->locallab.spots.clear();
-                custom->pedited->locallab.spots.resize(custom->pparams->locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
+                custom->pedited->locallab.spots.resize(custom->pparams->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
             } else {
                 const ProfileStoreEntry* entry = profiles->getSelectedEntry();
 
@@ -611,7 +611,7 @@ void ProfilePanel::paste_clicked (GdkEventButton* event)
 
                     // Setting LocallabSpotEdited number coherent with spots number in partProfile->pparams
                     custom->pedited->locallab.spots.clear();
-                    custom->pedited->locallab.spots.resize(custom->pparams->locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
+                    custom->pedited->locallab.spots.resize(custom->pparams->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
                 }
             }
         }
@@ -658,7 +658,7 @@ void ProfilePanel::paste_clicked (GdkEventButton* event)
             } else {
                 // Setting LocallabSpotEdited number coherent with spots number in custom->pparams
                 custom->pedited->locallab.spots.clear();
-                custom->pedited->locallab.spots.resize(custom->pparams->locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
+                custom->pedited->locallab.spots.resize(custom->pparams->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
             }
         }
     } else {
@@ -682,14 +682,14 @@ void ProfilePanel::paste_clicked (GdkEventButton* event)
 
             // Setting LocallabSpotEdited number coherent with spots number in custom->pparams
             custom->pedited->locallab.spots.clear();
-            custom->pedited->locallab.spots.resize(custom->pparams->locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
+            custom->pedited->locallab.spots.resize(custom->pparams->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
         } else {
             // custom.pparams = clipboard.pparams non filtered
             *custom->pparams = pp;
 
             // Setting LocallabSpotEdited number coherent with spots number in custom->pparams
             custom->pedited->locallab.spots.clear();
-            custom->pedited->locallab.spots.resize(custom->pparams->locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
+            custom->pedited->locallab.spots.resize(custom->pparams->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
         }
     }
 
@@ -739,7 +739,7 @@ void ProfilePanel::selection_changed ()
                 ParamsEdited pe(true);
 
                 // Setting LocallabSpotEdited number coherent with spots number in s->pparams
-                pe.locallab.spots.resize(s->pparams->locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
+                pe.locallab.spots.resize(s->pparams->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
 
                 PartialProfile s2(s->pparams, &pe, false);
                 changeTo (&s2, pse->label + "+");
@@ -782,7 +782,7 @@ void ProfilePanel::procParamsChanged(
 
     // Setting LocallabSpotEdited number coherent with spots number in p
     custom->pedited->locallab.spots.clear();
-    custom->pedited->locallab.spots.resize(p->locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
+    custom->pedited->locallab.spots.resize(p->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
 }
 
 void ProfilePanel::clearParamChanges()
@@ -819,7 +819,7 @@ void ProfilePanel::initProfile (const Glib::ustring& profileFullPath, ProcParams
     if (lastSaved) {
         ParamsEdited* pe = new ParamsEdited(true);
         // Setting LocallabSpotEdited number coherent with lastSaved->locallab spots number (initialized at true such as pe)
-        pe->locallab.spots.resize(lastSaved->locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
+        pe->locallab.spots.resize(lastSaved->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
         // copying the provided last saved profile to ProfilePanel::lastsaved
         lastsaved = new PartialProfile(lastSaved, pe);
     }

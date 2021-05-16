@@ -220,7 +220,7 @@ public:
 #endif
         return ptrs[row][col];
     }
-    const T   operator() (size_t row, size_t col) const
+    const T&   operator() (size_t row, size_t col) const
     {
 #if CHECK_BOUNDS
         assert (row < height_ && col < width_);
@@ -1310,7 +1310,7 @@ public:
 #endif
         return ptr[3 * (row * width + col)];
     }
-    const T  operator() (size_t row, size_t col) const
+    const T&  operator() (size_t row, size_t col) const
     {
 #if CHECK_BOUNDS
         assert (row < height_ && col < width_);

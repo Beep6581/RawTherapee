@@ -177,6 +177,7 @@ class LocallabColor:
 private:
     // Color & Light specific widgets
     Gtk::Frame* const lumFrame;
+    Adjuster* const reparcol;
     Adjuster* const lightness;
     Adjuster* const contrast;
     Adjuster* const chroma;
@@ -249,6 +250,7 @@ private:
     Adjuster* const blurcol;
     Adjuster* const blendmaskcol;
     Gtk::Frame* const toolcolFrame;
+    Gtk::Frame* const toolcolFrame2;
     Adjuster* const radmaskcol;
     Adjuster* const lapmaskcol;
     Adjuster* const chromaskcol;
@@ -330,6 +332,7 @@ private:
 //    Gtk::Frame* const pdeFrame;
     MyExpander* const exppde;
     Adjuster* const laplacexp;
+    Adjuster* const reparexp;
     Adjuster* const linear;
     Adjuster* const balanexp;
     Adjuster* const gamm;
@@ -339,6 +342,7 @@ private:
     MyExpander* const expfat;
     Adjuster* const fatamount;
     Adjuster* const fatdetail;
+    Gtk::CheckButton* const norm;
     Adjuster* const fatlevel;
     Adjuster* const fatanchor;
     Adjuster* const sensiex;
@@ -388,7 +392,7 @@ private:
     CurveEditorGroup* const mask2expCurveEditorG;
     DiagonalCurveEditor* const Lmaskexpshape;
 
-    sigc::connection expMethodConn, exnoiseMethodConn, inversexConn, showmaskexpMethodConn, showmaskexpMethodConninv, enaExpMaskConn, enaExpMaskaftConn;
+    sigc::connection expMethodConn, exnoiseMethodConn, inversexConn, normConn, showmaskexpMethodConn, showmaskexpMethodConninv, enaExpMaskConn, enaExpMaskaftConn;
 
 public:
     LocallabExposure();
@@ -420,6 +424,7 @@ private:
     void expMethodChanged();
     void exnoiseMethodChanged();
     void inversexChanged();
+    void normChanged();
     void showmaskexpMethodChanged();
     void showmaskexpMethodChangedinv();
     void enaExpMaskChanged();
@@ -439,6 +444,7 @@ class LocallabShadow:
 private:
     // Shadow highlight specific widgets
     MyComboBoxText* const shMethod;
+    Adjuster* const reparsh;
     const std::array<Adjuster*, 5> multipliersh;
     Adjuster* const detailSH;
     Adjuster* const highlights;
@@ -742,6 +748,7 @@ private:
     Adjuster* const nlgam;
     Adjuster* const bilateral;
     Adjuster* const sensiden;
+    Adjuster* const reparden;
     Gtk::Button* neutral;
     MyExpander* const expmaskbl;
     MyComboBoxText* const showmaskblMethod;
@@ -754,6 +761,7 @@ private:
     Adjuster* const strumaskbl;
     Gtk::CheckButton* const toolbl;
     Gtk::Frame* const toolblFrame;
+    Gtk::Frame* const toolblFrame2;
     Adjuster* const blendmaskbl;
     Adjuster* const radmaskbl;
     Adjuster* const lapmaskbl;
@@ -831,6 +839,7 @@ class LocallabTone:
 {
 private:
     // Tone Mapping specific widgets
+    Adjuster* const repartm;
     Adjuster* const amount;
     Adjuster* const stren;
     Gtk::CheckButton* const equiltm;
@@ -1079,6 +1088,7 @@ private:
     Adjuster* const residhi;
     Adjuster* const residhithr;
     Adjuster* const sensilc;
+    Adjuster* const reparw;
     Gtk::Frame* const clariFrame;
     Adjuster* const clarilres;
     Adjuster* const claricres;
@@ -1317,8 +1327,10 @@ private:
     Adjuster* const lightq;
     Adjuster* const contl;
     Adjuster* const contq;
+    Adjuster* const contthres;
     Adjuster* const colorfl;
     Adjuster* const saturl;
+    Adjuster* const chroml;
     MyExpander* const expL;
     CurveEditorGroup* const CurveEditorL;
     DiagonalCurveEditor* const LshapeL;

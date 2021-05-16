@@ -750,7 +750,7 @@ void Crop::update(int todo)
                 parent->imgsrc->getImage(parent->currWB, tr, f, pp, params.toneCurve, params.raw);
                 parent->imgsrc->convertColorSpace(f, params.icm, parent->currWB);
 
-                if (params.dirpyrDenoise.enabled) {
+                if (params.dirpyrDenoise.enabled || params.filmNegative.enabled) {
                     // copy the denoised crop
                     int oy = trafy / skip;
                     int ox = trafx / skip;
@@ -852,6 +852,8 @@ void Crop::update(int todo)
 
         const std::unique_ptr<LabImage> reservCrop(new LabImage(*laboCrop, true));
         const std::unique_ptr<LabImage> lastorigCrop(new LabImage(*laboCrop, true));
+        std::unique_ptr<LabImage> savenormtmCrop;
+        std::unique_ptr<LabImage> savenormretiCrop;
         auto& lllocalcurve2 = parent->lllocalcurve;
         auto& cllocalcurve2 = parent->cllocalcurve;
         auto& lclocalcurve2 = parent->lclocalcurve;
@@ -1017,6 +1019,10 @@ void Crop::update(int todo)
             lumare = parent->lumarefs[sp];
             sobelre = parent->sobelrefs[sp];
             const float avge = parent->avgs[sp];
+            float meantme = parent->meantms[sp];
+            float stdtme = parent->stdtms[sp];
+            float meanretie = parent->meanretis[sp];
+            float stdretie = parent->stdretis[sp];
             
             float minCD;
             float maxCD;
@@ -1032,7 +1038,7 @@ void Crop::update(int todo)
                                             skip);
             // Locallab mask are only shown for selected spot
             if (sp == params.locallab.selspot) {
-                parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), lastorigCrop.get(), cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
+                parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), savenormtmCrop.get(), savenormretiCrop.get(), lastorigCrop.get(), cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
                         lllocalcurve2,locallutili, 
                         cllocalcurve2, localclutili,
                         lclocalcurve2, locallcutili,
@@ -1075,7 +1081,8 @@ void Crop::update(int todo)
                         LHutili, HHutili, CHutili, cclocalcurve2, localcutili, rgblocalcurve2, localrgbutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, 
                         parent->previewDeltaE, parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallvibMask,  parent->localllcMask, parent->locallsharMask, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask,
-                        parent->localllogMask, parent->locall_Mask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+                        parent->localllogMask, parent->locall_Mask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+                        meantme, stdtme, meanretie, stdretie);
                         if(parent->previewDeltaE || parent->locallColorMask == 5 || parent->locallvibMask == 4 || parent->locallExpMask == 5 || parent->locallSHMask == 4 || parent->localllcMask == 4 || parent->localltmMask == 4 || parent->localllogMask == 4 || parent->locallsoftMask == 6 || parent->localllcMask == 4) {  
                             params.blackwhite.enabled = false;
                             params.colorToning.enabled = false;
@@ -1100,7 +1107,7 @@ void Crop::update(int todo)
                             params.softlight.enabled = false;
                         }
             } else {
-                parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), lastorigCrop.get(), cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
+                parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), savenormtmCrop.get(), savenormretiCrop.get(), lastorigCrop.get(), cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
                         lllocalcurve2,locallutili, 
                         cllocalcurve2, localclutili,
                         lclocalcurve2, locallcutili,
@@ -1143,7 +1150,8 @@ void Crop::update(int todo)
                         loclmasCurve_wav,lmasutili_wav,
                         LHutili, HHutili, CHutili, cclocalcurve2, localcutili, rgblocalcurve2, localrgbutili, localexutili, exlocalcurve2, hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                        minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+                        minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
+                        meantme, stdtme, meanretie, stdretie);
             }
             if (sp + 1u < params.locallab.spots.size()) {
                 // do not copy for last spot as it is not needed anymore
@@ -1201,6 +1209,16 @@ void Crop::update(int todo)
         bool cclutili = parent->cclutili;
 
         LUTu dummy;
+        if (params.colorToning.enabled && params.colorToning.method == "LabGrid") {
+            parent->ipf.colorToningLabGrid(labnCrop, 0,labnCrop->W , 0, labnCrop->H, false);
+        }
+
+        parent->ipf.shadowsHighlights(labnCrop, params.sh.enabled, params.sh.lab,params.sh.highlights ,params.sh.shadows, params.sh.radius, skip, params.sh.htonalwidth, params.sh.stonalwidth);
+        
+        if (params.localContrast.enabled) {
+        // Alberto's local contrast
+            parent->ipf.localContrast(labnCrop, labnCrop->L, params.localContrast, false, skip);
+        }
         parent->ipf.chromiLuminanceCurve(this, 1, labnCrop, labnCrop, parent->chroma_acurve, parent->chroma_bcurve, parent->satcurve, parent->lhskcurve,  parent->clcurve, parent->lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
         parent->ipf.vibrance(labnCrop, params.vibrance, params.toneCurve.hrenabled, params.icm.workingProfile);
         parent->ipf.labColorCorrectionRegions(labnCrop);

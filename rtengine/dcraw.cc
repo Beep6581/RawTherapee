@@ -923,7 +923,7 @@ ushort * CLASS ljpeg_row (int jrow, struct jhead *jh)
     }
     getbits(-1);
   }
-  FORC3 row[c] = (jh->row + ((jrow & 1) + 1) * (jh->wide*jh->clrs*((jrow+c) & 1)));
+  FORC3 row[c] = jh->row + jh->wide*jh->clrs*((jrow+c) & 1);
   for (col=0; col < jh->wide; col++)
     FORC(jh->clrs) {
       diff = ljpeg_diff (jh->huff[c]);
@@ -9078,7 +9078,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
     RT_matrix_from_constant = ThreeValBool::T;
   }
   // -- RT --------------------------------------------------------------------
-  
+
   for (i=0; i < sizeof table / sizeof *table; i++)
     if (!strncmp (name, table[i].prefix, strlen(table[i].prefix))) {
       if (RT_blacklevel_from_constant == ThreeValBool::T && table[i].black)   black   = (ushort) table[i].black;
@@ -9568,7 +9568,7 @@ void CLASS identify()
     apply_tiff();
     if (!strcmp(model, "X-T3")) {
         height = raw_height - 2;
-    } else if (!strcmp(model, "GFX 100")) {
+    } else if (!strcmp(model, "GFX 100") || !strcmp(model, "GFX100S")) {
         load_flags = 0;
     }
     if (!load_raw) {

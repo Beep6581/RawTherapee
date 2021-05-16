@@ -637,6 +637,8 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     vboxright = new Gtk::Paned (Gtk::ORIENTATION_VERTICAL);
 
     vsubboxright = new Gtk::Box (Gtk::ORIENTATION_VERTICAL, 0);
+//    int rightsize = options.fontSize * 44;
+//    vsubboxright->set_size_request (rightsize, rightsize - 50);
     vsubboxright->set_size_request (300, 250);
 
     vsubboxright->pack_start (*ppframe, Gtk::PACK_SHRINK, 2);
@@ -1755,7 +1757,7 @@ void EditorPanel::procParamsChanged (Thumbnail* thm, int whoChangedIt)
         PartialProfile pp (true);
         pp.set (true);
         * (pp.pparams) = openThm->getProcParams();
-        pp.pedited->locallab.spots.resize(pp.pparams->locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
+        pp.pedited->locallab.spots.resize(pp.pparams->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
         tpc->profileChange (&pp, rtengine::EvProfileChangeNotification, M ("PROGRESSDLG_PROFILECHANGEDINBROWSER"));
         pp.deleteInstance();
     }
