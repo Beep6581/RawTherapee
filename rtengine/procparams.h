@@ -1701,6 +1701,46 @@ struct ResizeParams {
   * Parameters of the color spaces used during the processing
   */
 struct ColorManagementParams {
+    enum class WorkingTrc {
+        NONE,
+        CUSTOM,
+        BT709,
+        SRGB,
+        GAMMA_2_2,
+        GAMMA_1_8,
+        LINEAR
+    };
+
+    enum class Illuminant {
+        DEFAULT,
+        D41,
+        D50,
+        D55,
+        D60,
+        D65,
+        D80,
+        D120,
+        STDA,
+        TUNGSTEN_2000K,
+        TUNGSTEN_1500K
+    };
+
+    enum class Primaries {
+        DEFAULT,
+        SRGB,
+        ADOBE_RGB,
+        PRO_PHOTO,
+        REC2020,
+        ACES_P1,
+        WIDE_GAMUT,
+        ACES_P0,
+        BRUCE_RGB,
+        BETA_RGB,
+        BEST_RGB,
+        CUSTOM,
+        CUSTOM_GRID
+    };
+
     Glib::ustring inputProfile;
     bool toneCurve;
     bool applyLookTable;
@@ -1709,9 +1749,28 @@ struct ColorManagementParams {
     int dcpIlluminant;
 
     Glib::ustring workingProfile;
-    Glib::ustring workingTRC;
+    WorkingTrc workingTRC;
+    Illuminant will;
+    Primaries wprim;
     double workingTRCGamma;
     double workingTRCSlope;
+    double redx;
+    double redy;
+    double grex;
+    double grey;
+    double blux;
+    double bluy;
+    double preser;
+    bool fbw;
+    double labgridcieALow;
+    double labgridcieBLow;
+    double labgridcieAHigh;
+    double labgridcieBHigh;
+    double labgridcieGx;
+    double labgridcieGy;
+    double labgridcieWx;
+    double labgridcieWy;
+    RenderingIntent aRendIntent;
 
     Glib::ustring outputProfile;
     RenderingIntent outputIntent;

@@ -190,6 +190,7 @@ protected:
     ImageTypeListener *imageTypeListener;
     FilmNegListener *filmNegListener;
     AutoColorTonListener* actListener;
+    AutoprimListener* primListener;
     AutoChromaListener* adnListener;
     WaveletListener* awavListener;
     RetinexListener* dehaListener;
@@ -500,6 +501,10 @@ public:
     void setAutoColorTonListener   (AutoColorTonListener* bwct) override
     {
         actListener = bwct;
+    }
+    void setAutoprimListener   (AutoprimListener* pri) override
+    {
+        primListener = pri;
     }
     void setAutoChromaListener  (AutoChromaListener* adn) override
     {

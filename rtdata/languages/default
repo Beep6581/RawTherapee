@@ -1338,10 +1338,22 @@ HISTORY_MSG_HLBL;Color propagation - blur
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primaries
 HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 illuminant D
 HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Type
-HISTORY_MSG_ICM_WORKING_GAMMA;Working - Gamma
-HISTORY_MSG_ICM_WORKING_SLOPE;Working - Slope
-HISTORY_MSG_ICM_WORKING_TRC_METHOD;Working - TRC method
+HISTORY_MSG_ICM_WORKING_GAMMA;TRC - Gamma
+HISTORY_MSG_ICM_WORKING_SLOPE;TRC - Slope
+HISTORY_MSG_ICM_WORKING_TRC_METHOD;TRC method
+HISTORY_MSG_ICM_WORKING_ILLUM_METHOD;Illuminant method
+HISTORY_MSG_ICM_WORKING_PRIM_METHOD;Primaries method
+HISTORY_MSG_ICM_REDX;Primaries Red X
+HISTORY_MSG_ICM_REDY;Primaries Red Y
+HISTORY_MSG_ICM_GREX;Primaries Green X
+HISTORY_MSG_ICM_GREY;Primaries Green Y
+HISTORY_MSG_ICM_BLUX;Primaries Blue X
+HISTORY_MSG_ICM_BLUY;Primaries Blue Y
+HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy
+HISTORY_MSG_ICM_AINTENT;Abstract profile intent
 HISTORY_MSG_ILLUM;Illuminant
+HISTORY_MSG_ICM_FBW;Black and White
+HISTORY_MSG_ICM_PRESER;Preserve neutral
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
@@ -2402,10 +2414,14 @@ TP_ICM_APPLYHUESATMAP;Base table
 TP_ICM_APPLYHUESATMAP_TOOLTIP;Employ the embedded DCP base table (HueSatMap). The setting is only available if the selected DCP has one.
 TP_ICM_APPLYLOOKTABLE;Look table
 TP_ICM_APPLYLOOKTABLE_TOOLTIP;Employ the embedded DCP look table. The setting is only available if the selected DCP has one.
+TP_ICM_BLUFRAME;Blue Primaries
 TP_ICM_BPC;Black Point Compensation
 TP_ICM_DCPILLUMINANT;Illuminant
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpolated
 TP_ICM_DCPILLUMINANT_TOOLTIP;Select which embedded DCP illuminant to employ. Default is "interpolated" which is a mix between the two based on white balance. The setting is only available if a dual-illuminant DCP with interpolation support is selected.
+TP_ICM_FBW;Black-and-White
+TP_ICM_GREFRAME;Green Primaries
+TP_ICM_ILLUMPRIM_TOOLTIP;Choose the illuminant closest to the shooting conditions.\nChanges can only be made when the ‘Destination primaries’ selection is set to ‘Custom (sliders)’.
 TP_ICM_INPUTCAMERA;Camera standard
 TP_ICM_INPUTCAMERAICC;Auto-matched camera profile
 TP_ICM_INPUTCAMERAICC_TOOLTIP;Use RawTherapee's camera-specific DCP or ICC input color profiles. These profiles are more precise than simpler matrix ones. They are not available for all cameras. These profiles are stored in the /iccprofiles/input and /dcpprofiles folders and are automatically retrieved based on a file name matching to the exact model name of the camera.
@@ -2418,22 +2434,66 @@ TP_ICM_INPUTEMBEDDED_TOOLTIP;Use color profile embedded in non-raw files.
 TP_ICM_INPUTNONE;No profile
 TP_ICM_INPUTNONE_TOOLTIP;Use no input color profile at all.\nUse only in special cases.
 TP_ICM_INPUTPROFILE;Input Profile
-TP_ICM_LABEL;Color Management
+TP_ICM_LABEL;Color Management 
+TP_ICM_LABGRID_CIEXY;R(x)=%1 R(y)=%2\nG(x)=%3 G(y)=%4\nB(x)=%5 B(y)=%6
 TP_ICM_NOICM;No ICM: sRGB Output
 TP_ICM_OUTPUTPROFILE;Output Profile
+TP_ICM_OUTPUTPROFILE_TOOLTIP;By default all RTv4 or RTv2 profiles are with TRC - sRGB: g=2.4 s=12.92\n\nWith 'ICC Profile Creator' you can generate v4 or v2 profiles with the following choices;\n-Primaries: Aces AP0, Aces AP1, AdobeRGB, Prophoto, Rec2020, sRGB, Widegamut, BestRGB, BetaRGB, BruceRGB, Custom\n-TRC: BT709, sRGB, linear, standard g=2.2, standard g=1.8, Custom\n-Illuminant: D41, D50, D55, D60, D65, D80, stdA 2856K
+TP_ICM_PRIMRED_TOOLTIP;Primaries Red:\nsRGB x=0.64 y=0.33\nAdobe x=0.64 y=0.33\nWidegamut x=0.735 y=0.265\nRec2020 x=0.708 y=0.292\nACES P1 x=0.713 y= 0.293\nACES P0 x=0.7347 y=0.2653\nProphoto x=0.7347 y=0.2653\nBruceRGB x=0.64 y=0.33\nBeta RGB x=0.688 y=0.3112\nBestRGB x=0.7347 y=0.2653
+TP_ICM_PRIMGRE_TOOLTIP;Primaries Green:\nsRGB x=0.3 y=0.6\nAdobe x=0.21 y=0.71\nWidegamut x=0.115 y=0.826\nRec2020 x=0.17 y=0.797\nACES P1 x=0.165 y= 0.83\nACES P0 x=0.0 y=1.0\nProphoto x=0.1596 y=0.8404\nBruceRGB x=0.28 y=0.65\nBeta RGB x=0.1986 y=0.7551\nBest RGB x=0.2150 0.7750 
+TP_ICM_PRIMBLU_TOOLTIP;Primaries Blue:\nsRGB x=0.15 y=0.06\nAdobe x=0.15 y=0.06\nWidegamut x=0.157 y=0.018\nRec2020 x=0.131 y=0.046\nACES P1 x=0.128 y= 0.044\nACES P0 x=0.0001 y=-0.077\nProphoto x=0.0366 y=0.0001\nBruceRGB x=0.15 y=0.06\nBeta RGB x=0.1265 y=0.0352\nBestRGB x=0.131 y=0.046 
 TP_ICM_PROFILEINTENT;Rendering Intent
+TP_ICM_REDFRAME;Custom Primaries
 TP_ICM_SAVEREFERENCE;Save Reference Image
 TP_ICM_SAVEREFERENCE_APPLYWB;Apply white balance
 TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generally, apply the white balance when saving images to create ICC profiles, and do not apply the white balance to create DCP profiles.
 TP_ICM_SAVEREFERENCE_TOOLTIP;Save the linear TIFF image before the input profile is applied. The result can be used for calibration purposes and generation of a camera profile.
 TP_ICM_TONECURVE;Tone curve
 TP_ICM_TONECURVE_TOOLTIP;Employ the embedded DCP tone curve. The setting is only available if the selected DCP has a tone curve.
+TP_ICM_TRCFRAME;Abstract Profile
+TP_ICM_TRCFRAME_TOOLTIP;Also known as ‘synthetic’ or ‘virtual’ profiles, which are applied at the end of the processing pipeline (prior to ciecam) allowing you to create custom image effects.\nYou can make changes to the:\n ‘Tone response curve’, which modifies the tones of the image.\n ‘Illuminant’ : which allows you to change the profile primaries to adapt them to the shooting conditions.\n ‘Destination primaries’: which allows you to change the destination primaries with two main uses - channel mixer and calibration.\nNote: Abstract profiles take into account the built-in Working profiles without modifying them. They do not work with custom Working profiles.
+TP_ICM_WORKING_CIEDIAG;CIE xy diagram
 TP_ICM_WORKINGPROFILE;Working Profile
+TP_ICM_WORKING_PRESER;Preserves Pastel tones
 TP_ICM_WORKING_TRC;Tone response curve:
+TP_ICM_WORKING_TRC_BT709;BT709 g=2.22 s=4.5
+TP_ICM_WORKING_TRC_SRGB;sRGB g=2.4 s=12.92
+TP_ICM_WORKING_TRC_22;Adobe g=2.2
+TP_ICM_WORKING_TRC_18;Prophoto g=1.8
+TP_ICM_WORKING_TRC_LIN;Linear g=1
 TP_ICM_WORKING_TRC_CUSTOM;Custom
 TP_ICM_WORKING_TRC_GAMMA;Gamma
 TP_ICM_WORKING_TRC_NONE;None
 TP_ICM_WORKING_TRC_SLOPE;Slope
+TP_ICM_TRC_TOOLTIP;Allows you to change the default sRGB ‘Tone response curve’ in RT (g=2.4 s=12.92).\nThis TRC modifies the tones of the image. The RGB and Lab values, histogram and output (screen, TIF, JPG) are changed:\n-Gamma acts mainly on light tones -Slope acts mainly on dark tones.\nYou can choose any pair of 'gamma and slope' (values >1) and the algorithm will ensure that there is continuity between the linear and parabolic parts of the curve.\nA selection other than 'none' activates the 'Illuminant' and 'Destination primaries' menus.
+TP_ICM_WORKING_ILLU;Illuminant
+TP_ICM_WORKING_ILLU_NONE;Default
+TP_ICM_WORKING_ILLU_D41;D41
+TP_ICM_WORKING_ILLU_D50;D50
+TP_ICM_WORKING_ILLU_D55;D55
+TP_ICM_WORKING_ILLU_D60;D60
+TP_ICM_WORKING_ILLU_D65;D65
+TP_ICM_WORKING_ILLU_D80;D80
+TP_ICM_WORKING_ILLU_D120;D120
+TP_ICM_WORKING_ILLU_STDA;stdA 2875K
+TP_ICM_WORKING_ILLU_2000;Tungsten 2000K
+TP_ICM_WORKING_ILLU_1500;Tungsten 1500K
+TP_ICM_WORKING_PRIM;Destination primaries
+TP_ICM_PRIMILLUM_TOOLTIP;You can change an image from its original mode (‘working profile’) to a different mode (‘destination primaries’). When you choose a different color mode for an image, you permanently change the color values in the image.\n\nChanging the ‘primaries’ is quite complex and difficult to use. It requires a lot of experimenting.\n It is capable of making exotic color adjustments as Channel Mixer primaries.\n Allows you to modify the camera calibration with Custom (sliders).
+TP_ICM_WORKING_PRIM_NONE;Default
+TP_ICM_WORKING_PRIM_SRGB;sRGB
+TP_ICM_WORKING_PRIM_ADOB;Adobe RGB
+TP_ICM_WORKING_PRIM_PROP;ProPhoto
+TP_ICM_WORKING_PRIM_REC;Rec2020
+TP_ICM_WORKING_PRIM_ACE;ACESp1
+TP_ICM_WORKING_PRIM_WID;WideGamut
+TP_ICM_WORKING_PRIM_AC0;ACESp0
+TP_ICM_WORKING_PRIM_BRU;BruceRGB
+TP_ICM_WORKING_PRIM_BET;Beta RGB
+TP_ICM_WORKING_PRIM_BST;BestRGB
+TP_ICM_WORKING_PRIM_CUS;Custom (sliders)
+TP_ICM_WORKING_PRIM_CUSGR;Custom (CIE xy Diagram)
+TP_ICM_WORKING_PRIMFRAME_TOOLTIP;When ‘Custom CIE xy diagram’ is selected in ‘Destination- primaries’’ combobox, you can modify the values of the 3 primaries directly on the graph.\nNote that in this case, the white point position on the graph will not be updated. 
 TP_ICM_WORKING_TRC_TOOLTIP;Only for built-in profiles.
 TP_IMPULSEDENOISE_LABEL;Impulse Noise Reduction
 TP_IMPULSEDENOISE_THRESH;Threshold
@@ -3299,6 +3359,12 @@ TP_PREPROCWB_LABEL;Preprocess White Balance
 TP_PREPROCWB_MODE;Mode
 TP_PREPROCWB_MODE_AUTO;Auto
 TP_PREPROCWB_MODE_CAMERA;Camera
+TC_PRIM_BLUX;Bx
+TC_PRIM_BLUY;By
+TC_PRIM_GREX;Gx
+TC_PRIM_GREY;Gy
+TC_PRIM_REDX;Rx
+TC_PRIM_REDY;Ry
 TP_PRSHARPENING_LABEL;Post-Resize Sharpening
 TP_PRSHARPENING_TOOLTIP;Sharpens the image after resizing. Only works when the "Lanczos" resizing method is used. It is impossible to preview the effects of this tool. See RawPedia for usage instructions.
 TP_RAWCACORR_AUTO;Auto-correction

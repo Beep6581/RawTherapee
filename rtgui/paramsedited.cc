@@ -439,7 +439,26 @@ void ParamsEdited::set(bool v)
     icm.outputBPC = v;
     icm.workingTRCGamma = v;
     icm.workingTRCSlope = v;
+    icm.redx = v;
+    icm.redy = v;
+    icm.grex = v;
+    icm.grey = v;
+    icm.blux = v;
+    icm.bluy = v;
+    icm.preser = v;
+    icm.fbw = v;
+    icm.labgridcieALow = v;
+    icm.labgridcieBLow = v;
+    icm.labgridcieAHigh = v;
+    icm.labgridcieBHigh = v;
+    icm.labgridcieGx = v;
+    icm.labgridcieGy = v;
+    icm.labgridcieWx = v;
+    icm.labgridcieWy = v;
+    icm.aRendIntent = v;
     icm.workingTRC = v;
+    icm.will = v;
+    icm.wprim = v;
     raw.bayersensor.method = v;
     raw.bayersensor.border = v;
     raw.bayersensor.imageNum = v;
@@ -1709,7 +1728,26 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         icm.outputBPC = icm.outputBPC && p.icm.outputBPC == other.icm.outputBPC ;
         icm.workingTRCGamma = icm.workingTRCGamma && p.icm.workingTRCGamma == other.icm.workingTRCGamma;
         icm.workingTRCSlope = icm.workingTRCSlope && p.icm.workingTRCSlope == other.icm.workingTRCSlope;
+        icm.redx = icm.redx && p.icm.redx == other.icm.redx;
+        icm.redy = icm.redy && p.icm.redy == other.icm.redy;
+        icm.grex = icm.grex && p.icm.grex == other.icm.grex;
+        icm.grey = icm.grey && p.icm.grey == other.icm.grey;
+        icm.blux = icm.blux && p.icm.blux == other.icm.blux;
+        icm.bluy = icm.bluy && p.icm.bluy == other.icm.bluy;
+        icm.labgridcieALow = icm.labgridcieALow && p.icm.labgridcieALow == other.icm.labgridcieALow;
+        icm.labgridcieBLow = icm.labgridcieBLow && p.icm.labgridcieBLow == other.icm.labgridcieBLow;
+        icm.labgridcieAHigh = icm.labgridcieAHigh && p.icm.labgridcieAHigh == other.icm.labgridcieAHigh;
+        icm.labgridcieBHigh = icm.labgridcieBHigh && p.icm.labgridcieBHigh == other.icm.labgridcieBHigh;
+        icm.labgridcieGx = icm.labgridcieGx && p.icm.labgridcieGx == other.icm.labgridcieGx;
+        icm.labgridcieGy = icm.labgridcieGy && p.icm.labgridcieGy == other.icm.labgridcieGy;
+        icm.labgridcieWx = icm.labgridcieWx && p.icm.labgridcieWx == other.icm.labgridcieWx;
+        icm.labgridcieWy = icm.labgridcieWy && p.icm.labgridcieWy == other.icm.labgridcieWy;
+        icm.preser = icm.preser && p.icm.preser == other.icm.preser;
+        icm.fbw = icm.fbw && p.icm.fbw == other.icm.fbw;
+        icm.aRendIntent = icm.aRendIntent && p.icm.aRendIntent == other.icm.aRendIntent;
         icm.workingTRC = icm.workingTRC && p.icm.workingTRC == other.icm.workingTRC;
+        icm.will = icm.will && p.icm.will == other.icm.will;
+        icm.wprim = icm.wprim && p.icm.wprim == other.icm.wprim;
         raw.bayersensor.method = raw.bayersensor.method && p.raw.bayersensor.method == other.raw.bayersensor.method;
         raw.bayersensor.border = raw.bayersensor.border && p.raw.bayersensor.border == other.raw.bayersensor.border;
         raw.bayersensor.imageNum = raw.bayersensor.imageNum && p.raw.bayersensor.imageNum == other.raw.bayersensor.imageNum;
@@ -5722,8 +5760,84 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.icm.workingTRCSlope = mods.icm.workingTRCSlope;
     }
 
+    if (icm.redx) {
+        toEdit.icm.redx = mods.icm.redx;
+    }
+
+    if (icm.redy) {
+        toEdit.icm.redy = mods.icm.redy;
+    }
+
+    if (icm.grex) {
+        toEdit.icm.grex = mods.icm.grex;
+    }
+
+    if (icm.grey) {
+        toEdit.icm.grey = mods.icm.grey;
+    }
+
+    if (icm.blux) {
+        toEdit.icm.blux = mods.icm.blux;
+    }
+
+    if (icm.bluy) {
+        toEdit.icm.bluy = mods.icm.bluy;
+    }
+
+    if (icm.preser) {
+        toEdit.icm.preser = mods.icm.preser;
+    }
+
+    if (icm.fbw) {
+        toEdit.icm.fbw = mods.icm.fbw;
+    }
+
+    if (icm.labgridcieALow) {
+        toEdit.icm.labgridcieALow = mods.icm.labgridcieALow;
+    }
+
+    if (icm.labgridcieBLow) {
+        toEdit.icm.labgridcieBLow = mods.icm.labgridcieBLow;
+    }
+
+    if (icm.labgridcieAHigh) {
+        toEdit.icm.labgridcieAHigh = mods.icm.labgridcieAHigh;
+    }
+
+    if (icm.labgridcieBHigh) {
+        toEdit.icm.labgridcieBHigh = mods.icm.labgridcieBHigh;
+    }
+
+    if (icm.labgridcieGx) {
+        toEdit.icm.labgridcieGx = mods.icm.labgridcieGx;
+    }
+
+    if (icm.labgridcieGy) {
+        toEdit.icm.labgridcieGy = mods.icm.labgridcieGy;
+    }
+
+    if (icm.labgridcieWx) {
+        toEdit.icm.labgridcieWx = mods.icm.labgridcieWx;
+    }
+
+    if (icm.labgridcieWy) {
+        toEdit.icm.labgridcieWy = mods.icm.labgridcieWy;
+    }
+
+    if (icm.aRendIntent) {
+        toEdit.icm.aRendIntent = mods.icm.aRendIntent;
+    }
+
     if (icm.workingTRC) {
         toEdit.icm.workingTRC = mods.icm.workingTRC;
+    }
+
+    if (icm.will) {
+        toEdit.icm.will = mods.icm.will;
+    }
+
+    if (icm.wprim) {
+        toEdit.icm.wprim = mods.icm.wprim;
     }
 
     if (raw.bayersensor.method) {
