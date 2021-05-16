@@ -504,7 +504,7 @@ bool CurveEditor::drag1(int modifierKey)
     return false;
 }
 
-CursorShape CurveEditor::getCursor(int objectID) const
+CursorShape CurveEditor::getCursor(int objectID, int xPos, int yPos) const
 {
     if (remoteDrag) {
         return CSResizeHeight;

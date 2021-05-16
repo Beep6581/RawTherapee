@@ -578,6 +578,14 @@ void BatchToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, c
     }
 }
 
+void BatchToolPanelCoordinator::setTweakOperator (rtengine::TweakOperator *tOperator)
+{
+}
+
+void BatchToolPanelCoordinator::unsetTweakOperator (rtengine::TweakOperator *tOperator)
+{
+}
+
 void BatchToolPanelCoordinator::getAutoWB (double& temp, double& green, double equal, double tempBias)
 {
 

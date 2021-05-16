@@ -267,7 +267,7 @@ private:
     void updateControlSpotCurve(const Gtk::TreeModel::Row& row);
     void deleteControlSpotCurve(Gtk::TreeModel::Row& row);
     void updateCurveOpacity(const Gtk::TreeModel::Row& selectedRow);
-    CursorShape getCursor(int objectID) const override;
+    CursorShape getCursor(int objectID, int xPos, int yPos) const override;
     bool mouseOver(int modifierKey) override;
     bool button1Pressed(int modifierKey) override;
     bool button1Released() override;

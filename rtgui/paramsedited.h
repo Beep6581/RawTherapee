@@ -1087,6 +1087,13 @@ struct ResizeParamsEdited {
     bool allowUpscaling;
 };
 
+class SpotParamsEdited
+{
+public:
+    bool enabled;
+    bool entries;
+};
+
 struct ColorManagementParamsEdited {
     bool inputProfile;
     bool toneCurve;
@@ -1437,6 +1444,7 @@ struct ParamsEdited {
     ChannelMixerParamsEdited chmixer;
     BlackWhiteParamsEdited blackwhite;
     ResizeParamsEdited resize;
+    SpotParamsEdited spot;
     ColorManagementParamsEdited icm;
     RAWParamsEdited raw;
     DirPyrEqualizerParamsEdited dirpyrequalizer;

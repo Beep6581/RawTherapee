@@ -365,6 +365,10 @@ namespace rtengine
 namespace procparams
 {
 
+const short SpotParams::minRadius = 5;
+const short SpotParams::maxRadius = 100;
+
+
 ToneCurveParams::ToneCurveParams() :
     autoexp(false),
     clip(0.02),
@@ -1690,6 +1694,57 @@ bool EPDParams::operator !=(const EPDParams& other) const
 {
     return !(*this == other);
 }
+
+SpotEntry::SpotEntry() :
+    radius(25),
+    feather(1.f),
+    opacity(1.f)
+{
+}
+
+float SpotEntry::getFeatherRadius() const
+{
+    return radius * (1.f + feather);
+}
+
+bool SpotEntry::operator ==(const SpotEntry& other) const
+{
+    return other.sourcePos == sourcePos && other.targetPos == targetPos &&
+           other.radius == radius && other.feather == feather && other.opacity == opacity;
+}
+
+bool SpotEntry::operator !=(const SpotEntry& other) const
+{
+    return other.sourcePos != sourcePos || other.targetPos != targetPos ||
+           other.radius != radius || other.feather != feather || other.opacity != opacity;
+}
+
+SpotParams::SpotParams() :
+    enabled(false)
+{
+    entries.clear ();
+}
+
+bool SpotParams::operator ==(const SpotParams& other) const
+{
+    if (enabled != other.enabled || entries.size() != other.entries.size()) {
+        return false;
+    }
+
+    size_t i = 0;
+    for (auto entry : entries) {
+        if (entry != other.entries[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool SpotParams::operator !=(const SpotParams& other) const
+{
+    return !(*this == other);
+}
+
 
 FattalToneMappingParams::FattalToneMappingParams() :
     enabled(false),
@@ -6790,6 +6845,25 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.hueskin2, "Wavelet", "HueRange", wavelet.hueskin2.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.contrast, "Wavelet", "Contrast", wavelet.contrast, keyFile);
 
+//Spot removal
+        saveToKeyfile(!pedited || pedited->spot.enabled, "Spot removal", "Enabled", spot.enabled, keyFile);
+        for (size_t i = 0; i < spot.entries.size (); ++i) {
+            std::vector<double> entry(7);
+
+            entry[0] = double (spot.entries.at (i).sourcePos.x);
+            entry[1] = double (spot.entries.at (i).sourcePos.y);
+            entry[2] = double (spot.entries.at (i).targetPos.x);
+            entry[3] = double (spot.entries.at (i).targetPos.y);
+            entry[4] = double (spot.entries.at (i).radius);
+            entry[5] = double (spot.entries.at (i).feather);
+            entry[6] = double (spot.entries.at (i).opacity);
+
+            std::stringstream ss;
+            ss << "Spot" << (i + 1);
+
+            saveToKeyfile(!pedited || pedited->spot.entries, "Spot removal", ss.str(), entry, keyFile);
+        }
+
 // Directional pyramid equalizer
         saveToKeyfile(!pedited || pedited->dirpyrequalizer.enabled, "Directional Pyramid Equalizer", "Enabled", dirpyrequalizer.enabled, keyFile);
         saveToKeyfile(!pedited || pedited->dirpyrequalizer.gamutlab, "Directional Pyramid Equalizer", "Gamutlab", dirpyrequalizer.gamutlab, keyFile);
@@ -8520,6 +8594,34 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
         }
 
+        if (keyFile.has_group ("Spot removal")) {
+            assignFromKeyfile(keyFile, "Spot removal", "Enabled", pedited, spot.enabled, pedited->spot.enabled);
+            int i = 0;
+            do {
+                std::stringstream ss;
+                ss << "Spot" << (i++ + 1);
+
+                if (keyFile.has_key ("Spot removal", ss.str())) {
+                    Glib::ArrayHandle<double> entry = keyFile.get_double_list ("Spot removal", ss.str());
+                    const double epsilon = 0.001;  // to circumvent rounding of integer saved as double
+                    SpotEntry se;
+
+                    se.sourcePos.set(int(entry.data()[0] + epsilon), int(entry.data()[1] + epsilon));
+                    se.targetPos.set(int(entry.data()[2] + epsilon), int(entry.data()[3] + epsilon));
+                    se.radius  = LIM<int>(int  (entry.data()[4] + epsilon), SpotParams::minRadius, SpotParams::maxRadius);
+                    se.feather = float(entry.data()[5]);
+                    se.opacity = float(entry.data()[6]);
+                    spot.entries.push_back(se);
+
+                    if (pedited) {
+                        pedited->spot.entries = true;
+                    }
+                } else {
+                    break;
+                }
+            } while (1);
+        }
+
         if (keyFile.has_group("PostDemosaicSharpening")) {
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Enabled", pedited, pdsharpening.enabled, pedited->pdsharpening.enabled);
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Contrast", pedited, pdsharpening.contrast, pedited->pdsharpening.contrast);
@@ -9679,6 +9781,7 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && chmixer == other.chmixer
         && blackwhite == other.blackwhite
         && resize == other.resize
+        && spot == other.spot
         && raw == other.raw
         && icm == other.icm
         && wavelet == other.wavelet

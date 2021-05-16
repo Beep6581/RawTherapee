@@ -426,6 +426,10 @@ void ParamsEdited::set(bool v)
     resize.width     = v;
     resize.height    = v;
     resize.enabled   = v;
+
+    spot.enabled = v;
+    spot.entries = v;
+
     resize.allowUpscaling = v;
     icm.inputProfile = v;
     icm.toneCurve = v;
@@ -1715,6 +1719,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         resize.width = resize.width && p.resize.width == other.resize.width;
         resize.height = resize.height && p.resize.height == other.resize.height;
         resize.enabled = resize.enabled && p.resize.enabled == other.resize.enabled;
+        spot.enabled = spot.enabled && p.spot.enabled == other.spot.enabled;
+        spot.entries = spot.entries && p.spot.entries == other.spot.entries;
         resize.allowUpscaling = resize.allowUpscaling && p.resize.allowUpscaling == other.resize.allowUpscaling;
         icm.inputProfile = icm.inputProfile && p.icm.inputProfile == other.icm.inputProfile;
         icm.toneCurve = icm.toneCurve && p.icm.toneCurve == other.icm.toneCurve;
@@ -5524,6 +5530,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).csthresholdmask = mods.locallab.spots.at(i).csthresholdmask;
         }
 
+    }
+
+    if (spot.enabled) {
+        toEdit.spot.enabled   = mods.spot.enabled;
+    }
+
+    if (spot.entries) {
+        toEdit.spot.entries   = mods.spot.entries;
     }
 
     if (pcvignette.enabled) {

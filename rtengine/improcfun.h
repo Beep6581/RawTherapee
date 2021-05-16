@@ -23,6 +23,7 @@
 
 #include "coord2d.h"
 #include "gamutwarning.h"
+#include "imagedimensions.h"
 #include "jaggedarray.h"
 #include "pipettebuffer.h"
 #include "array2D.h"
@@ -78,12 +79,15 @@ class Image8;
 class Imagefloat;
 class LabImage;
 class wavelet_decomposition;
+class ImageSource;
+class ColorTemp;
 
 namespace procparams
 {
 
 class ProcParams;
 
+struct SpotEntry;
 struct DehazeParams;
 struct FattalToneMappingParams;
 struct ColorManagementParams;
@@ -447,6 +451,9 @@ enum class BlurType {
     void calcautodn_info(float &chaut, float &delta, int Nb, int levaut, float maxmax, float lumema, float chromina, int mode, int lissage, float redyel, float skinc, float nsknc);
     float Mad(const float * DataList, int datalen);
     float MadRgb(const float * DataList, int datalen);
+
+    // spot removal tool
+    void removeSpots (rtengine::Imagefloat* img, rtengine::ImageSource* imgsrc, const std::vector<procparams::SpotEntry> &entries, const PreviewProps &pp, const rtengine::ColorTemp &currWB, const procparams::ColorManagementParams *cmp, int tr);
 
     // pyramid wavelet
     void cbdl_local_temp(float ** src, float ** loctemp, int srcwidth, int srcheight, const float * mult, float kchro, const double dirpyrThreshold, const float mergeL, const float contres, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r,  int choice, int scale, bool multiThread);

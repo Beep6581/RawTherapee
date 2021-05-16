@@ -133,7 +133,7 @@ public:
     bool button1Pressed(int modifierKey) override;
     bool button1Released() override;
     bool drag1(int modifierKey) override;
-    CursorShape getCursor(int objectID) const override;
+    CursorShape getCursor(int objectID, int xPos, int yPos) const override;
 
 
 };

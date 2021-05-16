@@ -32,6 +32,7 @@
 
 // Elementary functions that can be done to
 // the preview image when an event occurs
+#define M_SPOT        (1<<19)
 #define M_CSHARP      (1<<18)
 #define M_MONITOR     (1<<14)
 #define M_RETINEX     (1<<13)
@@ -51,23 +52,24 @@
 
 // Bitfield of functions to do to the preview image when an event occurs
 // Use those or create new ones for your new events
-#define FIRST            (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR|M_MONITOR)  // without HIGHQUAL
-#define ALL              (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)  // without HIGHQUAL
-#define DARKFRAME        (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define FLATFIELD        (M_PREPROC|M_RAW|M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define DEMOSAIC                   (M_RAW|M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define ALLNORAW                         (M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define CAPTURESHARPEN                   (M_INIT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR|M_CSHARP)
-#define HDR                                     (M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define TRANSFORM                                                  (M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define AUTOEXP                                                                    (M_HDR|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define RGBCURVE                                                                                   (M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define LUMINANCECURVE                                                                                        (M_LUMACURVE|M_LUMINANCE|M_COLOR)
-#define SHARPENING                                                                                                        (M_LUMINANCE|M_COLOR)
-#define IMPULSEDENOISE                                                                                                    (M_LUMINANCE|M_COLOR)
-#define DEFRINGE                                                                                                          (M_LUMINANCE|M_COLOR)
-#define DIRPYRDENOISE                                                                                                     (M_LUMINANCE|M_COLOR)
-#define DIRPYREQUALIZER                                                                                                   (M_LUMINANCE|M_COLOR)
+#define FIRST            (M_PREPROC|M_RAW|M_INIT|M_SPOT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR|M_MONITOR)  // without HIGHQUAL
+#define ALL              (M_PREPROC|M_RAW|M_INIT|M_SPOT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)  // without HIGHQUAL
+#define DARKFRAME        (M_PREPROC|M_RAW|M_INIT|M_SPOT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define FLATFIELD        (M_PREPROC|M_RAW|M_INIT|M_SPOT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define DEMOSAIC                   (M_RAW|M_INIT|M_SPOT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define ALLNORAW                         (M_INIT|M_SPOT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define CAPTURESHARPEN                   (M_INIT|M_SPOT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR|M_CSHARP)
+#define HDR                                     (M_SPOT|M_LINDENOISE|M_HDR|M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define SPOTADJUST                                                       (M_SPOT|M_HDR|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define TRANSFORM                                                         (M_TRANSFORM|M_BLURMAP|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define AUTOEXP                                                                    (M_SPOT|M_HDR|M_AUTOEXP|M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define RGBCURVE                                                                                          (M_RGBCURVE|M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define LUMINANCECURVE                                                                                               (M_LUMACURVE|M_LUMINANCE|M_COLOR)
+#define SHARPENING                                                                                                               (M_LUMINANCE|M_COLOR)
+#define IMPULSEDENOISE                                                                                                           (M_LUMINANCE|M_COLOR)
+#define DEFRINGE                                                                                                                 (M_LUMINANCE|M_COLOR)
+#define DIRPYRDENOISE                                                                                                            (M_LUMINANCE|M_COLOR)
+#define DIRPYREQUALIZER                                                                                                          (M_LUMINANCE|M_COLOR)
 #define GAMMA             M_VOID //M_MONITOR
 #define CROP              M_CROP
 #define RESIZE            M_VOID

@@ -81,6 +81,7 @@ class IImage8;
 class IImage16;
 class IImagefloat;
 class ImageSource;
+class TweakOperator;
 
 /**
   * This class provides functions to obtain exif and IPTC metadata information
@@ -553,9 +554,20 @@ public:
     /** Returns the initial image corresponding to the image processor.
       * @return the initial image corresponding to the image processor */
     virtual InitialImage* getInitialImage () = 0;
+    /** Set the TweakOperator
+      * @param tOperator is a pointer to the object that will alter the ProcParams for the rendering */
+    virtual void        setTweakOperator (TweakOperator *tOperator) = 0;
+    /** Unset the TweakOperator
+      * @param tOperator is a pointer to the object that were altering the ProcParams for the rendering
+      *        It will only unset the tweak operator if tOperator is the same than the currently set operator.
+      *        If it doesn't match, the currently set TweakOperator will remain set. */
+    virtual void        unsetTweakOperator (TweakOperator *tOperator) = 0;
     /** Returns the current processing parameters.
-      * @param dst is the location where the image processing parameters are copied (it is assumed that the memory is allocated by the caller) */
-    virtual void        getParams (procparams::ProcParams* dst) = 0;
+      * Since the ProcParams can be tweaked by a GUI to operate on the image at a specific stage or with disabled tool,
+      * you'll have to specify if you want the tweaked version for the current special mode, or the untweaked one.
+      * @param dst is the location where the image processing parameters are copied (it is assumed that the memory is allocated by the caller)
+      * @param tweaked is used to chose betwen the tweaked ProcParams (if there is one) or the untweaked one */
+    virtual void        getParams (procparams::ProcParams* dst, bool tweaked=false) = 0;
     /** An essential member function. Call this when a setting has been changed. This function returns a pointer to the
       * processing parameters, that you have to update to reflect the changed situation. When ready, call the paramsUpdateReady
       * function to start the image update.

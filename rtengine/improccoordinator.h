@@ -42,6 +42,7 @@ namespace rtengine
 using namespace procparams;
 
 class Crop;
+class TweakOperator;
 
 /** @brief Manages the image processing, espc. of the preview windows
   *
@@ -62,6 +63,7 @@ class ImProcCoordinator final : public StagedImageProcessor, public HistogramObs
 protected:
     Imagefloat *orig_prev;
     Imagefloat *oprevi;
+    Imagefloat *spotprev;
     LabImage *oprevl;
     LabImage *nprevl;
     Imagefloat *fattal_11_dcrop_cache; // global cache for ToneMapFattal02 used in 1:1 detail windows (except when denoise is active)
@@ -206,6 +208,9 @@ protected:
 
     MyMutex minit;  // to gain mutually exclusive access to ... to what exactly?
 
+    void backupParams();
+    void restoreParams();
+    void allocCache (Imagefloat* &imgfloat);
     void notifyHistogramChanged();
     void reallocAll();
     /// Updates L, R, G, and B histograms. Returns true unless not updated.
@@ -220,7 +225,9 @@ protected:
     void updatePreviewImage (int todo, bool panningRelatedChange);
 
     MyMutex mProcessing;
-    const std::unique_ptr<ProcParams> params;
+    const std::unique_ptr<ProcParams> params;  // used for the rendering, can be eventually tweaked
+    std::unique_ptr<ProcParams> paramsBackup;  // backup of the untweaked procparams
+    TweakOperator* tweakOperator;
 
     // for optimization purpose, the output profile, output rendering intent and
     // output BPC will trigger a regeneration of the profile on parameter change only
@@ -369,7 +376,7 @@ public:
     ~ImProcCoordinator () override;
     void assign     (ImageSource* imgsrc);
 
-    void        getParams (procparams::ProcParams* dst) override;
+    void        getParams (procparams::ProcParams* dst, bool tweaked=false) override;
 
     void        startProcessing (int changeCode) override;
     ProcParams* beginUpdateParams () override;
@@ -410,6 +417,8 @@ public:
 
     DetailedCrop* createCrop  (::EditDataProvider *editDataProvider, bool isDetailWindow) override;
 
+    void setTweakOperator (TweakOperator *tOperator) override;
+    void unsetTweakOperator (TweakOperator *tOperator) override;
     bool getAutoWB   (double& temp, double& green, double equal, double tempBias) override;
     void getCamWB    (double& temp, double& green) override;
     void getSpotWB   (int x, int y, int rectSize, double& temp, double& green) override;

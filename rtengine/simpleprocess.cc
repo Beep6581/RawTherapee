@@ -796,6 +796,11 @@ private:
             params.toneCurve.black = 0;
         }
 
+        // Spot Removal
+        if (params.spot.enabled && !params.spot.entries.empty ()) {
+            ipf.removeSpots (baseImg, imgsrc, params.spot.entries, pp, currWB, nullptr, tr);
+        }
+
         // at this stage, we can flush the raw data to free up quite an important amount of memory
         // commented out because it makes the application crash when batch processing...
         // TODO: find a better place to flush rawData and rawRGB

@@ -2197,7 +2197,7 @@ void ControlSpotPanel::updateCurveOpacity(const Gtk::TreeModel::Row& selectedRow
     }
 }
 
-CursorShape ControlSpotPanel::getCursor(int objectID) const
+CursorShape ControlSpotPanel::getCursor(int objectID, int xPos, int yPos) const
 {
     // printf("Object ID: %d\n", objectID);
 

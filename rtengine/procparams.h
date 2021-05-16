@@ -27,6 +27,7 @@
 #include <glibmm/ustring.h>
 #include <lcms2.h>
 
+#include "coord.h"
 #include "noncopyable.h"
 
 struct ParamsEdited;
@@ -1698,6 +1699,41 @@ struct ResizeParams {
 };
 
 /**
+  * Parameters entry
+  */
+struct SpotEntry {
+    Coord sourcePos;
+    Coord targetPos;
+    int radius;
+    float feather;
+    float opacity;
+
+    SpotEntry();
+    float getFeatherRadius() const;
+
+    bool operator ==(const SpotEntry& other) const;
+    bool operator !=(const SpotEntry& other) const;
+};
+
+/**
+  * Parameters of the dust removal tool
+  */
+struct SpotParams {
+    bool enabled;
+    std::vector<SpotEntry> entries;
+
+    // the following constant can be used for experimentation before the final merge
+    static const short minRadius;
+    static const short maxRadius;
+
+    SpotParams();
+
+    bool operator ==(const SpotParams& other) const;
+    bool operator !=(const SpotParams& other) const;
+};
+
+
+/**
   * Parameters of the color spaces used during the processing
   */
 struct ColorManagementParams {
@@ -2386,6 +2422,7 @@ public:
     ChannelMixerParams      chmixer;         ///< Channel mixer parameters
     BlackWhiteParams        blackwhite;      ///< Black&  White parameters
     ResizeParams            resize;          ///< Resize parameters
+    SpotParams              spot;            ///< Spot removal tool
     ColorManagementParams   icm;             ///< profiles/color spaces used during the image processing
     RAWParams               raw;             ///< RAW parameters before demosaicing
     WaveletParams           wavelet;         ///< Wavelet parameters

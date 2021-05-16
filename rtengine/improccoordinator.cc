@@ -36,6 +36,7 @@
 #include "labimage.h"
 #include "lcp.h"
 #include "procparams.h"
+#include "tweakoperator.h"
 #include "refreshmap.h"
 #include "utils.h"
 
@@ -58,6 +59,7 @@ namespace rtengine
 ImProcCoordinator::ImProcCoordinator() :
     orig_prev(nullptr),
     oprevi(nullptr),
+    spotprev(nullptr),
     oprevl(nullptr),
     nprevl(nullptr),
     fattal_11_dcrop_cache(nullptr),
@@ -167,6 +169,7 @@ ImProcCoordinator::ImProcCoordinator() :
     hListener(nullptr),
     resultValid(false),
     params(new procparams::ProcParams),
+    tweakOperator(nullptr),
     lastOutputProfile("BADFOOD"),
     lastOutputIntent(RI__COUNT),
     lastOutputBPC(false),
@@ -280,9 +283,32 @@ void ImProcCoordinator::assign(ImageSource* imgsrc)
     this->imgsrc = imgsrc;
 }
 
-void ImProcCoordinator::getParams(procparams::ProcParams* dst)
+void ImProcCoordinator::getParams(procparams::ProcParams* dst, bool tweaked)
 {
-    *dst = *params;
+    if (!tweaked && paramsBackup.operator bool()) {
+        *dst = *paramsBackup;
+    } else {
+        *dst = *params;
+    }
+}
+
+void ImProcCoordinator::backupParams()
+{
+    if (!params) {
+        return;
+    }
+    if (!paramsBackup) {
+        paramsBackup.reset(new ProcParams());
+    }
+    *paramsBackup = *params;
+}
+
+void ImProcCoordinator::restoreParams()
+{
+    if (!paramsBackup || !params) {
+        return;
+    }
+    *params = *paramsBackup;
 }
 
 DetailedCrop* ImProcCoordinator::createCrop(::EditDataProvider *editDataProvider, bool isDetailWindow)
@@ -322,6 +348,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         RAWParams rp = params->raw;
         ColorManagementParams cmp = params->icm;
         LCurveParams  lcur = params->labCurve;
+        bool spotsDone = false;
         
         if (!highDetailNeeded) {
             // if below 100% magnification, take a fast path
@@ -585,6 +612,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             ipf.setScale(scale);
 
             imgsrc->getImage(currWB, tr, orig_prev, pp, params->toneCurve, params->raw);
+
+            if ((todo & M_SPOT) && params->spot.enabled && !params->spot.entries.empty()) {
+                spotsDone = true;
+                PreviewProps pp(0, 0, fw, fh, scale);
+                ipf.removeSpots(orig_prev, imgsrc, params->spot.entries, pp, currWB, nullptr, tr);
+            }
+
             denoiseInfoStore.valid = false;
             //ColorTemp::CAT02 (orig_prev, &params) ;
             //   printf("orig_prevW=%d\n  scale=%d",orig_prev->width, scale);
@@ -654,6 +688,25 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             ipf.firstAnalysis(orig_prev, *params, vhist16);
         }
 
+        oprevi = orig_prev;
+
+        if ((todo & M_SPOT) && !spotsDone) {
+            if (params->spot.enabled && !params->spot.entries.empty()) {
+                allocCache(spotprev);
+                orig_prev->copyData(spotprev);
+                PreviewProps pp(0, 0, fw, fh, scale);
+                ipf.removeSpots(spotprev, imgsrc, params->spot.entries, pp, currWB, &params->icm, tr);
+            } else {
+                if (spotprev) {
+                    delete spotprev;
+                    spotprev = nullptr;
+                }
+            }
+        }
+        if (spotprev) {
+            spotprev->copyData(orig_prev);
+        }
+        
         if ((todo & M_HDR) && (params->fattal.enabled || params->dehaze.enabled)) {
             if (fattal_11_dcrop_cache) {
                 delete fattal_11_dcrop_cache;
@@ -668,12 +721,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
         }
 
-        oprevi = orig_prev;
-
         // Remove transformation if unneeded
         bool needstransform = ipf.needsTransform(fw, fh, imgsrc->getRotateDegree(), imgsrc->getMetaData());
 
         if ((needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && !params->colorappearance.enabled))) {
+            // Forking the image
             assert(oprevi);
             Imagefloat *op = oprevi;
             oprevi = new Imagefloat(pW, pH);
@@ -1885,15 +1937,31 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         delete oprevi;
         oprevi = nullptr;
     }
-
-
 }
 
+void ImProcCoordinator::setTweakOperator (TweakOperator *tOperator)
+{
+    if (tOperator) {
+        tweakOperator = tOperator;
+    }
+}
+
+void ImProcCoordinator::unsetTweakOperator (TweakOperator *tOperator)
+{
+    if (tOperator && tOperator == tweakOperator) {
+        tweakOperator = nullptr;
+    }
+}
 
 void ImProcCoordinator::freeAll()
 {
 
     if (allocated) {
+        if (spotprev && spotprev != oprevi) {
+            delete spotprev;
+        }
+        spotprev = nullptr;
+
         if (orig_prev != oprevi) {
             delete oprevi;
         }
@@ -1926,6 +1994,15 @@ void ImProcCoordinator::freeAll()
     allocated = false;
 }
 
+void ImProcCoordinator::allocCache (Imagefloat* &imgfloat)
+{
+    if (imgfloat == nullptr) {
+        imgfloat = new Imagefloat(pW, pH);
+    } else {
+        imgfloat->allocate(pW, pH);
+    }
+}
+
 /** @brief Handles image buffer (re)allocation and trigger sizeChanged of SizeListener[s]
  * If the scale change, this method will free all buffers and reallocate ones of the new size.
  * It will then tell to the SizeListener that size has changed (sizeChanged)
@@ -1944,9 +2021,9 @@ void ImProcCoordinator::setScale(int prevscale)
 
     do {
         prevscale--;
-        PreviewProps pp(0, 0, fw, fh, prevscale);
-        imgsrc->getSize(pp, nW, nH);
-    } while (nH < 400 && prevscale > 1 && (nW * nH < 1000000));  // sctually hardcoded values, perhaps a better choice is possible
+        PreviewProps pp (0, 0, fw, fh, prevscale);
+        imgsrc->getSize (pp, nW, nH);
+    } while (nH < 400 && prevscale > 1 && (nW * nH < 1000000));  // actually hardcoded values, perhaps a better choice is possible
 
     if (nW != pW || nH != pH) {
 
@@ -2387,35 +2464,37 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
     MyMutex::MyLock lock(mProcessing);
 
     int fW, fH;
+    std::unique_ptr<ProcParams> validParams(new ProcParams());
+    getParams(validParams.get());
 
-    int tr = getCoarseBitMask(params->coarse);
+    int tr = getCoarseBitMask(validParams->coarse);
 
     imgsrc->getFullSize(fW, fH, tr);
     PreviewProps pp(0, 0, fW, fH, 1);
-    ProcParams ppar = *params;
+    ProcParams ppar = *validParams;
     ppar.toneCurve.hrenabled = false;
     ppar.icm.inputProfile = "(none)";
     Imagefloat* im = new Imagefloat(fW, fH);
     imgsrc->preprocess(ppar.raw, ppar.lensProf, ppar.coarse);
     double dummy = 0.0;
     imgsrc->demosaic(ppar.raw, false, dummy);
-    ColorTemp currWB = ColorTemp(params->wb.temperature, params->wb.green, params->wb.equal, params->wb.method);
+    ColorTemp currWB = ColorTemp(validParams->wb.temperature, validParams->wb.green, validParams->wb.equal, validParams->wb.method);
 
-    if (params->wb.method == "Camera") {
+    if (validParams->wb.method == "Camera") {
         currWB = imgsrc->getWB();
-    } else if (params->wb.method == "autold") {
-        if (lastAwbEqual != params->wb.equal || lastAwbTempBias != params->wb.tempBias) {
+    } else if (validParams->wb.method == "autold") {
+        if (lastAwbEqual != validParams->wb.equal || lastAwbTempBias != validParams->wb.tempBias) {
             double rm, gm, bm;
             imgsrc->getAutoWBMultipliers(rm, gm, bm);
 
             if (rm != -1.) {
-                autoWB.update(rm, gm, bm, params->wb.equal, params->wb.tempBias);
-                lastAwbEqual = params->wb.equal;
-                lastAwbTempBias = params->wb.tempBias;
+                autoWB.update(rm, gm, bm, validParams->wb.equal, validParams->wb.tempBias);
+                lastAwbEqual = validParams->wb.equal;
+                lastAwbTempBias = validParams->wb.tempBias;
             } else {
                 lastAwbEqual = -1.;
                 lastAwbTempBias = 0.0;
-                autoWB.useDefaults(params->wb.equal);
+                autoWB.useDefaults(validParams->wb.equal);
             }
         }
 
@@ -2437,12 +2516,12 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
         im = trImg;
     }
 
-    if (params->crop.enabled) {
-        Imagefloat *tmpim = new Imagefloat(params->crop.w, params->crop.h);
-        int cx = params->crop.x;
-        int cy = params->crop.y;
-        int cw = params->crop.w;
-        int ch = params->crop.h;
+    if (validParams->crop.enabled) {
+        Imagefloat *tmpim = new Imagefloat(validParams->crop.w, validParams->crop.h);
+        int cx = validParams->crop.x;
+        int cy = validParams->crop.y;
+        int cw = validParams->crop.w;
+        int ch = validParams->crop.h;
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -2473,7 +2552,7 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
     }
 
     int imw, imh;
-    double tmpScale = ipf.resizeScale(params.get(), fW, fH, imw, imh);
+    double tmpScale = ipf.resizeScale(validParams.get(), fW, fH, imw, imh);
 
     if (tmpScale != 1.0) {
         Imagefloat* tempImage = new Imagefloat(imw, imh);
@@ -2582,12 +2661,22 @@ void ImProcCoordinator::process()
             || params->dehaze != nextParams->dehaze
             || params->pdsharpening != nextParams->pdsharpening
             || params->filmNegative != nextParams->filmNegative
+            || params->spot.enabled != nextParams->spot.enabled
             || sharpMaskChanged;
 
         sharpMaskChanged = false;
         *params = *nextParams;
         int change = changeSinceLast;
         changeSinceLast = 0;
+
+        if (tweakOperator) {
+            // TWEAKING THE PROCPARAMS FOR THE SPOT ADJUSTMENT MODE
+            backupParams();
+            tweakOperator->tweakParams(*params);
+        } else if (paramsBackup) {
+            paramsBackup.release();
+        }
+
         paramsUpdateMutex.unlock();
 
         // M_VOID means no update, and is a bit higher that the rest
