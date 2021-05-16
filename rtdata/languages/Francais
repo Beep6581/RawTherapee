@@ -2069,7 +2069,8 @@ TP_LOCALLAB_LOGLIGHTQ;Brillance (Q)
 TP_LOCALLAB_LOGLIGHTQ_TOOLTIP;Taux de perception de lumière émanant d'un stimulus.\nIndicateur qu'un stimulus apparaît être plus ou moins brillant, clair. 
 TP_LOCALLAB_LOGLIN;Logarithme mode
 TP_LOCALLAB_LOGPFRA;Niveaux d'Exposition relatif
-TP_LOCALLAB_LOGREPART;Force
+TP_LOCALLAB_LOGREPART;Force globale
+TP_LOCALLAB_LOGREPART_TOOLTIP;Vous permet d'ajuster le nivaeu de l'image 'codage log' par rapport à l'image originale.\nNe concerne pas la composante Ciecam.
 TP_LOCALLAB_LOGSATURL_TOOLTIP;Saturation (s) CIECAM16 correspond à la couleur d'un stimulus en relation avec sa propre brillance.\nAgit principalement sur les tons moyens et hauts.
 TP_LOCALLAB_LOGSCENE_TOOLTIP;Correspond aux conditions de prise de vue.
 TP_LOCALLAB_LOGSURSOUR_TOOLTIP;Change les tons et couleurs en prenant en compte les conditions de prise de vue.\n\n<b>Moyen</b>: Environnement lumineux moyen (standard). L'image ne change pas.\n\n<b>Tamisé</b>: Environnement tamisé. L'iamge va devenir un peu plus claire.
@@ -2244,6 +2245,12 @@ TP_LOCALLAB_RECURS_TOOLTIP;Recalcule les références pour  teinte, luma, chroma
 TP_LOCALLAB_REFLABEL;Ref. (0..1) Chroma=%1 Luma=%2 teinte=%3
 TP_LOCALLAB_REN_DIALOG_LAB;Entrer le nouveau nom de Spot
 TP_LOCALLAB_REN_DIALOG_NAME;Renomme le Controle Spot
+TP_LOCALLAB_REPARW_TOOLTIP;Vous permet d'ajuster le niveau de l'image modifiée par Contraste local et Ondelettes par rapport à l'image originale.
+TP_LOCALLAB_REPARCOL_TOOLTIP;Vous permet d'ajuster le niveau de l'image modifiée par Couleurs et lumiéres par rapport à l'image originale.
+TP_LOCALLAB_REPARDEN_TOOLTIP;Vous permet d'ajuster le niveau de l'image modifiée par De-bruite par rapport à l'image originale.
+TP_LOCALLAB_REPARSH_TOOLTIP;Vous permet d'ajuster le niveau de l'image modifiée Ombres et Lumières et Egaliseur par rapport à l'image originale..
+TP_LOCALLAB_REPAREXP_TOOLTIP;Vous permet d'ajuster le niveau de l'image modifiée par Compression dynammique et Exposition par rapport à l'image originale..
+TP_LOCALLAB_REPARTM_TOOLTIP;Vous permet d'ajuster le niveau de l'image modifiée par Compression tonale par rapport à l'image originale..
 TP_LOCALLAB_RESETSHOW;Annuler Montrer Toutes les Modifications
 TP_LOCALLAB_RESID;Image Résiduelle
 TP_LOCALLAB_RESIDBLUR;Flouter Image Résiduelle
