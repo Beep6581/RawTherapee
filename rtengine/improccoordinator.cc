@@ -346,6 +346,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         RAWParams rp = params->raw;
         ColorManagementParams cmp = params->icm;
         LCurveParams  lcur = params->labCurve;
+        bool spotsDone = false;
         
         if (!highDetailNeeded) {
             // if below 100% magnification, take a fast path
@@ -609,6 +610,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             ipf.setScale(scale);
 
             imgsrc->getImage(currWB, tr, orig_prev, pp, params->toneCurve, params->raw);
+
+            if ((todo & M_SPOT) && params->spot.enabled && !params->spot.entries.empty()) {
+                spotsDone = true;
+                PreviewProps pp(0, 0, fw, fh, scale);
+                ipf.removeSpots(orig_prev, imgsrc, params->spot.entries, pp, currWB, nullptr, tr);
+            }
+
             denoiseInfoStore.valid = false;
             //ColorTemp::CAT02 (orig_prev, &params) ;
             //   printf("orig_prevW=%d\n  scale=%d",orig_prev->width, scale);
@@ -680,7 +688,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         oprevi = orig_prev;
 
-        if (todo & M_SPOT) {
+        if ((todo & M_SPOT) && !spotsDone) {
             if (params->spot.enabled && !params->spot.entries.empty()) {
                 allocCache(spotprev);
                 orig_prev->copyData(spotprev);
@@ -694,10 +702,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             }
         }
         if (spotprev) {
-            if (oprevi == orig_prev) {
-                oprevi = new Imagefloat(pW, pH);
-            }
-            spotprev->copyData(oprevi);
+            spotprev->copyData(orig_prev);
         }
         
         if ((todo & M_HDR) && (params->fattal.enabled || params->dehaze.enabled)) {
