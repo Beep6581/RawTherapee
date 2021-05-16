@@ -2458,6 +2458,7 @@ void ImProcCoordinator::process()
             || params->dehaze != nextParams->dehaze
             || params->pdsharpening != nextParams->pdsharpening
             || params->filmNegative != nextParams->filmNegative
+            || params->spot.enabled != nextParams->spot.enabled
             || sharpMaskChanged;
 
         sharpMaskChanged = false;
