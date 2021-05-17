@@ -494,7 +494,7 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
     RTImage *resetImg = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
     setExpandAlignProperties (resetImg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     neutral->set_image (*resetImg);
-    neutral->set_tooltip_text (M ("TP_RETINEX_NEUTRAL_TIP"));
+    neutral->set_tooltip_text (M ("TP_ICM_NEUTRAL_TIP"));
     neutralconn = neutral->signal_pressed().connect ( sigc::mem_fun (*this, &Retinex::neutral_pressed) );
     neutral->show();
 

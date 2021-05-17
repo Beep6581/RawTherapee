@@ -266,6 +266,17 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     trcProfVBox->pack_start(*wprimBox, Gtk::PACK_EXPAND_WIDGET);
     trcProfVBox->pack_start(*fbw, Gtk::PACK_EXPAND_WIDGET);
 
+    neutral = Gtk::manage (new Gtk::Button (M ("TP_ICM_NEUTRAL")));
+    setExpandAlignProperties (neutral, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+    RTImage *resetImg = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
+    setExpandAlignProperties (resetImg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
+    neutral->set_image (*resetImg);
+    neutralconn = neutral->signal_pressed().connect ( sigc::mem_fun (*this, &ICMPanel::neutral_pressed) );
+    neutral->show();
+
+    trcProfVBox->pack_start (*neutral);
+
+
     wprim->append(M("TP_ICM_WORKING_PRIM_NONE"));
     wprim->append(M("TP_ICM_WORKING_PRIM_SRGB"));
     wprim->append(M("TP_ICM_WORKING_PRIM_ADOB"));
@@ -480,6 +491,36 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     saveRef->signal_pressed().connect(sigc::mem_fun(*this, &ICMPanel::saveReferencePressed));
 
     show_all();
+}
+
+void ICMPanel::neutral_pressed ()
+{   //find working profile and set the same destination proile
+    if (wProfNames->get_active_text() == "Rec2020") {
+        wprim->set_active(toUnderlying(ColorManagementParams::Primaries::REC2020));
+    } else if (wProfNames->get_active_text() == "sRGB") {
+        wprim->set_active(toUnderlying(ColorManagementParams::Primaries::SRGB));
+    } else if (wProfNames->get_active_text() == "Adobe RGB") {
+        wprim->set_active(toUnderlying(ColorManagementParams::Primaries::ADOBE_RGB));
+    } else if (wProfNames->get_active_text() == "ProPhoto") {
+        wprim->set_active(toUnderlying(ColorManagementParams::Primaries::PRO_PHOTO));
+    } else if (wProfNames->get_active_text() == "ACESp1") {
+        wprim->set_active(toUnderlying(ColorManagementParams::Primaries::ACES_P1));
+    } else if (wProfNames->get_active_text() == "WideGamut") {
+        wprim->set_active(toUnderlying(ColorManagementParams::Primaries::WIDE_GAMUT));
+    } else if (wProfNames->get_active_text() == "ACESp0") {
+        wprim->set_active(toUnderlying(ColorManagementParams::Primaries::ACES_P0));
+    } else if (wProfNames->get_active_text() == "BruceRGB") {
+        wprim->set_active(toUnderlying(ColorManagementParams::Primaries::BRUCE_RGB));
+    } else if (wProfNames->get_active_text() == "Beta RGB") {
+        wprim->set_active(toUnderlying(ColorManagementParams::Primaries::BETA_RGB));
+    } else if (wProfNames->get_active_text() == "BestRGB") {
+        wprim->set_active(toUnderlying(ColorManagementParams::Primaries::BEST_RGB));
+    }
+    const ColorManagementParams defPar;
+    wGamma->setValue(defPar.workingTRCGamma);//2.4
+    wSlope->setValue(defPar.workingTRCSlope);//12.92
+    preser->setValue(defPar.preser);
+    wTRC->set_active(toUnderlying(ColorManagementParams::WorkingTrc::NONE));//reset to none
 }
 
 void ICMPanel::updateRenderingIntent(const Glib::ustring &profile)
