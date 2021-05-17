@@ -2276,12 +2276,12 @@ ColorManagementParams::ColorManagementParams() :
     wprim(Primaries::DEFAULT),
     workingTRCGamma(2.4),//gamma sRGB
     workingTRCSlope(12.92),
-    redx(0.64),
-    redy(0.33),
-    grex(0.21),
-    grey(0.71),
-    blux(0.15),
-    bluy(0.06),
+    redx(0.7347),
+    redy(0.2653),
+    grex(0.1596),
+    grey(0.8404),
+    blux(0.0366),
+    bluy(0.0001),
     preser(0.),
     fbw(false),
     labgridcieALow(0.51763),//Prophoto red = (0.7347+0.1) * 1.81818 - 1
