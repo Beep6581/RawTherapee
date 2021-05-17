@@ -520,6 +520,7 @@ void ICMPanel::neutral_pressed ()
     wGamma->setValue(defPar.workingTRCGamma);//2.4
     wSlope->setValue(defPar.workingTRCSlope);//12.92
     preser->setValue(defPar.preser);
+    fbw->set_active(defPar.fbw);
     wTRC->set_active(toUnderlying(ColorManagementParams::WorkingTrc::NONE));//reset to none
 }
 
