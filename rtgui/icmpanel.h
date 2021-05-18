@@ -65,7 +65,9 @@ protected:
     Gtk::Label* blr;
     Gtk::Label* blg;
     Gtk::Label* blb;
+    Gtk::Button* neutral;
 
+    sigc::connection neutralconn;
     bool lastToneCurve;
     sigc::connection tcurveconn;
     bool lastApplyLookTable;
@@ -185,6 +187,7 @@ public:
     void adjusterChanged(Adjuster* a, double newval) override;
     void primChanged (float rx, float ry, float bx, float by, float gx, float gy) override;
     void iprimChanged (float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y) override;
+    void neutral_pressed();
 
     void wpChanged();
     void wtrcinChanged();
