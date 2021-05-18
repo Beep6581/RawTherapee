@@ -370,14 +370,13 @@ void Spot::updateGeometry()
                 p2.set (targetCircle.radius, p.angle + 180);
                 p3 = p2;
                 link.end = targetCircle.center + p3;
-                link.setActive (true);
+                link.setActive (draggedSide == DraggedSide::NONE);
             } else {
                 link.setActive (false);
             }
 
             sourceCircle.setVisible(draggedSide != DraggedSide::SOURCE);
             targetCircle.setVisible(draggedSide != DraggedSide::TARGET);
-            link.setVisible(draggedSide == DraggedSide::NONE);
         } else {
             targetCircle.setActive (false);
             targetMODisc.setActive (false);
