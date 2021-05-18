@@ -522,6 +522,7 @@ void ICMPanel::neutral_pressed ()
     preser->setValue(defPar.preser);
     fbw->set_active(defPar.fbw);
     wTRC->set_active(toUnderlying(ColorManagementParams::WorkingTrc::NONE));//reset to none
+    will->set_active(toUnderlying(ColorManagementParams::Illuminant::DEFAULT));//reset to default - after wprim
 }
 
 void ICMPanel::updateRenderingIntent(const Glib::ustring &profile)
