@@ -1354,6 +1354,8 @@ void ICMPanel::wtrcinChanged()
             wSlope->setValue(12.92);
             will->set_sensitive(false);
             willulab->set_sensitive(true);
+            wprim->set_sensitive(true);
+            fbw->set_sensitive(true);
             wGamma->set_sensitive(false);
             wSlope->set_sensitive(false);
             riaHBox->set_sensitive(true);
