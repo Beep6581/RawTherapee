@@ -705,15 +705,15 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
         state = SNormal;
         needRedraw = true;
     } else if (state == SEditDrag1 || state == SEditDrag2 || state == SEditDrag3) {
-        if        (state == SEditDrag1) {
-            needRedraw = editSubscriber->button1Released();
-        } else if (state == SEditDrag2) {
-            needRedraw = editSubscriber->button2Released();
-        } else if (state == SEditDrag3) {
-            needRedraw = editSubscriber->button3Released();
-        }
-
         if (editSubscriber) {
+            if (state == SEditDrag1) {
+                needRedraw = editSubscriber->button1Released();
+            } else if (state == SEditDrag2) {
+                needRedraw = editSubscriber->button2Released();
+            } else if (state == SEditDrag3) {
+                needRedraw = editSubscriber->button3Released();
+            }
+
             rtengine::Crop* crop = static_cast<rtengine::Crop*>(cropHandler.getCrop());
             Coord imgPos;
             action_x = x;
