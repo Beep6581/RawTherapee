@@ -1385,6 +1385,11 @@ Camera constants:
         "ranges": { "white": 4050 }
     },
 
+    { // Quality C
+        "make_model": "Fujifilm X-A20",
+        "ranges": { "white": 3838 }
+    },
+
     { // Quality B
         "make_model": [ "FUJIFILM X-T10", "FUJIFILM X-E2" ],
         "dcraw_matrix": [ 8458,-2451,-855,-4597,12447,2407,-1475,2482,6526 ], // DNG D65
