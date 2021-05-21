@@ -64,8 +64,8 @@ public:
 
 private:
     void fitBoxScale ();
-    int getComputedWidth ();
-    int getComputedHeight ();
+    int getComputedWidth (double height);
+    int getComputedHeight (double width);
     void notifyBBox ();
     void updateGUI ();
     void allowUpscalingChanged();

@@ -152,7 +152,7 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     h->set_range (32, MAX_SCALE * maxh);
     h->set_value (600);           // Doesn't seem to have any effect (overwritten in Resize::read)
 
-    se->set_digits (0);
+    le->set_digits (0);
     le->set_increments (1, 100);
     le->set_range (32, MAX_SCALE * maxw);
     le->set_value (900);
@@ -345,31 +345,31 @@ void Resize::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-int Resize::getComputedWidth()
+int Resize::getComputedWidth(double height)
 {
 
     if (cropw && appliesTo->get_active_row_number() == 0)
         // we use the crop dimensions
     {
-        return (int)((double)(cropw) * (h->get_value() / (double)(croph)) + 0.5);
+        return (int)((double)(cropw) * (height / (double)(croph)) + 0.5);
     } else
         // we use the image dimensions
     {
-        return (int)((double)(maxw) * (h->get_value() / (double)(maxh)) + 0.5);
+        return (int)((double)(maxw) * (height / (double)(maxh)) + 0.5);
     }
 }
 
-int Resize::getComputedHeight()
+int Resize::getComputedHeight(double width)
 {
 
     if (croph && appliesTo->get_active_row_number() == 0)
         // we use the crop dimensions
     {
-        return (int)((double)(croph) * (w->get_value() / (double)(cropw)) + 0.5);
+        return (int)((double)(croph) * (width / (double)(cropw)) + 0.5);
     } else
         // we use the image dimensions
     {
-        return (int)((double)(maxh) * (w->get_value() / (double)(maxw)) + 0.5);
+        return (int)((double)(maxh) * (width / (double)(maxw)) + 0.5);
     }
 }
 
@@ -496,16 +496,12 @@ void Resize::setDimensions ()
                 case 4: {
                     // Long edge mode
                     if (refw > refh) {
-// HA                        w->set_value (le->get_value ());
                         const double tmp_scale = le->get_value() / static_cast<double>(refw);
                         scale->setValue(tmp_scale);
-// HA                        h->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
                         se->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
                     } else {
-// HA                        h->set_value (le->get_value ());
                         const double tmp_scale = le->get_value() / static_cast<double>(refh);
                         scale->setValue(tmp_scale);
-// HA                        w->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * tmp_scale + 0.5)));
                         se->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * tmp_scale + 0.5)));
                     }
                     break;
@@ -514,16 +510,12 @@ void Resize::setDimensions ()
                 case 5: {
                     // Short edge mode
                     if (refw > refh) {
-// HA                        h->set_value (se->get_value ());
                         const double tmp_scale = se->get_value() / static_cast<double>(refh);
                         scale->setValue(tmp_scale);
-// HA                        w->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * tmp_scale + 0.5)));
                         le->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * tmp_scale + 0.5)));
                     } else {
-// HA                        w->set_value (se->get_value ());
                         const double tmp_scale = se->get_value() / static_cast<double>(refw);
                         scale->setValue(tmp_scale);
-// HA                        h->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
                         le->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
                     }
                     break;
@@ -589,7 +581,7 @@ void Resize::entryWChanged ()
             hconn.block (true);
             scale->block (true);
 
-            h->set_value ((double)(getComputedHeight()));
+            h->set_value ((double)(getComputedHeight(w->get_value())));
             scale->setValue (w->get_value () / (cropw && appliesTo->get_active_row_number() == 0 ? (double)cropw : (double)maxw));
 
             scale->block (false);
@@ -622,7 +614,7 @@ void Resize::entryHChanged ()
             wconn.block (true);
             scale->block (true);
 
-            w->set_value ((double)(getComputedWidth()));
+            w->set_value ((double)(getComputedWidth(h->get_value())));
             scale->setValue (h->get_value () / (croph && appliesTo->get_active_row_number() == 0 ? (double)croph : (double)maxh));
 
             scale->block (false);
@@ -643,16 +635,14 @@ void Resize::entryHChanged ()
 
 void Resize::entryLEChanged ()
 {
-
+    
     leDirty = true;
 
     // updating long edge
     if (!batchMode && listener) {
         int refw, refh;
         
-        leconn.block (true);
-        wconn.block (true);
-        hconn.block(true);
+        seconn.block (true);
         scale->block (true);
         
         if (cropw && appliesTo->get_active_row_number() == 0) {
@@ -666,25 +656,15 @@ void Resize::entryLEChanged ()
         } 
 
         if (refw > refh) {
-// HA            w->set_value (le->get_value ());
-// HA            h->set_value ((double)(getComputedHeight()));
-// HA            scale->setValue (w->get_value () / (cropw && appliesTo->get_active_row_number() == 0 ? (double)cropw : (double)maxw));
-            se->set_value ((double) (getComputedHeight()));
+            se->set_value ((double) (getComputedHeight(le->get_value())));
             scale->setValue (le->get_value () / (cropw && appliesTo->get_active_row_number() == 0 ? (double)cropw : (double)maxw));
         } else {
-// HA            h->set_value (le->get_value());
-// HA            w->set_value ((double)(getComputedWidth()));
-// HA            scale->setValue (h->get_value () / (croph && appliesTo->get_active_row_number() == 0 ? (double)croph : (double)maxh));
-            se->set_value ((double)(getComputedWidth()));
+            se->set_value ((double)(getComputedWidth(le->get_value())));
             scale->setValue (le->get_value () / (croph && appliesTo->get_active_row_number() == 0 ? (double)croph : (double)maxh));
-         }
+        }
          
-printf("entryLEChanged: scale: %2.5f\n", scale->getValue());
-
         scale->block (false);
-        leconn.block (false);
-        wconn.block (false);
-        hconn.block (false);
+        seconn.block (false);
     }
 
     if (listener) {
@@ -703,9 +683,7 @@ void Resize::entrySEChanged ()
     if (!batchMode && listener) {
         int refw, refh;
         
-        seconn.block (true);
-        wconn.block (true);
-        hconn.block(true);
+        leconn.block (true);
         scale->block (true);
         
         if (cropw && appliesTo->get_active_row_number() == 0) {
@@ -719,19 +697,15 @@ void Resize::entrySEChanged ()
         } 
 
         if (refw > refh) {
-            h->set_value (se->get_value ());
-            w->set_value ((double)(getComputedWidth()));
-            scale->setValue (h->get_value () / (croph && appliesTo->get_active_row_number() == 0 ? (double)croph : (double)maxh));
+            le->set_value ((double)(getComputedWidth(se->get_value())));
+            scale->setValue (se->get_value () / (croph && appliesTo->get_active_row_number() == 0 ? (double)croph : (double)maxh));
         } else {
-            w->set_value (se->get_value());
-            h->set_value ((double)(getComputedHeight()));
-            scale->setValue (w->get_value () / (cropw && appliesTo->get_active_row_number() == 0 ? (double)cropw : (double)maxw));
-         }
+            le->set_value ((double)(getComputedHeight(se->get_value())));
+            scale->setValue (se->get_value () / (cropw && appliesTo->get_active_row_number() == 0 ? (double)cropw : (double)maxw));
+        }
 
         scale->block (false);
-        seconn.block (false);
-        wconn.block (false);
-        hconn.block (false);
+        leconn.block (false);
     }
 
     if (listener) {
@@ -752,13 +726,13 @@ void Resize::specChanged ()
 
     case (1):
         // Width mode
-        w->set_value((double)(getComputedWidth()));
+        w->set_value((double)(getComputedWidth(h->get_value())));
         entryWChanged();
         break;
 
     case (2):
         // Height mode
-        h->set_value((double)(getComputedHeight()));
+        h->set_value((double)(getComputedHeight(w->get_value())));
         entryHChanged();
         break;
 
