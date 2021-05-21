@@ -2608,6 +2608,11 @@ Camera constants:
         }
     },
 
+    { // Quality C
+        "make_model": ["RICOH PENTAX K-3 MARK III", "PENTAX K-3 MARK III"],
+        "raw_crop": [ 24, 34, -28, -14 ]
+    },
+
     { // Quality B, intermediate ISOs info missing
         "make_model": [ "RICOH PENTAX 645Z", "PENTAX 645Z" ],
         "dcraw_matrix": [ 9519,-3591,-664,-4074,11725,2671,-624,1501,6653 ], // adobe dcp d65
