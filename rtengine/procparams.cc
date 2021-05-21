@@ -1727,17 +1727,7 @@ SpotParams::SpotParams() :
 
 bool SpotParams::operator ==(const SpotParams& other) const
 {
-    if (enabled != other.enabled || entries.size() != other.entries.size()) {
-        return false;
-    }
-
-    size_t i = 0;
-    for (auto entry : entries) {
-        if (entry != other.entries[i]) {
-            return false;
-        }
-    }
-    return true;
+    return enabled == other.enabled && entries == other.entries;
 }
 
 bool SpotParams::operator !=(const SpotParams& other) const
