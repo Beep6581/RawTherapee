@@ -98,7 +98,7 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     Gtk::Box* ebox = Gtk::manage (new Gtk::Box ());
     Gtk::Box* lebox = Gtk::manage (new Gtk::Box ());
     Gtk::Box* sebox = Gtk::manage (new Gtk::Box ());
-
+    
     w = Gtk::manage (new MySpinButton ());
     w->set_width_chars(5);
     setExpandAlignProperties(w, false, false, Gtk::ALIGN_END, Gtk::ALIGN_CENTER);
@@ -132,7 +132,7 @@ Resize::Resize () : FoldableToolPanel(this, "resize", M("TP_RESIZE_LABEL"), fals
     ebox->pack_start (*lebox);
     ebox->pack_start (*sebox);
     ebox->set_homogeneous();
-
+    
     sizeBox->pack_start (*sbox, Gtk::PACK_SHRINK, 0);
     sizeBox->pack_start (*ebox, Gtk::PACK_SHRINK, 0);
     sizeBox->show_all ();
@@ -496,15 +496,17 @@ void Resize::setDimensions ()
                 case 4: {
                     // Long edge mode
                     if (refw > refh) {
-                        w->set_value (le->get_value ());
+// HA                        w->set_value (le->get_value ());
                         const double tmp_scale = le->get_value() / static_cast<double>(refw);
                         scale->setValue(tmp_scale);
-                        h->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
+// HA                        h->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
+                        se->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
                     } else {
-                        h->set_value (le->get_value ());
+// HA                        h->set_value (le->get_value ());
                         const double tmp_scale = le->get_value() / static_cast<double>(refh);
                         scale->setValue(tmp_scale);
-                        w->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * tmp_scale + 0.5)));
+// HA                        w->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * tmp_scale + 0.5)));
+                        se->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * tmp_scale + 0.5)));
                     }
                     break;
                 }
@@ -512,15 +514,17 @@ void Resize::setDimensions ()
                 case 5: {
                     // Short edge mode
                     if (refw > refh) {
-                        h->set_value (se->get_value ());
+// HA                        h->set_value (se->get_value ());
                         const double tmp_scale = se->get_value() / static_cast<double>(refh);
                         scale->setValue(tmp_scale);
-                        w->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * tmp_scale + 0.5)));
+// HA                        w->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * tmp_scale + 0.5)));
+                        le->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refw) * tmp_scale + 0.5)));
                     } else {
-                        w->set_value (se->get_value ());
+// HA                        w->set_value (se->get_value ());
                         const double tmp_scale = se->get_value() / static_cast<double>(refw);
                         scale->setValue(tmp_scale);
-                        h->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
+// HA                        h->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
+                        le->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
                     }
                     break;
                 }
@@ -662,14 +666,20 @@ void Resize::entryLEChanged ()
         } 
 
         if (refw > refh) {
-            w->set_value (le->get_value ());
-            h->set_value ((double)(getComputedHeight()));
-            scale->setValue (w->get_value () / (cropw && appliesTo->get_active_row_number() == 0 ? (double)cropw : (double)maxw));
+// HA            w->set_value (le->get_value ());
+// HA            h->set_value ((double)(getComputedHeight()));
+// HA            scale->setValue (w->get_value () / (cropw && appliesTo->get_active_row_number() == 0 ? (double)cropw : (double)maxw));
+            se->set_value ((double) (getComputedHeight()));
+            scale->setValue (le->get_value () / (cropw && appliesTo->get_active_row_number() == 0 ? (double)cropw : (double)maxw));
         } else {
-            h->set_value (le->get_value());
-            w->set_value ((double)(getComputedWidth()));
-            scale->setValue (h->get_value () / (croph && appliesTo->get_active_row_number() == 0 ? (double)croph : (double)maxh));
+// HA            h->set_value (le->get_value());
+// HA            w->set_value ((double)(getComputedWidth()));
+// HA            scale->setValue (h->get_value () / (croph && appliesTo->get_active_row_number() == 0 ? (double)croph : (double)maxh));
+            se->set_value ((double)(getComputedWidth()));
+            scale->setValue (le->get_value () / (croph && appliesTo->get_active_row_number() == 0 ? (double)croph : (double)maxh));
          }
+         
+printf("entryLEChanged: scale: %2.5f\n", scale->getValue());
 
         scale->block (false);
         leconn.block (false);
@@ -793,8 +803,8 @@ void Resize::updateGUI ()
         reorder_child(*allowUpscaling, 4);
         w->set_sensitive (true);
         h->set_sensitive (false);
-        le->set_sensitive (false);
-        se->set_sensitive (false);
+        w->get_parent()->get_parent()->show();
+        le->get_parent()->get_parent()->hide();
         break;
 
     case (2):
@@ -803,8 +813,8 @@ void Resize::updateGUI ()
         reorder_child(*allowUpscaling, 4);
         w->set_sensitive (false);
         h->set_sensitive (true);
-        le->set_sensitive (false);
-        se->set_sensitive (false);
+        w->get_parent()->get_parent()->show();
+        le->get_parent()->get_parent()->hide();
         break;
 
     case (3):
@@ -813,28 +823,28 @@ void Resize::updateGUI ()
         reorder_child(*allowUpscaling, 4);
         w->set_sensitive (true);
         h->set_sensitive (true);
-        le->set_sensitive (false);
-        se->set_sensitive (false);
+        w->get_parent()->get_parent()->show();
+        le->get_parent()->get_parent()->hide();
         break;
 
     case (4):
         // Long edge mode
         pack_start (*sizeBox, Gtk::PACK_SHRINK, 4);
         reorder_child(*allowUpscaling, 4);
-        w->set_sensitive (false);
-        h->set_sensitive (false);
         le->set_sensitive (true);
         se->set_sensitive (false);
+        w->get_parent()->get_parent()->hide();
+        le->get_parent()->get_parent()->show();
         break;
 
     case (5):
         // Short edge mode
         pack_start (*sizeBox, Gtk::PACK_SHRINK, 4);
         reorder_child(*allowUpscaling, 4);
-        w->set_sensitive (false);
-        h->set_sensitive (false);
         le->set_sensitive (false);
         se->set_sensitive (true);
+        w->get_parent()->get_parent()->hide();
+        le->get_parent()->get_parent()->show();
         break;
 
     default:
