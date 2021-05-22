@@ -1295,6 +1295,8 @@ HISTORY_MSG_1047;Local - SH and Tone Equalizer strength
 HISTORY_MSG_1048;Local - DR and Exposure strength
 HISTORY_MSG_1049;Local - TM strength
 HISTORY_MSG_1050;Local - Log encoding chroma
+HISTORY_MSG_1051;Local - Residual wavelet gamma
+HISTORY_MSG_1052;Local - Residual wavelet slope
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -3168,7 +3170,7 @@ TP_LOCALLAB_SHOWSTRUC;Show spot structure(Advanced)
 TP_LOCALLAB_SHOWSTRUCEX;Show spot structure(Advanced)
 TP_LOCALLAB_SHOWT;Mask and modifications
 TP_LOCALLAB_SHOWVI;Mask and modifications
-TP_LOCALLAB_SHRESFRA;Shadows/Highlights
+TP_LOCALLAB_SHRESFRA;Shadows/Highlights & TRC
 TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones.\nIt is recommended that the TRC of both devices (monitor and output profile) be sRGB (default).
 TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer
 TP_LOCALLAB_SIGMAWAV;Attenuation response

@@ -804,6 +804,8 @@ public:
         bool residshathr;
         bool residhi;
         bool residhithr;
+        bool residgam;
+        bool residslop;
         bool residblur;
         bool levelblur;
         bool sigmabl;

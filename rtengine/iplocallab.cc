@@ -392,6 +392,7 @@ void SobelCannyLuma(float **sobelL, float **luma, int bfw, int bfh, float radius
     }
 }
 
+
 float igammalog(float x, float p, float s, float g2, float g4)
 {
     return x <= g2 ? x / s : pow_F((x + g4) / (1.f + g4), p);//continuous
@@ -412,7 +413,8 @@ float gammalog(float x, float p, float s, float g3, float g4)
 #ifdef __SSE2__
 vfloat gammalog(vfloat x, vfloat p, vfloat s, vfloat g3, vfloat g4)
 {
-    return x <= g3 ? x * s : (1.f + g4) * xexpf(xlogf(x) / p) - g4;//continuous
+  //  return x <= g3 ? x * s : (1.f + g4) * xexpf(xlogf(x) / p) - g4;//continuous
+    return vself(vmaskf_le(x, g3), x * s, (F2V(1.f) + g4) * xexpf(xlogf(x) / p) - g4);//continuous
 }
 #endif
 }
@@ -758,6 +760,8 @@ struct local_params {
     float residshathr;
     float residhi;
     float residhithr;
+    float residgam;
+    float residslop;
     bool blwh;
     bool fftma;
     float blurma;
@@ -1674,6 +1678,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.residshathr = locallab.spots.at(sp).residshathr;
     lp.residhi = locallab.spots.at(sp).residhi;
     lp.residhithr = locallab.spots.at(sp).residhithr;
+    lp.residgam = locallab.spots.at(sp).residgam;
+    lp.residslop = locallab.spots.at(sp).residslop;
     lp.blwh = locallab.spots.at(sp).blwh;
     lp.senscolor = (int) locallab.spots.at(sp).colorscope;
     //replace scope color vibrance shadows
@@ -8758,6 +8764,74 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
     }
     if (reconstruct) {
         wdspot->reconstruct(tmpb[0], 1.f);
+    }
+    
+    
+    //gamma and slope residual image - be carefull memory
+    bool tonecur = false;
+    const Glib::ustring profile = params->icm.workingProfile;
+    bool isworking = (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1");
+
+    if (isworking && (lp.residgam != 2.4f || lp.residslop != 12.92f)) {
+        tonecur = true;
+    }
+    
+    if(tonecur) {
+        std::unique_ptr<wavelet_decomposition> wdspotL(new wavelet_decomposition(tmp[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));
+        if (wdspotL->memory_allocation_failed()) {
+            return;
+        }
+        std::unique_ptr<wavelet_decomposition> wdspota(new wavelet_decomposition(tmpa[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));
+        if (wdspota->memory_allocation_failed()) {
+            return;
+        }
+        std::unique_ptr<wavelet_decomposition> wdspotb(new wavelet_decomposition(tmpb[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));
+        if (wdspotb->memory_allocation_failed()) {
+            return;
+        }
+        int W_Level = wdspotL->level_W(0);
+        int H_Level = wdspotL->level_H(0);
+        float *wav_L0 = wdspotL->get_coeff0();
+        float *wav_a0 = wdspota->get_coeff0();
+        float *wav_b0 = wdspotb->get_coeff0();
+
+        const std::unique_ptr<LabImage> labresid(new LabImage(W_Level, H_Level));
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+        for (int y = 0; y < H_Level; y++) {
+            for (int x = 0; x < W_Level; x++) {
+                labresid->L[y][x] = wav_L0[y * W_Level + x];
+                labresid->a[y][x] = wav_a0[y * W_Level + x];
+                labresid->b[y][x] = wav_b0[y * W_Level + x];
+            }
+        }
+
+        Imagefloat *tmpImage = nullptr;
+        tmpImage = new Imagefloat(W_Level, H_Level);
+        lab2rgb(*labresid, *tmpImage, params->icm.workingProfile);
+        Glib::ustring prof = params->icm.workingProfile;
+        cmsHTRANSFORM dummy = nullptr;
+        int ill =0;
+        workingtrc(tmpImage, tmpImage, W_Level, H_Level, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
+        workingtrc(tmpImage, tmpImage, W_Level, H_Level, 1, prof, lp.residgam, lp.residslop, ill, 0, dummy, false, true, true);//be carefull no gamut control
+        rgb2lab(*tmpImage, *labresid, params->icm.workingProfile);
+        delete tmpImage;
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+        for (int y = 0; y < H_Level; y++) {
+            for (int x = 0; x < W_Level; x++) {
+                wav_L0[y * W_Level + x] = labresid->L[y][x];
+                wav_a0[y * W_Level + x] = labresid->a[y][x];
+                wav_b0[y * W_Level + x] = labresid->b[y][x];
+            }
+        }
+
+        wdspotL->reconstruct(tmp[0], 1.f);
+        wdspota->reconstruct(tmpa[0], 1.f);
+        wdspotb->reconstruct(tmpb[0], 1.f);
     }
 }
 

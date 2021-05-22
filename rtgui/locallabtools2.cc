@@ -2346,6 +2346,8 @@ LocallabContrast::LocallabContrast():
     residshathr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDSHATHR"), 0., 100., 1., 30.))),
     residhi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDHI"), -100., 100., 1., 0.))),
     residhithr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDHITHR"), 0., 100., 1., 70.))),
+    residgam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMSH"), 0.25, 15.0, 0.01, 2.4))),
+    residslop(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOSH"), 0.0, 500.0, 0.01, 12.92))),
     sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     reparw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     clariFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
@@ -2477,6 +2479,11 @@ LocallabContrast::LocallabContrast():
     residhi->setAdjusterListener(this);
 
     residhithr->setAdjusterListener(this);
+
+    residgam->setAdjusterListener(this);
+
+    residslop->setAdjusterListener(this);
+    residslop->setLogScale(16, 0);
 
     sensilc->setAdjusterListener(this);
 
@@ -2726,10 +2733,14 @@ LocallabContrast::LocallabContrast():
     Gtk::Frame* const shresFrame = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SHRESFRA")));
     shresFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const shresBox = Gtk::manage(new ToolParamBlock());
+    Gtk::Separator* const separatorsh = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     shresBox->pack_start(*residsha);
     shresBox->pack_start(*residshathr);
     shresBox->pack_start(*residhi);
     shresBox->pack_start(*residhithr);
+    shresBox->pack_start(*separatorsh);
+    shresBox->pack_start(*residgam);
+    shresBox->pack_start(*residslop);
     shresFrame->add(*shresBox);
     resiBox->pack_start(*shresFrame);
     expresidpyr->add(*resiBox, false);
@@ -3132,6 +3143,8 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         residshathr->setValue(spot.residshathr);
         residhi->setValue(spot.residhi);
         residhithr->setValue(spot.residhithr);
+        residgam->setValue(spot.residgam);
+        residslop->setValue(spot.residslop);
         sensilc->setValue((double)spot.sensilc);
         reparw->setValue(spot.reparw);
         clarilres->setValue(spot.clarilres);
@@ -3254,6 +3267,8 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.residshathr = residshathr->getValue();
         spot.residhi = residhi->getValue();
         spot.residhithr = residhithr->getValue();
+        spot.residgam = residgam->getValue();
+        spot.residslop = residslop->getValue();
         spot.sensilc = sensilc->getIntValue();
         spot.reparw = reparw->getValue();
         spot.clarilres = clarilres->getValue();
@@ -3355,6 +3370,8 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         residshathr->setDefault(defSpot.residshathr);
         residhi->setDefault(defSpot.residhi);
         residhithr->setDefault(defSpot.residhithr);
+        residgam->setDefault(defSpot.residgam);
+        residslop->setDefault(defSpot.residslop);
         sensilc->setDefault((double)defSpot.sensilc);
         reparw->setDefault(defSpot.reparw);
         clarilres->setDefault(defSpot.clarilres);
@@ -3481,6 +3498,20 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabresidhithr,
                                        residhithr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == residgam) {
+            if (listener) {
+                listener->panelChanged(Evlocallabresidgam,
+                                       residgam->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == residslop) {
+            if (listener) {
+                listener->panelChanged(Evlocallabresidslop,
+                                       residslop->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

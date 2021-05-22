@@ -1397,6 +1397,8 @@ struct LocallabParams {
         double residshathr;
         double residhi;
         double residhithr;
+        double residgam;
+        double residslop;
         double residblur;
         double levelblur;
         double sigmabl;

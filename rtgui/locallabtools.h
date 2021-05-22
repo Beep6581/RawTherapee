@@ -1087,6 +1087,8 @@ private:
     Adjuster* const residshathr;
     Adjuster* const residhi;
     Adjuster* const residhithr;
+    Adjuster* const residgam;
+    Adjuster* const residslop;
     Adjuster* const sensilc;
     Adjuster* const reparw;
     Gtk::Frame* const clariFrame;
