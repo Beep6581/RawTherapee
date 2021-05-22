@@ -1768,7 +1768,7 @@ inline void DCPProfile::hsdApply(const HsdTableInfo& table_info, const std::vect
     }
 }
 
-bool DCPProfile::isValid()
+bool DCPProfile::isValid() const
 {
     return valid;
 }
@@ -1850,7 +1850,7 @@ void DCPStore::init(const Glib::ustring& rt_profile_dir, bool loadAll)
     }
 }
 
-bool DCPStore::isValidDCPFileName(const Glib::ustring& filename) const
+bool DCPStore::isValidDCPFileName(const Glib::ustring& filename)
 {
     if (!Glib::file_test(filename, Glib::FILE_TEST_EXISTS) || Glib::file_test(filename, Glib::FILE_TEST_IS_DIR)) {
         return false;
