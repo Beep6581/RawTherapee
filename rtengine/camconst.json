@@ -1399,6 +1399,11 @@ Camera constants:
         "ranges": { "white": 4050 }
     },
 
+    { // Quality C
+        "make_model": "Fujifilm X-A20",
+        "ranges": { "white": 3838 }
+    },
+
     { // Quality B
         "make_model": [ "FUJIFILM X-T10", "FUJIFILM X-E2" ],
         "dcraw_matrix": [ 8458,-2451,-855,-4597,12447,2407,-1475,2482,6526 ], // DNG D65
@@ -2606,6 +2611,11 @@ Camera constants:
                 { "iso": [ 1600, 3200, 6400, 12800, 25600, 51200 ], "levels": 16300 } // 16383 - pentax dng tag is 15868-15350
             ]
         }
+    },
+
+    { // Quality C
+        "make_model": ["RICOH PENTAX K-3 MARK III", "PENTAX K-3 MARK III"],
+        "raw_crop": [ 24, 34, -28, -14 ]
     },
 
     { // Quality B, intermediate ISOs info missing
