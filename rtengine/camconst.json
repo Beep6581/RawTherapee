@@ -2647,6 +2647,7 @@ Camera constants:
 
     { // Quality C
         "make_model": ["RICOH PENTAX K-3 MARK III", "PENTAX K-3 MARK III"],
+        "dcraw_matrix" : [7003, -1618, -887, -4614,  12728,  2065, -645,  1441,  5734],
         "raw_crop": [ 24, 34, -28, -14 ]
     },
 
