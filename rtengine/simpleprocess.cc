@@ -16,27 +16,31 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#include <glibmm/thread.h>
+#include <glibmm/ustring.h>
+
 #include "cieimage.h"
-#include "dcp.h"
-#include "imagefloat.h"
-#include "labimage.h"
-#include "rtengine.h"
+#include "clutstore.h"
+#include "color.h"
 #include "colortemp.h"
+#include "curves.h"
+#include "dcp.h"
+#include "guidedfilter.h"
+#include "iccstore.h"
+#include "imagefloat.h"
 #include "imagesource.h"
 #include "improcfun.h"
-#include "curves.h"
-#include "iccstore.h"
-#include "clutstore.h"
+#include "labimage.h"
+#include "mytime.h"
 #include "processingjob.h"
 #include "procparams.h"
-#include <glibmm/ustring.h>
-#include <glibmm/thread.h>
-#include "../rtgui/options.h"
 #include "rawimagesource.h"
+#include "rtengine.h"
+#include "utils.h"
+
 #include "../rtgui/multilangmgr.h"
-#include "mytime.h"
-#include "guidedfilter.h"
-#include "color.h"
+#include "../rtgui/options.h"
 
 #undef THREAD_PRIORITY_NORMAL
 
@@ -792,6 +796,11 @@ private:
             params.toneCurve.black = 0;
         }
 
+        // Spot Removal
+        if (params.spot.enabled && !params.spot.entries.empty ()) {
+            ipf.removeSpots (baseImg, imgsrc, params.spot.entries, pp, currWB, nullptr, tr);
+        }
+
         // at this stage, we can flush the raw data to free up quite an important amount of memory
         // commented out because it makes the application crash when batch processing...
         // TODO: find a better place to flush rawData and rawRGB
@@ -924,21 +933,6 @@ private:
             ipf.lab2rgb(labcbdl, *baseImg, params.icm.workingProfile);
         }
 
-/*        //gamma TRC working
-        if (params.icm.workingTRC == "Custom") { //exec TRC IN free
-            const Glib::ustring profile = params.icm.workingProfile;
-
-            if (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1") {
-                const int cw = baseImg->getWidth();
-                const int ch = baseImg->getHeight();
-                cmsHTRANSFORM dummyTransForm = nullptr;
-                // put gamma TRC to 1
-                ipf.workingtrc(baseImg, baseImg, cw, ch, -5, params.icm.workingProfile, 2.4, 12.92310, dummyTransForm, true, false, false);
-                //adjust TRC
-                ipf.workingtrc(baseImg, baseImg, cw, ch, 5, params.icm.workingProfile, params.icm.workingTRCGamma, params.icm.workingTRCSlope, dummyTransForm, false, true, false);
-            }
-        }
-*/
         // RGB processing
 
         labView = new LabImage(fw, fh);
@@ -1371,6 +1365,7 @@ private:
 
         ipf.chromiLuminanceCurve(nullptr, 1, labView, labView, curve1, curve2, satcurve, lhskcurve, clcurve, lumacurve, utili, autili, butili, ccutili, cclutili, clcutili, dummy, dummy);
 
+
         if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || (!params.colorappearance.enabled)) {
             ipf.EPDToneMap (labView, 0, 1);
         }
@@ -1569,6 +1564,52 @@ private:
         }
 
         ipf.softLight(labView, params.softlight);
+
+
+        if (params.icm.workingTRC != ColorManagementParams::WorkingTrc::NONE) {
+            const int GW = labView->W;
+            const int GH = labView->H;
+            std::unique_ptr<LabImage> provis;
+            const float pres = 0.01f * params.icm.preser;
+            if (pres > 0.f && params.icm.wprim != ColorManagementParams::Primaries::DEFAULT) {
+                provis.reset(new LabImage(GW, GH));
+                provis->CopyFrom(labView);
+            }
+
+            const std::unique_ptr<Imagefloat> tmpImage1(new Imagefloat(GW, GH));
+
+            ipf.lab2rgb(*labView, *tmpImage1, params.icm.workingProfile);
+
+            const float gamtone = params.icm.workingTRCGamma;
+            const float slotone = params.icm.workingTRCSlope;
+
+            int illum = toUnderlying(params.icm.will);
+            const int prim = toUnderlying(params.icm.wprim);
+
+            Glib::ustring prof = params.icm.workingProfile;
+
+            cmsHTRANSFORM dummy = nullptr;
+            int ill = 0;
+            ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
+            ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
+
+            ipf.rgb2lab(*tmpImage1, *labView, params.icm.workingProfile);
+            // labView and provis
+            if(provis) {
+                ipf.preserv(labView, provis.get(), GW, GH);
+            }
+            if(params.icm.fbw) {
+#ifdef _OPENMP
+            #pragma omp parallel for
+#endif
+            for (int x = 0; x < GH; x++)
+                for (int y = 0; y < GW; y++) {
+                    labView->a[x][y] = 0.f;
+                    labView->b[x][y] = 0.f;
+                }
+            }
+           
+        }
 
         //Colorappearance and tone-mapping associated
 

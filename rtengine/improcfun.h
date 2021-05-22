@@ -23,6 +23,7 @@
 
 #include "coord2d.h"
 #include "gamutwarning.h"
+#include "imagedimensions.h"
 #include "jaggedarray.h"
 #include "pipettebuffer.h"
 #include "array2D.h"
@@ -78,12 +79,15 @@ class Image8;
 class Imagefloat;
 class LabImage;
 class wavelet_decomposition;
+class ImageSource;
+class ColorTemp;
 
 namespace procparams
 {
 
 class ProcParams;
 
+struct SpotEntry;
 struct DehazeParams;
 struct FattalToneMappingParams;
 struct ColorManagementParams;
@@ -448,6 +452,9 @@ enum class BlurType {
     float Mad(const float * DataList, int datalen);
     float MadRgb(const float * DataList, int datalen);
 
+    // spot removal tool
+    void removeSpots (rtengine::Imagefloat* img, rtengine::ImageSource* imgsrc, const std::vector<procparams::SpotEntry> &entries, const PreviewProps &pp, const rtengine::ColorTemp &currWB, const procparams::ColorManagementParams *cmp, int tr);
+
     // pyramid wavelet
     void cbdl_local_temp(float ** src, float ** loctemp, int srcwidth, int srcheight, const float * mult, float kchro, const double dirpyrThreshold, const float mergeL, const float contres, const double skinprot, const bool gamutlab, float b_l, float t_l, float t_r, float b_r,  int choice, int scale, bool multiThread);
     void dirpyr_equalizer(const float * const * src, float ** dst, int srcwidth, int srcheight, const float * const * l_a, const float * const * l_b, const double * mult, double dirpyrThreshold, double skinprot, float b_l, float t_l, float t_r, int scale);    //Emil's directional pyramid wavelet
@@ -477,7 +484,8 @@ enum class BlurType {
     void rgb2lab(const Image8 &src, int x, int y, int w, int h, float L[], float a[], float b[], const procparams::ColorManagementParams &icm, bool consider_histogram_settings = true) const;
     Imagefloat*    lab2rgbOut(LabImage* lab, int cx, int cy, int cw, int ch, const procparams::ColorManagementParams &icm);
     // CieImage *ciec;
-    void workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, const Glib::ustring &profile, double gampos, double slpos, cmsHTRANSFORM &transform, bool normalizeIn = true, bool normalizeOut = true, bool keepTransForm = false) const;
+    void workingtrc(const Imagefloat* src, Imagefloat* dst, int cw, int ch, int mul, Glib::ustring &profile, double gampos, double slpos, int &illum, int prim, cmsHTRANSFORM &transform, bool normalizeIn = true, bool normalizeOut = true, bool keepTransForm = false) const;
+    void preserv(LabImage *nprevl, LabImage *provis, int cw, int ch);
 
     bool transCoord(int W, int H, int x, int y, int w, int h, int& xv, int& yv, int& wv, int& hv, double ascaleDef = -1, const LensCorrection *pLCPMap = nullptr) const;
     bool transCoord(int W, int H, const std::vector<Coord2D> &src, std::vector<Coord2D> &red,  std::vector<Coord2D> &green, std::vector<Coord2D> &blue, double ascaleDef = -1, const LensCorrection *pLCPMap = nullptr) const;

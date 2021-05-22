@@ -200,7 +200,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // EvLLCCurve
     LUMINANCECURVE,   // EvLLCredsk
     ALLNORAW,         // EvDPDNLdetail
-    ALLNORAW,         // EvCATEnabled
+    //ALLNORAW,         // EvCATEnabled
+    LUMINANCECURVE,         // EvCATEnabled
     LUMINANCECURVE,   // EvCATDegree
     LUMINANCECURVE,   // EvCATMethodsur
     LUMINANCECURVE,   // EvCATAdapscen
@@ -1069,7 +1070,14 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,   // EvLocallabSpotavoidrad
     AUTOEXP,   // EvLocallabSpotavoidmun
     AUTOEXP,   // Evlocallabcontthres
-    AUTOEXP   // Evlocallabnorm
+    AUTOEXP,   // Evlocallabnorm
+    AUTOEXP,   // Evlocallabreparw
+    AUTOEXP,   // Evlocallabreparcol
+    AUTOEXP,   // Evlocallabreparden
+    AUTOEXP,   // Evlocallabreparsh
+    AUTOEXP,   // Evlocallabreparexp
+    AUTOEXP,   // Evlocallabrepartm
+    AUTOEXP   // Evlocallabchroml
 
 
 };

@@ -38,6 +38,7 @@ class Crop final : public DetailedCrop, public PipetteBuffer
 protected:
     // --- permanently allocated in RAM and only renewed on size changes
     Imagefloat*  origCrop;   // "one chunk" allocation
+    Imagefloat*  spotCrop;   // "one chunk" allocation
     LabImage*    laboCrop;   // "one chunk" allocation
     LabImage*    labnCrop;   // "one chunk" allocation
     Image8*      cropImg;    // "one chunk" allocation ; displayed image in monitor color space, showing the output profile as well (soft-proofing enabled, which then correspond to workimg) or not

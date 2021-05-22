@@ -439,6 +439,8 @@ struct local_params {
     float thr;
     float stru;
     int chro, cont, sens, sensh, senscb, sensbn, senstm, sensex, sensexclu, sensden, senslc, senssf, senshs, senscolor;
+    float reparden;
+    float repartm;
     float clarityml;
     float contresid;
     bool deltaem;
@@ -785,9 +787,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float laplac = ((float)locallab.spots.at(sp).laplace);
     float thre = locallab.spots.at(sp).thresh;
 
-    if (thre > 8.f || thre < 0.f) {//to avoid artifacts if user does not clear cache with new settings. Can be suppressed after
-        thre = 2.f;
-    }
+//    if (thre > 8.f || thre < 0.f) {//to avoid artifacts if user does not clear cache with new settings. Can be suppressed after
+//        thre = 2.f;
+//    }
+    thre = LIM(thre, 0.f, 10.0f);
 
     double local_x = locallab.spots.at(sp).loc.at(0) / 2000.0;
     double local_y = locallab.spots.at(sp).loc.at(2) / 2000.0;
@@ -800,9 +803,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float balanch = (float) locallab.spots.at(sp).balanh;
     int colorde = (int) locallab.spots.at(sp).colorde;
 
-    if (iterati > 4.f || iterati < 0.2f) {//to avoid artifacts if user does not clear cache with new settings Can be suppressed after
-        iterati = 2.f;
-    }
+//    if (iterati > 4.f || iterati < 0.2f) {//to avoid artifacts if user does not clear cache with new settings Can be suppressed after
+//       iterati = 2.f;
+//    }
+    iterati = LIM(iterati, 0.2f, 10.0f);
 
     float neigh = float (locallab.spots.at(sp).neigh);
     float chromaPastel = float (locallab.spots.at(sp).pastels)   / 100.0f;
@@ -1122,6 +1126,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     int local_noiselequal = locallab.spots.at(sp).noiselequal;
     float local_noisechrodetail = (float)locallab.spots.at(sp).noisechrodetail;
     int local_sensiden = locallab.spots.at(sp).sensiden;
+    float local_reparden = locallab.spots.at(sp).reparden;
+    float local_repartm = locallab.spots.at(sp).repartm;
     float local_detailthr = (float)locallab.spots.at(sp).detailthr;
     float local_recothr = (float)locallab.spots.at(sp).recothres;
     float local_lowthr = (float)locallab.spots.at(sp).lowthres;
@@ -1580,6 +1586,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.noisecf = local_noisecf;
     lp.noisecc = local_noisecc;
     lp.sensden = local_sensiden;
+    lp.reparden = local_reparden;
+    lp.repartm = local_repartm;
     lp.bilat = locallab.spots.at(sp).bilateral;
     lp.nldet = locallab.spots.at(sp).nldet;
     lp.nlstr = locallab.spots.at(sp).nlstr;
@@ -2557,6 +2565,10 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
             f  = 0.9f;
             c  = 0.59f;
             nc = 0.9f;
+        } else if (params->locallab.spots.at(sp).sursour == "Dark") {
+            f  = 0.8f;
+            c  = 0.525f;
+            nc = 0.8f;
         }
 
         //viewing condition for surround
@@ -2609,8 +2621,15 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     
     float schr = 0.f;
     float mchr = 0.f;
+    float cchr = 0.f;
 
     if (ciec) {
+        
+        cchr = params->locallab.spots.at(sp).chroml;
+        if (cchr == -100.0f) {
+                cchr = -99.8f;
+        }
+
         schr = params->locallab.spots.at(sp).saturl;
 
         if (schr > 0.f) {
@@ -2765,7 +2784,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                 if(ciec) {
                     Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
                     float rstprotection = 50.f;//default value to avoid 1 slider
-                    float chr = 0.f;//no use of chroma 
+                   // float chr = 0.f;//no use of chroma 
                     float Mp, sres;
                     Mp = Mpro / 100.0f;
                     Ciecam02::curvecolorfloat(mchr, Mp, sres, 2.5f);
@@ -2793,7 +2812,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                     Qpro = QproFactor * sqrtf(Jpro);
                     float Cp = (spro * spro * Qpro) / (1000000.f);
                     Cpro = Cp * 100.f;
-                    Ciecam02::curvecolorfloat(chr, Cp, sres, 1.8f);
+                    Ciecam02::curvecolorfloat(cchr, Cp, sres, 1.8f);
                     Color::skinredfloat(Jpro, hpro, sres, Cp, 55.f, 30.f, 1, rstprotection, 100.f, Cpro);
                 }
 
@@ -3261,6 +3280,11 @@ void ImProcFunctions::DeNoise_Local(int call, const struct local_params& lp, Lab
                     difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
                     difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
                 } else  { //dcrop
+                    const float repart = 1.0f - 0.01f * lp.reparden;
+                    tmp1.L[y][x] = intp(repart, original->L[y][x], tmp1.L[y][x]);
+                    tmp1.a[y][x] = intp(repart, original->a[y][x], tmp1.a[y][x]);
+                    tmp1.b[y][x] = intp(repart, original->b[y][x], tmp1.b[y][x]);
+
                     difL = tmp1.L[y][x] - original->L[y][x];
                     difa = tmp1.a[y][x] - original->a[y][x];
                     difb = tmp1.b[y][x] - original->b[y][x];
@@ -3407,16 +3431,14 @@ void ImProcFunctions::DeNoise_Local2(const struct local_params& lp, LabImage* or
 
                 float difL, difa, difb;
 
- //               if (call == 2  /*|| call == 1  || call == 3 */) { //simpleprocess
- //                   difL = tmp1.L[loy - begy][lox - begx] - original->L[y][x];
- //                   difa = tmp1.a[loy - begy][lox - begx] - original->a[y][x];
- //                   difb = tmp1.b[loy - begy][lox - begx] - original->b[y][x];
- //               } else  { //dcrop
+                const float repart = 1.0f - 0.01f * lp.reparden;
+                tmp1.L[y-ystart][x-xstart] = intp(repart, original->L[y][x], tmp1.L[y-ystart][x-xstart]);
+                tmp1.a[y-ystart][x-xstart] = intp(repart, original->a[y][x], tmp1.a[y-ystart][x-xstart]);
+                tmp1.b[y-ystart][x-xstart] = intp(repart, original->b[y][x], tmp1.b[y-ystart][x-xstart]);
               
-                    difL = tmp1.L[y-ystart][x-xstart] - original->L[y][x];
-                    difa = tmp1.a[y-ystart][x-xstart] - original->a[y][x];
-                    difb = tmp1.b[y-ystart][x-xstart] - original->b[y][x];
- //               }
+                difL = tmp1.L[y-ystart][x-xstart] - original->L[y][x];
+                difa = tmp1.a[y-ystart][x-xstart] - original->a[y][x];
+                difb = tmp1.b[y-ystart][x-xstart] - original->b[y][x];
 
                 difL *= localFactor * reducdEL;
                 difa *= localFactor * reducdEa;
@@ -5047,7 +5069,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
 
         if (delt) {
             const std::unique_ptr<JaggedArray<float>> rdEBuffer(new JaggedArray<float>(bfw, bfh));
-            float** rdE = *(rdEBuffer.get());
+            float** rdE = *rdEBuffer;
 
             deltaEforMask(rdE, bfw, bfh, bufreserv.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, iterat, limscope, scope, lp.balance, lp.balanceh);
 #ifdef _OPENMP
@@ -6058,13 +6080,16 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
             const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(GW, GH));
 
             lab2rgb(*temp, *tmpImage, params->icm.workingProfile);
-
+            Glib::ustring prof = params->icm.workingProfile;
             if (tonecurv) { //Tone response curve  : does nothing if gamma=2.4 and slope=12.92 ==> gamma sRGB
                 const float gamtone = params->locallab.spots.at(sp).gamSH;
                 const float slotone = params->locallab.spots.at(sp).sloSH;
+                int ill = 0;
                 cmsHTRANSFORM dummy = nullptr;
-                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, -5, params->icm.workingProfile, 2.4, 12.92310, dummy, true, false, false);
-                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, 5, params->icm.workingProfile, gamtone, slotone, dummy, false, true, true);
+                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
+              //  workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, 5, prof, gamtone, slotone, illum, 0, dummy, false, true, true);//to keep if we want improve with illuminant and primaries
+                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, 1, prof, gamtone, slotone, ill, 0, dummy, false, true, true);//be carefull no gamut control
+
             }
 
             if (tonequ) {
@@ -6935,6 +6960,8 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
         }
     }
 
+
+
     if (lp.equtm && senstype == 8) { //normalize luminance for Tone mapping , at this place we can use for others senstype!
         float *datain = new float[bfh * bfw];
         float *data = new float[bfh * bfw];
@@ -6973,6 +7000,24 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
         delete [] datain;
         delete [] data;
     }
+
+
+    if (senstype == 8) {//strength Tone mapping
+        const float repart = 1.0f - 0.01f * lp.repartm;
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if(multiThread)
+#endif
+
+        for (int y = ystart; y < yend; y++){
+            for (int x = xstart; x < xend; x++) {
+                bufexpfin->L[y - ystart][x - xstart]= intp(repart, original->L[y][x], bufexpfin->L[y - ystart][x - xstart]);
+                bufexpfin->a[y - ystart][x - xstart]= intp(repart, original->a[y][x], bufexpfin->a[y - ystart][x - xstart]);
+                bufexpfin->b[y - ystart][x - xstart]= intp(repart, original->b[y][x], bufexpfin->b[y - ystart][x - xstart]);
+            }
+        }
+    }
+
 
 #ifdef _OPENMP
     #pragma omp parallel if (multiThread)
@@ -7075,6 +7120,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
                         rsob =  1.1f * lp.struco * rs;
                     }
                 }
+
 
                 //deltaE
                 float abdelta2 = SQR(refa - maskptr->a[y][x]) + SQR(refb - maskptr->b[y][x]);
@@ -11516,7 +11562,7 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
                 
-                rgb2lab(*(tmpImage.get()), *bufexpfin, params->icm.workingProfile);
+                rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);
                 
                 tmpImageorig.reset();
                 tmpImage.reset();
@@ -12298,7 +12344,7 @@ void ImProcFunctions::Lab_Local(
             ImProcFunctions::impulse_nr(bufwv.get(), threshold);
         }
 
-        DeNoise_Local(call, lp,  originalmaskbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, *(bufwv.get()), cx, cy, sk);
+        DeNoise_Local(call, lp,  originalmaskbl.get(), levred, huerefblur, lumarefblur, chromarefblur, original, transformed, *bufwv, cx, cy, sk);
 
         if (lp.recur) {
             original->CopyFrom(transformed, multiThread);
@@ -12565,6 +12611,8 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     //   transit_shapedetect_retinex(call, 4, bufgb.get(),bufmaskorigtm.get(), originalmasktm.get(), buflight, bufchro, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
+
+
                     transit_shapedetect2(sp, meantm, stdtm, call, 8, bufgb.get(), tmp1.get(), originalmasktm.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
                     //  transit_shapedetect(8, tmp1.get(), originalmasktm.get(), bufchro, false, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
@@ -12708,7 +12756,7 @@ void ImProcFunctions::Lab_Local(
             const float refb = chromaref * sin(hueref);
 
             const std::unique_ptr<JaggedArray<float>> reducDEBuffer(new JaggedArray<float>(Wd, Hd));
-            float** reducDE = *(reducDEBuffer.get());
+            float** reducDE = *reducDEBuffer;
 
             float ade = 0.01f * raddE;
             float bde = 100.f - raddE;
@@ -12724,10 +12772,10 @@ void ImProcFunctions::Lab_Local(
                 }
 
             const std::unique_ptr<JaggedArray<float>> origBuffer(new JaggedArray<float>(Wd, Hd));
-            float** orig = *(origBuffer.get());
+            float** orig = *origBuffer;
 
             const std::unique_ptr<JaggedArray<float>> origBuffer1(new JaggedArray<float>(Wd, Hd));
-            float** orig1 = *(origBuffer1.get());
+            float** orig1 = *origBuffer1;
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -13055,7 +13103,7 @@ void ImProcFunctions::Lab_Local(
             const float refb = chromaref * sin(hueref);
 
             const std::unique_ptr<JaggedArray<float>> reducDEBuffer(new JaggedArray<float>(Wd, Hd));
-            float** reducDE = *(reducDEBuffer.get());
+            float** reducDE = *reducDEBuffer;
             float ade = 0.01f * raddE;
             float bde = 100.f - raddE;
             float sensibefore = ade * lp.sensh + bde;//we can change sensitivity 0.1 90 or 0.3 70 or 0.4 60
@@ -13071,10 +13119,10 @@ void ImProcFunctions::Lab_Local(
             }
 
             const std::unique_ptr<JaggedArray<float>> origBuffer(new JaggedArray<float>(Wd, Hd));
-            float** orig = *(origBuffer.get());
+            float** orig = *origBuffer;
 
             const std::unique_ptr<JaggedArray<float>> origBuffer1(new JaggedArray<float>(Wd, Hd));
-            float** orig1 = *(origBuffer1.get());
+            float** orig1 = *origBuffer1;
 
             LabImage *tmpl = nullptr;
 
@@ -13907,13 +13955,16 @@ void ImProcFunctions::Lab_Local(
                     Imagefloat *tmpImage = nullptr;
                     tmpImage = new Imagefloat(bfw, bfh);
                     lab2rgb(*bufexpfin, *tmpImage, params->icm.workingProfile);
+                    Glib::ustring prof = params->icm.workingProfile;
 
                     if (tonecurv) { //Tone response curve  : does nothing if gamma=2.4 and slope=12.92 ==> gamma sRGB
-                        const float gamtone = params->locallab.spots.at(sp).gamSH;
-                        const float slotone = params->locallab.spots.at(sp).sloSH;
-                        cmsHTRANSFORM dummyTransForm = nullptr;
-                        workingtrc(tmpImage, tmpImage, bfw, bfh, -5, params->icm.workingProfile, 2.4, 12.92310, dummyTransForm, true, false, false);
-                        workingtrc(tmpImage, tmpImage, bfw, bfh, 5, params->icm.workingProfile, gamtone, slotone, dummyTransForm, false, true, true);
+                        float gamtone = params->locallab.spots.at(sp).gamSH;
+                        float slotone = params->locallab.spots.at(sp).sloSH;
+                        cmsHTRANSFORM dummy = nullptr;
+                        int ill =0;
+                        workingtrc(tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
+                     //   workingtrc(tmpImage, tmpImage, bfw, bfh, 5, prof, gamtone, slotone, 0, 0, dummy, false, true, true); //to keep if we want improve with illuminant and primaries
+                        workingtrc(tmpImage, tmpImage, bfw, bfh, 1, prof, gamtone, slotone, ill, 0, dummy, false, true, true);//be carefull no gamut control
                     }
 
                     if (tonequ) {
@@ -13938,6 +13989,21 @@ void ImProcFunctions::Lab_Local(
                 float decay = lp.decays;
                 bool invmask = false;
                 maskrecov(bufexpfin.get(), original, bufmaskorigSH.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
+            }
+
+            const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).reparsh;
+            int bw = bufexporig->W;
+            int bh = bufexporig->H;
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if(multiThread)
+#endif
+            for (int x = 0; x < bh; x++) {
+                for (int y = 0; y < bw; y++) {
+                    bufexpfin->L[x][y] = intp(repart, bufexporig->L[x][y], bufexpfin->L[x][y]);
+                    bufexpfin->a[x][y] = intp(repart, bufexporig->a[x][y], bufexpfin->a[x][y]);
+                    bufexpfin->b[x][y] = intp(repart, bufexporig->b[x][y], bufexpfin->b[x][y]);
+                }
             }
 
             transit_shapedetect2(sp, 0.f, 0.f, call, 9, bufexporig.get(), bufexpfin.get(), originalmaskSH.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
@@ -14565,6 +14631,20 @@ void ImProcFunctions::Lab_Local(
                         bool invmask = false;
                         maskrecov(tmp1.get(), original, bufmaskoriglc.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
                     }
+                const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).reparw;
+                int bw = bufgb->W;
+                int bh = bufgb->H;
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if(multiThread)
+#endif
+                    for (int x = 0; x < bh; x++) {
+                        for (int y = 0; y < bw; y++) {
+                            tmp1->L[x][y] = intp(repart, bufgb->L[x][y], tmp1->L[x][y]);
+                            tmp1->a[x][y] = intp(repart, bufgb->a[x][y], tmp1->a[x][y]);
+                            tmp1->b[x][y] = intp(repart, bufgb->b[x][y], tmp1->b[x][y]);
+                        }
+                    }
 
                 transit_shapedetect2(sp, 0.f, 0.f, call, 10, bufgb.get(), tmp1.get(), originalmasklc.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
                 tmp1.reset();
@@ -14863,13 +14943,17 @@ void ImProcFunctions::Lab_Local(
                             fatParams.enabled = true;
                             fatParams.threshold = params->locallab.spots.at(sp).fatdetail;
                             fatParams.amount = params->locallab.spots.at(sp).fatamount;
-                            fatParams.anchor = 50.f; //params->locallab.spots.at(sp).fatanchor;
+                            fatParams.anchor = params->locallab.spots.at(sp).fatanchor;
                             //const float sigm = 1.f; //params->locallab.spots.at(sp).fatlevel;
                             //const float mean = 1.f;// params->locallab.spots.at(sp).fatanchor;
                             const std::unique_ptr<Imagefloat> tmpImagefat(new Imagefloat(bfwr, bfhr));
-                            lab2rgb(*bufexpfin, *(tmpImagefat.get()), params->icm.workingProfile);
-                            ToneMapFattal02(tmpImagefat.get(), fatParams, 3, 0, nullptr, 0, 0, 1);//last parameter = 1 ==>ART algorithm
-                            rgb2lab(*(tmpImagefat.get()), *bufexpfin, params->icm.workingProfile);
+                            lab2rgb(*bufexpfin, *tmpImagefat, params->icm.workingProfile);
+                            int alg = 0;
+                            if(fatParams.anchor == 50.f) {
+                                alg = 1;
+                            }
+                            ToneMapFattal02(tmpImagefat.get(), fatParams, 3, 0, nullptr, 0, 0, alg);//last parameter = 1 ==>ART algorithm
+                            rgb2lab(*tmpImagefat, *bufexpfin, params->icm.workingProfile);
 
                         }
 
@@ -14980,6 +15064,22 @@ void ImProcFunctions::Lab_Local(
                     }
                     
                     float meansob = 0.f;
+
+                    const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).reparexp;
+                    int bw = bufexporig->W;
+                    int bh = bufexporig->H;
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if(multiThread)
+#endif
+                    for (int x = 0; x < bh; x++) {
+                        for (int y = 0; y < bw; y++) {
+                            bufexpfin->L[x][y] = intp(repart, bufexporig->L[x][y], bufexpfin->L[x][y]);
+                            bufexpfin->a[x][y] = intp(repart, bufexporig->a[x][y], bufexpfin->a[x][y]);
+                            bufexpfin->b[x][y] = intp(repart, bufexporig->b[x][y], bufexpfin->b[x][y]);
+                        }
+                    }
+
                     transit_shapedetect2(sp, 0.f, 0.f, call, 1, bufexporig.get(), bufexpfin.get(), originalmaskexp.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
                 }
 
@@ -15086,10 +15186,7 @@ void ImProcFunctions::Lab_Local(
     const float b_base = lp.lowB / scaling;
     const bool ctoning = (a_scale != 0.f || b_scale != 0.f || a_base != 0.f || b_base != 0.f);
     const float a_scalemerg = (lp.highAmerg - lp.lowAmerg) / factor / scaling;
-    const float a_basemerg = lp.lowAmerg / scaling;
     const float b_scalemerg = (lp.highBmerg - lp.lowBmerg) / factor / scaling;
-    const float b_basemerg = lp.lowBmerg / scaling;
-    const bool ctoningmerg = (a_scalemerg != 0.f || b_scalemerg != 0.f || a_basemerg != 0.f || b_basemerg != 0.f);
 
     if (!lp.inv && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.mergemet > 0 ||  lp.strcol != 0.f ||  lp.strcolab != 0.f || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5 || lp.prevdE) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
@@ -15267,7 +15364,7 @@ void ImProcFunctions::Lab_Local(
                         usergb = true;
                         const std::unique_ptr<Imagefloat> tmpImage(new Imagefloat(bfw, bfh));
 
-                        lab2rgb(*buftemp, *(tmpImage.get()), params->icm.workingProfile);
+                        lab2rgb(*buftemp, *tmpImage, params->icm.workingProfile);
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -15334,7 +15431,7 @@ void ImProcFunctions::Lab_Local(
                                 }
                             }
 
-                        rgb2lab(*(tmpImage.get()), *buftemp, params->icm.workingProfile);
+                        rgb2lab(*tmpImage, *buftemp, params->icm.workingProfile);
 
                         // end rgb curves
                     }
@@ -15564,7 +15661,7 @@ void ImProcFunctions::Lab_Local(
                                     bufcolreserv->L[y][x] = lastorig->L[y + ystart][x + xstart];
                                     bufcolreserv->a[y][x] = lastorig->a[y + ystart][x + xstart];
                                     bufcolreserv->b[y][x] = lastorig->b[y + ystart][x + xstart];
-                                } else if (lp.mergemet == 4 && ctoningmerg) {
+                                } else if (lp.mergemet == 4) {
                                         bufcolreserv->L[y][x] = merlucol * 327.68f;
                                         bufcolreserv->a[y][x] = 9.f * scaledirect * a_scalemerg;
                                         bufcolreserv->b[y][x] = 9.f * scaledirect * b_scalemerg;
@@ -15651,7 +15748,7 @@ void ImProcFunctions::Lab_Local(
                         }
 
                         const std::unique_ptr<JaggedArray<float>> rdEBuffer(new JaggedArray<float>(bfw, bfh));
-                        float** rdE = *(rdEBuffer.get());
+                        float** rdE = *rdEBuffer;
 
                         deltaEforMask(rdE, bfw, bfh, bufreser.get(), hueref, chromaref, lumaref, maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, mercol, lp.balance, lp.balanceh);
 
@@ -15813,11 +15910,11 @@ void ImProcFunctions::Lab_Local(
 
                             //prepare RGB values in 0 1(or more)for current image and reserved
                             std::unique_ptr<Imagefloat> tmpImageorig(new Imagefloat(bfw, bfh));
-                            lab2rgb(*bufcolfin, *(tmpImageorig.get()), params->icm.workingProfile);
+                            lab2rgb(*bufcolfin, *tmpImageorig, params->icm.workingProfile);
                             tmpImageorig->normalizeFloatTo1();
 
                             std::unique_ptr<Imagefloat> tmpImagereserv(new Imagefloat(bfw, bfh));
-                            lab2rgb(*bufcolreserv, *(tmpImagereserv.get()), params->icm.workingProfile);
+                            lab2rgb(*bufcolreserv, *tmpImagereserv, params->icm.workingProfile);
                             tmpImagereserv->normalizeFloatTo1();
 
                             float minR = tmpImagereserv->r(0, 0);
@@ -16043,6 +16140,21 @@ void ImProcFunctions::Lab_Local(
                             softproc(bufcolreserv.get(), bufcolfin.get(), lp.softradiuscol, bfh, bfw, 0.001, 0.00001, 0.5f, sk, multiThread, 1);
                         }
                         float meansob = 0.f;
+                        const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).reparcol;
+                        int bw = bufcolreserv->W;
+                        int bh = bufcolreserv->H;
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if(multiThread)
+#endif
+                    for (int x = 0; x < bh; x++) {
+                        for (int y = 0; y < bw; y++) {
+                            bufcolfin->L[x][y] = intp(repart, bufcolreserv->L[x][y], bufcolfin->L[x][y]);
+                            bufcolfin->a[x][y] = intp(repart, bufcolreserv->a[x][y], bufcolfin->a[x][y]);
+                            bufcolfin->b[x][y] = intp(repart, bufcolreserv->b[x][y], bufcolfin->b[x][y]);
+                        }
+                    }
+                        
                         transit_shapedetect2(sp, 0.f, 0.f, call, 0, bufcolreserv.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
                     }
 
@@ -16125,6 +16237,21 @@ void ImProcFunctions::Lab_Local(
                         bool invmask = false;
                         maskrecov(bufcolfin.get(), original, bufmaskblurcol.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
                     }
+                    const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).reparcol;
+                    int bw = bufcolorig->W;
+                    int bh = bufcolorig->H;
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if(multiThread)
+#endif
+                    for (int x = 0; x < bh; x++) {
+                        for (int y = 0; y < bw; y++) {
+                            bufcolfin->L[x][y] = intp(repart, bufcolorig->L[x][y], bufcolfin->L[x][y]);
+                            bufcolfin->a[x][y] = intp(repart, bufcolorig->a[x][y], bufcolfin->a[x][y]);
+                            bufcolfin->b[x][y] = intp(repart, bufcolorig->b[x][y], bufcolfin->b[x][y]);
+                        }
+                    }
+                    
                         float meansob = 0.f;
                         transit_shapedetect2(sp, 0.f, 0.f, call, 0, bufcolorig.get(), bufcolfin.get(), originalmaskcol.get(), hueref, chromaref, lumaref, sobelref, meansob, blend2, lp, original, transformed, cx, cy, sk);
                     }

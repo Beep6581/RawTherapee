@@ -21,7 +21,6 @@
 /*RT*/#define LOCALTIME
 /*RT*/#define DJGPP
 /*RT*/#include "jpeg.h"
-/*RT*/#include "lj92.h"
 /*RT*/#ifdef _OPENMP
 /*RT*/#include <omp.h>
 /*RT*/#endif
@@ -923,7 +922,7 @@ ushort * CLASS ljpeg_row (int jrow, struct jhead *jh)
     }
     getbits(-1);
   }
-  FORC3 row[c] = (jh->row + ((jrow & 1) + 1) * (jh->wide*jh->clrs*((jrow+c) & 1)));
+  FORC3 row[c] = jh->row + jh->wide*jh->clrs*((jrow+c) & 1);
   for (col=0; col < jh->wide; col++)
     FORC(jh->clrs) {
       diff = ljpeg_diff (jh->huff[c]);
@@ -1124,61 +1123,6 @@ void CLASS ljpeg_idct (struct jhead *jh)
       FORC(8) work[2][i][j] += work[1][c][j] * cs[(i*2+1)*c];
 
   FORC(64) jh->idct[c] = CLIP(((float *)work[2])[c]+0.5);
-}
-
-void CLASS lossless_dnglj92_load_raw()
-{
-    BENCHFUN
-
-    tiff_bps = 16;
-
-    int save = ifp->pos;
-    uint16_t *lincurve = !strncmp(make,"Blackmagic",10) ? curve : nullptr;
-    tile_width = tile_length < INT_MAX ? tile_width : raw_width;
-    size_t tileCount = raw_width / tile_width;
-
-    size_t dataOffset[tileCount];
-    if(tile_length < INT_MAX) {
-        for (size_t t = 0; t < tileCount; ++t) {
-            dataOffset[t] = get4();
-        }
-    } else {
-        dataOffset[0] = ifp->pos;
-    }
-    const int data_length = ifp->size;
-    const std::unique_ptr<uint8_t[]> data(new uint8_t[data_length]);
-    fseek(ifp, 0, SEEK_SET);
-    // read whole file
-    fread(data.get(), 1, data_length, ifp);
-    lj92 lj;
-    int newwidth, newheight, newbps;
-    lj92_open(&lj, &data[dataOffset[0]], data_length, &newwidth, &newheight, &newbps);
-    lj92_close(lj);
-    if (newwidth * newheight * tileCount != raw_width * raw_height) {
-        // not a lj92 file
-        fseek(ifp, save, SEEK_SET);
-        lossless_dng_load_raw();
-        return;
-    }
-
-#ifdef _OPENMP
-    #pragma omp parallel for num_threads(std::min<int>(tileCount, omp_get_max_threads()))
-#endif
-    for (size_t t = 0; t < tileCount; ++t) {
-        size_t tcol = t * tile_width;
-        lj92 lj;
-        int newwidth, newheight, newbps;
-        lj92_open(&lj, &data[dataOffset[t]], data_length, &newwidth, &newheight, &newbps);
-
-        const std::unique_ptr<uint16_t[]> target(new uint16_t[newwidth * newheight]);
-        lj92_decode(lj, target.get(), tile_width, 0, lincurve, 0x1000);
-        for (int y = 0; y < height; ++y) {
-            for(int x = 0; x < tile_width; ++x) {
-                RAW(y, x + tcol) = target[y * tile_width + x];
-            }
-        }
-        lj92_close(lj);
-    }
 }
 
 void CLASS lossless_dng_load_raw()
@@ -9078,7 +9022,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
     RT_matrix_from_constant = ThreeValBool::T;
   }
   // -- RT --------------------------------------------------------------------
-  
+
   for (i=0; i < sizeof table / sizeof *table; i++)
     if (!strncmp (name, table[i].prefix, strlen(table[i].prefix))) {
       if (RT_blacklevel_from_constant == ThreeValBool::T && table[i].black)   black   = (ushort) table[i].black;
@@ -9568,7 +9512,7 @@ void CLASS identify()
     apply_tiff();
     if (!strcmp(model, "X-T3")) {
         height = raw_height - 2;
-    } else if (!strcmp(model, "GFX 100")) {
+    } else if (!strcmp(model, "GFX 100") || !strcmp(model, "GFX100S")) {
         load_flags = 0;
     }
     if (!load_raw) {
@@ -9768,7 +9712,7 @@ void CLASS identify()
     switch (tiff_compress) {
       case 0:
       case 1:     load_raw = &CLASS   packed_dng_load_raw;  break;
-      case 7:     load_raw = (!strncmp(make,"Blackmagic",10) || !strncmp(make,"Canon",5)) ? &CLASS lossless_dnglj92_load_raw : &CLASS lossless_dng_load_raw;  break;
+      case 7:     load_raw = &CLASS lossless_dng_load_raw;  break;
       case 8:     load_raw = &CLASS  deflate_dng_load_raw;  break;
       case 34892: load_raw = &CLASS    lossy_dng_load_raw;  break;
       default:    load_raw = 0;

@@ -65,6 +65,7 @@ protected:
     Glib::RefPtr<Gtk::TreeStore> refTreeModel;
     MethodColumns methodColumns;
     MyComboBox* method;
+    Gtk::Button* resetButton;
     MyComboBoxText* spotsize;
     Adjuster* temp;
     Adjuster* green;
@@ -122,6 +123,7 @@ public:
         wblistener = l;
     }
     void setWB (int temp, double green);
+    void resetWB ();
     void WBChanged           (double temp, double green, float studgood) override;
 
     void setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd, bool tempbiasadd);

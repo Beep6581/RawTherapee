@@ -329,7 +329,7 @@ void Gradient::editToggled ()
     }
 }
 
-CursorShape Gradient::getCursor(int objectID) const
+CursorShape Gradient::getCursor(int objectID, int xPos, int yPos) const
 {
     switch (objectID) {
     case (0):
