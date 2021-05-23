@@ -527,8 +527,6 @@ bool RTWindow::on_configure_event (GdkEventConfigure* event)
         get_size (options.windowWidth, options.windowHeight);
         get_position (options.windowX, options.windowY);
     }
-    
-    printf("Position: X=%d, Y=%d\n", options.windowX, options.windowY);
 
     RTImage::setDPInScale(RTScalable::getDPI(), RTScalable::getScale());   // will update the RTImage   on scale/resolution change
     RTSurface::setDPInScale(RTScalable::getDPI(), RTScalable::getScale()); // will update the RTSurface on scale/resolution change
@@ -542,10 +540,6 @@ bool RTWindow::on_window_state_event (GdkEventWindowState* event)
     options.windowMaximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
     is_minimized = event->new_window_state & GDK_WINDOW_STATE_ICONIFIED;
     is_fullscreen = event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN;
-    
-    printf("is_minimized: %d\n", is_minimized);
-    printf("is_maximized: %d\n", options.windowMaximized);
-    printf("is_fullscreen: %d\n", is_fullscreen);
     
     return Gtk::Widget::on_window_state_event (event);
 }
@@ -586,6 +580,7 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
     if (options.multiDisplayMode > 0) {
         EditWindow * wndEdit = EditWindow::getInstance (this);
         wndEdit->show();
+        wndEdit->restoreWindow(); // Need to be called after RTWindow creation to work with all OS Windows Manager
         wndEdit->addEditorPanel (ep, name);
         wndEdit->toFront();
     } else {
@@ -795,7 +790,7 @@ bool RTWindow::on_delete_event (GdkEventAny* event)
     if (isSingleTabMode() || simpleEditor) {
         isProcessing = epanel->getIsProcessing();
     } else if (options.multiDisplayMode > 0) {
-        editWindow = EditWindow::getInstance (this, false);
+        editWindow = EditWindow::getInstance (this);
         isProcessing = editWindow->isProcessing();
     } else {
         int pageCount = mainNB->get_n_pages();
@@ -867,11 +862,18 @@ bool RTWindow::on_delete_event (GdkEventAny* event)
         get_size (options.windowWidth, options.windowHeight);
         get_position (options.windowX, options.windowY);
     }
-    
-    printf("is_minimized: %d\n", is_minimized);
-    printf("Position: X=%d, Y=%d\n", options.windowX, options.windowY);
 
-    options.windowMonitor = get_screen()->get_monitor_at_window (get_window());
+    // Retrieve window monitor ID
+    options.windowMonitor = 0;
+    const auto display = get_screen()->get_display();
+    const int monitor_nb = display->get_n_monitors();
+
+    for (int id = 0; id < monitor_nb; id++) {
+        if (display->get_monitor_at_window(get_window()) == display->get_monitor(id)) {
+            options.windowMonitor = id;
+            break;
+        }
+    }
 
     try {
         Options::save ();
@@ -1111,7 +1113,7 @@ void RTWindow::setWindowSize ()
     onConfEventConn.block(true); // Avoid getting size and position while window is being moved, maximized, ...
     
     Gdk::Rectangle lMonitorRect;
-    auto display = get_screen()->get_display();
+    const auto display = get_screen()->get_display();
     display->get_monitor (std::min (options.windowMonitor, display->get_n_monitors() - 1))->get_geometry(lMonitorRect);
 
 #ifdef __APPLE__
@@ -1153,14 +1155,12 @@ void RTWindow::get_position(int& x, int& y) const
     
     // Retrieve monitor size
     Gdk::Rectangle lMonitorRect;
-    auto display = get_screen()->get_display();
+    const auto display = get_screen()->get_display();
     display->get_monitor(std::min (options.windowMonitor, display->get_n_monitors() - 1))->get_geometry(lMonitorRect);
     
     // Saturate position at monitor limits to avoid unexpected behavior (fixes #6233)
     x = std::min(lMonitorRect.get_width(), std::max(0, x));
     y = std::min(lMonitorRect.get_height(), std::max(0, y));
-    
-    printf("Monitor: W=%d, H=%d\n", lMonitorRect.get_width(), lMonitorRect.get_height());
 }
 
 void RTWindow::set_title_decorated (Glib::ustring fname)
