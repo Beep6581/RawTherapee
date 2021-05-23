@@ -104,13 +104,6 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
                 for (int i = 1; i < 4; i++) {
                     x[i] = min(max(p[i], 0.001), 0.99);
                 }
-                // the curve becomes glitchy when the highlight parameter is too high
-                // soft-clamp is to 96% (starting from 95%) and make sure we keep 2% between parameters
-                if (x[3] > 0.95){
-                    x[3] = 0.95 + 0.01*(x[3]-0.95)/0.05;
-                    x[2] = min(x[2], x[3] - 0.02);
-                    x[1] = min(x[1], x[2] - 0.02);
-                }
 
                 for (int i = 4; i < 8; i++) {
                     x[i] = (p[i] + 100.0) / 200.0;
@@ -454,7 +447,13 @@ double DiagonalCurve::getVal (double t) const
             // add highlights effect:
             double htv = xexp(max(mhc * xlog((stretched - mfc) / (1.0 - mfc)),-236.0));
             double hbase = pfull_alt (htv, 0.5, x[4]);
-            return mfc + (1.0 - mfc) * xexp(xlog(hbase) / mhc);
+            //this part of the curve isn't affected by highlight, return the base curve
+            if (hbase < 1e-14 ){ 
+                hbase = xexp(max(xlog((stretched - mfc) / (1.0 - mfc)),-236.0));
+                return mfc + (1.0 - mfc) * hbase;
+            } else {
+                return mfc + (1.0 - mfc) * xexp(xlog(hbase) / mhc);
+            }
         }
 
         break;
