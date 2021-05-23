@@ -63,7 +63,7 @@ public:
     bool getHasBaselineExposureOffset() const;
 
     Illuminants getIlluminants() const;
-    bool isValid();
+    bool isValid() const;
 
     void apply(
         Imagefloat* img,
@@ -159,7 +159,7 @@ public:
 
     void init(const Glib::ustring& rt_profile_dir, bool loadAll = true);
 
-    bool isValidDCPFileName(const Glib::ustring& filename) const;
+    static bool isValidDCPFileName(const Glib::ustring& filename);
 
     DCPProfile* getProfile(const Glib::ustring& filename) const;
     DCPProfile* getStdProfile(const Glib::ustring& camShortName) const;

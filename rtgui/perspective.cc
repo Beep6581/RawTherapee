@@ -543,6 +543,11 @@ void PerspCorrection::applyControlLines(void)
     adjusterChanged(camera_pitch, pitch);
 }
 
+void PerspCorrection::tweakParams(rtengine::procparams::ProcParams &pparams)
+{
+    pparams.perspective.render = render;
+}
+
 void PerspCorrection::autoCorrectionPressed(Gtk::Button* b)
 {
     if (!lens_geom_listener) {
@@ -754,8 +759,9 @@ void PerspCorrection::linesEditButtonPressed(void)
         lines->setActive(true);
         lines->setDrawMode(true);
         render = false;
-        if (lens_geom_listener) {
-            lens_geom_listener->updateTransformPreviewRequested(EvPerspRender, false);
+        if (listener) {
+            listener->setTweakOperator(this);
+            listener->refreshPreview(EvPerspRender);
         }
         lines_button_apply->set_sensitive(true);
         lines_button_erase->set_sensitive(true);
@@ -768,8 +774,9 @@ void PerspCorrection::linesEditButtonPressed(void)
         lines_button_apply->set_sensitive(false);
         lines_button_erase->set_sensitive(false);
         render = true;
-        if (lens_geom_listener) {
-            lens_geom_listener->updateTransformPreviewRequested(EvPerspRender, true);
+        if (listener) {
+            listener->unsetTweakOperator(this);
+            listener->refreshPreview(EvPerspRender);
         }
         lines->setDrawMode(false);
         lines->setActive(false);

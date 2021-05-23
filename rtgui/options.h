@@ -279,6 +279,16 @@ public:
     Glib::ustring CPBPath; // Custom Profile Builder's path
     CPBKeyType CPBKeys; // Custom Profile Builder's key type
     int editorToSendTo;
+    enum EditorOutDir {
+        EDITOR_OUT_DIR_TEMP,
+        EDITOR_OUT_DIR_CURRENT,
+        EDITOR_OUT_DIR_CUSTOM
+    };
+    EditorOutDir editor_out_dir; // output directory for "open in external editor"
+    Glib::ustring editor_custom_out_dir;
+    bool editor_float32;
+    bool editor_bypass_output_profile;
+    
     int maxThumbnailHeight;
     int maxThumbnailWidth;
     std::size_t maxCacheEntries;

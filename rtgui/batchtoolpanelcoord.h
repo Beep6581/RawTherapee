@@ -56,6 +56,8 @@ public:
 
     // toolpanellistener interface
     void panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr) override;
+    void setTweakOperator (rtengine::TweakOperator *tOperator) override;
+    void unsetTweakOperator (rtengine::TweakOperator *tOperator) override;
 
     // profilechangelistener interface
     void profileChange(

@@ -1087,6 +1087,13 @@ struct ResizeParamsEdited {
     bool allowUpscaling;
 };
 
+class SpotParamsEdited
+{
+public:
+    bool enabled;
+    bool entries;
+};
+
 struct ColorManagementParamsEdited {
     bool inputProfile;
     bool toneCurve;
@@ -1099,7 +1106,25 @@ struct ColorManagementParamsEdited {
     bool workingTRC;
     bool workingTRCGamma;
     bool workingTRCSlope;
-
+    bool will;
+    bool wprim;
+    bool redx;
+    bool redy;
+    bool grex;
+    bool grey;
+    bool blux;
+    bool bluy;
+    bool preser;
+    bool fbw;
+    bool labgridcieALow;
+    bool labgridcieBLow;
+    bool labgridcieAHigh;
+    bool labgridcieBHigh;
+    bool labgridcieGx;
+    bool labgridcieGy;
+    bool labgridcieWx;
+    bool labgridcieWy;
+    bool aRendIntent;
     bool outputProfile;
     bool outputIntent;
     bool outputBPC;
@@ -1419,6 +1444,7 @@ struct ParamsEdited {
     ChannelMixerParamsEdited chmixer;
     BlackWhiteParamsEdited blackwhite;
     ResizeParamsEdited resize;
+    SpotParamsEdited spot;
     ColorManagementParamsEdited icm;
     RAWParamsEdited raw;
     DirPyrEqualizerParamsEdited dirpyrequalizer;

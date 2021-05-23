@@ -109,7 +109,7 @@ public:
     bool pick1(bool picked) override;
     bool pick3(bool picked) override;
     bool drag1(int modifierKey) override;
-    CursorShape getCursor(int objectID) const override;
+    CursorShape getCursor(int objectID, int xPos, int yPos) const override;
     bool mouseOver(int modifierKey) override;
     void switchOffEditMode(void) override;
 };

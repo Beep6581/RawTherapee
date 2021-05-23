@@ -365,6 +365,10 @@ namespace rtengine
 namespace procparams
 {
 
+const short SpotParams::minRadius = 5;
+const short SpotParams::maxRadius = 100;
+
+
 ToneCurveParams::ToneCurveParams() :
     autoexp(false),
     clip(0.02),
@@ -1691,6 +1695,47 @@ bool EPDParams::operator !=(const EPDParams& other) const
     return !(*this == other);
 }
 
+SpotEntry::SpotEntry() :
+    radius(25),
+    feather(1.f),
+    opacity(1.f)
+{
+}
+
+float SpotEntry::getFeatherRadius() const
+{
+    return radius * (1.f + feather);
+}
+
+bool SpotEntry::operator ==(const SpotEntry& other) const
+{
+    return other.sourcePos == sourcePos && other.targetPos == targetPos &&
+           other.radius == radius && other.feather == feather && other.opacity == opacity;
+}
+
+bool SpotEntry::operator !=(const SpotEntry& other) const
+{
+    return other.sourcePos != sourcePos || other.targetPos != targetPos ||
+           other.radius != radius || other.feather != feather || other.opacity != opacity;
+}
+
+SpotParams::SpotParams() :
+    enabled(false)
+{
+    entries.clear ();
+}
+
+bool SpotParams::operator ==(const SpotParams& other) const
+{
+    return enabled == other.enabled && entries == other.entries;
+}
+
+bool SpotParams::operator !=(const SpotParams& other) const
+{
+    return !(*this == other);
+}
+
+
 FattalToneMappingParams::FattalToneMappingParams() :
     enabled(false),
     threshold(30),
@@ -2206,6 +2251,7 @@ bool ResizeParams::operator !=(const ResizeParams& other) const
 }
 
 const Glib::ustring ColorManagementParams::NoICMString = Glib::ustring("No ICM: sRGB output");
+const Glib::ustring ColorManagementParams::NoProfileString = Glib::ustring("(none)");
 
 ColorManagementParams::ColorManagementParams() :
     inputProfile("(cameraICC)"),
@@ -2215,9 +2261,28 @@ ColorManagementParams::ColorManagementParams() :
     applyHueSatMap(true),
     dcpIlluminant(0),
     workingProfile("ProPhoto"),
-    workingTRC("none"),
-    workingTRCGamma(2.4),
-    workingTRCSlope(12.92310),
+    workingTRC(WorkingTrc::NONE),
+    will(Illuminant::DEFAULT),
+    wprim(Primaries::DEFAULT),
+    workingTRCGamma(2.4),//gamma sRGB
+    workingTRCSlope(12.92),
+    redx(0.7347),
+    redy(0.2653),
+    grex(0.1596),
+    grey(0.8404),
+    blux(0.0366),
+    bluy(0.0001),
+    preser(0.),
+    fbw(false),
+    labgridcieALow(0.51763),//Prophoto red = (0.7347+0.1) * 1.81818 - 1
+    labgridcieBLow(-0.33582),
+    labgridcieAHigh(-0.75163),//Prophoto blue
+    labgridcieBHigh(-0.8180),
+    labgridcieGx(-0.69164),//Prophoto green 0.1596
+    labgridcieGy(-0.70909),//0.84
+    labgridcieWx(-0.18964),//D50 0.3457, 0.3585,
+    labgridcieWy(-0.16636),//
+    aRendIntent(RI_RELATIVE),
     outputProfile(options.rtSettings.srgb),
     outputIntent(RI_RELATIVE),
     outputBPC(true)
@@ -2235,8 +2300,27 @@ bool ColorManagementParams::operator ==(const ColorManagementParams& other) cons
         && dcpIlluminant == other.dcpIlluminant
         && workingProfile == other.workingProfile
         && workingTRC == other.workingTRC
+        && will == other.will
+        && wprim == other.wprim
         && workingTRCGamma == other.workingTRCGamma
         && workingTRCSlope == other.workingTRCSlope
+        && redx == other.redx
+        && redy == other.redy
+        && grex == other.grex
+        && grey == other.grey
+        && blux == other.blux
+        && bluy == other.bluy
+        && labgridcieALow == other.labgridcieALow
+        && labgridcieBLow == other.labgridcieBLow
+        && labgridcieAHigh == other.labgridcieAHigh
+        && labgridcieBHigh == other.labgridcieBHigh
+        && labgridcieGx == other.labgridcieGx
+        && labgridcieGy == other.labgridcieGy
+        && labgridcieWx == other.labgridcieWx
+        && labgridcieWy == other.labgridcieWy
+        && preser == other.preser
+        && fbw == other.fbw
+        && aRendIntent == other.aRendIntent
         && outputProfile == other.outputProfile
         && outputIntent == other.outputIntent
         && outputBPC == other.outputBPC;
@@ -3978,6 +4062,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     // Log encoding
     visilog(false),
     explog(false),
+    complexlog(0),
     autocompute(false),
     sourceGray(10.),
     sourceabs(2000.),
@@ -6492,10 +6577,97 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->icm.applyHueSatMap, "Color Management", "ApplyHueSatMap", icm.applyHueSatMap, keyFile);
         saveToKeyfile(!pedited || pedited->icm.dcpIlluminant, "Color Management", "DCPIlluminant", icm.dcpIlluminant, keyFile);
         saveToKeyfile(!pedited || pedited->icm.workingProfile, "Color Management", "WorkingProfile", icm.workingProfile, keyFile);
-        saveToKeyfile(!pedited || pedited->icm.workingTRC, "Color Management", "WorkingTRC", icm.workingTRC, keyFile);
+        saveToKeyfile(
+            !pedited || pedited->icm.workingTRC,
+            "Color Management",
+            "WorkingTRC",
+            {
+                {ColorManagementParams::WorkingTrc::NONE, "none"},
+                {ColorManagementParams::WorkingTrc::CUSTOM, "Custom"},
+                {ColorManagementParams::WorkingTrc::BT709, "bt709"},
+                {ColorManagementParams::WorkingTrc::SRGB, "srgb"},
+                {ColorManagementParams::WorkingTrc::GAMMA_2_2, "22"},
+                {ColorManagementParams::WorkingTrc::GAMMA_1_8, "18"},
+                {ColorManagementParams::WorkingTrc::LINEAR, "lin"}
+            },
+            icm.workingTRC,
+            keyFile
+        );
+        saveToKeyfile(
+            !pedited || pedited->icm.will,
+            "Color Management",
+            "Will",
+            {
+                {ColorManagementParams::Illuminant::DEFAULT, "def"},
+                {ColorManagementParams::Illuminant::D41, "D41"},
+                {ColorManagementParams::Illuminant::D50, "D50"},
+                {ColorManagementParams::Illuminant::D55, "D55"},
+                {ColorManagementParams::Illuminant::D60, "D60"},
+                {ColorManagementParams::Illuminant::D65, "D65"},
+                {ColorManagementParams::Illuminant::D80, "D80"},
+                {ColorManagementParams::Illuminant::D120, "D120"},
+                {ColorManagementParams::Illuminant::STDA, "stda"},
+                {ColorManagementParams::Illuminant::TUNGSTEN_2000K, "2000"},
+                {ColorManagementParams::Illuminant::TUNGSTEN_1500K, "1500"}
+            },
+            icm.will,
+            keyFile
+        );
+        saveToKeyfile(
+            !pedited || pedited->icm.wprim,
+            "Color Management",
+            "Wprim",
+            {
+                {ColorManagementParams::Primaries::DEFAULT, "def"},
+                {ColorManagementParams::Primaries::SRGB, "srgb"},
+                {ColorManagementParams::Primaries::ADOBE_RGB, "adob"},
+                {ColorManagementParams::Primaries::PRO_PHOTO, "prop"},
+                {ColorManagementParams::Primaries::REC2020, "rec"},
+                {ColorManagementParams::Primaries::ACES_P1, "aces"},
+                {ColorManagementParams::Primaries::WIDE_GAMUT, "wid"},
+                {ColorManagementParams::Primaries::ACES_P0, "ac0"},
+                {ColorManagementParams::Primaries::BRUCE_RGB, "bru"},
+                {ColorManagementParams::Primaries::BETA_RGB, "bet"},
+                {ColorManagementParams::Primaries::BEST_RGB, "bst"},
+                {ColorManagementParams::Primaries::CUSTOM, "cus"},
+                {ColorManagementParams::Primaries::CUSTOM_GRID, "cusgr"}
+            },
+            icm.wprim,
+            keyFile
+        );
         saveToKeyfile(!pedited || pedited->icm.workingTRCGamma, "Color Management", "WorkingTRCGamma", icm.workingTRCGamma, keyFile);
         saveToKeyfile(!pedited || pedited->icm.workingTRCSlope, "Color Management", "WorkingTRCSlope", icm.workingTRCSlope, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.redx, "Color Management", "Redx", icm.redx, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.redy, "Color Management", "Redy", icm.redy, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.grex, "Color Management", "Grex", icm.grex, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.grey, "Color Management", "Grey", icm.grey, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.blux, "Color Management", "Blux", icm.blux, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.bluy, "Color Management", "Bluy", icm.bluy, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.labgridcieALow, "Color Management", "LabGridcieALow", icm.labgridcieALow, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.labgridcieBLow, "Color Management", "LabGridcieBLow", icm.labgridcieBLow, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.labgridcieAHigh, "Color Management", "LabGridcieAHigh", icm.labgridcieAHigh, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.labgridcieBHigh, "Color Management", "LabGridcieBHigh", icm.labgridcieBHigh, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.labgridcieGx, "Color Management", "LabGridcieGx", icm.labgridcieGx, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.labgridcieGy, "Color Management", "LabGridcieGy", icm.labgridcieGy, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.labgridcieWx, "Color Management", "LabGridcieWx", icm.labgridcieWx, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.labgridcieWy, "Color Management", "LabGridcieWy", icm.labgridcieWy, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.preser, "Color Management", "Preser", icm.preser, keyFile);
+        saveToKeyfile(!pedited || pedited->icm.fbw, "Color Management", "Fbw", icm.fbw, keyFile);
         saveToKeyfile(!pedited || pedited->icm.outputProfile, "Color Management", "OutputProfile", icm.outputProfile, keyFile);
+        saveToKeyfile(
+            !pedited || pedited->icm.aRendIntent,
+            "Color Management",
+            "aIntent",
+            {
+                {RI_PERCEPTUAL, "Perceptual"},
+                {RI_RELATIVE, "Relative"},
+                {RI_SATURATION, "Saturation"},
+                {RI_ABSOLUTE, "Absolute"}
+            },
+            icm.aRendIntent,
+            keyFile
+        );
+
         saveToKeyfile(
             !pedited || pedited->icm.outputIntent,
             "Color Management",
@@ -6505,7 +6677,6 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 {RI_RELATIVE, "Relative"},
                 {RI_SATURATION, "Saturation"},
                 {RI_ABSOLUTE, "Absolute"}
-
             },
             icm.outputIntent,
             keyFile
@@ -6663,6 +6834,25 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->wavelet.sky, "Wavelet", "HueRangeResidual", wavelet.sky, keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.hueskin2, "Wavelet", "HueRange", wavelet.hueskin2.toVector(), keyFile);
         saveToKeyfile(!pedited || pedited->wavelet.contrast, "Wavelet", "Contrast", wavelet.contrast, keyFile);
+
+//Spot removal
+        saveToKeyfile(!pedited || pedited->spot.enabled, "Spot removal", "Enabled", spot.enabled, keyFile);
+        for (size_t i = 0; i < spot.entries.size (); ++i) {
+            std::vector<double> entry(7);
+
+            entry[0] = double (spot.entries.at (i).sourcePos.x);
+            entry[1] = double (spot.entries.at (i).sourcePos.y);
+            entry[2] = double (spot.entries.at (i).targetPos.x);
+            entry[3] = double (spot.entries.at (i).targetPos.y);
+            entry[4] = double (spot.entries.at (i).radius);
+            entry[5] = double (spot.entries.at (i).feather);
+            entry[6] = double (spot.entries.at (i).opacity);
+
+            std::stringstream ss;
+            ss << "Spot" << (i + 1);
+
+            saveToKeyfile(!pedited || pedited->spot.entries, "Spot removal", ss.str(), entry, keyFile);
+        }
 
 // Directional pyramid equalizer
         saveToKeyfile(!pedited || pedited->dirpyrequalizer.enabled, "Directional Pyramid Equalizer", "Enabled", dirpyrequalizer.enabled, keyFile);
@@ -8394,6 +8584,34 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
         }
 
+        if (keyFile.has_group ("Spot removal")) {
+            assignFromKeyfile(keyFile, "Spot removal", "Enabled", pedited, spot.enabled, pedited->spot.enabled);
+            int i = 0;
+            do {
+                std::stringstream ss;
+                ss << "Spot" << (i++ + 1);
+
+                if (keyFile.has_key ("Spot removal", ss.str())) {
+                    Glib::ArrayHandle<double> entry = keyFile.get_double_list ("Spot removal", ss.str());
+                    const double epsilon = 0.001;  // to circumvent rounding of integer saved as double
+                    SpotEntry se;
+
+                    se.sourcePos.set(int(entry.data()[0] + epsilon), int(entry.data()[1] + epsilon));
+                    se.targetPos.set(int(entry.data()[2] + epsilon), int(entry.data()[3] + epsilon));
+                    se.radius  = LIM<int>(int  (entry.data()[4] + epsilon), SpotParams::minRadius, SpotParams::maxRadius);
+                    se.feather = float(entry.data()[5]);
+                    se.opacity = float(entry.data()[6]);
+                    spot.entries.push_back(se);
+
+                    if (pedited) {
+                        pedited->spot.entries = true;
+                    }
+                } else {
+                    break;
+                }
+            } while (1);
+        }
+
         if (keyFile.has_group("PostDemosaicSharpening")) {
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Enabled", pedited, pdsharpening.enabled, pedited->pdsharpening.enabled);
             assignFromKeyfile(keyFile, "PostDemosaicSharpening", "Contrast", pedited, pdsharpening.contrast, pedited->pdsharpening.contrast);
@@ -8455,9 +8673,124 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             assignFromKeyfile(keyFile, "Color Management", "ApplyHueSatMap", pedited, icm.applyHueSatMap, pedited->icm.applyHueSatMap);
             assignFromKeyfile(keyFile, "Color Management", "DCPIlluminant", pedited, icm.dcpIlluminant, pedited->icm.dcpIlluminant);
             assignFromKeyfile(keyFile, "Color Management", "WorkingProfile", pedited, icm.workingProfile, pedited->icm.workingProfile);
-            assignFromKeyfile(keyFile, "Color Management", "WorkingTRC", pedited, icm.workingTRC, pedited->icm.workingTRC);
+            if (
+                !assignFromKeyfile(
+                    keyFile,
+                    "Color Management",
+                    "WorkingTRC",
+                    pedited,
+                    {
+                        {"none", ColorManagementParams::WorkingTrc::NONE},
+                        {"Custom", ColorManagementParams::WorkingTrc::CUSTOM},
+                        {"bt709", ColorManagementParams::WorkingTrc::BT709},
+                        {"srgb", ColorManagementParams::WorkingTrc::SRGB},
+                        {"22", ColorManagementParams::WorkingTrc::GAMMA_2_2},
+                        {"18", ColorManagementParams::WorkingTrc::GAMMA_1_8},
+                        {"lin", ColorManagementParams::WorkingTrc::LINEAR}
+                    },
+                    icm.workingTRC,
+                    pedited->icm.workingTRC
+                )
+            ) {
+               icm.workingTRC = ColorManagementParams::WorkingTrc::NONE;
+               if (pedited) {
+                   pedited->icm.workingTRC = true;
+               }
+            }
+            if (
+                !assignFromKeyfile(
+                    keyFile,
+                    "Color Management",
+                    "Will",
+                    pedited,
+                    {
+                        {"def", ColorManagementParams::Illuminant::DEFAULT},
+                        {"D41", ColorManagementParams::Illuminant::D41},
+                        {"D50", ColorManagementParams::Illuminant::D50},
+                        {"D55", ColorManagementParams::Illuminant::D55},
+                        {"D60", ColorManagementParams::Illuminant::D60},
+                        {"D65", ColorManagementParams::Illuminant::D65},
+                        {"D80", ColorManagementParams::Illuminant::D80},
+                        {"D120", ColorManagementParams::Illuminant::D120},
+                        {"stda", ColorManagementParams::Illuminant::STDA},
+                        {"2000", ColorManagementParams::Illuminant::TUNGSTEN_2000K},
+                        {"1500", ColorManagementParams::Illuminant::TUNGSTEN_1500K}
+                    },
+                    icm.will,
+                    pedited->icm.will
+                )
+            ) {
+                icm.will = ColorManagementParams::Illuminant::DEFAULT;
+                if (pedited) {
+                    pedited->icm.will = true;
+                }
+            }
+            if (
+                !assignFromKeyfile(
+                    keyFile,
+                    "Color Management",
+                    "Wprim",
+                    pedited,
+                    {
+                        {"def", ColorManagementParams::Primaries::DEFAULT},
+                        {"srgb", ColorManagementParams::Primaries::SRGB},
+                        {"adob", ColorManagementParams::Primaries::ADOBE_RGB},
+                        {"prop", ColorManagementParams::Primaries::PRO_PHOTO},
+                        {"rec", ColorManagementParams::Primaries::REC2020},
+                        {"aces", ColorManagementParams::Primaries::ACES_P1},
+                        {"wid", ColorManagementParams::Primaries::WIDE_GAMUT},
+                        {"ac0", ColorManagementParams::Primaries::ACES_P0},
+                        {"bru", ColorManagementParams::Primaries::BRUCE_RGB},
+                        {"bet", ColorManagementParams::Primaries::BETA_RGB},
+                        {"bst", ColorManagementParams::Primaries::BEST_RGB},
+                        {"cus", ColorManagementParams::Primaries::CUSTOM},
+                        {"cusgr", ColorManagementParams::Primaries::CUSTOM_GRID}
+                    },
+                    icm.wprim,
+                    pedited->icm.wprim
+                )
+            ) {
+                icm.wprim = ColorManagementParams::Primaries::DEFAULT;
+                if (pedited) {
+                    pedited->icm.wprim = true;
+                }
+            }
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCGamma", pedited, icm.workingTRCGamma, pedited->icm.workingTRCGamma);
             assignFromKeyfile(keyFile, "Color Management", "WorkingTRCSlope", pedited, icm.workingTRCSlope, pedited->icm.workingTRCSlope);
+
+            assignFromKeyfile(keyFile, "Color Management", "Redx", pedited, icm.redx, pedited->icm.redx);
+            assignFromKeyfile(keyFile, "Color Management", "Redy", pedited, icm.redy, pedited->icm.redy);
+            assignFromKeyfile(keyFile, "Color Management", "Grex", pedited, icm.grex, pedited->icm.grex);
+            assignFromKeyfile(keyFile, "Color Management", "Grey", pedited, icm.grey, pedited->icm.grey);
+            assignFromKeyfile(keyFile, "Color Management", "Blux", pedited, icm.blux, pedited->icm.blux);
+            assignFromKeyfile(keyFile, "Color Management", "Bluy", pedited, icm.bluy, pedited->icm.bluy);
+            assignFromKeyfile(keyFile, "Color Management", "Preser", pedited, icm.preser, pedited->icm.preser);
+            assignFromKeyfile(keyFile, "Color Management", "Fbw", pedited, icm.fbw, pedited->icm.fbw);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieALow", pedited, icm.labgridcieALow, pedited->icm.labgridcieALow);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieBLow", pedited, icm.labgridcieBLow, pedited->icm.labgridcieBLow);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieAHigh", pedited, icm.labgridcieAHigh, pedited->icm.labgridcieAHigh);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieBHigh", pedited, icm.labgridcieBHigh, pedited->icm.labgridcieBHigh);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieGx", pedited, icm.labgridcieGx, pedited->icm.labgridcieGx);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieGy", pedited, icm.labgridcieGy, pedited->icm.labgridcieGy);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieWx", pedited, icm.labgridcieWx, pedited->icm.labgridcieWx);
+            assignFromKeyfile(keyFile, "Color Management", "LabGridcieWy", pedited, icm.labgridcieWy, pedited->icm.labgridcieWy);
+            if (keyFile.has_key("Color Management", "aIntent")) {
+                Glib::ustring intent = keyFile.get_string("Color Management", "aIntent");
+
+                if (intent == "Perceptual") {
+                    icm.aRendIntent = RI_PERCEPTUAL;
+                } else if (intent == "Relative") {
+                    icm.aRendIntent = RI_RELATIVE;
+                } else if (intent == "Saturation") {
+                    icm.aRendIntent = RI_SATURATION;
+                } else if (intent == "Absolute") {
+                    icm.aRendIntent = RI_ABSOLUTE;
+                }
+
+                if (pedited) {
+                    pedited->icm.aRendIntent = true;
+                }
+            }
 
             assignFromKeyfile(keyFile, "Color Management", "OutputProfile", pedited, icm.outputProfile, pedited->icm.outputProfile);
             if (ppVersion < 341) {
@@ -9438,6 +9771,7 @@ bool ProcParams::operator ==(const ProcParams& other) const
         && chmixer == other.chmixer
         && blackwhite == other.blackwhite
         && resize == other.resize
+        && spot == other.spot
         && raw == other.raw
         && icm == other.icm
         && wavelet == other.wavelet

@@ -55,7 +55,7 @@ public:
     void setEditProvider (EditDataProvider* provider) override;
 
     // EditSubscriber interface
-    CursorShape getCursor(int objectID) const override;
+    CursorShape getCursor(int objectID, int xPos, int yPos) const override;
     bool mouseOver(int modifierKey) override;
     bool button1Pressed(int modifierKey) override;
     bool button1Released() override;

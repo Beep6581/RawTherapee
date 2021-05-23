@@ -414,6 +414,10 @@ void Options::setDefaults()
     customEditorProg = "";
     CPBKeys = CPBKT_TID;
     editorToSendTo = 1;
+    editor_out_dir = EDITOR_OUT_DIR_TEMP;
+    editor_custom_out_dir = "";
+    editor_float32 = false;
+    editor_bypass_output_profile = false;
     favoriteDirs.clear();
     tpOpen.clear();
     autoSaveTpOpen = true;
@@ -483,7 +487,7 @@ void Options::setDefaults()
     menuGroupFileOperations = true;
     menuGroupProfileOperations = true;
     menuGroupExtProg = true;
-    showtooltip = true;
+    showtooltip = false;
 
     ICCPC_primariesPreset = "sRGB",
     ICCPC_redPrimaryX = 0.6400;
@@ -823,6 +827,28 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("External Editor", "CustomEditor")) {
                     customEditorProg = keyFile.get_string("External Editor", "CustomEditor");
                 }
+                
+                if (keyFile.has_key("External Editor", "OutputDir")) {
+                    int v = keyFile.get_integer("External Editor", "OutputDir");
+                    if (v < int(EDITOR_OUT_DIR_TEMP) || v > int(EDITOR_OUT_DIR_CUSTOM)) {
+                        editor_out_dir = EDITOR_OUT_DIR_TEMP;
+                    } else {
+                        editor_out_dir = EditorOutDir(v);
+                    }
+                }
+
+                if (keyFile.has_key("External Editor", "CustomOutputDir")) {
+                    editor_custom_out_dir = keyFile.get_string("External Editor", "CustomOutputDir");
+                }
+
+                if (keyFile.has_key("External Editor", "Float32")) {
+                    editor_float32 = keyFile.get_boolean("External Editor", "Float32");
+                }
+
+                if (keyFile.has_key("External Editor", "BypassOutputProfile")) {
+                    editor_bypass_output_profile = keyFile.get_boolean("External Editor", "BypassOutputProfile");
+                }
+                
             }
 
             if (keyFile.has_group("Output")) {
@@ -2110,6 +2136,10 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("External Editor", "GimpDir", gimpDir);
         keyFile.set_string("External Editor", "PhotoshopDir", psDir);
         keyFile.set_string("External Editor", "CustomEditor", customEditorProg);
+        keyFile.set_integer("External Editor", "OutputDir", int(editor_out_dir));
+        keyFile.set_string("External Editor", "CustomOutputDir", editor_custom_out_dir);
+        keyFile.set_boolean("External Editor", "Float32", editor_float32);
+        keyFile.set_boolean("External Editor", "BypassOutputProfile", editor_bypass_output_profile);
 
         keyFile.set_boolean("File Browser", "BrowseOnlyRaw", fbOnlyRaw);
         keyFile.set_boolean("File Browser", "BrowserShowsDate", fbShowDateTime);
