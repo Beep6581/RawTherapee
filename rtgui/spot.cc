@@ -185,6 +185,25 @@ void Spot::resetPressed()
     }
 }
 
+/**
+ * Release anything that's currently being dragged.
+ */
+void Spot::releaseEdit()
+{
+    Geometry *loGeom = getVisibleGeometryFromMO (lastObject);
+
+    if (!loGeom) {
+        EditSubscriber::action = EditSubscriber::Action::NONE;
+        return;
+    }
+
+    loGeom->state = Geometry::ACTIVE;
+    sourceIcon.state = Geometry::ACTIVE;
+    EditSubscriber::action = EditSubscriber::Action::NONE;
+    draggedSide = DraggedSide::NONE;
+    updateGeometry();
+}
+
 void Spot::setBatchMode (bool batchMode)
 {
     ToolPanel::setBatchMode (batchMode);
@@ -237,6 +256,7 @@ void Spot::editToggled ()
             listener->refreshPreview(EvSpotEnabledOPA); // reprocess the preview w/o creating History entry
             subscribe();
         } else {
+            releaseEdit();
             unsubscribe();
             listener->unsetTweakOperator(this);
             listener->refreshPreview(EvSpotEnabled); // reprocess the preview w/o creating History entry
