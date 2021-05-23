@@ -65,7 +65,7 @@ protected:
     MyMutex cropMutex;
     ImProcCoordinator* const parent;
     const bool isDetailWindow;
-    EditUniqueID getCurrEditID();
+    EditUniqueID getCurrEditID() const;
     bool setCropSizes(int cropX, int cropY, int cropW, int cropH, int skip, bool internal);
     void freeAll();
 
