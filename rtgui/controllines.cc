@@ -199,6 +199,10 @@ bool ControlLineManager::pick3(bool picked)
 
 bool ControlLineManager::drag1(int modifierKey)
 {
+    if (action != Action::DRAGGING) {
+        return false;
+    }
+
     EditDataProvider* provider = getEditProvider();
 
     if (!provider || selected_object < 1) {
@@ -261,6 +265,20 @@ bool ControlLineManager::drag1(int modifierKey)
     }
 
     return false;
+}
+
+void ControlLineManager::releaseEdit(void)
+{
+    action = Action::NONE;
+
+    if (selected_object > 0) {
+        mouseOverGeometry[selected_object]->state = Geometry::NORMAL;
+    }
+
+    edited = true;
+    callbacks->lineChanged();
+    drawing_line = false;
+    selected_object = -1;
 }
 
 bool ControlLineManager::getEdited(void) const

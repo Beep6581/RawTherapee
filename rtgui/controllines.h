@@ -87,6 +87,8 @@ public:
     ~ControlLineManager();
 
     bool getEdited(void) const;
+    /** Release anything that is currently being dragged. */
+    void releaseEdit(void);
     void removeAll(void);
     /** Sets whether or not the lines are visible and interact-able. */
     void setActive(bool active);
