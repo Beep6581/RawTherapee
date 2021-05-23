@@ -325,6 +325,7 @@ void Gradient::editToggled ()
     if (edit->get_active()) {
         subscribe();
     } else {
+        releaseEdit();
         unsubscribe();
     }
 }
@@ -577,6 +578,19 @@ bool Gradient::drag1(int modifierKey)
     }
 
     return false;
+}
+
+void Gradient::releaseEdit()
+{
+    if (lastObject >= 0) {
+        if (lastObject == 2 || lastObject == 3) {
+            EditSubscriber::visibleGeometry.at(2)->state = Geometry::NORMAL;
+            EditSubscriber::visibleGeometry.at(3)->state = Geometry::NORMAL;
+        } else {
+            EditSubscriber::visibleGeometry.at(lastObject)->state = Geometry::NORMAL;
+        }
+    }
+    action = Action::NONE;
 }
 
 void Gradient::switchOffEditMode ()
