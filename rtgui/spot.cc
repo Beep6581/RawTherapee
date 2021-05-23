@@ -172,6 +172,7 @@ void Spot::resetPressed()
         }
     } else {
         if (!spots.empty()) {
+            EditSubscriber::action = EditSubscriber::Action::NONE;
             spots.clear();
             activeSpot = -1;
             lastObject = -1;
@@ -657,6 +658,10 @@ bool Spot::button3Released()
 
 bool Spot::drag1 (int modifierKey)
 {
+    if (EditSubscriber::action != EditSubscriber::Action::DRAGGING) {
+        return false;
+    }
+
     EditDataProvider *editProvider = getEditProvider();
     int imW, imH;
     editProvider->getImageSize (imW, imH);
@@ -738,6 +743,10 @@ bool Spot::drag1 (int modifierKey)
 
 bool Spot::drag3 (int modifierKey)
 {
+    if (EditSubscriber::action != EditSubscriber::Action::DRAGGING) {
+        return false;
+    }
+
     EditDataProvider *editProvider = getEditProvider();
     int imW, imH;
     editProvider->getImageSize (imW, imH);
