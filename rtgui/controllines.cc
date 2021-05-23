@@ -274,6 +274,9 @@ void ControlLineManager::releaseEdit(void)
     if (selected_object > 0) {
         mouseOverGeometry[selected_object]->state = Geometry::NORMAL;
     }
+    if (prev_obj > 0) {
+        visibleGeometry[prev_obj - 1]->state = Geometry::NORMAL;
+    }
 
     edited = true;
     callbacks->lineChanged();

@@ -198,8 +198,8 @@ void Spot::releaseEdit()
         return;
     }
 
-    loGeom->state = Geometry::ACTIVE;
-    sourceIcon.state = Geometry::ACTIVE;
+    loGeom->state = Geometry::NORMAL;
+    sourceIcon.state = Geometry::NORMAL;
     EditSubscriber::action = EditSubscriber::Action::NONE;
     draggedSide = DraggedSide::NONE;
     updateGeometry();
