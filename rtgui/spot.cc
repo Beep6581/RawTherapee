@@ -567,6 +567,12 @@ bool Spot::button1Pressed (int modifierKey)
 
     if (editProvider) {
         if (lastObject == -1 && (modifierKey & GDK_CONTROL_MASK)) {
+            int imW, imH;
+            const auto startPos = editProvider->posImage;
+            editProvider->getImageSize(imW, imH);
+            if (startPos.x < 0 || startPos.y < 0 || startPos.x > imW || startPos.y > imH) {
+                return false; // Outside of image area.
+            }
             draggedSide = DraggedSide::SOURCE;
             addNewEntry();
             EditSubscriber::action = EditSubscriber::Action::DRAGGING;
