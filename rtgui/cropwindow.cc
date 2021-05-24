@@ -540,7 +540,7 @@ void CropWindow::buttonPress (int button, int type, int bstate, int x, int y)
                         action_y = 0;
                     }
 
-                } else if (iarea->getToolMode () == TMHand) {  // events outside of the image domain
+                } else if (iarea->getToolMode () == TMHand || iarea->getToolMode() == TMPerspective) {  // events outside of the image domain
                     EditSubscriber *editSubscriber = iarea->getCurrSubscriber();
 
                     if (editSubscriber && editSubscriber->getEditingType() == ET_OBJECTS) {

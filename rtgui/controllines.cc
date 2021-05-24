@@ -104,6 +104,9 @@ bool ControlLineManager::button1Pressed(int modifierKey)
             action = Action::DRAGGING;
         }
     } else if (draw_mode && (modifierKey & GDK_CONTROL_MASK)) { // Add new line.
+        if (object < 0) {
+            return false;
+        }
         addLine(dataProvider->posImage, dataProvider->posImage);
         drawing_line = true;
         selected_object = mouseOverGeometry.size() - 1; // Select endpoint.
@@ -125,7 +128,7 @@ bool ControlLineManager::button1Released(void)
     callbacks->lineChanged();
     drawing_line = false;
     selected_object = -1;
-    return false;
+    return true;
 }
 
 bool ControlLineManager::button3Pressed(int modifierKey)
@@ -139,7 +142,7 @@ bool ControlLineManager::button3Pressed(int modifierKey)
     }
 
     action = Action::PICKING;
-    return false;
+    return true;
 }
 
 bool ControlLineManager::pick1(bool picked)
@@ -194,7 +197,7 @@ bool ControlLineManager::pick3(bool picked)
     removeLine((provider->getObject() - 1) / ::ControlLine::OBJ_COUNT);
     prev_obj = -1;
     selected_object = -1;
-    return false;
+    return true;
 }
 
 bool ControlLineManager::drag1(int modifierKey)
@@ -264,7 +267,7 @@ bool ControlLineManager::drag1(int modifierKey)
         autoSetLineType(selected_object);
     }
 
-    return false;
+    return true;
 }
 
 void ControlLineManager::releaseEdit(void)
