@@ -1037,16 +1037,6 @@ double ToolPanelCoordinator::autoDistorRequested()
     return rtengine::ImProcFunctions::getAutoDistor(ipc->getInitialImage()->getFileName(), 400);
 }
 
-void ToolPanelCoordinator::updateTransformPreviewRequested(rtengine::ProcEvent event, bool render_perspective)
-{
-    if (!ipc) {
-        return;
-    }
-
-    ipc->beginUpdateParams()->perspective.render = render_perspective;
-    ipc->endUpdateParams(event);
-}
-
 void ToolPanelCoordinator::spotWBRequested(int size)
 {
 

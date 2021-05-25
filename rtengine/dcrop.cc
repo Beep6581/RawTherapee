@@ -98,7 +98,7 @@ void Crop::setListener(DetailedCropListener* il)
     }
 }
 
-EditUniqueID Crop::getCurrEditID()
+EditUniqueID Crop::getCurrEditID() const
 {
     const EditSubscriber *subscriber = PipetteBuffer::dataProvider ? PipetteBuffer::dataProvider->getCurrSubscriber() : nullptr;
     return subscriber ? subscriber->getEditID() : EUID_None;
@@ -1168,20 +1168,15 @@ void Crop::update(int todo)
     }
 
     if (todo & M_RGBCURVE) {
-        Imagefloat *workingCrop = baseCrop;
         double rrm, ggm, bbm;
         DCPProfileApplyState as;
         DCPProfile *dcpProf = parent->imgsrc->getDCP(params.icm, as);
 
         LUTu histToneCurve;
-        parent->ipf.rgbProc (workingCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve,
+        parent->ipf.rgbProc (baseCrop, laboCrop, this, parent->hltonecurve, parent->shtonecurve, parent->tonecurve,
                             params.toneCurve.saturation, parent->rCurve, parent->gCurve, parent->bCurve, parent->colourToningSatLimit, parent->colourToningSatLimitOpacity, parent->ctColorCurve, parent->ctOpacityCurve, parent->opautili, parent->clToningcurve, parent->cl2Toningcurve,
                             parent->customToneCurve1, parent->customToneCurve2, parent->beforeToneCurveBW, parent->afterToneCurveBW, rrm, ggm, bbm,
                             parent->bwAutoR, parent->bwAutoG, parent->bwAutoB, dcpProf, as, histToneCurve);
-
-        if (workingCrop != baseCrop) {
-            delete workingCrop;
-        }
     }
 
     // apply luminance operations
@@ -1516,10 +1511,10 @@ void Crop::update(int todo)
 
             Glib::ustring prof = params.icm.workingProfile;
 
-            cmsHTRANSFORM dummy = nullptr;
+            cmsHTRANSFORM cmsDummy = nullptr;
             int ill = 0;
-            parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
-            parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, illum, prim, dummy, false, true, true);
+            parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, -5, prof, 2.4, 12.92310, ill, 0, cmsDummy, true, false, false);
+            parent->ipf.workingtrc(tmpImage1.get(), tmpImage1.get(), GW, GH, 5, prof, gamtone, slotone, illum, prim, cmsDummy, false, true, true);
 
             parent->ipf.rgb2lab(*tmpImage1, *labnCrop, params.icm.workingProfile);
             //labnCrop and provis
@@ -1684,7 +1679,7 @@ bool check_need_larger_crop_for_lcp_distortion(int fw, int fh, int x, int y, int
  * If the scale changes, this method will free all buffers and reallocate ones of the new size.
  * It will then tell to the SizeListener that size has changed (sizeChanged)
  */
-bool Crop::setCropSizes(int rcx, int rcy, int rcw, int rch, int skip, bool internal)
+bool Crop::setCropSizes(int cropX, int cropY, int cropW, int cropH, int skip, bool internal)
 {
 
     if (!internal) {
@@ -1693,10 +1688,10 @@ bool Crop::setCropSizes(int rcx, int rcy, int rcw, int rch, int skip, bool inter
 
     bool changed = false;
 
-    rqcropx = rcx;
-    rqcropy = rcy;
-    rqcropw = rcw;
-    rqcroph = rch;
+    rqcropx = cropX;
+    rqcropy = cropY;
+    rqcropw = cropW;
+    rqcroph = cropH;
 
     // store and set requested crop size
     int rqx1 = LIM(rqcropx, 0, parent->fullw - 1);

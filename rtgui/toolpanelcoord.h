@@ -321,7 +321,6 @@ public:
     void autoCropRequested () override;
     void autoPerspRequested (bool corr_pitch, bool corr_yaw, double& rot, double& pitch, double& yaw, const std::vector<rtengine::ControlLine> *lines = nullptr) override;
     double autoDistorRequested () override;
-    void updateTransformPreviewRequested (rtengine::ProcEvent event, bool render_perspective) override;
 
     // spotwblistener interface
     void spotWBRequested (int size) override;
