@@ -2125,26 +2125,8 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
             } else {
                 mean /= (nc * 65535.0);
                 float yb;
-                yb = 100.f * (float) pow((double) mean, 2.2);
-                /*
-                if (mean < 0.15) {
-                    yb = 3.0f;
-                } else if (mean < 0.3) {
-                    yb = 5.0f;
-                } else if (mean < 0.4) {
-                    yb = 10.0f;
-                } else if (mean < 0.45) {
-                    yb = 15.0f;
-                } else if (mean < 0.5) {
-                    yb = 18.0f;
-                } else if (mean < 0.55) {
-                    yb = 23.0f;
-                } else if (mean < 0.6) {
-                    yb = 30.0f;
-                } else {
-                    yb = 45.f;
-                }
-                */
+                yb = 3.f + 100.f * (float) pow((double) mean, 2.4);
+
                 sourceg[sp] = 0.4f * yb;
                 if (settings->verbose) {
                     std::cout << "         no samples found in range, resorting to Yb gray point value " << sourceg[sp]  << std::endl;
