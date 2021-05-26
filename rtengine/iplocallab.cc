@@ -2122,12 +2122,12 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
                 if (settings->verbose) {
                     std::cout << "         computed gray point from " << n << " samples: " << sourceg[sp] << std::endl;
                 }
-            } else {
+            } else {//I change slightly this part of algo - more progressivity...best response in low exposure images
                 mean /= (nc * 65535.0);
                 float yb;
-                yb = 3.1f + 100.f * pow_F(mean, 2.4f);
+                yb = 1.f + 100.f * pow_F(mean, 2.3f);
 
-                sourceg[sp] = 0.4f * yb;
+                sourceg[sp] = yb;
                 if (settings->verbose) {
                     std::cout << "         no samples found in range, resorting to Yb gray point value " << sourceg[sp]  << std::endl;
                 }
