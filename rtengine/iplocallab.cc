@@ -2125,7 +2125,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
             } else {
                 mean /= (nc * 65535.0);
                 float yb;
-                yb = 3.f + 100.f * (float) pow((double) mean, 2.4);
+                yb = 3.1f + 100.f * pow_F(mean, 2.4f);
 
                 sourceg[sp] = 0.4f * yb;
                 if (settings->verbose) {
