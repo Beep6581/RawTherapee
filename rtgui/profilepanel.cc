@@ -759,9 +759,11 @@ void ProfilePanel::procParamsChanged(
     const ParamsEdited* paramsEdited
 )
 {
+printf("ProfilePanel::procParamsChanged 1: event=%d, isCustomSelected=%d, custom=%d\n", ev, isCustomSelected(), custom);
     // to prevent recursion, filter out the events caused by the profilepanel
     if (ev == EvProfileChanged || ev == EvPhotoLoaded) {
-        return;
+printf("ProfilePanel::procParamsChanged 2: event=%d, isCustomSelected=%d, custom=%d\n", ev, isCustomSelected(), custom);
+//        return;
     }
 
     if (!isCustomSelected()) {

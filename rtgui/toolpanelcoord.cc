@@ -454,6 +454,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
 
 void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr)
 {
+    printf("Toolpanelcoordinator::panelChanged 0: event=%d\n", event);
     if (!ipc) {
         return;
     }
@@ -486,9 +487,11 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
     }
 
     // Update "on preview" geometry
+    printf("Toolpanelcoordinator::panelChanged 1: event=%d\n", event);
     if (event == rtengine::EvPhotoLoaded || event == rtengine::EvProfileChanged || event == rtengine::EvHistoryBrowsed || event == rtengine::EvCTRotate) {
         // updating the "on preview" geometry
         int fw, fh;
+    printf("Toolpanelcoordinator::panelChanged 2\n");
         ipc->getInitialImage()->getImageSource()->getFullSize(fw, fh, tr);
         gradient->updateGeometry(params->gradient.centerX, params->gradient.centerY, params->gradient.feather, params->gradient.degree, fw, fh);
     }
