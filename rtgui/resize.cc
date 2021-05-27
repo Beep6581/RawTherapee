@@ -205,9 +205,7 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
     setEnabled (pp->resize.enabled);
     spec->set_active (pp->resize.dataspec);
     allowUpscaling->set_active(pp->resize.allowUpscaling);
-    printf("read 1\n");
-    // setDimensions();    // <HA> Sets Width/Height in the GUI according to value of Specify after loading a .pp3 profile (same behavior as if changed manually)
-    printf("read 2\n");
+    setDimensions();    // Sets Width/Height in the GUI according to value of Specify after loading a .pp3 profile (same behavior as if changed manually)
     updateGUI();
 
     appliesTo->set_active (0);
@@ -445,8 +443,6 @@ void Resize::setDimensions ()
             seconn.block(true);
             scale->block(true);
             
-            printf("setDimensions 0: maxw=%d maxh=%d cropw=%d croph=%d\n", maxw, maxh, cropw, croph);
-
             int refw, refh;
 
             if (appliesTo->get_active_row_number() == 0 && cropw) {
@@ -472,11 +468,9 @@ void Resize::setDimensions ()
 
                 case 1: {
                     // Width mode
-                    printf("setDimensions 1: refw=%d, w=%5.2f h=%5.2f\n", refw, w->get_value(), h->get_value());
                     const double tmp_scale = w->get_value() / static_cast<double>(refw);
                     scale->setValue(tmp_scale);
                     h->set_value(static_cast<double>(static_cast<int>(static_cast<double>(refh) * tmp_scale + 0.5)));
-                    printf("setDimensions 2: refw=%d, w=%5.2f h=%5.2f\n", refw, w->get_value(), h->get_value());
                     break;
                 }
 
