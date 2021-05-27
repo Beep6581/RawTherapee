@@ -448,9 +448,8 @@ double DiagonalCurve::getVal (double t) const
             double htv = xexp(max(mhc * xlog((stretched - mfc) / (1.0 - mfc)),-236.0));
             double hbase = pfull_alt (htv, 0.5, x[4]);
             //this part of the curve isn't affected by highlight, return the base curve
-            if (hbase < 1e-14 ){ 
-                hbase = xexp(max(xlog((stretched - mfc) / (1.0 - mfc)),-236.0));
-                return mfc + (1.0 - mfc) * hbase;
+            if (hbase < 1e-6 ){ 
+                return stretched;
             } else {
                 return mfc + (1.0 - mfc) * xexp(xlog(hbase) / mhc);
             }

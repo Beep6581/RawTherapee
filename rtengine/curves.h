@@ -464,15 +464,6 @@ protected:
             : t + (1.0 - sh) * hl * (0.5 + CurveFactory::baseu_alt(2.0 * x - 1.0) * 0.5) + sh * (1.0 - hl) * (0.5 + CurveFactory::basel_alt(2.0 * x - 1.0) * 0.5);
     }
 
-    //compute pow(x,a) for x, a in [0,1]
-    static inline double curve_pow(double x, double a){
-
-        if (x <= 0.0) return 0.0;
-        double y = xlog(x)*a;
-        if (xisinf(y) ) return 0.0;
-        return xexp(y);
-    }
-
     void fillHash();
     void fillDyByDx();
 
