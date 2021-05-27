@@ -407,14 +407,15 @@ vfloat igammalog(vfloat x, vfloat p, vfloat s, vfloat g2, vfloat g4)
 
 float gammalog(float x, float p, float s, float g3, float g4)
 {
-    return x <= g3 ? x * s : (1.f + g4) * xexpf(xlogf(x) / p) - g4;//continuous
+    return x <= g3 ? x * s : (1.f + g4) * xexpf(xlogf(x) / p) - g4;//used by Nlmeans
 }
 
 #ifdef __SSE2__
 vfloat gammalog(vfloat x, vfloat p, vfloat s, vfloat g3, vfloat g4)
 {
   //  return x <= g3 ? x * s : (1.f + g4) * xexpf(xlogf(x) / p) - g4;//continuous
-    return vself(vmaskf_le(x, g3), x * s, (F2V(1.f) + g4) * xexpf(xlogf(x) / p) - g4);//continuous
+    return vself(vmaskf_le(x, g3), x * s, (F2V(1.f) + g4) * xexpf(xlogf(x) / p) - g4);//improve by Ingo - used by Nlmeans
+    
 }
 #endif
 }
@@ -2084,7 +2085,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
         }
     }
     maxVal *= 1.2f; //or 1.5f;slightly increase max
-    //approximation sourcegray yb  source = 0.4 * yb
+    //approximation sourcegray yb  source =  yb
 
     if (maxVal > minVal) {
         const float log2 = std::log(2.f);
