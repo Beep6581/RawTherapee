@@ -113,7 +113,7 @@ __inline int xilogb(double d) {
     int e = ilogbk(xfabs(d));
     e = d == 0.0  ? FP_ILOGB0 : e;
     e = xisnan(d) ? FP_ILOGBNAN : e;
-    e = xisinf(d) ? INT_MAX : e;
+    e = xisinf(d) ? rtengine::MAXVALD : e;
     return e;
 }
 
