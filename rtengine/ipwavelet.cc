@@ -540,6 +540,9 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     for (int m = 0; m < maxmul; m++) {
         cp.mul[m] = waparams.c[m];
     }
+    for (int m = maxmul; m < 10; m++) {
+        cp.mul[m] = 0.f;
+    }
 
     cp.mul[9] = (float) waparams.sup;
 
