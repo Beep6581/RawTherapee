@@ -1045,7 +1045,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         cp.mul[0] = 0.01f;
                     }
                 }
-                printf("cp4=%f cpmul5=%f cp6=%f cp7=%f cp8=%f\n", (double)cp.mul[4], (double)cp.mul[5],(double)cp.mul[6],(double)cp.mul[7],(double)cp.mul[8]);
+              //  printf("cp4=%f cpmul5=%f cp6=%f cp7=%f cp8=%f\n", (double)cp.mul[4], (double)cp.mul[5],(double)cp.mul[6],(double)cp.mul[7],(double)cp.mul[8]);
 
                 if (levwavL == 6  && cp.noiseena && cp.chromfi == 0.f) {
                     cp.chromfi = 0.01f;
@@ -1065,24 +1065,8 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         levwavL--;
                     }
                 }
-                printf("levwbef=%i \n", levwavL);
-                
- //               if (levwavL == 6  && cp.noiseena && cp.chromfi == 0.f) {
-//                    cp.chromfi = 0.01f;
-//                }
-
-//                if (cp.chromfi > 0.f || cp.chromco > 0.f) {
- //                   if (levwavL < 7) {
-//                        levwavL = 7;
-//                    }
-//                }
                 bool isdenoisL = (cp.lev0n > 0.1f || cp.lev1n > 0.1f || cp.lev2n > 0.1f || cp.lev3n > 0.1f || cp.lev4n > 0.1f);
 
- //               if (levwavL < 5 && cp.noiseena) {
- //                   levwavL = 6;    //to allow edge and denoise  => I always allocate 3 (4) levels..because if user select wavelet it is to do something !!
- //               }
- //               printf("levwafter=%i \n", levwavL);
-                
                 
 /*
                 if(cp.denoicurvh  || cp.levdenhigh > 0.01f) {
