@@ -448,7 +448,11 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     for (int m = 0; m < maxmul; m++) {
         cp.mulC[m] = waparams.ch[m];
     }
-
+    for (int m = maxmul; m < 10; m++) {
+        cp.mulC[m] = 0.f;
+    }
+    
+//printf("maxmul=%i\n", maxmul);
     cp.factor = WaveletParams::LABGRID_CORR_MAX * 3.276f;
     cp.scaling = WaveletParams::LABGRID_CORR_SCALE;
     cp.scaledirect = WaveletParams::LABGRIDL_DIRECT_SCALE;
