@@ -16,6 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <assert.h>
 #include <memory>
 
 #include "controllines.h"
@@ -26,6 +27,53 @@
 #include "../rtengine/perspectivecorrection.h"
 
 using namespace rtengine;
+
+enum GeometryIndex {
+    MO_CANVAS,
+    MO_OBJECT_COUNT,
+
+    VISIBLE_OBJECT_COUNT = 0
+};
+
+/**
+ * Offsets for mouse-over geometry that can be compared to the mouse-over object
+ * ID modded with the control line object count.
+ */
+enum GeometryOffset {
+    OFFSET_LINE = (MO_OBJECT_COUNT + ::ControlLine::LINE) % ::ControlLine::OBJECT_COUNT,
+    OFFSET_ICON = (MO_OBJECT_COUNT + ::ControlLine::ICON) % ::ControlLine::OBJECT_COUNT,
+    OFFSET_BEGIN = (MO_OBJECT_COUNT + ::ControlLine::BEGIN) % ::ControlLine::OBJECT_COUNT,
+    OFFSET_END = (MO_OBJECT_COUNT + ::ControlLine::END) % ::ControlLine::OBJECT_COUNT,
+};
+
+namespace
+{
+
+/**
+ * Returns true if the object matches the offset.
+ */
+constexpr bool checkOffset(int object_id, enum GeometryOffset offset)
+{
+    return object_id % ::ControlLine::OBJECT_COUNT == offset;
+}
+
+/**
+ * Converts a control line mouse-over geometry ID to the visible geometry ID.
+ */
+constexpr int mouseOverIdToVisibleId(int mouse_over_id)
+{
+    return mouse_over_id - MO_OBJECT_COUNT + VISIBLE_OBJECT_COUNT;
+}
+
+/**
+ * Converts a control line mouse-over geometry ID to the control line ID.
+ */
+constexpr int mouseOverIdToLineId(int mouse_over_id)
+{
+    return (mouse_over_id - MO_OBJECT_COUNT) / ::ControlLine::OBJECT_COUNT;
+}
+
+}
 
 ::ControlLine::~ControlLine() = default;
 
@@ -96,8 +144,8 @@ bool ControlLineManager::button1Pressed(int modifierKey)
 
     const int object = dataProvider->getObject();
 
-    if (object > 0) { // A control line.
-        if (object % ::ControlLine::OBJ_COUNT == 2) { // Icon.
+    if (object >= MO_OBJECT_COUNT) { // A control line.
+        if (checkOffset(object, OFFSET_ICON)) { // Icon.
             action = Action::PICKING;
         } else {
             selected_object = object;
@@ -109,7 +157,7 @@ bool ControlLineManager::button1Pressed(int modifierKey)
         }
         addLine(dataProvider->posImage, dataProvider->posImage);
         drawing_line = true;
-        selected_object = mouseOverGeometry.size() - 1; // Select endpoint.
+        selected_object = mouseOverGeometry.size() - ::ControlLine::OBJECT_COUNT + ::ControlLine::END; // Select endpoint.
         action = Action::DRAGGING;
     }
 
@@ -120,7 +168,7 @@ bool ControlLineManager::button1Released(void)
 {
     action = Action::NONE;
 
-    if (selected_object > 0) {
+    if (selected_object >= MO_OBJECT_COUNT) {
         mouseOverGeometry[selected_object]->state = Geometry::NORMAL;
     }
 
@@ -137,7 +185,7 @@ bool ControlLineManager::button3Pressed(int modifierKey)
 
     action = Action::NONE;
 
-    if (!provider || provider->getObject() < 1) {
+    if (!provider || provider->getObject() < MO_OBJECT_COUNT) {
         return false;
     }
 
@@ -155,14 +203,13 @@ bool ControlLineManager::pick1(bool picked)
 
     EditDataProvider* provider = getEditProvider();
 
-    if (!provider || provider->getObject() % ::ControlLine::OBJ_COUNT != 2) {
+    if (!provider || !checkOffset(provider->getObject(), OFFSET_ICON)) {
         return false;
     }
 
     // Change line type.
     int object_id = provider->getObject();
-    ::ControlLine& line =
-        *control_lines[(object_id - 1) / ::ControlLine::OBJ_COUNT];
+    ::ControlLine& line = *control_lines[mouseOverIdToLineId(object_id)];
 
     if (line.type == rtengine::ControlLine::HORIZONTAL) {
         line.icon = line.icon_v;
@@ -172,7 +219,7 @@ bool ControlLineManager::pick1(bool picked)
         line.type = rtengine::ControlLine::HORIZONTAL;
     }
 
-    visibleGeometry[object_id - 1] = line.icon.get();
+    visibleGeometry[mouseOverIdToVisibleId(object_id)] = line.icon.get();
 
     edited = true;
     callbacks->lineChanged();
@@ -194,7 +241,7 @@ bool ControlLineManager::pick3(bool picked)
         return false;
     }
 
-    removeLine((provider->getObject() - 1) / ::ControlLine::OBJ_COUNT);
+    removeLine(mouseOverIdToLineId(provider->getObject()));
     prev_obj = -1;
     selected_object = -1;
     return true;
@@ -208,28 +255,28 @@ bool ControlLineManager::drag1(int modifierKey)
 
     EditDataProvider* provider = getEditProvider();
 
-    if (!provider || selected_object < 1) {
+    if (!provider || selected_object < MO_OBJECT_COUNT) {
         return false;
     }
 
     ::ControlLine& control_line =
-        *control_lines[(selected_object - 1) / ::ControlLine::OBJ_COUNT];
+        *control_lines[mouseOverIdToLineId(selected_object)];
     // 0 == end, 1 == line, 2 == icon, 3 == begin
-    int component = selected_object % ::ControlLine::OBJ_COUNT;
+    int component = selected_object % ::ControlLine::OBJECT_COUNT;
     Coord mouse = provider->posImage + provider->deltaImage;
     Coord delta = provider->deltaImage - drag_delta;
     int ih, iw;
     provider->getImageSize(iw, ih);
 
     switch (component) {
-        case (0): // end
+        case (OFFSET_END): // end
             control_line.end->center = mouse;
             control_line.end->center.clip(iw, ih);
             control_line.line->end = control_line.end->center;
             control_line.end->state = Geometry::DRAGGED;
             break;
 
-        case (1): { // line
+        case (OFFSET_LINE): { // line
             // Constrain delta so the end stays above the image.
             Coord new_delta = control_line.end->center + delta;
             new_delta.clip(iw, ih);
@@ -248,7 +295,7 @@ bool ControlLineManager::drag1(int modifierKey)
             break;
         }
 
-        case (3): // begin
+        case (OFFSET_BEGIN): // begin
             control_line.begin->center = mouse;
             control_line.begin->center.clip(iw, ih);
             control_line.line->begin = control_line.begin->center;
@@ -274,11 +321,11 @@ void ControlLineManager::releaseEdit(void)
 {
     action = Action::NONE;
 
-    if (selected_object > 0) {
+    if (selected_object >= MO_OBJECT_COUNT) {
         mouseOverGeometry[selected_object]->state = Geometry::NORMAL;
     }
-    if (prev_obj > 0) {
-        visibleGeometry[prev_obj - 1]->state = Geometry::NORMAL;
+    if (prev_obj >= MO_OBJECT_COUNT) {
+        visibleGeometry[mouseOverIdToVisibleId(prev_obj)]->state = Geometry::NORMAL;
     }
 
     edited = true;
@@ -307,7 +354,7 @@ bool ControlLineManager::mouseOver(int modifierKey)
 
     int cur_obj = provider->getObject();
 
-    if (cur_obj == 0) { // Canvas
+    if (cur_obj == MO_CANVAS) { // Canvas
         if (draw_mode && modifierKey & GDK_CONTROL_MASK) {
             cursor = CSCrosshair;
         } else {
@@ -315,16 +362,16 @@ bool ControlLineManager::mouseOver(int modifierKey)
         }
     } else if (cur_obj < 0) { // Nothing
         cursor = CSArrow;
-    } else if (cur_obj % ::ControlLine::OBJ_COUNT == 2) { // Icon
-        visibleGeometry[cur_obj - 1]->state = Geometry::PRELIGHT;
+    } else if (checkOffset(cur_obj, OFFSET_ICON)) { // Icon
+        visibleGeometry[mouseOverIdToVisibleId(cur_obj)]->state = Geometry::PRELIGHT;
         cursor = CSArrow;
     } else { // Object
-        visibleGeometry[cur_obj - 1]->state = Geometry::PRELIGHT;
+        visibleGeometry[mouseOverIdToVisibleId(cur_obj)]->state = Geometry::PRELIGHT;
         cursor = CSMove2D;
     }
 
-    if (prev_obj != cur_obj && prev_obj > 0) {
-        visibleGeometry[prev_obj - 1]->state = Geometry::NORMAL;
+    if (prev_obj != cur_obj && prev_obj >= MO_OBJECT_COUNT) {
+        visibleGeometry[mouseOverIdToVisibleId(prev_obj)]->state = Geometry::NORMAL;
     }
 
     prev_obj = cur_obj;
@@ -418,14 +465,29 @@ void ControlLineManager::addLine(Coord begin, Coord end,
     control_line->line = std::move(line);
     control_line->type = type;
 
+    auto assertEqual = [](size_t a, int b) {
+        assert(b >= 0);
+        assert(a == static_cast<size_t>(b));
+    };
+
+    const int base_visible_offset = VISIBLE_OBJECT_COUNT + ::ControlLine::OBJECT_COUNT * control_lines.size();
+    assertEqual(visibleGeometry.size(), base_visible_offset + ::ControlLine::LINE);
     EditSubscriber::visibleGeometry.push_back(control_line->line.get());
+    assertEqual(visibleGeometry.size(), base_visible_offset + ::ControlLine::ICON);
     EditSubscriber::visibleGeometry.push_back(control_line->icon.get());
+    assertEqual(visibleGeometry.size(), base_visible_offset + ::ControlLine::BEGIN);
     EditSubscriber::visibleGeometry.push_back(control_line->begin.get());
+    assertEqual(visibleGeometry.size(), base_visible_offset + ::ControlLine::END);
     EditSubscriber::visibleGeometry.push_back(control_line->end.get());
 
+    const int base_mo_count = MO_OBJECT_COUNT + ::ControlLine::OBJECT_COUNT * control_lines.size();
+    assertEqual(mouseOverGeometry.size(), base_mo_count + ::ControlLine::LINE);
     EditSubscriber::mouseOverGeometry.push_back(control_line->line.get());
+    assertEqual(mouseOverGeometry.size(), base_mo_count + ::ControlLine::ICON);
     EditSubscriber::mouseOverGeometry.push_back(control_line->icon.get());
+    assertEqual(mouseOverGeometry.size(), base_mo_count + ::ControlLine::BEGIN);
     EditSubscriber::mouseOverGeometry.push_back(control_line->begin.get());
+    assertEqual(mouseOverGeometry.size(), base_mo_count + ::ControlLine::END);
     EditSubscriber::mouseOverGeometry.push_back(control_line->end.get());
 
     control_lines.push_back(std::move(control_line));
@@ -433,7 +495,7 @@ void ControlLineManager::addLine(Coord begin, Coord end,
 
 void ControlLineManager::autoSetLineType(int object_id)
 {
-    int line_id = (object_id - 1) / ::ControlLine::OBJ_COUNT;
+    int line_id = mouseOverIdToLineId(object_id);
     ::ControlLine& line = *control_lines[line_id];
 
     int dx = line.begin->center.x - line.end->center.x;
@@ -461,7 +523,8 @@ void ControlLineManager::autoSetLineType(int object_id)
     if (type != line.type) { // Need to update line type.
         line.type = type;
         line.icon = icon;
-        visibleGeometry[line_id * ::ControlLine::OBJ_COUNT + 1] =
+        visibleGeometry[line_id * ::ControlLine::OBJECT_COUNT
++ VISIBLE_OBJECT_COUNT + ::ControlLine::ICON] =
             line.icon.get();
     }
 }
@@ -469,7 +532,7 @@ void ControlLineManager::autoSetLineType(int object_id)
 void ControlLineManager::removeAll(void)
 {
     visibleGeometry.clear();
-    mouseOverGeometry.erase(mouseOverGeometry.begin() + 1,
+    mouseOverGeometry.erase(mouseOverGeometry.begin() + MO_OBJECT_COUNT,
                             mouseOverGeometry.end());
     control_lines.clear();
     prev_obj = -1;
@@ -485,14 +548,13 @@ void ControlLineManager::removeLine(size_t line_id)
     }
 
     visibleGeometry.erase(
-        visibleGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id,
-        visibleGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id
-        + ::ControlLine::OBJ_COUNT
+        visibleGeometry.begin() + ::ControlLine::OBJECT_COUNT * line_id + VISIBLE_OBJECT_COUNT,
+        visibleGeometry.begin() + ::ControlLine::OBJECT_COUNT * line_id + VISIBLE_OBJECT_COUNT
+        + ::ControlLine::OBJECT_COUNT
     );
     mouseOverGeometry.erase(
-        mouseOverGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id + 1,
-        mouseOverGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id
-        + ::ControlLine::OBJ_COUNT + 1
+        mouseOverGeometry.begin() + ::ControlLine::OBJECT_COUNT * line_id + MO_OBJECT_COUNT,
+        mouseOverGeometry.begin() + ::ControlLine::OBJECT_COUNT * line_id + MO_OBJECT_COUNT + ::ControlLine::OBJECT_COUNT
     );
     control_lines.erase(control_lines.begin() + line_id);
 

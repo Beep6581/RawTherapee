@@ -29,8 +29,23 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-#define STATIC_VISIBLE_OBJ_NBR 6
-#define STATIC_MO_OBJ_NBR 6
+enum GeometryIndex {
+    MO_TARGET_DISK,
+    MO_SOURCE_DISC,
+    MO_TARGET_CIRCLE,
+    MO_SOURCE_CIRCLE,
+    MO_TARGET_FEATHER_CIRCLE,
+    MO_SOURCE_FEATHER_CIRCLE,
+    MO_OBJECT_COUNT,
+
+    VISIBLE_SOURCE_ICON = 0,
+    VISIBLE_SOURCE_FEATHER_CIRCLE,
+    VISIBLE_LINK,
+    VISIBLE_SOURCE_CIRCLE,
+    VISIBLE_TARGET_FEATHER_CIRCLE,
+    VISIBLE_TARGET_CIRCLE,
+    VISIBLE_OBJECT_COUNT
+};
 
 Spot::Spot() :
     FoldableToolPanel(this, "spot", M ("TP_SPOT_LABEL"), true, true),
@@ -106,7 +121,7 @@ Spot::~Spot()
 {
     // delete all dynamically allocated geometry
     if (EditSubscriber::visibleGeometry.size()) {
-        for (size_t i = 0; i < EditSubscriber::visibleGeometry.size() - STATIC_VISIBLE_OBJ_NBR; ++i) { // static visible geometry at the end if the list
+        for (size_t i = 0; i < EditSubscriber::visibleGeometry.size() - VISIBLE_OBJECT_COUNT; ++i) { // static visible geometry at the end of the list
             delete EditSubscriber::visibleGeometry.at (i);
         }
     }
@@ -271,16 +286,16 @@ Geometry* Spot::getVisibleGeometryFromMO (int MOID)
         return nullptr;
     }
 
-    if (MOID == 0) {
+    if (MOID == MO_TARGET_DISK) {
         return getActiveSpotIcon();
     }
 
-    if (MOID == 1) { // sourceMODisc
+    if (MOID == MO_SOURCE_DISC) {
         return &sourceIcon;
     }
 
-    if (MOID > STATIC_MO_OBJ_NBR) {
-        return EditSubscriber::visibleGeometry.at(MOID - STATIC_MO_OBJ_NBR);
+    if (MOID > MO_OBJECT_COUNT) {
+        return EditSubscriber::visibleGeometry.at(MOID - MO_OBJECT_COUNT);
     }
 
     return EditSubscriber::mouseOverGeometry.at (MOID);
@@ -296,30 +311,36 @@ void Spot::createGeometry ()
 
     //printf("CreateGeometry(%d)\n", nbrEntry);
     // delete all dynamically allocated geometry
-    if (EditSubscriber::visibleGeometry.size() > STATIC_VISIBLE_OBJ_NBR)
-        for (size_t i = 0; i < EditSubscriber::visibleGeometry.size() - STATIC_VISIBLE_OBJ_NBR; ++i) { // static visible geometry at the end if the list
+    if (EditSubscriber::visibleGeometry.size() > VISIBLE_OBJECT_COUNT)
+        for (size_t i = 0; i < EditSubscriber::visibleGeometry.size() - VISIBLE_OBJECT_COUNT; ++i) { // static visible geometry at the end of the list
             delete EditSubscriber::visibleGeometry.at (i);
         }
 
     // mouse over geometry starts with the static geometry, then the spot's icon geometry
-    EditSubscriber::mouseOverGeometry.resize (STATIC_MO_OBJ_NBR + nbrEntry);
+    EditSubscriber::mouseOverGeometry.resize (MO_OBJECT_COUNT + nbrEntry);
     // visible geometry starts with the spot's icon geometry, then the static geometry
-    EditSubscriber::visibleGeometry.resize (nbrEntry + STATIC_VISIBLE_OBJ_NBR);
+    EditSubscriber::visibleGeometry.resize (nbrEntry + VISIBLE_OBJECT_COUNT);
 
     size_t i = 0, j = 0;
-    EditSubscriber::mouseOverGeometry.at (i++) = &targetMODisc;        // STATIC_MO_OBJ_NBR + 0
-    EditSubscriber::mouseOverGeometry.at (i++) = &sourceMODisc;        // STATIC_MO_OBJ_NBR + 1
-    EditSubscriber::mouseOverGeometry.at (i++) = &targetCircle;        // STATIC_MO_OBJ_NBR + 2
-    EditSubscriber::mouseOverGeometry.at (i++) = &sourceCircle;        // STATIC_MO_OBJ_NBR + 3
-    EditSubscriber::mouseOverGeometry.at (i++) = &targetFeatherCircle; // STATIC_MO_OBJ_NBR + 4
-    EditSubscriber::mouseOverGeometry.at (i++) = &sourceFeatherCircle; // STATIC_MO_OBJ_NBR + 5
+    assert(i == MO_TARGET_DISK);
+    EditSubscriber::mouseOverGeometry.at (i++) = &targetMODisc;        // MO_OBJECT_COUNT + 0
+    assert(i == MO_SOURCE_DISC);
+    EditSubscriber::mouseOverGeometry.at (i++) = &sourceMODisc;        // MO_OBJECT_COUNT + 1
+    assert(i == MO_TARGET_CIRCLE);
+    EditSubscriber::mouseOverGeometry.at (i++) = &targetCircle;        // MO_OBJECT_COUNT + 2
+    assert(i == MO_SOURCE_CIRCLE);
+    EditSubscriber::mouseOverGeometry.at (i++) = &sourceCircle;        // MO_OBJECT_COUNT + 3
+    assert(i == MO_TARGET_FEATHER_CIRCLE);
+    EditSubscriber::mouseOverGeometry.at (i++) = &targetFeatherCircle; // MO_OBJECT_COUNT + 4
+    assert(i == MO_SOURCE_FEATHER_CIRCLE);
+    EditSubscriber::mouseOverGeometry.at (i++) = &sourceFeatherCircle; // MO_OBJECT_COUNT + 5
 
     // recreate all spots geometry
     Cairo::RefPtr<RTSurface> normalImg   = sourceIcon.getNormalImg();
     Cairo::RefPtr<RTSurface> prelightImg = sourceIcon.getPrelightImg();
     Cairo::RefPtr<RTSurface> activeImg   = sourceIcon.getActiveImg();
 
-    for (; j < EditSubscriber::visibleGeometry.size() - STATIC_VISIBLE_OBJ_NBR; ++i, ++j) {
+    for (; j < EditSubscriber::visibleGeometry.size() - VISIBLE_OBJECT_COUNT; ++i, ++j) {
         EditSubscriber::mouseOverGeometry.at (i) = EditSubscriber::visibleGeometry.at (j) = new OPIcon (normalImg, activeImg, prelightImg, Cairo::RefPtr<RTSurface> (nullptr), Cairo::RefPtr<RTSurface> (nullptr), Geometry::DP_CENTERCENTER);
         EditSubscriber::visibleGeometry.at (j)->setActive (true);
         EditSubscriber::visibleGeometry.at (j)->datum = Geometry::IMAGE;
@@ -327,12 +348,19 @@ void Spot::createGeometry ()
         //printf("mouseOverGeometry.at(%d) = %p\n", (unsigned int)i, (void*)EditSubscriber::mouseOverGeometry.at(i));
     }
 
-    EditSubscriber::visibleGeometry.at (j++) = &sourceIcon;          // STATIC_VISIBLE_OBJ_NBR + 0
-    EditSubscriber::visibleGeometry.at (j++) = &sourceFeatherCircle; // STATIC_VISIBLE_OBJ_NBR + 1
-    EditSubscriber::visibleGeometry.at (j++) = &link;                // STATIC_VISIBLE_OBJ_NBR + 2
-    EditSubscriber::visibleGeometry.at (j++) = &sourceCircle;        // STATIC_VISIBLE_OBJ_NBR + 3
-    EditSubscriber::visibleGeometry.at (j++) = &targetFeatherCircle; // STATIC_VISIBLE_OBJ_NBR + 4
-    EditSubscriber::visibleGeometry.at (j++) = &targetCircle;        // STATIC_VISIBLE_OBJ_NBR + 5
+    int visibleOffset = j;
+    assert(j - visibleOffset == VISIBLE_SOURCE_ICON);
+    EditSubscriber::visibleGeometry.at (j++) = &sourceIcon;          // VISIBLE_OBJECT_COUNT + 0
+    assert(j - visibleOffset == VISIBLE_SOURCE_FEATHER_CIRCLE);
+    EditSubscriber::visibleGeometry.at (j++) = &sourceFeatherCircle; // VISIBLE_OBJECT_COUNT + 1
+    assert(j - visibleOffset == VISIBLE_LINK);
+    EditSubscriber::visibleGeometry.at (j++) = &link;                // VISIBLE_OBJECT_COUNT + 2
+    assert(j - visibleOffset == VISIBLE_SOURCE_CIRCLE);
+    EditSubscriber::visibleGeometry.at (j++) = &sourceCircle;        // VISIBLE_OBJECT_COUNT + 3
+    assert(j - visibleOffset == VISIBLE_TARGET_FEATHER_CIRCLE);
+    EditSubscriber::visibleGeometry.at (j++) = &targetFeatherCircle; // VISIBLE_OBJECT_COUNT + 4
+    assert(j - visibleOffset == VISIBLE_TARGET_CIRCLE);
+    EditSubscriber::visibleGeometry.at (j++) = &targetCircle;        // VISIBLE_OBJECT_COUNT + 5
 }
 
 void Spot::updateGeometry()
@@ -440,7 +468,7 @@ void Spot::addNewEntry()
     se.sourcePos = se.targetPos;
     spots.push_back (se); // this make a copy of se ...
     activeSpot = spots.size() - 1;
-    lastObject = 1;
+    lastObject = MO_SOURCE_DISC;
 
     //printf("ActiveSpot = %d\n", activeSpot);
 
@@ -487,11 +515,11 @@ CursorShape Spot::getCursor (int objectID, int xPos, int yPos) const
             return CSEmpty;
         }
 
-        if (objectID == 0 || objectID == 1) {
+        if (objectID == MO_TARGET_DISK || objectID == MO_SOURCE_DISC) {
             return CSMove2D;
         }
-        if (objectID >= 2 && objectID <= 5) {
-            Coord delta(Coord(xPos, yPos) - ((objectID == 3 || objectID == 5) ? spots.at(activeSpot).sourcePos : spots.at(activeSpot).targetPos));
+        if (objectID >= MO_TARGET_CIRCLE && objectID <= MO_SOURCE_FEATHER_CIRCLE) {
+            Coord delta(Coord(xPos, yPos) - ((objectID == MO_SOURCE_CIRCLE || objectID == MO_SOURCE_FEATHER_CIRCLE) ? spots.at(activeSpot).sourcePos : spots.at(activeSpot).targetPos));
             PolarCoord polarPos(delta);
             if (polarPos.angle < 0.) {
                 polarPos.angle += 180.;
@@ -529,19 +557,19 @@ bool Spot::mouseOver (int modifierKey)
         if (editProvider->getObject() > -1) {
             getVisibleGeometryFromMO (editProvider->getObject())->state = Geometry::PRELIGHT;
 
-            if (editProvider->getObject() >= STATIC_MO_OBJ_NBR) {
+            if (editProvider->getObject() >= MO_OBJECT_COUNT) {
                 // a Spot is being edited
                 int oldActiveSpot = activeSpot;
-                activeSpot = editProvider->getObject() - STATIC_MO_OBJ_NBR;
+                activeSpot = editProvider->getObject() - MO_OBJECT_COUNT;
 
                 if (activeSpot != oldActiveSpot) {
                     if (oldActiveSpot > -1) {
                         EditSubscriber::visibleGeometry.at (oldActiveSpot)->state = Geometry::NORMAL;
-                        EditSubscriber::mouseOverGeometry.at (oldActiveSpot + STATIC_MO_OBJ_NBR)->state = Geometry::NORMAL;
+                        EditSubscriber::mouseOverGeometry.at (oldActiveSpot + MO_OBJECT_COUNT)->state = Geometry::NORMAL;
                     }
 
                     EditSubscriber::visibleGeometry.at (activeSpot)->state = Geometry::PRELIGHT;
-                    EditSubscriber::mouseOverGeometry.at (activeSpot + STATIC_MO_OBJ_NBR)->state = Geometry::PRELIGHT;
+                    EditSubscriber::mouseOverGeometry.at (activeSpot + MO_OBJECT_COUNT)->state = Geometry::PRELIGHT;
                     //printf("ActiveSpot = %d (was %d before)\n", activeSpot, oldActiveSpot);
                 }
             }
@@ -550,7 +578,7 @@ bool Spot::mouseOver (int modifierKey)
         lastObject = editProvider->getObject();
 
         if (lastObject > -1 && EditSubscriber::mouseOverGeometry.at (lastObject) == getActiveSpotIcon()) {
-            lastObject = 0;  // targetMODisc
+            lastObject = MO_TARGET_DISK;
         }
 
         updateGeometry();
@@ -578,7 +606,7 @@ bool Spot::button1Pressed (int modifierKey)
             EditSubscriber::action = EditSubscriber::Action::DRAGGING;
             return true;
         } else if (lastObject > -1) {
-            draggedSide = lastObject == 0 ? DraggedSide::TARGET : lastObject == 1 ? DraggedSide::SOURCE : DraggedSide::NONE;
+            draggedSide = lastObject == MO_TARGET_DISK ? DraggedSide::TARGET : lastObject == MO_SOURCE_DISC ? DraggedSide::SOURCE : DraggedSide::NONE;
             getVisibleGeometryFromMO (lastObject)->state = Geometry::DRAGGED;
             EditSubscriber::action = EditSubscriber::Action::DRAGGING;
             return true;
@@ -630,8 +658,8 @@ bool Spot::button3Pressed (int modifierKey)
         return false;
     }
 
-    if ((modifierKey & GDK_CONTROL_MASK) && (EditSubscriber::mouseOverGeometry.at (lastObject) == &targetMODisc || lastObject >= STATIC_MO_OBJ_NBR)) {
-        lastObject = 1;  // sourceMODisc
+    if ((modifierKey & GDK_CONTROL_MASK) && (EditSubscriber::mouseOverGeometry.at (lastObject) == &targetMODisc || lastObject >= MO_OBJECT_COUNT)) {
+        lastObject = MO_SOURCE_DISC;
         sourceIcon.state = Geometry::DRAGGED;
         EditSubscriber::action = EditSubscriber::Action::DRAGGING;
         draggedSide = DraggedSide::SOURCE;
@@ -687,8 +715,8 @@ bool Spot::drag1 (int modifierKey)
             modified = true;
         }
 
-        EditSubscriber::mouseOverGeometry.at (activeSpot + STATIC_MO_OBJ_NBR)->state = Geometry::DRAGGED;
-    } else if (loGeom == &targetMODisc || lastObject >= STATIC_MO_OBJ_NBR) {
+        EditSubscriber::mouseOverGeometry.at (activeSpot + MO_OBJECT_COUNT)->state = Geometry::DRAGGED;
+    } else if (loGeom == &targetMODisc || lastObject >= MO_OBJECT_COUNT) {
         //printf("targetMODisc / deltaPrevImage = %d / %d\n", editProvider->deltaPrevImage.x, editProvider->deltaPrevImage.y);
         rtengine::Coord currPos = spots.at (activeSpot).targetPos;
         spots.at (activeSpot).targetPos += editProvider->deltaPrevImage;

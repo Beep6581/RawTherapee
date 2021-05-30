@@ -30,7 +30,14 @@ class Rectangle;
 class RTSurface;
 
 struct ControlLine {
-    static constexpr int OBJ_COUNT = 4;
+    enum ObjectIndex {
+        LINE,
+        ICON,
+        BEGIN,
+        END,
+        OBJECT_COUNT
+    };
+
     std::unique_ptr<Line> line;
     std::shared_ptr<OPIcon> icon;
     std::shared_ptr<OPIcon> icon_h, icon_v;
