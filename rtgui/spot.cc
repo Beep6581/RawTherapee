@@ -208,14 +208,14 @@ void Spot::releaseEdit()
 {
     Geometry *loGeom = getVisibleGeometryFromMO (lastObject);
 
+    EditSubscriber::action = EditSubscriber::Action::NONE;
+
     if (!loGeom) {
-        EditSubscriber::action = EditSubscriber::Action::NONE;
         return;
     }
 
     loGeom->state = Geometry::NORMAL;
     sourceIcon.state = Geometry::NORMAL;
-    EditSubscriber::action = EditSubscriber::Action::NONE;
     draggedSide = DraggedSide::NONE;
     updateGeometry();
 }
@@ -686,8 +686,6 @@ bool Spot::button3Released()
     updateGeometry();
     EditSubscriber::action = EditSubscriber::Action::NONE;
     return true;
-
-    return false;
 }
 
 bool Spot::drag1 (int modifierKey)
