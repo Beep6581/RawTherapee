@@ -30,7 +30,14 @@ class Rectangle;
 class RTSurface;
 
 struct ControlLine {
-    static constexpr int OBJ_COUNT = 4;
+    enum ObjectIndex {
+        LINE,
+        ICON,
+        BEGIN,
+        END,
+        OBJECT_COUNT
+    };
+
     std::unique_ptr<Line> line;
     std::shared_ptr<OPIcon> icon;
     std::shared_ptr<OPIcon> icon_h, icon_v;
@@ -92,6 +99,8 @@ public:
     std::size_t getHorizontalCount() const;
     /** Returns the number of vertical control lines. */
     std::size_t getVerticalCount() const;
+    /** Release anything that is currently being dragged. */
+    void releaseEdit(void);
     void removeAll(void);
     /** Sets whether or not the lines are visible and interact-able. */
     void setActive(bool active);
