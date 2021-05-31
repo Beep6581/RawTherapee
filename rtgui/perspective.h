@@ -96,6 +96,7 @@ protected:
     void tweakParams(rtengine::procparams::ProcParams &pparams) override;
     void setCamBasedEventsActive (bool active = true);
     void setFocalLengthValue (const rtengine::procparams::ProcParams* pparams, const rtengine::FramesMetaData* metadata);
+    void updateApplyDeleteButtons(void);
 
 public:
 

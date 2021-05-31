@@ -351,6 +351,8 @@ void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
         method->set_active (1);
     }
 
+    updateApplyDeleteButtons();
+
     enableListener ();
 }
 
@@ -739,9 +741,27 @@ void PerspCorrection::setEditProvider(EditDataProvider* provider)
 
 void PerspCorrection::lineChanged(void)
 {
+    updateApplyDeleteButtons();
+
     if (listener) {
         listener->panelChanged(EvPerspControlLines, M("HISTORY_CHANGED"));
     }
+}
+
+void PerspCorrection::updateApplyDeleteButtons(void)
+{
+    if (batchMode) {
+        return;
+    }
+
+    bool edit_mode = lines_button_edit->get_active();
+    bool enough_lines = lines->getHorizontalCount() >= 2 || lines->getVerticalCount() >= 2;
+    const auto &tooltip = M("GENERAL_APPLY")
+        + ((edit_mode && !enough_lines) ? "\n\n" + M("TP_PERSPECTIVE_CONTROL_LINE_APPLY_INVALID_TOOLTIP") : "");
+
+    lines_button_apply->set_sensitive(edit_mode && enough_lines);
+    lines_button_apply->set_tooltip_text(tooltip);
+    lines_button_erase->set_sensitive(edit_mode && lines->size() > 0);
 }
 
 void PerspCorrection::linesApplyButtonPressed(void)
@@ -784,6 +804,7 @@ void PerspCorrection::linesEditButtonPressed(void)
             panel_listener->controlLineEditModeChanged(false);
         }
     }
+    updateApplyDeleteButtons();
 }
 
 void PerspCorrection::linesEraseButtonPressed(void)
@@ -795,6 +816,8 @@ void PerspCorrection::requestApplyControlLines(void)
 {
     if (lines_button_apply->is_sensitive()) {
         linesApplyButtonPressed();
+    } else if (lines_button_edit->get_active()) {
+        lines_button_edit->set_active(false);
     }
 }
 

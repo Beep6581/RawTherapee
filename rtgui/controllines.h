@@ -52,6 +52,7 @@ protected:
     bool draw_mode;
     bool drawing_line;
     bool edited;
+    size_t horizontalCount, verticalCount;
     Cairo::RefPtr<RTSurface> line_icon_h, line_icon_v;
     Cairo::RefPtr<RTSurface> line_icon_h_prelight, line_icon_v_prelight;
     int prev_obj;
@@ -87,6 +88,10 @@ public:
     ~ControlLineManager();
 
     bool getEdited(void) const;
+    /** Returns the number of horizontal control lines. */
+    size_t getHorizontalCount(void) const;
+    /** Returns the number of vertical control lines. */
+    size_t getVerticalCount(void) const;
     void removeAll(void);
     /** Sets whether or not the lines are visible and interact-able. */
     void setActive(bool active);

@@ -36,6 +36,7 @@ ControlLineManager::ControlLineManager():
     draw_mode(false),
     drawing_line(false),
     edited(false),
+    horizontalCount(0), verticalCount(0),
     prev_obj(-1),
     selected_object(-1)
 {
@@ -82,6 +83,16 @@ void ControlLineManager::setDrawMode(bool draw)
 size_t ControlLineManager::size(void) const
 {
     return control_lines.size();
+}
+
+size_t ControlLineManager::getHorizontalCount(void) const
+{
+    return horizontalCount;
+}
+
+size_t ControlLineManager::getVerticalCount(void) const
+{
+    return verticalCount;
 }
 
 bool ControlLineManager::button1Pressed(int modifierKey)
@@ -164,9 +175,13 @@ bool ControlLineManager::pick1(bool picked)
     if (line.type == rtengine::ControlLine::HORIZONTAL) {
         line.icon = line.icon_v;
         line.type = rtengine::ControlLine::VERTICAL;
+        horizontalCount--;
+        verticalCount++;
     } else if (line.type == rtengine::ControlLine::VERTICAL) {
         line.icon = line.icon_h;
         line.type = rtengine::ControlLine::HORIZONTAL;
+        horizontalCount++;
+        verticalCount--;
     }
 
     visibleGeometry[object_id - 1] = line.icon.get();
@@ -405,6 +420,11 @@ void ControlLineManager::addLine(Coord begin, Coord end,
     EditSubscriber::mouseOverGeometry.push_back(control_line->end.get());
 
     control_lines.push_back(std::move(control_line));
+    if (type == rtengine::ControlLine::HORIZONTAL) {
+        horizontalCount++;
+    } else {
+        verticalCount++;
+    }
 }
 
 void ControlLineManager::autoSetLineType(int object_id)
@@ -437,6 +457,13 @@ void ControlLineManager::autoSetLineType(int object_id)
     if (type != line.type) { // Need to update line type.
         line.type = type;
         line.icon = icon;
+        if (type == rtengine::ControlLine::HORIZONTAL) {
+            horizontalCount++;
+            verticalCount--;
+        } else {
+            horizontalCount--;
+            verticalCount++;
+        }
         visibleGeometry[line_id * ::ControlLine::OBJ_COUNT + 1] =
             line.icon.get();
     }
@@ -448,6 +475,7 @@ void ControlLineManager::removeAll(void)
     mouseOverGeometry.erase(mouseOverGeometry.begin() + 1,
                             mouseOverGeometry.end());
     control_lines.clear();
+    horizontalCount = verticalCount = 0;
     prev_obj = -1;
     selected_object = -1;
     edited = true;
@@ -470,6 +498,11 @@ void ControlLineManager::removeLine(size_t line_id)
         mouseOverGeometry.begin() + ::ControlLine::OBJ_COUNT * line_id
         + ::ControlLine::OBJ_COUNT + 1
     );
+    if (control_lines[line_id]->type == rtengine::ControlLine::HORIZONTAL) {
+        horizontalCount--;
+    } else {
+        verticalCount--;
+    }
     control_lines.erase(control_lines.begin() + line_id);
 
     edited = true;
