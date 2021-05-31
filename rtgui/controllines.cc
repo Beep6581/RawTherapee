@@ -80,17 +80,17 @@ void ControlLineManager::setDrawMode(bool draw)
     draw_mode = draw;
 }
 
-size_t ControlLineManager::size(void) const
+std::size_t ControlLineManager::size() const
 {
     return control_lines.size();
 }
 
-size_t ControlLineManager::getHorizontalCount(void) const
+std::size_t ControlLineManager::getHorizontalCount() const
 {
     return horizontalCount;
 }
 
-size_t ControlLineManager::getVerticalCount(void) const
+std::size_t ControlLineManager::getVerticalCount() const
 {
     return verticalCount;
 }
@@ -482,7 +482,7 @@ void ControlLineManager::removeAll(void)
     callbacks->lineChanged();
 }
 
-void ControlLineManager::removeLine(size_t line_id)
+void ControlLineManager::removeLine(std::size_t line_id)
 {
     if (line_id >= control_lines.size()) {
         return;

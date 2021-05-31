@@ -96,9 +96,14 @@ protected:
     void tweakParams(rtengine::procparams::ProcParams &pparams) override;
     void setCamBasedEventsActive (bool active = true);
     void setFocalLengthValue (const rtengine::procparams::ProcParams* pparams, const rtengine::FramesMetaData* metadata);
-    void updateApplyDeleteButtons(void);
+    void updateApplyDeleteButtons();
 
 public:
+
+    /** Minimum number of horizontal lines for horizontal/full correction. */
+    static constexpr std::size_t MIN_HORIZ_LINES = 2;
+    /** Minimum number of vertical lines for vertical/full correction. */
+    static constexpr std::size_t MIN_VERT_LINES = 2;
 
     PerspCorrection ();
 
