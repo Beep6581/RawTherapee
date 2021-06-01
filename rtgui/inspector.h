@@ -22,7 +22,6 @@
 
 #include "guiutils.h"
 
-#include "../rtengine/coord.h"
 #include "../rtengine/coord2d.h"
 
 class InspectorBuffer
@@ -44,18 +43,20 @@ class Inspector final : public Gtk::DrawingArea
 {
 
 private:
-    rtengine::Coord center;
+    rtengine::Coord2D center;
     std::vector<InspectorBuffer*> images;
     InspectorBuffer* currImage;
     bool scaled;  // fit image into window
     double scale; // current scale
     double zoomScale, zoomScaleBegin; // scale during zoom
-    rtengine::Coord centerBegin, dcenterBegin; // center during zoom
+    rtengine::Coord2D centerBegin, dcenterBegin; // center during zoom
     bool active;
     bool pinned;
     bool dirty;
     bool initialized;
     bool fullscreen;  // window is shown in fullscreen mode
+    bool keyDown;
+    bool windowShowing;
 
     sigc::connection delayconn;
     Glib::ustring next_image_path;
@@ -64,6 +65,9 @@ private:
     Gtk::Window *window;
     bool on_key_release(GdkEventKey *event);
     bool on_key_press(GdkEventKey *event);
+
+    void on_window_hide();
+    bool on_inspector_window_state_event(GdkEventWindowState *event);
 
     rtengine::Coord button_pos;
     bool on_button_press_event(GdkEventButton *event) override;
@@ -87,9 +91,15 @@ public:
     ~Inspector() override;
 
     /** @brief Show or hide window
+     * @param pinned pin window
      * @param scaled fit image into window
      */
-    void showWindow(bool scaled, bool fullscreen = true);
+    void showWindow(bool pinned, bool scaled = true);
+
+    /**
+     * Hide the window.
+     */
+    void hideWindow();
 
     /** @brief Mouse movement to a new position
      * @param pos Location of the mouse, in percentage (i.e. [0;1] range) relative to the full size image ; -1,-1 == out of the image

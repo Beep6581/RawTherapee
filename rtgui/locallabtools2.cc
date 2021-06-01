@@ -741,8 +741,10 @@ void LocallabTone::showmasktmMethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if (listener) {
-        listener->panelChanged(EvlocallabshowmaskMethod, "");
+    if(exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabshowmaskMethod, "");
+        }
     }
 }
 
@@ -1864,8 +1866,10 @@ void LocallabRetinex::showmaskretiMethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if (listener) {
-        listener->panelChanged(EvlocallabshowmaskMethod, "");
+    if(exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabshowmaskMethod, "");
+        }
     }
 }
 
@@ -2318,8 +2322,10 @@ void LocallabSharp::showmasksharMethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if (listener) {
-        listener->panelChanged(EvlocallabshowmaskMethod, "");
+    if(exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabshowmaskMethod, "");
+        }
     }
 }
 
@@ -4273,8 +4279,10 @@ void LocallabContrast::showmasklcMethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if (listener) {
-        listener->panelChanged(EvlocallabshowmaskMethod, "");
+    if(exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabshowmaskMethod, "");
+        }
     }
 }
 
@@ -5104,8 +5112,10 @@ void LocallabCBDL::showmaskcbMethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if (listener) {
-        listener->panelChanged(EvlocallabshowmaskMethod, "");
+    if(exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabshowmaskMethod, "");
+        }
     }
 }
 
@@ -5969,8 +5979,10 @@ void LocallabLog::showmaskLMethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if (listener) {
-        listener->panelChanged(EvlocallabshowmaskMethod, "");
+    if(exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabshowmaskMethod, "");
+        }
     }
 }
 
@@ -7257,8 +7269,10 @@ void LocallabMask::showmask_MethodChanged()
         locToolListener->resetOtherMaskView(this);
     }
 
-    if (listener) {
-        listener->panelChanged(EvlocallabshowmaskMethod, "");
+    if(exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabshowmaskMethod, "");
+        }
     }
 }
 

@@ -182,6 +182,8 @@ public:
     void saveThumbnailHeight (int height) override;
     int  getThumbnailHeight () override;
 
+
+    void enableTabMode(bool enable);
     bool isInTabMode() override
     {
         return tbl ? tbl->isInTabMode() : false;

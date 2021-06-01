@@ -4409,6 +4409,7 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
      */
 
    // BENCHFUN
+   
 #ifdef RT_FFTW3F_OMP
     if (multiThread) {
         fftwf_init_threads();
@@ -14199,7 +14200,6 @@ void ImProcFunctions::Lab_Local(
             if (lp.softmet == 0) {
                 ImProcFunctions::softLight(bufexpfin.get(), softLightParams);
             } else if (lp.softmet == 1) {
-
                 const std::unique_ptr<float[]> datain(new float[bfwr * bfhr]);
                 const std::unique_ptr<float[]> dataout(new float[bfwr * bfhr]);
                 const std::unique_ptr<float[]> dE(new float[bfwr * bfhr]);
