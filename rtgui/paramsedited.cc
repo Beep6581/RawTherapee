@@ -1356,6 +1356,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).noiselumc = locallab.spots.at(j).noiselumc && pSpot.noiselumc == otherSpot.noiselumc;
                 locallab.spots.at(j).noiselumdetail = locallab.spots.at(j).noiselumdetail && pSpot.noiselumdetail == otherSpot.noiselumdetail;
                 locallab.spots.at(j).noiselequal = locallab.spots.at(j).noiselequal && pSpot.noiselequal == otherSpot.noiselequal;
+                locallab.spots.at(j).noisegam = locallab.spots.at(j).noisegam && pSpot.noisegam == otherSpot.noisegam;
                 locallab.spots.at(j).noisechrof = locallab.spots.at(j).noisechrof && pSpot.noisechrof == otherSpot.noisechrof;
                 locallab.spots.at(j).noisechroc = locallab.spots.at(j).noisechroc && pSpot.noisechroc == otherSpot.noisechroc;
                 locallab.spots.at(j).noisechrodetail = locallab.spots.at(j).noisechrodetail && pSpot.noisechrodetail == otherSpot.noisechrodetail;
@@ -4361,6 +4362,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).noiselequal = mods.locallab.spots.at(i).noiselequal;
         }
 
+        if (locallab.spots.at(i).noisegam) {
+            toEdit.locallab.spots.at(i).noisegam = mods.locallab.spots.at(i).noisegam;
+        }
+
         if (locallab.spots.at(i).noisechrof) {
             toEdit.locallab.spots.at(i).noisechrof = mods.locallab.spots.at(i).noisechrof;
         }
@@ -7103,6 +7108,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     noiselumc(v),
     noiselumdetail(v),
     noiselequal(v),
+    noisegam(v),
     noisechrof(v),
     noisechroc(v),
     noisechrodetail(v),
@@ -7688,6 +7694,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     noiselumc = v;
     noiselumdetail = v;
     noiselequal = v;
+    noisegam = v;
     noisechrof = v;
     noisechroc = v;
     noisechrodetail = v;

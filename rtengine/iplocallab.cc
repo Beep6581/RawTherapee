@@ -662,6 +662,7 @@ struct local_params {
     int nlpat;
     int nlrad;
     float nlgam;
+    float noisegam;
     float noiselc;
     float noiselc4;
     float noiselc5;
@@ -1599,6 +1600,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.nlpat = locallab.spots.at(sp).nlpat;
     lp.nlrad = locallab.spots.at(sp).nlrad;
     lp.nlgam = locallab.spots.at(sp).nlgam;
+    lp.noisegam = locallab.spots.at(sp).noisegam;
     lp.adjch = (float) locallab.spots.at(sp).adjblur;
     lp.strengt = streng;
     lp.gamm = gam;
@@ -9180,6 +9182,29 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     tmp1.b[ir][jr] = original->b[ir][jr];
                 }
 
+            float gamma = lp.noisegam;
+            rtengine::GammaValues g_a; //gamma parameters
+            double pwr = 1.0 / (double) lp.noisegam;//default 3.0 - gamma Lab
+            double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+            rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
+
+            if(gamma > 1.f) {
+#ifdef _OPENMP
+#   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                for (int y = 0; y < GH; ++y) {
+                    int x = 0;
+#ifdef __SSE2__
+                    for (; x < GW - 3; x += 4) {
+                        STVFU(tmp1.L[y][x], F2V(32768.f) * igammalog(LVFU(tmp1.L[y][x]) / F2V(32768.f), F2V(gamma), F2V(ts), F2V(g_a[2]), F2V(g_a[4])));
+                    }
+#endif
+                    for (;x < GW; ++x) {
+                        tmp1.L[y][x] = 32768.f * igammalog(tmp1.L[y][x] / 32768.f, gamma, ts, g_a[2], g_a[4]);
+                    }
+                }
+            }
+
             //  int DaubLen = 6;
 
             int levwavL = levred;
@@ -9726,11 +9751,27 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 
             }
 
+            if(gamma > 1.f) {
+#ifdef _OPENMP
+#   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                for (int y = 0; y < GH; ++y) {//apply inverse gamma 3.f and put result in range 32768.f
+                    int x = 0;
+#ifdef __SSE2__
+                    for (; x < GW - 3; x += 4) {
+                        STVFU(tmp1.L[y][x], F2V(32768.f) * gammalog(LVFU(tmp1.L[y][x]) / F2V(32768.f), F2V(gamma), F2V(ts), F2V(g_a[3]), F2V(g_a[4])));
+                    }
+#endif
+                    for (; x < GW; ++x) {
+                        tmp1.L[y][x] = 32768.f * gammalog(tmp1.L[y][x] / 32768.f, gamma, ts, g_a[3], g_a[4]);
+                    }
+                }
+            }
+
             if(lp.nlstr > 0) {
                 NLMeans(tmp1.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW, GH, float (sk), multiThread);
-              //  NLMeans(*nlm, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, GW + addsiz, GH + addsiz, float (sk), multiThread);
-
             }
+
             if(lp.smasktyp != 0) {
                 if(lp.enablMask && lp.recothrd != 1.f) {
                     LabImage tmp3(GW, GH);
@@ -9855,6 +9896,29 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                         }
 
                     }
+
+                float gamma = lp.noisegam;
+                rtengine::GammaValues g_a; //gamma parameters
+                double pwr = 1.0 / (double) lp.noisegam;//default 3.0 - gamma Lab
+                double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
+                if(gamma > 1.f) {
+#ifdef _OPENMP
+#   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                    for (int y = 0; y < bfh; ++y) {
+                        int x = 0;
+                
+#ifdef __SSE2__
+                        for (; x <  bfw - 3; x += 4) {
+                            STVFU(bufwv.L[y][x], F2V(32768.f) * igammalog(LVFU(bufwv.L[y][x]) / F2V(32768.f), F2V(gamma), F2V(ts), F2V(g_a[2]), F2V(g_a[4])));
+                        }
+#endif
+                        for (;x < bfw; ++x) {
+                             bufwv.L[y][x] = 32768.f * igammalog(bufwv.L[y][x] / 32768.f, gamma, ts, g_a[2], g_a[4]);
+                        }
+                    }
+                }
 
                 //   int DaubLen = 6;
 
@@ -10398,13 +10462,29 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                     }
                 }
 
+                if(gamma > 1.f) {
+#ifdef _OPENMP
+#   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                    for (int y = 0; y < bfh ; ++y) {//apply inverse gamma 3.f and put result in range 32768.f
+                        int x = 0;
+        
+#ifdef __SSE2__
+                        for (; x < bfw  - 3; x += 4) {
 
-            if(lp.nlstr > 0) {
-                NLMeans(bufwv.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, bfw, bfh, 1.f, multiThread);
-               // NLMeans(*nlm, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, bfw + addsiz, bfh + addsiz, 1.f, multiThread);
+                            STVFU(bufwv.L[y][x], F2V(32768.f) * gammalog(LVFU(bufwv.L[y][x]) / F2V(32768.f), F2V(gamma), F2V(ts), F2V(g_a[3]), F2V(g_a[4])));
+                        }
+#endif
+                        for (; x < bfw ; ++x) {
 
-                
-            }
+                            bufwv.L[y][x] = 32768.f * gammalog(bufwv.L[y][x] / 32768.f, gamma, ts, g_a[3], g_a[4]);
+                        }
+                    }
+                }
+
+                if(lp.nlstr > 0) {
+                    NLMeans(bufwv.L, lp.nlstr, lp.nldet, lp.nlpat, lp.nlrad, lp.nlgam, bfw, bfh, 1.f, multiThread);
+                }
 
 
                 if (lp.smasktyp != 0) {

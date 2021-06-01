@@ -3441,6 +3441,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     noiselumc(0.),
     noiselumdetail(50.),
     noiselequal(7),
+    noisegam(1.),
     noisechrof(0.),
     noisechroc(0.),
     noisechrodetail(50.),
@@ -4552,6 +4553,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && noiselumc == other.noiselumc
         && noiselumdetail == other.noiselumdetail
         && noiselequal == other.noiselequal
+        && noisegam == other.noisegam
         && noisechrof == other.noisechrof
         && noisechroc == other.noisechroc
         && noisechrodetail == other.noisechrodetail
@@ -6206,6 +6208,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->noiselumc, "Locallab", "noiselumc_" + index_str, spot.noiselumc, keyFile);
                     saveToKeyfile(!pedited || spot_edited->noiselumdetail, "Locallab", "noiselumdetail_" + index_str, spot.noiselumdetail, keyFile);
                     saveToKeyfile(!pedited || spot_edited->noiselequal, "Locallab", "noiselequal_" + index_str, spot.noiselequal, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->noisegam, "Locallab", "noisegam_" + index_str, spot.noisegam, keyFile);
                     saveToKeyfile(!pedited || spot_edited->noisechrof, "Locallab", "noisechrof_" + index_str, spot.noisechrof, keyFile);
                     saveToKeyfile(!pedited || spot_edited->noisechroc, "Locallab", "noisechroc_" + index_str, spot.noisechroc, keyFile);
                     saveToKeyfile(!pedited || spot_edited->noisechrodetail, "Locallab", "noisechrodetail_" + index_str, spot.noisechrodetail, keyFile);
@@ -8181,6 +8184,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "noiselumc_" + index_str, pedited, spot.noiselumc, spotEdited.noiselumc);
                 assignFromKeyfile(keyFile, "Locallab", "noiselumdetail_" + index_str, pedited, spot.noiselumdetail, spotEdited.noiselumdetail);
                 assignFromKeyfile(keyFile, "Locallab", "noiselequal_" + index_str, pedited, spot.noiselequal, spotEdited.noiselequal);
+                assignFromKeyfile(keyFile, "Locallab", "noisegam_" + index_str, pedited, spot.noisegam, spotEdited.noisegam);
                 assignFromKeyfile(keyFile, "Locallab", "noisechrof_" + index_str, pedited, spot.noisechrof, spotEdited.noisechrof);
                 assignFromKeyfile(keyFile, "Locallab", "noisechroc_" + index_str, pedited, spot.noisechroc, spotEdited.noisechroc);
                 assignFromKeyfile(keyFile, "Locallab", "noisechrodetail_" + index_str, pedited, spot.noisechrodetail, spotEdited.noisechrodetail);

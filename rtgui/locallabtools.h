@@ -722,6 +722,7 @@ private:
     Adjuster* const noiselumc;
     Adjuster* const noiselumdetail;
     Adjuster* const noiselequal;
+    Adjuster* const noisegam;
     CurveEditorGroup* const LocalcurveEditorwavhue;
     FlatCurveEditor* wavhue;
     Adjuster* const noisechrof;

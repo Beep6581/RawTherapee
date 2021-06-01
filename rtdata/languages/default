@@ -1297,6 +1297,7 @@ HISTORY_MSG_1049;Local - TM strength
 HISTORY_MSG_1050;Local - Log encoding chroma
 HISTORY_MSG_1051;Local - Residual wavelet gamma
 HISTORY_MSG_1052;Local - Residual wavelet slope
+HISTORY_MSG_1053;Local - Denoise gamma
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -3034,6 +3035,8 @@ TP_LOCALLAB_NOISECHROC_TOOLTIP;If superior to zero, high quality algorithm is en
 TP_LOCALLAB_NOISECHRODETAIL;Chroma detail recovery
 TP_LOCALLAB_NOISECHROFINE;Fine chroma (Wav)
 TP_LOCALLAB_NOISEDETAIL_TOOLTIP;Disabled if slider = 100
+TP_LOCALLAB_NOISEGAM;Gamma
+TP_LOCALLAB_NOISEGAM_TOOLTIP;If gamma = 1 Luminance "Lab" is used. If gamma = 3.0 Luminance "linear" is used.\nLower values preserve details and texture, higher values increase denoise.
 TP_LOCALLAB_NOISELEQUAL;Equalizer white-black
 TP_LOCALLAB_NOISELUMCOARSE;Luminance coarse (Wav)
 TP_LOCALLAB_NOISELUMDETAIL;Luma detail recovery

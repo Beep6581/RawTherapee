@@ -6380,6 +6380,7 @@ LocallabBlur::LocallabBlur():
     noiselumc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMCOARSE"), MINCHRO, MAXCHROCC, 0.01, 0.))),//unused here, but used for normalize_mean_dt 
     noiselumdetail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELUMDETAIL"), 0., 100., 0.01, 50.))),
     noiselequal(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISELEQUAL"), -2, 10, 1, 7, Gtk::manage(new RTImage("circle-white-small.png")), Gtk::manage(new RTImage("circle-black-small.png"))))),
+    noisegam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISEGAM"), 1.0, 5., 0.1, 1.))),
     LocalcurveEditorwavhue(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_WAVELET_DENOISEHUE"))),
     wavhue(static_cast<FlatCurveEditor*>(LocalcurveEditorwavhue->addCurve(CT_Flat, "", nullptr, false, true))),
     noisechrof(Gtk::manage(new Adjuster(M("TP_LOCALLAB_NOISECHROFINE"), MINCHRO, MAXCHRO, 0.01, 0.))),
@@ -6548,6 +6549,8 @@ LocallabBlur::LocallabBlur():
     noiselumdetail->setAdjusterListener(this);
 
     noiselequal->setAdjusterListener(this);
+
+    noisegam->setAdjusterListener(this);
 
     LocalcurveEditorwavhue->setCurveListener(this);
 
@@ -6726,6 +6729,7 @@ LocallabBlur::LocallabBlur():
     // wavBox->pack_start(*noiselumc);//unused here, but used for normalize_mean_dt 
     wavBox->pack_start(*noiselumdetail);
     wavBox->pack_start(*noiselequal);
+    wavBox->pack_start(*noisegam);
     wavBox->pack_start(*LocalcurveEditorwavhue, Gtk::PACK_SHRINK, 4);
     ToolParamBlock* const wavBox1 = Gtk::manage(new ToolParamBlock());
     wavBox1->pack_start(*maskusable, Gtk::PACK_SHRINK, 0);
@@ -6862,6 +6866,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         invmaskd->set_tooltip_text(M("TP_LOCALLAB_MASKDEINV_TOOLTIP"));
         LocalcurveEditorwavden->setTooltip(M("TP_LOCALLAB_WASDEN_TOOLTIP"));
         noiselequal->set_tooltip_text(M("TP_LOCALLAB_DENOIEQUAL_TOOLTIP"));
+        noisegam->set_tooltip_text(M("TP_LOCALLAB_NOISEGAM_TOOLTIP"));
         noiselumdetail->set_tooltip_text(M("TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP"));
         noisechrof->set_tooltip_text(M("TP_LOCALLAB_DENOICHROF_TOOLTIP"));
         noisechroc->set_tooltip_text(M("TP_LOCALLAB_DENOICHROC_TOOLTIP"));
@@ -6928,6 +6933,7 @@ void LocallabBlur::updateAdviceTooltips(const bool showTooltips)
         invmaskd->set_tooltip_text("");
         LocalcurveEditorwavden->setTooltip("");
         noiselequal->set_tooltip_text("");
+        noisegam->set_tooltip_text("");
         noiselumdetail->set_tooltip_text("");
         noisechrof->set_tooltip_text("");
         noisechroc->set_tooltip_text("");
@@ -6985,6 +6991,7 @@ void LocallabBlur::neutral_pressed ()
     noiselumf0->setValue(defSpot.noiselumf0);
     noiselumdetail->setValue(defSpot.noiselumdetail);
     noiselequal->setValue(defSpot.noiselequal);
+    noisegam->setValue(defSpot.noisegam);
     noisechrof->setValue(defSpot.noisechrof);
     noisechroc->setValue(defSpot.noisechroc);
     noisechrodetail->setValue(defSpot.noisechrodetail);
@@ -7169,6 +7176,7 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
         lnoiselow->setValue(spot.lnoiselow);
         levelthrlow->setValue(spot.levelthrlow);
         noiselequal->setValue((double)spot.noiselequal);
+        noisegam->setValue((double)spot.noisegam);
         noisechrof->setValue(spot.noisechrof);
         noisechroc->setValue(spot.noisechroc);
         noisechrodetail->setValue(spot.noisechrodetail);
@@ -7316,6 +7324,7 @@ void LocallabBlur::write(rtengine::procparams::ProcParams* pp, ParamsEdited* ped
         spot.lnoiselow    = lnoiselow->getValue();
         spot.levelthrlow    = levelthrlow->getValue();
         spot.noiselequal = noiselequal->getIntValue();
+        spot.noisegam = noisegam->getValue();
         spot.noisechrof = noisechrof->getValue();
         spot.noisechroc = noisechroc->getValue();
         spot.noisechrodetail = noisechrodetail->getValue();
@@ -7398,6 +7407,7 @@ void LocallabBlur::setDefaults(const rtengine::procparams::ProcParams* defParams
         lnoiselow->setDefault(defSpot.lnoiselow);
         levelthrlow->setDefault(defSpot.levelthrlow);
         noiselequal->setDefault((double)defSpot.noiselequal);
+        noisegam->setDefault(defSpot.noisegam);
         noisechrof->setDefault(defSpot.noisechrof);
         noisechroc->setDefault(defSpot.noisechroc);
         noisechrodetail->setDefault(defSpot.noisechrodetail);
@@ -7619,6 +7629,13 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabnoiselequal,
                                        noiselequal->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == noisegam) {
+            if (listener) {
+                listener->panelChanged(Evlocallabnoisegam,
+                                       noisegam->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

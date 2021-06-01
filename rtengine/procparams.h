@@ -1262,6 +1262,7 @@ struct LocallabParams {
         double noiselumc;
         double noiselumdetail;
         int noiselequal;
+        double noisegam;
         double noisechrof;
         double noisechroc;
         double noisechrodetail;

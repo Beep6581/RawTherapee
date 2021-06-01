@@ -669,6 +669,7 @@ public:
         bool noiselumc;
         bool noiselumdetail;
         bool noiselequal;
+        bool noisegam;
         bool noisechrof;
         bool noisechroc;
         bool noisechrodetail;
