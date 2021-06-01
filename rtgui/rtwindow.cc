@@ -287,6 +287,7 @@ RTWindow::RTWindow ()
     signal_window_state_event().connect ( sigc::mem_fun (*this, &RTWindow::on_window_state_event) );
     onConfEventConn = signal_configure_event().connect ( sigc::mem_fun (*this, &RTWindow::on_configure_event) );
     signal_key_press_event().connect ( sigc::mem_fun (*this, &RTWindow::keyPressed) );
+    signal_key_release_event().connect(sigc::mem_fun(*this, &RTWindow::keyReleased));
 
     if (simpleEditor) {
         epanel = Gtk::manage ( new EditorPanel (nullptr) );
@@ -758,6 +759,14 @@ bool RTWindow::keyPressed (GdkEventKey* event)
         return ep->handleShortcutKey (event);
     }
 
+    return false;
+}
+
+bool RTWindow::keyReleased(GdkEventKey *event)
+{
+    if (mainNB->get_current_page() == mainNB->page_num(*fpanel)) {
+        return fpanel->handleShortcutKeyRelease(event);
+    }
     return false;
 }
 
