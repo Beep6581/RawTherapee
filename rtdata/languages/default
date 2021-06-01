@@ -1298,6 +1298,7 @@ HISTORY_MSG_1050;Local - Log encoding chroma
 HISTORY_MSG_1051;Local - Residual wavelet gamma
 HISTORY_MSG_1052;Local - Residual wavelet slope
 HISTORY_MSG_1053;Local - Denoise gamma
+HISTORY_MSG_1054;Local - Wavelet gamma
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2784,6 +2785,7 @@ TP_LOCALLAB_FFTWBLUR;ƒ - Always Use Fast Fourier Transform
 TP_LOCALLAB_FULLIMAGE;Black-Ev and White-Ev for whole image
 TP_LOCALLAB_FULLIMAGELOG_TOOLTIP;Calculates the Ev levels for the whole image.
 TP_LOCALLAB_GAM;Gamma
+TP_LOCALLAB_GAMW;Gamma (wavelet pyramids)
 TP_LOCALLAB_GAMFRA;Tone response curve (TRC)
 TP_LOCALLAB_GAMM;Gamma
 TP_LOCALLAB_GAMMASKCOL;Gamma
