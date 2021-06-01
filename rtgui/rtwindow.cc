@@ -579,9 +579,10 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
 {
     if (options.multiDisplayMode > 0) {
         EditWindow * wndEdit = EditWindow::getInstance (this);
-        wndEdit->show();
-        wndEdit->restoreWindow(); // Need to be called after RTWindow creation to work with all OS Windows Manager
         wndEdit->addEditorPanel (ep, name);
+        wndEdit->show_all();
+        wndEdit->restoreWindow(); // Need to be called after RTWindow creation to work with all OS Windows Manager
+        ep->setAspect();
         wndEdit->toFront();
     } else {
         ep->setParent (this);
@@ -1123,14 +1124,20 @@ void RTWindow::setWindowSize ()
     const int macMenuBarHeight = lWorkAreaRect.get_y();
 
     // Place RT window to saved one in options file
-    if (options.windowX <= lMonitorRect.get_x() + lMonitorRect.get_width() && options.windowY <= lMonitorRect.get_y() + lMonitorRect.get_height() - macMenuBarHeight) {
+    if (options.windowX <= lMonitorRect.get_x() + lMonitorRect.get_width()
+            && options.windowX >= 0
+            && options.windowY <= lMonitorRect.get_y() + lMonitorRect.get_height() - macMenuBarHeight
+            && options.windowY >= 0) {
         move (options.windowX, options.windowY + macMenuBarHeight);
     } else {
         move (lMonitorRect.get_x(), lMonitorRect.get_y() + macMenuBarHeight);
     }
 #else
     // Place RT window to saved one in options file
-    if (options.windowX <= lMonitorRect.get_x() + lMonitorRect.get_width() && options.windowY <= lMonitorRect.get_y() + lMonitorRect.get_height()) {
+    if (options.windowX <= lMonitorRect.get_x() + lMonitorRect.get_width()
+            && options.windowX >= 0
+            && options.windowY <= lMonitorRect.get_y() + lMonitorRect.get_height()
+            && options.windowY >= 0) {
         move (options.windowX, options.windowY);
     } else {
         move (lMonitorRect.get_x(), lMonitorRect.get_y());

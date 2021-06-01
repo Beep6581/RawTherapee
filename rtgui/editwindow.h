@@ -21,6 +21,7 @@
 #include <gtkmm.h>
 
 #include "rtimage.h"
+#include "guiutils.h"
 
 class EditorPanel;
 class RTWindow;
@@ -45,6 +46,8 @@ private:
     void toggleFullscreen ();
     bool updateResolution();
     void setAppIcon();
+
+    IdleRegister idle_register;
 
 public:
     // Check if the system has more than one display and option is set

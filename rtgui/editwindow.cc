@@ -124,14 +124,20 @@ void EditWindow::restoreWindow()
         const int macMenuBarHeight = lWorkAreaRect.get_y();
 
         // Place RT window to saved one in options file
-        if (options.meowX <= lMonitorRect.get_x() + lMonitorRect.get_width() && options.meowY <= lMonitorRect.get_y() + lMonitorRect.get_height() - macMenuBarHeight) {
+        if (options.meowX <= lMonitorRect.get_x() + lMonitorRect.get_width()
+                && options.meowX >= 0
+                && options.meowY <= lMonitorRect.get_y() + lMonitorRect.get_height() - macMenuBarHeight
+                && options.meowY >= 0) {
             move(options.meowX, options.meowY + macMenuBarHeight);
         } else {
             move(lMonitorRect.get_x(), lMonitorRect.get_y() + macMenuBarHeight);
         }
 #else
         // Place RT window to saved one in options file
-        if (options.meowX <= lMonitorRect.get_x() + lMonitorRect.get_width() && options.meowY <= lMonitorRect.get_y() + lMonitorRect.get_height()) {
+        if (options.meowX <= lMonitorRect.get_x() + lMonitorRect.get_width()
+                && options.meowX >= 0
+                && options.meowY <= lMonitorRect.get_y() + lMonitorRect.get_height()
+                && options.meowY >= 0) {
             move(options.meowX, options.meowY);
         } else {
             move(lMonitorRect.get_x(), lMonitorRect.get_y());
@@ -145,8 +151,6 @@ void EditWindow::restoreWindow()
             unmaximize();
             resize(options.meowWidth, options.meowHeight);
         }
-
-        show_all();
 
         isClosed = false;
 
@@ -274,7 +278,8 @@ void EditWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
     epanels[ name ] = ep;
     filesEdited.insert ( name );
     parent->fpanel->refreshEditedState (filesEdited);
-    ep->setAspect();
+
+    show_all();
 }
 
 void EditWindow::remEditorPanel (EditorPanel* ep)
@@ -314,10 +319,20 @@ bool EditWindow::selectEditorPanel(const std::string &name)
 
 void EditWindow::toFront ()
 {
-    // when using the secondary window on the same monitor as the primary window we need to present the secondary window.
+    // When using the secondary window on the same monitor as the primary window we need to present the secondary window.
     // If we don't, it will stay in background when opening 2nd, 3rd... editor, which is annoying
     // It will also deiconify the window
-    present();
+    // To avoid unexpected behavior while window is being updated, present() function is called after at idle
+    idle_register.add(
+        [this]()-> bool
+        {
+            onConfEventConn.block(true); // Avoid getting size and position while window is being moved, maximized, ...
+            present();
+            onConfEventConn.block(false);
+
+            return false;
+        }
+    );
 }
 
 bool EditWindow::keyPressed (GdkEventKey* event)
