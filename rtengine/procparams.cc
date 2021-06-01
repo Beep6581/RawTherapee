@@ -3799,6 +3799,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     residshathr(30.0),
     residhi(0.0),
     residhithr(70.0),
+    gamlc(1.0),
     residgam(2.40),
     residslop(12.94),
     residblur(0.0),
@@ -4689,6 +4690,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && residshathr == other.residshathr
         && residhi == other.residhi
         && residhithr == other.residhithr
+        && gamlc == other.gamlc
         && residgam == other.residgam
         && residslop == other.residslop
         && residblur == other.residblur
@@ -6348,6 +6350,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->residshathr, "Locallab", "Residshathr_" + index_str, spot.residshathr, keyFile);
                     saveToKeyfile(!pedited || spot_edited->residhi, "Locallab", "Residhi_" + index_str, spot.residhi, keyFile);
                     saveToKeyfile(!pedited || spot_edited->residhithr, "Locallab", "Residhithr_" + index_str, spot.residhithr, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->gamlc, "Locallab", "Gamlc_" + index_str, spot.gamlc, keyFile);
                     saveToKeyfile(!pedited || spot_edited->residgam, "Locallab", "Residgam_" + index_str, spot.residgam, keyFile);
                     saveToKeyfile(!pedited || spot_edited->residslop, "Locallab", "Residslop_" + index_str, spot.residslop, keyFile);
                     saveToKeyfile(!pedited || spot_edited->residblur, "Locallab", "Residblur_" + index_str, spot.residblur, keyFile);
@@ -8344,6 +8347,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Residsha_" + index_str, pedited, spot.residsha, spotEdited.residsha);
                 assignFromKeyfile(keyFile, "Locallab", "Residshathr_" + index_str, pedited, spot.residshathr, spotEdited.residshathr);
                 assignFromKeyfile(keyFile, "Locallab", "Residhi_" + index_str, pedited, spot.residhi, spotEdited.residhi);
+                assignFromKeyfile(keyFile, "Locallab", "Gamlc_" + index_str, pedited, spot.gamlc, spotEdited.gamlc);
                 assignFromKeyfile(keyFile, "Locallab", "Residhithr_" + index_str, pedited, spot.residhithr, spotEdited.residhithr);
                 assignFromKeyfile(keyFile, "Locallab", "Residgam_" + index_str, pedited, spot.residgam, spotEdited.residgam);
                 assignFromKeyfile(keyFile, "Locallab", "Residslop_" + index_str, pedited, spot.residslop, spotEdited.residslop);

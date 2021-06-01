@@ -7923,6 +7923,7 @@ void LocallabBlur::convertParamToNormal()
     csThresholdblur->setValue<int>(defSpot.csthresholdblur);
     lnoiselow->setValue(defSpot.lnoiselow);
     nlrad->setValue(defSpot.nlrad);
+    noisegam->setValue(defSpot.noisegam);
     
     // Enable all listeners
     enableListener();
@@ -7978,6 +7979,7 @@ void LocallabBlur::convertParamToSimple()
     nlpat->setValue(defSpot.nlpat);
     nlrad->setValue(defSpot.nlrad);
     nlgam->setValue(defSpot.nlgam);
+    noisegam->setValue(defSpot.noisegam);
     
     // Enable all listeners
     enableListener();
@@ -8009,6 +8011,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             nlrad->hide();
             nlgam->hide();
             scalegr->hide();
+            noisegam->hide();
             break;
 
         case Normal:
@@ -8034,6 +8037,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             nlrad->hide();
             nlgam->show();
             scalegr->show();
+            noisegam->hide();
 
             if (blMethod->get_active_row_number() == 2) {
                 expdenoise2->show();
@@ -8113,6 +8117,7 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
             nlpat->show();
             nlrad->show();
             nlgam->show();
+            noisegam->show();
 
             if(lnoiselow->getValue()!= 1.) {
                 if (showmaskblMethodtyp->get_active_row_number() == 0) {

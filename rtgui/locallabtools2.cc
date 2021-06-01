@@ -2352,6 +2352,7 @@ LocallabContrast::LocallabContrast():
     residshathr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDSHATHR"), 0., 100., 1., 30.))),
     residhi(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDHI"), -100., 100., 1., 0.))),
     residhithr(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RESIDHITHR"), 0., 100., 1., 70.))),
+    gamlc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMW"), 0.33, 2., 0.01, 1.))),
     residgam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMSH"), 0.25, 15.0, 0.01, 2.4))),
     residslop(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOSH"), 0.0, 500.0, 0.01, 12.92))),
     sensilc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
@@ -2485,6 +2486,9 @@ LocallabContrast::LocallabContrast():
     residhi->setAdjusterListener(this);
 
     residhithr->setAdjusterListener(this);
+
+    gamlc->setAdjusterListener(this);
+
 
     residgam->setAdjusterListener(this);
 
@@ -2819,6 +2823,7 @@ LocallabContrast::LocallabContrast():
     blurlevelFrame->add(*blurlevcontBox);
     blurcontBox->pack_start(*blurlevelFrame);
     expcontrastpyr->add(*blurcontBox, false);
+    pack_start(*gamlc);    
     pack_start(*expcontrastpyr);
     ToolParamBlock* const blurcontBox2 = Gtk::manage(new ToolParamBlock());
     Gtk::Frame* const contFrame2 = Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CONTFRA")));
@@ -3149,6 +3154,7 @@ void LocallabContrast::read(const rtengine::procparams::ProcParams* pp, const Pa
         residshathr->setValue(spot.residshathr);
         residhi->setValue(spot.residhi);
         residhithr->setValue(spot.residhithr);
+        gamlc->setValue((double)spot.gamlc);
         residgam->setValue(spot.residgam);
         residslop->setValue(spot.residslop);
         sensilc->setValue((double)spot.sensilc);
@@ -3273,6 +3279,7 @@ void LocallabContrast::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.residshathr = residshathr->getValue();
         spot.residhi = residhi->getValue();
         spot.residhithr = residhithr->getValue();
+        spot.gamlc = gamlc->getValue();
         spot.residgam = residgam->getValue();
         spot.residslop = residslop->getValue();
         spot.sensilc = sensilc->getIntValue();
@@ -3376,6 +3383,7 @@ void LocallabContrast::setDefaults(const rtengine::procparams::ProcParams* defPa
         residshathr->setDefault(defSpot.residshathr);
         residhi->setDefault(defSpot.residhi);
         residhithr->setDefault(defSpot.residhithr);
+        gamlc->setDefault((double)defSpot.gamlc);
         residgam->setDefault(defSpot.residgam);
         residslop->setDefault(defSpot.residslop);
         sensilc->setDefault((double)defSpot.sensilc);
@@ -3504,6 +3512,13 @@ void LocallabContrast::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabresidhithr,
                                        residhithr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == gamlc) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgamlc,
+                                       gamlc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -3890,6 +3905,7 @@ void LocallabContrast::convertParamToNormal()
 
     // Disable all listeners
     disableListener();
+    gamlc->setValue(defSpot.gamlc);
 
     // Set hidden GUI widgets in Normal mode to default spot values
     origlc->set_active(defSpot.origlc);
@@ -3966,6 +3982,7 @@ void LocallabContrast::convertParamToSimple()
 
     // Disable all listeners
     disableListener();
+    gamlc->setValue(defSpot.gamlc);
 
     // Set hidden specific GUI widgets in Simple mode to default spot values
     if (defSpot.localcontMethod == "loc") {
@@ -4012,6 +4029,7 @@ void LocallabContrast::updateGUIToMode(const modeType new_type)
             decayw->hide();
             maskusablew->hide();
             maskunusablew->hide();
+            gamlc->hide();
 
             break;
 
@@ -4034,6 +4052,7 @@ void LocallabContrast::updateGUIToMode(const modeType new_type)
                 maskusablew->hide();
                 maskunusablew->show();
             }
+            gamlc->hide();
 
             break;
 
@@ -4050,6 +4069,7 @@ void LocallabContrast::updateGUIToMode(const modeType new_type)
             if (localcontMethod->get_active_row_number() != 1) { // Keep widget hidden when localcontMethod is equal to 1
                 fftwlc->show();
             }
+            gamlc->show();
 
             expmasklc->show();
             exprecovw->show();

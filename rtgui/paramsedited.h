@@ -805,6 +805,7 @@ public:
         bool residshathr;
         bool residhi;
         bool residhithr;
+        bool gamlc;
         bool residgam;
         bool residslop;
         bool residblur;

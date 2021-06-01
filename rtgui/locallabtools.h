@@ -1088,6 +1088,7 @@ private:
     Adjuster* const residshathr;
     Adjuster* const residhi;
     Adjuster* const residhithr;
+    Adjuster* const gamlc;
     Adjuster* const residgam;
     Adjuster* const residslop;
     Adjuster* const sensilc;
