@@ -2549,6 +2549,7 @@ LocallabExposure::LocallabExposure():
     norm(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
     fatlevel(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATLEVEL"), 0.5, 2.0, 0.01, 1.))),
     fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 0.1, 100.0, 0.01, 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+    gamex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.7, 1.3, 0.05, 1.))),
     sensiex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     structexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
     blurexpde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
@@ -2636,6 +2637,8 @@ LocallabExposure::LocallabExposure():
     fatanchor->setAdjusterListener(this);
 
     sensiex->setAdjusterListener(this);
+
+    gamex->setAdjusterListener(this);
 
     structexp->setAdjusterListener(this);
 
@@ -2779,6 +2782,7 @@ LocallabExposure::LocallabExposure():
 //    pack_start(*fatFrame);
     pack_start(*expfat);
     pack_start(*expcomp);
+    pack_start(*gamex);
     pack_start(*structexp);
     pack_start(*blurexpde);
     ToolParamBlock* const toolBox = Gtk::manage(new ToolParamBlock());
@@ -2882,6 +2886,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
 //        fatFrame->set_tooltip_text(M("TP_LOCALLAB_FATFRAME_TOOLTIP"));
         expfat->set_tooltip_text(M("TP_LOCALLAB_FATFRAME_TOOLTIP"));
         expcomp->set_tooltip_text(M("TP_LOCALLAB_EXPCOMP_TOOLTIP"));
+        gamex->set_tooltip_text(M("TP_LOCALLAB_GAMCOL_TOOLTIP"));
         sensiex->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
         structexp->set_tooltip_text(M("TP_LOCALLAB_STRUCT_TOOLTIP"));
         expchroma->set_tooltip_text(M("TP_LOCALLAB_EXPCHROMA_TOOLTIP"));
@@ -2934,6 +2939,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         chromaskexp->set_tooltip_text("");
         slomaskexp->set_tooltip_text("");
         lapmaskexp->set_tooltip_text("");
+        gamex->set_tooltip_text("");
     }
 }
 
@@ -3024,6 +3030,7 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
    //     fatlevel->setValue(1.);
    //     fatanchor->setValue(1.);
         sensiex->setValue(spot.sensiex);
+        gamex->setValue(spot.gamex);
         structexp->setValue(spot.structexp);
         blurexpde->setValue(spot.blurexpde);
         expcomp->setValue(spot.expcomp);
@@ -3113,6 +3120,7 @@ void LocallabExposure::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
         spot.fatlevel = fatlevel->getValue();
         spot.fatanchor = fatanchor->getValue();
         spot.sensiex = sensiex->getIntValue();
+        spot.gamex = gamex->getValue();
         spot.structexp = structexp->getIntValue();
         spot.blurexpde = blurexpde->getIntValue();
         spot.expcomp = expcomp->getValue();
@@ -3165,6 +3173,7 @@ void LocallabExposure::setDefaults(const rtengine::procparams::ProcParams* defPa
         fatlevel->setDefault(defSpot.fatlevel);
         fatanchor->setDefault(defSpot.fatanchor);
         sensiex->setDefault((double)defSpot.sensiex);
+        gamex->setDefault((double)defSpot.gamex);
         structexp->setDefault((double)defSpot.structexp);
         blurexpde->setDefault((double)defSpot.blurexpde);
         expcomp->setDefault(defSpot.expcomp);
@@ -3262,6 +3271,13 @@ void LocallabExposure::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabfatanchor,
                                        fatanchor->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == gamex) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgamex,
+                                       gamex->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -3503,6 +3519,7 @@ void LocallabExposure::convertParamToNormal()
 
     // Disable all listeners
     disableListener();
+    gamex->setValue(defSpot.gamex);
 
     // Set hidden GUI widgets in Normal mode to default spot values
     structexp->setValue((double)defSpot.structexp);
@@ -3535,6 +3552,7 @@ void LocallabExposure::convertParamToSimple()
     softradiusexp->setValue(defSpot.softradiusexp);
     enaExpMask->set_active(defSpot.enaExpMask);
     enaExpMaskaft->set_active(defSpot.enaExpMaskaft);
+    gamex->setValue(defSpot.gamex);
  //   CCmaskexpshape->setCurve(defSpot.CCmaskexpcurve);
  //   LLmaskexpshape->setCurve(defSpot.CCmaskexpcurve);
  //   HHmaskexpshape->setCurve(defSpot.HHmaskexpcurve);
@@ -3568,6 +3586,7 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
             norm->hide();
             fatlevel->hide();
             fatanchor->hide();
+            gamex->hide();
 
             break;
 
@@ -3597,6 +3616,7 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
                 expgradexp->show();
                 softradiusexp->show();
                 exprecove->show();
+                gamex->hide();
             }
 
             expmaskexp->show();
@@ -3619,6 +3639,7 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
                 expgradexp->show();
                 softradiusexp->show();
                 exprecove->show();
+                gamex->show();
             }
             if (enaExpMask->get_active()) {
                 maskusablee->show();
@@ -3839,6 +3860,7 @@ void LocallabExposure::updateExposureGUI3()
         expcomp->setLabel(M("TP_LOCALLAB_EXPCOMPINV"));
         exprecove->hide();
         reparexp->hide();
+        gamex->hide();
 
         // Manage specific case where expMethod is different from 0
         if (expMethod->get_active_row_number() > 0) {
@@ -3861,6 +3883,7 @@ void LocallabExposure::updateExposureGUI3()
     } else {
         expMethod->show();
         expcomp->setLabel(M("TP_LOCALLAB_EXPCOMP"));
+        gamex->show();
 
         if (mode == Expert || mode == Normal) { // Keep widgets hidden in Simple mode
             softradiusexp->show();

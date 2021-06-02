@@ -1199,6 +1199,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).expchroma = locallab.spots.at(j).expchroma && pSpot.expchroma == otherSpot.expchroma;
                 locallab.spots.at(j).sensiex = locallab.spots.at(j).sensiex && pSpot.sensiex == otherSpot.sensiex;
                 locallab.spots.at(j).structexp = locallab.spots.at(j).structexp && pSpot.structexp == otherSpot.structexp;
+                locallab.spots.at(j).gamex = locallab.spots.at(j).gamex && pSpot.gamex == otherSpot.gamex;
                 locallab.spots.at(j).blurexpde = locallab.spots.at(j).blurexpde && pSpot.blurexpde == otherSpot.blurexpde;
                 locallab.spots.at(j).strexp = locallab.spots.at(j).strexp && pSpot.strexp == otherSpot.strexp;
                 locallab.spots.at(j).angexp = locallab.spots.at(j).angexp && pSpot.angexp == otherSpot.angexp;
@@ -3759,8 +3760,16 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).structexp = mods.locallab.spots.at(i).structexp;
         }
 
+        if (locallab.spots.at(i).gamex) {
+            toEdit.locallab.spots.at(i).gamex = mods.locallab.spots.at(i).gamex;
+        }
+
         if (locallab.spots.at(i).blurexpde) {
             toEdit.locallab.spots.at(i).blurexpde = mods.locallab.spots.at(i).blurexpde;
+        }
+
+        if (locallab.spots.at(i).gamex) {
+            toEdit.locallab.spots.at(i).gamex = mods.locallab.spots.at(i).gamex;
         }
 
         if (locallab.spots.at(i).strexp) {
@@ -6965,6 +6974,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     expchroma(v),
     sensiex(v),
     structexp(v),
+    gamex(v),
     blurexpde(v),
     strexp(v),
     angexp(v),
@@ -7549,6 +7559,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     expchroma = v;
     sensiex = v;
     structexp = v;
+    gamex = v;
     blurexpde = v;
     strexp = v;
     angexp = v;

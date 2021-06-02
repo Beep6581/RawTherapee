@@ -3137,6 +3137,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sensiex(60),
     structexp(0),
     blurexpde(5),
+    gamex(1.),
     strexp(0.),
     angexp(0.),
     excurve{
@@ -4394,6 +4395,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sensiex == other.sensiex
         && structexp == other.structexp
         && blurexpde == other.blurexpde
+        && gamex == other.gamex
         && strexp == other.strexp
         && angexp == other.angexp
         && excurve == other.excurve
@@ -6052,6 +6054,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->sensiex, "Locallab", "Sensiex_" + index_str, spot.sensiex, keyFile);
                     saveToKeyfile(!pedited || spot_edited->structexp, "Locallab", "Structexp_" + index_str, spot.structexp, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blurexpde, "Locallab", "Blurexpde_" + index_str, spot.blurexpde, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->gamex, "Locallab", "Gamex_" + index_str, spot.gamex, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strexp, "Locallab", "Strexp_" + index_str, spot.strexp, keyFile);
                     saveToKeyfile(!pedited || spot_edited->angexp, "Locallab", "Angexp_" + index_str, spot.angexp, keyFile);
                     saveToKeyfile(!pedited || spot_edited->excurve, "Locallab", "ExCurve_" + index_str, spot.excurve, keyFile);
@@ -8006,6 +8009,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Sensiex_" + index_str, pedited, spot.sensiex, spotEdited.sensiex);
                 assignFromKeyfile(keyFile, "Locallab", "Structexp_" + index_str, pedited, spot.structexp, spotEdited.structexp);
                 assignFromKeyfile(keyFile, "Locallab", "Blurexpde_" + index_str, pedited, spot.blurexpde, spotEdited.blurexpde);
+                assignFromKeyfile(keyFile, "Locallab", "Gamex_" + index_str, pedited, spot.gamex, spotEdited.gamex);
                 assignFromKeyfile(keyFile, "Locallab", "Strexp_" + index_str, pedited, spot.strexp, spotEdited.strexp);
                 assignFromKeyfile(keyFile, "Locallab", "Angexp_" + index_str, pedited, spot.angexp, spotEdited.angexp);
                 assignFromKeyfile(keyFile, "Locallab", "ExCurve_" + index_str, pedited, spot.excurve, spotEdited.excurve);

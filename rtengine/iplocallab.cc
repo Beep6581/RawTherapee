@@ -537,6 +537,7 @@ struct local_params {
     float ligh;
     float gamc;
     float gamlc;
+    float gamex;
     float lowA, lowB, highA, highB;
     float lowBmerg, highBmerg, lowAmerg, highAmerg;
     int shamo, shdamp, shiter, senssha, sensv;
@@ -1236,6 +1237,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float labgridAHighlocmerg = locallab.spots.at(sp).labgridAHighmerg;
     float local_gamlc = (float) locallab.spots.at(sp).gamlc;
     float local_gamc = (float) locallab.spots.at(sp).gamc;
+    float local_gamex = (float) locallab.spots.at(sp).gamex;
 
     float blendmasklc = ((float) locallab.spots.at(sp).blendmasklc) / 100.f ;
     float radmasklc = ((float) locallab.spots.at(sp).radmasklc);
@@ -1495,6 +1497,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.highAmerg = labgridAHighlocmerg;
     lp.gamlc = local_gamlc;
     lp.gamc = local_gamc;
+    lp.gamex = local_gamex;
 
     lp.senssf = local_sensisf;
     lp.strng = strlight;
@@ -15234,7 +15237,29 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
                     }
-                    
+
+                    float gamma = lp.gamex;
+                    rtengine::GammaValues g_a; //gamma parameters
+                    double pwr = 1.0 / (double) lp.gamex;//default 3.0 - gamma Lab
+                    double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
+                    if(gamma != 1.f) {
+#ifdef _OPENMP
+#   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif  
+                        for (int y = 0; y < bfh; ++y) {//apply inverse gamma 3.f and put result in range 32768.f
+                            int x = 0;
+#ifdef __SSE2__
+                            for (; x < bfw - 3; x += 4) {
+                                STVFU(bufexpfin->L[y][x], F2V(32768.f) * gammalog(LVFU(bufexpfin->L[y][x]) / F2V(32768.f), F2V(gamma), F2V(ts), F2V(g_a[3]), F2V(g_a[4])));
+                            }
+#endif
+                            for (; x < bfw; ++x) {
+                                bufexpfin->L[y][x] = 32768.f * gammalog(bufexpfin->L[y][x] / 32768.f, gamma, ts, g_a[3], g_a[4]);
+                            }
+                        }
+                    }
+
                     if (lp.softradiusexp > 0.f && lp.expmet == 0) {
                         softproc(buforig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.1, 0.001, 0.5f, sk, multiThread, 1);
                     }

@@ -515,6 +515,7 @@ public:
         bool expchroma;
         bool sensiex;
         bool structexp;
+        bool gamex;
         bool blurexpde;
         bool strexp;
         bool angexp;

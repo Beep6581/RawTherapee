@@ -1300,7 +1300,7 @@ HISTORY_MSG_1052;Local - Residual wavelet slope
 HISTORY_MSG_1053;Local - Denoise gamma
 HISTORY_MSG_1054;Local - Wavelet gamma
 HISTORY_MSG_1055;Local - Color and Light gamma
-
+HISTORY_MSG_1056;Local - DR and Exposure gamma
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance

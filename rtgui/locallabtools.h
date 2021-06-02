@@ -346,6 +346,7 @@ private:
     Gtk::CheckButton* const norm;
     Adjuster* const fatlevel;
     Adjuster* const fatanchor;
+    Adjuster* const gamex;
     Adjuster* const sensiex;
     Adjuster* const structexp;
     Adjuster* const blurexpde;
