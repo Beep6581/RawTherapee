@@ -2926,7 +2926,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         clariFrame->set_tooltip_markup(M("TP_LOCALLAB_CLARI_TOOLTIP"));
         clarisoft->set_tooltip_markup(M("TP_LOCALLAB_CLARISOFT_TOOLTIP"));
         exprecovw->set_tooltip_markup(M("TP_LOCALLAB_MASKRESWAV_TOOLTIP"));
-
+        gamlc->set_tooltip_text(M("TP_LOCALLAB_GAMC_TOOLTIP"));
         wavshape->setTooltip(M("TP_LOCALLAB_WAT_WAVSHAPE_TOOLTIP"));
         clarilres->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARIL_TOOLTIP"));
         claricres->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARIC_TOOLTIP"));
@@ -3019,6 +3019,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         chromasklc->set_tooltip_text("");
         sensilc->set_tooltip_text("");
         reparw->set_tooltip_text("");
+        gamlc->set_tooltip_text("");
 
         wavshape->setTooltip("");
         clarilres->set_tooltip_text("");
@@ -4064,12 +4065,12 @@ void LocallabContrast::updateGUIToMode(const modeType new_type)
             if (localcontMethod->get_active_row_number() != 0) { // Keep widgets hidden when localcontMethod is equal to 0
                 expcontrastpyr->show();
                 expcontrastpyr2->show();
+                gamlc->show();
             }
 
             if (localcontMethod->get_active_row_number() != 1) { // Keep widget hidden when localcontMethod is equal to 1
                 fftwlc->show();
             }
-            gamlc->show();
 
             expmasklc->show();
             exprecovw->show();
@@ -4347,7 +4348,7 @@ void LocallabContrast::updateContrastGUI1()
         clariFrame->hide();
         expcontrastpyr->hide();
         expcontrastpyr2->hide();
-
+        gamlc->hide();
         if (mode == Expert) { // Keep widget hidden in Normal and Simple mode
             fftwlc->show();
         }
@@ -4365,6 +4366,7 @@ void LocallabContrast::updateContrastGUI1()
         if (mode == Expert) { // Keep widget hidden in Normal and Simple mode
             expcontrastpyr->show();
             expcontrastpyr2->show();
+            gamlc->show();
         }
 
         fftwlc->hide();

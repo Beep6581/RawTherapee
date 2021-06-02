@@ -178,6 +178,7 @@ private:
     // Color & Light specific widgets
     Gtk::Frame* const lumFrame;
     Adjuster* const reparcol;
+    Adjuster* const gamc;
     Adjuster* const lightness;
     Adjuster* const contrast;
     Adjuster* const chroma;

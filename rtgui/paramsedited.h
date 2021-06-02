@@ -439,6 +439,7 @@ public:
         bool curvactiv;
         bool lightness;
         bool reparcol;
+        bool gamc;
         bool contrast;
         bool chroma;
         bool labgridALow;

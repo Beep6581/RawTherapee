@@ -1121,6 +1121,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).expcolor = locallab.spots.at(j).expcolor && pSpot.expcolor == otherSpot.expcolor;
                 locallab.spots.at(j).complexcolor = locallab.spots.at(j).complexcolor && pSpot.complexcolor == otherSpot.complexcolor;
                 locallab.spots.at(j).curvactiv = locallab.spots.at(j).curvactiv && pSpot.curvactiv == otherSpot.curvactiv;
+                locallab.spots.at(j).reparcol = locallab.spots.at(j).reparcol && pSpot.reparcol == otherSpot.reparcol;
+                locallab.spots.at(j).gamc = locallab.spots.at(j).gamc && pSpot.gamc == otherSpot.gamc;
                 locallab.spots.at(j).lightness = locallab.spots.at(j).lightness && pSpot.lightness == otherSpot.lightness;
                 locallab.spots.at(j).contrast = locallab.spots.at(j).contrast && pSpot.contrast == otherSpot.contrast;
                 locallab.spots.at(j).chroma = locallab.spots.at(j).chroma && pSpot.chroma == otherSpot.chroma;
@@ -3454,6 +3456,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).reparcol) {
             toEdit.locallab.spots.at(i).reparcol = mods.locallab.spots.at(i).reparcol;
+        }
+
+        if (locallab.spots.at(i).gamc) {
+            toEdit.locallab.spots.at(i).gamc = mods.locallab.spots.at(i).gamc;
         }
 
         if (locallab.spots.at(i).contrast) {
@@ -6883,6 +6889,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     curvactiv(v),
     lightness(v),
     reparcol(v),
+    gamc(v),
     contrast(v),
     chroma(v),
     labgridALow(v),
@@ -7466,6 +7473,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     curvactiv = v;
     lightness = v;
     reparcol = v;
+    gamc = v;
     contrast = v;
     chroma = v;
     labgridALow = v;

@@ -1299,6 +1299,8 @@ HISTORY_MSG_1051;Local - Residual wavelet gamma
 HISTORY_MSG_1052;Local - Residual wavelet slope
 HISTORY_MSG_1053;Local - Denoise gamma
 HISTORY_MSG_1054;Local - Wavelet gamma
+HISTORY_MSG_1055;Local - Color and Light gamma
+
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2786,6 +2788,9 @@ TP_LOCALLAB_FULLIMAGE;Black-Ev and White-Ev for whole image
 TP_LOCALLAB_FULLIMAGELOG_TOOLTIP;Calculates the Ev levels for the whole image.
 TP_LOCALLAB_GAM;Gamma
 TP_LOCALLAB_GAMW;Gamma (wavelet pyramids)
+TP_LOCALLAB_GAMC;Gamma
+TP_LOCALLAB_GAMCOL_TOOLTIP;Apply a gamma on Luminance L*a*b* datas
+TP_LOCALLAB_GAMC_TOOLTIP;Apply a gamma on Luminance L*a*b* datas before and after treatment Pyramid 1 and Pyramid 2
 TP_LOCALLAB_GAMFRA;Tone response curve (TRC)
 TP_LOCALLAB_GAMM;Gamma
 TP_LOCALLAB_GAMMASKCOL;Gamma

@@ -417,6 +417,7 @@ LocallabColor::LocallabColor():
     // Color & Light specific widgets
     lumFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LUMFRA")))),
     reparcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
+    gamc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.7, 1.3, 0.05, 1.))),
     lightness(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIGHTNESS"), -100, 500, 1, 0))),
     contrast(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRAST"), -100, 100, 1, 0))),
     chroma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMA"), -100, 150, 1, 0))),
@@ -525,6 +526,8 @@ LocallabColor::LocallabColor():
     lumFrame->set_label_align(0.025, 0.5);
 
     lightness->setAdjusterListener(this);
+
+    gamc->setAdjusterListener(this);
 
     reparcol->setAdjusterListener(this);
 
@@ -796,6 +799,7 @@ LocallabColor::LocallabColor():
     lumBox->pack_start(*lightness);
     lumBox->pack_start(*contrast);
     lumBox->pack_start(*chroma);
+    lumBox->pack_start(*gamc);
     lumFrame->add(*lumBox);
     pack_start(*lumFrame);
     Gtk::Frame* const superFrame = Gtk::manage(new Gtk::Frame());
@@ -961,6 +965,7 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         lumFrame->set_tooltip_text(M("TP_LOCALLAB_EXPCOLOR_TOOLTIP"));
+        gamc->set_tooltip_text(M("TP_LOCALLAB_GAMCOL_TOOLTIP"));
         lightness->set_tooltip_text(M("TP_LOCALLAB_LIGHTN_TOOLTIP"));
         reparcol->set_tooltip_text(M("TP_LOCALLAB_REPARCOL_TOOLTIP"));
         gridMethod->set_tooltip_text(M("TP_LOCALLAB_GRIDMETH_TOOLTIP"));
@@ -1014,6 +1019,7 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
     } else {
         lumFrame->set_tooltip_text("");
         lightness->set_tooltip_text("");
+        gamc->set_tooltip_text("");
         reparcol->set_tooltip_text("");
         gridMethod->set_tooltip_text("");
         strengthgrid->set_tooltip_text("");
@@ -1131,6 +1137,7 @@ void LocallabColor::read(const rtengine::procparams::ProcParams* pp, const Param
         complexity->set_active(spot.complexcolor);
 
         lightness->setValue(spot.lightness);
+        gamc->setValue(spot.gamc);
         reparcol->setValue(spot.reparcol);
         contrast->setValue(spot.contrast);
         chroma->setValue(spot.chroma);
@@ -1306,6 +1313,7 @@ void LocallabColor::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         spot.complexcolor = complexity->get_active_row_number();
 
         spot.lightness = lightness->getIntValue();
+        spot.gamc = gamc->getValue();
         spot.reparcol = reparcol->getValue();
         spot.contrast = contrast->getIntValue();
         spot.chroma = chroma->getIntValue();
@@ -1474,6 +1482,7 @@ void LocallabColor::setDefaults(const rtengine::procparams::ProcParams* defParam
 
         // Set default value for adjuster, labgrid and threshold adjuster widgets
         lightness->setDefault((double)defSpot.lightness);
+        gamc->setDefault((double)defSpot.gamc);
         reparcol->setDefault(defSpot.reparcol);
         contrast->setDefault((double)defSpot.contrast);
         chroma->setDefault((double)defSpot.chroma);
@@ -1526,6 +1535,13 @@ void LocallabColor::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallablightness,
                                        lightness->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == gamc) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgamc,
+                                       gamc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -1879,6 +1895,7 @@ void LocallabColor::convertParamToNormal()
 
     // Disable all listeners
     disableListener();
+    gamc->setValue(defSpot.gamc);
 
     // Set hidden GUI widgets in Normal mode to default spot values
     blurcolde->setValue((double)defSpot.blurcolde);
@@ -2003,6 +2020,7 @@ void LocallabColor::convertParamToSimple()
     softradiuscol->setValue(defSpot.softradiuscol);
     strcol->setValue(defSpot.strcol);
     angcol->setValue(defSpot.angcol);
+    gamc->setValue(defSpot.gamc);
 
     if (defSpot.qualitycurveMethod == "none") {
         qualitycurveMethod->set_active(0);
@@ -2047,6 +2065,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
             maskusablec->hide();
             maskunusablec->hide();
             decayc->hide();
+            gamc->hide();
             break;
 
         case Normal:
@@ -2087,6 +2106,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
             if (!invers->get_active()) { // Keep widget hidden when invers is toggled
                 expgradcol->show();
                 exprecov->show();
+                gamc->hide();
             }
 
             expcurvcol->show();
@@ -2104,6 +2124,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
                 softradiuscol->show();
                 expgradcol->show();
                 exprecov->show();
+                gamc->show();
             }
 
             strcolab->show();
@@ -2400,8 +2421,10 @@ void LocallabColor::updateColorGUI1()
         contcol->hide();
         blurcol->hide();
         reparcol->hide();
+        gamc->hide();
     } else {
         gridFrame->show();
+        gamc->show();
 
         if (mode == Expert) { // Keep widget hidden in Normal and Simple mode
             structcol->show();
