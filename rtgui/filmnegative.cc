@@ -194,6 +194,7 @@ FilmNegative::FilmNegative() :
     evFilmNegativeColorSpace(ProcEventMapper::getInstance()->newEvent(ALLNORAW, "HISTORY_MSG_FILMNEGATIVE_COLORSPACE")),
     refInputValues({0.f, 0.f, 0.f}),
     paramsUpgraded(false),
+    refLuminance({{0.f, 0.f, 0.f}, 0.f}),
     fnp(nullptr),
     colorSpace(Gtk::manage(new MyComboBoxText())),
     greenExp(createExponentAdjuster(this, M("TP_FILMNEGATIVE_GREEN"), 0.3, 4, 0.01, 1.5)),  // master exponent (green channel)
@@ -343,6 +344,9 @@ void FilmNegative::read(const rtengine::procparams::ProcParams* pp, const Params
 
     setEnabled(pp->filmNegative.enabled);
 
+    // Reset luminance reference each time params are read
+    refLuminance.lum = 0.f;
+
     colorSpace->set_active(CLAMP((int)pp->filmNegative.colorSpace, 0, 1));
     redRatio->setValue(pp->filmNegative.redRatio);
     greenExp->setValue(pp->filmNegative.greenExp);
@@ -470,6 +474,9 @@ void FilmNegative::adjusterChanged(Adjuster* a, double newval)
                 )
             );
         } else if (a == outputLevel || a == greenBalance || a == blueBalance) {
+
+            // Reset luminance reference when output level/color sliders are changed
+            refLuminance.lum = 0.f;
 
             listener->panelChanged(
                 evFilmNegativeBalance,
@@ -606,12 +613,44 @@ bool FilmNegative::button1Pressed(int modifierKey)
 
         } else if (refSpotButton->get_active()) {
 
+            disableListener();
+
+            // If the luminance reference is not set, copy the current reference input
+            // values, and the corresponding output luminance
+            if(refLuminance.lum <= 0.f) {
+                RGB out;
+                readOutputSliders(out);
+                refLuminance.input = refInputValues;
+                refLuminance.lum = rtengine::Color::rgbLuminance(out.r, out.g, out.b);
+            }
+
             RGB refOut;
             fnp->getFilmNegativeSpot(provider->posImage, 32, refInputValues, refOut);
 
-            disableListener();
+            // Output luminance of the sampled spot
+            float spotLum = rtengine::Color::rgbLuminance(refOut.r, refOut.g, refOut.b);
 
-            float gray = rtengine::Color::rgbLuminance(refOut.r, refOut.g, refOut.b);
+            float rexp = -(greenExp->getValue() * redRatio->getValue());
+            float gexp = -greenExp->getValue();
+            float bexp = -(greenExp->getValue() * blueRatio->getValue());
+
+            RGB mult = {
+                spotLum / pow_F(rtengine::max(refInputValues.r, 1.f), rexp),
+                spotLum / pow_F(rtengine::max(refInputValues.g, 1.f), gexp),
+                spotLum / pow_F(rtengine::max(refInputValues.b, 1.f), bexp)
+            };
+
+            // Calculate the new luminance of the initial luminance reference spot, by
+            // applying current multipliers
+            float newRefLum = rtengine::Color::rgbLuminance(
+                mult.r * pow_F(rtengine::max(refLuminance.input.r, 1.f), rexp),
+                mult.g * pow_F(rtengine::max(refLuminance.input.g, 1.f), gexp),
+                mult.b * pow_F(rtengine::max(refLuminance.input.b, 1.f), bexp));
+
+            // Choose a suitable gray value for the sampled spot, so that luminance
+            // of the initial reference spot is preserved.
+            float gray = spotLum * (refLuminance.lum / newRefLum);
+
             writeOutputSliders({gray, gray, gray});
 
             refInputLabel->set_text(
