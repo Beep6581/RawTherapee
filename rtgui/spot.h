@@ -82,6 +82,7 @@ private:
     void addNewEntry ();
     void deleteSelectedEntry ();
     void resetPressed ();
+    void releaseEdit();
 
 protected:
     Gtk::Box* labelBox;

@@ -35,6 +35,7 @@ protected:
     sigc::connection editConn;
 
     void editToggled ();
+    void releaseEdit();
 
 public:
 

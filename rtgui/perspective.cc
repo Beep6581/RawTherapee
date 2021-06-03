@@ -778,6 +778,7 @@ void PerspCorrection::linesEditButtonPressed(void)
             listener->unsetTweakOperator(this);
             listener->refreshPreview(EvPerspRender);
         }
+        lines->releaseEdit();
         lines->setDrawMode(false);
         lines->setActive(false);
         if (panel_listener) {
