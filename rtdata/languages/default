@@ -3321,6 +3321,7 @@ TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Roundness:\n0 = rectangle,\n50 = fitted ellipse,
 TP_PCVIGNETTE_STRENGTH;Strength
 TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filter strength in stops (reached in corners).
 TP_PDSHARPENING_LABEL;Capture Sharpening
+TP_PERSPECTIVE_CONTROL_LINE_APPLY_INVALID_TOOLTIP;At least two horizontal or two vertical control lines required.
 TP_PERSPECTIVE_CAMERA_CROP_FACTOR;Crop factor
 TP_PERSPECTIVE_CAMERA_FOCAL_LENGTH;Focal length
 TP_PERSPECTIVE_CAMERA_FRAME;Correction
