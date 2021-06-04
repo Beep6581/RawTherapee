@@ -1483,6 +1483,7 @@ ICCPROFCREATOR_PROF_V4;ICC v4
 ICCPROFCREATOR_SAVEDIALOG_TITLE;Save ICC profile as...
 ICCPROFCREATOR_SLOPE;Slope
 ICCPROFCREATOR_TRC_PRESET;Tone response curve
+INSPECTOR_WINDOW_TITLE;Inspector
 IPTCPANEL_CATEGORY;Category
 IPTCPANEL_CATEGORYHINT;Identifies the subject of the image in the opinion of the provider.
 IPTCPANEL_CITY;City
@@ -3320,6 +3321,7 @@ TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Roundness:\n0 = rectangle,\n50 = fitted ellipse,
 TP_PCVIGNETTE_STRENGTH;Strength
 TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filter strength in stops (reached in corners).
 TP_PDSHARPENING_LABEL;Capture Sharpening
+TP_PERSPECTIVE_CONTROL_LINE_APPLY_INVALID_TOOLTIP;At least two horizontal or two vertical control lines required.
 TP_PERSPECTIVE_CAMERA_CROP_FACTOR;Crop factor
 TP_PERSPECTIVE_CAMERA_FOCAL_LENGTH;Focal length
 TP_PERSPECTIVE_CAMERA_FRAME;Correction
