@@ -1690,6 +1690,8 @@ struct ResizeParams {
     int dataspec;
     int width;
     int height;
+    int longedge;
+    int shortedge;
     bool allowUpscaling;
 
     ResizeParams();

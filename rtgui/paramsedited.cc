@@ -425,6 +425,8 @@ void ParamsEdited::set(bool v)
     resize.dataspec  = v;
     resize.width     = v;
     resize.height    = v;
+    resize.longedge  = v;
+    resize.shortedge = v;
     resize.enabled   = v;
 
     spot.enabled = v;
@@ -1718,6 +1720,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         resize.dataspec = resize.dataspec && p.resize.dataspec == other.resize.dataspec;
         resize.width = resize.width && p.resize.width == other.resize.width;
         resize.height = resize.height && p.resize.height == other.resize.height;
+        resize.longedge = resize.longedge && p.resize.longedge == other.resize.longedge;
+        resize.shortedge = resize.shortedge && p.resize.shortedge == other.resize.shortedge;
         resize.enabled = resize.enabled && p.resize.enabled == other.resize.enabled;
         spot.enabled = spot.enabled && p.spot.enabled == other.spot.enabled;
         spot.entries = spot.entries && p.spot.entries == other.spot.entries;
@@ -5716,6 +5720,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (resize.height) {
         toEdit.resize.height = mods.resize.height;
+    }
+
+    if (resize.longedge) {
+        toEdit.resize.longedge = mods.resize.longedge;
+    }
+
+    if (resize.shortedge) {
+        toEdit.resize.shortedge = mods.resize.shortedge;
     }
 
     if (resize.enabled) {

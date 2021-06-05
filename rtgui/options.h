@@ -424,6 +424,8 @@ public:
     int           fastexport_resize_dataspec;
     int           fastexport_resize_width;
     int           fastexport_resize_height;
+    int           fastexport_resize_longedge;
+    int           fastexport_resize_shortedge;
     bool fastexport_use_fast_pipeline;
 
     std::vector<Glib::ustring> favorites;

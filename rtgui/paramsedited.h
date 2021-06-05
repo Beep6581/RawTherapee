@@ -1083,6 +1083,8 @@ struct ResizeParamsEdited {
     bool dataspec;
     bool width;
     bool height;
+    bool longedge;
+    bool shortedge;
     bool enabled;
     bool allowUpscaling;
 };

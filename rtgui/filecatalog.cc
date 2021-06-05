@@ -1215,9 +1215,13 @@ void FileCatalog::developRequested(const std::vector<FileBrowserEntry*>& tbe, bo
                 if (params.resize.enabled) {
                     params.resize.width = rtengine::min(params.resize.width, options.fastexport_resize_width);
                     params.resize.height = rtengine::min(params.resize.height, options.fastexport_resize_height);
+                    params.resize.longedge = rtengine::min(params.resize.longedge, options.fastexport_resize_longedge);
+                    params.resize.shortedge = rtengine::min(params.resize.shortedge, options.fastexport_resize_shortedge);
                 } else {
                     params.resize.width = options.fastexport_resize_width;
                     params.resize.height = options.fastexport_resize_height;
+                    params.resize.longedge = options.fastexport_resize_longedge;
+                    params.resize.shortedge = options.fastexport_resize_shortedge;
                 }
 
                 params.resize.enabled = options.fastexport_resize_enabled;

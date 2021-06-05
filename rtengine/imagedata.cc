@@ -339,7 +339,6 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                     iso_speed = isoTag->toDouble();
                 }
             }
-
         }
 
         if (lens == "Unknown") {
