@@ -21,6 +21,7 @@
 #pragma once
 
 #define pow_F(a,b) (xexpf(b*xlogf(a)))
+#define pow_Fr(a,b) (xexpf((b)*xlogf(a)))
 
 #ifdef __SSE2__
     #include "sleefsseavx.h"
