@@ -3091,14 +3091,14 @@ void ImProcFunctions::exlabLocal(local_params& lp, float strlap, int bfh, int bf
                 float L = bufexporig->L[ir][jr];
                 const float Llin = LIM01(L / 32768.f);
                 const float addcomp = linear * (-kl * Llin + kl);//maximum about 1 . IL
-                const float exp_scale = pow_Fr(2.f, lp.expcomp + addcomp);
+                const float exp_scale = pow_F(2.f, lp.expcomp + addcomp);
                 const float shoulder = (maxran / rtengine::max(1.0f, exp_scale)) * hlcompthr + 0.1f;
                 const float comp = (rtengine::max(0.f, (lp.expcomp + addcomp)) + 1.f) * hlcomp;
                 const float hlrange = maxran - shoulder;
 
                 //highlight
                 const float hlfactor = (2 * L < MAXVALF ? hltonecurve[2 * L] : CurveFactory::hlcurve(exp_scale, comp, hlrange, 2 * L));
-                L *= hlfactor * pow_Fr(2.f, addcomp);//approximation but pretty good with Laplacian and L < mean, hl aren't call
+                L *= hlfactor * pow_F(2.f, addcomp);//approximation but pretty good with Laplacian and L < mean, hl aren't call
                 //shadow tone curve
                 L *= shtonecurve[2 * L];
                 //tonecurve
