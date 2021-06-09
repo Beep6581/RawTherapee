@@ -1663,13 +1663,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.hlcomp = locallab.spots.at(sp).hlcompr;
     lp.hlcompthr = locallab.spots.at(sp).hlcomprthresh;
     lp.expcomp = LIM(locallab.spots.at(sp).expcomp, -2.0, 4.0); //to prevent crash with Old pp3 with integer
-    //increase sensitivity for low values
-    float proexp = lp.expcomp;
-    if (std::fabs(proexp) < 0.6f) {
-        float interm = std::fabs(proexp) / 0.6f;
-        interm = pow(interm, 3.f);
-        lp.expcomp = proexp * interm;
-    }
     lp.expchroma = locallab.spots.at(sp).expchroma / 100.;
     lp.sensex = local_sensiex;
     lp.war = local_warm;

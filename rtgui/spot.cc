@@ -361,6 +361,7 @@ void Spot::createGeometry ()
     EditSubscriber::visibleGeometry.at (j++) = &targetFeatherCircle; // VISIBLE_OBJECT_COUNT + 4
     assert(j - visibleOffset == VISIBLE_TARGET_CIRCLE);
     EditSubscriber::visibleGeometry.at (j++) = &targetCircle;        // VISIBLE_OBJECT_COUNT + 5
+    static_cast<void>(visibleOffset);
 }
 
 void Spot::updateGeometry()
