@@ -1668,6 +1668,13 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).Lmask_curve = locallab.spots.at(j).Lmask_curve && pSpot.Lmask_curve == otherSpot.Lmask_curve;
                 locallab.spots.at(j).LLmask_curvewav = locallab.spots.at(j).LLmask_curvewav && pSpot.LLmask_curvewav == otherSpot.LLmask_curvewav;
                 locallab.spots.at(j).csthresholdmask = locallab.spots.at(j).csthresholdmask && pSpot.csthresholdmask == otherSpot.csthresholdmask;
+
+                //ciecam
+                locallab.spots.at(j).visicie = locallab.spots.at(j).visicie && pSpot.visicie == otherSpot.visicie;
+                locallab.spots.at(j).expcie = locallab.spots.at(j).expcie && pSpot.expcie == otherSpot.expcie;
+                locallab.spots.at(j).complexcie = locallab.spots.at(j).complexcie && pSpot.complexcie == otherSpot.complexcie;
+                locallab.spots.at(j).reparcie = locallab.spots.at(j).reparcie && pSpot.reparcie == otherSpot.reparcie;
+
             }
         }
 
@@ -5569,6 +5576,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).csthresholdmask = mods.locallab.spots.at(i).csthresholdmask;
         }
 
+        //ciecam
+        if (locallab.spots.at(i).visicie) {
+            toEdit.locallab.spots.at(i).visicie = mods.locallab.spots.at(i).visicie;
+        }
+
+        if (locallab.spots.at(i).expcie) {
+            toEdit.locallab.spots.at(i).expcie = mods.locallab.spots.at(i).expcie;
+        }
+
+        if (locallab.spots.at(i).complexcie) {
+            toEdit.locallab.spots.at(i).complexcie = mods.locallab.spots.at(i).complexcie;
+        }
+        if (locallab.spots.at(i).reparcie) {
+            toEdit.locallab.spots.at(i).reparcie = mods.locallab.spots.at(i).reparcie;
+        }
+
     }
 
     if (spot.enabled) {
@@ -7442,7 +7465,12 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     HHhmask_curve(v),
     Lmask_curve(v),
     LLmask_curvewav(v),
-    csthresholdmask(v)
+    csthresholdmask(v),
+    //ciecam
+    visicie(v),
+    complexcie(v),
+    expcie(v),
+    reparcie(v)
 
 {
 }
@@ -8031,10 +8059,16 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     shadmask = v;
     str_mask = v;
     ang_mask = v;
-    HHhmask_curve =(v);
-    Lmask_curve =(v);
-    LLmask_curvewav =(v);
+    HHhmask_curve = v;
+    Lmask_curve = v;
+    LLmask_curvewav = v;
     csthresholdmask = v;
+    //ciecam
+    visicie= v;
+    complexcie= v;
+    expcie = v;
+    reparcie = v;
+    
 }
 
 bool CaptureSharpeningParamsEdited::isUnchanged() const

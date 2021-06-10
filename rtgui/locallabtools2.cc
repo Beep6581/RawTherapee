@@ -7358,3 +7358,132 @@ void LocallabMask::updateMaskGUI()
 
     blurmask->setValue(temp);
 }
+
+/*==== Locallabcie ====*/
+Locallabcie::Locallabcie():
+    LocallabTool(this, M("TP_LOCALLAB_CIE_TOOLNAME"), M("TP_LOCALLAB_CIE"), false),
+    reparcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0)))
+    
+    {
+    set_orientation(Gtk::ORIENTATION_VERTICAL);
+    
+    // Parameter Ciecam specific widgets
+    const LocallabParams::LocallabSpot defSpot;
+    reparcie->setAdjusterListener(this);
+    pack_start(*reparcie);
+
+    }
+Locallabcie::~Locallabcie()
+{
+    
+}
+void Locallabcie::setDefaultExpanderVisibility()
+{
+
+}
+void Locallabcie::updateAdviceTooltips(const bool showTooltips)
+{
+    if (showTooltips) {
+
+    } else {
+
+    }
+}
+void Locallabcie::disableListener()
+{
+    LocallabTool::disableListener();
+
+}
+
+void Locallabcie::enableListener()
+{
+    LocallabTool::enableListener();
+
+}
+
+void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
+{
+    disableListener();
+
+    // Update GUI to selected spot value
+    const int index = pp->locallab.selspot;
+
+    if (index < (int)pp->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
+
+        spotName = spot.name; // Update spot name according to selected spot
+
+        exp->set_visible(spot.visicie);
+        exp->setEnabled(spot.expcie);
+        complexity->set_active(spot.complexcie);
+
+        reparcie->setValue(spot.reparcie);
+    }
+    enableListener();
+    
+    
+}
+
+void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
+{
+     const int index = pp->locallab.selspot;
+
+    if (index < (int)pp->locallab.spots.size()) {
+        LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
+        spot.expcie = exp->getEnabled();
+        spot.visicie = exp->get_visible();
+        spot.complexcie = complexity->get_active_row_number();
+        spot.reparcie = reparcie->getValue();
+    }
+   
+}
+
+void Locallabcie::updateGUIToMode(const modeType new_type)
+{
+}
+
+void Locallabcie::convertParamToSimple()
+{
+}
+
+void Locallabcie::convertParamToNormal()
+{
+}
+
+void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
+{
+    const int index = defParams->locallab.selspot;
+
+    if (index < (int)defParams->locallab.spots.size()) {
+        const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
+        reparcie->setDefault(defSpot.reparcie);
+    }
+}
+
+void Locallabcie::adjusterChanged(Adjuster* a, double newval)
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (a == reparcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabreparcie,
+                                       reparcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::enabledChanged()
+{
+     if (isLocActivated) {
+        if (listener) {
+            if (exp->getEnabled()) {
+                listener->panelChanged(EvLocenacie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            } else {
+                listener->panelChanged(EvLocenacie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+    }
+   
+}

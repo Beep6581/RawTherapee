@@ -116,6 +116,7 @@ private:
     LocallabCBDL* const expcbdl;
     LocallabLog* const explog;
     LocallabMask* const expmask;
+    Locallabcie* const expcie;
 
     std::vector<LocallabTool*> locallabTools;
 

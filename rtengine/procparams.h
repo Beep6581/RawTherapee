@@ -1566,6 +1566,11 @@ struct LocallabParams {
         std::vector<double> Lmask_curve;
         std::vector<double> LLmask_curvewav;
         Threshold<int> csthresholdmask;
+        //ciecam
+        bool visicie;
+        bool expcie;
+        int complexcie;
+        double reparcie;
 
         LocallabSpot();
 

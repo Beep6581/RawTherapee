@@ -164,6 +164,7 @@ Locallab::Locallab():
     expcbdl(Gtk::manage(new LocallabCBDL())),
     explog(Gtk::manage(new LocallabLog())),
     expmask(Gtk::manage(new LocallabMask())),
+    expcie(Gtk::manage(new Locallabcie())),
 
     // Other widgets
     resetshowButton(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_RESETSHOW"))))
@@ -194,6 +195,7 @@ Locallab::Locallab():
     addTool(toolpanel, expshadhigh);
     addTool(toolpanel, expvibrance);
     addTool(toolpanel, explog);
+    addTool(toolpanel, expcie);
     addTool(toolpanel, expexpose);
     addTool(toolpanel, expmask);
     addTool(toolpanel, expsoft);

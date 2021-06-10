@@ -1502,4 +1502,42 @@ private:
     void updateMaskGUI();
 };
 
+
+/* ==== Locallabcie ==== */
+class Locallabcie:
+    public Gtk::Box,
+    public LocallabTool
+{
+private:
+    Adjuster* const reparcie;
+    
+public:
+    Locallabcie();
+    ~Locallabcie();
+    
+
+    void updateAdviceTooltips(const bool showTooltips) override;
+    void surroundChanged();
+    void sursourChanged();
+    void setDefaultExpanderVisibility() override;
+
+    void disableListener() override;
+    void enableListener() override;
+    void read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
+    void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
+    void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
+    void adjusterChanged(Adjuster* a, double newval) override;
+
+    void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg);
+
+private:
+    void enabledChanged() override;
+    void convertParamToNormal() override;
+    void convertParamToSimple() override;
+    void updateGUIToMode(const modeType new_type) override;
+    void complexityModeChanged();
+
+
+};
+
 #endif

@@ -4267,7 +4267,12 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35,
         0.35
     },
-    csthresholdmask(0, 0, 6, 5, false)
+    csthresholdmask(0, 0, 6, 5, false),
+    // ciecam
+    visicie(false),
+    expcie(false),
+    complexcie(0),
+    reparcie(100.)
 
 {
 }
@@ -4871,7 +4876,12 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && HHhmask_curve == other.HHhmask_curve
         && Lmask_curve == other.Lmask_curve
         && LLmask_curvewav == other.LLmask_curvewav
-        && csthresholdmask == other.csthresholdmask;
+        && csthresholdmask == other.csthresholdmask
+        //ciecam
+        && visicie == other.visicie
+        && expcie == other.expcie
+        && complexcie == other.complexcie
+        && reparcie == other.reparcie;
 
 }
 
@@ -6534,6 +6544,13 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->LLmask_curvewav, "Locallab", "LLmask_Curvewav_" + index_str, spot.LLmask_curvewav, keyFile);
                     saveToKeyfile(!pedited || spot_edited->csthresholdmask, "Locallab", "CSThresholdmask_" + index_str, spot.csthresholdmask.toVector(), keyFile);
                 }
+                //ciecam
+                if ((!pedited || spot_edited->visicie) && spot.visicie) {
+                    saveToKeyfile(!pedited || spot_edited->expcie, "Locallab", "Expcie_" + index_str, spot.expcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->complexcie, "Locallab", "Complexcie_" + index_str, spot.complexcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->reparcie, "Locallab", "Reparcie_" + index_str, spot.reparcie, keyFile);
+                }
+                
             }
         }
 
@@ -8563,6 +8580,16 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 if (spot.visimask) {
                     spotEdited.visimask = true;
                 }
+
+                // ciecam
+                spot.visicie = assignFromKeyfile(keyFile, "Locallab", "Expcie_" + index_str, pedited, spot.expcie, spotEdited.expcie);
+
+                if (spot.visicie) {
+                    spotEdited.visicie = true;
+                }
+                assignFromKeyfile(keyFile, "Locallab", "Complexcie_" + index_str, pedited, spot.complexcie, spotEdited.complexcie);
+                assignFromKeyfile(keyFile, "Locallab", "Reparcie_" + index_str, pedited, spot.reparcie, spotEdited.reparcie);
+
 
                 // Append LocallabSpot and LocallabParamsEdited
                 locallab.spots.push_back(spot);

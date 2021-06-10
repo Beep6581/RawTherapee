@@ -972,6 +972,11 @@ public:
         bool Lmask_curve;
         bool LLmask_curvewav;
         bool csthresholdmask;
+        //locallabcie
+        bool visicie;
+        bool complexcie;
+        bool expcie;
+        bool reparcie;
 
         LocallabSpotEdited(bool v);
 
