@@ -1510,6 +1510,13 @@ class Locallabcie:
 {
 private:
     Adjuster* const reparcie;
+    Gtk::Frame* const logFramecie;
+    Gtk::CheckButton* const Autograycie;
+    Adjuster* const sourceGraycie;
+    Adjuster* const sourceabscie;
+    MyComboBoxText*  const sursourcie;
+    Gtk::Box* const surHBoxcie;
+    sigc::connection AutograycieConn,  sursourcieconn;
     
 public:
     Locallabcie();
@@ -1527,6 +1534,7 @@ public:
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
+    void sursourcieChanged();
 
     void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg);
 
@@ -1536,6 +1544,7 @@ private:
     void convertParamToSimple() override;
     void updateGUIToMode(const modeType new_type) override;
     void complexityModeChanged();
+    void AutograycieChanged();
 
 
 };

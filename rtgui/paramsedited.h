@@ -977,6 +977,10 @@ public:
         bool complexcie;
         bool expcie;
         bool reparcie;
+        bool Autograycie;
+        bool sourceGraycie;
+        bool sourceabscie;
+        bool sursourcie;
 
         LocallabSpotEdited(bool v);
 

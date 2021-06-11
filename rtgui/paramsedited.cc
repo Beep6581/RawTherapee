@@ -1674,6 +1674,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).expcie = locallab.spots.at(j).expcie && pSpot.expcie == otherSpot.expcie;
                 locallab.spots.at(j).complexcie = locallab.spots.at(j).complexcie && pSpot.complexcie == otherSpot.complexcie;
                 locallab.spots.at(j).reparcie = locallab.spots.at(j).reparcie && pSpot.reparcie == otherSpot.reparcie;
+                locallab.spots.at(j).Autograycie = locallab.spots.at(j).Autograycie && pSpot.Autograycie == otherSpot.Autograycie;
+                locallab.spots.at(j).sourceGraycie = locallab.spots.at(j).sourceGraycie && pSpot.sourceGraycie == otherSpot.sourceGraycie;
+                locallab.spots.at(j).sourceabscie = locallab.spots.at(j).sourceabscie && pSpot.sourceabscie == otherSpot.sourceabscie;
+                locallab.spots.at(j).sursourcie = locallab.spots.at(j).sursourcie && pSpot.sursourcie == otherSpot.sursourcie;
 
             }
         }
@@ -5592,6 +5596,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).reparcie = mods.locallab.spots.at(i).reparcie;
         }
 
+        if (locallab.spots.at(i).Autograycie) {
+            toEdit.locallab.spots.at(i).Autograycie = mods.locallab.spots.at(i).Autograycie;
+        }
+
+        if (locallab.spots.at(i).sourceGraycie) {
+            toEdit.locallab.spots.at(i).sourceGraycie = mods.locallab.spots.at(i).sourceGraycie;
+        }
+
+        if (locallab.spots.at(i).sourceabscie) {
+            toEdit.locallab.spots.at(i).sourceabscie = mods.locallab.spots.at(i).sourceabscie;
+        }
+
+        if (locallab.spots.at(i).sursourcie) {
+            toEdit.locallab.spots.at(i).sursourcie = mods.locallab.spots.at(i).sursourcie;
+        }
+
     }
 
     if (spot.enabled) {
@@ -7470,7 +7490,11 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     visicie(v),
     complexcie(v),
     expcie(v),
-    reparcie(v)
+    reparcie(v),
+    Autograycie(v),
+    sourceGraycie(v),
+    sourceabscie(v),
+    sursourcie(v)
 
 {
 }
@@ -8068,7 +8092,11 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     complexcie= v;
     expcie = v;
     reparcie = v;
-    
+    Autograycie = v;
+    sourceGraycie = v;
+    sourceabscie = v;
+    sursourcie = v;
+
 }
 
 bool CaptureSharpeningParamsEdited::isUnchanged() const

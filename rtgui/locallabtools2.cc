@@ -7362,7 +7362,13 @@ void LocallabMask::updateMaskGUI()
 /*==== Locallabcie ====*/
 Locallabcie::Locallabcie():
     LocallabTool(this, M("TP_LOCALLAB_CIE_TOOLNAME"), M("TP_LOCALLAB_CIE"), false),
-    reparcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0)))
+    reparcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
+    logFramecie(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
+    Autograycie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAY")))),
+    sourceGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 10.0))),
+    sourceabscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 2000.0))),
+    sursourcie(Gtk::manage (new MyComboBoxText ())),
+    surHBoxcie(Gtk::manage(new Gtk::Box()))
     
     {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
@@ -7371,6 +7377,33 @@ Locallabcie::Locallabcie():
     const LocallabParams::LocallabSpot defSpot;
     reparcie->setAdjusterListener(this);
     pack_start(*reparcie);
+    AutograycieConn = Autograycie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::AutograycieChanged));
+
+    sourceGraycie->setAdjusterListener(this);
+
+    sourceabscie->setLogScale(500, 0);
+
+    sourceabscie->setAdjusterListener(this);
+    surHBoxcie->set_spacing (2);
+    surHBoxcie->set_tooltip_markup (M ("TP_LOCALLAB_LOGSURSOUR_TOOLTIP"));
+    Gtk::Label* surLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
+    surHBoxcie->pack_start (*surLabel, Gtk::PACK_SHRINK);
+    sursourcie->append (M ("TP_COLORAPP_SURROUND_AVER"));
+    sursourcie->append (M ("TP_COLORAPP_SURROUND_DIM"));
+    sursourcie->append (M ("TP_COLORAPP_SURROUND_DARK"));
+    sursourcie->set_active (0);
+    surHBoxcie->pack_start (*sursourcie);
+    sursourcieconn = sursourcie->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::sursourcieChanged) );
+
+    logFramecie->set_label_align(0.025, 0.5);
+    ToolParamBlock* const cieFBox = Gtk::manage(new ToolParamBlock());
+    cieFBox->pack_start(*Autograycie);
+    cieFBox->pack_start(*sourceGraycie);
+    cieFBox->pack_start(*sourceabscie);
+    cieFBox->pack_start (*surHBoxcie);
+    logFramecie->add(*cieFBox);
+    pack_start(*logFramecie);
+
 
     }
 Locallabcie::~Locallabcie()
@@ -7384,20 +7417,32 @@ void Locallabcie::setDefaultExpanderVisibility()
 void Locallabcie::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
+        logFramecie->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
+        Autograycie->set_tooltip_text(M("TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP"));
+        sourceGraycie->set_tooltip_text("");
+        sourceabscie->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
 
     } else {
+        logFramecie->set_tooltip_text("");
+        Autograycie->set_tooltip_text("");
+        sourceGraycie->set_tooltip_text("");
+        sourceabscie->set_tooltip_text("");
 
     }
 }
 void Locallabcie::disableListener()
 {
     LocallabTool::disableListener();
+    AutograycieConn.block(true);
+    sursourcieconn.block (true);
 
 }
 
 void Locallabcie::enableListener()
 {
     LocallabTool::enableListener();
+    AutograycieConn.block(false);
+    sursourcieconn.block (false);
 
 }
 
@@ -7418,6 +7463,18 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         complexity->set_active(spot.complexcie);
 
         reparcie->setValue(spot.reparcie);
+        Autograycie->set_active(spot.Autogray);
+        sourceGraycie->setValue(spot.sourceGraycie);
+        sourceabscie->setValue(spot.sourceabscie);
+        
+        if (spot.sursourcie == "Average") {
+            sursourcie->set_active (0);
+        } else if (spot.sursourcie == "Dim") {
+            sursourcie->set_active (1);
+        } else if (spot.sursourcie == "Dark") {
+            sursourcie->set_active (2);
+        }
+        
     }
     enableListener();
     
@@ -7434,8 +7491,45 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.visicie = exp->get_visible();
         spot.complexcie = complexity->get_active_row_number();
         spot.reparcie = reparcie->getValue();
+        spot.Autograycie = Autograycie->get_active();
+        spot.sourceGraycie = sourceGraycie->getValue();
+        spot.sourceabscie = sourceabscie->getValue();
+
+        if (sursourcie->get_active_row_number() == 0) {
+            spot.sursourcie = "Average";
+        } else if (sursourcie->get_active_row_number() == 1) {
+            spot.sursourcie = "Dim";
+        } else if (sursourcie->get_active_row_number() == 2) {
+            spot.sursourcie = "Dark";
+        }
+
     }
    
+}
+
+void Locallabcie::AutograycieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (Autograycie->get_active()) {
+                listener->panelChanged(EvlocallabAutograycie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            } else {
+                listener->panelChanged(EvlocallabAutograycie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::sursourcieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(Evlocallabsursourcie,
+                                   sursourcie->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+        }
+    }
 }
 
 void Locallabcie::updateGUIToMode(const modeType new_type)
@@ -7457,6 +7551,8 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
     if (index < (int)defParams->locallab.spots.size()) {
         const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
         reparcie->setDefault(defSpot.reparcie);
+        sourceGraycie->setDefault(defSpot.sourceGraycie);
+        sourceabscie->setDefault(defSpot.sourceabscie);
     }
 }
 
@@ -7469,6 +7565,21 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
                                        reparcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
+        
+        if (a == sourceGraycie) {
+            if (listener) {
+                listener->panelChanged(EvlocallabsourceGraycie,
+                                       sourceGraycie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == sourceabscie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsourceabscie,
+                                       sourceabscie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+        
     }
 }
 

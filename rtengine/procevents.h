@@ -1081,6 +1081,10 @@ enum ProcEventCode {
     Evlocallabgamex = 1055,
     EvLocenacie = 1056,
     Evlocallabreparcie = 1057,
+    EvlocallabAutograycie = 1058,
+    EvlocallabsourceGraycie = 1059,
+    Evlocallabsourceabscie = 1060,
+    Evlocallabsursourcie = 1061,
     NUMOFEVENTS
 };
 

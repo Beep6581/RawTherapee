@@ -1571,6 +1571,10 @@ struct LocallabParams {
         bool expcie;
         int complexcie;
         double reparcie;
+        bool Autograycie;
+        double sourceGraycie;
+        double sourceabscie;
+        Glib::ustring sursourcie;
 
         LocallabSpot();
 
