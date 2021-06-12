@@ -206,6 +206,8 @@ protected:
     double movingPosition;
     bool needPointer;
 
+    unsigned int bitdepth;
+
     HistogramAreaIdleHelper* haih;
 
     int pointer_red, pointer_green, pointer_blue;
@@ -240,6 +242,7 @@ public:
     );
     void updateOptions (bool r, bool g, bool b, bool l, bool c, int mode, Options::ScopeType type, bool pointer);
     bool updatePending();
+    void setBitDepth(unsigned int bitdepth);
     void on_realize() override;
     bool on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr) override;
     bool on_button_press_event (GdkEventButton* event) override;
@@ -354,6 +357,10 @@ public:
     )
     {
         histogramArea->update(histRed, histGreen, histBlue, histLuma, histChroma, histRedRaw, histGreenRaw, histBlueRaw, vectorscopeScale, vectorscopeHC, vectorscopeHS, waveformScale, waveformRed, waveformGreen, waveformBlue, waveformLuma);
+    }
+    void setBitDepth(unsigned int bitdepth)
+    {
+        histogramArea->setBitDepth(bitdepth);
     }
     // pointermotionlistener interface
     void pointerMoved (bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int x, int y, int r, int g, int b, bool isRaw = false) override;

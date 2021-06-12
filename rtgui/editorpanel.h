@@ -149,6 +149,7 @@ public:
     bool updateVectorscopeHC(void) const override;
     bool updateVectorscopeHS(void) const override;
     bool updateWaveform(void) const override;
+    void setBitDepth(unsigned int bitdepth) override;
 
     // HistogramPanelListener
     void scopeTypeChanged(Options::ScopeType new_type) override;

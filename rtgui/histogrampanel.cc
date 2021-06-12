@@ -1114,6 +1114,11 @@ void HistogramArea::get_preferred_width_for_height_vfunc (int height, int &minim
     get_preferred_width_vfunc (minimum_width, natural_width);
 }
 
+void HistogramArea::setBitDepth(unsigned int bitdepth)
+{
+    HistogramArea::bitdepth = bitdepth;
+}
+
 void HistogramArea::updateOptions (bool r, bool g, bool b, bool l, bool c, int mode, ScopeType type, bool pointer)
 {
     wave_buffer_dirty = wave_buffer_dirty || needRed != r || needGreen != g || needBlue != b;
@@ -1253,6 +1258,8 @@ void HistogramArea::updateBackBuffer ()
     std::valarray<double> ch_ds(1);
     ch_ds[0] = 4;
     cr->set_dash(ch_ds, 0);
+
+    printf("HistogramArea::setBitDepth -> %u\n",bitdepth);
 
     // determine the number of horiztonal gridlines based on current height
     int nrOfHGridPartitions = static_cast<int>(rtengine::min (16.0, pow (2.0, floor ((h - 100) / 250) + 2)));

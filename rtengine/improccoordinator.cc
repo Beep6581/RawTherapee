@@ -1810,8 +1810,6 @@ void ImProcCoordinator::notifyHistogramChanged()
 bool ImProcCoordinator::updateLRGBHistograms()
 {
 
-    printf("%u bit image - update histogram\n",imgsrc->getBitDepth());
-
     if (!hist_lrgb_dirty) {
         return false;
     }
@@ -1860,9 +1858,9 @@ bool ImProcCoordinator::updateLRGBHistograms()
                 int ofs = (i * pW + x1) * 3;
 
                 for (int j = x1; j < x2; j++) {
-                    int r = workimg->data[ofs++] * 256; // scale up, because workimg is 8 bit
-                    int g = workimg->data[ofs++] * 256;
-                    int b = workimg->data[ofs++] * 256;
+                    int r = workimg->data[ofs++];// * 256; // scale up, because workimg is 8 bit
+                    int g = workimg->data[ofs++];// * 256;
+                    int b = workimg->data[ofs++];// * 256;
 
                     histRed[r]++;
                     histGreen[g]++;

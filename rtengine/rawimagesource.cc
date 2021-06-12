@@ -3776,7 +3776,7 @@ void RawImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
 
 // For histogram data gamma is applied, blackpoint and gain also
 void RawImageSource::getRAWHistogram (LUTu & histRedRaw, LUTu & histGreenRaw, LUTu & histBlueRaw)
-{    
+{
 //    BENCHFUN
     histRedRaw.clear();
     histGreenRaw.clear();
