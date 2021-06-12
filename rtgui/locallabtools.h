@@ -1542,8 +1542,6 @@ public:
     
 
     void updateAdviceTooltips(const bool showTooltips) override;
-    void surroundChanged();
-    void sursourChanged();
     void setDefaultExpanderVisibility() override;
 
     void disableListener() override;
@@ -1563,6 +1561,7 @@ private:
     void updateGUIToMode(const modeType new_type) override;
     void complexityModeChanged();
     void AutograycieChanged();
+    void updatecieGUI();
 
 
 };

@@ -7362,6 +7362,7 @@ void LocallabMask::updateMaskGUI()
 /*==== Locallabcie ====*/
 Locallabcie::Locallabcie():
     LocallabTool(this, M("TP_LOCALLAB_CIE_TOOLNAME"), M("TP_LOCALLAB_CIE"), false),
+    // ciecam specific widgets
     reparcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     cieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
     Autograycie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAY")))),
@@ -7483,6 +7484,8 @@ Locallabcie::Locallabcie():
     cieP2Box->pack_start(*detailcie);
     cie2Frame->add(*cieP2Box);
     pack_start(*cie2Frame);
+    // Update GUI according to complexity mode
+    updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
 
 
     }
@@ -7515,6 +7518,8 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         targetGraycie->set_tooltip_text(M("TP_COLORAPP_YBOUT_TOOLTIP"));
         detailcie->set_tooltip_text(M("TP_LOCALLAB_LOGDETAIL_TOOLTIP"));
         catadcie->set_tooltip_text(M("TP_LOCALLAB_LOGCATAD_TOOLTIP"));
+        cie2Frame->set_tooltip_text(M("TP_LOCALLAB_LOGVIEWING_TOOLTIP"));
+
 
     } else {
         cieFrame->set_tooltip_text("");
@@ -7534,6 +7539,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         targetGraycie->set_tooltip_text("");
         detailcie->set_tooltip_text("");
         catadcie->set_tooltip_text("");
+        cie2Frame->set_tooltip_text("");
 
     }
 }
@@ -7609,7 +7615,11 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
        
     }
     enableListener();
-    
+    // Update GUI according to complexity mode
+    updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
+    // Update Log Encoding GUI according to autocompute button state
+    updatecieGUI();
+
     
 }
 
@@ -7622,6 +7632,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.expcie = exp->getEnabled();
         spot.visicie = exp->get_visible();
         spot.complexcie = complexity->get_active_row_number();
+
         spot.reparcie = reparcie->getValue();
         spot.Autograycie = Autograycie->get_active();
         spot.sourceGraycie = sourceGraycie->getValue();
@@ -7699,10 +7710,81 @@ void Locallabcie::surroundcieChanged()
 
 void Locallabcie::updateGUIToMode(const modeType new_type)
 {
+    switch (new_type) {
+        case Simple:
+            catadcie->hide();
+            saturlcie->show();
+            chromlcie->hide();
+            lightlcie->show();
+            lightqcie->hide();
+            contlcie->show();
+            contthrescie->show();
+            contqcie->hide();
+            colorflcie->hide();
+            surrHBoxcie->show();
+            expLcie->hide();
+            surHBoxcie->show();
+            sourceabscie->hide();
+            targabscie->hide();
+            detailcie->hide();
+            break;
+        case Normal:
+            // Expert mode widgets are hidden in Normal mode
+
+            catadcie->show();
+            saturlcie->show();
+            chromlcie->hide();
+            lightlcie->show();
+            lightqcie->hide();
+            contlcie->show();
+            contthrescie->show();
+            contqcie->hide();
+            colorflcie->hide();
+            surrHBoxcie->show();
+            expLcie->hide();
+            surHBoxcie->show();
+            sourceabscie->show();
+            targabscie->show();
+            detailcie->hide();
+
+            break;
+
+        case Expert:
+            // Show widgets hidden in Normal and Simple mode
+            catadcie->show();
+            saturlcie->show();
+            chromlcie->show();
+            lightlcie->show();
+            lightqcie->show();
+            contlcie->show();
+            contthrescie->show();
+            contqcie->show();
+            colorflcie->show();
+            surrHBoxcie->show();
+            expLcie->show();
+            surHBoxcie->show();
+            sourceabscie->show();
+            targabscie->show();
+            detailcie->show();
+
+    }
+    
 }
+
+void Locallabcie::updatecieGUI()
+{
+    const int mode = complexity->get_active_row_number();
+        if (mode == Expert || mode == Normal){
+            sourceabscie->set_sensitive(true);
+        } else {
+            sourceabscie->hide();
+        }
+}
+
 
 void Locallabcie::convertParamToSimple()
 {
+    
 }
 
 void Locallabcie::convertParamToNormal()
@@ -7715,6 +7797,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
 
     if (index < (int)defParams->locallab.spots.size()) {
         const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
+
         reparcie->setDefault(defSpot.reparcie);
         sourceGraycie->setDefault(defSpot.sourceGraycie);
         sourceabscie->setDefault(defSpot.sourceabscie);
