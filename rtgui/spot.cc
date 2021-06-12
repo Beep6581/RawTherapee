@@ -428,6 +428,11 @@ void Spot::updateGeometry()
             sourceCircle.setVisible(draggedSide != DraggedSide::SOURCE);
             targetCircle.setVisible(draggedSide != DraggedSide::TARGET);
         } else {
+            targetCircle.state = Geometry::NORMAL;
+            sourceCircle.state = Geometry::NORMAL;
+            targetFeatherCircle.state = Geometry::NORMAL;
+            sourceFeatherCircle.state = Geometry::NORMAL;
+
             targetCircle.setActive (false);
             targetMODisc.setActive (false);
             sourceIcon.setActive (false);
