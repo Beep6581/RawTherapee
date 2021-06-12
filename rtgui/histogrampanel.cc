@@ -1259,8 +1259,6 @@ void HistogramArea::updateBackBuffer ()
     ch_ds[0] = 4;
     cr->set_dash(ch_ds, 0);
 
-    printf("HistogramArea::setBitDepth -> %u\n",bitdepth);
-
     // determine the number of horiztonal gridlines based on current height
     int nrOfHGridPartitions = static_cast<int>(rtengine::min (16.0, pow (2.0, floor ((h - 100) / 250) + 2)));
     int nrOfVGridPartitions = 16; // always show 16 stops

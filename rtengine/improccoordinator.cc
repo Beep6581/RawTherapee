@@ -313,6 +313,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         }
     }
 
+    // Forward bit depth of image to the histogram
+    if (hListener) {
+        hListener->setBitDepth(imgsrc->getBitDepth());
+        if (settings->verbose) {
+            printf("Image has a bit depth of %u bits\n",imgsrc->getBitDepth());
+        }
+    }
+
     if (((todo & ALL) == ALL) || (todo & M_MONITOR) || panningRelatedChange || (highDetailNeeded && options.prevdemo != PD_Sidecar)) {
         bwAutoR = bwAutoG = bwAutoB = -9000.f;
 
