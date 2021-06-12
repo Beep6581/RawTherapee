@@ -4284,7 +4284,11 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     contlcie(0.),
     contthrescie(0.),
     contqcie(0.),
-    colorflcie(0.)
+    colorflcie(0.),
+    targabscie(16.),
+    targetGraycie(18.),
+    catadcie(0.),
+    detailcie(0.6)
 
 {
 }
@@ -4905,7 +4909,12 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && contlcie == other.contlcie
         && contthrescie == other.contthrescie
         && contqcie == other.contqcie
-        && colorflcie == other.colorflcie;
+        && colorflcie == other.colorflcie
+        && targabscie == other.targabscie
+        && targetGraycie == other.targetGraycie
+        && catadcie == other.catadcie
+        && detailcie == other.detailcie;
+       
 
 }
 
@@ -6585,6 +6594,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->contthrescie, "Locallab", "Contthrescie_" + index_str, spot.contthrescie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contqcie, "Locallab", "Contqcie_" + index_str, spot.contqcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->colorflcie, "Locallab", "Colorflcie_" + index_str, spot.colorflcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->targabscie, "Locallab", "Targabscie_" + index_str, spot.targabscie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->targetGraycie, "Locallab", "TargetGraycie_" + index_str, spot.targetGraycie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->catadcie, "Locallab", "Catadcie_" + index_str, spot.catadcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->detailcie, "Locallab", "Detailcie_" + index_str, spot.detailcie, keyFile);
                 }
                 
             }
@@ -8637,6 +8650,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Contthrescie_" + index_str, pedited, spot.contthrescie, spotEdited.contthrescie);
                 assignFromKeyfile(keyFile, "Locallab", "Contqcie_" + index_str, pedited, spot.contqcie, spotEdited.contqcie);
                 assignFromKeyfile(keyFile, "Locallab", "Colorflcie_" + index_str, pedited, spot.colorflcie, spotEdited.colorflcie);
+                assignFromKeyfile(keyFile, "Locallab", "Targabscie_" + index_str, pedited, spot.targabscie, spotEdited.targabscie);
+                assignFromKeyfile(keyFile, "Locallab", "TargetGraycie_" + index_str, pedited, spot.targetGraycie, spotEdited.targetGraycie);
+                assignFromKeyfile(keyFile, "Locallab", "Catadcie_" + index_str, pedited, spot.catadcie, spotEdited.catadcie);
+                assignFromKeyfile(keyFile, "Locallab", "Detailcie_" + index_str, pedited, spot.detailcie, spotEdited.detailcie);
 
 
                 // Append LocallabSpot and LocallabParamsEdited

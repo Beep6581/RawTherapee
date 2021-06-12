@@ -1686,6 +1686,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).contthrescie = locallab.spots.at(j).contthrescie && pSpot.contthrescie == otherSpot.contthrescie;
                 locallab.spots.at(j).contqcie = locallab.spots.at(j).contqcie && pSpot.contqcie == otherSpot.contqcie;
                 locallab.spots.at(j).colorflcie = locallab.spots.at(j).colorflcie && pSpot.colorflcie == otherSpot.colorflcie;
+                locallab.spots.at(j).targabscie = locallab.spots.at(j).targabscie && pSpot.targabscie == otherSpot.targabscie;
+                locallab.spots.at(j).targetGraycie = locallab.spots.at(j).targetGraycie && pSpot.targetGraycie == otherSpot.targetGraycie;
+                locallab.spots.at(j).catadcie = locallab.spots.at(j).catadcie && pSpot.catadcie == otherSpot.catadcie;
+                locallab.spots.at(j).detailcie = locallab.spots.at(j).detailcie && pSpot.detailcie == otherSpot.detailcie;
 
             }
         }
@@ -5652,6 +5656,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).colorflcie = mods.locallab.spots.at(i).colorflcie;
         }
 
+        if (locallab.spots.at(i).targabscie) {
+            toEdit.locallab.spots.at(i).targabscie = mods.locallab.spots.at(i).targabscie;
+        }
+
+        if (locallab.spots.at(i).targetGraycie) {
+            toEdit.locallab.spots.at(i).targetGraycie = mods.locallab.spots.at(i).targetGraycie;
+        }
+
+        if (locallab.spots.at(i).catadcie) {
+            toEdit.locallab.spots.at(i).catadcie = mods.locallab.spots.at(i).catadcie;
+        }
+
+        if (locallab.spots.at(i).detailcie) {
+            toEdit.locallab.spots.at(i).detailcie = mods.locallab.spots.at(i).detailcie;
+        }
+
     }
 
     if (spot.enabled) {
@@ -7542,7 +7562,11 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     contlcie(v),
     contthrescie(v),
     contqcie(v),
-    colorflcie(v)
+    colorflcie(v),
+    targabscie(v),
+    targetGraycie(v),
+    catadcie(v),
+    detailcie(v)
 
 {
 }
@@ -8152,6 +8176,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     contthrescie = v;
     contqcie = v;
     colorflcie = v;
+    targabscie = v;
+    targetGraycie = v;
+    catadcie = v;
+    detailcie = v;
 
 }
 

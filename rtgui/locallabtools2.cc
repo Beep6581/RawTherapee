@@ -7378,8 +7378,13 @@ Locallabcie::Locallabcie():
     colorflcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCOLORFL"), -100., 100., 0.5, 0.))),
     saturlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
     chromlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROML"), -100., 100., 0.5, 0.))),
-    expLcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_LOGEXP"))))
-    
+    expLcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_LOGEXP")))),
+    cie2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
+    targetGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
+    targabscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 16.0))),
+    detailcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 1., 0.01, 0.6))),
+    catadcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png")))))
+   
     {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     
@@ -7408,6 +7413,15 @@ Locallabcie::Locallabcie():
 
     contqcie->setAdjusterListener(this);
     colorflcie->setAdjusterListener(this);
+
+    targetGraycie->setAdjusterListener(this);
+    targabscie->setLogScale(500, 0);
+
+    targabscie->setAdjusterListener(this);
+
+    detailcie->setAdjusterListener(this);
+
+    catadcie->setAdjusterListener(this);
     
     surHBoxcie->set_spacing (2);
     surHBoxcie->set_tooltip_markup (M ("TP_LOCALLAB_LOGSURSOUR_TOOLTIP"));
@@ -7446,6 +7460,14 @@ Locallabcie::Locallabcie():
     cieP1Box->pack_start(*expLcie, false, false);
     cie1Frame->add(*cieP1Box);
     pack_start(*cie1Frame);
+    cie2Frame->set_label_align(0.025, 0.5);    
+    ToolParamBlock* const cieP2Box = Gtk::manage(new ToolParamBlock());
+    cieP2Box->pack_start(*targetGraycie);
+    cieP2Box->pack_start(*targabscie);
+    cieP2Box->pack_start(*catadcie);
+    cieP2Box->pack_start(*detailcie);
+    cie2Frame->add(*cieP2Box);
+    pack_start(*cie2Frame);
 
 
     }
@@ -7474,6 +7496,10 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         lightqcie->set_tooltip_text(M("TP_LOCALLAB_LOGLIGHTQ_TOOLTIP"));
         saturlcie->set_tooltip_text(M("TP_LOCALLAB_LOGSATURL_TOOLTIP"));
         chromlcie->set_tooltip_text(M("TP_COLORAPP_CHROMA_TOOLTIP"));
+        targabscie->set_tooltip_text(M("TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP"));
+        targetGraycie->set_tooltip_text(M("TP_COLORAPP_YBOUT_TOOLTIP"));
+        detailcie->set_tooltip_text(M("TP_LOCALLAB_LOGDETAIL_TOOLTIP"));
+        catadcie->set_tooltip_text(M("TP_LOCALLAB_LOGCATAD_TOOLTIP"));
 
     } else {
         cieFrame->set_tooltip_text("");
@@ -7489,6 +7515,10 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         lightqcie->set_tooltip_text("");
         saturlcie->set_tooltip_text("");
         chromlcie->set_tooltip_text("");
+        targabscie->set_tooltip_text("");
+        targetGraycie->set_tooltip_text("");
+        detailcie->set_tooltip_text("");
+        catadcie->set_tooltip_text("");
 
     }
 }
@@ -7545,7 +7575,11 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         contthrescie->setValue(spot.contthrescie);
         contqcie->setValue(spot.contqcie);
         colorflcie->setValue(spot.colorflcie);
-        
+        targabscie->setValue(spot.targabscie);
+        targetGraycie->setValue(spot.targetGraycie);
+        detailcie->setValue(spot.detailcie);
+        catadcie->setValue(spot.catadcie);
+       
     }
     enableListener();
     
@@ -7582,6 +7616,10 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.contthrescie = contthrescie->getValue();
         spot.contqcie = contqcie->getValue();
         spot.colorflcie = colorflcie->getValue();
+        spot.targabscie = targabscie->getValue();
+        spot.targetGraycie = targetGraycie->getValue();
+        spot.catadcie = catadcie->getValue();
+        spot.detailcie = detailcie->getValue();
 
     }
    
@@ -7641,6 +7679,10 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         contthrescie->setDefault(defSpot.contthrescie);
         contqcie->setDefault(defSpot.contqcie);
         colorflcie->setDefault(defSpot.colorflcie);
+        targabscie->setDefault(defSpot.targabscie);
+        targetGraycie->setDefault(defSpot.targetGraycie);
+        catadcie->setDefault(defSpot.catadcie);
+        detailcie->setDefault(defSpot.detailcie);
     }
 }
 
@@ -7725,7 +7767,34 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
-        
+        if (a == targabscie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabtargabscie,
+                                       targabscie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == targetGraycie) {
+            if (listener) {
+                listener->panelChanged(EvlocallabtargetGraycie,
+                                       targetGraycie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == catadcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcatadcie,
+                                       catadcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == detailcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdetailcie,
+                                       detailcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
         
     }
 }

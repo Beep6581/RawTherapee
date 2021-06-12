@@ -1583,6 +1583,10 @@ struct LocallabParams {
         double contthrescie;
         double contqcie;
         double colorflcie;
+        double targabscie;
+        double targetGraycie;
+        double catadcie;
+        double detailcie;
 
         LocallabSpot();
 

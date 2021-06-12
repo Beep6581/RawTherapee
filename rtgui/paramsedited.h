@@ -989,6 +989,10 @@ public:
         bool contthrescie;
         bool contqcie;
         bool colorflcie;
+        bool targabscie;
+        bool targetGraycie;
+        bool catadcie;
+        bool detailcie;
 
         LocallabSpotEdited(bool v);
 

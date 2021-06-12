@@ -1526,6 +1526,11 @@ private:
     Adjuster* const saturlcie;
     Adjuster* const chromlcie;
     MyExpander* const expLcie;
+    Gtk::Frame* const cie2Frame;
+    Adjuster* const targetGraycie;
+    Adjuster* const targabscie;
+    Adjuster* const detailcie;
+    Adjuster* const catadcie;
     
     sigc::connection AutograycieConn,  sursourcieconn;
     

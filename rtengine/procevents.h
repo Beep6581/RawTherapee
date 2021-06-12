@@ -1093,6 +1093,10 @@ enum ProcEventCode {
     Evlocallabcontthrescie = 1067,
     Evlocallabcontqcie = 1068,
     Evlocallabcolorflcie = 1069,
+    Evlocallabtargabscie = 1070,
+    EvlocallabtargetGraycie = 1071,
+    Evlocallabcatadcie = 1072,
+    Evlocallabdetailcie = 1073,
     NUMOFEVENTS
 };
 
