@@ -297,6 +297,11 @@ void StdImageSource::getSize (const PreviewProps &pp, int& w, int& h)
     h = pp.getHeight() / pp.getSkip() + (pp.getHeight() % pp.getSkip() > 0);
 }
 
+unsigned int StdImageSource::getBitDepth() const
+{
+    return img->getBPS();
+}
+
 void StdImageSource::getAutoExpHistogram (LUTu & histogram, int& histcompr)
 {
     if (img->getType() == sImage8) {

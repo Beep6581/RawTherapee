@@ -105,7 +105,6 @@ ImProcCoordinator::ImProcCoordinator() :
     histGreen(65536), histGreenRaw(65536),
     histBlue(65536), histBlueRaw(65536),
     histLuma(65536),
-    histChroma(65536),
     
     histToneCurve(256),
     histToneCurveBW(256),
@@ -117,6 +116,7 @@ ImProcCoordinator::ImProcCoordinator() :
     histCCAM(256),
     histClad(256),
     bcabhist(256),
+    histChroma(65536),
 
     histLRETI(256),
 
@@ -1809,6 +1809,8 @@ void ImProcCoordinator::notifyHistogramChanged()
 
 bool ImProcCoordinator::updateLRGBHistograms()
 {
+
+    printf("%u bit image - update histogram\n",imgsrc->getBitDepth());
 
     if (!hist_lrgb_dirty) {
         return false;

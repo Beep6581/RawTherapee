@@ -517,6 +517,11 @@ int RawImageSource::getRotateDegree() const
     return ri->get_rotateDegree();
 }
 
+unsigned int RawImageSource::getBitDepth() const
+{
+    return ri->get_bitdepth();
+}
+
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 void RawImageSource::transformRect (const PreviewProps &pp, int tran, int &ssx1, int &ssy1, int &width, int &height, int &fw)
