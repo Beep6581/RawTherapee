@@ -1510,12 +1510,23 @@ class Locallabcie:
 {
 private:
     Adjuster* const reparcie;
-    Gtk::Frame* const logFramecie;
+    Gtk::Frame* const cieFrame;
     Gtk::CheckButton* const Autograycie;
     Adjuster* const sourceGraycie;
     Adjuster* const sourceabscie;
     MyComboBoxText*  const sursourcie;
     Gtk::Box* const surHBoxcie;
+    Gtk::Frame* const cie1Frame;
+    Adjuster* const lightlcie;
+    Adjuster* const lightqcie;
+    Adjuster* const contlcie;
+    Adjuster* const contqcie;
+    Adjuster* const contthrescie;
+    Adjuster* const colorflcie;
+    Adjuster* const saturlcie;
+    Adjuster* const chromlcie;
+    MyExpander* const expLcie;
+    
     sigc::connection AutograycieConn,  sursourcieconn;
     
 public:

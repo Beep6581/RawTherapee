@@ -981,6 +981,14 @@ public:
         bool sourceGraycie;
         bool sourceabscie;
         bool sursourcie;
+        bool saturlcie;
+        bool chromlcie;
+        bool lightlcie;
+        bool lightqcie;
+        bool contlcie;
+        bool contthrescie;
+        bool contqcie;
+        bool colorflcie;
 
         LocallabSpotEdited(bool v);
 

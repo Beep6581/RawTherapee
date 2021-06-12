@@ -4276,7 +4276,15 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     Autograycie(true),
     sourceGraycie(10.),
     sourceabscie(2000.),
-    sursourcie("Average")
+    sursourcie("Average"),
+    saturlcie(0.),
+    chromlcie(0.),
+    lightlcie(0.),
+    lightqcie(0.),
+    contlcie(0.),
+    contthrescie(0.),
+    contqcie(0.),
+    colorflcie(0.)
 
 {
 }
@@ -4889,7 +4897,15 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && Autograycie == other.Autograycie
         && sourceGraycie == other.sourceGraycie
         && sourceabscie == other.sourceabscie
-        && sursourcie == other.sursourcie;
+        && sursourcie == other.sursourcie
+        && saturlcie == other.saturlcie
+        && chromlcie == other.chromlcie
+        && lightlcie == other.lightlcie
+        && lightqcie == other.lightqcie
+        && contlcie == other.contlcie
+        && contthrescie == other.contthrescie
+        && contqcie == other.contqcie
+        && colorflcie == other.colorflcie;
 
 }
 
@@ -6487,7 +6503,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->targetGray, "Locallab", "TargetGray_" + index_str, spot.targetGray, keyFile);
                     saveToKeyfile(!pedited || spot_edited->catad, "Locallab", "Catad_" + index_str, spot.catad, keyFile);
                     saveToKeyfile(!pedited || spot_edited->saturl, "Locallab", "Saturl_" + index_str, spot.saturl, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->saturl, "Locallab", "Chroml_" + index_str, spot.chroml, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->chroml, "Locallab", "Chroml_" + index_str, spot.chroml, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LcurveL, "Locallab", "LCurveL_" + index_str, spot.LcurveL, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lightl, "Locallab", "Lightl_" + index_str, spot.lightl, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lightq, "Locallab", "Brightq_" + index_str, spot.lightq, keyFile);
@@ -6561,6 +6577,14 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->sourceGraycie, "Locallab", "SourceGraycie_" + index_str, spot.sourceGraycie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sourceabscie, "Locallab", "Sourceabscie_" + index_str, spot.sourceabscie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sursourcie, "Locallab", "Sursourcie_" + index_str, spot.sursourcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->saturlcie, "Locallab", "Saturlcie_" + index_str, spot.saturlcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->chromlcie, "Locallab", "Chromlcie_" + index_str, spot.chromlcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lightlcie, "Locallab", "Lightlcie_" + index_str, spot.lightlcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lightqcie, "Locallab", "Brightqcie_" + index_str, spot.lightqcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->contlcie, "Locallab", "Contlcie_" + index_str, spot.contlcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->contthrescie, "Locallab", "Contthrescie_" + index_str, spot.contthrescie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->contqcie, "Locallab", "Contqcie_" + index_str, spot.contqcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->colorflcie, "Locallab", "Colorflcie_" + index_str, spot.colorflcie, keyFile);
                 }
                 
             }
@@ -8605,6 +8629,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "SourceGraycie_" + index_str, pedited, spot.sourceGraycie, spotEdited.sourceGraycie);
                 assignFromKeyfile(keyFile, "Locallab", "Sourceabscie_" + index_str, pedited, spot.sourceabscie, spotEdited.sourceabscie);
                 assignFromKeyfile(keyFile, "Locallab", "Sursourcie_" + index_str, pedited, spot.sursourcie, spotEdited.sursourcie);
+                assignFromKeyfile(keyFile, "Locallab", "Saturlcie_" + index_str, pedited, spot.saturlcie, spotEdited.saturlcie);
+                assignFromKeyfile(keyFile, "Locallab", "Chromlcie_" + index_str, pedited, spot.chromlcie, spotEdited.chromlcie);
+                assignFromKeyfile(keyFile, "Locallab", "Lightlcie_" + index_str, pedited, spot.lightlcie, spotEdited.lightlcie);
+                assignFromKeyfile(keyFile, "Locallab", "Brightqcie_" + index_str, pedited, spot.lightqcie, spotEdited.lightqcie);
+                assignFromKeyfile(keyFile, "Locallab", "Contlcie_" + index_str, pedited, spot.contlcie, spotEdited.contlcie);
+                assignFromKeyfile(keyFile, "Locallab", "Contthrescie_" + index_str, pedited, spot.contthrescie, spotEdited.contthrescie);
+                assignFromKeyfile(keyFile, "Locallab", "Contqcie_" + index_str, pedited, spot.contqcie, spotEdited.contqcie);
+                assignFromKeyfile(keyFile, "Locallab", "Colorflcie_" + index_str, pedited, spot.colorflcie, spotEdited.colorflcie);
 
 
                 // Append LocallabSpot and LocallabParamsEdited

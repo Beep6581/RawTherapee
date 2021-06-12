@@ -1678,6 +1678,14 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).sourceGraycie = locallab.spots.at(j).sourceGraycie && pSpot.sourceGraycie == otherSpot.sourceGraycie;
                 locallab.spots.at(j).sourceabscie = locallab.spots.at(j).sourceabscie && pSpot.sourceabscie == otherSpot.sourceabscie;
                 locallab.spots.at(j).sursourcie = locallab.spots.at(j).sursourcie && pSpot.sursourcie == otherSpot.sursourcie;
+                locallab.spots.at(j).saturlcie = locallab.spots.at(j).saturlcie && pSpot.saturlcie == otherSpot.saturlcie;
+                locallab.spots.at(j).chromlcie = locallab.spots.at(j).chromlcie && pSpot.chromlcie == otherSpot.chromlcie;
+                locallab.spots.at(j).lightlcie = locallab.spots.at(j).lightlcie && pSpot.lightlcie == otherSpot.lightlcie;
+                locallab.spots.at(j).lightqcie = locallab.spots.at(j).lightqcie && pSpot.lightqcie == otherSpot.lightqcie;
+                locallab.spots.at(j).contlcie = locallab.spots.at(j).contlcie && pSpot.contlcie == otherSpot.contlcie;
+                locallab.spots.at(j).contthrescie = locallab.spots.at(j).contthrescie && pSpot.contthrescie == otherSpot.contthrescie;
+                locallab.spots.at(j).contqcie = locallab.spots.at(j).contqcie && pSpot.contqcie == otherSpot.contqcie;
+                locallab.spots.at(j).colorflcie = locallab.spots.at(j).colorflcie && pSpot.colorflcie == otherSpot.colorflcie;
 
             }
         }
@@ -5612,6 +5620,38 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).sursourcie = mods.locallab.spots.at(i).sursourcie;
         }
 
+        if (locallab.spots.at(i).saturlcie) {
+            toEdit.locallab.spots.at(i).saturlcie = mods.locallab.spots.at(i).saturlcie;
+        }
+
+        if (locallab.spots.at(i).chromlcie) {
+            toEdit.locallab.spots.at(i).chromlcie = mods.locallab.spots.at(i).chromlcie;
+        }
+
+        if (locallab.spots.at(i).lightlcie) {
+            toEdit.locallab.spots.at(i).lightlcie = mods.locallab.spots.at(i).lightlcie;
+        }
+
+        if (locallab.spots.at(i).lightqcie) {
+            toEdit.locallab.spots.at(i).lightqcie = mods.locallab.spots.at(i).lightqcie;
+        }
+
+        if (locallab.spots.at(i).contlcie) {
+            toEdit.locallab.spots.at(i).contlcie = mods.locallab.spots.at(i).contlcie;
+        }
+
+        if (locallab.spots.at(i).contthrescie) {
+            toEdit.locallab.spots.at(i).contthrescie = mods.locallab.spots.at(i).contthrescie;
+        }
+
+        if (locallab.spots.at(i).contqcie) {
+            toEdit.locallab.spots.at(i).contqcie = mods.locallab.spots.at(i).contqcie;
+        }
+
+        if (locallab.spots.at(i).colorflcie) {
+            toEdit.locallab.spots.at(i).colorflcie = mods.locallab.spots.at(i).colorflcie;
+        }
+
     }
 
     if (spot.enabled) {
@@ -7494,7 +7534,15 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     Autograycie(v),
     sourceGraycie(v),
     sourceabscie(v),
-    sursourcie(v)
+    sursourcie(v),
+    saturlcie(v),
+    chromlcie(v),
+    lightlcie(v),
+    lightqcie(v),
+    contlcie(v),
+    contthrescie(v),
+    contqcie(v),
+    colorflcie(v)
 
 {
 }
@@ -8096,6 +8144,14 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     sourceGraycie = v;
     sourceabscie = v;
     sursourcie = v;
+    saturlcie = v;
+    chromlcie = v;
+    lightlcie = v;
+    lightqcie = v;
+    contlcie = v;
+    contthrescie = v;
+    contqcie = v;
+    colorflcie = v;
 
 }
 

@@ -7363,12 +7363,22 @@ void LocallabMask::updateMaskGUI()
 Locallabcie::Locallabcie():
     LocallabTool(this, M("TP_LOCALLAB_CIE_TOOLNAME"), M("TP_LOCALLAB_CIE"), false),
     reparcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
-    logFramecie(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
+    cieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
     Autograycie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAY")))),
     sourceGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 10.0))),
     sourceabscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 2000.0))),
     sursourcie(Gtk::manage (new MyComboBoxText ())),
-    surHBoxcie(Gtk::manage(new Gtk::Box()))
+    surHBoxcie(Gtk::manage(new Gtk::Box())),
+    cie1Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG1FRA")))),
+    lightlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTL"), -100., 100., 0.5, 0.))),
+    lightqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTQ"), -100., 100., 0.5, 0.))),
+    contlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTL"), -100., 100., 0.5, 0.))),
+    contqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),
+    contthrescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTHRES"), -1., 1., 0.01, 0.))),
+    colorflcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCOLORFL"), -100., 100., 0.5, 0.))),
+    saturlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
+    chromlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROML"), -100., 100., 0.5, 0.))),
+    expLcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_LOGEXP"))))
     
     {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
@@ -7384,6 +7394,21 @@ Locallabcie::Locallabcie():
     sourceabscie->setLogScale(500, 0);
 
     sourceabscie->setAdjusterListener(this);
+    setExpandAlignProperties(expLcie, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    saturlcie->setAdjusterListener(this);
+
+    chromlcie->setAdjusterListener(this);
+
+    lightlcie->setAdjusterListener(this);
+
+    lightqcie->setAdjusterListener(this);
+    contlcie->setAdjusterListener(this);
+    contthrescie->setAdjusterListener(this);
+
+    contqcie->setAdjusterListener(this);
+    colorflcie->setAdjusterListener(this);
+    
     surHBoxcie->set_spacing (2);
     surHBoxcie->set_tooltip_markup (M ("TP_LOCALLAB_LOGSURSOUR_TOOLTIP"));
     Gtk::Label* surLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
@@ -7395,14 +7420,32 @@ Locallabcie::Locallabcie():
     surHBoxcie->pack_start (*sursourcie);
     sursourcieconn = sursourcie->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::sursourcieChanged) );
 
-    logFramecie->set_label_align(0.025, 0.5);
+    cieFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const cieFBox = Gtk::manage(new ToolParamBlock());
     cieFBox->pack_start(*Autograycie);
     cieFBox->pack_start(*sourceGraycie);
     cieFBox->pack_start(*sourceabscie);
     cieFBox->pack_start (*surHBoxcie);
-    logFramecie->add(*cieFBox);
-    pack_start(*logFramecie);
+    cieFrame->add(*cieFBox);
+    pack_start(*cieFrame);
+
+    cie1Frame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const cieP1Box = Gtk::manage(new ToolParamBlock());
+    cieP1Box->pack_start(*contlcie);
+    cieP1Box->pack_start(*lightlcie);
+    cieP1Box->pack_start(*contthrescie);
+    cieP1Box->pack_start(*saturlcie);
+    Gtk::Separator* const separatorchrocie = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
+    ToolParamBlock* const cieP11Box = Gtk::manage(new ToolParamBlock());
+    cieP11Box->pack_start(*lightqcie);
+    cieP11Box->pack_start(*contqcie);
+    cieP11Box->pack_start(*separatorchrocie);
+    cieP11Box->pack_start(*chromlcie);
+    cieP11Box->pack_start(*colorflcie);
+    expLcie->add(*cieP11Box, false);
+    cieP1Box->pack_start(*expLcie, false, false);
+    cie1Frame->add(*cieP1Box);
+    pack_start(*cie1Frame);
 
 
     }
@@ -7412,21 +7455,40 @@ Locallabcie::~Locallabcie()
 }
 void Locallabcie::setDefaultExpanderVisibility()
 {
+    expLcie->set_expanded(false);
 
 }
 void Locallabcie::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
-        logFramecie->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
+        cieFrame->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
         Autograycie->set_tooltip_text(M("TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP"));
         sourceGraycie->set_tooltip_text("");
         sourceabscie->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
+        cie1Frame->set_tooltip_text(M("TP_LOCALLAB_LOGIMAGE_TOOLTIP"));
+        contlcie->set_tooltip_text(M("TP_LOCALLAB_LOGCONTL_TOOLTIP"));
+        contqcie->set_tooltip_text(M("TP_LOCALLAB_LOGCONTQ_TOOLTIP"));
+        contthrescie->set_tooltip_text(M("TP_LOCALLAB_LOGCONTTHRES_TOOLTIP"));
+        colorflcie->set_tooltip_text(M("TP_LOCALLAB_LOGCOLORF_TOOLTIP"));
+        lightlcie->set_tooltip_text(M("TP_LOCALLAB_LOGLIGHTL_TOOLTIP"));
+        lightqcie->set_tooltip_text(M("TP_LOCALLAB_LOGLIGHTQ_TOOLTIP"));
+        saturlcie->set_tooltip_text(M("TP_LOCALLAB_LOGSATURL_TOOLTIP"));
+        chromlcie->set_tooltip_text(M("TP_COLORAPP_CHROMA_TOOLTIP"));
 
     } else {
-        logFramecie->set_tooltip_text("");
+        cieFrame->set_tooltip_text("");
         Autograycie->set_tooltip_text("");
         sourceGraycie->set_tooltip_text("");
         sourceabscie->set_tooltip_text("");
+        cie1Frame->set_tooltip_text("");
+        contlcie->set_tooltip_text("");
+        contqcie->set_tooltip_text("");
+        contthrescie->set_tooltip_text("");
+        colorflcie->set_tooltip_text("");
+        lightlcie->set_tooltip_text("");
+        lightqcie->set_tooltip_text("");
+        saturlcie->set_tooltip_text("");
+        chromlcie->set_tooltip_text("");
 
     }
 }
@@ -7474,6 +7536,15 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         } else if (spot.sursourcie == "Dark") {
             sursourcie->set_active (2);
         }
+
+        saturlcie->setValue(spot.saturlcie);
+        chromlcie->setValue(spot.chromlcie);
+        lightlcie->setValue(spot.lightlcie);
+        lightqcie->setValue(spot.lightqcie);
+        contlcie->setValue(spot.contlcie);
+        contthrescie->setValue(spot.contthrescie);
+        contqcie->setValue(spot.contqcie);
+        colorflcie->setValue(spot.colorflcie);
         
     }
     enableListener();
@@ -7502,6 +7573,15 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         } else if (sursourcie->get_active_row_number() == 2) {
             spot.sursourcie = "Dark";
         }
+
+        spot.saturlcie = saturlcie->getValue();
+        spot.chromlcie = chromlcie->getValue();
+        spot.lightlcie = lightlcie->getValue();
+        spot.lightqcie = lightqcie->getValue();
+        spot.contlcie = contlcie->getValue();
+        spot.contthrescie = contthrescie->getValue();
+        spot.contqcie = contqcie->getValue();
+        spot.colorflcie = colorflcie->getValue();
 
     }
    
@@ -7553,6 +7633,14 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         reparcie->setDefault(defSpot.reparcie);
         sourceGraycie->setDefault(defSpot.sourceGraycie);
         sourceabscie->setDefault(defSpot.sourceabscie);
+        saturlcie->setDefault(defSpot.saturlcie);
+        chromlcie->setDefault(defSpot.chromlcie);
+        lightlcie->setDefault(defSpot.lightlcie);
+        lightqcie->setDefault(defSpot.lightqcie);
+        contlcie->setDefault(defSpot.contlcie);
+        contthrescie->setDefault(defSpot.contthrescie);
+        contqcie->setDefault(defSpot.contqcie);
+        colorflcie->setDefault(defSpot.colorflcie);
     }
 }
 
@@ -7579,6 +7667,65 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
                                        sourceabscie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
+        
+        if (a == saturlcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsaturlcie,
+                                       saturlcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == chromlcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabchromlcie,
+                                       chromlcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == lightlcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallablightlcie,
+                                       lightlcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == lightqcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallablightqcie,
+                                       lightqcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+
+        if (a == contlcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcontlcie,
+                                       contlcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == contthrescie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcontthrescie,
+                                       contthrescie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == contqcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcontqcie,
+                                       contqcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == colorflcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcolorflcie,
+                                       colorflcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        
         
     }
 }
