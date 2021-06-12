@@ -667,6 +667,7 @@ bool Spot::button3Pressed (int modifierKey)
         return true;
     } else if (! (modifierKey & (GDK_SHIFT_MASK | GDK_SHIFT_MASK))) {
         EditSubscriber::action = EditSubscriber::Action::PICKING;
+        return true;
     }
 
     return false;
