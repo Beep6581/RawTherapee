@@ -1259,18 +1259,25 @@ void HistogramArea::updateBackBuffer ()
     ch_ds[0] = 4;
     cr->set_dash(ch_ds, 0);
 
-    // determine the number of horiztonal gridlines based on current height
+    // determine the number of horizontal gridlines based on current height
     int nrOfHGridPartitions = static_cast<int>(rtengine::min (16.0, pow (2.0, floor ((h - 100) / 250) + 2)));
-    int nrOfVGridPartitions = 16; // always show 16 stops
+
+    // set up vertical grid based on image bitdepth
+    int nrOfVGridPartitions = bitdepth;
+    if (options.histogramScopeType == ScopeType::HISTOGRAM) {
+        nrOfVGridPartitions = 8; // Preview image is always 8-bit
+    }
+    int maxHValue = (1 << nrOfVGridPartitions) - 1;
+    float maxHValuef = static_cast<float>(maxHValue);
 
     // draw vertical gridlines
     if (options.histogramScopeType == ScopeType::HISTOGRAM || options.histogramScopeType == ScopeType::HISTOGRAM_RAW) {
         float xpos;
-        for (int i = 0; i <= nrOfVGridPartitions; i++) {
+        for (int i = 0; i < nrOfVGridPartitions; i++) {
             if (options.histogramDrawMode < 2) {
-                xpos = (pow(2.0,i) - 1) / 65535.0 * (w - 1.0);
+                xpos = (pow(2.0,i) - 1) / maxHValuef * (w - 1.0);
             } else {
-                xpos = HistogramScaling::log(65535.0, pow(2.0,i) - 1) * (w - 1.0);
+                xpos = HistogramScaling::log(maxHValuef, pow(2.0,i) - 1) * (w - 1.0);
             }
             cr->move_to(xpos + 1.0, 0);
             cr->line_to(xpos + 1.0, h);
@@ -1317,7 +1324,7 @@ void HistogramArea::updateBackBuffer ()
         unsigned int lumamax = 0;
         unsigned int chromamax = 0;
 
-        for (int i = 1; i < 65535; i++) { // Values at far left and right end are handled differently
+        for (int i = 1; i < maxHValue; i++) { // Values at far left and right end are handled differently
             if (needLuma && lhist[i] > lumamax) {
                 lumamax = lhist[i];
             }
@@ -1341,13 +1348,13 @@ void HistogramArea::updateBackBuffer ()
         
         // Compute the first and last non-zero histogram bins
         int rgbFirst = -1, rgbLast = -1;
-        for (int i = 0; i < 65536; i++) {
+        for (int i = 0; i < maxHValue + 1; i++) {
             if (needRed   && rgbFirst == -1 && rh[i] != 0) rgbFirst = i;
             if (needGreen && rgbFirst == -1 && gh[i] != 0) rgbFirst = i;
             if (needBlue  && rgbFirst == -1 && bh[i] != 0) rgbFirst = i;
             if (rgbFirst != -1) break;
         }
-        for (int i = 65535; i >= 0; i--) {
+        for (int i = maxHValue + 1; i >= 0; i--) {
             if (needRed   && rgbLast == -1 && rh[i] != 0) rgbLast = i;
             if (needGreen && rgbLast == -1 && gh[i] != 0) rgbLast = i;
             if (needBlue  && rgbLast == -1 && bh[i] != 0) rgbLast = i;
@@ -1360,10 +1367,10 @@ void HistogramArea::updateBackBuffer ()
                 
             float posX = static_cast<float>(rgbFirst);
             if (drawMode == 2) {
-                const float mult = 65535.f / xlogf(HistogramScaling::factor / (HistogramScaling::factor + 65535.0));
+                const float mult = maxHValuef / xlogf(HistogramScaling::factor / (HistogramScaling::factor + maxHValuef));
                 posX = HistogramScaling::logMult(posX, mult);
             }
-            posX = posX * (w - 1.f) / 65535.f;
+            posX = posX * (w - 1.f) / maxHValuef;
             cr->move_to (posX + 1.f, 0);
             cr->line_to (posX + 1.f, h);
             cr->set_source_rgba (1., 1., 1., 0.55);
@@ -1374,23 +1381,23 @@ void HistogramArea::updateBackBuffer ()
         
             float posX = static_cast<float>(rgbLast);
             if (drawMode == 2) {
-                const float mult = 65535.f / xlogf(HistogramScaling::factor / (HistogramScaling::factor + 65535.0));
+                const float mult = maxHValuef / xlogf(HistogramScaling::factor / (HistogramScaling::factor + maxHValuef));
                 posX = HistogramScaling::logMult(posX, mult);
             }
-            posX = posX * (w - 1.f) / 65535.f;
+            posX = posX * (w - 1.f) / maxHValuef;
             cr->move_to (posX + 1.f, 0);
             cr->line_to (posX + 1.f, h);
             cr->set_source_rgba (1., 1., 1., 0.55);
             cr->stroke();
         }
         
-        // Draw EV0 line
-        float posX = 32768.f; // TODO: Link directly to bitdepth
+        // Draw EV0 line at -3 stops from maximum (cf. RawDigger)
+        float posX = static_cast<float>(1 << (nrOfVGridPartitions - 3)) - 1.f;
         if (drawMode == 2) {
-            const float mult = 65535.f / xlogf(HistogramScaling::factor / (HistogramScaling::factor + 65535.0));
+            const float mult = maxHValuef / xlogf(HistogramScaling::factor / (HistogramScaling::factor + maxHValuef));
             posX = HistogramScaling::logMult(posX, mult);
         }
-        posX = posX * (w - 1.f) / 65535.f;
+        posX = posX * (w - 1.f) / maxHValuef;
         cr->move_to (posX + 1.f, 0);
         cr->line_to (posX + 1.f, h);
         cr->set_source_rgba (1., 1., 1., 0.55);
@@ -1479,11 +1486,18 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & da
 
     const float maxvalue = rtengine::max(scale, 0.001f); // avoid division by zero and negative values
     
+    // Limit the loop to the actual available data based on the image bit depth
+    int maxHValue = (1 << bitdepth) - 1;
+    if (options.histogramScopeType == ScopeType::HISTOGRAM) {
+        maxHValue = (1 << 8) - 1; // Preview image is always 8-bit
+    }
+    float maxHValuef = static_cast<float>(maxHValue);
+    
     if (drawMode > 0) { // scale y for single and double log-scale
         const float mult = (h - 1.0f) / xlogf(HistogramScaling::factor / (HistogramScaling::factor + maxvalue));
 #ifdef __SSE2__
         const vfloat multv = F2V(mult);
-        for (int i = 0; i < 65536; i += 4) {
+        for (int i = 0; i <= maxHValue; i += 4) {
             const vfloat val = _mm_cvtepi32_ps(_mm_loadu_si128((__m128i_u*)&data[i]));
             if (_mm_movemask_ps(ZEROV - val)) {
                 STVFU(vals[i], HistogramScaling::logMult(val, multv));
@@ -1492,7 +1506,7 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & da
             }
         }
 #else
-        for (int i = 0; i < 65536; ++i) {
+        for (int i = 0; i <= maxHValue; ++i) {
             if (data[i]) {
                 vals[i] = HistogramScaling::logMult(data[i], mult);
             } else {
@@ -1502,37 +1516,37 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & da
 #endif
     } else {
         const float mult = (h - 1.0f) / maxvalue;
-        for (int i = 0; i < 65536; ++i) {
+        for (int i = 0; i <= maxHValue; ++i) {
             vals[i] = data[i] * mult;
         }
     }
 
     if (drawMode == 2) { // scale x for double log-scale
-        const float mult = (w - 1.f) / xlogf(HistogramScaling::factor / (HistogramScaling::factor + 65535.f));
+        const float mult = (w - 1.f) / xlogf(HistogramScaling::factor / (HistogramScaling::factor + static_cast<float>(maxHValue)));
 #ifdef __SSE2__
         const vfloat multv = F2V(mult);
         const vfloat fourv = F2V(4.f);
         vfloat iv = _mm_setr_ps(0.f, 1.f, 2.f, 3.f);
-        for (int i = 0; i < 65536; i += 4, iv += fourv) {
+        for (int i = 0; i <= maxHValue; i += 4, iv += fourv) {
             if (_mm_movemask_ps(ZEROV - LVFU(vals[i]))) {
                 STVFU(iscaled[i], HistogramScaling::logMult(iv, multv));
             }
         }
 #else
-        for (int i = 0; i < 65536; ++i) {
+        for (int i = 0; i <= maxHValue; ++i) {
             if (vals[i] != 0.f) {
                 iscaled[i] = HistogramScaling::logMult(i, mult);
             }
         }
 #endif
     } else {
-        const float mult = (w - 1.f) / 65535.f;
-        for (int i = 0; i < 65536; ++i) {
+        const float mult = (w - 1.f) / static_cast<float>(maxHValue);
+        for (int i = 0; i <= maxHValue; ++i) {
             iscaled[i] = i * mult;
         }
     }
 
-    for (int i = 0; i < 65536; i++) {
+    for (int i = 0; i <= maxHValue; i++) {
         if (vals[i] == 0.f)
             continue;
         const float posY = h - 1.f - vals[i];
@@ -1547,11 +1561,16 @@ void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
 {
     int s = 8 * RTScalable::getScale();
 
-    if(data[0] > scale) {
+    if (data[0] > scale) {
         cr->rectangle(0, (ui++)*s, s, s);
     }
 
-    if(data[65535] > scale) {
+    int max = 1 << bitdepth;
+    if (options.histogramScopeType == ScopeType::HISTOGRAM) {
+        max = 1 << 8; // Preview image is always 8-bit
+    }
+
+    if (data[max - 1] > scale) {
         cr->rectangle(hsize - s, (oi++)*s, s, s);
     }
 
