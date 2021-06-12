@@ -1587,6 +1587,7 @@ struct LocallabParams {
         double targetGraycie;
         double catadcie;
         double detailcie;
+        Glib::ustring surroundcie;
 
         LocallabSpot();
 

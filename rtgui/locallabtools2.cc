@@ -7383,7 +7383,9 @@ Locallabcie::Locallabcie():
     targetGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
     targabscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 16.0))),
     detailcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 1., 0.01, 0.6))),
-    catadcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png")))))
+    catadcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png"))))),
+    surroundcie(Gtk::manage (new MyComboBoxText ())),
+    surrHBoxcie(Gtk::manage(new Gtk::Box()))
    
     {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
@@ -7443,6 +7445,18 @@ Locallabcie::Locallabcie():
     cieFrame->add(*cieFBox);
     pack_start(*cieFrame);
 
+    surrHBoxcie->set_spacing (2);
+    surrHBoxcie->set_tooltip_markup (M ("TP_COLORAPP_SURROUND_TOOLTIP"));
+    Gtk::Label* surrLabelcie = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
+    surrHBoxcie->pack_start (*surrLabelcie, Gtk::PACK_SHRINK);
+    surroundcie->append (M ("TP_COLORAPP_SURROUND_AVER"));
+    surroundcie->append (M ("TP_COLORAPP_SURROUND_DIM"));
+    surroundcie->append (M ("TP_COLORAPP_SURROUND_DARK"));
+    surroundcie->append (M ("TP_COLORAPP_SURROUND_EXDARK"));
+    surroundcie->set_active (0);
+    surrHBoxcie->pack_start (*surroundcie);
+    surroundcieconn = surroundcie->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::surroundcieChanged) );
+
     cie1Frame->set_label_align(0.025, 0.5);
     ToolParamBlock* const cieP1Box = Gtk::manage(new ToolParamBlock());
     cieP1Box->pack_start(*contlcie);
@@ -7465,6 +7479,7 @@ Locallabcie::Locallabcie():
     cieP2Box->pack_start(*targetGraycie);
     cieP2Box->pack_start(*targabscie);
     cieP2Box->pack_start(*catadcie);
+    cieP2Box->pack_start(*surrHBoxcie);
     cieP2Box->pack_start(*detailcie);
     cie2Frame->add(*cieP2Box);
     pack_start(*cie2Frame);
@@ -7527,6 +7542,7 @@ void Locallabcie::disableListener()
     LocallabTool::disableListener();
     AutograycieConn.block(true);
     sursourcieconn.block (true);
+    surroundcieconn.block (true);
 
 }
 
@@ -7535,6 +7551,7 @@ void Locallabcie::enableListener()
     LocallabTool::enableListener();
     AutograycieConn.block(false);
     sursourcieconn.block (false);
+    surroundcieconn.block (false);
 
 }
 
@@ -7565,6 +7582,16 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             sursourcie->set_active (1);
         } else if (spot.sursourcie == "Dark") {
             sursourcie->set_active (2);
+        }
+
+        if (spot.surroundcie == "Average") {
+            surroundcie->set_active (0);
+        } else if (spot.surroundcie == "Dim") {
+            surroundcie->set_active (1);
+        } else if (spot.surroundcie == "Dark") {
+            surroundcie->set_active (2);
+        } else if (spot.surroundcie == "ExtremelyDark") {
+            surroundcie->set_active (3);
         }
 
         saturlcie->setValue(spot.saturlcie);
@@ -7608,6 +7635,16 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.sursourcie = "Dark";
         }
 
+        if (surroundcie->get_active_row_number() == 0) {
+            spot.surroundcie = "Average";
+        } else if (surroundcie->get_active_row_number() == 1) {
+            spot.surroundcie = "Dim";
+        } else if (surroundcie->get_active_row_number() == 2) {
+            spot.surroundcie = "Dark";
+        } else if (surroundcie->get_active_row_number() == 3) {
+            spot.surroundcie = "ExtremelyDark";
+        }
+
         spot.saturlcie = saturlcie->getValue();
         spot.chromlcie = chromlcie->getValue();
         spot.lightlcie = lightlcie->getValue();
@@ -7646,6 +7683,16 @@ void Locallabcie::sursourcieChanged()
         if (listener) {
             listener->panelChanged(Evlocallabsursourcie,
                                    sursourcie->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+        }
+    }
+}
+
+void Locallabcie::surroundcieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(Evlocallabsurroundcie,
+                                   surroundcie->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
         }
     }
 }

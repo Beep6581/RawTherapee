@@ -4288,7 +4288,8 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     targabscie(16.),
     targetGraycie(18.),
     catadcie(0.),
-    detailcie(0.6)
+    detailcie(0.6),
+    surroundcie("Average")
 
 {
 }
@@ -4913,7 +4914,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && targabscie == other.targabscie
         && targetGraycie == other.targetGraycie
         && catadcie == other.catadcie
-        && detailcie == other.detailcie;
+        && detailcie == other.detailcie
+        && surroundcie == other.surroundcie;
        
 
 }
@@ -6598,6 +6600,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->targetGraycie, "Locallab", "TargetGraycie_" + index_str, spot.targetGraycie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->catadcie, "Locallab", "Catadcie_" + index_str, spot.catadcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->detailcie, "Locallab", "Detailcie_" + index_str, spot.detailcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->surroundcie, "Locallab", "Surroundcie_" + index_str, spot.surroundcie, keyFile);
                 }
                 
             }
@@ -8654,6 +8657,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "TargetGraycie_" + index_str, pedited, spot.targetGraycie, spotEdited.targetGraycie);
                 assignFromKeyfile(keyFile, "Locallab", "Catadcie_" + index_str, pedited, spot.catadcie, spotEdited.catadcie);
                 assignFromKeyfile(keyFile, "Locallab", "Detailcie_" + index_str, pedited, spot.detailcie, spotEdited.detailcie);
+                assignFromKeyfile(keyFile, "Locallab", "Surroundcie_" + index_str, pedited, spot.surroundcie, spotEdited.surroundcie);
 
 
                 // Append LocallabSpot and LocallabParamsEdited

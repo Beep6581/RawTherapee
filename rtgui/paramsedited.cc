@@ -1690,6 +1690,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).targetGraycie = locallab.spots.at(j).targetGraycie && pSpot.targetGraycie == otherSpot.targetGraycie;
                 locallab.spots.at(j).catadcie = locallab.spots.at(j).catadcie && pSpot.catadcie == otherSpot.catadcie;
                 locallab.spots.at(j).detailcie = locallab.spots.at(j).detailcie && pSpot.detailcie == otherSpot.detailcie;
+                locallab.spots.at(j).surroundcie = locallab.spots.at(j).surroundcie && pSpot.surroundcie == otherSpot.surroundcie;
 
             }
         }
@@ -5672,6 +5673,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).detailcie = mods.locallab.spots.at(i).detailcie;
         }
 
+        if (locallab.spots.at(i).surroundcie) {
+            toEdit.locallab.spots.at(i).surroundcie = mods.locallab.spots.at(i).surroundcie;
+        }
+
     }
 
     if (spot.enabled) {
@@ -7566,7 +7571,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     targabscie(v),
     targetGraycie(v),
     catadcie(v),
-    detailcie(v)
+    detailcie(v),
+    surroundcie(v)
 
 {
 }
@@ -8180,6 +8186,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     targetGraycie = v;
     catadcie = v;
     detailcie = v;
+    surroundcie = v;
 
 }
 

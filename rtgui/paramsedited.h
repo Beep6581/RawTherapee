@@ -993,6 +993,7 @@ public:
         bool targetGraycie;
         bool catadcie;
         bool detailcie;
+        bool surroundcie;
 
         LocallabSpotEdited(bool v);
 
