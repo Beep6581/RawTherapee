@@ -116,8 +116,8 @@ DiagonalCurve::DiagonalCurve (const std::vector<double>& p, int poly_pn)
                 }
 
                 mc = -xlog(2.0) / xlog(x[2]);
-                double mbase = pfull (0.5, x[8], x[6], x[5]);
-                mfc = mbase <= 1e-14 ? 0.0 : xexp(xlog(mbase) / mc);        // value of the curve at the center point
+                double mbase = pfull_alt (0.5, x[6], x[5]);
+                mfc = xexp(xlog(mbase) / mc);        // value of the curve at the center point
                 msc = -xlog(2.0) / xlog(x[1] / x[2]);
                 mhc = -xlog(2.0) / xlog((x[3] - x[2]) / (1 - x[2]));
             }
@@ -424,7 +424,6 @@ void DiagonalCurve::catmull_rom_set()
 
 /*****************************************************************************/
 
-
 double DiagonalCurve::getVal (double t) const
 {
 
@@ -435,20 +434,25 @@ double DiagonalCurve::getVal (double t) const
             return 0.0;
         }
 
-        double tv = xexp(mc * xlog(t));
-        double base = pfull (tv, x[8], x[6], x[5]);
-        double stretched = base <= 1e-14 ? 0.0 : xexp(xlog(base) / mc);
+        double tv = xexp(max(mc * xlog(t),-236.0)); // prevents numerical issues when calling pfull, at the cost of minor artifacts
+        double base = pfull_alt (tv, x[6], x[5]);
+        double stretched = xexp(xlog(base) / mc);
 
         if (t < x[2]) {
             // add shadows effect:
-            double stv = xexp(msc * xlog(stretched / mfc));
-            double sbase = pfull (stv, x[8], x[7], 0.5);
-            return mfc * (sbase <= 1e-14 ? 0.0 : xexp(xlog(sbase) / msc));
+            double stv = xexp(max(msc * xlog(stretched / mfc),-236.0));
+            double sbase = pfull_alt (stv, x[7], 0.5);
+            return mfc * xexp(xlog(sbase) / msc);
         } else {
             // add highlights effect:
-            double htv = xexp(mhc * xlog((stretched - mfc) / (1 - mfc)));
-            double hbase = pfull (htv, x[8], 0.5, x[4]);
-            return mfc + (1 - mfc) * (hbase <= 1e-14 ? 0.0 : xexp(xlog(hbase) / mhc));
+            double htv = xexp(max(mhc * xlog((stretched - mfc) / (1.0 - mfc)),-236.0));
+            double hbase = pfull_alt (htv, 0.5, x[4]);
+            //this part of the curve isn't affected by highlight, return the base curve
+            if (hbase < 1e-6 ){ 
+                return stretched;
+            } else {
+                return mfc + (1.0 - mfc) * xexp(xlog(hbase) / mhc);
+            }
         }
 
         break;
