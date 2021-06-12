@@ -1838,7 +1838,7 @@ bool ImProcCoordinator::updateLRGBHistograms()
             for (int i = y1; i < y2; i++)
                 for (int j = x1; j < x2; j++)
                 {
-                    histChroma[(int)(sqrtf(SQR(nprevl->a[i][j]) + SQR(nprevl->b[i][j])) * 1.3653333333f)]++; // = 65536/48000
+                    histChroma[(int)(sqrtf(SQR(nprevl->a[i][j]) + SQR(nprevl->b[i][j])) * 255.0/48000.0)]++;
                 }
         }
 #ifdef _OPENMP
@@ -1847,10 +1847,11 @@ bool ImProcCoordinator::updateLRGBHistograms()
         {
             histLuma.clear();
 
+            double s = 0.0078125; // map L = [0..32768] to [0..255]
             for (int i = y1; i < y2; i++)
                 for (int j = x1; j < x2; j++)
                 {
-                    histLuma[2 * (int)(nprevl->L[i][j])]++; // L = [0..32768] map to [0..65535]
+                    histLuma[(int)(nprevl->L[i][j] * s)]++;
                 }
         }
 #ifdef _OPENMP
@@ -1866,9 +1867,9 @@ bool ImProcCoordinator::updateLRGBHistograms()
                 int ofs = (i * pW + x1) * 3;
 
                 for (int j = x1; j < x2; j++) {
-                    int r = workimg->data[ofs++];// * 256; // scale up, because workimg is 8 bit
-                    int g = workimg->data[ofs++];// * 256;
-                    int b = workimg->data[ofs++];// * 256;
+                    int r = workimg->data[ofs++];
+                    int g = workimg->data[ofs++];
+                    int b = workimg->data[ofs++];
 
                     histRed[r]++;
                     histGreen[g]++;
