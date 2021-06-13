@@ -977,6 +977,7 @@ public:
         bool complexcie;
         bool expcie;
         bool reparcie;
+        bool sensicie;
         bool Autograycie;
         bool sourceGraycie;
         bool sourceabscie;

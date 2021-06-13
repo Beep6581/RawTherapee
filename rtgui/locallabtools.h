@@ -1509,6 +1509,7 @@ class Locallabcie:
     public LocallabTool
 {
 private:
+    Adjuster* const sensicie;
     Adjuster* const reparcie;
     Gtk::Frame* const cieFrame;
     Gtk::CheckButton* const Autograycie;

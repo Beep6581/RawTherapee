@@ -794,6 +794,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 targetg = new float[sizespot];
                 bool *log = nullptr;
                 log = new bool[sizespot];
+                bool *cie = nullptr;
+                cie = new bool[sizespot];
                 bool *autocomput = nullptr;
                 autocomput = new bool[sizespot];
                 float *blackev = nullptr;
@@ -802,7 +804,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 whiteev = new float[sizespot];
                 bool *Autogr = nullptr;
                 Autogr = new bool[sizespot];
-                
+                bool *autocie = nullptr;
+                autocie = new bool[sizespot];
+
+
                 float *locx = nullptr;
                 locx = new float[sizespot];
                 float *locy = nullptr;
@@ -818,7 +823,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 
                 for (int sp = 0; sp < sizespot; sp++) {
                     log[sp] = params->locallab.spots.at(sp).explog;
+                    cie[sp] = params->locallab.spots.at(sp).expcie;
                     autocomput[sp] = params->locallab.spots.at(sp).autocompute;
+                    autocie[sp] = params->locallab.spots.at(sp).Autograycie;
                     blackev[sp] = params->locallab.spots.at(sp).blackEv;
                     whiteev[sp] = params->locallab.spots.at(sp).whiteEv;
                     sourceg[sp] = params->locallab.spots.at(sp).sourceGray;
@@ -834,7 +841,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                     const bool fullim = params->locallab.spots.at(sp).fullimage;
 
-                    if (log[sp] && autocomput[sp]) {
+                    if ((log[sp] && autocomput[sp]) || (cie[sp] && autocie[sp])) {
                         constexpr int SCALE = 10;
                         int fw, fh, tr = TR_NONE;
                         imgsrc->getFullSize(fw, fh, tr);
@@ -872,12 +879,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 delete [] centx;
                 delete [] centy;
 
+                delete [] autocie;
                 delete [] Autogr;
                 delete [] whiteev;
                 delete [] blackev;
                 delete [] targetg;
                 delete [] sourceab;
                 delete [] sourceg;
+                delete [] cie;
                 delete [] log;
                 delete [] autocomput;
             }

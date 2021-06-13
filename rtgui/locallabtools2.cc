@@ -7363,6 +7363,7 @@ void LocallabMask::updateMaskGUI()
 Locallabcie::Locallabcie():
     LocallabTool(this, M("TP_LOCALLAB_CIE_TOOLNAME"), M("TP_LOCALLAB_CIE"), false),
     // ciecam specific widgets
+    sensicie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     reparcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     cieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
     Autograycie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAY")))),
@@ -7394,6 +7395,10 @@ Locallabcie::Locallabcie():
     // Parameter Ciecam specific widgets
     const LocallabParams::LocallabSpot defSpot;
     reparcie->setAdjusterListener(this);
+    sensicie->setAdjusterListener(this);
+
+
+    pack_start(*sensicie);
     pack_start(*reparcie);
     AutograycieConn = Autograycie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::AutograycieChanged));
 
@@ -7485,7 +7490,7 @@ Locallabcie::Locallabcie():
     cie2Frame->add(*cieP2Box);
     pack_start(*cie2Frame);
     // Update GUI according to complexity mode
-    updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
+   // updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
 
 
     }
@@ -7501,6 +7506,7 @@ void Locallabcie::setDefaultExpanderVisibility()
 void Locallabcie::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
+        reparcie->set_tooltip_text(M("TP_LOCALLAB_LOGREPART_TOOLTIP"));
         cieFrame->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
         Autograycie->set_tooltip_text(M("TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP"));
         sourceGraycie->set_tooltip_text("");
@@ -7519,9 +7525,11 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         detailcie->set_tooltip_text(M("TP_LOCALLAB_LOGDETAIL_TOOLTIP"));
         catadcie->set_tooltip_text(M("TP_LOCALLAB_LOGCATAD_TOOLTIP"));
         cie2Frame->set_tooltip_text(M("TP_LOCALLAB_LOGVIEWING_TOOLTIP"));
+        sensicie->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
 
 
     } else {
+        reparcie->set_tooltip_text("");
         cieFrame->set_tooltip_text("");
         Autograycie->set_tooltip_text("");
         sourceGraycie->set_tooltip_text("");
@@ -7540,6 +7548,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         detailcie->set_tooltip_text("");
         catadcie->set_tooltip_text("");
         cie2Frame->set_tooltip_text("");
+        sensicie->set_tooltip_text("");
 
     }
 }
@@ -7578,6 +7587,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         complexity->set_active(spot.complexcie);
 
         reparcie->setValue(spot.reparcie);
+        sensicie->setValue(spot.sensicie);
         Autograycie->set_active(spot.Autogray);
         sourceGraycie->setValue(spot.sourceGraycie);
         sourceabscie->setValue(spot.sourceabscie);
@@ -7634,6 +7644,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.complexcie = complexity->get_active_row_number();
 
         spot.reparcie = reparcie->getValue();
+        spot.sensicie = sensicie->getIntValue();
         spot.Autograycie = Autograycie->get_active();
         spot.sourceGraycie = sourceGraycie->getValue();
         spot.sourceabscie = sourceabscie->getValue();
@@ -7672,6 +7683,30 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
     }
    
 }
+
+void Locallabcie::updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg)
+{
+    idle_register.add(
+    [this, blackev, whiteev, sourceg, sourceab, targetg]() -> bool {
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+        // Update adjuster values according to autocomputed ones
+        disableListener();
+
+       // blackEv->setValue(blackev);
+       // whiteEv->setValue(whiteev);
+        sourceGraycie->setValue(sourceg);
+        sourceabscie->setValue(sourceab);
+      //  targetGray->setValue(targetg);
+
+        enableListener();
+
+        return false;
+    }
+    );
+}
+
+
 
 void Locallabcie::AutograycieChanged()
 {
@@ -7712,7 +7747,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 {
     switch (new_type) {
         case Simple:
-            catadcie->hide();
+            catadcie->show();
             saturlcie->show();
             chromlcie->hide();
             lightlcie->show();
@@ -7784,11 +7819,31 @@ void Locallabcie::updatecieGUI()
 
 void Locallabcie::convertParamToSimple()
 {
-    
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+    sourceabscie->setValue(defSpot.sourceabscie);
+    targabscie->setValue(defSpot.targabscie);
+    // Enable all listeners
+    enableListener();
+   
 }
 
 void Locallabcie::convertParamToNormal()
 {
+    const LocallabParams::LocallabSpot defSpot;
+
+    // Disable all listeners
+    disableListener();
+    contqcie->setValue(defSpot.contqcie);
+    colorflcie->setValue(defSpot.colorflcie);
+    lightqcie->setValue(defSpot.lightqcie);
+    chromlcie->setValue(defSpot.chromlcie);
+    detailcie->setValue(defSpot.detailcie);
+    // Enable all listeners
+    enableListener();
+    
 }
 
 void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited)
@@ -7799,6 +7854,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         const LocallabParams::LocallabSpot& defSpot = defParams->locallab.spots.at(index);
 
         reparcie->setDefault(defSpot.reparcie);
+        sensicie->setDefault(defSpot.sensicie);
         sourceGraycie->setDefault(defSpot.sourceGraycie);
         sourceabscie->setDefault(defSpot.sourceabscie);
         saturlcie->setDefault(defSpot.saturlcie);
@@ -7823,6 +7879,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabreparcie,
                                        reparcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == sensicie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsensicie,
+                                       sensicie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
         
