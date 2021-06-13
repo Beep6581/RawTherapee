@@ -982,6 +982,7 @@ public:
         bool sourceGraycie;
         bool sourceabscie;
         bool sursourcie;
+        bool modecie;
         bool saturlcie;
         bool chromlcie;
         bool lightlcie;

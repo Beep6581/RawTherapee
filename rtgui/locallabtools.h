@@ -1511,6 +1511,8 @@ class Locallabcie:
 private:
     Adjuster* const sensicie;
     Adjuster* const reparcie;
+    MyComboBoxText*  const modecie;
+    Gtk::Box* const modeHBoxcie;
     Gtk::Frame* const cieFrame;
     Gtk::CheckButton* const Autograycie;
     Adjuster* const sourceGraycie;
@@ -1535,7 +1537,7 @@ private:
     MyComboBoxText*  const surroundcie;
     Gtk::Box* const surrHBoxcie;
     
-    sigc::connection AutograycieConn,  sursourcieconn, surroundcieconn ;
+    sigc::connection AutograycieConn, sursourcieconn, surroundcieconn, modecieconn;
     
 public:
     Locallabcie();
@@ -1553,6 +1555,8 @@ public:
     void adjusterChanged(Adjuster* a, double newval) override;
     void sursourcieChanged();
     void surroundcieChanged();
+    void modecieChanged();
+    
     void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg);
 
 private:

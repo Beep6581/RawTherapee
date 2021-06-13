@@ -7365,6 +7365,8 @@ Locallabcie::Locallabcie():
     // ciecam specific widgets
     sensicie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     reparcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
+    modecie(Gtk::manage (new MyComboBoxText ())),
+    modeHBoxcie(Gtk::manage(new Gtk::Box())),
     cieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
     Autograycie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAY")))),
     sourceGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 10.0))),
@@ -7400,6 +7402,7 @@ Locallabcie::Locallabcie():
 
     pack_start(*sensicie);
     pack_start(*reparcie);
+    
     AutograycieConn = Autograycie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::AutograycieChanged));
 
     sourceGraycie->setAdjusterListener(this);
@@ -7430,7 +7433,19 @@ Locallabcie::Locallabcie():
     detailcie->setAdjusterListener(this);
 
     catadcie->setAdjusterListener(this);
-    
+
+    modeHBoxcie->set_spacing (2);
+    modeHBoxcie->set_tooltip_markup (M ("TP_LOCALLAB_CIEMODE_TOOLTIP"));
+    Gtk::Label* modeLabel = Gtk::manage (new Gtk::Label (M ("TP_LOCALLAB_CIEMODE") + ":"));
+    modeHBoxcie->pack_start (*modeLabel, Gtk::PACK_SHRINK);
+    modecie->append (M ("TP_LOCALLAB_CIEMODE_COM"));
+    modecie->append (M ("TP_LOCALLAB_CIEMODE_TM"));
+    modecie->set_active (0);
+    modeHBoxcie->pack_start (*modecie);
+    modecieconn = modecie->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::modecieChanged) );
+    pack_start(*modeHBoxcie);
+
+
     surHBoxcie->set_spacing (2);
     surHBoxcie->set_tooltip_markup (M ("TP_LOCALLAB_LOGSURSOUR_TOOLTIP"));
     Gtk::Label* surLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
@@ -7558,6 +7573,7 @@ void Locallabcie::disableListener()
     AutograycieConn.block(true);
     sursourcieconn.block (true);
     surroundcieconn.block (true);
+    modecieconn.block (true);
 
 }
 
@@ -7567,6 +7583,7 @@ void Locallabcie::enableListener()
     AutograycieConn.block(false);
     sursourcieconn.block (false);
     surroundcieconn.block (false);
+    modecieconn.block (false);
 
 }
 
@@ -7588,6 +7605,13 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 
         reparcie->setValue(spot.reparcie);
         sensicie->setValue(spot.sensicie);
+        
+        if (spot.modecie == "com") {
+            modecie->set_active (0);
+        } else if (spot.modecie == "tm") {
+            modecie->set_active (1);
+        }
+        
         Autograycie->set_active(spot.Autogray);
         sourceGraycie->setValue(spot.sourceGraycie);
         sourceabscie->setValue(spot.sourceabscie);
@@ -7630,6 +7654,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
     // Update Log Encoding GUI according to autocompute button state
     updatecieGUI();
 
+
     
 }
 
@@ -7645,6 +7670,13 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 
         spot.reparcie = reparcie->getValue();
         spot.sensicie = sensicie->getIntValue();
+
+        if (modecie->get_active_row_number() == 0) {
+            spot.modecie = "com";
+        } else if (modecie->get_active_row_number() == 1) {
+            spot.modecie = "tm";
+        }
+
         spot.Autograycie = Autograycie->get_active();
         spot.sourceGraycie = sourceGraycie->getValue();
         spot.sourceabscie = sourceabscie->getValue();
@@ -7722,6 +7754,28 @@ void Locallabcie::AutograycieChanged()
         }
     }
 }
+
+void Locallabcie::modecieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+                if (modecie->get_active_row_number() > 0) {
+                    sensicie->hide();
+                    reparcie->hide();
+                } else {
+                    sensicie->show();
+                    reparcie->show();
+                }
+
+        
+        
+        if (listener) {
+            listener->panelChanged(Evlocallabmodecie,
+                                   modecie->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+        }
+    }
+}
+
+
 
 void Locallabcie::sursourcieChanged()
 {
@@ -7814,6 +7868,15 @@ void Locallabcie::updatecieGUI()
         } else {
             sourceabscie->hide();
         }
+        
+    if (modecie->get_active_row_number() > 0) {
+        sensicie->hide();
+        reparcie->hide();
+    } else {
+        sensicie->show();
+        reparcie->show();
+    }
+        
 }
 
 

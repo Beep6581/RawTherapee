@@ -1576,6 +1576,7 @@ struct LocallabParams {
         double sourceGraycie;
         double sourceabscie;
         Glib::ustring sursourcie;
+        Glib::ustring modecie;
         double saturlcie;
         double chromlcie;
         double lightlcie;

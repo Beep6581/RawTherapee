@@ -1324,6 +1324,7 @@ HISTORY_MSG_1073;Local - CIECAM Cat16
 HISTORY_MSG_1074;Local - CIECAM Local contrast
 HISTORY_MSG_1075;Local - CIECAM Surround viewing
 HISTORY_MSG_1076;Local - CIECAM Scope
+HISTORY_MSG_1077;Local - CIECAM Mode
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2666,6 +2667,9 @@ TP_LOCALLAB_CIE_TOOLNAME;Color appearance (Ciecam16)
 TP_LOCALLAB_CIE;Color appearance (Ciecam16)
 TP_LOCALLAB_CIEC;Use Ciecam environment parameters
 TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM color appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nThe first Ciecam process 'Scene conditions' is carried out by Log encoding, it also uses 'Absolute luminance' at the time of shooting.\nThe second Ciecam process  'Image adjustments' is simplified and uses only 3 variables (local contrast, contrast J, saturation s).\nThe third Ciecam process  'Viewing conditions' adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment. 
+TP_LOCALLAB_CIEMODE;Mode
+TP_LOCALLAB_CIEMODE_COM;Common
+TP_LOCALLAB_CIEMODE_TM;Tone Mapping
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Contains the references of the RT-spot, useful for shape detection (hue, luma, chroma, Sobel).\nLow values may be useful for processing foliage.\nHigh values may be useful for processing skin.
 TP_LOCALLAB_CLARICRES;Merge chroma
