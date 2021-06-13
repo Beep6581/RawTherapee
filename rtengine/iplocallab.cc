@@ -12750,6 +12750,44 @@ void ImProcFunctions::Lab_Local(
                     constexpr int itera = 0;
                     ImProcFunctions::EPDToneMaplocal(sp, bufgb.get(), tmp1.get(), itera, sk);//iterate to 0 calculate with edgstopping, improve result, call=1 dcrop we can put iterate to 5
 
+                if (params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).modecie == "tm") {
+                    ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 0);
+
+                    float rad = params->locallab.spots.at(sp).detailcie;
+                    if (rad > 0.f) {
+                        array2D<float> guide(bfw, bfh);
+                        array2D<float> LL(bfw, bfh);
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+                        for (int y = ystart; y < yend ; y++) {
+                            for (int x = xstart; x < xend; x++) {
+                                LL[y][x] = tmp1->L[y - ystart][x - xstart];
+                                float ll = LL[y - ystart][x - xstart] / 32768.f;
+                                guide[y][x] = xlin2log(rtengine::max(ll, 0.f), 10.f);
+                            }
+                        }
+                        array2D<float> iL(bfw, bfh, LL, 0);
+                        float gu = 15.f * rad;
+                        int r = rtengine::max(int(gu / sk), 1);
+                        const double epsil = 0.001 * std::pow(2.f, -10);
+                        float st = 0.01f * rad;
+                        rtengine::guidedFilterLog(guide, 10.f, LL, r, epsil, false);
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+                        for (int y = ystart; y < yend ; y++) {
+                            for (int x = xstart; x < xend; x++) {
+                                LL[y - ystart][x - xstart] = intp(st, LL[y - ystart][x - xstart] , iL[y - ystart][x - xstart]);
+                                tmp1->L[y - ystart][x - xstart] = LL[y - ystart][x - xstart];
+                            }
+                        }
+                    }
+                }
+
+
+
+
                     tmp1m->CopyFrom(tmp1.get(), multiThread); //save current result7
                     if(params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap) {
                         if(call == 3) {
@@ -16865,7 +16903,7 @@ void ImProcFunctions::Lab_Local(
     }
 //end common mask
     
-        if(params->locallab.spots.at(sp).expcie) {//ciecam
+        if(params->locallab.spots.at(sp).expcie  && params->locallab.spots.at(sp).modecie == "com") {//ciecam
             int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
             int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
