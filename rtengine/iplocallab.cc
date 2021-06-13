@@ -748,6 +748,7 @@ struct local_params {
     float whiteev;
     float detail;
     int sensilog;
+    int sensicie;
     int sensimas;
     bool Autogray;
     bool autocompute;
@@ -1371,6 +1372,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.autocompute = locallab.spots.at(sp).autocompute;
     lp.baselog = (float) locallab.spots.at(sp).baselog;
     lp.sensimas = locallab.spots.at(sp).sensimask;
+    lp.sensicie = locallab.spots.at(sp).sensicie;
 
     lp.deltaem = locallab.spots.at(sp).deltae;
     lp.scalereti = scaleret;
@@ -2411,8 +2413,14 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
 {
     //BENCHFUN
     bool ciec = false;
+    bool iscie = false;
     if (params->locallab.spots.at(sp).ciecam && params->locallab.spots.at(sp).explog && call == 1) {
         ciec = true;
+        iscie = false;
+    }
+    else if (params->locallab.spots.at(sp).expcie && call == 0) {
+        ciec = true;
+        iscie = true;
     }
     int width = lab->W, height = lab->H;
     float Yw;
@@ -2502,12 +2510,29 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     //evaluate lightness, contrast
 
     if (ciec) {
-        const float contL = 0.6 * params->locallab.spots.at(sp).contl; //0.6 less effect, no need 1.
-        const float lightL = 0.4 * params->locallab.spots.at(sp).lightl; //0.4 less effect, no need 1.
-        const float contQ = 0.5 * params->locallab.spots.at(sp).contq; //0.5 less effect, no need 1.
-        const float lightQ = 0.4 * params->locallab.spots.at(sp).lightq; //0.4 less effect, no need 1.
+        float contL = 0.f;
+        float lightL = 0.f;
+        float contQ = 0.f;
+        float lightQ = 0.f;
+        if(iscie) {
+            contL = 0.6 * params->locallab.spots.at(sp).contlcie; //0.6 less effect, no need 1.
+            lightL = 0.4 * params->locallab.spots.at(sp).lightlcie; //0.4 less effect, no need 1.
+            contQ = 0.5 * params->locallab.spots.at(sp).contqcie; //0.5 less effect, no need 1.
+            lightQ = 0.4 * params->locallab.spots.at(sp).lightqcie; //0.4 less effect, no need 1.
+        } else {
+            contL = 0.6 * params->locallab.spots.at(sp).contl; //0.6 less effect, no need 1.
+            lightL = 0.4 * params->locallab.spots.at(sp).lightl; //0.4 less effect, no need 1.
+            contQ = 0.5 * params->locallab.spots.at(sp).contq; //0.5 less effect, no need 1.
+            lightQ = 0.4 * params->locallab.spots.at(sp).lightq; //0.4 less effect, no need 1.
+            
+        }
+        float contthresL = 0.f;
         
-        float contthresL = params->locallab.spots.at(sp).contthres;
+        if(iscie) {
+            contthresL = params->locallab.spots.at(sp).contthrescie;
+        } else {
+            contthresL = params->locallab.spots.at(sp).contthres;
+        }
         float contthresQ = contthresL;
         if(contL < 0.f) {
             contthresL *= -1;
@@ -2535,10 +2560,18 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     }
 
     if(ciec) {
-        if (params->locallab.spots.at(sp).catad > 0) {
-            tempo = 5000 - 30 * params->locallab.spots.at(sp).catad;
-        } else if (params->locallab.spots.at(sp).catad < 0){
-            tempo = 5000 - 70 * params->locallab.spots.at(sp).catad;
+        if(iscie) {        
+            if (params->locallab.spots.at(sp).catadcie > 0) {
+                tempo = 5000 - 30 * params->locallab.spots.at(sp).catadcie;
+            } else if (params->locallab.spots.at(sp).catadcie < 0){
+                tempo = 5000 - 70 * params->locallab.spots.at(sp).catadcie;
+            }
+        } else {
+            if (params->locallab.spots.at(sp).catad > 0) {
+                tempo = 5000 - 30 * params->locallab.spots.at(sp).catad;
+            } else if (params->locallab.spots.at(sp).catad < 0){
+                tempo = 5000 - 70 * params->locallab.spots.at(sp).catad;
+            }
         }
     }
 
@@ -2553,34 +2586,67 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     //viewing condition for surround
     f2 = 1.0f, c2 = 0.69f, nc2 = 1.0f;
     if(ciec) {
+        if(iscie) {
         //surround source with only 2 choices (because Log encoding before)
-        if (params->locallab.spots.at(sp).sursour == "Average") {
-            f = 1.0f, c = 0.69f, nc = 1.0f;
-        } else if (params->locallab.spots.at(sp).sursour == "Dim") {
-            f  = 0.9f;
-            c  = 0.59f;
-            nc = 0.9f;
-        } else if (params->locallab.spots.at(sp).sursour == "Dark") {
-            f  = 0.8f;
-            c  = 0.525f;
-            nc = 0.8f;
+            if (params->locallab.spots.at(sp).sursourcie == "Average") {
+                f = 1.0f, c = 0.69f, nc = 1.0f;
+            } else if (params->locallab.spots.at(sp).sursourcie == "Dim") {
+                f  = 0.9f;
+                c  = 0.59f;
+                nc = 0.9f;
+            } else if (params->locallab.spots.at(sp).sursourcie == "Dark") {
+                f  = 0.8f;
+                c  = 0.525f;
+                nc = 0.8f;
+            }
+        } else {
+            if (params->locallab.spots.at(sp).sursour == "Average") {
+                f = 1.0f, c = 0.69f, nc = 1.0f;
+            } else if (params->locallab.spots.at(sp).sursour == "Dim") {
+                f  = 0.9f;
+                c  = 0.59f;
+                nc = 0.9f;
+            } else if (params->locallab.spots.at(sp).sursour == "Dark") {
+                f  = 0.8f;
+                c  = 0.525f;
+                nc = 0.8f;
+            }
         }
 
         //viewing condition for surround
-        if (params->locallab.spots.at(sp).surround == "Average") {
-            f2 = 1.0f, c2 = 0.69f, nc2 = 1.0f;
-        } else if (params->locallab.spots.at(sp).surround == "Dim") {
-            f2  = 0.9f;
-            c2  = 0.59f;
-            nc2 = 0.9f;
-        } else if (params->locallab.spots.at(sp).surround == "Dark") {
-            f2  = 0.8f;
-            c2  = 0.525f;
-            nc2 = 0.8f;
-        } else if (params->locallab.spots.at(sp).surround == "ExtremelyDark") {
-            f2  = 0.8f;
-            c2  = 0.41f;
-            nc2 = 0.8f;
+        if(iscie) {
+            if (params->locallab.spots.at(sp).surroundcie == "Average") {
+                f2 = 1.0f, c2 = 0.69f, nc2 = 1.0f;
+            } else if (params->locallab.spots.at(sp).surroundcie == "Dim") {
+                f2  = 0.9f;
+                c2  = 0.59f;
+                nc2 = 0.9f;
+            } else if (params->locallab.spots.at(sp).surroundcie == "Dark") {
+                f2  = 0.8f;
+                c2  = 0.525f;
+                nc2 = 0.8f;
+            } else if (params->locallab.spots.at(sp).surroundcie == "ExtremelyDark") {
+                f2  = 0.8f;
+                c2  = 0.41f;
+                nc2 = 0.8f;
+            }
+        } else {
+            if (params->locallab.spots.at(sp).surround == "Average") {
+                f2 = 1.0f, c2 = 0.69f, nc2 = 1.0f;
+            } else if (params->locallab.spots.at(sp).surround == "Dim") {
+                f2  = 0.9f;
+                c2  = 0.59f;
+                nc2 = 0.9f;
+            } else if (params->locallab.spots.at(sp).surround == "Dark") {
+                f2  = 0.8f;
+                c2  = 0.525f;
+                nc2 = 0.8f;
+            } else if (params->locallab.spots.at(sp).surround == "ExtremelyDark") {
+                f2  = 0.8f;
+                c2  = 0.41f;
+                nc2 = 0.8f;
+            }
+            
         }
     }
 
@@ -2597,9 +2663,13 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     la = 400.f;
     float la2 = 400.f;
     if(ciec) {
-        la = params->locallab.spots.at(sp).sourceabs;
-        
-        la2 = params->locallab.spots.at(sp).targabs;
+        if(iscie) {
+            la = params->locallab.spots.at(sp).sourceabscie;
+            la2 = params->locallab.spots.at(sp).targabscie;
+        } else {
+            la = params->locallab.spots.at(sp).sourceabs;
+            la2 = params->locallab.spots.at(sp).targabs;
+        }
     }
 
     const float pilot = 2.f;
@@ -2609,9 +2679,13 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     float yb = 18.f;
     yb2 = 18;
     if(ciec) {
-        yb = params->locallab.spots.at(sp).targetGray;//target because we are after Log encoding
-        
-        yb2 = params->locallab.spots.at(sp).targetGray;
+        if(iscie) {
+            yb = params->locallab.spots.at(sp).sourceGraycie;//
+            yb2 = params->locallab.spots.at(sp).targetGraycie;
+        } else {
+            yb = params->locallab.spots.at(sp).targetGray;//target because we are after Log encoding
+            yb2 = params->locallab.spots.at(sp).targetGray;
+        }
     }
     
     float schr = 0.f;
@@ -2619,29 +2693,55 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     float cchr = 0.f;
 
     if (ciec) {
+        if(iscie) {
         
-        cchr = params->locallab.spots.at(sp).chroml;
-        if (cchr == -100.0f) {
-                cchr = -99.8f;
-        }
+            cchr = params->locallab.spots.at(sp).chromlcie;
+            if (cchr == -100.0f) {
+                    cchr = -99.8f;
+            }
 
-        schr = params->locallab.spots.at(sp).saturl;
+            schr = params->locallab.spots.at(sp).saturlcie;
 
-        if (schr > 0.f) {
-          schr = schr / 2.f;    //divide sensibility for saturation
-        }
+            if (schr > 0.f) {
+            schr = schr / 2.f;    //divide sensibility for saturation
+            }
 
-        if (schr == -100.f) {
-            schr = -99.8f;
-        }
+            if (schr == -100.f) {
+                schr = -99.8f;
+            }
 
-        mchr = params->locallab.spots.at(sp).colorfl;
+            mchr = params->locallab.spots.at(sp).colorflcie;
 
-        if (mchr == -100.0f) {
-            mchr = -99.8f ;
-        }
-        if (mchr == 100.0f) {
-            mchr = 99.9f;
+            if (mchr == -100.0f) {
+                mchr = -99.8f ;
+            }
+            if (mchr == 100.0f) {
+                mchr = 99.9f;
+            }
+        } else {
+            cchr = params->locallab.spots.at(sp).chroml;
+            if (cchr == -100.0f) {
+                    cchr = -99.8f;
+            }
+
+            schr = params->locallab.spots.at(sp).saturl;
+
+            if (schr > 0.f) {
+            schr = schr / 2.f;    //divide sensibility for saturation
+            }
+
+            if (schr == -100.f) {
+                schr = -99.8f;
+            }
+
+            mchr = params->locallab.spots.at(sp).colorfl;
+
+            if (mchr == -100.0f) {
+                mchr = -99.8f ;
+            }
+            if (mchr == 100.0f) {
+                mchr = 99.9f;
+            }
         }
     }
 
@@ -6862,7 +6962,9 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
         varsens = lp.sensilog;
     } else if (senstype == 20) { //common mask
         varsens = lp.sensimas;
-    }
+     } else if (senstype == 31) { //ciecam
+        varsens = lp.sensicie;
+   }
     bool delt = lp.deltaem;
 
     //sobel
@@ -16761,8 +16863,92 @@ void ImProcFunctions::Lab_Local(
             }
         }
     }
-
 //end common mask
+    
+        if(params->locallab.spots.at(sp).expcie) {//ciecam
+            int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
+            int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
+            int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
+            int xend = rtengine::min(static_cast<int>(lp.xc + lp.lx) - cx, original->W);
+            int bfh = yend - ystart;
+            int bfw = xend - xstart;
+
+            if (bfh >= mSP && bfw >= mSP) {
+                const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh)); //buffer for data in zone limit
+                const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                for (int y = ystart; y < yend; y++) {
+                    for (int x = xstart; x < xend; x++) {
+                        bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
+                        bufexporig->a[y - ystart][x - xstart] = original->a[y][x];
+                        bufexporig->b[y - ystart][x - xstart] = original->b[y][x];
+                    }
+                }
+
+                bufexpfin->CopyFrom(bufexporig.get(), multiThread);
+                if (params->locallab.spots.at(sp).expcie) {
+                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0);
+                }
+
+                float rad = params->locallab.spots.at(sp).detailcie;
+                if (rad > 0.f) {
+                    array2D<float> guide(bfw, bfh);
+                    array2D<float> LL(bfw, bfh);
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+                    for (int y = ystart; y < yend ; y++) {
+                        for (int x = xstart; x < xend; x++) {
+                            LL[y][x] = bufexpfin->L[y - ystart][x - xstart];
+                            float ll = LL[y - ystart][x - xstart] / 32768.f;
+                            guide[y][x] = xlin2log(rtengine::max(ll, 0.f), 10.f);
+                        }
+                    }
+                    array2D<float> iL(bfw, bfh, LL, 0);
+                    float gu = 15.f * rad;
+                    int r = rtengine::max(int(gu / sk), 1);
+                    const double epsil = 0.001 * std::pow(2.f, -10);
+                    float st = 0.01f * rad;
+                    rtengine::guidedFilterLog(guide, 10.f, LL, r, epsil, false);
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+                    for (int y = ystart; y < yend ; y++) {
+                        for (int x = xstart; x < xend; x++) {
+                            LL[y - ystart][x - xstart] = intp(st, LL[y - ystart][x - xstart] , iL[y - ystart][x - xstart]);
+                            bufexpfin->L[y - ystart][x - xstart] = LL[y - ystart][x - xstart];
+                        }
+                    }
+                }
+                const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).reparcie;
+                int bw = bufexporig->W;
+                int bh = bufexporig->H;
+
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic,16) if(multiThread)
+#endif
+                for (int x = 0; x < bh; x++) {
+                    for (int y = 0; y < bw; y++) {
+                        bufexpfin->L[x][y] = intp(repart, bufexporig->L[x][y], bufexpfin->L[x][y]);
+                        bufexpfin->a[x][y] = intp(repart, bufexporig->a[x][y], bufexpfin->a[x][y]);
+                        bufexpfin->b[x][y] = intp(repart, bufexporig->b[x][y], bufexpfin->b[x][y]);
+                    }
+                }
+
+
+                transit_shapedetect2(sp, 0.f, 0.f, call, 31, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+
+                if (lp.recur) {
+                    original->CopyFrom(transformed, multiThread);
+                    float avge;
+                    calc_ref(sp, original, transformed, 0, 0, original->W, original->H, sk, huerefblur, chromarefblur, lumarefblur, hueref, chromaref, lumaref, sobelref, avge, locwavCurveden, locwavdenutili);
+                }
+            }
+        }
+
 
 // Gamut and Munsell control - very important do not deactivated to avoid crash
     avoidcolshi(lp, sp, original, transformed, cy, cx, sk);

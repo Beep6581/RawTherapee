@@ -4290,7 +4290,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     targabscie(16.),
     targetGraycie(18.),
     catadcie(0.),
-    detailcie(0.6),
+    detailcie(0.),
     surroundcie("Average")
 
 {

@@ -7386,7 +7386,7 @@ Locallabcie::Locallabcie():
     cie2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
     targetGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
     targabscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 16.0))),
-    detailcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 1., 0.01, 0.6))),
+    detailcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 100., 0.1, 0.))),
     catadcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png"))))),
     surroundcie(Gtk::manage (new MyComboBoxText ())),
     surrHBoxcie(Gtk::manage(new Gtk::Box()))
@@ -7758,16 +7758,14 @@ void Locallabcie::AutograycieChanged()
 void Locallabcie::modecieChanged()
 {
     if (isLocActivated && exp->getEnabled()) {
-                if (modecie->get_active_row_number() > 0) {
-                    sensicie->hide();
-                    reparcie->hide();
-                } else {
-                    sensicie->show();
-                    reparcie->show();
-                }
+        if (modecie->get_active_row_number() > 0) {
+            sensicie->hide();
+            reparcie->hide();
+        } else {
+            sensicie->show();
+            reparcie->show();
+        }
 
-        
-        
         if (listener) {
             listener->panelChanged(Evlocallabmodecie,
                                    modecie->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
@@ -7862,13 +7860,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
 void Locallabcie::updatecieGUI()
 {
-    const int mode = complexity->get_active_row_number();
-        if (mode == Expert || mode == Normal){
-            sourceabscie->set_sensitive(true);
-        } else {
-            sourceabscie->hide();
-        }
-        
+ 
     if (modecie->get_active_row_number() > 0) {
         sensicie->hide();
         reparcie->hide();
@@ -7876,7 +7868,6 @@ void Locallabcie::updatecieGUI()
         sensicie->show();
         reparcie->show();
     }
-        
 }
 
 
