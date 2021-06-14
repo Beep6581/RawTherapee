@@ -7440,6 +7440,7 @@ Locallabcie::Locallabcie():
     modeHBoxcie->pack_start (*modeLabel, Gtk::PACK_SHRINK);
     modecie->append (M ("TP_LOCALLAB_CIEMODE_COM"));
     modecie->append (M ("TP_LOCALLAB_CIEMODE_TM"));
+    modecie->append (M ("TP_LOCALLAB_CIEMODE_WAV"));
     modecie->set_active (0);
     modeHBoxcie->pack_start (*modecie);
     modecieconn = modecie->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::modecieChanged) );
@@ -7610,6 +7611,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             modecie->set_active (0);
         } else if (spot.modecie == "tm") {
             modecie->set_active (1);
+        } else if (spot.modecie == "wav") {
+            modecie->set_active (2);
         }
         
         Autograycie->set_active(spot.Autogray);
@@ -7675,6 +7678,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.modecie = "com";
         } else if (modecie->get_active_row_number() == 1) {
             spot.modecie = "tm";
+        } else if (modecie->get_active_row_number() == 2) {
+            spot.modecie = "wav";
         }
 
         spot.Autograycie = Autograycie->get_active();

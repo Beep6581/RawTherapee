@@ -2407,7 +2407,7 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B,  const str
     }
 
 }
-void ImProcFunctions::loccont(int bfw, int bfh, int xstart, int ystart, int xend, int yend, LabImage* tmp1, float rad, int sk)
+void ImProcFunctions::loccont(int bfw, int bfh, int xstart, int ystart, int xend, int yend, LabImage* tmp1, float rad, float stren, int sk)
 {
     if (rad > 0.f) {
         array2D<float> guide(bfw, bfh);
@@ -2423,7 +2423,7 @@ void ImProcFunctions::loccont(int bfw, int bfh, int xstart, int ystart, int xend
             }
         }
         array2D<float> iL(bfw, bfh, LL, 0);
-        float gu = 15.f * rad;
+        float gu = stren * rad;
         int r = rtengine::max(int(gu / sk), 1);
         const double epsil = 0.001 * std::pow(2.f, -10);
         float st = 0.01f * rad;
@@ -12785,7 +12785,7 @@ void ImProcFunctions::Lab_Local(
                     ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 0);
 
                     float rad = params->locallab.spots.at(sp).detailcie;
-                    loccont(bfw, bfh, xstart, ystart, xend, yend, tmp1.get(), rad, sk);
+                    loccont(bfw, bfh, xstart, ystart, xend, yend, tmp1.get(), rad, 15.f, sk);
                 }
 
 
@@ -14763,6 +14763,15 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     wavcontrast4(lp, tmp1->L, tmp1->a, tmp1->b, contrast, radblur, radlevblur, tmp1->W, tmp1->H, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, wavcurve, loclevwavCurve, loclevwavutili, wavcurvelev, locconwavCurve, locconwavutili, wavcurvecon, loccompwavCurve, loccompwavutili, wavcurvecomp, loccomprewavCurve, loccomprewavutili, wavcurvecompre, locedgwavCurve, locedgwavutili, sigma, offs, maxlvl, sigmadc, deltad, chrol, chrobl, blurlc, blurena, levelena, comprena, compreena, compress, thres);
+
+                    if (params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).modecie == "wav") {
+                        ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 0);
+
+                        float rad = params->locallab.spots.at(sp).detailcie;
+                        loccont(bfw, bfh, xstart, ystart, xend, yend, tmp1.get(), rad, 5.f, sk);
+                    }
+
+
 
                     if(gamma != 1.f) {
 #ifdef _OPENMP
@@ -16935,7 +16944,7 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 float rad = params->locallab.spots.at(sp).detailcie;
-                loccont(bfw, bfh, xstart, ystart, xend, yend, bufexpfin.get(), rad, sk);
+                loccont(bfw, bfh, xstart, ystart, xend, yend, bufexpfin.get(), rad, 15.f, sk);
                 const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).reparcie;
                 int bw = bufexporig->W;
                 int bh = bufexporig->H;
