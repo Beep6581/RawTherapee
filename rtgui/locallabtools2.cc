@@ -7505,9 +7505,6 @@ Locallabcie::Locallabcie():
     cieP2Box->pack_start(*detailcie);
     cie2Frame->add(*cieP2Box);
     pack_start(*cie2Frame);
-    // Update GUI according to complexity mode
-   // updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
-
 
     }
 Locallabcie::~Locallabcie()
@@ -7575,7 +7572,6 @@ void Locallabcie::disableListener()
     sursourcieconn.block (true);
     surroundcieconn.block (true);
     modecieconn.block (true);
-
 }
 
 void Locallabcie::enableListener()
@@ -7585,7 +7581,6 @@ void Locallabcie::enableListener()
     sursourcieconn.block (false);
     surroundcieconn.block (false);
     modecieconn.block (false);
-
 }
 
 void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
@@ -7654,11 +7649,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
     enableListener();
     // Update GUI according to complexity mode
     updateGUIToMode(static_cast<modeType>(complexity->get_active_row_number()));
-    // Update Log Encoding GUI according to autocompute button state
+    // Update Ciecam GUI
     updatecieGUI();
-
-
-    
 }
 
 void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited)
@@ -7716,9 +7708,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.targetGraycie = targetGraycie->getValue();
         spot.catadcie = catadcie->getValue();
         spot.detailcie = detailcie->getValue();
-
     }
-   
 }
 
 void Locallabcie::updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg)
@@ -7729,12 +7719,8 @@ void Locallabcie::updateAutocompute(const float blackev, const float whiteev, co
 
         // Update adjuster values according to autocomputed ones
         disableListener();
-
-       // blackEv->setValue(blackev);
-       // whiteEv->setValue(whiteev);
         sourceGraycie->setValue(sourceg);
         sourceabscie->setValue(sourceab);
-      //  targetGray->setValue(targetg);
 
         enableListener();
 
@@ -7877,7 +7863,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             modeHBoxcie->show();
 
     }
-    
 }
 
 void Locallabcie::updatecieGUI()
@@ -7896,7 +7881,6 @@ void Locallabcie::updatecieGUI()
         sensicie->show();
         reparcie->show();
     }
-    
 }
 
 
@@ -7908,19 +7892,9 @@ void Locallabcie::convertParamToSimple()
     disableListener();
     sourceabscie->setValue(defSpot.sourceabscie);
     targabscie->setValue(defSpot.targabscie);
-/*        if (defSpot.modecie == "com") {
-            modecie->set_active (0);
-        } else if (defSpot.modecie == "tm") {
-            modecie->set_active (1);
-        } else if (defSpot.modecie == "wav") {
-            modecie->set_active (2);
-        }
-*/    
-    
     modecie->set_active(0);
     // Enable all listeners
     enableListener();
-   
 }
 
 void Locallabcie::convertParamToNormal()
@@ -7982,7 +7956,7 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
                                        sensicie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
-        
+
         if (a == sourceGraycie) {
             if (listener) {
                 listener->panelChanged(EvlocallabsourceGraycie,
@@ -7996,7 +7970,7 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
                                        sourceabscie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
-        
+
         if (a == saturlcie) {
             if (listener) {
                 listener->panelChanged(Evlocallabsaturlcie,
@@ -8081,8 +8055,6 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
                                        detailcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
-
-        
     }
 }
 
@@ -8099,5 +8071,4 @@ void Locallabcie::enabledChanged()
             }
         }
     }
-   
 }
