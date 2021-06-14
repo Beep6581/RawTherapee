@@ -428,6 +428,11 @@ void Spot::updateGeometry()
             sourceCircle.setVisible(draggedSide != DraggedSide::SOURCE);
             targetCircle.setVisible(draggedSide != DraggedSide::TARGET);
         } else {
+            targetCircle.state = Geometry::NORMAL;
+            sourceCircle.state = Geometry::NORMAL;
+            targetFeatherCircle.state = Geometry::NORMAL;
+            sourceFeatherCircle.state = Geometry::NORMAL;
+
             targetCircle.setActive (false);
             targetMODisc.setActive (false);
             sourceIcon.setActive (false);
@@ -667,6 +672,7 @@ bool Spot::button3Pressed (int modifierKey)
         return true;
     } else if (! (modifierKey & (GDK_SHIFT_MASK | GDK_SHIFT_MASK))) {
         EditSubscriber::action = EditSubscriber::Action::PICKING;
+        return true;
     }
 
     return false;

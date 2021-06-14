@@ -794,6 +794,13 @@ void CropWindow::buttonRelease (int button, int num, int bstate, int x, int y)
         iarea->setToolHand ();
     }
 
+    if (state != SEditDrag1 && state != SEditDrag2 && state != SEditDrag3) {
+        iarea->deltaImage.set(0, 0);
+        iarea->deltaScreen.set(0, 0);
+        iarea->deltaPrevImage.set(0, 0);
+        iarea->deltaPrevScreen.set(0, 0);
+    }
+
     if (cropgl && (state == SCropSelecting || state == SResizeH1 || state == SResizeH2 || state == SResizeW1 || state == SResizeW2 || state == SResizeTL || state == SResizeTR || state == SResizeBL || state == SResizeBR || state == SCropMove)) {
         cropgl->cropManipReady ();
         iarea->setToolHand ();
