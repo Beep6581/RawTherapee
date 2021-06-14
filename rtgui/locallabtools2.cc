@@ -7763,12 +7763,22 @@ void Locallabcie::AutograycieChanged()
 void Locallabcie::modecieChanged()
 {
     if (isLocActivated && exp->getEnabled()) {
+        
+        const int mode = complexity->get_active_row_number();
+        
         if (modecie->get_active_row_number() > 0) {
             sensicie->hide();
             reparcie->hide();
         } else {
             sensicie->show();
             reparcie->show();
+        }
+        if (mode == Simple || mode == Normal) { // Keep widget hidden in Normal and Simple mode
+        
+            modecie->set_active (0);
+            sensicie->show();
+            reparcie->show();
+            
         }
 
         if (listener) {
@@ -7819,6 +7829,9 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             sourceabscie->hide();
             targabscie->hide();
             detailcie->hide();
+            modeHBoxcie->hide();
+            sensicie->show();
+            reparcie->show();
             break;
         case Normal:
             // Expert mode widgets are hidden in Normal mode
@@ -7838,6 +7851,9 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             sourceabscie->show();
             targabscie->show();
             detailcie->hide();
+            modeHBoxcie->hide();
+            sensicie->show();
+            reparcie->show();
 
             break;
 
@@ -7858,6 +7874,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             sourceabscie->show();
             targabscie->show();
             detailcie->show();
+            modeHBoxcie->show();
 
     }
     
@@ -7865,6 +7882,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
 void Locallabcie::updatecieGUI()
 {
+    const int mode = complexity->get_active_row_number();
  
     if (modecie->get_active_row_number() > 0) {
         sensicie->hide();
@@ -7873,6 +7891,12 @@ void Locallabcie::updatecieGUI()
         sensicie->show();
         reparcie->show();
     }
+    if (mode == Simple || mode == Normal) { // Keep widget hidden in Normal and Simple mode
+        modecie->set_active (0);
+        sensicie->show();
+        reparcie->show();
+    }
+    
 }
 
 
@@ -7884,6 +7908,16 @@ void Locallabcie::convertParamToSimple()
     disableListener();
     sourceabscie->setValue(defSpot.sourceabscie);
     targabscie->setValue(defSpot.targabscie);
+/*        if (defSpot.modecie == "com") {
+            modecie->set_active (0);
+        } else if (defSpot.modecie == "tm") {
+            modecie->set_active (1);
+        } else if (defSpot.modecie == "wav") {
+            modecie->set_active (2);
+        }
+*/    
+    
+    modecie->set_active(0);
     // Enable all listeners
     enableListener();
    
@@ -7900,6 +7934,7 @@ void Locallabcie::convertParamToNormal()
     lightqcie->setValue(defSpot.lightqcie);
     chromlcie->setValue(defSpot.chromlcie);
     detailcie->setValue(defSpot.detailcie);
+    modecie->set_active(0);
     // Enable all listeners
     enableListener();
     
