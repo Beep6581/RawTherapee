@@ -2407,7 +2407,38 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B,  const str
     }
 
 }
-
+void ImProcFunctions::loccont(int bfw, int bfh, int xstart, int ystart, int xend, int yend, LabImage* tmp1, float rad, int sk)
+{
+    if (rad > 0.f) {
+        array2D<float> guide(bfw, bfh);
+        array2D<float> LL(bfw, bfh);
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16)
+#endif
+        for (int y = ystart; y < yend ; y++) {
+            for (int x = xstart; x < xend; x++) {
+                LL[y][x] = tmp1->L[y - ystart][x - xstart];
+                float ll = LL[y - ystart][x - xstart] / 32768.f;
+                guide[y][x] = xlin2log(rtengine::max(ll, 0.f), 10.f);
+            }
+        }
+        array2D<float> iL(bfw, bfh, LL, 0);
+        float gu = 15.f * rad;
+        int r = rtengine::max(int(gu / sk), 1);
+        const double epsil = 0.001 * std::pow(2.f, -10);
+        float st = 0.01f * rad;
+        rtengine::guidedFilterLog(guide, 10.f, LL, r, epsil, false);
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16)
+#endif
+        for (int y = ystart; y < yend ; y++) {
+            for (int x = xstart; x < xend; x++) {
+                LL[y - ystart][x - xstart] = intp(st, LL[y - ystart][x - xstart] , iL[y - ystart][x - xstart]);
+                tmp1->L[y - ystart][x - xstart] = LL[y - ystart][x - xstart];
+            }
+        }
+    }
+}
 
 void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
 {
@@ -12754,35 +12785,7 @@ void ImProcFunctions::Lab_Local(
                     ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 0);
 
                     float rad = params->locallab.spots.at(sp).detailcie;
-                    if (rad > 0.f) {
-                        array2D<float> guide(bfw, bfh);
-                        array2D<float> LL(bfw, bfh);
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-                        for (int y = ystart; y < yend ; y++) {
-                            for (int x = xstart; x < xend; x++) {
-                                LL[y][x] = tmp1->L[y - ystart][x - xstart];
-                                float ll = LL[y - ystart][x - xstart] / 32768.f;
-                                guide[y][x] = xlin2log(rtengine::max(ll, 0.f), 10.f);
-                            }
-                        }
-                        array2D<float> iL(bfw, bfh, LL, 0);
-                        float gu = 15.f * rad;
-                        int r = rtengine::max(int(gu / sk), 1);
-                        const double epsil = 0.001 * std::pow(2.f, -10);
-                        float st = 0.01f * rad;
-                        rtengine::guidedFilterLog(guide, 10.f, LL, r, epsil, false);
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-                        for (int y = ystart; y < yend ; y++) {
-                            for (int x = xstart; x < xend; x++) {
-                                LL[y - ystart][x - xstart] = intp(st, LL[y - ystart][x - xstart] , iL[y - ystart][x - xstart]);
-                                tmp1->L[y - ystart][x - xstart] = LL[y - ystart][x - xstart];
-                            }
-                        }
-                    }
+                    loccont(bfw, bfh, xstart, ystart, xend, yend, tmp1.get(), rad, sk);
                 }
 
 
@@ -16932,35 +16935,7 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 float rad = params->locallab.spots.at(sp).detailcie;
-                if (rad > 0.f) {
-                    array2D<float> guide(bfw, bfh);
-                    array2D<float> LL(bfw, bfh);
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-                    for (int y = ystart; y < yend ; y++) {
-                        for (int x = xstart; x < xend; x++) {
-                            LL[y][x] = bufexpfin->L[y - ystart][x - xstart];
-                            float ll = LL[y - ystart][x - xstart] / 32768.f;
-                            guide[y][x] = xlin2log(rtengine::max(ll, 0.f), 10.f);
-                        }
-                    }
-                    array2D<float> iL(bfw, bfh, LL, 0);
-                    float gu = 15.f * rad;
-                    int r = rtengine::max(int(gu / sk), 1);
-                    const double epsil = 0.001 * std::pow(2.f, -10);
-                    float st = 0.01f * rad;
-                    rtengine::guidedFilterLog(guide, 10.f, LL, r, epsil, false);
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic,16)
-#endif
-                    for (int y = ystart; y < yend ; y++) {
-                        for (int x = xstart; x < xend; x++) {
-                            LL[y - ystart][x - xstart] = intp(st, LL[y - ystart][x - xstart] , iL[y - ystart][x - xstart]);
-                            bufexpfin->L[y - ystart][x - xstart] = LL[y - ystart][x - xstart];
-                        }
-                    }
-                }
+                loccont(bfw, bfh, xstart, ystart, xend, yend, bufexpfin.get(), rad, sk);
                 const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).reparcie;
                 int bw = bufexporig->W;
                 int bh = bufexporig->H;
