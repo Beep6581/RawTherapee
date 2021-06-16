@@ -1679,7 +1679,7 @@ void HistogramArea::drawParade(Cairo::RefPtr<Cairo::Context> &cr, int w, int h)
     for (unsigned i = 0; i < buffers.size(); i++) {
         Cairo::RefPtr<Cairo::ImageSurface> surface;
         cr->translate(i * display_wave_width, 0);
-        cr->scale(display_wave_width / wave_width, h / wave_height);
+        cr->scale(display_wave_width / wave_width, static_cast<double>(h) / wave_height);
         surface = Cairo::ImageSurface::create(
             buffers[i], Cairo::FORMAT_ARGB32, wave_width, wave_height, cairo_stride);
         cr->set_source(surface, 0, 0);
@@ -1730,7 +1730,7 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
     }
 
     const bool fit_width = vect_width * h > vect_height * w;
-    const float scope_scale = fit_width ? w / vect_width : h / vect_height;
+    const float scope_scale = fit_width ? static_cast<float>(w) / vect_width : static_cast<float>(h) / vect_height;
     const float scope_size = (vectorscope_scale > 0) ?
         scope_scale * std::max<double>(vect_width, vect_height) : std::min<float>(w, h);
     const float o_x = (w - scope_scale * vect_width) / 2;
@@ -1924,7 +1924,7 @@ void HistogramArea::drawWaveform(Cairo::RefPtr<Cairo::Context> &cr, int w, int h
     Cairo::RefPtr<Cairo::ImageSurface> surface;
     auto orig_matrix = cr->get_matrix();
     cr->translate(0, 0);
-    cr->scale(static_cast<double>(w) / wave_width, h / wave_height);
+    cr->scale(static_cast<double>(w) / wave_width, static_cast<double>(h) / wave_height);
     if (needLuma) {
         surface = Cairo::ImageSurface::create(
             wave_buffer_luma.data(), Cairo::FORMAT_ARGB32, wave_width, wave_height, cairo_stride);
