@@ -1209,7 +1209,7 @@ Camera constants:
     { // Quality C
         "make_model": "Canon EOS R5",
         "dcraw_matrix" : [9766, -2953, -1254, -4276, 12116, 2433, -437, 1336, 5131],
-        "raw_crop" : [ 124, 92, 8220, 5486 ],
+        "raw_crop" : [ 128, 96, 8224, 5490 ],
         "masked_areas" : [ 94, 20, 5578, 122 ],
         "ranges" : { "white" : 16382 } 
     },
