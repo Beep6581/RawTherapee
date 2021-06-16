@@ -963,7 +963,7 @@ void HistogramRGBAreaHori::drawBar(Cairo::RefPtr<Cairo::Context> cc, double valu
     if (options.histogramDrawMode < 2) {
         pos = value * winw / max_value + 0.5 * scale;
     } else {
-        pos = HistogramScaling::log (max_value, value) * winw / max_value + 0.5 * scale;
+        pos = HistogramScaling::log (max_value, value) * winw + 0.5 * scale;
     }
     cc->move_to(pos, 0.0);
     cc->line_to(pos, winh - 0.0);
@@ -1001,7 +1001,7 @@ void HistogramRGBAreaVert::drawBar(Cairo::RefPtr<Cairo::Context> cc, double valu
     if (options.histogramDrawMode < 2 || options.histogramScopeType == ScopeType::PARADE || options.histogramScopeType == ScopeType::WAVEFORM) {
         pos = value * (winh - 1) / max_value + 0.5 * scale;
     } else {
-        pos = HistogramScaling::log (max_value, value) * winh / max_value + 0.5 * scale;
+        pos = HistogramScaling::log (max_value, value) * winh + 0.5 * scale;
     }
     cc->move_to(0.0, winh - pos);
     cc->line_to(winw, winh - pos);
@@ -1286,7 +1286,7 @@ void HistogramArea::updateBackBuffer ()
     }
 
     // draw horizontal gridlines
-    /*if (options.histogramScopeType == ScopeType::PARADE || options.histogramScopeType == ScopeType::WAVEFORM) {
+    if (options.histogramScopeType == ScopeType::PARADE || options.histogramScopeType == ScopeType::WAVEFORM) {
         for (int i = 0; i <= nrOfVGridPartitions; i++) {
             const double ypos = h - (pow(2.0,i) - 1) * (h - 1) / 255.0;
             cr->move_to(0, ypos);
@@ -1307,7 +1307,7 @@ void HistogramArea::updateBackBuffer ()
             cr->line_to (w, h - HistogramScaling::log (h, i * static_cast<double>(h) / nrOfHGridPartitions) + 0.5);
             cr->stroke ();
         }
-    }*/
+    }
 
     cr->unset_dash();
 
@@ -1522,7 +1522,7 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & da
     }
 
     if (drawMode == 2) { // scale x for double log-scale
-        const float mult = (w - 1.f) / xlogf(HistogramScaling::factor / (HistogramScaling::factor + static_cast<float>(maxHValue)));
+        const float mult = (w - 1.f) / xlogf(HistogramScaling::factor / (HistogramScaling::factor + maxHValuef));
 #ifdef __SSE2__
         const vfloat multv = F2V(mult);
         const vfloat fourv = F2V(4.f);
@@ -1540,7 +1540,7 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr, const LUTu & da
         }
 #endif
     } else {
-        const float mult = (w - 1.f) / static_cast<float>(maxHValue);
+        const float mult = (w - 1.f) / maxHValuef;
         for (int i = 0; i <= maxHValue; ++i) {
             iscaled[i] = i * mult;
         }
