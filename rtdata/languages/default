@@ -2670,7 +2670,7 @@ TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM color appearanc
 TP_LOCALLAB_CIEMODE;Change tool position
 TP_LOCALLAB_CIEMODE_COM;Default
 TP_LOCALLAB_CIEMODE_TM;Tone Mapping
-TP_LOCALLAB_CIEMODE_WAV;Wavelet
+TP_LOCALLAB_CIEMODE_WAV;Wavelet a
 TP_LOCALLAB_CIEMODE_TOOLTIP;In 'Standard' mode, Ciecam is added at the end of the treatment.\nIf you choose a specific tool (TM, Wavelet,...), Ciecam will be integrated to this tool, bringing different results. In this mode, you have "Mask and modifications" at your disposal.
 TP_LOCALLAB_CIRCRADIUS;Spot size
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Contains the references of the RT-spot, useful for shape detection (hue, luma, chroma, Sobel).\nLow values may be useful for processing foliage.\nHigh values may be useful for processing skin.
