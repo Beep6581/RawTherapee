@@ -3003,6 +3003,7 @@ void ImProcFunctions::exlabLocal(local_params& lp, float strlap, int bfh, int bf
     const bool exec = (lp.expmet == 1 && linear > 0.f && lp.laplacexp > 0.1f);
 
     if(!exec) {//for standard exposure
+    
         const float cexp_scale = std::pow(2.f, lp.expcomp);
         const float ccomp = (rtengine::max(0.f, lp.expcomp) + 1.f) * lp.hlcomp / 100.f;
         const float cshoulder = ((maxran / rtengine::max(1.0f, cexp_scale)) * (lp.hlcompthr / 200.f)) + 0.1f;
@@ -14896,6 +14897,10 @@ void ImProcFunctions::Lab_Local(
 
 
                     } else {
+                        if (lp.expcomp == 0.f  && (lp.linear > 0.01f && lp.laplacexp > 0.1f)) {
+                            lp.expcomp = 0.001f;// to enabled
+                        } 
+
                         if (lp.expcomp != 0.f  ) { // ||  lp.laplacexp > 0.1f
                             if(lp.laplacexp <= 0.1f) {
                                 lp.laplacexp = 0.2f;  //force to use Laplacian wth very small values

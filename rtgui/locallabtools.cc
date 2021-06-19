@@ -3570,10 +3570,14 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
             fatanchor->show();
 
             // Specific Simple mode widgets are shown in Normal mode
+            softradiusexp->hide();
+            blurexpde->hide();
+            
             if (!inversex->get_active()) { // Keep widget hidden when invers is toggled
                 expgradexp->show();
                 softradiusexp->show();
                 exprecove->show();
+                blurexpde->show();
             }
 
             expmaskexp->show();
@@ -3583,7 +3587,8 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
 
         case Expert:
             // Show widgets hidden in Normal and Simple mode
-            if (!inversex->get_active()) { // Keep widget hidden when invers is toggled
+           structexp->hide();
+           if (!inversex->get_active()) { // Keep widget hidden when invers is toggled
                 structexp->show();
             }
 
@@ -3591,11 +3596,15 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
             norm->show();
             fatlevel->show();
             fatanchor->show();
+            softradiusexp->hide();
+            blurexpde->hide();
 
             if (!inversex->get_active()) { // Keep widget hidden when invers is toggled
                 expgradexp->show();
                 softradiusexp->show();
                 exprecove->show();
+                blurexpde->show();
+
             }
             if (enaExpMask->get_active()) {
                 maskusablee->show();
@@ -3818,6 +3827,8 @@ void LocallabExposure::updateExposureGUI3()
         reparexp->hide();
         expfat->hide();
         exppde->hide();
+        structexp->hide();
+        blurexpde->hide();
 
         // Manage specific case where expMethod is different from 0
         if (expMethod->get_active_row_number() > 0) {
@@ -3843,11 +3854,20 @@ void LocallabExposure::updateExposureGUI3()
         expfat->show();
         exppde->show();
 
-        if (mode == Expert || mode == Normal) { // Keep widgets hidden in Simple mode
+        if (mode == Normal) { // Keep widgets hidden in Simple mode
             softradiusexp->show();
             expgradexp->show();
             exprecove->show();
+            blurexpde->show();
         }
+        if (mode == Expert) { // Keep widgets hidden in Simple mode
+            softradiusexp->show();
+            expgradexp->show();
+            exprecove->show();
+            structexp->show();
+            blurexpde->show();
+        }
+        
         reparexp->show();
 
         showmaskexpMethodinv->hide();
