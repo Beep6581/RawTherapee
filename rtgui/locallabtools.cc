@@ -3861,6 +3861,8 @@ void LocallabExposure::updateExposureGUI3()
         exprecove->hide();
         reparexp->hide();
         gamex->hide();
+        expfat->hide();
+        exppde->hide();
 
         // Manage specific case where expMethod is different from 0
         if (expMethod->get_active_row_number() > 0) {
@@ -3884,6 +3886,8 @@ void LocallabExposure::updateExposureGUI3()
         expMethod->show();
         expcomp->setLabel(M("TP_LOCALLAB_EXPCOMP"));
         gamex->show();
+        expfat->show();
+        exppde->show();
 
         if (mode == Expert || mode == Normal) { // Keep widgets hidden in Simple mode
             softradiusexp->show();

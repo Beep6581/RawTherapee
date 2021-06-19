@@ -15287,6 +15287,12 @@ void ImProcFunctions::Lab_Local(
                             }
                             ToneMapFattal02(tmpImagefat.get(), fatParams, 3, 0, nullptr, 0, 0, alg);//last parameter = 1 ==>ART algorithm
                             rgb2lab(*tmpImagefat, *bufexpfin, params->icm.workingProfile);
+                            if (params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).modecie == "dr") {
+                                ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0);
+
+                                float rad = params->locallab.spots.at(sp).detailcie;
+                                loccont(bfw, bfh, xstart, ystart, xend, yend, bufexpfin.get(), rad, 15.f, sk);
+                            }
 
                         }
 
