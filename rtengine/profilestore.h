@@ -209,7 +209,7 @@ public:
     void addListener (ProfileStoreListener *listener);
     void removeListener (ProfileStoreListener *listener);
 
-    rtengine::procparams::PartialProfile*        loadDynamicProfile (const rtengine::FramesMetaData *im, const Glib::ustring& fname);
+    rtengine::procparams::PartialProfile*        loadDynamicProfile (const rtengine::FramesMetaData *im, const Glib::ustring& filename);
 
     void dumpFolderList();
 };

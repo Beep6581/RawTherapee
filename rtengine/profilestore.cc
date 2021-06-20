@@ -19,7 +19,6 @@
 
 #include <glibmm/fileutils.h>
 #include <glibmm/miscutils.h>
-#include <iostream>
 
 #include "profilestore.h"
 
