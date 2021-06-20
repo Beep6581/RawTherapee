@@ -77,7 +77,7 @@ bool DynamicProfileRule::operator< (const DynamicProfileRule &other) const
 }
 
 
-bool DynamicProfileRule::matches (const rtengine::FramesMetaData *im) const
+bool DynamicProfileRule::matches (const rtengine::FramesMetaData *im,  const Glib::ustring& filename) const
 {
     return (iso (im->getISOSpeed())
             && fnumber (im->getFNumber())
@@ -86,7 +86,7 @@ bool DynamicProfileRule::matches (const rtengine::FramesMetaData *im) const
             && expcomp (im->getExpComp())
             && camera (im->getCamera())
             && lens (im->getLens())
-            // todo path
+            && path (filename)
             && imagetype(im->getImageType(0)));
 }
 
