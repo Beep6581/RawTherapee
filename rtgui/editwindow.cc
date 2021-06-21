@@ -372,14 +372,21 @@ void EditWindow::get_position(int& x, int& y) const
     // Call native function
     Gtk::Window::get_position(x, y);
 
-    // Retrieve monitor size
-    Gdk::Rectangle lMonitorRect;
+    // Retrieve display (concatenation of all monitors) size
+    int width = 0, height = 0;
     const auto display = get_screen()->get_display();
-    display->get_monitor(std::max(0, std::min(options.meowMonitor, display->get_n_monitors() - 1)))->get_geometry(lMonitorRect);
+    const int nbMonitors = display->get_n_monitors();
+
+    for (int i = 0; i < nbMonitors; i++) {
+        Gdk::Rectangle lMonitorRect;
+        display->get_monitor(i)->get_geometry(lMonitorRect);
+        width = std::max(width, lMonitorRect.get_x() + lMonitorRect.get_width());
+        height = std::max(height, lMonitorRect.get_y() + lMonitorRect.get_height());
+    }
 
     // Saturate position at monitor limits to avoid unexpected behavior (fixes #6233)
-    x = std::min(lMonitorRect.get_width(), std::max(0, x));
-    y = std::min(lMonitorRect.get_height(), std::max(0, y));
+    x = std::min(width, std::max(0, x));
+    y = std::min(height, std::max(0, y));
 }
 
 void EditWindow::writeOptions()
