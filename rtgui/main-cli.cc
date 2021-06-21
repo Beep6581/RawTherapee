@@ -737,8 +737,6 @@ int processLineParams ( int argc, char **argv )
         }
 
         if (useDefault) {
-            std::cout << "loading file: " << inputFile << std::endl;
-
             if (isRaw) {
                 if (options.defProfRaw == DEFPROFILE_DYNAMIC) {
                     rawParams->deleteInstance();
