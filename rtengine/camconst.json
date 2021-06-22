@@ -1548,7 +1548,7 @@ Camera constants:
 
     { // Quality C
         "make_model": "LEICA M8",
-        "dcraw_matrix": [ 7675, -2196, -305, -5860, 14119, 1855, -2425, 4006, 6578 ], // DNG
+        "dcraw_matrix": [ 7675, -2196, -305, -5860, 14119, 1855, -2425, 4006, 6578 ] // DNG
         // Do not set white level, probably special handling by dcraw (see #6237)
     },
 
