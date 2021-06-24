@@ -764,7 +764,7 @@ bool RTWindow::keyPressed (GdkEventKey* event)
 
 bool RTWindow::keyReleased(GdkEventKey *event)
 {
-    if (mainNB->get_current_page() == mainNB->page_num(*fpanel)) {
+    if (fpanel && mainNB->get_current_page() == mainNB->page_num(*fpanel)) {
         return fpanel->handleShortcutKeyRelease(event);
     }
     return false;
