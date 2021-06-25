@@ -1325,6 +1325,7 @@ HISTORY_MSG_1074;Local - CIECAM Local contrast
 HISTORY_MSG_1075;Local - CIECAM Surround viewing
 HISTORY_MSG_1076;Local - CIECAM Scope
 HISTORY_MSG_1077;Local - CIECAM Mode
+HISTORY_MSG_1078;Local - Red and skin protection
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -3150,6 +3151,7 @@ TP_LOCALLAB_RGB;RGB Tone Curve
 TP_LOCALLAB_RGBCURVE_TOOLTIP;In RGB mode you have 4 choices : Standard, Weighted standard, Luminance & Film-like.
 TP_LOCALLAB_ROW_NVIS;Not visible
 TP_LOCALLAB_ROW_VIS;Visible
+TP_LOCALLAB_RSTPROTECT_TOOLTIP;Red and skin-tones protection affects sliders Saturation, Chroma and Colorfullness.
 TP_LOCALLAB_SATUR;Saturation
 TP_LOCALLAB_SATURV;Saturation (s)
 TP_LOCALLAB_SAVREST;Save - Restore Current Image

@@ -2722,10 +2722,12 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     float schr = 0.f;
     float mchr = 0.f;
     float cchr = 0.f;
+    float rstprotection = 50.f;
 
     if (ciec) {
         if(iscie) {
-        
+            rstprotection =  params->locallab.spots.at(sp).rstprotectcie;
+
             cchr = params->locallab.spots.at(sp).chromlcie;
             if (cchr == -100.0f) {
                     cchr = -99.8f;
@@ -2909,7 +2911,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                 */
                 if(ciec) {
                     Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
-                    float rstprotection = 50.f;//default value to avoid 1 slider
+                  //  float rstprotection = 50.f;//default value to avoid 1 slider
                    // float chr = 0.f;//no use of chroma 
                     float Mp, sres;
                     Mp = Mpro / 100.0f;

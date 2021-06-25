@@ -1527,6 +1527,7 @@ private:
     Adjuster* const contthrescie;
     Adjuster* const colorflcie;
     Adjuster* const saturlcie;
+    Adjuster* const rstprotectcie;
     Adjuster* const chromlcie;
     MyExpander* const expLcie;
     Gtk::Frame* const cie2Frame;

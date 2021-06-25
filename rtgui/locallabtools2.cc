@@ -7381,6 +7381,7 @@ Locallabcie::Locallabcie():
     contthrescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTHRES"), -1., 1., 0.01, 0.))),
     colorflcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCOLORFL"), -100., 100., 0.5, 0.))),
     saturlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
+    rstprotectcie(Gtk::manage(new Adjuster(M("TP_COLORAPP_RSTPRO"), 0., 100., 0.1, 50.))),
     chromlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROML"), -100., 100., 0.5, 0.))),
     expLcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_LOGEXP")))),
     cie2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
@@ -7413,6 +7414,8 @@ Locallabcie::Locallabcie():
     setExpandAlignProperties(expLcie, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     saturlcie->setAdjusterListener(this);
+
+    rstprotectcie->setAdjusterListener(this);
 
     chromlcie->setAdjusterListener(this);
 
@@ -7486,6 +7489,7 @@ Locallabcie::Locallabcie():
     cieP1Box->pack_start(*lightlcie);
     cieP1Box->pack_start(*contthrescie);
     cieP1Box->pack_start(*saturlcie);
+    cieP1Box->pack_start(*rstprotectcie);
     Gtk::Separator* const separatorchrocie = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     ToolParamBlock* const cieP11Box = Gtk::manage(new ToolParamBlock());
     cieP11Box->pack_start(*lightqcie);
@@ -7533,6 +7537,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         lightlcie->set_tooltip_text(M("TP_LOCALLAB_LOGLIGHTL_TOOLTIP"));
         lightqcie->set_tooltip_text(M("TP_LOCALLAB_LOGLIGHTQ_TOOLTIP"));
         saturlcie->set_tooltip_text(M("TP_LOCALLAB_LOGSATURL_TOOLTIP"));
+        rstprotectcie->set_tooltip_text(M("TP_LOCALLAB_RSTPROTECT_TOOLTIP"));
         chromlcie->set_tooltip_text(M("TP_COLORAPP_CHROMA_TOOLTIP"));
         targabscie->set_tooltip_text(M("TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP"));
         targetGraycie->set_tooltip_text(M("TP_COLORAPP_YBOUT_TOOLTIP"));
@@ -7556,6 +7561,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         lightlcie->set_tooltip_text("");
         lightqcie->set_tooltip_text("");
         saturlcie->set_tooltip_text("");
+        rstprotectcie->set_tooltip_text("");
         chromlcie->set_tooltip_text("");
         targabscie->set_tooltip_text("");
         targetGraycie->set_tooltip_text("");
@@ -7636,6 +7642,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         }
 
         saturlcie->setValue(spot.saturlcie);
+        rstprotectcie->setValue(spot.rstprotectcie);
         chromlcie->setValue(spot.chromlcie);
         lightlcie->setValue(spot.lightlcie);
         lightqcie->setValue(spot.lightqcie);
@@ -7702,6 +7709,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         }
 
         spot.saturlcie = saturlcie->getValue();
+        spot.rstprotectcie = rstprotectcie->getValue();
         spot.chromlcie = chromlcie->getValue();
         spot.lightlcie = lightlcie->getValue();
         spot.lightqcie = lightqcie->getValue();
@@ -7807,6 +7815,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
         case Simple:
             catadcie->show();
             saturlcie->show();
+            rstprotectcie->show();
             chromlcie->hide();
             lightlcie->show();
             lightqcie->hide();
@@ -7829,6 +7838,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
             catadcie->show();
             saturlcie->show();
+            rstprotectcie->show();
             chromlcie->hide();
             lightlcie->show();
             lightqcie->hide();
@@ -7852,6 +7862,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             // Show widgets hidden in Normal and Simple mode
             catadcie->show();
             saturlcie->show();
+            rstprotectcie->show();
             chromlcie->show();
             lightlcie->show();
             lightqcie->show();
@@ -7931,6 +7942,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         sourceGraycie->setDefault(defSpot.sourceGraycie);
         sourceabscie->setDefault(defSpot.sourceabscie);
         saturlcie->setDefault(defSpot.saturlcie);
+        rstprotectcie->setDefault(defSpot.rstprotectcie);
         chromlcie->setDefault(defSpot.chromlcie);
         lightlcie->setDefault(defSpot.lightlcie);
         lightqcie->setDefault(defSpot.lightqcie);
@@ -7980,6 +7992,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabsaturlcie,
                                        saturlcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == rstprotectcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabrstprotectcie,
+                                       rstprotectcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

@@ -984,6 +984,7 @@ public:
         bool sursourcie;
         bool modecie;
         bool saturlcie;
+        bool rstprotectcie;
         bool chromlcie;
         bool lightlcie;
         bool lightqcie;

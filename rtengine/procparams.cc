@@ -4280,6 +4280,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sursourcie("Average"),
     modecie("com"),
     saturlcie(0.),
+    rstprotectcie(50.),
     chromlcie(0.),
     lightlcie(0.),
     lightqcie(0.),
@@ -4908,6 +4909,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sursourcie == other.sursourcie
         && modecie == other.modecie
         && saturlcie == other.saturlcie
+        && rstprotectcie == other.rstprotectcie
         && chromlcie == other.chromlcie
         && lightlcie == other.lightlcie
         && lightqcie == other.lightqcie
@@ -6595,6 +6597,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->sursourcie, "Locallab", "Sursourcie_" + index_str, spot.sursourcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->modecie, "Locallab", "Modecie_" + index_str, spot.modecie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->saturlcie, "Locallab", "Saturlcie_" + index_str, spot.saturlcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->rstprotectcie, "Locallab", "Rstprotectcie_" + index_str, spot.rstprotectcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chromlcie, "Locallab", "Chromlcie_" + index_str, spot.chromlcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lightlcie, "Locallab", "Lightlcie_" + index_str, spot.lightlcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lightqcie, "Locallab", "Brightqcie_" + index_str, spot.lightqcie, keyFile);
@@ -8654,6 +8657,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Sursourcie_" + index_str, pedited, spot.sursourcie, spotEdited.sursourcie);
                 assignFromKeyfile(keyFile, "Locallab", "Modecie_" + index_str, pedited, spot.modecie, spotEdited.modecie);
                 assignFromKeyfile(keyFile, "Locallab", "Saturlcie_" + index_str, pedited, spot.saturlcie, spotEdited.saturlcie);
+                assignFromKeyfile(keyFile, "Locallab", "Rstprotectcie_" + index_str, pedited, spot.rstprotectcie, spotEdited.rstprotectcie);
                 assignFromKeyfile(keyFile, "Locallab", "Chromlcie_" + index_str, pedited, spot.chromlcie, spotEdited.chromlcie);
                 assignFromKeyfile(keyFile, "Locallab", "Lightlcie_" + index_str, pedited, spot.lightlcie, spotEdited.lightlcie);
                 assignFromKeyfile(keyFile, "Locallab", "Brightqcie_" + index_str, pedited, spot.lightqcie, spotEdited.lightqcie);
