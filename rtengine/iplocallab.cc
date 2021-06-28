@@ -2442,7 +2442,7 @@ void ImProcFunctions::loccont(int bfw, int bfh, int xstart, int ystart, int xend
 
 void sigmoidla (float &valj, float thresj, float lambda) 
 {
-    valj =  valj + 1.f / (1.f + xexpf(lambda - (lambda / thresj) * valj));
+    valj =  LIM01(valj + 1.f / (1.f + xexpf(lambda - (lambda / thresj) * valj)));
 }
 
 void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
@@ -2939,14 +2939,17 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                     }
 
                     Jpro = CAMBrightCurveJ[(float)(Jpro * 327.68f)];   //lightness CIECAM02 + contrast
-                    if(sigmoidlambda > 0.f) {
+                    if(sigmoidlambda > 0.f) {//sigmoid J
                         float sigm = 16.f *(1.f - cbrt(sigmoidlambda));
-                        float th = 1.f + 1.3f * sigmoidth;
+                        float th = 1.f + 1.2f * sigmoidth;
                         float val = Jpro / 100.f;
                         sigmoidla (val, th, sigm);
-                        val = LIM01(val);
                         Jpro = 100.f * val;
                     }
+                    if (Jpro > 99.9f) {
+                       Jpro = 99.9f;
+                    }
+
                     float Sp = spro / 100.0f;
                     Ciecam02::curvecolorfloat(schr, Sp, sres, 1.5f);
                     dred = 100.f; // in C mode
