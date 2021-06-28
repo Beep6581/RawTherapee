@@ -1326,6 +1326,8 @@ HISTORY_MSG_1075;Local - CIECAM Surround viewing
 HISTORY_MSG_1076;Local - CIECAM Scope
 HISTORY_MSG_1077;Local - CIECAM Mode
 HISTORY_MSG_1078;Local - Red and skin protection
+HISTORY_MSG_1079;Local - CIECAM Sigmoid strength J
+HISTORY_MSG_1080;Local - CIECAM Sigmoid threshold
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -3221,6 +3223,8 @@ TP_LOCALLAB_SHRESFRA;Shadows/Highlights & TRC
 TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones.\nIt is recommended that the TRC of both devices (monitor and output profile) be sRGB (default).
 TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer
 TP_LOCALLAB_SIGMAWAV;Attenuation response
+TP_LOCALLAB_SIGMOIDLAMBDA;Sigmoid Strength J
+TP_LOCALLAB_SIGMOIDTH;Sigmoid threshold
 TP_LOCALLAB_SIM;Simple
 TP_LOCALLAB_SLOMASKCOL;Slope
 TP_LOCALLAB_SLOMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying ‘L’ to avoid any discontinuities.

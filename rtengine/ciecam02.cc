@@ -109,6 +109,7 @@ void Ciecam02::curveJfloat (float br, float contr, float thr, const LUTu & histo
         }
 
         avg /= sum;
+        printf("avg=%f \n", (double) avg);
         float thrmin = (thr - contr / 250.0f);
         float thrmax = (thr + contr / 250.0f);
         

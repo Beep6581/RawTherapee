@@ -1687,6 +1687,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).lightqcie = locallab.spots.at(j).lightqcie && pSpot.lightqcie == otherSpot.lightqcie;
                 locallab.spots.at(j).contlcie = locallab.spots.at(j).contlcie && pSpot.contlcie == otherSpot.contlcie;
                 locallab.spots.at(j).contthrescie = locallab.spots.at(j).contthrescie && pSpot.contthrescie == otherSpot.contthrescie;
+                locallab.spots.at(j).sigmoidldacie = locallab.spots.at(j).sigmoidldacie && pSpot.sigmoidldacie == otherSpot.sigmoidldacie;
+                locallab.spots.at(j).sigmoidthcie = locallab.spots.at(j).sigmoidthcie && pSpot.sigmoidthcie == otherSpot.sigmoidthcie;
                 locallab.spots.at(j).contqcie = locallab.spots.at(j).contqcie && pSpot.contqcie == otherSpot.contqcie;
                 locallab.spots.at(j).colorflcie = locallab.spots.at(j).colorflcie && pSpot.colorflcie == otherSpot.colorflcie;
                 locallab.spots.at(j).targabscie = locallab.spots.at(j).targabscie && pSpot.targabscie == otherSpot.targabscie;
@@ -5665,6 +5667,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).contthrescie = mods.locallab.spots.at(i).contthrescie;
         }
 
+        if (locallab.spots.at(i).sigmoidldacie) {
+            toEdit.locallab.spots.at(i).sigmoidldacie = mods.locallab.spots.at(i).sigmoidldacie;
+        }
+
+        if (locallab.spots.at(i).sigmoidthcie) {
+            toEdit.locallab.spots.at(i).sigmoidthcie = mods.locallab.spots.at(i).sigmoidthcie;
+        }
+
         if (locallab.spots.at(i).contqcie) {
             toEdit.locallab.spots.at(i).contqcie = mods.locallab.spots.at(i).contqcie;
         }
@@ -7585,6 +7595,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     lightqcie(v),
     contlcie(v),
     contthrescie(v),
+    sigmoidldacie(v),
+    sigmoidthcie(v),
     contqcie(v),
     colorflcie(v),
     targabscie(v),
@@ -8202,6 +8214,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     lightqcie = v;
     contlcie = v;
     contthrescie = v;
+    sigmoidldacie = v;
+    sigmoidthcie = v;
     contqcie = v;
     colorflcie = v;
     targabscie = v;

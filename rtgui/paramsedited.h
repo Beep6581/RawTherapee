@@ -990,6 +990,8 @@ public:
         bool lightqcie;
         bool contlcie;
         bool contthrescie;
+        bool sigmoidldacie;
+        bool sigmoidthcie;
         bool contqcie;
         bool colorflcie;
         bool targabscie;
