@@ -131,9 +131,7 @@ void setGtkLanguage(const Glib::ustring &language)
         // So we should set all locale data
         const Glib::ustring localeUTF8 = lang + ".UTF-8";
 
-        if (setlocale(LC_ALL, localeUTF8.c_str())) { // Check if this language is available in UTF-8
-            lang = localeUTF8;
-        }
+        lang = lang + ".UTF-8"; // According to Apple documentation, UTF-8 is a built-in encoding on all platforms on which macOS runs
 
         g_setenv("LANG", lang.c_str(), true);
         setlocale(LC_ALL, lang.c_str());
@@ -293,14 +291,11 @@ Glib::ustring MultiLangMgr::getOSUserLanguage ()
 
     // Release user locale data
     CFRelease(cfLocale);
+    CFRelease(langCodeStr);
+    CFRelease(countryCodeStr);
 
     // Set locale environment data
-    const Glib::ustring localeUTF8 = locale + ".UTF-8";
-
-    if (setlocale(LC_ALL, localeUTF8.c_str())) { // Check if this language is available in UTF-8
-        locale = localeUTF8;
-    }
-
+    locale = locale + ".UTF-8"; // According to Apple documentation, UTF-8 is a built-in encoding on all platforms on which macOS runs
     g_setenv("LANG", locale.c_str(), true);
     setlocale(LC_ALL, locale.c_str());
     setlocale (LC_NUMERIC, "C"); // Force decimal point to dot.
