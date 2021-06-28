@@ -17,8 +17,6 @@
             <string>/Applications/RawTherapee.app/Contents/Resources/etc/gtk-3.0/gdk-pixbuf.loaders</string>
             <key>GDK_PIXBUF_MODULEDIR</key>
             <string>/Applications/RawTherapee.app/Contents/Frameworks</string>
-            <key>FONTCONFIG_PATH</key>
-            <string>/Applications/RawTherapee.app/Contents/Resources/etc/fonts</string>
             <key>LIBDIR</key>
             <string>/Applications/RawTherapee.app/Contents/Frameworks</string>
             <key>DATADIR</key>
@@ -28,14 +26,12 @@
             <key>GTK_OVERLAY_SCROLLING</key>
             <string>0</string>
         </dict>
-        <key>ATSApplicationFontsPath</key>
-        <string>etc/fonts</string>
         <key>LSMultipleInstancesProhibited</key>
         <true />
         <key>LSMinimumSystemVersion</key>
         <string>@minimum_macos_version@</string>
-        <key>CFBundleDevelopmentRegion</key>
-        <string>English</string>
+        <key>CFBundleAllowMixedLocalizations</key>
+        <true />
         <key>CFBundleDisplayName</key>
         <string>RawTherapee</string>
         <key>CFBundleDocumentTypes</key>
