@@ -2941,6 +2941,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                     Jpro = CAMBrightCurveJ[(float)(Jpro * 327.68f)];   //lightness CIECAM02 + contrast
                     if(sigmoidlambda > 0.f) {//sigmoid J
                         float sigm = 16.f *(1.f - cbrt(sigmoidlambda));
+                       // sigm = std::max(sigm, 3.f);
                         float th = 1.f + 1.2f * sigmoidth;
                         float val = Jpro / 100.f;
                         sigmoidla (val, th, sigm);
