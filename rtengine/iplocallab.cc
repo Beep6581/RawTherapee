@@ -2945,7 +2945,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                         float bl = sigmoidbl;
                         float sigm = 16.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000
                         //cbrt to have a response in middle values
-                        float th = 1.f + 1.2f * sigmoidth;//th between 0.04 (positive) and 2.2
+                        float th = sigmoidth;//th between 0.04 (positive) and 2.2
                         float val = Jpro / 100.f;
                         sigmoidla (val, th, sigm, bl);
                         Jpro = 100.f * val;

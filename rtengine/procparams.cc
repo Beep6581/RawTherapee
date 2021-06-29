@@ -4287,7 +4287,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     contlcie(0.),
     contthrescie(0.),
     sigmoidldacie(0.),
-    sigmoidthcie(0.),
+    sigmoidthcie(1.),
     sigmoidblcie(1.),
     contqcie(0.),
     colorflcie(0.),
