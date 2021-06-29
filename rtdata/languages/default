@@ -3228,7 +3228,7 @@ TP_LOCALLAB_SIGFRA;Sigmoid J
 TP_LOCALLAB_SIGMOIDLAMBDA;Strength
 TP_LOCALLAB_SIGMOIDTH;Threshold
 TP_LOCALLAB_SIGMOIDBL;Blend
-TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both Ciecam and Sigmoid function.\nThree sliders : a) Strength acts on the shape of the sigmoid curve and consequently on the strength; b) threshold distributes the action according to the luminance; c)blend acts on the final aspect of the image, contrast and luminance. 
+TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both 'Ciecam J' and 'Sigmoid' function.\nThree sliders : a) Strength acts on the shape of the sigmoid curve and consequently on the strength; b) threshold distributes the action according to the luminance; c)blend acts on the final aspect of the image, contrast and luminance. 
 TP_LOCALLAB_SIM;Simple
 TP_LOCALLAB_SLOMASKCOL;Slope
 TP_LOCALLAB_SLOMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying ‘L’ to avoid any discontinuities.
