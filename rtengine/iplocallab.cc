@@ -2458,7 +2458,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         ciec = true;
         iscie = true;
     }
-    
+    //sigmoid J variables
     float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie; 
     float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie; 
     float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie; 
@@ -2941,11 +2941,11 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
 
                     Jpro = CAMBrightCurveJ[(float)(Jpro * 327.68f)];   //lightness CIECAM02 + contrast
 
-                    if(sigmoidlambda > 0.f && iscie) {//sigmoid J
+                    if(sigmoidlambda > 0.f && iscie) {//sigmoid J only with ciecam module
                         float bl = sigmoidbl;
-                        float sigm = 16.f *(1.f - cbrt(sigmoidlambda));
-                       // sigm = std::max(sigm, 3.f);
-                        float th = 1.f + 1.2f * sigmoidth;
+                        float sigm = 16.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000
+                        //cbrt to have a response in middle values
+                        float th = 1.f + 1.2f * sigmoidth;//th between 0.04 (positive) and 2.2
                         float val = Jpro / 100.f;
                         sigmoidla (val, th, sigm, bl);
                         Jpro = 100.f * val;
