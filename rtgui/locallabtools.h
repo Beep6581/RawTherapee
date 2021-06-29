@@ -1525,8 +1525,10 @@ private:
     Adjuster* const contlcie;
     Adjuster* const contqcie;
     Adjuster* const contthrescie;
+    Gtk::Frame* const sigmoidFrame;
     Adjuster* const sigmoidldacie;
     Adjuster* const sigmoidthcie;
+    Adjuster* const sigmoidblcie;
     
     Adjuster* const colorflcie;
     Adjuster* const saturlcie;

@@ -2440,9 +2440,9 @@ void ImProcFunctions::loccont(int bfw, int bfh, int xstart, int ystart, int xend
     }
 }
 
-void sigmoidla (float &valj, float thresj, float lambda) 
+void sigmoidla (float &valj, float thresj, float lambda, float blend) 
 {
-    valj =  LIM01(valj + 1.f / (1.f + xexpf(lambda - (lambda / thresj) * valj)));
+    valj =  LIM01(blend * valj + 1.f / (1.f + xexpf(lambda - (lambda / thresj) * valj)));
 }
 
 void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
@@ -2461,6 +2461,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     
     float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie; 
     float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie; 
+    float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie; 
 
     int width = lab->W, height = lab->H;
     float Yw;
@@ -2939,16 +2940,19 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                     }
 
                     Jpro = CAMBrightCurveJ[(float)(Jpro * 327.68f)];   //lightness CIECAM02 + contrast
-                    if(sigmoidlambda > 0.f) {//sigmoid J
+
+                    if(sigmoidlambda > 0.f && iscie) {//sigmoid J
+                        float bl = sigmoidbl;
                         float sigm = 16.f *(1.f - cbrt(sigmoidlambda));
                        // sigm = std::max(sigm, 3.f);
                         float th = 1.f + 1.2f * sigmoidth;
                         float val = Jpro / 100.f;
-                        sigmoidla (val, th, sigm);
+                        sigmoidla (val, th, sigm, bl);
                         Jpro = 100.f * val;
-                    }
-                    if (Jpro > 99.9f) {
-                       Jpro = 99.9f;
+
+                        if (Jpro > 99.9f) {
+                        Jpro = 99.9f;
+                        }
                     }
 
                     float Sp = spro / 100.0f;
