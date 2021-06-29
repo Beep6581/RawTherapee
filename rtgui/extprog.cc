@@ -276,8 +276,8 @@ bool ExtProgStore::openInGimp (const Glib::ustring& fileName)
     for (auto ver = 12; ver >= 0; --ver) {
 
         executable = Glib::build_filename (options.gimpDir, "bin", Glib::ustring::compose (Glib::ustring("gimp-2.%1.exe"), ver));
-        auto lsuccess = ShellExecute( NULL, "open", executable.c_str(), fileName.c_str(), NULL, SW_SHOWNORMAL );
-
+        Glib::ustring escapedFileName = Glib::ustring::compose ("\"%1\"", fileName);
+        auto lsuccess = ShellExecute( NULL, "open", executable.c_str(), escapedFileName.c_str(), NULL, SW_SHOWNORMAL );
         if (reinterpret_cast<uintptr_t>(lsuccess) > 32) {
             return true;
         }

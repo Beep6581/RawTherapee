@@ -52,6 +52,8 @@ private:
     Gtk::ProgressBar prProgBar;
     PLDBridge* pldBridge;
     bool is_fullscreen;
+    bool is_minimized;
+    sigc::connection onConfEventConn;
     bool on_delete_has_run;
     Gtk::Button * btn_fullscreen;
 
@@ -86,6 +88,7 @@ public:
     void addBatchQueueJobs      (const std::vector<BatchQueueEntry*>& entries);
 
     bool keyPressed (GdkEventKey* event);
+    bool keyReleased(GdkEventKey *event);
     bool on_configure_event (GdkEventConfigure* event) override;
     bool on_delete_event (GdkEventAny* event) override;
     bool on_window_state_event (GdkEventWindowState* event) override;
@@ -96,6 +99,7 @@ public:
     void showPreferences ();
     void on_realize () override;
     void toggle_fullscreen ();
+    void get_position(int& x, int& y) const;
 
     void setProgress(double p) override;
     void setProgressStr(const Glib::ustring& str) override;

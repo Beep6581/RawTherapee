@@ -151,6 +151,7 @@ set(NONCLISOURCEFILES
     softlight.cc
     soundman.cc
     splash.cc
+    spot.cc
     threadutils.cc
     thresholdadjuster.cc
     thresholdselector.cc

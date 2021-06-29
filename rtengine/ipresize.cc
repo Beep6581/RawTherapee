@@ -379,6 +379,26 @@ float ImProcFunctions::resizeScale (const ProcParams* params, int fw, int fh, in
             dScale = (dScale > 1.0 && !params->resize.allowUpscaling) ? 1.0 : dScale;
 
             break;
+            
+        case (4):
+        
+            // Long Edge
+            if (refw > refh) {
+                dScale = (double)params->resize.longedge / (double)refw;
+            } else {
+                dScale = (double)params->resize.longedge / (double)refh;
+            }
+            break;
+            
+        case (5):
+        
+            // Short Edge
+            if (refw > refh) {
+                dScale = (double)params->resize.shortedge / (double)refh;
+            } else {
+                dScale = (double)params->resize.shortedge / (double)refw;
+            }
+            break;
 
         default:
             // Scale

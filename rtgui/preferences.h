@@ -103,6 +103,14 @@ class Preferences final :
     Gtk::RadioButton* edPS;
     Gtk::RadioButton* edOther;
     ExternalEditorPreferences *externalEditors;
+    
+    Gtk::RadioButton *editor_dir_temp;
+    Gtk::RadioButton *editor_dir_current;
+    Gtk::RadioButton *editor_dir_custom;
+    MyFileChooserButton *editor_dir_custom_path;
+    Gtk::CheckButton *editor_float32;
+    Gtk::CheckButton *editor_bypass_output_profile;
+    
     MyFileChooserButton* darkFrameDir;
     MyFileChooserButton* flatFieldDir;
     MyFileChooserButton* clutsDir;

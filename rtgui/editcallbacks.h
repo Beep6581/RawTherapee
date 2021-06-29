@@ -57,7 +57,7 @@ public:
     virtual ~EditSubscriber () = default;
 
     void               setEditProvider(EditDataProvider *provider);
-    EditDataProvider*  getEditProvider ();
+    EditDataProvider*  getEditProvider () const;
     void               setEditID(EditUniqueID ID, BufferType buffType);
     bool               isCurrentSubscriber() const;
     virtual void       subscribe();
@@ -70,8 +70,10 @@ public:
     bool               isPicking() const;             /// Returns true if something is being picked
 
     /** @brief Get the cursor to be displayed when above handles
-    @param objectID object currently "hovered" */
-    virtual CursorShape getCursor (int objectID) const;
+    @param objectID object currently "hovered"
+    @param xPos X cursor position in image space
+    @param yPos Y cursor position in image space */
+    virtual CursorShape getCursor (int objectID, int xPos, int yPos) const;
 
     /** @brief Triggered when the mouse is moving over an object
     This method is also triggered when the cursor is moving over the image in ET_PIPETTE mode
@@ -189,7 +191,7 @@ public:
     void setPipetteVal1(float newVal);
     void setPipetteVal2(float newVal);
     void setPipetteVal3(float newVal);
-    virtual CursorShape getCursor(int objectID) const;
+    virtual CursorShape getCursor(int objectID, int xPos, int yPos) const;
     int getPipetteRectSize () const;
     EditSubscriber* getCurrSubscriber() const;
     virtual void getImageSize (int &w, int&h) = 0;

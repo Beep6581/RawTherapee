@@ -944,6 +944,7 @@ void Color::xyz2Prophoto (float x, float y, float z, float &r, float &g, float &
     g = ((prophoto_xyz[1][0] * x + prophoto_xyz[1][1] * y + prophoto_xyz[1][2] * z)) ;
     b = ((prophoto_xyz[2][0] * x + prophoto_xyz[2][1] * y + prophoto_xyz[2][2] * z)) ;
 }
+
 void Color::Prophotoxyz (float r, float g, float b, float &x, float &y, float &z)
 {
     x = ((xyz_prophoto[0][0] * r + xyz_prophoto[0][1] * g + xyz_prophoto[0][2] * b)) ;

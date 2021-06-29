@@ -74,7 +74,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     0,                // EvLDNEdgeTolerance: obsolete,
     0,                // EvCDNEnabled:obsolete,
     0,                // free entry
-    RGBCURVE | M_AUTOEXP, // EvDCPToneCurve,
+    RGBCURVE | M_AUTOEXP, // EvDCPToneCurve,    
     ALLNORAW,         // EvDCPIlluminant,
     LUMINANCECURVE,          // EvSHEnabled,
     LUMINANCECURVE,         // EvSHHighlights,
@@ -200,7 +200,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // EvLLCCurve
     LUMINANCECURVE,   // EvLLCredsk
     ALLNORAW,         // EvDPDNLdetail
-    ALLNORAW,         // EvCATEnabled
+    //ALLNORAW,         // EvCATEnabled
+    LUMINANCECURVE,         // EvCATEnabled
     LUMINANCECURVE,   // EvCATDegree
     LUMINANCECURVE,   // EvCATMethodsur
     LUMINANCECURVE,   // EvCATAdapscen
@@ -1069,7 +1070,14 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,   // EvLocallabSpotavoidrad
     AUTOEXP,   // EvLocallabSpotavoidmun
     AUTOEXP,   // Evlocallabcontthres
-    AUTOEXP   // Evlocallabnorm
+    AUTOEXP,   // Evlocallabnorm
+    AUTOEXP,   // Evlocallabreparw
+    AUTOEXP,   // Evlocallabreparcol
+    AUTOEXP,   // Evlocallabreparden
+    AUTOEXP,   // Evlocallabreparsh
+    AUTOEXP,   // Evlocallabreparexp
+    AUTOEXP,   // Evlocallabrepartm
+    AUTOEXP   // Evlocallabchroml
 
 
 };
