@@ -1010,35 +1010,13 @@ void RawImageSource::convertColorSpace(Imagefloat* image, const ColorManagementP
     colorSpaceConversion (image, cmp, wb, pre_mul, embProfile, camProfile, imatrices.xyz_cam, (static_cast<const FramesData*>(getMetaData()))->getCamera());
 }
 
-void RawImageSource::getFullSize (int& w, int& h, int tr)
+void RawImageSource::getFullSize(int& w, int& h, int tr)
 {
-    computeFullSize(ri, tr, w, h);
-
-    // tr = defTransform(ri, tr);
-
-    // if (fuji) {
-    //     w = ri->get_FujiWidth() * 2 + 1;
-    //     h = (H - ri->get_FujiWidth()) * 2 + 1;
-    // } else if (d1x) {
-    //     w = W;
-    //     h = 2 * H;
-    // } else {
-    //     w = W;
-    //     h = H;
-    // }
-
-    // if ((tr & TR_ROT) == TR_R90 || (tr & TR_ROT) == TR_R270) {
-    //     int tmp = w;
-    //     w = h;
-    //     h = tmp;
-    // }
-
-    // w -= 2 * border;
-    // h -= 2 * border;
+    computeFullSize(ri, tr, w, h, border);
 }
 
 
-void RawImageSource::computeFullSize(const RawImage *ri, int tr, int &w, int &h)
+void RawImageSource::computeFullSize(const RawImage *ri, int tr, int &w, int &h, int border)
 {
     tr = defTransform(ri, tr);
 
@@ -1046,7 +1024,10 @@ void RawImageSource::computeFullSize(const RawImage *ri, int tr, int &w, int &h)
     const int H = ri->get_height();
     const bool fuji = ri->get_FujiWidth() != 0;
     const bool d1x = !ri->get_model().compare("D1X");
-    const int border = (ri->getSensorType() == ST_BAYER ? 4 : (ri->getSensorType() == ST_FUJI_XTRANS ? 7 : 0));
+    const int b =
+        border >= 0 ? border :
+        (ri->getSensorType() == ST_BAYER ? 4 :
+         (ri->getSensorType() == ST_FUJI_XTRANS ? 7 : 0));
 
     if (fuji) {
         w = ri->get_FujiWidth() * 2 + 1;
@@ -1065,8 +1046,8 @@ void RawImageSource::computeFullSize(const RawImage *ri, int tr, int &w, int &h)
         h = tmp;
     }
 
-    w -= 2 * border;
-    h -= 2 * border;
+    w -= 2 * b;
+    h -= 2 * b;
 }
 
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

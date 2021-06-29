@@ -231,7 +231,7 @@ public:
         virtual float operator()(int row) const { return 1.f; }
     };
     
-    static void computeFullSize(const RawImage *ri, int tr, int &w, int &h);
+    static void computeFullSize(const RawImage *ri, int tr, int &w, int &h, int border=-1);
 
 protected:
     typedef unsigned short ushort;
