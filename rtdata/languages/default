@@ -1329,6 +1329,7 @@ HISTORY_MSG_1078;Local - Red and skin protection
 HISTORY_MSG_1079;Local - CIECAM Sigmoid strength J
 HISTORY_MSG_1080;Local - CIECAM Sigmoid threshold
 HISTORY_MSG_1081;Local - CIECAM Sigmoid blend
+HISTORY_MSG_1082;Local - CIECAM Sigmoid Q J
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -3224,11 +3225,12 @@ TP_LOCALLAB_SHRESFRA;Shadows/Highlights & TRC
 TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones.\nIt is recommended that the TRC of both devices (monitor and output profile) be sRGB (default).
 TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer
 TP_LOCALLAB_SIGMAWAV;Attenuation response
-TP_LOCALLAB_SIGFRA;Sigmoid J
+TP_LOCALLAB_SIGFRA;Sigmoid J & Q
 TP_LOCALLAB_SIGMOIDLAMBDA;Strength
 TP_LOCALLAB_SIGMOIDTH;Threshold
 TP_LOCALLAB_SIGMOIDBL;Blend
-TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both 'Ciecam J' and 'Sigmoid' function.\nThree sliders : a) Strength acts on the shape of the sigmoid curve and consequently on the strength; b) threshold distributes the action according to the luminance; c)blend acts on the final aspect of the image, contrast and luminance. 
+TP_LOCALLAB_SIGMOIDQJ;Use Q instead of J
+TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both 'Ciecam' and 'Sigmoid' function.\nThree sliders : a) Strength acts on the shape of the sigmoid curve and consequently on the strength; b) threshold distributes the action according to the luminance; c)blend acts on the final aspect of the image, contrast and luminance. 
 TP_LOCALLAB_SIM;Simple
 TP_LOCALLAB_SLOMASKCOL;Slope
 TP_LOCALLAB_SLOMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying ‘L’ to avoid any discontinuities.

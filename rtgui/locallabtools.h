@@ -1529,6 +1529,7 @@ private:
     Adjuster* const sigmoidldacie;
     Adjuster* const sigmoidthcie;
     Adjuster* const sigmoidblcie;
+    Gtk::CheckButton* const sigmoidqjcie;
     
     Adjuster* const colorflcie;
     Adjuster* const saturlcie;
@@ -1543,7 +1544,7 @@ private:
     MyComboBoxText*  const surroundcie;
     Gtk::Box* const surrHBoxcie;
     
-    sigc::connection AutograycieConn, sursourcieconn, surroundcieconn, modecieconn;
+    sigc::connection AutograycieConn, sursourcieconn, surroundcieconn, modecieconn, sigmoidqjcieconn;
     
 public:
     Locallabcie();
@@ -1572,6 +1573,7 @@ private:
     void updateGUIToMode(const modeType new_type) override;
     void complexityModeChanged();
     void AutograycieChanged();
+    void sigmoidqjcieChanged();
     void updatecieGUI();
 
 

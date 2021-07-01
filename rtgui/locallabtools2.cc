@@ -7380,9 +7380,10 @@ Locallabcie::Locallabcie():
     contqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),
     contthrescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTHRES"), -1., 1., 0.01, 0.))),
     sigmoidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGFRA")))),
-    sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 0.7, 0.01, 0.))),
+    sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 1.0, 0.01, 0.))),
     sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.04, 2.2, 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.3, 1.3, 0.01, 1.))),
+    sigmoidqjcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDQJ")))),
     colorflcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCOLORFL"), -100., 100., 0.5, 0.))),
     saturlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
     rstprotectcie(Gtk::manage(new Adjuster(M("TP_COLORAPP_RSTPRO"), 0., 100., 0.1, 50.))),
@@ -7409,6 +7410,7 @@ Locallabcie::Locallabcie():
     pack_start(*reparcie);
     
     AutograycieConn = Autograycie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::AutograycieChanged));
+    sigmoidqjcieconn = sigmoidqjcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigmoidqjcieChanged));
 
     sourceGraycie->setAdjusterListener(this);
 
@@ -7502,6 +7504,7 @@ Locallabcie::Locallabcie():
     sigBox->pack_start(*sigmoidldacie);
     sigBox->pack_start(*sigmoidthcie);
     sigBox->pack_start(*sigmoidblcie);
+    sigBox->pack_start(*sigmoidqjcie);
     sigmoidFrame->add(*sigBox);
     cieP1Box->pack_start(*sigmoidFrame);
     Gtk::Separator* const separatorchrocie = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
@@ -7592,6 +7595,7 @@ void Locallabcie::disableListener()
 {
     LocallabTool::disableListener();
     AutograycieConn.block(true);
+    sigmoidqjcieconn.block(true);
     sursourcieconn.block (true);
     surroundcieconn.block (true);
     modecieconn.block (true);
@@ -7601,6 +7605,7 @@ void Locallabcie::enableListener()
 {
     LocallabTool::enableListener();
     AutograycieConn.block(false);
+    sigmoidqjcieconn.block(false);
     sursourcieconn.block (false);
     surroundcieconn.block (false);
     modecieconn.block (false);
@@ -7637,6 +7642,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         
         Autograycie->set_active(spot.Autogray);
         sourceGraycie->setValue(spot.sourceGraycie);
+        sigmoidqjcie->set_active(spot.sigmoidqjcie);
         sourceabscie->setValue(spot.sourceabscie);
         
         if (spot.sursourcie == "Average") {
@@ -7708,6 +7714,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.Autograycie = Autograycie->get_active();
         spot.sourceGraycie = sourceGraycie->getValue();
         spot.sourceabscie = sourceabscie->getValue();
+        spot.sigmoidqjcie = sigmoidqjcie->get_active();
 
         if (sursourcie->get_active_row_number() == 0) {
             spot.sursourcie = "Average";
@@ -7775,6 +7782,21 @@ void Locallabcie::AutograycieChanged()
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
             } else {
                 listener->panelChanged(EvlocallabAutograycie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::sigmoidqjcieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (sigmoidqjcie->get_active()) {
+                listener->panelChanged(Evlocallabsigmoidqjcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsigmoidqjcie,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
             }
         }

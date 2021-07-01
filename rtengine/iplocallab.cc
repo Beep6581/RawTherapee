@@ -2442,7 +2442,7 @@ void ImProcFunctions::loccont(int bfw, int bfh, int xstart, int ystart, int xend
 
 void sigmoidla (float &valj, float thresj, float lambda, float blend) 
 {
-    valj =  LIM01(blend * valj + 1.f / (1.f + xexpf(lambda - (lambda / thresj) * valj)));
+    valj =  clipLoc(blend * valj + 1.f / (1.f + xexpf(lambda - (lambda / thresj) * valj)));
 }
 
 void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
@@ -2459,9 +2459,10 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         iscie = true;
     }
     //sigmoid J variables
-    float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie; 
+    float sigmoidlambda = 0.7 * params->locallab.spots.at(sp).sigmoidldacie; 
     float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie; 
     float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie; 
+    bool sigmoidqj = params->locallab.spots.at(sp).sigmoidqjcie; 
 
     int width = lab->W, height = lab->H;
     float Yw;
@@ -2923,6 +2924,17 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                     Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
                   //  float rstprotection = 50.f;//default value to avoid 1 slider
                    // float chr = 0.f;//no use of chroma 
+                    if(sigmoidlambda > 0.f && iscie && sigmoidqj == true) {//sigmoid Q only with ciecam module
+                        float bl = sigmoidbl;
+                        float sigm = 16.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000
+                        //cbrt to have a response in middle values
+                        float th = sigmoidth;//th between 0.04 (positive) and 2.2
+                        float val = Qpro / 100.f;
+                        sigmoidla (val, th, sigm, bl);
+                        Qpro = 100.f * val;
+
+                    }
+
                     float Mp, sres;
                     Mp = Mpro / 100.0f;
                     Ciecam02::curvecolorfloat(mchr, Mp, sres, 2.5f);
@@ -2941,7 +2953,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
 
                     Jpro = CAMBrightCurveJ[(float)(Jpro * 327.68f)];   //lightness CIECAM02 + contrast
 
-                    if(sigmoidlambda > 0.f && iscie) {//sigmoid J only with ciecam module
+                    if(sigmoidlambda > 0.f && iscie && sigmoidqj == false) {//sigmoid J only with ciecam module
                         float bl = sigmoidbl;
                         float sigm = 16.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000
                         //cbrt to have a response in middle values
