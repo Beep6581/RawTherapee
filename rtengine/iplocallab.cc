@@ -2807,6 +2807,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
 #endif
     const float epsil = 0.0001f;
     const float coefQ = 32767.f / wh;
+    //printf("coefQ=%f\n", (double) coefQ);
     const float pow1n = pow_F(1.64f - pow_F(0.29f, nj), 0.73f);
     const float coe = pow_F(fl, 0.25f);
     const float QproFactor = (0.4f / c) * (aw + 4.0f) ;
@@ -2929,9 +2930,9 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                         float sigm = 16.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000
                         //cbrt to have a response in middle values
                         float th = sigmoidth;//th between 0.04 (positive) and 2.2
-                        float val = Qpro / 100.f;
+                        float val = Qpro / coefQ;
                         sigmoidla (val, th, sigm, bl);
-                        Qpro = 100.f * val;
+                        Qpro = coefQ * val;
 
                     }
 
