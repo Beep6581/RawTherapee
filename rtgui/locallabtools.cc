@@ -5119,7 +5119,7 @@ LocallabVibrance::LocallabVibrance():
     Color::hsv2rgb01(0.92f, 0.45f, 0.6f, R, G, B);
     mskinTonesCurve.emplace_back(0.0, R, G, B);
     Color::hsv2rgb01(0.14056f, 0.45f, 0.6f, R, G, B);
-    mskinTonesCurve.emplace_back(0.0, R, G, B);
+    mskinTonesCurve.emplace_back(1.0, R, G, B);
     skinTonesCurve->setBottomBarBgGradient(mskinTonesCurve);
     skinTonesCurve->setLeftBarBgGradient(mskinTonesCurve);
     skinTonesCurve->setRangeLabels(

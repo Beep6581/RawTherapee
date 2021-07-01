@@ -1335,8 +1335,8 @@ void EditorPanel::info_toggled ()
 
     if (idata && idata->hasExif(selectedFrame)) {
         infoString = Glib::ustring::compose ("%1 + %2\n<span size=\"small\">f/</span><span size=\"large\">%3</span>  <span size=\"large\">%4</span><span size=\"small\">s</span>  <span size=\"small\">%5</span><span size=\"large\">%6</span>  <span size=\"large\">%7</span><span size=\"small\">mm</span>",
-                                              Glib::ustring (idata->getMake() + " " + idata->getModel()),
-                                              Glib::ustring (idata->getLens()),
+                                              escapeHtmlChars (idata->getMake() + " " + idata->getModel()),
+                                              escapeHtmlChars (idata->getLens()),
                                               Glib::ustring (idata->apertureToString (idata->getFNumber(selectedFrame))),
                                               Glib::ustring (idata->shutterToString (idata->getShutterSpeed(selectedFrame))),
                                               M ("QINFO_ISO"), idata->getISOSpeed(selectedFrame),
