@@ -2930,9 +2930,9 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                         float sigm = 16.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000
                         //cbrt to have a response in middle values
                         float th = sigmoidth;//th between 0.04 (positive) and 2.2
-                        float val = Qpro / coefQ;
+                        float val = 0.01f * SQR((10.f * Qpro) / wh);
                         sigmoidla (val, th, sigm, bl);
-                        Qpro = coefQ * val;
+                        Qpro = QproFactor * sqrtf(100.f * val);
 
                     }
 
