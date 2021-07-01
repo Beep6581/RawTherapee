@@ -36,7 +36,7 @@ class DFProvider
 {
 public:
     virtual ~DFProvider() = default;
-    virtual rtengine::RawImage* getDF() = 0;
+    virtual const rtengine::RawImage* getDF() = 0;
     virtual Glib::ustring GetCurrentImageFilePath() = 0;
     // add other info here
 };

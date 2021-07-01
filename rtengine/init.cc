@@ -92,7 +92,7 @@ int init (const Settings* s, const Glib::ustring& baseDir, const Glib::ustring& 
 #pragma omp section
 #endif
 {
-    dfm.init(s->darkFramesPath);
+    DFManager::getInstance().init(s->darkFramesPath);
 }
 #ifdef _OPENMP
 #pragma omp section
