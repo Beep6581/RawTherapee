@@ -2933,7 +2933,12 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                         if(th > 1.f) {
                             th = th * th * th * th;
                         }
+                        float at = 1.f - th;
+                        float bt = th;
                         float val = 0.01f * SQR((10.f * Qpro) / wh);//contrast with J
+                        if(th < 1.f) {
+                            th = at * val + bt;
+                        }
                         sigmoidla (val, th, sigm, 0.f);
                         float bl2 = bl;
                         if(bl > 1.f) {
@@ -2966,7 +2971,12 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                         float sigm = 22.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda
                         //cbrt to have a response in middle values
                         float th = sigmoidth;//th between 0.04 (positive) and 2.2
+                        float at = 1.f - th;
+                        float bt = th;
                         float val = Jpro / 100.f;
+                        if(th < 1.f) {
+                            th = at * val + bt;
+                        }
                         sigmoidla (val, th, sigm, bl);
                         Jpro = 100.f * val;
 
