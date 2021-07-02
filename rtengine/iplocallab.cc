@@ -2459,7 +2459,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         iscie = true;
     }
     //sigmoid J variables
-    float sigmoidlambda = 0.7 * params->locallab.spots.at(sp).sigmoidldacie; 
+    float sigmoidlambda = 0.8 * params->locallab.spots.at(sp).sigmoidldacie; 
     float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie; 
     float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie; 
     bool sigmoidqj = params->locallab.spots.at(sp).sigmoidqjcie; 
@@ -2811,7 +2811,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     const float pow1n = pow_F(1.64f - pow_F(0.29f, nj), 0.73f);
     const float coe = pow_F(fl, 0.25f);
     const float QproFactor = (0.4f / c) * (aw + 4.0f) ;
-
+   // printf("Qpro=%f \n", (double) QproFactor);
 #ifdef __SSE2__
     int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
 #endif
@@ -2927,12 +2927,17 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                    // float chr = 0.f;//no use of chroma 
                     if(sigmoidlambda > 0.f && iscie && sigmoidqj == true) {//sigmoid Q only with ciecam module
                         float bl = sigmoidbl;
-                        float sigm = 16.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000
+                        float sigm = 22.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000 e^20=485000000 e^22 = 3600000000
                         //cbrt to have a response in middle values
                         float th = sigmoidth;//th between 0.04 (positive) and 2.2
                         float val = 0.01f * SQR((10.f * Qpro) / wh);
-                        sigmoidla (val, th, sigm, bl);
-                        Qpro = QproFactor * sqrtf(100.f * val);
+                        //float maxqp = 11.f * QproFactor;
+                        //float val = Qpro / maxqp;
+                        //contrast val with J
+                       // if(val < 0.2f) printf("n");
+                        //if(val > 1.f) printf("p=%f", (double) val);
+                        sigmoidla (val, th, sigm, 0.f);
+                        Qpro = bl * Qpro + QproFactor * sqrtf(100.f * val);
 
                     }
 
@@ -2956,7 +2961,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
 
                     if(sigmoidlambda > 0.f && iscie && sigmoidqj == false) {//sigmoid J only with ciecam module
                         float bl = sigmoidbl;
-                        float sigm = 16.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000
+                        float sigm = 22.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda
                         //cbrt to have a response in middle values
                         float th = sigmoidth;//th between 0.04 (positive) and 2.2
                         float val = Jpro / 100.f;
