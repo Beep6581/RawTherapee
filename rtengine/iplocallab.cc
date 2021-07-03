@@ -2926,7 +2926,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                     Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
                     if(sigmoidlambda > 0.f && iscie && sigmoidqj == true) {//sigmoid Q only with ciecam module
                         float bl = sigmoidbl;
-                        float sigm = 1.5f + 22.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000 e^20=485000000 e^22 = 3600000000
+                        float sigm = 1.5f + 22.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000 e^20=485000000 e^23.5 = 16000000000
                         //cbrt to have a response in middle values
                         float th = sigmoidth;//th between 0.04 (positive) and 3
                         float at = 1.f - th;
@@ -2938,10 +2938,10 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                             th = at * val + bt;
                         }
                         sigmoidla (val, th, sigm, 0.f);
-                        float bl2 = bl;
-                        if(bl > 1.f) {
+                        float bl2 = 1.f;
+                        /* if(bl > 1.f) {
                             bl2 = 1.f;
-                        }
+                        } */
                         Qpro = clipLoc(bl * Qpro + bl2 * val / coefq);
 
                     }
