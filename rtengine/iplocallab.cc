@@ -2459,7 +2459,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         iscie = true;
     }
     //sigmoid J variables
-    float sigmoidlambda = 0.8 * params->locallab.spots.at(sp).sigmoidldacie; 
+    float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie; 
     float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie; 
     float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie; 
     bool sigmoidqj = params->locallab.spots.at(sp).sigmoidqjcie; 
@@ -2807,6 +2807,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
 #endif
     const float epsil = 0.0001f;
     const float coefQ = 32767.f / wh;
+    const float coefq = 1 / wh;
     //printf("coefQ=%f\n", (double) coefQ);
     const float pow1n = pow_F(1.64f - pow_F(0.29f, nj), 0.73f);
     const float coe = pow_F(fl, 0.25f);
@@ -2923,20 +2924,17 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                 */
                 if(ciec) {
                     Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
-                  //  float rstprotection = 50.f;//default value to avoid 1 slider
-                   // float chr = 0.f;//no use of chroma 
                     if(sigmoidlambda > 0.f && iscie && sigmoidqj == true) {//sigmoid Q only with ciecam module
                         float bl = sigmoidbl;
-                        float sigm = 22.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000 e^20=485000000 e^22 = 3600000000
+                        float sigm = 1.5f + 22.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000 e^20=485000000 e^22 = 3600000000
                         //cbrt to have a response in middle values
-                        float th = sigmoidth;//th between 0.04 (positive) and 2.2
-                        if(th > 1.f) {
-                            th = th * th * th * th;
-                        }
+                        float th = sigmoidth;//th between 0.04 (positive) and 3
                         float at = 1.f - th;
                         float bt = th;
-                        float val = 0.01f * SQR((10.f * Qpro) / wh);//contrast with J
-                        if(th < 1.f) {
+                        float val = Qpro * coefq;
+                        if(th >= 1.f) {
+                            th = th * th * th * th;
+                        } else {
                             th = at * val + bt;
                         }
                         sigmoidla (val, th, sigm, 0.f);
@@ -2944,7 +2942,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                         if(bl > 1.f) {
                             bl2 = 1.f;
                         }
-                        Qpro = clipLoc(bl * Qpro + bl2 * QproFactor * sqrtf(100.f * val));
+                        Qpro = clipLoc(bl * Qpro + bl2 * val / coefq);
 
                     }
 
@@ -2968,18 +2966,19 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
 
                     if(sigmoidlambda > 0.f && iscie && sigmoidqj == false) {//sigmoid J only with ciecam module
                         float bl = sigmoidbl;
-                        float sigm = 22.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda
+                        float sigm = 1.5f + 22.f *(1.f - cbrt(sigmoidlambda));
                         //cbrt to have a response in middle values
-                        float th = sigmoidth;//th between 0.04 (positive) and 2.2
+                        float th = sigmoidth;//th between 0.04 (positive) and 3
                         float at = 1.f - th;
                         float bt = th;
                         float val = Jpro / 100.f;
-                        if(th < 1.f) {
+                        if(th >= 1.f) {
+                            th = th * th * th * th;
+                        } else {
                             th = at * val + bt;
                         }
                         sigmoidla (val, th, sigm, bl);
                         Jpro = 100.f * val;
-
                         if (Jpro > 99.9f) {
                         Jpro = 99.9f;
                         }
