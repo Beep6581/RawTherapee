@@ -2464,11 +2464,11 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie; 
     const bool sigmoidqj = params->locallab.spots.at(sp).sigmoidqjcie; 
 
-    float th = sigmoidth;
-    const float at = 1.f - th;
-    const float bt = th;
+    float th = 1.f;
+    const float at = 1.f - sigmoidth;
+    const float bt = sigmoidth;
 
-    const float ath = th - 1.f;
+    const float ath = sigmoidth - 1.f;
     const float bth = 1;
 
     const float sigm = 1.5f + 22.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000 e^20=485000000 e^23.5 = 16000000000
@@ -2935,10 +2935,11 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                 */
                 if(ciec) {
                     Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
+
                     if(sigmoidlambda > 0.f && iscie && sigmoidqj == true) {//sigmoid Q only with ciecam module
                         float val = Qpro * coefq;
-                        if(th >= 1.f) {
-                            th = SQR(th * th * th);
+                        if(sigmoidth >= 1.f) {
+                            th = SQR(sigmoidth * sigmoidth * sigmoidth);
                             th = ath * val + bth;
                         } else {
                             th = at * val + bt;
@@ -2949,7 +2950,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                             bl2 = 1.f;
                         } */
                         Qpro = clipLoc(bl * Qpro + bl2 * val / coefq);
-
                     }
 
                     float Mp, sres;
@@ -2972,8 +2972,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
 
                     if(sigmoidlambda > 0.f && iscie && sigmoidqj == false) {//sigmoid J only with ciecam module
                         float val = Jpro / 100.f;
-                        if(th >= 1.f) {
-                            th = SQR(th * th * th);
+                        if(sigmoidth >= 1.f) {
+                            th = SQR(sigmoidth * sigmoidth * sigmoidth);
                             th = ath * val + bth;
                         } else {
                             th = at * val + bt;
