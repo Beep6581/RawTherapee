@@ -2458,11 +2458,22 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         ciec = true;
         iscie = true;
     }
-    //sigmoid J variables
-    float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie; 
-    float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie; 
-    float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie; 
-    bool sigmoidqj = params->locallab.spots.at(sp).sigmoidqjcie; 
+    //sigmoid J Q variables
+    const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie; 
+    const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie; 
+    const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie; 
+    const bool sigmoidqj = params->locallab.spots.at(sp).sigmoidqjcie; 
+
+    float th = sigmoidth;
+    const float at = 1.f - th;
+    const float bt = th;
+
+    const float ath = th - 1.f;
+    const float bth = 1;
+
+    const float sigm = 1.5f + 22.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000 e^20=485000000 e^23.5 = 16000000000
+    const float bl = sigmoidbl;
+    //end sigmoid
 
     int width = lab->W, height = lab->H;
     float Yw;
@@ -2925,15 +2936,10 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                 if(ciec) {
                     Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
                     if(sigmoidlambda > 0.f && iscie && sigmoidqj == true) {//sigmoid Q only with ciecam module
-                        float bl = sigmoidbl;
-                        float sigm = 1.5f + 22.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000 e^20=485000000 e^23.5 = 16000000000
-                        //cbrt to have a response in middle values
-                        float th = sigmoidth;//th between 0.04 (positive) and 3
-                        float at = 1.f - th;
-                        float bt = th;
                         float val = Qpro * coefq;
                         if(th >= 1.f) {
-                            th = th * th * th * th;
+                            th = SQR(th * th * th);
+                            th = ath * val + bth;
                         } else {
                             th = at * val + bt;
                         }
@@ -2965,15 +2971,10 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
                     Jpro = CAMBrightCurveJ[(float)(Jpro * 327.68f)];   //lightness CIECAM02 + contrast
 
                     if(sigmoidlambda > 0.f && iscie && sigmoidqj == false) {//sigmoid J only with ciecam module
-                        float bl = sigmoidbl;
-                        float sigm = 1.5f + 22.f *(1.f - cbrt(sigmoidlambda));
-                        //cbrt to have a response in middle values
-                        float th = sigmoidth;//th between 0.04 (positive) and 3
-                        float at = 1.f - th;
-                        float bt = th;
                         float val = Jpro / 100.f;
                         if(th >= 1.f) {
-                            th = th * th * th * th;
+                            th = SQR(th * th * th);
+                            th = ath * val + bth;
                         } else {
                             th = at * val + bt;
                         }
