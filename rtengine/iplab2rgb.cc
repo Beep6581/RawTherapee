@@ -519,6 +519,14 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         greyy = 0.55f * (gregraphy + 1.f) - 0.1f;
         greyy = rtengine::LIM(greyy, 0.5f, 1.f);
     }
+    //fixed crash when there is no space or too small..just a line...Possible if bx, by aligned with Gx,Gy Rx,Ry
+    float ac = (greyy - redyy) / (grexx - redxx);
+    float bc = greyy - ac * grexx;
+    float yc = ac * bluxx + bc;
+    if ((bluyy < yc + 0.0004f) &&  (bluyy > yc - 0.0004f)) {//under 0.0004 in some case crash because space too small
+        return;
+    }
+
 
     switch (ColorManagementParams::Primaries(prim)) {
         case ColorManagementParams::Primaries::DEFAULT: {
