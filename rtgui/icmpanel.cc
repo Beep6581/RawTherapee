@@ -305,7 +305,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     setExpandAlignProperties(grey, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     blux = Gtk::manage(new Adjuster(M("TC_PRIM_BLUX"), -0.1, 0.4, 0.0001, 0.0366));
     setExpandAlignProperties(blux, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    bluy = Gtk::manage(new Adjuster(M("TC_PRIM_BLUY"), -0.1, 0.5, 0.0001, 0.0001));
+    bluy = Gtk::manage(new Adjuster(M("TC_PRIM_BLUY"), -0.1, 0.49, 0.0001, 0.0001));
     setExpandAlignProperties(bluy, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
     redx->set_tooltip_text(M("TP_ICM_PRIMRED_TOOLTIP"));

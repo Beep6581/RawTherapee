@@ -513,7 +513,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         bluxx = 0.55f * (blugraphx + 1.f) - 0.1f;
         bluxx = rtengine::LIM(bluxx, -0.1f, 0.5f);
         bluyy = 0.55f * (blugraphy + 1.f) - 0.1f;
-        bluyy = rtengine::LIM(bluyy, -0.1f, 0.5f);
+        bluyy = rtengine::LIM(bluyy, -0.1f, 0.49f);
         grexx = 0.55f * (gregraphx + 1.f) - 0.1f;
         grexx = rtengine::LIM(grexx, -0.1f, 0.4f);
         greyy = 0.55f * (gregraphy + 1.f) - 0.1f;
