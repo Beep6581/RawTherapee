@@ -12,6 +12,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+namespace
+{
+
 enum GeometryIndex {
     H_LINE,
     V_LINE,
@@ -19,6 +22,8 @@ enum GeometryIndex {
     FEATHER_LINE_2,
     CENTER_CIRCLE,
 };
+
+}
 
 Gradient::Gradient () : FoldableToolPanel(this, "gradient", M("TP_GRADIENT_LABEL"), false, true), EditSubscriber(ET_OBJECTS), lastObject(-1), draggedPointOldAngle(-1000.)
 {
