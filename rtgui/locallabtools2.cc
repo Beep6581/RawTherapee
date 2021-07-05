@@ -7388,6 +7388,7 @@ Locallabcie::Locallabcie():
     saturlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
     rstprotectcie(Gtk::manage(new Adjuster(M("TP_COLORAPP_RSTPRO"), 0., 100., 0.1, 50.))),
     chromlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROML"), -100., 100., 0.5, 0.))),
+    huecie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HUECIE"), -100., 100., 0.1, 0.))),
     expLcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_LOGEXP")))),
     cie2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
     targetGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
@@ -7424,6 +7425,7 @@ Locallabcie::Locallabcie():
     rstprotectcie->setAdjusterListener(this);
 
     chromlcie->setAdjusterListener(this);
+    huecie->setAdjusterListener(this);
 
     lightlcie->setAdjusterListener(this);
 
@@ -7514,6 +7516,7 @@ Locallabcie::Locallabcie():
     cieP11Box->pack_start(*separatorchrocie);
     cieP11Box->pack_start(*chromlcie);
     cieP11Box->pack_start(*colorflcie);
+    cieP11Box->pack_start(*huecie);
     expLcie->add(*cieP11Box, false);
     cieP1Box->pack_start(*expLcie, false, false);
     cie1Frame->add(*cieP1Box);
@@ -7666,6 +7669,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         saturlcie->setValue(spot.saturlcie);
         rstprotectcie->setValue(spot.rstprotectcie);
         chromlcie->setValue(spot.chromlcie);
+        huecie->setValue(spot.huecie);
         lightlcie->setValue(spot.lightlcie);
         lightqcie->setValue(spot.lightqcie);
         contlcie->setValue(spot.contlcie);
@@ -7737,6 +7741,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.saturlcie = saturlcie->getValue();
         spot.rstprotectcie = rstprotectcie->getValue();
         spot.chromlcie = chromlcie->getValue();
+        spot.huecie = huecie->getValue();
         spot.lightlcie = lightlcie->getValue();
         spot.lightqcie = lightqcie->getValue();
         spot.contlcie = contlcie->getValue();
@@ -7861,6 +7866,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             saturlcie->show();
             rstprotectcie->show();
             chromlcie->hide();
+            huecie->hide();
             lightlcie->show();
             lightqcie->hide();
             contlcie->show();
@@ -7885,6 +7891,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             saturlcie->show();
             rstprotectcie->show();
             chromlcie->hide();
+            huecie->hide();
             lightlcie->show();
             lightqcie->hide();
             contlcie->show();
@@ -7910,6 +7917,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             saturlcie->show();
             rstprotectcie->show();
             chromlcie->show();
+            huecie->show();
             lightlcie->show();
             lightqcie->show();
             contlcie->show();
@@ -7972,6 +7980,7 @@ void Locallabcie::convertParamToNormal()
     colorflcie->setValue(defSpot.colorflcie);
     lightqcie->setValue(defSpot.lightqcie);
     chromlcie->setValue(defSpot.chromlcie);
+    huecie->setValue(defSpot.huecie);
     detailcie->setValue(defSpot.detailcie);
     modecie->set_active(0);
     // Enable all listeners
@@ -7993,6 +8002,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         saturlcie->setDefault(defSpot.saturlcie);
         rstprotectcie->setDefault(defSpot.rstprotectcie);
         chromlcie->setDefault(defSpot.chromlcie);
+        huecie->setDefault(defSpot.huecie);
         lightlcie->setDefault(defSpot.lightlcie);
         lightqcie->setDefault(defSpot.lightqcie);
         contlcie->setDefault(defSpot.contlcie);
@@ -8058,6 +8068,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabchromlcie,
                                        chromlcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == huecie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhuecie,
+                                       huecie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

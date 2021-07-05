@@ -1330,6 +1330,7 @@ HISTORY_MSG_1079;Local - CIECAM Sigmoid strength J
 HISTORY_MSG_1080;Local - CIECAM Sigmoid threshold
 HISTORY_MSG_1081;Local - CIECAM Sigmoid blend
 HISTORY_MSG_1082;Local - CIECAM Sigmoid Q J
+HISTORY_MSG_1083;Local - CIECAM Hue
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2865,6 +2866,7 @@ TP_LOCALLAB_GUIDSTRBL_TOOLTIP;Intensity of the guided filter
 TP_LOCALLAB_HHMASK_TOOLTIP;Fine hue adjustments for example for the skin.
 TP_LOCALLAB_HIGHMASKCOL;Highlights
 TP_LOCALLAB_HLH;H
+TP_LOCALLAB_HUECIE;Hue
 TP_LOCALLAB_IND;Independent (mouse)
 TP_LOCALLAB_INDSL;Independent (mouse + sliders)
 TP_LOCALLAB_INVBL;Inverse

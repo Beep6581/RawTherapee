@@ -987,6 +987,7 @@ public:
         bool saturlcie;
         bool rstprotectcie;
         bool chromlcie;
+        bool huecie;
         bool lightlcie;
         bool lightqcie;
         bool contlcie;
