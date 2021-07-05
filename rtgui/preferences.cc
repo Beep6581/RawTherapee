@@ -1271,7 +1271,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
     editor_bypass_output_profile = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_EXTEDITOR_BYPASS_OUTPUT_PROFILE")));
     {
         Gtk::Frame *f = Gtk::manage(new Gtk::Frame(M("PREFERENCES_EXTEDITOR_DIR")));
-        setExpandAlignProperties(f, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+        setExpandAlignProperties(f, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
         Gtk::Box *vb = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
         vb->pack_start(*editor_dir_temp);
         vb->pack_start(*editor_dir_current);
