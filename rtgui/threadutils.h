@@ -24,14 +24,14 @@
 //#undef STRICT_MUTEX
 //#define STRICT_MUTEX 1
 
-#include <glibmm/threads.h>
-
+#include <mutex>
+#include <condition_variable>
 #include "../rtengine/noncopyable.h"
 
 #if STRICT_MUTEX && NDEBUG
-using MyMutexBase = Glib::Threads::Mutex;
+using MyMutexBase = std::mutex;
 #else
-using MyMutexBase = Glib::Threads::RecMutex;
+using MyMutexBase = std::recursive_mutex;
 #endif
 
 /**
@@ -66,8 +66,6 @@ class MyMutex::MyLock :
 {
 public:
     explicit MyLock (MyMutex& mutex);
-    MyLock (MyMutex& mutex, Glib::Threads::NotLock);
-    MyLock (MyMutex& mutex, Glib::Threads::TryLock);
 
     ~MyLock ();
 
@@ -91,8 +89,8 @@ public:
     friend class MyWriterLock;
 
 private:
-    Glib::Threads::Mutex mutex;
-    Glib::Threads::Cond cond;
+    std::mutex mutex;
+    std::condition_variable_any cond;
 
     std::size_t writerCount = 0;
     std::size_t readerCount = 0;
@@ -167,7 +165,7 @@ inline void MyMutex::lock ()
 
 inline bool MyMutex::trylock ()
 {
-    if (MyMutexBase::trylock ()) {
+    if (MyMutexBase::try_lock ()) {
 #if STRICT_MUTEX && !NDEBUG
         checkLock ();
 #endif
@@ -192,18 +190,6 @@ inline MyMutex::MyLock::MyLock (MyMutex& mutex)
     , locked (true)
 {
     mutex.lock();
-}
-
-inline MyMutex::MyLock::MyLock (MyMutex& mutex, Glib::Threads::NotLock)
-    : mutex (mutex)
-    , locked (false)
-{
-}
-
-inline MyMutex::MyLock::MyLock (MyMutex& mutex, Glib::Threads::TryLock)
-    : mutex (mutex)
-    , locked (mutex.trylock ())
-{
 }
 
 inline MyMutex::MyLock::~MyLock ()
