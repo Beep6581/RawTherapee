@@ -108,6 +108,11 @@ public:
     {
         return fuji_width;
     }
+    
+    unsigned int get_bitdepth() const
+    {
+        return tiff_bps;
+    }
 
     float const * get_FloatRawImage() const
     {

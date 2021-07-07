@@ -355,6 +355,8 @@ public:
     virtual bool updateVectorscopeHS(void) const = 0;
     /** Returns if the listener wants the waveform to be updated. */
     virtual bool updateWaveform(void) const  = 0;
+    /** Set the bit depth of the image for the histogram binning */
+    virtual void setBitDepth(unsigned int bitdepth) = 0;
 };
 
 class HistogramObservable

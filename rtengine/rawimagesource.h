@@ -168,6 +168,8 @@ public:
     void        getSize     (const PreviewProps &pp, int& w, int& h) override;
     int         getRotateDegree() const override;
 
+    unsigned int getBitDepth() const override;
+
     ImageMatrices* getImageMatrices () override
     {
         return &imatrices;

@@ -87,6 +87,8 @@ public:
     void        getFullSize (int& w, int& h, int tr = TR_NONE) override;
     void        getSize     (const PreviewProps &pp, int& w, int& h) override;
 
+    unsigned int getBitDepth() const override;
+
     ImageIO*    getImageIO   ()
     {
         return img;
