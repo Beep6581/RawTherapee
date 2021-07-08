@@ -7365,6 +7365,7 @@ Locallabcie::Locallabcie():
     // ciecam specific widgets
     sensicie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     reparcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
+    jabcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JAB")))),
     modecie(Gtk::manage (new MyComboBoxText ())),
     modeHBoxcie(Gtk::manage(new Gtk::Box())),
     cieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
@@ -7409,7 +7410,9 @@ Locallabcie::Locallabcie():
 
     pack_start(*sensicie);
     pack_start(*reparcie);
+    pack_start(*jabcie);
     
+    jabcieConn = jabcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::jabcieChanged));
     AutograycieConn = Autograycie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::AutograycieChanged));
     sigmoidqjcieconn = sigmoidqjcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigmoidqjcieChanged));
 
@@ -7598,6 +7601,7 @@ void Locallabcie::disableListener()
 {
     LocallabTool::disableListener();
     AutograycieConn.block(true);
+    jabcieConn.block(true);
     sigmoidqjcieconn.block(true);
     sursourcieconn.block (true);
     surroundcieconn.block (true);
@@ -7608,6 +7612,7 @@ void Locallabcie::enableListener()
 {
     LocallabTool::enableListener();
     AutograycieConn.block(false);
+    jabcieConn.block(false);
     sigmoidqjcieconn.block(false);
     sursourcieconn.block (false);
     surroundcieconn.block (false);
@@ -7647,6 +7652,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         sourceGraycie->setValue(spot.sourceGraycie);
         sigmoidqjcie->set_active(spot.sigmoidqjcie);
         sourceabscie->setValue(spot.sourceabscie);
+        jabcie->set_active(spot.jabcie);
         
         if (spot.sursourcie == "Average") {
             sursourcie->set_active (0);
@@ -7716,6 +7722,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         }
 
         spot.Autograycie = Autograycie->get_active();
+        spot.jabcie = jabcie->get_active();
         spot.sourceGraycie = sourceGraycie->getValue();
         spot.sourceabscie = sourceabscie->getValue();
         spot.sigmoidqjcie = sigmoidqjcie->get_active();
@@ -7787,6 +7794,21 @@ void Locallabcie::AutograycieChanged()
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
             } else {
                 listener->panelChanged(EvlocallabAutograycie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::jabcieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (jabcie->get_active()) {
+                listener->panelChanged(Evlocallabjabcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+            } else {
+                listener->panelChanged(Evlocallabjabcie,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
             }
         }

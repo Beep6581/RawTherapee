@@ -25,6 +25,18 @@
 #undef CLIPD
 #define CLIPD(a) ((a)>0.f?((a)<1.f?(a):1.f):0.f)
 #define MAXR(a,b) ((a) > (b) ? (a) : (b))
+#define Jzazbz_b 1.15
+#define Jzazbz_g 0.66
+#define Jzazbz_c1 (3424/4096.0)
+#define Jzazbz_c2 (2413/128.0)
+#define Jzazbz_c3 (2392/128.0)
+#define Jzazbz_n (2610/16384.0)
+#define Jzazbz_p (1.7*2523/32.0)
+#define Jzazbz_d (-0.56)
+#define Jzazbz_d0 (1.6295499532821566e-11)
+
+
+
 
 namespace rtengine
 {
@@ -464,6 +476,66 @@ void Ciecam02::initcam2float (float yb, float pilotd, float f, float la, float x
     nbb = ncb = 0.725f * pow_F ( 1.0f / n, 0.2f );
     cz = 1.48f + sqrt ( n );
     aw = achromatic_response_to_whitefloat ( xw, yw, zw, d, fl, nbb, c16);
+}
+
+
+void Ciecam02::xyz2jzczhz ( double &Jz, double &az, double &bz, double x, double y, double z)
+{
+    double Xp, Yp, Zp, L, M, S, Lp, Mp, Sp, Iz;
+    double peakLum = 1e-4;
+
+    Xp = Jzazbz_b * x - ((Jzazbz_b - 1.) * z);
+    Yp = Jzazbz_g * y - ((Jzazbz_g - 1.) * x);
+    Zp = z;
+
+    L = 0.41478972 * Xp + 0.579999 * Yp + 0.0146480 * Zp;
+    M = -0.2015100 * Xp + 1.120649 * Yp + 0.0531008 * Zp;
+    S = -0.0166008 * Xp + 0.264800 * Yp + 0.6684799 * Zp;
+    
+    Lp = pow((Jzazbz_c1 + Jzazbz_c2 * pow((L * peakLum), Jzazbz_n)) / (1. + Jzazbz_c3 * pow((L * peakLum), Jzazbz_n)), Jzazbz_p);
+    Mp = pow((Jzazbz_c1 + Jzazbz_c2 * pow((M * peakLum), Jzazbz_n)) / (1. + Jzazbz_c3 * pow((M * peakLum), Jzazbz_n)), Jzazbz_p);
+    Sp = pow((Jzazbz_c1 + Jzazbz_c2 * pow((S * peakLum), Jzazbz_n)) / (1. + Jzazbz_c3 * pow((S * peakLum), Jzazbz_n)), Jzazbz_p);
+
+    Iz = 0.5 * Lp + 0.5 * Mp;
+    az = 3.524000 * Lp - 4.066708 * Mp + 0.542708 * Sp;
+    bz = 0.199076 * Lp + 1.096799 * Mp - 1.295875 * Sp;
+    Jz = (((1. + Jzazbz_d) * Iz) / (1. + Jzazbz_d * Iz)) - Jzazbz_d0;
+}
+
+
+void Ciecam02::jzczhzxyz (double &x, double &y, double &z, double jz, double az, double bz)
+{
+    double Xp, Yp, Zp, L, M, S, Lp, Mp, Sp, Iz, tmp;
+
+    Iz = (jz + Jzazbz_d0) / (1. + Jzazbz_d - Jzazbz_d * (jz + Jzazbz_d0));
+
+    Lp = 1.0 * Iz + 0.138605043271539 * az + 0.0580473161561189 * bz;
+    Mp = 1.0 * Iz - 0.138605043271539 * az - 0.0580473161561189 * bz;
+    Sp = 1.0 * Iz - 0.0960192420263189 * az - 0.811891896056039 * bz;
+   
+    tmp = pow(Lp, 1. / Jzazbz_p);
+    L = 10000. * pow((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), 1. / Jzazbz_n);
+    tmp = pow(Mp, 1. / Jzazbz_p);
+    M = 10000. * pow((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), 1. / Jzazbz_n);
+    tmp = pow(Sp, 1. / Jzazbz_p);
+    S = 10000. * pow((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), 1. / Jzazbz_n);
+        
+    Xp = 1.924226435787607 * L - 1.004792312595365 * M + 0.037651404030618 * S;
+    Yp = 0.350316762094999 * L + 0.726481193931655 * M - 0.065384422948085 * S;
+    Zp = -0.0909828109828476 * L - 0.312728290523074 * M + 1.522766561305260 * S;
+
+    x = (Xp + (Jzazbz_b - 1.) * Zp) / Jzazbz_b;
+    if(std::isnan(x)) {
+        x = 0.;
+    }
+    y = (Yp + (Jzazbz_g - 1.) * x) / Jzazbz_g;
+    if(std::isnan(y)) {
+        y = 0.;
+    }
+    z = Zp;
+    if(std::isnan(z)) {
+        z = 0.;
+    }
 }
 
 void Ciecam02::xyz2jchqms_ciecam02float ( float &J, float &C, float &h, float &Q, float &M, float &s, float aw, float fl, float wh,

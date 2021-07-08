@@ -2458,6 +2458,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         ciec = true;
         iscie = true;
     }
+    const bool jabcie = params->locallab.spots.at(sp).jabcie; 
+    
     //sigmoid J Q variables
     const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie; 
     const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie; 
@@ -2826,6 +2828,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     const float coe = pow_F(fl, 0.25f);
     const float QproFactor = (0.4f / c) * (aw + 4.0f) ;
    // printf("Qpro=%f \n", (double) QproFactor);
+if(jabcie == false) {
 #ifdef __SSE2__
     int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
 #endif
@@ -3075,6 +3078,42 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         }
 
     }
+} else {//Jzazbz 
+#ifdef _OPENMP
+            #pragma omp parallel for if(multiThread)
+#endif
+        for (int i = 0; i < height; i++) {
+            for (int k = 0; k < width; k++) {
+                float L = lab->L[i][k];
+                float a = lab->a[i][k];
+                float b = lab->b[i][k];
+                float x, y, z;
+                //convert Lab => XYZ
+                Color::Lab2XYZ(L, a, b, x, y, z);
+                x = x / 65535.f;
+                y = y / 65535.f;
+                z = z / 65535.f;
+                double Jz, az, bz;
+                double xx, yy, zz;
+                xx = (double) x;
+                yy = (double) y;
+                zz = (double) z;
+                Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz);
+                Jz = CAMBrightCurveJ[(Jz * 32768.)];   //lightness CIECAM02 + contrast
+                Jz *= 0.01;
+                Ciecam02::jzczhzxyz (xx, yy, zz, Jz, az, bz);
+                x = xx * 65535.;
+                y = yy * 65535.;
+                z = zz * 65535.;
+                float Ll, aa, bb;
+                Color::XYZ2Lab(x,  y,  z, Ll, aa, bb);
+                lab->L[i][k] = Ll;
+                lab->a[i][k] = aa;
+                lab->b[i][k] = bb;
+            }
+        }
+
+}
 }
 
 void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufcolfin, float rad, int bfh, int bfw, float epsilmax, float epsilmin, float thres, int sk, bool multiThread, int flag)
