@@ -266,7 +266,7 @@ rtengine::procparams::ProcParams* Thumbnail::createProcParamsForUpdate(bool retu
                 // Should we ask all frame's MetaData ?
                 imageMetaData = rtengine::FramesMetaData::fromFile (fname, nullptr, true);
             }
-            PartialProfile *pp = ProfileStore::getInstance()->loadDynamicProfile(imageMetaData);
+            PartialProfile *pp = ProfileStore::getInstance()->loadDynamicProfile(imageMetaData, fname);
             delete imageMetaData;
             int err = pp->pparams->save(outFName);
             pp->deleteInstance();
