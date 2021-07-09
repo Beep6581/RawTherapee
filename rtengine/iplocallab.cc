@@ -2830,115 +2830,293 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
    // printf("Qpro=%f \n", (double) QproFactor);
 if(jabcie == false) {
 #ifdef __SSE2__
-    int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
+        int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
 #endif
 #ifdef _OPENMP
-    #pragma omp parallel if (multiThread)
+        #pragma omp parallel if (multiThread)
 #endif
-    {
+        {
 #ifdef __SSE2__
-        // one line buffer per channel and thread
-        float Jbuffer[bufferLength] ALIGNED16;
-        float Cbuffer[bufferLength] ALIGNED16;
-        float hbuffer[bufferLength] ALIGNED16;
-        float Qbuffer[bufferLength] ALIGNED16;
-        float Mbuffer[bufferLength] ALIGNED16;
-        float sbuffer[bufferLength] ALIGNED16;
+            // one line buffer per channel and thread
+            float Jbuffer[bufferLength] ALIGNED16;
+            float Cbuffer[bufferLength] ALIGNED16;
+            float hbuffer[bufferLength] ALIGNED16;
+            float Qbuffer[bufferLength] ALIGNED16;
+            float Mbuffer[bufferLength] ALIGNED16;
+            float sbuffer[bufferLength] ALIGNED16;
 #endif
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic, 16)
 #endif
-        for (int i = 0; i < height; i++) {
+            for (int i = 0; i < height; i++) {
 #ifdef __SSE2__
             // vectorized conversion from Lab to jchqms
-            int k;
-            vfloat c655d35 = F2V(655.35f);
+                int k;
+                vfloat c655d35 = F2V(655.35f);
 
-            for (k = 0; k < width - 3; k += 4) {
-                vfloat x, y, z;
-                Color::Lab2XYZ(LVFU(lab->L[i][k]), LVFU(lab->a[i][k]), LVFU(lab->b[i][k]), x, y, z);
-                x = x / c655d35;
-                y = y / c655d35;
-                z = z / c655d35;
-                vfloat J, C, h, Q, M, s;
-                Ciecam02::xyz2jchqms_ciecam02float(J, C,  h,
+                for (k = 0; k < width - 3; k += 4) {
+                    vfloat x, y, z;
+                    Color::Lab2XYZ(LVFU(lab->L[i][k]), LVFU(lab->a[i][k]), LVFU(lab->b[i][k]), x, y, z);
+                    x = x / c655d35;
+                    y = y / c655d35;
+                    z = z / c655d35;
+                    vfloat J, C, h, Q, M, s;
+                    Ciecam02::xyz2jchqms_ciecam02float(J, C,  h,
                                                    Q,  M,  s, F2V(aw), F2V(fl), F2V(wh),
                                                    x,  y,  z,
                                                    F2V(xw1), F2V(yw1),  F2V(zw1),
                                                    F2V(c),  F2V(nc), F2V(pow1), F2V(nbb), F2V(ncb), F2V(pfl), F2V(cz), F2V(d), c16);
-                STVF(Jbuffer[k], J);
-                STVF(Cbuffer[k], C);
-                STVF(hbuffer[k], h);
-                STVF(Qbuffer[k], Q);
-                STVF(Mbuffer[k], M);
-                STVF(sbuffer[k], s);
+                    STVF(Jbuffer[k], J);
+                    STVF(Cbuffer[k], C);
+                    STVF(hbuffer[k], h);
+                    STVF(Qbuffer[k], Q);
+                    STVF(Mbuffer[k], M);
+                    STVF(sbuffer[k], s);
+                }
+
+                for (; k < width; k++) {
+                    float L = lab->L[i][k];
+                    float a = lab->a[i][k];
+                    float b = lab->b[i][k];
+                    float x, y, z;
+                    //convert Lab => XYZ
+                    Color::Lab2XYZ(L, a, b, x, y, z);
+                    x = x / 655.35f;
+                    y = y / 655.35f;
+                    z = z / 655.35f;
+                    float J, C, h, Q, M, s;
+                    Ciecam02::xyz2jchqms_ciecam02float(J, C,  h,
+                                                   Q,  M,  s, aw, fl, wh,
+                                                   x,  y,  z,
+                                                   xw1, yw1,  zw1,
+                                                   c,  nc, pow1, nbb, ncb, pfl, cz, d, c16);
+                    Jbuffer[k] = J;
+                    Cbuffer[k] = C;
+                    hbuffer[k] = h;
+                    Qbuffer[k] = Q;
+                    Mbuffer[k] = M;
+                    sbuffer[k] = s;
+                }
+
+#endif // __SSE2__
+
+                for (int j = 0; j < width; j++) {
+                    float J, C, h, Q, M, s;
+
+#ifdef __SSE2__
+                // use precomputed values from above
+                    J = Jbuffer[j];
+                    C = Cbuffer[j];
+                    h = hbuffer[j];
+                    Q = Qbuffer[j];
+                    M = Mbuffer[j];
+                    s = sbuffer[j];
+#else
+                    float x, y, z;
+                    float L = lab->L[i][j];
+                    float a = lab->a[i][j];
+                    float b = lab->b[i][j];
+                    float x1, y1, z1;
+                    //convert Lab => XYZ
+                    Color::Lab2XYZ(L, a, b, x1, y1, z1);
+                    x = x1 / 655.35f;
+                    y = y1 / 655.35f;
+                    z = z1 / 655.35f;
+                    //process source==> normal
+                    Ciecam02::xyz2jchqms_ciecam02float(J, C,  h,
+                                                   Q,  M,  s, aw, fl, wh,
+                                                   x,  y,  z,
+                                                   xw1, yw1,  zw1,
+                                                   c,  nc, pow1, nbb, ncb, pfl, cz, d, c16);
+#endif
+                    float Jpro, Cpro, hpro, Qpro, Mpro, spro;
+                    Jpro = J;
+                    Cpro = C;
+                    hpro = h;
+                    Qpro = Q;
+                    Mpro = M;
+                    spro = s;
+                    /*
+                    */
+                    if(ciec) {
+                        Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
+
+                        if(sigmoidlambda > 0.f && iscie && sigmoidqj == true) {//sigmoid Q only with ciecam module
+                            float val = Qpro * coefq;
+                            if(sigmoidth >= 1.f) {
+                                th = SQR(sigmoidth * sigmoidth * sigmoidth);
+                                th = ath * val + bth;
+                            } else {
+                                th = at * val + bt;
+                            }
+                            sigmoidla (val, th, sigm, 0.f);
+                            float bl2 = 1.f;
+                        /* if(bl > 1.f) {
+                            bl2 = 1.f;
+                        } */
+                            Qpro = clipLoc(bl * Qpro + bl2 * val / coefq);
+                        }
+
+                        float Mp, sres;
+                        Mp = Mpro / 100.0f;
+                        Ciecam02::curvecolorfloat(mchr, Mp, sres, 2.5f);
+                        float dred = 100.f; //in C mode
+                        float protect_red = 80.0f; // in C mode
+                        dred *= coe; //in M mode
+                        protect_red *= coe; //M mode
+                        Color::skinredfloat(Jpro, hpro, sres, Mp, dred, protect_red, 0, rstprotection, 100.f, Mpro);
+                        Jpro = SQR((10.f * Qpro) / wh);
+                        Qpro = (Qpro == 0.f ? epsil : Qpro); // avoid division by zero
+                        spro = 100.0f * sqrtf(Mpro / Qpro);
+
+                        if (Jpro > 99.9f) {
+                        Jpro = 99.9f;
+                        }
+
+                        Jpro = CAMBrightCurveJ[(float)(Jpro * 327.68f)];   //lightness CIECAM02 + contrast
+
+                        if(sigmoidlambda > 0.f && iscie && sigmoidqj == false) {//sigmoid J only with ciecam module
+                            float val = Jpro / 100.f;
+                            if(sigmoidth >= 1.f) {
+                                th = SQR(sigmoidth * sigmoidth * sigmoidth);
+                                th = ath * val + bth;
+                            } else {
+                                th = at * val + bt;
+                            }
+                            sigmoidla (val, th, sigm, bl);
+                            Jpro = 100.f * val;
+                            if (Jpro > 99.9f) {
+                            Jpro = 99.9f;
+                            }
+                        }
+
+                        float Sp = spro / 100.0f;
+                        Ciecam02::curvecolorfloat(schr, Sp, sres, 1.5f);
+                        dred = 100.f; // in C mode
+                        protect_red = 80.0f; // in C mode
+                        dred = 100.0f * sqrtf((dred * coe) / Q);
+                        protect_red = 100.0f * sqrtf((protect_red * coe) / Q);
+                        Color::skinredfloat(Jpro, hpro, sres, Sp, dred, protect_red, 0, rstprotection, 100.f, spro);
+                        Qpro = QproFactor * sqrtf(Jpro);
+                        float Cp = (spro * spro * Qpro) / (1000000.f);
+                        Cpro = Cp * 100.f;
+                        Ciecam02::curvecolorfloat(cchr, Cp, sres, 1.8f);
+                        Color::skinredfloat(Jpro, hpro, sres, Cp, 55.f, 30.f, 1, rstprotection, 100.f, Cpro);
+                        
+                        hpro = hpro + hue;
+
+                        if (hpro < 0.0f) {
+                            hpro += 360.0f;    //hue
+                        }
+
+
+                    }
+
+                    //retrieve values C,J...s
+                    C = Cpro;
+                    J = Jpro;
+                    Q = Qpro;
+                    M = Mpro;
+                    h = hpro;
+                    s = spro;
+
+#ifdef __SSE2__
+                    // write to line buffers
+                    Jbuffer[j] = J;
+                    Cbuffer[j] = C;
+                    hbuffer[j] = h;
+#else
+                    float xx, yy, zz;
+                    //process normal==> viewing
+
+                    Ciecam02::jch2xyz_ciecam02float(xx, yy, zz,
+                                                J,  C, h,
+                                                xw2, yw2,  zw2,
+                                                c2, nc2,  pow1n, nbbj, ncbj, flj, czj, dj, awj, c16);
+                    x = xx * 655.35f;
+                    y = yy * 655.35f;
+                    z = zz * 655.35f;
+                    float Ll, aa, bb;
+                    //convert xyz=>lab
+                    Color::XYZ2Lab(x,  y,  z, Ll, aa, bb);
+                    lab->L[i][j] = Ll;
+                    lab->a[i][j] = aa;
+                    lab->b[i][j] = bb;
+#endif
+                }
+
+#ifdef __SSE2__
+                // process line buffers
+                float *xbuffer = Qbuffer;
+                float *ybuffer = Mbuffer;
+                float *zbuffer = sbuffer;
+
+                for (k = 0; k < bufferLength; k += 4) {
+                    vfloat x, y, z;
+                    Ciecam02::jch2xyz_ciecam02float(x, y, z,
+                                                LVF(Jbuffer[k]), LVF(Cbuffer[k]), LVF(hbuffer[k]),
+                                                F2V(xw2), F2V(yw2), F2V(zw2),
+                                                F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz), c16);
+                    STVF(xbuffer[k], x * c655d35);
+                    STVF(ybuffer[k], y * c655d35);
+                    STVF(zbuffer[k], z * c655d35);
+                }
+
+                // XYZ2Lab uses a lookup table. The function behind that lut is a cube root.
+                // SSE can't beat the speed of that lut, so it doesn't make sense to use SSE
+                for (int j = 0; j < width; j++) {
+                    float Ll, aa, bb;
+                    //convert xyz=>lab
+                    Color::XYZ2Lab(xbuffer[j], ybuffer[j], zbuffer[j], Ll, aa, bb);
+
+                    lab->L[i][j] = Ll;
+                    lab->a[i][j] = aa;
+                    lab->b[i][j] = bb;
+                }
+
+#endif
             }
 
-            for (; k < width; k++) {
+        }
+} else {//Jzazbz 
+#ifdef _OPENMP
+            #pragma omp parallel for if(multiThread)
+#endif
+        for (int i = 0; i < height; i++) {
+            for (int k = 0; k < width; k++) {
                 float L = lab->L[i][k];
                 float a = lab->a[i][k];
                 float b = lab->b[i][k];
                 float x, y, z;
                 //convert Lab => XYZ
                 Color::Lab2XYZ(L, a, b, x, y, z);
-                x = x / 655.35f;
-                y = y / 655.35f;
-                z = z / 655.35f;
-                float J, C, h, Q, M, s;
-                Ciecam02::xyz2jchqms_ciecam02float(J, C,  h,
-                                                   Q,  M,  s, aw, fl, wh,
-                                                   x,  y,  z,
-                                                   xw1, yw1,  zw1,
-                                                   c,  nc, pow1, nbb, ncb, pfl, cz, d, c16);
-                Jbuffer[k] = J;
-                Cbuffer[k] = C;
-                hbuffer[k] = h;
-                Qbuffer[k] = Q;
-                Mbuffer[k] = M;
-                sbuffer[k] = s;
-            }
-
-#endif // __SSE2__
-
-            for (int j = 0; j < width; j++) {
-                float J, C, h, Q, M, s;
-
-#ifdef __SSE2__
-                // use precomputed values from above
-                J = Jbuffer[j];
-                C = Cbuffer[j];
-                h = hbuffer[j];
-                Q = Qbuffer[j];
-                M = Mbuffer[j];
-                s = sbuffer[j];
-#else
-                float x, y, z;
-                float L = lab->L[i][j];
-                float a = lab->a[i][j];
-                float b = lab->b[i][j];
-                float x1, y1, z1;
-                //convert Lab => XYZ
-                Color::Lab2XYZ(L, a, b, x1, y1, z1);
-                x = x1 / 655.35f;
-                y = y1 / 655.35f;
-                z = z1 / 655.35f;
-                //process source==> normal
-                Ciecam02::xyz2jchqms_ciecam02float(J, C,  h,
-                                                   Q,  M,  s, aw, fl, wh,
-                                                   x,  y,  z,
-                                                   xw1, yw1,  zw1,
-                                                   c,  nc, pow1, nbb, ncb, pfl, cz, d, c16);
-#endif
-                float Jpro, Cpro, hpro, Qpro, Mpro, spro;
-                Jpro = J;
-                Cpro = C;
-                hpro = h;
-                Qpro = Q;
-                Mpro = M;
-                spro = s;
-                /*
-                */
-                if(ciec) {
+                x = x / 65535.f;
+                y = y / 65535.f;
+                z = z / 65535.f;
+                double Jz, az, bz;
+                double xx, yy, zz;
+                xx = (double) x;
+                yy = (double) y;
+                zz = (double) z;
+                Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz);
+                Jz *= 100.;
+                //new variables
+                float Cz = 100.f * sqrt(az*az + bz*bz);
+                float myhz = xatan2f(bz, az);
+                if ( myhz < 0.0f ) {
+                    myhz += (2.f * rtengine::RT_PI_F);
+                }
+                float hzd = (myhz * 180.f) / (float)rtengine::RT_PI;
+                float Qz = wh * Jz;
+                float Mz = Cz * pfl;
+                float sz = 100.0 * sqrt ( Mz / Qz );
+                float Jpro = Jz;
+                float Qpro = Qz;
+                float Cpro = Cz;
+                float hpro = hzd;
+                float Mpro = Mz;
+                float spro = sz;
+                
                     Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
 
                     if(sigmoidlambda > 0.f && iscie && sigmoidqj == true) {//sigmoid Q only with ciecam module
@@ -2969,9 +3147,6 @@ if(jabcie == false) {
                     Qpro = (Qpro == 0.f ? epsil : Qpro); // avoid division by zero
                     spro = 100.0f * sqrtf(Mpro / Qpro);
 
-                    if (Jpro > 99.9f) {
-                       Jpro = 99.9f;
-                    }
 
                     Jpro = CAMBrightCurveJ[(float)(Jpro * 327.68f)];   //lightness CIECAM02 + contrast
 
@@ -2985,17 +3160,14 @@ if(jabcie == false) {
                         }
                         sigmoidla (val, th, sigm, bl);
                         Jpro = 100.f * val;
-                        if (Jpro > 99.9f) {
-                        Jpro = 99.9f;
-                        }
                     }
 
                     float Sp = spro / 100.0f;
                     Ciecam02::curvecolorfloat(schr, Sp, sres, 1.5f);
                     dred = 100.f; // in C mode
                     protect_red = 80.0f; // in C mode
-                    dred = 100.0f * sqrtf((dred * coe) / Q);
-                    protect_red = 100.0f * sqrtf((protect_red * coe) / Q);
+                    dred = 100.0f * sqrtf((dred * coe) / Qz);
+                    protect_red = 100.0f * sqrtf((protect_red * coe) / Qz);
                     Color::skinredfloat(Jpro, hpro, sres, Sp, dred, protect_red, 0, rstprotection, 100.f, spro);
                     Qpro = QproFactor * sqrtf(Jpro);
                     float Cp = (spro * spro * Qpro) / (1000000.f);
@@ -3010,96 +3182,34 @@ if(jabcie == false) {
                     }
 
 
-                }
 
                 //retrieve values C,J...s
-                C = Cpro;
-                J = Jpro;
-                Q = Qpro;
-                M = Mpro;
-                h = hpro;
-                s = spro;
+                Cz = Cpro;
+                Jz = Jpro;
 
-#ifdef __SSE2__
-                // write to line buffers
-                Jbuffer[j] = J;
-                Cbuffer[j] = C;
-                hbuffer[j] = h;
-#else
-                float xx, yy, zz;
-                //process normal==> viewing
 
-                Ciecam02::jch2xyz_ciecam02float(xx, yy, zz,
-                                                J,  C, h,
-                                                xw2, yw2,  zw2,
-                                                c2, nc2,  pow1n, nbbj, ncbj, flj, czj, dj, awj, c16);
-                x = xx * 655.35f;
-                y = yy * 655.35f;
-                z = zz * 655.35f;
-                float Ll, aa, bb;
-                //convert xyz=>lab
-                Color::XYZ2Lab(x,  y,  z, Ll, aa, bb);
-                lab->L[i][j] = Ll;
-                lab->a[i][j] = aa;
-                lab->b[i][j] = bb;
-#endif
-            }
 
-#ifdef __SSE2__
-            // process line buffers
-            float *xbuffer = Qbuffer;
-            float *ybuffer = Mbuffer;
-            float *zbuffer = sbuffer;
 
-            for (k = 0; k < bufferLength; k += 4) {
-                vfloat x, y, z;
-                Ciecam02::jch2xyz_ciecam02float(x, y, z,
-                                                LVF(Jbuffer[k]), LVF(Cbuffer[k]), LVF(hbuffer[k]),
-                                                F2V(xw2), F2V(yw2), F2V(zw2),
-                                                F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz), c16);
-                STVF(xbuffer[k], x * c655d35);
-                STVF(ybuffer[k], y * c655d35);
-                STVF(zbuffer[k], z * c655d35);
-            }
 
-            // XYZ2Lab uses a lookup table. The function behind that lut is a cube root.
-            // SSE can't beat the speed of that lut, so it doesn't make sense to use SSE
-            for (int j = 0; j < width; j++) {
-                float Ll, aa, bb;
-                //convert xyz=>lab
-                Color::XYZ2Lab(xbuffer[j], ybuffer[j], zbuffer[j], Ll, aa, bb);
 
-                lab->L[i][j] = Ll;
-                lab->a[i][j] = aa;
-                lab->b[i][j] = bb;
-            }
+                    float hz = hzd / 57.926f;
+                    
+                    
+                    
+                    
+                    Jz = 0.01 * Jz;
+                    Cz = 0.01 * Cz;
+                    az = Cz * cos(hz);
+                    bz = Cz * sin(hz);
 
-#endif
-        }
 
-    }
-} else {//Jzazbz 
-#ifdef _OPENMP
-            #pragma omp parallel for if(multiThread)
-#endif
-        for (int i = 0; i < height; i++) {
-            for (int k = 0; k < width; k++) {
-                float L = lab->L[i][k];
-                float a = lab->a[i][k];
-                float b = lab->b[i][k];
-                float x, y, z;
-                //convert Lab => XYZ
-                Color::Lab2XYZ(L, a, b, x, y, z);
-                x = x / 65535.f;
-                y = y / 65535.f;
-                z = z / 65535.f;
-                double Jz, az, bz;
-                double xx, yy, zz;
-                xx = (double) x;
-                yy = (double) y;
-                zz = (double) z;
-                Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz);
-                Jz = CAMBrightCurveJ[(Jz * 32768.)];   //lightness CIECAM02 + contrast
+
+
+
+
+
+
+                
                 Jz *= 0.01;
                 Ciecam02::jzczhzxyz (xx, yy, zz, Jz, az, bz);
                 x = xx * 65535.;
@@ -3111,9 +3221,10 @@ if(jabcie == false) {
                 lab->a[i][k] = aa;
                 lab->b[i][k] = bb;
             }
+
         }
 
-}
+    }
 }
 
 void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufcolfin, float rad, int bfh, int bfw, float epsilmax, float epsilmin, float thres, int sk, bool multiThread, int flag)
