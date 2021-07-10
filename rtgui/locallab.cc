@@ -356,6 +356,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
     // Select active spot
     if (pp->locallab.spots.size() > 0) {
         expsettings->setSelectedSpot(pp->locallab.selspot);
+        spotName = pp->locallab.spots.at(pp->locallab.selspot).name;
     }
 
     // Update each Locallab tools GUI
@@ -542,6 +543,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             // Update Locallab tools GUI with new created spot
             disableListener();
 
+            spotName = pp->locallab.spots.at(pp->locallab.selspot).name;
+
             for (auto tool : locallabTools) {
                 tool->read(pp, pedited);
             }
@@ -598,6 +601,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     // Update Locallab tools GUI with selected spot
                     disableListener();
 
+                    if (pp->locallab.spots.size() > 0) {
+                        spotName = pp->locallab.spots.at(pp->locallab.selspot).name;
+                    }
+
                     for (auto tool : locallabTools) {
                         tool->read(pp, pedited);
                     }
@@ -637,6 +644,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             // Update control spots and Locallab tools GUI with selected spot
             expsettings->setSelectedSpot(pp->locallab.selspot);
             disableListener();
+
+            if (pp->locallab.spots.size() > 0) {
+                spotName = pp->locallab.spots.at(pp->locallab.selspot).name;
+            }
 
             for (auto tool : locallabTools) {
                 tool->read(pp, pedited);
@@ -841,6 +852,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             // Update Locallab tools GUI with new created spot
             disableListener();
+
+            spotName = pp->locallab.spots.at(pp->locallab.selspot).name;
 
             for (auto tool : locallabTools) {
                 tool->read(pp, pedited);
@@ -1180,12 +1193,18 @@ void Locallab::updateShowtooltipVisibility(bool showtooltip)
     }
 }
 
+void Locallab::spotNameChanged(const Glib::ustring &newName)
+{
+    spotName = newName;
+}
+
 void Locallab::addTool(Gtk::Box* where, LocallabTool* tool)
 {
     tool->getExpander()->setLevel(3);
     where->pack_start(*tool->getExpander(), false, false);
     locallabTools.push_back(tool);
     tool->setLocallabToolListener(this);
+    tool->setSpotNameSource(&spotName);
 }
 
 void Locallab::setParamEditable(bool cond)

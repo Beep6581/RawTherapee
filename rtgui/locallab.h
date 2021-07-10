@@ -128,6 +128,8 @@ private:
     // Other widgets
     Gtk::Button* const resetshowButton;
 
+    Glib::ustring spotName;
+
 public:
     Locallab();
 
@@ -200,6 +202,7 @@ private:
 
     // ControlSpotListener function
     void resetToolMaskView() override;
+    void spotNameChanged(const Glib::ustring &newName) override;
 
     // LocallabToolListener function
     void resetOtherMaskView(LocallabTool* current) override;

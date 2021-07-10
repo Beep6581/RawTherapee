@@ -703,6 +703,9 @@ void ControlSpotPanel::on_button_rename()
             row[spots_.name] = newname;
             treeview_->columns_autosize();
             listener->panelChanged(EvLocallabSpotName, newname);
+            if (controlPanelListener) {
+                controlPanelListener->spotNameChanged(newname);
+            }
         }
     }
 }
