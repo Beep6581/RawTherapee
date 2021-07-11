@@ -2047,7 +2047,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
     }
 }
 
-void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, float *sourceab, int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE)
+void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, float *sourceab,  int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE)
 {
     //BENCHFUN
 //adpatation to local adjustments Jacques Desmis 12 2019
@@ -2729,13 +2729,14 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
 
     const float pilot = 2.f;
     const float pilotout = 2.f;
-
+    double avgm = 0.;
     //algoritm's params
     float yb = 18.f;
     yb2 = 18;
     if(ciec) {
         if(iscie) {
             yb = params->locallab.spots.at(sp).sourceGraycie;//
+            avgm = (double) pow_F(0.01f * (yb - 1.f), 0.45f);;
             yb2 = params->locallab.spots.at(sp).targetGraycie;
         } else {
             yb = params->locallab.spots.at(sp).targetGray;//target because we are after Log encoding
@@ -2972,8 +2973,10 @@ if(jabcie == false) {
                         if (Jpro > 99.9f) {
                         Jpro = 99.9f;
                         }
+                 //   printf("JB=%f", (double) Jpro);
 
                         Jpro = CAMBrightCurveJ[(float)(Jpro * 327.68f)];   //lightness CIECAM02 + contrast
+                 //   printf("JA=%f", (double) Jpro);
 
                         if(sigmoidlambda > 0.f && iscie && sigmoidqj == false) {//sigmoid J only with ciecam module
                             float val = Jpro / 100.f;
@@ -3079,6 +3082,79 @@ if(jabcie == false) {
 
         }
 } else {//Jzazbz 
+double mini = 1000.;
+double maxi = -1000.;
+double sum = 0.;
+int nc = 0;
+#ifdef _OPENMP
+            #pragma omp parallel for reduction(min:mini) reduction(max:maxi) reduction(+:sum) if(multiThread)
+#endif
+        for (int i = 0; i < height; i+=10) {
+            for (int k = 0; k < width; k+=10) {
+                float L = lab->L[i][k];
+                float a = lab->a[i][k];
+                float b = lab->b[i][k];
+                float x, y, z;
+                //convert Lab => XYZ
+                Color::Lab2XYZ(L, a, b, x, y, z);
+                x = x / 65535.f;
+                y = y / 65535.f;
+                z = z / 65535.f;
+                double Jz, az, bz;
+                double xx, yy, zz;
+                xx = (double) x ;
+                yy = (double) y ;
+                zz = (double) z ;
+                double L_p, M_p, S_p;
+                double pl = (double) la + 5.;
+
+                Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p);
+                if(Jz > maxi) {
+                    maxi = Jz;
+                }
+                if(Jz < mini) {
+                    mini = Jz;
+                }
+                sum += Jz;
+                nc++;
+                
+            }
+        }
+        sum = sum / nc;
+        avgm = 0.5 * (sum + avgm);
+        double maxy = 0.7;
+        double pln = (double) la;
+        if(la < 3000.f) {
+            pln = (double) la / 3000.;
+            pln = pow(pln, 1.8);
+            pln *= 3000.;
+        }
+        double pl = pln + 5.;
+        printf("maxi=%f mini=%f mean=%f, avgm=%f, pl=%f\n", maxi, mini, sum, avgm, pl);
+        double contreal = 0.2 *  params->locallab.spots.at(sp).contlcie;
+        DiagonalCurve jz_contrast({
+            DCT_NURBS,
+            0, 0,
+            avgm - avgm * (0.6 - contreal / 250.0), avgm - avgm * (0.6 + contreal / 250.0),
+            avgm + (1. - avgm) * (0.6 - contreal / 250.0), avgm + (1. - avgm) * (0.6 + contreal / 250.0),
+            1, 1
+        });
+        double lightreal = 0.2 *  params->locallab.spots.at(sp).lightlcie;
+        DiagonalCurve jz_light({
+            DCT_NURBS,
+            0, 0,
+            0.05, 0.05 + lightreal / 150.,
+            maxy, min (1.0, maxy + lightreal / 300.0),
+            1, 1
+        });
+        DiagonalCurve jz_lightn({
+            DCT_NURBS,
+            0, 0,
+            0.05 - lightreal / 150., 0.05,
+            min (1.0, maxy - lightreal / 300.0), maxy,
+            1, 1
+        });
+
 #ifdef _OPENMP
             #pragma omp parallel for if(multiThread)
 #endif
@@ -3095,123 +3171,34 @@ if(jabcie == false) {
                 z = z / 65535.f;
                 double Jz, az, bz;
                 double xx, yy, zz;
-                xx = (double) x;
-                yy = (double) y;
-                zz = (double) z;
-                Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz);
-                Jz *= 100.;
-                //new variables
-                float Cz = 100.f * sqrt(az*az + bz*bz);
-                float myhz = xatan2f(bz, az);
-                if ( myhz < 0.0f ) {
-                    myhz += (2.f * rtengine::RT_PI_F);
+                xx = (double) x ;
+                yy = (double) y ;
+                zz = (double) z ;
+                double L_p, M_p, S_p;
+
+                Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p);
+                Jz= jz_contrast.getVal(Jz);
+
+                if(lightreal > 0) {
+                    Jz= jz_light.getVal(Jz);
                 }
-                float hzd = (myhz * 180.f) / (float)rtengine::RT_PI;
-                float Qz = wh * Jz;
-                float Mz = Cz * pfl;
-                float sz = 100.0 * sqrt ( Mz / Qz );
-                float Jpro = Jz;
-                float Qpro = Qz;
-                float Cpro = Cz;
-                float hpro = hzd;
-                float Mpro = Mz;
-                float spro = sz;
-                
-                    Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
+                if(lightreal < 0) {
+                    Jz= jz_lightn.getVal(Jz);
+                }
 
-                    if(sigmoidlambda > 0.f && iscie && sigmoidqj == true) {//sigmoid Q only with ciecam module
-                        float val = Qpro * coefq;
-                        if(sigmoidth >= 1.f) {
-                            th = SQR(sigmoidth * sigmoidth * sigmoidth);
-                            th = ath * val + bth;
-                        } else {
-                            th = at * val + bt;
-                        }
-                        sigmoidla (val, th, sigm, 0.f);
-                        float bl2 = 1.f;
-                        /* if(bl > 1.f) {
-                            bl2 = 1.f;
-                        } */
-                        Qpro = clipLoc(bl * Qpro + bl2 * val / coefq);
+                if(sigmoidlambda > 0.f && iscie && sigmoidqj == false) {//sigmoid J only with ciecam module
+                    float val = Jz;// / 100.f;
+                    if(sigmoidth >= 1.f) {
+                        th = SQR(sigmoidth * sigmoidth * sigmoidth);
+                        th = ath * val + bth;
+                    } else {
+                        th = at * val + bt;
                     }
-
-                    float Mp, sres;
-                    Mp = Mpro / 100.0f;
-                    Ciecam02::curvecolorfloat(mchr, Mp, sres, 2.5f);
-                    float dred = 100.f; //in C mode
-                    float protect_red = 80.0f; // in C mode
-                    dred *= coe; //in M mode
-                    protect_red *= coe; //M mode
-                    Color::skinredfloat(Jpro, hpro, sres, Mp, dred, protect_red, 0, rstprotection, 100.f, Mpro);
-                    Jpro = SQR((10.f * Qpro) / wh);
-                    Qpro = (Qpro == 0.f ? epsil : Qpro); // avoid division by zero
-                    spro = 100.0f * sqrtf(Mpro / Qpro);
-
-
-                    Jpro = CAMBrightCurveJ[(float)(Jpro * 327.68f)];   //lightness CIECAM02 + contrast
-
-                    if(sigmoidlambda > 0.f && iscie && sigmoidqj == false) {//sigmoid J only with ciecam module
-                        float val = Jpro / 100.f;
-                        if(sigmoidth >= 1.f) {
-                            th = SQR(sigmoidth * sigmoidth * sigmoidth);
-                            th = ath * val + bth;
-                        } else {
-                            th = at * val + bt;
-                        }
-                        sigmoidla (val, th, sigm, bl);
-                        Jpro = 100.f * val;
-                    }
-
-                    float Sp = spro / 100.0f;
-                    Ciecam02::curvecolorfloat(schr, Sp, sres, 1.5f);
-                    dred = 100.f; // in C mode
-                    protect_red = 80.0f; // in C mode
-                    dred = 100.0f * sqrtf((dred * coe) / Qz);
-                    protect_red = 100.0f * sqrtf((protect_red * coe) / Qz);
-                    Color::skinredfloat(Jpro, hpro, sres, Sp, dred, protect_red, 0, rstprotection, 100.f, spro);
-                    Qpro = QproFactor * sqrtf(Jpro);
-                    float Cp = (spro * spro * Qpro) / (1000000.f);
-                    Cpro = Cp * 100.f;
-                    Ciecam02::curvecolorfloat(cchr, Cp, sres, 1.8f);
-                    Color::skinredfloat(Jpro, hpro, sres, Cp, 55.f, 30.f, 1, rstprotection, 100.f, Cpro);
-                        
-                    hpro = hpro + hue;
-
-                    if (hpro < 0.0f) {
-                        hpro += 360.0f;    //hue
-                    }
-
-
-
-                //retrieve values C,J...s
-                Cz = Cpro;
-                Jz = Jpro;
-
-
-
-
-
-
-                    float hz = hzd / 57.926f;
-                    
-                    
-                    
-                    
-                    Jz = 0.01 * Jz;
-                    Cz = 0.01 * Cz;
-                    az = Cz * cos(hz);
-                    bz = Cz * sin(hz);
-
-
-
-
-
-
-
-
-                
-                Jz *= 0.01;
-                Ciecam02::jzczhzxyz (xx, yy, zz, Jz, az, bz);
+                    sigmoidla (val, th, sigm, bl);
+                    Jz = val;
+                }
+                double L_, M_, S_;
+                Ciecam02::jzczhzxyz (xx, yy, zz, Jz, az, bz, pl, L_, M_, S_);
                 x = xx * 65535.;
                 y = yy * 65535.;
                 z = zz * 65535.;
@@ -3223,7 +3210,6 @@ if(jabcie == false) {
             }
 
         }
-
     }
 }
 

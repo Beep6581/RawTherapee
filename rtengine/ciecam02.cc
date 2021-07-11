@@ -479,11 +479,11 @@ void Ciecam02::initcam2float (float yb, float pilotd, float f, float la, float x
 }
 
 
-void Ciecam02::xyz2jzczhz ( double &Jz, double &az, double &bz, double x, double y, double z)
+void Ciecam02::xyz2jzczhz ( double &Jz, double &az, double &bz, double x, double y, double z, double pl, double &Lp, double &Mp, double &Sp)
 {
-    double Xp, Yp, Zp, L, M, S, Lp, Mp, Sp, Iz;
-    double peakLum = 1e-4;
-
+    double Xp, Yp, Zp, L, M, S, Iz;
+    double peakLum = 1. / pl;
+    //I change 10000 for peaklum function of la...because after many tests original algo works very bad (too small values of Jz)
     Xp = Jzazbz_b * x - ((Jzazbz_b - 1.) * z);
     Yp = Jzazbz_g * y - ((Jzazbz_g - 1.) * x);
     Zp = z;
@@ -503,22 +503,23 @@ void Ciecam02::xyz2jzczhz ( double &Jz, double &az, double &bz, double x, double
 }
 
 
-void Ciecam02::jzczhzxyz (double &x, double &y, double &z, double jz, double az, double bz)
+void Ciecam02::jzczhzxyz (double &x, double &y, double &z, double jz, double az, double bz, double pl, double &L, double &M, double &S)
 {
-    double Xp, Yp, Zp, L, M, S, Lp, Mp, Sp, Iz, tmp;
+    double Xp, Yp, Zp, Lp, Mp, Sp, Iz, tmp;
 
     Iz = (jz + Jzazbz_d0) / (1. + Jzazbz_d - Jzazbz_d * (jz + Jzazbz_d0));
 
     Lp = 1.0 * Iz + 0.138605043271539 * az + 0.0580473161561189 * bz;
     Mp = 1.0 * Iz - 0.138605043271539 * az - 0.0580473161561189 * bz;
     Sp = 1.0 * Iz - 0.0960192420263189 * az - 0.811891896056039 * bz;
+    //I change 10000 for pl function of la...because after many tests original algo works very bad (too small values of Jz)
    
     tmp = pow(Lp, 1. / Jzazbz_p);
-    L = 10000. * pow((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), 1. / Jzazbz_n);
+    L = pl * pow((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), 1. / Jzazbz_n);
     tmp = pow(Mp, 1. / Jzazbz_p);
-    M = 10000. * pow((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), 1. / Jzazbz_n);
+    M = pl * pow((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), 1. / Jzazbz_n);
     tmp = pow(Sp, 1. / Jzazbz_p);
-    S = 10000. * pow((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), 1. / Jzazbz_n);
+    S = pl * pow((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), 1. / Jzazbz_n);
         
     Xp = 1.924226435787607 * L - 1.004792312595365 * M + 0.037651404030618 * S;
     Yp = 0.350316762094999 * L + 0.726481193931655 * M - 0.065384422948085 * S;

@@ -67,9 +67,9 @@ public:
     static void curvecolorfloat (float satind, float satval, float &sres, float parsat);
     static void curveJfloat (float br, float contr, float thr, const LUTu & histogram, LUTf & outCurve ) ;
 
-    static void xyz2jzczhz (double &Jz, double &az, double &bz, double x, double y, double z);
+    static void xyz2jzczhz (double &Jz, double &az, double &bz, double x, double y, double z, double pl, double &Lp, double &Mp, double &Sp);
 
-    static void jzczhzxyz (double &x, double &y, double &z, double Jz, double az, double bz);
+    static void jzczhzxyz (double &x, double &y, double &z, double Jz, double az, double bz, double pl, double &L, double &M, double &S);
 
 
 

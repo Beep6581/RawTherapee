@@ -7549,6 +7549,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         reparcie->set_tooltip_text(M("TP_LOCALLAB_LOGREPART_TOOLTIP"));
         cieFrame->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
+        jabcie->set_tooltip_text(M("TP_LOCALLAB_JAB_TOOLTIP"));
         Autograycie->set_tooltip_text(M("TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP"));
         sourceGraycie->set_tooltip_text("");
         sourceabscie->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
@@ -7574,6 +7575,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
     } else {
         reparcie->set_tooltip_text("");
         cieFrame->set_tooltip_text("");
+        jabcie->set_tooltip_text("");
         Autograycie->set_tooltip_text("");
         sourceGraycie->set_tooltip_text("");
         sourceabscie->set_tooltip_text("");
@@ -7898,7 +7900,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             surrHBoxcie->show();
             expLcie->hide();
             surHBoxcie->show();
-            sourceabscie->hide();
+            sourceabscie->show();
             targabscie->hide();
             detailcie->hide();
             modeHBoxcie->hide();
@@ -7983,7 +7985,7 @@ void Locallabcie::convertParamToSimple()
 
     // Disable all listeners
     disableListener();
-    sourceabscie->setValue(defSpot.sourceabscie);
+    //sourceabscie->setValue(defSpot.sourceabscie);
     targabscie->setValue(defSpot.targabscie);
     sigmoidblcie->setValue(defSpot.sigmoidblcie);
 
