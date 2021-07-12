@@ -342,5 +342,13 @@ bool ExtProgStore::openInCustomEditor (const Glib::ustring& fileName)
 
 bool ExtProgStore::openInExternalEditor(const Glib::ustring &fileName, const Glib::RefPtr<Gio::AppInfo> &editorInfo)
 {
-    return editorInfo->launch(Gio::File::create_for_path(fileName));
+    try {
+        return editorInfo->launch(Gio::File::create_for_path(fileName));
+    } catch (const Glib::Error &e) {
+        std::cerr
+            << "Error launching external editor.\n"
+            << "Error code #" << e.code() << ": " << e.what()
+            << std::endl;
+        return false;
+    }
 }
