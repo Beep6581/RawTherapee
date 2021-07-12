@@ -912,7 +912,7 @@ void Options::readFromFile(Glib::ustring fname)
                         if (editorToSendTo == 1) {
                             externalEditorIndex = externalEditors.size();
                         }
-                        externalEditors.push_back(ExternalEditor("GIMP", "\"" + executable + "\"", "gimp"));
+                        externalEditors.push_back(ExternalEditor("GIMP", "\"" + executable + "\"", executable + ",0"));
                     } else {
                         for (auto ver = 12; ver >= 0; --ver) {
                             executable = Glib::build_filename(gimpDir, "bin", Glib::ustring::compose(Glib::ustring("gimp-2.%1.exe"), ver));
@@ -920,7 +920,7 @@ void Options::readFromFile(Glib::ustring fname)
                                 if (editorToSendTo == 1) {
                                     externalEditorIndex = externalEditors.size();
                                 }
-                                externalEditors.push_back(ExternalEditor("GIMP", "\"" + executable + "\"", "gimp"));
+                                externalEditors.push_back(ExternalEditor("GIMP", "\"" + executable + "\"", executable + ",0"));
                                 break;
                             }
                         }
@@ -935,7 +935,7 @@ void Options::readFromFile(Glib::ustring fname)
                         if (editorToSendTo == 2) {
                             externalEditorIndex = externalEditors.size();
                         }
-                        externalEditors.push_back(ExternalEditor("Photoshop", "\"" + executable + "\"", ""));
+                        externalEditors.push_back(ExternalEditor("Photoshop", "\"" + executable + "\"", executable + ",0"));
                     }
 
                     if (keyFile.has_key("External Editor", "CustomEditor")) {
