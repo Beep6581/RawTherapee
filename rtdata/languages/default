@@ -2875,7 +2875,12 @@ TP_LOCALLAB_INVERS;Inverse
 TP_LOCALLAB_INVERS_TOOLTIP;Fewer possibilities if selected (Inverse).\n\nAlternative: use two spots\nFirst Spot:\n Full Image\n \nSecond spot: Excluding spot
 TP_LOCALLAB_INVMASK;Inverse algorithm
 TP_LOCALLAB_ISOGR;Distribution (ISO)
-TP_LOCALLAB_JAB;Jz az bz
+TP_LOCALLAB_JAB;Jz Cz Hz
+TP_LOCALLAB_JZFRA;Jz Cz Hz
+TP_LOCALLAB_JZLIGHT;Lightness
+TP_LOCALLAB_JZCONT;Contrast
+TP_LOCALLAB_JZCHROM;Chroma
+TP_LOCALLAB_JZHUECIE;Hue
 TP_LOCALLAB_JAB_TOOLTIP;Experimental - only Jz lightness, contrast J and Sigmoid J works??.\nTry 'absolute luminance' and 'mean luminance' source
 TP_LOCALLAB_LABBLURM;Blur Mask
 TP_LOCALLAB_LABEL;Local Adjustments

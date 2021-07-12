@@ -1513,6 +1513,7 @@ private:
     Adjuster* const reparcie;
     Gtk::CheckButton* const jabcie;
     MyComboBoxText*  const modecie;
+    Gtk::Frame* const jzFrame;
     Gtk::Box* const modeHBoxcie;
     Gtk::Frame* const cieFrame;
     Gtk::CheckButton* const Autograycie;
@@ -1522,6 +1523,8 @@ private:
     Gtk::Box* const surHBoxcie;
     Gtk::Frame* const cie1Frame;
     Adjuster* const lightlcie;
+    Adjuster* const lightjzcie;
+    Adjuster* const contjzcie;
     Adjuster* const lightqcie;
     Adjuster* const contlcie;
     Adjuster* const contqcie;
@@ -1537,6 +1540,8 @@ private:
     Adjuster* const rstprotectcie;
     Adjuster* const chromlcie;
     Adjuster* const huecie;
+    Adjuster* const chromjzcie;
+    Adjuster* const huejzcie;
     
     MyExpander* const expLcie;
     Gtk::Frame* const cie2Frame;

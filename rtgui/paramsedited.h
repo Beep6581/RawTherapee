@@ -989,9 +989,13 @@ public:
         bool rstprotectcie;
         bool chromlcie;
         bool huecie;
+        bool chromjzcie;
+        bool huejzcie;
         bool lightlcie;
+        bool lightjzcie;
         bool lightqcie;
         bool contlcie;
+        bool contjzcie;
         bool contthrescie;
         bool sigmoidldacie;
         bool sigmoidthcie;

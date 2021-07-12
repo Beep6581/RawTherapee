@@ -7367,6 +7367,7 @@ Locallabcie::Locallabcie():
     reparcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     jabcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JAB")))),
     modecie(Gtk::manage (new MyComboBoxText ())),
+    jzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZFRA")))),
     modeHBoxcie(Gtk::manage(new Gtk::Box())),
     cieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
     Autograycie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAY")))),
@@ -7376,6 +7377,8 @@ Locallabcie::Locallabcie():
     surHBoxcie(Gtk::manage(new Gtk::Box())),
     cie1Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG1FRA")))),
     lightlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTL"), -100., 100., 0.5, 0.))),
+    lightjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZLIGHT"), -100., 100., 0.5, 0.))),
+    contjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCONT"), -100., 100., 0.5, 0.))),
     lightqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTQ"), -100., 100., 0.5, 0.))),
     contlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTL"), -100., 100., 0.5, 0.))),
     contqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),
@@ -7390,6 +7393,8 @@ Locallabcie::Locallabcie():
     rstprotectcie(Gtk::manage(new Adjuster(M("TP_COLORAPP_RSTPRO"), 0., 100., 0.1, 50.))),
     chromlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROML"), -100., 100., 0.5, 0.))),
     huecie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HUECIE"), -100., 100., 0.1, 0.))),
+    chromjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCHROM"), -100., 100., 0.5, 0.))),
+    huejzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZHUECIE"), -100., 100., 0.1, 0.))),
     expLcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_LOGEXP")))),
     cie2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
     targetGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
@@ -7412,6 +7417,16 @@ Locallabcie::Locallabcie():
     pack_start(*reparcie);
     pack_start(*jabcie);
     
+    jzFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const jzBox = Gtk::manage(new ToolParamBlock());
+    jzBox->pack_start(*lightjzcie);
+    jzBox->pack_start(*contjzcie);
+    jzBox->pack_start(*chromjzcie);
+    jzBox->pack_start(*huejzcie);
+    jzFrame->add(*jzBox);
+    pack_start(*jzFrame);
+    
+    
     jabcieConn = jabcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::jabcieChanged));
     AutograycieConn = Autograycie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::AutograycieChanged));
     sigmoidqjcieconn = sigmoidqjcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigmoidqjcieChanged));
@@ -7429,11 +7444,15 @@ Locallabcie::Locallabcie():
 
     chromlcie->setAdjusterListener(this);
     huecie->setAdjusterListener(this);
+    chromjzcie->setAdjusterListener(this);
+    huejzcie->setAdjusterListener(this);
 
     lightlcie->setAdjusterListener(this);
+    lightjzcie->setAdjusterListener(this);
 
     lightqcie->setAdjusterListener(this);
     contlcie->setAdjusterListener(this);
+    contjzcie->setAdjusterListener(this);
     contthrescie->setAdjusterListener(this);
     sigmoidldacie->setAdjusterListener(this);
     sigmoidthcie->setAdjusterListener(this);
@@ -7655,7 +7674,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         sigmoidqjcie->set_active(spot.sigmoidqjcie);
         sourceabscie->setValue(spot.sourceabscie);
         jabcie->set_active(spot.jabcie);
-        
+        jabcieChanged();
         if (spot.sursourcie == "Average") {
             sursourcie->set_active (0);
         } else if (spot.sursourcie == "Dim") {
@@ -7678,9 +7697,13 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         rstprotectcie->setValue(spot.rstprotectcie);
         chromlcie->setValue(spot.chromlcie);
         huecie->setValue(spot.huecie);
+        chromjzcie->setValue(spot.chromjzcie);
+        huejzcie->setValue(spot.huejzcie);
         lightlcie->setValue(spot.lightlcie);
+        lightjzcie->setValue(spot.lightjzcie);
         lightqcie->setValue(spot.lightqcie);
         contlcie->setValue(spot.contlcie);
+        contjzcie->setValue(spot.contjzcie);
         contthrescie->setValue(spot.contthrescie);
         sigmoidldacie->setValue(spot.sigmoidldacie);
         sigmoidthcie->setValue(spot.sigmoidthcie);
@@ -7750,10 +7773,14 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.saturlcie = saturlcie->getValue();
         spot.rstprotectcie = rstprotectcie->getValue();
         spot.chromlcie = chromlcie->getValue();
+        spot.huejzcie = huejzcie->getValue();
+        spot.chromjzcie = chromjzcie->getValue();
         spot.huecie = huecie->getValue();
         spot.lightlcie = lightlcie->getValue();
+        spot.lightjzcie = lightjzcie->getValue();
         spot.lightqcie = lightqcie->getValue();
         spot.contlcie = contlcie->getValue();
+        spot.contjzcie = contjzcie->getValue();
         spot.contthrescie = contthrescie->getValue();
         spot.sigmoidldacie = sigmoidldacie->getValue();
         spot.sigmoidthcie = sigmoidthcie->getValue();
@@ -7804,6 +7831,11 @@ void Locallabcie::AutograycieChanged()
 
 void Locallabcie::jabcieChanged()
 {
+    if (jabcie->get_active()) {
+        jzFrame->show();
+    } else {
+        jzFrame->hide();
+    }
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (jabcie->get_active()) {
@@ -8027,9 +8059,13 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         rstprotectcie->setDefault(defSpot.rstprotectcie);
         chromlcie->setDefault(defSpot.chromlcie);
         huecie->setDefault(defSpot.huecie);
+        chromjzcie->setDefault(defSpot.chromjzcie);
+        huejzcie->setDefault(defSpot.huejzcie);
         lightlcie->setDefault(defSpot.lightlcie);
+        lightjzcie->setDefault(defSpot.lightjzcie);
         lightqcie->setDefault(defSpot.lightqcie);
         contlcie->setDefault(defSpot.contlcie);
+        contjzcie->setDefault(defSpot.contjzcie);
         contthrescie->setDefault(defSpot.contthrescie);
         sigmoidldacie->setDefault(defSpot.sigmoidldacie);
         sigmoidthcie->setDefault(defSpot.sigmoidthcie);
@@ -8095,6 +8131,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == chromjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabchromjzcie,
+                                       chromjzcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
         if (a == huecie) {
             if (listener) {
                 listener->panelChanged(Evlocallabhuecie,
@@ -8102,10 +8145,24 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == huejzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhuejzcie,
+                                       huejzcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
         if (a == lightlcie) {
             if (listener) {
                 listener->panelChanged(Evlocallablightlcie,
                                        lightlcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == lightjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallablightjzcie,
+                                       lightjzcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -8121,6 +8178,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabcontlcie,
                                        contlcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == contjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcontjzcie,
+                                       contjzcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

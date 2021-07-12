@@ -2834,6 +2834,17 @@ if(jabcie == true) {
     double maxi = -1000.;
     double sum = 0.;
     int nc = 0;
+    double pln = (double) la;
+    if(la < 3000.f) {
+        pln = (double) la / 3000.;
+        pln = pow(pln, 1.9);
+        pln *= 3000.;
+    }
+    double pl = pln + 4.;
+    if(pl > 10000.) {
+        pl = 10000.;
+    }
+
 #ifdef _OPENMP
             #pragma omp parallel for reduction(min:mini) reduction(max:maxi) reduction(+:sum) if(multiThread)
 #endif
@@ -2854,7 +2865,6 @@ if(jabcie == true) {
                 yy = (double) y ;
                 zz = (double) z ;
                 double L_p, M_p, S_p;
-                double pl = (double) la + 5.;
 
                 Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p);
                 if(Jz > maxi) {
@@ -2871,15 +2881,8 @@ if(jabcie == true) {
         sum = sum / nc;
         avgm = 0.5 * (sum + avgm);
         double maxy = 0.7;
-        double pln = (double) la;
-        if(la < 3000.f) {
-            pln = (double) la / 3000.;
-            pln = pow(pln, 1.8);
-            pln *= 3000.;
-        }
-        double pl = pln + 5.;
         printf("maxi=%f mini=%f mean=%f, avgm=%f, pl=%f\n", maxi, mini, sum, avgm, pl);
-        double contreal = 0.2 *  params->locallab.spots.at(sp).contlcie;
+        double contreal = 0.2 *  params->locallab.spots.at(sp).contjzcie;
         DiagonalCurve jz_contrast({
             DCT_NURBS,
             0, 0,
@@ -2887,9 +2890,9 @@ if(jabcie == true) {
             avgm + (1. - avgm) * (0.6 - contreal / 250.0), avgm + (1. - avgm) * (0.6 + contreal / 250.0),
             1, 1
         });
-        double lightreal = 0.2 *  params->locallab.spots.at(sp).lightlcie;
-        double chromz = 0.4 * params->locallab.spots.at(sp).chromlcie;
-        double dhue = 0.0174 * params->locallab.spots.at(sp).huecie;
+        double lightreal = 0.2 *  params->locallab.spots.at(sp).lightjzcie;
+        double chromz = 0.4 * params->locallab.spots.at(sp).chromjzcie;
+        double dhue = 0.0174 * params->locallab.spots.at(sp).huejzcie;
 
         DiagonalCurve jz_light({
             DCT_NURBS,
