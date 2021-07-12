@@ -1054,6 +1054,13 @@ void RTWindow::MoveFileBrowserToEditor()
     }
 }
 
+void RTWindow::updateExternalEditorWidget(int selectedIndex, const std::vector<ExternalEditor> & editors)
+{
+    if (epanel) {
+        epanel->updateExternalEditorWidget(selectedIndex, editors);
+    }
+}
+
 void RTWindow::updateProfiles (const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC)
 {
     if (epanel) {

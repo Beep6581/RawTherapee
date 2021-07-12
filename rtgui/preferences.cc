@@ -17,6 +17,7 @@
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include <sigc++/slot.h>
+#include "externaleditorpreferences.h"
 #include "preferences.h"
 #include "multilangmgr.h"
 #include "splash.h"
@@ -32,6 +33,8 @@
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+//#define EXT_EDITORS_RADIOS // TODO: Remove the corresponding code after testing.
 
 namespace {
 void placeSpinBox(Gtk::Container* where, Gtk::SpinButton* &spin, const std::string &labelText, int digits, int inc0, int inc1, int maxLength, int range0, int range1, const std::string &toolTip = "") {
@@ -1188,6 +1191,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
 
     Gtk::Frame* fdg = Gtk::manage(new Gtk::Frame(M("PREFERENCES_EXTERNALEDITOR")));
     setExpandAlignProperties(fdg, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+#ifdef EXT_EDITORS_RADIOS
     Gtk::Grid* externaleditorGrid = Gtk::manage(new Gtk::Grid());
     externaleditorGrid->set_column_spacing(4);
     externaleditorGrid->set_row_spacing(4);
@@ -1243,13 +1247,22 @@ Gtk::Widget* Preferences::getGeneralPanel()
     externaleditorGrid->attach_next_to(*edOther, *edGimp, Gtk::POS_BOTTOM, 1, 1);
     externaleditorGrid->attach_next_to(*editorToSendTo, *edOther, Gtk::POS_RIGHT, 1, 1);
 #endif
+#endif
 
+    externalEditors = Gtk::make_managed<ExternalEditorPreferences>();
+    externalEditors->set_size_request(-1, 200);
+#ifdef EXT_EDITORS_RADIOS
+    externaleditorGrid->attach_next_to(*externalEditors, *edOther, Gtk::POS_BOTTOM, 2, 1);
+#endif
 
  //   fdg->add(*externaleditorGrid);
     editor_dir_temp = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_EXTEDITOR_DIR_TEMP")));
     editor_dir_current = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_EXTEDITOR_DIR_CURRENT")));
     editor_dir_custom = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_EXTEDITOR_DIR_CUSTOM") + ": "));
     editor_dir_custom_path = Gtk::manage(new MyFileChooserButton("", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+#ifndef EXT_EDITORS_RADIOS
+    Gtk::RadioButton::Group ge;
+#endif
     ge = editor_dir_temp->get_group();
     editor_dir_current->set_group(ge);
     editor_dir_custom->set_group(ge);
@@ -1258,7 +1271,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
     editor_bypass_output_profile = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_EXTEDITOR_BYPASS_OUTPUT_PROFILE")));
     {
         Gtk::Frame *f = Gtk::manage(new Gtk::Frame(M("PREFERENCES_EXTEDITOR_DIR")));
-        setExpandAlignProperties(f, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
+        setExpandAlignProperties(f, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
         Gtk::Box *vb = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
         vb->pack_start(*editor_dir_temp);
         vb->pack_start(*editor_dir_current);
@@ -1269,7 +1282,12 @@ Gtk::Widget* Preferences::getGeneralPanel()
         f->add(*vb);
         
         hb = Gtk::manage(new Gtk::Box());
+#ifdef EXT_EDITORS_RADIOS
+        externaleditorGrid->attach_next_to(*externalEditors, *edOther, Gtk::POS_BOTTOM, 2, 1);
         hb->pack_start(*externaleditorGrid);
+#else
+        hb->pack_start(*externalEditors);
+#endif
         hb->pack_start(*f, Gtk::PACK_EXPAND_WIDGET, 4);
 
         vb = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
@@ -1741,6 +1759,7 @@ void Preferences::storePreferences()
 
     moptions.pseudoHiDPISupport = pseudoHiDPI->get_active();
 
+#ifdef EXT_EDITORS_RADIOS
 #ifdef WIN32
     moptions.gimpDir = gimpDir->get_filename();
     moptions.psDir = psDir->get_filename();
@@ -1766,6 +1785,20 @@ void Preferences::storePreferences()
 #endif
     else if (edOther->get_active()) {
         moptions.editorToSendTo = 3;
+    }
+#endif
+
+    const std::vector<ExternalEditorPreferences::EditorInfo> &editors = externalEditors->getEditors();
+    moptions.externalEditors.resize(editors.size());
+    moptions.externalEditorIndex = -1;
+    for (unsigned i = 0; i < editors.size(); i++) {
+        moptions.externalEditors[i] = (ExternalEditor(
+            editors[i].name, editors[i].command, editors[i].icon_name));
+        if (editors[i].other_data) {
+            // The current editor was marked before the list was edited. We
+            // found the mark, so this is the editor that was active.
+            moptions.externalEditorIndex = i;
+        }
     }
 
     if (editor_dir_temp->get_active()) {
@@ -2033,6 +2066,7 @@ void Preferences::fillPreferences()
     hlThresh->set_value(moptions.highlightThreshold);
     shThresh->set_value(moptions.shadowThreshold);
 
+#ifdef EXT_EDITORS_RADIOS
     edGimp->set_active(moptions.editorToSendTo == 1);
     edOther->set_active(moptions.editorToSendTo == 3);
 #ifdef WIN32
@@ -2061,6 +2095,18 @@ void Preferences::fillPreferences()
 
 #endif
     editorToSendTo->set_text(moptions.customEditorProg);
+#endif
+
+    std::vector<ExternalEditorPreferences::EditorInfo> editorInfos;
+    for (const auto &editor : moptions.externalEditors) {
+        editorInfos.push_back(ExternalEditorPreferences::EditorInfo(
+                    editor.name, editor.command, editor.icon_name));
+    }
+    if (moptions.externalEditorIndex >= 0) {
+        // Mark the current editor so we can track it.
+        editorInfos[moptions.externalEditorIndex].other_data = (void *)1;
+    }
+    externalEditors->setEditors(editorInfos);
 
     editor_dir_temp->set_active(moptions.editor_out_dir == Options::EDITOR_OUT_DIR_TEMP);
     editor_dir_current->set_active(moptions.editor_out_dir == Options::EDITOR_OUT_DIR_CURRENT);
@@ -2535,6 +2581,23 @@ void Preferences::workflowUpdate()
             || moptions.rtSettings.printerIntent  != options.rtSettings.printerIntent) {
         // Update the position of the Histogram
         parent->updateProfiles (moptions.rtSettings.printerProfile, rtengine::RenderingIntent(moptions.rtSettings.printerIntent), moptions.rtSettings.printerBPC);
+    }
+
+    bool changed = moptions.externalEditorIndex != options.externalEditorIndex
+        || moptions.externalEditors.size() != options.externalEditors.size();
+    if (!changed) {
+        auto &editors = options.externalEditors;
+        auto &meditors = moptions.externalEditors;
+        for (unsigned i = 0; i < editors.size(); i++) {
+            if (editors[i] != meditors[i]) {
+                changed = true;
+                break;
+            }
+        }
+    }
+    if (changed) {
+        // Update the send to external editor widget.
+        parent->updateExternalEditorWidget(moptions.externalEditorIndex, moptions.externalEditors);
     }
 
 }

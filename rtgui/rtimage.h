@@ -34,6 +34,11 @@ class RTImage final : public Gtk::Image, public RTScalable
 protected:
     Cairo::RefPtr<Cairo::ImageSurface> surface;
     Glib::RefPtr<Gdk::Pixbuf> pixbuf;
+    Glib::RefPtr<const Gio::Icon> gIcon;
+    int gIconSize;
+
+    void changeImage(const Glib::RefPtr<const Gio::Icon> &gIcon, int size);
+    int iconSizeToPixels(Gtk::IconSize size) const;
 
 public:
     RTImage ();
@@ -42,9 +47,11 @@ public:
     explicit RTImage (Cairo::RefPtr<Cairo::ImageSurface> &surf);
     explicit RTImage(Cairo::RefPtr<Cairo::ImageSurface> other);
     explicit RTImage (Glib::RefPtr<RTImage> &other);
+    explicit RTImage(const Glib::RefPtr<const Gio::Icon> &gIcon, Gtk::IconSize size);
     explicit RTImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileName = Glib::ustring());
 
     void setImage (const Glib::ustring& fileName, const Glib::ustring& rtlFileName = Glib::ustring());
+    void changeImage(const Glib::RefPtr<const Gio::Icon> &gIcon, Gtk::IconSize size);
     void changeImage (const Glib::ustring& imageName);
     Cairo::RefPtr<Cairo::ImageSurface> get_surface();
     int get_width();
@@ -58,6 +65,7 @@ public:
     static void setScale (const int newScale);
 
     static Glib::RefPtr<Gdk::Pixbuf> createPixbufFromFile (const Glib::ustring& fileName);
+    static Glib::RefPtr<Gdk::Pixbuf> createPixbufFromGIcon(const Glib::RefPtr<const Gio::Icon> &icon, int size);
     static Cairo::RefPtr<Cairo::ImageSurface> createImgSurfFromFile (const Glib::ustring& fileName);
 
 };
