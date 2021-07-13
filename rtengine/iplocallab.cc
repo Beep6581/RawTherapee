@@ -2829,23 +2829,23 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     const float pow1n = pow_F(1.64f - pow_F(0.29f, nj), 0.73f);
     const float coe = pow_F(fl, 0.25f);
     const float QproFactor = (0.4f / c) * (aw + 4.0f) ;
-   // printf("Qpro=%f \n", (double) QproFactor);
-if(jabcie == true) {//Jz az bz ==> Jz Cz Hz
+   
+if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
     double mini = 1000.;
     double maxi = -1000.;
     double sum = 0.;
     int nc = 0;
     double pln = (double) la;
-    if(la < 3000.f) {
+    if(la < 3000.f) {//3000. empirical value, below image are SDR ?
         pln = (double) la / 3000.;
         pln = pow(pln, 1.9);
         pln *= 3000.;
     }
-    double pl = pln + 4.;
+    double pl = pln + 4.;//4. to avoid artifacts
     if(pl > 10000.) {
         pl = 10000.;
     }
-
+//calculate min, max, mean for Jz
 #ifdef _OPENMP
             #pragma omp parallel for reduction(min:mini) reduction(max:maxi) reduction(+:sum) if(multiThread)
 #endif
@@ -2862,6 +2862,7 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz
                 z = z / 65535.f;
                 double Jz, az, bz;
                 double xx, yy, zz;
+                //D50 ==> D65
                 xx = (d50_d65[0][0] * (double) x + d50_d65[0][1] * (double) y + d50_d65[0][2] * (double) z);
                 yy = (d50_d65[1][0] * (double) x + d50_d65[1][1] * (double) y + d50_d65[1][2] * (double) z);
                 zz = (d50_d65[2][0] * (double) x + d50_d65[2][1] * (double) y + d50_d65[2][2] * (double) z);
@@ -2881,10 +2882,12 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz
             }
         }
         sum = sum / nc;
-        avgm = 0.5 * (sum + avgm);
-        double maxy = 0.7;
-        printf("maxi=%f mini=%f mean=%f, avgm=%f, pl=%f\n", maxi, mini, sum, avgm, pl);
-        
+        avgm = 0.5 * (sum + avgm);//empirical formula
+        double maxy = 0.7;//empirical value
+        if (settings->verbose) { 
+            printf("maxi=%f mini=%f mean=%f, avgm=%f, pl=%f\n", maxi, mini, sum, avgm, pl);
+        }
+
         const float sigmoidlambdajz = params->locallab.spots.at(sp).sigmoidldajzcie; 
         const float sigmoidthjz = params->locallab.spots.at(sp).sigmoidthjzcie; 
         const float sigmoidbljz = params->locallab.spots.at(sp).sigmoidbljzcie; 
@@ -2896,7 +2899,7 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz
         const float athjz = sigmoidthjz - 1.f;
         const float bthjz = 1;
 
-        const float sigmjz = 1.5f + 22.f *(1.f - cbrt(sigmoidlambdajz));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000 e^20=485000000 e^23.5 = 16000000000
+        const float sigmjz = 1.5f + 22.f *(1.f - cbrt(sigmoidlambdajz));// e^23.5 = 16000000000
         const float bljz = sigmoidbljz;
         
         double contreal = 0.2 *  params->locallab.spots.at(sp).contjzcie;
@@ -2907,6 +2910,7 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz
             avgm + (1. - avgm) * (0.6 - contreal / 250.0), avgm + (1. - avgm) * (0.6 + contreal / 250.0),
             1, 1
         });
+        //all calculs in double to best results...but slow
         double lightreal = 0.2 *  params->locallab.spots.at(sp).lightjzcie;
         double chromz = 0.2 * params->locallab.spots.at(sp).chromjzcie;
         double dhue = 0.0174 * params->locallab.spots.at(sp).huejzcie;
@@ -2955,6 +2959,7 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz
                 z = z / 65535.f;
                 double Jz, az, bz;
                 double xx, yy, zz;
+                //change WP to D65
                 xx = (d50_d65[0][0] * (double) x + d50_d65[0][1] * (double) y + d50_d65[0][2] * (double) z);
                 yy = (d50_d65[1][0] * (double) x + d50_d65[1][1] * (double) y + d50_d65[1][2] * (double) z);
                 zz = (d50_d65[2][0] * (double) x + d50_d65[2][1] * (double) y + d50_d65[2][2] * (double) z);
@@ -2971,8 +2976,8 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz
                     Jz= jz_lightn.getVal(Jz);
                 }
 
-                if(sigmoidlambdajz > 0.f && iscie) {//sigmoid J only with ciecam module
-                    float val = Jz;// / 100.f;
+                if(sigmoidlambdajz > 0.f && iscie) {//sigmoid Jz
+                    float val = Jz;
                     if(sigmoidthjz >= 1.f) {
                         thjz = SQR(sigmoidthjz * sigmoidthjz * sigmoidthjz);
                         thjz = athjz * val + bthjz;
@@ -3004,10 +3009,11 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz
                 bz = Cz * (double) sincosval.x;
                 double L_, M_, S_;
                 Ciecam02::jzczhzxyz (xx, yy, zz, Jz, az, bz, pl, L_, M_, S_);
+                //re enable D50
                 x = 65535. * (d65_d50[0][0] * xx + d65_d50[0][1] * yy + d65_d50[0][2] * zz);
                 y = 65535. * (d65_d50[1][0] * xx + d65_d50[1][1] * yy + d65_d50[1][2] * zz);
                 z = 65535. * (d65_d50[2][0] * xx + d65_d50[2][1] * yy + d65_d50[2][2] * zz);
-                
+
                 float Ll, aa, bb;
                 Color::XYZ2Lab(x,  y,  z, Ll, aa, bb);
                 lab->L[i][k] = Ll;

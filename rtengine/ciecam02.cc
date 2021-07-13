@@ -480,10 +480,10 @@ void Ciecam02::initcam2float (float yb, float pilotd, float f, float la, float x
 
 
 void Ciecam02::xyz2jzczhz ( double &Jz, double &az, double &bz, double x, double y, double z, double pl, double &Lp, double &Mp, double &Sp)
-{
+{   //from various web 
     double Xp, Yp, Zp, L, M, S, Iz;
     double peakLum = 1. / pl;
-    //I change 10000 for peaklum function of la...because after many tests original algo works very bad (too small values of Jz)
+    //I change 10000 for peaklum function of la (absolute luminance)...because after many tests original algo works very bad (too small values of Jz)
     Xp = Jzazbz_b * x - ((Jzazbz_b - 1.) * z);
     Yp = Jzazbz_g * y - ((Jzazbz_g - 1.) * x);
     Zp = z;
@@ -504,7 +504,7 @@ void Ciecam02::xyz2jzczhz ( double &Jz, double &az, double &bz, double x, double
 
 
 void Ciecam02::jzczhzxyz (double &x, double &y, double &z, double jz, double az, double bz, double pl, double &L, double &M, double &S)
-{
+{ //from various web 
     double Xp, Yp, Zp, Lp, Mp, Sp, Iz, tmp;
 
     Iz = (jz + Jzazbz_d0) / (1. + Jzazbz_d - Jzazbz_d * (jz + Jzazbz_d0));
@@ -512,7 +512,7 @@ void Ciecam02::jzczhzxyz (double &x, double &y, double &z, double jz, double az,
     Lp = 1.0 * Iz + 0.138605043271539 * az + 0.0580473161561189 * bz;
     Mp = 1.0 * Iz - 0.138605043271539 * az - 0.0580473161561189 * bz;
     Sp = 1.0 * Iz - 0.0960192420263189 * az - 0.811891896056039 * bz;
-    //I change 10000 for pl function of la...because after many tests original algo works very bad (too small values of Jz)
+    //I change 10000 for pl function of la(absolute luminance)...because after many tests original algo works very bad (too small values of Jz)
    
     tmp = pow(Lp, 1. / Jzazbz_p);
     L = pl * pow((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), 1. / Jzazbz_n);
@@ -526,7 +526,8 @@ void Ciecam02::jzczhzxyz (double &x, double &y, double &z, double jz, double az,
     Zp = -0.0909828109828476 * L - 0.312728290523074 * M + 1.522766561305260 * S;
 
     x = (Xp + (Jzazbz_b - 1.) * Zp) / Jzazbz_b;
-    if(std::isnan(x)) {
+
+    if(std::isnan(x)) {//to avoid crash
         x = 0.;
     }
     y = (Yp + (Jzazbz_g - 1.) * x) / Jzazbz_g;
