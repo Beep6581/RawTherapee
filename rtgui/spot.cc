@@ -29,6 +29,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+namespace
+{
+
 enum GeometryIndex {
     MO_TARGET_DISK,
     MO_SOURCE_DISC,
@@ -46,6 +49,8 @@ enum GeometryIndex {
     VISIBLE_TARGET_CIRCLE,
     VISIBLE_OBJECT_COUNT
 };
+
+}
 
 Spot::Spot() :
     FoldableToolPanel(this, "spot", M ("TP_SPOT_LABEL"), true, true),

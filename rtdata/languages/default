@@ -1117,6 +1117,7 @@ HISTORY_MSG_863;Local - Wavelet merge original image
 HISTORY_MSG_864;Local - Wavelet dir contrast attenuation
 HISTORY_MSG_865;Local - Wavelet dir contrast delta
 HISTORY_MSG_866;Local - Wavelet dir compression
+HISTORY_MSG_868;Local - balance ΔE C-H
 HISTORY_MSG_869;Local - Denoise by level
 HISTORY_MSG_870;Local - Wavelet mask curve H
 HISTORY_MSG_871;Local - Wavelet mask curve C

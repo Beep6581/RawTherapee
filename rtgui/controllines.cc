@@ -28,6 +28,9 @@
 
 using namespace rtengine;
 
+namespace
+{
+
 enum GeometryIndex {
     MO_CANVAS,
     MO_OBJECT_COUNT,
@@ -45,9 +48,6 @@ enum GeometryOffset {
     OFFSET_BEGIN = (MO_OBJECT_COUNT + ::ControlLine::BEGIN) % ::ControlLine::OBJECT_COUNT,
     OFFSET_END = (MO_OBJECT_COUNT + ::ControlLine::END) % ::ControlLine::OBJECT_COUNT,
 };
-
-namespace
-{
 
 /**
  * Returns true if the object matches the offset.
