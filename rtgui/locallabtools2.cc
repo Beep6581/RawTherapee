@@ -7370,7 +7370,7 @@ Locallabcie::Locallabcie():
     jzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZFRA")))),
     modeHBoxcie(Gtk::manage(new Gtk::Box())),
     cieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
-    Autograycie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAY")))),
+    Autograycie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAYCIE")))),
     sourceGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 10.0))),
     sourceabscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 2000.0))),
     sursourcie(Gtk::manage (new MyComboBoxText ())),
@@ -7584,7 +7584,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         reparcie->set_tooltip_text(M("TP_LOCALLAB_LOGREPART_TOOLTIP"));
         cieFrame->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
         jabcie->set_tooltip_text(M("TP_LOCALLAB_JAB_TOOLTIP"));
-        Autograycie->set_tooltip_text(M("TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP"));
+        Autograycie->set_tooltip_text(M("TP_LOCALLAB_AUTOGRAYCIE_TOOLTIP"));
         sourceGraycie->set_tooltip_text("");
         sourceabscie->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
         cie1Frame->set_tooltip_text(M("TP_LOCALLAB_LOGIMAGE_TOOLTIP"));

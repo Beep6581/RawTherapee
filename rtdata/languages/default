@@ -2614,6 +2614,8 @@ TP_LOCALLAB_AMOUNT;Amount
 TP_LOCALLAB_ARTIF;Shape detection
 TP_LOCALLAB_ARTIF_TOOLTIP;ΔE scope threshold increases the range of deltaE scope. High values are for very wide gamut images.\nIncreasing deltaE decay can improve shape detection, but can also reduce the scope.
 TP_LOCALLAB_AUTOGRAY;Auto mean luminance (Yb%)
+TP_LOCALLAB_AUTOGRAYCIE;Auto
+TP_LOCALLAB_AUTOGRAYCIE_TOOLTIP;Automatically calculates the 'Mean luminance' an 'Absolute luminance'.\nTry to change with JzCzHz
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_AVOIDRAD;Soft radius
 TP_LOCALLAB_AVOIDMUN;Munsell correction only
