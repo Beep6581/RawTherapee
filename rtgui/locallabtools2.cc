@@ -7388,6 +7388,10 @@ Locallabcie::Locallabcie():
     sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.04, 3., 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.1, 1.5, 0.01, 1.))),
     sigmoidqjcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDQJ")))),
+    sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
+    sigmoidldajzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 1.0, 0.01, 0.))),
+    sigmoidthjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.04, 3., 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+    sigmoidbljzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.1, 1.5, 0.01, 1.))),
     colorflcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCOLORFL"), -100., 100., 0.5, 0.))),
     saturlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
     rstprotectcie(Gtk::manage(new Adjuster(M("TP_COLORAPP_RSTPRO"), 0., 100., 0.1, 50.))),
@@ -7423,6 +7427,14 @@ Locallabcie::Locallabcie():
     jzBox->pack_start(*contjzcie);
     jzBox->pack_start(*chromjzcie);
     jzBox->pack_start(*huejzcie);
+    sigmoidjzFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const sigjzBox = Gtk::manage(new ToolParamBlock());
+    sigjzBox->pack_start(*sigmoidldajzcie);
+    sigjzBox->pack_start(*sigmoidthjzcie);
+    sigjzBox->pack_start(*sigmoidbljzcie);
+    sigmoidjzFrame->add(*sigjzBox);
+    jzBox->pack_start(*sigmoidjzFrame);
+
     jzFrame->add(*jzBox);
     pack_start(*jzFrame);
     
@@ -7457,6 +7469,9 @@ Locallabcie::Locallabcie():
     sigmoidldacie->setAdjusterListener(this);
     sigmoidthcie->setAdjusterListener(this);
     sigmoidblcie->setAdjusterListener(this);
+    sigmoidldajzcie->setAdjusterListener(this);
+    sigmoidthjzcie->setAdjusterListener(this);
+    sigmoidbljzcie->setAdjusterListener(this);
 
     contqcie->setAdjusterListener(this);
     colorflcie->setAdjusterListener(this);
@@ -7708,6 +7723,9 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         sigmoidldacie->setValue(spot.sigmoidldacie);
         sigmoidthcie->setValue(spot.sigmoidthcie);
         sigmoidblcie->setValue(spot.sigmoidblcie);
+        sigmoidldajzcie->setValue(spot.sigmoidldajzcie);
+        sigmoidthjzcie->setValue(spot.sigmoidthjzcie);
+        sigmoidbljzcie->setValue(spot.sigmoidbljzcie);
         contqcie->setValue(spot.contqcie);
         colorflcie->setValue(spot.colorflcie);
         targabscie->setValue(spot.targabscie);
@@ -7785,6 +7803,9 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.sigmoidldacie = sigmoidldacie->getValue();
         spot.sigmoidthcie = sigmoidthcie->getValue();
         spot.sigmoidblcie = sigmoidblcie->getValue();
+        spot.sigmoidldajzcie = sigmoidldajzcie->getValue();
+        spot.sigmoidthjzcie = sigmoidthjzcie->getValue();
+        spot.sigmoidbljzcie = sigmoidbljzcie->getValue();
         spot.contqcie = contqcie->getValue();
         spot.colorflcie = colorflcie->getValue();
         spot.targabscie = targabscie->getValue();
@@ -8070,6 +8091,9 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         sigmoidldacie->setDefault(defSpot.sigmoidldacie);
         sigmoidthcie->setDefault(defSpot.sigmoidthcie);
         sigmoidblcie->setDefault(defSpot.sigmoidblcie);
+        sigmoidldajzcie->setDefault(defSpot.sigmoidldajzcie);
+        sigmoidthjzcie->setDefault(defSpot.sigmoidthjzcie);
+        sigmoidbljzcie->setDefault(defSpot.sigmoidbljzcie);
         contqcie->setDefault(defSpot.contqcie);
         colorflcie->setDefault(defSpot.colorflcie);
         targabscie->setDefault(defSpot.targabscie);
@@ -8202,6 +8226,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == sigmoidldajzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmoidldajzcie,
+                                       sigmoidldajzcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
         if (a == sigmoidthcie) {
             if (listener) {
                 listener->panelChanged(Evlocallabsigmoidthcie,
@@ -8209,10 +8240,24 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == sigmoidthjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmoidthjzcie,
+                                       sigmoidthjzcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
         if (a == sigmoidblcie) {
             if (listener) {
                 listener->panelChanged(Evlocallabsigmoidblcie,
                                        sigmoidblcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == sigmoidbljzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmoidbljzcie,
+                                       sigmoidbljzcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

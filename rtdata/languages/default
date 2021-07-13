@@ -1331,6 +1331,14 @@ HISTORY_MSG_1080;Local - CIECAM Sigmoid threshold
 HISTORY_MSG_1081;Local - CIECAM Sigmoid blend
 HISTORY_MSG_1082;Local - CIECAM Sigmoid Q J
 HISTORY_MSG_1083;Local - CIECAM Hue
+HISTORY_MSG_1084;Local - JzCzHz
+HISTORY_MSG_1085;Local - Jz lightness
+HISTORY_MSG_1086;Local - Jz contrast
+HISTORY_MSG_1087;Local - Jz chroma
+HISTORY_MSG_1088;Local - Jz hue
+HISTORY_MSG_1089;Local - Jz Sigmoid strength
+HISTORY_MSG_1090;Local - Jz Sigmoid threshold
+HISTORY_MSG_1091;Local - Jz Sigmoid blend
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2881,7 +2889,7 @@ TP_LOCALLAB_JZLIGHT;Lightness
 TP_LOCALLAB_JZCONT;Contrast
 TP_LOCALLAB_JZCHROM;Chroma
 TP_LOCALLAB_JZHUECIE;Hue
-TP_LOCALLAB_JAB_TOOLTIP;Experimental - only Jz lightness, contrast J and Sigmoid J works??.\nTry 'absolute luminance' and 'mean luminance' source
+TP_LOCALLAB_JAB_TOOLTIP;Preferably for HDR images. Is executed before Ciecam16.\nYou can also use the settings that have a strong influence on JzCzHz - Absolute luminance and Mean luminance.
 TP_LOCALLAB_LABBLURM;Blur Mask
 TP_LOCALLAB_LABEL;Local Adjustments
 TP_LOCALLAB_LABGRID;Color correction grid
@@ -3235,6 +3243,7 @@ TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modi
 TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer
 TP_LOCALLAB_SIGMAWAV;Attenuation response
 TP_LOCALLAB_SIGFRA;Sigmoid J & Q
+TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
 TP_LOCALLAB_SIGMOIDLAMBDA;Strength
 TP_LOCALLAB_SIGMOIDTH;Threshold
 TP_LOCALLAB_SIGMOIDBL;Blend

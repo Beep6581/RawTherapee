@@ -2882,6 +2882,21 @@ if(jabcie == true) {
         avgm = 0.5 * (sum + avgm);
         double maxy = 0.7;
         printf("maxi=%f mini=%f mean=%f, avgm=%f, pl=%f\n", maxi, mini, sum, avgm, pl);
+        
+    const float sigmoidlambdajz = params->locallab.spots.at(sp).sigmoidldajzcie; 
+    const float sigmoidthjz = params->locallab.spots.at(sp).sigmoidthjzcie; 
+    const float sigmoidbljz = params->locallab.spots.at(sp).sigmoidbljzcie; 
+
+    float thjz = 1.f;
+    const float atjz = 1.f - sigmoidthjz;
+    const float btjz = sigmoidthjz;
+
+    const float athjz = sigmoidthjz - 1.f;
+    const float bthjz = 1;
+
+    const float sigmjz = 1.5f + 22.f *(1.f - cbrt(sigmoidlambdajz));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000 e^20=485000000 e^23.5 = 16000000000
+    const float bljz = sigmoidbljz;
+        
         double contreal = 0.2 *  params->locallab.spots.at(sp).contjzcie;
         DiagonalCurve jz_contrast({
             DCT_NURBS,
@@ -2953,15 +2968,15 @@ if(jabcie == true) {
                     Jz= jz_lightn.getVal(Jz);
                 }
 
-                if(sigmoidlambda > 0.f && iscie && sigmoidqj == false) {//sigmoid J only with ciecam module
+                if(sigmoidlambdajz > 0.f && iscie) {//sigmoid J only with ciecam module
                     float val = Jz;// / 100.f;
-                    if(sigmoidth >= 1.f) {
-                        th = SQR(sigmoidth * sigmoidth * sigmoidth);
-                        th = ath * val + bth;
+                    if(sigmoidthjz >= 1.f) {
+                        thjz = SQR(sigmoidthjz * sigmoidthjz * sigmoidthjz);
+                        thjz = athjz * val + bthjz;
                     } else {
-                        th = at * val + bt;
+                        thjz = atjz * val + btjz;
                     }
-                    sigmoidla (val, th, sigm, bl);
+                    sigmoidla (val, thjz, sigmjz, bljz);
                     Jz = val;
                 }
                 double Cz, Hz;
@@ -2997,7 +3012,8 @@ if(jabcie == true) {
             }
 
         }
-} else {
+}
+//begin ciecam
 #ifdef __SSE2__
         int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
 #endif
@@ -3249,7 +3265,7 @@ if(jabcie == true) {
             }
 
         }
-} 
+//} 
 }
 
 void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufcolfin, float rad, int bfh, int bfw, float epsilmax, float epsilmin, float thres, int sk, bool multiThread, int flag)

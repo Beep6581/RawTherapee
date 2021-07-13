@@ -1000,6 +1000,9 @@ public:
         bool sigmoidldacie;
         bool sigmoidthcie;
         bool sigmoidblcie;
+        bool sigmoidldajzcie;
+        bool sigmoidthjzcie;
+        bool sigmoidbljzcie;
         bool contqcie;
         bool colorflcie;
         bool targabscie;
