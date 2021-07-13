@@ -4275,7 +4275,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     reparcie(100.),
     sensicie(60),
     Autograycie(true),
-    jabcie(true),
+    jabcie(false),
     sigmoidqjcie(false),
     sourceGraycie(10.),
     sourceabscie(2000.),

@@ -37,6 +37,7 @@
 #include "settings.h"
 #include "../rtgui/options.h"
 #include "utils.h"
+#include "iccmatrices.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -2829,7 +2830,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     const float coe = pow_F(fl, 0.25f);
     const float QproFactor = (0.4f / c) * (aw + 4.0f) ;
    // printf("Qpro=%f \n", (double) QproFactor);
-if(jabcie == true) {
+if(jabcie == true) {//Jz az bz ==> Jz Cz Hz
     double mini = 1000.;
     double maxi = -1000.;
     double sum = 0.;
@@ -2861,9 +2862,10 @@ if(jabcie == true) {
                 z = z / 65535.f;
                 double Jz, az, bz;
                 double xx, yy, zz;
-                xx = (double) x ;
-                yy = (double) y ;
-                zz = (double) z ;
+                xx = (d50_d65[0][0] * (double) x + d50_d65[0][1] * (double) y + d50_d65[0][2] * (double) z);
+                yy = (d50_d65[1][0] * (double) x + d50_d65[1][1] * (double) y + d50_d65[1][2] * (double) z);
+                zz = (d50_d65[2][0] * (double) x + d50_d65[2][1] * (double) y + d50_d65[2][2] * (double) z);
+
                 double L_p, M_p, S_p;
 
                 Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p);
@@ -2883,19 +2885,19 @@ if(jabcie == true) {
         double maxy = 0.7;
         printf("maxi=%f mini=%f mean=%f, avgm=%f, pl=%f\n", maxi, mini, sum, avgm, pl);
         
-    const float sigmoidlambdajz = params->locallab.spots.at(sp).sigmoidldajzcie; 
-    const float sigmoidthjz = params->locallab.spots.at(sp).sigmoidthjzcie; 
-    const float sigmoidbljz = params->locallab.spots.at(sp).sigmoidbljzcie; 
+        const float sigmoidlambdajz = params->locallab.spots.at(sp).sigmoidldajzcie; 
+        const float sigmoidthjz = params->locallab.spots.at(sp).sigmoidthjzcie; 
+        const float sigmoidbljz = params->locallab.spots.at(sp).sigmoidbljzcie; 
 
-    float thjz = 1.f;
-    const float atjz = 1.f - sigmoidthjz;
-    const float btjz = sigmoidthjz;
+        float thjz = 1.f;
+        const float atjz = 1.f - sigmoidthjz;
+        const float btjz = sigmoidthjz;
 
-    const float athjz = sigmoidthjz - 1.f;
-    const float bthjz = 1;
+        const float athjz = sigmoidthjz - 1.f;
+        const float bthjz = 1;
 
-    const float sigmjz = 1.5f + 22.f *(1.f - cbrt(sigmoidlambdajz));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000 e^20=485000000 e^23.5 = 16000000000
-    const float bljz = sigmoidbljz;
+        const float sigmjz = 1.5f + 22.f *(1.f - cbrt(sigmoidlambdajz));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000 e^20=485000000 e^23.5 = 16000000000
+        const float bljz = sigmoidbljz;
         
         double contreal = 0.2 *  params->locallab.spots.at(sp).contjzcie;
         DiagonalCurve jz_contrast({
@@ -2906,7 +2908,7 @@ if(jabcie == true) {
             1, 1
         });
         double lightreal = 0.2 *  params->locallab.spots.at(sp).lightjzcie;
-        double chromz = 0.4 * params->locallab.spots.at(sp).chromjzcie;
+        double chromz = 0.2 * params->locallab.spots.at(sp).chromjzcie;
         double dhue = 0.0174 * params->locallab.spots.at(sp).huejzcie;
 
         DiagonalCurve jz_light({
@@ -2953,9 +2955,10 @@ if(jabcie == true) {
                 z = z / 65535.f;
                 double Jz, az, bz;
                 double xx, yy, zz;
-                xx = (double) x ;
-                yy = (double) y ;
-                zz = (double) z ;
+                xx = (d50_d65[0][0] * (double) x + d50_d65[0][1] * (double) y + d50_d65[0][2] * (double) z);
+                yy = (d50_d65[1][0] * (double) x + d50_d65[1][1] * (double) y + d50_d65[1][2] * (double) z);
+                zz = (d50_d65[2][0] * (double) x + d50_d65[2][1] * (double) y + d50_d65[2][2] * (double) z);
+                
                 double L_p, M_p, S_p;
 
                 Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p);
@@ -3001,9 +3004,10 @@ if(jabcie == true) {
                 bz = Cz * (double) sincosval.x;
                 double L_, M_, S_;
                 Ciecam02::jzczhzxyz (xx, yy, zz, Jz, az, bz, pl, L_, M_, S_);
-                x = xx * 65535.;
-                y = yy * 65535.;
-                z = zz * 65535.;
+                x = 65535. * (d65_d50[0][0] * xx + d65_d50[0][1] * yy + d65_d50[0][2] * zz);
+                y = 65535. * (d65_d50[1][0] * xx + d65_d50[1][1] * yy + d65_d50[1][2] * zz);
+                z = 65535. * (d65_d50[2][0] * xx + d65_d50[2][1] * yy + d65_d50[2][2] * zz);
+                
                 float Ll, aa, bb;
                 Color::XYZ2Lab(x,  y,  z, Ll, aa, bb);
                 lab->L[i][k] = Ll;
