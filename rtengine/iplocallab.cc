@@ -2835,11 +2835,12 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
     double maxi = -1000.;
     double sum = 0.;
     int nc = 0;
+    double adapjz = params->locallab.spots.at(sp).adapjzcie;
     double pln = (double) la;
-    if(la < 3000.f) {//3000. empirical value, below image are SDR ?
-        pln = (double) la / 3000.;
-        pln = pow(pln, 1.9);
-        pln *= 3000.;
+    if(la < 5000.f) {//3000. empirical value, below image are SDR ?
+        pln = (double) la / 5000.;
+        pln = pow(pln, adapjz);
+        pln *= 5000.;
     }
     double pl = pln + 4.;//4. to avoid artifacts
     if(pl > 10000.) {
@@ -2883,7 +2884,8 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
         }
         sum = sum / nc;
         avgm = 0.5 * (sum + avgm);//empirical formula
-        double maxy = 0.7;//empirical value
+        double maxy = 0.85;//empirical value
+        double maxyc = 0.95;
         if (settings->verbose) { 
             printf("maxi=%f mini=%f mean=%f, avgm=%f, pl=%f\n", maxi, mini, sum, avgm, pl);
         }
@@ -2914,7 +2916,6 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
         double lightreal = 0.2 *  params->locallab.spots.at(sp).lightjzcie;
         double chromz = 0.2 * params->locallab.spots.at(sp).chromjzcie;
         double dhue = 0.0174 * params->locallab.spots.at(sp).huejzcie;
-
         DiagonalCurve jz_light({
             DCT_NURBS,
             0, 0,
@@ -2933,14 +2934,14 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
             DCT_NURBS,
             0, 0,
             0.05, 0.05 + chromz / 150.,
-            maxy, min (1.0, maxy + chromz / 300.0),
+            maxyc, min (1.0, maxyc + chromz / 300.0),
             1, 1
         });
         DiagonalCurve cz_chn({
             DCT_NURBS,
             0, 0,
             0.05 - chromz / 150., 0.05,
-            min (1.0, maxy - chromz / 300.0), maxy,
+            min (1.0, maxyc - chromz / 300.0), maxyc,
             1, 1
         });
 #ifdef _OPENMP

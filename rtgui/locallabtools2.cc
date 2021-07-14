@@ -7379,6 +7379,7 @@ Locallabcie::Locallabcie():
     lightlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTL"), -100., 100., 0.5, 0.))),
     lightjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZLIGHT"), -100., 100., 0.5, 0.))),
     contjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCONT"), -100., 100., 0.5, 0.))),
+    adapjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZADAP"), 1., 10., 0.05, 4.))),
     lightqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTQ"), -100., 100., 0.5, 0.))),
     contlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTL"), -100., 100., 0.5, 0.))),
     contqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),
@@ -7427,6 +7428,7 @@ Locallabcie::Locallabcie():
     jzBox->pack_start(*contjzcie);
     jzBox->pack_start(*chromjzcie);
     jzBox->pack_start(*huejzcie);
+    jzBox->pack_start(*adapjzcie);
     sigmoidjzFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const sigjzBox = Gtk::manage(new ToolParamBlock());
     sigjzBox->pack_start(*sigmoidldajzcie);
@@ -7465,6 +7467,7 @@ Locallabcie::Locallabcie():
     lightqcie->setAdjusterListener(this);
     contlcie->setAdjusterListener(this);
     contjzcie->setAdjusterListener(this);
+    adapjzcie->setAdjusterListener(this);
     contthrescie->setAdjusterListener(this);
     sigmoidldacie->setAdjusterListener(this);
     sigmoidthcie->setAdjusterListener(this);
@@ -7719,6 +7722,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         lightqcie->setValue(spot.lightqcie);
         contlcie->setValue(spot.contlcie);
         contjzcie->setValue(spot.contjzcie);
+        adapjzcie->setValue(spot.adapjzcie);
         contthrescie->setValue(spot.contthrescie);
         sigmoidldacie->setValue(spot.sigmoidldacie);
         sigmoidthcie->setValue(spot.sigmoidthcie);
@@ -7799,6 +7803,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.lightqcie = lightqcie->getValue();
         spot.contlcie = contlcie->getValue();
         spot.contjzcie = contjzcie->getValue();
+        spot.adapjzcie = adapjzcie->getValue();
         spot.contthrescie = contthrescie->getValue();
         spot.sigmoidldacie = sigmoidldacie->getValue();
         spot.sigmoidthcie = sigmoidthcie->getValue();
@@ -8087,6 +8092,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         lightqcie->setDefault(defSpot.lightqcie);
         contlcie->setDefault(defSpot.contlcie);
         contjzcie->setDefault(defSpot.contjzcie);
+        adapjzcie->setDefault(defSpot.adapjzcie);
         contthrescie->setDefault(defSpot.contthrescie);
         sigmoidldacie->setDefault(defSpot.sigmoidldacie);
         sigmoidthcie->setDefault(defSpot.sigmoidthcie);
@@ -8209,6 +8215,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabcontjzcie,
                                        contjzcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == adapjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabadapjzcie,
+                                       adapjzcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

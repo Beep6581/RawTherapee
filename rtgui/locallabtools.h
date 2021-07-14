@@ -1525,6 +1525,8 @@ private:
     Adjuster* const lightlcie;
     Adjuster* const lightjzcie;
     Adjuster* const contjzcie;
+    Adjuster* const adapjzcie;
+    
     Adjuster* const lightqcie;
     Adjuster* const contlcie;
     Adjuster* const contqcie;

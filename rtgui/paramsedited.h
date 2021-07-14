@@ -996,6 +996,7 @@ public:
         bool lightqcie;
         bool contlcie;
         bool contjzcie;
+        bool adapjzcie;
         bool contthrescie;
         bool sigmoidldacie;
         bool sigmoidthcie;

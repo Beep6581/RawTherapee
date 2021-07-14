@@ -1340,6 +1340,7 @@ HISTORY_MSG_1088;Local - Jz hue
 HISTORY_MSG_1089;Local - Jz Sigmoid strength
 HISTORY_MSG_1090;Local - Jz Sigmoid threshold
 HISTORY_MSG_1091;Local - Jz Sigmoid blend
+HISTORY_MSG_1092;Local - Jz adaptation
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2887,6 +2888,7 @@ TP_LOCALLAB_INVERS_TOOLTIP;Fewer possibilities if selected (Inverse).\n\nAlterna
 TP_LOCALLAB_INVMASK;Inverse algorithm
 TP_LOCALLAB_ISOGR;Distribution (ISO)
 TP_LOCALLAB_JAB;Jz Cz Hz
+TP_LOCALLAB_JZADAP;Peak luminance adaptation (SDR)
 TP_LOCALLAB_JZFRA;Jz Cz Hz
 TP_LOCALLAB_JZLIGHT;Lightness
 TP_LOCALLAB_JZCONT;Contrast
