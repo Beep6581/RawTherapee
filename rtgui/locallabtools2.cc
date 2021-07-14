@@ -7587,6 +7587,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         reparcie->set_tooltip_text(M("TP_LOCALLAB_LOGREPART_TOOLTIP"));
         cieFrame->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
         jabcie->set_tooltip_text(M("TP_LOCALLAB_JAB_TOOLTIP"));
+        adapjzcie->set_tooltip_text(M("TP_LOCALLAB_JABADAP_TOOLTIP"));
         Autograycie->set_tooltip_text(M("TP_LOCALLAB_AUTOGRAYCIE_TOOLTIP"));
         sourceGraycie->set_tooltip_text("");
         sourceabscie->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
@@ -7613,6 +7614,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         reparcie->set_tooltip_text("");
         cieFrame->set_tooltip_text("");
         jabcie->set_tooltip_text("");
+        adapjzcie->set_tooltip_text("");
         Autograycie->set_tooltip_text("");
         sourceGraycie->set_tooltip_text("");
         sourceabscie->set_tooltip_text("");
