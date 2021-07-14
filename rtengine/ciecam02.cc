@@ -507,8 +507,8 @@ void Ciecam02::jzczhzxyz (double &x, double &y, double &z, double jz, double az,
 { //from various web 
     double Xp, Yp, Zp, Lp, Mp, Sp, Iz, tmp;
 
-   // Iz = std::max((jz + Jzazbz_d0) / (1. + Jzazbz_d - Jzazbz_d * (jz + Jzazbz_d0)), 0.);
-    Iz = (jz + Jzazbz_d0) / (1. + Jzazbz_d - Jzazbz_d * (jz + Jzazbz_d0));
+    Iz = std::max((jz + Jzazbz_d0) / (1. + Jzazbz_d - Jzazbz_d * (jz + Jzazbz_d0)), 0.);
+   // Iz = (jz + Jzazbz_d0) / (1. + Jzazbz_d - Jzazbz_d * (jz + Jzazbz_d0));
 
     Lp = 1.0 * Iz + 0.138605043271539 * az + 0.0580473161561189 * bz;
     Mp = 1.0 * Iz - 0.138605043271539 * az - 0.0580473161561189 * bz;
