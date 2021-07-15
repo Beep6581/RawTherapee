@@ -194,8 +194,9 @@ if [[ -d /usr/local/Cellar/expat ]]; then ditto /usr/local/Cellar/expat/*/lib/li
 # Copy libz into the app bundle
 ditto ${LOCAL_PREFIX}/lib/libz.1.dylib "${CONTENTS}/Frameworks"
 
-# Copy libpng16 to the app bundle
+# Copy libpng12 & 16 to the app bundle
 ditto ${LOCAL_PREFIX}/lib/libpng16.16.dylib "${CONTENTS}/Frameworks/libpng16.16.dylib"
+ditto ${LOCAL_PREFIX}/lib/libpng12.0.dylib "${CONTENTS}/Frameworks/libpng12.0.dylib"
 
 # Copy libtiff 5 into the app bundle
 ditto ${LOCAL_PREFIX}/lib/libtiff.5.dylib "${CONTENTS}/Frameworks/libtiff.5.dylib"
@@ -205,17 +206,17 @@ ditto ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
 
 # Prepare GTK+3 installation
 msg "Copying configuration files from ${GTK_PREFIX}:"
-install -d "${ETC}/gtk-3.0"
+cp -RL {"${GDK_PREFIX}/lib","${LIB}"}/gdk-pixbuf-2.0
 msg "Copying library modules from ${GTK_PREFIX}:"
-ditto --arch "${arch}" {"${GTK_PREFIX}/lib","${LIB}"}/gdk-pixbuf-2.0
+cp -RL {"${GDK_PREFIX}/lib","${LIB}"}/gdk-pixbuf-2.0
 ditto --arch "${arch}" {"${GTK_PREFIX}/lib","${LIB}"}/gtk-3.0
 msg "Removing static libraries and cache files:"
 find -E "${LIB}" -type f -regex '.*\.(a|la|cache)$' | while read -r; do rm "${REPLY}"; done
 
 # Make Frameworks folder flat
 msg "Flattening the Frameworks folder"
-ditto "${LIB}"/gdk-pixbuf-2.0/2*/loaders/*.so "${LIB}"
-ditto "${LIB}"/gtk-3.0/3*/immodules/*.{dylib,so} "${LIB}"
+cp -RL "${LIB}"/gdk-pixbuf-2.0/2*/loaders/* "${LIB}"
+cp "${LIB}"/gtk-3.0/3*/immodules/*.{dylib,so} "${LIB}"
 rm -r "${LIB}"/gtk-3.0
 rm -r "${LIB}"/gdk-pixbuf-2.0
 
