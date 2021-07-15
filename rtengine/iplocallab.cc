@@ -2833,22 +2833,15 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
 if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
     double mini = 1000.;
     double maxi = -1000.;
+    double maxiC = -1000.;
+    
     double sum = 0.;
     int nc = 0;
     double adapjz = params->locallab.spots.at(sp).adapjzcie;
-    double pln = (double) la;
-    if(la < 5000.f) {//3000. empirical value, below image are SDR ?
-        pln = (double) la / 5000.;
-        pln = pow(pln, adapjz);
-        pln *= 5000.;
-    }
-    double pl = pln + 4.;//4. to avoid artifacts
-    if(pl > 10000.) {
-        pl = 10000.;
-    }
+    double pl = 10000.;
 //calculate min, max, mean for Jz
 #ifdef _OPENMP
-            #pragma omp parallel for reduction(min:mini) reduction(max:maxi) reduction(+:sum) if(multiThread)
+            #pragma omp parallel for reduction(min:mini) reduction(max:maxi) reduction(max:maxiC) reduction(+:sum) if(multiThread)
 #endif
         for (int i = 0; i < height; i+=10) {
             for (int k = 0; k < width; k+=10) {
@@ -2877,6 +2870,11 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
                 if(Jz < mini) {
                     mini = Jz;
                 }
+                double Cz = sqrt(az * az + bz * bz);
+                if(Cz > maxiC) {
+                    maxiC = Cz;
+                }
+
                 sum += Jz;
                 nc++;
                 
@@ -2884,10 +2882,10 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
         }
         sum = sum / nc;
         avgm = 0.5 * (sum + avgm);//empirical formula
-        double maxy = 0.85;//empirical value
+        double maxy = 0.75;//empirical value
         double maxyc = 0.95;
         if (settings->verbose) { 
-            printf("maxi=%f mini=%f mean=%f, avgm=%f, pl=%f\n", maxi, mini, sum, avgm, pl);
+            printf("maxi=%f mini=%f mean=%f, avgm=%f, maxiC=%f\n", maxi, mini, sum, avgm, maxiC);
         }
 
         const float sigmoidlambdajz = params->locallab.spots.at(sp).sigmoidldajzcie; 
@@ -2914,8 +2912,11 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
         });
         //all calculs in double to best results...but slow
         double lightreal = 0.2 *  params->locallab.spots.at(sp).lightjzcie;
-        double chromz = 0.2 * params->locallab.spots.at(sp).chromjzcie;
+        double chromz = 0.11 * params->locallab.spots.at(sp).chromjzcie;
         double dhue = 0.0174 * params->locallab.spots.at(sp).huejzcie;
+        double kjz = (0.35 + 0.05 * adapjz) / maxi;//remapping Jz in usual values 0..1
+        double kcz =0.3 / maxiC;//remapping Cz
+        printf("kjz=%f kcz=%f maxi=%f\n", kjz, kcz, maxi);
         DiagonalCurve jz_light({
             DCT_NURBS,
             0, 0,
@@ -2933,7 +2934,7 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
         DiagonalCurve cz_ch({
             DCT_NURBS,
             0, 0,
-            0.05, 0.05 + chromz / 150.,
+            0.2, 0.2 + chromz / 150.,
             maxyc, min (1.0, maxyc + chromz / 300.0),
             1, 1
         });
@@ -2968,13 +2969,15 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
                 double L_p, M_p, S_p;
 
                 Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p);
+                //remapping Jz
+                Jz = Jz * kjz;
                 Jz= jz_contrast.getVal(Jz);
 
                 if(lightreal > 0) {
-                    Jz= jz_light.getVal(Jz);
+                    Jz = jz_light.getVal(Jz);
                 }
                 if(lightreal < 0) {
-                    Jz= jz_lightn.getVal(Jz);
+                    Jz = jz_lightn.getVal(Jz);
                 }
 
                 if(sigmoidlambdajz > 0.f && iscie) {//sigmoid Jz
@@ -2990,24 +2993,28 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
                 }
                 double Cz, Hz;
                 Cz = sqrt(az * az + bz * bz);
+                //remapping Cz
+                Cz = Cz * kcz;
                 Hz = xatan2f ( bz, az );
                 
                 if ( Hz < 0.0 ) {
                     Hz += (double) (2.f * rtengine::RT_PI_F);
                 }
                 if(chromz > 0) {
-                    Cz= cz_ch.getVal(Cz);
+                    Cz = cz_ch.getVal(Cz);
                 }
                 if(chromz < 0) {
-                    Cz= cz_chn.getVal(Cz);
+                    Cz = cz_chn.getVal(Cz);
                 }
                 Hz += dhue;
                 if ( Hz < 0.0 ) {
                     Hz += (double) (2.f * rtengine::RT_PI_F);
                 }
+                Cz = Cz / kcz;
                 float2 sincosval = xsincosf(Hz);
                 az = Cz * (double) sincosval.y;
                 bz = Cz * (double) sincosval.x;
+                Jz = Jz / kjz;
                 double L_, M_, S_;
                 Ciecam02::jzczhzxyz (xx, yy, zz, Jz, az, bz, pl, L_, M_, S_);
                 //re enable D50

@@ -7379,7 +7379,7 @@ Locallabcie::Locallabcie():
     lightlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTL"), -100., 100., 0.5, 0.))),
     lightjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZLIGHT"), -100., 100., 0.5, 0.))),
     contjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCONT"), -100., 100., 0.5, 0.))),
-    adapjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZADAP"), 1., 10., 0.05, 4.))),
+    adapjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZADAP"), 1., 10., 0.05, 2.))),
     lightqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTQ"), -100., 100., 0.5, 0.))),
     contlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTL"), -100., 100., 0.5, 0.))),
     contqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),

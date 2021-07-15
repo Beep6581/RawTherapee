@@ -2888,14 +2888,14 @@ TP_LOCALLAB_INVERS_TOOLTIP;Fewer possibilities if selected (Inverse).\n\nAlterna
 TP_LOCALLAB_INVMASK;Inverse algorithm
 TP_LOCALLAB_ISOGR;Distribution (ISO)
 TP_LOCALLAB_JAB;Jz Cz Hz
-TP_LOCALLAB_JABADAP_TOOLTIP;Allows you to adapt - for SDR images - the relation between Jz and saturation.
-TP_LOCALLAB_JZADAP;Peak luminance adaptation (SDR)
+TP_LOCALLAB_JABADAP_TOOLTIP;Allows you to adapt a) the relation between Jz and saturation, b) the peak luminance level 
+TP_LOCALLAB_JZADAP;Peak luminance adaptation
 TP_LOCALLAB_JZFRA;Jz Cz Hz
 TP_LOCALLAB_JZLIGHT;Lightness
 TP_LOCALLAB_JZCONT;Contrast
 TP_LOCALLAB_JZCHROM;Chroma
 TP_LOCALLAB_JZHUECIE;Hue
-TP_LOCALLAB_JAB_TOOLTIP;Preferably for HDR images. Is executed before Ciecam16.\nYou can also use the settings that have a strong influence on JzCzHz - Absolute luminance and Mean luminance.
+TP_LOCALLAB_JAB_TOOLTIP;Preferably for HDR images. Is executed before Ciecam16.
 TP_LOCALLAB_LABBLURM;Blur Mask
 TP_LOCALLAB_LABEL;Local Adjustments
 TP_LOCALLAB_LABGRID;Color correction grid
