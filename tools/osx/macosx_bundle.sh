@@ -138,7 +138,7 @@ MACOS="${CONTENTS}/MacOS"
 LIB="${CONTENTS}/Frameworks"
 ETC="${RESOURCES}/etc"
 EXECUTABLE="${MACOS}/rawtherapee"
-GDK_PREFIX="${LOCAL_PREFIX}/local/"
+GDK_PREFIX="${LOCAL_PREFIX}/"
 
 msg "Removing old files:"
 rm -rf "${APP}" *.dmg *.zip
@@ -153,7 +153,7 @@ msg "Copying binary executable files."
 ditto "${CMAKE_BUILD_TYPE}/MacOS" "${MACOS}"
 
 msg "Copying Resources directory."
-cp AboutThisBuild.txt "${RESOURCES}"
+#cp AboutThisBuild.txt "${RESOURCES}"
 ditto "${CMAKE_BUILD_TYPE}/Resources" "${RESOURCES}"
 
 echo "\n--------\n" >> "${RESOURCES}/AboutThisBuild.txt"
@@ -165,13 +165,19 @@ echo "Bundle UUID:   $(uuidgen|tr 'A-Z' 'a-z')" >> "${RESOURCES}/AboutThisBuild.
 
 # Copy the Lensfun database into the app bundle
 mkdir -p "${RESOURCES}/share/lensfun"
-ditto ${LOCAL_PREFIX}/local/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
+lensfunversion=$(pkg-config --modversion lensfun | cut -f3 -d'.')
+if [ $lensfunversion = 95 ]
+then
+    ditto ${LOCAL_PREFIX}/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
+else
+    ditto ${LOCAL_PREFIX}/share/lensfun/version_1/* "${RESOURCES}/share/lensfun"
+fi
 
 # Copy liblensfun to Frameworks
-ditto ${LOCAL_PREFIX}/local/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks/liblensfun.2.dylib"
+ditto ${LOCAL_PREFIX}/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks/liblensfun.2.dylib"
 
 # Copy libomp to Frameworks
-ditto ${LOCAL_PREFIX}/local/lib/libomp.dylib "${CONTENTS}/Frameworks"
+ditto ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
 
 msg "Copying dependencies from ${GTK_PREFIX}."
 CheckLink "${EXECUTABLE}"
@@ -180,101 +186,92 @@ CheckLink "${EXECUTABLE}"
 ModifyInstallNames
 
 # Copy libjpeg-turbo ("62") into the app bundle
-ditto ${LOCAL_PREFIX}/local/lib/libjpeg.62.dylib "${CONTENTS}/Frameworks/libjpeg.62.dylib"
+ditto ${LOCAL_PREFIX}/lib/libjpeg.62.dylib "${CONTENTS}/Frameworks/libjpeg.62.dylib"
 
 # Copy libexpat into the app bundle (which is keg-only)
 if [[ -d /usr/local/Cellar/expat ]]; then ditto /usr/local/Cellar/expat/*/lib/libexpat.1.dylib "${CONTENTS}/Frameworks"; else ditto "${EXPATLIB}" "${CONTENTS}/Frameworks/libexpat.1.dylib"; fi
 
 # Copy libz into the app bundle
-ditto ${LOCAL_PREFIX}/local/lib/libz.1.dylib "${CONTENTS}/Frameworks"
+ditto ${LOCAL_PREFIX}/lib/libz.1.dylib "${CONTENTS}/Frameworks"
 
-# Copy libpng16 to the app bundle
-ditto ${LOCAL_PREFIX}/local/lib/libpng16.16.dylib "${CONTENTS}/Frameworks/libpng16.16.dylib"
+# Copy libpng12 & 16 to the app bundle
+ditto ${LOCAL_PREFIX}/lib/libpng16.16.dylib "${CONTENTS}/Frameworks/libpng16.16.dylib"
+ditto ${LOCAL_PREFIX}/lib/libpng12.0.dylib "${CONTENTS}/Frameworks/libpng12.0.dylib"
 
 # Copy libtiff 5 into the app bundle
-ditto ${LOCAL_PREFIX}/local/lib/libtiff.5.dylib "${CONTENTS}/Frameworks/libtiff.5.dylib"
-
-# Copy the Lensfun database into the app bundle
-mkdir -p "${RESOURCES}/share/lensfun"
-ditto ${LOCAL_PREFIX}/local/share/lensfun/version_2/* "${RESOURCES}/share/lensfun"
-
-# Copy liblensfun to Frameworks
-ditto ${LOCAL_PREFIX}/local/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks/liblensfun.2.dylib"
+ditto ${LOCAL_PREFIX}/lib/libtiff.5.dylib "${CONTENTS}/Frameworks/libtiff.5.dylib"
 
 # Copy libomp to Frameworks
-ditto ${LOCAL_PREFIX}/local/lib/libomp.dylib "${CONTENTS}/Frameworks"
+ditto ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
 
 # Prepare GTK+3 installation
 msg "Copying configuration files from ${GTK_PREFIX}:"
-install -d "${ETC}/gtk-3.0"
+cp -RL {"${GDK_PREFIX}/lib","${LIB}"}/gdk-pixbuf-2.0
 msg "Copying library modules from ${GTK_PREFIX}:"
-ditto --arch "${arch}" {"${GTK_PREFIX}/lib","${LIB}"}/gdk-pixbuf-2.0
+cp -RL {"${GDK_PREFIX}/lib","${LIB}"}/gdk-pixbuf-2.0
 ditto --arch "${arch}" {"${GTK_PREFIX}/lib","${LIB}"}/gtk-3.0
 msg "Removing static libraries and cache files:"
 find -E "${LIB}" -type f -regex '.*\.(a|la|cache)$' | while read -r; do rm "${REPLY}"; done
 
 # Make Frameworks folder flat
 msg "Flattening the Frameworks folder"
-ditto "${LIB}"/gdk-pixbuf-2.0/2*/loaders/*.so "${LIB}"
-ditto "${LIB}"/gtk-3.0/3*/immodules/*.{dylib,so} "${LIB}"
+cp -RL "${LIB}"/gdk-pixbuf-2.0/2*/loaders/* "${LIB}"
+cp "${LIB}"/gtk-3.0/3*/immodules/*.{dylib,so} "${LIB}"
 rm -r "${LIB}"/gtk-3.0
 rm -r "${LIB}"/gdk-pixbuf-2.0
 
 # GTK+3 themes
 msg "Copy GTK+3 theme and icon resources:"
-ditto {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/themes/Mac/gtk-3.0/gtk-keys.css
-ditto {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/themes/Default/gtk-3.0/gtk-keys.css
+ditto {"${LOCAL_PREFIX}","${RESOURCES}"}/share/themes/Mac/gtk-3.0/gtk-keys.css
+ditto {"${LOCAL_PREFIX}","${RESOURCES}"}/share/themes/Default/gtk-3.0/gtk-keys.css
 
 # Adwaita icons
 msg "Copy Adwaita icons"
-iconfolders=("16x16/actions" "16x16/devices" "16x16/mimetypes" "16x16/places" "16x16/status" "48x48/devices")
+iconfolders=("16x16/actions" "16x16/devices" "16x16/mimetypes" "16x16/places" "16x16/status" "16x16/ui" "48x48/devices")
 for f in "${iconfolders[@]}"; do
     mkdir -p ${RESOURCES}/share/icons/Adwaita/${f}
-    ditto ${LOCAL_PREFIX}/local/share/icons/Adwaita/${f}/* "${RESOURCES}"/share/icons/Adwaita/${f}
+    cp -RL ${LOCAL_PREFIX}/share/icons/Adwaita/${f}/* "${RESOURCES}"/share/icons/Adwaita/${f}
 done
-ditto {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/icons/Adwaita/index.theme
-"${LOCAL_PREFIX}/local/bin/gtk-update-icon-cache" "${RESOURCES}/share/icons/Adwaita"
-ditto "${LOCAL_PREFIX}/local/share/icons/hicolor" "${RESOURCES}/share/icons/hicolor"
+cp -RL {"${LOCAL_PREFIX}","${RESOURCES}"}/share/icons/Adwaita/index.theme
+"${LOCAL_PREFIX}/bin/gtk-update-icon-cache" "${RESOURCES}/share/icons/Adwaita" || "${LOCAL_PREFIX}/bin/gtk-update-icon-cache-3.0" "${RESOURCES}/share/icons/Adwaita"
+cp -RL "${LOCAL_PREFIX}/share/icons/hicolor" "${RESOURCES}/share/icons/hicolor"
 
 # fix libfreetype install name
 for lib in "${LIB}"/*; do
     install_name_tool -change libfreetype.6.dylib "${LIB}"/libfreetype.6.dylib "${lib}"
 done
 
-# pixbuf loaders & immodules
+# Build GTK3 pixbuf loaders & immodules database
 msg "Build GTK3 databases:"
-"${LOCAL_PREFIX}"/local/bin/gdk-pixbuf-query-loaders "${LIB}"/libpix*.so > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
-"${LOCAL_PREFIX}"/local/bin/gtk-query-immodules-3.0 "${LIB}"/im-* > "${ETC}"/gtk-3.0/gtk.immodules
-sed -i "" -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}/gtk-3.0/gdk-pixbuf.loaders" "${ETC}/gtk-3.0/gtk.immodules"
-sed -i "" -e "s|/opt/local/|/Applications/RawTherapee.app/Contents/Frameworks/|" "${ETC}/gtk-3.0/gtk.immodules"
+"${LOCAL_PREFIX}"/bin/gdk-pixbuf-query-loaders "${LIB}"/libpixbufloader-*.so > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
+"${LOCAL_PREFIX}"/bin/gtk-query-immodules-3.0 "${LIB}"/im-* > "${ETC}"/gtk-3.0/gtk.immodules || "${LOCAL_PREFIX}"/bin/gtk-query-immodules "${LIB}"/im-* > "${ETC}"/gtk-3.0/gtk.immodules
+sed -i.bak -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}"/gtk-3.0/gdk-pixbuf.loaders "${ETC}/gtk-3.0/gtk.immodules"
+sed -i.bak -e "s|${LOCAL_PREFIX}/share/|/Applications/RawTherapee.app/Contents/Resources/share/|" "${ETC}"/gtk-3.0/gtk.immodules
+sed -i.bak -e "s|${LOCAL_PREFIX}/|/Applications/RawTherapee.app/Contents/Frameworks/|" "${ETC}"/gtk-3.0/gtk.immodules
+rm "${ETC}"/*.bak
 
 # Install names
 ModifyInstallNames
 
 # Mime directory
 msg "Copying shared files from ${GTK_PREFIX}:"
-ditto {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/mime
+ditto {"${LOCAL_PREFIX}","${RESOURCES}"}/share/mime
 
 msg "Installing required application bundle files:"
 PROJECT_SOURCE_DATA_DIR="${PROJECT_SOURCE_DIR}/tools/osx"
-ditto "${CMAKE_BUILD_TYPE}/Resources" "${RESOURCES}"
 ditto "${PROJECT_SOURCE_DIR}/rtdata/fonts" "${ETC}/fonts"
 
 # App bundle resources
 ditto "${PROJECT_SOURCE_DATA_DIR}/"{rawtherapee,profile}.icns "${RESOURCES}"
 ditto "${PROJECT_SOURCE_DATA_DIR}/PkgInfo" "${CONTENTS}"
-install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/Info.plist.in" "${CONTENTS}/Info.plist"
-install -m 0644 "${PROJECT_SOURCE_DATA_DIR}/cliInfo.plist.in" "${LIB}/Info.plist"
-sed -i "" -e "s|@version@|${PROJECT_FULL_VERSION}|
-s|@shortVersion@|${PROJECT_VERSION}|
-s|@arch@|${arch}|" \
-"${CONTENTS}/Info.plist"
+cmake -DPROJECT_SOURCE_DATA_DIR=${PROJECT_SOURCE_DATA_DIR} -DCONTENTS=${CONTENTS} -Dversion=${PROJECT_FULL_VERSION} -DshortVersion=${PROJECT_VERSION} -Darch=${arch} -P "${PROJECT_SOURCE_DATA_DIR}/info-plist.cmake"
 update-mime-database -V  "${RESOURCES}/share/mime"
+cp -RL "${LOCAL_PREFIX}/share/locale" "${RESOURCES}/share/locale"
 
 msg "Build glib database:"
 mkdir -p ${RESOURCES}/share/glib-2.0
-ditto {"${LOCAL_PREFIX}/local","${RESOURCES}"}/share/glib-2.0/schemas
-"${LOCAL_PREFIX}/local/bin/glib-compile-schemas" "${RESOURCES}/share/glib-2.0/schemas"
+cp -LR {"${LOCAL_PREFIX}","${RESOURCES}"}/share/glib-2.0/schemas
+"${LOCAL_PREFIX}/bin/glib-compile-schemas" "${RESOURCES}/share/glib-2.0/schemas"
 
 # Append an LC_RPATH
 msg "Registering @rpath into the main executable."
@@ -285,7 +282,7 @@ ModifyInstallNames
 # fix @rpath in Frameworks
 msg "Registering @rpath in Frameworks folder."
 for frameworklibs in "${LIB}"/*{dylib,so,cli}; do
-    install_name_tool -delete_rpath ${LOCAL_PREFIX}/local/lib "${frameworklibs}"
+    install_name_tool -delete_rpath ${LOCAL_PREFIX}/lib "${frameworklibs}"
     install_name_tool -add_rpath /Applications/"${LIB}" "${frameworklibs}"
 done
 install_name_tool -delete_rpath RawTherapee.app/Contents/Frameworks "${EXECUTABLE}"-cli
@@ -296,13 +293,8 @@ ditto "${EXECUTABLE}"-cli "${APP}"/..
 if [[ -n $CODESIGNID ]]; then
     msg "Codesigning Application."
     iconv -f UTF-8 -t ASCII "${PROJECT_SOURCE_DATA_DIR}"/rt.entitlements > "${CMAKE_BUILD_TYPE}"/rt.entitlements
-        iconv -f UTF-8 -t ASCII "${PROJECT_SOURCE_DATA_DIR}"/rt-cli.entitlements > "${CMAKE_BUILD_TYPE}"/rt-cli.entitlements
     mv "${EXECUTABLE}"-cli "${LIB}"
-    for frameworklibs in "${LIB}"/*{dylib,so}; do
-        codesign -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee --force --verbose -o runtime --timestamp --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${frameworklibs}"
-    done
-    codesign --force -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt-cli.entitlements "${LIB}"/rawtherapee-cli
-    codesign --deep --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"
+    codesign --force --deep --timestamp --strict -v -s "${CODESIGNID}" -i com.rawtherapee.RawTherapee -o runtime --entitlements "${CMAKE_BUILD_TYPE}"/rt.entitlements "${APP}"
     spctl -a -vvvv "${APP}"
 fi
 
@@ -310,6 +302,7 @@ fi
 if [[ -n $NOTARY ]]; then
     msg "Notarizing the application:"
     ditto -c -k --sequesterRsrc --keepParent "${APP}" "${APP}.zip"
+    echo "Uploading..."
     uuid=`xcrun altool --notarize-app --primary-bundle-id "com.rawtherapee.RawTherapee" ${NOTARY} --file "${APP}.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }'`
     echo "Result= $uuid" # Display identifier string
     sleep 15
@@ -334,11 +327,11 @@ if [[ -n $NOTARY ]]; then
 fi
 
 function CreateDmg {
-    local srcDir="$(mktemp -dt $$)"
+    local srcDir="$(mktemp -dt $$.XXXXXXXXXXXX)"
     
     msg "Preparing disk image sources at ${srcDir}:"
     cp -R "${APP}" "${srcDir}"
-    cp "${RESOURCES}"/share/LICENSE.txt "${srcDir}"
+    cp "${RESOURCES}"/LICENSE.txt "${srcDir}"
     ln -s /Applications "${srcDir}"
     
     # Web bookmarks
@@ -379,6 +372,7 @@ function CreateDmg {
     
     # Sign disk image
     if [[ -n $CODESIGNID ]]; then
+        msg "Signing disk image"
         codesign --deep --force -v -s "${CODESIGNID}" --timestamp "${dmg_name}.dmg"
     fi
     
@@ -386,6 +380,7 @@ function CreateDmg {
     if ! test -z "$NOTARY"; then
         msg "Notarizing the dmg:"
         zip "${dmg_name}.dmg.zip" "${dmg_name}.dmg"
+        echo "Uploading..."
         uuid=`xcrun altool --notarize-app --primary-bundle-id "com.rawtherapee" ${NOTARY} --file "${dmg_name}.dmg.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }'`
         echo "dmg Result= $uuid" # Display identifier string
         sleep 15
@@ -415,12 +410,7 @@ function CreateDmg {
     mkdir "${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}_folder"
         ditto {"${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}.dmg","rawtherapee-cli","${PROJECT_SOURCE_DATA_DIR}/INSTALL.readme.rtf"} "${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}_folder"
     zip -r "${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}.zip" "${PROJECT_NAME}_OSX_${MINIMUM_SYSTEM_VERSION}_${PROC_BIT_DEPTH}_${PROJECT_FULL_VERSION}_folder/"
-    # rm "${dmg_name}.dmg"
-    # msg "Removing disk image caches:"
-    # rm -rf "${srcDir}"
 }
 CreateDmg
 msg "Finishing build:"
 echo "Script complete."
-#
-# TODO filter out the benign errors
