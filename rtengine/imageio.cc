@@ -1395,18 +1395,19 @@ int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool u
 
             if (exif)   {
                 int exif_size = exif->calculateSize();
-                unsigned char *buffer = new unsigned char[exif_size + 8];
                 // TIFFOpen writes out the header and sets file pointer at position 8
+                const uint64_t file_offset = 8; // must be 64-bit, because TIFFTAG_EXIFIFD is
+                unsigned char *buffer = new unsigned char[exif_size + file_offset];
 
-                exif->write (8, buffer);
+                exif->write (file_offset, buffer);
 
-                write (fileno, buffer + 8, exif_size);
+                write (fileno, buffer + file_offset, exif_size);
 
                 delete [] buffer;
                 // let libtiff know that scanlines or any other following stuff should go
                 // at a different offset:
-                TIFFSetWriteOffset (out, exif_size + 8);
-                TIFFSetField (out, TIFFTAG_EXIFIFD, 8);
+                TIFFSetWriteOffset (out, exif_size + file_offset);
+                TIFFSetField (out, TIFFTAG_EXIFIFD, file_offset);
                 applyExifPatch = true;
             }
         }
