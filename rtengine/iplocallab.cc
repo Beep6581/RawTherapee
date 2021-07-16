@@ -91,6 +91,16 @@ constexpr float clipChro(float x)
     return rtengine::LIM(x, 0.f, 140.f);
 }
 
+constexpr double clipazbz(double x)
+{
+    return rtengine::LIM(x, -0.5, 0.5);
+}
+
+constexpr double clipcz(double x)
+{
+    return rtengine::LIM(x, 0., 0.707);
+}
+
 float softlig(float a, float b, float minc, float maxc)
 {
     // as Photoshop
@@ -2843,8 +2853,8 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
 #ifdef _OPENMP
             #pragma omp parallel for reduction(min:mini) reduction(max:maxi) reduction(max:maxiC) reduction(+:sum) if(multiThread)
 #endif
-        for (int i = 0; i < height; i+=10) {
-            for (int k = 0; k < width; k+=10) {
+        for (int i = 0; i < height; i+=1) {
+            for (int k = 0; k < width; k+=1) {
                 float L = lab->L[i][k];
                 float a = lab->a[i][k];
                 float b = lab->b[i][k];
@@ -2881,7 +2891,10 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
             }
         }
         sum = sum / nc;
-        avgm = 0.5 * (sum + avgm);//empirical formula
+        double kjz = (0.39 + 0.06 * adapjz) / maxi;//remapping Jz in usual values 0..1
+        double kcz =0.5 / maxiC;//remapping Cz
+        
+        avgm = 0.5 * (sum * kjz + avgm);//empirical formula
         double maxy = 0.75;//empirical value
         double maxyc = 0.95;
         if (settings->verbose) { 
@@ -2914,8 +2927,6 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
         double lightreal = 0.2 *  params->locallab.spots.at(sp).lightjzcie;
         double chromz = 0.11 * params->locallab.spots.at(sp).chromjzcie;
         double dhue = 0.0174 * params->locallab.spots.at(sp).huejzcie;
-        double kjz = (0.35 + 0.05 * adapjz) / maxi;//remapping Jz in usual values 0..1
-        double kcz =0.3 / maxiC;//remapping Cz
         printf("kjz=%f kcz=%f maxi=%f\n", kjz, kcz, maxi);
         DiagonalCurve jz_light({
             DCT_NURBS,
@@ -2971,13 +2982,13 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
                 Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p);
                 //remapping Jz
                 Jz = Jz * kjz;
-                Jz= jz_contrast.getVal(Jz);
+                Jz= LIM01(jz_contrast.getVal(Jz));
 
                 if(lightreal > 0) {
-                    Jz = jz_light.getVal(Jz);
+                    Jz = LIM01(jz_light.getVal(Jz));
                 }
                 if(lightreal < 0) {
-                    Jz = jz_lightn.getVal(Jz);
+                    Jz = LIM01(jz_lightn.getVal(Jz));
                 }
 
                 if(sigmoidlambdajz > 0.f && iscie) {//sigmoid Jz
@@ -3001,20 +3012,20 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
                     Hz += (double) (2.f * rtengine::RT_PI_F);
                 }
                 if(chromz > 0) {
-                    Cz = cz_ch.getVal(Cz);
+                    Cz = clipcz(cz_ch.getVal(Cz));
                 }
                 if(chromz < 0) {
-                    Cz = cz_chn.getVal(Cz);
+                    Cz = clipcz(cz_chn.getVal(Cz));
                 }
                 Hz += dhue;
                 if ( Hz < 0.0 ) {
                     Hz += (double) (2.f * rtengine::RT_PI_F);
                 }
-                Cz = Cz / kcz;
+                Cz = clipcz(Cz / kcz);
                 float2 sincosval = xsincosf(Hz);
-                az = Cz * (double) sincosval.y;
-                bz = Cz * (double) sincosval.x;
-                Jz = Jz / kjz;
+                az = clipazbz(Cz * (double) sincosval.y);
+                bz = clipazbz(Cz * (double) sincosval.x);
+                Jz = LIM01(Jz / kjz);
                 double L_, M_, S_;
                 Ciecam02::jzczhzxyz (xx, yy, zz, Jz, az, bz, pl, L_, M_, S_);
                 //re enable D50

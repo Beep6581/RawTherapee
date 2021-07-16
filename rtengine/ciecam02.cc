@@ -483,7 +483,7 @@ void Ciecam02::xyz2jzczhz ( double &Jz, double &az, double &bz, double x, double
 {   //from various web 
     double Xp, Yp, Zp, L, M, S, Iz;
     double peakLum = 1. / pl;
-    //I change 10000 for peaklum function of la (absolute luminance)...because after many tests original algo works very bad (too small values of Jz)
+    //I change 10000 for peaklum function of la (absolute luminance)
     Xp = Jzazbz_b * x - ((Jzazbz_b - 1.) * z);
     Yp = Jzazbz_g * y - ((Jzazbz_g - 1.) * x);
     Zp = z;
@@ -513,7 +513,7 @@ void Ciecam02::jzczhzxyz (double &x, double &y, double &z, double jz, double az,
     Lp = 1.0 * Iz + 0.138605043271539 * az + 0.0580473161561189 * bz;
     Mp = 1.0 * Iz - 0.138605043271539 * az - 0.0580473161561189 * bz;
     Sp = 1.0 * Iz - 0.0960192420263189 * az - 0.811891896056039 * bz;
-    //I change 10000 for pl function of la(absolute luminance)...because after many tests original algo works very bad (too small values of Jz)
+    //I change optionnaly 10000 for pl function of la(absolute luminance)
    
     tmp = pow(Lp, 1. / Jzazbz_p);
     L = pl * pow(std::max((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2),0.), 1. / Jzazbz_n);
