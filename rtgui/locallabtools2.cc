@@ -7366,8 +7366,10 @@ Locallabcie::Locallabcie():
     sensicie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     reparcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
     jabcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JAB")))),
+    modecam(Gtk::manage (new MyComboBoxText ())),
     modecie(Gtk::manage (new MyComboBoxText ())),
     jzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZFRA")))),
+    modeHBoxcam(Gtk::manage(new Gtk::Box())),
     modeHBoxcie(Gtk::manage(new Gtk::Box())),
     cieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
     Autograycie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAYCIE")))),
@@ -7420,7 +7422,18 @@ Locallabcie::Locallabcie():
 
     pack_start(*sensicie);
     pack_start(*reparcie);
-    pack_start(*jabcie);
+  //  pack_start(*jabcie);
+    modeHBoxcam->set_spacing (2);
+    //modeHBoxcam->set_tooltip_markup (M ("TP_LOCALLAB_CAMMODE_TOOLTIP"));
+    Gtk::Label* modeLabelcam = Gtk::manage (new Gtk::Label (M ("TP_LOCALLAB_CAMMODE") + ":"));
+    modeHBoxcam->pack_start (*modeLabelcam, Gtk::PACK_SHRINK);
+    modecam->append (M ("TP_LOCALLAB_CAMMODE_ALL"));
+    modecam->append (M ("TP_LOCALLAB_CAMMODE_CAM16"));
+    modecam->append (M ("TP_LOCALLAB_CAMMODE_JZ"));
+    modecam->set_active (0);
+    modeHBoxcam->pack_start (*modecam);
+    modecamconn = modecam->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::modecamChanged) );
+    pack_start(*modeHBoxcam);
     
     jzFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const jzBox = Gtk::manage(new ToolParamBlock());
@@ -7487,6 +7500,8 @@ Locallabcie::Locallabcie():
     detailcie->setAdjusterListener(this);
 
     catadcie->setAdjusterListener(this);
+
+
 
     modeHBoxcie->set_spacing (2);
     modeHBoxcie->set_tooltip_markup (M ("TP_LOCALLAB_CIEMODE_TOOLTIP"));
@@ -7647,6 +7662,7 @@ void Locallabcie::disableListener()
     sursourcieconn.block (true);
     surroundcieconn.block (true);
     modecieconn.block (true);
+    modecamconn.block (true);
 }
 
 void Locallabcie::enableListener()
@@ -7658,6 +7674,7 @@ void Locallabcie::enableListener()
     sursourcieconn.block (false);
     surroundcieconn.block (false);
     modecieconn.block (false);
+    modecamconn.block (false);
 }
 
 void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
@@ -7678,7 +7695,15 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 
         reparcie->setValue(spot.reparcie);
         sensicie->setValue(spot.sensicie);
-        
+
+        if (spot.modecam == "all") {
+            modecam->set_active (0);
+        } else if (spot.modecam == "cam16") {
+            modecam->set_active (1);
+        } else if (spot.modecam == "jz") {
+            modecam->set_active (2);
+        }
+
         if (spot.modecie == "com") {
             modecie->set_active (0);
         } else if (spot.modecie == "tm") {
@@ -7695,6 +7720,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         sourceabscie->setValue(spot.sourceabscie);
         jabcie->set_active(spot.jabcie);
         jabcieChanged();
+        modecamChanged();
         if (spot.sursourcie == "Average") {
             sursourcie->set_active (0);
         } else if (spot.sursourcie == "Dim") {
@@ -7759,6 +7785,14 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 
         spot.reparcie = reparcie->getValue();
         spot.sensicie = sensicie->getIntValue();
+
+        if (modecam->get_active_row_number() == 0) {
+            spot.modecam = "all";
+        } else if (modecam->get_active_row_number() == 1) {
+            spot.modecam = "cam16";
+        } else if (modecam->get_active_row_number() == 2) {
+            spot.modecam = "jz";
+        }
 
         if (modecie->get_active_row_number() == 0) {
             spot.modecie = "com";
@@ -7891,6 +7925,26 @@ void Locallabcie::sigmoidqjcieChanged()
         }
     }
 }
+
+void Locallabcie::modecamChanged()
+{
+    if (modecam->get_active_row_number() != 1) {
+        jzFrame->show();
+    } else {
+        jzFrame->hide();
+    }
+    
+    if (isLocActivated && exp->getEnabled()) {
+        
+        
+
+        if (listener) {
+            listener->panelChanged(Evlocallabmodecam,
+                                   modecam->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+        }
+    }
+}
+
 
 void Locallabcie::modecieChanged()
 {

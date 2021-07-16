@@ -1341,6 +1341,7 @@ HISTORY_MSG_1089;Local - Jz Sigmoid strength
 HISTORY_MSG_1090;Local - Jz Sigmoid threshold
 HISTORY_MSG_1091;Local - Jz Sigmoid blend
 HISTORY_MSG_1092;Local - Jz adaptation
+HISTORY_MSG_1093;Local - CAM model
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2662,6 +2663,10 @@ TP_LOCALLAB_BUTTON_DEL;Delete
 TP_LOCALLAB_BUTTON_DUPL;Duplicate
 TP_LOCALLAB_BUTTON_REN;Rename
 TP_LOCALLAB_BUTTON_VIS;Show/Hide
+TP_LOCALLAB_CAMMODE;CAM model
+TP_LOCALLAB_CAMMODE_ALL;CAM 16 + Jz Cz Hz
+TP_LOCALLAB_CAMMODE_CAM16;CAM 16 only
+TP_LOCALLAB_CAMMODE_JZ;Jz Cz Hz only
 TP_LOCALLAB_CATAD;Chromatic adaptation/Cat16
 TP_LOCALLAB_CBDL;Contrast by Detail Levels
 TP_LOCALLAB_CBDLCLARI_TOOLTIP;Enhances local contrast of the midtones.
@@ -2681,8 +2686,8 @@ TP_LOCALLAB_CHROMASKCOL;Chroma
 TP_LOCALLAB_CHROMASK_TOOLTIP;Changes the chroma of the mask if one exists (i.e. C(C) or LC(H) is activated).
 TP_LOCALLAB_CHROML;Chroma (C)
 TP_LOCALLAB_CHRRT;Chroma
-TP_LOCALLAB_CIE_TOOLNAME;Color appearance (Ciecam16)
-TP_LOCALLAB_CIE;Color appearance (Ciecam16)
+TP_LOCALLAB_CIE_TOOLNAME;Color appearance (Cam16 & JzCzHz)
+TP_LOCALLAB_CIE;Color appearance (Cam16 & JzCzHz)
 TP_LOCALLAB_CIEC;Use Ciecam environment parameters
 TP_LOCALLAB_CIECAMLOG_TOOLTIP;This module is based on the CIECAM color appearance model which was designed to better simulate how human vision perceives colors under different lighting conditions.\nThe first Ciecam process 'Scene conditions' is carried out by Log encoding, it also uses 'Absolute luminance' at the time of shooting.\nThe second Ciecam process  'Image adjustments' is simplified and uses only 3 variables (local contrast, contrast J, saturation s).\nThe third Ciecam process  'Viewing conditions' adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic and contrast appearance is preserved across the display environment. 
 TP_LOCALLAB_CIEMODE;Change tool position

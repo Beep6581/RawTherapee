@@ -1512,8 +1512,10 @@ private:
     Adjuster* const sensicie;
     Adjuster* const reparcie;
     Gtk::CheckButton* const jabcie;
+    MyComboBoxText*  const modecam;
     MyComboBoxText*  const modecie;
     Gtk::Frame* const jzFrame;
+    Gtk::Box* const modeHBoxcam;
     Gtk::Box* const modeHBoxcie;
     Gtk::Frame* const cieFrame;
     Gtk::CheckButton* const Autograycie;
@@ -1558,7 +1560,7 @@ private:
     MyComboBoxText*  const surroundcie;
     Gtk::Box* const surrHBoxcie;
     
-    sigc::connection AutograycieConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, sigmoidqjcieconn;
+    sigc::connection AutograycieConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn;
     
 public:
     Locallabcie();
@@ -1577,6 +1579,7 @@ public:
     void sursourcieChanged();
     void surroundcieChanged();
     void modecieChanged();
+    void modecamChanged();
     
     void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg);
 

@@ -1579,6 +1579,7 @@ struct LocallabParams {
         double sourceabscie;
         Glib::ustring sursourcie;
         Glib::ustring modecie;
+        Glib::ustring modecam;
         double saturlcie;
         double rstprotectcie;
         double chromlcie;

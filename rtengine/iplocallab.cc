@@ -2469,13 +2469,22 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         ciec = true;
         iscie = true;
     }
-    const bool jabcie = params->locallab.spots.at(sp).jabcie; 
+   // const bool jabcie = params->locallab.spots.at(sp).jabcie; 
     
     //sigmoid J Q variables
     const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie; 
     const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie; 
     const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie; 
     const bool sigmoidqj = params->locallab.spots.at(sp).sigmoidqjcie; 
+
+    int mocam = 0;
+    if(params->locallab.spots.at(sp).modecam == "all") {
+        mocam = 0;
+    } else if(params->locallab.spots.at(sp).modecam == "cam16") {
+        mocam = 1;
+    } else if(params->locallab.spots.at(sp).modecam == "jz") {
+        mocam = 2;
+    }
 
     float th = 1.f;
     const float at = 1.f - sigmoidth;
@@ -2840,7 +2849,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     const float coe = pow_F(fl, 0.25f);
     const float QproFactor = (0.4f / c) * (aw + 4.0f) ;
    
-if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
+if(mocam != 1) {//Jz az bz ==> Jz Cz Hz before Ciecam16
     double mini = 1000.;
     double maxi = -1000.;
     double maxiC = -1000.;
@@ -2892,7 +2901,8 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
         }
         sum = sum / nc;
         double kjz = (0.39 + 0.06 * adapjz) / maxi;//remapping Jz in usual values 0..1
-        double kcz =0.5 / maxiC;//remapping Cz
+       // double kcz =0.5 / maxiC;//remapping Cz
+        double kcz = 0.707 * kjz;
         
         avgm = 0.5 * (sum * kjz + avgm);//empirical formula
         double maxy = 0.75;//empirical value
@@ -3042,6 +3052,7 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
 
         }
 }
+if(mocam != 2) {
 //begin ciecam
 #ifdef __SSE2__
         int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
@@ -3294,6 +3305,7 @@ if(jabcie == true) {//Jz az bz ==> Jz Cz Hz before Ciecam16
             }
 
         }
+    }
 //} 
 }
 
