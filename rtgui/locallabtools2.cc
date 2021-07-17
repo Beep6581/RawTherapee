@@ -7867,7 +7867,7 @@ void Locallabcie::updateAutocompute(const float blackev, const float whiteev, co
         disableListener();
         sourceGraycie->setValue(sourceg);
         sourceabscie->setValue(sourceab);
-        float  pal = sqrt(std::max(100.f, sourceab) / 100.f);
+        float  pal = sqrt(std::max(100.f, sourceab) / 100.f);//empirical formula to adapt peak luminance in function La
         adapjzcie->setValue(pal);
         enableListener();
 
@@ -8096,6 +8096,12 @@ void Locallabcie::updatecieGUI()
         sensicie->show();
         reparcie->show();
     }
+        surHBoxcie->show();
+
+    if (modecam->get_active_row_number() == 2) {
+        surHBoxcie->hide();
+    }
+
     if (mode == Simple || mode == Normal) { // Keep widget hidden in Normal and Simple mode
         modecie->set_active (0);
         sensicie->show();

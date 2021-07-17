@@ -2901,7 +2901,6 @@ if(mocam != 1) {//Jz az bz ==> Jz Cz Hz before Ciecam16
         }
         sum = sum / nc;
         double kjz = (0.29 + 0.07 * adapjz) / maxi;//remapping Jz in usual values 0..1 => 0.29 empirical value for La=100...adapjz take into account La
-       // double kcz =0.5 / maxiC;//remapping Cz
         double kcz = 0.707 * kjz;
         
         avgm = 0.5 * (sum * kjz + avgm);//empirical formula
