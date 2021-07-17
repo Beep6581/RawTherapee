@@ -2900,7 +2900,7 @@ if(mocam != 1) {//Jz az bz ==> Jz Cz Hz before Ciecam16
             }
         }
         sum = sum / nc;
-        double kjz = (0.39 + 0.06 * adapjz) / maxi;//remapping Jz in usual values 0..1
+        double kjz = (0.29 + 0.07 * adapjz) / maxi;//remapping Jz in usual values 0..1 => 0.29 empirical value for La=100...adapjz take into account La
        // double kcz =0.5 / maxiC;//remapping Cz
         double kcz = 0.707 * kjz;
         
@@ -2908,7 +2908,7 @@ if(mocam != 1) {//Jz az bz ==> Jz Cz Hz before Ciecam16
         double maxy = 0.75;//empirical value
         double maxyc = 0.95;
         if (settings->verbose) { 
-            printf("maxi=%f mini=%f mean=%f, avgm=%f, maxiC=%f\n", maxi, mini, sum, avgm, maxiC);
+            printf("maxi=%f mini=%f mean=%f, avgm=%f, maxiC=%f wh=%f\n", maxi, mini, sum, avgm, maxiC, (double) wh);
         }
 
         const float sigmoidlambdajz = params->locallab.spots.at(sp).sigmoidldajzcie; 

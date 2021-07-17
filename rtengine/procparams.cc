@@ -4293,7 +4293,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lightqcie(0.),
     contlcie(0.),
     contjzcie(0.),
-    adapjzcie(2.0),
+    adapjzcie(4.0),
     contthrescie(0.),
     sigmoidldacie(0.),
     sigmoidthcie(1.),

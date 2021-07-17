@@ -7381,7 +7381,7 @@ Locallabcie::Locallabcie():
     lightlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTL"), -100., 100., 0.5, 0.))),
     lightjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZLIGHT"), -100., 100., 0.5, 0.))),
     contjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCONT"), -100., 100., 0.5, 0.))),
-    adapjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZADAP"), 1., 10., 0.05, 2.))),
+    adapjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZADAP"), 1., 10., 0.05, 4.))),
     lightqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTQ"), -100., 100., 0.5, 0.))),
     contlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTL"), -100., 100., 0.5, 0.))),
     contqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),
@@ -7434,6 +7434,28 @@ Locallabcie::Locallabcie():
     modeHBoxcam->pack_start (*modecam);
     modecamconn = modecam->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::modecamChanged) );
     pack_start(*modeHBoxcam);
+
+    surHBoxcie->set_spacing (2);
+    surHBoxcie->set_tooltip_markup (M ("TP_LOCALLAB_LOGSURSOUR_TOOLTIP"));
+    Gtk::Label* surLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
+    surHBoxcie->pack_start (*surLabel, Gtk::PACK_SHRINK);
+    sursourcie->append (M ("TP_COLORAPP_SURROUND_AVER"));
+    sursourcie->append (M ("TP_COLORAPP_SURROUND_DIM"));
+    sursourcie->append (M ("TP_COLORAPP_SURROUND_DARK"));
+    sursourcie->set_active (0);
+    surHBoxcie->pack_start (*sursourcie);
+    sursourcieconn = sursourcie->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::sursourcieChanged) );
+
+    cieFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const cieFBox = Gtk::manage(new ToolParamBlock());
+    cieFBox->pack_start(*Autograycie);
+    cieFBox->pack_start(*sourceGraycie);
+    cieFBox->pack_start(*sourceabscie);
+    cieFBox->pack_start(*adapjzcie);
+
+    cieFBox->pack_start (*surHBoxcie);
+    cieFrame->add(*cieFBox);
+    pack_start(*cieFrame);
     
     jzFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const jzBox = Gtk::manage(new ToolParamBlock());
@@ -7441,7 +7463,7 @@ Locallabcie::Locallabcie():
     jzBox->pack_start(*contjzcie);
     jzBox->pack_start(*chromjzcie);
     jzBox->pack_start(*huejzcie);
-    jzBox->pack_start(*adapjzcie);
+ //   jzBox->pack_start(*adapjzcie);
     sigmoidjzFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const sigjzBox = Gtk::manage(new ToolParamBlock());
     sigjzBox->pack_start(*sigmoidldajzcie);
@@ -7515,27 +7537,6 @@ Locallabcie::Locallabcie():
     modeHBoxcie->pack_start (*modecie);
     modecieconn = modecie->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::modecieChanged) );
     pack_start(*modeHBoxcie);
-
-
-    surHBoxcie->set_spacing (2);
-    surHBoxcie->set_tooltip_markup (M ("TP_LOCALLAB_LOGSURSOUR_TOOLTIP"));
-    Gtk::Label* surLabel = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
-    surHBoxcie->pack_start (*surLabel, Gtk::PACK_SHRINK);
-    sursourcie->append (M ("TP_COLORAPP_SURROUND_AVER"));
-    sursourcie->append (M ("TP_COLORAPP_SURROUND_DIM"));
-    sursourcie->append (M ("TP_COLORAPP_SURROUND_DARK"));
-    sursourcie->set_active (0);
-    surHBoxcie->pack_start (*sursourcie);
-    sursourcieconn = sursourcie->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::sursourcieChanged) );
-
-    cieFrame->set_label_align(0.025, 0.5);
-    ToolParamBlock* const cieFBox = Gtk::manage(new ToolParamBlock());
-    cieFBox->pack_start(*Autograycie);
-    cieFBox->pack_start(*sourceGraycie);
-    cieFBox->pack_start(*sourceabscie);
-    cieFBox->pack_start (*surHBoxcie);
-    cieFrame->add(*cieFBox);
-    pack_start(*cieFrame);
 
     surrHBoxcie->set_spacing (2);
     surrHBoxcie->set_tooltip_markup (M ("TP_COLORAPP_SURROUND_TOOLTIP"));
@@ -7866,7 +7867,8 @@ void Locallabcie::updateAutocompute(const float blackev, const float whiteev, co
         disableListener();
         sourceGraycie->setValue(sourceg);
         sourceabscie->setValue(sourceab);
-
+        float  pal = sqrt(std::max(100.f, sourceab) / 100.f);
+        adapjzcie->setValue(pal);
         enableListener();
 
         return false;
@@ -7895,8 +7897,10 @@ void Locallabcie::jabcieChanged()
 {
     if (jabcie->get_active()) {
         jzFrame->show();
+        adapjzcie->show();
     } else {
         jzFrame->hide();
+        adapjzcie->hide();
     }
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
@@ -7930,8 +7934,16 @@ void Locallabcie::modecamChanged()
 {
     if (modecam->get_active_row_number() != 1) {
         jzFrame->show();
+        adapjzcie->show();
+        
     } else {
         jzFrame->hide();
+        adapjzcie->hide();
+    }
+    surHBoxcie->show();
+
+    if (modecam->get_active_row_number() == 2) {
+        surHBoxcie->hide();
     }
     
     if (isLocActivated && exp->getEnabled()) {
@@ -8077,7 +8089,6 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 void Locallabcie::updatecieGUI()
 {
     const int mode = complexity->get_active_row_number();
- 
     if (modecie->get_active_row_number() > 0) {
         sensicie->hide();
         reparcie->hide();
