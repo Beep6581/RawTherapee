@@ -2893,8 +2893,8 @@ TP_LOCALLAB_INVERS_TOOLTIP;Fewer possibilities if selected (Inverse).\n\nAlterna
 TP_LOCALLAB_INVMASK;Inverse algorithm
 TP_LOCALLAB_ISOGR;Distribution (ISO)
 TP_LOCALLAB_JAB;Jz Cz Hz
-TP_LOCALLAB_JABADAP_TOOLTIP;Allows you to adapt a) the relation between Jz and saturation, b) the peak luminance level 
-TP_LOCALLAB_JZADAP;Peak luminance adaptation
+TP_LOCALLAB_JABADAP_TOOLTIP;Allows you to adapt a) the relation between Jz and saturation, b) the peak luminance level (HDR)
+TP_LOCALLAB_JZADAP;Peak luminance adaptation - Jz
 TP_LOCALLAB_JZFRA;Jz Cz Hz
 TP_LOCALLAB_JZLIGHT;Lightness
 TP_LOCALLAB_JZCONT;Contrast

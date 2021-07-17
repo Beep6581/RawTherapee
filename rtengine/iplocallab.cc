@@ -2900,10 +2900,12 @@ if(mocam != 1) {//Jz az bz ==> Jz Cz Hz before Ciecam16
             }
         }
         sum = sum / nc;
-        double kjz = (0.29 + 0.07 * adapjz) / maxi;//remapping Jz in usual values 0..1 => 0.29 empirical value for La=100...adapjz take into account La
+        double kjz = (0.29 + 0.07 * adapjz) / maxi;//remapping Jz in usual values 0..1 => 0.29 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
         double kcz = 0.707 * kjz;
         
         avgm = 0.5 * (sum * kjz + avgm);//empirical formula
+        double miny = 0.05;
+        double delta = 0.015 * (double) sqrt(std::max(100.f, la) / 100.f);//small adaptation in function La scene
         double maxy = 0.75;//empirical value
         double maxyc = 0.95;
         if (settings->verbose) { 
@@ -2936,19 +2938,19 @@ if(mocam != 1) {//Jz az bz ==> Jz Cz Hz before Ciecam16
         double lightreal = 0.2 *  params->locallab.spots.at(sp).lightjzcie;
         double chromz = 0.11 * params->locallab.spots.at(sp).chromjzcie;
         double dhue = 0.0174 * params->locallab.spots.at(sp).huejzcie;
-        printf("kjz=%f kcz=%f maxi=%f\n", kjz, kcz, maxi);
+     //   printf("kjz=%f kcz=%f maxi=%f\n", kjz, kcz, maxi);
         DiagonalCurve jz_light({
             DCT_NURBS,
             0, 0,
-            0.05, 0.05 + lightreal / 150.,
-            maxy, min (1.0, maxy + lightreal / 300.0),
+            miny + delta, miny + delta + lightreal / 150.,
+            maxy, min (1.0, maxy - delta + lightreal / 300.0),
             1, 1
         });
         DiagonalCurve jz_lightn({
             DCT_NURBS,
             0, 0,
-            0.05 - lightreal / 150., 0.05,
-            min (1.0, maxy - lightreal / 300.0), maxy,
+            miny + delta - lightreal / 150., miny + delta,
+            min (1.0, maxy + delta - lightreal / 300.0), maxy + delta,
             1, 1
         });
         DiagonalCurve cz_ch({
