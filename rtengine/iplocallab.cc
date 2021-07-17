@@ -2942,14 +2942,14 @@ if(mocam != 1) {//Jz az bz ==> Jz Cz Hz before Ciecam16
         DiagonalCurve jz_light({
             DCT_NURBS,
             0, 0,
-            miny + delta, miny + delta + lightreal / 150.,
+            miny, miny + lightreal / 150.,
             maxy, min (1.0, maxy - delta + lightreal / 300.0),
             1, 1
         });
         DiagonalCurve jz_lightn({
             DCT_NURBS,
             0, 0,
-            miny + delta - lightreal / 150., miny + delta,
+            miny  - lightreal / 150., miny ,
             min (1.0, maxy + delta - lightreal / 300.0), maxy + delta,
             1, 1
         });
