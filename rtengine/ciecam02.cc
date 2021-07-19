@@ -509,9 +509,9 @@ void Ciecam02::jzczhzxyz (double &x, double &y, double &z, double jz, double az,
 
     Iz = std::max((jz + Jzazbz_d0) / (1. + Jzazbz_d - Jzazbz_d * (jz + Jzazbz_d0)), 0.);
 
-    Lp = 1.0 * Iz + 0.138605043271539 * az + 0.0580473161561189 * bz;
-    Mp = 1.0 * Iz - 0.138605043271539 * az - 0.0580473161561189 * bz;
-    Sp = 1.0 * Iz - 0.0960192420263189 * az - 0.811891896056039 * bz;
+    Lp = Iz + 0.138605043271539 * az + 0.0580473161561189 * bz;
+    Mp = Iz - 0.138605043271539 * az - 0.0580473161561189 * bz;
+    Sp = Iz - 0.0960192420263189 * az - 0.811891896056039 * bz;
     //I change optionnaly 10000 for pl function of la(absolute luminance) default 10000
    
     tmp = pow(Lp, 1. / Jzazbz_p);

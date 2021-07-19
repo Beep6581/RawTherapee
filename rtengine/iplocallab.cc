@@ -2862,7 +2862,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk)
         double pl = 10000.;
 //calculate min, max, mean for Jz
 #ifdef _OPENMP
-            #pragma omp parallel for reduction(min:mini) reduction(max:maxi) reduction(max:maxiC) reduction(+:sum) if(multiThread)
+            #pragma omp parallel for reduction(min:mini) reduction(max:maxi) reduction(+:sum) if(multiThread)
 #endif
         for (int i = 0; i < height; i+=1) {
             for (int k = 0; k < width; k+=1) {
@@ -2891,20 +2891,15 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk)
                 if(Jz < mini) {
                     mini = Jz;
                 }
-                double Cz = sqrt(az * az + bz * bz);
-                if(Cz > maxiC) {
-                    maxiC = Cz;
-                }
 
                 sum += Jz;
                 nc++;
-                
+
             }
         }
+
         sum = sum / nc;
         double kjz = (0.29 + 0.07 * adapjz) / maxi;//remapping Jz in usual values 0..1 => 0.29 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
-     //   double kcz = 0.707 * kjz;
-    if(mocam != 1) {
         const std::unique_ptr<LabImage> temp(new LabImage(width, height));
         array2D<double> JJz(width, height);
         array2D<double> Aaz(width, height);
@@ -2949,7 +2944,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk)
         double lightreal = 0.2 *  params->locallab.spots.at(sp).lightjzcie;
         double chromz = 0.11 * params->locallab.spots.at(sp).chromjzcie;
         double dhue = 0.0174 * params->locallab.spots.at(sp).huejzcie;
-     //   printf("kjz=%f kcz=%f maxi=%f\n", kjz, kcz, maxi);
         DiagonalCurve jz_light({
             DCT_NURBS,
             0, 0,
@@ -2978,7 +2972,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk)
             min (1.0, maxyc - chromz / 300.0), maxyc,
             1, 1
         });
-     
 
 #ifdef _OPENMP
             #pragma omp parallel for if(multiThread)
@@ -3000,7 +2993,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk)
                 xx = (d50_d65[0][0] * (double) x + d50_d65[0][1] * (double) y + d50_d65[0][2] * (double) z);
                 yy = (d50_d65[1][0] * (double) x + d50_d65[1][1] * (double) y + d50_d65[1][2] * (double) z);
                 zz = (d50_d65[2][0] * (double) x + d50_d65[2][1] * (double) y + d50_d65[2][2] * (double) z);
-                
+
                 double L_p, M_p, S_p;
 
                 Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p);
@@ -3011,7 +3004,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk)
                 JJz[i][k] = Jz;
                 Aaz[i][k] = az;
                 Bbz[i][k] = bz;
-                
+
                 if(highhs > 0 || shadhs > 0) {
                     temp->L[i][k] = 32768.f * (float) JJz[i][k];
                     temp->a[i][k] = 32768.f * (float) Aaz[i][k];
@@ -3019,11 +3012,12 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk)
                 }
             }
         }
+
         if(highhs > 0 || shadhs > 0) {
             ImProcFunctions::shadowsHighlights(temp.get(), true, 1, highhs, shadhs, radhs, sk, hltonahs, shtonals);
         }
-    
- 
+        //others "Lab" threatment...to adapt 
+
 #ifdef _OPENMP
             #pragma omp parallel for if(multiThread)
 #endif
@@ -3034,12 +3028,11 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk)
                     Aaz[i][k] = (double) (temp->a[i][k] / 32768.f);
                     Bbz[i][k] = (double) (temp->b[i][k] / 32768.f);
                 }
-                    
-                
+
                 double az =  Aaz[i][k];
                 double bz =  Bbz[i][k];
                 double Jz =  JJz[i][k];
-                
+
                 Jz= LIM01(jz_contrast.getVal(Jz));
 
                 if(lightreal > 0) {
@@ -3084,15 +3077,12 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk)
                 float2 sincosval = xsincosf(Hz);
                 az = clipazbz(Cz * (double) sincosval.y);
                 bz = clipazbz(Cz * (double) sincosval.x);
-                
+
                 bz = bz / kjz;
                 az = az / kjz;
-                
+
                 Jz = LIM01(Jz / kjz);
-                
-                
-                
-                
+
                 double L_, M_, S_;
                 double xx, yy, zz;
                 Ciecam02::jzczhzxyz (xx, yy, zz, Jz, az, bz, pl, L_, M_, S_);
@@ -3110,7 +3100,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk)
             }
         }
     }
-}
 
 if(mocam == 0 || mocam == 1) {
 //begin ciecam
@@ -3257,10 +3246,8 @@ if(mocam == 0 || mocam == 1) {
                         if (Jpro > 99.9f) {
                         Jpro = 99.9f;
                         }
-                 //   printf("JB=%f", (double) Jpro);
 
                         Jpro = CAMBrightCurveJ[(float)(Jpro * 327.68f)];   //lightness CIECAM02 + contrast
-                 //   printf("JA=%f", (double) Jpro);
 
                         if(sigmoidlambda > 0.f && iscie && sigmoidqj == false) {//sigmoid J only with ciecam module
                             float val = Jpro / 100.f;
@@ -3295,7 +3282,6 @@ if(mocam == 0 || mocam == 1) {
                         if (hpro < 0.0f) {
                             hpro += 360.0f;    //hue
                         }
-
 
                     }
 
@@ -3366,7 +3352,7 @@ if(mocam == 0 || mocam == 1) {
 
         }
     }
-//} 
+ 
 }
 
 void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufcolfin, float rad, int bfh, int bfw, float epsilmax, float epsilmin, float thres, int sk, bool multiThread, int flag)
