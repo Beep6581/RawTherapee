@@ -7382,6 +7382,12 @@ Locallabcie::Locallabcie():
     lightjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZLIGHT"), -100., 100., 0.5, 0.))),
     contjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCONT"), -100., 100., 0.5, 0.))),
     adapjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZADAP"), 1., 10., 0.05, 4.))),
+    jzshFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZSHFRA")))),
+    hljzcie(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0., 100., 1., 0.))),
+    hlthjzcie(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HLTONALW"), 20., 100., 1., 70.))),
+    shjzcie(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHADOWS"), 0., 100., 1., 0.))),
+    shthjzcie(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHTONALW"), 20., 100., 1., 40.))),
+    radjzcie(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_RADIUS"), 0., 100., 1., 40.))),
     lightqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTQ"), -100., 100., 0.5, 0.))),
     contlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTL"), -100., 100., 0.5, 0.))),
     contqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),
@@ -7471,11 +7477,22 @@ Locallabcie::Locallabcie():
     sigjzBox->pack_start(*sigmoidthjzcie);
     sigjzBox->pack_start(*sigmoidbljzcie);
     sigmoidjzFrame->add(*sigjzBox);
+    
     jzBox->pack_start(*sigmoidjzFrame);
+
+    
+    jzshFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const jzshBox = Gtk::manage(new ToolParamBlock());
+    jzshBox->pack_start(*hljzcie);
+    jzshBox->pack_start(*hlthjzcie);
+    jzshBox->pack_start(*shjzcie);
+    jzshBox->pack_start(*shthjzcie);
+    jzshBox->pack_start(*radjzcie);
+    jzshFrame->add(*jzshBox);
+    jzBox->pack_start(*jzshFrame);
 
     jzFrame->add(*jzBox);
     pack_start(*jzFrame);
-    
     
     jabcieConn = jabcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::jabcieChanged));
     AutograycieConn = Autograycie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::AutograycieChanged));
@@ -7504,6 +7521,11 @@ Locallabcie::Locallabcie():
     contlcie->setAdjusterListener(this);
     contjzcie->setAdjusterListener(this);
     adapjzcie->setAdjusterListener(this);
+    hljzcie->setAdjusterListener(this);
+    hlthjzcie->setAdjusterListener(this);
+    shjzcie->setAdjusterListener(this);
+    shthjzcie->setAdjusterListener(this);
+    radjzcie->setAdjusterListener(this);
     contthrescie->setAdjusterListener(this);
     sigmoidldacie->setAdjusterListener(this);
     sigmoidthcie->setAdjusterListener(this);
@@ -7755,6 +7777,11 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         contlcie->setValue(spot.contlcie);
         contjzcie->setValue(spot.contjzcie);
         adapjzcie->setValue(spot.adapjzcie);
+        hljzcie->setValue(spot.hljzcie);
+        hlthjzcie->setValue(spot.hlthjzcie);
+        shjzcie->setValue(spot.shjzcie);
+        shthjzcie->setValue(spot.shthjzcie);
+        radjzcie->setValue(spot.radjzcie);
         contthrescie->setValue(spot.contthrescie);
         sigmoidldacie->setValue(spot.sigmoidldacie);
         sigmoidthcie->setValue(spot.sigmoidthcie);
@@ -7846,6 +7873,11 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.contlcie = contlcie->getValue();
         spot.contjzcie = contjzcie->getValue();
         spot.adapjzcie = adapjzcie->getValue();
+        spot.hljzcie = hljzcie->getValue();
+        spot.hlthjzcie = hlthjzcie->getValue();
+        spot.shjzcie = shjzcie->getValue();
+        spot.shthjzcie = shthjzcie->getValue();
+        spot.radjzcie = radjzcie->getValue();
         spot.contthrescie = contthrescie->getValue();
         spot.sigmoidldacie = sigmoidldacie->getValue();
         spot.sigmoidthcie = sigmoidthcie->getValue();
@@ -8171,6 +8203,11 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         contlcie->setDefault(defSpot.contlcie);
         contjzcie->setDefault(defSpot.contjzcie);
         adapjzcie->setDefault(defSpot.adapjzcie);
+        hljzcie->setDefault(defSpot.hljzcie);
+        hlthjzcie->setDefault(defSpot.hlthjzcie);
+        shjzcie->setDefault(defSpot.shjzcie);
+        shthjzcie->setDefault(defSpot.shthjzcie);
+        radjzcie->setDefault(defSpot.radjzcie);
         contthrescie->setDefault(defSpot.contthrescie);
         sigmoidldacie->setDefault(defSpot.sigmoidldacie);
         sigmoidthcie->setDefault(defSpot.sigmoidthcie);
@@ -8300,6 +8337,41 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabadapjzcie,
                                        adapjzcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == hljzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhljzcie,
+                                       hljzcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == hlthjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhlthjzcie,
+                                       hlthjzcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == shjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshjzcie,
+                                       shjzcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == shthjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshthjzcie,
+                                       shthjzcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == radjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabradjzcie,
+                                       radjzcie->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

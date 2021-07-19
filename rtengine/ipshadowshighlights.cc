@@ -192,11 +192,11 @@ void ImProcFunctions::shadowsHighlights(LabImage *lab, bool ena, int labmode, in
         };
 
     if (hightli > 0) {
-        apply(hightli * 0.4, hltonal, true);
+        apply(hightli * 0.7, hltonal, true);
     }
 
     if (shado > 0) {
-        apply(shado * 0.3, shtonal, false);
+        apply(shado * 0.6, shtonal, false);
     }
 }
 

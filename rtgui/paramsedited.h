@@ -998,6 +998,11 @@ public:
         bool contlcie;
         bool contjzcie;
         bool adapjzcie;
+        bool hljzcie;
+        bool hlthjzcie;
+        bool shjzcie;
+        bool shthjzcie;
+        bool radjzcie;
         bool contthrescie;
         bool sigmoidldacie;
         bool sigmoidthcie;

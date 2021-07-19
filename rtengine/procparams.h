@@ -1592,6 +1592,11 @@ struct LocallabParams {
         double contlcie;
         double contjzcie;
         double adapjzcie;
+        double hljzcie;
+        double hlthjzcie;
+        double shjzcie;
+        double shthjzcie;
+        double radjzcie;
         double contthrescie;
         double sigmoidldacie;
         double sigmoidthcie;

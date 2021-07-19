@@ -1342,6 +1342,11 @@ HISTORY_MSG_1090;Local - Jz Sigmoid threshold
 HISTORY_MSG_1091;Local - Jz Sigmoid blend
 HISTORY_MSG_1092;Local - Jz adaptation
 HISTORY_MSG_1093;Local - CAM model
+HISTORY_MSG_1094;Local - Jz highligths
+HISTORY_MSG_1095;Local - Jz highligths thr
+HISTORY_MSG_1096;Local - Jz shadows
+HISTORY_MSG_1097;Local - Jz shadows thr
+HISTORY_MSG_1098;Local - Jz radius SH
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2900,6 +2905,7 @@ TP_LOCALLAB_JZLIGHT;Lightness
 TP_LOCALLAB_JZCONT;Contrast
 TP_LOCALLAB_JZCHROM;Chroma
 TP_LOCALLAB_JZHUECIE;Hue
+TP_LOCALLAB_JZSHFRA;Shadows/Highlights Jz
 TP_LOCALLAB_JAB_TOOLTIP;Preferably for HDR images. Is executed before Ciecam16.
 TP_LOCALLAB_LABBLURM;Blur Mask
 TP_LOCALLAB_LABEL;Local Adjustments

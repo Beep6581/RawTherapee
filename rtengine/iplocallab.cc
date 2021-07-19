@@ -2903,17 +2903,17 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk)
         }
         sum = sum / nc;
         double kjz = (0.29 + 0.07 * adapjz) / maxi;//remapping Jz in usual values 0..1 => 0.29 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
-        double kcz = 0.707 * kjz;
+     //   double kcz = 0.707 * kjz;
     if(mocam != 1) {
         const std::unique_ptr<LabImage> temp(new LabImage(width, height));
         array2D<double> JJz(width, height);
         array2D<double> Aaz(width, height);
         array2D<double> Bbz(width, height);
-            int highhs = params->locallab.spots.at(sp).highlights;
-            int hltonahs = params->locallab.spots.at(sp).h_tonalwidth;
-            int shadhs = params->locallab.spots.at(sp).shadows;
-            int shtonals = params->locallab.spots.at(sp).s_tonalwidth;
-            int radhs = params->locallab.spots.at(sp).sh_radius;
+        int highhs =  params->locallab.spots.at(sp).hljzcie;
+        int hltonahs = params->locallab.spots.at(sp).hlthjzcie;
+        int shadhs = params->locallab.spots.at(sp).shjzcie;
+        int shtonals = params->locallab.spots.at(sp).shthjzcie;
+        int radhs = params->locallab.spots.at(sp).radjzcie;
         avgm = 0.5 * (sum * kjz + avgm);//empirical formula
         double miny = 0.05;
         double delta = 0.015 * (double) sqrt(std::max(100.f, la) / 100.f);//small adaptation in function La scene
@@ -3020,7 +3020,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk)
             }
         }
         if(highhs > 0 || shadhs > 0) {
-            ImProcFunctions::shadowsHighlights(temp.get(), true, 1, highhs, shadhs, radhs, sk, hltonahs,shtonals );
+            ImProcFunctions::shadowsHighlights(temp.get(), true, 1, highhs, shadhs, radhs, sk, hltonahs, shtonals);
         }
     
  

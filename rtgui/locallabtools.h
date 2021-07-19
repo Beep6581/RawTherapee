@@ -438,7 +438,7 @@ private:
 };
 
 
-/* ==== LocallabShadow ==== */
+/* ==== LocallabjShadow ==== */
 class LocallabShadow:
     public Gtk::Box,
     public LocallabTool
@@ -1528,6 +1528,12 @@ private:
     Adjuster* const lightjzcie;
     Adjuster* const contjzcie;
     Adjuster* const adapjzcie;
+    Gtk::Frame* const jzshFrame;
+    Adjuster* const hljzcie;
+    Adjuster* const hlthjzcie;
+    Adjuster* const shjzcie;
+    Adjuster* const shthjzcie;
+    Adjuster* const radjzcie;
     
     Adjuster* const lightqcie;
     Adjuster* const contlcie;
