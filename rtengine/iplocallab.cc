@@ -2456,7 +2456,7 @@ void sigmoidla (float &valj, float thresj, float lambda, float blend)
     valj =  clipLoc(blend * valj + 1.f / (1.f + xexpf(lambda - (lambda / thresj) * valj)));
 }
 
-void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
+void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk)
 {
     //BENCHFUN
     bool ciec = false;
@@ -2484,6 +2484,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
         mocam = 1;
     } else if(params->locallab.spots.at(sp).modecam == "jz") {
         mocam = 2;
+  //  } else if(params->locallab.spots.at(sp).modecam == "jzall") {
+  //      mocam = 3;
     }
 
     float th = 1.f;
@@ -2848,16 +2850,16 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call)
     const float pow1n = pow_F(1.64f - pow_F(0.29f, nj), 0.73f);
     const float coe = pow_F(fl, 0.25f);
     const float QproFactor = (0.4f / c) * (aw + 4.0f) ;
-   
-if(mocam != 1) {//Jz az bz ==> Jz Cz Hz before Ciecam16
-    double mini = 1000.;
-    double maxi = -1000.;
-    double maxiC = -1000.;
-    
-    double sum = 0.;
-    int nc = 0;
-    double adapjz = params->locallab.spots.at(sp).adapjzcie;
-    double pl = 10000.;
+
+
+    if(mocam != 1) {//Jz az bz ==> Jz Cz Hz before Ciecam16
+        double mini = 1000.;
+        double maxi = -1000.;
+        double maxiC = -1000.;
+        double sum = 0.;
+        int nc = 0;
+        double adapjz = params->locallab.spots.at(sp).adapjzcie;
+        double pl = 10000.;
 //calculate min, max, mean for Jz
 #ifdef _OPENMP
             #pragma omp parallel for reduction(min:mini) reduction(max:maxi) reduction(max:maxiC) reduction(+:sum) if(multiThread)
@@ -2902,7 +2904,16 @@ if(mocam != 1) {//Jz az bz ==> Jz Cz Hz before Ciecam16
         sum = sum / nc;
         double kjz = (0.29 + 0.07 * adapjz) / maxi;//remapping Jz in usual values 0..1 => 0.29 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
         double kcz = 0.707 * kjz;
-        
+    if(mocam != 1) {
+        const std::unique_ptr<LabImage> temp(new LabImage(width, height));
+        array2D<double> JJz(width, height);
+        array2D<double> Aaz(width, height);
+        array2D<double> Bbz(width, height);
+            int highhs = params->locallab.spots.at(sp).highlights;
+            int hltonahs = params->locallab.spots.at(sp).h_tonalwidth;
+            int shadhs = params->locallab.spots.at(sp).shadows;
+            int shtonals = params->locallab.spots.at(sp).s_tonalwidth;
+            int radhs = params->locallab.spots.at(sp).sh_radius;
         avgm = 0.5 * (sum * kjz + avgm);//empirical formula
         double miny = 0.05;
         double delta = 0.015 * (double) sqrt(std::max(100.f, la) / 100.f);//small adaptation in function La scene
@@ -2967,6 +2978,8 @@ if(mocam != 1) {//Jz az bz ==> Jz Cz Hz before Ciecam16
             min (1.0, maxyc - chromz / 300.0), maxyc,
             1, 1
         });
+     
+
 #ifdef _OPENMP
             #pragma omp parallel for if(multiThread)
 #endif
@@ -2993,6 +3006,40 @@ if(mocam != 1) {//Jz az bz ==> Jz Cz Hz before Ciecam16
                 Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p);
                 //remapping Jz
                 Jz = Jz * kjz;
+                az = az * kjz;
+                bz = bz * kjz;
+                JJz[i][k] = Jz;
+                Aaz[i][k] = az;
+                Bbz[i][k] = bz;
+                
+                if(highhs > 0 || shadhs > 0) {
+                    temp->L[i][k] = 32768.f * (float) JJz[i][k];
+                    temp->a[i][k] = 32768.f * (float) Aaz[i][k];
+                    temp->b[i][k] = 32768.f * (float) Bbz[i][k];
+                }
+            }
+        }
+        if(highhs > 0 || shadhs > 0) {
+            ImProcFunctions::shadowsHighlights(temp.get(), true, 1, highhs, shadhs, radhs, sk, hltonahs,shtonals );
+        }
+    
+ 
+#ifdef _OPENMP
+            #pragma omp parallel for if(multiThread)
+#endif
+        for (int i = 0; i < height; i++) {
+            for (int k = 0; k < width; k++) {
+                if(highhs > 0 || shadhs > 0) {
+                    JJz[i][k] = (double) (temp->L[i][k] / 32768.f);
+                    Aaz[i][k] = (double) (temp->a[i][k] / 32768.f);
+                    Bbz[i][k] = (double) (temp->b[i][k] / 32768.f);
+                }
+                    
+                
+                double az =  Aaz[i][k];
+                double bz =  Bbz[i][k];
+                double Jz =  JJz[i][k];
+                
                 Jz= LIM01(jz_contrast.getVal(Jz));
 
                 if(lightreal > 0) {
@@ -3013,11 +3060,12 @@ if(mocam != 1) {//Jz az bz ==> Jz Cz Hz before Ciecam16
                     sigmoidla (val, thjz, sigmjz, bljz);
                     Jz = val;
                 }
+
                 double Cz, Hz;
                 Cz = sqrt(az * az + bz * bz);
                 //remapping Cz
-                Cz = Cz * kcz;
                 Hz = xatan2f ( bz, az );
+                
                 
                 if ( Hz < 0.0 ) {
                     Hz += (double) (2.f * rtengine::RT_PI_F);
@@ -3032,14 +3080,24 @@ if(mocam != 1) {//Jz az bz ==> Jz Cz Hz before Ciecam16
                 if ( Hz < 0.0 ) {
                     Hz += (double) (2.f * rtengine::RT_PI_F);
                 }
-                Cz = clipcz(Cz / kcz);
+                Cz = clipcz(Cz);
                 float2 sincosval = xsincosf(Hz);
                 az = clipazbz(Cz * (double) sincosval.y);
                 bz = clipazbz(Cz * (double) sincosval.x);
+                
+                bz = bz / kjz;
+                az = az / kjz;
+                
                 Jz = LIM01(Jz / kjz);
+                
+                
+                
+                
                 double L_, M_, S_;
+                double xx, yy, zz;
                 Ciecam02::jzczhzxyz (xx, yy, zz, Jz, az, bz, pl, L_, M_, S_);
                 //re enable D50
+                double x, y, z;
                 x = 65535. * (d65_d50[0][0] * xx + d65_d50[0][1] * yy + d65_d50[0][2] * zz);
                 y = 65535. * (d65_d50[1][0] * xx + d65_d50[1][1] * yy + d65_d50[1][2] * zz);
                 z = 65535. * (d65_d50[2][0] * xx + d65_d50[2][1] * yy + d65_d50[2][2] * zz);
@@ -3050,10 +3108,11 @@ if(mocam != 1) {//Jz az bz ==> Jz Cz Hz before Ciecam16
                 lab->a[i][k] = aa;
                 lab->b[i][k] = bb;
             }
-
         }
+    }
 }
-if(mocam != 2) {
+
+if(mocam == 0 || mocam == 1) {
 //begin ciecam
 #ifdef __SSE2__
         int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
@@ -12143,7 +12202,7 @@ void ImProcFunctions::Lab_Local(
                 tmpImageorig.reset();
                 tmpImage.reset();
                 if (params->locallab.spots.at(sp).ciecam) {
-                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 1);
+                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 1, sk);
                 }
 
                 //here begin graduated filter
@@ -13083,7 +13142,7 @@ void ImProcFunctions::Lab_Local(
                     ImProcFunctions::EPDToneMaplocal(sp, bufgb.get(), tmp1.get(), itera, sk);//iterate to 0 calculate with edgstopping, improve result, call=1 dcrop we can put iterate to 5
 
                 if (params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).modecie == "tm") {
-                    ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 0);
+                    ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 0, sk);
 
                     float rad = params->locallab.spots.at(sp).detailcie;
                     loccont(bfw, bfh, xstart, ystart, xend, yend, tmp1.get(), rad, 15.f, sk);
@@ -14357,7 +14416,7 @@ void ImProcFunctions::Lab_Local(
                     ImProcFunctions::vibrance(bufexpfin.get(), vibranceParams, params->toneCurve.hrenabled, params->icm.workingProfile);
 
                     if (params->locallab.spots.at(sp).warm != 0) {
-                        ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 2);
+                        ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 2, sk);
                     }
 
                     if(lp.enavibMask && lp.recothrv != 1.f) {
@@ -15066,7 +15125,7 @@ void ImProcFunctions::Lab_Local(
                     wavcontrast4(lp, tmp1->L, tmp1->a, tmp1->b, contrast, radblur, radlevblur, tmp1->W, tmp1->H, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, wavcurve, loclevwavCurve, loclevwavutili, wavcurvelev, locconwavCurve, locconwavutili, wavcurvecon, loccompwavCurve, loccompwavutili, wavcurvecomp, loccomprewavCurve, loccomprewavutili, wavcurvecompre, locedgwavCurve, locedgwavutili, sigma, offs, maxlvl, sigmadc, deltad, chrol, chrobl, blurlc, blurena, levelena, comprena, compreena, compress, thres);
 
                     if (params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).modecie == "wav") {
-                        ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 0);
+                        ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 0, sk);
 
                         float rad = params->locallab.spots.at(sp).detailcie;
                         loccont(bfw, bfh, xstart, ystart, xend, yend, tmp1.get(), rad, 5.f, sk);
@@ -15593,7 +15652,7 @@ void ImProcFunctions::Lab_Local(
                             ToneMapFattal02(tmpImagefat.get(), fatParams, 3, 0, nullptr, 0, 0, alg);//last parameter = 1 ==>ART algorithm
                             rgb2lab(*tmpImagefat, *bufexpfin, params->icm.workingProfile);
                             if (params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).modecie == "dr") {
-                                ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0);
+                                ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0, sk);
 
                                 float rad = params->locallab.spots.at(sp).detailcie;
                                 loccont(bfw, bfh, xstart, ystart, xend, yend, bufexpfin.get(), rad, 15.f, sk);
@@ -17251,7 +17310,7 @@ void ImProcFunctions::Lab_Local(
 
                 bufexpfin->CopyFrom(bufexporig.get(), multiThread);
                 if (params->locallab.spots.at(sp).expcie) {
-                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0);
+                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0, sk);
                 }
 
                 float rad = params->locallab.spots.at(sp).detailcie;

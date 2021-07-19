@@ -7430,6 +7430,7 @@ Locallabcie::Locallabcie():
     modecam->append (M ("TP_LOCALLAB_CAMMODE_ALL"));
     modecam->append (M ("TP_LOCALLAB_CAMMODE_CAM16"));
     modecam->append (M ("TP_LOCALLAB_CAMMODE_JZ"));
+   // modecam->append (M ("TP_LOCALLAB_CAMMODE_JZALL"));
     modecam->set_active (0);
     modeHBoxcam->pack_start (*modecam);
     modecamconn = modecam->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::modecamChanged) );
@@ -7703,6 +7704,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             modecam->set_active (1);
         } else if (spot.modecam == "jz") {
             modecam->set_active (2);
+      //  } else if (spot.modecam == "jzall") {
+      //      modecam->set_active (3);
         }
 
         if (spot.modecie == "com") {
@@ -7793,6 +7796,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.modecam = "cam16";
         } else if (modecam->get_active_row_number() == 2) {
             spot.modecam = "jz";
+      //  } else if (modecam->get_active_row_number() == 3) {
+      //      spot.modecam = "jzall";
         }
 
         if (modecie->get_active_row_number() == 0) {
