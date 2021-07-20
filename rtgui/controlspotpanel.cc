@@ -408,6 +408,10 @@ ControlSpotPanel::ControlSpotPanel():
     avFrame->add(*avbox);
     specCaseBox->pack_start(*avFrame);
 
+    if (showtooltip) {
+        avoidmun_->set_tooltip_text(M("TP_LOCALLAB_AVOIDMUN_TOOLTIP"));
+    }
+
     blwhConn_  = blwh_->signal_toggled().connect(
                      sigc::mem_fun(*this, &ControlSpotPanel::blwhChanged));
 
@@ -422,7 +426,7 @@ ControlSpotPanel::ControlSpotPanel():
 
     if (showtooltip) {
         recurs_->set_tooltip_text(M("TP_LOCALLAB_RECURS_TOOLTIP"));
-        avoid_->set_tooltip_text(M("TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP"));
+        avoid_->set_tooltip_text(M("TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP"));
     }
 
     specCaseBox->pack_start(*recurs_);

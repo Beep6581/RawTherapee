@@ -11241,6 +11241,10 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
 {
     if (params->locallab.spots.at(sp).avoid  && lp.islocal) {
         const float ach = lp.trans / 100.f;
+        bool execmunsell = true;
+        if(params->locallab.spots.at(sp).modecam == "all" || params->locallab.spots.at(sp).modecam == "jz") {
+            execmunsell = false;
+        }
 
         TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
         const double wip[3][3] = {//improve precision with double
@@ -11386,7 +11390,9 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
                         float correctlum = 0.f;
                         const float memChprov = std::sqrt(SQR(original->a[y][x]) + SQR(original->b[y][x])) / 327.68f;
                         float Chprov = std::sqrt(SQR(transformed->a[y][x]) + SQR(transformed->b[y][x])) / 327.68f;
-                        Color::AllMunsellLch(true, Lprov1, Lprov2, HH, Chprov, memChprov, correctionHue, correctlum);
+                        if(execmunsell) {
+                            Color::AllMunsellLch(true, Lprov1, Lprov2, HH, Chprov, memChprov, correctionHue, correctlum);
+                        }
 
                         if (std::fabs(correctionHue) < 0.015f) {
                             HH += correctlum;    // correct only if correct Munsell chroma very small.
