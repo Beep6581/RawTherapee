@@ -1556,6 +1556,9 @@ private:
     Adjuster* const huecie;
     Adjuster* const chromjzcie;
     Adjuster* const huejzcie;
+    CurveEditorGroup* const HjzCurveEditorG;
+    FlatCurveEditor* const HHshapejz;
+    FlatCurveEditor* const CHshapejz;
     
     MyExpander* const expLcie;
     Gtk::Frame* const cie2Frame;
@@ -1586,6 +1589,7 @@ public:
     void surroundcieChanged();
     void modecieChanged();
     void modecamChanged();
+    void curveChanged(CurveEditor* ce) override;
     
     void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg);
 
@@ -1599,6 +1603,7 @@ private:
     void jabcieChanged();
     void sigmoidqjcieChanged();
     void updatecieGUI();
+    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
 
 };

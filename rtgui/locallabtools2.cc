@@ -24,6 +24,7 @@
 #include "../rtengine/procparams.h"
 #include "locallab.h"
 #include "rtimage.h"
+#include "../rtengine/color.h"
 
 #define MINNEIGH 0.1
 #define MAXNEIGH 1500
@@ -7408,6 +7409,9 @@ Locallabcie::Locallabcie():
     huecie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HUECIE"), -100., 100., 0.1, 0.))),
     chromjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCHROM"), -100., 100., 0.5, 0.))),
     huejzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZHUECIE"), -100., 100., 0.1, 0.))),
+    HjzCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_HLHZ"))),
+    HHshapejz(static_cast<FlatCurveEditor*>(HjzCurveEditorG->addCurve(CT_Flat, "hz(hz)", nullptr, false, true))),
+    CHshapejz(static_cast<FlatCurveEditor*>(HjzCurveEditorG->addCurve(CT_Flat, "cz(hz)", nullptr, false, true))),
     expLcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_LOGEXP")))),
     cie2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
     targetGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
@@ -7463,6 +7467,30 @@ Locallabcie::Locallabcie():
     cieFBox->pack_start (*surHBoxcie);
     cieFrame->add(*cieFBox);
     pack_start(*cieFrame);
+
+    float R, G, B;
+    std::vector<GradientMilestone> six_shape;
+    for (int i = 0; i < 6; i++) {
+        const float x = static_cast<float>(i) * (1.f / 6.f);
+        Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
+        six_shape.emplace_back(x, R, G, B);
+    }
+
+    HjzCurveEditorG->setCurveListener(this);
+
+    HHshapejz->setIdentityValue(0.);
+    HHshapejz->setResetCurve(FlatCurveType(defSpot.HHcurvejz.at(0)), defSpot.HHcurvejz);
+    HHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    HHshapejz->setCurveColorProvider(this, 3);
+    HHshapejz->setBottomBarBgGradient(six_shape);
+
+    CHshapejz->setIdentityValue(0.);
+    CHshapejz->setResetCurve(FlatCurveType(defSpot.CHcurvejz.at(0)), defSpot.CHcurvejz);
+    CHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    CHshapejz->setCurveColorProvider(this, 3);
+    CHshapejz->setBottomBarBgGradient(six_shape);
+
+    HjzCurveEditorG->curveListComplete();
     
     jzFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const jzBox = Gtk::manage(new ToolParamBlock());
@@ -7470,6 +7498,7 @@ Locallabcie::Locallabcie():
     jzBox->pack_start(*contjzcie);
     jzBox->pack_start(*chromjzcie);
     jzBox->pack_start(*huejzcie);
+    jzBox->pack_start(*HjzCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
  //   jzBox->pack_start(*adapjzcie);
     sigmoidjzFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const sigjzBox = Gtk::manage(new ToolParamBlock());
@@ -7613,6 +7642,7 @@ Locallabcie::Locallabcie():
     }
 Locallabcie::~Locallabcie()
 {
+    delete HjzCurveEditorG;
     
 }
 void Locallabcie::setDefaultExpanderVisibility()
@@ -7765,6 +7795,9 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             surroundcie->set_active (3);
         }
 
+        HHshapejz->setCurve(spot.HHcurvejz);
+        CHshapejz->setCurve(spot.CHcurvejz);
+
         saturlcie->setValue(spot.saturlcie);
         rstprotectcie->setValue(spot.rstprotectcie);
         chromlcie->setValue(spot.chromlcie);
@@ -7860,6 +7893,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         } else if (surroundcie->get_active_row_number() == 3) {
             spot.surroundcie = "ExtremelyDark";
         }
+        spot.HHcurvejz = HHshapejz->getCurve();
+        spot.CHcurvejz = CHshapejz->getCurve();
 
         spot.saturlcie = saturlcie->getValue();
         spot.rstprotectcie = rstprotectcie->getValue();
@@ -7893,6 +7928,41 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.detailcie = detailcie->getValue();
     }
 }
+
+void Locallabcie::curveChanged(CurveEditor* ce)
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (ce == HHshapejz) {
+            if (listener) {
+                listener->panelChanged(EvlocallabHHshapejz,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+        if (ce == CHshapejz) {
+            if (listener) {
+                listener->panelChanged(EvlocallabCHshapejz,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+    }
+}
+
+void Locallabcie::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
+{
+    idle_register.add(
+    [this, normHuer, normLumar, normChromar]() -> bool {
+        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+
+        // Update mask background
+        HHshapejz->updateLocallabBackground(normHuer);
+        CHshapejz->updateLocallabBackground(normHuer);
+
+        return false;
+    }
+    );
+}
+
 
 void Locallabcie::updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg)
 {

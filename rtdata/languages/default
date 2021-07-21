@@ -1347,6 +1347,8 @@ HISTORY_MSG_1095;Local - Jz highligths thr
 HISTORY_MSG_1096;Local - Jz shadows
 HISTORY_MSG_1097;Local - Jz shadows thr
 HISTORY_MSG_1098;Local - Jz radius SH
+HISTORY_MSG_1099;Local - Jz HzHz Curve
+HISTORY_MSG_1100;Local - Jz CzHz Curve
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2890,6 +2892,7 @@ TP_LOCALLAB_GUIDSTRBL_TOOLTIP;Intensity of the guided filter
 TP_LOCALLAB_HHMASK_TOOLTIP;Fine hue adjustments for example for the skin.
 TP_LOCALLAB_HIGHMASKCOL;Highlights
 TP_LOCALLAB_HLH;H
+TP_LOCALLAB_HLHZ;Hz
 TP_LOCALLAB_HUECIE;Hue
 TP_LOCALLAB_IND;Independent (mouse)
 TP_LOCALLAB_INDSL;Independent (mouse + sliders)
@@ -2903,10 +2906,10 @@ TP_LOCALLAB_JAB;Jz Cz Hz
 TP_LOCALLAB_JABADAP_TOOLTIP;Allows you to adapt a) the relation between Jz and saturation, b) the peak luminance level (HDR)
 TP_LOCALLAB_JZADAP;Peak luminance adaptation - Jz
 TP_LOCALLAB_JZFRA;Jz Cz Hz
-TP_LOCALLAB_JZLIGHT;Lightness
+TP_LOCALLAB_JZLIGHT;Brightness
 TP_LOCALLAB_JZCONT;Contrast
 TP_LOCALLAB_JZCHROM;Chroma
-TP_LOCALLAB_JZHUECIE;Hue
+TP_LOCALLAB_JZHUECIE;Hue Rotation
 TP_LOCALLAB_JZSHFRA;Shadows/Highlights Jz
 TP_LOCALLAB_JAB_TOOLTIP;Preferably for HDR images. Is executed before Ciecam16.
 TP_LOCALLAB_LABBLURM;Blur Mask

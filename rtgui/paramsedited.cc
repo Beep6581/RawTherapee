@@ -1689,6 +1689,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).huecie = locallab.spots.at(j).huecie && pSpot.huecie == otherSpot.huecie;
                 locallab.spots.at(j).chromjzcie = locallab.spots.at(j).chromjzcie && pSpot.chromjzcie == otherSpot.chromjzcie;
                 locallab.spots.at(j).huejzcie = locallab.spots.at(j).huejzcie && pSpot.huejzcie == otherSpot.huejzcie;
+                locallab.spots.at(j).HHcurvejz = locallab.spots.at(j).HHcurvejz && pSpot.HHcurvejz == otherSpot.HHcurvejz;
+                locallab.spots.at(j).CHcurvejz = locallab.spots.at(j).CHcurvejz && pSpot.CHcurvejz == otherSpot.CHcurvejz;
                 locallab.spots.at(j).lightlcie = locallab.spots.at(j).lightlcie && pSpot.lightlcie == otherSpot.lightlcie;
                 locallab.spots.at(j).lightjzcie = locallab.spots.at(j).lightjzcie && pSpot.lightjzcie == otherSpot.lightjzcie;
                 locallab.spots.at(j).lightqcie = locallab.spots.at(j).lightqcie && pSpot.lightqcie == otherSpot.lightqcie;
@@ -5693,6 +5695,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).huejzcie = mods.locallab.spots.at(i).huejzcie;
         }
 
+        if (locallab.spots.at(i).HHcurvejz) {
+            toEdit.locallab.spots.at(i).HHcurvejz = mods.locallab.spots.at(i).HHcurvejz;
+        }
+
+        if (locallab.spots.at(i).CHcurvejz) {
+            toEdit.locallab.spots.at(i).CHcurvejz = mods.locallab.spots.at(i).CHcurvejz;
+        }
+
         if (locallab.spots.at(i).lightlcie) {
             toEdit.locallab.spots.at(i).lightlcie = mods.locallab.spots.at(i).lightlcie;
         }
@@ -7688,6 +7698,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     huecie(v),
     chromjzcie(v),
     huejzcie(v),
+    HHcurvejz(v),
+    CHcurvejz(v),
     lightlcie(v),
     lightjzcie(v),
     lightqcie(v),
@@ -8325,6 +8337,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     huecie = v;
     chromjzcie = v;
     huejzcie = v;
+    HHcurvejz = v;
+    CHcurvejz = v;
     lightlcie = v;
     lightjzcie = v;
     lightqcie = v;

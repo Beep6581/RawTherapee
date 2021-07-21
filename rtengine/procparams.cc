@@ -4288,6 +4288,60 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     huecie(0.),
     chromjzcie(0.),
     huejzcie(0.),
+    HHcurvejz{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        0.50,
+        0.35,
+        0.35,
+        0.166,
+        0.50,
+        0.35,
+        0.35,
+        0.333,
+        0.50,
+        0.35,
+        0.35,
+        0.50,
+        0.50,
+        0.35,
+        0.35,
+        0.666,
+        0.50,
+        0.35,
+        0.35,
+        0.833,
+        0.50,
+        0.35,
+        0.35
+    },
+    CHcurvejz{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        0.50,
+        0.35,
+        0.35,
+        0.166,
+        0.50,
+        0.35,
+        0.35,
+        0.333,
+        0.50,
+        0.35,
+        0.35,
+        0.50,
+        0.50,
+        0.35,
+        0.35,
+        0.666,
+        0.50,
+        0.35,
+        0.35,
+        0.833,
+        0.50,
+        0.35,
+        0.35
+    },
     lightlcie(0.),
     lightjzcie(0.),
     lightqcie(0.),
@@ -4937,6 +4991,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && huecie == other.huecie
         && chromjzcie == other.chromjzcie
         && huejzcie == other.huejzcie
+        && HHcurvejz == other.HHcurvejz
+        && CHcurvejz == other.CHcurvejz
         && lightlcie == other.lightlcie
         && lightjzcie == other.lightjzcie
         && lightqcie == other.lightqcie
@@ -6645,6 +6701,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->huecie, "Locallab", "Huecie_" + index_str, spot.huecie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chromjzcie, "Locallab", "Chromjzcie_" + index_str, spot.chromjzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->huejzcie, "Locallab", "Huejzcie_" + index_str, spot.huejzcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->HHcurvejz, "Locallab", "HHCurvejz_" + index_str, spot.HHcurvejz, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->CHcurvejz, "Locallab", "CHCurvejz_" + index_str, spot.CHcurvejz, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lightlcie, "Locallab", "Lightlcie_" + index_str, spot.lightlcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lightjzcie, "Locallab", "Lightjzcie_" + index_str, spot.lightjzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lightqcie, "Locallab", "Brightqcie_" + index_str, spot.lightqcie, keyFile);
@@ -8725,6 +8783,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Huecie_" + index_str, pedited, spot.huecie, spotEdited.huecie);
                 assignFromKeyfile(keyFile, "Locallab", "Chromjzcie_" + index_str, pedited, spot.chromjzcie, spotEdited.chromjzcie);
                 assignFromKeyfile(keyFile, "Locallab", "Huejzcie_" + index_str, pedited, spot.huejzcie, spotEdited.huejzcie);
+                assignFromKeyfile(keyFile, "Locallab", "HHCurvejz_" + index_str, pedited, spot.HHcurvejz, spotEdited.HHcurvejz);
+                assignFromKeyfile(keyFile, "Locallab", "CHCurvejz_" + index_str, pedited, spot.CHcurvejz, spotEdited.CHcurvejz);
                 assignFromKeyfile(keyFile, "Locallab", "Lightlcie_" + index_str, pedited, spot.lightlcie, spotEdited.lightlcie);
                 assignFromKeyfile(keyFile, "Locallab", "Lightjzcie_" + index_str, pedited, spot.lightjzcie, spotEdited.lightjzcie);
                 assignFromKeyfile(keyFile, "Locallab", "Brightqcie_" + index_str, pedited, spot.lightqcie, spotEdited.lightqcie);
