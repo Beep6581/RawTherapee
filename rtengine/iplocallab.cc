@@ -11242,7 +11242,7 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
     if (params->locallab.spots.at(sp).avoid  && lp.islocal) {
         const float ach = lp.trans / 100.f;
         bool execmunsell = true;
-        if(params->locallab.spots.at(sp).modecam == "all" || params->locallab.spots.at(sp).modecam == "jz") {
+        if(params->locallab.spots.at(sp).expcie && (params->locallab.spots.at(sp).modecam == "all" || params->locallab.spots.at(sp).modecam == "jz" || params->locallab.spots.at(sp).modecam == "cam16")) {
             execmunsell = false;
         }
 

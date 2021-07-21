@@ -2624,10 +2624,10 @@ TP_LOCALLAB_AUTOGRAY;Auto mean luminance (Yb%)
 TP_LOCALLAB_AUTOGRAYCIE;Auto
 TP_LOCALLAB_AUTOGRAYCIE_TOOLTIP;Automatically calculates the 'Mean luminance' an 'Absolute luminance'.\nTry to change with JzCzHz
 TP_LOCALLAB_AVOID;Avoid color shift
-TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).\nMunsell correction always disabled when Jz is used.
+TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).\nMunsell correction always disabled when Jz or CAM16 is used.
 TP_LOCALLAB_AVOIDRAD;Soft radius
 TP_LOCALLAB_AVOIDMUN;Munsell correction only
-TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz is used
+TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz or CAM16 is used
 TP_LOCALLAB_BALAN;ab-L balance (ΔE)
 TP_LOCALLAB_BALANEXP;Laplacian balance
 TP_LOCALLAB_BALANH;C-H balance (ΔE)
