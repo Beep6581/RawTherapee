@@ -2913,7 +2913,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         double miny = 0.05;
         double delta = 0.015 * (double) sqrt(std::max(100.f, la) / 100.f);//small adaptation in function La scene
         double maxy = 0.75;//empirical value
-        double maxyc = 0.95;
         if (settings->verbose) { 
             printf("maxi=%f mini=%f mean=%f, avgm=%f, maxiC=%f wh=%f\n", maxi, mini, sum, avgm, maxiC, (double) wh);
         }
@@ -2942,7 +2941,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         });
         //all calculs in double to best results...but slow
         double lightreal = 0.2 *  params->locallab.spots.at(sp).lightjzcie;
-        double chromz = 0.11 * params->locallab.spots.at(sp).chromjzcie;
+        double chromz =  params->locallab.spots.at(sp).chromjzcie;
         double dhue = 0.0174 * params->locallab.spots.at(sp).huejzcie;
         DiagonalCurve jz_light({
             DCT_NURBS,
@@ -2956,20 +2955,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
             0, 0,
             miny  - lightreal / 150., miny ,
             min (1.0, maxy + delta - lightreal / 300.0), maxy + delta,
-            1, 1
-        });
-        DiagonalCurve cz_ch({
-            DCT_NURBS,
-            0, 0,
-            0.2, 0.2 + chromz / 150.,
-            maxyc, min (1.0, maxyc + chromz / 300.0),
-            1, 1
-        });
-        DiagonalCurve cz_chn({
-            DCT_NURBS,
-            0, 0,
-            0.05 - chromz / 150., 0.05,
-            min (1.0, maxyc - chromz / 300.0), maxyc,
             1, 1
         });
 
@@ -3063,11 +3048,15 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                 if ( Hz < 0.0 ) {
                     Hz += (double) (2.f * rtengine::RT_PI_F);
                 }
-                if(chromz > 0) {
-                    Cz = clipcz(cz_ch.getVal(Cz));
-                }
-                if(chromz < 0) {
-                    Cz = clipcz(cz_chn.getVal(Cz));
+                if(chromz < 0.) {
+                    Cz = Cz * (1. + 0.01 * chromz);
+                } else {
+                    double maxcz = 0.70710678;
+                    double fcz = Cz / maxcz;
+                    double pocz = pow(fcz , 1. - 0.0017 * chromz);
+                    Cz = maxcz * pocz;
+                  //  Cz = Cz * (1. + 0.005 * chromz);//linear
+                    
                 }
                 Hz += dhue;
                 if ( Hz < 0.0 ) {
