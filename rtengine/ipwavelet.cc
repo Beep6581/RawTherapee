@@ -448,7 +448,11 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     for (int m = 0; m < maxmul; m++) {
         cp.mulC[m] = waparams.ch[m];
     }
-
+    for (int m = maxmul; m < 9; m++) {
+        cp.mulC[m] = 0.f;
+    }
+    
+//printf("maxmul=%i\n", maxmul);
     cp.factor = WaveletParams::LABGRID_CORR_MAX * 3.276f;
     cp.scaling = WaveletParams::LABGRID_CORR_SCALE;
     cp.scaledirect = WaveletParams::LABGRIDL_DIRECT_SCALE;
@@ -535,6 +539,9 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
     for (int m = 0; m < maxmul; m++) {
         cp.mul[m] = waparams.c[m];
+    }
+    for (int m = maxmul; m < 10; m++) {
+        cp.mul[m] = 0.f;
     }
 
     cp.mul[9] = (float) waparams.sup;
@@ -1038,13 +1045,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         cp.mul[0] = 0.01f;
                     }
                 }
-                    
-                
-                if (!exblurL && cp.contrast == 0.f && cp.blurres == 0.f && !cp.noiseena && !cp.tonemap && !cp.resena && !cp.chromena && !cp.finena && !cp.edgeena && cp.conres == 0.f && cp.conresH == 0.f && cp.val == 0  && !ref0 && params->wavelet.CLmethod == "all") { // no processing of residual L or edge=> we probably can reduce the number of levels
-                    while (levwavL > 0 && cp.mul[levwavL - 1] == 0.f) { // cp.mul[level] == 0.f means no changes to level
-                        levwavL--;
-                    }
-                }
+              //  printf("cp4=%f cpmul5=%f cp6=%f cp7=%f cp8=%f\n", (double)cp.mul[4], (double)cp.mul[5],(double)cp.mul[6],(double)cp.mul[7],(double)cp.mul[8]);
 
                 if (levwavL == 6  && cp.noiseena && cp.chromfi == 0.f) {
                     cp.chromfi = 0.01f;
@@ -1055,12 +1056,17 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         levwavL = 7;
                     }
                 }
-                bool isdenoisL = (cp.lev0n > 0.1f || cp.lev1n > 0.1f || cp.lev2n > 0.1f || cp.lev3n > 0.1f || cp.lev4n > 0.1f);
-
                 if (levwavL < 5 && cp.noiseena) {
                     levwavL = 6;    //to allow edge and denoise  => I always allocate 3 (4) levels..because if user select wavelet it is to do something !!
                 }
                 
+                if (!exblurL && cp.contrast == 0.f && cp.blurres == 0.f && !cp.noiseena && !cp.tonemap && !cp.resena && !cp.chromena && !cp.toningena && !cp.finena && !cp.edgeena && cp.conres == 0.f && cp.conresH == 0.f && cp.val == 0  && !ref0 && params->wavelet.CLmethod == "all") { // no processing of residual L or edge=> we probably can reduce the number of levels
+                    while (levwavL > 0 && cp.mul[levwavL - 1] == 0.f) { // cp.mul[level] == 0.f means no changes to level
+                        levwavL--;
+                    }
+                }
+                bool isdenoisL = (cp.lev0n > 0.1f || cp.lev1n > 0.1f || cp.lev2n > 0.1f || cp.lev3n > 0.1f || cp.lev4n > 0.1f);
+
                 
 /*
                 if(cp.denoicurvh  || cp.levdenhigh > 0.01f) {
@@ -1724,7 +1730,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         if (!hhutili) { //always a or b
                             int levwava = levwav;
 
-                            if (!exblurab && cp.chrores == 0.f  && cp.blurcres == 0.f && !cp.noiseena && !cp.tonemap && !cp.resena && !cp.chromena && !cp.finena && !cp.edgeena&& params->wavelet.CLmethod == "all" && !cp.cbena) { // no processing of residual ab => we probably can reduce the number of levels
+                            if (!exblurab && cp.chrores == 0.f  && cp.blurcres == 0.f && !cp.noiseena && !cp.tonemap && !cp.resena && !cp.chromena && !cp.toningena && !cp.finena && !cp.edgeena && params->wavelet.CLmethod == "all" && !cp.cbena) { // no processing of residual ab => we probably can reduce the number of levels
                                 while (levwava > 0 && !cp.diag && (((cp.CHmet == 2 && (cp.chro == 0.f || cp.mul[levwava - 1] == 0.f)) || (cp.CHmet != 2 && (levwava == 10 || (!cp.curv  || cp.mulC[levwava - 1] == 0.f))))) && (!cp.opaRG || levwava == 10 || (cp.opaRG && cp.mulopaRG[levwava - 1] == 0.f)) && ((levwava == 10 || (cp.CHSLmet == 1 && cp.mulC[levwava - 1] == 0.f)))) {
                                     levwava--;
                                 }
@@ -1777,7 +1783,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
                             int levwavb = levwav;
 
-                            if (!exblurab && cp.chrores == 0.f && cp.blurcres == 0.f && !cp.noiseena && !cp.tonemap && !cp.resena && !cp.chromena && !cp.finena && !cp.edgeena && params->wavelet.CLmethod == "all" && !cp.cbena) { // no processing of residual ab => we probably can reduce the number of levels
+                            if (!exblurab && cp.chrores == 0.f && cp.blurcres == 0.f && !cp.noiseena && !cp.tonemap && !cp.resena && !cp.chromena && !cp.toningena && !cp.finena && !cp.edgeena && params->wavelet.CLmethod == "all" && !cp.cbena) { // no processing of residual ab => we probably can reduce the number of levels
                                 while (levwavb > 0 &&  !cp.diag && (((cp.CHmet == 2 && (cp.chro == 0.f || cp.mul[levwavb - 1] == 0.f)) || (cp.CHmet != 2 && (levwavb == 10 || (!cp.curv || cp.mulC[levwavb - 1] == 0.f))))) && (!cp.opaBY || levwavb == 10 || (cp.opaBY && cp.mulopaBY[levwavb - 1] == 0.f)) && ((levwavb == 10 || (cp.CHSLmet == 1 && cp.mulC[levwavb - 1] == 0.f)))) {
                                     levwavb--;
                                 }
@@ -4532,6 +4538,10 @@ void ImProcFunctions::ContAllAB(LabImage * labco, int maxlvl, float ** varhue, f
     }
 
     if ((useOpacity && level < 9 && mulOpacity != 0.f) && cp.toningena) { //toning
+    //    if (settings->verbose) {
+    //        printf("Toning enabled\n");
+    //    }
+
         float mea[10];
         float effect = cp.sigmaton;
         float betaab;

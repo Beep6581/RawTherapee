@@ -346,7 +346,8 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     //------------------------------------------------------------------------
     // LAB grid
     auto m = ProcEventMapper::getInstance();
-    EvColorToningLabGridValue = m->newEvent(RGBCURVE, "HISTORY_MSG_COLORTONING_LABGRID_VALUE");
+//    EvColorToningLabGridValue = m->newEvent(RGBCURVE, "HISTORY_MSG_COLORTONING_LABGRID_VALUE");
+    EvColorToningLabGridValue = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_COLORTONING_LABGRID_VALUE");
     labgrid = Gtk::manage(new LabGrid(EvColorToningLabGridValue, M("TP_COLORTONING_LABGRID_VALUES")));
     pack_start(*labgrid, Gtk::PACK_EXPAND_WIDGET, 4);
     //------------------------------------------------------------------------
@@ -645,7 +646,7 @@ void ColorToning::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     lastLumamode = pp->colorToning.lumamode;
 
-    labgrid->setParams(pp->colorToning.labgridALow / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridBLow / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridAHigh / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridBHigh / ColorToningParams::LABGRID_CORR_MAX, false);
+    labgrid->setParams(pp->colorToning.labgridALow / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridBLow / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridAHigh / ColorToningParams::LABGRID_CORR_MAX, pp->colorToning.labgridBHigh / ColorToningParams::LABGRID_CORR_MAX, 0, 0, 0, 0,false);
 
     if (pedited && !pedited->colorToning.method) {
         method->set_active (7);
@@ -714,8 +715,10 @@ void ColorToning::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorToning.satProtectionThreshold = satProtectionThreshold->getIntValue();
     pp->colorToning.saturatedOpacity       = saturatedOpacity->getIntValue();
     pp->colorToning.strength               = strength->getIntValue();
-
-    labgrid->getParams(pp->colorToning.labgridALow, pp->colorToning.labgridBLow, pp->colorToning.labgridAHigh, pp->colorToning.labgridBHigh);
+    double zerox = 0.;
+    double zeroy = 0.;
+    
+    labgrid->getParams(pp->colorToning.labgridALow, pp->colorToning.labgridBLow, pp->colorToning.labgridAHigh, pp->colorToning.labgridBHigh, zerox, zeroy, zerox, zeroy);
     pp->colorToning.labgridALow *= ColorToningParams::LABGRID_CORR_MAX;
     pp->colorToning.labgridAHigh *= ColorToningParams::LABGRID_CORR_MAX;
     pp->colorToning.labgridBLow *= ColorToningParams::LABGRID_CORR_MAX;
@@ -831,7 +834,7 @@ void ColorToning::setDefaults (const ProcParams* defParams, const ParamsEdited* 
     hlColSat->setDefault<int> (defParams->colorToning.hlColSat);
     shadowsColSat->setDefault<int> (defParams->colorToning.shadowsColSat);
     strength->setDefault (defParams->colorToning.strength);
-    labgrid->setDefault(defParams->colorToning.labgridALow / ColorToningParams::LABGRID_CORR_MAX, defParams->colorToning.labgridBLow / ColorToningParams::LABGRID_CORR_MAX, defParams->colorToning.labgridAHigh / ColorToningParams::LABGRID_CORR_MAX, defParams->colorToning.labgridBHigh / ColorToningParams::LABGRID_CORR_MAX);
+    labgrid->setDefault(defParams->colorToning.labgridALow / ColorToningParams::LABGRID_CORR_MAX, defParams->colorToning.labgridBLow / ColorToningParams::LABGRID_CORR_MAX, defParams->colorToning.labgridAHigh / ColorToningParams::LABGRID_CORR_MAX, defParams->colorToning.labgridBHigh / ColorToningParams::LABGRID_CORR_MAX, 0, 0, 0, 0);
 
 
     if (pedited) {
@@ -1429,7 +1432,9 @@ void ColorToning::labRegionGet(int idx)
 
     auto &r = labRegionData[idx];
     double la, lb;
-    labRegionAB->getParams(la, lb, r.a, r.b);
+    double zerox = 0.;
+    double zeroy = 0.;
+    labRegionAB->getParams(la, lb, r.a, r.b, zerox, zeroy, zerox, zeroy);
     r.saturation = labRegionSaturation->getValue();
     r.slope = labRegionSlope->getValue();
     r.offset = labRegionOffset->getValue();
@@ -1565,9 +1570,9 @@ void ColorToning::labRegionShow(int idx, bool list_only)
         disableListener();
     }
     rtengine::procparams::ColorToningParams::LabCorrectionRegion dflt;
-    auto &r = labRegionData[idx];
+    auto &r = labRegionData[idx]; 
     if (!list_only) {
-        labRegionAB->setParams(0, 0, r.a, r.b, false);
+        labRegionAB->setParams(0, 0, r.a, r.b,0, 0, 0, 0, false);
         labRegionSaturation->setValue(r.saturation);
         labRegionSlope->setValue(r.slope);
         labRegionOffset->setValue(r.offset);

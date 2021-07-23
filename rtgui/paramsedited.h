@@ -438,6 +438,7 @@ public:
         bool complexcolor;
         bool curvactiv;
         bool lightness;
+        bool reparcol;
         bool contrast;
         bool chroma;
         bool labgridALow;
@@ -517,6 +518,7 @@ public:
         bool strexp;
         bool angexp;
         bool excurve;
+        bool norm;
         bool inversex;
         bool enaExpMask;
         bool enaExpMaskaft;
@@ -536,6 +538,7 @@ public:
         bool expMethod;
         bool exnoiseMethod;
         bool laplacexp;
+        bool reparexp;
         bool balanexp;
         bool linear;
         bool gamm;
@@ -574,6 +577,7 @@ public:
         bool slomaskSH;
         bool lapmaskSH;
         bool detailSH;
+        bool reparsh;
         bool LmaskSHcurve;
         bool fatamountSH;
         bool fatanchorSH;
@@ -676,6 +680,7 @@ public:
         bool nlrad;
         bool nlgam;
         bool sensiden;
+        bool reparden;
         bool detailthr;
         bool locwavcurveden;
         bool locwavcurvehue;
@@ -707,6 +712,7 @@ public:
         bool gamma;
         bool estop;
         bool scaltm;
+        bool repartm;
         bool rewei;
         bool satur;
         bool sensitm;
@@ -828,6 +834,7 @@ public:
         bool edgw;
         bool basew;
         bool sensilc;
+        bool reparw;
         bool fftwlc;
         bool blurlc;
         bool wavblur;
@@ -897,6 +904,7 @@ public:
         bool targetGray;
         bool catad;
         bool saturl;
+        bool chroml;
         bool lightl;
         bool lightq;
         bool contl;
@@ -1075,8 +1083,17 @@ struct ResizeParamsEdited {
     bool dataspec;
     bool width;
     bool height;
+    bool longedge;
+    bool shortedge;
     bool enabled;
     bool allowUpscaling;
+};
+
+class SpotParamsEdited
+{
+public:
+    bool enabled;
+    bool entries;
 };
 
 struct ColorManagementParamsEdited {
@@ -1091,7 +1108,25 @@ struct ColorManagementParamsEdited {
     bool workingTRC;
     bool workingTRCGamma;
     bool workingTRCSlope;
-
+    bool will;
+    bool wprim;
+    bool redx;
+    bool redy;
+    bool grex;
+    bool grey;
+    bool blux;
+    bool bluy;
+    bool preser;
+    bool fbw;
+    bool labgridcieALow;
+    bool labgridcieBLow;
+    bool labgridcieAHigh;
+    bool labgridcieBHigh;
+    bool labgridcieGx;
+    bool labgridcieGy;
+    bool labgridcieWx;
+    bool labgridcieWy;
+    bool aRendIntent;
     bool outputProfile;
     bool outputIntent;
     bool outputBPC;
@@ -1411,6 +1446,7 @@ struct ParamsEdited {
     ChannelMixerParamsEdited chmixer;
     BlackWhiteParamsEdited blackwhite;
     ResizeParamsEdited resize;
+    SpotParamsEdited spot;
     ColorManagementParamsEdited icm;
     RAWParamsEdited raw;
     DirPyrEqualizerParamsEdited dirpyrequalizer;

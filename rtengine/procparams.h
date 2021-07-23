@@ -27,6 +27,7 @@
 #include <glibmm/ustring.h>
 #include <lcms2.h>
 
+#include "coord.h"
 #include "noncopyable.h"
 
 struct ParamsEdited;
@@ -1030,6 +1031,7 @@ struct LocallabParams {
         int complexcolor;
         bool curvactiv;
         int lightness;
+        double reparcol;
         int contrast;
         int chroma;
         double labgridALow;
@@ -1109,6 +1111,7 @@ struct LocallabParams {
         double strexp;
         double angexp;
         std::vector<double> excurve;
+        bool norm;
         bool inversex;
         bool enaExpMask;
         bool enaExpMaskaft;
@@ -1128,6 +1131,7 @@ struct LocallabParams {
         Glib::ustring expMethod; // std, pde
         Glib::ustring exnoiseMethod; // none, med, medhi
         double laplacexp;
+        double reparexp;
         double balanexp;
         double linear;
         double gamm;
@@ -1166,6 +1170,7 @@ struct LocallabParams {
         double slomaskSH;
         double lapmaskSH;
         int detailSH;
+        double reparsh;
         std::vector<double> LmaskSHcurve;
         double fatamountSH;
         double fatanchorSH;
@@ -1268,6 +1273,7 @@ struct LocallabParams {
         int nlrad;
         double nlgam;
         int sensiden;
+        double reparden;
         int detailthr;
         std::vector<double> locwavcurveden;
         std::vector<double> locwavcurvehue;
@@ -1299,6 +1305,7 @@ struct LocallabParams {
         double gamma;
         double estop;
         double scaltm;
+        double repartm;
         int rewei;
         double satur;
         int sensitm;
@@ -1420,6 +1427,7 @@ struct LocallabParams {
         double edgw;
         double basew;
         int sensilc;
+        double reparw;
         bool fftwlc;
         bool blurlc;
         bool wavblur;
@@ -1489,6 +1497,7 @@ struct LocallabParams {
         double targetGray;
         double catad;
         double saturl;
+        double chroml;
         double lightl;
         double lightq;
         double contl;
@@ -1681,6 +1690,8 @@ struct ResizeParams {
     int dataspec;
     int width;
     int height;
+    int longedge;
+    int shortedge;
     bool allowUpscaling;
 
     ResizeParams();
@@ -1690,9 +1701,84 @@ struct ResizeParams {
 };
 
 /**
+  * Parameters entry
+  */
+struct SpotEntry {
+    Coord sourcePos;
+    Coord targetPos;
+    int radius;
+    float feather;
+    float opacity;
+
+    SpotEntry();
+    float getFeatherRadius() const;
+
+    bool operator ==(const SpotEntry& other) const;
+    bool operator !=(const SpotEntry& other) const;
+};
+
+/**
+  * Parameters of the dust removal tool
+  */
+struct SpotParams {
+    bool enabled;
+    std::vector<SpotEntry> entries;
+
+    // the following constant can be used for experimentation before the final merge
+    static const short minRadius;
+    static const short maxRadius;
+
+    SpotParams();
+
+    bool operator ==(const SpotParams& other) const;
+    bool operator !=(const SpotParams& other) const;
+};
+
+
+/**
   * Parameters of the color spaces used during the processing
   */
 struct ColorManagementParams {
+    enum class WorkingTrc {
+        NONE,
+        CUSTOM,
+        BT709,
+        SRGB,
+        GAMMA_2_2,
+        GAMMA_1_8,
+        LINEAR
+    };
+
+    enum class Illuminant {
+        DEFAULT,
+        D41,
+        D50,
+        D55,
+        D60,
+        D65,
+        D80,
+        D120,
+        STDA,
+        TUNGSTEN_2000K,
+        TUNGSTEN_1500K
+    };
+
+    enum class Primaries {
+        DEFAULT,
+        SRGB,
+        ADOBE_RGB,
+        PRO_PHOTO,
+        REC2020,
+        ACES_P1,
+        WIDE_GAMUT,
+        ACES_P0,
+        BRUCE_RGB,
+        BETA_RGB,
+        BEST_RGB,
+        CUSTOM,
+        CUSTOM_GRID
+    };
+
     Glib::ustring inputProfile;
     bool toneCurve;
     bool applyLookTable;
@@ -1701,15 +1787,35 @@ struct ColorManagementParams {
     int dcpIlluminant;
 
     Glib::ustring workingProfile;
-    Glib::ustring workingTRC;
+    WorkingTrc workingTRC;
+    Illuminant will;
+    Primaries wprim;
     double workingTRCGamma;
     double workingTRCSlope;
+    double redx;
+    double redy;
+    double grex;
+    double grey;
+    double blux;
+    double bluy;
+    double preser;
+    bool fbw;
+    double labgridcieALow;
+    double labgridcieBLow;
+    double labgridcieAHigh;
+    double labgridcieBHigh;
+    double labgridcieGx;
+    double labgridcieGy;
+    double labgridcieWx;
+    double labgridcieWy;
+    RenderingIntent aRendIntent;
 
     Glib::ustring outputProfile;
     RenderingIntent outputIntent;
     bool outputBPC;
 
     static const Glib::ustring NoICMString;
+    static const Glib::ustring NoProfileString;
 
     ColorManagementParams();
 
@@ -2318,6 +2424,7 @@ public:
     ChannelMixerParams      chmixer;         ///< Channel mixer parameters
     BlackWhiteParams        blackwhite;      ///< Black&  White parameters
     ResizeParams            resize;          ///< Resize parameters
+    SpotParams              spot;            ///< Spot removal tool
     ColorManagementParams   icm;             ///< profiles/color spaces used during the image processing
     RAWParams               raw;             ///< RAW parameters before demosaicing
     WaveletParams           wavelet;         ///< Wavelet parameters

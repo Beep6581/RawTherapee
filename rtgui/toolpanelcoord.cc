@@ -49,6 +49,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     shadowshighlights   = Gtk::manage (new ShadowsHighlights ());
     impulsedenoise      = Gtk::manage (new ImpulseDenoise ());
     defringe            = Gtk::manage (new Defringe ());
+    spot                = Gtk::manage (new Spot ());
     dirpyrdenoise       = Gtk::manage (new DirPyrDenoise ());
     epd                 = Gtk::manage (new EdgePreservingDecompositionUI ());
     sharpening          = Gtk::manage (new Sharpening ());
@@ -117,6 +118,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     addfavoritePanel (colorPanel, chmixer);
     addfavoritePanel (colorPanel, blackwhite);
     addfavoritePanel (exposurePanel, shadowshighlights);
+    addfavoritePanel (detailsPanel, spot);
     addfavoritePanel (detailsPanel, sharpening);
     addfavoritePanel (detailsPanel, localContrast);
     addfavoritePanel (detailsPanel, sharpenEdge);
@@ -351,6 +353,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     rawPanelSW->set_sensitive(true);
                     sensorxtrans->FoldableToolPanel::hide();
                     xtransprocess->FoldableToolPanel::hide();
+                    bayerrawexposure->FoldableToolPanel::show();
                     xtransrawexposure->FoldableToolPanel::hide();
                     sensorbayer->FoldableToolPanel::show();
                     bayerprocess->FoldableToolPanel::show();
@@ -372,6 +375,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     sensorxtrans->FoldableToolPanel::show();
                     xtransprocess->FoldableToolPanel::show();
                     xtransrawexposure->FoldableToolPanel::show();
+                    bayerrawexposure->FoldableToolPanel::hide();
                     sensorbayer->FoldableToolPanel::hide();
                     bayerprocess->FoldableToolPanel::hide();
                     bayerpreprocess->FoldableToolPanel::hide();
@@ -449,6 +453,33 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
 
 }
 
+void ToolPanelCoordinator::setTweakOperator (rtengine::TweakOperator *tOperator)
+{
+    if (ipc && tOperator) {
+        ipc->setTweakOperator(tOperator);
+    }
+}
+
+void ToolPanelCoordinator::unsetTweakOperator (rtengine::TweakOperator *tOperator)
+{
+    if (ipc && tOperator) {
+        ipc->unsetTweakOperator(tOperator);
+    }
+}
+
+void ToolPanelCoordinator::refreshPreview (const rtengine::ProcEvent& event)
+{
+    if (!ipc) {
+        return;
+    }
+
+    ProcParams* params = ipc->beginUpdateParams ();
+    for (auto toolPanel : toolPanels) {
+        toolPanel->write (params);
+    }
+
+    ipc->endUpdateParams (event);   // starts the IPC processing
+}
 
 void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr)
 {
@@ -712,6 +743,7 @@ void ToolPanelCoordinator::initImage(rtengine::StagedImageProcessor* ipc_, bool 
         ipc->setpdSharpenAutoRadiusListener (pdSharpening);
         ipc->setAutoWBListener(whitebalance);
         ipc->setAutoColorTonListener(colortoning);
+        ipc->setAutoprimListener(icm);
         ipc->setAutoChromaListener(dirpyrdenoise);
         ipc->setWaveletListener(wavelet);
         ipc->setRetinexListener(retinex);
@@ -1003,16 +1035,6 @@ double ToolPanelCoordinator::autoDistorRequested()
     }
 
     return rtengine::ImProcFunctions::getAutoDistor(ipc->getInitialImage()->getFileName(), 400);
-}
-
-void ToolPanelCoordinator::updateTransformPreviewRequested(rtengine::ProcEvent event, bool render_perspective)
-{
-    if (!ipc) {
-        return;
-    }
-
-    ipc->beginUpdateParams()->perspective.render = render_perspective;
-    ipc->endUpdateParams(event);
 }
 
 void ToolPanelCoordinator::spotWBRequested(int size)

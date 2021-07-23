@@ -1438,6 +1438,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     CurveFactory::complexsgnCurve (autili, butili, ccutili, cclutili, params.labCurve.acurve, params.labCurve.bcurve, params.labCurve.cccurve,
                                    params.labCurve.lccurve, curve1, curve2, satcurve, lhskcurve, 16);
 
+
+    if (params.colorToning.enabled && params.colorToning.method == "LabGrid") {
+        ipf.colorToningLabGrid(labView, 0,labView->W , 0, labView->H, false);
+    }
+
     ipf.shadowsHighlights(labView, params.sh.enabled, params.sh.lab,params.sh.highlights ,params.sh.shadows, params.sh.radius, 16, params.sh.htonalwidth, params.sh.stonalwidth);
 
     if (params.localContrast.enabled) {
@@ -1450,11 +1455,14 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
     ipf.labColorCorrectionRegions(labView);
 
 
+
+
     if ((params.colorappearance.enabled && !params.colorappearance.tonecie) || !params.colorappearance.enabled) {
         ipf.EPDToneMap (labView, 5, 6);
     }
 
     ipf.softLight(labView, params.softlight);
+
 
     if (params.colorappearance.enabled) {
         CurveFactory::curveLightBrightColor (
@@ -1503,7 +1511,8 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
         ipf.ciecam_02float (cieView, adap, 1, 2, labView, &params, customColCurve1, customColCurve2, customColCurve3, dummy, dummy, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 5, sk, execsharp, d, dj, yb, rtt);
         delete cieView;
     }
-    
+
+
     // color processing
     //ipf.colorCurve (labView, labView);
 
