@@ -113,23 +113,21 @@ public:
         const int W = lab->getWidth();
         const int H = lab->getHeight();
         float **lab_L = lab->g.ptrs;
+        double wddf = wd;
+        if (call == 1 || call == 3) {
+            wddf = wdf;
+        }
+
 
 #ifdef _OPENMP
 #       pragma omp parallel for if (multithread)
 #endif
         for (int j = 0; j < H; ++j) {
             double wy = oy + j;
-            double y = wy / wd;
-            if (call == 1 || call == 3) {
-                y = wy / wdf;
-            }
+            double y = wy / wddf;
             for (int i = 0; i < W; ++i) {
                 double wx = ox + i;
-                double x = wx / wd;
-                if (call == 1 || call == 3) {
-                    x = wx / wdf;
-                }
-                
+                double x = wx / wddf;
                 double noise = simplex_2d_noise(x, y, octaves, 1.0, zoom) / s;
                 lab_L[j][i] += lut_lookup(noise * strength * GRAIN_LIGHTNESS_STRENGTH_SCALE, lab_L[j][i] / 32768.f);
             }
