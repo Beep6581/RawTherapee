@@ -89,7 +89,7 @@ const int permutation[]
 
 class GrainEvaluator {
 public:
-    GrainEvaluator(int offset_x, int offset_y, int full_width, int full_height, double scale, float divgr):
+    GrainEvaluator(int offset_x, int offset_y, int full_width, int full_height, double scale, float divgr, int call, int fww, int fhh):
         ox(offset_x),
         oy(offset_y),
         fw(full_width),
@@ -101,14 +101,15 @@ public:
         evaluate_grain_lut(mb, divgr);
     }
     
-    void operator()(int isogr, int strengr, int scalegr, float divgr, Imagefloat *lab, bool multithread)
+    void operator()(int isogr, int strengr, int scalegr, float divgr, Imagefloat *lab, bool multithread, int call, int fww, int fhh)
     {
         const double strength = (strengr / 100.0);
         const double octaves = 3.;
         const double wd = std::min(fw, fh);
+        const double wdf = std::min(fww, fhh);
+        
         const double zoom = (1.0 + 8 * (double(isogr) / GRAIN_SCALE_FACTOR) / 100.0) / 800.0;
         const double s = std::max(scale / 3.0, 1.0) / (double(std::max(scalegr, 1)) / 100.0);
-      //      printf("s=%f \n", s);
         const int W = lab->getWidth();
         const int H = lab->getHeight();
         float **lab_L = lab->g.ptrs;
@@ -119,9 +120,16 @@ public:
         for (int j = 0; j < H; ++j) {
             double wy = oy + j;
             double y = wy / wd;
+            if (call == 1 || call == 3) {
+                y = wy / wdf;
+            }
             for (int i = 0; i < W; ++i) {
                 double wx = ox + i;
                 double x = wx / wd;
+                if (call == 1 || call == 3) {
+                    x = wx / wdf;
+                }
+                
                 double noise = simplex_2d_noise(x, y, octaves, 1.0, zoom) / s;
                 lab_L[j][i] += lut_lookup(noise * strength * GRAIN_LIGHTNESS_STRENGTH_SCALE, lab_L[j][i] / 32768.f);
             }
@@ -371,14 +379,14 @@ private:
 } // namespace
 
 
-void ImProcFunctions::filmGrain(Imagefloat *rgb, int isogr, int strengr, int scalegr, float divgr, int bfw, int bfh)
+void ImProcFunctions::filmGrain(Imagefloat *rgb, int isogr, int strengr, int scalegr, float divgr, int bfw, int bfh, int call, int fw, int fh)
 {
     if (settings->verbose) {
         printf("iso=%i strength=%i scale=%i gamma=%f\n", isogr, strengr, scalegr, divgr);
     }
 
-    GrainEvaluator ge(0, 0, bfw, bfh, scale, divgr);
-    ge(isogr, strengr, scalegr, divgr, rgb, multiThread);
+    GrainEvaluator ge(0, 0, bfw, bfh, scale, divgr, call, fw, fh);
+    ge(isogr, strengr, scalegr, divgr, rgb, multiThread, call, fw, fh);
 }
 
 } // namespace rtengine
