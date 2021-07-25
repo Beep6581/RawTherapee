@@ -1349,6 +1349,7 @@ HISTORY_MSG_1097;Local - Jz shadows thr
 HISTORY_MSG_1098;Local - Jz radius SH
 HISTORY_MSG_1099;Local - Jz HzHz Curve
 HISTORY_MSG_1100;Local - Jz CzHz Curve
+HISTORY_MSG_1101;Local - Jz reference 100
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2903,7 +2904,9 @@ TP_LOCALLAB_INVERS_TOOLTIP;Fewer possibilities if selected (Inverse).\n\nAlterna
 TP_LOCALLAB_INVMASK;Inverse algorithm
 TP_LOCALLAB_ISOGR;Distribution (ISO)
 TP_LOCALLAB_JAB;Jz Cz Hz
-TP_LOCALLAB_JABADAP_TOOLTIP;Allows you to adapt a) the relation between Jz and saturation, b) the peak luminance level (HDR)
+TP_LOCALLAB_JABADAP_TOOLTIP;Allows you to adapt a) the relation between Jz and saturation, b) the peak luminance level (HDR).\nAllows you to adapt this level to your device display characteristics.
+TP_LOCALLAB_JZ100;Jz reference 100cd/m2
+TP_LOCALLAB_JZ100_TOOLTIP;Allows you to refine the reference Jz 100 cd/m2 level.\nChange saturation level and action of 'peak luminance adaptation' , can leads artifacts.
 TP_LOCALLAB_JZADAP;Peak luminance adaptation - Jz
 TP_LOCALLAB_JZFRA;Jz Cz Hz
 TP_LOCALLAB_JZLIGHT;Brightness

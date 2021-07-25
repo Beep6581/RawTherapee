@@ -2859,6 +2859,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         double sum = 0.;
         int nc = 0;
         double adapjz = params->locallab.spots.at(sp).adapjzcie;
+        double jz100 = params->locallab.spots.at(sp).jz100;
         double pl = 10000.;
 //calculate min, max, mean for Jz
 #ifdef _OPENMP
@@ -2899,7 +2900,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         }
 
         sum = sum / nc;
-        double kjz = (0.29 + 0.07 * adapjz) / maxi;//remapping Jz in usual values 0..1 => 0.29 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
+        double kjz = (jz100 + 0.07 * adapjz) / maxi;//remapping Jz in usual values 0..1 => 0.29 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
         const std::unique_ptr<LabImage> temp(new LabImage(width, height));
         array2D<double> JJz(width, height);
         array2D<double> Aaz(width, height);

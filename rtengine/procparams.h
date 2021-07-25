@@ -1594,6 +1594,7 @@ struct LocallabParams {
         double contlcie;
         double contjzcie;
         double adapjzcie;
+        double jz100;
         double hljzcie;
         double hlthjzcie;
         double shjzcie;

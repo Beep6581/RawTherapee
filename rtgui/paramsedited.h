@@ -1000,6 +1000,7 @@ public:
         bool contlcie;
         bool contjzcie;
         bool adapjzcie;
+        bool jz100;
         bool hljzcie;
         bool hlthjzcie;
         bool shjzcie;

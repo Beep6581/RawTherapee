@@ -1528,6 +1528,7 @@ private:
     Adjuster* const lightjzcie;
     Adjuster* const contjzcie;
     Adjuster* const adapjzcie;
+    Adjuster* const jz100;
     Gtk::Frame* const jzshFrame;
     Adjuster* const hljzcie;
     Adjuster* const hlthjzcie;
