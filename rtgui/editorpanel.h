@@ -243,6 +243,7 @@ private:
     Glib::RefPtr<Gio::AppInfo> external_editor_info;
     std::unique_ptr<Gtk::AppChooserDialog> app_chooser_dialog;
 
+    rtengine::InitialImage *cached_exported_image;
     rtengine::procparams::ProcParams cached_exported_pparams;
     Glib::ustring cached_exported_filename;
 

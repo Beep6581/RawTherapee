@@ -1980,11 +1980,12 @@ void EditorPanel::sendToExternal()
         pparams.icm.outputProfile = rtengine::procparams::ColorManagementParams::NoProfileString;
     }
 
-    if (!cached_exported_filename.empty() && pparams == cached_exported_pparams && Glib::file_test(cached_exported_filename, Glib::FILE_TEST_IS_REGULAR)) {
+    if (!cached_exported_filename.empty() && cached_exported_image == ipc->getInitialImage() && pparams == cached_exported_pparams && Glib::file_test(cached_exported_filename, Glib::FILE_TEST_IS_REGULAR)) {
         idle_sentToGimp(nullptr, nullptr, cached_exported_filename);
         return;
     }
 
+    cached_exported_image = ipc->getInitialImage();
     cached_exported_pparams = pparams;
     cached_exported_filename.clear();
     rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
