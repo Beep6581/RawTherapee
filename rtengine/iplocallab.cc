@@ -2900,7 +2900,11 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         }
 
         sum = sum / nc;
-        double kjz = (jz100 + 0.07 * adapjz) / maxi;//remapping Jz in usual values 0..1 => 0.29 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
+        double ijz100 = 1./jz100;
+        double ajz = (ijz100 - 1.)/9.;//9 = sqrt(100) - 1
+        double bjz = 1. - ajz;
+        double kjz = jz100 * (adapjz * ajz + bjz) / maxi;//remapping Jz in usual values 0..1 =>jz100 = 0.25 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
+        //adapjz * ajz + bjz parabolic curve between 1 and ijz100
         const std::unique_ptr<LabImage> temp(new LabImage(width, height));
         array2D<double> JJz(width, height);
         array2D<double> Aaz(width, height);
