@@ -38,6 +38,8 @@ template<typename T>
 class array2D;
 }
 
+using ExternalEditorChangedSignal = sigc::signal<void>;
+
 class BatchQueueEntry;
 class EditorPanel;
 class FilePanel;
@@ -66,6 +68,7 @@ class EditorPanel final :
     public rtengine::NonCopyable
 {
 public:
+
     explicit EditorPanel (FilePanel* filePanel = nullptr);
     ~EditorPanel () override;
 
@@ -170,6 +173,10 @@ public:
     void openPreviousEditorImage ();
     void syncFileBrowser ();
 
+    // Signals.
+    ExternalEditorChangedSignal * getExternalEditorChangedSignal();
+    void setExternalEditorChangedSignal(ExternalEditorChangedSignal *signal);
+
     void tbTopPanel_1_visible (bool visible);
     bool CheckSidePanelsVisibility();
     void tbShowHideSidePanels_managestate();
@@ -207,6 +214,7 @@ private:
     void                histogramProfile_toggled ();
     Gtk::AppChooserDialog *getAppChooserDialog();
     void onAppChooserDialogResponse(int resposneId);
+    void updateExternalEditorSelection();
 
 
     Glib::ustring lastSaveAsFileName;
@@ -242,6 +250,8 @@ private:
     Gtk::Button* navPrev;
     Glib::RefPtr<Gio::AppInfo> external_editor_info;
     std::unique_ptr<Gtk::AppChooserDialog> app_chooser_dialog;
+    ExternalEditorChangedSignal *externalEditorChangedSignal;
+    sigc::connection externalEditorChangedSignalConnection;
 
     rtengine::InitialImage *cached_exported_image;
     rtengine::procparams::ProcParams cached_exported_pparams;

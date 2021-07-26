@@ -2003,6 +2003,9 @@ void EditorPanel::sendToExternalChanged(int)
         index = -1;
     }
     options.externalEditorIndex = index;
+    if (externalEditorChangedSignal) {
+        externalEditorChangedSignal->emit();
+    }
 }
 
 void EditorPanel::sendToExternalPressed()
@@ -2066,6 +2069,23 @@ void EditorPanel::syncFileBrowser()   // synchronize filebrowser with image in E
 {
     if (!simpleEditor && fPanel && !fname.empty()) {
         fPanel->fileCatalog->selectImage (fname, false);
+    }
+}
+
+ExternalEditorChangedSignal * EditorPanel::getExternalEditorChangedSignal()
+{
+    return externalEditorChangedSignal;
+}
+
+void EditorPanel::setExternalEditorChangedSignal(ExternalEditorChangedSignal *signal)
+{
+    if (externalEditorChangedSignal) {
+        externalEditorChangedSignalConnection.disconnect();
+    }
+    externalEditorChangedSignal = signal;
+    if (signal) {
+        externalEditorChangedSignalConnection = signal->connect(
+                sigc::mem_fun(*this, &EditorPanel::updateExternalEditorSelection));
     }
 }
 
@@ -2200,6 +2220,18 @@ void EditorPanel::onAppChooserDialogResponse(int responseId)
             break;
         default:
             break;
+    }
+}
+
+void EditorPanel::updateExternalEditorSelection()
+{
+    int index = send_to_external->getSelected();
+    if (index >= 0 && static_cast<unsigned>(index) == options.externalEditors.size()) {
+        index = -1;
+    }
+    if (options.externalEditorIndex != index) {
+        send_to_external->setSelected(
+            options.externalEditorIndex >= 0 ? options.externalEditorIndex : options.externalEditors.size());
     }
 }
 
