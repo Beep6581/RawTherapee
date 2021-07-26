@@ -7433,7 +7433,6 @@ Locallabcie::Locallabcie():
 
     pack_start(*sensicie);
     pack_start(*reparcie);
-  //  pack_start(*jabcie);
     modeHBoxcam->set_spacing (2);
     //modeHBoxcam->set_tooltip_markup (M ("TP_LOCALLAB_CAMMODE_TOOLTIP"));
     Gtk::Label* modeLabelcam = Gtk::manage (new Gtk::Label (M ("TP_LOCALLAB_CAMMODE") + ":"));
@@ -7639,6 +7638,8 @@ Locallabcie::Locallabcie():
     cieP2Box->pack_start(*catadcie);
     cieP2Box->pack_start(*surrHBoxcie);
     cieP2Box->pack_start(*detailcie);
+    cieP2Box->pack_start(*jabcie);
+    
     cie2Frame->add(*cieP2Box);
     pack_start(*cie2Frame);
 
@@ -8013,10 +8014,13 @@ void Locallabcie::jabcieChanged()
         jzFrame->show();
         adapjzcie->show();
         jz100->show();
+        jabcie->show();
+
     } else {
         jzFrame->hide();
         adapjzcie->hide();
         jz100->hide();
+        jabcie->hide();
     }
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
@@ -8052,17 +8056,24 @@ void Locallabcie::modecamChanged()
         jzFrame->show();
         adapjzcie->show();
         jz100->show();
-        
+        jabcie->show();
     } else {
         jzFrame->hide();
         adapjzcie->hide();
         jz100->hide();
+        jabcie->hide();
     }
     surHBoxcie->show();
+    cie1Frame->show();
+    cie2Frame->show();
 
     if (modecam->get_active_row_number() == 2) {
         surHBoxcie->hide();
-    }
+        cie1Frame->hide();
+        targetGraycie->hide();
+        targabscie->hide();
+        surrHBoxcie->hide();
+        }
     
     if (isLocActivated && exp->getEnabled()) {
         
@@ -8215,9 +8226,16 @@ void Locallabcie::updatecieGUI()
         reparcie->show();
     }
         surHBoxcie->show();
+        cie1Frame->show();
+        cie2Frame->show();
 
     if (modecam->get_active_row_number() == 2) {
         surHBoxcie->hide();
+        cie1Frame->hide();
+        targetGraycie->hide();
+        targabscie->hide();
+        surrHBoxcie->hide();
+
     }
 
     if (mode == Simple || mode == Normal) { // Keep widget hidden in Normal and Simple mode

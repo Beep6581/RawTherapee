@@ -2903,7 +2903,7 @@ TP_LOCALLAB_INVERS;Inverse
 TP_LOCALLAB_INVERS_TOOLTIP;Fewer possibilities if selected (Inverse).\n\nAlternative: use two spots\nFirst Spot:\n Full Image\n \nSecond spot: Excluding spot
 TP_LOCALLAB_INVMASK;Inverse algorithm
 TP_LOCALLAB_ISOGR;Distribution (ISO)
-TP_LOCALLAB_JAB;Jz Cz Hz
+TP_LOCALLAB_JAB;Jz Gamut control
 TP_LOCALLAB_JABADAP_TOOLTIP;Allows you to adapt a) the relation between Jz and saturation, b) the peak luminance level (HDR).\nAllows you to adapt this level to your device display characteristics.
 TP_LOCALLAB_JZ100;Jz reference 100cd/m2
 TP_LOCALLAB_JZ100_TOOLTIP;Allows you to refine the reference Jz 100 cd/m2 level.\nChange saturation level and action of 'peak luminance adaptation' , can leads artifacts.
@@ -2914,7 +2914,7 @@ TP_LOCALLAB_JZCONT;Contrast
 TP_LOCALLAB_JZCHROM;Chroma
 TP_LOCALLAB_JZHUECIE;Hue Rotation
 TP_LOCALLAB_JZSHFRA;Shadows/Highlights Jz
-TP_LOCALLAB_JAB_TOOLTIP;Preferably for HDR images. Is executed before Ciecam16.
+TP_LOCALLAB_JAB_TOOLTIP;Not implemented
 TP_LOCALLAB_LABBLURM;Blur Mask
 TP_LOCALLAB_LABEL;Local Adjustments
 TP_LOCALLAB_LABGRID;Color correction grid
