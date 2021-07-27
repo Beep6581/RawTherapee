@@ -298,7 +298,6 @@ void Options::setDefaults()
     windowMaximized = true;
     windowMonitor = 0;
     meowMonitor = -1;
-    meowFullScreen = false;
     meowMaximized = true;
     meowWidth = 1200;
     meowHeight = 680;
@@ -415,6 +414,10 @@ void Options::setDefaults()
     customEditorProg = "";
     CPBKeys = CPBKT_TID;
     editorToSendTo = 1;
+    editor_out_dir = EDITOR_OUT_DIR_TEMP;
+    editor_custom_out_dir = "";
+    editor_float32 = false;
+    editor_bypass_output_profile = false;
     favoriteDirs.clear();
     tpOpen.clear();
     autoSaveTpOpen = true;
@@ -484,7 +487,7 @@ void Options::setDefaults()
     menuGroupFileOperations = true;
     menuGroupProfileOperations = true;
     menuGroupExtProg = true;
-    showtooltip = true;
+    showtooltip = false;
 
     ICCPC_primariesPreset = "sRGB",
     ICCPC_redPrimaryX = 0.6400;
@@ -535,6 +538,8 @@ void Options::setDefaults()
     fastexport_resize_dataspec           = 3;
     fastexport_resize_width              = 900;
     fastexport_resize_height             = 900;
+    fastexport_resize_longedge           = 900;
+    fastexport_resize_shortedge          = 900;
     fastexport_use_fast_pipeline         = true;
 
     clutsDir = "./cluts";
@@ -824,6 +829,28 @@ void Options::readFromFile(Glib::ustring fname)
                 if (keyFile.has_key("External Editor", "CustomEditor")) {
                     customEditorProg = keyFile.get_string("External Editor", "CustomEditor");
                 }
+                
+                if (keyFile.has_key("External Editor", "OutputDir")) {
+                    int v = keyFile.get_integer("External Editor", "OutputDir");
+                    if (v < int(EDITOR_OUT_DIR_TEMP) || v > int(EDITOR_OUT_DIR_CUSTOM)) {
+                        editor_out_dir = EDITOR_OUT_DIR_TEMP;
+                    } else {
+                        editor_out_dir = EditorOutDir(v);
+                    }
+                }
+
+                if (keyFile.has_key("External Editor", "CustomOutputDir")) {
+                    editor_custom_out_dir = keyFile.get_string("External Editor", "CustomOutputDir");
+                }
+
+                if (keyFile.has_key("External Editor", "Float32")) {
+                    editor_float32 = keyFile.get_boolean("External Editor", "Float32");
+                }
+
+                if (keyFile.has_key("External Editor", "BypassOutputProfile")) {
+                    editor_bypass_output_profile = keyFile.get_boolean("External Editor", "BypassOutputProfile");
+                }
+                
             }
 
             if (keyFile.has_group("Output")) {
@@ -1214,10 +1241,6 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("GUI", "MeowMonitor")) {
                     meowMonitor = keyFile.get_integer("GUI", "MeowMonitor");
-                }
-
-                if (keyFile.has_key("GUI", "MeowFullScreen")) {
-                    meowFullScreen = keyFile.get_boolean("GUI", "MeowFullScreen");
                 }
 
                 if (keyFile.has_key("GUI", "MeowMaximized")) {
@@ -1992,6 +2015,14 @@ void Options::readFromFile(Glib::ustring fname)
                     fastexport_resize_height = keyFile.get_integer("Fast Export", "fastexport_resize_height");
                 }
 
+                if (keyFile.has_key("Fast Export", "fastexport_resize_longedge")) {
+                    fastexport_resize_longedge = keyFile.get_integer("Fast Export", "fastexport_resize_longedge");
+                }
+
+                if (keyFile.has_key("Fast Export", "fastexport_resize_shortedge")) {
+                    fastexport_resize_shortedge = keyFile.get_integer("Fast Export", "fastexport_resize_shortedge");
+                }
+
                 if (keyFile.has_key("Fast Export", "fastexport_use_fast_pipeline")) {
                     fastexport_use_fast_pipeline = keyFile.get_integer("Fast Export", "fastexport_use_fast_pipeline");
                 }
@@ -2115,6 +2146,10 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("External Editor", "GimpDir", gimpDir);
         keyFile.set_string("External Editor", "PhotoshopDir", psDir);
         keyFile.set_string("External Editor", "CustomEditor", customEditorProg);
+        keyFile.set_integer("External Editor", "OutputDir", int(editor_out_dir));
+        keyFile.set_string("External Editor", "CustomOutputDir", editor_custom_out_dir);
+        keyFile.set_boolean("External Editor", "Float32", editor_float32);
+        keyFile.set_boolean("External Editor", "BypassOutputProfile", editor_bypass_output_profile);
 
         keyFile.set_boolean("File Browser", "BrowseOnlyRaw", fbOnlyRaw);
         keyFile.set_boolean("File Browser", "BrowserShowsDate", fbShowDateTime);
@@ -2230,7 +2265,6 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("GUI", "WindowY", windowY);
         keyFile.set_integer("GUI", "WindowMonitor", windowMonitor);
         keyFile.set_integer("GUI", "MeowMonitor", meowMonitor);
-        keyFile.set_boolean("GUI", "MeowFullScreen", meowFullScreen);
         keyFile.set_boolean("GUI", "MeowMaximized", meowMaximized);
         keyFile.set_integer("GUI", "MeowWidth", meowWidth);
         keyFile.set_integer("GUI", "MeowHeight", meowHeight);
@@ -2424,6 +2458,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("Fast Export", "fastexport_resize_dataspec", fastexport_resize_dataspec);
         keyFile.set_integer("Fast Export", "fastexport_resize_width", fastexport_resize_width);
         keyFile.set_integer("Fast Export", "fastexport_resize_height", fastexport_resize_height);
+        keyFile.set_integer("Fast Export", "fastexport_resize_longedge", fastexport_resize_longedge);
+        keyFile.set_integer("Fast Export", "fastexport_resize_shortedge", fastexport_resize_shortedge);
         keyFile.set_integer("Fast Export", "fastexport_use_fast_pipeline", fastexport_use_fast_pipeline);
 
         keyFile.set_string("Dialogs", "LastIccDir", lastIccDir);

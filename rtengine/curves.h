@@ -142,10 +142,18 @@ protected:
         double lx = xlog(x);
         return m2 * x + (1.0 - m2) * (2.0 - xexp(k * lx)) * xexp(l * lx);
     }
+    static inline double basel_alt(double x)
+    {
+        return (2.0 - x) * x * x * x;
+    }
     // basic concave function between (0,0) and (1,1). m1 and m2 controls the slope at the start and end point
     static inline double baseu(double x, double m1, double m2)
     {
         return 1.0 - basel(1.0 - x, m1, m2);
+    }
+    static inline double baseu_alt(double x)
+    {
+        return x * (2.0 + (x - 2.0) * x * x);
     }
     // convex curve between (0,0) and (1,1) with slope m at (0,0). hr controls the highlight recovery
     static inline double cupper(double x, double m, double hr)
@@ -447,6 +455,13 @@ protected:
     static inline double pfull(double x, double prot, double sh, double hl)
     {
         return (1 - sh) * (1 - hl) * p00(x, prot) + sh * hl * p11(x, prot) + (1 - sh) * hl * p01(x, prot) + sh * (1 - hl) * p10(x, prot);
+    }
+    static inline double pfull_alt(double x, double sh, double hl)
+    {
+        double t = (1.0 - sh) * (1.0 - hl) * CurveFactory::basel_alt(x) + sh * hl * CurveFactory::baseu_alt(x);
+        return x <= 0.5
+            ? t + (1.0 - sh) * hl * CurveFactory::basel_alt(2.0 * x) * 0.5 + sh * (1.0 - hl) * CurveFactory::baseu_alt(2.0 * x) * 0.5
+            : t + (1.0 - sh) * hl * (0.5 + CurveFactory::baseu_alt(2.0 * x - 1.0) * 0.5) + sh * (1.0 - hl) * (0.5 + CurveFactory::basel_alt(2.0 * x - 1.0) * 0.5);
     }
 
     void fillHash();

@@ -329,7 +329,6 @@ void ljpeg_idct (struct jhead *jh);
 void canon_sraw_load_raw();
 void adobe_copy_pixel (unsigned row, unsigned col, ushort **rp);
 void lossless_dng_load_raw();
-void lossless_dnglj92_load_raw();
 void packed_dng_load_raw();
 void deflate_dng_load_raw();
 void init_fuji_compr(struct fuji_compressed_params* info);

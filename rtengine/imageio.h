@@ -93,7 +93,7 @@ public:
     void setSampleArrangement(IIOSampleArrangement sArrangement);
     IIOSampleArrangement getSampleArrangement() const;
 
-    virtual void getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const = 0;
+    virtual void getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp) const = 0;
     virtual int getBPS () const = 0;
     virtual void getScanline (int row, unsigned char* buffer, int bps, bool isFloat = false) const = 0;
     virtual void setScanline (int row, const unsigned char* buffer, int bps, unsigned int numSamples = 3) = 0;

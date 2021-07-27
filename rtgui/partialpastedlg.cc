@@ -226,6 +226,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     labcurve    = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_LABCURVE")));
 
     // Detail Settings:
+    spot        = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SPOT")));
     sharpen     = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHARPENING")));
     localcontrast = Gtk::manage(new Gtk::CheckButton(M("PARTIALPASTE_LOCALCONTRAST")));
     sharpenedge = Gtk::manage (new Gtk::CheckButton (M("PARTIALPASTE_SHARPENEDGE")));
@@ -339,6 +340,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     //DETAIL
     vboxes[1]->pack_start (*detail, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*hseps[1], Gtk::PACK_SHRINK, 2);
+    vboxes[1]->pack_start (*spot, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*sharpen, Gtk::PACK_SHRINK, 2);
     vboxes[1]->pack_start (*localcontrast, Gtk::PACK_SHRINK, 2);    
     vboxes[1]->pack_start (*sharpenedge, Gtk::PACK_SHRINK, 2);
@@ -501,6 +503,7 @@ PartialPasteDlg::PartialPasteDlg (const Glib::ustring &title, Gtk::Window* paren
     labcurveConn    = labcurve->signal_toggled().connect (sigc::bind (sigc::mem_fun(*basic, &Gtk::CheckButton::set_inconsistent), true));
 
     // Detail Settings:
+    spotConn        = spot->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     sharpenConn     = sharpen->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     localcontrastConn = localcontrast->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
     gradsharpenConn = sharpenedge->signal_toggled().connect (sigc::bind (sigc::mem_fun(*detail, &Gtk::CheckButton::set_inconsistent), true));
@@ -719,6 +722,7 @@ void PartialPasteDlg::basicToggled ()
 void PartialPasteDlg::detailToggled ()
 {
 
+    ConnectionBlocker spotBlocker(spotConn);
     ConnectionBlocker sharpenBlocker(sharpenConn);
     ConnectionBlocker localcontrastBlocker(localcontrastConn);
     ConnectionBlocker gradsharpenBlocker(gradsharpenConn);
@@ -731,6 +735,7 @@ void PartialPasteDlg::detailToggled ()
 
     detail->set_inconsistent (false);
 
+    spot->set_active (detail->get_active ());
     sharpen->set_active (detail->get_active ());
     localcontrast->set_active(detail->get_active());
     sharpenedge->set_active (detail->get_active ());
@@ -910,6 +915,10 @@ void PartialPasteDlg::applyPaste (rtengine::procparams::ProcParams* dstPP, Param
 
     if (!colorappearance->get_active ()) {
         filterPE.colorappearance = falsePE.colorappearance;
+    }
+
+    if (!spot->get_active ()) {
+        filterPE.spot            = falsePE.spot;
     }
 
     if (!sharpen->get_active ()) {

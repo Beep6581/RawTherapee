@@ -44,8 +44,9 @@ public:
     ~Imagefloat () override;
 
     Imagefloat* copy () const;
+    Imagefloat*          copySubRegion (int x, int y, int width, int height);
 
-    void getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const override;
+    void getStdImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp) const override;
 
     const char* getType () const override
     {
