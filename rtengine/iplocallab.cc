@@ -2457,7 +2457,7 @@ void sigmoidla (float &valj, float thresj, float lambda, float blend)
 }
 
 
-void gamutjz (double &Jz, double &az, double &bz, const double wip[3][3], const float higherCoef)
+void gamutjz (double &Jz, double &az, double &bz, double pl, const double wip[3][3], const float higherCoef)
 {
         constexpr float ClipLevel = 65535.0f;
         bool inGamut;
@@ -2466,7 +2466,6 @@ void gamutjz (double &Jz, double &az, double &bz, const double wip[3][3], const 
             inGamut = true;
             double L_, M_, S_;
             double xx, yy, zz;
-            double pl = 10000.;
             Ciecam02::jzczhzxyz (xx, yy, zz, Jz, az, bz, pl, L_, M_, S_);
             double x, y, z;
             x = 65535. * (d65_d50[0][0] * xx + d65_d50[0][1] * yy + d65_d50[0][2] * zz);
@@ -3141,7 +3140,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
 
                 Jz = LIM01(Jz / kjz);
                 if(jabcie) {
-                    gamutjz (Jz, az, bz, wip, 0.92);
+                    gamutjz (Jz, az, bz, pl, wip, 0.92);
                 }
 
                 double L_, M_, S_;
