@@ -1350,6 +1350,7 @@ HISTORY_MSG_1098;Local - Jz radius SH
 HISTORY_MSG_1099;Local - Jz HzHz Curve
 HISTORY_MSG_1100;Local - Jz CzHz Curve
 HISTORY_MSG_1101;Local - Jz reference 100
+HISTORY_MSG_1102;Local - Jz PQ remap
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2906,15 +2907,18 @@ TP_LOCALLAB_ISOGR;Distribution (ISO)
 TP_LOCALLAB_JAB;Jz Gamut control
 TP_LOCALLAB_JABADAP_TOOLTIP;Allows you to adapt a) the relation between Jz and saturation, b) the peak luminance level (HDR).\nAllows you to adapt this level to your device display characteristics.
 TP_LOCALLAB_JZ100;Jz reference 100cd/m2
-TP_LOCALLAB_JZ100_TOOLTIP;Allows you to refine the reference Jz 100 cd/m2 level.\nChange saturation level and action of 'peak luminance adaptation' , can leads artifacts.
-TP_LOCALLAB_JZADAP;Peak luminance adaptation - Jz
+TP_LOCALLAB_JZPQFRA;Jz remapping
+TP_LOCALLAB_JZPQREMAP;Perceptual Quantizer
+TP_LOCALLAB_JZPQREMAP_TOOLTIP;Allows you to change internal PQ function (default 10000).\nCan be used to avoid artifacts.
+TP_LOCALLAB_JZ100_TOOLTIP;Allows you to refine the reference Jz 100 cd/m2 level.\nChange saturation level and action of 'PU Perceptual Uniform adaptation' , can leads artifacts.
+TP_LOCALLAB_JZADAP;Perceptual Uniform adaptation
 TP_LOCALLAB_JZFRA;Jz Cz Hz
 TP_LOCALLAB_JZLIGHT;Brightness
 TP_LOCALLAB_JZCONT;Contrast
 TP_LOCALLAB_JZCHROM;Chroma
 TP_LOCALLAB_JZHUECIE;Hue Rotation
 TP_LOCALLAB_JZSHFRA;Shadows/Highlights Jz
-TP_LOCALLAB_JAB_TOOLTIP;Not implemented
+TP_LOCALLAB_JAB_TOOLTIP;Use with precaution.\n Can lead to very huge time processing.
 TP_LOCALLAB_LABBLURM;Blur Mask
 TP_LOCALLAB_LABEL;Local Adjustments
 TP_LOCALLAB_LABGRID;Color correction grid

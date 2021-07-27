@@ -1001,6 +1001,7 @@ public:
         bool contjzcie;
         bool adapjzcie;
         bool jz100;
+        bool pqremap;
         bool hljzcie;
         bool hlthjzcie;
         bool shjzcie;

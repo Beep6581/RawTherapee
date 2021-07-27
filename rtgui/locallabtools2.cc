@@ -7379,11 +7379,13 @@ Locallabcie::Locallabcie():
     sursourcie(Gtk::manage (new MyComboBoxText ())),
     surHBoxcie(Gtk::manage(new Gtk::Box())),
     cie1Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG1FRA")))),
+    PQFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZPQFRA")))),
     lightlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTL"), -100., 100., 0.5, 0.))),
     lightjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZLIGHT"), -100., 100., 0.5, 0.))),
     contjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCONT"), -100., 100., 0.5, 0.))),
     adapjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZADAP"), 1., 10., 0.05, 4.))),
     jz100(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZ100"), 0.1, 1.0, 0.01, 0.32))),
+    pqremap(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZPQREMAP"), 100., 10000., 100., 10000.))),
     jzshFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZSHFRA")))),
     hljzcie(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0., 100., 1., 0.))),
     hlthjzcie(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HLTONALW"), 20., 100., 1., 70.))),
@@ -7462,8 +7464,13 @@ Locallabcie::Locallabcie():
     cieFBox->pack_start(*Autograycie);
     cieFBox->pack_start(*sourceGraycie);
     cieFBox->pack_start(*sourceabscie);
-    cieFBox->pack_start(*adapjzcie);
-    cieFBox->pack_start(*jz100);
+    PQFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const PQFBox = Gtk::manage(new ToolParamBlock());
+    PQFBox->pack_start(*adapjzcie);
+    PQFBox->pack_start(*jz100);
+    PQFBox->pack_start(*pqremap);
+    PQFrame->add(*PQFBox);
+    cieFBox->pack_start (*PQFrame);
 
     cieFBox->pack_start (*surHBoxcie);
     cieFrame->add(*cieFBox);
@@ -7552,6 +7559,7 @@ Locallabcie::Locallabcie():
     contjzcie->setAdjusterListener(this);
     adapjzcie->setAdjusterListener(this);
     jz100->setAdjusterListener(this);
+    pqremap->setAdjusterListener(this);
     hljzcie->setAdjusterListener(this);
     hlthjzcie->setAdjusterListener(this);
     shjzcie->setAdjusterListener(this);
@@ -7662,6 +7670,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         jabcie->set_tooltip_text(M("TP_LOCALLAB_JAB_TOOLTIP"));
         adapjzcie->set_tooltip_text(M("TP_LOCALLAB_JABADAP_TOOLTIP"));
         jz100->set_tooltip_text(M("TP_LOCALLAB_JZ100_TOOLTIP"));
+        pqremap->set_tooltip_text(M("TP_LOCALLAB_JZPQREMAP_TOOLTIP"));
         Autograycie->set_tooltip_text(M("TP_LOCALLAB_AUTOGRAYCIE_TOOLTIP"));
         sourceGraycie->set_tooltip_text("");
         sourceabscie->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
@@ -7690,6 +7699,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         jabcie->set_tooltip_text("");
         adapjzcie->set_tooltip_text("");
         jz100->set_tooltip_text("");
+        pqremap->set_tooltip_text("");
         Autograycie->set_tooltip_text("");
         sourceGraycie->set_tooltip_text("");
         sourceabscie->set_tooltip_text("");
@@ -7817,6 +7827,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         contjzcie->setValue(spot.contjzcie);
         adapjzcie->setValue(spot.adapjzcie);
         jz100->setValue(spot.jz100);
+        pqremap->setValue(spot.pqremap);
         hljzcie->setValue(spot.hljzcie);
         hlthjzcie->setValue(spot.hlthjzcie);
         shjzcie->setValue(spot.shjzcie);
@@ -7916,6 +7927,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.contjzcie = contjzcie->getValue();
         spot.adapjzcie = adapjzcie->getValue();
         spot.jz100 = jz100->getValue();
+        spot.pqremap = pqremap->getValue();
         spot.hljzcie = hljzcie->getValue();
         spot.hlthjzcie = hlthjzcie->getValue();
         spot.shjzcie = shjzcie->getValue();
@@ -8009,19 +8021,7 @@ void Locallabcie::AutograycieChanged()
 }
 
 void Locallabcie::jabcieChanged()
-{
-    if (jabcie->get_active()) {
-        jzFrame->show();
-        adapjzcie->show();
-        jz100->show();
-        jabcie->show();
-
-    } else {
-        jzFrame->hide();
-        adapjzcie->hide();
-        jz100->hide();
-        jabcie->hide();
-    }
+{ 
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (jabcie->get_active()) {
@@ -8056,12 +8056,16 @@ void Locallabcie::modecamChanged()
         jzFrame->show();
         adapjzcie->show();
         jz100->show();
+        pqremap->show();
         jabcie->show();
+        PQFrame->show();
     } else {
         jzFrame->hide();
         adapjzcie->hide();
         jz100->hide();
+        pqremap->hide();
         jabcie->hide();
+        PQFrame->hide();
     }
     surHBoxcie->show();
     cie1Frame->show();
@@ -8158,6 +8162,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             sourceabscie->show();
             targabscie->hide();
             detailcie->hide();
+            jabcie->hide();
             modeHBoxcie->hide();
             sensicie->show();
             reparcie->show();
@@ -8183,6 +8188,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             sourceabscie->show();
             targabscie->show();
             detailcie->hide();
+            jabcie->hide();
             modeHBoxcie->hide();
             sensicie->show();
             reparcie->show();
@@ -8211,6 +8217,10 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             detailcie->show();
             modeHBoxcie->show();
             sigmoidblcie->show();
+            if (modecam->get_active_row_number() != 1) {
+                jabcie->show();
+            }
+
 
     }
 }
@@ -8273,6 +8283,9 @@ void Locallabcie::convertParamToNormal()
     chromlcie->setValue(defSpot.chromlcie);
     huecie->setValue(defSpot.huecie);
     detailcie->setValue(defSpot.detailcie);
+    jabcie->set_active(defSpot.jabcie);
+
+
     modecie->set_active(0);
     // Enable all listeners
     enableListener();
@@ -8303,6 +8316,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         contjzcie->setDefault(defSpot.contjzcie);
         adapjzcie->setDefault(defSpot.adapjzcie);
         jz100->setDefault(defSpot.jz100);
+        pqremap->setDefault(defSpot.pqremap);
         hljzcie->setDefault(defSpot.hljzcie);
         hlthjzcie->setDefault(defSpot.hlthjzcie);
         shjzcie->setDefault(defSpot.shjzcie);
@@ -8444,6 +8458,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabjz100,
                                        jz100->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == pqremap) {
+            if (listener) {
+                listener->panelChanged(Evlocallabpqremap,
+                                       pqremap->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 

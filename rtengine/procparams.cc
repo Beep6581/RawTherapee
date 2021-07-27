@@ -4349,6 +4349,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     contjzcie(0.),
     adapjzcie(4.0),
     jz100(0.32),
+    pqremap(10000.),
     hljzcie(0.0),
     hlthjzcie(70.0),
     shjzcie(0.0),
@@ -5001,6 +5002,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && contjzcie == other.contjzcie
         && adapjzcie == other.adapjzcie
         && jz100 == other.jz100
+        && pqremap == other.pqremap
         && hljzcie == other.hljzcie
         && hlthjzcie == other.hlthjzcie
         && shjzcie == other.shjzcie
@@ -6712,6 +6714,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->contjzcie, "Locallab", "Contjzcie_" + index_str, spot.contjzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->adapjzcie, "Locallab", "Adapjzcie_" + index_str, spot.adapjzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->jz100, "Locallab", "Jz100_" + index_str, spot.jz100, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->pqremap, "Locallab", "PQremap_" + index_str, spot.pqremap, keyFile);
                     saveToKeyfile(!pedited || spot_edited->hljzcie, "Locallab", "Hljzcie_" + index_str, spot.hljzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->hlthjzcie, "Locallab", "Hlthjzcie_" + index_str, spot.hlthjzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->shjzcie, "Locallab", "Shjzcie_" + index_str, spot.shjzcie, keyFile);
@@ -8795,6 +8798,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Contjzcie_" + index_str, pedited, spot.contjzcie, spotEdited.contjzcie);
                 assignFromKeyfile(keyFile, "Locallab", "Adapjzcie_" + index_str, pedited, spot.adapjzcie, spotEdited.adapjzcie);
                 assignFromKeyfile(keyFile, "Locallab", "Jz100_" + index_str, pedited, spot.jz100, spotEdited.jz100);
+                assignFromKeyfile(keyFile, "Locallab", "PQremap_" + index_str, pedited, spot.pqremap, spotEdited.pqremap);
                 assignFromKeyfile(keyFile, "Locallab", "Hljzcie_" + index_str, pedited, spot.hljzcie, spotEdited.hljzcie);
                 assignFromKeyfile(keyFile, "Locallab", "Hlthjzcie_" + index_str, pedited, spot.hlthjzcie, spotEdited.hlthjzcie);
                 assignFromKeyfile(keyFile, "Locallab", "Shjzcie_" + index_str, pedited, spot.shjzcie, spotEdited.shjzcie);

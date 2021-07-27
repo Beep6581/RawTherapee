@@ -2456,6 +2456,38 @@ void sigmoidla (float &valj, float thresj, float lambda, float blend)
     valj =  clipLoc(blend * valj + 1.f / (1.f + xexpf(lambda - (lambda / thresj) * valj)));
 }
 
+
+void gamutjz (double &Jz, double &az, double &bz, const double wip[3][3], const float higherCoef)
+{
+        constexpr float ClipLevel = 65535.0f;
+        bool inGamut;
+        
+        do {
+            inGamut = true;
+            double L_, M_, S_;
+            double xx, yy, zz;
+            double pl = 10000.;
+            Ciecam02::jzczhzxyz (xx, yy, zz, Jz, az, bz, pl, L_, M_, S_);
+            double x, y, z;
+            x = 65535. * (d65_d50[0][0] * xx + d65_d50[0][1] * yy + d65_d50[0][2] * zz);
+            y = 65535. * (d65_d50[1][0] * xx + d65_d50[1][1] * yy + d65_d50[1][2] * zz);
+            z = 65535. * (d65_d50[2][0] * xx + d65_d50[2][1] * yy + d65_d50[2][2] * zz);
+            float R,G,B;
+            Color:: xyz2rgb(x, y, z, R, G, B, wip);
+            if (rtengine::min(R, G, B) < 0.f  || rtengine::max(R, G, B) > ClipLevel) {
+       //         printf("z");
+                double hz = xatan2f(bz, az);
+                float2 sincosval = xsincosf(hz);
+                double Cz = sqrt(az * az + bz * bz);
+                Cz *= (double) higherCoef;
+                az = clipazbz(Cz * (double) sincosval.y);
+                bz = clipazbz(Cz * (double) sincosval.x);
+                
+                inGamut = false;
+            }
+        } while (!inGamut);
+}
+
 void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk, const LocCHCurve& locchCurvejz, const LocHHCurve& lochhCurvejz, bool HHcurvejz, bool CHcurvejz)
 {
     //BENCHFUN
@@ -2469,13 +2501,20 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         ciec = true;
         iscie = true;
     }
-   // const bool jabcie = params->locallab.spots.at(sp).jabcie; 
+    const bool jabcie = params->locallab.spots.at(sp).jabcie; 
     
     //sigmoid J Q variables
     const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie; 
     const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie; 
     const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie; 
     const bool sigmoidqj = params->locallab.spots.at(sp).sigmoidqjcie; 
+
+    TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
+    const double wip[3][3] = {//improve precision with double
+        {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
+        {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
+        {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
+    };
 
     int mocam = 0;
     if(params->locallab.spots.at(sp).modecam == "all") {
@@ -2858,9 +2897,10 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         double maxiC = -1000.;
         double sum = 0.;
         int nc = 0;
+        //Remapping see https://hal.inria.fr/hal-02131890/document    I took some ideas in this text, and add my personal adaptation
         double adapjz = params->locallab.spots.at(sp).adapjzcie;
         double jz100 = params->locallab.spots.at(sp).jz100;
-        double pl = 10000.;
+        double pl = params->locallab.spots.at(sp).pqremap;
 //calculate min, max, mean for Jz
 #ifdef _OPENMP
             #pragma omp parallel for reduction(min:mini) reduction(max:maxi) reduction(+:sum) if(multiThread)
@@ -3097,6 +3137,9 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                 az = az / kjz;
 
                 Jz = LIM01(Jz / kjz);
+                if(jabcie) {
+                    gamutjz (Jz, az, bz, wip, 0.92);
+                }
 
                 double L_, M_, S_;
                 double xx, yy, zz;

@@ -1524,11 +1524,13 @@ private:
     MyComboBoxText*  const sursourcie;
     Gtk::Box* const surHBoxcie;
     Gtk::Frame* const cie1Frame;
+    Gtk::Frame* const PQFrame;
     Adjuster* const lightlcie;
     Adjuster* const lightjzcie;
     Adjuster* const contjzcie;
     Adjuster* const adapjzcie;
     Adjuster* const jz100;
+    Adjuster* const pqremap;
     Gtk::Frame* const jzshFrame;
     Adjuster* const hljzcie;
     Adjuster* const hlthjzcie;
