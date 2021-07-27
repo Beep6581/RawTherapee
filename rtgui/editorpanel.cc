@@ -1335,8 +1335,8 @@ void EditorPanel::info_toggled ()
 
     if (idata && idata->hasExif(selectedFrame)) {
         infoString = Glib::ustring::compose ("%1 + %2\n<span size=\"small\">f/</span><span size=\"large\">%3</span>  <span size=\"large\">%4</span><span size=\"small\">s</span>  <span size=\"small\">%5</span><span size=\"large\">%6</span>  <span size=\"large\">%7</span><span size=\"small\">mm</span>",
-                                              Glib::ustring (idata->getMake() + " " + idata->getModel()),
-                                              Glib::ustring (idata->getLens()),
+                                              escapeHtmlChars (idata->getMake() + " " + idata->getModel()),
+                                              escapeHtmlChars (idata->getLens()),
                                               Glib::ustring (idata->apertureToString (idata->getFNumber(selectedFrame))),
                                               Glib::ustring (idata->shutterToString (idata->getShutterSpeed(selectedFrame))),
                                               M ("QINFO_ISO"), idata->getISOSpeed(selectedFrame),
@@ -1757,7 +1757,7 @@ void EditorPanel::procParamsChanged (Thumbnail* thm, int whoChangedIt)
         PartialProfile pp (true);
         pp.set (true);
         * (pp.pparams) = openThm->getProcParams();
-        pp.pedited->locallab.spots.resize(pp.pparams->locallab.spots.size(), new LocallabParamsEdited::LocallabSpotEdited(true));
+        pp.pedited->locallab.spots.resize(pp.pparams->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
         tpc->profileChange (&pp, rtengine::EvProfileChangeNotification, M ("PROGRESSDLG_PROFILECHANGEDINBROWSER"));
         pp.deleteInstance();
     }
@@ -1972,6 +1972,9 @@ void EditorPanel::sendToGimpPressed ()
     // develop image
     rtengine::procparams::ProcParams pparams;
     ipc->getParams (&pparams);
+    if (options.editor_bypass_output_profile) {
+        pparams.icm.outputProfile = rtengine::procparams::ColorManagementParams::NoProfileString;
+    }
     rtengine::ProcessingJob* job = rtengine::ProcessingJob::create (ipc->getInitialImage(), pparams);
     ProgressConnector<rtengine::IImagefloat*> *ld = new ProgressConnector<rtengine::IImagefloat*>();
     ld->startFunc (sigc::bind (sigc::ptr_fun (&rtengine::processImage), job, err, parent->getProgressListener(), false ),
@@ -2045,24 +2048,40 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
 
     if (img) {
         // get file name base
-        const Glib::ustring shortname = removeExtension (Glib::path_get_basename (fname));
-        const Glib::ustring dirname = Glib::get_tmp_dir ();
-        const Glib::ustring lfname = Glib::build_filename (dirname, shortname);
+        Glib::ustring shortname = removeExtension(Glib::path_get_basename(fname));
+        Glib::ustring dirname;
+        switch (options.editor_out_dir) {
+        case Options::EDITOR_OUT_DIR_CURRENT:
+            dirname = Glib::path_get_dirname(fname);
+            break;
+        case Options::EDITOR_OUT_DIR_CUSTOM:
+            dirname = options.editor_custom_out_dir;
+            break;
+        default: // Options::EDITOR_OUT_DIR_TEMP
+            dirname = Glib::get_tmp_dir();
+            break;
+        }
+        Glib::ustring fullFileName = Glib::build_filename(dirname, shortname);
 
         SaveFormat sf;
         sf.format = "tif";
-        sf.tiffBits = 16;
-        sf.tiffFloat = false;
+        if (options.editor_float32) {
+            sf.tiffBits = 32;
+            sf.tiffFloat = true;
+        } else {
+            sf.tiffBits = 16;
+            sf.tiffFloat = false;
+        }
+        
         sf.tiffUncompressed = true;
         sf.saveParams = true;
 
-        Glib::ustring fileName = Glib::ustring::compose ("%1.%2", lfname, sf.format);
+        Glib::ustring fileName = Glib::ustring::compose ("%1.%2", fullFileName, sf.format);
 
         // TODO: Just list all file with a suitable name instead of brute force...
         int tries = 1;
-
         while (Glib::file_test (fileName, Glib::FILE_TEST_EXISTS) && tries < 1000) {
-            fileName = Glib::ustring::compose ("%1-%2.%3", lfname, tries, sf.format);
+            fileName = Glib::ustring::compose ("%1-%2.%3", fullFileName, tries, sf.format);
             tries++;
         }
 

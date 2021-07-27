@@ -294,7 +294,7 @@ bool FileBrowserEntry::motionNotify (int x, int y)
 
     Inspector* inspector = parent->getInspector();
 
-    if (inspector && inspector->isActive() && !parent->isInTabMode()) {
+    if (inspector && inspector->isActive() && (!parent->isInTabMode() || options.inspectorWindow)) {
         const rtengine::Coord2D coord(getPosInImgSpace(x, y));
 
         if (coord.x != -1.) {

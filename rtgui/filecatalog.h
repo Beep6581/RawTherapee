@@ -276,6 +276,7 @@ public:
     void openNextPreviousEditorImage (Glib::ustring fname, bool clearFilters, eRTNav nextPrevious);
 
     bool handleShortcutKey (GdkEventKey* event);
+    bool handleShortcutKeyRelease(GdkEventKey *event);
 
     bool CheckSidePanelsVisibility();
     void toggleSidePanels();

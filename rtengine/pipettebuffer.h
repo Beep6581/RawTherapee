@@ -58,7 +58,7 @@ public:
     ~PipetteBuffer();
 
     /** @brief Getter to know if the pipette buffer is correctly filled */
-    bool isReady()
+    bool isReady() const
     {
         return ready;
     }

@@ -173,10 +173,10 @@ void EditDataProvider::setPipetteVal3(float newVal)
     pipetteVal3 = newVal;
 }
 
-CursorShape EditDataProvider::getCursor(int objectID) const
+CursorShape EditDataProvider::getCursor(int objectID, int xPos, int yPos) const
 {
     if (currSubscriber) {
-        currSubscriber->getCursor(objectID);
+        currSubscriber->getCursor(objectID, xPos, yPos);
     }
 
     return CSHandOpen;
@@ -187,12 +187,12 @@ EditSubscriber* EditDataProvider::getCurrSubscriber() const
     return currSubscriber;
 }
 
-EditDataProvider* EditSubscriber::getEditProvider()
+EditDataProvider* EditSubscriber::getEditProvider() const
 {
     return provider;
 }
 
-CursorShape EditSubscriber::getCursor(int objectID) const
+CursorShape EditSubscriber::getCursor(int objectID, int xPos, int yPos) const
 {
     return CSHandOpen;
 }

@@ -16,6 +16,7 @@ The most useful feedback is based on the latest development code, and in the cas
 - Announce and discuss your plans in GitHub before starting work.
 - Work in a new branch. Fork if necessary.
 - Keep branches small so that completed and working features can be merged into the "dev" branch often, and so that they can be abandoned if they head in the wrong direction.
+- Documentation for your work must be provided in order for your branch to be merged if it changes or adds anything the user should know about. The documentation can be provided in plain-text or markdown form as a comment in the issue or pull request.
 - Use C++11.
 - To break header dependencies use forward declarations as much as possible. See [#5197](https://github.com/Beep6581/RawTherapee/pull/5197#issuecomment-468938190) for some tips.
 - The naming isn't homogeneous throughout the code but here is a rough guideline:

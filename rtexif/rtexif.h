@@ -145,12 +145,12 @@ public:
     {
         return tags.size ();
     }
-    const TagAttrib* getAttrib     (int id);
+    const TagAttrib* getAttrib     (int id) const;
     // Find a Tag by scanning the whole tag tree and stopping at the first occurrence
     const TagAttrib* getAttrib     (const char* name);
     // Try to get the Tag at a given location. 'name' is a path relative to this directory (e.g. "LensInfo/FocalLength")
     const TagAttrib* getAttribP    (const char* name);
-    const TagAttrib* getAttribTable()
+    const TagAttrib* getAttribTable() const
     {
         return attribs;
     }
@@ -321,7 +321,7 @@ public:
     Tag* clone         (TagDirectory* parent) const;
 
     // to control if the tag shall be written
-    bool getKeep ()
+    bool getKeep () const
     {
         return keep;
     }
@@ -331,7 +331,7 @@ public:
     }
 
     // get subdirectory (there can be several, the last is NULL)
-    bool           isDirectory  ()
+    bool isDirectory () const
     {
         return directory != nullptr;
     }
@@ -340,7 +340,7 @@ public:
         return (directory) ? directory[i] : nullptr;
     }
 
-    MNKind getMakerNoteFormat ()
+    MNKind getMakerNoteFormat () const
     {
         return makerNoteKind;
     }
