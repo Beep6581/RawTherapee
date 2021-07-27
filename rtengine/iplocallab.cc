@@ -2457,7 +2457,7 @@ void sigmoidla (float &valj, float thresj, float lambda, float blend)
 }
 
 
-void gamutjz (double &Jz, double &az, double &bz, double pl, const double wip[3][3], const float higherCoef)
+void gamutjz (double &Jz, double &az, double &bz, double pl, const double wip[3][3], const float higherCoef, int &nx)
 {
         constexpr float ClipLevel = 65535.0f;
         bool inGamut;
@@ -2475,6 +2475,7 @@ void gamutjz (double &Jz, double &az, double &bz, double pl, const double wip[3]
             Color:: xyz2rgb(x, y, z, R, G, B, wip);
             if (rtengine::min(R, G, B) < 0.f  || rtengine::max(R, G, B) > ClipLevel) {
                 nb++;
+                nx++;
                 double hz = xatan2f(bz, az);
                 float2 sincosval = xsincosf(hz);
                 double Cz = sqrt(az * az + bz * bz);
@@ -2503,8 +2504,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         ciec = true;
         iscie = true;
     }
-    const bool jabcie = params->locallab.spots.at(sp).jabcie; 
-    
+    bool jabcie = params->locallab.spots.at(sp).jabcie; 
+    jabcie = false;
     //sigmoid J Q variables
     const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie; 
     const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie; 
@@ -3049,9 +3050,9 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
             ImProcFunctions::shadowsHighlights(temp.get(), true, 1, highhs, shadhs, radhs, sk, hltonahs, shtonals);
         }
         //others "Lab" threatment...to adapt 
-
+        int nx = 0;
 #ifdef _OPENMP
-            #pragma omp parallel for if(multiThread)
+            #pragma omp parallel  for reduction(+:nx) if(multiThread)
 #endif
         for (int i = 0; i < height; i++) {
             for (int k = 0; k < width; k++) {
@@ -3140,7 +3141,10 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
 
                 Jz = LIM01(Jz / kjz);
                 if(jabcie) {
-                    gamutjz (Jz, az, bz, pl, wip, 0.91);
+                    if(nx  < 0.1 * (width * height)) {
+                        gamutjz (Jz, az, bz, pl, wip, 0.91, nx);
+                    }
+                    
                 }
 
                 double L_, M_, S_;
