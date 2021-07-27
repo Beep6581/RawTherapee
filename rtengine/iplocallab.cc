@@ -2461,7 +2461,7 @@ void gamutjz (double &Jz, double &az, double &bz, const double wip[3][3], const 
 {
         constexpr float ClipLevel = 65535.0f;
         bool inGamut;
-        
+        int nb = 0;
         do {
             inGamut = true;
             double L_, M_, S_;
@@ -2475,11 +2475,14 @@ void gamutjz (double &Jz, double &az, double &bz, const double wip[3][3], const 
             float R,G,B;
             Color:: xyz2rgb(x, y, z, R, G, B, wip);
             if (rtengine::min(R, G, B) < 0.f  || rtengine::max(R, G, B) > ClipLevel) {
-       //         printf("z");
+                 nb++;
                 double hz = xatan2f(bz, az);
                 float2 sincosval = xsincosf(hz);
                 double Cz = sqrt(az * az + bz * bz);
                 Cz *= (double) higherCoef;
+                if(nb > 1) {
+                    Cz *= (double) higherCoef;
+                }
                 az = clipazbz(Cz * (double) sincosval.y);
                 bz = clipazbz(Cz * (double) sincosval.x);
                 
