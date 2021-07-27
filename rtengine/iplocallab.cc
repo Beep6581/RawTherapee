@@ -3140,7 +3140,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
 
                 Jz = LIM01(Jz / kjz);
                 if(jabcie) {
-                    gamutjz (Jz, az, bz, pl, wip, 0.95);
+                    gamutjz (Jz, az, bz, pl, wip, 0.91);
                 }
 
                 double L_, M_, S_;
