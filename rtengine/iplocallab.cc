@@ -2474,7 +2474,7 @@ void gamutjz (double &Jz, double &az, double &bz, double pl, const double wip[3]
             float R,G,B;
             Color:: xyz2rgb(x, y, z, R, G, B, wip);
             if (rtengine::min(R, G, B) < 0.f  || rtengine::max(R, G, B) > ClipLevel) {
-                 nb++;
+                nb++;
                 double hz = xatan2f(bz, az);
                 float2 sincosval = xsincosf(hz);
                 double Cz = sqrt(az * az + bz * bz);
@@ -2943,9 +2943,9 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
 
         sum = sum / nc;
         double ijz100 = 1./jz100;
-        double ajz = (ijz100 - 1.)/9.;//9 = sqrt(100) - 1
+        double ajz = (ijz100 - 1.)/9.;//9 = sqrt(100) - 1 with a parabolic curve after jz100 - we can chnage for others curve ..log...(you must change also in locallabtool2)
         double bjz = 1. - ajz;
-        double kjz = jz100 * (adapjz * ajz + bjz) / maxi;//remapping Jz in usual values 0..1 =>jz100 = 0.25 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
+        double kjz = jz100 * (adapjz * ajz + bjz) / maxi;//remapping Jz in usual values 0..1 =>jz100 = 0.25...0.40 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
         //adapjz * ajz + bjz parabolic curve between 1 and ijz100
         const std::unique_ptr<LabImage> temp(new LabImage(width, height));
         array2D<double> JJz(width, height);
@@ -3140,7 +3140,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
 
                 Jz = LIM01(Jz / kjz);
                 if(jabcie) {
-                    gamutjz (Jz, az, bz, pl, wip, 0.92);
+                    gamutjz (Jz, az, bz, pl, wip, 0.95);
                 }
 
                 double L_, M_, S_;
