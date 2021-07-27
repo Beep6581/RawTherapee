@@ -252,6 +252,8 @@ void Resize::read (const ProcParams* pp, const ParamsEdited* pedited)
         set_inconsistent (multiImage && !pedited->resize.enabled);
     }
 
+    setDimensions(); // fixes the issue that values in GUI are not recomputed when loading profile
+    
     scale->block(false);
     sconn.block (false);
     wconn.block (false);
