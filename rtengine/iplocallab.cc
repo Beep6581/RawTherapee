@@ -2491,7 +2491,7 @@ void gamutjz (double &Jz, double &az, double &bz, double pl, const double wip[3]
         } while (!inGamut);
 }
 
-void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk, const LocCHCurve& locchCurvejz, const LocHHCurve& lochhCurvejz, bool HHcurvejz, bool CHcurvejz)
+void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk, const LocCHCurve& locchCurvejz, const LocHHCurve& lochhCurvejz, const LocLHCurve& loclhCurvejz, bool HHcurvejz, bool CHcurvejz, bool LHcurvejz)
 {
     //BENCHFUN
     bool ciec = false;
@@ -3115,7 +3115,24 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                 az = clipazbz(Cz * (double) sincosval.y);
                 bz = clipazbz(Cz * (double) sincosval.x);
                 Cz = sqrt(az * az + bz * bz);
-                
+
+
+                if (loclhCurvejz && LHcurvejz) {//Jz=f(Hz) curve
+                    float l_r = Jz;
+                    const float valparam = loclhCurvejz[500.f *static_cast<float>(Color::huelab_to_huehsv2((float) Hz))] - 0.5f;
+
+                    if (valparam > 0.f) {
+                        l_r = (1.f - valparam) * l_r + valparam * (1.f - SQR(((SQR(1.f - rtengine::min(l_r, 1.0f))))));
+                    } else {
+                        constexpr float khu = 1.9f; //in reserve in case of!
+                                    //for negative
+                        l_r *= (1.f + khu * valparam);
+                    }
+                    Jz = l_r;
+                }
+
+
+
                 if (lochhCurvejz && HHcurvejz) { // Hz=f(Hz)
                     const float valparam = 2.f * (lochhCurvejz[500.f * static_cast<float>(Color::huelab_to_huehsv2((float)Hz))] - 0.5f) + (float) Hz;
                     float2 sincosval = xsincosf(valparam);
@@ -11983,7 +12000,7 @@ void ImProcFunctions::Lab_Local(
     const LUTf& cllocalcurve, bool localclutili,
     const LUTf& lclocalcurve, bool locallcutili,
     const LocLHCurve& loclhCurve,  const LocHHCurve& lochhCurve, const LocCHCurve& locchCurve,
-    const LocHHCurve& lochhCurvejz, const LocCHCurve& locchCurvejz,
+    const LocHHCurve& lochhCurvejz, const LocCHCurve& locchCurvejz, const LocLHCurve& loclhCurvejz,
     const LUTf& lmasklocalcurve, bool localmaskutili,
     const LUTf& lmaskexplocalcurve, bool localmaskexputili,
     const LUTf& lmaskSHlocalcurve, bool localmaskSHutili,
@@ -12020,7 +12037,7 @@ void ImProcFunctions::Lab_Local(
     const LocwavCurve& locedgwavCurve, bool locedgwavutili,
     const LocwavCurve& loclmasCurve_wav, bool lmasutili_wav,
     
-    bool LHutili, bool HHutili, bool CHutili, bool HHutilijz, bool CHutilijz, const LUTf& cclocalcurve, bool localcutili, const LUTf& rgblocalcurve, bool localrgbutili, bool localexutili, const LUTf& exlocalcurve, const LUTf& hltonecurveloc, const LUTf& shtonecurveloc, const LUTf& tonecurveloc, const LUTf& lightCurveloc,
+    bool LHutili, bool HHutili, bool CHutili, bool HHutilijz, bool CHutilijz, bool LHutilijz, const LUTf& cclocalcurve, bool localcutili, const LUTf& rgblocalcurve, bool localrgbutili, bool localexutili, const LUTf& exlocalcurve, const LUTf& hltonecurveloc, const LUTf& shtonecurveloc, const LUTf& tonecurveloc, const LUTf& lightCurveloc,
     double& huerefblur, double& chromarefblur, double& lumarefblur, double& hueref, double& chromaref, double& lumaref, double& sobelref, int &lastsav,
     bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask,
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
@@ -12259,8 +12276,8 @@ void ImProcFunctions::Lab_Local(
                 tmpImageorig.reset();
                 tmpImage.reset();
                 if (params->locallab.spots.at(sp).ciecam) {
-                    bool HHcurvejz = false, CHcurvejz = false;
-                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 1, sk, locchCurvejz, lochhCurvejz, HHcurvejz, CHcurvejz);
+                    bool HHcurvejz = false, CHcurvejz = false, LHcurvejz = false;;
+                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 1, sk, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
                 }
 
                 //here begin graduated filter
@@ -13202,8 +13219,9 @@ void ImProcFunctions::Lab_Local(
                 if (params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).modecie == "tm") {
                     bool HHcurvejz = false;
                     bool CHcurvejz = false;
+                    bool LHcurvejz = false;
 
-                    ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 0, sk, locchCurvejz, lochhCurvejz, HHcurvejz, CHcurvejz);
+                    ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 0, sk, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
 
                     float rad = params->locallab.spots.at(sp).detailcie;
                     loccont(bfw, bfh, xstart, ystart, xend, yend, tmp1.get(), rad, 15.f, sk);
@@ -14477,9 +14495,9 @@ void ImProcFunctions::Lab_Local(
                     ImProcFunctions::vibrance(bufexpfin.get(), vibranceParams, params->toneCurve.hrenabled, params->icm.workingProfile);
 
                     if (params->locallab.spots.at(sp).warm != 0) {
-                        bool HHcurvejz = false, CHcurvejz = false;
+                        bool HHcurvejz = false, CHcurvejz = false, LHcurvejz = false;
                        
-                        ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 2, sk, locchCurvejz, lochhCurvejz, HHcurvejz, CHcurvejz);
+                        ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 2, sk, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
                     }
 
                     if(lp.enavibMask && lp.recothrv != 1.f) {
@@ -15188,9 +15206,9 @@ void ImProcFunctions::Lab_Local(
                     wavcontrast4(lp, tmp1->L, tmp1->a, tmp1->b, contrast, radblur, radlevblur, tmp1->W, tmp1->H, level_bl, level_hl, level_br, level_hr, sk, numThreads, locwavCurve, locwavutili, wavcurve, loclevwavCurve, loclevwavutili, wavcurvelev, locconwavCurve, locconwavutili, wavcurvecon, loccompwavCurve, loccompwavutili, wavcurvecomp, loccomprewavCurve, loccomprewavutili, wavcurvecompre, locedgwavCurve, locedgwavutili, sigma, offs, maxlvl, sigmadc, deltad, chrol, chrobl, blurlc, blurena, levelena, comprena, compreena, compress, thres);
 
                     if (params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).modecie == "wav") {
-                        bool HHcurvejz = false, CHcurvejz = false;
+                        bool HHcurvejz = false, CHcurvejz = false, LHcurvejz = false;
 
-                        ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 0, sk, locchCurvejz, lochhCurvejz, HHcurvejz, CHcurvejz);
+                        ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 0, sk, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
 
                         float rad = params->locallab.spots.at(sp).detailcie;
                         loccont(bfw, bfh, xstart, ystart, xend, yend, tmp1.get(), rad, 5.f, sk);
@@ -15717,9 +15735,9 @@ void ImProcFunctions::Lab_Local(
                             ToneMapFattal02(tmpImagefat.get(), fatParams, 3, 0, nullptr, 0, 0, alg);//last parameter = 1 ==>ART algorithm
                             rgb2lab(*tmpImagefat, *bufexpfin, params->icm.workingProfile);
                             if (params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).modecie == "dr") {
-                                bool HHcurvejz = false, CHcurvejz = false;
+                                bool HHcurvejz = false, CHcurvejz = false, LHcurvejz = false;
 
-                                ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0, sk, locchCurvejz, lochhCurvejz, HHcurvejz, CHcurvejz);
+                                ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0, sk, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
 
                                 float rad = params->locallab.spots.at(sp).detailcie;
                                 loccont(bfw, bfh, xstart, ystart, xend, yend, bufexpfin.get(), rad, 15.f, sk);
@@ -17394,10 +17412,20 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
 
+                bool LHcurvejz = false;
+                if (loclhCurvejz && LHutilijz) {
+                    for (int i = 0; i < 500; i++) {
+                        if (loclhCurvejz[i] != 0.5f) {
+                            LHcurvejz = true;
+                            break;
+                        }
+                    }
+                }
+
                 bufexpfin->CopyFrom(bufexporig.get(), multiThread);
                 if (params->locallab.spots.at(sp).expcie) {
                     
-                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0, sk, locchCurvejz, lochhCurvejz, HHcurvejz, CHcurvejz);
+                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0, sk, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
                 }
 
                 float rad = params->locallab.spots.at(sp).detailcie;

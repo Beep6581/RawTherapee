@@ -191,7 +191,7 @@ enum class BlurType {
     void moyeqt(Imagefloat* working, float &moyS, float &eqty);
 
     void luminanceCurve(LabImage* lold, LabImage* lnew, const LUTf &curve);
-    void ciecamloc_02float(int sp, LabImage* lab, int call, int sk, const LocCHCurve& locchCurvejz, const LocHHCurve& lochhCurve, bool HHcurvejz, bool CHcurvejz);
+    void ciecamloc_02float(int sp, LabImage* lab, int call, int sk, const LocCHCurve& locchCurvejz, const LocHHCurve& lochhCurve, const LocLHCurve& loclhCurve, bool HHcurvejz, bool CHcurvejz, bool LHcurvejz);
 
     void ciecam_02float(CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const procparams::ProcParams* params,
                         const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3,
@@ -308,7 +308,7 @@ enum class BlurType {
                 const LUTf& cllocalcurve, bool localclutili,
                 const LUTf& lclocalcurve, bool locallcutili,
                 const LocLHCurve& loclhCurve, const LocHHCurve& lochhCurve, const LocCHCurve& locchCurve,
-                const LocHHCurve& lochhCurvejz, const LocCHCurve& locchCurvejz,
+                const LocHHCurve& lochhCurvejz, const LocCHCurve& locchCurvejz, const LocLHCurve& loclhCurvejz,
                 const LUTf& lmasklocalcurve, bool localmaskutili,
                 const LUTf& lmaskexplocalcurve, bool localmaskexputili,
                 const LUTf& lmaskSHlocalcurve, bool localmaskSHutili,
@@ -345,7 +345,7 @@ enum class BlurType {
                 const LocwavCurve& locwavCurveden, bool locwavdenutili,
                 const LocwavCurve& locedgwavCurve, bool locedgwavutili,
                 const LocwavCurve& loclmasCurve_wav, bool lmasutili_wav,
-                bool LHutili, bool HHutili, bool CHutili, bool HHutilijz, bool CHutilijz, const LUTf& cclocalcurve, bool localcutili, const LUTf& rgblocalcurve, bool localrgbutili, bool localexutili, const LUTf& exlocalcurve, const LUTf& hltonecurveloc, const LUTf& shtonecurveloc, const LUTf& tonecurveloc, const LUTf& lightCurveloc,
+                bool LHutili, bool HHutili, bool CHutili, bool HHutilijz, bool CHutilijz, bool LHutilijz, const LUTf& cclocalcurve, bool localcutili, const LUTf& rgblocalcurve, bool localrgbutili, bool localexutili, const LUTf& exlocalcurve, const LUTf& hltonecurveloc, const LUTf& shtonecurveloc, const LUTf& tonecurveloc, const LUTf& lightCurveloc,
                 double& huerefblur, double &chromarefblur, double& lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, int &lastsav,
                 bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask,
                 float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,

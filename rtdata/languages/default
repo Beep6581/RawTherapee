@@ -1351,6 +1351,7 @@ HISTORY_MSG_1099;Local - Jz HzHz Curve
 HISTORY_MSG_1100;Local - Jz CzHz Curve
 HISTORY_MSG_1101;Local - Jz reference 100
 HISTORY_MSG_1102;Local - Jz PQ remap
+HISTORY_MSG_1103;Local - Jz JzHz Curve
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance

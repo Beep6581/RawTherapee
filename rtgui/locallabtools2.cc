@@ -7412,9 +7412,10 @@ Locallabcie::Locallabcie():
     huecie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HUECIE"), -100., 100., 0.1, 0.))),
     chromjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCHROM"), -100., 100., 0.5, 0.))),
     huejzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZHUECIE"), -100., 100., 0.1, 0.))),
-    HjzCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_HLHZ"))),
+    HjzCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
     HHshapejz(static_cast<FlatCurveEditor*>(HjzCurveEditorG->addCurve(CT_Flat, "hz(hz)", nullptr, false, true))),
     CHshapejz(static_cast<FlatCurveEditor*>(HjzCurveEditorG->addCurve(CT_Flat, "cz(hz)", nullptr, false, true))),
+    LHshapejz(static_cast<FlatCurveEditor*>(HjzCurveEditorG->addCurve(CT_Flat, "Jz(hz)", nullptr, false, true))),
     expLcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_LOGEXP")))),
     cie2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
     targetGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
@@ -7497,6 +7498,12 @@ Locallabcie::Locallabcie():
     CHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     CHshapejz->setCurveColorProvider(this, 3);
     CHshapejz->setBottomBarBgGradient(six_shape);
+
+    LHshapejz->setIdentityValue(0.);
+    LHshapejz->setResetCurve(FlatCurveType(defSpot.LHcurvejz.at(0)), defSpot.LHcurvejz);
+    LHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    LHshapejz->setCurveColorProvider(this, 3);
+    LHshapejz->setBottomBarBgGradient(six_shape);
 
     HjzCurveEditorG->curveListComplete();
     
@@ -7655,7 +7662,6 @@ Locallabcie::Locallabcie():
 Locallabcie::~Locallabcie()
 {
     delete HjzCurveEditorG;
-    
 }
 void Locallabcie::setDefaultExpanderVisibility()
 {
@@ -7772,8 +7778,6 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             modecam->set_active (1);
         } else if (spot.modecam == "jz") {
             modecam->set_active (2);
-      //  } else if (spot.modecam == "jzall") {
-      //      modecam->set_active (3);
         }
 
         if (spot.modecie == "com") {
@@ -7813,6 +7817,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 
         HHshapejz->setCurve(spot.HHcurvejz);
         CHshapejz->setCurve(spot.CHcurvejz);
+        LHshapejz->setCurve(spot.LHcurvejz);
 
         saturlcie->setValue(spot.saturlcie);
         rstprotectcie->setValue(spot.rstprotectcie);
@@ -7874,8 +7879,6 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.modecam = "cam16";
         } else if (modecam->get_active_row_number() == 2) {
             spot.modecam = "jz";
-      //  } else if (modecam->get_active_row_number() == 3) {
-      //      spot.modecam = "jzall";
         }
 
         if (modecie->get_active_row_number() == 0) {
@@ -7913,6 +7916,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         }
         spot.HHcurvejz = HHshapejz->getCurve();
         spot.CHcurvejz = CHshapejz->getCurve();
+        spot.LHcurvejz = LHshapejz->getCurve();
 
         spot.saturlcie = saturlcie->getValue();
         spot.rstprotectcie = rstprotectcie->getValue();
@@ -7965,6 +7969,13 @@ void Locallabcie::curveChanged(CurveEditor* ce)
             }
         }
 
+        if (ce == LHshapejz) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLHshapejz,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
     }
 }
 
@@ -7977,6 +7988,7 @@ void Locallabcie::updateMaskBackground(const double normChromar, const double no
         // Update mask background
         HHshapejz->updateLocallabBackground(normHuer);
         CHshapejz->updateLocallabBackground(normHuer);
+        LHshapejz->updateLocallabBackground(normHuer);
 
         return false;
     }

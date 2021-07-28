@@ -1562,6 +1562,7 @@ private:
     CurveEditorGroup* const HjzCurveEditorG;
     FlatCurveEditor* const HHshapejz;
     FlatCurveEditor* const CHshapejz;
+    FlatCurveEditor* const LHshapejz;
     
     MyExpander* const expLcie;
     Gtk::Frame* const cie2Frame;

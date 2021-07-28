@@ -954,6 +954,7 @@ private:
             LocCHCurve locchCurve;
             LocHHCurve lochhCurvejz;
             LocCHCurve locchCurvejz;
+            LocLHCurve loclhCurvejz;
             LocCCmaskCurve locccmasCurve;
             LocLLmaskCurve locllmasCurve;
             LocHHmaskCurve lochhmasCurve;
@@ -1042,6 +1043,7 @@ private:
                 const bool CHutili = locchCurve.Set(params.locallab.spots.at(sp).CHcurve);
                 const bool HHutilijz = lochhCurvejz.Set(params.locallab.spots.at(sp).HHcurvejz);
                 const bool CHutilijz = locchCurvejz.Set(params.locallab.spots.at(sp).CHcurvejz);
+                const bool LHutilijz = loclhCurvejz.Set(params.locallab.spots.at(sp).LHcurvejz);
                 const bool lcmasutili = locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve);
                 const bool llmasutili = locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve);
                 const bool lhmasutili = lochhmasCurve.Set(params.locallab.spots.at(sp).HHmaskcurve);
@@ -1151,7 +1153,7 @@ private:
                         cllocalcurve, localclutili,
                         lclocalcurve, locallcutili,
                         loclhCurve, lochhCurve, locchCurve,
-                        lochhCurvejz, locchCurvejz,
+                        lochhCurvejz, locchCurvejz,loclhCurvejz,
                         lmasklocalcurve, localmaskutili,
                         lmaskexplocalcurve, localmaskexputili,
                         lmaskSHlocalcurve, localmaskSHutili,
@@ -1187,7 +1189,7 @@ private:
                         locwavCurveden, locwavdenutili,
                         locedgwavCurve, locedgwavutili,
                         loclmasCurve_wav,lmasutili_wav,
-                        LHutili, HHutili, CHutili, HHutilijz, CHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
+                        LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                         meantme, stdtme, meanretie, stdretie

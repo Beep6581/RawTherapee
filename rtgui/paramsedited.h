@@ -994,6 +994,7 @@ public:
         bool huejzcie;
         bool HHcurvejz;
         bool CHcurvejz;
+        bool LHcurvejz;
         bool lightlcie;
         bool lightjzcie;
         bool lightqcie;

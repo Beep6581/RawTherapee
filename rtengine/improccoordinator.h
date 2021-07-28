@@ -293,6 +293,7 @@ protected:
     LocCHCurve locchCurve;
     LocHHCurve lochhCurvejz;
     LocCHCurve locchCurvejz;
+    LocLHCurve loclhCurvejz;
     LocCCmaskCurve locccmasCurve;
     LocLLmaskCurve locllmasCurve;
     LocHHmaskCurve lochhmasCurve;
