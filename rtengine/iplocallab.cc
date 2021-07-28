@@ -101,6 +101,12 @@ constexpr double clipcz(double x)
     return rtengine::LIM(x, 0., 0.707);
 }
 
+
+constexpr double clipjz05(double x)
+{
+    return rtengine::LIM(x, 0.0005, 1.0);
+}
+
 float softlig(float a, float b, float minc, float maxc)
 {
     // as Photoshop
@@ -2457,11 +2463,11 @@ void sigmoidla (float &valj, float thresj, float lambda, float blend)
 }
 
 
-void gamutjz (double &Jz, double &az, double &bz, double pl, const double wip[3][3], const float higherCoef, int &nx)
+void gamutjz (double &Jz, double &az, double &bz, double pl, const double wip[3][3], const float higherCoef, const float lowerCoef)
 {
         constexpr float ClipLevel = 65535.0f;
         bool inGamut;
-        int nb = 0;
+      //  int nb = 0;
         do {
             inGamut = true;
             double L_, M_, S_;
@@ -2474,14 +2480,14 @@ void gamutjz (double &Jz, double &az, double &bz, double pl, const double wip[3]
             float R,G,B;
             Color:: xyz2rgb(x, y, z, R, G, B, wip);
             if (rtengine::min(R, G, B) < 0.f  || rtengine::max(R, G, B) > ClipLevel) {
-                nb++;
-                nx++;
+            //    nb++;
                 double hz = xatan2f(bz, az);
                 float2 sincosval = xsincosf(hz);
                 double Cz = sqrt(az * az + bz * bz);
+               // printf("cz=%f jz=%f" , (double) Cz, (double) Jz);
                 Cz *= (double) higherCoef;
-                if(nb > 1) {
-                    Cz *= (double) higherCoef;
+                if(Cz < 0.01 && Jz > 0.05) {//empirical values
+                    Jz -= (double) lowerCoef;
                 }
                 az = clipazbz(Cz * (double) sincosval.y);
                 bz = clipazbz(Cz * (double) sincosval.x);
@@ -2505,7 +2511,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         iscie = true;
     }
     bool jabcie = params->locallab.spots.at(sp).jabcie; 
-    jabcie = false;
+ //   jabcie = false;
     //sigmoid J Q variables
     const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie; 
     const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie; 
@@ -3050,9 +3056,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
             ImProcFunctions::shadowsHighlights(temp.get(), true, 1, highhs, shadhs, radhs, sk, hltonahs, shtonals);
         }
         //others "Lab" threatment...to adapt 
-        int nx = 0;
 #ifdef _OPENMP
-            #pragma omp parallel  for reduction(+:nx) if(multiThread)
+            #pragma omp parallel  for if(multiThread)
 #endif
         for (int i = 0; i < height; i++) {
             for (int k = 0; k < width; k++) {
@@ -3158,10 +3163,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
 
                 Jz = LIM01(Jz / kjz);
                 if(jabcie) {
-                    if(nx  < 0.1 * (width * height)) {
-                        gamutjz (Jz, az, bz, pl, wip, 0.91, nx);
-                    }
-                    
+                    Jz = clipjz05(Jz);
+                    gamutjz (Jz, az, bz, pl, wip, 0.95, 0.003);
                 }
 
                 double L_, M_, S_;
