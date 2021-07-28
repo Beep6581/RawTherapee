@@ -3129,8 +3129,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                     if (valparam > 0.f) {
                         l_r = (1.f - valparam) * l_r + valparam * (1.f - SQR(((SQR(1.f - rtengine::min(l_r, 1.0f))))));
                     } else {
-                        constexpr float khu = 1.9f; //in reserve in case of!
-                                    //for negative
+                        constexpr float khu = 1.9f;
                         l_r *= (1.f + khu * valparam);
                     }
                     Jz = l_r;
