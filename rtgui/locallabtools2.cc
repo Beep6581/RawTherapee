@@ -7673,6 +7673,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         reparcie->set_tooltip_text(M("TP_LOCALLAB_LOGREPART_TOOLTIP"));
         cieFrame->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
+        PQFrame->set_tooltip_text(M("TP_LOCALLAB_JZPQFRA_TOOLTIP"));
         jabcie->set_tooltip_text(M("TP_LOCALLAB_JAB_TOOLTIP"));
         adapjzcie->set_tooltip_text(M("TP_LOCALLAB_JABADAP_TOOLTIP"));
         jz100->set_tooltip_text(M("TP_LOCALLAB_JZ100_TOOLTIP"));
@@ -7702,6 +7703,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
     } else {
         reparcie->set_tooltip_text("");
         cieFrame->set_tooltip_text("");
+        PQFrame->set_tooltip_text("");
         jabcie->set_tooltip_text("");
         adapjzcie->set_tooltip_text("");
         jz100->set_tooltip_text("");
