@@ -8066,6 +8066,8 @@ void Locallabcie::sigmoidqjcieChanged()
 
 void Locallabcie::modecamChanged()
 {
+    const int mode = complexity->get_active_row_number();
+    
     if (modecam->get_active_row_number() != 1) {
         jzFrame->show();
         adapjzcie->show();
@@ -8092,10 +8094,24 @@ void Locallabcie::modecamChanged()
         targabscie->hide();
         surrHBoxcie->hide();
         }
-    
+
+    if(mode != Expert) {
+            jzFrame->hide();
+            adapjzcie->hide();
+            jz100->hide();
+            pqremap->hide();
+            jabcie->hide();
+            PQFrame->hide();
+            
+            if (modecam->get_active_row_number() == 2) {
+                cieFrame->hide();
+                cie2Frame->hide();
+            }
+
+    }
+
+
     if (isLocActivated && exp->getEnabled()) {
-        
-        
 
         if (listener) {
             listener->panelChanged(Evlocallabmodecam,
@@ -8181,6 +8197,19 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             sensicie->show();
             reparcie->show();
             sigmoidblcie->hide();
+            
+            jzFrame->hide();
+            adapjzcie->hide();
+            jz100->hide();
+            pqremap->hide();
+            jabcie->hide();
+            PQFrame->hide();
+            
+            if (modecam->get_active_row_number() == 2) {
+                cieFrame->hide();
+                cie2Frame->hide();
+            }
+            
             break;
         case Normal:
             // Expert mode widgets are hidden in Normal mode
@@ -8208,6 +8237,18 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             reparcie->show();
             sigmoidblcie->show();
 
+            jzFrame->hide();
+            adapjzcie->hide();
+            jz100->hide();
+            pqremap->hide();
+            jabcie->hide();
+            PQFrame->hide();
+
+            if (modecam->get_active_row_number() == 2) {
+                cieFrame->hide();
+                cie2Frame->hide();
+            }
+
             break;
 
         case Expert:
@@ -8231,8 +8272,14 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             detailcie->show();
             modeHBoxcie->show();
             sigmoidblcie->show();
+
             if (modecam->get_active_row_number() != 1) {
                 jabcie->show();
+                jzFrame->show();
+                adapjzcie->show();
+                jz100->show();
+                pqremap->show();
+                PQFrame->show();
             }
 
 
@@ -8252,6 +8299,7 @@ void Locallabcie::updatecieGUI()
         surHBoxcie->show();
         cie1Frame->show();
         cie2Frame->show();
+        
 
     if (modecam->get_active_row_number() == 2) {
         surHBoxcie->hide();
@@ -8259,6 +8307,10 @@ void Locallabcie::updatecieGUI()
         targetGraycie->hide();
         targabscie->hide();
         surrHBoxcie->hide();
+        if(mode != Expert) {
+            cie1Frame->hide();
+            cie2Frame->hide();
+        }
 
     }
 
@@ -8298,8 +8350,16 @@ void Locallabcie::convertParamToNormal()
     huecie->setValue(defSpot.huecie);
     detailcie->setValue(defSpot.detailcie);
     jabcie->set_active(defSpot.jabcie);
-
-
+    LHshapejz->setCurve(defSpot.LHcurvejz);
+    CHshapejz->setCurve(defSpot.CHcurvejz);
+    HHshapejz->setCurve(defSpot.HHcurvejz);
+    lightjzcie->setValue(defSpot.lightjzcie);
+    contjzcie->setValue(defSpot.contjzcie);
+    sigmoidldajzcie->setValue(defSpot.sigmoidldajzcie);
+    hljzcie->setValue(defSpot.hljzcie);
+    shjzcie->setValue(defSpot.shjzcie);
+    chromjzcie->setValue(defSpot.chromjzcie);
+    huejzcie->setValue(defSpot.huejzcie);
     modecie->set_active(0);
     // Enable all listeners
     enableListener();

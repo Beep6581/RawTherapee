@@ -104,7 +104,7 @@ constexpr double clipcz(double x)
 
 constexpr double clipjz05(double x)
 {
-    return rtengine::LIM(x, 0.0005, 1.0);
+    return rtengine::LIM(x, 0.0006, 1.0);
 }
 
 float softlig(float a, float b, float minc, float maxc)
@@ -3163,7 +3163,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                 Jz = LIM01(Jz / kjz);
                 if(jabcie) {
                     Jz = clipjz05(Jz);
-                    gamutjz (Jz, az, bz, pl, wip, 0.95, 0.003);
+                    gamutjz (Jz, az, bz, pl, wip, 0.94, 0.004);
                 }
 
                 double L_, M_, S_;
