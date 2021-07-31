@@ -2903,7 +2903,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
     if(mocam != 1) {//Jz az bz ==> Jz Cz Hz before Ciecam16
         double mini = 1000.;
         double maxi = -1000.;
-        double maxiC = -1000.;
         double sum = 0.;
         int nc = 0;
         //Remapping see https://hal.inria.fr/hal-02131890/document    I took some ideas in this text, and add my personal adaptation
@@ -2968,7 +2967,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         double delta = 0.015 * (double) sqrt(std::max(100.f, la) / 100.f);//small adaptation in function La scene
         double maxy = 0.75;//empirical value
         if (settings->verbose) { 
-            printf("maxi=%f mini=%f mean=%f, avgm=%f, maxiC=%f wh=%f\n", maxi, mini, sum, avgm, maxiC, (double) wh);
+            printf("maxi=%f mini=%f mean=%f, avgm=%f\n", maxi, mini, sum, avgm);
         }
 
         const float sigmoidlambdajz = params->locallab.spots.at(sp).sigmoidldajzcie; 

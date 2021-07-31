@@ -8096,19 +8096,22 @@ void Locallabcie::modecamChanged()
         }
 
     if(mode != Expert) {
-            jzFrame->hide();
-            adapjzcie->hide();
-            jz100->hide();
-            pqremap->hide();
-            jabcie->hide();
-            PQFrame->hide();
-            
-            if (modecam->get_active_row_number() == 2) {
-                cieFrame->hide();
-                cie2Frame->hide();
-            }
+        jzFrame->hide();
+        adapjzcie->hide();
+        jz100->hide();
+        pqremap->hide();
+        jabcie->hide();
+        PQFrame->hide();
 
+        if (modecam->get_active_row_number() == 2) {
+            cieFrame->hide();
+            cie2Frame->hide();
+        }
+    } else {
+        cieFrame->show();
+        cie2Frame->show();
     }
+    
 
 
     if (isLocActivated && exp->getEnabled()) {
@@ -8281,6 +8284,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 pqremap->show();
                 PQFrame->show();
             }
+                cieFrame->show();
+                cie2Frame->show();
 
 
     }
