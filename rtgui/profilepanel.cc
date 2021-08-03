@@ -359,7 +359,7 @@ void ProfilePanel::save_clicked (GdkEventButton* event)
                 if (isPartial) {
                     // Build partial profile
                     PartialProfile ppTemp(true);
-                    partialProfileDlg->applyPaste(ppTemp.pparams, ppTemp.pedited, toSave->pparams, toSave->pedited);
+                    partialProfileDlg->applyPaste(ppTemp.pparams, ppTemp.pedited, toSave->pparams, nullptr);
                     // Save partial profile
                     retCode = ppTemp.pparams->save(fname, "", true, ppTemp.pedited);
                     // Cleanup
