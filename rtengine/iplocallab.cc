@@ -2906,6 +2906,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         double sum = 0.;
         int nc = 0;
         //Remapping see https://hal.inria.fr/hal-02131890/document    I took some ideas in this text, and add my personal adaptation
+        // image quality assessment of HDR and WCG images https://tel.archives-ouvertes.fr/tel-02378332/document
         double adapjz = params->locallab.spots.at(sp).adapjzcie;
         double jz100 = params->locallab.spots.at(sp).jz100;
         double pl = params->locallab.spots.at(sp).pqremap;
@@ -2949,7 +2950,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
 
         sum = sum / nc;
         double ijz100 = 1./jz100;
-        double ajz = (ijz100 - 1.)/9.;//9 = sqrt(100) - 1 with a parabolic curve after jz100 - we can chnage for others curve ..log...(you must change also in locallabtool2)
+        double ajz = (ijz100 - 1.)/9.;//9 = sqrt(100) - 1 with a parabolic curve after jz100 - we can change for others curve ..log...(you must change also in locallabtool2)
         double bjz = 1. - ajz;
         double kjz = jz100 * (adapjz * ajz + bjz) / maxi;//remapping Jz in usual values 0..1 =>jz100 = 0.25...0.40 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
         //adapjz * ajz + bjz parabolic curve between 1 and ijz100

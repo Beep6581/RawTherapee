@@ -7443,7 +7443,6 @@ Locallabcie::Locallabcie():
     modecam->append (M ("TP_LOCALLAB_CAMMODE_ALL"));
     modecam->append (M ("TP_LOCALLAB_CAMMODE_CAM16"));
     modecam->append (M ("TP_LOCALLAB_CAMMODE_JZ"));
-   // modecam->append (M ("TP_LOCALLAB_CAMMODE_JZALL"));
     modecam->set_active (0);
     modeHBoxcam->pack_start (*modecam);
     modecamconn = modecam->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::modecamChanged) );
@@ -7674,6 +7673,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         reparcie->set_tooltip_text(M("TP_LOCALLAB_LOGREPART_TOOLTIP"));
         cieFrame->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
         PQFrame->set_tooltip_text(M("TP_LOCALLAB_JZPQFRA_TOOLTIP"));
+        modecam->set_tooltip_text(M("TP_LOCALLAB_JZMODECAM_TOOLTIP"));
         jabcie->set_tooltip_text(M("TP_LOCALLAB_JAB_TOOLTIP"));
         adapjzcie->set_tooltip_text(M("TP_LOCALLAB_JABADAP_TOOLTIP"));
         jz100->set_tooltip_text(M("TP_LOCALLAB_JZ100_TOOLTIP"));
@@ -7704,6 +7704,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         reparcie->set_tooltip_text("");
         cieFrame->set_tooltip_text("");
         PQFrame->set_tooltip_text("");
+        modecam->set_tooltip_text("");
         jabcie->set_tooltip_text("");
         adapjzcie->set_tooltip_text("");
         jz100->set_tooltip_text("");

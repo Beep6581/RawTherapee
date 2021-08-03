@@ -2909,6 +2909,7 @@ TP_LOCALLAB_JAB;Jz Gamut control
 TP_LOCALLAB_JAB_TOOLTIP;Use with precaution.\n Preferably for SDR: images and devices.
 TP_LOCALLAB_JABADAP_TOOLTIP;Allows you to adapt a) the relation between Jz and saturation, b) the peak luminance level (HDR).\nAllows you to adapt this level to your device display characteristics.
 TP_LOCALLAB_JZ100;Jz reference 100cd/m2
+TP_LOCALLAB_JZMODECAM_TOOLTIP;Jz (only in 'Advanced' mode) is really operational if the output device (monitor) is HDR (peak luminance higher than 100 cd/m2, ideally between 4000 and 10000 cd/m2 and a black point luminance inferior to 0.005 cd/m2). This supposes that this monitor is calibrated (with if possible a DCI-P3 or Rec-2020 gamut), and that the usual gamma (sRGB or BT709) is replaced by Perceptual Quantiser (PQ).
 TP_LOCALLAB_JZPQFRA;Jz remapping
 TP_LOCALLAB_JZPQFRA_TOOLTIP;Allows you to adapt the Jz algorithm to an SDR environment or to the characteristics (performance) of an HDR monitor as follows:\n a) for luminance values between 0 and 100 cd/m2 the system behaves as if it was in an SDR environment;\n b) for luminance values between 100 and 10000 cd/m2 you can adapt the algorithm to the HDR characteristics of the image and the monitor.
 TP_LOCALLAB_JZPQREMAP;PQ - Peak luminance 
