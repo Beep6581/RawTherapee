@@ -7652,7 +7652,7 @@ Locallabcie::Locallabcie():
     cieP2Box->pack_start(*catadcie);
     cieP2Box->pack_start(*surrHBoxcie);
     cieP2Box->pack_start(*detailcie);
-    cieP2Box->pack_start(*jabcie);
+//    cieP2Box->pack_start(*jabcie);
     
     cie2Frame->add(*cieP2Box);
     pack_start(*cie2Frame);

@@ -2511,7 +2511,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         iscie = true;
     }
     bool jabcie = params->locallab.spots.at(sp).jabcie; 
- //   jabcie = false;
+    jabcie = false;//always disabled
     //sigmoid J Q variables
     const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie; 
     const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie; 
@@ -2532,8 +2532,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         mocam = 1;
     } else if(params->locallab.spots.at(sp).modecam == "jz") {
         mocam = 2;
-  //  } else if(params->locallab.spots.at(sp).modecam == "jzall") {
-  //      mocam = 3;
     }
 
     float th = 1.f;
