@@ -15549,7 +15549,30 @@ void ImProcFunctions::Lab_Local(
                         buforig->L[y - ystart][x - xstart] = original->L[y][x];
                     }
                 }
+/*
+                float gamma1 = lp.gamex;
+                rtengine::GammaValues g_a; //gamma parameters
+                double pwr1 = 1.0 / (double) lp.gamex;//default 3.0 - gamma Lab
+                double ts1 = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
 
+                if(gamma1 != 1.f) {
+#ifdef _OPENMP
+#   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                        for (int y = 0; y < bufexporig->H; ++y) {
+                        int x = 0;
+#ifdef __SSE2__
+                            for (; x < bufexporig->W - 3; x += 4) {
+                            STVFU(bufexporig->L[y][x], F2V(32768.f) * igammalog(LVFU(bufexporig->L[y][x]) / F2V(32768.f), F2V(gamma1), F2V(ts1), F2V(g_a[2]), F2V(g_a[4])));
+                            }
+#endif
+                            for (;x < bufexporig->W; ++x) {
+                                bufexporig->L[y][x] = 32768.f * igammalog(bufexporig->L[y][x] / 32768.f, gamma1, ts1, g_a[2], g_a[4]);
+                            }
+                        }
+                    }
+*/
                 const int spotSi = rtengine::max(1 + 2 * rtengine::max(1, lp.cir / sk), 5);
 
                 if (bfw > 2 * spotSi && bfh > 2 * spotSi && lp.struexp > 0.f) {
@@ -15837,7 +15860,7 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
                     }
-
+/*
                     float gamma = lp.gamex;
                     rtengine::GammaValues g_a; //gamma parameters
                     double pwr = 1.0 / (double) lp.gamex;//default 3.0 - gamma Lab
@@ -15859,7 +15882,7 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
                     }
-
+*/
                     if (lp.softradiusexp > 0.f && lp.expmet == 0) {
                         softproc(buforig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.1, 0.001, 0.5f, sk, multiThread, 1);
                     }
@@ -16066,6 +16089,29 @@ void ImProcFunctions::Lab_Local(
                         buftemp->b[y][x] = original->b[y + ystart][x + xstart];
                     }
                 }
+
+                    float gamma1 = lp.gamc;
+                    rtengine::GammaValues g_a; //gamma parameters
+                    double pwr1 = 1.0 / (double) lp.gamc;//default 3.0 - gamma Lab
+                    double ts1 = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
+
+                    if(gamma1 != 1.f) {
+#ifdef _OPENMP
+#   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                        for (int y = 0; y < bufcolorig->H; ++y) {
+                        int x = 0;
+#ifdef __SSE2__
+                            for (; x < bufcolorig->W - 3; x += 4) {
+                            STVFU(bufcolorig->L[y][x], F2V(32768.f) * igammalog(LVFU(bufcolorig->L[y][x]) / F2V(32768.f), F2V(gamma1), F2V(ts1), F2V(g_a[2]), F2V(g_a[4])));
+                            }
+#endif
+                            for (;x < bufcolorig->W; ++x) {
+                                bufcolorig->L[y][x] = 32768.f * igammalog(bufcolorig->L[y][x] / 32768.f, gamma1, ts1, g_a[2], g_a[4]);
+                            }
+                        }
+                    }
 
                 const int spotSi = rtengine::max(1 + 2 * rtengine::max(1,  lp.cir / sk), 5);
                 const bool blends = bfw > 2 * spotSi && bfh > 2 * spotSi && lp.struco > 0.f;
@@ -17032,6 +17078,9 @@ void ImProcFunctions::Lab_Local(
                                     bufcolfin->b[ir][jr] = clipC(chrm * sincosval.x);
                                 }
                         }
+
+
+
 
                         float gamma = lp.gamc;
                         rtengine::GammaValues g_a; //gamma parameters
