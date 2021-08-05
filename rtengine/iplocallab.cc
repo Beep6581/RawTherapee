@@ -15543,13 +15543,13 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-                for (int y = ystart; y < yend; y++) {
-                    for (int x = xstart; x < xend; x++) {
-                        bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
-                        buforig->L[y - ystart][x - xstart] = original->L[y][x];
+                for (int y = 0; y < bfh ; y++) {
+                    for (int x = 0; x < bfw; x++) {
+                        bufexporig->L[y][x] = original->L[y + ystart][x + xstart];
+                        buforig->a[y][x] = original->a[y + ystart][x + xstart];
                     }
                 }
-/*
+
                 float gamma1 = lp.gamex;
                 rtengine::GammaValues g_a; //gamma parameters
                 double pwr1 = 1.0 / (double) lp.gamex;//default 3.0 - gamma Lab
@@ -15560,19 +15560,19 @@ void ImProcFunctions::Lab_Local(
 #ifdef _OPENMP
 #   pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-                        for (int y = 0; y < bufexporig->H; ++y) {
+                        for (int y = 0; y < bfh; ++y) {
                         int x = 0;
 #ifdef __SSE2__
-                            for (; x < bufexporig->W - 3; x += 4) {
+                            for (; x < bfw - 3; x += 4) {
                             STVFU(bufexporig->L[y][x], F2V(32768.f) * igammalog(LVFU(bufexporig->L[y][x]) / F2V(32768.f), F2V(gamma1), F2V(ts1), F2V(g_a[2]), F2V(g_a[4])));
                             }
 #endif
-                            for (;x < bufexporig->W; ++x) {
+                            for (;x < bfw; ++x) {
                                 bufexporig->L[y][x] = 32768.f * igammalog(bufexporig->L[y][x] / 32768.f, gamma1, ts1, g_a[2], g_a[4]);
                             }
                         }
                     }
-*/
+
                 const int spotSi = rtengine::max(1 + 2 * rtengine::max(1, lp.cir / sk), 5);
 
                 if (bfw > 2 * spotSi && bfh > 2 * spotSi && lp.struexp > 0.f) {
@@ -15684,7 +15684,7 @@ void ImProcFunctions::Lab_Local(
 
 
                     if (exlocalcurve && localexutili) {// L=f(L) curve enhanced
-                    
+
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -15708,6 +15708,7 @@ void ImProcFunctions::Lab_Local(
 
                         if (lp.expcomp != 0.f  ) { // ||  lp.laplacexp > 0.1f
                             if(lp.laplacexp <= 0.1f) {
+
                                 lp.laplacexp = 0.2f;  //force to use Laplacian wth very small values
                             }
                             ImProcFunctions::exlabLocal(lp, 1.f, bfh, bfw, bfhr, bfwr, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
@@ -15718,6 +15719,7 @@ void ImProcFunctions::Lab_Local(
                     struct grad_params gp;
 
                     if (lp.strexp != 0.f) {
+
                         calclocalGradientParams(lp, gp, ystart, xstart, bfw, bfh, 1);
 #ifdef _OPENMP
                         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -15732,6 +15734,7 @@ void ImProcFunctions::Lab_Local(
 //exposure_pde
                     if (lp.expmet == 1) {
                         if (enablefat) {
+
                             const std::unique_ptr<float[]> datain(new float[bfwr * bfhr]);
                             const std::unique_ptr<float[]> dataout(new float[bfwr * bfhr]);
 #ifdef _OPENMP
@@ -15769,6 +15772,7 @@ void ImProcFunctions::Lab_Local(
                         }
 
                         if (lp.laplacexp > 0.1f) {
+
                             MyMutex::MyLock lock(*fftwMutex);
                             std::unique_ptr<float[]> datain(new float[bfwr * bfhr]);
                             std::unique_ptr<float[]> dataout(new float[bfwr * bfhr]);
@@ -15824,12 +15828,14 @@ void ImProcFunctions::Lab_Local(
                         }
                     }
                     if (lp.shadex > 0) {
+
                         if (lp.expcomp == 0.f) {
                             lp.expcomp = 0.001f;    // to enabled
                         }
                     }
 
                     if (lp.hlcomp > 0.f) {
+
                         if (lp.expcomp == 0.f) {
                             lp.expcomp = 0.001f;    // to enabled
                         }
@@ -15838,12 +15844,14 @@ void ImProcFunctions::Lab_Local(
                     //shadows with ipshadowshighlight
                     if ((lp.expcomp != 0.f) || (exlocalcurve && localexutili)) {
                         if (lp.shadex > 0) {
+
                             ImProcFunctions::shadowsHighlights(bufexpfin.get(), true, 1, 0, lp.shadex, 40, sk, 0, lp.shcomp);
                         }
                     }
 
                     if (lp.expchroma != 0.f) {
                         if ((lp.expcomp != 0.f && lp.expcomp != 0.001f) || (exlocalcurve && localexutili) || lp.laplacexp > 0.1f) {
+
                             constexpr float ampli = 70.f;
                             const float ch = (1.f + 0.02f * lp.expchroma);
                             const float chprosl = ch <= 1.f ? 99.f * ch - 99.f : clipChro(ampli * ch - ampli);
@@ -15860,7 +15868,7 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
                     }
-/*
+
                     float gamma = lp.gamex;
                     rtengine::GammaValues g_a; //gamma parameters
                     double pwr = 1.0 / (double) lp.gamex;//default 3.0 - gamma Lab
@@ -15882,7 +15890,7 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
                     }
-*/
+
                     if (lp.softradiusexp > 0.f && lp.expmet == 0) {
                         softproc(buforig.get(), bufexpfin.get(), lp.softradiusexp, bfh, bfw, 0.1, 0.001, 0.5f, sk, multiThread, 1);
                     }
