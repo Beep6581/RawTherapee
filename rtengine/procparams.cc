@@ -3788,6 +3788,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     shardamping(0),
     shariter(30),
     sharblur(0.2),
+    shargam(1.0),
     sensisha(40),
     inverssha(false),
     // Local Contrast
@@ -4809,6 +4810,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && shardamping == other.shardamping
         && shariter == other.shariter
         && sharblur == other.sharblur
+        && shargam == other.shargam
         && sensisha == other.sensisha
         && inverssha == other.inverssha
         // Local contrast
@@ -6521,6 +6523,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->shardamping, "Locallab", "Shardamping_" + index_str, spot.shardamping, keyFile);
                     saveToKeyfile(!pedited || spot_edited->shariter, "Locallab", "Shariter_" + index_str, spot.shariter, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sharblur, "Locallab", "Sharblur_" + index_str, spot.sharblur, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->shargam, "Locallab", "Shargam_" + index_str, spot.shargam, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sensisha, "Locallab", "Sensisha_" + index_str, spot.sensisha, keyFile);
                     saveToKeyfile(!pedited || spot_edited->inverssha, "Locallab", "Inverssha_" + index_str, spot.inverssha, keyFile);
                 }
@@ -8575,6 +8578,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Shardamping_" + index_str, pedited, spot.shardamping, spotEdited.shardamping);
                 assignFromKeyfile(keyFile, "Locallab", "Shariter_" + index_str, pedited, spot.shariter, spotEdited.shariter);
                 assignFromKeyfile(keyFile, "Locallab", "Sharblur_" + index_str, pedited, spot.sharblur, spotEdited.sharblur);
+                assignFromKeyfile(keyFile, "Locallab", "Shargam_" + index_str, pedited, spot.shargam, spotEdited.shargam);
                 assignFromKeyfile(keyFile, "Locallab", "Sensisha_" + index_str, pedited, spot.sensisha, spotEdited.sensisha);
                 assignFromKeyfile(keyFile, "Locallab", "Inverssha_" + index_str, pedited, spot.inverssha, spotEdited.inverssha);
                 // Local Contrast

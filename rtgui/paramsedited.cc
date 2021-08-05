@@ -1480,6 +1480,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).shardamping = locallab.spots.at(j).shardamping && pSpot.shardamping == otherSpot.shardamping;
                 locallab.spots.at(j).shariter = locallab.spots.at(j).shariter && pSpot.shariter == otherSpot.shariter;
                 locallab.spots.at(j).sharblur = locallab.spots.at(j).sharblur && pSpot.sharblur == otherSpot.sharblur;
+                locallab.spots.at(j).shargam = locallab.spots.at(j).shargam && pSpot.shargam == otherSpot.shargam;
                 locallab.spots.at(j).sensisha = locallab.spots.at(j).sensisha && pSpot.sensisha == otherSpot.sensisha;
                 locallab.spots.at(j).inverssha = locallab.spots.at(j).inverssha && pSpot.inverssha == otherSpot.inverssha;
                 // Local Contrast
@@ -4902,6 +4903,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).sharblur    = mods.locallab.spots.at(i).sharblur;
         }
 
+        if (locallab.spots.at(i).shargam) {
+            toEdit.locallab.spots.at(i).shargam    = mods.locallab.spots.at(i).shargam;
+        }
+
         if (locallab.spots.at(i).sensisha) {
             toEdit.locallab.spots.at(i).sensisha = mods.locallab.spots.at(i).sensisha;
         }
@@ -7511,6 +7516,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     shardamping(v),
     shariter(v),
     sharblur(v),
+    shargam(v),
     sensisha(v),
     inverssha(v),
     // Local Contrast
@@ -8149,6 +8155,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     shardamping = v;
     shariter = v;
     sharblur = v;
+    shargam = v;
     sensisha = v;
     inverssha = v;
     // Local Contrast

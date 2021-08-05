@@ -1027,6 +1027,7 @@ class LocallabSharp:
 private:
     Adjuster* const sharcontrast;
     Adjuster* const sharblur;
+    Adjuster* const shargam;
     Adjuster* const sharamount;
     Adjuster* const shardamping;
     Adjuster* const shariter;

@@ -1985,6 +1985,7 @@ LocallabSharp::LocallabSharp():
     // Sharpening specific widgets
     sharcontrast(Gtk::manage(new Adjuster(M("TP_SHARPENING_CONTRAST"), 0, 200, 1, 20))),
     sharblur(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARBLUR"), 0.2, 2.0, 0.05, 0.2))),
+    shargam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.33, 2.0, 0.05, 1.))),
     sharamount(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARAMOUNT"), 0, 100, 1, 100))),
     shardamping(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARDAMPING"), 0, 100, 1, 0))),
     shariter(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHARITER"), 5, 100, 1, 30))),
@@ -2009,6 +2010,8 @@ LocallabSharp::LocallabSharp():
 
     sharblur->setAdjusterListener(this);
 
+    shargam->setAdjusterListener(this);
+
     sensisha->setAdjusterListener(this);
 
     inversshaConn = inverssha->signal_toggled().connect(sigc::mem_fun(*this, &LocallabSharp::inversshaChanged));
@@ -2024,6 +2027,7 @@ LocallabSharp::LocallabSharp():
     pack_start(*sensisha);
     pack_start(*sharcontrast);
     pack_start(*sharblur);
+    pack_start(*shargam);
     pack_start(*sharradius);
     pack_start(*sharamount);
     pack_start(*shardamping);
@@ -2104,6 +2108,7 @@ void LocallabSharp::read(const rtengine::procparams::ProcParams* pp, const Param
         shardamping->setValue((double)spot.shardamping);
         shariter->setValue((double)spot.shariter);
         sharblur->setValue(spot.sharblur);
+        shargam->setValue(spot.shargam);
         sensisha->setValue((double)spot.sensisha);
         inverssha->set_active(spot.inverssha);
     }
@@ -2134,6 +2139,7 @@ void LocallabSharp::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         spot.shardamping = shardamping->getIntValue();
         spot.shariter = shariter->getIntValue();
         spot.sharblur = sharblur->getValue();
+        spot.shargam = shargam->getValue();
         spot.sensisha = sensisha->getIntValue();
         spot.inverssha = inverssha->get_active();
     }
@@ -2155,6 +2161,7 @@ void LocallabSharp::setDefaults(const rtengine::procparams::ProcParams* defParam
         shardamping->setDefault((double)defSpot.shardamping);
         shariter->setDefault((double)defSpot.shariter);
         sharblur->setDefault(defSpot.sharblur);
+        shargam->setDefault(defSpot.shargam);
         sensisha->setDefault((double)defSpot.sensisha);
     }
 
@@ -2206,6 +2213,13 @@ void LocallabSharp::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
+        if (a == shargam) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshargam,
+                                       shargam->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
         if (a == sensisha) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensis,
@@ -2243,6 +2257,7 @@ void LocallabSharp::convertParamToNormal()
     sharamount->setValue(defSpot.sharamount);
     shardamping->setValue((double)defSpot.shardamping);
     shariter->setValue((double)defSpot.shariter);
+    shargam->setValue(defSpot.shargam);
 
     // Enable all listeners
     enableListener();
@@ -2275,6 +2290,7 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             shardamping->hide();
             shariter->hide();
             sharFrame->hide();
+            shargam->hide();
 
             break;
 
@@ -2282,6 +2298,7 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             // Expert mode widgets are hidden in Normal mode
             sharcontrast->hide();
             sharblur->hide();
+            shargam->hide();
             sharamount->hide();
             shardamping->hide();
             shariter->hide();
@@ -2294,6 +2311,7 @@ void LocallabSharp::updateGUIToMode(const modeType new_type)
             // Show widgets hidden in Normal and Simple mode
             sharcontrast->show();
             sharblur->show();
+            shargam->show();
             sharamount->show();
             shardamping->show();
             shariter->show();

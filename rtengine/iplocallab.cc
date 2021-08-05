@@ -15467,11 +15467,107 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
             }
+            float gamma1 = params->locallab.spots.at(sp).shargam;
+            rtengine::GammaValues g_a; //gamma parameters
+            double pwr1 = 1.0 / (double) gamma1;//default 3.0 - gamma Lab
+            double ts1 = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+            rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
+                    if(gamma1 != 1.f) {
+#ifdef _OPENMP
+#   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif  
+                        for (int y = 0; y < bfh; ++y) {//apply inverse gamma 3.f and put result in range 32768.f
+                            int x = 0;
+#ifdef __SSE2__
+                            for (; x < bfw - 3; x += 4) {
+                                STVFU(bufsh[y][x], F2V(32768.f) * gammalog(LVFU(bufsh[y][x]) / F2V(32768.f), F2V(gamma1), F2V(ts1), F2V(g_a[3]), F2V(g_a[4])));
+                            }
+#endif
+                            for (; x < bfw; ++x) {
+                                bufsh[y][x] = 32768.f * gammalog(bufsh[y][x] / 32768.f, gamma1, ts1, g_a[3], g_a[4]);
+                            }
+                        }
+                    }
 
-            //sharpen only square area instead of all image
-            ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur, 1);
+                    //sharpen only square area instead of all image
+                    ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur, 1);
+
+                    float gamma =  params->locallab.spots.at(sp).shargam;
+                    double pwr = 1.0 / (double) gamma;//default 3.0 - gamma Lab
+                    double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
+                    if(gamma != 1.f) {
+#ifdef _OPENMP
+#   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                        for (int y = 0; y < bfh; ++y) {
+                        int x = 0;
+#ifdef __SSE2__
+                            for (; x < bfw - 3; x += 4) {
+                                STVFU(bufsh[y][x], F2V(32768.f) * igammalog(LVFU(bufsh[y][x]) / F2V(32768.f), F2V(gamma), F2V(ts), F2V(g_a[2]), F2V(g_a[4])));
+                                STVFU(loctemp[y][x], F2V(32768.f) * igammalog(LVFU(loctemp[y][x]) / F2V(32768.f), F2V(gamma), F2V(ts), F2V(g_a[2]), F2V(g_a[4])));
+                            }
+#endif
+                            for (;x < bfw; ++x) {
+                                bufsh[y][x] = 32768.f * igammalog(bufsh[y][x] / 32768.f, gamma, ts, g_a[2], g_a[4]);
+                                loctemp[y][x] = 32768.f * igammalog(loctemp[y][x] / 32768.f, gamma, ts, g_a[2], g_a[4]);
+                            }
+                        }
+                    }
+
+
+
+
         } else { //call from dcrop.cc
-            ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur, sk);
+                    float gamma1 = params->locallab.spots.at(sp).shargam;
+                    rtengine::GammaValues g_a; //gamma parameters
+                    double pwr1 = 1.0 / (double) gamma1;//default 3.0 - gamma Lab
+                    double ts1 = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
+                    if(gamma1 != 1.f) {
+#ifdef _OPENMP
+#   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif  
+                        for (int y = 0; y < bfh; ++y) {//apply inverse gamma 3.f and put result in range 32768.f
+                            int x = 0;
+#ifdef __SSE2__
+                            for (; x < bfw - 3; x += 4) {
+                                STVFU(original->L[y][x], F2V(32768.f) * gammalog(LVFU(original->L[y][x]) / F2V(32768.f), F2V(gamma1), F2V(ts1), F2V(g_a[3]), F2V(g_a[4])));
+                            }
+#endif
+                            for (; x < bfw; ++x) {
+                                original->L[y][x] = 32768.f * gammalog(original->L[y][x] / 32768.f, gamma1, ts1, g_a[3], g_a[4]);
+                            }
+                        }
+                    }
+        
+        
+                    ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur, sk);
+
+                    float gamma =  params->locallab.spots.at(sp).shargam;
+                    double pwr = 1.0 / (double) gamma;//default 3.0 - gamma Lab
+                    double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
+                    if(gamma != 1.f) {
+#ifdef _OPENMP
+#   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                        for (int y = 0; y < bfh; ++y) {
+                        int x = 0;
+#ifdef __SSE2__
+                            for (; x < bfw - 3; x += 4) {
+                                STVFU(original->L[y][x], F2V(32768.f) * igammalog(LVFU(original->L[y][x]) / F2V(32768.f), F2V(gamma), F2V(ts), F2V(g_a[2]), F2V(g_a[4])));
+                                STVFU(loctemp[y][x], F2V(32768.f) * igammalog(LVFU(loctemp[y][x]) / F2V(32768.f), F2V(gamma), F2V(ts), F2V(g_a[2]), F2V(g_a[4])));
+                            }
+#endif
+                            for (;x < bfw; ++x) {
+                                original->L[y][x] = 32768.f * igammalog(original->L[y][x] / 32768.f, gamma, ts, g_a[2], g_a[4]);
+                                loctemp[y][x] = 32768.f * igammalog(loctemp[y][x] / 32768.f, gamma, ts, g_a[2], g_a[4]);
+                            }
+                        }
+                    }
+                        
+
         }
 
         //sharpen ellipse and transition
@@ -15488,7 +15584,53 @@ void ImProcFunctions::Lab_Local(
         int GH = original->H;
         JaggedArray<float> loctemp(GW, GH);
 
-        ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, GW, GH, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur, sk);
+                    float gamma1 = params->locallab.spots.at(sp).shargam;
+                    rtengine::GammaValues g_a; //gamma parameters
+                    double pwr1 = 1.0 / (double) gamma1;//default 3.0 - gamma Lab
+                    double ts1 = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
+                    if(gamma1 != 1.f) {
+#ifdef _OPENMP
+#   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif  
+                        for (int y = 0; y < GH; ++y) {//apply inverse gamma 3.f and put result in range 32768.f
+                            int x = 0;
+#ifdef __SSE2__
+                            for (; x < GW - 3; x += 4) {
+                                STVFU(original->L[y][x], F2V(32768.f) * gammalog(LVFU(original->L[y][x]) / F2V(32768.f), F2V(gamma1), F2V(ts1), F2V(g_a[3]), F2V(g_a[4])));
+                            }
+#endif
+                            for (; x < GW; ++x) {
+                                original->L[y][x] = 32768.f * gammalog(original->L[y][x] / 32768.f, gamma1, ts1, g_a[3], g_a[4]);
+                            }
+                        }
+                    }
+
+                    ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, GW, GH, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur, sk);
+                    
+                    float gamma =  params->locallab.spots.at(sp).shargam;
+                    double pwr = 1.0 / (double) gamma;//default 3.0 - gamma Lab
+                    double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
+                    if(gamma != 1.f) {
+#ifdef _OPENMP
+#   pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                        for (int y = 0; y < GH; ++y) {
+                        int x = 0;
+#ifdef __SSE2__
+                            for (; x < GW - 3; x += 4) {
+                                STVFU(original->L[y][x], F2V(32768.f) * igammalog(LVFU(original->L[y][x]) / F2V(32768.f), F2V(gamma), F2V(ts), F2V(g_a[2]), F2V(g_a[4])));
+                                STVFU(loctemp[y][x], F2V(32768.f) * igammalog(LVFU(loctemp[y][x]) / F2V(32768.f), F2V(gamma), F2V(ts), F2V(g_a[2]), F2V(g_a[4])));
+                            }
+#endif
+                            for (;x < GW; ++x) {
+                                original->L[y][x] = 32768.f * igammalog(original->L[y][x] / 32768.f, gamma, ts, g_a[2], g_a[4]);
+                                loctemp[y][x] = 32768.f * igammalog(loctemp[y][x] / 32768.f, gamma, ts, g_a[2], g_a[4]);
+                            }
+                        }
+                    }
+
 
         InverseSharp_Local(loctemp, hueref, lumaref, chromaref, lp, original, transformed, cx, cy, sk);
 

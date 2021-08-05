@@ -1383,6 +1383,7 @@ struct LocallabParams {
         int shardamping;
         int shariter;
         double sharblur;
+        double shargam;
         int sensisha;
         bool inverssha;
         // Local Contrast

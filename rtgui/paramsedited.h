@@ -790,6 +790,7 @@ public:
         bool shardamping;
         bool shariter;
         bool sharblur;
+        bool shargam;
         bool sensisha;
         bool inverssha;
         // Local Contrast
