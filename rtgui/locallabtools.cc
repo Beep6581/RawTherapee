@@ -417,7 +417,7 @@ LocallabColor::LocallabColor():
     // Color & Light specific widgets
     lumFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LUMFRA")))),
     reparcol(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGREPART"), 1.0, 100.0, 1., 100.0))),
-    gamc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.33, 2.0, 0.05, 1.))),
+    gamc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.5, 3.0, 0.05, 1.))),
     lightness(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LIGHTNESS"), -100, 500, 1, 0))),
     contrast(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTRAST"), -100, 100, 1, 0))),
     chroma(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMA"), -100, 150, 1, 0))),
@@ -2549,7 +2549,7 @@ LocallabExposure::LocallabExposure():
     norm(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_EQUIL")))),
     fatlevel(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATLEVEL"), 0.5, 2.0, 0.01, 1.))),
     fatanchor(Gtk::manage(new Adjuster(M("TP_LOCALLAB_FATANCHOR"), 0.1, 100.0, 0.01, 50., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
-    gamex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.33, 2.0, 0.05, 1.))),
+    gamex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.5, 3.0, 0.05, 1.))),
     sensiex(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SENSI"), 0, 100, 1, 60))),
     structexp(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUCCOL"), 0, 100, 1, 0))),
     blurexpde(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURDE"), 2, 100, 1, 5))),
@@ -5050,7 +5050,7 @@ LocallabVibrance::LocallabVibrance():
     // Vibrance specific widgets
     saturated(Gtk::manage(new Adjuster(M("TP_VIBRANCE_SATURATED"), -100., 100., 1., 0.))),
     pastels(Gtk::manage(new Adjuster(M("TP_VIBRANCE_PASTELS"), -100., 100., 1., 0.))),
-    vibgam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.33, 2., 0.05, 1.))),
+    vibgam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.5, 3., 0.05, 1.))),
     warm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WARM"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png"))))),
     psThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_VIBRANCE_PSTHRESHOLD"), -100., 100., 0., M("TP_VIBRANCE_PSTHRESHOLD_WEIGTHING"), 0, 0., 100., 75., M("TP_VIBRANCE_PSTHRESHOLD_SATTHRESH"), 0, this, false))),
     protectSkins(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_PROTECTSKINS")))),
