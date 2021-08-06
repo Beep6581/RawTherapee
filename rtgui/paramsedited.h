@@ -595,6 +595,7 @@ public:
         bool complexvibrance;
         bool saturated;
         bool pastels;
+        bool vibgam;
         bool warm;
         bool psthreshold;
         bool protectskins;

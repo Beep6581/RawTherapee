@@ -5050,6 +5050,7 @@ LocallabVibrance::LocallabVibrance():
     // Vibrance specific widgets
     saturated(Gtk::manage(new Adjuster(M("TP_VIBRANCE_SATURATED"), -100., 100., 1., 0.))),
     pastels(Gtk::manage(new Adjuster(M("TP_VIBRANCE_PASTELS"), -100., 100., 1., 0.))),
+    vibgam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMC"), 0.33, 2., 0.05, 1.))),
     warm(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WARM"), -100., 100., 1., 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png"))))),
     psThreshold(Gtk::manage(new ThresholdAdjuster(M("TP_VIBRANCE_PSTHRESHOLD"), -100., 100., 0., M("TP_VIBRANCE_PSTHRESHOLD_WEIGTHING"), 0, 0., 100., 75., M("TP_VIBRANCE_PSTHRESHOLD_SATTHRESH"), 0, this, false))),
     protectSkins(Gtk::manage(new Gtk::CheckButton(M("TP_VIBRANCE_PROTECTSKINS")))),
@@ -5097,6 +5098,8 @@ LocallabVibrance::LocallabVibrance():
     saturated->setAdjusterListener(this);
 
     pastels->setAdjusterListener(this);
+
+    vibgam->setAdjusterListener(this);
 
     warm->setAdjusterListener(this);
 
@@ -5202,6 +5205,9 @@ LocallabVibrance::LocallabVibrance():
     // Add Vibrance specific widgets to GUI
     pack_start(*saturated, Gtk::PACK_SHRINK, 0);
     pack_start(*pastels, Gtk::PACK_SHRINK, 0);
+    pack_start(*vibgam, Gtk::PACK_SHRINK, 0);
+    Gtk::Separator* const separatorvib = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
+    pack_start(*separatorvib, Gtk::PACK_SHRINK, 2);
     pack_start(*warm, Gtk::PACK_SHRINK, 0);
     pack_start(*psThreshold, Gtk::PACK_SHRINK, 0);
     pack_start(*protectSkins, Gtk::PACK_SHRINK, 0);
@@ -5387,6 +5393,7 @@ void LocallabVibrance::read(const rtengine::procparams::ProcParams* pp, const Pa
 
         saturated->setValue(spot.saturated);
         pastels->setValue(spot.pastels);
+        vibgam->setValue(spot.vibgam);
         warm->setValue(spot.warm);
         psThreshold->setValue<int>(spot.psthreshold);
         protectSkins->set_active(spot.protectskins);
@@ -5440,6 +5447,7 @@ void LocallabVibrance::write(rtengine::procparams::ProcParams* pp, ParamsEdited*
 
         spot.saturated = saturated->getIntValue();
         spot.pastels = pastels->getIntValue();
+        spot.vibgam = vibgam->getValue();
         spot.warm = warm->getIntValue();
         spot.psthreshold = psThreshold->getValue<int>();
         spot.protectskins = protectSkins->get_active();
@@ -5481,6 +5489,7 @@ void LocallabVibrance::setDefaults(const rtengine::procparams::ProcParams* defPa
         // Set default values for adjuster and threshold adjuster widgets
         saturated->setDefault((double)defSpot.saturated);
         pastels->setDefault((double)defSpot.pastels);
+        vibgam->setDefault((double)defSpot.vibgam);
         warm->setDefault((double)defSpot.warm);
         psThreshold->setDefault<int>(defSpot.psthreshold);
         sensiv->setDefault((double)defSpot.sensiv);
@@ -5522,6 +5531,13 @@ void LocallabVibrance::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(EvlocallabPastels,
                                        pastels->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (a == vibgam) {
+            if (listener) {
+                listener->panelChanged(Evlocallabvibgam,
+                                       vibgam->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
             }
         }
 
@@ -5762,6 +5778,8 @@ void LocallabVibrance::convertParamToNormal()
 
     // Set hidden GUI widgets in Normal mode to default spot values
     saturated->setValue((double)defSpot.saturated);
+    vibgam->setValue(defSpot.vibgam);
+    
     psThreshold->setValue<int>(defSpot.psthreshold);
     protectSkins->set_active(defSpot.protectskins);
     avoidColorShift->set_active(defSpot.avoidcolorshift);
@@ -5817,6 +5835,7 @@ void LocallabVibrance::updateGUIToMode(const modeType new_type)
             // Expert and Normal mode widgets are hidden in Simple mode
             saturated->hide();
             pastels->setLabel(M("TP_LOCALLAB_PASTELS2"));
+            vibgam->hide();
             psThreshold->hide();
             protectSkins->hide();
             avoidColorShift->hide();
@@ -5834,6 +5853,7 @@ void LocallabVibrance::updateGUIToMode(const modeType new_type)
         case Normal:
             // Expert mode widgets are hidden in Normal mode
             saturated->hide();
+            vibgam->hide();
             pastels->setLabel(M("TP_LOCALLAB_PASTELS2"));
             psThreshold->hide();
             protectSkins->hide();
@@ -5864,6 +5884,7 @@ void LocallabVibrance::updateGUIToMode(const modeType new_type)
         case Expert:
             // Show widgets hidden in Normal and Simple mode
             saturated->show();
+            vibgam->show();
             pastels->setLabel(M("TP_VIBRANCE_PASTELS"));
             psThreshold->show();
             protectSkins->show();

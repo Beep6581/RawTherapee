@@ -3321,6 +3321,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     complexvibrance(0),
     saturated(0),
     pastels(0),
+    vibgam(1.0),
     warm(0),
     psthreshold({0, 75, false}),
     protectskins(false),
@@ -4615,6 +4616,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && complexvibrance == other.complexvibrance
         && saturated == other.saturated
         && pastels == other.pastels
+        && vibgam == other.vibgam
         && warm == other.warm
         && psthreshold == other.psthreshold
         && protectskins == other.protectskins
@@ -6323,6 +6325,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->complexvibrance, "Locallab", "Complexvibrance_" + index_str, spot.complexvibrance, keyFile);
                     saveToKeyfile(!pedited || spot_edited->saturated, "Locallab", "Saturated_" + index_str, spot.saturated, keyFile);
                     saveToKeyfile(!pedited || spot_edited->pastels, "Locallab", "Pastels_" + index_str, spot.pastels, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->vibgam, "Locallab", "Vibgam_" + index_str, spot.vibgam, keyFile);
                     saveToKeyfile(!pedited || spot_edited->warm, "Locallab", "Warm_" + index_str, spot.warm, keyFile);
                     saveToKeyfile(!pedited || spot_edited->psthreshold, "Locallab", "PSThreshold_" + index_str, spot.psthreshold.toVector(), keyFile);
                     saveToKeyfile(!pedited || spot_edited->protectskins, "Locallab", "ProtectSkins_" + index_str, spot.protectskins, keyFile);
@@ -8344,6 +8347,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Complexvibrance_" + index_str, pedited, spot.complexvibrance, spotEdited.complexvibrance);
                 assignFromKeyfile(keyFile, "Locallab", "Saturated_" + index_str, pedited, spot.saturated, spotEdited.saturated);
                 assignFromKeyfile(keyFile, "Locallab", "Pastels_" + index_str, pedited, spot.pastels, spotEdited.pastels);
+                assignFromKeyfile(keyFile, "Locallab", "Vibgam_" + index_str, pedited, spot.vibgam, spotEdited.vibgam);
                 assignFromKeyfile(keyFile, "Locallab", "Warm_" + index_str, pedited, spot.warm, spotEdited.warm);
 
                 if (keyFile.has_key("Locallab", "PSThreshold_" + index_str)) {

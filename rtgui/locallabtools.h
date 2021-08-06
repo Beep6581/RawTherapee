@@ -540,6 +540,7 @@ private:
     // Vibrance specific widgets
     Adjuster* const saturated;
     Adjuster* const pastels;
+    Adjuster* const vibgam;
     Adjuster* const warm;
     ThresholdAdjuster* const psThreshold;
     Gtk::CheckButton* const protectSkins;

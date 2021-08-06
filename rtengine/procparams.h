@@ -1188,6 +1188,7 @@ struct LocallabParams {
         int complexvibrance;
         int saturated;
         int pastels;
+        double vibgam;
         int warm;
         Threshold<int> psthreshold;
         bool protectskins;

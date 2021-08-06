@@ -1285,6 +1285,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).complexvibrance = locallab.spots.at(j).complexvibrance && pSpot.complexvibrance == otherSpot.complexvibrance;
                 locallab.spots.at(j).saturated = locallab.spots.at(j).saturated && pSpot.saturated == otherSpot.saturated;
                 locallab.spots.at(j).pastels = locallab.spots.at(j).pastels && pSpot.pastels == otherSpot.pastels;
+                locallab.spots.at(j).vibgam = locallab.spots.at(j).vibgam && pSpot.vibgam == otherSpot.vibgam;
                 locallab.spots.at(j).warm = locallab.spots.at(j).warm && pSpot.warm == otherSpot.warm;
                 locallab.spots.at(j).psthreshold = locallab.spots.at(j).psthreshold && pSpot.psthreshold == otherSpot.psthreshold;
                 locallab.spots.at(j).protectskins = locallab.spots.at(j).protectskins && pSpot.protectskins == otherSpot.protectskins;
@@ -4135,6 +4136,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).pastels) {
             toEdit.locallab.spots.at(i).pastels = mods.locallab.spots.at(i).pastels;
+        }
+
+        if (locallab.spots.at(i).vibgam) {
+            toEdit.locallab.spots.at(i).vibgam = mods.locallab.spots.at(i).vibgam;
         }
 
         if (locallab.spots.at(i).warm) {
@@ -7321,6 +7326,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     complexvibrance(v),
     saturated(v),
     pastels(v),
+    vibgam(v),
     warm(v),
     psthreshold(v),
     protectskins(v),
@@ -7961,6 +7967,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     complexvibrance = v;
     saturated = v;
     pastels = v;
+    vibgam = v;
     warm = v;
     psthreshold = v;
     protectskins = v;
