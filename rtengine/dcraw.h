@@ -73,7 +73,7 @@ public:
 
 protected:
     int exif_base, ciff_base, ciff_len;
-    IMFILE *ifp;
+    rtengine::IMFILE *ifp;
     FILE *ofp;
     short order;
     const char *ifname;
@@ -125,7 +125,7 @@ protected:
         int         cur_buf_size;    // buffer size
         uchar       *cur_buf;        // currently read block
         int         fillbytes;          // Counter to add extra byte for block size N*16
-        IMFILE      *input;
+        rtengine::IMFILE      *input;
         struct int_pair grad_even[3][41];    // tables of gradients
         struct int_pair grad_odd[3][41];
         ushort		*linealloc;
@@ -279,7 +279,7 @@ void parse_redcine();
 class getbithuff_t
 {
 public:
-   getbithuff_t(DCraw *p,IMFILE *&i, unsigned &z):parent(p),bitbuf(0),vbits(0),reset(0),ifp(i),zero_after_ff(z){}
+   getbithuff_t(DCraw *p,rtengine::IMFILE *&i, unsigned &z):parent(p),bitbuf(0),vbits(0),reset(0),ifp(i),zero_after_ff(z){}
    unsigned operator()(int nbits, ushort *huff);
 
 private:
@@ -289,7 +289,7 @@ private:
    DCraw *parent;
    unsigned bitbuf;
    int vbits, reset;
-   IMFILE *&ifp;
+   rtengine::IMFILE *&ifp;
    unsigned &zero_after_ff;
 };
 getbithuff_t getbithuff;
@@ -297,7 +297,7 @@ getbithuff_t getbithuff;
 class nikbithuff_t
 {
 public:
-   explicit nikbithuff_t(IMFILE *&i):bitbuf(0),errors(0),vbits(0),ifp(i){}
+   explicit nikbithuff_t(rtengine::IMFILE *&i):bitbuf(0),errors(0),vbits(0),ifp(i){}
    void operator()() {bitbuf = vbits = 0;};
    unsigned operator()(int nbits, ushort *huff);
    unsigned errorCount() { return errors; }
@@ -310,7 +310,7 @@ private:
    }
    unsigned bitbuf, errors;
    int vbits;
-   IMFILE *&ifp;
+   rtengine::IMFILE *&ifp;
 };
 nikbithuff_t nikbithuff;
 
@@ -379,7 +379,7 @@ void parse_qt (int end);
 // ph1_bithuff(int nbits, ushort *huff);
 class ph1_bithuff_t {
 public:
-   ph1_bithuff_t(DCraw *p, IMFILE *i, short &o):order(o),ifp(i),bitbuf(0),vbits(0){}
+   ph1_bithuff_t(DCraw *p, rtengine::IMFILE *i, short &o):order(o),ifp(i),bitbuf(0),vbits(0){}
    unsigned operator()(int nbits, ushort *huff);
    unsigned operator()(int nbits);
    unsigned operator()();
@@ -413,7 +413,7 @@ private:
    }
 
    short &order;
-   IMFILE* const ifp;
+   rtengine::IMFILE* const ifp;
    UINT64 bitbuf;
    int vbits;
 };
@@ -431,11 +431,11 @@ void nokia_load_raw();
 
 class pana_bits_t{
 public:
-   pana_bits_t(IMFILE *i, unsigned &u, unsigned enc):
+   pana_bits_t(rtengine::IMFILE *i, unsigned &u, unsigned enc):
     ifp(i), load_flags(u), vbits(0), encoding(enc) {}
    unsigned operator()(int nbits, unsigned *bytes=nullptr);
 private:
-   IMFILE *ifp;
+   rtengine::IMFILE *ifp;
    unsigned &load_flags;
    uchar buf[0x4000];
    int vbits;

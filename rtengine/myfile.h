@@ -30,8 +30,6 @@ namespace rtengine
 
 class ProgressListener;
 
-}
-
 struct IMFILE {
     int fd;
     ssize_t pos;
@@ -141,3 +139,5 @@ inline unsigned char* fdata(int offset, IMFILE* f)
 
 int fscanf (IMFILE* f, const char* s ...);
 char* fgets (char* s, int n, IMFILE* f);
+
+}
