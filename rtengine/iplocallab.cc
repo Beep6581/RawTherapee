@@ -63,7 +63,7 @@ namespace
 constexpr int limscope = 80;
 constexpr int mSPsharp = 39; //minimum size Spot Sharp due to buildblendmask
 constexpr int mSPwav = 32; //minimum size Spot Wavelet
-constexpr int mDEN = 64; //minimum size Spot Denoise
+constexpr int mDEN = 128; //minimum size Spot Denoise
 constexpr int mSP = 5; //minimum size Spot
 constexpr float MAXSCOPE = 1.25f;
 constexpr float MINSCOPE = 0.025f;

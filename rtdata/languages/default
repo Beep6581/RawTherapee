@@ -2780,7 +2780,7 @@ TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative mode preserves low frequency detail. A
 TP_LOCALLAB_DENOIS;Denoise
 TP_LOCALLAB_DENOITHR_TOOLTIP;Adjusts edge detection to help reduce noise in uniform, low-contrast areas. 
 TP_LOCALLAB_DENOI_EXP;Denoise
-TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action  based on color (deltaE).
+TP_LOCALLAB_DENOI_TOOLTIP;This module can be used for noise reduction either on its own (at the end of the processing pipeline) or in addition to the Noise Reduction module in the Detail tab (which works at the beginning of the pipeline).\n Scope allows you to differentiate the action  based on color (deltaE).\nMinimum RT-spot size: 128x128
 TP_LOCALLAB_DEPTH;Depth 
 TP_LOCALLAB_DETAIL;Local contrast
 TP_LOCALLAB_DETAILFRA;Edge detection - DCT
