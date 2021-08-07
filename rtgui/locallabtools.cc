@@ -5291,6 +5291,8 @@ void LocallabVibrance::updateAdviceTooltips(const bool showTooltips)
         chromaskvib->set_tooltip_text(M("TP_LOCALLAB_CHROMASK_TOOLTIP"));
         slomaskvib->set_tooltip_text(M("TP_LOCALLAB_SLOMASK_TOOLTIP"));
         lapmaskvib->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
+        vibgam->set_tooltip_text(M("TP_LOCALLAB_GAMCOL_TOOLTIP"));
+
 /*
         saturated->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
         pastels->set_tooltip_text(M("TP_LOCALLAB_NUL_TOOLTIP"));
@@ -5342,6 +5344,7 @@ void LocallabVibrance::updateAdviceTooltips(const bool showTooltips)
         decayv->set_tooltip_text("");
         lowthresv->set_tooltip_text("");
         higthresv->set_tooltip_text("");
+        vibgam->set_tooltip_text("");
     }
 }
 

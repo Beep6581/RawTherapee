@@ -2063,9 +2063,12 @@ void LocallabSharp::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_EXPSHARP_TOOLTIP"));
         sensisha->set_tooltip_text(M("TP_LOCALLAB_SENSI_TOOLTIP"));
+        shargam->set_tooltip_text(M("TP_LOCALLAB_GAMCOL_TOOLTIP"));
+
     } else {
         exp->set_tooltip_text("");
         sensisha->set_tooltip_text("");
+        shargam->set_tooltip_text("");
     }
 }
 
