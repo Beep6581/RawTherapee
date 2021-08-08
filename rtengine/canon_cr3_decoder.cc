@@ -670,7 +670,7 @@ std::uint32_t _byteswap_ulong(std::uint32_t x)
 #endif
 
 struct LibRaw_abstract_datastream {
-    IMFILE* ifp;
+    rtengine::IMFILE* ifp;
 
     void lock()
     {

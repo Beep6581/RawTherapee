@@ -1035,7 +1035,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 } else {
                     ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 }
-                      //
+
                 meantme = 0.f;
                 stdtme = 0.f;
                 meanretie = 0.f;
@@ -1119,7 +1119,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Tmin;
                 float Tmax;
                 int lastsav;
-                ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), savenormtm.get(), savenormreti.get(), lastorigimp.get(), 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
+
+                ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), savenormtm.get(), savenormreti.get(), lastorigimp.get(), fw, fh, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
                               lllocalcurve, locallutili,
                               cllocalcurve, localclutili,
                               lclocalcurve, locallcutili,
@@ -1209,7 +1210,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 } else {
                     ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg, locwavCurveden, locwavdenutili);
                 }
-
                 // Update Locallab reference values according to recurs parameter
                 if (params->locallab.spots.at(sp).recurs) {
                     locallref.at(sp).chromar = chromar;

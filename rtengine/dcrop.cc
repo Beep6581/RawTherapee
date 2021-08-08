@@ -1039,8 +1039,12 @@ void Crop::update(int todo)
                                             hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, avge,
                                             skip);
             // Locallab mask are only shown for selected spot
+            int fh = parent->fh;
+            int fw = parent->fw;
+
             if (sp == params.locallab.selspot) {
-                parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), savenormtmCrop.get(), savenormretiCrop.get(), lastorigCrop.get(), cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
+                
+                parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), savenormtmCrop.get(), savenormretiCrop.get(), lastorigCrop.get(), fw, fh, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
                         lllocalcurve2,locallutili, 
                         cllocalcurve2, localclutili,
                         lclocalcurve2, locallcutili,
@@ -1109,7 +1113,7 @@ void Crop::update(int todo)
                             params.softlight.enabled = false;
                         }
             } else {
-                parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), savenormtmCrop.get(), savenormretiCrop.get(), lastorigCrop.get(), cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
+                parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), savenormtmCrop.get(), savenormretiCrop.get(), lastorigCrop.get(), fw, fh, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
                         lllocalcurve2,locallutili, 
                         cllocalcurve2, localclutili,
                         lclocalcurve2, locallcutili,

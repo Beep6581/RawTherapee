@@ -1965,7 +1965,7 @@ bool Thumbnail::writeImage (const Glib::ustring& fname)
 
     Glib::ustring fullFName = fname + ".rtti";
 
-    FILE* f = g_fopen (fullFName.c_str (), "wb");
+    FILE* f = ::g_fopen (fullFName.c_str (), "wb");
 
     if (!f) {
         return false;
@@ -2008,7 +2008,7 @@ bool Thumbnail::readImage (const Glib::ustring& fname)
         return false;
     }
 
-    FILE* f = g_fopen(fullFName.c_str (), "rb");
+    FILE* f = ::g_fopen(fullFName.c_str (), "rb");
 
     if (!f) {
         return false;
@@ -2239,7 +2239,7 @@ bool Thumbnail::writeData  (const Glib::ustring& fname)
         return false;
     }
 
-    FILE *f = g_fopen (fname.c_str (), "wt");
+    FILE *f = ::g_fopen (fname.c_str (), "wt");
 
     if (!f) {
         if (settings->verbose) {
@@ -2262,7 +2262,7 @@ bool Thumbnail::readEmbProfile  (const Glib::ustring& fname)
     embProfile = nullptr;
     embProfileLength = 0;
 
-    FILE* f = g_fopen (fname.c_str (), "rb");
+    FILE* f = ::g_fopen (fname.c_str (), "rb");
 
     if (f) {
         if (!fseek (f, 0, SEEK_END)) {
@@ -2290,7 +2290,7 @@ bool Thumbnail::writeEmbProfile (const Glib::ustring& fname)
 {
 
     if (embProfileData) {
-        FILE* f = g_fopen (fname.c_str (), "wb");
+        FILE* f = ::g_fopen (fname.c_str (), "wb");
 
         if (f) {
             fwrite (embProfileData, 1, embProfileLength, f);

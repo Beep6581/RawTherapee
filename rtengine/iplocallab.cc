@@ -62,7 +62,7 @@ namespace
 constexpr int limscope = 80;
 constexpr int mSPsharp = 39; //minimum size Spot Sharp due to buildblendmask
 constexpr int mSPwav = 32; //minimum size Spot Wavelet
-constexpr int mDEN = 64; //minimum size Spot Denoise
+constexpr int mDEN = 128; //minimum size Spot Denoise
 constexpr int mSP = 5; //minimum size Spot
 constexpr float MAXSCOPE = 1.25f;
 constexpr float MINSCOPE = 0.025f;
@@ -11281,7 +11281,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
 }
 
 void ImProcFunctions::Lab_Local(
-    int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, LabImage * savenormtm, LabImage * savenormreti, LabImage * lastorig, int cx, int cy, int oW, int oH, int sk,
+    int call, int sp, float** shbuffer, LabImage * original, LabImage * transformed, LabImage * reserved, LabImage * savenormtm, LabImage * savenormreti, LabImage * lastorig, int fw, int fh, int cx, int cy, int oW, int oH, int sk,
     const LocretigainCurve& locRETgainCcurve, const LocretitransCurve& locRETtransCcurve,
     const LUTf& lllocalcurve, bool locallutili,
     const LUTf& cllocalcurve, bool localclutili,
@@ -11876,7 +11876,7 @@ void ImProcFunctions::Lab_Local(
                         }
 
 
-                        filmGrain(tmpImage, isogr, strengr, scalegr, divgr, wi, he);
+                        filmGrain(tmpImage, isogr, strengr, scalegr, divgr, wi, he, call, fw, fh);
 
                         for (int y = 0; y < he ; y++) {
                             for (int x = 0; x < wi; x++) {
