@@ -1963,7 +1963,7 @@ void CLASS phase_one_load_raw_c()
 #endif
 {
     int len[2], pred[2];
-    IMFILE ifpthr = *ifp;
+    rtengine::IMFILE ifpthr = *ifp;
     ifpthr.plistener = nullptr;
 
 #ifdef _OPENMP
@@ -3317,7 +3317,7 @@ void CLASS sony_arw2_load_raw()
 {
     uchar *data = new (std::nothrow) uchar[raw_width + 1];
     merror(data, "sony_arw2_load_raw()");
-    IMFILE ifpthr = *ifp;
+    rtengine::IMFILE ifpthr = *ifp;
     int pos = ifpthr.pos;
     ushort pix[16];
 
@@ -6331,7 +6331,7 @@ int CLASS parse_tiff_ifd (int base)
   unsigned sony_curve[] = { 0,0,0,0,0,4095 };
   unsigned *buf, sony_offset=0, sony_length=0, sony_key=0;
   struct jhead jh;
-/*RT*/  IMFILE *sfp;
+/*RT*/  rtengine::IMFILE *sfp;
 /*RT*/  int pana_raw = 0;
 
   if (tiff_nifds >= sizeof tiff_ifd / sizeof tiff_ifd[0])
@@ -6895,7 +6895,7 @@ it under the terms of the one of two licenses as you choose:
     fread (buf, sony_length, 1, ifp);
     sony_decrypt (buf, sony_length/4, 1, sony_key);
     sfp = ifp;
-/*RT*/ ifp = fopen (buf, sony_length);
+/*RT*/ ifp = rtengine::fopen (buf, sony_length);
 // if ((ifp = tmpfile())) {
 // fwrite (buf, sony_length, 1, ifp);
 // fseek (ifp, 0, SEEK_SET);
@@ -7203,7 +7203,7 @@ void CLASS parse_external_jpeg()
 {
   const char *file, *ext;
   char *jname, *jfile, *jext;
-/*RT*/  IMFILE *save=ifp;
+/*RT*/  rtengine::IMFILE *save=ifp;
 
   ext  = strrchr (ifname, '.');
   file = strrchr (ifname, '/');
@@ -7231,7 +7231,7 @@ void CLASS parse_external_jpeg()
       *jext = '0';
     }
   if (strcmp (jname, ifname)) {
-/*RT*/    if ((ifp = fopen (jname))) {
+/*RT*/    if ((ifp = rtengine::fopen (jname))) {
 //    if ((ifp = fopen (jname, "rb"))) {
       if (verbose)
 	fprintf (stderr,_("Reading metadata from %s ...\n"), jname);

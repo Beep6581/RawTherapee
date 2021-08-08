@@ -540,7 +540,7 @@ std::vector<badPix> *DFManager::getHotPixels ( const std::string &mak, const std
 
 int DFManager::scanBadPixelsFile( Glib::ustring filename )
 {
-    FILE *file = fopen( filename.c_str(), "r" );
+    FILE *file = ::fopen( filename.c_str(), "r" );
 
     if( !file ) {
         return false;
