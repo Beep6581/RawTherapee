@@ -175,7 +175,7 @@ if(APPLE) # TODO make -mtune generic conditional and/or specifiable.
     if(CMAKE_CXX_COMPILER MATCHES "g\\+\\+-mp-4.[5-8]"
        OR CMAKE_CXX_COMPILER_ARG1 MATCHES "g\\+\\+-mp-4.[5-8]")
         set(CMAKE_EXE_LINKER_FLAGS
-            "${CMAKE_EXE_LINKER_FLAGS} /usr/lib/libstdc++.6.dylib -Wl,-headerpad_max_install_names -mtune=generic"
+            "${CMAKE_EXE_LINKER_FLAGS} /usr/lib/libstdc++.6.dylib -Wl,-headerpad_max_install_names -mtune=generic -framework Foundation"
         )
         message(
             STATUS
@@ -190,7 +190,7 @@ if(APPLE) # TODO make -mtune generic conditional and/or specifiable.
     set(CMAKE_C_FLAGS
         "${CMAKE_C_FLAGS} -mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
     set(CMAKE_EXE_LINKER_FLAGS
-        "${CMAKE_EXE_LINKER_FLAGS} -Wl,-headerpad_max_install_names -mtune=generic"
+        "${CMAKE_EXE_LINKER_FLAGS} -Wl,-headerpad_max_install_names -mtune=generic -framework Foundation"
     )
 endif()
 
@@ -304,7 +304,7 @@ endif()
 if(NOT DEFINED CREDITSDIR)
     if(BUILD_BUNDLE)
         if(APPLE)
-            set(CREDITSDIR "${DATADIR}")
+            set(CREDITSDIR "${DATADIR}/..")
         else()
             set(CREDITSDIR "${DATADIR}")
         endif()
@@ -371,6 +371,8 @@ if(NOT APPLE)
     if(DEFINED LENSFUNDBDIR AND NOT IS_ABSOLUTE "${LENSFUNDBDIR}")
         set(LENSFUNDBDIR "${DATADIR}/${LENSFUNDBDIR}")
     endif()
+else()
+    set(LENSFUNDBDIR "${LENSFUNDBDIR}")
 endif()
 
 if(APPLE)
@@ -387,11 +389,11 @@ if(APPLE)
     if("${LOCAL_PREFIX}")
         set(LOCAL_PREFIX
             "${LOCAL_PREFIX}"
-            CACHE STRING "macos/gtk parent directory ie /usr or /opt")
+            CACHE STRING "macos/gtk parent directory ie /usr/local or /opt/local or /opt/homebrew (for arm64)")
     else()
         set(LOCAL_PREFIX
-            /usr
-            CACHE STRING "macos/gtk parent directory ie /usr or /opt")
+            /usr/local
+            CACHE STRING "macos/gtk parent directory ie /usr/local (default) or /opt/local (macports) or /opt/homebrew (for arm64)")
     endif()
     if("${FANCY_DMG}")
         set(FANCY_DMG
@@ -686,11 +688,18 @@ elseif(APPLE)
          ${CMAKE_COMMAND}
              -DPROJECT_SOURCE_DIR:STRING=${PROJECT_SOURCE_DIR}
              -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
-             -P ${PROJECT_SOURCE_DIR}/UpdateInfo.cmake
              -DSYSTEM:STRING=Apple
              -DCXX_FLAGS:STRING=${CXX_FLAGS}
              -DLFLAGS:STRING=${LFLAGS}
-             -DCOMPILER_INFO:STRING=${COMPILER_INFO})    
+             -DCOMPILER_INFO:STRING=${COMPILER_INFO}
+             -DPROC_LABEL:STRING="${PROC_LABEL}"
+             -DPROC_BIT_DEPTH:STRING="${PROC_BIT_DEPTH}"
+             -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+             -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
+             -DOPTION_OMP:STRING=${OPTION_OMP}
+             -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+             -DLENSFUN_VERSION:STRING=${LENSFUN_VERSION}
+             -P ${PROJECT_SOURCE_DIR}/UpdateInfo.cmake)
 else()
     list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Linux
          -DCXX_FLAGS:STRING=${CXX_FLAGS} -DLFLAGS:STRING=${LFLAGS}
