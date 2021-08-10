@@ -290,7 +290,7 @@ private:
         return 32.0 * (n0 + n1 + n2 + n3);
     }
 
-    double simplex_2d_noise(double x, double y, uint32_t octaves, double persistance, double z)
+    double simplex_2d_noise(double x, double y, uint32_t octaves, double persistence, double z)
     {
         double total = 0;
 
