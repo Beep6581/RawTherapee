@@ -38,7 +38,7 @@ class TweakOperator
 public:
     virtual ~TweakOperator() {}
 
-    /** Callback that will alter the ProcParams before hte image is computed. */
+    /** Callback that will alter the ProcParams before the image is computed. */
     virtual void tweakParams(procparams::ProcParams& pparams) = 0;
 };
 

@@ -342,7 +342,7 @@ public:
         choices[26] = "Museum";
         choices[27] = "Shoot & Select";
         choices[28] = "Beach & Snow";
-        choices[29] = "Self Protrait+Timer";
+        choices[29] = "Self Portrait+Timer";
         choices[30] = "Candle";
         choices[31] = "Available Light";
         choices[32] = "Behind Glass";

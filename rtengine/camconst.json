@@ -569,7 +569,7 @@ Camera constants:
     { // Quality B, taken from 6D Mark II because identical sensor (different matrix)
         "make_model": "Canon EOS RP",
         "dcraw_matrix": [ 8608,-2097,-1178,-5425,13265,2383,-1149,2238,5680 ], // DNG v13.2
-        // Let dcraw handle crop, because camconst shouldn't override for diferent crop factors. See #6255
+        // Let dcraw handle crop, because camconst shouldn't override for different crop factors. See #6255
         "masked_areas": [ 44, 4, 4220, 116 ], // Potential problem for different crop factor as well
         "ranges": {
             "white": [

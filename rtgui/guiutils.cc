@@ -1003,7 +1003,7 @@ MyScrolledToolbar::MyScrolledToolbar ()
     set_policy (Gtk::POLICY_EXTERNAL, Gtk::POLICY_NEVER);
     get_style_context()->add_class("scrollableToolbar");
 
-    // Works fine with Gtk 3.22, but a a custom made get_preferred_height had to be created as a workaround
+    // Works fine with Gtk 3.22, but a custom made get_preferred_height had to be created as a workaround
     // taken from the official Gtk3.22 source code
     //set_propagate_natural_height(true);
 }
@@ -1213,7 +1213,7 @@ bool MySpinButton::on_key_press_event (GdkEventKey* event)
     } else {
         if (event->keyval == GDK_KEY_comma || event->keyval == GDK_KEY_KP_Decimal) {
             set_text(get_text() + ".");
-            set_position(get_text().length()); // When setting text, cursor position is reseted at text start. Avoiding this with this code
+            set_position(get_text().length()); // When setting text, cursor position is reset at text start. Avoiding this with this code
             return true; // Event is not propagated further
         }
 

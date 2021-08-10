@@ -154,7 +154,7 @@ constexpr float exclusion(float a, float b)
 void calcdif(float lmr, float &lmrc)
 {   //approximative change between gamma sRGB g=2.4 s=12.92 and gamma LAB g=3.0 s=9.03
     //useful to calculate action with dark and light area mask
-    //differences in 3 parts linear...very small diffrences with real...
+    //differences in 3 parts linear...very small differences with real...
     float a0 = 7.6f / 11.6f;//11.6 sRGB  - 7.6 Lab...11.6 max difference
     float a01 = 62.f - 7.6f; //60 sRGB 62 Lab   60 max difference
     float a11 = 60.f - 11.6f;
@@ -6083,7 +6083,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
                 cmsHTRANSFORM dummy = nullptr;
                 workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
               //  workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, 5, prof, gamtone, slotone, illum, 0, dummy, false, true, true);//to keep if we want improve with illuminant and primaries
-                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, 1, prof, gamtone, slotone, ill, 0, dummy, false, true, true);//be carefull no gamut control
+                workingtrc(tmpImage.get(), tmpImage.get(), GW, GH, 1, prof, gamtone, slotone, ill, 0, dummy, false, true, true);//be careful no gamut control
 
             }
 
@@ -6412,7 +6412,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
 // single precision for the result
         float avA, avB, avL;
         int spotSize = 0.88623f * rtengine::max(1,  lp.cir / sk);  //18
-        //O.88623 = std::sqrt(PI / 4) ==> sqare equal to circle
+        //O.88623 = std::sqrt(PI / 4) ==> square equal to circle
         int spotSise2; // = 0.88623f * max (1,  lp.cir / sk); //18
 
         // very small region, don't use omp here
@@ -9027,7 +9027,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
 //local denoise
     //all these variables are to prevent use of denoise when non necessary
     // but with qualmet = 2 (default for best quality) we must denoise chroma with little values to prevent artifacts due to variations of Hue
-    // but if user select voluntary denoise, it is that choice the good (prioritary)
+    // but if user select voluntary denoise, it is that choice the good (priority)
     bool execcolor = (lp.chro != 0.f || lp.ligh != 0.f || lp.cont != 0); // only if one slider or more is engaged
     bool execbdl = (lp.mulloc[0] != 1.f || lp.mulloc[1] != 1.f || lp.mulloc[2] != 1.f || lp.mulloc[3] != 1.f || lp.mulloc[4] != 1.f || lp.mulloc[5] != 1.f) ;//only if user want cbdl
     bool execdenoi = noiscfactiv && ((lp.colorena && execcolor) || (lp.tonemapena && lp.strengt != 0.f) || (lp.cbdlena && execbdl) || (lp.sfena && lp.strng > 0.f) || (lp.lcena && lp.lcamount > 0.f) || (lp.sharpena && lp.shrad > 0.42) || (lp.retiena && lp.str > 0.f)  || (lp.exposena && lp.expcomp != 0.f)  || (lp.expvib && lp.past != 0.f));
@@ -11006,7 +11006,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     float gamma = gam;
     rtengine::GammaValues g_a; //gamma parameters
     double pwr = 1.0 / static_cast<double>(gam);//default 3.0 - gamma Lab
-    double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+    double ts = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
     rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
 
     //first change Lab L to pseudo linear with gamma = 3.f slope 9.032...and in range 0...65536, or with gamma slope Lab
@@ -11049,7 +11049,7 @@ void ImProcFunctions::NLMeans(float **img, int strength, int detail_thresh, int 
     // laplacian filter with additional averaging and smoothing. The
     // detail_thresh parameter controls the degree of detail preservation: the
     // (averaged, smoothed) laplacian is first normalized to [0,1], and then
-    // modified by compression and offseting depending on the detail_thresh
+    // modified by compression and offsetting depending on the detail_thresh
     // parameter, i.e. mask[y][x] = mask[y][x] * (1 - f) + f,
     // where f = detail_thresh / 100
     float amount = LIM(float(detail_thresh)/100.f, 0.f, 0.99f);
@@ -13959,7 +13959,7 @@ void ImProcFunctions::Lab_Local(
                         int ill =0;
                         workingtrc(tmpImage, tmpImage, bfw, bfh, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
                      //   workingtrc(tmpImage, tmpImage, bfw, bfh, 5, prof, gamtone, slotone, 0, 0, dummy, false, true, true); //to keep if we want improve with illuminant and primaries
-                        workingtrc(tmpImage, tmpImage, bfw, bfh, 1, prof, gamtone, slotone, ill, 0, dummy, false, true, true);//be carefull no gamut control
+                        workingtrc(tmpImage, tmpImage, bfw, bfh, 1, prof, gamtone, slotone, ill, 0, dummy, false, true, true);//be careful no gamut control
                     }
 
                     if (tonequ) {
@@ -14903,7 +14903,7 @@ void ImProcFunctions::Lab_Local(
 
                         if (lp.expcomp != 0.f  ) { // ||  lp.laplacexp > 0.1f
                             if(lp.laplacexp <= 0.1f) {
-                                lp.laplacexp = 0.2f;  //force to use Laplacian wth very small values
+                                lp.laplacexp = 0.2f;  //force to use Laplacian with very small values
                             }
                             ImProcFunctions::exlabLocal(lp, 1.f, bfh, bfw, bfhr, bfwr, bufexporig.get(), bufexpfin.get(), hltonecurveloc, shtonecurveloc, tonecurveloc, hueref, lumaref, chromaref);
                         }
