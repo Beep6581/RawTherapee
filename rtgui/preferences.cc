@@ -1275,7 +1275,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
         vb = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
         vb->pack_start(*hb);
         hb = Gtk::manage(new Gtk::Box());
-        //I disabled these 2 functionnalities...easy to enable
+        //I disabled these 2 functionalities...easy to enable
 //        hb->pack_start(*editor_float32, Gtk::PACK_SHRINK);
 //        hb->pack_start(*editor_bypass_output_profile, Gtk::PACK_SHRINK, 4);
         vb->pack_start(*hb, Gtk::PACK_SHRINK, 4);
