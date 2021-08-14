@@ -18,13 +18,14 @@
  */
 #pragma once
 
-#include <gtkmm/appchooserdialog.h>
 #include <gtkmm/button.h>
 #include <gtkmm/box.h>
 #include <gtkmm/liststore.h>
 #include <gtkmm/scrolledwindow.h>
 #include <gtkmm/treemodelcolumn.h>
 #include <gtkmm/treeview.h>
+
+#include "rtappchooserdialog.h"
 
 
 /**
@@ -98,7 +99,7 @@ private:
     Gtk::Button *button_app_chooser;
     Gtk::Button *button_add;
     Gtk::Button *button_remove;
-    std::unique_ptr<Gtk::AppChooserDialog> app_chooser_dialog;
+    std::unique_ptr<RTAppChooserDialog> app_chooser_dialog;
 
     /**
      * Inserts a new editor entry after the current selection, or at the end if
@@ -117,7 +118,7 @@ private:
      * Called when the user is done interacting with the app chooser dialog.
      * Closes the dialog and updates the selected entry if an app was chosen.
      */
-    void onAppChooserDialogResponse(int responseId, Gtk::AppChooserDialog *dialog);
+    void onAppChooserDialogResponse(int responseId, RTAppChooserDialog *dialog);
     /**
      * Shows the app chooser dialog.
      */

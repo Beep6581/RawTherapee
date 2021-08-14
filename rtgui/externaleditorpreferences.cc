@@ -164,7 +164,7 @@ Gtk::TreeViewColumn *ExternalEditorPreferences::makeCommandColumn()
 }
 
 void ExternalEditorPreferences::onAppChooserDialogResponse(
-    int response_id, Gtk::AppChooserDialog *dialog)
+    int response_id, RTAppChooserDialog *dialog)
 {
     switch (response_id) {
         case Gtk::RESPONSE_OK:
@@ -190,7 +190,7 @@ void ExternalEditorPreferences::openAppChooserDialog()
         return;
     }
 
-    app_chooser_dialog.reset(new Gtk::AppChooserDialog("image/tiff"));
+    app_chooser_dialog.reset(new RTAppChooserDialog("image/tiff"));
     app_chooser_dialog->signal_response().connect(sigc::bind(
                 sigc::mem_fun(*this, &ExternalEditorPreferences::onAppChooserDialogResponse),
                 app_chooser_dialog.get()

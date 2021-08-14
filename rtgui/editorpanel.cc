@@ -39,6 +39,7 @@
 #include "procparamchangers.h"
 #include "placesbrowser.h"
 #include "pathutils.h"
+#include "rtappchooserdialog.h"
 #include "thumbnail.h"
 #include "toolpanelcoord.h"
 
@@ -2014,7 +2015,7 @@ void EditorPanel::sendToExternalPressed()
 {
     if (options.externalEditorIndex == -1) {
         // "Other" external editor. Show app chooser dialog to let user pick.
-        Gtk::AppChooserDialog *dialog = getAppChooserDialog();
+        RTAppChooserDialog *dialog = getAppChooserDialog();
         dialog->show();
     } else {
         struct ExternalEditor editor = options.externalEditors.at(options.externalEditorIndex);
@@ -2195,10 +2196,10 @@ bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagef
     return false;
 }
 
-Gtk::AppChooserDialog *EditorPanel::getAppChooserDialog()
+RTAppChooserDialog *EditorPanel::getAppChooserDialog()
 {
     if (!app_chooser_dialog.get()) {
-        app_chooser_dialog.reset(new Gtk::AppChooserDialog("image/tiff"));
+        app_chooser_dialog.reset(new RTAppChooserDialog("image/tiff"));
         app_chooser_dialog->signal_response().connect(
             sigc::mem_fun(*this, &EditorPanel::onAppChooserDialogResponse)
         );

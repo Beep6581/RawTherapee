@@ -46,6 +46,7 @@ class FilePanel;
 class MyProgressBar;
 class Navigator;
 class PopUpButton;
+class RTAppChooserDialog;
 class Thumbnail;
 class ToolPanelCoordinator;
 
@@ -212,7 +213,7 @@ private:
     bool                idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *pc, Glib::ustring fname);
     bool                idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagefloat* img, Glib::ustring filename);
     void                histogramProfile_toggled ();
-    Gtk::AppChooserDialog *getAppChooserDialog();
+    RTAppChooserDialog *getAppChooserDialog();
     void onAppChooserDialogResponse(int resposneId);
     void updateExternalEditorSelection();
 
@@ -249,7 +250,7 @@ private:
     Gtk::Button* navNext;
     Gtk::Button* navPrev;
     Glib::RefPtr<Gio::AppInfo> external_editor_info;
-    std::unique_ptr<Gtk::AppChooserDialog> app_chooser_dialog;
+    std::unique_ptr<RTAppChooserDialog> app_chooser_dialog;
     ExternalEditorChangedSignal *externalEditorChangedSignal;
     sigc::connection externalEditorChangedSignalConnection;
 
