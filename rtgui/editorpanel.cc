@@ -470,7 +470,9 @@ public:
 EditorPanel::EditorPanel (FilePanel* filePanel)
     : catalogPane (nullptr), realized (false), tbBeforeLock (nullptr), iHistoryShow (nullptr), iHistoryHide (nullptr),
       iTopPanel_1_Show (nullptr), iTopPanel_1_Hide (nullptr), iRightPanel_1_Show (nullptr), iRightPanel_1_Hide (nullptr),
-      iBeforeLockON (nullptr), iBeforeLockOFF (nullptr), previewHandler (nullptr), beforePreviewHandler (nullptr),
+      iBeforeLockON (nullptr), iBeforeLockOFF (nullptr),
+      externalEditorChangedSignal (nullptr),
+      previewHandler (nullptr), beforePreviewHandler (nullptr),
       beforeIarea (nullptr), beforeBox (nullptr), afterBox (nullptr), beforeLabel (nullptr), afterLabel (nullptr),
       beforeHeaderBox (nullptr), afterHeaderBox (nullptr), parent (nullptr), parentWindow (nullptr), openThm (nullptr),
       selectedFrame(0), isrc (nullptr), ipc (nullptr), beforeIpc (nullptr), err (0), isProcessing (false),
