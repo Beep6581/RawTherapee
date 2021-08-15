@@ -2334,7 +2334,7 @@ ZOOMPANEL_ZOOMOUT;Reducir Zoom\nTecla de Atajo: <b>-</b>
 !HISTORY_MSG_PDSHARPEN_RADIUS;CS - Radius
 !HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
 !HISTORY_MSG_SHARPENING_BLUR;Sharpening - Blur radius
-!HISTORY_MSG_TRANS_Method;Geometry - Method
+!HISTORY_MSG_TRANS_METHOD;Geometry - Method
 !MAIN_FRAME_PLACES_DEL;Remove
 !MAIN_TAB_FAVORITES;Favorites
 !MAIN_TAB_FAVORITES_TOOLTIP;Shortcut: <b>Alt-u</b>

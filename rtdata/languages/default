@@ -1404,7 +1404,7 @@ HISTORY_MSG_SPOT_ENTRY;Spot removal - Point modif.
 HISTORY_MSG_TEMPOUT;CAM02 automatic temperature
 HISTORY_MSG_THRESWAV;Balance threshold
 HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
-HISTORY_MSG_TRANS_Method;Geometry - Method
+HISTORY_MSG_TRANS_METHOD;Geometry - Method
 HISTORY_MSG_WAVBALCHROM;Equalizer chrominance
 HISTORY_MSG_WAVBALLUM;Equalizer luminance
 HISTORY_MSG_WAVBL;Blur levels
