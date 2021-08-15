@@ -1793,7 +1793,7 @@ void Preferences::storePreferences()
     moptions.externalEditorIndex = -1;
     for (unsigned i = 0; i < editors.size(); i++) {
         moptions.externalEditors[i] = (ExternalEditor(
-            editors[i].name, editors[i].command, editors[i].icon_name));
+            editors[i].name, editors[i].command, editors[i].icon_serialized));
         if (editors[i].other_data) {
             // The current editor was marked before the list was edited. We
             // found the mark, so this is the editor that was active.
@@ -2100,7 +2100,7 @@ void Preferences::fillPreferences()
     std::vector<ExternalEditorPreferences::EditorInfo> editorInfos;
     for (const auto &editor : moptions.externalEditors) {
         editorInfos.push_back(ExternalEditorPreferences::EditorInfo(
-                    editor.name, editor.command, editor.icon_name));
+                    editor.name, editor.command, editor.icon_serialized));
     }
     if (moptions.externalEditorIndex >= 0) {
         // Mark the current editor so we can track it.

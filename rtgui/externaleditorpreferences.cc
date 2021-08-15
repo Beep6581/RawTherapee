@@ -16,6 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <iostream>
+
 #include "externaleditorpreferences.h"
 #include "multilangmgr.h"
 #include "rtimage.h"
@@ -85,11 +87,11 @@ ExternalEditorPreferences::getEditors() const
 
     for (auto rowIter = children.begin(); rowIter != children.end(); rowIter++) {
         const Gio::Icon *const icon = rowIter->get_value(model_columns.icon).get();
-        const auto &icon_name = icon == nullptr ? "" : icon->to_string();
+        const auto &icon_serialized = icon == nullptr ? "" : icon->serialize().print();
         editors.push_back(ExternalEditorPreferences::EditorInfo(
                               rowIter->get_value(model_columns.name),
                               rowIter->get_value(model_columns.command),
-                              icon_name,
+                              icon_serialized,
                               rowIter->get_value(model_columns.other_data)
                           ));
     }
@@ -104,8 +106,28 @@ void ExternalEditorPreferences::setEditors(
 
     for (const ExternalEditorPreferences::EditorInfo & editor : editors) {
         auto row = *list_model->append();
+        Glib::RefPtr<Gio::Icon> icon;
+
+        // Get icon.
+        if (editor.icon_serialized.empty()) {
+            icon = Glib::RefPtr<Gio::Icon>();
+        } else {
+            GError *e = nullptr;
+            GVariant *icon_variant = g_variant_parse(
+                nullptr, editor.icon_serialized.c_str(), nullptr, nullptr, &e);
+            if (e) {
+                std::cerr
+                    << "Error loading external editor icon from \""
+                    << editor.icon_serialized << "\": " << e->message
+                    << std::endl;
+                icon = Glib::RefPtr<Gio::Icon>();
+            } else {
+                icon = Gio::Icon::deserialize(Glib::VariantBase(icon_variant));
+            }
+        }
+
         row[model_columns.name] = editor.name;
-        row[model_columns.icon] = editor.icon_name.empty() ? Glib::RefPtr<Gio::Icon>() : Gio::Icon::create(editor.icon_name);
+        row[model_columns.icon] = icon;
         row[model_columns.command] = editor.command;
         row[model_columns.other_data] = editor.other_data;
     }
@@ -247,8 +269,8 @@ void ExternalEditorPreferences::updateToolbarSensitivity()
 }
 
 ExternalEditorPreferences::EditorInfo::EditorInfo(
-    Glib::ustring name, Glib::ustring command, Glib::ustring icon_name, void *other_data
-) : name(name), icon_name(icon_name), command(command), other_data(other_data)
+    Glib::ustring name, Glib::ustring command, Glib::ustring icon_serialized, void *other_data
+) : name(name), icon_serialized(icon_serialized), command(command), other_data(other_data)
 {
 }
 

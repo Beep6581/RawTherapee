@@ -859,7 +859,7 @@ void Options::readFromFile(Glib::ustring fname)
             if (keyFile.has_group("External Editor")) {
                 if (keyFile.has_key("External Editor", "Names")
                         || keyFile.has_key("External Editor", "Commands")
-                        || keyFile.has_key("External Editor", "IconNames")) {
+                        || keyFile.has_key("External Editor", "IconsSerialized")) {
                     // Multiple external editors.
 
                     const auto & names =
@@ -872,21 +872,21 @@ void Options::readFromFile(Glib::ustring fname)
                             std::vector<Glib::ustring>() :
                             static_cast<std::vector<Glib::ustring>>(
                                 keyFile.get_string_list("External Editor", "Commands"));
-                    const auto & icon_names =
-                        !keyFile.has_key("External Editor", "IconNames") ?
+                    const auto & icons_serialized =
+                        !keyFile.has_key("External Editor", "IconsSerialized") ?
                             std::vector<Glib::ustring>() :
                             static_cast<std::vector<Glib::ustring>>(
-                                keyFile.get_string_list("External Editor", "IconNames"));
+                                keyFile.get_string_list("External Editor", "IconsSerialized"));
                     externalEditors = std::vector<ExternalEditor>(std::max(std::max(
-                        names.size(), commands.size()), icon_names.size()));
+                        names.size(), commands.size()), icons_serialized.size()));
                     for (unsigned i = 0; i < names.size(); i++) {
                         externalEditors[i].name = names[i];
                     }
                     for (unsigned i = 0; i < commands.size(); i++) {
                         externalEditors[i].command = commands[i];
                     }
-                    for (unsigned i = 0; i < icon_names.size(); i++) {
-                        externalEditors[i].icon_name = icon_names[i];
+                    for (unsigned i = 0; i < icons_serialized.size(); i++) {
+                        externalEditors[i].icon_serialized = icons_serialized[i];
                     }
 
                     if (keyFile.has_key("External Editor", "EditorIndex")) {
@@ -903,6 +903,9 @@ void Options::readFromFile(Glib::ustring fname)
                     editorToSendTo = keyFile.get_integer("External Editor", "EditorKind");
 
 #ifdef WIN32
+                    auto getIconSerialized = [](const Glib::ustring &executable) {
+                        return Glib::ustring::compose("('themed', <['%1,0', '%1,0-symbolic']>)", executable);
+                    };
                     Glib::ustring gimpDir = "";
                     if (keyFile.has_key("External Editor", "GimpDir")) {
                         gimpDir = keyFile.get_string("External Editor", "GimpDir");
@@ -912,7 +915,7 @@ void Options::readFromFile(Glib::ustring fname)
                         if (editorToSendTo == 1) {
                             externalEditorIndex = externalEditors.size();
                         }
-                        externalEditors.push_back(ExternalEditor("GIMP", "\"" + executable + "\"", executable + ",0"));
+                        externalEditors.push_back(ExternalEditor("GIMP", "\"" + executable + "\"", getIconSerialized(executable)));
                     } else {
                         for (auto ver = 12; ver >= 0; --ver) {
                             executable = Glib::build_filename(gimpDir, "bin", Glib::ustring::compose(Glib::ustring("gimp-2.%1.exe"), ver));
@@ -920,7 +923,7 @@ void Options::readFromFile(Glib::ustring fname)
                                 if (editorToSendTo == 1) {
                                     externalEditorIndex = externalEditors.size();
                                 }
-                                externalEditors.push_back(ExternalEditor("GIMP", "\"" + executable + "\"", executable + ",0"));
+                                externalEditors.push_back(ExternalEditor("GIMP", "\"" + executable + "\"", getIconSerialized(executable)));
                                 break;
                             }
                         }
@@ -935,7 +938,7 @@ void Options::readFromFile(Glib::ustring fname)
                         if (editorToSendTo == 2) {
                             externalEditorIndex = externalEditors.size();
                         }
-                        externalEditors.push_back(ExternalEditor("Photoshop", "\"" + executable + "\"", executable + ",0"));
+                        externalEditors.push_back(ExternalEditor("Photoshop", "\"" + executable + "\"", getIconSerialized(executable)));
                     }
 
                     if (keyFile.has_key("External Editor", "CustomEditor")) {
@@ -2296,17 +2299,17 @@ void Options::saveToFile(Glib::ustring fname)
         {
         std::vector<Glib::ustring> names;
         std::vector<Glib::ustring> commands;
-        std::vector<Glib::ustring> icon_names;
+        std::vector<Glib::ustring> icons_serialized;
 
         for (const auto & editor : externalEditors) {
             names.push_back(editor.name);
             commands.push_back(editor.command);
-            icon_names.push_back(editor.icon_name);
+            icons_serialized.push_back(editor.icon_serialized);
         }
 
         keyFile.set_string_list("External Editor", "Names", names);
         keyFile.set_string_list("External Editor", "Commands", commands);
-        keyFile.set_string_list("External Editor", "IconNames", icon_names);
+        keyFile.set_string_list("External Editor", "IconsSerialized", icons_serialized);
 
         keyFile.set_integer("External Editor", "EditorIndex", externalEditorIndex);
         }
@@ -2978,12 +2981,12 @@ Glib::ustring Options::getICCProfileCopyright()
 ExternalEditor::ExternalEditor() {}
 
 ExternalEditor::ExternalEditor(
-    const Glib::ustring &name, const Glib::ustring &command, const Glib::ustring &icon_name
-): name(name), command(command), icon_name(icon_name) {}
+    const Glib::ustring &name, const Glib::ustring &command, const Glib::ustring &icon_serialized
+): name(name), command(command), icon_serialized(icon_serialized) {}
 
 bool ExternalEditor::operator==(const ExternalEditor &other) const
 {
-    return this->name == other.name && this->command == other.command && this->icon_name == other.icon_name;
+    return this->name == other.name && this->command == other.command && this->icon_serialized == other.icon_serialized;
 }
 
 bool ExternalEditor::operator!=(const ExternalEditor &other) const

@@ -54,10 +54,10 @@
 
 struct ExternalEditor {
     ExternalEditor();
-    ExternalEditor(const Glib::ustring &name, const Glib::ustring &command, const Glib::ustring &icon_name);
+    ExternalEditor(const Glib::ustring &name, const Glib::ustring &command, const Glib::ustring &icon_serialized);
     Glib::ustring name;
     Glib::ustring command;
-    Glib::ustring icon_name;
+    Glib::ustring icon_serialized;
 
     bool operator==(const ExternalEditor & other) const;
     bool operator!=(const ExternalEditor & other) const;

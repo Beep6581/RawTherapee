@@ -41,7 +41,7 @@ public:
         explicit EditorInfo(
             Glib::ustring name = Glib::ustring(),
             Glib::ustring command = Glib::ustring(),
-            Glib::ustring icon_name = Glib::ustring(),
+            Glib::ustring icon_serialized = Glib::ustring(),
             void *other_data = nullptr
         );
         /**
@@ -49,9 +49,9 @@ public:
          */
         Glib::ustring name;
         /**
-         * The string representation of the icon. See Gio::Icon::to_string().
+         * The string representation of the icon. See Gio::Icon::serialize().
          */
-        Glib::ustring icon_name;
+        Glib::ustring icon_serialized;
         /**
          * The commandline for running the program. See
          * Gio::AppInfo::get_commandline()

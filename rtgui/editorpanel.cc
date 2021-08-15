@@ -2522,8 +2522,22 @@ void EditorPanel::updateExternalEditorWidget(int selectedIndex, const std::vecto
     // Add the editors.
     for (unsigned i = 0; i < editors.size(); i++) {
         const auto & name = editors[i].name.empty() ? Glib::ustring(" ") : editors[i].name;
-        if (!editors[i].icon_name.empty()) {
-            Glib::RefPtr<Gio::Icon> gioIcon = Gio::Icon::create(editors[i].icon_name);
+        if (!editors[i].icon_serialized.empty()) {
+            Glib::RefPtr<Gio::Icon> gioIcon;
+            GError *e = nullptr;
+            GVariant *icon_variant = g_variant_parse(
+                nullptr, editors[i].icon_serialized.c_str(), nullptr, nullptr, &e);
+
+            if (e) {
+                std::cerr
+                    << "Error loading external editor icon from \""
+                    << editors[i].icon_serialized << "\": " << e->message
+                    << std::endl;
+                gioIcon = Glib::RefPtr<Gio::Icon>();
+            } else {
+                gioIcon = Gio::Icon::deserialize(Glib::VariantBase(icon_variant));
+            }
+
             send_to_external->insertEntry(i, gioIcon, name);
         } else {
             send_to_external->insertEntry(i, "palette-brush.png", name);

@@ -294,7 +294,12 @@ Glib::RefPtr<Gdk::Pixbuf> RTImage::createPixbufFromFile (const Glib::ustring& fi
 Glib::RefPtr<Gdk::Pixbuf> RTImage::createPixbufFromGIcon(const Glib::RefPtr<const Gio::Icon> &icon, int size)
 {
     // TODO: Listen for theme changes and update icon, remove from cache.
-    return Gtk::IconTheme::get_default()->lookup_icon(icon, size, Gtk::ICON_LOOKUP_FORCE_SIZE).load_icon();
+    Gtk::IconInfo iconInfo = Gtk::IconTheme::get_default()->lookup_icon(icon, size, Gtk::ICON_LOOKUP_FORCE_SIZE);
+    try {
+        return iconInfo.load_icon();
+    } catch (Glib::Exception &e) {
+        return Glib::RefPtr<Gdk::Pixbuf>();
+    }
 }
 
 Cairo::RefPtr<Cairo::ImageSurface> RTImage::createImgSurfFromFile (const Glib::ustring& fileName)
