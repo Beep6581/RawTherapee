@@ -2180,7 +2180,7 @@ struct HSVEqualizerParams {
 };
 
 /**
- *  Film simualtion params
+ *  Film simulation params
  */
 struct FilmSimulationParams {
     bool enabled;

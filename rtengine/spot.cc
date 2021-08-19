@@ -493,7 +493,7 @@ void ImProcFunctions::removeSpots (Imagefloat* img, ImageSource* imgsrc, const s
 
     }
 
-    // Construct list of upstream dependancies
+    // Construct list of upstream dependencies
 
     std::unordered_set<int> requiredSpotsSet = calcSpotDependencies(visibleSpots, srcSpotBoxs, dstSpotBoxs);
     std::vector<int> requiredSpots(requiredSpotsSet.size());

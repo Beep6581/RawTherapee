@@ -446,7 +446,7 @@ void ThumbBrowserEntryBase::getTextSizes (int& infow, int& infoh)
     Glib::RefPtr<Pango::Layout> fn = w->create_pango_layout(dispname);
     fn->get_pixel_size (fnlabw, fnlabh);
 
-    // calculate cummulated height of all info fields
+    // calculate cumulated height of all info fields
     infoh = fnlabh;
     infow = 0;
 

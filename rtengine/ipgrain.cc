@@ -128,7 +128,7 @@ public:
             for (int i = 0; i < W; ++i) {
                 double wx = ox + i;
                 double x = wx / wddf;
-                double noise = simplex_2d_noise(x, y, octaves, 1.0, zoom) / s;
+                double noise = simplex_2d_noise(x, y, octaves, zoom) / s;
                 lab_L[j][i] += lut_lookup(noise * strength * GRAIN_LIGHTNESS_STRENGTH_SCALE, lab_L[j][i] / 32768.f);
             }
         }
@@ -290,7 +290,7 @@ private:
         return 32.0 * (n0 + n1 + n2 + n3);
     }
 
-    double simplex_2d_noise(double x, double y, uint32_t octaves, double persistance, double z)
+    double simplex_2d_noise(double x, double y, uint32_t octaves, double z)
     {
         double total = 0;
 

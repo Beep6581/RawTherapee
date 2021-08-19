@@ -3683,7 +3683,7 @@ void ImProcFunctions::secondeg_begin(float reducac, float vend, float &aam, floa
 * @param RedHigh   [-1..1] value after transformations of sliders [-100..100] for highlights
 * @param GreenHigh [-1..1] value after transformations of sliders [-100..100] for highlights
 * @param BlueHigh  [-1..1] value after transformations of sliders [-100..100] for highlights
-* @param reducac value of the reduction in the middle of the range for second degree increse or decrease action
+* @param reducac value of the reduction in the middle of the range for second degree increase or decrease action
 * @param mode 0 = colour, 1 = Black and White
 * @param strProtect ?
 **/

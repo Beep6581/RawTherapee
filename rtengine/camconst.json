@@ -532,7 +532,7 @@ Camera constants:
     },
 
     { // Quality B, some missing scaling factors are safely guessed
-        "make_model": [ "Canon EOS 6D Mark II", "Canon EOS RP" ],
+        "make_model": "Canon EOS 6D Mark II",
         "dcraw_matrix": [ 6875,-970,-932,-4691,12459,2501,-874,1953,5809 ], // DNG v_9.12 D65
         "raw_crop": [ 120, 44, 6264, 4180 ], // fullraw size 6384x4224 useful 120,44,6264x4180 // TODO: See EOS RP
         // "raw_crop": [ 128, 52, 6248, 4168 ], // official jpeg crop 120+12,44+12,6240x4160
@@ -569,7 +569,7 @@ Camera constants:
     { // Quality B, taken from 6D Mark II because identical sensor (different matrix)
         "make_model": "Canon EOS RP",
         "dcraw_matrix": [ 8608,-2097,-1178,-5425,13265,2383,-1149,2238,5680 ], // DNG v13.2
-        // Let dcraw handle crop, because camconst shouldn't override for diferent crop factors. See #6255
+        // Let dcraw handle crop, because camconst shouldn't override for different crop factors. See #6255
         "masked_areas": [ 44, 4, 4220, 116 ], // Potential problem for different crop factor as well
         "ranges": {
             "white": [

@@ -2392,7 +2392,7 @@ ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
 
 !GENERAL_HELP;Help
 !HISTORY_MSG_PDSHARPEN_CHECKITER;CS - Auto limit iterations
-!HISTORY_MSG_TRANS_Method;Geometry - Method
+!HISTORY_MSG_TRANS_METHOD;Geometry - Method
 !TP_LENSGEOM_LIN;Linear
 !TP_LENSGEOM_LOG;Logarithmic
 !TP_SHARPENING_ITERCHECK;Auto limit iterations

@@ -1354,7 +1354,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !HISTORY_MSG_SOFTLIGHT_ENABLED;Soft light
 !HISTORY_MSG_SOFTLIGHT_STRENGTH;Soft light - Strength
 !HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anchor
-!HISTORY_MSG_TRANS_Method;Geometry - Method
+!HISTORY_MSG_TRANS_METHOD;Geometry - Method
 !HISTORY_NEWSNAPSHOT_TOOLTIP;Shortcut: <b>Alt-s</b>
 !ICCPROFCREATOR_COPYRIGHT;Copyright:
 !ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Reset to the default copyright, granted to "RawTherapee, CC0"

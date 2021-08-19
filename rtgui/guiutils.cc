@@ -221,7 +221,7 @@ bool confirmOverwrite (Gtk::Window& parent, const std::string& filename)
     bool safe = true;
 
     if (Glib::file_test (filename, Glib::FILE_TEST_EXISTS)) {
-        Glib::ustring msg_ = Glib::ustring ("<b>\"") + Glib::path_get_basename (filename) + "\": "
+        Glib::ustring msg_ = Glib::ustring ("<b>\"") + escapeHtmlChars(Glib::path_get_basename (filename)) + "\": "
                              + M("MAIN_MSG_ALREADYEXISTS") + "</b>\n" + M("MAIN_MSG_QOVERWRITE");
         Gtk::MessageDialog msgd (parent, msg_, true, Gtk::MESSAGE_WARNING, Gtk::BUTTONS_YES_NO, true);
         safe = (msgd.run () == Gtk::RESPONSE_YES);
@@ -232,7 +232,7 @@ bool confirmOverwrite (Gtk::Window& parent, const std::string& filename)
 
 void writeFailed (Gtk::Window& parent, const std::string& filename)
 {
-    Glib::ustring msg_ = Glib::ustring::compose(M("MAIN_MSG_WRITEFAILED"), filename);
+    Glib::ustring msg_ = Glib::ustring::compose(M("MAIN_MSG_WRITEFAILED"), escapeHtmlChars(filename));
     Gtk::MessageDialog msgd (parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
     msgd.run ();
 }
@@ -1003,7 +1003,7 @@ MyScrolledToolbar::MyScrolledToolbar ()
     set_policy (Gtk::POLICY_EXTERNAL, Gtk::POLICY_NEVER);
     get_style_context()->add_class("scrollableToolbar");
 
-    // Works fine with Gtk 3.22, but a a custom made get_preferred_height had to be created as a workaround
+    // Works fine with Gtk 3.22, but a custom made get_preferred_height had to be created as a workaround
     // taken from the official Gtk3.22 source code
     //set_propagate_natural_height(true);
 }
@@ -1213,7 +1213,7 @@ bool MySpinButton::on_key_press_event (GdkEventKey* event)
     } else {
         if (event->keyval == GDK_KEY_comma || event->keyval == GDK_KEY_KP_Decimal) {
             set_text(get_text() + ".");
-            set_position(get_text().length()); // When setting text, cursor position is reseted at text start. Avoiding this with this code
+            set_position(get_text().length()); // When setting text, cursor position is reset at text start. Avoiding this with this code
             return true; // Event is not propagated further
         }
 

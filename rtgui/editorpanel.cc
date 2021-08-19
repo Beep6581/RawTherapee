@@ -1788,7 +1788,7 @@ bool EditorPanel::idle_saveImage (ProgressConnector<rtengine::IImagefloat*> *pc,
             delete ld;
         }
     } else {
-        Glib::ustring msg_ = Glib::ustring ("<b>") + fname + ": Error during image processing\n</b>";
+        Glib::ustring msg_ = Glib::ustring ("<b>") + escapeHtmlChars(fname) + ": Error during image processing\n</b>";
         Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
         msgd.run ();
 

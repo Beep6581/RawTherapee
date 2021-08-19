@@ -566,7 +566,7 @@ public:
       * Since the ProcParams can be tweaked by a GUI to operate on the image at a specific stage or with disabled tool,
       * you'll have to specify if you want the tweaked version for the current special mode, or the untweaked one.
       * @param dst is the location where the image processing parameters are copied (it is assumed that the memory is allocated by the caller)
-      * @param tweaked is used to chose betwen the tweaked ProcParams (if there is one) or the untweaked one */
+      * @param tweaked is used to choose between the tweaked ProcParams (if there is one) or the untweaked one */
     virtual void        getParams (procparams::ProcParams* dst, bool tweaked=false) = 0;
     /** An essential member function. Call this when a setting has been changed. This function returns a pointer to the
       * processing parameters, that you have to update to reflect the changed situation. When ready, call the paramsUpdateReady
