@@ -15604,8 +15604,8 @@ void ImProcFunctions::Lab_Local(
 
                             if (ctoning) {//color toning and direct change color
                                 if (lp.gridmet == 0) {
-                                    bufcolcalca += kd * bufcolcalcL * a_scale + a_base;
-                                    bufcolcalcb += kd * bufcolcalcL * b_scale + b_base;
+                                    bufcolcalca += kd * (bufcolcalcL * a_scale + a_base);
+                                    bufcolcalcb += kd * (bufcolcalcL * b_scale + b_base);
                                 } else if (lp.gridmet == 1) {
                                     bufcolcalca += kd * scaledirect * a_scale;
                                     bufcolcalcb += kd * scaledirect * b_scale;
