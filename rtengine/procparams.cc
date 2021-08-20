@@ -366,7 +366,7 @@ namespace procparams
 {
 
 const short SpotParams::minRadius = 5;
-const short SpotParams::maxRadius = 100;
+const short SpotParams::maxRadius = 400;
 
 
 ToneCurveParams::ToneCurveParams() :
