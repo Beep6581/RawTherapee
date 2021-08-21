@@ -1094,8 +1094,9 @@ HISTORY_MSG_838;Local - Vib gradient strength H
 HISTORY_MSG_839;Local - Software complexity
 HISTORY_MSG_840;Local - CL Curve
 HISTORY_MSG_841;Local - LC curve
-HISTORY_MSG_842;Local - Contrast Threshold
-HISTORY_MSG_843;Local - Radius
+HISTORY_MSG_842;Local - Blur mask Radius
+HISTORY_MSG_843;Local - Blur mask Contrast Threshold
+HISTORY_MSG_844;Local - Blur mask FFTW
 HISTORY_MSG_845;Local - Log encoding
 HISTORY_MSG_846;Local - Log encoding auto
 HISTORY_MSG_847;Local - Log encoding Source
