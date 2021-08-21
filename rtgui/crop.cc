@@ -295,6 +295,7 @@ Crop::Crop():
     guide->append (M("TP_CROP_GTTRIANGLE1"));
     guide->append (M("TP_CROP_GTTRIANGLE2"));
     guide->append (M("TP_CROP_GTEPASSPORT"));
+    guide->append (M("TP_CROP_GTCENTEREDSQUARE"));
     guide->set_active (0);
 
     w->set_range (1, maxw);
@@ -431,6 +432,8 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited)
         guide->set_active (7);
     } else if (pp->crop.guide == "ePassport") {
         guide->set_active (8);
+    } else if (pp->crop.guide == "Centered square") {
+        guide->set_active (9);
     }
 
     x->set_value(pp->crop.x);
@@ -549,6 +552,8 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited)
         pp->crop.guide = "Golden Triangle 2";
     } else if (guide->get_active_row_number() == 8) {
         pp->crop.guide = "ePassport";
+    } else if (guide->get_active_row_number() == 9) {
+        pp->crop.guide = "Centered square";
     }
 
     if (pedited) {

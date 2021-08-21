@@ -2226,6 +2226,7 @@ TP_COLORTONING_TWOBY;Special a* and b*
 TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colors:\nMore predictable.
 TP_COLORTONING_TWOSTD;Standard chroma
 TP_CROP_FIXRATIO;Lock ratio
+TP_CROP_GTCENTEREDSQUARE;Centered square
 TP_CROP_GTDIAGONALS;Rule of Diagonals
 TP_CROP_GTEPASSPORT;Biometric Passport
 TP_CROP_GTFRAME;Frame
