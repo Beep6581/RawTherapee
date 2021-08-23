@@ -1217,7 +1217,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     }
 
                     if (hasColCurve1) {//curve 1 with Lightness and Brightness
-                        if (curveMode == ColorAppearanceParams::TcMode::LIGHT) {
+                     //   if (curveMode == ColorAppearanceParams::TcMode::LIGHT) {
                             float Jj = (float) Jpro * 327.68f;
                             float Jold = Jj;
                             float Jold100 = (float) Jpro;
@@ -1246,7 +1246,8 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             if (Jpro < 1.f) {
                                 Jpro = 1.f;
                             }
-                        } else if (curveMode == ColorAppearanceParams::TcMode::BRIGHT) {
+                      //  } 
+                        /* else if (curveMode == ColorAppearanceParams::TcMode::BRIGHT) {
                             //attention! Brightness curves are open - unlike Lightness or Lab or RGB==> rendering  and algorithms will be different
                             float coef = ((aw + 4.f) * (4.f / c)) / 100.f;
                             float Qanc = Qpro;
@@ -1286,10 +1287,11 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                                 Jpro = 1.f;
                             }
                         }
+                        */
                     }
 
                     if (hasColCurve2) {//curve 2 with Lightness and Brightness
-                        if (curveMode2 == ColorAppearanceParams::TcMode::LIGHT) {
+                      //  if (curveMode2 == ColorAppearanceParams::TcMode::LIGHT) {
                             float Jj = (float) Jpro * 327.68f;
                             float Jold = Jj;
                             float Jold100 = (float) Jpro;
@@ -1327,7 +1329,9 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                                 Jpro = 1.f;
                             }
 
-                        } else if (curveMode2 == ColorAppearanceParams::TcMode::BRIGHT) { //
+                    //    } 
+                        /*
+                        else if (curveMode2 == ColorAppearanceParams::TcMode::BRIGHT) { //
                             float Qanc = Qpro;
 
                             float coef = ((aw + 4.f) * (4.f / c)) / 100.f;
@@ -1378,6 +1382,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                                 Jpro = 1.f;
                             }
                         }
+                        */
                     }
 
                     if (hasColCurve3) {//curve 3 with chroma saturation colorfullness
