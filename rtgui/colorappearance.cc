@@ -533,7 +533,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     curveEditorG->setCurveListener (this);
     curveEditorG->setTooltip (M ("TP_COLORAPP_CURVEEDITOR1_TOOLTIP"));
 
-    shape = static_cast<DiagonalCurveEditor*> (curveEditorG->addCurve (CT_Diagonal, "", toneCurveMode));
+ //   shape = static_cast<DiagonalCurveEditor*> (curveEditorG->addCurve (CT_Diagonal, "", toneCurveMode));
+    shape = static_cast<DiagonalCurveEditor*> (curveEditorG->addCurve (CT_Diagonal, "J(J)"));
 
 
 
@@ -548,7 +549,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     curveEditorG2 = new CurveEditorGroup (options.lastToneCurvesDir, M ("TP_COLORAPP_CURVEEDITOR2"));
     curveEditorG2->setCurveListener (this);
 
-    shape2 = static_cast<DiagonalCurveEditor*> (curveEditorG2->addCurve (CT_Diagonal, "", toneCurveMode2));
+  //  shape2 = static_cast<DiagonalCurveEditor*> (curveEditorG2->addCurve (CT_Diagonal, "", toneCurveMode2));
+    shape2 = static_cast<DiagonalCurveEditor*> (curveEditorG2->addCurve (CT_Diagonal, "J(J)"));
 
     tcmode2conn = toneCurveMode2->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::curveMode2Changed), true );
 
@@ -1398,9 +1400,11 @@ void ColorAppearance::convertParamToNormal()
     wbmodel->set_active (0);
     if (presetcat02->get_active ()) {
         wbmodel->set_active (2);
+        illumChanged();
     }
     if (catmethod->get_active_row_number() == 1  || catmethod->get_active_row_number() == 2) {
             wbmodel->set_active (2);
+        illumChanged();
     }
 
     greenout->setValue(def_params.greenout);

@@ -2153,13 +2153,13 @@ TP_COLORAPP_CONTRAST_Q;Contrast (Q)
 TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast (Q) in CIECAM02/16 is based on brightness, differs from L*a*b* and RGB contrast.
 TP_COLORAPP_CONTRAST_TOOLTIP;Contrast (J) in CIECAM02/16 is based on lightness, differs from L*a*b* and RGB contrast.
 TP_COLORAPP_CURVEEDITOR1;Tone curve 1
-TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L* (L*a*b*) before CIECAM02/16.\nIf the "CIECAM02/16 output histograms in curves" checkbox is enabled, shows the histogram of J or Q after CIECAM02/16.\n\nJ and Q are not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel.
+TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L* (L*a*b*) before CIECAM02/16.\nIf the "CIECAM02/16 output histograms in curves" checkbox is enabled, shows the histogram of J after CIECAM02/16.\n\nJ is not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel.
 TP_COLORAPP_CURVEEDITOR2;Tone curve 2
 TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the second exposure tone curve.
 TP_COLORAPP_CURVEEDITOR3;Color curve
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM02/16.\nIf the "CIECAM02/16 output histograms in curves" checkbox is enabled, shows the histogram of C, S or M after CIECAM02/16.\n\nC, S and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
 TP_COLORAPP_DATACIE;CIECAM02/16 output histograms in curves
-TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02/16 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02/16 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02/16 curves show L*a*b* values before CIECAM02/16 adjustments.
+TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02/16 curves show approximate values/ranges for J, and C, s or M after the CIECAM02/16 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02/16 curves show L*a*b* values before CIECAM02/16 adjustments.
 TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 is a chromatic adaptation, it converts the values of an image whose white point is that of a given illuminant (for example D65), into new values whose white point is that of the new illuminant - see WP Model (for example D50 or D55).
 TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02/16 is a chromatic adaptation, it converts the values of an image whose white point is that of a given illuminant (for example D50), into new values whose white point is that of the new illuminant - see WP model (for example D75).
 TP_COLORAPP_FREE;Free temp + tint + CAT02/16 +[output]
