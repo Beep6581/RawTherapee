@@ -1398,9 +1398,11 @@ void ColorAppearance::convertParamToNormal()
     wbmodel->set_active (0);
     if (presetcat02->get_active ()) {
         wbmodel->set_active (2);
+        illumChanged();
     }
     if (catmethod->get_active_row_number() == 1  || catmethod->get_active_row_number() == 2) {
             wbmodel->set_active (2);
+        illumChanged();
     }
 
     greenout->setValue(def_params.greenout);
