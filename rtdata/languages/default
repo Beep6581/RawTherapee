@@ -2097,7 +2097,7 @@ TP_COLORAPP_CONTRAST_TOOLTIP;Contrast (J) in CIECAM02/16 is based on lightness, 
 TP_COLORAPP_CURVEEDITOR1;Tone curve 1
 TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L* (L*a*b*) before CIECAM02/16.\nIf the "CIECAM02/16 output histograms in curves" checkbox is enabled, shows the histogram of J after CIECAM02/16.\n\nJ is not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel.
 TP_COLORAPP_CURVEEDITOR2;Tone curve 2
-TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the second exposure tone curve.
+TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the first J(J) tone curve.
 TP_COLORAPP_CURVEEDITOR3;Color curve
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM02/16.\nIf the "CIECAM02/16 output histograms in curves" checkbox is enabled, shows the histogram of C, S or M after CIECAM02/16.\n\nC, S and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
 TP_COLORAPP_DATACIE;CIECAM02/16 output histograms in curves
