@@ -747,7 +747,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
         const bool hasColCurve1 = bool (customColCurve1);
         const bool t1L = hasColCurve1 && curveMode == ColorAppearanceParams::TcMode::LIGHT;
 
-        const ColorAppearanceParams::TcMode curveMode2 = params->colorappearance.curveMode2;
+//        const ColorAppearanceParams::TcMode curveMode2 = params->colorappearance.curveMode2;
         const bool hasColCurve2 = bool (customColCurve2);
 
         const ColorAppearanceParams::CtcMode curveMode3 = params->colorappearance.curveMode3;
