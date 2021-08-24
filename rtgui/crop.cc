@@ -24,6 +24,7 @@
 #include "rtimage.h"
 
 #include "../rtengine/procparams.h"
+#include "../rtengine/utils.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -414,26 +415,19 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited)
         orientation->set_active (2);
     }
 
-    if (pp->crop.guide == "None") {
-        guide->set_active (0);
-    } else if (pp->crop.guide == "Frame") {
-        guide->set_active (1);
-    } else if (pp->crop.guide == "Rule of thirds") {
-        guide->set_active (2);
-    } else if (pp->crop.guide == "Rule of diagonals") {
-        guide->set_active (3);
-    } else if (!strncmp(pp->crop.guide.data(), "Harmonic means", 14)) {
-        guide->set_active (4);
-    } else if (pp->crop.guide == "Grid") {
-        guide->set_active (5);
-    } else if (pp->crop.guide == "Golden Triangle 1") {
-        guide->set_active (6);
-    } else if (pp->crop.guide == "Golden Triangle 2") {
-        guide->set_active (7);
-    } else if (pp->crop.guide == "ePassport") {
-        guide->set_active (8);
-    } else if (pp->crop.guide == "Centered square") {
-        guide->set_active (9);
+    switch (pp->crop.guide) {
+        case procparams::CropParams::Guide::NONE:
+        case procparams::CropParams::Guide::FRAME:
+        case procparams::CropParams::Guide::RULE_OF_THIRDS:
+        case procparams::CropParams::Guide::RULE_OF_DIAGONALS:
+        case procparams::CropParams::Guide::HARMONIC_MEANS:
+        case procparams::CropParams::Guide::GRID:
+        case procparams::CropParams::Guide::GOLDEN_TRIANGLE_1:
+        case procparams::CropParams::Guide::GOLDEN_TRIANGLE_2:
+        case procparams::CropParams::Guide::EPASSPORT:
+        case procparams::CropParams::Guide::CENTERED_SQUARE: {
+            guide->set_active(toUnderlying(pp->crop.guide));
+        }
     }
 
     x->set_value(pp->crop.x);
@@ -534,27 +528,7 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited)
         pp->crop.orientation = "As Image";
     }
 
-    if (guide->get_active_row_number() == 0) {
-        pp->crop.guide = "None";
-    } else if (guide->get_active_row_number() == 1) {
-        pp->crop.guide = "Frame";
-    } else if (guide->get_active_row_number() == 2) {
-        pp->crop.guide = "Rule of thirds";
-    } else if (guide->get_active_row_number() == 3) {
-        pp->crop.guide = "Rule of diagonals";
-    } else if (guide->get_active_row_number() == 4) {
-        pp->crop.guide = "Harmonic means";
-    } else if (guide->get_active_row_number() == 5) {
-        pp->crop.guide = "Grid";
-    } else if (guide->get_active_row_number() == 6) {
-        pp->crop.guide = "Golden Triangle 1";
-    } else if (guide->get_active_row_number() == 7) {
-        pp->crop.guide = "Golden Triangle 2";
-    } else if (guide->get_active_row_number() == 8) {
-        pp->crop.guide = "ePassport";
-    } else if (guide->get_active_row_number() == 9) {
-        pp->crop.guide = "Centered square";
-    }
+    pp->crop.guide = procparams::CropParams::Guide(guide->get_active_row_number());
 
     if (pedited) {
         pedited->crop.enabled       = !get_inconsistent();
