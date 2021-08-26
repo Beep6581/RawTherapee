@@ -779,6 +779,7 @@ Gtk::Widget* Preferences::getColorManPanel ()
 
     vbColorMan->pack_start (*iccdgrid, Gtk::PACK_SHRINK);
 
+    
     //------------------------- MONITOR ----------------------
 
     Gtk::Frame* fmonitor = Gtk::manage(new Gtk::Frame(M("PREFERENCES_MONITOR")));
@@ -897,6 +898,19 @@ Gtk::Widget* Preferences::getColorManPanel ()
     fprinter->add(*gprinter);
 
     vbColorMan->pack_start (*fprinter, Gtk::PACK_SHRINK);
+    
+    //-------------CIECAM
+    Gtk::Frame* fcie = Gtk::manage(new Gtk::Frame(M("PREFERENCES_CIE")));
+    Gtk::Grid* gcie = Gtk::manage(new Gtk::Grid());
+    gcie->set_column_spacing(4);
+    mcie = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_CIEARTIF")));
+    setExpandAlignProperties(mcie, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    mcie->set_active(true);
+    int rowc = 0;
+    gcie->attach(*mcie, 0, rowc, 1, 1);
+    fcie->add(*gcie);
+
+    vbColorMan->pack_start (*fcie, Gtk::PACK_SHRINK);
     swColorMan->add(*vbColorMan);
     return swColorMan;
 }
@@ -1830,6 +1844,8 @@ void Preferences::storePreferences()
 
     moptions.rtSettings.monitorBPC = monBPC->get_active();
     moptions.rtSettings.autoMonitorProfile = cbAutoMonProfile->get_active();
+    moptions.rtSettings.autocielab = mcie->get_active();
+
 #endif
 
     moptions.rtSettings.iccDirectory = iccDir->get_filename();
@@ -1984,6 +2000,7 @@ void Preferences::fillPreferences()
     }
 
     monBPC->set_active(moptions.rtSettings.monitorBPC);
+    mcie->set_active(moptions.rtSettings.autocielab);
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif
 

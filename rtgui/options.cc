@@ -590,6 +590,7 @@ void Options::setDefaults()
     rtSettings.monitorProfile = Glib::ustring();
     rtSettings.monitorIntent = rtengine::RI_RELATIVE;
     rtSettings.monitorBPC = true;
+    rtSettings.autocielab = false;
     rtSettings.autoMonitorProfile = false;
     rtSettings.adobe = "RTv2_Medium"; // put the name of yours profiles (here windows)
     rtSettings.prophoto = "RTv2_Large"; // these names appear in the menu "output profile"
@@ -636,7 +637,7 @@ void Options::setDefaults()
     rtSettings.protectred = 60;
     rtSettings.protectredh = 0.3;
     rtSettings.CRI_color = 0;
-    rtSettings.autocielab = true;
+ //   rtSettings.autocielab = true;
     rtSettings.denoiselabgamma = 2;
     rtSettings.HistogramWorking = false;
 
@@ -1564,9 +1565,6 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.autoMonitorProfile = keyFile.get_boolean("Color Management", "AutoMonitorProfile");
                 }
 
-                if (keyFile.has_key("Color Management", "Autocielab")) {
-                    rtSettings.autocielab = keyFile.get_boolean("Color Management", "Autocielab");
-                }
 
                 if (keyFile.has_key("Color Management", "RGBcurvesLumamode_Gamut")) {
                     rtSettings.rgbcurveslumamode_gamut = keyFile.get_boolean("Color Management", "RGBcurvesLumamode_Gamut");
@@ -1578,6 +1576,10 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("Color Management", "MonitorBPC")) {
                     rtSettings.monitorBPC = keyFile.get_boolean("Color Management", "MonitorBPC");
+                }
+
+                if (keyFile.has_key("Color Management", "Autocielab")) {
+                    rtSettings.autocielab = keyFile.get_boolean("Color Management", "Autocielab");
                 }
 
                 if (keyFile.has_key("Color Management", "CRI")) {
@@ -2353,6 +2355,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("Color Management", "RGBcurvesLumamode_Gamut", rtSettings.rgbcurveslumamode_gamut);
         keyFile.set_integer("Color Management", "Intent", rtSettings.monitorIntent);
         keyFile.set_boolean("Color Management", "MonitorBPC", rtSettings.monitorBPC);
+
+
         //keyFile.set_integer ("Color Management", "view", rtSettings.viewingdevice);
         //keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevicegrey);
 //        keyFile.set_integer ("Color Management", "greySc", rtSettings.viewinggreySc);
