@@ -785,7 +785,14 @@ if(ENABLE_TCMALLOC)
         find_library(TCMALLOC_LIBRARIES tcmalloc PATHS ${TCMALLOC_LIB_DIR}
                                                        NO_DEFAULT_PATH)
     else()
-        find_library(TCMALLOC_LIBRARIES tcmalloc)
+        # On Debian libtcmalloc-minimal4 has no .so symlink, so let's adjust for that
+        set(OLD_CMAKE_FIND_LIBRARY_SUFFIXES "${CMAKE_FIND_LIBRARY_SUFFIXES}")
+        list(APPEND CMAKE_FIND_LIBRARY_SUFFIXES ".so.4")
+
+        find_library(TCMALLOC_LIBRARIES NAMES tcmalloc tcmalloc_minimal)
+
+        set(CMAKE_FIND_LIBRARY_SUFFIXES "${OLD_CMAKE_FIND_LIBRARY_SUFFIXES}")
+        unset(OLD_CMAKE_FIND_LIBRARY_SUFFIXES)
     endif()
     if(TCMALLOC_LIBRARIES)
         message(STATUS "using tcmalloc library in ${TCMALLOC_LIBRARIES}")
