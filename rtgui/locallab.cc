@@ -150,21 +150,6 @@ Locallab::Locallab():
     // Tool list widget
     toollist(Gtk::manage(new LocallabToolList())),
 
-    // Create Locallab tools
-    expcolor(Gtk::manage(new LocallabColor())),
-    expexpose(Gtk::manage(new LocallabExposure())),
-    expshadhigh(Gtk::manage(new LocallabShadow())),
-    expvibrance(Gtk::manage(new LocallabVibrance())),
-    expsoft(Gtk::manage(new LocallabSoft())),
-    expblur(Gtk::manage(new LocallabBlur())),
-    exptonemap(Gtk::manage(new LocallabTone())),
-    expreti(Gtk::manage(new LocallabRetinex())),
-    expsharp(Gtk::manage(new LocallabSharp())),
-    expcontrast(Gtk::manage(new LocallabContrast())),
-    expcbdl(Gtk::manage(new LocallabCBDL())),
-    explog(Gtk::manage(new LocallabLog())),
-    expmask(Gtk::manage(new LocallabMask())),
-
     // Other widgets
     resetshowButton(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_RESETSHOW"))))
 {
@@ -190,19 +175,19 @@ Locallab::Locallab():
     // Add Locallab tools to panel widget
     ToolVBox* const toolpanel = Gtk::manage(new ToolVBox());
     toolpanel->set_name("LocallabToolPanel");
-    addTool(toolpanel, expcolor);
-    addTool(toolpanel, expshadhigh);
-    addTool(toolpanel, expvibrance);
-    addTool(toolpanel, explog);
-    addTool(toolpanel, expexpose);
-    addTool(toolpanel, expmask);
-    addTool(toolpanel, expsoft);
-    addTool(toolpanel, expblur);
-    addTool(toolpanel, exptonemap);
-    addTool(toolpanel, expreti);
-    addTool(toolpanel, expsharp);
-    addTool(toolpanel, expcontrast);
-    addTool(toolpanel, expcbdl);
+    addTool(toolpanel, &expcolor);
+    addTool(toolpanel, &expshadhigh);
+    addTool(toolpanel, &expvibrance);
+    addTool(toolpanel, &explog);
+    addTool(toolpanel, &expexpose);
+    addTool(toolpanel, &expmask);
+    addTool(toolpanel, &expsoft);
+    addTool(toolpanel, &expblur);
+    addTool(toolpanel, &exptonemap);
+    addTool(toolpanel, &expreti);
+    addTool(toolpanel, &expsharp);
+    addTool(toolpanel, &expcontrast);
+    addTool(toolpanel, &expcbdl);
     panel->pack_start(*toolpanel, false, false);
 
     // Add separator
@@ -689,7 +674,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 const double Tmin = retiMinMax.at(pp->locallab.selspot).Tmin;
                 const double Tmax = retiMinMax.at(pp->locallab.selspot).Tmax;
 
-                expreti->updateMinMax(cdma, cdmin, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+                expreti.updateMinMax(cdma, cdmin, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
             }
 
             // Update default values according to selected spot
@@ -1056,14 +1041,14 @@ void Locallab::minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int 
         const double Tmin = retiMinMax.at(selspot).Tmin;
         const double Tmax = retiMinMax.at(selspot).Tmax;
 
-        expreti->updateMinMax(cdma, cdmin, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+        expreti.updateMinMax(cdma, cdmin, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
     }
 }
 
 void Locallab::logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg)
 {
     // Update Locallab Log Encoding accordingly
-    explog->updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg);
+    explog.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg);
 }
 
 void Locallab::refChanged(const std::vector<locallabRef> &ref, int selspot)
