@@ -1175,9 +1175,11 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
 
     d1x = ! ri->get_model().compare("D1X");
 
-    if (ri->getSensorType() == ST_FUJI_XTRANS) {
+    if (ri->getSensorType() == ST_BAYER) {
+        border = 4;
+    } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
         border = 7;
-    } else if (ri->getSensorType() == ST_FOVEON) {
+    } else {
         border = 0;
     }
 
