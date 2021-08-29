@@ -831,15 +831,28 @@ struct SHParams {
   * Parameters of the cropping
   */
 struct CropParams {
-    bool    enabled;
-    int     x;
-    int     y;
-    int     w;
-    int     h;
-    bool    fixratio;
-    Glib::ustring   ratio;
-    Glib::ustring   orientation;
-    Glib::ustring   guide;
+    enum class Guide {
+        NONE,
+        FRAME,
+        RULE_OF_THIRDS,
+        RULE_OF_DIAGONALS,
+        HARMONIC_MEANS,
+        GRID,
+        GOLDEN_TRIANGLE_1,
+        GOLDEN_TRIANGLE_2,
+        EPASSPORT,
+        CENTERED_SQUARE
+    };
+
+    bool enabled;
+    int x;
+    int y;
+    int w;
+    int h;
+    bool fixratio;
+    Glib::ustring ratio;
+    Glib::ustring orientation;
+    Guide guide;
 
     CropParams();
 

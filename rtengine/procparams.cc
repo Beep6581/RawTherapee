@@ -1430,7 +1430,7 @@ ColorAppearanceParams::ColorAppearanceParams() :
     curveMode2(TcMode::LIGHT),
     curveMode3(CtcMode::CHROMA),
     complexmethod("normal"),
-    modelmethod("02"),
+    modelmethod("16"),
     catmethod("clas"),
     surround("Average"),
     surrsrc("Average"),
@@ -1795,7 +1795,7 @@ CropParams::CropParams() :
     fixratio(true),
     ratio("As Image"),
     orientation("As Image"),
-    guide("Frame")
+    guide(Guide::FRAME)
 {
 }
 
@@ -6049,7 +6049,25 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->crop.fixratio, "Crop", "FixedRatio", crop.fixratio, keyFile);
         saveToKeyfile(!pedited || pedited->crop.ratio, "Crop", "Ratio", crop.ratio, keyFile);
         saveToKeyfile(!pedited || pedited->crop.orientation, "Crop", "Orientation", crop.orientation, keyFile);
-        saveToKeyfile(!pedited || pedited->crop.guide, "Crop", "Guide", crop.guide, keyFile);
+        saveToKeyfile(
+            !pedited || pedited->crop.guide,
+            "Crop",
+            "Guide",
+            {
+                {CropParams::Guide::NONE, "None"},
+                {CropParams::Guide::FRAME, "Frame"},
+                {CropParams::Guide::RULE_OF_THIRDS, "Rule of thirds"},
+                {CropParams::Guide::RULE_OF_DIAGONALS, "Rule of diagonals"},
+                {CropParams::Guide::HARMONIC_MEANS, "Harmonic means"},
+                {CropParams::Guide::GRID, "Grid"},
+                {CropParams::Guide::GOLDEN_TRIANGLE_1, "Golden Triangle 1"},
+                {CropParams::Guide::GOLDEN_TRIANGLE_2, "Golden Triangle 2"},
+                {CropParams::Guide::EPASSPORT, "ePassport"},
+                {CropParams::Guide::CENTERED_SQUARE, "Centered square"},
+            },
+            crop.guide,
+            keyFile
+        );
 
 // Coarse transformation
         saveToKeyfile(!pedited || pedited->coarse.rotate, "Coarse Transformation", "Rotate", coarse.rotate, keyFile);
@@ -7987,7 +8005,26 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
 
             assignFromKeyfile(keyFile, "Crop", "Orientation", pedited, crop.orientation, pedited->crop.orientation);
-            assignFromKeyfile(keyFile, "Crop", "Guide", pedited, crop.guide, pedited->crop.guide);
+            assignFromKeyfile(
+                keyFile,
+                "Crop",
+                "Guide",
+                pedited,
+                {
+                    {"None", CropParams::Guide::NONE},
+                    {"Frame", CropParams::Guide::FRAME},
+                    {"Rule of thirds", CropParams::Guide::RULE_OF_THIRDS},
+                    {"Rule of diagonals", CropParams::Guide::RULE_OF_DIAGONALS},
+                    {"Harmonic means", CropParams::Guide::HARMONIC_MEANS},
+                    {"Grid", CropParams::Guide::GRID},
+                    {"Golden Triangle 1", CropParams::Guide::GOLDEN_TRIANGLE_1},
+                    {"Golden Triangle 2", CropParams::Guide::GOLDEN_TRIANGLE_2},
+                    {"ePassport", CropParams::Guide::EPASSPORT},
+                    {"Centered square", CropParams::Guide::CENTERED_SQUARE}
+                },
+                crop.guide,
+                pedited->crop.guide
+            );
         }
 
         if (keyFile.has_group("Coarse Transformation")) {

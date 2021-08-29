@@ -267,7 +267,7 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
     cr->fill ();
 
     // rectangle around the cropped area and guides
-    if (cparams.guide != "None" && drawGuide) {
+    if (cparams.guide != rtengine::procparams::CropParams::Guide::NONE && drawGuide) {
         double rectx1 = round(c1x) + imx + 0.5;
         double recty1 = round(c1y) + imy + 0.5;
         double rectx2 = round(c2x) + imx + 0.5;
@@ -296,60 +296,98 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
         cr->stroke ();
         cr->set_dash (std::valarray<double>(), 0);
 
-        if (cparams.guide != "Rule of diagonals" && cparams.guide != "Golden Triangle 1" && cparams.guide != "Golden Triangle 2") {
+        if (
+            cparams.guide != rtengine::procparams::CropParams::Guide::RULE_OF_DIAGONALS
+            && cparams.guide != rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_1
+            && cparams.guide != rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_2
+        ) {
             // draw guide lines
             std::vector<double> horiz_ratios;
             std::vector<double> vert_ratios;
 
-            if (cparams.guide == "Rule of thirds") {
-                horiz_ratios.push_back (1.0 / 3.0);
-                horiz_ratios.push_back (2.0 / 3.0);
-                vert_ratios.push_back (1.0 / 3.0);
-                vert_ratios.push_back (2.0 / 3.0);
-            } else if (!strncmp(cparams.guide.data(), "Harmonic means", 14)) {
-                horiz_ratios.push_back (1.0 - 0.618);
-                horiz_ratios.push_back (0.618);
-                vert_ratios.push_back (0.618);
-                vert_ratios.push_back (1.0 - 0.618);
-            } else if (cparams.guide == "Grid") {
-                // To have even distribution, normalize it a bit
-                const int longSideNumLines = 10;
+            switch (cparams.guide) {
+                case rtengine::procparams::CropParams::Guide::NONE:
+                case rtengine::procparams::CropParams::Guide::FRAME:
+                case rtengine::procparams::CropParams::Guide::RULE_OF_DIAGONALS:
+                case rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_1:
+                case rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_2: {
+                    break;
+                }
 
-                int w = rectx2 - rectx1, h = recty2 - recty1;
+                case rtengine::procparams::CropParams::Guide::RULE_OF_THIRDS: {
+                    horiz_ratios.push_back (1.0 / 3.0);
+                    horiz_ratios.push_back (2.0 / 3.0);
+                    vert_ratios.push_back (1.0 / 3.0);
+                    vert_ratios.push_back (2.0 / 3.0);
+                    break;
+                }
 
-                if (w > longSideNumLines && h > longSideNumLines) {
-                    if (w > h) {
-                        for (int i = 1; i < longSideNumLines; i++) {
-                            vert_ratios.push_back ((double)i / longSideNumLines);
-                        }
+                case rtengine::procparams::CropParams::Guide::HARMONIC_MEANS: {
+                    horiz_ratios.push_back (1.0 - 0.618);
+                    horiz_ratios.push_back (0.618);
+                    vert_ratios.push_back (0.618);
+                    vert_ratios.push_back (1.0 - 0.618);
+                    break;
+                }
 
-                        int shortSideNumLines = (int)round(h * (double)longSideNumLines / w);
+                case rtengine::procparams::CropParams::Guide::GRID: {
+                    // To have even distribution, normalize it a bit
+                    const int longSideNumLines = 10;
 
-                        for (int i = 1; i < shortSideNumLines; i++) {
-                            horiz_ratios.push_back ((double)i / shortSideNumLines);
-                        }
-                    } else {
-                        for (int i = 1; i < longSideNumLines; i++) {
-                            horiz_ratios.push_back ((double)i / longSideNumLines);
-                        }
+                    int w = rectx2 - rectx1, h = recty2 - recty1;
 
-                        int shortSideNumLines = (int)round(w * (double)longSideNumLines / h);
+                    if (w > longSideNumLines && h > longSideNumLines) {
+                        if (w > h) {
+                            for (int i = 1; i < longSideNumLines; i++) {
+                                vert_ratios.push_back ((double)i / longSideNumLines);
+                            }
 
-                        for (int i = 1; i < shortSideNumLines; i++) {
-                            vert_ratios.push_back ((double)i / shortSideNumLines);
+                            int shortSideNumLines = (int)round(h * (double)longSideNumLines / w);
+
+                            for (int i = 1; i < shortSideNumLines; i++) {
+                                horiz_ratios.push_back ((double)i / shortSideNumLines);
+                            }
+                        } else {
+                            for (int i = 1; i < longSideNumLines; i++) {
+                                horiz_ratios.push_back ((double)i / longSideNumLines);
+                            }
+
+                            int shortSideNumLines = (int)round(w * (double)longSideNumLines / h);
+
+                            for (int i = 1; i < shortSideNumLines; i++) {
+                                vert_ratios.push_back ((double)i / shortSideNumLines);
+                            }
                         }
                     }
+                    break;
                 }
-            } else if (cparams.guide == "ePassport") {
-                /* Official measurements do not specify exact ratios, just min/max measurements within which the eyes and chin-crown distance must lie. I averaged those measurements to produce these guides.
-                 * The first horizontal guide is for the crown, the second is roughly for the nostrils, the third is for the chin.
-                 * http://www.homeoffice.gov.uk/agencies-public-bodies/ips/passports/information-photographers/
-                 * "(...) the measurement of the face from the bottom of the chin to the crown (ie the top of the head, not the top of the hair) is between 29mm and 34mm."
-                 */
-                horiz_ratios.push_back (7.0 / 45.0);
-                horiz_ratios.push_back (26.0 / 45.0);
-                horiz_ratios.push_back (37.0 / 45.0);
-                vert_ratios.push_back (0.5);
+
+                case rtengine::procparams::CropParams::Guide::EPASSPORT: {
+                    /* Official measurements do not specify exact ratios, just min/max measurements within which the eyes and chin-crown distance must lie. I averaged those measurements to produce these guides.
+                     * The first horizontal guide is for the crown, the second is roughly for the nostrils, the third is for the chin.
+                     * http://www.homeoffice.gov.uk/agencies-public-bodies/ips/passports/information-photographers/
+                     * "(...) the measurement of the face from the bottom of the chin to the crown (ie the top of the head, not the top of the hair) is between 29mm and 34mm."
+                     */
+                    horiz_ratios.push_back (7.0 / 45.0);
+                    horiz_ratios.push_back (26.0 / 45.0);
+                    horiz_ratios.push_back (37.0 / 45.0);
+                    vert_ratios.push_back (0.5);
+                    break;
+                }
+
+                case rtengine::procparams::CropParams::Guide::CENTERED_SQUARE: {
+                    const double w = rectx2 - rectx1, h = recty2 - recty1;
+                    double ratio = w / h;
+                    if (ratio < 1.0) {
+                        ratio = 1.0 / ratio;
+                        horiz_ratios.push_back((ratio - 1.0) / (2.0 * ratio));
+                        horiz_ratios.push_back(1.0 - (ratio - 1.0) / (2.0 * ratio));
+                    } else {
+                        vert_ratios.push_back((ratio - 1.0) / (2.0 * ratio));
+                        vert_ratios.push_back(1.0 - (ratio - 1.0) / (2.0 * ratio));
+                    }
+                    break;
+                }
             }
 
             // Horizontals
@@ -385,7 +423,7 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
                 ds.resize (0);
                 cr->set_dash (ds, 0);
             }
-        } else if (cparams.guide == "Rule of diagonals") {
+        } else if (cparams.guide == rtengine::procparams::CropParams::Guide::RULE_OF_DIAGONALS) {
             double corners_from[4][2];
             double corners_to[4][2];
             int mindim = min(rectx2 - rectx1, recty2 - recty1);
@@ -421,9 +459,12 @@ void drawCrop (Cairo::RefPtr<Cairo::Context> cr, int imx, int imy, int imw, int 
                 ds.resize (0);
                 cr->set_dash (ds, 0);
             }
-        } else if (cparams.guide == "Golden Triangle 1" || cparams.guide == "Golden Triangle 2") {
+        } else if (
+            cparams.guide == rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_1
+            || cparams.guide == rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_2
+        ) {
             // main diagonal
-            if(cparams.guide == "Golden Triangle 2") {
+            if(cparams.guide == rtengine::procparams::CropParams::Guide::GOLDEN_TRIANGLE_2) {
                 std::swap(rectx1, rectx2);
             }
 

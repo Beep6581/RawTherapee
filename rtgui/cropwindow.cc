@@ -1470,10 +1470,10 @@ void CropWindow::expose (Cairo::RefPtr<Cairo::Context> cr)
         if (state == SNormal) {
             switch (options.cropGuides) {
             case Options::CROP_GUIDE_NONE:
-                cropParams.guide = "None";
+                cropParams.guide = procparams::CropParams::Guide::NONE;
                 break;
             case Options::CROP_GUIDE_FRAME:
-                cropParams.guide = "Frame";
+                cropParams.guide = procparams::CropParams::Guide::FRAME;
                 break;
             default:
                 break;

@@ -1799,6 +1799,8 @@ PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA correction
 PREFERENCES_CHUNKSIZE_RAW_RCD;RCD demosaic
 PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans demosaic
 PREFERENCES_CHUNKSIZE_RGB;RGB processing
+PREFERENCES_CIE;Ciecam
+PREFERENCES_CIEARTIF;Avoid artifacts
 PREFERENCES_CLIPPINGIND;Clipping Indication
 PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs
@@ -2155,7 +2157,7 @@ TP_COLORAPP_CONTRAST_TOOLTIP;Contrast (J) in CIECAM02/16 is based on lightness, 
 TP_COLORAPP_CURVEEDITOR1;Tone curve 1
 TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L* (L*a*b*) before CIECAM02/16.\nIf the "CIECAM02/16 output histograms in curves" checkbox is enabled, shows the histogram of J after CIECAM02/16.\n\nJ is not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel.
 TP_COLORAPP_CURVEEDITOR2;Tone curve 2
-TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the second exposure tone curve.
+TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the first J(J) tone curve.
 TP_COLORAPP_CURVEEDITOR3;Color curve
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM02/16.\nIf the "CIECAM02/16 output histograms in curves" checkbox is enabled, shows the histogram of C, S or M after CIECAM02/16.\n\nC, S and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
 TP_COLORAPP_DATACIE;CIECAM02/16 output histograms in curves
@@ -2284,6 +2286,7 @@ TP_COLORTONING_TWOBY;Special a* and b*
 TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard chroma:\nLinear response, a* = b*.\n\nSpecial chroma:\nLinear response, a* = b*, but unbound - try under the diagonal.\n\nSpecial a* and b*:\nLinear response unbound with separate curves for a* and b*. Intended for special effects.\n\nSpecial chroma 2 colors:\nMore predictable.
 TP_COLORTONING_TWOSTD;Standard chroma
 TP_CROP_FIXRATIO;Lock ratio
+TP_CROP_GTCENTEREDSQUARE;Centered square
 TP_CROP_GTDIAGONALS;Rule of Diagonals
 TP_CROP_GTEPASSPORT;Biometric Passport
 TP_CROP_GTFRAME;Frame
