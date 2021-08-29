@@ -1842,7 +1842,7 @@ Camera constants:
     },
 
     { // Quality A, white levels and PDAF lines measured by Yann Leprince #5851
-        "make_model" : "Nikon Z 50",
+        "make_model" : [ "Nikon Z 50", "Nikon Z fc" ],
         "dcraw_matrix" : [11640, -4829, -1079, -5107, 13006, 2325, -972, 1711, 7380], // Adobe DNG Converter 12.2.1 ColorMatrix2 (D65)
         "ranges": {
             "white": [
