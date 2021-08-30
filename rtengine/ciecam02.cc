@@ -34,6 +34,8 @@
 #define Jzazbz_p (1.7*2523/32.0)
 #define Jzazbz_d (-0.56)
 #define Jzazbz_d0 (1.6295499532821566e-11)
+#define Jzazbz_ni (16384.0/2610.0)
+#define Jzazbz_pi (32.0/4289.1)
 
 
 
@@ -514,12 +516,12 @@ void Ciecam02::jzczhzxyz (double &x, double &y, double &z, double jz, double az,
     Sp = Iz - 0.0960192420263189 * az - 0.811891896056039 * bz;
     //I change optionnaly 10000 for pl function of la(absolute luminance) default 10000
    
-    tmp = pow(Lp, 1. / Jzazbz_p);
-    L = pl * pow(std::max((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2),0.), 1. / Jzazbz_n);
-    tmp = pow(Mp, 1. / Jzazbz_p);
-    M = pl * pow(std::max((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), 0.), 1. / Jzazbz_n);
-    tmp = pow(Sp, 1. / Jzazbz_p);
-    S = pl * pow(std::max((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), 0.), 1. / Jzazbz_n);
+    tmp = pow(Lp, Jzazbz_pi);
+    L = pl * pow(std::max((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2),0.), Jzazbz_ni);
+    tmp = pow(Mp, Jzazbz_pi);
+    M = pl * pow(std::max((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), 0.), Jzazbz_ni);
+    tmp = pow(Sp, Jzazbz_pi);
+    S = pl * pow(std::max((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), 0.), Jzazbz_ni);
         
     Xp = 1.9242264357876067 * L - 1.0047923125953657 * M + 0.0376514040306180 * S;
     Yp = 0.3503167620949991 * L + 0.7264811939316552 * M - 0.0653844229480850 * S;
