@@ -747,7 +747,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
         const bool hasColCurve1 = bool (customColCurve1);
         const bool t1L = hasColCurve1 && curveMode == ColorAppearanceParams::TcMode::LIGHT;
 
-//        const ColorAppearanceParams::TcMode curveMode2 = params->colorappearance.curveMode2;
+        const ColorAppearanceParams::TcMode curveMode2 = params->colorappearance.curveMode2;
         const bool hasColCurve2 = bool (customColCurve2);
 
         const ColorAppearanceParams::CtcMode curveMode3 = params->colorappearance.curveMode3;
@@ -1129,7 +1129,28 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     Qpro = Q;
                     Mpro = M;
                     spro = s;
-
+                    bool jp = false;
+                    if ((hasColCurve1) && (curveMode == ColorAppearanceParams::TcMode::BRIGHT)) {
+                        jp = true;
+                        float Qq = Qpro * coefQ;
+                        float Qold = Qpro;
+                        const Brightcurve& userColCurveB1 = static_cast<const Brightcurve&>(customColCurve1);
+                        userColCurveB1.Apply(Qq);
+                        Qq = Qq / coefQ;
+                        Qpro = 0.2f * (Qq - Qold) + Qold;
+                    }
+                    if ((hasColCurve2) && (curveMode2 == ColorAppearanceParams::TcMode::BRIGHT)) {
+                        jp = true;
+                        float Qq2 = Qpro * coefQ;
+                        float Qold2 = Qpro;
+                        const Brightcurve& userColCurveB2 = static_cast<const Brightcurve&>(customColCurve2);
+                        userColCurveB2.Apply(Qq2);
+                        Qq2 = Qq2 / coefQ;
+                        Qpro = 0.2f * (Qq2 - Qold2) + Qold2;
+                        }
+                    if(jp) {
+                        Jpro = SQR((10.f * Qpro) / wh);
+                    }
                     // we cannot have all algorithms with all chroma curves
                     if (alg == 0) {
                         Jpro = CAMBrightCurveJ[Jpro * 327.68f]; //lightness CIECAM02 + contrast
@@ -1216,8 +1237,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         }
                     }
 
-                    if (hasColCurve1) {//curve 1 with Lightness and Brightness
-                     //   if (curveMode == ColorAppearanceParams::TcMode::LIGHT) {
+                    if (hasColCurve1 && (curveMode == ColorAppearanceParams::TcMode::LIGHT)) {
                             float Jj = (float) Jpro * 327.68f;
                             float Jold = Jj;
                             float Jold100 = (float) Jpro;
@@ -1246,52 +1266,9 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             if (Jpro < 1.f) {
                                 Jpro = 1.f;
                             }
-                      //  } 
-                        /* else if (curveMode == ColorAppearanceParams::TcMode::BRIGHT) {
-                            //attention! Brightness curves are open - unlike Lightness or Lab or RGB==> rendering  and algorithms will be different
-                            float coef = ((aw + 4.f) * (4.f / c)) / 100.f;
-                            float Qanc = Qpro;
-                            float Qq = (float) Qpro * 327.68f * (1.f / coef);
-                            float Qold100 = (float) Qpro / coef;
-
-                            float Qold = Qq;
-                            float redu = 20.f;
-                            float reduc = 1.f;
-
-                            const Brightcurve& userColCurveB1 = static_cast<const Brightcurve&>(customColCurve1);
-                            userColCurveB1.Apply(Qq);
-
-                            if (Qq > Qold) {
-                                if (Qq < 65535.f)  {
-                                    if (Qold < 327.68f * redu) {
-                                        Qq = 0.25f * (Qq - Qold) + Qold;    //divide sensibility
-                                    } else            {
-                                        reduc = LIM((100.f - Qold100) / (100.f - redu), 0.f, 1.f);
-                                        Qq = 0.25f * reduc * (Qq - Qold) + Qold; //reduct sensibility in highlights
-                                    }
-                                }
-                            } else if (Qq > 10.f) {
-                                Qq = 0.5f * (Qq - Qold) + Qold;
-                            } else if (Qq >= 0.f) {
-                                Qq = 0.7f * (Qq - Qold) + Qold;    // not zero ==>artifacts
-                            }
-
-                            if (Qold == 0.f) {
-                                Qold = 0.001f;
-                            }
-
-                            Qpro = Qanc * (Qq / Qold);
-                            Jpro = SQR ((10.f * Qpro) / wh);
-
-                            if (Jpro < 1.f) {
-                                Jpro = 1.f;
-                            }
-                        }
-                        */
                     }
 
-                    if (hasColCurve2) {//curve 2 with Lightness and Brightness
-                      //  if (curveMode2 == ColorAppearanceParams::TcMode::LIGHT) {
+                    if (hasColCurve2 &&  (curveMode2 == ColorAppearanceParams::TcMode::LIGHT)) {
                             float Jj = (float) Jpro * 327.68f;
                             float Jold = Jj;
                             float Jold100 = (float) Jpro;
@@ -1328,61 +1305,6 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             if (Jpro < 1.f) {
                                 Jpro = 1.f;
                             }
-
-                    //    } 
-                        /*
-                        else if (curveMode2 == ColorAppearanceParams::TcMode::BRIGHT) { //
-                            float Qanc = Qpro;
-
-                            float coef = ((aw + 4.f) * (4.f / c)) / 100.f;
-                            float Qq = (float) Qpro * 327.68f * (1.f / coef);
-                            float Qold100 = (float) Qpro / coef;
-
-                            float Qold = Qq;
-                            float redu = 20.f;
-                            float reduc = 1.f;
-
-                            const Brightcurve& userColCurveB2 = static_cast<const Brightcurve&>(customColCurve2);
-                            userColCurveB2.Apply(Qq);
-
-                            if (Qq > Qold) {
-                                if (Qq < 65535.f)  {
-                                    if (Qold < 327.68f * redu) {
-                                        Qq = 0.25f * (Qq - Qold) + Qold;    //divide sensibility
-                                    } else            {
-                                        reduc = LIM((100.f - Qold100) / (100.f - redu), 0.f, 1.f);
-                                        Qq = 0.25f * reduc * (Qq - Qold) + Qold; //reduct sensibility in highlights
-                                    }
-                                }
-                            } else if (Qq > 10.f) {
-                                Qq = 0.5f * (Qq - Qold) + Qold;
-                            } else if (Qq >= 0.f) {
-                                Qq = 0.7f * (Qq - Qold) + Qold;    // not zero ==>artifacts
-                            }
-
-                            if (Qold == 0.f) {
-                                Qold = 0.001f;
-                            }
-
-                            Qpro = Qanc * (Qq / Qold);
-                            Jpro = SQR ((10.f * Qpro) / wh);
-
-                            if (t1L) { //to workaround the problem if we modify curve1-lightnees after curve2 brightness(the cat that bites its own tail!) in fact it's another type of curve only for this case
-                                coef = 2.f; //adapt Q to J approximation
-                                Qq = (float) Qpro * coef;
-                                Qold = Qq;
-                                const Lightcurve& userColCurveJ1 = static_cast<const Lightcurve&>(customColCurve1);
-                                userColCurveJ1.Apply(Qq);
-                                Qq = 0.05f * (Qq - Qold) + Qold; //approximative adaptation
-                                Qpro = (float)(Qq / coef);
-                                Jpro = 100.f * (Qpro * Qpro) / ((4.0f / c) * (4.0f / c) * (aw + 4.0f) * (aw + 4.0f));
-                            }
-
-                            if (Jpro < 1.f) {
-                                Jpro = 1.f;
-                            }
-                        }
-                        */
                     }
 
                     if (hasColCurve3) {//curve 3 with chroma saturation colorfullness
