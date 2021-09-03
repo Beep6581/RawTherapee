@@ -191,7 +191,7 @@ enum class BlurType {
     void moyeqt(Imagefloat* working, float &moyS, float &eqty);
 
     void luminanceCurve(LabImage* lold, LabImage* lnew, const LUTf &curve);
-    void ciecamloc_02float(int sp, LabImage* lab, int call, int sk, const LocCHCurve& locchCurvejz, const LocHHCurve& lochhCurve, const LocLHCurve& loclhCurve, bool HHcurvejz, bool CHcurvejz, bool LHcurvejz);
+    void ciecamloc_02float(int sp, LabImage* lab, int call, int sk, const LUTf& cielocalcurve, bool localcieutili, const LocCHCurve& locchCurvejz, const LocHHCurve& lochhCurve, const LocLHCurve& loclhCurve, bool HHcurvejz, bool CHcurvejz, bool LHcurvejz);
 
     void ciecam_02float(CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const procparams::ProcParams* params,
                         const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3,
