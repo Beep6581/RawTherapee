@@ -837,7 +837,7 @@ void ColorAppearance::neutral_pressed ()
     wbmodel->set_active (0);
     illum->set_active (2);
     toneCurveMode->set_active (0);
-    toneCurveMode2->set_active (0);
+    toneCurveMode2->set_active (1);
     toneCurveMode3->set_active (0);
     shape->reset();
     shape2->reset();
@@ -1460,7 +1460,7 @@ void ColorAppearance::catmethodChanged()
         badpixsl->resetValue (false);
         illum->set_active (2);
         toneCurveMode->set_active (0);
-        toneCurveMode2->set_active (0);
+        toneCurveMode2->set_active (1);
         toneCurveMode3->set_active (0);
         shape->reset();
         shape2->reset();
@@ -1728,7 +1728,7 @@ void ColorAppearance::presetcat02pressed () //keep in case of...
     wbmodel->set_active (0);
     illum->set_active (2);
     toneCurveMode->set_active (0);
-    toneCurveMode2->set_active (0);
+    toneCurveMode2->set_active (1);
     toneCurveMode3->set_active (0);
     shape->reset();
     shape2->reset();
