@@ -992,6 +992,8 @@ public:
         bool rstprotectcie;
         bool chromlcie;
         bool huecie;
+        bool toneMethodcie;
+        bool ciecurve;
         bool chromjzcie;
         bool huejzcie;
         bool HHcurvejz;

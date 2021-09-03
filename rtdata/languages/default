@@ -1355,6 +1355,8 @@ HISTORY_MSG_1102;Local - Jz PQ remap
 HISTORY_MSG_1103;Local - Jz JzHz Curve
 HISTORY_MSG_1104;Local - Sharp gamma
 HISTORY_MSG_1105;Local - Vibrance gamma
+HISTORY_MSG_1106;Local - CIECAM Tone method
+HISTORY_MSG_1107;Local - CIECAM Tone curve
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2764,6 +2766,7 @@ TP_LOCALLAB_CURVENH;Super
 TP_LOCALLAB_CURVENHSU;Combined HueChroma (experimental)
 TP_LOCALLAB_CURVENSOB2;Combined HueChroma + Contrast threshold (experimental)
 TP_LOCALLAB_CURVNONE;Disable curves
+TP_LOCALLAB_CURVES_CIE;Tone curve
 TP_LOCALLAB_DARKRETI;Darkness
 TP_LOCALLAB_DEHAFRA;Dehaze
 TP_LOCALLAB_DEHAZ;Strength

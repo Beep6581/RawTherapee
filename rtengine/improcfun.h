@@ -320,6 +320,7 @@ enum class BlurType {
                 const LUTf& lmasklclocalcurve, bool localmasklcutili,
                 const LUTf& lmaskloglocalcurve, bool localmasklogutili,
                 const LUTf& lmasklocal_curve, bool localmask_utili,
+                const LUTf& cielocalcurve, bool localcieutili, 
                 
                 const LocCCmaskCurve& locccmasCurve, bool lcmasutili, const LocLLmaskCurve& locllmasCurve, bool llmasutili, const LocHHmaskCurve& lochhmasCurve, bool lhmasutili, const LocHHmaskCurve& llochhhmasCurve, bool lhhmasutili,
                 const LocCCmaskCurve& locccmasexpCurve, bool lcmasexputili, const LocLLmaskCurve& locllmasexpCurve, bool llmasexputili, const LocHHmaskCurve& lochhmasexpCurve, bool lhmasexputili, 

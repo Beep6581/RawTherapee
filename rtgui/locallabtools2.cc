@@ -7431,6 +7431,10 @@ Locallabcie::Locallabcie():
     rstprotectcie(Gtk::manage(new Adjuster(M("TP_COLORAPP_RSTPRO"), 0., 100., 0.1, 50.))),
     chromlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROML"), -100., 100., 0.5, 0.))),
     huecie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HUECIE"), -100., 100., 0.1, 0.))),
+    cieCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_CURVES_CIE"))),
+    toneMethodcie(Gtk::manage(new MyComboBoxText())),
+    shapecie(static_cast<DiagonalCurveEditor*>(cieCurveEditorG->addCurve(CT_Diagonal, "", toneMethodcie))),
+
     chromjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCHROM"), -100., 100., 0.5, 0.))),
     huejzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZHUECIE"), -100., 100., 0.1, 0.))),
     HjzCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
@@ -7575,6 +7579,23 @@ Locallabcie::Locallabcie():
 
     chromlcie->setAdjusterListener(this);
     huecie->setAdjusterListener(this);
+
+    std::vector<GradientMilestone> milestone;
+    milestone.push_back ( GradientMilestone (0., 0., 0., 0.) );
+    milestone.push_back ( GradientMilestone (1., 1., 1., 1.) );
+
+    cieCurveEditorG->setCurveListener(this);
+    toneMethodcie->append (M ("TP_COLORAPP_TCMODE_LIGHTNESS"));
+    toneMethodcie->append (M ("TP_COLORAPP_TCMODE_BRIGHTNESS"));
+    toneMethodcie->set_active (0);
+    toneMethodcieConn = toneMethodcie->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::toneMethodcieChanged));
+    shapecie->setResetCurve(DiagonalCurveType(defSpot.ciecurve.at(0)), defSpot.ciecurve);
+    shapecie->setBottomBarBgGradient (milestone);
+    shapecie->setLeftBarBgGradient (milestone);
+    cieCurveEditorG->curveListComplete();
+
+
+
     chromjzcie->setAdjusterListener(this);
     huejzcie->setAdjusterListener(this);
 
@@ -7662,6 +7683,7 @@ Locallabcie::Locallabcie():
     cieP11Box->pack_start(*chromlcie);
     cieP11Box->pack_start(*colorflcie);
     cieP11Box->pack_start(*huecie);
+    cieP11Box->pack_start(*cieCurveEditorG);
     expLcie->add(*cieP11Box, false);
     cieP1Box->pack_start(*expLcie, false, false);
     cie1Frame->add(*cieP1Box);
@@ -7682,6 +7704,8 @@ Locallabcie::Locallabcie():
 Locallabcie::~Locallabcie()
 {
     delete HjzCurveEditorG;
+    delete cieCurveEditorG;
+
 }
 void Locallabcie::setDefaultExpanderVisibility()
 {
@@ -7763,6 +7787,7 @@ void Locallabcie::disableListener()
     surroundcieconn.block (true);
     modecieconn.block (true);
     modecamconn.block (true);
+    toneMethodcieConn.block(true);
 }
 
 void Locallabcie::enableListener()
@@ -7775,6 +7800,7 @@ void Locallabcie::enableListener()
     surroundcieconn.block (false);
     modecieconn.block (false);
     modecamconn.block (false);
+    toneMethodcieConn.block(false);
 }
 
 void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
@@ -7813,6 +7839,12 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         } else if (spot.modecie == "dr") {
             modecie->set_active (3);
         }
+
+        if (spot.toneMethodcie == "one") {
+            toneMethodcie->set_active(0);
+        } else if (spot.toneMethodcie == "two") {
+            toneMethodcie->set_active(1);
+        }
         
         Autograycie->set_active(spot.Autogray);
         sourceGraycie->setValue(spot.sourceGraycie);
@@ -7838,6 +7870,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         } else if (spot.surroundcie == "ExtremelyDark") {
             surroundcie->set_active (3);
         }
+        shapecie->setCurve(spot.ciecurve);
 
         HHshapejz->setCurve(spot.HHcurvejz);
         CHshapejz->setCurve(spot.CHcurvejz);
@@ -7915,6 +7948,12 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.modecie = "dr";
         }
 
+        if (toneMethodcie->get_active_row_number() == 0) {
+            spot.toneMethodcie = "one";
+        } else if (toneMethodcie->get_active_row_number() == 1) {
+            spot.toneMethodcie = "two";
+        }
+
         spot.Autograycie = Autograycie->get_active();
         spot.jabcie = jabcie->get_active();
         spot.sourceGraycie = sourceGraycie->getValue();
@@ -7941,6 +7980,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.HHcurvejz = HHshapejz->getCurve();
         spot.CHcurvejz = CHshapejz->getCurve();
         spot.LHcurvejz = LHshapejz->getCurve();
+        spot.ciecurve = shapecie->getCurve();
 
         spot.saturlcie = saturlcie->getValue();
         spot.rstprotectcie = rstprotectcie->getValue();
@@ -7977,6 +8017,17 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
     }
 }
 
+void Locallabcie::toneMethodcieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvLocallabtoneMethodcie,
+                                   toneMethodcie->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+        }
+    }
+}
+
+
 void Locallabcie::curveChanged(CurveEditor* ce)
 {
     if (isLocActivated && exp->getEnabled()) {
@@ -7996,6 +8047,13 @@ void Locallabcie::curveChanged(CurveEditor* ce)
         if (ce == LHshapejz) {
             if (listener) {
                 listener->panelChanged(EvlocallabLHshapejz,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+            }
+        }
+
+        if (ce == shapecie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshapecie,
                                        M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
             }
         }

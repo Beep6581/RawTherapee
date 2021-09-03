@@ -1689,6 +1689,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).rstprotectcie = locallab.spots.at(j).rstprotectcie && pSpot.rstprotectcie == otherSpot.rstprotectcie;
                 locallab.spots.at(j).chromlcie = locallab.spots.at(j).chromlcie && pSpot.chromlcie == otherSpot.chromlcie;
                 locallab.spots.at(j).huecie = locallab.spots.at(j).huecie && pSpot.huecie == otherSpot.huecie;
+                locallab.spots.at(j).toneMethodcie = locallab.spots.at(j).toneMethodcie && pSpot.toneMethodcie == otherSpot.toneMethodcie;
+                locallab.spots.at(j).ciecurve = locallab.spots.at(j).ciecurve && pSpot.ciecurve == otherSpot.ciecurve;
                 locallab.spots.at(j).chromjzcie = locallab.spots.at(j).chromjzcie && pSpot.chromjzcie == otherSpot.chromjzcie;
                 locallab.spots.at(j).huejzcie = locallab.spots.at(j).huejzcie && pSpot.huejzcie == otherSpot.huejzcie;
                 locallab.spots.at(j).HHcurvejz = locallab.spots.at(j).HHcurvejz && pSpot.HHcurvejz == otherSpot.HHcurvejz;
@@ -5700,12 +5702,20 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).huecie = mods.locallab.spots.at(i).huecie;
         }
 
+        if (locallab.spots.at(i).toneMethodcie) {
+            toEdit.locallab.spots.at(i).toneMethodcie = mods.locallab.spots.at(i).toneMethodcie;
+        }
+
         if (locallab.spots.at(i).chromjzcie) {
             toEdit.locallab.spots.at(i).chromjzcie = mods.locallab.spots.at(i).chromjzcie;
         }
 
         if (locallab.spots.at(i).huejzcie) {
             toEdit.locallab.spots.at(i).huejzcie = mods.locallab.spots.at(i).huejzcie;
+        }
+
+        if (locallab.spots.at(i).ciecurve) {
+            toEdit.locallab.spots.at(i).ciecurve = mods.locallab.spots.at(i).ciecurve;
         }
 
         if (locallab.spots.at(i).HHcurvejz) {
@@ -7723,6 +7733,8 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     rstprotectcie(v),
     chromlcie(v),
     huecie(v),
+    toneMethodcie(v),
+    ciecurve(v),
     chromjzcie(v),
     huejzcie(v),
     HHcurvejz(v),
@@ -8367,6 +8379,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     rstprotectcie = v;
     chromlcie = v;
     huecie = v;
+    toneMethodcie = v;
+    ciecurve = v;
     chromjzcie = v;
     huejzcie = v;
     HHcurvejz = v;
