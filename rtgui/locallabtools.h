@@ -1562,6 +1562,9 @@ private:
     CurveEditorGroup* const cieCurveEditorG;
     MyComboBoxText* const toneMethodcie;
     DiagonalCurveEditor* const shapecie;
+    CurveEditorGroup* const cieCurveEditorG2;
+    MyComboBoxText* const toneMethodcie2;
+    DiagonalCurveEditor* const shapecie2;
     
     Adjuster* const chromjzcie;
     Adjuster* const huejzcie;
@@ -1579,7 +1582,7 @@ private:
     MyComboBoxText*  const surroundcie;
     Gtk::Box* const surrHBoxcie;
     
-    sigc::connection AutograycieConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, toneMethodcieConn;
+    sigc::connection AutograycieConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, toneMethodcieConn, toneMethodcieConn2;
     
 public:
     Locallabcie();
@@ -1601,6 +1604,7 @@ public:
     void modecamChanged();
     void curveChanged(CurveEditor* ce) override;
     void toneMethodcieChanged();
+    void toneMethodcie2Changed();
     void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg);
 
 private:

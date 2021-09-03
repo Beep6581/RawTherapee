@@ -4296,6 +4296,14 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0,
         1.0
     },
+    toneMethodcie2("onec"),
+    ciecurve2{
+        static_cast<double>(DCT_NURBS),
+        0.0,
+        0.0,
+        1.0,
+        1.0
+    },
     chromjzcie(0.),
     huejzcie(0.),
     HHcurvejz{
@@ -5032,6 +5040,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && huecie == other.huecie
         && toneMethodcie == other.toneMethodcie
         && ciecurve == other.ciecurve
+        && toneMethodcie2 == other.toneMethodcie2
+        && ciecurve2 == other.ciecurve2
         && chromjzcie == other.chromjzcie
         && huejzcie == other.huejzcie
         && HHcurvejz == other.HHcurvejz
@@ -6767,6 +6777,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->huecie, "Locallab", "Huecie_" + index_str, spot.huecie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->toneMethodcie, "Locallab", "ToneMethodcie_" + index_str, spot.toneMethodcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ciecurve, "Locallab", "Ciecurve_" + index_str, spot.ciecurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->toneMethodcie2, "Locallab", "ToneMethodcie2_" + index_str, spot.toneMethodcie2, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->ciecurve2, "Locallab", "Ciecurve2_" + index_str, spot.ciecurve2, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chromjzcie, "Locallab", "Chromjzcie_" + index_str, spot.chromjzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->huejzcie, "Locallab", "Huejzcie_" + index_str, spot.huejzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->HHcurvejz, "Locallab", "HHCurvejz_" + index_str, spot.HHcurvejz, keyFile);
@@ -8878,6 +8890,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Huecie_" + index_str, pedited, spot.huecie, spotEdited.huecie);
                 assignFromKeyfile(keyFile, "Locallab", "ToneMethodcie_" + index_str, pedited, spot.toneMethodcie, spotEdited.toneMethodcie);
                 assignFromKeyfile(keyFile, "Locallab", "Ciecurve_" + index_str, pedited, spot.ciecurve, spotEdited.ciecurve);
+                assignFromKeyfile(keyFile, "Locallab", "ToneMethodcie2_" + index_str, pedited, spot.toneMethodcie2, spotEdited.toneMethodcie2);
+                assignFromKeyfile(keyFile, "Locallab", "Ciecurve2_" + index_str, pedited, spot.ciecurve2, spotEdited.ciecurve2);
                 assignFromKeyfile(keyFile, "Locallab", "Chromjzcie_" + index_str, pedited, spot.chromjzcie, spotEdited.chromjzcie);
                 assignFromKeyfile(keyFile, "Locallab", "Huejzcie_" + index_str, pedited, spot.huejzcie, spotEdited.huejzcie);
                 assignFromKeyfile(keyFile, "Locallab", "HHCurvejz_" + index_str, pedited, spot.HHcurvejz, spotEdited.HHcurvejz);

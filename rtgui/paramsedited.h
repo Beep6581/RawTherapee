@@ -994,6 +994,8 @@ public:
         bool huecie;
         bool toneMethodcie;
         bool ciecurve;
+        bool toneMethodcie2;
+        bool ciecurve2;
         bool chromjzcie;
         bool huejzcie;
         bool HHcurvejz;

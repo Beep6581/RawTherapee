@@ -1601,6 +1601,8 @@ struct LocallabParams {
         double huecie;
         Glib::ustring toneMethodcie;
         std::vector<double> ciecurve;
+        Glib::ustring toneMethodcie2;
+        std::vector<double> ciecurve2;
         double chromjzcie;
         double huejzcie;
         std::vector<double> HHcurvejz;
