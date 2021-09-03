@@ -533,8 +533,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     curveEditorG->setCurveListener (this);
     curveEditorG->setTooltip (M ("TP_COLORAPP_CURVEEDITOR1_TOOLTIP"));
 
- //   shape = static_cast<DiagonalCurveEditor*> (curveEditorG->addCurve (CT_Diagonal, "", toneCurveMode));
-    shape = static_cast<DiagonalCurveEditor*> (curveEditorG->addCurve (CT_Diagonal, "J(J)"));
+    shape = static_cast<DiagonalCurveEditor*> (curveEditorG->addCurve (CT_Diagonal, "", toneCurveMode));
+ //   shape = static_cast<DiagonalCurveEditor*> (curveEditorG->addCurve (CT_Diagonal, "J(J)"));
 
 
 
@@ -549,8 +549,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     curveEditorG2 = new CurveEditorGroup (options.lastToneCurvesDir, M ("TP_COLORAPP_CURVEEDITOR2"));
     curveEditorG2->setCurveListener (this);
 
-  //  shape2 = static_cast<DiagonalCurveEditor*> (curveEditorG2->addCurve (CT_Diagonal, "", toneCurveMode2));
-    shape2 = static_cast<DiagonalCurveEditor*> (curveEditorG2->addCurve (CT_Diagonal, "J(J)"));
+    shape2 = static_cast<DiagonalCurveEditor*> (curveEditorG2->addCurve (CT_Diagonal, "", toneCurveMode2));
+//    shape2 = static_cast<DiagonalCurveEditor*> (curveEditorG2->addCurve (CT_Diagonal, "J(J)"));
 
     tcmode2conn = toneCurveMode2->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::curveMode2Changed), true );
 

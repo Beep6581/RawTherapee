@@ -1427,7 +1427,7 @@ ColorAppearanceParams::ColorAppearanceParams() :
        DCT_Linear
     },
     curveMode(TcMode::LIGHT),
-    curveMode2(TcMode::LIGHT),
+    curveMode2(TcMode::BRIGHT),
     curveMode3(CtcMode::CHROMA),
     complexmethod("normal"),
     modelmethod("16"),
