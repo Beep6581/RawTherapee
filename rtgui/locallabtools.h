@@ -59,7 +59,7 @@ protected:
     // LocallabTool parameters
     bool needMode;
     bool isLocActivated;
-    Glib::ustring spotName;
+    const Glib::ustring *spotNameSource;
     LocallabToolListener* locToolListener;
 
     // LocallabTool generic widgets
@@ -69,6 +69,8 @@ protected:
     sigc::connection enaExpConn, complexityConn;
 
     IdleRegister idle_register;
+
+    Glib::ustring getSpotName() const;
 
 public:
     // Locallab tool constructor/destructor
@@ -98,10 +100,10 @@ public:
         isLocActivated = cond;
     }
 
-    // Setter for spot name
-    void setSpotName(const Glib::ustring &spotname)
+    // Setter for spot name source
+    void setSpotNameSource(const Glib::ustring *source)
     {
-        spotName = spotname;
+        spotNameSource = source;
     }
 
     // Setter for Locallab tool listener

@@ -34,6 +34,7 @@ public:
     virtual ~ControlPanelListener() {};
 
     virtual void resetToolMaskView() = 0;
+    virtual void spotNameChanged(const Glib::ustring &newName) = 0;
 };
 
 
