@@ -285,6 +285,7 @@ protected:
     LUTf lmaskloglocalcurve;
     LUTf lmasklocal_curve;
     LUTf cielocalcurve;
+    LUTf cielocalcurve2;
     
     LocretigainCurve locRETgainCurve;
     LocretitransCurve locRETtransCurve;

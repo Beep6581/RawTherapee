@@ -8505,6 +8505,8 @@ void Locallabcie::convertParamToNormal()
     LHshapejz->setCurve(defSpot.LHcurvejz);
     CHshapejz->setCurve(defSpot.CHcurvejz);
     HHshapejz->setCurve(defSpot.HHcurvejz);
+    shapecie->setCurve(defSpot.ciecurve);
+    shapecie2->setCurve(defSpot.ciecurve2);
     lightjzcie->setValue(defSpot.lightjzcie);
     contjzcie->setValue(defSpot.contjzcie);
     sigmoidldajzcie->setValue(defSpot.sigmoidldajzcie);

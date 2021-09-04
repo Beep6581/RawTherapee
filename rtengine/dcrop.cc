@@ -873,6 +873,7 @@ void Crop::update(int todo)
         auto& lmasklclocalcurve2 = parent->lmasklclocalcurve;
         auto& lmaskloglocalcurve2 = parent->lmaskloglocalcurve;
         auto& cielocalcurve2 = parent->cielocalcurve;
+        auto& cielocalcurve22 = parent->cielocalcurve2;
         auto& hltonecurveloc2 = parent->hltonecurveloc;
         auto& shtonecurveloc2 = parent->shtonecurveloc;
         auto& tonecurveloc2 = parent->tonecurveloc;
@@ -1008,6 +1009,7 @@ void Crop::update(int todo)
             const bool localmasklogutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).LmaskcurveL, lmaskloglocalcurve2, skip);
             const bool localmask_utili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmask_curve, lmasklocal_curve2, skip);
             const bool localcieutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).ciecurve, cielocalcurve2, skip);
+            const bool localcieutili2 = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).ciecurve2, cielocalcurve22, skip);
 
             double ecomp = params.locallab.spots.at(sp).expcomp;
             double black = params.locallab.spots.at(sp).black;
@@ -1071,6 +1073,7 @@ void Crop::update(int todo)
                         lmaskloglocalcurve2, localmasklogutili,
                         lmasklocal_curve2, localmask_utili, 
                         cielocalcurve2,localcieutili, 
+                        cielocalcurve22,localcieutili2, 
                         
                         locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                         locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
@@ -1142,6 +1145,7 @@ void Crop::update(int todo)
                         lmaskloglocalcurve2, localmasklogutili,
                         lmasklocal_curve2, localmask_utili, 
                         cielocalcurve2,localcieutili, 
+                        cielocalcurve22,localcieutili2, 
                         
                         locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili,lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili, 
                         locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
