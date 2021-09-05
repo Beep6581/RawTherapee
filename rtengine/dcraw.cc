@@ -4397,6 +4397,12 @@ void CLASS crop_masked_pixels()
       }
     }
   } else {
+    if (height + top_margin > raw_height) {
+      top_margin = raw_height - height;
+    }
+    if (width + left_margin > raw_width) {
+      left_margin = raw_width - width;
+    }
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif

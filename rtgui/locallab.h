@@ -103,20 +103,20 @@ private:
     LocallabToolList* const toollist;
 
     // Locallab tool widgets
-    LocallabColor* const expcolor;
-    LocallabExposure* const expexpose;
-    LocallabShadow* const expshadhigh;
-    LocallabVibrance* const expvibrance;
-    LocallabSoft* const expsoft;
-    LocallabBlur* const expblur;
-    LocallabTone* const exptonemap;
-    LocallabRetinex* const expreti;
-    LocallabSharp* const expsharp;
-    LocallabContrast* const expcontrast;
-    LocallabCBDL* const expcbdl;
-    LocallabLog* const explog;
-    LocallabMask* const expmask;
-    Locallabcie* const expcie;
+    LocallabColor expcolor;
+    LocallabExposure expexpose;
+    LocallabShadow expshadhigh;
+    LocallabVibrance expvibrance;
+    LocallabSoft expsoft;
+    LocallabBlur expblur;
+    LocallabTone exptonemap;
+    LocallabRetinex expreti;
+    LocallabSharp expsharp;
+    LocallabContrast expcontrast;
+    LocallabCBDL expcbdl;
+    LocallabLog explog;
+    LocallabMask expmask;
+    Locallabcie expcie;
 
     std::vector<LocallabTool*> locallabTools;
 
@@ -128,6 +128,8 @@ private:
 
     // Other widgets
     Gtk::Button* const resetshowButton;
+
+    Glib::ustring spotName;
 
 public:
     Locallab();
@@ -201,6 +203,7 @@ private:
 
     // ControlSpotListener function
     void resetToolMaskView() override;
+    void spotNameChanged(const Glib::ustring &newName) override;
 
     // LocallabToolListener function
     void resetOtherMaskView(LocallabTool* current) override;

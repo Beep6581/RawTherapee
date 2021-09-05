@@ -184,6 +184,14 @@ LocallabTool::~LocallabTool()
     idle_register.destroy();
 }
 
+Glib::ustring LocallabTool::getSpotName() const
+{
+    if (spotNameSource) {
+        return *spotNameSource;
+    }
+    return "";
+}
+
 void LocallabTool::addLocallabTool(bool raiseEvent)
 {
     exp->set_visible(true);
@@ -218,7 +226,7 @@ void LocallabTool::addLocallabTool(bool raiseEvent)
 
         if (listener) {
             listener->panelChanged(EvlocallabToolAdded,
-                                   toolName + " (" + escapeHtmlChars(spotName) + ")");
+                                   toolName + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -242,13 +250,13 @@ void LocallabTool::removeLocallabTool(bool raiseEvent)
         // Raise event if required refreshing image
         if (raiseEvent && listener) {
             listener->panelChanged(EvlocallabToolRemovedWithRefresh,
-                                   toolName + " (" + escapeHtmlChars(spotName) + ")");
+                                   toolName + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     } else {
         // Raise event if required without refreshing image
         if (raiseEvent && listener) {
             listener->panelChanged(EvlocallabToolRemovedWithoutRefresh,
-                                   toolName + " (" + escapeHtmlChars(spotName) + ")");
+                                   toolName + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -387,7 +395,7 @@ void LocallabTool::complexityModeChanged()
 
         if (listener && isLocActivated) {
             listener->panelChanged(EvlocallabcomplexityWithRefresh,
-                                   M("TP_LOCALLAB_MODE_SIMPLE") + " (" + escapeHtmlChars(spotName) + ")");
+                                   M("TP_LOCALLAB_MODE_SIMPLE") + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     } else if (complexity->get_active_row_number() == Normal) { // New selected mode is Normal one
         // Convert tool widget parameters
@@ -397,7 +405,7 @@ void LocallabTool::complexityModeChanged()
 
         if (listener && isLocActivated) {
             listener->panelChanged(EvlocallabcomplexityWithRefresh,
-                                   M("TP_LOCALLAB_MODE_NORMAL") + " (" + escapeHtmlChars(spotName) + ")");
+                                   M("TP_LOCALLAB_MODE_NORMAL") + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     } else if (complexity->get_active_row_number() == Expert) { // New selected mode is Expert one
         // Update GUI based on new mode
@@ -405,7 +413,7 @@ void LocallabTool::complexityModeChanged()
 
         if (listener && isLocActivated) {
             listener->panelChanged(EvlocallabcomplexityWithRefresh,
-                                   M("TP_LOCALLAB_MODE_EXPERT") + " (" + escapeHtmlChars(spotName) + ")");
+                                   M("TP_LOCALLAB_MODE_EXPERT") + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -1130,8 +1138,6 @@ void LocallabColor::read(const rtengine::procparams::ProcParams* pp, const Param
     if (index < (int)pp->locallab.spots.size()) {
         const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        spotName = spot.name; // Update spot name according to selected spot
-
         exp->set_visible(spot.visicolor);
         exp->setEnabled(spot.expcolor);
         complexity->set_active(spot.complexcolor);
@@ -1534,70 +1540,70 @@ void LocallabColor::adjusterChanged(Adjuster* a, double newval)
         if (a == lightness) {
             if (listener) {
                 listener->panelChanged(Evlocallablightness,
-                                       lightness->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lightness->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == gamc) {
             if (listener) {
                 listener->panelChanged(Evlocallabgamc,
-                                       gamc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       gamc->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == reparcol) {
             if (listener) {
                 listener->panelChanged(Evlocallabreparcol,
-                                       reparcol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       reparcol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == contrast) {
             if (listener) {
                 listener->panelChanged(Evlocallabcontrast,
-                                       contrast->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       contrast->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == chroma) {
             if (listener) {
                 listener->panelChanged(Evlocallabchroma,
-                                       chroma->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       chroma->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == strengthgrid) {
             if (listener) {
                 listener->panelChanged(EvLocallabLabstrengthgrid,
-                                       strengthgrid->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       strengthgrid->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sensi) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensi,
-                                       sensi->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sensi->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == structcol) {
             if (listener) {
                 listener->panelChanged(Evlocallabstructcol,
-                                       structcol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       structcol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == blurcolde) {
             if (listener) {
                 listener->panelChanged(Evlocallabblurcolde,
-                                       blurcolde->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       blurcolde->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == softradiuscol) {
             if (listener) {
                 listener->panelChanged(Evlocallabsoftradiuscol,
-                                       softradiuscol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       softradiuscol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -1605,28 +1611,28 @@ void LocallabColor::adjusterChanged(Adjuster* a, double newval)
             
             if (listener) {
                 listener->panelChanged(Evlocallabrecothresc,
-                                       recothresc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       recothresc->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lowthresc) {
             if (listener) {
                 listener->panelChanged(Evlocallablowthresc,
-                                       lowthresc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lowthresc->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == higthresc) {
             if (listener) {
                 listener->panelChanged(Evlocallabhigthresc,
-                                       higthresc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       higthresc->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == decayc) {
             if (listener) {
                 listener->panelChanged(Evlocallabdecayc,
-                                       decayc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       decayc->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -1634,126 +1640,126 @@ void LocallabColor::adjusterChanged(Adjuster* a, double newval)
         if (a == strcol) {
             if (listener) {
                 listener->panelChanged(Evlocallabstrcol,
-                                       strcol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       strcol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == strcolab) {
             if (listener) {
                 listener->panelChanged(Evlocallabstrcolab,
-                                       strcolab->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       strcolab->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == strcolh) {
             if (listener) {
                 listener->panelChanged(Evlocallabstrcolh,
-                                       strcolh->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       strcolh->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == angcol) {
             if (listener) {
                 listener->panelChanged(Evlocallabangcol,
-                                       angcol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       angcol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == mercol) {
             if (listener) {
                 listener->panelChanged(Evlocallabmercol,
-                                       mercol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       mercol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == opacol) {
             if (listener) {
                 listener->panelChanged(Evlocallabopacol,
-                                       opacol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       opacol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == conthrcol) {
             if (listener) {
                 listener->panelChanged(Evlocallabconthrcol,
-                                       conthrcol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       conthrcol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == merlucol) {
             if (listener) {
                 listener->panelChanged(Evlocallabmerlucol,
-                                       merlucol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       merlucol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == strumaskcol) {
             if (listener) {
                 listener->panelChanged(Evlocallabstrumaskcol,
-                                       strumaskcol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       strumaskcol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == contcol) {
             if (listener) {
                 listener->panelChanged(Evlocallabcontcol,
-                                       contcol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       contcol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == blurcol) {
             if (listener) {
                 listener->panelChanged(Evlocallabblurcol,
-                                       blurcol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       blurcol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == blendmaskcol) {
             if (listener) {
                 listener->panelChanged(Evlocallabblendmaskcol,
-                                       blendmaskcol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       blendmaskcol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == radmaskcol) {
             if (listener) {
                 listener->panelChanged(Evlocallabradmaskcol,
-                                       radmaskcol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       radmaskcol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lapmaskcol) {
             if (listener) {
                 listener->panelChanged(Evlocallablapmaskcol,
-                                       lapmaskcol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lapmaskcol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == chromaskcol) {
             if (listener) {
                 listener->panelChanged(Evlocallabchromaskcol,
-                                       chromaskcol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       chromaskcol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == gammaskcol) {
             if (listener) {
                 listener->panelChanged(Evlocallabgammaskcol,
-                                       gammaskcol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       gammaskcol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == slomaskcol) {
             if (listener) {
                 listener->panelChanged(Evlocallabslomaskcol,
-                                       slomaskcol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       slomaskcol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == shadmaskcol) {
             if (listener) {
                 listener->panelChanged(Evlocallabshadmaskcol,
-                                       shadmaskcol->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       shadmaskcol->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -1765,7 +1771,7 @@ void LocallabColor::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int n
         if (a == csThresholdcol) {
             if (listener) {
                 listener->panelChanged(EvlocallabcsThresholdcol,
-                                       csThresholdcol->getHistoryString() + " (" + escapeHtmlChars(spotName) + ")");
+                                       csThresholdcol->getHistoryString() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -1777,98 +1783,98 @@ void LocallabColor::curveChanged(CurveEditor* ce)
         if (ce == llshape) {
             if (listener) {
                 listener->panelChanged(Evlocallabllshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == ccshape) {
             if (listener) {
                 listener->panelChanged(Evlocallabccshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == clshape) {
             if (listener) {
                 listener->panelChanged(Evlocallabclshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == lcshape) {
             if (listener) {
                 listener->panelChanged(Evlocallablcshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == LHshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLHshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == CHshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabCHshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == HHshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == rgbshape) {
             if (listener) {
                 listener->panelChanged(Evlocallabrgbshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == CCmaskshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabCCmaskshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == LLmaskshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLLmaskshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == HHmaskshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHmaskshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == HHhmaskshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHhmaskshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == Lmaskshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLmaskshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == LLmaskcolshapewav) {
             if (listener) {
                 listener->panelChanged(EvlocallabLLmaskcolshapewav,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -1880,10 +1886,10 @@ void LocallabColor::enabledChanged()
         if (listener) {
             if (exp->getEnabled()) {
                 listener->panelChanged(EvLocenacolor,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocenacolor,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -2201,10 +2207,10 @@ void LocallabColor::curvactivChanged()
         if (listener) {
             if (curvactiv->get_active()) {
                 listener->panelChanged(Evlocallabcurvactiv,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabcurvactiv,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -2215,7 +2221,7 @@ void LocallabColor::gridMethodChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvLocallabgridMethod,
-                                   gridMethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   gridMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -2238,10 +2244,10 @@ void LocallabColor::inversChanged()
         if (listener) {
             if (invers->get_active()) {
                 listener->panelChanged(Evlocallabinvers,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabinvers,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -2252,7 +2258,7 @@ void LocallabColor::qualitycurveMethodChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabqualitycurveMethod,
-                                   qualitycurveMethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   qualitycurveMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -2262,7 +2268,7 @@ void LocallabColor::toneMethodChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvLocallabtoneMethod,
-                                   toneMethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   toneMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -2273,10 +2279,10 @@ void LocallabColor::specialChanged()
         if (listener) {
             if (special->get_active()) {
                 listener->panelChanged(EvLocallabspecial,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabspecial,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -2289,7 +2295,7 @@ void LocallabColor::merMethodChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvLocallabmerMethod,
-                                   merMethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   merMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -2299,7 +2305,7 @@ void LocallabColor::mergecolMethodChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvLocallabmergecolMethod,
-                                   mergecolMethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   mergecolMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -2355,10 +2361,10 @@ void LocallabColor::enaColorMaskChanged()
         if (listener) {
             if (enaColorMask->get_active()) {
                 listener->panelChanged(EvLocallabEnaColorMask,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabEnaColorMask,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -2370,10 +2376,10 @@ void LocallabColor::toolcolChanged()
         if (listener) {
             if (toolcol->get_active()) {
                 listener->panelChanged(EvLocallabtoolcol,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabtoolcol,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -2387,10 +2393,10 @@ void LocallabColor::fftColorMaskChanged()
         if (listener) {
             if (fftColorMask->get_active()) {
                 listener->panelChanged(EvLocallabfftColorMask,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabfftColorMask,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -2992,8 +2998,6 @@ void LocallabExposure::read(const rtengine::procparams::ProcParams* pp, const Pa
     if (index < (int)pp->locallab.spots.size()) {
         const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        spotName = spot.name; // Update spot name according to selected spot
-
         exp->set_visible(spot.visiexpose);
         exp->setEnabled(spot.expexpose);
         complexity->set_active(spot.complexexpose);
@@ -3214,245 +3218,245 @@ void LocallabExposure::adjusterChanged(Adjuster* a, double newval)
         if (a == laplacexp) {
             if (listener) {
                 listener->panelChanged(Evlocallablaplacexp,
-                                       laplacexp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       laplacexp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == reparexp) {
             if (listener) {
                 listener->panelChanged(Evlocallabreparexp,
-                                       reparexp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       reparexp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == linear) {
             if (listener) {
                 listener->panelChanged(Evlocallablinear,
-                                       linear->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       linear->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == balanexp) {
             if (listener) {
                 listener->panelChanged(Evlocallabbalanexp,
-                                       balanexp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       balanexp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == gamm) {
             if (listener) {
                 listener->panelChanged(Evlocallabgamm,
-                                       gamm->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       gamm->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == fatamount) {
             if (listener) {
                 listener->panelChanged(Evlocallabfatamount,
-                                       fatamount->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       fatamount->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == fatdetail) {
             if (listener) {
                 listener->panelChanged(Evlocallabfatdetail,
-                                       fatdetail->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       fatdetail->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == fatlevel) {
             if (listener) {
                 listener->panelChanged(Evlocallabfatlevel,
-                                       fatlevel->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       fatlevel->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == fatanchor) {
             if (listener) {
                 listener->panelChanged(Evlocallabfatanchor,
-                                       fatanchor->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       fatanchor->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == gamex) {
             if (listener) {
                 listener->panelChanged(Evlocallabgamex,
-                                       gamex->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       gamex->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == recothrese) {
             if (listener) {
                 listener->panelChanged(Evlocallabrecothrese,
-                                       recothrese->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       recothrese->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lowthrese) {
             if (listener) {
                 listener->panelChanged(Evlocallablowthrese,
-                                       lowthrese->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lowthrese->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == higthrese) {
             if (listener) {
                 listener->panelChanged(Evlocallabhigthrese,
-                                       higthrese->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       higthrese->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == decaye) {
             if (listener) {
                 listener->panelChanged(Evlocallabdecaye,
-                                       decaye->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       decaye->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sensiex) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensiex,
-                                       sensiex->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sensiex->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == structexp) {
             if (listener) {
                 listener->panelChanged(Evlocallabstructexp,
-                                       structexp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       structexp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == blurexpde) {
             if (listener) {
                 listener->panelChanged(Evlocallabblurexpde,
-                                       blurexpde->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       blurexpde->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == expcomp) {
             if (listener) {
                 listener->panelChanged(Evlocallabexpcomp,
-                                       expcomp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       expcomp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == black) {
             if (listener) {
                 listener->panelChanged(Evlocallabblack,
-                                       black->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       black->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == hlcompr) {
             if (listener) {
                 listener->panelChanged(Evlocallabhlcompr,
-                                       hlcompr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       hlcompr->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == hlcomprthresh) {
             if (listener) {
                 listener->panelChanged(Evlocallabhlcomprthresh,
-                                       hlcomprthresh->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       hlcomprthresh->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == shadex) {
             if (listener) {
                 listener->panelChanged(Evlocallabshadex,
-                                       shadex->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       shadex->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == shcompr) {
             if (listener) {
                 listener->panelChanged(Evlocallabshcompr,
-                                       shcompr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       shcompr->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == expchroma) {
             if (listener) {
                 listener->panelChanged(Evlocallabexpchroma,
-                                       expchroma->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       expchroma->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == strexp) {
             if (listener) {
                 listener->panelChanged(Evlocallabstrexp,
-                                       strexp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       strexp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == angexp) {
             if (listener) {
                 listener->panelChanged(Evlocallabangexp,
-                                       angexp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       angexp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == softradiusexp) {
             if (listener) {
                 listener->panelChanged(Evlocallabsoftradiusexp,
-                                       softradiusexp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       softradiusexp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == blendmaskexp) {
             if (listener) {
                 listener->panelChanged(Evlocallabblendmaskexp,
-                                       blendmaskexp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       blendmaskexp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == radmaskexp) {
             if (listener) {
                 listener->panelChanged(Evlocallabradmaskexp,
-                                       radmaskexp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       radmaskexp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lapmaskexp) {
             if (listener) {
                 listener->panelChanged(Evlocallablapmaskexp,
-                                       lapmaskexp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lapmaskexp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == chromaskexp) {
             if (listener) {
                 listener->panelChanged(Evlocallabchromaskexp,
-                                       chromaskexp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       chromaskexp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == gammaskexp) {
             if (listener) {
                 listener->panelChanged(Evlocallabgammaskexp,
-                                       gammaskexp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       gammaskexp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == slomaskexp) {
             if (listener) {
                 listener->panelChanged(Evlocallabslomaskexp,
-                                       slomaskexp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       slomaskexp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == strmaskexp) {
             if (listener) {
                 listener->panelChanged(Evlocallabstrmaskexp,
-                                       strmaskexp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       strmaskexp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == angmaskexp) {
             if (listener) {
                 listener->panelChanged(Evlocallabangmaskexp,
-                                       angmaskexp->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       angmaskexp->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -3464,35 +3468,35 @@ void LocallabExposure::curveChanged(CurveEditor* ce)
         if (ce == shapeexpos) {
             if (listener) {
                 listener->panelChanged(Evlocallabshapeexpos,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == CCmaskexpshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabCCmaskexpshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == LLmaskexpshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLLmaskexpshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == HHmaskexpshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHmaskexpshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == Lmaskexpshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLmaskexpshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -3504,10 +3508,10 @@ void LocallabExposure::enabledChanged()
         if (listener) {
             if (exp->getEnabled()) {
                 listener->panelChanged(EvLocenaexpose,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocenaexpose,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -3693,7 +3697,7 @@ void LocallabExposure::expMethodChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabexpMethod,
-                                   expMethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   expMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -3703,7 +3707,7 @@ void LocallabExposure::exnoiseMethodChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabexnoiseMethod,
-                                   exnoiseMethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   exnoiseMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -3715,10 +3719,10 @@ void LocallabExposure::normChanged()
         if (listener) {
             if (norm->get_active()) {
                 listener->panelChanged(Evlocallabnorm,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabnorm,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -3743,10 +3747,10 @@ void LocallabExposure::inversexChanged()
         if (listener) {
             if (inversex->get_active()) {
                 listener->panelChanged(Evlocallabinversex,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabinversex,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -3804,10 +3808,10 @@ void LocallabExposure::enaExpMaskChanged()
         if (listener) {
             if (enaExpMask->get_active()) {
                 listener->panelChanged(EvLocallabEnaExpMask,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabEnaExpMask,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -3819,10 +3823,10 @@ void LocallabExposure::enaExpMaskaftChanged()
         if (listener) {
             if (enaExpMaskaft->get_active()) {
                 listener->panelChanged(EvLocallabEnaExpMaskaft,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabEnaExpMaskaft,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -4319,8 +4323,6 @@ void LocallabShadow::read(const rtengine::procparams::ProcParams* pp, const Para
     if (index < (int)pp->locallab.spots.size()) {
         const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        spotName = spot.name; // Update spot name according to selected spot
-
         exp->set_visible(spot.visishadhigh);
         exp->setEnabled(spot.expshadhigh);
         complexity->set_active(spot.complexshadhigh);
@@ -4493,56 +4495,56 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
                                                Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[1]->getIntValue()),
                                                Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[2]->getIntValue()),
                                                Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[3]->getIntValue()),
-                                               Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[4]->getIntValue())) + " (" + escapeHtmlChars(spotName) + ")");
+                                               Glib::ustring::format(std::fixed, std::setprecision(2), multipliersh[4]->getIntValue())) + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == detailSH) {
             if (listener) {
                 listener->panelChanged(EvlocallabdetailSH,
-                                       detailSH->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       detailSH->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == reparsh) {
             if (listener) {
                 listener->panelChanged(Evlocallabreparsh,
-                                       reparsh->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       reparsh->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == highlights) {
             if (listener) {
                 listener->panelChanged(Evlocallabhighlights,
-                                       highlights->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       highlights->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == h_tonalwidth) {
             if (listener) {
                 listener->panelChanged(Evlocallabh_tonalwidth,
-                                       h_tonalwidth->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       h_tonalwidth->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == shadows) {
             if (listener) {
                 listener->panelChanged(Evlocallabshadows,
-                                       shadows->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       shadows->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == s_tonalwidth) {
             if (listener) {
                 listener->panelChanged(Evlocallabs_tonalwidth,
-                                       s_tonalwidth->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       s_tonalwidth->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sh_radius) {
             if (listener) {
                 listener->panelChanged(Evlocallabsh_radius,
-                                       sh_radius->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sh_radius->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -4550,28 +4552,28 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
             
             if (listener) {
                 listener->panelChanged(Evlocallabrecothress,
-                                       recothress->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       recothress->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lowthress) {
             if (listener) {
                 listener->panelChanged(Evlocallablowthress,
-                                       lowthress->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lowthress->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == higthress) {
             if (listener) {
                 listener->panelChanged(Evlocallabhigthress,
-                                       higthress->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       higthress->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == decays) {
             if (listener) {
                 listener->panelChanged(Evlocallabdecays,
-                                       decays->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       decays->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -4579,91 +4581,91 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
         if (a == sensihs) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensihs,
-                                       sensihs->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sensihs->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == blurSHde) {
             if (listener) {
                 listener->panelChanged(EvlocallabblurSHde,
-                                       blurSHde->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       blurSHde->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == gamSH) {
             if (listener) {
                 listener->panelChanged(EvlocallabgamSH,
-                                       gamSH->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       gamSH->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sloSH) {
             if (listener) {
                 listener->panelChanged(EvlocallabsloSH,
-                                       sloSH->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sloSH->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == strSH) {
             if (listener) {
                 listener->panelChanged(EvlocallabstrSH,
-                                       strSH->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       strSH->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == angSH) {
             if (listener) {
                 listener->panelChanged(EvlocallabangSH,
-                                       angSH->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       angSH->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == blendmaskSH) {
             if (listener) {
                 listener->panelChanged(EvlocallabblendmaskSH,
-                                       blendmaskSH->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       blendmaskSH->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == radmaskSH) {
             if (listener) {
                 listener->panelChanged(EvlocallabradmaskSH,
-                                       radmaskSH->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       radmaskSH->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lapmaskSH) {
             if (listener) {
                 listener->panelChanged(EvlocallablapmaskSH,
-                                       lapmaskSH->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lapmaskSH->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == chromaskSH) {
             if (listener) {
                 listener->panelChanged(EvlocallabchromaskSH,
-                                       chromaskSH->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       chromaskSH->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == gammaskSH) {
             if (listener) {
                 listener->panelChanged(EvlocallabgammaskSH,
-                                       gammaskSH->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       gammaskSH->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == slomaskSH) {
             if (listener) {
                 listener->panelChanged(EvlocallabslomaskSH,
-                                       slomaskSH->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       slomaskSH->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == fatamountSH) {
             if (listener) {
                 listener->panelChanged(EvlocallabfatamountSH,
-                                       fatamountSH->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       fatamountSH->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -4671,7 +4673,7 @@ void LocallabShadow::adjusterChanged(Adjuster* a, double newval)
         if (a == fatanchorSH) {
             if (listener) {
                 listener->panelChanged(EvlocallabfatanchorSH,
-                                       fatanchorSH->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       fatanchorSH->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -4683,28 +4685,28 @@ void LocallabShadow::curveChanged(CurveEditor* ce)
         if (ce == CCmaskSHshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabCCmaskSHshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == LLmaskSHshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLLmaskSHshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == HHmaskSHshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHmaskSHshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == LmaskSHshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLmaskSHshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -4716,10 +4718,10 @@ void LocallabShadow::enabledChanged()
         if (listener) {
             if (exp->getEnabled()) {
                 listener->panelChanged(EvLocenashadhigh,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocenashadhigh,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -4883,7 +4885,7 @@ void LocallabShadow::shMethodChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabshMethod,
-                                   shMethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   shMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -4906,10 +4908,10 @@ void LocallabShadow::inversshChanged()
         if (listener) {
             if (inverssh->get_active()) {
                 listener->panelChanged(Evlocallabinverssh,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabinverssh,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -4968,10 +4970,10 @@ void LocallabShadow::enaSHMaskChanged()
         if (listener) {
             if (enaSHMask->get_active()) {
                 listener->panelChanged(EvLocallabEnaSHMask,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabEnaSHMask,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -5388,8 +5390,6 @@ void LocallabVibrance::read(const rtengine::procparams::ProcParams* pp, const Pa
     if (index < (int)pp->locallab.spots.size()) {
         const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        spotName = spot.name; // Update spot name according to selected spot
-
         exp->set_visible(spot.visivibrance);
         exp->setEnabled(spot.expvibrance);
         complexity->set_active(spot.complexvibrance);
@@ -5526,35 +5526,35 @@ void LocallabVibrance::adjusterChanged(Adjuster* a, double newval)
         if (a == saturated && !pastSatTog->get_active()) {
             if (listener) {
                 listener->panelChanged(EvlocallabSaturated,
-                                       saturated->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       saturated->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == pastels) {
             if (listener) {
                 listener->panelChanged(EvlocallabPastels,
-                                       pastels->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       pastels->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == vibgam) {
             if (listener) {
                 listener->panelChanged(Evlocallabvibgam,
-                                       vibgam->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       vibgam->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == warm) {
             if (listener) {
                 listener->panelChanged(Evlocallabwarm,
-                                       warm->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       warm->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sensiv) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensiv,
-                                       sensiv->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sensiv->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -5562,98 +5562,98 @@ void LocallabVibrance::adjusterChanged(Adjuster* a, double newval)
             
             if (listener) {
                 listener->panelChanged(Evlocallabrecothresv,
-                                       recothresv->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       recothresv->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lowthresv) {
             if (listener) {
                 listener->panelChanged(Evlocallablowthresv,
-                                       lowthresv->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lowthresv->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == higthresv) {
             if (listener) {
                 listener->panelChanged(Evlocallabhigthresv,
-                                       higthresv->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       higthresv->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == decayv) {
             if (listener) {
                 listener->panelChanged(Evlocallabdecayv,
-                                       decayv->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       decayv->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == strvib) {
             if (listener) {
                 listener->panelChanged(Evlocallabstrvib,
-                                       strvib->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       strvib->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == strvibab) {
             if (listener) {
                 listener->panelChanged(Evlocallabstrvibab,
-                                       strvibab->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       strvibab->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == strvibh) {
             if (listener) {
                 listener->panelChanged(Evlocallabstrvibh,
-                                       strvibh->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       strvibh->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == angvib) {
             if (listener) {
                 listener->panelChanged(Evlocallabangvib,
-                                       angvib->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       angvib->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == blendmaskvib) {
             if (listener) {
                 listener->panelChanged(Evlocallabblendmaskvi,
-                                       blendmaskvib->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       blendmaskvib->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == radmaskvib) {
             if (listener) {
                 listener->panelChanged(Evlocallabradmaskvib,
-                                       radmaskvib->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       radmaskvib->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lapmaskvib) {
             if (listener) {
                 listener->panelChanged(Evlocallablapmaskvib,
-                                       lapmaskvib->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lapmaskvib->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == chromaskvib) {
             if (listener) {
                 listener->panelChanged(Evlocallabchromaskvib,
-                                       chromaskvib->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       chromaskvib->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == gammaskvib) {
             if (listener) {
                 listener->panelChanged(Evlocallabgammaskvib,
-                                       gammaskvib->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       gammaskvib->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == slomaskvib) {
             if (listener) {
                 listener->panelChanged(Evlocallabslomaskvib,
-                                       slomaskvib->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       slomaskvib->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -5664,7 +5664,7 @@ void LocallabVibrance::adjusterChanged(ThresholdAdjuster* a, int newBottom, int 
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabPastSatThreshold,
-                                   psThreshold->getHistoryString() + " (" + escapeHtmlChars(spotName) + ")");
+                                   psThreshold->getHistoryString() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -5723,35 +5723,35 @@ void LocallabVibrance::curveChanged(CurveEditor* ce)
         if (ce == skinTonesCurve) {
             if (listener) {
                 listener->panelChanged(EvlocallabSkinTonesCurve,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == CCmaskvibshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabCCmaskvibshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == LLmaskvibshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLLmaskvibshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == HHmaskvibshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHmaskvibshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == Lmaskvibshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLmaskvibshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -5763,10 +5763,10 @@ void LocallabVibrance::enabledChanged()
         if (listener) {
             if (exp->getEnabled()) {
                 listener->panelChanged(EvLocenavibrance,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocenashadhigh,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -5937,10 +5937,10 @@ void LocallabVibrance::protectskins_toggled()
         if (listener) {
             if (protectSkins->get_active()) {
                 listener->panelChanged(EvlocallabProtectSkins,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvlocallabProtectSkins,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -5952,10 +5952,10 @@ void LocallabVibrance::avoidcolorshift_toggled()
         if (listener) {
             if (avoidColorShift->get_active()) {
                 listener->panelChanged(EvlocallabAvoidColorShift,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvlocallabAvoidColorShift,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -5970,10 +5970,10 @@ void LocallabVibrance::pastsattog_toggled()
         if (listener) {
             if (pastSatTog->get_active()) {
                 listener->panelChanged(EvlocallabPastSatTog,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvlocallabPastSatTog,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -6008,10 +6008,10 @@ void LocallabVibrance::enavibMaskChanged()
         if (listener) {
             if (enavibMask->get_active()) {
                 listener->panelChanged(EvLocallabEnavibMask,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabEnavibMask,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -6140,8 +6140,6 @@ void LocallabSoft::read(const rtengine::procparams::ProcParams* pp, const Params
     if (index < (int)pp->locallab.spots.size()) {
         const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        spotName = spot.name; // Update spot name according to selected spot
-
         exp->set_visible(spot.visisoft);
         exp->setEnabled(spot.expsoft);
         complexity->set_active(spot.complexsoft);
@@ -6216,21 +6214,21 @@ void LocallabSoft::adjusterChanged(Adjuster* a, double newval)
         if (a == streng) {
             if (listener) {
                 listener->panelChanged(Evlocallabstreng,
-                                       streng->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       streng->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sensisf) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensisf,
-                                       sensisf->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sensisf->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == laplace) {
             if (listener) {
                 listener->panelChanged(Evlocallablaplace,
-                                       laplace->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       laplace->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -6256,7 +6254,7 @@ void LocallabSoft::complexityModeChanged()
 
         if (listener && isLocActivated) {
             listener->panelChanged(EvlocallabcomplexityWithRefresh,
-                                   M("TP_LOCALLAB_MODE_SIMPLE") + " (" + escapeHtmlChars(spotName) + ")");
+                                   M("TP_LOCALLAB_MODE_SIMPLE") + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     } else if (complexity->get_active_row_number() == Normal) { // New selected mode is Normal one
         const bool maskPreviewActivated = isMaskViewActive();
@@ -6275,7 +6273,7 @@ void LocallabSoft::complexityModeChanged()
 
         if (listener && isLocActivated) {
             listener->panelChanged(EvlocallabcomplexityWithRefresh,
-                                   M("TP_LOCALLAB_MODE_NORMAL") + " (" + escapeHtmlChars(spotName) + ")");
+                                   M("TP_LOCALLAB_MODE_NORMAL") + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     } else if (complexity->get_active_row_number() == Expert) { // New selected mode is Expert one
         // Update GUI based on new mode
@@ -6283,7 +6281,7 @@ void LocallabSoft::complexityModeChanged()
 
         if (listener && isLocActivated) {
             listener->panelChanged(EvlocallabcomplexityWithRefresh,
-                                   M("TP_LOCALLAB_MODE_EXPERT") + " (" + escapeHtmlChars(spotName) + ")");
+                                   M("TP_LOCALLAB_MODE_EXPERT") + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -6294,10 +6292,10 @@ void LocallabSoft::enabledChanged()
         if (listener) {
             if (exp->getEnabled()) {
                 listener->panelChanged(EvLocenasoft,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocenasoft,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -6384,7 +6382,7 @@ void LocallabSoft::softMethodChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabsoftMethod,
-                                   softMethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   softMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -7180,8 +7178,6 @@ void LocallabBlur::read(const rtengine::procparams::ProcParams* pp, const Params
     if (index < (int)pp->locallab.spots.size()) {
         const LocallabParams::LocallabSpot& spot = pp->locallab.spots.at(index);
 
-        spotName = spot.name; // Update spot name according to selected spot
-
         exp->set_visible(spot.visiblur);
         exp->setEnabled(spot.expblur);
         complexity->set_active(spot.complexblur);
@@ -7535,63 +7531,63 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
         if (a == radius) {
             if (listener) {
                 listener->panelChanged(Evlocallabradius,
-                                       radius->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       radius->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == strength) {
             if (listener) {
                 listener->panelChanged(Evlocallabstrength,
-                                       strength->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       strength->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == isogr) {
             if (listener) {
                 listener->panelChanged(Evlocallabisogr,
-                                       isogr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       isogr->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == strengr) {
             if (listener) {
                 listener->panelChanged(Evlocallabstrengr,
-                                       strengr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       strengr->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == scalegr) {
             if (listener) {
                 listener->panelChanged(Evlocallabscalegr,
-                                       scalegr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       scalegr->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == divgr) {
             if (listener) {
                 listener->panelChanged(Evlocallabdivgr,
-                                       divgr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       divgr->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == itera) {
             if (listener) {
                 listener->panelChanged(Evlocallabitera,
-                                       itera->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       itera->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == guidbl) {
             if (listener) {
                 listener->panelChanged(Evlocallabguidbl,
-                                       guidbl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       guidbl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == strbl) {
             if (listener) {
                 listener->panelChanged(Evlocallabstrbl,
-                                       strbl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       strbl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -7604,21 +7600,21 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             
             if (listener) {
                 listener->panelChanged(Evlocallabrecothres,
-                                       recothres->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       recothres->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lowthres) {
             if (listener) {
                 listener->panelChanged(Evlocallablowthres,
-                                       lowthres->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lowthres->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == higthres) {
             if (listener) {
                 listener->panelChanged(Evlocallabhigthres,
-                                       higthres->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       higthres->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -7631,112 +7627,112 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             
             if (listener) {
                 listener->panelChanged(Evlocallabrecothresd,
-                                       recothresd->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       recothresd->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lowthresd) {
             if (listener) {
                 listener->panelChanged(Evlocallablowthresd,
-                                       lowthresd->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lowthresd->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == midthresd) {
             if (listener) {
                 listener->panelChanged(Evlocallabmidthresd,
-                                       midthresd->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       midthresd->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == midthresdch) {
             if (listener) {
                 listener->panelChanged(Evlocallabmidthresdch,
-                                       midthresdch->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       midthresdch->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == higthresd) {
             if (listener) {
                 listener->panelChanged(Evlocallabhigthresd,
-                                       higthresd->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       higthresd->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == decayd) {
             if (listener) {
                 listener->panelChanged(Evlocallabdecayd,
-                                       decayd->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       decayd->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == epsbl) {
             if (listener) {
                 listener->panelChanged(Evlocallabepsbl,
-                                       epsbl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       epsbl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sensibn) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensibn,
-                                       sensibn->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sensibn->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == noiselumf0) {
             if (listener) {
                 listener->panelChanged(Evlocallabnoiselumf0,
-                                       noiselumf0->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       noiselumf0->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == noiselumf) {
             if (listener) {
                 listener->panelChanged(Evlocallabnoiselumf,
-                                       noiselumf->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       noiselumf->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == noiselumf2) {
             if (listener) {
                 listener->panelChanged(Evlocallabnoiselumf2,
-                                       noiselumf2->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       noiselumf2->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == noiselumc) {
             if (listener) {
                 listener->panelChanged(Evlocallabnoiselumc,
-                                       noiselumc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       noiselumc->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == noiselumdetail) {
             if (listener) {
                 listener->panelChanged(Evlocallabnoiselumdetail,
-                                       noiselumdetail->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       noiselumdetail->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == noiselequal) {
             if (listener) {
                 listener->panelChanged(Evlocallabnoiselequal,
-                                       noiselequal->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       noiselequal->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == noisegam) {
             if (listener) {
                 listener->panelChanged(Evlocallabnoisegam,
-                                       noisegam->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       noisegam->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == levelthr) {
             if (listener) {
                 listener->panelChanged(Evlocallablevelthr,
-                                       levelthr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       levelthr->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -7748,168 +7744,168 @@ void LocallabBlur::adjusterChanged(Adjuster* a, double newval)
             }
             if (listener) {
                 listener->panelChanged(Evlocallablnoiselow,
-                                       lnoiselow->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lnoiselow->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == levelthrlow) {
             if (listener) {
                 listener->panelChanged(Evlocallablevelthrlow,
-                                       levelthrlow->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       levelthrlow->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == noisechrof) {
             if (listener) {
                 listener->panelChanged(Evlocallabnoisechrof,
-                                       noisechrof->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       noisechrof->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == noisechroc) {
             if (listener) {
                 listener->panelChanged(Evlocallabnoisechroc,
-                                       noisechroc->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       noisechroc->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == noisechrodetail) {
             if (listener) {
                 listener->panelChanged(Evlocallabnoisechrodetail,
-                                       noisechrodetail->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       noisechrodetail->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == detailthr) {
             if (listener) {
                 listener->panelChanged(Evlocallabdetailthr,
-                                       detailthr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       detailthr->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == adjblur) {
             if (listener) {
                 listener->panelChanged(Evlocallabadjblur,
-                                       adjblur->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       adjblur->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == bilateral) {
             if (listener) {
                 listener->panelChanged(Evlocallabbilateral,
-                                       bilateral->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       bilateral->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == nlstr) {
             if (listener) {
                 listener->panelChanged(Evlocallabnlstr,
-                                       nlstr->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       nlstr->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == nldet) {
             if (listener) {
                 listener->panelChanged(Evlocallabnldet,
-                                       nldet->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       nldet->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == nlpat) {
             if (listener) {
                 listener->panelChanged(Evlocallabnlpat,
-                                       nlpat->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       nlpat->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == nlrad) {
             if (listener) {
                 listener->panelChanged(Evlocallabnlrad,
-                                       nlrad->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       nlrad->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == nlgam) {
             if (listener) {
                 listener->panelChanged(Evlocallabnlgam,
-                                       nlgam->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       nlgam->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == sensiden) {
             if (listener) {
                 listener->panelChanged(Evlocallabsensiden,
-                                       sensiden->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       sensiden->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == reparden) {
             if (listener) {
                 listener->panelChanged(Evlocallabreparden,
-                                       reparden->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       reparden->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == strumaskbl) {
             if (listener) {
                 listener->panelChanged(Evlocallabstrumaskbl,
-                                       strumaskbl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       strumaskbl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == blendmaskbl) {
             if (listener) {
                 listener->panelChanged(Evlocallabblendmaskbl,
-                                       blendmaskbl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       blendmaskbl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == radmaskbl) {
             if (listener) {
                 listener->panelChanged(Evlocallabradmaskbl,
-                                       radmaskbl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       radmaskbl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == lapmaskbl) {
             if (listener) {
                 listener->panelChanged(Evlocallablapmaskbl,
-                                       lapmaskbl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       lapmaskbl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == chromaskbl) {
             if (listener) {
                 listener->panelChanged(Evlocallabchromaskbl,
-                                       chromaskbl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       chromaskbl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == gammaskbl) {
             if (listener) {
                 listener->panelChanged(Evlocallabgammaskbl,
-                                       gammaskbl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       gammaskbl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == slomaskbl) {
             if (listener) {
                 listener->panelChanged(Evlocallabslomaskbl,
-                                       slomaskbl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       slomaskbl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == shadmaskbl) {
             if (listener) {
                 listener->panelChanged(Evlocallabshadmaskbl,
-                                       shadmaskbl->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       shadmaskbl->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (a == shadmaskblsha) {
             if (listener) {
                 listener->panelChanged(Evlocallabshadmaskblsha,
-                                       shadmaskblsha->getTextValue() + " (" + escapeHtmlChars(spotName) + ")");
+                                       shadmaskblsha->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
@@ -7923,7 +7919,7 @@ void LocallabBlur::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int ne
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabcsThresholdblur,
-                                   csThresholdblur->getHistoryString() + " (" + escapeHtmlChars(spotName) + ")");
+                                   csThresholdblur->getHistoryString() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -7934,49 +7930,49 @@ void LocallabBlur::curveChanged(CurveEditor* ce)
         if (ce == wavshapeden) {
             if (listener) {
                 listener->panelChanged(EvlocallabwavCurveden,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == wavhue) {
             if (listener) {
                 listener->panelChanged(EvlocallabwavCurvehue,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == CCmaskblshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabCCmaskblshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == LLmaskblshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLLmaskblshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == HHmaskblshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHmaskblshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == Lmaskblshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabLmaskblshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
         if (ce == LLmaskblshapewav) {
             if (listener) {
                 listener->panelChanged(EvlocallabLLmaskblshapewav,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -7988,10 +7984,10 @@ void LocallabBlur::enabledChanged()
         if (listener) {
             if (exp->getEnabled()) {
                 listener->panelChanged(EvLocenablur,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocenablur,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -8286,7 +8282,7 @@ void LocallabBlur::blMethodChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabblMethod,
-                                   blMethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   blMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -8297,10 +8293,10 @@ void LocallabBlur::fftwblChanged()
         if (listener) {
             if (fftwbl->get_active()) {
                 listener->panelChanged(Evlocallabfftwbl,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabfftwbl,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -8312,10 +8308,10 @@ void LocallabBlur::usemaskChanged()
         if (listener) {
             if (usemask->get_active()) {
                 listener->panelChanged(Evlocallabusemask1,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabusemask1,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -8327,10 +8323,10 @@ void LocallabBlur::invmaskdChanged()
         if (listener) {
             if (invmaskd->get_active()) {
                 listener->panelChanged(Evlocallabinvmaskd,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabinvmaskd,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -8342,10 +8338,10 @@ void LocallabBlur::invmaskChanged()
         if (listener) {
             if (invmask->get_active()) {
                 listener->panelChanged(Evlocallabinvmask,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabinvmask,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -8373,10 +8369,10 @@ void LocallabBlur::invblChanged()
         if (listener) {
             if (invbl->get_active()) {
                 listener->panelChanged(Evlocallabinvbl,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabinvbl,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -8387,7 +8383,7 @@ void LocallabBlur::medMethodChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabmedMethod,
-                                   medMethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   medMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -8397,7 +8393,7 @@ void LocallabBlur::blurMethodChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabblurMethod,
-                                   blurMethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   blurMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -8407,7 +8403,7 @@ void LocallabBlur::chroMethodChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabchroMethod,
-                                   chroMethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   chroMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -8417,7 +8413,7 @@ void LocallabBlur::quamethodChanged()
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             listener->panelChanged(EvlocallabquaMethod,
-                                   quamethod->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                                   quamethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
 }
@@ -8429,10 +8425,10 @@ void LocallabBlur::activlumChanged()
         if (listener) {
             if (activlum->get_active()) {
                 listener->panelChanged(Evlocallabactivlum,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabactivlum,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -8475,7 +8471,7 @@ void LocallabBlur::showmaskblMethodtypChanged()
 
     if (listener) {
         listener->panelChanged(EvlocallabshowmasktypMethod,
-                               showmaskblMethodtyp->get_active_text() + " (" + escapeHtmlChars(spotName) + ")");
+                               showmaskblMethodtyp->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
     }
 }
 
@@ -8501,10 +8497,10 @@ void LocallabBlur::enablMaskChanged()
         if (listener) {
             if (enablMask->get_active()) {
                 listener->panelChanged(EvLocallabEnablMask,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabEnablMask,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
@@ -8516,10 +8512,10 @@ void LocallabBlur::toolblChanged()
         if (listener) {
             if (toolbl->get_active()) {
                 listener->panelChanged(Evlocallabtoolbl,
-                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabtoolbl,
-                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(spotName) + ")");
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
     }
