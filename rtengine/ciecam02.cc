@@ -35,7 +35,7 @@
 #define Jzazbz_d (-0.56)
 #define Jzazbz_d0 (1.6295499532821566e-11)
 #define Jzazbz_ni (16384.0/2610.0)
-#define Jzazbz_pi (32.0/4289.1)
+#define Jzazbz_pi (32.0/4289.1)  //4289.1 = 2523 * 1.7
 
 
 
