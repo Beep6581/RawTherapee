@@ -1605,6 +1605,7 @@ struct LocallabParams {
         std::vector<double> ciecurve2;
         double chromjzcie;
         double huejzcie;
+        std::vector<double> jzcurve;
         std::vector<double> HHcurvejz;
         std::vector<double> CHcurvejz;
         std::vector<double> LHcurvejz;

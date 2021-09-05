@@ -1026,6 +1026,7 @@ private:
             LUTf lmasklocal_curve(65536, LUT_CLIP_OFF);
             LUTf cielocalcurve(65536, LUT_CLIP_OFF);
             LUTf cielocalcurve2(65536, LUT_CLIP_OFF);
+            LUTf jzlocalcurve(65536, LUT_CLIP_OFF);
 
             array2D<float> shbuffer;
             for (size_t sp = 0; sp < params.locallab.spots.size(); sp++) {
@@ -1112,6 +1113,7 @@ private:
                 const bool localmask_utili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmask_curve, lmasklocal_curve, 1);
                 const bool localcieutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).ciecurve, cielocalcurve, 1);
                 const bool localcieutili2 = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).ciecurve2, cielocalcurve2, 1);
+                const bool localjzutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).jzcurve, jzlocalcurve, 1);
 
                 //provisory
                 double ecomp = params.locallab.spots.at(sp).expcomp;
@@ -1171,6 +1173,7 @@ private:
                         lmasklocal_curve, localmask_utili,
                         cielocalcurve, localcieutili, 
                         cielocalcurve2, localcieutili2, 
+                        jzlocalcurve, localjzutili, 
                         
                         locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                         locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,

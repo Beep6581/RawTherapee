@@ -218,6 +218,7 @@ ImProcCoordinator::ImProcCoordinator() :
     lmasklocal_curve(65536, LUT_CLIP_OFF),
     cielocalcurve(65536, LUT_CLIP_OFF),
     cielocalcurve2(65536, LUT_CLIP_OFF),
+    jzlocalcurve(65536, LUT_CLIP_OFF),
     lastspotdup(false),
     previewDeltaE(false),
     locallColorMask(0),
@@ -1033,6 +1034,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 const bool localmask_utili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmask_curve, lmasklocal_curve, sca);
                 const bool localcieutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).ciecurve, cielocalcurve, sca);
                 const bool localcieutili2 = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).ciecurve2, cielocalcurve2, sca);
+                const bool localjzutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).jzcurve, jzlocalcurve, sca);
                 double ecomp = params->locallab.spots.at(sp).expcomp;
                 double black = params->locallab.spots.at(sp).black;
                 double hlcompr = params->locallab.spots.at(sp).hlcompr;
@@ -1155,6 +1157,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               lmasklocal_curve, localmask_utili,
                               cielocalcurve, localcieutili,
                               cielocalcurve2, localcieutili2,
+                              jzlocalcurve, localjzutili,
 
                               locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                               locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,

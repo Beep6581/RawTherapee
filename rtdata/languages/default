@@ -1359,6 +1359,7 @@ HISTORY_MSG_1106;Local - CIECAM Tone method
 HISTORY_MSG_1107;Local - CIECAM Tone curve
 HISTORY_MSG_1108;Local - CIECAM Color method
 HISTORY_MSG_1109;Local - CIECAM Color curve
+HISTORY_MSG_1110;Local - Jz curve
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance

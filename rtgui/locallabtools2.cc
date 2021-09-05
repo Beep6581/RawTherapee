@@ -7426,6 +7426,8 @@ Locallabcie::Locallabcie():
 
     chromjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCHROM"), -100., 100., 0.5, 0.))),
     huejzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZHUECIE"), -100., 100., 0.1, 0.))),
+    jzCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
+    shapejz(static_cast<DiagonalCurveEditor*>(jzCurveEditorG->addCurve(CT_Diagonal, "Jz(Jz)"))),
     HjzCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
     HHshapejz(static_cast<FlatCurveEditor*>(HjzCurveEditorG->addCurve(CT_Flat, "hz(h)", nullptr, false, true))),
     CHshapejz(static_cast<FlatCurveEditor*>(HjzCurveEditorG->addCurve(CT_Flat, "cz(h)", nullptr, false, true))),
@@ -7497,6 +7499,15 @@ Locallabcie::Locallabcie():
         Color::hsv2rgb01(x, 0.5f, 0.5f, R, G, B);
         six_shape.emplace_back(x, R, G, B);
     }
+    std::vector<GradientMilestone> milestone;
+    milestone.push_back ( GradientMilestone (0., 0., 0., 0.) );
+    milestone.push_back ( GradientMilestone (1., 1., 1., 1.) );
+
+    jzCurveEditorG->setCurveListener(this);
+    shapejz->setResetCurve(DiagonalCurveType(defSpot.jzcurve.at(0)), defSpot.jzcurve);
+    shapejz->setBottomBarBgGradient (milestone);
+    shapejz->setLeftBarBgGradient (milestone);
+    jzCurveEditorG->curveListComplete();
 
     HjzCurveEditorG->setCurveListener(this);
 
@@ -7526,6 +7537,7 @@ Locallabcie::Locallabcie():
     jzBox->pack_start(*contjzcie);
     jzBox->pack_start(*chromjzcie);
     jzBox->pack_start(*huejzcie);
+    jzBox->pack_start(*jzCurveEditorG, Gtk::PACK_SHRINK, 4);
     jzBox->pack_start(*HjzCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
  //   jzBox->pack_start(*adapjzcie);
     sigmoidjzFrame->set_label_align(0.025, 0.5);
@@ -7569,9 +7581,6 @@ Locallabcie::Locallabcie():
     chromlcie->setAdjusterListener(this);
     huecie->setAdjusterListener(this);
 
-    std::vector<GradientMilestone> milestone;
-    milestone.push_back ( GradientMilestone (0., 0., 0., 0.) );
-    milestone.push_back ( GradientMilestone (1., 1., 1., 1.) );
 
     cieCurveEditorG->setCurveListener(this);
     toneMethodcie->append (M ("TP_COLORAPP_TCMODE_LIGHTNESS"));
@@ -7898,6 +7907,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         shapecie->setCurve(spot.ciecurve);
         shapecie2->setCurve(spot.ciecurve2);
 
+        shapejz->setCurve(spot.jzcurve);
         HHshapejz->setCurve(spot.HHcurvejz);
         CHshapejz->setCurve(spot.CHcurvejz);
         LHshapejz->setCurve(spot.LHcurvejz);
@@ -8011,6 +8021,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         } else if (surroundcie->get_active_row_number() == 3) {
             spot.surroundcie = "ExtremelyDark";
         }
+        spot.jzcurve = shapejz->getCurve();
         spot.HHcurvejz = HHshapejz->getCurve();
         spot.CHcurvejz = CHshapejz->getCurve();
         spot.LHcurvejz = LHshapejz->getCurve();
@@ -8076,6 +8087,13 @@ void Locallabcie::curveChanged(CurveEditor* ce)
 {
     if (isLocActivated && exp->getEnabled()) {
        const auto spName = M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")";
+       if (ce == shapejz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshapejz,
+                                       M("HISTORY_CUSTOMCURVE") + spName);
+            }
+        }
+
        if (ce == HHshapejz) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHshapejz,
@@ -8123,6 +8141,7 @@ void Locallabcie::updateMaskBackground(const double normChromar, const double no
         HHshapejz->updateLocallabBackground(normHuer);
         CHshapejz->updateLocallabBackground(normHuer);
         LHshapejz->updateLocallabBackground(normHuer);
+        shapejz->updateLocallabBackground(normLumar);
 
         return false;
     }
@@ -8490,6 +8509,7 @@ void Locallabcie::convertParamToNormal()
     LHshapejz->setCurve(defSpot.LHcurvejz);
     CHshapejz->setCurve(defSpot.CHcurvejz);
     HHshapejz->setCurve(defSpot.HHcurvejz);
+    shapejz->setCurve(defSpot.jzcurve);
     shapecie->setCurve(defSpot.ciecurve);
     shapecie2->setCurve(defSpot.ciecurve2);
     lightjzcie->setValue(defSpot.lightjzcie);
