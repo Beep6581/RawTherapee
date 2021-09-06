@@ -1348,18 +1348,20 @@ HISTORY_MSG_1095;Local - Jz highligths thr
 HISTORY_MSG_1096;Local - Jz shadows
 HISTORY_MSG_1097;Local - Jz shadows thr
 HISTORY_MSG_1098;Local - Jz radius SH
-HISTORY_MSG_1099;Local - Jz HzHz Curve
-HISTORY_MSG_1100;Local - Jz CzHz Curve
+HISTORY_MSG_1099;Local - Hz(Hz) Curve
+HISTORY_MSG_1100;Local - Cz(Hz) Curve
 HISTORY_MSG_1101;Local - Jz reference 100
 HISTORY_MSG_1102;Local - Jz PQ remap
-HISTORY_MSG_1103;Local - Jz JzHz Curve
+HISTORY_MSG_1103;Local - Jz(Hz) Curve
 HISTORY_MSG_1105;Local - Vibrance gamma
 HISTORY_MSG_1104;Local - Sharp gamma
 HISTORY_MSG_1106;Local - CIECAM Tone method
 HISTORY_MSG_1107;Local - CIECAM Tone curve
 HISTORY_MSG_1108;Local - CIECAM Color method
 HISTORY_MSG_1109;Local - CIECAM Color curve
-HISTORY_MSG_1110;Local - Jz curve
+HISTORY_MSG_1110;Local - Jz(Jz) curve
+HISTORY_MSG_1111;Local - Cz(Cz) curve
+
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance

@@ -1570,11 +1570,13 @@ private:
     
     Adjuster* const chromjzcie;
     Adjuster* const huejzcie;
-    CurveEditorGroup* const jzCurveEditorG;
+    CurveEditorGroup* const jz1CurveEditorG;
     DiagonalCurveEditor* const shapejz;
+    DiagonalCurveEditor* const shapecz;
     
-    CurveEditorGroup* const HjzCurveEditorG;
+    CurveEditorGroup* const jz2CurveEditorG;
     FlatCurveEditor* const HHshapejz;
+    CurveEditorGroup* const jz3CurveEditorG;
     FlatCurveEditor* const CHshapejz;
     FlatCurveEditor* const LHshapejz;
     

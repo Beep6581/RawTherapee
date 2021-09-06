@@ -999,6 +999,7 @@ public:
         bool chromjzcie;
         bool huejzcie;
         bool jzcurve;
+        bool czcurve;
         bool HHcurvejz;
         bool CHcurvejz;
         bool LHcurvejz;
