@@ -3125,13 +3125,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                     double chromaCfactor =  (double) (czjzlocalcurve[(float) Jz * 65535.f]) / (Jz * 65535.);
                     Cz  *=  chromaCfactor;
                 }
-
-
-                                /*
-                                float chromaCfactor = (cllocalcurve[bufcolcalcL * 2.f]) / (bufcolcalcL * 2.f);
-                                bufcolcalca *= chromaCfactor;
-                                bufcolcalcb *= chromaCfactor;
-                                */
                 
                 if ( Hz < 0.0 ) {
                     Hz += (double) (2.f * rtengine::RT_PI_F);
@@ -3219,7 +3212,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         }
     }
 
-if(mocam == 0 || mocam == 1) {
+if(mocam == 0 || mocam == 1  || call == 1) {
 //begin ciecam
 #ifdef __SSE2__
         int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
@@ -12389,6 +12382,18 @@ void ImProcFunctions::Lab_Local(
                 if (params->locallab.spots.at(sp).ciecam) {
                     bool HHcurvejz = false, CHcurvejz = false, LHcurvejz = false;;
                     ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 1, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
+                }
+
+
+                if (params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).modecie == "log") {
+                    bool HHcurvejz = false;
+                    bool CHcurvejz = false;
+                    bool LHcurvejz = false;
+
+                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
+
+                    float rad = params->locallab.spots.at(sp).detailcie;
+                    loccont(bfw, bfh, xstart, ystart, xend, yend, bufexpfin.get(), rad, 15.f, sk);
                 }
 
                 //here begin graduated filter
