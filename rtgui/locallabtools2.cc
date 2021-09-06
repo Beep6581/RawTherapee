@@ -7430,6 +7430,7 @@ Locallabcie::Locallabcie():
     shapejz(static_cast<DiagonalCurveEditor*>(jz1CurveEditorG->addCurve(CT_Diagonal, "Jz(Jz)"))),
     shapecz(static_cast<DiagonalCurveEditor*>(jz1CurveEditorG->addCurve(CT_Diagonal, "Cz(Cz)"))),
     jz2CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
+    shapeczjz(static_cast<DiagonalCurveEditor*>(jz2CurveEditorG->addCurve(CT_Diagonal, "Cz(Jz)"))),
     HHshapejz(static_cast<FlatCurveEditor*>(jz2CurveEditorG->addCurve(CT_Flat, "Hz(hz)", nullptr, false, true))),
     jz3CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
     CHshapejz(static_cast<FlatCurveEditor*>(jz3CurveEditorG->addCurve(CT_Flat, "Cz(hz)", nullptr, false, true))),
@@ -7531,6 +7532,12 @@ Locallabcie::Locallabcie():
     jz1CurveEditorG->curveListComplete();
 
     jz2CurveEditorG->setCurveListener(this);
+    shapeczjz->setLeftBarColorProvider (this, 1);
+    shapeczjz->setRangeDefaultMilestones (0.05, 0.2, 0.58);
+    shapeczjz->setResetCurve(DiagonalCurveType(defSpot.czjzcurve.at(0)), defSpot.czjzcurve);
+    shapeczjz->setBottomBarBgGradient (milestone);
+    shapeczjz->setLeftBarBgGradient (shapeczMilestones);
+    shapeczjz->setRangeDefaultMilestones (0.05, 0.2, 0.58);
 
     HHshapejz->setIdentityValue(0.);
     HHshapejz->setResetCurve(FlatCurveType(defSpot.HHcurvejz.at(0)), defSpot.HHcurvejz);
@@ -7935,6 +7942,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
 
         shapejz->setCurve(spot.jzcurve);
         shapecz->setCurve(spot.czcurve);
+        shapeczjz->setCurve(spot.czjzcurve);
         HHshapejz->setCurve(spot.HHcurvejz);
         CHshapejz->setCurve(spot.CHcurvejz);
         LHshapejz->setCurve(spot.LHcurvejz);
@@ -8050,6 +8058,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         }
         spot.jzcurve = shapejz->getCurve();
         spot.czcurve = shapecz->getCurve();
+        spot.czjzcurve = shapeczjz->getCurve();
         spot.HHcurvejz = HHshapejz->getCurve();
         spot.CHcurvejz = CHshapejz->getCurve();
         spot.LHcurvejz = LHshapejz->getCurve();
@@ -8127,6 +8136,12 @@ void Locallabcie::curveChanged(CurveEditor* ce)
             }
         }
 
+       if (ce == shapeczjz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshapeczjz, spName);
+            }
+        }
+
        if (ce == HHshapejz) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHshapejz, spName);
@@ -8171,6 +8186,7 @@ void Locallabcie::updateMaskBackground(const double normChromar, const double no
         LHshapejz->updateLocallabBackground(normHuer);
         shapejz->updateLocallabBackground(normLumar);
         shapecz->updateLocallabBackground(normChromar);
+        shapeczjz->updateLocallabBackground(normLumar);
 
         return false;
     }
@@ -8540,6 +8556,7 @@ void Locallabcie::convertParamToNormal()
     HHshapejz->setCurve(defSpot.HHcurvejz);
     shapejz->setCurve(defSpot.jzcurve);
     shapecz->setCurve(defSpot.czcurve);
+    shapeczjz->setCurve(defSpot.czjzcurve);
     shapecie->setCurve(defSpot.ciecurve);
     shapecie2->setCurve(defSpot.ciecurve2);
     lightjzcie->setValue(defSpot.lightjzcie);

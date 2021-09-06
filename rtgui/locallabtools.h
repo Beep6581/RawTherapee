@@ -1575,6 +1575,7 @@ private:
     DiagonalCurveEditor* const shapecz;
     
     CurveEditorGroup* const jz2CurveEditorG;
+    DiagonalCurveEditor* const shapeczjz;
     FlatCurveEditor* const HHshapejz;
     CurveEditorGroup* const jz3CurveEditorG;
     FlatCurveEditor* const CHshapejz;

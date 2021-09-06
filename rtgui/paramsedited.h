@@ -1000,6 +1000,7 @@ public:
         bool huejzcie;
         bool jzcurve;
         bool czcurve;
+        bool czjzcurve;
         bool HHcurvejz;
         bool CHcurvejz;
         bool LHcurvejz;
