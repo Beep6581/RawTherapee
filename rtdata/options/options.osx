@@ -42,3 +42,7 @@ CustomProfileBuilder=
 # Set the included font as default
 FontFamily=Droid Sans Mono Slashed
 CPFontFamily=Droid Sans Mono Slashed
+
+[Performance]
+# Set rgbDenoiseThreadLimit = 2 to avoid crash
+RgbDenoiseThreadLimit = 2
