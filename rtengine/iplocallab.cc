@@ -2967,6 +2967,9 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         double ajz = (ijz100 - 1.)/9.;//9 = sqrt(100) - 1 with a parabolic curve after jz100 - we can change for others curve ..log...(you must change also in locallabtool2)
         double bjz = 1. - ajz;
         double kjz = jz100 * (adapjz * ajz + bjz) / maxi;//remapping Jz in usual values 0..1 =>jz100 = 0.25...0.40 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
+        if(adapjz == 1. && jz100 == 0.1) {//force original algorithm
+            kjz = 1.;
+        }
         //adapjz * ajz + bjz parabolic curve between 1 and ijz100
         const std::unique_ptr<LabImage> temp(new LabImage(width, height));
         array2D<double> JJz(width, height);
@@ -2982,7 +2985,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         double delta = 0.015 * (double) sqrt(std::max(100.f, la) / 100.f);//small adaptation in function La scene
         double maxy = 0.75;//empirical value
         if (settings->verbose) { 
-            printf("maxi=%f mini=%f mean=%f, avgm=%f\n", maxi, mini, sum, avgm);
+            printf("maxi=%f mini=%f mean=%f, avgm=%f kjz=%f Max_real=%f\n", maxi, mini, sum, avgm, kjz, maxi*kjz);
         }
 
         const float sigmoidlambdajz = params->locallab.spots.at(sp).sigmoidldajzcie; 
