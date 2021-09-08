@@ -1050,6 +1050,8 @@ void Locallab::logencodChanged(const float blackev, const float whiteev, const f
 {
     // Update Locallab Log Encoding accordingly
     explog.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg);
+    expcie.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg);
+
 }
 
 void Locallab::refChanged(const std::vector<locallabRef> &ref, int selspot)
