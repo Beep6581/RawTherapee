@@ -181,6 +181,7 @@ Locallab::Locallab():
     addTool(toolpanel, &expvibrance);
     addTool(toolpanel, &explog);
     addTool(toolpanel, &expcie);
+    addTool(toolpanel, &expexpose);
     addTool(toolpanel, &expmask);
     addTool(toolpanel, &expsoft);
     addTool(toolpanel, &expblur);
