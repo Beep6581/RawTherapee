@@ -2924,14 +2924,14 @@ TP_LOCALLAB_INVMASK;Inverse algorithm
 TP_LOCALLAB_ISOGR;Distribution (ISO)
 TP_LOCALLAB_JAB;Jz Gamut control
 TP_LOCALLAB_JAB_TOOLTIP;Use with precaution.\n Preferably for SDR: images and devices.
-TP_LOCALLAB_JABADAP_TOOLTIP;Allows you to adapt a) the relation between Jz and saturation, b) the peak luminance level (HDR).\nAllows you to adapt this level to your device display characteristics.
+TP_LOCALLAB_JABADAP_TOOLTIP;Allows you to adapt a) the relation between Jz and saturation, b) the peak luminance level (HDR), c) taking into account the level of brightness (if set to 10 Lightness is used).\nAllows you to adapt this level to your device display characteristics.
 TP_LOCALLAB_JZ100;Jz reference 100cd/m2
-TP_LOCALLAB_JZMODECAM_TOOLTIP;Jz (only in 'Advanced' mode) is really operational if the output device (monitor) is HDR (peak luminance higher than 100 cd/m2, ideally between 4000 and 10000 cd/m2 and a black point luminance inferior to 0.005 cd/m2). This supposes a) ICC-PCS uses Jzazbz, b) that this monitor is calibrated (with if possible a DCI-P3 or Rec-2020 gamut), c) and that the usual gamma (sRGB or BT709) is replaced by Perceptual Quantiser (PQ).
+TP_LOCALLAB_JZMODECAM_TOOLTIP;Jz (only in 'Advanced' mode) is really operational if the output device (monitor) is HDR (peak luminance higher than 100 cd/m2, ideally between 4000 and 10000 cd/m2 and a black point luminance inferior to 0.005 cd/m2). This supposes a) ICC-PCS for screen uses Jzazbz (or XYZ), b) work in real precision, c) that this monitor is calibrated (with if possible a DCI-P3 or Rec-2020 gamut), d) and that the usual gamma (sRGB or BT709) is replaced by Perceptual Quantiser (PQ).
 TP_LOCALLAB_JZPQFRA;Jz remapping
-TP_LOCALLAB_JZPQFRA_TOOLTIP;Allows you to adapt the Jz algorithm to an SDR environment or to the characteristics (performance) of an HDR monitor as follows:\n a) for luminance values between 0 and 100 cd/m2 the system behaves as if it was in an SDR environment;\n b) for luminance values between 100 and 10000 cd/m2 you can adapt the algorithm to the HDR characteristics of the image and the monitor.
+TP_LOCALLAB_JZPQFRA_TOOLTIP;Allows you to adapt the Jz algorithm to an SDR environment or to the characteristics (performance) of an HDR monitor as follows:\n a) for luminance values between 0 and 100 cd/m2 the system behaves as if it was in an SDR environment;\n b) for luminance values between 100 and 10000 cd/m2 you can adapt the algorithm to the HDR characteristics of the image and the monitor.\n\nIf 'Perceptual Uniform adptation' is set to 1, 'Jz reference 100cd/m2' is set to 0.1, and PQ set to 10000, 'Jz remappping' behave as original algorithm Jzazbz  
 TP_LOCALLAB_JZPQREMAP;PQ - Peak luminance 
 TP_LOCALLAB_JZPQREMAP_TOOLTIP;PQ (Perceptual Quantizer) - allows you to change internal PQ function (usually 10000 cd/m2 - default 120 cd/m2).\nCan be used to adapt to devices and images - avoid artifacts, especially with SDR images and devices.
-TP_LOCALLAB_JZ100_TOOLTIP;Allows you to refine the reference Jz 100 cd/m2 level (Image Signal).\nChange saturation level and action of 'PU Perceptual Uniform adaptation', can lead to artifacts.
+TP_LOCALLAB_JZ100_TOOLTIP;Allows you to refine the reference Jz 100 cd/m2 level (Image Signal).\nChange saturation level and action of 'PU Perceptual Uniform adaptation'.
 TP_LOCALLAB_JZADAP;Perceptual Uniform adaptation
 TP_LOCALLAB_JZFRA;Jz Cz Hz
 TP_LOCALLAB_JZLIGHT;Brightness
