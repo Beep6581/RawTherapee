@@ -2200,6 +2200,8 @@ bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagef
         parent->setProgress (0.);
         bool success = false;
 
+        setUserOnlyPermission(Gio::File::create_for_path(filename), false);
+
         if (options.editorToSendTo == 1) {
             success = ExtProgStore::openInGimp (filename);
         } else if (options.editorToSendTo == 2) {
