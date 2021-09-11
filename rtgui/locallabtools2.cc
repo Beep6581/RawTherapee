@@ -8192,6 +8192,8 @@ void Locallabcie::updateMaskBackground(const double normChromar, const double no
         shapejz->updateLocallabBackground(normLumar);
         shapecz->updateLocallabBackground(normChromar);
         shapeczjz->updateLocallabBackground(normLumar);
+        shapecie->updateLocallabBackground(normLumar);
+        shapecie2->updateLocallabBackground(normChromar);
 
         return false;
     }
