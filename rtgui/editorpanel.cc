@@ -134,6 +134,87 @@ bool find_default_monitor_profile (GdkWindow *rootwin, Glib::ustring &defprof, G
 }
 #endif
 
+bool hasUserOnlyPermission(const Glib::ustring &dirname)
+{
+#if defined(__linux__)
+    const Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(dirname);
+    const Glib::RefPtr<Gio::FileInfo> file_info = file->query_info("owner::user,unix::mode");
+
+    if (!file_info) {
+        return false;
+    }
+
+    const Glib::ustring owner = file_info->get_attribute_string("owner::user");
+    const guint32 mode = file_info->get_attribute_uint32("unix::mode");
+
+    return (mode & 0777) == 0700 && owner == Glib::get_user_name();
+#else
+    return false;
+#endif
+}
+
+/**
+ * Sets read and write permissions, and optionally the execute permission, for
+ * the user and no permissions for others.
+ */
+void setUserOnlyPermission(const Glib::RefPtr<Gio::File> file, bool execute)
+{
+#if defined(__linux__)
+    const Glib::RefPtr<Gio::FileInfo> file_info = file->query_info("unix::mode");
+    if (!file_info) {
+        return;
+    }
+
+    guint32 mode = file_info->get_attribute_uint32("unix::mode");
+    mode = (mode & ~0777) | (execute ? 0700 : 0600);
+    try {
+        file->set_attribute_uint32("unix::mode", mode, Gio::FILE_QUERY_INFO_NONE);
+    } catch (Gio::Error &) {
+    }
+#endif
+}
+
+/**
+ * Gets the path to the temp directory, creating it if necessary.
+ */
+Glib::ustring getTmpDirectory()
+{
+#if defined(__linux__)
+    const int MAX_ATTEMPT = 100;
+    int attempt;
+    const Glib::ustring tmp_dir_root = Glib::get_tmp_dir();
+    const Glib::ustring subdir_base =
+        Glib::ustring::compose("rawtherapee-%1", Glib::get_user_name());
+    Glib::ustring dir = Glib::build_filename(tmp_dir_root, subdir_base);
+
+    // Returns true if the directory doesn't exist or has the right permissions.
+    auto is_usable_dir = [](const Glib::ustring &dir_path) {
+        return !Glib::file_test(dir_path, Glib::FILE_TEST_EXISTS) || (Glib::file_test(dir_path, Glib::FILE_TEST_IS_DIR) && hasUserOnlyPermission(dir_path));
+    };
+
+    for (attempt = 0; !is_usable_dir(dir) && attempt < MAX_ATTEMPT; attempt++) {
+        Glib::ustring subdir = Glib::ustring::compose("%1-%2", subdir_base, attempt);
+        dir = Glib::build_filename(tmp_dir_root, subdir);
+    }
+
+    if (attempt >= MAX_ATTEMPT) {
+        return tmp_dir_root;
+    }
+
+    if (!Glib::file_test(dir, Glib::FILE_TEST_EXISTS)) {
+        Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(dir);
+        bool dir_created = file->make_directory();
+        if (!dir_created) {
+            return tmp_dir_root;
+        }
+        setUserOnlyPermission(file, true);
+    }
+
+    return dir;
+#else
+    return Glib::get_tmp_dir();
+#endif
+}
 }
 
 class EditorPanel::ColorManagementToolbar
@@ -2058,7 +2139,7 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
             dirname = options.editor_custom_out_dir;
             break;
         default: // Options::EDITOR_OUT_DIR_TEMP
-            dirname = Glib::get_tmp_dir();
+            dirname = getTmpDirectory();
             break;
         }
         Glib::ustring fullFileName = Glib::build_filename(dirname, shortname);
