@@ -2500,6 +2500,9 @@ void gamutjz (double &Jz, double &az, double &bz, double pl, const double wip[3]
 void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk, const LUTf& cielocalcurve, bool localcieutili, const LUTf& cielocalcurve2, bool localcieutili2, const LUTf& jzlocalcurve, bool localjzutili, const LUTf& czlocalcurve, bool localczutili, const LUTf& czjzlocalcurve, bool localczjzutili, const LocCHCurve& locchCurvejz, const LocHHCurve& lochhCurvejz, const LocLHCurve& loclhCurvejz, bool HHcurvejz, bool CHcurvejz, bool LHcurvejz)
 {
     //BENCHFUN
+    if(!params->locallab.spots.at(sp).activ) {//disable all ciecam functions
+        return;
+    }
     bool ciec = false;
     bool iscie = false;
     if (params->locallab.spots.at(sp).ciecam && params->locallab.spots.at(sp).explog && call == 1) {
@@ -17762,7 +17765,7 @@ void ImProcFunctions::Lab_Local(
     }
 //end common mask
     
-        if(params->locallab.spots.at(sp).expcie  && params->locallab.spots.at(sp).modecie == "com") {//ciecam
+        if(params->locallab.spots.at(sp).expcie  && params->locallab.spots.at(sp).modecie == "com"  && lp.activspot) {//ciecam
             int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
             int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);
