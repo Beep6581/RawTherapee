@@ -872,7 +872,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         params->locallab.spots.at(sp).sourceabs = sourceab[sp];
 
                         if (locallListener) {
-                            locallListener->logencodChanged(blackev[sp], whiteev[sp], sourceg[sp], sourceab[sp], targetg[sp]);
+                            locallListener->logencodChanged(blackev[sp], whiteev[sp], sourceg[sp], sourceab[sp], targetg[sp], autocomput[sp], autocie[sp]);
                         }
                     }
                 }

@@ -144,7 +144,7 @@ public:
     void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) override;
 
     // Locallab Log Encoding autocompute function
-    void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg) override;
+    void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie) override;
 
     // Locallab tools mask background management function
     void refChanged(const std::vector<locallabRef> &ref, int selspot) override;

@@ -1038,7 +1038,7 @@ void Locallab::minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int 
         const double cdmin = retiMinMax.at(selspot).cdmin;
         const double mini = retiMinMax.at(selspot).mini;
         const double maxi = retiMinMax.at(selspot).maxi;
-        const double Tmean = retiMinMax.at(selspot).Tmean;
+        const  double Tmean = retiMinMax.at(selspot).Tmean;
         const double Tsigma = retiMinMax.at(selspot).Tsigma;
         const double Tmin = retiMinMax.at(selspot).Tmin;
         const double Tmax = retiMinMax.at(selspot).Tmax;
@@ -1047,11 +1047,15 @@ void Locallab::minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int 
     }
 }
 
-void Locallab::logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg)
+void Locallab::logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie)
 {
-    // Update Locallab Log Encoding accordingly
-    explog.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg);
-    expcie.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg);
+    // Update Locallab Log Encoding and Ciecam accordingly
+    if(autocomput) {
+        explog.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg);
+    }
+    if(autocie) {
+        expcie.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg);
+    }
 
 }
 
