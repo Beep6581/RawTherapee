@@ -8224,6 +8224,16 @@ void Locallabcie::updateAutocompute(const float blackev, const float whiteev, co
 
 void Locallabcie::AutograycieChanged()
 {
+
+    if (Autograycie->get_active()) {
+        sourceGraycie->set_sensitive(false);
+        sourceabscie->set_sensitive(false);
+        adapjzcie->set_sensitive(false);
+    } else {
+        sourceGraycie->set_sensitive(true);
+        sourceabscie->set_sensitive(true);
+        adapjzcie->set_sensitive(true);
+    }
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (Autograycie->get_active()) {
@@ -8520,6 +8530,16 @@ void Locallabcie::updatecieGUI()
             cie2Frame->hide();
         }
 
+    }
+
+    if (Autograycie->get_active()) {
+        sourceGraycie->set_sensitive(false);
+        sourceabscie->set_sensitive(false);
+        adapjzcie->set_sensitive(false);
+    } else {
+        sourceGraycie->set_sensitive(true);
+        sourceabscie->set_sensitive(true);
+        adapjzcie->set_sensitive(true);
     }
 
     if (mode == Simple || mode == Normal) { // Keep widget hidden in Normal and Simple mode
