@@ -2969,10 +2969,14 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         double ijz100 = 1./jz100;
         double ajz = (ijz100 - 1.)/9.;//9 = sqrt(100) - 1 with a parabolic curve after jz100 - we can change for others curve ..log...(you must change also in locallabtool2)
         double bjz = 1. - ajz;
-        double kjz = jz100 * (adapjz * ajz + bjz) / maxi;//remapping Jz in usual values 0..1 =>jz100 = 0.25...0.40 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
+        double to_screen = jz100 * (adapjz * ajz + bjz) / maxi;//to adapt screen values - remapping Jz in usual values 0..1 =>jz100 = 0.25...0.40 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
         if(adapjz == 1. && jz100 == 0.1) {//force original algorithm
-            kjz = 1.;
+            to_screen = 1.;
         }
+        double to_one = 1.;//only for calculation in range 0..1 or 0..32768
+        //to_screen and to_one are used actually both....but in case of HDR we must separate them 
+        to_one = 1 / (maxi * to_screen);
+        //double to_prov = 1 / (maxi * to_screen);
         //adapjz * ajz + bjz parabolic curve between 1 and ijz100
         const std::unique_ptr<LabImage> temp(new LabImage(width, height));
         array2D<double> JJz(width, height);
@@ -2983,12 +2987,12 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         int shadhs = params->locallab.spots.at(sp).shjzcie;
         int shtonals = params->locallab.spots.at(sp).shthjzcie;
         int radhs = params->locallab.spots.at(sp).radjzcie;
-        avgm = 0.5 * (sum * kjz + avgm);//empirical formula
+        avgm = 0.5 * (sum * to_screen * to_one + avgm);//empirical formula
         double miny = 0.05;
         double delta = 0.015 * (double) sqrt(std::max(100.f, la) / 100.f);//small adaptation in function La scene
         double maxy = 0.75;//empirical value
         if (settings->verbose) { 
-            printf("maxi=%f mini=%f mean=%f, avgm=%f kjz=%f Max_real=%f\n", maxi, mini, sum, avgm, kjz, maxi*kjz);
+            printf("maxi=%f mini=%f mean=%f, avgm=%f to_screen=%f to_one=%f Max_real=%f Max=%f \n", maxi, mini, sum, avgm, to_screen, to_one, maxi*to_screen, maxi*to_screen*to_one);
         }
 
         const float sigmoidlambdajz = params->locallab.spots.at(sp).sigmoidldajzcie; 
@@ -3057,17 +3061,17 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
 
                 Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p);
                 //remapping Jz
-                Jz = Jz * kjz;
-                az = az * kjz;
-                bz = bz * kjz;
+                Jz = Jz * to_screen;
+                az = az * to_screen;
+                bz = bz * to_screen;
                 JJz[i][k] = Jz;
                 Aaz[i][k] = az;
                 Bbz[i][k] = bz;
 
                 if(highhs > 0 || shadhs > 0) {
-                    temp->L[i][k] = 32768.f * (float) JJz[i][k];
-                    temp->a[i][k] = 32768.f * (float) Aaz[i][k];
-                    temp->b[i][k] = 32768.f * (float) Bbz[i][k];
+                    temp->L[i][k] = (float) to_one * 32768.f * (float) JJz[i][k];
+                    temp->a[i][k] = (float) to_one * 32768.f * (float) Aaz[i][k];
+                    temp->b[i][k] = (float) to_one * 32768.f * (float) Bbz[i][k];
                 }
             }
         }
@@ -3082,15 +3086,15 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         for (int i = 0; i < height; i++) {
             for (int k = 0; k < width; k++) {
                 if(highhs > 0 || shadhs > 0) {
-                    JJz[i][k] = (double) (temp->L[i][k] / 32768.f);
-                    Aaz[i][k] = (double) (temp->a[i][k] / 32768.f);
-                    Bbz[i][k] = (double) (temp->b[i][k] / 32768.f);
+                    JJz[i][k] = (double) (temp->L[i][k] / (32768.f * (float) to_one));
+                    Aaz[i][k] = (double) (temp->a[i][k] / (32768.f * (float) to_one));
+                    Bbz[i][k] = (double) (temp->b[i][k] / (32768.f * (float) to_one));
                 }
 
                 double az =  Aaz[i][k];
                 double bz =  Bbz[i][k];
                 double Jz =  JJz[i][k];
-
+                Jz *= to_one;
                 Jz= LIM01(jz_contrast.getVal(Jz));
 
                 if(lightreal > 0) {
@@ -3116,6 +3120,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                     sigmoidla (val, thjz, sigmjz, bljz);
                     Jz = val;
                 }
+                Jz /= to_one;
 
                 double Cz, Hz;
                 Cz = sqrt(az * az + bz * bz);
@@ -3127,8 +3132,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                     Cz  = 0.4 * (Cz - Czold) + Czold;
                 }
                 
-                if(czjzlocalcurve && localczjzutili) {
-                    double chromaCfactor =  (double) (czjzlocalcurve[(float) Jz * 65535.f]) / (Jz * 65535.);
+                if(czjzlocalcurve && localczjzutili) { 
+                    double chromaCfactor =  (double) (czjzlocalcurve[(float) Jz * 65535.f * (float) to_one]) / (Jz * 65535. * to_one);
                     Cz  *=  chromaCfactor;
                 }
                 
@@ -3157,7 +3162,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
 
 
                 if (loclhCurvejz && LHcurvejz) {//Jz=f(Hz) curve
-                    float l_r = Jz;
+                    float l_r = Jz * to_one;
                     const float valparam = loclhCurvejz[500.f *static_cast<float>(Color::huelab_to_huehsv2((float) Hz))] - 0.5f;
 
                     if (valparam > 0.f) {
@@ -3166,7 +3171,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                         constexpr float khu = 1.9f;
                         l_r *= (1.f + khu * valparam);
                     }
-                    Jz = l_r;
+                    Jz = (double) l_r / to_one;
                 }
 
 
@@ -3191,10 +3196,10 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                      bz = clipazbz(bz);
                 }
 
-                bz = bz / kjz;
-                az = az / kjz;
+                bz = bz / (to_screen);
+                az = az / (to_screen);
 
-                Jz = LIM01(Jz / kjz);
+                Jz = LIM01(Jz / (to_screen));
                 if(jabcie) {
                     Jz = clipjz05(Jz);
                     gamutjz (Jz, az, bz, pl, wip, 0.94, 0.004);
