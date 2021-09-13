@@ -7609,7 +7609,7 @@ Locallabcie::Locallabcie():
     sigmoidjzFrame->add(*sigjzBox);
     
     jzBox->pack_start(*sigmoidjzFrame);
-    jzallBox->pack_start(*jzBox);
+    //jzallBox->pack_start(*jzBox);
     
     jzshFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const jzshBox = Gtk::manage(new ToolParamBlock());
