@@ -3036,8 +3036,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         DiagonalCurve jz_lightn({
             DCT_NURBS,
             0, 0,
-            miny  - lightreal / 150., miny ,
-            min (1.0, maxy + delta - lightreal / 300.0), maxy + delta,
+            max(0.0, miny  - lightreal / 150.), miny ,
+            maxy + delta - lightreal / 300.0, maxy + delta,
             1, 1
         });
 
