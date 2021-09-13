@@ -2936,7 +2936,7 @@ TP_LOCALLAB_JZPQREMAP;PQ - Peak luminance
 TP_LOCALLAB_JZPQREMAP_TOOLTIP;PQ (Perceptual Quantizer) - allows you to change internal PQ function (usually 10000 cd/m2 - default 120 cd/m2).\nCan be used to adapt to devices and images - avoid artifacts, especially with SDR images and devices.
 TP_LOCALLAB_JZ100_TOOLTIP;Allows you to refine the reference Jz 100 cd/m2 level (Image Signal).\nChange saturation level and action of 'PU Perceptual Uniform adaptation'.
 TP_LOCALLAB_JZADAP;Perceptual Uniform adaptation
-TP_LOCALLAB_JZFRA;Jz Cz Hz
+TP_LOCALLAB_JZFRA;Jz Cz Hz Image Adjustments
 TP_LOCALLAB_JZLIGHT;Brightness
 TP_LOCALLAB_JZCONT;Contrast
 TP_LOCALLAB_JZCHROM;Chroma
@@ -2978,7 +2978,7 @@ TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contrast by level/TM/Directional contrast
 TP_LOCALLAB_LOC_CONTRASTPYRLAB; Graduated Filter/Edge Sharpness/Blur
 TP_LOCALLAB_LOC_RESIDPYR;Residual image (Main)
 TP_LOCALLAB_LOG;Log Encoding
-TP_LOCALLAB_LOG1FRA;Image Adjustments
+TP_LOCALLAB_LOG1FRA;CAM16 Image Adjustments
 TP_LOCALLAB_LOG2FRA;Viewing Conditions
 TP_LOCALLAB_LOGAUTO;Automatic
 TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Automatically calculates the 'Mean luminance' for the scene conditions when the ‘Automatic’ button in Relative Exposure Levels is pressed.
