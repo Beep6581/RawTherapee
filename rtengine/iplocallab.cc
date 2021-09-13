@@ -3082,12 +3082,12 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         }
 
         if(highhs > 0 || shadhs > 0) {
-            ImProcFunctions::shadowsHighlights(temp.get(), true, 1, highhs, shadhs, radhs, sk, hltonahs, shtonals);
+            ImProcFunctions::shadowsHighlights(temp.get(), true, 1, highhs, shadhs, radhs, sk, hltonahs * maxi * to_screen * to_one, shtonals * maxi * to_screen * to_one);
         }
         //others "Lab" threatment...to adapt 
 #ifdef _OPENMP
             #pragma omp parallel  for if(multiThread)
-#endif
+#endif 
         for (int i = 0; i < height; i++) {
             for (int k = 0; k < width; k++) {
                 if(highhs > 0 || shadhs > 0) {
