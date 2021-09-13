@@ -1536,6 +1536,7 @@ private:
     Adjuster* const jz100;
     Adjuster* const pqremap;
     Gtk::CheckButton* const forcejz;
+    MyExpander* const expjz;
     Gtk::Frame* const jzshFrame;
     Adjuster* const hljzcie;
     Adjuster* const hlthjzcie;

@@ -7394,6 +7394,7 @@ Locallabcie::Locallabcie():
     jz100(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZ100"), 0.1, 1.0, 0.01, 0.30))),
     pqremap(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZPQREMAP"), 100., 10000., 10., 120.))),
     forcejz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZFORCE")))),
+    expjz(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
     jzshFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZSHFRA")))),
     hljzcie(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0., 100., 1., 0.))),
     hlthjzcie(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HLTONALW"), 20., 100., 1., 70.))),
@@ -7511,6 +7512,19 @@ Locallabcie::Locallabcie():
     cieFrame->add(*cieFBox);
     pack_start(*cieFrame);
 
+    ToolParamBlock* const jzallBox = Gtk::manage(new ToolParamBlock());
+    Gtk::Box *TittleVBoxjz;
+    TittleVBoxjz = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    TittleVBoxjz->set_spacing(2);
+    Gtk::Box* const LCTitleHBoxjz = Gtk::manage(new Gtk::Box());
+    Gtk::Label* const LCLabeljz = Gtk::manage(new Gtk::Label());
+    LCLabeljz->set_markup(Glib::ustring("<b>") + (M("TP_LOCALLAB_JZFRA")) + Glib::ustring("</b>"));
+    LCTitleHBoxjz->pack_start(*LCLabeljz, Gtk::PACK_SHRINK);
+    TittleVBoxjz->pack_start(*LCTitleHBoxjz, Gtk::PACK_SHRINK);
+    expjz->setLabel(TittleVBoxjz);
+
+    setExpandAlignProperties(expjz, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
     float R, G, B;
     std::vector<GradientMilestone> six_shape;
     for (int i = 0; i < 6; i++) {
@@ -7595,7 +7609,7 @@ Locallabcie::Locallabcie():
     sigmoidjzFrame->add(*sigjzBox);
     
     jzBox->pack_start(*sigmoidjzFrame);
-
+    jzallBox->pack_start(*jzBox);
     
     jzshFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const jzshBox = Gtk::manage(new ToolParamBlock());
@@ -7607,8 +7621,10 @@ Locallabcie::Locallabcie():
     jzshFrame->add(*jzshBox);
     jzBox->pack_start(*jzshFrame);
 
-    jzFrame->add(*jzBox);
-    pack_start(*jzFrame);
+    jzallBox->add(*jzBox);
+
+    expjz->add(*jzallBox, false);
+    pack_start(*expjz, false, false);
     
     jabcieConn = jabcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::jabcieChanged));
     AutograycieConn = Autograycie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::AutograycieChanged));
@@ -7706,21 +7722,6 @@ Locallabcie::Locallabcie():
     catadcie->setAdjusterListener(this);
 
 
-/*
-    modeHBoxcie->set_spacing (2);
-    modeHBoxcie->set_tooltip_markup (M ("TP_LOCALLAB_CIEMODE_TOOLTIP"));
-    Gtk::Label* modeLabel = Gtk::manage (new Gtk::Label (M ("TP_LOCALLAB_CIEMODE") + ":"));
-    modeHBoxcie->pack_start (*modeLabel, Gtk::PACK_SHRINK);
-    modecie->append (M ("TP_LOCALLAB_CIEMODE_COM"));
-    modecie->append (M ("TP_LOCALLAB_CIEMODE_TM"));
-    modecie->append (M ("TP_LOCALLAB_CIEMODE_WAV"));
-    modecie->append (M ("TP_LOCALLAB_CIEMODE_DR"));
-    modecie->append (M ("TP_LOCALLAB_CIEMODE_LOG"));
-    modecie->set_active (0);
-    modeHBoxcie->pack_start (*modecie);
-    modecieconn = modecie->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::modecieChanged) );
-    pack_start(*modeHBoxcie);
-*/
     surrHBoxcie->set_spacing (2);
     surrHBoxcie->set_tooltip_markup (M ("TP_COLORAPP_SURROUND_TOOLTIP"));
     Gtk::Label* surrLabelcie = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
@@ -7787,6 +7788,7 @@ Locallabcie::~Locallabcie()
 void Locallabcie::setDefaultExpanderVisibility()
 {
     expLcie->set_expanded(false);
+    expjz->set_expanded(false);
 
 }
 void Locallabcie::updateAdviceTooltips(const bool showTooltips)
@@ -8321,6 +8323,7 @@ void Locallabcie::modecamChanged()
     const int mode = complexity->get_active_row_number();
     
     if (modecam->get_active_row_number() != 0) {
+        expjz->show();
         jzFrame->show();
         adapjzcie->show();
         jz100->show();
@@ -8328,6 +8331,7 @@ void Locallabcie::modecamChanged()
         jabcie->show();
         PQFrame->show();
     } else {
+        expjz->hide();
         jzFrame->hide();
         adapjzcie->hide();
         jz100->hide();
@@ -8348,6 +8352,7 @@ void Locallabcie::modecamChanged()
         }
 
     if(mode != Expert) {
+        expjz->hide();
         jzFrame->hide();
         adapjzcie->hide();
         jz100->hide();
@@ -8453,6 +8458,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             reparcie->show();
             sigmoidblcie->hide();
             
+            expjz->hide();
             jzFrame->hide();
             adapjzcie->hide();
             jz100->hide();
@@ -8491,6 +8497,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             sensicie->show();
             reparcie->show();
             sigmoidblcie->show();
+            expjz->hide();
 
             jzFrame->hide();
             adapjzcie->hide();
@@ -8530,6 +8537,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
             if (modecam->get_active_row_number() != 0) {
                 jabcie->show();
+                expjz->show();
                 jzFrame->show();
                 adapjzcie->show();
                 jz100->show();
