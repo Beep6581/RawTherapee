@@ -7393,6 +7393,7 @@ Locallabcie::Locallabcie():
     adapjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZADAP"), 1., 10., 0.05, 4.))),
     jz100(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZ100"), 0.1, 1.0, 0.01, 0.30))),
     pqremap(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZPQREMAP"), 100., 10000., 10., 120.))),
+    forcejz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZFORCE")))),
     jzshFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZSHFRA")))),
     hljzcie(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HIGHLIGHTS"), 0., 100., 1., 0.))),
     hlthjzcie(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_HLTONALW"), 20., 100., 1., 70.))),
@@ -7488,6 +7489,7 @@ Locallabcie::Locallabcie():
     PQFBox->pack_start(*adapjzcie);
     PQFBox->pack_start(*jz100);
     PQFBox->pack_start(*pqremap);
+    PQFBox->pack_start(*forcejz);
     PQFrame->add(*PQFBox);
     cieFBox->pack_start (*PQFrame);
 
@@ -7597,6 +7599,7 @@ Locallabcie::Locallabcie():
     jabcieConn = jabcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::jabcieChanged));
     AutograycieConn = Autograycie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::AutograycieChanged));
     sigmoidqjcieconn = sigmoidqjcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigmoidqjcieChanged));
+    forcejzConn = forcejz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::forcejzChanged));
 
     sourceGraycie->setAdjusterListener(this);
 
@@ -7784,6 +7787,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         jz100->set_tooltip_text(M("TP_LOCALLAB_JZ100_TOOLTIP"));
         pqremap->set_tooltip_text(M("TP_LOCALLAB_JZPQREMAP_TOOLTIP"));
         Autograycie->set_tooltip_text(M("TP_LOCALLAB_AUTOGRAYCIE_TOOLTIP"));
+        forcejz->set_tooltip_text(M("TP_LOCALLAB_JZFORCE_TOOLTIP"));
         sourceGraycie->set_tooltip_text("");
         sourceabscie->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
         cie1Frame->set_tooltip_text(M("TP_LOCALLAB_LOGIMAGE_TOOLTIP"));
@@ -7815,6 +7819,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         jz100->set_tooltip_text("");
         pqremap->set_tooltip_text("");
         Autograycie->set_tooltip_text("");
+        forcejz->set_tooltip_text("");
         sourceGraycie->set_tooltip_text("");
         sourceabscie->set_tooltip_text("");
         cie1Frame->set_tooltip_text("");
@@ -7841,6 +7846,7 @@ void Locallabcie::disableListener()
 {
     LocallabTool::disableListener();
     AutograycieConn.block(true);
+    forcejzConn.block(true);
     jabcieConn.block(true);
     sigmoidqjcieconn.block(true);
     sursourcieconn.block (true);
@@ -7855,6 +7861,7 @@ void Locallabcie::enableListener()
 {
     LocallabTool::enableListener();
     AutograycieConn.block(false);
+    forcejzConn.block(false);
     jabcieConn.block(false);
     sigmoidqjcieconn.block(false);
     sursourcieconn.block (false);
@@ -7916,7 +7923,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             toneMethodcie2->set_active(2);
         }
         
-        Autograycie->set_active(spot.Autogray);
+        Autograycie->set_active(spot.Autograycie);
+        forcejz->set_active(spot.forcejz);
         sourceGraycie->setValue(spot.sourceGraycie);
         sigmoidqjcie->set_active(spot.sigmoidqjcie);
         sourceabscie->setValue(spot.sourceabscie);
@@ -8039,6 +8047,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         }
 
         spot.Autograycie = Autograycie->get_active();
+        spot.forcejz = forcejz->get_active();
         spot.jabcie = jabcie->get_active();
         spot.sourceGraycie = sourceGraycie->getValue();
         spot.sourceabscie = sourceabscie->getValue();
@@ -8241,6 +8250,22 @@ void Locallabcie::AutograycieChanged()
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvlocallabAutograycie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::forcejzChanged()
+{
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (forcejz->get_active()) {
+                listener->panelChanged(Evlocallabforcejz,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabforcejz,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }

@@ -2927,6 +2927,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         double adapjz = params->locallab.spots.at(sp).adapjzcie;
         double jz100 = params->locallab.spots.at(sp).jz100;
         double pl = params->locallab.spots.at(sp).pqremap;
+        bool forcejz = params->locallab.spots.at(sp).forcejz;
 //calculate min, max, mean for Jz
 #ifdef _OPENMP
             #pragma omp parallel for reduction(min:mini) reduction(max:maxi) reduction(+:sum) if(multiThread)
@@ -2970,12 +2971,16 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         double ajz = (ijz100 - 1.)/9.;//9 = sqrt(100) - 1 with a parabolic curve after jz100 - we can change for others curve ..log...(you must change also in locallabtool2)
         double bjz = 1. - ajz;
         double to_screen = jz100 * (adapjz * ajz + bjz) / maxi;//to adapt screen values - remapping Jz in usual values 0..1 =>jz100 = 0.25...0.40 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
-        if(adapjz == 1. && jz100 == 0.1) {//force original algorithm
-            to_screen = 1.;
-        }
         double to_one = 1.;//only for calculation in range 0..1 or 0..32768
         //to_screen and to_one are used actually both....but in case of HDR we must separate them 
         to_one = 1 / (maxi * to_screen);
+        if(adapjz == 1. && jz100 == 0.1) {//force original algorithm
+            to_screen = 1.;
+            to_one = 1.;
+        }
+        if(!forcejz) {
+            to_one = 1.;
+        }
         //double to_prov = 1 / (maxi * to_screen);
         //adapjz * ajz + bjz parabolic curve between 1 and ijz100
         const std::unique_ptr<LabImage> temp(new LabImage(width, height));

@@ -1135,6 +1135,7 @@ enum ProcEventCode {
     Evlocallabshapejz = 1109,
     Evlocallabshapecz = 1110,
     Evlocallabshapeczjz = 1111,
+    Evlocallabforcejz = 1112,
     NUMOFEVENTS
 };
 

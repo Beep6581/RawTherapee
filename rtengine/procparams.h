@@ -1588,6 +1588,7 @@ struct LocallabParams {
         double reparcie;
         int sensicie;
         bool Autograycie;
+        bool forcejz;
         bool jabcie;
         bool sigmoidqjcie;
         double sourceGraycie;

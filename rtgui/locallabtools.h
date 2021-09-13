@@ -1535,6 +1535,7 @@ private:
     Adjuster* const adapjzcie;
     Adjuster* const jz100;
     Adjuster* const pqremap;
+    Gtk::CheckButton* const forcejz;
     Gtk::Frame* const jzshFrame;
     Adjuster* const hljzcie;
     Adjuster* const hlthjzcie;
@@ -1590,7 +1591,7 @@ private:
     MyComboBoxText*  const surroundcie;
     Gtk::Box* const surrHBoxcie;
     
-    sigc::connection AutograycieConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, toneMethodcieConn, toneMethodcieConn2;
+    sigc::connection AutograycieConn,  forcejzConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, toneMethodcieConn, toneMethodcieConn2;
     
 public:
     Locallabcie();
@@ -1622,6 +1623,7 @@ private:
     void updateGUIToMode(const modeType new_type) override;
     void complexityModeChanged();
     void AutograycieChanged();
+    void forcejzChanged();
     void jabcieChanged();
     void sigmoidqjcieChanged();
     void updatecieGUI();

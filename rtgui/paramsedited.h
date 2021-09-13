@@ -981,6 +981,7 @@ public:
         bool reparcie;
         bool sensicie;
         bool Autograycie;
+        bool forcejz;
         bool jabcie;
         bool sigmoidqjcie;
         bool sourceGraycie;
