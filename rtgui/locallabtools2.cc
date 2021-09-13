@@ -7460,13 +7460,27 @@ Locallabcie::Locallabcie():
     //modeHBoxcam->set_tooltip_markup (M ("TP_LOCALLAB_CAMMODE_TOOLTIP"));
     Gtk::Label* modeLabelcam = Gtk::manage (new Gtk::Label (M ("TP_LOCALLAB_CAMMODE") + ":"));
     modeHBoxcam->pack_start (*modeLabelcam, Gtk::PACK_SHRINK);
-    modecam->append (M ("TP_LOCALLAB_CAMMODE_ALL"));
     modecam->append (M ("TP_LOCALLAB_CAMMODE_CAM16"));
     modecam->append (M ("TP_LOCALLAB_CAMMODE_JZ"));
+    modecam->append (M ("TP_LOCALLAB_CAMMODE_ALL"));
     modecam->set_active (0);
     modeHBoxcam->pack_start (*modecam);
     modecamconn = modecam->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::modecamChanged) );
     pack_start(*modeHBoxcam);
+
+    modeHBoxcie->set_spacing (2);
+    modeHBoxcie->set_tooltip_markup (M ("TP_LOCALLAB_CIEMODE_TOOLTIP"));
+    Gtk::Label* modeLabel = Gtk::manage (new Gtk::Label (M ("TP_LOCALLAB_CIEMODE") + ":"));
+    modeHBoxcie->pack_start (*modeLabel, Gtk::PACK_SHRINK);
+    modecie->append (M ("TP_LOCALLAB_CIEMODE_COM"));
+    modecie->append (M ("TP_LOCALLAB_CIEMODE_TM"));
+    modecie->append (M ("TP_LOCALLAB_CIEMODE_WAV"));
+    modecie->append (M ("TP_LOCALLAB_CIEMODE_DR"));
+    modecie->append (M ("TP_LOCALLAB_CIEMODE_LOG"));
+    modecie->set_active (0);
+    modeHBoxcie->pack_start (*modecie);
+    modecieconn = modecie->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::modecieChanged) );
+    pack_start(*modeHBoxcie);
 
     surHBoxcie->set_spacing (2);
     surHBoxcie->set_tooltip_markup (M ("TP_LOCALLAB_LOGSURSOUR_TOOLTIP"));
@@ -7692,7 +7706,7 @@ Locallabcie::Locallabcie():
     catadcie->setAdjusterListener(this);
 
 
-
+/*
     modeHBoxcie->set_spacing (2);
     modeHBoxcie->set_tooltip_markup (M ("TP_LOCALLAB_CIEMODE_TOOLTIP"));
     Gtk::Label* modeLabel = Gtk::manage (new Gtk::Label (M ("TP_LOCALLAB_CIEMODE") + ":"));
@@ -7706,7 +7720,7 @@ Locallabcie::Locallabcie():
     modeHBoxcie->pack_start (*modecie);
     modecieconn = modecie->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::modecieChanged) );
     pack_start(*modeHBoxcie);
-
+*/
     surrHBoxcie->set_spacing (2);
     surrHBoxcie->set_tooltip_markup (M ("TP_COLORAPP_SURROUND_TOOLTIP"));
     Gtk::Label* surrLabelcie = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_SURROUND") + ":"));
@@ -7889,11 +7903,11 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         reparcie->setValue(spot.reparcie);
         sensicie->setValue(spot.sensicie);
 
-        if (spot.modecam == "all") {
+        if (spot.modecam == "cam16") {
             modecam->set_active (0);
-        } else if (spot.modecam == "cam16") {
-            modecam->set_active (1);
         } else if (spot.modecam == "jz") {
+            modecam->set_active (1);
+        } else if (spot.modecam == "all") {
             modecam->set_active (2);
         }
 
@@ -8013,11 +8027,11 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.sensicie = sensicie->getIntValue();
 
         if (modecam->get_active_row_number() == 0) {
-            spot.modecam = "all";
-        } else if (modecam->get_active_row_number() == 1) {
             spot.modecam = "cam16";
-        } else if (modecam->get_active_row_number() == 2) {
+        } else if (modecam->get_active_row_number() == 1) {
             spot.modecam = "jz";
+        } else if (modecam->get_active_row_number() == 2) {
+            spot.modecam = "all";
         }
 
         if (modecie->get_active_row_number() == 0) {
@@ -8306,7 +8320,7 @@ void Locallabcie::modecamChanged()
 {
     const int mode = complexity->get_active_row_number();
     
-    if (modecam->get_active_row_number() != 1) {
+    if (modecam->get_active_row_number() != 0) {
         jzFrame->show();
         adapjzcie->show();
         jz100->show();
@@ -8325,7 +8339,7 @@ void Locallabcie::modecamChanged()
     cie1Frame->show();
     cie2Frame->show();
 
-    if (modecam->get_active_row_number() == 2) {
+    if (modecam->get_active_row_number() == 1) {
         surHBoxcie->hide();
         cie1Frame->hide();
         targetGraycie->hide();
@@ -8341,7 +8355,7 @@ void Locallabcie::modecamChanged()
         jabcie->hide();
         PQFrame->hide();
 
-        if (modecam->get_active_row_number() == 2) {
+        if (modecam->get_active_row_number() == 1) {
             cieFrame->hide();
             cie2Frame->hide();
         }
@@ -8446,7 +8460,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             jabcie->hide();
             PQFrame->hide();
             
-            if (modecam->get_active_row_number() == 2) {
+            if (modecam->get_active_row_number() == 1) {
                 cieFrame->hide();
                 cie2Frame->hide();
             }
@@ -8485,7 +8499,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             jabcie->hide();
             PQFrame->hide();
 
-            if (modecam->get_active_row_number() == 2) {
+            if (modecam->get_active_row_number() == 1) {
                 cieFrame->hide();
                 cie2Frame->hide();
             }
@@ -8514,7 +8528,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             modeHBoxcie->show();
             sigmoidblcie->show();
 
-            if (modecam->get_active_row_number() != 1) {
+            if (modecam->get_active_row_number() != 0) {
                 jabcie->show();
                 jzFrame->show();
                 adapjzcie->show();
@@ -8544,7 +8558,7 @@ void Locallabcie::updatecieGUI()
         cie2Frame->show();
         
 
-    if (modecam->get_active_row_number() == 2) {
+    if (modecam->get_active_row_number() == 1) {
         surHBoxcie->hide();
         cie1Frame->hide();
         targetGraycie->hide();

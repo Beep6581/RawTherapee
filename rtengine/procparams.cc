@@ -4284,7 +4284,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sourceabscie(2000.),
     sursourcie("Average"),
     modecie("com"),
-    modecam("all"),
+    modecam("cam16"),
     saturlcie(0.),
     rstprotectcie(50.),
     chromlcie(0.),
