@@ -7609,7 +7609,6 @@ Locallabcie::Locallabcie():
     sigmoidjzFrame->add(*sigjzBox);
     
     jzBox->pack_start(*sigmoidjzFrame);
-    //jzallBox->pack_start(*jzBox);
     
     jzshFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const jzshBox = Gtk::manage(new ToolParamBlock());
@@ -7624,7 +7623,7 @@ Locallabcie::Locallabcie():
     jzallBox->add(*jzBox);
 
     expjz->add(*jzallBox, false);
-    pack_start(*expjz, false, false);
+//    pack_start(*expjz, false, false);
     
     jabcieConn = jabcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::jabcieChanged));
     AutograycieConn = Autograycie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::AutograycieChanged));
@@ -7763,6 +7762,8 @@ Locallabcie::Locallabcie():
     cieP1Box->pack_start(*expLcie, false, false);
     cie1Frame->add(*cieP1Box);
     pack_start(*cie1Frame);
+    pack_start(*expjz, false, false);
+    
     cie2Frame->set_label_align(0.025, 0.5);    
     ToolParamBlock* const cieP2Box = Gtk::manage(new ToolParamBlock());
     cieP2Box->pack_start(*targetGraycie);
