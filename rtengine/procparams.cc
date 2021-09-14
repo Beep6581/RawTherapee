@@ -6726,7 +6726,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->contthres, "Locallab", "Contthres_" + index_str, spot.contthres, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contq, "Locallab", "Contq_" + index_str, spot.contq, keyFile);
                     saveToKeyfile(!pedited || spot_edited->colorfl, "Locallab", "Colorfl_" + index_str, spot.colorfl, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->Autogray, "Locallab", "Autogray_" + index_str, spot.Autogray, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->Autogray, "Locallab", "AutoGray_" + index_str, spot.Autogray, keyFile);
                     saveToKeyfile(!pedited || spot_edited->fullimage, "Locallab", "Fullimage_" + index_str, spot.fullimage, keyFile);
                     saveToKeyfile(!pedited || spot_edited->repar, "Locallab", "Repart_" + index_str, spot.repar, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ciecam, "Locallab", "Ciecam_" + index_str, spot.ciecam, keyFile);
@@ -6789,7 +6789,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->complexcie, "Locallab", "Complexcie_" + index_str, spot.complexcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->reparcie, "Locallab", "Reparcie_" + index_str, spot.reparcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sensicie, "Locallab", "Sensicie_" + index_str, spot.sensicie, keyFile);
-                    saveToKeyfile(!pedited || spot_edited->Autograycie, "Locallab", "Autograycie_" + index_str, spot.Autograycie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->Autograycie, "Locallab", "AutoGraycie_" + index_str, spot.Autograycie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->forcejz, "Locallab", "Forcejz_" + index_str, spot.forcejz, keyFile);
                     saveToKeyfile(!pedited || spot_edited->jabcie, "Locallab", "jabcie_" + index_str, spot.jabcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmoidqjcie, "Locallab", "sigmoidqjcie_" + index_str, spot.sigmoidqjcie, keyFile);
