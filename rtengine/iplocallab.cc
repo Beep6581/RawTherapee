@@ -2993,9 +2993,9 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         int shtonals = params->locallab.spots.at(sp).shthjzcie;
         int radhs = params->locallab.spots.at(sp).radjzcie;
         avgm = 0.5 * (sum * to_screen * to_one + avgm);//empirical formula
-        double miny = 0.05;
+        double miny = 0.1;
         double delta = 0.015 * (double) sqrt(std::max(100.f, la) / 100.f);//small adaptation in function La scene
-        double maxy = 0.75;//empirical value
+        double maxy = 0.65;//empirical value
         if (settings->verbose) { 
             printf("maxi=%f mini=%f mean=%f, avgm=%f to_screen=%f to_one=%f Max_real=%f Max=%f \n", maxi, mini, sum, avgm, to_screen, to_one, maxi*to_screen, maxi*to_screen*to_one);
         }
@@ -3030,7 +3030,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
             DCT_NURBS,
             0, 0,
             miny, miny + lightreal / 150.,
-            maxy, min (1.0, maxy - delta + lightreal / 300.0),
+            maxy, min (1.0, maxy + delta + lightreal / 300.0),
             1, 1
         });
         DiagonalCurve jz_lightn({
