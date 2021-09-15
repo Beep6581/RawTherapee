@@ -136,7 +136,7 @@ bool find_default_monitor_profile (GdkWindow *rootwin, Glib::ustring &defprof, G
 
 bool hasUserOnlyPermission(const Glib::ustring &dirname)
 {
-#if defined(__linux__)
+#if defined(__linux__) || defined(__APPLE__)
     const Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(dirname);
     const Glib::RefPtr<Gio::FileInfo> file_info = file->query_info("owner::user,unix::mode");
 
@@ -159,7 +159,7 @@ bool hasUserOnlyPermission(const Glib::ustring &dirname)
  */
 void setUserOnlyPermission(const Glib::RefPtr<Gio::File> file, bool execute)
 {
-#if defined(__linux__)
+#if defined(__linux__) || defined(__APPLE__)
     const Glib::RefPtr<Gio::FileInfo> file_info = file->query_info("unix::mode");
     if (!file_info) {
         return;
@@ -179,7 +179,7 @@ void setUserOnlyPermission(const Glib::RefPtr<Gio::File> file, bool execute)
  */
 Glib::ustring getTmpDirectory()
 {
-#if defined(__linux__)
+#if defined(__linux__) || defined(__APPLE__)
     const int MAX_ATTEMPT = 100;
     int attempt;
     const Glib::ustring tmp_dir_root = Glib::get_tmp_dir();
