@@ -2536,6 +2536,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         mocam = 1;
     } else if(params->locallab.spots.at(sp).modecam == "jz") {
         mocam = 2;
+    } else if(params->locallab.spots.at(sp).modecam == "zcam") {
+        mocam = 3;
     }
 
     int mecamcurve = 0;
@@ -3566,6 +3568,9 @@ if(mocam == 0 || mocam == 1  || call == 1) {
 
         }
     }
+if(mocam == 3) {//Zcam
+}
+    
  
 }
 

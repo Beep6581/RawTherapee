@@ -1582,7 +1582,15 @@ private:
     CurveEditorGroup* const jz3CurveEditorG;
     FlatCurveEditor* const CHshapejz;
     FlatCurveEditor* const LHshapejz;
-    
+
+    Gtk::Frame* const ciezFrame;
+    Adjuster* const lightlzcam;
+    Adjuster* const lightqzcam;
+    Adjuster* const contlzcam;
+    Adjuster* const contqzcam;
+    Adjuster* const contthreszcam;
+    Adjuster* const colorflzcam;
+
     MyExpander* const expLcie;
     Gtk::Frame* const cie2Frame;
     Adjuster* const targetGraycie;

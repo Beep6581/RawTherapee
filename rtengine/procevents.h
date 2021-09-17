@@ -1136,8 +1136,17 @@ enum ProcEventCode {
     Evlocallabshapecz = 1110,
     Evlocallabshapeczjz = 1111,
     Evlocallabforcejz = 1112,
+    Evlocallablightlzcam = 1113,
+    Evlocallablightqzcam = 1114,
+    Evlocallabcontlzcam = 1115,
+    Evlocallabcontqzcam = 1116,
+    Evlocallabcontthreszcam = 1117,
+    Evlocallabcolorflzcam = 1118,
     NUMOFEVENTS
 };
+
+
+
 
 class ProcEvent
 {
