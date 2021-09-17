@@ -502,6 +502,7 @@ void Ciecam02::xyz2jzczhz ( double &Jz, double &az, double &bz, double x, double
     az = 3.524000 * Lp - 4.066708 * Mp + 0.542708 * Sp;
     bz = 0.199076 * Lp + 1.096799 * Mp - 1.295875 * Sp;
     Jz = std::max((((1. + Jzazbz_d) * Iz) / (1. + Jzazbz_d * Iz)) - Jzazbz_d0, 0.);
+    //or if we use ZCAM Jz = Mp  - Jzazbz_d0
 }
 
 

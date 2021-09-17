@@ -3040,7 +3040,15 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
             maxy + delta - lightreal / 300.0, maxy + delta,
             1, 1
         });
-
+/*
+                double L_p, M_p, S_p;
+                double jzw, azw, bzw;
+                Ciecam02::xyz2jzczhz (jzw, azw, bzw, Xw, Yw, Zw, pl, L_p, M_p, S_p);
+                float fb = sqrt(yb/100.f);
+                double  kk = 1.6 * (double) c2 / pow((double) fb, 0.12);
+                double qzw = 2700. * pow(jzw, (double) kk) * pow((double) c2,2.2) * pow((double) fl, 0.2);
+                printf("qzw=%f \n", qzw);
+*/
 #ifdef _OPENMP
             #pragma omp parallel for if(multiThread)
 #endif
@@ -3065,6 +3073,13 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                 double L_p, M_p, S_p;
 
                 Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p);
+                /* float fb = sqrt(yb/100.f);
+                double  kk = 1.6 * (double) c2 / pow((double) fb, 0.12);
+                double qz = 2700. * pow(Jz, (double) kk) * pow((double) c2,2.2) * pow((double) fl, 0.2); 
+              //  printf("qz=%f ", qz); 
+                double Jz2 = qz/qzw;
+                printf("Jz2=%f", Jz2);
+                */
                 //remapping Jz
                 Jz = Jz * to_screen;
                 az = az * to_screen;
