@@ -481,7 +481,7 @@ void Ciecam02::initcam2float (float yb, float pilotd, float f, float la, float x
 }
 
 
-void Ciecam02::xyz2jzczhz ( double &Jz, double &az, double &bz, double x, double y, double z, double pl, double &Lp, double &Mp, double &Sp)
+void Ciecam02::xyz2jzczhz ( double &Jz, double &az, double &bz, double x, double y, double z, double pl, double &Lp, double &Mp, double &Sp, bool zcam)
 {   //from various web 
     double Xp, Yp, Zp, L, M, S, Iz;
     double peakLum = 1. / pl;
@@ -501,16 +501,25 @@ void Ciecam02::xyz2jzczhz ( double &Jz, double &az, double &bz, double x, double
     Iz = 0.5 * Lp + 0.5 * Mp;
     az = 3.524000 * Lp - 4.066708 * Mp + 0.542708 * Sp;
     bz = 0.199076 * Lp + 1.096799 * Mp - 1.295875 * Sp;
-    Jz = std::max((((1. + Jzazbz_d) * Iz) / (1. + Jzazbz_d * Iz)) - Jzazbz_d0, 0.);
+    if(!zcam) {
+        Jz = std::max((((1. + Jzazbz_d) * Iz) / (1. + Jzazbz_d * Iz)) - Jzazbz_d0, 0.);
+    } else {
     //or if we use ZCAM Jz = Mp  - Jzazbz_d0
+        Jz = Mp  - Jzazbz_d0;
+    }
 }
 
 
-void Ciecam02::jzczhzxyz (double &x, double &y, double &z, double jz, double az, double bz, double pl, double &L, double &M, double &S)
+void Ciecam02::jzczhzxyz (double &x, double &y, double &z, double jz, double az, double bz, double pl, double &L, double &M, double &S, bool zcam)
 { //from various web 
     double Xp, Yp, Zp, Lp, Mp, Sp, Iz, tmp;
 
-    Iz = std::max((jz + Jzazbz_d0) / (1. + Jzazbz_d - Jzazbz_d * (jz + Jzazbz_d0)), 0.);
+    if(!zcam) {
+        Iz = std::max((jz + Jzazbz_d0) / (1. + Jzazbz_d - Jzazbz_d * (jz + Jzazbz_d0)), 0.);
+    } else {
+    //or if we use ZCAM Iz = Jz  + Jzazbz_d0
+        Iz = jz  + Jzazbz_d0;  
+    }
 
     Lp = Iz + 0.138605043271539 * az + 0.0580473161561189 * bz;
     Mp = Iz - 0.138605043271539 * az - 0.0580473161561189 * bz;

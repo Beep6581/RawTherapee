@@ -2472,7 +2472,8 @@ void gamutjz (double &Jz, double &az, double &bz, double pl, const double wip[3]
             inGamut = true;
             double L_, M_, S_;
             double xx, yy, zz;
-            Ciecam02::jzczhzxyz (xx, yy, zz, Jz, az, bz, pl, L_, M_, S_);
+            bool zcam = false;
+            Ciecam02::jzczhzxyz (xx, yy, zz, Jz, az, bz, pl, L_, M_, S_, zcam);
             double x, y, z;
             x = 65535. * (d65_d50[0][0] * xx + d65_d50[0][1] * yy + d65_d50[0][2] * zz);
             y = 65535. * (d65_d50[1][0] * xx + d65_d50[1][1] * yy + d65_d50[1][2] * zz);
@@ -2951,8 +2952,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                 zz = (d50_d65[2][0] * (double) x + d50_d65[2][1] * (double) y + d50_d65[2][2] * (double) z);
 
                 double L_p, M_p, S_p;
-
-                Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p);
+                bool zcam = false;
+                Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p, zcam);
                 if(Jz > maxi) {
                     maxi = Jz;
                 }
@@ -3043,7 +3044,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
 /*
                 double L_p, M_p, S_p;
                 double jzw, azw, bzw;
-                Ciecam02::xyz2jzczhz (jzw, azw, bzw, Xw, Yw, Zw, pl, L_p, M_p, S_p);
+                bool zcam = true;
+                Ciecam02::xyz2jzczhz (jzw, azw, bzw, Xw, Yw, Zw, pl, L_p, M_p, S_p, zcam);
                 float fb = sqrt(yb/100.f);
                 double  kk = 1.6 * (double) c2 / pow((double) fb, 0.12);
                 double qzw = 2700. * pow(jzw, (double) kk) * pow((double) c2,2.2) * pow((double) fl, 0.2);
@@ -3071,8 +3073,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                 zz = (d50_d65[2][0] * (double) x + d50_d65[2][1] * (double) y + d50_d65[2][2] * (double) z);
 
                 double L_p, M_p, S_p;
-
-                Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p);
+                bool zcam = false;
+                Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p, zcam);
                 /* float fb = sqrt(yb/100.f);
                 double  kk = 1.6 * (double) c2 / pow((double) fb, 0.12);
                 double qz = 2700. * pow(Jz, (double) kk) * pow((double) c2,2.2) * pow((double) fl, 0.2); 
@@ -3227,7 +3229,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
 
                 double L_, M_, S_;
                 double xx, yy, zz;
-                Ciecam02::jzczhzxyz (xx, yy, zz, Jz, az, bz, pl, L_, M_, S_);
+                bool zcam = false;
+                Ciecam02::jzczhzxyz (xx, yy, zz, Jz, az, bz, pl, L_, M_, S_, zcam);
                 //re enable D50
                 double x, y, z;
                 x = 65535. * (d65_d50[0][0] * xx + d65_d50[0][1] * yy + d65_d50[0][2] * zz);
