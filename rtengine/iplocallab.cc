@@ -3569,6 +3569,18 @@ if(mocam == 0 || mocam == 1  || call == 1) {
         }
     }
 if(mocam == 3) {//Zcam
+    //calculate Qz white - brightness of the reference white
+    double L_p, M_p, S_p;
+    double jzw, azw, bzw;
+    bool zcam = true;
+    double pl = params->locallab.spots.at(sp).pqremap;// to test or change to 10000
+    Ciecam02::xyz2jzczhz (jzw, azw, bzw, Xw, Yw, Zw, pl, L_p, M_p, S_p, zcam);
+
+    float fb = sqrt(yb/100.f);
+    double  kk = 1.6 * (double) c2 / pow((double) fb, 0.12);
+    double qzw = 2700. * pow(jzw, (double) kk) * pow((double) c2,2.2) * pow((double) fl, 0.2);
+    printf("qzw=%f PL=%f \n", qzw, pl);//huge change with PQ peak luminance
+
 }
     
  
