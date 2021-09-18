@@ -2584,6 +2584,9 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
     LUTf CAMBrightCurveJ(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
     LUTf CAMBrightCurveQ(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
 
+    LUTf ZCAMBrightCurveJz(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
+    LUTf ZCAMBrightCurveQz(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
+
 #ifdef _OPENMP
     const int numThreads = min(max(width * height / 65536, 1), omp_get_max_threads());
     #pragma omp parallel num_threads(numThreads) if(numThreads>1)
@@ -2695,6 +2698,34 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         
         Ciecam02::curveJfloat(lightQ, contQ, thQ, hist16Q, CAMBrightCurveQ); //brightness Q and contrast Q
     }
+        if(mocam == 3) {
+            float contLz = 0.f;
+            float lightLz = 0.f;
+            float contQz = 0.f;
+            float lightQz = 0.f;
+            contLz = 0.6 * params->locallab.spots.at(sp).contlzcam; //0.6 less effect, no need 1.
+            lightLz = 0.4 * params->locallab.spots.at(sp).lightlzcam; //0.4 less effect, no need 1.
+            contQz = 0.5 * params->locallab.spots.at(sp).contqzcam; //0.5 less effect, no need 1.
+            lightQz = 0.4 * params->locallab.spots.at(sp).lightqzcam; //0.4 less effect, no need 1.
+            float contthresLz = 0.f;
+            float contthresQz = contthresLz;
+            contthresLz = params->locallab.spots.at(sp).contthreszcam;
+            if(contLz < 0.f) {
+                contthresLz *= -1;
+            } 
+            float thLz = 0.6f;
+            thLz = 0.3f * contthresLz + 0.6f;
+            if(contQz < 0.f) {
+                contthresQz *= -1;
+            } 
+            float thQz = 0.6f;
+            thQz = 0.3f * contthresQz + 0.6f;
+            Ciecam02::curveJfloat(lightLz, contLz, thLz, hist16J, ZCAMBrightCurveJz); //lightness Jz and contrast Jz
+            ZCAMBrightCurveJz /= 327.68f;
+            Ciecam02::curveJfloat(lightQz, contQz, thQz, hist16Q, ZCAMBrightCurveQz); //brightness Q and contrast Q
+        }
+    
+    
     int tempo = 5000;
     if(params->locallab.spots.at(sp).expvibrance && call == 2) {
         if (params->locallab.spots.at(sp).warm > 0) {
@@ -2919,7 +2950,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
     const float coe = pow_F(fl, 0.25f);
     const float QproFactor = (0.4f / c) * (aw + 4.0f) ;
 
-
+    double maxiiz = -1000.;
     if(mocam != 1) {//Jz az bz ==> Jz Cz Hz before Ciecam16
         double mini = 1000.;
         double maxi = -1000.;
@@ -2961,6 +2992,11 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                 }
                 if(Jz < mini) {
                     mini = Jz;
+                }
+                zcam = true;
+                Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p, zcam);
+                if(Jz > maxiiz) {
+                    maxiiz = Jz;
                 }
 
                 sum += Jz;
@@ -3043,16 +3079,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
             maxy + delta - lightreal / 300.0, maxy + delta,
             1, 1
         });
-/*
-                double L_p, M_p, S_p;
-                double jzw, azw, bzw;
-                bool zcam = true;
-                Ciecam02::xyz2jzczhz (jzw, azw, bzw, Xw, Yw, Zw, pl, L_p, M_p, S_p, zcam);
-                float fb = sqrt(yb/100.f);
-                double  kk = 1.6 * (double) c2 / pow((double) fb, 0.12);
-                double qzw = 2700. * pow(jzw, (double) kk) * pow((double) c2,2.2) * pow((double) fl, 0.2);
-                printf("qzw=%f \n", qzw);
-*/
+
 #ifdef _OPENMP
             #pragma omp parallel for if(multiThread)
 #endif
@@ -3579,8 +3606,9 @@ if(mocam == 3) {//Zcam
     float fb = sqrt(yb/100.f);
     double  kk = 1.6 * (double) c2 / pow((double) fb, 0.12);
     double qzw = 2700. * pow(jzw, (double) kk) * pow((double) c2,2.2) * pow((double) fl, 0.2);
+    double qzmax =  2700. * pow(maxiiz, (double) kk) * pow((double) c2,2.2) * pow((double) fl, 0.2);
     double izw = jzw;
-    printf("qzw=%f PL=%f \n", qzw, pl);//huge change with PQ peak luminance
+    printf("qzw=%f PL=%f qzmax=%f\n", qzw, pl, qzmax);//huge change with PQ peak luminance
 
 }
     
