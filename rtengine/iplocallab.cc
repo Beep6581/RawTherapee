@@ -3579,6 +3579,7 @@ if(mocam == 3) {//Zcam
     float fb = sqrt(yb/100.f);
     double  kk = 1.6 * (double) c2 / pow((double) fb, 0.12);
     double qzw = 2700. * pow(jzw, (double) kk) * pow((double) c2,2.2) * pow((double) fl, 0.2);
+    double izw = jzw;
     printf("qzw=%f PL=%f \n", qzw, pl);//huge change with PQ peak luminance
 
 }
