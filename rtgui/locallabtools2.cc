@@ -8389,9 +8389,6 @@ void Locallabcie::modecamChanged()
     cie1Frame->show();
     cie2Frame->show();
     ciezFrame->hide();
-        targetGraycie->show();
-        targabscie->show();
-        surrHBoxcie->show();
 
     if (modecam->get_active_row_number() == 1) {
         surHBoxcie->hide();
@@ -8401,14 +8398,18 @@ void Locallabcie::modecamChanged()
         surrHBoxcie->hide();
         }
     if (modecam->get_active_row_number() == 3) {
-        surHBoxcie->hide();
-        cie1Frame->hide();
-        targetGraycie->hide();
-        targabscie->hide();
-        surrHBoxcie->hide();
+     //   surHBoxcie->hide();
+     //   cie1Frame->hide();
+     //   targetGraycie->hide();
+     //   targabscie->hide();
+     //   surrHBoxcie->hide();
+        cieFrame->show();
         cie1Frame->hide();
         cie2Frame->show();
         ciezFrame->show();
+        targetGraycie->hide();
+        targabscie->hide();
+        surrHBoxcie->hide();
 
     }
 
@@ -8429,13 +8430,27 @@ void Locallabcie::modecamChanged()
     } else {
         cieFrame->show();
         cie2Frame->show();
+        if (modecam->get_active_row_number() == 1) {
+            targetGraycie->hide();
+            targabscie->hide();
+            surrHBoxcie->hide();
+        }
         if (modecam->get_active_row_number() == 3) {
-            cieFrame->hide();
+            cieFrame->show();
             cie2Frame->show();
             ciezFrame->show();
+            targetGraycie->hide();
+            targabscie->hide();
+            surrHBoxcie->hide();
         }
         
     }
+        if (modecam->get_active_row_number() == 0 || modecam->get_active_row_number() == 2) {
+            targetGraycie->show();
+            targabscie->show();
+            surrHBoxcie->show();
+            cie2Frame->show();
+        }
     
 
 
@@ -8518,7 +8533,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             expLcie->hide();
             surHBoxcie->show();
             sourceabscie->show();
-            targabscie->hide();
+            targabscie->show();
             detailcie->hide();
             jabcie->hide();
             modeHBoxcie->hide();
@@ -8636,17 +8651,21 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             }
                 cieFrame->show();
                 cie2Frame->show();
+
+            if (modecam->get_active_row_number() == 0 || modecam->get_active_row_number() == 2) {
+                targetGraycie->show();
+                targabscie->show();
+                surrHBoxcie->show();
+            }
+
             if (modecam->get_active_row_number() == 1) {
-                cieFrame->hide();
-                cie2Frame->show();
-                ciezFrame->hide();
                 targetGraycie->hide();
                 targabscie->hide();
                 surrHBoxcie->hide();
             }
                 
             if (modecam->get_active_row_number() == 3) {
-                cieFrame->hide();
+                cieFrame->show();
                 cie2Frame->show();
                 ciezFrame->show();
                 targetGraycie->hide();
@@ -8688,6 +8707,10 @@ void Locallabcie::updatecieGUI()
     if (modecam->get_active_row_number() == 3) {
             cie1Frame->hide();
             cie2Frame->show();
+            targetGraycie->hide();
+            targabscie->hide();
+            surrHBoxcie->hide();
+            cieFrame->show();
             ciezFrame->show();
     }
 
@@ -8716,7 +8739,7 @@ void Locallabcie::convertParamToSimple()
     // Disable all listeners
     disableListener();
     //sourceabscie->setValue(defSpot.sourceabscie);
-    targabscie->setValue(defSpot.targabscie);
+    //targabscie->setValue(defSpot.targabscie);
     sigmoidblcie->setValue(defSpot.sigmoidblcie);
 
     modecie->set_active(0);

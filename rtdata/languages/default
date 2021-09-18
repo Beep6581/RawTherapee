@@ -1363,7 +1363,12 @@ HISTORY_MSG_1110;Local - Jz(Jz) curve
 HISTORY_MSG_1111;Local - Cz(Cz) curve
 HISTORY_MSG_1112;Local - Cz(Jz) curve
 HISTORY_MSG_1113;Local - forcejz
-
+HISTORY_MSG_1114;Local - ZCAM lightness
+HISTORY_MSG_1115;Local - ZCAM brightness
+HISTORY_MSG_1116;Local - ZCAM contrast J
+HISTORY_MSG_1117;Local - ZCAM contrast Q
+HISTORY_MSG_1118;Local - ZCAM contrast threshold
+HISTORY_MSG_1119;Local - ZCAM colorfullness
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance

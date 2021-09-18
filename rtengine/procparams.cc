@@ -4435,7 +4435,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     lightqzcam(0.),
     contlzcam(0.),
     contqzcam(0.), 
-    contthreszcam(50.),
+    contthreszcam(0.),
     colorflzcam(0.),
     targabscie(16.),
     targetGraycie(18.),
