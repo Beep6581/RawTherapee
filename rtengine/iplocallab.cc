@@ -3603,8 +3603,11 @@ if(mocam == 3) {//Zcam
     double pl = params->locallab.spots.at(sp).pqremap;// to test or change to 10000
     float fb_source = sqrt(yb/100.f);
     float fb_dest = sqrt(yb2/100.f);
-    double achro_source = pow((double) c,2.2) * pow((double) fl, 0.2)* (double) sqrt(fb_source);
-    double achro_dest = pow((double) c2,2.2) * pow((double) flj, 0.2) * (double) sqrt(fb_dest);
+    double flz = 0.171 * pow(la, 0.33333)*(1. - exp(-(48. * la / 9.)));
+    double fljz = 0.171 * pow(la2, 0.33333)*(1. - exp(-(48. * la2 / 9.)));
+    
+    double achro_source =  pow((double) c,2.2) * pow((double) flz, 0.2)* (double) sqrt(fb_source);
+    double achro_dest =  pow((double) c2,2.2) * pow((double) fljz, 0.2) * (double) sqrt(fb_dest);
     double  kk_source = (1.6 * (double) c) / pow((double) fb_source, 0.12);
     double  ikk_source = pow((double) fb_source, 0.12) / (1.6 * (double) c);
     double  kk_dest = (1.6 * (double) c2) / pow((double) fb_dest, 0.12);
@@ -3612,8 +3615,8 @@ if(mocam == 3) {//Zcam
 
     Ciecam02::xyz2jzczhz (jzw, azw, bzw, Xw, Yw, Zw, pl, L_p, M_p, S_p, zcam);
 
-    double qzw = 2700. * pow(jzw, (double) kk_source) *  achro_source;
-    double qzmax =  2700. * pow(maxiiz, (double) kk_source) *  achro_source;
+    double qzw = 2700. * pow(jzw, (double) kk_source) /  achro_source;//I think there is an error in formula documentation step 5 - all parameters are inversed
+    double qzmax =  2700. * pow(maxiiz, (double) kk_source) /  achro_source;
     double izw = jzw;
     printf("qzw=%f PL=%f qzmax=%f\n", qzw, pl, qzmax);//huge change with PQ peak luminance
     
@@ -3660,13 +3663,13 @@ if(mocam == 3) {//Zcam
                 double bz =  Bbz[i][k];
                 double iz =  Iiz[i][k];
                 float coefqz = 32768.f / (float) qzmax;
-                double qz = 2700. * pow(iz, (double) kk_source) *  achro_source;
+                double qz = 2700. * pow(iz, (double) kk_source) / achro_source;
                 double qzpro = (double) (ZCAMBrightCurveQz[coefqz * (float) qz] / coefqz);
                 qz = qzpro;
                 double jz = 100. * (qz / qzw);
                 double jzpro = (double) ZCAMBrightCurveJz[(float) (327.68 * jz)];
                 qzpro = 0.01 * jzpro * qzw;
-                iz = pow(qzpro / (2700. * achro_dest), ikk_dest);
+                iz = pow(qzpro / (2700. / achro_dest), ikk_dest);
                 double L_, M_, S_;
                 double xx, yy, zz;
                 bool zcam = true;
