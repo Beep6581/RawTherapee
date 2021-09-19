@@ -2705,8 +2705,15 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
             float lightQz = 0.f;
             contLz = 0.6 * params->locallab.spots.at(sp).contlzcam; //0.6 less effect, no need 1.
             lightLz = 0.4 * params->locallab.spots.at(sp).lightlzcam; //0.4 less effect, no need 1.
+            if(params->locallab.spots.at(sp).lightlzcam < 0) {
+                lightLz = 0.2 * params->locallab.spots.at(sp).lightlzcam; //0.4 less effect, no need 1.
+            }
+    
             contQz = 0.5 * params->locallab.spots.at(sp).contqzcam; //0.5 less effect, no need 1.
             lightQz = 0.4 * params->locallab.spots.at(sp).lightqzcam; //0.4 less effect, no need 1.
+            if(params->locallab.spots.at(sp).lightqzcam < 0) {
+                lightQz = 0.2 * params->locallab.spots.at(sp).lightqzcam; //0.4 less effect, no need 1.
+            }
             float contthresLz = 0.f; //because use of maxiiz
             float contthresQz = contthresLz;
             contthresLz = params->locallab.spots.at(sp).contthreszcam;
@@ -3603,14 +3610,14 @@ if(mocam == 3) {//Zcam
     double pl = params->locallab.spots.at(sp).pqremap;// to test or change to 10000
     float fb_source = sqrt(yb/100.f);
     float fb_dest = sqrt(yb2/100.f);
-    double flz = 0.171 * pow(la, 0.33333)*(1. - exp(-(48. * la / 9.)));
-    double fljz = 0.171 * pow(la2, 0.33333)*(1. - exp(-(48. * la2 / 9.)));
-    
-    double achro_source =  pow((double) c,2.2) * pow((double) flz, 0.2)* (double) sqrt(fb_source);
-    double achro_dest =  pow((double) c2,2.2) * pow((double) fljz, 0.2) * (double) sqrt(fb_dest);
+    double flz = 0.171 * pow(la, 0.33333)*(1. - exp(-(48. * (double) la / 9.)));
+    double fljz = 0.171 * pow(la2, 0.33333)*(1. - exp(-(48. * (double) la2 / 9.)));
+    double cpow = 0.1;
+    double achro_source =  pow((double) c, cpow) * pow((double) flz, 0.2)* (double) sqrt(fb_source);
+    double achro_dest =  pow((double) c2, cpow) * pow((double) fljz, 0.2) * (double) sqrt(fb_dest);
     double  kk_source = (1.6 * (double) c) / pow((double) fb_source, 0.12);
-    double  ikk_source = pow((double) fb_source, 0.12) / (1.6 * (double) c);
-    double  kk_dest = (1.6 * (double) c2) / pow((double) fb_dest, 0.12);
+   // double  ikk_source = pow((double) fb_source, 0.12) / (1.6 * (double) c);
+   // double  kk_dest = (1.6 * (double) c2) / pow((double) fb_dest, 0.12);
     double  ikk_dest = pow((double) fb_dest, 0.12) /(1.6 * (double) c2);
 
     Ciecam02::xyz2jzczhz (jzw, azw, bzw, Xw, Yw, Zw, pl, L_p, M_p, S_p, zcam);

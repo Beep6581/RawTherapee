@@ -81,10 +81,12 @@ void Ciecam02::curveJfloat (float br, float contr, float thr, const LUTu & histo
             brightcurvePoints[5] = 0.7f; // shoulder point
             brightcurvePoints[6] = min (1.0f, 0.7f + br / 300.0f); //value at shoulder point
         } else {
-            brightcurvePoints[3] = 0.1f - br / 150.0f; // toe point
+            brightcurvePoints[3] = max(0.0, 0.1 - (double) br / 150.0); // toe point
+        //    brightcurvePoints[3] = 0.1f - br / 150.0f; // toe point
             brightcurvePoints[4] = 0.1f; // value at toe point
 
-            brightcurvePoints[5] = min (1.0f, 0.7f - br / 300.0f); // shoulder point
+        //    brightcurvePoints[5] = min (1.0f, 0.7f - br / 300.0f); // shoulder point
+            brightcurvePoints[5] = 0.7f - br / 300.0f; // shoulder point
             brightcurvePoints[6] = 0.7f; // value at shoulder point
         }
 
