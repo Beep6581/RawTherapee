@@ -1640,6 +1640,7 @@ struct LocallabParams {
         double contqzcam; 
         double contthreszcam;
         double colorflzcam;
+        double saturzcam;
         double targabscie;
         double targetGraycie;
         double catadcie;

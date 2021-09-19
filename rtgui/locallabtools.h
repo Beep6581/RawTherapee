@@ -1590,6 +1590,7 @@ private:
     Adjuster* const contqzcam;
     Adjuster* const contthreszcam;
     Adjuster* const colorflzcam;
+    Adjuster* const saturzcam;
 
     MyExpander* const expLcie;
     Gtk::Frame* const cie2Frame;

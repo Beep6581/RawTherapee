@@ -2934,6 +2934,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
     }
     float mchrz = 0.f;
     mchrz = 0.5f * (float) params->locallab.spots.at(sp).colorflzcam;
+    float schrz = 0.f;
+    schrz = 0.5f * (float) params->locallab.spots.at(sp).saturzcam;
 
     float d, dj;
 
@@ -3688,13 +3690,22 @@ if(mocam == 3) {//Zcam
                 }
                 double hp = h * (360 / (double) (2.f * rtengine::RT_PI_F));
                 double ez = 1.015 + cos(89.038 + hp);
-                if(mchrz != 0.f){
+                if(mchrz != 0.f || schrz != 0.f){
+                    //colorfullness
                     double Mpz = 100. * pow(az * az + bz * bz, 0.37)* pow(ez, 0.068) * coefm;
                     Mpz *= (double) (1.f + 0.01f * mchrz);
                     float ccz = sqrt(pow((float) (Mpz / (100. * pow(ez, 0.068) * coefm)), (1.f / 0.37f)));
                     float2 sincosval = xsincosf(h);
                     az = (double)(ccz * sincosval.y);
                     bz = (double)(ccz * sincosval.x);
+                    //saturation
+                    double Spz = 100. * pow(flz, 0.6) * (Mpz / qz);
+                    Spz *= (double) (1.f + 0.01f * schrz);
+                    Mpz = (Spz * qz) / (100.* pow(flz, 0.6));
+                    ccz = sqrt(pow((float) (Mpz / (100. * pow(ez, 0.068) * coefm)), (1.f / 0.37f)));
+                    az = (double)(ccz * sincosval.y);
+                    bz = (double)(ccz * sincosval.x);
+                    
                 }    
                 double L_, M_, S_;
                 double xx, yy, zz;

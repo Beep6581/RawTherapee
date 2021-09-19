@@ -7445,6 +7445,7 @@ Locallabcie::Locallabcie():
     contqzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),
     contthreszcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTHRES"), -1., 1., 0.01, 0.))),
     colorflzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCOLORFL"), -100., 100., 0.5, 0.))),
+    saturzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
     
     expLcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_LOGEXP")))),
     cie2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
@@ -7726,6 +7727,7 @@ Locallabcie::Locallabcie():
     contqzcam->setAdjusterListener(this);
     contthreszcam->setAdjusterListener(this);
     colorflzcam->setAdjusterListener(this);
+    saturzcam->setAdjusterListener(this);
     targetGraycie->setAdjusterListener(this);
     targabscie->setLogScale(500, 0);
 
@@ -7787,6 +7789,7 @@ Locallabcie::Locallabcie():
     ciePzBox->pack_start(*contqzcam);
     ciePzBox->pack_start(*contthreszcam);
     ciePzBox->pack_start(*colorflzcam);
+    ciePzBox->pack_start(*saturzcam);
     ciezFrame->add(*ciePzBox);
     pack_start(*ciezFrame);
 
@@ -8042,6 +8045,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         contqzcam->setValue(spot.contqzcam);
         contthreszcam->setValue(spot.contthreszcam);
         colorflzcam->setValue(spot.colorflzcam);
+        saturzcam->setValue(spot.saturzcam);
 
        
     }
@@ -8172,6 +8176,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.contqzcam = contqzcam->getValue(); 
         spot.contthreszcam = contthreszcam->getValue();
         spot.colorflzcam = colorflzcam->getValue();
+        spot.saturzcam = saturzcam->getValue();
 
     }
 }
@@ -9129,6 +9134,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabcolorflzcam,
                                        colorflzcam->getTextValue()+ spName );
+            }
+        }
+
+        if (a == saturzcam) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsaturzcam,
+                                       saturzcam->getTextValue()+ spName );
             }
         }
 

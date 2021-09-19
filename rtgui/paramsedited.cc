@@ -1735,6 +1735,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).contqzcam = locallab.spots.at(j).contqzcam && pSpot.contqzcam == otherSpot.contqzcam;
                 locallab.spots.at(j).contthreszcam = locallab.spots.at(j).contthreszcam && pSpot.contthreszcam == otherSpot.contthreszcam;
                 locallab.spots.at(j).colorflzcam = locallab.spots.at(j).colorflzcam && pSpot.colorflzcam == otherSpot.colorflzcam;
+                locallab.spots.at(j).saturzcam = locallab.spots.at(j).saturzcam && pSpot.saturzcam == otherSpot.saturzcam;
 
 
             }
@@ -5876,6 +5877,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).colorflzcam = mods.locallab.spots.at(i).colorflzcam;
         }
 
+        if (locallab.spots.at(i).saturzcam) {
+            toEdit.locallab.spots.at(i).saturzcam = mods.locallab.spots.at(i).saturzcam;
+        }
+
         if (locallab.spots.at(i).targabscie) {
             toEdit.locallab.spots.at(i).targabscie = mods.locallab.spots.at(i).targabscie;
         }
@@ -7831,6 +7836,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     contqzcam(v), 
     contthreszcam(v),
     colorflzcam(v),
+    saturzcam(v),
     targabscie(v),
     targetGraycie(v),
     catadcie(v),
@@ -8489,6 +8495,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     contqzcam = v; 
     contthreszcam = v;
     colorflzcam = v;
+    saturzcam = v;
     targabscie = v;
     targetGraycie = v;
     catadcie = v;

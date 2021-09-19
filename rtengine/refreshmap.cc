@@ -1146,7 +1146,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,    //Evlocallabcontlzcam
     AUTOEXP,    //Evlocallabcontqzcam
     AUTOEXP,    //Evlocallabcontthreszcam
-    AUTOEXP    //Evlocallabcolorflzcam
+    AUTOEXP,    //Evlocallabcolorflzcam
+    AUTOEXP    //Evlocallabsaturzcam
     
     
 };
