@@ -2932,6 +2932,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
             }
         }
     }
+    float mchrz = 0.f;
+    mchrz = 0.5f * (float) params->locallab.spots.at(sp).colorflzcam;
 
     float d, dj;
 
@@ -3622,12 +3624,12 @@ if(mocam == 3) {//Zcam
    // double  ikk_source = pow((double) fb_source, 0.12) / (1.6 * (double) c);
    // double  kk_dest = (1.6 * (double) c2) / pow((double) fb_dest, 0.12);
     double  ikk_dest = pow((double) fb_dest, 0.12) /(1.6 * (double) cpp2);
-
     Ciecam02::xyz2jzczhz (jzw, azw, bzw, Xw, Yw, Zw, pl, L_p, M_p, S_p, zcam);
 
     double qzw = 2700. * pow(jzw, (double) kk_source) /  achro_source;//I think there is an error in formula documentation step 5 - all parameters are inversed
     double qzmax =  2700. * pow(maxiiz, (double) kk_source) /  achro_source;
     double izw = jzw;
+    double coefm = pow(flz, 0.2) / (pow((double) fb_source, 0.1) * pow(izw, 0.78)); 
     printf("qzw=%f PL=%f qzmax=%f\n", qzw, pl, qzmax);//huge change with PQ peak luminance
     
     array2D<double> Iiz(width, height);
@@ -3680,6 +3682,20 @@ if(mocam == 3) {//Zcam
                 double jzpro = (double) ZCAMBrightCurveJz[(float) (327.68 * jz)];
                 qzpro = 0.01 * jzpro * qzw;
                 iz = pow(qzpro / (2700. / achro_dest), ikk_dest);
+                double h = atan2(bz, az);
+                if ( h < 0.0 ) {
+                    h += (double) (2.f * rtengine::RT_PI_F);
+                }
+                double hp = h * (360 / (double) (2.f * rtengine::RT_PI_F));
+                double ez = 1.015 + cos(89.038 + hp);
+                if(mchrz != 0.f){
+                    double Mpz = 100. * pow(az * az + bz * bz, 0.37)* pow(ez, 0.068) * coefm;
+                    Mpz *= (double) (1.f + 0.01f * mchrz);
+                    float ccz = sqrt(pow((float) (Mpz / (100. * pow(ez, 0.068) * coefm)), (1.f / 0.37f)));
+                    float2 sincosval = xsincosf(h);
+                    az = (double)(ccz * sincosval.y);
+                    bz = (double)(ccz * sincosval.x);
+                }    
                 double L_, M_, S_;
                 double xx, yy, zz;
                 bool zcam = true;
