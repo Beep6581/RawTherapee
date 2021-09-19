@@ -210,6 +210,10 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
             }
         }
 
+        if (p.size() == 0) {
+            return 0.f;
+        }
+
         const int pos = p.size() * 0.95;
         std::nth_element(p.begin(), p.begin() + pos, p.end());
         darklim = p[pos];
