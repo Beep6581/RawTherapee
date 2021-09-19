@@ -2707,7 +2707,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
             lightLz = 0.4 * params->locallab.spots.at(sp).lightlzcam; //0.4 less effect, no need 1.
             contQz = 0.5 * params->locallab.spots.at(sp).contqzcam; //0.5 less effect, no need 1.
             lightQz = 0.4 * params->locallab.spots.at(sp).lightqzcam; //0.4 less effect, no need 1.
-            float contthresLz = 0.f;
+            float contthresLz = 0.f; //because use of maxiiz
             float contthresQz = contthresLz;
             contthresLz = params->locallab.spots.at(sp).contthreszcam;
             if(contLz < 0.f) {
@@ -2716,13 +2716,13 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
             float thLz = 0.6f;
             thLz = 0.3f * contthresLz + 0.6f;
             if(contQz < 0.f) {
-                contthresQz *= -1;
+                contthresQz *= -1.f;
             } 
             float thQz = 0.6f;
             thQz = 0.3f * contthresQz + 0.6f;
             Ciecam02::curveJfloat(lightLz, contLz, thLz, hist16J, ZCAMBrightCurveJz); //lightness Jz and contrast Jz
             ZCAMBrightCurveJz /= 327.68f;
-            Ciecam02::curveJfloat(lightQz, contQz, thQz, hist16Q, ZCAMBrightCurveQz); //brightness Q and contrast Q
+            Ciecam02::curveJfloat(lightQz, contQz, thQz, hist16J, ZCAMBrightCurveQz); //brightness Qz and contrast Qz - hist16J good approximation because maxiiz
         }
     
     
@@ -2940,7 +2940,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
     float nj, nbbj, ncbj, czj, awj, flj;
     Ciecam02::initcam2float(yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj, c16);
 #ifdef __SSE2__
-    const float reccmcz = 1.f / (c2 * czj);
+    const float reccmcz = 1.f / (c * czj);
 #endif
     const float epsil = 0.0001f;
     const float coefQ = 32767.f / wh;
@@ -2964,7 +2964,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         bool forcejz = params->locallab.spots.at(sp).forcejz;
 //calculate min, max, mean for Jz
 #ifdef _OPENMP
-            #pragma omp parallel for reduction(min:mini) reduction(max:maxi) reduction(+:sum) if(multiThread)
+            #pragma omp parallel for reduction(min:mini) reduction(max:maxi) reduction(max:maxiiz) reduction(+:sum) if(multiThread)
 #endif
         for (int i = 0; i < height; i+=1) {
             for (int k = 0; k < width; k+=1) {
@@ -3601,12 +3601,17 @@ if(mocam == 3) {//Zcam
     double jzw, azw, bzw;
     bool zcam = true;
     double pl = params->locallab.spots.at(sp).pqremap;// to test or change to 10000
+    float fb_source = sqrt(yb/100.f);
+    float fb_dest = sqrt(yb2/100.f);
+    double achro_source = pow((double) c,2.2) * pow((double) fl, 0.2)* (double) sqrt(fb_source);
+    double achro_dest = pow((double) c2,2.2) * pow((double) flj, 0.2) * (double) sqrt(fb_dest);
+    double  kk_source = 1.6 * (double) c / pow((double) fb_source, 0.12);
+    double  kk_dest = 1.6 * (double) c2 / pow((double) fb_dest, 0.12);
+
     Ciecam02::xyz2jzczhz (jzw, azw, bzw, Xw, Yw, Zw, pl, L_p, M_p, S_p, zcam);
 
-    float fb = sqrt(yb/100.f);
-    double  kk = 1.6 * (double) c2 / pow((double) fb, 0.12);
-    double qzw = 2700. * pow(jzw, (double) kk) * pow((double) c2,2.2) * pow((double) fl, 0.2);
-    double qzmax =  2700. * pow(maxiiz, (double) kk) * pow((double) c2,2.2) * pow((double) fl, 0.2);
+    double qzw = 2700. * pow(jzw, (double) kk_source) *  achro_source;
+    double qzmax =  2700. * pow(maxiiz, (double) kk_source) *  achro_source;
     double izw = jzw;
     printf("qzw=%f PL=%f qzmax=%f\n", qzw, pl, qzmax);//huge change with PQ peak luminance
 

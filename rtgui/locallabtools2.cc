@@ -8402,9 +8402,9 @@ void Locallabcie::modecamChanged()
         cie1Frame->hide();
         cie2Frame->show();
         ciezFrame->show();
-        targetGraycie->hide();
-        targabscie->hide();
-        surrHBoxcie->hide();
+        targetGraycie->show();
+        targabscie->show();
+        surrHBoxcie->show();
         PQFrame->show();
         adapjzcie->hide();
         jz100->hide();
@@ -8438,9 +8438,9 @@ void Locallabcie::modecamChanged()
             cieFrame->show();
             cie2Frame->show();
             ciezFrame->show();
-            targetGraycie->hide();
-            targabscie->hide();
-            surrHBoxcie->hide();
+            targetGraycie->show();
+            targabscie->show();
+            surrHBoxcie->show();
             PQFrame->show();
             adapjzcie->hide();
             jz100->hide();
@@ -8672,9 +8672,9 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 cieFrame->show();
                 cie2Frame->show();
                 ciezFrame->show();
-                targetGraycie->hide();
-                targabscie->hide();
-                surrHBoxcie->hide();
+                targetGraycie->show();
+                targabscie->show();
+                surrHBoxcie->show();
                 PQFrame->show();
                 adapjzcie->hide();
                 jz100->hide();
@@ -8716,9 +8716,9 @@ void Locallabcie::updatecieGUI()
     if (modecam->get_active_row_number() == 3) {
             cie1Frame->hide();
             cie2Frame->show();
-            targetGraycie->hide();
-            targabscie->hide();
-            surrHBoxcie->hide();
+            targetGraycie->show();
+            targabscie->show();
+            surrHBoxcie->show();
             cieFrame->show();
             ciezFrame->show();
             PQFrame->show();
