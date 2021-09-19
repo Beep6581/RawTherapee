@@ -2715,8 +2715,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                 lightQz = 0.2 * params->locallab.spots.at(sp).lightqzcam; //0.4 less effect, no need 1.
             }
             float contthresLz = 0.f; //because use of maxiiz
-            float contthresQz = contthresLz;
-            contthresLz = params->locallab.spots.at(sp).contthreszcam;
+            float contthresQz = 0.f;
+            contthresLz = contthresQz = params->locallab.spots.at(sp).contthreszcam;
             if(contLz < 0.f) {
                 contthresLz *= -1;
             } 
@@ -3612,11 +3612,11 @@ if(mocam == 3) {//Zcam
     double pl = params->locallab.spots.at(sp).pqremap;// to test or change to 10000
     float fb_source = sqrt(yb/100.f);
     float fb_dest = sqrt(yb2/100.f);
-    double flz = 0.171 * pow(la, 0.33333)*(1. - exp(-(48. * (double) la / 9.)));
-    double fljz = 0.171 * pow(la2, 0.33333)*(1. - exp(-(48. * (double) la2 / 9.)));
-    double cpow = 0.1;
-    double cpp = pow(c,0.5);
-    double cpp2 = pow(c2,0.5);
+    double flz = 0.171 * pow(la, 0.3333333)*(1. - exp(-(48. * (double) la / 9.)));
+    double fljz = 0.171 * pow(la2, 0.3333333)*(1. - exp(-(48. * (double) la2 / 9.)));
+    double cpow = 0.3;//empirical 
+    double cpp = pow(c,0.5);//empirical 
+    double cpp2 = pow(c2,0.5);//empirical 
     
     double achro_source =  pow((double) c, cpow) * pow((double) flz, 0.2)* (double) sqrt(fb_source);
     double achro_dest =  pow((double) c2, cpow) * pow((double) fljz, 0.2) * (double) sqrt(fb_dest);
@@ -3630,7 +3630,7 @@ if(mocam == 3) {//Zcam
     double qzmax =  2700. * pow(maxiiz, (double) kk_source) /  achro_source;
     double izw = jzw;
     double coefm = pow(flz, 0.2) / (pow((double) fb_source, 0.1) * pow(izw, 0.78)); 
-    printf("qzw=%f PL=%f qzmax=%f\n", qzw, pl, qzmax);//huge change with PQ peak luminance
+//    printf("qzw=%f PL=%f qzmax=%f\n", qzw, pl, qzmax);//huge change with PQ peak luminance
     
     array2D<double> Iiz(width, height);
     array2D<double> Aaz(width, height);
