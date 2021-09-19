@@ -3613,12 +3613,15 @@ if(mocam == 3) {//Zcam
     double flz = 0.171 * pow(la, 0.33333)*(1. - exp(-(48. * (double) la / 9.)));
     double fljz = 0.171 * pow(la2, 0.33333)*(1. - exp(-(48. * (double) la2 / 9.)));
     double cpow = 0.1;
+    double cpp = pow(c,0.5);
+    double cpp2 = pow(c2,0.5);
+    
     double achro_source =  pow((double) c, cpow) * pow((double) flz, 0.2)* (double) sqrt(fb_source);
     double achro_dest =  pow((double) c2, cpow) * pow((double) fljz, 0.2) * (double) sqrt(fb_dest);
-    double  kk_source = (1.6 * (double) c) / pow((double) fb_source, 0.12);
+    double  kk_source = (1.6 * (double) cpp) / pow((double) fb_source, 0.12);
    // double  ikk_source = pow((double) fb_source, 0.12) / (1.6 * (double) c);
    // double  kk_dest = (1.6 * (double) c2) / pow((double) fb_dest, 0.12);
-    double  ikk_dest = pow((double) fb_dest, 0.12) /(1.6 * (double) c2);
+    double  ikk_dest = pow((double) fb_dest, 0.12) /(1.6 * (double) cpp2);
 
     Ciecam02::xyz2jzczhz (jzw, azw, bzw, Xw, Yw, Zw, pl, L_p, M_p, S_p, zcam);
 
