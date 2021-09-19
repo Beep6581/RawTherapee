@@ -8398,19 +8398,26 @@ void Locallabcie::modecamChanged()
         surrHBoxcie->hide();
         }
     if (modecam->get_active_row_number() == 3) {
-        cieFrame->show();
-        cie1Frame->hide();
-        cie2Frame->show();
-        ciezFrame->show();
-        targetGraycie->show();
-        targabscie->show();
-        surrHBoxcie->show();
-        PQFrame->show();
-        adapjzcie->hide();
-        jz100->hide();
-        forcejz->hide();
-        pqremap->show();
-    }
+        if(mode == Expert) {
+            cieFrame->show();
+            cie1Frame->hide();
+            cie2Frame->show();
+            ciezFrame->show();
+            targetGraycie->show();
+            targabscie->show();
+            surrHBoxcie->show();
+            PQFrame->show();
+            adapjzcie->hide();
+            jz100->hide();
+            forcejz->hide();
+            pqremap->show();
+        } else {
+            cieFrame->hide();
+            cie1Frame->hide();
+            cie2Frame->hide();
+            ciezFrame->hide();
+        }
+    } 
 
     if(mode != Expert) {
         expjz->hide();
@@ -8421,8 +8428,9 @@ void Locallabcie::modecamChanged()
         jabcie->hide();
         PQFrame->hide();
 
-        if (modecam->get_active_row_number() == 1) {
+        if (modecam->get_active_row_number() == 1  || modecam->get_active_row_number() == 3) {
             cieFrame->hide();
+            cie1Frame->hide();
             cie2Frame->hide();
             ciezFrame->hide();
         }
@@ -8558,11 +8566,13 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             
             if (modecam->get_active_row_number() == 1) {
                 cieFrame->hide();
+                cie1Frame->hide();
                 cie2Frame->hide();
                 ciezFrame->hide();
             }
             if (modecam->get_active_row_number() == 3) {
                 cieFrame->hide();
+                cie1Frame->hide();
                 cie2Frame->hide();
                 ciezFrame->hide();
             }
@@ -8607,11 +8617,13 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
             if (modecam->get_active_row_number() == 1) {
                 cieFrame->hide();
+                cie1Frame->hide();
                 cie2Frame->hide();
                 ciezFrame->hide();
             }
             if (modecam->get_active_row_number() == 3) {
                 cieFrame->hide();
+                cie1Frame->hide();
                 cie2Frame->hide();
                 ciezFrame->hide();
             }
@@ -8670,6 +8682,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 
             if (modecam->get_active_row_number() == 3) {
                 cieFrame->show();
+                cie1Frame->hide();
                 cie2Frame->show();
                 ciezFrame->show();
                 targetGraycie->show();
@@ -8714,6 +8727,7 @@ void Locallabcie::updatecieGUI()
 
     }
     if (modecam->get_active_row_number() == 3) {
+        if(mode == Expert) {
             cie1Frame->hide();
             cie2Frame->show();
             targetGraycie->show();
@@ -8726,6 +8740,11 @@ void Locallabcie::updatecieGUI()
             jz100->hide();
             forcejz->hide();
             pqremap->show();
+        } else {
+            cie1Frame->hide();
+            cie2Frame->hide();
+            ciezFrame->hide();
+        }
     }
 
     if (Autograycie->get_active()) {

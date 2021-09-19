@@ -3605,8 +3605,10 @@ if(mocam == 3) {//Zcam
     float fb_dest = sqrt(yb2/100.f);
     double achro_source = pow((double) c,2.2) * pow((double) fl, 0.2)* (double) sqrt(fb_source);
     double achro_dest = pow((double) c2,2.2) * pow((double) flj, 0.2) * (double) sqrt(fb_dest);
-    double  kk_source = 1.6 * (double) c / pow((double) fb_source, 0.12);
-    double  kk_dest = 1.6 * (double) c2 / pow((double) fb_dest, 0.12);
+    double  kk_source = (1.6 * (double) c) / pow((double) fb_source, 0.12);
+    double  ikk_source = pow((double) fb_source, 0.12) / (1.6 * (double) c);
+    double  kk_dest = (1.6 * (double) c2) / pow((double) fb_dest, 0.12);
+    double  ikk_dest = pow((double) fb_dest, 0.12) /(1.6 * (double) c2);
 
     Ciecam02::xyz2jzczhz (jzw, azw, bzw, Xw, Yw, Zw, pl, L_p, M_p, S_p, zcam);
 
@@ -3614,6 +3616,74 @@ if(mocam == 3) {//Zcam
     double qzmax =  2700. * pow(maxiiz, (double) kk_source) *  achro_source;
     double izw = jzw;
     printf("qzw=%f PL=%f qzmax=%f\n", qzw, pl, qzmax);//huge change with PQ peak luminance
+    
+    array2D<double> Iiz(width, height);
+    array2D<double> Aaz(width, height);
+    array2D<double> Bbz(width, height);
+
+#ifdef _OPENMP
+            #pragma omp parallel for if(multiThread)
+#endif
+        for (int i = 0; i < height; i++) {
+            for (int k = 0; k < width; k++) {
+                float L = lab->L[i][k];
+                float a = lab->a[i][k];
+                float b = lab->b[i][k];
+                float x, y, z;
+                //convert Lab => XYZ
+                Color::Lab2XYZ(L, a, b, x, y, z);
+                x = x / 65535.f;
+                y = y / 65535.f;
+                z = z / 65535.f;
+                double iz, az, bz;
+                double xx, yy, zz;
+                //change WP to D65
+                xx = (d50_d65[0][0] * (double) x + d50_d65[0][1] * (double) y + d50_d65[0][2] * (double) z);
+                yy = (d50_d65[1][0] * (double) x + d50_d65[1][1] * (double) y + d50_d65[1][2] * (double) z);
+                zz = (d50_d65[2][0] * (double) x + d50_d65[2][1] * (double) y + d50_d65[2][2] * (double) z);
+                double L_p, M_p, S_p;
+                bool zcam = true;
+                Ciecam02::xyz2jzczhz (iz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p, zcam);
+                Iiz[i][k] = iz;
+                Aaz[i][k] = az;
+                Bbz[i][k] = bz;
+            }
+        }
+    
+#ifdef _OPENMP
+            #pragma omp parallel  for if(multiThread)
+#endif 
+        for (int i = 0; i < height; i++) {
+            for (int k = 0; k < width; k++) {
+
+                double az =  Aaz[i][k];
+                double bz =  Bbz[i][k];
+                double iz =  Iiz[i][k];
+                float coefqz = 32768.f / (float) qzmax;
+                double qz = 2700. * pow(iz, (double) kk_source) *  achro_source;
+                double qzpro = (double) (ZCAMBrightCurveQz[coefqz * (float) qz] / coefqz);
+                qz = qzpro;
+                double jz = 100. * (qz / qzw);
+                double jzpro = (double) ZCAMBrightCurveJz[(float) (327.68 * jz)];
+                qzpro = 0.01 * jzpro * qzw;
+                iz = pow(qzpro / (2700. * achro_dest), ikk_dest);
+                double L_, M_, S_;
+                double xx, yy, zz;
+                bool zcam = true;
+                Ciecam02::jzczhzxyz (xx, yy, zz, iz, az, bz, pl, L_, M_, S_, zcam);
+                //re enable D50
+                double x, y, z;
+                x = 65535. * (d65_d50[0][0] * xx + d65_d50[0][1] * yy + d65_d50[0][2] * zz);
+                y = 65535. * (d65_d50[1][0] * xx + d65_d50[1][1] * yy + d65_d50[1][2] * zz);
+                z = 65535. * (d65_d50[2][0] * xx + d65_d50[2][1] * yy + d65_d50[2][2] * zz);
+
+                float Ll, aa, bb;
+                Color::XYZ2Lab(x,  y,  z, Ll, aa, bb);
+                lab->L[i][k] = Ll;
+                lab->a[i][k] = aa;
+                lab->b[i][k] = bb;
+            }
+        }
 
 }
     
