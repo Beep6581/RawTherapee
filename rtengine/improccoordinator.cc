@@ -569,13 +569,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 params->wb.green = currWB.getGreen();
             }
 
-            if (autowb && awbListener && params->wb.method ==  "autitcgreen") {
-                awbListener->WBChanged(params->wb.temperature, params->wb.green, studgood);
-            } 
-
-            if (autowb && awbListener && params->wb.method ==  "autold") {
-                awbListener->WBChanged(params->wb.temperature, params->wb.green, -1.f);
-            } 
+            if (autowb && awbListener) {
+                if (params->wb.method ==  "autitcgreen") {
+                    awbListener->WBChanged(params->wb.temperature, params->wb.green, studgood);
+                } else if (params->wb.method ==  "autold") {
+                    awbListener->WBChanged(params->wb.temperature, params->wb.green, -1.f);
+                }
+            }
 
             /*
                     GammaValues g_a;
