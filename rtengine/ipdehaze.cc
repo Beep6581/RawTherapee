@@ -210,7 +210,7 @@ float estimate_ambient_light(const array2D<float> &R, const array2D<float> &G, c
             }
         }
 
-        if (p.size() == 0) {
+        if (p.empty()) {
             return 0.f;
         }
 
