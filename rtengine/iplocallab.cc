@@ -3621,7 +3621,7 @@ if(mocam == 3) {//Zcam
     double cpow = 0.18;//empirical 
     double cpp = pow(c,0.42);//empirical 
     double cpp2 = pow(c2,0.42);//empirical 
-    
+    double pfl = pow(flz, 0.25);
     double achro_source =  pow((double) c, cpow) * pow((double) flz, 0.2)* (double) sqrt(fb_source);
     double achro_dest =  pow((double) c2, cpow) * pow((double) fljz, 0.2) * (double) sqrt(fb_dest);
     double  kk_source = (1.6 * (double) cpp) / pow((double) fb_source, 0.12);
@@ -3682,9 +3682,11 @@ if(mocam == 3) {//Zcam
                 double qz = 2700. * pow(iz, (double) kk_source) / achro_source;
                 double qzpro = (double) (ZCAMBrightCurveQz[coefqz * (float) qz] / coefqz);
                 qz = qzpro;
-                double jz = 100. * (qz / qzw);
+               // double jz = 100. * (qz / qzw);
+                double jz = SQR((10. * qz) / qzw);//formula CAM16
                 double jzpro = (double) ZCAMBrightCurveJz[(float) (327.68 * jz)];
-                qzpro = 0.01 * jzpro * qzw;
+               //qzpro = 0.01 * jzpro * qzw;
+                qzpro = 0.1 * sqrt(jzpro) * qzw;
                 iz = pow(qzpro / (2700. / achro_dest), ikk_dest);
                 double h = atan2(bz, az);
                 if ( h < 0.0 ) {
@@ -3710,9 +3712,14 @@ if(mocam == 3) {//Zcam
                         bz = (double)(ccz * sincosval.x);
                     }
                     if(cchrz != 0.f){
-                        double Cpz = 100. * (Mpz / qzw);
+                     //   double Cpz = 100. * (Mpz / qzw);
+                        double Cpz = 100. * (Mpz / pfl);//Cam16 formula
                         Cpz *= (double) (1.f + 0.01f * cchrz);
-                        Mpz = (Cpz * qzw) / 100.;
+                        Mpz = (Cpz * pfl) / 100.;
+                       // double Vpz = sqrt(SQR(jz - 58.) + 3.4 * SQR(Cpz));//vividness not working
+                       // Vpz *= (double) (1.f + 0.01f * cchrz);
+                        //Mpz = (Cpz * qzw) / 100.;
+                       // Mpz  = 0.01 * qzw * sqrt((SQR(Vpz) - SQR(jz - 58.)) / 3.4);
                         ccz = sqrt(pow((float) (Mpz / (100. * pow(ez, 0.068) * coefm)), (1.f / 0.37f)));
                         az = (double)(ccz * sincosval.y);
                         bz = (double)(ccz * sincosval.x);
