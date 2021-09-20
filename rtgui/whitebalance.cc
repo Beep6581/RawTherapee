@@ -949,7 +949,6 @@ void WhiteBalance::WBChanged(double temperature, double greenVal, float studgood
         [this, temperature, greenVal, studgood]() -> bool
         {
             disableListener();
-            setEnabled(true);
             temp->setValue(temperature);
             green->setValue(greenVal);
             StudLabel->set_text(
