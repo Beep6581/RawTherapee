@@ -4438,6 +4438,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     contthreszcam(0.),
     colorflzcam(0.),
     saturzcam(0.),
+    chromzcam(0.),
     targabscie(16.),
     targetGraycie(18.),
     catadcie(0.),
@@ -5109,6 +5110,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && contthreszcam == other.contthreszcam
         && colorflzcam == other.colorflzcam
         && saturzcam == other.saturzcam
+        && chromzcam == other.chromzcam
         && targabscie == other.targabscie
         && targetGraycie == other.targetGraycie
         && catadcie == other.catadcie
@@ -6857,6 +6859,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->contthreszcam, "Locallab", "Contthreszcam_" + index_str, spot.contthreszcam, keyFile);
                     saveToKeyfile(!pedited || spot_edited->colorflzcam, "Locallab", "Colorflzcam_" + index_str, spot.colorflzcam, keyFile);
                     saveToKeyfile(!pedited || spot_edited->saturzcam, "Locallab", "Saturzcam_" + index_str, spot.saturzcam, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->chromzcam, "Locallab", "Chromzcam_" + index_str, spot.chromzcam, keyFile);
                     saveToKeyfile(!pedited || spot_edited->targabscie, "Locallab", "Targabscie_" + index_str, spot.targabscie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->targetGraycie, "Locallab", "TargetGraycie_" + index_str, spot.targetGraycie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->catadcie, "Locallab", "Catadcie_" + index_str, spot.catadcie, keyFile);
@@ -8989,6 +8992,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Detailcie_" + index_str, pedited, spot.detailcie, spotEdited.detailcie);
                 assignFromKeyfile(keyFile, "Locallab", "Colorflzcam_" + index_str, pedited, spot.colorflzcam, spotEdited.colorflzcam);
                 assignFromKeyfile(keyFile, "Locallab", "Saturzcam_" + index_str, pedited, spot.saturzcam, spotEdited.saturzcam);
+                assignFromKeyfile(keyFile, "Locallab", "Chromzcam_" + index_str, pedited, spot.chromzcam, spotEdited.chromzcam);
 
                 // Append LocallabSpot and LocallabParamsEdited
                 locallab.spots.push_back(spot);

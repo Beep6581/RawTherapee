@@ -1034,6 +1034,7 @@ public:
         bool contthreszcam;
         bool colorflzcam;
         bool saturzcam;
+        bool chromzcam;
         bool targabscie;
         bool targetGraycie;
         bool catadcie;

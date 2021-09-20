@@ -1143,6 +1143,7 @@ enum ProcEventCode {
     Evlocallabcontthreszcam = 1117,
     Evlocallabcolorflzcam = 1118,
     Evlocallabsaturzcam = 1119,
+    Evlocallabchromzcam = 1120,
     NUMOFEVENTS
 };
 

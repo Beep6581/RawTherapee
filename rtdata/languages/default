@@ -1369,6 +1369,8 @@ HISTORY_MSG_1116;Local - ZCAM contrast J
 HISTORY_MSG_1117;Local - ZCAM contrast Q
 HISTORY_MSG_1118;Local - ZCAM contrast threshold
 HISTORY_MSG_1119;Local - ZCAM colorfullness
+HISTORY_MSG_1120;Local - ZCAM saturation
+HISTORY_MSG_1121;Local - ZCAM chroma
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
