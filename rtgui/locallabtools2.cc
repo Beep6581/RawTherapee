@@ -7745,7 +7745,7 @@ Locallabcie::Locallabcie():
     surroundcie->append (M ("TP_COLORAPP_SURROUND_AVER"));
     surroundcie->append (M ("TP_COLORAPP_SURROUND_DIM"));
     surroundcie->append (M ("TP_COLORAPP_SURROUND_DARK"));
-    surroundcie->append (M ("TP_COLORAPP_SURROUND_EXDARK"));
+//    surroundcie->append (M ("TP_COLORAPP_SURROUND_EXDARK"));
     surroundcie->set_active (0);
     surrHBoxcie->pack_start (*surroundcie);
     surroundcieconn = surroundcie->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::surroundcieChanged) );
@@ -7994,8 +7994,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             surroundcie->set_active (1);
         } else if (spot.surroundcie == "Dark") {
             surroundcie->set_active (2);
-        } else if (spot.surroundcie == "ExtremelyDark") {
-            surroundcie->set_active (3);
+//        } else if (spot.surroundcie == "ExtremelyDark") {
+//            surroundcie->set_active (3);
         }
         shapecie->setCurve(spot.ciecurve);
         shapecie2->setCurve(spot.ciecurve2);
@@ -8126,8 +8126,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.surroundcie = "Dim";
         } else if (surroundcie->get_active_row_number() == 2) {
             spot.surroundcie = "Dark";
-        } else if (surroundcie->get_active_row_number() == 3) {
-            spot.surroundcie = "ExtremelyDark";
+//        } else if (surroundcie->get_active_row_number() == 3) {
+//            spot.surroundcie = "ExtremelyDark";
         }
         spot.jzcurve = shapejz->getCurve();
         spot.czcurve = shapecz->getCurve();

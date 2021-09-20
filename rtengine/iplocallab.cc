@@ -3616,9 +3616,9 @@ if(mocam == 3) {//Zcam
     float fb_dest = sqrt(yb2/100.f);
     double flz = 0.171 * pow(la, 0.3333333)*(1. - exp(-(48. * (double) la / 9.)));
     double fljz = 0.171 * pow(la2, 0.3333333)*(1. - exp(-(48. * (double) la2 / 9.)));
-    double cpow = 0.3;//empirical 
-    double cpp = pow(c,0.5);//empirical 
-    double cpp2 = pow(c2,0.5);//empirical 
+    double cpow = 0.18;//empirical 
+    double cpp = pow(c,0.42);//empirical 
+    double cpp2 = pow(c2,0.42);//empirical 
     
     double achro_source =  pow((double) c, cpow) * pow((double) flz, 0.2)* (double) sqrt(fb_source);
     double achro_dest =  pow((double) c2, cpow) * pow((double) fljz, 0.2) * (double) sqrt(fb_dest);
