@@ -2698,7 +2698,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         
         Ciecam02::curveJfloat(lightQ, contQ, thQ, hist16Q, CAMBrightCurveQ); //brightness Q and contrast Q
     }
-        if(mocam == 3) {
+       if(mocam == 3  && iscie) {
             float contLz = 0.f;
             float lightLz = 0.f;
             float contQz = 0.f;
@@ -2716,7 +2716,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
             }
             float contthresLz = 0.f; //because use of maxiiz
             float contthresQz = 0.f;
-            contthresLz = contthresQz = params->locallab.spots.at(sp).contthreszcam;
+            contthresLz = params->locallab.spots.at(sp).contthreszcam;
+            contthresQz = params->locallab.spots.at(sp).contthreszcam;
             if(contLz < 0.f) {
                 contthresLz *= -1;
             } 
@@ -2877,6 +2878,9 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
     float cchr = 0.f;
     float rstprotection = 50.f;
     float hue = 0.f;
+    float mchrz = 0.f;
+    float schrz = 0.f;
+    float cchrz = 0.f;
 
     if (ciec) {
         if(iscie) {
@@ -2906,6 +2910,10 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
             if (mchr == 100.0f) {
                 mchr = 99.9f;
             }
+            mchrz = 0.5f * (float) params->locallab.spots.at(sp).colorflzcam;
+            schrz = 0.5f * (float) params->locallab.spots.at(sp).saturzcam;
+            cchrz = 0.5f * (float) params->locallab.spots.at(sp).chromzcam;
+            
         } else {
             cchr = params->locallab.spots.at(sp).chroml;
             if (cchr == -100.0f) {
@@ -2932,12 +2940,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
             }
         }
     }
-    float mchrz = 0.f;
-    mchrz = 0.5f * (float) params->locallab.spots.at(sp).colorflzcam;
-    float schrz = 0.f;
-    schrz = 0.5f * (float) params->locallab.spots.at(sp).saturzcam;
-    float cchrz = 0.f;
-    cchrz = 0.5f * (float) params->locallab.spots.at(sp).chromzcam;
 
     float d, dj;
 
@@ -3613,7 +3615,7 @@ if(mocam == 3) {//Zcam
     double L_p, M_p, S_p;
     double jzw, azw, bzw;
     bool zcam = true;
-    double pl = params->locallab.spots.at(sp).pqremap;// to test or change to 10000
+    double plz = params->locallab.spots.at(sp).pqremap;// to test or change to 10000
     float fb_source = sqrt(yb/100.f);
     float fb_dest = sqrt(yb2/100.f);
     double flz = 0.171 * pow(la, 0.3333333)*(1. - exp(-(48. * (double) la / 9.)));
@@ -3628,7 +3630,7 @@ if(mocam == 3) {//Zcam
    // double  ikk_source = pow((double) fb_source, 0.12) / (1.6 * (double) c);
    // double  kk_dest = (1.6 * (double) c2) / pow((double) fb_dest, 0.12);
     double  ikk_dest = pow((double) fb_dest, 0.12) /(1.6 * (double) cpp2);
-    Ciecam02::xyz2jzczhz (jzw, azw, bzw, Xw, Yw, Zw, pl, L_p, M_p, S_p, zcam);
+    Ciecam02::xyz2jzczhz (jzw, azw, bzw, Xw, Yw, Zw, plz, L_p, M_p, S_p, zcam);
 
     double qzw = 2700. * pow(jzw, (double) kk_source) /  achro_source;//I think there is an error in formula documentation step 5 - all parameters are inversed
     double qzmax =  2700. * pow(maxiiz, (double) kk_source) /  achro_source;
@@ -3662,15 +3664,15 @@ if(mocam == 3) {//Zcam
                 zz = (d50_d65[2][0] * (double) x + d50_d65[2][1] * (double) y + d50_d65[2][2] * (double) z);
                 double L_p, M_p, S_p;
                 bool zcam = true;
-                Ciecam02::xyz2jzczhz (iz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p, zcam);
+                Ciecam02::xyz2jzczhz (iz, az, bz, xx, yy, zz, plz, L_p, M_p, S_p, zcam);
                 Iiz[i][k] = iz;
                 Aaz[i][k] = az;
                 Bbz[i][k] = bz;
             }
         }
-    
+
 #ifdef _OPENMP
-            #pragma omp parallel  for if(multiThread)
+      //      #pragma omp parallel  for if(multiThread)
 #endif 
         for (int i = 0; i < height; i++) {
             for (int k = 0; k < width; k++) {
@@ -3729,7 +3731,7 @@ if(mocam == 3) {//Zcam
                 double L_, M_, S_;
                 double xx, yy, zz;
                 bool zcam = true;
-                Ciecam02::jzczhzxyz (xx, yy, zz, iz, az, bz, pl, L_, M_, S_, zcam);
+                Ciecam02::jzczhzxyz (xx, yy, zz, iz, az, bz, plz, L_, M_, S_, zcam);
                 //re enable D50
                 double x, y, z;
                 x = 65535. * (d65_d50[0][0] * xx + d65_d50[0][1] * yy + d65_d50[0][2] * zz);
