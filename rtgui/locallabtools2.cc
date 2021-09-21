@@ -7443,7 +7443,7 @@ Locallabcie::Locallabcie():
     lightqzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTQ"), -100., 100., 0.05, 0.))),
     contlzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTL"), -100., 100., 0.5, 0.))),
     contqzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),
-    contthreszcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ZCAMTHRES"), 0., 1., 0.01, 0.))),
+    contthreszcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ZCAMTHRES"), 0., 1., 0.01, 0.15))),
     colorflzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCOLORFL"), -100., 100., 0.5, 0.))),
     saturzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
     chromzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROML"), -100., 100., 0.5, 0.))),

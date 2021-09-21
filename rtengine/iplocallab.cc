@@ -2584,8 +2584,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
     LUTf CAMBrightCurveJ(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
     LUTf CAMBrightCurveQ(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
 
-    LUTf ZCAMBrightCurveJz(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
-    LUTf ZCAMBrightCurveQz(32768, LUT_CLIP_BELOW | LUT_CLIP_ABOVE);
 
 #ifdef _OPENMP
     const int numThreads = min(max(width * height / 65536, 1), omp_get_max_threads());
@@ -2698,40 +2696,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         
         Ciecam02::curveJfloat(lightQ, contQ, thQ, hist16Q, CAMBrightCurveQ); //brightness Q and contrast Q
     }
-       if(mocam == 3  && iscie) {
-            float contLz = 0.f;
-            float lightLz = 0.f;
-            float contQz = 0.f;
-            float lightQz = 0.f;
-            contLz = 0.6 * params->locallab.spots.at(sp).contlzcam; //0.6 less effect, no need 1.
-            lightLz = 0.4 * params->locallab.spots.at(sp).lightlzcam; //0.4 less effect, no need 1.
-            if(params->locallab.spots.at(sp).lightlzcam < 0) {
-                lightLz = 0.2 * params->locallab.spots.at(sp).lightlzcam; //0.4 less effect, no need 1.
-            }
-    
-            contQz = 0.5 * params->locallab.spots.at(sp).contqzcam; //0.5 less effect, no need 1.
-            lightQz = 0.4 * params->locallab.spots.at(sp).lightqzcam; //0.4 less effect, no need 1.
-            if(params->locallab.spots.at(sp).lightqzcam < 0) {
-                lightQz = 0.2 * params->locallab.spots.at(sp).lightqzcam; //0.4 less effect, no need 1.
-            }
-            float contthresLz = 0.f; //because use of maxiiz
-            float contthresQz = 0.f;
-            contthresLz = params->locallab.spots.at(sp).contthreszcam;
-            contthresQz = params->locallab.spots.at(sp).contthreszcam;
-            if(contLz < 0.f) {
-                contthresLz *= -1;
-            } 
-            float thLz = 0.6f;
-            thLz = 0.3f * contthresLz + 0.6f;
-            if(contQz < 0.f) {
-                contthresQz *= -1.f;
-            } 
-            float thQz = 0.6f;
-            thQz = 0.3f * contthresQz + 0.6f;
-            Ciecam02::curveJfloat(lightLz, contLz, thLz, hist16J, ZCAMBrightCurveJz); //lightness Jz and contrast Jz
-            ZCAMBrightCurveJz /= 327.68f;
-            Ciecam02::curveJfloat(lightQz, contQz, thQz, hist16J, ZCAMBrightCurveQz); //brightness Qz and contrast Qz - hist16J good approximation because maxiiz
-        }
     
     
     int tempo = 5000;
@@ -3008,13 +2972,6 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                 if(Jz < mini) {
                     mini = Jz;
                 }
-/*
-                zcam = true;
-                Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p, zcam);
-                if(Jz > maxiiz) {
-                    maxiiz = Jz;
-                }
-*/
                 sum += Jz;
                 nc++;
 
@@ -3619,7 +3576,8 @@ if(mocam == 3) {//Zcam
         double sumiz = 0.;
         int nciz = 0;
         double epsilzcam = 0.0001;
-        double atten = 2700.;// * (1. - params->locallab.spots.at(sp).contthreszcam);
+        double atten = 2700.;
+        double epsilzcam2 = 1.;
 
     if(mocam == 3) {//Zcam
         double pl = params->locallab.spots.at(sp).pqremap;
@@ -3680,7 +3638,7 @@ if(mocam == 3) {//Zcam
     float fb_dest = sqrt(yb2/100.f);
     double flz = 0.171 * pow(la, 0.3333333)*(1. - exp(-(48. * (double) la / 9.)));
     double fljz = 0.171 * pow(la2, 0.3333333)*(1. - exp(-(48. * (double) la2 / 9.)));
-    double cpow = 0.18;//empirical 
+    double cpow = 0.15;//empirical 
     double cpp = pow(c,0.42);//empirical 
     double cpp2 = pow(c2,0.42);//empirical 
     double pfl = pow(flz, 0.25);
@@ -3691,9 +3649,17 @@ if(mocam == 3) {//Zcam
    // double  kk_dest = (1.6 * (double) c2) / pow((double) fb_dest, 0.12);
     double  ikk_dest = pow((double) fb_dest, 0.12) /(1.6 * (double) cpp2);
     Ciecam02::xyz2jzczhz (jzw, azw, bzw, Xw, Yw, Zw, plz, L_p, M_p, S_p, zcam);
+    double eff = (1. + 2. * params->locallab.spots.at(sp).contthreszcam);
 
     double qzw = atten * pow(jzw, (double) kk_source) /  achro_source;//I think there is an error in formula documentation step 5 - all parameters are inversed
-    double qzmax =  atten * pow(maxiiz, (double) kk_source) /  achro_source;
+  //  double qzmax =  atten * pow(maxiiz, (double) kk_source) /  achro_source;
+    double maxforq = 2.1 * sumiz * eff + epsilzcam2;
+    if(maxforq > maxiiz) {
+        maxforq = maxiiz;
+    } else {
+        maxforq = 0.5 * (maxforq + maxiiz);
+    }
+    double qzmax =  atten * pow(maxforq, (double) kk_source) /  achro_source;
     double izw = jzw;
     double coefm = pow(flz, 0.2) / (pow((double) fb_source, 0.1) * pow(izw, 0.78)); 
     printf("qzw=%f PL=%f qzmax=%f\n", qzw, plz, qzmax);//huge change with PQ peak luminance
@@ -3703,22 +3669,7 @@ if(mocam == 3) {//Zcam
     array2D<double> Bbz(width, height);
 
 //curve to replace LUT
-/*
-        double contthresLz = 0.;
-        double contthresQz = 0.;
-        contthresLz = params->locallab.spots.at(sp).contthreszcam;
-        contthresQz = params->locallab.spots.at(sp).contthreszcam;
-*/
         double contqz = 0.5 *  params->locallab.spots.at(sp).contqzcam;
-/*        if(contqz < 0.) {
-            contthresQz *= -1.;
-        } 
-        double thQz = 0.6;
-        thQz = 0.3 * contthresQz + 0.6;
-        double thrmin = (thQz - contqz / 250.0);
-        double thrmax = (thQz + contqz / 250.0);
-        
-*/
         DiagonalCurve qz_contrast({
             DCT_NURBS,
             0, 0,
@@ -3726,33 +3677,7 @@ if(mocam == 3) {//Zcam
             avgmz + (1. - avgmz) * (0.6 - contqz / 250.0), avgmz + (1. - avgmz) * (0.6 + contqz / 250.0),
             1, 1
         });
-/*
-        DiagonalCurve qz_contrast({
-            DCT_NURBS,
-            0, 0,
-            avgmz - avgmz * (thrmin), avgmz - avgmz * (thrmax),
-            avgmz + (1. - avgmz) * (thrmin), avgmz + (1. - avgmz) * (thrmax),
-            1, 1
-        });
-        */
         double contlz = 0.6 *  params->locallab.spots.at(sp).contlzcam;
- /*       if(contlz < 0.) {
-            contthresLz *= -1.;
-        } 
-        double thLz = 0.6;
-        thLz = 0.3 * contthresLz + 0.6;
-        double thrminl = (thLz - contlz / 250.0);
-        double thrmaxl = (thLz + contlz / 250.0);
-        */
-        /*
-        DiagonalCurve ljz_contrast({
-            DCT_NURBS,
-            0, 0,
-            avgmz - avgmz * (thrminl), avgmz - avgmz * (thrmaxl),
-            avgmz + (1. - avgmz) * (thrminl), avgmz + (1. - avgmz) * (thrmaxl),
-            1, 1
-        });
-        */
         DiagonalCurve ljz_contrast({
             DCT_NURBS,
             0, 0,
@@ -3827,7 +3752,6 @@ if(mocam == 3) {//Zcam
                 Bbz[i][k] = clipazbz(bz);
             }
         }
-        double eff = (1. + 3. * params->locallab.spots.at(sp).contthreszcam);
 #ifdef _OPENMP
             #pragma omp parallel  for if(multiThread)
 #endif 
