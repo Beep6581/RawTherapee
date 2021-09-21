@@ -2965,12 +2965,12 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
     const float coe = pow_F(fl, 0.25f);
     const float QproFactor = (0.4f / c) * (aw + 4.0f) ;
 
-    double maxiiz = -1000.;
-    if(mocam != 1) {//Jz az bz ==> Jz Cz Hz before Ciecam16
+    if(mocam == 0 || mocam ==2) {//Jz az bz ==> Jz Cz Hz before Ciecam16
         double mini = 1000.;
         double maxi = -1000.;
         double sum = 0.;
         int nc = 0;
+        double epsiljz = 0.0001;
         //Remapping see https://hal.inria.fr/hal-02131890/document    I took some ideas in this text, and add my personal adaptation
         // image quality assessment of HDR and WCG images https://tel.archives-ouvertes.fr/tel-02378332/document
         double adapjz = params->locallab.spots.at(sp).adapjzcie;
@@ -2979,7 +2979,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         bool forcejz = params->locallab.spots.at(sp).forcejz;
 //calculate min, max, mean for Jz
 #ifdef _OPENMP
-            #pragma omp parallel for reduction(min:mini) reduction(max:maxi) reduction(max:maxiiz) reduction(+:sum) if(multiThread)
+            #pragma omp parallel for reduction(min:mini) reduction(max:maxi) reduction(+:sum) if(multiThread)
 #endif
         for (int i = 0; i < height; i+=1) {
             for (int k = 0; k < width; k+=1) {
@@ -3008,12 +3008,13 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                 if(Jz < mini) {
                     mini = Jz;
                 }
+/*
                 zcam = true;
                 Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p, zcam);
                 if(Jz > maxiiz) {
                     maxiiz = Jz;
                 }
-
+*/
                 sum += Jz;
                 nc++;
 
@@ -3021,6 +3022,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         }
 
         sum = sum / nc;
+        maxi += epsiljz;
+        sum += epsiljz;
         double ijz100 = 1./jz100;
         double ajz = (ijz100 - 1.)/9.;//9 = sqrt(100) - 1 with a parabolic curve after jz100 - we can change for others curve ..log...(you must change also in locallabtool2)
         double bjz = 1. - ajz;
@@ -3611,6 +3614,63 @@ if(mocam == 0 || mocam == 1  || call == 1) {
         }
     }
 if(mocam == 3) {//Zcam
+        double miniiz = 1000.;
+        double maxiiz = -1000.;
+        double sumiz = 0.;
+        int nciz = 0;
+        double epsilzcam = 0.0001;
+        double atten = 2700.;// * (1. - params->locallab.spots.at(sp).contthreszcam);
+
+    if(mocam == 3) {//Zcam
+        double pl = params->locallab.spots.at(sp).pqremap;
+//calculate min, max, mean for Jz
+#ifdef _OPENMP
+            #pragma omp parallel for reduction(min:miniiz) reduction(max:maxiiz) reduction(+:sumiz) if(multiThread)
+#endif
+        for (int i = 0; i < height; i+=1) {
+            for (int k = 0; k < width; k+=1) {
+                float L = lab->L[i][k];
+                float a = lab->a[i][k];
+                float b = lab->b[i][k];
+                float x, y, z;
+                //convert Lab => XYZ
+                Color::Lab2XYZ(L, a, b, x, y, z);
+                x = x / 65535.f;
+                y = y / 65535.f;
+                z = z / 65535.f;
+                double Jz, az, bz;
+                double xx, yy, zz;
+                //D50 ==> D65
+                xx = (d50_d65[0][0] * (double) x + d50_d65[0][1] * (double) y + d50_d65[0][2] * (double) z);
+                yy = (d50_d65[1][0] * (double) x + d50_d65[1][1] * (double) y + d50_d65[1][2] * (double) z);
+                zz = (d50_d65[2][0] * (double) x + d50_d65[2][1] * (double) y + d50_d65[2][2] * (double) z);
+                xx = LIM01(xx);
+                yy = LIM01(yy);
+                zz = LIM01(zz);
+                
+                double L_p, M_p, S_p;
+                bool zcam = true;
+                Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p, zcam);
+                if(Jz > maxiiz) {
+                    maxiiz = Jz;
+                }
+                if(Jz < miniiz) {
+                    miniiz = Jz;
+                }
+
+                sumiz += Jz;
+                nciz++;
+
+            }
+        }
+
+        sumiz = sumiz / nciz;
+        sumiz += epsilzcam;
+        maxiiz += epsilzcam;
+        printf("Zcam miniiz=%f maxiiz=%f meaniz=%f\n", miniiz, maxiiz, sumiz);
+    }
+    double avgmz = sumiz;
+    //avgmz = 0.5 * maxiiz;
     //calculate Qz white - brightness of the reference white
     double L_p, M_p, S_p;
     double jzw, azw, bzw;
@@ -3632,15 +3692,112 @@ if(mocam == 3) {//Zcam
     double  ikk_dest = pow((double) fb_dest, 0.12) /(1.6 * (double) cpp2);
     Ciecam02::xyz2jzczhz (jzw, azw, bzw, Xw, Yw, Zw, plz, L_p, M_p, S_p, zcam);
 
-    double qzw = 2700. * pow(jzw, (double) kk_source) /  achro_source;//I think there is an error in formula documentation step 5 - all parameters are inversed
-    double qzmax =  2700. * pow(maxiiz, (double) kk_source) /  achro_source;
+    double qzw = atten * pow(jzw, (double) kk_source) /  achro_source;//I think there is an error in formula documentation step 5 - all parameters are inversed
+    double qzmax =  atten * pow(maxiiz, (double) kk_source) /  achro_source;
     double izw = jzw;
     double coefm = pow(flz, 0.2) / (pow((double) fb_source, 0.1) * pow(izw, 0.78)); 
-//    printf("qzw=%f PL=%f qzmax=%f\n", qzw, pl, qzmax);//huge change with PQ peak luminance
+    printf("qzw=%f PL=%f qzmax=%f\n", qzw, plz, qzmax);//huge change with PQ peak luminance
     
     array2D<double> Iiz(width, height);
     array2D<double> Aaz(width, height);
     array2D<double> Bbz(width, height);
+
+//curve to replace LUT
+/*
+        double contthresLz = 0.;
+        double contthresQz = 0.;
+        contthresLz = params->locallab.spots.at(sp).contthreszcam;
+        contthresQz = params->locallab.spots.at(sp).contthreszcam;
+*/
+        double contqz = 0.5 *  params->locallab.spots.at(sp).contqzcam;
+/*        if(contqz < 0.) {
+            contthresQz *= -1.;
+        } 
+        double thQz = 0.6;
+        thQz = 0.3 * contthresQz + 0.6;
+        double thrmin = (thQz - contqz / 250.0);
+        double thrmax = (thQz + contqz / 250.0);
+        
+*/
+        DiagonalCurve qz_contrast({
+            DCT_NURBS,
+            0, 0,
+            avgmz - avgmz * (0.6 - contqz / 250.0), avgmz - avgmz * (0.6 + contqz / 250.0),
+            avgmz + (1. - avgmz) * (0.6 - contqz / 250.0), avgmz + (1. - avgmz) * (0.6 + contqz / 250.0),
+            1, 1
+        });
+/*
+        DiagonalCurve qz_contrast({
+            DCT_NURBS,
+            0, 0,
+            avgmz - avgmz * (thrmin), avgmz - avgmz * (thrmax),
+            avgmz + (1. - avgmz) * (thrmin), avgmz + (1. - avgmz) * (thrmax),
+            1, 1
+        });
+        */
+        double contlz = 0.6 *  params->locallab.spots.at(sp).contlzcam;
+ /*       if(contlz < 0.) {
+            contthresLz *= -1.;
+        } 
+        double thLz = 0.6;
+        thLz = 0.3 * contthresLz + 0.6;
+        double thrminl = (thLz - contlz / 250.0);
+        double thrmaxl = (thLz + contlz / 250.0);
+        */
+        /*
+        DiagonalCurve ljz_contrast({
+            DCT_NURBS,
+            0, 0,
+            avgmz - avgmz * (thrminl), avgmz - avgmz * (thrmaxl),
+            avgmz + (1. - avgmz) * (thrminl), avgmz + (1. - avgmz) * (thrmaxl),
+            1, 1
+        });
+        */
+        DiagonalCurve ljz_contrast({
+            DCT_NURBS,
+            0, 0,
+            avgmz - avgmz * (0.6 - contlz / 250.0), avgmz - avgmz * (0.6 + contlz / 250.0),
+            avgmz + (1. - avgmz) * (0.6 - contlz / 250.0), avgmz + (1. - avgmz) * (0.6 + contlz / 250.0),
+            1, 1
+        });
+
+        //all calculs in double to best results...but slow
+        double lqz = 0.4 *  params->locallab.spots.at(sp).lightqzcam;
+        if(params->locallab.spots.at(sp).lightqzcam < 0) {
+            lqz = 0.2 * params->locallab.spots.at(sp).lightqzcam; //0.4 less effect, no need 1.
+        }
+       DiagonalCurve qz_light({
+            DCT_NURBS,
+            0, 0,
+            0.1, 0.1 + lqz / 150.,
+            0.7, min (1.0, 0.7 + lqz / 300.0),
+            1, 1
+        });
+        DiagonalCurve qz_lightn({
+            DCT_NURBS,
+            0, 0,
+            max(0.0, 0.1  - lqz / 150.), 0.1 ,
+            0.7 - lqz / 300.0, 0.7,
+            1, 1
+        });
+        double ljz = 0.4 *  params->locallab.spots.at(sp).lightlzcam;
+        if(params->locallab.spots.at(sp).lightlzcam < 0) {
+            ljz = 0.2 * params->locallab.spots.at(sp).lightlzcam; 
+        }
+        DiagonalCurve ljz_light({
+            DCT_NURBS,
+            0, 0,
+            0.1, 0.1 + ljz / 150.,
+            0.7, min (1.0, 0.7 + ljz / 300.0),
+            1, 1
+        });
+        DiagonalCurve ljz_lightn({
+            DCT_NURBS,
+            0, 0,
+            max(0.0, 0.1  - ljz / 150.), 0.1 ,
+            0.7 - ljz / 300.0, 0.7,
+            1, 1
+        });
 
 #ifdef _OPENMP
             #pragma omp parallel for if(multiThread)
@@ -3665,14 +3822,14 @@ if(mocam == 3) {//Zcam
                 double L_p, M_p, S_p;
                 bool zcam = true;
                 Ciecam02::xyz2jzczhz (iz, az, bz, xx, yy, zz, plz, L_p, M_p, S_p, zcam);
-                Iiz[i][k] = iz;
-                Aaz[i][k] = az;
-                Bbz[i][k] = bz;
+                Iiz[i][k] = LIM01(iz);
+                Aaz[i][k] = clipazbz(az);
+                Bbz[i][k] = clipazbz(bz);
             }
         }
-
+        double eff = (1. + 3. * params->locallab.spots.at(sp).contthreszcam);
 #ifdef _OPENMP
-      //      #pragma omp parallel  for if(multiThread)
+            #pragma omp parallel  for if(multiThread)
 #endif 
         for (int i = 0; i < height; i++) {
             for (int k = 0; k < width; k++) {
@@ -3680,16 +3837,36 @@ if(mocam == 3) {//Zcam
                 double az =  Aaz[i][k];
                 double bz =  Bbz[i][k];
                 double iz =  Iiz[i][k];
-                float coefqz = 32768.f / (float) qzmax;
-                double qz = 2700. * pow(iz, (double) kk_source) / achro_source;
-                double qzpro = (double) (ZCAMBrightCurveQz[coefqz * (float) qz] / coefqz);
-                qz = qzpro;
+                if(iz > 2.1 * sumiz) {
+                    iz = 2.1 * sumiz * eff;
+                }
+                float coefqz = (float) qzmax;
+                float coefjz = 100.f ;
+                double qz = atten * pow(iz, (double) kk_source) / achro_source;
+                
+                qz= (double) coefqz * LIM01(qz_contrast.getVal((float)qz / coefqz));
+
+                if(lqz > 0) {
+                    qz = (double) coefqz * LIM01(qz_light.getVal((float)qz / coefqz));
+                }
+                if(lqz < 0) {
+                    qz = (double) coefqz * LIM01(qz_lightn.getVal((float)qz / coefqz));
+                }
                // double jz = 100. * (qz / qzw);
                 double jz = SQR((10. * qz) / qzw);//formula CAM16
-                double jzpro = (double) ZCAMBrightCurveJz[(float) (327.68 * jz)];
+                jz= (double) coefjz * LIM01(ljz_contrast.getVal((float)jz / coefjz));
+                if(ljz > 0) {
+                    jz = (double) coefjz * LIM01(ljz_light.getVal((float)jz / coefjz));
+                }
+                if(ljz < 0) {
+                    jz = (double) coefjz * LIM01(ljz_lightn.getVal((float)jz / coefjz));
+                }
+                if(jz > 100.) jz = 99.;
+                
+                
                //qzpro = 0.01 * jzpro * qzw;
-                qzpro = 0.1 * sqrt(jzpro) * qzw;
-                iz = pow(qzpro / (2700. / achro_dest), ikk_dest);
+                double qzpro = 0.1 * sqrt(jz) * qzw;
+                iz = LIM01(pow(qzpro / (atten / achro_dest), ikk_dest));
                 double h = atan2(bz, az);
                 if ( h < 0.0 ) {
                     h += (double) (2.f * rtengine::RT_PI_F);
@@ -3731,6 +3908,10 @@ if(mocam == 3) {//Zcam
                 double L_, M_, S_;
                 double xx, yy, zz;
                 bool zcam = true;
+                iz=LIM01(iz);
+                az=clipazbz(az);
+                bz=clipazbz(bz);
+                
                 Ciecam02::jzczhzxyz (xx, yy, zz, iz, az, bz, plz, L_, M_, S_, zcam);
                 //re enable D50
                 double x, y, z;

@@ -7443,7 +7443,7 @@ Locallabcie::Locallabcie():
     lightqzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTQ"), -100., 100., 0.05, 0.))),
     contlzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTL"), -100., 100., 0.5, 0.))),
     contqzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),
-    contthreszcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTHRES"), -1., 1., 0.01, 0.))),
+    contthreszcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_ZCAMTHRES"), 0., 1., 0.01, 0.))),
     colorflzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCOLORFL"), -100., 100., 0.5, 0.))),
     saturzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SATURV"), -100., 100., 0.5, 0.))),
     chromzcam(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROML"), -100., 100., 0.5, 0.))),
@@ -7517,6 +7517,7 @@ Locallabcie::Locallabcie():
     PQFBox->pack_start(*jz100);
     PQFBox->pack_start(*pqremap);
     PQFBox->pack_start(*forcejz);
+    PQFBox->pack_start(*contthreszcam);
     PQFrame->add(*PQFBox);
     cieFBox->pack_start (*PQFrame);
 
@@ -7789,7 +7790,7 @@ Locallabcie::Locallabcie():
     ciePzBox->pack_start(*lightqzcam);
     ciePzBox->pack_start(*contlzcam);
     ciePzBox->pack_start(*contqzcam);
-    ciePzBox->pack_start(*contthreszcam);
+//    ciePzBox->pack_start(*contthreszcam);
     ciePzBox->pack_start(*colorflzcam);
     ciePzBox->pack_start(*saturzcam);
     ciePzBox->pack_start(*chromzcam);
@@ -8386,6 +8387,7 @@ void Locallabcie::modecamChanged()
         pqremap->show();
         jabcie->show();
         PQFrame->show();
+        contthreszcam->hide();
     } else {
         expjz->hide();
         jzFrame->hide();
@@ -8406,6 +8408,7 @@ void Locallabcie::modecamChanged()
         targetGraycie->hide();
         targabscie->hide();
         surrHBoxcie->hide();
+        contthreszcam->hide();
         }
     if (modecam->get_active_row_number() == 3) {
         if(mode == Expert) {
@@ -8421,6 +8424,7 @@ void Locallabcie::modecamChanged()
             jz100->hide();
             forcejz->hide();
             pqremap->show();
+            contthreszcam->show();
         } else {
             cieFrame->hide();
             cie1Frame->hide();
@@ -8437,6 +8441,7 @@ void Locallabcie::modecamChanged()
         pqremap->hide();
         jabcie->hide();
         PQFrame->hide();
+        contthreszcam->hide();
 
         if (modecam->get_active_row_number() == 1  || modecam->get_active_row_number() == 3) {
             cieFrame->hide();
@@ -8464,6 +8469,7 @@ void Locallabcie::modecamChanged()
             jz100->hide();
             forcejz->hide();
             pqremap->show();
+            contthreszcam->show();
         }
         
     }
@@ -8573,6 +8579,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             targetGraycie->show();
             targabscie->show();
             surrHBoxcie->show();
+            contthreszcam->hide();
             
             if (modecam->get_active_row_number() == 1) {
                 cieFrame->hide();
@@ -8624,6 +8631,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             targetGraycie->show();
             targabscie->show();
             surrHBoxcie->show();
+            contthreszcam->hide();
 
             if (modecam->get_active_row_number() == 1) {
                 cieFrame->hide();
@@ -8674,6 +8682,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 jz100->show();
                 pqremap->show();
                 PQFrame->show();
+                contthreszcam->hide();
             }
                 cieFrame->show();
                 cie2Frame->show();
@@ -8703,6 +8712,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 jz100->hide();
                 forcejz->hide();
                 pqremap->show();
+                contthreszcam->show();
             }
 
     }
@@ -8750,6 +8760,7 @@ void Locallabcie::updatecieGUI()
             jz100->hide();
             forcejz->hide();
             pqremap->show();
+            contthreszcam->show();
         } else {
             cie1Frame->hide();
             cie2Frame->hide();
