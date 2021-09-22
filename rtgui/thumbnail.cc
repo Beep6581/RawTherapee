@@ -143,6 +143,12 @@ void Thumbnail::_generateThumbnailImage ()
         if (tpp) {
             cfs.format = FT_Jpeg;
         }
+    } else if (ext == "jxl") {
+        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal);
+
+        if (tpp) {
+            cfs.format = FT_Png;
+        }
     } else if (ext == "png") {
         tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal);
 
@@ -180,6 +186,15 @@ void Thumbnail::_generateThumbnailImage ()
             cfs.format = FT_Raw;
             cfs.thumbImgType = quick ? CacheImageData::QUICK_THUMBNAIL : CacheImageData::FULL_THUMBNAIL;
             infoFromImage (fname, std::unique_ptr<rtengine::RawMetaDataLocation>(new rtengine::RawMetaDataLocation(ri)));
+        }
+    }
+
+    if (!tpp) {
+        // try a custom loader
+        tpp = rtengine::Thumbnail::loadFromImage(fname, tw, th, -1, pparams->wb.equal, true);
+        if (tpp) {
+            cfs.format = FT_Custom;
+            infoFromImage(fname);
         }
     }
 

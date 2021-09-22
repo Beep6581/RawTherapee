@@ -226,6 +226,7 @@ target_link_libraries(rtengine rtexif
     ${LENSFUN_LIBRARIES}
     ${RSVG_LIBRARIES}
     ${KLT_LIBRARIES}
+    ${JXL_LIBRARIES}
 )
 
 if(OpenMP_FOUND)
