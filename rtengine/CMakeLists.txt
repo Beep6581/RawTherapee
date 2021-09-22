@@ -246,6 +246,7 @@ target_link_libraries(rtengine
     ${RSVG_LIBRARIES}
     ${KLT_LIBRARIES}
     ${EXIV2_LIBRARIES}
+    ${JXL_LIBRARIES}
     )
 
 if(OpenMP_FOUND)

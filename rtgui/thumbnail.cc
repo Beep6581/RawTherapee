@@ -212,6 +212,12 @@ void Thumbnail::_generateThumbnailImage ()
         if (tpp) {
             cfs.format = FT_Jpeg;
         }
+    } else if (ext == "jxl") {
+        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal);
+
+        if (tpp) {
+            cfs.format = FT_Png;
+        }
     } else if (ext == "png") {
         tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal, pparams->wb.observer);
 
@@ -252,6 +258,15 @@ void Thumbnail::_generateThumbnailImage ()
                 cfs.width = tpp->full_width;
                 cfs.height = tpp->full_height;
             }
+        }
+    }
+
+    if (!tpp) {
+        // try a custom loader
+        tpp = rtengine::Thumbnail::loadFromImage(fname, tw, th, -1, pparams->wb.equal, true);
+        if (tpp) {
+            cfs.format = FT_Custom;
+            infoFromImage(fname);
         }
     }
 

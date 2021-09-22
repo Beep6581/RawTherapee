@@ -552,6 +552,11 @@ if(WITH_SYSTEM_KLT)
     find_package(KLT REQUIRED)
 endif()
 
+pkg_check_modules(JXL IMPORTED_TARGET libjxl libjxl_threads)
+if(JXL)
+    set(JXL_LIBRARIES jxl jxl_threads)
+endif()
+
 # Check for libcanberra-gtk3 (sound events on Linux):
 if(UNIX AND (NOT APPLE))
     option(USE_LIBCANBERRA "Build with libcanberra" ON)

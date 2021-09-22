@@ -24,12 +24,19 @@
 #include <string>
 #include <utility>
 #include <vector>
-
 #include <fcntl.h>
 #include <glib/gstdio.h>
 #include <png.h>
 #include <tiff.h>
 #include <tiffio.h>
+
+#ifdef JXL
+#include <fstream>
+#include "jxl/decode.h"
+#include "jxl/decode_cxx.h"
+#include "jxl/resizable_parallel_runner.h"
+#include "jxl/resizable_parallel_runner_cxx.h"
+#endif
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -822,6 +829,161 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
     return IMIO_SUCCESS;
 }
 
+#ifdef JXL
+#define _PROFILE_ JXL_COLOR_PROFILE_TARGET_ORIGINAL
+
+// adapted from libjxl
+int ImageIO::loadJxl(const Glib::ustring &fname)
+{
+    if (pl) {
+        pl->setProgressStr("PROGRESSBAR_LOADJXL");
+        pl->setProgress(0.0);
+    }
+
+    std::vector<uint8_t> icc_profile;
+
+    gpointer buffer = nullptr;
+    size_t buffer_size = 0;
+
+    JxlBasicInfo info = {};
+    JxlPixelFormat format = {};
+
+    format.num_channels = 3;
+    format.data_type = JXL_TYPE_FLOAT;
+    format.endianness = JXL_NATIVE_ENDIAN;
+    format.align = 0;
+
+    // get file contents
+    std::ifstream instream(fname.c_str(), std::ios::in | std::ios::binary);
+    std::vector<uint8_t> compressed(
+        (std::istreambuf_iterator<char>(instream)),
+        std::istreambuf_iterator<char>());
+    instream.close();
+
+
+    // multi-threaded parallel runner.
+    auto runner = JxlResizableParallelRunnerMake(nullptr);
+
+    auto dec = JxlDecoderMake(nullptr);
+    if (JXL_DEC_SUCCESS !=
+        JxlDecoderSubscribeEvents(dec.get(), JXL_DEC_BASIC_INFO |
+                                                 JXL_DEC_COLOR_ENCODING |
+                                                 JXL_DEC_FULL_IMAGE)) {
+        g_printerr("Error: JxlDecoderSubscribeEvents failed\n");
+        return false;
+    }
+
+    if (JXL_DEC_SUCCESS !=
+        JxlDecoderSetParallelRunner(dec.get(), JxlResizableParallelRunner,
+                                    runner.get())) {
+        g_printerr("Error: JxlDecoderSetParallelRunner failed\n");
+        return false;
+    }
+
+    // grand decode loop...
+    JxlDecoderSetInput(dec.get(), compressed.data(), compressed.size());
+
+    while (true) {
+        JxlDecoderStatus status = JxlDecoderProcessInput(dec.get());
+
+        if (status == JXL_DEC_BASIC_INFO) {
+            if (JXL_DEC_SUCCESS !=
+                JxlDecoderGetBasicInfo(dec.get(), &info)) {
+                g_printerr("Error: JxlDecoderGetBasicInfo failed\n");
+                return false;
+            }
+
+            JxlResizableParallelRunnerSetThreads(
+                runner.get(), JxlResizableParallelRunnerSuggestThreads(
+                                  info.xsize, info.ysize));
+        } else if (status == JXL_DEC_COLOR_ENCODING) {
+            // check for ICC profile
+            deleteLoadedProfileData();
+            embProfile = nullptr;
+            size_t icc_size = 0;
+
+            if (JXL_DEC_SUCCESS !=
+                JxlDecoderGetICCProfileSize(dec.get(), &format,
+                                            _PROFILE_, &icc_size)) {
+                g_printerr("Warning: JxlDecoderGetICCProfileSize failed\n");
+            }
+
+            if (icc_size > 0) {
+                icc_profile.resize(icc_size);
+                if (JXL_DEC_SUCCESS !=
+                    JxlDecoderGetColorAsICCProfile(
+                        dec.get(), &format, _PROFILE_,
+                        icc_profile.data(), icc_profile.size())) {
+                    g_printerr(
+                        "Warning: JxlDecoderGetColorAsICCProfile failed\n");
+                } else {
+                    embProfile = cmsOpenProfileFromMem(icc_profile.data(),
+                                                       icc_profile.size());
+                }
+            } else {
+                g_printerr("Warning: Empty ICC data.\n");
+            }
+        } else if (status == JXL_DEC_NEED_IMAGE_OUT_BUFFER) {
+            format.data_type = JXL_TYPE_FLOAT;
+            if (JXL_DEC_SUCCESS != JxlDecoderImageOutBufferSize(
+                                       dec.get(), &format, &buffer_size)) {
+                g_printerr("Error: JxlDecoderImageOutBufferSize failed\n");
+                return false;
+            }
+            buffer = g_malloc(buffer_size);
+            if (JXL_DEC_SUCCESS != JxlDecoderSetImageOutBuffer(dec.get(), &format,
+                                            buffer, buffer_size)) {
+                g_printerr("Error: JxlDecoderSetImageOutBuffer failed\n");
+                g_free(buffer);
+                return false;
+            }
+        } else if (status == JXL_DEC_FULL_IMAGE ||
+                   status == JXL_DEC_FRAME) {
+            // Nothing to do. If the image is an animation, more full frames
+            // may be decoded. This example only keeps the first one.
+        } else if (status == JXL_DEC_SUCCESS) {
+            // All decoding successfully finished.
+            // It's not required to call JxlDecoderReleaseInput(dec.get())
+            // since the decoder will be destroyed.
+            break;
+        } else if (status == JXL_DEC_NEED_MORE_INPUT) {
+            g_printerr("Error: Already provided all input\n");
+            return false;
+        } else if (status == JXL_DEC_ERROR) {
+            g_printerr("Error: Decoder error\n");
+            return false;
+        } else {
+            g_printerr("Error: Unknown decoder status\n");
+            return false;
+        }
+    }  // end grand decode loop
+
+    unsigned int width = info.xsize;
+    unsigned int height = info.ysize;
+
+    allocate(width, height);
+
+    int line_length = width * 3 * 4;
+
+    for (size_t row = 0; row < height; ++row) {
+        setScanline (row, ((const unsigned char*)buffer) + (row * line_length), 32);
+
+        if (pl && !(row % 100)) {
+            pl->setProgress ((double)(row) / height);
+        }
+    }
+
+    g_free(buffer);
+
+    if (pl) {
+        pl->setProgressStr ("PROGRESSBAR_READY");
+        pl->setProgress (1.0);
+    }
+
+    return IMIO_SUCCESS;
+}
+#endif
+
 int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool swap, int bps)
 {
     allocate (width, height);
@@ -1310,6 +1472,10 @@ int ImageIO::load (const Glib::ustring &fname)
         return loadPNG (fname);
     } else if (hasJpegExtension(fname)) {
         return loadJPEG (fname);
+#ifdef JXL
+    } else if (hasJxlExtension(fname)) {
+        return loadJxl(fname);
+#endif
     } else if (hasTiffExtension(fname)) {
         return loadTIFF (fname);
     } else {
