@@ -3650,7 +3650,10 @@ if(mocam == 3) {//Zcam
     double  ikk_dest = pow((double) fb_dest, 0.12) /(1.6 * (double) cpp2);
     Ciecam02::xyz2jzczhz (jzw, azw, bzw, Xw, Yw, Zw, plz, L_p, M_p, S_p, zcam);
     double eff = (1. + 2. * params->locallab.spots.at(sp).contthreszcam);
-    double kap = 1.7;//2.1
+    double kap = 2.7; //1.7;//2.1
+    if(maxiiz > (kap * sumiz)) {
+        kap = 1.7;
+    }
     double qzw = atten * pow(jzw, (double) kk_source) /  achro_source;//I think there is an error in formula documentation step 5 - all parameters are inversed
   //  double qzmax =  atten * pow(maxiiz, (double) kk_source) /  achro_source;
     double maxforq = kap * sumiz * eff + epsilzcam2;
