@@ -143,17 +143,17 @@ void Thumbnail::_generateThumbnailImage ()
         if (tpp) {
             cfs.format = FT_Jpeg;
         }
-    } else if (ext == "jxl") {
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal);
-
-        if (tpp) {
-            cfs.format = FT_Png;
-        }
     } else if (ext == "png") {
         tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal);
 
         if (tpp) {
             cfs.format = FT_Png;
+        }
+    } else if (ext == "jxl") {
+        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal);
+
+        if (tpp) {
+            cfs.format = FT_Custom;
         }
     } else if (ext == "tif" || ext == "tiff") {
         infoFromImage (fname);
