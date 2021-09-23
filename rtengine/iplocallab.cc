@@ -3626,41 +3626,41 @@ if(mocam == 3) {//Zcam
         sumiz = sumiz / nciz;
         sumiz += epsilzcam;
         maxiiz += epsilzcam;
-        printf("Zcam miniiz=%f maxiiz=%f meaniz=%f\n", miniiz, maxiiz, sumiz);
+        if (settings->verbose) {
+            printf("Zcam miniiz=%f maxiiz=%f meaniz=%f\n", miniiz, maxiiz, sumiz);
+        }
     }
     double avgmz = sumiz;
-    //avgmz = 0.5 * maxiiz;
-    //calculate Qz white - brightness of the reference white
+    //calculate various parameter for Zcam - those with ** come from documentation Zcam 
+    // ZCAM, a colour appearance model based on a high dynamic range uniform colour space
+    //Muhammad Safdar, Jon Yngve Hardeberg, and Ming Ronnier Luo
+    // https://www.osapublishing.org/oe/fulltext.cfm?uri=oe-29-4-6036&id=447640#e12
     double L_p, M_p, S_p;
     double jzw, azw, bzw;
     bool zcam = true;
     double plz = params->locallab.spots.at(sp).pqremap;// to test or change to 10000
-    float fb_source = sqrt(yb/100.f);
-    float fb_dest = sqrt(yb2/100.f);
-    double flz = 0.171 * pow(la, 0.3333333)*(1. - exp(-(48. * (double) la / 9.)));
+//    double po = 0.1 + params->locallab.spots.at(sp).contthreszcam;
+    float fb_source = sqrt(yb / 100.f);//**
+    float fb_dest = sqrt(yb2 / 100.f);//**
+    double flz = 0.171 * pow(la, 0.3333333)*(1. - exp(-(48. * (double) la / 9.)));//**
     double fljz = 0.171 * pow(la2, 0.3333333)*(1. - exp(-(48. * (double) la2 / 9.)));
-    double cpow = 0.15;//empirical
-    double cpp = pow( (double) c, 0.42);//empirical 
-    double cpp2 = pow( (double) c2, 0.42);//empirical 
+    double cpow = 2.2;//empirical
+    double cpp = pow( (double) c, 0.5);//empirical 
+    double cpp2 = pow( (double) c2, 0.5);//empirical 
     double pfl = pow(flz, 0.25);
     double cmul_source = 1.26;//empirical 
     double cmul_source_ch = 1.1;//empirical 
-    
-  //  double po = 1. +  (params->locallab.spots.at(sp).contthreszcam);
-    double achro_source =  pow((double) c, cpow)*(pow((double) flz, - 0.004)* (double) sqrt(fb_source));
+    double achro_source =  pow((double) c, cpow)*(pow((double) flz, - 0.004)* (double) sqrt(fb_source));//I think there is an error in formula documentation step 5 - all parameters are inversed or wrong
     double achro_dest =  pow((double) c2, cpow)*(pow((double) fljz, - 0.004) * (double) sqrt(fb_dest));
-    double  kk_source = (1.6 * (double) cpp) / pow((double) fb_source, 0.12);
-   // double  ikk_source = pow((double) fb_source, 0.12) / (1.6 * (double) c);
-   // double  kk_dest = (1.6 * (double) c2) / pow((double) fb_dest, 0.12);
+    double  kk_source = (1.6 * (double) cpp) / pow((double) fb_source, 0.12);//**
     double  ikk_dest = pow((double) fb_dest, 0.12) /(1.6 * (double) cpp2);
     Ciecam02::xyz2jzczhz (jzw, azw, bzw, Xw, Yw, Zw, plz, L_p, M_p, S_p, zcam);
-    double eff = 1.; (1. + 2. * params->locallab.spots.at(sp).contthreszcam);
-    double kap = 2.7; //1.7;//2.1
+    double eff = 1.;
+    double kap = 2.7;
     if(maxiiz > (kap * sumiz)) {
         kap = 1.7;
     }
     double qzw = cmul_source * atten * pow(jzw, (double) kk_source) /  achro_source;//I think there is an error in formula documentation step 5 - all parameters are inversed
-  //  double qzmax =  atten * pow(maxiiz, (double) kk_source) /  achro_source;
     double maxforq = kap * sumiz * eff + epsilzcam2;
     if(maxforq > maxiiz) {
         maxforq = maxiiz;
@@ -3670,13 +3670,14 @@ if(mocam == 3) {//Zcam
     double qzmax = cmul_source * atten * pow(maxforq, (double) kk_source) /  achro_source;
     double izw = jzw;
     double coefm = pow(flz, 0.2) / (pow((double) fb_source, 0.1) * pow(izw, 0.78)); 
-    printf("qzw=%f PL=%f qzmax=%f\n", qzw, plz, qzmax);//huge change with PQ peak luminance
-    
+    if (settings->verbose) {
+        printf("qzw=%f PL=%f qzmax=%f\n", qzw, plz, qzmax);//huge change with PQ peak luminance
+    }
     array2D<double> Iiz(width, height);
     array2D<double> Aaz(width, height);
     array2D<double> Bbz(width, height);
 
-//curve to replace LUT
+//curve to replace LUT , LUT leads to crash...
         double contqz = 0.5 *  params->locallab.spots.at(sp).contqzcam;
         DiagonalCurve qz_contrast({
             DCT_NURBS,
@@ -3774,7 +3775,7 @@ if(mocam == 3) {//Zcam
                 }
                 float coefqz = (float) qzmax;
                 float coefjz = 100.f ;
-                double qz = cmul_source * atten * pow(iz, (double) kk_source) / achro_source;
+                double qz = cmul_source * atten * pow(iz, (double) kk_source) / achro_source;//partial **
                 az *= cmul_source_ch;
                 bz *= cmul_source_ch;
                 
