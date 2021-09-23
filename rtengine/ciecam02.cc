@@ -496,15 +496,21 @@ void Ciecam02::xyz2jzczhz ( double &Jz, double &az, double &bz, double x, double
     M = -0.2015100 * Xp + 1.120649 * Yp + 0.0531008 * Zp;
     S = -0.0166008 * Xp + 0.264800 * Yp + 0.6684799 * Zp;
     
-    Lp = pow((Jzazbz_c1 + Jzazbz_c2 * pow(std::max((L * peakLum), 0.), Jzazbz_n)) / (1. + Jzazbz_c3 * pow((L * peakLum), Jzazbz_n)), Jzazbz_p);
-    Mp = pow((Jzazbz_c1 + Jzazbz_c2 * pow(std::max((M * peakLum),0.), Jzazbz_n)) / (1. + Jzazbz_c3 * pow((M * peakLum), Jzazbz_n)), Jzazbz_p);
-    Sp = pow((Jzazbz_c1 + Jzazbz_c2 * pow(std::max((S * peakLum), 0.), Jzazbz_n)) / (1. + Jzazbz_c3 * pow((S * peakLum), Jzazbz_n)), Jzazbz_p);
+ //   Lp = pow((Jzazbz_c1 + Jzazbz_c2 * pow(std::max((L * peakLum), 0.), Jzazbz_n)) / (1. + Jzazbz_c3 * pow((L * peakLum), Jzazbz_n)), Jzazbz_p);
+ //   Mp = pow((Jzazbz_c1 + Jzazbz_c2 * pow(std::max((M * peakLum),0.), Jzazbz_n)) / (1. + Jzazbz_c3 * pow((M * peakLum), Jzazbz_n)), Jzazbz_p);
+ //   Sp = pow((Jzazbz_c1 + Jzazbz_c2 * pow(std::max((S * peakLum), 0.), Jzazbz_n)) / (1. + Jzazbz_c3 * pow((S * peakLum), Jzazbz_n)), Jzazbz_p);
+
+    Lp = pow((Jzazbz_c1 + Jzazbz_c2 * pow(L * peakLum, Jzazbz_n)) / (1. + Jzazbz_c3 * pow((L * peakLum), Jzazbz_n)), Jzazbz_p);
+    Mp = pow((Jzazbz_c1 + Jzazbz_c2 * pow(M * peakLum, Jzazbz_n)) / (1. + Jzazbz_c3 * pow((M * peakLum), Jzazbz_n)), Jzazbz_p);
+    Sp = pow((Jzazbz_c1 + Jzazbz_c2 * pow(S * peakLum, Jzazbz_n)) / (1. + Jzazbz_c3 * pow((S * peakLum), Jzazbz_n)), Jzazbz_p);
+
 
     Iz = 0.5 * Lp + 0.5 * Mp;
     az = 3.524000 * Lp - 4.066708 * Mp + 0.542708 * Sp;
     bz = 0.199076 * Lp + 1.096799 * Mp - 1.295875 * Sp;
     if(!zcam) {
-        Jz = std::max((((1. + Jzazbz_d) * Iz) / (1. + Jzazbz_d * Iz)) - Jzazbz_d0, 0.);
+        Jz = (((1. + Jzazbz_d) * Iz) / (1. + Jzazbz_d * Iz)) - Jzazbz_d0;
+      //  Jz = std::max((((1. + Jzazbz_d) * Iz) / (1. + Jzazbz_d * Iz)) - Jzazbz_d0, 0.);
     } else {
     //or if we use ZCAM Jz = Mp  - Jzazbz_d0
         Jz = Mp  - Jzazbz_d0;
@@ -517,7 +523,8 @@ void Ciecam02::jzczhzxyz (double &x, double &y, double &z, double jz, double az,
     double Xp, Yp, Zp, Lp, Mp, Sp, Iz, tmp;
 
     if(!zcam) {
-        Iz = std::max((jz + Jzazbz_d0) / (1. + Jzazbz_d - Jzazbz_d * (jz + Jzazbz_d0)), 0.);
+      //  Iz = std::max((jz + Jzazbz_d0) / (1. + Jzazbz_d - Jzazbz_d * (jz + Jzazbz_d0)), 0.);
+        Iz = (jz + Jzazbz_d0) / (1. + Jzazbz_d - Jzazbz_d * (jz + Jzazbz_d0));
     } else {
     //or if we use ZCAM Iz = Jz  + Jzazbz_d0
         Iz = jz  + Jzazbz_d0;  
@@ -529,11 +536,11 @@ void Ciecam02::jzczhzxyz (double &x, double &y, double &z, double jz, double az,
     //I change optionnaly 10000 for pl function of la(absolute luminance) default 10000
    
     tmp = pow(Lp, Jzazbz_pi);
-    L = pl * pow(std::max((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2),0.), Jzazbz_ni);
+    L = pl * pow((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), Jzazbz_ni);
     tmp = pow(Mp, Jzazbz_pi);
-    M = pl * pow(std::max((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), 0.), Jzazbz_ni);
+    M = pl * pow((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), Jzazbz_ni);
     tmp = pow(Sp, Jzazbz_pi);
-    S = pl * pow(std::max((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), 0.), Jzazbz_ni);
+    S = pl * pow((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), Jzazbz_ni);
         
     Xp = 1.9242264357876067 * L - 1.0047923125953657 * M + 0.0376514040306180 * S;
     Yp = 0.3503167620949991 * L + 0.7264811939316552 * M - 0.0653844229480850 * S;
