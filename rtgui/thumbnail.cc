@@ -184,7 +184,6 @@ Glib::ustring Thumbnail::xmpSidecarPath(const Glib::ustring &imagePath)
 
 void Thumbnail::_generateThumbnailImage ()
 {
-
     //  delete everything loaded into memory
     delete tpp;
     tpp = nullptr;
@@ -205,67 +204,37 @@ void Thumbnail::_generateThumbnailImage ()
     cfs.exifValid = false;
     cfs.timeValid = false;
 
-    if (ext == "jpg" || ext == "jpeg") {
+    // RAW works like this:
+    //  1. if we are here it's because we aren't in the cache so load the JPG
+    //     image out of the RAW. Mark as "quick".
+    //  2. if we don't find that then just grab the real image.
+    bool quick = false;
+
+    rtengine::eSensorType sensorType = rtengine::ST_NONE;
+    if ( initial_ && options.internalThumbIfUntouched) {
+        quick = true;
+        tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, sensorType, tw, th, 1, TRUE);
+    }
+
+    if ( tpp == nullptr ) {
+        quick = false;
+        tpp = rtengine::Thumbnail::loadFromRaw (fname, sensorType, tw, th, 1, pparams->wb.equal, pparams->wb.observer, TRUE, &(pparams->raw));
+    }
+
+    cfs.sensortype = sensorType;
+    if (tpp) {
+        cfs.format = FT_Raw;
+        cfs.thumbImgType = quick ? CacheImageData::QUICK_THUMBNAIL : CacheImageData::FULL_THUMBNAIL;
         infoFromImage (fname);
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal, pparams->wb.observer);
-
-        if (tpp) {
-            cfs.format = FT_Jpeg;
-        }
-    } else if (ext == "png") {
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal, pparams->wb.observer);
-
-        if (tpp) {
-            cfs.format = FT_Png;
-        }
-#ifdef LIBJXL
-    } else if (ext == "jxl") {
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal);
-
-        if (tpp) {
-            cfs.format = FT_Custom;
-        }
-#endif
-    } else if (ext == "tif" || ext == "tiff") {
-        infoFromImage (fname);
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal, pparams->wb.observer);
-
-        if (tpp) {
-            cfs.format = FT_Tiff;
-        }
-    } else {
-        // RAW works like this:
-        //  1. if we are here it's because we aren't in the cache so load the JPG
-        //     image out of the RAW. Mark as "quick".
-        //  2. if we don't find that then just grab the real image.
-        bool quick = false;
-
-        rtengine::eSensorType sensorType = rtengine::ST_NONE;
-        if ( initial_ && options.internalThumbIfUntouched) {
-            quick = true;
-            tpp = rtengine::Thumbnail::loadQuickFromRaw (fname, sensorType, tw, th, 1, TRUE);
-        }
-
-        if ( tpp == nullptr ) {
-            quick = false;
-            tpp = rtengine::Thumbnail::loadFromRaw (fname, sensorType, tw, th, 1, pparams->wb.equal, pparams->wb.observer, TRUE, &(pparams->raw));
-        }
-
-        cfs.sensortype = sensorType;
-        if (tpp) {
-            cfs.format = FT_Raw;
-            cfs.thumbImgType = quick ? CacheImageData::QUICK_THUMBNAIL : CacheImageData::FULL_THUMBNAIL;
-            infoFromImage (fname);
-            if (!quick) {
-                cfs.width = tpp->full_width;
-                cfs.height = tpp->full_height;
-            }
+        if (!quick) {
+            cfs.width = tpp->full_width;
+            cfs.height = tpp->full_height;
         }
     }
 
     if (!tpp) {
-        // try a custom loader
-        tpp = rtengine::Thumbnail::loadFromImage(fname, tw, th, -1, pparams->wb.equal, true);
+        // this will load formats supported by imagio (jpg, png, jxl, and tiff)
+        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal, pparams->wb.observer);
         if (tpp) {
             cfs.format = FT_Custom;
             infoFromImage(fname);
