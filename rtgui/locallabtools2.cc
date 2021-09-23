@@ -7517,7 +7517,7 @@ Locallabcie::Locallabcie():
     PQFBox->pack_start(*jz100);
     PQFBox->pack_start(*pqremap);
     PQFBox->pack_start(*forcejz);
-    PQFBox->pack_start(*contthreszcam);
+  //  PQFBox->pack_start(*contthreszcam);
     PQFrame->add(*PQFBox);
     cieFBox->pack_start (*PQFrame);
 

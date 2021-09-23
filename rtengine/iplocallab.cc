@@ -2734,7 +2734,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
     //viewing condition for surround
     f2 = 1.0f, c2 = 0.69f, nc2 = 1.0f;
     if(ciec) {
-        if(iscie) {
+        if(iscie) { 
         //surround source with only 2 choices (because Log encoding before)
             if (params->locallab.spots.at(sp).sursourcie == "Average") {
                 f = 1.0f, c = 0.69f, nc = 1.0f;
@@ -2919,7 +2919,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
     float nj, nbbj, ncbj, czj, awj, flj;
     Ciecam02::initcam2float(yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj, c16);
 #ifdef __SSE2__
-    const float reccmcz = 1.f / (c * czj);
+    const float reccmcz = 1.f / (c2 * czj);
 #endif
     const float epsil = 0.0001f;
     const float coefQ = 32767.f / wh;
@@ -3252,6 +3252,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
 
 if(mocam == 0 || mocam == 1  || call == 1) {
 //begin ciecam
+//printf("c=%f c2=%f aw=%f fl=%f wh=%f nc=%f nbb=%f cz=%f d=%f pfl=%f \n", (double) c, (double) c2, (double) aw, (double) fl, (double) wh, (double) nc, (double) nbb, (double) cz, (double) d, (double) pfl);
 #ifdef __SSE2__
         int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
 #endif
@@ -3570,6 +3571,7 @@ if(mocam == 0 || mocam == 1  || call == 1) {
 
         }
     }
+  
 if(mocam == 3) {//Zcam
         double miniiz = 1000.;
         double maxiiz = -1000.;
@@ -3578,7 +3580,6 @@ if(mocam == 3) {//Zcam
         double epsilzcam = 0.0001;
         double atten = 2700.;
         double epsilzcam2 = 1.;
-
     if(mocam == 3) {//Zcam
         double pl = params->locallab.spots.at(sp).pqremap;
 //calculate min, max, mean for Jz
@@ -3638,23 +3639,27 @@ if(mocam == 3) {//Zcam
     float fb_dest = sqrt(yb2/100.f);
     double flz = 0.171 * pow(la, 0.3333333)*(1. - exp(-(48. * (double) la / 9.)));
     double fljz = 0.171 * pow(la2, 0.3333333)*(1. - exp(-(48. * (double) la2 / 9.)));
-    double cpow = 0.15;//empirical 
-    double cpp = pow(c,0.42);//empirical 
-    double cpp2 = pow(c2,0.42);//empirical 
+    double cpow = 0.15;//empirical
+    double cpp = pow( (double) c, 0.42);//empirical 
+    double cpp2 = pow( (double) c2, 0.42);//empirical 
     double pfl = pow(flz, 0.25);
-    double achro_source =  pow((double) c, cpow) * pow((double) flz, 0.2)* (double) sqrt(fb_source);
-    double achro_dest =  pow((double) c2, cpow) * pow((double) fljz, 0.2) * (double) sqrt(fb_dest);
+    double cmul_source = 1.26;//empirical 
+    double cmul_source_ch = 1.1;//empirical 
+    
+  //  double po = 1. +  (params->locallab.spots.at(sp).contthreszcam);
+    double achro_source =  pow((double) c, cpow)*(pow((double) flz, - 0.004)* (double) sqrt(fb_source));
+    double achro_dest =  pow((double) c2, cpow)*(pow((double) fljz, - 0.004) * (double) sqrt(fb_dest));
     double  kk_source = (1.6 * (double) cpp) / pow((double) fb_source, 0.12);
    // double  ikk_source = pow((double) fb_source, 0.12) / (1.6 * (double) c);
    // double  kk_dest = (1.6 * (double) c2) / pow((double) fb_dest, 0.12);
     double  ikk_dest = pow((double) fb_dest, 0.12) /(1.6 * (double) cpp2);
     Ciecam02::xyz2jzczhz (jzw, azw, bzw, Xw, Yw, Zw, plz, L_p, M_p, S_p, zcam);
-    double eff = (1. + 2. * params->locallab.spots.at(sp).contthreszcam);
+    double eff = 1.; (1. + 2. * params->locallab.spots.at(sp).contthreszcam);
     double kap = 2.7; //1.7;//2.1
     if(maxiiz > (kap * sumiz)) {
         kap = 1.7;
     }
-    double qzw = atten * pow(jzw, (double) kk_source) /  achro_source;//I think there is an error in formula documentation step 5 - all parameters are inversed
+    double qzw = cmul_source * atten * pow(jzw, (double) kk_source) /  achro_source;//I think there is an error in formula documentation step 5 - all parameters are inversed
   //  double qzmax =  atten * pow(maxiiz, (double) kk_source) /  achro_source;
     double maxforq = kap * sumiz * eff + epsilzcam2;
     if(maxforq > maxiiz) {
@@ -3662,7 +3667,7 @@ if(mocam == 3) {//Zcam
     } else {
         maxforq = 0.9 * maxforq + 0.1 * maxiiz;
     }
-    double qzmax =  atten * pow(maxforq, (double) kk_source) /  achro_source;
+    double qzmax = cmul_source * atten * pow(maxforq, (double) kk_source) /  achro_source;
     double izw = jzw;
     double coefm = pow(flz, 0.2) / (pow((double) fb_source, 0.1) * pow(izw, 0.78)); 
     printf("qzw=%f PL=%f qzmax=%f\n", qzw, plz, qzmax);//huge change with PQ peak luminance
@@ -3769,7 +3774,9 @@ if(mocam == 3) {//Zcam
                 }
                 float coefqz = (float) qzmax;
                 float coefjz = 100.f ;
-                double qz = atten * pow(iz, (double) kk_source) / achro_source;
+                double qz = cmul_source * atten * pow(iz, (double) kk_source) / achro_source;
+                az *= cmul_source_ch;
+                bz *= cmul_source_ch;
                 
                 qz= (double) coefqz * LIM01(qz_contrast.getVal((float)qz / coefqz));
 
@@ -3855,7 +3862,7 @@ if(mocam == 3) {//Zcam
         }
 
 }
-    
+
  
 }
 
