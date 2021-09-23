@@ -553,8 +553,8 @@ if(WITH_SYSTEM_KLT)
 endif()
 
 pkg_check_modules(JXL IMPORTED_TARGET libjxl libjxl_threads)
-if(JXL)
-    set(JXL_LIBRARIES jxl jxl_threads)
+if(JXL_FOUND)
+    add_definitions(-DLIBJXL)    
 endif()
 
 # Check for libcanberra-gtk3 (sound events on Linux):

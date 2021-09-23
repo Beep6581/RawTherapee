@@ -90,7 +90,7 @@ void StdImageSource::getSampleFormat (const Glib::ustring &fname, IIOSampleForma
         if (result == IMIO_SUCCESS) {
             return;
         }
-#ifdef JXL
+#ifdef LIBJXL
     } else if (hasJxlExtension(fname)) {
         sFormat = IIOSF_FLOAT32;
         sArrangement = IIOSA_CHUNKY;

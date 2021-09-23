@@ -90,7 +90,7 @@ public:
     int load (const Glib::ustring &fname);
     int save (const Glib::ustring &fname) const;
 
-#ifdef JXL
+#ifdef LIBJXL
     int loadJxl (const Glib::ustring &fname);
 #endif
 

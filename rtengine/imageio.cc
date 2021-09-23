@@ -30,7 +30,7 @@
 #include <tiff.h>
 #include <tiffio.h>
 
-#ifdef JXL
+#ifdef LIBJXL
 #include <fstream>
 #include "jxl/decode.h"
 #include "jxl/decode_cxx.h"
@@ -829,9 +829,8 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
     return IMIO_SUCCESS;
 }
 
-#ifdef JXL
+#ifdef LIBJXL
 #define _PROFILE_ JXL_COLOR_PROFILE_TARGET_ORIGINAL
-
 // adapted from libjxl
 int ImageIO::loadJxl(const Glib::ustring &fname)
 {
@@ -870,14 +869,14 @@ int ImageIO::loadJxl(const Glib::ustring &fname)
                                                  JXL_DEC_COLOR_ENCODING |
                                                  JXL_DEC_FULL_IMAGE)) {
         g_printerr("Error: JxlDecoderSubscribeEvents failed\n");
-        return false;
+        return IMIO_HEADERERROR;
     }
 
     if (JXL_DEC_SUCCESS !=
         JxlDecoderSetParallelRunner(dec.get(), JxlResizableParallelRunner,
                                     runner.get())) {
         g_printerr("Error: JxlDecoderSetParallelRunner failed\n");
-        return false;
+        return IMIO_HEADERERROR;
     }
 
     // grand decode loop...
@@ -890,7 +889,7 @@ int ImageIO::loadJxl(const Glib::ustring &fname)
             if (JXL_DEC_SUCCESS !=
                 JxlDecoderGetBasicInfo(dec.get(), &info)) {
                 g_printerr("Error: JxlDecoderGetBasicInfo failed\n");
-                return false;
+                return IMIO_HEADERERROR;
             }
 
             JxlResizableParallelRunnerSetThreads(
@@ -928,14 +927,14 @@ int ImageIO::loadJxl(const Glib::ustring &fname)
             if (JXL_DEC_SUCCESS != JxlDecoderImageOutBufferSize(
                                        dec.get(), &format, &buffer_size)) {
                 g_printerr("Error: JxlDecoderImageOutBufferSize failed\n");
-                return false;
+                return IMIO_READERROR;
             }
             buffer = g_malloc(buffer_size);
             if (JXL_DEC_SUCCESS != JxlDecoderSetImageOutBuffer(dec.get(), &format,
                                             buffer, buffer_size)) {
                 g_printerr("Error: JxlDecoderSetImageOutBuffer failed\n");
                 g_free(buffer);
-                return false;
+                return IMIO_READERROR;
             }
         } else if (status == JXL_DEC_FULL_IMAGE ||
                    status == JXL_DEC_FRAME) {
@@ -948,13 +947,13 @@ int ImageIO::loadJxl(const Glib::ustring &fname)
             break;
         } else if (status == JXL_DEC_NEED_MORE_INPUT) {
             g_printerr("Error: Already provided all input\n");
-            return false;
+            return IMIO_READERROR;
         } else if (status == JXL_DEC_ERROR) {
             g_printerr("Error: Decoder error\n");
-            return false;
+            return IMIO_READERROR;
         } else {
             g_printerr("Error: Unknown decoder status\n");
-            return false;
+            return IMIO_READERROR;
         }
     }  // end grand decode loop
 
@@ -982,7 +981,8 @@ int ImageIO::loadJxl(const Glib::ustring &fname)
 
     return IMIO_SUCCESS;
 }
-#endif
+#undef _PROFILE_
+#endif // LIBJXL
 
 int ImageIO::loadPPMFromMemory(const char* buffer, int width, int height, bool swap, int bps)
 {
@@ -1472,7 +1472,7 @@ int ImageIO::load (const Glib::ustring &fname)
         return loadPNG (fname);
     } else if (hasJpegExtension(fname)) {
         return loadJPEG (fname);
-#ifdef JXL
+#ifdef LIBJXL
     } else if (hasJxlExtension(fname)) {
         return loadJxl(fname);
 #endif
