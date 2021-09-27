@@ -7387,12 +7387,12 @@ Locallabcie::Locallabcie():
     surHBoxcie(Gtk::manage(new Gtk::Box())),
     cie1Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG1FRA")))),
     PQFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZPQFRA")))),
-    lightlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTL"), -100., 100., 0.5, 0.))),
-    lightjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZLIGHT"), -100., 100., 0.05, 0.))),
+    lightlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTL"), -100., 100., 0.01, 0.))),
+    lightjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZLIGHT"), -100., 100., 0.01, 0.))),
     contjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCONT"), -100., 100., 0.5, 0.))),
     adapjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZADAP"), 1., 10., 0.05, 4.))),
     jz100(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZ100"), 0.1, 1.0, 0.01, 0.30))),
-    pqremap(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZPQREMAP"), 100., 10000., 10., 120.))),
+    pqremap(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZPQREMAP"), 100., 10000., 0.1, 100.))),
     forcejz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZFORCE")))),
     expjz(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
     jzshFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZSHFRA")))),
@@ -8388,14 +8388,17 @@ void Locallabcie::modecamChanged()
         jabcie->show();
         PQFrame->show();
         contthreszcam->hide();
+        forcejz->show();
+        
     } else {
         expjz->hide();
         jzFrame->hide();
         adapjzcie->hide();
         jz100->hide();
-        pqremap->hide();
+        pqremap->show();
         jabcie->hide();
-        PQFrame->hide();
+        PQFrame->show();
+        forcejz->hide();
     }
     surHBoxcie->show();
     cie1Frame->show();
@@ -8409,6 +8412,8 @@ void Locallabcie::modecamChanged()
         targabscie->hide();
         surrHBoxcie->hide();
         contthreszcam->hide();
+        forcejz->show();
+        
         }
     if (modecam->get_active_row_number() == 3) {
         if(mode == Expert) {
@@ -8438,9 +8443,10 @@ void Locallabcie::modecamChanged()
         jzFrame->hide();
         adapjzcie->hide();
         jz100->hide();
-        pqremap->hide();
+        pqremap->show();
         jabcie->hide();
-        PQFrame->hide();
+        PQFrame->show();
+        forcejz->show();
         contthreszcam->hide();
 
         if (modecam->get_active_row_number() == 1  || modecam->get_active_row_number() == 3) {
@@ -8456,6 +8462,8 @@ void Locallabcie::modecamChanged()
             targetGraycie->hide();
             targabscie->hide();
             surrHBoxcie->hide();
+            forcejz->show();
+            
         }
         if (modecam->get_active_row_number() == 3) {
             cieFrame->show();
@@ -8573,19 +8581,22 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             jzFrame->hide();
             adapjzcie->hide();
             jz100->hide();
-            pqremap->hide();
+            pqremap->show();
             jabcie->hide();
-            PQFrame->hide();
+            PQFrame->show();
             targetGraycie->show();
             targabscie->show();
             surrHBoxcie->show();
             contthreszcam->hide();
+            forcejz->hide();
             
             if (modecam->get_active_row_number() == 1) {
                 cieFrame->hide();
                 cie1Frame->hide();
                 cie2Frame->hide();
                 ciezFrame->hide();
+                forcejz->show();
+                
             }
             if (modecam->get_active_row_number() == 3) {
                 cieFrame->hide();
@@ -8621,13 +8632,14 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             reparcie->show();
             sigmoidblcie->show();
             expjz->hide();
+            forcejz->hide();
 
             jzFrame->hide();
             adapjzcie->hide();
             jz100->hide();
-            pqremap->hide();
+            pqremap->show();
             jabcie->hide();
-            PQFrame->hide();
+            PQFrame->show();
             targetGraycie->show();
             targabscie->show();
             surrHBoxcie->show();
@@ -8638,6 +8650,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 cie1Frame->hide();
                 cie2Frame->hide();
                 ciezFrame->hide();
+                forcejz->show();
             }
             if (modecam->get_active_row_number() == 3) {
                 cieFrame->hide();
@@ -8673,6 +8686,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             targetGraycie->show();
             targabscie->show();
             surrHBoxcie->show();
+            forcejz->hide();
 
             if (modecam->get_active_row_number() == 1 || modecam->get_active_row_number() == 2) {
                 jabcie->show();
@@ -8683,6 +8697,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 pqremap->show();
                 PQFrame->show();
                 contthreszcam->hide();
+                forcejz->show();
+                
             }
                 cieFrame->show();
                 cie2Frame->show();

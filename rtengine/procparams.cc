@@ -4416,7 +4416,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     contjzcie(0.),
     adapjzcie(4.0),
     jz100(0.30),
-    pqremap(120.),
+    pqremap(100.),
     hljzcie(0.0),
     hlthjzcie(70.0),
     shjzcie(0.0),

@@ -3461,11 +3461,12 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
 
         float J, C, h;
         int c16 = 1;
+        float plum = 100.f;
         Ciecam02::xyz2jch_ciecam02float(J, C, h,
                                         aw, fl,
                                         x * 0.0015259022f,  y * 0.0015259022f,  z * 0.0015259022f,
                                         xw, yw,  zw,
-                                        c,  nc, pow1, nbb, ncb, cz, d, c16);
+                                        c,  nc, pow1, nbb, ncb, cz, d, c16, plum);
 
 
         if (!isfinite(J) || !isfinite(C) || !isfinite(h)) {
@@ -3583,7 +3584,7 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
         Ciecam02::jch2xyz_ciecam02float(x, y, z,
                                         J, C, h,
                                         xw, yw,  zw,
-                                        c, nc, pow1, nbb, ncb, fl, cz, d, aw, c16);
+                                        c, nc, pow1, nbb, ncb, fl, cz, d, aw, c16, plum);
 
         if (!isfinite(x) || !isfinite(y) || !isfinite(z)) {
             // can happen for colours on the rim of being outside gamut, that worked without chroma scaling but not with. Then we return only the curve's result.
@@ -3699,8 +3700,9 @@ void PerceptualToneCurve::init()
     c  = 0.69f;
     nc = 1.00f;
     int c16 = 1;//with cat02 for compatibility
+    float plum = 100.f;
     Ciecam02::initcam1float(yb, 1.f, f, la, xw, yw, zw, n, d, nbb, ncb,
-                            cz, aw, wh, pfl, fl, c, c16);
+                            cz, aw, wh, pfl, fl, c, c16, plum);
     pow1 = pow_F(1.64f - pow_F(0.29f, n), 0.73f);
 
     {

@@ -53,6 +53,19 @@
 #include "boxblur.h"
 #include "rescale.h"
 
+#define Jzazbz_b 1.15
+#define Jzazbz_g 0.66
+#define Jzazbz_c1 (3424/4096.0)
+#define Jzazbz_c2 (2413/128.0)
+#define Jzazbz_c3 (2392/128.0)
+#define Jzazbz_n (2610/16384.0)
+#define Jzazbz_p (1.7*2523/32.0)
+#define Jzazbz_d (-0.56)
+#define Jzazbz_d0 (1.6295499532821566e-11)
+#define Jzazbz_ni (16384.0/2610.0)
+#define Jzazbz_pi (32.0/4289.1)  //4289.1 = 2523 * 1.7
+
+
 #pragma GCC diagnostic warning "-Wall"
 #pragma GCC diagnostic warning "-Wextra"
 #pragma GCC diagnostic warning "-Wdouble-promotion"
@@ -2528,6 +2541,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
         {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
     };
+    float plum = (float) params->locallab.spots.at(sp).pqremap;
 
     int mocam = 0;
     if(params->locallab.spots.at(sp).modecam == "all") {
@@ -2914,10 +2928,15 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
     float xw1 = xws, yw1 = yws, zw1 = zws, xw2 = xwd, yw2 = ywd, zw2 = zwd;
     float cz, wh, pfl;
     int c16 = 16;//always cat16
-    Ciecam02::initcam1float(yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c, c16);
+    bool c20 = true;
+    if(c20  && plum > 100.f) {
+        c16 = 20;
+    }
+    
+    Ciecam02::initcam1float(yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c, c16, plum);
     const float pow1 = pow_F(1.64f - pow_F(0.29f, n), 0.73f);
     float nj, nbbj, ncbj, czj, awj, flj;
-    Ciecam02::initcam2float(yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj, c16);
+    Ciecam02::initcam2float(yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj, c16, plum);
 #ifdef __SSE2__
     const float reccmcz = 1.f / (c2 * czj);
 #endif
@@ -3252,6 +3271,9 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
 
 if(mocam == 0 || mocam == 1  || call == 1) {
 //begin ciecam
+ //       float pliz = (float) 1. / params->locallab.spots.at(sp).pqremap;
+ //       float plz = (float) params->locallab.spots.at(sp).pqremap;
+
 //printf("c=%f c2=%f aw=%f fl=%f wh=%f nc=%f nbb=%f cz=%f d=%f pfl=%f \n", (double) c, (double) c2, (double) aw, (double) fl, (double) wh, (double) nc, (double) nbb, (double) cz, (double) d, (double) pfl);
 #ifdef __SSE2__
         int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
@@ -3289,7 +3311,7 @@ if(mocam == 0 || mocam == 1  || call == 1) {
                                                    Q,  M,  s, F2V(aw), F2V(fl), F2V(wh),
                                                    x,  y,  z,
                                                    F2V(xw1), F2V(yw1),  F2V(zw1),
-                                                   F2V(c),  F2V(nc), F2V(pow1), F2V(nbb), F2V(ncb), F2V(pfl), F2V(cz), F2V(d), c16);
+                                                   F2V(c),  F2V(nc), F2V(pow1), F2V(nbb), F2V(ncb), F2V(pfl), F2V(cz), F2V(d), c16, F2V(plum));
                     STVF(Jbuffer[k], J);
                     STVF(Cbuffer[k], C);
                     STVF(hbuffer[k], h);
@@ -3313,7 +3335,7 @@ if(mocam == 0 || mocam == 1  || call == 1) {
                                                    Q,  M,  s, aw, fl, wh,
                                                    x,  y,  z,
                                                    xw1, yw1,  zw1,
-                                                   c,  nc, pow1, nbb, ncb, pfl, cz, d, c16);
+                                                   c,  nc, pow1, nbb, ncb, pfl, cz, d, c16, plum);
                     Jbuffer[k] = J;
                     Cbuffer[k] = C;
                     hbuffer[k] = h;
@@ -3351,7 +3373,7 @@ if(mocam == 0 || mocam == 1  || call == 1) {
                                                    Q,  M,  s, aw, fl, wh,
                                                    x,  y,  z,
                                                    xw1, yw1,  zw1,
-                                                   c,  nc, pow1, nbb, ncb, pfl, cz, d, c16);
+                                                   c,  nc, pow1, nbb, ncb, pfl, cz, d, c16, plum);
 #endif
                     float Jpro, Cpro, hpro, Qpro, Mpro, spro;
                     Jpro = J;
@@ -3525,9 +3547,9 @@ if(mocam == 0 || mocam == 1  || call == 1) {
                                                 J,  C, h,
                                                 xw2, yw2,  zw2,
                                                 c2, nc2,  pow1n, nbbj, ncbj, flj, czj, dj, awj, c16);
-                    x = xx * 655.35f;
-                    y = yy * 655.35f;
-                    z = zz * 655.35f;
+                    x = CLIP(xx * 655.35f);
+                    y = CLIP(yy * 655.35f);
+                    z = CLIP(zz * 655.35f);
                     float Ll, aa, bb;
                     //convert xyz=>lab
                     Color::XYZ2Lab(x,  y,  z, Ll, aa, bb);
@@ -3548,7 +3570,7 @@ if(mocam == 0 || mocam == 1  || call == 1) {
                     Ciecam02::jch2xyz_ciecam02float(x, y, z,
                                                 LVF(Jbuffer[k]), LVF(Cbuffer[k]), LVF(hbuffer[k]),
                                                 F2V(xw2), F2V(yw2), F2V(zw2),
-                                                F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz), c16);
+                                                F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz), c16, F2V(plum));
                     STVF(xbuffer[k], x * c655d35);
                     STVF(ybuffer[k], y * c655d35);
                     STVF(zbuffer[k], z * c655d35);
@@ -3559,6 +3581,10 @@ if(mocam == 0 || mocam == 1  || call == 1) {
                 for (int j = 0; j < width; j++) {
                     float Ll, aa, bb;
                     //convert xyz=>lab
+                    xbuffer[j] = CLIP(xbuffer[j]);
+                    ybuffer[j] = CLIP(ybuffer[j]);
+                    zbuffer[j] = CLIP(zbuffer[j]);
+                   
                     Color::XYZ2Lab(xbuffer[j], ybuffer[j], zbuffer[j], Ll, aa, bb);
 
                     lab->L[i][j] = Ll;
