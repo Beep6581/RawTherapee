@@ -53,17 +53,6 @@
 #include "boxblur.h"
 #include "rescale.h"
 
-#define Jzazbz_b 1.15
-#define Jzazbz_g 0.66
-#define Jzazbz_c1 (3424/4096.0)
-#define Jzazbz_c2 (2413/128.0)
-#define Jzazbz_c3 (2392/128.0)
-#define Jzazbz_n (2610/16384.0)
-#define Jzazbz_p (1.7*2523/32.0)
-#define Jzazbz_d (-0.56)
-#define Jzazbz_d0 (1.6295499532821566e-11)
-#define Jzazbz_ni (16384.0/2610.0)
-#define Jzazbz_pi (32.0/4289.1)  //4289.1 = 2523 * 1.7
 
 
 #pragma GCC diagnostic warning "-Wall"
