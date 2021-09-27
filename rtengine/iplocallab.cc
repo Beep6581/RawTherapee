@@ -2541,7 +2541,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         {wiprof[1][0], wiprof[1][1], wiprof[1][2]},
         {wiprof[2][0], wiprof[2][1], wiprof[2][2]}
     };
-    float plum = (float) params->locallab.spots.at(sp).pqremap;
+    float plum = (float) params->locallab.spots.at(sp).pqremapcam16;
 
     int mocam = 0;
     if(params->locallab.spots.at(sp).modecam == "all") {
@@ -2550,8 +2550,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         mocam = 1;
     } else if(params->locallab.spots.at(sp).modecam == "jz") {
         mocam = 2;
-    } else if(params->locallab.spots.at(sp).modecam == "zcam") {
-        mocam = 3;
+//    } else if(params->locallab.spots.at(sp).modecam == "zcam") {
+//        mocam = 3;
     }
 
     int mecamcurve = 0;

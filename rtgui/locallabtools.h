@@ -1528,6 +1528,9 @@ private:
     MyComboBoxText*  const sursourcie;
     Gtk::Box* const surHBoxcie;
     Gtk::Frame* const cie1Frame;
+    Gtk::Frame* const cie1lightFrame;
+    Gtk::Frame* const cie1contFrame;
+    Gtk::Frame* const cie1colorFrame;
     Gtk::Frame* const PQFrame;
     Adjuster* const lightlcie;
     Adjuster* const lightjzcie;
@@ -1535,6 +1538,7 @@ private:
     Adjuster* const adapjzcie;
     Adjuster* const jz100;
     Adjuster* const pqremap;
+    Adjuster* const pqremapcam16;
     Gtk::CheckButton* const forcejz;
     MyExpander* const expjz;
     Gtk::Frame* const jzshFrame;

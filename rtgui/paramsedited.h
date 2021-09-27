@@ -1013,6 +1013,7 @@ public:
         bool adapjzcie;
         bool jz100;
         bool pqremap;
+        bool pqremapcam16;
         bool hljzcie;
         bool hlthjzcie;
         bool shjzcie;
