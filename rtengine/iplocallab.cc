@@ -2711,7 +2711,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
     }
 
     if(ciec) {
-        if(iscie) {        
+        if(iscie) {
             if (params->locallab.spots.at(sp).catadcie > 0) {
                 tempo = 5000 - 30 * params->locallab.spots.at(sp).catadcie;
             } else if (params->locallab.spots.at(sp).catadcie < 0){
@@ -3001,7 +3001,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
             to_one = 1.;
         }
         if(!forcejz) {
-            to_one = 1.;
+        //    to_one = 1.;
         }
         //double to_prov = 1 / (maxi * to_screen);
         //adapjz * ajz + bjz parabolic curve between 1 and ijz100
