@@ -74,13 +74,17 @@ Spot::Spot() :
     reset->set_border_width (0);
     reset->signal_clicked().connect ( sigc::mem_fun (*this, &Spot::resetPressed) );
 
+    spotSize = Gtk::manage(new Adjuster(M("Default spot size"), 5, 50, 1, 25));
+    spotSize->setAdjusterListener (this);
+
     labelBox = Gtk::manage (new Gtk::Box());
     labelBox->set_spacing (2);
     labelBox->pack_start (*countLabel, false, false, 0);
     labelBox->pack_end (*edit, false, false, 0);
     labelBox->pack_end (*reset, false, false, 0);
+    labelBox->pack_end (*spotSize, false, false, 0);
     pack_start (*labelBox);
-
+    
     sourceIcon.datum = Geometry::IMAGE;
     sourceIcon.setActive (false);
     sourceIcon.state = Geometry::ACTIVE;
@@ -118,6 +122,7 @@ Spot::Spot() :
     EvSpotEnabledOPA = m->newEvent(SPOTADJUST, "TP_SPOT_LABEL");
     EvSpotEntry = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT_ENTRY");
     EvSpotEntryOPA = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT_ENTRY");
+    EvspotSize = m->newEvent(SPOTADJUST, "Default spot size");
 
     show_all();
 }
@@ -173,6 +178,7 @@ void Spot::write (ProcParams* pp, ParamsEdited* pedited)
     if (pedited) {
         pedited->spot.enabled = !get_inconsistent();
         pedited->spot.entries = editedCheckBox->get_active();
+        //pedited->spot.strength = spotSize->getEditedState ()
     }
 }
 
@@ -475,6 +481,7 @@ void Spot::addNewEntry()
     EditDataProvider* editProvider = getEditProvider();
     // we create a new entry
     SpotEntry se;
+    se.radius = spotSize->getIntValue();
     se.targetPos = editProvider->posImage;
     se.sourcePos = se.targetPos;
     spots.push_back (se); // this make a copy of se ...
@@ -854,6 +861,16 @@ void Spot::switchOffEditMode ()
     EditSubscriber::switchOffEditMode();  // disconnect
     listener->unsetTweakOperator(this);
     listener->refreshPreview(EvSpotEnabled); // reprocess the preview w/o creating History entry
+}
+
+void Spot::adjusterChanged(Adjuster* a, double newval)
+{
+    if (listener && getEnabled()) {
+
+        if (a == spotSize) {
+            listener->panelChanged (EvspotSize, spotSize->getTextValue());
+        }
+    }
 }
 
 void Spot::tweakParams(procparams::ProcParams& pparams)

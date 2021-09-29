@@ -23,6 +23,7 @@
 #include <gtkmm.h>
 #include "toolpanel.h"
 #include "editwidgets.h"
+#include "adjuster.h"
 #include "../rtengine/procparams.h"
 #include "../rtengine/tweakoperator.h"
 
@@ -53,7 +54,7 @@
  * (the point will be deleted on button release).
  */
 
-class Spot : public ToolParamBlock, public FoldableToolPanel, public rtengine::TweakOperator, public EditSubscriber
+class Spot : public ToolParamBlock, public FoldableToolPanel, public AdjusterListener, public rtengine::TweakOperator, public EditSubscriber
 {
 
 private:
@@ -90,6 +91,7 @@ protected:
     Gtk::Label* countLabel;
     Gtk::ToggleButton* edit;
     Gtk::Button* reset;
+    Adjuster* spotSize;
     sigc::connection editConn, editedConn;
 
     void editToggled ();
@@ -109,6 +111,8 @@ public:
     void setEditProvider (EditDataProvider* provider) override;
 
     void setBatchMode (bool batchMode) override;
+
+    void adjusterChanged(Adjuster* a, double newval) override;
 
     // EditSubscriber interface
     CursorShape getCursor (int objectID, int xPos, int yPos) const override;
@@ -131,6 +135,7 @@ public:
     rtengine::ProcEvent EvSpotEnabledOPA; // used to toggle-on the Spot 'On Preview Adjustment' mode
     rtengine::ProcEvent EvSpotEntry;
     rtengine::ProcEvent EvSpotEntryOPA;
+    rtengine::ProcEvent EvspotSize;
 };
 
 #endif
