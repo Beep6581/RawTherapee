@@ -2981,24 +2981,33 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                     mini = Jz;
                 }
                 sum += Jz;
-                nc++;
 
             }
         }
-
+        nc = height * width;
         sum = sum / nc;
         maxi += epsiljz;
         sum += epsiljz;
         double ijz100 = 1./jz100;
         double ajz = (ijz100 - 1.)/9.;//9 = sqrt(100) - 1 with a parabolic curve after jz100 - we can change for others curve ..log...(you must change also in locallabtool2)
         double bjz = 1. - ajz;
-        double to_screen = jz100 * (adapjz * ajz + bjz) / maxi;//to adapt screen values - remapping Jz in usual values 0..1 =>jz100 = 0.25...0.40 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
+        double interm = jz100 * (adapjz * ajz + bjz);
+        double bj = (10. - maxi) / 9.;
+         
+        double aj = maxi -bj;
+//        double to_screenp = (aj * interm + bj);
+        double to_screen = (aj * interm + bj) / maxi;
+        
+       // double to_screen = jz100 * (adapjz * ajz + bjz) / maxi;//to adapt screen values - remapping Jz in usual values 0..1 =>jz100 = 0.25...0.40 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
+ //       if (settings->verbose) { 
+ //           printf("ajz=%f bjz=%f adapjz=%f jz100=%f interm=%f to-scrp=%f to_screen=%f\n", ajz, bjz, adapjz, jz100, interm ,to_screenp, to_screen);
+ //       }
         double to_one = 1.;//only for calculation in range 0..1 or 0..32768
         //to_screen and to_one are used actually both....but in case of HDR we must separate them 
         to_one = 1 / (maxi * to_screen);
-        if(adapjz == 1. && jz100 == 0.1) {//force original algorithm
+        if(adapjz == 10. && jz100 == 1.) {//force original algorithm
             to_screen = 1.;
-            to_one = 1.;
+           // to_one = 1.;
         }
         if(!forcejz) {
         //    to_one = 1.;
@@ -3018,8 +3027,9 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         double miny = 0.1;
         double delta = 0.015 * (double) sqrt(std::max(100.f, la) / 100.f);//small adaptation in function La scene
         double maxy = 0.65;//empirical value
+        double maxreal = maxi*to_screen;
         if (settings->verbose) { 
-            printf("maxi=%f mini=%f mean=%f, avgm=%f to_screen=%f to_one=%f Max_real=%f Max=%f \n", maxi, mini, sum, avgm, to_screen, to_one, maxi*to_screen, maxi*to_screen*to_one);
+            printf("maxi=%f mini=%f mean=%f, avgm=%f to_screen=%f Max_real=%f to_one=%f\n", maxi, mini, sum, avgm, to_screen, maxreal, to_one);
         }
 
         const float sigmoidlambdajz = params->locallab.spots.at(sp).sigmoidldajzcie; 
@@ -3140,7 +3150,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                 double Jzold = Jz;
                 if(jzlocalcurve && localjzutili) {
                     Jz =  (double) (jzlocalcurve[(float) Jz * 65535.f] / 65535.f);
-                    Jz  = 0.4 * (Jz - Jzold) + Jzold;
+                    Jz  = 0.3 * (Jz - Jzold) + Jzold;
                 }
 
                 if(sigmoidlambdajz > 0.f && iscie) {//sigmoid Jz
@@ -3152,18 +3162,18 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                         thjz = atjz * val + btjz;
                     }
                     sigmoidla (val, thjz, sigmjz, bljz);
-                    Jz = val;
+                    Jz = (double) val;
                 }
                 Jz /= to_one;
 
                 double Cz, Hz;
                 Cz = sqrt(az * az + bz * bz);
-                //remapping Cz
+                //remapping Cz 
                 Hz = xatan2f ( bz, az );
-                double Czold = Cz;
+                double Czold = Cz * maxreal;
                 if(czlocalcurve && localczutili) {
                     Cz =  (double) (czlocalcurve[(float) Cz * 92666.f] / 92666.f);
-                    Cz  = 0.4 * (Cz - Czold) + Czold;
+                    Cz  = 0.3 * (Cz - Czold) + Czold;
                 }
                 
                 if(czjzlocalcurve && localczjzutili) { 
@@ -3633,11 +3643,10 @@ if(mocam == 3) {//Zcam
                 }
 
                 sumiz += Jz;
-                nciz++;
 
             }
         }
-
+        nciz = height * width;
         sumiz = sumiz / nciz;
         sumiz += epsilzcam;
         maxiiz += epsilzcam;

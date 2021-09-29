@@ -8315,7 +8315,8 @@ void Locallabcie::updateAutocompute(const float blackev, const float whiteev, co
         disableListener();
         sourceGraycie->setValue(sourceg);
         sourceabscie->setValue(sourceab);
-        float  pal = sqrt(std::max(100.f, sourceab) / 100.f);//empirical formula to adapt peak luminance in function La
+        float sour = sourceab;
+        float  pal = sqrt(std::max(200.f, sour) / 100.f);//empirical formula to adapt peak luminance in function La
         adapjzcie->setValue(pal);
         enableListener();
 
