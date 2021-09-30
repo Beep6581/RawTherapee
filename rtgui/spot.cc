@@ -74,7 +74,7 @@ Spot::Spot() :
     reset->set_border_width (0);
     reset->signal_clicked().connect ( sigc::mem_fun (*this, &Spot::resetPressed) );
 
-    spotSize = Gtk::manage(new Adjuster(M("Default spot size"), 5, 50, 1, 25));
+    spotSize = Gtk::manage(new Adjuster(M("TP_SPOT_DEFAULT_SIZE"), 5, 50, 1, 25));
     spotSize->setAdjusterListener (this);
 
     labelBox = Gtk::manage (new Gtk::Box());
@@ -122,7 +122,7 @@ Spot::Spot() :
     EvSpotEnabledOPA = m->newEvent(SPOTADJUST, "TP_SPOT_LABEL");
     EvSpotEntry = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT_ENTRY");
     EvSpotEntryOPA = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT_ENTRY");
-    EvspotSize = m->newEvent(SPOTADJUST, "Default spot size");
+    EvspotSize = m->newEvent(SPOTADJUST, "TP_SPOT_DEFAULT_SIZE");
 
     show_all();
 }
@@ -178,7 +178,6 @@ void Spot::write (ProcParams* pp, ParamsEdited* pedited)
     if (pedited) {
         pedited->spot.enabled = !get_inconsistent();
         pedited->spot.entries = editedCheckBox->get_active();
-        //pedited->spot.strength = spotSize->getEditedState ()
     }
 }
 
@@ -865,12 +864,7 @@ void Spot::switchOffEditMode ()
 
 void Spot::adjusterChanged(Adjuster* a, double newval)
 {
-    if (listener && getEnabled()) {
 
-        if (a == spotSize) {
-            listener->panelChanged (EvspotSize, spotSize->getTextValue());
-        }
-    }
 }
 
 void Spot::tweakParams(procparams::ProcParams& pparams)

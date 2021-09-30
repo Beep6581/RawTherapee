@@ -2752,6 +2752,7 @@ TP_SPOT_COUNTLABEL;%1 point(s)
 TP_SPOT_ENTRYCHANGED;Modification d'un point
 TP_SPOT_HINT;Cliquez sur ce bouton pour pouvoir opérer sur la zone de prévisualisation.\n\nPour ajouter un spot, pressez Ctrl et le bouton gauche de la souris, tirez le cercle (la touche Ctrl peut être relâchée) vers la position source, puis relâchez le bouton de la souris.\n\nPour éditer un spot, placez le curseur au-dessus de la marque blanche situant une zone éditée, faisant apparaître la géométrie d'édition.\n\nPour déplacer le spot source ou destination, placez le curseur en son centre et tirez le.\n\nLe cercle intérieur (zone d'effet maximum) et le cercle "d'adoucicement" peuvent être redimmensionné en plaçant le curseur dessus (le cercle devient orange) et en le tirant (le cercle devient rouge).\n\nQuand les changements sont terminés, un clic droit en dehors de tout spot termine le mode d'édition, ou cliquez à nouveau sur ce bouton.
 TP_SPOT_LABEL;Retrait de taches
+TP_SPOT_DEFAULT_SIZE;Taille par défault des points
 TP_TM_FATTAL_AMOUNT;Quantité
 TP_TM_FATTAL_ANCHOR;Ancre
 TP_TM_FATTAL_LABEL;Compression de Plage Dynamique
