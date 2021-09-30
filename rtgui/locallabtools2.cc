@@ -7394,7 +7394,7 @@ Locallabcie::Locallabcie():
     lightjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZLIGHT"), -100., 100., 0.01, 0.))),
     contjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCONT"), -100., 100., 0.5, 0.))),
     adapjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZADAP"), 1., 10., 0.05, 4.))),
-    jz100(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZ100"), 0.1, 1.0, 0.01, 0.30))),
+    jz100(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZ100"), 0.02, 1.0, 0.01, 0.25))),
     pqremap(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZPQREMAP"), 100., 10000., 0.1, 120.))),
     pqremapcam16(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CAM16PQREMAP"), 100., 10000., 0.1, 100.))),
     forcejz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZFORCE")))),
@@ -8334,10 +8334,13 @@ void Locallabcie::AutograycieChanged()
         sourceGraycie->set_sensitive(false);
         sourceabscie->set_sensitive(false);
         adapjzcie->set_sensitive(false);
+        jz100->set_sensitive(false);
     } else {
         sourceGraycie->set_sensitive(true);
         sourceabscie->set_sensitive(true);
-        adapjzcie->set_sensitive(true);
+      //  adapjzcie->set_sensitive(true);
+        adapjzcie->set_sensitive(false);
+        jz100->set_sensitive(false);
     }
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
@@ -8882,10 +8885,13 @@ void Locallabcie::updatecieGUI()
         sourceGraycie->set_sensitive(false);
         sourceabscie->set_sensitive(false);
         adapjzcie->set_sensitive(false);
+        jz100->set_sensitive(false);
     } else {
         sourceGraycie->set_sensitive(true);
         sourceabscie->set_sensitive(true);
-        adapjzcie->set_sensitive(true);
+        //adapjzcie->set_sensitive(true);
+        adapjzcie->set_sensitive(false);
+        jz100->set_sensitive(false);
     }
 
     if (mode == Simple || mode == Normal) { // Keep widget hidden in Normal and Simple mode

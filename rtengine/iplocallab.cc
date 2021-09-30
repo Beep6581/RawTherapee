@@ -3170,10 +3170,10 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                 Cz = sqrt(az * az + bz * bz);
                 //remapping Cz 
                 Hz = xatan2f ( bz, az );
-                double Czold = Cz * maxreal;
+                double Czold = Cz;
                 if(czlocalcurve && localczutili) {
                     Cz =  (double) (czlocalcurve[(float) Cz * 92666.f] / 92666.f);
-                    Cz  = 0.3 * (Cz - Czold) + Czold;
+                    Cz  = 0.7 * (Cz - Czold) + Czold;
                 }
                 
                 if(czjzlocalcurve && localczjzutili) { 
