@@ -3460,7 +3460,7 @@ void PerceptualToneCurve::BatchApply(const size_t start, const size_t end, float
         Color::Prophotoxyz(r, g, b, x, y, z);
 
         float J, C, h;
-        int c16 = 1;
+        int c16 = 1;//always Cat02....to reserve compatibility
         float plum = 100.f;
         Ciecam02::xyz2jch_ciecam02float(J, C, h,
                                         aw, fl,

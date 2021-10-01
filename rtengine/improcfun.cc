@@ -960,7 +960,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
             c16 = 1;
         }else if (params->colorappearance.modelmethod == "16") {
             c16 = 16;
-        }
+        } //I don't use PQ here...hence no 21 
         float plum = 100.f;
         Ciecam02::initcam1float (yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c, c16, plum);
         //printf ("wh=%f \n", wh);

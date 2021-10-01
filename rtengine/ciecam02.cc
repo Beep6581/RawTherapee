@@ -39,7 +39,6 @@
 
 
 
-
 namespace rtengine
 {
 
@@ -248,7 +247,7 @@ void Ciecam02::xyz_to_cat02float ( float &r, float &g, float &b, float x, float 
         r = ( 0.401288f * x) + (0.650173f * y) - (0.051461f * z); //cat16
         g = (-0.250268f * x) + (1.204414f * y) + (0.045854f * z);
         b = ( -0.002079f * x) + (0.048952f * y) + (0.953127f * z);
-    } else if (c16 == 20) {//Z
+    } else if (c16 == 21) {//cam16 PQ
         float rp = ( 0.401288f * x) + (0.650173f * y) - (0.051461f * z); //cat16
         float gp = (-0.250268f * x) + (1.204414f * y) + (0.045854f * z);
         float bp = ( -0.002079f * x) + (0.048952f * y) + (0.953127f * z);
@@ -281,11 +280,11 @@ void Ciecam02::xyz_to_cat02float ( vfloat &r, vfloat &g, vfloat &b, vfloat x, vf
         b = z;
     } else  if (c16 == 16) {
     //cat16
-        r = ( F2V (0.401288f) * x) + (F2V (0.650173f) * y) - (F2V (0.051461f) * z); //Changjun Li
+        r = ( F2V (0.401288f) * x) + (F2V (0.650173f) * y) - (F2V (0.051461f) * z);
         g = -(F2V (0.250268f) * x) + (F2V (1.204414f) * y) + (F2V (0.045854f) * z);
         b = -(F2V(0.002079f) * x) + (F2V(0.048952f) * y) + (F2V(0.953127f) * z);
-    } else  if (c16 == 20) {
-        vfloat rp = ( F2V (0.401288f) * x) + (F2V (0.650173f) * y) - (F2V (0.051461f) * z); //Changjun Li
+    } else  if (c16 == 21) {
+        vfloat rp = ( F2V (0.401288f) * x) + (F2V (0.650173f) * y) - (F2V (0.051461f) * z);
         vfloat gp = -(F2V (0.250268f) * x) + (F2V (1.204414f) * y) + (F2V (0.045854f) * z);
         vfloat bp = -(F2V(0.002079f) * x) + (F2V(0.048952f) * y) + (F2V(0.953127f) * z);
         vfloat Jzazbz_c1v = F2V(Jzazbz_c1);
@@ -338,7 +337,7 @@ void Ciecam02::cat02_to_xyzfloat ( float &x, float &y, float &z, float r, float 
         x = ( 1.86206786f * r) - (1.01125463f * g) + (0.14918677f * b); //Cat16
         y = ( 0.38752654f * r) + (0.62144744f * g) + (-0.00897398f * b);
         z = ( -0.0158415f * r) - (0.03412294f * g) + (1.04996444f * b);
-    }else if(c16 == 20){//cat16
+    }else if(c16 == 21){//cam16 PQ
         float lp = ( 1.86206786f * r) - (1.01125463f * g) + (0.14918677f * b); //Cat16
         float mp = ( 0.38752654f * r) + (0.62144744f * g) + (-0.00897398f * b);
         float sp = ( -0.0158415f * r) - (0.03412294f * g) + (1.04996444f * b);
@@ -384,7 +383,7 @@ void Ciecam02::cat02_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vf
         x = ( F2V (1.86206786f) * r) - (F2V (1.01125463f) * g) + (F2V (0.14918677f) * b);
         y = ( F2V (0.38752654f) * r) + (F2V (0.621447744f) * g) - (F2V (0.00897398f) * b);
         z = -(F2V(0.0158415f) * r) - (F2V(0.03412294f) * g) + (F2V(1.04996444f) * b);
-    }else if(c16 == 20){//cat16
+    }else if(c16 == 21){//cam16 PQ
             vfloat lp = ( F2V (1.86206786f) * r) - (F2V (1.01125463f) * g) + (F2V (0.14918677f) * b);
             vfloat mp = ( F2V (0.38752654f) * r) + (F2V (0.621447744f) * g) - (F2V (0.00897398f) * b);
             vfloat sp = -(F2V(0.0158415f) * r) - (F2V(0.03412294f) * g) + (F2V(1.04996444f) * b);

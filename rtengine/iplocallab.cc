@@ -2919,7 +2919,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
     int c16 = 16;//always cat16
     bool c20 = true;
     if(c20  && plum > 100.f) {
-        c16 = 20;
+        c16 = 21;//I define 21...for 2021 :)
     }
     
     Ciecam02::initcam1float(yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c, c16, plum);
