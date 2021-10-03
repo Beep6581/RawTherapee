@@ -3270,8 +3270,61 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
 
 if(mocam == 0 || mocam == 1  || call == 1) {
 //begin ciecam
- //       float pliz = (float) 1. / params->locallab.spots.at(sp).pqremap;
- //       float plz = (float) params->locallab.spots.at(sp).pqremap;
+ if (settings->verbose) {
+     //informations on Cam16 scene conditions - allows user to see choices's incidences
+    float maxicam = -1000.f;
+    float maxicamq = -1000.f;
+    float minicam = 1000000.f;
+    float minicamq = 1000000.f;
+    int nccam = 0;
+    float sumcam = 0.f;
+    float sumcamq = 0.f;
+#ifdef _OPENMP
+            #pragma omp parallel for reduction(min:minicam) reduction(max:maxicam) reduction(min:minicamq) reduction(max:maxicamq) reduction(+:sumcam) reduction(+:sumcamq) if(multiThread)
+#endif
+        for (int i = 0; i < height; i+=1) {
+            for (int k = 0; k < width; k+=1) {
+                    float L = lab->L[i][k];
+                    float a = lab->a[i][k];
+                    float b = lab->b[i][k];
+                    float x, y, z;
+                    //convert Lab => XYZ
+                    Color::Lab2XYZ(L, a, b, x, y, z);
+                    x = x / 655.35f;
+                    y = y / 655.35f;
+                    z = z / 655.35f;
+                    float J, C, h, Q, M, s;
+                    Ciecam02::xyz2jchqms_ciecam02float(J, C,  h,
+                                                   Q,  M,  s, aw, fl, wh,
+                                                   x,  y,  z,
+                                                   xw1, yw1,  zw1,
+                                                   c,  nc, pow1, nbb, ncb, pfl, cz, d, c16, plum);
+                    if(J > maxicam) {
+                        maxicam = J;
+                    }
+                    if(J < minicam) {
+                        minicam = J;
+                    }
+                    sumcam += J;
+
+                    if(Q > maxicamq) {
+                        maxicamq = Q;
+                    }
+                    if(Q < minicamq) {
+                        minicamq = Q;
+                    }
+                    sumcamq += Q;
+
+            }
+        }
+        nccam = height * width;
+        sumcam = sumcam / nccam;
+        sumcamq = sumcamq / nccam;
+
+        printf("Cam16 Scene- HDR-PQ=%5.1f minJ=%3.1f maxJ=%3.1f meanJ=%3.1f minQ=%3.1f maxQ=%4.1f meanQ=%4.1f\n", (double) plum, (double) minicam, (double) maxicam, (double) sumcam, (double) minicamq, (double) maxicamq, (double) sumcamq);
+}
+
+
 
 //printf("c=%f c2=%f aw=%f fl=%f wh=%f nc=%f nbb=%f cz=%f d=%f pfl=%f \n", (double) c, (double) c2, (double) aw, (double) fl, (double) wh, (double) nc, (double) nbb, (double) cz, (double) d, (double) pfl);
 #ifdef __SSE2__
