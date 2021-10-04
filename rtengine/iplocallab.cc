@@ -3274,13 +3274,19 @@ if(mocam == 0 || mocam == 1  || call == 1) {
      //informations on Cam16 scene conditions - allows user to see choices's incidences
     float maxicam = -1000.f;
     float maxicamq = -1000.f;
+    float maxisat = -1000.f;
+    float maxiM = -1000.f;
     float minicam = 1000000.f;
     float minicamq = 1000000.f;
+    float minisat = 1000000.f;
+    float miniM = 1000000.f;
     int nccam = 0;
     float sumcam = 0.f;
     float sumcamq = 0.f;
+    float sumsat = 0.f;
+    float sumM = 0.f;
 #ifdef _OPENMP
-            #pragma omp parallel for reduction(min:minicam) reduction(max:maxicam) reduction(min:minicamq) reduction(max:maxicamq) reduction(+:sumcam) reduction(+:sumcamq) if(multiThread)
+            #pragma omp parallel for reduction(min:minicam) reduction(max:maxicam) reduction(min:minicamq) reduction(max:maxicamq) reduction(min:minisat) reduction(max:maxisat) reduction(min:miniM) reduction(max:maxiM) reduction(+:sumcam) reduction(+:sumcamq) reduction(+:sumsat) reduction(+:sumM)if(multiThread)
 #endif
         for (int i = 0; i < height; i+=1) {
             for (int k = 0; k < width; k+=1) {
@@ -3315,13 +3321,32 @@ if(mocam == 0 || mocam == 1  || call == 1) {
                     }
                     sumcamq += Q;
 
+                    if(s > maxisat) {
+                        maxisat = s;
+                    }
+                    if(s < minisat) {
+                        minisat = s;
+                    }
+                    sumsat += s;
+
+                    if(M > maxiM) {
+                        maxiM = M;
+                    }
+                    if(M < miniM) {
+                        miniM = M;
+                    }
+                    sumM += M;
+
             }
         }
         nccam = height * width;
         sumcam = sumcam / nccam;
-        sumcamq = sumcamq / nccam;
+        sumcamq /= nccam;
+        sumsat /= nccam;
+        sumM /= nccam;
 
-        printf("Cam16 Scene- HDR-PQ=%5.1f minJ=%3.1f maxJ=%3.1f meanJ=%3.1f minQ=%3.1f maxQ=%4.1f meanQ=%4.1f\n", (double) plum, (double) minicam, (double) maxicam, (double) sumcam, (double) minicamq, (double) maxicamq, (double) sumcamq);
+        printf("Cam16 Scene  Lighness_J Brightness_Q- HDR-PQ=%5.1f minJ=%3.1f maxJ=%3.1f meanJ=%3.1f minQ=%3.1f maxQ=%4.1f meanQ=%4.1f\n", (double) plum, (double) minicam, (double) maxicam, (double) sumcam, (double) minicamq, (double) maxicamq, (double) sumcamq);
+        printf("Cam16 Scene  Saturati-s Colorfulln_M- minSat=%3.1f maxSat=%3.1f meanSat=%3.1f minM=%3.1f maxM=%3.1f meanM=%3.1f\n", (double) minisat, (double) maxisat, (double) sumsat, (double) miniM, (double) maxiM, (double) sumM);
 }
 
 
