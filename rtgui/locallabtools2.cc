@@ -7478,7 +7478,7 @@ Locallabcie::Locallabcie():
     modeHBoxcam->pack_start (*modeLabelcam, Gtk::PACK_SHRINK);
     modecam->append (M ("TP_LOCALLAB_CAMMODE_CAM16"));
     modecam->append (M ("TP_LOCALLAB_CAMMODE_JZ"));
-    modecam->append (M ("TP_LOCALLAB_CAMMODE_ALL"));
+ //   modecam->append (M ("TP_LOCALLAB_CAMMODE_ALL"));
 //    modecam->append (M ("TP_LOCALLAB_CAMMODE_ZCAM"));
     modecam->set_active (0);
     modeHBoxcam->pack_start (*modecam);
@@ -7964,8 +7964,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             modecam->set_active (0);
         } else if (spot.modecam == "jz") {
             modecam->set_active (1);
-        } else if (spot.modecam == "all") {
-            modecam->set_active (2);
+//        } else if (spot.modecam == "all") {
+//            modecam->set_active (2);
 //        } else if (spot.modecam == "zcam") {
 //            modecam->set_active (3);
         }
@@ -8099,8 +8099,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.modecam = "cam16";
         } else if (modecam->get_active_row_number() == 1) {
             spot.modecam = "jz";
-        } else if (modecam->get_active_row_number() == 2) {
-            spot.modecam = "all";
+//        } else if (modecam->get_active_row_number() == 2) {
+//            spot.modecam = "all";
 //        } else if (modecam->get_active_row_number() == 3) {
 //            spot.modecam = "zcam";
         }

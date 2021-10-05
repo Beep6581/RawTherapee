@@ -2532,9 +2532,9 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
     };
     float plum = (float) params->locallab.spots.at(sp).pqremapcam16;
 
-    int mocam = 0;
+    int mocam = 1;
     if(params->locallab.spots.at(sp).modecam == "all") {
-        mocam = 0;
+        mocam = 10;//à remettre à 0 si modecam = "all"
     } else if(params->locallab.spots.at(sp).modecam == "cam16") {
         mocam = 1;
     } else if(params->locallab.spots.at(sp).modecam == "jz") {
