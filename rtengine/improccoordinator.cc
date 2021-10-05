@@ -1831,8 +1831,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     adap = 2000.;
                 } else {
                     double E_V = fcomp + log2(double ((fnum * fnum) / fspeed / (fiso / 100.f)));
-                    E_V += params->toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
-                    E_V += log2(params->raw.expos);  // exposure raw white point ; log2 ==> linear to EV
+                    E_V += 0.3 * params->toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
+                    E_V += 0.7 * log2(params->raw.expos);  // exposure raw white point ; log2 ==> linear to EV
                     adap = pow(2.0, E_V - 3.0);  // cd / m2
                     // end calculation adaptation scene luminosity
                 }
