@@ -1577,8 +1577,9 @@ void Crop::update(int todo)
                 adap = 2000.;
             } else {
                 double E_V = fcomp + log2(double ((fnum * fnum) / fspeed / (fiso / 100.f)));
-                E_V += params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
-                E_V += log2(params.raw.expos);  // exposure raw white point ; log2 ==> linear to EV
+                double kexp = 0.;
+                E_V += kexp * params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
+                E_V += 0.5 * log2(params.raw.expos);  // exposure raw white point ; log2 ==> linear to EV
                 adap = pow(2., E_V - 3.);  // cd / m2
                 // end calculation adaptation scene luminosity
             }

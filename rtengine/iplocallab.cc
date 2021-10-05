@@ -2190,8 +2190,9 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
             adap = 2000.;
         } else {
             double E_V = fcomp + std::log2(double ((fnum * fnum) / fspeed / (fiso / 100.f)));
-            E_V += 0.3 * params->toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
-            E_V += 0.7 * std::log2(params->raw.expos);  // exposure raw white point ; log2 ==> linear to EV
+            double kexp = 0.;
+            E_V += kexp * params->toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
+            E_V += 0.5 * std::log2(params->raw.expos);  // exposure raw white point ; log2 ==> linear to EV
             adap = pow(2.0, E_V - 3.0);  // cd / m2
             // end calculation adaptation scene luminosity
         }

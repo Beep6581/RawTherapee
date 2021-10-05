@@ -1675,8 +1675,9 @@ private:
             }//if no exif data or wrong
             else {
                 double E_V = fcomp + log2 ((fnum * fnum) / fspeed / (fiso / 100.f));
-                E_V += params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
-                E_V += log2(params.raw.expos); // exposure raw white point ; log2 ==> linear to EV
+                double kexp = 0.;
+                E_V += kexp * params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
+                E_V += 0.5 * log2(params.raw.expos); // exposure raw white point ; log2 ==> linear to EV
                 adap = std::pow(2.0, E_V - 3.0); //cd / m2
             }
 
