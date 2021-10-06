@@ -2949,7 +2949,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         double adapjz = params->locallab.spots.at(sp).adapjzcie;
         double jz100 = params->locallab.spots.at(sp).jz100;
         double pl = params->locallab.spots.at(sp).pqremap;
-        bool forcejz = params->locallab.spots.at(sp).forcejz;
+//        bool forcejz = params->locallab.spots.at(sp).forcejz;
 //calculate min, max, mean for Jz
 #ifdef _OPENMP
             #pragma omp parallel for reduction(min:mini) reduction(max:maxi) reduction(+:sum) if(multiThread)
@@ -3000,19 +3000,19 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         double to_screen = (aj * interm + bj) / maxi;
         
        // double to_screen = jz100 * (adapjz * ajz + bjz) / maxi;//to adapt screen values - remapping Jz in usual values 0..1 =>jz100 = 0.25...0.40 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
- //       if (settings->verbose) { 
- //           printf("ajz=%f bjz=%f adapjz=%f jz100=%f interm=%f to-scrp=%f to_screen=%f\n", ajz, bjz, adapjz, jz100, interm ,to_screenp, to_screen);
- //       }
+//        if (settings->verbose) { 
+//            printf("ajz=%f bjz=%f adapjz=%f jz100=%f interm=%f to-scrp=%f to_screen=%f\n", ajz, bjz, adapjz, jz100, interm ,to_screenp, to_screen);
+//        }
         double to_one = 1.;//only for calculation in range 0..1 or 0..32768
         //to_screen and to_one are used actually both....but in case of HDR we must separate them 
         to_one = 1 / (maxi * to_screen);
-        if(adapjz == 10. && jz100 == 1.) {//force original algorithm
+        if(adapjz == 10.) {//force original algorithm if La > 10000
             to_screen = 1.;
            // to_one = 1.;
         }
-        if(!forcejz) {
-        //    to_one = 1.;
-        }
+//        if(forcejz) {
+//            to_screen = 1.;
+//        }
         //double to_prov = 1 / (maxi * to_screen);
         //adapjz * ajz + bjz parabolic curve between 1 and ijz100
         const std::unique_ptr<LabImage> temp(new LabImage(width, height));
@@ -3030,7 +3030,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         double maxy = 0.65;//empirical value
         double maxreal = maxi*to_screen;
         if (settings->verbose) { 
-            printf("maxi=%f mini=%f mean=%f, avgm=%f to_screen=%f Max_real=%f to_one=%f\n", maxi, mini, sum, avgm, to_screen, maxreal, to_one);
+            printf("La=%4.1f PU_adap=%2.1f maxi=%f mini=%f mean=%f, avgm=%f to_screen=%f Max_real=%f to_one=%f\n", (double) la, adapjz, maxi, mini, sum, avgm, to_screen, maxreal, to_one);
         }
 
         const float sigmoidlambdajz = params->locallab.spots.at(sp).sigmoidldajzcie; 

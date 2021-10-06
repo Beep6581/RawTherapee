@@ -7521,7 +7521,7 @@ Locallabcie::Locallabcie():
     PQFBox->pack_start(*adapjzcie);
     PQFBox->pack_start(*jz100);
     PQFBox->pack_start(*pqremap);
- //   PQFBox->pack_start(*forcejz);
+//    PQFBox->pack_start(*forcejz);
 //    PQFBox->pack_start(*contthreszcam);
     PQFrame->add(*PQFBox);
     cieFBox->pack_start (*PQFrame);
@@ -8317,7 +8317,7 @@ void Locallabcie::updateAutocompute(const float blackev, const float whiteev, co
         sourceabscie->setValue(sourceab);
         float sour = sourceab;
         float  pal = sqrt(std::max(200.f, sour) / 100.f);//empirical formula to adapt peak luminance in function La
-        adapjzcie->setValue(pal);
+        adapjzcie->setValue(pal);//max = 10
         enableListener();
 
         return false;
@@ -9042,6 +9042,10 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
         }
 
         if (a == sourceabscie) {
+            float sour = sourceabscie->getValue();
+            float  pal = sqrt(std::max(200.f, sour) / 100.f);//empirical formula to adapt peak luminance in function La
+            adapjzcie->setValue(pal);//max to 10 if La > 10000
+            
             if (listener) {
                 listener->panelChanged(Evlocallabsourceabscie,
                                        sourceabscie->getTextValue() + spName );
