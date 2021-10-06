@@ -254,17 +254,31 @@ void Ciecam02::xyz_to_cat02float ( float &r, float &g, float &b, float x, float 
         rp *= 0.01f;
         gp *= 0.01f;
         bp *= 0.01f;
-        r = 100.f * pow((Jzazbz_c1 + Jzazbz_c2 * pow(rp * peakLum, Jzazbz_n)) / (1. + Jzazbz_c3 * pow((rp * peakLum), Jzazbz_n)), Jzazbz_p);
+        float tmp = pow_F(rp * peakLum, Jzazbz_n);
+        if(std::isnan(tmp)) {//to avoid crash
+            tmp = 0.f;
+        }
+        r = 100.f * pow((Jzazbz_c1 + Jzazbz_c2 * tmp) / (1. + Jzazbz_c3 * tmp), Jzazbz_p);
         if(std::isnan(r) || r < 0.f) {
-            r = 0.;
+            r = 0.f;
         }
-        g = 100.f * pow((Jzazbz_c1 + Jzazbz_c2 * pow(gp * peakLum, Jzazbz_n)) / (1. + Jzazbz_c3 * pow((gp * peakLum), Jzazbz_n)), Jzazbz_p);
+
+        tmp = pow_F(gp * peakLum, Jzazbz_n);
+        if(std::isnan(tmp)) {//to avoid crash
+            tmp = 0.f;
+        }
+        g = 100.f * pow((Jzazbz_c1 + Jzazbz_c2 * tmp) / (1. + Jzazbz_c3 * tmp), Jzazbz_p);
         if(std::isnan(g) || g < 0.f) {
-            g = 0.;
+            g = 0.f;
         }
-        b = 100.f * pow((Jzazbz_c1 + Jzazbz_c2 * pow(bp * peakLum, Jzazbz_n)) / (1. + Jzazbz_c3 * pow((bp * peakLum), Jzazbz_n)), Jzazbz_p);
+        tmp = pow_F(bp * peakLum, Jzazbz_n);
+        if(std::isnan(tmp)) {//to avoid crash
+            tmp = 0.f;
+        }
+        
+        b = 100.f * pow((Jzazbz_c1 + Jzazbz_c2 * tmp) / (1. + Jzazbz_c3 * tmp), Jzazbz_p);
         if(std::isnan(b) || b < 0.f) {
-            b = 0.;
+            b = 0.f;
         }
     }
 
@@ -300,19 +314,35 @@ void Ciecam02::xyz_to_cat02float ( vfloat &r, vfloat &g, vfloat &b, vfloat x, vf
         rp *= mulone;
         gp *= mulone;
         bp *= mulone;
-        r = mulhund * pow_F((Jzazbz_c1v + Jzazbz_c2v * pow_F(rp * peakLumv, Jzazbz_nv)) / (one + Jzazbz_c3v * pow_F((rp * peakLumv), Jzazbz_nv)), Jzazbz_pv);
+        vfloat tmp = pow_F(rp * peakLumv, Jzazbz_nv );
+        STVF(RR, tmp);
+        if(std::isnan(RR)) {//to avoid crash
+            tmp = F2V(0.f);;
+        }
+        r = mulhund * pow_F((Jzazbz_c1v + Jzazbz_c2v * tmp) / (one + Jzazbz_c3v * tmp), Jzazbz_pv);
             STVF(RR, r);
             if(std::isnan(RR) || RR < 0.f) {//to avoid crash
                 r = F2V(0.f);;
             }
+        tmp = pow_F(gp * peakLumv, Jzazbz_nv );
+        STVF(RR, tmp);
+        if(std::isnan(RR)) {//to avoid crash
+            tmp = F2V(0.f);;
+        }
 
-        g = mulhund * pow_F((Jzazbz_c1v + Jzazbz_c2v * pow_F(gp * peakLumv, Jzazbz_nv)) / (one + Jzazbz_c3v * pow_F((gp * peakLumv), Jzazbz_nv)), Jzazbz_pv);
+        g = mulhund * pow_F((Jzazbz_c1v + Jzazbz_c2v * tmp) / (one + Jzazbz_c3v * tmp), Jzazbz_pv);
             STVF(GG, g);
             if(std::isnan(GG) || GG < 0.f) {//to avoid crash
                 g = F2V(0.f);;
             }
 
-        b = mulhund * pow_F((Jzazbz_c1v + Jzazbz_c2v * pow_F(bp * peakLumv, Jzazbz_nv)) / (one + Jzazbz_c3v * pow_F((bp * peakLumv), Jzazbz_nv)), Jzazbz_pv);
+        tmp = pow_F(bp * peakLumv, Jzazbz_nv );
+        STVF(RR, tmp);
+        if(std::isnan(RR)) {//to avoid crash
+            tmp = F2V(0.f);;
+        }
+
+        b = mulhund * pow_F((Jzazbz_c1v + Jzazbz_c2v * tmp) / (one + Jzazbz_c3v * tmp), Jzazbz_pv);
             STVF(BB, b);
             if(std::isnan(BB) || BB < 0.f) {//to avoid crash
                 b = F2V(0.f);;
@@ -629,11 +659,32 @@ void Ciecam02::xyz2jzczhz ( double &Jz, double &az, double &bz, double x, double
  //   Lp = pow((Jzazbz_c1 + Jzazbz_c2 * pow(std::max((L * peakLum), 0.), Jzazbz_n)) / (1. + Jzazbz_c3 * pow((L * peakLum), Jzazbz_n)), Jzazbz_p);
  //   Mp = pow((Jzazbz_c1 + Jzazbz_c2 * pow(std::max((M * peakLum),0.), Jzazbz_n)) / (1. + Jzazbz_c3 * pow((M * peakLum), Jzazbz_n)), Jzazbz_p);
  //   Sp = pow((Jzazbz_c1 + Jzazbz_c2 * pow(std::max((S * peakLum), 0.), Jzazbz_n)) / (1. + Jzazbz_c3 * pow((S * peakLum), Jzazbz_n)), Jzazbz_p);
+    double temp = pow(L * peakLum, Jzazbz_n);
+    if(std::isnan(temp)) {//to avoid crash
+        temp = 0.;
+    }
+    Lp = pow((Jzazbz_c1 + Jzazbz_c2 * temp) / (1. + Jzazbz_c3 * temp), Jzazbz_p);
+    if(std::isnan(Lp)) {//to avoid crash
+        Lp = 0.;
+    }
+    
+    temp = pow(M * peakLum, Jzazbz_n);
+    if(std::isnan(temp)) {//to avoid crash
+        temp = 0.;
+    }
+    Mp = pow((Jzazbz_c1 + Jzazbz_c2 * temp) / (1. + Jzazbz_c3 * temp), Jzazbz_p);
+    if(std::isnan(Mp)) {//to avoid crash
+        Mp = 0.;
+    }
 
-    Lp = pow((Jzazbz_c1 + Jzazbz_c2 * pow(L * peakLum, Jzazbz_n)) / (1. + Jzazbz_c3 * pow((L * peakLum), Jzazbz_n)), Jzazbz_p);
-    Mp = pow((Jzazbz_c1 + Jzazbz_c2 * pow(M * peakLum, Jzazbz_n)) / (1. + Jzazbz_c3 * pow((M * peakLum), Jzazbz_n)), Jzazbz_p);
-    Sp = pow((Jzazbz_c1 + Jzazbz_c2 * pow(S * peakLum, Jzazbz_n)) / (1. + Jzazbz_c3 * pow((S * peakLum), Jzazbz_n)), Jzazbz_p);
-
+    temp = pow(S * peakLum, Jzazbz_n);
+    if(std::isnan(temp)) {//to avoid crash
+        temp = 0.;
+    }
+    Sp = pow((Jzazbz_c1 + Jzazbz_c2 * temp) / (1. + Jzazbz_c3 * temp), Jzazbz_p);
+    if(std::isnan(Sp)) {//to avoid crash
+        Sp = 0.;
+    }
 
     Iz = 0.5 * Lp + 0.5 * Mp;
     az = 3.524000 * Lp - 4.066708 * Mp + 0.542708 * Sp;
