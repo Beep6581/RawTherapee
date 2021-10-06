@@ -904,7 +904,16 @@ void Options::readFromFile(Glib::ustring fname)
 
 #ifdef WIN32
                     auto getIconSerialized = [](const Glib::ustring &executable) {
-                        return Glib::ustring::compose("('themed', <['%1,0', '%1,0-symbolic']>)", executable);
+                        // Backslashes and quotes must be escaped in the text representation of GVariant strings.
+                        // See https://www.freedesktop.org/software/gstreamer-sdk/data/docs/2012.5/glib/gvariant-text.html#gvariant-text-strings
+                        Glib::ustring exec_escaped = "";
+                        for (const auto character : executable) {
+                            if (character == '\\' || character == '\'') {
+                                exec_escaped += '\\';
+                            }
+                            exec_escaped += character;
+                        }
+                        return Glib::ustring::compose("('themed', <['%1,0', '%1,0-symbolic']>)", exec_escaped);
                     };
                     Glib::ustring gimpDir = "";
                     if (keyFile.has_key("External Editor", "GimpDir")) {
