@@ -2427,7 +2427,7 @@ void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B,  const str
     }
 
 }
-void ImProcFunctions::loccont(int bfw, int bfh, int xstart, int ystart, int xend, int yend, LabImage* tmp1, float rad, float stren, int sk)
+void ImProcFunctions::loccont(int bfw, int bfh, /* int xstart, int ystart, int xend, int yend, */ LabImage* tmp1, float rad, float stren, int sk)
 {
     if (rad > 0.f) {
         array2D<float> guide(bfw, bfh);
@@ -2435,26 +2435,28 @@ void ImProcFunctions::loccont(int bfw, int bfh, int xstart, int ystart, int xend
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
 #endif
-        for (int y = ystart; y < yend ; y++) {
-            for (int x = xstart; x < xend; x++) {
-                LL[y][x] = tmp1->L[y - ystart][x - xstart];
-                float ll = LL[y - ystart][x - xstart] / 32768.f;
+        for (int y = 0; y < bfh ; y++) {
+            for (int x = 0; x < bfw; x++) {
+                LL[y][x] = tmp1->L[y][x];
+                float ll = LL[y][x] / 32768.f;
                 guide[y][x] = xlin2log(rtengine::max(ll, 0.f), 10.f);
             }
         }
+        
         array2D<float> iL(bfw, bfh, LL, 0);
         float gu = stren * rad;
         int r = rtengine::max(int(gu / sk), 1);
         const double epsil = 0.001 * std::pow(2.f, -10);
         float st = 0.01f * rad;
         rtengine::guidedFilterLog(guide, 10.f, LL, r, epsil, false);
+        
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16)
 #endif
-        for (int y = ystart; y < yend ; y++) {
-            for (int x = xstart; x < xend; x++) {
-                LL[y - ystart][x - xstart] = intp(st, LL[y - ystart][x - xstart] , iL[y - ystart][x - xstart]);
-                tmp1->L[y - ystart][x - xstart] = LL[y - ystart][x - xstart];
+        for (int y = 0; y < bfh ; y++) {
+            for (int x = 0; x < bfw; x++) {
+                LL[y][x] = intp(st, LL[y][x] , iL[y][x]);
+                tmp1->L[y][x] = LL[y][x];
             }
         }
     }
@@ -12828,7 +12830,7 @@ void ImProcFunctions::Lab_Local(
                     ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
 
                     float rad = params->locallab.spots.at(sp).detailcie;
-                    loccont(bfw, bfh, xstart, ystart, xend, yend, bufexpfin.get(), rad, 15.f, sk);
+                    loccont(bfw, bfh, /*xstart, ystart, xend, yend,*/ bufexpfin.get(), rad, 15.f, sk);
                 }
 
                 //here begin graduated filter
@@ -13775,7 +13777,7 @@ void ImProcFunctions::Lab_Local(
                     ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
 
                     float rad = params->locallab.spots.at(sp).detailcie;
-                    loccont(bfw, bfh, xstart, ystart, xend, yend, tmp1.get(), rad, 15.f, sk);
+                    loccont(bfw, bfh, /*xstart, ystart, xend, yend,*/ tmp1.get(), rad, 15.f, sk);
                 }
 
 
@@ -15829,7 +15831,7 @@ void ImProcFunctions::Lab_Local(
                         ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
 
                         float rad = params->locallab.spots.at(sp).detailcie;
-                        loccont(bfw, bfh, xstart, ystart, xend, yend, tmp1.get(), rad, 5.f, sk);
+                        loccont(bfw, bfh, /*xstart, ystart, xend, yend,*/ tmp1.get(), rad, 5.f, sk);
                     }
 
 
@@ -16532,7 +16534,7 @@ void ImProcFunctions::Lab_Local(
                                 ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
 
                                 float rad = params->locallab.spots.at(sp).detailcie;
-                                loccont(bfw, bfh, xstart, ystart, xend, yend, bufexpfin.get(), rad, 15.f, sk);
+                                loccont(bfw, bfh, /*xstart, ystart, xend, yend,*/ bufexpfin.get(), rad, 15.f, sk);
                             }
 
                         }
@@ -18253,7 +18255,8 @@ void ImProcFunctions::Lab_Local(
                 }
 
                 float rad = params->locallab.spots.at(sp).detailcie;
-                loccont(bfw, bfh, xstart, ystart, xend, yend, bufexpfin.get(), rad, 15.f, sk);
+                loccont(bfw, bfh, /*xstart, ystart, xend, yend,*/ bufexpfin.get(), rad, 15.f, sk);
+                
                 const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).reparcie;
                 int bw = bufexporig->W;
                 int bh = bufexporig->H;
