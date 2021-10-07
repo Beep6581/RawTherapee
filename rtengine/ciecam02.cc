@@ -373,22 +373,32 @@ void Ciecam02::cat02_to_xyzfloat ( float &x, float &y, float &z, float r, float 
         float sp = ( -0.0158415f * r) - (0.03412294f * g) + (1.04996444f * b);
         lp *= 0.01f;
         float tmp = pow_F(lp, Jzazbz_pi);
+        if(std::isnan(tmp)) {//to avoid crash
+            tmp = 0.f;
+        }
+
         float prov = (Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2);
         x =  pl * pow_F(prov, Jzazbz_ni);
         if(std::isnan(x)) {//to avoid crash
-            x = 0.;
+            x = 0.f;
         }
         x *= 100.f;
         mp *= 0.01f;
         tmp = pow_F(mp, Jzazbz_pi);
+        if(std::isnan(tmp)) {//to avoid crash
+            tmp = 0.f;
+        }
         prov = (Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2);
         y =  pl * pow_F(prov, Jzazbz_ni);
         if(std::isnan(y)) {
-            y = 0.;
+            y = 0.f;
         }
         y *= 100.f;
         sp *= 0.01f;
         tmp = pow_F(sp, Jzazbz_pi);
+        if(std::isnan(tmp)) {//to avoid crash
+            tmp = 0.f;
+        }
         prov = (Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2);
         z =  pl * pow_F(prov, Jzazbz_ni);
         if(std::isnan(z)) {
@@ -428,6 +438,10 @@ void Ciecam02::cat02_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vf
             lp *= mulone;
             float pro;
             vfloat tmp = pow_F(lp, Jzazbz_piv);
+            STVF(XX, tmp);
+            if(std::isnan(XX)) {//to avoid crash
+                tmp = F2V(0.f);;
+            }
             vfloat prov = (Jzazbz_c1v - tmp) / ((Jzazbz_c3v * tmp) - Jzazbz_c2v);
             x =  plv * pow_F(prov, Jzazbz_niv);
             STVF(XX, x);
@@ -437,6 +451,10 @@ void Ciecam02::cat02_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vf
             x *= mulhund;
             mp *= mulone;
             tmp = pow_F(mp, Jzazbz_piv);
+            STVF(YY, tmp);
+            if(std::isnan(YY)) {//to avoid crash
+                tmp = F2V(0.f);;
+            }
             prov = (Jzazbz_c1v - tmp) / ((Jzazbz_c3v * tmp) - Jzazbz_c2v);
             y = plv * pow_F(prov, Jzazbz_niv);
             STVF(YY, y);
@@ -446,6 +464,10 @@ void Ciecam02::cat02_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vf
             y *= mulhund;
             sp *= mulone;
             tmp = pow_F(sp, Jzazbz_piv);
+            STVF(ZZ, tmp);
+            if(std::isnan(ZZ)) {//to avoid crash
+                tmp = F2V(0.f);;
+            }
             prov = (Jzazbz_c1v - tmp) / ((Jzazbz_c3v * tmp) - Jzazbz_c2v);
             STVF(pro, prov);
             z = plv * pow_F(prov, Jzazbz_niv);
@@ -717,12 +739,32 @@ void Ciecam02::jzczhzxyz (double &x, double &y, double &z, double jz, double az,
     //I change optionnaly 10000 for pl function of la(absolute luminance) default 10000
    
     tmp = pow(Lp, Jzazbz_pi);
+    if(std::isnan(tmp)) {//to avoid crash
+        tmp = 0.;
+    }
     L = pl * pow((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), Jzazbz_ni);
+    if(std::isnan(L)) {//to avoid crash
+        L = 0.;
+    }
+
     tmp = pow(Mp, Jzazbz_pi);
+    if(std::isnan(tmp)) {//to avoid crash
+        tmp = 0.;
+    }
     M = pl * pow((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), Jzazbz_ni);
+    if(std::isnan(M)) {//to avoid crash
+        M = 0.;
+    }
+
     tmp = pow(Sp, Jzazbz_pi);
+    if(std::isnan(tmp)) {//to avoid crash
+        tmp = 0.;
+    }
     S = pl * pow((Jzazbz_c1 - tmp) / ((Jzazbz_c3 * tmp) - Jzazbz_c2), Jzazbz_ni);
-        
+    if(std::isnan(S)) {//to avoid crash
+        S = 0.;
+    }
+
     Xp = 1.9242264357876067 * L - 1.0047923125953657 * M + 0.0376514040306180 * S;
     Yp = 0.3503167620949991 * L + 0.7264811939316552 * M - 0.0653844229480850 * S;
     Zp = -0.0909828109828475 * L - 0.3127282905230739 * M + 1.5227665613052603 * S;

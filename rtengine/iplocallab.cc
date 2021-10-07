@@ -2996,13 +2996,13 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         double bj = (10. - maxi) / 9.;
          
         double aj = maxi -bj;
-//        double to_screenp = (aj * interm + bj);
+        double to_screenp = (aj * interm + bj);
         double to_screen = (aj * interm + bj) / maxi;
         
        // double to_screen = jz100 * (adapjz * ajz + bjz) / maxi;//to adapt screen values - remapping Jz in usual values 0..1 =>jz100 = 0.25...0.40 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
-//        if (settings->verbose) { 
-//            printf("ajz=%f bjz=%f adapjz=%f jz100=%f interm=%f to-scrp=%f to_screen=%f\n", ajz, bjz, adapjz, jz100, interm ,to_screenp, to_screen);
-//        }
+        if (settings->verbose) { 
+            printf("ajz=%f bjz=%f adapjz=%f jz100=%f interm=%f to-scrp=%f to_screen=%f\n", ajz, bjz, adapjz, jz100, interm ,to_screenp, to_screen);
+        }
         double to_one = 1.;//only for calculation in range 0..1 or 0..32768
         //to_screen and to_one are used actually both....but in case of HDR we must separate them 
         to_one = 1 / (maxi * to_screen);
