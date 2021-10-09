@@ -1648,6 +1648,10 @@ struct LocallabParams {
         double catadcie;
         double detailcie;
         Glib::ustring surroundcie;
+        bool enacieMask;
+        std::vector<double> CCmaskciecurve;
+        std::vector<double> LLmaskciecurve;
+        std::vector<double> HHmaskciecurve;
 
         LocallabSpot();
 

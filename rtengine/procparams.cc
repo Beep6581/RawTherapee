@@ -4444,7 +4444,53 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     targetGraycie(18.),
     catadcie(0.),
     detailcie(0.),
-    surroundcie("Average")
+    surroundcie("Average"),
+    enacieMask(false),
+    CCmaskciecurve{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        1.0,
+        0.35,
+        0.35,
+        0.50,
+        1.0,
+        0.35,
+        0.35,
+        1.0,
+        1.0,
+        0.35,
+        0.35
+    },
+    LLmaskciecurve{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        1.0,
+        0.35,
+        0.35,
+        0.50,
+        1.0,
+        0.35,
+        0.35,
+        1.0,
+        1.0,
+        0.35,
+        0.35
+    },
+    HHmaskciecurve{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        1.0,
+        0.35,
+        0.35,
+        0.50,
+        1.0,
+        0.35,
+        0.35,
+        1.0,
+        1.0,
+        0.35,
+        0.35
+    }
 
 {
 }
@@ -5117,7 +5163,11 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && targetGraycie == other.targetGraycie
         && catadcie == other.catadcie
         && detailcie == other.detailcie
-        && surroundcie == other.surroundcie;
+        && surroundcie == other.surroundcie
+        && enacieMask == other.enacieMask
+        && CCmaskciecurve == other.CCmaskciecurve
+        && LLmaskciecurve == other.LLmaskciecurve
+        && HHmaskciecurve == other.HHmaskciecurve;
        
 
 }
@@ -6868,6 +6918,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->catadcie, "Locallab", "Catadcie_" + index_str, spot.catadcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->detailcie, "Locallab", "Detailcie_" + index_str, spot.detailcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->surroundcie, "Locallab", "Surroundcie_" + index_str, spot.surroundcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->enacieMask, "Locallab", "EnacieMask_" + index_str, spot.enacieMask, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->CCmaskciecurve, "Locallab", "CCmaskcieCurve_" + index_str, spot.CCmaskciecurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->LLmaskciecurve, "Locallab", "LLmaskcieCurve_" + index_str, spot.LLmaskciecurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->HHmaskciecurve, "Locallab", "HHmaskcieCurve_" + index_str, spot.HHmaskciecurve, keyFile);
 
 
 
@@ -8997,6 +9051,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Colorflzcam_" + index_str, pedited, spot.colorflzcam, spotEdited.colorflzcam);
                 assignFromKeyfile(keyFile, "Locallab", "Saturzcam_" + index_str, pedited, spot.saturzcam, spotEdited.saturzcam);
                 assignFromKeyfile(keyFile, "Locallab", "Chromzcam_" + index_str, pedited, spot.chromzcam, spotEdited.chromzcam);
+                assignFromKeyfile(keyFile, "Locallab", "EnacieMask_" + index_str, pedited, spot.enacieMask, spotEdited.enacieMask);
+                assignFromKeyfile(keyFile, "Locallab", "CCmaskcieCurve_" + index_str, pedited, spot.CCmaskciecurve, spotEdited.CCmaskciecurve);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskcieCurve_" + index_str, pedited, spot.LLmaskciecurve, spotEdited.LLmaskciecurve);
+                assignFromKeyfile(keyFile, "Locallab", "HHmaskcieCurve_" + index_str, pedited, spot.HHmaskciecurve, spotEdited.HHmaskciecurve);
 
                 // Append LocallabSpot and LocallabParamsEdited
                 locallab.spots.push_back(spot);

@@ -1041,6 +1041,10 @@ public:
         bool catadcie;
         bool detailcie;
         bool surroundcie;
+        bool enacieMask;
+        bool CCmaskciecurve;
+        bool LLmaskciecurve;
+        bool HHmaskciecurve;
 
         LocallabSpotEdited(bool v);
 

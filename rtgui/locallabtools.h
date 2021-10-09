@@ -1605,13 +1605,23 @@ private:
     Adjuster* const catadcie;
     MyComboBoxText*  const surroundcie;
     Gtk::Box* const surrHBoxcie;
+
+    MyExpander* const expmaskcie;
+    MyComboBoxText* const showmaskcieMethod;
+    Gtk::CheckButton* const enacieMask;
+    CurveEditorGroup* const maskcieCurveEditorG;
+    FlatCurveEditor* const CCmaskcieshape;
+    FlatCurveEditor* const LLmaskcieshape;
+    FlatCurveEditor* const HHmaskcieshape;
     
-    sigc::connection AutograycieConn,  forcejzConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, toneMethodcieConn, toneMethodcieConn2;
-    
+    sigc::connection AutograycieConn,  forcejzConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, toneMethodcieConn, toneMethodcieConn2;
 public:
     Locallabcie();
     ~Locallabcie();
     
+    bool isMaskViewActive() override;
+    void resetMaskView() override;
+    void getMaskView(int &colorMask, int &colorMaskinv, int &expMask, int &expMaskinv, int &shMask, int &shMaskinv, int &vibMask, int &softMask, int &blMask, int &tmMask, int &retiMask, int &sharMask, int &lcMask, int &cbMask, int &logMask, int &maskMask) override;
 
     void updateAdviceTooltips(const bool showTooltips) override;
     void setDefaultExpanderVisibility() override;
@@ -1643,7 +1653,8 @@ private:
     void sigmoidqjcieChanged();
     void updatecieGUI();
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
-
+    void showmaskcieMethodChanged();
+    void enacieMaskChanged();
 
 };
 

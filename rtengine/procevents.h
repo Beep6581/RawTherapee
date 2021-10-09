@@ -1145,6 +1145,10 @@ enum ProcEventCode {
     Evlocallabsaturzcam = 1119,
     Evlocallabchromzcam = 1120,
     Evlocallabpqremapcam16 = 1121,
+    EvLocallabEnacieMask = 1122,
+    EvlocallabCCmaskcieshape = 1123,
+    EvlocallabLLmaskcieshape = 1124,
+    EvlocallabHHmaskcieshape = 1125,
     NUMOFEVENTS
 };
 

@@ -1738,6 +1738,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).colorflzcam = locallab.spots.at(j).colorflzcam && pSpot.colorflzcam == otherSpot.colorflzcam;
                 locallab.spots.at(j).saturzcam = locallab.spots.at(j).saturzcam && pSpot.saturzcam == otherSpot.saturzcam;
                 locallab.spots.at(j).chromzcam = locallab.spots.at(j).chromzcam && pSpot.chromzcam == otherSpot.chromzcam;
+                locallab.spots.at(j).enacieMask = locallab.spots.at(j).enaSHMask && pSpot.enaSHMask == otherSpot.enaSHMask;
+                locallab.spots.at(j).CCmaskciecurve = locallab.spots.at(j).CCmaskciecurve && pSpot.CCmaskciecurve == otherSpot.CCmaskciecurve;
+                locallab.spots.at(j).LLmaskciecurve = locallab.spots.at(j).LLmaskciecurve && pSpot.LLmaskciecurve == otherSpot.LLmaskciecurve;
+                locallab.spots.at(j).HHmaskciecurve = locallab.spots.at(j).HHmaskciecurve && pSpot.HHmaskciecurve == otherSpot.HHmaskciecurve;
 
 
             }
@@ -5911,6 +5915,23 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).surroundcie = mods.locallab.spots.at(i).surroundcie;
         }
 
+        if (locallab.spots.at(i).enacieMask) {
+            toEdit.locallab.spots.at(i).enacieMask = mods.locallab.spots.at(i).enacieMask;
+        }
+
+        if (locallab.spots.at(i).CCmaskciecurve) {
+            toEdit.locallab.spots.at(i).CCmaskciecurve = mods.locallab.spots.at(i).CCmaskciecurve;
+        }
+
+        if (locallab.spots.at(i).LLmaskciecurve) {
+            toEdit.locallab.spots.at(i).LLmaskciecurve = mods.locallab.spots.at(i).LLmaskciecurve;
+        }
+
+        if (locallab.spots.at(i).HHmaskciecurve) {
+            toEdit.locallab.spots.at(i).HHmaskciecurve = mods.locallab.spots.at(i).HHmaskciecurve;
+        }
+
+
     }
 
     if (spot.enabled) {
@@ -7853,7 +7874,11 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     targetGraycie(v),
     catadcie(v),
     detailcie(v),
-    surroundcie(v)
+    surroundcie(v),
+    enacieMask(v),
+    CCmaskciecurve(v),
+    LLmaskciecurve(v),
+    HHmaskciecurve(v)
 
 {
 }
@@ -8515,6 +8540,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     catadcie = v;
     detailcie = v;
     surroundcie = v;
+    enacieMask = v;
+    CCmaskciecurve = v;
+    LLmaskciecurve = v;
+    HHmaskciecurve = v;
 
 }
 
