@@ -1045,6 +1045,10 @@ public:
         bool CCmaskciecurve;
         bool LLmaskciecurve;
         bool HHmaskciecurve;
+        bool blendmaskcie;
+        bool radmaskcie;
+        bool chromaskcie;
+        bool Lmaskciecurve;
 
         LocallabSpotEdited(bool v);
 

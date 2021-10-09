@@ -4490,6 +4490,16 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0,
         0.35,
         0.35
+    },
+    blendmaskcie(0),
+    radmaskcie(0.0),
+    chromaskcie(0.0),
+    Lmaskciecurve{
+        static_cast<double>(DCT_NURBS),
+        0.0,
+        0.0,
+        1.0,
+        1.0
     }
 
 {
@@ -5167,7 +5177,11 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && enacieMask == other.enacieMask
         && CCmaskciecurve == other.CCmaskciecurve
         && LLmaskciecurve == other.LLmaskciecurve
-        && HHmaskciecurve == other.HHmaskciecurve;
+        && HHmaskciecurve == other.HHmaskciecurve
+        && blendmaskcie == other.blendmaskcie
+        && radmaskcie == other.radmaskcie
+        && chromaskcie == other.chromaskcie
+        && Lmaskciecurve == other.Lmaskciecurve;
        
 
 }
@@ -6922,6 +6936,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->CCmaskciecurve, "Locallab", "CCmaskcieCurve_" + index_str, spot.CCmaskciecurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->LLmaskciecurve, "Locallab", "LLmaskcieCurve_" + index_str, spot.LLmaskciecurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->HHmaskciecurve, "Locallab", "HHmaskcieCurve_" + index_str, spot.HHmaskciecurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->blendmaskcie, "Locallab", "Blendmaskcie_" + index_str, spot.blendmaskcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->radmaskcie, "Locallab", "Radmaskcie_" + index_str, spot.radmaskcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->chromaskcie, "Locallab", "Chromaskcie_" + index_str, spot.chromaskcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->Lmaskciecurve, "Locallab", "LmaskcieCurve_" + index_str, spot.Lmaskciecurve, keyFile);
 
 
 
@@ -9055,6 +9073,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "CCmaskcieCurve_" + index_str, pedited, spot.CCmaskciecurve, spotEdited.CCmaskciecurve);
                 assignFromKeyfile(keyFile, "Locallab", "LLmaskcieCurve_" + index_str, pedited, spot.LLmaskciecurve, spotEdited.LLmaskciecurve);
                 assignFromKeyfile(keyFile, "Locallab", "HHmaskcieCurve_" + index_str, pedited, spot.HHmaskciecurve, spotEdited.HHmaskciecurve);
+                assignFromKeyfile(keyFile, "Locallab", "Blendmaskcie_" + index_str, pedited, spot.blendmaskcie, spotEdited.blendmaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "Radmaskcie_" + index_str, pedited, spot.radmaskcie, spotEdited.radmaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "Chromaskcie_" + index_str, pedited, spot.chromaskcie, spotEdited.chromaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "LmaskcieCurve_" + index_str, pedited, spot.Lmaskciecurve, spotEdited.Lmaskciecurve);
 
                 // Append LocallabSpot and LocallabParamsEdited
                 locallab.spots.push_back(spot);

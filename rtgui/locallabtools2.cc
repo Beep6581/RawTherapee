@@ -7468,8 +7468,13 @@ Locallabcie::Locallabcie():
     maskcieCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
     CCmaskcieshape(static_cast<FlatCurveEditor*>(maskcieCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
     LLmaskcieshape(static_cast<FlatCurveEditor*>(maskcieCurveEditorG->addCurve(CT_Flat, "L", nullptr, false, false))),
-    HHmaskcieshape(static_cast<FlatCurveEditor*>(maskcieCurveEditorG->addCurve(CT_Flat, "LC(h)", nullptr, false, true)))
-    
+    HHmaskcieshape(static_cast<FlatCurveEditor*>(maskcieCurveEditorG->addCurve(CT_Flat, "LC(h)", nullptr, false, true))),
+    blendmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
+    radmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+    chromaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
+    mask2cieCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
+    Lmaskcieshape(static_cast<DiagonalCurveEditor*>(mask2cieCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
+   
    
     {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
@@ -7866,11 +7871,27 @@ Locallabcie::Locallabcie():
     HHmaskcieshape->setBottomBarColorProvider(this, 2);
 
     maskcieCurveEditorG->curveListComplete();
+    blendmaskcie->setAdjusterListener(this);
+
+    radmaskcie->setAdjusterListener(this);
+
+    chromaskcie->setAdjusterListener(this);
+    mask2cieCurveEditorG->setCurveListener(this);
+
+    Lmaskcieshape->setResetCurve(DiagonalCurveType(defSpot.Lmaskciecurve.at(0)), defSpot.Lmaskciecurve);
+    Lmaskcieshape->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+    Lmaskcieshape->setLeftBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+
+    mask2cieCurveEditorG->curveListComplete();
+    
     ToolParamBlock* const maskcieBox = Gtk::manage(new ToolParamBlock());
     maskcieBox->pack_start(*showmaskcieMethod, Gtk::PACK_SHRINK, 4);
     maskcieBox->pack_start(*enacieMask, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*maskcieCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    // maskSHBox->pack_start(*fatSHFrame);
+    maskcieBox->pack_start(*blendmaskcie, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*radmaskcie, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*chromaskcie, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*mask2cieCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     expmaskcie->add(*maskcieBox, false);
     pack_start(*expmaskcie, false, false);
     
@@ -7885,6 +7906,7 @@ Locallabcie::~Locallabcie()
     delete cieCurveEditorG;
     delete cieCurveEditorG2;
     delete maskcieCurveEditorG;
+    delete mask2cieCurveEditorG;
 
 }
 
@@ -7911,6 +7933,7 @@ void Locallabcie::setDefaultExpanderVisibility()
 {
     expLcie->set_expanded(false);
     expjz->set_expanded(false);
+    expmaskcie->set_expanded(false);
 
 }
 void Locallabcie::updateAdviceTooltips(const bool showTooltips)
@@ -7951,6 +7974,10 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         HHmaskcieshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         expmaskcie->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
        // blurSHde->set_tooltip_text(M("TP_LOCALLAB_BLURCOLDE_TOOLTIP"));
+        blendmaskcie->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
+        radmaskcie->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
+        mask2cieCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
+        Lmaskcieshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
 
 
     } else {
@@ -7988,7 +8015,10 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         LLmaskcieshape->setTooltip("");
         HHmaskcieshape->setTooltip("");
         expmaskcie->set_tooltip_markup("");
-       // blurSHde->set_tooltip_text(M("");
+        blendmaskcie->set_tooltip_text("");
+        radmaskcie->set_tooltip_text("");
+        mask2cieCurveEditorG->set_tooltip_text("");
+        Lmaskcieshape->setTooltip("");
 
     }
 }
@@ -8201,6 +8231,10 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         CCmaskcieshape->setCurve(spot.CCmaskciecurve);
         LLmaskcieshape->setCurve(spot.LLmaskciecurve);
         HHmaskcieshape->setCurve(spot.HHmaskciecurve);
+        blendmaskcie->setValue((double)spot.blendmaskcie);
+        radmaskcie->setValue(spot.radmaskcie);
+        chromaskcie->setValue(spot.chromaskcie);
+        Lmaskcieshape->setCurve(spot.Lmaskciecurve);
 
        
     }
@@ -8338,6 +8372,10 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.LLmaskciecurve = LLmaskcieshape->getCurve();
         spot.CCmaskciecurve = CCmaskcieshape->getCurve();
         spot.HHmaskciecurve = HHmaskcieshape->getCurve();
+        spot.blendmaskcie = blendmaskcie->getIntValue();
+        spot.radmaskcie = radmaskcie->getValue();
+        spot.chromaskcie = chromaskcie->getValue();
+        spot.Lmaskciecurve = Lmaskcieshape->getCurve();
 
     }
 }
@@ -8433,7 +8471,14 @@ void Locallabcie::curveChanged(CurveEditor* ce)
                                        M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
-        
+
+        if (ce == Lmaskcieshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLmaskcieshape,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
 
     }
 }
@@ -8456,6 +8501,7 @@ void Locallabcie::updateMaskBackground(const double normChromar, const double no
         CCmaskcieshape->updateLocallabBackground(normChromar);
         LLmaskcieshape->updateLocallabBackground(normLumar);
         HHmaskcieshape->updateLocallabBackground(normHuer);
+        Lmaskcieshape->updateLocallabBackground(normLumar);
 
         return false;
     }
@@ -9171,6 +9217,9 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         targetGraycie->setDefault(defSpot.targetGraycie);
         catadcie->setDefault(defSpot.catadcie);
         detailcie->setDefault(defSpot.detailcie);
+        blendmaskcie->setDefault((double)defSpot.blendmaskcie);
+        radmaskcie->setDefault(defSpot.radmaskcie);
+        chromaskcie->setDefault(defSpot.chromaskcie);
     }
 }
 
@@ -9498,6 +9547,29 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
                                        detailcie->getTextValue() + spName);
             }
         }
+        
+        if (a == blendmaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblendmaskcie,
+                                       blendmaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == radmaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabradmaskcie,
+                                       radmaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == chromaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabchromaskcie,
+                                       chromaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        
     }
 }
 

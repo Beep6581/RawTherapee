@@ -1613,6 +1613,11 @@ private:
     FlatCurveEditor* const CCmaskcieshape;
     FlatCurveEditor* const LLmaskcieshape;
     FlatCurveEditor* const HHmaskcieshape;
+    Adjuster* const blendmaskcie;
+    Adjuster* const radmaskcie;
+    Adjuster* const chromaskcie;
+    CurveEditorGroup* const mask2cieCurveEditorG;
+    DiagonalCurveEditor* const Lmaskcieshape;
     
     sigc::connection AutograycieConn,  forcejzConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, toneMethodcieConn, toneMethodcieConn2;
 public:
