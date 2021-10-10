@@ -677,6 +677,11 @@ struct local_params {
     float lowthrl;
     float higthrl;
     float decayl;
+    float recothrcie;
+    float lowthrcie;
+    float higthrcie;
+    float decaycie;
+    
     int noiselequal;
     float noisechrodetail;
     float bilat;
@@ -799,6 +804,9 @@ struct local_params {
     float thrhigh;
     bool usemask;
     float lnoiselow;
+    float radmacie;
+    float blendmacie;
+    float chromacie;
 
 };
 
@@ -1212,6 +1220,11 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float local_higthrs = (float)locallab.spots.at(sp).higthress;
     float local_decays = (float)locallab.spots.at(sp).decays;
 
+    float local_recothrcie = (float)locallab.spots.at(sp).recothrescie;
+    float local_lowthrcie = (float)locallab.spots.at(sp).lowthrescie;
+    float local_higthrcie = (float)locallab.spots.at(sp).higthrescie;
+    float local_decaycie = (float)locallab.spots.at(sp).decaycie;
+
     float local_recothrl = (float)locallab.spots.at(sp).recothresl;
     float local_lowthrl = (float)locallab.spots.at(sp).lowthresl;
     float local_higthrl = (float)locallab.spots.at(sp).higthresl;
@@ -1397,6 +1410,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.baselog = (float) locallab.spots.at(sp).baselog;
     lp.sensimas = locallab.spots.at(sp).sensimask;
     lp.sensicie = locallab.spots.at(sp).sensicie;
+    float blendmaskcie = ((float) locallab.spots.at(sp).blendmaskcie) / 100.f ;
+    float radmaskcie = ((float) locallab.spots.at(sp).radmaskcie);
+    float chromaskcie = ((float) locallab.spots.at(sp).chromaskcie);
 
     lp.deltaem = locallab.spots.at(sp).deltae;
     lp.scalereti = scaleret;
@@ -1592,6 +1608,12 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.lowthrs = local_lowthrs;
     lp.higthrs = local_higthrs;
     lp.decays = local_decays;
+
+    lp.recothrcie = local_recothrcie;
+    lp.lowthrcie = local_lowthrcie;
+    lp.higthrcie = local_higthrcie;
+    lp.decaycie = local_decaycie;
+
     lp.recothrv = local_recothrv;
     lp.lowthrv = local_lowthrv;
     lp.higthrv = local_higthrv;
@@ -1647,6 +1669,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.blurma = (float) locallab.spots.at(sp).blurmask;
     lp.fftma = locallab.spots.at(sp).fftmask;
     lp.contma = (float) locallab.spots.at(sp).contmask;
+
+    lp.blendmacie = blendmaskcie;
+    lp.radmacie = radmaskcie;
+    lp.chromacie = chromaskcie;
 
     for (int y = 0; y < 6; y++) {
         lp.mulloc[y] = LIM(multi[y], 0.f, 4.f);//to prevent crash with old pp3 integer
@@ -18218,17 +18244,27 @@ void ImProcFunctions::Lab_Local(
             if (bfh >= mSP && bfw >= mSP) {
                 const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh)); //buffer for data in zone limit
                 const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
+            std::unique_ptr<LabImage> bufmaskorigcie;
+            std::unique_ptr<LabImage> bufmaskblurcie;
+            std::unique_ptr<LabImage> originalmaskcie;
+
+            if (lp.showmaskciemet == 2  || lp.enacieMask || lp.showmaskciemet == 3 || lp.showmaskciemet == 4) {
+                bufmaskorigcie.reset(new LabImage(bfw, bfh));
+                bufmaskblurcie.reset(new LabImage(bfw, bfh));
+                originalmaskcie.reset(new LabImage(bfw, bfh));
+            }
 
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
-                for (int y = ystart; y < yend; y++) {
-                    for (int x = xstart; x < xend; x++) {
-                        bufexporig->L[y - ystart][x - xstart] = original->L[y][x];
-                        bufexporig->a[y - ystart][x - xstart] = original->a[y][x];
-                        bufexporig->b[y - ystart][x - xstart] = original->b[y][x];
+                for (int y = 0; y < bfh; y++) {
+                    for (int x = 0; x < bfw; x++) {
+                        bufexporig->L[y][x] = original->L[y + ystart][x + xstart];
+                        bufexporig->a[y][x] = original->a[y + ystart][x + xstart];
+                        bufexporig->b[y][x] = original->b[y + ystart][x + xstart];
                     }
                 }
+                
                 bool HHcurvejz = false;
                 if (lochhCurvejz && HHutilijz) {
                     for (int i = 0; i < 500; i++) {
@@ -18259,14 +18295,96 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
 
-                bufexpfin->CopyFrom(bufexporig.get(), multiThread);
-                if (params->locallab.spots.at(sp).expcie) {
-                    
-                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
+                int inv = 0;
+                bool showmaske = false;
+                bool enaMask = false;
+                bool deltaE = false;
+                bool modmask = false;
+                bool zero = false;
+                bool modif = false;
+
+                if (lp.showmaskciemet == 3) {
+                    showmaske = true;
                 }
 
-                float rad = params->locallab.spots.at(sp).detailcie;
-                loccont(bfw, bfh, bufexpfin.get(), rad, 15.f, sk);
+                if (lp.enacieMask) {
+                    enaMask = true;
+                }
+
+                if (lp.showmaskciemet == 4) {
+                    deltaE = true;
+                }
+
+                if (lp.showmaskciemet == 2) {
+                    modmask = true;
+                }
+
+                if (lp.showmaskciemet == 1) {
+                    modif = true;
+                }
+
+                if (lp.showmaskciemet == 0) {
+                    zero = true;
+                }
+
+                float chrom = lp.chromacie;
+                float rad = lp.radmacie;
+                float gamma = 1.f; //lp.gammaSH;
+                float slope = 0.f;//lp.slomaSH;
+                float blendm = lp.blendmacie;
+                float lap = 0.f;//params->locallab.spots.at(sp).lapmaskSH;
+                bool pde = false; //params->locallab.spots.at(sp).laplac;
+                LocwavCurve dummy;
+                int sco = params->locallab.spots.at(sp).scopemask;
+                int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
+                int shado = 0;
+                const int highl = 0;
+
+                const float mindE = 2.f + MINSCOPE * sco * lp.thr;
+                const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
+                const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
+                const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
+                int lumask = params->locallab.spots.at(sp).lumask;
+                float amountcd = 0.f;
+                float anchorcd = 50.f;
+
+                LocHHmaskCurve lochhhmasCurve;
+                maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskorigcie.get(), originalmaskcie.get(), original, reserved, inv, lp,
+                        0.f, false,
+                        locccmascieCurve, lcmascieutili, locllmascieCurve, llmascieutili, lochhmascieCurve, lhmascieutili, lochhhmasCurve, false, multiThread,
+                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmaskcielocalcurve, localmaskcieutili, dummy, false, 1, 1, 5, 5,
+                        shortcu, params->locallab.spots.at(sp).deltae, hueref, chromaref, lumaref,
+                        maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, -1
+                       );
+
+                if (lp.showmaskciemet == 3) {
+                    showmask(lumask, lp, xstart, ystart, cx, cy, bfw, bfh, bufexporig.get(), transformed, bufmaskorigcie.get(), 0);
+
+                    return;
+                }
+
+
+
+                if (lp.showmaskciemet == 0 || lp.showmaskciemet == 1  || lp.showmaskciemet == 2 || lp.showmaskciemet == 4 || lp.enacieMask) {
+
+                    bufexpfin->CopyFrom(bufexporig.get(), multiThread);
+                    if (params->locallab.spots.at(sp).expcie) {
+                        ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
+                    }
+                }
+            
+                if(lp.enacieMask && lp.recothrcie != 1.f) {
+                    float hig = lp.higthrcie;
+                    float low = lp.lowthrcie;
+                    float recoth = lp.recothrcie;
+                    float decay = lp.decaycie;
+                    bool invmask = false;
+                    maskrecov(bufexpfin.get(), original, bufmaskorigcie.get(), bfh, bfw, ystart, xstart, hig, low, recoth, decay, invmask, sk, multiThread);
+                }
+            
+            
+                float radcie = params->locallab.spots.at(sp).detailcie;
+                loccont(bfw, bfh, bufexpfin.get(), radcie, 15.f, sk);
                 
                 const float repart = 1.0 - 0.01 * params->locallab.spots.at(sp).reparcie;
                 int bw = bufexporig->W;
@@ -18284,7 +18402,7 @@ void ImProcFunctions::Lab_Local(
                 }
 
 
-                transit_shapedetect2(sp, 0.f, 0.f, call, 31, bufexporig.get(), bufexpfin.get(), nullptr, hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
+                transit_shapedetect2(sp, 0.f, 0.f, call, 31, bufexporig.get(), bufexpfin.get(), originalmaskcie.get(), hueref, chromaref, lumaref, sobelref, 0.f, nullptr, lp, original, transformed, cx, cy, sk);
 
                 if (lp.recur) {
                     original->CopyFrom(transformed, multiThread);

@@ -9148,6 +9148,14 @@ void Locallabcie::updatecieGUI()
         sourceGraycie->show();
         cieFrame->show();
 
+    if (enacieMask->get_active() && mode != Simple) {
+        maskusablecie->show();
+        maskunusablecie->hide();
+                
+    } else {
+        maskusablecie->hide();
+        maskunusablecie->show();
+    }
 
     if (modecam->get_active_row_number() == 1) {
         surHBoxcie->hide();
