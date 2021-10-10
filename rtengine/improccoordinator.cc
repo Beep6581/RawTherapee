@@ -1181,6 +1181,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               locccmaslogCurve, lcmaslogutili, locllmaslogCurve, llmaslogutili, lochhmaslogCurve, lhmaslogutili,
                               
                               locccmas_Curve, lcmas_utili, locllmas_Curve, llmas_utili, lochhmas_Curve, lhmas_utili,
+                              locccmascieCurve, lcmascieutili, locllmascieCurve, llmascieutili, lochhmascieCurve, lhmascieutili,
+
                               lochhhmas_Curve, lhhmas_utili,
                               loclmasCurveblwav, lmasutiliblwav,
                               loclmasCurvecolwav, lmasutilicolwav,

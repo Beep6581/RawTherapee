@@ -12571,6 +12571,8 @@ void ImProcFunctions::Lab_Local(
     const LocCCmaskCurve& locccmaslcCurve, bool lcmaslcutili, const LocLLmaskCurve& locllmaslcCurve, bool llmaslcutili, const LocHHmaskCurve& lochhmaslcCurve, bool lhmaslcutili,
     const LocCCmaskCurve& locccmaslogCurve, bool lcmaslogutili, const LocLLmaskCurve& locllmaslogCurve, bool llmaslogutili, const LocHHmaskCurve& lochhmaslogCurve, bool lhmaslogutili,
     const LocCCmaskCurve& locccmas_Curve, bool lcmas_utili, const LocLLmaskCurve& locllmas_Curve, bool llmas_utili, const LocHHmaskCurve& lochhmas_Curve, bool lhmas_utili,
+    const LocCCmaskCurve& locccmascieCurve, bool lcmascieutili, const LocLLmaskCurve& locllmascieCurve, bool llmascieutili, const LocHHmaskCurve& lochhmascieCurve, bool lhmascieutili,
+
     const LocHHmaskCurve& lochhhmas_Curve, bool lhhmas_utili,
     const LocwavCurve& loclmasCurveblwav, bool lmasutiliblwav,
     const LocwavCurve& loclmasCurvecolwav, bool lmasutilicolwav,
