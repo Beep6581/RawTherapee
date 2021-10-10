@@ -377,6 +377,7 @@ protected:
     int locallsharMask;
     int localllogMask;
     int locall_Mask;
+    int locallcieMask;
 
 public:
 
@@ -448,7 +449,7 @@ public:
         updaterThreadStart.unlock();
     }
 
-    void setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int localllogMask, int locall_Mask) override
+    void setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int localllogMask, int locall_Mask, int locallcieMask) override
     {
         this->previewDeltaE = previewDeltaE;
         this->locallColorMask = locallColorMask;
@@ -467,6 +468,7 @@ public:
         this->locallcbMask = locallcbMask;
         this->localllogMask = localllogMask;
         this->locall_Mask = locall_Mask;
+        this->locallcieMask = locallcieMask;
     }
 
     void setProgressListener (ProgressListener* pl) override

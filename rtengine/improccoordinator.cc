@@ -239,6 +239,7 @@ ImProcCoordinator::ImProcCoordinator() :
     locallsharMask(0),
     localllogMask(0),
     locall_Mask(0),
+    locallcieMask(0),
     retistrsav(nullptr)
 {
 }

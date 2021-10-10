@@ -168,6 +168,7 @@ public:
         int cbMask;
         int logMask;
         int maskMask;
+        int cieMask;
     };
 
     void resetMaskVisibility();
