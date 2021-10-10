@@ -1205,7 +1205,7 @@ private:
                         locedgwavCurve, locedgwavutili,
                         loclmasCurve_wav,lmasutili_wav,
                         LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                        huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                         meantme, stdtme, meanretie, stdretie
 );

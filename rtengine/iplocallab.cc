@@ -610,6 +610,7 @@ struct local_params {
     int showmaskblmet;
     int showmasklogmet;
     int showmask_met;
+    int showmaskciemet;
     bool fftbl;
     float laplacexp;
     float balanexp;
@@ -719,6 +720,7 @@ struct local_params {
     bool logena;
     bool islocal;
     bool maskena;
+    bool cieena;
     bool cut_past;
     float past;
     float satur;
@@ -755,6 +757,7 @@ struct local_params {
     bool enablMask;
     bool enaLMask;
     bool ena_Mask;
+    bool enacieMask;
     int highlihs;
     int shadowhs;
     int radiushs;
@@ -799,7 +802,7 @@ struct local_params {
 
 };
 
-static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locallab, struct local_params& lp, bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, const LocwavCurve & locwavCurveden, bool locwavdenutili)
+static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locallab, struct local_params& lp, bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask, const LocwavCurve & locwavCurveden, bool locwavdenutili)
 {
     int w = oW;
     int h = oH;
@@ -898,22 +901,24 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.showmaskblmet = llblMask;
     lp.showmasklogmet = lllogMask;
     lp.showmask_met = ll_Mask;
-
-    lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llsoftMask == 0 && llColorMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
-    lp.enaColorMaskinv = locallab.spots.at(sp).enaColorMask && llColorMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
-    lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
-    lp.enaExpMaskinv = locallab.spots.at(sp).enaExpMask && llExpMaskinv == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
-    lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0  && ll_Mask == 0;
-    lp.enaSHMaskinv = locallab.spots.at(sp).enaSHMask && llSHMaskinv == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
-    lp.enacbMask = locallab.spots.at(sp).enacbMask && llcbMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
-    lp.enaretiMask = locallab.spots.at(sp).enaretiMask && lllcMask == 0 && llsharMask == 0 && llsoftMask == 0 && llretiMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
-    lp.enatmMask = locallab.spots.at(sp).enatmMask && lltmMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && llblMask == 0 && llvibMask == 0&& lllogMask == 0  && ll_Mask == 0;
-    lp.enablMask = locallab.spots.at(sp).enablMask && llblMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
-    lp.enavibMask = locallab.spots.at(sp).enavibMask && llvibMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0;
-    lp.enalcMask = locallab.spots.at(sp).enalcMask && lllcMask == 0 && llcbMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 ;
-    lp.enasharMask = lllcMask == 0 && llcbMask == 0 && llsharMask == 0 && llsoftMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
-    lp.ena_Mask = locallab.spots.at(sp).enamask && lllcMask == 0 && llcbMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && lllogMask == 0 && llvibMask == 0;
-    lp.enaLMask = locallab.spots.at(sp).enaLMask && lllogMask == 0 && llColorMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0;// Exposure mask is deactivated if Color & Light mask is visible
+    lp.showmaskciemet = llcieMask;
+//printf("CIEmask=%i\n", lp.showmaskciemet);
+    lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llsoftMask == 0 && llColorMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
+    lp.enaColorMaskinv = locallab.spots.at(sp).enaColorMask && llColorMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
+    lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
+    lp.enaExpMaskinv = locallab.spots.at(sp).enaExpMask && llExpMaskinv == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
+    lp.enaSHMask = locallab.spots.at(sp).enaSHMask && llSHMask == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0  && ll_Mask == 0 && llcieMask == 0;
+    lp.enaSHMaskinv = locallab.spots.at(sp).enaSHMask && llSHMaskinv == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.enacbMask = locallab.spots.at(sp).enacbMask && llcbMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.enaretiMask = locallab.spots.at(sp).enaretiMask && lllcMask == 0 && llsharMask == 0 && llsoftMask == 0 && llretiMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.enatmMask = locallab.spots.at(sp).enatmMask && lltmMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && llblMask == 0 && llvibMask == 0&& lllogMask == 0  && ll_Mask == 0 && llcieMask == 0;
+    lp.enablMask = locallab.spots.at(sp).enablMask && llblMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.enavibMask = locallab.spots.at(sp).enavibMask && llvibMask == 0 && lllcMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.enalcMask = locallab.spots.at(sp).enalcMask && lllcMask == 0 && llcbMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.enasharMask = lllcMask == 0 && llcbMask == 0 && llsharMask == 0 && llsoftMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.ena_Mask = locallab.spots.at(sp).enamask && lllcMask == 0 && llcbMask == 0 && llsoftMask == 0 && llsharMask == 0 && llColorMask == 0 && llExpMask == 0 && llSHMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && lllogMask == 0 && llvibMask == 0 && llcieMask == 0;
+    lp.enaLMask = locallab.spots.at(sp).enaLMask && lllogMask == 0 && llColorMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
+    lp.enacieMask = locallab.spots.at(sp).enacieMask && llcieMask == 0 && llColorMask == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0  && ll_Mask == 0;
 
 
     lp.thrlow = locallab.spots.at(sp).levelthrlow;
@@ -1651,27 +1656,28 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.mullocsh[y] = multish[y];
     }
     lp.activspot = locallab.spots.at(sp).activ;
-
+ 
 
     lp.detailsh = locallab.spots.at(sp).detailSH; 
     lp.threshol = thresho;
     lp.chromacb = chromcbdl;
     lp.expvib = locallab.spots.at(sp).expvibrance && lp.activspot ;
-    lp.colorena = locallab.spots.at(sp).expcolor && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0; // Color & Light tool is deactivated if Exposure mask is visible or SHMask
-    lp.blurena = locallab.spots.at(sp).expblur && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
-    lp.tonemapena = locallab.spots.at(sp).exptonemap && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llColorMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
-    lp.retiena = locallab.spots.at(sp).expreti && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0;
-    lp.lcena = locallab.spots.at(sp).expcontrast && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && llsharMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0;
-    lp.cbdlena = locallab.spots.at(sp).expcbdl && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llretiMask == 0 && lllcMask == 0 && llsharMask == 0 && lllcMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
-    lp.exposena = locallab.spots.at(sp).expexpose && lp.activspot  && llColorMask == 0 && llsoftMask == 0 && llSHMask == 0 && lllcMask == 0 && llsharMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0; // Exposure tool is deactivated if Color & Light mask SHmask is visible
-    lp.hsena = locallab.spots.at(sp).expshadhigh && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;// Shadow Highlight tool is deactivated if Color & Light mask or SHmask is visible
-    lp.vibena = locallab.spots.at(sp).expvibrance && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
-    lp.sharpena = locallab.spots.at(sp).expsharp && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
-    lp.sfena = locallab.spots.at(sp).expsoft && lp.activspot && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;
-    lp.maskena = locallab.spots.at(sp).expmask && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && lllogMask == 0 && llSHMask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
-    lp.logena = locallab.spots.at(sp).explog && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
+    lp.colorena = locallab.spots.at(sp).expcolor && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0; // Color & Light tool is deactivated if Exposure mask is visible or SHMask
+    lp.blurena = locallab.spots.at(sp).expblur && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.tonemapena = locallab.spots.at(sp).exptonemap && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llColorMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.retiena = locallab.spots.at(sp).expreti && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.lcena = locallab.spots.at(sp).expcontrast && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llcbMask == 0 && llsharMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.cbdlena = locallab.spots.at(sp).expcbdl && lp.activspot && llExpMask == 0 && llsoftMask == 0 && llSHMask == 0 && llretiMask == 0 && lllcMask == 0 && llsharMask == 0 && lllcMask == 0 && llColorMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.exposena = locallab.spots.at(sp).expexpose && lp.activspot  && llColorMask == 0 && llsoftMask == 0 && llSHMask == 0 && lllcMask == 0 && llsharMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0; // Exposure tool is deactivated if Color & Light mask SHmask is visible
+    lp.hsena = locallab.spots.at(sp).expshadhigh && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Shadow Highlight tool is deactivated if Color & Light mask or SHmask is visible
+    lp.vibena = locallab.spots.at(sp).expvibrance && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
+    lp.sharpena = locallab.spots.at(sp).expsharp && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.sfena = locallab.spots.at(sp).expsoft && lp.activspot && llColorMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;
+    lp.maskena = locallab.spots.at(sp).expmask && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && lllogMask == 0 && llSHMask == 0 && llcieMask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
+    lp.logena = locallab.spots.at(sp).explog && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && llcbMask == 0 && lltmMask == 0 && llSHMask == 0 && ll_Mask == 0 && llcieMask == 0;// vibrance tool is deactivated if Color & Light mask or SHmask is visible
+    lp.cieena = locallab.spots.at(sp).expcie && lp.activspot && llColorMask == 0 && llsoftMask == 0 && llExpMask == 0 && llcbMask == 0 && lllcMask == 0 && llsharMask == 0 && llretiMask == 0 && lltmMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0;// Shadow Highlight tool is deactivated if Color & Light mask or SHmask is visible
 
-    lp.islocal = (lp.expvib || lp.colorena || lp.blurena || lp.tonemapena || lp.retiena || lp.lcena || lp.cbdlena || lp.exposena || lp.hsena || lp.vibena || lp.sharpena || lp.sfena || lp.maskena || lp.logena);
+    lp.islocal = (lp.expvib || lp.colorena || lp.blurena || lp.tonemapena || lp.retiena || lp.lcena || lp.cbdlena || lp.exposena || lp.hsena || lp.vibena || lp.sharpena || lp.sfena || lp.maskena || lp.logena || lp.cieena);
 
     lp.sensv = local_sensiv;
     lp.past =  chromaPastel;
@@ -7468,7 +7474,7 @@ void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transform
     if (params->locallab.enabled) {
         //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
         struct local_params lp;
-        calcLocalParams(sp, oW, oH, params->locallab, lp, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, locwavCurveden, locwavdenutili);
+        calcLocalParams(sp, oW, oH, params->locallab, lp, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, locwavCurveden, locwavdenutili);
         int begy = lp.yc - lp.lyT;
         int begx = lp.xc - lp.lxL;
         int yEn = lp.yc + lp.ly;
@@ -12580,7 +12586,7 @@ void ImProcFunctions::Lab_Local(
     
     bool LHutili, bool HHutili, bool CHutili, bool HHutilijz, bool CHutilijz, bool LHutilijz, const LUTf& cclocalcurve, bool localcutili, const LUTf& rgblocalcurve, bool localrgbutili, bool localexutili, const LUTf& exlocalcurve, const LUTf& hltonecurveloc, const LUTf& shtonecurveloc, const LUTf& tonecurveloc, const LUTf& lightCurveloc,
     double& huerefblur, double& chromarefblur, double& lumarefblur, double& hueref, double& chromaref, double& lumaref, double& sobelref, int &lastsav,
-    bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask,
+    bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask, 
     float& minCD, float& maxCD, float& mini, float& maxi, float& Tmean, float& Tsigma, float& Tmin, float& Tmax,
     float& meantm, float& stdtm, float& meanreti, float& stdreti
     )
@@ -12594,7 +12600,7 @@ void ImProcFunctions::Lab_Local(
 
     constexpr int del = 3; // to avoid crash with [loy - begy] and [lox - begx] and bfh bfw  // with gtk2 [loy - begy-1] [lox - begx -1 ] and del = 1
     struct local_params lp;
-    calcLocalParams(sp, oW, oH, params->locallab, lp, prevDeltaE, llColorMask, llColorMaskinv, llExpMask, llExpMaskinv, llSHMask, llSHMaskinv, llvibMask, lllcMask, llsharMask, llcbMask, llretiMask, llsoftMask, lltmMask, llblMask, lllogMask, ll_Mask, locwavCurveden, locwavdenutili);
+    calcLocalParams(sp, oW, oH, params->locallab, lp, prevDeltaE, llColorMask, llColorMaskinv, llExpMask, llExpMaskinv, llSHMask, llSHMaskinv, llvibMask, lllcMask, llsharMask, llcbMask, llretiMask, llsoftMask, lltmMask, llblMask, lllogMask, ll_Mask, llcieMask, locwavCurveden, locwavdenutili);
 
     avoidcolshi(lp, sp, original, transformed, cy, cx, sk);
 
