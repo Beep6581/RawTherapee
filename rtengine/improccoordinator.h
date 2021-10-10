@@ -284,6 +284,7 @@ protected:
     LUTf lmasklclocalcurve;
     LUTf lmaskloglocalcurve;
     LUTf lmasklocal_curve;
+    LUTf lmaskcielocalcurve;
     LUTf cielocalcurve;
     LUTf cielocalcurve2;
     LUTf jzlocalcurve;

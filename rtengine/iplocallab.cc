@@ -12554,6 +12554,7 @@ void ImProcFunctions::Lab_Local(
     const LUTf& lmasklclocalcurve, bool localmasklcutili,
     const LUTf& lmaskloglocalcurve, bool localmasklogutili,
     const LUTf& lmasklocal_curve, bool localmask_utili,
+    const LUTf& lmaskcielocalcurve, bool localmaskcieutili,
     const LUTf& cielocalcurve, bool localcieutili,
     const LUTf& cielocalcurve2, bool localcieutili2,
     const LUTf& jzlocalcurve, bool localjzutili,

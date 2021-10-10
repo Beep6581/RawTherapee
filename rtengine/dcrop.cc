@@ -872,6 +872,7 @@ void Crop::update(int todo)
         auto& lmaskbllocalcurve2 = parent->lmaskbllocalcurve;
         auto& lmasklclocalcurve2 = parent->lmasklclocalcurve;
         auto& lmaskloglocalcurve2 = parent->lmaskloglocalcurve;
+        auto& lmaskcielocalcurve2 = parent->lmaskcielocalcurve;
         auto& cielocalcurve2 = parent->cielocalcurve;
         auto& cielocalcurve22 = parent->cielocalcurve2;
         auto& jzlocalcurve2 = parent->jzlocalcurve;
@@ -1017,6 +1018,7 @@ void Crop::update(int todo)
             const bool localmaskblutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskblcurve, lmaskbllocalcurve2, skip);
             const bool localmasklogutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).LmaskcurveL, lmaskloglocalcurve2, skip);
             const bool localmask_utili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmask_curve, lmasklocal_curve2, skip);
+            const bool localmaskcieutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskciecurve, lmaskcielocalcurve2, skip);
             const bool localcieutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).ciecurve, cielocalcurve2, skip);
             const bool localcieutili2 = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).ciecurve2, cielocalcurve22, skip);
             const bool localjzutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).jzcurve, jzlocalcurve2, skip);
@@ -1084,6 +1086,7 @@ void Crop::update(int todo)
                         lmasklclocalcurve2, localmasklcutili,
                         lmaskloglocalcurve2, localmasklogutili,
                         lmasklocal_curve2, localmask_utili, 
+                        lmaskcielocalcurve2, localmaskcieutili, 
                         cielocalcurve2,localcieutili, 
                         cielocalcurve22,localcieutili2, 
                         jzlocalcurve2,localjzutili, 
@@ -1161,6 +1164,7 @@ void Crop::update(int todo)
                         lmasklclocalcurve2, localmasklcutili,
                         lmaskloglocalcurve2, localmasklogutili,
                         lmasklocal_curve2, localmask_utili, 
+                        lmaskcielocalcurve2, localmaskcieutili, 
                         cielocalcurve2,localcieutili, 
                         cielocalcurve22,localcieutili2, 
                         jzlocalcurve2,localjzutili, 

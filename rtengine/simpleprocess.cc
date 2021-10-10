@@ -1027,6 +1027,7 @@ private:
             LUTf lmasklclocalcurve(65536, LUT_CLIP_OFF);
             LUTf lmaskloglocalcurve(65536, LUT_CLIP_OFF);
             LUTf lmasklocal_curve(65536, LUT_CLIP_OFF);
+            LUTf lmaskcielocalcurve(65536, LUT_CLIP_OFF);
             LUTf cielocalcurve(65536, LUT_CLIP_OFF);
             LUTf cielocalcurve2(65536, LUT_CLIP_OFF);
             LUTf jzlocalcurve(65536, LUT_CLIP_OFF);
@@ -1119,6 +1120,7 @@ private:
                 const bool localmasklcutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmasklccurve, lmasklclocalcurve, 1);
                 const bool localmasklogutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).LmaskcurveL, lmaskloglocalcurve, 1);
                 const bool localmask_utili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmask_curve, lmasklocal_curve, 1);
+                const bool localmaskcieutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskciecurve, lmaskcielocalcurve, 1);
                 const bool localcieutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).ciecurve, cielocalcurve, 1);
                 const bool localcieutili2 = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).ciecurve2, cielocalcurve2, 1);
                 const bool localjzutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).jzcurve, jzlocalcurve, 1);
@@ -1181,6 +1183,7 @@ private:
                         lmasklclocalcurve, localmasklcutili,
                         lmaskloglocalcurve, localmasklogutili,
                         lmasklocal_curve, localmask_utili,
+                        lmaskcielocalcurve, localmaskcieutili,
                         cielocalcurve, localcieutili, 
                         cielocalcurve2, localcieutili2, 
                         jzlocalcurve, localjzutili, 

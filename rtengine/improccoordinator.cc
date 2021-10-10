@@ -216,6 +216,7 @@ ImProcCoordinator::ImProcCoordinator() :
     lmasklclocalcurve(65536, LUT_CLIP_OFF),
     lmaskloglocalcurve(65536, LUT_CLIP_OFF),
     lmasklocal_curve(65536, LUT_CLIP_OFF),
+    lmaskcielocalcurve(65536, LUT_CLIP_OFF),
     cielocalcurve(65536, LUT_CLIP_OFF),
     cielocalcurve2(65536, LUT_CLIP_OFF),
     jzlocalcurve(65536, LUT_CLIP_OFF),
@@ -1039,6 +1040,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 const bool localmasklcutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmasklccurve, lmasklclocalcurve, sca);
                 const bool localmasklogutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).LmaskcurveL, lmaskloglocalcurve, sca);
                 const bool localmask_utili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmask_curve, lmasklocal_curve, sca);
+                const bool localmaskcieutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmaskciecurve, lmaskcielocalcurve, sca);
                 const bool localcieutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).ciecurve, cielocalcurve, sca);
                 const bool localcieutili2 = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).ciecurve2, cielocalcurve2, sca);
                 const bool localjzutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).jzcurve, jzlocalcurve, sca);
@@ -1164,6 +1166,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               lmasklclocalcurve, localmasklcutili,
                               lmaskloglocalcurve, localmasklogutili,
                               lmasklocal_curve, localmask_utili,
+                              lmaskcielocalcurve, localmaskcieutili,
                               cielocalcurve, localcieutili,
                               cielocalcurve2, localcieutili2,
                               jzlocalcurve, localjzutili,
