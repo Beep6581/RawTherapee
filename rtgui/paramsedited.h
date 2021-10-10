@@ -1049,6 +1049,10 @@ public:
         bool radmaskcie;
         bool chromaskcie;
         bool Lmaskciecurve;
+        bool recothrescie;
+        bool lowthrescie;
+        bool higthrescie;
+        bool decaycie;
 
         LocallabSpotEdited(bool v);
 

@@ -7460,7 +7460,13 @@ Locallabcie::Locallabcie():
     catadcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png"))))),
     surroundcie(Gtk::manage (new MyComboBoxText ())),
     surrHBoxcie(Gtk::manage(new Gtk::Box())),
-    
+    exprecovcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
+    maskusablecie(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
+    maskunusablecie(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
+    recothrescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+    lowthrescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
+    higthrescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
+    decaycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
     expmaskcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_SHOWS")))),
     showmaskcieMethod(Gtk::manage(new MyComboBoxText())),
     enacieMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ENABLE_MASK")))),
@@ -7842,7 +7848,14 @@ Locallabcie::Locallabcie():
     
     cie2Frame->add(*cieP2Box);
     pack_start(*cie2Frame);
-    
+
+    recothrescie->setAdjusterListener(this);
+    lowthrescie->setAdjusterListener(this);
+    higthrescie->setAdjusterListener(this);
+    decaycie->setAdjusterListener(this);
+    setExpandAlignProperties(exprecovcie, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+
     setExpandAlignProperties(expmaskcie, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     showmaskcieMethod->append(M("TP_LOCALLAB_SHOWMNONE"));
@@ -7883,7 +7896,17 @@ Locallabcie::Locallabcie():
     Lmaskcieshape->setLeftBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
 
     mask2cieCurveEditorG->curveListComplete();
-    
+
+    ToolParamBlock* const cieBox3 = Gtk::manage(new ToolParamBlock());
+    cieBox3->pack_start(*maskusablecie, Gtk::PACK_SHRINK, 0);
+    cieBox3->pack_start(*maskunusablecie, Gtk::PACK_SHRINK, 0);
+    cieBox3->pack_start(*recothrescie);
+    cieBox3->pack_start(*lowthrescie);
+    cieBox3->pack_start(*higthrescie);
+    cieBox3->pack_start(*decaycie);
+    exprecovcie->add(*cieBox3, false);
+    pack_start(*exprecovcie, false, false);
+
     ToolParamBlock* const maskcieBox = Gtk::manage(new ToolParamBlock());
     maskcieBox->pack_start(*showmaskcieMethod, Gtk::PACK_SHRINK, 4);
     maskcieBox->pack_start(*enacieMask, Gtk::PACK_SHRINK, 0);
@@ -7934,7 +7957,7 @@ void Locallabcie::setDefaultExpanderVisibility()
     expLcie->set_expanded(false);
     expjz->set_expanded(false);
     expmaskcie->set_expanded(false);
-
+    exprecovcie->set_expanded(false);
 }
 void Locallabcie::updateAdviceTooltips(const bool showTooltips)
 {
@@ -7978,6 +8001,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         radmaskcie->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         mask2cieCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
         Lmaskcieshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
+        exprecovcie->set_tooltip_markup(M("TP_LOCALLAB_MASKRESH_TOOLTIP"));
 
 
     } else {
@@ -8019,6 +8043,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         radmaskcie->set_tooltip_text("");
         mask2cieCurveEditorG->set_tooltip_text("");
         Lmaskcieshape->setTooltip("");
+        exprecovcie->set_tooltip_markup("");
 
     }
 }
@@ -8077,12 +8102,12 @@ void Locallabcie::showmaskcieMethodChanged()
 void Locallabcie::enacieMaskChanged()
 {
     if (enacieMask->get_active()) {
-     //   maskusables->show();
-     //   maskunusables->hide();
+        maskusablecie->show();
+        maskunusablecie->hide();
 
     } else {
-     //   maskusables->hide();
-     //   maskunusables->show();
+        maskusablecie->hide();
+        maskunusablecie->show();
     }
     
     if (isLocActivated && exp->getEnabled()) {
@@ -8235,6 +8260,10 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         radmaskcie->setValue(spot.radmaskcie);
         chromaskcie->setValue(spot.chromaskcie);
         Lmaskcieshape->setCurve(spot.Lmaskciecurve);
+        recothrescie->setValue((double)spot.recothrescie);
+        lowthrescie->setValue((double)spot.lowthrescie);
+        higthrescie->setValue((double)spot.higthrescie);
+        decaycie->setValue((double)spot.decaycie);
 
        
     }
@@ -8376,6 +8405,10 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.radmaskcie = radmaskcie->getValue();
         spot.chromaskcie = chromaskcie->getValue();
         spot.Lmaskciecurve = Lmaskcieshape->getCurve();
+        spot.recothrescie = recothrescie->getValue();
+        spot.lowthrescie = lowthrescie->getValue();
+        spot.higthrescie = higthrescie->getValue();
+        spot.decaycie = decaycie->getValue();
 
     }
 }
@@ -9220,6 +9253,11 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         blendmaskcie->setDefault((double)defSpot.blendmaskcie);
         radmaskcie->setDefault(defSpot.radmaskcie);
         chromaskcie->setDefault(defSpot.chromaskcie);
+        recothrescie->setDefault((double)defSpot.recothrescie);
+        lowthrescie->setDefault((double)defSpot.lowthrescie);
+        higthrescie->setDefault((double)defSpot.higthrescie);
+        decaycie->setDefault((double)defSpot.decaycie);
+
     }
 }
 
@@ -9569,7 +9607,35 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             }
         }
 
-        
+        if (a == recothrescie) {
+            
+            if (listener) {
+                listener->panelChanged(Evlocallabrecothrescie,
+                                       recothrescie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == lowthrescie) {
+            if (listener) {
+                listener->panelChanged(Evlocallablowthrescie,
+                                       lowthrescie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == higthrescie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhigthrescie,
+                                       higthrescie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == decaycie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabdecaycie,
+                                       decaycie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
     }
 }
 

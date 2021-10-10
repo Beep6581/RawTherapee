@@ -1746,6 +1746,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).radmaskcie = locallab.spots.at(j).radmaskcie && pSpot.radmaskcie == otherSpot.radmaskcie;
                 locallab.spots.at(j).chromaskcie = locallab.spots.at(j).chromaskcie && pSpot.chromaskcie == otherSpot.chromaskcie;
                 locallab.spots.at(j).Lmaskciecurve = locallab.spots.at(j).Lmaskciecurve && pSpot.Lmaskciecurve == otherSpot.Lmaskciecurve;
+                locallab.spots.at(j).recothrescie = locallab.spots.at(j).recothrescie && pSpot.recothrescie == otherSpot.recothrescie;
+                locallab.spots.at(j).lowthrescie = locallab.spots.at(j).lowthrescie && pSpot.lowthrescie == otherSpot.lowthrescie;
+                locallab.spots.at(j).higthrescie = locallab.spots.at(j).higthrescie && pSpot.higthrescie == otherSpot.higthrescie;
+                locallab.spots.at(j).decaycie = locallab.spots.at(j).decaycie && pSpot.decaycie == otherSpot.decaycie;
 
 
             }
@@ -5951,6 +5955,22 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).Lmaskciecurve = mods.locallab.spots.at(i).Lmaskciecurve;
         }
 
+        if (locallab.spots.at(i).recothrescie) {
+            toEdit.locallab.spots.at(i).recothrescie = mods.locallab.spots.at(i).recothrescie;
+        }
+
+        if (locallab.spots.at(i).lowthrescie) {
+            toEdit.locallab.spots.at(i).lowthrescie = mods.locallab.spots.at(i).lowthrescie;
+        }
+
+        if (locallab.spots.at(i).higthrescie) {
+            toEdit.locallab.spots.at(i).higthrescie = mods.locallab.spots.at(i).higthrescie;
+        }
+
+        if (locallab.spots.at(i).decaycie) {
+            toEdit.locallab.spots.at(i).decaycie = mods.locallab.spots.at(i).decaycie;
+        }
+
     }
 
     if (spot.enabled) {
@@ -7898,7 +7918,11 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     CCmaskciecurve(v),
     LLmaskciecurve(v),
     HHmaskciecurve(v),
-    Lmaskciecurve(v)
+    Lmaskciecurve(v),
+    recothrescie(v),
+    lowthrescie(v),
+    higthrescie(v),
+    decaycie(v)
 
 {
 }
@@ -8568,6 +8592,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     radmaskcie = v;
     chromaskcie = v;
     Lmaskciecurve = v;
+    recothrescie = v;
+    lowthrescie = v;
+    higthrescie = v;
+    decaycie = v;
 
 }
 

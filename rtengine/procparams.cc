@@ -4500,7 +4500,12 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.0,
         1.0,
         1.0
-    }
+    },
+    recothrescie(1.),
+    lowthrescie(12.),
+    higthrescie(85.),
+    decaycie(2.)
+    
 
 {
 }
@@ -5181,7 +5186,11 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && blendmaskcie == other.blendmaskcie
         && radmaskcie == other.radmaskcie
         && chromaskcie == other.chromaskcie
-        && Lmaskciecurve == other.Lmaskciecurve;
+        && Lmaskciecurve == other.Lmaskciecurve
+        && recothrescie == other.recothrescie
+        && lowthrescie == other.lowthrescie
+        && higthrescie == other.higthrescie
+        && decaycie == other.decaycie;
        
 
 }
@@ -6940,6 +6949,10 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->radmaskcie, "Locallab", "Radmaskcie_" + index_str, spot.radmaskcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chromaskcie, "Locallab", "Chromaskcie_" + index_str, spot.chromaskcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Lmaskciecurve, "Locallab", "LmaskcieCurve_" + index_str, spot.Lmaskciecurve, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->recothrescie, "Locallab", "Recothrescie_" + index_str, spot.recothrescie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lowthrescie, "Locallab", "Lowthrescie_" + index_str, spot.lowthrescie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->higthrescie, "Locallab", "Higthrescie_" + index_str, spot.higthrescie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->decaycie, "Locallab", "Decaycie_" + index_str, spot.decaycie, keyFile);
 
 
 
@@ -9077,6 +9090,10 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Radmaskcie_" + index_str, pedited, spot.radmaskcie, spotEdited.radmaskcie);
                 assignFromKeyfile(keyFile, "Locallab", "Chromaskcie_" + index_str, pedited, spot.chromaskcie, spotEdited.chromaskcie);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskcieCurve_" + index_str, pedited, spot.Lmaskciecurve, spotEdited.Lmaskciecurve);
+                assignFromKeyfile(keyFile, "Locallab", "Recothrescie_" + index_str, pedited, spot.recothrescie, spotEdited.recothrescie);
+                assignFromKeyfile(keyFile, "Locallab", "Lowthrescie_" + index_str, pedited, spot.lowthrescie, spotEdited.lowthrescie);
+                assignFromKeyfile(keyFile, "Locallab", "Higthrescie_" + index_str, pedited, spot.higthrescie, spotEdited.higthrescie);
+                assignFromKeyfile(keyFile, "Locallab", "Decaycie_" + index_str, pedited, spot.decaycie, spotEdited.decaycie);
 
                 // Append LocallabSpot and LocallabParamsEdited
                 locallab.spots.push_back(spot);

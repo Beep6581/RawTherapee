@@ -1606,6 +1606,14 @@ private:
     MyComboBoxText*  const surroundcie;
     Gtk::Box* const surrHBoxcie;
 
+    MyExpander* const exprecovcie;
+    Gtk::Label* const maskusablecie;
+    Gtk::Label* const maskunusablecie;
+    Adjuster* const recothrescie;
+    Adjuster* const lowthrescie;
+    Adjuster* const higthrescie;
+    Adjuster* const decaycie;
+
     MyExpander* const expmaskcie;
     MyComboBoxText* const showmaskcieMethod;
     Gtk::CheckButton* const enacieMask;

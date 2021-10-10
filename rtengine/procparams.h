@@ -1656,6 +1656,10 @@ struct LocallabParams {
         double radmaskcie;
         double chromaskcie;
         std::vector<double> Lmaskciecurve;
+        double recothrescie;
+        double lowthrescie;
+        double higthrescie;
+        double decaycie;
 
         LocallabSpot();
 

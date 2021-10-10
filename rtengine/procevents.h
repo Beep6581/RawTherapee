@@ -1153,6 +1153,10 @@ enum ProcEventCode {
     Evlocallabradmaskcie = 1127,
     Evlocallabchromaskcie = 1128,
     EvlocallabLmaskcieshape = 1129,
+    Evlocallabrecothrescie = 1130,
+    Evlocallablowthrescie = 1131,
+    Evlocallabhigthrescie = 1132,
+    Evlocallabdecaycie = 1133,
     NUMOFEVENTS
 };
 
