@@ -1547,6 +1547,7 @@ private:
     Adjuster* const shjzcie;
     Adjuster* const shthjzcie;
     Adjuster* const radjzcie;
+    MyExpander* const expcam16;
     
     Adjuster* const lightqcie;
     Adjuster* const contlcie;

@@ -2698,6 +2698,7 @@ TP_LOCALLAB_BUTTON_DEL;Delete
 TP_LOCALLAB_BUTTON_DUPL;Duplicate
 TP_LOCALLAB_BUTTON_REN;Rename
 TP_LOCALLAB_BUTTON_VIS;Show/Hide
+TP_LOCALLAB_CAM16_FRA;Cam16 Image Adjustments
 TP_LOCALLAB_CAM16PQREMAP;HDR PQ-peak Luminance
 TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) adapted to CAM16 - allows you to change internal PQ function (usually 10000 cd/m2 - default 100 cd/m2 - disabled for 100 cd/m2).\nCan be used to adapt to devices and images.
 TP_LOCALLAB_CAMMODE;CAM model
