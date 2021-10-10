@@ -920,6 +920,9 @@ void Crop::update(int todo)
         auto& locccmaslogCurve = parent->locccmaslogCurve;
         auto& locllmaslogCurve = parent->locllmaslogCurve;
         auto& lochhmaslogCurve = parent->lochhmaslogCurve;
+        auto& locccmascieCurve = parent->locccmascieCurve;
+        auto& locllmascieCurve = parent->locllmascieCurve;
+        auto& lochhmascieCurve = parent->lochhmascieCurve;
         
         auto& locccmas_Curve = parent->locccmas_Curve;
         auto& locllmas_Curve = parent->locllmas_Curve;
@@ -975,6 +978,9 @@ void Crop::update(int todo)
             const bool lcmaslogutili = locccmaslogCurve.Set(params.locallab.spots.at(sp).CCmaskcurveL);
             const bool llmaslogutili = locllmaslogCurve.Set(params.locallab.spots.at(sp).LLmaskcurveL);
             const bool lhmaslogutili = lochhmaslogCurve.Set(params.locallab.spots.at(sp).HHmaskcurveL);
+            const bool lcmascieutili = locccmascieCurve.Set(params.locallab.spots.at(sp).CCmaskciecurve);
+            const bool llmascieutili = locllmascieCurve.Set(params.locallab.spots.at(sp).LLmaskciecurve);
+            const bool lhmascieutili = lochhmascieCurve.Set(params.locallab.spots.at(sp).HHmaskciecurve);
             
             const bool lcmas_utili = locccmas_Curve.Set(params.locallab.spots.at(sp).CCmask_curve);
             const bool llmas_utili = locllmas_Curve.Set(params.locallab.spots.at(sp).LLmask_curve);

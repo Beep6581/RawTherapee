@@ -986,6 +986,9 @@ private:
             LocCCmaskCurve locccmaslogCurve;
             LocLLmaskCurve locllmaslogCurve;
             LocHHmaskCurve lochhmaslogCurve;
+            LocCCmaskCurve locccmascieCurve;
+            LocLLmaskCurve locllmascieCurve;
+            LocHHmaskCurve lochhmascieCurve;
 
             LocCCmaskCurve locccmas_Curve;
             LocLLmaskCurve locllmas_Curve;
@@ -1078,6 +1081,9 @@ private:
                 const bool lcmaslogutili = locccmaslogCurve.Set(params.locallab.spots.at(sp).CCmaskcurveL);
                 const bool llmaslogutili = locllmaslogCurve.Set(params.locallab.spots.at(sp).LLmaskcurveL);
                 const bool lhmaslogutili = lochhmaslogCurve.Set(params.locallab.spots.at(sp).HHmaskcurveL);
+                const bool lcmascieutili = locccmascieCurve.Set(params.locallab.spots.at(sp).CCmaskciecurve);
+                const bool llmascieutili = locllmascieCurve.Set(params.locallab.spots.at(sp).LLmaskciecurve);
+                const bool lhmascieutili = lochhmascieCurve.Set(params.locallab.spots.at(sp).HHmaskciecurve);
                 
                 const bool lcmas_utili = locccmas_Curve.Set(params.locallab.spots.at(sp).CCmask_curve);
                 const bool llmas_utili = locllmas_Curve.Set(params.locallab.spots.at(sp).LLmask_curve);
