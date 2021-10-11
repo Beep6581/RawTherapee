@@ -133,7 +133,7 @@ LocallabTone::LocallabTone():
     exprecovt(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusablet(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusablet(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
-    recothrest(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+    recothrest(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 0., 2., 0.01, 1.))),
     lowthrest(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
     higthrest(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
     decayt(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
@@ -309,6 +309,7 @@ void LocallabTone::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_TONEMAP_TOOLTIP"));
+        recothrest->set_tooltip_text(M("TP_LOCALLAB_RECOTHRES02_TOOLTIP"));
         exprecovt->set_tooltip_markup(M("TP_LOCALLAB_MASKRESTM_TOOLTIP"));
         equiltm->set_tooltip_text(M("TP_LOCALLAB_EQUILTM_TOOLTIP"));
         repartm->set_tooltip_text(M("TP_LOCALLAB_REPARTM_TOOLTIP"));
@@ -337,6 +338,7 @@ void LocallabTone::updateAdviceTooltips(const bool showTooltips)
     } else {
         exp->set_tooltip_text("");
         equiltm->set_tooltip_text("");
+        recothrest->set_tooltip_text("");
         repartm->set_tooltip_text("");
         gamma->set_tooltip_text("");
         estop->set_tooltip_text("");
@@ -2430,7 +2432,7 @@ LocallabContrast::LocallabContrast():
     exprecovw(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusablew(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusablew(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
-    recothresw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+    recothresw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 0., 2., 0.01, 1.))),
     lowthresw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
     higthresw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
     decayw(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
@@ -2936,6 +2938,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         contFrame->set_tooltip_text(M("TP_LOCALLAB_EXPCONTRAST_TOOLTIP"));
+        recothresw->set_tooltip_text(M("TP_LOCALLAB_RECOTHRES02_TOOLTIP"));
         LocalcurveEditorwav->set_tooltip_markup(M("TP_LOCALLAB_WAT_LEVELLOCCONTRAST_TOOLTIP"));
         csThreshold->set_tooltip_markup(M("TP_LOCALLAB_WAT_THRESHOLDWAV_TOOLTIP"));
         levelwav->set_tooltip_markup(M("TP_LOCALLAB_LEVELWAV_TOOLTIP"));
@@ -3007,6 +3010,7 @@ void LocallabContrast::updateAdviceTooltips(const bool showTooltips)
         higthresw->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRESWAV_TOOLTIP"));
     } else {
         contFrame->set_tooltip_text("");
+        recothresw->set_tooltip_text("");
         LocalcurveEditorwav->set_tooltip_markup("");
         csThreshold->set_tooltip_markup("");
         expresidpyr->set_tooltip_text("");
@@ -5249,7 +5253,7 @@ LocallabLog::LocallabLog():
     exprecovl(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusablel(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusablel(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
-    recothresl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+    recothresl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 0., 2., 0.01, 1.))),
     lowthresl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
     higthresl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
     decayl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
@@ -5520,6 +5524,7 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_LOGENCOD_TOOLTIP"));
         repar->set_tooltip_text(M("TP_LOCALLAB_LOGREPART_TOOLTIP"));
+        recothresl->set_tooltip_text(M("TP_LOCALLAB_RECOTHRES02_TOOLTIP"));
         logPFrame->set_tooltip_text(M("TP_LOCALLAB_LOGFRAME_TOOLTIP"));
         logFrame->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
         log1Frame->set_tooltip_text(M("TP_LOCALLAB_LOGIMAGE_TOOLTIP"));
@@ -5568,6 +5573,7 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
     } else {
         exp->set_tooltip_text("");
         repar->set_tooltip_text("");
+        recothresl->set_tooltip_text("");
         logPFrame->set_tooltip_text("");
         logFrame->set_tooltip_text("");
         log1Frame->set_tooltip_text("");
@@ -7464,7 +7470,7 @@ Locallabcie::Locallabcie():
     exprecovcie(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusablecie(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusablecie(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
-    recothrescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+    recothrescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 0., 2., 0.01, 1.))),
     lowthrescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
     higthrescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
     decaycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
@@ -7478,7 +7484,10 @@ Locallabcie::Locallabcie():
     HHmaskcieshape(static_cast<FlatCurveEditor*>(maskcieCurveEditorG->addCurve(CT_Flat, "LC(h)", nullptr, false, true))),
     blendmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     radmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
+    lapmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     chromaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
+    gammaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
+    slomaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
     mask2cieCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmaskcieshape(static_cast<DiagonalCurveEditor*>(mask2cieCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
    
@@ -7903,6 +7912,9 @@ Locallabcie::Locallabcie():
     blendmaskcie->setAdjusterListener(this);
 
     radmaskcie->setAdjusterListener(this);
+    lapmaskcie->setAdjusterListener(this);
+    gammaskcie->setAdjusterListener(this);
+    slomaskcie->setAdjusterListener(this);
 
     chromaskcie->setAdjusterListener(this);
     mask2cieCurveEditorG->setCurveListener(this);
@@ -7929,7 +7941,10 @@ Locallabcie::Locallabcie():
     maskcieBox->pack_start(*maskcieCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     maskcieBox->pack_start(*blendmaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*radmaskcie, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*lapmaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*chromaskcie, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*gammaskcie, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*slomaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*mask2cieCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     expmaskcie->add(*maskcieBox, false);
     pack_start(*expmaskcie, false, false);
@@ -7979,6 +7994,7 @@ void Locallabcie::setDefaultExpanderVisibility()
 void Locallabcie::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
+        recothrescie->set_tooltip_text(M("TP_LOCALLAB_RECOTHRES02_TOOLTIP"));
         reparcie->set_tooltip_text(M("TP_LOCALLAB_LOGREPART_TOOLTIP"));
         cieFrame->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
         PQFrame->set_tooltip_text(M("TP_LOCALLAB_JZPQFRA_TOOLTIP"));
@@ -8023,6 +8039,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
 
     } else {
         reparcie->set_tooltip_text("");
+        recothrescie->set_tooltip_text("");
         cieFrame->set_tooltip_text("");
         PQFrame->set_tooltip_text("");
         modecam->set_tooltip_text("");
@@ -8276,6 +8293,9 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         blendmaskcie->setValue((double)spot.blendmaskcie);
         radmaskcie->setValue(spot.radmaskcie);
         chromaskcie->setValue(spot.chromaskcie);
+        lapmaskcie->setValue(spot.lapmaskcie);
+        gammaskcie->setValue(spot.gammaskcie);
+        slomaskcie->setValue(spot.slomaskcie);
         Lmaskcieshape->setCurve(spot.Lmaskciecurve);
         recothrescie->setValue((double)spot.recothrescie);
         lowthrescie->setValue((double)spot.lowthrescie);
@@ -8421,6 +8441,9 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.blendmaskcie = blendmaskcie->getIntValue();
         spot.radmaskcie = radmaskcie->getValue();
         spot.chromaskcie = chromaskcie->getValue();
+        spot.lapmaskcie = lapmaskcie->getValue();
+        spot.gammaskcie = gammaskcie->getValue();
+        spot.slomaskcie = slomaskcie->getValue();
         spot.Lmaskciecurve = Lmaskcieshape->getCurve();
         spot.recothrescie = recothrescie->getValue();
         spot.lowthrescie = lowthrescie->getValue();
@@ -8988,6 +9011,9 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             exprecovcie->show();
             expmaskcie->show();
             decaycie->hide();
+            lapmaskcie->hide();
+            gammaskcie->hide();
+            slomaskcie->hide();
             if (enacieMask->get_active()) {
                 maskusablecie->show();
                 maskunusablecie->hide();
@@ -9061,6 +9087,17 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             cieFrame->show();
             exprecovcie->show();
             decaycie->show();
+            lapmaskcie->show();
+            gammaskcie->show();
+            slomaskcie->show();
+            if (enacieMask->get_active()) {
+                maskusablecie->show();
+                maskunusablecie->hide();
+                
+            } else {
+                maskusablecie->hide();
+                maskunusablecie->show();
+            }
 
             if (modecam->get_active_row_number() == 1 || modecam->get_active_row_number() == 2) {
                 jabcie->show();
@@ -9283,6 +9320,10 @@ void Locallabcie::convertParamToNormal()
         showmaskcieMethod->set_active(0);
         enacieMask->set_active(defSpot.enacieMask);
     }
+    lapmaskcie->setValue(defSpot.lapmaskcie);
+    gammaskcie->setValue(defSpot.gammaskcie);
+    slomaskcie->setValue(defSpot.slomaskcie);
+    
     // Enable all listeners
     enableListener();
     
@@ -9335,6 +9376,9 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         blendmaskcie->setDefault((double)defSpot.blendmaskcie);
         radmaskcie->setDefault(defSpot.radmaskcie);
         chromaskcie->setDefault(defSpot.chromaskcie);
+        lapmaskcie->setDefault(defSpot.lapmaskcie);
+        gammaskcie->setDefault(defSpot.gammaskcie);
+        slomaskcie->setDefault(defSpot.slomaskcie);
         recothrescie->setDefault((double)defSpot.recothrescie);
         lowthrescie->setDefault((double)defSpot.lowthrescie);
         higthrescie->setDefault((double)defSpot.higthrescie);
@@ -9686,6 +9730,27 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabchromaskcie,
                                        chromaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == lapmaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallablapmaskcie,
+                                       lapmaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == gammaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabgammaskcie,
+                                       gammaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == slomaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabslomaskcie,
+                                       slomaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 

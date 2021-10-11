@@ -441,7 +441,7 @@ LocallabColor::LocallabColor():
     exprecov(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusablec(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusablec(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
-    recothresc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+    recothresc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 0., 2., 0.01, 1.))),
     lowthresc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
     higthresc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
     decayc(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
@@ -973,6 +973,7 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
 {
     if (showTooltips) {
         lumFrame->set_tooltip_text(M("TP_LOCALLAB_EXPCOLOR_TOOLTIP"));
+        recothresc->set_tooltip_text(M("TP_LOCALLAB_RECOTHRES02_TOOLTIP"));
         gamc->set_tooltip_text(M("TP_LOCALLAB_GAMCOL_TOOLTIP"));
         lightness->set_tooltip_text(M("TP_LOCALLAB_LIGHTN_TOOLTIP"));
         reparcol->set_tooltip_text(M("TP_LOCALLAB_REPARCOL_TOOLTIP"));
@@ -1026,6 +1027,7 @@ void LocallabColor::updateAdviceTooltips(const bool showTooltips)
         higthresc->set_tooltip_text(M("TP_LOCALLAB_MASKHIGTHRESC_TOOLTIP"));
     } else {
         lumFrame->set_tooltip_text("");
+        recothresc->set_tooltip_text("");
         lightness->set_tooltip_text("");
         gamc->set_tooltip_text("");
         reparcol->set_tooltip_text("");
@@ -2572,7 +2574,7 @@ LocallabExposure::LocallabExposure():
     exprecove(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusablee(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusablee(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
-    recothrese(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+    recothrese(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 0., 2., 0.01, 1.))),
     lowthrese(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
     higthrese(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
     decaye(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
@@ -2877,6 +2879,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
 //        expMethod->set_tooltip_text(M("TP_LOCALLAB_EXPMETHOD_TOOLTIP"));
 //        pdeFrame->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
         exppde->set_tooltip_text(M("TP_LOCALLAB_PDEFRAME_TOOLTIP"));
+        recothrese->set_tooltip_text(M("TP_LOCALLAB_RECOTHRES02_TOOLTIP"));
         exprecove->set_tooltip_markup(M("TP_LOCALLAB_MASKREEXP_TOOLTIP"));
         decaye->set_tooltip_text(M("TP_LOCALLAB_MASKDECAY_TOOLTIP"));
         lowthrese->set_tooltip_text(M("TP_LOCALLAB_MASKLOWTHRESE_TOOLTIP"));
@@ -2915,6 +2918,7 @@ void LocallabExposure::updateAdviceTooltips(const bool showTooltips)
         lapmaskexp->set_tooltip_text(M("TP_LOCALLAB_LAPRAD1_TOOLTIP"));
     } else {
         exp->set_tooltip_text("");
+        recothrese->set_tooltip_text("");
         exppde->set_tooltip_text("");
         blurexpde->set_tooltip_text("");
         exprecove->set_tooltip_markup("");
@@ -3966,7 +3970,7 @@ LocallabShadow::LocallabShadow():
     exprecovs(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusables(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusables(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
-    recothress(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+    recothress(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 0., 2., 0.01, 1.))),
     lowthress(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
     higthress(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
     decays(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
@@ -4210,7 +4214,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         for (const auto multiplier : multipliersh) {
             multiplier->set_tooltip_text(M("TP_LOCALLAB_MULTIPL_TOOLTIP"));
         }
-
+        recothress->set_tooltip_text(M("TP_LOCALLAB_RECOTHRES02_TOOLTIP"));
         gamSH->set_tooltip_text(M("TP_LOCALLAB_SHTRC_TOOLTIP"));
         reparsh->set_tooltip_text(M("TP_LOCALLAB_REPARSH_TOOLTIP"));
         sloSH->set_tooltip_text(M("TP_LOCALLAB_SHTRC_TOOLTIP"));
@@ -4252,6 +4256,7 @@ void LocallabShadow::updateAdviceTooltips(const bool showTooltips)
         for (const auto multiplier : multipliersh) {
             multiplier->set_tooltip_text("");
         }
+        recothress->set_tooltip_text("");
         gamSH->set_tooltip_text("");
         reparsh->set_tooltip_text("");
         sloSH->set_tooltip_text("");
@@ -5064,7 +5069,7 @@ LocallabVibrance::LocallabVibrance():
     exprecovv(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_DENOI2_EXP")))),
     maskusablev(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUSABLE")))),
     maskunusablev(Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_MASKUNUSABLE")))),
-    recothresv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 1., 2., 0.01, 1.))),
+    recothresv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKRECOTHRES"), 0., 2., 0.01, 1.))),
     lowthresv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHRLOW"), 1., 80., 0.5, 12.))),
     higthresv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKLCTHR"), 20., 99., 0.5, 85.))),
     decayv(Gtk::manage(new Adjuster(M("TP_LOCALLAB_MASKDDECAY"), 0.5, 4., 0.1, 2.))),
@@ -5279,6 +5284,7 @@ void LocallabVibrance::updateAdviceTooltips(const bool showTooltips)
     if (showTooltips) {
         exp->set_tooltip_text(M("TP_LOCALLAB_VIBRA_TOOLTIP"));
         warm->set_tooltip_text(M("TP_LOCALLAB_WARM_TOOLTIP"));
+        recothresv->set_tooltip_text(M("TP_LOCALLAB_RECOTHRES02_TOOLTIP"));
         strvib->set_tooltip_text(M("TP_LOCALLAB_GRADGEN_TOOLTIP"));
         exprecovv->set_tooltip_markup(M("TP_LOCALLAB_MASKRESVIB_TOOLTIP"));
         expmaskvib->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
@@ -5322,6 +5328,7 @@ void LocallabVibrance::updateAdviceTooltips(const bool showTooltips)
         exp->set_tooltip_text("");
         warm->set_tooltip_text("");
         strvib->set_tooltip_text("");
+        recothresv->set_tooltip_text("");
         expmaskvib->set_tooltip_markup("");
         CCmaskvibshape->setTooltip("");
         LLmaskvibshape->setTooltip("");

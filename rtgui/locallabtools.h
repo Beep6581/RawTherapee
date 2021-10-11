@@ -1624,7 +1624,11 @@ private:
     FlatCurveEditor* const HHmaskcieshape;
     Adjuster* const blendmaskcie;
     Adjuster* const radmaskcie;
+    Adjuster* const lapmaskcie;
     Adjuster* const chromaskcie;
+    Adjuster* const gammaskcie;
+    Adjuster* const slomaskcie;
+    
     CurveEditorGroup* const mask2cieCurveEditorG;
     DiagonalCurveEditor* const Lmaskcieshape;
     

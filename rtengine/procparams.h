@@ -1655,6 +1655,9 @@ struct LocallabParams {
         int blendmaskcie;
         double radmaskcie;
         double chromaskcie;
+        double lapmaskcie;
+        double gammaskcie;
+        double slomaskcie;
         std::vector<double> Lmaskciecurve;
         double recothrescie;
         double lowthrescie;

@@ -1372,6 +1372,21 @@ HISTORY_MSG_1119;Local - ZCAM colorfullness
 HISTORY_MSG_1120;Local - ZCAM saturation
 HISTORY_MSG_1121;Local - ZCAM chroma
 HISTORY_MSG_1122;Local - HDR PQ
+HISTORY_MSG_1123;Local - Cie mask enable
+HISTORY_MSG_1124;Local - Cie mask curve C
+HISTORY_MSG_1125;Local - Cie mask curve L
+HISTORY_MSG_1126;Local - Cie mask curve H
+HISTORY_MSG_1127;Local - Cie mask blend
+HISTORY_MSG_1128;Local - Cie mask radius
+HISTORY_MSG_1129;Local - Cie mask chroma
+HISTORY_MSG_1130;Local - Cie mask contrast curve
+HISTORY_MSG_1131;Local - Cie mask recovery threshold
+HISTORY_MSG_1132;Local - Cie mask recovery dark
+HISTORY_MSG_1133;Local - Cie mask recovery light
+HISTORY_MSG_1134;Local - Cie mask recovery decay
+HISTORY_MSG_1135;Local - Cie mask laplacian
+HISTORY_MSG_1136;Local - Cie mask gamma
+HISTORY_MSG_1137;Local - Cie mask slope
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -3201,6 +3216,7 @@ TP_LOCALLAB_QUANONEALL;Off
 TP_LOCALLAB_RADIUS;Radius
 TP_LOCALLAB_RADIUS_TOOLTIP;Uses a Fast Fourier Transform for radius > 30
 TP_LOCALLAB_RADMASKCOL;Smooth radius
+TP_LOCALLAB_RECOTHRES02_TOOLTIP;If the 'Recovery threshold' value is greater than 1, "Mask and Modifications" which acts on the original image not modified by the current tool (Color and Light, Wavelet, Cam16, etc.) takes into account the mask modifications for the general process.\nIf the value of 'Recovery threshold' is less than 1, "Mask and Modifications" which acts on the original image not modified by the current tool (Color and Light, Wavelet, Cam16, etc.) does not take into account the mask modifications for the general process. These modifications are ignored.\n\nIn both cases, 'Recovery threshold' acts, depending on the mask, on the image modified by the current tool (Color and Light, Wavelet, Cam16, etc.).
 TP_LOCALLAB_RECT;Rectangle
 TP_LOCALLAB_RECURS;Recursive references
 TP_LOCALLAB_RECURS_TOOLTIP;Forces the algorithm to recalculate the references after each tool is applied.\nAlso useful for working with masks.

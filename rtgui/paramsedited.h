@@ -1048,6 +1048,9 @@ public:
         bool blendmaskcie;
         bool radmaskcie;
         bool chromaskcie;
+        bool lapmaskcie;
+        bool gammaskcie;
+        bool slomaskcie;
         bool Lmaskciecurve;
         bool recothrescie;
         bool lowthrescie;

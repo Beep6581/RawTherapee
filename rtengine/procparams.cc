@@ -4494,6 +4494,9 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     blendmaskcie(0),
     radmaskcie(0.0),
     chromaskcie(0.0),
+    lapmaskcie(0.0),
+    gammaskcie(1.0),
+    slomaskcie(0.0),
     Lmaskciecurve{
         static_cast<double>(DCT_NURBS),
         0.0,
@@ -5186,6 +5189,9 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && blendmaskcie == other.blendmaskcie
         && radmaskcie == other.radmaskcie
         && chromaskcie == other.chromaskcie
+        && lapmaskcie == other.lapmaskcie
+        && gammaskcie == other.gammaskcie
+        && slomaskcie == other.slomaskcie
         && Lmaskciecurve == other.Lmaskciecurve
         && recothrescie == other.recothrescie
         && lowthrescie == other.lowthrescie
@@ -6948,6 +6954,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->blendmaskcie, "Locallab", "Blendmaskcie_" + index_str, spot.blendmaskcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->radmaskcie, "Locallab", "Radmaskcie_" + index_str, spot.radmaskcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chromaskcie, "Locallab", "Chromaskcie_" + index_str, spot.chromaskcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->lapmaskcie, "Locallab", "Lapmaskcie_" + index_str, spot.lapmaskcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->gammaskcie, "Locallab", "Gammaskcie_" + index_str, spot.gammaskcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->slomaskcie, "Locallab", "Slomaskcie_" + index_str, spot.slomaskcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->Lmaskciecurve, "Locallab", "LmaskcieCurve_" + index_str, spot.Lmaskciecurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->recothrescie, "Locallab", "Recothrescie_" + index_str, spot.recothrescie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->lowthrescie, "Locallab", "Lowthrescie_" + index_str, spot.lowthrescie, keyFile);
@@ -9089,6 +9098,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Blendmaskcie_" + index_str, pedited, spot.blendmaskcie, spotEdited.blendmaskcie);
                 assignFromKeyfile(keyFile, "Locallab", "Radmaskcie_" + index_str, pedited, spot.radmaskcie, spotEdited.radmaskcie);
                 assignFromKeyfile(keyFile, "Locallab", "Chromaskcie_" + index_str, pedited, spot.chromaskcie, spotEdited.chromaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "Lapmaskcie_" + index_str, pedited, spot.lapmaskcie, spotEdited.lapmaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "Gammaskcie_" + index_str, pedited, spot.gammaskcie, spotEdited.gammaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "Slomaskcie_" + index_str, pedited, spot.slomaskcie, spotEdited.slomaskcie);
                 assignFromKeyfile(keyFile, "Locallab", "LmaskcieCurve_" + index_str, pedited, spot.Lmaskciecurve, spotEdited.Lmaskciecurve);
                 assignFromKeyfile(keyFile, "Locallab", "Recothrescie_" + index_str, pedited, spot.recothrescie, spotEdited.recothrescie);
                 assignFromKeyfile(keyFile, "Locallab", "Lowthrescie_" + index_str, pedited, spot.lowthrescie, spotEdited.lowthrescie);
