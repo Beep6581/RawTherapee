@@ -2876,7 +2876,19 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         }
     }
     if(params->locallab.spots.at(sp).expcie && call == 10) {
-            yb = params->locallab.spots.at(sp).sourceGraycie;//for Jz calculate Yb  before process Jz
+            yb = params->locallab.spots.at(sp).sourceGraycie;//for Jz calculate Yb and surround in Lab and cam16 before process Jz
+
+            if (params->locallab.spots.at(sp).sursourcie == "Average") {
+                f = 1.0f, c = 0.69f, nc = 1.0f;
+            } else if (params->locallab.spots.at(sp).sursourcie == "Dim") {
+                f  = 0.9f;
+                c  = 0.59f;
+                nc = 0.9f;
+            } else if (params->locallab.spots.at(sp).sursourcie == "Dark") {
+                f  = 0.8f;
+                c  = 0.525f;
+                nc = 0.8f;
+            }
     }
     
     float schr = 0.f;

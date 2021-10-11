@@ -8714,7 +8714,8 @@ void Locallabcie::modecamChanged()
     cieFrame->show();
 
     if (modecam->get_active_row_number() == 1) {
-        surHBoxcie->hide();
+    //    surHBoxcie->hide();
+        surHBoxcie->show();
         cie1Frame->hide();
         expcam16->hide();
         targetGraycie->hide();
@@ -9126,6 +9127,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             }
 
             if (modecam->get_active_row_number() == 1) {
+                surHBoxcie->show();
                 targetGraycie->hide();
                 targabscie->hide();
                 surrHBoxcie->hide();
@@ -9195,7 +9197,8 @@ void Locallabcie::updatecieGUI()
     }
 
     if (modecam->get_active_row_number() == 1) {
-        surHBoxcie->hide();
+      //  surHBoxcie->hide();
+        surHBoxcie->show();
         cie1Frame->hide();
         expcam16->hide();
         targetGraycie->hide();
