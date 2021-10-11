@@ -2745,6 +2745,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         }
     }
 
+
     if(ciec) {
         if(iscie) {
             if (params->locallab.spots.at(sp).catadcie > 0) {
@@ -2873,6 +2874,9 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
             yb = params->locallab.spots.at(sp).targetGray;//target because we are after Log encoding
             yb2 = params->locallab.spots.at(sp).targetGray;
         }
+    }
+    if(params->locallab.spots.at(sp).expcie && call == 10) {
+            yb = params->locallab.spots.at(sp).sourceGraycie;//for Jz calculate Yb  before process Jz
     }
     
     float schr = 0.f;
@@ -3303,9 +3307,9 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         }
     }
 
-if(mocam == 0 || mocam == 1  || call == 1) {
+if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2 vibrance warm-cool - call = 10 take into account "mean luminance Yb for Jz 
 //begin ciecam
- if (settings->verbose) {
+ if (settings->verbose && (mocam == 0 || mocam == 1  || call == 1)) {//display only if choice cam16
      //informations on Cam16 scene conditions - allows user to see choices's incidences
     float maxicam = -1000.f;
     float maxicamq = -1000.f;
@@ -18327,8 +18331,12 @@ void ImProcFunctions::Lab_Local(
                         bufexporig->b[y][x] = original->b[y + ystart][x + xstart];
                     }
                 }
-                
-                bool HHcurvejz = false;
+                        bool HHcurvejz = false, CHcurvejz = false, LHcurvejz = false;
+                    if (params->locallab.spots.at(sp).expcie  && params->locallab.spots.at(sp).modecam == "jz") {//some cam16 elementsfor Jz
+                       
+                        ImProcFunctions::ciecamloc_02float(sp, bufexporig.get(), 10, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
+                    }
+             //   bool HHcurvejz = false;
                 if (lochhCurvejz && HHutilijz) {
                     for (int i = 0; i < 500; i++) {
                         if (lochhCurvejz[i] != 0.5f) {
@@ -18338,7 +18346,7 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
 
-                bool CHcurvejz = false;
+             //   bool CHcurvejz = false;
                 if (locchCurvejz && CHutilijz) {
                     for (int i = 0; i < 500; i++) {
                         if (locchCurvejz[i] != 0.5f) {
@@ -18348,7 +18356,7 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
 
-                bool LHcurvejz = false;
+             //   bool LHcurvejz = false;
                 if (loclhCurvejz && LHutilijz) {
                     for (int i = 0; i < 500; i++) {
                         if (loclhCurvejz[i] != 0.5f) {

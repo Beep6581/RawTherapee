@@ -7387,7 +7387,7 @@ Locallabcie::Locallabcie():
     modeHBoxcie(Gtk::manage(new Gtk::Box())),
     cieFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGFRA")))),
     Autograycie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_AUTOGRAYCIE")))),
-    sourceGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 10.0))),
+    sourceGraycie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_GRAY"), 1.0, 100.0, 0.1, 18.0))),
     sourceabscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOURCE_ABS"), 0.01, 16384.0, 0.01, 2000.0))),
     sursourcie(Gtk::manage (new MyComboBoxText ())),
     surHBoxcie(Gtk::manage(new Gtk::Box())),
@@ -8725,7 +8725,7 @@ void Locallabcie::modecamChanged()
         pqremapcam16->hide();
         catadcie->hide();
         cie2Frame->hide();
-        sourceGraycie->hide();
+      //  sourceGraycie->hide();
         }
     if (modecam->get_active_row_number() == 3) {
         if(mode == Expert) {
@@ -8795,7 +8795,7 @@ void Locallabcie::modecamChanged()
             PQFrame->show();
             catadcie->hide();
             cie2Frame->hide();
-            sourceGraycie->hide();
+        //    sourceGraycie->hide();
             
         }
         if (modecam->get_active_row_number() == 3) {
@@ -8949,7 +8949,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 PQFrame->hide();
                 catadcie->hide();
                 cie2Frame->hide();
-                sourceGraycie->hide();
+              //  sourceGraycie->hide();
                 maskusablecie->hide();
                 maskunusablecie->hide();
                 decaycie->hide();
@@ -9037,7 +9037,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 PQFrame->hide();
                 catadcie->hide();
                 cie2Frame->hide();
-                sourceGraycie->hide();
+              //  sourceGraycie->hide();
                 exprecovcie->hide();
                 expmaskcie->hide();
                 maskusablecie->hide();
@@ -9133,7 +9133,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 PQFrame->show();
                 catadcie->hide();
                 cie2Frame->hide();
-                sourceGraycie->hide();
+               // sourceGraycie->hide();
                 exprecovcie->show();
                 expmaskcie->show();
                 maskusablecie->show();
@@ -9205,7 +9205,7 @@ void Locallabcie::updatecieGUI()
         PQFrame->show();
         catadcie->hide();
         cie2Frame->hide();
-        sourceGraycie->hide();
+    //    sourceGraycie->hide();
         if(mode != Expert) {
             cieFrame->hide();
             cie1Frame->hide();

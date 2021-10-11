@@ -4280,7 +4280,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     forcejz(true),
     jabcie(false),
     sigmoidqjcie(false),
-    sourceGraycie(10.),
+    sourceGraycie(18.),
     sourceabscie(2000.),
     sursourcie("Average"),
     modecie("com"),
