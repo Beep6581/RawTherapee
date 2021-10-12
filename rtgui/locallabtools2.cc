@@ -8847,9 +8847,16 @@ void Locallabcie::modecieChanged()
         if (modecie->get_active_row_number() > 0) {
             sensicie->hide();
             reparcie->hide();
+            exprecovcie->hide();
+            expmaskcie->hide();
+            
         } else {
             sensicie->show();
             reparcie->show();
+            if(mode == Expert) {
+                exprecovcie->show();
+                expmaskcie->show();
+            }
         }
         if (mode == Simple || mode == Normal) { // Keep widget hidden in Normal and Simple mode
         
@@ -9054,6 +9061,10 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 PQFrame->hide();
                 catadcie->hide();
             }
+            if (modecie->get_active_row_number() > 0) {
+                exprecovcie->hide();
+                expmaskcie->hide();
+            }
 
             break;
 
@@ -9160,6 +9171,10 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 contthreszcam->show();
                 catadcie->hide();
             }
+            if (modecie->get_active_row_number() > 0) {
+                exprecovcie->hide();
+                expmaskcie->hide();
+            }
 
     }
 }
@@ -9170,6 +9185,8 @@ void Locallabcie::updatecieGUI()
     if (modecie->get_active_row_number() > 0) {
         sensicie->hide();
         reparcie->hide();
+        exprecovcie->hide();
+        expmaskcie->hide();
     } else {
         sensicie->show();
         reparcie->show();
@@ -9270,6 +9287,11 @@ void Locallabcie::updatecieGUI()
         sensicie->show();
         reparcie->show();
     }
+    if (modecie->get_active_row_number() > 0) {
+        exprecovcie->hide();
+        expmaskcie->hide();
+    }
+    
 }
 
 
