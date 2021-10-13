@@ -7396,6 +7396,7 @@ Locallabcie::Locallabcie():
     cie1contFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIECONTFRA")))),
     cie1colorFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIECOLORFRA")))),
     PQFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZPQFRA")))),
+    qtoj(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZQTOJ")))),
     lightlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTL"), -100., 100., 0.01, 0.))),
     lightjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZLIGHT"), -100., 100., 0.01, 0.))),
     contjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCONT"), -100., 100., 0.5, 0.))),
@@ -7643,6 +7644,7 @@ Locallabcie::Locallabcie():
     
     jzFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const jzBox = Gtk::manage(new ToolParamBlock());
+    jzBox->pack_start(*qtoj);
     jzBox->pack_start(*lightjzcie);
     jzBox->pack_start(*contjzcie);
     jzBox->pack_start(*chromjzcie);
@@ -7678,6 +7680,7 @@ Locallabcie::Locallabcie():
     AutograycieConn = Autograycie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::AutograycieChanged));
     sigmoidqjcieconn = sigmoidqjcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigmoidqjcieChanged));
     forcejzConn = forcejz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::forcejzChanged));
+    qtojConn = qtoj->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::qtojChanged));
 
     sourceGraycie->setAdjusterListener(this);
 
@@ -7998,6 +8001,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         reparcie->set_tooltip_text(M("TP_LOCALLAB_LOGREPART_TOOLTIP"));
         cieFrame->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
         PQFrame->set_tooltip_text(M("TP_LOCALLAB_JZPQFRA_TOOLTIP"));
+        qtoj->set_tooltip_text(M("TP_LOCALLAB_JZQTOJ_TOOLTIP"));
         modecam->set_tooltip_text(M("TP_LOCALLAB_JZMODECAM_TOOLTIP"));
         jabcie->set_tooltip_text(M("TP_LOCALLAB_JAB_TOOLTIP"));
         adapjzcie->set_tooltip_text(M("TP_LOCALLAB_JABADAP_TOOLTIP"));
@@ -8043,6 +8047,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         cieFrame->set_tooltip_text("");
         PQFrame->set_tooltip_text("");
         modecam->set_tooltip_text("");
+        qtoj->set_tooltip_text("");
         jabcie->set_tooltip_text("");
         adapjzcie->set_tooltip_text("");
         jz100->set_tooltip_text("");
@@ -8086,6 +8091,7 @@ void Locallabcie::disableListener()
     LocallabTool::disableListener();
     AutograycieConn.block(true);
     forcejzConn.block(true);
+    qtojConn.block(true);
     jabcieConn.block(true);
     sigmoidqjcieconn.block(true);
     sursourcieconn.block (true);
@@ -8103,6 +8109,7 @@ void Locallabcie::enableListener()
     LocallabTool::enableListener();
     AutograycieConn.block(false);
     forcejzConn.block(false);
+    qtojConn.block(false);
     jabcieConn.block(false);
     sigmoidqjcieconn.block(false);
     sursourcieconn.block (false);
@@ -8212,6 +8219,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         
         Autograycie->set_active(spot.Autograycie);
         forcejz->set_active(spot.forcejz);
+        qtoj->set_active(spot.qtoj);
         sourceGraycie->setValue(spot.sourceGraycie);
         sigmoidqjcie->set_active(spot.sigmoidqjcie);
         sourceabscie->setValue(spot.sourceabscie);
@@ -8362,6 +8370,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 
         spot.Autograycie = Autograycie->get_active();
         spot.forcejz = forcejz->get_active();
+        spot.qtoj = qtoj->get_active();
         spot.jabcie = jabcie->get_active();
         spot.sourceGraycie = sourceGraycie->getValue();
         spot.sourceabscie = sourceabscie->getValue();
@@ -8648,6 +8657,22 @@ void Locallabcie::forcejzChanged()
     }
 }
 
+void Locallabcie::qtojChanged()
+{
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (qtoj->get_active()) {
+                listener->panelChanged(Evlocallabqtoj,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabqtoj,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
 void Locallabcie::jabcieChanged()
 { 
     if (isLocActivated && exp->getEnabled()) {
@@ -8691,7 +8716,7 @@ void Locallabcie::modecamChanged()
         jabcie->show();
         PQFrame->show();
         contthreszcam->hide();
-        forcejz->show();
+        forcejz->hide();
         
     } else {
         expjz->hide();
@@ -8722,10 +8747,17 @@ void Locallabcie::modecamChanged()
         targabscie->hide();
         surrHBoxcie->hide();
         contthreszcam->hide();
-        forcejz->show();
+        forcejz->hide();
         pqremapcam16->hide();
         catadcie->hide();
         cie2Frame->hide();
+        exprecovcie->hide();
+        expmaskcie->hide();
+        if(mode == Expert) {
+            exprecovcie->show();
+            expmaskcie->show();
+        }
+        
       //  sourceGraycie->hide();
         }
     if (modecam->get_active_row_number() == 3) {
@@ -8768,7 +8800,7 @@ void Locallabcie::modecamChanged()
         pqremap->show();
         jabcie->hide();
         PQFrame->hide();
-        forcejz->show();
+        forcejz->hide();
         contthreszcam->hide();
         pqremapcam16->show();
         catadcie->show();
@@ -8791,7 +8823,7 @@ void Locallabcie::modecamChanged()
             targetGraycie->hide();
             targabscie->hide();
             surrHBoxcie->hide();
-            forcejz->show();
+            forcejz->hide();
             pqremapcam16->hide();
             PQFrame->show();
             catadcie->hide();
@@ -8843,6 +8875,8 @@ void Locallabcie::modecieChanged()
     if (isLocActivated && exp->getEnabled()) {
         
         const int mode = complexity->get_active_row_number();
+                exprecovcie->show();
+                expmaskcie->show();
         
         if (modecie->get_active_row_number() > 0) {
             sensicie->hide();
@@ -8942,6 +8976,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             maskunusablecie->hide();
             decaycie->hide();
             expmaskcie->hide();
+            expmaskcie->hide();
 
             if (modecam->get_active_row_number() == 2) {
                 PQFrame->hide();
@@ -8952,7 +8987,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 cie1Frame->hide();
                 expcam16->hide();
                 ciezFrame->hide();
-                forcejz->show();
+                forcejz->hide();
                 pqremapcam16->hide();
                 PQFrame->hide();
                 catadcie->hide();
@@ -9040,7 +9075,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 cie1Frame->hide();
                 expcam16->hide();
                 ciezFrame->hide();
-                forcejz->show();
+                forcejz->hide();
                 pqremapcam16->hide();
                 PQFrame->hide();
                 catadcie->hide();
@@ -9103,6 +9138,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             gammaskcie->show();
             slomaskcie->show();
             expmaskcie->show();
+            exprecovcie->show();
 
             if (enacieMask->get_active()) {
                 maskusablecie->show();
@@ -9122,7 +9158,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 pqremap->show();
                 PQFrame->show();
                 contthreszcam->hide();
-                forcejz->show();
+                forcejz->hide();
                 
             }
                 cieFrame->show();
@@ -9176,7 +9212,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             if (modecie->get_active_row_number() > 0) {
                 exprecovcie->hide();
                 expmaskcie->hide();
-            }
+            } 
 
     }
 }
@@ -9185,6 +9221,7 @@ void Locallabcie::updatecieGUI()
 {
     const int mode = complexity->get_active_row_number();
     expmaskcie->show();
+    exprecovcie->show();
     if (modecie->get_active_row_number() > 0) {
         sensicie->hide();
         reparcie->hide();

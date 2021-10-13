@@ -1387,6 +1387,7 @@ HISTORY_MSG_1134;Local - Cie mask recovery decay
 HISTORY_MSG_1135;Local - Cie mask laplacian
 HISTORY_MSG_1136;Local - Cie mask gamma
 HISTORY_MSG_1137;Local - Cie mask slope
+HISTORY_MSG_1138;Local - Cie Relative luminance
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2973,6 +2974,8 @@ TP_LOCALLAB_JZCONT;Contrast
 TP_LOCALLAB_JZCHROM;Chroma
 TP_LOCALLAB_JZHUECIE;Hue Rotation
 TP_LOCALLAB_JZSHFRA;Shadows/Highlights Jz
+TP_LOCALLAB_JZQTOJ;Relative luminance
+TP_LOCALLAB_JZQTOJ_TOOLTIP;Allows you to use "Relative luminance" instead of "Absolute luminance" - Brighness becomes Lightness.\nAre affected by this change: the 'Brightness' slider, the 'Contrast' slider, the 'Jz(Jz)' curve, and 'Sigmoid Jz'.
 TP_LOCALLAB_LABBLURM;Blur Mask
 TP_LOCALLAB_LABEL;Local Adjustments
 TP_LOCALLAB_LABGRID;Color correction grid

@@ -1413,7 +1413,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float blendmaskcie = ((float) locallab.spots.at(sp).blendmaskcie) / 100.f ;
     float radmaskcie = ((float) locallab.spots.at(sp).radmaskcie);
     float chromaskcie = ((float) locallab.spots.at(sp).chromaskcie);
-
     lp.deltaem = locallab.spots.at(sp).deltae;
     lp.scalereti = scaleret;
     lp.cir = circr;
@@ -2999,7 +2998,11 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         double adapjz = params->locallab.spots.at(sp).adapjzcie;
         double jz100 = params->locallab.spots.at(sp).jz100;
         double pl = params->locallab.spots.at(sp).pqremap;
+        double jzw, azw, bzw;
+        jzw = 0.18;
 //        bool forcejz = params->locallab.spots.at(sp).forcejz;
+        bool Qtoj = params->locallab.spots.at(sp).qtoj;
+
 //calculate min, max, mean for Jz
 #ifdef _OPENMP
             #pragma omp parallel for reduction(min:mini) reduction(max:maxi) reduction(+:sum) if(multiThread)
@@ -3024,6 +3027,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
 
                 double L_p, M_p, S_p;
                 bool zcam = false;
+
                 Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p, zcam);
                 if(Jz > maxi) {
                     maxi = Jz;
@@ -3060,6 +3064,17 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
             to_screen = 1.;
            // to_one = 1.;
         }
+        if(Qtoj) {
+                double xxw = (d50_d65[0][0] * (double) Xw + d50_d65[0][1] * (double) Yw + d50_d65[0][2] * (double) Zw);
+                double yyw = (d50_d65[1][0] * (double) Xw + d50_d65[1][1] * (double) Yw + d50_d65[1][2] * (double) Zw);
+                double zzw = (d50_d65[2][0] * (double) Xw + d50_d65[2][1] * (double) Yw + d50_d65[2][2] * (double) Zw);
+                double L_pa, M_pa, S_pa;
+                Ciecam02::xyz2jzczhz (jzw, azw, bzw, xxw, yyw, zzw, pl, L_pa, M_pa, S_pa, false);
+                if (settings->verbose) { 
+                    printf("Jzwhite=%f \n", jzw);
+                }
+
+        }
 //        if(forcejz) {
 //            to_screen = 1.;
 //        }
@@ -3079,6 +3094,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         double delta = 0.015 * (double) sqrt(std::max(100.f, la) / 100.f);//small adaptation in function La scene
         double maxy = 0.65;//empirical value
         double maxreal = maxi*to_screen;
+        double maxjzw = jzw*to_screen;
         if (settings->verbose) { 
             printf("La=%4.1f PU_adap=%2.1f maxi=%f mini=%f mean=%f, avgm=%f to_screen=%f Max_real=%f to_one=%f\n", (double) la, adapjz, maxi, mini, sum, avgm, to_screen, maxreal, to_one);
         }
@@ -3189,7 +3205,12 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                 double az =  Aaz[i][k];
                 double bz =  Bbz[i][k];
                 double Jz =  JJz[i][k];
-                Jz *= to_one;
+                if(Qtoj == false) {
+                    Jz *= to_one;
+                } else {
+                    Jz /= maxjzw;
+                    Jz = SQR(Jz);
+                }
                 Jz= LIM01(jz_contrast.getVal(Jz));
 
                 if(lightreal > 0) {
@@ -3215,7 +3236,12 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                     sigmoidla (val, thjz, sigmjz, bljz);
                     Jz = (double) val;
                 }
-                Jz /= to_one;
+                if(Qtoj == false) {
+                    Jz /= to_one;
+                } else {
+                    Jz = sqrt(Jz);
+                    Jz *= maxjzw;
+                }
 
                 double Cz, Hz;
                 Cz = sqrt(az * az + bz * bz);
@@ -5722,7 +5748,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
     const std::unique_ptr<LabImage> bufreserv(new LabImage(bfw, bfh));
     float meanfab, fab;
     mean_fab(xstart, ystart, bfw, bfh, bufcolorig, original, fab, meanfab, chrom, multiThread);
-    float chromult = 1.f - 0.01f * chrom;
+    float chromult = 1.f + 0.01f * chrom;
     float kinv = 1.f;
     float kneg = 1.f;
 
@@ -5912,8 +5938,8 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     }
 
                     bufmaskblurcol->L[ir][jr] = clipLoc(kmaskL + kmaskHL + kmasstru + kmasblur);
-                    bufmaskblurcol->a[ir][jr] = clipC((kmaskC + chromult * kmaskH));
-                    bufmaskblurcol->b[ir][jr] = clipC((kmaskC + chromult * kmaskH));
+                    bufmaskblurcol->a[ir][jr] = clipC((chromult * kmaskC + chromult * kmaskH));
+                    bufmaskblurcol->b[ir][jr] = clipC((chromult * kmaskC + chromult * kmaskH));
 
                     if (shortcu == 1) { //short circuit all L curve
                         bufmaskblurcol->L[ir][jr] = 32768.f - bufcolorig->L[ir][jr];

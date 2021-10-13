@@ -1532,6 +1532,7 @@ private:
     Gtk::Frame* const cie1contFrame;
     Gtk::Frame* const cie1colorFrame;
     Gtk::Frame* const PQFrame;
+    Gtk::CheckButton* const qtoj;
     Adjuster* const lightlcie;
     Adjuster* const lightjzcie;
     Adjuster* const contjzcie;
@@ -1632,7 +1633,7 @@ private:
     CurveEditorGroup* const mask2cieCurveEditorG;
     DiagonalCurveEditor* const Lmaskcieshape;
     
-    sigc::connection AutograycieConn,  forcejzConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, toneMethodcieConn, toneMethodcieConn2;
+    sigc::connection AutograycieConn,  forcejzConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, toneMethodcieConn, toneMethodcieConn2;
 public:
     Locallabcie();
     ~Locallabcie();
@@ -1667,6 +1668,7 @@ private:
     void complexityModeChanged();
     void AutograycieChanged();
     void forcejzChanged();
+    void qtojChanged();
     void jabcieChanged();
     void sigmoidqjcieChanged();
     void updatecieGUI();
