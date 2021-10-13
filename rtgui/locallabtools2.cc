@@ -9102,6 +9102,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             lapmaskcie->show();
             gammaskcie->show();
             slomaskcie->show();
+            expmaskcie->show();
+
             if (enacieMask->get_active()) {
                 maskusablecie->show();
                 maskunusablecie->hide();
@@ -9182,6 +9184,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 void Locallabcie::updatecieGUI()
 {
     const int mode = complexity->get_active_row_number();
+    expmaskcie->show();
     if (modecie->get_active_row_number() > 0) {
         sensicie->hide();
         reparcie->hide();
