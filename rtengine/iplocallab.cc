@@ -3124,6 +3124,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         //all calculs in double to best results...but slow
         double lightreal = 0.2 *  params->locallab.spots.at(sp).lightjzcie;
         double chromz =  params->locallab.spots.at(sp).chromjzcie;
+        double saturz =  params->locallab.spots.at(sp).saturjzcie;
         double dhue = 0.0174 * params->locallab.spots.at(sp).huejzcie;
         DiagonalCurve jz_light({
             DCT_NURBS,
@@ -3266,11 +3267,29 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                 } else {
                     double maxcz = 0.70710678;
                     double fcz = Cz / maxcz;
-                    double pocz = pow(fcz , 1. - 0.0017 * chromz);
+                    //double pocz = pow(fcz , 1. - 0.0017 * chromz);
+                    double pocz = pow(fcz , 1. - 0.0024 * chromz);//increase value - before 0.0017
                     Cz = maxcz * pocz;
                   //  Cz = Cz * (1. + 0.005 * chromz);//linear
                     
                 }
+                if(saturz != 0.) {
+                    double js = Jz/ maxjzw;
+                    js = SQR(js);
+                    if(js <= 0.) {
+                        js = 0.0000001;
+                    }
+                    double Sz = Cz / (js);
+                    if(saturz < 0.) {
+                        Sz = Sz * (1. + 0.01 * saturz);
+                    } else {
+                        Sz = Sz * (1. + 0.003 * saturz);//not pow function because Sz is "open" - 0.003 empirical value to have results comparable to Cz
+                    }
+                    Cz = Sz * js;
+                    
+                }
+                
+                
                 Hz += dhue;
                 if ( Hz < 0.0 ) {
                     Hz += (double) (2.f * rtengine::RT_PI_F);

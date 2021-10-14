@@ -1696,6 +1696,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).toneMethodcie2 = locallab.spots.at(j).toneMethodcie2 && pSpot.toneMethodcie2 == otherSpot.toneMethodcie2;
                 locallab.spots.at(j).ciecurve2 = locallab.spots.at(j).ciecurve2 && pSpot.ciecurve2 == otherSpot.ciecurve2;
                 locallab.spots.at(j).chromjzcie = locallab.spots.at(j).chromjzcie && pSpot.chromjzcie == otherSpot.chromjzcie;
+                locallab.spots.at(j).saturjzcie = locallab.spots.at(j).saturjzcie && pSpot.saturjzcie == otherSpot.saturjzcie;
                 locallab.spots.at(j).huejzcie = locallab.spots.at(j).huejzcie && pSpot.huejzcie == otherSpot.huejzcie;
                 locallab.spots.at(j).jzcurve = locallab.spots.at(j).jzcurve && pSpot.jzcurve == otherSpot.jzcurve;
                 locallab.spots.at(j).czcurve = locallab.spots.at(j).czcurve && pSpot.czcurve == otherSpot.czcurve;
@@ -5754,6 +5755,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).chromjzcie = mods.locallab.spots.at(i).chromjzcie;
         }
 
+        if (locallab.spots.at(i).saturjzcie) {
+            toEdit.locallab.spots.at(i).saturjzcie = mods.locallab.spots.at(i).saturjzcie;
+        }
+
         if (locallab.spots.at(i).huejzcie) {
             toEdit.locallab.spots.at(i).huejzcie = mods.locallab.spots.at(i).huejzcie;
         }
@@ -7892,6 +7897,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     toneMethodcie2(v),
     ciecurve2(v),
     chromjzcie(v),
+    saturjzcie(v),
     huejzcie(v),
     jzcurve(v),
     czcurve(v),
@@ -8569,6 +8575,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     toneMethodcie2 = v;
     ciecurve2 = v;
     chromjzcie = v;
+    saturjzcie = v;
     huejzcie = v;
     jzcurve = v;
     czcurve = v;

@@ -7395,6 +7395,8 @@ Locallabcie::Locallabcie():
     cie1lightFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIELIGHTFRA")))),
     cie1contFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIECONTFRA")))),
     cie1colorFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIECOLORFRA")))),
+    czlightFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIELIGHTCONTFRA")))),
+    czcolorFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CIECOLORFRA")))),
     PQFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZPQFRA")))),
     qtoj(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZQTOJ")))),
     lightlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTL"), -100., 100., 0.01, 0.))),
@@ -7439,6 +7441,7 @@ Locallabcie::Locallabcie():
     shapecie2(static_cast<DiagonalCurveEditor*>(cieCurveEditorG2->addCurve(CT_Diagonal, "", toneMethodcie2))),
 
     chromjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCHROM"), -100., 100., 0.5, 0.))),
+    saturjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZSAT"), -100., 100., 0.5, 0.))),
     huejzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZHUECIE"), -100., 100., 0.1, 0.))),
     jz1CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
     shapejz(static_cast<DiagonalCurveEditor*>(jz1CurveEditorG->addCurve(CT_Diagonal, "Jz(Jz)"))),
@@ -7645,10 +7648,21 @@ Locallabcie::Locallabcie():
     jzFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const jzBox = Gtk::manage(new ToolParamBlock());
     jzBox->pack_start(*qtoj);
-    jzBox->pack_start(*lightjzcie);
-    jzBox->pack_start(*contjzcie);
-    jzBox->pack_start(*chromjzcie);
-    jzBox->pack_start(*huejzcie);
+    czlightFrame->set_label_align(0.025, 0.5);
+    czcolorFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const ciePzlightBox = Gtk::manage(new ToolParamBlock());
+    ciePzlightBox->pack_start(*lightjzcie);
+    ciePzlightBox->pack_start(*contjzcie);
+    czlightFrame->add(*ciePzlightBox);
+    jzBox->pack_start(*czlightFrame);
+
+    ToolParamBlock* const ciePzcolorBox = Gtk::manage(new ToolParamBlock());
+    ciePzcolorBox->pack_start(*chromjzcie);
+    ciePzcolorBox->pack_start(*saturjzcie);
+    ciePzcolorBox->pack_start(*huejzcie);
+    czcolorFrame->add(*ciePzcolorBox);
+    jzBox->pack_start(*czcolorFrame);
+    
     jzBox->pack_start(*jz1CurveEditorG, Gtk::PACK_SHRINK, 4);
     jzBox->pack_start(*jz2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     jzBox->pack_start(*jz3CurveEditorG, Gtk::PACK_SHRINK, 4); //   jzBox->pack_start(*adapjzcie);
@@ -7736,6 +7750,7 @@ Locallabcie::Locallabcie():
 
 
     chromjzcie->setAdjusterListener(this);
+    saturjzcie->setAdjusterListener(this);
     huejzcie->setAdjusterListener(this);
 
     lightlcie->setAdjusterListener(this);
@@ -8258,6 +8273,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         chromlcie->setValue(spot.chromlcie);
         huecie->setValue(spot.huecie);
         chromjzcie->setValue(spot.chromjzcie);
+        saturjzcie->setValue(spot.saturjzcie);
         huejzcie->setValue(spot.huejzcie);
         lightlcie->setValue(spot.lightlcie);
         lightjzcie->setValue(spot.lightjzcie);
@@ -8407,6 +8423,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.chromlcie = chromlcie->getValue();
         spot.huejzcie = huejzcie->getValue();
         spot.chromjzcie = chromjzcie->getValue();
+        spot.saturjzcie = saturjzcie->getValue();
         spot.huecie = huecie->getValue();
         spot.lightlcie = lightlcie->getValue();
         spot.lightjzcie = lightjzcie->getValue();
@@ -9379,6 +9396,7 @@ void Locallabcie::convertParamToNormal()
     hljzcie->setValue(defSpot.hljzcie);
     shjzcie->setValue(defSpot.shjzcie);
     chromjzcie->setValue(defSpot.chromjzcie);
+    saturjzcie->setValue(defSpot.saturjzcie);
     huejzcie->setValue(defSpot.huejzcie);
     modecie->set_active(0);
     if (modecam->get_active_row_number() == 1) {
@@ -9410,6 +9428,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         chromlcie->setDefault(defSpot.chromlcie);
         huecie->setDefault(defSpot.huecie);
         chromjzcie->setDefault(defSpot.chromjzcie);
+        saturjzcie->setDefault(defSpot.saturjzcie);
         huejzcie->setDefault(defSpot.huejzcie);
         lightlcie->setDefault(defSpot.lightlcie);
         lightjzcie->setDefault(defSpot.lightjzcie);
@@ -9513,6 +9532,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabchromjzcie,
                                        chromjzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == saturjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsaturjzcie,
+                                       saturjzcie->getTextValue() + spName);
             }
         }
 

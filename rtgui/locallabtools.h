@@ -1531,6 +1531,9 @@ private:
     Gtk::Frame* const cie1lightFrame;
     Gtk::Frame* const cie1contFrame;
     Gtk::Frame* const cie1colorFrame;
+    Gtk::Frame* const czlightFrame;
+//    Gtk::Frame* const czcontFrame;
+    Gtk::Frame* const czcolorFrame;
     Gtk::Frame* const PQFrame;
     Gtk::CheckButton* const qtoj;
     Adjuster* const lightlcie;
@@ -1577,6 +1580,7 @@ private:
     DiagonalCurveEditor* const shapecie2;
     
     Adjuster* const chromjzcie;
+    Adjuster* const saturjzcie;
     Adjuster* const huejzcie;
     CurveEditorGroup* const jz1CurveEditorG;
     DiagonalCurveEditor* const shapejz;

@@ -4307,6 +4307,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         1.0
     },
     chromjzcie(0.),
+    saturjzcie(0.),
     huejzcie(0.),
     jzcurve{
         static_cast<double>(DCT_NURBS),
@@ -5141,6 +5142,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && toneMethodcie2 == other.toneMethodcie2
         && ciecurve2 == other.ciecurve2
         && chromjzcie == other.chromjzcie
+        && saturjzcie == other.saturjzcie
         && huejzcie == other.huejzcie
         && jzcurve == other.jzcurve
         && czcurve == other.czcurve
@@ -6907,6 +6909,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->toneMethodcie2, "Locallab", "ToneMethodcie2_" + index_str, spot.toneMethodcie2, keyFile);
                     saveToKeyfile(!pedited || spot_edited->ciecurve2, "Locallab", "Ciecurve2_" + index_str, spot.ciecurve2, keyFile);
                     saveToKeyfile(!pedited || spot_edited->chromjzcie, "Locallab", "Chromjzcie_" + index_str, spot.chromjzcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->saturjzcie, "Locallab", "Saturjzcie_" + index_str, spot.saturjzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->huejzcie, "Locallab", "Huejzcie_" + index_str, spot.huejzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->CHcurvejz, "Locallab", "JzCurve_" + index_str, spot.jzcurve, keyFile);
                     saveToKeyfile(!pedited || spot_edited->CHcurvejz, "Locallab", "CzCurve_" + index_str, spot.czcurve, keyFile);
@@ -9052,6 +9055,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "ToneMethodcie2_" + index_str, pedited, spot.toneMethodcie2, spotEdited.toneMethodcie2);
                 assignFromKeyfile(keyFile, "Locallab", "Ciecurve2_" + index_str, pedited, spot.ciecurve2, spotEdited.ciecurve2);
                 assignFromKeyfile(keyFile, "Locallab", "Chromjzcie_" + index_str, pedited, spot.chromjzcie, spotEdited.chromjzcie);
+                assignFromKeyfile(keyFile, "Locallab", "Saturjzcie_" + index_str, pedited, spot.saturjzcie, spotEdited.saturjzcie);
                 assignFromKeyfile(keyFile, "Locallab", "Huejzcie_" + index_str, pedited, spot.huejzcie, spotEdited.huejzcie);
                 assignFromKeyfile(keyFile, "Locallab", "JzCurve_" + index_str, pedited, spot.jzcurve, spotEdited.jzcurve);
                 assignFromKeyfile(keyFile, "Locallab", "CzCurve_" + index_str, pedited, spot.czcurve, spotEdited.czcurve);
