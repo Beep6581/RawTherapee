@@ -2550,8 +2550,8 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         ciec = true;
         iscie = true;
     }
-    bool jabcie = params->locallab.spots.at(sp).jabcie; 
-    jabcie = false;//always disabled
+    bool z_cam = false; //params->locallab.spots.at(sp).jabcie; //alaways use normal algorithm, Zcam giev often bad results
+    bool jabcie = false;//always disabled
     //sigmoid J Q variables
     const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie; 
     const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie; 
@@ -3026,7 +3026,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                 zz = (d50_d65[2][0] * (double) x + d50_d65[2][1] * (double) y + d50_d65[2][2] * (double) z);
 
                 double L_p, M_p, S_p;
-                bool zcam = false;
+                bool zcam = z_cam;
 
                 Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p, zcam);
                 if(Jz > maxi) {
@@ -3069,7 +3069,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                 double yyw = (d50_d65[1][0] * (double) Xw + d50_d65[1][1] * (double) Yw + d50_d65[1][2] * (double) Zw);
                 double zzw = (d50_d65[2][0] * (double) Xw + d50_d65[2][1] * (double) Yw + d50_d65[2][2] * (double) Zw);
                 double L_pa, M_pa, S_pa;
-                Ciecam02::xyz2jzczhz (jzw, azw, bzw, xxw, yyw, zzw, pl, L_pa, M_pa, S_pa, false);
+                Ciecam02::xyz2jzczhz (jzw, azw, bzw, xxw, yyw, zzw, pl, L_pa, M_pa, S_pa, z_cam);
                 if (settings->verbose) { 
                     printf("Jzwhite=%f \n", jzw);
                 }
@@ -3163,7 +3163,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
                 zz = (d50_d65[2][0] * (double) x + d50_d65[2][1] * (double) y + d50_d65[2][2] * (double) z);
 
                 double L_p, M_p, S_p;
-                bool zcam = false;
+                bool zcam = z_cam;
                 Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p, zcam);
                 /* float fb = sqrt(yb/100.f);
                 double  kk = 1.6 * (double) c2 / pow((double) fb, 0.12);
@@ -3347,7 +3347,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
 
                 double L_, M_, S_;
                 double xx, yy, zz;
-                bool zcam = false;
+                bool zcam = z_cam;
                 Ciecam02::jzczhzxyz (xx, yy, zz, Jz, az, bz, pl, L_, M_, S_, zcam);
                 //re enable D50
                 double x, y, z;
