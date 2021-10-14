@@ -5912,7 +5912,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     }
 
                     if (!deltaE && locccmasCurve && lcmasutili) {
-                        kmaskC = LIM01(kinv  - kneg * locccmasCurve[500.f * (0.0001f + std::sqrt(SQR(bufcolorig->a[ir][jr]) + SQR(bufcolorig->b[ir][jr])) / fab)]);
+                        kmaskC = LIM01(kinv  - kneg * locccmasCurve[500.f * (0.0001f + std::sqrt(SQR(bufcolorig->a[ir][jr]) + SQR(bufcolorig->b[ir][jr])) / (fab))]);
                     }
 
                     if (lochhmasCurve && lhmasutili) {
@@ -5938,8 +5938,8 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     }
 
                     bufmaskblurcol->L[ir][jr] = clipLoc(kmaskL + kmaskHL + kmasstru + kmasblur);
-                    bufmaskblurcol->a[ir][jr] = clipC((chromult * kmaskC + chromult * kmaskH));
-                    bufmaskblurcol->b[ir][jr] = clipC((chromult * kmaskC + chromult * kmaskH));
+                    bufmaskblurcol->a[ir][jr] = clipC((chromult * 8.f * kmaskC + chromult * kmaskH));
+                    bufmaskblurcol->b[ir][jr] = clipC((chromult * 8.f * kmaskC + chromult * kmaskH));
 
                     if (shortcu == 1) { //short circuit all L curve
                         bufmaskblurcol->L[ir][jr] = 32768.f - bufcolorig->L[ir][jr];
