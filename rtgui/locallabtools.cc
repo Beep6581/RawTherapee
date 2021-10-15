@@ -283,7 +283,7 @@ void LocallabTool::refChanged(const double huer, const double lumar, const doubl
     const double normLumar = lumar / 100.f;
 
     // Chroma reference normalization (between 0 and 1)
-    const double normChromar = chromar / 100.f;
+    const double normChromar = LIM01(chromar / 100.f);
 
     // Update mask curve backgrounds
     updateMaskBackground(normChromar, normLumar, normHuer);
