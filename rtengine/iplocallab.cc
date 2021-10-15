@@ -5957,8 +5957,8 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     }
 
                     bufmaskblurcol->L[ir][jr] = clipLoc(kmaskL + kmaskHL + kmasstru + kmasblur);
-                    bufmaskblurcol->a[ir][jr] = clipC((chromult * 8.f * kmaskC + chromult * kmaskH));
-                    bufmaskblurcol->b[ir][jr] = clipC((chromult * 8.f * kmaskC + chromult * kmaskH));
+                    bufmaskblurcol->a[ir][jr] = clipC((chromult * 12.f * kmaskC + chromult * kmaskH));
+                    bufmaskblurcol->b[ir][jr] = clipC((chromult * 12.f * kmaskC + chromult * kmaskH));
 
                     if (shortcu == 1) { //short circuit all L curve
                         bufmaskblurcol->L[ir][jr] = 32768.f - bufcolorig->L[ir][jr];
@@ -8131,7 +8131,8 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     const bool usemasklc = (lp.showmasklcmet == 2 || lp.enalcMask || lp.showmasklcmet == 4) && senstype == 10;
     const bool usemaskmas = (lp.showmask_met == 1 || lp.ena_Mask || lp.showmask_met == 3) && senstype == 20;
     const bool usemasklog = (lp.showmasklogmet == 2 || lp.enaLMask || lp.showmasklogmet == 4) && senstype == 11;
-    const bool usemaskall = (usemaskexp || usemaskvib || usemaskcol || usemaskSH || usemasktm || usemasklc || usemasklog || usemaskmas);
+    const bool usemaskcie = (lp.showmaskciemet == 2 || lp.enacieMask || lp.showmaskciemet == 4) && senstype == 31;
+    const bool usemaskall = (usemaskexp || usemaskvib || usemaskcol || usemaskSH || usemasktm || usemasklc || usemasklog || usemaskcie || usemaskmas);
 
     //blur a little mask
     if (usemaskall) {
