@@ -5974,6 +5974,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                 }
             }
         }
+        
         if (lap > 0.f && pde) {
             array2D<float> mask;
             mask(bfw, bfh);
@@ -8133,7 +8134,6 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     const bool usemasklog = (lp.showmasklogmet == 2 || lp.enaLMask || lp.showmasklogmet == 4) && senstype == 11;
     const bool usemaskcie = (lp.showmaskciemet == 2 || lp.enacieMask || lp.showmaskciemet == 4) && senstype == 31;
     const bool usemaskall = (usemaskexp || usemaskvib || usemaskcol || usemaskSH || usemasktm || usemasklc || usemasklog || usemaskcie || usemaskmas);
-
     //blur a little mask
     if (usemaskall) {
         origblurmask.reset(new LabImage(bfw, bfh));
@@ -18391,6 +18391,8 @@ void ImProcFunctions::Lab_Local(
                 originalmaskcie.reset(new LabImage(bfw, bfh));
             }
 
+
+
 #ifdef _OPENMP
                 #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -18472,6 +18474,7 @@ void ImProcFunctions::Lab_Local(
                 float lap = params->locallab.spots.at(sp).lapmaskcie;
                 bool pde =  params->locallab.spots.at(sp).laplac;
                 LocwavCurve dummy;
+                bool delt = params->locallab.spots.at(sp).deltae;
                 int sco = params->locallab.spots.at(sp).scopemask;
                 int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
                 int shado = 0;
@@ -18490,7 +18493,7 @@ void ImProcFunctions::Lab_Local(
                         0.f, false,
                         locccmascieCurve, lcmascieutili, locllmascieCurve, llmascieutili, lochhmascieCurve, lhmascieutili, lochhhmasCurve, false, multiThread,
                         enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmaskcielocalcurve, localmaskcieutili, dummy, false, 1, 1, 5, 5,
-                        shortcu, params->locallab.spots.at(sp).deltae, hueref, chromaref, lumaref,
+                        shortcu, delt, hueref, chromaref, lumaref,
                         maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, -1
                        );
 
