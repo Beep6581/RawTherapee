@@ -78,6 +78,7 @@ ControlSpotPanel::ControlSpotPanel():
     colorscope_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COLORSCOPE"), 0., 100.0, 1., 30.))),
     avoidrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_AVOIDRAD"), 0., 30.0, 0.1, 0.7))),
     scopemask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCOPEMASK"), 0, 100, 1, 60))),
+    denoichmask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DENOIMASK"), 0., 100., 0.5, 0))),
     lumask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LUMASK"), -50, 30, 1, 10, Gtk::manage(new RTImage("circle-yellow-small.png")), Gtk::manage(new RTImage("circle-gray-small.png")) ))),
 
     hishow_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_PREVSHOW")))),
@@ -330,6 +331,7 @@ ControlSpotPanel::ControlSpotPanel():
         feather_->set_tooltip_text(M("TP_LOCALLAB_FEATH_TOOLTIP"));
         transitgrad_->set_tooltip_text(M("TP_LOCALLAB_TRANSITGRAD_TOOLTIP"));
         scopemask_->set_tooltip_text(M("TP_LOCALLAB_SCOPEMASK_TOOLTIP"));
+        denoichmask_->set_tooltip_text(M("TP_LOCALLAB_DENOIMASK_TOOLTIP"));
     }
 
     transit_->setAdjusterListener(this);
@@ -337,6 +339,7 @@ ControlSpotPanel::ControlSpotPanel():
     transitgrad_->setAdjusterListener(this);
     feather_->setAdjusterListener(this);
     scopemask_->setAdjusterListener(this);
+    denoichmask_->setAdjusterListener(this);
     transitBox->pack_start(*transit_);
     transitBox->pack_start(*transitweak_);
     transitBox->pack_start(*transitgrad_);
@@ -485,6 +488,7 @@ ControlSpotPanel::ControlSpotPanel():
 //    maskBox->pack_start(*laplac_);
     maskBox->pack_start(*deltae_);
     maskBox->pack_start(*scopemask_);
+    maskBox->pack_start(*denoichmask_);
     // maskBox->pack_start(*shortc_);
     maskBox->pack_start(*lumask_);
     // maskBox->pack_start(*savrest_);
@@ -858,6 +862,7 @@ void ControlSpotPanel::load_ControlSpot_param()
     laplac_->set_active(true);
     deltae_->set_active(row[spots_.deltae]);
     scopemask_->setValue((double)row[spots_.scopemask]);
+    denoichmask_->setValue(row[spots_.denoichmask]);
     shortc_->set_active(row[spots_.shortc]);
     lumask_->setValue((double)row[spots_.lumask]);
     savrest_->set_active(row[spots_.savrest]);
@@ -1520,6 +1525,14 @@ void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)
         }
     }
 
+    if (a == denoichmask_) {
+        row[spots_.denoichmask] = denoichmask_->getValue();
+
+        if (listener) {
+            listener->panelChanged(EvLocallabSpotdenoichmask, denoichmask_->getTextValue());
+        }
+    }
+
     if (a == lumask_) {
         row[spots_.lumask] = lumask_->getIntValue();
 
@@ -1853,6 +1866,7 @@ void ControlSpotPanel::disableParamlistener(bool cond)
     laplacConn_.block(cond);
     deltaeConn_.block(cond);
     scopemask_->block(cond);
+    denoichmask_->block(cond);
     shortcConn_.block(cond);
     lumask_->block(cond);
     savrestConn_.block(cond);
@@ -1899,6 +1913,7 @@ void ControlSpotPanel::setParamEditable(bool cond)
     laplac_->set_sensitive(cond);
     deltae_->set_sensitive(cond);
     scopemask_->set_sensitive(cond);
+    denoichmask_->set_sensitive(cond);
     shortc_->set_sensitive(cond);
     lumask_->set_sensitive(cond);
     savrest_->set_sensitive(cond);
@@ -2573,6 +2588,7 @@ ControlSpotPanel::SpotRow* ControlSpotPanel::getSpot(const int index)
             r->transitweak = row[spots_.transitweak];
             r->transitgrad = row[spots_.transitgrad];
             r->scopemask = row[spots_.scopemask];
+            r->denoichmask = row[spots_.denoichmask];
             r->lumask = row[spots_.lumask];
             r->hishow = row[spots_.hishow];
             r->activ = row[spots_.activ];
@@ -2716,6 +2732,7 @@ void ControlSpotPanel::addControlSpot(SpotRow* newSpot)
     row[spots_.laplac] = newSpot->laplac;
     row[spots_.deltae] = newSpot->deltae;
     row[spots_.scopemask] = newSpot->scopemask;
+    row[spots_.denoichmask] = newSpot->denoichmask;
     row[spots_.shortc] = newSpot->shortc;
     row[spots_.lumask] = newSpot->lumask;
     row[spots_.savrest] = newSpot->savrest;
@@ -2783,6 +2800,7 @@ void ControlSpotPanel::setDefaults(const rtengine::procparams::ProcParams * defP
         colorscope_->setDefault(defSpot.colorscope);
         avoidrad_->setDefault(defSpot.avoidrad);
         scopemask_->setDefault((double)defSpot.scopemask);
+        denoichmask_->setDefault((double)defSpot.denoichmask);
         lumask_->setDefault((double)defSpot.lumask);
     }
 
@@ -2834,6 +2852,7 @@ ControlSpotPanel::ControlSpots::ControlSpots()
     add(laplac);
     add(deltae);
     add(scopemask);
+    add(denoichmask);
     add(shortc);
     add(lumask);
     add(savrest);

@@ -807,6 +807,7 @@ struct local_params {
     float radmacie;
     float blendmacie;
     float chromacie;
+    float denoichmask;
 
 };
 
@@ -1672,6 +1673,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.blendmacie = blendmaskcie;
     lp.radmacie = radmaskcie;
     lp.chromacie = chromaskcie;
+    lp.denoichmask = locallab.spots.at(sp).denoichmask;
 
     for (int y = 0; y < 6; y++) {
         lp.mulloc[y] = LIM(multi[y], 0.f, 4.f);//to prevent crash with old pp3 integer
@@ -5874,6 +5876,114 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             }
         }
 
+//denoise mask chroma
+
+
+        LabImage tmpab(bfw, bfh);
+        tmpab.clear(true);
+
+#ifdef _OPENMP
+                    #pragma omp parallel for if (multiThread)
+#endif
+        for (int ir = 0; ir < bfh; ir++)
+            for (int jr = 0; jr < bfw; jr++) {
+                tmpab.L[ir][jr] = bufcolorig->L[ir][jr];
+                tmpab.a[ir][jr] = bufcolorig->a[ir][jr];
+                tmpab.b[ir][jr] = bufcolorig->b[ir][jr];
+        }
+        float noisevarab_r = SQR(lp.denoichmask / 10.f);//SQR(lap/10.f);
+        if(noisevarab_r > 0.f) {
+            int wavelet_leve = 6;
+
+            int minwin1 = rtengine::min(bfw, bfh);
+            int maxlevelspot1 = 9;
+
+            while ((1 << maxlevelspot1) >= (minwin1 * sk) && maxlevelspot1  > 1) {
+                --maxlevelspot1 ;
+            }
+
+            wavelet_leve = rtengine::min(wavelet_leve, maxlevelspot1);
+            int maxlvl1 = wavelet_leve;
+#ifdef _OPENMP
+            const int numThreads = omp_get_max_threads();
+#else
+            const int numThreads = 1;
+
+#endif
+
+            wavelet_decomposition Ldecomp(tmpab.L[0],tmpab.W, tmpab.H, maxlvl1, 1, sk, numThreads, lp.daubLen);
+            wavelet_decomposition adecomp(tmpab.a[0],tmpab.W, tmpab.H, maxlvl1, 1, sk, numThreads, lp.daubLen);
+            wavelet_decomposition bdecomp(tmpab.b[0],tmpab.W, tmpab.H, maxlvl1, 1, sk, numThreads, lp.daubLen);
+            float* noisevarchrom;
+            noisevarchrom = new float[bfw*bfh];
+            float nvch = 0.6f;//high value
+            float nvcl = 0.1f;//low value
+            float seuil = 4000.f;//low
+            float seuil2 = 15000.f;//high
+            //ac and bc for transition
+            float ac = (nvch - nvcl) / (seuil - seuil2);
+            float bc = nvch - seuil * ac;
+            int bfw2 = (bfw + 1) / 2;
+             
+#ifdef _OPENMP
+                    #pragma omp parallel for if (multiThread)
+#endif
+            for (int ir = 0; ir < bfh; ir++)
+                for (int jr = 0; jr < bfw; jr++) {
+                    float cN = std::sqrt(SQR(tmpab.a[ir][jr]) + SQR(tmpab.b[ir][jr]));
+
+                    if (cN < seuil) {
+                        noisevarchrom[(ir >> 1)*bfw2 + (jr >> 1)] =  nvch;
+                    } else if (cN < seuil2) {
+                        noisevarchrom[(ir >> 1)*bfw2 + (jr >> 1)] = ac * cN + bc;
+                    } else {
+                        noisevarchrom[(ir >> 1)*bfw2 + (jr >> 1)] =  nvcl;
+                    }
+                }
+           
+            float madL[8][3];
+            int levred = maxlvl1;
+            if (!Ldecomp.memory_allocation_failed()) {
+#ifdef _OPENMP
+                #pragma omp parallel for schedule(dynamic) collapse(2) if (multiThread)
+#endif
+                for (int lvl = 0; lvl < levred; lvl++) {
+                    for (int dir = 1; dir < 4; dir++) {
+                        int Wlvl_L = Ldecomp.level_W(lvl);
+                        int Hlvl_L = Ldecomp.level_H(lvl);
+                        const float* const* WavCoeffs_L = Ldecomp.level_coeffs(lvl);
+
+                        madL[lvl][dir - 1] = SQR(Mad(WavCoeffs_L[dir], Wlvl_L * Hlvl_L));
+                    }
+                }
+            }
+            
+            if (!adecomp.memory_allocation_failed() && !bdecomp.memory_allocation_failed()) {
+                        WaveletDenoiseAll_BiShrinkAB(Ldecomp, adecomp, noisevarchrom, madL, nullptr, 0, noisevarab_r, true, false, false, numThreads);
+                        WaveletDenoiseAllAB(Ldecomp, adecomp, noisevarchrom, madL, nullptr, 0, noisevarab_r, true, false, false, numThreads);
+
+                        WaveletDenoiseAll_BiShrinkAB(Ldecomp, bdecomp, noisevarchrom, madL, nullptr, 0, noisevarab_r, false, false, false, numThreads);
+                        WaveletDenoiseAllAB(Ldecomp, bdecomp, noisevarchrom, madL, nullptr, 0, noisevarab_r, false, false, false, numThreads);
+
+            }
+           
+            delete[] noisevarchrom;
+
+            if (!Ldecomp.memory_allocation_failed()) {
+                Ldecomp.reconstruct(tmpab.L[0]);
+            }
+            if (!adecomp.memory_allocation_failed()) {
+                adecomp.reconstruct(tmpab.a[0]);
+            }
+            if (!bdecomp.memory_allocation_failed()) {
+                bdecomp.reconstruct(tmpab.b[0]);
+            }
+        }
+// end code denoise mask chroma
+
+
+
+
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
 #endif
@@ -5892,11 +6002,13 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     int i = 0;
 
                     for (; i < bfw - 3; i += 4) {
-                        STVF(atan2Buffer[i], xatan2f(LVFU(bufcolorig->b[ir][i]), LVFU(bufcolorig->a[ir][i])));
+                     //   STVF(atan2Buffer[i], xatan2f(LVFU(bufcolorig->b[ir][i]), LVFU(bufcolorig->a[ir][i])));
+                        STVF(atan2Buffer[i], xatan2f(LVFU(tmpab.b[ir][i]), LVFU(tmpab.a[ir][i])));
                     }
 
                     for (; i < bfw; i++) {
-                        atan2Buffer[i] = xatan2f(bufcolorig->b[ir][i], bufcolorig->a[ir][i]);
+                      //  atan2Buffer[i] = xatan2f(bufcolorig->b[ir][i], bufcolorig->a[ir][i]);
+                        atan2Buffer[i] = xatan2f(tmpab.b[ir][i], tmpab.a[ir][i]);
                     }
                 }
 
@@ -5931,14 +6043,16 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                     }
 
                     if (!deltaE && locccmasCurve && lcmasutili) {
-                        kmaskC = LIM01(kinv  - kneg * locccmasCurve[500.f * (0.0001f + std::sqrt(SQR(bufcolorig->a[ir][jr]) + SQR(bufcolorig->b[ir][jr])) / (fab))]);
+                      //  kmaskC = LIM01(kinv  - kneg * locccmasCurve[500.f * (0.0001f + std::sqrt(SQR(bufcolorig->a[ir][jr]) + SQR(bufcolorig->b[ir][jr])) / (fab))]);
+                        kmaskC = LIM01(kinv  - kneg * locccmasCurve[500.f * (0.0001f + std::sqrt(SQR(tmpab.a[ir][jr]) + SQR(tmpab.b[ir][jr])) / (fab))]);
                     }
 
                     if (lochhmasCurve && lhmasutili) {
 #ifdef __SSE2__
                         const float huema = atan2Buffer[jr];
 #else
-                        const float huema = xatan2f(bufcolorig->b[ir][jr], bufcolorig->a[ir][jr]);
+                       // const float huema = xatan2f(bufcolorig->b[ir][jr], bufcolorig->a[ir][jr]);
+                        const float huema = xatan2f(tmpab.b[ir][jr], tmpab.a[ir][jr]);
 #endif
                         float h = Color::huelab_to_huehsv2(huema);
                         h += 1.f / 6.f;

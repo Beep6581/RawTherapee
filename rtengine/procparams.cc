@@ -2876,6 +2876,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     shortc(false),
     savrest(false),
     scopemask(60),
+    denoichmask(0.),
     lumask(10),
     // Color & Light
     visicolor(false),
@@ -4557,6 +4558,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && shortc == other.shortc
         && savrest == other.savrest
         && scopemask == other.scopemask
+        && denoichmask == other.denoichmask
         && lumask == other.lumask
         // Color & Light
         && visicolor == other.visicolor
@@ -6320,6 +6322,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                 saveToKeyfile(!pedited || spot_edited->shortc, "Locallab", "Shortc_" + index_str, spot.shortc, keyFile);
                 saveToKeyfile(!pedited || spot_edited->savrest, "Locallab", "Savrest_" + index_str, spot.savrest, keyFile);
                 saveToKeyfile(!pedited || spot_edited->scopemask, "Locallab", "Scopemask_" + index_str, spot.scopemask, keyFile);
+                saveToKeyfile(!pedited || spot_edited->denoichmask, "Locallab", "Denoichmask_" + index_str, spot.denoichmask, keyFile);
                 saveToKeyfile(!pedited || spot_edited->lumask, "Locallab", "Lumask_" + index_str, spot.lumask, keyFile);
                 // Color & Light
                 if ((!pedited || spot_edited->visicolor) && spot.visicolor) {
@@ -8373,6 +8376,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Shortc_" + index_str, pedited, spot.shortc, spotEdited.shortc);
                 assignFromKeyfile(keyFile, "Locallab", "Savrest_" + index_str, pedited, spot.savrest, spotEdited.savrest);
                 assignFromKeyfile(keyFile, "Locallab", "Scopemask_" + index_str, pedited, spot.scopemask, spotEdited.scopemask);
+                assignFromKeyfile(keyFile, "Locallab", "Denoichmask_" + index_str, pedited, spot.denoichmask, spotEdited.denoichmask);
                 assignFromKeyfile(keyFile, "Locallab", "Lumask_" + index_str, pedited, spot.lumask, spotEdited.lumask);
                 // Color & Light
                 spot.visicolor = assignFromKeyfile(keyFile, "Locallab", "Expcolor_" + index_str, pedited, spot.expcolor, spotEdited.expcolor);

@@ -431,6 +431,7 @@ public:
         bool shortc;
         bool savrest;
         bool scopemask;
+        bool denoichmask;
         bool lumask;
         // Color & Light
         bool visicolor;

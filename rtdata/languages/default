@@ -2826,6 +2826,8 @@ TP_LOCALLAB_DENOIEQUAL_TOOLTIP;Allows you to carry out more or less noise reduct
 TP_LOCALLAB_DENOI1_EXP;Denoise based on luminance mask
 TP_LOCALLAB_DENOI2_EXP;Recovery based on luminance mask
 TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP;Allows you to recover luminance detail by progressively applying a Fourier transform (DCT). 
+TP_LOCALLAB_DENOIMASK;Denoise chroma mask
+TP_LOCALLAB_DENOIMASK_TOOLTIP;For all tools, allows you to control the chromatic noise level of the mask.\nUseful for better control of chrominance and to avoid artifacts when using the LC(h) curve.
 TP_LOCALLAB_DENOIQUA_TOOLTIP;Conservative mode preserves low frequency detail. Aggressive mode removes low frequency detail.\nConservative and Aggressive modes use wavelets and DCT and can be used in conjunction with ‘Non-local Means – Luminance’.
 TP_LOCALLAB_DENOIS;Denoise
 TP_LOCALLAB_DENOITHR_TOOLTIP;Adjusts edge detection to help reduce noise in uniform, low-contrast areas. 

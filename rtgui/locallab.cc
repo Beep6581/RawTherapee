@@ -313,6 +313,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         r->laplac = true; //pp->locallab.spots.at(i).laplac;
         r->deltae = pp->locallab.spots.at(i).deltae;
         r->scopemask = pp->locallab.spots.at(i).scopemask;
+        r->denoichmask = pp->locallab.spots.at(i).denoichmask;
         r->shortc = pp->locallab.spots.at(i).shortc;
         r->lumask = pp->locallab.spots.at(i).lumask;
         r->savrest = pp->locallab.spots.at(i).savrest;
@@ -494,6 +495,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->laplac = newSpot->laplac;
             r->deltae = newSpot->deltae;
             r->scopemask = newSpot->scopemask;
+            r->denoichmask = newSpot->denoichmask;
             r->shortc = newSpot->shortc;
             r->lumask = newSpot->lumask;
             r->savrest = newSpot->savrest;
@@ -803,6 +805,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->laplac = newSpot->laplac;
             r->deltae = newSpot->deltae;
             r->scopemask = newSpot->scopemask;
+            r->denoichmask = newSpot->denoichmask;
             r->shortc = newSpot->shortc;
             r->lumask = newSpot->lumask;
             r->savrest = newSpot->savrest;
@@ -958,6 +961,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).laplac = r->laplac;
                     pp->locallab.spots.at(pp->locallab.selspot).deltae = r->deltae;
                     pp->locallab.spots.at(pp->locallab.selspot).scopemask = r->scopemask;
+                    pp->locallab.spots.at(pp->locallab.selspot).denoichmask = r->denoichmask;
                     pp->locallab.spots.at(pp->locallab.selspot).shortc = r->shortc;
                     pp->locallab.spots.at(pp->locallab.selspot).lumask = r->lumask;
                     pp->locallab.spots.at(pp->locallab.selspot).savrest = r->savrest;

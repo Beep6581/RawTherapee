@@ -1117,6 +1117,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).shortc = locallab.spots.at(j).shortc && pSpot.shortc == otherSpot.shortc;
                 locallab.spots.at(j).savrest = locallab.spots.at(j).savrest && pSpot.savrest == otherSpot.savrest;
                 locallab.spots.at(j).scopemask = locallab.spots.at(j).scopemask && pSpot.scopemask == otherSpot.scopemask;
+                locallab.spots.at(j).denoichmask = locallab.spots.at(j).denoichmask && pSpot.denoichmask == otherSpot.denoichmask;
                 locallab.spots.at(j).lumask = locallab.spots.at(j).lumask && pSpot.lumask == otherSpot.lumask;
                 // Color & Light
                 locallab.spots.at(j).visicolor = locallab.spots.at(j).visicolor && pSpot.visicolor == otherSpot.visicolor;
@@ -3517,6 +3518,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
         if (locallab.spots.at(i).savrest) {
             toEdit.locallab.spots.at(i).savrest = mods.locallab.spots.at(i).savrest;
+        }
+
+        if (locallab.spots.at(i).denoichmask) {
+            toEdit.locallab.spots.at(i).denoichmask = mods.locallab.spots.at(i).denoichmask;
         }
 
         if (locallab.spots.at(i).scopemask) {
@@ -7329,6 +7334,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     shortc(v),
     savrest(v),
     scopemask(v),
+    denoichmask(v),
     lumask(v),
     // Color & Light
     visicolor(v),
@@ -8000,6 +8006,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     shortc = v;
     savrest = v;
     scopemask = v;
+    denoichmask = v;
     lumask = v;
     // Color & Light
     visicolor = v;
