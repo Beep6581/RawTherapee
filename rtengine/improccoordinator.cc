@@ -1250,7 +1250,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg, locwavCurveden, locwavdenutili);
                 }
                 // Update Locallab reference values according to recurs parameter
-            //    if (params->locallab.spots.at(sp).recurs) {
+                if (params->locallab.spots.at(sp).recurs) {
                     spotref.huer = huer;
                     spotref.lumar = lumar;
                     spotref.chromar = chromar;
@@ -1259,8 +1259,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     locallref.at(sp).lumar = lumar;
                     locallref.at(sp).huer = huer;
                     locallref.at(sp).fab = fab;
-                   
-             //   }
+                }
+                spotref.fab = fab;
+                locallref.at(sp).fab = fab;
+
                 locallref.push_back(spotref);
 
             }
