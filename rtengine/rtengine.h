@@ -424,6 +424,7 @@ public:
         double huer;
         double lumar;
         double chromar;
+        float fab;
     };
 
     struct locallabRetiMinMax {

@@ -266,7 +266,7 @@ bool LocallabTool::isLocallabToolAdded()
     return exp->get_visible();
 }
 
-void LocallabTool::refChanged(const double huer, const double lumar, const double chromar)
+void LocallabTool::refChanged(const double huer, const double lumar, const double chromar, const float fab)
 {
     // Hue reference normalization (between 0 and 1)
     double normHuer = huer;
@@ -283,7 +283,9 @@ void LocallabTool::refChanged(const double huer, const double lumar, const doubl
     const double normLumar = lumar / 100.f;
 
     // Chroma reference normalization (between 0 and 1)
-    const double normChromar = LIM01(chromar / 100.f);
+    const double corfap = (65535. * 1.414) / (double) fab;
+//    printf("FAB=%f corfap=%f\n", (double) fab, corfap);
+    const double normChromar = LIM01(corfap * (chromar / 195.f));//195 a little more than 128 * 1.414 = 181
 
     // Update mask curve backgrounds
     updateMaskBackground(normChromar, normLumar, normHuer);

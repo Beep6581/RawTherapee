@@ -1069,7 +1069,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 stdtme = 0.f;
                 meanretie = 0.f;
                 stdretie = 0.f;
-
+                float fab = 1.f;
                 bool istm = params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap;
                 bool isreti = params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti;
                 //preparation for mean and sigma on current RT-spot
@@ -1132,6 +1132,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 spotref.huer = huer;
                 spotref.lumar = lumar;
                 spotref.chromar = chromar;
+                spotref.fab = 1.f;
                 locallref.push_back(spotref);
                 // Locallab tools computation
                 /* Notes:
@@ -1201,7 +1202,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                              meantm, stdtm, meanreti, stdreti);
+                              meantm, stdtm, meanreti, stdreti, fab);
 
 
                 
@@ -1249,11 +1250,19 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg, locwavCurveden, locwavdenutili);
                 }
                 // Update Locallab reference values according to recurs parameter
-                if (params->locallab.spots.at(sp).recurs) {
+            //    if (params->locallab.spots.at(sp).recurs) {
+                    spotref.huer = huer;
+                    spotref.lumar = lumar;
+                    spotref.chromar = chromar;
+                    spotref.fab = fab;
                     locallref.at(sp).chromar = chromar;
                     locallref.at(sp).lumar = lumar;
                     locallref.at(sp).huer = huer;
-                }
+                    locallref.at(sp).fab = fab;
+                   
+             //   }
+                locallref.push_back(spotref);
+
             }
 
             // Transmit Locallab reference values and Locallab Retinex min/max to LocallabListener

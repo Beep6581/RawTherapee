@@ -8048,7 +8048,6 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         LLmaskcieshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         HHmaskcieshape->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_CC_TOOLTIP"));
         expmaskcie->set_tooltip_markup(M("TP_LOCALLAB_MASK_TOOLTIP"));
-       // blurSHde->set_tooltip_text(M("TP_LOCALLAB_BLURCOLDE_TOOLTIP"));
         blendmaskcie->set_tooltip_text(M("TP_LOCALLAB_BLENDMASK_TOOLTIP"));
         radmaskcie->set_tooltip_text(M("TP_LOCALLAB_LAPRAD_TOOLTIP"));
         mask2cieCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));

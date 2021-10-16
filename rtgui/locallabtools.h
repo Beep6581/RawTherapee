@@ -118,7 +118,7 @@ public:
     bool isLocallabToolAdded();
 
     // Mask background management function
-    void refChanged(const double huer, const double lumar, const double chromar);
+    void refChanged(const double huer, const double lumar, const double chromar, const float fab);
 
     // Mask preview functions
     virtual bool isMaskViewActive()

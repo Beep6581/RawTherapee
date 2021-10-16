@@ -253,7 +253,7 @@ enum class BlurType {
                  const LUTf& lmasklocalcurve, bool localmaskutili,
                  const LocwavCurve & loclmasCurvecolwav, bool lmasutilicolwav, int level_bl, int level_hl, int level_br, int level_hr,
                  int shortcu, bool delt, const float hueref, const float chromaref, const float lumaref,
-                 float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, bool fftt, float blu_ma, float cont_ma, int indic);
+                 float maxdE, float mindE, float maxdElim,  float mindElim, float iterat, float limscope, int scope, bool fftt, float blu_ma, float cont_ma, int indic, float &fab);
 
     void avoidcolshi(const struct local_params& lp, int sp, LabImage * original, LabImage *transformed, int cy, int cx, int sk);
 
@@ -357,7 +357,7 @@ enum class BlurType {
                 double& huerefblur, double &chromarefblur, double& lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, int &lastsav,
                 bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
                 float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
-                float& meantm, float& stdtm, float& meanreti, float& stdreti);
+                float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab);
 
     void addGaNoise(LabImage *lab, LabImage *dst, const float mean, const float variance, const int sk);
     void BlurNoise_Localold(int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy);

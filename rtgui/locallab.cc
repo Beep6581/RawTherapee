@@ -661,9 +661,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 const double huer = maskBackRef.at(pp->locallab.selspot).huer;
                 const double lumar = maskBackRef.at(pp->locallab.selspot).lumar;
                 const double chromar = maskBackRef.at(pp->locallab.selspot).chromar;
+                const float fab = maskBackRef.at(pp->locallab.selspot).fab;
 
                 for (auto tool : locallabTools) {
-                    tool->refChanged(huer, lumar, chromar);
+                    tool->refChanged(huer, lumar, chromar, fab);
                 }
             }
 
@@ -1073,9 +1074,10 @@ void Locallab::refChanged(const std::vector<locallabRef> &ref, int selspot)
         const double huer = maskBackRef.at(selspot).huer;
         const double lumar = maskBackRef.at(selspot).lumar;
         const double chromar = maskBackRef.at(selspot).chromar;
+        const float fab = maskBackRef.at(selspot).fab;
 
         for (auto tool : locallabTools) {
-            tool->refChanged(huer, lumar, chromar);
+            tool->refChanged(huer, lumar, chromar, fab);
         }
     }
 }
