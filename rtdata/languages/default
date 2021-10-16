@@ -2959,8 +2959,8 @@ TP_LOCALLAB_INVERS;Inverse
 TP_LOCALLAB_INVERS_TOOLTIP;Fewer possibilities if selected (Inverse).\n\nAlternative: use two spots\nFirst Spot:\n Full Image\n \nSecond spot: Excluding spot
 TP_LOCALLAB_INVMASK;Inverse algorithm
 TP_LOCALLAB_ISOGR;Distribution (ISO)
-TP_LOCALLAB_JAB;Jz Gamut control
-TP_LOCALLAB_JAB_TOOLTIP;Use with precaution.\n Preferably for SDR: images and devices.
+TP_LOCALLAB_JAB;Zcam matrix - instead of Jz matrix
+//TP_LOCALLAB_JAB_TOOLTIP;
 TP_LOCALLAB_JABADAP_TOOLTIP;Perceptual Uniform adaptation.\nAutomatically adjusts a) the relation between Jz and saturation, taking into account "Absolute luminance"
 TP_LOCALLAB_JZ100;Jz reference 100cd/m2
 TP_LOCALLAB_JZFORCE;Force max Jz to 1

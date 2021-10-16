@@ -7648,7 +7648,7 @@ Locallabcie::Locallabcie():
     jzFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const jzBox = Gtk::manage(new ToolParamBlock());
     jzBox->pack_start(*qtoj);
-//    jzBox->pack_start(*jabcie);
+    jzBox->pack_start(*jabcie);
     czlightFrame->set_label_align(0.025, 0.5);
     czcolorFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const ciePzlightBox = Gtk::manage(new ToolParamBlock());
@@ -8019,7 +8019,6 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         PQFrame->set_tooltip_text(M("TP_LOCALLAB_JZPQFRA_TOOLTIP"));
         qtoj->set_tooltip_text(M("TP_LOCALLAB_JZQTOJ_TOOLTIP"));
         modecam->set_tooltip_text(M("TP_LOCALLAB_JZMODECAM_TOOLTIP"));
-        jabcie->set_tooltip_text(M("TP_LOCALLAB_JAB_TOOLTIP"));
         adapjzcie->set_tooltip_text(M("TP_LOCALLAB_JABADAP_TOOLTIP"));
         jz100->set_tooltip_text(M("TP_LOCALLAB_JZ100_TOOLTIP"));
         pqremap->set_tooltip_text(M("TP_LOCALLAB_JZPQREMAP_TOOLTIP"));
