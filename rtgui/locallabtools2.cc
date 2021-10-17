@@ -7648,7 +7648,7 @@ Locallabcie::Locallabcie():
     jzFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const jzBox = Gtk::manage(new ToolParamBlock());
     jzBox->pack_start(*qtoj);
-    jzBox->pack_start(*jabcie);
+   // jzBox->pack_start(*jabcie);
     czlightFrame->set_label_align(0.025, 0.5);
     czcolorFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const ciePzlightBox = Gtk::manage(new ToolParamBlock());

@@ -2552,7 +2552,7 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
         ciec = true;
         iscie = true;
     }
-    bool z_cam = params->locallab.spots.at(sp).jabcie; //alaways use normal algorithm, Zcam giev often bad results
+    bool z_cam = false; //params->locallab.spots.at(sp).jabcie; //alaways use normal algorithm, Zcam giev often bad results
     bool jabcie = false;//always disabled
     //sigmoid J Q variables
     const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie; 
@@ -4914,7 +4914,7 @@ void ImProcFunctions::InverseBlurNoise_Local(LabImage * originalmask, const stru
 
 
 
-static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexporig, const LabImage* original, float &fab, float &meanfab, float &maxfab, float chrom, bool multiThread)
+static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexporig, int flag, const LabImage* original, float &fab, float &meanfab, float &maxfab, float chrom, bool multiThread)
 {
     const int nbfab = bfw * bfh;
 
@@ -4930,8 +4930,13 @@ static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexpo
 #endif
         for (int y = 0; y < bfh; y++) {
             for (int x = 0; x < bfw; x++) {
-                bufexporig->a[y][x] = original->a[y + ystart][x + xstart];
-                bufexporig->b[y][x] = original->b[y + ystart][x + xstart];
+                if(flag == 0) {
+                    bufexporig->a[y][x] = original->a[y + ystart][x + xstart];
+                    bufexporig->b[y][x] = original->b[y + ystart][x + xstart];
+                } else {
+                    bufexporig->a[y][x] = original->a[y][x];
+                    bufexporig->b[y][x] = original->b[y][x];
+                }
                 sumab += static_cast<double>(SQR(std::fabs(bufexporig->a[y][x])) + SQR(std::fabs(bufexporig->b[y][x])));
                 
               //  sumab += static_cast<double>(std::fabs(bufexporig->a[y][x]));
@@ -4963,8 +4968,11 @@ static void mean_fab(int xstart, int ystart, int bfw, int bfh, LabImage* bufexpo
         const float multchrom = 1.f + kf * chrom; //small correction chrom here 0.f
 
         const float stddv = std::sqrt(som / nbfab);
-        fab = meanfab + multsigma * stddv * multchrom;//with 3 sigma about 99% cases
-        fab = max(fab, 0.90f* maxfab);//Find maxi between mean + 3 sigma and 90% max (90 arbitrary empirical value)
+        float fabprov = meanfab + multsigma * stddv * multchrom;//with 3 sigma about 99% cases
+        if(fabprov > maxfab) {
+            fabprov = maxfab;
+        }
+        fab = max(fabprov, 0.90f* maxfab);//Find maxi between mean + 3 sigma and 90% max (90 arbitrary empirical value)
 
         if (fab <= 0.f) {
             fab = 50.f;
@@ -5780,7 +5788,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
     float meanfab, corfab;
     float maxfab = -1000.f;
     float epsi = 0.001f;
-    mean_fab(xstart, ystart, bfw, bfh, bufcolorig, original, fab, meanfab, maxfab, chrom, multiThread);
+    mean_fab(xstart, ystart, bfw, bfh, bufcolorig, 0, original, fab, meanfab, maxfab, chrom, multiThread);
     corfab = 0.7f * (65535.f) / (fab + epsi);//empirical values 0.7 link to chromult
 
    // printf("Fab=%f corfab=%f maxfab=%f\n", (double) fab, (double) corfab, (double) maxfab);
@@ -5999,21 +6007,25 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
             if (!bdecomp.memory_allocation_failed()) {
                 bdecomp.reconstruct(tmpab.b[0]);
             }
-            /*
-                float meanfab1, fab1, maxfab1;
-                std::unique_ptr<LabImage> buforig;
-                buforig.reset(new LabImage(bfw, bfh));
-                for (int ir = 0; ir < bfh; ir++)
-                    for (int jr = 0; jr < bfw; jr++) {
+            
+            float meanfab1, fab1, maxfab1;
+            std::unique_ptr<LabImage> buforig;
+            buforig.reset(new LabImage(bfw, bfh));
+#ifdef _OPENMP
+                    #pragma omp parallel for if (multiThread)
+#endif
+            for (int ir = 0; ir < bfh; ir++)
+                for (int jr = 0; jr < bfw; jr++) {
                     buforig->L[ir][jr] = tmpab.L[ir][jr];
                     buforig->a[ir][jr] = tmpab.a[ir][jr];
                     buforig->b[ir][jr] = tmpab.b[ir][jr];
                 }
 
     
-                mean_fab(xstart, ystart, bfw, bfh, buforig.get(), original, fab1, meanfab1, maxfab1, chrom, multiThread);
-                printf("Fab den=%f \n", (double) fab1);
-            */
+            mean_fab(xstart, ystart, bfw, bfh, buforig.get(), 1, buforig.get(), fab1, meanfab1, maxfab1, chrom, multiThread);
+              //  printf("Fab den=%f \n", (double) fab1);
+            fab = fab1;//fab denoise
+            
         }
 // end code denoise mask chroma
 
