@@ -2667,7 +2667,7 @@ TP_LOCALLAB_ARTIF;Shape detection
 TP_LOCALLAB_ARTIF_TOOLTIP;ΔE scope threshold increases the range of deltaE scope. High values are for very wide gamut images.\nIncreasing deltaE decay can improve shape detection, but can also reduce the scope.
 TP_LOCALLAB_AUTOGRAY;Auto mean luminance (Yb%)
 TP_LOCALLAB_AUTOGRAYCIE;Auto
-TP_LOCALLAB_AUTOGRAYCIE_TOOLTIP;Automatically calculates the 'Mean luminance' an 'Absolute luminance'.\nTry to change with JzCzHz
+TP_LOCALLAB_AUTOGRAYCIE_TOOLTIP;Automatically calculates the “Mean luminance” and “Absolute luminance”.
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).\nMunsell correction always disabled when Jz or CAM16 is used.
 TP_LOCALLAB_AVOIDRAD;Soft radius
@@ -2717,7 +2717,7 @@ TP_LOCALLAB_BUTTON_REN;Rename
 TP_LOCALLAB_BUTTON_VIS;Show/Hide
 TP_LOCALLAB_CAM16_FRA;Cam16 Image Adjustments
 TP_LOCALLAB_CAM16PQREMAP;HDR PQ-peak Luminance
-TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) adapted to CAM16 - allows you to change internal PQ function (usually 10000 cd/m2 - default 100 cd/m2 - disabled for 100 cd/m2).\nCan be used to adapt to devices and images.
+TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) adapted to CAM16 - allows you to change the internal PQ function (usually 10000 cd/m2 - default 100 cd/m2 - disabled for 100 cd/m2).\nCan be used to adapt to different devices and images.
 TP_LOCALLAB_CAMMODE;CAM model
 TP_LOCALLAB_CAMMODE_ALL;CAM 16 + Jz Cz Hz
 TP_LOCALLAB_CAMMODE_CAM16;CAM 16
@@ -2961,16 +2961,16 @@ TP_LOCALLAB_INVMASK;Inverse algorithm
 TP_LOCALLAB_ISOGR;Distribution (ISO)
 TP_LOCALLAB_JAB;Zcam matrix - instead of Jz matrix
 //TP_LOCALLAB_JAB_TOOLTIP;
-TP_LOCALLAB_JABADAP_TOOLTIP;Perceptual Uniform adaptation.\nAutomatically adjusts a) the relation between Jz and saturation, taking into account "Absolute luminance"
+TP_LOCALLAB_JABADAP_TOOLTIP;Perceptual Uniform adaptation.\nAutomatically adjusts the relationship between Jz and saturation, taking into account "Absolute luminance".
 TP_LOCALLAB_JZ100;Jz reference 100cd/m2
 TP_LOCALLAB_JZFORCE;Force max Jz to 1
-TP_LOCALLAB_JZFORCE_TOOLTIP;Allows you to force Jz maximum to 1, to ensure a better response for sliders, curves...
-TP_LOCALLAB_JZMODECAM_TOOLTIP;Jz (only in 'Advanced' mode) is really operational if the output device (monitor) is HDR (peak luminance higher than 100 cd/m2, ideally between 4000 and 10000 cd/m2 and a black point luminance inferior to 0.005 cd/m2). This supposes a) ICC-PCS for screen uses Jzazbz (or XYZ), b) work in real precision, c) that this monitor is calibrated (with if possible a DCI-P3 or Rec-2020 gamut), d) and that the usual gamma (sRGB or BT709) is replaced by Perceptual Quantiser (PQ).
+TP_LOCALLAB_JZFORCE_TOOLTIP;Allows you to force the maximum Jz value to 1 for better slider and curve response
+TP_LOCALLAB_JZMODECAM_TOOLTIP;Jz (only in 'Advanced' mode). Only operational if the output device (monitor) is HDR (peak luminance higher than 100 cd/m2  ideally between 4000 and 10000 cd/m2 - and black point luminance inferior to 0.005 cd/m2). This supposes a) the ICC-PCS for the screen uses Jzazbz (or XYZ), b) works in real precision, c) that the monitor is calibrated (if possible with a DCI-P3 or Rec-2020 gamut), d) that the usual gamma (sRGB or BT709) is replaced by a Perceptual Quantiser (PQ) function.
 TP_LOCALLAB_JZPQFRA;Jz remapping
-TP_LOCALLAB_JZPQFRA_TOOLTIP;Allows you to adapt the Jz algorithm to an SDR environment or to the characteristics (performance) of an HDR environnemnt as follows:\n a) for luminance values between 0 and 100 cd/m2 the system behaves as if it was in an SDR environment;\n b) for luminance values between 100 and 10000 cd/m2 you can adapt the algorithm to the HDR characteristics of the image and the monitor.\n\nIf 'PQ - Peak luminance' is set to 10000, 'Jz remappping' behave as original algorithm Jzazbz  
+TP_LOCALLAB_JZPQFRA_TOOLTIP;Allows you to adapt the Jz algorithm to an SDR environment or to the characteristics (performance) of an HDR environment as follows:\n a) for luminance values between 0 and 100 cd/m2, the system behaves as if it were in an SDR environment.\n b) for luminance values between 100 and 10000 cd/m2, you can adapt the algorithm to the HDR characteristics of the image and the monitor.\n\nIf “PQ - Peak luminance” is set to 10000, “Jz remappping” behaves in the same way as the original Jzazbz algorithm. 
 TP_LOCALLAB_JZPQREMAP;PQ - Peak luminance 
-TP_LOCALLAB_JZPQREMAP_TOOLTIP;PQ (Perceptual Quantizer) - allows you to change internal PQ function (usually 10000 cd/m2 - default 120 cd/m2).\nCan be used to adapt to images, process and devices.
-TP_LOCALLAB_JZ100_TOOLTIP;Automatically adjusts the reference Jz 100 cd/m2 level (Image Signal).\nChange saturation level and action of 'PU adaptation (Perceptual Uniform adaptation)'.
+TP_LOCALLAB_JZPQREMAP_TOOLTIP;PQ (Perceptual Quantizer) - allows you to change the internal PQ function (usually 10000 cd/m2 - default 120 cd/m2).\nCan be used to adapt to different images, processes and devices.
+TP_LOCALLAB_JZ100_TOOLTIP;Automatically adjusts the reference Jz 100 cd/m2 level (image signal).\nChanges the saturation level and action of “PU adaptation” (Perceptual Uniform adaptation).
 TP_LOCALLAB_JZADAP;PU adaptation
 TP_LOCALLAB_JZFRA;Jz Cz Hz Image Adjustments
 TP_LOCALLAB_JZLIGHT;Brightness
@@ -2980,7 +2980,7 @@ TP_LOCALLAB_JZHUECIE;Hue Rotation
 TP_LOCALLAB_JZSAT;Saturation
 TP_LOCALLAB_JZSHFRA;Shadows/Highlights Jz
 TP_LOCALLAB_JZQTOJ;Relative luminance
-TP_LOCALLAB_JZQTOJ_TOOLTIP;Allows you to use "Relative luminance" instead of "Absolute luminance" - Brighness becomes Lightness.\nAre affected by this change: the 'Brightness' slider, the 'Contrast' slider, the 'Jz(Jz)' curve, and 'Sigmoid Jz'.
+TP_LOCALLAB_JZQTOJ_TOOLTIP;Allows you to use "Relative luminance" instead of "Absolute luminance" - Brightness becomes Lightness.\nThe changes affect: the Brightness slider, the Contrast slider, the Jz(Jz) curve and Sigmoid Jz.
 TP_LOCALLAB_LABBLURM;Blur Mask
 TP_LOCALLAB_LABEL;Local Adjustments
 TP_LOCALLAB_LABGRID;Color correction grid
@@ -3024,7 +3024,7 @@ TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Automatically calculates the 'Mean luminance' fo
 TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the dynamic range and 'Mean luminance' for the scene conditions if the "Auto mean luminance (Yb%)” is checked).\nAlso calculates the absolute luminance at the time of shooting.\nPress the button again to adjust the automatically calculated values.
 TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm making the shadows darker and the highlights brighter.\nWith values greater than 2, the shadows are grayer and the highlights become more washed out.
 TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Estimated values of dynamic range i.e. Black Ev and White Ev
-TP_LOCALLAB_LOGCATAD_TOOLTIP;The chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance deviates significantly from the D50 reference.\nAdapts colors to the illuminant of the output device.
+TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance deviates significantly from the D50 reference.\nAdapts colors to the illuminant of the output device.
 TP_LOCALLAB_LOGCOLORFL;Colorfulness (M)
 TP_LOCALLAB_LOGCOLORF_TOOLTIP;Perceived amount of hue in relation to gray.\nIndicator that a stimulus appears more or less colored.
 TP_LOCALLAB_LOGCONQL;Contrast (Q)
@@ -3038,7 +3038,7 @@ TP_LOCALLAB_LOGENCOD_TOOLTIP;Tone Mapping with Logarithmic encoding (ACES).\nUse
 TP_LOCALLAB_LOGEXP;All tools
 TP_LOCALLAB_LOGFRA;Scene Conditions
 TP_LOCALLAB_LOGFRAME_TOOLTIP;Allows you to calculate and adjust the Ev levels and the 'Mean luminance Yb%' (source gray point) for the spot area. The resulting values will be used by all Lab operations and most RGB operations in the pipeline.\nTakes into account exposure compensation in the main-menu Exposure tab.\nAlso calculates the absolute luminance at the time of shooting.
-TP_LOCALLAB_LOGIMAGE_TOOLTIP;Takes into account corresponding Ciecam variables (mainly Contrast 'J' and Saturation 's', and also Contrast (Q) , Brightness (Q), Lightness (J), Colorfulness (M) in Advanced mode).
+TP_LOCALLAB_LOGIMAGE_TOOLTIP;Takes into account corresponding Ciecam variables: i.e.  Contrast (J) and Saturation (s), as well as Contrast (Q), Brightness (Q), Lightness (J) and Colorfulness (M) (in Advanced mode)
 TP_LOCALLAB_LOGLIGHTL;Lightness (J)
 TP_LOCALLAB_LOGLIGHTL_TOOLTIP;Close to lightness (L*a*b*), takes into account the increase in perceived coloration. 
 TP_LOCALLAB_LOGLIGHTQ;Brightness (Q)
@@ -3047,7 +3047,7 @@ TP_LOCALLAB_LOGLIN;Logarithm mode
 TP_LOCALLAB_LOGPFRA;Relative Exposure Levels
 TP_LOCALLAB_LOGREPART;Overall strength
 TP_LOCALLAB_LOGREPART_TOOLTIP;Allows you to adjust the relative strength of the log-encoded image with respect to the original image.\nDoes not affect the Ciecam component.
-TP_LOCALLAB_LOGSATURL_TOOLTIP;Saturation (s) in CIECAM16 corresponds to the color of a stimulus in relation to its own brightness.\nActs mainly on medium and highlights tones
+TP_LOCALLAB_LOGSATURL_TOOLTIP;Saturation (s) in CIECAM16 corresponds to the color of a stimulus in relation to its own brightness.\nActs mainly on medium tones and on the highlights.
 TP_LOCALLAB_LOGSCENE_TOOLTIP;Corresponds to the shooting conditions.
 TP_LOCALLAB_LOGSRCGREY_TOOLTIP;Estimated gray point value of the image.
 TP_LOCALLAB_LOGSURSOUR_TOOLTIP;Changes tones and colors to take into account the Scene conditions.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment. The image will become slightly brighter.\n\n<b>Dark</b>: Dark environment. The image will become more bright.
@@ -3118,7 +3118,7 @@ TP_LOCALLAB_MASKLCTHRMIDCH;Gray area chroma denoise
 TP_LOCALLAB_MASKUSABLE;Mask enabled (Mask & modifications)
 TP_LOCALLAB_MASKUNUSABLE;Mask disabled (Mask & modifications)
 TP_LOCALLAB_MASKRECOTHRES;Recovery threshold
-TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a tool by activating another tool and using only the mask (set the tool sliders to 0 ).\n\nYou can also duplicate the RT-spot and place it close to the first spot. The small variations in the spot references allows you to make fine adjustments.  
+TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a tool by activating another tool and using only the mask (set the tool sliders to 0 ).\n\nYou can also duplicate the RT-spot and place it close to the first spot. The small variations in the spot references allow you to make fine adjustments. 
 TP_LOCALLAB_MED;Medium
 TP_LOCALLAB_MEDIAN;Median Low
 TP_LOCALLAB_MEDIANITER_TOOLTIP;The number of successive iterations carried out by the median filter.
@@ -3224,9 +3224,8 @@ TP_LOCALLAB_QUANONEALL;Off
 TP_LOCALLAB_RADIUS;Radius
 TP_LOCALLAB_RADIUS_TOOLTIP;Uses a Fast Fourier Transform for radius > 30
 TP_LOCALLAB_RADMASKCOL;Smooth radius
-//TP_LOCALLAB_RECOTHRES02_TOOLTIP;If the 'Recovery threshold' value is greater than 1, "Mask and Modifications" which acts on the original image not modified by the current tool (Color and Light, Wavelet, Cam16, etc.) takes into account the mask modifications for the general process.\nIf the value of 'Recovery threshold' is less than 1, "Mask and Modifications" which acts on the original image not modified by the current tool (Color and Light, Wavelet, Cam16, etc.) does not take into account the mask modifications for the general process. These modifications are ignored.\n\nIn both cases, 'Recovery threshold' acts, depending on the mask, on the image modified by the current tool (Color and Light, Wavelet, Cam16, etc.).
-TP_LOCALLAB_RECOTHRES02_TOOLTIP;If the “Recovery threshold” value is greater than 1, the mask in Mask and Modifications takes into account any previous modifications made to the image but not those made with the current tool (e.g. Color and Light, Wavelet, Cam16, etc.)\nIf the value of the “Recovery threshold” is less than 1, the mask in Mask and Modifications does not take into account any previous modifications to the image.\n\nIn both cases, the “Recovery threshold” acts on the masked image as modified by the current tool (Color and Light, Wavelet, Cam16, etc.).
 TP_LOCALLAB_RECT;Rectangle
+TP_LOCALLAB_RECOTHRES02_TOOLTIP;If the “Recovery threshold” value is greater than 1, the mask in Mask and Modifications takes into account any previous modifications made to the image but not those made with the current tool (e.g. Color and Light, Wavelet, Cam16, etc.)\nIf the value of the “Recovery threshold” is less than 1, the mask in Mask and Modifications does not take into account any previous modifications to the image.\n\nIn both cases, the “Recovery threshold” acts on the masked image as modified by the current tool (Color and Light, Wavelet, Cam16, etc.). 
 TP_LOCALLAB_RECURS;Recursive references
 TP_LOCALLAB_RECURS_TOOLTIP;Forces the algorithm to recalculate the references after each tool is applied.\nAlso useful for working with masks.
 TP_LOCALLAB_REFLABEL;Ref. (0..1) Chroma=%1 Luma=%2 Hue=%3
@@ -3265,7 +3264,7 @@ TP_LOCALLAB_RGB;RGB Tone Curve
 TP_LOCALLAB_RGBCURVE_TOOLTIP;In RGB mode you have 4 choices : Standard, Weighted standard, Luminance & Film-like.
 TP_LOCALLAB_ROW_NVIS;Not visible
 TP_LOCALLAB_ROW_VIS;Visible
-TP_LOCALLAB_RSTPROTECT_TOOLTIP;Red and skin-tones protection affects sliders Saturation, Chroma and Colorfullness.
+TP_LOCALLAB_RSTPROTECT_TOOLTIP;Red and skin-tone protection affects the Saturation, Chroma and Colorfulness sliders.
 TP_LOCALLAB_SATUR;Saturation
 TP_LOCALLAB_SATURV;Saturation (s)
 TP_LOCALLAB_SAVREST;Save - Restore Current Image
@@ -3342,6 +3341,7 @@ TP_LOCALLAB_SIGMOIDTH;Threshold
 TP_LOCALLAB_SIGMOIDBL;Blend
 TP_LOCALLAB_SIGMOIDQJ;Use Q instead of J
 TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both 'Ciecam' and 'Sigmoid' function.\nThree sliders : a) Strength acts on the shape of the sigmoid curve and consequently on the strength; b) threshold distributes the action according to the luminance; c)blend acts on the final aspect of the image, contrast and luminance. 
+TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a tone-mapping appearance using both Ciecam and Sigmoid functions.\nThree sliders: a) Strength acts on the shape of the Sigmoid curve; b) Threshold distributes the action according to the luminance; c)Blend acts on the final aspect (contrast and luminance) of the image. 
 TP_LOCALLAB_SIM;Simple
 TP_LOCALLAB_SLOMASKCOL;Slope
 TP_LOCALLAB_SLOMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying ‘L’ to avoid any discontinuities.
