@@ -16,17 +16,20 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Install dependencies
         run: |
           sudo apt update
           DEBIAN_FRONTEND=noninteractive sudo apt install -y cmake libgtk-3-dev libgtkmm-3.0-dev liblensfun-dev librsvg2-dev liblcms2-dev libfftw3-dev libiptcdata0-dev libtiff5-dev libcanberra-gtk3-dev liblensfun-bin
       - name: Configure build
         run: |
+          BRANCH="$(git branch --show-current)"
           mkdir build
           cd build
           cmake \
             -DCMAKE_BUILD_TYPE="release"  \
-            -DCACHE_NAME_SUFFIX="5-dev" \
+            -DCACHE_NAME_SUFFIX="5-$BRANCH-AppImage" \
             -DPROC_TARGET_NUMBER="1" \
             -DBUILD_BUNDLE="ON" \
             -DBUNDLE_BASE_INSTALL_DIR="/" \
@@ -57,6 +60,7 @@ jobs:
       - name: Package AppImage
         working-directory: ./build
         run: |
+          OUTPUT="RawTherapee-$(git describe)-x86_64.AppImage"
           ./linuxdeploy-x86_64.AppImage \
             --appimage-extract-and-run \
             --appdir AppDir \
@@ -75,13 +79,9 @@ jobs:
             --library /lib/x86_64-linux-gnu/libxcb.so.1 \
             --library /lib/x86_64-linux-gnu/libXau.so.6 \
             --library /lib/x86_64-linux-gnu/libXdmcp.so.6
-      - name: Prepare for upload
-        working-directory: ./build
-        run: |
-          echo "VERSION=$(grep Version AboutThisBuild.txt | awk '{print $2}')" >> $GITHUB_ENV
-          echo "APPIMAGE_PATH=$(pwd)/$(echo RawTherapee-*.AppImage)" >> $GITHUB_ENV
+          echo "APPIMAGE_NAME='$OUTPUT'" >> $GITHUB_ENV
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: RawTherapee-${{env.VERSION}}-x86_64.AppImage
-          path: ${{env.APPIMAGE_PATH}}
+          name: ${{env.APPIMAGE_NAME}}
+          path: ${{github.workspace}}/build/${{env.APPIMAGE_NAME}}
