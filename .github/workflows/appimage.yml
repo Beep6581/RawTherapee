@@ -65,20 +65,7 @@ jobs:
             --appimage-extract-and-run \
             --appdir AppDir \
             --plugin gtk \
-            --output appimage \
-            --library /lib/x86_64-linux-gnu/libbsd.so.0 \
-            --library /lib/x86_64-linux-gnu/libdatrie.so.1 \
-            --library /lib/x86_64-linux-gnu/libexpat.so.1 \
-            --library /lib/x86_64-linux-gnu/libfontconfig.so.1 \
-            --library /lib/x86_64-linux-gnu/libfreetype.so.6 \
-            --library /lib/x86_64-linux-gnu/libfribidi.so.0 \
-            --library /lib/x86_64-linux-gnu/libglib-2.0.so.0 \
-            --library /lib/x86_64-linux-gnu/libharfbuzz.so.0 \
-            --library /lib/x86_64-linux-gnu/libthai.so.0 \
-            --library /lib/x86_64-linux-gnu/libX11.so.6 \
-            --library /lib/x86_64-linux-gnu/libxcb.so.1 \
-            --library /lib/x86_64-linux-gnu/libXau.so.6 \
-            --library /lib/x86_64-linux-gnu/libXdmcp.so.6
+            --output appimage
           echo "APPIMAGE_NAME='$OUTPUT'" >> $GITHUB_ENV
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
