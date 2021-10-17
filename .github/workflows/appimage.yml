@@ -48,7 +48,7 @@ jobs:
         run: |
           lensfun-update-data
           mkdir -p build/AppDir/usr/share/lensfun
-          cp -R /var/lib/lensfun-updates/* build/AppDir/usr/share/lensfun/
+          cp -R ~/.local/share/lensfun/updates/* build/AppDir/usr/share/lensfun/
       - name: Download AppImage tools
         working-directory: ./build
         run: |
