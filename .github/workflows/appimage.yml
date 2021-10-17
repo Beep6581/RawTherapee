@@ -1,0 +1,88 @@
+name: Build AppImage
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - dev
+  release:
+    types:
+      - created
+  workflow_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          apt update
+          apt upgrade -y
+          DEBIAN_FRONTEND=noninteractive apt install -y git build-essential cmake curl pkg-config libgtk-3-dev libgtkmm-3.0-dev liblensfun-dev librsvg2-dev liblcms2-dev libfftw3-dev libiptcdata0-dev libtiff5-dev libcanberra-gtk3-dev patchelf liblensfun-bin
+      - name: Configure build
+        run: |
+          mkdir build
+          cd build
+          cmake \
+            -DCMAKE_BUILD_TYPE="release"  \
+            -DCACHE_NAME_SUFFIX="5-dev" \
+            -DPROC_TARGET_NUMBER="1" \
+            -DBUILD_BUNDLE="ON" \
+            -DBUNDLE_BASE_INSTALL_DIR="/" \
+            -DOPTION_OMP="ON" \
+            -DWITH_LTO="OFF" \
+            -DWITH_PROF="OFF" \
+            -DWITH_SAN="OFF" \
+            -DWITH_SYSTEM_KLT="OFF" \
+            -DCMAKE_INSTALL_PREFIX=/usr \
+            -DLENSFUNDBDIR="../share/lensfun/version_1" \
+            ..
+      - name: Build RawTherapee
+        working-directory: ./build
+        run: |
+          make -j$(nproc) install DESTDIR=AppDir/usr/bin
+          mv AppDir/usr/bin/share AppDir/usr/
+      - name: Include Lensfun
+        run: |
+          lensfun-update-data
+          mkdir -p build/AppDir/usr/share/lensfun
+          cp -R /var/lib/lensfun-updates/* build/AppDir/usr/share/lensfun/
+      - name: Download AppImage tools
+        working-directory: ./build
+        run: |
+          curl --location 'https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage' > linuxdeploy-x86_64.AppImage
+          curl --location 'https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh' > linuxdeploy-plugin-gtk.sh
+          chmod u+x linuxdeploy-*
+      - name: Package AppImage
+        working-directory: ./build
+        run: |
+          ./linuxdeploy-x86_64.AppImage \
+            --appimage-extract-and-run \
+            --appdir AppDir \
+            --plugin gtk \
+            --output appimage \
+            --library /lib/x86_64-linux-gnu/libbsd.so.0 \
+            --library /lib/x86_64-linux-gnu/libdatrie.so.1 \
+            --library /lib/x86_64-linux-gnu/libexpat.so.1 \
+            --library /lib/x86_64-linux-gnu/libfontconfig.so.1 \
+            --library /lib/x86_64-linux-gnu/libfreetype.so.6 \
+            --library /lib/x86_64-linux-gnu/libfribidi.so.0 \
+            --library /lib/x86_64-linux-gnu/libglib-2.0.so.0 \
+            --library /lib/x86_64-linux-gnu/libharfbuzz.so.0 \
+            --library /lib/x86_64-linux-gnu/libthai.so.0 \
+            --library /lib/x86_64-linux-gnu/libX11.so.6 \
+            --library /lib/x86_64-linux-gnu/libxcb.so.1 \
+            --library /lib/x86_64-linux-gnu/libXau.so.6 \
+            --library /lib/x86_64-linux-gnu/libXdmcp.so.6
+      - name: Prepare for upload
+        working-directory: ./build
+        run: |
+          echo "VERSION=$(grep Version AboutThisBuild.txt | awk '{print $2}')" >> $GITHUB_ENV
+          echo "APPIMAGE_PATH=$(pwd)/$(echo RawTherapee-*.AppImage)" >> $GITHUB_ENV
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: RawTherapee-${{env.VERSION}}-x86_64.AppImage
+          path: ${{env.APPIMAGE_PATH}}
