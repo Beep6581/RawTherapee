@@ -2974,6 +2974,26 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk,
     if(c20  && plum > 100.f) {
         c16 = 21;//I define 21...for 2021 :)
     }
+    int level_bljz = params->locallab.spots.at(sp).csthresholdjz.getBottomLeft();
+    int level_hljz = params->locallab.spots.at(sp).csthresholdjz.getTopLeft();
+    int level_brjz = params->locallab.spots.at(sp).csthresholdjz.getBottomRight();
+    int level_hrjz = params->locallab.spots.at(sp).csthresholdjz.getTopRight();
+    float alowjz = 1.f;
+    float blowjz = 0.f;
+
+    if (level_hljz != level_bljz) {
+        alowjz = 1.f / (level_hljz - level_bljz);
+        blowjz = -alowjz * level_bljz;
+    }
+
+    float ahighjz = 1.f;
+    float bhighjz = 0.f;
+
+    if (level_hrjz != level_brjz) {
+        ahighjz = 1.f / (level_hrjz - level_brjz);
+        bhighjz =  -ahighjz * level_brjz;
+    }
+    float sigmalcjz = params->locallab.spots.at(sp).sigmalcjz;
     
     Ciecam02::initcam1float(yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c, c16, plum);
     const float pow1 = pow_F(1.64f - pow_F(0.29f, n), 0.73f);
