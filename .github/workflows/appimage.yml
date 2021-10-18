@@ -11,7 +11,7 @@ on:
       - created
   workflow_dispatch:
 jobs:
-  build:
+  Build AppImage:
     runs-on: ubuntu-18.04
     steps:
       - name: Checkout source
