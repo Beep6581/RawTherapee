@@ -6,9 +6,6 @@ on:
   pull_request:
     branches:
       - dev
-  release:
-    types:
-      - created
   workflow_dispatch:
 jobs:
   Build AppImage:
