@@ -350,6 +350,7 @@ protected:
     LocwavCurve locedgwavCurve;
     LocwavCurve loclmasCurve_wav;
     LocwavCurve locwavCurvehue;
+    LocwavCurve locwavCurvejz;
 
     std::vector<float> huerefs;
     std::vector<float> huerefblurs;

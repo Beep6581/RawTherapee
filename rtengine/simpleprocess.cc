@@ -999,6 +999,7 @@ private:
             LocwavCurve loclmasCurvecolwav;
             LocwavCurve loclmasCurve_wav;
             LocwavCurve locwavCurve;
+            LocwavCurve locwavCurvejz;
             LocwavCurve loclevwavCurve;
             LocwavCurve locconwavCurve;
             LocwavCurve loccompwavCurve;
@@ -1096,6 +1097,7 @@ private:
                 const bool llmaslcutili = locllmaslcCurve.Set(params.locallab.spots.at(sp).LLmasklccurve);
                 const bool lmasutili_wav = loclmasCurve_wav.Set(params.locallab.spots.at(sp).LLmask_curvewav);
                 const bool locwavutili = locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve);
+                const bool locwavutilijz = locwavCurvejz.Set(params.locallab.spots.at(sp).locwavcurvejz);
                 const bool locwavhueutili = locwavCurvehue.Set(params.locallab.spots.at(sp).locwavcurvehue);
                 const bool locwavdenutili = locwavCurveden.Set(params.locallab.spots.at(sp).locwavcurveden);
                 const bool loclevwavutili = loclevwavCurve.Set(params.locallab.spots.at(sp).loclevwavcurve);
@@ -1207,6 +1209,7 @@ private:
                         loclmasCurveblwav,lmasutiliblwav,
                         loclmasCurvecolwav,lmasutilicolwav,
                         locwavCurve, locwavutili,
+                        locwavCurvejz, locwavutilijz,
                         loclevwavCurve, loclevwavutili,
                         locconwavCurve, locconwavutili,
                         loccompwavCurve, loccompwavutili,

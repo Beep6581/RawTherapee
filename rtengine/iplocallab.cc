@@ -2536,7 +2536,8 @@ void gamutjz (double &Jz, double &az, double &bz, double pl, const double wip[3]
         } while (!inGamut);
 }
 
-void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk, const LUTf& cielocalcurve, bool localcieutili, const LUTf& cielocalcurve2, bool localcieutili2, const LUTf& jzlocalcurve, bool localjzutili, const LUTf& czlocalcurve, bool localczutili, const LUTf& czjzlocalcurve, bool localczjzutili, const LocCHCurve& locchCurvejz, const LocHHCurve& lochhCurvejz, const LocLHCurve& loclhCurvejz, bool HHcurvejz, bool CHcurvejz, bool LHcurvejz)
+void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int call, int sk, const LUTf& cielocalcurve, bool localcieutili, const LUTf& cielocalcurve2, bool localcieutili2, const LUTf& jzlocalcurve, bool localjzutili, const LUTf& czlocalcurve, bool localczutili, const LUTf& czjzlocalcurve, bool localczjzutili, const LocCHCurve& locchCurvejz, const LocHHCurve& lochhCurvejz, const LocLHCurve& loclhCurvejz, bool HHcurvejz, bool CHcurvejz, bool LHcurvejz, const LocwavCurve& locwavCurvejz, bool locwavutilijz
+)
 {
     BENCHFUN
     if(!params->locallab.spots.at(sp).activ) {//disable all ciecam functions
@@ -12830,6 +12831,7 @@ void ImProcFunctions::Lab_Local(
     const LocwavCurve& loclmasCurveblwav, bool lmasutiliblwav,
     const LocwavCurve& loclmasCurvecolwav, bool lmasutilicolwav,
     const LocwavCurve& locwavCurve, bool locwavutili,
+    const LocwavCurve& locwavCurvejz, bool locwavutilijz,
     const LocwavCurve& loclevwavCurve, bool loclevwavutili,
     const LocwavCurve& locconwavCurve, bool locconwavutili,
     const LocwavCurve& loccompwavCurve, bool loccompwavutili,
@@ -13079,7 +13081,7 @@ void ImProcFunctions::Lab_Local(
                 tmpImage.reset();
                 if (params->locallab.spots.at(sp).ciecam) {
                     bool HHcurvejz = false, CHcurvejz = false, LHcurvejz = false;;
-                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 1, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
+                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 1, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz);
                 }
 
 
@@ -13088,10 +13090,10 @@ void ImProcFunctions::Lab_Local(
                     bool CHcurvejz = false;
                     bool LHcurvejz = false;
                     if (params->locallab.spots.at(sp).expcie  && params->locallab.spots.at(sp).modecam == "jz") {//some cam16 elementsfor Jz
-                        ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 10, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
+                        ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 10, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz);
                     }
 
-                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
+                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz);
 
                     float rad = params->locallab.spots.at(sp).detailcie;
                     loccont(bfw, bfh, bufexpfin.get(), rad, 15.f, sk);
@@ -14045,10 +14047,10 @@ void ImProcFunctions::Lab_Local(
                     bool CHcurvejz = false;
                     bool LHcurvejz = false;
                     if (params->locallab.spots.at(sp).modecam == "jz") {//some cam16 elementsfor Jz
-                        ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 10, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
+                        ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 10, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz);
                     }
 
-                    ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
+                    ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz);
 
                     float rad = params->locallab.spots.at(sp).detailcie;
                     loccont(bfw, bfh, tmp1.get(), rad, 15.f, sk);
@@ -15396,7 +15398,7 @@ void ImProcFunctions::Lab_Local(
                     if (params->locallab.spots.at(sp).warm != 0) {
                         bool HHcurvejz = false, CHcurvejz = false, LHcurvejz = false;
                        
-                        ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 2, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
+                        ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 2, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz);
                     }
 
                     if(lp.enavibMask && lp.recothrv != 1.f) {
@@ -16123,10 +16125,10 @@ void ImProcFunctions::Lab_Local(
                     if (params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).modecie == "wav") {
                         bool HHcurvejz = false, CHcurvejz = false, LHcurvejz = false;
                         if (params->locallab.spots.at(sp).modecam == "jz") {//some cam16 elementsfor Jz
-                            ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 10, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
+                            ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 10, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz);
                         }
 
-                        ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
+                        ImProcFunctions::ciecamloc_02float(sp, tmp1.get(), 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz);
 
                         float rad = params->locallab.spots.at(sp).detailcie;
                         loccont(bfw, bfh, tmp1.get(), rad, 5.f, sk);
@@ -16837,10 +16839,10 @@ void ImProcFunctions::Lab_Local(
                             if (params->locallab.spots.at(sp).expcie && params->locallab.spots.at(sp).modecie == "dr") {
                                 bool HHcurvejz = false, CHcurvejz = false, LHcurvejz = false;
                                 if (params->locallab.spots.at(sp).modecam == "jz") {//some cam16 elementsfor Jz
-                                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 10, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
+                                    ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 10, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz);
                                 }
 
-                                ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
+                                ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz);
 
                                 float rad = params->locallab.spots.at(sp).detailcie;
                                 loccont(bfw, bfh, bufexpfin.get(), rad, 15.f, sk);
@@ -18556,7 +18558,7 @@ void ImProcFunctions::Lab_Local(
                 }
                 bool HHcurvejz = false, CHcurvejz = false, LHcurvejz = false;
                 if (params->locallab.spots.at(sp).expcie  && params->locallab.spots.at(sp).modecam == "jz") {//some cam16 elementsfor Jz
-                    ImProcFunctions::ciecamloc_02float(sp, bufexporig.get(), 10, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
+                    ImProcFunctions::ciecamloc_02float(sp, bufexporig.get(), 10, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz);
                 }
                 if (lochhCurvejz && HHutilijz) {
                     for (int i = 0; i < 500; i++) {
@@ -18659,7 +18661,7 @@ void ImProcFunctions::Lab_Local(
 
                     bufexpfin->CopyFrom(bufexporig.get(), multiThread);
                     if (params->locallab.spots.at(sp).expcie) {
-                        ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz);
+                        ImProcFunctions::ciecamloc_02float(sp, bufexpfin.get(), 0, sk, cielocalcurve, localcieutili, cielocalcurve2, localcieutili2, jzlocalcurve, localjzutili, czlocalcurve, localczutili, czjzlocalcurve, localczjzutili, locchCurvejz, lochhCurvejz, loclhCurvejz, HHcurvejz, CHcurvejz, LHcurvejz, locwavCurvejz, locwavutilijz);
                     }
                 }
             

@@ -930,6 +930,7 @@ void Crop::update(int todo)
         auto& lochhmas_Curve = parent->lochhmas_Curve;
         auto& lochhhmas_Curve = parent->lochhhmas_Curve;
         auto& locwavCurve = parent->locwavCurve;
+        auto& locwavCurvejz = parent->locwavCurvejz;
         auto& loclmasCurveblwav = parent->loclmasCurveblwav;
         auto& loclmasCurvecolwav = parent->loclmasCurvecolwav;
         auto& loclevwavCurve = parent->loclevwavCurve;
@@ -994,6 +995,7 @@ void Crop::update(int todo)
             const bool llmaslcutili = locllmaslcCurve.Set(params.locallab.spots.at(sp).LLmasklccurve);
             const bool lhmaslcutili = lochhmaslcCurve.Set(params.locallab.spots.at(sp).HHmasklccurve);
             const bool locwavutili = locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve);
+            const bool locwavutilijz = locwavCurvejz.Set(params.locallab.spots.at(sp).locwavcurvejz);
             const bool locwavhueutili = locwavCurvehue.Set(params.locallab.spots.at(sp).locwavcurvehue);
             const bool locwavdenutili = locwavCurveden.Set(params.locallab.spots.at(sp).locwavcurveden);
             const bool loclevwavutili = loclevwavCurve.Set(params.locallab.spots.at(sp).loclevwavcurve);
@@ -1110,6 +1112,7 @@ void Crop::update(int todo)
                         loclmasCurveblwav,lmasutiliblwav,
                         loclmasCurvecolwav,lmasutilicolwav,
                         locwavCurve, locwavutili,
+                        locwavCurvejz, locwavutilijz,
                         loclevwavCurve, loclevwavutili,
                         locconwavCurve, locconwavutili,
                         loccompwavCurve, loccompwavutili,
@@ -1188,6 +1191,7 @@ void Crop::update(int todo)
                         loclmasCurveblwav,lmasutiliblwav,
                         loclmasCurvecolwav,lmasutilicolwav,
                         locwavCurve, locwavutili,
+                        locwavCurvejz, locwavutilijz,
                         loclevwavCurve, loclevwavutili,
                         locconwavCurve, locconwavutili,
                         loccompwavCurve, loccompwavutili,
