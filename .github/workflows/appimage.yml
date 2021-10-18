@@ -8,7 +8,7 @@ on:
       - dev
   workflow_dispatch:
 jobs:
-  Build AppImage:
+  build:
     runs-on: ubuntu-18.04
     steps:
       - name: Checkout source
