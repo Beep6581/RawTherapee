@@ -72,8 +72,11 @@ jobs:
       - name: Package AppImage
         working-directory: ./build
         run: |
+          echo "Getting RawTherapee version."
+          export VERSION="$(git describe)"
+          echo "Version is '$VERSION'."
           echo "Generating AppImage file name."
-          OUTPUT="RawTherapee-$(git describe)-x86_64.AppImage"
+          export OUTPUT="RawTherapee-$VERSION-x86_64.AppImage"
           echo "AppImage file name will be '$OUTPUT'."
           echo "Packaging AppImage."
           ./linuxdeploy-x86_64.AppImage \
