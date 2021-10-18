@@ -4426,6 +4426,20 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     shjzcie(0.0),
     shthjzcie(40.0),
     radjzcie(40.0),
+    sigmalcjz(1.),
+    locwavcurvejz{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        0.5,
+        0.35,
+        0.35,
+        1.,
+        0.5,
+        0.35,
+        0.35
+    },
+    csthresholdjz(0, 0, 6, 6, false),
+    
     contthrescie(0.),
     sigmoidldacie(0.),
     sigmoidthcie(1.),
@@ -5166,6 +5180,9 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && shjzcie == other.shjzcie
         && shthjzcie == other.shthjzcie
         && radjzcie == other.radjzcie
+        && sigmalcjz == other.sigmalcjz
+        && locwavcurvejz == other.locwavcurvejz
+        && csthresholdjz == other.csthresholdjz
         && contthrescie == other.contthrescie
         && sigmoidldacie == other.sigmoidldacie
         && sigmoidthcie == other.sigmoidthcie
@@ -6934,6 +6951,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->shjzcie, "Locallab", "Shjzcie_" + index_str, spot.shjzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->shthjzcie, "Locallab", "Shthjzcie_" + index_str, spot.shthjzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->radjzcie, "Locallab", "Radjzcie_" + index_str, spot.radjzcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->sigmalcjz, "Locallab", "Sigmalcjz_" + index_str, spot.sigmalcjz, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->locwavcurvejz, "Locallab", "LocwavCurvejz_" + index_str, spot.locwavcurvejz, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->csthresholdjz, "Locallab", "CSThresholdjz_" + index_str, spot.csthresholdjz.toVector(), keyFile);
                     saveToKeyfile(!pedited || spot_edited->contthrescie, "Locallab", "Contthrescie_" + index_str, spot.contthrescie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmoidldacie, "Locallab", "Sigmoidldacie_" + index_str, spot.sigmoidldacie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmoidthcie, "Locallab", "Sigmoidthcie_" + index_str, spot.sigmoidthcie, keyFile);
@@ -9081,6 +9101,18 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Shjzcie_" + index_str, pedited, spot.shjzcie, spotEdited.shjzcie);
                 assignFromKeyfile(keyFile, "Locallab", "Shthjzcie_" + index_str, pedited, spot.shthjzcie, spotEdited.shthjzcie);
                 assignFromKeyfile(keyFile, "Locallab", "Radjzcie_" + index_str, pedited, spot.radjzcie, spotEdited.radjzcie);
+                if (keyFile.has_key("Locallab", "CSThresholdjz_" + index_str)) {
+
+                    const std::vector<int> thresh = keyFile.get_integer_list("Locallab", "CSThresholdjz_" + index_str);
+
+                    if (thresh.size() >= 4) {
+                        spot.csthresholdjz.setValues(thresh[0], thresh[1], min(thresh[2], 10), min(thresh[3], 10));
+                    }
+
+                    spotEdited.csthresholdjz = true;
+                }
+                assignFromKeyfile(keyFile, "Locallab", "Sigmalcjz_" + index_str, pedited, spot.sigmalcjz, spotEdited.sigmalcjz);
+                assignFromKeyfile(keyFile, "Locallab", "LocwavCurvejz_" + index_str, pedited, spot.locwavcurvejz, spotEdited.locwavcurvejz);
                 assignFromKeyfile(keyFile, "Locallab", "Contthrescie_" + index_str, pedited, spot.contthrescie, spotEdited.contthrescie);
                 assignFromKeyfile(keyFile, "Locallab", "Sigmoidldacie_" + index_str, pedited, spot.sigmoidldacie, spotEdited.sigmoidldacie);
                 assignFromKeyfile(keyFile, "Locallab", "Sigmoidthcie_" + index_str, pedited, spot.sigmoidthcie, spotEdited.sigmoidthcie);

@@ -1050,6 +1050,9 @@ public:
         bool HHmaskciecurve;
         bool blendmaskcie;
         bool radmaskcie;
+        bool sigmalcjz;
+        bool locwavcurvejz;
+        bool csthresholdjz;
         bool chromaskcie;
         bool lapmaskcie;
         bool gammaskcie;

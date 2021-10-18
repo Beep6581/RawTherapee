@@ -5920,7 +5920,7 @@ void ImProcFunctions::maskcalccol(bool invmask, bool pde, int bfw, int bfh, int 
                 tmpab.a[ir][jr] = bufcolorig->a[ir][jr];
                 tmpab.b[ir][jr] = bufcolorig->b[ir][jr];
         }
-        float noisevarab_r = SQR(lp.denoichmask / 10.f);//SQR(lap/10.f);
+        float noisevarab_r = SQR(lp.denoichmask / 10.f);
         if(noisevarab_r > 0.f) {
             int wavelet_leve = 6;
 

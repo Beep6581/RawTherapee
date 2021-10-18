@@ -1629,6 +1629,9 @@ struct LocallabParams {
         double shjzcie;
         double shthjzcie;
         double radjzcie;
+        double sigmalcjz;
+        std::vector<double> locwavcurvejz;
+        Threshold<int> csthresholdjz;
         double contthrescie;
         double sigmoidldacie;
         double sigmoidthcie;

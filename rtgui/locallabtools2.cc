@@ -7414,6 +7414,13 @@ Locallabcie::Locallabcie():
     shjzcie(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHADOWS"), 0., 100., 1., 0.))),
     shthjzcie(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_SHTONALW"), 20., 100., 1., 40.))),
     radjzcie(Gtk::manage(new Adjuster(M("TP_SHADOWSHLIGHTS_RADIUS"), 0., 100., 1., 40.))),
+    expwavjz(Gtk::manage(new MyExpander(false, M("TP_LOCALLAB_JZWAVEXP")))),
+    contFramejz(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CONTWFRA")))),
+    sigmalcjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMAWAV"), 0.2, 2.5, 0.01, 1.))),
+    LocalcurveEditorwavjz(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAV"))),
+    wavshapejz(static_cast<FlatCurveEditor*>(LocalcurveEditorwavjz->addCurve(CT_Flat, "", nullptr, false, false))),
+    csThresholdjz(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLD"), 0, 9, 0, 0, 6, 6, 0, false))),
+
     expcam16(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
     lightqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTQ"), -100., 100., 0.05, 0.))),
     contlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTL"), -100., 100., 0.5, 0.))),
@@ -7649,6 +7656,7 @@ Locallabcie::Locallabcie():
     ToolParamBlock* const jzBox = Gtk::manage(new ToolParamBlock());
     jzBox->pack_start(*qtoj);
    // jzBox->pack_start(*jabcie);
+   // jzBox->pack_start(*jabcie);
     czlightFrame->set_label_align(0.025, 0.5);
     czcolorFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const ciePzlightBox = Gtk::manage(new ToolParamBlock());
@@ -7686,10 +7694,31 @@ Locallabcie::Locallabcie():
     jzshFrame->add(*jzshBox);
     jzBox->pack_start(*jzshFrame);
 
+    setExpandAlignProperties(expwavjz, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
+
+    contFramejz->set_label_align(0.025, 0.5);
+
+    sigmalcjz->setAdjusterListener(this);
+
+    LocalcurveEditorwavjz->setCurveListener(this);
+    wavshapejz->setIdentityValue(0.);
+    wavshapejz->setResetCurve(FlatCurveType(defSpot.locwavcurvejz.at(0)), defSpot.locwavcurvejz);
+    LocalcurveEditorwavjz->curveListComplete();
+    csThresholdjz->setAdjusterListener(this);
+
+    ToolParamBlock* const coBox2jz = Gtk::manage(new ToolParamBlock());
+    coBox2jz->pack_start(*csThresholdjz);
+    ToolParamBlock* const coBoxjz = Gtk::manage(new ToolParamBlock());
+    coBoxjz->pack_start(*sigmalcjz);
+    coBoxjz->pack_start(*LocalcurveEditorwavjz, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    contFramejz->add(*coBoxjz);
+    coBox2jz->pack_start(*contFramejz);
+    expwavjz->add(*coBox2jz, false);
+    jzBox->pack_start(*expwavjz, false, false);
+
     jzallBox->add(*jzBox);
 
     expjz->add(*jzallBox, false);
-//    pack_start(*expjz, false, false);
     
     jabcieConn = jabcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::jabcieChanged));
     AutograycieConn = Autograycie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::AutograycieChanged));
@@ -7980,6 +8009,7 @@ Locallabcie::~Locallabcie()
     delete cieCurveEditorG2;
     delete maskcieCurveEditorG;
     delete mask2cieCurveEditorG;
+    delete LocalcurveEditorwavjz;
 
 }
 
@@ -8006,6 +8036,7 @@ void Locallabcie::setDefaultExpanderVisibility()
 {
     expLcie->set_expanded(false);
     expjz->set_expanded(false);
+    expwavjz->set_expanded(false);
     expcam16->set_expanded(false);
     expmaskcie->set_expanded(false);
     exprecovcie->set_expanded(false);
@@ -8288,6 +8319,11 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         shjzcie->setValue(spot.shjzcie);
         shthjzcie->setValue(spot.shthjzcie);
         radjzcie->setValue(spot.radjzcie);
+        sigmalcjz->setValue(spot.sigmalcjz);
+        wavshapejz->setCurve(spot.locwavcurvejz);
+        csThresholdjz->setValue<int>(spot.csthresholdjz);
+        
+        
         contthrescie->setValue(spot.contthrescie);
         sigmoidldacie->setValue(spot.sigmoidldacie);
         sigmoidthcie->setValue(spot.sigmoidthcie);
@@ -8438,6 +8474,10 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.shjzcie = shjzcie->getValue();
         spot.shthjzcie = shthjzcie->getValue();
         spot.radjzcie = radjzcie->getValue();
+        spot.sigmalcjz = sigmalcjz->getValue();
+        spot.locwavcurvejz = wavshapejz->getCurve();
+        spot.csthresholdjz = csThresholdjz->getValue<int>();
+        
         spot.contthrescie = contthrescie->getValue();
         spot.sigmoidldacie = sigmoidldacie->getValue();
         spot.sigmoidthcie = sigmoidthcie->getValue();
@@ -8498,88 +8538,6 @@ void Locallabcie::toneMethodcie2Changed()
     }
 }
 
-void Locallabcie::curveChanged(CurveEditor* ce)
-{
-    if (isLocActivated && exp->getEnabled()) {
-       const auto spName = M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")";
-       if (ce == shapejz) {
-            if (listener) {
-                listener->panelChanged(Evlocallabshapejz, spName);
-            }
-        }
-
-       if (ce == shapecz) {
-            if (listener) {
-                listener->panelChanged(Evlocallabshapecz, spName);
-            }
-        }
-
-       if (ce == shapeczjz) {
-            if (listener) {
-                listener->panelChanged(Evlocallabshapeczjz, spName);
-            }
-        }
-
-       if (ce == HHshapejz) {
-            if (listener) {
-                listener->panelChanged(EvlocallabHHshapejz, spName);
-            }
-        }
-        if (ce == CHshapejz) {
-            if (listener) {
-                listener->panelChanged(EvlocallabCHshapejz, spName);
-            }
-        }
-
-        if (ce == LHshapejz) {
-            if (listener) {
-                listener->panelChanged(EvlocallabLHshapejz, spName);
-            }
-        }
-
-        if (ce == shapecie) {
-            if (listener) {
-                listener->panelChanged(Evlocallabshapecie, spName);
-            }
-        }
-
-        if (ce == shapecie2) {
-            if (listener) {
-                listener->panelChanged(Evlocallabshapecie2, spName);
-            }
-        }
-        
-        if (ce == CCmaskcieshape) {
-            if (listener) {
-                listener->panelChanged(EvlocallabCCmaskcieshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
-            }
-        }
-
-        if (ce == LLmaskcieshape) {
-            if (listener) {
-                listener->panelChanged(EvlocallabLLmaskcieshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
-            }
-        }
-
-        if (ce == HHmaskcieshape) {
-            if (listener) {
-                listener->panelChanged(EvlocallabHHmaskcieshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
-            }
-        }
-
-        if (ce == Lmaskcieshape) {
-            if (listener) {
-                listener->panelChanged(EvlocallabLmaskcieshape,
-                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
-            }
-        }
-
-
-    }
-}
 
 void Locallabcie::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
@@ -9443,6 +9401,9 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         shjzcie->setDefault(defSpot.shjzcie);
         shthjzcie->setDefault(defSpot.shthjzcie);
         radjzcie->setDefault(defSpot.radjzcie);
+        sigmalcjz->setDefault(defSpot.sigmalcjz);
+        csThresholdjz->setDefault<int>(defSpot.csthresholdjz);
+        
         contthrescie->setDefault(defSpot.contthrescie);
         sigmoidldacie->setDefault(defSpot.sigmoidldacie);
         sigmoidthcie->setDefault(defSpot.sigmoidthcie);
@@ -9469,6 +9430,108 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
 
     }
 }
+
+void Locallabcie::curveChanged(CurveEditor* ce)
+{
+    if (isLocActivated && exp->getEnabled()) {
+       const auto spName = M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")";
+       if (ce == shapejz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshapejz, spName);
+            }
+        }
+
+       if (ce == shapecz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshapecz, spName);
+            }
+        }
+
+       if (ce == shapeczjz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshapeczjz, spName);
+            }
+        }
+
+       if (ce == HHshapejz) {
+            if (listener) {
+                listener->panelChanged(EvlocallabHHshapejz, spName);
+            }
+        }
+        if (ce == CHshapejz) {
+            if (listener) {
+                listener->panelChanged(EvlocallabCHshapejz, spName);
+            }
+        }
+
+        if (ce == LHshapejz) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLHshapejz, spName);
+            }
+        }
+
+        if (ce == shapecie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshapecie, spName);
+            }
+        }
+
+        if (ce == shapecie2) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshapecie2, spName);
+            }
+        }
+        
+        if (ce == CCmaskcieshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabCCmaskcieshape,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (ce == LLmaskcieshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLLmaskcieshape,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (ce == HHmaskcieshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabHHmaskcieshape,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (ce == Lmaskcieshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLmaskcieshape,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (ce == wavshapejz) {
+            if (listener) {
+                listener->panelChanged(EvlocallabwavCurvejz,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+
+    }
+}
+
+
+void Locallabcie::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR)
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabcsThresholdjz,
+                                   csThresholdjz->getHistoryString() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    }
+}
+
 
 void Locallabcie::adjusterChanged(Adjuster* a, double newval)
 {
@@ -9651,6 +9714,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabradjzcie,
                                        radjzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == sigmalcjz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmalcjz,
+                                       sigmalcjz->getTextValue() + spName);
             }
         }
 

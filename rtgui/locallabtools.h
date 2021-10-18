@@ -1510,6 +1510,7 @@ private:
 /* ==== Locallabcie ==== */
 class Locallabcie:
     public Gtk::Box,
+    public ThresholdAdjusterListener,
     public LocallabTool
 {
 private:
@@ -1551,6 +1552,15 @@ private:
     Adjuster* const shjzcie;
     Adjuster* const shthjzcie;
     Adjuster* const radjzcie;
+    
+    MyExpander* const expwavjz;
+    
+    Gtk::Frame* const contFramejz;
+    Adjuster* const sigmalcjz;
+    CurveEditorGroup* const LocalcurveEditorwavjz;
+    FlatCurveEditor* const wavshapejz;
+    ThresholdAdjuster* const csThresholdjz;
+    
     MyExpander* const expcam16;
     
     Adjuster* const lightqcie;
@@ -1585,6 +1595,7 @@ private:
     CurveEditorGroup* const jz1CurveEditorG;
     DiagonalCurveEditor* const shapejz;
     DiagonalCurveEditor* const shapecz;
+
     
     CurveEditorGroup* const jz2CurveEditorG;
     DiagonalCurveEditor* const shapeczjz;
@@ -1655,6 +1666,12 @@ public:
     void write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setDefaults(const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;
     void adjusterChanged(Adjuster* a, double newval) override;
+    void adjusterChanged(ThresholdAdjuster* a, double newBottom, double newTop) override {}; // Not used
+//    void adjusterChanged3(ThresholdAdjuster* a, double newBottom, double newTop) override {};
+    void adjusterChanged(ThresholdAdjuster* a, double newBottomLeft, double newTopLeft, double newBottomRight, double newTopRight) override {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, int newBottom, int newTop) override {}; // Not used
+    void adjusterChanged(ThresholdAdjuster* a, int newBottomLeft, int newTopLeft, int newBottomRight, int newTopRight) override {}; // Not used
+    void adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int newTopL, int newBottomR, int newTopR) override;
     void sursourcieChanged();
     void surroundcieChanged();
     void modecieChanged();
