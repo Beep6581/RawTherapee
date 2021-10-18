@@ -59,7 +59,7 @@ jobs:
           echo "Creating Lensfun directory in the build directory."
           mkdir -p build/AppDir/usr/share/lensfun
           echo "Copying Lensfun database to the build directory."
-          cp -R /var/lib/lensfun-updates/* build/AppDir/usr/share/lensfun/
+          cp -R ~/.local/share/lensfun/updates/* build/AppDir/usr/share/lensfun/
       - name: Download AppImage tools
         working-directory: ./build
         run: |
