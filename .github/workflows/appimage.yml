@@ -85,7 +85,7 @@ jobs:
             --plugin gtk \
             --output appimage
           echo "Recording AppImage file name."
-          echo "APPIMAGE_NAME='$OUTPUT'" >> $GITHUB_ENV
+          echo "APPIMAGE_NAME=$OUTPUT" >> $GITHUB_ENV
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
