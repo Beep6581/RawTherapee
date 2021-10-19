@@ -3228,12 +3228,13 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int bfw, int bfh,
         //others "Lab" threatment...to adapt
         
         if (locwavCurvejz && locwavutilijz && wavcurvejz) {//simple local contrast in function luminance
-            float mean[10];
+           /* float mean[10];
             float meanN[10];
             float sigma[10];
             float sigmaN[10];
             float MaxP[10];
             float MaxN[10];
+            */
 #ifdef _OPENMP
             const int numThreads = omp_get_max_threads();
 #else
@@ -3253,77 +3254,14 @@ void ImProcFunctions::ciecamloc_02float(int sp, LabImage* lab, int bfw, int bfh,
 
             wavelet_level = rtengine::min(wavelet_level, maxlevelspot);
             int maxlvl = wavelet_level;
-        
+            float strengthjz = 1.2;
             std::unique_ptr<wavelet_decomposition> wdspot(new wavelet_decomposition(temp->L[0], bfw, bfh, maxlvl, 1, sk, numThreads, 6));//lp.daubLen
             //first decomposition for compress dynamic range positive values and other process
             if (wdspot->memory_allocation_failed()) {
                 return;
             }
             maxlvl = wdspot->maxlevel();
-
-            Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
-            for (int dir = 1; dir < 4; dir++) {
-                for (int level = level_bljz; level < maxlvl; ++level) {
-                    int W_L = wdspot->level_W(level);
-                    int H_L = wdspot->level_H(level);
-                    float klev = 1.f;
-
-                    if (level >= level_hljz && level <= level_hrjz) {
-                        klev = 1.f;
-                    }
-
-                    if (level_hljz != level_bljz) {
-                        if (level >= level_bljz && level < level_hljz) {
-                            klev = alowjz * level + blowjz;
-                        }
-                    }
-
-                    if (level_hrjz != level_brjz) {
-                        if (level > level_hrjz && level <= level_brjz) {
-                            klev = ahighjz * level + bhighjz;
-                        }
-                    }
-                    float* const* wav_L = wdspot->level_coeffs(level);
-
-                    if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
-                        constexpr float insigma = 0.666f; //SD
-                        const float logmax = log(MaxP[level]); //log Max
-                        const float rapX = (mean[level] + sigmalcjz * sigma[level]) / MaxP[level]; //rapport between sD / max
-                        const float inx = log(insigma);
-                        const float iny = log(rapX);
-                        const float rap = inx / iny; //koef
-                        const float asig = 0.166f / (sigma[level] * sigmalcjz);
-                        const float bsig = 0.5f - asig * mean[level];
-                        const float amean = 0.5f / mean[level];
-                        const float limit1 = mean[level] + sigmalcjz * sigma[level];
-                        const float limit2 = mean[level];
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic, 16 * W_L) if (multiThread)
-#endif
-                        for (int i = 0; i < W_L * H_L; i++) {
-                            const float val = std::fabs(wav_L[dir][i]);
-
-                            float absciss;
-                            if (val >= limit1) { //for max
-                                const float valcour = xlogf(val);
-                                absciss = xexpf((valcour - logmax) * rap);
-                            } else if (val >= limit2) {
-                                absciss = asig * val + bsig;
-                            } else {
-                                absciss = amean * val;
-                            }
-
-                            const float kc = klev * (locwavCurvejz[absciss * 500.f] - 0.5f);
-                            const float reduceeffect = kc <= 0.f ? 1.f : 1.2f;
-
-                            float kinterm = 1.f + reduceeffect * kc;
-                            kinterm = kinterm <= 0.f ? 0.01f : kinterm;
-
-                            wav_L[dir][i] *= kinterm <= 0.f ? 0.01f : kinterm;
-                        }
-                }
-            }
-        }
+            wavlc(*wdspot, level_bljz, level_hljz, maxlvl, level_hrjz, level_brjz, ahighjz, bhighjz, alowjz, blowjz, sigmalcjz, strengthjz, locwavCurvejz, numThreads);
             wdspot->reconstruct(temp->L[0], 1.f);
 
     }
@@ -9363,6 +9301,81 @@ void ImProcFunctions::Compresslevels(float **Source, int W_L, int H_L, float com
     }
 }
 
+void ImProcFunctions::wavlc(wavelet_decomposition& wdspot, int level_bl, int level_hl, int maxlvl, int level_hr, int level_br, float ahigh, float bhigh, float alow, float blow, float sigmalc, float strength, const LocwavCurve & locwavCurve, int numThreads)
+{
+        float mean[10];
+        float meanN[10];
+        float sigma[10];
+        float sigmaN[10];
+        float MaxP[10];
+        float MaxN[10];
+        
+        Evaluate2(wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
+        for (int dir = 1; dir < 4; dir++) {
+            for (int level = level_bl; level < maxlvl; ++level) {
+                int W_L = wdspot.level_W(level);
+                int H_L = wdspot.level_H(level);
+                float klev = 1.f;
+
+                if (level >= level_hl && level <= level_hr) {
+                    klev = 1.f;
+                }
+
+                if (level_hl != level_bl) {
+                    if (level >= level_bl && level < level_hl) {
+                        klev = alow * level + blow;
+                    }
+                }
+
+                if (level_hr != level_br) {
+                    if (level > level_hr && level <= level_br) {
+                        klev = ahigh * level + bhigh;
+                    }
+                }
+                float* const* wav_L = wdspot.level_coeffs(level);
+
+                if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
+                    constexpr float insigma = 0.666f; //SD
+                    const float logmax = log(MaxP[level]); //log Max
+                    const float rapX = (mean[level] + sigmalc * sigma[level]) / MaxP[level]; //rapport between sD / max
+                    const float inx = log(insigma);
+                    const float iny = log(rapX);
+                    const float rap = inx / iny; //koef
+                    const float asig = 0.166f / (sigma[level] * sigmalc);
+                    const float bsig = 0.5f - asig * mean[level];
+                    const float amean = 0.5f / mean[level];
+                    const float limit1 = mean[level] + sigmalc * sigma[level];
+                    const float limit2 = mean[level];
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic, 16 * W_L) if (multiThread)
+#endif
+                    for (int i = 0; i < W_L * H_L; i++) {
+                        const float val = std::fabs(wav_L[dir][i]);
+
+                        float absciss;
+                        if (val >= limit1) { //for max
+                            const float valcour = xlogf(val);
+                            absciss = xexpf((valcour - logmax) * rap);
+                        } else if (val >= limit2) {
+                            absciss = asig * val + bsig;
+                        } else {
+                            absciss = amean * val;
+                        }
+
+                        const float kc = klev * (locwavCurve[absciss * 500.f] - 0.5f);
+                        const float reduceeffect = kc <= 0.f ? 1.f : strength;
+
+                        float kinterm = 1.f + reduceeffect * kc;
+                        kinterm = kinterm <= 0.f ? 0.01f : kinterm;
+
+                        wav_L[dir][i] *= kinterm <= 0.f ? 0.01f : kinterm;
+                    }
+                }
+            }
+        }
+    
+}    
+
 void ImProcFunctions::wavcont(const struct local_params& lp, float ** tmp, wavelet_decomposition& wdspot, int level_bl, int maxlvl,
                               const LocwavCurve & loclevwavCurve, bool loclevwavutili,
                               const LocwavCurve & loccompwavCurve, bool loccompwavutili,
@@ -10123,75 +10136,8 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
 //edge sharpness end
 
     if (locwavCurve && locwavutili && wavcurve) {//simple local contrast in function luminance
-        float mean[10];
-        float meanN[10];
-        float sigma[10];
-        float sigmaN[10];
-        float MaxP[10];
-        float MaxN[10];
-        Evaluate2(*wdspot, mean, meanN, sigma, sigmaN, MaxP, MaxN, numThreads);
-        for (int dir = 1; dir < 4; dir++) {
-            for (int level = level_bl; level < maxlvl; ++level) {
-                int W_L = wdspot->level_W(level);
-                int H_L = wdspot->level_H(level);
-                float klev = 1.f;
-
-                if (level >= level_hl && level <= level_hr) {
-                    klev = 1.f;
-                }
-
-                if (level_hl != level_bl) {
-                    if (level >= level_bl && level < level_hl) {
-                        klev = alow * level + blow;
-                    }
-                }
-
-                if (level_hr != level_br) {
-                    if (level > level_hr && level <= level_br) {
-                        klev = ahigh * level + bhigh;
-                    }
-                }
-                float* const* wav_L = wdspot->level_coeffs(level);
-
-                if (MaxP[level] > 0.f && mean[level] != 0.f && sigma[level] != 0.f) {
-                    constexpr float insigma = 0.666f; //SD
-                    const float logmax = log(MaxP[level]); //log Max
-                    const float rapX = (mean[level] + lp.sigmalc * sigma[level]) / MaxP[level]; //rapport between sD / max
-                    const float inx = log(insigma);
-                    const float iny = log(rapX);
-                    const float rap = inx / iny; //koef
-                    const float asig = 0.166f / (sigma[level] * lp.sigmalc);
-                    const float bsig = 0.5f - asig * mean[level];
-                    const float amean = 0.5f / mean[level];
-                    const float limit1 = mean[level] + lp.sigmalc * sigma[level];
-                    const float limit2 = mean[level];
-#ifdef _OPENMP
-                    #pragma omp parallel for schedule(dynamic, 16 * W_L) if (multiThread)
-#endif
-                    for (int i = 0; i < W_L * H_L; i++) {
-                        const float val = std::fabs(wav_L[dir][i]);
-
-                        float absciss;
-                        if (val >= limit1) { //for max
-                            const float valcour = xlogf(val);
-                            absciss = xexpf((valcour - logmax) * rap);
-                        } else if (val >= limit2) {
-                            absciss = asig * val + bsig;
-                        } else {
-                            absciss = amean * val;
-                        }
-
-                        const float kc = klev * (locwavCurve[absciss * 500.f] - 0.5f);
-                        const float reduceeffect = kc <= 0.f ? 1.f : 1.5f;
-
-                        float kinterm = 1.f + reduceeffect * kc;
-                        kinterm = kinterm <= 0.f ? 0.01f : kinterm;
-
-                        wav_L[dir][i] *= kinterm <= 0.f ? 0.01f : kinterm;
-                    }
-                }
-            }
-        }
+        float strengthlc = 1.5f;
+        wavlc(*wdspot, level_bl, level_hl, maxlvl, level_hr, level_br, ahigh, bhigh, alow, blow, lp.sigmalc, strengthlc, locwavCurve, numThreads);
     }
     //reconstruct all for L
     wdspot->reconstruct(tmp[0], 1.f);

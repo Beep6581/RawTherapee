@@ -382,6 +382,8 @@ enum class BlurType {
                 const LocwavCurve & loccomprewavCurve, bool loccomprewavutili,
                 float radlevblur, int process, float chromablu, float thres, float sigmadc, float deltad);
 
+    void wavlc(wavelet_decomposition& wdspot, int level_bl, int level_hl, int maxlvl, int level_hr, int level_br, float ahigh, float bhigh, float alow, float blow, float sigmalc, float strength, const LocwavCurve & locwavCurve, int numThreads);
+
     void wavcbd(wavelet_decomposition &wdspot, int level_bl, int maxlvl,
                 const LocwavCurve& locconwavCurve, bool locconwavutili, float sigm, float offs, float chromalev, int sk);
 
