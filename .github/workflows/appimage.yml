@@ -73,7 +73,7 @@ jobs:
         working-directory: ./build
         run: |
           echo "Getting RawTherapee version."
-          export VERSION="$(git describe)"
+          export VERSION="$(grep -m 1 '^Version: .*$' AboutThisBuild.txt | sed 's/^Version: \(.\+\)$/\1/' | sed 's/[^A-z0-9_.-]//g')"
           echo "Version is '$VERSION'."
           echo "Generating AppImage file name."
           export OUTPUT="RawTherapee-$VERSION-x86_64.AppImage"
