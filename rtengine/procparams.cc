@@ -4438,7 +4438,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
         0.35,
         0.35
     },
-    csthresholdjz(0, 0, 6, 6, false),
+    csthresholdjz(0, 0, 7, 4, false),
     
     contthrescie(0.),
     sigmoidldacie(0.),
