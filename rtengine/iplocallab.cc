@@ -3228,13 +3228,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         //others "Lab" threatment...to adapt
         
         if (locwavCurvejz && locwavutilijz && wavcurvejz) {//simple local contrast in function luminance
-           /* float mean[10];
-            float meanN[10];
-            float sigma[10];
-            float sigmaN[10];
-            float MaxP[10];
-            float MaxN[10];
-            */
 #ifdef _OPENMP
             const int numThreads = omp_get_max_threads();
 #else
@@ -3264,7 +3257,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             wavlc(*wdspot, level_bljz, level_hljz, maxlvl, level_hrjz, level_brjz, ahighjz, bhighjz, alowjz, blowjz, sigmalcjz, strengthjz, locwavCurvejz, numThreads);
             wdspot->reconstruct(temp->L[0], 1.f);
 
-    }
+        }
         
         
         
