@@ -3283,14 +3283,14 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
                 double az =  Aaz[i][k];
                 double bz =  Bbz[i][k];
-                double Jz =  JJz[i][k];
+                double Jz =  LIM01(JJz[i][k]);
                 if(Qtoj == false) {
                     Jz *= to_one;
                 } else {
                     Jz /= maxjzw;
                     Jz = SQR(Jz);
                 }
-                Jz= LIM01(jz_contrast.getVal(Jz));
+                Jz= LIM01(jz_contrast.getVal(LIM01(Jz)));
 
                 if(lightreal > 0) {
                     Jz = LIM01(jz_light.getVal(Jz));
