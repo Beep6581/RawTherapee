@@ -74,8 +74,7 @@ Spot::Spot() :
     reset->set_border_width (0);
     reset->signal_clicked().connect ( sigc::mem_fun (*this, &Spot::resetPressed) );
 
-    spotSize = Gtk::manage(new Adjuster(M("TP_SPOT_DEFAULT_SIZE"), 5, 50, 1, 25));
-    spotSize->setAdjusterListener (this);
+    spotSize = Gtk::manage(new Adjuster(M("TP_SPOT_DEFAULT_SIZE"), SpotParams::minRadius, SpotParams::maxRadius, 1, 25));
 
     labelBox = Gtk::manage (new Gtk::Box());
     labelBox->set_spacing (2);
@@ -122,7 +121,6 @@ Spot::Spot() :
     EvSpotEnabledOPA = m->newEvent(SPOTADJUST, "TP_SPOT_LABEL");
     EvSpotEntry = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT_ENTRY");
     EvSpotEntryOPA = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT_ENTRY");
-    EvspotSize = m->newEvent(SPOTADJUST, "TP_SPOT_DEFAULT_SIZE");
 
     show_all();
 }
@@ -862,10 +860,6 @@ void Spot::switchOffEditMode ()
     listener->refreshPreview(EvSpotEnabled); // reprocess the preview w/o creating History entry
 }
 
-void Spot::adjusterChanged(Adjuster* a, double newval)
-{
-
-}
 
 void Spot::tweakParams(procparams::ProcParams& pparams)
 {

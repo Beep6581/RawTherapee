@@ -54,7 +54,7 @@
  * (the point will be deleted on button release).
  */
 
-class Spot : public ToolParamBlock, public FoldableToolPanel, public AdjusterListener, public rtengine::TweakOperator, public EditSubscriber
+class Spot : public ToolParamBlock, public FoldableToolPanel, public rtengine::TweakOperator, public EditSubscriber
 {
 
 private:
@@ -112,8 +112,6 @@ public:
 
     void setBatchMode (bool batchMode) override;
 
-    void adjusterChanged(Adjuster* a, double newval) override;
-
     // EditSubscriber interface
     CursorShape getCursor (int objectID, int xPos, int yPos) const override;
     bool mouseOver (int modifierKey) override;
@@ -135,7 +133,6 @@ public:
     rtengine::ProcEvent EvSpotEnabledOPA; // used to toggle-on the Spot 'On Preview Adjustment' mode
     rtengine::ProcEvent EvSpotEntry;
     rtengine::ProcEvent EvSpotEntryOPA;
-    rtengine::ProcEvent EvspotSize;
 };
 
 #endif
