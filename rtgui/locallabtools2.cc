@@ -8073,6 +8073,10 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         pqremapcam16->set_tooltip_text(M("TP_LOCALLAB_CAM16PQREMAP_TOOLTIP"));
         Autograycie->set_tooltip_text(M("TP_LOCALLAB_AUTOGRAYCIE_TOOLTIP"));
         sigmalcjz->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
+        clariFramejz->set_tooltip_markup(M("TP_LOCALLAB_CLARIJZ_TOOLTIP"));
+        clarilresjz->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARILJZ_TOOLTIP"));
+        claricresjz->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARICJZ_TOOLTIP"));
+        clarisoftjz->set_tooltip_markup(M("TP_LOCALLAB_CLARISOFTJZ_TOOLTIP"));
         wavshapejz->setTooltip(M("TP_LOCALLAB_WAT_WAVSHAPE_TOOLTIP"));
         LocalcurveEditorwavjz->set_tooltip_markup(M("TP_LOCALLAB_WAT_LEVELLOCCONTRAST_TOOLTIP"));
         csThresholdjz->set_tooltip_markup(M("TP_LOCALLAB_WAT_THRESHOLDWAV_TOOLTIP"));
@@ -8150,6 +8154,10 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         Lmaskcieshape->setTooltip("");
         exprecovcie->set_tooltip_markup("");
         sigmalcjz->set_tooltip_text("");
+        clarilresjz->set_tooltip_text("");
+        claricresjz->set_tooltip_text("");
+        clarisoftjz->set_tooltip_markup("");
+        clariFramejz->set_tooltip_markup("");
         wavshapejz->setTooltip("");
         LocalcurveEditorwavjz->set_tooltip_markup("");
         csThresholdjz->set_tooltip_markup("");

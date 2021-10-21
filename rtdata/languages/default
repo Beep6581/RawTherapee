@@ -2772,8 +2772,11 @@ TP_LOCALLAB_CLARIFRA;Clarity & Sharp mask/Blend & Soften Images
 TP_LOCALLAB_CLARILRES;Merge luma
 TP_LOCALLAB_CLARISOFT;Soft radius
 TP_LOCALLAB_CLARISOFT_TOOLTIP;The ‘Soft radius’ slider (guided filter algorithm) reduces halos and irregularities for both Clarity and Sharp Mask and for all pyramid wavelet processes. To deactivate, set slider to zero.
+TP_LOCALLAB_CLARISOFTJZ_TOOLTIP;The ‘Soft radius’ slider (guided filter algorithm) reduces halos and irregularities for both Clarity and Sharp Mask, and Local contrast wavelet Jz.
+
 TP_LOCALLAB_CLARITYML;Clarity
 TP_LOCALLAB_CLARI_TOOLTIP;Levels 0 to 4 (included): ‘Sharp mask’ is enabled\nLevels 5 and above: 'Clarity' is enabled.\nUseful if you use 'Wavelet level tone mapping'
+TP_LOCALLAB_CLARIJZ_TOOLTIP;Levels 0 to 4 (included): ‘Sharp mask’ is enabled\nLevels 5 and above: 'Clarity' is enabled.
 TP_LOCALLAB_CLIPTM;Clip restored data (gain)
 TP_LOCALLAB_COFR;Color & Light
 TP_LOCALLAB_COLOR_CIE;Color curve
@@ -3436,6 +3439,9 @@ TP_LOCALLAB_WAT_BALTHRES_TOOLTIP;Balances the action within each level.
 TP_LOCALLAB_WAT_BLURLC_TOOLTIP;The default blur setting affects all 3 L*a* b* components (luminance and colour).\nWhen checked, only luminance is blurred.
 TP_LOCALLAB_WAT_CLARIC_TOOLTIP;“Merge chroma” is used to select the intensity of the desired effect on chrominance.
 TP_LOCALLAB_WAT_CLARIL_TOOLTIP;“Merge luma” is used to select the intensity of the desired effect on luminance.
+TP_LOCALLAB_WAT_CLARICJZ_TOOLTIP;“Merge chroma” is used to select the intensity of the desired effect on chrominance.\nOnly the maximum value of wavelet levels (bottom-right) is taken into account.
+TP_LOCALLAB_WAT_CLARILJZ_TOOLTIP;“Merge luma” is used to select the intensity of the desired effect on luminance.\nOnly the maximum value of wavelet levels (bottom-right) is taken into account.
+
 TP_LOCALLAB_WAT_CONTCHROMALEV_TOOLTIP;‘Chroma levels’: adjusts the “a” and “b” components of Lab* as a proportion of the luminance value.
 TP_LOCALLAB_WAT_CONTOFFSET_TOOLTIP;Offset modifies the balance between low-contrast and high-contrast details.\nHigh values will amplify contrast changes to the higher-contrast details, whereas low values will amplify contrast changes to low-contrast details.\nBy using a low ‘Attenuation response’ value you can select which contrast values will be enhanced.
 TP_LOCALLAB_WAT_DELTABAL_TOOLTIP;By moving the slider to the left, the lower levels are accentuated. To the right, the lower levels are reduced and the higher levels accentuated.
