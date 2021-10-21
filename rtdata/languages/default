@@ -1393,6 +1393,9 @@ HISTORY_MSG_1140;Local - Mask denoise chroma
 HISTORY_MSG_1141;Local - Cie Wav sigma Jz 
 HISTORY_MSG_1142;Local - Cie Wav level Jz
 HISTORY_MSG_1143;Local - Cie Wav local contrast Jz
+HISTORY_MSG_1144;Local - Cie Wav clarity Jz
+HISTORY_MSG_1145;Local - Cie Wav clarity Cz
+HISTORY_MSG_1146;Local - Cie Wav clarity Soft
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2967,6 +2970,8 @@ TP_LOCALLAB_JAB;Zcam matrix - instead of Jz matrix
 //TP_LOCALLAB_JAB_TOOLTIP;
 TP_LOCALLAB_JABADAP_TOOLTIP;Perceptual Uniform adaptation.\nAutomatically adjusts the relationship between Jz and saturation, taking into account "Absolute luminance".
 TP_LOCALLAB_JZ100;Jz reference 100cd/m2
+TP_LOCALLAB_JZCLARILRES;Merge Jz
+TP_LOCALLAB_JZCLARICRES;Merge chroma Cz
 TP_LOCALLAB_JZFORCE;Force max Jz to 1
 TP_LOCALLAB_JZFORCE_TOOLTIP;Allows you to force the maximum Jz value to 1 for better slider and curve response
 TP_LOCALLAB_JZMODECAM_TOOLTIP;Jz (only in 'Advanced' mode). Only operational if the output device (monitor) is HDR (peak luminance higher than 100 cd/m2  ideally between 4000 and 10000 cd/m2 - and black point luminance inferior to 0.005 cd/m2). This supposes a) the ICC-PCS for the screen uses Jzazbz (or XYZ), b) works in real precision, c) that the monitor is calibrated (if possible with a DCI-P3 or Rec-2020 gamut), d) that the usual gamma (sRGB or BT709) is replaced by a Perceptual Quantiser (PQ) function.

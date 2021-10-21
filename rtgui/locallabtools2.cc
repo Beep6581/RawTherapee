@@ -7420,6 +7420,10 @@ Locallabcie::Locallabcie():
     LocalcurveEditorwavjz(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAV"))),
     wavshapejz(static_cast<FlatCurveEditor*>(LocalcurveEditorwavjz->addCurve(CT_Flat, "", nullptr, false, false))),
     csThresholdjz(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLD"), 0, 9, 0, 0, 7, 4, 0, false))),
+    clariFramejz(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
+    clarilresjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCLARILRES"), -20., 100., 0.5, 0.))),
+    claricresjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCLARICRES"), -20., 100., 0.5, 0.))),
+    clarisoftjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 1.))),
 
     expcam16(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
     lightqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTQ"), -100., 100., 0.05, 0.))),
@@ -7713,7 +7717,20 @@ Locallabcie::Locallabcie():
     coBoxjz->pack_start(*LocalcurveEditorwavjz, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     contFramejz->add(*coBoxjz);
     coBox2jz->pack_start(*contFramejz);
+
+    clarilresjz->setAdjusterListener(this);
+    claricresjz->setAdjusterListener(this);
+    clarisoftjz->setAdjusterListener(this);
+    
+    clariFramejz->set_label_align(0.025, 0.5);
+    ToolParamBlock* const coBox3jz = Gtk::manage(new ToolParamBlock());
+    coBox3jz->pack_start(*clarilresjz);
+    coBox3jz->pack_start(*claricresjz);
+    coBox3jz->pack_start(*clarisoftjz);
+    clariFramejz->add(*coBox3jz);
+    coBox2jz->pack_start(*clariFramejz);
     expwavjz->add(*coBox2jz, false);
+    
     jzBox->pack_start(*expwavjz, false, false);
 
     jzallBox->add(*jzBox);
@@ -8330,8 +8347,9 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         sigmalcjz->setValue(spot.sigmalcjz);
         wavshapejz->setCurve(spot.locwavcurvejz);
         csThresholdjz->setValue<int>(spot.csthresholdjz);
-        
-        
+        clarilresjz->setValue(spot.clarilresjz);
+        claricresjz->setValue(spot.claricresjz);
+        clarisoftjz->setValue(spot.clarisoftjz);
         contthrescie->setValue(spot.contthrescie);
         sigmoidldacie->setValue(spot.sigmoidldacie);
         sigmoidthcie->setValue(spot.sigmoidthcie);
@@ -8485,7 +8503,9 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.sigmalcjz = sigmalcjz->getValue();
         spot.locwavcurvejz = wavshapejz->getCurve();
         spot.csthresholdjz = csThresholdjz->getValue<int>();
-        
+        spot.clarilresjz = clarilresjz->getValue();
+        spot.claricresjz = claricresjz->getValue();
+        spot.clarisoftjz = clarisoftjz->getValue();
         spot.contthrescie = contthrescie->getValue();
         spot.sigmoidldacie = sigmoidldacie->getValue();
         spot.sigmoidthcie = sigmoidthcie->getValue();
@@ -9411,7 +9431,9 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         radjzcie->setDefault(defSpot.radjzcie);
         sigmalcjz->setDefault(defSpot.sigmalcjz);
         csThresholdjz->setDefault<int>(defSpot.csthresholdjz);
-        
+        clarilresjz->setDefault(defSpot.clarilresjz);
+        claricresjz->setDefault(defSpot.claricresjz);
+        clarisoftjz->setDefault(defSpot.clarisoftjz);
         contthrescie->setDefault(defSpot.contthrescie);
         sigmoidldacie->setDefault(defSpot.sigmoidldacie);
         sigmoidthcie->setDefault(defSpot.sigmoidthcie);
@@ -9729,6 +9751,27 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabsigmalcjz,
                                        sigmalcjz->getTextValue() + spName);
+            }
+        }
+
+        if (a == clarilresjz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabclarilresjz,
+                                       clarilresjz->getTextValue() + spName);
+            }
+        }
+
+        if (a == claricresjz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabclaricresjz,
+                                       claricresjz->getTextValue() + spName);
+            }
+        }
+
+        if (a == clarisoftjz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabclarisoftjz,
+                                       clarisoftjz->getTextValue() + spName);
             }
         }
 

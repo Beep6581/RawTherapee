@@ -1630,6 +1630,9 @@ struct LocallabParams {
         double shthjzcie;
         double radjzcie;
         double sigmalcjz;
+        double clarilresjz;
+        double claricresjz;
+        double clarisoftjz;
         std::vector<double> locwavcurvejz;
         Threshold<int> csthresholdjz;
         double contthrescie;

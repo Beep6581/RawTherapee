@@ -3226,7 +3226,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             ImProcFunctions::shadowsHighlights(temp.get(), true, 1, highhs, shadhs, radhs, sk, hltonahs * maxi * to_screen * to_one, shtonals * maxi * to_screen * to_one);
         }
         //others "Lab" threatment...to adapt
-        
+
         if (locwavCurvejz && locwavutilijz && wavcurvejz) {//simple local contrast in function luminance
 #ifdef _OPENMP
             const int numThreads = omp_get_max_threads();

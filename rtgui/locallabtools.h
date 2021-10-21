@@ -1560,6 +1560,10 @@ private:
     CurveEditorGroup* const LocalcurveEditorwavjz;
     FlatCurveEditor* const wavshapejz;
     ThresholdAdjuster* const csThresholdjz;
+    Gtk::Frame* const clariFramejz;
+    Adjuster* const clarilresjz;
+    Adjuster* const claricresjz;
+    Adjuster* const clarisoftjz;
     
     MyExpander* const expcam16;
     

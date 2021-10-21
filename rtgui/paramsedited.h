@@ -1051,6 +1051,9 @@ public:
         bool blendmaskcie;
         bool radmaskcie;
         bool sigmalcjz;
+        bool clarilresjz;
+        bool claricresjz;
+        bool clarisoftjz;
         bool locwavcurvejz;
         bool csthresholdjz;
         bool chromaskcie;

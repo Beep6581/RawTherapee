@@ -1759,6 +1759,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).locwavcurvejz = locallab.spots.at(j).locwavcurvejz && pSpot.locwavcurvejz == otherSpot.locwavcurvejz;
                 locallab.spots.at(j).csthresholdjz = locallab.spots.at(j).csthresholdjz && pSpot.csthresholdjz == otherSpot.csthresholdjz;
                 locallab.spots.at(j).sigmalcjz = locallab.spots.at(j).sigmalcjz && pSpot.sigmalcjz == otherSpot.sigmalcjz;
+                locallab.spots.at(j).clarilresjz = locallab.spots.at(j).clarilresjz && pSpot.clarilresjz == otherSpot.clarilresjz;
+                locallab.spots.at(j).claricresjz = locallab.spots.at(j).claricresjz && pSpot.claricresjz == otherSpot.claricresjz;
+                locallab.spots.at(j).clarisoftjz = locallab.spots.at(j).clarisoftjz && pSpot.clarisoftjz == otherSpot.clarisoftjz;
 
 
             }
@@ -5948,6 +5951,18 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).sigmalcjz = mods.locallab.spots.at(i).sigmalcjz;
         }
 
+        if (locallab.spots.at(i).clarilresjz) {
+            toEdit.locallab.spots.at(i).clarilresjz = mods.locallab.spots.at(i).clarilresjz;
+        }
+
+        if (locallab.spots.at(i).claricresjz) {
+            toEdit.locallab.spots.at(i).claricresjz = mods.locallab.spots.at(i).claricresjz;
+        }
+
+        if (locallab.spots.at(i).clarisoftjz) {
+            toEdit.locallab.spots.at(i).clarisoftjz = mods.locallab.spots.at(i).clarisoftjz;
+        }
+
         if (locallab.spots.at(i).detailcie) {
             toEdit.locallab.spots.at(i).detailcie = mods.locallab.spots.at(i).detailcie;
         }
@@ -7969,6 +7984,9 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     blendmaskcie(v),
     radmaskcie(v),
     sigmalcjz(v),
+    clarilresjz(v),
+    claricresjz(v),
+    clarisoftjz(v),
     locwavcurvejz(v),
     csthresholdjz(v),
     chromaskcie(v),
@@ -8651,6 +8669,9 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     blendmaskcie = v;
     radmaskcie = v;
     sigmalcjz = v;
+    clarilresjz = v;
+    claricresjz = v;
+    clarisoftjz = v;
     locwavcurvejz = v;
     csthresholdjz = v;
     chromaskcie = v;
