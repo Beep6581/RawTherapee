@@ -2905,10 +2905,11 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     float cchr = 0.f;
     float rstprotection = 50.f;
     float hue = 0.f;
+/*
     float mchrz = 0.f;
     float schrz = 0.f;
     float cchrz = 0.f;
-
+*/
     if (ciec) {
         if(iscie) {
             rstprotection =  params->locallab.spots.at(sp).rstprotectcie;
@@ -2937,10 +2938,11 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             if (mchr == 100.0f) {
                 mchr = 99.9f;
             }
+/*
             mchrz = 0.5f * (float) params->locallab.spots.at(sp).colorflzcam;
             schrz = 0.5f * (float) params->locallab.spots.at(sp).saturzcam;
             cchrz = 0.5f * (float) params->locallab.spots.at(sp).chromzcam;
-            
+*/
         } else {
             cchr = params->locallab.spots.at(sp).chroml;
             if (cchr == -100.0f) {
@@ -3889,6 +3891,7 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
     }
   
 if(mocam == 3) {//Zcam
+/*
         double miniiz = 1000.;
         double maxiiz = -1000.;
         double sumiz = 0.;
@@ -3955,9 +3958,9 @@ if(mocam == 3) {//Zcam
     bool zcam = true;
     double plz = params->locallab.spots.at(sp).pqremap;// to test or change to 10000
 //    double po = 0.1 + params->locallab.spots.at(sp).contthreszcam;
-    float fb_source = sqrt(yb / 100.f);//**
-    float fb_dest = sqrt(yb2 / 100.f);//**
-    double flz = 0.171 * pow(la, 0.3333333)*(1. - exp(-(48. * (double) la / 9.)));//**
+    float fb_source = sqrt(yb / 100.f);
+    float fb_dest = sqrt(yb2 / 100.f);
+    double flz = 0.171 * pow(la, 0.3333333)*(1. - exp(-(48. * (double) la / 9.)));
     double fljz = 0.171 * pow(la2, 0.3333333)*(1. - exp(-(48. * (double) la2 / 9.)));
     double cpow = 2.2;//empirical
     double cpp = pow( (double) c, 0.5);//empirical 
@@ -3967,7 +3970,7 @@ if(mocam == 3) {//Zcam
     double cmul_source_ch = 1.1;//empirical 
     double achro_source =  pow((double) c, cpow)*(pow((double) flz, - 0.004)* (double) sqrt(fb_source));//I think there is an error in formula documentation step 5 - all parameters are inversed or wrong
     double achro_dest =  pow((double) c2, cpow)*(pow((double) fljz, - 0.004) * (double) sqrt(fb_dest));
-    double  kk_source = (1.6 * (double) cpp) / pow((double) fb_source, 0.12);//**
+    double  kk_source = (1.6 * (double) cpp) / pow((double) fb_source, 0.12);
     double  ikk_dest = pow((double) fb_dest, 0.12) /(1.6 * (double) cpp2);
     Ciecam02::xyz2jzczhz (jzw, azw, bzw, Xw, Yw, Zw, plz, L_p, M_p, S_p, zcam);
     double eff = 1.;
@@ -4090,7 +4093,7 @@ if(mocam == 3) {//Zcam
                 }
                 float coefqz = (float) qzmax;
                 float coefjz = 100.f ;
-                double qz = cmul_source * atten * pow(iz, (double) kk_source) / achro_source;//partial **
+                double qz = cmul_source * atten * pow(iz, (double) kk_source) / achro_source;//partial
                 az *= cmul_source_ch;
                 bz *= cmul_source_ch;
                 
@@ -4176,7 +4179,7 @@ if(mocam == 3) {//Zcam
                 lab->b[i][k] = bb;
             }
         }
-
+*/
 }
 
  

@@ -1031,6 +1031,7 @@ public:
         bool sigmoidbljzcie;
         bool contqcie;
         bool colorflcie;
+/*
         bool lightlzcam;
         bool lightqzcam;
         bool contlzcam;
@@ -1039,6 +1040,7 @@ public:
         bool colorflzcam;
         bool saturzcam;
         bool chromzcam;
+*/
         bool targabscie;
         bool targetGraycie;
         bool catadcie;
