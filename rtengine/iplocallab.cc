@@ -808,6 +808,9 @@ struct local_params {
     float blendmacie;
     float chromacie;
     float denoichmask;
+    float mLjz;
+    float mCjz;
+    float softrjz;
 
 };
 
@@ -1745,6 +1748,10 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.sens = lp.senscolor;
     lp.sensv = lp.senscolor;
     lp.senshs = lp.senscolor;
+
+    lp.mLjz = locallab.spots.at(sp).clarilresjz / 100.0;
+    lp.mCjz = locallab.spots.at(sp).claricresjz / 100.0;
+    lp.softrjz = locallab.spots.at(sp).clarisoftjz;
 
 }
 
@@ -3105,6 +3112,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         //double to_prov = 1 / (maxi * to_screen);
         //adapjz * ajz + bjz parabolic curve between 1 and ijz100
         const std::unique_ptr<LabImage> temp(new LabImage(width, height));
+        const std::unique_ptr<LabImage> tempresid(new LabImage(width, height));
+        const std::unique_ptr<LabImage> tempres(new LabImage(width, height));
  //       const std::unique_ptr<LabImage> tempred(new LabImage(width, height));
         array2D<double> JJz(width, height);
         array2D<double> Aaz(width, height);
@@ -3213,11 +3222,10 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 JJz[i][k] = Jz;
                 Aaz[i][k] = az;
                 Bbz[i][k] = bz;
-
-                if(highhs > 0 || shadhs > 0  || wavcurvejz) {
-                    temp->L[i][k] = (float) to_one * 32768.f * (float) JJz[i][k];
-                    temp->a[i][k] = (float) to_one * 32768.f * (float) Aaz[i][k];
-                    temp->b[i][k] = (float) to_one * 32768.f * (float) Bbz[i][k];
+                if(highhs > 0 || shadhs > 0  || wavcurvejz || lp.mLjz != 0.f || lp.mCjz != 0.f) {
+                    temp->L[i][k] = tempresid->L[i][k] = tempres->L[i][k] = (float) to_one * 32768.f * (float) JJz[i][k];
+                    temp->a[i][k] = tempresid->a[i][k] = tempres->a[i][k] = (float) to_one * 32768.f * (float) Aaz[i][k];
+                    temp->b[i][k] = tempresid->b[i][k] = tempres->b[i][k] = (float) to_one * 32768.f * (float) Bbz[i][k];
                 }
             }
         }
@@ -3227,7 +3235,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         }
         //others "Lab" threatment...to adapt
 
-        if (locwavCurvejz && locwavutilijz && wavcurvejz) {//simple local contrast in function luminance
+        if(wavcurvejz  || lp.mLjz != 0.f || lp.mCjz != 0.f) {
 #ifdef _OPENMP
             const int numThreads = omp_get_max_threads();
 #else
@@ -3247,28 +3255,69 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             wavelet_level = rtengine::min(wavelet_level, maxlevelspot);
             int maxlvl = wavelet_level;
-            float strengthjz = 1.2;
-            std::unique_ptr<wavelet_decomposition> wdspot(new wavelet_decomposition(temp->L[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));//lp.daubLen
-            //first decomposition for compress dynamic range positive values and other process
-            if (wdspot->memory_allocation_failed()) {
-                return;
-            }
-            maxlvl = wdspot->maxlevel();
-            wavlc(*wdspot, level_bljz, level_hljz, maxlvl, level_hrjz, level_brjz, ahighjz, bhighjz, alowjz, blowjz, sigmalcjz, strengthjz, locwavCurvejz, numThreads);
-            wdspot->reconstruct(temp->L[0], 1.f);
+            
+            if (locwavCurvejz && locwavutilijz && wavcurvejz) {//simple local contrast in function luminance
+                float strengthjz = 1.2;
+                std::unique_ptr<wavelet_decomposition> wdspot(new wavelet_decomposition(temp->L[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));//lp.daubLen
+                //first decomposition for compress dynamic range positive values and other process
+                if (wdspot->memory_allocation_failed()) {
+                    return;
+                }
+                maxlvl = wdspot->maxlevel();
+                wavlc(*wdspot, level_bljz, level_hljz, maxlvl, level_hrjz, level_brjz, ahighjz, bhighjz, alowjz, blowjz, sigmalcjz, strengthjz, locwavCurvejz, numThreads);
+                wdspot->reconstruct(temp->L[0], 1.f);
 
+            }
+            float thr = 0.001f;
+            int flag = 0;
+            
+// begin clarity wavelet jz
+            if(lp.mLjz != 0.f || lp.mCjz != 0.f) {
+                float mL0 = 0.f;
+                float mC0 = 0.f;
+                bool exec = false;
+                float mL = lp.mLjz;
+                float mC = lp.mCjz;
+                clarimerge(lp, mL, mC, exec, tempresid.get(), wavelet_level, sk, numThreads);
+
+                if (maxlvl <= 4) {
+                    mL0 = 0.f;
+                    mC0 = 0.f;
+                    mL = -1.5f * mL;//increase only for sharpen
+                    mC = -mC;
+                    thr = 1.f;
+                    flag = 0;
+
+                } else {
+                    mL0 = mL;
+                    mC0 = mC;
+                    thr = 1.f;
+                    flag = 1;
+                }
+                LabImage *mergfile = temp.get();
+#ifdef _OPENMP
+                #pragma omp parallel for if (multiThread)
+#endif
+                for (int x = 0; x < height; x++)
+                    for (int y = 0; y < width; y++) {
+                        temp->L[x][y] = clipLoc((1.f + mL0) * mergfile->L[x][y] - mL * tempresid->L[x][y]);
+                        temp->a[x][y] = clipC((1.f + mC0) * mergfile->a[x][y] - mC * tempresid->a[x][y]);
+                        temp->b[x][y] = clipC((1.f + mC0) * mergfile->b[x][y] - mC * tempresid->b[x][y]);
+                }
+            }
+        
+            if (lp.softrjz != 0.f && (wavcurvejz || std::fabs(lp.mLjz) > 0.001f)) {
+                   softproc(tempres.get(), temp.get(), lp.softrjz, height, width, 0.001, 0.00001, thr, sk, multiThread, flag);
+            }
+        
         }
-        
-        
-        
-        
         
 #ifdef _OPENMP
             #pragma omp parallel  for if(multiThread)
 #endif 
         for (int i = 0; i < height; i++) {
             for (int k = 0; k < width; k++) {
-                if(highhs > 0 || shadhs > 0  || wavcurvejz) {
+                if(highhs > 0 || shadhs > 0  || wavcurvejz || lp.mLjz != 0.f || lp.mCjz != 0.f) {
                     JJz[i][k] = (double) (temp->L[i][k] / (32768.f * (float) to_one));
                     Aaz[i][k] = (double) (temp->a[i][k] / (32768.f * (float) to_one));
                     Bbz[i][k] = (double) (temp->b[i][k] / (32768.f * (float) to_one));
@@ -12057,7 +12106,7 @@ void rgbtone(float& maxval, float& medval, float& minval, const LUTf& lutToneCur
     medval = minval + ((maxval - minval) * (medvalold - minvalold) / (maxvalold - minvalold));
 }
 
-void clarimerge(struct local_params& lp, float &mL, float &mC, bool &exec, LabImage *tmpresid, int wavelet_level, int sk, int numThreads)
+void ImProcFunctions::clarimerge(const struct local_params& lp, float &mL, float &mC, bool &exec, LabImage *tmpresid, int wavelet_level, int sk, int numThreads)
 {
     if (mL != 0.f && mC == 0.f) {
         mC = 0.0001f;
