@@ -3183,6 +3183,10 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 }
             }
         }
+        float mjjz = lp.mLjz;
+        if(wavcurvejz && lp.mLjz == 0.f) {
+            mjjz = 0.002f;//to enable wavelet local contrast
+        }
 
 #ifdef _OPENMP
             #pragma omp parallel for if(multiThread)
@@ -3208,13 +3212,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 double L_p, M_p, S_p;
                 bool zcam = z_cam;
                 Ciecam02::xyz2jzczhz (Jz, az, bz, xx, yy, zz, pl, L_p, M_p, S_p, zcam);
-                /* float fb = sqrt(yb/100.f);
-                double  kk = 1.6 * (double) c2 / pow((double) fb, 0.12);
-                double qz = 2700. * pow(Jz, (double) kk) * pow((double) c2,2.2) * pow((double) fl, 0.2); 
-              //  printf("qz=%f ", qz); 
-                double Jz2 = qz/qzw;
-                printf("Jz2=%f", Jz2);
-                */
                 //remapping Jz
                 Jz = Jz * to_screen;
                 az = az * to_screen;
@@ -3222,7 +3219,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 JJz[i][k] = Jz;
                 Aaz[i][k] = az;
                 Bbz[i][k] = bz;
-                if(highhs > 0 || shadhs > 0  || wavcurvejz || lp.mLjz != 0.f || lp.mCjz != 0.f) {
+                if(highhs > 0 || shadhs > 0  || wavcurvejz || mjjz != 0.f || lp.mCjz != 0.f) {
                     temp->L[i][k] = tempresid->L[i][k] = tempres->L[i][k] = (float) to_one * 32768.f * (float) JJz[i][k];
                     temp->a[i][k] = tempresid->a[i][k] = tempres->a[i][k] = (float) to_one * 32768.f * (float) Aaz[i][k];
                     temp->b[i][k] = tempresid->b[i][k] = tempres->b[i][k] = (float) to_one * 32768.f * (float) Bbz[i][k];
@@ -3234,8 +3231,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             ImProcFunctions::shadowsHighlights(temp.get(), true, 1, highhs, shadhs, radhs, sk, hltonahs * maxi * to_screen * to_one, shtonals * maxi * to_screen * to_one);
         }
         //others "Lab" threatment...to adapt
-
-        if(wavcurvejz  || lp.mLjz != 0.f || lp.mCjz != 0.f) {
+        
+        if(wavcurvejz  || mjjz != 0.f || lp.mCjz != 0.f) {
 #ifdef _OPENMP
             const int numThreads = omp_get_max_threads();
 #else
@@ -3272,11 +3269,11 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             int flag = 0;
             
 // begin clarity wavelet jz
-            if(lp.mLjz != 0.f || lp.mCjz != 0.f) {
+            if(mjjz != 0.f || lp.mCjz != 0.f) {
                 float mL0 = 0.f;
                 float mC0 = 0.f;
                 bool exec = false;
-                float mL = lp.mLjz;
+                float mL = mjjz;
                 float mC = lp.mCjz;
                 clarimerge(lp, mL, mC, exec, tempresid.get(), wavelet_level, sk, numThreads);
 
@@ -3306,7 +3303,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 }
             }
         
-            if (lp.softrjz != 0.f && (wavcurvejz || std::fabs(lp.mLjz) > 0.001f)) {
+            if (lp.softrjz != 0.f && (wavcurvejz || std::fabs(mjjz) > 0.001f)) {
                    softproc(tempres.get(), temp.get(), lp.softrjz, height, width, 0.001, 0.00001, thr, sk, multiThread, flag);
             }
         
@@ -3317,7 +3314,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 #endif 
         for (int i = 0; i < height; i++) {
             for (int k = 0; k < width; k++) {
-                if(highhs > 0 || shadhs > 0  || wavcurvejz || lp.mLjz != 0.f || lp.mCjz != 0.f) {
+                if(highhs > 0 || shadhs > 0  || wavcurvejz || mjjz != 0.f || lp.mCjz != 0.f) {
                     JJz[i][k] = (double) (temp->L[i][k] / (32768.f * (float) to_one));
                     Aaz[i][k] = (double) (temp->a[i][k] / (32768.f * (float) to_one));
                     Bbz[i][k] = (double) (temp->b[i][k] / (32768.f * (float) to_one));
