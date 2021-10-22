@@ -3187,7 +3187,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         }
         float mjjz = lp.mLjz;
         if(wavcurvejz && lp.mLjz == 0.f) {
-            mjjz = 0.001f;//to enable clarity if need in some cases mjjz = 0.0001f
+            mjjz = 0.0f;//to enable clarity if need in some cases mjjz = 0.0001f
         }
 
 #ifdef _OPENMP
@@ -3277,10 +3277,11 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             }
             float thr = 0.001f;
-            int flag = 0;
+            int flag = 1;
             
 // begin clarity wavelet jz
             if(mjjz != 0.f || lp.mCjz != 0.f) {
+//                printf("OK 1\n");
                 float mL0 = 0.f;
                 float mC0 = 0.f;
                 bool exec = false;
@@ -3314,7 +3315,9 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 }
             }
         
-            if (lp.softrjz != 0.f && (wavcurvejz || std::fabs(mjjz) > 0.001f)) {
+            if (lp.softrjz >= 0.5f && (wavcurvejz || std::fabs(mjjz) > 0.001f)) {
+//                                printf("OK 2\n");
+
                    softproc(tempres.get(), temp.get(), lp.softrjz, height, width, 0.001, 0.00001, thr, sk, multiThread, flag);
             }
         

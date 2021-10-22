@@ -7423,7 +7423,7 @@ Locallabcie::Locallabcie():
     clariFramejz(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_CLARIFRA")))),
     clarilresjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCLARILRES"), -20., 100., 0.5, 0.))),
     claricresjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCLARICRES"), -20., 100., 0.5, 0.))),
-    clarisoftjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 1.))),
+    clarisoftjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SOFTRADIUSCOL"), 0.0, 100.0, 0.5, 0.))),
 
     expcam16(Gtk::manage(new MyExpander(false, Gtk::manage(new Gtk::Box())))),
     lightqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTQ"), -100., 100., 0.05, 0.))),
