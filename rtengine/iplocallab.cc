@@ -3187,7 +3187,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         }
         float mjjz = lp.mLjz;
         if(wavcurvejz && lp.mLjz == 0.f) {
-            mjjz = 0.002f;//to enable wavelet local contrast
+            mjjz = 0.0f;//to enable clarity if need in some cases mjjz = 0.0001f
         }
 
 #ifdef _OPENMP
@@ -3235,7 +3235,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             #pragma omp parallel for if(multiThread)
 #endif
             for (int i = 0; i < height; i++) {
-                for (int k = 0; k < width; k++) {
+                for (int k = 0; k < width; k++) {//reinitialize dats after SH...: guide, etc.
                     tempresid->L[i][k] = tempres->L[i][k] = temp->L[i][k];
                     tempresid->a[i][k] = tempres->a[i][k] = temp->a[i][k];
                     tempresid->b[i][k] = tempres->b[i][k] = temp->b[i][k];
@@ -3268,7 +3268,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             if (locwavCurvejz && locwavutilijz && wavcurvejz) {//simple local contrast in function luminance
                 float strengthjz = 1.2;
                 std::unique_ptr<wavelet_decomposition> wdspot(new wavelet_decomposition(temp->L[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));//lp.daubLen
-                //first decomposition for compress dynamic range positive values and other process
                 if (wdspot->memory_allocation_failed()) {
                     return;
                 }
