@@ -3229,8 +3229,18 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             }
         }
 
-        if(highhs > 0 || shadhs > 0  || wavcurvejz) {
+        if(highhs > 0 || shadhs > 0) {
             ImProcFunctions::shadowsHighlights(temp.get(), true, 1, highhs, shadhs, radhs, sk, hltonahs * maxi * to_screen * to_one, shtonals * maxi * to_screen * to_one);
+#ifdef _OPENMP
+            #pragma omp parallel for if(multiThread)
+#endif
+            for (int i = 0; i < height; i++) {
+                for (int k = 0; k < width; k++) {
+                    tempresid->L[i][k] = tempres->L[i][k] = temp->L[i][k];
+                    tempresid->a[i][k] = tempres->a[i][k] = temp->a[i][k];
+                    tempresid->b[i][k] = tempres->b[i][k] = temp->b[i][k];
+                }
+            }
         }
         //others "Lab" threatment...to adapt
         
