@@ -3187,7 +3187,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         }
         float mjjz = lp.mLjz;
         if(wavcurvejz && lp.mLjz == 0.f) {
-            mjjz = 0.0f;//to enable clarity if need in some cases mjjz = 0.0001f
+            mjjz = 0.001f;//to enable clarity if need in some cases mjjz = 0.0001f
         }
 
 #ifdef _OPENMP
