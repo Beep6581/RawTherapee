@@ -8346,7 +8346,6 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
         varsens = lp.sensicie;
    }
     bool delt = lp.deltaem;
-
     //sobel
     sobelref /= 100.f;
     meansobel /= 100.f;
@@ -8415,7 +8414,10 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     float darklim = 5000.f;
     float aadark = -1.f;
     float bbdark = darklim;
-
+    bool usemask = true;
+    if(originalmask == nullptr) {
+        usemask = false;
+    }
     const bool usemaskvib = (lp.showmaskvibmet == 2 || lp.enavibMask || lp.showmaskvibmet == 4) && senstype == 2;
     const bool usemaskexp = (lp.showmaskexpmet == 2 || lp.enaExpMask || lp.showmaskexpmet == 5) && senstype == 1;
     const bool usemaskcol = (lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 5) && senstype == 0;
@@ -8425,7 +8427,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     const bool usemaskmas = (lp.showmask_met == 1 || lp.ena_Mask || lp.showmask_met == 3) && senstype == 20;
     const bool usemasklog = (lp.showmasklogmet == 2 || lp.enaLMask || lp.showmasklogmet == 4) && senstype == 11;
     const bool usemaskcie = (lp.showmaskciemet == 2 || lp.enacieMask || lp.showmaskciemet == 4) && senstype == 31;
-    const bool usemaskall = (usemaskexp || usemaskvib || usemaskcol || usemaskSH || usemasktm || usemasklc || usemasklog || usemaskcie || usemaskmas);
+    const bool usemaskall = usemask && (usemaskexp || usemaskvib || usemaskcol || usemaskSH || usemasktm || usemasklc || usemasklog || usemaskcie || usemaskmas);
     //blur a little mask
     if (usemaskall) {
         origblurmask.reset(new LabImage(bfw, bfh));
@@ -12496,7 +12498,6 @@ void ImProcFunctions::avoidcolshi(const struct local_params& lp, int sp, LabImag
 void maskrecov(const LabImage * bufcolfin, LabImage * original, LabImage * bufmaskblurcol, int bfh, int bfw, int ystart, int xstart, float hig, float low, float recoth, float decay, bool invmask, int sk, bool multiThread)
 {
     LabImage tmp3(bfw, bfh);
-
     for (int y = 0; y < bfh; y++){
         for (int x = 0; x < bfw; x++) {
             tmp3.L[y][x] = original->L[y + ystart][x + xstart];
