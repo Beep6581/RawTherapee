@@ -2759,7 +2759,7 @@ TP_LOCALLAB_CIEMODE_DR;Dynamic Range
 TP_LOCALLAB_CIEMODE_TM;Tone-Mapping
 TP_LOCALLAB_CIEMODE_WAV;Wavelet
 TP_LOCALLAB_CIEMODE_LOG;Log Encoding
-TP_LOCALLAB_CIEMODE_TOOLTIP;In 'Default' mode, Ciecam is added at the end of the treatment.\nIf you choose a specific tool (TM, Wavelet,...), Ciecam will be integrated to this tool, bringing different results. In this mode, you have "Mask and modifications" at your disposal.
+TP_LOCALLAB_CIEMODE_TOOLTIP;In 'Default' mode, Ciecam is added at the end of the treatment, you have "Mask and modifications" and "Recovery based on luminance mask" of "Cam16 and JzCzHz" at your disposal .\nIf you choose a specific tool (TM, Wavelet, Dynamic Range, Log Encoding), Ciecam will be integrated to this tool, bringing different results. In this mode, you have "Mask and modifications" and "Recovery based on luminance mask" of the tool at your disposal.
 TP_LOCALLAB_CIETOOLEXP;Curves
 TP_LOCALLAB_CIECOLORFRA;Color
 TP_LOCALLAB_CIECONTFRA;Contrast
