@@ -8610,22 +8610,25 @@ void Locallabcie::updateMaskBackground(const double normChromar, const double no
 
 void Locallabcie::updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg)
 {
-    idle_register.add(
-    [this, blackev, whiteev, sourceg, sourceab, targetg]() -> bool {
-        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+    if (Autograycie->get_active()) {
+    
+        idle_register.add(
+        [this, blackev, whiteev, sourceg, sourceab, targetg]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
-        // Update adjuster values according to autocomputed ones
-        disableListener();
-        sourceGraycie->setValue(sourceg);
-        sourceabscie->setValue(sourceab);
-        float sour = sourceab;
-        float  pal = sqrt(std::max(200.f, sour) / 100.f);//empirical formula to adapt peak luminance in function La
-        adapjzcie->setValue(pal);//max = 10
-        enableListener();
+            // Update adjuster values according to autocomputed ones
+            disableListener();
+            sourceGraycie->setValue(sourceg);
+            sourceabscie->setValue(sourceab);
+            float sour = sourceab;
+            float  pal = sqrt(std::max(200.f, sour) / 100.f);//empirical formula to adapt peak luminance in function La
+            adapjzcie->setValue(pal);//max = 10
+            enableListener();
 
-        return false;
+            return false;
+        }
+        );
     }
-    );
 }
 
 
