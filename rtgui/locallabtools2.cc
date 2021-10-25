@@ -6317,24 +6317,26 @@ void LocallabLog::adjusterChanged(Adjuster* a, double newval)
 
 void LocallabLog::updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg)
 {
-    idle_register.add(
-    [this, blackev, whiteev, sourceg, sourceab, targetg]() -> bool {
-        GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+    if (autocompute->get_active()) {
+        idle_register.add(
+        [this, blackev, whiteev, sourceg, sourceab, targetg]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
-        // Update adjuster values according to autocomputed ones
-        disableListener();
+            // Update adjuster values according to autocomputed ones
+            disableListener();
 
-        blackEv->setValue(blackev);
-        whiteEv->setValue(whiteev);
-        sourceGray->setValue(sourceg);
-        sourceabs->setValue(sourceab);
-        targetGray->setValue(targetg);
+            blackEv->setValue(blackev);
+            whiteEv->setValue(whiteev);
+            sourceGray->setValue(sourceg);
+            sourceabs->setValue(sourceab);
+            targetGray->setValue(targetg);
 
-        enableListener();
+            enableListener();
 
         return false;
+        }
+        );
     }
-    );
 }
 
 void LocallabLog::enabledChanged()

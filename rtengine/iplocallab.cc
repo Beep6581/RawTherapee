@@ -3351,6 +3351,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 if(lightreal < 0) {
                     Jz = LIM01(jz_lightn.getVal(Jz));
                 }
+
                 double Jzold = Jz;
                 if(jzlocalcurve && localjzutili) {
                     Jz =  (double) (jzlocalcurve[(float) Jz * 65535.f] / 65535.f);
@@ -3433,33 +3434,45 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
 
                 if (loclhCurvejz && LHcurvejz) {//Jz=f(Hz) curve
-                    float l_r = Jz * to_one;
-                    const float valparam = loclhCurvejz[500.f *static_cast<float>(Color::huelab_to_huehsv2((float) Hz))] - 0.5f;
-
-                    if (valparam > 0.f) {
-                        l_r = (1.f - valparam) * l_r + valparam * (1.f - SQR(((SQR(1.f - rtengine::min(l_r, 1.0f))))));
-                    } else {
-                        constexpr float khu = 1.9f;
-                        l_r *= (1.f + khu * valparam);
-                    }
-                    Jz = (double) l_r / to_one;
+                    //float kcz = 0.03f + 0.02f * lightreal;//to test and fing good value
+                    double kcz = 0.35;
+                    float l_r = LIM01(Jz * to_one);
+                    float kcc = (Cz / kcz);//0.15 empirical value
+                    float valparam = loclhCurvejz[500.f *static_cast<float>(Color::huelab_to_huehsv2((float) Hz))] - 0.5f;
+                    float valparamneg;
+                    valparamneg = valparam;
+                    valparam *= 2.f * kcc;
+                    valparamneg *= kcc;
+                        if (valparam > 0.f) {
+                            l_r = (1.f - valparam) * l_r + valparam * (1.f - SQR(((SQR(1.f - min(l_r, 1.0f))))));
+                        } else
+                            //for negative
+                        {
+                            float khue = 1.9f; //in reserve in case of!
+                            l_r *= (1.f + khue * valparamneg);
+                        }
+                    
+                    Jz = (double) (l_r) / to_one;
                 }
 
 
 
                 if (lochhCurvejz && HHcurvejz) { // Hz=f(Hz)
-                    const float valparam = 2.f * (lochhCurvejz[500.f * static_cast<float>(Color::huelab_to_huehsv2((float)Hz))] - 0.5f) + (float) Hz;
+                    const float valparam = 1.4f * (lochhCurvejz[500.f * static_cast<float>(Color::huelab_to_huehsv2((float)Hz))] - 0.5f) + static_cast<float>(Hz);
+                    if ( Hz < 0.0 ) {
+                        Hz += (double) (2.f * rtengine::RT_PI_F);
+                    }
+                    Hz = valparam;
                     float2 sincosval = xsincosf(valparam);
                     az = clipazbz(Cz * (double) sincosval.y);
                     bz = clipazbz(Cz * (double) sincosval.x);
-                    Hz = valparam;
                 }
                 if ( Hz < 0.0 ) {
                     Hz += (double) (2.f * rtengine::RT_PI_F);
                 }
                 
                 if (locchCurvejz && CHcurvejz) {//Cz=f(Hz) curve
-                     const float valparam = locchCurvejz[500.f * static_cast<float>(Color::huelab_to_huehsv2((float)Hz))] - 0.5f;  //get valp=f(H)
+                     const float valparam = 1.5f * (locchCurvejz[500.f * static_cast<float>(Color::huelab_to_huehsv2((float)Hz))] - 0.5f);  //get valp=f(H)
                      float chromaCzfactor = 1.0f + valparam;
                      az *= (double) chromaCzfactor;
                      bz *= (double) chromaCzfactor;
@@ -17594,6 +17607,24 @@ void ImProcFunctions::Lab_Local(
                         rtengine::min(1.f, 0.7f - satreal / 300.f), 0.7,
                         1, 1
                     });
+                    bool LHcurve = false;
+                    if (loclhCurve && LHutili) {
+                        for (int i = 0; i < 500; i++) {
+                            if (loclhCurve[i] != 0.5f) {
+                                LHcurve = true;
+                                break;
+                            }
+                        }
+                    }
+                    bool CHcurve = false;
+                    if (locchCurve && CHutili) {
+                        for (int i = 0; i < 500; i++) {
+                            if (locchCurve[i] != 0.5f) {
+                                CHcurve = true;
+                                break;
+                            }
+                        }
+                    }
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -17668,27 +17699,47 @@ void ImProcFunctions::Lab_Local(
                                 bufcolcalcL = 0.5f * lllocalcurve[bufcolcalcL * 2.f];
                             }
 
-                            if (loclhCurve && LHutili && lp.qualcurvemet != 0) {//L=f(H) curve
+
+                            if (loclhCurve && LHcurve && lp.qualcurvemet != 0) {//L=f(H) curve
                                 const float rhue = xatan2f(bufcolcalcb, bufcolcalca);
-                                float l_r = bufcolcalcL / 32768.f; //Luminance Lab in 0..1
-                                const float valparam = loclhCurve[500.f *static_cast<float>(Color::huelab_to_huehsv2(rhue))] - 0.5f;  //get l_r=f(H)
+                                const float chromat = (std::sqrt(SQR(bufcolcalca) + SQR(bufcolcalcb)))/32768.f;
+                                float l_r = LIM01(bufcolcalcL / 32768.f); //Luminance Lab in 0..1
+                                float valparam = loclhCurve[500.f *static_cast<float>(Color::huelab_to_huehsv2(rhue))] - 0.5f;  //get l_r=f(H)
+                               // float kc = 0.05f + 0.02f * params->locallab.spots.at(sp).lightjzcie;
+                                float kc = 0.01f;
+                                float valparamneg;
+                                valparamneg = valparam;
+                                float kcc = (chromat / kc); //take Chroma into account...40 "middle low" of chromaticity (arbitrary and simple), one can imagine other algorithme
+                                //reduce action for low chroma and increase action for high chroma
+                                valparam *= 2.f * kcc;
+                                valparamneg *= kcc; //slightly different for negative
 
                                 if (valparam > 0.f) {
-                                    l_r = (1.f - valparam) * l_r + valparam * (1.f - SQR(((SQR(1.f - rtengine::min(l_r, 1.0f))))));
-                                } else {
-                                    constexpr float khu = 1.9f; //in reserve in case of!
-                                    //for negative
-                                    l_r *= (1.f + khu * valparam);
+                                    l_r = (1.f - valparam) * l_r + valparam * (1.f - SQR(((SQR(1.f - min(l_r, 1.0f))))));
+                                } else
+                                //for negative
+                                {
+                                    float khue = 1.9f; //in reserve in case of!
+                                    l_r *= (1.f + khue * valparamneg);
                                 }
 
                                 bufcolcalcL = l_r * 32768.f;
 
                             }
-
-
-                            if (locchCurve && CHutili && lp.qualcurvemet != 0) {//C=f(H) curve
+/*
+                     const float valparam = 1.5f * (locchCurvejz[500.f * static_cast<float>(Color::huelab_to_huehsv2((float)Hz))] - 0.5f);  //get valp=f(H)
+                     float chromaCzfactor = 1.0f + valparam;
+                     az *= (double) chromaCzfactor;
+                     bz *= (double) chromaCzfactor;
+                     az = clipazbz(az);
+                     bz = clipazbz(bz);
+*/
+                            if (locchCurve && CHcurve && lp.qualcurvemet != 0) {//C=f(H) curve
+                           // printf("ba=%f", (double) bufcolcalca);
                                 const float rhue = xatan2f(bufcolcalcb, bufcolcalca);
-                                const float valparam = locchCurve[500.f * static_cast<float>(Color::huelab_to_huehsv2(rhue))] - 0.5f;  //get valp=f(H)
+                                const float valparam = 2.f * locchCurve[500.f * static_cast<float>(Color::huelab_to_huehsv2(rhue))] - 0.5f;  //get valp=f(H)
+                               // printf("val=%f", (double) valparam);
+
                                 float chromaChfactor = 1.0f + valparam;
                                 bufcolcalca *= chromaChfactor;//apply C=f(H)
                                 bufcolcalcb *= chromaChfactor;
