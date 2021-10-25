@@ -950,8 +950,8 @@ void Crop::update(int todo)
             const bool HHutili = lochhCurve.Set(params.locallab.spots.at(sp).HHcurve);
             const bool CHutili = locchCurve.Set(params.locallab.spots.at(sp).CHcurve);
             const bool HHutilijz = lochhCurvejz.Set(params.locallab.spots.at(sp).HHcurvejz);
-            const bool CHutilijz = locchCurve.Set(params.locallab.spots.at(sp).CHcurvejz);
-            const bool LHutilijz = loclhCurve.Set(params.locallab.spots.at(sp).LHcurvejz);
+            const bool CHutilijz = locchCurvejz.Set(params.locallab.spots.at(sp).CHcurvejz);
+            const bool LHutilijz = loclhCurvejz.Set(params.locallab.spots.at(sp).LHcurvejz);
             const bool lcmasutili = locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve);
             const bool llmasutili = locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve);
             const bool lhmasutili = lochhmasCurve.Set(params.locallab.spots.at(sp).HHmaskcurve);

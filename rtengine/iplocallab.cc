@@ -17706,7 +17706,7 @@ void ImProcFunctions::Lab_Local(
                                 float l_r = LIM01(bufcolcalcL / 32768.f); //Luminance Lab in 0..1
                                 float valparam = loclhCurve[500.f *static_cast<float>(Color::huelab_to_huehsv2(rhue))] - 0.5f;  //get l_r=f(H)
                                // float kc = 0.05f + 0.02f * params->locallab.spots.at(sp).lightjzcie;
-                                float kc = 0.01f;
+                                float kc = 0.30f;
                                 float valparamneg;
                                 valparamneg = valparam;
                                 float kcc = (chromat / kc); //take Chroma into account...40 "middle low" of chromaticity (arbitrary and simple), one can imagine other algorithme
@@ -17726,20 +17726,9 @@ void ImProcFunctions::Lab_Local(
                                 bufcolcalcL = l_r * 32768.f;
 
                             }
-/*
-                     const float valparam = 1.5f * (locchCurvejz[500.f * static_cast<float>(Color::huelab_to_huehsv2((float)Hz))] - 0.5f);  //get valp=f(H)
-                     float chromaCzfactor = 1.0f + valparam;
-                     az *= (double) chromaCzfactor;
-                     bz *= (double) chromaCzfactor;
-                     az = clipazbz(az);
-                     bz = clipazbz(bz);
-*/
                             if (locchCurve && CHcurve && lp.qualcurvemet != 0) {//C=f(H) curve
-                           // printf("ba=%f", (double) bufcolcalca);
                                 const float rhue = xatan2f(bufcolcalcb, bufcolcalca);
                                 const float valparam = 2.f * locchCurve[500.f * static_cast<float>(Color::huelab_to_huehsv2(rhue))] - 0.5f;  //get valp=f(H)
-                               // printf("val=%f", (double) valparam);
-
                                 float chromaChfactor = 1.0f + valparam;
                                 bufcolcalca *= chromaChfactor;//apply C=f(H)
                                 bufcolcalcb *= chromaChfactor;
