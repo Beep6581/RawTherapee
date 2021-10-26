@@ -3435,10 +3435,15 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
                 if (loclhCurvejz && LHcurvejz) {//Jz=f(Hz) curve
                     //float kcz = 0.03f + 0.02f * lightreal;//to test and fing good value
-                    double kcz = 0.35;
+                    double kcz = 0.45;
+                    Hz = xatan2f ( bz, az );
+                    
+//                                                    printf("hz=%f", Hz);
+
                     float l_r = LIM01(Jz * to_one);
                     float kcc = (Cz / kcz);//0.15 empirical value
-                    float valparam = loclhCurvejz[500.f *static_cast<float>(Color::huelab_to_huehsv2((float) Hz))] - 0.5f;
+                  //  float valparam = loclhCurvejz[500.f *static_cast<float>(Color::huelab_to_huehsv2((float) Hz))] - 0.5f;
+                    float valparam = loclhCurvejz[500.f *static_cast<float>(Color::huejz_to_huehsv2((float) Hz))] - 0.5f;
                     float valparamneg;
                     valparamneg = valparam;
                     valparam *= 2.f * kcc;
@@ -3458,7 +3463,10 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
 
                 if (lochhCurvejz && HHcurvejz) { // Hz=f(Hz)
-                    const float valparam = 1.4f * (lochhCurvejz[500.f * static_cast<float>(Color::huelab_to_huehsv2((float)Hz))] - 0.5f) + static_cast<float>(Hz);
+                    Hz = xatan2f ( bz, az );
+
+                //    const float valparam = 1.4f * (lochhCurvejz[500.f * static_cast<float>(Color::huelab_to_huehsv2((float)Hz))] - 0.5f) + static_cast<float>(Hz);
+                    const float valparam = 1.4f * (lochhCurvejz[500.f * static_cast<float>(Color::huejz_to_huehsv2((float)Hz))] - 0.5f) + static_cast<float>(Hz);
                     if ( Hz < 0.0 ) {
                         Hz += (double) (2.f * rtengine::RT_PI_F);
                     }
@@ -3472,12 +3480,17 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 }
                 
                 if (locchCurvejz && CHcurvejz) {//Cz=f(Hz) curve
-                     const float valparam = 1.5f * (locchCurvejz[500.f * static_cast<float>(Color::huelab_to_huehsv2((float)Hz))] - 0.5f);  //get valp=f(H)
+                    Hz = xatan2f ( bz, az );
+               //      const float valparam = 1.5f * (locchCurvejz[500.f * static_cast<float>(Color::huelab_to_huehsv2((float)Hz))] - 0.5f);  //get valp=f(H)
+                     const float valparam = 1.5f * (locchCurvejz[500.f * static_cast<float>(Color::huejz_to_huehsv2((float)Hz))] - 0.5f);  //get valp=f(H)
                      float chromaCzfactor = 1.0f + valparam;
                      az *= (double) chromaCzfactor;
                      bz *= (double) chromaCzfactor;
                      az = clipazbz(az);
                      bz = clipazbz(bz);
+                }
+                if ( Hz < 0.0 ) {
+                    Hz += (double) (2.f * rtengine::RT_PI_F);
                 }
 
                 bz = bz / (to_screen);
@@ -17702,6 +17715,7 @@ void ImProcFunctions::Lab_Local(
 
                             if (loclhCurve && LHcurve && lp.qualcurvemet != 0) {//L=f(H) curve
                                 const float rhue = xatan2f(bufcolcalcb, bufcolcalca);
+                                //printf("rhu=%f", (double) rhue);
                                 const float chromat = (std::sqrt(SQR(bufcolcalca) + SQR(bufcolcalcb)))/32768.f;
                                 float l_r = LIM01(bufcolcalcL / 32768.f); //Luminance Lab in 0..1
                                 float valparam = loclhCurve[500.f *static_cast<float>(Color::huelab_to_huehsv2(rhue))] - 0.5f;  //get l_r=f(H)
