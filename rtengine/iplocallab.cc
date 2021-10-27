@@ -17699,6 +17699,13 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
                     }
+                    double amountchrom = 0.01 * settings->amchroma;
+                    if(amountchrom < 0.05) {
+                        amountchrom = 0.05;
+                    }
+                    if(amountchrom > 2.) {
+                        amountchrom = 2.;
+                    }
 
 #ifdef _OPENMP
                     #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -17782,7 +17789,7 @@ void ImProcFunctions::Lab_Local(
                                 float valparam = loclhCurve[500.f *static_cast<float>(Color::huelab_to_huehsv2(rhue))] - 0.5f;  //get l_r=f(H)
                                // printf("rh=%f V=%f", (double) rhue, (double) valparam);
                                // float kc = 0.05f + 0.02f * params->locallab.spots.at(sp).lightjzcie;
-                                float kc = 0.30f;
+                                float kc = amountchrom;
                                 float valparamneg;
                                 valparamneg = valparam;
                                 float kcc = (chromat / kc); //take Chroma into account...40 "middle low" of chromaticity (arbitrary and simple), one can imagine other algorithme
