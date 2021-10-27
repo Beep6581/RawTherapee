@@ -1126,7 +1126,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,    //Evlocallabshjzcie
     AUTOEXP,    //Evlocallabshthjzcie
     AUTOEXP,    //Evlocallabradjzcie
-    AUTOEXP,    //EvlocallabHHshapejz
+//    AUTOEXP,    //EvlocallabHHshapejz
     AUTOEXP,    //EvlocallabCHshapejz
     AUTOEXP,    //Evlocallabjz100
     AUTOEXP,    //Evlocallabpqremap

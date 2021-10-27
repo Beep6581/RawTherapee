@@ -703,7 +703,8 @@ void LocallabTone::updateGUIToMode(const modeType new_type)
     }
 }
 
-void LocallabTone::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+//void LocallabTone::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+void LocallabTone::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -1786,7 +1787,8 @@ void LocallabRetinex::updateGUIToMode(const modeType new_type)
     }
 }
 
-void LocallabRetinex::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+//void LocallabRetinex::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+void LocallabRetinex::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -4105,7 +4107,8 @@ void LocallabContrast::updateGUIToMode(const modeType new_type)
     }
 }
 
-void LocallabContrast::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+//void LocallabContrast::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+void LocallabContrast::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -5126,7 +5129,8 @@ void LocallabCBDL::updateGUIToMode(const modeType new_type)
     }
 }
 
-void LocallabCBDL::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+//void LocallabCBDL::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+void LocallabCBDL::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -6450,7 +6454,8 @@ void LocallabLog::fullimageChanged()
     }
 }
 
-void LocallabLog::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+//void LocallabLog::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+void LocallabLog::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -7282,7 +7287,8 @@ void LocallabMask::updateGUIToMode(const modeType new_type)
     
 }
 
-void LocallabMask::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+//void LocallabMask::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+void LocallabMask::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -7457,14 +7463,14 @@ Locallabcie::Locallabcie():
     saturjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZSAT"), -100., 100., 0.5, 0.))),
     huejzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZHUECIE"), -100., 100., 0.1, 0.))),
     jz1CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
-    shapejz(static_cast<DiagonalCurveEditor*>(jz1CurveEditorG->addCurve(CT_Diagonal, "Jz(Jz)"))),
-    shapecz(static_cast<DiagonalCurveEditor*>(jz1CurveEditorG->addCurve(CT_Diagonal, "Cz(Cz)"))),
-    jz2CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
-    shapeczjz(static_cast<DiagonalCurveEditor*>(jz2CurveEditorG->addCurve(CT_Diagonal, "Cz(Jz)"))),
-    HHshapejz(static_cast<FlatCurveEditor*>(jz2CurveEditorG->addCurve(CT_Flat, "Hz(hz)", nullptr, false, true))),
+    shapejz(static_cast<DiagonalCurveEditor*>(jz1CurveEditorG->addCurve(CT_Diagonal, "Jz(J)"))),
+    shapecz(static_cast<DiagonalCurveEditor*>(jz1CurveEditorG->addCurve(CT_Diagonal, "Cz(C)"))),
+    shapeczjz(static_cast<DiagonalCurveEditor*>(jz1CurveEditorG->addCurve(CT_Diagonal, "Cz(J)"))),
+//    jz2CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
+//    HHshapejz(static_cast<FlatCurveEditor*>(jz2CurveEditorG->addCurve(CT_Flat, "Hz(hz)", nullptr, false, true))),
     jz3CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
-    CHshapejz(static_cast<FlatCurveEditor*>(jz3CurveEditorG->addCurve(CT_Flat, "Cz(hz)", nullptr, false, true))),
-    LHshapejz(static_cast<FlatCurveEditor*>(jz3CurveEditorG->addCurve(CT_Flat, "Jz(hz)", nullptr, false, true))),
+    CHshapejz(static_cast<FlatCurveEditor*>(jz3CurveEditorG->addCurve(CT_Flat, "Cz(h)", nullptr, false, true))),
+    LHshapejz(static_cast<FlatCurveEditor*>(jz3CurveEditorG->addCurve(CT_Flat, "Jz(h)", nullptr, false, true))),
 /*
     ciezFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_ZCAMFRA")))),
 
@@ -7626,9 +7632,6 @@ Locallabcie::Locallabcie():
     shapecz->setLeftBarBgGradient (shapeczMilestones);
     shapecz->setRangeDefaultMilestones (0.05, 0.2, 0.58);
 
-    jz1CurveEditorG->curveListComplete();
-
-    jz2CurveEditorG->setCurveListener(this);
     shapeczjz->setLeftBarColorProvider (this, 1);
     shapeczjz->setRangeDefaultMilestones (0.05, 0.2, 0.58);
     shapeczjz->setResetCurve(DiagonalCurveType(defSpot.czjzcurve.at(0)), defSpot.czjzcurve);
@@ -7636,13 +7639,25 @@ Locallabcie::Locallabcie():
     shapeczjz->setLeftBarBgGradient (shapeczMilestones);
     shapeczjz->setRangeDefaultMilestones (0.05, 0.2, 0.58);
 
+
+    jz1CurveEditorG->curveListComplete();
+/*
+    jz2CurveEditorG->setCurveListener(this);
+    shapeczjz->setLeftBarColorProvider (this, 1);
+    shapeczjz->setRangeDefaultMilestones (0.05, 0.2, 0.58);
+    shapeczjz->setResetCurve(DiagonalCurveType(defSpot.czjzcurve.at(0)), defSpot.czjzcurve);
+    shapeczjz->setBottomBarBgGradient (milestone);
+    shapeczjz->setLeftBarBgGradient (shapeczMilestones);
+    shapeczjz->setRangeDefaultMilestones (0.05, 0.2, 0.58);
+    jz2CurveEditorG->curveListComplete();
+
     HHshapejz->setIdentityValue(0.);
     HHshapejz->setResetCurve(FlatCurveType(defSpot.HHcurvejz.at(0)), defSpot.HHcurvejz);
     HHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
     HHshapejz->setCurveColorProvider(this, 3);
     HHshapejz->setBottomBarBgGradient(six_shape);
     jz2CurveEditorG->curveListComplete();
-
+*/
     jz3CurveEditorG->setCurveListener(this);
 
     CHshapejz->setIdentityValue(0.);
@@ -7680,7 +7695,7 @@ Locallabcie::Locallabcie():
     jzBox->pack_start(*czcolorFrame);
     
     jzBox->pack_start(*jz1CurveEditorG, Gtk::PACK_SHRINK, 4);
-    jzBox->pack_start(*jz2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+//    jzBox->pack_start(*jz2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     jzBox->pack_start(*jz3CurveEditorG, Gtk::PACK_SHRINK, 4); //   jzBox->pack_start(*adapjzcie);
     sigmoidjzFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const sigjzBox = Gtk::manage(new ToolParamBlock());
@@ -8025,7 +8040,7 @@ Locallabcie::Locallabcie():
 Locallabcie::~Locallabcie()
 {
     delete jz1CurveEditorG;
-    delete jz2CurveEditorG;
+//    delete jz2CurveEditorG;
     delete jz3CurveEditorG;
     delete cieCurveEditorG;
     delete cieCurveEditorG2;
@@ -8332,7 +8347,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         shapejz->setCurve(spot.jzcurve);
         shapecz->setCurve(spot.czcurve);
         shapeczjz->setCurve(spot.czjzcurve);
-        HHshapejz->setCurve(spot.HHcurvejz);
+//        HHshapejz->setCurve(spot.HHcurvejz);
         CHshapejz->setCurve(spot.CHcurvejz);
         LHshapejz->setCurve(spot.LHcurvejz);
 
@@ -8488,7 +8503,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.jzcurve = shapejz->getCurve();
         spot.czcurve = shapecz->getCurve();
         spot.czjzcurve = shapeczjz->getCurve();
-        spot.HHcurvejz = HHshapejz->getCurve();
+//        spot.HHcurvejz = HHshapejz->getCurve();
         spot.CHcurvejz = CHshapejz->getCurve();
         spot.LHcurvejz = LHshapejz->getCurve();
         spot.ciecurve = shapecie->getCurve();
@@ -8584,16 +8599,17 @@ void Locallabcie::toneMethodcie2Changed()
 }
 
 
-void Locallabcie::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+//void Locallabcie::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+void Locallabcie::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
-    [this, normHuerjz, normHuer, normLumar, normChromar]() -> bool {
+    [this, normHuer, normLumar, normChromar]() -> bool {
         GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
         // Update mask background
-        HHshapejz->updateLocallabBackground(normHuerjz);
-        CHshapejz->updateLocallabBackground(normHuerjz);
-        LHshapejz->updateLocallabBackground(normHuerjz);
+//        HHshapejz->updateLocallabBackground(normHuer);
+        CHshapejz->updateLocallabBackground(normHuer);
+        LHshapejz->updateLocallabBackground(normHuer);
         shapejz->updateLocallabBackground(normLumar);
         shapecz->updateLocallabBackground(normChromar);
         shapeczjz->updateLocallabBackground(normLumar);
@@ -9389,7 +9405,7 @@ void Locallabcie::convertParamToNormal()
     jabcie->set_active(defSpot.jabcie);
     LHshapejz->setCurve(defSpot.LHcurvejz);
     CHshapejz->setCurve(defSpot.CHcurvejz);
-    HHshapejz->setCurve(defSpot.HHcurvejz);
+//    HHshapejz->setCurve(defSpot.HHcurvejz);
     shapejz->setCurve(defSpot.jzcurve);
     shapecz->setCurve(defSpot.czcurve);
     shapeczjz->setCurve(defSpot.czjzcurve);
@@ -9502,12 +9518,13 @@ void Locallabcie::curveChanged(CurveEditor* ce)
                 listener->panelChanged(Evlocallabshapeczjz, spName);
             }
         }
-
+        /*
        if (ce == HHshapejz) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHshapejz, spName);
             }
         }
+        */
         if (ce == CHshapejz) {
             if (listener) {
                 listener->panelChanged(EvlocallabCHshapejz, spName);

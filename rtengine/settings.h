@@ -65,6 +65,7 @@ public:
     bool            HistogramWorking;       // true: histogram is display the value of the image computed in the Working profile
     // false: histogram is display the value of the image computed in the Output profile
     int             amchroma;
+    int             amchromajz;
     int             protectred;
     double          protectredh;
     double          nrauto;

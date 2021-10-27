@@ -278,7 +278,7 @@ void LocallabTool::refChanged(const double huer, const double lumar, const doubl
     }
 
     normHuer = h;
-
+/*
     double normHuerjz = huer;
 
     float hz = Color::huejz_to_huehsv2(normHuerjz);
@@ -287,7 +287,7 @@ void LocallabTool::refChanged(const double huer, const double lumar, const doubl
         hz -= 1.f;
     }
     normHuerjz = hz;
-
+*/
     // Luma reference normalization (between 0 and 1)
     const double normLumar = lumar / 100.f;
 
@@ -297,7 +297,8 @@ void LocallabTool::refChanged(const double huer, const double lumar, const doubl
     const double normChromar = LIM01(corfap * (chromar / 195.f));//195 a little more than 128 * 1.414 = 181
 
     // Update mask curve backgrounds
-    updateMaskBackground(normChromar, normLumar, normHuer, normHuerjz);
+ //   updateMaskBackground(normChromar, normLumar, normHuer, normHuerjz);
+    updateMaskBackground(normChromar, normLumar, normHuer);
 }
 
 void LocallabTool::colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller)
@@ -2189,7 +2190,8 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
     }
 }
 
-void LocallabColor::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+//void LocallabColor::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+void LocallabColor::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -3687,7 +3689,8 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
     }
 }
 
-void LocallabExposure::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+//void LocallabExposure::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+void LocallabExposure::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -4875,7 +4878,8 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
     }
 }
 
-void LocallabShadow::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+//void LocallabShadow::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+void LocallabShadow::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -5932,7 +5936,8 @@ void LocallabVibrance::updateGUIToMode(const modeType new_type)
     }
 }
 
-void LocallabVibrance::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+//void LocallabVibrance::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+void LocallabVibrance::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -8262,7 +8267,8 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
     }
 }
 
-void LocallabBlur::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+//void LocallabBlur::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
+void LocallabBlur::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
