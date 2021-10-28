@@ -1002,6 +1002,7 @@ public:
         bool chromjzcie;
         bool saturjzcie;
         bool huejzcie;
+        bool softjzcie;
         bool jzcurve;
         bool czcurve;
         bool czjzcurve;

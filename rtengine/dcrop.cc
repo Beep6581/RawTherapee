@@ -942,7 +942,7 @@ void Crop::update(int todo)
         auto& locwavCurveden = parent->locwavCurveden;
         auto& lmasklocal_curve2 = parent->lmasklocal_curve;
         auto& loclmasCurve_wav = parent->loclmasCurve_wav;
-        const int sizespot = (int)params.locallab.spots.size();
+//        const int sizespot = (int)params.locallab.spots.size();
 /*        float *huerefp = nullptr;
         huerefp = new float[sizespot];
         float *chromarefp = nullptr;

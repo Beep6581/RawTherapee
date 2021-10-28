@@ -3132,6 +3132,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         int shadhs = params->locallab.spots.at(sp).shjzcie;
         int shtonals = params->locallab.spots.at(sp).shthjzcie;
         int radhs = params->locallab.spots.at(sp).radjzcie;
+        float softjz = 0.4f * (float) params->locallab.spots.at(sp).softjzcie;
+        
         avgm = 0.5 * (sum * to_screen * to_one + avgm);//empirical formula
         double miny = 0.1;
         double delta = 0.015 * (double) sqrt(std::max(100.f, la) / 100.f);//small adaptation in function La scene
@@ -3228,7 +3230,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 JJz[i][k] = Jz;
                 Aaz[i][k] = az;
                 Bbz[i][k] = bz;
-                if(highhs > 0 || shadhs > 0  || wavcurvejz || mjjz != 0.f || lp.mCjz != 0.f  || LHcurvejz) {
+                if(highhs > 0 || shadhs > 0  || wavcurvejz || mjjz != 0.f || lp.mCjz != 0.f  || LHcurvejz || HHcurvejz) {
                     temp->L[i][k] = tempresid->L[i][k] = tempres->L[i][k] = (float) to_one * 32768.f * (float) JJz[i][k];
                     temp->a[i][k] = tempresid->a[i][k] = tempres->a[i][k] = (float) to_one * 32768.f * (float) Aaz[i][k];
                     temp->b[i][k] = tempresid->b[i][k] = tempres->b[i][k] = (float) to_one * 32768.f * (float) Bbz[i][k];
@@ -3323,9 +3325,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             }
         
             if (lp.softrjz >= 0.5f && (wavcurvejz || std::fabs(mjjz) > 0.001f)) {
-//                                printf("OK 2\n");
-
-                   softproc(tempres.get(), temp.get(), lp.softrjz, height, width, 0.001, 0.00001, thr, sk, multiThread, flag);
+                softproc(tempres.get(), temp.get(), lp.softrjz, height, width, 0.001, 0.00001, thr, sk, multiThread, flag);
             }
         
         }
@@ -3373,7 +3373,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 }
                 
                  if (lochhCurvejz && HHcurvejz) { // Hz=f(Hz)
-                    /*
                     //Hz = xatan2f ( bz, az );
                     float Hbisz = xatan2f ( b, a);
 
@@ -3383,24 +3382,67 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                         Hbisz += (2.f * rtengine::RT_PI_F);
                     }
                     Hbisz = valparam;
-                    float2 sincosval = xsincosf(valparam);
+                    float2 sincosval = xsincosf(Hbisz);
                     temp->a[i][k] = C_z * sincosval.y;
                     temp->b[i][k] = C_z * sincosval.x;
-                    */
                 }
                
                 
                 
             }
         }
-                if (loclhCurvejz && LHcurvejz) {
+                if (loclhCurvejz && LHcurvejz && softjz > 0.1f) {//for artifacts curve J(H)
                     float thr = 0.001f;
                     int flag = 1;
-                    float softjz = 4.f;//to test to avoid a slider...
                     softproc(tempres.get(), temp.get(), softjz, height, width, 0.001, 0.00001, thr, sk, multiThread, flag);
                 }
 
 
+                 if (lochhCurvejz && HHcurvejz) { //for artifacts curve H(H)
+                    if(softjz > 0.1f) {
+                        array2D<float> chro(width, height);
+                        array2D<float> hue(width, height);
+                        array2D<float> guid(width, height);
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                        for (int y = 0; y < height; y++) {
+                            for (int x = 0; x < width; x++) {
+                                hue[y][x] = xatan2f(temp->b[y][x], temp->a[y][x]);
+                                chro[y][x] = sqrt(SQR(temp->b[y][x]) + SQR(temp->a[y][x]));
+                                if ( hue[y][x] < 0.0f ) {
+                                    hue[y][x] += (2.f * rtengine::RT_PI_F);
+                                }
+                                hue[y][x] /= (2.f * rtengine::RT_PI_F);
+                                guid[y][x] = tempres->L[y][x];
+                            }
+                        }
+                        float softr = lp.softrjz;//to test to avoid a slider...                    
+                        const float tmpblur = softr < 0.f ? -1.f / softr : 1.f + softr;
+                        const int r2 = rtengine::max<int>(25 / sk * tmpblur + 0.5f, 1);
+                        constexpr float epsilmax = 0.005f;
+                        constexpr float epsilmin = 0.00001f;
+                        constexpr float aepsil = (epsilmax - epsilmin) / 100.f;
+                        constexpr float bepsil = epsilmin;
+                        const float epsil = softr < 0.f ? 0.001f : aepsil * softr + bepsil;
+                        rtengine::guidedFilter(guid, hue, hue, r2, 0.2f * epsil, multiThread);
+
+#ifdef _OPENMP
+        #pragma omp parallel for schedule(dynamic,16) if (multiThread)
+#endif
+                        for (int y = 0; y < height; y++) {
+                            for (int x = 0; x < width; x++) {
+                                hue[y][x] *= (2.f * rtengine::RT_PI_F);
+                                float2 sincosval = xsincosf(hue[y][x]);
+                                temp->a[y][x] = chro[y][x] * sincosval.y;
+                                temp->b[y][x] = chro[y][x] * sincosval.x;
+                            }
+                        }
+                    }
+                 }
+
+
+///////////////////
 
         
 #ifdef _OPENMP
@@ -3411,7 +3453,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 float a = lab->a[i][k];
                 float b = lab->b[i][k];
 
-                if(highhs > 0 || shadhs > 0  || wavcurvejz || mjjz != 0.f || lp.mCjz != 0.f || LHcurvejz) {
+                if(highhs > 0 || shadhs > 0  || wavcurvejz || mjjz != 0.f || lp.mCjz != 0.f || LHcurvejz || HHcurvejz) {
                     JJz[i][k] = (double) (temp->L[i][k] / (32768.f * (float) to_one));
                     Aaz[i][k] = (double) (temp->a[i][k] / (32768.f * (float) to_one));
                     Bbz[i][k] = (double) (temp->b[i][k] / (32768.f * (float) to_one));

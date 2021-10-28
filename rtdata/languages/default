@@ -1348,21 +1348,22 @@ HISTORY_MSG_1095;Local - Jz highligths thr
 HISTORY_MSG_1096;Local - Jz shadows
 HISTORY_MSG_1097;Local - Jz shadows thr
 HISTORY_MSG_1098;Local - Jz radius SH
-HISTORY_MSG_1099;Local - Hz(Hz) Curve
-HISTORY_MSG_1100;Local - Cz(Hz) Curve
-HISTORY_MSG_1101;Local - Jz reference 100
-HISTORY_MSG_1102;Local - Jz PQ remap
-HISTORY_MSG_1103;Local - Jz(Hz) Curve
-HISTORY_MSG_1105;Local - Vibrance gamma
+//HISTORY_MSG_1099;Local - Hz(Hz) Curve
+HISTORY_MSG_1099;Local - Cz(Hz) Curve
+HISTORY_MSG_1100;Local - Jz reference 100
+HISTORY_MSG_1101;Local - Jz PQ remap
+HISTORY_MSG_1102;Local - Jz(Hz) Curve
+HISTORY_MSG_1103;Local - Vibrance gamma
 HISTORY_MSG_1104;Local - Sharp gamma
-HISTORY_MSG_1106;Local - CIECAM Tone method
-HISTORY_MSG_1107;Local - CIECAM Tone curve
-HISTORY_MSG_1108;Local - CIECAM Color method
-HISTORY_MSG_1109;Local - CIECAM Color curve
-HISTORY_MSG_1110;Local - Jz(Jz) curve
-HISTORY_MSG_1111;Local - Cz(Cz) curve
-HISTORY_MSG_1112;Local - Cz(Jz) curve
-HISTORY_MSG_1113;Local - forcejz
+HISTORY_MSG_1105;Local - CIECAM Tone method
+HISTORY_MSG_1106;Local - CIECAM Tone curve
+HISTORY_MSG_1107;Local - CIECAM Color method
+HISTORY_MSG_1108;Local - CIECAM Color curve
+HISTORY_MSG_1109;Local - Jz(Jz) curve
+HISTORY_MSG_1110;Local - Cz(Cz) curve
+HISTORY_MSG_1111;Local - Cz(Jz) curve
+HISTORY_MSG_1112;Local - forcejz
+/*
 HISTORY_MSG_1114;Local - ZCAM lightness
 HISTORY_MSG_1115;Local - ZCAM brightness
 HISTORY_MSG_1116;Local - ZCAM contrast J
@@ -1371,31 +1372,34 @@ HISTORY_MSG_1118;Local - ZCAM contrast threshold
 HISTORY_MSG_1119;Local - ZCAM colorfullness
 HISTORY_MSG_1120;Local - ZCAM saturation
 HISTORY_MSG_1121;Local - ZCAM chroma
-HISTORY_MSG_1122;Local - HDR PQ
-HISTORY_MSG_1123;Local - Cie mask enable
-HISTORY_MSG_1124;Local - Cie mask curve C
-HISTORY_MSG_1125;Local - Cie mask curve L
-HISTORY_MSG_1126;Local - Cie mask curve H
-HISTORY_MSG_1127;Local - Cie mask blend
-HISTORY_MSG_1128;Local - Cie mask radius
-HISTORY_MSG_1129;Local - Cie mask chroma
-HISTORY_MSG_1130;Local - Cie mask contrast curve
-HISTORY_MSG_1131;Local - Cie mask recovery threshold
-HISTORY_MSG_1132;Local - Cie mask recovery dark
-HISTORY_MSG_1133;Local - Cie mask recovery light
-HISTORY_MSG_1134;Local - Cie mask recovery decay
-HISTORY_MSG_1135;Local - Cie mask laplacian
-HISTORY_MSG_1136;Local - Cie mask gamma
-HISTORY_MSG_1137;Local - Cie mask slope
-HISTORY_MSG_1138;Local - Cie Relative luminance
-HISTORY_MSG_1139;Local - Cie Saturation Jz
-HISTORY_MSG_1140;Local - Mask denoise chroma 
-HISTORY_MSG_1141;Local - Cie Wav sigma Jz 
-HISTORY_MSG_1142;Local - Cie Wav level Jz
-HISTORY_MSG_1143;Local - Cie Wav local contrast Jz
-HISTORY_MSG_1144;Local - Cie Wav clarity Jz
-HISTORY_MSG_1145;Local - Cie Wav clarity Cz
-HISTORY_MSG_1146;Local - Cie Wav clarity Soft
+*/
+HISTORY_MSG_1113;Local - HDR PQ
+HISTORY_MSG_1114;Local - Cie mask enable
+HISTORY_MSG_1115;Local - Cie mask curve C
+HISTORY_MSG_1116;Local - Cie mask curve L
+HISTORY_MSG_1117;Local - Cie mask curve H
+HISTORY_MSG_1118;Local - Cie mask blend
+HISTORY_MSG_1119;Local - Cie mask radius
+HISTORY_MSG_1120;Local - Cie mask chroma
+HISTORY_MSG_1121;Local - Cie mask contrast curve
+HISTORY_MSG_1122;Local - Cie mask recovery threshold
+HISTORY_MSG_1123;Local - Cie mask recovery dark
+HISTORY_MSG_1124;Local - Cie mask recovery light
+HISTORY_MSG_1125;Local - Cie mask recovery decay
+HISTORY_MSG_1126;Local - Cie mask laplacian
+HISTORY_MSG_1127;Local - Cie mask gamma
+HISTORY_MSG_1128;Local - Cie mask slope
+HISTORY_MSG_1129;Local - Cie Relative luminance
+HISTORY_MSG_1130;Local - Cie Saturation Jz
+HISTORY_MSG_1131;Local - Mask denoise chroma 
+HISTORY_MSG_1132;Local - Cie Wav sigma Jz 
+HISTORY_MSG_1133;Local - Cie Wav level Jz
+HISTORY_MSG_1134;Local - Cie Wav local contrast Jz
+HISTORY_MSG_1135;Local - Cie Wav clarity Jz
+HISTORY_MSG_1136;Local - Cie Wav clarity Cz
+HISTORY_MSG_1137;Local - Cie Wav clarity Soft
+HISTORY_MSG_1138;Local - Local - Hz(Hz) Curve
+HISTORY_MSG_1139;Local - Jz soft Curves H
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2991,6 +2995,7 @@ TP_LOCALLAB_JZCHROM;Chroma
 TP_LOCALLAB_JZHUECIE;Hue Rotation
 TP_LOCALLAB_JZSAT;Saturation
 TP_LOCALLAB_JZSHFRA;Shadows/Highlights Jz
+TP_LOCALLAB_JZSOFTCIE;Soft radius
 TP_LOCALLAB_JZQTOJ;Relative luminance
 TP_LOCALLAB_JZQTOJ_TOOLTIP;Allows you to use "Relative luminance" instead of "Absolute luminance" - Brightness becomes Lightness.\nThe changes affect: the Brightness slider, the Contrast slider, the Jz(Jz) curve and Sigmoid Jz.
 TP_LOCALLAB_JZWAVEXP;Wavelet Jz
