@@ -1063,6 +1063,19 @@ void Locallab::logencodChanged(const float blackev, const float whiteev, const f
     }
 
 }
+void Locallab::refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot)
+{
+    // enableListener();
+        //printf("selspo=%i \n", selspot);
+        const double huer = huerefp[selspot];
+        const double lumar = lumarefp[selspot];
+        const double chromar = chromarefp[selspot];
+        const float fab = fabrefp[selspot];
+        for (auto tool : locallabTools) {
+            tool->refChanged(huer, lumar, chromar, fab);
+        }
+   // disableListener();
+}
 
 void Locallab::refChanged(const std::vector<locallabRef> &ref, int selspot)
 {

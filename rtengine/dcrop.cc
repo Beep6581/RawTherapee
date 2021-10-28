@@ -942,7 +942,16 @@ void Crop::update(int todo)
         auto& locwavCurveden = parent->locwavCurveden;
         auto& lmasklocal_curve2 = parent->lmasklocal_curve;
         auto& loclmasCurve_wav = parent->loclmasCurve_wav;
-
+        const int sizespot = (int)params.locallab.spots.size();
+/*        float *huerefp = nullptr;
+        huerefp = new float[sizespot];
+        float *chromarefp = nullptr;
+        chromarefp = new float[sizespot];
+        float *lumarefp = nullptr;
+        lumarefp = new float[sizespot];
+        float *fabrefp = nullptr;
+        fabrefp = new float[sizespot];
+*/
         for (int sp = 0; sp < (int)params.locallab.spots.size(); sp++) {
             locRETgainCurve.Set(params.locallab.spots.at(sp).localTgaincurve);
             locRETtransCurve.Set(params.locallab.spots.at(sp).localTtranscurve);
@@ -1061,6 +1070,11 @@ void Crop::update(int todo)
             float Tmin;
             float Tmax;
             int lastsav;
+
+/*            huerefp[sp] = huere;
+            chromarefp[sp] = chromare;
+            lumarefp[sp] = lumare;
+*/            
             CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lumare,
                                             hltonecurveloc2, shtonecurveloc2, tonecurveloc2, lightCurveloc2, avge,
                                             skip);
@@ -1126,6 +1140,8 @@ void Crop::update(int todo)
                         parent->previewDeltaE, parent->locallColorMask, parent->locallColorMaskinv, parent->locallExpMask, parent->locallExpMaskinv, parent->locallSHMask, parent->locallSHMaskinv, parent->locallvibMask,  parent->localllcMask, parent->locallsharMask, parent->locallcbMask, parent->locallretiMask, parent->locallsoftMask, parent->localltmMask, parent->locallblMask,
                         parent->localllogMask, parent->locall_Mask, parent->locallcieMask, minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                         meantme, stdtme, meanretie, stdretie, fab);
+                    //    fabrefp[sp] = fab;
+
                         if (parent->previewDeltaE || parent->locallColorMask == 5 || parent->locallvibMask == 4 || parent->locallExpMask == 5 || parent->locallSHMask == 4 || parent->localllcMask == 4 || parent->localltmMask == 4 || parent->localllogMask == 4 || parent->locallsoftMask == 6 || parent->localllcMask == 4 || parent->locallcieMask == 4) {
                             params.blackwhite.enabled = false;
                             params.colorToning.enabled = false;
@@ -1149,6 +1165,13 @@ void Crop::update(int todo)
                             params.epd.enabled = false;
                             params.softlight.enabled = false;
                         }
+                        /*
+                        if (parent->locallListener) {
+                            parent->locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params.locallab.selspot);
+
+                        }
+                        */
+
             } else {
                 parent->ipf.Lab_Local(1, sp, (float**)shbuffer, labnCrop, labnCrop, reservCrop.get(), savenormtmCrop.get(), savenormretiCrop.get(), lastorigCrop.get(), fw, fh, cropx / skip, cropy / skip, skips(parent->fw, skip), skips(parent->fh, skip), skip, locRETgainCurve, locRETtransCurve,
                         lllocalcurve2,locallutili, 
@@ -1214,6 +1237,13 @@ void Crop::update(int todo)
                 Glib::usleep(settings->cropsleep);    //wait to avoid crash when crop 100% and move window
             }
         }
+        /*
+                delete [] huerefp;
+                delete [] chromarefp;
+                delete [] lumarefp;
+                delete [] fabrefp;
+        */
+        
         parent->ipf.lab2rgb(*labnCrop, *baseCrop, params.icm.workingProfile);
     }
 

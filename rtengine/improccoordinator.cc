@@ -954,6 +954,16 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             stdtms.resize(params->locallab.spots.size());
             meanretis.resize(params->locallab.spots.size());
             stdretis.resize(params->locallab.spots.size());
+            const int sizespot = (int)params->locallab.spots.size();
+
+            float *huerefp = nullptr;
+            huerefp = new float[sizespot];
+            float *chromarefp = nullptr;
+            chromarefp = new float[sizespot];
+            float *lumarefp = nullptr;
+            lumarefp = new float[sizespot];
+            float *fabrefp = nullptr;
+            fabrefp = new float[sizespot];
 
             for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
 
@@ -1123,6 +1133,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float stdtm = stdtms[sp] = stdtme;
                 float meanreti = meanretis[sp] = meanretie;
                 float stdreti = stdretis[sp] = stdretie;
+
+                huerefp[sp] = huer;
+                chromarefp[sp] = chromar;
+                lumarefp[sp] = lumar;
                 
                 CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lumar,
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avg,
@@ -1207,7 +1221,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               meantm, stdtm, meanreti, stdreti, fab);
 
 
-                
+                fabrefp[sp] = fab;
                 if (istm) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;
                     float stdf = 0.f;
@@ -1266,14 +1280,24 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 locallref.at(sp).fab = fab;
 
                 locallref.push_back(spotref);
-
+            if (locallListener) {
+              //  locallListener->refChanged(locallref, params->locallab.selspot);
+                locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
+                locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
             }
 
+            }
+            delete [] huerefp;
+            delete [] chromarefp;
+            delete [] lumarefp;
+            delete [] fabrefp;
             // Transmit Locallab reference values and Locallab Retinex min/max to LocallabListener
+            /*
             if (locallListener) {
                 locallListener->refChanged(locallref, params->locallab.selspot);
                 locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
             }
+            */
             ipf.lab2rgb(*nprevl, *oprevi, params->icm.workingProfile);
             //*************************************************************
             // end locallab
