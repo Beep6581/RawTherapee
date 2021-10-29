@@ -58,6 +58,7 @@ protected:
     CheckBox* pixelShiftBlur;
     CheckBox* pixelShiftHoleFill;
     CheckBox* pixelShiftMedian;
+    CheckBox* pixelShiftAverage;
     CheckBox* pixelShiftEqualBright;
     CheckBox* pixelShiftEqualBrightChannel;
     Adjuster* pixelShiftSmooth;
@@ -73,6 +74,7 @@ protected:
     rtengine::ProcEvent EvDemosaicAutoContrast;
     rtengine::ProcEvent EvDemosaicContrast;
     rtengine::ProcEvent EvDemosaicPixelshiftDemosaicMethod;
+    rtengine::ProcEvent EvPixelshiftAverage;
 public:
 
     BayerProcess ();
