@@ -1275,6 +1275,11 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     locallref.at(sp).lumar = lumar;
                     locallref.at(sp).huer = huer;
                     locallref.at(sp).fab = fab;
+                    huerefp[sp] = huer;
+                    chromarefp[sp] = chromar;
+                    lumarefp[sp] = lumar;
+                    fabrefp[sp] = fab;
+                    
                 }
                 spotref.fab = fab;
                 locallref.at(sp).fab = fab;

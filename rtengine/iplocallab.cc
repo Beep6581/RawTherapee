@@ -3386,9 +3386,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     temp->a[i][k] = C_z * sincosval.y;
                     temp->b[i][k] = C_z * sincosval.x;
                 }
-               
-                
-                
             }
         }
                 if (loclhCurvejz && LHcurvejz && softjz > 0.1f) {//for artifacts curve J(H)
@@ -3403,6 +3400,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                         array2D<float> chro(width, height);
                         array2D<float> hue(width, height);
                         array2D<float> guid(width, height);
+//                        array2D<float> guidhue(width, height);
+                        
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
 #endif
@@ -3414,18 +3413,23 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                                     hue[y][x] += (2.f * rtengine::RT_PI_F);
                                 }
                                 hue[y][x] /= (2.f * rtengine::RT_PI_F);
-                                guid[y][x] = tempres->L[y][x];
+                            //    guidhue[y][x] = xatan2f(lab->b[y][x], lab->a[y][x]);
+                            //    if ( guidhue[y][x] < 0.0f ) {
+                            //        guidhue[y][x] += (2.f * rtengine::RT_PI_F);
+                            //    }
+                                guid[y][x] = tempres->L[y][x] / 32768.f;
+                            //    guidhue[y][x] /= (2.f * rtengine::RT_PI_F);
                             }
                         }
-                        float softr = lp.softrjz;//to test to avoid a slider...                    
+                        float softr = softjz;
                         const float tmpblur = softr < 0.f ? -1.f / softr : 1.f + softr;
-                        const int r2 = rtengine::max<int>(25 / sk * tmpblur + 0.5f, 1);
+                        const int r2 = rtengine::max<int>(25 / sk * tmpblur + 0.2f, 1);
                         constexpr float epsilmax = 0.005f;
                         constexpr float epsilmin = 0.00001f;
                         constexpr float aepsil = (epsilmax - epsilmin) / 100.f;
                         constexpr float bepsil = epsilmin;
                         const float epsil = softr < 0.f ? 0.001f : aepsil * softr + bepsil;
-                        rtengine::guidedFilter(guid, hue, hue, r2, 0.2f * epsil, multiThread);
+                        rtengine::guidedFilter(guid, hue, hue, r2, 0.5f * epsil, multiThread);
 
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
