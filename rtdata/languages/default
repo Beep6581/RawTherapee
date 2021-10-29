@@ -1400,6 +1400,7 @@ HISTORY_MSG_1136;Local - Cie Wav clarity Cz
 HISTORY_MSG_1137;Local - Cie Wav clarity Soft
 HISTORY_MSG_1138;Local - Local - Hz(Hz) Curve
 HISTORY_MSG_1139;Local - Jz soft Curves H
+HISTORY_MSG_1140;Local - Jz Threshold chroma
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2998,6 +2999,7 @@ TP_LOCALLAB_JZSHFRA;Shadows/Highlights Jz
 TP_LOCALLAB_JZSOFTCIE;Soft radius
 TP_LOCALLAB_JZQTOJ;Relative luminance
 TP_LOCALLAB_JZQTOJ_TOOLTIP;Allows you to use "Relative luminance" instead of "Absolute luminance" - Brightness becomes Lightness.\nThe changes affect: the Brightness slider, the Contrast slider, the Jz(Jz) curve and Sigmoid Jz.
+TP_LOCALLAB_JZTHRHCIE;Threshold Chroma for Jz(H)
 TP_LOCALLAB_JZWAVEXP;Wavelet Jz
 TP_LOCALLAB_LABBLURM;Blur Mask
 TP_LOCALLAB_LABEL;Local Adjustments

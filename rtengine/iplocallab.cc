@@ -3004,6 +3004,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         bhighjz =  -ahighjz * level_brjz;
     }
     float sigmalcjz = params->locallab.spots.at(sp).sigmalcjz;
+    float jzamountchr = 0.01 * params->locallab.spots.at(sp).thrhjzcie;
     double jzamountchroma = 0.01 * settings->amchromajz;
     if(jzamountchroma < 0.05) {
         jzamountchroma = 0.05;
@@ -3342,7 +3343,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 float C_z = sqrt(SQR(temp->a[i][k]) + SQR(temp->b[i][k]));
                 float c_z = C_z / 32768.f;
                 if (loclhCurvejz && LHcurvejz) {//Jz=f(Hz) curve
-                    float kcz = (float) jzamountchroma;//0.4 by default
+                   // float kcz = (float) jzamountchroma;//0.4 by default
+                    float kcz = (float) jzamountchr;//0.4 by default
                   //  Hz = xatan2f ( bz, az );
                     float Hbisz = xatan2f ( b, a);//replace Hz by H=> a b Lab....best response in all cases
 

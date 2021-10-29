@@ -7472,6 +7472,7 @@ Locallabcie::Locallabcie():
     CHshapejz(static_cast<FlatCurveEditor*>(jz3CurveEditorG->addCurve(CT_Flat, "Cz(h)", nullptr, false, true))),
     LHshapejz(static_cast<FlatCurveEditor*>(jz3CurveEditorG->addCurve(CT_Flat, "Jz(h)", nullptr, false, true))),
     softjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZSOFTCIE"), 0., 100., 0.1, 0.5))),
+    thrhjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZTHRHCIE"), 0., 100., 0.1, 40.))),
     
 /*
     ciezFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_ZCAMFRA")))),
@@ -7701,6 +7702,7 @@ Locallabcie::Locallabcie():
     jzBox->pack_start(*jz2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     jzBox->pack_start(*jz3CurveEditorG, Gtk::PACK_SHRINK, 4); //   jzBox->pack_start(*adapjzcie);
     jzBox->pack_start(*softjzcie);
+    jzBox->pack_start(*thrhjzcie);
     sigmoidjzFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const sigjzBox = Gtk::manage(new ToolParamBlock());
     sigjzBox->pack_start(*sigmoidldajzcie);
@@ -7822,6 +7824,7 @@ Locallabcie::Locallabcie():
     saturjzcie->setAdjusterListener(this);
     huejzcie->setAdjusterListener(this);
     softjzcie->setAdjusterListener(this);
+    thrhjzcie->setAdjusterListener(this);
 
     lightlcie->setAdjusterListener(this);
     lightjzcie->setAdjusterListener(this);
@@ -8364,6 +8367,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         saturjzcie->setValue(spot.saturjzcie);
         huejzcie->setValue(spot.huejzcie);
         softjzcie->setValue(spot.softjzcie);
+        thrhjzcie->setValue(spot.thrhjzcie);
         lightlcie->setValue(spot.lightlcie);
         lightjzcie->setValue(spot.lightjzcie);
         lightqcie->setValue(spot.lightqcie);
@@ -8520,6 +8524,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.chromlcie = chromlcie->getValue();
         spot.huejzcie = huejzcie->getValue();
         spot.softjzcie = softjzcie->getValue();
+        spot.thrhjzcie = thrhjzcie->getValue();
         spot.chromjzcie = chromjzcie->getValue();
         spot.saturjzcie = saturjzcie->getValue();
         spot.huecie = huecie->getValue();
@@ -9427,6 +9432,7 @@ void Locallabcie::convertParamToNormal()
     saturjzcie->setValue(defSpot.saturjzcie);
     huejzcie->setValue(defSpot.huejzcie);
     softjzcie->setValue(defSpot.softjzcie);
+    thrhjzcie->setValue(defSpot.thrhjzcie);
     modecie->set_active(0);
     if (modecam->get_active_row_number() == 1) {
         showmaskcieMethod->set_active(0);
@@ -9460,6 +9466,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         saturjzcie->setDefault(defSpot.saturjzcie);
         huejzcie->setDefault(defSpot.huejzcie);
         softjzcie->setDefault(defSpot.softjzcie);
+        thrhjzcie->setDefault(defSpot.thrhjzcie);
         lightlcie->setDefault(defSpot.lightlcie);
         lightjzcie->setDefault(defSpot.lightjzcie);
         lightqcie->setDefault(defSpot.lightqcie);
@@ -9698,6 +9705,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabsoftjzcie,
                                        softjzcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == thrhjzcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabthrhjzcie,
+                                       thrhjzcie->getTextValue() + spName);
             }
         }
 

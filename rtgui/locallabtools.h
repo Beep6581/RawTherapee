@@ -1620,6 +1620,7 @@ private:
     FlatCurveEditor* const CHshapejz;
     FlatCurveEditor* const LHshapejz;
     Adjuster* const softjzcie;
+    Adjuster* const thrhjzcie;
    
 /*
     Gtk::Frame* const ciezFrame;
