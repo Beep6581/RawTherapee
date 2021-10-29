@@ -1613,10 +1613,12 @@ private:
     DiagonalCurveEditor* const shapecz;
 
     
+    Gtk::Frame* const HFramejz;
+    Gtk::Frame* const JzHFramejz;
     CurveEditorGroup* const jz2CurveEditorG;
+    CurveEditorGroup* const jz3CurveEditorG;
     DiagonalCurveEditor* const shapeczjz;
     FlatCurveEditor* const HHshapejz;
-    CurveEditorGroup* const jz3CurveEditorG;
     FlatCurveEditor* const CHshapejz;
     FlatCurveEditor* const LHshapejz;
     Adjuster* const softjzcie;

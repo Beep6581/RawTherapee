@@ -7465,12 +7465,15 @@ Locallabcie::Locallabcie():
     jz1CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
     shapejz(static_cast<DiagonalCurveEditor*>(jz1CurveEditorG->addCurve(CT_Diagonal, "Jz(J)"))),
     shapecz(static_cast<DiagonalCurveEditor*>(jz1CurveEditorG->addCurve(CT_Diagonal, "Cz(C)"))),
+
+    HFramejz(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZHFRA")))),
+    JzHFramejz(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_JZHJZFRA")))),
     jz2CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
-    shapeczjz(static_cast<DiagonalCurveEditor*>(jz1CurveEditorG->addCurve(CT_Diagonal, "Cz(J)"))),
-    HHshapejz(static_cast<FlatCurveEditor*>(jz2CurveEditorG->addCurve(CT_Flat, "Hz(hz)", nullptr, false, true))),
     jz3CurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "", 1)),
-    CHshapejz(static_cast<FlatCurveEditor*>(jz3CurveEditorG->addCurve(CT_Flat, "Cz(h)", nullptr, false, true))),
-    LHshapejz(static_cast<FlatCurveEditor*>(jz3CurveEditorG->addCurve(CT_Flat, "Jz(h)", nullptr, false, true))),
+    shapeczjz(static_cast<DiagonalCurveEditor*>(jz1CurveEditorG->addCurve(CT_Diagonal, "Cz(J)"))),
+    HHshapejz(static_cast<FlatCurveEditor*>(jz3CurveEditorG->addCurve(CT_Flat, "Hz(Hz)", nullptr, false, true))),
+    CHshapejz(static_cast<FlatCurveEditor*>(jz3CurveEditorG->addCurve(CT_Flat, "Cz(Hz)", nullptr, false, true))),
+    LHshapejz(static_cast<FlatCurveEditor*>(jz2CurveEditorG->addCurve(CT_Flat, "Jz(Hz)", nullptr, false, true))),
     softjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZSOFTCIE"), 0., 100., 0.1, 0.5))),
     thrhjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZTHRHCIE"), 0., 100., 0.1, 40.))),
     
@@ -7655,11 +7658,11 @@ Locallabcie::Locallabcie():
     jz2CurveEditorG->curveListComplete();
 */
     jz2CurveEditorG->setCurveListener(this);
-    HHshapejz->setIdentityValue(0.);
-    HHshapejz->setResetCurve(FlatCurveType(defSpot.HHcurvejz.at(0)), defSpot.HHcurvejz);
-    HHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
-    HHshapejz->setCurveColorProvider(this, 3);
-    HHshapejz->setBottomBarBgGradient(six_shape);
+    LHshapejz->setIdentityValue(0.);
+    LHshapejz->setResetCurve(FlatCurveType(defSpot.LHcurvejz.at(0)), defSpot.LHcurvejz);
+    LHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    LHshapejz->setCurveColorProvider(this, 3);
+    LHshapejz->setBottomBarBgGradient(six_shape);
     jz2CurveEditorG->curveListComplete();
 
     jz3CurveEditorG->setCurveListener(this);
@@ -7670,11 +7673,12 @@ Locallabcie::Locallabcie():
     CHshapejz->setCurveColorProvider(this, 3);
     CHshapejz->setBottomBarBgGradient(six_shape);
 
-    LHshapejz->setIdentityValue(0.);
-    LHshapejz->setResetCurve(FlatCurveType(defSpot.LHcurvejz.at(0)), defSpot.LHcurvejz);
-    LHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
-    LHshapejz->setCurveColorProvider(this, 3);
-    LHshapejz->setBottomBarBgGradient(six_shape);
+    HHshapejz->setIdentityValue(0.);
+    HHshapejz->setResetCurve(FlatCurveType(defSpot.HHcurvejz.at(0)), defSpot.HHcurvejz);
+    HHshapejz->setTooltip(M("TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP"));
+    HHshapejz->setCurveColorProvider(this, 3);
+    HHshapejz->setBottomBarBgGradient(six_shape);
+
 
     jz3CurveEditorG->curveListComplete();
     
@@ -7699,10 +7703,21 @@ Locallabcie::Locallabcie():
     jzBox->pack_start(*czcolorFrame);
     
     jzBox->pack_start(*jz1CurveEditorG, Gtk::PACK_SHRINK, 4);
-    jzBox->pack_start(*jz2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
-    jzBox->pack_start(*jz3CurveEditorG, Gtk::PACK_SHRINK, 4); //   jzBox->pack_start(*adapjzcie);
-    jzBox->pack_start(*softjzcie);
-    jzBox->pack_start(*thrhjzcie);
+    HFramejz->set_label_align(0.025, 0.5);
+    ToolParamBlock* const jzHHBox = Gtk::manage(new ToolParamBlock());
+    JzHFramejz->set_label_align(0.025, 0.5);
+    ToolParamBlock* const jzHBox = Gtk::manage(new ToolParamBlock());
+
+    jzHBox->pack_start(*jz2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    jzHBox->pack_start(*thrhjzcie);
+    JzHFramejz->add(*jzHBox);
+    jzHHBox->pack_start(*JzHFramejz);
+    
+    jzHHBox->pack_start(*jz3CurveEditorG, Gtk::PACK_SHRINK, 4); //   jzBox->pack_start(*adapjzcie);
+    jzHHBox->pack_start(*softjzcie);
+    HFramejz->add(*jzHHBox);
+    jzBox->pack_start(*HFramejz);
+    
     sigmoidjzFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const sigjzBox = Gtk::manage(new ToolParamBlock());
     sigjzBox->pack_start(*sigmoidldajzcie);
