@@ -1367,7 +1367,7 @@ Camera constants:
     },
 
     { // Quality B
-        "make_model": "FUJIFILM GFX 50S",
+        "make_model": [ "FUJIFILM GFX 50R", "FUJIFILM GFX 50S", "FUJIFILM GFX50S II" ],
         "dcraw_matrix": [ 11756,-4754,-874,-3056,11045,2305,-381,1457,6006 ], // DNGv9.9 D65
         //"dcraw_matrix": [ 12407,-5222,-1086,-2971,11116,2120,-294,1029,5284 ], // copy from X-A3 DNGv9.8 D65
         "raw_crop": [ 0, 0, 8280, 6208 ], // full raw 9216X6210 - useful 8280x6208
