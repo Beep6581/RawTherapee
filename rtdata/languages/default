@@ -1401,6 +1401,8 @@ HISTORY_MSG_1137;Local - Cie Wav clarity Soft
 HISTORY_MSG_1138;Local - Local - Hz(Hz) Curve
 HISTORY_MSG_1139;Local - Jz soft Curves H
 HISTORY_MSG_1140;Local - Jz Threshold chroma
+HISTORY_MSG_1141;Local - chroma curve Jz(Hz)
+
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2992,6 +2994,7 @@ TP_LOCALLAB_JZADAP;PU adaptation
 TP_LOCALLAB_JZFRA;Jz Cz Hz Image Adjustments
 TP_LOCALLAB_JZLIGHT;Brightness
 TP_LOCALLAB_JZCONT;Contrast
+TP_LOCALLAB_JZCH;Chroma
 TP_LOCALLAB_JZCHROM;Chroma
 TP_LOCALLAB_JZHFRA;Curves Hz
 TP_LOCALLAB_JZHJZFRA;Curve Jz(Hz)

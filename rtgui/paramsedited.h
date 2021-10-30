@@ -986,6 +986,7 @@ public:
         bool qtoj;
         bool jabcie;
         bool sigmoidqjcie;
+        bool chjzcie;
         bool sourceGraycie;
         bool sourceabscie;
         bool sursourcie;

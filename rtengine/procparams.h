@@ -1593,6 +1593,7 @@ struct LocallabParams {
         bool qtoj;
         bool jabcie;
         bool sigmoidqjcie;
+        bool chjzcie;
         double sourceGraycie;
         double sourceabscie;
         Glib::ustring sursourcie;

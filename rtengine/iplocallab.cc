@@ -3005,6 +3005,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     }
     float sigmalcjz = params->locallab.spots.at(sp).sigmalcjz;
     float jzamountchr = 0.01 * params->locallab.spots.at(sp).thrhjzcie;
+    bool jzch = params->locallab.spots.at(sp).chjzcie;
     double jzamountchroma = 0.01 * settings->amchromajz;
     if(jzamountchroma < 0.05) {
         jzamountchroma = 0.05;
@@ -3349,9 +3350,13 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     float Hbisz = xatan2f ( b, a);//replace Hz by H=> a b Lab....best response in all cases
 
                     float l_r = j_z / 32768.f;
-                    float kcc = c_z / kcz;//0.15 empirical value
+                    float kcc = c_z / kcz;
                     //  printf("kcz=%f", (double) kcc);
-
+                    if(jzch == false) {
+                        kcc = 1.f;
+                    } else if(kcc > 1.f) {
+                        kcc = cbrt(kcc);
+                    }
                     float valparam = loclhCurvejz[500.f *static_cast<float>(Color::huelab_to_huehsv2((float) Hbisz))] - 0.5f;
                    // float valparam = loclhCurvejz[500.f *static_cast<float>(Color::huejz_to_huehsv2((float) Hz))] - 0.5f;
                    // printf("hz=%f Hbis=%f vz=%f", Hz , (double) Hbisz, (double) valparam);

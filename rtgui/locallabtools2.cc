@@ -7475,7 +7475,8 @@ Locallabcie::Locallabcie():
     CHshapejz(static_cast<FlatCurveEditor*>(jz3CurveEditorG->addCurve(CT_Flat, "Cz(Hz)", nullptr, false, true))),
     LHshapejz(static_cast<FlatCurveEditor*>(jz2CurveEditorG->addCurve(CT_Flat, "Jz(Hz)", nullptr, false, true))),
     softjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZSOFTCIE"), 0., 100., 0.1, 0.5))),
-    thrhjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZTHRHCIE"), 0., 100., 0.1, 40.))),
+    thrhjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZTHRHCIE"), 5, 100., 0.1, 60.))),
+    chjzcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZCH")))),
     
 /*
     ciezFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_ZCAMFRA")))),
@@ -7709,6 +7710,7 @@ Locallabcie::Locallabcie():
     ToolParamBlock* const jzHBox = Gtk::manage(new ToolParamBlock());
 
     jzHBox->pack_start(*jz2CurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    jzHBox->pack_start(*chjzcie);
     jzHBox->pack_start(*thrhjzcie);
     JzHFramejz->add(*jzHBox);
     jzHHBox->pack_start(*JzHFramejz);
@@ -7781,6 +7783,7 @@ Locallabcie::Locallabcie():
     sigmoidqjcieconn = sigmoidqjcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigmoidqjcieChanged));
     forcejzConn = forcejz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::forcejzChanged));
     qtojConn = qtoj->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::qtojChanged));
+    chjzcieconn = chjzcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::chjzcieChanged));
 
     sourceGraycie->setAdjusterListener(this);
 
@@ -8215,6 +8218,7 @@ void Locallabcie::disableListener()
     qtojConn.block(true);
     jabcieConn.block(true);
     sigmoidqjcieconn.block(true);
+    chjzcieconn.block(true);
     sursourcieconn.block (true);
     surroundcieconn.block (true);
     modecieconn.block (true);
@@ -8233,6 +8237,7 @@ void Locallabcie::enableListener()
     qtojConn.block(false);
     jabcieConn.block(false);
     sigmoidqjcieconn.block(false);
+    chjzcieconn.block(false);
     sursourcieconn.block (false);
     surroundcieconn.block (false);
     modecieconn.block (false);
@@ -8343,6 +8348,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         qtoj->set_active(spot.qtoj);
         sourceGraycie->setValue(spot.sourceGraycie);
         sigmoidqjcie->set_active(spot.sigmoidqjcie);
+        chjzcie->set_active(spot.chjzcie);
         sourceabscie->setValue(spot.sourceabscie);
         jabcie->set_active(spot.jabcie);
         jabcieChanged();
@@ -8507,6 +8513,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.sourceGraycie = sourceGraycie->getValue();
         spot.sourceabscie = sourceabscie->getValue();
         spot.sigmoidqjcie = sigmoidqjcie->get_active();
+        spot.chjzcie = chjzcie->get_active();
 
         if (sursourcie->get_active_row_number() == 0) {
             spot.sursourcie = "Average";
@@ -8768,6 +8775,26 @@ void Locallabcie::sigmoidqjcieChanged()
     }
 }
 
+void Locallabcie::chjzcieChanged()
+{
+    if (chjzcie->get_active()) {
+        thrhjzcie->set_sensitive(true);
+    } else {
+        thrhjzcie->set_sensitive(false);
+    }
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (chjzcie->get_active()) {
+                listener->panelChanged(Evlocallabchjzcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabchjzcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
 void Locallabcie::modecamChanged()
 {
     const int mode = complexity->get_active_row_number();
@@ -8893,6 +8920,12 @@ void Locallabcie::modecamChanged()
             PQFrame->show();
             catadcie->hide();
             cie2Frame->hide();
+            if (chjzcie->get_active()) {
+                thrhjzcie->set_sensitive(true);
+            } else {
+                thrhjzcie->set_sensitive(false);
+            }
+            
         //    sourceGraycie->hide();
             
         }
@@ -9150,6 +9183,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 expmaskcie->hide();
                 maskusablecie->hide();
                 maskunusablecie->hide();
+                
             }
             if (modecam->get_active_row_number() == 3) {
                 cieFrame->hide();
@@ -9254,6 +9288,12 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 expmaskcie->show();
                 maskusablecie->show();
                 maskunusablecie->show();
+                if (chjzcie->get_active()) {
+                    thrhjzcie->set_sensitive(true);
+                } else {
+                    thrhjzcie->set_sensitive(false);
+                }
+                
            }
                 
             if (modecam->get_active_row_number() == 3) {
