@@ -85,6 +85,8 @@ jobs:
             --appdir AppDir \
             --plugin gtk \
             --output appimage
+          echo "Recording RawTherapee version."
+          echo "RT_VERSION=$VERSION" >> $GITHUB_ENV
           echo "Recording AppImage file name."
           echo "APPIMAGE_NAME=$OUTPUT" >> $GITHUB_ENV
       - name: Upload artifacts
@@ -92,3 +94,27 @@ jobs:
         with:
           name: ${{env.APPIMAGE_NAME}}
           path: ${{github.workspace}}/build/${{env.APPIMAGE_NAME}}
+      - name: Prepare for publishing
+        run: |
+          echo "Setting dev AppImage file name."
+          APPIMAGE_DEV_NAME="RawTherapee-dev-x86_64.AppImage"
+          echo "dev AppImage file name is '$APPIMAGE_DEV_NAME'."
+          echo "Renaming dev AppImage."
+          cp "build/$APPIMAGE_NAME" "$APPIMAGE_DEV_NAME"
+          echo "Recording dev AppImage file name."
+          echo "APPIMAGE_DEV_NAME=$APPIMAGE_DEV_NAME" >> $GITHUB_ENV
+          echo "Setting dev AppImage version file name."
+          APPIMAGE_DEV_VERSION_NAME="RawTherapee-dev-x86_64-version.txt"
+          echo "dev AppImage version file name is '$APPIMAGE_DEV_VERSION_NAME'."
+          echo "Creating dev AppImage version file."
+          echo "$RT_VERSION" > "$APPIMAGE_DEV_VERSION_NAME"
+          echo "Recording dev AppImage version file name."
+          echo "APPIMAGE_DEV_VERSION_NAME=$APPIMAGE_DEV_VERSION_NAME" >> $GITHUB_ENV
+      - name: Publish artifacts
+        uses: softprops/action-gh-release@v1
+        if: ${{github.ref == 'refs/heads/dev'}}
+        with:
+          tag_name: nightly-github-actions
+          files: |
+            ${{env.APPIMAGE_DEV_NAME}}
+            ${{env.APPIMAGE_DEV_VERSION_NAME}}
