@@ -1066,7 +1066,7 @@ void Locallab::logencodChanged(const float blackev, const float whiteev, const f
 void Locallab::refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot)
 {
     // enableListener();
-        //printf("selspo=%i \n", selspot);
+       // printf("selspo=%i \n", selspot);
         const double huer = huerefp[selspot];
         const double lumar = lumarefp[selspot];
         const double chromar = chromarefp[selspot];

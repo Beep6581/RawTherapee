@@ -524,7 +524,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DEMOSAIC,         // EvPdShrEnabled
     CAPTURESHARPEN,    // EvPdShrMaskToggled
     AUTOEXP,   // EvLocallabSpotDeleted
-    M_VOID,           // EvLocallabSpotSelected
+    HDR,           // EvLocallabSpotSelected
     M_VOID,           // EvLocallabSpotName
     M_VOID,           // EvLocallabSpotVisibility
     AUTOEXP,   // EvLocallabSpotShape
