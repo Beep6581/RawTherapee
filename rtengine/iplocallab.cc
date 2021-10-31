@@ -3078,7 +3078,9 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     mini = Jz;
                 }
                 sum += Jz;
-
+            //    double Hz = xatan2f ( bz, az );
+            //    printf("Hz=%f", Hz);
+            // I read bz, az values and Hz ==> with low chroma values Hz are very different from lab always around 1.4 radians ????
             }
         }
         nc = height * width;

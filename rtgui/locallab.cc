@@ -655,7 +655,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     toollist->addToolRow(tool->getToolName(), toolNb);
                 }
             }
-
+/*
             // Update locallab tools mask background
             if (pp->locallab.selspot < (int)maskBackRef.size()) {
                 const double huer = maskBackRef.at(pp->locallab.selspot).huer;
@@ -667,7 +667,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     tool->refChanged(huer, lumar, chromar, fab);
                 }
             }
-
+*/
             // Update Locallab Retinex tool min/max
             if (pp->locallab.selspot < (int)retiMinMax.size()) {
                 const double cdma = retiMinMax.at(pp->locallab.selspot).cdma;
@@ -1065,8 +1065,6 @@ void Locallab::logencodChanged(const float blackev, const float whiteev, const f
 }
 void Locallab::refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot)
 {
-    // enableListener();
-       // printf("selspo=%i \n", selspot);
         const double huer = huerefp[selspot];
         const double lumar = lumarefp[selspot];
         const double chromar = chromarefp[selspot];
@@ -1074,7 +1072,6 @@ void Locallab::refChanged2(float *huerefp, float *chromarefp, float *lumarefp, f
         for (auto tool : locallabTools) {
             tool->refChanged(huer, lumar, chromar, fab);
         }
-   // disableListener();
 }
 
 void Locallab::refChanged(const std::vector<locallabRef> &ref, int selspot)
