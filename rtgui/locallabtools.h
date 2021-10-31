@@ -152,7 +152,6 @@ public:
 protected:
     // To be implemented
     virtual void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) {}; // Only necessary when using mask
-    //virtual void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) {}; // Only necessary when using mask
 
 private:
     // Remove button event function
@@ -305,7 +304,6 @@ private:
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
-  //  void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void curvactivChanged();
     void gridMethodChanged();
@@ -426,7 +424,6 @@ private:
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
-  //  void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void expMethodChanged();
     void exnoiseMethodChanged();
@@ -523,7 +520,6 @@ private:
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
-  //  void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void shMethodChanged();
     void inversshChanged();
@@ -618,7 +614,6 @@ private:
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
-  //  void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void protectskins_toggled();
     void avoidcolorshift_toggled();
@@ -823,7 +818,6 @@ private:
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
-   // void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void blMethodChanged();
     void fftwblChanged();
@@ -914,7 +908,6 @@ private:
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
-  //  void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void equiltmChanged();
     void showmasktmMethodChanged();
@@ -1014,7 +1007,6 @@ private:
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
-  //  void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void loglinChanged();
     void retinexMethodChanged();
@@ -1215,7 +1207,6 @@ private:
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
-  //  void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void localcontMethodChanged();
     void origlcChanged();
@@ -1309,7 +1300,6 @@ private:
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
-  //  void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void showmaskcbMethodChanged();
     void enacbMaskChanged();
@@ -1424,7 +1414,6 @@ private:
     void showmaskLMethodChanged();
     void enaLMaskChanged();
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
-   // void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void updateLogGUI();
     void updateLogGUI2();
@@ -1508,7 +1497,6 @@ private:
     void updateGUIToMode(const modeType new_type) override;
 
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
-   // void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
 
     void showmask_MethodChanged();
     void enamaskChanged();
@@ -1717,7 +1705,6 @@ private:
     void chjzcieChanged();
     void updatecieGUI();
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;
-//    void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer) override;
     void showmaskcieMethodChanged();
     void enacieMaskChanged();
 

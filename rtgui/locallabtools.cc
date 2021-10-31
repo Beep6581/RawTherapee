@@ -298,7 +298,6 @@ void LocallabTool::refChanged(const double huer, const double lumar, const doubl
 
     // Update mask curve backgrounds
     updateMaskBackground(normChromar, normLumar, normHuer, normHuerjz);
- //   updateMaskBackground(normChromar, normLumar, normHuer);
 }
 
 void LocallabTool::colorForValue(double valX, double valY, enum ColorCaller::ElemType elemType, int callerId, ColorCaller* caller)
@@ -2191,7 +2190,6 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
 }
 
 void LocallabColor::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
-//void LocallabColor::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -3690,7 +3688,6 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
 }
 
 void LocallabExposure::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
-//void LocallabExposure::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -4879,7 +4876,6 @@ void LocallabShadow::updateGUIToMode(const modeType new_type)
 }
 
 void LocallabShadow::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
-//void LocallabShadow::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -5937,7 +5933,6 @@ void LocallabVibrance::updateGUIToMode(const modeType new_type)
 }
 
 void LocallabVibrance::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
-//void LocallabVibrance::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {
@@ -8268,7 +8263,6 @@ void LocallabBlur::updateGUIToMode(const modeType new_type)
 }
 
 void LocallabBlur::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz)
-//void LocallabBlur::updateMaskBackground(const double normChromar, const double normLumar, const double normHuer)
 {
     idle_register.add(
     [this, normHuer, normLumar, normChromar]() -> bool {

@@ -1891,44 +1891,34 @@ static inline void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, v
 
     static inline double huejz_to_huehsv2 (float HH)
     {
-        //hr=translate Hue Jz value  (-Pi +Pi) in approximative hr (hsv values) (0 1) [red 1/6 yellow 1/6 green 1/6 cyan 1/6 blue 1/6 magenta 1/6 ]
+        //hr=translate Hue Jz value  (-Pi +Pi) in approximative hr (hsv values) (0 1) 
         // with multi linear correspondences (I expect another time with Jz there is no error !!)
         double hr = 0.0;
         //always put h between 0 and 1
         // make with my chart 468 colors...
-//Blue sky Lab -2.22  jz -2.89
-// Lab -1.90  jz= -2.7
-// -1.37   -2.17
-//-1.54  -2.28
-// vers -2.70  -3.14
-//vers -2.80  +3.05
-// -2.85 +2.97
-// 2.94  2.46
-// 2.79  2.44
-// 2.75  2.30
-
-        if      (HH >= 0.2f       && HH < 0.75f    ) {
-            hr = 0.12727273 * double(HH) + 0.9045454;    //hr 0.93  1.00    full red
-        } else if (HH >= 0.75f      && HH < 1.35f    ) {
-            hr = 0.1125 * double(HH) - 0.0675;    //hr 0.00  0.09    red yellow orange
-        } else if (HH >= 1.35f      && HH < 1.85f     ) {
+        // HH ==> Hz value  ; hr HSv value
+        if      (HH >= 0.2f && HH < 0.75f) {
+            hr = 0.12727273 * double(HH) + 0.9045454;//hr 0.93  1.00    full red
+        } else if (HH >= 0.75f && HH < 1.35f) {
+            hr = 0.1125 * double(HH) - 0.0675;//hr 0.00  0.09    red yellow orange
+        } else if (HH >= 1.35f && HH < 1.85f) {
             hr = 0.32 * double(HH) - 0.342;    //hr 0.09  0.25    orange yellow
-        } else if (HH >= 1.85f       && HH < 2.46f) {
-            hr = 0.23442623 * double(HH) -0.1836885;    //hr 0.25  0.393    yellow green green
-        } else if (HH >= 2.46f       && HH < 3.14159f) {
-            hr = 0.177526 * double(HH) -0.043714;    //hr 0.393  0.514    green
-        } else if (HH >= -3.14159f && HH < -2.89f   ) {
-            hr = 0.3009078 * double(HH) + 1.459329;    //hr 0.514  0.5897    green cyan
-        } else if (HH >= -2.89f     && HH < -2.7f   ) {
-            hr = 0.204542   * double(HH) + 1.1808264;    //hr 0.5897  0.628563    cyan
-        } else if (HH >= -2.7f     && HH < -2.17f   ) {
-            hr = 0.121547 * double(HH) + 0.956677;    //hr 0.6285  0.693    blue blue-sky
-        } else if (HH >= -2.17f     && HH < -0.9f   ) {
-            hr = 0.044882 * double(HH) + 0.7039;    //hr 0.693  0.75    blue blue-sky
-        } else if (HH >= -0.9f     && HH < -0.1f   ) {
-            hr = 0.2125 * double(HH) + 0.94125;    //hr 0.75  0.92    purple magenta
-        } else if (HH >= -0.1f     && HH < 0.2f     ) {
-            hr = 0.03333    * double(HH) + 0.9233;    //hr 0.92  0.93    red
+        } else if (HH >= 1.85f && HH < 2.46f) {
+            hr = 0.23442623 * double(HH) -0.1836885;//hr 0.25  0.393    yellow green green
+        } else if (HH >= 2.46f && HH < 3.14159f) {
+            hr = 0.177526 * double(HH) -0.043714;//hr 0.393  0.514    green
+        } else if (HH >= -3.14159f && HH < -2.89f) {
+            hr = 0.3009078 * double(HH) + 1.459329;//hr 0.514  0.5897    green cyan
+        } else if (HH >= -2.89f && HH < -2.7f) {
+            hr = 0.204542 * double(HH) + 1.1808264;//hr 0.5897  0.628563    cyan
+        } else if (HH >= -2.7f && HH < -2.17f) {
+            hr = 0.121547 * double(HH) + 0.956677;//hr 0.6285  0.693    blue blue-sky
+        } else if (HH >= -2.17f && HH < -0.9f) {
+            hr = 0.044882 * double(HH) + 0.7039;//hr 0.693  0.75    blue blue-sky
+        } else if (HH >= -0.9f && HH < -0.1f) {
+            hr = 0.2125 * double(HH) + 0.94125;//hr 0.75  0.92    purple magenta
+        } else if (HH >= -0.1f && HH < 0.2f) {
+            hr = 0.03333 * double(HH) + 0.9233;//hr 0.92  0.93    red
         }
         // in case of !
         if     (hr < 0.0) {
