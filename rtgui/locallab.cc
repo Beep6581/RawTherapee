@@ -1073,7 +1073,7 @@ void Locallab::refChanged2(float *huerefp, float *chromarefp, float *lumarefp, f
             tool->refChanged(huer, lumar, chromar, fab);
         }
 }
-
+/*
 void Locallab::refChanged(const std::vector<locallabRef> &ref, int selspot)
 {
     // Saving transmitted mask background data
@@ -1091,7 +1091,7 @@ void Locallab::refChanged(const std::vector<locallabRef> &ref, int selspot)
         }
     }
 }
-
+*/
 void Locallab::resetMaskVisibility()
 {
     // Indicate to spot control panel that no more mask preview is active

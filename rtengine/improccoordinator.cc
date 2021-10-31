@@ -940,7 +940,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             int sca = 1;
             double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
             float avge, meantme, stdtme, meanretie, stdretie;
-            std::vector<LocallabListener::locallabRef> locallref;
+            //std::vector<LocallabListener::locallabRef> locallref;
             std::vector<LocallabListener::locallabRetiMinMax> locallretiminmax;
             huerefs.resize(params->locallab.spots.size());
             huerefblurs.resize(params->locallab.spots.size());
@@ -1143,12 +1143,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                                 sca);
 
                 // Save Locallab mask curve references for current spot
+                /*
                 LocallabListener::locallabRef spotref;
                 spotref.huer = huer;
                 spotref.lumar = lumar;
                 spotref.chromar = chromar;
                 spotref.fab = 1.f;
                 locallref.push_back(spotref);
+                */
                 // Locallab tools computation
                 /* Notes:
                  * - shbuffer is used as nullptr
@@ -1267,6 +1269,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
                 // Update Locallab reference values according to recurs parameter
                 if (params->locallab.spots.at(sp).recurs) {
+                    /*
                     spotref.huer = huer;
                     spotref.lumar = lumar;
                     spotref.chromar = chromar;
@@ -1275,16 +1278,17 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     locallref.at(sp).lumar = lumar;
                     locallref.at(sp).huer = huer;
                     locallref.at(sp).fab = fab;
+                    */
                     huerefp[sp] = huer;
                     chromarefp[sp] = chromar;
                     lumarefp[sp] = lumar;
                     fabrefp[sp] = fab;
                     
                 }
-                spotref.fab = fab;
-                locallref.at(sp).fab = fab;
+            //    spotref.fab = fab;
+            //    locallref.at(sp).fab = fab;
 
-                locallref.push_back(spotref);
+            //    locallref.push_back(spotref);
             if (locallListener) {
               //  locallListener->refChanged(locallref, params->locallab.selspot);
                 locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
