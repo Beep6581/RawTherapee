@@ -3348,7 +3348,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     float Hz = xatan2f (temp->b[i][k], temp->a[i][k]);
 
                     float l_r = j_z / 32768.f;
-                    float kcc = c_z / kcz;
+                    float kcc = SQR(c_z / kcz);
                     //  printf("kcz=%f", (double) kcc);
                     jzch = true;
                     if(jzch == false) {
