@@ -1612,6 +1612,7 @@ private:
     Adjuster* const softjzcie;
     Adjuster* const thrhjzcie;
     Gtk::CheckButton* const chjzcie;
+    Adjuster* const strsoftjzcie;
    
 /*
     Gtk::Frame* const ciezFrame;

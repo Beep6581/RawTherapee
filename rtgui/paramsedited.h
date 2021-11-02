@@ -1004,6 +1004,7 @@ public:
         bool saturjzcie;
         bool huejzcie;
         bool softjzcie;
+        bool strsoftjzcie;
         bool thrhjzcie;
         bool jzcurve;
         bool czcurve;

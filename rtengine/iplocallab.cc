@@ -3127,7 +3127,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         const std::unique_ptr<LabImage> temp(new LabImage(width, height));
         const std::unique_ptr<LabImage> tempresid(new LabImage(width, height));
         const std::unique_ptr<LabImage> tempres(new LabImage(width, height));
- //       const std::unique_ptr<LabImage> tempred(new LabImage(width, height));
         array2D<double> JJz(width, height);
         array2D<double> Aaz(width, height);
         array2D<double> Bbz(width, height);
@@ -3136,7 +3135,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         int shadhs = params->locallab.spots.at(sp).shjzcie;
         int shtonals = params->locallab.spots.at(sp).shthjzcie;
         int radhs = params->locallab.spots.at(sp).radjzcie;
-        float softjz = 0.4f * (float) params->locallab.spots.at(sp).softjzcie;
+        float softjz = (float) params->locallab.spots.at(sp).softjzcie;
+        //float strsoftjz = 0.01f * (float) params->locallab.spots.at(sp).strsoftjzcie;
         
         avgm = 0.5 * (sum * to_screen * to_one + avgm);//empirical formula
         double miny = 0.1;
@@ -3290,7 +3290,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             }
             float thr = 0.001f;
-            int flag = 1;
+            int flag = 2;
             
 // begin clarity wavelet jz
             if(mjjz != 0.f || lp.mCjz != 0.f) {
@@ -3314,7 +3314,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     mL0 = mL;
                     mC0 = mC;
                     thr = 1.f;
-                    flag = 1;
+                    flag = 2;
                 }
                 LabImage *mergfile = temp.get();
 #ifdef _OPENMP
@@ -3335,33 +3335,28 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         }
 
 //new curves Hz
+#ifdef _OPENMP
+                #pragma omp parallel for if (multiThread)
+#endif
         for (int i = 0; i < height; i++) {
             for (int k = 0; k < width; k++) {
-               // float a = lab->a[i][k];
-               // float b = lab->b[i][k];
-                //temp->L  Jz temp->L[i][k]
-                //temp->a  az temp->a[i][k]
-                //temp->b  bz temp->b[i][k]
                 float j_z = temp->L[i][k];
                 float C_z = sqrt(SQR(temp->a[i][k]) + SQR(temp->b[i][k]));
                 float c_z = C_z / 32768.f;
                 if (loclhCurvejz && LHcurvejz) {//Jz=f(Hz) curve
                     float kcz = (float) jzamountchr;
                     float Hz = xatan2f (temp->b[i][k], temp->a[i][k]);
-                  //  float Hbisz = xatan2f ( b, a);//replace Hz by H=> a b Lab....best response in all cases ??
 
                     float l_r = j_z / 32768.f;
                     float kcc = c_z / kcz;
                     //  printf("kcz=%f", (double) kcc);
+                    jzch = true;
                     if(jzch == false) {
                         kcc = 1.f;
                     } else if(kcc > 1.f) {
-                        kcc = cbrt(kcc);
+                        kcc = 1.f; //cbrt(kcc);
                     }
-                   // float valparam = loclhCurvejz[500.f *static_cast<float>(Color::huelab_to_huehsv2((float) Hbisz))] - 0.5f;
                     float valparam = loclhCurvejz[500.f *static_cast<float>(Color::huejz_to_huehsv2((float) Hz))] - 0.5f;
-                   // printf("hz=%f Hbis=%f vz=%f", Hz , (double) Hbisz, (double) valparam);
-                   // printf("Hbis=%f vz=%f", (double) Hbisz, (double) valparam);
 
                     float valparamneg;
                     valparamneg = valparam;
@@ -3381,10 +3376,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 }
                 
                 if (locchCurvejz && CHcurvejz) {//Cz=f(Hz) curve
-                   // float Hbisz = xatan2f ( b, a);
                     float Hz = xatan2f (temp->b[i][k], temp->a[i][k]);
-                    
-                    // const float valparam = 1.5f * (locchCurvejz[500.f * static_cast<float>(Color::huelab_to_huehsv2((float)Hbisz))] - 0.5f);  //get valp=f(H)
                      const float valparam = 1.5f * (locchCurvejz[500.f * static_cast<float>(Color::huejz_to_huehsv2((float)Hz))] - 0.5f);  //get valp=f(H)
                      float chromaCzfactor = 1.0f + valparam;
                      temp->a[i][k] *= chromaCzfactor;
@@ -3393,16 +3385,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 
                 
                  if (lochhCurvejz && HHcurvejz) { // Hz=f(Hz)
-                    //float Hbisz = xatan2f ( b, a);
                     float Hz = xatan2f (temp->b[i][k], temp->a[i][k]);
-
-                  //  const float valparam = 1.4f * (lochhCurvejz[500.f * static_cast<float>(Color::huelab_to_huehsv2((float)Hbisz))] - 0.5f) + static_cast<float>(Hbisz);
                     const float valparam = 1.4f * (lochhCurvejz[500.f * static_cast<float>(Color::huejz_to_huehsv2((float)Hz))] - 0.5f) + static_cast<float>(Hz);
-                    /*
-                    if ( Hbisz < 0.0f ) {
-                        Hbisz += (2.f * rtengine::RT_PI_F);
-                    }
-                    */
                     Hz = valparam;
                     if ( Hz < 0.0f ) {
                         Hz += (2.f * rtengine::RT_PI_F);
@@ -3414,18 +3398,33 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 }
             }
         }
-                if (loclhCurvejz && LHcurvejz && softjz > 0.1f) {//for artifacts curve J(H)
-                    float thr = 0.001f;
-                    int flag = 1;
-                    softproc(tempres.get(), temp.get(), softjz, height, width, 0.001, 0.00001, thr, sk, multiThread, flag);
-                }
+            //    array2D<float> iL(width, height, temp->L, 0);
+
+                if (loclhCurvejz && LHcurvejz && softjz > 0.f) {//for artifacts curve J(H)
+                    float thr = 0.00001f;
+                    int flag = 2;
+                    float softjzr = 0.05f * softjz;
+                    softproc(tempres.get(), temp.get(), softjzr, height, width, 0.000001, 0.00000001, thr, sk, multiThread, flag);
+                    /*
+#ifdef _OPENMP
+                #pragma omp parallel for if (multiThread)
+#endif
+                    for (int i = 0; i < height; i++) {
+                        for (int k = 0; k < width; k++) {
+                            temp->L[i][k] = intp(strsoftjz, temp->L[i][k] , iL[i][k]);
+                        }
+                    }
+                    */
+                } 
 
 
                  if ((lochhCurvejz && HHcurvejz) || (locchCurvejz && CHcurvejz)) { //for artifacts curve H(H)
-                    if(softjz > 0.1f) {
+                    if(softjz > 0.f) {
                         array2D<float> chro(width, height);
                         array2D<float> hue(width, height);
                         array2D<float> guid(width, height);
+            //            array2D<float> ia(width, height, temp->a, 0);
+            //            array2D<float> ib(width, height, temp->b, 0);
                         
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -3445,8 +3444,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                         const float tmpblur = softr < 0.f ? -1.f / softr : 1.f + softr;
                         const int r2 = rtengine::max<int>(10 / sk * tmpblur + 0.2f, 1);
                         const int r1 = rtengine::max<int>(4 / sk * tmpblur + 0.5f, 1);
-                        constexpr float epsilmax = 0.005f;
-                        constexpr float epsilmin = 0.00001f;
+                        constexpr float epsilmax = 0.0005f;
+                        constexpr float epsilmin = 0.0000001f;
                         constexpr float aepsil = (epsilmax - epsilmin) / 100.f;
                         constexpr float bepsil = epsilmin;
                         const float epsil = softr < 0.f ? 0.001f : aepsil * softr + bepsil;
@@ -3467,6 +3466,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                                 float2 sincosval = xsincosf(hue[y][x]);
                                 temp->a[y][x] = chro[y][x] * sincosval.y;
                                 temp->b[y][x] = chro[y][x] * sincosval.x;
+                        //        temp->a[y][x] = intp(strsoftjz, temp->a[y][x] , ia[y][x]);
+                        //        temp->b[y][x] = intp(strsoftjz, temp->b[y][x] , ib[y][x]);
                             }
                         }
                     }
@@ -4380,7 +4381,7 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
             const float bepsil = epsilmin; //epsilmax - 100.f * aepsil;
            // const float epsil = aepsil * 0.1f * rad + bepsil;
             const float epsil = aepsil * rad + bepsil;
-            const float blur = 10.f / sk * (thres + 0.8f * rad);
+            const float blur = 10.f / sk * (thres + 0.f * rad);
 
             rtengine::guidedFilter(guid, ble, ble, blur, epsil, multiThread, 4);
 
@@ -4408,6 +4409,34 @@ void ImProcFunctions::softproc(const LabImage* bufcolorig, const LabImage* bufco
             const float epsil = rad < 0.f ? 0.0001f : aepsil * rad + bepsil;
             const float blur = rad < 0.f ? -1.f / rad : 1.f + rad;
             const int r2 = rtengine::max(int(25 / sk * blur + 0.5f), 1);
+
+            rtengine::guidedFilter(guid, ble, ble, r2, epsil, multiThread);
+
+#ifdef _OPENMP
+            #pragma omp parallel for if(multiThread)
+#endif
+            for (int ir = 0; ir < bfh; ir++) {
+                for (int jr = 0; jr < bfw; jr++) {
+                    bufcolfin->L[ir][jr] =  32768.f * ble[ir][jr];
+                }
+            }
+        } else if (flag == 2) {
+
+#ifdef _OPENMP
+            #pragma omp parallel for if(multiThread)
+#endif
+            for (int ir = 0; ir < bfh; ir++)
+                for (int jr = 0; jr < bfw; jr++) {
+                    ble[ir][jr] = bufcolfin->L[ir][jr] / 32768.f;
+                    guid[ir][jr] = bufcolorig->L[ir][jr] / 32768.f;
+                }
+
+            const float aepsil = (epsilmax - epsilmin) / 1000.f;
+            const float bepsil = epsilmin; //epsilmax - 100.f * aepsil;
+            const float epsil = rad < 0.f ? 0.0001f : aepsil * 10.f * rad + bepsil;
+          //  const float epsil =  bepsil;
+            const float blur = rad < 0.f ? -1.f / rad : 0.00001f + rad;
+            const int r2 = rtengine::max(int(20.f / sk * blur + 0.000001f), 1);
 
             rtengine::guidedFilter(guid, ble, ble, r2, epsil, multiThread);
 
