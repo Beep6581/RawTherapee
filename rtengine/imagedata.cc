@@ -424,6 +424,30 @@ FramesData::FramesData(const Glib::ustring &fname) :
             }
         }
 
+        if (make == "SONY") {
+            if (find_exif_tag("Exif.SubImage1.BitsPerSample") && pos->toLong() == 14) {
+                if (find_exif_tag("Exif.SubImage1.SamplesPerPixel") && pos->toLong() == 4 &&
+                    find_exif_tag("Exif.SubImage1.PhotometricInterpretation") && pos->toLong() == 32892 &&
+                    find_exif_tag("Exif.SubImage1.Compression") && pos->toLong() == 1) {
+                    isPixelShift = true;
+                }
+            } else if (bps != exif.end() && bps->toLong() == 14 &&
+                       spp != exif.end() && spp->toLong() == 4 &&
+                       c != exif.end() && c->toLong() == 1 &&
+                       find_exif_tag("Exif.Image.Software") &&
+                       pos->toString() == "make_arq") {
+                isPixelShift = true;
+            }
+        } else if (make == "FUJIFILM") {
+            if (bps != exif.end() && bps->toLong() == 16 &&
+                spp != exif.end() && spp->toLong() == 4 &&
+                c != exif.end() && c->toLong() == 1 &&
+                find_exif_tag("Exif.Image.Software") &&
+                pos->toString() == "make_arq") {
+                isPixelShift = true;
+            }
+        }
+
         sampleFormat = IIOSF_UNKNOWN;
 
         if (sf == exif.end())
