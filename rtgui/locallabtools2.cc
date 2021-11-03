@@ -7405,7 +7405,7 @@ Locallabcie::Locallabcie():
     lightjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZLIGHT"), -100., 100., 0.01, 0.))),
     contjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZCONT"), -100., 100., 0.5, 0.))),
     adapjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZADAP"), 1., 10., 0.05, 4.))),
-    jz100(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZ100"), 0.02, 1.0, 0.01, 0.25))),
+    jz100(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZ100"), 0.10, 0.70, 0.01, 0.25))),
     pqremap(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZPQREMAP"), 100., 10000., 0.1, 120.))),
     pqremapcam16(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CAM16PQREMAP"), 100., 10000., 0.1, 100.))),
     forcejz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZFORCE")))),
@@ -8660,9 +8660,9 @@ void Locallabcie::updateMaskBackground(const double normChromar, const double no
 
 
 void Locallabcie::updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg)
-{
+{    
+
     if (Autograycie->get_active()) {
-    
         idle_register.add(
         [this, blackev, whiteev, sourceg, sourceab, targetg]() -> bool {
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
@@ -8674,6 +8674,7 @@ void Locallabcie::updateAutocompute(const float blackev, const float whiteev, co
             float sour = sourceab;
             float  pal = sqrt(std::max(200.f, sour) / 100.f);//empirical formula to adapt peak luminance in function La
             adapjzcie->setValue(pal);//max = 10
+            jz100->setValue(0.25);
             enableListener();
 
             return false;
@@ -8695,9 +8696,10 @@ void Locallabcie::AutograycieChanged()
     } else {
         sourceGraycie->set_sensitive(true);
         sourceabscie->set_sensitive(true);
-      //  adapjzcie->set_sensitive(true);
-        adapjzcie->set_sensitive(false);
-        jz100->set_sensitive(false);
+        adapjzcie->set_sensitive(true);
+        jz100->set_sensitive(true);
+      //  adapjzcie->set_sensitive(false);
+      //  jz100->set_sensitive(false);
     }
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
@@ -9421,9 +9423,10 @@ void Locallabcie::updatecieGUI()
     } else {
         sourceGraycie->set_sensitive(true);
         sourceabscie->set_sensitive(true);
-        //adapjzcie->set_sensitive(true);
-        adapjzcie->set_sensitive(false);
-        jz100->set_sensitive(false);
+        adapjzcie->set_sensitive(true);
+        jz100->set_sensitive(true);
+       // adapjzcie->set_sensitive(false);
+       // jz100->set_sensitive(false);
     }
 
     if (mode == Simple || mode == Normal) { // Keep widget hidden in Normal and Simple mode
@@ -9674,6 +9677,8 @@ void Locallabcie::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int new
 
 void Locallabcie::adjusterChanged(Adjuster* a, double newval)
 {
+    const LocallabParams::LocallabSpot defSpot;
+
     if (isLocActivated && exp->getEnabled()) {
         const auto spName = " (" + escapeHtmlChars(getSpotName()) + ")";
         if (a == reparcie) {
@@ -9701,6 +9706,7 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             float sour = sourceabscie->getValue();
             float  pal = sqrt(std::max(200.f, sour) / 100.f);//empirical formula to adapt peak luminance in function La
             adapjzcie->setValue(pal);//max to 10 if La > 10000
+            jz100->setValue(defSpot.jz100);
             
             if (listener) {
                 listener->panelChanged(Evlocallabsourceabscie,
