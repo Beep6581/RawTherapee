@@ -2903,7 +2903,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     float schr = 0.f;
     float mchr = 0.f;
     float cchr = 0.f;
-    float rstprotection = 50.f;
+    float rstprotection = 0.f;
     float hue = 0.f;
 /*
     float mchrz = 0.f;

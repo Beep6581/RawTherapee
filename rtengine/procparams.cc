@@ -4289,7 +4289,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     modecie("com"),
     modecam("cam16"),
     saturlcie(0.),
-    rstprotectcie(50.),
+    rstprotectcie(0.),
     chromlcie(0.),
     huecie(0.),
     toneMethodcie("one"),
