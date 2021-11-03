@@ -6315,11 +6315,11 @@ void LocallabLog::adjusterChanged(Adjuster* a, double newval)
     }
 }
 
-void LocallabLog::updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg)
+void LocallabLog::updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const float jz1)
 {
     if (autocompute->get_active()) {
         idle_register.add(
-        [this, blackev, whiteev, sourceg, sourceab, targetg]() -> bool {
+        [this, blackev, whiteev, sourceg, sourceab, targetg, jz1]() -> bool {
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
             // Update adjuster values according to autocomputed ones
@@ -8659,12 +8659,12 @@ void Locallabcie::updateMaskBackground(const double normChromar, const double no
 }
 
 
-void Locallabcie::updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg)
+void Locallabcie::updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const float jz1)
 {    
 
     if (Autograycie->get_active()) {
         idle_register.add(
-        [this, blackev, whiteev, sourceg, sourceab, targetg]() -> bool {
+        [this, blackev, whiteev, sourceg, sourceab, targetg, jz1]() -> bool {
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
             // Update adjuster values according to autocomputed ones
@@ -8674,7 +8674,7 @@ void Locallabcie::updateAutocompute(const float blackev, const float whiteev, co
             float sour = sourceab;
             float  pal = sqrt(std::max(200.f, sour) / 100.f);//empirical formula to adapt peak luminance in function La
             adapjzcie->setValue(pal);//max = 10
-            jz100->setValue(0.25);
+            jz100->setValue(jz1);
             enableListener();
 
             return false;

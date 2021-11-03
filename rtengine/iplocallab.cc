@@ -17896,7 +17896,7 @@ void ImProcFunctions::Lab_Local(
                                 float kc = amountchrom;
                                 float valparamneg;
                                 valparamneg = valparam;
-                                float kcc = (chromat / kc); //take Chroma into account...40 "middle low" of chromaticity (arbitrary and simple), one can imagine other algorithme
+                                float kcc = SQR(chromat / kc); //take Chroma into account...40 "middle low" of chromaticity (arbitrary and simple), one can imagine other algorithme
                              //   printf("KC=%f", (double) kcc);
                                 //reduce action for low chroma and increase action for high chroma
                                 valparam *= 2.f * kcc;

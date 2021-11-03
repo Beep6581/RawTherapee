@@ -792,6 +792,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             // Encoding log with locallab
             if (params->locallab.enabled && !params->locallab.spots.empty()) {
                 const int sizespot = (int)params->locallab.spots.size();
+                const LocallabParams::LocallabSpot defSpot;
 
                 float *sourceg = nullptr;
                 sourceg = new float[sizespot];
@@ -874,8 +875,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         params->locallab.spots.at(sp).sourceabs = sourceab[sp];
                         params->locallab.spots.at(sp).sourceGraycie = sourceg[sp];
                         params->locallab.spots.at(sp).sourceabscie = sourceab[sp];
+                        float jz1 = defSpot.jz100;
                         if (locallListener) {
-                            locallListener->logencodChanged(blackev[sp], whiteev[sp], sourceg[sp], sourceab[sp], targetg[sp], autocomput[sp], autocie[sp]);
+                            locallListener->logencodChanged(blackev[sp], whiteev[sp], sourceg[sp], sourceab[sp], targetg[sp], autocomput[sp], autocie[sp], jz1);
                         }
                     }
                 }

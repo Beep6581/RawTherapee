@@ -1398,7 +1398,7 @@ public:
     void adjusterChanged(Adjuster* a, double newval) override;
     void curveChanged(CurveEditor* ce) override;
 
-    void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg);
+    void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const float jz1);
 
 private:
     void enabledChanged() override;
@@ -1690,7 +1690,7 @@ public:
     void curveChanged(CurveEditor* ce) override;
     void toneMethodcieChanged();
     void toneMethodcie2Changed();
-    void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg);
+    void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const float jz1);
 
 private:
     void enabledChanged() override;
