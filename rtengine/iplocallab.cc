@@ -3235,6 +3235,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 Aaz[i][k] = az;
                 Bbz[i][k] = bz;
                 if(highhs > 0 || shadhs > 0  || wavcurvejz || mjjz != 0.f || lp.mCjz != 0.f  || LHcurvejz || HHcurvejz || CHcurvejz) {
+                    //here we work in float with usual functions  SH / wavelets / curves H
                     temp->L[i][k] = tempresid->L[i][k] = tempres->L[i][k] = (float) to_one * 32768.f * (float) JJz[i][k];
                     temp->a[i][k] = tempresid->a[i][k] = tempres->a[i][k] = (float) to_one * 32768.f * (float) Aaz[i][k];
                     temp->b[i][k] = tempresid->b[i][k] = tempres->b[i][k] = (float) to_one * 32768.f * (float) Bbz[i][k];
@@ -3486,6 +3487,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                // float b = lab->b[i][k];
 
                 if(highhs > 0 || shadhs > 0  || wavcurvejz || mjjz != 0.f || lp.mCjz != 0.f || LHcurvejz || HHcurvejz || CHcurvejz) {
+                    //now we work in double necessary for matrix conversion and when in range 0..1 with use of PQ
                     JJz[i][k] = (double) (temp->L[i][k] / (32768.f * (float) to_one));
                     Aaz[i][k] = (double) (temp->a[i][k] / (32768.f * (float) to_one));
                     Bbz[i][k] = (double) (temp->b[i][k] / (32768.f * (float) to_one));
@@ -3579,7 +3581,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 }
                 
                 
-                Hz += dhue;
+                Hz += dhue;//rotation hue
                 if ( Hz < 0.0 ) {
                     Hz += (double) (2.f * rtengine::RT_PI_F);
                 }
@@ -3589,52 +3591,12 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 bz = clipazbz(Cz * (double) sincosval.x);
                 Cz = sqrt(az * az + bz * bz);
 
-// H curves
-
-/*
-                if (lochhCurvejz && HHcurvejz) { // Hz=f(Hz)
-                    //Hz = xatan2f ( bz, az );
-                    float Hbisz = xatan2f ( b, a);
-
-                    const float valparam = 1.4f * (lochhCurvejz[500.f * static_cast<float>(Color::huelab_to_huehsv2((float)Hbisz))] - 0.5f) + static_cast<float>(Hbisz);
-                 //   const float valparam = 1.4f * (lochhCurvejz[500.f * static_cast<float>(Color::huejz_to_huehsv2((float)Hz))] - 0.5f) + static_cast<float>(Hz);
-                    if ( Hbisz < 0.0f ) {
-                        Hbisz += (2.f * rtengine::RT_PI_F);
-                    }
-                    Hbisz = valparam;
-                    float2 sincosval = xsincosf(valparam);
-                    az = clipazbz(Cz * (double) sincosval.y);
-                    bz = clipazbz(Cz * (double) sincosval.x);
-                    Hz = xatan2f ( bz, az );//re- calcualte Hz values
-                }
-                if ( Hz < 0.0 ) {
-                    Hz += (double) (2.f * rtengine::RT_PI_F);
-                }
-*/                
-/*
-                if (locchCurvejz && CHcurvejz) {//Cz=f(Hz) curve
-                    //Hz = xatan2f ( bz, az );
-                    float Hbisz = xatan2f ( b, a);
-                    
-                     const float valparam = 1.5f * (locchCurvejz[500.f * static_cast<float>(Color::huelab_to_huehsv2((float)Hbisz))] - 0.5f);  //get valp=f(H)
-                   //  const float valparam = 1.5f * (locchCurvejz[500.f * static_cast<float>(Color::huejz_to_huehsv2((float)Hz))] - 0.5f);  //get valp=f(H)
-                     float chromaCzfactor = 1.0f + valparam;
-                     az *= (double) chromaCzfactor;
-                     bz *= (double) chromaCzfactor;
-                     az = clipazbz(az);
-                     bz = clipazbz(bz);
-                }
-                */
-                if ( Hz < 0.0 ) {
-                    Hz += (double) (2.f * rtengine::RT_PI_F);
-                }
-//End H Curves
 
                 bz = bz / (to_screen);
                 az = az / (to_screen);
 
                 Jz = LIM01(Jz / (to_screen));
-                if(jabcie) {
+                if(jabcie) {//Not used
                     Jz = clipjz05(Jz);
                     gamutjz (Jz, az, bz, pl, wip, 0.94, 0.004);
                 }
