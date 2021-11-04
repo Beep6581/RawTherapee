@@ -1908,17 +1908,17 @@ static inline void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, v
         } else if (HH >= 2.46f && HH < 3.14159f) {
             hr = 0.177526 * double(HH) -0.043714;//hr 0.393  0.51315    green  ==> 0.42 Lab
         } else if (HH >= -3.14159f && HH < -2.89f) {
-            hr = 0.3009078 * double(HH) + 1.459329;//hr 0.514  0.5897    green cyan ==> -2.30 Lab
+            hr = 0.3009078 * double(HH) + 1.459329;//hr 0.51315  0.5897    green cyan ==> -2.30 Lab
         } else if (HH >= -2.89f && HH < -2.7f) {
             hr = 0.204542 * double(HH) + 1.1808264;//hr 0.5897  0.628563    cyan
         } else if (HH >= -2.7f && HH < -2.17f) {
             hr = 0.121547 * double(HH) + 0.956399;//hr 0.628563  0.692642    blue blue-sky
         } else if (HH >= -2.17f && HH < -0.9f) {
-            hr = 0.044882 * double(HH) + 0.789901;//hr 0.692642  0.74656    blue blue-sky
+            hr = 0.044882 * double(HH) + 0.789901;//hr 0.692642  0.749563    blue blue-sky
         } else if (HH >= -0.9f && HH < -0.1f) {
-            hr = 0.2125 * double(HH) + 0.93781;//hr 0.74656  0.91656    purple magenta
+            hr = 0.2125 * double(HH) + 0.940813;//hr 0.749563 0.919563    purple magenta
         } else if (HH >= -0.1f && HH < 0.2f) {
-            hr = 0.0448 * double(HH) + 0.92104;//hr 0.91656  0.93    red
+            hr = 0.03479 * double(HH) + 0.923042;//hr 0.919563  0.93    red
         }
         // in case of !
         if     (hr < 0.0) {
