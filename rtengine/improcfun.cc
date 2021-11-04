@@ -1460,7 +1460,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             Ciecam02::jch2xyz_ciecam02float(xx, yy, zz,
                                                             J,  C, h,
                                                             xw2, yw2,  zw2,
-                                                              c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj, c16);
+                                                              c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj, c16, plum);
                             float x, y, z;
                             x = xx * 655.35f;
                             y = yy * 655.35f;
@@ -1769,7 +1769,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         Ciecam02::jch2xyz_ciecam02float(xx, yy, zz,
                                                         ncie->J_p[i][j],  ncie_C_p, ncie->h_p[i][j],
                                                         xw2, yw2,  zw2,
-                                                          c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj, c16);
+                                                          c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj, c16, plum);
                         float x = (float)xx * 655.35f;
                         float y = (float)yy * 655.35f;
                         float z = (float)zz * 655.35f;

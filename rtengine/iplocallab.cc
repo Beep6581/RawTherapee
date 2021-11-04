@@ -3975,7 +3975,7 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
                     Ciecam02::jch2xyz_ciecam02float(xx, yy, zz,
                                                 J,  C, h,
                                                 xw2, yw2,  zw2,
-                                                c2, nc2,  pow1n, nbbj, ncbj, flj, czj, dj, awj, c16);
+                                                c2, nc2,  pow1n, nbbj, ncbj, flj, czj, dj, awj, c16, plum);
                     x = CLIP(xx * 655.35f);
                     y = CLIP(yy * 655.35f);
                     z = CLIP(zz * 655.35f);
