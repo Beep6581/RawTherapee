@@ -1898,27 +1898,27 @@ static inline void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, v
         // make with my chart 468 colors...
         // HH ==> Hz value  ; hr HSv value
         if      (HH >= 0.2f && HH < 0.75f) {
-            hr = 0.12727273 * double(HH) + 0.9045454;//hr 0.93  1.00    full red
+            hr = 0.12727273 * double(HH) + 0.90454551;//hr 0.93  1.00    full red
         } else if (HH >= 0.75f && HH < 1.35f) {
-            hr = 0.1125 * double(HH) - 0.0675;//hr 0.00  0.09    red yellow orange
+            hr = 0.15 * double(HH) - 0.1125;//hr 0.00  0.09    red yellow orange
         } else if (HH >= 1.35f && HH < 1.85f) {
             hr = 0.32 * double(HH) - 0.342;    //hr 0.09  0.25    orange yellow
         } else if (HH >= 1.85f && HH < 2.46f) {
-            hr = 0.23442623 * double(HH) -0.1836885;//hr 0.25  0.393    yellow green green
+            hr = 0.23442623 * double(HH) -0.18368853;//hr 0.25  0.393    yellow green green
         } else if (HH >= 2.46f && HH < 3.14159f) {
-            hr = 0.177526 * double(HH) -0.043714;//hr 0.393  0.514    green  ==> 0.42 Lab
+            hr = 0.177526 * double(HH) -0.043714;//hr 0.393  0.51315    green  ==> 0.42 Lab
         } else if (HH >= -3.14159f && HH < -2.89f) {
             hr = 0.3009078 * double(HH) + 1.459329;//hr 0.514  0.5897    green cyan ==> -2.30 Lab
         } else if (HH >= -2.89f && HH < -2.7f) {
             hr = 0.204542 * double(HH) + 1.1808264;//hr 0.5897  0.628563    cyan
         } else if (HH >= -2.7f && HH < -2.17f) {
-            hr = 0.121547 * double(HH) + 0.956677;//hr 0.6285  0.693    blue blue-sky
+            hr = 0.121547 * double(HH) + 0.956399;//hr 0.628563  0.692642    blue blue-sky
         } else if (HH >= -2.17f && HH < -0.9f) {
-            hr = 0.044882 * double(HH) + 0.7039;//hr 0.693  0.75    blue blue-sky
+            hr = 0.044882 * double(HH) + 0.789901;//hr 0.692642  0.74656    blue blue-sky
         } else if (HH >= -0.9f && HH < -0.1f) {
-            hr = 0.2125 * double(HH) + 0.94125;//hr 0.75  0.92    purple magenta
+            hr = 0.2125 * double(HH) + 0.93781;//hr 0.74656  0.91656    purple magenta
         } else if (HH >= -0.1f && HH < 0.2f) {
-            hr = 0.03333 * double(HH) + 0.9233;//hr 0.92  0.93    red
+            hr = 0.0448 * double(HH) + 0.92104;//hr 0.91656  0.93    red
         }
         // in case of !
         if     (hr < 0.0) {
