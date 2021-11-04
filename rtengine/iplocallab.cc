@@ -2546,7 +2546,7 @@ void gamutjz (double &Jz, double &az, double &bz, double pl, const double wip[3]
 void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, LabImage* lab, int bfw, int bfh, int call, int sk, const LUTf& cielocalcurve, bool localcieutili, const LUTf& cielocalcurve2, bool localcieutili2, const LUTf& jzlocalcurve, bool localjzutili, const LUTf& czlocalcurve, bool localczutili, const LUTf& czjzlocalcurve, bool localczjzutili, const LocCHCurve& locchCurvejz, const LocHHCurve& lochhCurvejz, const LocLHCurve& loclhCurvejz, bool HHcurvejz, bool CHcurvejz, bool LHcurvejz, const LocwavCurve& locwavCurvejz, bool locwavutilijz
 )
 {
-    BENCHFUN
+//    BENCHFUN
     if(!params->locallab.spots.at(sp).activ) {//disable all ciecam functions
         return;
     }
