@@ -420,7 +420,8 @@ float igammalog(float x, float p, float s, float g2, float g4)
 #ifdef __SSE2__
 vfloat igammalog(vfloat x, vfloat p, vfloat s, vfloat g2, vfloat g4)
 {
-    return x <= g2 ? x / s : pow_F((x + g4) / (1.f + g4), p);//continuous
+  //  return x <= g2 ? x / s : pow_F((x + g4) / (1.f + g4), p);//continuous
+    return vself(vmaskf_le(x, g2), x / s, pow_F((x + g4) / (F2V(1.f) + g4), p));
 }
 #endif
 
