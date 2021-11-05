@@ -1863,7 +1863,7 @@ static inline void Lab2XYZ(vfloat L, vfloat a, vfloat b, vfloat &x, vfloat &y, v
         if      (HH >= 0.f       && HH < 0.6f    ) {
             hr = 0.11666 * double(HH) + 0.93;    //hr 0.93  1.00    full red
         } else if (HH >= 0.6f      && HH < 1.4f    ) {
-            hr = 0.15 * double(HH) - 0.1125;    //hr 0.00  0.09    red yellow orange
+            hr = 0.1125 * double(HH) - 0.0675;    //hr 0.00  0.09    red yellow orange
         } else if (HH >= 1.4f      && HH < 2.f     ) {
             hr = 0.2666 * double(HH) - 0.2833;    //hr 0.09  0.25    orange yellow
         } else if (HH >= 2.f       && HH < 3.14159f) {

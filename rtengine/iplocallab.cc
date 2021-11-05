@@ -3078,7 +3078,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     mini = Jz;
                 }
                 sum += Jz;
-            //    double Hz = xatan2f ( bz, az );
+            //    double Hz = xatan2 ( bz, az );
             //    printf("Hz=%f", Hz);
             // I read bz, az values and Hz ==> with low chroma values Hz are very different from lab always around 1.4 radians ????
             }
@@ -3538,7 +3538,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 double Cz, Hz;
                 Cz = sqrt(az * az + bz * bz);
                 //remapping Cz 
-                Hz = xatan2f ( bz, az );
+                Hz = xatan2 ( bz, az );
                 double Czold = Cz;
                 if(czlocalcurve && localczutili) {
                     Cz =  (double) (czlocalcurve[(float) Cz * 92666.f * (float) to_one] / (92666.f * (float) to_one));
@@ -3551,7 +3551,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 }
                 
                 if ( Hz < 0.0 ) {
-                    Hz += (double) (2.f * rtengine::RT_PI_F);
+                    Hz +=  (2. * rtengine::RT_PI);
                 }
                 if(chromz < 0.) {
                     Cz = Cz * (1. + 0.01 * chromz);
@@ -3583,12 +3583,12 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 
                 Hz += dhue;//rotation hue
                 if ( Hz < 0.0 ) {
-                    Hz += (double) (2.f * rtengine::RT_PI_F);
+                    Hz +=  (2. * rtengine::RT_PI);
                 }
                 Cz = clipcz(Cz);
-                float2 sincosval = xsincosf(Hz);
-                az = clipazbz(Cz * (double) sincosval.y);
-                bz = clipazbz(Cz * (double) sincosval.x);
+                double2 sincosval = xsincos(Hz);
+                az = clipazbz(Cz * sincosval.y);
+                bz = clipazbz(Cz * sincosval.x);
                 Cz = sqrt(az * az + bz * bz);
 
 
