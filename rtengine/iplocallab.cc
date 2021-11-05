@@ -3917,9 +3917,9 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
                                 Cc = 0.5f * cielocalcurve2[Cc * 2.f];
                                 float dred = 55.f;
                                 float protect_red = 30.0f;
-                                int sk = 1;
+                                int sk1 = 1;
                                 float ko = 1.f / coef;
-                                Color::skinredfloat(Jpro, hpro, Cc, Ccold, dred, protect_red, sk, rstprotection, ko, Cpro);
+                                Color::skinredfloat(Jpro, hpro, Cc, Ccold, dred, protect_red, sk1, rstprotection, ko, Cpro);
                             } else if (mecamcurve2 == 1) {
                                 float parsat = 0.8f; //0.6
                                 float coef = 327.68f / parsat;
@@ -3931,9 +3931,8 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
                                 float protect_red = 80.0f; // in C mode
                                 dred = 100.0f * sqrtf((dred * coe) / Qpro);
                                 protect_red = 100.0f * sqrtf((protect_red * coe) / Qpro);
-                                int sk = 0;
                                 float ko = 1.f / coef;
-                                Color::skinredfloat(Jpro, hpro, Ss, Sold, dred, protect_red, sk, rstprotection, ko, spro);
+                                Color::skinredfloat(Jpro, hpro, Ss, Sold, dred, protect_red, 0, rstprotection, ko, spro);
                                 Qpro = (4.0f / c) * sqrtf(Jpro / 100.0f) * (aw + 4.0f) ;
                                 Cpro = (spro * spro * Qpro) / (10000.0f);
                             } else if (mecamcurve2 == 2) {
@@ -3946,9 +3945,8 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
                                 float protect_red = 80.0f; // in C mode
                                 dred *= coe; //in M mode
                                 protect_red *= coe;
-                                int sk = 0;
                                 float ko = 1.f / coef;
-                                Color::skinredfloat(Jpro, hpro, Mm, Mold, dred, protect_red, sk, rstprotection, ko, Mpro);
+                                Color::skinredfloat(Jpro, hpro, Mm, Mold, dred, protect_red, 0, rstprotection, ko, Mpro);
                                 Cpro = Mpro / coe;
                             }
                         }
