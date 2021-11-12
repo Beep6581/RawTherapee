@@ -1485,6 +1485,7 @@ HISTORY_MSG_PERSP_METHOD;Perspective - Method
 HISTORY_MSG_PERSP_PROJ_ANGLE;Perspective - Recovery
 HISTORY_MSG_PERSP_PROJ_ROTATE;Perspective - PCA rotation
 HISTORY_MSG_PERSP_PROJ_SHIFT;Perspective - PCA
+HISTORY_MSG_PIXELSHIFT_AVERAGE;PS - Average
 HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaic method for motion
 HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Line noise filter direction
 HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF lines filter
@@ -3629,6 +3630,8 @@ TP_RAW_LMMSE_TOOLTIP;Adds gamma (step 1), median (steps 2-4) and refinement (ste
 TP_RAW_MONO;Mono
 TP_RAW_NONE;None (Shows sensor pattern)
 TP_RAW_PIXELSHIFT;Pixel Shift
+TP_RAW_PIXELSHIFTAVERAGE;Use average for moving parts
+TP_RAW_PIXELSHIFTAVERAGE_TOOLTIP;Use average of all frames instead of selected frame for regions with motion.\nGives motion effect on slow moving (overlapping) objects.
 TP_RAW_PIXELSHIFTBLUR;Blur motion mask
 TP_RAW_PIXELSHIFTDMETHOD;Demosaic method for motion
 TP_RAW_PIXELSHIFTEPERISO;Sensitivity

@@ -1436,6 +1436,7 @@ struct RAWParamsEdited {
         bool pixelShiftShowMotionMaskOnly;
         bool pixelShiftHoleFill;
         bool pixelShiftMedian;
+        bool pixelShiftAverage;
         bool pixelShiftGreen;
         bool pixelShiftBlur;
         bool pixelShiftSmooth;
