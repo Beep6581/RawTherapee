@@ -8671,9 +8671,9 @@ void Locallabcie::updateAutocompute(const float blackev, const float whiteev, co
             disableListener();
             sourceGraycie->setValue(sourceg);
             sourceabscie->setValue(sourceab);
-            float sour = sourceab;
-            float  pal = sqrt(std::max(200.f, sour) / 100.f);//empirical formula to adapt peak luminance in function La
-            adapjzcie->setValue(pal);//max = 10
+            float sour = std::min((double) sourceab, 10000.) / 10000.f;
+            float pal = std::max(10. * (double) sqrt(sour), 1.5);
+            adapjzcie->setValue(pal);//max = 10 and min 1.5
             jz100->setValue(jz1);
             enableListener();
 
@@ -9703,9 +9703,9 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
         }
 
         if (a == sourceabscie) {
-            float sour = sourceabscie->getValue();
-            float  pal = sqrt(std::max(200.f, sour) / 100.f);//empirical formula to adapt peak luminance in function La
-            adapjzcie->setValue(pal);//max to 10 if La > 10000
+            float sour = std::min(sourceabscie->getValue(), 10000.) / 10000.f;
+            float pal = std::max(10. * (double) sqrt(sour), 1.5);
+            adapjzcie->setValue(pal);//max to 10 if La > 10000 and mini to 1.5
             jz100->setValue(defSpot.jz100);
             
             if (listener) {
