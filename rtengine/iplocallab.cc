@@ -3638,6 +3638,10 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
     float sumcamq = 0.f;
     float sumsat = 0.f;
     float sumM = 0.f;
+    if(lp.logena && !(params->locallab.spots.at(sp).expcie && mocam == 1)) {//Log encoding only, but enable for log encoding if we use Cam16 module both with log encoding
+        plum = 100.f;
+    }
+    
 #ifdef _OPENMP
             #pragma omp parallel for reduction(min:minicam) reduction(max:maxicam) reduction(min:minicamq) reduction(max:maxicamq) reduction(min:minisat) reduction(max:maxisat) reduction(min:miniM) reduction(max:maxiM) reduction(+:sumcam) reduction(+:sumcamq) reduction(+:sumsat) reduction(+:sumM)if(multiThread)
 #endif
