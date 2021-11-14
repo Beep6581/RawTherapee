@@ -518,6 +518,7 @@ void ParamsEdited::set(bool v)
     raw.df_autoselect = v;
     raw.ff_file = v;
     raw.ff_AutoSelect = v;
+    raw.ff_FromMetaData = v;
     raw.ff_BlurRadius = v;
     raw.ff_BlurType = v;
     raw.ff_AutoClipControl = v;
@@ -1811,6 +1812,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         raw.df_autoselect = raw.df_autoselect && p.raw.df_autoselect == other.raw.df_autoselect;
         raw.ff_file = raw.ff_file && p.raw.ff_file == other.raw.ff_file;
         raw.ff_AutoSelect = raw.ff_AutoSelect && p.raw.ff_AutoSelect == other.raw.ff_AutoSelect;
+        raw.ff_FromMetaData = raw.ff_FromMetaData && p.raw.ff_FromMetaData == other.raw.ff_FromMetaData;
         raw.ff_BlurRadius = raw.ff_BlurRadius && p.raw.ff_BlurRadius == other.raw.ff_BlurRadius;
         raw.ff_BlurType = raw.ff_BlurType && p.raw.ff_BlurType == other.raw.ff_BlurType;
         raw.ff_AutoClipControl = raw.ff_AutoClipControl && p.raw.ff_AutoClipControl == other.raw.ff_AutoClipControl;
@@ -6078,6 +6080,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.raw.ff_AutoSelect = mods.raw.ff_AutoSelect;
     }
 
+    if (raw.ff_FromMetaData) {
+        toEdit.raw.ff_FromMetaData = mods.raw.ff_FromMetaData;
+    }
+
     if (raw.ff_BlurRadius) {
         toEdit.raw.ff_BlurRadius = mods.raw.ff_BlurRadius;
     }
@@ -6809,7 +6815,7 @@ bool RAWParamsEdited::XTransSensor::isUnchanged() const
 bool RAWParamsEdited::isUnchanged() const
 {
     return  bayersensor.isUnchanged() && xtranssensor.isUnchanged() && ca_autocorrect && ca_avoidcolourshift && caautoiterations && cared && cablue && hotPixelFilter && deadPixelFilter && hotdeadpix_thresh && darkFrame
-            && df_autoselect && ff_file && ff_AutoSelect && ff_BlurRadius && ff_BlurType && exPos && ff_AutoClipControl && ff_clipControl;
+            && df_autoselect && ff_file && ff_AutoSelect && ff_FromMetaData && ff_BlurRadius && ff_BlurType && exPos && ff_AutoClipControl && ff_clipControl;
 }
 
 bool LensProfParamsEdited::isUnchanged() const

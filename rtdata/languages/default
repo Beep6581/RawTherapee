@@ -1330,6 +1330,7 @@ HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
 HISTORY_MSG_EDGEFFECT;Edge Attenuation response
+HISTORY_MSG_FF_FROMMETADATA;Flat-Field - From Metadata
 HISTORY_MSG_FILMNEGATIVE_BALANCE;FN - Reference output
 HISTORY_MSG_FILMNEGATIVE_COLORSPACE;Film negative color space
 HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
@@ -2392,6 +2393,7 @@ TP_FLATFIELD_BT_VERTHORIZ;Vertical + Horizontal
 TP_FLATFIELD_BT_VERTICAL;Vertical
 TP_FLATFIELD_CLIPCONTROL;Clip control
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, value 0 is used.
+TP_FLATFIELD_FROMMETADATA;From Metadata
 TP_FLATFIELD_LABEL;Flat-Field
 TP_GENERAL_11SCALE_TOOLTIP;The effects of this tool are only visible or only accurate at a preview scale of 1:1.
 TP_GRADIENT_CENTER;Center

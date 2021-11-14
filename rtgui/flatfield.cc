@@ -18,6 +18,7 @@
  */
 #include <sstream>
 
+#include "eventmapper.h"
 #include "flatfield.h"
 
 #include "guiutils.h"
@@ -32,6 +33,9 @@ using namespace rtengine::procparams;
 
 FlatField::FlatField () : FoldableToolPanel(this, "flatfield", M("TP_FLATFIELD_LABEL"))
 {
+    auto m = ProcEventMapper::getInstance();
+    EvFlatFieldFromMetaData = m->newEvent(DARKFRAME, "HISTORY_MSG_FF_FROMMETADATA");
+
     hbff = Gtk::manage(new Gtk::Box());
     flatFieldFile = Gtk::manage(new MyFileChooserButton(M("TP_FLATFIELD_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));
     bindCurrentFolder (*flatFieldFile, options.lastFlatfieldDir);
@@ -42,6 +46,8 @@ FlatField::FlatField () : FoldableToolPanel(this, "flatfield", M("TP_FLATFIELD_L
     hbff->pack_start(*flatFieldFile);
     hbff->pack_start(*flatFieldFileReset, Gtk::PACK_SHRINK);
     flatFieldAutoSelect = Gtk::manage(new Gtk::CheckButton((M("TP_FLATFIELD_AUTOSELECT"))));
+    flatFieldFromMetaData = Gtk::manage(new CheckBox((M("TP_FLATFIELD_FROMMETADATA")), multiImage));
+    flatFieldFromMetaData->setCheckBoxListener (this);
     ffInfo = Gtk::manage(new Gtk::Label("-"));
     setExpandAlignProperties(ffInfo, true, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     flatFieldBlurRadius = Gtk::manage(new Adjuster (M("TP_FLATFIELD_BLURRADIUS"), 0, 200, 2, 32));
@@ -72,6 +78,7 @@ FlatField::FlatField () : FoldableToolPanel(this, "flatfield", M("TP_FLATFIELD_L
 
     pack_start( *hbff, Gtk::PACK_SHRINK);
     pack_start( *flatFieldAutoSelect, Gtk::PACK_SHRINK);
+    pack_start( *flatFieldFromMetaData, Gtk::PACK_SHRINK);
     pack_start( *ffInfo, Gtk::PACK_SHRINK);
     pack_start( *hbffbt, Gtk::PACK_SHRINK);
     pack_start( *flatFieldBlurRadius, Gtk::PACK_SHRINK);
@@ -128,12 +135,14 @@ void FlatField::read(const rtengine::procparams::ProcParams* pp, const ParamsEdi
     }
 
     flatFieldAutoSelect->set_active (pp->raw.ff_AutoSelect);
+    flatFieldFromMetaData->set_active (pp->raw.ff_FromMetaData);
     flatFieldBlurRadius->setValue (pp->raw.ff_BlurRadius);
     flatFieldClipControl->setValue (pp->raw.ff_clipControl);
     flatFieldClipControl->setAutoValue (pp->raw.ff_AutoClipControl);
 
     if(pedited ) {
         flatFieldAutoSelect->set_inconsistent (!pedited->raw.ff_AutoSelect);
+        flatFieldFromMetaData->set_inconsistent (!pedited->raw.ff_FromMetaData);
         flatFieldBlurRadius->setEditedState( pedited->raw.ff_BlurRadius ? Edited : UnEdited );
         flatFieldClipControl->setEditedState( pedited->raw.ff_clipControl ? Edited : UnEdited );
         flatFieldClipControl->setAutoInconsistent(multiImage && !pedited->raw.ff_AutoClipControl);
@@ -214,6 +223,7 @@ void FlatField::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedit
 {
     pp->raw.ff_file = flatFieldFile->get_filename();
     pp->raw.ff_AutoSelect = flatFieldAutoSelect->get_active();
+    pp->raw.ff_FromMetaData = flatFieldFromMetaData->get_active();
     pp->raw.ff_BlurRadius = flatFieldBlurRadius->getIntValue();
     pp->raw.ff_clipControl = flatFieldClipControl->getIntValue();
     pp->raw.ff_AutoClipControl = flatFieldClipControl->getAutoValue();
@@ -227,6 +237,7 @@ void FlatField::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pedit
     if (pedited) {
         pedited->raw.ff_file = ffChanged;
         pedited->raw.ff_AutoSelect = !flatFieldAutoSelect->get_inconsistent();
+        pedited->raw.ff_FromMetaData = !flatFieldFromMetaData->get_inconsistent();
         pedited->raw.ff_BlurRadius = flatFieldBlurRadius->getEditedState ();
         pedited->raw.ff_clipControl = flatFieldClipControl->getEditedState ();
         pedited->raw.ff_AutoClipControl = !flatFieldClipControl->getAutoInconsistent();
@@ -349,6 +360,15 @@ void FlatField::flatFieldBlurTypeChanged ()
 
     if (listener && curSelection >= 0) {
         listener->panelChanged (EvFlatFieldBlurType, flatFieldBlurType->get_active_text());
+    }
+}
+
+void FlatField::checkBoxToggled (CheckBox* c, CheckValue newval)
+{
+    if (c == flatFieldFromMetaData) {
+        if (listener) {
+            listener->panelChanged (EvFlatFieldFromMetaData, flatFieldFromMetaData->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        }
     }
 }
 

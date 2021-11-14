@@ -21,7 +21,7 @@
 
 #include "myfile.h"
 #include <csetjmp>
-
+#include "dnggainmap.h"
 
 class DCraw
 {
@@ -192,6 +192,43 @@ public:
         unsigned int crx_track_selected;
         short CR3_CTMDtag;
     };
+    std::vector<GainMap> gainMaps;
+    bool isGainMapSupported(const std::vector<GainMap> &gainMaps) const {
+        const auto n = gainMaps.size();
+        if ( n != 4) { // we need 4 gainmaps for bayer files
+            return false;
+        }
+        unsigned int check = 0;
+        bool noOp = true;
+        for (const auto &m : gainMaps) {
+            if (m.RowPitch != 2 || m.ColPitch != 2) {
+                return false;
+            }
+            if (m.Top == 0){
+                if (m.Left == 0) {
+                    check += 1;
+                } else if (m.Left == 1) {
+                    check += 2;
+                }
+            } else if (m.Top == 1) {
+                if (m.Left == 0) {
+                    check += 4;
+                } else if (m.Left == 1) {
+                    check += 8;
+                }
+            }
+            for (size_t i = 0; noOp && i < m.MapGain.size(); ++i) {
+                if (m.MapGain[i] != 1.f) { // we have at least one value != 1.f => map is not a nop
+                    noOp = false;
+                    break;
+                }
+            }
+        }
+        if (noOp || check != 15) { // a map is a nop or the atructure of the combination of 4 maps is not correct
+            return false;
+        }
+        return true;
+    }
 protected:
     CanonCR3Data RT_canon_CR3_data;
 

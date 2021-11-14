@@ -23,6 +23,7 @@
 #include <gtkmm.h>
 
 #include "adjuster.h"
+#include "checkbox.h"
 #include "guiutils.h"
 #include "toolpanel.h"
 
@@ -42,7 +43,7 @@ public:
     // add other info here
 };
 
-class FlatField final : public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public rtengine::FlatFieldAutoClipListener
+class FlatField final : public ToolParamBlock, public AdjusterListener, public CheckBoxListener, public FoldableToolPanel, public rtengine::FlatFieldAutoClipListener
 {
 
 protected:
@@ -52,6 +53,7 @@ protected:
     Gtk::Label *ffInfo;
     Gtk::Button *flatFieldFileReset;
     Gtk::CheckButton* flatFieldAutoSelect;
+    CheckBox* flatFieldFromMetaData;
     Adjuster* flatFieldClipControl;
     Adjuster* flatFieldBlurRadius;
     MyComboBoxText* flatFieldBlurType;
@@ -66,6 +68,8 @@ protected:
     bool israw;
 
     IdleRegister idle_register;
+
+    rtengine::ProcEvent EvFlatFieldFromMetaData;
 public:
 
     FlatField ();
@@ -90,4 +94,5 @@ public:
         ffp = p;
     };
     void flatFieldAutoClipValueChanged(int n = 0) override;
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
 };
