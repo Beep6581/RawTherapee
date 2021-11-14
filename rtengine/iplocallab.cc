@@ -3557,10 +3557,10 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 if(chromz < 0.) {
                     Cz = Cz * (1. + 0.01 * chromz);
                 } else {
-                    double maxcz = 0.70710678;
+                    double maxcz = 0.70710678 / to_one;
                     double fcz = Cz / maxcz;
                     //double pocz = pow(fcz , 1. - 0.0017 * chromz);
-                    double pocz = pow(fcz , 1. - 0.0024 * chromz);//increase value - before 0.0017
+                    double pocz = pow(fcz , 1. - 0.002 * chromz);//increase value - before 0.0017
                     Cz = maxcz * pocz;
                   //  Cz = Cz * (1. + 0.005 * chromz);//linear
                     
