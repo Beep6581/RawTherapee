@@ -1931,14 +1931,34 @@ void ImProcFunctions::mean_sig (const float* const * const savenormL, float &mea
     stdf = std::sqrt(stdd);
     meanf = meand;
 }
+// taken from darktable
+inline float power_norm(float r, float g, float b)
+{
+    r = std::abs(r);
+    g = std::abs(g);
+    b = std::abs(b);
 
+    float r2 = SQR(r);
+    float g2 = SQR(g);
+    float b2 = SQR(b);
+    float d = r2 + g2 + b2;
+    float n = r*r2 + g*g2 + b*b2;
+
+    return n / std::max(d, 1e-12f);
+}
+
+
+inline float norm2(float r, float g, float b, TMatrix ws)
+{
+    return (power_norm(r, g, b) + Color::rgbLuminance(r, g, b, ws)) / 2.f;
+}
 
 // basic log encoding taken from ACESutil.Lin_to_Log2, from
 // https://github.com/ampas/aces-dev
 // (as seen on pixls.us)
 void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool multiThread, int bfw, int bfh)
 {
-    /* J.Desmis 12 2019
+    /* J.Desmis 12 2019  and 11 2021
         small adaptations to local adjustments
         replace log2 by log(lp.baselog) allows diferentiation between low and high lights
     */
@@ -1982,35 +2002,6 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
         }
     };
 
-    const auto norm =
-    [&](float r, float g, float b) -> float {
-        return Color::rgbLuminance(r, g, b, ws);
-
-        // other possible alternatives (so far, luminance seems to work
-        // fine though). See also
-        // https://discuss.pixls.us/t/finding-a-norm-to-preserve-ratios-across-non-linear-operations
-        //
-        // MAX
-        //return max(r, g, b);
-        //
-        // Euclidean
-        //return std::sqrt(SQR(r) + SQR(g) + SQR(b));
-
-        // weighted yellow power norm from https://youtu.be/Z0DS7cnAYPk
-        // float rr = 1.22f * r / 65535.f;
-        // float gg = 1.20f * g / 65535.f;
-        // float bb = 0.58f * b / 65535.f;
-        // float rr4 = SQR(rr) * SQR(rr);
-        // float gg4 = SQR(gg) * SQR(gg);
-        // float bb4 = SQR(bb) * SQR(bb);
-        // float den = (rr4 + gg4 + bb4);
-        // if (den > 0.f) {
-        //     return 0.8374319f * ((rr4 * rr + gg4 * gg + bb4 * bb) / den) * 65535.f;
-        // } else {
-        //     return 0.f;
-        // }
-    };
-
     const float detail = lp.detail;
     const int W = rgb->getWidth(), H = rgb->getHeight();
 
@@ -2023,7 +2014,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
                 float r = rgb->r(y, x);
                 float g = rgb->g(y, x);
                 float b = rgb->b(y, x);
-                float m = norm(r, g, b);
+                float m = norm2(r, g, b, ws);
 
                 if (m > noise) {
                     float mm = apply(m);
@@ -2059,7 +2050,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
 #endif
             for (int y = 0; y < H; ++y) {
                 for (int x = 0; x < W; ++x) {
-                    Y2[y][x] = norm(rgb->r(y, x), rgb->g(y, x), rgb->b(y, x)) / 65535.f;
+                    Y2[y][x] = norm2(rgb->r(y, x), rgb->g(y, x), rgb->b(y, x), ws) / 65535.f;
                     float l = xlogf(rtengine::max(Y2[y][x], 1e-9f));
                     float ll = round(l * base_posterization) / base_posterization;
                     Y[y][x] = xexpf(ll);
@@ -2083,7 +2074,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
                 float t = Y[y][x];
                 float t2;
 
-                if (t > noise && (t2 = norm(r, g, b)) > noise) {
+                if (t > noise && (t2 = norm2(r, g, b, ws)) > noise) {
                     float c = apply(t, false);
                     float f = c / t;
                     //   float t2 = norm(r, g, b);
@@ -2110,19 +2101,17 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
 void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg, float *blackev, float *whiteev, bool *Autogr, float *sourceab,  int fw, int fh, float xsta, float xend, float ysta, float yend, int SCALE)
 {
     //BENCHFUN
-//adpatation to local adjustments Jacques Desmis 12 2019
+//adpatation to local adjustments Jacques Desmis 12 2019 and 11 2021 (from ART)
     const PreviewProps pp(0, 0, fw, fh, SCALE);
 
     Imagefloat img(int(fw / SCALE + 0.5), int(fh / SCALE + 0.5));
     const ProcParams neutral;
+
     imgsrc->getImage(imgsrc->getWB(), TR_NONE, &img, pp, params->toneCurve, neutral.raw);
     imgsrc->convertColorSpace(&img, params->icm, imgsrc->getWB());
     float minVal = RT_INFINITY;
     float maxVal = -RT_INFINITY;
-    float ec = 1.f;
-    if(params->toneCurve.autoexp) {//take into account exposure, only if autoexp, in other cases now it's after LA
-        ec = std::pow(2.f, params->toneCurve.expcomp);
-    }
+    TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
     constexpr float noise = 1e-5;
     const int h = fh / SCALE;
@@ -2133,24 +2122,29 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
 
     const int wsta = xsta * w;
     const int wend = xend * w;
+    array2D<float> Y(wend - wsta, hend - hsta);
     
     double mean = 0.0;
     int nc = 0;
     for (int y = hsta; y < hend; ++y) {
         for (int x = wsta; x < wend; ++x) {
             const float r = img.r(y, x), g = img.g(y, x), b = img.b(y, x);
+            Y[y][x] = norm2(r, g, b, ws) / 65535.f;
             mean += static_cast<double>(0.2126f * Color::gamma_srgb(r) + 0.7152f * Color::gamma_srgb(g) + 0.0722f * Color::gamma_srgb(b));
             nc++;
-
-            const float m = rtengine::max(0.f, r, g, b) / 65535.f * ec;
-            if (m > noise) {
-                const float l = rtengine::min(r, g, b) / 65535.f * ec;
-                minVal = rtengine::min(minVal, l > noise ? l : m);
-                maxVal = rtengine::max(maxVal, m);
+        }
+    }
+    for (int y = hsta; y < hend; ++y) {
+        for (int x = wsta; x < wend; ++x) {
+            float l = Y[y][x];
+            if (l > noise) {
+                minVal = min(minVal, l);
+                maxVal = max(maxVal, l);
             }
         }
     }
-    maxVal *= 1.2f; //or 1.5f;slightly increase max
+    maxVal *= 1.45f; //or 1.5f...slightly increase max
+    minVal *= 0.55f;//or 0.5f...slightly increase min
     //approximation sourcegray yb  source =  yb
 
     if (maxVal > minVal) {
