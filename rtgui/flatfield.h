@@ -66,10 +66,10 @@ protected:
     Glib::ustring lastShortcutPath;
     bool b_filter_asCurrent;
     bool israw;
+    rtengine::ProcEvent EvFlatFieldFromMetaData;
 
     IdleRegister idle_register;
 
-    rtengine::ProcEvent EvFlatFieldFromMetaData;
 public:
 
     FlatField ();

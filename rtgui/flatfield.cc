@@ -365,10 +365,8 @@ void FlatField::flatFieldBlurTypeChanged ()
 
 void FlatField::checkBoxToggled (CheckBox* c, CheckValue newval)
 {
-    if (c == flatFieldFromMetaData) {
-        if (listener) {
-            listener->panelChanged (EvFlatFieldFromMetaData, flatFieldFromMetaData->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
-        }
+    if (listener && c == flatFieldFromMetaData) {
+        listener->panelChanged (EvFlatFieldFromMetaData, flatFieldFromMetaData->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
     }
 }
 

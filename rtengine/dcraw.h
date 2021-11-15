@@ -19,9 +19,12 @@
 
 #pragma once
 
+#include <iostream>
+
 #include "myfile.h"
 #include <csetjmp>
 #include "dnggainmap.h"
+#include "settings.h"
 
 class DCraw
 {
@@ -195,13 +198,19 @@ public:
     std::vector<GainMap> gainMaps;
     bool isGainMapSupported(const std::vector<GainMap> &gainMaps) const {
         const auto n = gainMaps.size();
-        if ( n != 4) { // we need 4 gainmaps for bayer files
+        if (n != 4) { // we need 4 gainmaps for bayer files
+            if (rtengine::settings->verbose) {
+                std::cout << "GainMap has " << n << " maps, but 4 are needed" << std::endl;
+            }
             return false;
         }
         unsigned int check = 0;
         bool noOp = true;
         for (const auto &m : gainMaps) {
             if (m.RowPitch != 2 || m.ColPitch != 2) {
+                if (rtengine::settings->verbose) {
+                    std::cout << "GainMap needs Row/ColPitch of 2/2, but has " << m.RowPitch << "/" << m.ColPitch << std::endl;
+                }
                 return false;
             }
             if (m.Top == 0){
@@ -220,11 +229,17 @@ public:
             for (size_t i = 0; noOp && i < m.MapGain.size(); ++i) {
                 if (m.MapGain[i] != 1.f) { // we have at least one value != 1.f => map is not a nop
                     noOp = false;
-                    break;
                 }
             }
         }
-        if (noOp || check != 15) { // a map is a nop or the atructure of the combination of 4 maps is not correct
+        if (noOp || check != 15) { // all maps are nops or the structure of the combination of 4 maps is not correct
+            if (rtengine::settings->verbose) {
+                if (noOp) {
+                    std::cout << "GainMap is a nop" << std::endl;
+                } else {
+                    std::cout << "GainMap has unsupported type : " << check << std::endl;
+                }
+            }
             return false;
         }
         return true;

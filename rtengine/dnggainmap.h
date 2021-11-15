@@ -24,20 +24,20 @@
 
 struct GainMap
 {
-    uint32_t Top;
-    uint32_t Left;
-    uint32_t Bottom;
-    uint32_t Right;
-    uint32_t Plane;
-    uint32_t Planes;
-    uint32_t RowPitch;
-    uint32_t ColPitch;
-    uint32_t MapPointsV;
-    uint32_t MapPointsH;
+    std::uint32_t Top;
+    std::uint32_t Left;
+    std::uint32_t Bottom;
+    std::uint32_t Right;
+    std::uint32_t Plane;
+    std::uint32_t Planes;
+    std::uint32_t RowPitch;
+    std::uint32_t ColPitch;
+    std::uint32_t MapPointsV;
+    std::uint32_t MapPointsH;
     double MapSpacingV;
     double MapSpacingH;
     double MapOriginV;
     double MapOriginH;
-    uint32_t MapPlanes;
+    std::uint32_t MapPlanes;
     std::vector<float> MapGain;
 };

@@ -1384,14 +1384,10 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         copyOriginalPixels(raw, ri, rid, rif, rawData);
     }
     //FLATFIELD end
-bool test = ri->isGainMapSupported(ri->gainMaps);
-std::cout << "test : " << test << std::endl;
-    test = test && raw.ff_FromMetaData;
-std::cout << "raw.ff_FromMetaData : " << raw.ff_FromMetaData << std::endl;
 
-if (test) {
-    applyDngGainMap(c_black, ri->gainMaps);
-}
+    if (raw.ff_FromMetaData && ri->isGainMapSupported(ri->gainMaps)) {
+        applyDngGainMap(c_black, ri->gainMaps);
+    }
 
     // Always correct camera badpixels from .badpixels file
     std::vector<badPix> *bp = dfm.getBadPixels(ri->get_maker(), ri->get_model(), idata->getSerialNumber());
@@ -6261,7 +6257,7 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
     }
 }
 
-void RawImageSource::applyDngGainMap(const float black[4], std::vector<GainMap> &gainMaps) {
+void RawImageSource::applyDngGainMap(const float black[4], const std::vector<GainMap> &gainMaps) {
 BENCHFUN    
     // now we can apply each gain map to raw_data
     array2D<float> mvals[2][2];
