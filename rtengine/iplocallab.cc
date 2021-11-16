@@ -3556,13 +3556,16 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     Jz =  (double) (jzlocalcurve[(float) Jz * 65535.f] / 65535.f);
                     Jz  = 0.3 * (Jz - Jzold) + Jzold;
                 }
+                double Cz = sqrt(az * az + bz * bz);
 
                 if(logjz) {
                     double jmz = 65535. * Jz;
+                    
                     if (jmz > noise) {
                         double mm = applytojz(jmz);
                         double f = mm / jmz;
                         Jz *= f;
+                        Cz *= f;
                     }
                 }
 
@@ -3585,8 +3588,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     Jz *= maxjzw;
                 }
 
-                double Cz, Hz;
-                Cz = sqrt(az * az + bz * bz);
+                double Hz;
                 //remapping Cz 
                 Hz = xatan2 ( bz, az );
                 double Czold = Cz;
