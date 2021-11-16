@@ -2095,6 +2095,7 @@ void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool
                 }
             }
         }
+
     }
 }
 
@@ -2122,27 +2123,31 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
 
     const int wsta = xsta * w;
     const int wend = xend * w;
-    array2D<float> Y(wend - wsta, hend - hsta);
-    
+    int www = int(fw / SCALE + 0.5);
+    int hhh = int(fh / SCALE + 0.5);
+    array2D<float> YY(www, hhh);
+
     double mean = 0.0;
     int nc = 0;
     for (int y = hsta; y < hend; ++y) {
         for (int x = wsta; x < wend; ++x) {
             const float r = img.r(y, x), g = img.g(y, x), b = img.b(y, x);
-            Y[y][x] = norm2(r, g, b, ws) / 65535.f;
+            YY[y][x] = norm2(r, g, b, ws) / 65535.f;
             mean += static_cast<double>(0.2126f * Color::gamma_srgb(r) + 0.7152f * Color::gamma_srgb(g) + 0.0722f * Color::gamma_srgb(b));
             nc++;
         }
     }
+    
     for (int y = hsta; y < hend; ++y) {
         for (int x = wsta; x < wend; ++x) {
-            float l = Y[y][x];
+            float l = YY[y][x];
             if (l > noise) {
                 minVal = min(minVal, l);
                 maxVal = max(maxVal, l);
             }
         }
     }
+    
     maxVal *= 1.45f; //or 1.5f...slightly increase max
     minVal *= 0.55f;//or 0.5f...slightly increase min
     //approximation sourcegray yb  source =  yb
@@ -2233,6 +2238,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
         }
         
         sourceab[sp] = adap;
+
     }
 }
 
