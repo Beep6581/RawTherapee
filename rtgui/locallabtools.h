@@ -1571,6 +1571,12 @@ private:
     Adjuster* const contlcie;
     Adjuster* const contqcie;
     Adjuster* const contthrescie;
+    Gtk::Frame* const logjzFrame;
+    Gtk::CheckButton* const logjz;
+    Adjuster* const blackEvjz;
+    Adjuster* const whiteEvjz;
+    Adjuster* const targetjz;
+    
     Gtk::Frame* const sigmoidFrame;
     Adjuster* const sigmoidldacie;
     Adjuster* const sigmoidthcie;
@@ -1659,7 +1665,7 @@ private:
     CurveEditorGroup* const mask2cieCurveEditorG;
     DiagonalCurveEditor* const Lmaskcieshape;
     
-    sigc::connection AutograycieConn,  forcejzConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2;
+    sigc::connection AutograycieConn,  forcejzConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, logjzconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2;
 public:
     Locallabcie();
     ~Locallabcie();
@@ -1703,6 +1709,7 @@ private:
     void qtojChanged();
     void jabcieChanged();
     void sigmoidqjcieChanged();
+    void logjzChanged();
     void chjzcieChanged();
     void updatecieGUI();
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;

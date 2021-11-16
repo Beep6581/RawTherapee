@@ -1593,6 +1593,7 @@ struct LocallabParams {
         bool qtoj;
         bool jabcie;
         bool sigmoidqjcie;
+        bool logjz;
         bool chjzcie;
         double sourceGraycie;
         double sourceabscie;
@@ -1640,6 +1641,9 @@ struct LocallabParams {
         std::vector<double> locwavcurvejz;
         Threshold<int> csthresholdjz;
         double contthrescie;
+        double blackEvjz;
+        double whiteEvjz;
+        double targetjz;
         double sigmoidldacie;
         double sigmoidthcie;
         double sigmoidblcie;

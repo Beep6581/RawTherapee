@@ -3204,6 +3204,45 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             mjjz = 0.0f;//to enable clarity if need in some cases mjjz = 0.0001f
         }
 
+    //log encoding Jz
+    const bool logjz =  params->locallab.spots.at(sp).logjz;
+    const double gray = params->locallab.spots.at(sp).sourceGraycie / 100.;
+    const double shadows_range =  params->locallab.spots.at(sp).blackEvjz;
+    const double targetgray = params->locallab.spots.at(sp).targetjz;
+    double dynamic_range = params->locallab.spots.at(sp).whiteEvjz - shadows_range;
+    if (dynamic_range < 0.5) {
+        dynamic_range = 0.5;
+    }
+    const double noise = pow(2., -16.);
+    const double log2 = xlog(2.);
+    const double base = targetgray > 1. && targetgray < 100. && dynamic_range > 0 ? (double) find_gray(std::abs((float) shadows_range) / (float) dynamic_range, (float) (targetgray / 100.)) : 0.;
+    const double linbase = std::max(base, 0.);
+
+    const auto applytojz =
+    [ = ](double x, bool scale = true) -> double {
+        if (scale)
+        {
+            x /= 65535.;
+        }
+
+        x = std::max(x, noise);
+        x = std::max(x / gray, noise);
+        x = std::max((xlog(x) / log2 - shadows_range) / dynamic_range, noise);
+        assert(x == x);
+
+        if (linbase > 0.)
+        {
+            x = xlog2lin(x, linbase);
+        }
+
+        if (scale)
+        {
+            return x * 65535.;
+        } else {
+            return x;
+        }
+    };
+
 #ifdef _OPENMP
             #pragma omp parallel for if(multiThread)
 #endif
@@ -3517,6 +3556,16 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     Jz =  (double) (jzlocalcurve[(float) Jz * 65535.f] / 65535.f);
                     Jz  = 0.3 * (Jz - Jzold) + Jzold;
                 }
+
+                if(logjz) {
+                    double jmz = 65535. * Jz;
+                    if (jmz > noise) {
+                        double mm = applytojz(jmz);
+                        double f = mm / jmz;
+                        Jz *= f;
+                    }
+                }
+
 
                 if(sigmoidlambdajz > 0.f && iscie) {//sigmoid Jz
                     float val = Jz;

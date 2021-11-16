@@ -7432,6 +7432,13 @@ Locallabcie::Locallabcie():
     contlcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTL"), -100., 100., 0.5, 0.))),
     contqcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONQL"), -100., 100., 0.5, 0.))),
     contthrescie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCONTHRES"), -1., 1., 0.01, 0.))),
+
+    logjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOGJZFRA")))),
+    logjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZLOG")))),
+    blackEvjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.0, 0.0, 0.1, -5.0))),
+    whiteEvjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0., 32.0, 0.1, 10.0))),
+    targetjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZTARGET_EV"), 1., 100.0, 0.1, 18.0))),
+
     sigmoidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGFRA")))),
     sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 1.0, 0.01, 0.))),
     sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.04, 3., 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
@@ -7582,7 +7589,14 @@ Locallabcie::Locallabcie():
 //    PQFBox->pack_start(*contthreszcam);
     PQFrame->add(*PQFBox);
     cieFBox->pack_start (*PQFrame);
-
+    logjzFrame->set_label_align(0.025, 0.5);
+    logjzFrame->set_label_widget(*logjz);
+    ToolParamBlock* const logjzBox = Gtk::manage(new ToolParamBlock());
+    logjzBox->pack_start(*blackEvjz);
+    logjzBox->pack_start(*whiteEvjz);
+    logjzBox->pack_start(*targetjz);
+    logjzFrame->add(*logjzBox);
+    cieFBox->pack_start (*logjzFrame);
     cieFBox->pack_start (*surHBoxcie);
     cieFrame->add(*cieFBox);
     pack_start(*cieFrame);
@@ -7777,6 +7791,7 @@ Locallabcie::Locallabcie():
     jabcieConn = jabcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::jabcieChanged));
     AutograycieConn = Autograycie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::AutograycieChanged));
     sigmoidqjcieconn = sigmoidqjcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigmoidqjcieChanged));
+    logjzconn = logjz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logjzChanged));
     forcejzConn = forcejz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::forcejzChanged));
     qtojConn = qtoj->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::qtojChanged));
     chjzcieconn = chjzcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::chjzcieChanged));
@@ -7857,6 +7872,11 @@ Locallabcie::Locallabcie():
     shthjzcie->setAdjusterListener(this);
     radjzcie->setAdjusterListener(this);
     contthrescie->setAdjusterListener(this);
+    blackEvjz->setLogScale(2, -8);
+    blackEvjz->setAdjusterListener(this);
+    whiteEvjz->setLogScale(16, 0);
+    whiteEvjz->setAdjusterListener(this);
+    targetjz->setAdjusterListener(this);
     sigmoidldacie->setAdjusterListener(this);
     sigmoidthcie->setAdjusterListener(this);
     sigmoidblcie->setAdjusterListener(this);
@@ -7934,9 +7954,12 @@ Locallabcie::Locallabcie():
     cieP1colorBox->pack_start(*rstprotectcie);
     cie1colorFrame->add(*cieP1colorBox);
     cieP1Box->pack_start(*cie1colorFrame);
+ //   pack_start(*blackEvjz);
+ //   pack_start(*whiteEvjz);
 
     sigmoidFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const sigBox = Gtk::manage(new ToolParamBlock());
+    
     sigBox->pack_start(*sigmoidldacie);
     sigBox->pack_start(*sigmoidthcie);
     sigBox->pack_start(*sigmoidblcie);
@@ -8215,6 +8238,7 @@ void Locallabcie::disableListener()
     qtojConn.block(true);
     jabcieConn.block(true);
     sigmoidqjcieconn.block(true);
+    logjzconn.block(true);
     chjzcieconn.block(true);
     sursourcieconn.block (true);
     surroundcieconn.block (true);
@@ -8234,6 +8258,7 @@ void Locallabcie::enableListener()
     qtojConn.block(false);
     jabcieConn.block(false);
     sigmoidqjcieconn.block(false);
+    logjzconn.block(false);
     chjzcieconn.block(false);
     sursourcieconn.block (false);
     surroundcieconn.block (false);
@@ -8345,6 +8370,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         qtoj->set_active(spot.qtoj);
         sourceGraycie->setValue(spot.sourceGraycie);
         sigmoidqjcie->set_active(spot.sigmoidqjcie);
+        logjz->set_active(spot.logjz);
        // chjzcie->set_active(spot.chjzcie);
         chjzcie->set_active(true);//force to true to avoid other mode
         sourceabscie->setValue(spot.sourceabscie);
@@ -8409,6 +8435,9 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         claricresjz->setValue(spot.claricresjz);
         clarisoftjz->setValue(spot.clarisoftjz);
         contthrescie->setValue(spot.contthrescie);
+        blackEvjz->setValue(spot.blackEvjz);
+        whiteEvjz->setValue(spot.whiteEvjz);
+        targetjz->setValue(spot.targetjz);
         sigmoidldacie->setValue(spot.sigmoidldacie);
         sigmoidthcie->setValue(spot.sigmoidthcie);
         sigmoidblcie->setValue(spot.sigmoidblcie);
@@ -8512,6 +8541,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.sourceGraycie = sourceGraycie->getValue();
         spot.sourceabscie = sourceabscie->getValue();
         spot.sigmoidqjcie = sigmoidqjcie->get_active();
+        spot.logjz = logjz->get_active();
         spot.chjzcie = chjzcie->get_active();
 
         if (sursourcie->get_active_row_number() == 0) {
@@ -8571,6 +8601,9 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.claricresjz = claricresjz->getValue();
         spot.clarisoftjz = clarisoftjz->getValue();
         spot.contthrescie = contthrescie->getValue();
+        spot.blackEvjz = blackEvjz->getValue();
+        spot.whiteEvjz = whiteEvjz->getValue();
+        spot.targetjz = targetjz->getValue();
         spot.sigmoidldacie = sigmoidldacie->getValue();
         spot.sigmoidthcie = sigmoidthcie->getValue();
         spot.sigmoidblcie = sigmoidblcie->getValue();
@@ -8669,6 +8702,8 @@ void Locallabcie::updateAutocompute(const float blackev, const float whiteev, co
 
             // Update adjuster values according to autocomputed ones
             disableListener();
+            blackEvjz->setValue(blackev);
+            whiteEvjz->setValue(whiteev);
             sourceGraycie->setValue(sourceg);
             sourceabscie->setValue(sourceab);
             float sour = std::min((double) sourceab, 10000.) / 10000.f;
@@ -8693,11 +8728,15 @@ void Locallabcie::AutograycieChanged()
         sourceabscie->set_sensitive(false);
         adapjzcie->set_sensitive(false);
         jz100->set_sensitive(false);
+        blackEvjz->set_sensitive(false);
+        whiteEvjz->set_sensitive(false);
     } else {
         sourceGraycie->set_sensitive(true);
         sourceabscie->set_sensitive(true);
         adapjzcie->set_sensitive(true);
         jz100->set_sensitive(true);
+        blackEvjz->set_sensitive(true);
+        whiteEvjz->set_sensitive(true);
       //  adapjzcie->set_sensitive(false);
       //  jz100->set_sensitive(false);
     }
@@ -8776,6 +8815,21 @@ void Locallabcie::sigmoidqjcieChanged()
     }
 }
 
+void Locallabcie::logjzChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (logjz->get_active()) {
+                listener->panelChanged(Evlocallablogjz,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallablogjz,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
 void Locallabcie::chjzcieChanged()
 {
     if (chjzcie->get_active()) {
@@ -8808,6 +8862,7 @@ void Locallabcie::modecamChanged()
         pqremap->show();
         jabcie->show();
         PQFrame->show();
+        logjzFrame->show();
 //        contthreszcam->hide();
         forcejz->hide();
         
@@ -8820,6 +8875,7 @@ void Locallabcie::modecamChanged()
         pqremapcam16->show();
         jabcie->hide();
         PQFrame->hide();
+        logjzFrame->hide();
         forcejz->hide();
         catadcie->show();
     }
@@ -8864,6 +8920,7 @@ void Locallabcie::modecamChanged()
             targabscie->show();
             surrHBoxcie->show();
             PQFrame->show();
+            logjzFrame->show();
             adapjzcie->hide();
             jz100->hide();
             forcejz->hide();
@@ -8893,6 +8950,7 @@ void Locallabcie::modecamChanged()
         pqremap->show();
         jabcie->hide();
         PQFrame->hide();
+        logjzFrame->hide();
         forcejz->hide();
 //        contthreszcam->hide();
         pqremapcam16->show();
@@ -8919,6 +8977,7 @@ void Locallabcie::modecamChanged()
             forcejz->hide();
             pqremapcam16->hide();
             PQFrame->show();
+            logjzFrame->show();
             catadcie->hide();
             cie2Frame->hide();
             if (chjzcie->get_active()) {
@@ -8938,6 +8997,7 @@ void Locallabcie::modecamChanged()
             targabscie->show();
             surrHBoxcie->show();
             PQFrame->show();
+            logjzFrame->show();
             adapjzcie->hide();
             jz100->hide();
             forcejz->hide();
@@ -9079,6 +9139,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
             if (modecam->get_active_row_number() == 2) {
                 PQFrame->hide();
+                logjzFrame->hide();
             }
 
             if (modecam->get_active_row_number() == 1) {
@@ -9089,6 +9150,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 forcejz->hide();
                 pqremapcam16->hide();
                 PQFrame->hide();
+                logjzFrame->hide();
+
                 catadcie->hide();
                 cie2Frame->hide();
               //  sourceGraycie->hide();
@@ -9105,6 +9168,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 //                ciezFrame->hide();
                 pqremapcam16->hide();
                 PQFrame->hide();
+                logjzFrame->hide();
                 catadcie->hide();
             }
             
@@ -9167,6 +9231,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
 
             if (modecam->get_active_row_number() == 2) {
                 PQFrame->hide();
+                logjzFrame->hide();
             }
 
             if (modecam->get_active_row_number() == 1) {
@@ -9177,6 +9242,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 forcejz->hide();
                 pqremapcam16->hide();
                 PQFrame->hide();
+                logjzFrame->hide();
                 catadcie->hide();
                 cie2Frame->hide();
               //  sourceGraycie->hide();
@@ -9195,6 +9261,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 pqremapcam16->hide();
                 PQFrame->hide();
                 catadcie->hide();
+                logjzFrame->hide();
             }
             if (modecie->get_active_row_number() > 0) {
                 exprecovcie->hide();
@@ -9257,6 +9324,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 jz100->show();
                 pqremap->show();
                 PQFrame->show();
+                logjzFrame->show();
 //                contthreszcam->hide();
                 forcejz->hide();
                 
@@ -9270,9 +9338,11 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 surrHBoxcie->show();
                 pqremapcam16->show();
                 PQFrame->hide();
+                logjzFrame->hide();
             }
             if (modecam->get_active_row_number() == 2) {
                 PQFrame->show();
+                logjzFrame->show();
             }
 
             if (modecam->get_active_row_number() == 1) {
@@ -9282,6 +9352,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 surrHBoxcie->hide();
                 pqremapcam16->hide();
                 PQFrame->show();
+                logjzFrame->show();
                 catadcie->hide();
                 cie2Frame->hide();
                // sourceGraycie->hide();
@@ -9307,6 +9378,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 targabscie->show();
                 surrHBoxcie->show();
                 PQFrame->show();
+                logjzFrame->show();
                 adapjzcie->hide();
                 jz100->hide();
                 forcejz->hide();
@@ -9346,6 +9418,7 @@ void Locallabcie::updatecieGUI()
         
     if (modecam->get_active_row_number() == 2  && mode == Expert) {
         PQFrame->show();
+        logjzFrame->show();
     }
         sourceGraycie->show();
         cieFrame->show();
@@ -9369,6 +9442,7 @@ void Locallabcie::updatecieGUI()
         surrHBoxcie->hide();
         pqremapcam16->hide();
         PQFrame->show();
+        logjzFrame->show();
         catadcie->hide();
         cie2Frame->hide();
     //    sourceGraycie->hide();
@@ -9379,6 +9453,7 @@ void Locallabcie::updatecieGUI()
             cie2Frame->hide();
 //            ciezFrame->hide();
             PQFrame->hide();
+            logjzFrame->hide();
             exprecovcie->hide();
             expmaskcie->hide();
             maskusablecie->hide();
@@ -9398,6 +9473,7 @@ void Locallabcie::updatecieGUI()
             cieFrame->show();
 //            ciezFrame->show();
             PQFrame->show();
+            logjzFrame->show();
             adapjzcie->hide();
             jz100->hide();
             forcejz->hide();
@@ -9412,6 +9488,7 @@ void Locallabcie::updatecieGUI()
             cie2Frame->hide();
 //            ciezFrame->hide();
             PQFrame->hide();
+            logjzFrame->hide();
         }
     }
 
@@ -9420,10 +9497,14 @@ void Locallabcie::updatecieGUI()
         sourceabscie->set_sensitive(false);
         adapjzcie->set_sensitive(false);
         jz100->set_sensitive(false);
+        blackEvjz->set_sensitive(false);
+        whiteEvjz->set_sensitive(false);
     } else {
         sourceGraycie->set_sensitive(true);
         sourceabscie->set_sensitive(true);
         adapjzcie->set_sensitive(true);
+        blackEvjz->set_sensitive(true);
+        whiteEvjz->set_sensitive(true);
         jz100->set_sensitive(true);
        // adapjzcie->set_sensitive(false);
        // jz100->set_sensitive(false);
@@ -9495,6 +9576,7 @@ void Locallabcie::convertParamToNormal()
     if (modecam->get_active_row_number() == 1) {
         showmaskcieMethod->set_active(0);
         enacieMask->set_active(defSpot.enacieMask);
+        logjz->set_active(defSpot.enacieMask);
     }
     lapmaskcie->setValue(defSpot.lapmaskcie);
     gammaskcie->setValue(defSpot.gammaskcie);
@@ -9546,6 +9628,9 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         claricresjz->setDefault(defSpot.claricresjz);
         clarisoftjz->setDefault(defSpot.clarisoftjz);
         contthrescie->setDefault(defSpot.contthrescie);
+        blackEvjz->setDefault(defSpot.blackEvjz);
+        whiteEvjz->setDefault(defSpot.whiteEvjz);
+        targetjz->setDefault(defSpot.targetjz);
         sigmoidldacie->setDefault(defSpot.sigmoidldacie);
         sigmoidthcie->setDefault(defSpot.sigmoidthcie);
         sigmoidblcie->setDefault(defSpot.sigmoidblcie);
@@ -9915,6 +10000,27 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabcontthrescie,
                                        contthrescie->getTextValue() + spName);
+            }
+        }
+
+        if (a == blackEvjz) {
+            if (listener) {
+                listener->panelChanged(EvlocallabblackEvjz,
+                                       blackEvjz->getTextValue() + spName);
+            }
+        }
+
+        if (a == whiteEvjz) {
+            if (listener) {
+                listener->panelChanged(EvlocallabwhiteEvjz,
+                                       whiteEvjz->getTextValue() + spName);
+            }
+        }
+
+        if (a == targetjz) {
+            if (listener) {
+                listener->panelChanged(Evlocallabtargetjz,
+                                       targetjz->getTextValue() + spName);
             }
         }
 

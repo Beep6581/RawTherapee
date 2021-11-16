@@ -986,6 +986,7 @@ public:
         bool qtoj;
         bool jabcie;
         bool sigmoidqjcie;
+        bool logjz;
         bool chjzcie;
         bool sourceGraycie;
         bool sourceabscie;
@@ -1027,6 +1028,9 @@ public:
         bool shthjzcie;
         bool radjzcie;
         bool contthrescie;
+        bool blackEvjz;
+        bool whiteEvjz;
+        bool targetjz;
         bool sigmoidldacie;
         bool sigmoidthcie;
         bool sigmoidblcie;
