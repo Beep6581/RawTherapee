@@ -461,33 +461,40 @@ IPTCPanel::IPTCPanel():
     show_all();
 }
 
+
 void IPTCPanel::read (const ProcParams* pp, const ParamsEdited* pedited)
 {
-
     disableListener();
     changeList->clear();
 
     if (!pp->metadata.iptc.empty()) {
         *changeList = pp->metadata.iptc;
+        changelist_valid_ = true;
     } else {
         *changeList = *embeddedData;
+        changelist_valid_ = false;
     }
 
     applyChangeList();
     enableListener();
 }
 
+
 void IPTCPanel::write (ProcParams* pp, ParamsEdited* pedited)
 {
-
-    pp->metadata.iptc = *changeList;
+    if (changelist_valid_) {
+        pp->metadata.iptc = *changeList;
+    } else {
+        pp->metadata.iptc.clear();
+    }
 }
+
 
 void IPTCPanel::setDefaults (const ProcParams* defParams, const ParamsEdited* pedited)
 {
-
     *defChangeList = defParams->metadata.iptc;
 }
+
 
 void IPTCPanel::setImageData(const FramesMetaData* id)
 {
@@ -510,9 +517,9 @@ void IPTCPanel::setImageData(const FramesMetaData* id)
     file->set_sensitive(!embeddedData->empty());
 }
 
+
 void IPTCPanel::notifyListener()
 {
-
     if (listener) {
         listener->panelChanged(EvIPTC, M("HISTORY_CHANGED"));
     }
@@ -628,7 +635,7 @@ void IPTCPanel::delSuppCategory()
 
 void IPTCPanel::updateChangeList()
 {
-
+    changelist_valid_ = true;
     changeList->clear();
     (*changeList)[CAPTION].push_back(captionText->get_text());
     (*changeList)[CAPTION_WRITER].push_back(captionWriter->get_text());
@@ -756,9 +763,9 @@ void IPTCPanel::applyChangeList()
 
 void IPTCPanel::resetClicked()
 {
-
     disableListener();
     *changeList = *defChangeList;
+    changelist_valid_ = false;
     applyChangeList();
     enableListener();
     notifyListener();
