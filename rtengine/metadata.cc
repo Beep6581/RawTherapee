@@ -198,6 +198,7 @@ void Exiv2Metadata::do_merge_xmp(Exiv2::Image *dst, bool keep_all) const
         Exiv2::IptcData iptc;
         Exiv2::copyXmpToIptc(xmp, iptc);
         Exiv2::moveXmpToExif(xmp, exif);
+        std::unordered_set<std::string> seen;
 
         if (!keep_all) {
             remove_unwanted(exif);
@@ -207,10 +208,18 @@ void Exiv2Metadata::do_merge_xmp(Exiv2::Image *dst, bool keep_all) const
             dst->exifData()[datum.key()] = datum;
         }
         for (auto &datum : iptc) {
-            dst->iptcData()[datum.key()] = datum;
+            if (seen.insert(datum.key()).second) {
+                dst->iptcData()[datum.key()] = datum;
+            } else {
+                dst->iptcData().add(datum);
+            }
         }
         for (auto &datum : xmp) {
-            dst->xmpData()[datum.key()] = datum;
+            if (seen.insert(datum.key()).second) {
+                dst->xmpData()[datum.key()] = datum;
+            } else {
+                dst->xmpData().add(datum);
+            }
         }
     } catch (std::exception &exc) {
         if (settings->verbose) {
