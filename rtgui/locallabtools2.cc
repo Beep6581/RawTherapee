@@ -5297,12 +5297,14 @@ LocallabLog::LocallabLog():
     AutograyConn = Autogray->signal_toggled().connect(sigc::mem_fun(*this, &LocallabLog::AutograyChanged));
 
     sourceGray->setAdjusterListener(this);
+    sourceGray->setLogScale(10, 18, true);
 
     sourceabs->setLogScale(500, 0);
 
     sourceabs->setAdjusterListener(this);
 
     targetGray->setAdjusterListener(this);
+    targetGray->setLogScale(10, 18, true);
 
     detail->setAdjusterListener(this);
 
@@ -7437,7 +7439,7 @@ Locallabcie::Locallabcie():
     logjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZLOG")))),
     blackEvjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.0, 0.0, 0.1, -5.0))),
     whiteEvjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0., 32.0, 0.1, 10.0))),
-    targetjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZTARGET_EV"), 1., 100.0, 0.1, 18.0))),
+    targetjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZTARGET_EV"), 2., 80.0, 0.1, 18.0))),
 
     sigmoidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGFRA")))),
     sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 1.0, 0.01, 0.))),
@@ -7797,6 +7799,7 @@ Locallabcie::Locallabcie():
     chjzcieconn = chjzcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::chjzcieChanged));
 
     sourceGraycie->setAdjusterListener(this);
+    sourceGraycie->setLogScale(10, 18, true);
 
     sourceabscie->setLogScale(500, 0);
 
@@ -7877,6 +7880,7 @@ Locallabcie::Locallabcie():
     whiteEvjz->setLogScale(16, 0);
     whiteEvjz->setAdjusterListener(this);
     targetjz->setAdjusterListener(this);
+    targetjz->setLogScale(10, 18, true);
     sigmoidldacie->setAdjusterListener(this);
     sigmoidthcie->setAdjusterListener(this);
     sigmoidblcie->setAdjusterListener(this);
@@ -7897,6 +7901,7 @@ Locallabcie::Locallabcie():
     chromzcam->setAdjusterListener(this);
 */
     targetGraycie->setAdjusterListener(this);
+    targetGraycie->setLogScale(10, 18, true);
     targabscie->setLogScale(500, 0);
 
     targabscie->setAdjusterListener(this);
@@ -8544,7 +8549,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.logjz = logjz->get_active();
         spot.chjzcie = chjzcie->get_active();
 
-        if (sursourcie->get_active_row_number() == 0) {
+        if(sursourcie->get_active_row_number() == 0) {
             spot.sursourcie = "Average";
         } else if (sursourcie->get_active_row_number() == 1) {
             spot.sursourcie = "Dim";

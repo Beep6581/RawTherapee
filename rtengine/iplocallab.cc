@@ -1850,9 +1850,6 @@ static void calcTransition(const float lox, const float loy, const float ach, co
 }
 
 // Copyright 2018 Alberto Griggio <alberto.griggio@gmail.com>
-//J.Desmis 12 2019 - I will try to port a raw process in local adjustments
-// I choose this one because, it is "new"
-// Perhaps - probably no result, but perhaps ??
 
 float find_gray(float source_gray, float target_gray)
 {
@@ -1871,7 +1868,7 @@ float find_gray(float source_gray, float target_gray)
 
     const auto f =
     [ = ](float x) -> float {
-        return std::pow(x, source_gray) - 1 - target_gray * x + target_gray;
+        return std::pow(x, source_gray) - 1.f - target_gray * x + target_gray;
     };
 
     // first find the interval we are interested in
@@ -1945,6 +1942,17 @@ inline float power_norm(float r, float g, float b)
     float n = r*r2 + g*g2 + b*b2;
 
     return n / std::max(d, 1e-12f);
+}
+
+inline float ev2gray(float ev)
+{
+    return std::pow(2.f, -ev + std::log2(0.18f));
+}
+
+
+inline float gray2ev(float gray)
+{
+    return std::log2(0.18f / gray);
 }
 
 
@@ -3209,21 +3217,15 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const double gray = params->locallab.spots.at(sp).sourceGraycie / 100.;
     const double shadows_range =  params->locallab.spots.at(sp).blackEvjz;
     const double targetgray = params->locallab.spots.at(sp).targetjz;
-    double dynamic_range = params->locallab.spots.at(sp).whiteEvjz - shadows_range;
-    if (dynamic_range < 0.5) {
-        dynamic_range = 0.5;
-    }
-    const double noise = pow(2., -16.);
+    double targetgraycor = pow(0.01 * targetgray, 1.1);//take into account suuround
+    double dynamic_range = std::max(params->locallab.spots.at(sp).whiteEvjz - shadows_range, 0.5);
+    const double noise = pow(2., -16.6);//16.6 instead of 16 a little les than other, but we work in double
     const double log2 = xlog(2.);
-    const double base = targetgray > 1. && targetgray < 100. && dynamic_range > 0 ? (double) find_gray(std::abs((float) shadows_range) / (float) dynamic_range, (float) (targetgray / 100.)) : 0.;
+    const double base = targetgray > 1. && targetgray < 100. && dynamic_range > 0. ? (double) find_gray(std::abs((float) shadows_range) / (float) dynamic_range, (float) (targetgraycor)) : 0.;
     const double linbase = std::max(base, 0.);
 
     const auto applytojz =
-    [ = ](double x, bool scale = true) -> double {
-        if (scale)
-        {
-            x /= 65535.;
-        }
+    [ = ](double x) -> double {
 
         x = std::max(x, noise);
         x = std::max(x / gray, noise);
@@ -3234,13 +3236,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         {
             x = xlog2lin(x, linbase);
         }
+        return x;
 
-        if (scale)
-        {
-            return x * 65535.;
-        } else {
-            return x;
-        }
     };
 
 #ifdef _OPENMP
@@ -3559,13 +3556,16 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 double Cz = sqrt(az * az + bz * bz);
 
                 if(logjz) {
-                    double jmz = 65535. * Jz;
+                    double jmzn = 65535. * Jz;
+                    double jmz =  Jz;
                     
-                    if (jmz > noise) {
+                    if (jmzn > noise) {
                         double mm = applytojz(jmz);
                         double f = mm / jmz;
                         Jz *= f;
                         Cz *= f;
+                        Jz = LIM01(Jz);
+                        Cz = clipazbz(Cz);
                     }
                 }
 
