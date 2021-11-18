@@ -39,6 +39,7 @@ BayerProcess::BayerProcess () :
     EvDemosaicContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_DUALDEMOSAIC_CONTRAST");
     EvDemosaicAutoContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST");
     EvDemosaicPixelshiftDemosaicMethod = m->newEvent(DEMOSAIC, "HISTORY_MSG_PIXELSHIFT_DEMOSAIC");
+    EvPixelshiftAverage = m->newEvent(DEMOSAIC, "HISTORY_MSG_PIXELSHIFT_AVERAGE");
 
     Gtk::Box* hb1 = Gtk::manage (new Gtk::Box ());
     hb1->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_DMETHOD") + ": ")), Gtk::PACK_SHRINK, 4);
@@ -226,7 +227,13 @@ BayerProcess::BayerProcess () :
     pixelShiftMedian = Gtk::manage (new CheckBox(M("TP_RAW_PIXELSHIFTMEDIAN"), multiImage));
     pixelShiftMedian->setCheckBoxListener (this);
     pixelShiftMedian->set_tooltip_text (M("TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP"));
+
+    pixelShiftAverage = Gtk::manage (new CheckBox(M("TP_RAW_PIXELSHIFTAVERAGE"), multiImage));
+    pixelShiftAverage->setCheckBoxListener (this);
+    pixelShiftAverage->set_tooltip_text (M("TP_RAW_PIXELSHIFTAVERAGE_TOOLTIP"));
+
     pixelShiftOptions->pack_start(*pixelShiftMedian);
+    pixelShiftOptions->pack_start(*pixelShiftAverage);
 
     pixelShiftMainVBox->pack_start(*pixelShiftOptions);
     pixelShiftFrame->add(*pixelShiftMainVBox);
@@ -281,6 +288,7 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
     }
     pixelShiftHoleFill->setValue (pp->raw.bayersensor.pixelShiftHoleFill);
     pixelShiftMedian->setValue (pp->raw.bayersensor.pixelShiftMedian);
+    pixelShiftAverage->setValue (pp->raw.bayersensor.pixelShiftAverage);
     pixelShiftGreen->setValue (pp->raw.bayersensor.pixelShiftGreen);
     pixelShiftBlur->setValue (pp->raw.bayersensor.pixelShiftBlur);
     pixelShiftSmooth->setValue (pp->raw.bayersensor.pixelShiftSmoothFactor);
@@ -314,6 +322,7 @@ void BayerProcess::read(const rtengine::procparams::ProcParams* pp, const Params
         pixelShiftShowMotionMaskOnly->setEdited (pedited->raw.bayersensor.pixelShiftShowMotionMaskOnly);
         pixelShiftHoleFill->setEdited (pedited->raw.bayersensor.pixelShiftHoleFill);
         pixelShiftMedian->setEdited(pedited->raw.bayersensor.pixelShiftMedian);
+        pixelShiftAverage->setEdited(pedited->raw.bayersensor.pixelShiftAverage);
         pixelShiftGreen->setEdited (pedited->raw.bayersensor.pixelShiftGreen);
         pixelShiftBlur->setEdited (pedited->raw.bayersensor.pixelShiftBlur);
         pixelShiftSmooth->setEditedState ( pedited->raw.bayersensor.pixelShiftSmooth ? Edited : UnEdited);
@@ -396,6 +405,7 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
     pp->raw.bayersensor.pixelShiftShowMotionMaskOnly = pixelShiftShowMotionMaskOnly->getLastActive ();
     pp->raw.bayersensor.pixelShiftHoleFill = pixelShiftHoleFill->getLastActive ();
     pp->raw.bayersensor.pixelShiftMedian = pixelShiftMedian->getLastActive ();
+    pp->raw.bayersensor.pixelShiftAverage = pixelShiftAverage->getLastActive ();
     pp->raw.bayersensor.pixelShiftGreen = pixelShiftGreen->getLastActive ();
     pp->raw.bayersensor.pixelShiftBlur = pixelShiftBlur->getLastActive ();
     pp->raw.bayersensor.pixelShiftSmoothFactor = pixelShiftSmooth->getValue();
@@ -438,6 +448,7 @@ void BayerProcess::write( rtengine::procparams::ProcParams* pp, ParamsEdited* pe
         pedited->raw.bayersensor.pixelShiftShowMotionMaskOnly = !pixelShiftShowMotionMaskOnly->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftHoleFill = !pixelShiftHoleFill->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftMedian = !pixelShiftMedian->get_inconsistent();
+        pedited->raw.bayersensor.pixelShiftAverage = !pixelShiftAverage->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftGreen = !pixelShiftGreen->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftBlur = !pixelShiftBlur->get_inconsistent();
         pedited->raw.bayersensor.pixelShiftSmooth = pixelShiftSmooth->getEditedState();
@@ -632,8 +643,18 @@ void BayerProcess::checkBoxToggled (CheckBox* c, CheckValue newval)
             listener->panelChanged (EvPixelShiftHoleFill, pixelShiftHoleFill->getValueAsStr ());
         }
     } else if (c == pixelShiftMedian) {
+        if (pixelShiftMedian->getLastActive()) {
+            pixelShiftAverage->setValue(false);
+        }
         if (listener) {
             listener->panelChanged (EvPixelShiftMedian, pixelShiftMedian->getValueAsStr ());
+        }
+    } else if (c == pixelShiftAverage) {
+        if (pixelShiftAverage->getLastActive()) {
+            pixelShiftMedian->setValue(false);
+        }
+        if (listener) {
+            listener->panelChanged (EvPixelshiftAverage, pixelShiftAverage->getValueAsStr ());
         }
     } else if (c == pixelShiftGreen) {
         if (listener) {
