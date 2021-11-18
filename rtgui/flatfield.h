@@ -95,4 +95,5 @@ public:
     };
     void flatFieldAutoClipValueChanged(int n = 0) override;
     void checkBoxToggled(CheckBox* c, CheckValue newval) override;
+    void setGainMap(bool enabled);
 };

@@ -437,3 +437,18 @@ void FlatField::flatFieldAutoClipValueChanged(int n)
         }
     );
 }
+
+void FlatField::setGainMap(bool enabled) {
+    flatFieldFromMetaData->set_sensitive(enabled);
+    if (!enabled) {
+        idle_register.add(
+            [this, enabled]() -> bool
+            {
+                disableListener();
+                flatFieldFromMetaData->setValue(false);
+                enableListener();
+                return false;
+            }
+        );
+    }
+}

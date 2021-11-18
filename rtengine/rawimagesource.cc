@@ -1385,7 +1385,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
     //FLATFIELD end
 
-    if (raw.ff_FromMetaData && ri->isGainMapSupported()) {
+    if (raw.ff_FromMetaData && isGainMapSupported()) {
         applyDngGainMap(c_black, ri->getGainMaps());
     }
 

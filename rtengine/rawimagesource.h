@@ -28,6 +28,7 @@
 #include "iimage.h"
 #include "imagesource.h"
 #include "procparams.h"
+#include "rawimage.h"
 
 #define HR_SCALE 2
 
@@ -176,6 +177,11 @@ public:
     bool        isRAW() const override
     {
         return true;
+    }
+
+    bool        isGainMapSupported() const override
+    {
+        return ri->isGainMapSupported();
     }
 
     void        setProgressListener (ProgressListener* pl) override
