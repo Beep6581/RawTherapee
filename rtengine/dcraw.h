@@ -168,6 +168,8 @@ protected:
         PanasonicRW2Info(): bpp(0), encoding(0) {}
     };
     PanasonicRW2Info RT_pana_info;
+    std::vector<GainMap> gainMaps;
+
 public:
     struct CanonCR3Data {
         // contents of tag CMP1 for relevant track in CR3 file
@@ -195,8 +197,20 @@ public:
         unsigned int crx_track_selected;
         short CR3_CTMDtag;
     };
-    std::vector<GainMap> gainMaps;
-    bool isGainMapSupported(const std::vector<GainMap> &gainMaps) const {
+
+    bool isBayer() const
+    {
+        return (filters != 0 && filters != 9);
+    }
+
+    const std::vector<GainMap>& getGainMaps() const {
+        return gainMaps;
+    }
+
+    bool isGainMapSupported() const {
+        if (!(dng_version && isBayer())) {
+            return false;
+        }
         const auto n = gainMaps.size();
         if (n != 4) { // we need 4 gainmaps for bayer files
             if (rtengine::settings->verbose) {
@@ -207,6 +221,18 @@ public:
         unsigned int check = 0;
         bool noOp = true;
         for (const auto &m : gainMaps) {
+            if (m.MapGain.size() < 1) {
+                if (rtengine::settings->verbose) {
+                    std::cout << "GainMap has invalid size of " << m.MapGain.size() << std::endl;
+                }
+                return false;
+            }
+            if (m.MapGain.size() != m.MapPointsV * m.MapPointsH * m.MapPlanes) {
+                if (rtengine::settings->verbose) {
+                    std::cout << "GainMap has size of " << m.MapGain.size() << ", but needs " << m.MapPointsV * m.MapPointsH * m.MapPlanes << std::endl;
+                }
+                return false;
+            }
             if (m.RowPitch != 2 || m.ColPitch != 2) {
                 if (rtengine::settings->verbose) {
                     std::cout << "GainMap needs Row/ColPitch of 2/2, but has " << m.RowPitch << "/" << m.ColPitch << std::endl;

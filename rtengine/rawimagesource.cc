@@ -1385,8 +1385,8 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
     //FLATFIELD end
 
-    if (raw.ff_FromMetaData && ri->isGainMapSupported(ri->gainMaps)) {
-        applyDngGainMap(c_black, ri->gainMaps);
+    if (raw.ff_FromMetaData && ri->isGainMapSupported()) {
+        applyDngGainMap(c_black, ri->getGainMaps());
     }
 
     // Always correct camera badpixels from .badpixels file
@@ -6270,12 +6270,12 @@ BENCHFUN
     const float row_scale = float(gainMaps[0].MapPointsV-1) / float(H);
 
 #ifdef _OPENMP
-#   pragma omp parallel for schedule(dynamic, 16)
+    #pragma omp parallel for schedule(dynamic, 16)
 #endif
-    for (unsigned y = 0; y < H; ++y) {
+    for (std::size_t y = 0; y < static_cast<size_t>(H); ++y) {
         const float rowBlack[2] = {black[FC(y,0)], black[FC(y,1)]};
         const float ys = y * row_scale;
-        for (unsigned x = 0; x < W; ++x) {
+        for (std::size_t x = 0; x < static_cast<std::size_t>(W); ++x) {
             const float xs = x * col_scale;
             const float f = getBilinearValue(mvals[y & 1][x & 1], xs, ys);
             const float b = rowBlack[x & 1];

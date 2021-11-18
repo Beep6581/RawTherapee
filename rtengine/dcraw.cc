@@ -6881,65 +6881,46 @@ it under the terms of the one of two licenses as you choose:
         }
       case 51009:			/* OpcodeList2 */
         {
-	meta_offset = ftell(ifp);
-            unsigned oldOrder = order;
+            meta_offset = ftell(ifp);
+            const unsigned oldOrder = order;
             order = 0x4d4d; // always big endian per definition in https://www.adobe.com/content/dam/acom/en/products/photoshop/pdfs/dng_spec_1.4.0.0.pdf chapter 7
             unsigned ntags = get4(); // read the number of opcodes
-std::cout << "ntags : " << ntags << std::endl;
-
             if (ntags < ifp->size / 12) { // rough check for wrong value (happens for example with DNG files from DJI FC6310)
                 while (ntags-- && !ifp->eof) {
-                  unsigned opcode = get4();
-std::cout << "opcode : " << opcode << std::endl;
-                  if (opcode == 9 && gainMaps.size() < 4) {
-                    fseek (ifp, 4, SEEK_CUR); // skip 4 bytes as we know that the opcode 4 takes 4 byte
-
-                    fseek (ifp, 8, SEEK_CUR); // skip 8 bytes as they don't interest us currently
-                    GainMap gainMap;
-                    gainMap.Top = get4();
-                    std::cout << "gainMap.top : " << gainMap.Top << std::endl;
-
-                    gainMap.Left = get4();
-                    gainMap.Bottom = get4();
-                    std::cout << "gainMap.bottom : " << gainMap.Bottom << std::endl;
-                    std::cout << "gainMap.left : " << gainMap.Left << std::endl;
-
-                    gainMap.Right = get4();
-                    std::cout << "gainMap.right : " << gainMap.Right << std::endl;
-
-                    gainMap.Plane = get4();
-                    gainMap.Planes = get4();
-                    gainMap.RowPitch = get4();
-                    gainMap.ColPitch = get4();
-                    gainMap.MapPointsV = get4();
-                    gainMap.MapPointsH = get4();
-                    gainMap.MapSpacingV = getreal(12);
-                    gainMap.MapSpacingH = getreal(12);
-                    gainMap.MapOriginV = getreal(12);
-                    gainMap.MapOriginH = getreal(12);
-                    gainMap.MapPlanes = get4();
-                    std::cout << "gainMap.row_pitch : " << gainMap.RowPitch << std::endl;
-                    std::cout << "gainMap.col_pitch : " << gainMap.ColPitch << std::endl;
-                    std::cout << "gainMap.map_points_v : " << gainMap.MapPointsV << std::endl;
-                    std::cout << "gainMap.map_points_h : " << gainMap.MapPointsH << std::endl;
-
-                    std::cout << "gainMap.planes : " << gainMap.Planes << std::endl;
-                    size_t n = gainMap.MapPointsV * gainMap.MapPointsH * gainMap.MapPlanes;
-                    std::cout << "n : " << n << std::endl;
-
-                    gainMap.MapGain.reserve(n);
-                    for (size_t i = 0; i < n; ++i) {
-                        gainMap.MapGain.push_back(getreal(11));
+                    unsigned opcode = get4();
+                    if (opcode == 9 && gainMaps.size() < 4) {
+                        fseek(ifp, 4, SEEK_CUR); // skip 4 bytes as we know that the opcode 4 takes 4 byte
+                        fseek(ifp, 8, SEEK_CUR); // skip 8 bytes as they don't interest us currently
+                        GainMap gainMap;
+                        gainMap.Top = get4();
+                        gainMap.Left = get4();
+                        gainMap.Bottom = get4();
+                        gainMap.Right = get4();
+                        gainMap.Plane = get4();
+                        gainMap.Planes = get4();
+                        gainMap.RowPitch = get4();
+                        gainMap.ColPitch = get4();
+                        gainMap.MapPointsV = get4();
+                        gainMap.MapPointsH = get4();
+                        gainMap.MapSpacingV = getreal(12);
+                        gainMap.MapSpacingH = getreal(12);
+                        gainMap.MapOriginV = getreal(12);
+                        gainMap.MapOriginH = getreal(12);
+                        gainMap.MapPlanes = get4();
+                        const std::size_t n = gainMap.MapPointsV * gainMap.MapPointsH * gainMap.MapPlanes;
+                        gainMap.MapGain.reserve(n);
+                        for (std::size_t i = 0; i < n; ++i) {
+                            gainMap.MapGain.push_back(getreal(11));
+                        }
+                        gainMaps.push_back(std::move(gainMap));
+                    } else {
+                        fseek(ifp, 8, SEEK_CUR); // skip 8 bytes as they don't interest us currently
+                        fseek(ifp, get4(), SEEK_CUR);
                     }
-                    gainMaps.push_back(std::move(gainMap));
-                  } else {
-                  fseek (ifp, 8, SEEK_CUR); // skip 8 bytes as they don't interest us currently
-                    fseek (ifp, get4(), SEEK_CUR);
-                  }
                 }
             }
             order = oldOrder;
-          break;
+            break;
         }
       case 64772:			/* Kodak P-series */
 	if (len < 13) break;
