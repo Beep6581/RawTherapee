@@ -871,6 +871,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                        // printf("sp=%i sg=%f sab=%f\n", sp, sourceg[sp], sourceab[sp]);
                         params->locallab.spots.at(sp).blackEv = blackev[sp];
                         params->locallab.spots.at(sp).whiteEv = whiteev[sp];
+                        params->locallab.spots.at(sp).blackEvjz = blackev[sp];
+                        params->locallab.spots.at(sp).whiteEvjz = whiteev[sp];
                         params->locallab.spots.at(sp).sourceGray = sourceg[sp];
                         params->locallab.spots.at(sp).sourceabs = sourceab[sp];
                         params->locallab.spots.at(sp).sourceGraycie = sourceg[sp];

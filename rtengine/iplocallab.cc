@@ -3218,12 +3218,20 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const double gray = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
     const double shadows_range =  params->locallab.spots.at(sp).blackEvjz;
     const double targetgray = params->locallab.spots.at(sp).targetjz;
-    double targetgraycor = pow(0.01 * targetgray, 1.1);//small reduce effect -> take into account a part of surround
+    double targetgraycor = 0.15;
     double dynamic_range = std::max(params->locallab.spots.at(sp).whiteEvjz - shadows_range, 0.5);
     const double noise = pow(2., -16.6);//16.6 instead of 16 a little less than others, but we work in double
     const double log2 = xlog(2.);
-    const double base = targetgray > 1. && targetgray < 100. && dynamic_range > 0. ? (double) find_gray(std::abs((float) shadows_range) / (float) dynamic_range, (float) (targetgraycor)) : 0.;
-    const double linbase = std::max(base, 0.);
+    double base = 10.;
+    double linbase = 10.;
+    if(logjz) {
+        targetgraycor = pow(0.01 * targetgray, 1.1);//small reduce effect -> take into account a part of surround
+        base = targetgray > 1. && targetgray < 100. && dynamic_range > 0. ? (double) find_gray(std::abs((float) shadows_range) / (float) dynamic_range, (float) (targetgraycor)) : 0.;
+        linbase = std::max(base, 2.);//2. minimal base log to avoid very bad results
+        if (settings->verbose) {
+            printf("Base logarithm encoding=%5.1f\n", linbase);
+        }
+    }
 
     const auto applytojz =
     [ = ](double x) -> double {
