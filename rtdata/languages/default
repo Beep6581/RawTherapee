@@ -3004,10 +3004,11 @@ TP_LOCALLAB_JZCHROM;Chroma
 TP_LOCALLAB_JZHFRA;Curves Hz
 TP_LOCALLAB_JZHJZFRA;Curve Jz(Hz)
 TP_LOCALLAB_JZHUECIE;Hue Rotation
+TP_LOCALLAB_JZLOGWB_TOOLTIP;Allows you to calculate (If "auto" enabled) and adjust the Ev levels and the 'Mean luminance Yb%' (source gray point) for the spot area. The resulting values will be used by all Jz operations including "Log encoding Jz".\nAlso calculates the absolute luminance at the time of shooting.
 TP_LOCALLAB_JZSAT;Saturation
 TP_LOCALLAB_JZSHFRA;Shadows/Highlights Jz
 TP_LOCALLAB_JZSOFTCIE;Soft radius (GuidedFilter)
-TP_LOCALLAB_JZTARGET_EV;Target gray point
+TP_LOCALLAB_JZTARGET_EV;Viewing Mean luminance (Yb%)
 TP_LOCALLAB_JZSTRSOFTCIE;Strength GuidedFilter
 TP_LOCALLAB_JZQTOJ;Relative luminance
 TP_LOCALLAB_JZQTOJ_TOOLTIP;Allows you to use "Relative luminance" instead of "Absolute luminance" - Brightness becomes Lightness.\nThe changes affect: the Brightness slider, the Contrast slider, the Jz(Jz) curve and Sigmoid Jz.
@@ -3070,7 +3071,7 @@ TP_LOCALLAB_LOGDETAIL_TOOLTIP;Acts mainly on high frequencies.
 TP_LOCALLAB_LOGENCOD_TOOLTIP;Tone Mapping with Logarithmic encoding (ACES).\nUseful for underexposed images or images with high dynamic range.\n\nTwo-step process : 1) Dynamic Range calculation 2) Manual adjustment
 TP_LOCALLAB_LOGEXP;All tools
 TP_LOCALLAB_LOGFRA;Scene Conditions
-TP_LOCALLAB_LOGFRAME_TOOLTIP;Allows you to calculate and adjust the Ev levels and the 'Mean luminance Yb%' (source gray point) for the spot area. The resulting values will be used by all Lab operations and most RGB operations in the pipeline.\nTakes into account exposure compensation in the main-menu Exposure tab.\nAlso calculates the absolute luminance at the time of shooting.
+TP_LOCALLAB_LOGFRAME_TOOLTIP;Allows you to calculate and adjust the Ev levels and the 'Mean luminance Yb%' (source gray point) for the spot area. The resulting values will be used by all Lab operations and most RGB operations in the pipeline.\nAlso calculates the absolute luminance at the time of shooting.
 TP_LOCALLAB_LOGIMAGE_TOOLTIP;Takes into account corresponding Ciecam variables: i.e.  Contrast (J) and Saturation (s), as well as Contrast (Q), Brightness (Q), Lightness (J) and Colorfulness (M) (in Advanced mode)
 TP_LOCALLAB_LOGLIGHTL;Lightness (J)
 TP_LOCALLAB_LOGLIGHTL_TOOLTIP;Close to lightness (L*a*b*), takes into account the increase in perceived coloration. 

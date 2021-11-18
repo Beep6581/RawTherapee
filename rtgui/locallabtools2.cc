@@ -7593,9 +7593,11 @@ Locallabcie::Locallabcie():
     cieFBox->pack_start (*PQFrame);
     logjzFrame->set_label_align(0.025, 0.5);
     logjzFrame->set_label_widget(*logjz);
+    Gtk::Separator* const separatorjz = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     ToolParamBlock* const logjzBox = Gtk::manage(new ToolParamBlock());
     logjzBox->pack_start(*blackEvjz);
     logjzBox->pack_start(*whiteEvjz);
+    logjzBox->pack_start(*separatorjz);
     logjzBox->pack_start(*targetjz);
     logjzFrame->add(*logjzBox);
     cieFBox->pack_start (*logjzFrame);
@@ -8144,6 +8146,9 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         pqremapcam16->set_tooltip_text(M("TP_LOCALLAB_CAM16PQREMAP_TOOLTIP"));
         Autograycie->set_tooltip_text(M("TP_LOCALLAB_AUTOGRAYCIE_TOOLTIP"));
         sigmalcjz->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
+        logjzFrame->set_tooltip_text(M("TP_LOCALLAB_JZLOGWB_TOOLTIP"));
+        blackEvjz->set_tooltip_text(M("TP_LOCALLAB_JZLOGWB_TOOLTIP"));
+        whiteEvjz->set_tooltip_text(M("TP_LOCALLAB_JZLOGWB_TOOLTIP"));
         clariFramejz->set_tooltip_markup(M("TP_LOCALLAB_CLARIJZ_TOOLTIP"));
         clarilresjz->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARILJZ_TOOLTIP"));
         claricresjz->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARICJZ_TOOLTIP"));
@@ -8192,6 +8197,9 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         jabcie->set_tooltip_text("");
         adapjzcie->set_tooltip_text("");
         jz100->set_tooltip_text("");
+        logjzFrame->set_tooltip_text("");
+        blackEvjz->set_tooltip_text("");
+        whiteEvjz->set_tooltip_text("");
         pqremap->set_tooltip_text("");
         pqremapcam16->set_tooltip_text("");
         Autograycie->set_tooltip_text("");
