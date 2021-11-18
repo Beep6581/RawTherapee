@@ -72,6 +72,7 @@ constexpr float MINSCOPE = 0.025f;
 constexpr int TS = 64; // Tile size
 constexpr float epsilonw = 0.001f / (TS * TS); //tolerance
 constexpr int offset = 25; // shift between tiles
+double czlim = rtengine::RT_SQRT1_2;// 0.70710678118654752440;
 
 constexpr float clipLoc(float x)
 {
@@ -100,7 +101,7 @@ constexpr double clipazbz(double x)
 
 constexpr double clipcz(double x)
 {
-    return rtengine::LIM(x, 0., 0.707);
+    return rtengine::LIM(x, 0., czlim);
 }
 
 
@@ -3556,14 +3557,13 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
                 if(logjz) {
                     double jmz =  Jz;
-                    
                     if (jmz > noise) {
                         double mm = applytojz(jmz);
                         double f = mm / jmz;
                         Jz *= f;
                         Cz *= f;
                         Jz = LIM01(Jz);
-                        Cz = clipazbz(Cz);
+                        Cz = clipcz(Cz);
                     }
                 }
 
@@ -3606,7 +3606,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 if(chromz < 0.) {
                     Cz = Cz * (1. + 0.01 * chromz);
                 } else {
-                    double maxcz = RT_SQRT1_2 / to_one;
+                    double maxcz = czlim / to_one;
                     double fcz = Cz / maxcz;
                     //double pocz = pow(fcz , 1. - 0.0017 * chromz);
                     double pocz = pow(fcz , 1. - 0.0024 * chromz);//increase value - before 0.0017
