@@ -2686,7 +2686,7 @@ TP_LOCALLAB_ARTIF;Shape detection
 TP_LOCALLAB_ARTIF_TOOLTIP;ΔE scope threshold increases the range of deltaE scope. High values are for very wide gamut images.\nIncreasing deltaE decay can improve shape detection, but can also reduce the scope.
 TP_LOCALLAB_AUTOGRAY;Auto mean luminance (Yb%)
 TP_LOCALLAB_AUTOGRAYCIE;Auto
-TP_LOCALLAB_AUTOGRAYCIE_TOOLTIP;Automatically calculates the “Mean luminance” and “Absolute luminance”.
+TP_LOCALLAB_AUTOGRAYCIE_TOOLTIP;Automatically calculates the “Mean luminance” and “Absolute luminance”.\nFor Jz Cz Hz: automatically calculates "PU adaptation", "Black Ev" and "White Ev".
 TP_LOCALLAB_AVOID;Avoid color shift
 TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).\nMunsell correction always disabled when Jz or CAM16 is used.
 TP_LOCALLAB_AVOIDRAD;Soft radius

@@ -72,7 +72,7 @@ constexpr float MINSCOPE = 0.025f;
 constexpr int TS = 64; // Tile size
 constexpr float epsilonw = 0.001f / (TS * TS); //tolerance
 constexpr int offset = 25; // shift between tiles
-double czlim = rtengine::RT_SQRT1_2;// 0.70710678118654752440;
+constexpr double czlim = rtengine::RT_SQRT1_2;// 0.70710678118654752440;
 
 constexpr float clipLoc(float x)
 {
