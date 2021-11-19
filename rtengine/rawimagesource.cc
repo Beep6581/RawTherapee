@@ -6258,7 +6258,6 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
 }
 
 void RawImageSource::applyDngGainMap(const float black[4], const std::vector<GainMap> &gainMaps) {
-BENCHFUN    
     // now we can apply each gain map to raw_data
     array2D<float> mvals[2][2];
     for (auto &m : gainMaps) {
