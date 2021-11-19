@@ -3054,14 +3054,14 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         double pl = params->locallab.spots.at(sp).pqremap;
         double jzw, azw, bzw;
         jzw = 0.18;
-        double jzg, azg, bzg;
-        jzg = 0.1;
+//        double jzg, azg, bzg;
+//        jzg = 0.1;
 
 //        bool forcejz = params->locallab.spots.at(sp).forcejz;
         bool Qtoj = params->locallab.spots.at(sp).qtoj;
         const bool logjz =  params->locallab.spots.at(sp).logjz;
-        float sourcegg = params->locallab.spots.at(sp).sourceGraycie;
-        TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+//        float sourcegg = params->locallab.spots.at(sp).sourceGraycie;
+/*        TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
         double wp[3][3] = {
             {ws[0][0], ws[0][1], ws[0][2]},
             {ws[1][0], ws[1][1], ws[1][2]},
@@ -3071,8 +3071,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         if(logjz) {
             Color::rgbxyz(0.01f * sourcegg, 0.01f * sourcegg, 0.01f * sourcegg , Xg, Yg, Zg, wp);
         }
-        
-        
+*/
 
 //calculate min, max, mean for Jz
 #ifdef _OPENMP
@@ -3148,6 +3147,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 }
 
         }
+/*
         if(logjz) {
                 double xxg = (d50_d65[0][0] * (double) Xg + d50_d65[0][1] * (double) Yg + d50_d65[0][2] * (double) Zg);
                 double yyg = (d50_d65[1][0] * (double) Xg + d50_d65[1][1] * (double) Yg + d50_d65[1][2] * (double) Zg);
@@ -3159,7 +3159,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 }
 
         }
-        
+*/
 //        if(forcejz) {
 //            to_screen = 1.;
 //        }
@@ -3245,7 +3245,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         }
 
     //log encoding Jz
-    const double gray = jzg; //0.01 * params->locallab.spots.at(sp).sourceGraycie;
+   // const double gray = jzg * to_one; //0.01 * params->locallab.spots.at(sp).sourceGraycie;
+    const double gray = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
     const double shadows_range =  params->locallab.spots.at(sp).blackEvjz;
     const double targetgray = params->locallab.spots.at(sp).targetjz;
     double targetgraycor = 0.15;
