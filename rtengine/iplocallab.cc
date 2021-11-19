@@ -3536,9 +3536,22 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 double az =  Aaz[i][k];
                 double bz =  Bbz[i][k];
                 double Jz =  LIM01(JJz[i][k]);
-                if(Qtoj == false) {
-                    Jz *= to_one;
-                } else {
+                Jz *= to_one;
+                double Cz = sqrt(az * az + bz * bz);
+                if(logjz) {
+                    double jmz =  Jz;
+                    if (jmz > noise) {
+                        double mm = applytojz(jmz);
+                        double f = mm / jmz;
+                        Jz *= f;
+                        Cz *= f;
+                        Jz = LIM01(Jz);
+                        Cz = clipcz(Cz);
+                    }
+                }
+
+                if(Qtoj == true) {
+                    Jz /= to_one;
                     Jz /= maxjzw;
                     Jz = SQR(Jz);
                 }
@@ -3556,19 +3569,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     Jz =  (double) (jzlocalcurve[(float) Jz * 65535.f] / 65535.f);
                     Jz  = 0.3 * (Jz - Jzold) + Jzold;
                 }
-                double Cz = sqrt(az * az + bz * bz);
 
-                if(logjz) {
-                    double jmz =  Jz;
-                    if (jmz > noise) {
-                        double mm = applytojz(jmz);
-                        double f = mm / jmz;
-                        Jz *= f;
-                        Cz *= f;
-                        Jz = LIM01(Jz);
-                        Cz = clipcz(Cz);
-                    }
-                }
 
 
                 if(sigmoidlambdajz > 0.f && iscie) {//sigmoid Jz
