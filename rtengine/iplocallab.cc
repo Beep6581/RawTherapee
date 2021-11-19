@@ -1962,6 +1962,12 @@ inline float norm2(float r, float g, float b, TMatrix ws)
     return (power_norm(r, g, b) + Color::rgbLuminance(r, g, b, ws)) / 2.f;
 }
 
+inline float norm(float r, float g, float b, TMatrix ws)
+{
+    return (Color::rgbLuminance(r, g, b, ws));
+}
+
+
 // basic log encoding taken from ACESutil.Lin_to_Log2, from
 // https://github.com/ampas/aces-dev
 // (as seen on pixls.us)
@@ -2137,7 +2143,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
         for (int x = wsta; x < wend; ++x) {
             const float r = img.r(y, x), g = img.g(y, x), b = img.b(y, x);
             YY[y][x] = norm2(r, g, b, ws) / 65535.f;
-            mean += static_cast<double>(0.2126f * Color::gamma_srgb(r) + 0.7152f * Color::gamma_srgb(g) + 0.0722f * Color::gamma_srgb(b));
+            mean += static_cast<double>((float) ws[1][0] * Color::gamma_srgb(r) + (float) ws[1][1] * Color::gamma_srgb(g) + (float) ws[1][2] * Color::gamma_srgb(b));
             nc++;
         }
     }
@@ -2195,7 +2201,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
             } else {//I change slightly this part of algo - more progressivity...best response in low exposure images
                 mean /= (nc * 65535.0);
                 float yb;
-                yb = 1.f + 100.f * pow_F(mean, 2.3f);
+                yb = 1.5f + 100.f * pow_F(mean, 1.8f);//empirical formula for Jz and log encod for low exposure images
 
                 sourceg[sp] = yb;
                 if (settings->verbose) {
@@ -2203,6 +2209,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
                 }
             }
         }
+        
         constexpr float MIN_WHITE = 2.f;
         constexpr float MAX_BLACK = -3.5f;
 
@@ -3047,8 +3054,25 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         double pl = params->locallab.spots.at(sp).pqremap;
         double jzw, azw, bzw;
         jzw = 0.18;
+        double jzg, azg, bzg;
+        jzg = 0.1;
+
 //        bool forcejz = params->locallab.spots.at(sp).forcejz;
         bool Qtoj = params->locallab.spots.at(sp).qtoj;
+        const bool logjz =  params->locallab.spots.at(sp).logjz;
+        float sourcegg = params->locallab.spots.at(sp).sourceGraycie;
+        TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+        double wp[3][3] = {
+            {ws[0][0], ws[0][1], ws[0][2]},
+            {ws[1][0], ws[1][1], ws[1][2]},
+            {ws[2][0], ws[2][1], ws[2][2]}
+        };
+        float Xg, Yg, Zg;
+        if(logjz) {
+            Color::rgbxyz(0.01f * sourcegg, 0.01f * sourcegg, 0.01f * sourcegg , Xg, Yg, Zg, wp);
+        }
+        
+        
 
 //calculate min, max, mean for Jz
 #ifdef _OPENMP
@@ -3124,6 +3148,18 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 }
 
         }
+        if(logjz) {
+                double xxg = (d50_d65[0][0] * (double) Xg + d50_d65[0][1] * (double) Yg + d50_d65[0][2] * (double) Zg);
+                double yyg = (d50_d65[1][0] * (double) Xg + d50_d65[1][1] * (double) Yg + d50_d65[1][2] * (double) Zg);
+                double zzg = (d50_d65[2][0] * (double) Xg + d50_d65[2][1] * (double) Yg + d50_d65[2][2] * (double) Zg);
+                double L_pa, M_pa, S_pa;
+                Ciecam02::xyz2jzczhz (jzg, azg, bzg, xxg, yyg, zzg, pl, L_pa, M_pa, S_pa, z_cam);
+                if (settings->verbose) { 
+                    printf("Jzgray=%f \n", jzg);
+                }
+
+        }
+        
 //        if(forcejz) {
 //            to_screen = 1.;
 //        }
@@ -3209,8 +3245,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         }
 
     //log encoding Jz
-    const bool logjz =  params->locallab.spots.at(sp).logjz;
-    const double gray = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
+    const double gray = jzg; //0.01 * params->locallab.spots.at(sp).sourceGraycie;
     const double shadows_range =  params->locallab.spots.at(sp).blackEvjz;
     const double targetgray = params->locallab.spots.at(sp).targetjz;
     double targetgraycor = 0.15;
@@ -3220,7 +3255,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     double base = 10.;
     double linbase = 10.;
     if(logjz) {
-        targetgraycor = pow(0.01 * targetgray, 1.1);//small reduce effect -> take into account a part of surround
+        targetgraycor = pow(0.01 * targetgray, 1.2);//small reduce effect -> take into account a part of surround
         base = targetgray > 1. && targetgray < 100. && dynamic_range > 0. ? (double) find_gray(std::abs((float) shadows_range) / (float) dynamic_range, (float) (targetgraycor)) : 0.;
         linbase = std::max(base, 2.);//2. minimal base log to avoid very bad results
         if (settings->verbose) {
