@@ -1967,24 +1967,19 @@ inline float norm2(float r, float g, float b, TMatrix ws)
 // (as seen on pixls.us)
 void ImProcFunctions::log_encode(Imagefloat *rgb, struct local_params & lp, bool multiThread, int bfw, int bfh)
 {
-    /* J.Desmis 12 2019  and 11 2021
-        small adaptations to local adjustments
-        replace log2 by log(lp.baselog) allows diferentiation between low and high lights
-    */
    // BENCHFUN
-    const float gray = lp.sourcegray / 100.f;
+    const float gray = 0.01f * lp.sourcegray;
     const float shadows_range = lp.blackev;
 
-    float dynamic_range = lp.whiteev - lp.blackev;
-    if (dynamic_range < 0.5f) {
-        dynamic_range = 0.5f;
-    }
+    float dynamic_range = max(lp.whiteev - lp.blackev, 0.5f);
     const float noise = pow_F(2.f, -16.f);
-   // const float log2 = xlogf(lp.baselog);
     const float log2 = xlogf(2.f);
-    const float base = lp.targetgray > 1 && lp.targetgray < 100 && dynamic_range > 0 ? find_gray(std::abs(lp.blackev) / dynamic_range, lp.targetgray / 100.f) : 0.f;
-    const float linbase = rtengine::max(base, 0.f);
+    const float base = lp.targetgray > 1 && lp.targetgray < 100 && dynamic_range > 0 ? find_gray(std::abs(lp.blackev) / dynamic_range, 0.01f * lp.targetgray) : 0.f;
+    const float linbase = rtengine::max(base, 2.f);//2 to avoid bad behavior
     TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
+    if (settings->verbose) {
+        printf("Base Log encoding std=%5.1f\n", (double) linbase);
+    }
 
     const auto apply =
     [ = ](float x, bool scale = true) -> float {
@@ -3229,7 +3224,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         base = targetgray > 1. && targetgray < 100. && dynamic_range > 0. ? (double) find_gray(std::abs((float) shadows_range) / (float) dynamic_range, (float) (targetgraycor)) : 0.;
         linbase = std::max(base, 2.);//2. minimal base log to avoid very bad results
         if (settings->verbose) {
-            printf("Base logarithm encoding=%5.1f\n", linbase);
+            printf("Base logarithm encoding Jz=%5.1f\n", linbase);
         }
     }
 

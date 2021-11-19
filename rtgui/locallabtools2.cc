@@ -5232,7 +5232,7 @@ LocallabLog::LocallabLog():
     surHBox(Gtk::manage(new Gtk::Box())),
     log1Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG1FRA")))),
     log2Frame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LOG2FRA")))),
-    targetGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 5.0, 80.0, 0.1, 18.0))),
+    targetGray(Gtk::manage(new Adjuster(M("TP_LOCALLAB_TARGET_GRAY"), 4.0, 80.0, 0.1, 18.0))),
     detail(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DETAIL"), 0., 1., 0.01, 0.6))),
     catad(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CATAD"), -100., 100., 0.5, 0., Gtk::manage(new RTImage("circle-blue-small.png")), Gtk::manage(new RTImage("circle-orange-small.png"))))),
     lightl(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGLIGHTL"), -100., 100., 0.5, 0.))),
@@ -7439,7 +7439,7 @@ Locallabcie::Locallabcie():
     logjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_JZLOG")))),
     blackEvjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.0, 0.0, 0.1, -5.0))),
     whiteEvjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0., 32.0, 0.1, 10.0))),
-    targetjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZTARGET_EV"), 2., 80.0, 0.1, 18.0))),
+    targetjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZTARGET_EV"), 4., 80.0, 0.1, 18.0))),
 
     sigmoidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGFRA")))),
     sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 1.0, 0.01, 0.))),
