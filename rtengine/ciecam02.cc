@@ -233,7 +233,7 @@ float Ciecam02::achromatic_response_to_whitefloat ( float x, float y, float z, f
 }
 
 void Ciecam02::xyz_to_cat02float ( float &r, float &g, float &b, float x, float y, float z, int c16, float plum)
-{
+{   //I use isnan() because I have tested others solutions with std::max(xxx,0) and in some cases crash
     //original cat02
     //r = ( 0.7328 * x) + (0.4296 * y) - (0.1624 * z);
     //g = (-0.7036 * x) + (1.6975 * y) + (0.0061 * z);
@@ -286,7 +286,7 @@ void Ciecam02::xyz_to_cat02float ( float &r, float &g, float &b, float x, float 
 
 #ifdef __SSE2__
 void Ciecam02::xyz_to_cat02float ( vfloat &r, vfloat &g, vfloat &b, vfloat x, vfloat y, vfloat z, int c16, vfloat plum)
-{
+{   //I use isnan() because I have tested others solutions with std::max(xxx,0) and in some cases crash
     //gamut correction M.H.Brill S.Susstrunk
     if(c16 == 1) {
         r = ( F2V (1.007245f) * x) + (F2V (0.011136f) * y) - (F2V (0.018381f) * z); //Changjun Li
@@ -353,7 +353,7 @@ void Ciecam02::xyz_to_cat02float ( vfloat &r, vfloat &g, vfloat &b, vfloat x, vf
 #endif
 
 void Ciecam02::cat02_to_xyzfloat ( float &x, float &y, float &z, float r, float g, float b, int c16, float plum)
-{
+{   //I use isnan() because I have tested others solutions with std::max(xxx,0) and in some cases crash
     //original cat02
     //x = ( 1.0978566 * r) - (0.277843 * g) + (0.179987 * b);
     //y = ( 0.455053 * r) + (0.473938 * g) + (0.0710096* b);
@@ -411,7 +411,7 @@ void Ciecam02::cat02_to_xyzfloat ( float &x, float &y, float &z, float r, float 
 }
 #ifdef __SSE2__
 void Ciecam02::cat02_to_xyzfloat ( vfloat &x, vfloat &y, vfloat &z, vfloat r, vfloat g, vfloat b, int c16, vfloat plum )
-{
+{   //I use isnan() because I have tested others solutions with std::max(xxx,0) and in some cases crash
     vfloat plv = plum;
     //gamut correction M.H.Brill S.Susstrunk
     if(c16 == 1) {//cat02
@@ -677,7 +677,7 @@ void Ciecam02::xyz2jzczhz ( double &Jz, double &az, double &bz, double x, double
     M = -0.2015100 * Xp + 1.120649 * Yp + 0.0531008 * Zp;
     S = -0.0166008 * Xp + 0.264800 * Yp + 0.6684799 * Zp;
  
- 
+ //I use isnan() because I have tested others solutions with std::max(xxx,0) and in some cases crash 
  //   Lp = pow((Jzazbz_c1 + Jzazbz_c2 * pow(std::max((L * peakLum), 0.), Jzazbz_n)) / (1. + Jzazbz_c3 * pow((L * peakLum), Jzazbz_n)), Jzazbz_p);
  //   Mp = pow((Jzazbz_c1 + Jzazbz_c2 * pow(std::max((M * peakLum),0.), Jzazbz_n)) / (1. + Jzazbz_c3 * pow((M * peakLum), Jzazbz_n)), Jzazbz_p);
  //   Sp = pow((Jzazbz_c1 + Jzazbz_c2 * pow(std::max((S * peakLum), 0.), Jzazbz_n)) / (1. + Jzazbz_c3 * pow((S * peakLum), Jzazbz_n)), Jzazbz_p);
@@ -722,7 +722,9 @@ void Ciecam02::xyz2jzczhz ( double &Jz, double &az, double &bz, double x, double
 
 
 void Ciecam02::jzczhzxyz (double &x, double &y, double &z, double jz, double az, double bz, double pl, double &L, double &M, double &S, bool zcam)
-{ //from various web 
+{ //from various web
+  //I use isnan() because I have tested others solutions with std::max(xxx,0) and in some cases crash 
+
     double Xp, Yp, Zp, Lp, Mp, Sp, Iz, tmp;
 
     if(!zcam) {

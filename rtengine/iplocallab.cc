@@ -2494,7 +2494,6 @@ void ImProcFunctions::loccont(int bfw, int bfh, LabImage* tmp1, float rad, float
                 guide[y][x] = xlin2log(rtengine::max(ll, 0.f), 10.f);
             }
         }
-        
         array2D<float> iL(bfw, bfh, LL, 0);
         float gu = stren * rad;
         int r = rtengine::max(int(gu / sk), 1);
@@ -2521,7 +2520,7 @@ void sigmoidla (float &valj, float thresj, float lambda, float blend)
 
 
 void gamutjz (double &Jz, double &az, double &bz, double pl, const double wip[3][3], const float higherCoef, const float lowerCoef)
-{
+{//Not used...bad results
         constexpr float ClipLevel = 65535.0f;
         bool inGamut;
       //  int nb = 0;
@@ -2559,6 +2558,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 )
 {
 //    BENCHFUN
+//possibility to reenable Zcam
     if(!params->locallab.spots.at(sp).activ) {//disable all ciecam functions
         return;
     }
@@ -3036,7 +3036,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const float epsil = 0.0001f;
     const float coefQ = 32767.f / wh;
     const float coefq = 1 / wh;
-    //printf("coefQ=%f\n", (double) coefQ);
     const float pow1n = pow_F(1.64f - pow_F(0.29f, nj), 0.73f);
     const float coe = pow_F(fl, 0.25f);
     const float QproFactor = (0.4f / c) * (aw + 4.0f) ;
@@ -3054,24 +3053,9 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         double pl = params->locallab.spots.at(sp).pqremap;
         double jzw, azw, bzw;
         jzw = 0.18;
-//        double jzg, azg, bzg;
-//        jzg = 0.1;
 
-//        bool forcejz = params->locallab.spots.at(sp).forcejz;
         bool Qtoj = params->locallab.spots.at(sp).qtoj;
         const bool logjz =  params->locallab.spots.at(sp).logjz;
-//        float sourcegg = params->locallab.spots.at(sp).sourceGraycie;
-/*        TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
-        double wp[3][3] = {
-            {ws[0][0], ws[0][1], ws[0][2]},
-            {ws[1][0], ws[1][1], ws[1][2]},
-            {ws[2][0], ws[2][1], ws[2][2]}
-        };
-        float Xg, Yg, Zg;
-        if(logjz) {
-            Color::rgbxyz(0.01f * sourcegg, 0.01f * sourcegg, 0.01f * sourcegg , Xg, Yg, Zg, wp);
-        }
-*/
 
 //calculate min, max, mean for Jz
 #ifdef _OPENMP
@@ -3106,9 +3090,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     mini = Jz;
                 }
                 sum += Jz;
-            //    double Hz = xatan2 ( bz, az );
-            //    printf("Hz=%f", Hz);
-            // I read bz, az values and Hz ==> with low chroma values Hz are very different from lab always around 1.4 radians ????
+            // I read bz, az values and Hz ==> with low chroma values Hz are very different from lab always around 1.4 radians ???? for blue...
             }
         }
         nc = height * width;
@@ -3125,7 +3107,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 //        double to_screenp = (aj * interm + bj);
         double to_screen = (aj * interm + bj) / maxi;
         
-       // double to_screen = jz100 * (adapjz * ajz + bjz) / maxi;//to adapt screen values - remapping Jz in usual values 0..1 =>jz100 = 0.25...0.40 empirical value for La=100...adapjz take into account La #sqrt(La / 100)
 //        if (settings->verbose) { 
 //            printf("ajz=%f bjz=%f adapjz=%f jz100=%f interm=%f to-scrp=%f to_screen=%f\n", ajz, bjz, adapjz, jz100, interm ,to_screenp, to_screen);
 //        }
@@ -3147,23 +3128,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 }
 
         }
-/*
-        if(logjz) {
-                double xxg = (d50_d65[0][0] * (double) Xg + d50_d65[0][1] * (double) Yg + d50_d65[0][2] * (double) Zg);
-                double yyg = (d50_d65[1][0] * (double) Xg + d50_d65[1][1] * (double) Yg + d50_d65[1][2] * (double) Zg);
-                double zzg = (d50_d65[2][0] * (double) Xg + d50_d65[2][1] * (double) Yg + d50_d65[2][2] * (double) Zg);
-                double L_pa, M_pa, S_pa;
-                Ciecam02::xyz2jzczhz (jzg, azg, bzg, xxg, yyg, zzg, pl, L_pa, M_pa, S_pa, z_cam);
-                if (settings->verbose) { 
-                    printf("Jzgray=%f \n", jzg);
-                }
-
-        }
-*/
-//        if(forcejz) {
-//            to_screen = 1.;
-//        }
-        //double to_prov = 1 / (maxi * to_screen);
         //adapjz * ajz + bjz parabolic curve between 1 and ijz100
         const std::unique_ptr<LabImage> temp(new LabImage(width, height));
         const std::unique_ptr<LabImage> tempresid(new LabImage(width, height));
@@ -3177,7 +3141,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         int shtonals = params->locallab.spots.at(sp).shthjzcie;
         int radhs = params->locallab.spots.at(sp).radjzcie;
         float softjz = (float) params->locallab.spots.at(sp).softjzcie;
-        //float strsoftjz = 0.01f * (float) params->locallab.spots.at(sp).strsoftjzcie;
         
         avgm = 0.5 * (sum * to_screen * to_one + avgm);//empirical formula
         double miny = 0.1;
@@ -3245,8 +3208,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         }
 
     //log encoding Jz
-   // const double gray = jzg * to_one; //0.01 * params->locallab.spots.at(sp).sourceGraycie;
-    const double gray = 0.01 * params->locallab.spots.at(sp).sourceGraycie;
+    double gray = 0.15;
     const double shadows_range =  params->locallab.spots.at(sp).blackEvjz;
     const double targetgray = params->locallab.spots.at(sp).targetjz;
     double targetgraycor = 0.15;
@@ -3256,6 +3218,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     double base = 10.;
     double linbase = 10.;
     if(logjz) {
+        gray = 0.01 * params->locallab.spots.at(sp).sourceGraycie;//acts as amplifier (gain) : perhaps needs same type of modifications than targetgraycor 
         targetgraycor = pow(0.01 * targetgray, 1.2);//small reduce effect -> take into account a part of surround
         base = targetgray > 1. && targetgray < 100. && dynamic_range > 0. ? (double) find_gray(std::abs((float) shadows_range) / (float) dynamic_range, (float) (targetgraycor)) : 0.;
         linbase = std::max(base, 2.);//2. minimal base log to avoid very bad results
@@ -3268,11 +3231,11 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     [ = ](double x) -> double {
 
         x = std::max(x, noise);
-        x = std::max(x / gray, noise);
+        x = std::max(x / gray, noise);//before log conversion
         x = std::max((xlog(x) / log2 - shadows_range) / dynamic_range, noise);
         assert(x == x);
 
-        if (linbase > 0.)
+        if (linbase > 0.)//apply log base in function of targetgray blackEvjz and Dynamic Range
         {
             x = xlog2lin(x, linbase);
         }
@@ -3293,7 +3256,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 x = x / 65535.f;
                 y = y / 65535.f;
                 z = z / 65535.f;
-                double Jz, az, bz;
+                double Jz, az, bz;//double need because matrix with const(1.6295499532821566e-11) and others
                 double xx, yy, zz;
                 //change WP to D65
                 xx = (d50_d65[0][0] * (double) x + d50_d65[0][1] * (double) y + d50_d65[0][2] * (double) z);
@@ -3354,8 +3317,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             wavelet_level = rtengine::min(wavelet_level, maxlevelspot);
             int maxlvl = wavelet_level;
-            
-            if (locwavCurvejz && locwavutilijz && wavcurvejz) {//simple local contrast in function luminance
+            //simple local contrast in function luminance
+            if (locwavCurvejz && locwavutilijz && wavcurvejz) {
                 float strengthjz = 1.2;
                 std::unique_ptr<wavelet_decomposition> wdspot(new wavelet_decomposition(temp->L[0], bfw, bfh, maxlvl, 1, sk, numThreads, lp.daubLen));//lp.daubLen
                 if (wdspot->memory_allocation_failed()) {
@@ -3369,9 +3332,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             float thr = 0.001f;
             int flag = 2;
             
-// begin clarity wavelet jz
+            // begin clarity wavelet jz
             if(mjjz != 0.f || lp.mCjz != 0.f) {
-//                printf("OK 1\n");
                 float mL0 = 0.f;
                 float mC0 = 0.f;
                 bool exec = false;
@@ -3423,7 +3385,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 if (loclhCurvejz && LHcurvejz) {//Jz=f(Hz) curve
                     float kcz = (float) jzamountchr;
                     float Hz = xatan2f (temp->b[i][k], temp->a[i][k]);
-
                     float l_r = j_z / 32768.f;
                     float kcc = SQR(c_z / kcz);
                     //  printf("kcz=%f", (double) kcc);
@@ -3447,9 +3408,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                             float khue = 1.9f; //in reserve in case of!
                             l_r *= (1.f + khue * valparamneg);
                         }
-                    
                     temp->L[i][k] = l_r * 32768.f;
-                    
                 }
                 
                 if (locchCurvejz && CHcurvejz) {//Cz=f(Hz) curve
@@ -3468,30 +3427,19 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     if ( Hz < 0.0f ) {
                         Hz += (2.f * rtengine::RT_PI_F);
                     }
-                    
+
                     float2 sincosval = xsincosf(Hz);
                     temp->a[i][k] = C_z * sincosval.y;
                     temp->b[i][k] = C_z * sincosval.x;
                 }
             }
         }
-            //    array2D<float> iL(width, height, temp->L, 0);
 
                 if (loclhCurvejz && LHcurvejz && softjz > 0.f) {//for artifacts curve J(H)
                     float thr = 0.00001f;
                     int flag = 2;
                     float softjzr = 0.05f * softjz;
                     softproc(tempres.get(), temp.get(), softjzr, height, width, 0.000001, 0.00000001, thr, sk, multiThread, flag);
-                    /*
-#ifdef _OPENMP
-                #pragma omp parallel for if (multiThread)
-#endif
-                    for (int i = 0; i < height; i++) {
-                        for (int k = 0; k < width; k++) {
-                            temp->L[i][k] = intp(strsoftjz, temp->L[i][k] , iL[i][k]);
-                        }
-                    }
-                    */
                 } 
 
 
@@ -3500,8 +3448,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                         array2D<float> chro(width, height);
                         array2D<float> hue(width, height);
                         array2D<float> guid(width, height);
-            //            array2D<float> ia(width, height, temp->a, 0);
-            //            array2D<float> ib(width, height, temp->b, 0);
                         
 #ifdef _OPENMP
         #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -3543,8 +3489,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                                 float2 sincosval = xsincosf(hue[y][x]);
                                 temp->a[y][x] = chro[y][x] * sincosval.y;
                                 temp->b[y][x] = chro[y][x] * sincosval.x;
-                        //        temp->a[y][x] = intp(strsoftjz, temp->a[y][x] , ia[y][x]);
-                        //        temp->b[y][x] = intp(strsoftjz, temp->b[y][x] , ib[y][x]);
                             }
                         }
                     }
@@ -3559,9 +3503,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 #endif 
         for (int i = 0; i < height; i++) {
             for (int k = 0; k < width; k++) {
-               // float a = lab->a[i][k];
-               // float b = lab->b[i][k];
-
+                //reconvert to double
                 if(highhs > 0 || shadhs > 0  || wavcurvejz || mjjz != 0.f || lp.mCjz != 0.f || LHcurvejz || HHcurvejz || CHcurvejz) {
                     //now we work in double necessary for matrix conversion and when in range 0..1 with use of PQ
                     JJz[i][k] = (double) (temp->L[i][k] / (32768.f * (float) to_one));
@@ -3574,6 +3516,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 double Jz =  LIM01(JJz[i][k]);
                 Jz *= to_one;
                 double Cz = sqrt(az * az + bz * bz);
+                //log encoding
                 if(logjz) {
                     double jmz =  Jz;
                     if (jmz > noise) {
@@ -3586,28 +3529,27 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     }
                 }
 
-                if(Qtoj == true) {
+                if(Qtoj == true) {//lightness
                     Jz /= to_one;
                     Jz /= maxjzw;
                     Jz = SQR(Jz);
                 }
+                //contrast 
                 Jz= LIM01(jz_contrast.getVal(LIM01(Jz)));
-
+                //brightness and lightness
                 if(lightreal > 0) {
                     Jz = LIM01(jz_light.getVal(Jz));
                 }
                 if(lightreal < 0) {
                     Jz = LIM01(jz_lightn.getVal(Jz));
                 }
-
+                //Jz (Jz) curve
                 double Jzold = Jz;
                 if(jzlocalcurve && localjzutili) {
                     Jz =  (double) (jzlocalcurve[(float) Jz * 65535.f] / 65535.f);
                     Jz  = 0.3 * (Jz - Jzold) + Jzold;
                 }
-
-
-
+                //sigmoid
                 if(sigmoidlambdajz > 0.f && iscie) {//sigmoid Jz
                     float val = Jz;
                     if(sigmoidthjz >= 1.f) {
@@ -3619,6 +3561,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     sigmoidla (val, thjz, sigmjz, bljz);
                     Jz = (double) val;
                 }
+                //reconvert from lightness or Brightness
                 if(Qtoj == false) {
                     Jz /= to_one;
                 } else {
@@ -3630,19 +3573,21 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 //remapping Cz 
                 Hz = xatan2 ( bz, az );
                 double Czold = Cz;
+                //Cz(Cz) curve
                 if(czlocalcurve && localczutili) {
                     Cz =  (double) (czlocalcurve[(float) Cz * 92666.f * (float) to_one] / (92666.f * (float) to_one));
                     Cz  = 0.5 * (Cz - Czold) + Czold;
                 }
-
+                //Cz(Jz) curve
                 if(czjzlocalcurve && localczjzutili) { 
                     double chromaCfactor =  (double) (czjzlocalcurve[(float) Jz * 65535.f * (float) to_one]) / (Jz * 65535. * to_one);
                     Cz  *=  chromaCfactor;
                 }
-                
+
                 if ( Hz < 0.0 ) {
                     Hz +=  (2. * rtengine::RT_PI);
                 }
+                //Chroma slider
                 if(chromz < 0.) {
                     Cz = Cz * (1. + 0.01 * chromz);
                 } else {
@@ -3652,8 +3597,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     double pocz = pow(fcz , 1. - 0.0024 * chromz);//increase value - before 0.0017
                     Cz = maxcz * pocz;
                   //  Cz = Cz * (1. + 0.005 * chromz);//linear
-                    
                 }
+                //saturation slider
                 if(saturz != 0.) {
                     double js = Jz/ maxjzw;
                     js = SQR(js);
@@ -3667,11 +3612,10 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                         Sz = Sz * (1. + 0.003 * saturz);//not pow function because Sz is "open" - 0.003 empirical value to have results comparable to Cz
                     }
                     Cz = Sz * js;
-                    
                 }
                 
-                
-                Hz += dhue;//rotation hue
+                //rotation hue
+                Hz += dhue;
                 if ( Hz < 0.0 ) {
                     Hz +=  (2. * rtengine::RT_PI);
                 }
@@ -3686,7 +3630,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 az = az / (to_screen);
 
                 Jz = LIM01(Jz / (to_screen));
-                if(jabcie) {//Not used
+                if(jabcie) {//Not used does not work at all
                     Jz = clipjz05(Jz);
                     gamutjz (Jz, az, bz, pl, wip, 0.94, 0.004);
                 }
@@ -3694,6 +3638,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 double L_, M_, S_;
                 double xx, yy, zz;
                 bool zcam = z_cam;
+                //reconvert to XYZ in double
                 Ciecam02::jzczhzxyz (xx, yy, zz, Jz, az, bz, pl, L_, M_, S_, zcam);
                 //re enable D50
                 double x, y, z;
@@ -3797,7 +3742,7 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
 
 
 
-//printf("c=%f c2=%f aw=%f fl=%f wh=%f nc=%f nbb=%f cz=%f d=%f pfl=%f \n", (double) c, (double) c2, (double) aw, (double) fl, (double) wh, (double) nc, (double) nbb, (double) cz, (double) d, (double) pfl);
+//Ciecam "old" code not change except sigmoid added
 #ifdef __SSE2__
         int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
 #endif
@@ -3933,9 +3878,6 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
                             }
                             sigmoidla (val, th, sigm, 0.f);
                             float bl2 = 1.f;
-                        /* if(bl > 1.f) {
-                            bl2 = 1.f;
-                        } */
                             Qpro = clipLoc(bl * Qpro + bl2 * val / coefq);
                         }
 
@@ -4119,7 +4061,7 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
         }
     }
   
-if(mocam == 3) {//Zcam
+if(mocam == 3) {//Zcam not use but keep in case off 
 /*
         double miniiz = 1000.;
         double maxiiz = -1000.;
