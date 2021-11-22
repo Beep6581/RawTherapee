@@ -29,6 +29,7 @@
 #include <sstream>
 #include "rtimage.h"
 #include "rtwindow.h"
+#include "toollocationpref.h"
 #ifdef _OPENMP
 #include <omp.h>
 #endif
@@ -65,6 +66,7 @@ Preferences::Preferences(RTWindow *rtwindow)
     , parent(rtwindow)
     , newFont(false)
     , newCPFont(false)
+    , toolLocationPreference(nullptr)
 {
 
     moptions.copyFrom(&options);
@@ -102,6 +104,7 @@ Preferences::Preferences(RTWindow *rtwindow)
 
     nb->append_page(*getGeneralPanel(), M("PREFERENCES_TAB_GENERAL"));
     nb->append_page(*getImageProcessingPanel(), M("PREFERENCES_TAB_IMPROC"));
+    nb->append_page(*getFavoritesPanel(), M("PREFERENCES_TAB_FAVORITES"));
     nb->append_page(*getDynamicProfilePanel(), M("PREFERENCES_TAB_DYNAMICPROFILE"));
     nb->append_page(*getFileBrowserPanel(), M("PREFERENCES_TAB_BROWSER"));
     nb->append_page(*getColorManPanel(), M("PREFERENCES_TAB_COLORMGR"));
@@ -492,6 +495,13 @@ void Preferences::behSetRadioToggled(const Glib::ustring& path)
     behAddSetRadioToggled(path, false);
 }
 
+Gtk::Widget *Preferences::getFavoritesPanel()
+{
+    if (!toolLocationPreference) {
+        toolLocationPreference = Gtk::make_managed<ToolLocationPreference>(moptions);
+    }
+    return toolLocationPreference;
+}
 
 Gtk::Widget *Preferences::getDynamicProfilePanel()
 {
@@ -1938,6 +1948,8 @@ void Preferences::storePreferences()
 
     moptions.cropGuides = Options::CropGuidesMode(cropGuidesCombo->get_active_row_number());
     moptions.cropAutoFit = cropAutoFitCB->get_active();
+
+    toolLocationPreference->updateOptions();
 }
 
 void Preferences::fillPreferences()

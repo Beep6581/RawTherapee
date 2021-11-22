@@ -32,6 +32,241 @@
 
 using namespace rtengine::procparams;
 
+using Tool = ToolPanelCoordinator::Tool;
+using ToolTree = struct ToolPanelCoordinator::ToolTree;
+
+const std::vector<ToolTree> EXPOSURE_PANEL_TOOLS = {
+    {
+        .id = Tool::TONE_CURVE,
+    },
+    {
+        .id = Tool::SHADOWS_HIGHLIGHTS,
+    },
+    {
+        .id = Tool::EPD,
+    },
+    {
+        .id = Tool::FATTAL,
+    },
+    {
+        .id = Tool::PC_VIGNETTE,
+    },
+    {
+        .id = Tool::GRADIENT,
+    },
+    {
+        .id = Tool::L_CURVE,
+    },
+};
+
+const std::vector<ToolTree> DETAILS_PANEL_TOOLS = {
+    {
+        .id = Tool::SPOT,
+    },
+    {
+        .id = Tool::SHARPENING_TOOL,
+    },
+    {
+        .id = Tool::LOCAL_CONTRAST,
+    },
+    {
+        .id = Tool::SHARPEN_EDGE,
+    },
+    {
+        .id = Tool::SHARPEN_MICRO,
+    },
+    {
+        .id = Tool::IMPULSE_DENOISE,
+    },
+    {
+        .id = Tool::DIR_PYR_DENOISE,
+    },
+    {
+        .id = Tool::DEFRINGE_TOOL,
+    },
+    {
+        .id = Tool::DIR_PYR_EQUALIZER,
+    },
+    {
+        .id = Tool::DEHAZE,
+    },
+};
+
+const std::vector<ToolTree> COLOR_PANEL_TOOLS = {
+    {
+        .id = Tool::WHITE_BALANCE,
+    },
+    {
+        .id = Tool::VIBRANCE,
+    },
+    {
+        .id = Tool::CH_MIXER,
+    },
+    {
+        .id = Tool::BLACK_WHITE,
+    },
+    {
+        .id = Tool::HSV_EQUALIZER,
+    },
+    {
+        .id = Tool::FILM_SIMULATION,
+    },
+    {
+        .id = Tool::FILM_NEGATIVE,
+    },
+    {
+        .id = Tool::SOFT_LIGHT,
+    },
+    {
+        .id = Tool::RGB_CURVES,
+    },
+    {
+        .id = Tool::COLOR_TONING,
+    },
+    {
+        .id = Tool::ICM,
+    },
+};
+
+const std::vector<ToolTree> ADVANCED_PANEL_TOOLS = {
+    {
+        .id = Tool::RETINEX_TOOL,
+    },
+    {
+        .id = Tool::COLOR_APPEARANCE,
+    },
+    {
+        .id = Tool::WAVELET,
+    },
+};
+
+const std::vector<ToolTree> LOCALLAB_PANEL_TOOLS = {
+    {
+        .id = Tool::LOCALLAB,
+    },
+};
+
+const std::vector<ToolTree> TRANSFORM_PANEL_TOOLS = {
+    {
+        .id = Tool::CROP_TOOL,
+    },
+    {
+        .id = Tool::RESIZE_TOOL,
+        .children = {
+            {
+                .id = Tool::PR_SHARPENING,
+            },
+        },
+    },
+    {
+        .id = Tool::LENS_GEOM,
+        .children = {
+            {
+                .id = Tool::ROTATE,
+            },
+            {
+                .id = Tool::PERSPECTIVE,
+            },
+            {
+                .id = Tool::LENS_PROF,
+            },
+            {
+                .id = Tool::DISTORTION,
+            },
+            {
+                .id = Tool::CA_CORRECTION,
+            },
+            {
+                .id = Tool::VIGNETTING,
+            },
+        },
+    },
+};
+
+const std::vector<ToolTree> RAW_PANEL_TOOLS = {
+    {
+        .id = Tool::SENSOR_BAYER,
+        .children = {
+            {
+                {
+                    .id = Tool::BAYER_PROCESS,
+                },
+                {
+                    .id = Tool::BAYER_RAW_EXPOSURE,
+                },
+                {
+                    .id = Tool::BAYER_PREPROCESS,
+                },
+                {
+                    .id = Tool::RAW_CA_CORRECTION,
+                },
+            },
+        },
+    },
+    {
+        .id = Tool::SENSOR_XTRANS,
+        .children = {
+            {
+                {
+                    .id = Tool::XTRANS_PROCESS,
+                },
+                {
+                    .id = Tool::XTRANS_RAW_EXPOSURE,
+                },
+            },
+        },
+    },
+    {
+        .id = Tool::RAW_EXPOSURE,
+    },
+    {
+        .id = Tool::PREPROCESS_WB,
+    },
+    {
+        .id = Tool::PREPROCESS,
+    },
+    {
+        .id = Tool::DARKFRAME_TOOL,
+    },
+    {
+        .id = Tool::FLATFIELD_TOOL,
+    },
+    {
+        .id = Tool::PD_SHARPENING,
+    },
+};
+
+const std::unordered_map<ToolPanelCoordinator::Panel, const std::vector<ToolTree>> PANEL_TOOLS = {
+    {
+        ToolPanelCoordinator::Panel::EXPOSURE,
+        EXPOSURE_PANEL_TOOLS
+    },
+    {
+        ToolPanelCoordinator::Panel::DETAILS,
+        DETAILS_PANEL_TOOLS
+    },
+    {
+        ToolPanelCoordinator::Panel::COLOR,
+        COLOR_PANEL_TOOLS
+    },
+    {
+        ToolPanelCoordinator::Panel::ADVANCED,
+        ADVANCED_PANEL_TOOLS
+    },
+    {
+        ToolPanelCoordinator::Panel::LOCALLAB,
+        LOCALLAB_PANEL_TOOLS
+    },
+    {
+        ToolPanelCoordinator::Panel::TRANSFORM_PANEL,
+        TRANSFORM_PANEL_TOOLS
+    },
+    {
+        ToolPanelCoordinator::Panel::RAW,
+        RAW_PANEL_TOOLS
+    },
+};
+
 ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favoritePanelSW(nullptr), hasChanged (false), editDataProvider (nullptr), photoLoadedOnce(false)
 {
 
@@ -286,6 +521,21 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     toolBar->setToolBarListener(this);
 
     prevPage = toolPanelNotebook->get_nth_page(0);
+}
+
+const std::unordered_map<ToolPanelCoordinator::Panel, const std::vector<ToolTree>> ToolPanelCoordinator::getDefaultToolLayout()
+{
+    return PANEL_TOOLS;
+}
+
+bool ToolPanelCoordinator::isFavoritable(Tool tool)
+{
+    switch (tool) {
+        case Tool::PR_SHARPENING:
+            return false;
+        default:
+            return true;
+    }
 }
 
 void ToolPanelCoordinator::notebookPageChanged(Gtk::Widget* page, guint page_num)

@@ -223,11 +223,89 @@ private:
     Gtk::Widget* prevPage;
 
 public:
+    enum class Panel {
+        FAVORITE,
+        EXPOSURE,
+        DETAILS,
+        COLOR,
+        ADVANCED,
+        LOCALLAB,
+        TRANSFORM_PANEL,
+        RAW,
+    };
+
+    enum class Tool {
+        TONE_CURVE,
+        SHADOWS_HIGHLIGHTS,
+        IMPULSE_DENOISE,
+        DEFRINGE_TOOL,
+        SPOT,
+        DIR_PYR_DENOISE,
+        EPD,
+        SHARPENING_TOOL,
+        LOCAL_CONTRAST,
+        SHARPEN_EDGE,
+        SHARPEN_MICRO,
+        L_CURVE,
+        RGB_CURVES,
+        COLOR_TONING,
+        LENS_GEOM,
+        LENS_PROF,
+        DISTORTION,
+        ROTATE,
+        VIBRANCE,
+        COLOR_APPEARANCE,
+        WHITE_BALANCE,
+        VIGNETTING,
+        RETINEX_TOOL,
+        GRADIENT,
+        LOCALLAB,
+        PC_VIGNETTE,
+        PERSPECTIVE,
+        CA_CORRECTION,
+        CH_MIXER,
+        BLACK_WHITE,
+        RESIZE_TOOL,
+        PR_SHARPENING,
+        CROP_TOOL,
+        ICM,
+        WAVELET,
+        DIR_PYR_EQUALIZER,
+        HSV_EQUALIZER,
+        FILM_SIMULATION,
+        SOFT_LIGHT,
+        DEHAZE,
+        SENSOR_BAYER,
+        SENSOR_XTRANS,
+        BAYER_PROCESS,
+        XTRANS_PROCESS,
+        BAYER_PREPROCESS,
+        PREPROCESS,
+        DARKFRAME_TOOL,
+        FLATFIELD_TOOL,
+        RAW_CA_CORRECTION,
+        RAW_EXPOSURE,
+        PREPROCESS_WB,
+        BAYER_RAW_EXPOSURE,
+        XTRANS_RAW_EXPOSURE,
+        FATTAL,
+        FILM_NEGATIVE,
+        PD_SHARPENING,
+    };
+
+    struct ToolTree {
+        Tool id;
+        std::vector<ToolTree> children;
+    };
+
     CoarsePanel* coarse;
     Gtk::Notebook* toolPanelNotebook;
 
     ToolPanelCoordinator(bool batch = false);
     ~ToolPanelCoordinator () override;
+
+    static const std::unordered_map<Panel, const std::vector<ToolTree>> getDefaultToolLayout();
+    static bool isFavoritable(Tool tool);
 
     bool getChangedState()
     {

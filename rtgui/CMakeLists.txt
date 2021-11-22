@@ -160,6 +160,7 @@ set(NONCLISOURCEFILES
     thumbnail.cc
     tonecurve.cc
     toolbar.cc
+    toollocationpref.cc
     toolpanel.cc
     toolpanelcoord.cc
     vibrance.cc
