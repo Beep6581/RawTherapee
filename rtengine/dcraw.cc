@@ -6907,7 +6907,7 @@ it under the terms of the one of two licenses as you choose:
                         gainMap.MapOriginV = getreal(12);
                         gainMap.MapOriginH = getreal(12);
                         gainMap.MapPlanes = get4();
-                        const std::size_t n = gainMap.MapPointsV * gainMap.MapPointsH * gainMap.MapPlanes;
+                        const std::size_t n = static_cast<std::size_t>(gainMap.MapPointsV) * static_cast<std::size_t>(gainMap.MapPointsH) * static_cast<std::size_t>(gainMap.MapPlanes);
                         gainMap.MapGain.reserve(n);
                         for (std::size_t i = 0; i < n; ++i) {
                             gainMap.MapGain.push_back(getreal(11));

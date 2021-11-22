@@ -227,7 +227,7 @@ public:
                 }
                 return false;
             }
-            if (m.MapGain.size() != m.MapPointsV * m.MapPointsH * m.MapPlanes) {
+            if (m.MapGain.size() != static_cast<std::size_t>(m.MapPointsV) * static_cast<std::size_t>(m.MapPointsH) * static_cast<std::size_t>(m.MapPlanes)) {
                 if (rtengine::settings->verbose) {
                     std::cout << "GainMap has size of " << m.MapGain.size() << ", but needs " << m.MapPointsV * m.MapPointsH * m.MapPlanes << std::endl;
                 }
