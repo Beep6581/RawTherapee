@@ -33,7 +33,7 @@
 using namespace rtengine::procparams;
 
 using Tool = ToolPanelCoordinator::Tool;
-using ToolTree = struct ToolPanelCoordinator::ToolTree;
+using ToolTree = ToolPanelCoordinator::ToolTree;
 
 const std::vector<ToolTree> EXPOSURE_PANEL_TOOLS = {
     {

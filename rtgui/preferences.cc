@@ -498,7 +498,7 @@ void Preferences::behSetRadioToggled(const Glib::ustring& path)
 Gtk::Widget *Preferences::getFavoritesPanel()
 {
     if (!toolLocationPreference) {
-        toolLocationPreference = Gtk::make_managed<ToolLocationPreference>(moptions);
+        toolLocationPreference = Gtk::manage(new ToolLocationPreference(moptions));
     }
     return toolLocationPreference;
 }

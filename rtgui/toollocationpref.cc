@@ -364,17 +364,16 @@ ToolLocationPreference::Impl::Impl(Options &options) :
         Gtk::TreeViewColumn(M("PREFERENCES_TOOLPANEL_FAVORITE"))),
     toolListViewColumnToolName(
         Gtk::TreeViewColumn(M("PREFERENCES_TOOLPANEL_TOOL"))),
-    toolListViewPtr(Gtk::make_managed<Gtk::TreeView>()),
+    toolListViewPtr(Gtk::manage(new Gtk::TreeView(toolListModelPtr))),
 
     favoritesModelPtr(Gtk::ListStore::create(favoritesColumns)),
     favoritesViewColumnToolName(
         Gtk::TreeViewColumn(M("PREFERENCES_TOOLPANEL_TOOL"))),
-    favoritesViewPtr(Gtk::make_managed<Gtk::TreeView>())
+    favoritesViewPtr(Gtk::manage(new Gtk::TreeView(favoritesModelPtr)))
 {
     const std::vector<Tool> favorites = toolNamesToTools(options.favorites);
 
     // Tool list.
-    toolListViewPtr->set_model(toolListModelPtr);
     toolListViewPtr->append_column(toolListViewColumnToolName);
     toolListViewColumnToolName.pack_start(toolListCellRendererToolName);
     toolListViewColumnToolName.set_expand();
@@ -386,14 +385,13 @@ ToolLocationPreference::Impl::Impl(Options &options) :
     toolListViewColumnFavorite.set_renderer(
         toolListCellRendererFavorite, toolListColumns.isFavorite);
     toolListViewColumnFavorite.add_attribute(
-        toolListCellRendererFavorite, "visible", toolListColumns.isEditable);
+        toolListCellRendererFavorite.property_visible(), toolListColumns.isEditable);
     toolListCellRendererFavorite.signal_toggled().connect(
         sigc::mem_fun(*this, &ToolLocationPreference::Impl::favoriteToggled));
     initToolListRows(favorites);
     toolListViewPtr->expand_all();
 
     // Favorites list.
-    favoritesViewPtr->set_model(favoritesModelPtr);
     favoritesViewPtr->append_column(favoritesViewColumnToolName);
     favoritesViewPtr->set_reorderable(true);
     favoritesViewColumnToolName.pack_start(favoritesCellRendererToolName);
@@ -555,19 +553,19 @@ ToolLocationPreference::ToolLocationPreference(Options &options) :
     impl(new Impl(options))
 {
     // Layout grid.
-    Gtk::Grid *layout_grid = Gtk::make_managed<Gtk::Grid>();
+    Gtk::Grid *layout_grid = Gtk::manage(new Gtk::Grid());
     layout_grid->set_column_spacing(4);
     layout_grid->set_row_spacing(4);
     add(*layout_grid);
 
     // Tool list.
-    Gtk::Frame *tool_list_frame = Gtk::make_managed<Gtk::Frame>(
-        M("PREFERENCES_TOOLPANEL_AVAILABLETOOLS"));
+    Gtk::Frame *tool_list_frame = Gtk::manage(new Gtk::Frame(
+        M("PREFERENCES_TOOLPANEL_AVAILABLETOOLS")));
     Gtk::ScrolledWindow *tool_list_scrolled_window =
-        Gtk::make_managed<Gtk::ScrolledWindow>();
+        Gtk::manage(new Gtk::ScrolledWindow());
     tool_list_scrolled_window->property_hscrollbar_policy() =
         Gtk::PolicyType::POLICY_NEVER;
-    layout_grid->attach_next_to(*tool_list_frame, Gtk::PositionType::POS_RIGHT);
+    layout_grid->attach_next_to(*tool_list_frame, Gtk::PositionType::POS_RIGHT, 1, 1);
     tool_list_frame->add(*tool_list_scrolled_window);
     tool_list_scrolled_window->add(*impl->toolListViewPtr);
     impl->toolListViewPtr->set_hscroll_policy(Gtk::ScrollablePolicy::SCROLL_MINIMUM);
@@ -575,13 +573,13 @@ ToolLocationPreference::ToolLocationPreference(Options &options) :
         tool_list_frame, false, true, Gtk::ALIGN_START, Gtk::ALIGN_FILL);
 
     // Favorites list.
-    Gtk::Frame *favorites_frame = Gtk::make_managed<Gtk::Frame>(
-        M("PREFERENCES_TOOLPANEL_FAVORITESPANEL"));
+    Gtk::Frame *favorites_frame = Gtk::manage(new Gtk::Frame(
+        M("PREFERENCES_TOOLPANEL_FAVORITESPANEL")));
     Gtk::ScrolledWindow *favorites_list_scrolled_window =
-        Gtk::make_managed<Gtk::ScrolledWindow>();
+        Gtk::manage(new Gtk::ScrolledWindow());
     favorites_list_scrolled_window->property_hscrollbar_policy() =
         Gtk::PolicyType::POLICY_NEVER;
-    layout_grid->attach_next_to(*favorites_frame, Gtk::PositionType::POS_RIGHT);
+    layout_grid->attach_next_to(*favorites_frame, Gtk::PositionType::POS_RIGHT, 1, 1);
     favorites_frame->add(*favorites_list_scrolled_window);
     favorites_list_scrolled_window->add(*impl->favoritesViewPtr);
     setExpandAlignProperties(
