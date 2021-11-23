@@ -1497,7 +1497,7 @@ Camera constants:
     },
     
     { // Quality B
-        "make_model": [ "FUJIFILM X-T30", "FUJIFILM X100V", "FUJIFILM X-T4", "FUJIFILM X-S10" ],
+        "make_model": [ "FUJIFILM X-T30", "FUJIFILM X-T30 II", "FUJIFILM X100V", "FUJIFILM X-T4", "FUJIFILM X-S10" ],
         "dcraw_matrix": [ 13426,-6334,-1177,-4244,12136,2371,-580,1303,5980 ], // DNG_v11, standard_v2 d65
         "raw_crop": [ 0, 5, 6252, 4176]
     },
