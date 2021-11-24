@@ -236,7 +236,7 @@ const std::vector<ToolTree> RAW_PANEL_TOOLS = {
     },
 };
 
-const std::unordered_map<ToolPanelCoordinator::Panel, const std::vector<ToolTree>> PANEL_TOOLS = {
+const ToolPanelCoordinator::ToolLayout PANEL_TOOLS = {
     {
         ToolPanelCoordinator::Panel::EXPOSURE,
         EXPOSURE_PANEL_TOOLS
@@ -378,7 +378,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     addfavoritePanel (detailsPanel, dehaze);
     addfavoritePanel (advancedPanel, wavelet);
     addfavoritePanel(locallabPanel, locallab);
-    
+
     addfavoritePanel (transformPanel, crop);
     addfavoritePanel (transformPanel, resize);
     addPanel (resize->getPackBox(), prsharpening, 2);
@@ -424,7 +424,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     transformPanelSW   = Gtk::manage (new MyScrolledWindow ());
     rawPanelSW         = Gtk::manage (new MyScrolledWindow ());
     advancedPanelSW    = Gtk::manage (new MyScrolledWindow ());
-    locallabPanelSW     = Gtk::manage(new MyScrolledWindow());    
+    locallabPanelSW     = Gtk::manage(new MyScrolledWindow());
 
     // load panel endings
     for (int i = 0; i < 8; i++) {
@@ -455,7 +455,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
 
     locallabPanelSW->add(*locallabPanel);
     locallabPanel->pack_start(*vbPanelEnd[7], Gtk::PACK_SHRINK, 4);
-    
+
     transformPanelSW->add (*transformPanel);
     transformPanel->pack_start (*vbPanelEnd[4], Gtk::PACK_SHRINK, 4);
 
@@ -523,7 +523,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     prevPage = toolPanelNotebook->get_nth_page(0);
 }
 
-const std::unordered_map<ToolPanelCoordinator::Panel, const std::vector<ToolTree>> ToolPanelCoordinator::getDefaultToolLayout()
+const ToolPanelCoordinator::ToolLayout& ToolPanelCoordinator::getDefaultToolLayout()
 {
     return PANEL_TOOLS;
 }

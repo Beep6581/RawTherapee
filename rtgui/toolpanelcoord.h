@@ -298,13 +298,15 @@ public:
         std::vector<ToolTree> children;
     };
 
+    using ToolLayout = std::unordered_map<Panel, const std::vector<ToolTree>, ScopedEnumHash>;
+
     CoarsePanel* coarse;
     Gtk::Notebook* toolPanelNotebook;
 
     ToolPanelCoordinator(bool batch = false);
     ~ToolPanelCoordinator () override;
 
-    static const std::unordered_map<Panel, const std::vector<ToolTree>> getDefaultToolLayout();
+    static const ToolLayout& getDefaultToolLayout();
     static bool isFavoritable(Tool tool);
 
     bool getChangedState()

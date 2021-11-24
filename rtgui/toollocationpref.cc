@@ -24,6 +24,7 @@
 #include "toolpanelcoord.h"
 
 using Tool = ToolPanelCoordinator::Tool;
+using Favorites = std::unordered_set<Tool, ScopedEnumHash>;
 
 std::string getToolName(Tool tool)
 {
@@ -200,7 +201,7 @@ struct ToolLocationPreference::Impl {
     void addToolListRowGroup(
         const std::vector<ToolPanelCoordinator::ToolTree> &tools,
         const Gtk::TreeIter &parentRowIter,
-        const std::unordered_set<Tool> &favorites);
+        const Favorites &favorites);
     void favoriteToggled(const Glib::ustring &row_path);
     Tool getToolFromName(const std::string &name) const;
     void initFavoritesRows(const std::vector<Tool> &favorites);
@@ -477,7 +478,7 @@ void ToolLocationPreference::Impl::initFavoritesRows(
 void ToolLocationPreference::Impl::addToolListRowGroup(
     const std::vector<ToolPanelCoordinator::ToolTree> &tools,
     const Gtk::TreeIter &parentRowIter,
-    const std::unordered_set<Tool> &favorites)
+    const Favorites &favorites)
 {
     for (const ToolPanelCoordinator::ToolTree &tool : tools) {
         auto tool_row_iter = toolListModelPtr->append(parentRowIter->children());
@@ -498,7 +499,7 @@ void ToolLocationPreference::Impl::addToolListRowGroup(
 void ToolLocationPreference::Impl::initToolListRows(const std::vector<Tool> &favorites)
 {
     const auto panel_tools = ToolPanelCoordinator::getDefaultToolLayout();
-    std::unordered_set<Tool> favorites_set;
+    Favorites favorites_set;
 
     for (const auto &tool : favorites) {
         favorites_set.insert(tool);

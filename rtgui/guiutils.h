@@ -20,6 +20,7 @@
 
 #include <functional>
 #include <map>
+#include <type_traits>
 
 #include <gtkmm.h>
 
@@ -73,6 +74,17 @@ private:
     std::map<const DataWrapper*, guint> ids;
     MyMutex mutex;
 };
+
+struct ScopedEnumHash {
+    template<typename T, typename std::enable_if<std::is_enum<T>::value && !std::is_convertible<T, int>::value, int>::type = 0>
+    size_t operator ()(T val) const noexcept
+    {
+        using type = typename std::underlying_type<T>::type;
+
+        return std::hash<type>{}(static_cast<type>(val));
+    }
+};
+
 
 // TODO: The documentation says gdk_threads_enter and gdk_threads_leave should be replaced
 // by g_main_context_invoke(), g_idle_add() and related functions, but this will require more extensive changes.
