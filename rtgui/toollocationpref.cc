@@ -26,6 +26,9 @@
 using Tool = ToolPanelCoordinator::Tool;
 using Favorites = std::unordered_set<Tool, ScopedEnumHash>;
 
+namespace
+{
+
 std::string getToolName(Tool tool)
 {
     switch (tool) {
@@ -144,75 +147,6 @@ std::string getToolName(Tool tool)
     };
     return "";
 };
-
-class FavoritesColumns : public Gtk::TreeModelColumnRecord
-{
-public:
-    Gtk::TreeModelColumn<Glib::ustring> toolName;
-    Gtk::TreeModelColumn<Tool> tool;
-
-    FavoritesColumns()
-    {
-        add(toolName);
-        add(tool);
-    }
-};
-
-class ToolListColumns : public Gtk::TreeModelColumnRecord
-{
-public:
-    Gtk::TreeModelColumn<Glib::ustring> toolName;
-    Gtk::TreeModelColumn<Tool> tool;
-    Gtk::TreeModelColumn<bool> isFavorite;
-    Gtk::TreeModelColumn<bool> isEditable;
-
-    ToolListColumns()
-    {
-        add(toolName);
-        add(tool);
-        add(isFavorite);
-        add(isEditable);
-    }
-};
-
-struct ToolLocationPreference::Impl {
-    static std::unordered_map<std::string, Tool> toolNamesReverseMap;
-
-    Options &options;
-
-    // Tool list.
-    ToolListColumns toolListColumns;
-    Glib::RefPtr<Gtk::TreeStore> toolListModelPtr;
-    Gtk::CellRendererToggle toolListCellRendererFavorite;
-    Gtk::CellRendererText toolListCellRendererToolName;
-    Gtk::TreeViewColumn toolListViewColumnFavorite;
-    Gtk::TreeViewColumn toolListViewColumnToolName;
-    Gtk::TreeView *toolListViewPtr;
-
-    // Favorites list.
-    FavoritesColumns favoritesColumns;
-    Glib::RefPtr<Gtk::ListStore> favoritesModelPtr;
-    Gtk::CellRendererText favoritesCellRendererToolName;
-    Gtk::TreeViewColumn favoritesViewColumnToolName;
-    Gtk::TreeView *favoritesViewPtr;
-
-    explicit Impl(Options &options);
-
-    void addToolListRowGroup(
-        const std::vector<ToolPanelCoordinator::ToolTree> &tools,
-        const Gtk::TreeIter &parentRowIter,
-        const Favorites &favorites);
-    void favoriteToggled(const Glib::ustring &row_path);
-    Tool getToolFromName(const std::string &name) const;
-    void initFavoritesRows(const std::vector<Tool> &favorites);
-    void initToolListRows(const std::vector<Tool> &favorites);
-    std::vector<Tool> toolNamesToTools(
-        const std::vector<Glib::ustring> &tool_names) const;
-    void updateOptions();
-};
-
-std::unordered_map<std::string, Tool>
-    ToolLocationPreference::Impl::toolNamesReverseMap;
 
 Glib::ustring getToolPanelTitleKey(ToolPanelCoordinator::Panel panel)
 {
@@ -356,6 +290,77 @@ Glib::ustring getToolTitleKey(Tool tool)
     };
     return "";
 }
+
+}
+
+class FavoritesColumns : public Gtk::TreeModelColumnRecord
+{
+public:
+    Gtk::TreeModelColumn<Glib::ustring> toolName;
+    Gtk::TreeModelColumn<Tool> tool;
+
+    FavoritesColumns()
+    {
+        add(toolName);
+        add(tool);
+    }
+};
+
+class ToolListColumns : public Gtk::TreeModelColumnRecord
+{
+public:
+    Gtk::TreeModelColumn<Glib::ustring> toolName;
+    Gtk::TreeModelColumn<Tool> tool;
+    Gtk::TreeModelColumn<bool> isFavorite;
+    Gtk::TreeModelColumn<bool> isEditable;
+
+    ToolListColumns()
+    {
+        add(toolName);
+        add(tool);
+        add(isFavorite);
+        add(isEditable);
+    }
+};
+
+struct ToolLocationPreference::Impl {
+    static std::unordered_map<std::string, Tool> toolNamesReverseMap;
+
+    Options &options;
+
+    // Tool list.
+    ToolListColumns toolListColumns;
+    Glib::RefPtr<Gtk::TreeStore> toolListModelPtr;
+    Gtk::CellRendererToggle toolListCellRendererFavorite;
+    Gtk::CellRendererText toolListCellRendererToolName;
+    Gtk::TreeViewColumn toolListViewColumnFavorite;
+    Gtk::TreeViewColumn toolListViewColumnToolName;
+    Gtk::TreeView *toolListViewPtr;
+
+    // Favorites list.
+    FavoritesColumns favoritesColumns;
+    Glib::RefPtr<Gtk::ListStore> favoritesModelPtr;
+    Gtk::CellRendererText favoritesCellRendererToolName;
+    Gtk::TreeViewColumn favoritesViewColumnToolName;
+    Gtk::TreeView *favoritesViewPtr;
+
+    explicit Impl(Options &options);
+
+    void addToolListRowGroup(
+        const std::vector<ToolPanelCoordinator::ToolTree> &tools,
+        const Gtk::TreeIter &parentRowIter,
+        const Favorites &favorites);
+    void favoriteToggled(const Glib::ustring &row_path);
+    Tool getToolFromName(const std::string &name) const;
+    void initFavoritesRows(const std::vector<Tool> &favorites);
+    void initToolListRows(const std::vector<Tool> &favorites);
+    std::vector<Tool> toolNamesToTools(
+        const std::vector<Glib::ustring> &tool_names) const;
+    void updateOptions();
+};
+
+std::unordered_map<std::string, Tool>
+    ToolLocationPreference::Impl::toolNamesReverseMap;
 
 ToolLocationPreference::Impl::Impl(Options &options) :
     options(options),
