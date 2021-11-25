@@ -81,6 +81,20 @@ std::unique_ptr<Exiv2::Image> open_exiv2(const Glib::ustring& fname,
     return ret;
 }
 
+
+template <class Data, class Key>
+void clear_metadata_key(Data &data, const Key &key)
+{
+    while (true) {
+        auto it = data.findKey(key);
+        if (it == data.end()) {
+            break;
+        } else {
+            data.erase(it);
+        }
+    }
+}
+
 } // namespace
 
 
@@ -119,18 +133,29 @@ void Exiv2Metadata::load() const
     if (!src_.empty() && !image_.get() && Glib::file_test(src_.c_str(), Glib::FILE_TEST_EXISTS)) {
         CacheVal val;
         auto finfo = Gio::File::create_for_path(src_)->query_info(G_FILE_ATTRIBUTE_TIME_MODIFIED);
-        if (cache_ && cache_->get(src_, val) && val.second >= finfo->modification_time()) {
-            image_ = val.first;
-        } else {
-            auto img = open_exiv2(src_, true);
-            image_.reset(img.release());
-            if (cache_) {
-                cache_->set(src_, CacheVal(image_, finfo->modification_time()));
+        Glib::TimeVal xmp_mtime(0, 0);
+        if (merge_xmp_) {
+            auto xmpname = xmpSidecarPath(src_);
+            if (Glib::file_test(xmpname.c_str(), Glib::FILE_TEST_EXISTS)) {
+                xmp_mtime = Gio::File::create_for_path(xmpname)->query_info(G_FILE_ATTRIBUTE_TIME_MODIFIED)->modification_time();
             }
         }
 
-        if (merge_xmp_) {
-            do_merge_xmp(image_.get(), false);
+        if (cache_ && cache_->get(src_, val) && val.image_mtime >= finfo->modification_time() && val.use_xmp == merge_xmp_ && val.xmp_mtime >= xmp_mtime) {
+            image_ = val.image;
+        } else {
+            auto img = open_exiv2(src_, true);
+            image_.reset(img.release());
+            if (merge_xmp_) {
+                do_merge_xmp(image_.get(), false);
+            }
+            if (cache_) {
+                val.image = image_;
+                val.image_mtime = finfo->modification_time();
+                val.xmp_mtime = xmp_mtime;
+                val.use_xmp = merge_xmp_;
+                cache_->set(src_, val);
+            }
         }
     }
 }
@@ -198,7 +223,7 @@ void Exiv2Metadata::do_merge_xmp(Exiv2::Image *dst, bool keep_all) const
         Exiv2::IptcData iptc;
         Exiv2::copyXmpToIptc(xmp, iptc);
         Exiv2::moveXmpToExif(xmp, exif);
-        std::unordered_set<std::string> seen;
+        std::unordered_map<std::string, std::unordered_set<std::string>> seen;
 
         if (!keep_all) {
             remove_unwanted(exif);
@@ -208,16 +233,23 @@ void Exiv2Metadata::do_merge_xmp(Exiv2::Image *dst, bool keep_all) const
             dst->exifData()[datum.key()] = datum;
         }
         for (auto &datum : iptc) {
-            if (seen.insert(datum.key()).second) {
+            auto &s = seen[datum.key()];
+            if (s.empty()) {
+                clear_metadata_key(dst->iptcData(), Exiv2::IptcKey(datum.key()));
                 dst->iptcData()[datum.key()] = datum;
-            } else {
+                s.insert(datum.toString());
+            } else if (s.insert(datum.toString()).second) {
                 dst->iptcData().add(datum);
             }
         }
+        seen.clear();
         for (auto &datum : xmp) {
-            if (seen.insert(datum.key()).second) {
+            auto &s = seen[datum.key()];
+            if (s.empty()) {
+                clear_metadata_key(dst->xmpData(), Exiv2::XmpKey(datum.key()));
                 dst->xmpData()[datum.key()] = datum;
-            } else {
+                s.insert(datum.toString());
+            } else if (s.insert(datum.toString()).second) {
                 dst->xmpData().add(datum);
             }
         }
@@ -415,9 +447,11 @@ void Exiv2Metadata::import_iptc_pairs(Exiv2::IptcData &out) const
         try {
             auto &v = p.second;
             if (v.size() >= 1) {
-                out[p.first] = v[0];
+                clear_metadata_key(out, Exiv2::IptcKey(p.first));
+                Exiv2::Iptcdatum d(Exiv2::IptcKey(p.first));
+                d.setValue(v[0]);
+                out[p.first] = d;
                 for (size_t j = 1; j < v.size(); ++j) {
-                    Exiv2::Iptcdatum d(Exiv2::IptcKey(p.first));
                     d.setValue(v[j]);
                     out.add(d);
                 }

@@ -85,7 +85,14 @@ private:
 
     std::shared_ptr<std::unordered_set<std::string>> exif_keys_;
 
-    typedef std::pair<std::shared_ptr<Exiv2::Image>, Glib::TimeVal> CacheVal;
+    struct CacheVal {
+        std::shared_ptr<Exiv2::Image> image;
+        Glib::TimeVal image_mtime;
+        Glib::TimeVal xmp_mtime;
+        bool use_xmp;
+        CacheVal() = default;
+    };
+    //typedef std::pair<std::shared_ptr<Exiv2::Image>, Glib::TimeVal> CacheVal;
     typedef Cache<Glib::ustring, CacheVal> ImageCache;
     static std::unique_ptr<ImageCache> cache_;
 };

@@ -673,6 +673,13 @@ void IPTCPanel::updateChangeList()
     (*changeList)[DATE_CREATED].push_back(dateCreated->get_text());
     (*changeList)[TRANS_REFERENCE].push_back(transReference->get_text());
 
+    for (auto &p : *embeddedData) {
+        auto it = changeList->find(p.first);
+        if (it != changeList->end() && p.second == it->second) {
+            changeList->erase(it);
+        }
+    }
+
     notifyListener();
 }
 

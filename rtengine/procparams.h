@@ -1803,6 +1803,11 @@ public:
         return pairs.empty();
     }
 
+    iterator erase(const const_iterator& key)
+    {
+        return pairs.erase(key);
+    }
+
     void clear()
     {
         pairs.clear();
