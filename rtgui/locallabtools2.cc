@@ -5538,7 +5538,7 @@ void LocallabLog::updateAdviceTooltips(const bool showTooltips)
         exprecovl->set_tooltip_markup(M("TP_LOCALLAB_MASKRELOG_TOOLTIP"));
         blackEv->set_tooltip_text("");
         whiteEv->set_tooltip_text("");
-        sourceGray->set_tooltip_text("");
+        sourceGray->set_tooltip_text(M("TP_LOCALLAB_JZLOGYBOUT_TOOLTIP"));
         sourceabs->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
         targabs->set_tooltip_text(M("TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP"));
         targetGray->set_tooltip_text(M("TP_COLORAPP_YBOUT_TOOLTIP"));
@@ -8153,7 +8153,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         LocalcurveEditorwavjz->set_tooltip_markup(M("TP_LOCALLAB_WAT_LEVELLOCCONTRAST_TOOLTIP"));
         csThresholdjz->set_tooltip_markup(M("TP_LOCALLAB_WAT_THRESHOLDWAV_TOOLTIP"));
         forcejz->set_tooltip_text(M("TP_LOCALLAB_JZFORCE_TOOLTIP"));
-        sourceGraycie->set_tooltip_text("");
+        sourceGraycie->set_tooltip_text(M("TP_LOCALLAB_JZLOGYBOUT_TOOLTIP"));
         sourceabscie->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
         cie1Frame->set_tooltip_text(M("TP_LOCALLAB_LOGIMAGE_TOOLTIP"));
         sigmoidFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID_TOOLTIP"));

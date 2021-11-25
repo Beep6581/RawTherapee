@@ -2147,7 +2147,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
             nc++;
         }
     }
-    
+
     for (int y = hsta; y < hend; ++y) {
         for (int x = wsta; x < wend; ++x) {
             float l = YY[y][x];
@@ -2181,7 +2181,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
                 std::cout << "         gray boundaries: " << gmin << ", " << gmax << std::endl;
             }
 
-            for (int y = ysta; y < yend; ++y) {
+            for (int y = hsta; y < hend; ++y) {
                 for (int x = wsta; x < wend; ++x) {
                     const float l = img.g(y, x) / 65535.f;
 
@@ -2201,7 +2201,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
             } else {//I change slightly this part of algo - more progressivity...best response in low exposure images
                 mean /= (nc * 65535.0);
                 float yb;
-                yb = 1.5f + 100.f * pow_F(mean, 1.8f);//empirical formula for Jz and log encod for low exposure images
+                yb = 1.5f + 100.f * pow_F(mean, 1.8f);//empirical formula for Jz and log encode for low exposure images
 
                 sourceg[sp] = yb;
                 if (settings->verbose) {
@@ -3217,9 +3217,10 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const double log2 = xlog(2.);
     double base = 10.;
     double linbase = 10.;
-    if(logjz) {
-        gray = 0.01 * params->locallab.spots.at(sp).sourceGraycie;//acts as amplifier (gain) : perhaps needs same type of modifications than targetgraycor 
-        targetgraycor = pow(0.01 * targetgray, 1.2);//small reduce effect -> take into account a part of surround
+    if(logjz) {//with brightness Jz
+        gray = 0.01 * params->locallab.spots.at(sp).sourceGraycie;//acts as amplifier (gain) : needs same type of modifications than targetgraycor with pow
+        gray = pow(gray, 1.2);//or 1.15 => modification to increase sensitivity gain, only on defaults, of course we can change this value manually...take into account suuround and Yb Cam16
+        targetgraycor = pow(0.01 * targetgray, 1.15);//or 1.2 small reduce effect -> take into account a part of surround (before it was at 1.2)
         base = targetgray > 1. && targetgray < 100. && dynamic_range > 0. ? (double) find_gray(std::abs((float) shadows_range) / (float) dynamic_range, (float) (targetgraycor)) : 0.;
         linbase = std::max(base, 2.);//2. minimal base log to avoid very bad results
         if (settings->verbose) {
