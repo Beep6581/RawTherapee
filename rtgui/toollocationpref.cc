@@ -569,12 +569,10 @@ ToolLocationPreference::ToolLocationPreference(Options &options) :
         M("PREFERENCES_TOOLPANEL_AVAILABLETOOLS")));
     Gtk::ScrolledWindow *tool_list_scrolled_window =
         Gtk::manage(new Gtk::ScrolledWindow());
-    tool_list_scrolled_window->property_hscrollbar_policy() =
-        Gtk::PolicyType::POLICY_NEVER;
+    tool_list_scrolled_window->set_min_content_width(550);
     layout_grid->attach_next_to(*tool_list_frame, Gtk::PositionType::POS_RIGHT, 1, 1);
     tool_list_frame->add(*tool_list_scrolled_window);
     tool_list_scrolled_window->add(*impl->toolListViewPtr);
-    impl->toolListViewPtr->set_hscroll_policy(Gtk::ScrollablePolicy::SCROLL_MINIMUM);
     setExpandAlignProperties(
         tool_list_frame, false, true, Gtk::ALIGN_START, Gtk::ALIGN_FILL);
 
@@ -583,15 +581,12 @@ ToolLocationPreference::ToolLocationPreference(Options &options) :
         M("PREFERENCES_TOOLPANEL_FAVORITESPANEL")));
     Gtk::ScrolledWindow *favorites_list_scrolled_window =
         Gtk::manage(new Gtk::ScrolledWindow());
-    favorites_list_scrolled_window->property_hscrollbar_policy() =
-        Gtk::PolicyType::POLICY_NEVER;
+    favorites_list_scrolled_window->set_min_content_width(400);
     layout_grid->attach_next_to(*favorites_frame, Gtk::PositionType::POS_RIGHT, 1, 1);
     favorites_frame->add(*favorites_list_scrolled_window);
     favorites_list_scrolled_window->add(*impl->favoritesViewPtr);
     setExpandAlignProperties(
         favorites_frame, false, true, Gtk::ALIGN_START, Gtk::ALIGN_FILL);
-
-    this->show_all();
 }
 
 void ToolLocationPreference::updateOptions()

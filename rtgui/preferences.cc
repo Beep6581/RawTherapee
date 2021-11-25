@@ -67,6 +67,7 @@ Preferences::Preferences(RTWindow *rtwindow)
     , newFont(false)
     , newCPFont(false)
     , toolLocationPreference(nullptr)
+    , swFavorites(nullptr)
 {
 
     moptions.copyFrom(&options);
@@ -500,7 +501,12 @@ Gtk::Widget *Preferences::getFavoritesPanel()
     if (!toolLocationPreference) {
         toolLocationPreference = Gtk::manage(new ToolLocationPreference(moptions));
     }
-    return toolLocationPreference;
+    if (!swFavorites) {
+        swFavorites = Gtk::manage(new Gtk::ScrolledWindow());
+        swFavorites->set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_NEVER);
+        swFavorites->add(*toolLocationPreference);
+    }
+    return swFavorites;
 }
 
 Gtk::Widget *Preferences::getDynamicProfilePanel()

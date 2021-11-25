@@ -272,6 +272,7 @@ class Preferences final :
 
     Gtk::ScrolledWindow *swGeneral;
     Gtk::ScrolledWindow *swImageProcessing;
+    Gtk::ScrolledWindow *swFavorites;
     Gtk::ScrolledWindow *swDynamicProfile;
     Gtk::ScrolledWindow *swFileBrowser;
     Gtk::ScrolledWindow *swColorMan;
