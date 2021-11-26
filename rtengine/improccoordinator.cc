@@ -847,7 +847,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     centx[sp] = params->locallab.spots.at(sp).centerX / 2000.0 + 0.5;
                     centy[sp] = params->locallab.spots.at(sp).centerY / 2000.0 + 0.5;
 
-                    const bool fullim = params->locallab.spots.at(sp).fullimage;
+                    const bool fullimstd = params->locallab.spots.at(sp).fullimage;//for log encoding standard
+                    const bool fullimjz = true;//always force fullimage in log encoding Jz - always possible to put a checkbox if need
 
                     if ((log[sp] && autocomput[sp]) || (cie[sp] && autocie[sp])) {
                         constexpr int SCALE = 10;
@@ -860,7 +861,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         float xsta = std::max(static_cast<float>(centx[sp] - locxL[sp]), 0.f);
                         float xend = std::min(static_cast<float>(centx[sp] + locx[sp]), 1.f);
 
-                        if (fullim) {
+                        if (fullimstd  && (log[sp] && autocomput[sp])) {
+                            ysta = 0.f;
+                            yend = 1.f;
+                            xsta = 0.f;
+                            xend = 1.f;
+                        }
+
+                        if (fullimjz  && (cie[sp] && autocie[sp])) {
                             ysta = 0.f;
                             yend = 1.f;
                             xsta = 0.f;
