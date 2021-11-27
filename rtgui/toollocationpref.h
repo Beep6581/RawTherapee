@@ -22,6 +22,9 @@
 
 class Options;
 
+/**
+ * Widget for configuring the location of tools in the tool panel tabs.
+ */
 class ToolLocationPreference : public Gtk::Box
 {
 private:
@@ -29,6 +32,14 @@ private:
     std::unique_ptr<Impl> impl;
 
 public:
+    /**
+     * Constructs a tool location preference widget that gets values from and
+     * updates the provided options object.
+     */
     explicit ToolLocationPreference(Options &options);
+    /**
+     * Updates the options object associated with this object with the current
+     * favorites preferences.
+     */
     void updateOptions();
 };

@@ -30,6 +30,12 @@ using Favorites = std::unordered_set<Tool, ScopedEnumHash>;
 namespace
 {
 
+/**
+ * Gets the tool name for the tool's ToolPanel as a string.
+ *
+ * @param tool The name as a raw string, or an empty string if the tool is
+ * unknown.
+ */
 std::string getToolName(Tool tool)
 {
     switch (tool) {
@@ -149,6 +155,9 @@ std::string getToolName(Tool tool)
     return "";
 };
 
+/**
+ * Returns the language key for the panel's title.
+ */
 Glib::ustring getToolPanelTitleKey(ToolPanelCoordinator::Panel panel)
 {
     switch (panel) {
@@ -172,6 +181,9 @@ Glib::ustring getToolPanelTitleKey(ToolPanelCoordinator::Panel panel)
     return "";
 }
 
+/**
+ * Returns the language key for the tool's title.
+ */
 Glib::ustring getToolTitleKey(Tool tool)
 {
     using Tool = Tool;
@@ -292,6 +304,13 @@ Glib::ustring getToolTitleKey(Tool tool)
     return "";
 }
 
+/**
+ * A widget with buttons (packed vertically) for modifying a list store with a
+ * tree view.
+ *
+ * Includes buttons for moving single rows up or down and a button for removing
+ * selected rows.
+ */
 class ListEditButtons : public Gtk::Box
 {
 private:
@@ -310,15 +329,34 @@ private:
     void updateButtonSensitivity();
 
 public:
+    /**
+     * Constructs an edit buttons widget for modifying the provided list store.
+     *
+     * @param list The tree view for which selections are made in. The tree
+     * view's model MUST be the list store.
+     * @param listStore The list store that the widget will modify.
+     */
     explicit ListEditButtons(Gtk::TreeView &list, Glib::RefPtr<Gtk::ListStore> listStore);
 
+    /**
+     * Returns the signal that gets emitted right before this widget removes
+     * rows from its list store.
+     *
+     * The signal contains a vector of tree model paths of the rows that will be
+     * erased.
+     */
     sigc::signal<void, const std::vector<Gtk::TreeModel::Path>> getSignalRowsPreErase();
 };
 
+/**
+ * Model columns for the favorites list.
+ */
 class FavoritesColumns : public Gtk::TreeModelColumnRecord
 {
 public:
+    /** The tool's display name. */
     Gtk::TreeModelColumn<Glib::ustring> toolName;
+    /** The tool. */
     Gtk::TreeModelColumn<Tool> tool;
 
     FavoritesColumns()
@@ -328,12 +366,19 @@ public:
     }
 };
 
+/**
+ * Model columns for the available tools list.
+ */
 class ToolListColumns : public Gtk::TreeModelColumnRecord
 {
 public:
+    /** The tool's display name. */
     Gtk::TreeModelColumn<Glib::ustring> toolName;
+    /** The tool. */
     Gtk::TreeModelColumn<Tool> tool;
+    /** Is the tool added to favorites. */
     Gtk::TreeModelColumn<bool> isFavorite;
+    /** Can the tool be added to favorites. */
     Gtk::TreeModelColumn<bool> isEditable;
 
     ToolListColumns()
@@ -394,6 +439,7 @@ void ListEditButtons::onButtonDownPressed()
         return;
     }
 
+    // Get the selected row and next row.
     auto selected_row_iter = listStore->get_iter(selected[0]);
     auto next_row_iter = selected_row_iter;
     next_row_iter++;
@@ -402,6 +448,7 @@ void ListEditButtons::onButtonDownPressed()
         return;
     }
 
+    // Move the selected row down and update the buttons.
     listStore->iter_swap(selected_row_iter, next_row_iter);
     updateButtonSensitivity();
 }
@@ -419,6 +466,7 @@ void ListEditButtons::onButtonRemovePressed()
 
     signalRowsPreErase.emit(selected_paths);
 
+    // Remove the selected rows.
     for (const auto & row_ref : selected) {
         const auto row_path = row_ref.get_path();
         if (row_path) {
@@ -445,6 +493,7 @@ void ListEditButtons::onButtonUpPressed()
         return;
     }
 
+    // Swap selected row with the previous row.
     auto prev_row_iter = selected_row_iter;
     prev_row_iter--;
     listStore->iter_swap(selected_row_iter, prev_row_iter);
@@ -469,6 +518,8 @@ void ListEditButtons::updateButtonSensitivity()
         buttonDown.set_sensitive(false);
         buttonUp.set_sensitive(false);
     } else {
+        // Up button cannot be used on the first row. Down button cannot be used
+        // on the last row.
         auto selected_row_iter = list.get_model()->get_iter(selected[0]);
         const auto list_children = listStore->children();
         buttonUp.set_sensitive(!selected_row_iter->equal(list_children.begin()));
@@ -511,19 +562,68 @@ struct ToolLocationPreference::Impl {
     Gtk::TreeView *favoritesViewPtr;
     ListEditButtons favoritesListEditButtons;
 
+    /**
+     * Constructs an implementation that gets values from and updates the
+     * provided options object.
+     */
     explicit Impl(Options &options);
 
+    /**
+     * Adds the tools in the tool tree as a child in the provided row.
+     *
+     * @param tools The tool tree.
+     * @param parentRowIter An iterator to the row under which to add the tools.
+     * @param favorites The tools which are currently marked as favorites.
+     */
     void addToolListRowGroup(
         const std::vector<ToolPanelCoordinator::ToolTree> &tools,
         const Gtk::TreeIter &parentRowIter,
         const Favorites &favorites);
+    /**
+     * Toggles the tool list favorite column and updates the favorites list.
+     *
+     * @param row_path Path to the tool list model row.
+     */
     void favoriteToggled(const Glib::ustring &row_path);
+    /**
+     * Gets the tool with the provided tool name.
+     *
+     * @param name The tool name as a raw string.
+     * @return The tool.
+     */
     Tool getToolFromName(const std::string &name) const;
+    /**
+     * Initializes the favorites list.
+     *
+     * @param favorites Tools that are currently marked as favorites.
+     */
     void initFavoritesRows(const std::vector<Tool> &favorites);
+    /**
+     * Initializes the available tools list.
+     *
+     * @param favorites Tools that are currently marked as favorites.
+     */
     void initToolListRows(const std::vector<Tool> &favorites);
+    /**
+     * Updates the favorites column of the available tools list when tools are
+     * about to be removed from the favorites list.
+     *
+     * @param paths Paths in the favorites list pointing to the rows that are
+     * about to be removed.
+     */
     void onFavoritesRowsPreRemove(const std::vector<Gtk::TreeModel::Path> paths);
+    /**
+     * Converts tool names to their corresponding tools.
+     *
+     * @param tool_names The tool names that need to be converted.
+     * @return The tools.
+     */
     std::vector<Tool> toolNamesToTools(
         const std::vector<Glib::ustring> &tool_names) const;
+    /**
+     * Updates the options object associated with this object with the current
+     * favorites preferences.
+     */
     void updateOptions();
 };
 
@@ -533,6 +633,7 @@ std::unordered_map<std::string, Tool>
 ToolLocationPreference::Impl::Impl(Options &options) :
     options(options),
 
+    // Tool list.
     toolListModelPtr(Gtk::TreeStore::create(toolListColumns)),
     toolListViewColumnFavorite(
         Gtk::TreeViewColumn(M("PREFERENCES_TOOLPANEL_FAVORITE"))),
@@ -540,6 +641,7 @@ ToolLocationPreference::Impl::Impl(Options &options) :
         Gtk::TreeViewColumn(M("PREFERENCES_TOOLPANEL_TOOL"))),
     toolListViewPtr(Gtk::manage(new Gtk::TreeView(toolListModelPtr))),
 
+    // Favorites list.
     favoritesModelPtr(Gtk::ListStore::create(favoritesColumns)),
     favoritesViewColumnToolName(
         Gtk::TreeViewColumn(M("PREFERENCES_TOOLPANEL_TOOL"))),
@@ -644,6 +746,7 @@ Tool ToolLocationPreference::Impl::getToolFromName(const std::string &name) cons
 void ToolLocationPreference::Impl::initFavoritesRows(
     const std::vector<Tool> &favorites)
 {
+    // Add the favorites to the favorites list store.
     for (const auto tool : favorites) {
         auto favorite_row_iter = favoritesModelPtr->append();
         favorite_row_iter->set_value(
@@ -658,6 +761,7 @@ void ToolLocationPreference::Impl::addToolListRowGroup(
     const Gtk::TreeIter &parentRowIter,
     const Favorites &favorites)
 {
+    // Recursively add the tool and its children to the tool list tree store.
     for (const ToolPanelCoordinator::ToolTree &tool : tools) {
         auto tool_row_iter = toolListModelPtr->append(parentRowIter->children());
         tool_row_iter->set_value(
@@ -680,10 +784,12 @@ void ToolLocationPreference::Impl::initToolListRows(const std::vector<Tool> &fav
     const auto panel_tools = ToolPanelCoordinator::getDefaultToolLayout();
     Favorites favorites_set;
 
+    // Convert the favorites vector into a set for fast lookup.
     for (const auto &tool : favorites) {
         favorites_set.insert(tool);
     }
 
+    // Add each panel and their children to the tool list.
     for (const auto panel : {
              ToolPanelCoordinator::Panel::EXPOSURE,
              ToolPanelCoordinator::Panel::DETAILS,
