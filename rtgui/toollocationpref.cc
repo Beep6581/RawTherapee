@@ -500,7 +500,8 @@ struct ToolLocationPreference::Impl {
     Gtk::TreeViewColumn toolListViewColumnFavorite;
     Gtk::TreeViewColumn toolListViewColumnToolName;
     Gtk::TreeView *toolListViewPtr;
-    std::unordered_map<Tool, Gtk::TreeModel::iterator> toolListToolToRowIterMap;
+    std::unordered_map<Tool, Gtk::TreeModel::iterator, ScopedEnumHash>
+        toolListToolToRowIterMap;
 
     // Favorites list.
     FavoritesColumns favoritesColumns;
