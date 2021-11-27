@@ -16,6 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <iostream>
 #include <unordered_set>
 
 #include "guiutils.h"
@@ -152,6 +153,7 @@ std::string getToolName(Tool tool)
         case Tool::PD_SHARPENING:
             return "capturesharpening";
     };
+    assert(false);
     return "";
 };
 
@@ -178,6 +180,7 @@ Glib::ustring getToolPanelTitleKey(ToolPanelCoordinator::Panel panel)
         case ToolPanelCoordinator::Panel::RAW:
             return "MAIN_TAB_RAW";
     }
+    assert(false);
     return "";
 }
 
@@ -301,6 +304,7 @@ Glib::ustring getToolTitleKey(Tool tool)
         case Tool::PD_SHARPENING:
             return "TP_PDSHARPENING_LABEL";
     };
+    assert(false);
     return "";
 }
 
@@ -471,6 +475,8 @@ void ListEditButtons::onButtonRemovePressed()
         const auto row_path = row_ref.get_path();
         if (row_path) {
             listStore->erase(listStore->get_iter(row_path));
+        } else if (rtengine::settings->verbose) {
+            std::cout << "Unable to remove row because it does not exist anymore." << std::endl;
         }
     }
 
@@ -829,6 +835,10 @@ std::vector<Tool> ToolLocationPreference::Impl::toolNamesToTools(
         try {
             tool = getToolFromName(tool_name);
         } catch (const std::exception &e) {
+            if (rtengine::settings->verbose) {
+                std::cerr << "Unrecognized tool name \"" << tool_name << "\"." << std::endl;
+            }
+            assert(false);
             continue;
         }
         tool_set.push_back(tool);
