@@ -6278,8 +6278,8 @@ void RawImageSource::applyDngGainMap(const float black[4], const std::vector<Gai
     for (std::size_t y = 0; y < static_cast<size_t>(H); ++y) {
         const float rowBlack[2] = {black[FC(y,0)], black[FC(y,1)]};
         const float ys = y * row_scale;
-        for (std::size_t x = 0; x < static_cast<std::size_t>(W); ++x) {
-            const float xs = x * col_scale;
+        float xs = 0.f;
+        for (std::size_t x = 0; x < static_cast<std::size_t>(W); ++x, xs += col_scale) {
             const float f = getBilinearValue(mvals[y & 1][x & 1], xs, ys);
             const float b = rowBlack[x & 1];
             rawData[y][x] = rtengine::max((rawData[y][x] - b) * f + b, 0.f);
