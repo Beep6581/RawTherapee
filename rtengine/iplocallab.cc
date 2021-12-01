@@ -3554,7 +3554,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 if(sigmoidlambdajz > 0.f && iscie) {//sigmoid Jz
                     float val = Jz;
                     if(sigmoidthjz >= 1.f) {
-                        thjz = SQR(sigmoidthjz * sigmoidthjz * sigmoidthjz);
                         thjz = athjz * val + bthjz;
                     } else {
                         thjz = atjz * val + btjz;
@@ -3872,7 +3871,6 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
                         if(sigmoidlambda > 0.f && iscie && sigmoidqj == true) {//sigmoid Q only with ciecam module
                             float val = Qpro * coefq;
                             if(sigmoidth >= 1.f) {
-                                th = SQR(sigmoidth * sigmoidth * sigmoidth);
                                 th = ath * val + bth;
                             } else {
                                 th = at * val + bt;
@@ -3903,7 +3901,6 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
                         if(sigmoidlambda > 0.f && iscie && sigmoidqj == false) {//sigmoid J only with ciecam module
                             float val = Jpro / 100.f;
                             if(sigmoidth >= 1.f) {
-                                th = SQR(sigmoidth * sigmoidth * sigmoidth);
                                 th = ath * val + bth;
                             } else {
                                 th = at * val + bt;
