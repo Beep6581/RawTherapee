@@ -1737,7 +1737,7 @@ TP_FILMNEGATIVE_BLUE;Blauverhältnis
 TP_FILMNEGATIVE_GREEN;Bezugsexponent (Kontrast)
 TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness. Set the white balance afterwards.
 TP_FILMNEGATIVE_LABEL;Filmnegativ
-TP_FILMNEGATIVE_PICK;Pick neutral spots
+TP_FILMNEGATIVE_PICK;Neutrale Stellen wählen
 TP_FILMNEGATIVE_RED;Rotverhältnis
 TP_FILMSIMULATION_LABEL;Filmsimulation
 TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee sucht nach Hald-CLUT-Bildern, die für die Filmsimulation benötigt werden, in einem Ordner, der viel Zeit benötigt.\nGehen Sie zu\n< Einstellungen > Bildbearbeitung > Filmsimulation >\nund prüfen Sie welcher Order benutzt wird. Wählen Sie den Ordner aus, der nur die Hald-CLUT-Bilder beinhaltet, oder einen leeren Ordner, wenn Sie die Filsimulation nicht verwenden möchten.\n\nWeitere Informationen über die Filmsimulation finden Sie auf RawPedia.\n\nMöchten Sie die Suche beenden?
