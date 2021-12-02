@@ -2515,7 +2515,7 @@ void ImProcFunctions::loccont(int bfw, int bfh, LabImage* tmp1, float rad, float
 
 void sigmoidla (float &valj, float thresj, float lambda, float blend) 
 {
-    valj =  clipLoc(blend * valj + 1.f / (1.f + xexpf(lambda - (lambda / thresj) * valj)));
+    valj =  std::max(blend * valj + 1.f / (1.f + xexpf(lambda - (lambda / thresj) * valj)), 0.f);
 }
 
 
@@ -2622,7 +2622,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const float ath = sigmoidth - 1.f;
     const float bth = 1;
 
-    const float sigm = 1.5f + 22.f *(1.f - cbrt(sigmoidlambda));//16 must be suffisant...with sigmoidlambda = 0 e^16 = 9000000 e^20=485000000 e^23.5 = 16000000000
+    const float sigm = 1.4f + 25.f *(1.f - cbrt(sigmoidlambda));//with sigmoidlambda = 0 e^16 = 9000000 e^20=485000000 e^23.5 = 16000000000 e^26.4 = 291000000000
     const float bl = sigmoidbl;
     //end sigmoid
 
@@ -3163,7 +3163,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         const float athjz = sigmoidthjz - 1.f;
         const float bthjz = 1;
 
-        const float sigmjz = 1.5f + 22.f *(1.f - cbrt(sigmoidlambdajz));// e^23.5 = 16000000000
+        const float sigmjz = 1.4f + 25.f *(1.f - cbrt(sigmoidlambdajz));// e^26.4 = 291000000000
         const float bljz = sigmoidbljz;
         
         double contreal = 0.2 *  params->locallab.spots.at(sp).contjzcie;
@@ -3877,7 +3877,7 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
                             }
                             sigmoidla (val, th, sigm, 0.f);
                             float bl2 = 1.f;
-                            Qpro = clipLoc(bl * Qpro + bl2 * val / coefq);
+                            Qpro = std::max(bl * Qpro + bl2 * val / coefq, 0.f);
                         }
 
                         float Mp, sres;
