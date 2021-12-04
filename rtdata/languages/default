@@ -1522,6 +1522,7 @@ HISTORY_MSG_WAVBALLUM;Equalizer luminance
 HISTORY_MSG_WAVBL;Blur levels
 HISTORY_MSG_WAVCHROMCO;Chroma coarse
 HISTORY_MSG_WAVCHROMFI;Chroma fine
+HISTORY_MSG_WAVCHR;Blur levels - blur chroma
 HISTORY_MSG_WAVCLARI;Clarity
 HISTORY_MSG_WAVDENLH;Level 5
 HISTORY_MSG_WAVDENMET;Local equalizer
@@ -1533,6 +1534,8 @@ HISTORY_MSG_WAVGUIDH;Local contrast-Hue equalizer
 HISTORY_MSG_WAVHUE;Equalizer hue
 HISTORY_MSG_WAVLEVDEN;High level local contrast
 HISTORY_MSG_WAVLEVSIGM;Radius
+HISTORY_MSG_WAVLABGRID_VALUE;Toning - exclude colors
+HISTORY_MSG_WAVLEVELSIGM;Denoise - radius
 HISTORY_MSG_WAVLIMDEN;Interaction 56 14
 HISTORY_MSG_WAVLOWTHR;Threshold low contrast
 HISTORY_MSG_WAVMERGEC;Merge C
@@ -3996,6 +3999,7 @@ TP_WAVELET_HUESKY_TOOLTIP;The bottom points set the beginning of the transition 
 TP_WAVELET_ITER;Delta balance levels
 TP_WAVELET_ITER_TOOLTIP;Left: increase low levels and reduce high levels,\nRight: reduce low levels and increase high levels.
 TP_WAVELET_LABEL;Wavelet levels
+TP_WAVELET_LABGRID_VALUES;High(a)=%1 High(b)=%2\nLow(a)=%3 Low(b)=%4
 TP_WAVELET_LARGEST;Coarsest
 TP_WAVELET_LEVCH;Chroma
 TP_WAVELET_LEVDEN;Level 5-6 denoise
