@@ -2142,8 +2142,9 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
     for (int y = hsta; y < hend; ++y) {
         for (int x = wsta; x < wend; ++x) {
             const float r = img.r(y, x), g = img.g(y, x), b = img.b(y, x);
-            YY[y][x] = norm2(r, g, b, ws) / 65535.f;
+            YY[y][x] = norm2(r, g, b, ws) / 65535.f;//norm2 to find a best color luminance response in RGB 
             mean += static_cast<double>((float) ws[1][0] * Color::gamma_srgb(r) + (float) ws[1][1] * Color::gamma_srgb(g) + (float) ws[1][2] * Color::gamma_srgb(b));
+            //alternative to fing gray in case of above process does not works
             nc++;
         }
     }
@@ -2158,10 +2159,12 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
         }
     }
     
-    maxVal *= 1.45f; //or 1.5f...slightly increase max
-    minVal *= 0.55f;//or 0.5f...slightly increase min
-    //approximation sourcegray yb  source =  yb
-
+    maxVal *= 1.45f; //(or 1.5f...) slightly increase max to take into account illuminance incident light
+    minVal *= 0.55f; //(or 0.5f...) slightly decrease min to take into account illuminance incident light
+    //E = 2.5*2^EV => e=2.5 depends on the sensor type C=250 e=2.5 to C=330 e=3.3
+    //repartition with 2.5 between 1.45 Light and shadows 0.58 => a little more 0.55...
+    // https://www.pixelsham.com/2020/12/26/exposure-value-measurements/
+    // https://en.wikipedia.org/wiki/Light_meter
     if (maxVal > minVal) {
         const float log2 = std::log(2.f);
         const float dynamic_range = -xlogf(minVal / maxVal) / log2;
@@ -2174,6 +2177,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
         if (Autogr[sp]) {
             double tot = 0.0;
             int n = 0;
+            //0.05 0.25 arbitrary values around gray point 0.18 to find a good value as "gray" for "gain"
             const float gmax = rtengine::min(maxVal / 2.f, 0.25f);
             const float gmin = rtengine::max(minVal * std::pow(2.f, rtengine::max((dynamic_range - 1.f) / 2.f, 1.f)), 0.05f);
 
@@ -2198,7 +2202,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
                 if (settings->verbose) {
                     std::cout << "         computed gray point from " << n << " samples: " << sourceg[sp] << std::endl;
                 }
-            } else {//I change slightly this part of algo - more progressivity...best response in low exposure images
+            } else {//I change slightly this part of algo - more progressivity...best response in very low exposure images
                 mean /= (nc * 65535.0);
                 float yb;
                 yb = 1.5f + 100.f * pow_F(mean, 1.8f);//empirical formula for Jz and log encode for low exposure images
@@ -2244,7 +2248,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
             double kexp = 0.;
             E_V += kexp * params->toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
             E_V += 0.5 * std::log2(params->raw.expos);  // exposure raw white point ; log2 ==> linear to EV
-            adap = pow(2.0, E_V - 3.0);  // cd / m2
+            adap = pow(2.0, E_V - 3.0);  // cd / m2  ==> 3.0 = log2(8) =>fnum*fnum/speed = Luminance (average scene) * fiso / K (K is the reflected-light meter calibration constant according to the sensors about 12.5 or 14 
             // end calculation adaptation scene luminosity
         }
         
@@ -2516,6 +2520,9 @@ void ImProcFunctions::loccont(int bfw, int bfh, LabImage* tmp1, float rad, float
 void sigmoidla (float &valj, float thresj, float lambda, float blend) 
 {
     valj =  std::max(blend * valj + 1.f / (1.f + xexpf(lambda - (lambda / thresj) * valj)), 0.f);
+    //thres : shifts the action of sigmoid to darker tones or lights
+    //lambda : changes the "slope" of the sigmoid. Low values give a flat curve, high values a "rectangular / orthogonal" curve
+    //blend : blend original image with sigmoid - default 1
 }
 
 
@@ -3052,10 +3059,10 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         double jz100 = params->locallab.spots.at(sp).jz100;
         double pl = params->locallab.spots.at(sp).pqremap;
         double jzw, azw, bzw;
-        jzw = 0.18;
+        jzw = 0.18;//Jz white
 
-        bool Qtoj = params->locallab.spots.at(sp).qtoj;
-        const bool logjz =  params->locallab.spots.at(sp).logjz;
+        bool Qtoj = params->locallab.spots.at(sp).qtoj;//betwwen lightness to brightness
+        const bool logjz =  params->locallab.spots.at(sp).logjz;//log encoding
 
 //calculate min, max, mean for Jz
 #ifdef _OPENMP
@@ -3097,25 +3104,24 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         sum = sum / nc;
         maxi += epsiljz;
         sum += epsiljz;
+        //remapping Jz 
         double ijz100 = 1./jz100;
         double ajz = (ijz100 - 1.)/9.;//9 = sqrt(100) - 1 with a parabolic curve after jz100 - we can change for others curve ..log...(you must change also in locallabtool2)
         double bjz = 1. - ajz;
+        //relation between adapjz and Absolute luminance source (La), adapjz =sqrt(La) - see locallabtool2 adapjzcie 
         double interm = jz100 * (adapjz * ajz + bjz);
         double bj = (10. - maxi) / 9.;
-         
         double aj = maxi -bj;
-//        double to_screenp = (aj * interm + bj);
         double to_screen = (aj * interm + bj) / maxi;
-        
+        //to screen - remapping of Jz in function real scene absolute luminance
+
 //        if (settings->verbose) { 
 //            printf("ajz=%f bjz=%f adapjz=%f jz100=%f interm=%f to-scrp=%f to_screen=%f\n", ajz, bjz, adapjz, jz100, interm ,to_screenp, to_screen);
 //        }
         double to_one = 1.;//only for calculation in range 0..1 or 0..32768
-        //to_screen and to_one are used actually both....but in case of HDR we must separate them 
         to_one = 1 / (maxi * to_screen);
         if(adapjz == 10.) {//force original algorithm if La > 10000
             to_screen = 1.;
-           // to_one = 1.;
         }
         if(Qtoj) {
                 double xxw = (d50_d65[0][0] * (double) Xw + d50_d65[0][1] * (double) Yw + d50_d65[0][2] * (double) Zw);
@@ -3123,12 +3129,11 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 double zzw = (d50_d65[2][0] * (double) Xw + d50_d65[2][1] * (double) Yw + d50_d65[2][2] * (double) Zw);
                 double L_pa, M_pa, S_pa;
                 Ciecam02::xyz2jzczhz (jzw, azw, bzw, xxw, yyw, zzw, pl, L_pa, M_pa, S_pa, z_cam);
-                if (settings->verbose) { 
+                if (settings->verbose) { //calculate Jz white for use of lightness instead brightness
                     printf("Jzwhite=%f \n", jzw);
                 }
 
         }
-        //adapjz * ajz + bjz parabolic curve between 1 and ijz100
         const std::unique_ptr<LabImage> temp(new LabImage(width, height));
         const std::unique_ptr<LabImage> tempresid(new LabImage(width, height));
         const std::unique_ptr<LabImage> tempres(new LabImage(width, height));
@@ -3232,8 +3237,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     [ = ](double x) -> double {
 
         x = std::max(x, noise);
-        x = std::max(x / gray, noise);//before log conversion
-        x = std::max((xlog(x) / log2 - shadows_range) / dynamic_range, noise);
+        x = std::max(x / gray, noise);//gray = gain - before log conversion
+        x = std::max((xlog(x) / log2 - shadows_range) / dynamic_range, noise);//x in range EV
         assert(x == x);
 
         if (linbase > 0.)//apply log base in function of targetgray blackEvjz and Dynamic Range
@@ -3289,7 +3294,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             #pragma omp parallel for if(multiThread)
 #endif
             for (int i = 0; i < height; i++) {
-                for (int k = 0; k < width; k++) {//reinitialize dats after SH...: guide, etc.
+                for (int k = 0; k < width; k++) {//reinitialize datas after SH...: guide, etc.
                     tempresid->L[i][k] = tempres->L[i][k] = temp->L[i][k];
                     tempresid->a[i][k] = tempres->a[i][k] = temp->a[i][k];
                     tempresid->b[i][k] = tempres->b[i][k] = temp->b[i][k];
@@ -3298,7 +3303,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         }
         //others "Lab" threatment...to adapt
         
-        if(wavcurvejz  || mjjz != 0.f || lp.mCjz != 0.f) {
+        if(wavcurvejz  || mjjz != 0.f || lp.mCjz != 0.f) {//local contrast wavelet and clarity
 #ifdef _OPENMP
             const int numThreads = omp_get_max_threads();
 #else
@@ -3368,10 +3373,9 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 }
             }
         
-            if (lp.softrjz >= 0.5f && (wavcurvejz || std::fabs(mjjz) > 0.001f)) {
+            if (lp.softrjz >= 0.5f && (wavcurvejz || std::fabs(mjjz) > 0.001f)) {//guidedfilter
                 softproc(tempres.get(), temp.get(), lp.softrjz, height, width, 0.001, 0.00001, thr, sk, multiThread, flag);
             }
-        
         }
 
 //new curves Hz
@@ -3388,7 +3392,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     float Hz = xatan2f (temp->b[i][k], temp->a[i][k]);
                     float l_r = j_z / 32768.f;
                     float kcc = SQR(c_z / kcz);
-                    //  printf("kcz=%f", (double) kcc);
                     jzch = true;
                     if(jzch == false) {
                         kcc = 1.f;
@@ -3436,7 +3439,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             }
         }
 
-                if (loclhCurvejz && LHcurvejz && softjz > 0.f) {//for artifacts curve J(H)
+                if (loclhCurvejz && LHcurvejz && softjz > 0.f) {//Guidedilter for artifacts curve J(H)
                     float thr = 0.00001f;
                     int flag = 2;
                     float softjzr = 0.05f * softjz;
@@ -3525,14 +3528,14 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                         double f = mm / jmz;
                         Jz *= f;
                         Cz *= f;
-                        Jz = LIM01(Jz);
+                        Jz = LIM01(Jz);//clip values
                         Cz = clipcz(Cz);
                     }
                 }
 
-                if(Qtoj == true) {//lightness
+                if(Qtoj == true) {//lightness instead of brightness
                     Jz /= to_one;
-                    Jz /= maxjzw;
+                    Jz /= maxjzw;//Jz white
                     Jz = SQR(Jz);
                 }
                 //contrast 
@@ -3554,11 +3557,11 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 if(sigmoidlambdajz > 0.f && iscie) {//sigmoid Jz
                     float val = Jz;
                     if(sigmoidthjz >= 1.f) {
-                        thjz = athjz * val + bthjz;
+                        thjz = athjz * val + bthjz;//threshold
                     } else {
                         thjz = atjz * val + btjz;
                     }
-                    sigmoidla (val, thjz, sigmjz, bljz);
+                    sigmoidla (val, thjz, sigmjz, bljz);//sigmz "slope" of sigmoid and bljz = blend
                     Jz = (double) val;
                 }
                 //reconvert from lightness or Brightness
@@ -3583,7 +3586,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     double chromaCfactor =  (double) (czjzlocalcurve[(float) Jz * 65535.f * (float) to_one]) / (Jz * 65535. * to_one);
                     Cz  *=  chromaCfactor;
                 }
-
+                //Hz in 0 2*PI
                 if ( Hz < 0.0 ) {
                     Hz +=  (2. * rtengine::RT_PI);
                 }
@@ -3593,14 +3596,13 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 } else {
                     double maxcz = czlim / to_one;
                     double fcz = Cz / maxcz;
-                    //double pocz = pow(fcz , 1. - 0.0017 * chromz);
                     double pocz = pow(fcz , 1. - 0.0024 * chromz);//increase value - before 0.0017
                     Cz = maxcz * pocz;
                   //  Cz = Cz * (1. + 0.005 * chromz);//linear
                 }
                 //saturation slider
                 if(saturz != 0.) {
-                    double js = Jz/ maxjzw;
+                    double js = Jz/ maxjzw;//divide by Jz white
                     js = SQR(js);
                     if(js <= 0.) {
                         js = 0.0000001;
