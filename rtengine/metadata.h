@@ -90,7 +90,7 @@ private:
         Glib::TimeVal image_mtime;
         Glib::TimeVal xmp_mtime;
         bool use_xmp;
-        CacheVal() = default;
+        CacheVal(): image(nullptr), image_mtime(), xmp_mtime(), use_xmp(false) {}
     };
     //typedef std::pair<std::shared_ptr<Exiv2::Image>, Glib::TimeVal> CacheVal;
     typedef Cache<Glib::ustring, CacheVal> ImageCache;
