@@ -758,7 +758,7 @@ button.radio#histButton:hover {
 #MyExpander:first-child {
     border-top: none;
 }
-#MyExpander:nth-last-child(2),
+#MyExpander:nth-last-child(1),
 #MyExpander #MyExpander:nth-last-child(1) {
     border-bottom: 0.0833333333333333em solid rgba(0,0,0,0.3);
 }

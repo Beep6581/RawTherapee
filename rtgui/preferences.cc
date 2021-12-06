@@ -2572,6 +2572,9 @@ void Preferences::workflowUpdate()
         parent->updateProfiles (moptions.rtSettings.printerProfile, rtengine::RenderingIntent(moptions.rtSettings.printerIntent), moptions.rtSettings.printerBPC);
     }
 
+    if (moptions.favorites != options.favorites) {
+        parent->updateToolPanelToolLocations(moptions.favorites);
+    }
 }
 
 void Preferences::addExtPressed()

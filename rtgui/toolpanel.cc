@@ -73,7 +73,14 @@ FoldableToolPanel::FoldableToolPanel(Gtk::Box* content, Glib::ustring toolName, 
     exp->signal_button_release_event().connect_notify( sigc::mem_fun(this, &FoldableToolPanel::foldThemAll) );
     enaConn = signal_enabled_toggled().connect( sigc::mem_fun(*this, &FoldableToolPanel::enabled_toggled) );
 
-    exp->add (*content);
+    Gtk::Box *expanderContents = Gtk::manage(
+        new Gtk::Box(Gtk::Orientation::ORIENTATION_VERTICAL));
+    subToolsContainer = Gtk::manage(
+        new Gtk::Box(Gtk::Orientation::ORIENTATION_VERTICAL));
+    expanderContents->pack_start(*content, false, false, 0);
+    expanderContents->pack_start(*subToolsContainer, false, false, 0);
+
+    exp->add(*expanderContents, false);
     exp->show ();
 }
 

@@ -18,6 +18,7 @@
  */
 #pragma once
 
+#include <unordered_set>
 #include <vector>
 
 #include <gtkmm.h>
@@ -169,11 +170,13 @@ protected:
     FilmNegative* filmNegative;
     PdSharpening* pdSharpening;
     std::vector<PParamsChangeListener*> paramcListeners;
+    std::unordered_map<Gtk::Widget *, FoldableToolPanel *>
+        expanderToToolPanelMap;
 
     rtengine::StagedImageProcessor* ipc;
 
     std::vector<ToolPanel*> toolPanels;
-    std::vector<FoldableToolPanel*> favorites;
+    std::vector<FoldableToolPanel*> favoritesToolPanels;
     ToolVBox* favoritePanel;
     ToolVBox* exposurePanel;
     ToolVBox* detailsPanel;
@@ -184,7 +187,7 @@ protected:
     ToolVBox* locallabPanel;
     ToolBar* toolBar;
 
-    TextOrIcon* toiF;
+    std::unique_ptr<TextOrIcon> toiF;
     TextOrIcon* toiE;
     TextOrIcon* toiD;
     TextOrIcon* toiC;
@@ -197,7 +200,7 @@ protected:
     Gtk::Image* imgPanelEnd[8];
     Gtk::Box* vbPanelEnd[8];
 
-    Gtk::ScrolledWindow* favoritePanelSW;
+    std::unique_ptr<Gtk::ScrolledWindow> favoritePanelSW;
     Gtk::ScrolledWindow* exposurePanelSW;
     Gtk::ScrolledWindow* detailsPanelSW;
     Gtk::ScrolledWindow* colorPanelSW;
@@ -215,6 +218,8 @@ protected:
     void updateVScrollbars(bool hide);
     void addfavoritePanel (Gtk::Box* where, FoldableToolPanel* panel, int level = 1);
     void notebookPageChanged(Gtk::Widget* page, guint page_num);
+    void updatePanelTools(
+        Gtk::Widget *page, const std::vector<Glib::ustring> &favorites);
 
 private:
     EditDataProvider *editDataProvider;
@@ -307,6 +312,20 @@ public:
     ~ToolPanelCoordinator () override;
 
     static const ToolLayout& getDefaultToolLayout();
+    /**
+     * Gets the tool with the provided tool name.
+     *
+     * @param name The tool name as a raw string.
+     * @return The tool.
+     */
+    static Tool getToolFromName(const std::string &name);
+    /**
+     * Gets the tool name for the tool's ToolPanel as a string.
+     *
+     * @param tool The name as a raw string, or an empty string if the tool is
+     * unknown.
+     */
+    static std::string getToolName(Tool tool);
     static bool isFavoritable(Tool tool);
 
     bool getChangedState()
@@ -326,6 +345,7 @@ public:
         const LUTu& histLRETI
     );
     void foldAllButOne(Gtk::Box* parent, FoldableToolPanel* openedSection);
+    void updateToolLocations(const std::vector<Glib::ustring> &favorites);
 
     // multiple listeners can be added that are notified on changes (typical: profile panel and the history)
     void addPParamsChangeListener(PParamsChangeListener* pp)
@@ -432,6 +452,23 @@ public:
     void editModeSwitchedOff () final;
 
     void setEditProvider(EditDataProvider *provider);
+
+protected:
+    static std::unordered_map<std::string, Tool> toolNamesReverseMap;
+
+    std::unordered_map<Tool, const ToolTree *, ScopedEnumHash>
+        toolToDefaultToolTreeMap;
+
+    FoldableToolPanel *getFoldableToolPanel(Tool tool) const;
+    FoldableToolPanel *getFoldableToolPanel(const ToolTree &tool) const;
+    void updateFavoritesPanel(const std::vector<Glib::ustring> &favorites);
+    template <typename T>
+    typename std::enable_if<std::is_convertible<T, const ToolTree>::value, void>::type
+    updateToolPanel(
+        Gtk::Box *panelBox,
+        const std::vector<T> &children,
+        int level,
+        std::unordered_set<Tool, ScopedEnumHash> favorites);
 
 private:
     IdleRegister idle_register;

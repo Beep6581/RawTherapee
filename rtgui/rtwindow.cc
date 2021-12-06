@@ -1110,6 +1110,14 @@ void RTWindow::updateHistogramPosition (int oldPosition, int newPosition)
     }
 }
 
+void RTWindow::updateToolPanelToolLocations(
+    const std::vector<Glib::ustring> &favorites)
+{
+    if (epanel) {
+        epanel->updateToolPanelToolLocations(favorites);
+    }
+}
+
 bool RTWindow::splashClosed (GdkEventAny* event)
 {
     delete splash;

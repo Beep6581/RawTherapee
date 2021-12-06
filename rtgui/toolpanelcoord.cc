@@ -267,6 +267,8 @@ const ToolPanelCoordinator::ToolLayout PANEL_TOOLS = {
     },
 };
 
+std::unordered_map<std::string, Tool> ToolPanelCoordinator::toolNamesReverseMap;
+
 ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favoritePanelSW(nullptr), hasChanged (false), editDataProvider (nullptr), photoLoadedOnce(false)
 {
 
@@ -345,71 +347,33 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     // Valeurs par dfaut:
     //     Best -> low ISO
     //     Medium -> High ISO
-    favorites.resize(options.favorites.size(), nullptr);
 
-    addfavoritePanel (colorPanel, whitebalance);
-    addfavoritePanel (exposurePanel, toneCurve);
-    addfavoritePanel (colorPanel, vibrance);
-    addfavoritePanel (colorPanel, chmixer);
-    addfavoritePanel (colorPanel, blackwhite);
-    addfavoritePanel (exposurePanel, shadowshighlights);
-    addfavoritePanel (detailsPanel, spot);
-    addfavoritePanel (detailsPanel, sharpening);
-    addfavoritePanel (detailsPanel, localContrast);
-    addfavoritePanel (detailsPanel, sharpenEdge);
-    addfavoritePanel (detailsPanel, sharpenMicro);
-    addfavoritePanel (colorPanel, hsvequalizer);
-    addfavoritePanel (colorPanel, filmSimulation);
-    addfavoritePanel (colorPanel, filmNegative);
-    addfavoritePanel (colorPanel, softlight);
-    addfavoritePanel (colorPanel, rgbcurves);
-    addfavoritePanel (colorPanel, colortoning);
-    addfavoritePanel (exposurePanel, epd);
-    addfavoritePanel (exposurePanel, fattal);
-    addfavoritePanel (advancedPanel, retinex);
-    addfavoritePanel (exposurePanel, pcvignette);
-    addfavoritePanel (exposurePanel, gradient);
-    addfavoritePanel (exposurePanel, lcurve);
-    addfavoritePanel (advancedPanel, colorappearance);
-    addfavoritePanel (detailsPanel, impulsedenoise);
-    addfavoritePanel (detailsPanel, dirpyrdenoise);
-    addfavoritePanel (detailsPanel, defringe);
-    addfavoritePanel (detailsPanel, dirpyrequalizer);
-    addfavoritePanel (detailsPanel, dehaze);
-    addfavoritePanel (advancedPanel, wavelet);
-    addfavoritePanel(locallabPanel, locallab);
+    for (const auto &panel_tool_layout : getDefaultToolLayout()) {
+        const auto &panel_tools = panel_tool_layout.second;
+        std::vector<const ToolTree *> unprocessed_tools;
 
-    addfavoritePanel (transformPanel, crop);
-    addfavoritePanel (transformPanel, resize);
-    addPanel (resize->getPackBox(), prsharpening, 2);
-    addfavoritePanel (transformPanel, lensgeom);
-    addfavoritePanel (lensgeom->getPackBox(), rotate, 2);
-    addfavoritePanel (lensgeom->getPackBox(), perspective, 2);
-    addfavoritePanel (lensgeom->getPackBox(), lensProf, 2);
-    addfavoritePanel (lensgeom->getPackBox(), distortion, 2);
-    addfavoritePanel (lensgeom->getPackBox(), cacorrection, 2);
-    addfavoritePanel (lensgeom->getPackBox(), vignetting, 2);
-    addfavoritePanel (colorPanel, icm);
-    addfavoritePanel (rawPanel, sensorbayer);
-    addfavoritePanel (sensorbayer->getPackBox(), bayerprocess, 2);
-    addfavoritePanel (sensorbayer->getPackBox(), bayerrawexposure, 2);
-    addfavoritePanel (sensorbayer->getPackBox(), bayerpreprocess, 2);
-    addfavoritePanel (sensorbayer->getPackBox(), rawcacorrection, 2);
-    addfavoritePanel (rawPanel, sensorxtrans);
-    addfavoritePanel (sensorxtrans->getPackBox(), xtransprocess, 2);
-    addfavoritePanel (sensorxtrans->getPackBox(), xtransrawexposure, 2);
-    addfavoritePanel (rawPanel, rawexposure);
-    addfavoritePanel (rawPanel, preprocessWB);
-    addfavoritePanel (rawPanel, preprocess);
-    addfavoritePanel (rawPanel, darkframe);
-    addfavoritePanel (rawPanel, flatfield);
-    addfavoritePanel (rawPanel, pdSharpening);
+        // Start with the root tools for every panel.
+        for (const auto &tool_tree : panel_tools) {
+            unprocessed_tools.push_back(&tool_tree);
+        }
 
-    int favoriteCount = 0;
-    for(auto it = favorites.begin(); it != favorites.end(); ++it) {
-        if (*it) {
-            addPanel(favoritePanel, *it);
-            ++favoriteCount;
+        // Process each tool.
+        while (!unprocessed_tools.empty()) {
+            // Pop from stack of unprocessed.
+            const ToolTree *cur_tool = unprocessed_tools.back();
+            unprocessed_tools.pop_back();
+            // Add tool to list of expanders and tool panels.
+            FoldableToolPanel *tool_panel = getFoldableToolPanel(*cur_tool);
+            expList.push_back(tool_panel->getExpander());
+            toolPanels.push_back(tool_panel);
+            expanderToToolPanelMap[tool_panel->getExpander()] = tool_panel;
+            toolToDefaultToolTreeMap[cur_tool->id] = cur_tool;
+            // Show all now, since they won't be attached to a parent.
+            tool_panel->getExpander()->show_all();
+            // Add children to unprocessed.
+            for (const auto &child_tool : cur_tool->children) {
+                unprocessed_tools.push_back(&child_tool);
+            }
         }
     }
 
@@ -418,6 +382,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
 
     toolPanelNotebook = new Gtk::Notebook();
     toolPanelNotebook->set_name("ToolPanelNotebook");
+    favoritePanelSW.reset(new MyScrolledWindow());
     exposurePanelSW    = Gtk::manage (new MyScrolledWindow ());
     detailsPanelSW     = Gtk::manage (new MyScrolledWindow ());
     colorPanelSW       = Gtk::manage (new MyScrolledWindow ());
@@ -434,35 +399,58 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
         vbPanelEnd[i]->pack_start(*imgPanelEnd[i], Gtk::PACK_SHRINK);
         vbPanelEnd[i]->show_all();
     }
-    if(favoriteCount > 0) {
-        favoritePanelSW = Gtk::manage(new MyScrolledWindow());
-        favoritePanelSW->add(*favoritePanel);
-        favoritePanel->pack_start(*vbPanelEnd[0], Gtk::PACK_SHRINK, 4);
-    }
     updateVScrollbars(options.hideTPVScrollbar);
 
-    exposurePanelSW->add  (*exposurePanel);
-    exposurePanel->pack_start (*vbPanelEnd[1], Gtk::PACK_SHRINK, 4);
+    Gtk::Box *favoritePanelContainer =
+        Gtk::manage(new Gtk::Box(Gtk::Orientation::ORIENTATION_VERTICAL));
+    Gtk::Box *exposurePanelContainer =
+        Gtk::manage(new Gtk::Box(Gtk::Orientation::ORIENTATION_VERTICAL));
+    Gtk::Box *detailsPanelContainer =
+        Gtk::manage(new Gtk::Box(Gtk::Orientation::ORIENTATION_VERTICAL));
+    Gtk::Box *colorPanelContainer =
+        Gtk::manage(new Gtk::Box(Gtk::Orientation::ORIENTATION_VERTICAL));
+    Gtk::Box *advancedPanelContainer =
+        Gtk::manage(new Gtk::Box(Gtk::Orientation::ORIENTATION_VERTICAL));
+    Gtk::Box *locallabPanelContainer =
+        Gtk::manage(new Gtk::Box(Gtk::Orientation::ORIENTATION_VERTICAL));
+    Gtk::Box *transformPanelContainer =
+        Gtk::manage(new Gtk::Box(Gtk::Orientation::ORIENTATION_VERTICAL));
+    Gtk::Box *rawPanelContainer =
+        Gtk::manage(new Gtk::Box(Gtk::Orientation::ORIENTATION_VERTICAL));
 
-    detailsPanelSW->add   (*detailsPanel);
-    detailsPanel->pack_start (*vbPanelEnd[2], Gtk::PACK_SHRINK, 4);
+    favoritePanelSW->add(*favoritePanelContainer);
+    favoritePanelContainer->pack_start(*favoritePanel, Gtk::PACK_SHRINK, 0);
+    favoritePanelContainer->pack_start(*vbPanelEnd[0], Gtk::PACK_SHRINK, 4);
 
-    colorPanelSW->add     (*colorPanel);
-    colorPanel->pack_start (*vbPanelEnd[3], Gtk::PACK_SHRINK, 4);
+    exposurePanelSW->add  (*exposurePanelContainer);
+    exposurePanelContainer->pack_start(*exposurePanel, Gtk::PACK_SHRINK, 0);
+    exposurePanelContainer->pack_start (*vbPanelEnd[1], Gtk::PACK_SHRINK, 4);
 
-    advancedPanelSW->add       (*advancedPanel);
-    advancedPanel->pack_start (*vbPanelEnd[6], Gtk::PACK_SHRINK, 0);
+    detailsPanelSW->add   (*detailsPanelContainer);
+    detailsPanelContainer->pack_start(*detailsPanel, Gtk::PACK_SHRINK, 0);
+    detailsPanelContainer->pack_start (*vbPanelEnd[2], Gtk::PACK_SHRINK, 4);
 
-    locallabPanelSW->add(*locallabPanel);
-    locallabPanel->pack_start(*vbPanelEnd[7], Gtk::PACK_SHRINK, 4);
+    colorPanelSW->add     (*colorPanelContainer);
+    colorPanelContainer->pack_start(*colorPanel, Gtk::PACK_SHRINK, 0);
+    colorPanelContainer->pack_start (*vbPanelEnd[3], Gtk::PACK_SHRINK, 4);
 
-    transformPanelSW->add (*transformPanel);
-    transformPanel->pack_start (*vbPanelEnd[4], Gtk::PACK_SHRINK, 4);
+    advancedPanelSW->add       (*advancedPanelContainer);
+    advancedPanelContainer->pack_start(*advancedPanel, Gtk::PACK_SHRINK, 0);
+    advancedPanelContainer->pack_start (*vbPanelEnd[6], Gtk::PACK_SHRINK, 0);
 
-    rawPanelSW->add       (*rawPanel);
-    rawPanel->pack_start (*vbPanelEnd[5], Gtk::PACK_SHRINK, 0);
+    locallabPanelSW->add(*locallabPanelContainer);
+    locallabPanelContainer->pack_start(*locallabPanel, Gtk::PACK_SHRINK, 0);
+    locallabPanelContainer->pack_start(*vbPanelEnd[7], Gtk::PACK_SHRINK, 4);
 
-    toiF = Gtk::manage (new TextOrIcon ("star.png", M ("MAIN_TAB_FAVORITES"), M ("MAIN_TAB_FAVORITES_TOOLTIP")));
+    transformPanelSW->add (*transformPanelContainer);
+    transformPanelContainer->pack_start(*transformPanel, Gtk::PACK_SHRINK, 0);
+    transformPanelContainer->pack_start (*vbPanelEnd[4], Gtk::PACK_SHRINK, 4);
+
+    rawPanelSW->add       (*rawPanelContainer);
+    rawPanelContainer->pack_start(*rawPanel, Gtk::PACK_SHRINK, 0);
+    rawPanelContainer->pack_start (*vbPanelEnd[5], Gtk::PACK_SHRINK, 0);
+
+    toiF.reset(new TextOrIcon ("star.png", M ("MAIN_TAB_FAVORITES"), M ("MAIN_TAB_FAVORITES_TOOLTIP")));
     toiE = Gtk::manage (new TextOrIcon ("exposure.png", M ("MAIN_TAB_EXPOSURE"), M ("MAIN_TAB_EXPOSURE_TOOLTIP")));
     toiD = Gtk::manage (new TextOrIcon ("detail.png", M ("MAIN_TAB_DETAIL"), M ("MAIN_TAB_DETAIL_TOOLTIP")));
     toiC = Gtk::manage (new TextOrIcon ("color-circles.png", M ("MAIN_TAB_COLOR"), M ("MAIN_TAB_COLOR_TOOLTIP")));
@@ -472,9 +460,6 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     toiT = Gtk::manage (new TextOrIcon ("transform.png", M ("MAIN_TAB_TRANSFORM"), M ("MAIN_TAB_TRANSFORM_TOOLTIP")));
     toiR = Gtk::manage (new TextOrIcon ("bayer.png", M ("MAIN_TAB_RAW"), M ("MAIN_TAB_RAW_TOOLTIP")));
     toiM = Gtk::manage (new TextOrIcon ("metadata.png", M ("MAIN_TAB_METADATA"), M ("MAIN_TAB_METADATA_TOOLTIP")));
-    if (favoritePanelSW) {
-        toolPanelNotebook->append_page (*favoritePanelSW,  *toiF);
-    }
     toolPanelNotebook->append_page (*exposurePanelSW,  *toiE);
     toolPanelNotebook->append_page (*detailsPanelSW,   *toiD);
     toolPanelNotebook->append_page (*colorPanelSW,     *toiC);
@@ -491,6 +476,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
 
     toolPanelNotebook->set_scrollable();
     toolPanelNotebook->show_all();
+    updateToolLocations(options.favorites);
 
     notebookconn = toolPanelNotebook->signal_switch_page().connect(
                        sigc::mem_fun(*this, &ToolPanelCoordinator::notebookPageChanged));
@@ -528,6 +514,156 @@ const ToolPanelCoordinator::ToolLayout& ToolPanelCoordinator::getDefaultToolLayo
     return PANEL_TOOLS;
 }
 
+Tool ToolPanelCoordinator::getToolFromName(const std::string &name)
+{
+    if (toolNamesReverseMap.empty()) {
+        // Create the name to tool mapping.
+
+        const auto panels = ToolPanelCoordinator::getDefaultToolLayout();
+        std::vector<const ToolPanelCoordinator::ToolTree *> unprocessed_tool_trees;
+
+        // Get the root tools from each panel.
+        for (const auto &panel_tools : panels) {
+            for (const auto &tool : panel_tools.second) {
+                unprocessed_tool_trees.push_back(&tool);
+            }
+        }
+
+        // Process all the tools, including their children.
+        while (unprocessed_tool_trees.size() > 0) {
+            const ToolPanelCoordinator::ToolTree *tool_tree =
+                unprocessed_tool_trees.back();
+            unprocessed_tool_trees.pop_back();
+            toolNamesReverseMap[getToolName(tool_tree->id)] = tool_tree->id;
+            for (const auto &child_tree : tool_tree->children) {
+                unprocessed_tool_trees.push_back(&child_tree);
+            }
+        }
+    }
+
+    return toolNamesReverseMap.at(name);
+}
+
+std::string ToolPanelCoordinator::getToolName(Tool tool)
+{
+    switch (tool) {
+        case Tool::TONE_CURVE:
+            return "tonecurve";
+        case Tool::SHADOWS_HIGHLIGHTS:
+            return "shadowshighlights";
+        case Tool::IMPULSE_DENOISE:
+            return "impulsedenoise";
+        case Tool::DEFRINGE_TOOL:
+            return "defringe";
+        case Tool::SPOT:
+            return "spot";
+        case Tool::DIR_PYR_DENOISE:
+            return "dirpyrdenoise";
+        case Tool::EPD:
+            return "epd";
+        case Tool::SHARPENING_TOOL:
+            return "sharpening";
+        case Tool::LOCAL_CONTRAST:
+            return "localcontrast";
+        case Tool::SHARPEN_EDGE:
+            return "sharpenedge";
+        case Tool::SHARPEN_MICRO:
+            return "sharpenmicro";
+        case Tool::L_CURVE:
+            return "labcurves";
+        case Tool::RGB_CURVES:
+            return "rgbcurves";
+        case Tool::COLOR_TONING:
+            return "colortoning";
+        case Tool::LENS_GEOM:
+            return "lensgeom";
+        case Tool::LENS_PROF:
+            return "lensprof";
+        case Tool::DISTORTION:
+            return "distortion";
+        case Tool::ROTATE:
+            return "rotate";
+        case Tool::VIBRANCE:
+            return "vibrance";
+        case Tool::COLOR_APPEARANCE:
+            return "colorappearance";
+        case Tool::WHITE_BALANCE:
+            return "whitebalance";
+        case Tool::VIGNETTING:
+            return "vignetting";
+        case Tool::RETINEX_TOOL:
+            return "retinex";
+        case Tool::GRADIENT:
+            return "gradient";
+        case Tool::LOCALLAB:
+            return "locallab";
+        case Tool::PC_VIGNETTE:
+            return "pcvignette";
+        case Tool::PERSPECTIVE:
+            return "perspective";
+        case Tool::CA_CORRECTION:
+            return "cacorrection";
+        case Tool::CH_MIXER:
+            return "chmixer";
+        case Tool::BLACK_WHITE:
+            return "blackwhite";
+        case Tool::RESIZE_TOOL:
+            return "resize";
+        case Tool::PR_SHARPENING:
+            return "prsharpening";
+        case Tool::CROP_TOOL:
+            return "crop";
+        case Tool::ICM:
+            return "icm";
+        case Tool::WAVELET:
+            return "wavelet";
+        case Tool::DIR_PYR_EQUALIZER:
+            return "dirpyrdenoise";
+        case Tool::HSV_EQUALIZER:
+            return "hsvequalizer";
+        case Tool::FILM_SIMULATION:
+            return "filmsimulation";
+        case Tool::SOFT_LIGHT:
+            return "softlight";
+        case Tool::DEHAZE:
+            return "dehaze";
+        case Tool::SENSOR_BAYER:
+            return "sensorbayer";
+        case Tool::SENSOR_XTRANS:
+            return "sensorxtrans";
+        case Tool::BAYER_PROCESS:
+            return "bayerprocess";
+        case Tool::XTRANS_PROCESS:
+            return "xtransprocess";
+        case Tool::BAYER_PREPROCESS:
+            return "bayerpreprocess";
+        case Tool::PREPROCESS:
+            return "preprocess";
+        case Tool::DARKFRAME_TOOL:
+            return "darkframe";
+        case Tool::FLATFIELD_TOOL:
+            return "flatfield";
+        case Tool::RAW_CA_CORRECTION:
+            return "rawcacorrection";
+        case Tool::RAW_EXPOSURE:
+            return "rawexposure";
+        case Tool::PREPROCESS_WB:
+            return "preprocesswb";
+        case Tool::BAYER_RAW_EXPOSURE:
+            return "bayerrawexposure";
+        case Tool::XTRANS_RAW_EXPOSURE:
+            return "xtransrawexposure";
+        case Tool::FATTAL:
+            return "fattal";
+        case Tool::FILM_NEGATIVE:
+            return "filmnegative";
+        case Tool::PD_SHARPENING:
+            return "capturesharpening";
+    };
+    assert(false);
+    return "";
+};
+
 bool ToolPanelCoordinator::isFavoritable(Tool tool)
 {
     switch (tool) {
@@ -540,6 +676,8 @@ bool ToolPanelCoordinator::isFavoritable(Tool tool)
 
 void ToolPanelCoordinator::notebookPageChanged(Gtk::Widget* page, guint page_num)
 {
+    updatePanelTools(page, options.favorites);
+
     // Locallab spot curves are set visible if at least one photo has been loaded (to avoid
     // segfault) and locallab panel is active
     if (photoLoadedOnce) {
@@ -557,26 +695,140 @@ void ToolPanelCoordinator::notebookPageChanged(Gtk::Widget* page, guint page_num
     }
 }
 
+void ToolPanelCoordinator::updateFavoritesPanel(
+    const std::vector<Glib::ustring> &favoritesNames)
+{
+    std::unordered_set<Tool, ScopedEnumHash> favorites_set;
+    std::vector<std::reference_wrapper<const ToolTree>> favorites_tool_tree;
+
+    for (const auto &tool_name : favoritesNames) {
+        Tool tool = getToolFromName(tool_name.raw());
+        favorites_set.insert(tool);
+        favorites_tool_tree.push_back(
+            std::ref(*(toolToDefaultToolTreeMap.at(tool))));
+    }
+
+    updateToolPanel(favoritePanel, favorites_tool_tree, 1, favorites_set);
+}
+
+void ToolPanelCoordinator::updatePanelTools(
+    Gtk::Widget *page, const std::vector<Glib::ustring> &favorites)
+{
+    if (page == favoritePanelSW.get()) {
+        updateFavoritesPanel(favorites);
+        return;
+    }
+
+    ToolVBox *panel = nullptr;
+    const std::vector<ToolTree> *default_panel_tools = nullptr;
+    if (page == exposurePanelSW) {
+        panel = exposurePanel;
+        default_panel_tools = &EXPOSURE_PANEL_TOOLS;
+    } else if (page == detailsPanelSW) {
+        panel = detailsPanel;
+        default_panel_tools = &DETAILS_PANEL_TOOLS;
+    } else if (page == colorPanelSW) {
+        panel = colorPanel;
+        default_panel_tools = &COLOR_PANEL_TOOLS;
+    } else if (page == transformPanelSW) {
+        panel = transformPanel;
+        default_panel_tools = &TRANSFORM_PANEL_TOOLS;
+    } else if (page == rawPanelSW) {
+        panel = rawPanel;
+        default_panel_tools = &RAW_PANEL_TOOLS;
+    } else if (page == advancedPanelSW) {
+        panel = advancedPanel;
+        default_panel_tools = &ADVANCED_PANEL_TOOLS;
+    } else if (page == locallabPanelSW) {
+        panel = locallabPanel;
+        default_panel_tools = &LOCALLAB_PANEL_TOOLS;
+    } else {
+        return;
+    }
+    assert(panel && default_panel_tools);
+
+    std::unordered_set<Tool, ScopedEnumHash> favoriteTools;
+    for (const auto &tool_name : favorites) {
+        favoriteTools.insert(getToolFromName(tool_name.raw()));
+    }
+
+    updateToolPanel(panel, *default_panel_tools, 1, favoriteTools);
+}
+
+template <typename T>
+typename std::enable_if<std::is_convertible<T, const ToolTree>::value, void>::type
+ToolPanelCoordinator::updateToolPanel(
+    Gtk::Box *panelBox,
+    const std::vector<T> &children,
+    int level,
+    std::unordered_set<Tool, ScopedEnumHash> favorites)
+{
+    const bool is_favorite_panel = panelBox == favoritePanel;
+    const std::vector<Gtk::Widget *> old_tool_panels = panelBox->get_children();
+    auto old_widgets_iter = old_tool_panels.begin();
+    auto new_tool_trees_iter = children.begin();
+
+    // Indicates if this tool should not be added. Favorite tools are skipped
+    // unless the parent panel box is the favorites panel.
+    const auto should_skip_tool =
+        [is_favorite_panel, &favorites](const ToolTree &tool_tree) {
+            return !is_favorite_panel && favorites.count(tool_tree.id);
+        };
+
+    // Keep tools that are already correct.
+    while (
+        old_widgets_iter != old_tool_panels.end() &&
+        new_tool_trees_iter != children.end()) {
+        if (should_skip_tool(*new_tool_trees_iter)) {
+            ++new_tool_trees_iter;
+            continue;
+        }
+        if (*old_widgets_iter !=
+            getFoldableToolPanel(*new_tool_trees_iter)->getExpander()) {
+            break;
+        }
+        ++old_widgets_iter;
+    }
+
+    // Remove incorrect tools.
+    for (auto iter = old_tool_panels.end(); iter != old_widgets_iter;) {
+        --iter;
+        FoldableToolPanel *old_tool_panel = expanderToToolPanelMap.at(*iter);
+        assert(*iter == old_tool_panel->getExpander());
+        panelBox->remove(**iter);
+        old_tool_panel->setParent(nullptr);
+    }
+
+    // Add correct tools.
+    for (; new_tool_trees_iter != children.end(); new_tool_trees_iter++) {
+        if (should_skip_tool(*new_tool_trees_iter)) {
+            continue;
+        }
+        FoldableToolPanel *tool_panel =
+            getFoldableToolPanel(*new_tool_trees_iter);
+        if (tool_panel->getParent()) {
+            tool_panel->getParent()->remove(*tool_panel->getExpander());
+        }
+        addPanel(panelBox, tool_panel, level);
+    }
+
+    // Update the child tools.
+    for (const ToolTree &tool_tree : children) {
+        const FoldableToolPanel *tool_panel = getFoldableToolPanel(tool_tree);
+        updateToolPanel(
+            tool_panel->getSubToolsContainer(),
+            tool_tree.children,
+            level + 1,
+            favorites);
+    }
+}
+
 void ToolPanelCoordinator::addPanel(Gtk::Box* where, FoldableToolPanel* panel, int level)
 {
 
     panel->setParent(where);
     panel->setLevel(level);
-
-    expList.push_back(panel->getExpander());
     where->pack_start(*panel->getExpander(), false, false);
-    toolPanels.push_back(panel);
-}
-void ToolPanelCoordinator::addfavoritePanel (Gtk::Box* where, FoldableToolPanel* panel, int level)
-{
-    auto name = panel->getToolName();
-    auto it = std::find(options.favorites.begin(), options.favorites.end(), name);
-    if (it != options.favorites.end()) {
-        int index = std::distance(options.favorites.begin(), it);
-        favorites[index] = panel;
-    } else {
-        addPanel(where, panel, level);
-    }
 }
 
 ToolPanelCoordinator::~ToolPanelCoordinator ()
@@ -1366,6 +1618,30 @@ void ToolPanelCoordinator::foldAllButOne(Gtk::Box* parent, FoldableToolPanel* op
     }
 }
 
+void ToolPanelCoordinator::updateToolLocations(const std::vector<Glib::ustring> &favorites)
+{
+    const int fav_page_num = toolPanelNotebook->page_num(*favoritePanelSW);
+
+    // Add or remove favorites tab if necessary.
+    if (favorites.empty() && fav_page_num != -1) {
+        toolPanelNotebook->remove_page(fav_page_num);
+    } else if (!favorites.empty() && fav_page_num == -1) {
+        toolPanelNotebook->prepend_page(*favoritePanelSW, *toiF);
+    }
+
+    // Update favorite tool panels list.
+    favoritesToolPanels.clear();
+    for (const auto &favorite_name : favorites) {
+        favoritesToolPanels.push_back(
+            getFoldableToolPanel(getToolFromName(favorite_name)));
+    }
+
+    int cur_page_num = toolPanelNotebook->get_current_page();
+    Gtk::Widget *const cur_page = toolPanelNotebook->get_nth_page(cur_page_num);
+
+    updatePanelTools(cur_page, favorites);
+}
+
 bool ToolPanelCoordinator::handleShortcutKey(GdkEventKey* event)
 {
 
@@ -1376,7 +1652,7 @@ bool ToolPanelCoordinator::handleShortcutKey(GdkEventKey* event)
     if (alt) {
         switch (event->keyval) {
             case GDK_KEY_u:
-                if (favoritePanelSW) {
+                if (toolPanelNotebook->page_num(*favoritePanelSW) >= 0) {
                     toolPanelNotebook->set_current_page (toolPanelNotebook->page_num (*favoritePanelSW));
                 }
                 return true;
@@ -1422,9 +1698,7 @@ void ToolPanelCoordinator::updateVScrollbars(bool hide)
 {
     GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
     Gtk::PolicyType policy = hide ? Gtk::POLICY_NEVER : Gtk::POLICY_AUTOMATIC;
-    if (favoritePanelSW) {
-        favoritePanelSW->set_policy     (Gtk::POLICY_AUTOMATIC, policy);
-    }
+    favoritePanelSW->set_policy     (Gtk::POLICY_AUTOMATIC, policy);
     exposurePanelSW->set_policy     (Gtk::POLICY_AUTOMATIC, policy);
     detailsPanelSW->set_policy      (Gtk::POLICY_AUTOMATIC, policy);
     colorPanelSW->set_policy        (Gtk::POLICY_AUTOMATIC, policy);
@@ -1456,7 +1730,7 @@ void ToolPanelCoordinator::toolSelected(ToolMode tool)
     notebookconn.block(true); // "signal_switch_page" event is blocked to avoid unsubscribing Locallab (allows a correct behavior when switching to another tool using toolbar)
 
     auto checkFavorite = [this](FoldableToolPanel* tool) {
-        for (auto fav : favorites) {
+        for (auto fav : favoritesToolPanels) {
             if (fav == tool) {
                 return true;
             }
@@ -1512,6 +1786,8 @@ void ToolPanelCoordinator::toolSelected(ToolMode tool)
             break;
     }
 
+    updateToolLocations(options.favorites);
+
     notebookconn.block(false);
 }
 
@@ -1540,4 +1816,128 @@ void ToolPanelCoordinator::setEditProvider(EditDataProvider *provider)
 bool ToolPanelCoordinator::getFilmNegativeSpot(rtengine::Coord spot, int spotSize, RGB &refInput, RGB &refOutput)
 {
     return ipc && ipc->getFilmNegativeSpot(spot.x, spot.y, spotSize, refInput, refOutput);
+}
+
+FoldableToolPanel *ToolPanelCoordinator::getFoldableToolPanel(Tool tool) const
+{
+    switch (tool) {
+        case Tool::TONE_CURVE:
+            return toneCurve;
+        case Tool::SHADOWS_HIGHLIGHTS:
+            return shadowshighlights;
+        case Tool::IMPULSE_DENOISE:
+            return impulsedenoise;
+        case Tool::DEFRINGE_TOOL:
+            return defringe;
+        case Tool::SPOT:
+            return spot;
+        case Tool::DIR_PYR_DENOISE:
+            return dirpyrdenoise;
+        case Tool::EPD:
+            return epd;
+        case Tool::SHARPENING_TOOL:
+            return sharpening;
+        case Tool::LOCAL_CONTRAST:
+            return localContrast;
+        case Tool::SHARPEN_EDGE:
+            return sharpenEdge;
+        case Tool::SHARPEN_MICRO:
+            return sharpenMicro;
+        case Tool::L_CURVE:
+            return lcurve;
+        case Tool::RGB_CURVES:
+            return rgbcurves;
+        case Tool::COLOR_TONING:
+            return colortoning;
+        case Tool::LENS_GEOM:
+            return lensgeom;
+        case Tool::LENS_PROF:
+            return lensProf;
+        case Tool::DISTORTION:
+            return distortion;
+        case Tool::ROTATE:
+            return rotate;
+        case Tool::VIBRANCE:
+            return vibrance;
+        case Tool::COLOR_APPEARANCE:
+            return colorappearance;
+        case Tool::WHITE_BALANCE:
+            return whitebalance;
+        case Tool::VIGNETTING:
+            return vignetting;
+        case Tool::RETINEX_TOOL:
+            return retinex;
+        case Tool::GRADIENT:
+            return gradient;
+        case Tool::LOCALLAB:
+            return locallab;
+        case Tool::PC_VIGNETTE:
+            return pcvignette;
+        case Tool::PERSPECTIVE:
+            return perspective;
+        case Tool::CA_CORRECTION:
+            return cacorrection;
+        case Tool::CH_MIXER:
+            return chmixer;
+        case Tool::BLACK_WHITE:
+            return blackwhite;
+        case Tool::RESIZE_TOOL:
+            return resize;
+        case Tool::PR_SHARPENING:
+            return prsharpening;
+        case Tool::CROP_TOOL:
+            return crop;
+        case Tool::ICM:
+            return icm;
+        case Tool::WAVELET:
+            return wavelet;
+        case Tool::DIR_PYR_EQUALIZER:
+            return dirpyrequalizer;
+        case Tool::HSV_EQUALIZER:
+            return hsvequalizer;
+        case Tool::FILM_SIMULATION:
+            return filmSimulation;
+        case Tool::SOFT_LIGHT:
+            return softlight;
+        case Tool::DEHAZE:
+            return dehaze;
+        case Tool::SENSOR_BAYER:
+            return sensorbayer;
+        case Tool::SENSOR_XTRANS:
+            return sensorxtrans;
+        case Tool::BAYER_PROCESS:
+            return bayerprocess;
+        case Tool::XTRANS_PROCESS:
+            return xtransprocess;
+        case Tool::BAYER_PREPROCESS:
+            return bayerpreprocess;
+        case Tool::PREPROCESS:
+            return preprocess;
+        case Tool::DARKFRAME_TOOL:
+            return darkframe;
+        case Tool::FLATFIELD_TOOL:
+            return flatfield;
+        case Tool::RAW_CA_CORRECTION:
+            return rawcacorrection;
+        case Tool::RAW_EXPOSURE:
+            return rawexposure;
+        case Tool::PREPROCESS_WB:
+            return preprocessWB;
+        case Tool::BAYER_RAW_EXPOSURE:
+            return bayerrawexposure;
+        case Tool::XTRANS_RAW_EXPOSURE:
+            return xtransrawexposure;
+        case Tool::FATTAL:
+            return fattal;
+        case Tool::FILM_NEGATIVE:
+            return filmNegative;
+        case Tool::PD_SHARPENING:
+            return pdSharpening;
+    };
+    return nullptr;
+}
+
+FoldableToolPanel *ToolPanelCoordinator::getFoldableToolPanel(const ToolTree &toolTree) const
+{
+    return getFoldableToolPanel(toolTree.id);
 }

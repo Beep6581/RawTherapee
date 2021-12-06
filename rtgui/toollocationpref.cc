@@ -32,132 +32,6 @@ namespace
 {
 
 /**
- * Gets the tool name for the tool's ToolPanel as a string.
- *
- * @param tool The name as a raw string, or an empty string if the tool is
- * unknown.
- */
-std::string getToolName(Tool tool)
-{
-    switch (tool) {
-        case Tool::TONE_CURVE:
-            return "tonecurve";
-        case Tool::SHADOWS_HIGHLIGHTS:
-            return "shadowshighlights";
-        case Tool::IMPULSE_DENOISE:
-            return "impulsedenoise";
-        case Tool::DEFRINGE_TOOL:
-            return "defringe";
-        case Tool::SPOT:
-            return "spot";
-        case Tool::DIR_PYR_DENOISE:
-            return "dirpyrdenoise";
-        case Tool::EPD:
-            return "epd";
-        case Tool::SHARPENING_TOOL:
-            return "sharpening";
-        case Tool::LOCAL_CONTRAST:
-            return "localcontrast";
-        case Tool::SHARPEN_EDGE:
-            return "sharpenedge";
-        case Tool::SHARPEN_MICRO:
-            return "sharpenmicro";
-        case Tool::L_CURVE:
-            return "labcurves";
-        case Tool::RGB_CURVES:
-            return "rgbcurves";
-        case Tool::COLOR_TONING:
-            return "colortoning";
-        case Tool::LENS_GEOM:
-            return "lensgeom";
-        case Tool::LENS_PROF:
-            return "lensprof";
-        case Tool::DISTORTION:
-            return "distortion";
-        case Tool::ROTATE:
-            return "rotate";
-        case Tool::VIBRANCE:
-            return "vibrance";
-        case Tool::COLOR_APPEARANCE:
-            return "colorappearance";
-        case Tool::WHITE_BALANCE:
-            return "whitebalance";
-        case Tool::VIGNETTING:
-            return "vignetting";
-        case Tool::RETINEX_TOOL:
-            return "retinex";
-        case Tool::GRADIENT:
-            return "gradient";
-        case Tool::LOCALLAB:
-            return "locallab";
-        case Tool::PC_VIGNETTE:
-            return "pcvignette";
-        case Tool::PERSPECTIVE:
-            return "perspective";
-        case Tool::CA_CORRECTION:
-            return "cacorrection";
-        case Tool::CH_MIXER:
-            return "chmixer";
-        case Tool::BLACK_WHITE:
-            return "blackwhite";
-        case Tool::RESIZE_TOOL:
-            return "resize";
-        case Tool::PR_SHARPENING:
-            return "prsharpening";
-        case Tool::CROP_TOOL:
-            return "crop";
-        case Tool::ICM:
-            return "icm";
-        case Tool::WAVELET:
-            return "wavelet";
-        case Tool::DIR_PYR_EQUALIZER:
-            return "dirpyrdenoise";
-        case Tool::HSV_EQUALIZER:
-            return "hsvequalizer";
-        case Tool::FILM_SIMULATION:
-            return "filmsimulation";
-        case Tool::SOFT_LIGHT:
-            return "softlight";
-        case Tool::DEHAZE:
-            return "dehaze";
-        case Tool::SENSOR_BAYER:
-            return "sensorbayer";
-        case Tool::SENSOR_XTRANS:
-            return "sensorxtrans";
-        case Tool::BAYER_PROCESS:
-            return "bayerprocess";
-        case Tool::XTRANS_PROCESS:
-            return "xtransprocess";
-        case Tool::BAYER_PREPROCESS:
-            return "bayerpreprocess";
-        case Tool::PREPROCESS:
-            return "preprocess";
-        case Tool::DARKFRAME_TOOL:
-            return "darkframe";
-        case Tool::FLATFIELD_TOOL:
-            return "flatfield";
-        case Tool::RAW_CA_CORRECTION:
-            return "rawcacorrection";
-        case Tool::RAW_EXPOSURE:
-            return "rawexposure";
-        case Tool::PREPROCESS_WB:
-            return "preprocesswb";
-        case Tool::BAYER_RAW_EXPOSURE:
-            return "bayerrawexposure";
-        case Tool::XTRANS_RAW_EXPOSURE:
-            return "xtransrawexposure";
-        case Tool::FATTAL:
-            return "fattal";
-        case Tool::FILM_NEGATIVE:
-            return "filmnegative";
-        case Tool::PD_SHARPENING:
-            return "capturesharpening";
-    };
-    assert(false);
-    return "";
-};
-
-/**
  * Returns the language key for the panel's title.
  */
 Glib::ustring getToolPanelTitleKey(ToolPanelCoordinator::Panel panel)
@@ -592,13 +466,6 @@ struct ToolLocationPreference::Impl {
      */
     void favoriteToggled(const Glib::ustring &row_path);
     /**
-     * Gets the tool with the provided tool name.
-     *
-     * @param name The tool name as a raw string.
-     * @return The tool.
-     */
-    Tool getToolFromName(const std::string &name) const;
-    /**
      * Initializes the favorites list.
      *
      * @param favorites Tools that are currently marked as favorites.
@@ -719,36 +586,6 @@ void ToolLocationPreference::Impl::favoriteToggled(const Glib::ustring &row_path
     }
 }
 
-Tool ToolLocationPreference::Impl::getToolFromName(const std::string &name) const
-{
-    if (toolNamesReverseMap.empty()) {
-        // Create the name to tool mapping.
-
-        const auto panels = ToolPanelCoordinator::getDefaultToolLayout();
-        std::vector<const ToolPanelCoordinator::ToolTree *> unprocessed_tool_trees;
-
-        // Get the root tools from each panel.
-        for (const auto &panel_tools : panels) {
-            for (const auto &tool : panel_tools.second) {
-                unprocessed_tool_trees.push_back(&tool);
-            }
-        }
-
-        // Process all the tools, including their children.
-        while (unprocessed_tool_trees.size() > 0) {
-            const ToolPanelCoordinator::ToolTree *tool_tree =
-                unprocessed_tool_trees.back();
-            unprocessed_tool_trees.pop_back();
-            toolNamesReverseMap[getToolName(tool_tree->id)] = tool_tree->id;
-            for (const auto &child_tree : tool_tree->children) {
-                unprocessed_tool_trees.push_back(&child_tree);
-            }
-        }
-    }
-
-    return toolNamesReverseMap.at(name);
-}
-
 void ToolLocationPreference::Impl::initFavoritesRows(
     const std::vector<Tool> &favorites)
 {
@@ -833,7 +670,7 @@ std::vector<Tool> ToolLocationPreference::Impl::toolNamesToTools(
     for (auto &&tool_name : tool_names) {
         Tool tool;
         try {
-            tool = getToolFromName(tool_name);
+            tool = ToolPanelCoordinator::getToolFromName(tool_name);
         } catch (const std::exception &e) {
             if (rtengine::settings->verbose) {
                 std::cerr << "Unrecognized tool name \"" << tool_name << "\"." << std::endl;
@@ -853,7 +690,7 @@ void ToolLocationPreference::Impl::updateOptions()
     options.favorites.resize(favorites_rows.size());
     for (unsigned i = 0; i < favorites_rows.size(); i++) {
         const Tool tool = favorites_rows[i].get_value(favoritesColumns.tool);
-        options.favorites[i] = getToolName(tool);
+        options.favorites[i] = ToolPanelCoordinator::getToolName(tool);
     }
 }
 

@@ -124,6 +124,7 @@ public:
     void updateFBQueryTB (bool singleRow);
     void updateFBToolBarVisibility (bool showFilmStripToolBar);
     void updateShowtooltipVisibility (bool showtooltip);
+    void updateToolPanelToolLocations(const std::vector<Glib::ustring> &favorites);
     bool getIsFullscreen()
     {
         return is_fullscreen;
