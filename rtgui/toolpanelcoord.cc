@@ -421,6 +421,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     favoritePanelSW->add(*favoritePanelContainer);
     favoritePanelContainer->pack_start(*favoritePanel, Gtk::PACK_SHRINK, 0);
     favoritePanelContainer->pack_start(*vbPanelEnd[0], Gtk::PACK_SHRINK, 4);
+    favoritePanelSW->show_all();
 
     exposurePanelSW->add  (*exposurePanelContainer);
     exposurePanelContainer->pack_start(*exposurePanel, Gtk::PACK_SHRINK, 0);
@@ -460,6 +461,10 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     toiT = Gtk::manage (new TextOrIcon ("transform.png", M ("MAIN_TAB_TRANSFORM"), M ("MAIN_TAB_TRANSFORM_TOOLTIP")));
     toiR = Gtk::manage (new TextOrIcon ("bayer.png", M ("MAIN_TAB_RAW"), M ("MAIN_TAB_RAW_TOOLTIP")));
     toiM = Gtk::manage (new TextOrIcon ("metadata.png", M ("MAIN_TAB_METADATA"), M ("MAIN_TAB_METADATA_TOOLTIP")));
+    toiF->show_all();
+    if (options.favorites.size()) {
+        toolPanelNotebook->append_page(*favoritePanelSW, *toiF);
+    }
     toolPanelNotebook->append_page (*exposurePanelSW,  *toiE);
     toolPanelNotebook->append_page (*detailsPanelSW,   *toiD);
     toolPanelNotebook->append_page (*colorPanelSW,     *toiC);
