@@ -185,7 +185,8 @@ public:
     void updateProfiles (const Glib::ustring &printerProfile, rtengine::RenderingIntent printerIntent, bool printerBPC);
     void updateTPVScrollbar (bool hide);
     void updateHistogramPosition (int oldPosition, int newPosition);
-    void updateToolPanelToolLocations(const std::vector<Glib::ustring> &favorites);
+    void updateToolPanelToolLocations(
+        const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools);
 
     void defaultMonitorProfileChanged (const Glib::ustring &profile_name, bool auto_monitor_profile);
 

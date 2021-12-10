@@ -423,6 +423,9 @@ struct ToolLocationPreference::Impl {
 
     Options &options;
 
+    // General options.
+    Gtk::CheckButton *cloneFavoriteToolsToggleWidget;
+
     // Tool list.
     ToolListColumns toolListColumns;
     Glib::RefPtr<Gtk::TreeStore> toolListModelPtr;
@@ -506,6 +509,10 @@ std::unordered_map<std::string, Tool>
 ToolLocationPreference::Impl::Impl(Options &options) :
     options(options),
 
+    // General options.
+    cloneFavoriteToolsToggleWidget(Gtk::manage(
+        new Gtk::CheckButton(M("PREFERENCES_TOOLPANEL_CLONE_FAVORITES")))),
+
     // Tool list.
     toolListModelPtr(Gtk::TreeStore::create(toolListColumns)),
     toolListViewColumnFavorite(
@@ -522,6 +529,9 @@ ToolLocationPreference::Impl::Impl(Options &options) :
     favoritesListEditButtons(*favoritesViewPtr, favoritesModelPtr)
 {
     const std::vector<Tool> favorites = toolNamesToTools(options.favorites);
+
+    // General options.
+    cloneFavoriteToolsToggleWidget->set_active(options.cloneFavoriteTools);
 
     // Tool list.
     toolListViewPtr->append_column(toolListViewColumnToolName);
@@ -686,6 +696,8 @@ std::vector<Tool> ToolLocationPreference::Impl::toolNamesToTools(
 
 void ToolLocationPreference::Impl::updateOptions()
 {
+    options.cloneFavoriteTools = cloneFavoriteToolsToggleWidget->get_active();
+
     const auto favorites_rows = favoritesModelPtr->children();
     options.favorites.resize(favorites_rows.size());
     for (unsigned i = 0; i < favorites_rows.size(); i++) {
@@ -729,6 +741,10 @@ ToolLocationPreference::ToolLocationPreference(Options &options) :
     favorites_list_scrolled_window->add(*impl->favoritesViewPtr);
     setExpandAlignProperties(
         favorites_frame, false, true, Gtk::ALIGN_START, Gtk::ALIGN_FILL);
+
+    // General options.
+    layout_grid->attach_next_to(
+        *impl->cloneFavoriteToolsToggleWidget, Gtk::PositionType::POS_BOTTOM, 2, 1);
 }
 
 void ToolLocationPreference::updateOptions()

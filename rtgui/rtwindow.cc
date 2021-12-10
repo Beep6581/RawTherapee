@@ -1111,10 +1111,10 @@ void RTWindow::updateHistogramPosition (int oldPosition, int newPosition)
 }
 
 void RTWindow::updateToolPanelToolLocations(
-    const std::vector<Glib::ustring> &favorites)
+    const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools)
 {
     if (epanel) {
-        epanel->updateToolPanelToolLocations(favorites);
+        epanel->updateToolPanelToolLocations(favorites, cloneFavoriteTools);
     }
 }
 

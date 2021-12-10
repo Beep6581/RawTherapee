@@ -219,7 +219,9 @@ protected:
     void addfavoritePanel (Gtk::Box* where, FoldableToolPanel* panel, int level = 1);
     void notebookPageChanged(Gtk::Widget* page, guint page_num);
     void updatePanelTools(
-        Gtk::Widget *page, const std::vector<Glib::ustring> &favorites);
+        Gtk::Widget *page,
+        const std::vector<Glib::ustring> &favorites,
+        bool cloneFavoriteTools);
 
 private:
     EditDataProvider *editDataProvider;
@@ -345,7 +347,8 @@ public:
         const LUTu& histLRETI
     );
     void foldAllButOne(Gtk::Box* parent, FoldableToolPanel* openedSection);
-    void updateToolLocations(const std::vector<Glib::ustring> &favorites);
+    void updateToolLocations(
+        const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools);
 
     // multiple listeners can be added that are notified on changes (typical: profile panel and the history)
     void addPParamsChangeListener(PParamsChangeListener* pp)
@@ -461,14 +464,16 @@ protected:
 
     FoldableToolPanel *getFoldableToolPanel(Tool tool) const;
     FoldableToolPanel *getFoldableToolPanel(const ToolTree &tool) const;
-    void updateFavoritesPanel(const std::vector<Glib::ustring> &favorites);
+    void updateFavoritesPanel(
+        const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools);
     template <typename T>
     typename std::enable_if<std::is_convertible<T, const ToolTree>::value, void>::type
     updateToolPanel(
         Gtk::Box *panelBox,
         const std::vector<T> &children,
         int level,
-        std::unordered_set<Tool, ScopedEnumHash> favorites);
+        std::unordered_set<Tool, ScopedEnumHash> favorites,
+        bool cloneFavoriteTools);
 
 private:
     IdleRegister idle_register;

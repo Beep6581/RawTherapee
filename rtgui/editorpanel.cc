@@ -2487,10 +2487,10 @@ void EditorPanel::updateHistogramPosition (int oldPosition, int newPosition)
 }
 
 void EditorPanel::updateToolPanelToolLocations(
-    const std::vector<Glib::ustring> &favorites)
+    const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools)
 {
     if (tpc) {
-        tpc->updateToolLocations(favorites);
+        tpc->updateToolLocations(favorites, cloneFavoriteTools);
     }
 }
 

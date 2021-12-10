@@ -481,7 +481,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
 
     toolPanelNotebook->set_scrollable();
     toolPanelNotebook->show_all();
-    updateToolLocations(options.favorites);
+    updateToolLocations(options.favorites, options.cloneFavoriteTools);
 
     notebookconn = toolPanelNotebook->signal_switch_page().connect(
                        sigc::mem_fun(*this, &ToolPanelCoordinator::notebookPageChanged));
@@ -681,7 +681,7 @@ bool ToolPanelCoordinator::isFavoritable(Tool tool)
 
 void ToolPanelCoordinator::notebookPageChanged(Gtk::Widget* page, guint page_num)
 {
-    updatePanelTools(page, options.favorites);
+    updatePanelTools(page, options.favorites, options.cloneFavoriteTools);
 
     // Locallab spot curves are set visible if at least one photo has been loaded (to avoid
     // segfault) and locallab panel is active
@@ -701,7 +701,8 @@ void ToolPanelCoordinator::notebookPageChanged(Gtk::Widget* page, guint page_num
 }
 
 void ToolPanelCoordinator::updateFavoritesPanel(
-    const std::vector<Glib::ustring> &favoritesNames)
+    const std::vector<Glib::ustring> &favoritesNames,
+    bool cloneFavoriteTools)
 {
     std::unordered_set<Tool, ScopedEnumHash> favorites_set;
     std::vector<std::reference_wrapper<const ToolTree>> favorites_tool_tree;
@@ -713,14 +714,17 @@ void ToolPanelCoordinator::updateFavoritesPanel(
             std::ref(*(toolToDefaultToolTreeMap.at(tool))));
     }
 
-    updateToolPanel(favoritePanel, favorites_tool_tree, 1, favorites_set);
+    updateToolPanel(
+        favoritePanel, favorites_tool_tree, 1, favorites_set, cloneFavoriteTools);
 }
 
 void ToolPanelCoordinator::updatePanelTools(
-    Gtk::Widget *page, const std::vector<Glib::ustring> &favorites)
+    Gtk::Widget *page,
+    const std::vector<Glib::ustring> &favorites,
+    bool cloneFavoriteTools)
 {
     if (page == favoritePanelSW.get()) {
-        updateFavoritesPanel(favorites);
+        updateFavoritesPanel(favorites, cloneFavoriteTools);
         return;
     }
 
@@ -757,7 +761,7 @@ void ToolPanelCoordinator::updatePanelTools(
         favoriteTools.insert(getToolFromName(tool_name.raw()));
     }
 
-    updateToolPanel(panel, *default_panel_tools, 1, favoriteTools);
+    updateToolPanel(panel, *default_panel_tools, 1, favoriteTools, cloneFavoriteTools);
 }
 
 template <typename T>
@@ -766,18 +770,21 @@ ToolPanelCoordinator::updateToolPanel(
     Gtk::Box *panelBox,
     const std::vector<T> &children,
     int level,
-    std::unordered_set<Tool, ScopedEnumHash> favorites)
+    std::unordered_set<Tool, ScopedEnumHash> favorites,
+    bool cloneFavoriteTools)
 {
     const bool is_favorite_panel = panelBox == favoritePanel;
+    const bool skip_favorites = !cloneFavoriteTools && !is_favorite_panel;
     const std::vector<Gtk::Widget *> old_tool_panels = panelBox->get_children();
     auto old_widgets_iter = old_tool_panels.begin();
     auto new_tool_trees_iter = children.begin();
 
     // Indicates if this tool should not be added. Favorite tools are skipped
-    // unless the parent panel box is the favorites panel.
+    // if they are sub-tools within the favorites panel, or if tool cloning is
+    // off and they are not within the favorites panel.
     const auto should_skip_tool =
-        [is_favorite_panel, &favorites](const ToolTree &tool_tree) {
-            return !is_favorite_panel && favorites.count(tool_tree.id);
+        [skip_favorites, &favorites](const ToolTree &tool_tree) {
+            return skip_favorites && favorites.count(tool_tree.id);
         };
 
     // Keep tools that are already correct.
@@ -824,7 +831,8 @@ ToolPanelCoordinator::updateToolPanel(
             tool_panel->getSubToolsContainer(),
             tool_tree.children,
             level + 1,
-            favorites);
+            favorites,
+            cloneFavoriteTools && !is_favorite_panel);
     }
 }
 
@@ -1623,7 +1631,8 @@ void ToolPanelCoordinator::foldAllButOne(Gtk::Box* parent, FoldableToolPanel* op
     }
 }
 
-void ToolPanelCoordinator::updateToolLocations(const std::vector<Glib::ustring> &favorites)
+void ToolPanelCoordinator::updateToolLocations(
+    const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools)
 {
     const int fav_page_num = toolPanelNotebook->page_num(*favoritePanelSW);
 
@@ -1644,7 +1653,7 @@ void ToolPanelCoordinator::updateToolLocations(const std::vector<Glib::ustring> 
     int cur_page_num = toolPanelNotebook->get_current_page();
     Gtk::Widget *const cur_page = toolPanelNotebook->get_nth_page(cur_page_num);
 
-    updatePanelTools(cur_page, favorites);
+    updatePanelTools(cur_page, favorites, cloneFavoriteTools);
 }
 
 bool ToolPanelCoordinator::handleShortcutKey(GdkEventKey* event)
@@ -1791,7 +1800,7 @@ void ToolPanelCoordinator::toolSelected(ToolMode tool)
             break;
     }
 
-    updateToolLocations(options.favorites);
+    updateToolLocations(options.favorites, options.cloneFavoriteTools);
 
     notebookconn.block(false);
 }
