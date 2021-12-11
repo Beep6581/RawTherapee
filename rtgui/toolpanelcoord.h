@@ -305,7 +305,7 @@ public:
         std::vector<ToolTree> children;
     };
 
-    using ToolLayout = std::unordered_map<Panel, const std::vector<ToolTree>, ScopedEnumHash>;
+    using ToolLayout = std::unordered_map<Panel, const std::vector<ToolTree> &, ScopedEnumHash>;
 
     CoarsePanel* coarse;
     Gtk::Notebook* toolPanelNotebook;
@@ -313,12 +313,13 @@ public:
     ToolPanelCoordinator(bool batch = false);
     ~ToolPanelCoordinator () override;
 
-    static const ToolLayout& getDefaultToolLayout();
+    static const ToolLayout &getDefaultToolLayout();
     /**
      * Gets the tool with the provided tool name.
      *
      * @param name The tool name as a raw string.
      * @return The tool.
+     * @throws std::out_of_range If the name is not recognized.
      */
     static Tool getToolFromName(const std::string &name);
     /**
@@ -472,7 +473,7 @@ protected:
         Gtk::Box *panelBox,
         const std::vector<T> &children,
         int level,
-        std::unordered_set<Tool, ScopedEnumHash> favorites,
+        const std::unordered_set<Tool, ScopedEnumHash> &favorites,
         bool cloneFavoriteTools);
 
 private:

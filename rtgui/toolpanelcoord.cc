@@ -16,6 +16,8 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <iostream>
+
 #include "multilangmgr.h"
 #include "toolpanelcoord.h"
 #include "metadatapanel.h"
@@ -350,12 +352,14 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
 
     for (const auto &panel_tool_layout : getDefaultToolLayout()) {
         const auto &panel_tools = panel_tool_layout.second;
-        std::vector<const ToolTree *> unprocessed_tools;
+        std::vector<const ToolTree *> unprocessed_tools(panel_tools.size());
 
         // Start with the root tools for every panel.
-        for (const auto &tool_tree : panel_tools) {
-            unprocessed_tools.push_back(&tool_tree);
-        }
+        std::transform(
+            panel_tools.begin(),
+            panel_tools.end(),
+            unprocessed_tools.begin(),
+            [](const ToolTree &tool_tree) { return &tool_tree; });
 
         // Process each tool.
         while (!unprocessed_tools.empty()) {
@@ -363,7 +367,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
             const ToolTree *cur_tool = unprocessed_tools.back();
             unprocessed_tools.pop_back();
             // Add tool to list of expanders and tool panels.
-            FoldableToolPanel *tool_panel = getFoldableToolPanel(*cur_tool);
+            FoldableToolPanel *const tool_panel = getFoldableToolPanel(*cur_tool);
             expList.push_back(tool_panel->getExpander());
             toolPanels.push_back(tool_panel);
             expanderToToolPanelMap[tool_panel->getExpander()] = tool_panel;
@@ -514,7 +518,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     prevPage = toolPanelNotebook->get_nth_page(0);
 }
 
-const ToolPanelCoordinator::ToolLayout& ToolPanelCoordinator::getDefaultToolLayout()
+const ToolPanelCoordinator::ToolLayout &ToolPanelCoordinator::getDefaultToolLayout()
 {
     return PANEL_TOOLS;
 }
@@ -708,10 +712,22 @@ void ToolPanelCoordinator::updateFavoritesPanel(
     std::vector<std::reference_wrapper<const ToolTree>> favorites_tool_tree;
 
     for (const auto &tool_name : favoritesNames) {
-        Tool tool = getToolFromName(tool_name.raw());
+        Tool tool;
+        try {
+            tool = getToolFromName(tool_name.raw());
+        } catch (const std::out_of_range &e) {
+            if (rtengine::settings->verbose) {
+                std::cerr
+                    << "Unrecognized favorite tool \"" << tool_name << "\""
+                    << std::endl;
+            }
+            continue;
+        }
+        if (isFavoritable(tool)) {
         favorites_set.insert(tool);
         favorites_tool_tree.push_back(
             std::ref(*(toolToDefaultToolTreeMap.at(tool))));
+        }
     }
 
     updateToolPanel(
@@ -758,7 +774,20 @@ void ToolPanelCoordinator::updatePanelTools(
 
     std::unordered_set<Tool, ScopedEnumHash> favoriteTools;
     for (const auto &tool_name : favorites) {
-        favoriteTools.insert(getToolFromName(tool_name.raw()));
+        Tool tool;
+        try {
+            tool = getToolFromName(tool_name.raw());
+        } catch (const std::out_of_range &e) {
+            if (rtengine::settings->verbose) {
+                std::cerr
+                    << "Unrecognized favorite tool \"" << tool_name << "\""
+                    << std::endl;
+            }
+            continue;
+        }
+        if (isFavoritable(tool)) {
+            favoriteTools.insert(tool);
+        }
     }
 
     updateToolPanel(panel, *default_panel_tools, 1, favoriteTools, cloneFavoriteTools);
@@ -770,7 +799,7 @@ ToolPanelCoordinator::updateToolPanel(
     Gtk::Box *panelBox,
     const std::vector<T> &children,
     int level,
-    std::unordered_set<Tool, ScopedEnumHash> favorites,
+    const std::unordered_set<Tool, ScopedEnumHash> &favorites,
     bool cloneFavoriteTools)
 {
     const bool is_favorite_panel = panelBox == favoritePanel;
@@ -1646,8 +1675,20 @@ void ToolPanelCoordinator::updateToolLocations(
     // Update favorite tool panels list.
     favoritesToolPanels.clear();
     for (const auto &favorite_name : favorites) {
-        favoritesToolPanels.push_back(
-            getFoldableToolPanel(getToolFromName(favorite_name)));
+        Tool tool;
+        try {
+            tool = getToolFromName(favorite_name.raw());
+        } catch (const std::out_of_range &e) {
+            if (rtengine::settings->verbose) {
+                std::cerr
+                    << "Unrecognized favorite tool \"" << favorite_name << "\""
+                    << std::endl;
+            }
+            continue;
+        }
+        if (isFavoritable(tool)) {
+            favoritesToolPanels.push_back(getFoldableToolPanel(tool));
+        }
     }
 
     int cur_page_num = toolPanelNotebook->get_current_page();
@@ -1948,6 +1989,7 @@ FoldableToolPanel *ToolPanelCoordinator::getFoldableToolPanel(Tool tool) const
         case Tool::PD_SHARPENING:
             return pdSharpening;
     };
+    assert(false);
     return nullptr;
 }
 
