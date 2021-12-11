@@ -22,6 +22,7 @@
 #include "guiutils.h"
 #include "options.h"
 #include "rtimage.h"
+#include "rtscalable.h"
 #include "toollocationpref.h"
 #include "toolpanelcoord.h"
 
@@ -720,7 +721,8 @@ ToolLocationPreference::ToolLocationPreference(Options &options) :
         M("PREFERENCES_TOOLPANEL_AVAILABLETOOLS")));
     Gtk::ScrolledWindow *tool_list_scrolled_window =
         Gtk::manage(new Gtk::ScrolledWindow());
-    tool_list_scrolled_window->set_min_content_width(550);
+    tool_list_scrolled_window->set_min_content_width(
+        400 * (RTScalable::getTweakedDPI() / RTScalable::baseDPI));
     layout_grid->attach_next_to(*tool_list_frame, Gtk::PositionType::POS_RIGHT, 1, 1);
     tool_list_frame->add(*tool_list_scrolled_window);
     tool_list_scrolled_window->add(*impl->toolListViewPtr);
@@ -733,10 +735,11 @@ ToolLocationPreference::ToolLocationPreference(Options &options) :
     Gtk::Box *favorites_box = Gtk::manage(new Gtk::Box());
     Gtk::ScrolledWindow *favorites_list_scrolled_window =
         Gtk::manage(new Gtk::ScrolledWindow());
-    favorites_list_scrolled_window->set_min_content_width(400);
+    favorites_list_scrolled_window->set_min_content_width(
+        300 * (RTScalable::getTweakedDPI() / RTScalable::baseDPI));
     layout_grid->attach_next_to(*favorites_frame, Gtk::PositionType::POS_RIGHT, 1, 1);
-    favorites_box->pack_start(*favorites_list_scrolled_window, false, false);
     favorites_box->pack_start(impl->favoritesListEditButtons, false, false);
+    favorites_box->pack_start(*favorites_list_scrolled_window, false, false);
     favorites_frame->add(*favorites_box);
     favorites_list_scrolled_window->add(*impl->favoritesViewPtr);
     setExpandAlignProperties(
