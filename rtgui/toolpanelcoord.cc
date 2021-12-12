@@ -557,117 +557,117 @@ std::string ToolPanelCoordinator::getToolName(Tool tool)
 {
     switch (tool) {
         case Tool::TONE_CURVE:
-            return "tonecurve";
+            return ToneCurve::TOOL_NAME;
         case Tool::SHADOWS_HIGHLIGHTS:
-            return "shadowshighlights";
+            return ShadowsHighlights::TOOL_NAME;
         case Tool::IMPULSE_DENOISE:
-            return "impulsedenoise";
+            return ImpulseDenoise::TOOL_NAME;
         case Tool::DEFRINGE_TOOL:
-            return "defringe";
+            return Defringe::TOOL_NAME;
         case Tool::SPOT:
-            return "spot";
+            return Spot::TOOL_NAME;
         case Tool::DIR_PYR_DENOISE:
-            return "dirpyrdenoise";
+            return DirPyrDenoise::TOOL_NAME;
         case Tool::EPD:
-            return "epd";
+            return EdgePreservingDecompositionUI::TOOL_NAME;
         case Tool::SHARPENING_TOOL:
-            return "sharpening";
+            return Sharpening::TOOL_NAME;
         case Tool::LOCAL_CONTRAST:
-            return "localcontrast";
+            return LocalContrast::TOOL_NAME;
         case Tool::SHARPEN_EDGE:
-            return "sharpenedge";
+            return SharpenEdge::TOOL_NAME;
         case Tool::SHARPEN_MICRO:
-            return "sharpenmicro";
+            return SharpenMicro::TOOL_NAME;
         case Tool::L_CURVE:
-            return "labcurves";
+            return LCurve::TOOL_NAME;
         case Tool::RGB_CURVES:
-            return "rgbcurves";
+            return RGBCurves::TOOL_NAME;
         case Tool::COLOR_TONING:
-            return "colortoning";
+            return ColorToning::TOOL_NAME;
         case Tool::LENS_GEOM:
-            return "lensgeom";
+            return LensGeometry::TOOL_NAME;
         case Tool::LENS_PROF:
-            return "lensprof";
+            return LensProfilePanel::TOOL_NAME;
         case Tool::DISTORTION:
-            return "distortion";
+            return Distortion::TOOL_NAME;
         case Tool::ROTATE:
-            return "rotate";
+            return Rotate::TOOL_NAME;
         case Tool::VIBRANCE:
-            return "vibrance";
+            return Vibrance::TOOL_NAME;
         case Tool::COLOR_APPEARANCE:
-            return "colorappearance";
+            return ColorAppearance::TOOL_NAME;
         case Tool::WHITE_BALANCE:
-            return "whitebalance";
+            return WhiteBalance::TOOL_NAME;
         case Tool::VIGNETTING:
-            return "vignetting";
+            return Vignetting::TOOL_NAME;
         case Tool::RETINEX_TOOL:
-            return "retinex";
+            return Retinex::TOOL_NAME;
         case Tool::GRADIENT:
-            return "gradient";
+            return Gradient::TOOL_NAME;
         case Tool::LOCALLAB:
-            return "locallab";
+            return Locallab::TOOL_NAME;
         case Tool::PC_VIGNETTE:
-            return "pcvignette";
+            return PCVignette::TOOL_NAME;
         case Tool::PERSPECTIVE:
-            return "perspective";
+            return PerspCorrection::TOOL_NAME;
         case Tool::CA_CORRECTION:
-            return "cacorrection";
+            return CACorrection::TOOL_NAME;
         case Tool::CH_MIXER:
-            return "chmixer";
+            return ChMixer::TOOL_NAME;
         case Tool::BLACK_WHITE:
-            return "blackwhite";
+            return BlackWhite::TOOL_NAME;
         case Tool::RESIZE_TOOL:
-            return "resize";
+            return Resize::TOOL_NAME;
         case Tool::PR_SHARPENING:
-            return "prsharpening";
+            return PrSharpening::TOOL_NAME;
         case Tool::CROP_TOOL:
-            return "crop";
+            return Crop::TOOL_NAME;
         case Tool::ICM:
-            return "icm";
+            return ICMPanel::TOOL_NAME;
         case Tool::WAVELET:
-            return "wavelet";
+            return Wavelet::TOOL_NAME;
         case Tool::DIR_PYR_EQUALIZER:
-            return "dirpyrdenoise";
+            return DirPyrEqualizer::TOOL_NAME;
         case Tool::HSV_EQUALIZER:
-            return "hsvequalizer";
+            return HSVEqualizer::TOOL_NAME;
         case Tool::FILM_SIMULATION:
-            return "filmsimulation";
+            return FilmSimulation::TOOL_NAME;
         case Tool::SOFT_LIGHT:
-            return "softlight";
+            return SoftLight::TOOL_NAME;
         case Tool::DEHAZE:
-            return "dehaze";
+            return Dehaze::TOOL_NAME;
         case Tool::SENSOR_BAYER:
-            return "sensorbayer";
+            return SensorBayer::TOOL_NAME;
         case Tool::SENSOR_XTRANS:
-            return "sensorxtrans";
+            return SensorXTrans::TOOL_NAME;
         case Tool::BAYER_PROCESS:
-            return "bayerprocess";
+            return BayerProcess::TOOL_NAME;
         case Tool::XTRANS_PROCESS:
-            return "xtransprocess";
+            return XTransProcess::TOOL_NAME;
         case Tool::BAYER_PREPROCESS:
-            return "bayerpreprocess";
+            return BayerPreProcess::TOOL_NAME;
         case Tool::PREPROCESS:
-            return "preprocess";
+            return PreProcess::TOOL_NAME;
         case Tool::DARKFRAME_TOOL:
-            return "darkframe";
+            return DarkFrame::TOOL_NAME;
         case Tool::FLATFIELD_TOOL:
-            return "flatfield";
+            return FlatField::TOOL_NAME;
         case Tool::RAW_CA_CORRECTION:
-            return "rawcacorrection";
+            return RAWCACorr::TOOL_NAME;
         case Tool::RAW_EXPOSURE:
-            return "rawexposure";
+            return RAWExposure::TOOL_NAME;
         case Tool::PREPROCESS_WB:
-            return "preprocesswb";
+            return PreprocessWB::TOOL_NAME;
         case Tool::BAYER_RAW_EXPOSURE:
-            return "bayerrawexposure";
+            return BayerRAWExposure::TOOL_NAME;
         case Tool::XTRANS_RAW_EXPOSURE:
-            return "xtransrawexposure";
+            return XTransRAWExposure::TOOL_NAME;
         case Tool::FATTAL:
-            return "fattal";
+            return FattalToneMapping::TOOL_NAME;
         case Tool::FILM_NEGATIVE:
-            return "filmnegative";
+            return FilmNegative::TOOL_NAME;
         case Tool::PD_SHARPENING:
-            return "capturesharpening";
+            return PdSharpening::TOOL_NAME;
     };
     assert(false);
     return "";

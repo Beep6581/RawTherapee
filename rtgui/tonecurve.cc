@@ -33,7 +33,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-ToneCurve::ToneCurve() : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LABEL"))
+const Glib::ustring ToneCurve::TOOL_NAME = "tonecurve";
+
+ToneCurve::ToneCurve() : FoldableToolPanel(this, TOOL_NAME, M("TP_EXPOSURE_LABEL"))
 {
     auto m = ProcEventMapper::getInstance();
     EvHistMatching = m->newEvent(AUTOEXP, "HISTORY_MSG_HISTMATCHING");

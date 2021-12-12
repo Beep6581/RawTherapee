@@ -52,8 +52,10 @@ enum GeometryIndex {
 
 }
 
+const Glib::ustring Spot::TOOL_NAME = "spot";
+
 Spot::Spot() :
-    FoldableToolPanel(this, "spot", M ("TP_SPOT_LABEL"), true, true),
+    FoldableToolPanel(this, TOOL_NAME, M ("TP_SPOT_LABEL"), true, true),
     EditSubscriber(ET_OBJECTS),
     draggedSide(DraggedSide::NONE),
     lastObject(-1),

@@ -40,6 +40,7 @@ protected:
     rtengine::ProcEvent EvSHColorspace;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     ShadowsHighlights ();
 

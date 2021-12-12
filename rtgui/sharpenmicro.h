@@ -47,6 +47,7 @@ protected:
     bool lastmatrix;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     SharpenMicro           ();
 

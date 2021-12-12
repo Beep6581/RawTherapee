@@ -33,6 +33,7 @@ protected:
     Adjuster* PexPos;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     RAWExposure ();
 

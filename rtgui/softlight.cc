@@ -29,7 +29,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-SoftLight::SoftLight(): FoldableToolPanel(this, "softlight", M("TP_SOFTLIGHT_LABEL"), false, true)
+const Glib::ustring SoftLight::TOOL_NAME = "softlight";
+
+SoftLight::SoftLight(): FoldableToolPanel(this, TOOL_NAME, M("TP_SOFTLIGHT_LABEL"), false, true)
 {
     auto m = ProcEventMapper::getInstance();
     EvSoftLightEnabled = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_SOFTLIGHT_ENABLED");

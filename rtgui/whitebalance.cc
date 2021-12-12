@@ -34,6 +34,8 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+const Glib::ustring WhiteBalance::TOOL_NAME = "whitebalance";
+
 Glib::RefPtr<Gdk::Pixbuf> WhiteBalance::wbPixbufs[toUnderlying(WBEntry::Type::CUSTOM) + 1];
 
 void WhiteBalance::init ()
@@ -142,7 +144,7 @@ static double wbTemp2Slider(double temp)
     return sval;
 }
 
-WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WBALANCE_LABEL"), true, true), wbp(nullptr), wblistener(nullptr)
+WhiteBalance::WhiteBalance () : FoldableToolPanel(this, TOOL_NAME, M("TP_WBALANCE_LABEL"), true, true), wbp(nullptr), wblistener(nullptr)
 {
 
     Gtk::Grid* methodgrid = Gtk::manage(new Gtk::Grid());

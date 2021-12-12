@@ -137,7 +137,7 @@ Glib::ustring getToolTitleKey(Tool tool)
         case Tool::WAVELET:
             return "TP_WAVELET_LABEL";
         case Tool::DIR_PYR_EQUALIZER:
-            return "TP_DIRPYRDENOISE_LABEL";
+            return "TP_DIRPYREQUALIZER_LABEL";
         case Tool::HSV_EQUALIZER:
             return "TP_HSVEQUALIZER_LABEL";
         case Tool::FILM_SIMULATION:

@@ -69,6 +69,7 @@ protected:
     //%%%%%%%%%%%%%%%%
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     LCurve ();
     ~LCurve () override;

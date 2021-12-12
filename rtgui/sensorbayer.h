@@ -31,6 +31,7 @@ protected:
     ToolParamBlock*     packBox;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     SensorBayer ();
 

@@ -38,6 +38,7 @@ private:
     rtengine::ProcEvent EvLocalContrastLightness;
     
 public:
+    static const Glib::ustring TOOL_NAME;
 
     LocalContrast();
 

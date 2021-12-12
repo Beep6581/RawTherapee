@@ -27,7 +27,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-LensGeometry::LensGeometry () : FoldableToolPanel(this, "lensgeom", M("TP_LENSGEOM_LABEL")), rlistener(nullptr), lastFill(false)
+const Glib::ustring LensGeometry::TOOL_NAME = "lensgeom";
+
+LensGeometry::LensGeometry () : FoldableToolPanel(this, TOOL_NAME, M("TP_LENSGEOM_LABEL")), rlistener(nullptr), lastFill(false)
 {
 
     auto m = ProcEventMapper::getInstance();

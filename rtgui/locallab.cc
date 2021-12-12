@@ -29,6 +29,8 @@ using namespace procparams;
 
 extern Options options;
 
+const Glib::ustring Locallab::TOOL_NAME = "locallab";
+
 /* ==== LocallabToolList ==== */
 LocallabToolList::LocallabToolList():
     // Tool list GUI elements
@@ -142,7 +144,7 @@ void LocallabToolList::toolRowSelected()
 
 /* ==== Locallab ==== */
 Locallab::Locallab():
-    FoldableToolPanel(this, "locallab", M("TP_LOCALLAB_LABEL"), false, true),
+    FoldableToolPanel(this, TOOL_NAME, M("TP_LOCALLAB_LABEL"), false, true),
 
     // Spot control panel widget
     expsettings(Gtk::manage(new ControlSpotPanel())),

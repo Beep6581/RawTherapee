@@ -57,6 +57,7 @@ protected:
     sigc::connection pastsattogconn;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     Vibrance                 ();
     ~Vibrance                () override;

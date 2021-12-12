@@ -30,7 +30,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-DarkFrame::DarkFrame () : FoldableToolPanel(this, "darkframe", M("TP_DARKFRAME_LABEL")), dfChanged(false), lastDFauto(false), dfp(nullptr), israw(true)
+const Glib::ustring DarkFrame::TOOL_NAME = "darkframe";
+
+DarkFrame::DarkFrame () : FoldableToolPanel(this, TOOL_NAME, M("TP_DARKFRAME_LABEL")), dfChanged(false), lastDFauto(false), dfp(nullptr), israw(true)
 {
     hbdf = Gtk::manage(new Gtk::Box());
     hbdf->set_spacing(4);

@@ -34,6 +34,8 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+const Glib::ustring Wavelet::TOOL_NAME = "wavelet";
+
 namespace
 {
 
@@ -62,7 +64,7 @@ std::vector<GradientMilestone> makeWholeHueRange()
 }
 
 Wavelet::Wavelet() :
-    FoldableToolPanel(this, "wavelet", M("TP_WAVELET_LABEL"), true, true),
+    FoldableToolPanel(this, TOOL_NAME, M("TP_WAVELET_LABEL"), true, true),
     curveEditorG(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_CONTEDIT"))),
     curveEditorC(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_CONTRASTEDIT"))),
     CCWcurveEditorG(new CurveEditorGroup(options.lastWaveletCurvesDir, M("TP_WAVELET_CCURVE"))),

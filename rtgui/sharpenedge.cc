@@ -28,8 +28,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+const Glib::ustring SharpenEdge::TOOL_NAME = "sharpenedge";
 
-SharpenEdge::SharpenEdge () : FoldableToolPanel(this, "sharpenedge", M("TP_SHARPENEDGE_LABEL"), true, true)
+SharpenEdge::SharpenEdge () : FoldableToolPanel(this, TOOL_NAME, M("TP_SHARPENEDGE_LABEL"), true, true)
 {
 
     passes = Gtk::manage(new Adjuster (M("TP_SHARPENEDGE_PASSES"), 1, 4, 1, 2));

@@ -34,8 +34,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+const Glib::ustring BlackWhite::TOOL_NAME = "blackwhite";
 
-BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LABEL"), false, true)
+BlackWhite::BlackWhite (): FoldableToolPanel(this, TOOL_NAME, M("TP_BWMIX_LABEL"), false, true)
 {
     CurveListener::setMulti(true);
 

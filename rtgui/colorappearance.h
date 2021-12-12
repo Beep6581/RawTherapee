@@ -39,6 +39,8 @@ class ColorAppearance final :
     public ColorProvider
 {
 public:
+    static const Glib::ustring TOOL_NAME;
+
     ColorAppearance ();
     ~ColorAppearance () override;
 

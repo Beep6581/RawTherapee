@@ -20,7 +20,9 @@
 #include "guiutils.h"
 #include "rtimage.h"
 
-SensorXTrans::SensorXTrans () : FoldableToolPanel(this, "sensorxtrans", M("TP_RAW_SENSOR_XTRANS_LABEL"))
+const Glib::ustring SensorXTrans::TOOL_NAME = "sensorxtrans";
+
+SensorXTrans::SensorXTrans () : FoldableToolPanel(this, TOOL_NAME, M("TP_RAW_SENSOR_XTRANS_LABEL"))
 {
 
     packBox = Gtk::manage (new ToolParamBlock ());

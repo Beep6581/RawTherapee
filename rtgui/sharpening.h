@@ -62,6 +62,7 @@ protected:
     rtengine::ProcEvent EvSharpenContrast;
     rtengine::ProcEvent EvSharpenBlur;
 public:
+    static const Glib::ustring TOOL_NAME;
 
     Sharpening ();
     ~Sharpening () override;

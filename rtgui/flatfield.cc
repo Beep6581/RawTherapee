@@ -30,7 +30,9 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
-FlatField::FlatField () : FoldableToolPanel(this, "flatfield", M("TP_FLATFIELD_LABEL"))
+const Glib::ustring FlatField::TOOL_NAME = "flatfield";
+
+FlatField::FlatField () : FoldableToolPanel(this, TOOL_NAME, M("TP_FLATFIELD_LABEL"))
 {
     hbff = Gtk::manage(new Gtk::Box());
     flatFieldFile = Gtk::manage(new MyFileChooserButton(M("TP_FLATFIELD_LABEL"), Gtk::FILE_CHOOSER_ACTION_OPEN));

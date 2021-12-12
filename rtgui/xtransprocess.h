@@ -52,6 +52,7 @@ protected:
     rtengine::ProcEvent EvDemosaicContrast;
 
 public:
+    static const Glib::ustring TOOL_NAME;
 
     XTransProcess ();
     ~XTransProcess () override;

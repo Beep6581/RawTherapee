@@ -67,6 +67,7 @@ protected:
 
     IdleRegister idle_register;
 public:
+    static const Glib::ustring TOOL_NAME;
 
     FlatField ();
     ~FlatField () override;

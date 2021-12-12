@@ -32,6 +32,8 @@ class Resize final :
     public rtengine::SizeListener
 {
 public:
+    static const Glib::ustring TOOL_NAME;
+
     Resize ();
     ~Resize () override;
 

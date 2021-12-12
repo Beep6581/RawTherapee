@@ -44,6 +44,8 @@
 using namespace rtengine;
 using namespace rtengine::procparams;
 
+const Glib::ustring ColorAppearance::TOOL_NAME = "colorappearance";
+
 static double wbSlider2Temp (double sval)
 {
 
@@ -212,7 +214,7 @@ static double wbTemp2Slider (double temp)
 }
 
 
-ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance", M ("TP_COLORAPP_LABEL"), false, true)
+ColorAppearance::ColorAppearance () : FoldableToolPanel (this, TOOL_NAME, M ("TP_COLORAPP_LABEL"), false, true)
 {
     CurveListener::setMulti (true);
     std::vector<GradientMilestone> milestones;

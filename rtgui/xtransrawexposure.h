@@ -37,6 +37,7 @@ protected:
 private:
 //  Gtk::CheckButton*  PextwoGreen;
 public:
+    static const Glib::ustring TOOL_NAME;
 
     XTransRAWExposure ();
 

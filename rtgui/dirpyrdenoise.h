@@ -40,6 +40,8 @@ class DirPyrDenoise final :
     public ColorProvider
 {
 public:
+    static const Glib::ustring TOOL_NAME;
+
     DirPyrDenoise ();
     ~DirPyrDenoise () override;
 
