@@ -828,6 +828,7 @@ ToolPanelCoordinator::updateToolPanel(
             getFoldableToolPanel(*new_tool_trees_iter)->getExpander()) {
             break;
         }
+        ++new_tool_trees_iter;
         ++old_widgets_iter;
     }
 
