@@ -6993,7 +6993,6 @@ void ImProcFunctions::Sharp_Local(int call, float **loctemp, int senstype, const
         const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
         const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
         const float maxdElim = 5.f + MAXSCOPE * limscope * (1 + 0.1f * lp.thr);
-
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic,16)
 #endif
@@ -8586,7 +8585,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     std::unique_ptr<LabImage> origblurmask;
 
     //balance deltaE
-    const float kL = lp.balance / SQR(327.68f);
+    float kL = lp.balance / SQR(327.68f);
     const float kab = balancedeltaE(lp.balance) / SQR(327.68f);
     const float kH = lp.balanceh;
     const float kch = balancedeltaE(kH);
@@ -8714,6 +8713,13 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     const LabImage *maskptr = usemaskall ? origblurmask.get() : origblur.get();
 
     //parameters deltaE
+    //increase a bit lp.thr and lp.iterat and kL if HDR only with log encoding and CAM16 Jz
+    if(senstype == 11 || senstype == 31) {
+        lp.thr *= 1.2f;
+        lp.iterat *= 1.2f;
+        kL *= 1.2f;
+    }
+   
     const float mindE = 2.f + MINSCOPE * varsens * lp.thr;
     const float maxdE = 5.f + MAXSCOPE * varsens * (1 + 0.1f * lp.thr);
     const float mindElim = 2.f + MINSCOPE * limscope * lp.thr;
