@@ -884,6 +884,17 @@ ToolPanelCoordinator::~ToolPanelCoordinator ()
     // which is responsible of segfault if listener isn't deactivated before
     notebookconn.block(true);
 
+    // Foldable tool panels manage (Gtk::manage) their expanders. Each expander
+    // will only be automatically deleted if attached to a parent and the parent
+    // is deleted.  This is a hack in lieu of a potentially tedious refactoring
+    // of FoldableToolPanel.
+    std::unique_ptr<Gtk::Box> hidden_tool_panel_parent(new Gtk::Box());
+    for (const auto expander : expList) {
+        if (!expander->get_parent()) {
+            hidden_tool_panel_parent->add(*expander);
+        }
+    }
+
     delete toolPanelNotebook;
     delete toolBar;
 }
