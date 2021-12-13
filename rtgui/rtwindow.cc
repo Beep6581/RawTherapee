@@ -1113,8 +1113,21 @@ void RTWindow::updateHistogramPosition (int oldPosition, int newPosition)
 void RTWindow::updateToolPanelToolLocations(
     const std::vector<Glib::ustring> &favorites, bool cloneFavoriteTools)
 {
+    if (fpanel) {
+        fpanel->updateToolPanelToolLocations(favorites, cloneFavoriteTools);
+    }
+
     if (epanel) {
         epanel->updateToolPanelToolLocations(favorites, cloneFavoriteTools);
+    }
+
+    for (const auto &panel : epanels) {
+        panel.second->updateToolPanelToolLocations(favorites, cloneFavoriteTools);
+    }
+
+    if (options.multiDisplayMode > 0) {
+        EditWindow::getInstance(this)
+            ->updateToolPanelToolLocations(favorites, cloneFavoriteTools);
     }
 }
 
