@@ -212,6 +212,7 @@ protected:
     std::vector<MyExpander*> expList;
 
     bool hasChanged;
+    bool batch;
 
     void addPanel(Gtk::Box* where, FoldableToolPanel* panel, int level = 1);
     void foldThemAll(GdkEventButton* event);

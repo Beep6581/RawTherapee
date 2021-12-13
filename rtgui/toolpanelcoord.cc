@@ -271,7 +271,7 @@ const ToolPanelCoordinator::ToolLayout PANEL_TOOLS = {
 
 std::unordered_map<std::string, Tool> ToolPanelCoordinator::toolNamesReverseMap;
 
-ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favoritePanelSW(nullptr), hasChanged (false), editDataProvider (nullptr), photoLoadedOnce(false)
+ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favoritePanelSW(nullptr), hasChanged (false), batch(batch), editDataProvider (nullptr), photoLoadedOnce(false)
 {
 
     favoritePanel   = Gtk::manage (new ToolVBox ());
@@ -812,8 +812,9 @@ ToolPanelCoordinator::updateToolPanel(
     // if they are sub-tools within the favorites panel, or if tool cloning is
     // off and they are not within the favorites panel.
     const auto should_skip_tool =
-        [skip_favorites, &favorites](const ToolTree &tool_tree) {
-            return skip_favorites && favorites.count(tool_tree.id);
+        [this, skip_favorites, &favorites](const ToolTree &tool_tree) {
+            return (skip_favorites && favorites.count(tool_tree.id)) ||
+                   (batch && tool_tree.id == Tool::LOCALLAB);
         };
 
     // Keep tools that are already correct.
