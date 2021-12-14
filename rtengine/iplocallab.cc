@@ -2517,12 +2517,11 @@ void ImProcFunctions::loccont(int bfw, int bfh, LabImage* tmp1, float rad, float
     }
 }
 
-void sigmoidla (float &valj, float thresj, float lambda, float blend) 
+void sigmoidla (float &valj, float thresj, float lambda) 
 {
-    valj =  std::max(blend * valj + 1.f / (1.f + xexpf(lambda - (lambda / thresj) * valj)), 0.f);
     //thres : shifts the action of sigmoid to darker tones or lights
     //lambda : changes the "slope" of the sigmoid. Low values give a flat curve, high values a "rectangular / orthogonal" curve
-    //blend : blend original image with sigmoid - default 1
+     valj =  1.f / (1.f + xexpf(lambda - (lambda / thresj) * valj));
 }
 
 
@@ -2905,6 +2904,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     }
     if(params->locallab.spots.at(sp).expcie && call == 10 && params->locallab.spots.at(sp).modecam == "jz") {
             yb = params->locallab.spots.at(sp).sourceGraycie;//for Jz calculate Yb and surround in Lab and cam16 before process Jz
+            la = params->locallab.spots.at(sp).sourceabscie;
 
             if (params->locallab.spots.at(sp).sursourcie == "Average") {
                 f = 1.0f, c = 0.69f, nc = 1.0f;
@@ -3527,9 +3527,9 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                         double mm = applytojz(jmz);
                         double f = mm / jmz;
                         Jz *= f;
-                        Cz *= f;
+                        //Cz *= f;
                         Jz = LIM01(Jz);//clip values
-                        Cz = clipcz(Cz);
+                        //Cz = clipcz(Cz);
                     }
                 }
 
@@ -3561,8 +3561,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     } else {
                         thjz = atjz * val + btjz;
                     }
-                    sigmoidla (val, thjz, sigmjz, bljz);//sigmz "slope" of sigmoid and bljz = blend
-                    Jz = (double) val;
+                    sigmoidla (val, thjz, sigmjz);//sigmz "slope" of sigmoid
+                    Jz = LIM01((double) bljz * Jz + (double) val);
                 }
                 //reconvert from lightness or Brightness
                 if(Qtoj == false) {
@@ -3877,7 +3877,7 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
                             } else {
                                 th = at * val + bt;
                             }
-                            sigmoidla (val, th, sigm, 0.f);
+                            sigmoidla (val, th, sigm);
                             float bl2 = 1.f;
                             Qpro = std::max(bl * Qpro + bl2 * val / coefq, 0.f);
                         }
@@ -3907,10 +3907,10 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
                             } else {
                                 th = at * val + bt;
                             }
-                            sigmoidla (val, th, sigm, bl);
-                            Jpro = 100.f * val;
+                            sigmoidla (val, th, sigm);
+                            Jpro = 100.f * LIM01(bl * 0.01f * Jpro + val);
                             if (Jpro > 99.9f) {
-                            Jpro = 99.9f;
+                                Jpro = 99.9f;
                             }
                         }
 
