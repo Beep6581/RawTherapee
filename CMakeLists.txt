@@ -44,8 +44,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION
             "Building RawTherapee requires using GCC version 4.9 or higher!")
 endif()
 
-# Warning for GCC 10, which causes problems #5749:
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "10.1")
+# Warning for GCC vectorization issues, which causes problems #5749 and #6384:
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND ((CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "10.0" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "10.2") OR (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "11.0")))
     message(STATUS "WARNING: gcc ${CMAKE_CXX_COMPILER_VERSION} is known to miscompile RawTherapee when using -ftree-loop-vectorize, forcing the option to be off")    
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-tree-loop-vectorize")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-tree-loop-vectorize")
