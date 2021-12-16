@@ -869,6 +869,8 @@ HISTORY_MSG_SHARPENING_GAMMA;(Schärfung) - Gamma
 HISTORY_MSG_SH_COLORSPACE;Farbraum
 HISTORY_MSG_SOFTLIGHT_ENABLED;(Weiches Licht)
 HISTORY_MSG_SOFTLIGHT_STRENGTH;(Weiches Licht)\nIntensität
+HISTORY_MSG_SPOT;Fleckenentfernung
+HISTORY_MSG_SPOT_ENTRY;Fleckenentfernung - Punkt bearb.
 HISTORY_MSG_TM_FATTAL_ANCHOR;(Dynamikkompression)\nHelligkeitsverschiebung
 HISTORY_NEWSNAPSHOT;Hinzufügen
 HISTORY_NEWSNAPSHOT_TOOLTIP;Taste: <b>Alt</b> + <b>s</b>
