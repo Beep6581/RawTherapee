@@ -4280,7 +4280,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     Autograycie(true),
     forcejz(true),
     qtoj(false),
-    jabcie(false),
+    jabcie(true),
     sigmoidqjcie(false),
     logjz(false),
     chjzcie(true),

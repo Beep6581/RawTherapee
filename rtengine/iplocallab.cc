@@ -2580,6 +2580,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     }
     bool z_cam = false; //params->locallab.spots.at(sp).jabcie; //alaways use normal algorithm, Zcam giev often bad results
     bool jabcie = false;//always disabled
+    bool islogjz = params->locallab.spots.at(sp).jabcie;
     //sigmoid J Q variables
     const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie; 
     const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie; 
@@ -3556,12 +3557,17 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 //sigmoid
                 if(sigmoidlambdajz > 0.f && iscie) {//sigmoid Jz
                     float val = Jz;
+                    if(islogjz) {
+                        val = std::max((xlog(Jz) / log2 - shadows_range) / dynamic_range, noise);//in range EV
+                    }
                     if(sigmoidthjz >= 1.f) {
                         thjz = athjz * val + bthjz;//threshold
                     } else {
                         thjz = atjz * val + btjz;
                     }
                     sigmoidla (val, thjz, sigmjz);//sigmz "slope" of sigmoid
+                    
+
                     Jz = LIM01((double) bljz * Jz + (double) val);
                 }
                 //reconvert from lightness or Brightness

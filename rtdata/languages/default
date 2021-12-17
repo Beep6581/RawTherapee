@@ -1333,7 +1333,7 @@ HISTORY_MSG_1080;Local - CIECAM Sigmoid threshold
 HISTORY_MSG_1081;Local - CIECAM Sigmoid blend
 HISTORY_MSG_1082;Local - CIECAM Sigmoid Q J
 HISTORY_MSG_1083;Local - CIECAM Hue
-HISTORY_MSG_1084;Local - JzCzHz
+HISTORY_MSG_1084;Local - Uses Black Ev - White Ev
 HISTORY_MSG_1085;Local - Jz lightness
 HISTORY_MSG_1086;Local - Jz contrast
 HISTORY_MSG_1087;Local - Jz chroma
@@ -2983,7 +2983,7 @@ TP_LOCALLAB_INVERS;Inverse
 TP_LOCALLAB_INVERS_TOOLTIP;Fewer possibilities if selected (Inverse).\n\nAlternative: use two spots\nFirst Spot:\n Full Image\n \nSecond spot: Excluding spot
 TP_LOCALLAB_INVMASK;Inverse algorithm
 TP_LOCALLAB_ISOGR;Distribution (ISO)
-TP_LOCALLAB_JAB;Zcam matrix - instead of Jz matrix
+TP_LOCALLAB_JAB;Uses Black Ev & White Ev
 TP_LOCALLAB_JABADAP_TOOLTIP;Perceptual Uniform adaptation.\nAutomatically adjusts the relationship between Jz and saturation taking into account "Absolute luminance".
 TP_LOCALLAB_JZ100;Jz reference 100cd/m2
 TP_LOCALLAB_JZLOGYBOUT_TOOLTIP;Yb is the relative luminance of the background, expressed as a percentage of gray. 18% gray corresponds to a background luminance of 50% when expressed in CIE L.\nThe data is based on the mean luminance of the image.\nWhen used with Log Encoding, the mean luminance is used to determine the amount of gain that needs to be applied to the signal prior to the log encoding. Lower values of mean luminance will result in increased gain.
