@@ -3533,6 +3533,22 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                         //Cz = clipcz(Cz);
                     }
                 }
+                //sigmoid
+                if(sigmoidlambdajz > 0.f && iscie) {//sigmoid Jz
+                    float val = Jz;
+                    if(islogjz) {
+                        val = std::max((xlog(Jz) / log2 - shadows_range) / dynamic_range, noise);//in range EV
+                    }
+                    if(sigmoidthjz >= 1.f) {
+                        thjz = athjz * val + bthjz;//threshold
+                    } else {
+                        thjz = atjz * val + btjz;
+                    }
+                    sigmoidla (val, thjz, sigmjz);//sigmz "slope" of sigmoid
+                    
+
+                    Jz = LIM01((double) bljz * Jz + (double) val);
+                }
 
                 if(Qtoj == true) {//lightness instead of brightness
                     Jz /= to_one;
@@ -3553,22 +3569,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 if(jzlocalcurve && localjzutili) {
                     Jz =  (double) (jzlocalcurve[(float) Jz * 65535.f] / 65535.f);
                     Jz  = 0.3 * (Jz - Jzold) + Jzold;
-                }
-                //sigmoid
-                if(sigmoidlambdajz > 0.f && iscie) {//sigmoid Jz
-                    float val = Jz;
-                    if(islogjz) {
-                        val = std::max((xlog(Jz) / log2 - shadows_range) / dynamic_range, noise);//in range EV
-                    }
-                    if(sigmoidthjz >= 1.f) {
-                        thjz = athjz * val + bthjz;//threshold
-                    } else {
-                        thjz = atjz * val + btjz;
-                    }
-                    sigmoidla (val, thjz, sigmjz);//sigmz "slope" of sigmoid
-                    
-
-                    Jz = LIM01((double) bljz * Jz + (double) val);
                 }
                 //reconvert from lightness or Brightness
                 if(Qtoj == false) {

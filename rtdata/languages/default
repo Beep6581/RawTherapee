@@ -3013,7 +3013,7 @@ TP_LOCALLAB_JZSOFTCIE;Soft radius (GuidedFilter)
 TP_LOCALLAB_JZTARGET_EV;Viewing Mean luminance (Yb%)
 TP_LOCALLAB_JZSTRSOFTCIE;Strength GuidedFilter
 TP_LOCALLAB_JZQTOJ;Relative luminance
-TP_LOCALLAB_JZQTOJ_TOOLTIP;Allows you to use "Relative luminance" instead of "Absolute luminance" - Brightness becomes Lightness.\nThe changes affect: the Brightness slider, the Contrast slider, the Jz(Jz) curve and Sigmoid Jz.
+TP_LOCALLAB_JZQTOJ_TOOLTIP;Allows you to use "Relative luminance" instead of "Absolute luminance" - Brightness becomes Lightness.\nThe changes affect: the Brightness slider, the Contrast slider and the Jz(Jz) curve.
 TP_LOCALLAB_JZTHRHCIE;Threshold Chroma for Jz(Hz)
 TP_LOCALLAB_JZWAVEXP;Wavelet Jz
 TP_LOCALLAB_JZLOG;Log encoding Jz
