@@ -1576,6 +1576,7 @@ private:
     Adjuster* const blackEvjz;
     Adjuster* const whiteEvjz;
     Adjuster* const targetjz;
+    Gtk::Frame* const bevwevFrame;
     
     Gtk::Frame* const sigmoidFrame;
     Adjuster* const sigmoidldacie;

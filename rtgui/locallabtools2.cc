@@ -7440,6 +7440,7 @@ Locallabcie::Locallabcie():
     blackEvjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLACK_EV"), -16.0, 0.0, 0.1, -5.0))),
     whiteEvjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0., 32.0, 0.1, 10.0))),
     targetjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZTARGET_EV"), 4., 80.0, 0.1, 18.0))),
+    bevwevFrame(Gtk::manage(new Gtk::Frame(M("")))),
 
     sigmoidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGFRA")))),
     sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 1.0, 0.01, 0.))),
@@ -7593,14 +7594,21 @@ Locallabcie::Locallabcie():
     cieFBox->pack_start (*PQFrame);
     logjzFrame->set_label_align(0.025, 0.5);
     logjzFrame->set_label_widget(*logjz);
-    Gtk::Separator* const separatorjz = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
+  //  Gtk::Separator* const separatorjz = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     ToolParamBlock* const logjzBox = Gtk::manage(new ToolParamBlock());
-    logjzBox->pack_start(*blackEvjz);
-    logjzBox->pack_start(*whiteEvjz);
-    logjzBox->pack_start(*separatorjz);
+    //logjzBox->pack_start(*blackEvjz);
+   // logjzBox->pack_start(*whiteEvjz);
+   // logjzBox->pack_start(*separatorjz);
     logjzBox->pack_start(*targetjz);
     logjzFrame->add(*logjzBox);
     cieFBox->pack_start (*logjzFrame);
+    bevwevFrame->set_label_align(0.025, 0.5);
+    ToolParamBlock* const bevwevBox = Gtk::manage(new ToolParamBlock());
+    bevwevBox->pack_start(*blackEvjz);
+    bevwevBox->pack_start(*whiteEvjz);
+    bevwevFrame->add(*bevwevBox);
+    cieFBox->pack_start (*bevwevFrame);
+
     sigmoidjzFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const sigjzBox = Gtk::manage(new ToolParamBlock());
     sigjzBox->pack_start(*sigmoidldajzcie);
@@ -8884,6 +8892,7 @@ void Locallabcie::modecamChanged()
         jabcie->show();
         PQFrame->show();
         logjzFrame->show();
+        bevwevFrame->show();
         sigmoidjzFrame->show();
         forcejz->hide();
         
@@ -8897,6 +8906,7 @@ void Locallabcie::modecamChanged()
         jabcie->hide();
         PQFrame->hide();
         logjzFrame->hide();
+        bevwevFrame->hide();
         sigmoidjzFrame->hide();
         forcejz->hide();
         catadcie->show();
@@ -8967,6 +8977,7 @@ void Locallabcie::modecamChanged()
         PQFrame->hide();
         logjzFrame->hide();
         sigmoidjzFrame->hide();
+        bevwevFrame->hide();
         forcejz->hide();
         pqremapcam16->show();
         catadcie->show();
@@ -8993,6 +9004,7 @@ void Locallabcie::modecamChanged()
             PQFrame->show();
             logjzFrame->show();
             sigmoidjzFrame->show();
+            bevwevFrame->show();
             catadcie->hide();
             cie2Frame->hide();
             if (chjzcie->get_active()) {
@@ -9151,6 +9163,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 PQFrame->hide();
                 logjzFrame->hide();
                 sigmoidjzFrame->hide();
+                bevwevFrame->hide();
             }
 
             if (modecam->get_active_row_number() == 1) {
@@ -9161,6 +9174,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 pqremapcam16->hide();
                 PQFrame->hide();
                 logjzFrame->hide();
+                bevwevFrame->hide();
                 sigmoidjzFrame->hide();
                 catadcie->hide();
                 cie2Frame->hide();
@@ -9239,6 +9253,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 PQFrame->hide();
                 logjzFrame->hide();
                 sigmoidjzFrame->hide();
+                bevwevFrame->hide();
             }
 
             if (modecam->get_active_row_number() == 1) {
@@ -9250,6 +9265,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 PQFrame->hide();
                 logjzFrame->hide();
                 sigmoidjzFrame->hide();
+                bevwevFrame->hide();
                 catadcie->hide();
                 cie2Frame->hide();
                 exprecovcie->hide();
@@ -9329,6 +9345,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 pqremap->show();
                 PQFrame->show();
                 logjzFrame->show();
+                bevwevFrame->show();
                 sigmoidjzFrame->show();
                 forcejz->hide();
                 
@@ -9344,11 +9361,13 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 PQFrame->hide();
                 logjzFrame->hide();
                 sigmoidjzFrame->hide();
+                bevwevFrame->hide();
             }
             if (modecam->get_active_row_number() == 2) {
                 PQFrame->show();
-                logjzFrame->show();
+                logjzFrame->hide();
                 sigmoidjzFrame->hide();
+                bevwevFrame->hide();
             }
 
             if (modecam->get_active_row_number() == 1) {
@@ -9360,6 +9379,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 PQFrame->show();
                 logjzFrame->show();
                 sigmoidjzFrame->show();
+                bevwevFrame->show();
                 catadcie->hide();
                 cie2Frame->hide();
                 exprecovcie->show();
@@ -9424,6 +9444,7 @@ void Locallabcie::updatecieGUI()
         PQFrame->show();
         logjzFrame->show();
         sigmoidjzFrame->show();
+        bevwevFrame->show();
     }
         sourceGraycie->show();
         cieFrame->show();
@@ -9448,6 +9469,7 @@ void Locallabcie::updatecieGUI()
         PQFrame->show();
         logjzFrame->show();
         sigmoidjzFrame->show();
+        bevwevFrame->show();
         catadcie->hide();
         cie2Frame->hide();
         if(mode != Expert) {
@@ -9458,6 +9480,7 @@ void Locallabcie::updatecieGUI()
             PQFrame->hide();
             logjzFrame->hide();
             sigmoidjzFrame->hide();
+            bevwevFrame->hide();
             exprecovcie->hide();
             expmaskcie->hide();
             maskusablecie->hide();
