@@ -2580,7 +2580,9 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     }
     bool z_cam = false; //params->locallab.spots.at(sp).jabcie; //alaways use normal algorithm, Zcam giev often bad results
     bool jabcie = false;//always disabled
-    bool islogjz = params->locallab.spots.at(sp).jabcie;
+    bool islogjz = params->locallab.spots.at(sp).forcebw;
+    bool issigjz = params->locallab.spots.at(sp).sigjz;
+
     //sigmoid J Q variables
     const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie; 
     const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie; 
@@ -2628,8 +2630,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
     const float ath = sigmoidth - 1.f;
     const float bth = 1;
-
-    const float sigm = 1.4f + 25.f *(1.f - cbrt(sigmoidlambda));//with sigmoidlambda = 0 e^16 = 9000000 e^20=485000000 e^23.5 = 16000000000 e^26.4 = 291000000000
+    float sila = pow_F(sigmoidlambda, 0.25f);
+    const float sigm = 1.4f + 25.f *(1.f - sila);//with sigmoidlambda = 0 e^16 = 9000000 e^20=485000000 e^23.5 = 16000000000 e^26.4 = 291000000000
     const float bl = sigmoidbl;
     //end sigmoid
 
@@ -3168,8 +3170,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
         const float athjz = sigmoidthjz - 1.f;
         const float bthjz = 1;
-
-        const float sigmjz = 1.4f + 25.f *(1.f - cbrt(sigmoidlambdajz));// e^26.4 = 291000000000
+        float powsig = pow_F(sigmoidlambdajz, 0.25f);
+        const float sigmjz = 1.4f + 25.f *(1.f - powsig);// e^26.4 = 291000000000
         const float bljz = sigmoidbljz;
         
         double contreal = 0.2 *  params->locallab.spots.at(sp).contjzcie;
@@ -3534,7 +3536,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     }
                 }
                 //sigmoid
-                if(sigmoidlambdajz > 0.f && iscie) {//sigmoid Jz
+                if(issigjz && iscie) {//sigmoid Jz
                     float val = Jz;
                     if(islogjz) {
                         val = std::max((xlog(Jz) / log2 - shadows_range) / dynamic_range, noise);//in range EV

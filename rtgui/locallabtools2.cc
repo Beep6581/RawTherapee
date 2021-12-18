@@ -7441,6 +7441,7 @@ Locallabcie::Locallabcie():
     whiteEvjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_WHITE_EV"), 0., 32.0, 0.1, 10.0))),
     targetjz(Gtk::manage(new Adjuster(M("TP_LOCALLAB_JZTARGET_EV"), 4., 80.0, 0.1, 18.0))),
     bevwevFrame(Gtk::manage(new Gtk::Frame(M("")))),
+    forcebw(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BWFORCE")))),
 
     sigmoidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGFRA")))),
     sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 1.0, 0.01, 0.))),
@@ -7448,7 +7449,8 @@ Locallabcie::Locallabcie():
     sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.5, 1.5, 0.01, 1.))),
     sigmoidqjcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDQJ")))),
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
-    sigmoidldajzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 1.0, 0.01, 0.))),
+    sigjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGJZFRA")))),
+    sigmoidldajzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 1.0, 0.01, 0.5))),
     sigmoidthjzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.1, 4., 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     sigmoidbljzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.5, 1.5, 0.01, 1.))),
     colorflcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LOGCOLORFL"), -100., 100., 0.5, 0.))),
@@ -7610,11 +7612,12 @@ Locallabcie::Locallabcie():
     cieFBox->pack_start (*bevwevFrame);
 
     sigmoidjzFrame->set_label_align(0.025, 0.5);
+    sigmoidjzFrame->set_label_widget(*sigjz);
     ToolParamBlock* const sigjzBox = Gtk::manage(new ToolParamBlock());
     sigjzBox->pack_start(*sigmoidldajzcie);
     sigjzBox->pack_start(*sigmoidthjzcie);
     sigjzBox->pack_start(*sigmoidbljzcie);
-    sigjzBox->pack_start(*jabcie);
+    sigjzBox->pack_start(*forcebw);
     sigmoidjzFrame->add(*sigjzBox);
     
   //  jzBox->pack_start(*sigmoidjzFrame);
@@ -7812,9 +7815,11 @@ Locallabcie::Locallabcie():
     AutograycieConn = Autograycie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::AutograycieChanged));
     sigmoidqjcieconn = sigmoidqjcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigmoidqjcieChanged));
     logjzconn = logjz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logjzChanged));
+    sigjzconn = sigjz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigjzChanged));
     forcejzConn = forcejz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::forcejzChanged));
     qtojConn = qtoj->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::qtojChanged));
     chjzcieconn = chjzcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::chjzcieChanged));
+    forcebwConn = forcebw->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::forcebwChanged));
 
     sourceGraycie->setAdjusterListener(this);
     sourceGraycie->setLogScale(10, 18, true);
@@ -8264,10 +8269,12 @@ void Locallabcie::disableListener()
     LocallabTool::disableListener();
     AutograycieConn.block(true);
     forcejzConn.block(true);
+    forcebwConn.block(true);
     qtojConn.block(true);
     jabcieConn.block(true);
     sigmoidqjcieconn.block(true);
     logjzconn.block(true);
+    sigjzconn.block(true);
     chjzcieconn.block(true);
     sursourcieconn.block (true);
     surroundcieconn.block (true);
@@ -8284,10 +8291,12 @@ void Locallabcie::enableListener()
     LocallabTool::enableListener();
     AutograycieConn.block(false);
     forcejzConn.block(false);
+    forcebwConn.block(false);
     qtojConn.block(false);
     jabcieConn.block(false);
     sigmoidqjcieconn.block(false);
     logjzconn.block(false);
+    sigjzconn.block(false);
     chjzcieconn.block(false);
     sursourcieconn.block (false);
     surroundcieconn.block (false);
@@ -8396,10 +8405,12 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         
         Autograycie->set_active(spot.Autograycie);
         forcejz->set_active(spot.forcejz);
+        forcebw->set_active(spot.forcebw);
         qtoj->set_active(spot.qtoj);
         sourceGraycie->setValue(spot.sourceGraycie);
         sigmoidqjcie->set_active(spot.sigmoidqjcie);
         logjz->set_active(spot.logjz);
+        sigjz->set_active(spot.sigjz);
        // chjzcie->set_active(spot.chjzcie);
         chjzcie->set_active(true);//force to true to avoid other mode
         sourceabscie->setValue(spot.sourceabscie);
@@ -8565,12 +8576,14 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
 
         spot.Autograycie = Autograycie->get_active();
         spot.forcejz = forcejz->get_active();
+        spot.forcebw = forcebw->get_active();
         spot.qtoj = qtoj->get_active();
         spot.jabcie = jabcie->get_active();
         spot.sourceGraycie = sourceGraycie->getValue();
         spot.sourceabscie = sourceabscie->getValue();
         spot.sigmoidqjcie = sigmoidqjcie->get_active();
         spot.logjz = logjz->get_active();
+        spot.sigjz = sigjz->get_active();
         spot.chjzcie = chjzcie->get_active();
 
         if(sursourcie->get_active_row_number() == 0) {
@@ -8798,6 +8811,22 @@ void Locallabcie::forcejzChanged()
     }
 }
 
+void Locallabcie::forcebwChanged()
+{
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (forcebw->get_active()) {
+                listener->panelChanged(Evlocallabforcebw,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabforcebw,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
 void Locallabcie::qtojChanged()
 {
 
@@ -8853,6 +8882,21 @@ void Locallabcie::logjzChanged()
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallablogjz,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::sigjzChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (sigjz->get_active()) {
+                listener->panelChanged(Evlocallabsigjz,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsigjz,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
@@ -9594,7 +9638,8 @@ void Locallabcie::convertParamToNormal()
     if (modecam->get_active_row_number() == 1) {
         showmaskcieMethod->set_active(0);
         enacieMask->set_active(defSpot.enacieMask);
-        logjz->set_active(defSpot.enacieMask);
+        logjz->set_active(defSpot.logjz);
+        sigjz->set_active(defSpot.sigjz);
     }
     lapmaskcie->setValue(defSpot.lapmaskcie);
     gammaskcie->setValue(defSpot.gammaskcie);
