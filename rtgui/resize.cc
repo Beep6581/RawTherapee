@@ -172,10 +172,8 @@ Resize::Resize () : FoldableToolPanel(this, TOOL_NAME, M("TP_RESIZE_LABEL"), fal
     method->signal_changed().connect ( sigc::mem_fun(*this, &Resize::methodChanged) );
     sconn = spec->signal_changed().connect ( sigc::mem_fun(*this, &Resize::specChanged) );
 
-    packBox = Gtk::manage (new ToolParamBlock ());
-    pack_end (*packBox);
-    packBox->hide();
-    packBox->set_tooltip_markup (M("TP_PRSHARPENING_TOOLTIP"));
+    getSubToolsContainer()->hide();
+    getSubToolsContainer()->set_tooltip_markup (M("TP_PRSHARPENING_TOOLTIP"));
 
     show_all();
 }
@@ -398,9 +396,9 @@ void Resize::methodChanged ()
 
     // Post-resize Sharpening assumes the image is in Lab space, and currently Lanczos is the only method which uses that space, and Lanczos is on row 0.
     if (method->get_active_row_number() == 0) {
-        packBox->set_sensitive(true);
+        getSubToolsContainer()->set_sensitive(true);
     } else {
-        packBox->set_sensitive(false);
+        getSubToolsContainer()->set_sensitive(false);
     }
 }
 

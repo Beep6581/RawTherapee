@@ -27,16 +27,8 @@ class SensorXTrans final:
     public FoldableToolPanel
 {
 
-protected:
-    ToolParamBlock*     packBox;
-
 public:
     static const Glib::ustring TOOL_NAME;
 
     SensorXTrans ();
-
-    Gtk::Box* getPackBox ()
-    {
-        return packBox;
-    }
 };

@@ -400,6 +400,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
         vbPanelEnd[i] = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
         imgPanelEnd[i] = Gtk::manage (new RTImage ("ornament1.png"));
         imgPanelEnd[i]->show();
+        vbPanelEnd[i]->get_style_context()->add_class("PanelEnding");
         vbPanelEnd[i]->pack_start(*imgPanelEnd[i], Gtk::PACK_SHRINK);
         vbPanelEnd[i]->show_all();
     }
@@ -423,37 +424,37 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
         Gtk::manage(new Gtk::Box(Gtk::Orientation::ORIENTATION_VERTICAL));
 
     favoritePanelSW->add(*favoritePanelContainer);
-    favoritePanelContainer->pack_start(*favoritePanel, Gtk::PACK_SHRINK, 0);
-    favoritePanelContainer->pack_start(*vbPanelEnd[0], Gtk::PACK_SHRINK, 4);
+    favoritePanelContainer->pack_start(*favoritePanel, Gtk::PACK_SHRINK);
+    favoritePanelContainer->pack_start(*vbPanelEnd[0], Gtk::PACK_SHRINK);
     favoritePanelSW->show_all();
 
     exposurePanelSW->add  (*exposurePanelContainer);
-    exposurePanelContainer->pack_start(*exposurePanel, Gtk::PACK_SHRINK, 0);
-    exposurePanelContainer->pack_start (*vbPanelEnd[1], Gtk::PACK_SHRINK, 4);
+    exposurePanelContainer->pack_start(*exposurePanel, Gtk::PACK_SHRINK);
+    exposurePanelContainer->pack_start (*vbPanelEnd[1], Gtk::PACK_SHRINK);
 
     detailsPanelSW->add   (*detailsPanelContainer);
-    detailsPanelContainer->pack_start(*detailsPanel, Gtk::PACK_SHRINK, 0);
-    detailsPanelContainer->pack_start (*vbPanelEnd[2], Gtk::PACK_SHRINK, 4);
+    detailsPanelContainer->pack_start(*detailsPanel, Gtk::PACK_SHRINK);
+    detailsPanelContainer->pack_start (*vbPanelEnd[2], Gtk::PACK_SHRINK);
 
     colorPanelSW->add     (*colorPanelContainer);
-    colorPanelContainer->pack_start(*colorPanel, Gtk::PACK_SHRINK, 0);
-    colorPanelContainer->pack_start (*vbPanelEnd[3], Gtk::PACK_SHRINK, 4);
+    colorPanelContainer->pack_start(*colorPanel, Gtk::PACK_SHRINK);
+    colorPanelContainer->pack_start (*vbPanelEnd[3], Gtk::PACK_SHRINK);
 
     advancedPanelSW->add       (*advancedPanelContainer);
-    advancedPanelContainer->pack_start(*advancedPanel, Gtk::PACK_SHRINK, 0);
-    advancedPanelContainer->pack_start (*vbPanelEnd[6], Gtk::PACK_SHRINK, 0);
+    advancedPanelContainer->pack_start(*advancedPanel, Gtk::PACK_SHRINK);
+    advancedPanelContainer->pack_start (*vbPanelEnd[6], Gtk::PACK_SHRINK);
 
     locallabPanelSW->add(*locallabPanelContainer);
-    locallabPanelContainer->pack_start(*locallabPanel, Gtk::PACK_SHRINK, 0);
-    locallabPanelContainer->pack_start(*vbPanelEnd[7], Gtk::PACK_SHRINK, 4);
+    locallabPanelContainer->pack_start(*locallabPanel, Gtk::PACK_SHRINK);
+    locallabPanelContainer->pack_start(*vbPanelEnd[7], Gtk::PACK_SHRINK);
 
     transformPanelSW->add (*transformPanelContainer);
-    transformPanelContainer->pack_start(*transformPanel, Gtk::PACK_SHRINK, 0);
-    transformPanelContainer->pack_start (*vbPanelEnd[4], Gtk::PACK_SHRINK, 4);
+    transformPanelContainer->pack_start(*transformPanel, Gtk::PACK_SHRINK);
+    transformPanelContainer->pack_start (*vbPanelEnd[4], Gtk::PACK_SHRINK);
 
     rawPanelSW->add       (*rawPanelContainer);
-    rawPanelContainer->pack_start(*rawPanel, Gtk::PACK_SHRINK, 0);
-    rawPanelContainer->pack_start (*vbPanelEnd[5], Gtk::PACK_SHRINK, 0);
+    rawPanelContainer->pack_start(*rawPanel, Gtk::PACK_SHRINK);
+    rawPanelContainer->pack_start (*vbPanelEnd[5], Gtk::PACK_SHRINK);
 
     toiF.reset(new TextOrIcon ("star.png", M ("MAIN_TAB_FAVORITES"), M ("MAIN_TAB_FAVORITES_TOOLTIP")));
     toiE = Gtk::manage (new TextOrIcon ("exposure.png", M ("MAIN_TAB_EXPOSURE"), M ("MAIN_TAB_EXPOSURE_TOOLTIP")));

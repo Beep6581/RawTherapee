@@ -98,7 +98,7 @@ public:
     {
         return nullptr;
     }
-    virtual Gtk::Box *getSubToolsContainer() const
+    virtual ToolParamBlock *getSubToolsContainer() const
     {
         return nullptr;
     }
@@ -168,7 +168,7 @@ class FoldableToolPanel :
 protected:
     Gtk::Box* parentContainer;
     MyExpander* exp;
-    Gtk::Box *subToolsContainer;
+    ToolParamBlock *subToolsContainer;
     bool lastEnabled;
     sigc::connection enaConn;
     void foldThemAll (GdkEventButton* event);
@@ -183,7 +183,7 @@ public:
         return exp;
     }
 
-    Gtk::Box *getSubToolsContainer() const final
+    ToolParamBlock *getSubToolsContainer() const final
     {
         return subToolsContainer;
     }

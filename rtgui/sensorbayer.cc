@@ -25,8 +25,5 @@ const Glib::ustring SensorBayer::TOOL_NAME = "sensorbayer";
 SensorBayer::SensorBayer () : FoldableToolPanel(this, TOOL_NAME, M("TP_RAW_SENSOR_BAYER_LABEL"))
 {
 
-    packBox = Gtk::manage (new ToolParamBlock ());
-    pack_start (*packBox);
-
     show_all ();
 }

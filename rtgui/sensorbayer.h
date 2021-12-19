@@ -27,16 +27,8 @@ class SensorBayer final :
     public FoldableToolPanel
 {
 
-protected:
-    ToolParamBlock*     packBox;
-
 public:
     static const Glib::ustring TOOL_NAME;
 
     SensorBayer ();
-
-    Gtk::Box* getPackBox ()
-    {
-        return packBox;
-    }
 };

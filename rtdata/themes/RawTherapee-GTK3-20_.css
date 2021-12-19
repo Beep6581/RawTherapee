@@ -766,6 +766,29 @@ button.radio#histButton:hover {
     border-bottom: none;
 }
 
+/* ExpanderContents is just a logical container. Don't add additional spacing. */
+#ExpanderBox > .ExpanderContents > * {
+    margin: 0;
+    min-height: 0;
+    padding: 0;
+}
+
+/* For sub-tools containers that go below another widget, add some margin
+ * between them if the container has children. */
+#MyExpander .SubToolsContainer:not(:first-child) > :first-child {
+    margin-top: 0.3333333333333333em;
+}
+
+#MyExpander .SubToolsContainer {
+    min-height: 0;
+}
+
+.SubToolsContainer > #MyExpander,
+.ToolParamBlock > #MyExpander,
+.ExpanderContents,
+#MyExpander .ToolParamBlock {
+    margin: 0;
+}
 
 /* Tool background */
 #ExpanderBox > box,
@@ -1044,6 +1067,10 @@ dialog frame > label:not(.dummy) {
 
 #ToolPanelNotebook viewport {
     padding: 0;	
+}
+
+#ToolPanelNotebook .PanelEnding {
+    margin-top: 4px;
 }
 
 #ToolPanelNotebook header tabs {
