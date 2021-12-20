@@ -1489,10 +1489,11 @@ IImage8* Thumbnail::processImage (const procparams::ProcParams& params, eSensorT
             adap = 2000.f;
         } else {
             float E_V = fcomp + log2 ((fnum * fnum) / fspeed / (fiso / 100.f));
-            float expo2 = params.toneCurve.expcomp; // exposure compensation in tonecurve ==> direct EV
+            double kexp = 0.;
+            float expo2 = kexp * params.toneCurve.expcomp; // exposure compensation in tonecurve ==> direct EV
             E_V += expo2;
             float expo1;//exposure raw white point
-            expo1 = log2 (params.raw.expos); //log2 ==>linear to EV
+            expo1 = 0.5 * log2 (params.raw.expos); //log2 ==>linear to EV
             E_V += expo1;
             adap = powf (2.f, E_V - 3.f); //cd / m2
             //end calculation adaptation scene luminosity

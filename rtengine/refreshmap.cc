@@ -524,7 +524,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DEMOSAIC,         // EvPdShrEnabled
     CAPTURESHARPEN,    // EvPdShrMaskToggled
     AUTOEXP,   // EvLocallabSpotDeleted
-    M_VOID,           // EvLocallabSpotSelected
+    HDR,           // EvLocallabSpotSelected
     M_VOID,           // EvLocallabSpotName
     M_VOID,           // EvLocallabSpotVisibility
     AUTOEXP,   // EvLocallabSpotShape
@@ -1077,8 +1077,114 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,   // Evlocallabreparsh
     AUTOEXP,   // Evlocallabreparexp
     AUTOEXP,   // Evlocallabrepartm
-    AUTOEXP   // Evlocallabchroml
-
+    AUTOEXP,   // Evlocallabchroml
+    AUTOEXP,   // Evlocallabresidgam
+    AUTOEXP,   // Evlocallabresidslop
+    AUTOEXP,   // Evlocallabnoisegam
+    AUTOEXP,    //Evlocallabgamlc
+    AUTOEXP,    //Evlocallabgamc
+    AUTOEXP,    //Evlocallabgamex
+    AUTOEXP | M_AUTOEXP,    // EvLocenacie
+    AUTOEXP,     //Evlocallabreparcie
+    HDR,     //EvlocallabAutograycie
+    HDR,    //EvlocallabsourceGraycie
+    HDR,    //Evlocallabsourceabscie
+    AUTOEXP,    //Evlocallabsursourcie
+    AUTOEXP,    //Evlocallabsaturlcie
+    AUTOEXP,    //Evlocallabchromlcie
+    AUTOEXP,    //Evlocallablightlcie
+    AUTOEXP,    //Evlocallablightqcie
+    AUTOEXP,    //Evlocallabcontlcie
+    AUTOEXP,    //Evlocallabcontthrescie
+    AUTOEXP,    //Evlocallabcontqcie
+    AUTOEXP,    //Evlocallabcolorflcie
+    AUTOEXP,    //Evlocallabtargabscie
+    AUTOEXP,    //EvlocallabtargetGraycie
+    AUTOEXP,    //Evlocallabcatadcie
+    AUTOEXP,    //Evlocallabdetailcie
+    AUTOEXP,    //Evlocallabsurroundcie
+    AUTOEXP,    //Evlocallabsensicie
+    AUTOEXP,    //Evlocallabmodecie
+    AUTOEXP,    //Evlocallabrstprotectcie
+    AUTOEXP,    //Evlocallabsigmoidldacie
+    AUTOEXP,    //Evlocallabsigmoidthcie
+    AUTOEXP,    //Evlocallabsigmoidblcie
+    AUTOEXP,    //Evlocallabsigmoidqjcie
+    AUTOEXP,    //Evlocallabhuecie
+    AUTOEXP,    //Evlocallabjabcie
+    AUTOEXP,    //Evlocallablightjzcie
+    AUTOEXP,    //Evlocallabcontjzcie
+    AUTOEXP,    //Evlocallabchromjzcie
+    AUTOEXP,    //Evlocallabhuejzcie
+    AUTOEXP,    //Evlocallabsigmoidldajzcie
+    AUTOEXP,    //Evlocallabsigmoidthjzcie
+    AUTOEXP,    //Evlocallabsigmoidbljzcie
+    AUTOEXP,    //Evlocallabadapjzcie
+    AUTOEXP,    //Evlocallabmodecam
+    AUTOEXP,    //Evlocallabhljzcie
+    AUTOEXP,    //Evlocallabhlthjzcie
+    AUTOEXP,    //Evlocallabshjzcie
+    AUTOEXP,    //Evlocallabshthjzcie
+    AUTOEXP,    //Evlocallabradjzcie
+//    AUTOEXP,    //EvlocallabHHshapejz
+    AUTOEXP,    //EvlocallabCHshapejz
+    AUTOEXP,    //Evlocallabjz100
+    AUTOEXP,    //Evlocallabpqremap
+    AUTOEXP,    //EvlocallabLHshapejz
+    AUTOEXP,    //Evlocallabshargam
+    AUTOEXP,    //Evlocallabvibgam
+    AUTOEXP,    //EvLocallabtoneMethodcie
+    AUTOEXP,    //Evlocallabshapecie
+    AUTOEXP,    //EvLocallabtoneMethodcie2
+    AUTOEXP,    //Evlocallabshapecie2
+    AUTOEXP,    //Evlocallabshapejz
+    AUTOEXP,    //Evlocallabshapecz
+    AUTOEXP,    //Evlocallabshapeczjz
+    AUTOEXP,    //Evlocallabforcejz
+//    AUTOEXP,    //Evlocallablightlzcam
+//    AUTOEXP,    //Evlocallablightqzcam
+//    AUTOEXP,    //Evlocallabcontlzcam
+//    AUTOEXP,    //Evlocallabcontqzcam
+//    AUTOEXP,    //Evlocallabcontthreszcam
+//    AUTOEXP,    //Evlocallabcolorflzcam
+//    AUTOEXP,    //Evlocallabsaturzcam
+//    AUTOEXP,    //Evlocallabchromzcam
+    AUTOEXP,    //Evlocallabpqremapcam16
+    AUTOEXP,    //EvLocallabEnacieMask    
+    AUTOEXP,    //EvlocallabCCmaskcieshape
+    AUTOEXP,    //EvlocallabLLmaskcieshape
+    AUTOEXP,    //EvlocallabHHmaskcieshape
+    AUTOEXP,    //Evlocallabblendmaskcie
+    AUTOEXP,    //Evlocallabradmaskcie
+    AUTOEXP,    //Evlocallabchromaskcie
+    AUTOEXP,    //EvlocallabLmaskcieshape 
+    AUTOEXP,    //Evlocallabrecothrescie
+    AUTOEXP,    //Evlocallablowthrescie
+    AUTOEXP,    //Evlocallabhigthrescie
+    AUTOEXP,    //Evlocallabdecaycie
+    AUTOEXP,    //Evlocallablapmaskcie
+    AUTOEXP,    //Evlocallabgammaskcie
+    AUTOEXP,    //Evlocallabslomaskcie
+    AUTOEXP,    //Evlocallabqtoj
+    AUTOEXP,    //Evlocallabsaturjzcie
+    AUTOEXP,    //EvLocallabSpotdenoichmask
+    AUTOEXP,    //Evlocallabsigmalcjz
+    AUTOEXP,    //EvlocallabcsThresholdjz
+    AUTOEXP,    //EvlocallabwavCurvejz
+    AUTOEXP,    //Evlocallabclarilresjz
+    AUTOEXP,    //Evlocallabclaricresjz
+    AUTOEXP,    //Evlocallabclarisoftjz
+    AUTOEXP,    //EvlocallabHHshapejz
+    AUTOEXP,    //Evlocallabsoftjzcie
+    AUTOEXP,    //Evlocallabthrhjzcie
+    AUTOEXP,    //Evlocallabchjzcie
+    AUTOEXP,    //Evlocallabstrsoftjzcie
+    AUTOEXP,    //EvlocallabblackEvjz
+    AUTOEXP,    //EvlocallabwhiteEvjz
+    AUTOEXP,    //Evlocallablogjz
+    AUTOEXP,    //Evlocallabtargetjz
+    AUTOEXP,    //Evlocallabforcebw
+    AUTOEXP    //Evlocallabsigjz
 
 };
 

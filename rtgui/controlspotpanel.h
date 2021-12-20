@@ -86,6 +86,7 @@ public:
         bool laplac;
         bool deltae;
         int scopemask;
+        double denoichmask;
         bool shortc;
         int lumask;
         bool savrest;
@@ -321,6 +322,7 @@ private:
         Gtk::TreeModelColumn<bool> laplac;
         Gtk::TreeModelColumn<bool> deltae;
         Gtk::TreeModelColumn<int> scopemask;
+        Gtk::TreeModelColumn<int> denoichmask;
         Gtk::TreeModelColumn<bool> shortc;
         Gtk::TreeModelColumn<int> lumask;
         Gtk::TreeModelColumn<bool> savrest;
@@ -402,6 +404,7 @@ private:
     Adjuster* const colorscope_;
     Adjuster* const avoidrad_;
     Adjuster* const scopemask_;
+    Adjuster* const denoichmask_;
     Adjuster* const lumask_;
 
     Gtk::CheckButton* const hishow_;

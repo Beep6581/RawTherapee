@@ -606,6 +606,7 @@ void Options::setDefaults()
     rtSettings.gamutICC = true;
     rtSettings.gamutLch = true;
     rtSettings.amchroma = 40;//between 20 and 140   low values increase effect..and also artifacts, high values reduces
+    rtSettings.amchromajz = 40;//between 5 and 100  low values increase effect..and also artifacts, high values reduces
     rtSettings.level0_cbdl = 0;
     rtSettings.level123_cbdl = 30;
 //locallab
@@ -1748,6 +1749,10 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.amchroma = keyFile.get_integer("Color Management", "Amountchroma");
                 }
 
+                if (keyFile.has_key("Color Management", "JzAmountchroma")) {
+                    rtSettings.amchromajz = keyFile.get_integer("Color Management", "JzAmountchroma");
+                }
+
                 if (keyFile.has_key("Color Management", "ClutsDirectory")) {
                     clutsDir = keyFile.get_string("Color Management", "ClutsDirectory");
                 }
@@ -2376,6 +2381,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("Color Management", "GamutLch", rtSettings.gamutLch);
         keyFile.set_integer("Color Management", "ProtectRed", rtSettings.protectred);
         keyFile.set_integer("Color Management", "Amountchroma", rtSettings.amchroma);
+        keyFile.set_integer("Color Management", "JzAmountchroma", rtSettings.amchromajz);
         keyFile.set_double("Color Management", "ProtectRedH", rtSettings.protectredh);
         keyFile.set_integer("Color Management", "CRI", rtSettings.CRI_color);
         keyFile.set_integer("Color Management", "DenoiseLabgamma", rtSettings.denoiselabgamma);

@@ -116,6 +116,7 @@ private:
     LocallabCBDL expcbdl;
     LocallabLog explog;
     LocallabMask expmask;
+    Locallabcie expcie;
 
     std::vector<LocallabTool*> locallabTools;
 
@@ -143,10 +144,11 @@ public:
     void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) override;
 
     // Locallab Log Encoding autocompute function
-    void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg) override;
+    void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1) override;
 
     // Locallab tools mask background management function
-    void refChanged(const std::vector<locallabRef> &ref, int selspot) override;
+//    void refChanged(const std::vector<locallabRef> &ref, int selspot) override;
+    void refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot)override;
 
     // Mask visibility management functions
     struct llMaskVisibility {
@@ -167,6 +169,7 @@ public:
         int cbMask;
         int logMask;
         int maskMask;
+        int cieMask;
     };
 
     void resetMaskVisibility();
