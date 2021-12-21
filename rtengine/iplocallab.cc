@@ -12730,7 +12730,7 @@ void maskrecov(const LabImage * bufcolfin, LabImage * original, LabImage * bufma
 #ifdef _OPENMP
    #pragma omp parallel for if (multiThread)
 #endif
-    for (int ir = 0; ir < bfh; ir++)
+    for (int ir = 0; ir < bfh; ir++) {
         for (int jr = 0; jr < bfw; jr++) {
             const float lM = bufmaskblurcol->L[ir][jr];
             const float lmr = lM / 327.68f;
@@ -12749,6 +12749,7 @@ void maskrecov(const LabImage * bufcolfin, LabImage * original, LabImage * bufma
             }
 
         }
+    }
 
         for (int i = 0; i < 3; ++i) {
             boxblur(static_cast<float**>(masklum), static_cast<float**>(masklum), 10 / sk, bfw, bfh, false);

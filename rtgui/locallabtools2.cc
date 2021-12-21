@@ -6321,7 +6321,7 @@ void LocallabLog::updateAutocompute(const float blackev, const float whiteev, co
 {
     if (autocompute->get_active()) {
         idle_register.add(
-        [this, blackev, whiteev, sourceg, sourceab, targetg, jz1]() -> bool {
+        [this, blackev, whiteev, sourceg, sourceab, targetg]() -> bool {
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
             // Update adjuster values according to autocomputed ones
@@ -8739,7 +8739,7 @@ void Locallabcie::updateAutocompute(const float blackev, const float whiteev, co
 
     if (Autograycie->get_active()) {
         idle_register.add(
-        [this, blackev, whiteev, sourceg, sourceab, targetg, jz1]() -> bool {
+        [this, blackev, whiteev, sourceg, sourceab, jz1]() -> bool {
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
 
             // Update adjuster values according to autocomputed ones
