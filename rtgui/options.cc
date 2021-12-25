@@ -424,7 +424,7 @@ void Options::setDefaults()
     //crvOpen.clear ();
     parseExtensions.clear();
     favorites.clear();
-    cloneFavoriteTools = true;
+    cloneFavoriteTools = false;
     parseExtensionsEnabled.clear();
     parsedExtensions.clear();
     parsedExtensionsSet.clear();

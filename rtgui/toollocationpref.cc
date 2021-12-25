@@ -532,6 +532,8 @@ ToolLocationPreference::Impl::Impl(Options &options) :
 
     // General options.
     cloneFavoriteToolsToggleWidget->set_active(options.cloneFavoriteTools);
+    cloneFavoriteToolsToggleWidget->set_tooltip_text(
+        M("PREFERENCES_TOOLPANEL_CLONE_FAVORITES_TOOLTIP"));
 
     // Tool list.
     toolListViewPtr->append_column(toolListViewColumnToolName);
