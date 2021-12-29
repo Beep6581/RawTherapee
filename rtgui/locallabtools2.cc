@@ -7444,7 +7444,8 @@ Locallabcie::Locallabcie():
     forcebw(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_BWFORCE")))),
 
     sigmoidFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGFRA")))),
-    sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 1.0, 0.01, 0.))),
+    sigq(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGFRA")))),
+    sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.0, 1., 0.01, 0.5))),
     sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.1, 4., 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.5, 1.5, 0.01, 1.))),
     sigmoidqjcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDQJ")))),
@@ -7610,6 +7611,18 @@ Locallabcie::Locallabcie():
     bevwevBox->pack_start(*whiteEvjz);
     bevwevFrame->add(*bevwevBox);
     cieFBox->pack_start (*bevwevFrame);
+
+    sigmoidFrame->set_label_align(0.025, 0.5);
+    sigmoidFrame->set_label_widget(*sigq);
+    ToolParamBlock* const sigBox = Gtk::manage(new ToolParamBlock());
+    
+    sigBox->pack_start(*sigmoidldacie);
+    sigBox->pack_start(*sigmoidthcie);
+    sigBox->pack_start(*sigmoidblcie);
+    sigBox->pack_start(*sigmoidqjcie);
+    sigmoidFrame->add(*sigBox);
+    cieFBox->pack_start(*sigmoidFrame);
+
 
     sigmoidjzFrame->set_label_align(0.025, 0.5);
     sigmoidjzFrame->set_label_widget(*sigjz);
@@ -7816,6 +7829,7 @@ Locallabcie::Locallabcie():
     sigmoidqjcieconn = sigmoidqjcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigmoidqjcieChanged));
     logjzconn = logjz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logjzChanged));
     sigjzconn = sigjz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigjzChanged));
+    sigqconn = sigq->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigqChanged));
     forcejzConn = forcejz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::forcejzChanged));
     qtojConn = qtoj->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::qtojChanged));
     chjzcieconn = chjzcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::chjzcieChanged));
@@ -7984,7 +7998,7 @@ Locallabcie::Locallabcie():
     cieP1Box->pack_start(*cie1colorFrame);
  //   pack_start(*blackEvjz);
  //   pack_start(*whiteEvjz);
-
+/*
     sigmoidFrame->set_label_align(0.025, 0.5);
     ToolParamBlock* const sigBox = Gtk::manage(new ToolParamBlock());
     
@@ -7994,6 +8008,7 @@ Locallabcie::Locallabcie():
     sigBox->pack_start(*sigmoidqjcie);
     sigmoidFrame->add(*sigBox);
     cieP1Box->pack_start(*sigmoidFrame);
+    */
     ToolParamBlock* const cieP11Box = Gtk::manage(new ToolParamBlock());
     cieP11Box->pack_start(*cieCurveEditorG);
     cieP11Box->pack_start(*cieCurveEditorG2);
@@ -8275,6 +8290,7 @@ void Locallabcie::disableListener()
     sigmoidqjcieconn.block(true);
     logjzconn.block(true);
     sigjzconn.block(true);
+    sigqconn.block(true);
     chjzcieconn.block(true);
     sursourcieconn.block (true);
     surroundcieconn.block (true);
@@ -8297,6 +8313,7 @@ void Locallabcie::enableListener()
     sigmoidqjcieconn.block(false);
     logjzconn.block(false);
     sigjzconn.block(false);
+    sigqconn.block(false);
     chjzcieconn.block(false);
     sursourcieconn.block (false);
     surroundcieconn.block (false);
@@ -8411,6 +8428,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         sigmoidqjcie->set_active(spot.sigmoidqjcie);
         logjz->set_active(spot.logjz);
         sigjz->set_active(spot.sigjz);
+        sigq->set_active(spot.sigq);
        // chjzcie->set_active(spot.chjzcie);
         chjzcie->set_active(true);//force to true to avoid other mode
         sourceabscie->setValue(spot.sourceabscie);
@@ -8585,6 +8603,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.logjz = logjz->get_active();
         spot.sigjz = sigjz->get_active();
         spot.chjzcie = chjzcie->get_active();
+        spot.sigq = sigq->get_active();
 
         if(sursourcie->get_active_row_number() == 0) {
             spot.sursourcie = "Average";
@@ -8903,6 +8922,21 @@ void Locallabcie::sigjzChanged()
     }
 }
 
+void Locallabcie::sigqChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (sigq->get_active()) {
+                listener->panelChanged(Evlocallabsigq,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallabsigq,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
 void Locallabcie::chjzcieChanged()
 {
     if (chjzcie->get_active()) {
@@ -8938,6 +8972,7 @@ void Locallabcie::modecamChanged()
         logjzFrame->show();
         bevwevFrame->show();
         sigmoidjzFrame->show();
+        sigmoidFrame->hide();
         forcejz->hide();
         
     } else {
@@ -8950,7 +8985,10 @@ void Locallabcie::modecamChanged()
         jabcie->hide();
         PQFrame->hide();
         logjzFrame->hide();
-        bevwevFrame->hide();
+        if (modecam->get_active_row_number() == 0){ 
+            bevwevFrame->show();
+            sigmoidFrame->show();
+        }
         sigmoidjzFrame->hide();
         forcejz->hide();
         catadcie->show();
@@ -9021,7 +9059,13 @@ void Locallabcie::modecamChanged()
         PQFrame->hide();
         logjzFrame->hide();
         sigmoidjzFrame->hide();
+        sigmoidFrame->hide();
         bevwevFrame->hide();
+        if (modecam->get_active_row_number() == 0){ 
+            bevwevFrame->show();
+            sigmoidFrame->show();
+        }
+
         forcejz->hide();
         pqremapcam16->show();
         catadcie->show();
@@ -9039,6 +9083,11 @@ void Locallabcie::modecamChanged()
     } else {
         cieFrame->show();
         cie2Frame->show();
+        if (modecam->get_active_row_number() == 0){ 
+            bevwevFrame->show();
+            sigmoidjzFrame->hide();
+            
+        }
         if (modecam->get_active_row_number() == 1) {
             targetGraycie->hide();
             targabscie->hide();
@@ -9048,6 +9097,7 @@ void Locallabcie::modecamChanged()
             PQFrame->show();
             logjzFrame->show();
             sigmoidjzFrame->show();
+            sigmoidFrame->hide();
             bevwevFrame->show();
             catadcie->hide();
             cie2Frame->hide();
@@ -9208,6 +9258,11 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 logjzFrame->hide();
                 sigmoidjzFrame->hide();
                 bevwevFrame->hide();
+                sigmoidFrame->hide();
+            }
+            if (modecam->get_active_row_number() == 0){ 
+                bevwevFrame->show();
+                sigmoidFrame->show();
             }
 
             if (modecam->get_active_row_number() == 1) {
@@ -9220,6 +9275,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 logjzFrame->hide();
                 bevwevFrame->hide();
                 sigmoidjzFrame->hide();
+                sigmoidFrame->hide();
                 catadcie->hide();
                 cie2Frame->hide();
                 maskusablecie->hide();
@@ -9292,6 +9348,10 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 maskusablecie->hide();
                 maskunusablecie->show();
             }
+            if (modecam->get_active_row_number() == 0){ 
+                bevwevFrame->show();
+                sigmoidFrame->show();
+            }
 
             if (modecam->get_active_row_number() == 2) {
                 PQFrame->hide();
@@ -9310,6 +9370,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 logjzFrame->hide();
                 sigmoidjzFrame->hide();
                 bevwevFrame->hide();
+                sigmoidFrame->hide();
                 catadcie->hide();
                 cie2Frame->hide();
                 exprecovcie->hide();
@@ -9379,6 +9440,9 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 maskusablecie->hide();
                 maskunusablecie->show();
             }
+            if (modecam->get_active_row_number() == 0){ 
+                bevwevFrame->show();
+            }
 
             if (modecam->get_active_row_number() == 1 || modecam->get_active_row_number() == 2) {
                 jabcie->show();
@@ -9391,6 +9455,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 logjzFrame->show();
                 bevwevFrame->show();
                 sigmoidjzFrame->show();
+                sigmoidFrame->hide();
                 forcejz->hide();
                 
             }
@@ -9406,6 +9471,11 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 logjzFrame->hide();
                 sigmoidjzFrame->hide();
                 bevwevFrame->hide();
+                if (modecam->get_active_row_number() == 0){ 
+                    bevwevFrame->show();
+                    sigmoidFrame->show();
+                }
+                
             }
             if (modecam->get_active_row_number() == 2) {
                 PQFrame->show();
@@ -9423,6 +9493,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
                 PQFrame->show();
                 logjzFrame->show();
                 sigmoidjzFrame->show();
+                sigmoidFrame->hide();
                 bevwevFrame->show();
                 catadcie->hide();
                 cie2Frame->hide();
@@ -9483,6 +9554,9 @@ void Locallabcie::updatecieGUI()
         cie1Frame->show();
         cie2Frame->show();
         expcam16->show();
+    if (modecam->get_active_row_number() == 0){ 
+       bevwevFrame->show();
+    }
         
     if (modecam->get_active_row_number() == 2  && mode == Expert) {
         PQFrame->show();
@@ -9514,6 +9588,7 @@ void Locallabcie::updatecieGUI()
         logjzFrame->show();
         sigmoidjzFrame->show();
         bevwevFrame->show();
+        sigmoidFrame->hide();
         catadcie->hide();
         cie2Frame->hide();
         if(mode != Expert) {
@@ -9524,7 +9599,12 @@ void Locallabcie::updatecieGUI()
             PQFrame->hide();
             logjzFrame->hide();
             sigmoidjzFrame->hide();
+            sigmoidFrame->hide();
             bevwevFrame->hide();
+            if (modecam->get_active_row_number() == 0){ 
+                bevwevFrame->show();
+                sigmoidFrame->show();
+            }
             exprecovcie->hide();
             expmaskcie->hide();
             maskusablecie->hide();

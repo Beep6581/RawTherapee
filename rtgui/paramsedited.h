@@ -989,6 +989,7 @@ public:
         bool sigmoidqjcie;
         bool logjz;
         bool sigjz;
+        bool sigq;
         bool chjzcie;
         bool sourceGraycie;
         bool sourceabscie;

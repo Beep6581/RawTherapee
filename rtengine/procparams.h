@@ -1596,6 +1596,7 @@ struct LocallabParams {
         bool sigmoidqjcie;
         bool logjz;
         bool sigjz;
+        bool sigq;
         bool chjzcie;
         double sourceGraycie;
         double sourceabscie;

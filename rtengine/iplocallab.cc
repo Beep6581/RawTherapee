@@ -2582,6 +2582,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     bool jabcie = false;//always disabled
     bool islogjz = params->locallab.spots.at(sp).forcebw;
     bool issigjz = params->locallab.spots.at(sp).sigjz;
+    bool issigq = params->locallab.spots.at(sp).sigq;
 
     //sigmoid J Q variables
     const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie; 
@@ -2630,8 +2631,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
     const float ath = sigmoidth - 1.f;
     const float bth = 1;
-    float sila = pow_F(sigmoidlambda, 0.25f);
-    const float sigm = 1.4f + 25.f *(1.f - sila);//with sigmoidlambda = 0 e^16 = 9000000 e^20=485000000 e^23.5 = 16000000000 e^26.4 = 291000000000
+    float sila = pow_F(sigmoidlambda, 0.5f);
+    const float sigm = 2.4f + 10.f *(1.f - sila);//with sigmoidlambda = 0 e^16 = 9000000 e^20=485000000 e^23.5 = 16000000000 e^26.4 = 291000000000
     const float bl = sigmoidbl;
     //end sigmoid
 
@@ -3049,6 +3050,12 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const float pow1n = pow_F(1.64f - pow_F(0.29f, nj), 0.73f);
     const float coe = pow_F(fl, 0.25f);
     const float QproFactor = (0.4f / c) * (aw + 4.0f) ;
+    const double shadows_range =  params->locallab.spots.at(sp).blackEvjz;
+    const double targetgray = params->locallab.spots.at(sp).targetjz;
+    double targetgraycor = 0.15;
+    double dynamic_range = std::max(params->locallab.spots.at(sp).whiteEvjz - shadows_range, 0.5);
+    const double noise = pow(2., -16.6);//16.6 instead of 16 a little less than others, but we work in double
+    const double log2 = xlog(2.);
 
     if((mocam == 0 || mocam ==2)  && call == 0) {//Jz az bz ==> Jz Cz Hz before Ciecam16
         double mini = 1000.;
@@ -3170,8 +3177,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
         const float athjz = sigmoidthjz - 1.f;
         const float bthjz = 1;
-        float powsig = pow_F(sigmoidlambdajz, 0.25f);
-        const float sigmjz = 1.4f + 25.f *(1.f - powsig);// e^26.4 = 291000000000
+        float powsig = pow_F(sigmoidlambdajz, 0.5f);
+        const float sigmjz = 2.4f + 10.f *(1.f - powsig);// e^12.4 = 242000
         const float bljz = sigmoidbljz;
         
         double contreal = 0.2 *  params->locallab.spots.at(sp).contjzcie;
@@ -3217,12 +3224,14 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
     //log encoding Jz
     double gray = 0.15;
+    /*
     const double shadows_range =  params->locallab.spots.at(sp).blackEvjz;
     const double targetgray = params->locallab.spots.at(sp).targetjz;
     double targetgraycor = 0.15;
     double dynamic_range = std::max(params->locallab.spots.at(sp).whiteEvjz - shadows_range, 0.5);
     const double noise = pow(2., -16.6);//16.6 instead of 16 a little less than others, but we work in double
     const double log2 = xlog(2.);
+    */
     double base = 10.;
     double linbase = 10.;
     if(logjz) {//with brightness Jz
@@ -3878,17 +3887,41 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
 
                         Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
 
-                        if(sigmoidlambda > 0.f && iscie && sigmoidqj == true) {//sigmoid Q only with ciecam module
+                        if(issigq && iscie) {//sigmoid Q only with ciecam module
+                      //  if(iscie && sigmoidqj == true) {//sigmoid Q only with ciecam module
                             float val = Qpro * coefq;
+                            if(sigmoidqj == true) {
+                                val = std::max((xlog(val) / log2 - shadows_range) / dynamic_range, noise);//in range EV
+                                
+                            }
                             if(sigmoidth >= 1.f) {
                                 th = ath * val + bth;
                             } else {
                                 th = at * val + bt;
                             }
+                           // th *=0.7f;
                             sigmoidla (val, th, sigm);
                             float bl2 = 1.f;
                             Qpro = std::max(bl * Qpro + bl2 * val / coefq, 0.f);
                         }
+
+/*
+                if(issigjz && iscie) {//sigmoid Jz
+                    float val = Jz;
+                    if(islogjz) {
+                        val = std::max((xlog(Jz) / log2 - shadows_range) / dynamic_range, noise);//in range EV
+                    }
+                    if(sigmoidthjz >= 1.f) {
+                        thjz = athjz * val + bthjz;//threshold
+                    } else {
+                        thjz = atjz * val + btjz;
+                    }
+                    sigmoidla (val, thjz, sigmjz);//sigmz "slope" of sigmoid
+                    
+
+                    Jz = LIM01((double) bljz * Jz + (double) val);
+                }
+*/
 
                         float Mp, sres;
                         Mp = Mpro / 100.0f;
@@ -3907,7 +3940,7 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
                         }
 
                         Jpro = CAMBrightCurveJ[(float)(Jpro * 327.68f)];   //lightness CIECAM02 + contrast
-
+/*
                         if(sigmoidlambda > 0.f && iscie && sigmoidqj == false) {//sigmoid J only with ciecam module
                             float val = Jpro / 100.f;
                             if(sigmoidth >= 1.f) {
@@ -3921,7 +3954,7 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
                                 Jpro = 99.9f;
                             }
                         }
-
+*/
                         float Sp = spro / 100.0f;
                         Ciecam02::curvecolorfloat(schr, Sp, sres, 1.5f);
                         dred = 100.f; // in C mode
