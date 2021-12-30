@@ -2632,7 +2632,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const float ath = sigmoidth - 1.f;
     const float bth = 1;
     float sila = pow_F(sigmoidlambda, 0.5f);
-    const float sigm = 2.4f + 10.f *(1.f - sila);//e^12.4 = 242000 => sigm vary from 2.4 to 12.4
+    const float sigm = 2.445f + 10.f *(1.f - sila);//e^12.4 = 242000 => sigm vary from 2.4 to 12.4
     const float bl = sigmoidbl;
     //end sigmoid
 
@@ -3176,9 +3176,9 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         const float btjz = sigmoidthjz;
 
         const float athjz = sigmoidthjz - 1.f;
-        const float bthjz = 1;
+        const float bthjz = 1.f;
         float powsig = pow_F(sigmoidlambdajz, 0.5f);
-        const float sigmjz = 2.4f + 10.f *(1.f - powsig);// e^12.4 = 242000
+        const float sigmjz = 2.445f + 10.f *(1.f - powsig);// e^12.4 = 242000
         const float bljz = sigmoidbljz;
         
         double contreal = 0.2 *  params->locallab.spots.at(sp).contjzcie;
