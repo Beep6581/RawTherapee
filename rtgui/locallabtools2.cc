@@ -8197,6 +8197,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         sourceabscie->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
         cie1Frame->set_tooltip_text(M("TP_LOCALLAB_LOGIMAGE_TOOLTIP"));
         sigmoidFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID_TOOLTIP"));
+        sigmoidjzFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID_TOOLTIP"));
         contlcie->set_tooltip_text(M("TP_LOCALLAB_LOGCONTL_TOOLTIP"));
         contqcie->set_tooltip_text(M("TP_LOCALLAB_LOGCONTQ_TOOLTIP"));
         contthrescie->set_tooltip_text(M("TP_LOCALLAB_LOGCONTTHRES_TOOLTIP"));
@@ -8244,6 +8245,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         sourceabscie->set_tooltip_text("");
         cie1Frame->set_tooltip_text("");
         sigmoidFrame->set_tooltip_text("");
+        sigmoidjzFrame->set_tooltip_text("");
         contlcie->set_tooltip_text("");
         contqcie->set_tooltip_text("");
         contthrescie->set_tooltip_text("");
