@@ -6061,6 +6061,20 @@ get2_256:
       offsetChannelBlackLevel2 = save1 + (0x0149 << 1);
       offsetWhiteLevels = save1 + (0x031c << 1);
       break;
+
+    case 3656: // EOS R6, ColorDataSubVer 33
+      // imCanon.ColorDataVer = 10;
+      imCanon.ColorDataSubVer = get2();
+
+      // The constant 0x0055 was found in LibRaw; more specifically by
+      // spelunking in LibRaw:src/metadata/canon.cpp.
+      fseek(ifp, save1 + (0x0055 << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
+
+      offsetChannelBlackLevel = save1 + (0x326 << 1);
+      offsetChannelBlackLevel2 = save1 + (0x157 << 1);
+      offsetWhiteLevels = save1 + (0x32a << 1);
+      break;
     }
 
     if (offsetChannelBlackLevel)
