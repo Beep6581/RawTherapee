@@ -166,11 +166,11 @@ FILEBROWSER_POPUPUNTRASH;Haal terug uit prullenbak
 FILEBROWSER_QUERYBUTTONHINT;Wis zoekopdracht
 FILEBROWSER_QUERYHINT;Zoeken op bestandsnamen. Ondersteund gedeeltelijke bestandsnamen. Scheidt de zoektermen door komma's, bv.\n<i>1001,1004,1199</i>\n\nSluit zoektermen uit door ze te prefixen met <i>!=</i> bv.\n<i>!=1001,1004,1199</i> \n\nSneltoets:\n<b>Ctrl-f</b> - focus het zoekveld,\n<b>Enter</b> - zoek,\n<b>Esc</b> - verwijder zoekresultaat, \n<b>Shift-Esc</b> - verwijder focus van het zoekveld.
 FILEBROWSER_QUERYLABEL; Zoeken:
-FILEBROWSER_RANK1_TOOLTIP;Waardering 1 *\nSneltoets: Shift-1
-FILEBROWSER_RANK2_TOOLTIP;Waardering 2 *\nSneltoets: Shift-2
-FILEBROWSER_RANK3_TOOLTIP;Waardering 3 *\nSneltoets: Shift-3
-FILEBROWSER_RANK4_TOOLTIP;Waardering 4 *\nSneltoets: Shift-4
-FILEBROWSER_RANK5_TOOLTIP;Waardering 5 *\nSneltoets: Shift-5
+FILEBROWSER_RANK1_TOOLTIP;Waardering 1 *\nSneltoets: <b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;Waardering 2 *\nSneltoets: <b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;Waardering 3 *\nSneltoets: <b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;Waardering 4 *\nSneltoets: <b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;Waardering 5 *\nSneltoets: <b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;Hernoem bestand
 FILEBROWSER_RESETDEFAULTPROFILE;Terugzetten naar standaardwaarde
 FILEBROWSER_SELECTDARKFRAME;Selecteer donkerframe...
@@ -181,22 +181,22 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;Toon foto's met label Groen\nSneltoets: <b>Alt-3
 FILEBROWSER_SHOWCOLORLABEL4HINT;Toon foto's met label Blauw\nSneltoets: <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Toon foto's met label Paars\nSneltoets: <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;Verwijder alle filters.\nSneltoets: <b>d</b>
-FILEBROWSER_SHOWEDITEDHINT;Toon bewerkte foto's\nSneltoets: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Toon niet-bewerkte foto's\nSneltoets: <b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;Toon bewerkte foto's\nSneltoets: <b>Shift-7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Toon niet-bewerkte foto's\nSneltoets: <b>Shift-6</b>
 FILEBROWSER_SHOWEXIFINFO;Toon EXIF-info
 FILEBROWSER_SHOWORIGINALHINT;Toon alleen originele afbeelding.\n\nAls er meerdere afbeeldingen zijn met dezelfde naam maar verschillende extensies, dan wordt de afbeelding waarvan de extensie het hoogst staat in de lijst met extensies in Voorkeuren > Bestandsnavigator > Extensies
-FILEBROWSER_SHOWRANK1HINT;Toon foto's met 1 ster.\nSneltoets: <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;Toon foto's met 2 sterren.\nSneltoets: <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;Toon foto's met 3 sterren.\nSneltoets: <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;Toon foto's met 4 sterren.\nSneltoets: <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;Toon foto's met 5 sterren.\nSneltoets: <b>5</b>
+FILEBROWSER_SHOWRANK1HINT;Toon foto's met 1 ster.\nSneltoets: <b>Shift-1</b>
+FILEBROWSER_SHOWRANK2HINT;Toon foto's met 2 sterren.\nSneltoets: <b>Shift-2</b>
+FILEBROWSER_SHOWRANK3HINT;Toon foto's met 3 sterren.\nSneltoets: <b>Shift-3</b>
+FILEBROWSER_SHOWRANK4HINT;Toon foto's met 4 sterren.\nSneltoets: <b>Shift-4</b>
+FILEBROWSER_SHOWRANK5HINT;Toon foto's met 5 sterren.\nSneltoets: <b>Shift-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Toon recent opgeslagen/verwerkte foto's.\nSneltoets: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Toon niet-opgeslagen/verwerkte foto's.\nSneltoets: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Toon inhoud prullenbak\nSneltoets: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Toon foto's zonder kleurlabel.\nSneltoets: <b>Alt-0</b>
-FILEBROWSER_SHOWUNRANKHINT;Toon foto's zonder sterwaardering.\nSneltoets: <b>0</b>
+FILEBROWSER_SHOWUNRANKHINT;Toon foto's zonder sterwaardering.\nSneltoets: <b>Shift-0</b>
 FILEBROWSER_THUMBSIZE;Miniaturen
-FILEBROWSER_UNRANK_TOOLTIP;Verwijder sterwaardering\nSneltoets: <b>Shift-0</b>
+FILEBROWSER_UNRANK_TOOLTIP;Verwijder sterwaardering\nSneltoets: <b>0</b>
 FILEBROWSER_ZOOMINHINT;Groter
 FILEBROWSER_ZOOMOUTHINT;Kleiner
 FILECHOOSER_FILTER_ANY;Alle bestanden

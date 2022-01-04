@@ -168,11 +168,11 @@ FILEBROWSER_POPUPUNTRASH;Remover da lixeira
 FILEBROWSER_QUERYBUTTONHINT;Limpar a consulta Localizar
 FILEBROWSER_QUERYHINT;Digite nomes de arquivos para procurar. Suporta nomes de arquivos parciais. Separe os termos de pesquisa usando vírgulas, por exemplo\n<i>1001,1004,1199</i>\n\nExcluir termos de pesquisa prefixando-os com <i>!=</i>\npor ex.\n<i>!=1001,1004,1199</i>\n\nAtalhos:\n<b>Ctrl-f</b> - foque a caixa Localizar,\n<b>Enter</b> - pesquisa,\n<b>Esc</b> - Limpe a caixa Localizar,\n<b>Shift-Esc</b> - desfoque a caixa Localizar.
 FILEBROWSER_QUERYLABEL; Localizar:
-FILEBROWSER_RANK1_TOOLTIP;Classificação 1 *\nAtalho: <b>Shift-1</b>
-FILEBROWSER_RANK2_TOOLTIP;Classificação 2 *\nAtalho: <b>Shift-2</b>
-FILEBROWSER_RANK3_TOOLTIP;Classificação 3 *\nAtalho: <b>Shift-3</b>
-FILEBROWSER_RANK4_TOOLTIP;Classificação 4 *\nAtalho: <b>Shift-4</b>
-FILEBROWSER_RANK5_TOOLTIP;Classificação 5 *\nAtalho: <b>Shift-5</b>
+FILEBROWSER_RANK1_TOOLTIP;Classificação 1 *\nAtalho: <b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;Classificação 2 *\nAtalho: <b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;Classificação 3 *\nAtalho: <b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;Classificação 4 *\nAtalho: <b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;Classificação 5 *\nAtalho: <b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;Renomear arquivo
 FILEBROWSER_RESETDEFAULTPROFILE;Restaurar para o padrão
 FILEBROWSER_SELECTDARKFRAME;Selecionar quadro escuro...
@@ -183,23 +183,23 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;Mostrar imagens marcadas com Verde.\nAtalho: <b>
 FILEBROWSER_SHOWCOLORLABEL4HINT;Mostrar imagens marcadas com Azul.\nAtalho: <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Mostrar imagens marcadas com Roxo.\nAtalho: <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;Limpar todos os filtros.\nAtalho: <b>d</b>
-FILEBROWSER_SHOWEDITEDHINT;Mostrar imagens editadas.\nAtalho: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Mostrar imagens não editadas.\nAtalho: <b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;Mostrar imagens editadas.\nAtalho: <b>Shift-7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Mostrar imagens não editadas.\nAtalho: <b>Shift-6</b>
 FILEBROWSER_SHOWEXIFINFO;Mostrar informações Exif.\n\nAtalhos:\n<b>i</b> - Modo de Guias de Editores Múltiplos,\n<b>Alt-i</b> - Modo de Guia de Editor Único.
 FILEBROWSER_SHOWNOTTRASHHINT;Mostrar apenas imagens que não estão no lixo.
 FILEBROWSER_SHOWORIGINALHINT;Mostre somente imagens originais.\n\nQuando existem várias imagens com o mesmo nome de arquivo, mas extensões diferentes, a única considerada original é aquela cuja extensão está mais próxima da parte superior da lista de extensões analisadas em Preferências > Navegador de Arquivos > Extensões Analisadas.
-FILEBROWSER_SHOWRANK1HINT;Mostrar imagens classificadas com 1 estrela.\nAtalho: <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;Mostrar imagens classificadas com 2 estrelas.\nAtalho: <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;Mostrar imagens classificadas com 3 estrelas.\nAtalho: <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;Mostrar imagens classificadas com 4 estrelas.\nAtalho: <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;Mostrar imagens classificadas com 5 estrelas.\nAtalho: <b>5</b>
+FILEBROWSER_SHOWRANK1HINT;Mostrar imagens classificadas com 1 estrela.\nAtalho: <b>Shift-1</b>
+FILEBROWSER_SHOWRANK2HINT;Mostrar imagens classificadas com 2 estrelas.\nAtalho: <b>Shift-2</b>
+FILEBROWSER_SHOWRANK3HINT;Mostrar imagens classificadas com 3 estrelas.\nAtalho: <b>Shift-3</b>
+FILEBROWSER_SHOWRANK4HINT;Mostrar imagens classificadas com 4 estrelas.\nAtalho: <b>Shift-4</b>
+FILEBROWSER_SHOWRANK5HINT;Mostrar imagens classificadas com 5 estrelas.\nAtalho: <b>Shift-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Mostrar imagens salvas.\nAtalho: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Mostrar imagens não salvas.\nAtalho: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Mostrar conteúdo da lixeira.\nAtalho: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Mostrar imagens sem etiqueta colorida.\nAtalho: <b>Alt-0</b>
-FILEBROWSER_SHOWUNRANKHINT;Mostrar imagens sem classificação.\nAtalho: <b>0</b>
+FILEBROWSER_SHOWUNRANKHINT;Mostrar imagens sem classificação.\nAtalho: <b>Shift-0</b>
 FILEBROWSER_THUMBSIZE;Tamanho da miniatura
-FILEBROWSER_UNRANK_TOOLTIP;Sem classificação.\nAtalho: <b>Shift-0</b>
+FILEBROWSER_UNRANK_TOOLTIP;Sem classificação.\nAtalho: <b>0</b>
 FILEBROWSER_ZOOMINHINT;Aumentar tamanho da miniatura.\n\nAtalhos:\n<b>+</b> - Modo de Guias de Editores Múltiplos,\n<b>Alt</b>-<b>+</b> - Modo de Guia de Editor Único.
 FILEBROWSER_ZOOMOUTHINT;Diminuir o tamanho da miniatura.\n\nAtalhos:\n<b>-</b> - Modo de Guias de Editores Múltiplos,\n<b>Alt</b>-<b>-</b> - Modo de Guia de Editor Único.
 FILECHOOSER_FILTER_ANY;Todos os arquivos

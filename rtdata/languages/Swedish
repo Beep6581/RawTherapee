@@ -136,11 +136,11 @@ FILEBROWSER_POPUPUNTRASH;Ta bort från papperskorgen
 FILEBROWSER_QUERYBUTTONHINT;Rensa sökfältet
 FILEBROWSER_QUERYHINT;Skriv en <i>del av ett filnamn</i> för att söka efter en <i>kommaseparerad lista</i>.\nT. ex. <i>1001,1004,1199</i>\n\n<b>Ctrl-F</b> för att komma till sökfältet.\n<b>Enter</b> för att starta sökningen.\n<b>Esc</b> för att rensa.\n<b>Shift-Esc</b> för att ta bort fokus från sökfältet.
 FILEBROWSER_QUERYLABEL; Hitta:
-FILEBROWSER_RANK1_TOOLTIP;Betyg 1 *\nKortkommando: <b>Shift-1</b>
-FILEBROWSER_RANK2_TOOLTIP;Betyg 2 *\nKortkommando: <b>Shift-2</b>
-FILEBROWSER_RANK3_TOOLTIP;Betyg 3 *\nKortkommando: <b>Shift-3</b>
-FILEBROWSER_RANK4_TOOLTIP;Betyg 4 *\nKortkommando: <b>Shift-4</b>
-FILEBROWSER_RANK5_TOOLTIP;Betyg 5 *\nKortkommando: <b>Shift-5</b>
+FILEBROWSER_RANK1_TOOLTIP;Betyg 1 *\nKortkommando: <b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;Betyg 2 *\nKortkommando: <b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;Betyg 3 *\nKortkommando: <b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;Betyg 4 *\nKortkommando: <b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;Betyg 5 *\nKortkommando: <b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;Byt namn
 FILEBROWSER_SELECTDARKFRAME;Välj svartbild...
 FILEBROWSER_SELECTFLATFIELD;Välj plattfält...
@@ -150,22 +150,22 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;Visa bilder märkta som gröna.\nKortkommando:<b
 FILEBROWSER_SHOWCOLORLABEL4HINT;Visa bilder märkta som blåa.\nKortkommando:<b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Visa bilder märkta som lila.\nKortkommando: <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;Återställ alla sökfilter.\nKortkommando: <b>d</b>
-FILEBROWSER_SHOWEDITEDHINT;Visa redigerade bilder.\nKortkommando: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Visa ickeredigerade bilder.\nKortkommando: <b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;Visa redigerade bilder.\nKortkommando: <b>Shift-7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Visa ickeredigerade bilder.\nKortkommando: <b>Shift-6</b>
 FILEBROWSER_SHOWEXIFINFO;Visa EXIF-information.\nKortkommando: <b>i</b>\n\nKortkommando i enkelbildsläget: <b>Alt-i</b>
 FILEBROWSER_SHOWORIGINALHINT;Visa endast ursprungliga bilder.\n\nNär flera bilder finns med samma filnamn men med olika filändelser så anses den bild vara urpsrungsbilden som har sin ändelse närmst toppen i listan över filändelser i Inställningar > Filbläddrare > Hanterade filändelser
-FILEBROWSER_SHOWRANK1HINT;Visa bilder med betyg 1.\nKortkommando: <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;Visa bilder med betyg 2.\nKortkommando: <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;Visa bilder med betyg 3.\nKortkommando: <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;Visa bilder med betyg 4.\nKortkommando: <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;Visa bilder med betyg 5.\nKortkommando: <b>5</b>
+FILEBROWSER_SHOWRANK1HINT;Visa bilder med betyg 1.\nKortkommando: <b>Shift-1</b>
+FILEBROWSER_SHOWRANK2HINT;Visa bilder med betyg 2.\nKortkommando: <b>Shift-2</b>
+FILEBROWSER_SHOWRANK3HINT;Visa bilder med betyg 3.\nKortkommando: <b>Shift-3</b>
+FILEBROWSER_SHOWRANK4HINT;Visa bilder med betyg 4.\nKortkommando: <b>Shift-4</b>
+FILEBROWSER_SHOWRANK5HINT;Visa bilder med betyg 5.\nKortkommando: <b>Shift-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Visa bilder som nyligen sparats\nKortkommando: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Visa bilder som inte nyligen sparats\nKortkommando: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Visa innehållet i papperskorgen
 FILEBROWSER_SHOWUNCOLORHINT;Visa bilder utan färgetikett\nKortkommando: <b>Alt-0</b>
 FILEBROWSER_SHOWUNRANKHINT;Visa icke-betygsatta bilder
 FILEBROWSER_THUMBSIZE;Miniatyrbildens storlek
-FILEBROWSER_UNRANK_TOOLTIP;Ta bort betyg\nKortkommando: <b>Shift-0</b>
+FILEBROWSER_UNRANK_TOOLTIP;Ta bort betyg\nKortkommando: <b>0</b>
 FILEBROWSER_ZOOMINHINT;Förstora miniatyrbilderna.\nKortkommando: <b>+</b>\nKortkommado i enkelbildsläget: <b>Alt-+</b>
 FILEBROWSER_ZOOMOUTHINT;Förminska miniatyrbilderna.\nKortkommando: <b>-</b>\nKortkommado i enkelbildsläget: <b>Alt--</b>
 FILECHOOSER_FILTER_ANY;Alla filer

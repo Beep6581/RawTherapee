@@ -214,11 +214,11 @@ FILEBROWSER_POPUPUNTRASH;Vymazat z koše
 FILEBROWSER_QUERYBUTTONHINT;Smaže vyhledávací dotaz
 FILEBROWSER_QUERYHINT;Napište názvy hledaných souborů. Podporuje částečná jména souborů. Hledané termíny oddělte čárkami. Například:\n<i>1001,1004,1199</i>\n\nPro vyřazení výsledků z hledání použijte <i>!=</i> před hledaný výraz.\nNapříklad: \n<i>!=1001,1004,1199</i>\n\nZkratky:\n<b>Ctrl-F</b> pro přepnutí do pole hledání ,\n<b>Enter</b> pro zahájení hledání,\n<b>Esc</b> pro vyčištění,\n<b>Shift-Esc</b> pro zrušení přepnutí.
 FILEBROWSER_QUERYLABEL; Najít:
-FILEBROWSER_RANK1_TOOLTIP;Hodnocení 1 *\nZkratka: <b>Shift-1</b>
-FILEBROWSER_RANK2_TOOLTIP;Hodnocení 2 *\nZkratka: <b>Shift-2</b>
-FILEBROWSER_RANK3_TOOLTIP;Hodnocení 3 *\nZkratka: <b>Shift-3</b>
-FILEBROWSER_RANK4_TOOLTIP;Hodnocení 4 *\nZkratka: <b>Shift-4</b>
-FILEBROWSER_RANK5_TOOLTIP;Hodnocení 5 *\nZkratka: <b>Shift-5</b>
+FILEBROWSER_RANK1_TOOLTIP;Hodnocení 1 *\nZkratka: <b>1</b>
+FILEBROWSER_RANK2_TOOLTIP;Hodnocení 2 *\nZkratka: <b>2</b>
+FILEBROWSER_RANK3_TOOLTIP;Hodnocení 3 *\nZkratka: <b>3</b>
+FILEBROWSER_RANK4_TOOLTIP;Hodnocení 4 *\nZkratka: <b>4</b>
+FILEBROWSER_RANK5_TOOLTIP;Hodnocení 5 *\nZkratka: <b>5</b>
 FILEBROWSER_RENAMEDLGLABEL;Přejmenování souboru
 FILEBROWSER_RESETDEFAULTPROFILE;Vrátit se k původnímu
 FILEBROWSER_SELECTDARKFRAME;Výběr tmavého snímku...
@@ -229,23 +229,23 @@ FILEBROWSER_SHOWCOLORLABEL3HINT;Ukázat obrázky se zeleným štítkem.\nZkratka
 FILEBROWSER_SHOWCOLORLABEL4HINT;Ukázat obrázky s modrým štítkem.\nZkratka: <b>Alt-4</b>
 FILEBROWSER_SHOWCOLORLABEL5HINT;Ukázat obrázky s nachovým štítkem.\nZkratka: <b>Alt-5</b>
 FILEBROWSER_SHOWDIRHINT;Smazat všechny filtry.\nZkratka: <b>d</b>
-FILEBROWSER_SHOWEDITEDHINT;Ukázat upravené obrázky.\nZkratka: <b>7</b>
-FILEBROWSER_SHOWEDITEDNOTHINT;Ukázat neupravené obrázky.\nZkratka: <b>6</b>
+FILEBROWSER_SHOWEDITEDHINT;Ukázat upravené obrázky.\nZkratka: <b>Shift-7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Ukázat neupravené obrázky.\nZkratka: <b>Shift-6</b>
 FILEBROWSER_SHOWEXIFINFO;Zobrazit Exif informace.\n\nZkratky:\n<b>i</b> - režim více karet editoru,\n<b>Alt-i</b> - režim jedné karty editoru.
 FILEBROWSER_SHOWNOTTRASHHINT;Zobrazit pouze snímky které nejsou v koši.
 FILEBROWSER_SHOWORIGINALHINT;Zobrazí pouze originální  obrázky.\n\nPokud existuje několik obrázků se stejným názvem, ale rozdílnými příponami, bude jako originál vybrán ten, jehož přípona je nejvýše v seznamu přípon veVolby > Prohlížeč souborů > Analyzované přípony.
-FILEBROWSER_SHOWRANK1HINT;Ukázat obrázky hodnocené jednou hvězdičkou.\nZkratka: <b>1</b>
-FILEBROWSER_SHOWRANK2HINT;Ukázat obrázky hodnocené dvěma hvězdičkami.\nZkratka: <b>2</b>
-FILEBROWSER_SHOWRANK3HINT;Ukázat obrázky hodnocené třemi hvězdičkami.\nZkratka: <b>3</b>
-FILEBROWSER_SHOWRANK4HINT;Ukázat obrázky hodnocené čtyřmi hvězdičkami.\nZkratka: <b>4</b>
-FILEBROWSER_SHOWRANK5HINT;Ukázat obrázky hodnocené pěti hvězdičkami.\nZkratka: <b>5</b>
+FILEBROWSER_SHOWRANK1HINT;Ukázat obrázky hodnocené jednou hvězdičkou.\nZkratka: <b>Shift-1</b>
+FILEBROWSER_SHOWRANK2HINT;Ukázat obrázky hodnocené dvěma hvězdičkami.\nZkratka: <b>Shift-2</b>
+FILEBROWSER_SHOWRANK3HINT;Ukázat obrázky hodnocené třemi hvězdičkami.\nZkratka: <b>Shift-3</b>
+FILEBROWSER_SHOWRANK4HINT;Ukázat obrázky hodnocené čtyřmi hvězdičkami.\nZkratka: <b>Shift-4</b>
+FILEBROWSER_SHOWRANK5HINT;Ukázat obrázky hodnocené pěti hvězdičkami.\nZkratka: <b>Shift-5</b>
 FILEBROWSER_SHOWRECENTLYSAVEDHINT;Ukázat uložené obrázky.\nZkratka: <b>Alt-7</b>
 FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Ukázat neuložené obrázky.\nZkratka: <b>Alt-6</b>
 FILEBROWSER_SHOWTRASHHINT;Ukázat obsah koše.\nZkratka: <b>Ctrl-t</b>
 FILEBROWSER_SHOWUNCOLORHINT;Ukázat obrázky bez barevného štítku.\nZkratka: <b>Alt-0</b>
-FILEBROWSER_SHOWUNRANKHINT;Ukázat nehodnocené obrázky.\nZkratka: <b>0</b>
+FILEBROWSER_SHOWUNRANKHINT;Ukázat nehodnocené obrázky.\nZkratka: <b>Shift-0</b>
 FILEBROWSER_THUMBSIZE;Velikost náhledu
-FILEBROWSER_UNRANK_TOOLTIP;Zrušit hodnocení.\nZkratka: <b>Shift - 0</b>
+FILEBROWSER_UNRANK_TOOLTIP;Zrušit hodnocení.\nZkratka: <b>0</b>
 FILEBROWSER_ZOOMINHINT;Zvětšit velikosti náhledů.\n\nZkratky:\n<b>+</b> - režim více karet editoru,\n<b>Alt-+</b> - režim jedné karty editoru.
 FILEBROWSER_ZOOMOUTHINT;Zmenšit velikosti náhledů.\n\nZkratky:\n<b>-</b> - režim více karet editoru,\n<b>Alt--</b> - režim jedné karty editoru.
 FILECHOOSER_FILTER_ANY;Všechny soubory
