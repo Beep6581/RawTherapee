@@ -1,13 +1,39 @@
 #!/usr/bin/env bash
 # By Morgan Hardwood
-# Version 2018-01-06
+# Version 2022-01-04
 # This script gets the latest source code for the given program and compiles it.
+
+# Function to retrieve the absolute path to the folder of this script, also works with symlinks
+# Inspired by https://stackoverflow.com/questions/59895/how-can-i-get-the-source-directory-of-a-bash-script-from-within-the-script-itsel
+function get_absolute_path_to_script_folder() {
+    SOURCE=${BASH_SOURCE[0]}
+    while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+        TARGET=$(readlink "$SOURCE")
+        if [[ $TARGET == /* ]]; then
+            SOURCE=$TARGET
+        else
+            DIR=$(dirname "$SOURCE")
+            SOURCE=$DIR/$TARGET # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+        fi
+    done
+    DIR=$(cd -P "$(dirname "$SOURCE")" &> /dev/null && pwd)
+    echo $DIR
+}
 
 # The name of the program, used for the folder names:
 prog="rawtherapee"
 
 # The name of the compiled executable:
 exe="${prog}"
+
+# Install folder:
+installFolderLocal="$HOME/programs"
+installFolderSystem="/opt"
+# default install folder:
+installFolder="$installFolderLocal"
+
+# Discovered repo folder (containing this script)
+repoFolder=$(realpath "$(get_absolute_path_to_script_folder)/..")
 
 # The name of the sub-folder, if any, relative to the folder into which the
 # compiled executable is placed.
@@ -39,40 +65,51 @@ exeRelativePath="${exeRelativePath/%\/}"
 exePath="${exeRelativePath:+${exeRelativePath}/}${exe}"
 
 # Command-line arguments
+sudo=""
 OPTIND=1
-while getopts "bdh?-" opt; do
+while getopts "bdsh?-" opt; do
     case "${opt}" in
         b)  buildOnly="true"
             ;;
         d)  buildType="debug"
             ;;
-        h|\?|-) printf '%s\n' "This script gets the latest source code for ${prog} and compiles it." \
-                "" \
+		s)
+			sudo="sudo "
+            installFolder="$installFolderSystem"
+			;;            
+        h|\?|-) printf '%s\n' "This script gets the latest source code for ${prog}, compiles and installs it to $installFolder." \
+                "Options:" \
                 "  -b" \
-                "     Optional. If specified, the script only compiles the source, it does not try to update the source. If not specified, the source will be updated first." \
+                "     Optional. If specified, the script only compiles the source, it does not try to update the source." \
+                "     If not specified, the source will be updated first." \
                 "  -d" \
                 "     Optional. Compile a \"debug\" build. If not specified, a \"release\" build will be made." \
+                "  -s" \
+                "     Optional. System wide installation to $installFolderSystem." \
                 ""
         exit 0
         ;;
     esac
 done
+
 shift $((OPTIND-1))
 [ "$1" = "--" ] && shift
 
-printf '%s\n' "" "Program name: ${prog}" "Build type: ${buildType}" "Build without updating: ${buildOnly}" ""
+printf '%s\n' "" "Found $prog repo: $repoFolder" "Program name: ${prog}" \
+                 "Build type: ${buildType}" "Build without updating: ${buildOnly}" \
+                 "Install folder: ${installFolder}" ""
 
 # Clone if needed
 cloned="false"
 updates="false"
-if [[ ! -d "$HOME/programs/code-${prog}" ]]; then
+if [[ ! -d "$repoFolder" ]]; then
     mkdir -p "$HOME/programs" || exit 1
-    git clone "$repo" "$HOME/programs/code-${prog}" || exit 1
-    pushd "$HOME/programs/code-${prog}" 1>/dev/null || exit 1
+    git clone "$repo" "$repoFolder" || exit 1
+    pushd "$repoFolder" 1>/dev/null || exit 1
     cloned="true"
 else
-    pushd "$HOME/programs/code-${prog}" 1>/dev/null || exit 1
-    git fetch
+    pushd "$repoFolder" 1>/dev/null || exit 1
+    git fetch || exit 1
     if [[ $(git rev-parse HEAD) != $(git rev-parse '@{u}') ]]; then
         updates="true"
     fi
@@ -84,15 +121,15 @@ if [[ "$updates" = "true" && "$buildOnly" = "false" ]]; then
 fi
 
 # Find out which branch git is on
-branch="$(git rev-parse --abbrev-ref HEAD)"
+branch="$(git rev-parse --abbrev-ref HEAD)" || exit 1
 
 # Set build and install folder names
 if [[ $branch = $master && $buildType = release ]]; then
-    buildDir="$HOME/programs/code-${prog}/build"
-    installDir="$HOME/programs/${prog}"
+    buildDir="${repoFolder}/build"
+    installDir="${installFolder}/${prog}"
 else
-    buildDir="$HOME/programs/code-${prog}/build-${branch}-${buildType}"
-    installDir="$HOME/programs/${prog}-${branch}-${buildType}"
+    buildDir="${repoFolder}/build-${branch}-${buildType}"
+    installDir="${installFolder}/${prog}-${branch}-${buildType}"
 fi
 
 existsExe="false"
@@ -107,17 +144,15 @@ if [[ "$cloned" = "false" && "$buildOnly" = "false" && "$updates" = "false" && "
 fi
 
 # Determine CPU count
-cpuCount="fail"
-if command -v nproc >/dev/null 2>&1; then
+cpuCount=1
+if command -v nproc &>/dev/null; then
     cpuCount="$(nproc --all)"
-fi
-if [[ ! ( $cpuCount -ge 1 && $cpuCount -le 64 ) ]]; then
-    cpuCount=1
+else 
+    echo "Couldn't determine CPU core count (program `nproc` is missing), using $cpuCount build process(es)"
 fi
 
-# Prepare folders
-rm -rf "${installDir}"
-mkdir -p "${buildDir}" "${installDir}" || exit 1
+# Create build folder
+mkdir -p "${buildDir}" || exit 1
 cd "${buildDir}" || exit 1
 
 # -----------------------------------------------------------------------------
@@ -138,9 +173,16 @@ cmake \
     -DWITH_SAN="OFF" \
     -DWITH_SYSTEM_KLT="OFF" \
     -DWITH_BENCHMARK="OFF" \
-    "$HOME/programs/code-${prog}" || exit 1
+    "$repoFolder" || exit 1
 
-make --jobs="$cpuCount" install || exit 1
+echo "Compiling with $cpuCount threads"
+
+make --jobs="$cpuCount" || exit 1
+
+echo "Installing to $installDir"
+${sudo}rm -rf "${installDir}" || exit 1
+${sudo}mkdir -p "${installDir}"  || exit 1
+${sudo}make install || exit 1
 
 # Finished
 printf '%s\n' "" "To run ${prog} type:" "${installDir}/${exePath}" ""
