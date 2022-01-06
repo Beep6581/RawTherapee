@@ -1410,6 +1410,7 @@ HISTORY_MSG_1146;Local - Jz Log encoding target gray
 HISTORY_MSG_1147;Local - Jz BlackEv WhiteEv
 HISTORY_MSG_1148;Local - Jz Sigmoid
 HISTORY_MSG_1149;Local - Q Sigmoid
+HISTORY_MSG_1150;Local - Log encoding Q instead Sigmoid Q
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -3066,6 +3067,8 @@ TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action o
 TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Estimated values of dynamic range i.e. Black Ev and White Ev
 TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance deviates significantly from the D50 reference.\nAdapts colors to the illuminant of the output device.
 TP_LOCALLAB_LOGCOLORFL;Colorfulness (M)
+TP_LOCALLAB_LOGCIE;Log encoding instead of Sigmoid
+TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using Log encoding Q.
 TP_LOCALLAB_LOGCOLORF_TOOLTIP;Perceived amount of hue in relation to gray.\nIndicator that a stimulus appears more or less colored.
 TP_LOCALLAB_LOGCONQL;Contrast (Q)
 TP_LOCALLAB_LOGCONTL;Contrast (J)
@@ -3374,7 +3377,7 @@ TP_LOCALLAB_SHRESFRA;Shadows/Highlights & TRC
 TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones.\nIt is recommended that the TRC of both devices (monitor and output profile) be sRGB (default).
 TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer
 TP_LOCALLAB_SIGMAWAV;Attenuation response
-TP_LOCALLAB_SIGFRA;Sigmoid Q
+TP_LOCALLAB_SIGFRA;Sigmoid Q & Log encoding Q
 TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
 TP_LOCALLAB_SIGMOIDLAMBDA;Contrast
 TP_LOCALLAB_SIGMOIDTH;Threshold (Gray point)

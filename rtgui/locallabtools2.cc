@@ -7449,6 +7449,7 @@ Locallabcie::Locallabcie():
     sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.1, 4., 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.5, 1.5, 0.01, 1.))),
     sigmoidqjcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDQJ")))),
+    logcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGCIE")))),
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
     sigjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoidldajzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 1.0, 0.01, 0.5))),
@@ -7615,11 +7616,14 @@ Locallabcie::Locallabcie():
     sigmoidFrame->set_label_align(0.025, 0.5);
     sigmoidFrame->set_label_widget(*sigq);
     ToolParamBlock* const sigBox = Gtk::manage(new ToolParamBlock());
+    Gtk::Separator* const separatorsig = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     
     sigBox->pack_start(*sigmoidldacie);
     sigBox->pack_start(*sigmoidthcie);
     sigBox->pack_start(*sigmoidblcie);
     sigBox->pack_start(*sigmoidqjcie);
+    sigBox->pack_start(*separatorsig);    
+    sigBox->pack_start(*logcie);
     sigmoidFrame->add(*sigBox);
     cieFBox->pack_start(*sigmoidFrame);
 
@@ -7827,6 +7831,7 @@ Locallabcie::Locallabcie():
     jabcieConn = jabcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::jabcieChanged));
     AutograycieConn = Autograycie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::AutograycieChanged));
     sigmoidqjcieconn = sigmoidqjcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigmoidqjcieChanged));
+    logcieconn = logcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logcieChanged));
     logjzconn = logjz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::logjzChanged));
     sigjzconn = sigjz->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigjzChanged));
     sigqconn = sigq->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::sigqChanged));
@@ -8175,6 +8180,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         cieFrame->set_tooltip_text(M("TP_LOCALLAB_LOGSCENE_TOOLTIP"));
         PQFrame->set_tooltip_text(M("TP_LOCALLAB_JZPQFRA_TOOLTIP"));
         qtoj->set_tooltip_text(M("TP_LOCALLAB_JZQTOJ_TOOLTIP"));
+        logcie->set_tooltip_text(M("TP_LOCALLAB_LOGCIE_TOOLTIP"));        
         modecam->set_tooltip_text(M("TP_LOCALLAB_JZMODECAM_TOOLTIP"));
         adapjzcie->set_tooltip_text(M("TP_LOCALLAB_JABADAP_TOOLTIP"));
         jz100->set_tooltip_text(M("TP_LOCALLAB_JZ100_TOOLTIP"));
@@ -8231,6 +8237,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         PQFrame->set_tooltip_text("");
         modecam->set_tooltip_text("");
         qtoj->set_tooltip_text("");
+        logcie->set_tooltip_text("");
         jabcie->set_tooltip_text("");
         adapjzcie->set_tooltip_text("");
         jz100->set_tooltip_text("");
@@ -8290,6 +8297,7 @@ void Locallabcie::disableListener()
     qtojConn.block(true);
     jabcieConn.block(true);
     sigmoidqjcieconn.block(true);
+    logcieconn.block(true);
     logjzconn.block(true);
     sigjzconn.block(true);
     sigqconn.block(true);
@@ -8313,6 +8321,7 @@ void Locallabcie::enableListener()
     qtojConn.block(false);
     jabcieConn.block(false);
     sigmoidqjcieconn.block(false);
+    logcieconn.block(false);
     logjzconn.block(false);
     sigjzconn.block(false);
     sigqconn.block(false);
@@ -8428,6 +8437,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         qtoj->set_active(spot.qtoj);
         sourceGraycie->setValue(spot.sourceGraycie);
         sigmoidqjcie->set_active(spot.sigmoidqjcie);
+        logcie->set_active(spot.logcie);
         logjz->set_active(spot.logjz);
         sigjz->set_active(spot.sigjz);
         sigq->set_active(spot.sigq);
@@ -8437,6 +8447,19 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         jabcie->set_active(spot.jabcie);
         jabcieChanged();
         modecamChanged();
+        
+        if(logcie->get_active()) {
+            sigmoidldacie->set_sensitive(false);
+            sigmoidthcie->set_sensitive(false);
+            sigmoidblcie->set_sensitive(false);
+            sigmoidqjcie->set_sensitive(false);
+        } else {
+            sigmoidldacie->set_sensitive(true);
+            sigmoidthcie->set_sensitive(true);
+            sigmoidblcie->set_sensitive(true);
+            sigmoidqjcie->set_sensitive(true);
+        }
+        
         if (spot.sursourcie == "Average") {
             sursourcie->set_active (0);
         } else if (spot.sursourcie == "Dim") {
@@ -8602,6 +8625,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.sourceGraycie = sourceGraycie->getValue();
         spot.sourceabscie = sourceabscie->getValue();
         spot.sigmoidqjcie = sigmoidqjcie->get_active();
+        spot.logcie = logcie->get_active();
         spot.logjz = logjz->get_active();
         spot.sigjz = sigjz->get_active();
         spot.chjzcie = chjzcie->get_active();
@@ -8888,6 +8912,34 @@ void Locallabcie::sigmoidqjcieChanged()
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(Evlocallabsigmoidqjcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+void Locallabcie::logcieChanged()
+{
+    
+    if(logcie->get_active()) {
+        sigmoidldacie->set_sensitive(false);
+        sigmoidthcie->set_sensitive(false);
+        sigmoidblcie->set_sensitive(false);
+        sigmoidqjcie->set_sensitive(false);
+    } else {
+        sigmoidldacie->set_sensitive(true);
+        sigmoidthcie->set_sensitive(true);
+        sigmoidblcie->set_sensitive(true);
+        sigmoidqjcie->set_sensitive(true);
+    }
+    
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (logcie->get_active()) {
+                listener->panelChanged(Evlocallablogcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(Evlocallablogcie,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }

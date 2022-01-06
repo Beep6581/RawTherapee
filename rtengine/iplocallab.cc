@@ -2583,6 +2583,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     bool islogjz = params->locallab.spots.at(sp).forcebw;
     bool issigjz = params->locallab.spots.at(sp).sigjz;
     bool issigq = params->locallab.spots.at(sp).sigq;
+    bool islogq = params->locallab.spots.at(sp).logcie;
 
     //sigmoid J Q variables
     const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie; 
@@ -3694,6 +3695,8 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
     if(lp.logena && !(params->locallab.spots.at(sp).expcie && mocam == 1)) {//Log encoding only, but enable for log encoding if we use Cam16 module both with log encoding
         plum = 100.f;
     }
+
+
     
 #ifdef _OPENMP
             #pragma omp parallel for reduction(min:minicam) reduction(max:maxicam) reduction(min:minicamq) reduction(max:maxicamq) reduction(min:minisat) reduction(max:maxisat) reduction(min:miniM) reduction(max:maxiM) reduction(+:sumcam) reduction(+:sumcamq) reduction(+:sumsat) reduction(+:sumM)if(multiThread)
@@ -3758,6 +3761,36 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
         printf("Cam16 Scene  Lighness_J Brightness_Q- HDR-PQ=%5.1f minJ=%3.1f maxJ=%3.1f meanJ=%3.1f minQ=%3.1f maxQ=%4.1f meanQ=%4.1f\n", (double) plum, (double) minicam, (double) maxicam, (double) sumcam, (double) minicamq, (double) maxicamq, (double) sumcamq);
         printf("Cam16 Scene  Saturati-s Colorfulln_M- minSat=%3.1f maxSat=%3.1f meanSat=%3.1f minM=%3.1f maxM=%3.1f meanM=%3.1f\n", (double) minisat, (double) maxisat, (double) sumsat, (double) miniM, (double) maxiM, (double) sumM);
 }
+
+    double base = 10.;
+    double linbase = 10.;
+    double gray = 15.;
+    if(islogq) {//with brightness Jz
+        gray = 0.01 * params->locallab.spots.at(sp).sourceGraycie;//acts as amplifier (gain) : needs same type of modifications than targetgraycor with pow
+       // gray = pow(gray, 1.2);//or 1.15 => modification to increase sensitivity gain, only on defaults, of course we can change this value manually...take into account suuround and Yb Cam16
+        const double targetgraycie = params->locallab.spots.at(sp).targetGraycie;
+        double targetgraycor = 0.01 * targetgraycie;//or 1.2 small reduce effect -> take into account a part of surround (before it was at 1.2)
+        base = targetgraycie > 1. && targetgraycie < 100. && dynamic_range > 0. ? (double) find_gray(std::abs((float) shadows_range) / (float) dynamic_range, (float) (targetgraycor)) : 0.;
+        linbase = std::max(base, 2.);//2. minimal base log to avoid very bad results
+        if (settings->verbose) {
+            printf("Base logarithm encoding Q=%5.1f\n", linbase);
+        }
+    }
+
+    const auto applytoq =
+    [ = ](double x) -> double {
+
+        x = std::max(x, noise);
+        x = std::max(x / gray, noise);//gray = gain - before log conversion
+        x = std::max((xlog(x) / log2 - shadows_range) / dynamic_range, noise);//x in range EV
+        assert(x == x);
+
+        if (linbase > 0.)//apply log base in function of targetgray blackEvjz and Dynamic Range
+        {
+            x = xlog2lin(x, linbase);
+        }
+        return x;
+    };
 
 
 
@@ -3887,7 +3920,17 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
 
                         Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
 
-                        if(issigq && iscie) {//sigmoid Q only with ciecam module
+                        if(islogq && issigq) {
+                            double val = (double) Qpro * (double) coefq;;
+                            if (val > noise) {
+                            double mm = applytoq(val);
+                            double f = mm / val;
+                            Qpro *= (float) f;
+                            }
+                        }
+
+
+                        if(issigq && iscie && !islogq) {//sigmoid Q only with ciecam module
                             float val = Qpro * coefq;
                             if(sigmoidqj == true) {
                                 val = std::max((xlog(val) / log2 - shadows_range) / dynamic_range, noise);//in range EV
