@@ -3768,8 +3768,9 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
     float gray = 15.;
     if(islogq) {//with brightness Jz
         gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
+        gray = pow_F(gray, 1.2f);//or 1.15 => modification to increase sensitivity gain, only on defaults, of course we can change this value manually...take into account suuround and Yb Cam16
         const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;
-        float targetgraycor = 0.01f * targetgraycie;
+        float targetgraycor = pow_F(0.01f * targetgraycie, 1.15f);
         base = targetgraycie > 1.f && targetgraycie < 100.f && (float) dynamic_range > 0.f ?  find_gray(std::abs((float) shadows_range) / (float) dynamic_range,(targetgraycor)) : 0.f;
         linbase = std::max(base, 2.f);//2. minimal base log to avoid very bad results
         if (settings->verbose) {
