@@ -3057,6 +3057,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     double dynamic_range = std::max(params->locallab.spots.at(sp).whiteEvjz - shadows_range, 0.5);
     const double noise = pow(2., -16.6);//16.6 instead of 16 a little less than others, but we work in double
     const double log2 = xlog(2.);
+    const float log2f = xlogf(2.f);
 
     if((mocam == 0 || mocam ==2)  && call == 0) {//Jz az bz ==> Jz Cz Hz before Ciecam16
         double mini = 1000.;
@@ -3762,30 +3763,29 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
         printf("Cam16 Scene  Saturati-s Colorfulln_M- minSat=%3.1f maxSat=%3.1f meanSat=%3.1f minM=%3.1f maxM=%3.1f meanM=%3.1f\n", (double) minisat, (double) maxisat, (double) sumsat, (double) miniM, (double) maxiM, (double) sumM);
 }
 
-    double base = 10.;
-    double linbase = 10.;
-    double gray = 15.;
+    float base = 10.;
+    float linbase = 10.;
+    float gray = 15.;
     if(islogq) {//with brightness Jz
-        gray = 0.01 * params->locallab.spots.at(sp).sourceGraycie;//acts as amplifier (gain) : needs same type of modifications than targetgraycor with pow
-       // gray = pow(gray, 1.2);//or 1.15 => modification to increase sensitivity gain, only on defaults, of course we can change this value manually...take into account suuround and Yb Cam16
-        const double targetgraycie = params->locallab.spots.at(sp).targetGraycie;
-        double targetgraycor = 0.01 * targetgraycie;//or 1.2 small reduce effect -> take into account a part of surround (before it was at 1.2)
-        base = targetgraycie > 1. && targetgraycie < 100. && dynamic_range > 0. ? (double) find_gray(std::abs((float) shadows_range) / (float) dynamic_range, (float) (targetgraycor)) : 0.;
-        linbase = std::max(base, 2.);//2. minimal base log to avoid very bad results
+        gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
+        const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;
+        float targetgraycor = 0.01f * targetgraycie;
+        base = targetgraycie > 1.f && targetgraycie < 100.f && (float) dynamic_range > 0.f ?  find_gray(std::abs((float) shadows_range) / (float) dynamic_range,(targetgraycor)) : 0.f;
+        linbase = std::max(base, 2.f);//2. minimal base log to avoid very bad results
         if (settings->verbose) {
-            printf("Base logarithm encoding Q=%5.1f\n", linbase);
+            printf("Base logarithm encoding Q=%5.1f\n", (double) linbase);
         }
     }
 
     const auto applytoq =
-    [ = ](double x) -> double {
+    [ = ](float x) -> float {
 
-        x = std::max(x, noise);
-        x = std::max(x / gray, noise);//gray = gain - before log conversion
-        x = std::max((xlog(x) / log2 - shadows_range) / dynamic_range, noise);//x in range EV
+        x = rtengine::max(x, (float) noise);
+        x = rtengine::max(x / gray, (float) noise);//gray = gain - before log conversion
+        x = rtengine::max((xlogf(x) / log2f - (float) shadows_range) / (float) dynamic_range, (float) noise);//x in range EV
         assert(x == x);
 
-        if (linbase > 0.)//apply log base in function of targetgray blackEvjz and Dynamic Range
+        if (linbase > 0.f)//apply log base in function of targetgray blackEvjz and Dynamic Range
         {
             x = xlog2lin(x, linbase);
         }
@@ -3921,11 +3921,11 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
                         Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
 
                         if(islogq && issigq) {
-                            double val = (double) Qpro * (double) coefq;;
-                            if (val > noise) {
-                            double mm = applytoq(val);
-                            double f = mm / val;
-                            Qpro *= (float) f;
+                            float val =  Qpro *  coefq;;
+                            if (val > (float) noise) {
+                            float mm = applytoq(val);
+                            float f = mm / val;
+                            Qpro *=  f;
                             }
                         }
 
