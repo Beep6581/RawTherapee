@@ -8189,8 +8189,8 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         Autograycie->set_tooltip_text(M("TP_LOCALLAB_AUTOGRAYCIE_TOOLTIP"));
         sigmalcjz->set_tooltip_text(M("TP_LOCALLAB_WAT_SIGMALC_TOOLTIP"));
         logjzFrame->set_tooltip_text(M("TP_LOCALLAB_JZLOGWB_TOOLTIP"));
-        blackEvjz->set_tooltip_text(M("TP_LOCALLAB_JZLOGWB_TOOLTIP"));
-        whiteEvjz->set_tooltip_text(M("TP_LOCALLAB_JZLOGWB_TOOLTIP"));
+        blackEvjz->set_tooltip_text(M("TP_LOCALLAB_JZLOGWBS_TOOLTIP"));
+        whiteEvjz->set_tooltip_text(M("TP_LOCALLAB_JZLOGWBS_TOOLTIP"));
         clariFramejz->set_tooltip_markup(M("TP_LOCALLAB_CLARIJZ_TOOLTIP"));
         clarilresjz->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARILJZ_TOOLTIP"));
         claricresjz->set_tooltip_text(M("TP_LOCALLAB_WAT_CLARICJZ_TOOLTIP"));

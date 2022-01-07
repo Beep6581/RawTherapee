@@ -3012,6 +3012,7 @@ TP_LOCALLAB_JZHFRA;Curves Hz
 TP_LOCALLAB_JZHJZFRA;Curve Jz(Hz)
 TP_LOCALLAB_JZHUECIE;Hue Rotation
 TP_LOCALLAB_JZLOGWB_TOOLTIP;If Auto is enabled, it will calculate and adjust the Ev levels and the 'Mean luminance Yb%' for the spot area. The resulting values will be used by all Jz operations including "Log Encoding Jz".\nAlso calculates the absolute luminance at the time of shooting.
+TP_LOCALLAB_JZLOGWBS_TOOLTIP;Black Ev and White Ev adjustments can be different depending on whether Log encoding or Sigmoid is used.\nFor Sigmoid, an increase of White Ev may be necessary to obtain a better rendering of highlights, contrast and saturation.
 TP_LOCALLAB_JZSAT;Saturation
 TP_LOCALLAB_JZSHFRA;Shadows/Highlights Jz
 TP_LOCALLAB_JZSOFTCIE;Soft radius (GuidedFilter)
