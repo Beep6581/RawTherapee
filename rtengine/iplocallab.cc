@@ -3550,7 +3550,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 if(issigjz && iscie) {//sigmoid Jz
                     float val = Jz;
                     if(islogjz) {
-                        val = std::max((xlog(Jz) / log2 - shadows_range) / dynamic_range, noise);//in range EV
+                        val = std::max((xlog(Jz) / log2 - shadows_range) / (dynamic_range + 1.5), noise);//in range EV
                     }
                     if(sigmoidthjz >= 1.f) {
                         thjz = athjz * val + bthjz;//threshold
@@ -3934,7 +3934,7 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
                         if(issigq && iscie && !islogq) {//sigmoid Q only with ciecam module
                             float val = Qpro * coefq;
                             if(sigmoidqj == true) {
-                                val = std::max((xlog(val) / log2 - shadows_range) / dynamic_range, noise);//in range EV
+                                val = std::max((xlog(val) / log2 - shadows_range) / (dynamic_range + 1.5), noise);//in range EV
                             }
                             if(sigmoidth >= 1.f) {
                                 th = ath * val + bth;
