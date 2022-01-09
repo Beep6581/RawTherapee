@@ -4283,7 +4283,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     qtoj(false),
     jabcie(true),
     sigmoidqjcie(false),
-    logcie(true),
+    logcie(false),
     logjz(false),
     sigjz(false),
     sigq(false),

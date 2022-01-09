@@ -7564,7 +7564,7 @@ Locallabcie::Locallabcie():
     modecie->append (M ("TP_LOCALLAB_CIEMODE_TM"));
     modecie->append (M ("TP_LOCALLAB_CIEMODE_WAV"));
     modecie->append (M ("TP_LOCALLAB_CIEMODE_DR"));
-    modecie->append (M ("TP_LOCALLAB_CIEMODE_LOG"));
+//    modecie->append (M ("TP_LOCALLAB_CIEMODE_LOG"));
     modecie->set_active (0);
     modeHBoxcie->pack_start (*modecie);
     modecieconn = modecie->signal_changed().connect ( sigc::mem_fun (*this, &Locallabcie::modecieChanged) );
@@ -8413,8 +8413,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             modecie->set_active (2);
         } else if (spot.modecie == "dr") {
             modecie->set_active (3);
-        } else if (spot.modecie == "log") {
-            modecie->set_active (4);
+//        } else if (spot.modecie == "log") {
+//            modecie->set_active (4);
         }
 
         if (spot.toneMethodcie == "one") {
@@ -8599,8 +8599,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.modecie = "wav";
         } else if (modecie->get_active_row_number() == 3) {
             spot.modecie = "dr";
-        } else if (modecie->get_active_row_number() == 4) {
-            spot.modecie = "log";
+//        } else if (modecie->get_active_row_number() == 4) {
+//            spot.modecie = "log";
         }
 
         if (toneMethodcie->get_active_row_number() == 0) {
