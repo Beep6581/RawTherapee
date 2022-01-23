@@ -47,11 +47,13 @@ jobs:
 
       - name: Configure build
         run: |
+          export REF_NAME_FILTERED="$(echo '${{github.ref_name}}' | sed 's/[^A-z0-9_.-]//g')"
+          
           if [ '${{github.ref_type}}' == 'tag' ]; then
             export CACHE_SUFFIX=""
           else
             echo "Setting cache suffix."
-            export CACHE_SUFFIX='5-${{github.ref_name}}'
+            export CACHE_SUFFIX="5-$REF_NAME_FILTERED"
             echo "Cache suffix is '$CACHE_SUFFIX'."
           fi
 
@@ -68,6 +70,9 @@ jobs:
             -DPROC_TARGET_NUMBER="1" \
             -DLENSFUNDBDIR="./share/lensfun/version_1" \
             ..
+
+          echo "Recording filtered ref name."
+          echo "REF_NAME_FILTERED=$REF_NAME_FILTERED" >> "$(cygpath -u $GITHUB_ENV)"
 
       - name: Build RawTherapee
         working-directory: ./build
@@ -231,13 +236,13 @@ jobs:
       - name: Prepare artifact name
         run: |
           if [ '${{github.ref_type}}' == 'tag' ]; then
-            ARTIFACT_NAME='RawTherapee_${{github.ref_name}}_WinVista_64_${{matrix.build_type}}'
+            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_WinVista_64_${{matrix.build_type}}"
           else
             echo "Getting RawTherapee version."
             export VERSION="$(grep -m 1 '^Version: .*$' './build/${{matrix.build_type}}/AboutThisBuild.txt' | sed 's/^Version: \(.\+\)$/\1/')"
             echo "Version is '$VERSION'."
             FILTERED_VERSION="$(echo "$VERSION" | sed 's/[^A-z0-9_.-]//g')"
-            ARTIFACT_NAME='RawTherapee_${{github.ref_name}}_'"$FILTERED_VERSION"'_WinVista_64_${{matrix.build_type}}'
+            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_${FILTERED_VERSION}_WinVista_64_${{matrix.build_type}}"
           fi
           echo "Artifact name is '$ARTIFACT_NAME'."
 
@@ -277,7 +282,7 @@ jobs:
         if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
         run: |
           echo "Setting publish name."
-          PUBLISH_NAME='RawTherapee_${{github.ref_name}}_WinVista_64_${{matrix.build_type}}'
+          PUBLISH_NAME="RawTherapee_${REF_NAME_FILTERED}_WinVista_64_${{matrix.build_type}}"
           echo "Publish name is '$PUBLISH_NAME'."
           if [ "$ARTIFACT_NAME" != "$PUBLISH_NAME" ]; then
             echo "Renaming ZIP file."
