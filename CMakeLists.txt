@@ -488,6 +488,12 @@ endif()
 pkg_check_modules(LCMS REQUIRED lcms2>=2.6)
 pkg_check_modules(EXPAT REQUIRED expat>=2.1)
 pkg_check_modules(FFTW3F REQUIRED fftw3f)
+
+#Set the appropriate FFTW flags on macOS
+if(APPLE AND OPTION_OMP)
+        set(EXTRA_LIB "-L${LOCAL_PREFIX}/lib -lfftw3f_omp -lfftw3f -lm")
+endif()
+
 pkg_check_modules(IPTCDATA REQUIRED libiptcdata)
 find_package(TIFF 4.0.4 REQUIRED)
 find_package(JPEG REQUIRED)
