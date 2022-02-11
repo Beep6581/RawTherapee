@@ -2749,8 +2749,8 @@ Camera constants:
     },
     
     { // Quality C
-        "make_model": "Sony ILCE-7M4",
-        "dcraw_matrix": [ 8532, -701, -1167, -4095, 11879, 2508, -797, 2424, 7010 ] // DNG 14.1
+	"make_model": "Sony ILCE-7M4",
+	"dcraw_matrix": [ 7460, -2365, -588, -5687, 13442, 2474, -624, 1156, 6584 ] // ColorMatrix2 using illuminant D65 from Adobe DNG Converter 14.2
     },
 
     { // Quality C,
