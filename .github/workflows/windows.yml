@@ -68,7 +68,7 @@ jobs:
             -DCMAKE_BUILD_TYPE='${{matrix.build_type}}' \
             -DCACHE_NAME_SUFFIX="$CACHE_SUFFIX" \
             -DPROC_TARGET_NUMBER="1" \
-            -DLENSFUNDBDIR="./share/lensfun/version_1" \
+            -DLENSFUNDBDIR="share/lensfun" \
             ..
 
           echo "Recording filtered ref name."
@@ -87,7 +87,7 @@ jobs:
           echo "Creating Lensfun directory in the build directory."
           mkdir -p 'build/${{matrix.build_type}}/share'
           echo "Copying Lensfun database to the build directory."
-          cp -R "/C/msys2/msys64/mingw64/var/lib/lensfun-updates" 'build/${{matrix.build_type}}/share/lensfun'
+          cp -R "/C/msys2/msys64/mingw64/var/lib/lensfun-updates/version_1" 'build/${{matrix.build_type}}/share/lensfun'
 
       - name: Restore GDB from cache
         id: gdb-cache
