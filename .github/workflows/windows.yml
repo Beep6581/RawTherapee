@@ -282,7 +282,7 @@ jobs:
         if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
         run: |
           echo "Setting publish name."
-          PUBLISH_NAME="RawTherapee_${REF_NAME_FILTERED}_WinVista_64_${{matrix.build_type}}"
+          PUBLISH_NAME="RawTherapee_${REF_NAME_FILTERED}_win64_${{matrix.build_type}}"
           echo "Publish name is '$PUBLISH_NAME'."
           if [ "$ARTIFACT_NAME" != "$PUBLISH_NAME" ]; then
             echo "Renaming ZIP file."
