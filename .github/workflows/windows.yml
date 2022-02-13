@@ -236,13 +236,13 @@ jobs:
       - name: Prepare artifact name
         run: |
           if [ '${{github.ref_type}}' == 'tag' ]; then
-            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_WinVista_64_${{matrix.build_type}}"
+            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_win64_${{matrix.build_type}}"
           else
             echo "Getting RawTherapee version."
             export VERSION="$(grep -m 1 '^Version: .*$' './build/${{matrix.build_type}}/AboutThisBuild.txt' | sed 's/^Version: \(.\+\)$/\1/')"
             echo "Version is '$VERSION'."
             FILTERED_VERSION="$(echo "$VERSION" | sed 's/[^A-z0-9_.-]//g')"
-            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_${FILTERED_VERSION}_WinVista_64_${{matrix.build_type}}"
+            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_${FILTERED_VERSION}_win64_${{matrix.build_type}}"
           fi
           echo "Artifact name is '$ARTIFACT_NAME'."
 
