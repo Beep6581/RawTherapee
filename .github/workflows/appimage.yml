@@ -83,7 +83,17 @@ jobs:
           echo "Copying Lensfun database to the build directory."
           cp -R ~/.local/share/lensfun/updates/* build/AppDir/usr/share/lensfun/
 
+      - name: Restore AppImage tools from cache
+        id: appimage-tools-cache
+        uses: actions/cache@v2
+        with:
+          key: appimage-tools
+          path: |
+            ./build/linuxdeploy-x86_64.AppImage
+            ./build/linuxdeploy-plugin-gtk.sh
+
       - name: Download AppImage tools
+        if: ${{steps.appimage-tools-cache.outputs.cache-hit != 'true'}}
         working-directory: ./build
         run: |
           echo "Downloading linuxdeploy."
