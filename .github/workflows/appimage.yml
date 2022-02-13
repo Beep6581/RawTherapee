@@ -152,7 +152,7 @@ jobs:
           cp "build/AboutThisBuild.txt" "$PUBLISH_NAME-AboutThisBuild.txt"
 
           echo "Recording publish name."
-          echo "PUBLISH_NAME=$PUBLISH_NAME" >> $GITHUB_ENV"
+          echo "PUBLISH_NAME=$PUBLISH_NAME" >> $GITHUB_ENV
 
       - name: Publish artifacts
         uses: softprops/action-gh-release@v1
