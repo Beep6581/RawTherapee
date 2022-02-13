@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - dev
+    tags:
+      - '[0-9]+.*'
   pull_request:
     branches:
       - dev
@@ -10,30 +12,45 @@ on:
 jobs:
   build:
     runs-on: ubuntu-18.04
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [release]
     steps:
       - name: Checkout source
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
       - name: Install dependencies
         run: |
           echo "Running apt update."
           sudo apt update
           echo "Installing dependencies with apt."
           DEBIAN_FRONTEND=noninteractive sudo apt install -y cmake libgtk-3-dev libgtkmm-3.0-dev liblensfun-dev librsvg2-dev liblcms2-dev libfftw3-dev libiptcdata0-dev libtiff5-dev libcanberra-gtk3-dev liblensfun-bin
+
       - name: Configure build
         run: |
-          echo "Getting branch name."
-          BRANCH="$(git branch --show-current)"
-          echo "Branch name is '$BRANCH'."
+          export REF_NAME_FILTERED="$(echo '${{github.ref_name}}' | sed 's/[^A-z0-9_.-]//g')"
+
+          echo "Setting cache suffix."
+          if [ '${{github.ref_type}}' == 'tag' ]; then
+            export CACHE_SUFFIX=""
+          else
+            export CACHE_SUFFIX="5-$REF_NAME_FILTERED"
+          fi
+          export CACHE_SUFFIX="$CACHE_SUFFIX-AppImage"
+          echo "Cache suffix is '$CACHE_SUFFIX'."
+
           echo "Making build directory."
           mkdir build
           echo "Changing working directory to the build directory."
           cd build
+
           echo "Running CMake configure."
           cmake \
-            -DCMAKE_BUILD_TYPE="release"  \
-            -DCACHE_NAME_SUFFIX="5-$BRANCH-AppImage" \
+            -DCMAKE_BUILD_TYPE='${{matrix.build_type}}'  \
+            -DCACHE_NAME_SUFFIX="$CACHE_SUFFIX" \
             -DPROC_TARGET_NUMBER="1" \
             -DBUILD_BUNDLE="ON" \
             -DBUNDLE_BASE_INSTALL_DIR="/" \
@@ -45,6 +62,10 @@ jobs:
             -DCMAKE_INSTALL_PREFIX=/usr \
             -DLENSFUNDBDIR="../share/lensfun/version_1" \
             ..
+
+          echo "Recording filtered ref name."
+          echo "REF_NAME_FILTERED=$REF_NAME_FILTERED" >> $GITHUB_ENV
+
       - name: Build RawTherapee
         working-directory: ./build
         run: |
@@ -52,6 +73,7 @@ jobs:
           make -j$(nproc) install DESTDIR=AppDir/usr/bin
           echo "Moving usr/bin/share to usr/share."
           mv AppDir/usr/bin/share AppDir/usr/
+
       - name: Include Lensfun
         run: |
           echo "Updating Lensfun database."
@@ -60,6 +82,7 @@ jobs:
           mkdir -p build/AppDir/usr/share/lensfun
           echo "Copying Lensfun database to the build directory."
           cp -R ~/.local/share/lensfun/updates/* build/AppDir/usr/share/lensfun/
+
       - name: Download AppImage tools
         working-directory: ./build
         run: |
@@ -69,47 +92,63 @@ jobs:
           curl --location 'https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh' > linuxdeploy-plugin-gtk.sh
           echo "Setting execute bit on all AppImage tools."
           chmod u+x linuxdeploy-*
+
       - name: Package AppImage
         working-directory: ./build
         run: |
-          echo "Getting RawTherapee version."
-          export VERSION="$(grep -m 1 '^Version: .*$' AboutThisBuild.txt | sed 's/^Version: \(.\+\)$/\1/')"
-          echo "Version is '$VERSION'."
+          echo "Creating artifact name."
+          if [ '${{github.ref_type}}' == 'tag' ]; then
+            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_${{matrix.build_type}}"
+          else
+            echo "Getting RawTherapee version."
+            export VERSION="$(grep -m 1 '^Version: .*$' 'AboutThisBuild.txt' | sed 's/^Version: \(.\+\)$/\1/')"
+            echo "Version is '$VERSION'."
+            FILTERED_VERSION="$(echo "$VERSION" | sed 's/[^A-z0-9_.-]//g')"
+            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_${FILTERED_VERSION}_${{matrix.build_type}}"
+          fi
+          echo "Artifact name is '$ARTIFACT_NAME'."
+
           echo "Generating AppImage file name."
-          FILTERED_VERSION="$(echo "$VERSION" | sed 's/[^A-z0-9_.-]//g')"
-          export OUTPUT="RawTherapee_${FILTERED_VERSION}_release.AppImage"
+          export OUTPUT="$ARTIFACT_NAME.AppImage"
           echo "AppImage file name will be '$OUTPUT'."
+
           echo "Packaging AppImage."
           ./linuxdeploy-x86_64.AppImage \
             --appimage-extract-and-run \
             --appdir AppDir \
             --plugin gtk \
             --output appimage
-          echo "Recording RawTherapee version."
-          echo "RT_VERSION=$VERSION" >> $GITHUB_ENV
-          echo "Recording AppImage file name."
-          echo "APPIMAGE_NAME=$OUTPUT" >> $GITHUB_ENV
+
+          echo "Recording artifact name."
+          echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: ${{env.APPIMAGE_NAME}}
-          path: ${{github.workspace}}/build/${{env.APPIMAGE_NAME}}
+          name: ${{env.ARTIFACT_NAME}}.AppImage
+          path: ${{github.workspace}}/build/${{env.ARTIFACT_NAME}}.AppImage
+
       - name: Prepare for publishing
+        if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
         run: |
-          echo "Setting dev AppImage file name."
-          APPIMAGE_DEV_NAME="RawTherapee_dev_release.AppImage"
-          echo "dev AppImage file name is '$APPIMAGE_DEV_NAME'."
-          echo "Renaming dev AppImage."
-          cp "build/$APPIMAGE_NAME" "$APPIMAGE_DEV_NAME"
-          echo "Recording dev AppImage file name."
-          echo "APPIMAGE_DEV_NAME=$APPIMAGE_DEV_NAME" >> $GITHUB_ENV
+          echo "Setting publish name."
+          PUBLISH_NAME="RawTherapee_${REF_NAME_FILTERED}_${{matrix.build_type}}"
+          echo "Publish name is '$PUBLISH_NAME'."
+
+          echo "Renaming AppImage."
+          cp "build/$ARTIFACT_NAME.AppImage" "$PUBLISH_NAME.AppImage"
+
           echo "Creating version file."
-          cp "build/AboutThisBuild.txt" "build/$APPIMAGE_DEV_NAME-AboutThisBuild.txt"
+          cp "build/AboutThisBuild.txt" "$PUBLISH_NAME-AboutThisBuild.txt"
+
+          echo "Recording publish name."
+          echo "PUBLISH_NAME=$PUBLISH_NAME" >> $GITHUB_ENV"
+
       - name: Publish artifacts
         uses: softprops/action-gh-release@v1
-        if: ${{github.ref == 'refs/heads/dev'}}
+        if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
         with:
           tag_name: nightly-github-actions
           files: |
-            ${{env.APPIMAGE_DEV_NAME}}
-            ${{env.APPIMAGE_DEV_NAME}}-AboutThisBuild.txt
+            ${{env.PUBLISH_NAME}}.AppImage
+            ${{env.PUBLISH_NAME}}-AboutThisBuild.txt
