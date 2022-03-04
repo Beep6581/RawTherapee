@@ -64,9 +64,6 @@ FilmSimulation::FilmSimulation()
     :   FoldableToolPanel( this, "filmsimulation", M("TP_FILMSIMULATION_LABEL"), false, true )
 {
     m_clutComboBox = Gtk::manage( new ClutComboBox(options.clutsDir) );
-	// The following line, inspired by https://stackoverflow.com/questions/43414163/gtk-mm-limit-width-of-combobox,
-	// makes the Film Simulation ComboBox look better if there are HaldCLUT names that are too long to fit into it
-	((Gtk::CellRendererText*)m_clutComboBox->get_first_cell())->property_ellipsize() = Pango::ELLIPSIZE_END;
 
     int foundClutsCount = m_clutComboBox->foundClutsCount();
 
@@ -222,7 +219,13 @@ ClutComboBox::ClutComboBox(const Glib::ustring &path):
     set_model(m_model());
 
     if (cm->count > 0) {
-        pack_start(m_columns().label, false);
+		// Pack a CellRendererText in order to display long Clut file names properly
+		Gtk::CellRendererText *renderer;
+
+		renderer = new Gtk::CellRendererText;
+		renderer->property_ellipsize() = Pango::ELLIPSIZE_END;
+		pack_start(*renderer, false); 
+		add_attribute(*renderer, "text", 0);
     }
 
     if (!options.multiDisplayMode) {
