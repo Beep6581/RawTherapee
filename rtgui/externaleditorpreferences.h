@@ -28,6 +28,14 @@
 #include "rtappchooserdialog.h"
 
 
+namespace Gtk
+{
+
+class FileChooserDialog;
+
+}
+
+
 /**
  * Widget for editing the external editors options.
  */
@@ -98,8 +106,10 @@ private:
     Gtk::Box toolbar; // Contains buttons for editing the list.
     Gtk::Button *button_app_chooser;
     Gtk::Button *button_add;
+    Gtk::Button *button_file_chooser;
     Gtk::Button *button_remove;
     std::unique_ptr<RTAppChooserDialog> app_chooser_dialog;
+    std::unique_ptr<Gtk::FileChooserDialog> file_chooser_dialog;
 
     /**
      * Inserts a new editor entry after the current selection, or at the end if
@@ -120,9 +130,18 @@ private:
      */
     void onAppChooserDialogResponse(int responseId, RTAppChooserDialog *dialog);
     /**
+     * Called when the user is done interacting with the file chooser dialog.
+     * Closes the dialog and updates the selected entry if a file was chosen.
+     */
+    void onFileChooserDialogResponse(int responseId, Gtk::FileChooserDialog *dialog);
+    /**
      * Shows the app chooser dialog.
      */
     void openAppChooserDialog();
+    /**
+     * Shows the file chooser dialog for picking an executable.
+     */
+    void openFileChooserDialog();
     /**
      * Removes all selected editors.
      */

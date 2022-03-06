@@ -18,6 +18,11 @@
  */
 #include <iostream>
 
+#include <giomm/contenttype.h>
+#include <glibmm/shell.h>
+#include <gtkmm/filechooserdialog.h>
+#include <gtkmm/stock.h>
+
 #include "externaleditorpreferences.h"
 #include "multilangmgr.h"
 #include "rtimage.h"
@@ -54,11 +59,14 @@ ExternalEditorPreferences::ExternalEditorPreferences():
     button_add->set_image(*add_image);
     button_remove->set_image(*remove_image);
     button_app_chooser = Gtk::make_managed<Gtk::Button>(M("PREFERENCES_EXTERNALEDITOR_CHANGE"));
+    button_file_chooser = Gtk::manage(new Gtk::Button(M("PREFERENCES_EXTERNALEDITOR_CHANGE_FILE")));
 
     button_app_chooser->signal_pressed().connect(sigc::mem_fun(
                 *this, &ExternalEditorPreferences::openAppChooserDialog));
     button_add->signal_pressed().connect(sigc::mem_fun(
             *this, &ExternalEditorPreferences::addEditor));
+    button_file_chooser->signal_pressed().connect(sigc::mem_fun(
+        *this, &ExternalEditorPreferences::openFileChooserDialog));
     button_remove->signal_pressed().connect(sigc::mem_fun(
             *this, &ExternalEditorPreferences::removeSelectedEditors));
 
@@ -69,6 +77,7 @@ ExternalEditorPreferences::ExternalEditorPreferences():
     // Toolbar.
     toolbar.set_halign(Gtk::Align::ALIGN_END);
     toolbar.add(*button_app_chooser);
+    toolbar.add(*button_file_chooser);
     toolbar.add(*button_add);
     toolbar.add(*button_remove);
 
@@ -204,6 +213,38 @@ void ExternalEditorPreferences::onAppChooserDialogResponse(
     }
 }
 
+void ExternalEditorPreferences::onFileChooserDialogResponse(
+        int response_id, Gtk::FileChooserDialog *dialog)
+{
+    switch (response_id) {
+        case Gtk::RESPONSE_OK: {
+            dialog->close();
+
+            auto selection = list_view->get_selection()->get_selected_rows();
+            for (const auto &selected : selection) {
+                auto row = *list_model->get_iter(selected);
+                row[model_columns.icon] = Glib::RefPtr<Gio::Icon>(nullptr);
+                row[model_columns.command] =
+#ifdef WIN32
+                    '"' + dialog->get_filename() + '"';
+#else
+                    Glib::shell_quote(dialog->get_filename());
+#endif
+            }
+
+            break;
+        }
+
+        case Gtk::RESPONSE_CANCEL:
+        case Gtk::RESPONSE_CLOSE:
+            dialog->close();
+            break;
+
+        default:
+            break;
+    }
+}
+
 void ExternalEditorPreferences::openAppChooserDialog()
 {
     if (app_chooser_dialog.get()) {
@@ -219,6 +260,35 @@ void ExternalEditorPreferences::openAppChooserDialog()
             ));
     app_chooser_dialog->set_modal();
     app_chooser_dialog->show();
+}
+
+void ExternalEditorPreferences::openFileChooserDialog()
+{
+    if (file_chooser_dialog.get()) {
+        file_chooser_dialog->show();
+        return;
+    }
+
+    file_chooser_dialog.reset(new Gtk::FileChooserDialog(M("PREFERENCES_EXTERNALEDITOR_CHANGE_FILE")));
+
+    const auto exe_filter = Gtk::FileFilter::create();
+    exe_filter->set_name(M("FILECHOOSER_FILTER_EXECUTABLE"));
+    exe_filter->add_custom(Gtk::FILE_FILTER_MIME_TYPE, [](const Gtk::FileFilter::Info &info) {
+        return Gio::content_type_can_be_executable(info.mime_type);
+    });
+    const auto all_filter = Gtk::FileFilter::create();
+    all_filter->set_name(M("FILECHOOSER_FILTER_ANY"));
+    all_filter->add_pattern("*");
+    file_chooser_dialog->add_filter(exe_filter);
+    file_chooser_dialog->add_filter(all_filter);
+
+    file_chooser_dialog->signal_response().connect(sigc::bind(
+        sigc::mem_fun(*this, &ExternalEditorPreferences::onFileChooserDialogResponse),
+        file_chooser_dialog.get()));
+    file_chooser_dialog->set_modal();
+    file_chooser_dialog->add_button(M("GENERAL_CANCEL"), Gtk::RESPONSE_CANCEL);
+    file_chooser_dialog->add_button(M("GENERAL_OPEN"), Gtk::RESPONSE_OK);
+    file_chooser_dialog->show();
 }
 
 void ExternalEditorPreferences::removeSelectedEditors()
@@ -265,6 +335,7 @@ void ExternalEditorPreferences::updateToolbarSensitivity()
 {
     bool selected = list_view->get_selection()->count_selected_rows();
     button_app_chooser->set_sensitive(selected);
+    button_file_chooser->set_sensitive(selected);
     button_remove->set_sensitive(selected);
 }
 
