@@ -50,14 +50,14 @@ PopUpCommon::PopUpCommon (Gtk::Button* thisButton, const Glib::ustring& label)
     buttonGroup->get_style_context()->add_class("image-combo");
 
     // Create the image for the button
-    buttonImage = Gtk::make_managed<RTImage>();
+    buttonImage = Gtk::manage(new RTImage());
     setExpandAlignProperties(buttonImage, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     imageContainer->attach_next_to(*buttonImage, Gtk::POS_RIGHT, 1, 1);
     buttonImage->set_no_show_all();
 
     // Create the button for showing the pop-up.
-    arrowButton = Gtk::make_managed<Gtk::Button>();
-    Gtk::Image *arrowImage = Gtk::make_managed<Gtk::Image>();
+    arrowButton = Gtk::manage(new Gtk::Button());
+    Gtk::Image *arrowImage = Gtk::manage(new Gtk::Image());
     arrowImage->set_from_icon_name("pan-down-symbolic", Gtk::ICON_SIZE_BUTTON);
     setExpandAlignProperties(arrowButton, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     arrowButton->add(*arrowImage); //menuSymbol);
@@ -82,7 +82,7 @@ bool PopUpCommon::insertEntry(int position, const Glib::ustring& fileName, const
 {
     RTImage* image = nullptr;
     if (!fileName.empty()) {
-        image = Gtk::make_managed<RTImage>(fileName);
+        image = Gtk::manage(new RTImage(fileName));
     }
     bool success = insertEntryImpl(position, fileName, Glib::RefPtr<const Gio::Icon>(), image, label);
     if (!success && image) {
@@ -93,7 +93,7 @@ bool PopUpCommon::insertEntry(int position, const Glib::ustring& fileName, const
 
 bool PopUpCommon::insertEntry(int position, const Glib::RefPtr<const Gio::Icon>& gIcon, const Glib::ustring& label)
 {
-    RTImage* image = Gtk::make_managed<RTImage>(gIcon, Gtk::ICON_SIZE_BUTTON);
+    RTImage* image = Gtk::manage(new RTImage(gIcon, Gtk::ICON_SIZE_BUTTON));
     bool success = insertEntryImpl(position, "", gIcon, image, label);
     if (!success) {
         delete image;
@@ -107,7 +107,7 @@ bool PopUpCommon::insertEntryImpl(int position, const Glib::ustring& fileName, c
         return false;
 
     // Create the menu item and image
-    MyImageMenuItem *newItem = Gtk::make_managed<MyImageMenuItem>(label, image);
+    MyImageMenuItem *newItem = Gtk::manage(new MyImageMenuItem(label, image));
     imageIcons.insert(imageIcons.begin() + position, gIcon);
     imageFilenames.insert(imageFilenames.begin() + position, fileName);
     images.insert(images.begin() + position, newItem->getImage());

@@ -34,7 +34,7 @@ ExternalEditorPreferences::ExternalEditorPreferences():
     toolbar(Gtk::Orientation::ORIENTATION_HORIZONTAL)
 {
     // List view.
-    list_view = Gtk::make_managed<Gtk::TreeView>();
+    list_view = Gtk::manage(new Gtk::TreeView());
     list_view->set_model(list_model);
     list_view->append_column(*Gtk::manage(makeAppColumn()));
     list_view->append_column(*Gtk::manage(makeCommandColumn()));
@@ -52,13 +52,13 @@ ExternalEditorPreferences::ExternalEditorPreferences():
     list_scroll_area.add(*list_view);
 
     // Toolbar buttons.
-    auto add_image = Gtk::make_managed<RTImage>("add-small.png");
-    auto remove_image = Gtk::make_managed<RTImage>("remove-small.png");
-    button_add = Gtk::make_managed<Gtk::Button>();
-    button_remove = Gtk::make_managed<Gtk::Button>();
+    auto add_image = Gtk::manage(new RTImage("add-small.png"));
+    auto remove_image = Gtk::manage(new RTImage("remove-small.png"));
+    button_add = Gtk::manage(new Gtk::Button());
+    button_remove = Gtk::manage(new Gtk::Button());
     button_add->set_image(*add_image);
     button_remove->set_image(*remove_image);
-    button_app_chooser = Gtk::make_managed<Gtk::Button>(M("PREFERENCES_EXTERNALEDITOR_CHANGE"));
+    button_app_chooser = Gtk::manage(new Gtk::Button(M("PREFERENCES_EXTERNALEDITOR_CHANGE")));
     button_file_chooser = Gtk::manage(new Gtk::Button(M("PREFERENCES_EXTERNALEDITOR_CHANGE_FILE")));
 
     button_app_chooser->signal_pressed().connect(sigc::mem_fun(
@@ -159,9 +159,9 @@ void ExternalEditorPreferences::addEditor()
 
 Gtk::TreeViewColumn *ExternalEditorPreferences::makeAppColumn()
 {
-    auto name_renderer = Gtk::make_managed<Gtk::CellRendererText>();
-    auto icon_renderer = Gtk::make_managed<Gtk::CellRendererPixbuf>();
-    auto col = Gtk::make_managed<Gtk::TreeViewColumn>();
+    auto name_renderer = Gtk::manage(new Gtk::CellRendererText());
+    auto icon_renderer = Gtk::manage(new Gtk::CellRendererPixbuf());
+    auto col = Gtk::manage(new Gtk::TreeViewColumn());
 
     col->set_title(M("PREFERENCES_EXTERNALEDITOR_COLUMN_NAME"));
     col->set_resizable();
@@ -180,8 +180,8 @@ Gtk::TreeViewColumn *ExternalEditorPreferences::makeAppColumn()
 
 Gtk::TreeViewColumn *ExternalEditorPreferences::makeCommandColumn()
 {
-    auto command_renderer = Gtk::make_managed<Gtk::CellRendererText>();
-    auto col = Gtk::make_managed<Gtk::TreeViewColumn>();
+    auto command_renderer = Gtk::manage(new Gtk::CellRendererText());
+    auto col = Gtk::manage(new Gtk::TreeViewColumn());
 
     col->set_title(M("PREFERENCES_EXTERNALEDITOR_COLUMN_COMMAND"));
     col->pack_start(*command_renderer);

@@ -671,7 +671,7 @@ EditorPanel::EditorPanel (FilePanel* filePanel)
     queueimg->set_tooltip_markup (M ("MAIN_BUTTON_PUTTOQUEUE_TOOLTIP"));
     setExpandAlignProperties (queueimg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
 
-    send_to_external = Gtk::make_managed<PopUpButton>("", false);
+    send_to_external = Gtk::manage(new PopUpButton("", false));
     send_to_external->set_tooltip_text(M("MAIN_BUTTON_SENDTOEDITOR_TOOLTIP"));
     setExpandAlignProperties(send_to_external->buttonGroup, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
     send_to_external->addEntry("palette-brush.png", M("GENERAL_OTHER"));

@@ -1249,7 +1249,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
 #endif
 #endif
 
-    externalEditors = Gtk::make_managed<ExternalEditorPreferences>();
+    externalEditors = Gtk::manage(new ExternalEditorPreferences());
     externalEditors->set_size_request(-1, 200);
 #ifdef EXT_EDITORS_RADIOS
     externaleditorGrid->attach_next_to(*externalEditors, *edOther, Gtk::POS_BOTTOM, 2, 1);
