@@ -20,6 +20,7 @@
 
 #include <vector>
 
+#include <glibmm/refptr.h>
 #include <glibmm/ustring.h>
 
 #include "threadutils.h"
