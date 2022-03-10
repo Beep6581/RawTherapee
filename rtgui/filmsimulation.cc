@@ -220,9 +220,7 @@ ClutComboBox::ClutComboBox(const Glib::ustring &path):
 
     if (cm->count > 0) {
 		// Pack a CellRendererText in order to display long Clut file names properly
-		Gtk::CellRendererText *renderer;
-
-		renderer = Gtk::manage(new Gtk::CellRendererText);
+		Gtk::CellRendererText* const renderer = Gtk::manage(new Gtk::CellRendererText);
 		renderer->property_ellipsize() = Pango::ELLIPSIZE_END;
 		pack_start(*renderer, false); 
 		add_attribute(*renderer, "text", 0);
