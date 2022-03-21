@@ -281,6 +281,10 @@ FramesData::FramesData(const Glib::ustring &fname) :
 
         if (find_tag(Exiv2::lensName)) {
             lens = validateUft8(pos->print(&exif)); // validateUft8 (#5923) still needed?
+            if (pos->count() == 1 && lens == std::to_string(pos->toLong()) &&
+                find_exif_tag("Exif.Photo.LensModel")) {
+                lens = validateUft8(pos->print(&exif)); // validateUft8 (#5923) still needed?
+            }
         } else if (find_exif_tag("Exif.Photo.LensSpecification") && pos->count() == 4) {
             const auto round =
                 [](float f) -> float
