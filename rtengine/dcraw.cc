@@ -6404,6 +6404,9 @@ int CLASS parse_tiff_ifd (int base)
       case 3: case 257: case 61442:	/* ImageHeight */
 	tiff_ifd[ifd].height = getint(type);
 	break;
+      case 254:
+	tiff_ifd[ifd].new_sub_file_type = getint(type);
+	break;
       case 258:				/* BitsPerSample */
       case 61443:
 	tiff_ifd[ifd].samples = len & 7;
@@ -6737,14 +6740,17 @@ guess_cfa_pc:
 	linear_table (len);
 	break;
       case 50713:			/* BlackLevelRepeatDim */
+	if (tiff_ifd[ifd].new_sub_file_type != 0) continue;
 	cblack[4] = get2();
 	cblack[5] = get2();
 	if (cblack[4] * cblack[5] > sizeof cblack / sizeof *cblack - 6)
 	    cblack[4] = cblack[5] = 1;
 	break;
       case 61450:
+	if (tiff_ifd[ifd].new_sub_file_type != 0) continue;
 	cblack[4] = cblack[5] = MIN(sqrt(len),64);
       case 50714:			/* BlackLevel */
+	if (tiff_ifd[ifd].new_sub_file_type != 0) continue;
                 RT_blacklevel_from_constant = ThreeValBool::F;
 //-----------------------------------------------------------------------------
 // taken from LibRaw.
