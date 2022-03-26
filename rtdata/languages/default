@@ -3822,6 +3822,7 @@ TP_SHARPENMICRO_UNIFORMITY;Uniformity
 TP_SOFTLIGHT_LABEL;Soft Light
 TP_SOFTLIGHT_STRENGTH;Strength
 TP_SPOT_COUNTLABEL;%1 point(s)
+TP_SPOT_DEFAULT_SIZE;Default point size
 TP_SPOT_ENTRYCHANGED;Point changed
 TP_SPOT_HINT;Click on this button to be able to operate on the preview area.\n\nTo edit a spot, hover the white mark locating an edited area, making the editing geometry appear.\n\nTo add a spot, press Ctrl and left mouse button, drag the circle (Ctrl key can be released) to a source location, then release the mouse button.\n\nTo move the source or destination spot, hover its center then drag it.\n\nThe inner circle (maximum effect area) and the "feather" circle can be resized by hovering them (the circle becomes orange) and dragging it (the circle becomes red).\n\nWhen the changes are done, right click outside any spot to end the Spot editing mode, or click on this button again.
 TP_SPOT_LABEL;Spot Removal
