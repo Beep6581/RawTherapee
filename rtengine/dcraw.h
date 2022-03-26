@@ -209,7 +209,7 @@ protected:
     } first_decode[2048], *second_decode, *free_decode;
 
     struct tiff_ifd {
-      int width, height, bps, comp, phint, offset, flip, samples, bytes;
+      int new_sub_file_type, width, height, bps, comp, phint, offset, flip, samples, bytes;
       int tile_width, tile_length, sample_format, predictor;
       float shutter;
     } tiff_ifd[10];
