@@ -550,7 +550,7 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
                 } else if (mnote && (!make.compare (0, 4, "SONY") || !make.compare (0, 6, "KONICA"))) {
                     if (mnote->getTag ("LensID")) {
                         lens = validateUft8(mnote->getTag("LensID")->valueToString());
-                        if (lens == "Unknown") {
+                        if (!lens.compare (0, 7, "Unknown")) {
                             lens_from_make_and_model();
                         }
                     }
