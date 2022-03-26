@@ -821,7 +821,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
             int i = sy1 + skip * ix;
             i = std::min(i, maxy - skip); // avoid trouble
 
-            if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1) {
+            if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1 || ri->get_colors() == 3) {
                 for (int j = 0, jx = sx1; j < imwidth; j++, jx += skip) {
                     jx = std::min(jx, maxx - skip); // avoid trouble
 
@@ -1683,6 +1683,9 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
     } else if (ri->get_colors() == 1) {
         // Monochrome
         nodemosaic(true);
+    } else {
+        // RGB
+        nodemosaic(false);
     }
 
     t2.set();

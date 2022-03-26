@@ -878,7 +878,7 @@ void RawImageSource::nodemosaic(bool bw)
         for (int j = 0; j < W; j++) {
             if (bw) {
                 red[i][j] = green[i][j] = blue[i][j] = rawData[i][j];
-            } else if(ri->getSensorType() != ST_FUJI_XTRANS) {
+            } else if(ri->getSensorType() == ST_BAYER) {
                 switch( FC(i, j)) {
                 case 0:
                     red[i][j] = rawData[i][j];
@@ -895,7 +895,7 @@ void RawImageSource::nodemosaic(bool bw)
                     red[i][j] = green[i][j] = 0;
                     break;
                 }
-            } else {
+            } else if(ri->getSensorType() == ST_FUJI_XTRANS) {
                 switch( ri->XTRANSFC(i, j)) {
                 case 0:
                     red[i][j] = rawData[i][j];
@@ -912,6 +912,10 @@ void RawImageSource::nodemosaic(bool bw)
                     red[i][j] = green[i][j] = 0;
                     break;
                 }
+            } else {
+                red[i][j] = rawData[i][j * 3 + 0];
+                green[i][j] = rawData[i][j * 3 + 1];
+                blue[i][j] = rawData[i][j * 3 + 2];
             }
         }
     }
