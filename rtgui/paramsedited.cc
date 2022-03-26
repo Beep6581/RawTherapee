@@ -1685,8 +1685,10 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).qtoj = locallab.spots.at(j).qtoj && pSpot.qtoj == otherSpot.qtoj;
                 locallab.spots.at(j).jabcie = locallab.spots.at(j).jabcie && pSpot.jabcie == otherSpot.jabcie;
                 locallab.spots.at(j).sigmoidqjcie = locallab.spots.at(j).sigmoidqjcie && pSpot.sigmoidqjcie == otherSpot.sigmoidqjcie;
+                locallab.spots.at(j).logcie = locallab.spots.at(j).logcie && pSpot.logcie == otherSpot.logcie;
                 locallab.spots.at(j).logjz = locallab.spots.at(j).logjz && pSpot.logjz == otherSpot.logjz;
                 locallab.spots.at(j).sigjz = locallab.spots.at(j).sigjz && pSpot.sigjz == otherSpot.sigjz;
+                locallab.spots.at(j).sigq = locallab.spots.at(j).sigq && pSpot.sigq == otherSpot.sigq;
                 locallab.spots.at(j).chjzcie = locallab.spots.at(j).chjzcie && pSpot.chjzcie == otherSpot.chjzcie;
                 locallab.spots.at(j).sourceGraycie = locallab.spots.at(j).sourceGraycie && pSpot.sourceGraycie == otherSpot.sourceGraycie;
                 locallab.spots.at(j).sourceabscie = locallab.spots.at(j).sourceabscie && pSpot.sourceabscie == otherSpot.sourceabscie;
@@ -5736,12 +5738,20 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).sigmoidqjcie = mods.locallab.spots.at(i).sigmoidqjcie;
         }
 
+        if (locallab.spots.at(i).logcie) {
+            toEdit.locallab.spots.at(i).logcie = mods.locallab.spots.at(i).logcie;
+        }
+
         if (locallab.spots.at(i).logjz) {
             toEdit.locallab.spots.at(i).logjz = mods.locallab.spots.at(i).logjz;
         }
 
         if (locallab.spots.at(i).sigjz) {
             toEdit.locallab.spots.at(i).sigjz = mods.locallab.spots.at(i).sigjz;
+        }
+
+        if (locallab.spots.at(i).sigq) {
+            toEdit.locallab.spots.at(i).sigq = mods.locallab.spots.at(i).sigq;
         }
 
         if (locallab.spots.at(i).chjzcie) {
@@ -7978,8 +7988,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     qtoj(v),
     jabcie(v),
     sigmoidqjcie(v),
+    logcie(v),
     logjz(v),
     sigjz(v),
+    sigq(v),
     chjzcie(v),
     sourceGraycie(v),
     sourceabscie(v),
@@ -8675,8 +8687,10 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     qtoj = v;
     jabcie = v;
     sigmoidqjcie = v;
+    logcie = v;
     logjz = v;
     sigjz = v;
+    sigq = v;
     chjzcie = v;
     sourceGraycie = v;
     sourceabscie = v;

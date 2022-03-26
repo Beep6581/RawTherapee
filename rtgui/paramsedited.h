@@ -987,8 +987,10 @@ public:
         bool qtoj;
         bool jabcie;
         bool sigmoidqjcie;
+        bool logcie;
         bool logjz;
         bool sigjz;
+        bool sigq;
         bool chjzcie;
         bool sourceGraycie;
         bool sourceabscie;
