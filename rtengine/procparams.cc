@@ -365,7 +365,7 @@ namespace rtengine
 namespace procparams
 {
 
-const short SpotParams::minRadius = 5;
+const short SpotParams::minRadius = 1;
 const short SpotParams::maxRadius = 400;
 
 

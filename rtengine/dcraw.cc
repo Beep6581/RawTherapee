@@ -6077,7 +6077,7 @@ get2_256:
       offsetChannelBlackLevel = save1 + (0x0326 << 1);
       offsetChannelBlackLevel2 = save1 + (0x0157 << 1);
       offsetWhiteLevels = save1 + (0x032a << 1);
-      break;                                                   
+      break;
     }
 
     if (offsetChannelBlackLevel)

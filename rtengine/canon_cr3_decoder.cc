@@ -86,13 +86,10 @@ void DCraw::parse_canon_cr3()
 
 void DCraw::selectCRXTrack(unsigned short maxTrack)
 {
-    if (maxTrack < 0)
-        return;
-    
     std::int64_t bitcounts[CanonCR3Data::CRXTRACKS_MAXCOUNT] = {};
     std::int64_t maxbitcount = 0;
     std::uint32_t maxjpegbytes = 0;
-    
+
     memset(bitcounts, 0, sizeof(bitcounts));
 
     for (unsigned int i = 0; i <= maxTrack && i < RT_canon_CR3_data.CRXTRACKS_MAXCOUNT; ++i) {
@@ -950,7 +947,7 @@ inline std::uint32_t crxBitstreamGetBits(CrxBitstream* bitStrm, int bits)
     result = bitData >> (32 - bits); // 32-bits
     bitStrm->bitData = bitData << bits;
     bitStrm->bitsLeft = bitsLeft - bits;
-    
+
     return result;
 }
 
@@ -1817,7 +1814,7 @@ bool crxDecodeLineWithIQuantization(CrxSubband* subband, CrxQStep *qStep)
             int32_t quantVal = subband->qStepBase + ((qStepTblPtr[0] * subband->qStepMult) >> 3);
             bandBuf[i] *= rtengine::LIM(quantVal, 1, 0x168000);
         }
-    
+
         for (int i = subband->colStartAddOn; i < subband->width - subband->colEndAddOn; ++i) {
             int32_t quantVal = subband->qStepBase + ((qStepTblPtr[(i - subband->colStartAddOn) >> subband->levelShift] * subband->qStepMult) >> 3);
             bandBuf[i] *= rtengine::LIM(quantVal, 1, 0x168000);
@@ -1834,7 +1831,7 @@ bool crxDecodeLineWithIQuantization(CrxSubband* subband, CrxQStep *qStep)
         if (subband->qParam / 6 >= 6) {
             qScale = q_step_tbl[subband->qParam % 6] * (1 << (subband->qParam / 6 + 26));
         }
-    
+
         if (qScale != 1) {
             for (std::int32_t i = 0; i < subband->width; ++i) {
                 bandBuf[i] *= qScale;
@@ -2722,7 +2719,7 @@ bool crxMakeQStep(CrxImage *img, CrxTile *tile, std::int32_t *qpTable, std::uint
     int qpHeight = (tile->height >> 1) + (tile->height & 1);
     int qpHeight4 = (tile->height >> 2) + ((tile->height & 3) != 0);
     int qpHeight8 = (tile->height >> 3) + ((tile->height & 7) != 0);
-    std::uint32_t totalHeight = qpHeight;
+    std::size_t totalHeight = qpHeight;
     if (img->levels > 1) {
         totalHeight += qpHeight4;
     }
@@ -2749,7 +2746,7 @@ bool crxMakeQStep(CrxImage *img, CrxTile *tile, std::int32_t *qpTable, std::uint
             int row1Idx = qpWidth * std::min(4 * qpRow + 1, qpHeight - 1);
             int row2Idx = qpWidth * std::min(4 * qpRow + 2, qpHeight - 1);
             int row3Idx = qpWidth * std::min(4 * qpRow + 3, qpHeight - 1);
-        
+
             for (int qpCol = 0; qpCol < qpWidth; ++qpCol, ++qStepTbl) {
                 std::int32_t quantVal = qpTable[row0Idx++] + qpTable[row1Idx++] + qpTable[row2Idx++] + qpTable[row3Idx++];
                 // not sure about this nonsense - why is it not just avg like with 2 levels?
@@ -2905,7 +2902,7 @@ bool crxReadSubbandHeaders( // Combined with crxProcessSubbands function
 
     band->width = bandWidthExCoef + bandWidth;
     band->height = bandHeightExCoef + bandHeight;
-    
+
     if (img->levels) {
         crxSetupSubbandIdx(hdr, img, band, img->levels, 0, bandWidthExCoef, 0, bandHeightExCoef);
     }
@@ -2923,10 +2920,10 @@ bool crxReadSubbandHeaders( // Combined with crxProcessSubbands function
         if (*mdatSize < 4) {
             return false;
         }
-        
+
         int hdrSign = sgetn(2, *subbandMdatPtr);
         int hdrSize = sgetn(2, *subbandMdatPtr + 2);
-        
+
         if (*mdatSize < hdrSize + 4) {
             return false;
         }
@@ -2939,13 +2936,13 @@ bool crxReadSubbandHeaders( // Combined with crxProcessSubbands function
             band->dataSize = subbandSize;
             return false;
         }
-        
+
         band->dataOffset = subbandOffset;
         band->kParam = 0;
         band->bandParam = 0;
         band->bandBuf = 0;
         band->bandSize = 0;
-        
+
         if (hdrSign == 0xFF03) {
             // old header
             std::uint32_t bitData = sgetn(4, *subbandMdatPtr + 8);
@@ -3114,7 +3111,7 @@ bool crxReadImageHeaders(
         tile->tileSize = sgetn(4, dataPtr + 4);
         tile->dataOffset = tileOffset;
         tile->qStep = 0;
-        
+
         if (hdrSize == 16) {
           // extended header data - terminated by 0 bytes
           if (sgetn(2, dataPtr + 18) != 0) {
@@ -3128,7 +3125,7 @@ bool crxReadImageHeaders(
           tile->mdatQPDataSize = 0;
           tile->mdatExtraSize = 0;
         }
-        
+
         dataPtr += hdrSize + 4;
         tileOffset += tile->tileSize;
 
@@ -3139,7 +3136,7 @@ bool crxReadImageHeaders(
             if (dataSize < 0xC) {
                 return false;
             }
-            
+
             hdrSign = sgetn(2, dataPtr);
             hdrSize = sgetn(2, dataPtr + 2);
             if ((hdrSign != 0xFF02 && hdrSign != 0xFF12) || hdrSize != 8) {
@@ -3183,7 +3180,7 @@ bool crxReadImageHeaders(
     if (hdr->version != 0x200) {
         return true;
     }
-    
+
     tile = img->tiles;
     for (unsigned int curTile = 0; curTile < nTiles; ++curTile, ++tile) {
         if (tile->hasQPData) {
@@ -3195,13 +3192,13 @@ bool crxReadImageHeaders(
             bitStrm.mdatSize = tile->mdatQPDataSize;
             bitStrm.curBufOffset = img->mdatOffset + tile->dataOffset;
             bitStrm.input = img->input;
-        
+
             crxFillBuffer(&bitStrm);
-        
+
             unsigned int qpWidth = (tile->width >> 3) + ((tile->width & 7) != 0);
             unsigned int qpHeight = (tile->height >> 1) + (tile->height & 1);
-            unsigned long totalQP = qpHeight * qpWidth;
-        
+            unsigned long totalQP = static_cast<std::size_t>(qpHeight) * qpWidth;
+
             try {
                 std::vector<std::int32_t> qpTable(totalQP + 2 * (qpWidth + 2));
                 std::int32_t *qpCurElem = qpTable.data();
@@ -3211,7 +3208,7 @@ bool crxReadImageHeaders(
                 for (unsigned qpRow = 0; qpRow < qpHeight; ++qpRow) {
                     std::int32_t *qpLine0 = qpRow & 1 ? qpLineBuf + qpWidth + 2 : qpLineBuf;
                     std::int32_t *qpLine1 = qpRow & 1 ? qpLineBuf : qpLineBuf + qpWidth + 2;
-            
+
                     if (qpRow) {
                         crxDecodeGolombNormal(&bitStrm, qpWidth, qpLine0, qpLine1, &kParam);
                     } else {
@@ -3222,7 +3219,7 @@ bool crxReadImageHeaders(
                         *qpCurElem++ = qpLine1[qpCol + 1] + 4;
                     }
                 }
-            
+
                 // now we read QP data - build tile QStep
                 if (!crxMakeQStep(img, tile, qpTable.data(), totalQP)) {
                     return false;
@@ -3266,8 +3263,6 @@ bool crxSetupImageData(
     img->tileRows = (img->planeHeight + hdr->tileHeight - 1) / hdr->tileHeight;
 
     if (
-        img->tileCols > 0xFF ||
-        img->tileRows > 0xFF ||
         img->planeWidth - hdr->tileWidth * (img->tileCols - 1) < 0x16 ||
         img->planeHeight - hdr->tileHeight * (img->tileRows - 1) < 0x16
     ) {
@@ -3295,7 +3290,7 @@ bool crxSetupImageData(
     // left as is.
     if (img->encType == 3 && img->nPlanes == 4 && img->nBits > 8) {
         img->planeBuf = static_cast<std::int16_t*>(
-            malloc(img->planeHeight * img->planeWidth * img->nPlanes * ((img->samplePrecision + 7) >> 3))
+            malloc(static_cast<std::size_t>(img->planeHeight) * img->planeWidth * img->nPlanes * ((img->samplePrecision + 7) >> 3))
         );
 
         if (!img->planeBuf) {
@@ -3513,7 +3508,7 @@ bool DCraw::crxParseImageHeader(uchar* cmp1TagData, int nTrack, int size)
     int extHeader = cmp1TagData[32] >> 7;
     int useMedianBits = 0;
     hdr->medianBits = hdr->nBits;
-    
+
     if (extHeader && size >= 56 && hdr->nPlanes == 4)
         useMedianBits = cmp1TagData[56] >> 6 & 1;
 
