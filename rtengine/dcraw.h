@@ -182,14 +182,15 @@ public:
             int32_t hasTileCols;
             int32_t hasTileRows;
             int32_t mdatHdrSize;
+            int32_t medianBits;
             // Not from header, but from datastream
             uint32_t MediaSize;
             int64_t MediaOffset;
             uint32_t MediaType; /* 1 -> /C/RAW, 2-> JPEG */
         };
-        static constexpr size_t CRXTRACKS_MAXCOUNT = 16;
+        static constexpr int CRXTRACKS_MAXCOUNT = 16;
         crx_data_header_t crx_header[CRXTRACKS_MAXCOUNT];
-        unsigned int crx_track_selected;
+        int crx_track_selected;
         short CR3_CTMDtag;
     };
 protected:
@@ -565,13 +566,13 @@ void parse_canon_cr3();
 void selectCRXTrack(unsigned short maxTrack);
 int parseCR3(unsigned long long oAtomList,
              unsigned long long szAtomList, short &nesting,
-             char *AtomNameStack, unsigned short &nTrack, short &TrackType);
+             char *AtomNameStack, short &nTrack, short &TrackType);
 bool crxDecodePlane(void *p, uint32_t planeNumber);
 void crxLoadDecodeLoop(void *img, int nPlanes);
 void crxConvertPlaneLineDf(void *p, int imageRow);
 void crxLoadFinalizeLoopE3(void *p, int planeHeight);
 void crxLoadRaw();
-bool crxParseImageHeader(uchar *cmp1TagData, unsigned int nTrack);
+bool crxParseImageHeader(uchar *cmp1TagData, int nTrack, int size);
 //-----------------------------------------------------------------------------
 
 };
