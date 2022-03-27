@@ -685,6 +685,8 @@ void Options::setDefaults()
     lastICCProfCreatorDir = "";
     gimpPluginShowInfoDialog = true;
     maxRecentFolders = 15;
+    sortMethod = SORT_BY_NAME;
+    sortDescending = false;
     rtSettings.lensfunDbDirectory = ""; // set also in main.cc and main-cli.cc
     cropGuides = CROP_GUIDE_FULL;
     cropAutoFit = false;
@@ -1146,6 +1148,19 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("File Browser", "RecentFolders")) {
                     recentFolders = keyFile.get_string_list("File Browser", "RecentFolders");
+                }
+
+                if (keyFile.has_key("File Browser", "SortMethod")) {
+                    int v = keyFile.get_integer("File Browser", "SortMethod");
+                    if (v < int(0) || v >= int(SORT_METHOD_COUNT)) {
+                        sortMethod = SORT_BY_NAME;
+                    } else {
+                        sortMethod = SortMethod(v);
+                    }
+                }
+
+                if (keyFile.has_key("File Browser", "SortDescending")) {
+                    sortDescending = keyFile.get_boolean("File Browser", "SortDescending");
                 }
             }
 
@@ -2214,6 +2229,8 @@ void Options::saveToFile(Glib::ustring fname)
 
             keyFile.set_string_list("File Browser", "RecentFolders", temp);
         }
+        keyFile.set_integer("File Browser", "SortMethod", sortMethod);
+        keyFile.set_boolean("File Browser", "SortDescending", sortDescending);
         keyFile.set_integer("Clipping Indication", "HighlightThreshold", highlightThreshold);
         keyFile.set_integer("Clipping Indication", "ShadowThreshold", shadowThreshold);
         keyFile.set_boolean("Clipping Indication", "BlinkClipped", blinkClipped);
