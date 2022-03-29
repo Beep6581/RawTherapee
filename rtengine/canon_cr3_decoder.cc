@@ -306,7 +306,7 @@ int DCraw::parseCR3(
     unsigned long long lHdr;
 
     char UIID[16];
-    uchar CMP1[36];
+    uchar CMP1[85];
     char HandlerType[5];
     char MediaFormatID[5];
 //  unsigned int ImageWidth, ImageHeight;
