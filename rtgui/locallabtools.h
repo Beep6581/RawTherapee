@@ -1580,10 +1580,12 @@ private:
     Gtk::CheckButton* const forcebw;
     
     Gtk::Frame* const sigmoidFrame;
+    Gtk::CheckButton* const sigq;
     Adjuster* const sigmoidldacie;
     Adjuster* const sigmoidthcie;
     Adjuster* const sigmoidblcie;
     Gtk::CheckButton* const sigmoidqjcie;
+    Gtk::CheckButton* const logcie;
     Gtk::Frame* const sigmoidjzFrame;
     Gtk::CheckButton* const sigjz;
     Adjuster* const sigmoidldajzcie;
@@ -1668,7 +1670,7 @@ private:
     CurveEditorGroup* const mask2cieCurveEditorG;
     DiagonalCurveEditor* const Lmaskcieshape;
     
-    sigc::connection AutograycieConn,  forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, logjzconn, sigjzconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2;
+    sigc::connection AutograycieConn,  forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, logcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2;
 public:
     Locallabcie();
     ~Locallabcie();
@@ -1713,8 +1715,10 @@ private:
     void qtojChanged();
     void jabcieChanged();
     void sigmoidqjcieChanged();
+    void logcieChanged();
     void logjzChanged();
     void sigjzChanged();
+    void sigqChanged();
     void chjzcieChanged();
     void updatecieGUI();
     void updateMaskBackground(const double normChromar, const double normLumar, const double normHuer, const double normHuerjz) override;

@@ -949,11 +949,22 @@ struct LensProfParams {
   * Parameters of the perspective correction
   */
 struct PerspectiveParams {
+    static constexpr double DEFAULT_CAMERA_CROP_FACTOR = 1;
+    static constexpr double DEFAULT_CAMERA_FOCAL_LENGTH = 24;
+
     Glib::ustring method;
     bool    render;
     double  horizontal;
     double  vertical;
+    /**
+     * Negative and zero values indicate an unspecified crop factor and should
+     * be interpreted with {@link #DEFAULT_CAMERA_CROP_FACTOR}.
+     */
     double  camera_crop_factor;
+    /**
+     * Negative and zero values indicate an unspecified focal length and should
+     * be interpreted with {@link #DEFAULT_CAMERA_FOCAL_LENGTH}.
+     */
     double  camera_focal_length;
     double  camera_pitch;
     double  camera_roll;
@@ -1594,8 +1605,10 @@ struct LocallabParams {
         bool qtoj;
         bool jabcie;
         bool sigmoidqjcie;
+        bool logcie;
         bool logjz;
         bool sigjz;
+        bool sigq;
         bool chjzcie;
         double sourceGraycie;
         double sourceabscie;

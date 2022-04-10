@@ -1331,7 +1331,7 @@ HISTORY_MSG_1078;Local - Red and skin protection
 HISTORY_MSG_1079;Local - CIECAM Sigmoid strength J
 HISTORY_MSG_1080;Local - CIECAM Sigmoid threshold
 HISTORY_MSG_1081;Local - CIECAM Sigmoid blend
-HISTORY_MSG_1082;Local - CIECAM Sigmoid Q J
+HISTORY_MSG_1082;Local - CIECAM Sigmoid Q BlackEv WhiteEv
 HISTORY_MSG_1083;Local - CIECAM Hue
 HISTORY_MSG_1084;Local - Uses Black Ev - White Ev
 HISTORY_MSG_1085;Local - Jz lightness
@@ -1409,6 +1409,8 @@ HISTORY_MSG_1145;Local - Jz Log encoding
 HISTORY_MSG_1146;Local - Jz Log encoding target gray
 HISTORY_MSG_1147;Local - Jz BlackEv WhiteEv
 HISTORY_MSG_1148;Local - Jz Sigmoid
+HISTORY_MSG_1149;Local - Q Sigmoid
+HISTORY_MSG_1150;Local - Log encoding Q instead Sigmoid Q
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -1575,6 +1577,7 @@ ICCPROFCREATOR_ILL_41;D41
 ICCPROFCREATOR_ILL_50;D50
 ICCPROFCREATOR_ILL_55;D55
 ICCPROFCREATOR_ILL_60;D60
+ICCPROFCREATOR_ILL_63;D63 : DCI-P3 Theater 
 ICCPROFCREATOR_ILL_65;D65
 ICCPROFCREATOR_ILL_80;D80
 ICCPROFCREATOR_ILL_DEF;Default
@@ -1589,6 +1592,7 @@ ICCPROFCREATOR_PRIM_BETA;BetaRGB
 ICCPROFCREATOR_PRIM_BLUX;Blue X
 ICCPROFCREATOR_PRIM_BLUY;Blue Y
 ICCPROFCREATOR_PRIM_BRUCE;BruceRGB
+ICCPROFCREATOR_PRIM_DCIP3;DCI-P3
 ICCPROFCREATOR_PRIM_GREX;Green X
 ICCPROFCREATOR_PRIM_GREY;Green Y
 ICCPROFCREATOR_PRIM_PROPH;Prophoto
@@ -3010,6 +3014,7 @@ TP_LOCALLAB_JZHFRA;Curves Hz
 TP_LOCALLAB_JZHJZFRA;Curve Jz(Hz)
 TP_LOCALLAB_JZHUECIE;Hue Rotation
 TP_LOCALLAB_JZLOGWB_TOOLTIP;If Auto is enabled, it will calculate and adjust the Ev levels and the 'Mean luminance Yb%' for the spot area. The resulting values will be used by all Jz operations including "Log Encoding Jz".\nAlso calculates the absolute luminance at the time of shooting.
+TP_LOCALLAB_JZLOGWBS_TOOLTIP;Black Ev and White Ev adjustments can be different depending on whether Log encoding or Sigmoid is used.\nFor Sigmoid, a change (increase in most cases) of White Ev may be necessary to obtain a better rendering of highlights, contrast and saturation.
 TP_LOCALLAB_JZSAT;Saturation
 TP_LOCALLAB_JZSHFRA;Shadows/Highlights Jz
 TP_LOCALLAB_JZSOFTCIE;Soft radius (GuidedFilter)
@@ -3065,6 +3070,8 @@ TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action o
 TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Estimated values of dynamic range i.e. Black Ev and White Ev
 TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance deviates significantly from the D50 reference.\nAdapts colors to the illuminant of the output device.
 TP_LOCALLAB_LOGCOLORFL;Colorfulness (M)
+TP_LOCALLAB_LOGCIE;Log encoding instead of Sigmoid
+TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using Log encoding Q.
 TP_LOCALLAB_LOGCOLORF_TOOLTIP;Perceived amount of hue in relation to gray.\nIndicator that a stimulus appears more or less colored.
 TP_LOCALLAB_LOGCONQL;Contrast (Q)
 TP_LOCALLAB_LOGCONTL;Contrast (J)
@@ -3373,13 +3380,13 @@ TP_LOCALLAB_SHRESFRA;Shadows/Highlights & TRC
 TP_LOCALLAB_SHTRC_TOOLTIP;Based on 'working profile' (only those provided), modifies the tones of the image by acting on a TRC (Tone Response Curve).\nGamma acts mainly on light tones.\nSlope acts mainly on dark tones.\nIt is recommended that the TRC of both devices (monitor and output profile) be sRGB (default).
 TP_LOCALLAB_SH_TOOLNAME;Shadows/Highlights & Tone Equalizer
 TP_LOCALLAB_SIGMAWAV;Attenuation response
-TP_LOCALLAB_SIGFRA;Sigmoid J & Q
+TP_LOCALLAB_SIGFRA;Sigmoid Q & Log encoding Q
 TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
 TP_LOCALLAB_SIGMOIDLAMBDA;Contrast
 TP_LOCALLAB_SIGMOIDTH;Threshold (Gray point)
 TP_LOCALLAB_SIGMOIDBL;Blend
-TP_LOCALLAB_SIGMOIDQJ;Use Q instead of J
-TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the'Ciecam' and 'Sigmoid' function.\nThree sliders: a) Strength acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold distributes the action according to the luminance; c)Blend acts on the final aspect of the image, contrast and luminance. 
+TP_LOCALLAB_SIGMOIDQJ;Uses Black Ev & White Ev
+TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the'Ciecam' (or 'Jz') and 'Sigmoid' function.\nThree sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Blend acts on the final aspect of the image, contrast and luminance. 
 TP_LOCALLAB_SIM;Simple
 TP_LOCALLAB_SLOMASKCOL;Slope
 TP_LOCALLAB_SLOMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying ‘L’ to avoid any discontinuities.
@@ -3822,6 +3829,7 @@ TP_SHARPENMICRO_UNIFORMITY;Uniformity
 TP_SOFTLIGHT_LABEL;Soft Light
 TP_SOFTLIGHT_STRENGTH;Strength
 TP_SPOT_COUNTLABEL;%1 point(s)
+TP_SPOT_DEFAULT_SIZE;Default spot size
 TP_SPOT_ENTRYCHANGED;Point changed
 TP_SPOT_HINT;Click on this button to be able to operate on the preview area.\n\nTo edit a spot, hover the white mark locating an edited area, making the editing geometry appear.\n\nTo add a spot, press Ctrl and left mouse button, drag the circle (Ctrl key can be released) to a source location, then release the mouse button.\n\nTo move the source or destination spot, hover its center then drag it.\n\nThe inner circle (maximum effect area) and the "feather" circle can be resized by hovering them (the circle becomes orange) and dragging it (the circle becomes red).\n\nWhen the changes are done, right click outside any spot to end the Spot editing mode, or click on this button again.
 TP_SPOT_LABEL;Spot Removal

@@ -1,0 +1,315 @@
+name: Windows Build
+on:
+  push:
+    branches:
+      - dev
+    tags:
+      - '[0-9]+.*'
+  pull_request:
+    branches:
+      - dev
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: msys2 {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [release, debug]
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        uses: msys2/setup-msys2@v2
+        with:
+          location: C:\msys2
+          update: true
+          install: |
+            gzip
+            git
+            intltool
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-make
+            mingw-w64-x86_64-pkg-config
+            mingw-w64-x86_64-cmake
+            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-gtkmm3
+            mingw-w64-x86_64-lcms2
+            mingw-w64-x86_64-fftw
+            mingw-w64-x86_64-lensfun
+            mingw-w64-x86_64-libiptcdata
+
+      - name: Configure build
+        run: |
+          export REF_NAME_FILTERED="$(echo '${{github.ref_name}}' | sed 's/[^A-z0-9_.-]//g')"
+          
+          if [ '${{github.ref_type}}' == 'tag' ]; then
+            export CACHE_SUFFIX=""
+          else
+            echo "Setting cache suffix."
+            export CACHE_SUFFIX="5-$REF_NAME_FILTERED"
+            echo "Cache suffix is '$CACHE_SUFFIX'."
+          fi
+
+          echo "Making build directory."
+          mkdir build
+          echo "Changing working directory to the build directory."
+          cd build
+
+          echo "Running CMake configure."
+          cmake \
+            -G "Ninja" \
+            -DCMAKE_BUILD_TYPE='${{matrix.build_type}}' \
+            -DCACHE_NAME_SUFFIX="$CACHE_SUFFIX" \
+            -DPROC_TARGET_NUMBER="1" \
+            -DLENSFUNDBDIR="share/lensfun" \
+            ..
+
+          echo "Recording filtered ref name."
+          echo "REF_NAME_FILTERED=$REF_NAME_FILTERED" >> "$(cygpath -u $GITHUB_ENV)"
+
+      - name: Build RawTherapee
+        working-directory: ./build
+        run: |
+          echo "Running CMake install."
+          cmake --build . --target install
+
+      - name: Include Lensfun
+        run: |
+          echo "Updating Lensfun database."
+          lensfun-update-data
+          echo "Creating Lensfun directory in the build directory."
+          mkdir -p 'build/${{matrix.build_type}}/share'
+          echo "Copying Lensfun database to the build directory."
+          cp -R "/C/msys2/msys64/mingw64/var/lib/lensfun-updates/version_1" 'build/${{matrix.build_type}}/share/lensfun'
+
+      - name: Restore GDB from cache
+        id: gdb-cache
+        if: ${{matrix.build_type == 'debug'}}
+        uses: actions/cache@v2
+        with:
+          key: gdb-windows-64
+          path: gdb-windows-64.exe
+
+      - name: Download GDB
+        if: ${{matrix.build_type == 'debug' && steps.gdb-cache.outputs.cache-hit != 'true'}}
+        run: |
+          echo "Downloading GDB."
+          curl --location 'http://www.equation.com/ftpdir/gdb/64/gdb.exe' > 'gdb-windows-64.exe'
+          echo "Verifying download."
+          sha256sum --check <(echo '27c507ae76adf4b4229091dcd6b5e25c7baffef32185604f1ebdd590598566c6  gdb-windows-64.exe')
+
+      - name: Include GDB
+        if: ${{matrix.build_type == 'debug'}}
+        run: cp 'gdb-windows-64.exe' 'build/${{matrix.build_type}}/gdb.exe'
+
+      - name: Bundle dependencies
+        run: |
+          echo "Getting workspace path."
+          export BUILD_DIR="$(pwd)/build/${{matrix.build_type}}"
+          echo "Build directory is '$BUILD_DIR'."
+          echo "Changing working directory to MSYS2 MINGW64."
+          cd "/C/msys2/msys64/mingw64"
+          echo "Copying DLLs and EXEs."
+
+          cd ./bin
+          cp \
+            "gdbus.exe" \
+            "gspawn-win64-helper.exe" \
+            "gspawn-win64-helper-console.exe" \
+            "libatk-1.0-0.dll" \
+            "libatkmm-1.6-1.dll" \
+            "libbrotlicommon.dll" \
+            "libbrotlidec.dll" \
+            "libbz2-1.dll" \
+            "libcairo-2.dll" \
+            "libcairo-gobject-2.dll" \
+            "libcairomm-1.0-1.dll" \
+            "libdatrie-1.dll" \
+            "libdeflate.dll" \
+            "libepoxy-0.dll" \
+            "libexpat-1.dll" \
+            "libffi-7.dll" \
+            "libfftw3f-3.dll" \
+            "libfontconfig-1.dll" \
+            "libfreetype-6.dll" \
+            "libfribidi-0.dll" \
+            "libgcc_s_seh-1.dll" \
+            "libgdk_pixbuf-2.0-0.dll" \
+            "libgdk-3-0.dll" \
+            "libgdkmm-3.0-1.dll" \
+            "libgio-2.0-0.dll" \
+            "libgiomm-2.4-1.dll" \
+            "libglib-2.0-0.dll" \
+            "libglibmm-2.4-1.dll" \
+            "libgmodule-2.0-0.dll" \
+            "libgobject-2.0-0.dll" \
+            "libgomp-1.dll" \
+            "libgraphite2.dll" \
+            "libgtk-3-0.dll" \
+            "libgtkmm-3.0-1.dll" \
+            "libharfbuzz-0.dll" \
+            "libiconv-2.dll" \
+            "libintl-8.dll" \
+            "libjbig-0.dll" \
+            "libjpeg-8.dll" \
+            "liblcms2-2.dll" \
+            "liblensfun.dll" \
+            "libLerc.dll" \
+            "liblzma-5.dll" \
+            "libpango-1.0-0.dll" \
+            "libpangocairo-1.0-0.dll" \
+            "libpangoft2-1.0-0.dll" \
+            "libpangomm-1.4-1.dll" \
+            "libpangowin32-1.0-0.dll" \
+            "libpcre-1.dll" \
+            "libpixman-1-0.dll" \
+            "libpng16-16.dll" \
+            "librsvg-2-2.dll" \
+            "libsigc-2.0-0.dll" \
+            "libstdc++-6.dll" \
+            "libsystre-0.dll" \
+            "libthai-0.dll" \
+            "libtiff-5.dll" \
+            "libtre-5.dll" \
+            "libwebp-7.dll" \
+            "libwinpthread-1.dll" \
+            "libxml2-2.dll" \
+            "libzstd.dll" \
+            "zlib1.dll" \
+            "$BUILD_DIR"
+          cd -
+
+          echo "Copying Adwaita theme."
+          mkdir -p "$BUILD_DIR/share/icons/Adwaita"
+          cd 'share/icons/Adwaita/'
+          mkdir -p "$BUILD_DIR/share/icons/Adwaita/scalable"
+          cp -r \
+            "scalable/actions" \
+            "scalable/devices" \
+            "scalable/mimetypes" \
+            "scalable/places" \
+            "scalable/status" \
+            "scalable/ui" \
+            "$BUILD_DIR/share/icons/Adwaita/scalable"
+          cp 'index.theme' "$BUILD_DIR/share/icons/Adwaita"
+          mkdir -p "$BUILD_DIR/share/icons/Adwaita/cursors"
+          cp -r \
+            "cursors/plus.cur" \
+            "cursors/sb_h_double_arrow.cur" \
+            "cursors/sb_left_arrow.cur" \
+            "cursors/sb_right_arrow.cur" \
+            "cursors/sb_v_double_arrow.cur" \
+            "$BUILD_DIR/share/icons/Adwaita/cursors"
+          cd -
+
+          echo "Copying GDK pixbuf."
+          mkdir -p "$BUILD_DIR/lib"
+          cp -r 'lib/gdk-pixbuf-2.0' "$BUILD_DIR/lib/gdk-pixbuf-2.0"
+
+          echo "Copying GLib schemas."
+          mkdir -p "$BUILD_DIR/share/glib-2.0/schemas"
+          cp 'share/glib-2.0/schemas/gschemas.compiled' "$BUILD_DIR/share/glib-2.0/schemas"
+
+          echo "Creating GTK settings.ini."
+          mkdir -p "$BUILD_DIR/share/gtk-3.0/"
+          echo '[Settings] gtk-button-images=1' > "$BUILD_DIR/share/gtk-3.0/settings.ini"
+
+      - name: Create installer
+        if: ${{matrix.build_type == 'release' && (github.ref_type == 'tag' || github.ref_name == 'dev')}}
+        working-directory: build/${{matrix.build_type}}
+        shell: pwsh
+        run: |
+          echo "Installing Inno Setup."
+          choco install innosetup
+          echo "Setup file:"
+          type "WindowsInnoSetup.iss"
+          echo "Creating installer from script."
+          iscc /F"installer" "WindowsInnoSetup.iss"
+
+      - name: Prepare artifact name
+        run: |
+          if [ '${{github.ref_type}}' == 'tag' ]; then
+            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_win64_${{matrix.build_type}}"
+          else
+            echo "Getting RawTherapee version."
+            export VERSION="$(grep -m 1 '^Version: .*$' './build/${{matrix.build_type}}/AboutThisBuild.txt' | sed 's/^Version: \(.\+\)$/\1/')"
+            echo "Version is '$VERSION'."
+            FILTERED_VERSION="$(echo "$VERSION" | sed 's/[^A-z0-9_.-]//g')"
+            ARTIFACT_NAME="RawTherapee_${REF_NAME_FILTERED}_${FILTERED_VERSION}_win64_${{matrix.build_type}}"
+          fi
+          echo "Artifact name is '$ARTIFACT_NAME'."
+
+          echo "Recording artifact name."
+          echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> "$(cygpath -u $GITHUB_ENV)"
+          echo "Recording RawTherapee version."
+          echo "RT_VERSION=$VERSION" >> "$(cygpath -u $GITHUB_ENV)"
+
+          echo "Renaming artifact."
+          mv './build/${{matrix.build_type}}' "./build/$ARTIFACT_NAME"
+          if [ -e './build/installer.exe' ]; then
+            echo "Renaming installer."
+            mv './build/installer.exe' "./build/$ARTIFACT_NAME.exe"
+          fi
+
+      - name: Create ZIP archive
+        shell: cmd
+        working-directory: ./build
+        run: |
+          echo "Zipping artifact."
+          7z a -tzip "%ARTIFACT_NAME%.zip" "./%ARTIFACT_NAME%"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{env.ARTIFACT_NAME}}
+          path: build\${{env.ARTIFACT_NAME}}
+
+      - name: Upload installer
+        if: ${{matrix.build_type == 'release' && (github.ref_type == 'tag' || github.ref_name == 'dev')}}
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{env.ARTIFACT_NAME}}.exe
+          path: build\${{env.ARTIFACT_NAME}}.exe
+
+      - name: Prepare for publishing
+        if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
+        run: |
+          echo "Setting publish name."
+          PUBLISH_NAME="RawTherapee_${REF_NAME_FILTERED}_win64_${{matrix.build_type}}"
+          echo "Publish name is '$PUBLISH_NAME'."
+          if [ "$ARTIFACT_NAME" != "$PUBLISH_NAME" ]; then
+            echo "Renaming ZIP file."
+            cp "build/$ARTIFACT_NAME.zip" "build/$PUBLISH_NAME.zip"
+            if [ -e "./build/$ARTIFACT_NAME.exe" ]; then
+              echo "Renaming installer."
+              mv "./build/$ARTIFACT_NAME.exe" "./build/$PUBLISH_NAME.exe"
+            fi
+          fi
+          echo "Creating version file."
+          cp "build/$ARTIFACT_NAME/AboutThisBuild.txt" "build/$PUBLISH_NAME-AboutThisBuild.txt"
+
+          echo "Recording publish name."
+          echo "PUBLISH_NAME=$PUBLISH_NAME" >> "$(cygpath -u $GITHUB_ENV)"
+
+      - name: Publish artifacts
+        uses: softprops/action-gh-release@v1
+        if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
+        with:
+          tag_name: nightly-github-actions
+          files: |
+            build/${{env.PUBLISH_NAME}}.zip
+            build/${{env.PUBLISH_NAME}}-AboutThisBuild.txt
+
+      - name: Publish installer
+        uses: softprops/action-gh-release@v1
+        if: ${{matrix.build_type == 'release' && (github.ref_type == 'tag' || github.ref_name == 'dev')}}
+        with:
+          tag_name: nightly-github-actions
+          files: build/${{env.PUBLISH_NAME}}.exe
