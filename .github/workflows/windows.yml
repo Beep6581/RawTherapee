@@ -89,26 +89,6 @@ jobs:
           echo "Copying Lensfun database to the build directory."
           cp -R "/C/msys2/msys64/mingw64/var/lib/lensfun-updates/version_1" 'build/${{matrix.build_type}}/share/lensfun'
 
-      - name: Restore GDB from cache
-        id: gdb-cache
-        if: ${{matrix.build_type == 'debug'}}
-        uses: actions/cache@v2
-        with:
-          key: gdb-windows-64
-          path: gdb-windows-64.exe
-
-      - name: Download GDB
-        if: ${{matrix.build_type == 'debug' && steps.gdb-cache.outputs.cache-hit != 'true'}}
-        run: |
-          echo "Downloading GDB."
-          curl --location 'http://www.equation.com/ftpdir/gdb/64/gdb.exe' > 'gdb-windows-64.exe'
-          echo "Verifying download."
-          sha256sum --check <(echo '27c507ae76adf4b4229091dcd6b5e25c7baffef32185604f1ebdd590598566c6  gdb-windows-64.exe')
-
-      - name: Include GDB
-        if: ${{matrix.build_type == 'debug'}}
-        run: cp 'gdb-windows-64.exe' 'build/${{matrix.build_type}}/gdb.exe'
-
       - name: Bundle dependencies
         run: |
           echo "Getting workspace path."
