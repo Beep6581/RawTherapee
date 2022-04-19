@@ -123,8 +123,15 @@ FramesData::FramesData(const Glib::ustring &fname) :
         const auto find_exif_tag =
             [&exif, &pos](const std::string &name) -> bool
             {
-                pos = exif.findKey(Exiv2::ExifKey(name));
-                return pos != exif.end() && pos->size();
+                try {
+                    pos = exif.findKey(Exiv2::ExifKey(name));
+                    return pos != exif.end() && pos->size();
+                } catch (std::exception &e) {
+                    if (settings->verbose) {
+                        std::cerr << "Exiv2 WARNING -- error finding tag " << name << ": " << e.what() << std::endl;
+                    }
+                    return false;
+                }
             };
 
         const auto find_tag =
