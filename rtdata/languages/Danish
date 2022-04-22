@@ -1,0 +1,2302 @@
+﻿#01 mogensjaeger (github), initial danish translation
+
+ABOUT_TAB_BUILD;Version
+ABOUT_TAB_CREDITS;Credits
+ABOUT_TAB_LICENSE;Licens
+ABOUT_TAB_RELEASENOTES;Udgivelses noter
+ABOUT_TAB_SPLASH;Splash
+ADJUSTER_RESET_TO_DEFAULT;<b>Click</b> - nulstil til standardværdier.\n<b>Ctrl</b>+<b>click</b> - nulstil til startværdier.
+BATCH_PROCESSING;Batch redigering
+CURVEEDITOR_AXIS_IN;I:
+CURVEEDITOR_AXIS_LEFT_TAN;LT:
+CURVEEDITOR_AXIS_OUT;O:
+CURVEEDITOR_AXIS_RIGHT_TAN;RT:
+CURVEEDITOR_CATMULLROM;Fleksibel
+CURVEEDITOR_CURVE;Kurve
+CURVEEDITOR_Kurver;Kurver
+CURVEEDITOR_CUSTOM;Standard
+CURVEEDITOR_DARKS;Mørke
+CURVEEDITOR_EDITPOINT_HINT;Aktivér redigering af node ind/ud værdier.\n\nHøjreklik på en node for at vælge den.\nHøjreklik på et tomt område for at fravælge noden.
+CURVEEDITOR_HIGHLIGHTS;Højlys
+CURVEEDITOR_LIGHTS;Lyse partier
+CURVEEDITOR_LINEAR;Lineær
+CURVEEDITOR_LOADDLGLABEL;Indlæs kurve...
+CURVEEDITOR_MINMAXCPOINTS;Equalizer
+CURVEEDITOR_NURBS;Control cage
+CURVEEDITOR_PARAMETRIC;Parametrisk
+CURVEEDITOR_SAVEDLGLABEL;Gem kurve...
+CURVEEDITOR_SHADOWS;Mørke partier
+CURVEEDITOR_TOOLTIPCOPY;Kopier nuværende kurve til udklipsholderen.
+CURVEEDITOR_TOOLTIPLINEAR;Nulstil kurve til lineær.
+CURVEEDITOR_TOOLTIPLOAD;Indlæs kurve fra fil.
+CURVEEDITOR_TOOLTIPPASTE;Overfør kurve fra udklipsholderen.
+CURVEEDITOR_TOOLTIPSAVE;Gem nuværende kurve.
+CURVEEDITOR_TYPE;Type:
+DIRBROWSER_FOLDERS;Mapper
+DONT_SHOW_AGAIN;Vis ikke denne besked igen.
+DYNPROFILEEDITOR_DELETE;Slet
+DYNPROFILEEDITOR_EDIT;Redigér
+DYNPROFILEEDITOR_EDIT_RULE;Redigér Dynamisk Profil Regel
+DYNPROFILEEDITOR_ENTRY_TOOLTIP;Matchningen er ufølsom over for store og små bogstaver. \nBrug "re:" præfiks for at indtaste \net almindeligt udtryk.
+DYNPROFILEEDITOR_IMGTYPE_ANY;Alle mulige
+DYNPROFILEEDITOR_IMGTYPE_HDR;HDR
+DYNPROFILEEDITOR_IMGTYPE_PS;Pixel Shift
+DYNPROFILEEDITOR_IMGTYPE_STD;Standard
+DYNPROFILEEDITOR_MOVE_DOWN;Flyt ned
+DYNPROFILEEDITOR_MOVE_UP;Flyt op
+DYNPROFILEEDITOR_NEW;Ny
+DYNPROFILEEDITOR_NEW_RULE;Ny Dynamisk Profil Regel
+DYNPROFILEEDITOR_PROFILE;Redigeringsprofil
+EDITWINDOW_TITLE;Billede Redigér
+EDIT_OBJECT_TOOLTIP;Viser en widget i forhåndsvisningsvinduet, som lader dig justere dette værktøj.
+EDIT_PIPETTE_TOOLTIP;For at tilføje et justeringspunkt til kurven, skal du holde Ctrl-tasten nede, mens du venstreklikker på det ønskede sted i billedeksemplet. \nFor at justere punktet, hold Ctrl-tasten nede, mens du venstreklikker på det tilsvarende område i forhåndsvisningen, slip derefter Ctrl-tasten (medmindre du ønsker finkontrol), og mens du stadig holder venstre museknap nede, bevæges musen op eller ned for at flytte punktet op eller ned i kurven. 
+EXIFFILTER_APERTURE;Blænde
+EXIFFILTER_CAMERA;Kamera
+EXIFFILTER_EXPOSURECOMPENSATION;Eksponerings kompensation (EV)
+EXIFFILTER_FILETYPE;Fil type
+EXIFFILTER_FOCALLEN;Brændvidde
+EXIFFILTER_IMAGETYPE;Billedtype
+EXIFFILTER_ISO;ISO
+EXIFFILTER_LENS;Objektiv
+EXIFFILTER_METADATAFILTER;Aktivér metadatafiltre
+EXIFFILTER_SHUTTER;Lukker
+EXIFPANEL_ADDEDIT;Tilføj/Rediger
+EXIFPANEL_ADDEDITHINT;Tilføj nyt mærkat eller rediger mærkat.
+EXIFPANEL_ADDTAGDLG_ENTERVALUE;Indsæt værdi
+EXIFPANEL_ADDTAGDLG_SELECTTAG;Vælg mærkat
+EXIFPANEL_ADDTAGDLG_TITLE;Tilføj/Rediger Mærkat
+EXIFPANEL_KEEP;Behold
+EXIFPANEL_KEEPHINT;Behold de valgte mærkater, når du skriver outputfil.
+EXIFPANEL_REMOVE;Fjern
+EXIFPANEL_REMOVEHINT;Fjern de valgte mærkater, når du skriver outputfil.
+EXIFPANEL_RESET;Nulstil
+EXIFPANEL_RESETALL;Nulstil Alt
+EXIFPANEL_RESETALLHINT;Nulstil alle mærkater til deres oprindelige værdier.
+EXIFPANEL_RESETHINT;Nulstil alle valgte mærkater til deres oprindelige værdier.
+EXIFPANEL_SHOWALL;Vis alt
+EXIFPANEL_SUBDIRECTORY;Undermappe
+EXPORT_BYPASS;Redigeringstrin der skal fravælges
+EXPORT_BYPASS_ALL;Vælg / fravælg alt
+EXPORT_BYPASS_DEFRINGE;Spring over Defringe
+EXPORT_BYPASS_DIRPYRDENOISE;Spring over støjreduktion
+EXPORT_BYPASS_DIRPYREQUALIZER;Spring over Kontrast ved Detalje Niveauer
+EXPORT_BYPASS_EQUALIZER;Spring over Wavelet Niveauer
+EXPORT_BYPASS_RAW_CA;Spring over [raw] Korrektion af Kromatisk Afvigelse
+EXPORT_BYPASS_RAW_CCSTEPS;Spring over [raw] Undertrykkelse af Falsk Farve
+EXPORT_BYPASS_RAW_DCB_ENHANCE;Spring over [raw] DCB Forbedrings Skridt
+EXPORT_BYPASS_RAW_DCB_ITERATIONS;Spring over [raw] DCB Iterationer
+EXPORT_BYPASS_RAW_DF;Spring over [raw] Mørk-ramme
+EXPORT_BYPASS_RAW_FF;Spring over [raw] Fladt-Felt
+EXPORT_BYPASS_RAW_GREENTHRESH;Spring over [raw] Grøn ligevægt
+EXPORT_BYPASS_RAW_LINENOISE;Spring over [raw] Linie Støj Filter
+EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Spring over [raw] LMMSE Forbedrings Skridt
+EXPORT_BYPASS_SHARPENEDGE;Spring over Kantskærpning
+EXPORT_BYPASS_SHARPENING;Spring over Skærpning
+EXPORT_BYPASS_SHARPENMICRO;Spring over Mikrokontrast
+EXPORT_FASTEXPORTOPTIONS;<b>Hurtige Eksportmuligheder</b>
+EXPORT_INSTRUCTIONS;Hurtige eksportmuligheder giver tilsidesættelser for at omgå tids- og ressourcekrævende udviklingsindstillinger og for at køre kø-redigering ved at bruge de hurtige eksportindstillinger i stedet. Denne metode anbefales til hurtigere generering af billeder med lavere opløsning, når hastighed er en prioritet, eller når der ønskes ændret output for et eller mange billeder uden at foretage ændringer af deres gemte fremkaldelsesparametre.
+EXPORT_MAXHEIGHT;Maksimal højde:
+EXPORT_MAXWIDTH;Maksimal bredde:
+EXPORT_PIPELINE;Redigeringspipeline
+EXPORT_PUTTOQUEUEFAST;  Sæt i kø for hurtig eksport
+EXPORT_RAW_DMETHOD;Demosaisk metode
+EXPORT_USE_FAST_PIPELINE;Dedikeret (fuld redigering på ændret billedstørrelse)
+EXPORT_USE_FAST_PIPELINE_TIP;Brug en dedikeret redigeringspipeline til billeder i hurtig eksporttilstand, der bruger hastighed frem for kvalitet. Ændring af størrelsen på billedet udføres så tidligt som muligt, i stedet for at gøre det til sidst som i den normale pipeline. Hastighedsforbedringen kan være betydelig, men vær forberedt på at se artefakter, og en generel forringelse af outputkvaliteten.
+EXPORT_USE_NORMAL_PIPELINE;Standard (spring over enkelte trin, ændre størrelse til sidst) 
+EXTPROGTARGET_1;raw
+EXTPROGTARGET_2;kø-bearbejdet
+FILEBROWSER_APPLYPROFILE;Anvend
+FILEBROWSER_APPLYPROFILE_PARTIAL;Anvend - delvist
+FILEBROWSER_AUTODARKFRAME;Automatisk mørk ramme
+FILEBROWSER_AUTOFLATFIELD;Automatisk fladt-felt
+FILEBROWSER_BROWSEPATHBUTTONHINT;Klik for at åbne den angivne sti, genindlæs mappen og anvend "find" nøgleord.
+FILEBROWSER_BROWSEPATHHINT;Skriv en sti at navigere til.\n\nTastaturgenveje:\n<b>Ctrl-o</b> for at fokusere på stiens tekstboks.\n<b>Enter</b> / <b>Ctrl-Enter</b> at gennemse der;\n<b>Esc</b> for at rydde ændringer.\n<b>Shift-Esc</b> for at fjerne fokus.\n\nStigenveje:\n<b>~</b>	- brugers hjemmemappe.\n<b>!</b>	- brugers billedmappe
+FILEBROWSER_CACHE;Cache
+FILEBROWSER_CACHECLEARFROMFULL;Ryd alt inklusive cachelagrede profiler
+FILEBROWSER_CACHECLEARFROMPARTIAL;Ryd alt undtagen cachelagrede profiler
+FILEBROWSER_CLEARPROFILE;Ryd
+FILEBROWSER_COLORLABEL_TOOLTIP;Farvemærkat.\n\nBrug rullemenuen eller genveje:\n<b>Shift-Ctrl-0</b> Ingen farver\n<b>Shift-Ctrl-1</b> Rød\n<b>Shift-Ctrl-2</b> Gul\n<b>Shift-Ctrl-3</b> Grøn\n<b>Shift-Ctrl-4</b> Blå\n<b>Shift-Ctrl-5</b> Lilla
+FILEBROWSER_COPYPROFILE;Kopiér
+FILEBROWSER_CURRENT_NAME;Nuværende navn:
+FILEBROWSER_DARKFRAME;Mørk ramme
+FILEBROWSER_DELETEDIALOG_ALL;Er du sikker på, at du <b>permanent</b> vil slette alle <b>%1</b> filer i papirkurven?
+FILEBROWSER_DELETEDIALOG_HEADER;Bekræftelse af filsletning:
+FILEBROWSER_DELETEDIALOG_SELECTED;Er du sikker på, at du <b>permanent</b> vil slette de valgte <b>%1</b> filer?
+FILEBROWSER_DELETEDIALOG_SELECTEDINCLPROC;Er du sikker på, at du <b>permanent</b> vil slette de valgte <b>%1</b> filer, <b>inklusive</b> en købehandlet version?
+FILEBROWSER_EMPTYTRASH;Tøm papirkurven
+FILEBROWSER_EMPTYTRASHHINT;<b>Permanent</b> slet alle filer i papirkurven.
+FILEBROWSER_EXTPROGMENU;Åben med
+FILEBROWSER_FLATFIELD;Fladt-Felt
+FILEBROWSER_MOVETODARKFDIR;Flyt til mappen med mørke-rammer
+FILEBROWSER_MOVETOFLATFIELDDIR;Flyt til mappen med flade-felter
+FILEBROWSER_NEW_NAME;Nyt navn:
+FILEBROWSER_OPENDEFAULTVIEWER;Windows standard viser (kø-bearbejdet)
+FILEBROWSER_PARTIALPASTEPROFILE;Sæt ind - partiel
+FILEBROWSER_PASTEPROFILE;Sæt ind
+FILEBROWSER_POPUPCANCELJOB;Annulér job
+FILEBROWSER_POPUPCOLORLABEL;Farvemærkat
+FILEBROWSER_POPUPCOLORLABEL0;Mærkat: Ingen
+FILEBROWSER_POPUPCOLORLABEL1;Mærkat: Rød
+FILEBROWSER_POPUPCOLORLABEL2;Mærkat: Gul
+FILEBROWSER_POPUPCOLORLABEL3;Mærkat: Grøn
+FILEBROWSER_POPUPCOLORLABEL4;Mærkat: Blå
+FILEBROWSER_POPUPCOLORLABEL5;Mærkat: Lilla
+FILEBROWSER_POPUPCOPYTO;Kopiér til...
+FILEBROWSER_POPUPFILEOPERATIONS;Filhandlinger
+FILEBROWSER_POPUPMOVEEND;Flyt til slutningen af køen
+FILEBROWSER_POPUPMOVEHEAD;Flyt til begyndelsen af køen
+FILEBROWSER_POPUPMOVETO;Flyt til...
+FILEBROWSER_POPUPOPEN;Åbn
+FILEBROWSER_POPUPOPENINEDITOR;Åbn i Redigering
+FILEBROWSER_POPUPPROCESS;Sæt i kø
+FILEBROWSER_POPUPPROCESSFAST;Sæt i kø (hurtig eksport)
+FILEBROWSER_POPUPPROFILEOPERATIONS;Redigering af profiloperationer
+FILEBROWSER_POPUPRANK;Rang
+FILEBROWSER_POPUPRANK0;Ikke rangeret
+FILEBROWSER_POPUPRANK1;Rang 1 *
+FILEBROWSER_POPUPRANK2;Rang 2 **
+FILEBROWSER_POPUPRANK3;Rang 3 ***
+FILEBROWSER_POPUPRANK4;Rang 4 ****
+FILEBROWSER_POPUPRANK5;Rang 5 *****
+FILEBROWSER_POPUPREMOVE;Slet permanent
+FILEBROWSER_POPUPREMOVEINCLPROC;Slet permanent, inklusive kø-bearbejdet version
+FILEBROWSER_POPUPRENAME;Omdøb
+FILEBROWSER_POPUPSELECTALL;Vælg alt
+FILEBROWSER_POPUPTRASH;Flyt til papirkurv
+FILEBROWSER_POPUPUNRANK;Slet rang
+FILEBROWSER_POPUPUNTRASH;Flyt fra papirkurv
+FILEBROWSER_QUERYBUTTONHINT;Ryd søgeforespørgslen
+FILEBROWSER_QUERYHINT;Indtast filnavne til at søge efter. Understøtter delvise filnavne. Adskil søgetermerne ved hjælp af kommaer, f.eks.\n<i>1001,1004,1199</i>\n\nEkskluder søgetermer ved at sætte <i>!=</i>\nforan, f.eks.\n<i >!=1001,1004,1199</i>\n\nGenveje:\n<b>Ctrl-f</b> - fokuser på søgefeltet,\n<b>Enter</b> - søg,\n <b>Esc</b> - ryd søgefeltet,\n<b>Shift-Esc</b> - ufokuser søgefeltet.
+FILEBROWSER_QUERYLABEL; Søg:
+FILEBROWSER_RANK1_TOOLTIP;Rang 1 *\nGenvej: <b>Shift-1</b>
+FILEBROWSER_RANK2_TOOLTIP;Rang 2 *\nGenvej: <b>Shift-2</b>
+FILEBROWSER_RANK3_TOOLTIP;Rang 3 *\nGenvej: <b>Shift-3</b>
+FILEBROWSER_RANK4_TOOLTIP;Rang 4 *\nGenvej: <b>Shift-4</b>
+FILEBROWSER_RANK5_TOOLTIP;Rang 5 *\nGenvej: <b>Shift-5</b>
+FILEBROWSER_RENAMEDLGLABEL;Omdøb fil
+FILEBROWSER_RESETDEFAULTPROFILE;Nulstil til standard
+FILEBROWSER_SELECTDARKFRAME;Vælg mørk-ramme...
+FILEBROWSER_SELECTFLATFIELD;Vælg fladt-felt...
+FILEBROWSER_SHOWCOLORLABEL1HINT;Vis billeder mærket Rød.\nGenvej: <b>Alt-1</b>
+FILEBROWSER_SHOWCOLORLABEL2HINT;Vis billeder mærket Gul.\nGenvej: <b>Alt-2</b>
+FILEBROWSER_SHOWCOLORLABEL3HINT;Vis billeder mærket Grøn.\nGenvej: <b>Alt-3</b>
+FILEBROWSER_SHOWCOLORLABEL4HINT;Vis billeder mærket Blå.\nGenvej: <b>Alt-4</b>
+FILEBROWSER_SHOWCOLORLABEL5HINT;Vis billeder mærket Lilla.\nGenvej: <b>Alt-5</b>
+FILEBROWSER_SHOWDIRHINT;Ryd alle filtre.\nGenvej: <b>d</b>
+FILEBROWSER_SHOWEDITEDHINT;Vis bearbejdede billeder.\nGenvej: <b>7</b>
+FILEBROWSER_SHOWEDITEDNOTHINT;Vis ikke-bearbejdede billeder.\nGenvej: <b>6</b>
+FILEBROWSER_SHOWEXIFINFO;Vis Exif info.\n\nGenveje:\n<b>i</b> - Tilstand med flere redigerings-faneblade,\n<b>Alt-i</b> - Tilstand med enkelt redigerings-faneblad.
+FILEBROWSER_SHOWNOTTRASHHINT;Vis kun billeder, der ikke er i papirkurven.
+FILEBROWSER_SHOWORIGINALHINT;Vis kun originale billeder.\n\nNår der findes flere billeder med det samme filnavn, men med forskellige suffikser, er den, der betragtes som original, den, hvis suffiks er nærmest øverst på listen over Fortolkede suffikser i Præferencer > Filbrowser > Fortolkede suffikser.
+FILEBROWSER_SHOWRANK1HINT;Vis billeder rangeret som 1-stjernet.\nGenvej: <b>1</b>
+FILEBROWSER_SHOWRANK2HINT;Vis billeder rangeret som 2-stjernet.\nGenvej: <b>2</b>
+FILEBROWSER_SHOWRANK3HINT;Vis billeder rangeret som 3-stjernet.\nGenvej: <b>3</b>
+FILEBROWSER_SHOWRANK4HINT;Vis billeder rangeret som 4-stjernet.\nGenvej: <b>4</b>
+FILEBROWSER_SHOWRANK5HINT;Vis billeder rangeret som 5-stjernet.\nGenvej: <b>5</b>
+FILEBROWSER_SHOWRECENTLYSAVEDHINT;Vis gemte billeder.\nGenvej: <b>Alt-7</b>
+FILEBROWSER_SHOWRECENTLYSAVEDNOTHINT;Vis ikke-gemte billeder.\nGenvej: <b>Alt-6</b>
+FILEBROWSER_SHOWTRASHHINT;Vis indholdet af papirkurven.\nGenvej: <b>Ctrl-t</b>
+FILEBROWSER_SHOWUNCOLORHINT;Vis billeder uden farvemærkat.\nGenvej: <b>Alt-0</b>
+FILEBROWSER_SHOWUNRANKHINT;Vis ikke-rangerede billeder.\nGenvej: <b>0</b>
+FILEBROWSER_THUMBSIZE;Thumbnail størrelse
+FILEBROWSER_UNRANK_TOOLTIP;Slet rang.\nGenvej: <b>Shift-0</b>
+FILEBROWSER_ZOOMINHINT;Øg thumbnail størrelse.\n\nGenveje:\n<b>+</b> - Tilstand med flere redigerings-faneblade,\n<b>Alt</b>-<b>+</b> - Tilstand med enkelt redigerings-faneblad.
+FILEBROWSER_ZOOMOUTHINT;Formindsk thumbnail størrelse.\n\nGenveje:\n<b>-</b> - Tilstand med flere redigerings-faneblade,\n<b>Alt</b>-<b>-</b> - Tilstand med enkelt redigerings-faneblad.
+FILECHOOSER_FILTER_ANY;Alle filer
+FILECHOOSER_FILTER_COLPROF;Farve profiler (*.icc)
+FILECHOOSER_FILTER_CURVE;Kurve filer
+FILECHOOSER_FILTER_LCP;Objektivkorrektionsprofiler
+FILECHOOSER_FILTER_PP;Redigeringsprofiler
+FILECHOOSER_FILTER_SAME;Samme format som nuværende foto
+FILECHOOSER_FILTER_TIFF;TIFF filer
+GENERAL_ABOUT;Om
+GENERAL_AFTER;Efter
+GENERAL_APPLY;Tilføj
+GENERAL_ASIMAGE;Som billede
+GENERAL_AUTO;Automatisk
+GENERAL_BEFORE;Før
+GENERAL_CANCEL;Annulér
+GENERAL_CLOSE;Luk
+GENERAL_CURRENT;Nuværende
+GENERAL_DISABLE;Deaktivér
+GENERAL_DISABLED;Deaktiveret
+GENERAL_ENABLE;Aktivér
+GENERAL_ENABLED;Aktiveret
+GENERAL_FILE;Fil
+GENERAL_HELP;Hjælp
+GENERAL_LANDSCAPE;Landskab
+GENERAL_NA;N/A
+GENERAL_NO;Nej
+GENERAL_NONE;Ingen
+GENERAL_OK;OK
+GENERAL_OPEN;Åben
+GENERAL_PORTRAIT;Portræt
+GENERAL_RESET;Nulstil
+GENERAL_SAVE;Gem
+GENERAL_SAVE_AS;Gem som...
+GENERAL_SLIDER;Skyder
+GENERAL_UNCHANGED;(Uændret)
+GENERAL_WARNING;Advarsel
+GIMP_PLUGIN_INFO;Velkommen til RawTherapee’s GIMP-plugin!\nNår du er færdig med at bearbejde billedet, skal du blot lukke RawTherapees hovedvindue, og billedet importeres automatisk i GIMP.
+HISTOGRAM_TOOLTIP_B;Vis/Skjul blåt histogram.
+HISTOGRAM_TOOLTIP_BAR;Vis/Skjul RGB indikatorbjælke.
+HISTOGRAM_TOOLTIP_CHRO;Vis/Skjul kromaticitet histogram.
+HISTOGRAM_TOOLTIP_G;Vis/Skjul grøn histogram.
+HISTOGRAM_TOOLTIP_L;Vis/Skjul CIELab luminans histogram.
+HISTOGRAM_TOOLTIP_MODE;Skift mellem lineær, log-lineær og log-log-skalering af histogrammet.
+HISTOGRAM_TOOLTIP_R;Vis/Skjul rødt histogram.
+HISTOGRAM_TOOLTIP_RAW;Vis/Skjul raw histogram.
+HISTORY_CHANGED;Ændret
+HISTORY_CUSTOMCURVE;Standardkurve
+HISTORY_FROMCLIPBOARD;Fra udklipsholder
+HISTORY_LABEL;Historik
+HISTORY_MSG_1;Foto indlæst
+HISTORY_MSG_2;PP3 indlæst
+HISTORY_MSG_3;PP3 ændret
+HISTORY_MSG_4;Historik browsing
+HISTORY_MSG_5;Eksponering - Lyshed
+HISTORY_MSG_6;Eksponering - Kontrast
+HISTORY_MSG_7;Eksponering - Sort
+HISTORY_MSG_8;Eksponering - Kompensation
+HISTORY_MSG_9;Eksponering - Højlyskompression
+HISTORY_MSG_10;Eksponering - Skyggekompression
+HISTORY_MSG_11;Eksponering - Tonekurve 1
+HISTORY_MSG_12;Eksponering - Autoniveauer
+HISTORY_MSG_13;Eksponering - Klip
+HISTORY_MSG_14;L*a*b* - Lyshed
+HISTORY_MSG_15;L*a*b* - Kontrast
+HISTORY_MSG_16;-
+HISTORY_MSG_17;-
+HISTORY_MSG_18;-
+HISTORY_MSG_19;L*a*b* - L* kurve
+HISTORY_MSG_20;Skærpe
+HISTORY_MSG_21;USM - Radius
+HISTORY_MSG_22;USM - Mængde
+HISTORY_MSG_23;USM - Tærskel
+HISTORY_MSG_24;USM – Skærp kun kanter
+HISTORY_MSG_25;USM - Kantdetekteringsradius
+HISTORY_MSG_26;USM - Kanttolerance
+HISTORY_MSG_27;USM - Glorie kontrol
+HISTORY_MSG_28;USM - Glorie kontrol mængde
+HISTORY_MSG_29;Skærpe - Metode
+HISTORY_MSG_30;RLD - Radius
+HISTORY_MSG_31;RLD - Mængde
+HISTORY_MSG_32;RLD - Dæmpning
+HISTORY_MSG_33;RLD - Gentagelser
+HISTORY_MSG_34;Objektivkorrektion - Forvrængning
+HISTORY_MSG_35;Objektivkorrektion - Vignetering
+HISTORY_MSG_36;Objektivkorrektion - CA
+HISTORY_MSG_37;Eksponering - Autoniveauer
+HISTORY_MSG_38;Hvidbalance - Metode
+HISTORY_MSG_39;WB - Temperatur
+HISTORY_MSG_40;WB - Farvenuance
+HISTORY_MSG_41;Eksponering - Tonekurve 1 mode
+HISTORY_MSG_42;Eksponering - Tonekurve 2
+HISTORY_MSG_43;Eksponering - Tonekurve 2 mode
+HISTORY_MSG_44;Lum. støjreduktionsradius
+HISTORY_MSG_45;Lum. støjreduktion kant tolerance
+HISTORY_MSG_46;Farvestøjreducering
+HISTORY_MSG_47;Bland ICC-højlys med matrix
+HISTORY_MSG_48;DCP - Tonekurve
+HISTORY_MSG_49;DCP lyskilde
+HISTORY_MSG_50;Skygger/Højlys
+HISTORY_MSG_51;S/H - Højlys
+HISTORY_MSG_52;S/H - Skygger
+HISTORY_MSG_53;S/H – Højlysenes tonale bredde
+HISTORY_MSG_54;S/H – Skyggernes tonale bredde
+HISTORY_MSG_55;S/H - Lokal kontrast
+HISTORY_MSG_56;S/H - Radius
+HISTORY_MSG_57;Grov rotation
+HISTORY_MSG_58;Vandret vending
+HISTORY_MSG_59;Lodret vending
+HISTORY_MSG_60;Rotation
+HISTORY_MSG_61;Auto-udfyldning
+HISTORY_MSG_62;Forvrængningskorrektion
+HISTORY_MSG_63;Snapshot valgt
+HISTORY_MSG_64;Beskær
+HISTORY_MSG_65;CA korrektion
+HISTORY_MSG_66;Eksponering – Højlys rekonstruktion
+HISTORY_MSG_67;Eksponering - HLR mængde
+HISTORY_MSG_68;Eksponering - HLR metode
+HISTORY_MSG_69;Arbejdsfarverum
+HISTORY_MSG_70;Output farverum
+HISTORY_MSG_71;Input farverum
+HISTORY_MSG_72;VC - Mængde
+HISTORY_MSG_73;Kanal Mikser
+HISTORY_MSG_74;Ændre størrelse - Skala
+HISTORY_MSG_75;Ændre størrelse - Metode
+HISTORY_MSG_76;Exif metadata
+HISTORY_MSG_77;IPTC metadata
+HISTORY_MSG_78;-
+HISTORY_MSG_79;Ændre størrelse - Bredde
+HISTORY_MSG_80;Ændre størrelse - Højde
+HISTORY_MSG_81;Ændre størrelse
+HISTORY_MSG_82;Profil ændret
+HISTORY_MSG_83;S/H - Skærpemaske
+HISTORY_MSG_84;Perspektivkorrektion
+HISTORY_MSG_85;Objektivkorrektion - LCP fil
+HISTORY_MSG_86;RGB Kurver - Luminanstilstand
+HISTORY_MSG_87;Impuls støjreduktion
+HISTORY_MSG_88;Impuls Støjreduktion tærskel
+HISTORY_MSG_89;Støjreduktion
+HISTORY_MSG_90;Støjreduktion - Luminans
+HISTORY_MSG_91;Støjreduktion - Chrominance master
+HISTORY_MSG_92;Støjreduktion - Gamma
+HISTORY_MSG_93;KeDN - Værdi
+HISTORY_MSG_94;Kontrast ved Detaljeniveauer
+HISTORY_MSG_95;L*a*b* - Kromaticitet
+HISTORY_MSG_96;L*a*b* - a* kurve
+HISTORY_MSG_97;L*a*b* - b* kurve
+HISTORY_MSG_98;Demosaiking metode
+HISTORY_MSG_99;Varm-pixel filter
+HISTORY_MSG_100;Eksponering - Mætning
+HISTORY_MSG_101;HSV - Farvetone
+HISTORY_MSG_102;HSV - Mætning
+HISTORY_MSG_103;HSV - Værdi
+HISTORY_MSG_104;HSV Equalizer
+HISTORY_MSG_105;Defringe
+HISTORY_MSG_106;Defringe - Radius
+HISTORY_MSG_107;Defringe - Tærskel
+HISTORY_MSG_108;Eksponering - HLC tærskel
+HISTORY_MSG_109;Ændr størrelse - Afgrænsningsboks
+HISTORY_MSG_110;Ændr størrelse - Gælder for
+HISTORY_MSG_111;L*a*b* - Undgå farveforskydning
+HISTORY_MSG_112;--ubrugt--
+HISTORY_MSG_113;L*a*b* - Rød/hud beskyt.
+HISTORY_MSG_114;DCB gentagelser
+HISTORY_MSG_115;Undertrykkelse af forkerte farver
+HISTORY_MSG_116;DCB forbedring
+HISTORY_MSG_117;Raw CA korrektion - Rød
+HISTORY_MSG_118;Raw CA korrektion - Blå
+HISTORY_MSG_119;Linje støjfilter
+HISTORY_MSG_120;Grøn ligevægt
+HISTORY_MSG_121;Raw CA Korrektion - Auto
+HISTORY_MSG_122;Mørk-Ramme - Auto-udvælgelse
+HISTORY_MSG_123;Mørk-Ramme - Fil
+HISTORY_MSG_124;Hvidpunkts korrektion
+HISTORY_MSG_126;Fladt-Felt - Fil
+HISTORY_MSG_127;Fladt-Felt - Automatisk valg
+HISTORY_MSG_128;Fladt-Felt - Sløringsradius
+HISTORY_MSG_129;Fladt-Felt - Sløringstype
+HISTORY_MSG_130;Automatisk forvrængningskorrektion
+HISTORY_MSG_131;Støjreduktion - Luma
+HISTORY_MSG_132;Støjreduktion - Kroma
+HISTORY_MSG_133;Output gamma
+HISTORY_MSG_134;Fri gamma
+HISTORY_MSG_135;Fri gamma
+HISTORY_MSG_136;Fri gamma hældning
+HISTORY_MSG_137;Sort niveau - Grøn 1
+HISTORY_MSG_138;Sort niveau - Rød
+HISTORY_MSG_139;Sort niveau - Blå
+HISTORY_MSG_140;Sort niveau - Grøn 2
+HISTORY_MSG_141;Sort niveau – Sammenkæd grønne
+HISTORY_MSG_142;Skærpen kanter - Gentagelser
+HISTORY_MSG_143;Skærpen kanter - Mængde
+HISTORY_MSG_144;Mikrokontrast - Mængde
+HISTORY_MSG_145;Mikrokontrast - Ensartethed
+HISTORY_MSG_146;Kantskærpning
+HISTORY_MSG_147;Skærpen kanter – Kun luminans
+HISTORY_MSG_148;Mikrokontrast
+HISTORY_MSG_149;Mikrokontrast - 3×3 matrix
+HISTORY_MSG_150;Efter-demosaiking artefakt/støjreduktion
+HISTORY_MSG_151;Vibrance
+HISTORY_MSG_152;Vibrance - Pastel toner
+HISTORY_MSG_153;Vibrance - Mættede toner
+HISTORY_MSG_154;Vibrance - Beskyt hud-toner
+HISTORY_MSG_155;Vibrance - Undgå farveforskydning
+HISTORY_MSG_156;Vibrance - Sammenkæd pastel/mættet
+HISTORY_MSG_157;Vibrance - P/S tærskel
+HISTORY_MSG_158;Tonekortlægning - Styrke
+HISTORY_MSG_159;Tonekortlægning - Kantstopper
+HISTORY_MSG_160;Tonekortlægning - Vægt
+HISTORY_MSG_161;Tonekortlægning - Genvægtning gentages
+HISTORY_MSG_162;Tone Mapping
+HISTORY_MSG_163;RGB Kurver - Rød
+HISTORY_MSG_164;RGB Kurver - Grøn
+HISTORY_MSG_165;RGB Kurver - Blå
+HISTORY_MSG_166;Eksponering - Nulstil
+HISTORY_MSG_167;Demosaikingmetode
+HISTORY_MSG_168;L*a*b* - CC kurve
+HISTORY_MSG_169;L*a*b* - CH kurve
+HISTORY_MSG_170;Vibrance - HH kurve
+HISTORY_MSG_171;L*a*b* - LC kurve
+HISTORY_MSG_172;L*a*b* - Begræns LC
+HISTORY_MSG_173;Støjreduktion - Detaljegendannelse
+HISTORY_MSG_174;CIEFM02
+HISTORY_MSG_175;CIEFM02 - CAT02 tilpasning
+HISTORY_MSG_176;CIEFM02 - Visning omgivende
+HISTORY_MSG_177;CIEFM02 - Scene lysstyrke
+HISTORY_MSG_178;CIEFM02 - Visers lysstyrke
+HISTORY_MSG_179;CIEFM02 - Hvidpunkts model
+HISTORY_MSG_180;CIEFM02 - Lyshed (J)
+HISTORY_MSG_181;CIEFM02 - Kroma (C)
+HISTORY_MSG_182;CIEFM02 - Automatisk CAT02
+HISTORY_MSG_183;CIEFM02 - Kontrast (J)
+HISTORY_MSG_184;CIEFM02 - Scene omgivende
+HISTORY_MSG_185;CIEFM02 - Farveskala kontrol
+HISTORY_MSG_186;CIEFM02 - Algoritme
+HISTORY_MSG_187;CIEFM02 - Rød/hud besk.
+HISTORY_MSG_188;CIEFM02 - Lysstyrke (Q)
+HISTORY_MSG_189;CIEFM02 - Kontrast (Q)
+HISTORY_MSG_190;CIEFM02 - Mætning (S)
+HISTORY_MSG_191;CIEFM02 - Farverighed (M)
+HISTORY_MSG_192;CIEFM02 - Farvetone (h)
+HISTORY_MSG_193;CIEFM02 - Tonekurve 1
+HISTORY_MSG_194;CIEFM02 - Tonekurve 2
+HISTORY_MSG_195;CIEFM02 - Tonekurve 1
+HISTORY_MSG_196;CIEFM02 - Tonekurve 2
+HISTORY_MSG_197;CIEFM02 – Farvekurve
+HISTORY_MSG_198;CIEFM02 - Farvekurve
+HISTORY_MSG_199;CIEFM02 - Output histogrammer
+HISTORY_MSG_200;CIEFM02 - Tonekortlægning
+HISTORY_MSG_201;Støjreduktion - Krominans - R&amp;G
+HISTORY_MSG_202;Støjreduktion - Krominans - B&amp;Y
+HISTORY_MSG_203;Støjreduktion - Farverum
+HISTORY_MSG_204;LMMSE forbedringstrin
+HISTORY_MSG_205;CIEFM02 - Varmt/dødt pixelfilter
+HISTORY_MSG_206;CAT02 - Auto scene lysstyrke
+HISTORY_MSG_207;Defringe - Farvetonekurve
+HISTORY_MSG_208;WB - B/R equalizer
+HISTORY_MSG_210;GF - Vinkel
+HISTORY_MSG_211;Gradueret Filter
+HISTORY_MSG_212;VF - Styrke
+HISTORY_MSG_213;Vignette Filter
+HISTORY_MSG_214;Sort-og-Hvid
+HISTORY_MSG_215;S/H - CM - Rød
+HISTORY_MSG_216;S/H - CM - Grøn
+HISTORY_MSG_217;S/H - CM - Blå
+HISTORY_MSG_218;S/H - Gamma - Rød
+HISTORY_MSG_219;S/H - Gamma - Grøn
+HISTORY_MSG_220;S/H - Gamma - Blå
+HISTORY_MSG_221;S/H - Farvefilter
+HISTORY_MSG_222;S/H - Forudindstillinger
+HISTORY_MSG_223;S/H - CM - Orange
+HISTORY_MSG_224;S/H - CM - Gul
+HISTORY_MSG_225;S/H - CM - Cyan
+HISTORY_MSG_226;S/H - CM - Magenta
+HISTORY_MSG_227;S/H - CM - Lilla
+HISTORY_MSG_228;S/H - Luminans equalizer
+HISTORY_MSG_229;S/H - Luminans equalizer
+HISTORY_MSG_230;S/H - Tilstand
+HISTORY_MSG_231;S/H - 'Før' kurve
+HISTORY_MSG_232;S/H - 'Før' kurvetype
+HISTORY_MSG_233;S/H - 'Efter' kurve
+HISTORY_MSG_234;S/H - 'Efter' kurvetype
+HISTORY_MSG_235;S/H - CM - Auto
+HISTORY_MSG_236;--unused--
+HISTORY_MSG_237;S/H - CM
+HISTORY_MSG_238;GF - Fjer
+HISTORY_MSG_239;GF - Styrke
+HISTORY_MSG_240;GF - Centrum
+HISTORY_MSG_241;VF - Fjer
+HISTORY_MSG_242;VF - Rundhed
+HISTORY_MSG_243;VC - Radius
+HISTORY_MSG_244;VC - Styrke
+HISTORY_MSG_245;VC - Centrum
+HISTORY_MSG_246;L*a*b* - CL kurve
+HISTORY_MSG_247;L*a*b* - LH kurve
+HISTORY_MSG_248;L*a*b* - HH kurve
+HISTORY_MSG_249;KeDN - Tærskel
+HISTORY_MSG_250;Støjreduktion - Forbedret
+HISTORY_MSG_251;S/H - Algoritme
+HISTORY_MSG_252;KeDN – Beskyt hudfarvetoner
+HISTORY_MSG_253;KeDN - Reducér artefakter
+HISTORY_MSG_254;KeDN - Hud farvetone
+HISTORY_MSG_255;Støjreduktion - Median filter
+HISTORY_MSG_256;Støjreduktion - Median - Type
+HISTORY_MSG_257;Farvetoning
+HISTORY_MSG_258;Farvetoning - Farvekurve
+HISTORY_MSG_259;Farvetoning - Opacitetskurve
+HISTORY_MSG_260;Farvetoning - a*[b*] opacitet
+HISTORY_MSG_261;Farvetoning - Metode
+HISTORY_MSG_262;Farvetoning - b* opacitet
+HISTORY_MSG_263;Farvetoning - Skygger - Rød
+HISTORY_MSG_264;Farvetoning - Skygger - Grøn
+HISTORY_MSG_265;Farvetoning - Skygger - Blå
+HISTORY_MSG_266;Farvetoning - Mellem - Rød
+HISTORY_MSG_267;Farvetoning - Mellem - Grøn
+HISTORY_MSG_268;Farvetoning - Mellem - Blå
+HISTORY_MSG_269;Farvetoning - Høj - Rød
+HISTORY_MSG_270;Farvetoning - Høj - Grøn
+HISTORY_MSG_271;Farvetoning - Høj - Blå
+HISTORY_MSG_272;Farvetoning - Balance
+HISTORY_MSG_273;Farvetoning - Farvebalance SMH
+HISTORY_MSG_274;Farvetoning - Mættet Skygger
+HISTORY_MSG_275;Farvetoning - Mættet Højlys
+HISTORY_MSG_276;Farvetoning - Opacitet
+HISTORY_MSG_277;--unused--
+HISTORY_MSG_278;Farvetoning - Bevar luminans
+HISTORY_MSG_279;Farvetoning - Skygger
+HISTORY_MSG_280;Farvetoning - Højlys
+HISTORY_MSG_281;Farvetoning - Mættet styrke
+HISTORY_MSG_282;Farvetoning - Mættet tærskel
+HISTORY_MSG_283;Farvetoning - Styrke
+HISTORY_MSG_284;Farvetoning - Auto mætningsbeskyttelse
+HISTORY_MSG_285;Støjreduktion - Median - Metode
+HISTORY_MSG_286;Støjreduktion - Median - Type
+HISTORY_MSG_287;Støjreduktion - Median - Gentagelser
+HISTORY_MSG_288;Fladt-Felt - Klipningskontrol
+HISTORY_MSG_289;Fladt-Felt - Klipningskontrol - Auto
+HISTORY_MSG_290;Sort Niveau - Rød
+HISTORY_MSG_291;Sort Niveau - Grøn
+HISTORY_MSG_292;Sort Niveau - Blå
+HISTORY_MSG_293;Film Simulation
+HISTORY_MSG_294;Film Simulation - Styrke
+HISTORY_MSG_295;Film Simulation - Film
+HISTORY_MSG_296;Støjreduktion – Luminanskurve
+HISTORY_MSG_297;Støjreduktion - Tilstand
+HISTORY_MSG_298;Død-pixel filter
+HISTORY_MSG_299;Støjreduktion - Krominans kurve
+HISTORY_MSG_300;-
+HISTORY_MSG_301;Støjreduktion - Luma kontrol
+HISTORY_MSG_302;Støjreduktion - Kroma metode
+HISTORY_MSG_303;Støjreduktion - Kroma metode
+HISTORY_MSG_304;Wavelet - Kontrastniveauer
+HISTORY_MSG_305;Wavelet Niveauer
+HISTORY_MSG_306;Wavelet - Proces
+HISTORY_MSG_307;Wavelet - Proces
+HISTORY_MSG_308;Wavelet – Proces retning
+HISTORY_MSG_309;Wavelet - ES - Detail
+HISTORY_MSG_310;Wavelet - Resterende – Himmelandel beskyttelse
+HISTORY_MSG_311;Wavelet - Wavelet niveauer
+HISTORY_MSG_312;Wavelet - Resterende - Skyggetærskel
+HISTORY_MSG_313;Wavelet - Kroma - Mættet/pastel
+HISTORY_MSG_314;Wavelet - Gamut - Reducér artefakter
+HISTORY_MSG_315;Wavelet - Resterende - Kontrast
+HISTORY_MSG_316;Wavelet - Gamut – Hudandel beskyttelse
+HISTORY_MSG_317;Wavelet - Gamut - Hudfarvetone
+HISTORY_MSG_318;Wavelet - Kontrast - Højlys niveauer
+HISTORY_MSG_319;Wavelet - Kontrast - Højlys rækkevidde
+HISTORY_MSG_320;Wavelet - Kontrast - Skygge rækkevidde
+HISTORY_MSG_321;Wavelet - Kontrast - Skygge niveauer
+HISTORY_MSG_322;Wavelet - Gamut - Undgå farveforskydning
+HISTORY_MSG_323;Wavelet - ES - Localkontrast
+HISTORY_MSG_324;Wavelet - Kroma - Pastel
+HISTORY_MSG_325;Wavelet - Kroma - Mættet
+HISTORY_MSG_326;Wavelet - Kroma - Metode
+HISTORY_MSG_327;Wavelet - Kontrast - Tilføj til
+HISTORY_MSG_328;Wavelet - Kroma - Sammenkædniongsstyrke
+HISTORY_MSG_329;Wavelet - Toning - Opacitet RG
+HISTORY_MSG_330;Wavelet - Toning - Opacitet BY
+HISTORY_MSG_331;Wavelet - Kontrastniveauer - Ekstra
+HISTORY_MSG_332;Wavelet - Fliseopdelingsmetode
+HISTORY_MSG_333;Wavelet - Resterende - Skygger
+HISTORY_MSG_334;Wavelet - Resterende - Kroma
+HISTORY_MSG_335;Wavelet - Resterende - Højlys
+HISTORY_MSG_336;Wavelet - Resterende - Højlystærskel
+HISTORY_MSG_337;Wavelet - Resterende - Himmelfarvetone
+HISTORY_MSG_338;Wavelet - ES - Radius
+HISTORY_MSG_339;Wavelet - ES - Styrke
+HISTORY_MSG_340;Wavelet - Styrke
+HISTORY_MSG_341;Wavelet - Kantydelse
+HISTORY_MSG_342;Wavelet - ES - Første niveau
+HISTORY_MSG_343;Wavelet - Kroma niveauer
+HISTORY_MSG_344;Wavelet - Meth kroma sl/cur
+HISTORY_MSG_345;Wavelet - ES - Lokal kontrast
+HISTORY_MSG_346;Wavelet - ES - Lokal kontrast metode
+HISTORY_MSG_347;Wavelet - Støjfjernelse - Niveau 1
+HISTORY_MSG_348;Wavelet - Støjfjernelse - Niveau 2
+HISTORY_MSG_349;Wavelet - Støjfjernelse - Niveau 3
+HISTORY_MSG_350;Wavelet - ES - Kantgenkendelse
+HISTORY_MSG_351;Wavelet - Resterende - HH kurve
+HISTORY_MSG_352;Wavelet - Baggrund
+HISTORY_MSG_353;Wavelet - ES - Gradient følsomhed
+HISTORY_MSG_354;Wavelet - ES - Forbedret
+HISTORY_MSG_355;Wavelet - ES - Tærskel lav
+HISTORY_MSG_356;Wavelet - ES - Tærskel høj
+HISTORY_MSG_357;Wavelet - Støjfjernelse - Link med ES
+HISTORY_MSG_358;Wavelet - Gamut - CH
+HISTORY_MSG_359;Varm/Død - Tærskel
+HISTORY_MSG_360;Tonekortlægning - Gamma
+HISTORY_MSG_361;Wavelet - Afsluttende - Kroma balance
+HISTORY_MSG_362;Wavelet - Resterende - Kompression metode
+HISTORY_MSG_363;Wavelet - Resterende - Kompression styrke
+HISTORY_MSG_364;Wavelet - Afsluttende - Kontrast balance
+HISTORY_MSG_365;Wavelet - Afsluttende - Delta balance
+HISTORY_MSG_366;Wavelet - Resterende - Kompression gamma
+HISTORY_MSG_367;Wavelet - Afsluttende - 'Efter' kontrast kurve
+HISTORY_MSG_368;Wavelet - Afsluttende - Kontrast balance
+HISTORY_MSG_369;Wavelet - Afsluttende - Balance metode
+HISTORY_MSG_370;Wavelet - Afsluttende - Lokal kontrast kurve
+HISTORY_MSG_371;Post-Resize Skærpe
+HISTORY_MSG_372;PRS USM - Radius
+HISTORY_MSG_373;PRS USM - Mængde
+HISTORY_MSG_374;PRS USM - Tærskel
+HISTORY_MSG_375;PRS USM - Skærp kun kanter
+HISTORY_MSG_376;PRS USM - Kantfinding radius
+HISTORY_MSG_377;PRS USM - Kanttolerance
+HISTORY_MSG_378;PRS USM - Glorie kontrol
+HISTORY_MSG_379;PRS USM - Glorie kontrolmængde
+HISTORY_MSG_380;PRS - Metode
+HISTORY_MSG_381;PRS RLD - Radius
+HISTORY_MSG_382;PRS RLD - Mængde
+HISTORY_MSG_383;PRS RLD - Dæmpning
+HISTORY_MSG_384;PRS RLD - Gentagelser
+HISTORY_MSG_385;Wavelet - Resterende - Farve Balance
+HISTORY_MSG_386;Wavelet - Resterende - CB grøn høj
+HISTORY_MSG_387;Wavelet - Resterende - CB blå høj
+HISTORY_MSG_388;Wavelet - Resterende - CB grøn mellem
+HISTORY_MSG_389;Wavelet - Resterende - CB blå mellem
+HISTORY_MSG_390;Wavelet - Resterende - CB grøn lav
+HISTORY_MSG_391;Wavelet - Resterende - CB blå lav
+HISTORY_MSG_392;Wavelet - Resterende - Farve Balance
+HISTORY_MSG_393;DCP - Look-tabel
+HISTORY_MSG_394;DCP - Basisbelysning
+HISTORY_MSG_395;DCP - Basistabel
+HISTORY_MSG_396;Wavelet - Kontrast slutredigering
+HISTORY_MSG_397;Wavelet - Kroma slutredigering
+HISTORY_MSG_398;Wavelet - ES slutredigering
+HISTORY_MSG_399;Wavelet - Resterende billede
+HISTORY_MSG_400;Wavelet - Afsluttende redigering
+HISTORY_MSG_401;Wavelet - Toning slutredigering
+HISTORY_MSG_402;Wavelet - Støjfjernelse slutredigering
+HISTORY_MSG_403;Wavelet - ES – Kantfølsomhed
+HISTORY_MSG_404;Wavelet - ES - Base forstærkning
+HISTORY_MSG_405;Wavelet - Støjfjernelse - Niveau 4
+HISTORY_MSG_406;Wavelet - ES - Nabo pixels
+HISTORY_MSG_407;Retinex - Metode
+HISTORY_MSG_408;Retinex - Radius
+HISTORY_MSG_409;Retinex - Kontrast
+HISTORY_MSG_410;Retinex - Offset
+HISTORY_MSG_411;Retinex - Styrke
+HISTORY_MSG_412;Retinex - Gaussisk gradient
+HISTORY_MSG_413;Retinex - Kontrast
+HISTORY_MSG_414;Retinex - Histogram - Lab
+HISTORY_MSG_415;Retinex - Transmission
+HISTORY_MSG_416;Retinex
+HISTORY_MSG_417;Retinex - Transmission median
+HISTORY_MSG_418;Retinex - Tærskel
+HISTORY_MSG_419;Retinex - Farverum
+HISTORY_MSG_420;Retinex - Histogram - HSL
+HISTORY_MSG_421;Retinex - Gamma
+HISTORY_MSG_422;Retinex - Gamma
+HISTORY_MSG_423;Retinex - Gamma hældning
+HISTORY_MSG_424;Retinex - HL tærskel
+HISTORY_MSG_425;Retinex - Log base
+HISTORY_MSG_426;Retinex - Farvetone equalizer
+HISTORY_MSG_427;Output - Ønsket gengivelse
+HISTORY_MSG_428;Skærm - Ønsket gengivelse
+HISTORY_MSG_429;Retinex - Gentagelser
+HISTORY_MSG_430;Retinex - Transmission gradient
+HISTORY_MSG_431;Retinex - Styrke gradient
+HISTORY_MSG_432;Retinex - Maske - Højlys
+HISTORY_MSG_433;Retinex - Maske - Højlys TB
+HISTORY_MSG_434;Retinex - Maske - Skygger
+HISTORY_MSG_435;Retinex - Maske - Skygger TB
+HISTORY_MSG_436;Retinex - Maske - Radius
+HISTORY_MSG_437;Retinex - Maske - Metode
+HISTORY_MSG_438;Retinex - Maske - Equalizer
+HISTORY_MSG_439;Retinex - Proces
+HISTORY_MSG_440;KeDN - Metode
+HISTORY_MSG_441;Retinex - Forstærk transmission
+HISTORY_MSG_442;Retinex - Vægt
+HISTORY_MSG_443;Output sortpunktskompensation
+HISTORY_MSG_444;WB - Temp forskydning
+HISTORY_MSG_445;Raw sub-image
+HISTORY_MSG_449;PS - ISO tilpasning
+HISTORY_MSG_452;PS - Vis bevægelse
+HISTORY_MSG_453;PS - Vis kun maske
+HISTORY_MSG_457;PS - Check rød/blå
+HISTORY_MSG_462;PS - Check grøn
+HISTORY_MSG_464;PS - Slør bevægelsesmaske
+HISTORY_MSG_465;PS - Sløringsradius
+HISTORY_MSG_468;PS – Udfyld huller
+HISTORY_MSG_469;PS - Median
+HISTORY_MSG_471;PS - Bevægelseskorrektion
+HISTORY_MSG_472;PS - Bløde overgange
+HISTORY_MSG_473;PS - Brug LMMSE
+HISTORY_MSG_474;PS - Equalize
+HISTORY_MSG_475;PS - Equalize kanal
+HISTORY_MSG_476;CIEFM02 - Temp ud
+HISTORY_MSG_477;CIEFM02 - Grøn ud
+HISTORY_MSG_478;CIEFM02 - Yb ud
+HISTORY_MSG_479;CIEFM02 - CAT02 adaptation ud
+HISTORY_MSG_480;CIEFM02 - Automatic CAT02 ud
+HISTORY_MSG_481;CIEFM02 - Temp scene
+HISTORY_MSG_482;CIEFM02 - Grøn scene
+HISTORY_MSG_483;CIEFM02 - Yb scene
+HISTORY_MSG_484;CIEFM02 - Auto Yb scene
+HISTORY_MSG_485;Objektivkorrektion
+HISTORY_MSG_486;Objektivkorrektion - Kamera
+HISTORY_MSG_487;Objektivkorrektion - Objektiv
+HISTORY_MSG_488;Dynamisk Områdekomprimering
+HISTORY_MSG_489;DO - Detalje
+HISTORY_MSG_490;DO - Mængde
+HISTORY_MSG_491;Hvidbalance
+HISTORY_MSG_492;RGB Kurver
+HISTORY_MSG_493;L*a*b* Justeringer
+HISTORY_MSG_494;Input skærpning
+HISTORY_MSG_CLAMPOOG;Klip farver uden for Gamut
+HISTORY_MSG_COLORTONING_LABGRID_VALUE;Farvetoning - Farvekorrektion
+HISTORY_MSG_COLORTONING_LABREGION_AB;Farvetoning - Farvekorrektion
+HISTORY_MSG_COLORTONING_LABREGION_CHANNEL;Farvetoning - Kanal
+HISTORY_MSG_COLORTONING_LABREGION_CHROMATICITYMASK;Farvetoning - område C maske
+HISTORY_MSG_COLORTONING_LABREGION_HUEMASK;Farvetoning - H maske
+HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESS;Farvetoning - Lyshed
+HISTORY_MSG_COLORTONING_LABREGION_LIGHTNESSMASK;Farvetoning - L maske
+HISTORY_MSG_COLORTONING_LABREGION_LIST;Farvetoning - Liste
+HISTORY_MSG_COLORTONING_LABREGION_MASKBLUR;Farvetoning - område maske sløring
+HISTORY_MSG_COLORTONING_LABREGION_OFFSET;Farvetoning - område offset
+HISTORY_MSG_COLORTONING_LABREGION_POWER;Farvetoning - område styrke
+HISTORY_MSG_COLORTONING_LABREGION_SATURATION;Farvetoning - Mætning
+HISTORY_MSG_COLORTONING_LABREGION_SHOWMASK;Farvetoning - område vis maske
+HISTORY_MSG_COLORTONING_LABREGION_SLOPE;Farvetoning – område hældning
+HISTORY_MSG_DEHAZE_DEPTH;Fjern dis - Dybde
+HISTORY_MSG_DEHAZE_ENABLED;Fjern dis
+HISTORY_MSG_DEHAZE_LUMINANCE;Fjern dis – Kun luminans
+HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Fjern dis - Vis dybde kort
+HISTORY_MSG_DEHAZE_STRENGTH;Fjern dis - Styrke
+HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dobbelt demosaik - Auto tærskel
+HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dobbelt demosaik - Kontrasttærskel
+HISTORY_MSG_FILMNEGATIVE_ENABLED;Film-negativ
+HISTORY_MSG_FILMNEGATIVE_VALUES;Film-negativ værdier
+HISTORY_MSG_HISTMATCHING;Auto-matchet tone kurve
+HISTORY_MSG_ICM_OUTPUT_PRIMARIES;Output - Primære
+HISTORY_MSG_ICM_OUTPUT_TEMP;Output - ICC-v4 lyskilde D
+HISTORY_MSG_ICM_OUTPUT_TYPE;Output - Type
+HISTORY_MSG_ICM_WORKING_GAMMA;Arbejdsprofil - Gamma
+HISTORY_MSG_ICM_WORKING_SLOPE;Arbejdsprofil - Hældning
+HISTORY_MSG_ICM_WORKING_TRC_METHOD;Arbejdsprofil - TRC metode
+HISTORY_MSG_LOCALCONTRAST_AMOUNT;Lokal Kontrast - Mængde
+HISTORY_MSG_LOCALCONTRAST_DARKNESS;Lokal Kontrast - Mørke
+HISTORY_MSG_LOCALCONTRAST_ENABLED;Lokal Kontrast
+HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Lokal Kontrast - Lyshed
+HISTORY_MSG_LOCALCONTRAST_RADIUS;Lokal Kontrast - Radius
+HISTORY_MSG_METADATA_MODE;Metadata kopieringstilstand
+HISTORY_MSG_MICROCONTRAST_CONTRAST;Mikrokontrast - Kontrasttærskel
+HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto tærskel
+HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - Auto radius
+HISTORY_MSG_PDSHARPEN_CHECKITER;CS - Auto begrænsning af iterationer
+HISTORY_MSG_PDSHARPEN_CONTRAST;CS - Kontrasttærskel
+HISTORY_MSG_PDSHARPEN_ITERATIONS;CS - Gentagelser
+HISTORY_MSG_PDSHARPEN_RADIUS;CS - Radius
+HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Forstærkning af hjørneradius
+HISTORY_MSG_PIXELSHIFT_DEMOSAIC;PS - Demosaik metode til bevægelse
+HISTORY_MSG_PREPROCESS_LINEDENOISE_DIRECTION;Linje støjfilter retning
+HISTORY_MSG_PREPROCESS_PDAFLINESFILTER;PDAF linjer filter
+HISTORY_MSG_PRSHARPEN_CONTRAST;PRS - Kontrasttærskel
+HISTORY_MSG_RAWCACORR_AUTOIT;Raw CA Korrektion - Gentagelser
+HISTORY_MSG_RAWCACORR_COLORSHIFT;Raw CA Korrektion - Undgå farveforskydning
+HISTORY_MSG_RAW_BORDER;Billed kant
+HISTORY_MSG_RESIZE_ALLOWUPSCALING;Tilpas størrelse - Tillad opskalering
+HISTORY_MSG_SHARPENING_BLUR;Skærpe - Sløringsradius
+HISTORY_MSG_SHARPENING_CONTRAST;Skærpe - Kontrasttærskel
+HISTORY_MSG_SH_COLORSPACE;Farverum
+HISTORY_MSG_SOFTLIGHT_ENABLED;Blødt lys
+HISTORY_MSG_SOFTLIGHT_STRENGTH;Blødt lys - Styrke
+HISTORY_MSG_TM_FATTAL_ANCHOR;DRC - Anker
+HISTORY_MSG_TRANS_Method;Geometri - Metode
+HISTORY_NEWSNAPSHOT;Tilføj
+HISTORY_NEWSNAPSHOT_TOOLTIP;Genvej: <b>Alt-s</b>
+HISTORY_SNAPSHOT;Snapshot
+HISTORY_SNAPSHOTS;Snapshots
+ICCPROFCREATOR_COPYRIGHT;Ophavsret:
+ICCPROFCREATOR_COPYRIGHT_RESET_TOOLTIP;Nulstil til standardophavsretten, givet til "RawTherapee, CC0"
+ICCPROFCREATOR_CUSTOM;Standard
+ICCPROFCREATOR_DESCRIPTION;Beskrivelse:
+ICCPROFCREATOR_DESCRIPTION_ADDPARAM;Tilføj gamma- og hældningsværdier til beskrivelsen
+ICCPROFCREATOR_DESCRIPTION_TOOLTIP;Lad stå tomt for at angive standardbeskrivelsen.
+ICCPROFCREATOR_GAMMA;Gamma
+ICCPROFCREATOR_ICCVERSION;ICC version:
+ICCPROFCREATOR_ILL;Lyskilde:
+ICCPROFCREATOR_ILL_41;D41
+ICCPROFCREATOR_ILL_50;D50
+ICCPROFCREATOR_ILL_55;D55
+ICCPROFCREATOR_ILL_60;D60
+ICCPROFCREATOR_ILL_65;D65
+ICCPROFCREATOR_ILL_80;D80
+ICCPROFCREATOR_ILL_DEF;Standard
+ICCPROFCREATOR_ILL_INC;StdA 2856K
+ICCPROFCREATOR_ILL_TOOLTIP;Du kan kun indstille lyskilden for ICC v4-profiler.
+ICCPROFCREATOR_PRIMARIES;Primære:
+ICCPROFCREATOR_PRIM_ACESP0;ACES AP0
+ICCPROFCREATOR_PRIM_ACESP1;ACES AP1
+ICCPROFCREATOR_PRIM_ADOBE;Adobe RGB (1998)
+ICCPROFCREATOR_PRIM_BEST;BestRGB
+ICCPROFCREATOR_PRIM_BETA;BetaRGB
+ICCPROFCREATOR_PRIM_BLUX;Blå X
+ICCPROFCREATOR_PRIM_BLUY;Blå Y
+ICCPROFCREATOR_PRIM_BRUCE;BruceRGB
+ICCPROFCREATOR_PRIM_GREX;Grøn X
+ICCPROFCREATOR_PRIM_GREY;Grøn Y
+ICCPROFCREATOR_PRIM_PROPH;Prophoto
+ICCPROFCREATOR_PRIM_REC2020;Rec2020
+ICCPROFCREATOR_PRIM_REDX;Rød X
+ICCPROFCREATOR_PRIM_REDY;Rød Y
+ICCPROFCREATOR_PRIM_SRGB;sRGB
+ICCPROFCREATOR_PRIM_TOOLTIP;Du kan kun indstille tilpassede primære for ICC v4-profiler.
+ICCPROFCREATOR_PRIM_WIDEG;Bred farveskala
+ICCPROFCREATOR_PROF_V2;ICC v2
+ICCPROFCREATOR_PROF_V4;ICC v4
+ICCPROFCREATOR_SAVEDIALOG_TITLE;Gem ICC-profil som...
+ICCPROFCREATOR_SLOPE;Hældning
+ICCPROFCREATOR_TRC_PRESET;Toneresponskurve:
+IPTCPANEL_CATEGORY;Kategori
+IPTCPANEL_CATEGORYHINT;Identificér billedets motiv efter bidragerens mening.
+IPTCPANEL_CITY;By
+IPTCPANEL_CITYHINT;Indtast navnet på byen på billedet.
+IPTCPANEL_COPYHINT;Kopiér IPTC indstillinger til klippebordet.
+IPTCPANEL_COPYRIGHT;Ophavsretsmeddelelse
+IPTCPANEL_COPYRIGHTHINT;Indtast en meddelelse om den nuværende ejer af ophavsretten til dette billede, som f.eks. ©2008 Jane Doe.
+IPTCPANEL_COUNTRY;Land
+IPTCPANEL_COUNTRYHINT;Indtast navnet på landet på billedet.
+IPTCPANEL_CREATOR;Skaber
+IPTCPANEL_CREATORHINT;Indtast navnet på den person, der skabte dette billede.
+IPTCPANEL_CREATORJOBTITLE;Skabers jobtitel
+IPTCPANEL_CREATORJOBTITLEHINT;Indtast jobtitlen på den person, der er angivet i feltet ’Skaber’.
+IPTCPANEL_CREDIT;Kredditerings linje
+IPTCPANEL_CREDITHINT;Indtast, hvem der skal krediteres, når dette billede offentliggøres.
+IPTCPANEL_DATECREATED;Dato oprettet
+IPTCPANEL_DATECREATEDHINT;Indtast datoen, hvor billedet blev taget.
+IPTCPANEL_DESCRIPTION;Beskrivelse
+IPTCPANEL_DESCRIPTIONHINT;Indtast en "billedtekst", der beskriver hvem, hvad, hvorfor, og af hvad der sker på dette billede. Dette kan omfatte navne på personer og/eller deres rolle i den handling, der finder sted på billedet.
+IPTCPANEL_DESCRIPTIONWRITER;Beskrivelse forfatter
+IPTCPANEL_DESCRIPTIONWRITERHINT;Indtast navnet på den person, der er involveret i at skrive, redigere eller rette beskrivelsen af billedet.
+IPTCPANEL_EMBEDDED;Indlejret
+IPTCPANEL_EMBEDDEDHINT;Nulstil til IPTC-data, der er indlejret i billedfilen.
+IPTCPANEL_HEADLINE;Overskrift
+IPTCPANEL_HEADLINEHINT;Indtast en kort publicerbar synopsis eller et resumé af indholdet af billedet.
+IPTCPANEL_INSTRUCTIONS;Instruktioner
+IPTCPANEL_INSTRUCTIONSHINT;Indtast oplysninger om embargoer eller andre restriktioner, der ikke er dækket af Ophavsret-feltet.
+IPTCPANEL_KEYWORDS;Nøgleord
+IPTCPANEL_KEYWORDSHINT;Indtast et vilkårligt antal søgeord, termer eller sætninger, der bruges til at udtrykke emnet i billedet.
+IPTCPANEL_PASTEHINT;Indsæt IPTC-indstillinger fra udklipsholder.
+IPTCPANEL_PROVINCE;Provins eller stat
+IPTCPANEL_PROVINCEHINT;Indtast navnet på provinsen eller staten afbildet på dette billede.
+IPTCPANEL_RESET;Nulstil
+IPTCPANEL_RESETHINT;Nulstil til standardprofil.
+IPTCPANEL_SOURCE;Kilde
+IPTCPANEL_SOURCEHINT;Indtast eller rediger navnet på en person eller enhed, der har en rolle i indholdsforsyningskæden, f.eks. en person eller enhed, som du modtog dette billede fra.
+IPTCPANEL_SUPPCATEGORIES;Supplerende kategorier
+IPTCPANEL_SUPPCATEGORIESHINT;Forfiner billedets emne yderligere.
+IPTCPANEL_TITLE;Titel
+IPTCPANEL_TITLEHINT;Indtast et kort verbalt og menneskeligt læsbart navn til billedet, dette kan være filnavnet.
+IPTCPANEL_TRANSREFERENCE;Job ID
+IPTCPANEL_TRANSREFERENCEHINT;Indtast et nummer eller en identifikator, der er nødvendig for workflowkontrol eller sporing.
+MAIN_BUTTON_FULLSCREEN;Fuldskærm
+MAIN_BUTTON_ICCPROFCREATOR;ICC-profilskaber
+MAIN_BUTTON_NAVNEXT_TOOLTIP;Naviger til det næste billede i forhold til det billede, der er åbnet i editoren.\nGenvej: <b>Shift-F4</b>\n\nFor at navigere til det næste billede i forhold til det aktuelt valgte thumbnail i Filbrowseren eller filmstrimlen:\nGenvej: <b>F4</b>
+MAIN_BUTTON_NAVPREV_TOOLTIP;Naviger til det forrige billede i forhold til det billede, der er åbnet i editoren.\nGenvej: <b>Shift-F3</b>\n\nFor at navigere til det forrige billede i forhold til det aktuelt valgte thumbnail i Filbrowseren eller filmstrimlen:\nGenvej: <b>F3</b>
+MAIN_BUTTON_NAVSYNC_TOOLTIP;Synkroniser Filbrowseren eller Filmstrimlen med Editoren for at vise thumbnails fra det aktuelt åbnede billede, og ryd ethvert aktivt filter.\nGenvej: <b>x</b>\n\nSom ovenfor, men uden at rydde aktive filtre:\nGenvej: < b>y</b>\n(Bemærk, at thumbnailet af det åbnede billede, ikke vil blive vist, hvis det filtreres fra).
+MAIN_BUTTON_PREFERENCES;Præferencer
+MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Sæt det aktuelle billede i redigeringskøen.\nGenvej: <b>Ctrl+b</b>
+MAIN_BUTTON_SAVE_TOOLTIP;Gem det aktuelle billede.\nGenvej: <b>Ctrl+s</b>\nGem den aktuelle profil (.pp3).\nGenvej: <b>Ctrl+Shift+s</b>
+MAIN_BUTTON_SENDTOEDITOR;Redigér billede i ekstern editor.
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Redigér det aktuelle billede i ekstern editor.\nGenvej: <b>Ctrl+e</b>
+MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Vis/skjul alle sidepaneler.\nGenvej: <b>m</b>
+MAIN_BUTTON_UNFULLSCREEN;Afslut fuldskærm
+MAIN_FRAME_EDITOR;Redigering
+MAIN_FRAME_EDITOR_TOOLTIP;Redigering.\nGenvej: <b>Ctrl-F4</b>
+MAIN_FRAME_FILEBROWSER;Fil Browser
+MAIN_FRAME_FILEBROWSER_TOOLTIP;Fil browser.\nGenvej: <b>Ctrl-F2</b>
+MAIN_FRAME_PLACES;Steder
+MAIN_FRAME_PLACES_ADD;Tilføj
+MAIN_FRAME_PLACES_DEL;Fjern
+MAIN_FRAME_QUEUE;Kø
+MAIN_FRAME_QUEUE_TOOLTIP;Redigeringskø.\nGenvej: <b>Ctrl-F3</b>
+MAIN_FRAME_RECENT;Nylige mapper
+MAIN_MSG_ALREADYEXISTS;Filen findes allerede.
+MAIN_MSG_CANNOTLOAD;Kan ikke indlæse billede.
+MAIN_MSG_CANNOTSAVE;Fillagringsfejl
+MAIN_MSG_CANNOTSTARTEDITOR;Kan ikke starte editor.
+MAIN_MSG_CANNOTSTARTEDITOR_SECONDARY;Indstil den korrekte sti i Præferencer.
+MAIN_MSG_EMPTYFILENAME;Filnavn ikke specificeret!
+MAIN_MSG_IMAGEUNPROCESSED;Denne kommando kræver, at alle valgte billeder behandles i kø først.
+MAIN_MSG_NAVIGATOR;Navigator
+MAIN_MSG_OPERATIONCANCELLED;Handling annulleret
+MAIN_MSG_PATHDOESNTEXIST;Stien\n\n<b>%1</b>\n\neksisterer ikke. Indsæt en korrekt sti i Præferencer.
+MAIN_MSG_QOVERWRITE;Vil du overskrive det?
+MAIN_MSG_SETPATHFIRST;Du skal først angive en målsti i Præferencer for at bruge denne funktion!
+MAIN_MSG_TOOMANYOPENEDITORS;For mange åbne editors.\nLuk en editor for at fortsætte
+MAIN_MSG_WRITEFAILED;Kunne ikke gemme\n<b>"%1"</b>\n\nSørg for, at mappen eksisterer, og at du har skrivetilladelse til den.
+MAIN_TAB_ADVANCED;Avanceret
+MAIN_TAB_ADVANCED_TOOLTIP;Genvej: <b>Alt</b>-<b>a</b>
+MAIN_TAB_COLOR;Farver
+MAIN_TAB_COLOR_TOOLTIP;Genvej: <b>Alt-c</b>
+MAIN_TAB_DETAIL;Detaljer
+MAIN_TAB_DETAIL_TOOLTIP;Genvej: <b>Alt-d</b>
+MAIN_TAB_DEVELOP; Batch Edit 
+MAIN_TAB_EXIF;Exif
+MAIN_TAB_EXPORT; Hurtig eksport 
+MAIN_TAB_EXPOSURE;Eksponering
+MAIN_TAB_EXPOSURE_TOOLTIP;Genvej: <b>Alt-e</b>
+MAIN_TAB_FAVORITES;Favoritter
+MAIN_TAB_FAVORITES_TOOLTIP;Genvej: <b>Alt-u</b>
+MAIN_TAB_FILTER; Filtrér 
+MAIN_TAB_INSPECT; Inspicér
+MAIN_TAB_IPTC;IPTC
+MAIN_TAB_METADATA;Metadata
+MAIN_TAB_METADATA_TOOLTIP;Genvej: <b>Alt-m</b>
+MAIN_TAB_RAW;Raw
+MAIN_TAB_RAW_TOOLTIP;Genvej: <b>Alt-r</b>
+MAIN_TAB_TRANSFORM;Transformér
+MAIN_TAB_TRANSFORM_TOOLTIP;Genvej: <b>Alt-t</b>
+MAIN_TOOLTIP_BACKCOLOR0;Forhåndsvisningens baggrundsfarve: <b>temabaseret</b>\nGenvej: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR1;Forhåndsvisningens baggrundsfarve: <b>sort</b>\nGenvej: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR2;Forhåndsvisningens baggrundsfarve: <b>hvid</b>\nGenvej: <b>9</b>
+MAIN_TOOLTIP_BACKCOLOR3;Forhåndsvisningens baggrundsfarve: <b>mellemgrå</b>\nGenvej: <b>9</b>
+MAIN_TOOLTIP_BEFOREAFTERLOCK;<b>Lås</b> / <b>Lås op</b> visningen <b>Før</b>\n\n<b>Lås</b>: behold <b>Før</b> visning uændret.\nNyttig til at evaluere den samlede effekt af flere værktøjer.\nDerudover kan sammenligninger foretages med enhver tilstand i historikken.\n\n<b>Lås op</b>: <b>Før</b> visningen følger <b>Efter</b>-visningen et skridt bagud, og viser billedet før effekten af det aktuelt brugte værktøj.
+MAIN_TOOLTIP_HIDEHP;Vis/Skjul venstre panel (inklusiv historik).\nGenvej: <b>l</b>
+MAIN_TOOLTIP_INDCLIPPEDH;Klippet højlys indikation.\nGenvej: <b>&gt;</b>
+MAIN_TOOLTIP_INDCLIPPEDS;Klippet skygge indikation.\nGenvej: <b>&lt;</b>
+MAIN_TOOLTIP_PREVIEWB;Forhåndsvis den <b>blå kanal</b>.\nGenvej: <b>b</b>
+MAIN_TOOLTIP_PREVIEWFOCUSMASK;Forhåndsvis <b>fokusmasken</b>.\nGenvej: <b>Shift-f</b>\n\nMere nøjagtig på billeder med lav dybdeskarphed, lav støj og ved højere zoomniveauer.\nZoom ud til 10-30 % for at forbedre detektionsnøjagtigheden på støjfyldte billeder.
+MAIN_TOOLTIP_PREVIEWG;Forhåndsvis den <b>grønne kanal</b>.\nGenvej: <b>g</b>
+MAIN_TOOLTIP_PREVIEWL;Forhåndsvis <b>luminosity</b>.\nGenvej: <b>v</b>\n\n0.299*R + 0.587*G + 0.114*B
+MAIN_TOOLTIP_PREVIEWR;Forhåndsvis <b>rød kanal</b>.\nGenvej: <b>r</b>
+MAIN_TOOLTIP_PREVIEWSHARPMASK;Forhåndsvis den <b>skærpende kontrastmaske</b>.\nGenvej: <b>p</b>\n\nVirker kun når skærpen er aktiveret og zoom >= 100%.
+MAIN_TOOLTIP_QINFO;Hurtig info om billedet.\nGenvej: <b>i</b>
+MAIN_TOOLTIP_SHOWHIDELP1;Vis/Skjul venstre panel.\nGenvej: <b>l</b>
+MAIN_TOOLTIP_SHOWHIDERP1;Vis/Skjul højre panel.\nGenvej: <b>Alt-l</b>
+MAIN_TOOLTIP_SHOWHIDETP1;Vis/Skjul top panel.\nGenvej: <b>Shift-l</b>
+MAIN_TOOLTIP_THRESHOLD;Tærskel
+MAIN_TOOLTIP_TOGGLE;Skift mellem <b>Før</b>/<b>Efter</b> visningen.\nGenvej: <b>Shift-b</b>
+MONITOR_PROFILE_SYSTEM;Systemstandard
+NAVIGATOR_B;B:
+NAVIGATOR_G;G:
+NAVIGATOR_H;H:
+NAVIGATOR_LAB_A;a*:
+NAVIGATOR_LAB_B;b*:
+NAVIGATOR_LAB_L;L*:
+NAVIGATOR_NA; --
+NAVIGATOR_R;R:
+NAVIGATOR_S;S:
+NAVIGATOR_V;V:
+NAVIGATOR_XY_FULL;Bredde: %1, Højde: %2
+NAVIGATOR_XY_NA;x: --, y: --
+OPTIONS_BUNDLED_MISSING;Den medfølgende profil "<b>%1</b>" blev ikke fundet!\n\nDin installation kan være beskadiget.\n\nInterne standardværdier vil blive brugt i stedet.
+OPTIONS_DEFIMG_MISSING;Standardprofilen for <b>ikke-raw billeder</b> kunne ikke findes eller er ikke sat.\n\nTjek dine profilers mappe, den kan mangle eller være beskadiget.\n\n"<b>%1</b>" vil blive brugt i stedet.
+OPTIONS_DEFRAW_MISSING; Standardprofilen for <b>raw billeder</b> kunne ikke findes eller er ikke sat.\n\nTjek dine profilers mappe, den kan mangle eller være beskadiget.\n\n"<b>%1</b>" vil blive brugt i stedet.
+PARTIALPASTE_ADVANCEDGROUP;Avancerede Indstillinger
+PARTIALPASTE_BASICGROUP;Grundlæggende Indstillinger
+PARTIALPASTE_CACORRECTION;Kromatisk afvigelse korrektion
+PARTIALPASTE_CHANNELMIXER;Kanalmixer
+PARTIALPASTE_CHANNELMIXERBW;S/H
+PARTIALPASTE_COARSETRANS;Grov rotation/flipping
+PARTIALPASTE_COLORAPP;CIEFM02
+PARTIALPASTE_COLORGROUP;Farverelaterede Indstillinger
+PARTIALPASTE_COLORTONING;Farvetoning
+PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto-udfyld
+PARTIALPASTE_COMPOSITIONGROUP;Kompositions Indstillinger
+PARTIALPASTE_CROP;Beskær
+PARTIALPASTE_DARKFRAMEAUTOSELECT;Mørk ramme auto-selektion
+PARTIALPASTE_DARKFRAMEFILE;Mørk ramme fil
+PARTIALPASTE_DEFRINGE;Defringe
+PARTIALPASTE_DEHAZE;Fjern dis
+PARTIALPASTE_DETAILGROUP;Detail Indstillinger
+PARTIALPASTE_DIALOGLABEL;Bearbejdningsprofil for delvist indsæt
+PARTIALPASTE_DIRPYRDENOISE;Støjreduktion
+PARTIALPASTE_DIRPYREQUALIZER;Kontrast ved detaljeniveauer
+PARTIALPASTE_DISTORTION;Forvrængningskorrektion
+PARTIALPASTE_EPD;
+PARTIALPASTE_EQUALIZER;Wavelet niveauer
+PARTIALPASTE_EVERYTHING;Alt
+PARTIALPASTE_EXIFCHANGES;Exif
+PARTIALPASTE_EXPOSURE;Eksponering
+PARTIALPASTE_FILMNEGATIVE;Negativfilm
+PARTIALPASTE_FILMSIMULATION;Film simulation
+PARTIALPASTE_FLATFIELDAUTOSELECT;Flat-field Automatisk valg
+PARTIALPASTE_FLATFIELDBLURRADIUS;Flat-field sløringsradius
+PARTIALPASTE_FLATFIELDBLURTYPE;Flat-field sløringstype
+PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field klip kontrol
+PARTIALPASTE_FLATFIELDFILE;Flat-field fil
+PARTIALPASTE_GRADIENT;Gradueret filter
+PARTIALPASTE_HSVEQUALIZER;HSV equalizer
+PARTIALPASTE_ICMSETTINGS;Farvestyring indstillinger
+PARTIALPASTE_IMPULSEDENOISE;Impuls støjreduktion
+PARTIALPASTE_IPTCINFO;IPTC
+PARTIALPASTE_LABCURVE;L*a*b* adjustments
+PARTIALPASTE_LENSGROUP;Lens Related Indstillinger
+PARTIALPASTE_LENSPROFILE;Profileret objektivkorrektion
+PARTIALPASTE_LOCALCONTRAST;Lokal kontrast
+PARTIALPASTE_METADATA;Metadata tilstand
+PARTIALPASTE_METAGROUP;Metadata indstillinger
+PARTIALPASTE_PCVIGNETTE;Vignette filter
+PARTIALPASTE_PERSPECTIVE;Perspektiv
+PARTIALPASTE_PREPROCESS_DEADPIXFILT;Død-pixel filter
+PARTIALPASTE_PREPROCESS_GREENEQUIL;Grøn ligevægt
+PARTIALPASTE_PREPROCESS_HOTPIXFILT;Varm-pixel filter
+PARTIALPASTE_PREPROCESS_LINEDENOISE;Linje støjfilter
+PARTIALPASTE_PREPROCESS_PDAFLINESFILTER;PDAF linjefilter
+PARTIALPASTE_PRSHARPENING;Skærpning efter justering af størrelse
+PARTIALPASTE_RAWCACORR_AUTO;CA auto-korrektion
+PARTIALPASTE_RAWCACORR_AVOIDCOLORSHIFT;CA undgå farveskift
+PARTIALPASTE_RAWCACORR_CAREDBLUE;CA rød & blå
+PARTIALPASTE_RAWEXPOS_BLACK;Sort niveauer
+PARTIALPASTE_RAWEXPOS_LINEAR;Hvidpunkts korrektion
+PARTIALPASTE_RAWGROUP;Raw Indstillinger
+PARTIALPASTE_RAW_BORDER;Raw kanter
+PARTIALPASTE_RAW_DCBENHANCE;DCB forbedring
+PARTIALPASTE_RAW_DCBITERATIONS;DCB iterationer
+PARTIALPASTE_RAW_DMETHOD;Demosaik metode
+PARTIALPASTE_RAW_FALSECOLOR;Undertrykkelse af falske farver
+PARTIALPASTE_RAW_IMAGENUM;Underbillede
+PARTIALPASTE_RAW_LMMSEITERATIONS;LMMSE forbedrings skridt
+PARTIALPASTE_RAW_PIXELSHIFT;Pixel Shift
+PARTIALPASTE_RESIZE;Ændr størrelse
+PARTIALPASTE_RETINEX;Retinex
+PARTIALPASTE_RGBCURVES;RGB kurver
+PARTIALPASTE_ROTATION;Rotation
+PARTIALPASTE_SHADOWSHIGHLIGHTS;Skygger/højlys
+PARTIALPASTE_SHARPENEDGE;Skærpen kanter
+PARTIALPASTE_SHARPENING;Skærpe (USM/RL)
+PARTIALPASTE_SHARPENMICRO;Mikrokontrast
+PARTIALPASTE_SOFTLIGHT;Blødt lys
+PARTIALPASTE_TM_FATTAL;Dynamisk områdekompression
+PARTIALPASTE_VIBRANCE;Vibrance
+PARTIALPASTE_VIGNETTING;Vignetteringskorrektion
+PARTIALPASTE_WHITEBALANCE;Hvidbalance
+PREFERENCES_ADD;Tilføj
+PREFERENCES_APPEARANCE;Udseende
+PREFERENCES_APPEARANCE_COLORPICKERFONT;Farvevælgers skrifttype
+PREFERENCES_APPEARANCE_CROPMASKCOLOR;Beskæringsmaskens farve
+PREFERENCES_APPEARANCE_MAINFONT;Hovedskrifttype
+PREFERENCES_APPEARANCE_NAVGUIDECOLOR;Navigeringsguide farve
+PREFERENCES_APPEARANCE_PSEUDOHIDPI;Pseudo-HiDPI tilstand
+PREFERENCES_APPEARANCE_THEME;Tema
+PREFERENCES_APPLNEXTSTARTUP;genstart nødvendig
+PREFERENCES_AUTOMONPROFILE;Brug operativsystemets hovedskærmfarveprofil
+PREFERENCES_AUTOSAVE_TP_OPEN;Gem værktøjets foldet/udfoldet tilstand ved afslutning
+PREFERENCES_BATCH_PROCESSING;Batch Redigering
+PREFERENCES_BEHADDALL;Alt til 'Tilføj'
+PREFERENCES_BEHADDALLHINT;Sæt alle parametre til <b>Tilføj</b> tilstanden.\nJusteringer af parametre i batchværktøjspanelet vil være <b>deltaer</b> til de lagrede værdier.
+PREFERENCES_BEHAVIOR;Opførsel
+PREFERENCES_BEHSETALL;Alt til 'Indstil'
+PREFERENCES_BEHSETALLHINT;Sæt alle parametre til <b>Indstil</b>-tilstand.\nJusteringer af parametre i batchværktøjspanelet vil være <b>absolutte</b>, de faktiske værdier vil blive vist.
+PREFERENCES_CACHECLEAR;Ryd
+PREFERENCES_CACHECLEAR_ALL;Ryd alle cachelagrede filer:
+PREFERENCES_CACHECLEAR_ALLBUTPROFILES;Ryd alle cachelagrede filer undtagen cachelagrede redigeringsprofiler:
+PREFERENCES_CACHECLEAR_ONLYPROFILES;Ryd kun cachelagrede redigeringsprofiler:
+PREFERENCES_CACHECLEAR_SAFETY;Kun filer i cachen ryddes. Redigeringsprofiler gemt sammen med kildebillederne berøres ikke.
+PREFERENCES_CACHEMAXENTRIES;Maksimalt antal cacheposter
+PREFERENCES_CACHEOPTS;Cacheindstillinger
+PREFERENCES_CACHETHUMBHEIGHT;Maksimal thumbnail-højde
+PREFERENCES_CHUNKSIZES;Fliser pr tråd
+PREFERENCES_CHUNKSIZE_RAW_AMAZE;AMaZE demosaik
+PREFERENCES_CHUNKSIZE_RAW_CA;Raw CA korrektion
+PREFERENCES_CHUNKSIZE_RAW_RCD;RCD demosaik
+PREFERENCES_CHUNKSIZE_RAW_XT;Xtrans demosaik
+PREFERENCES_CHUNKSIZE_RGB;RGB redigering
+PREFERENCES_CLIPPINGIND;Indikation af klipning
+PREFERENCES_CLUTSCACHE;HaldCLUT Cache
+PREFERENCES_CLUTSCACHE_LABEL;Maksimalt antal cached CLUTs
+PREFERENCES_CLUTSDIR;HaldCLUT mappe
+PREFERENCES_CMMBPC;Sortpunkts kompensation
+PREFERENCES_CROP;Beskæringsredigering
+PREFERENCES_CROP_AUTO_FIT;Zoom automatisk for at passe til beskæringen
+PREFERENCES_CROP_GUIDES;Hjælpelinjer vises, når beskæringen ikke redigeres
+PREFERENCES_CROP_GUIDES_FRAME;Ramme
+PREFERENCES_CROP_GUIDES_FULL;Original
+PREFERENCES_CROP_GUIDES_NONE;Ingen
+PREFERENCES_CURVEBBOXPOS;Placering af kurve kopiér & indsæt knapper
+PREFERENCES_CURVEBBOXPOS_ABOVE;Over
+PREFERENCES_CURVEBBOXPOS_BELOW;Under
+PREFERENCES_CURVEBBOXPOS_LEFT;Venstre
+PREFERENCES_CURVEBBOXPOS_RIGHT;Højre
+PREFERENCES_CUSTPROFBUILD;Standard Bearbejnings Profilbygger
+PREFERENCES_CUSTPROFBUILDHINT;Eksekverbar (eller script) fil der kaldes, når en ny indledende redigeringsprofil skal genereres for et billede.\n\nStien til kommunikationsfilen (*.ini-stil, også kaldet "Keyfile") tilføjes som en kommandolinjeparameter. Den indeholder forskellige parametre, der kræves til scripts og billede Exif for at tillade generering af en regelbaseret redigeringsprofil.\n\n<b>ADVARSEL:</b> Du er ansvarlig for at bruge dobbelte anførselstegn, hvor det er nødvendigt, hvis du bruger stier, der indeholder mellemrum.
+PREFERENCES_CUSTPROFBUILDKEYFORMAT;Keys format
+PREFERENCES_CUSTPROFBUILDKEYFORMAT_NAME;Navn
+PREFERENCES_CUSTPROFBUILDKEYFORMAT_TID;TagID
+PREFERENCES_CUSTPROFBUILDPATH;Eksekverbar sti
+PREFERENCES_DARKFRAMEFOUND;Fundet
+PREFERENCES_DARKFRAMESHOTS;skud
+PREFERENCES_DARKFRAMETEMPLATES;skabeloner
+PREFERENCES_DATEFORMAT;Datoformat
+PREFERENCES_DATEFORMATHINT;Du kan bruge følgende formateringsstrenge:\n<b>%y</b> - år\n<b>%m</b> - måned\n<b>%d</b> - dag\n\ nFor eksempel dikterer ISO 8601-standarden datoformatet som følger:\n<b>%y-%m-%d</b>
+PREFERENCES_DIRDARKFRAMES;Mørke-rammer mappe
+PREFERENCES_DIRECTORIES;Mapper
+PREFERENCES_DIRHOME;Hjemmemappe
+PREFERENCES_DIRLAST;Sidst brugte mappe
+PREFERENCES_DIROTHER;Andre
+PREFERENCES_DIRSELECTDLG;Vælg Billedmappe ved start...
+PREFERENCES_DIRSOFTWARE;Installationsmappe
+PREFERENCES_EDITORCMDLINE;Brugerdefineret kommandolinje
+PREFERENCES_EDITORLAYOUT;Editor layout
+PREFERENCES_EXTERNALEDITOR;Ekstern Editor
+PREFERENCES_FBROWSEROPTS;Filbrowser/Thumbnail Indstillinger
+PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Kompakte værktøjslinjer i filbrowseren
+PREFERENCES_FLATFIELDFOUND;Fundet
+PREFERENCES_FLATFIELDSDIR;Flat-fields mappe
+PREFERENCES_FLATFIELDSHOTS;shots
+PREFERENCES_FLATFIELDTEMPLATES;skabeloner
+PREFERENCES_FORIMAGE;Til ikke-raw billeder
+PREFERENCES_FORRAW;Til raw billeder
+PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT;Samme thumbnail-højde i filmstrimlen og filbrowseren
+PREFERENCES_FSTRIP_SAME_THUMB_HEIGHT_HINT;At have forskellig thumbnail-størrelser vil kræve mere redigeringstid, hver gang du skifter mellem den enkelte Editor-fane og filbrowseren.
+PREFERENCES_GIMPPATH;GIMP installationsmappe
+PREFERENCES_HISTOGRAMPOSITIONLEFT;Histogram i venstre panel
+PREFERENCES_HISTOGRAM_TOOLTIP;Hvis den er aktiveret, bruges arbejdsprofilen til at gengive hovedhistogrammet og Navigator-panelet, ellers bruges den gammakorrigerede outputprofil.
+PREFERENCES_HLTHRESHOLD;Tærskel for klippede højlys
+PREFERENCES_ICCDIR;Mappe der indeholder farveprofiler
+PREFERENCES_IMPROCPARAMS;Standardredigeringsprofil
+PREFERENCES_INSPECT_LABEL;Inspicér
+PREFERENCES_INSPECT_MAXBUFFERS_LABEL;Maksimalt antal cachelagrede billeder
+PREFERENCES_INSPECT_MAXBUFFERS_TOOLTIP;Sæt det maksimale antal billeder gemt i cachen, når du holder musemarkøren over dem i filbrowseren; systemer med lidt RAM (2GB) bør holde denne værdi indstillet til 1 eller 2.
+PREFERENCES_INTENT_ABSOLUTE;Absolut kolorimetrisk
+PREFERENCES_INTENT_PERCEPTUAL;Som opfattet
+PREFERENCES_INTENT_RELATIVE;Relativ kolorimetrisk
+PREFERENCES_INTENT_SATURATION;Mætning
+PREFERENCES_INTERNALTHUMBIFUNTOUCHED;Vis indlejret JPEG-thumbnail, hvis raw er uredigeret
+PREFERENCES_LANG;Sprog
+PREFERENCES_LANGAUTODETECT;Brug systemsprog
+PREFERENCES_MAXRECENTFOLDERS;Maksimalt antal seneste mapper
+PREFERENCES_MENUGROUPEXTPROGS;Gruppe "Åbn med"
+PREFERENCES_MENUGROUPFILEOPERATIONS;Gruppe "Filhandlinger"
+PREFERENCES_MENUGROUPLABEL;Gruppe "Farvemærkat"
+PREFERENCES_MENUGROUPPROFILEOPERATIONS;Gruppe "Redigerer profilhandlinger"
+PREFERENCES_MENUGROUPRANK;Gruppe "Rank"
+PREFERENCES_MENUOPTIONS;Indstillinger for kontekstmenu
+PREFERENCES_MONINTENT;Standard gengivelseshensigt
+PREFERENCES_MONITOR;Skærm
+PREFERENCES_MONPROFILE;Standard farveprofil
+PREFERENCES_MONPROFILE_WARNOSX;På grund af MacOS-begrænsninger understøttes kun sRGB.
+PREFERENCES_MULTITAB;Tilstand med flere redigerings-faneblade
+PREFERENCES_MULTITABDUALMON;Tilstand med flere redigerings-faneblade i eget vindue
+PREFERENCES_NAVIGATIONFRAME;Navigation
+PREFERENCES_OVERLAY_FILENAMES;Overlejr filnavne på thumbnails i filbrowseren
+PREFERENCES_OVERLAY_FILENAMES_FILMSTRIP;Overlejr filnavne på thumbnails i redigeringspanelet
+PREFERENCES_OVERWRITEOUTPUTFILE;Overskriv eksisterende outputfiler
+PREFERENCES_PANFACTORLABEL;Pan rate forstærkning
+PREFERENCES_PARSEDEXT;Fortolkede Suffikser
+PREFERENCES_PARSEDEXTADD;Tilføj suffiks
+PREFERENCES_PARSEDEXTADDHINT;Tilføj indtastet suffiks til listen.
+PREFERENCES_PARSEDEXTDELHINT;Slet valgte suffiks fra listen.
+PREFERENCES_PARSEDEXTDOWNHINT;Flyt det valgte suffiks ned på listen.
+PREFERENCES_PARSEDEXTUPHINT;Flyt det valgte suffiks op på listen.
+PREFERENCES_PERFORMANCE_MEASURE;Mål
+PREFERENCES_PERFORMANCE_MEASURE_HINT;Logger redigeringstider i konsollen
+PREFERENCES_PERFORMANCE_THREADS;Tråde
+PREFERENCES_PERFORMANCE_THREADS_LABEL;Maksimalt antal tråde til Støjreduktion og Wavelet Niveauer (0 = Automatisk)
+PREFERENCES_PREVDEMO;Forhåndsvisning Demosaiking Metode
+PREFERENCES_PREVDEMO_FAST;Hurtig
+PREFERENCES_PREVDEMO_LABEL;Demosaiking metode brugt til forhåndsvisningen ved <100% zoom:
+PREFERENCES_PREVDEMO_SIDECAR;Som i PP3
+PREFERENCES_PRINTER;Printer (Soft-Proofing)
+PREFERENCES_PROFILEHANDLING;Redigeringsprofil Håndtering
+PREFERENCES_PROFILELOADPR;Behandler profilindlæsningsprioritet
+PREFERENCES_PROFILEPRCACHE;Profil i cache
+PREFERENCES_PROFILEPRFILE;Profil ved siden af inputfilen
+PREFERENCES_PROFILESAVEBOTH;Gem redigeringsprofil både i cachen og ved siden af inputfilen
+PREFERENCES_PROFILESAVECACHE;Gem redigeringsprofil i cachen
+PREFERENCES_PROFILESAVEINPUT;Gem redigeringsprofil ved siden af inputfilen
+PREFERENCES_PROFILESAVELOCATION;Redigeringsprofilen gemmes
+PREFERENCES_PROFILE_NONE;Ingen
+PREFERENCES_PROPERTY;Egenskab
+PREFERENCES_PRTINTENT;Hensigt med gengivelse
+PREFERENCES_PRTPROFILE;Farveprofil
+PREFERENCES_PSPATH;Adobe Photoshop installationsmappe
+PREFERENCES_REMEMBERZOOMPAN;Husk zoom % og panoreringsforskydning
+PREFERENCES_REMEMBERZOOMPAN_TOOLTIP;Husk zoom % og panoreringsforskydning af det aktuelle billede, når du åbner et nyt billede.\n\nDenne mulighed virker kun i "Tilstand med enkelt redigerings-faneblad" og når "Demosaiking metode brugt til forhåndsvisningen ved <100% zoom" er indstillet til "Som i PP3".
+PREFERENCES_SAVE_TP_OPEN_NOW;Gem værktøjets foldet/udfoldet tilstand nu
+PREFERENCES_SELECTLANG;Vælg sprog
+PREFERENCES_SERIALIZE_TIFF_READ;TIFF Læs Indstillinger
+PREFERENCES_SERIALIZE_TIFF_READ_LABEL;Serialiser læsning af TIFF-filer
+PREFERENCES_SERIALIZE_TIFF_READ_TOOLTIP;Aktivering af denne indstilling, når du arbejder med mapper, der indeholder ikke-komprimerede TIFF-filer, kan øge ydeevnen af thumbnail-generering.
+PREFERENCES_SET;Sæt
+PREFERENCES_SHOWBASICEXIF;Vis basis Exif info
+PREFERENCES_SHOWDATETIME;Vis dato og tid
+PREFERENCES_SHOWEXPOSURECOMPENSATION;Tilføj eksponeringskompensation
+PREFERENCES_SHOWFILMSTRIPTOOLBAR;Vis Filmstrip værktøjslinje
+PREFERENCES_SHTHRESHOLD;Tærskel for klippede skygger
+PREFERENCES_SINGLETAB;Tilstand med enkelt redigerings-faneblad
+PREFERENCES_SINGLETABVERTAB;Tilstand med enkelt redigerings-faneblad, Lodret Tabs
+PREFERENCES_SND_HELP;Indtast en fuld filsti for at indstille en lyd, eller lad den stå tom for ingen lyd.\nFor systemlyde på Windows, brug "SystemStandard", "SystemAsterisk" osv., og på Linux brug "complete", "window-attention" osv.
+PREFERENCES_SND_LNGEDITPROCDONE;Redigering færdig
+PREFERENCES_SND_QUEUEDONE;Kø-redigering færdig
+PREFERENCES_SND_THRESHOLDSECS;Efter sekunder
+PREFERENCES_STARTUPIMDIR;Billedmappe ved start
+PREFERENCES_TAB_BROWSER;Filbrowser
+PREFERENCES_TAB_COLORMGR;Farvestyring
+PREFERENCES_TAB_DYNAMICPROFILE;Dynamiske profilregler
+PREFERENCES_TAB_GENERAL;Generel
+PREFERENCES_TAB_IMPROC;Billedredigering
+PREFERENCES_TAB_PERFORMANCE;Ydeevne
+PREFERENCES_TAB_SOUND;Lyde
+PREFERENCES_THUMBNAIL_INSPECTOR_JPEG;Indlejret JPEG forhåndsvisning
+PREFERENCES_THUMBNAIL_INSPECTOR_MODE;Billede til visning
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW;Neutral raw gengivelse
+PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Indlejret JPEG hvis fuld størrelse, ellers neutral raw
+PREFERENCES_TP_LABEL;Værktøjspanel:
+PREFERENCES_TP_VSCROLLBAR;Gem lodret rullebjælke
+PREFERENCES_USEBUNDLEDPROFILES;Brug medfølgende profiler
+PREFERENCES_WORKFLOW;Layout
+PROFILEPANEL_COPYPPASTE;Parametre til kopiér
+PROFILEPANEL_GLOBALPROFILES;Medfølgende profiler
+PROFILEPANEL_LABEL;Redigeringsprofiler
+PROFILEPANEL_LOADDLGLABEL;Indlæs redigeringsparametre...
+PROFILEPANEL_LOADPPASTE;Parametre til indlæsning
+PROFILEPANEL_MODE_TIP;Behandler profiludfyldningstilstand.\n\nKnap trykket: delvise profiler vil blive konverteret til hele profiler; de manglende værdier vil blive erstattet med hårdtkodede standarder.\n\nKnap frigivet: profiler vil blive anvendt, som de er, og ændrer kun de værdier, som de indeholder.
+PROFILEPANEL_MYPROFILES;Mine profiler
+PROFILEPANEL_PASTEPPASTE;Parametre der skal indsættes
+PROFILEPANEL_PCUSTOM;Standard
+PROFILEPANEL_PDYNAMIC;Dynamisk
+PROFILEPANEL_PFILE;Fra fil
+PROFILEPANEL_PINTERNAL;Neutral
+PROFILEPANEL_PLASTSAVED;Sidst gemt
+PROFILEPANEL_SAVEDLGLABEL;Gem redigeringsparametre...
+PROFILEPANEL_SAVEPPASTE;Parametre der skal gemmes
+PROFILEPANEL_TOOLTIPCOPY;Kopiér nuværende redigeringsprofil til udklipsholder.\n<b>Ctrl-klik</b> for at vælge parametre til kopiering.
+PROFILEPANEL_TOOLTIPLOAD;Indlæs en profil fra fil.\n<b>Ctrl-klik</b> for at vælge de parametre, der skal indlæses.
+PROFILEPANEL_TOOLTIPPASTE;Indsæt profil fra udklipsholder.\n<b>Ctrl-klik</b> for at vælge de parametre, der skal indsættes.
+PROFILEPANEL_TOOLTIPSAVE;Gem den aktuelle profil.\n<b>Ctrl-klik</b> for at vælge de parametre, der skal gemmes.
+PROGRESSBAR_DECODING;Afkodning...
+PROGRESSBAR_GREENEQUIL;Grøn ligevægt...
+PROGRESSBAR_HLREC;Højlys rekonstruktion...
+PROGRESSBAR_HOTDEADPIXELFILTER;Varmt/dødt pixel filter...
+PROGRESSBAR_LINEDENOISE;Linje støjfilter...
+PROGRESSBAR_LOADING;Indlæser billede...
+PROGRESSBAR_LOADINGTHUMBS;Indlæser thumbnails...
+PROGRESSBAR_LOADJPEG; Indlæser JPEG fil...
+PROGRESSBAR_LOADPNG; Indlæser PNG fil...
+PROGRESSBAR_LOADTIFF;Indlæser TIFF fil...
+PROGRESSBAR_NOIMAGES;Ingen billeder fundet
+PROGRESSBAR_PROCESSING;Bearbejder billede...
+PROGRESSBAR_PROCESSING_PROFILESAVED;Redigeringsprofil gemt
+PROGRESSBAR_RAWCACORR;Raw CA korrektion...
+PROGRESSBAR_READY;Parat
+PROGRESSBAR_SAVEJPEG;Gemmer JPEG fil...
+PROGRESSBAR_SAVEPNG;Gemmer PNG fil...
+PROGRESSBAR_SAVETIFF;Gemmer TIFF fil...
+PROGRESSBAR_SNAPSHOT_ADDED;Snapshot tilføjet
+PROGRESSDLG_PROFILECHANGEDINBROWSER;Behandlerprofil ændret i browser
+QINFO_FRAMECOUNT;%2 rammer
+QINFO_HDR;HDR / %2 ramme(r)
+QINFO_ISO;ISO
+QINFO_NOEXIF;Exif-data ikke tilgængelige.
+QINFO_PIXELSHIFT;Pixel Shift / %2 ramme(r)
+QUEUE_AUTOSTART;Auto-start
+QUEUE_AUTOSTART_TOOLTIP;Begynd redigering automatisk, når et nyt job ankommer.
+QUEUE_DESTFILENAME;Sti og filnavn
+QUEUE_FORMAT_TITLE;Filformat
+QUEUE_LOCATION_FOLDER;Gem til mappe
+QUEUE_LOCATION_TEMPLATE;Brug skabelon
+QUEUE_LOCATION_TEMPLATE_TOOLTIP;Angiv outputplaceringen baseret på kildebilledets placering, rang, papirkurvsstatus eller position i køen.\n\nBrug følgende stinavn som eksempel:\n<b>/home/tom/photos/2010-10-31/photo1.raw</b>\nbetydningen af formateringsstrengene er:\n<b>%d4</b> = <i>home</i>\n<b>%d3</b> = <i>tom</i>\n<b>%d2</b> = <i>photos</i>\n<b>%d1</b> = <i>2010-10-31</i>\n<b>%f</b> = <i>photo1</i>\n<b>%p1</b> = <i>/home/tom/photos/2010-10-31/</i>\n<b>%p2</b> = <i>/home/tom/photos/</i>\n<b>%p3</b> = <i>/home/tom/</i>\n<b>%p4</b> = <i>/home/</i>\n\n<b>%r</b> vil blive erstattet af billedets rang. Hvis billedet ikke er rangordnet, bruges '<i>0</i>'. Hvis billedet er i skraldespanden, bruges '<i>x</i>'.\n\n<b>%s1</b>, ..., <b>%s9</b> erstattes af billedets startposition i køen på det tidspunkt, hvor køen startes. Nummeret angiver polstringen, f.eks. <b>%s3</b> resulterer i '<i>001</i>'.\n\nHvis du vil gemme outputbilledet sammen med kildebilledet, skriv:\n<b>%p1/%f</b>\n\nHvis du vil gemme outputbilledet i en mappe med navnet '<i>converted</i>', der er placeret i kildebilledets mappe, skal du skrive:\n<b>%p1/converted/%f</b>\n\nHvis du vil gemme outputbilledet i\n'<i>/home/tom/photos/converted/2010-10-31</i>', skriv:\n<b>%p2/converted/%d1/ %f</b>
+QUEUE_LOCATION_TITLE;Output sted
+QUEUE_STARTSTOP_TOOLTIP;Start eller stop redigeringen af billederne i køen.\n\nGenvej: <b>Ctrl</b>+<b>s</b>
+SAMPLEFORMAT_0;Ukendt dataformat
+SAMPLEFORMAT_1;8-bit usigneret
+SAMPLEFORMAT_2;16-bit usigneret
+SAMPLEFORMAT_4;24-bit LogLuv
+SAMPLEFORMAT_8;32-bit LogLuv
+SAMPLEFORMAT_16;16-bit floating-point
+SAMPLEFORMAT_32;24-bit floating-point
+SAMPLEFORMAT_64;32-bit floating-point
+SAVEDLG_AUTOSUFFIX;Tilføj automatisk et suffiks hvis filen allerede findes
+SAVEDLG_FILEFORMAT;Filformat
+SAVEDLG_FILEFORMAT_FLOAT; floating-point
+SAVEDLG_FORCEFORMATOPTS;Gennemtving gemmemuligheder
+SAVEDLG_JPEGQUAL;JPEG kvalitet
+SAVEDLG_PUTTOQUEUE;Sæt i redigeringskø
+SAVEDLG_PUTTOQUEUEHEAD;Sæt i toppen af redigeringskøen
+SAVEDLG_PUTTOQUEUETAIL;Sæt til slutningen af redigeringskøen
+SAVEDLG_SAVEIMMEDIATELY;Gem straks
+SAVEDLG_SAVESPP;Gem redigeringsparametre med billedet
+SAVEDLG_SUBSAMP;Delprøvetagning
+SAVEDLG_SUBSAMP_1;Kraftigste kompression
+SAVEDLG_SUBSAMP_2;Balanceret
+SAVEDLG_SUBSAMP_3;Bedste kvalitet
+SAVEDLG_SUBSAMP_TOOLTIP;Bedste komprimering:\nJ:a:b 4:2:0\nh/v 2/2\nKroma halveret vandret og lodret.\n\nBalanceret:\nJ:a:b 4:2:2\nh/v 2/ 1\nKroma halveret vandret.\n\nBedste kvalitet:\nJ:a:b 4:4:4\nh/v 1/1\nIngen Kroma-delprøvetagning.
+SAVEDLG_TIFFUNCOMPRESSED;Ikke-komprimeret TIFF
+SAVEDLG_WARNFILENAME;Filen vil blive navngivet
+SHCSELECTOR_TOOLTIP;Klik på højre museknap for at nulstille placeringen af disse 3 skydere.
+SOFTPROOF_GAMUTCHECK_TOOLTIP;Højlys-pixels med farver uden for farveskalaen med hensyn til:\n- printerprofilen, hvis en er valgt og soft-proofing er aktiveret,\n- outputprofilen, hvis en printerprofil ikke er indstillet og soft-proofing er aktiveret,\n- skærmprofilen, hvis soft-proofing er deaktiveret.
+SOFTPROOF_TOOLTIP;Soft-proofing simulerer billedets udseende:\n- når det udskrives, hvis en printerprofil er indstillet i Præferencer > Farvestyring,\n- når det vises på et display, der bruger den aktuelle outputprofil, hvis der ikke er angivet en printerprofil.
+THRESHOLDSELECTOR_B;Bund
+THRESHOLDSELECTOR_BL;Bund-venstre
+THRESHOLDSELECTOR_BR;Bund-højre
+THRESHOLDSELECTOR_HINT;Hold tasten <b>Skift</b> nede for at flytte individuelle kontrolpunkter.
+THRESHOLDSELECTOR_T;Top
+THRESHOLDSELECTOR_TL;Top-venstre
+THRESHOLDSELECTOR_TR;Top-højre
+TOOLBAR_TOOLTIP_COLORPICKER;Låsbar farvevælger\n\nNår værktøjet er aktivt:\n- Tilføj en vælger: <b>venstre-klik</b>.\n- Træk en vælger: <b>venstre-klik og træk</b>. \n- Slet en vælger: <b>højreklik</b>.\n- Slet alle vælgere: <b>Ctrl</b>+<b>Shift</b>+<b>højreklik< /b>.\n- Vend tilbage til håndværktøj: <b>højreklik</b> uden for en hvilken som helst vælger.
+TOOLBAR_TOOLTIP_CROP;<b>Beskær</b> det valgte.\nGenvej: <b>c</b>\nFlyt beskæringen med <b>Shift</b>+<b>træk med musen</b>.
+TOOLBAR_TOOLTIP_HAND;Håndværktøj.\nGenvej: <b>h</b>
+TOOLBAR_TOOLTIP_STRAIGHTEN;<b>Ret ud</b> / <b>fin rotation</b>.\nGenvej: <b>s</b>\n\nIndikér lodret eller vandret ved at tegne en hjælpelinje over billedet. Rotationsvinkel vil blive vist ved siden af ledelinjen. Rotationscentrum er billedets geometriske centrum.
+TOOLBAR_TOOLTIP_WB;Spot hvidbalance.\nGenvej: <b>w</b>
+TP_BWMIX_ALGO;Algoritme OYCPM
+TP_BWMIX_ALGO_LI;Lineær
+TP_BWMIX_ALGO_SP;Special-effekter
+TP_BWMIX_ALGO_TOOLTIP;Lineær:vil producere en normal <b>lineær</b> respons.\nSpecial-effekter: vil producere specielle effekter ved at blande kanaler <b>ikke-lineært</b>.
+TP_BWMIX_AUTOCH;Auto
+TP_BWMIX_CC_ENABLED;Justér komplementære farver
+TP_BWMIX_CC_TOOLTIP;Aktivér for at tillade automatisk justering af komplementære farver i ROYGCBPM-tilstand.
+TP_BWMIX_CHANNEL;Luminans equalizer
+TP_BWMIX_CURVEEDITOR1;'Før' kurve
+TP_BWMIX_CURVEEDITOR2;'Efter' kurve
+TP_BWMIX_CURVEEDITOR_AFTER_TOOLTIP;Tone kurve, efter S/H konvertering, ved afslutningen af behandlingen.
+TP_BWMIX_CURVEEDITOR_BEFORE_TOOLTIP;Tone kurve,lige før S/H konvertering.\nKan tage højde for farvekomponenterne.
+TP_BWMIX_CURVEEDITOR_LH_TOOLTIP;Luminans i henhold til farvetone L=f(H).\nVær opmærksom på ekstreme værdier, da de kan forårsage artefakter.
+TP_BWMIX_FILTER;Farve Filter
+TP_BWMIX_FILTER_BLUE;Blå
+TP_BWMIX_FILTER_BLUEGREEN;Blå-Grøn
+TP_BWMIX_FILTER_GREEN;Grøn
+TP_BWMIX_FILTER_GREENYELLOW;Grøn-Gul
+TP_BWMIX_FILTER_NONE;Ingen
+TP_BWMIX_FILTER_PURPLE;Lilla
+TP_BWMIX_FILTER_RED;Rød
+TP_BWMIX_FILTER_REDYELLOW;Rød-Gul
+TP_BWMIX_FILTER_TOOLTIP;Farvefilteret simulerer billeder taget med et farvet filter placeret foran objektivet. Farvede filtre reducerer transmissionen af specifikke farveområder og påvirker derfor deres lyshed. F. eks. et rød-filter giver mørkere blå himmel.
+TP_BWMIX_FILTER_YELLOW;Gul
+TP_BWMIX_GAMMA;Gamma Korrektion
+TP_BWMIX_GAM_TOOLTIP;Korrigér gamma for hver RGB-kanal.
+TP_BWMIX_LABEL;Sort-og-Hvid
+TP_BWMIX_MET;Metode
+TP_BWMIX_MET_CHANMIX;Kanalmikser
+TP_BWMIX_MET_DESAT;Afmætning
+TP_BWMIX_MET_LUMEQUAL;Luminans Equalizer
+TP_BWMIX_MIXC;Kanalmikser
+TP_BWMIX_NEUTRAL;Nulstil
+TP_BWMIX_RGBLABEL;R: %1%%   G: %2%%   B: %3%%   Total: %4%%
+TP_BWMIX_RGBLABEL_HINT;Sluttelige RGB-faktorer, der tager sig af alle miksermulighederne.\n"Total" viser summen af RGB-værdierne:\n- altid 100 % i relativ tilstand\n- højere (lysere) eller lavere (mørkere) end 100 % i absolut tilstand.
+TP_BWMIX_RGB_TOOLTIP;Bland RGB-kanalerne. Brug forudindstillinger som vejledning.\nVær opmærksom på negative værdier, der kan forårsage artefakter eller uberegnelig adfærd.
+TP_BWMIX_SETTING;Forudindstillinger
+TP_BWMIX_SETTING_TOOLTIP;Forskellige forudindstillinger (film, landskab osv.) eller manuelle kanalmixerindstillinger.
+TP_BWMIX_SET_HIGHCONTAST;Høj kontrast
+TP_BWMIX_SET_HIGHSENSIT;Høj følsomhed
+TP_BWMIX_SET_HYPERPANCHRO;Hyper Pankromatisk
+TP_BWMIX_SET_INFRARED;Infrarød
+TP_BWMIX_SET_LANDSCAPE;Landskab
+TP_BWMIX_SET_LOWSENSIT;Lav følsomhed
+TP_BWMIX_SET_LUMINANCE;Luminans
+TP_BWMIX_SET_NORMCONTAST;Normal Kontrast
+TP_BWMIX_SET_ORTHOCHRO;Ortokromatisk
+TP_BWMIX_SET_PANCHRO;Pankromatisk
+TP_BWMIX_SET_PORTRAIT;Portræt
+TP_BWMIX_SET_RGBABS;Absolut RGB
+TP_BWMIX_SET_RGBREL;Relativ RGB
+TP_BWMIX_SET_ROYGCBPMABS;Absolut ROYGCBPM
+TP_BWMIX_SET_ROYGCBPMREL;Relativ ROYGCBPM
+TP_BWMIX_TCMODE_FILMLIKE;S/H Film-agtigt
+TP_BWMIX_TCMODE_SATANDVALBLENDING;S/H mætning og værdiblanding
+TP_BWMIX_TCMODE_STANDARD;S/H Standard
+TP_BWMIX_TCMODE_WEIGHTEDSTD;S/H Vægtet Standard
+TP_BWMIX_VAL;L
+TP_CACORRECTION_BLUE;Blå
+TP_CACORRECTION_LABEL;Kromatisk Afvigelse Korrektion
+TP_CACORRECTION_RED;Rød
+TP_CBDL_AFT;Efter Sort-og-Hvid
+TP_CBDL_BEF;Før Sort-og-Hvid
+TP_CBDL_METHOD;Processen er lokaliseret
+TP_CBDL_METHOD_TOOLTIP;Vælg, om værktøjet Kontrast ved detaljeniveauer skal placeres efter Sort-og-Hvid-værktøjet, som får det til at fungere i L*a*b*-rummet, eller før det, som får det til at fungere i RGB-rummet.
+TP_CHMIXER_BLUE;Blå kanal
+TP_CHMIXER_GREEN;Grøn kanal
+TP_CHMIXER_LABEL;Kanalmikser
+TP_CHMIXER_RED;Rød kanal
+TP_COARSETRAF_TOOLTIP_HFLIP;Vend vandret.
+TP_COARSETRAF_TOOLTIP_ROTLEFT;Rotér til venstre.\n\nGenveje:\n<b>[</b> - Tilstand med flere redigerings-faneblade,\n<b>Alt-[</b> - Tilstand med enkelt redigerings-faneblad.
+TP_COARSETRAF_TOOLTIP_ROTRIGHT;Rotér til højre.\n\nGenveje:\n<b>]</b> - Tilstand med flere redigerings-faneblade,\n<b>Alt-]</b> - Tilstand med enkelt redigerings-faneblad.
+TP_COARSETRAF_TOOLTIP_VFLIP;Vend lodret.
+TP_COLORAPP_ABSOLUTELUMINANCE;Absolut luminans
+TP_COLORAPP_ALGO;Algoritme
+TP_COLORAPP_ALGO_ALL;Alt
+TP_COLORAPP_ALGO_JC;Lyshed + Kroma (JC)
+TP_COLORAPP_ALGO_JS;Lyshed + Mættet (JS)
+TP_COLORAPP_ALGO_QM;Lysstyrke + Farverighed (QM)
+TP_COLORAPP_ALGO_TOOLTIP;Giver dig mulighed for at vælge mellem parameter undersæt eller alle parametre.
+TP_COLORAPP_BADPIXSL;Varmt/dødt pixelfilter
+TP_COLORAPP_BADPIXSL_TOOLTIP;Undertrykkelse af varme/døde (meget lyst farvede) pixels.\n0 = Ingen effekt\n1 = Mellem\n2 = Gaussisk.\nAlternativt, justér billedet for at undgå meget mørke skygger.\n\nDisse artefakter skyldes begrænsninger i CIEFM02.
+TP_COLORAPP_BRIGHT;Lysstyrke (Q)
+TP_COLORAPP_BRIGHT_TOOLTIP;Lysstyrke i CIEFM02 tager højde for luminansen i hvid, og adskiller sig fra L*a*b* og RGB lysstyrke.
+TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;Ved manuel indstilling anbefales værdier over 65.
+TP_COLORAPP_CHROMA;Kroma (C)
+TP_COLORAPP_CHROMA_M;Farverighed (M)
+TP_COLORAPP_CHROMA_M_TOOLTIP;Farverighed i CIEFM02 adskiller sig fra L*a*b* og RGB farverighed.
+TP_COLORAPP_CHROMA_S;Mætning (S)
+TP_COLORAPP_CHROMA_S_TOOLTIP;Mætning i CIEFM02 adskiller sig fra L*a*b* og RGB-mætning.
+TP_COLORAPP_CHROMA_TOOLTIP;Kroma i CIEFM02 adskiller sig fra L*a*b* og RGB Kroma.
+TP_COLORAPP_CIECAT_DEGREE;CAT02 tilpasning
+TP_COLORAPP_CONTRAST;Kontrast (J)
+TP_COLORAPP_CONTRAST_Q;Kontrast (Q)
+TP_COLORAPP_CONTRAST_Q_TOOLTIP;Afviger fra L*a*b* og RGB kontrast.
+TP_COLORAPP_CONTRAST_TOOLTIP;Afviger fra L*a*b* og RGB kontrast.
+TP_COLORAPP_CURVEEDITOR1;Tonekurve 1
+TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Viser histogrammet for L* (L*a*b*) før CIEFM02.\nHvis afkrydsningsfeltet "Vis CIEFM02-outputhistogrammer i kurver" er aktiveret, vises histogrammet for J eller Q, efter CIEFM02.\n\nJ og Q er ikke vist i hovedhistogrampanelet.\n\nFor endelig output henvises til hovedhistogrampanelet.
+TP_COLORAPP_CURVEEDITOR2;Tonekurve 2
+TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Samme brug som med anden eksponeringstonekurve.
+TP_COLORAPP_CURVEEDITOR3;Farvekurve
+TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Justér enten Kroma, mætning eller farverighed.\n\nViser histogrammet for kromaticitet (L*a*b*) før CIEFM02.\nHvis afkrydsningsfeltet "Vis CIEFM02 output histogrammer i kurver" er aktiveret, vises histogrammet for C, s eller M, efter CIEFM02.\n\nC, s og M vises ikke i hovedhistogrampanelet.\nFor sluttelig output henvises til hovedhistogrampanelet.
+TP_COLORAPP_DATACIE;CIEFM02 output histogrammer i kurver
+TP_COLORAPP_DATACIE_TOOLTIP;Når det er aktiveret, viser histogrammer i CIEFM02-kurver omtrentlige værdier/intervaller for J eller Q, og C, s eller M efter CIEFM02-justeringerne.\nDette valg påvirker ikke hovedhistogrampanelet.\n\nNår de er deaktiveret, viser histogrammer i CIEFM02-kurverne L*a*b*-værdier før CIEFM02-justeringer.
+TP_COLORAPP_FREE;Fri temp+grøn + CAT02 + [output]
+TP_COLORAPP_GAMUT;Farveskalakontrol (L*a*b*)
+TP_COLORAPP_GAMUT_TOOLTIP;Tillad farveskalakontrol i L*a*b*-tilstand.
+TP_COLORAPP_HUE;Farvetone (h)
+TP_COLORAPP_HUE_TOOLTIP;Farvetone (h) - vinkel mellem 0° og 360°.
+TP_COLORAPP_LABEL;CIE Farveudseende Model 2002
+TP_COLORAPP_LABEL_CAM02;Billedjusteringer
+TP_COLORAPP_LABEL_SCENE;Sceneforhold
+TP_COLORAPP_LABEL_VIEWING;Visningsforhold
+TP_COLORAPP_LIGHT;Lyshed (J)
+TP_COLORAPP_LIGHT_TOOLTIP;Lyshed i CIEFM02 adskiller sig fra L*a*b* og RGB lyshed.
+TP_COLORAPP_MEANLUMINANCE;Gennemsnitlig luminans (Yb%)
+TP_COLORAPP_MODEL;Hvidpunktsmodel
+TP_COLORAPP_MODEL_TOOLTIP;Hvidpunktsmodel.\n\n<b>WB [RT] + [output]</b>: RTs hvidbalance bruges til scenen, CIEFM02 er sat til D50, og outputenhedens hvidbalance er indstillet i visningsbetingelser.\n \n<b>WB [RT+CAT02] + [output]</b>: RTs hvidbalance-indstillinger bruges af CAT02, og output-enhedens hvidbalance er indstillet i visningsbetingelser.\n\n<b>Fri temp+grøn + CAT02 + [output]:</b> temp og grøn vælges af brugeren, outputenhedens hvidbalance indstilles i Visningsbetingelser.
+TP_COLORAPP_NEUTRAL;Nulstil
+TP_COLORAPP_NEUTRAL_TIP;Nulstil alle skydere i afkrydsningsfeltet og kurverne til deres standardværdier
+TP_COLORAPP_RSTPRO;Rød- & hud-toner beskyttelse
+TP_COLORAPP_RSTPRO_TOOLTIP;Rød- & hud-toner; hudtone beskyttelse påvirker både skydere og kurver.
+TP_COLORAPP_SURROUND;Efter omgivelserne
+TP_COLORAPP_SURROUND_AVER;Gennemsnitligt
+TP_COLORAPP_SURROUND_DARK;Dæmpet
+TP_COLORAPP_SURROUND_DIM;Mørkt
+TP_COLORAPP_SURROUND_EXDARK;Ekstremt mørkt (mørklægnings-gardin/plade)
+TP_COLORAPP_SURROUND_TOOLTIP;Ændrer toner og farver for at tage højde for visningsforholdene for outputenheden.\n\n<b>Gennemsnit</b>: Gennemsnitligt lysmiljø (standard). Billedet ændres ikke.\n\n<b>Dæmpet</b>: Dæmpet miljø (TV). Billedet bliver lidt mørkt.\n\n<b>Mørkt</b>: Mørkt miljø (projektor). Billedet bliver mere mørkt.\n\n<b>Ekstremt mørkt</b>: Ekstremt mørke omgivelser (mørklægnings-gardin/plade). Billedet bliver meget mørkt.
+TP_COLORAPP_TCMODE_BRIGHTNESS;Lysstyrke
+TP_COLORAPP_TCMODE_CHROMA;Kroma
+TP_COLORAPP_TCMODE_COLORF;Farverighed
+TP_COLORAPP_TCMODE_LABEL1;Kurvetilstand 1
+TP_COLORAPP_TCMODE_LABEL2;Kurvetilstand 2
+TP_COLORAPP_TCMODE_LABEL3;Kurve kroma mode
+TP_COLORAPP_TCMODE_LIGHTNESS;Lyshed
+TP_COLORAPP_TCMODE_SATUR;Mætning
+TP_COLORAPP_TEMP_TOOLTIP;For at vælge en lyskilde skal du altid indstille Farvetone=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
+TP_COLORAPP_TONECIE; bruger CIEFM02
+TP_COLORAPP_TONECIE_TOOLTIP;Hvis denne indstilling er deaktiveret, udføres tonetilknytning i L*a*b* farverum.\nAktiveret, udføres tonetilknytning ved hjælp af CIEFM02.\nTonetilknytnings-værktøjet skal være aktiveret for at denne indstilling kan træde i kraft.
+TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Absolut luminans af visningsmiljøet\n(normalt 16 cd/m²).
+TP_COLORAPP_WBCAM;WB [RT+CAT02] + [output]
+TP_COLORAPP_WBRT;WB [RT] + [output]
+TP_COLORTONING_AB;o C/L
+TP_COLORTONING_AUTOSAT;Automatisk
+TP_COLORTONING_BALANCE;Balance
+TP_COLORTONING_BY;o C/L
+TP_COLORTONING_CHROMAC;Opacitet
+TP_COLORTONING_COLOR;Farve
+TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Kroma opacitet som en funktion af luminans oC=f(L)
+TP_COLORTONING_HIGHLIGHT;Højlys
+TP_COLORTONING_HUE;Farvetone
+TP_COLORTONING_LAB;L*a*b* blanding
+TP_COLORTONING_LABEL;Farvetoning
+TP_COLORTONING_LABGRID;L*a*b* farvekorrektionsgitter
+TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4
+TP_COLORTONING_LABREGIONS;Farvekorrektionsområder
+TP_COLORTONING_LABREGION_ABVALUES;a=%1 b=%2
+TP_COLORTONING_LABREGION_CHANNEL;Kanal
+TP_COLORTONING_LABREGION_CHANNEL_ALL;Alle
+TP_COLORTONING_LABREGION_CHANNEL_B;Blå
+TP_COLORTONING_LABREGION_CHANNEL_G;Grøn
+TP_COLORTONING_LABREGION_CHANNEL_R;Rød
+TP_COLORTONING_LABREGION_CHROMATICITYMASK;C
+TP_COLORTONING_LABREGION_HUEMASK;H
+TP_COLORTONING_LABREGION_LIGHTNESS;Lyshed
+TP_COLORTONING_LABREGION_LIGHTNESSMASK;L
+TP_COLORTONING_LABREGION_LIST_TITLE;Rettelse
+TP_COLORTONING_LABREGION_MASK;Maske
+TP_COLORTONING_LABREGION_MASKBLUR;Maskesløring
+TP_COLORTONING_LABREGION_OFFSET;Offset
+TP_COLORTONING_LABREGION_POWER;Power
+TP_COLORTONING_LABREGION_SATURATION;Mætning
+TP_COLORTONING_LABREGION_SHOWMASK;Vis maske
+TP_COLORTONING_LABREGION_SLOPE;Hældning
+TP_COLORTONING_LUMA;Luminans
+TP_COLORTONING_LUMAMODE;Bevar luminansen
+TP_COLORTONING_LUMAMODE_TOOLTIP;Hvis aktiveret, når du skifter farve (rød, grøn, cyan, blå osv.), bevares luminansen af hver pixel.
+TP_COLORTONING_METHOD;Metode
+TP_COLORTONING_METHOD_TOOLTIP;"L*a*b*-blanding", "RGB-skydere" og "RGB-kurver" bruger interpoleret farveblanding.\n"Farvebalance (Skygger/Mellemtoner/Højlys)" og "Mætning 2 farver" bruger direkte farver.\n\ nSort-og-Hvid-værktøjet kan aktiveres, når du bruger enhver farvetonemetode, som giver mulighed for farvetoning.
+TP_COLORTONING_MIDTONES;Mellemtoner
+TP_COLORTONING_NEUTRAL;Nulstil skydere
+TP_COLORTONING_NEUTRAL_TIP;Nulstil alle værdier (Skygger, Mellemtoner, Højlys) til standard.
+TP_COLORTONING_OPACITY;Opacitet
+TP_COLORTONING_RGBCURVES;RGB - Kurver
+TP_COLORTONING_RGBSLIDERS;RGB - Skydere
+TP_COLORTONING_SA;Mætningsbeskyttelse
+TP_COLORTONING_SATURATEDOPACITY;Styrke
+TP_COLORTONING_SATURATIONTHRESHOLD;Tærskel
+TP_COLORTONING_SHADOWS;Skygger
+TP_COLORTONING_SPLITCO;Skygger/Mellemtoner/Højlys
+TP_COLORTONING_SPLITCOCO;Farvebalance Skygger/Mellemtoner/Højlys
+TP_COLORTONING_SPLITLR;Mætning 2 farver
+TP_COLORTONING_STR;Styrke
+TP_COLORTONING_STRENGTH;Styrke
+TP_COLORTONING_TWO2;Speciel kroma '2 farver'
+TP_COLORTONING_TWOALL;Speciel kroma
+TP_COLORTONING_TWOBY;Speciel a* og b*
+TP_COLORTONING_TWOCOLOR_TOOLTIP;Standard kroma:\nLineær respons, a* = b*.\n\nSpeciel kroma:\nLineær respons, a* = b*, men ikke-bundet - prøv under diagonalen.\n\nSpeciel a* og b*:\nLineær respons ikke-bundet med seperate kurver for a* og b*. Beregnet til specielle effekter.\n\nSpeciel kroma 2 farver:\nMere forudsigelig.
+TP_COLORTONING_TWOSTD;Standard kroma
+TP_CROP_FIXRATIO;Låseforhold
+TP_CROP_GTDIAGONALS;Diagonalernes regel
+TP_CROP_GTEPASSPORT;Biometrisk pas
+TP_CROP_GTFRAME;Ramme
+TP_CROP_GTGRID;Gitter
+TP_CROP_GTHARMMEANS;Harmoniske midler
+TP_CROP_GTNONE;Ingen
+TP_CROP_GTRULETHIRDS;Tredjedelsregelen
+TP_CROP_GTTRIANGLE1;Gyldne trekanter 1
+TP_CROP_GTTRIANGLE2;Gyldne trekanter 2
+TP_CROP_GUIDETYPE;Guide type:
+TP_CROP_H;Højde
+TP_CROP_LABEL;Beskær
+TP_CROP_PPI;PPI
+TP_CROP_RESETCROP;Nulstil
+TP_CROP_SELECTCROP;Vælg
+TP_CROP_W;Bredde
+TP_CROP_X;Venstre
+TP_CROP_Y;Top
+TP_DARKFRAME_AUTOSELECT;Automatisk valg
+TP_DARKFRAME_LABEL;Mørk-Ramme
+TP_DEFRINGE_LABEL;Defringe
+TP_DEFRINGE_RADIUS;Radius
+TP_DEFRINGE_THRESHOLD;Tærskel
+TP_DEHAZE_DEPTH;Dybde
+TP_DEHAZE_LABEL;Fjernelse af dis
+TP_DEHAZE_LUMINANCE;Kun luminans
+TP_DEHAZE_SHOW_DEPTH_MAP;Vis dybdekort
+TP_DEHAZE_STRENGTH;Styrke
+TP_DIRPYRDENOISE_CHROMINANCE_AMZ;Auto multi-zoner
+TP_DIRPYRDENOISE_CHROMINANCE_AUTOGLOBAL;Automatisk global
+TP_DIRPYRDENOISE_CHROMINANCE_BLUEYELLOW;Krominans - Blå-Gul
+TP_DIRPYRDENOISE_CHROMINANCE_CURVE;Krominans kurve
+TP_DIRPYRDENOISE_CHROMINANCE_CURVE_TOOLTIP;Forøg (multiplicer) værdien af alle krominansskydere.\nDenne kurve lader dig justere styrken af kromatisk støjreduktion som funktion af kromaticitet, for eksempel for at øge handlingen i områder med lav mætning og for at mindske den i områder med høj mætning.
+TP_DIRPYRDENOISE_CHROMINANCE_FRAME;Krominans
+TP_DIRPYRDENOISE_CHROMINANCE_MANUAL;Manuel
+TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Krominans - Master
+TP_DIRPYRDENOISE_CHROMINANCE_METHOD;Metode
+TP_DIRPYRDENOISE_CHROMINANCE_METHODADVANCED_TOOLTIP;Manuel\nVirker på det fulde billede.\nDu styrer indstillingerne for støjreduktion manuelt.\n\nAutomatisk global\nVirker på det fulde billede.\n9 zoner bruges til at beregne en global krominans-støjreduktionsindstilling.\n\nForhåndsvisning virker på hele billedet.\nDen del af billedet, der er synlig i forhåndsvisningen, bruges til at beregne globale krominans støjreduktionsindstillinger.
+TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP;Manuel\nVirker på det fulde billede.\nDu styrer indstillingerne for støjreduktion manuelt.\n\nAutomatisk global\nVirker på det fulde billede.\n9 zoner bruges til at beregne en global krominans-støjreduktionsindstilling.\n\nAutomatiske multizoner \nIngen forhåndsvisning - virker kun under lagring, men ved at bruge "Forhånsvisning"-metoden ved at matche flisestørrelsen og midten, til forhåndsvisningsstørrelsen og midten, kan du få en idé om de forventede resultater.\nBilledet er opdelt i fliser (ca. 10 til 70 afhængigt af billedstørrelsen), og hver flise modtager sine egne indstillinger for krominansstøjreduktion.\n\nForhånsvisning\nVirkerer på hele billedet.\nDen del af billedet, der er synlig i forhåndsvisningen, bruges til at beregne globale indstillinger for krominansstøjreduktion.
+TP_DIRPYRDENOISE_CHROMINANCE_PMZ;Forhånsvisning multi-zoner
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW;Forhånsvisning
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP;Viser de resterende støjniveauer for den del af billedet, der er synlig i forhåndsvisningen efter wavelet.\n\n>300 Meget støjende\n100-300 Støjende\n50-100 Lidt støjende\n<50 Meget lav støj\n\nPas på, værdierne vil variere mellem RGB- og L*a*b*-tilstandene. RGB-værdierne er mindre nøjagtige, fordi RGB-tilstanden ikke adskiller luminans og krominans fuldstændigt.
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_INFO;Forhånsvisning størrelse=%1, Midte: Px=%2  Py=%3
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO;Forhånsvisning støj: Middel=%1  Høj=%2
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_NOISEINFO_EMPTY;Forhånsvisning støj: Middel= -   Høj= -
+TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW_TILEINFO;Flisestørrelse=%1, Midte: Tx=%2  Ty=%3
+TP_DIRPYRDENOISE_CHROMINANCE_REDGREEN;Krominans - Rød-Grøn
+TP_DIRPYRDENOISE_LABEL;Støjreduktion
+TP_DIRPYRDENOISE_LUMINANCE_CONTROL;Luminans kontrol
+TP_DIRPYRDENOISE_LUMINANCE_CURVE;Luminans kurve
+TP_DIRPYRDENOISE_LUMINANCE_DETAIL;Detaljegendannelse
+TP_DIRPYRDENOISE_LUMINANCE_FRAME;Luminans
+TP_DIRPYRDENOISE_LUMINANCE_SMOOTHING;Luminans
+TP_DIRPYRDENOISE_MAIN_COLORSPACE;Farverum
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_LAB;L*a*b*
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_RGB;RGB
+TP_DIRPYRDENOISE_MAIN_COLORSPACE_TOOLTIP;Til raw-billeder kan enten RGB- eller L*a*b*-metoder bruges.\n\nTil ikke-raw-billeder vil L*a*b*-metoden blive brugt, uanset valget.
+TP_DIRPYRDENOISE_MAIN_GAMMA;Gamma
+TP_DIRPYRDENOISE_MAIN_GAMMA_TOOLTIP;Gamma varierer støjreduktionsstyrken på tværs af toneområdet. Mindre værdier vil målrette skygger, mens større værdier vil strække effekten til de lysere toner.
+TP_DIRPYRDENOISE_MAIN_MODE;Mode
+TP_DIRPYRDENOISE_MAIN_MODE_AGGRESSIVE;Aggressiv
+TP_DIRPYRDENOISE_MAIN_MODE_CONSERVATIVE;Konservativ
+TP_DIRPYRDENOISE_MAIN_MODE_TOOLTIP;"Konservativ" bevarer lavfrekvente kroma-mønstre, mens "aggressiv" udsletter dem.
+TP_DIRPYRDENOISE_MEDIAN_METHOD;Median metode
+TP_DIRPYRDENOISE_MEDIAN_METHOD_CHROMINANCE;Kun kroma
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LAB;L*a*b*
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LABEL;Median Filter
+TP_DIRPYRDENOISE_MEDIAN_METHOD_LUMINANCE;Kun luminans
+TP_DIRPYRDENOISE_MEDIAN_METHOD_RGB;RGB
+TP_DIRPYRDENOISE_MEDIAN_METHOD_TOOLTIP;Når du bruger metoderne "Kun luminans" og "L*a*b*", vil medianfiltrering blive udført lige efter wavelet-trinnet i støjreduktionspipelinen.\nNår du bruger "RGB"-tilstanden, udføres den ved afslutningen af støjreduktionspipelinen.
+TP_DIRPYRDENOISE_MEDIAN_METHOD_WEIGHTED;Vægtet L* (lille) + a*b* (normal)
+TP_DIRPYRDENOISE_MEDIAN_PASSES;Median iterationer
+TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Anvendelse af tre median filteriterationer med en 3×3 vinduesstørrelse fører ofte til bedre resultater end ved at bruge en median filteriteration med en 7×7 vinduesstørrelse.
+TP_DIRPYRDENOISE_MEDIAN_TYPE;Median type
+TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Tilføj et medianfilter af den ønskede vinduesstørrelse. Jo større vinduet er, jo længere tid tager det.\n\n3×3 blød: behandler 5 pixels i et 3×3 pixels vindue.\n3×3: behandler 9 pixels i et 3×3 pixels vindue.\n5×5 blød: behandler 13 pixels i et 5×5 pixel vindue.\n5×5: behandler 25 pixels i et 5×5 pixel vindue.\n7×7: behandler 49 pixels i et 7×7 pixel vindue.\n9×9: behandler 81 pixels i et 9×9 pixel vindue.\n\nNogle gange er det muligt at opnå højere kvalitet ved at køre flere iterationer med en mindre vinduesstørrelse end én iteration med et større vindue.
+TP_DIRPYRDENOISE_TYPE_3X3;3×3
+TP_DIRPYRDENOISE_TYPE_3X3SOFT;3×3 blød
+TP_DIRPYRDENOISE_TYPE_5X5;5×5
+TP_DIRPYRDENOISE_TYPE_5X5SOFT;5×5 blød
+TP_DIRPYRDENOISE_TYPE_7X7;7×7
+TP_DIRPYRDENOISE_TYPE_9X9;9×9
+TP_DIRPYREQUALIZER_ALGO;Hudfarveområde
+TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fint: tættere på hudens farver, minimerer virkningen på andre farver\nStor: undgår flere artefakter.
+TP_DIRPYREQUALIZER_ARTIF;Reducér artefakter
+TP_DIRPYREQUALIZER_HUESKIN;Hudfarve
+TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;Denne pyramide er for den øverste del, så vidt algoritmen har sin maksimale effektivitet.\nTil den nederste del, overgangszonerne.\nHvis du har brug for at flytte området væsentligt til venstre eller højre - eller hvis der er artefakter: <b>hvidbalancen er forkert</b>\nDu kan reducere zonen lidt for at forhindre, at resten af billedet påvirkes.
+TP_DIRPYREQUALIZER_LABEL;Kontrast efter Detalje Niveauer
+TP_DIRPYREQUALIZER_LUMACOARSEST;Groveste
+TP_DIRPYREQUALIZER_LUMACONTRAST_MINUS;Kontrast -
+TP_DIRPYREQUALIZER_LUMACONTRAST_PLUS;Kontrast +
+TP_DIRPYREQUALIZER_LUMAFINEST;Finest
+TP_DIRPYREQUALIZER_LUMANEUTRAL;Neutral
+TP_DIRPYREQUALIZER_SKIN;Hudmålretning/beskyttelse
+TP_DIRPYREQUALIZER_SKIN_TOOLTIP;Ved -100 bliver hudtoner angrebet.\nVed 0 behandles alle toner ens.\nVed +100 bliver hudtoner beskyttet, mens alle andre toner påvirkes.
+TP_DIRPYREQUALIZER_THRESHOLD;Tærskel
+TP_DIRPYREQUALIZER_TOOLTIP;Forsøger at reducere artefakter i overgangene mellem hudfarver (nuance, kroma, luma) og resten af billedet.
+TP_DISTORTION_AMOUNT;Mængde
+TP_DISTORTION_AUTO_TIP;Korrigerer automatisk objektivforvrængning i raw filer ved at matche dem med det indlejrede JPEG-billede, hvis et sådant findes og har fået dets objektivforvrængning automatisk korrigeret af kameraet.
+TP_DISTORTION_LABEL;Forvrængningskorrektion
+TP_EPD_EDGESTOPPING;Kantstopper
+TP_EPD_GAMMA;Gamma
+TP_EPD_LABEL;Tonekortlægning
+TP_EPD_REWEIGHTINGITERATES;Genvægtning gentages
+TP_EPD_SCALE;Vægt
+TP_EPD_STRENGTH;Styrke
+TP_EXPOSURE_AUTOLEVELS;Auto Niveauer
+TP_EXPOSURE_AUTOLEVELS_TIP;Skifter udførelse af Auto Niveauer til automatisk at indstille Eksponeringsskyderværdier baseret på en billedanalyse.\nAktivér Højlys Rekonstruktion om nødvendigt.
+TP_EXPOSURE_BLACKLEVEL;Sort
+TP_EXPOSURE_BRIGHTNESS;Lyshed
+TP_EXPOSURE_CLAMPOOG;Klip udenfor-farveskala farver
+TP_EXPOSURE_CLIP;Klip %
+TP_EXPOSURE_CLIP_TIP;Den del af pixels, der skal klippes i Auto Niveauer-indstilling.
+TP_EXPOSURE_COMPRHIGHLIGHTS;Højlys kompression
+TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Tærskel for højlys kompression
+TP_EXPOSURE_COMPRSHADOWS;Skygge kompression
+TP_EXPOSURE_CONTRAST;Kontrast
+TP_EXPOSURE_CURVEEDITOR1;Tone kurve 1
+TP_EXPOSURE_CURVEEDITOR2;Tone kurve 2
+TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Se venligst RawPedia-artiklen "Eksponering > Tonekurver" for at lære, hvordan du opnår de bedste resultater ved at bruge to tonekurver.
+TP_EXPOSURE_EXPCOMP;Eksponeringskompensation
+TP_EXPOSURE_HISTMATCHING;Auto-matchet tonekurve
+TP_EXPOSURE_HISTMATCHING_TOOLTIP;Justér automatisk skydere og kurver (undtagen eksponeringskompensation) for at matche udseendet af den indlejrede JPEG thumbnail.
+TP_EXPOSURE_LABEL;Eksponering
+TP_EXPOSURE_SATURATION;Mætning
+TP_EXPOSURE_TCMODE_FILMLIKE;Film-like
+TP_EXPOSURE_TCMODE_LABEL1;Kurvetilstand 1
+TP_EXPOSURE_TCMODE_LABEL2;Kurvetilstand 2
+TP_EXPOSURE_TCMODE_LUMINANCE;Luminans
+TP_EXPOSURE_TCMODE_PERCEPTUAL;Perceptuel
+TP_EXPOSURE_TCMODE_SATANDVALBLENDING;Mætning og værdiblanding
+TP_EXPOSURE_TCMODE_STANDARD;Standard
+TP_EXPOSURE_TCMODE_WEIGHTEDSTD;Vægtet Standard
+TP_EXPOS_BLACKPOINT_LABEL;Raw Sort-punkter
+TP_EXPOS_WHITEPOINT_LABEL;Raw Hvid-punkter
+TP_FILMNEGATIVE_BLUE;Blå forhold
+TP_FILMNEGATIVE_GREEN;Referenceeksponent (kontrast)
+TP_FILMNEGATIVE_GUESS_TOOLTIP;Indstil automatisk rødt- og blåt-forholdet ved at vælge to felter, som havde en neutral farvetone (ingen farve) i den originale scene. Feltrene bør afvige i lysstyrke. Indstil hvidbalancen bagefter.
+TP_FILMNEGATIVE_LABEL;Film Negativ
+TP_FILMNEGATIVE_PICK;Vælg neutrale felter
+TP_FILMNEGATIVE_RED;Rødt-forholdet
+TP_FILMSIMULATION_LABEL;Film Simulation
+TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee er konfigureret til at søge efter Hald CLUT-billeder, som bruges til filmsimuleringsværktøjet, i en mappe, der tager for lang tid at indlæse.\nGå til Præferencer > Billedredigering > Filmsimulering\nfor at se, hvilken mappe der bruges. Du bør enten vise RawTherapee hen til en mappe, der kun indeholder Hald CLUT-billeder og intet andet, eller til en tom mappe, hvis du ikke vil bruge værktøjet Filmsimulering.\n\nLæs artiklen Filmsimulering i RawPedia for mere information. \n\nVil du annullere scanningen nu?
+TP_FILMSIMULATION_STRENGTH;Styrke
+TP_FILMSIMULATION_ZEROCLUTSFOUND;Sæt HaldCLUT mappe i Præferencer
+TP_FLATFIELD_AUTOSELECT;Auto-selektion
+TP_FLATFIELD_BLURRADIUS;Sløringsradius
+TP_FLATFIELD_BLURTYPE;Sløringstype
+TP_FLATFIELD_BT_AREA;Område
+TP_FLATFIELD_BT_HORIZONTAL;Vandret
+TP_FLATFIELD_BT_VERTHORIZ;Lodret + Vandret
+TP_FLATFIELD_BT_VERTICAL;Lodret
+TP_FLATFIELD_CLIPCONTROL;Klipkontrol
+TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Klipkontrol undgår klippede højlys forårsaget af anvendelse af det flade felt. Hvis der allerede er klippede højlys, før det flade felt anvendes, bruges værdien 0.
+TP_FLATFIELD_LABEL;Fladt-Felt
+TP_GENERAL_11SCALE_TOOLTIP;Effekterne af dette værktøj er kun synlige, eller kun nøjagtige i en forhåndsvisningsskala på 1:1.
+TP_GRADIENT_CENTER;Center
+TP_GRADIENT_CENTER_X;Center X
+TP_GRADIENT_CENTER_X_TOOLTIP;Flyt gradient til venstre (negative værdier) eller højre (positive værdier).
+TP_GRADIENT_CENTER_Y;Center Y
+TP_GRADIENT_CENTER_Y_TOOLTIP;Flyt gradient op (negative værdier) eller ned (positive værdier).
+TP_GRADIENT_DEGREE;Vinkel
+TP_GRADIENT_DEGREE_TOOLTIP;Rotationsvinkel i grader.
+TP_GRADIENT_FEATHER;Fjer
+TP_GRADIENT_FEATHER_TOOLTIP;Gradientbredde i procent af billeddiagonal.
+TP_GRADIENT_LABEL;Gradueret Filter
+TP_GRADIENT_STRENGTH;Styrke
+TP_GRADIENT_STRENGTH_TOOLTIP;Filterstyrke i stop.
+TP_HLREC_BLEND;Miks
+TP_HLREC_CIELAB;CIELab Miksning
+TP_HLREC_COLOR;Farveudbredelse
+TP_HLREC_ENA_TOOLTIP;Kunne aktiveres af Auto Niveauer.
+TP_HLREC_LABEL;Højlys rekonstruktion
+TP_HLREC_LUMINANCE;Luminansgendannelse
+TP_HLREC_METHOD;Metode:
+TP_HSVEQUALIZER_CHANNEL;Kanal
+TP_HSVEQUALIZER_HUE;H
+TP_HSVEQUALIZER_LABEL;HSV Equalizer
+TP_HSVEQUALIZER_SAT;S
+TP_HSVEQUALIZER_VAL;V
+TP_ICM_APPLYBASELINEEXPOSUREOFFSET;Baseline eksponering
+TP_ICM_APPLYBASELINEEXPOSUREOFFSET_TOOLTIP;Anvend den indlejrede DCP-baseline eksponeringsoffset. Indstillingen er kun tilgængelig, hvis den valgte DCP har en.
+TP_ICM_APPLYHUESATMAP;Basistabel
+TP_ICM_APPLYHUESATMAP_TOOLTIP;Anvend den indlejrede DCP-basistabel (FarvetoneSatMap). Indstillingen er kun tilgængelig, hvis den valgte DCP har en.
+TP_ICM_APPLYLOOKTABLE;Look tabel
+TP_ICM_APPLYLOOKTABLE_TOOLTIP;Brug den indlejrede DCP-looktabel. Indstillingen er kun tilgængelig, hvis den valgte DCP har en.
+TP_ICM_BPC;Sortpunkts kompensation
+TP_ICM_DCPILLUMINANT;Lyskilde
+TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpoleret
+TP_ICM_DCPILLUMINANT_TOOLTIP;Vælg hvilken indlejret DCP-lyskilde, der skal bruges. Standard er "interpoleret", hvilket er en blanding mellem de to baseret på hvidbalance. Indstillingen er kun tilgængelig, hvis en dual-illuminant DCP med interpolationsunderstøttelse er valgt.
+TP_ICM_INPUTCAMERA;Kamera standard
+TP_ICM_INPUTCAMERAICC;Automatisk matchet kameraprofil
+TP_ICM_INPUTCAMERAICC_TOOLTIP;Brug RawTherapees kameraspecifikke DCP- eller ICC-inputfarveprofiler. Disse profiler er mere præcise end simplere matrixprofiler. De er ikke tilgængelige for alle kameraer. Disse profiler gemmes i mapperne /iccprofiles/input og /dcpprofiles og hentes automatisk baseret på et filnavn, der matcher kameraets nøjagtige modelnavn.
+TP_ICM_INPUTCAMERA_TOOLTIP;Brug en simpel farvematrix fra dcraw, en forbedret RawTherapee-version (afhængig af hvilken der er tilgængelig baseret på kameramodel) eller en integreret i DNG.
+TP_ICM_INPUTCUSTOM;Standard
+TP_ICM_INPUTCUSTOM_TOOLTIP;Vælg din egen DCP/ICC farveprofil-fil til kameraet.
+TP_ICM_INPUTDLGLABEL;Vælg Input DCP/ICC profil...
+TP_ICM_INPUTEMBEDDED;Brug indlejret, hvis muligt
+TP_ICM_INPUTEMBEDDED_TOOLTIP;Brug farveprofil, der er indlejret i ikke-raw filer.
+TP_ICM_INPUTNONE;Ingen profil
+TP_ICM_INPUTNONE_TOOLTIP;Brug ingen inputfarveprofil overhovedet.\nBrug kun i særlige tilfælde.
+TP_ICM_INPUTPROFILE;Input Profil
+TP_ICM_LABEL;Farvestyring
+TP_ICM_NOICM;No ICM: sRGB Output
+TP_ICM_OUTPUTPROFILE;Output Profil
+TP_ICM_PROFILEINTENT;Ønsket gengivelse
+TP_ICM_SAVEREFERENCE;Gem referencebillede
+TP_ICM_SAVEREFERENCE_APPLYWB;Tilføj hvidbalance
+TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Generelt, tilføj hvidbalance når du gemmer billeder for at oprette ICC-profiler, og undlad at tilføje hvidbalance for at oprette DCP-profiler.
+TP_ICM_SAVEREFERENCE_TOOLTIP;Gem det lineære TIFF-billede, før inputprofilen tilføjes. Resultatet kan bruges til kalibreringsformål og generering af en kameraprofil.
+TP_ICM_TONECURVE;Tonekurve
+TP_ICM_TONECURVE_TOOLTIP;Anvend den indlejrede DCP-tonekurve. Indstillingen er kun tilgængelig, hvis den valgte DCP har en tonekurve.
+TP_ICM_WORKINGPROFILE;Arbejdsprofil
+TP_ICM_WORKING_TRC;Toneresponskurve:
+TP_ICM_WORKING_TRC_CUSTOM;Standard
+TP_ICM_WORKING_TRC_GAMMA;Gamma
+TP_ICM_WORKING_TRC_NONE;Ingen
+TP_ICM_WORKING_TRC_SLOPE;Hældning
+TP_ICM_WORKING_TRC_TOOLTIP;Kun til indbyggede profiler.
+TP_IMPULSEDENOISE_LABEL;Impuls støjreduktion
+TP_IMPULSEDENOISE_THRESH;Tærskel
+TP_LABCURVE_AVOIDCOLORSHIFT;Undgå farveforskydning
+TP_LABCURVE_AVOIDCOLORSHIFT_TOOLTIP;Tilpas farver til farveskalaen af arbejdsfarverum og tilføj Munsell korrektion.
+TP_LABCURVE_BRIGHTNESS;Lyshed
+TP_LABCURVE_CHROMATICITY;Kromaticitet
+TP_LABCURVE_CHROMA_TOOLTIP;Indstil kromacitet til -100 for at anvende S/H toning.
+TP_LABCURVE_CONTRAST;Kontrast
+TP_LABCURVE_CURVEEDITOR;Luminans kurve
+TP_LABCURVE_CURVEEDITOR_A_RANGE1;Grøn Mættet
+TP_LABCURVE_CURVEEDITOR_A_RANGE2;Grøn Pastel
+TP_LABCURVE_CURVEEDITOR_A_RANGE3;Rød Pastel
+TP_LABCURVE_CURVEEDITOR_A_RANGE4;Rød Mættet
+TP_LABCURVE_CURVEEDITOR_B_RANGE1;Blå Mættet
+TP_LABCURVE_CURVEEDITOR_B_RANGE2;Blå Pastel
+TP_LABCURVE_CURVEEDITOR_B_RANGE3;Gul Pastel
+TP_LABCURVE_CURVEEDITOR_B_RANGE4;Gul Mættet
+TP_LABCURVE_CURVEEDITOR_CC;CC
+TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutral
+TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Kedelig
+TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastel
+TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Mættet
+TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Kromaticitet i forhold til kromaticitet C=f(C)
+TP_LABCURVE_CURVEEDITOR_CH;CH
+TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Kromaticitet i forhold til farvetone C=f(H)
+TP_LABCURVE_CURVEEDITOR_CL;CL
+TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Kromaticitet i forhold til luminans C=f(L)
+TP_LABCURVE_CURVEEDITOR_HH;HH
+TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Farvetone i forhold til farvetone H=f(H)
+TP_LABCURVE_CURVEEDITOR_LC;LC
+TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminans i forhold til kromaticitet L=f(C)
+TP_LABCURVE_CURVEEDITOR_LH;LH
+TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminans i forhold til farvetone L=f(H)
+TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminans i forhold til luminans L=f(L)
+TP_LABCURVE_LABEL;L*a*b* Justeringer
+TP_LABCURVE_LCREDSK;Begræns LC til rød og hudtoner
+TP_LABCURVE_LCREDSK_TIP;Hvis den er aktiveret, påvirker LC-kurven kun rød og hudtoner.\nHvis den er deaktiveret, gælder den for alle toner.
+TP_LABCURVE_RSTPROTECTION;Rød og hudtone beskyttelse
+TP_LABCURVE_RSTPRO_TOOLTIP;Virker på Kromaticitet-skyderen og CC-kurven. TP_LENSGEOM_AUTOCROP;Auto-beskæring
+TP_LENSGEOM_FILL;Auto-udfyld
+TP_LENSGEOM_LABEL;Objektiv/Geometri
+TP_LENSGEOM_LIN;Lineær
+TP_LENSGEOM_LOG;Logaritmisk
+TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatisk valgt
+TP_LENSPROFILE_CORRECTION_LCPFILE;LCP fil
+TP_LENSPROFILE_CORRECTION_MANUAL;Manuelt valgt
+TP_LENSPROFILE_LABEL;Profileret objektivkorrektion
+TP_LENSPROFILE_LENS_WARNING;Advarsel: Beskæringsfaktoren, der bruges til objektivprofilering, er større end beskæringsfaktoren for kameraet, resultaterne kan være forkerte.
+TP_LENSPROFILE_MODE_HEADER;Objektiv Profil
+TP_LENSPROFILE_USE_CA;Kromatisk afvigelse
+TP_LENSPROFILE_USE_GEOMETRIC;Geometrisk forvrængning
+TP_LENSPROFILE_USE_HEADER;Korrekt
+TP_LENSPROFILE_USE_VIGNETTING;Vignettering
+TP_LOCALCONTRAST_AMOUNT;Mængde
+TP_LOCALCONTRAST_DARKNESS;Mørk-niveau
+TP_LOCALCONTRAST_LABEL;Lokal Kontrast
+TP_LOCALCONTRAST_LIGHTNESS;Lys-niveau
+TP_LOCALCONTRAST_RADIUS;Radius
+TP_METADATA_EDIT;Tilføj modifikationer
+TP_METADATA_MODE;Metadata kopiér mode
+TP_METADATA_STRIP;Fjern alle metadata
+TP_METADATA_TUNNEL;Kopiér uændret
+TP_NEUTRAL;Nulstil
+TP_NEUTRAL_TIP;Nulstiller eksponeringsskyderne til neutrale værdier.\nGælder for de samme kontroller, som Auto Niveauer gælder for, uanset om du har brugt Auto Niveauer eller ej.
+TP_PCVIGNETTE_FEATHER;Fjer
+TP_PCVIGNETTE_FEATHER_TOOLTIP;Fler(blødgøring):\n0 = kun hjørner,\n50 = halvvejs til center,\n100 = til center.
+TP_PCVIGNETTE_LABEL;Vignetteringsfilter
+TP_PCVIGNETTE_ROUNDNESS;Rundhed
+TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Rundhed:\n0 = rektangel,\n50 = tilpasset ellipse,\n100 = cirkel.
+TP_PCVIGNETTE_STRENGTH;Styrke
+TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filterstyrke i stop (nået i hjørner).
+TP_PDSHARPENING_LABEL;Input skærpning
+TP_PERSPECTIVE_HORIZONTAL;Vandret
+TP_PERSPECTIVE_LABEL;Perspektiv
+TP_PERSPECTIVE_VERTICAL;Lodret
+TP_PFCURVE_CURVEEDITOR_CH;Farvetone
+TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Styrer defringe styrke efter farve.\nHøjere = mere,\nLavere = mindre.
+TP_PREPROCESS_DEADPIXFILT;Døde-pixels filter
+TP_PREPROCESS_DEADPIXFILT_TOOLTIP;Forsøger at undertrykke døde pixels.
+TP_PREPROCESS_GREENEQUIL;Grøn ligevægt
+TP_PREPROCESS_HOTPIXFILT;Varme-pixels filter
+TP_PREPROCESS_HOTPIXFILT_TOOLTIP;Forsøger at undertrykke varme pixels.
+TP_PREPROCESS_LABEL;Forbehandling
+TP_PREPROCESS_LINEDENOISE;Linje støjfilter
+TP_PREPROCESS_LINEDENOISE_DIRECTION;Retning
+TP_PREPROCESS_LINEDENOISE_DIRECTION_BOTH;Begge
+TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL;Vandret
+TP_PREPROCESS_LINEDENOISE_DIRECTION_PDAF_LINES;Vandret kun på PDAF rækker
+TP_PREPROCESS_LINEDENOISE_DIRECTION_VERTICAL;Lodret
+TP_PREPROCESS_NO_FOUND;Ingen fundet
+TP_PREPROCESS_PDAFLINESFILTER;PDAF linjefilter
+TP_PRSHARPENING_LABEL;Skærpning efter ændring af størrelse
+TP_PRSHARPENING_TOOLTIP;Gør billedet skarpere efter ændring af størrelse. Virker kun, når "Lanczos"-størrelsesændringdsmetoden bruges. Det er umuligt at forhåndsvise virkningerne af dette værktøj. Se RawPedia for brugsinstruktioner.
+TP_RAWCACORR_AUTO;Auto-korrektion
+TP_RAWCACORR_AUTOIT;Gentagelser
+TP_RAWCACORR_AUTOIT_TOOLTIP;Denne indstilling er tilgængelig, når "Autokorrektion" er markeret.\nAutokorrektion er konservativ, hvilket betyder, at den ofte ikke retter alle kromatiske afvigelser.\nFor at rette den resterende kromatisk afvigelse kan du bruge op til fem iterationer af automatisk kromatisk afvigelseskorrektion.\nHver iteration vil reducere den resterende kromatisk afvigelse fra sidste iteration, på bekostning af yderligere behandlingstid.
+TP_RAWCACORR_AVOIDCOLORSHIFT;Undgå farveforskydning
+TP_RAWCACORR_CABLUE;Blå
+TP_RAWCACORR_CARED;Rød
+TP_RAWCACORR_LABEL;Kromatisk Afvigelse Korrektion
+TP_RAWEXPOS_BLACK_0;Grøn 1 (master)
+TP_RAWEXPOS_BLACK_1;Rød
+TP_RAWEXPOS_BLACK_2;Blå
+TP_RAWEXPOS_BLACK_3;Grøn 2
+TP_RAWEXPOS_BLACK_BLUE;Blå
+TP_RAWEXPOS_BLACK_GREEN;Grøn
+TP_RAWEXPOS_BLACK_RED;Rød
+TP_RAWEXPOS_LINEAR;Hvidpunkts korrektion
+TP_RAWEXPOS_RGB;Rød, Grøn, Blå
+TP_RAWEXPOS_TWOGREEN;Kæd grønne sammen
+TP_RAW_1PASSMEDIUM;1-pass (Markesteijn)
+TP_RAW_2PASS;1-pass+fast
+TP_RAW_3PASSBEST;3-pass (Markesteijn)
+TP_RAW_4PASS;3-pass+fast
+TP_RAW_AHD;AHD
+TP_RAW_AMAZE;AMaZE
+TP_RAW_AMAZEVNG4;AMaZE+VNG4
+TP_RAW_BORDER;Billedkant
+TP_RAW_DCB;DCB
+TP_RAW_DCBENHANCE;DCB forbedring
+TP_RAW_DCBITERATIONS;Antal DCB-iterationer
+TP_RAW_DCBVNG4;DCB+VNG4
+TP_RAW_DMETHOD;Metode
+TP_RAW_DMETHOD_PROGRESSBAR;%1 demosaiking...
+TP_RAW_DMETHOD_PROGRESSBAR_REFINE;Demosaik forfining...
+TP_RAW_DMETHOD_TOOLTIP;Bemærk: IGV og LMMSE er dedikeret til billeder med høj ISO for at hjælpe med støjreduktion uden at det fører til labyrintmønstre, posterisering eller et udvasket udseende.\nPixel Shift er til Pentax/Sony Pixel Shift-filer. Det falder tilbage til AMaZE for ikke-Pixel Shift-filer.
+TP_RAW_DUALDEMOSAICAUTOCONTRAST;Auto tærskel
+TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;Hvis afkrydsningsfeltet er markeret (anbefales), beregner RawTherapee en optimal værdi baseret på flade områder i billedet.\nHvis der ikke er et fladt område i billedet, eller billedet er for støjfyldt, indstilles værdien til 0.\nFor at indstille værdien manuelt, fjern markeringen i afkrydsningsfeltet først (rimelige værdier afhænger af billedet).
+TP_RAW_DUALDEMOSAICCONTRAST;Kontrasttærskel
+TP_RAW_EAHD;EAHD
+TP_RAW_FALSECOLOR;Trin til undertrykkelse af forkerte farver
+TP_RAW_FAST;Hurtig
+TP_RAW_HD;Tærskel
+TP_RAW_HD_TOOLTIP;Lavere værdier gør detektion af varme/døde pixels mere aggressiv, men falske positiver kan føre til artefakter. Hvis du bemærker, at der opstår artefakter, når du aktiverer Varm/Død Pixel-filtrene, skal du gradvist øge tærskelværdien, indtil de forsvinder.
+TP_RAW_HPHD;HPHD
+TP_RAW_IGV;IGV
+TP_RAW_IMAGENUM;Under-billede
+TP_RAW_IMAGENUM_SN;SN tilstand
+TP_RAW_IMAGENUM_TOOLTIP;Nogle raw-filer består af flere underbilleder (Pentax/Sony Pixel Shift, Pentax 3-i-1 HDR, Canon Dual Pixel, Fuji EXR).\n\nNår du bruger en anden demosaiking metode end Pixel Shift, vælger dette hvilket under-billede der bruges.\n\nNår du bruger Pixel Shift demosaiking metoden på et Pixel Shift raw, bruges alle underbilleder, og dette vælger hvilket underbillede der skal bruges til bevægelige dele.
+TP_RAW_LABEL;Demosaiking
+TP_RAW_LMMSE;LMMSE
+TP_RAW_LMMSEITERATIONS;LMMSE forbedringstrin
+TP_RAW_LMMSE_TOOLTIP;Tilføjer gamma (trin 1), median (trin 2-4) og forfining (trin 5-6) for at reducere artefakter og forbedre signal-til-støj-forholdet.
+TP_RAW_MONO;Mono
+TP_RAW_NONE;Ingen (Viser sensor mønster)
+TP_RAW_PIXELSHIFT;Pixel Shift
+TP_RAW_PIXELSHIFTBLUR;Slør bevægelsesmaske
+TP_RAW_PIXELSHIFTDMETHOD;Demosaisk metode til bevægelse
+TP_RAW_PIXELSHIFTEPERISO;Følsomhed
+TP_RAW_PIXELSHIFTEPERISO_TOOLTIP;Standardværdien på 0 burde fungere fint for basis ISO.\nHøjere værdier øger følsomheden af bevægelsesregistrering.\nSkift i små trin, og se bevægelsesmasken, mens du skifter.\nForøg følsomheden for undereksponerede eller høj-ISO billeder.
+TP_RAW_PIXELSHIFTEQUALBRIGHT;Udligne lysstyrke af rammer
+TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL;Udlign pr. kanal
+TP_RAW_PIXELSHIFTEQUALBRIGHTCHANNEL_TOOLTIP;Aktiveret: Udlign RGB-kanalerne individuelt.\nDeaktiveret: Brug samme udligningsfaktor for alle kanaler.
+TP_RAW_PIXELSHIFTEQUALBRIGHT_TOOLTIP;Udlign lysstyrken af rammerne til lysstyrken for den valgte ramme.\nHvis der er overeksponerede områder i rammerne, skal du vælge den mest lysstærke ramme for at undgå magentafarver i overeksponerede områder, eller aktivere bevægelseskorrektion.
+TP_RAW_PIXELSHIFTGREEN;Tjek grøn kanal for bevægelse
+TP_RAW_PIXELSHIFTHOLEFILL;Fyld huller i bevægelsesmasken
+TP_RAW_PIXELSHIFTHOLEFILL_TOOLTIP;Fyld huller i bevægelsesmasken
+TP_RAW_PIXELSHIFTMEDIAN;Brug median til bevægelige dele
+TP_RAW_PIXELSHIFTMEDIAN_TOOLTIP;Brug medianen af alle rammer i stedet for den valgte ramme for områder med bevægelse.\nFjerner objekter, der er på forskellige steder i alle rammer.\nGiver bevægelseseffekt på objekter, der bevæger sig langsomt (overlappende).
+TP_RAW_PIXELSHIFTMM_AUTO;Automatisk
+TP_RAW_PIXELSHIFTMM_CUSTOM;Standard
+TP_RAW_PIXELSHIFTMM_OFF;Fra
+TP_RAW_PIXELSHIFTMOTIONMETHOD;Bevægelseskorrektion
+TP_RAW_PIXELSHIFTNONGREENCROSS;Tjek rød/blå kanaler for bevægelse
+TP_RAW_PIXELSHIFTSHOWMOTION;Vis bevægelsesmaske
+TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY;Vis kun bevægelsesmaske
+TP_RAW_PIXELSHIFTSHOWMOTIONMASKONLY_TOOLTIP;Viser bevægelsesmasken uden billedet.
+TP_RAW_PIXELSHIFTSHOWMOTION_TOOLTIP;Overlejrer billedet med en grøn maske, der viser områderne med bevægelse.
+TP_RAW_PIXELSHIFTSIGMA;Sløringsradius
+TP_RAW_PIXELSHIFTSIGMA_TOOLTIP;Standardradius på 1,0 passer normalt godt til basis ISO.\nForøg værdien for billeder med høj ISO, 5,0 er et godt udgangspunkt.\nSe bevægelsesmasken, mens du ændrer værdien.
+TP_RAW_PIXELSHIFTSMOOTH;Glatte overgange
+TP_RAW_PIXELSHIFTSMOOTH_TOOLTIP;Glatte overgange mellem områder med bevægelse og områder uden.\nSæt til 0 for at deaktivere overgangsudjævning.\nSæt til 1 for enten at få AmaZE/LMMSE resultatet af den valgte frame (afhængigt af om "Brug LMMSE" er valgt), eller medianen af alle fire rammer, hvis "Brug median" er valgt.
+TP_RAW_RCD;RCD
+TP_RAW_RCDVNG4;RCD+VNG4
+TP_RAW_SENSOR_BAYER_LABEL;Sensor med Bayer Matrix
+TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;3-pass giver de bedste resultater (anbefales til billeder med lav ISO).\n1-pass kan næsten ikke skelnes fra 3-pass for billeder med høj ISO og er hurtigere.\n+hurtig giver færre artefakter i flade områder
+TP_RAW_SENSOR_XTRANS_LABEL;Sensor med X-Trans Matrix
+TP_RAW_VNG4;VNG4
+TP_RAW_XTRANS;X-Trans
+TP_RAW_XTRANSFAST;Hurtig X-Trans
+TP_RESIZE_ALLOW_UPSCALING;Tillad opskalering
+TP_RESIZE_APPLIESTO;Gælder for:
+TP_RESIZE_CROPPEDAREA;Beskåret område
+TP_RESIZE_FITBOX;Afgrænsningskasse
+TP_RESIZE_FULLIMAGE;Fuldt billede
+TP_RESIZE_H;Højde:
+TP_RESIZE_HEIGHT;Højde
+TP_RESIZE_LABEL;Ændr størrelse
+TP_RESIZE_LANCZOS;Lanczos
+TP_RESIZE_METHOD;Metode:
+TP_RESIZE_NEAREST;Nærmeste
+TP_RESIZE_SCALE;Vægt
+TP_RESIZE_SPECIFY;Specificér:
+TP_RESIZE_W;Bredde:
+TP_RESIZE_WIDTH;Bredde
+TP_RETINEX_CONTEDIT_HSL;HSL histogram
+TP_RETINEX_CONTEDIT_LAB;L*a*b* histogram
+TP_RETINEX_CONTEDIT_LH;Farvetone
+TP_RETINEX_CONTEDIT_MAP;Equalizer
+TP_RETINEX_CURVEEDITOR_CD;L=f(L)
+TP_RETINEX_CURVEEDITOR_CD_TOOLTIP;Luminans i henhold til luminans L=f(L)\nKorrigér raw data for at reducere glorier og artefakter.
+TP_RETINEX_CURVEEDITOR_LH;Styrke=f(H)
+TP_RETINEX_CURVEEDITOR_LH_TOOLTIP;Styrke i henhold til farvetone Styrke=f(H)\nDenne kurve virker også på kroma ved brug af "Højlys" retinex-metoden.
+TP_RETINEX_CURVEEDITOR_MAP;L=f(L)
+TP_RETINEX_CURVEEDITOR_MAP_TOOLTIP;Denne kurve kan påføres alene eller med en gaussisk maske eller wavelet-maske.\nPas på - artefakter!
+TP_RETINEX_EQUAL;Equalizer
+TP_RETINEX_FREEGAMMA;Fri gamma
+TP_RETINEX_GAIN;Forstærk
+TP_RETINEX_GAINOFFS;Forstærk og Offset (lysstyrke)
+TP_RETINEX_GAINTRANSMISSION;Forstærk transmission
+TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Forstærk eller reducér transmissionskortet for at opnå den ønskede luminans.\nX-aksen er transmissionen.\nY-aksen er forstærkningen.
+TP_RETINEX_GAMMA;Gamma
+TP_RETINEX_GAMMA_FREE;Fri
+TP_RETINEX_GAMMA_HIGH;Høj
+TP_RETINEX_GAMMA_LOW;Lav
+TP_RETINEX_GAMMA_MID;Mellem
+TP_RETINEX_GAMMA_NONE;Ingen
+TP_RETINEX_GAMMA_TOOLTIP;Gendan toner ved at påføre gamma før og efter Retinex. Forskelligt fra Retinex-kurver eller andre kurver (Lab, Eksponering osv.).
+TP_RETINEX_GRAD;Transmissionsgradient
+TP_RETINEX_GRADS;Styrke gradient
+TP_RETINEX_GRADS_TOOLTIP;Hvis skyderen står på 0, er alle iterationer identiske.\nHvis > 0 Styrken reduceres, når iterationerne øges, og omvendt.
+TP_RETINEX_GRAD_TOOLTIP;Hvis skyderen står på 0, er alle iterationer identiske.\nHvis > 0 Varians og Tærskel reduceres, når iterationer øges, og omvendt.
+TP_RETINEX_HIGH;Høj
+TP_RETINEX_HIGHLIG;Højlys
+TP_RETINEX_HIGHLIGHT;Højlys tærskel
+TP_RETINEX_HIGHLIGHT_TOOLTIP;Forøg handlingen af Høj-algoritmen.\nKan kræve, at du genjusterer "Nabopixels" og øger "Hvidpunkts korrektion" på fanen Raw -> Raw hvide punkter.
+TP_RETINEX_HSLSPACE_LIN;HSL-lineær
+TP_RETINEX_HSLSPACE_LOG;HSL-Logaritmisk
+TP_RETINEX_ITER;Gentagelser (Tone-mapping)
+TP_RETINEX_ITERF;
+TP_RETINEX_ITER_TOOLTIP;Simulér en tone-mapping-operator.\nHøje værdier øger behandlingstiden.
+TP_RETINEX_LABEL;Retinex
+TP_RETINEX_LABEL_MASK;Maske
+TP_RETINEX_LABSPACE;L*a*b*
+TP_RETINEX_LOW;Lav
+TP_RETINEX_MAP;Metode
+TP_RETINEX_MAP_GAUS;Gaussisk maske
+TP_RETINEX_MAP_MAPP;Skarp maske (wavelet partiel)
+TP_RETINEX_MAP_MAPT;Skarp maske (wavelet total)
+TP_RETINEX_MAP_METHOD_TOOLTIP;Brug masken genereret af Gaussisk-funktionen ovenfor (Radius, Metode) til at reducere glorier og artefakter.\n\nKun kurve: tilføj en diagonal kontrastkurve på masken.\nPas på artefakter!\n\nGaussisk maske: generér og brug en Gaussisk sløring af den originale maske.\nHurtig.\n\nSkarp maske: generér og brug en wavelet på den originale maske.\nLangsom.
+TP_RETINEX_MAP_NONE;Ingen
+TP_RETINEX_MEDIAN;Transmission median filter
+TP_RETINEX_METHOD;Metode
+TP_RETINEX_METHOD_TOOLTIP;Lav = Forstærk svagt lys.\nEnsartet = Equalize handling.\nHøj = Forstærk højlys.\nHøjlys = Fjern magenta i højlys.
+TP_RETINEX_MLABEL;Gendannet dis-fri Min=%1 Max=%2
+TP_RETINEX_MLABEL_TOOLTIP;Bør være tæt på min=0 max=32768\nGendannet billede uden blanding.
+TP_RETINEX_NEIGHBOR;Radius
+TP_RETINEX_NEUTRAL;Nulstil
+TP_RETINEX_NEUTRAL_TIP;Nulstil alle skydere og kurver til deres standardværdier.
+TP_RETINEX_OFFSET;Offset (lysstyrke)
+TP_RETINEX_SCALES;Gaussian gradient
+TP_RETINEX_SCALES_TOOLTIP;Hvis skyderen står på 0, er alle iterationer identiske.\nHvis > 0 Vægt og radius reduceres, når iterationer øges, og omvendt.
+TP_RETINEX_SETTINGS;Indstillinger
+TP_RETINEX_SKAL;Vægt
+TP_RETINEX_SLOPE;Fri gamma hældning
+TP_RETINEX_STRENGTH;Styrke
+TP_RETINEX_THRESHOLD;Tærskel
+TP_RETINEX_THRESHOLD_TOOLTIP;Begrænser ind/ud.\nInd = billedkilde,\nUd = billede gauss.
+TP_RETINEX_TLABEL;TM Min=%1 Max=%2 Mean=%3 Sigma=%4
+TP_RETINEX_TLABEL2;TM Tm=%1 TM=%2
+TP_RETINEX_TLABEL_TOOLTIP;Transmissionskortresultat.\Min og Max bruges af Variance.\Mean og Sigma.\nTm=Min TM=Maks af transmissionskort.
+TP_RETINEX_TRANF;Transmission
+TP_RETINEX_TRANSMISSION;Transmissionskort
+TP_RETINEX_TRANSMISSION_TOOLTIP;Transmission i henhold til transmission.\nVandret akse: transmission fra negative værdier (min), middelværdier og positive værdier (maks.).\nLodret akse: forstærkning eller reduktion.
+TP_RETINEX_UNIFORM;Ensartet
+TP_RETINEX_VARIANCE;Kontrast
+TP_RETINEX_VARIANCE_TOOLTIP;Lav varians øger lokal kontrast og mætning, men kan føre til artefakter.
+TP_RETINEX_VIEW;Proces
+TP_RETINEX_VIEW_MASK;Mask
+TP_RETINEX_VIEW_METHOD_TOOLTIP;Standard - Normal visning.\nMaske - Viser masken.\nUskarp maske - Viser billedet med en uskarp maske med høj radius.\nTransmission - Auto/Fixet - Viser transmissionskortet før enhver handling på kontrast og lysstyrke.\n \nBemærk: masken svarer ikke til virkeligheden, men er forstærket for at gøre den mere synlig.
+TP_RETINEX_VIEW_NONE;Standard
+TP_RETINEX_VIEW_TRAN;Transmission - Auto
+TP_RETINEX_VIEW_TRAN2;Transmission - Fixed
+TP_RETINEX_VIEW_UNSHARP;Uskarp maske
+TP_RGBCURVES_BLUE;B
+TP_RGBCURVES_CHANNEL;Kanal
+TP_RGBCURVES_GREEN;G
+TP_RGBCURVES_LABEL;RGB Kurver
+TP_RGBCURVES_LUMAMODE;Luminanstilstand
+TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminanstilstand</b> gør det muligt at variere bidraget fra R-, G- og B-kanaler til billedets luminans uden at ændre billedfarven.
+TP_RGBCURVES_RED;R
+TP_ROTATE_DEGREE;Grad
+TP_ROTATE_LABEL;Rotér
+TP_ROTATE_SELECTLINE;Vælg lige linje
+TP_SAVEDIALOG_OK_TIP;Genvej: <b>Ctrl-Enter</b>
+TP_SHADOWSHLIGHTS_HIGHLIGHTS;Højlys
+TP_SHADOWSHLIGHTS_HLTONALW;Højlys tonal bredde
+TP_SHADOWSHLIGHTS_LABEL;Skygger/Højlys
+TP_SHADOWSHLIGHTS_RADIUS;Radius
+TP_SHADOWSHLIGHTS_SHADOWS;Skygger
+TP_SHADOWSHLIGHTS_SHTONALW;Skygger tonal bredde
+TP_SHARPENEDGE_AMOUNT;Mængde
+TP_SHARPENEDGE_LABEL;Skærpen kanter
+TP_SHARPENEDGE_PASSES;Gentagelser
+TP_SHARPENEDGE_THREE;Kun luminans
+TP_SHARPENING_AMOUNT;Mængde
+TP_SHARPENING_BLUR;Sløringsradius
+TP_SHARPENING_CONTRAST;Kontrasttærskel
+TP_SHARPENING_EDRADIUS;Radius
+TP_SHARPENING_EDTOLERANCE;Kanttolerance
+TP_SHARPENING_HALOCONTROL;Gloriekontrol
+TP_SHARPENING_HCAMOUNT;Mængde
+TP_SHARPENING_ITERCHECK;Autobegræns gentagelser
+TP_SHARPENING_LABEL;Skærpe
+TP_SHARPENING_METHOD;Metode
+TP_SHARPENING_ONLYEDGES;Skærp kun kanter
+TP_SHARPENING_RADIUS;Radius
+TP_SHARPENING_RADIUS_BOOST;Forstærkning af hjørneradius
+TP_SHARPENING_RLD;RL Dekonvolution
+TP_SHARPENING_RLD_AMOUNT;Mængde
+TP_SHARPENING_RLD_DAMPING;Dæmpning
+TP_SHARPENING_RLD_ITERATIONS;Gentagelser
+TP_SHARPENING_THRESHOLD;Tærskel
+TP_SHARPENING_USM;Uskarp maske
+TP_SHARPENMICRO_AMOUNT;Mængde
+TP_SHARPENMICRO_CONTRAST;Kontrasttærskel
+TP_SHARPENMICRO_LABEL;Mikrokontrast
+TP_SHARPENMICRO_MATRIX;3×3 matrix i stedet for 5×5
+TP_SHARPENMICRO_UNIFORMITY;Ensartethed
+TP_SOFTLIGHT_LABEL;Blødt lys
+TP_SOFTLIGHT_STRENGTH;Styrke
+TP_TM_FATTAL_AMOUNT;Mængde
+TP_TM_FATTAL_ANCHOR;Anker
+TP_TM_FATTAL_LABEL;Dynamisk områdekomprimering
+TP_TM_FATTAL_THRESHOLD;Detalje
+TP_VIBRANCE_AVOIDCOLORSHIFT;Undgå farveforskydning
+TP_VIBRANCE_CURVEEDITOR_SKINTONES;HH
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_LABEL;Hudtoner
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE1;Rød/Lilla
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE2;Rød
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE3;Rød/Gul
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_RANGE4;Gul
+TP_VIBRANCE_CURVEEDITOR_SKINTONES_TOOLTIP;Farvetone i henhold til farvetone H=f(H)
+TP_VIBRANCE_LABEL;Vibrance
+TP_VIBRANCE_PASTELS;Pastel Toner
+TP_VIBRANCE_PASTSATTOG;Knyt pastel og mættede toner sammen
+TP_VIBRANCE_PROTECTSKINS;Beskyt hudtoner
+TP_VIBRANCE_PSTHRESHOLD;Pastel/mættede toners tærskel
+TP_VIBRANCE_PSTHRESHOLD_SATTHRESH;Mætningstærskel
+TP_VIBRANCE_PSTHRESHOLD_TOOLTIP;Den lodrette akse repræsenterer pastel toner i bunden og mættede toner i toppen.\nDen vandrette akse repræsenterer mætningsområdet.
+TP_VIBRANCE_PSTHRESHOLD_WEIGTHING;Pastel/mættet overgangsvægtning
+TP_VIBRANCE_SATURATED;Mættede Toner
+TP_VIGNETTING_AMOUNT;Mængde
+TP_VIGNETTING_CENTER;Center
+TP_VIGNETTING_CENTER_X;Center X
+TP_VIGNETTING_CENTER_Y;Center Y
+TP_VIGNETTING_LABEL;Vignettekorrektion
+TP_VIGNETTING_RADIUS;Radius
+TP_VIGNETTING_STRENGTH;Styrke
+TP_WAVELET_1;Niveau 1
+TP_WAVELET_2;Niveau 2
+TP_WAVELET_3;Niveau 3
+TP_WAVELET_4;Niveau 4
+TP_WAVELET_5;Niveau 5
+TP_WAVELET_6;Niveau 6
+TP_WAVELET_7;Niveau 7
+TP_WAVELET_8;Niveau 8
+TP_WAVELET_9;Niveau 9
+TP_WAVELET_APPLYTO;Tilføj Til
+TP_WAVELET_AVOID;Undgå farveskift
+TP_WAVELET_B0;Sort
+TP_WAVELET_B1;Grå
+TP_WAVELET_B2;Resterende
+TP_WAVELET_BACKGROUND;Baggrund
+TP_WAVELET_BACUR;Kurve
+TP_WAVELET_BALANCE;Kontrastbalance d/v-h
+TP_WAVELET_BALANCE_TOOLTIP;Ændrer balancen mellem wavelet-retningerne: lodret-vandret og diagonal.\nHvis kontrast-, kroma- eller resttonemapping er aktiveret, er effekten på basis af balance forstærket.
+TP_WAVELET_BALCHRO;Kroma balance
+TP_WAVELET_BALCHRO_TOOLTIP;Hvis aktiveret, ændrer 'Kontrastbalance'-kurven eller -skyderen også kroma-balancen.
+TP_WAVELET_BANONE;Ingen
+TP_WAVELET_BASLI;Skyder
+TP_WAVELET_BATYPE;Kontrastbalance metode
+TP_WAVELET_CBENAB;Toning og Farveballance
+TP_WAVELET_CB_TOOLTIP;For stærke værdier - produktfarvetoning ved at kombinere det eller ej med niveauer dekomponering 'toning'\nFor lave værdier kan du ændre hvidbalancen af baggrunden (himmel, ...) uden at ændre den for frontplanet, generelt mere kontrasteret
+TP_WAVELET_CCURVE;Lokal kontrast
+TP_WAVELET_CH1;Hele kroma området
+TP_WAVELET_CH2;Mættet/pastel
+TP_WAVELET_CH3;Sammenkæd kontrast niveauer
+TP_WAVELET_CHCU;Kurve
+TP_WAVELET_CHR;Kroma-kontrast sammenkæd styrke
+TP_WAVELET_CHRO;Mættet/pastel tærskel
+TP_WAVELET_CHRO_TOOLTIP;Sætter det wavelet niveau, som vil være tærskelværdien mellem mættede og pastel farver.\n1-x: mættet\nx-9: pastel\n\nHvis værdien overstiger mængden af wavelet niveauer du bruger, vil det blive ignoreret.
+TP_WAVELET_CHR_TOOLTIP;Justerer kroma som en funktion af "contrast niveauer" og "kroma-kontrast sammenkæd styrke"
+TP_WAVELET_CHSL;Skydere
+TP_WAVELET_CHTYPE;Krominans metode
+TP_WAVELET_COLORT;Opacitet Rød-Grøn
+TP_WAVELET_COMPCONT;Kontrast
+TP_WAVELET_COMPGAMMA;Kompressions gamma
+TP_WAVELET_COMPGAMMA_TOOLTIP;Justering af gamma for det resterende billede giver dig mulighed for at afbalancere dataene og histogrammet.
+TP_WAVELET_COMPTM;
+TP_WAVELET_CONTEDIT;'efter' kontrast Kurve
+TP_WAVELET_CONTR;Farveskala
+TP_WAVELET_CONTRA;Kontrast
+TP_WAVELET_CONTRAST_MINUS;Kontrast -
+TP_WAVELET_CONTRAST_PLUS;Kontrast +
+TP_WAVELET_CONTRA_TOOLTIP;Ændrer kontrast i det resterende billede.
+TP_WAVELET_CTYPE;Krominans kontrol
+TP_WAVELET_CURVEEDITOR_CC_TOOLTIP;Modificerer lokal kontrast som en funktion af den oprindelige lokale kontrast (vandret akse).\nLave værdier på vandret akse repræsenterer lille lokal kontrast (reelle værdier omkring 10..20).\n50% på vandret akse repræsenterer gennemsnitlig lokal kontrast (virkelig værdi omkring 100..300).\n66% på vandret akse repræsenterer standard afvigelse af lokal kontrast (virkelig værdi ca. 300..800).\n100% på vandret akse repræsenterer maksimal lokal kontrast (virkelig værdi ca. 3000..8000).
+TP_WAVELET_CURVEEDITOR_CH;Kontrastniveauer=f(Farvetone)
+TP_WAVELET_CURVEEDITOR_CH_TOOLTIP;Ændrer hvert niveaus kontrast som en funktion af nuance.\nPas på ikke at overskrive ændringer foretaget med Farveskala-underværktøjets farvetonekontroller.\nKurven vil kun have en effekt, når wavelet-kontrastniveau-skydere er ikke-nul.
+TP_WAVELET_CURVEEDITOR_CL;L
+TP_WAVELET_CURVEEDITOR_CL_TOOLTIP;Påfører en endelig kontrastluminanskurve i slutningen af wavelet-behandlingen.
+TP_WAVELET_CURVEEDITOR_HH;HH
+TP_WAVELET_CURVEEDITOR_HH_TOOLTIP;Ændrer det resterende billedes farvetone som en funktion af farvetonen.
+TP_WAVELET_DALL;Alle retninger
+TP_WAVELET_DAUB;Kant ydeevne
+TP_WAVELET_DAUB2;D2 - lav
+TP_WAVELET_DAUB4;D4 - standard
+TP_WAVELET_DAUB6;D6 - standard plus
+TP_WAVELET_DAUB10;D10 - medium
+TP_WAVELET_DAUB14;D14 - høj
+TP_WAVELET_DAUB_TOOLTIP;Ændrer Daubechies-koefficienter:\nD4 = Standard,\nD14 = Ofte bedste ydeevne, 10% mere tidskrævende.\n\nPåvirker kantgenkendelse såvel som den generelle kvalitet af første niveauer. Kvaliteten er dog ikke strengt relateret til denne koefficient og kan variere med billeder og anvendelser.
+TP_WAVELET_DONE;Lodret
+TP_WAVELET_DTHR;Diagonal
+TP_WAVELET_DTWO;Vandret
+TP_WAVELET_EDCU;Kurve
+TP_WAVELET_EDGCONT;Lokal kontrast
+TP_WAVELET_EDGCONT_TOOLTIP;Justering af punkterne til venstre mindsker kontrasten, og til højre øges den.\nNederst til venstre, øverst til venstre, øverst til højre og nederst til højre repræsenterer henholdsvis lokal kontrast for lave værdier, middelværdi, middel+stdev og maksima.
+TP_WAVELET_EDGE;Kantskarphed
+TP_WAVELET_EDGEAMPLI;Basisforstærkning
+TP_WAVELET_EDGEDETECT;Gradient følsomhed
+TP_WAVELET_EDGEDETECTTHR;Tærskel lav (støj)
+TP_WAVELET_EDGEDETECTTHR2;Tærskel høj (genkendelse)
+TP_WAVELET_EDGEDETECTTHR_TOOLTIP;Denne skyder lader dig målrette kantgenkendelse for f. eks. at undgå at anvende kantskarphed på fine detaljer, såsom støj i himlen.
+TP_WAVELET_EDGEDETECT_TOOLTIP;Flytning af skyderen til højre øger kantfølsomheden. Dette påvirker lokal kontrast, kantindstillinger og støj.
+TP_WAVELET_EDGESENSI;Kantfølsomhed
+TP_WAVELET_EDGREINF_TOOLTIP;Forstærk eller reducér virkningen af det første niveau, gør det modsatte af det andet niveau, og lad resten være uændret.
+TP_WAVELET_EDGTHRESH;Detalje
+TP_WAVELET_EDGTHRESH_TOOLTIP;Ændr opdelingen mellem det første niveau og de andre. Jo højere tærskel der er, desto mere er handlingen centreret på det første niveau. Vær forsigtig med negative værdier, de øger virkningen af høje niveauer og kan introducere artefakter.
+TP_WAVELET_EDRAD;Radius
+TP_WAVELET_EDRAD_TOOLTIP;Denne radiusjustering er meget forskellig fra dem i andre skærpeværktøjer. Dens værdi sammenlignes med hvert niveau gennem en kompleks funktion. I den forstand, at en værdi på nul stadig har effekt.
+TP_WAVELET_EDSL;Tærskel Skydere
+TP_WAVELET_EDTYPE;Lokalkontrast metode
+TP_WAVELET_EDVAL;Styrke
+TP_WAVELET_FINAL;Afsluttende Redigering
+TP_WAVELET_FINEST;Fineste
+TP_WAVELET_HIGHLIGHT;Højlys luminanceområde
+TP_WAVELET_HS1;Hele luminansområdet
+TP_WAVELET_HS2;Skygge/Højlys
+TP_WAVELET_HUESKIN;Hudfarvenuance
+TP_WAVELET_HUESKIN_TOOLTIP;De nederste punkter angiver begyndelsen af overgangszonen, og de øverste peger på slutningen af den, hvor effekten er maksimal.\n\nHvis du har brug for at flytte området betydeligt, eller hvis der er artefakter, er <b >hvidbalance forkert</b>.
+TP_WAVELET_HUESKY;Himmelfarvenuance
+TP_WAVELET_HUESKY_TOOLTIP;De nederste punkter angiver begyndelsen af overgangszonen, og de øverste peger på slutningen af den, hvor effekten er maksimal.\n\nHvis du har brug for at flytte området betydeligt, eller hvis der er artefakter, er <b >hvidbalance forkert</b>.
+TP_WAVELET_ITER;Delta balance niveauer
+TP_WAVELET_ITER_TOOLTIP;Venstre: øg lavt niveau og sænk højt niveauer,\nHøjre: sænk lavt niveau og øg højt niveau.
+TP_WAVELET_LABEL;Wavelet Niveauer
+TP_WAVELET_LARGEST;Grovste
+TP_WAVELET_LEVCH;Kroma
+TP_WAVELET_LEVDIR_ALL;Alle niveauer i alle retninger
+TP_WAVELET_LEVDIR_INF;Under eller lig med niveauet
+TP_WAVELET_LEVDIR_ONE;Et niveau
+TP_WAVELET_LEVDIR_SUP;Over niveauet
+TP_WAVELET_LEVELS;Wavelet niveauer
+TP_WAVELET_LEVELS_TOOLTIP;Vælg antal detaljniveauer billedet skal dekomponeres til. Flere niveauer kræver mere RAM og kræver længere behandlingstid.
+TP_WAVELET_LEVF;Kontrast
+TP_WAVELET_LEVLABEL;Forhåndsvis maksimalt mulig niveauer = %1
+TP_WAVELET_LEVONE;Niveau 2
+TP_WAVELET_LEVTHRE;Niveau 4
+TP_WAVELET_LEVTWO;Niveau 3
+TP_WAVELET_LEVZERO;Niveau 1
+TP_WAVELET_LINKEDG;Sammenkæd med Kantskarpheds Styrke
+TP_WAVELET_LIPST;Forbedret algoritme
+TP_WAVELET_LOWLIGHT;Skyggeluminansområde
+TP_WAVELET_MEDGREINF;Første niveau
+TP_WAVELET_MEDI;Formindsk artefakter på blå himmel
+TP_WAVELET_MEDILEV;Kantgenkendelse
+TP_WAVELET_MEDILEV_TOOLTIP;Når du aktiverer Kantgenkendelse, anbefales det:\n- at deaktivere lavkontrastniveauer for at undgå artefakter,\n- at bruge høje værdier af gradientfølsomhed.\n\nDu kan modulere styrken med 'forfining' fra Støjfjernelse og Forfining.
+TP_WAVELET_NEUTRAL;Neutral
+TP_WAVELET_NOIS;Støjfjernelse
+TP_WAVELET_NOISE;Støjfjernelse og raffinér
+TP_WAVELET_NPHIGH;Høj
+TP_WAVELET_NPLOW;Lav
+TP_WAVELET_NPNONE;Ingen
+TP_WAVELET_NPTYPE;Nabo pixels
+TP_WAVELET_NPTYPE_TOOLTIP;Denne algoritme bruger nærheden af en pixel og otte af dens naboer. Hvis der er mindre forskel, forstærkes kanter.
+TP_WAVELET_OPACITY;Opacitet Blå-Gul
+TP_WAVELET_OPACITYW;Kontrast balance d/v-h kurve
+TP_WAVELET_OPACITYWL;Endelig lokalkontrast
+TP_WAVELET_OPACITYWL_TOOLTIP;Forandr den endelige lokalkontrast i slutningen af wavelet-redigeringen.\in\Venstre side repræsenterer den mindste lokalkontrast, gående til den højeste lokalkontrast i højre side.
+TP_WAVELET_PASTEL;Pastel kroma
+TP_WAVELET_PROC;Proces
+TP_WAVELET_RE1;Forstærket
+TP_WAVELET_RE2;Uændret
+TP_WAVELET_RE3;Reduceret
+TP_WAVELET_RESCHRO;Kroma
+TP_WAVELET_RESCON;Skygger
+TP_WAVELET_RESCONH;Højlys
+TP_WAVELET_RESID;Resterende billede
+TP_WAVELET_SAT;Mættet kroma
+TP_WAVELET_SETTINGS;Wavelet Indstillinger
+TP_WAVELET_SKIN;Hud målretning/beskyttelse
+TP_WAVELET_SKIN_TOOLTIP;Ved -100 bliver hudtoner angrebet.\nVed 0 behandles alle toner ens.\nVed +100 er hudtoner beskyttet, mens alle andre toner påvirkes.
+TP_WAVELET_SKY;Himmel målretning/beskyttelse
+TP_WAVELET_SKY_TOOLTIP;Ved -100 angribes himmeltoner.\nVed 0 behandles alle toner ens.\nVed +100 er himmeltoner beskyttet, mens alle andre toner påvirkes.
+TP_WAVELET_STREN;Styrke
+TP_WAVELET_STRENGTH;Styrke
+TP_WAVELET_SUPE;Ekstra
+TP_WAVELET_THR;Skygge tærskel
+TP_WAVELET_THRESHOLD;Højlys niveauer
+TP_WAVELET_THRESHOLD2;Skygge niveauer
+TP_WAVELET_THRESHOLD2_TOOLTIP;Kun niveauer mellem 9 og minus-9 værdien vil blive påvirket af skygge luminansområdet. Andre niveauer vil blive behandlet fuldt ud. Det højest mulige niveau er begrænset af højlysniveauværdien (minus-9 højlysniveauværdi).
+TP_WAVELET_THRESHOLD_TOOLTIP;Kun niveauer ud over den valgte værdi vil blive påvirket af højlys luminansområdet. Andre niveauer vil blive behandlet fuldt ud. Den valgte værdi her begrænser den højest mulige værdi af skyggeniveauerne.
+TP_WAVELET_THRH;Højlys tærskel
+TP_WAVELET_TILESBIG;Store fliser
+TP_WAVELET_TILESFULL;Fuldt billede
+TP_WAVELET_TILESIZE;Fliseopdelingsmetode
+TP_WAVELET_TILESLIT;Små fliser
+TP_WAVELET_TILES_TOOLTIP;Redigering af det fulde billede fører til bedre kvalitet og er den anbefalede metode, mens brug af fliser er en nødløsning for brugere med lidt RAM. Se RawPedia for hukommelseskrav.
+TP_WAVELET_TMSTRENGTH;Kompressionsstyrke
+TP_WAVELET_TMSTRENGTH_TOOLTIP;Kontrolér styrken af tonemapping eller kontrastkomprimering af det resterende billede. Når værdien er forskellig fra 0, bliver skyderne Styrke og Gamma i Tone Mapping-værktøjet på fanen Eksponering grået-ud.
+TP_WAVELET_TMTYPE;Kompressions metode
+TP_WAVELET_TON;Toning
+TP_WBALANCE_AUTO;Auto
+TP_WBALANCE_CAMERA;Kamera
+TP_WBALANCE_CLOUDY;Overskyet
+TP_WBALANCE_CUSTOM;Bruger
+TP_WBALANCE_DAYLIGHT;Dagslys (solrig)
+TP_WBALANCE_EQBLUERED;Blå/Rød equalizer
+TP_WBALANCE_EQBLUERED_TOOLTIP;Giver mulighed for at afvige fra den normale opførsel af "hvidbalance" ved at modulere blå/rød-balancen.\nDette kan være nyttigt, når optageforholdene:\na: er meget forskellige fra standardlyskilden (f.eks. under vand),\nb: hvor kalibrering blev udført,\nc: hvor matricerne eller ICC-profilerne er uegnede.
+TP_WBALANCE_FLASH55;Leica
+TP_WBALANCE_FLASH60;Standard, Canon, Pentax, Olympus
+TP_WBALANCE_FLASH65;Nikon, Panasonic, Sony, Minolta
+TP_WBALANCE_FLASH_HEADER;Flash
+TP_WBALANCE_FLUO1;F1 - Dagslys
+TP_WBALANCE_FLUO2;F2 – Kold hvid
+TP_WBALANCE_FLUO3;F3 - Hvid
+TP_WBALANCE_FLUO4;F4 - Varm hvid
+TP_WBALANCE_FLUO5;F5 - Dagslys
+TP_WBALANCE_FLUO6;F6 – Let hvid
+TP_WBALANCE_FLUO7;F7 - D65 Dagslyssimulering
+TP_WBALANCE_FLUO8;F8 - D50/Sylvania F40 Design
+TP_WBALANCE_FLUO9;F9 – Kold hvid Deluxe
+TP_WBALANCE_FLUO10;F10 - Philips TL85
+TP_WBALANCE_FLUO11;F11 - Philips TL84
+TP_WBALANCE_FLUO12;F12 - Philips TL83
+TP_WBALANCE_FLUO_HEADER;Fluorescent
+TP_WBALANCE_GREEN;Farvenuance
+TP_WBALANCE_GTI;GTI
+TP_WBALANCE_HMI;HMI
+TP_WBALANCE_JUDGEIII;JudgeIII
+TP_WBALANCE_LABEL;Hvidbalance
+TP_WBALANCE_LAMP_HEADER;Lampe
+TP_WBALANCE_LED_CRS;CRS SP12 WWMR16
+TP_WBALANCE_LED_HEADER;LED
+TP_WBALANCE_LED_LSI;LSI Lumelex 2040
+TP_WBALANCE_METHOD;Metode
+TP_WBALANCE_PICKER;Pipette
+TP_WBALANCE_SHADE;Skygge
+TP_WBALANCE_SIZE;Størrelse:
+TP_WBALANCE_SOLUX35;Solux 3500K
+TP_WBALANCE_SOLUX41;Solux 4100K
+TP_WBALANCE_SOLUX47;Solux 4700K (leverandør)
+TP_WBALANCE_SOLUX47_NG;Solux 4700K (Nat. Galleri)
+TP_WBALANCE_SPOTWB;Brug pipetten til at vælge hvidbalancen fra et egnet område, f.eks. hvidt/gråt/sort område i forhåndsvisningen.
+TP_WBALANCE_TEMPBIAS;Automatisk hvidballance temperatur forskydning
+TP_WBALANCE_TEMPBIAS_TOOLTIP;Kan kun bruges med "Metode" valgt til: "Auto"\n Ændrer beregningen af "auto hvidbalance" ved at forskyde den mod\nvarmere eller køligere temperaturer.\nForskydningen er udtrykt som en procentdel af den beregnede temperatur,\nså resultatet er givet ved "BeregnetTemp + BeregnetTemp * Forskydning".
+TP_WBALANCE_TEMPERATURE;Temperatur
+TP_WBALANCE_TUNGSTEN;Tungsten
+TP_WBALANCE_WATER1;UnderVands 1
+TP_WBALANCE_WATER2;UnderVands 2
+TP_WBALANCE_WATER_HEADER;UnderVands
+ZOOMPANEL_100;(100%)
+ZOOMPANEL_NEWCROPWINDOW;Åbn (nyt) detaljevindue
+ZOOMPANEL_ZOOM100;Zoom til 100%\nGenvej: <b>z</b>
+ZOOMPANEL_ZOOMFITCROPSCREEN;Tilpas beskæring til skærmen\nGenvej: <b>f</b>
+ZOOMPANEL_ZOOMFITSCREEN;Tilpas hele billedet til skærmen\nGenvej: <b>Alt</b>-<b>f</b>
+ZOOMPANEL_ZOOMIN;Zoom Ind\nGenvej: <b>+</b>
+ZOOMPANEL_ZOOMOUT;Zoom Ud\nGenvej: <b>-</b>
