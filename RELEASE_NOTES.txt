@@ -1,6 +1,6 @@
-RAWTHERAPEE 5.8 RELEASE NOTES
+RAWTHERAPEE 5.8.1 RELEASE NOTES
 
-This is RawTherapee 5.8, released on 2020-02-04.
+This is RawTherapee 5.8.1, released on 2022-04-26.
 
 Start by reading the "Getting Started" article in RawPedia:
 https://rawpedia.rawtherapee.com/
