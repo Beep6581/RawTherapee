@@ -159,6 +159,7 @@ set(NONCLISOURCEFILES
     thumbimageupdater.cc
     thumbnail.cc
     tonecurve.cc
+    toneequalizer.cc
     toolbar.cc
     toolpanel.cc
     toolpanelcoord.cc

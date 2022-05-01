@@ -97,6 +97,7 @@ struct LocalContrastParams;
 struct LocallabParams;
 struct SharpeningParams;
 struct SoftLightParams;
+struct ToneEqualizerParams;
 struct VibranceParams;
 struct VignettingParams;
 struct WaveletParams;
@@ -491,7 +492,8 @@ enum class BlurType {
     void colorToningLabGrid(LabImage *lab, int xstart, int xend, int ystart, int yend, bool MultiThread);
     //void shadowsHighlights(LabImage *lab);
     void shadowsHighlights(LabImage *lab, bool ena, int labmode, int hightli, int shado, int rad, int scal, int hltonal, int shtonal);
-    
+    bool toneEqualizer(Imagefloat *rgb);
+    static void toneEqualizer(array2D<float> &R, array2D<float> &G, array2D<float> &B, const procparams::ToneEqualizerParams & params, const Glib::ustring &workingProfile, double scale, bool multithread, bool show_color_map);
     void softLight(LabImage *lab, const procparams::SoftLightParams &softLightParams);
     void labColorCorrectionRegions(LabImage *lab);
 

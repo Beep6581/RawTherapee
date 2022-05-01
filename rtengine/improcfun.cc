@@ -2258,6 +2258,12 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     // For tonecurve histogram
     const float lumimulf[3] = {static_cast<float>(lumimul[0]), static_cast<float>(lumimul[1]), static_cast<float>(lumimul[2])};
 
+    std::unique_ptr<Imagefloat> workimg_copy;
+    if (params->toneEqualizer.enabled) {
+        working = working->copy();
+        workimg_copy.reset(working);
+        toneEqualizer(working);
+    }
 
 #define TS 112
 

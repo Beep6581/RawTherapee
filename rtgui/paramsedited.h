@@ -358,6 +358,14 @@ struct SHParamsEdited {
     bool lab;
 };
 
+struct ToneEqualizerParamsEdited {
+    bool enabled;
+    bool bands;
+    bool regularization;
+    bool show_colormap;
+    bool pivot;
+};
+
 struct CropParamsEdited {
     bool enabled;
     bool x;
@@ -1545,6 +1553,7 @@ struct ParamsEdited {
     FattalToneMappingParamsEdited fattal;
     ImpulseDenoiseParamsEdited impulseDenoise;
     SHParamsEdited sh;
+    ToneEqualizerParamsEdited toneEqualizer;
     CropParamsEdited crop;
     CoarseTransformParamsEdited coarse;
     CommonTransformParamsEdited commonTrans;

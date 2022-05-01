@@ -2734,6 +2734,7 @@ void ImProcCoordinator::process()
             || params->epd != nextParams->epd
             || params->fattal != nextParams->fattal
             || params->sh != nextParams->sh
+            || params->toneEqualizer != nextParams->toneEqualizer
             || params->crop != nextParams->crop
             || params->coarse != nextParams->coarse
             || params->commonTrans != nextParams->commonTrans

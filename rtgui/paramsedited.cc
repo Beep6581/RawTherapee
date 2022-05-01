@@ -317,6 +317,11 @@ void ParamsEdited::set(bool v)
     sh.stonalwidth   = v;
     sh.radius        = v;
     sh.lab           = v;
+    toneEqualizer.enabled        = v;
+    toneEqualizer.bands          = v;
+    toneEqualizer.regularization = v;
+    toneEqualizer.show_colormap  = v;
+    toneEqualizer.pivot  = v;
     crop.enabled = v;
     crop.x       = v;
     crop.y       = v;
@@ -1031,6 +1036,11 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         crop.ratio = crop.ratio && p.crop.ratio == other.crop.ratio;
         crop.orientation = crop.orientation && p.crop.orientation == other.crop.orientation;
         crop.guide = crop.guide && p.crop.guide == other.crop.guide;
+        toneEqualizer.enabled = toneEqualizer.enabled && p.toneEqualizer.enabled == other.toneEqualizer.enabled;
+        toneEqualizer.bands = toneEqualizer.bands && p.toneEqualizer.bands == other.toneEqualizer.bands;
+        toneEqualizer.regularization = toneEqualizer.regularization && p.toneEqualizer.regularization == other.toneEqualizer.regularization;
+        toneEqualizer.show_colormap = toneEqualizer.show_colormap && p.toneEqualizer.show_colormap == other.toneEqualizer.show_colormap;
+        toneEqualizer.pivot = toneEqualizer.pivot && p.toneEqualizer.pivot == other.toneEqualizer.pivot;
         coarse.rotate = coarse.rotate && p.coarse.rotate == other.coarse.rotate;
         coarse.hflip = coarse.hflip && p.coarse.hflip == other.coarse.hflip;
         coarse.vflip = coarse.vflip && p.coarse.vflip == other.coarse.vflip;
@@ -3192,6 +3202,26 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (sh.lab) {
         toEdit.sh.lab = mods.sh.lab;
+    }
+
+    if (toneEqualizer.enabled) {
+        toEdit.toneEqualizer.enabled = mods.toneEqualizer.enabled;
+    }
+
+    if (toneEqualizer.bands) {
+        toEdit.toneEqualizer.bands = mods.toneEqualizer.bands;
+    }
+
+    if (toneEqualizer.regularization) {
+        toEdit.toneEqualizer.regularization = mods.toneEqualizer.regularization;
+    }
+
+    if (toneEqualizer.show_colormap) {
+        toEdit.toneEqualizer.show_colormap = mods.toneEqualizer.show_colormap;
+    }
+
+    if (toneEqualizer.pivot) {
+        toEdit.toneEqualizer.pivot = mods.toneEqualizer.pivot;
     }
 
     if (crop.enabled) {

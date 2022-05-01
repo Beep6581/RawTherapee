@@ -207,9 +207,10 @@ public:
         return (uint32_t) ((lsign << 31) | (exponent << 23) | mantissa);
     }
 
+    void multiply(float factor, bool multithread);
     void                 normalizeFloat(float srcMinVal, float srcMaxVal) override;
-    void                 normalizeFloatTo1();
-    void                 normalizeFloatTo65535();
+    void                 normalizeFloatTo1(bool multithread=true);
+    void                 normalizeFloatTo65535(bool multithread=true);
     void                 ExecCMSTransform(cmsHTRANSFORM hTransform);
     void                 ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy);
 };
