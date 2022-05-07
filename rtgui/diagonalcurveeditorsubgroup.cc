@@ -399,6 +399,25 @@ DiagonalCurveEditor* DiagonalCurveEditorSubGroup::addCurve(Glib::ustring curveLa
     return newCE;
 }
 
+
+void DiagonalCurveEditorSubGroup::updateLocallabBackground(CurveEditor* ce)
+{
+    if (ce == parent->displayedCurve) {
+        paramCurve->updateLocallabBackground(ce->locallabRef);
+        customCurve->updateLocallabBackground(ce->locallabRef);
+        NURBSCurve->updateLocallabBackground(ce->locallabRef);
+    }
+}
+
+void DiagonalCurveEditorSubGroup::restoreLocallabBackground()
+{
+    if (parent->displayedCurve) {
+         paramCurve->updateLocallabBackground(parent->displayedCurve->locallabRef);
+         customCurve->updateLocallabBackground(parent->displayedCurve->locallabRef);
+         NURBSCurve->updateLocallabBackground(parent->displayedCurve->locallabRef);
+    }
+}
+
 /*
  * Switch off the edit button
  */

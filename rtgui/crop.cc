@@ -16,12 +16,15 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <vector>
+
 #include "crop.h"
 
 #include "options.h"
 #include "rtimage.h"
 
 #include "../rtengine/procparams.h"
+#include "../rtengine/utils.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -46,39 +49,83 @@ inline void get_custom_ratio(int w, int h, double &rw, double &rh)
 
 } // namespace
 
+class Crop::CropRatios final
+{
+public:
+    CropRatios() :
+        ratios{
+            {M("GENERAL_ASIMAGE"), 0.0},
+            {M("GENERAL_CURRENT"), -1.0},
+            {"3:2", 3.0 / 2.0},                 // L1.5,        P0.666...
+            {"4:3", 4.0 / 3.0},                 // L1.333...,   P0.75
+            {"16:9", 16.0 / 9.0},               // L1.777...,   P0.5625
+            {"16:10", 16.0 / 10.0},             // L1.6,        P0.625
+            {"1:1", 1.0 / 1.0},                 // L1,          P1
+            {"2:1", 2.0 / 1.0},                 // L2,          P0.5
+            {"3:1", 3.0 / 1.0},                 // L3,          P0.333...
+            {"4:1", 4.0 / 1.0},                 // L4,          P0.25
+            {"5:1", 5.0 / 1.0},                 // L5,          P0.2
+            {"6:1", 6.0 / 1.0},                 // L6,          P0.1666...
+            {"7:1", 7.0 / 1.0},                 // L7,          P0.142...
+            {"4:5", 4.0 / 5.0},                 // L1.25,       P0.8
+            {"5:7", 5.0 / 7.0},                 // L1.4,        P0.714...
+            {"6:7", 6.0 / 7.0},                 // L1.166...,   P0.857...
+            {"6:17", 6.0 / 17.0},               // L2.833...,   P0.352...
+            {"24:65 - XPAN", 24.0 / 65.0},      // L2.708...,   P0.369...
+            {"1.414 - DIN EN ISO 216", 1.414},  // L1.414,      P0.707...
+            {"3.5:5", 3.5 / 5.0},               // L1.428...,   P0.7
+            {"8.5:11 - US Letter", 8.5 / 11.0}, // L1.294...,   P0.772...
+            {"9.5:12", 9.5 / 12.0},             // L1.263...,   P0.791...
+            {"10:12", 10.0 / 12.0},             // L1.2,        P0.833...
+            {"11:14", 11.0 / 14.0},             // L1.272...,   P0.785...
+            {"11:17 - Tabloid", 11.0 / 17.0},   // L1.545...,   P0.647...
+            {"13:19", 13.0 / 19.0},             // L1.461...,   P0.684...
+            {"17:22", 17.0 / 22.0},             // L1.294...,   P0.772...
+            {"45:35 - ePassport", 45.0 / 35.0}, // L1.285,...   P0.777...
+            {"64:27", 64.0 / 27.0},             // L2.370...,   P0.421...
+            {"13:18", 13.0 / 18.0},             // L1.384...,   P0.722...
+        }
+    {
+    }
+
+    std::vector<Glib::ustring> getLabels() const
+    {
+        std::vector<Glib::ustring> res;
+
+        res.reserve(ratios.size());
+
+        for (const auto& ratio : ratios) {
+            res.push_back(ratio.label);
+        }
+
+        return res;
+    }
+
+    double getValue(std::size_t index) const
+    {
+        return
+            index < ratios.size()
+                ? ratios[index].value
+                : ratios[0].value;
+    }
+
+    void updateCurrentRatio(double value)
+    {
+        ratios[1].value = value;
+    }
+
+private:
+    struct CropRatio {
+        Glib::ustring label;
+        double value;
+    };
+
+    std::vector<CropRatio> ratios;
+};
+
 Crop::Crop():
     FoldableToolPanel(this, "crop", M("TP_CROP_LABEL"), false, true),
-    crop_ratios{
-        {M("GENERAL_ASIMAGE"), 0.0},
-        {M("GENERAL_CURRENT"), -1.0},
-        {"3:2", 3.0 / 2.0},                 // L1.5,        P0.666...
-        {"4:3", 4.0 / 3.0},                 // L1.333...,   P0.75
-        {"16:9", 16.0 / 9.0},               // L1.777...,   P0.5625
-        {"16:10", 16.0 / 10.0},             // L1.6,        P0.625
-        {"1:1", 1.0 / 1.0},                 // L1,          P1
-        {"2:1", 2.0 / 1.0},                 // L2,          P0.5
-        {"3:1", 3.0 / 1.0},                 // L3,          P0.333...
-        {"4:1", 4.0 / 1.0},                 // L4,          P0.25
-        {"5:1", 5.0 / 1.0},                 // L5,          P0.2
-        {"6:1", 6.0 / 1.0},                 // L6,          P0.1666...
-        {"7:1", 7.0 / 1.0},                 // L7,          P0.142...
-        {"4:5", 4.0 / 5.0},                 // L1.25,       P0.8
-        {"5:7", 5.0 / 7.0},                 // L1.4,        P0.714...
-        {"6:7", 6.0 / 7.0},                 // L1.166...,   P0.857...
-        {"6:17", 6.0 / 17.0},               // L2.833...,   P0.352...
-        {"24:65 - XPAN", 24.0 / 65.0},      // L2.708...,   P0.369...
-        {"1.414 - DIN EN ISO 216", 1.414},  // L1.414,      P0.707...
-        {"3.5:5", 3.5 / 5.0},               // L1.428...,   P0.7
-        {"8.5:11 - US Letter", 8.5 / 11.0}, // L1.294...,   P0.772...
-        {"9.5:12", 9.5 / 12.0},             // L1.263...,   P0.791...
-        {"10:12", 10.0 / 12.0},             // L1.2,        P0.833...
-        {"11:14", 11.0 / 14.0},             // L1.272...,   P0.785...
-        {"11:17 - Tabloid", 11.0 / 17.0},   // L1.545...,   P0.647...
-        {"13:19", 13.0 / 19.0},             // L1.461...,   P0.684...
-        {"17:22", 17.0 / 22.0},             // L1.294...,   P0.772...
-        {"45:35 - ePassport", 45.0 / 35.0}, // L1.285,...   P0.777...
-        {"64:27", 64.0 / 27.0},             // L2.370...,   P0.421...
-    },
+    crop_ratios(new CropRatios),
     opt(0),
     wDirty(true),
     hDirty(true),
@@ -146,7 +193,7 @@ Crop::Crop():
     methodgrid->attach (*resetCrop, 2, 2, 2, 1);
     pack_start (*methodgrid, Gtk::PACK_EXPAND_WIDGET, 0 );
 
-    Gtk::HSeparator* methodseparator = Gtk::manage (new  Gtk::HSeparator());
+    Gtk::Separator* methodseparator = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     methodseparator->get_style_context()->add_class("grid-row-separator");
     pack_start (*methodseparator, Gtk::PACK_SHRINK, 0);
 
@@ -196,7 +243,7 @@ Crop::Crop():
     ppigrid->set_column_homogeneous (true);
     setExpandAlignProperties(ppigrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
-    Gtk::HSeparator* ppiseparator = Gtk::manage (new  Gtk::HSeparator());
+    Gtk::Separator* ppiseparator = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     ppiseparator->get_style_context()->add_class("grid-row-separator");
 
     Gtk::Grid* ppisubgrid = Gtk::manage(new Gtk::Grid());
@@ -229,8 +276,8 @@ Crop::Crop():
     // ppigrid END
 
     // Populate the combobox
-    for (const auto& crop_ratio : crop_ratios) {
-        ratio->append (crop_ratio.label);
+    for (const auto& label : crop_ratios->getLabels()) {
+        ratio->append (label);
     }
 
     ratio->set_active (0);
@@ -249,6 +296,7 @@ Crop::Crop():
     guide->append (M("TP_CROP_GTTRIANGLE1"));
     guide->append (M("TP_CROP_GTTRIANGLE2"));
     guide->append (M("TP_CROP_GTEPASSPORT"));
+    guide->append (M("TP_CROP_GTCENTEREDSQUARE"));
     guide->set_active (0);
 
     w->set_range (1, maxw);
@@ -354,7 +402,10 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited)
         setDimensions (pp->crop.x + pp->crop.w, pp->crop.y + pp->crop.h);
     }
 
-    const bool flip_orientation = pp->crop.fixratio && crop_ratios[ratio->get_active_row_number()].value > 0 && crop_ratios[ratio->get_active_row_number()].value < 1.0;
+    const bool flip_orientation =
+        pp->crop.fixratio
+        && crop_ratios->getValue(ratio->get_active_row_number()) > 0
+        && crop_ratios->getValue(ratio->get_active_row_number()) < 1.0;
 
     if (pp->crop.orientation == "Landscape") {
         orientation->set_active (flip_orientation ? 1 : 0);
@@ -364,24 +415,19 @@ void Crop::read (const ProcParams* pp, const ParamsEdited* pedited)
         orientation->set_active (2);
     }
 
-    if (pp->crop.guide == "None") {
-        guide->set_active (0);
-    } else if (pp->crop.guide == "Frame") {
-        guide->set_active (1);
-    } else if (pp->crop.guide == "Rule of thirds") {
-        guide->set_active (2);
-    } else if (pp->crop.guide == "Rule of diagonals") {
-        guide->set_active (3);
-    } else if (!strncmp(pp->crop.guide.data(), "Harmonic means", 14)) {
-        guide->set_active (4);
-    } else if (pp->crop.guide == "Grid") {
-        guide->set_active (5);
-    } else if (pp->crop.guide == "Golden Triangle 1") {
-        guide->set_active (6);
-    } else if (pp->crop.guide == "Golden Triangle 2") {
-        guide->set_active (7);
-    } else if (pp->crop.guide == "ePassport") {
-        guide->set_active (8);
+    switch (pp->crop.guide) {
+        case procparams::CropParams::Guide::NONE:
+        case procparams::CropParams::Guide::FRAME:
+        case procparams::CropParams::Guide::RULE_OF_THIRDS:
+        case procparams::CropParams::Guide::RULE_OF_DIAGONALS:
+        case procparams::CropParams::Guide::HARMONIC_MEANS:
+        case procparams::CropParams::Guide::GRID:
+        case procparams::CropParams::Guide::GOLDEN_TRIANGLE_1:
+        case procparams::CropParams::Guide::GOLDEN_TRIANGLE_2:
+        case procparams::CropParams::Guide::EPASSPORT:
+        case procparams::CropParams::Guide::CENTERED_SQUARE: {
+            guide->set_active(toUnderlying(pp->crop.guide));
+        }
     }
 
     x->set_value(pp->crop.x);
@@ -469,7 +515,10 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited)
     }
 
     // for historical reasons we store orientation different if ratio is written as 2:3 instead of 3:2, but in GUI 'landscape' is always long side horizontal regardless of the ratio is written short or long side first.
-    const bool flip_orientation = fixr->get_active() && crop_ratios[ratio->get_active_row_number()].value > 0 && crop_ratios[ratio->get_active_row_number()].value < 1.0;
+    const bool flip_orientation =
+        fixr->get_active()
+        && crop_ratios->getValue(ratio->get_active_row_number()) > 0
+        && crop_ratios->getValue(ratio->get_active_row_number()) < 1.0;
 
     if (orientation->get_active_row_number() == 0) {
         pp->crop.orientation = flip_orientation ? "Portrait" : "Landscape";
@@ -479,25 +528,7 @@ void Crop::write (ProcParams* pp, ParamsEdited* pedited)
         pp->crop.orientation = "As Image";
     }
 
-    if (guide->get_active_row_number() == 0) {
-        pp->crop.guide = "None";
-    } else if (guide->get_active_row_number() == 1) {
-        pp->crop.guide = "Frame";
-    } else if (guide->get_active_row_number() == 2) {
-        pp->crop.guide = "Rule of thirds";
-    } else if (guide->get_active_row_number() == 3) {
-        pp->crop.guide = "Rule of diagonals";
-    } else if (guide->get_active_row_number() == 4) {
-        pp->crop.guide = "Harmonic means";
-    } else if (guide->get_active_row_number() == 5) {
-        pp->crop.guide = "Grid";
-    } else if (guide->get_active_row_number() == 6) {
-        pp->crop.guide = "Golden Triangle 1";
-    } else if (guide->get_active_row_number() == 7) {
-        pp->crop.guide = "Golden Triangle 2";
-    } else if (guide->get_active_row_number() == 8) {
-        pp->crop.guide = "ePassport";
-    }
+    pp->crop.guide = procparams::CropParams::Guide(guide->get_active_row_number());
 
     if (pedited) {
         pedited->crop.enabled       = !get_inconsistent();
@@ -561,6 +592,11 @@ void Crop::doresetCrop ()
     yDirty = true;
     wDirty = true;
     hDirty = true;
+    
+    // Reset ratio, ratio lock and orientation as well
+    ratio->set_active(0);
+    orientation->set_active(2);
+    fixr->set_active(true); 
 
     int X = 0;
     int Y = 0;
@@ -1501,7 +1537,7 @@ double Crop::getRatio () const
         return r;
     }
 
-    r = crop_ratios[ratio->get_active_row_number()].value;
+    r = crop_ratios->getValue(ratio->get_active_row_number());
     if (!r) {
         r = maxh <= maxw ? float(maxh)/float(maxw) : float(maxw)/float(maxh);
     }
@@ -1539,5 +1575,5 @@ void Crop::updateCurrentRatio()
     double rw, rh;
     get_custom_ratio(w->get_value(), h->get_value(), rw, rh);
     customRatioLabel->set_text(Glib::ustring::compose("%1:%2", rw, rh));
-    crop_ratios[1].value = double(w->get_value())/double(h->get_value());
+    crop_ratios->updateCurrentRatio(static_cast<double>(w->get_value()) / static_cast<double>(h->get_value()));
 }

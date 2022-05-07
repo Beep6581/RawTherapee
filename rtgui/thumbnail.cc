@@ -39,6 +39,7 @@
 #include "guiutils.h"
 #include "batchqueue.h"
 #include "extprog.h"
+#include "md5helper.h"
 #include "pathutils.h"
 #include "paramsedited.h"
 #include "procparamchangers.h"
@@ -120,7 +121,7 @@ void Thumbnail::_generateThumbnailImage ()
     tpp = nullptr;
     delete [] lastImg;
     lastImg = nullptr;
-    tw = -1;
+    tw = options.maxThumbnailWidth;
     th = options.maxThumbnailHeight;
     imgRatio = -1.;
 
@@ -137,20 +138,20 @@ void Thumbnail::_generateThumbnailImage ()
 
     if (ext == "jpg" || ext == "jpeg") {
         infoFromImage (fname);
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams->wb.equal);
+        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal);
 
         if (tpp) {
             cfs.format = FT_Jpeg;
         }
     } else if (ext == "png") {
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams->wb.equal);
+        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal);
 
         if (tpp) {
             cfs.format = FT_Png;
         }
     } else if (ext == "tif" || ext == "tiff") {
         infoFromImage (fname);
-        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, 1, pparams->wb.equal);
+        tpp = rtengine::Thumbnail::loadFromImage (fname, tw, th, -1, pparams->wb.equal);
 
         if (tpp) {
             cfs.format = FT_Tiff;
@@ -193,7 +194,7 @@ void Thumbnail::_generateThumbnailImage ()
     }
 }
 
-bool Thumbnail::isSupported ()
+bool Thumbnail::isSupported () const
 {
     return cfs.supported;
 }
@@ -450,6 +451,7 @@ void Thumbnail::setProcParams (const ProcParams& pp, ParamsEdited* pe, int whoCh
     const bool needsReprocessing =
            resetToDefault
         || pparams->toneCurve != pp.toneCurve
+        || pparams->locallab != pp.locallab
         || pparams->labCurve != pp.labCurve
         || pparams->localContrast != pp.localContrast
         || pparams->rgbCurves != pp.rgbCurves
@@ -587,10 +589,13 @@ void Thumbnail::decreaseRef ()
     cachemgr->closeThumbnail (this);
 }
 
-int Thumbnail::getThumbnailWidth (const int h, const rtengine::procparams::ProcParams *pparams) const
+void Thumbnail::getThumbnailSize(int &w, int &h, const rtengine::procparams::ProcParams *pparams)
 {
+    MyMutex::MyLock lock(mutex);
+
     int tw_ = tw;
     int th_ = th;
+
     float imgRatio_ = imgRatio;
 
     if (pparams) {
@@ -615,10 +620,16 @@ int Thumbnail::getThumbnailWidth (const int h, const rtengine::procparams::ProcP
         }
     }
 
-    if (imgRatio_ > 0.f) {
-        return imgRatio_ * h;
+    if (imgRatio_ > 0.) {
+        w = imgRatio_ * static_cast<float>(h);
     } else {
-        return tw_ * h / th_;
+        w = tw_ * h / th_;
+    }
+
+    if (w > options.maxThumbnailWidth) {
+        const float s = static_cast<float>(options.maxThumbnailWidth) / w;
+        w = options.maxThumbnailWidth;
+        h = std::max<int>(h * s, 1);
     }
 }
 
@@ -644,7 +655,7 @@ void Thumbnail::getFinalSize (const rtengine::procparams::ProcParams& pparams, i
     }
 }
 
-void Thumbnail::getOriginalSize (int& w, int& h)
+void Thumbnail::getOriginalSize (int& w, int& h) const
 {
     w = tw;
     h = th;
@@ -773,7 +784,7 @@ void Thumbnail::getAutoWB (double& temp, double& green, double equal, double tem
 }
 
 
-ThFileType Thumbnail::getType ()
+ThFileType Thumbnail::getType () const
 {
 
     return (ThFileType) cfs.format;
@@ -873,7 +884,7 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
     if (!succ && firstTrial) {
         _generateThumbnailImage ();
 
-        if (cfs.supported && firstTrial) {
+        if (cfs.supported) {
             _loadThumbnail (false);
         }
 
@@ -896,20 +907,6 @@ void Thumbnail::_loadThumbnail(bool firstTrial)
     if (!initial_) {
         tw = tpp->getImageWidth (getProcParamsU(), th, imgRatio);    // this might return 0 if image was just building
     }
-}
-
-/*
- * Read all thumbnail's data from the cache; build and save them if doesn't exist - MUTEX PROTECTED
- * This includes:
- *  - image's bitmap (*.rtti)
- *  - auto exposure's histogram (full thumbnail only)
- *  - embedded profile (full thumbnail only)
- *  - LiveThumbData section of the data file
- */
-void Thumbnail::loadThumbnail (bool firstTrial)
-{
-    MyMutex::MyLock lock(mutex);
-    _loadThumbnail(firstTrial);
 }
 
 /*
@@ -993,7 +990,7 @@ void Thumbnail::setFileName (const Glib::ustring &fn)
 {
 
     fname = fn;
-    cfs.md5 = cachemgr->getMD5 (fname);
+    cfs.md5 = ::getMD5 (fname);
 }
 
 int Thumbnail::getRank  () const
@@ -1167,7 +1164,7 @@ void Thumbnail::applyAutoExp (rtengine::procparams::ProcParams& pparams)
     }
 }
 
-const CacheImageData* Thumbnail::getCacheImageData()
+const CacheImageData* Thumbnail::getCacheImageData() const
 {
     return &cfs;
 }

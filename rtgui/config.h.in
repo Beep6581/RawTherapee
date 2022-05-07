@@ -22,8 +22,9 @@
 
 #cmakedefine BUILD_BUNDLE
 #cmakedefine HAVE_UNALIGNED_MALLOC
+#cmakedefine OSX_DEV_BUILD
 
-#ifdef __APPLE__
+#if defined(__APPLE__) && !defined(OSX_DEV_BUILD)
 #define DATA_SEARCH_PATH "/Applications/RawTherapee.app/Contents/Resources/share"
 #define DOC_SEARCH_PATH "/Applications/RawTherapee.app/Contents/Resources"
 #define CREDITS_SEARCH_PATH "/Applications/RawTherapee.app/Contents/Resources"

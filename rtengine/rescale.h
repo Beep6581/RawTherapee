@@ -31,36 +31,35 @@ namespace rtengine
 
 inline float getBilinearValue(const array2D<float> &src, float x, float y)
 {
-    const int W = src.width();
-    const int H = src.height();
+    const int W = src.getWidth();
+    const int H = src.getHeight();
     
     // Get integer and fractional parts of numbers
-    int xi = x;
-    int yi = y;
-    float xf = x - xi;
-    float yf = y - yi;
-    int xi1 = std::min(xi + 1, W - 1);
-    int yi1 = std::min(yi + 1, H - 1);
+    const int xi = x;
+    const int yi = y;
+    const float xf = x - xi;
+    const float yf = y - yi;
+    const int xi1 = std::min(xi + 1, W - 1);
+    const int yi1 = std::min(yi + 1, H - 1);
 
-    float bl = src[yi][xi];
-    float br = src[yi][xi1];
-    float tl = src[yi1][xi];
-    float tr = src[yi1][xi1];
+    const float bl = src[yi][xi];
+    const float br = src[yi][xi1];
+    const float tl = src[yi1][xi];
+    const float tr = src[yi1][xi1];
 
     // interpolate
-    float b = xf * br + (1.f - xf) * bl;
-    float t = xf * tr + (1.f - xf) * tl;
-    float pxf = yf * t + (1.f - yf) * b;
-    return pxf;
+    const float b = intp(xf, br, bl);
+    const float t = intp(xf, tr, tl);
+    return intp(yf, t, b);
 }
 
 
 inline void rescaleBilinear(const array2D<float> &src, array2D<float> &dst, bool multithread)
 {
-    const int Ws = src.width();
-    const int Hs = src.height();
-    const int Wd = dst.width();
-    const int Hd = dst.height();
+    const int Ws = src.getWidth();
+    const int Hs = src.getHeight();
+    const int Wd = dst.getWidth();
+    const int Hd = dst.getHeight();
     
     float col_scale = float (Ws) / float (Wd);
     float row_scale = float (Hs) / float (Hd);
@@ -81,10 +80,10 @@ inline void rescaleBilinear(const array2D<float> &src, array2D<float> &dst, bool
 
 inline void rescaleNearest(const array2D<float> &src, array2D<float> &dst, bool multithread)
 {
-    const int width = src.width();
-    const int height = src.height();
-    const int nw = dst.width();
-    const int nh = dst.height();
+    const int width = src.getWidth();
+    const int height = src.getHeight();
+    const int nw = dst.getWidth();
+    const int nh = dst.getHeight();
 
 #ifdef _OPENMP
     #pragma omp parallel for if (multithread)

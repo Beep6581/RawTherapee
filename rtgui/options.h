@@ -168,13 +168,23 @@ private:
                      const Glib::ustring& entryName, Glib::ustring& destination);
 
 public:
-
     enum class NavigatorUnit {
         PERCENT,
         R0_255,
         R0_1,
         _COUNT
     };
+
+    enum class ScopeType {
+        NONE = -1,
+        HISTOGRAM,
+        HISTOGRAM_RAW,
+        PARADE,
+        VECTORSCOPE_HC,
+        VECTORSCOPE_HS,
+        WAVEFORM
+    };
+
     bool savesParamsAtExit;
     SaveFormat saveFormat, saveFormatBatch;
     Glib::ustring savePathTemplate;
@@ -209,7 +219,6 @@ public:
     bool windowMaximized;
     int windowMonitor;
     int meowMonitor;
-    bool meowFullScreen;
     bool meowMaximized;
     int meowWidth;
     int meowHeight;
@@ -270,7 +279,18 @@ public:
     Glib::ustring CPBPath; // Custom Profile Builder's path
     CPBKeyType CPBKeys; // Custom Profile Builder's key type
     int editorToSendTo;
+    enum EditorOutDir {
+        EDITOR_OUT_DIR_TEMP,
+        EDITOR_OUT_DIR_CURRENT,
+        EDITOR_OUT_DIR_CUSTOM
+    };
+    EditorOutDir editor_out_dir; // output directory for "open in external editor"
+    Glib::ustring editor_custom_out_dir;
+    bool editor_float32;
+    bool editor_bypass_output_profile;
+    
     int maxThumbnailHeight;
+    int maxThumbnailWidth;
     std::size_t maxCacheEntries;
     int thumbInterp; // 0: nearest, 1: bilinear
     std::vector<Glib::ustring> parseExtensions;   // List containing all extensions type
@@ -282,12 +302,15 @@ public:
     //std::vector<int> crvOpen;
     std::vector<int> baBehav;
     rtengine::Settings rtSettings;
-
+    bool showtooltip;
     std::vector<Glib::ustring> favoriteDirs;
     std::vector<Glib::ustring> renameTemplates;
     bool renameUseTemplates;
     bool internalThumbIfUntouched;
     bool overwriteOutputFile;
+    int complexity;
+    bool inspectorWindow; // open inspector in spearate window
+    bool zoomOnScroll;    // translate scroll events to zoom
 
     std::vector<double> thumbnailZoomRatios;
     bool overlayedFileNames;
@@ -307,10 +330,13 @@ public:
 
     int histogramPosition;  // 0=disabled, 1=left pane, 2=right pane
     bool histogramRed, histogramGreen, histogramBlue;
-    bool histogramLuma, histogramChroma, histogramRAW;
+    bool histogramLuma, histogramChroma;
     bool histogramBar;
     int histogramHeight;
     int histogramDrawMode;
+    ScopeType histogramScopeType;
+    bool histogramShowOptionButtons;
+    float histogramTraceBrightness;
     bool FileBrowserToolbarSingleRow;
     bool hideTPVScrollbar;
     int whiteBalanceSpotSize;
@@ -397,6 +423,8 @@ public:
     int           fastexport_resize_dataspec;
     int           fastexport_resize_width;
     int           fastexport_resize_height;
+    int           fastexport_resize_longedge;
+    int           fastexport_resize_shortedge;
     bool fastexport_use_fast_pipeline;
 
     std::vector<Glib::ustring> favorites;
@@ -409,6 +437,7 @@ public:
     Glib::ustring lastRetinexDir;
     Glib::ustring lastDenoiseCurvesDir;
     Glib::ustring lastWaveletCurvesDir;
+    Glib::ustring lastlocalCurvesDir;
     Glib::ustring lastPFCurvesDir;
     Glib::ustring lastHsvCurvesDir;
     Glib::ustring lastToneCurvesDir;

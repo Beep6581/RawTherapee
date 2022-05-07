@@ -37,22 +37,18 @@ BayerPreProcess::BayerPreProcess() : FoldableToolPanel(this, "bayerpreprocess", 
     lineDenoise = Gtk::manage(new Adjuster(M("TP_PREPROCESS_LINEDENOISE"), 0, 1000, 1, 0));
     lineDenoise->setAdjusterListener(this);
 
-    if (lineDenoise->delay < options.adjusterMaxDelay) {
-        lineDenoise->delay = options.adjusterMaxDelay;
-    }
+    lineDenoise->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     lineDenoise->show();
 
     greenEqThreshold = Gtk::manage(new Adjuster(M("TP_PREPROCESS_GREENEQUIL"), 0, 100, 1, 0));
     greenEqThreshold->setAdjusterListener(this);
 
-    if (greenEqThreshold->delay < options.adjusterMaxDelay) {
-        greenEqThreshold->delay = options.adjusterMaxDelay;
-    }
+    greenEqThreshold->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     greenEqThreshold->show();
 
-    Gtk::HBox *hb = Gtk::manage(new Gtk::HBox());
+    Gtk::Box *hb = Gtk::manage(new Gtk::Box());
     hb->pack_start(*Gtk::manage(new Gtk::Label(M("TP_PREPROCESS_LINEDENOISE_DIRECTION") + ": ")), Gtk::PACK_SHRINK, 0);
     lineDenoiseDirection = Gtk::manage(new MyComboBoxText());
     lineDenoiseDirection->append(M("TP_PREPROCESS_LINEDENOISE_DIRECTION_HORIZONTAL"));
@@ -67,7 +63,7 @@ BayerPreProcess::BayerPreProcess() : FoldableToolPanel(this, "bayerpreprocess", 
     pack_start(*lineDenoise, Gtk::PACK_SHRINK, 4);
     pack_start(*hb, Gtk::PACK_SHRINK, 4);
 
-    pack_start(*Gtk::manage(new  Gtk::HSeparator()));
+    pack_start(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
 
     pack_start(*greenEqThreshold, Gtk::PACK_SHRINK, 4);
 
@@ -75,7 +71,7 @@ BayerPreProcess::BayerPreProcess() : FoldableToolPanel(this, "bayerpreprocess", 
     pdafLinesFilter->show();
     pdafLinesFilter->signal_toggled().connect(sigc::mem_fun(*this, &BayerPreProcess::pdafLinesFilterChanged), true);
 
-    pack_start(*Gtk::manage(new Gtk::HSeparator()));
+    pack_start(*Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
     pack_start(*pdafLinesFilter, Gtk::PACK_SHRINK, 4);
 }
 

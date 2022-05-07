@@ -9,6 +9,7 @@
 #include "rtimage.h"
 #include "options.h"
 #include "../rtengine/color.h"
+#include "eventmapper.h"
 
 using namespace rtengine;
 using namespace rtengine::procparams;
@@ -25,13 +26,26 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
     nextsigma = 0.;
     nextminT = 0.;
     nextmaxT = 0.;
+    auto m = ProcEventMapper::getInstance();
+    EvReticomplex = m->newEvent(DEMOSAIC, "HISTORY_MSG_COMPLEXRETI");
 
 
+    const RetinexParams default_params;
 
 
     // MAIN Expander ==================================================================
 
+    complexmethod = Gtk::manage (new MyComboBoxText ());
 
+    complexmethod->append(M("TP_WAVELET_COMPNORMAL"));
+    complexmethod->append(M("TP_WAVELET_COMPEXPERT"));
+    complexmethodconn = complexmethod->signal_changed().connect(sigc::mem_fun(*this, &Retinex::complexmethodChanged));
+    complexmethod->set_tooltip_text(M("TP_WAVELET_COMPLEX_TOOLTIP"));
+    Gtk::Box* const complexHBox = Gtk::manage(new Gtk::Box());
+    Gtk::Label* const complexLabel = Gtk::manage(new Gtk::Label(M("TP_WAVELET_COMPLEXLAB") + ":"));
+    complexHBox->pack_start(*complexLabel, Gtk::PACK_SHRINK, 4);
+    complexHBox->pack_start(*complexmethod);
+    pack_start(*complexHBox);
 
 
     Gtk::Grid *retinexGrid = Gtk::manage ( new Gtk::Grid());
@@ -116,7 +130,9 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
     // MAP (MASK) Frame ---------------------------------------------------------------
 
 
-    Gtk::Frame *maskFrame = Gtk::manage (new Gtk::Frame (M ("TP_RETINEX_LABEL_MASK")) );
+ //   Gtk::Frame *maskFrame = Gtk::manage (new Gtk::Frame (M ("TP_RETINEX_LABEL_MASK")) );
+    maskFrame = Gtk::manage (new Gtk::Frame (M ("TP_RETINEX_LABEL_MASK")) );
+    maskFrame->set_label_align(0.025, 0.5);
     setExpandAlignProperties (maskFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
     Gtk::Grid *maskGrid = Gtk::manage ( new Gtk::Grid());
@@ -227,6 +243,7 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
 
 
     equalFrame = Gtk::manage (new Gtk::Frame (M ("TP_RETINEX_EQUAL")));
+    equalFrame->set_label_align(0.025, 0.5);
     setExpandAlignProperties (equalFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
@@ -330,6 +347,7 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
 
 
     iterFrame = Gtk::manage (new Gtk::Frame (M ("TP_RETINEX_ITERF")));
+    iterFrame->set_label_align(0.025, 0.5);
     setExpandAlignProperties (iterFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
@@ -374,6 +392,7 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
 
 
     tranFrame = Gtk::manage (new Gtk::Frame (M ("TP_RETINEX_TRANF")));
+    tranFrame->set_label_align(0.025, 0.5);
     setExpandAlignProperties (tranFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
@@ -384,7 +403,6 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
     Gtk::Grid *tranGrid = Gtk::manage (new Gtk::Grid());
     setExpandAlignProperties (tranGrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 
-    const RetinexParams default_params;
 
     // Transmission map curve
     transmissionCurveEditorG = new CurveEditorGroup (options.lastRetinexDir, M ("TP_RETINEX_TRANSMISSION"));
@@ -430,6 +448,7 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
 
 
     gainFrame = Gtk::manage (new Gtk::Frame (M ("TP_RETINEX_GAINOFFS")));
+    gainFrame->set_label_align(0.025, 0.5);
     setExpandAlignProperties (gainFrame, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
@@ -488,112 +507,58 @@ Retinex::Retinex () : FoldableToolPanel (this, "retinex", M ("TP_RETINEX_LABEL")
 
 
     str->setAdjusterListener (this);
-
-    if (str->delay < 200) {
-        str->delay = 200;
-    }
+    str->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     scal->setAdjusterListener (this);
-
-    if (scal->delay < 200) {
-        scal->delay = 200;
-    }
+    scal->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     iter->setAdjusterListener (this);
-
-    if (iter->delay < 200) {
-        iter->delay = 200;
-    }
+    iter->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     grad->setAdjusterListener (this);
-
-    if (grad->delay < 200) {
-        grad->delay = 200;
-    }
+    grad->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     grads->setAdjusterListener (this);
-
-    if (grads->delay < 200) {
-        grads->delay = 200;
-    }
+    grads->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     gam->setAdjusterListener (this);
-
-    if (gam->delay < 500) {
-        gam->delay = 500;
-    }
+    gam->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay) * 2.5f);
 
     slope->setAdjusterListener (this);
-
-    if (slope->delay < 500) {
-        slope->delay = 500;
-    }
+    slope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay) * 2.5f);
 
     neigh->setAdjusterListener (this);
-
-    if (neigh->delay < 200) {
-        neigh->delay = 200;
-    }
+    neigh->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     offs->setAdjusterListener (this);
-
-    if (offs->delay < 200) {
-        offs->delay = 200;
-    }
+    offs->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     vart->setAdjusterListener (this);
-
-    if (vart->delay < 200) {
-        vart->delay = 200;
-    }
+    offs->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     limd->setAdjusterListener (this);
-
-    if (limd->delay < 200) {
-        limd->delay = 200;
-    }
+    limd->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     highl->setAdjusterListener (this);
-
-    if (highl->delay < 200) {
-        highl->delay = 200;
-    }
+    highl->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     radius->setAdjusterListener (this);
-
-    if (radius->delay < 200) {
-        radius->delay = 200;
-    }
+    radius->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     highlights->setAdjusterListener (this);
-
-    if (highlights->delay < 200) {
-        highlights->delay = 200;
-    }
+    highlights->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     h_tonalwidth->setAdjusterListener (this);
-
-    if (h_tonalwidth->delay < 200) {
-        h_tonalwidth->delay = 200;
-    }
+    h_tonalwidth->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     shadows->setAdjusterListener (this);
-
-    if (shadows->delay < 200) {
-        shadows->delay = 200;
-    }
+    shadows->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     s_tonalwidth->setAdjusterListener (this);
-
-    if (s_tonalwidth->delay < 200) {
-        s_tonalwidth->delay = 200;
-    }
+    s_tonalwidth->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     skal->setAdjusterListener (this);
-
-    if (skal->delay < 200) {
-        skal->delay = 200;
-    }
+    skal->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     disableListener();
     retinexColorSpaceChanged();
@@ -628,12 +593,14 @@ void Retinex::neutral_pressed ()
     limd->resetValue (false);
     highl->resetValue (false);
     gam->resetValue (false);
+    skal->resetValue (false);
     slope->resetValue (false);
     highlights->resetValue (false);
     h_tonalwidth->resetValue (false);
     shadows->resetValue (false);
     s_tonalwidth->resetValue (false);
     radius->resetValue (false);
+    medianmap->set_active (false);
     mapMethod->set_active (0);
     viewMethod->set_active (0);
     retinexMethod->set_active (2);
@@ -742,7 +709,53 @@ void Retinex::updateTrans ()
     }
 }
 
+void Retinex::convertParamToNormal()
+{
+    const RetinexParams def_params;
+    disableListener();
+    iter->setValue(def_params.iter);
+    viewMethod->set_active(0);
+    mapMethod->set_active(0);
+    cdshape->reset();
+    cdshapeH->reset();
+    lhshape->reset();
+    transmissionShape->reset();
+    medianmap->set_active(def_params.medianmap);
+    enableListener();
+}
 
+void Retinex::updateGUIToMode(int mode)
+{
+
+    if(mode ==0) {
+        iterFrame->hide();
+        maskFrame->hide();
+        equalFrame->hide();
+        viewMethod->hide();
+        mapMethod->hide();
+        transmissionCurveEditorG->hide();
+        medianmap->hide();
+    } else {
+        iterFrame->show();
+        maskFrame->show();
+        equalFrame->show();
+        viewMethod->show();
+        transmissionCurveEditorG->show();
+        medianmap->show();
+        mapMethod->show();
+       if (iter->getIntValue() > 1) {
+            grad->set_sensitive (true);
+            scal->set_sensitive (true);
+            grads->set_sensitive (true);
+       } else {
+            grad->set_sensitive (false);
+            scal->set_sensitive (false);
+            grads->set_sensitive (false);
+       }
+
+    }
+
+}
 
 void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
 {
@@ -752,6 +765,7 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
     gammaretinexConn.block (true);
     mapMethodConn.block (true);
     viewMethodConn.block (true);
+    complexmethodconn.block (true);
 
 
     if (pedited) {
@@ -775,6 +789,9 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
         shadows->setEditedState      (pedited->retinex.shadows ? Edited : UnEdited);
         s_tonalwidth->setEditedState (pedited->retinex.stonalwidth ? Edited : UnEdited);
 
+        if (!pedited->retinex.complexmethod) {
+            complexmethod->set_active_text (M ("GENERAL_UNCHANGED"));
+        }
 
         if (!pedited->retinex.retinexMethod) {
             retinexMethod->set_active_text (M ("GENERAL_UNCHANGED"));
@@ -844,6 +861,13 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
     medianmapConn.block (false);
     lastmedianmap = pp->retinex.medianmap;
 
+    if (pp->retinex.complexmethod == "normal") {
+        complexmethod->set_active(0);
+    } else if (pp->retinex.complexmethod == "expert") {
+        complexmethod->set_active(1);
+    }
+
+
     if (pp->retinex.retinexMethod == "low") {
         retinexMethod->set_active (0);
     } else if (pp->retinex.retinexMethod == "uni") {
@@ -906,6 +930,7 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
     mapMethodChanged ();
     viewMethodChanged ();
 
+
     medianmapConn.block (true);
     medianmapChanged ();
     medianmapConn.block (false);
@@ -914,7 +939,7 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
     cdshapeH->setCurve  (pp->retinex.cdHcurve);
     lhshape->setCurve  (pp->retinex.lhcurve);
     mapshape->setCurve  (pp->retinex.mapcurve);
-
+    
     retinexMethodConn.block (false);
     retinexColorSpaceConn.block (false);
     gammaretinexConn.block (false);
@@ -923,8 +948,18 @@ void Retinex::read (const ProcParams* pp, const ParamsEdited* pedited)
     transmissionShape->setCurve (pp->retinex.transmissionCurve);
     gaintransmissionShape->setCurve (pp->retinex.gaintransmissionCurve);
 
+    complexmethodconn.block (false);
 
     enableListener ();
+    
+    if (complexmethod->get_active_row_number() == 0) {
+        updateGUIToMode(0);
+       // convertParamToNormal();
+
+    } else {
+        updateGUIToMode(1);
+    }
+    
 }
 
 
@@ -961,6 +996,7 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
     pp->retinex.stonalwidth   = (int)s_tonalwidth->getValue ();
 
     if (pedited) {
+        pedited->retinex.complexmethod    = complexmethod->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->retinex.retinexMethod    = retinexMethod->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->retinex.retinexcolorspace    = retinexcolorspace->get_active_text() != M ("GENERAL_UNCHANGED");
         pedited->retinex.gammaretinex    = gammaretinex->get_active_text() != M ("GENERAL_UNCHANGED");
@@ -996,6 +1032,12 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->retinex.shadows         = shadows->getEditedState ();
         pedited->retinex.stonalwidth     = s_tonalwidth->getEditedState ();
 
+    }
+
+    if (complexmethod->get_active_row_number() == 0) {
+        pp->retinex.complexmethod = "normal";
+    } else if (complexmethod->get_active_row_number() == 1) {
+        pp->retinex.complexmethod = "expert";
     }
 
     if (retinexMethod->get_active_row_number() == 0) {
@@ -1055,6 +1097,27 @@ void Retinex::write (ProcParams* pp, ParamsEdited* pedited)
     }
 
 }
+
+void Retinex::complexmethodChanged()
+{
+
+    if (!batchMode) {
+        if (complexmethod->get_active_row_number() == 0) {
+            updateGUIToMode(0);
+            convertParamToNormal();
+
+        } else {
+            updateGUIToMode(1);
+        }
+    }
+
+    if (listener) {
+        listener->panelChanged(EvReticomplex, complexmethod->get_active_text());
+    }
+
+}
+
+
 
 void Retinex::retinexMethodChanged()
 {
@@ -1138,8 +1201,11 @@ void Retinex::viewMethodChanged()
             limd->show();
             transmissionCurveEditorG->show();
             medianmap->show();
-
-            iterFrame->show();
+            if (complexmethod->get_active_row_number() == 0) {
+                iterFrame->hide();
+            } else {
+                iterFrame->show();
+            }
             /*
             iter->show();
             scal->show();
@@ -1522,6 +1588,7 @@ void Retinex::setBatchMode (bool batchMode)
     h_tonalwidth->showEditedCB ();
     shadows->showEditedCB ();
     s_tonalwidth->showEditedCB ();
+  //  complexmethod->append(M("GENERAL_UNCHANGED"));
 
     skal->showEditedCB ();
     curveEditorGD->setBatchMode (batchMode);

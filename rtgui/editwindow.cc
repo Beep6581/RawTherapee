@@ -31,11 +31,17 @@ extern Glib::ustring argv0;
 // Check if the system has more than one display and option is set
 bool EditWindow::isMultiDisplayEnabled()
 {
-    return options.multiDisplayMode > 0 && Gdk::Screen::get_default()->get_n_monitors() > 1;
+    const auto screen = Gdk::Screen::get_default();
+
+    if (screen) {
+        return options.multiDisplayMode > 0 && screen->get_display()->get_n_monitors() > 1;
+    } else {
+        return false; // There is no default screen
+    }
 }
 
-// Should only be created once, auto-creates window on correct display
-EditWindow* EditWindow::getInstance(RTWindow* p, bool restore)
+// Should only be created once
+EditWindow* EditWindow::getInstance(RTWindow* p)
 {
     struct EditWindowInstance
     {
@@ -47,13 +53,15 @@ EditWindow* EditWindow::getInstance(RTWindow* p, bool restore)
     };
 
     static EditWindowInstance instance_(p);
-    if(restore) {
-        instance_.editWnd.restoreWindow();
-    }
     return &instance_.editWnd;
 }
 
-EditWindow::EditWindow (RTWindow* p) : resolution(RTScalable::baseDPI), parent(p) , isFullscreen(false), isClosed(true)
+EditWindow::EditWindow (RTWindow* p)
+    : resolution(RTScalable::baseDPI)
+    , parent(p)
+    , isFullscreen(false)
+    , isClosed(true)
+    , isMinimized(false)
 {
 
     updateResolution();
@@ -70,51 +78,84 @@ EditWindow::EditWindow (RTWindow* p) : resolution(RTScalable::baseDPI), parent(p
     mainNB->signal_switch_page().connect_notify(sigc::mem_fun(*this, &EditWindow::on_mainNB_switch_page));
 
     signal_key_press_event().connect(sigc::mem_fun(*this, &EditWindow::keyPressed));
+    signal_window_state_event().connect(sigc::mem_fun(*this, &EditWindow::on_window_state_event));
+    onConfEventConn = signal_configure_event().connect(sigc::mem_fun(*this, &EditWindow::on_configure_event));
 
-    Gtk::VBox* mainBox = Gtk::manage(new Gtk::VBox());
+    Gtk::Box* mainBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     mainBox->pack_start(*mainNB);
 
     add(*mainBox);
 
 }
 
-void EditWindow::restoreWindow() {
+void EditWindow::restoreWindow()
+{
+    if (isClosed) {
+        onConfEventConn.block(true); // Avoid getting size and position while window is being moved, maximized, ...
 
-    if(isClosed) {
-        int meowMonitor = 0;
-        if(isMultiDisplayEnabled()) {
-            if(options.meowMonitor >= 0) { // use display from last session if available
-                meowMonitor = std::min(options.meowMonitor, Gdk::Screen::get_default()->get_n_monitors() - 1);
-            } else { // Determine the other display
-                const Glib::RefPtr< Gdk::Window >& wnd = parent->get_window();
-                meowMonitor = parent->get_screen()->get_monitor_at_window(wnd) == 0 ? 1 : 0;
+        int meowMonitor = 0; // By default, set to main monitor
+        const auto display = get_screen()->get_display();
+
+        if (isMultiDisplayEnabled()) {
+            if (options.meowMonitor >= 0) { // Use display from last session if available
+                meowMonitor = std::max(0, std::min(options.meowMonitor, display->get_n_monitors() - 1));
+            } else { // Determine the main RT window display
+                const Glib::RefPtr<Gdk::Window> &wnd = parent->get_window();
+
+                // Retrieve window monitor ID
+                const int monitor_nb = display->get_n_monitors();
+
+                for (int id = 0; id < monitor_nb; id++) {
+                    if (display->get_monitor_at_window(wnd) == display->get_monitor(id)) {
+                        meowMonitor = id;
+                        break;
+                    }
+                }
             }
         }
 
         Gdk::Rectangle lMonitorRect;
-        get_screen()->get_monitor_geometry(meowMonitor, lMonitorRect);
-        if(options.meowMaximized) {
+        display->get_monitor(meowMonitor)->get_geometry(lMonitorRect);
+
+#ifdef __APPLE__
+        // Get macOS menu bar height
+        Gdk::Rectangle lWorkAreaRect;
+        display->get_monitor(std::min(meowMonitor, display->get_n_monitors() - 1))->get_workarea(lWorkAreaRect);
+        const int macMenuBarHeight = lWorkAreaRect.get_y();
+
+        // Place RT window to saved one in options file
+        if (options.meowX <= lMonitorRect.get_x() + lMonitorRect.get_width()
+                && options.meowX >= 0
+                && options.meowY <= lMonitorRect.get_y() + lMonitorRect.get_height() - macMenuBarHeight
+                && options.meowY >= 0) {
+            move(options.meowX, options.meowY + macMenuBarHeight);
+        } else {
+            move(lMonitorRect.get_x(), lMonitorRect.get_y() + macMenuBarHeight);
+        }
+#else
+        // Place RT window to saved one in options file
+        if (options.meowX <= lMonitorRect.get_x() + lMonitorRect.get_width()
+                && options.meowX >= 0
+                && options.meowY <= lMonitorRect.get_y() + lMonitorRect.get_height()
+                && options.meowY >= 0) {
+            move(options.meowX, options.meowY);
+        } else {
             move(lMonitorRect.get_x(), lMonitorRect.get_y());
+        }
+#endif
+
+        // Maximize RT window according to options file
+        if (options.meowMaximized) {
             maximize();
         } else {
+            unmaximize();
             resize(options.meowWidth, options.meowHeight);
-            if(options.meowX <= lMonitorRect.get_x() + lMonitorRect.get_width() && options.meowY <= lMonitorRect.get_y() + lMonitorRect.get_height()) {
-                move(options.meowX, options.meowY);
-            } else {
-                move(lMonitorRect.get_x(), lMonitorRect.get_y());
-            }
-        }
-        show_all();
-
-        isFullscreen = options.meowFullScreen;
-
-        if(isFullscreen) {
-            fullscreen();
         }
 
         isClosed = false;
-    }
 
+        onConfEventConn.block(false);
+    }
 }
 
 void EditWindow::on_realize ()
@@ -174,27 +215,23 @@ bool EditWindow::on_configure_event(GdkEventConfigure* event)
         setAppIcon();
     }
 
-    if (get_realized() && is_visible()) {
-        if(!is_maximized()) {
-            get_position(options.meowX, options.meowY);
-            get_size(options.meowWidth, options.meowHeight);
-        }
-        options.meowMaximized = is_maximized();
+    if (!options.meowMaximized && !isFullscreen && !isMinimized) {
+        get_position(options.meowX, options.meowY);
+        get_size(options.meowWidth, options.meowHeight);
     }
 
     return Gtk::Widget::on_configure_event(event);
 }
 
-/*  HOMBRE: Disabling this since it's maximized when opened anyway.
- *  Someday, the EditorWindow might save its own position and state, so it'll have to be uncommented
 bool EditWindow::on_window_state_event(GdkEventWindowState* event)
 {
-    if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED) {
-        options.windowMaximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
-    }
+    // Retrieve RT window states
+    options.meowMaximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
+    isMinimized = event->new_window_state & GDK_WINDOW_STATE_ICONIFIED;
+    isFullscreen = event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN;
 
     return Gtk::Widget::on_window_state_event(event);
-}*/
+}
 
 void EditWindow::on_mainNB_switch_page(Gtk::Widget* widget, guint page_num)
 {
@@ -215,7 +252,7 @@ void EditWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
     ep->setParentWindow(this);
 
     // construct closeable tab for the image
-    Gtk::HBox* hb = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hb = Gtk::manage (new Gtk::Box ());
     hb->pack_start (*Gtk::manage (new RTImage ("aperture.png")));
     hb->pack_start (*Gtk::manage (new Gtk::Label (Glib::path_get_basename (name))));
     hb->set_tooltip_markup (name);
@@ -241,7 +278,8 @@ void EditWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
     epanels[ name ] = ep;
     filesEdited.insert ( name );
     parent->fpanel->refreshEditedState (filesEdited);
-    ep->setAspect();
+
+    show_all();
 }
 
 void EditWindow::remEditorPanel (EditorPanel* ep)
@@ -281,10 +319,20 @@ bool EditWindow::selectEditorPanel(const std::string &name)
 
 void EditWindow::toFront ()
 {
-    // when using the secondary window on the same monitor as the primary window we need to present the secondary window.
+    // When using the secondary window on the same monitor as the primary window we need to present the secondary window.
     // If we don't, it will stay in background when opening 2nd, 3rd... editor, which is annoying
     // It will also deiconify the window
-    present();
+    // To avoid unexpected behavior while window is being updated, present() function is called after at idle
+    idle_register.add(
+        [this]()-> bool
+        {
+            onConfEventConn.block(true); // Avoid getting size and position while window is being moved, maximized, ...
+            present();
+            onConfEventConn.block(false);
+
+            return false;
+        }
+    );
 }
 
 bool EditWindow::keyPressed (GdkEventKey* event)
@@ -308,27 +356,63 @@ bool EditWindow::keyPressed (GdkEventKey* event)
 
         return false;
     }
-
 }
 
-void EditWindow::toggleFullscreen ()
+void EditWindow::toggleFullscreen()
 {
+    onConfEventConn.block(true); // Avoid getting size and position while window is getting fullscreen
+
     isFullscreen ? unfullscreen() : fullscreen();
-    options.meowFullScreen = isFullscreen = !isFullscreen;
+
+    onConfEventConn.block(false);
 }
 
-void EditWindow::writeOptions() {
+void EditWindow::get_position(int& x, int& y) const
+{
+    // Call native function
+    Gtk::Window::get_position(x, y);
 
-    if(is_visible()) {
-        if(isMultiDisplayEnabled()) {
-            options.meowMonitor = get_screen()->get_monitor_at_window(get_window());
+    // Retrieve display (concatenation of all monitors) size
+    int width = 0, height = 0;
+    const auto display = get_screen()->get_display();
+    const int nbMonitors = display->get_n_monitors();
+
+    for (int i = 0; i < nbMonitors; i++) {
+        Gdk::Rectangle lMonitorRect;
+        display->get_monitor(i)->get_geometry(lMonitorRect);
+        width = std::max(width, lMonitorRect.get_x() + lMonitorRect.get_width());
+        height = std::max(height, lMonitorRect.get_y() + lMonitorRect.get_height());
+    }
+
+    // Saturate position at monitor limits to avoid unexpected behavior (fixes #6233)
+    x = std::min(width, std::max(0, x));
+    y = std::min(height, std::max(0, y));
+}
+
+void EditWindow::writeOptions()
+{
+    if (is_visible()) {
+        if (isMultiDisplayEnabled()) {
+            // Retrieve window monitor ID
+            options.meowMonitor = 0;
+            const auto display = get_screen()->get_display();
+            const int monitor_nb = display->get_n_monitors();
+
+            for (int id = 0; id < monitor_nb; id++) {
+                if (display->get_monitor_at_window(get_window()) == display->get_monitor(id)) {
+                    options.windowMonitor = id;
+                    break;
+                }
+            }
         }
 
-        options.meowMaximized = is_maximized();
-        get_position(options.meowX, options.meowY);
-        get_size(options.meowWidth,options.meowHeight);
+        if (!options.meowMaximized && !isFullscreen && !isMinimized) {
+            get_position(options.meowX, options.meowY);
+            get_size(options.meowWidth, options.meowHeight);
+        }
     }
 }
+
 bool EditWindow::on_delete_event(GdkEventAny* event)
 {
 

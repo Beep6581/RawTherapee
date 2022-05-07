@@ -7,8 +7,8 @@
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
  *  (at your option) any later version.
- *
  *  RawTherapee is distributed in the hope that it will be useful,
+itcw *
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU General Public License for more details.
@@ -59,12 +59,14 @@ public:
     Glib::ustring   rec2020;                // filename of Rec2020      profile (default to the bundled one)
     Glib::ustring   ACESp0;                 // filename of ACES P0      profile (default to the bundled one)
     Glib::ustring   ACESp1;                 // filename of ACES P1      profile (default to the bundled one)
+    Glib::ustring   DCIP3;                 // filename of DCIP3         profile (default to the bundled one)
 
     bool            gamutICC; // no longer used
     bool            gamutLch;
     bool            HistogramWorking;       // true: histogram is display the value of the image computed in the Working profile
-                                            // false: histogram is display the value of the image computed in the Output profile
+    // false: histogram is display the value of the image computed in the Output profile
     int             amchroma;
+    int             amchromajz;
     int             protectred;
     double          protectredh;
     double          nrauto;
@@ -81,6 +83,15 @@ public:
     double          level0_cbdl;
     double          level123_cbdl;
     Glib::ustring   lensfunDbDirectory; // The directory containing the lensfun database. If empty, the system defaults will be used, as described in https://lensfun.github.io/manual/latest/dbsearch.html
+    int             cropsleep;
+    double          reduchigh;
+    double          reduclow;
+    bool            detectshape;
+    bool            fftwsigma;
+    int             previewselection;
+    double          cbdlsensi;
+//    bool            showtooltip;
+
     int             itcwb_thres;
     bool            itcwb_sort;
     int             itcwb_greenrange;
@@ -88,6 +99,12 @@ public:
     bool            itcwb_forceextra;
     int             itcwb_sizereference;
     int             itcwb_delta;
+    bool            itcwb_stdobserver10;
+    int             itcwb_precis;
+//wavelet levels
+    double          edghi;
+    double          edglo;
+    double          limrad;
 
 
     enum class ThumbnailInspectorMode {

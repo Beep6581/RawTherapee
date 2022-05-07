@@ -30,7 +30,7 @@ class RTWindow;
 class FileCatalog;
 class Thumbnail;
 
-class BatchQueuePanel : public Gtk::VBox,
+class BatchQueuePanel : public Gtk::Box,
     public BatchQueueListener,
     public FormatChangeListener
 {
@@ -51,8 +51,8 @@ class BatchQueuePanel : public Gtk::VBox,
 
     RTWindow* parent;
     BatchQueue* batchQueue;
-    Gtk::HBox* bottomBox;
-    Gtk::HBox* topBox;
+    Gtk::Box* bottomBox;
+    Gtk::Box* topBox;
 
     std::atomic<bool> queueShouldRun;
 

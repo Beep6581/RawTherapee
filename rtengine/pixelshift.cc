@@ -283,20 +283,20 @@ void calcFrameBrightnessFactor(unsigned int frame, uint32_t datalen, LUTu *histo
 {
     float medians[4];
 
-    for(int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 4; ++i) {
         //find median of histogram
-        uint32_t median = 0, count = 0;
+        uint32_t lmedian = 0, count = 0;
 
-        while(count < datalen / 2) {
-            count += (*histo[i])[median];
-            ++median;
+        while (count < datalen / 2) {
+            count += (*histo[i])[lmedian];
+            ++lmedian;
         }
 
-        const float weight = (count - datalen / 2.f) / (*histo[i])[median - 1];
-        medians[i] = rtengine::intp(weight, (float)(median - 2), (float)(median - 1));
+        const float weight = (count - datalen / 2.f) / (*histo[i])[lmedian - 1];
+        medians[i] = rtengine::intp(weight, (float)(lmedian - 2), (float)(lmedian - 1));
     }
 
-    for(int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 4; ++i) {
         brightnessFactor[i] = medians[frame] / medians[i];
     }
 
@@ -334,7 +334,7 @@ BENCHFUN
 
     if(motionDetection) {
         if(!showOnlyMask) {
-            if(bayerParams.pixelShiftMedian) { // We need the demosaiced frames for motion correction
+            if(bayerParams.pixelShiftMedian || bayerParams.pixelShiftAverage) { // We need the demosaiced frames for motion correction
                 if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(procparams::RAWParams::BayerSensor::PSDemosaicMethod::LMMSE)) {
                     lmmse_interpolate_omp(winw, winh, *(rawDataFrames[0]), red, green, blue, bayerParams.lmmse_iterations);
                 } else if (bayerParams.pixelShiftDemosaicMethod == bayerParams.getPSDemosaicMethodString(procparams::RAWParams::BayerSensor::PSDemosaicMethod::AMAZEVNG4)) {
@@ -359,22 +359,42 @@ BENCHFUN
                         amaze_demosaic_RT(winx, winy, winw, winh, *(rawDataFrames[i + 1]), redTmp[i], greenTmp[i], blueTmp[i], options.chunkSizeAMAZE, options.measure);
                     }
                 }
+                if(bayerParams.pixelShiftMedian) {
 
 #ifdef _OPENMP
-                #pragma omp parallel for schedule(dynamic,16)
+                    #pragma omp parallel for schedule(dynamic,16)
 #endif
 
-                for(int i = winy + border; i < winh - border; i++) {
-                    for(int j = winx + border; j < winw - border; j++) {
-                        red[i][j] = median(red[i][j], redTmp[0][i + 1][j], redTmp[1][i + 1][j + 1], redTmp[2][i][j + 1]);
-                    }
+                    for(int i = winy + border; i < winh - border; i++) {
+                        for(int j = winx + border; j < winw - border; j++) {
+                            red[i][j] = median(red[i][j], redTmp[0][i + 1][j], redTmp[1][i + 1][j + 1], redTmp[2][i][j + 1]);
+                        }
 
-                    for(int j = winx + border; j < winw - border; j++) {
-                        green[i][j] = median(green[i][j], greenTmp[0][i + 1][j], greenTmp[1][i + 1][j + 1], greenTmp[2][i][j + 1]);
-                    }
+                        for(int j = winx + border; j < winw - border; j++) {
+                            green[i][j] = median(green[i][j], greenTmp[0][i + 1][j], greenTmp[1][i + 1][j + 1], greenTmp[2][i][j + 1]);
+                        }
 
-                    for(int j = winx + border; j < winw - border; j++) {
-                        blue[i][j] = median(blue[i][j], blueTmp[0][i + 1][j], blueTmp[1][i + 1][j + 1], blueTmp[2][i][j + 1]);
+                        for(int j = winx + border; j < winw - border; j++) {
+                            blue[i][j] = median(blue[i][j], blueTmp[0][i + 1][j], blueTmp[1][i + 1][j + 1], blueTmp[2][i][j + 1]);
+                        }
+                    }
+                } else {
+#ifdef _OPENMP
+                    #pragma omp parallel for schedule(dynamic,16)
+#endif
+
+                    for(int i = winy + border; i < winh - border; i++) {
+                        for(int j = winx + border; j < winw - border; j++) {
+                            red[i][j] = 0.25f * ((red[i][j] + redTmp[0][i + 1][j]) + (redTmp[1][i + 1][j + 1] + redTmp[2][i][j + 1]));
+                        }
+
+                        for(int j = winx + border; j < winw - border; j++) {
+                            green[i][j] = 0.25f * ((green[i][j] + greenTmp[0][i + 1][j]) + (greenTmp[1][i + 1][j + 1] + greenTmp[2][i][j + 1]));
+                        }
+
+                        for(int j = winx + border; j < winw - border; j++) {
+                            blue[i][j] = 0.25f * ((blue[i][j] + blueTmp[0][i + 1][j]) + (blueTmp[1][i + 1][j + 1] + blueTmp[2][i][j + 1]));
+                        }
                     }
                 }
             } else {

@@ -37,18 +37,18 @@ class BayerProcess final :
 protected:
 
     MyComboBoxText* method;
-    Gtk::HBox* borderbox;
-    Gtk::HBox *imageNumberBox;
+    Gtk::Box* borderbox;
+    Gtk::Box *imageNumberBox;
     Adjuster* border;
     MyComboBoxText* imageNumber;
     Adjuster* ccSteps;
-    Gtk::VBox *dcbOptions;
+    Gtk::Box *dcbOptions;
     Adjuster* dcbIterations;
     CheckBox* dcbEnhance;
-    Gtk::VBox *lmmseOptions;
+    Gtk::Box *lmmseOptions;
     Adjuster* lmmseIterations;
     Gtk::Frame *pixelShiftFrame;
-    Gtk::VBox *pixelShiftOptions;
+    Gtk::Box *pixelShiftOptions;
     MyComboBoxText* pixelShiftMotionMethod;
     MyComboBoxText* pixelShiftDemosaicMethod;
     CheckBox* pixelShiftShowMotion;
@@ -58,12 +58,13 @@ protected:
     CheckBox* pixelShiftBlur;
     CheckBox* pixelShiftHoleFill;
     CheckBox* pixelShiftMedian;
+    CheckBox* pixelShiftAverage;
     CheckBox* pixelShiftEqualBright;
     CheckBox* pixelShiftEqualBrightChannel;
     Adjuster* pixelShiftSmooth;
     Adjuster* pixelShiftEperIso;
     Adjuster* pixelShiftSigma;
-    Gtk::VBox *dualDemosaicOptions;
+    Gtk::Box *dualDemosaicOptions;
     Adjuster* dualDemosaicContrast;
     int oldMethod;
     bool lastAutoContrast;
@@ -73,6 +74,7 @@ protected:
     rtengine::ProcEvent EvDemosaicAutoContrast;
     rtengine::ProcEvent EvDemosaicContrast;
     rtengine::ProcEvent EvDemosaicPixelshiftDemosaicMethod;
+    rtengine::ProcEvent EvPixelshiftAverage;
 public:
 
     BayerProcess ();

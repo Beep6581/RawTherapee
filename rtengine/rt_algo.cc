@@ -34,21 +34,22 @@
 #include "sleef.h"
 
 namespace {
+
 float calcBlendFactor(float val, float threshold) {
     // sigmoid function
     // result is in ]0;1] range
     // inflexion point is at (x, y) (threshold, 0.5)
-    return 1.f / (1.f + xexpf(16.f - 16.f * val / threshold));
+    const float x = -16.f + (16.f / threshold) * val;
+    return 0.5f * (1.f + x / std::sqrt(1.f + rtengine::SQR(x)));
 }
 
 #ifdef __SSE2__
-vfloat calcBlendFactor(vfloat valv, vfloat thresholdv) {
+vfloat calcBlendFactor(vfloat val, vfloat threshold) {
     // sigmoid function
     // result is in ]0;1] range
     // inflexion point is at (x, y) (threshold, 0.5)
-    const vfloat onev = F2V(1.f);
-    const vfloat c16v = F2V(16.f);
-    return onev / (onev + xexpf(c16v - c16v * valv / thresholdv));
+    const vfloat x = -16.f + (16.f / threshold) * val;
+    return 0.5f * (1.f + x * _mm_rsqrt_ps(1.f + rtengine::SQR(x)));
 }
 #endif
 
@@ -488,4 +489,25 @@ void buildBlendMask(const float* const * luminance, float **blend, int W, int H,
     }
 }
 
+double accumulateProduct(const float* data1, const float* data2, size_t n, bool multiThread) {
+    if (n == 0) {
+        return 0.0;
+    }
+
+    // use two accumulators to reduce dependencies (improves speed) and increase accuracy
+    double acc1 = 0.0;
+    double acc2 = 0.0;
+#ifdef _OPENMP
+    #pragma omp parallel for reduction(+:acc1,acc2) if(multiThread)
+#endif
+    for (size_t i = 0; i < n - 1; i += 2) {
+        acc1 += static_cast<double>(data1[i]) * static_cast<double>(data2[i]);
+        acc2 += static_cast<double>(data1[i + 1]) * static_cast<double>(data2[i + 1]);
+    }
+
+    if (n & 1) {
+        acc1 += static_cast<double>(data1[n -1]) * static_cast<double>(data2[n -1]);
+    }
+    return acc1 + acc2;
+}
 }

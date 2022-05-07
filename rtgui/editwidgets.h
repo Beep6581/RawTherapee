@@ -24,10 +24,11 @@
 #include <glibmm/ustring.h>
 
 #include "editcoordsys.h"
+#include "rtsurface.h"
 #include "../rtengine/coord.h"
+#include "../rtengine/rt_math.h"
 
 class ObjectMOBuffer;
-class RTSurface;
 
 /** @file
  *
@@ -210,6 +211,8 @@ public:
         F_VISIBLE     = 1 << 0, /// true if the geometry have to be drawn on the visible layer
         F_HOVERABLE   = 1 << 1, /// true if the geometry have to be drawn on the "mouse over" layer
         F_AUTO_COLOR  = 1 << 2, /// true if the color depend on the state value, not the color field above
+        F_DASHED      = 1 << 3, /// true if the geometry have to be drawn as a dash line
+        // (TODO: add a F_LARGE_DASH to have two different dash size ?)
     };
 
     /// @brief Key point of the image's rectangle that is used to locate the icon copy to the target point:
@@ -226,6 +229,7 @@ public:
     };
 
 protected:
+    static const std::vector<double> dash;
     RGBColor innerLineColor;
     RGBColor outerLineColor;
     short flags;
@@ -234,6 +238,7 @@ public:
     float innerLineWidth;  // ...outerLineWidth = innerLineWidth+2
     Datum datum;
     State state;  // set by the Subscriber
+    float opacity; // Percentage of opacity
 
     Geometry ();
     virtual ~Geometry() {}
@@ -251,6 +256,8 @@ public:
     void setVisible (bool visible);
     bool isHoverable ();
     void setHoverable (bool visible);
+    bool isDashed ();
+    void setDashed (bool dashed);
 
 
     // setActive will enable/disable the visible and hoverable flags in one shot!
@@ -319,6 +326,25 @@ public:
     void setXYXY(int left, int top, int right, int bottom);
     void setXYWH(rtengine::Coord topLeft, rtengine::Coord widthHeight);
     void setXYXY(rtengine::Coord topLeft, rtengine::Coord bottomRight);
+    void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
+    void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
+    void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
+};
+
+class Ellipse : public Geometry
+{
+public:
+    rtengine::Coord center;
+    int radYT; // Ellipse half-radius for top y-axis
+    int radY; // Ellipse half-radius for bottom y-axis
+    int radXL; // Ellipse half-radius for left x-axis
+    int radX; // Ellipse half-radius for right x-axis
+    bool filled;
+    bool radiusInImageSpace; /// If true, the radius depend on the image scale; if false, it is a fixed 'screen' size
+
+    Ellipse ();
+    Ellipse (const rtengine::Coord& center, int radYT, int radY, int radXL, int radX, bool filled = false, bool radiusInImageSpace = false);
+
     void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
     void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
     void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
@@ -429,7 +455,7 @@ inline void Geometry::setOuterLineColor (char r, char g, char b) {
 }
 
 inline double Geometry::getMouseOverLineWidth () {
-    return getOuterLineWidth () + 2.;
+    return rtengine::max(double(innerLineWidth), 1.) + 2.;
 }
 
 inline void Geometry::setAutoColor (bool aColor) {
@@ -464,6 +490,18 @@ inline void Geometry::setHoverable (bool hoverable) {
     }
 }
 
+inline bool Geometry::isDashed () {
+    return flags & F_DASHED;
+}
+
+inline void Geometry::setDashed (bool dashed) {
+    if (dashed) {
+        flags |= F_DASHED;
+    } else {
+        flags &= ~F_DASHED;
+    }
+}
+
 inline void Geometry::setActive (bool active) {
     if (active) {
         flags |= (F_VISIBLE | F_HOVERABLE);
@@ -476,7 +514,7 @@ inline Geometry::Geometry () :
         innerLineColor (char (255), char (255), char (255)), outerLineColor (
                 char (0), char (0), char (0)), flags (
                 F_VISIBLE | F_HOVERABLE | F_AUTO_COLOR), innerLineWidth (1.5f), datum (
-                IMAGE), state (NORMAL) {
+                IMAGE), state (NORMAL), opacity(100.) {
 }
 
 inline RGBAColor::RGBAColor () :
@@ -520,6 +558,10 @@ inline Line::Line () :
         begin (10, 10), end (100, 100) {
 }
 
+inline Ellipse::Ellipse () :
+        center (100, 100), radYT (5), radY (5), radXL (10), radX (10), filled (false), radiusInImageSpace (false) {
+}
+
 inline Circle::Circle (rtengine::Coord& center, int radius, bool filled,
         bool radiusInImageSpace) :
         center (center), radius (radius), filled (filled), radiusInImageSpace (
@@ -540,5 +582,10 @@ inline Line::Line (int beginX, int beginY, int endX, int endY) :
         begin (beginX, beginY), end (endX, endY) {
 }
 
-#endif
+inline Ellipse::Ellipse (const rtengine::Coord& center, int radYT, int radY, int radXL, int radX,
+        bool filled, bool radiusInImageSpace) :
+        center (center), radYT (radYT), radY (radY), radXL (radXL), radX (radX), filled (filled),
+                radiusInImageSpace (radiusInImageSpace) {
+}
 
+#endif

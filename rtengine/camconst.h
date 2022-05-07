@@ -37,12 +37,12 @@ private:
     int globalGreenEquilibration;
     
     CameraConst();
-    static bool parseLevels(CameraConst *cc, int bw, void *ji);
-    static bool parseApertureScaling(CameraConst *cc, void *ji);
+    static bool parseLevels(CameraConst *cc, int bw, const void *ji);
+    static bool parseApertureScaling(CameraConst *cc, const void *ji);
     bool get_Levels(camera_const_levels & lvl, int bw, int iso, float fnumber) const;
 
 public:
-    static CameraConst *parseEntry(void *cJSON, const char *make_model);
+    static CameraConst *parseEntry(const void *cJSON, const char *make_model);
     bool has_dcrawMatrix(void) const;
     void update_dcrawMatrix(const short *other);
     const short *get_dcrawMatrix(void) const;

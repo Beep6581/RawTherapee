@@ -145,12 +145,12 @@ public:
     {
         return tags.size ();
     }
-    const TagAttrib* getAttrib     (int id);
+    const TagAttrib* getAttrib     (int id) const;
     // Find a Tag by scanning the whole tag tree and stopping at the first occurrence
     const TagAttrib* getAttrib     (const char* name);
     // Try to get the Tag at a given location. 'name' is a path relative to this directory (e.g. "LensInfo/FocalLength")
     const TagAttrib* getAttribP    (const char* name);
-    const TagAttrib* getAttribTable()
+    const TagAttrib* getAttribTable() const
     {
         return attribs;
     }
@@ -304,7 +304,7 @@ public:
     double  toDouble        (int ofs = 0) const;
     double* toDoubleArray   (int ofs = 0) const;
     void    toRational      (int& num, int& denom, int ofs = 0) const;
-    void    toString        (char* buffer, int ofs = 0) const;
+    void    toString        (char* buffer, std::size_t size, int ofs = 0) const;
     void    fromString      (const char* v, int size = -1);
     void    setInt          (int v, int ofs = 0, TagType astype = LONG);
     int     getDistanceFrom (const TagDirectory *root);
@@ -321,7 +321,7 @@ public:
     Tag* clone         (TagDirectory* parent) const;
 
     // to control if the tag shall be written
-    bool getKeep ()
+    bool getKeep () const
     {
         return keep;
     }
@@ -331,7 +331,7 @@ public:
     }
 
     // get subdirectory (there can be several, the last is NULL)
-    bool           isDirectory  ()
+    bool isDirectory () const
     {
         return directory != nullptr;
     }
@@ -340,7 +340,7 @@ public:
         return (directory) ? directory[i] : nullptr;
     }
 
-    MNKind getMakerNoteFormat ()
+    MNKind getMakerNoteFormat () const
     {
         return makerNoteKind;
     }
@@ -392,7 +392,7 @@ public:
     virtual std::string toString (const Tag* t) const
     {
         char buffer[1024];
-        t->toString (buffer);
+        t->toString (buffer, sizeof(buffer));
         std::string s (buffer);
         std::string::size_type p1 = s.find_first_not_of (' ');
 
@@ -434,10 +434,15 @@ public:
             case LONG:
                 return (double) ((int)sget4 (t->getValue() + ofs, t->getOrder()));
 
-            case SRATIONAL:
-            case RATIONAL: {
+            case SRATIONAL: {
                 const double dividend = (int)sget4 (t->getValue() + ofs, t->getOrder());
                 const double divisor = (int)sget4 (t->getValue() + ofs + 4, t->getOrder());
+                return divisor == 0. ? 0. : dividend / divisor;
+            }
+
+            case RATIONAL: {
+                const double dividend = (uint32_t)sget4 (t->getValue() + ofs, t->getOrder());
+                const double divisor = (uint32_t)sget4 (t->getValue() + ofs + 4, t->getOrder());
                 return divisor == 0. ? 0. : dividend / divisor;
             }
 
@@ -454,8 +459,6 @@ public:
     // Get the value as an int
     virtual int toInt (const Tag* t, int ofs = 0, TagType astype = INVALID)
     {
-        int a;
-
         if (astype == INVALID || astype == AUTO) {
             astype = t->getType();
         }
@@ -480,10 +483,15 @@ public:
             case LONG:
                 return (int)sget4 (t->getValue() + ofs, t->getOrder());
 
-            case SRATIONAL:
-            case RATIONAL:
-                a = (int)sget4 (t->getValue() + ofs + 4, t->getOrder());
+            case SRATIONAL: {
+                int a = (int)sget4 (t->getValue() + ofs + 4, t->getOrder());
                 return a == 0 ? 0 : (int)sget4 (t->getValue() + ofs, t->getOrder()) / a;
+            }
+
+            case RATIONAL: {
+                uint32_t a = (uint32_t)sget4 (t->getValue() + ofs + 4, t->getOrder());
+                return a == 0 ? 0 : (uint32_t)sget4 (t->getValue() + ofs, t->getOrder()) / a;
+            }
 
             case FLOAT:
                 return (int)toDouble (t, ofs);
@@ -518,7 +526,7 @@ public:
             return r->second;
         } else {
             char buffer[1024];
-            t->toString(buffer);
+            t->toString(buffer, sizeof(buffer));
             return buffer;
         }
     }

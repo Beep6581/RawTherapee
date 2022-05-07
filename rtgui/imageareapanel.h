@@ -23,7 +23,7 @@
 class ImageArea;
 
 class ImageAreaPanel final :
-    public Gtk::VBox
+    public Gtk::Box
 {
 
 protected:

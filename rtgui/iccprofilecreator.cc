@@ -79,6 +79,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     primaries->append(M("ICCPROFCREATOR_PRIM_BEST"));
     primaries->append(M("ICCPROFCREATOR_PRIM_BETA"));
     primaries->append(M("ICCPROFCREATOR_PRIM_BRUCE"));
+    primaries->append(M("ICCPROFCREATOR_PRIM_DCIP3"));
     primaries->set_tooltip_text(M("ICCPROFCREATOR_PRIM_TOOLTIP"));
     mainGrid->attach(*primaries, 1, 0, 1, 1);
 
@@ -101,17 +102,17 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     Gtk::Image* gamutl5 =  Gtk::manage(new RTImage("rt-logo-small.png"));
     */
 
-    aPrimariesRedX = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_REDX"), 0.6300, 0.7350, 0.0001, 0.6400/*, gamuts0, gamutl0*/));
+    aPrimariesRedX = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_REDX"), 0.4100, 0.9000, 0.0001, 0.6400/*, gamuts0, gamutl0*/));
     setExpandAlignProperties(aPrimariesRedX, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    aPrimariesRedY = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_REDY"), 0.2650, 0.3350, 0.0001, 0.3300/*, gamutl1, gamuts1*/));
+    aPrimariesRedY = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_REDY"), 0.1000, 0.6000, 0.0001, 0.3300/*, gamutl1, gamuts1*/));
     setExpandAlignProperties(aPrimariesRedY, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    aPrimariesGreenX = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_GREX"), 0.0000, 0.3100, 0.0001, 0.3000/*, gamutl2, gamuts2*/));
+    aPrimariesGreenX = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_GREX"), -0.100, 0.4000, 0.0001, 0.3000/*, gamutl2, gamuts2*/));
     setExpandAlignProperties(aPrimariesGreenX, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    aPrimariesGreenY = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_GREY"), 0.5900, 1.0000, 0.0001, 0.6000/*, gamuts3, gamutl3*/));
+    aPrimariesGreenY = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_GREY"), 0.50, 1.0000, 0.0001, 0.6000/*, gamuts3, gamutl3*/));
     setExpandAlignProperties(aPrimariesGreenY, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    aPrimariesBlueX = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_BLUX"), 0.0001, 0.1600, 0.0001, 0.1500/*, gamutl4, gamuts4*/));
+    aPrimariesBlueX = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_BLUX"), -0.1, 0.3000, 0.0001, 0.1500/*, gamutl4, gamuts4*/));
     setExpandAlignProperties(aPrimariesBlueX, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    aPrimariesBlueY = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_BLUY"), -0.0800, 0.0700, 0.0001, 0.060/*, gamutl5, gamuts5*/));
+    aPrimariesBlueY = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_PRIM_BLUY"), -0.100, 0.4000, 0.0001, 0.060/*, gamutl5, gamuts5*/));
     setExpandAlignProperties(aPrimariesBlueY, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
     primariesGrid->attach(*aPrimariesRedX,   0, 0, 1, 1);
@@ -151,9 +152,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     aGamma = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_GAMMA"), 1, 3.5, 0.00001, 2.4));
     setExpandAlignProperties(aGamma, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
 
-    if (aGamma->delay < options.adjusterMaxDelay) {
-        aGamma->delay = options.adjusterMaxDelay;
-    }
+    aGamma->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     aGamma->show();
     mainGrid->attach(*aGamma, 1, 3, 1, 1); //gamma
@@ -161,9 +160,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     aSlope = Gtk::manage(new Adjuster(M("ICCPROFCREATOR_SLOPE"), 0, 15, 0.00001, 12.92310));
     setExpandAlignProperties(aSlope, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
 
-    if (aSlope->delay < options.adjusterMaxDelay) {
-        aSlope->delay = options.adjusterMaxDelay;
-    }
+    aSlope->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     aSlope->show();
     mainGrid->attach(*aSlope, 1, 4, 1, 1); //slope
@@ -180,6 +177,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     cIlluminant->append(M("ICCPROFCREATOR_ILL_50"));
     cIlluminant->append(M("ICCPROFCREATOR_ILL_55"));
     cIlluminant->append(M("ICCPROFCREATOR_ILL_60"));
+    cIlluminant->append(M("ICCPROFCREATOR_ILL_63"));
     cIlluminant->append(M("ICCPROFCREATOR_ILL_65"));
     cIlluminant->append(M("ICCPROFCREATOR_ILL_80"));
     cIlluminant->append(M("ICCPROFCREATOR_ILL_INC"));
@@ -269,6 +267,8 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
         primaries->set_active_text(M("ICCPROFCREATOR_PRIM_BETA"));
     } else if (primariesPreset == "BruceRGB") {
         primaries->set_active_text(M("ICCPROFCREATOR_PRIM_BRUCE"));
+    } else if (primariesPreset == "DCIP3") {
+        primaries->set_active_text(M("ICCPROFCREATOR_PRIM_DCIP3"));
     }
 
     trcPresets->set_active(0);
@@ -300,6 +300,8 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
         cIlluminant->set_active_text(M("ICCPROFCREATOR_ILL_55"));
     } else if (illuminant == "D60") {
         cIlluminant->set_active_text(M("ICCPROFCREATOR_ILL_60"));
+    } else if (illuminant == "D63") {
+        cIlluminant->set_active_text(M("ICCPROFCREATOR_ILL_63"));
     } else if (illuminant == "D65") {
         cIlluminant->set_active_text(M("ICCPROFCREATOR_ILL_65"));
     } else if (illuminant == "D80") {
@@ -328,7 +330,7 @@ ICCProfileCreator::ICCProfileCreator(RTWindow *rtwindow)
     close->signal_clicked().connect(sigc::mem_fun(*this, &ICCProfileCreator::closePressed));
     get_action_area()->pack_start(*close);
 
-    //--------------- Show childrens
+    //--------------- Show children
 
     show_all_children();
 
@@ -441,6 +443,8 @@ void ICCProfileCreator::storeValues()
         options.ICCPC_illuminant = illuminant = "D55";
     } else if (cIlluminant->get_active_text() == M("ICCPROFCREATOR_ILL_60")) {
         options.ICCPC_illuminant = illuminant = "D60";
+    } else if (cIlluminant->get_active_text() == M("ICCPROFCREATOR_ILL_63")) {
+        options.ICCPC_illuminant = illuminant = "D63";
     } else if (cIlluminant->get_active_text() == M("ICCPROFCREATOR_ILL_65")) {
         options.ICCPC_illuminant = illuminant = "D65";
     } else if (cIlluminant->get_active_text() == M("ICCPROFCREATOR_ILL_80")) {
@@ -486,6 +490,8 @@ Glib::ustring ICCProfileCreator::getPrimariesPresetName(const Glib::ustring &pre
         return Glib::ustring("BetaRGB");
     } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_BRUCE")) {
         return Glib::ustring("BruceRGB");
+    } else if (primaries->get_active_text() == M("ICCPROFCREATOR_PRIM_DCIP3")) {
+        return Glib::ustring("DCIP3");
     } else if (primaries->get_active_text() == M("ICCPROFCREATOR_CUSTOM")) {
         return Glib::ustring("custom");
     } else {
@@ -574,6 +580,13 @@ void ICCProfileCreator::getPrimaries(const Glib::ustring &preset, double *p, Col
         p[3] = 0.8404;
         p[4] = 0.0366;
         p[5] = 0.0001;
+    } else if (preset == "DCIP3") {
+        p[0] = 0.68;    // DCIP3 primaries
+        p[1] = 0.32;
+        p[2] = 0.265;
+        p[3] = 0.69;
+        p[4] = 0.15;
+        p[5] = 0.06;
     } else if (preset == "custom") {
         p[0] = redPrimaryX;
         p[1] = redPrimaryY;
@@ -659,7 +672,7 @@ void ICCProfileCreator::savePressed()
     // -------------------------------------------- Compute the default file name
     // -----------------setmedia white point for monitor  profile sRGB or AdobeRGB in case of profile used for monitor---------------------
     //instead of calculations made by LCMS..small differences
-    bool isD65 = (primariesPreset == "sRGB" || primariesPreset == "Adobe" || primariesPreset == "Rec2020"  || primariesPreset == "BruceRGB");
+    bool isD65 = (primariesPreset == "sRGB" || primariesPreset == "Adobe" || primariesPreset == "Rec2020"  || primariesPreset == "BruceRGB" || primariesPreset == "DCIP3");
     bool isD60 = (primariesPreset == "ACES-AP1" || primariesPreset == "ACES-AP0");
     bool isD50 = (primariesPreset == "ProPhoto" || primariesPreset == "Widegamut" || primariesPreset == "BestRGB" || primariesPreset == "BetaRGB");
     // v2except = (profileVersion == "v2"  && (primariesPreset == "sRGB" || primariesPreset == "Adobe" || primariesPreset == "Rec2020"  || primariesPreset == "BruceRGB" || primariesPreset == "ACES-AP1" || primariesPreset == "ACES-AP0") && illuminant == "DEF");
@@ -697,23 +710,23 @@ void ICCProfileCreator::savePressed()
             if (options.rtSettings.widegamut.substr(0, 4) == "RTv4") {
                 options.rtSettings.widegamut = "RTv2_Wide";
             }
-
             sNewProfile = options.rtSettings.widegamut;
-
             sPrimariesPreset = "Wide";
+        } else if (primariesPreset == "DCIP3") {//only at the request of the user
+            sNewProfile = options.rtSettings.DCIP3;
+            sPrimariesPreset = "DCIP3";
         } else if (primariesPreset == "BestRGB"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.best)) {
             if (options.rtSettings.best.substr(0, 4) == "RTv4") {
                 options.rtSettings.best = "RTv2_Best";
             }
-
             sNewProfile = options.rtSettings.best;
 
             sPrimariesPreset = "Best";
         } else if (primariesPreset == "BetaRGB"    && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.beta)) {
-            sNewProfile = options.rtSettings.beta;
             if (options.rtSettings.beta.substr(0, 4) == "RTv4") {
                 options.rtSettings.widegamut = "RTv2_Beta";
             }
+            sNewProfile = options.rtSettings.beta;
 
             sPrimariesPreset = "Beta";
         } else if (primariesPreset == "BruceRGB"   && rtengine::ICCStore::getInstance()->outputProfileExist(options.rtSettings.bruce)) {
@@ -754,6 +767,8 @@ void ICCProfileCreator::savePressed()
             sPrimariesPreset = "Best";
         } else if (primariesPreset == "BetaRGB") {
             sPrimariesPreset = "Beta";
+        } else if (primariesPreset == "DCIP3") {
+            sPrimariesPreset = "DCIP3";
         } else if (primariesPreset == "custom") {
             sPrimariesPreset = "Custom";
         }
@@ -881,8 +896,7 @@ void ICCProfileCreator::savePressed()
         double ts = slope;
         double slope2 = slope == 0 ? eps : slope;
 
-        int mode = 0;
-        rtengine::Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
+        rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope : return parameters for LCMS2
         ga[4] = g_a[3] * ts;
         //printf("g_a.gamma0=%f g_a.gamma1=%f g_a.gamma2=%f g_a.gamma3=%f g_a.gamma4=%f\n", g_a.gamma0,g_a.gamma1,g_a.gamma2,g_a.gamma3,g_a.gamma4);
         ga[0] = gamma;
@@ -1017,6 +1031,8 @@ void ICCProfileCreator::savePressed()
             tempv4 = 5500.;
         } else if (illuminant == "D60") {
             tempv4 = 6004.;
+        } else if (illuminant == "D63") {
+            tempv4 = 6300.;
         } else if (illuminant == "D65") {
             tempv4 = 6504.;
         } else if (illuminant == "D80") {
@@ -1033,6 +1049,10 @@ void ICCProfileCreator::savePressed()
 
         if (illuminant == "D60") {
             xyD = {0.32168, 0.33767, 1.0};
+        }
+
+        if (illuminant == "D63") {
+            xyD = {0.314, 0.351, 1.0};
         }
 
         if (illuminant == "D50") {
@@ -1082,6 +1102,9 @@ void ICCProfileCreator::savePressed()
                 } else if (illuminant == "D60") {
                     Wx = 0.952646075;
                     Wz = 1.008825184;
+                } else if (illuminant == "D63") {
+                    Wx = 0.894587;
+                    Wz = 0.954416;
                 } else if (illuminant == "D41") {
                     Wx = 0.991488263;
                     Wz = 0.631604625;

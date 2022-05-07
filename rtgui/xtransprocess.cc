@@ -34,7 +34,7 @@ XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP
     EvDemosaicContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_DUALDEMOSAIC_CONTRAST");
     EvDemosaicAutoContrast = m->newEvent(DEMOSAIC, "HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST");
 
-    Gtk::HBox* hb1 = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* hb1 = Gtk::manage (new Gtk::Box ());
     hb1->pack_start (*Gtk::manage (new Gtk::Label ( M("TP_RAW_DMETHOD") + ": ")), Gtk::PACK_SHRINK, 4);
     method = Gtk::manage (new MyComboBoxText ());
 
@@ -72,40 +72,34 @@ XTransProcess::XTransProcess () : FoldableToolPanel(this, "xtransprocess", M("TP
     hb1->pack_end (*method, Gtk::PACK_EXPAND_WIDGET, 4);
     pack_start( *hb1, Gtk::PACK_SHRINK, 4);
 
-    dualDemosaicOptions = Gtk::manage (new Gtk::VBox ());
+    dualDemosaicOptions = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
     dualDemosaicContrast = Gtk::manage(new Adjuster (M("TP_RAW_DUALDEMOSAICCONTRAST"), 0, 100, 1, 20));
     dualDemosaicContrast->setAdjusterListener (this);
     dualDemosaicContrast->addAutoButton(M("TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP"));
     dualDemosaicContrast->setAutoValue(true);
 
-    if (dualDemosaicContrast->delay < options.adjusterMaxDelay) {
-        dualDemosaicContrast->delay = options.adjusterMaxDelay;
-    }
+    dualDemosaicContrast->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     dualDemosaicContrast->show();
     dualDemosaicOptions->pack_start(*dualDemosaicContrast);
     pack_start( *dualDemosaicOptions, Gtk::PACK_SHRINK, 4);
 
-    borderbox = Gtk::manage(new Gtk::HBox());
+    borderbox = Gtk::manage(new Gtk::Box());
     border = Gtk::manage(new Adjuster(M("TP_RAW_BORDER"), 0, 16, 1, 7));
     border->setAdjusterListener (this);
 
-    if (border->delay < options.adjusterMaxDelay) {
-        border->delay = options.adjusterMaxDelay;
-    }
+    border->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     border->show();
     borderbox->pack_start(*border);
     pack_start(*borderbox, Gtk::PACK_SHRINK, 4);
 
-    pack_start( *Gtk::manage( new Gtk::HSeparator()), Gtk::PACK_SHRINK, 0 );
+    pack_start( *Gtk::manage( new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)), Gtk::PACK_SHRINK, 0 );
     ccSteps = Gtk::manage (new Adjuster (M("TP_RAW_FALSECOLOR"), 0, 5, 1, 0 ));
     ccSteps->setAdjusterListener (this);
 
-    if (ccSteps->delay < options.adjusterMaxDelay) {
-        ccSteps->delay = options.adjusterMaxDelay;
-    }
+    ccSteps->setDelay(std::max(options.adjusterMinDelay, options.adjusterMaxDelay));
 
     ccSteps->show();
     pack_start( *ccSteps, Gtk::PACK_SHRINK, 4);

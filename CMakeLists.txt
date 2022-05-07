@@ -44,6 +44,13 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION
             "Building RawTherapee requires using GCC version 4.9 or higher!")
 endif()
 
+# Warning for GCC vectorization issues, which causes problems #5749 and #6384:
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND ((CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "10.0" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "10.2") OR (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "11.0")))
+    message(STATUS "WARNING: gcc ${CMAKE_CXX_COMPILER_VERSION} is known to miscompile RawTherapee when using -ftree-loop-vectorize, forcing the option to be off")    
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-tree-loop-vectorize")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-tree-loop-vectorize")
+endif()
+
 # We might want to build using the old C++ ABI, even when using a new GCC
 # version:
 if(USE_OLD_CXX_ABI)
@@ -67,6 +74,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 set(CACHE_NAME_SUFFIX
     ""
     CACHE STRING "RawTherapee's cache folder suffix")
+
+# For macOS only, OSX_DEV_BUILD option allows using relative paths instead of absolute
+# paths. Consequently, for development builds, application can be launching without
+# being bundled. However, file access can be restricted for some folder.
+option(OSX_DEV_BUILD "Generate macOS development builds" OFF)
 
 # By default we don't use a specific processor target, so PROC_TARGET_NUMBER is
 # set to 0. Specify other values to optimize for specific processor architecture
@@ -128,6 +140,14 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${PROC_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=unused-label")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror=delete-incomplete")
 
+# Do net set math errno, as we never check its value.
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-math-errno")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-math-errno")
+
+# suppress warning https://github.com/Beep6581/RawTherapee/issues/6105
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-attributes")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-attributes")
+
 # Special treatment for x87 and x86-32 SSE (see GitHub issue #4324)
 include(FindX87Math)
 if(HAVE_X87_MATH)
@@ -155,7 +175,7 @@ if(APPLE) # TODO make -mtune generic conditional and/or specifiable.
     if(CMAKE_CXX_COMPILER MATCHES "g\\+\\+-mp-4.[5-8]"
        OR CMAKE_CXX_COMPILER_ARG1 MATCHES "g\\+\\+-mp-4.[5-8]")
         set(CMAKE_EXE_LINKER_FLAGS
-            "${CMAKE_EXE_LINKER_FLAGS} /usr/lib/libstdc++.6.dylib -Wl,-headerpad_max_install_names -mtune=generic"
+            "${CMAKE_EXE_LINKER_FLAGS} /usr/lib/libstdc++.6.dylib -Wl,-headerpad_max_install_names -mtune=generic -framework Foundation"
         )
         message(
             STATUS
@@ -170,7 +190,7 @@ if(APPLE) # TODO make -mtune generic conditional and/or specifiable.
     set(CMAKE_C_FLAGS
         "${CMAKE_C_FLAGS} -mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
     set(CMAKE_EXE_LINKER_FLAGS
-        "${CMAKE_EXE_LINKER_FLAGS} -Wl,-headerpad_max_install_names -mtune=generic"
+        "${CMAKE_EXE_LINKER_FLAGS} -Wl,-headerpad_max_install_names -mtune=generic -framework Foundation"
     )
 endif()
 
@@ -284,7 +304,7 @@ endif()
 if(NOT DEFINED CREDITSDIR)
     if(BUILD_BUNDLE)
         if(APPLE)
-            set(CREDITSDIR "${DATADIR}")
+            set(CREDITSDIR "${DATADIR}/..")
         else()
             set(CREDITSDIR "${DATADIR}")
         endif()
@@ -351,6 +371,8 @@ if(NOT APPLE)
     if(DEFINED LENSFUNDBDIR AND NOT IS_ABSOLUTE "${LENSFUNDBDIR}")
         set(LENSFUNDBDIR "${DATADIR}/${LENSFUNDBDIR}")
     endif()
+else()
+    set(LENSFUNDBDIR "${LENSFUNDBDIR}")
 endif()
 
 if(APPLE)
@@ -367,11 +389,11 @@ if(APPLE)
     if("${LOCAL_PREFIX}")
         set(LOCAL_PREFIX
             "${LOCAL_PREFIX}"
-            CACHE STRING "macos/gtk parent directory ie /usr or /opt")
+            CACHE STRING "macos/gtk parent directory ie /usr/local or /opt/local or /opt/homebrew (for arm64)")
     else()
         set(LOCAL_PREFIX
-            /usr
-            CACHE STRING "macos/gtk parent directory ie /usr or /opt")
+            /usr/local
+            CACHE STRING "macos/gtk parent directory ie /usr/local (default) or /opt/local (macports) or /opt/homebrew (for arm64)")
     endif()
     if("${FANCY_DMG}")
         set(FANCY_DMG
@@ -440,13 +462,13 @@ if(GTK_VERSION VERSION_GREATER "3.24.1" AND GTK_VERSION VERSION_LESS "3.24.7")
     )
 endif()
 
-pkg_check_modules(GLIB2 REQUIRED glib-2.0>=2.44)
-pkg_check_modules(GLIBMM REQUIRED glibmm-2.4>=2.44)
+pkg_check_modules(GLIB2 REQUIRED glib-2.0>=2.48)
+pkg_check_modules(GLIBMM REQUIRED glibmm-2.4>=2.48)
 pkg_check_modules(CAIROMM REQUIRED cairomm-1.0)
-pkg_check_modules(GIO REQUIRED gio-2.0>=2.44)
-pkg_check_modules(GIOMM REQUIRED giomm-2.4>=2.44)
-pkg_check_modules(GTHREAD REQUIRED gthread-2.0>=2.44)
-pkg_check_modules(GOBJECT REQUIRED gobject-2.0>=2.44)
+pkg_check_modules(GIO REQUIRED gio-2.0>=2.48)
+pkg_check_modules(GIOMM REQUIRED giomm-2.4>=2.48)
+pkg_check_modules(GTHREAD REQUIRED gthread-2.0>=2.48)
+pkg_check_modules(GOBJECT REQUIRED gobject-2.0>=2.48)
 pkg_check_modules(SIGC REQUIRED sigc++-2.0>=2.3.1)
 pkg_check_modules(LENSFUN REQUIRED lensfun>=0.2)
 pkg_check_modules(RSVG REQUIRED librsvg-2.0>=2.40)
@@ -466,8 +488,14 @@ endif()
 pkg_check_modules(LCMS REQUIRED lcms2>=2.6)
 pkg_check_modules(EXPAT REQUIRED expat>=2.1)
 pkg_check_modules(FFTW3F REQUIRED fftw3f)
+
+#Set the appropriate FFTW flags on macOS
+if(APPLE AND OPTION_OMP)
+        set(EXTRA_LIB "-L${LOCAL_PREFIX}/lib -lfftw3f_omp -lfftw3f -lm")
+endif()
+
 pkg_check_modules(IPTCDATA REQUIRED libiptcdata)
-pkg_check_modules(TIFF REQUIRED libtiff-4>=4.0.4)
+find_package(TIFF 4.0.4 REQUIRED)
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
 find_package(ZLIB REQUIRED)
@@ -477,7 +505,11 @@ endif()
 
 # Check for libcanberra-gtk3 (sound events on Linux):
 if(UNIX AND (NOT APPLE))
-    pkg_check_modules(CANBERRA-GTK REQUIRED libcanberra-gtk3)
+    option(USE_LIBCANBERRA "Build with libcanberra" ON)
+    if(USE_LIBCANBERRA)
+       pkg_check_modules(CANBERRA-GTK REQUIRED libcanberra-gtk3)
+       add_definitions(-DUSE_CANBERRA)
+    endif()
 endif()
 
 if(WITH_MYFILE_MMAP)
@@ -621,14 +653,8 @@ else()
 endif()
 
 # Get compiler name and version.
-    get_filename_component(COMPILER_INFO ${CMAKE_C_COMPILER} NAME_WE)
-    set(COMPILER_INFO "${COMPILER_INFO} ${CMAKE_C_COMPILER_VERSION}")
-if(NOT APPLE)
-    execute_process(
-        COMMAND gcc -dumpversion
-        OUTPUT_VARIABLE GCC_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
-    set(COMPILER_INFO "gcc ${GCC_VERSION}")
-endif()
+get_filename_component(COMPILER_INFO ${CMAKE_C_COMPILER} NAME_WE)
+set(COMPILER_INFO "${COMPILER_INFO} ${CMAKE_C_COMPILER_VERSION}")
 
 # Get C++ and linker flags for rtengine (the GUI's C++ flags may have fewer
 # flags):
@@ -665,7 +691,21 @@ if(WIN32)
 elseif(APPLE)
     set(
          ABOUT_COMMAND_WITH_ARGS
-         cmake -DPROJECT_SOURCE_DIR:STRING=${PROJECT_SOURCE_DIR} -P ${PROJECT_SOURCE_DIR}/UpdateInfo.cmake -DSYSTEM:STRING=Apple -DCXX_FLAGS:STRING=${CXX_FLAGS} -DLFLAGS:STRING=${LFLAGS} -DCOMPILER_INFO:STRING=${COMPILER_INFO} -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX})
+         ${CMAKE_COMMAND}
+             -DPROJECT_SOURCE_DIR:STRING=${PROJECT_SOURCE_DIR}
+             -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
+             -DSYSTEM:STRING=Apple
+             -DCXX_FLAGS:STRING=${CXX_FLAGS}
+             -DLFLAGS:STRING=${LFLAGS}
+             -DCOMPILER_INFO:STRING=${COMPILER_INFO}
+             -DPROC_LABEL:STRING="${PROC_LABEL}"
+             -DPROC_BIT_DEPTH:STRING="${PROC_BIT_DEPTH}"
+             -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+             -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
+             -DOPTION_OMP:STRING=${OPTION_OMP}
+             -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+             -DLENSFUN_VERSION:STRING=${LENSFUN_VERSION}
+             -P ${PROJECT_SOURCE_DIR}/UpdateInfo.cmake)
 else()
     list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Linux
          -DCXX_FLAGS:STRING=${CXX_FLAGS} -DLFLAGS:STRING=${LFLAGS}
@@ -751,7 +791,14 @@ if(ENABLE_TCMALLOC)
         find_library(TCMALLOC_LIBRARIES tcmalloc PATHS ${TCMALLOC_LIB_DIR}
                                                        NO_DEFAULT_PATH)
     else()
-        find_library(TCMALLOC_LIBRARIES tcmalloc)
+        # On Debian libtcmalloc-minimal4 has no .so symlink, so let's adjust for that
+        set(OLD_CMAKE_FIND_LIBRARY_SUFFIXES "${CMAKE_FIND_LIBRARY_SUFFIXES}")
+        list(APPEND CMAKE_FIND_LIBRARY_SUFFIXES ".so.4")
+
+        find_library(TCMALLOC_LIBRARIES NAMES tcmalloc tcmalloc_minimal)
+
+        set(CMAKE_FIND_LIBRARY_SUFFIXES "${OLD_CMAKE_FIND_LIBRARY_SUFFIXES}")
+        unset(OLD_CMAKE_FIND_LIBRARY_SUFFIXES)
     endif()
     if(TCMALLOC_LIBRARIES)
         message(STATUS "using tcmalloc library in ${TCMALLOC_LIBRARIES}")

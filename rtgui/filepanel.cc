@@ -34,7 +34,7 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
 {
 
     // Contains everything except for the batch Tool Panel and tabs (Fast Export, Inspect, etc)
-    dirpaned = Gtk::manage ( new Gtk::HPaned () );
+    dirpaned = Gtk::manage ( new Gtk::Paned () );
     dirpaned->set_position (options.dirBrowserWidth);
 
     // The directory tree
@@ -45,12 +45,12 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
     recentBrowser = Gtk::manage ( new RecentBrowser () );
 
     // The whole left panel. Contains Places, Recent Folders and Folders.
-    placespaned = Gtk::manage ( new Gtk::VPaned () );
+    placespaned = Gtk::manage ( new Gtk::Paned (Gtk::ORIENTATION_VERTICAL) );
     placespaned->set_name ("PlacesPaned");
     placespaned->set_size_request(250, 100);
     placespaned->set_position (options.dirBrowserHeight);
 
-    Gtk::VBox* obox = Gtk::manage (new Gtk::VBox ());
+    Gtk::Box* obox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     obox->get_style_context()->add_class ("plainback");
     obox->pack_start (*recentBrowser, Gtk::PACK_SHRINK, 4);
     obox->pack_start (*dirBrowser);
@@ -79,11 +79,11 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
     recentBrowser->setDirSelector (sigc::mem_fun (dirBrowser, &DirBrowser::selectDir));
     fileCatalog->setFileSelectionListener (this);
 
-    rightBox = Gtk::manage ( new Gtk::HBox () );
+    rightBox = Gtk::manage ( new Gtk::Box () );
     rightBox->set_size_request(350, 100);
     rightNotebook = Gtk::manage ( new Gtk::Notebook () );
     rightNotebookSwitchConn = rightNotebook->signal_switch_page().connect_notify( sigc::mem_fun(*this, &FilePanel::on_NB_switch_page) );
-    //Gtk::VBox* taggingBox = Gtk::manage ( new Gtk::VBox () );
+    //Gtk::Box* taggingBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL) );
 
     history = Gtk::manage ( new History (false) );
 
@@ -115,9 +115,12 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
     Gtk::Label* devLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_DEVELOP")) );
     devLab->set_name ("LabelRightNotebook");
     devLab->set_angle (90);
-    Gtk::Label* inspectLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_INSPECT")) );
-    inspectLab->set_name ("LabelRightNotebook");
-    inspectLab->set_angle (90);
+    Gtk::Label* inspectLab = nullptr;
+    if (!options.inspectorWindow) {
+        inspectLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_INSPECT")) );
+        inspectLab->set_name ("LabelRightNotebook");
+        inspectLab->set_angle (90);
+    }
     Gtk::Label* filtLab = Gtk::manage ( new Gtk::Label (M("MAIN_TAB_FILTER")) );
     filtLab->set_name ("LabelRightNotebook");
     filtLab->set_angle (90);
@@ -127,12 +130,13 @@ FilePanel::FilePanel () : parent(nullptr), error(0)
     exportLab->set_name ("LabelRightNotebook");
     exportLab->set_angle (90);
 
-    tpcPaned = Gtk::manage ( new Gtk::VPaned () );
+    tpcPaned = Gtk::manage ( new Gtk::Paned (Gtk::ORIENTATION_VERTICAL) );
     tpcPaned->pack1 (*tpc->toolPanelNotebook, false, true);
     tpcPaned->pack2 (*history, true, false);
 
     rightNotebook->append_page (*sFilterPanel, *filtLab);
-    rightNotebook->append_page (*inspectorPanel, *inspectLab);
+    if (!options.inspectorWindow)
+        rightNotebook->append_page (*inspectorPanel, *inspectLab);
     rightNotebook->append_page (*tpcPaned, *devLab);
     //rightNotebook->append_page (*taggingBox, *tagLab); commented out: currently the tab is empty ...
     rightNotebook->append_page (*sExportPanel, *exportLab);
@@ -173,7 +177,7 @@ FilePanel::~FilePanel ()
 
 void FilePanel::on_realize ()
 {
-    Gtk::HPaned::on_realize ();
+    Gtk::Paned::on_realize ();
     tpc->closeAllTools();
 }
 
@@ -300,7 +304,8 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
                 {
 #ifdef WIN32
                     int winGdiHandles = GetGuiResources( GetCurrentProcess(), GR_GDIOBJECTS);
-                    if(winGdiHandles > 0 && winGdiHandles <= 8500) // 0 means we don't have the rights to access the function, 8500 because the limit is 10000 and we need about 1500 free handles
+                    if(winGdiHandles > 0 && winGdiHandles <= 6500) //(old settings 8500) 0 means we don't have the rights to access the function, 8500 because the limit is 10000 and we need about 1500 free handles
+                    //J.Desmis october 2021 I change 8500 to 6500..Why ? because whitout while increasing size GUI system crash in multieditor
 #endif
                     {
                     GThreadLock lock; // Acquiring the GUI... not sure that it's necessary, but it shouldn't harm
@@ -309,7 +314,7 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
                     }
 #ifdef WIN32
                     else {
-                        Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n" + M("MAIN_MSG_TOOMANYOPENEDITORS") + "</b>";
+                        Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + escapeHtmlChars(thm->getFileName()) + "\" .\n" + M("MAIN_MSG_TOOMANYOPENEDITORS") + "</b>";
                         Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
                         msgd.run ();
                         goto MAXGDIHANDLESREACHED;
@@ -330,7 +335,7 @@ bool FilePanel::imageLoaded( Thumbnail* thm, ProgressConnector<rtengine::Initial
                 parent->set_title_decorated(pl->thm->getFileName());
             }
         } else {
-            Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + thm->getFileName() + "\" .\n</b>";
+            Glib::ustring msg_ = Glib::ustring("<b>") + M("MAIN_MSG_CANNOTLOAD") + " \"" + escapeHtmlChars(thm->getFileName()) + "\" .\n</b>";
             Gtk::MessageDialog msgd (*parent, msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
             msgd.run ();
         }
@@ -402,6 +407,15 @@ bool FilePanel::handleShortcutKey (GdkEventKey* event)
     }
 
     if(fileCatalog->handleShortcutKey(event)) {
+        return true;
+    }
+
+    return false;
+}
+
+bool FilePanel::handleShortcutKeyRelease(GdkEventKey *event)
+{
+    if(fileCatalog->handleShortcutKeyRelease(event)) {
         return true;
     }
 

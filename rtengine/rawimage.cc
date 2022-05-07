@@ -20,7 +20,7 @@
 namespace rtengine
 {
 
-RawImage::RawImage(  const Glib::ustring &name )
+RawImage::RawImage(const Glib::ustring &name)
     : data(nullptr)
     , prefilters(0)
     , filename(name)
@@ -36,31 +36,31 @@ RawImage::RawImage(  const Glib::ustring &name )
 
 RawImage::~RawImage()
 {
-    if(ifp) {
+    if (ifp) {
         fclose(ifp);
         ifp = nullptr;
     }
 
-    if( image ) {
+    if (image) {
         free(image);
     }
 
-    if(allocation) {
+    if (allocation) {
         delete [] allocation;
         allocation = nullptr;
     }
 
-    if(float_raw_image) {
+    if (float_raw_image) {
         delete [] float_raw_image;
         float_raw_image = nullptr;
     }
 
-    if(data) {
+    if (data) {
         delete [] data;
         data = nullptr;
     }
 
-    if(profile_data) {
+    if (profile_data) {
         delete [] profile_data;
         profile_data = nullptr;
     }
@@ -82,15 +82,38 @@ eSensorType RawImage::getSensorType() const
 /* Similar to dcraw scale_colors for coeff. calculation, but without actual pixels scaling.
  * need pixels in data[][] available
  */
-void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblack_, bool forceAutoWB)
+void RawImage::get_colorsCoeff(float *pre_mul_, float *scale_mul_, float *cblack_, bool forceAutoWB)
 {
+    if (!pre_mul_ && !scale_mul_ && !forceAutoWB) {
+        // only black levels
+        if (isXtrans()) {
+            // for xtrans files dcraw stores black levels in cblack[6] .. cblack[41], but all are equal, so we just use cblack[6]
+            for (int c = 0; c < 4; c++) {
+                cblack_[c] = (float) this->get_cblack(6);
+            }
+        } else if ((this->get_cblack(4) + 1) / 2 == 1 && (this->get_cblack(5) + 1) / 2 == 1) {
+            for (int c = 0; c < 4; c++) {
+                cblack_[c] = this->get_cblack(c);
+            }
+
+            for (int c = 0; c < 4; c++) {
+                cblack_[FC(c / 2, c % 2)] = this->get_cblack(6 + c / 2 % this->get_cblack(4) * this->get_cblack(5) + c % 2 % this->get_cblack(5));
+            }
+        } else {
+            for (int c = 0; c < 4; c++) {
+                cblack_[c] = (float) this->get_cblack(c);
+            }
+        }
+        return;
+    }
+
     unsigned sum[8], c;
     unsigned W = this->get_width();
     unsigned H = this->get_height();
     float val;
     double dsum[8], dmin, dmax;
 
-    if(isXtrans()) {
+    if (isXtrans()) {
         // for xtrans files dcraw stores black levels in cblack[6] .. cblack[41], but all are equal, so we just use cblack[6]
         for (int c = 0; c < 4; c++) {
             cblack_[c] = (float) this->get_cblack(6);
@@ -100,6 +123,7 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
         for (int c = 0; c < 4; c++) {
             cblack_[c] = this->get_cblack(c);
         }
+
         for (int c = 0; c < 4; c++) {
             cblack_[FC(c / 2, c % 2)] = this->get_cblack(6 + c / 2 % this->get_cblack(4) * this->get_cblack(5) + c % 2 % this->get_cblack(5));
             pre_mul_[c] = this->get_pre_mul(c);
@@ -112,9 +136,10 @@ void RawImage::get_colorsCoeff( float *pre_mul_, float *scale_mul_, float *cblac
     }
 
     if (this->get_cam_mul(0) == -1 || forceAutoWB) {
-        if(!data) { // this happens only for thumbnail creation when get_cam_mul(0) == -1
+        if (!data) { // this happens only for thumbnail creation when get_cam_mul(0) == -1
             compress_image(0, false);
         }
+
         memset(dsum, 0, sizeof dsum);
 
         constexpr float blackThreshold = 8.f;
@@ -194,11 +219,11 @@ skip_block2:
                 }
             }
 
-            for(int c = 0; c < 4; c++) {
+            for (int c = 0; c < 4; c++) {
                 dsum[c] -= static_cast<double>(cblack_[c]) * dsum[c + 4];
             }
 
-        } else if(isXtrans()) {
+        } else if (isXtrans()) {
 #ifdef _OPENMP
             #pragma omp parallel
 #endif
@@ -313,8 +338,7 @@ skip_block:
         if (sum[0] && sum[1] && sum[2] && sum[3])
             for (int c = 0; c < 4; c++) {
                 pre_mul_[c] = (float) sum[c + 4] / sum[c];
-            }
-        else if (this->get_cam_mul(0) && this->get_cam_mul(2)) {
+            } else if (this->get_cam_mul(0) && this->get_cam_mul(2)) {
             pre_mul_[0] = this->get_cam_mul(0);
             pre_mul_[1] = this->get_cam_mul(1);
             pre_mul_[2] = this->get_cam_mul(2);
@@ -412,17 +436,17 @@ skip_block:
     }
 }
 
-int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, ProgressListener *plistener, double progressRange)
+int RawImage::loadRaw(bool loadData, unsigned int imageNum, bool closeFile, ProgressListener *plistener, double progressRange)
 {
     ifname = filename.c_str();
     image = nullptr;
     verbose = settings->verbose;
     oprof = nullptr;
 
-    if(!ifp) {
-        ifp = gfopen (ifname);  // Maps to either file map or direct fopen
+    if (!ifp) {
+        ifp = gfopen(ifname);   // Maps to either file map or direct fopen
     } else  {
-        fseek (ifp, 0, SEEK_SET);
+        fseek(ifp, 0, SEEK_SET);
     }
 
     if (!ifp) {
@@ -458,7 +482,7 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
         return 2;
     }
 
-    if(!strcmp(make,"Fujifilm") && raw_height * raw_width * 2u != raw_size) {
+    if (!strcmp(make, "Fujifilm") && raw_height * raw_width * 2u != raw_size) {
         if (raw_width * raw_height * 7u / 4u == raw_size) {
             load_raw = &RawImage::fuji_14bit_load_raw;
         } else {
@@ -478,13 +502,13 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
         this->rotate_deg = 0;
     }
 
-    if( loadData ) {
+    if (loadData) {
 
         use_camera_wb = 1;
         shrink = 0;
 
         if (settings->verbose) {
-            printf ("Loading %s %s image from %s...\n", make, model, filename.c_str());
+            printf("Loading %s %s image from %s...\n", make, model, filename.c_str());
         }
 
         iheight = height;
@@ -492,16 +516,15 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
 
         if (filters || colors == 1) {
             raw_image = (ushort *) calloc ((static_cast<unsigned int>(raw_height) + 7u) * static_cast<unsigned int>(raw_width), 2);
-            merror (raw_image, "main()");
+            merror(raw_image, "main()");
         }
 
         // dcraw needs this global variable to hold pixel data
         image = (dcrawImage_t)calloc (static_cast<unsigned int>(height) * static_cast<unsigned int>(width) * sizeof * image + meta_length, 1);
-        meta_data = (char *) (image + static_cast<unsigned int>(height) * static_cast<unsigned int>(width));
-
         if(!image) {
             return 200;
         }
+        meta_data = (char *) (image + static_cast<unsigned int>(height) * static_cast<unsigned int>(width));
 
         /* Issue 2467
               if (setjmp (failure)) {
@@ -512,7 +535,7 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
               }
         */
         // Load raw pixels data
-        fseek (ifp, data_offset, SEEK_SET);
+        fseek(ifp, data_offset, SEEK_SET);
         (this->*load_raw)();
 
         if (!float_raw_image) { // apply baseline exposure only for float DNGs
@@ -538,13 +561,14 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
                 int lm, tm, w, h;
                 cc->get_rawCrop(raw_width, raw_height, lm, tm, w, h);
 
-                if(isXtrans()) {
-                    shiftXtransMatrix(6 - ((top_margin - tm)%6), 6 - ((left_margin - lm)%6));
+                if (isXtrans()) {
+                    shiftXtransMatrix(6 - ((top_margin - tm) % 6), 6 - ((left_margin - lm) % 6));
                 } else {
-                    if(((int)top_margin - tm) & 1) { // we have an odd border difference
+                    if (((int)top_margin - tm) & 1) { // we have an odd border difference
                         filters = (filters << 4) | (filters >> 28);    // left rotate filters by 4 bits
                     }
                 }
+
                 left_margin = lm;
                 top_margin = tm;
 
@@ -574,7 +598,7 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
             }
 
             crop_masked_pixels();
-            free (raw_image);
+            free(raw_image);
             raw_image = nullptr;
         } else {
             if (get_maker() == "Sigma" && cc && cc->has_rawCrop(width, height)) { // foveon images
@@ -603,8 +627,8 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
         // Load embedded profile
         if (profile_length) {
             profile_data = new char[profile_length];
-            fseek ( ifp, profile_offset, SEEK_SET);
-            fread ( profile_data, 1, profile_length, ifp);
+            fseek(ifp, profile_offset, SEEK_SET);
+            fread(profile_data, 1, profile_length, ifp);
         }
 
         /*
@@ -634,10 +658,10 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
                 if (RT_whitelevel_from_constant == ThreeValBool::T) {
                     maximum_c4[i] = cc->get_WhiteLevel(i, iso_speed, aperture);
 
-                    if(tiff_bps > 0 && maximum_c4[i] > 0 && !isFoveon()) {
+                    if (tiff_bps > 0 && maximum_c4[i] > 0 && !isFoveon()) {
                         unsigned compare = ((uint64_t)1 << tiff_bps) - 1; // use uint64_t to avoid overflow if tiff_bps == 32
 
-                        while(static_cast<uint64_t>(maximum_c4[i]) > compare) {
+                        while (static_cast<uint64_t>(maximum_c4[i]) > compare) {
                             maximum_c4[i] >>= 1;
                         }
                     }
@@ -646,11 +670,10 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
         }
 
         if (black_c4[0] == -1) {
-            if(isXtrans())
+            if (isXtrans())
                 for (int c = 0; c < 4; c++) {
                     black_c4[c] = cblack[6];
-                }
-            else
+                } else
 
                 // RT constants not set, bring in the DCRAW single channel black constant
                 for (int c = 0; c < 4; c++) {
@@ -687,7 +710,7 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
         }
     }
 
-    if ( closeFile ) {
+    if (closeFile) {
         fclose(ifp);
         ifp = nullptr;
     }
@@ -701,7 +724,7 @@ int RawImage::loadRaw (bool loadData, unsigned int imageNum, bool closeFile, Pro
 
 float** RawImage::compress_image(unsigned int frameNum, bool freeImage)
 {
-    if( !image ) {
+    if (!image) {
         return nullptr;
     }
 
@@ -737,7 +760,7 @@ float** RawImage::compress_image(unsigned int frameNum, bool freeImage)
     }
 
     // copy pixel raw data: the compressed format earns space
-    if( float_raw_image ) {
+    if (float_raw_image) {
 #ifdef _OPENMP
         #pragma omp parallel for
 #endif
@@ -793,50 +816,51 @@ float** RawImage::compress_image(unsigned int frameNum, bool freeImage)
             }
     }
 
-    if(freeImage) {
+    if (freeImage) {
         free(image); // we don't need this anymore
         image = nullptr;
     }
+
     return data;
 }
 
 bool
 RawImage::is_supportedThumb() const
 {
-    return ( (thumb_width * thumb_height) > 0 &&
-             ( write_thumb == &rtengine::RawImage::jpeg_thumb ||
-               write_thumb == &rtengine::RawImage::ppm_thumb) &&
-             !thumb_load_raw );
+    return ((thumb_width * thumb_height) > 0 &&
+            (write_thumb == &rtengine::RawImage::jpeg_thumb ||
+             write_thumb == &rtengine::RawImage::ppm_thumb) &&
+            !thumb_load_raw);
 }
 
 bool
 RawImage::is_jpegThumb() const
 {
-    return ( (thumb_width * thumb_height) > 0 &&
-              write_thumb == &rtengine::RawImage::jpeg_thumb &&
-             !thumb_load_raw );
+    return ((thumb_width * thumb_height) > 0 &&
+            write_thumb == &rtengine::RawImage::jpeg_thumb &&
+            !thumb_load_raw);
 }
 
 bool
 RawImage::is_ppmThumb() const
 {
-    return ( (thumb_width * thumb_height) > 0 &&
-             write_thumb == &rtengine::RawImage::ppm_thumb &&
-             !thumb_load_raw );
+    return ((thumb_width * thumb_height) > 0 &&
+            write_thumb == &rtengine::RawImage::ppm_thumb &&
+            !thumb_load_raw);
 }
 
-void RawImage::getXtransMatrix( int XtransMatrix[6][6])
+void RawImage::getXtransMatrix(int XtransMatrix[6][6])
 {
-    for(int row = 0; row < 6; row++)
-        for(int col = 0; col < 6; col++) {
+    for (int row = 0; row < 6; row++)
+        for (int col = 0; col < 6; col++) {
             XtransMatrix[row][col] = xtrans[row][col];
         }
 }
 
-void RawImage::getRgbCam (float rgbcam[3][4])
+void RawImage::getRgbCam(float rgbcam[3][4])
 {
-    for(int row = 0; row < 3; row++)
-        for(int col = 0; col < 4; col++) {
+    for (int row = 0; row < 3; row++)
+        for (int col = 0; col < 4; col++) {
             rgbcam[row][col] = rgb_cam[row][col];
         }
 
@@ -1031,8 +1055,10 @@ DCraw::dcraw_coeff_overrides(const char make[], const char model[], const int is
         }
     }
 
-    char name[strlen(make) + strlen(model) + 32];
-    sprintf(name, "%s %s", make, model);
+    const std::size_t name_size = strlen(make) + strlen(model) + 32;
+
+    char name[name_size];
+    snprintf(name, name_size, "%s %s", make, model);
 
     for (size_t i = 0; i < sizeof table / sizeof(table[0]); i++) {
         if (strcasecmp(name, table[i].prefix) == 0) {

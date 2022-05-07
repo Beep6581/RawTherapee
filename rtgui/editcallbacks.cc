@@ -99,10 +99,11 @@ bool EditSubscriber::isPicking() const
 
 EditDataProvider::EditDataProvider() :
     currSubscriber(nullptr),
-    object(0),
+//    object(0),
     pipetteVal1(0.f),
     pipetteVal2(0.f),
     pipetteVal3(0.f),
+    object(0),
     posScreen(-1, -1),
     posImage(-1, -1),
     deltaScreen(0, 0),
@@ -172,10 +173,10 @@ void EditDataProvider::setPipetteVal3(float newVal)
     pipetteVal3 = newVal;
 }
 
-CursorShape EditDataProvider::getCursor(int objectID) const
+CursorShape EditDataProvider::getCursor(int objectID, int xPos, int yPos) const
 {
     if (currSubscriber) {
-        currSubscriber->getCursor(objectID);
+        currSubscriber->getCursor(objectID, xPos, yPos);
     }
 
     return CSHandOpen;
@@ -186,12 +187,12 @@ EditSubscriber* EditDataProvider::getCurrSubscriber() const
     return currSubscriber;
 }
 
-EditDataProvider* EditSubscriber::getEditProvider()
+EditDataProvider* EditSubscriber::getEditProvider() const
 {
     return provider;
 }
 
-CursorShape EditSubscriber::getCursor(int objectID) const
+CursorShape EditSubscriber::getCursor(int objectID, int xPos, int yPos) const
 {
     return CSHandOpen;
 }

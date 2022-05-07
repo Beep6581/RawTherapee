@@ -7,6 +7,7 @@ Development contributors, in last name alphabetical order:
 
   Roel Baars
   Martin Burri
+  Pierre Cabrera
   Javier Celaya
   Jacques Desmis
   Pavlov Dmitry
@@ -14,12 +15,14 @@ Development contributors, in last name alphabetical order:
   Maciek Dworak
   Michael Ezra
   Flössie
+  Rüdiger Franke
   Jean-Christophe Frisch
   Ilias Giarimis
   Alberto Griggio
   Steve Herrell
   Philippe Hupé
   Wolfgang Kuehnel
+  Lawrence Lee
   Guokai Ma
   Emil Martinec
   Wyatt Olson
@@ -30,14 +33,16 @@ Development contributors, in last name alphabetical order:
   Jan Rinze
   Alberto Romei
   Ben S.
+  Simon Segerblom Rex
   Andrey Skvortsov
   Fabio Suprani
   Anders Torger
   Ingo Weyrich
   Makoto Yoshida
 
-Other contributors (profiles, ideas, mockups, testing, forum activity, translations, etc.), in last name alphabetical order:
+Other contributors (profiles, ideas, mockups, testing, forum activity, translations, tutorials etc.), in last name alphabetical order:
 
+  Andy Astbury
   Marcin Bajor
   Javier Bartol
   Thorsten Bartolomäus
@@ -45,6 +50,7 @@ Other contributors (profiles, ideas, mockups, testing, forum activity, translati
   Fernando Carello
   Rodrigo Nuno Bragança da Cunha
   Pat David
+  Jacques Dekker
   Reine Edvardsson
   Andrea Ferrero
   André Gauthier
@@ -56,12 +62,14 @@ Other contributors (profiles, ideas, mockups, testing, forum activity, translati
   Oscar de Lama
   Lebarhon
   Karl Loncarek
+  Patrick Lopatto
   Jie Luo
   Paul Matthijsse
   Wim ter Meer
   Alberto Righetto
   Kostia (Kildor) Romanov
   Kalle Söderman
+  Wayne Sutton
   Johan Thor
   Vitalis Tiknius
   TooWaBoo

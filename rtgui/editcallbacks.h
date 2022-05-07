@@ -57,7 +57,7 @@ public:
     virtual ~EditSubscriber () = default;
 
     void               setEditProvider(EditDataProvider *provider);
-    EditDataProvider*  getEditProvider ();
+    EditDataProvider*  getEditProvider () const;
     void               setEditID(EditUniqueID ID, BufferType buffType);
     bool               isCurrentSubscriber() const;
     virtual void       subscribe();
@@ -70,8 +70,10 @@ public:
     bool               isPicking() const;             /// Returns true if something is being picked
 
     /** @brief Get the cursor to be displayed when above handles
-    @param objectID object currently "hovered" */
-    virtual CursorShape getCursor (int objectID) const;
+    @param objectID object currently "hovered"
+    @param xPos X cursor position in image space
+    @param yPos Y cursor position in image space */
+    virtual CursorShape getCursor (int objectID, int xPos, int yPos) const;
 
     /** @brief Triggered when the mouse is moving over an object
     This method is also triggered when the cursor is moving over the image in ET_PIPETTE mode
@@ -129,19 +131,19 @@ public:
     @param picked True if the cursor is still above the the same object than on button pressed and with the same modifier keys.
                   If false, the user moved the cursor away or the modifier key is different, so the element is considered as NOT selected.
     @return true if the preview has to be redrawn, false otherwise */
-    bool pick1 (bool picked);
+    virtual bool pick1 (bool picked);
 
     /** @brief Triggered when the user is releasing mouse button 2 while in action==ES_ACTION_PICKING mode
     @param picked True if the cursor is still above the the same object than on button pressed and with the same modifier keys.
                   If false, the user moved the cursor away or the modifier key is different, so the element is considered as NOT selected.
     @return true if the preview has to be redrawn, false otherwise */
-    bool pick2 (bool picked);
+    virtual bool pick2 (bool picked);
 
     /** @brief Triggered when the user is releasing mouse button 3 while in action==ES_ACTION_PICKING mode
     @param picked True if the cursor is still above the the same object than on button pressed and with the same modifier keys.
                   If false, the user moved the cursor away or the modifier key is different, so the element is considered as NOT selected.
     @return true if the preview has to be redrawn, false otherwise */
-    bool pick3 (bool picked);
+    virtual bool pick3 (bool picked);
 
     /** @brief Get the geometry to be shown to the user */
     const std::vector<Geometry*>& getVisibleGeometry ();
@@ -160,12 +162,13 @@ class EditDataProvider
 
 private:
     EditSubscriber *currSubscriber;
-    int object;            /// ET_OBJECTS mode: Object detected under the cursor, 0 otherwise; ET_PIPETTE mode: 1 if above the image, 0 otherwise
+//    int object;            /// ET_OBJECTS mode: Object detected under the cursor, 0 otherwise; ET_PIPETTE mode: 1 if above the image, 0 otherwise
     float pipetteVal1;     /// Current pipette values
     float pipetteVal2;     /// Current pipette values; if bufferType==BT_SINGLEPLANE_FLOAT, will be set to 0
     float pipetteVal3;     /// Current pipette values; if bufferType==BT_SINGLEPLANE_FLOAT, will be set to 0
 
 public:
+    int object;            /// ET_OBJECTS mode: Object detected under the cursor, 0 otherwise; ET_PIPETTE mode: 1 if above the image, 0 otherwise
 
     rtengine::Coord posScreen;       /// Location of the mouse button press, in preview image space
     rtengine::Coord posImage;        /// Location of the mouse button press, in the full image space
@@ -188,8 +191,10 @@ public:
     void setPipetteVal1(float newVal);
     void setPipetteVal2(float newVal);
     void setPipetteVal3(float newVal);
-    virtual CursorShape getCursor(int objectID) const;
+    virtual CursorShape getCursor(int objectID, int xPos, int yPos) const;
     int getPipetteRectSize () const;
     EditSubscriber* getCurrSubscriber() const;
     virtual void getImageSize (int &w, int&h) = 0;
+    virtual void getPreviewCenterPos(int &x, int &y) = 0;
+    virtual void getPreviewSize(int &w, int &h) = 0;
 };

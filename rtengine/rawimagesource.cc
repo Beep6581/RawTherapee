@@ -636,6 +636,56 @@ float calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const flo
     return gain;
 }
 
+
+void RawImageSource::getWBMults (const ColorTemp &ctemp, const RAWParams &raw, std::array<float, 4>& out_scale_mul, float &autoGainComp, float &rm, float &gm, float &bm) const
+{
+    // compute channel multipliers
+    double r, g, b;
+    //float rm, gm, bm;
+
+    if (ctemp.getTemp() < 0) {
+        // no white balance, ie revert the pre-process white balance to restore original unbalanced raw camera color
+        rm = ri->get_pre_mul(0);
+        gm = ri->get_pre_mul(1);
+        bm = ri->get_pre_mul(2);
+    } else {
+        ctemp.getMultipliers (r, g, b);
+        rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
+        gm = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
+        bm = imatrices.cam_rgb[2][0] * r + imatrices.cam_rgb[2][1] * g + imatrices.cam_rgb[2][2] * b;
+    }
+
+    // adjust gain so the maximum raw value of the least scaled channel just hits max
+    const float new_pre_mul[4] = { ri->get_pre_mul(0) / rm, ri->get_pre_mul(1) / gm, ri->get_pre_mul(2) / bm, ri->get_pre_mul(3) / gm };
+    float new_scale_mul[4];
+
+    bool isMono = (ri->getSensorType() == ST_FUJI_XTRANS && raw.xtranssensor.method == RAWParams::XTransSensor::getMethodString(RAWParams::XTransSensor::Method::MONO))
+                    || (ri->getSensorType() == ST_BAYER && raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::MONO));
+
+    float c_white[4];
+    for (int i = 0; i < 4; ++i) {
+        c_white[i] = (ri->get_white(i) - cblacksom[i]) / static_cast<float>(raw.expos) + cblacksom[i];
+    }
+
+    float gain = calculate_scale_mul(new_scale_mul, new_pre_mul, c_white, cblacksom, isMono, ri->get_colors());
+    rm = new_scale_mul[0] / scale_mul[0] * gain;
+    gm = new_scale_mul[1] / scale_mul[1] * gain;
+    bm = new_scale_mul[2] / scale_mul[2] * gain;
+    //fprintf(stderr, "camera gain: %f, current wb gain: %f, diff in stops %f\n", camInitialGain, gain, log2(camInitialGain) - log2(gain));
+
+    const float expcomp = std::pow(2, ri->getBaselineExposure());
+    rm *= expcomp;
+    gm *= expcomp;
+    bm *= expcomp;
+
+    out_scale_mul[0] = scale_mul[0];
+    out_scale_mul[1] = scale_mul[1];
+    out_scale_mul[2] = scale_mul[2];
+    out_scale_mul[3] = scale_mul[3];
+
+    autoGainComp = camInitialGain / initialGain;
+}
+
 void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw)
 {
     MyMutex::MyLock lock(getImageMutex);
@@ -771,7 +821,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
             int i = sy1 + skip * ix;
             i = std::min(i, maxy - skip); // avoid trouble
 
-            if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1) {
+            if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1 || ri->get_colors() == 3) {
                 for (int j = 0, jx = sx1; j < imwidth; j++, jx += skip) {
                     jx = std::min(jx, maxx - skip); // avoid trouble
 
@@ -1125,9 +1175,11 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
 
     d1x = ! ri->get_model().compare("D1X");
 
-    if (ri->getSensorType() == ST_FUJI_XTRANS) {
+    if (ri->getSensorType() == ST_BAYER) {
+        border = 4;
+    } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
         border = 7;
-    } else if (ri->getSensorType() == ST_FOVEON) {
+    } else {
         border = 0;
     }
 
@@ -1161,25 +1213,8 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
     double cam_b = imatrices.rgb_cam[2][0] * camwb_red + imatrices.rgb_cam[2][1] * camwb_green + imatrices.rgb_cam[2][2] * camwb_blue;
     camera_wb = ColorTemp (cam_r, cam_g, cam_b, 1.); // as shot WB
 
-    ColorTemp ReferenceWB;
-    double ref_r, ref_g, ref_b;
-    {
-        // ...then we re-get the constants but now with auto which gives us better demosaicing and CA auto-correct
-        // performance for strange white balance settings (such as UniWB)
-        ri->get_colorsCoeff(ref_pre_mul, scale_mul, c_black, true);
-        refwb_red = ri->get_pre_mul(0) / ref_pre_mul[0];
-        refwb_green = ri->get_pre_mul(1) / ref_pre_mul[1];
-        refwb_blue = ri->get_pre_mul(2) / ref_pre_mul[2];
-        initialGain = max(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
-        ref_r = imatrices.rgb_cam[0][0] * refwb_red + imatrices.rgb_cam[0][1] * refwb_green + imatrices.rgb_cam[0][2] * refwb_blue;
-        ref_g = imatrices.rgb_cam[1][0] * refwb_red + imatrices.rgb_cam[1][1] * refwb_green + imatrices.rgb_cam[1][2] * refwb_blue;
-        ref_b = imatrices.rgb_cam[2][0] * refwb_red + imatrices.rgb_cam[2][1] * refwb_green + imatrices.rgb_cam[2][2] * refwb_blue;
-        ReferenceWB = ColorTemp (ref_r, ref_g, ref_b, 1.);
-    }
-
     if (settings->verbose) {
         printf("Raw As Shot White balance: temp %f, tint %f\n", camera_wb.getTemp(), camera_wb.getGreen());
-        printf("Raw Reference (auto) white balance: temp %f, tint %f, multipliers [%f %f %f | %f %f %f]\n", ReferenceWB.getTemp(), ReferenceWB.getGreen(), ref_r, ref_g, ref_b, refwb_red, refwb_blue, refwb_green);
     }
 
     /*{
@@ -1249,6 +1284,28 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     MyTime t1, t2;
     t1.set();
 
+    {
+        // Recalculate the scaling coefficients, using auto WB if selected in the Preprocess WB param.
+        // Auto WB gives us better demosaicing and CA auto-correct performance for strange white balance settings (such as UniWB)
+        float dummy_cblk[4] = { 0.f }; // Avoid overwriting c_black, see issue #5676
+        ri->get_colorsCoeff( ref_pre_mul, scale_mul, dummy_cblk, raw.preprocessWB.mode == RAWParams::PreprocessWB::Mode::AUTO);
+
+        refwb_red = ri->get_pre_mul(0) / ref_pre_mul[0];
+        refwb_green = ri->get_pre_mul(1) / ref_pre_mul[1];
+        refwb_blue = ri->get_pre_mul(2) / ref_pre_mul[2];
+        initialGain = max(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]) / min(scale_mul[0], scale_mul[1], scale_mul[2], scale_mul[3]);
+
+        const double ref_r = imatrices.rgb_cam[0][0] * refwb_red + imatrices.rgb_cam[0][1] * refwb_green + imatrices.rgb_cam[0][2] * refwb_blue;
+        const double ref_g = imatrices.rgb_cam[1][0] * refwb_red + imatrices.rgb_cam[1][1] * refwb_green + imatrices.rgb_cam[1][2] * refwb_blue;
+        const double ref_b = imatrices.rgb_cam[2][0] * refwb_red + imatrices.rgb_cam[2][1] * refwb_green + imatrices.rgb_cam[2][2] * refwb_blue;
+        const ColorTemp ReferenceWB = ColorTemp (ref_r, ref_g, ref_b, 1.);
+
+        if (settings->verbose) {
+            printf("Raw Reference white balance: temp %f, tint %f, multipliers [%f %f %f | %f %f %f]\n", ReferenceWB.getTemp(), ReferenceWB.getGreen(), ref_r, ref_g, ref_b, refwb_red, refwb_blue, refwb_green);
+        }
+    }
+
+
     Glib::ustring newDF = raw.dark_frame;
     RawImage *rid = nullptr;
 
@@ -1270,7 +1327,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     if (ri->zeroIsBad()) { // mark all pixels with value zero as bad, has to be called before FF and DF. dcraw sets this flag only for some cameras (mainly Panasonic and Leica)
         bitmapBads.reset(new PixelsMap(W, H));
-        totBP = findZeroPixels(*(bitmapBads.get()));
+        totBP = findZeroPixels(*bitmapBads);
 
         if (settings->verbose) {
             printf("%d pixels with value zero marked as bad pixels\n", totBP);
@@ -1414,7 +1471,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             bitmapBads.reset(new PixelsMap(W, H));
         }
 
-        int nFound = findHotDeadPixels(*(bitmapBads.get()), raw.hotdeadpix_thresh, raw.hotPixelFilter, raw.deadPixelFilter);
+        int nFound = findHotDeadPixels(*bitmapBads, raw.hotdeadpix_thresh, raw.hotPixelFilter, raw.deadPixelFilter);
         totBP += nFound;
 
         if (settings->verbose && nFound > 0) {
@@ -1429,7 +1486,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             bitmapBads.reset(new PixelsMap(W, H));
         }
         
-        int n = f.mark(rawData, *(bitmapBads.get()));
+        int n = f.mark(rawData, *bitmapBads);
         totBP += n;
 
         if (n > 0) {
@@ -1493,15 +1550,15 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         if (ri->getSensorType() == ST_BAYER) {
             if (numFrames == 4) {
                 for (int i = 0; i < 4; ++i) {
-                    interpolateBadPixelsBayer(*(bitmapBads.get()), *rawDataFrames[i]);
+                    interpolateBadPixelsBayer(*bitmapBads, *rawDataFrames[i]);
                 }
             } else {
-                interpolateBadPixelsBayer(*(bitmapBads.get()), rawData);
+                interpolateBadPixelsBayer(*bitmapBads, rawData);
             }
         } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
-            interpolateBadPixelsXtrans(*(bitmapBads.get()));
+            interpolateBadPixelsXtrans(*bitmapBads);
         } else {
-            interpolateBadPixelsNColours(*(bitmapBads.get()), ri->get_colors());
+            interpolateBadPixelsNColours(*bitmapBads, ri->get_colors());
         }
     }
 
@@ -1573,8 +1630,11 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
             ahd_demosaic ();
         } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZE)) {
             amaze_demosaic_RT (0, 0, W, H, rawData, red, green, blue, options.chunkSizeAMAZE, options.measure);
-        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4)
+        } else if (raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEBILINEAR)
+                   || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::AMAZEVNG4)
+                   || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBBILINEAR)
                    || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::DCBVNG4)
+                   || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDBILINEAR)
                    || raw.bayersensor.method == RAWParams::BayerSensor::getMethodString(RAWParams::BayerSensor::Method::RCDVNG4)) {
             if (!autoContrast) {
                 double threshold = raw.bayersensor.dualDemosaicContrast;
@@ -1623,6 +1683,9 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
     } else if (ri->get_colors() == 1) {
         // Monochrome
         nodemosaic(true);
+    } else {
+        // RGB
+        nodemosaic(false);
     }
 
     t2.set();
@@ -1712,10 +1775,8 @@ void RawImageSource::retinexPrepareBuffers(const ColorManagementParams& cmp, con
             std::swap(pwr, gamm);
         }
 
-        int mode = 0;
-        Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
+        Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
 
-   //        printf("g_a0=%f g_a1=%f g_a2=%f g_a3=%f g_a4=%f\n", g_a0,g_a1,g_a2,g_a3,g_a4);
         double start;
         double add;
 
@@ -1943,12 +2004,12 @@ void RawImageSource::retinexPrepareCurves(const RetinexParams &retinexParams, LU
     useHsl = (retinexParams.retinexcolorspace == "HSLLOG" || retinexParams.retinexcolorspace == "HSLLIN");
 
     if (useHsl) {
-        CurveFactory::curveDehaContL (retinexcontlutili, retinexParams.cdHcurve, cdcurve, 1, lhist16RETI, histLRETI);
+        retinexcontlutili = CurveFactory::diagonalCurve2Lut(retinexParams.cdHcurve, cdcurve, 1, lhist16RETI, histLRETI);
     } else {
-        CurveFactory::curveDehaContL (retinexcontlutili, retinexParams.cdcurve, cdcurve, 1, lhist16RETI, histLRETI);
+        retinexcontlutili = CurveFactory::diagonalCurve2Lut(retinexParams.cdcurve, cdcurve, 1, lhist16RETI, histLRETI);
     }
 
-    CurveFactory::mapcurve(mapcontlutili, retinexParams.mapcurve, mapcurve, 1, lhist16RETI, histLRETI);
+    mapcontlutili = CurveFactory::diagonalCurve2Lut(retinexParams.mapcurve, mapcurve, 1, lhist16RETI, histLRETI);
     mapcurve *= 0.5f;
     retinexParams.getCurves(retinextransmissionCurve, retinexgaintransmissionCurve);
 }
@@ -1979,13 +2040,12 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
         double gamm = deh.gam;
         double gamm2 = gamm;
         double ts = deh.slope;
-        int mode = 0;
 
         if (gamm2 < 1.) {
             std::swap(pwr, gamm);
         }
 
-        Color::calcGamma(pwr, ts, mode, g_a); // call to calcGamma with selected gamma and slope
+        Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
 
         double mul = 1. + g_a[4];
         double add;
@@ -2253,15 +2313,8 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
                     }
 
                     float R, G, B;
-#ifdef _DEBUG
-                    bool neg = false;
-                    bool more_rgb = false;
-                    //gamut control : Lab values are in gamut
-                    Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f, neg, more_rgb);
-#else
                     //gamut control : Lab values are in gamut
                     Color::gamutLchonly(HH, sincosval, Lprov1, Chprov1, R, G, B, wip, highlight, 0.15f, 0.96f);
-#endif
 
 
 
@@ -2390,7 +2443,7 @@ void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
                 printf ("Applying Highlight Recovery: Color propagation...\n");
             }
 
-            HLRecovery_inpaint (red, green, blue);
+            HLRecovery_inpaint (red, green, blue, hrp.hlbl);
             rgbSourceModified = true;
         }
     }
@@ -2402,10 +2455,11 @@ void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
  */
 void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, RawImage *riDark, RawImage *riFlatFile, array2D<float> &rawData)
 {
-    const float black[4] = {
-                     static_cast<float>(ri->get_cblack(0)), static_cast<float>(ri->get_cblack(1)),
-                     static_cast<float>(ri->get_cblack(2)), static_cast<float>(ri->get_cblack(3))
-                     };
+    const auto tmpfilters = ri->get_filters();
+    ri->set_filters(ri->prefilters); // we need 4 blacks for bayer processing
+    float black[4];
+    ri->get_colorsCoeff(nullptr, nullptr, black, false);
+    ri->set_filters(tmpfilters);
 
     if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS) {
         if (!rawData) {
@@ -2446,7 +2500,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
 
 
         if (riFlatFile && W == riFlatFile->get_width() && H == riFlatFile->get_height()) {
-            processFlatField(raw, riFlatFile, black);
+            processFlatField(raw, riFlatFile, rawData, black);
         }  // flatfield
     } else if (ri->get_colors() == 1) {
         // Monochrome
@@ -2468,7 +2522,7 @@ void RawImageSource::copyOriginalPixels(const RAWParams &raw, RawImage *src, Raw
             }
         }
         if (riFlatFile && W == riFlatFile->get_width() && H == riFlatFile->get_height()) {
-            processFlatField(raw, riFlatFile, black);
+            processFlatField(raw, riFlatFile, rawData, black);
         }  // flatfield
     } else {
         // No bayer pattern
@@ -4412,29 +4466,30 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com
     Copyright (c) Ingo Weyrich 3 - 2020 (heckflosse67@gmx.de)
 
-    This algorithm try to find temperature correlation between 20 to 201 color between 200 spectral color and about 20 to 55 color found in the image, I just found the idea in the web "correlate with chroma" instead of RGB grey point,but I don't use any algo found on the web.
+    This algorithm try to find temperature correlation between 20 to 201 color between 201 spectral color and about 20 to 55 color found in the image between 192, I just found the idea in the web "correlate with chroma" instead of RGB grey point,but I don't use any algo found on the web.
 
     I have test many many algorithms to find the first one that work :)
     Probably (sure) there are improvement to do...
 
-    I have create a table temperature with temp and white point with 100 values between 2000K and 12000K we can obviously  change these values, more...with different steps
+    I have create a table temperature with temp and white point with 118 values between 2000K and 12000K we can obviously  change these values, more...with different steps
+    I have create a table for tint (green)with 134 values between 0.4 to 4. 
     I have create or recuparate and transformed 201 spectral colors from Colorchecker24, others color and my 468 colors target, or from web flowers, etc. with a step of 5nm, I think it is large enough.
     I think this value of 201 is now complete: I tested correlation with 60, 90, 100, 120, 155...better student increase with number of color, but now it seems stabilized
     Of course we can increase this number :)
 
     1) for the current raw file we create a table for each temp of RGB multipliers
     2) then, I choose the "camera temp" to initialize calculation (why not)
-    3) for this temp, I calculated XYZ values for the 201 spectral datas
-    4) then I create for the image an "histogram", but for xyY (Cie 1931 color space)
-    5) for each pixel (in fact to accelerate only 1/10 for and 1/10 for y), I determine for each couple xy, the number of occurences
+    3) for this temp, I calculated XYZ values for the 201 spectral data
+    4) then I create for the image an "histogram", but for xyY (CIE 1931 color space or CIE 1964 (default))
+    5) for each pixel (in fact to accelerate only 1/5 for and 1/5 for y), I determine for each couple xy, the number of occurrences, can be change by Itcwb_precis to 3 or 9
     6) I sort this result in ascending order
     7) in option we can sort in another manner to take into account chroma : chromax = x - white point x, chromay = y - white point y
-    8) then I compare this result, with spectral datas found above in 3) with deltaE (limited to chroma)
-    9) at this point we have xyY values that match Camera temp, and spectral datas associated
+    8) then I compare this result, with spectral data found above in 3) with deltaE (limited to chroma)
+    9) at this point we have xyY values that match Camera temp, and spectral data associated
     10) then I recalculate RGB values from xyY histogram
     11) after, I vary temp, between 2000K to 12000K
     12) RGB values are recalculated from 10) with RGB multipliers, and then xyY are calculated for each temp
-    13) spectral datas choose are recalculated with temp between 2000K to 12000K with matrix spectral calculation, that leads to xyY values
+    13) spectral data choose are recalculated with temp between 2000K to 12000K with matrix spectral calculation, that leads to xyY values
     14) I calculated for each couple xy, Student correlation (without Snedecor test)
     15) the good result, is the best correlation
     16) we have found the best temperature where color image and color references are correlate
@@ -4445,10 +4500,9 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     20) between these green limits, we make slightly vary temp (settings in options) and recalculated RGB multipliers
     21) with this multipliers for the RGB color find in histogram we recalculate xyY
     22) we re-adjust references color for these xyY from 20)
-    23) we add if chroma image is very low, k colors to degrad correlation
-    24) then find all Student correlation for each couple green / temp
-    25) sort these Student values, and choose the minimum
-    26) then for the 3 better couple "temp / green" choose the one where green is nearest from 1.
+    23) then find all Student correlation for each couple green / temp
+    24) sort these Student values, and choose the minimum
+    25) then for the 3 better couple "temp / green" choose the one where green is nearest from 1.
 
     Some variables or function are not used, keep in case of
     I have test with cat02 but result are not stable enough ! why ??, therefore cat02 neutralized
@@ -4459,7 +4513,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     You can used it in images :flowers, landscape, portrait, skin, where illuminants are "normal" (daylight, blackbody)
     You must avoid when illuminant is non standard (fluorescent, LED...) and also, when the subject is lost in the image (some target to generate profiles).
 
-    You can change 4 parameters in option.cc
+    You can change  parameters in option.cc
     Itcwb_thres : 34 by default ==> number of color used in final algorithm - between 10 and max 55
     Itcwb_sort : false by default, can improve algorithm if true, ==> sort value in something near chroma order, instead of histogram number
     Itcwb_greenrange : 0 amplitude of green variation - between 0 to 2
@@ -4467,6 +4521,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     Itcwb_forceextra : false - if true force algorithm "extra" ("extra" is used when camera wbsettings are wrong) to all images
     Itcwb_sizereference : 3 by default, can be set to 5 ==> size of reference color compare to size of histogram real color
     itcwb_delta : 1 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
+    itcwb_stdobserver10 : true by default - use standard observer 10°, false = standard observer 2°
+    itcwb_precis : 5 by default - can be set to 3 or 9 - 3 best sampling but more time...9 "old" settings - but low differences in times with 3 instead of 9 about twice time 160ms instead of 80ms for a big raw file
     */
 //    BENCHFUN
  
@@ -4659,7 +4715,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     //I don't know how to pass this structure to Colortemp !
     // X and Z values calculate for each temp between 2000K to  12000K, so no result after 12000K !
     //of course we can change the step between each temp if need
-    constexpr WbTxyz Txyz[118] = {//temperature Xwb Zwb 118 values  x wb and y wb are calculated after
+    constexpr WbTxyz Txyz[118] = {//temperature Xwb Zwb 118 values  x wb and y wb are calculated after,  Xwb and Ywb calculated with a spreadsheet
         {2001., 1.273842, 0.145295},
         {2101., 1.244008, 0.167533},
         {2201., 1.217338, 0.190697},
@@ -4780,7 +4836,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {12001., 0.960440, 1.601019}
     };
     const int N_t = sizeof(Txyz) / sizeof(Txyz[0]);   //number of temperature White point
-    constexpr int Nc = 201 + 1;//200 number of reference spectral colors, I think it is enough to retrieve good values
+    constexpr int Nc = 201 + 1;//201 number of reference spectral colors, I think it is enough to retrieve good values
     array2D<float> Tx(N_t, Nc);
     array2D<float> Ty(N_t, Nc);
     array2D<float> Tz(N_t, Nc);
@@ -4990,7 +5046,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     chrom wbchro[sizcu4];
     const float swpr = Txyz[repref].XX + Txyz[repref].ZZ + 1.f;
-    const float xwpr = Txyz[repref].XX / swpr;//white point for tt in xy coordiantes
+    const float xwpr = Txyz[repref].XX / swpr;//white point for tt in xy coordinates
     const float ywpr = 1.f / swpr;
 
     for (int i = 0; i < sizcu4; ++i) { //take the max values
@@ -5021,7 +5077,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
     }
 
-    const int maxval = rtengine::LIM(settings->itcwb_thres, 10, 55);//max values of color to find correllation
+    const int maxval = rtengine::LIM(settings->itcwb_thres, 10, 55);//max values of color to find correlation
 
     sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
 
@@ -5035,7 +5091,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
     }
 
-    //calculate deltaE xx to find best values of spectrals datas - limited to chroma values
+    //calculate deltaE xx to find best values of spectrals data - limited to chroma values
     int maxnb = rtengine::LIM(settings->itcwb_sizereference, 1, 5);
 
     if (settings->itcwb_thres > 55) {
@@ -5195,15 +5251,6 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                     reff_spect_xxyy_prov[2 * j + 1][tt] = Ty[j][tt] / (Tx[j][tt] + Ty[j][tt] +  Tz[j][tt]); // y from xyY
                 }
 
-                //degrade correllation with color high chroma, but not too much...seems not good, but keep in case of??
-                //I suppress this old behavior replace by tint += 0.02
- /*               if (estimchrom < 0.025f) {//very smal value of chroma for image
-                    //enable strong values
-                    good_spectral[0] = true;//blue
-                    good_spectral[11] = true;//green
-                    good_spectral[62] = true;//red
-                }
-*/
                 int kkg = -1;
                 for (int i = 0; i < Nc ; ++i) {
                     if (good_spectral[i]) {
@@ -5212,8 +5259,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
                         reff_spect_xxyy[2 * kkg + 1][tt] = reff_spect_xxyy_prov[2 * i + 1][tt];
                     }
                 }
-                //now we have good spectral datas
-                //claculate student correlation
+                //now we have good spectral data
+                //calculate student correlation
                 const float abstudgr = std::fabs(studentXY(xxyycurr_reduc, reff_spect_xxyy, 2 * w, 2 * kkg, tt));
 
                 if (abstudgr < minstudgr) {  // find the minimum Student
@@ -5300,7 +5347,7 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
     if (wbpar.method == "autitcgreen") {
         bool extra = false;
 
-        if (greenref > 0.5 && greenref < 1.3) {// 0/77 and 1.3 arbitraties values
+        if (greenref > 0.5 && greenref < 1.3) {// 0.5 and 1.3 arbitraties values
             greenitc = greenref;
 
             if (settings->itcwb_forceextra) {
@@ -5321,8 +5368,17 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 {
 //    BENCHFUN
     //used by auto WB local to calculate red, green, blue in local region
-    const int bfw = W / 9 + ((W % 9) > 0 ? 1 : 0);//10 arbitrary value  ; perhaps 4 or 5 or 20
-    const int bfh = H / 9 + ((H % 9) > 0 ? 1 : 0);
+    int precision = 5;
+    if (settings->itcwb_precis == 5) {
+        precision = 5;
+    } else if (settings->itcwb_precis < 5) {
+        precision = 3; 
+    } else if (settings->itcwb_precis > 5) {
+        precision = 9;
+    }
+
+    const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
+    const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
 
     if (! greenloc) {
         greenloc(bfw, bfh);
@@ -5372,9 +5428,9 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     #pragma omp parallel for
 #endif
     for (int i = 0; i < bfh; ++i) {
-        const int ii = i * 9;
+        const int ii = i * precision;
         if (ii < H) {
-            for (int j = 0, jj = 0; j < bfw; ++j, jj += 9) {
+            for (int j = 0, jj = 0; j < bfw; ++j, jj += precision) {
                 redloc[i][j] = red[ii][jj] * multip;
                 greenloc[i][j] = green[ii][jj] * multip;
                 blueloc[i][j] = blue[ii][jj] * multip;
@@ -5574,8 +5630,17 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
 
     if (wbpar.method == "autitcgreen") {
         bool twotimes = false;
-        const int bfw = W / 9 + ((W % 9) > 0 ? 1 : 0);// 10 arbitrary value  ; perhaps 4 or 5 or 20
-        const int bfh = H / 9 + ((H % 9) > 0 ? 1 : 0);
+        int precision = 5;
+        if (settings->itcwb_precis == 5) {
+            precision = 5;
+        } else if (settings->itcwb_precis < 5) {
+            precision = 3; 
+        } else if (settings->itcwb_precis > 5) {
+            precision = 9;
+        }
+        
+        const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
+        const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
         WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw);
     }
 

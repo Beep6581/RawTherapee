@@ -45,7 +45,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 
     //----------- Method combobox ------------------------------
 
-    Gtk::HBox* metHBox = Gtk::manage (new Gtk::HBox ());
+    Gtk::Box* metHBox = Gtk::manage (new Gtk::Box ());
     metHBox->set_spacing (2);
     Gtk::Label* metLabel = Gtk::manage (new Gtk::Label (M("TP_BWMIX_MET") + ":"));
     metHBox->pack_start (*metLabel, Gtk::PACK_SHRINK);
@@ -62,7 +62,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 
     //----------- Luminance equalizer ------------------------------
 
-    luminanceSep = Gtk::manage (new  Gtk::HSeparator());
+    luminanceSep = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     pack_start (*luminanceSep);
 
     std::vector<GradientMilestone> bottomMilestones;
@@ -89,12 +89,13 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     //----------- Auto and Reset buttons ------------------------------
 
     mixerFrame = Gtk::manage (new Gtk::Frame (M("TP_BWMIX_MET_CHANMIX")));
+    mixerFrame->set_label_align(0.025, 0.5);
     pack_start (*mixerFrame, Gtk::PACK_SHRINK, 0);
 
-    mixerVBox = Gtk::manage (new Gtk::VBox ());
+    mixerVBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     mixerVBox->set_spacing(4);
 
-    autoHBox = Gtk::manage (new Gtk::HBox ());
+    autoHBox = Gtk::manage (new Gtk::Box ());
 
     autoch = Gtk::manage (new Gtk::ToggleButton (M("TP_BWMIX_AUTOCH")));
     autoconn = autoch->signal_toggled().connect( sigc::mem_fun(*this, &BlackWhite::autoch_toggled) );
@@ -110,9 +111,9 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 
     //----------- Presets combobox ------------------------------
 
-    mixerVBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+    mixerVBox->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
 
-    settingHBox = Gtk::manage (new Gtk::HBox ());
+    settingHBox = Gtk::manage (new Gtk::Box ());
     settingHBox->set_spacing (2);
     settingHBox->set_tooltip_markup (M("TP_BWMIX_SETTING_TOOLTIP"));
     Gtk::Label *settingLabel = Gtk::manage (new Gtk::Label (M("TP_BWMIX_SETTING") + ":"));
@@ -146,7 +147,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 
     //----------- Complementary Color checkbox ------------------------------
 
-    enabledccSep = Gtk::manage (new  Gtk::HSeparator());
+    enabledccSep = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     mixerVBox->pack_start (*enabledccSep);
 
     enabledcc = Gtk::manage (new Gtk::CheckButton (M("TP_BWMIX_CC_ENABLED")));
@@ -160,10 +161,10 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 
     //----------- Color Filters ------------------------------
 
-    filterSep = Gtk::manage (new  Gtk::HSeparator());
+    filterSep = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     mixerVBox->pack_start (*filterSep);
 
-    filterHBox = Gtk::manage (new Gtk::HBox ());
+    filterHBox = Gtk::manage (new Gtk::Box ());
     filterHBox->set_spacing (2);
     filterHBox->set_tooltip_markup (M("TP_BWMIX_FILTER_TOOLTIP"));
     Gtk::Label *filterLabel = Gtk::manage (new Gtk::Label (M("TP_BWMIX_FILTER") + ":"));
@@ -199,7 +200,7 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     imgIcon[9]  = Gtk::manage (new RTImage ("circle-empty-green-small.png"));
     imgIcon[10] = Gtk::manage (new RTImage ("circle-empty-blue-small.png"));
 
-    mixerVBox->pack_start (*Gtk::manage (new  Gtk::HSeparator()));
+    mixerVBox->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
 
     mixerRed = Gtk::manage(new Adjuster (/*M("TP_BWMIX_RED")*/"", -100, 200, 1, 33, imgIcon[0]));
 
@@ -222,10 +223,10 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     mixerBlue->show();
     mixerVBox->pack_start( *mixerBlue, Gtk::PACK_SHRINK, 0);
 
-    filterSep2 = Gtk::manage (new  Gtk::HSeparator());
+    filterSep2 = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     mixerVBox->pack_start (*filterSep2);
 
-    algoHBox = Gtk::manage (new Gtk::HBox ());
+    algoHBox = Gtk::manage (new Gtk::Box ());
     algoHBox->set_spacing (2);
     algoHBox->set_tooltip_markup (M("TP_BWMIX_ALGO_TOOLTIP"));
 
@@ -280,9 +281,10 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
     //----------- Gamma sliders ------------------------------
 
     gammaFrame = Gtk::manage (new Gtk::Frame (M("TP_BWMIX_GAMMA")));
+    gammaFrame->set_label_align(0.025, 0.5);
     pack_start (*gammaFrame, Gtk::PACK_SHRINK, 0);
 
-    Gtk::VBox *gammaVBox = Gtk::manage (new Gtk::VBox());
+    Gtk::Box* gammaVBox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     gammaVBox->set_spacing(4);
 
 

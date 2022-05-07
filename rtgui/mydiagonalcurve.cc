@@ -39,7 +39,9 @@ MyDiagonalCurve::MyDiagonalCurve () :
     ugpX(0.0),
     ugpY(0.0),
     activeParam(-1),
-    bghistvalid(false)
+    bghistvalid(false),
+    locallabRef(0.0)
+
 {
 
     grab_point = -1;
@@ -128,6 +130,36 @@ std::vector<double> MyDiagonalCurve::get_vector (int veclen)
     rtcurve.getVal (t, vector);
     return vector;
 }
+
+void MyDiagonalCurve::updateLocallabBackground(double ref)
+{
+    locallabRef = ref;
+
+     mcih->pending++;
+
+     idle_register.add(
+        [this]() -> bool
+        {
+            if (mcih->destroyed) {
+                if (mcih->pending == 1) {
+                    delete mcih;
+                } else {
+                    --mcih->pending;
+                }
+
+                 return false;
+            }
+
+             mcih->clearPixmap();
+            mcih->myCurve->queue_draw();
+
+             --mcih->pending;
+
+             return false;
+        }
+    );
+}
+
 
 void MyDiagonalCurve::get_LUT (LUTf &lut)
 {
@@ -260,6 +292,20 @@ void MyDiagonalCurve::draw (int handle)
 
     cr->set_line_width (1.0 * s);
 
+    // Draw Locallab reference value in the background
+    if (locallabRef > 0.0) {
+        cr->set_line_width(1.0);
+        cr->move_to(double(graphX + 1), double(graphY - 1));
+        c = style->get_color(state);
+        cr->set_source_rgba(c.get_red(), c.get_green(), c.get_blue(), 0.2);
+        cr->line_to(double(graphX + 1), double(graphY - 1) -  double(graphH - 2));
+        cr->line_to(double(graphX) + 1.5 + locallabRef*double(graphW -2), double(graphY - 1) - double(graphH - 2));
+        cr->line_to(double(graphX) + 1.5 + locallabRef*double(graphW -2), double(graphY - 1));
+        cr->close_path();
+        cr->fill();
+        cr->stroke();
+    }
+
     // draw the left colored bar
     if (leftBar) {
         // first the background
@@ -323,7 +369,7 @@ void MyDiagonalCurve::draw (int handle)
     // draw the grid lines:
     cr->set_line_width (1.0 * s);
     c = style->get_border_color(state);
-    cr->set_source_rgb (c.get_red(), c.get_green(), c.get_blue());
+    cr->set_source_rgba (c.get_red(), c.get_green(), c.get_blue(), 0.3);
     cr->set_antialias (Cairo::ANTIALIAS_NONE);
 
     for (int i = 0; i <= 10; i++) {

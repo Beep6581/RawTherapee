@@ -127,12 +127,8 @@ void compute3x3kernel(float sigma, float kernel[3][3]) {
     float sum = 0.f;
     for (int i = -1; i <= 1; ++i) {
         for (int j = -1; j <= 1; ++j) {
-            if((rtengine::SQR(i) + rtengine::SQR(j)) <= rtengine::SQR(3.0 * 0.84)) {
-                kernel[i + 1][j + 1] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
-                sum += kernel[i + 1][j + 1];
-            } else {
-                kernel[i + 1][j + 1] = 0.f;
-            }
+            kernel[i + 1][j + 1] = std::exp((rtengine::SQR(i) + rtengine::SQR(j)) / temp);
+            sum += kernel[i + 1][j + 1];
         }
     }
 
@@ -647,7 +643,7 @@ float calcRadiusBayer(const float * const *rawData, int W, int H, float lowerLim
             }
         }
     }
-    return std::sqrt((1.f / (std::log(1.f / maxRatio) /  2.f)) / -2.f);
+    return std::sqrt(1.f / std::log(maxRatio));
 }
 
 float calcRadiusXtrans(const float * const *rawData, int W, int H, float lowerLimit, float upperLimit, unsigned int starty, unsigned int startx)
@@ -738,7 +734,7 @@ float calcRadiusXtrans(const float * const *rawData, int W, int H, float lowerLi
             }
         }
     }
-    return std::sqrt((1.f / (std::log(1.f / maxRatio) /  2.f)) / -2.f);
+    return std::sqrt(1.f / std::log(maxRatio));
 }
 
 bool checkForStop(float** tmpIThr, float** iterCheck, int fullTileSize, int border)
@@ -1116,23 +1112,23 @@ BENCHFUN
         return;
     }
 
-    array2D<float>* Lbuffer = nullptr;
+    std::unique_ptr<array2D<float>> Lbuffer;
     if (!redCache) {
-        Lbuffer = new array2D<float>(W, H);
+        Lbuffer.reset(new array2D<float>(W, H));
     }
 
-    array2D<float>* YOldbuffer = nullptr;
+    std::unique_ptr<array2D<float>> YOldbuffer;
     if (!greenCache) {
-        YOldbuffer = new array2D<float>(W, H);
+        YOldbuffer.reset(new array2D<float>(W, H));
     }
 
-    array2D<float>* YNewbuffer = nullptr;
+    std::unique_ptr<array2D<float>> YNewbuffer;
     if (!blueCache) {
-        YNewbuffer = new array2D<float>(W, H);
+        YNewbuffer.reset(new array2D<float>(W, H));
     }
-    array2D<float>& L = Lbuffer ? *Lbuffer : red;
-    array2D<float>& YOld = YOldbuffer ? * YOldbuffer : green;
-    array2D<float>& YNew = YNewbuffer ? * YNewbuffer : blue;
+    array2D<float>& L = Lbuffer.get() ? *Lbuffer.get() : red;
+    array2D<float>& YOld = YOldbuffer.get() ? *YOldbuffer.get() : green;
+    array2D<float>& YNew = YNewbuffer.get() ? *YNewbuffer.get() : blue;
 
 #ifdef _OPENMP
     #pragma omp parallel for schedule(dynamic, 16)
@@ -1160,17 +1156,12 @@ BENCHFUN
     #pragma omp parallel for schedule(dynamic, 16)
 #endif
     for (int i = 0; i < H; ++i) {
-        int j = 0;
-#ifdef __SSE2__
-        for (; j < W - 3; j += 4) {
-            const vfloat factor = LVFU(YNew[i][j]) / vmaxf(LVFU(YOld[i][j]), F2V(0.00001f));
-            STVFU(red[i][j], LVFU(redVals[i][j]) * factor);
-            STVFU(green[i][j], LVFU(greenVals[i][j]) * factor);
-            STVFU(blue[i][j], LVFU(blueVals[i][j]) * factor);
-        }
-
+#if defined(__clang__)
+        #pragma clang loop vectorize(assume_safety)
+#elif defined(__GNUC__)
+        #pragma GCC ivdep
 #endif
-        for (; j < W; ++j) {
+        for (int j = 0; j < W; ++j) {
             const float factor = YNew[i][j] / std::max(YOld[i][j], 0.00001f);
             red[i][j] = redVals[i][j] * factor;
             green[i][j] = greenVals[i][j] * factor;
@@ -1178,9 +1169,6 @@ BENCHFUN
         }
     }
 
-    delete Lbuffer;
-    delete YOldbuffer;
-    delete YNewbuffer;
     if (plistener) {
         plistener->setProgress(1.0);
     }

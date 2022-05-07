@@ -24,6 +24,9 @@
 #include <windows.h>
 #include <winnls.h>
 #endif
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
 
 namespace
 {
@@ -122,6 +125,20 @@ void setGtkLanguage(const Glib::ustring &language)
 {
     if(language != "default") { // nothing to change when using default
         std::string lang = localeToLang.getLocale(language);
+#ifdef __APPLE__
+
+        // On MacOS, LANG environment variable is not defined when running app bundle
+        // So we should set all locale data
+        const Glib::ustring localeUTF8 = lang + ".UTF-8";
+
+        lang = lang + ".UTF-8"; // According to Apple documentation, UTF-8 is a built-in encoding on all platforms on which macOS runs
+
+        g_setenv("LANG", lang.c_str(), true);
+        setlocale(LC_ALL, lang.c_str());
+        setlocale (LC_NUMERIC, "C"); // Force decimal point to dot.
+
+#else
+
         const gchar *env_langc = g_getenv("LANG");
         if(env_langc) {
             const std::string env_lang(env_langc);
@@ -134,6 +151,8 @@ void setGtkLanguage(const Glib::ustring &language)
         }
 
         g_setenv("LANG", lang.c_str(), true);
+        
+#endif
     }
 }
 
@@ -228,7 +247,7 @@ Glib::ustring MultiLangMgr::getOSUserLanguage ()
 
     langName = localeToLang (localeName);
 
-#elif defined (__linux__) || defined (__APPLE__)
+#elif defined (__linux__)
 
     // Query the current locale and force decimal point to dot.
     const char *locale = getenv("LANG");
@@ -238,6 +257,51 @@ Glib::ustring MultiLangMgr::getOSUserLanguage ()
 
     setlocale (LC_NUMERIC, "C");
 
+#elif defined (__APPLE__)
+
+    // "LANG" environment variable is not defined. Retrieving it from CoreFundation API
+    // Get used Mac string encoding
+    CFStringEncoding strEncoding = CFStringGetSystemEncoding();
+    // Get user locale data
+    CFLocaleRef cfLocale = CFLocaleCopyCurrent();
+    // Get locale language code
+    CFStringRef langCodeStr = (CFStringRef)CFLocaleGetValue(cfLocale, kCFLocaleLanguageCode);
+    Glib::ustring langCode("");
+
+    if (langCodeStr != NULL) {
+        const auto langCodeStrLength = CFStringGetLength(langCodeStr) + 1;
+        char langCodeBuffer[langCodeStrLength];
+        CFStringGetCString(langCodeStr, langCodeBuffer, langCodeStrLength, strEncoding);
+        langCode = Glib::ustring(langCodeBuffer);
+    }
+
+    // Get locale country code
+    CFStringRef countryCodeStr = (CFStringRef)CFLocaleGetValue(cfLocale, kCFLocaleCountryCode);
+    Glib::ustring countryCode("");
+
+    if (countryCodeStr != NULL) {
+        const auto countryCodeStrLength = CFStringGetLength(countryCodeStr) + 1;
+        char countryCodeBuffer[countryCodeStrLength];
+        CFStringGetCString(countryCodeStr, countryCodeBuffer, countryCodeStrLength, strEncoding);
+        countryCode = Glib::ustring(countryCodeBuffer);
+    }
+
+    // Concatenate locale data
+    Glib::ustring locale = langCode + "_" + countryCode;
+
+    // Release user locale data
+    CFRelease(cfLocale);
+    CFRelease(langCodeStr);
+    CFRelease(countryCodeStr);
+
+    // Set locale environment data
+    locale = locale + ".UTF-8"; // According to Apple documentation, UTF-8 is a built-in encoding on all platforms on which macOS runs
+    g_setenv("LANG", locale.c_str(), true);
+    setlocale(LC_ALL, locale.c_str());
+    setlocale (LC_NUMERIC, "C"); // Force decimal point to dot.
+
+    langName = localeToLang(locale);
+    
 #endif
 
     return langName;

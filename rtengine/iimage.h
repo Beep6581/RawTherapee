@@ -220,7 +220,7 @@ public:
 #endif
         return ptrs[row][col];
     }
-    const T   operator() (size_t row, size_t col) const
+    const T&   operator() (size_t row, size_t col) const
     {
 #if CHECK_BOUNDS
         assert (row < height_ && col < width_);
@@ -344,6 +344,23 @@ public:
 
         for (int i = 0; i < height; i++) {
             memcpy (dest->v(i), v(i), width * sizeof(T));
+        }
+    }
+
+    /** Copy the a sub-region of the data to another PlanarRGBData */
+    void copyData(PlanarWhateverData<T> *dest, int x, int y, int width, int height)
+    {
+        assert (dest != NULL);
+        // Make sure that the size is the same, reallocate if necessary
+        dest->allocate(width, height);
+
+        if (dest->width == -1) {
+            printf("ERROR: PlanarRGBData::copyData >>> allocation failed!\n");
+            return;
+        }
+
+        for (int i = y, j = 0; i < y + height; ++i, ++j) {
+            memcpy (dest->v(i) + x, v(j), width * sizeof(T));
         }
     }
 
@@ -753,6 +770,25 @@ public:
             memcpy (dest->r(i), r(i), width * sizeof(T));
             memcpy (dest->g(i), g(i), width * sizeof(T));
             memcpy (dest->b(i), b(i), width * sizeof(T));
+        }
+    }
+
+    /** Copy the a sub-region of the data to another PlanarRGBData */
+    void copyData(PlanarRGBData<T> *dest, int x, int y, int width, int height)
+    {
+        assert (dest != NULL);
+        // Make sure that the size is the same, reallocate if necessary
+        dest->allocate(width, height);
+
+        if (dest->width == -1) {
+            printf("ERROR: PlanarRGBData::copyData >>> allocation failed!\n");
+            return;
+        }
+
+        for (int i = y, j = 0; i < y + height; ++i, ++j) {
+            memcpy (dest->r(i) + x, r(j), width * sizeof(T));
+            memcpy (dest->g(i) + x, g(j), width * sizeof(T));
+            memcpy (dest->b(i) + x, b(j), width * sizeof(T));
         }
     }
 
@@ -1274,7 +1310,7 @@ public:
 #endif
         return ptr[3 * (row * width + col)];
     }
-    const T  operator() (size_t row, size_t col) const
+    const T&  operator() (size_t row, size_t col) const
     {
 #if CHECK_BOUNDS
         assert (row < height_ && col < width_);
@@ -1390,6 +1426,23 @@ public:
         }
 
         memcpy (dest->data, data, 3 * width * height * sizeof(T));
+    }
+
+    /** Copy the a sub-region of the data to another PlanarRGBData */
+    void copyData(ChunkyRGBData<T> *dest, int x, int y, int width, int height)
+    {
+        assert (dest != NULL);
+        // Make sure that the size is the same, reallocate if necessary
+        dest->allocate(width, height);
+
+        if (dest->width == -1) {
+            printf("ERROR: PlanarRGBData::copyData >>> allocation failed!\n");
+            return;
+        }
+
+        for (int i = y, j = 0; i < y + height; ++i, ++j) {
+            memcpy (dest->r(i) + x, r(j), 3 * width * sizeof(T));
+        }
     }
 
     void rotate (int deg) final
@@ -1809,9 +1862,6 @@ public:
       * @return The mutex */
     virtual MyMutex& getMutex () = 0;
     virtual cmsHPROFILE getProfile () const = 0;
-    /** @brief Returns the bits per pixel of the image.
-      * @return The bits per pixel of the image */
-    virtual int getBitsPerPixel () const = 0;
     /** @brief Saves the image to file. It autodetects the format (jpg, tif, png are supported).
       * @param fname is the name of the file
         @return the error code, 0 if none */
@@ -1836,8 +1886,6 @@ public:
     /** @brief Sets the progress listener if you want to follow the progress of the image saving operations (optional).
       * @param pl is the pointer to the class implementing the ProgressListener interface */
     virtual void setSaveProgressListener (ProgressListener* pl) = 0;
-    /** @brief Free the image */
-    virtual void free () = 0;
 };
 
 /** @brief This class represents an image having a float pixel planar representation.

@@ -39,10 +39,9 @@ public:
     ~Image16() override;
 
     Image16* copy() const;
+    Image16*             copySubRegion (int x, int y, int width, int height);
 
-    Image8* to8() const;
-
-    void getStdImage(const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const override;
+    void getStdImage(const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp) const override;
 
     const char* getType() const override
     {
@@ -65,11 +64,6 @@ public:
     cmsHPROFILE getProfile() const override
     {
         return getEmbeddedProfile();
-    }
-
-    int getBitsPerPixel() const override
-    {
-        return 8 * sizeof(unsigned short);
     }
 
     int saveToFile(const Glib::ustring &fname) const override
@@ -97,10 +91,6 @@ public:
         setProgressListener(pl);
     }
 
-    void free() override
-    {
-        delete this;
-    }
     void ExecCMSTransform(cmsHTRANSFORM hTransform);
 
     /* void                 ExecCMSTransform(cmsHTRANSFORM hTransform, const LabImage &labImage, int cx, int cy); */

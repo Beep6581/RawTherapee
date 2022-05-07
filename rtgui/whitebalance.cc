@@ -248,10 +248,17 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     std::vector<Gtk::CellRenderer*> cells = method->get_cells();
     Gtk::CellRendererText* cellRenderer = dynamic_cast<Gtk::CellRendererText*>(cells.at(1));
     cellRenderer->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
+    
+    resetButton = Gtk::manage (new Gtk::Button()); // No label, keep it short
+    setExpandAlignProperties(resetButton, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    resetButton->set_relief(Gtk::RELIEF_NONE);
+    resetButton->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
+    resetButton->set_image (*Gtk::manage (new RTImage ("undo-small.png")));
 
     method->set_active (0); // Camera
     methodgrid->attach (*lab, 0, 0, 1, 1);
     methodgrid->attach (*method, 1, 0, 1, 1);
+    methodgrid->attach (*resetButton, 2, 0, 1, 1);
     pack_start (*methodgrid, Gtk::PACK_SHRINK, 0 );
     opt = 0;
 
@@ -311,7 +318,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     spotgrid->attach (*wbsizehelper, 2, 0, 1, 1);
     pack_start (*spotgrid, Gtk::PACK_SHRINK, 0 );
 
-    Gtk::HSeparator *separator = Gtk::manage (new  Gtk::HSeparator());
+    Gtk::Separator *separator = Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
     separator->get_style_context()->add_class("grid-row-separator");
     pack_start (*separator, Gtk::PACK_SHRINK, 0);
 
@@ -341,7 +348,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     equal->show ();
     tempBias->show ();
 
-    /*  Gtk::HBox* boxgreen = Gtk::manage (new Gtk::HBox ());
+    /*  Gtk::Box* boxgreen = Gtk::manage (new Gtk::Box ());
     boxgreen->show ();
 
     boxgreen->pack_start(*igreenL);
@@ -362,6 +369,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
 
     spotbutton->signal_pressed().connect( sigc::mem_fun(*this, &WhiteBalance::spotPressed) );
     methconn = method->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::optChanged) );
+    resetButton->signal_pressed().connect( sigc::mem_fun(*this, &WhiteBalance::resetWB) );
     spotsize->signal_changed().connect( sigc::mem_fun(*this, &WhiteBalance::spotSizeChanged) );
 }
 
@@ -828,6 +836,11 @@ void WhiteBalance::setWB (int vtemp, double vgreen)
 
 }
 
+void WhiteBalance::resetWB ()
+{
+    setActiveMethod("Camera");
+}
+
 void WhiteBalance::setAdjusterBehavior (bool tempadd, bool greenadd, bool equaladd, bool tempbiasadd)
 {
 
@@ -936,7 +949,6 @@ void WhiteBalance::WBChanged(double temperature, double greenVal, float studgood
         [this, temperature, greenVal, studgood]() -> bool
         {
             disableListener();
-            setEnabled(true);
             temp->setValue(temperature);
             green->setValue(greenVal);
             StudLabel->set_text(

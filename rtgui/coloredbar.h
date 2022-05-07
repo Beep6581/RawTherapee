@@ -27,7 +27,7 @@
  *
  * WARNING: If the color has no gradient defined or can't get colors from the provider,
  *          the bar will have undefined data, and the calling class will have to draw
- *          the bar itself, i.e. use render_background (depending on its Gtk::Style)
+ *          the bar itself, i.e. use render_background (depending on its Gtk::StyleContext)
  *
  */
 class ColoredBar final : private BackBuffer, public ColorCaller

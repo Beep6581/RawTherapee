@@ -134,7 +134,21 @@ Image16* Image16::copy() const
     return cp;
 }
 
-void Image16::getStdImage(const ColorTemp &ctemp, int tran, Imagefloat* image, PreviewProps pp) const
+Image16* Image16::copySubRegion (int x, int y, int width, int height)
+{
+    Image16* cp = NULL;
+    int realWidth  = LIM<int>(x + width,  0, this->width)  - x;
+    int realHeight = LIM<int>(y + height, 0, this->height) - y;
+
+    if (realWidth > 0 && realHeight > 0) {
+        cp = new Image16 (realWidth, realHeight);
+        copyData(cp, x, y, realWidth, realHeight);
+    }
+
+    return cp;
+}
+
+void Image16::getStdImage(const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp) const
 {
 
     // compute channel multipliers
@@ -258,10 +272,10 @@ void Image16::getStdImage(const ColorTemp &ctemp, int tran, Imagefloat* image, P
                         lineB[dst_x] = CLIP(bm * btot);
                     } else {
                         // computing a special factor for this incomplete sub-region
-                        float area = src_sub_width * src_sub_height;
-                        lineR[dst_x] = CLIP(rm2 * rtot / area);
-                        lineG[dst_x] = CLIP(gm2 * gtot / area);
-                        lineB[dst_x] = CLIP(bm2 * btot / area);
+                        float larea = src_sub_width * src_sub_height;
+                        lineR[dst_x] = CLIP(rm2 * rtot / larea);
+                        lineG[dst_x] = CLIP(gm2 * gtot / larea);
+                        lineB[dst_x] = CLIP(bm2 * btot / larea);
                     }
                 }
             }
@@ -293,21 +307,6 @@ void Image16::getStdImage(const ColorTemp &ctemp, int tran, Imagefloat* image, P
     }
 #endif
 #undef GCLIP
-}
-
-Image8* Image16::to8() const
-{
-    Image8* img8 = new Image8(width, height);
-
-    for (int h = 0; h < height; ++h) {
-        for (int w = 0; w < width; ++w) {
-            img8->r(h, w) = uint16ToUint8Rounded(r(h, w));
-            img8->g(h, w) = uint16ToUint8Rounded(g(h, w));
-            img8->b(h, w) = uint16ToUint8Rounded(b(h, w));
-        }
-    }
-
-    return img8;
 }
 
 // Parallelized transformation; create transform with cmsFLAGS_NOCACHE!

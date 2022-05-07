@@ -196,7 +196,7 @@ rtengine::LCPProfile::LCPProfile(const Glib::ustring& fname) :
     XML_Parser parser = XML_ParserCreate(nullptr);
 
     if (!parser) {
-        throw "Couldn't allocate memory for XML parser";
+        throw std::runtime_error("Couldn't allocate memory for XML parser");
     }
 
     XML_SetElementHandler(parser, XmlStartHandler, XmlEndHandler);
@@ -216,7 +216,7 @@ rtengine::LCPProfile::LCPProfile(const Glib::ustring& fname) :
 
             if (XML_Parse(parser, buf, bytesRead, done) == XML_STATUS_ERROR) {
                 XML_ParserFree(parser);
-                throw "Invalid XML in LCP file";
+                throw std::runtime_error("Invalid XML in LCP file");
             }
         } while (!done);
 
@@ -990,16 +990,16 @@ bool rtengine::LCPMapper::isCACorrectionAvailable() const
     return enableCA;
 }
 
-void rtengine::LCPMapper::correctDistortion(double &x, double &y, int cx, int cy, double scale) const
+void rtengine::LCPMapper::correctDistortion(double &x, double &y, int cx, int cy) const
 {
     x += cx;
     y += cy;
 
     if (isFisheye) {
-        const double u = x * scale;
-        const double v = y * scale;
-        const double u0 = static_cast<double>(mc.x0) * scale;
-        const double v0 = static_cast<double>(mc.y0) * scale;
+        const double u = x;
+        const double v = y;
+        const double u0 = static_cast<double>(mc.x0);
+        const double v0 = static_cast<double>(mc.y0);
         const double du = (u - u0);
         const double dv = (v - v0);
         const double fx = mc.fx;
@@ -1007,7 +1007,7 @@ void rtengine::LCPMapper::correctDistortion(double &x, double &y, int cx, int cy
         const double k1 = mc.param[0];
         const double k2 = mc.param[1];
         const double r = sqrt(du * du + dv * dv);
-        const double f = sqrt(fx*fy / (scale * scale));
+        const double f = sqrt(fx*fy);
         const double th = atan2(r, f);
         const double th2 = th * th;
         const double cfact = (((k2 * th2 + k1) * th2 + 1) * th) / r;
@@ -1017,10 +1017,8 @@ void rtengine::LCPMapper::correctDistortion(double &x, double &y, int cx, int cy
         x = ud;
         y = vd;
     } else {
-        x *= scale;
-        y *= scale;
-        const double x0 = static_cast<double>(mc.x0) * scale;
-        const double y0 = static_cast<double>(mc.y0) * scale;
+        const double x0 = static_cast<double>(mc.x0);
+        const double y0 = static_cast<double>(mc.y0);
         const double xd = (x - x0) / static_cast<double>(mc.fx), yd = (y - y0) / static_cast<double>(mc.fy);
 
         const auto& aDist = mc.param;
@@ -1037,8 +1035,8 @@ void rtengine::LCPMapper::correctDistortion(double &x, double &y, int cx, int cy
         y = ynew * static_cast<double>(mc.fy) + y0;
     }
 
-    x -= cx * scale;
-    y -= cy * scale;
+    x -= cx;
+    y -= cy;
 }
 
 void rtengine::LCPMapper::correctCA(double& x, double& y, int cx, int cy, int channel) const

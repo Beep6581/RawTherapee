@@ -57,12 +57,18 @@ link_directories("${PROJECT_SOURCE_DIR}/rtexif"
     "${RSVG_LIBRARY_DIRS}"
 )
 
+if(OpenMP_FOUND)
+    include_directories(${OpenMP_CXX_INCLUDE_DIRS})
+endif()
+
 set(CAMCONSTSFILE "camconst.json")
 
 set(RTENGINESOURCEFILES
+    alpha.cc
     ahd_demosaic_RT.cc
     amaze_demosaic_RT.cc
     badpixels.cc
+    bayer_bilinear_demosaic.cc
     boxblur.cc
     canon_cr3_decoder.cc
     CA_correct_RT.cc
@@ -93,7 +99,6 @@ set(RTENGINESOURCEFILES
     fast_demo.cc
     ffmanager.cc
     filmnegativeproc.cc
-    filmnegativethumb.cc
     flatcurves.cc
     FTblockDN.cc
     gamutwarning.cc
@@ -117,7 +122,9 @@ set(RTENGINESOURCEFILES
     impulse_denoise.cc
     init.cc
     ipdehaze.cc
+    ipgrain.cc
     iplab2rgb.cc
+    iplocallab.cc
     iplabregions.cc
     iplocalcontrast.cc
     ipresize.cc
@@ -133,13 +140,13 @@ set(RTENGINESOURCEFILES
     jpeg_ijg/jpeg_memsrc.cc
     labimage.cc
     lcp.cc
-    lj92.c
     lmmse_demosaic.cc
     loadinitial.cc
     munselllch.cc
     myfile.cc
     panasonic_decoders.cc
     pdaflinesfilter.cc
+    perspectivecorrection.cc
     PF_correct_RT.cc
     pipettebuffer.cc
     pixelshift.cc
@@ -157,6 +164,7 @@ set(RTENGINESOURCEFILES
     rtthumbnail.cc
     shmap.cc
     simpleprocess.cc
+    spot.cc
     stdimagesource.cc
     tmo_fattal02.cc
     utils.cc
@@ -219,5 +227,9 @@ target_link_libraries(rtengine rtexif
     ${RSVG_LIBRARIES}
     ${KLT_LIBRARIES}
 )
+
+if(OpenMP_FOUND)
+    target_link_libraries(rtengine ${OpenMP_CXX_LIBRARIES})
+endif()
 
 install(FILES ${CAMCONSTSFILE} DESTINATION "${DATADIR}" PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)

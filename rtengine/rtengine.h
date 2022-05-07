@@ -35,11 +35,15 @@
 
 #include "../rtgui/threadutils.h"
 
+
 /**
  * @file
  * This file contains the main functionality of the RawTherapee engine.
  *
  */
+
+template<typename T>
+class array2D;
 
 template<typename T>
 class LUT;
@@ -77,6 +81,7 @@ class IImage8;
 class IImage16;
 class IImagefloat;
 class ImageSource;
+class TweakOperator;
 
 /**
   * This class provides functions to obtain exif and IPTC metadata information
@@ -301,6 +306,8 @@ public:
     virtual void sizeChanged(int w, int h, int ow, int oh) = 0;
 };
 
+class HistogramObservable;
+
 /** This listener is used when the histogram of the final image has changed. */
 class HistogramListener
 {
@@ -326,8 +333,43 @@ public:
         const LUTu& histGreenRaw,
         const LUTu& histBlueRaw,
         const LUTu& histChroma,
-        const LUTu& histLRETI
+        const LUTu& histLRETI,
+        int vectorscopeScale,
+        const array2D<int>& vectorscopeHC,
+        const array2D<int>& vectorscopeHS,
+        int waveformScale,
+        const array2D<int>& waveformRed,
+        const array2D<int>& waveformGreen,
+        const array2D<int>& waveformBlue,
+        const array2D<int>& waveformLuma
     ) = 0;
+    /** Tells which observable is notifying the listener. */
+    virtual void setObservable(HistogramObservable* observable) = 0;
+    /** Returns if the listener wants the histogram to be updated. */
+    virtual bool updateHistogram(void) const = 0;
+    /** Returns if the listener wants the raw histogram to be updated. */
+    virtual bool updateHistogramRaw(void) const = 0;
+    /** Returns if the listener wants the H-C vectorscope to be updated. */
+    virtual bool updateVectorscopeHC(void) const = 0;
+    /** Returns if the listener wants the H-S vectorscope to be updated. */
+    virtual bool updateVectorscopeHS(void) const = 0;
+    /** Returns if the listener wants the waveform to be updated. */
+    virtual bool updateWaveform(void) const  = 0;
+};
+
+class HistogramObservable
+{
+public:
+    /** Tells the observable to update the histogram data. */
+    virtual void requestUpdateHistogram() = 0;
+    /** Tells the observable to update the raw histogram data. */
+    virtual void requestUpdateHistogramRaw() = 0;
+    /** Tells the observable to update the H-C vectorscope data. */
+    virtual void requestUpdateVectorscopeHC() = 0;
+    /** Tells the observable to update the H-S vectorscope data. */
+    virtual void requestUpdateVectorscopeHS() = 0;
+    /** Tells the observable to update the waveform data. */
+    virtual void requestUpdateWaveform() = 0;
 };
 
 /** This listener is used when the auto exposure has been recomputed (e.g. when the clipping ratio changed). */
@@ -375,12 +417,49 @@ public:
     virtual void minmaxChanged(double cdma, double cdmin, double mini, double maxi, double Tmean, double Tsigma, double Tmin, double Tmax) = 0;
 };
 
+class LocallabListener
+{
+public:
+    struct locallabRef {
+        double huer;
+        double lumar;
+        double chromar;
+        float fab;
+    };
+
+    struct locallabRetiMinMax {
+        double cdma;
+        double cdmin;
+        double mini;
+        double maxi;
+        double Tmean;
+        double Tsigma;
+        double Tmin;
+        double Tmax;
+    };
+
+    virtual ~LocallabListener() = default;
+//    virtual void refChanged(const std::vector<locallabRef> &ref, int selspot) = 0;
+    virtual void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) = 0;
+    virtual void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1) = 0;
+    virtual void refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot) = 0;
+};
+
 class AutoColorTonListener
 {
 public:
     virtual ~AutoColorTonListener() = default;
     virtual void autoColorTonChanged(int bwct, int satthres, int satprot) = 0;
 };
+
+class AutoprimListener
+{
+public:
+    virtual ~AutoprimListener() = default;
+    virtual void primChanged(float rx, float ry, float bx, float by, float gx, float gy) = 0;
+    virtual void iprimChanged(float r_x, float r_y, float b_x, float b_y, float g_x, float g_y, float w_x, float w_y) = 0;
+};
+
 
 class AutoBWListener
 {
@@ -439,6 +518,13 @@ public:
 
 };
 
+class FilmNegListener
+{
+public:
+    virtual ~FilmNegListener() = default;
+    virtual void filmRefValuesChanged(const procparams::FilmNegativeParams::RGB &refInput, const procparams::FilmNegativeParams::RGB &refOutput) = 0;
+};
+
 /** This class represents a detailed part of the image (looking through a kind of window).
   * It can be created and destroyed with the appropriate members of StagedImageProcessor.
   * Several crops can be assigned to the same image.   */
@@ -470,9 +556,20 @@ public:
     /** Returns the initial image corresponding to the image processor.
       * @return the initial image corresponding to the image processor */
     virtual InitialImage* getInitialImage () = 0;
+    /** Set the TweakOperator
+      * @param tOperator is a pointer to the object that will alter the ProcParams for the rendering */
+    virtual void        setTweakOperator (TweakOperator *tOperator) = 0;
+    /** Unset the TweakOperator
+      * @param tOperator is a pointer to the object that were altering the ProcParams for the rendering
+      *        It will only unset the tweak operator if tOperator is the same than the currently set operator.
+      *        If it doesn't match, the currently set TweakOperator will remain set. */
+    virtual void        unsetTweakOperator (TweakOperator *tOperator) = 0;
     /** Returns the current processing parameters.
-      * @param dst is the location where the image processing parameters are copied (it is assumed that the memory is allocated by the caller) */
-    virtual void        getParams (procparams::ProcParams* dst) = 0;
+      * Since the ProcParams can be tweaked by a GUI to operate on the image at a specific stage or with disabled tool,
+      * you'll have to specify if you want the tweaked version for the current special mode, or the untweaked one.
+      * @param dst is the location where the image processing parameters are copied (it is assumed that the memory is allocated by the caller)
+      * @param tweaked is used to choose between the tweaked ProcParams (if there is one) or the untweaked one */
+    virtual void        getParams (procparams::ProcParams* dst, bool tweaked=false) = 0;
     /** An essential member function. Call this when a setting has been changed. This function returns a pointer to the
       * processing parameters, that you have to update to reflect the changed situation. When ready, call the paramsUpdateReady
       * function to start the image update.
@@ -515,6 +612,8 @@ public:
 
     virtual void        updateUnLock() = 0;
 
+    virtual void        setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int localllogMask, int locall_Mask, int locallcieMask) = 0;
+
     /** Creates and returns a Crop instance that acts as a window on the image
       * @param editDataProvider pointer to the EditDataProvider that communicates with the EditSubscriber
       * @return a pointer to the Crop object that handles the image data trough its own pipeline */
@@ -523,7 +622,8 @@ public:
     virtual bool        getAutoWB   (double& temp, double& green, double equal, double tempBias) = 0;
     virtual void        getCamWB    (double& temp, double& green) = 0;
     virtual void        getSpotWB  (int x, int y, int rectSize, double& temp, double& green) = 0;
-    virtual bool        getFilmNegativeExponents(int xA, int yA, int xB, int yB, std::array<float, 3>& newExps) = 0;
+    virtual bool        getFilmNegativeSpot(int x, int y, int spotSize, procparams::FilmNegativeParams::RGB &refInput, procparams::FilmNegativeParams::RGB &refOutput) = 0;
+    
     virtual void        getAutoCrop (double ratio, int &x, int &y, int &w, int &h) = 0;
 
     virtual void        saveInputICCReference (const Glib::ustring& fname, bool apply_wb) = 0;
@@ -544,10 +644,14 @@ public:
     virtual void        setAutoBWListener       (AutoBWListener* l) = 0;
     virtual void        setAutoWBListener       (AutoWBListener* l) = 0;
     virtual void        setAutoColorTonListener (AutoColorTonListener* l) = 0;
+    virtual void        setAutoprimListener     (AutoprimListener* l) = 0;
+
     virtual void        setAutoChromaListener   (AutoChromaListener* l) = 0;
     virtual void        setRetinexListener      (RetinexListener* l) = 0;
     virtual void        setWaveletListener      (WaveletListener* l) = 0;
     virtual void        setImageTypeListener    (ImageTypeListener* l) = 0;
+    virtual void        setLocallabListener     (LocallabListener* l) = 0;
+    virtual void        setFilmNegListener      (FilmNegListener* l) = 0;
 
     virtual void        setMonitorProfile       (const Glib::ustring& monitorProfile, RenderingIntent intent) = 0;
     virtual void        getMonitorProfile       (Glib::ustring& monitorProfile, RenderingIntent& intent) const = 0;

@@ -27,8 +27,10 @@
 
 #include "batchqueue.h"
 #include "clipboard.h"
+#include "inspector.h"
 #include "multilangmgr.h"
 #include "options.h"
+#include "paramsedited.h"
 #include "profilestorecombobox.h"
 #include "procparamchangers.h"
 #include "rtimage.h"
@@ -151,6 +153,10 @@ FileBrowser::FileBrowser () :
     pmenu = new Gtk::Menu ();
     pmenu->attach (*Gtk::manage(open = new Gtk::MenuItem (M("FILEBROWSER_POPUPOPEN"))), 0, 1, p, p + 1);
     p++;
+    if (options.inspectorWindow) {
+        pmenu->attach (*Gtk::manage(inspect = new Gtk::MenuItem (M("FILEBROWSER_POPUPINSPECT"))), 0, 1, p, p + 1);
+        p++;
+    }
     pmenu->attach (*Gtk::manage(develop = new MyImageMenuItem (M("FILEBROWSER_POPUPPROCESS"), "gears.png")), 0, 1, p, p + 1);
     p++;
     pmenu->attach (*Gtk::manage(developfast = new Gtk::MenuItem (M("FILEBROWSER_POPUPPROCESSFAST"))), 0, 1, p, p + 1);
@@ -404,6 +410,8 @@ FileBrowser::FileBrowser () :
     trash->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_Delete, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
     untrash->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_Delete, Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
     open->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_Return, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
+    if (options.inspectorWindow)
+        inspect->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_f, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
     develop->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_B, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
     developfast->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_B, Gdk::CONTROL_MASK | Gdk::SHIFT_MASK, Gtk::ACCEL_VISIBLE);
     copyprof->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_C, Gdk::CONTROL_MASK, Gtk::ACCEL_VISIBLE);
@@ -414,6 +422,10 @@ FileBrowser::FileBrowser () :
 
     // Bind to event handlers
     open->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), open));
+
+    if (options.inspectorWindow) {
+        inspect->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), inspect));
+    }
 
     for (int i = 0; i < 6; i++) {
         rank[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), rank[i]));
@@ -697,7 +709,6 @@ void FileBrowser::menuColorlabelActivated (Gtk::MenuItem* m)
 
 void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
 {
-
     std::vector<FileBrowserEntry*> mselected;
 
     {
@@ -750,6 +761,8 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
 
     if (m == open) {
         openRequested(mselected);
+    } else if (options.inspectorWindow && m == inspect) {
+        inspectRequested(mselected);
     } else if (m == remove) {
         tbl->deleteRequested (mselected, false, true);
     } else if (m == removeInclProc) {
@@ -866,7 +879,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
             } else {
                 // Target directory creation failed, we clear the darkFramesPath setting
                 options.rtSettings.darkFramesPath.clear();
-                Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), options.rtSettings.darkFramesPath)
+                Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), escapeHtmlChars(options.rtSettings.darkFramesPath))
                                      + "\n\n" + M("MAIN_MSG_OPERATIONCANCELLED");
                 Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
                 msgd.set_title(M("TP_DARKFRAME_LABEL"));
@@ -942,7 +955,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
             } else {
                 // Target directory creation failed, we clear the flatFieldsPath setting
                 options.rtSettings.flatFieldsPath.clear();
-                Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), options.rtSettings.flatFieldsPath)
+                Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), escapeHtmlChars(options.rtSettings.flatFieldsPath))
                                      + "\n\n" + M("MAIN_MSG_OPERATIONCANCELLED");
                 Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
                 msgd.set_title(M("TP_FLATFIELD_LABEL"));
@@ -972,11 +985,19 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
         }
 
         for (size_t i = 0; i < mselected.size(); i++)  {
-            mselected[i]->thumbnail->createProcParamsForUpdate (false, true);
+            const auto thumbnail = mselected[i]->thumbnail;
+            const auto rank = thumbnail->getRank();
+            const auto colorLabel = thumbnail->getColorLabel();
+            const auto stage = thumbnail->getStage();
+
+            thumbnail->createProcParamsForUpdate (false, true);
+            thumbnail->setRank(rank);
+            thumbnail->setColorLabel(colorLabel);
+            thumbnail->setStage(stage);
 
             // Empty run to update the thumb
-            rtengine::procparams::ProcParams params = mselected[i]->thumbnail->getProcParams ();
-            mselected[i]->thumbnail->setProcParams (params, nullptr, FILEBROWSER, true, true);
+            rtengine::procparams::ProcParams params = thumbnail->getProcParams ();
+            thumbnail->setProcParams (params, nullptr, FILEBROWSER, true, true);
         }
 
         if (!mselected.empty() && bppcl) {
@@ -1065,6 +1086,8 @@ void FileBrowser::partPasteProfile ()
 
         auto toplevel = static_cast<Gtk::Window*> (get_toplevel ());
         PartialPasteDlg partialPasteDlg (M("PARTIALPASTE_DIALOGLABEL"), toplevel);
+
+        partialPasteDlg.updateSpotWidget(clipboard.getPartialProfile().pparams);
 
         int i = partialPasteDlg.run ();
 
@@ -1351,6 +1374,19 @@ int FileBrowser::getThumbnailHeight ()
     }
 }
 
+void FileBrowser::enableTabMode(bool enable)
+{
+    ThumbBrowserBase::enableTabMode(enable);
+    if (options.inspectorWindow) {
+        if (enable) {
+            inspect->remove_accelerator(pmenu->get_accel_group(), GDK_KEY_f, (Gdk::ModifierType)0);
+        }
+        else {
+            inspect->add_accelerator ("activate", pmenu->get_accel_group(), GDK_KEY_f, (Gdk::ModifierType)0, Gtk::ACCEL_VISIBLE);
+        }
+    }
+}
+
 void FileBrowser::applyMenuItemActivated (ProfileStoreLabel *label)
 {
     MYREADERLOCK(l, entryRW);
@@ -1392,6 +1428,8 @@ void FileBrowser::applyPartialMenuItemActivated (ProfileStoreLabel *label)
         auto toplevel = static_cast<Gtk::Window*> (get_toplevel ());
         PartialPasteDlg partialPasteDlg (M("PARTIALPASTE_DIALOGLABEL"), toplevel);
 
+        partialPasteDlg.updateSpotWidget(srcProfiles->pparams);
+
         if (partialPasteDlg.run() == Gtk::RESPONSE_OK) {
 
             MYREADERLOCK(l, entryRW);
@@ -1406,6 +1444,7 @@ void FileBrowser::applyPartialMenuItemActivated (ProfileStoreLabel *label)
                 rtengine::procparams::PartialProfile dstProfile(true);
                 *dstProfile.pparams = (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->getProcParams ();
                 dstProfile.set(true);
+                dstProfile.pedited->locallab.spots.resize(dstProfile.pparams->locallab.spots.size(), LocallabParamsEdited::LocallabSpotEdited(true));
                 partialPasteDlg.applyPaste (dstProfile.pparams, dstProfile.pedited, srcProfiles->pparams, srcProfiles->pedited);
                 (static_cast<FileBrowserEntry*>(selected[i]))->thumbnail->setProcParams (*dstProfile.pparams, dstProfile.pedited, FILEBROWSER);
                 dstProfile.deleteInstance();
@@ -2070,4 +2109,9 @@ void FileBrowser::openRequested( std::vector<FileBrowserEntry*> mselected)
     }
 
     tbl->openRequested (entries);
+}
+
+void FileBrowser::inspectRequested(std::vector<FileBrowserEntry*> mselected)
+{
+    getInspector()->showWindow(true);
 }
