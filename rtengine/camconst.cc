@@ -28,8 +28,6 @@ namespace rtengine
 CameraConst::CameraConst() : pdafOffset(0)
 {
     memset(dcraw_matrix, 0, sizeof(dcraw_matrix));
-    // memset(raw_crop, 0, sizeof(raw_crop));
-    // memset(raw_mask, 0, sizeof(raw_mask));
     white_max = 0;
     globalGreenEquilibration = -1;
 }
@@ -196,7 +194,7 @@ CameraConst* CameraConst::parseEntry(const void *cJSON_, const char *make_model)
         [](int w, int h, const cJSON *ji, CameraConst *cc) -> bool
         {
             std::array<int, 4> rc;
-        
+
             if (ji->type != cJSON_Array) {
                 //fprintf(stderr, "\"raw_crop\" must be an array\n");
                 return false;
@@ -227,7 +225,7 @@ CameraConst* CameraConst::parseEntry(const void *cJSON_, const char *make_model)
         [](int w, int h, const cJSON *ji, CameraConst *cc) -> bool
         {
             std::array<std::array<int, 4>, 2> rm;
-        
+
             if (ji->type != cJSON_Array) {
                 //fprintf(stderr, "\"masked_areas\" must be an array\n");
                 return false;
@@ -235,7 +233,7 @@ CameraConst* CameraConst::parseEntry(const void *cJSON_, const char *make_model)
 
             int i;
 
-            for (i = 0, ji = ji->child; i < 8 * 4 && ji != nullptr; i++, ji = ji->next) {
+            for (i = 0, ji = ji->child; i < 2 * 4 && ji != nullptr; i++, ji = ji->next) {
                 if (ji->type != cJSON_Number) {
                     //fprintf(stderr, "\"masked_areas\" array must contain numbers\n");
                     return false;
@@ -253,8 +251,7 @@ CameraConst* CameraConst::parseEntry(const void *cJSON_, const char *make_model)
             cc->raw_mask[std::make_pair(w, h)] = rm;
             return true;
         };
-    
-    
+
     const cJSON *ji = cJSON_GetObjectItem(js, "dcraw_matrix");
 
     if (ji) {
@@ -482,7 +479,6 @@ void CameraConst::update_pdafOffset(int other)
 bool CameraConst::has_rawCrop(int raw_width, int raw_height) const
 {
     return raw_crop.find(std::make_pair(raw_width, raw_height)) != raw_crop.end() || raw_crop.find(std::make_pair(0, 0)) != raw_crop.end();
-//    return raw_crop[0] != 0 || raw_crop[1] != 0 || raw_crop[2] != 0 || raw_crop[3] != 0;
 }
 
 
@@ -510,7 +506,6 @@ bool CameraConst::has_rawMask(int raw_width, int raw_height, int idx) const
     }
 
     return raw_mask.find(std::make_pair(raw_width, raw_height)) != raw_mask.end() || raw_mask.find(std::make_pair(0, 0)) != raw_mask.end();
-    //return (raw_mask[idx][0] | raw_mask[idx][1] | raw_mask[idx][2] | raw_mask[idx][3]) != 0;
 }
 
 
@@ -564,9 +559,6 @@ void CameraConst::update_Crop(CameraConst *other)
         return;
     }
 
-    // if (other->has_rawCrop()) {
-    //     other->get_rawCrop(raw_crop[0], raw_crop[1], raw_crop[2], raw_crop[3]);
-    // }
     raw_crop.insert(other->raw_crop.begin(), other->raw_crop.end());
 }
 

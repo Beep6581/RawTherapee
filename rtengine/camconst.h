@@ -1,5 +1,5 @@
 /* -*- C++ -*-
- *  
+ *
  *  This file is part of RawTherapee.
  */
 #pragma once
@@ -16,7 +16,8 @@ class ustring;
 
 }
 
-namespace rtengine {
+namespace rtengine
+{
 
 class CameraConst final
 {
@@ -28,7 +29,7 @@ private:
     std::string make_model;
     short dcraw_matrix[12];
     std::map<std::pair<int, int>, std::array<int, 4>> raw_crop;
-    std::map<std::pair<int, int>, std::array<std::array<int, 4>, 2>> raw_mask; //int raw_mask[2][4];
+    std::map<std::pair<int, int>, std::array<std::array<int, 4>, 2>> raw_mask;
     int white_max;
     std::map<int, camera_const_levels> mLevels[2];
     std::map<float, float> mApertureScaling;

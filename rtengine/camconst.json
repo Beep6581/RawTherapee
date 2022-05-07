@@ -99,7 +99,6 @@ Examples:
            { "frame" : [4100, 3050], "areas": [10, 20, 4050, 3020] },
            { "frame" : [0, 0], "areas": [10, 20, 4000, 3000] }
         ]
-        
 
         // list of indices of the rows with on-sensor PDAF pixels, for cameras that have such features. The indices here form a pattern that is repeated for the whole height of the sensor. The values are relative to the "pdaf_offset" value (see below)
         "pdaf_pattern" : [ 0,12,36,54,72,90,114,126,144,162,180,204,216,240,252,270,294,306,324,342,366,384,396,414,432,450,474,492,504,522,540,564,576,594,606,630 ],
