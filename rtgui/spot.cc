@@ -117,8 +117,8 @@ Spot::Spot() :
     link.setActive (false);
 
     auto m = ProcEventMapper::getInstance();
-    EvSpotEnabled = m->newEvent(ALLNORAW, "TP_SPOT_LABEL");
-    EvSpotEnabledOPA = m->newEvent(SPOTADJUST, "TP_SPOT_LABEL");
+    EvSpotEnabled = m->newEvent(ALLNORAW, "HISTORY_MSG_SPOT");
+    EvSpotEnabledOPA = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT");
     EvSpotEntry = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT_ENTRY");
     EvSpotEntryOPA = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT_ENTRY");
 
