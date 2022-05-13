@@ -209,7 +209,8 @@ std::unique_ptr<LUTf> ImProcFunctions::buildMeaLut(const float inVals[11], const
             }
         }
     }
-    lutFactor = 1.f / lutDiff;
+  //  lutFactor = 1.f / lutDiff;
+    lutFactor = lutDiff == 0.f ? 0.f : 1.f / lutDiff;
     return std::unique_ptr<LUTf>(new LUTf(lutVals));
 }
 
