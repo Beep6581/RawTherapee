@@ -787,8 +787,8 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
     ConnectionBlocker willconn_(willconn);
     ConnectionBlocker wprimconn_(wprimconn);
 
-    if (pp->icm.inputProfile.substr(0, 5) != "file:" && !ipDialog->get_filename().empty()) {
-        ipDialog->set_filename(pp->icm.inputProfile);
+    if (pp->icm.inputProfile.substr(0, 5) != "file:") {
+        ipDialog->set_filename(" ");
     }
 
     if (pp->icm.inputProfile == "(none)") {
@@ -1908,13 +1908,13 @@ void ICMPanel::ipChanged()
     Glib::ustring profname;
 
     if (inone->get_active()) {
-        profname = "(none)";
+        profname = inone->get_label();
     } else if (iembedded->get_active()) {
-        profname = "(embedded)";
+        profname = iembedded->get_label();
     } else if (icamera->get_active()) {
-        profname = "(camera)";
+        profname = icamera->get_label();
     } else if (icameraICC->get_active()) {
-        profname = "(cameraICC)";
+        profname = icameraICC->get_label();
     } else {
         profname = ipDialog->get_filename();
     }

@@ -811,7 +811,6 @@ void BlackWhite::filterChanged ()
 
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged (EvBWfilter, filter->get_active_text ());
-        listener->panelChanged (EvAutoch, M("GENERAL_ENABLED"));
     }
 }
 
