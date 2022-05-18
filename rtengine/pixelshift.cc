@@ -624,7 +624,7 @@ BENCHFUN
         } else { // default to ILCE-7RM3 for Sony cameras without data
            nRead = nReadILCE7RM3[nReadIndex];
            eperIsoModel = ePerIsoILCE7RM3;
-	}
+        }
     } else { // Pentax
         if(model.find("K-3") != string::npos) {
             nRead = nReadK3II[nReadIndex];
