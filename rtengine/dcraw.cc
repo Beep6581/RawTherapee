@@ -6439,7 +6439,8 @@ int CLASS parse_tiff_ifd (int base)
 	break;
       case 258:				/* BitsPerSample */
       case 61443:
-	tiff_ifd[ifd].samples = len & 7;
+	if (tiff_ifd[ifd].samples != 4)
+	    tiff_ifd[ifd].samples = len & 7; // possible bug? should this be .bps instead of .samples ?
 	if ((tiff_ifd[ifd].bps = getint(type)) > 32)
         tiff_ifd[ifd].bps = 8;
 	if (tiff_bps < tiff_ifd[ifd].bps)
@@ -7098,7 +7099,7 @@ void CLASS apply_tiff()
 		     load_raw = &CLASS olympus_load_raw;
                    // ------- RT -------
                    if (!strncmp(make,"SONY",4) &&
-                       (!strncmp(model,"ILCE-7RM3",9) || !strncmp(model,"ILCE-7RM4",9)) &&
+                       (!strncmp(model,"ILCE-7RM3",9) || !strncmp(model,"ILCE-7RM4",9)  || !strncmp(model,"ILCE-1",6) || !strncmp(model,"ILCE-7M4",8)) &&
                        tiff_samples == 4 &&
                        tiff_ifd[raw].bytes == raw_width*raw_height*tiff_samples*2) {
                        load_raw = &CLASS sony_arq_load_raw;
