@@ -1022,6 +1022,16 @@ void ToolPanelCoordinator::autoPerspRequested (bool corr_pitch, bool corr_yaw, d
     rtengine::procparams::ProcParams params;
     ipc->getParams(&params);
 
+    // If focal length or crop factor are undetermined, use the defaults.
+    if (params.perspective.camera_focal_length <= 0) {
+        params.perspective.camera_focal_length =
+            PerspectiveParams::DEFAULT_CAMERA_FOCAL_LENGTH;
+    }
+    if (params.perspective.camera_crop_factor <= 0) {
+        params.perspective.camera_crop_factor =
+            PerspectiveParams::DEFAULT_CAMERA_CROP_FACTOR;
+    }
+
     auto res = rtengine::PerspectiveCorrection::autocompute(src, corr_pitch, corr_yaw, &params, src->getMetaData(), lines);
     rot = res.angle;
     pitch = res.pitch;
