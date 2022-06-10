@@ -5843,7 +5843,7 @@ float *ImProcFunctions::cos_table(size_t size)
     const double pi_size = rtengine::RT_PI / size;
 
     for (size_t i = 0; i < size; i++) {
-        table[i] = std::cos(pi_size * i);
+        table[i] = 1.0 - std::cos(pi_size * i);
     }
 
     return table;
@@ -5889,7 +5889,7 @@ void ImProcFunctions::rex_poisson_dct(float * data, size_t nx, size_t ny, double
 #endif
     for (size_t i = 0; i < ny; ++i) {
         for (size_t j = 0; j < nx; ++j) {
-            data[i * nx + j] *= m2 / (2.f - cosx[j] - cosy[i]);
+            data[i * nx + j] *= m2 / (cosx[j] + cosy[i]);
         }
     }
     // handle the first value, data[0, 0] = 0
