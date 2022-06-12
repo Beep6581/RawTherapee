@@ -1545,11 +1545,12 @@ Camera constants:
         "raw_crop": [ 4, 4, -4, -4 ] // full raw 6016x4016, Official 6000x4000
     },
 
-    { // Quality C
-        "make_model": "LEICA M8",
-        "dcraw_matrix": [ 7675, -2196, -305, -5860, 14119, 1855, -2425, 4006, 6578 ] // DNG
-        // Do not set white level, probably special handling by dcraw (see #6237)
-    },
+    // TODO: Temporary workaround for issues #6237 and #6498.
+    //{ // Quality C
+    //    "make_model": "LEICA M8",
+    //    "dcraw_matrix": [ 7675, -2196, -305, -5860, 14119, 1855, -2425, 4006, 6578 ], // DNG
+    //    "ranges": { "white": 16383 }
+    //},
 
     { // Quality C
         "make_model": "LEICA Q2",
