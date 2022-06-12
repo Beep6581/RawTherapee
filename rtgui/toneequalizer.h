@@ -23,9 +23,10 @@
 
 #include <gtkmm.h>
 #include "adjuster.h"
+#include "checkbox.h"
 #include "toolpanel.h"
 
-class ToneEqualizer: public ToolParamBlock, public AdjusterListener, public FoldableToolPanel {
+class ToneEqualizer: public ToolParamBlock, public AdjusterListener, public FoldableToolPanel, public CheckBoxListener {
 public:
     ToneEqualizer();
 
@@ -35,6 +36,9 @@ public:
     void adjusterChanged(Adjuster *a, double newval) override;
     void adjusterAutoToggled(Adjuster *a) override;
     void enabledChanged() override;
+    void setBatchMode(bool batchMode) override;
+    void setAdjusterBehavior(bool bands_add, bool regularization_add, bool pivot_add);
+    void checkBoxToggled(CheckBox* c, CheckValue newval) override;
 
     void trimValues(rtengine::procparams::ProcParams *pp) override;
 
@@ -44,7 +48,7 @@ private:
     std::array<Adjuster *, 5> bands;
     Adjuster *regularization;
     Adjuster *pivot;
-    Gtk::CheckButton *show_colormap;
+    CheckBox *show_colormap;
 
     rtengine::ProcEvent EvEnabled;
     rtengine::ProcEvent EvBands;

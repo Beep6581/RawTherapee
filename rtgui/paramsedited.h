@@ -18,6 +18,7 @@
  */
 #pragma once
 
+#include <array>
 #include <vector>
 
 namespace rtengine
@@ -360,7 +361,7 @@ struct SHParamsEdited {
 
 struct ToneEqualizerParamsEdited {
     bool enabled;
-    bool bands;
+    std::array<bool, 5> bands;
     bool regularization;
     bool show_colormap;
     bool pivot;

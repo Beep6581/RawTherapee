@@ -318,7 +318,7 @@ void ParamsEdited::set(bool v)
     sh.radius        = v;
     sh.lab           = v;
     toneEqualizer.enabled        = v;
-    toneEqualizer.bands          = v;
+    toneEqualizer.bands.fill(v);
     toneEqualizer.regularization = v;
     toneEqualizer.show_colormap  = v;
     toneEqualizer.pivot  = v;
@@ -1037,7 +1037,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         crop.orientation = crop.orientation && p.crop.orientation == other.crop.orientation;
         crop.guide = crop.guide && p.crop.guide == other.crop.guide;
         toneEqualizer.enabled = toneEqualizer.enabled && p.toneEqualizer.enabled == other.toneEqualizer.enabled;
-        toneEqualizer.bands = toneEqualizer.bands && p.toneEqualizer.bands == other.toneEqualizer.bands;
+        for (size_t i = 0; i < toneEqualizer.bands.size(); ++i) {
+            toneEqualizer.bands[i] = toneEqualizer.bands[i] && p.toneEqualizer.bands[i] == other.toneEqualizer.bands[i];
+        }
         toneEqualizer.regularization = toneEqualizer.regularization && p.toneEqualizer.regularization == other.toneEqualizer.regularization;
         toneEqualizer.show_colormap = toneEqualizer.show_colormap && p.toneEqualizer.show_colormap == other.toneEqualizer.show_colormap;
         toneEqualizer.pivot = toneEqualizer.pivot && p.toneEqualizer.pivot == other.toneEqualizer.pivot;
@@ -3208,12 +3210,20 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.toneEqualizer.enabled = mods.toneEqualizer.enabled;
     }
 
-    if (toneEqualizer.bands) {
-        toEdit.toneEqualizer.bands = mods.toneEqualizer.bands;
+    for (size_t i = 0; i < toneEqualizer.bands.size(); ++i) {
+        if (toneEqualizer.bands[i]) {
+            toEdit.toneEqualizer.bands[i] =
+                dontforceSet && options.baBehav[ADDSET_TONE_EQUALIZER_BANDS]
+                    ? toEdit.toneEqualizer.bands[i] + mods.toneEqualizer.bands[i]
+                    : mods.toneEqualizer.bands[i];
+        }
     }
 
     if (toneEqualizer.regularization) {
-        toEdit.toneEqualizer.regularization = mods.toneEqualizer.regularization;
+        toEdit.toneEqualizer.regularization =
+            dontforceSet && options.baBehav[ADDSET_TONE_EQUALIZER_REGULARIZATION]
+                ? toEdit.toneEqualizer.regularization + mods.toneEqualizer.regularization
+                : mods.toneEqualizer.regularization;
     }
 
     if (toneEqualizer.show_colormap) {
@@ -3221,7 +3231,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
     }
 
     if (toneEqualizer.pivot) {
-        toEdit.toneEqualizer.pivot = mods.toneEqualizer.pivot;
+        toEdit.toneEqualizer.pivot =
+            dontforceSet && options.baBehav[ADDSET_TONE_EQUALIZER_PIVOT]
+                ? toEdit.toneEqualizer.pivot + mods.toneEqualizer.pivot
+                : mods.toneEqualizer.pivot;
     }
 
     if (crop.enabled) {

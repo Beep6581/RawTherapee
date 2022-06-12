@@ -59,9 +59,9 @@ ToneEqualizer::ToneEqualizer(): FoldableToolPanel(this, "toneequalizer", M("TP_T
     regularization->setAdjusterListener(this);
     pack_start(*regularization);
 
-    show_colormap = Gtk::manage(new Gtk::CheckButton(M("TP_TONE_EQUALIZER_SHOW_COLOR_MAP")));
+    show_colormap = Gtk::manage(new CheckBox(M("TP_TONE_EQUALIZER_SHOW_COLOR_MAP"), multiImage));
     pack_start(*show_colormap);
-    show_colormap->signal_toggled().connect(sigc::mem_fun(this, &ToneEqualizer::colormapToggled));
+    show_colormap->setCheckBoxListener(this);
 
     show_all_children ();
 }
@@ -70,6 +70,16 @@ ToneEqualizer::ToneEqualizer(): FoldableToolPanel(this, "toneequalizer", M("TP_T
 void ToneEqualizer::read(const ProcParams *pp, const ParamsEdited* pedited)
 {
     disableListener();
+
+    if (pedited) {
+        set_inconsistent(multiImage && !pedited->toneEqualizer.enabled);
+        for (size_t i = 0; i < bands.size(); ++i) {
+            bands[i]->setEditedState(pedited->toneEqualizer.bands[i] ? Edited : UnEdited);
+        }
+        regularization->setEditedState(pedited->toneEqualizer.regularization ? Edited : UnEdited);
+        pivot->setEditedState(pedited->toneEqualizer.pivot ? Edited : UnEdited);
+        show_colormap->setEdited(pedited->toneEqualizer.show_colormap ? Edited : UnEdited);
+    }
 
     setEnabled(pp->toneEqualizer.enabled);
 
@@ -80,7 +90,7 @@ void ToneEqualizer::read(const ProcParams *pp, const ParamsEdited* pedited)
     regularization->setValue(pp->toneEqualizer.regularization);
 
     pivot->setValue(pp->toneEqualizer.pivot);
-    show_colormap->set_active(pp->toneEqualizer.show_colormap);
+    show_colormap->setValue(pp->toneEqualizer.show_colormap);
 
     enableListener();
 }
@@ -93,8 +103,19 @@ void ToneEqualizer::write(ProcParams *pp, ParamsEdited* pedited)
     }
     pp->toneEqualizer.enabled = getEnabled();
     pp->toneEqualizer.regularization = regularization->getValue();
-    pp->toneEqualizer.show_colormap = show_colormap->get_active();
+    pp->toneEqualizer.show_colormap = show_colormap->getLastActive();
     pp->toneEqualizer.pivot = pivot->getValue();
+
+    if (pedited) {
+        auto &edited = pedited->toneEqualizer;
+        edited.enabled = !get_inconsistent();
+        for (size_t i = 0; i < bands.size(); ++i) {
+            edited.bands[i] = bands[i]->getEditedState();
+        }
+        edited.regularization = regularization->getEditedState();
+        edited.pivot = pivot->getEditedState();
+        edited.show_colormap = show_colormap->getEdited();
+    }
 }
 
 
@@ -107,6 +128,21 @@ void ToneEqualizer::setDefaults(const ProcParams *defParams, const ParamsEdited*
 
     pivot->setDefault(defParams->toneEqualizer.pivot);
     inital_params = defParams->toneEqualizer;
+
+    if (pedited) {
+        auto &edited = pedited->toneEqualizer;
+        for (size_t i = 0; i < bands.size(); ++i) {
+            bands[i]->setDefaultEditedState(edited.bands[i] ? Edited : UnEdited);
+        }
+        regularization->setDefaultEditedState(edited.regularization ? Edited : UnEdited);
+        pivot->setDefaultEditedState(edited.pivot ? Edited : UnEdited);
+    } else {
+        for (auto band : bands) {
+            band->setDefaultEditedState(Irrelevant);
+        }
+        regularization->setDefaultEditedState(Irrelevant);
+        pivot->setDefaultEditedState(Irrelevant);
+    }
 }
 
 
@@ -147,13 +183,44 @@ void ToneEqualizer::enabledChanged()
 }
 
 
+void ToneEqualizer::setBatchMode(bool batchMode)
+{
+    ToolPanel::setBatchMode(batchMode);
+    if (batchMode) {
+        for (auto band : bands) {
+            band->showEditedCB();
+        }
+        regularization->showEditedCB();
+        pivot->showEditedCB();
+    }
+}
+
+
+void ToneEqualizer::setAdjusterBehavior(bool bands_add, bool regularization_add, bool pivot_add)
+{
+    for (auto band : bands) {
+        band->setAddMode(bands_add);
+    }
+    regularization->setAddMode(regularization_add);
+    pivot->setAddMode(pivot_add);
+}
+
+
+void ToneEqualizer::checkBoxToggled(CheckBox *c, CheckValue newval)
+{
+    if (c == show_colormap) {
+        colormapToggled();
+    }
+}
+
+
 void ToneEqualizer::colormapToggled()
 {
     for (size_t i = 0; i < bands.size(); ++i) {
-        bands[i]->showIcons(show_colormap->get_active());
+        bands[i]->showIcons(show_colormap->getLastActive());
     }
     if (listener && getEnabled()) {
-        listener->panelChanged(EvColormap, show_colormap->get_active() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
+        listener->panelChanged(EvColormap, show_colormap->getLastActive() ? M("GENERAL_ENABLED") : M("GENERAL_DISABLED"));
     }
 }
 

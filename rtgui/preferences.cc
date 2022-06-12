@@ -228,6 +228,12 @@ Gtk::Widget* Preferences::getBatchProcPanel()
     appendBehavList(mi, M("TP_SHADOWSHLIGHTS_SHADOWS"), ADDSET_SH_SHADOWS, false);
 
     mi = behModel->append();
+    mi->set_value(behavColumns.label, M("TP_TONE_EQUALIZER_LABEL"));
+    appendBehavList(mi, M("TP_TONE_EQUALIZER_BANDS"), ADDSET_TONE_EQUALIZER_BANDS, false);
+    appendBehavList(mi, M("TP_TONE_EQUALIZER_PIVOT"), ADDSET_TONE_EQUALIZER_PIVOT, false);
+    appendBehavList(mi, M("TP_TONE_EQUALIZER_DETAIL"), ADDSET_TONE_EQUALIZER_REGULARIZATION, false);
+
+    mi = behModel->append();
     mi->set_value(behavColumns.label, M("TP_LABCURVE_LABEL"));
     appendBehavList(mi, M("TP_LABCURVE_BRIGHTNESS"), ADDSET_LC_BRIGHTNESS, false);
     appendBehavList(mi, M("TP_LABCURVE_CONTRAST"), ADDSET_LC_CONTRAST, false);

@@ -689,8 +689,10 @@ void Adjuster::showIcons(bool yes)
 {
     if (imageIcon1) {
         imageIcon1->set_visible(yes);
+        imageIcon1->set_no_show_all(!yes);
     }
     if (imageIcon2) {
         imageIcon2->set_visible(yes);
+        imageIcon2->set_no_show_all(!yes);
     }
 }

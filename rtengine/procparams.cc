@@ -6270,7 +6270,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 // Tone equalizer
         saveToKeyfile(!pedited || pedited->toneEqualizer.enabled, "ToneEqualizer", "Enabled", toneEqualizer.enabled, keyFile);
         for (size_t i = 0; i < toneEqualizer.bands.size(); ++i) {
-            saveToKeyfile(!pedited || pedited->toneEqualizer.bands, "ToneEqualizer", "Band" + std::to_string(i), toneEqualizer.bands[i], keyFile);
+            saveToKeyfile(!pedited || pedited->toneEqualizer.bands[i], "ToneEqualizer", "Band" + std::to_string(i), toneEqualizer.bands[i], keyFile);
         }
         saveToKeyfile(!pedited || pedited->toneEqualizer.regularization, "ToneEqualizer", "Regularization", toneEqualizer.regularization, keyFile);
         saveToKeyfile(!pedited || pedited->toneEqualizer.pivot, "ToneEqualizer", "Pivot", toneEqualizer.pivot, keyFile);
@@ -8263,7 +8263,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         if (keyFile.has_group("ToneEqualizer")) {
             assignFromKeyfile(keyFile, "ToneEqualizer", "Enabled", pedited, toneEqualizer.enabled, pedited->toneEqualizer.enabled);
             for (size_t i = 0; i < toneEqualizer.bands.size(); ++i) {
-                assignFromKeyfile(keyFile, "ToneEqualizer", "Band" + std::to_string(i), pedited, toneEqualizer.bands[i], pedited->toneEqualizer.bands);
+                assignFromKeyfile(keyFile, "ToneEqualizer", "Band" + std::to_string(i), pedited, toneEqualizer.bands[i], pedited->toneEqualizer.bands[i]);
             }
             assignFromKeyfile(keyFile, "ToneEqualizer", "Regularization", pedited, toneEqualizer.regularization, pedited->toneEqualizer.regularization);
             assignFromKeyfile(keyFile, "ToneEqualizer", "Pivot", pedited, toneEqualizer.pivot, pedited->toneEqualizer.pivot);
