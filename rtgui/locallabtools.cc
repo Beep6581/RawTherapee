@@ -3612,6 +3612,7 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
         case Normal:
             // Expert mode widgets are hidden in Normal mode
             structexp->hide();
+            gamex->hide();
             blurexpde->hide();
             lapmaskexp->hide();
             gammaskexp->hide();
@@ -3659,7 +3660,7 @@ void LocallabExposure::updateGUIToMode(const modeType new_type)
             fatlevel->show();
             fatanchor->show();
             softradiusexp->hide();
-            blurexpde->hide();
+            gamex->show();
 
             if (!inversex->get_active()) { // Keep widget hidden when invers is toggled
                 expgradexp->show();
@@ -3915,7 +3916,7 @@ void LocallabExposure::updateExposureGUI3()
     } else {
         expMethod->show();
         expcomp->setLabel(M("TP_LOCALLAB_EXPCOMP"));
-        gamex->show();
+        gamex->hide();
         expfat->show();
         exppde->show();
 
@@ -3931,6 +3932,8 @@ void LocallabExposure::updateExposureGUI3()
             exprecove->show();
             structexp->show();
             blurexpde->show();
+            gamex->show();
+
         }
         
         reparexp->show();
