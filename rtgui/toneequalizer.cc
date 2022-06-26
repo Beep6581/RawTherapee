@@ -29,11 +29,11 @@ using namespace rtengine::procparams;
 ToneEqualizer::ToneEqualizer(): FoldableToolPanel(this, "toneequalizer", M("TP_TONE_EQUALIZER_LABEL"), false, true)
 {
     auto m = ProcEventMapper::getInstance();
-    EvEnabled = m->newEvent(RGBCURVE, "HISTORY_MSG_TONE_EQUALIZER_ENABLED");
-    EvBands = m->newEvent(RGBCURVE, "HISTORY_MSG_TONE_EQUALIZER_BANDS");
-    EvRegularization = m->newEvent(RGBCURVE, "HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION");
-    EvColormap = m->newEvent(RGBCURVE, "HISTORY_MSG_TONE_EQUALIZER_SHOW_COLOR_MAP");
-    EvPivot = m->newEvent(RGBCURVE, "HISTORY_MSG_TONE_EQUALIZER_PIVOT");
+    EvEnabled = m->newEvent(AUTOEXP, "HISTORY_MSG_TONE_EQUALIZER_ENABLED");
+    EvBands = m->newEvent(AUTOEXP, "HISTORY_MSG_TONE_EQUALIZER_BANDS");
+    EvRegularization = m->newEvent(AUTOEXP, "HISTORY_MSG_TONE_EQUALIZER_REGULARIZATION");
+    EvColormap = m->newEvent(AUTOEXP, "HISTORY_MSG_TONE_EQUALIZER_SHOW_COLOR_MAP");
+    EvPivot = m->newEvent(AUTOEXP, "HISTORY_MSG_TONE_EQUALIZER_PIVOT");
 
     std::array<const char *, 5> images = {
         "purple",
