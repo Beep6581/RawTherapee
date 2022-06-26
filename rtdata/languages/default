@@ -1475,6 +1475,7 @@ HISTORY_MSG_LOCALCONTRAST_DARKNESS;Local Contrast - Darkness
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Local Contrast
 HISTORY_MSG_LOCALCONTRAST_LIGHTNESS;Local Contrast - Lightness
 HISTORY_MSG_LOCALCONTRAST_RADIUS;Local Contrast - Radius
+HISTORY_MSG_LOCALLAB_TE_PIVOT;Local - Equalizer pivot
 HISTORY_MSG_METADATA_MODE;Metadata copy mode
 HISTORY_MSG_MICROCONTRAST_CONTRAST;Microcontrast - Contrast threshold
 HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
@@ -3433,6 +3434,7 @@ TP_LOCALLAB_STYPE_TOOLTIP;You can choose between:\nSymmetrical - left handle lin
 TP_LOCALLAB_SYM;Symmetrical (mouse)
 TP_LOCALLAB_SYMSL;Symmetrical (mouse + sliders)
 TP_LOCALLAB_TARGET_GRAY;Mean luminance (Yb%)
+TP_LOCALLAB_TE_PIVOT;Pivot (Ev)
 TP_LOCALLAB_THRES;Threshold structure
 TP_LOCALLAB_THRESDELTAE;ΔE scope threshold 
 TP_LOCALLAB_THRESRETI;Threshold

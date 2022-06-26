@@ -451,6 +451,7 @@ private:
     Adjuster* const reparsh;
     const std::array<Adjuster*, 5> multipliersh;
     Adjuster* const detailSH;
+    Adjuster* const tePivot;
     Adjuster* const highlights;
     Adjuster* const h_tonalwidth;
     Adjuster* const shadows;
@@ -491,6 +492,8 @@ private:
     Gtk::Frame* const fatSHFrame;
     Adjuster* const fatamountSH;
     Adjuster* const fatanchorSH;
+
+    rtengine::ProcEvent EvlocallabTePivot;
 
     sigc::connection shMethodConn, inversshConn, showmaskSHMethodConn, showmaskSHMethodConninv, enaSHMaskConn;
 

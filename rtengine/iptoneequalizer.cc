@@ -25,19 +25,13 @@ const std::vector<std::array<float, 3>> colormap = {
     {1.f, 0.f, 0.f}
 };
 
-}
 
-
-namespace rtengine
-{
-
-void ImProcFunctions::toneEqualizer(
+void toneEqualizer(
     array2D<float> &R, array2D<float> &G, array2D<float> &B,
-    const struct ToneEqualizerParams &params,
+    const rtengine::ToneEqualizerParams &params,
     const Glib::ustring &workingProfile,
     double scale,
-    bool multithread,
-    bool show_color_map)
+    bool multithread)
 // adapted from the tone equalizer of darktable
 /*
     Copyright 2019 Alberto Griggio <alberto.griggio@gmail.com>
@@ -102,18 +96,18 @@ void ImProcFunctions::toneEqualizer(
         conv(params.bands[4], 3.f, 2.f)  //   4 EV
     };
 
-    TMatrix ws = ICCStore::getInstance()->workingSpaceMatrix(workingProfile);
+    rtengine::TMatrix ws = rtengine::ICCStore::getInstance()->workingSpaceMatrix(workingProfile);
 
 #ifdef _OPENMP
     #pragma omp parallel for if (multithread)
 #endif
     for (int y = 0; y < H; ++y) {
         for (int x = 0; x < W; ++x) {
-            Y[y][x] = Color::rgbLuminance(R[y][x], G[y][x], B[y][x], ws);
+            Y[y][x] = rtengine::Color::rgbLuminance(R[y][x], G[y][x], B[y][x], ws);
         }
     }
 
-    int detail = LIM(params.regularization + 5, 0, 5);
+    int detail = rtengine::LIM(params.regularization + 5, 0, 5);
     int radius = detail / scale + 0.5;
     float epsilon2 = 0.01f + 0.002f * rtengine::max(detail - 3, 0);
 
@@ -131,7 +125,7 @@ void ImProcFunctions::toneEqualizer(
 #endif
         for (int y = 0; y < H; ++y) {
             for (int x = 0; x < W; ++x) {
-                float l = LIM(log2(rtengine::max(Y[y][x], 1e-9f)), centers[0], centers[11]);
+                float l = rtengine::LIM(log2(rtengine::max(Y[y][x], 1e-9f)), centers[0], centers[11]);
                 float ll = round(l * base_posterization) / base_posterization;
                 Y2[y][x] = Y[y][x];
                 Y[y][x] = exp2(ll);
@@ -145,7 +139,7 @@ void ImProcFunctions::toneEqualizer(
 
     const auto gauss =
     [](float b, float x) -> float {
-        return xexpf((-SQR(x - b) / 4.0f));
+        return xexpf((-rtengine::SQR(x - b) / 4.0f));
     };
 
     // For every pixel luminance, the sum of the gaussian masks
@@ -175,12 +169,12 @@ void ImProcFunctions::toneEqualizer(
     };
 
     std::vector<std::array<float, 3>> cur_colormap;
-    if (show_color_map) {
-        lcmsMutex->lock();
-        cmsHPROFILE in = ICCStore::getInstance()->getsRGBProfile();
-        cmsHPROFILE out = ICCStore::getInstance()->workingSpace(workingProfile);
+    if (params.show_colormap) {
+        rtengine::lcmsMutex->lock();
+        cmsHPROFILE in = rtengine::ICCStore::getInstance()->getsRGBProfile();
+        cmsHPROFILE out = rtengine::ICCStore::getInstance()->workingSpace(workingProfile);
         cmsHTRANSFORM xform = cmsCreateTransform(in, TYPE_RGB_FLT, out, TYPE_RGB_FLT, INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_NOOPTIMIZE | cmsFLAGS_NOCACHE);
-        lcmsMutex->unlock();
+        rtengine::lcmsMutex->unlock();
 
         for (auto &c : colormap) {
             cur_colormap.push_back(c);
@@ -197,7 +191,7 @@ void ImProcFunctions::toneEqualizer(
             std::array<float, 3> ret = { 0.f, 0.f, 0.f };
 
             // convert to log space
-            const float luma = max(log2(max(y, 0.f)), -18.0f);
+            const float luma = rtengine::max(log2(rtengine::max(y, 0.f)), -18.0f);
 
             // build the correction as the sum of the contribution of each
             // luminance channel to current pixel
@@ -208,7 +202,7 @@ void ImProcFunctions::toneEqualizer(
                 }
             }
             for (int i = 0; i < 3; ++i) {
-                ret[i] = LIM01(ret[i] / w_sum);
+                ret[i] = rtengine::LIM01(ret[i] / w_sum);
             }
 
             return ret;
@@ -227,7 +221,7 @@ void ImProcFunctions::toneEqualizer(
     const auto vgauss =
     [](vfloat b, vfloat x) -> vfloat {
         static const vfloat fourv = F2V(4.f);
-        return xexpf((-SQR(x - b) / fourv));
+        return xexpf((-rtengine::SQR(x - b) / fourv));
     };
 
     vfloat zerov = F2V(0.f);
@@ -258,7 +252,7 @@ void ImProcFunctions::toneEqualizer(
 #endif // __SSE2__
 
 
-    if (show_color_map) {
+    if (params.show_colormap) {
         LUTf lut_r(65537), lut_g(65537), lut_b(65537);
         for (int i = 0; i < 65536; ++i) {
             float y = float(i)/65535.f;
@@ -332,15 +326,26 @@ void ImProcFunctions::toneEqualizer(
 
 }
 
-bool ImProcFunctions::toneEqualizer(Imagefloat *rgb)
+}
+
+
+namespace rtengine
 {
-    if (!params->toneEqualizer.enabled) {
-        return false;
+
+void ImProcFunctions::toneEqualizer(
+    Imagefloat *rgb,
+    const ToneEqualizerParams &params,
+    const Glib::ustring &workingProfile,
+    double scale,
+    bool multiThread)
+{
+    if (!params.enabled) {
+        return;
     }
 
     BENCHFUN
 
-    const float gain = 1.f / 65535.f * std::pow(2.f, -params->toneEqualizer.pivot);
+    const float gain = 1.f / 65535.f * std::pow(2.f, -params.pivot);
 
     rgb->multiply(gain, multiThread);
 
@@ -351,12 +356,14 @@ bool ImProcFunctions::toneEqualizer(Imagefloat *rgb)
     array2D<float> G(W, H, rgb->g.ptrs, ARRAY2D_BYREFERENCE);
     array2D<float> B(W, H, rgb->b.ptrs, ARRAY2D_BYREFERENCE);
 
-    bool show_color_map = params->toneEqualizer.show_colormap;
-    toneEqualizer(R, G, B, params->toneEqualizer, params->icm.workingProfile, scale, multiThread, show_color_map);
+    ::toneEqualizer(R, G, B, params, workingProfile, scale, multiThread);
 
     rgb->multiply(1.f/gain, multiThread);
+}
 
-    return show_color_map;
+void ImProcFunctions::toneEqualizer(Imagefloat *rgb)
+{
+    toneEqualizer(rgb, params->toneEqualizer, params->icm.workingProfile, scale, multiThread);
 }
 
 }

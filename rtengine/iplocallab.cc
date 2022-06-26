@@ -702,6 +702,7 @@ struct local_params {
     float mulloc[6];
     int mullocsh[5];
     int detailsh;
+    double tePivot;
     float threshol;
     float chromacb;
     float strengt;
@@ -1691,6 +1692,7 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
  
 
     lp.detailsh = locallab.spots.at(sp).detailSH; 
+    lp.tePivot = locallab.spots.at(sp).tePivot;
     lp.threshol = thresho;
     lp.chromacb = chromcbdl;
     lp.expvib = locallab.spots.at(sp).expvibrance && lp.activspot ;
@@ -2257,12 +2259,14 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
     }
 }
 
-void tone_eq(array2D<float> &R, array2D<float> &G, array2D<float> &B,  const struct local_params & lp, const Glib::ustring &workingProfile, double scale, bool multithread)
+void tone_eq(ImProcFunctions *ipf, Imagefloat *rgb, const struct local_params &lp, const Glib::ustring &workingProfile, double scale, bool multithread)
 {
     ToneEqualizerParams params;
+    params.enabled = true;
     params.regularization = lp.detailsh;
+    params.pivot = lp.tePivot;
     std::copy(lp.mullocsh, lp.mullocsh + params.bands.size(), params.bands.begin());
-    ImProcFunctions::toneEqualizer(R, G, B, params, workingProfile, scale, multithread, false);
+    ipf->toneEqualizer(rgb, params, workingProfile, scale, multithread);
 }
 void ImProcFunctions::loccont(int bfw, int bfh, LabImage* tmp1, float rad, float stren, int sk)
 {
@@ -7586,12 +7590,7 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
             }
 
             if (tonequ) {
-                tmpImage->normalizeFloatTo1();
-                array2D<float> Rtemp(GW, GH, tmpImage->r.ptrs, ARRAY2D_BYREFERENCE);
-                array2D<float> Gtemp(GW, GH, tmpImage->g.ptrs, ARRAY2D_BYREFERENCE);
-                array2D<float> Btemp(GW, GH, tmpImage->b.ptrs, ARRAY2D_BYREFERENCE);
-                tone_eq(Rtemp, Gtemp, Btemp, lp, params->icm.workingProfile, sk, multiThread);
-                tmpImage->normalizeFloatTo65535();
+                tone_eq(this, tmpImage.get(), lp, params->icm.workingProfile, sk, multiThread);
             }
 
             rgb2lab(*tmpImage, *temp, params->icm.workingProfile);
@@ -15766,12 +15765,7 @@ void ImProcFunctions::Lab_Local(
                     }
 
                     if (tonequ) {
-                        tmpImage->normalizeFloatTo1();
-                        array2D<float> Rtemp(bfw, bfh, tmpImage->r.ptrs, ARRAY2D_BYREFERENCE);
-                        array2D<float> Gtemp(bfw, bfh, tmpImage->g.ptrs, ARRAY2D_BYREFERENCE);
-                        array2D<float> Btemp(bfw, bfh, tmpImage->b.ptrs, ARRAY2D_BYREFERENCE);
-                        tone_eq(Rtemp, Gtemp, Btemp, lp, params->icm.workingProfile, scal, multiThread);
-                        tmpImage->normalizeFloatTo65535();
+                        tone_eq(this, tmpImage, lp, params->icm.workingProfile, scal, multiThread);
                     }
 
                     rgb2lab(*tmpImage, *bufexpfin, params->icm.workingProfile);

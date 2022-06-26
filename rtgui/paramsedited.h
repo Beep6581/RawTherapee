@@ -589,6 +589,7 @@ public:
         bool slomaskSH;
         bool lapmaskSH;
         bool detailSH;
+        bool tePivot;
         bool reparsh;
         bool LmaskSHcurve;
         bool fatamountSH;

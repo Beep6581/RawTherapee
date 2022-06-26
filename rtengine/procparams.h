@@ -1214,6 +1214,7 @@ struct LocallabParams {
         double slomaskSH;
         double lapmaskSH;
         int detailSH;
+        double tePivot;
         double reparsh;
         std::vector<double> LmaskSHcurve;
         double fatamountSH;
