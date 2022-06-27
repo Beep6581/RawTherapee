@@ -358,7 +358,7 @@ void ImProcFunctions::toneEqualizer(
 
     ::toneEqualizer(R, G, B, params, workingProfile, scale, multiThread);
 
-    rgb->multiply(1.f/gain, multiThread);
+    rgb->multiply(params.show_colormap ? 65535.f : 1.f/gain, multiThread);
 }
 
 void ImProcFunctions::toneEqualizer(Imagefloat *rgb)
