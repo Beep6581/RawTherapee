@@ -1789,7 +1789,7 @@ bool SHParams::operator !=(const SHParams& other) const
 ToneEqualizerParams::ToneEqualizerParams() :
     enabled(false),
     bands{0, 0, 0, 0, 0},
-    regularization(4),
+    regularization(0),
     show_colormap(false),
     pivot(0)
 {

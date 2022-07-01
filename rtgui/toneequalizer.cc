@@ -55,7 +55,7 @@ ToneEqualizer::ToneEqualizer(): FoldableToolPanel(this, "toneequalizer", M("TP_T
     pack_start(*pivot);
 
     pack_start(*Gtk::manage(new Gtk::HSeparator()));
-    regularization = Gtk::manage(new Adjuster(M("TP_TONE_EQUALIZER_DETAIL"), -5, 5, 1, 5));
+    regularization = Gtk::manage(new Adjuster(M("TP_TONE_EQUALIZER_DETAIL"), -5, 5, 1, 0));
     regularization->setAdjusterListener(this);
     pack_start(*regularization);
 
