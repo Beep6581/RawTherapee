@@ -15,12 +15,12 @@ const std::vector<std::array<float, 3>> colormap = {
     {0.5f, 0.f, 0.5f},
     {0.5f, 0.f, 0.5f},
     {0.5f, 0.f, 0.5f},
-    {0.5f, 0.f, 0.5f},
     {0.5f, 0.f, 0.5f}, // blacks
     {0.f, 0.f, 1.f}, // shadows
     {0.5f, 0.5f, 0.5f}, // midtones
     {1.f, 1.f, 0.f}, // highlights
     {1.f, 0.f, 0.f}, // whites
+    {1.f, 0.f, 0.f},
     {1.f, 0.f, 0.f},
     {1.f, 0.f, 0.f}
 };
@@ -73,8 +73,8 @@ void toneEqualizer(
     // Build the luma channels: band-pass filters with gaussian windows of
     // std 2 EV, spaced by 2 EV
     const float centers[12] = {
-        -18.0f, -16.0f, -14.0f, -12.0f, -10.0f, -8.0f, -6.0f,
-        -4.0f, -2.0f, 0.0f, 2.0f, 4.0f
+        -16.0f, -14.0f, -12.0f, -10.0f, -8.0f, -6.0f,
+        -4.0f, -2.0f, 0.0f, 2.0f, 4.0f, 6.0f
     };
 
     const auto conv = [&](int v, float lo, float hi) -> float {
@@ -82,7 +82,6 @@ void toneEqualizer(
         return exp2(float(v) / 100.f * f);
     };
     const float factors[12] = {
-        conv(params.bands[0], 2.f, 3.f), // -18 EV
         conv(params.bands[0], 2.f, 3.f), // -16 EV
         conv(params.bands[0], 2.f, 3.f), // -14 EV
         conv(params.bands[0], 2.f, 3.f), // -12 EV
@@ -93,7 +92,8 @@ void toneEqualizer(
         conv(params.bands[3], 3.f, 2.f), //  -2 EV
         conv(params.bands[4], 3.f, 2.f), //   0 EV
         conv(params.bands[4], 3.f, 2.f), //   2 EV
-        conv(params.bands[4], 3.f, 2.f)  //   4 EV
+        conv(params.bands[4], 3.f, 2.f), //   4 EV
+        conv(params.bands[4], 3.f, 2.f)  //   6 EV
     };
 
     rtengine::TMatrix ws = rtengine::ICCStore::getInstance()->workingSpaceMatrix(workingProfile);
@@ -149,10 +149,13 @@ void toneEqualizer(
         w_sum += gauss(centers[i], 0.f);
     }
 
+    constexpr float luma_lo = -14.f;
+    constexpr float luma_hi = 4.f;
+
     const auto process_pixel =
     [&](float y) -> float {
         // convert to log space
-        const float luma = rtengine::max(log2(rtengine::max(y, 0.f)), -18.0f);
+        const float luma = rtengine::LIM(log2(rtengine::max(y, 0.f)), luma_lo, luma_hi);
 
         // build the correction as the sum of the contribution of each
         // luminance channel to current pixel
@@ -191,7 +194,7 @@ void toneEqualizer(
             std::array<float, 3> ret = { 0.f, 0.f, 0.f };
 
             // convert to log space
-            const float luma = rtengine::max(log2(rtengine::max(y, 0.f)), -18.0f);
+            const float luma = rtengine::LIM(log2(rtengine::max(y, 0.f)), luma_lo, luma_hi);
 
             // build the correction as the sum of the contribution of each
             // luminance channel to current pixel
@@ -227,12 +230,13 @@ void toneEqualizer(
     vfloat zerov = F2V(0.f);
     vfloat vw_sum = F2V(w_sum);
 
-    const vfloat noisev = F2V(-18.f);
+    const vfloat vluma_lo = F2V(luma_lo);
+    const vfloat vluma_hi = F2V(luma_hi);
     const vfloat xlog2v = F2V(xlogf(2.f));
 
     const auto vprocess_pixel =
     [&](vfloat y) -> vfloat {
-        const vfloat luma = vmaxf(xlogf(vmaxf(y, zerov)) / xlog2v, noisev);
+        const vfloat luma = vminf(vmaxf(xlogf(vmaxf(y, zerov)) / xlog2v, vluma_lo), vluma_hi);
 
         vfloat correction = zerov;
 
