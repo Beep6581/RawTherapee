@@ -592,8 +592,7 @@ BENCHFUN
 
     static const float ePerIsoILCE7RM3 = 0.8f;
 
-    //TODO: Add data for ILCE-7RM4, ILCE-1, and ILCE-7M4
-
+    //TODO: Add data for ILCE-7RM4, and ILCE-1
     if(plistener) {
         plistener->setProgressStr(Glib::ustring::compose(M("TP_RAW_DMETHOD_PROGRESSBAR"), M("TP_RAW_PIXELSHIFT")));
         plistener->setProgress(0.0);
@@ -616,10 +615,9 @@ BENCHFUN
         if(model.find("ILCE-7RM3") != string::npos) {
             nRead = nReadILCE7RM3[nReadIndex];
             eperIsoModel = ePerIsoILCE7RM3;
-        /* TODO: When we have data for missing ILCE-7RM4, ILCE-1, and ILCE-7M4, add it here
+        /* TODO: When we have data for missing ILCE-7RM4, and ILCE-1, add it here
         } else if(model.find("ILCE-7RM4") != string::npos) {
         } else if(model.find("ILCE-1") != string::npos) {
-        } else if(model.find("ILCE-7M4") != string::npos) {
         */
         } else { // default to ILCE-7RM3 for Sony cameras without data
            nRead = nReadILCE7RM3[nReadIndex];
