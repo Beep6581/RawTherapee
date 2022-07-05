@@ -80,6 +80,9 @@ set(CACHE_NAME_SUFFIX
 # being bundled. However, file access can be restricted for some folder.
 option(OSX_DEV_BUILD "Generate macOS development builds" OFF)
 
+# On macOS, optionally generate the final zip artifact file without version in the name for nightly upload purposes.
+option(OSX_NIGHTLY "Generate a generically-named zip" OFF)
+
 # By default we don't use a specific processor target, so PROC_TARGET_NUMBER is
 # set to 0. Specify other values to optimize for specific processor architecture
 # as listed in ProcessorTargets.cmake:
