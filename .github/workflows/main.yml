@@ -52,8 +52,8 @@ jobs:
             -DPROC_LABEL="generic processor" \
             -DWITH_LTO="OFF" \
             -DLENSFUNDBDIR="/Applications/RawTherapee.app/Contents/Resources/share/lensfun" \
-            -DCMAKE_C_COMPILER=/usr/local/opt/llvm/bin/clang \
-            -DCMAKE_CXX_COMPILER=/usr/local/opt/llvm/bin/clang++ \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
             -DCMAKE_C_FLAGS="-arch x86_64 -Wno-pass-failed -Wno-deprecated-register -Wno-unused-command-line-argument" \
             -DCMAKE_CXX_FLAGS="-arch x86_64 -Wno-pass-failed -Wno-deprecated-register -Wno-unused-command-line-argument" \
             -DOpenMP_C_FLAGS="${C_FLAGS}" \
