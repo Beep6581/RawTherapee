@@ -44,6 +44,7 @@
 #include "extprog.h"
 #include "../rtengine/dynamicprofile.h"
 #include "../rtengine/procparams.h"
+#include "pathutils.h"
 
 #ifndef WIN32
 #include <glibmm/fileutils.h>
@@ -71,27 +72,7 @@ bool remote = false;
 unsigned char initialGdkScale = 1;
 //Glib::Threads::Thread* mainThread;
 
-namespace
-{
-
-// For an unknown reason, Glib::filename_to_utf8 doesn't work on reliably Windows,
-// so we're using Glib::filename_to_utf8 for Linux/Apple and Glib::locale_to_utf8 for Windows.
-Glib::ustring fname_to_utf8 (const char* fname)
-{
-#ifdef WIN32
-
-    try {
-        return Glib::locale_to_utf8 (fname);
-    } catch (Glib::Error&) {
-        return Glib::convert_with_fallback (fname, "UTF-8", "ISO-8859-1", "?");
-    }
-
-#else
-
-    return Glib::filename_to_utf8 (fname);
-
-#endif
-}
+namespace {
 
 // This recursive mutex will be used by gdk_threads_enter/leave instead of a simple mutex
 static Glib::Threads::RecMutex myGdkRecMutex;
