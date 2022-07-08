@@ -83,6 +83,18 @@ option(OSX_DEV_BUILD "Generate macOS development builds" OFF)
 # On macOS, optionally generate the final zip artifact file without version in the name for nightly upload purposes.
 option(OSX_NIGHTLY "Generate a generically-named zip" OFF)
 
+# Generate a universal macOS build
+option(OSX_UNIVERSAL "Generate a universal app" OFF)
+
+# On, macOS: merge the app via a specific url to generate a universal bundle with both x86_64 and arm64
+if(OSX_UNIVERSAL)
+    if(CMAKE_OSX_ARCHITECTURES STREQUAL "arm64")
+        set(OSX_UNIVERSAL_URL "https://kd6kxr.keybase.pub/RawTherapee_macOS_x86_64_latest.zip" CACHE STRING "URL of x86_64 app for lipo")
+    else()
+        set(OSX_UNIVERSAL_URL "https://kd6kxr.keybase.pub/RawTherapee_macOS_arm64_latest.zip" CACHE STRING "URL of arm64 app for lipo")
+    endif()
+endif()
+
 # By default we don't use a specific processor target, so PROC_TARGET_NUMBER is
 # set to 0. Specify other values to optimize for specific processor architecture
 # as listed in ProcessorTargets.cmake:
