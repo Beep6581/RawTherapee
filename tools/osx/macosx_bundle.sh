@@ -325,6 +325,7 @@ if [[ -n $UNIVERSAL_URL ]]; then
         cp -R RawTherapee.app RawTherapee-x86_64.app
         cp -R RTuniv/RawTherapee.app RawTherapee-arm64.app
     fi
+    hdiutil unmount ./RTuniv
     # Create the fat main rawtherapee binary and move it into the new bundle
     lipo -create -output rawtherapee RawTherapee-arm64.app/Contents/MacOS/rawtherapee RawTherapee-x86_64.app/Contents/MacOS/rawtherapee
     mv rawtherapee RawTherapee.app/Contents/MacOS
@@ -391,6 +392,9 @@ function CreateDmg {
     CreateWebloc    'Report Bug' 'https://github.com/Beep6581/RawTherapee/issues/new'
     
     # Disk image name
+    if [[ -n ${UNIVERSAL_URL} ]] ; then
+        arch = "Universal"
+    fi
     dmg_name="${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}"
     lower_build_type="$(tr '[:upper:]' '[:lower:]' <<< "$CMAKE_BUILD_TYPE")"
     if [[ $lower_build_type != release ]]; then
