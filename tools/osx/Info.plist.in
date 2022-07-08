@@ -156,9 +156,10 @@
         <string>????</string>
         <key>CFBundleVersion</key>
         <string>@shortVersion@</string>
-        <key>LSExecutableArchitectures</key>
+        <key>LSArchitecturePriority</key>
         <array>
-            <string>@arch@</string>
+            <string>arm64</string>
+            <string>x86_64</string>
         </array>
         <key>NSHighResolutionCapable</key>
         <true />
