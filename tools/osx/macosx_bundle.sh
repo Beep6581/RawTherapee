@@ -139,6 +139,13 @@ if [[ -n $FANCY_DMG ]]; then
     echo "Fancy .dmg build is ON."
 fi
 
+#In: OSX_UNIVERSAL_URL=https:// etc.
+#Out: https:// etc.
+UNIVERSAL_URL="$(cmake .. -L -N | grep OSX_UNIVERSAL_URL)"; UNIVERSAL_URL="${UNIVERSAL_URL#*=}"
+if [[ -n $UNIVERSAL_URL ]]; then
+    echo "Univeral app is ON. The URL is ${UNIVERSAL_URL}"
+fi
+
 # In: OSX_NIGHTLY:BOOL=ON
 # Out: ON
 OSX_NIGHTLY="$(cmake .. -L -N | grep OSX_NIGHTLY)"; NIGHTLY="${OSX_NIGHTLY#*=}"
@@ -303,6 +310,30 @@ done
 install_name_tool -delete_rpath RawTherapee.app/Contents/Frameworks "${EXECUTABLE}"-cli
 install_name_tool -add_rpath /Applications/"${LIB}" "${EXECUTABLE}"-cli
 ditto "${EXECUTABLE}"-cli "${APP}"/..
+
+# Merge the app with the other archictecture to create the universal app.
+if [[ -n $UNIVERSAL_URL ]]; then
+    msg "Getting Universal countercomponent."
+    curl -L ${UNIVERSAL_URL} -o univ.zip
+    msg "Extracting app."
+    unzip univ.zip -d univapp
+    hdiutil attach -mountpoint ./RTuniv univapp/*/*dmg
+    if [[ $arch = "arm64" ]]; then
+        cp -R RawTherapee.app RawTherapee-arm64.app
+        cp -R RTuniv/RawTherapee.app RawTherapee-x86_64.app
+    else
+        cp -R RawTherapee.app RawTherapee-x86_64.app
+        cp -R RTuniv/RawTherapee.app RawTherapee-arm64.app
+    fi
+    # Create the fat main rawtherapee binary and move it into the new bundle
+    lipo -create -output rawtherapee RawTherapee-arm64.app/Contents/MacOS/rawtherapee RawTherapee-x86_64.app/Contents/MacOS/rawtherapee
+    mv rawtherapee RawTherapee.app/Contents/MacOS
+    # Create all the fat dependencies and move them into the bundle
+    for lib in RawTherapee-arm64.app/Contents/Frameworks/* ; do
+        lipo -create -output $(basename $lib) RawTherapee-arm64.app/Contents/Frameworks/$(basename $lib) RawTherapee-x86_64.app/Contents/Frameworks/$(basename $lib)
+    done
+    sudo mv *cli *so *dylib RawTherapee.app/Contents/Frameworks
+fi
 
 # Codesign the app
 if [[ -n $CODESIGNID ]]; then
