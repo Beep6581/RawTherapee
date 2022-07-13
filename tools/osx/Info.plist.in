@@ -3,10 +3,14 @@
     <dict>
         <key>LSEnvironment</key>
         <dict>
-            <key>XDG_DATA_DIRS</key>
+            <key>XDG_CONFIG_DIRS</key>
+            <string>/Applications/RawTherapee.app/Contents/Resources/share/gtk-3.0</string>
+            <key>XDG_CONFIG_HOME</key>
             <string>/Applications/RawTherapee.app/Contents/Resources/share</string>
+            <key>XDG_DATA_DIRS</key>
+            <string>/Applications/RawTherapee.app/Contents/Resources/share/gtk-3.0</string>
             <key>GTK_PATH</key>
-            <string>/Applications/RawTherapee.app/Contents/Frameworks</string>
+            <string>/Applications/RawTherapee.app/Contents/Resources/share/gtk-3.0</string>
             <key>GTK_IM_MODULE_FILE</key>
             <string>/Applications/RawTherapee.app/Contents/Resources/etc/gtk-3.0/gtk.immodules</string>
             <key>XDG_DATA_HOME</key>
