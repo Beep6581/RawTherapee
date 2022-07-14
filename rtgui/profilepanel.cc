@@ -496,6 +496,12 @@ void ProfilePanel::load_clicked (GdkEventButton* event)
                 custom->pedited->locallab.spots.clear();
             }
 
+            // For each Locallab spot, loaded profile pp only contains activated tools params
+            // Missing tool params in pe shall be also set to true to avoid a "spot merge" issue
+            for (int i = 0; i < (int)pe.locallab.spots.size(); i++) {
+                pe.locallab.spots.at(i).set(true);
+            }
+
             custom->set(true);
 
             bool prevState = changeconn.block(true);
