@@ -589,6 +589,7 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     Gtk::Grid* dirgrid = Gtk::manage(new Gtk::Grid());
     setExpandAlignProperties(dirgrid, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
 
+	// Dark Frames Dir
     Gtk::Label *dfLab = Gtk::manage(new Gtk::Label(M("PREFERENCES_DIRDARKFRAMES") + ":"));
     setExpandAlignProperties(dfLab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     darkFrameDir = Gtk::manage(new MyFileChooserButton(M("PREFERENCES_DIRDARKFRAMES"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
@@ -602,7 +603,7 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
 
     dfconn = darkFrameDir->signal_selection_changed().connect ( sigc::mem_fun (*this, &Preferences::darkFrameChanged));
 
-    // FLATFIELD
+    // Flatfield Dir
     Gtk::Label *ffLab = Gtk::manage(new Gtk::Label(M("PREFERENCES_FLATFIELDSDIR") + ":"));
     setExpandAlignProperties(ffLab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     flatFieldDir = Gtk::manage(new MyFileChooserButton(M("PREFERENCES_FLATFIELDSDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
@@ -628,6 +629,25 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     dirgrid->attach_next_to(*clutsDir, *clutsDirLabel, Gtk::POS_RIGHT, 1, 1);
     dirgrid->attach_next_to(*clutsRestartNeeded, *clutsDir, Gtk::POS_RIGHT, 1, 1);
 
+    //Camera Profiles Dir
+    Gtk::Label *cameraProfilesDirLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_CAMERAPROFILESDIR") + ":"));
+    setExpandAlignProperties(cameraProfilesDirLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    cameraProfilesDir = Gtk::manage(new MyFileChooserButton(M("PREFERENCES_CAMERAPROFILESDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    setExpandAlignProperties(cameraProfilesDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    dirgrid->attach_next_to(*cameraProfilesDirLabel, *clutsDirLabel, Gtk::POS_BOTTOM, 1, 1);
+    dirgrid->attach_next_to(*cameraProfilesDir, *cameraProfilesDirLabel, Gtk::POS_RIGHT, 1, 1);
+
+	//Lens Profiles Dir
+    Gtk::Label *lensProfilesDirLabel = Gtk::manage(new Gtk::Label(M("PREFERENCES_LENSPROFILESDIR") + ":"));
+    setExpandAlignProperties(lensProfilesDirLabel, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    lensProfilesDir = Gtk::manage(new MyFileChooserButton(M("PREFERENCES_LENSPROFILESDIR"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
+    setExpandAlignProperties(lensProfilesDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
+
+    dirgrid->attach_next_to(*lensProfilesDirLabel, *cameraProfilesDirLabel, Gtk::POS_BOTTOM, 1, 1);
+    dirgrid->attach_next_to(*lensProfilesDir, *lensProfilesDirLabel, Gtk::POS_RIGHT, 1, 1);
+
+	//Pack directories to Image Processing panel
     cdf->add(*dirgrid);
     vbImageProcessing->pack_start (*cdf, Gtk::PACK_SHRINK, 4 );
 
@@ -1889,8 +1909,9 @@ void Preferences::storePreferences()
 
     moptions.rtSettings.darkFramesPath = darkFrameDir->get_filename();
     moptions.rtSettings.flatFieldsPath = flatFieldDir->get_filename();
-
     moptions.clutsDir = clutsDir->get_filename();
+	moptions.rtSettings.cameraProfilesPath = cameraProfilesDir->get_filename();
+	moptions.rtSettings.lensProfilesPath = lensProfilesDir->get_filename();
 
     moptions.baBehav.resize(ADDSET_PARAM_NUM);
 
@@ -2162,6 +2183,10 @@ void Preferences::fillPreferences()
     flatFieldChanged();
 
     clutsDir->set_current_folder(moptions.clutsDir);
+	
+	cameraProfilesDir->set_current_folder(moptions.rtSettings.cameraProfilesPath);
+	
+	lensProfilesDir->set_current_folder(moptions.rtSettings.lensProfilesPath);
 
     addc.block(true);
     setc.block(true);

@@ -112,6 +112,8 @@ class Preferences final :
     MyFileChooserButton* darkFrameDir;
     MyFileChooserButton* flatFieldDir;
     MyFileChooserButton* clutsDir;
+	MyFileChooserButton* cameraProfilesDir;
+	MyFileChooserButton* lensProfilesDir;
     Gtk::Label *dfLabel;
     Gtk::Label *ffLabel;
 

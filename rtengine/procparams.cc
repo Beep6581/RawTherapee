@@ -6287,7 +6287,14 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Lens profile
         saveToKeyfile(!pedited || pedited->lensProf.lcMode, "LensProfile", "LcMode", lensProf.getMethodString(lensProf.lcMode), keyFile);
-        saveToKeyfile(!pedited || pedited->lensProf.lcpFile, "LensProfile", "LCPFile", relativePathIfInside(fname, fnameAbsolute, lensProf.lcpFile), keyFile);
+		if (options.rtSettings.lensProfilesPath.empty()
+			|| !Glib::path_is_absolute(options.rtSettings.lensProfilesPath)) {
+			saveToKeyfile(!pedited || pedited->lensProf.lcpFile, "LensProfile", "LCPFile", relativePathIfInside(fname, fnameAbsolute, lensProf.lcpFile), keyFile);
+		} else {
+			// if the "lens profiles directory" in Preferences exists and is an absolute path, try to save
+			// the path to the LCP file as relative to this directory
+			saveToKeyfile(!pedited || pedited->lensProf.lcpFile, "LensProfile", "LCPFile", relativePathIfInside(options.rtSettings.lensProfilesPath + G_DIR_SEPARATOR_S, false, lensProf.lcpFile), keyFile);
+		}
         saveToKeyfile(!pedited || pedited->lensProf.useDist, "LensProfile", "UseDistortion", lensProf.useDist, keyFile);
         saveToKeyfile(!pedited || pedited->lensProf.useVign, "LensProfile", "UseVignette", lensProf.useVign, keyFile);
         saveToKeyfile(!pedited || pedited->lensProf.useCA, "LensProfile", "UseCA", lensProf.useCA, keyFile);
@@ -7108,7 +7115,14 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->prsharpening.deconviter, "PostResizeSharpening", "DeconvIterations", prsharpening.deconviter, keyFile);
 
 // Color management
-        saveToKeyfile(!pedited || pedited->icm.inputProfile, "Color Management", "InputProfile", relativePathIfInside(fname, fnameAbsolute, icm.inputProfile), keyFile);
+		if (options.rtSettings.cameraProfilesPath.empty()
+			|| !Glib::path_is_absolute(options.rtSettings.cameraProfilesPath)) {
+			saveToKeyfile(!pedited || pedited->icm.inputProfile, "Color Management", "InputProfile", relativePathIfInside(fname, fnameAbsolute, icm.inputProfile), keyFile);
+		} else {
+			// if the "camera profiles directory" in Preferences exists and is an absolute path, try to save
+			// the path to the Custom Input Profile as relative to this directory
+			saveToKeyfile(!pedited || pedited->icm.inputProfile, "Color Management", "InputProfile", relativePathIfInside(options.rtSettings.cameraProfilesPath + G_DIR_SEPARATOR_S, false, icm.inputProfile), keyFile);
+		}
         saveToKeyfile(!pedited || pedited->icm.toneCurve, "Color Management", "ToneCurve", icm.toneCurve, keyFile);
         saveToKeyfile(!pedited || pedited->icm.applyLookTable, "Color Management", "ApplyLookTable", icm.applyLookTable, keyFile);
         saveToKeyfile(!pedited || pedited->icm.applyBaselineExposureOffset, "Color Management", "ApplyBaselineExposureOffset", icm.applyBaselineExposureOffset, keyFile);
@@ -8320,7 +8334,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key("LensProfile", "LCPFile")) {
-                lensProf.lcpFile = expandRelativePath(fname, "", keyFile.get_string("LensProfile", "LCPFile"));
+				if (options.rtSettings.lensProfilesPath.empty()
+					|| !Glib::path_is_absolute(options.rtSettings.lensProfilesPath)) {
+					lensProf.lcpFile = expandRelativePath(fname, "", keyFile.get_string("LensProfile", "LCPFile"));
+				} else {
+					// if the "lens profiles directory" in Preferences exists and is an absolute path,
+					// use it as a prefix if the path to the LCP file is relative
+					lensProf.lcpFile = expandRelativePath(options.rtSettings.lensProfilesPath + G_DIR_SEPARATOR_S, "", keyFile.get_string("LensProfile", "LCPFile"));
+				}
 
                 if (pedited) {
                     pedited->lensProf.lcpFile = true;
@@ -9350,7 +9371,14 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("Color Management")) {
             if (keyFile.has_key("Color Management", "InputProfile")) {
-                icm.inputProfile = expandRelativePath(fname, "file:", keyFile.get_string("Color Management", "InputProfile"));
+				if (options.rtSettings.cameraProfilesPath.empty()
+					|| !Glib::path_is_absolute(options.rtSettings.cameraProfilesPath)) {
+					icm.inputProfile = expandRelativePath(fname, "file:", keyFile.get_string("Color Management", "InputProfile"));
+				} else {
+					// if the "camera profiles directory" in Preferences exists and is an absolute path,
+					// use it as a prefix if the path to the Custom Input Profile is relative
+					icm.inputProfile = expandRelativePath(options.rtSettings.cameraProfilesPath + G_DIR_SEPARATOR_S, "file:", keyFile.get_string("Color Management", "InputProfile"));
+				}
 
                 if (pedited) {
                     pedited->icm.inputProfile = true;
