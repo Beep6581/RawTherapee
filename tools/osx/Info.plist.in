@@ -32,8 +32,13 @@
         </dict>
         <key>LSMultipleInstancesProhibited</key>
         <true />
-        <key>LSMinimumSystemVersion</key>
-        <string>@minimum_macos_version@</string>
+        <key>LSMinimumSystemVersionByArchitecture</key>
+        <dict>
+            <key>arm64</key>
+            <string>@minimum_arm64_version@</string>
+            <key>x86_64</key>
+            <string>@minimum_x86_64_version@</string>
+        </dict>
         <key>CFBundleAllowMixedLocalizations</key>
         <true />
         <key>CFBundleDisplayName</key>
