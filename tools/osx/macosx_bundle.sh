@@ -319,23 +319,28 @@ if [[ -n $UNIVERSAL_URL ]]; then
     curl -L ${UNIVERSAL_URL} -o univ.zip
     msg "Extracting app."
     unzip univ.zip -d univapp
-    hdiutil attach -mountpoint ./RTuniv univapp/*/*dmg
+    hdiutil attach -mountpoint ./RawTherapeeuniv univapp/*/*dmg
     if [[ $arch = "arm64" ]]; then
         cp -R RawTherapee.app RawTherapee-arm64.app
-        cp -R RTuniv/RawTherapee.app RawTherapee-x86_64.app
+        minimum_arm64_version=$(f=$(cat RawTherapee-arm64.app/Contents/Resources/AboutThisBuild.txt | grep mmacosx-version); echo "${f#*min=}" | cut -d ' ' -f1)
+        cp -R RawTherapeeuniv/RawTherapee.app RawTherapee-x86_64.app
+        minimum_x86_64_version=$(cat AboutThisBuild.txt | grep mmacosx-version); echo "${f#*min=}" | cut -d ' ' -f1
         echo "\n\n=====================================\n\n" >> RawTherapee.app/Contents/Resources/AboutThisBuild.txt
         cat RawTherapee-x86_64.app/Contents/Resources/AboutThisBuild.txt >> RawTherapee.app/Contents/Resources/AboutThisBuild.txt
     else
         cp -R RawTherapee.app RawTherapee-x86_64.app
-        cp -R RTuniv/RawTherapee.app RawTherapee-arm64.app
+        minimum_x86_64_version=$(f=$(cat RawTherapee-x86_64.app/Contents/Resources/AboutThisBuild.txt | grep mmacosx-version); echo "${f#*min=}" | cut -d ' ' -f1)
+        cp -R RawTherapeeuniv/RawTherapee.app RawTherapee-arm64.app
+        minimum_arm64_version=$(f=$(cat RawTherapee-arm64.app/Contents/Resources/AboutThisBuild.txt | grep mmacosx-version); echo "${f#*min=}" | cut -d ' ' -f1)
         echo "\n\n=====================================\n\n" >> RawTherapee.app/Contents/Resources/AboutThisBuild.txt
         cat RawTherapee-arm64.app/Contents/Resources/AboutThisBuild.txt >> RawTherapee.app/Contents/Resources/AboutThisBuild.txt
     fi
-    hdiutil unmount ./RTuniv
+    cmake -DPROJECT_SOURCE_DATA_DIR=${PROJECT_SOURCE_DATA_DIR} -DCONTENTS=${CONTENTS} -Dversion=${PROJECT_FULL_VERSION} -DshortVersion=${PROJECT_VERSION} -Dminimum_arm64_version=${minimum_arm64_version} -Dminimum_x86_64_version=${minimum_x86_64_version} -Darch=${arch} -P ${PROJECT_SOURCE_DATA_DIR}/info-plist.cmake
+    hdiutil unmount ./RawTherapeeuniv
     rm -r univapp
-    # Create the fat main rawtherapee binary and move it into the new bundle
-    lipo -create -output rawtherapee RawTherapee-arm64.app/Contents/MacOS/rawtherapee RawTherapee-x86_64.app/Contents/MacOS/rawtherapee
-    mv rawtherapee RawTherapee.app/Contents/MacOS
+    # Create the fat main RawTherapee binary and move it into the new bundle
+    lipo -create -output RawTherapee RawTherapee-arm64.app/Contents/MacOS/RawTherapee RawTherapee-x86_64.app/Contents/MacOS/RawTherapee
+    mv RawTherapee RawTherapee.app/Contents/MacOS
     # Create all the fat dependencies and move them into the bundle
     for lib in RawTherapee-arm64.app/Contents/Frameworks/* ; do
         lipo -create -output $(basename $lib) RawTherapee-arm64.app/Contents/Frameworks/$(basename $lib) RawTherapee-x86_64.app/Contents/Frameworks/$(basename $lib)
@@ -343,6 +348,10 @@ if [[ -n $UNIVERSAL_URL ]]; then
     sudo mv *cli *so *dylib RawTherapee.app/Contents/Frameworks
     rm -r RawTherapee-arm64.app
     rm -r RawTherapee-x86_64.app
+else
+    minimum_arm64_version=$(f=$(cat RawTherapee-arm64.app/Contents/Resources/AboutThisBuild.txt | grep mmacosx-version))
+    minimum_x86_64_version=minimum_arm64_version
+    cmake -DPROJECT_SOURCE_DATA_DIR=${PROJECT_SOURCE_DATA_DIR} -DCONTENTS=${CONTENTS} -Dversion=${PROJECT_FULL_VERSION} -DshortVersion=${PROJECT_VERSION} -Dminimum_arm64_version=${minimum_arm64_version} -Dminimum_x86_64_version=${minimum_x86_64_version} -Darch=${arch} -P ${PROJECT_SOURCE_DATA_DIR}/info-plist.cmake
 fi
 
 # Codesign the app
