@@ -288,7 +288,7 @@ ditto "${PROJECT_SOURCE_DIR}/rtdata/fonts" "${ETC}/fonts"
 # App bundle resources
 ditto "${PROJECT_SOURCE_DATA_DIR}/"{rawtherapee,profile}.icns "${RESOURCES}"
 #ditto "${PROJECT_SOURCE_DATA_DIR}/PkgInfo" "${CONTENTS}"
-cmake -DPROJECT_SOURCE_DATA_DIR=${PROJECT_SOURCE_DATA_DIR} -DCONTENTS=${CONTENTS} -Dversion=${PROJECT_FULL_VERSION} -DshortVersion=${PROJECT_VERSION} -Darch=${arch} -P "${PROJECT_SOURCE_DATA_DIR}/info-plist.cmake"
+
 update-mime-database -V  "${RESOURCES}/share/mime"
 cp -RL "${LOCAL_PREFIX}/share/locale" "${RESOURCES}/share/locale"
 
@@ -324,7 +324,7 @@ if [[ -n $UNIVERSAL_URL ]]; then
         cp -R RawTherapee.app RawTherapee-arm64.app
         minimum_arm64_version=$(f=$(cat RawTherapee-arm64.app/Contents/Resources/AboutThisBuild.txt | grep mmacosx-version); echo "${f#*min=}" | cut -d ' ' -f1)
         cp -R RawTherapeeuniv/RawTherapee.app RawTherapee-x86_64.app
-        minimum_x86_64_version=$(cat AboutThisBuild.txt | grep mmacosx-version); echo "${f#*min=}" | cut -d ' ' -f1
+        minimum_x86_64_version=$(f=$(cat RawTherapee-x86_64.app/Contents/Resources/AboutThisBuild.txt | grep mmacosx-version); echo "${f#*min=}" | cut -d ' ' -f1)
         echo "\n\n=====================================\n\n" >> RawTherapee.app/Contents/Resources/AboutThisBuild.txt
         cat RawTherapee-x86_64.app/Contents/Resources/AboutThisBuild.txt >> RawTherapee.app/Contents/Resources/AboutThisBuild.txt
     else
@@ -428,6 +428,7 @@ function CreateDmg {
         SetFile -c incC "${srcDir}/.VolumeIcon.icns"
         create-dmg "${dmg_name}.dmg" "${srcDir}" \
         --volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" \
+        --appname "${PROJECT_NAME}" \
         --volicon "${srcDir}/.VolumeIcon.icns" \
         --sandbox-safe \
         --no-internet-enable \
