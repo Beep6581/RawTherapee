@@ -353,6 +353,7 @@ else
     minimum_x86_64_version=${minimum_arm64_version}
         cmake -DPROJECT_SOURCE_DATA_DIR=${PROJECT_SOURCE_DATA_DIR} -DCONTENTS=${CONTENTS} -Dversion=${PROJECT_FULL_VERSION} -DshortVersion=${PROJECT_VERSION} -Dminimum_arm64_version=${minimum_arm64_version} -Dminimum_x86_64_version=${minimum_x86_64_version} -Darch=${arch} -P ${PROJECT_SOURCE_DATA_DIR}/info-plist.cmake
 fi
+rm ${PROJECT_NAME}.app/Contents/Frameworks/lib{X,x}*
 
 # Codesign the app
 if [[ -n $CODESIGNID ]]; then
