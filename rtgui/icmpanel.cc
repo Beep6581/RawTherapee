@@ -1906,23 +1906,29 @@ void ICMPanel::ipChanged()
 {
 
     Glib::ustring profname;
+    Glib::ustring localized_profname;
 
     if (inone->get_active()) {
-        profname = inone->get_label();
+        profname = "(none)";
+        localized_profname = inone->get_label();
     } else if (iembedded->get_active()) {
-        profname = iembedded->get_label();
+        profname = "(embedded)";
+        localized_profname = iembedded->get_label();
     } else if (icamera->get_active()) {
-        profname = icamera->get_label();
+        profname = "(camera)";
+        localized_profname = icamera->get_label();
     } else if (icameraICC->get_active()) {
-        profname = icameraICC->get_label();
+        profname = "(cameraICC)";
+        localized_profname = icameraICC->get_label();
     } else {
         profname = ipDialog->get_filename();
+        localized_profname = profname;
     }
 
     updateDCP(-1, profname);
 
     if (listener && profname != oldip) {
-        listener->panelChanged(EvIProfile, profname);
+        listener->panelChanged(EvIProfile, localized_profname);
     }
 
     oldip = profname;

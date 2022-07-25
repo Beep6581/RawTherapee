@@ -2090,6 +2090,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
         case Normal:
             // Expert mode widgets are hidden in Normal mode
             structcol->hide();
+            gamc->hide();
             blurcolde->hide();
             strcolab->hide();
             strcolh->hide();
@@ -2138,6 +2139,7 @@ void LocallabColor::updateGUIToMode(const modeType new_type)
             // Show widgets hidden in Normal and Simple mode
             structcol->show();
             blurcolde->show();
+            gamc->show();
 
             if (!invers->get_active()) { // Keep widget hidden when invers is toggled
                 softradiuscol->show();
@@ -2443,7 +2445,7 @@ void LocallabColor::updateColorGUI1()
         gamc->hide();
     } else {
         gridFrame->show();
-        gamc->show();
+        gamc->hide();
 
         if (mode == Expert) { // Keep widget hidden in Normal and Simple mode
             structcol->show();
@@ -2463,6 +2465,7 @@ void LocallabColor::updateColorGUI1()
             HCurveEditorG->show();
             H3CurveEditorG->show();
             expmaskcol1->show();
+            gamc->show();
         }
 
         showmaskcolMethod->show();

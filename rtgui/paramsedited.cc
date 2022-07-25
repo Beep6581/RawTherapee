@@ -3382,14 +3382,15 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
 
     if (locallab.enabled) {
         toEdit.locallab.enabled   = mods.locallab.enabled;
+
+        // In that case, locallab is impacted by the combine:
+        // Resizing locallab spots vector according to pedited
+        toEdit.locallab.spots.resize(locallab.spots.size());
     }
 
     if (locallab.selspot) {
         toEdit.locallab.selspot   = mods.locallab.selspot;
     }
-
-    // Resizing locallab spots vector according to pedited
-    toEdit.locallab.spots.resize(locallab.spots.size());
 
     // Updating each locallab spot according to pedited
     for (size_t i = 0; i < toEdit.locallab.spots.size() && i < mods.locallab.spots.size() && i < locallab.spots.size(); i++) {
@@ -8048,7 +8049,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     lightlzcam(v),
     lightqzcam(v),
     contlzcam(v),
-    contqzcam(v), 
+    contqzcam(v),
     contthreszcam(v),
     colorflzcam(v),
     saturzcam(v),
@@ -8747,7 +8748,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     lightlzcam = v;
     lightqzcam = v;
     contlzcam = v;
-    contqzcam = v; 
+    contqzcam = v;
     contthreszcam = v;
     colorflzcam = v;
     saturzcam = v;
