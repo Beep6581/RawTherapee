@@ -42,6 +42,19 @@ using namespace std;
 namespace
 {
 
+Glib::ustring replaceBackslash(Glib::ustring path)
+{
+	size_t pos;
+	
+	pos = path.find("\\");
+	while (pos != string::npos) {
+		path.replace(pos, 1, "/");
+		pos = path.find("\\", pos);
+	}
+	return path;
+}
+
+
 Glib::ustring expandRelativePath(const Glib::ustring &procparams_fname, const Glib::ustring &prefix, Glib::ustring embedded_fname)
 {
     if (embedded_fname.empty() || !Glib::path_is_absolute(procparams_fname)) {
@@ -6293,7 +6306,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 		} else {
 			// if the "lens profiles directory" in Preferences exists and is an absolute path, try to save
 			// the path to the LCP file as relative to this directory
-			saveToKeyfile(!pedited || pedited->lensProf.lcpFile, "LensProfile", "LCPFile", relativePathIfInside(options.rtSettings.lensProfilesPath + G_DIR_SEPARATOR_S, false, lensProf.lcpFile), keyFile);
+			saveToKeyfile(!pedited || pedited->lensProf.lcpFile, "LensProfile", "LCPFile", replaceBackslash(relativePathIfInside(options.rtSettings.lensProfilesPath + G_DIR_SEPARATOR_S, false, lensProf.lcpFile)), keyFile);
 		}
         saveToKeyfile(!pedited || pedited->lensProf.useDist, "LensProfile", "UseDistortion", lensProf.useDist, keyFile);
         saveToKeyfile(!pedited || pedited->lensProf.useVign, "LensProfile", "UseVignette", lensProf.useVign, keyFile);
@@ -7121,7 +7134,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 		} else {
 			// if the "camera profiles directory" in Preferences exists and is an absolute path, try to save
 			// the path to the Custom Input Profile as relative to this directory
-			saveToKeyfile(!pedited || pedited->icm.inputProfile, "Color Management", "InputProfile", relativePathIfInside(options.rtSettings.cameraProfilesPath + G_DIR_SEPARATOR_S, false, icm.inputProfile), keyFile);
+			saveToKeyfile(!pedited || pedited->icm.inputProfile, "Color Management", "InputProfile", replaceBackslash(relativePathIfInside(options.rtSettings.cameraProfilesPath + G_DIR_SEPARATOR_S, false, icm.inputProfile)), keyFile);
 		}
         saveToKeyfile(!pedited || pedited->icm.toneCurve, "Color Management", "ToneCurve", icm.toneCurve, keyFile);
         saveToKeyfile(!pedited || pedited->icm.applyLookTable, "Color Management", "ApplyLookTable", icm.applyLookTable, keyFile);
