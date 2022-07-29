@@ -9978,7 +9978,23 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
         
         if (keyFile.has_group("Film Simulation")) {
             assignFromKeyfile(keyFile, "Film Simulation", "Enabled", pedited, filmSimulation.enabled, pedited->filmSimulation.enabled);
-            assignFromKeyfile(keyFile, "Film Simulation", "ClutFilename", pedited, filmSimulation.clutFilename, pedited->filmSimulation.clutFilename);
+			assignFromKeyfile(keyFile, "Film Simulation", "ClutFilename", pedited, filmSimulation.clutFilename, pedited->filmSimulation.clutFilename);
+			#if defined (WIN32)
+			// if this is Windows, replace any "/" in the filename with "\\"
+			size_t pos = filmSimulation.clutFilename.find("/");
+			while (pos != string::npos) {
+				filmSimulation.clutFilename.replace(pos, 1, "\\");
+				pos = filmSimulation.clutFilename.find("/", pos);
+			}
+			#endif
+			#if !defined (WIN32)
+			// if this is not Windows, replace any "\\" in the filename with "/"
+			size_t pos = filmSimulation.clutFilename.find("\\");
+			while (pos != string::npos) {
+				filmSimulation.clutFilename.replace(pos, 1, "/");
+				pos = filmSimulation.clutFilename.find("\\", pos);
+			}
+			#endif
 
             if (keyFile.has_key("Film Simulation", "Strength")) {
                 if (ppVersion < 321) {
