@@ -617,6 +617,7 @@ struct local_params {
     float laplacexp;
     float balanexp;
     float linear;
+    int fullim;
     int expmet;
     int softmet;
     int blurmet;
@@ -895,7 +896,15 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.laplacexp = locallab.spots.at(sp).laplacexp;
     lp.balanexp = locallab.spots.at(sp).balanexp;
     lp.linear = locallab.spots.at(sp).linear;
-
+    if (locallab.spots.at(sp).spotMethod == "norm") {
+        lp.fullim = 0;
+    } else if(locallab.spots.at(sp).spotMethod == "exc"){
+        lp.fullim = 1;
+    } else if (locallab.spots.at(sp).spotMethod == "full"){
+        lp.fullim = 2;
+    }
+   // printf("Lpfullim=%i\n", lp.fullim);
+    
     lp.fftColorMask = locallab.spots.at(sp).fftColorMask;
     lp.prevdE = prevDeltaE;
     lp.showmaskcolmet = llColorMask;
@@ -8317,10 +8326,20 @@ const int fftw_size[] = {18144, 18000, 17920, 17836, 17820, 17640, 17600, 17550,
 int N_fftwsize = sizeof(fftw_size) / sizeof(fftw_size[0]);
 
 
-void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct local_params& lp, int H, int W, int &xstart, int &ystart, int &xend, int &yend, int cx, int cy)
+void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct local_params& lp, int H, int W, int &xstart, int &ystart, int &xend, int &yend, int cx, int cy, int fulima)
 {
     int ftsizeH = 1;
     int ftsizeW = 1;
+    int deltaw = 150;
+    int deltah = 150;
+    
+    if(W < 4000) {
+        deltaw = 80;
+    }
+    if(H < 4000) {
+        deltah = 80;
+    }
+
 
     for (int ft = 0; ft < N_fftwsize; ft++) { //find best values
         if (fftw_size[ft] <= bfh) {
@@ -8335,6 +8354,31 @@ void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct loc
             break;
         }
     }
+    
+    if(fulima == 2) {// if full image, the ftsizeH and ftsizeW is a bit larger (about 10 to 200 pixels) than the image dimensions so that it is fully processed (consumes a bit more resources)
+        for (int ftfu = 0; ftfu < N_fftwsize; ftfu++) { //find best values
+            if (fftw_size[ftfu] <= (H + deltah)) {
+                ftsizeH = fftw_size[ftfu];
+                break;
+            }
+        }
+        for (int ftfu = 0; ftfu < N_fftwsize; ftfu++) { //find best values
+            if (fftw_size[ftfu] <= (W + deltaw)) {
+                ftsizeW = fftw_size[ftfu];
+                break;
+            }
+        }
+    }
+
+    if (settings->verbose) {
+        if(fulima == 2) {
+            printf("Full image: ftsizeWF=%i ftsizeH=%i\n", ftsizeW, ftsizeH);
+
+        } else {
+            printf("ftsizeW=%i ftsizeH=%i\n", ftsizeW, ftsizeH);
+        }
+    }
+
 
     //optimize with size fftw
     bool reduW = false;
@@ -8373,7 +8417,6 @@ void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct loc
         reduW = true;
         exec = false;
     }
-
     //new values optimized
     ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
     yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, H);
@@ -8552,7 +8595,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     int bfhr = bfh;
     int bfwr = bfw;
     if (lp.blurcolmask >= 0.25f && lp.fftColorMask && call == 2) {
-        optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+        optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
     }
 
     bfh = bfhr;
@@ -13660,7 +13703,7 @@ void ImProcFunctions::Lab_Local(
 
         if (bfw >= mSP && bfh >= mSP) {
             if (lp.blurmet == 0 && (fft || lp.rad > 30.0)) {
-                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
 
             const std::unique_ptr<LabImage> bufgbi(new LabImage(TW, TH));
@@ -14977,7 +15020,7 @@ void ImProcFunctions::Lab_Local(
 
         if (bfw >= mSP && bfh > mSP) {
             if (lp.ftwreti) {
-                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
 
             array2D<float> buflight(bfw, bfh);
@@ -16141,7 +16184,7 @@ void ImProcFunctions::Lab_Local(
         if (bfw >= mSP && bfh >= mSP) {
 
             if (lp.softmet == 1) {
-                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
 
             const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
@@ -16267,7 +16310,7 @@ void ImProcFunctions::Lab_Local(
 
         if (bfw >= mSPwav && bfh >= mSPwav) {//avoid too small spot for wavelet
             if (lp.ftwlc) {
-                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
 
             std::unique_ptr<LabImage> bufmaskblurlc;
@@ -16983,7 +17026,7 @@ void ImProcFunctions::Lab_Local(
         if (bfw >= mSP && bfh >= mSP) {
 
             if (lp.expmet == 1  || lp.expmet == 0) {
-                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
 
             const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
@@ -17513,7 +17556,7 @@ void ImProcFunctions::Lab_Local(
         if (bfw >= mSP && bfh >= mSP) {
 
             if (lp.blurcolmask >= 0.25f && lp.fftColorMask && call == 2) {
-                optfft(N_fftwsize, bfh, bfw, bfh, bfw, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfh, bfw, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
 
             std::unique_ptr<LabImage> bufcolorig;
@@ -18783,7 +18826,7 @@ void ImProcFunctions::Lab_Local(
         if (bfw >= mSP && bfh >= mSP) {
 
             if (lp.blurma >= 0.25f && lp.fftma && call == 2) {
-                optfft(N_fftwsize, bfh, bfw, bfh, bfw, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfh, bfw, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
             array2D<float> blechro(bfw, bfh);
             array2D<float> ble(bfw, bfh);
