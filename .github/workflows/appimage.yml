@@ -76,6 +76,8 @@ jobs:
 
       - name: Include Lensfun
         run: |
+          echo "Patching lensfun-update-data script."
+          sudo sed -i 's/HTTPError\(, ValueError\)/URLError\1/' $(which lensfun-update-data)
           echo "Updating Lensfun database."
           lensfun-update-data
           echo "Creating Lensfun directory in the build directory."
