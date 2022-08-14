@@ -117,7 +117,7 @@ jobs:
             "libdeflate.dll" \
             "libepoxy-0.dll" \
             "libexpat-1.dll" \
-            "libffi-7.dll" \
+            libffi-*.dll \
             "libfftw3f-3.dll" \
             "libfontconfig-1.dll" \
             "libfreetype-6.dll" \
