@@ -725,7 +725,7 @@ add_custom_target(
 # End generating AboutThisBuild.txt
 
 install(FILES AUTHORS.txt DESTINATION "${CREDITSDIR}")
-install(FILES LICENSE.txt DESTINATION "${LICENCEDIR}")
+install(FILES LICENSE DESTINATION "${LICENCEDIR}")
 install(FILES "${CMAKE_BINARY_DIR}/AboutThisBuild.txt"
         DESTINATION "${CREDITSDIR}")
 install(
