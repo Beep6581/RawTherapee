@@ -6091,6 +6091,18 @@ get2_256:
       offsetChannelBlackLevel2 = save1 + (0x157 << 1);
       offsetWhiteLevels = save1 + (0x32a << 1);
       break;
+    case 3973: // R3; ColorDataSubVer: 34
+    case 3778: // R7, R10; ColorDataSubVer: 48
+      // imCanon.ColorDataVer = 11;
+      imCanon.ColorDataSubVer = get2();
+
+      fseek(ifp, save1 + ((0x0069+0x0064) << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
+
+      offsetChannelBlackLevel2 = save1 + ((0x0069+0x0102) << 1);
+      offsetChannelBlackLevel  = save1 + ((0x0069+0x0213) << 1);
+      offsetWhiteLevels        = save1 + ((0x0069+0x0217) << 1);
+      break;
     }
 
     if (offsetChannelBlackLevel)

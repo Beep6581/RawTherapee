@@ -1209,11 +1209,16 @@ Camera constants:
     },
 
     { // Quality C
+        "make_model": "Canon EOS R3",
+        "dcraw_matrix" : [9423,-2839,-1195,-4532,12377,2415,-483,1374,5276]
+    },
+
+    { // Quality C
         "make_model": "Canon EOS R5",
         "dcraw_matrix" : [9766, -2953, -1254, -4276, 12116, 2433, -437, 1336, 5131],
         "raw_crop" : [ 128, 96, 8224, 5490 ],
         "masked_areas" : [ 94, 20, 5578, 122 ],
-        "ranges" : { "white" : 16382 } 
+        "ranges" : { "white" : 16382 }
     },
 
     { // Quality C
@@ -1222,6 +1227,16 @@ Camera constants:
         "raw_crop": [ 72, 38, 5496, 3670 ],
         "masked_areas" : [ 40, 10, 5534, 70 ],
         "ranges" : { "white" : 16382 }
+    },
+
+    { // Quality C
+        "make_model": "Canon EOS R7",
+        "dcraw_matrix" : [10424, -3138, -1300, -4221, 11938,  2584,  -547,  1658,  6183]
+    },
+
+    { // Quality C
+        "make_model": "Canon EOS R10",
+        "dcraw_matrix" : [9269, -2012, -1107, -3990, 11762,  2527,  -569,  2093,  4913]
     },
 
     { // Quality C, CHDK DNGs, raw frame correction
@@ -1702,7 +1717,7 @@ Camera constants:
     { // Quality A, samples provided by dimonoid (#5842)
         "make_model": "NIKON COOLPIX P1000",
         "dcraw_matrix": [ 14294, -6116, -1333, -1628, 10219, 1637, -14, 1158, 5022 ], // ColorMatrix2 from Adobe DNG Converter 11.4
-        "ranges": { 
+        "ranges": {
             "black": 200,
             "white": [ 4000, 4050, 3950 ] // Typical values without LENR: 4009, 4093, 3963
         } // No significant influence of ISO
