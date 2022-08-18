@@ -658,7 +658,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         maxlevelcrop = 10;
     }
 
-    // adap maximum level wavelet to size of crop
+    // adapt maximum level wavelet to size of crop
     if (minwin * skip < 1024) {
         maxlevelcrop = 9;    //sampling wavelet 512
     }
@@ -694,7 +694,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
     levwav = rtengine::min(maxlevelcrop, levwav);
 
-    // I suppress this fonctionality ==> crash for level < 3
+    // I suppress this functionality ==> crash for level < 3
     if (levwav < 1) {
         return;    // nothing to do
     }
