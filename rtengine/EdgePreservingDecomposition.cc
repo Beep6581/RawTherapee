@@ -208,7 +208,7 @@ bool MultiDiagonalSymmetricMatrix::CreateDiagonal(int index, int StartRow)
     return true;
 }
 
-inline int MultiDiagonalSymmetricMatrix::FindIndex(int StartRow)
+inline int MultiDiagonalSymmetricMatrix::FindIndex(int StartRow) const
 {
     //There's GOT to be a better way to do this. "Bidirectional map?"
     // Issue 1895 : Changed start of loop from zero to one

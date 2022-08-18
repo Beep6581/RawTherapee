@@ -823,7 +823,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
             int i = sy1 + skip * ix;
             i = std::min(i, maxy - skip); // avoid trouble
 
-            if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1) {
+            if (ri->getSensorType() == ST_BAYER || ri->getSensorType() == ST_FUJI_XTRANS || ri->get_colors() == 1 || ri->get_colors() == 3) {
                 for (int j = 0, jx = sx1; j < imwidth; j++, jx += skip) {
                     jx = std::min(jx, maxx - skip); // avoid trouble
 
@@ -1177,9 +1177,11 @@ int RawImageSource::load (const Glib::ustring &fname, bool firstFrameOnly)
 
     d1x = ! ri->get_model().compare("D1X");
 
-    if (ri->getSensorType() == ST_FUJI_XTRANS) {
+    if (ri->getSensorType() == ST_BAYER) {
+        border = 4;
+    } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
         border = 7;
-    } else if (ri->getSensorType() == ST_FOVEON) {
+    } else {
         border = 0;
     }
 
@@ -1327,7 +1329,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
 
     if (ri->zeroIsBad()) { // mark all pixels with value zero as bad, has to be called before FF and DF. dcraw sets this flag only for some cameras (mainly Panasonic and Leica)
         bitmapBads.reset(new PixelsMap(W, H));
-        totBP = findZeroPixels(*(bitmapBads.get()));
+        totBP = findZeroPixels(*bitmapBads);
 
         if (settings->verbose) {
             printf("%d pixels with value zero marked as bad pixels\n", totBP);
@@ -1471,7 +1473,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             bitmapBads.reset(new PixelsMap(W, H));
         }
 
-        int nFound = findHotDeadPixels(*(bitmapBads.get()), raw.hotdeadpix_thresh, raw.hotPixelFilter, raw.deadPixelFilter);
+        int nFound = findHotDeadPixels(*bitmapBads, raw.hotdeadpix_thresh, raw.hotPixelFilter, raw.deadPixelFilter);
         totBP += nFound;
 
         if (settings->verbose && nFound > 0) {
@@ -1486,7 +1488,7 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
             bitmapBads.reset(new PixelsMap(W, H));
         }
         
-        int n = f.mark(rawData, *(bitmapBads.get()));
+        int n = f.mark(rawData, *bitmapBads);
         totBP += n;
 
         if (n > 0) {
@@ -1550,15 +1552,15 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         if (ri->getSensorType() == ST_BAYER) {
             if (numFrames == 4) {
                 for (int i = 0; i < 4; ++i) {
-                    interpolateBadPixelsBayer(*(bitmapBads.get()), *rawDataFrames[i]);
+                    interpolateBadPixelsBayer(*bitmapBads, *rawDataFrames[i]);
                 }
             } else {
-                interpolateBadPixelsBayer(*(bitmapBads.get()), rawData);
+                interpolateBadPixelsBayer(*bitmapBads, rawData);
             }
         } else if (ri->getSensorType() == ST_FUJI_XTRANS) {
-            interpolateBadPixelsXtrans(*(bitmapBads.get()));
+            interpolateBadPixelsXtrans(*bitmapBads);
         } else {
-            interpolateBadPixelsNColours(*(bitmapBads.get()), ri->get_colors());
+            interpolateBadPixelsNColours(*bitmapBads, ri->get_colors());
         }
     }
 
@@ -1683,6 +1685,9 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
     } else if (ri->get_colors() == 1) {
         // Monochrome
         nodemosaic(true);
+    } else {
+        // RGB
+        nodemosaic(false);
     }
 
     t2.set();

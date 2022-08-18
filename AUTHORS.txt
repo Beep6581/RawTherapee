@@ -33,6 +33,7 @@ Development contributors, in last name alphabetical order:
   Jan Rinze
   Alberto Romei
   Ben S.
+  Simon Segerblom Rex
   Andrey Skvortsov
   Fabio Suprani
   Anders Torger
@@ -49,6 +50,7 @@ Other contributors (profiles, ideas, mockups, testing, forum activity, translati
   Fernando Carello
   Rodrigo Nuno Bragança da Cunha
   Pat David
+  Jacques Dekker
   Reine Edvardsson
   Andrea Ferrero
   André Gauthier

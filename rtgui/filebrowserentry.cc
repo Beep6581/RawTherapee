@@ -176,10 +176,10 @@ void FileBrowserEntry::customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c)
             rtengine::procparams::CropParams cparams = thumbnail->getProcParams().crop;
             switch (options.cropGuides) {
             case Options::CROP_GUIDE_NONE:
-                cparams.guide = "None";
+                cparams.guide = rtengine::procparams::CropParams::Guide::NONE;
                 break;
             case Options::CROP_GUIDE_FRAME:
-                cparams.guide = "Frame";
+                cparams.guide = rtengine::procparams::CropParams::Guide::FRAME;
                 break;
             default:
                 break;
@@ -294,7 +294,7 @@ bool FileBrowserEntry::motionNotify (int x, int y)
 
     Inspector* inspector = parent->getInspector();
 
-    if (inspector && inspector->isActive() && !parent->isInTabMode()) {
+    if (inspector && inspector->isActive() && (!parent->isInTabMode() || options.inspectorWindow)) {
         const rtengine::Coord2D coord(getPosInImgSpace(x, y));
 
         if (coord.x != -1.) {

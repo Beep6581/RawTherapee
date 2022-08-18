@@ -29,6 +29,7 @@ public:
     int getWidth() const;
     int getHeight() const;
     int getSkip() const;
+    void set (int x, int y, int w, int h, int skip);
 
 private:
     int x;

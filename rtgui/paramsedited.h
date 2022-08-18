@@ -431,6 +431,7 @@ public:
         bool shortc;
         bool savrest;
         bool scopemask;
+        bool denoichmask;
         bool lumask;
         // Color & Light
         bool visicolor;
@@ -438,6 +439,8 @@ public:
         bool complexcolor;
         bool curvactiv;
         bool lightness;
+        bool reparcol;
+        bool gamc;
         bool contrast;
         bool chroma;
         bool labgridALow;
@@ -513,6 +516,7 @@ public:
         bool expchroma;
         bool sensiex;
         bool structexp;
+        bool gamex;
         bool blurexpde;
         bool strexp;
         bool angexp;
@@ -537,6 +541,7 @@ public:
         bool expMethod;
         bool exnoiseMethod;
         bool laplacexp;
+        bool reparexp;
         bool balanexp;
         bool linear;
         bool gamm;
@@ -575,6 +580,7 @@ public:
         bool slomaskSH;
         bool lapmaskSH;
         bool detailSH;
+        bool reparsh;
         bool LmaskSHcurve;
         bool fatamountSH;
         bool fatanchorSH;
@@ -590,6 +596,7 @@ public:
         bool complexvibrance;
         bool saturated;
         bool pastels;
+        bool vibgam;
         bool warm;
         bool psthreshold;
         bool protectskins;
@@ -666,6 +673,7 @@ public:
         bool noiselumc;
         bool noiselumdetail;
         bool noiselequal;
+        bool noisegam;
         bool noisechrof;
         bool noisechroc;
         bool noisechrodetail;
@@ -677,6 +685,7 @@ public:
         bool nlrad;
         bool nlgam;
         bool sensiden;
+        bool reparden;
         bool detailthr;
         bool locwavcurveden;
         bool locwavcurvehue;
@@ -708,6 +717,7 @@ public:
         bool gamma;
         bool estop;
         bool scaltm;
+        bool repartm;
         bool rewei;
         bool satur;
         bool sensitm;
@@ -782,6 +792,7 @@ public:
         bool shardamping;
         bool shariter;
         bool sharblur;
+        bool shargam;
         bool sensisha;
         bool inverssha;
         // Local Contrast
@@ -799,6 +810,9 @@ public:
         bool residshathr;
         bool residhi;
         bool residhithr;
+        bool gamlc;
+        bool residgam;
+        bool residslop;
         bool residblur;
         bool levelblur;
         bool sigmabl;
@@ -829,6 +843,7 @@ public:
         bool edgw;
         bool basew;
         bool sensilc;
+        bool reparw;
         bool fftwlc;
         bool blurlc;
         bool wavblur;
@@ -898,6 +913,7 @@ public:
         bool targetGray;
         bool catad;
         bool saturl;
+        bool chroml;
         bool lightl;
         bool lightq;
         bool contl;
@@ -959,6 +975,110 @@ public:
         bool Lmask_curve;
         bool LLmask_curvewav;
         bool csthresholdmask;
+        //locallabcie
+        bool visicie;
+        bool complexcie;
+        bool expcie;
+        bool reparcie;
+        bool sensicie;
+        bool Autograycie;
+        bool forcejz;
+        bool forcebw;
+        bool qtoj;
+        bool jabcie;
+        bool sigmoidqjcie;
+        bool logcie;
+        bool logjz;
+        bool sigjz;
+        bool sigq;
+        bool chjzcie;
+        bool sourceGraycie;
+        bool sourceabscie;
+        bool sursourcie;
+        bool modecam;
+        bool modecie;
+        bool saturlcie;
+        bool rstprotectcie;
+        bool chromlcie;
+        bool huecie;
+        bool toneMethodcie;
+        bool ciecurve;
+        bool toneMethodcie2;
+        bool ciecurve2;
+        bool chromjzcie;
+        bool saturjzcie;
+        bool huejzcie;
+        bool softjzcie;
+        bool strsoftjzcie;
+        bool thrhjzcie;
+        bool jzcurve;
+        bool czcurve;
+        bool czjzcurve;
+        bool HHcurvejz;
+        bool CHcurvejz;
+        bool LHcurvejz;
+        bool lightlcie;
+        bool lightjzcie;
+        bool lightqcie;
+        bool contlcie;
+        bool contjzcie;
+        bool adapjzcie;
+        bool jz100;
+        bool pqremap;
+        bool pqremapcam16;
+        bool hljzcie;
+        bool hlthjzcie;
+        bool shjzcie;
+        bool shthjzcie;
+        bool radjzcie;
+        bool contthrescie;
+        bool blackEvjz;
+        bool whiteEvjz;
+        bool targetjz;
+        bool sigmoidldacie;
+        bool sigmoidthcie;
+        bool sigmoidblcie;
+        bool sigmoidldajzcie;
+        bool sigmoidthjzcie;
+        bool sigmoidbljzcie;
+        bool contqcie;
+        bool colorflcie;
+/*
+        bool lightlzcam;
+        bool lightqzcam;
+        bool contlzcam;
+        bool contqzcam; 
+        bool contthreszcam;
+        bool colorflzcam;
+        bool saturzcam;
+        bool chromzcam;
+*/
+        bool targabscie;
+        bool targetGraycie;
+        bool catadcie;
+        bool detailcie;
+        bool surroundcie;
+        bool enacieMask;
+        bool CCmaskciecurve;
+        bool LLmaskciecurve;
+        bool HHmaskciecurve;
+        bool blendmaskcie;
+        bool radmaskcie;
+        bool sigmalcjz;
+        bool clarilresjz;
+        bool claricresjz;
+        bool clarisoftjz;
+        bool locwavcurvejz;
+        bool csthresholdjz;
+        bool chromaskcie;
+        bool lapmaskcie;
+        bool gammaskcie;
+        bool slomaskcie;
+        bool Lmaskciecurve;
+        bool recothrescie;
+        bool lowthrescie;
+        bool higthrescie;
+        bool decaycie;
 
         LocallabSpotEdited(bool v);
 
@@ -1076,8 +1196,17 @@ struct ResizeParamsEdited {
     bool dataspec;
     bool width;
     bool height;
+    bool longedge;
+    bool shortedge;
     bool enabled;
     bool allowUpscaling;
+};
+
+class SpotParamsEdited
+{
+public:
+    bool enabled;
+    bool entries;
 };
 
 struct ColorManagementParamsEdited {
@@ -1092,7 +1221,25 @@ struct ColorManagementParamsEdited {
     bool workingTRC;
     bool workingTRCGamma;
     bool workingTRCSlope;
-
+    bool will;
+    bool wprim;
+    bool redx;
+    bool redy;
+    bool grex;
+    bool grey;
+    bool blux;
+    bool bluy;
+    bool preser;
+    bool fbw;
+    bool labgridcieALow;
+    bool labgridcieBLow;
+    bool labgridcieAHigh;
+    bool labgridcieBHigh;
+    bool labgridcieGx;
+    bool labgridcieGy;
+    bool labgridcieWx;
+    bool labgridcieWy;
+    bool aRendIntent;
     bool outputProfile;
     bool outputIntent;
     bool outputBPC;
@@ -1297,6 +1444,7 @@ struct RAWParamsEdited {
         bool pixelShiftShowMotionMaskOnly;
         bool pixelShiftHoleFill;
         bool pixelShiftMedian;
+        bool pixelShiftAverage;
         bool pixelShiftGreen;
         bool pixelShiftBlur;
         bool pixelShiftSmooth;
@@ -1412,6 +1560,7 @@ struct ParamsEdited {
     ChannelMixerParamsEdited chmixer;
     BlackWhiteParamsEdited blackwhite;
     ResizeParamsEdited resize;
+    SpotParamsEdited spot;
     ColorManagementParamsEdited icm;
     RAWParamsEdited raw;
     DirPyrEqualizerParamsEdited dirpyrequalizer;

@@ -49,6 +49,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     shadowshighlights   = Gtk::manage (new ShadowsHighlights ());
     impulsedenoise      = Gtk::manage (new ImpulseDenoise ());
     defringe            = Gtk::manage (new Defringe ());
+    spot                = Gtk::manage (new Spot ());
     dirpyrdenoise       = Gtk::manage (new DirPyrDenoise ());
     epd                 = Gtk::manage (new EdgePreservingDecompositionUI ());
     sharpening          = Gtk::manage (new Sharpening ());
@@ -117,6 +118,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     addfavoritePanel (colorPanel, chmixer);
     addfavoritePanel (colorPanel, blackwhite);
     addfavoritePanel (exposurePanel, shadowshighlights);
+    addfavoritePanel (detailsPanel, spot);
     addfavoritePanel (detailsPanel, sharpening);
     addfavoritePanel (detailsPanel, localContrast);
     addfavoritePanel (detailsPanel, sharpenEdge);
@@ -451,6 +453,33 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
 
 }
 
+void ToolPanelCoordinator::setTweakOperator (rtengine::TweakOperator *tOperator)
+{
+    if (ipc && tOperator) {
+        ipc->setTweakOperator(tOperator);
+    }
+}
+
+void ToolPanelCoordinator::unsetTweakOperator (rtengine::TweakOperator *tOperator)
+{
+    if (ipc && tOperator) {
+        ipc->unsetTweakOperator(tOperator);
+    }
+}
+
+void ToolPanelCoordinator::refreshPreview (const rtengine::ProcEvent& event)
+{
+    if (!ipc) {
+        return;
+    }
+
+    ProcParams* params = ipc->beginUpdateParams ();
+    for (auto toolPanel : toolPanels) {
+        toolPanel->write (params);
+    }
+
+    ipc->endUpdateParams (event);   // starts the IPC processing
+}
 
 void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr)
 {
@@ -526,12 +555,12 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
         ipc->setLocallabMaskVisibility(maskStruc.previewDeltaE, maskStruc.colorMask, maskStruc.colorMaskinv, maskStruc.expMask, maskStruc.expMaskinv,
                 maskStruc.SHMask, maskStruc.SHMaskinv, maskStruc.vibMask, maskStruc.softMask,
                 maskStruc.blMask, maskStruc.tmMask, maskStruc.retiMask, maskStruc.sharMask,
-                maskStruc.lcMask, maskStruc.cbMask, maskStruc.logMask, maskStruc.maskMask);
+                maskStruc.lcMask, maskStruc.cbMask, maskStruc.logMask, maskStruc.maskMask, maskStruc.cieMask);
     } else if (event == rtengine::EvLocallabSpotCreated || event == rtengine::EvLocallabSpotSelectedWithMask ||
             event == rtengine::EvLocallabSpotDeleted || event == rtengine::Evlocallabshowreset ||
             event == rtengine::EvlocallabToolRemovedWithRefresh) {
         locallab->resetMaskVisibility();
-        ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
     ipc->endUpdateParams(changeFlags);    // starts the IPC processing
@@ -641,7 +670,7 @@ void ToolPanelCoordinator::profileChange(
 
     // Reset Locallab mask visibility
     locallab->resetMaskVisibility();
-    ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
     // start the IPC processing
     if (filterRawRefresh) {
@@ -714,6 +743,7 @@ void ToolPanelCoordinator::initImage(rtengine::StagedImageProcessor* ipc_, bool 
         ipc->setpdSharpenAutoRadiusListener (pdSharpening);
         ipc->setAutoWBListener(whitebalance);
         ipc->setAutoColorTonListener(colortoning);
+        ipc->setAutoprimListener(icm);
         ipc->setAutoChromaListener(dirpyrdenoise);
         ipc->setWaveletListener(wavelet);
         ipc->setRetinexListener(retinex);
@@ -992,6 +1022,16 @@ void ToolPanelCoordinator::autoPerspRequested (bool corr_pitch, bool corr_yaw, d
     rtengine::procparams::ProcParams params;
     ipc->getParams(&params);
 
+    // If focal length or crop factor are undetermined, use the defaults.
+    if (params.perspective.camera_focal_length <= 0) {
+        params.perspective.camera_focal_length =
+            PerspectiveParams::DEFAULT_CAMERA_FOCAL_LENGTH;
+    }
+    if (params.perspective.camera_crop_factor <= 0) {
+        params.perspective.camera_crop_factor =
+            PerspectiveParams::DEFAULT_CAMERA_CROP_FACTOR;
+    }
+
     auto res = rtengine::PerspectiveCorrection::autocompute(src, corr_pitch, corr_yaw, &params, src->getMetaData(), lines);
     rot = res.angle;
     pitch = res.pitch;
@@ -1005,16 +1045,6 @@ double ToolPanelCoordinator::autoDistorRequested()
     }
 
     return rtengine::ImProcFunctions::getAutoDistor(ipc->getInitialImage()->getFileName(), 400);
-}
-
-void ToolPanelCoordinator::updateTransformPreviewRequested(rtengine::ProcEvent event, bool render_perspective)
-{
-    if (!ipc) {
-        return;
-    }
-
-    ipc->beginUpdateParams()->perspective.render = render_perspective;
-    ipc->endUpdateParams(event);
 }
 
 void ToolPanelCoordinator::spotWBRequested(int size)

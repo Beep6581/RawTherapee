@@ -534,6 +534,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     curveEditorG->setTooltip (M ("TP_COLORAPP_CURVEEDITOR1_TOOLTIP"));
 
     shape = static_cast<DiagonalCurveEditor*> (curveEditorG->addCurve (CT_Diagonal, "", toneCurveMode));
+ //   shape = static_cast<DiagonalCurveEditor*> (curveEditorG->addCurve (CT_Diagonal, "J(J)"));
 
 
 
@@ -549,6 +550,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     curveEditorG2->setCurveListener (this);
 
     shape2 = static_cast<DiagonalCurveEditor*> (curveEditorG2->addCurve (CT_Diagonal, "", toneCurveMode2));
+//    shape2 = static_cast<DiagonalCurveEditor*> (curveEditorG2->addCurve (CT_Diagonal, "J(J)"));
 
     tcmode2conn = toneCurveMode2->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::curveMode2Changed), true );
 
@@ -835,7 +837,7 @@ void ColorAppearance::neutral_pressed ()
     wbmodel->set_active (0);
     illum->set_active (2);
     toneCurveMode->set_active (0);
-    toneCurveMode2->set_active (0);
+    toneCurveMode2->set_active (1);
     toneCurveMode3->set_active (0);
     shape->reset();
     shape2->reset();
@@ -1398,9 +1400,11 @@ void ColorAppearance::convertParamToNormal()
     wbmodel->set_active (0);
     if (presetcat02->get_active ()) {
         wbmodel->set_active (2);
+        illumChanged();
     }
     if (catmethod->get_active_row_number() == 1  || catmethod->get_active_row_number() == 2) {
             wbmodel->set_active (2);
+        illumChanged();
     }
 
     greenout->setValue(def_params.greenout);
@@ -1456,7 +1460,7 @@ void ColorAppearance::catmethodChanged()
         badpixsl->resetValue (false);
         illum->set_active (2);
         toneCurveMode->set_active (0);
-        toneCurveMode2->set_active (0);
+        toneCurveMode2->set_active (1);
         toneCurveMode3->set_active (0);
         shape->reset();
         shape2->reset();
@@ -1724,7 +1728,7 @@ void ColorAppearance::presetcat02pressed () //keep in case of...
     wbmodel->set_active (0);
     illum->set_active (2);
     toneCurveMode->set_active (0);
-    toneCurveMode2->set_active (0);
+    toneCurveMode2->set_active (1);
     toneCurveMode3->set_active (0);
     shape->reset();
     shape2->reset();

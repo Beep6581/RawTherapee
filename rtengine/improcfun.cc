@@ -960,14 +960,14 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
             c16 = 1;
         }else if (params->colorappearance.modelmethod == "16") {
             c16 = 16;
-        }
-
-        Ciecam02::initcam1float (yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c, c16);
+        } //I don't use PQ here...hence no 21 
+        float plum = 100.f;
+        Ciecam02::initcam1float (yb, pilot, f, la, xw, yw, zw, n, d, nbb, ncb, cz, aw, wh, pfl, fl, c, c16, plum);
         //printf ("wh=%f \n", wh);
 
         const float pow1 = pow_F(1.64f - pow_F(0.29f, n), 0.73f);
         float nj, nbbj, ncbj, czj, awj, flj;
-        Ciecam02::initcam2float (yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj, c16);
+        Ciecam02::initcam2float (yb2, pilotout, f2,  la2,  xw2,  yw2,  zw2, nj, dj, nbbj, ncbj, czj, awj, flj, c16, plum);
 #ifdef __SSE2__
         const float reccmcz = 1.f / (c2 * czj);
 #endif
@@ -1054,11 +1054,13 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     x = x / c655d35;
                     y = y / c655d35;
                     z = z / c655d35;
+                    float plum = 100.f;
+                    vfloat plumv = F2V(plum);
                     Ciecam02::xyz2jchqms_ciecam02float(J, C,  h,
                                                        Q,  M,  s, F2V(aw), F2V(fl), F2V(wh),
                                                        x,  y,  z,
                                                        F2V(xw1), F2V(yw1),  F2V(zw1),
-                                                       F2V(c),  F2V(nc), F2V(pow1), F2V(nbb), F2V(ncb), F2V(pfl), F2V(cz), F2V(d), c16);
+                                                       F2V(c),  F2V(nc), F2V(pow1), F2V(nbb), F2V(ncb), F2V(pfl), F2V(cz), F2V(d), c16, plumv);
                     STVF(Jbuffer[k], J);
                     STVF(Cbuffer[k], C);
                     STVF(hbuffer[k], h);
@@ -1082,7 +1084,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                                                        Q,  M,  s, aw, fl, wh,
                                                        x,  y,  z,
                                                        xw1, yw1,  zw1,
-                                                         c,  nc, pow1, nbb, ncb, pfl, cz, d, c16);
+                                                         c,  nc, pow1, nbb, ncb, pfl, cz, d, c16, plum);
                     Jbuffer[k] = J;
                     Cbuffer[k] = C;
                     hbuffer[k] = h;
@@ -1120,7 +1122,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                                                        Q,  M,  s, aw, fl, wh,
                                                        x,  y,  z,
                                                        xw1, yw1,  zw1,
-                                                         c,  nc, pow1, nbb, ncb, pfl, cz, d, c16);
+                                                         c,  nc, pow1, nbb, ncb, pfl, cz, d, c16, plum);
 #endif
                     float Jpro, Cpro, hpro, Qpro, Mpro, spro;
                     Jpro = J;
@@ -1129,7 +1131,28 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     Qpro = Q;
                     Mpro = M;
                     spro = s;
-
+                    bool jp = false;
+                    if ((hasColCurve1) && (curveMode == ColorAppearanceParams::TcMode::BRIGHT)) {
+                        jp = true;
+                        float Qq = Qpro * coefQ;
+                        float Qold = Qpro;
+                        const Brightcurve& userColCurveB1 = static_cast<const Brightcurve&>(customColCurve1);
+                        userColCurveB1.Apply(Qq);
+                        Qq = Qq / coefQ;
+                        Qpro = 0.2f * (Qq - Qold) + Qold;
+                    }
+                    if ((hasColCurve2) && (curveMode2 == ColorAppearanceParams::TcMode::BRIGHT)) {
+                        jp = true;
+                        float Qq2 = Qpro * coefQ;
+                        float Qold2 = Qpro;
+                        const Brightcurve& userColCurveB2 = static_cast<const Brightcurve&>(customColCurve2);
+                        userColCurveB2.Apply(Qq2);
+                        Qq2 = Qq2 / coefQ;
+                        Qpro = 0.2f * (Qq2 - Qold2) + Qold2;
+                        }
+                    if(jp) {
+                        Jpro = SQR((10.f * Qpro) / wh);
+                    }
                     // we cannot have all algorithms with all chroma curves
                     if (alg == 0) {
                         Jpro = CAMBrightCurveJ[Jpro * 327.68f]; //lightness CIECAM02 + contrast
@@ -1216,8 +1239,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         }
                     }
 
-                    if (hasColCurve1) {//curve 1 with Lightness and Brightness
-                        if (curveMode == ColorAppearanceParams::TcMode::LIGHT) {
+                    if (hasColCurve1 && (curveMode == ColorAppearanceParams::TcMode::LIGHT)) {
                             float Jj = (float) Jpro * 327.68f;
                             float Jold = Jj;
                             float Jold100 = (float) Jpro;
@@ -1246,50 +1268,9 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             if (Jpro < 1.f) {
                                 Jpro = 1.f;
                             }
-                        } else if (curveMode == ColorAppearanceParams::TcMode::BRIGHT) {
-                            //attention! Brightness curves are open - unlike Lightness or Lab or RGB==> rendering  and algorithms will be different
-                            float coef = ((aw + 4.f) * (4.f / c)) / 100.f;
-                            float Qanc = Qpro;
-                            float Qq = (float) Qpro * 327.68f * (1.f / coef);
-                            float Qold100 = (float) Qpro / coef;
-
-                            float Qold = Qq;
-                            float redu = 20.f;
-                            float reduc = 1.f;
-
-                            const Brightcurve& userColCurveB1 = static_cast<const Brightcurve&>(customColCurve1);
-                            userColCurveB1.Apply(Qq);
-
-                            if (Qq > Qold) {
-                                if (Qq < 65535.f)  {
-                                    if (Qold < 327.68f * redu) {
-                                        Qq = 0.25f * (Qq - Qold) + Qold;    //divide sensibility
-                                    } else            {
-                                        reduc = LIM((100.f - Qold100) / (100.f - redu), 0.f, 1.f);
-                                        Qq = 0.25f * reduc * (Qq - Qold) + Qold; //reduct sensibility in highlights
-                                    }
-                                }
-                            } else if (Qq > 10.f) {
-                                Qq = 0.5f * (Qq - Qold) + Qold;
-                            } else if (Qq >= 0.f) {
-                                Qq = 0.7f * (Qq - Qold) + Qold;    // not zero ==>artifacts
-                            }
-
-                            if (Qold == 0.f) {
-                                Qold = 0.001f;
-                            }
-
-                            Qpro = Qanc * (Qq / Qold);
-                            Jpro = SQR ((10.f * Qpro) / wh);
-
-                            if (Jpro < 1.f) {
-                                Jpro = 1.f;
-                            }
-                        }
                     }
 
-                    if (hasColCurve2) {//curve 2 with Lightness and Brightness
-                        if (curveMode2 == ColorAppearanceParams::TcMode::LIGHT) {
+                    if (hasColCurve2 &&  (curveMode2 == ColorAppearanceParams::TcMode::LIGHT)) {
                             float Jj = (float) Jpro * 327.68f;
                             float Jold = Jj;
                             float Jold100 = (float) Jpro;
@@ -1326,58 +1307,6 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             if (Jpro < 1.f) {
                                 Jpro = 1.f;
                             }
-
-                        } else if (curveMode2 == ColorAppearanceParams::TcMode::BRIGHT) { //
-                            float Qanc = Qpro;
-
-                            float coef = ((aw + 4.f) * (4.f / c)) / 100.f;
-                            float Qq = (float) Qpro * 327.68f * (1.f / coef);
-                            float Qold100 = (float) Qpro / coef;
-
-                            float Qold = Qq;
-                            float redu = 20.f;
-                            float reduc = 1.f;
-
-                            const Brightcurve& userColCurveB2 = static_cast<const Brightcurve&>(customColCurve2);
-                            userColCurveB2.Apply(Qq);
-
-                            if (Qq > Qold) {
-                                if (Qq < 65535.f)  {
-                                    if (Qold < 327.68f * redu) {
-                                        Qq = 0.25f * (Qq - Qold) + Qold;    //divide sensibility
-                                    } else            {
-                                        reduc = LIM((100.f - Qold100) / (100.f - redu), 0.f, 1.f);
-                                        Qq = 0.25f * reduc * (Qq - Qold) + Qold; //reduct sensibility in highlights
-                                    }
-                                }
-                            } else if (Qq > 10.f) {
-                                Qq = 0.5f * (Qq - Qold) + Qold;
-                            } else if (Qq >= 0.f) {
-                                Qq = 0.7f * (Qq - Qold) + Qold;    // not zero ==>artifacts
-                            }
-
-                            if (Qold == 0.f) {
-                                Qold = 0.001f;
-                            }
-
-                            Qpro = Qanc * (Qq / Qold);
-                            Jpro = SQR ((10.f * Qpro) / wh);
-
-                            if (t1L) { //to workaround the problem if we modify curve1-lightnees after curve2 brightness(the cat that bites its own tail!) in fact it's another type of curve only for this case
-                                coef = 2.f; //adapt Q to J approximation
-                                Qq = (float) Qpro * coef;
-                                Qold = Qq;
-                                const Lightcurve& userColCurveJ1 = static_cast<const Lightcurve&>(customColCurve1);
-                                userColCurveJ1.Apply(Qq);
-                                Qq = 0.05f * (Qq - Qold) + Qold; //approximative adaptation
-                                Qpro = (float)(Qq / coef);
-                                Jpro = 100.f * (Qpro * Qpro) / ((4.0f / c) * (4.0f / c) * (aw + 4.0f) * (aw + 4.0f));
-                            }
-
-                            if (Jpro < 1.f) {
-                                Jpro = 1.f;
-                            }
-                        }
                     }
 
                     if (hasColCurve3) {//curve 3 with chroma saturation colorfullness
@@ -1531,7 +1460,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                             Ciecam02::jch2xyz_ciecam02float(xx, yy, zz,
                                                             J,  C, h,
                                                             xw2, yw2,  zw2,
-                                                              c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj, c16);
+                                                              c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj, c16, plum);
                             float x, y, z;
                             x = xx * 655.35f;
                             y = yy * 655.35f;
@@ -1583,7 +1512,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                     Ciecam02::jch2xyz_ciecam02float(x, y, z,
                                                     LVF(Jbuffer[k]), LVF(Cbuffer[k]), LVF(hbuffer[k]),
                                                     F2V(xw2), F2V(yw2), F2V(zw2),
-                                                    F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz), c16);
+                                                    F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz), c16, F2V(plum));
                     STVF(xbuffer[k], x * c655d35);
                     STVF(ybuffer[k], y * c655d35);
                     STVF(zbuffer[k], z * c655d35);
@@ -1840,7 +1769,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         Ciecam02::jch2xyz_ciecam02float(xx, yy, zz,
                                                         ncie->J_p[i][j],  ncie_C_p, ncie->h_p[i][j],
                                                         xw2, yw2,  zw2,
-                                                          c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj, c16);
+                                                          c2, nc2, pow1n, nbbj, ncbj, flj, czj, dj, awj, c16, plum);
                         float x = (float)xx * 655.35f;
                         float y = (float)yy * 655.35f;
                         float z = (float)zz * 655.35f;
@@ -1888,7 +1817,7 @@ void ImProcFunctions::ciecam_02float(CieImage* ncie, float adap, int pW, int pwb
                         Ciecam02::jch2xyz_ciecam02float(x, y, z,
                                                         LVF(Jbuffer[k]), LVF(Cbuffer[k]), LVF(hbuffer[k]),
                                                         F2V(xw2), F2V(yw2), F2V(zw2),
-                                                        F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz), c16);
+                                                        F2V(nc2), F2V(pow1n), F2V(nbbj), F2V(ncbj), F2V(flj), F2V(dj), F2V(awj), F2V(reccmcz), c16, F2V(plum));
                         x *= c655d35;
                         y *= c655d35;
                         z *= c655d35;
@@ -3582,21 +3511,13 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
     }
 
     if (sCurveEnabled) {
-        delete sCurve;
+        delete sCurve; 
     }
 
     if (vCurveEnabled) {
         delete vCurve;
     }
 
-  //  shadowsHighlights(lab);
- //   shadowsHighlights(lab, params->sh.enabled, params->sh.lab,params->sh.highlights ,params->sh.shadows, params->sh.radius, scale, params->sh.htonalwidth, params->sh.stonalwidth);
-/*
-    if (params->localContrast.enabled) {
-        // Alberto's local contrast
-        localContrast(lab, lab->L, params->localContrast, false, scale);
-    }
-    */
 }
 
 /**
@@ -3691,7 +3612,7 @@ void ImProcFunctions::secondeg_begin(float reducac, float vend, float &aam, floa
 * @param RedHigh   [-1..1] value after transformations of sliders [-100..100] for highlights
 * @param GreenHigh [-1..1] value after transformations of sliders [-100..100] for highlights
 * @param BlueHigh  [-1..1] value after transformations of sliders [-100..100] for highlights
-* @param reducac value of the reduction in the middle of the range for second degree increse or decrease action
+* @param reducac value of the reduction in the middle of the range for second degree increase or decrease action
 * @param mode 0 = colour, 1 = Black and White
 * @param strProtect ?
 **/

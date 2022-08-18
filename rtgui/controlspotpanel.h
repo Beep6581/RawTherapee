@@ -34,6 +34,7 @@ public:
     virtual ~ControlPanelListener() {};
 
     virtual void resetToolMaskView() = 0;
+    virtual void spotNameChanged(const Glib::ustring &newName) = 0;
 };
 
 
@@ -85,6 +86,7 @@ public:
         bool laplac;
         bool deltae;
         int scopemask;
+        double denoichmask;
         bool shortc;
         int lumask;
         bool savrest;
@@ -267,7 +269,7 @@ private:
     void updateControlSpotCurve(const Gtk::TreeModel::Row& row);
     void deleteControlSpotCurve(Gtk::TreeModel::Row& row);
     void updateCurveOpacity(const Gtk::TreeModel::Row& selectedRow);
-    CursorShape getCursor(int objectID) const override;
+    CursorShape getCursor(int objectID, int xPos, int yPos) const override;
     bool mouseOver(int modifierKey) override;
     bool button1Pressed(int modifierKey) override;
     bool button1Released() override;
@@ -320,6 +322,7 @@ private:
         Gtk::TreeModelColumn<bool> laplac;
         Gtk::TreeModelColumn<bool> deltae;
         Gtk::TreeModelColumn<int> scopemask;
+        Gtk::TreeModelColumn<int> denoichmask;
         Gtk::TreeModelColumn<bool> shortc;
         Gtk::TreeModelColumn<int> lumask;
         Gtk::TreeModelColumn<bool> savrest;
@@ -401,6 +404,7 @@ private:
     Adjuster* const colorscope_;
     Adjuster* const avoidrad_;
     Adjuster* const scopemask_;
+    Adjuster* const denoichmask_;
     Adjuster* const lumask_;
 
     Gtk::CheckButton* const hishow_;

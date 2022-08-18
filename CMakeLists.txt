@@ -44,8 +44,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION
             "Building RawTherapee requires using GCC version 4.9 or higher!")
 endif()
 
-# Warning for GCC 10, which causes problems #5749:
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "10.1")
+# Warning for GCC vectorization issues, which causes problems #5749 and #6384:
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND ((CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "10.0" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "10.2") OR (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "11.0")))
     message(STATUS "WARNING: gcc ${CMAKE_CXX_COMPILER_VERSION} is known to miscompile RawTherapee when using -ftree-loop-vectorize, forcing the option to be off")    
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-tree-loop-vectorize")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-tree-loop-vectorize")
@@ -175,7 +175,7 @@ if(APPLE) # TODO make -mtune generic conditional and/or specifiable.
     if(CMAKE_CXX_COMPILER MATCHES "g\\+\\+-mp-4.[5-8]"
        OR CMAKE_CXX_COMPILER_ARG1 MATCHES "g\\+\\+-mp-4.[5-8]")
         set(CMAKE_EXE_LINKER_FLAGS
-            "${CMAKE_EXE_LINKER_FLAGS} /usr/lib/libstdc++.6.dylib -Wl,-headerpad_max_install_names -mtune=generic"
+            "${CMAKE_EXE_LINKER_FLAGS} /usr/lib/libstdc++.6.dylib -Wl,-headerpad_max_install_names -mtune=generic -framework Foundation"
         )
         message(
             STATUS
@@ -190,7 +190,7 @@ if(APPLE) # TODO make -mtune generic conditional and/or specifiable.
     set(CMAKE_C_FLAGS
         "${CMAKE_C_FLAGS} -mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
     set(CMAKE_EXE_LINKER_FLAGS
-        "${CMAKE_EXE_LINKER_FLAGS} -Wl,-headerpad_max_install_names -mtune=generic"
+        "${CMAKE_EXE_LINKER_FLAGS} -Wl,-headerpad_max_install_names -mtune=generic -framework Foundation"
     )
 endif()
 
@@ -304,7 +304,7 @@ endif()
 if(NOT DEFINED CREDITSDIR)
     if(BUILD_BUNDLE)
         if(APPLE)
-            set(CREDITSDIR "${DATADIR}")
+            set(CREDITSDIR "${DATADIR}/..")
         else()
             set(CREDITSDIR "${DATADIR}")
         endif()
@@ -371,6 +371,8 @@ if(NOT APPLE)
     if(DEFINED LENSFUNDBDIR AND NOT IS_ABSOLUTE "${LENSFUNDBDIR}")
         set(LENSFUNDBDIR "${DATADIR}/${LENSFUNDBDIR}")
     endif()
+else()
+    set(LENSFUNDBDIR "${LENSFUNDBDIR}")
 endif()
 
 if(APPLE)
@@ -387,11 +389,11 @@ if(APPLE)
     if("${LOCAL_PREFIX}")
         set(LOCAL_PREFIX
             "${LOCAL_PREFIX}"
-            CACHE STRING "macos/gtk parent directory ie /usr or /opt")
+            CACHE STRING "macos/gtk parent directory ie /usr/local or /opt/local or /opt/homebrew (for arm64)")
     else()
         set(LOCAL_PREFIX
-            /usr
-            CACHE STRING "macos/gtk parent directory ie /usr or /opt")
+            /usr/local
+            CACHE STRING "macos/gtk parent directory ie /usr/local (default) or /opt/local (macports) or /opt/homebrew (for arm64)")
     endif()
     if("${FANCY_DMG}")
         set(FANCY_DMG
@@ -486,6 +488,12 @@ endif()
 pkg_check_modules(LCMS REQUIRED lcms2>=2.6)
 pkg_check_modules(EXPAT REQUIRED expat>=2.1)
 pkg_check_modules(FFTW3F REQUIRED fftw3f)
+
+#Set the appropriate FFTW flags on macOS
+if(APPLE AND OPTION_OMP)
+        set(EXTRA_LIB "-L${LOCAL_PREFIX}/lib -lfftw3f_omp -lfftw3f -lm")
+endif()
+
 pkg_check_modules(IPTCDATA REQUIRED libiptcdata)
 find_package(TIFF 4.0.4 REQUIRED)
 find_package(JPEG REQUIRED)
@@ -686,11 +694,18 @@ elseif(APPLE)
          ${CMAKE_COMMAND}
              -DPROJECT_SOURCE_DIR:STRING=${PROJECT_SOURCE_DIR}
              -DCACHE_NAME_SUFFIX:STRING=${CACHE_NAME_SUFFIX}
-             -P ${PROJECT_SOURCE_DIR}/UpdateInfo.cmake
              -DSYSTEM:STRING=Apple
              -DCXX_FLAGS:STRING=${CXX_FLAGS}
              -DLFLAGS:STRING=${LFLAGS}
-             -DCOMPILER_INFO:STRING=${COMPILER_INFO})    
+             -DCOMPILER_INFO:STRING=${COMPILER_INFO}
+             -DPROC_LABEL:STRING="${PROC_LABEL}"
+             -DPROC_BIT_DEPTH:STRING="${PROC_BIT_DEPTH}"
+             -DBUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+             -DGTKMM_VERSION:STRING=${GTKMM_VERSION}
+             -DOPTION_OMP:STRING=${OPTION_OMP}
+             -DWITH_MYFILE_MMAP:STRING=${WITH_MYFILE_MMAP}
+             -DLENSFUN_VERSION:STRING=${LENSFUN_VERSION}
+             -P ${PROJECT_SOURCE_DIR}/UpdateInfo.cmake)
 else()
     list(APPEND ABOUT_COMMAND_WITH_ARGS -DSYSTEM:STRING=Linux
          -DCXX_FLAGS:STRING=${CXX_FLAGS} -DLFLAGS:STRING=${LFLAGS}
@@ -776,7 +791,14 @@ if(ENABLE_TCMALLOC)
         find_library(TCMALLOC_LIBRARIES tcmalloc PATHS ${TCMALLOC_LIB_DIR}
                                                        NO_DEFAULT_PATH)
     else()
-        find_library(TCMALLOC_LIBRARIES tcmalloc)
+        # On Debian libtcmalloc-minimal4 has no .so symlink, so let's adjust for that
+        set(OLD_CMAKE_FIND_LIBRARY_SUFFIXES "${CMAKE_FIND_LIBRARY_SUFFIXES}")
+        list(APPEND CMAKE_FIND_LIBRARY_SUFFIXES ".so.4")
+
+        find_library(TCMALLOC_LIBRARIES NAMES tcmalloc tcmalloc_minimal)
+
+        set(CMAKE_FIND_LIBRARY_SUFFIXES "${OLD_CMAKE_FIND_LIBRARY_SUFFIXES}")
+        unset(OLD_CMAKE_FIND_LIBRARY_SUFFIXES)
     endif()
     if(TCMALLOC_LIBRARIES)
         message(STATUS "using tcmalloc library in ${TCMALLOC_LIBRARIES}")

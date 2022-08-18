@@ -549,7 +549,7 @@ dfInfo* rtengine::DFManager::Implementation::addFileInfo(const Glib::ustring& fi
 
         auto info = file->query_info("standard::name,standard::type,standard::is-hidden");
 
-        if (!info && info->get_file_type() == Gio::FILE_TYPE_DIRECTORY) {
+        if (!info || info->get_file_type() == Gio::FILE_TYPE_DIRECTORY) {
             return nullptr;
         }
 
@@ -640,7 +640,7 @@ dfInfo* rtengine::DFManager::Implementation::find(const std::string& mak, const 
 
 int rtengine::DFManager::Implementation::scanBadPixelsFile(const Glib::ustring& filename)
 {
-    FILE *file = fopen(filename.c_str(), "r");
+    FILE *file = ::fopen( filename.c_str(), "r" );
 
     if (!file) {
         return 0;

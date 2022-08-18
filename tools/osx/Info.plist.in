@@ -5,14 +5,10 @@
         <dict>
             <key>XDG_DATA_DIRS</key>
             <string>/Applications/RawTherapee.app/Contents/Resources/share</string>
-            <key>DYLD_FALLBACK_LIBRARY_PATH</key>
-            <string>/Applications/RawTherapee.app/Contents/Frameworks</string>
             <key>GTK_PATH</key>
             <string>/Applications/RawTherapee.app/Contents/Frameworks</string>
             <key>GTK_IM_MODULE_FILE</key>
             <string>/Applications/RawTherapee.app/Contents/Resources/etc/gtk-3.0/gtk.immodules</string>
-            <key>GTK_MODULES</key>
-            <string>/Applications/RawTherapee.app/Contents/Frameworks/im-quartz.so</string>
             <key>XDG_DATA_HOME</key>
             <string>/Applications/RawTherapee.app/Contents/Resources/share</string>
             <key>GSETTINGS_SCHEMA_DIR</key>
@@ -21,8 +17,6 @@
             <string>/Applications/RawTherapee.app/Contents/Resources/etc/gtk-3.0/gdk-pixbuf.loaders</string>
             <key>GDK_PIXBUF_MODULEDIR</key>
             <string>/Applications/RawTherapee.app/Contents/Frameworks</string>
-            <key>FONTCONFIG_PATH</key>
-            <string>/Applications/RawTherapee.app/Contents/Resources/etc/fonts</string>
             <key>LIBDIR</key>
             <string>/Applications/RawTherapee.app/Contents/Frameworks</string>
             <key>DATADIR</key>
@@ -31,17 +25,13 @@
             <string>similar</string>
             <key>GTK_OVERLAY_SCROLLING</key>
             <string>0</string>
-            <key>GDK_NATIVE_WINDOWS</key>
-            <string>1</string>
         </dict>
-        <key>ATSApplicationFontsPath</key>
-        <string>etc/fonts</string>
         <key>LSMultipleInstancesProhibited</key>
         <true />
         <key>LSMinimumSystemVersion</key>
         <string>@minimum_macos_version@</string>
-        <key>CFBundleDevelopmentRegion</key>
-        <string>English</string>
+        <key>CFBundleAllowMixedLocalizations</key>
+        <true />
         <key>CFBundleDisplayName</key>
         <string>RawTherapee</string>
         <key>CFBundleDocumentTypes</key>

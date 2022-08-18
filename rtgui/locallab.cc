@@ -150,21 +150,7 @@ Locallab::Locallab():
     // Tool list widget
     toollist(Gtk::manage(new LocallabToolList())),
 
-    // Create Locallab tools
-    expcolor(Gtk::manage(new LocallabColor())),
-    expexpose(Gtk::manage(new LocallabExposure())),
-    expshadhigh(Gtk::manage(new LocallabShadow())),
-    expvibrance(Gtk::manage(new LocallabVibrance())),
-    expsoft(Gtk::manage(new LocallabSoft())),
-    expblur(Gtk::manage(new LocallabBlur())),
-    exptonemap(Gtk::manage(new LocallabTone())),
-    expreti(Gtk::manage(new LocallabRetinex())),
-    expsharp(Gtk::manage(new LocallabSharp())),
-    expcontrast(Gtk::manage(new LocallabContrast())),
-    expcbdl(Gtk::manage(new LocallabCBDL())),
-    explog(Gtk::manage(new LocallabLog())),
-    expmask(Gtk::manage(new LocallabMask())),
-
+  //  expcie(Gtk::manage(new Locallabcie())),
     // Other widgets
     resetshowButton(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_RESETSHOW"))))
 {
@@ -190,19 +176,20 @@ Locallab::Locallab():
     // Add Locallab tools to panel widget
     ToolVBox* const toolpanel = Gtk::manage(new ToolVBox());
     toolpanel->set_name("LocallabToolPanel");
-    addTool(toolpanel, expcolor);
-    addTool(toolpanel, expshadhigh);
-    addTool(toolpanel, expvibrance);
-    addTool(toolpanel, explog);
-    addTool(toolpanel, expexpose);
-    addTool(toolpanel, expmask);
-    addTool(toolpanel, expsoft);
-    addTool(toolpanel, expblur);
-    addTool(toolpanel, exptonemap);
-    addTool(toolpanel, expreti);
-    addTool(toolpanel, expsharp);
-    addTool(toolpanel, expcontrast);
-    addTool(toolpanel, expcbdl);
+    addTool(toolpanel, &expcolor);
+    addTool(toolpanel, &expshadhigh);
+    addTool(toolpanel, &expvibrance);
+    addTool(toolpanel, &explog);
+    addTool(toolpanel, &expcie);
+    addTool(toolpanel, &expexpose);
+    addTool(toolpanel, &expmask);
+    addTool(toolpanel, &expsoft);
+    addTool(toolpanel, &expblur);
+    addTool(toolpanel, &exptonemap);
+    addTool(toolpanel, &expreti);
+    addTool(toolpanel, &expsharp);
+    addTool(toolpanel, &expcontrast);
+    addTool(toolpanel, &expcbdl);
     panel->pack_start(*toolpanel, false, false);
 
     // Add separator
@@ -326,6 +313,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         r->laplac = true; //pp->locallab.spots.at(i).laplac;
         r->deltae = pp->locallab.spots.at(i).deltae;
         r->scopemask = pp->locallab.spots.at(i).scopemask;
+        r->denoichmask = pp->locallab.spots.at(i).denoichmask;
         r->shortc = pp->locallab.spots.at(i).shortc;
         r->lumask = pp->locallab.spots.at(i).lumask;
         r->savrest = pp->locallab.spots.at(i).savrest;
@@ -356,6 +344,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
     // Select active spot
     if (pp->locallab.spots.size() > 0) {
         expsettings->setSelectedSpot(pp->locallab.selspot);
+        spotName = pp->locallab.spots.at(pp->locallab.selspot).name;
     }
 
     // Update each Locallab tools GUI
@@ -506,6 +495,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->laplac = newSpot->laplac;
             r->deltae = newSpot->deltae;
             r->scopemask = newSpot->scopemask;
+            r->denoichmask = newSpot->denoichmask;
             r->shortc = newSpot->shortc;
             r->lumask = newSpot->lumask;
             r->savrest = newSpot->savrest;
@@ -541,6 +531,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             // Update Locallab tools GUI with new created spot
             disableListener();
+
+            spotName = pp->locallab.spots.at(pp->locallab.selspot).name;
 
             for (auto tool : locallabTools) {
                 tool->read(pp, pedited);
@@ -598,6 +590,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     // Update Locallab tools GUI with selected spot
                     disableListener();
 
+                    if (pp->locallab.spots.size() > 0) {
+                        spotName = pp->locallab.spots.at(pp->locallab.selspot).name;
+                    }
+
                     for (auto tool : locallabTools) {
                         tool->read(pp, pedited);
                     }
@@ -638,6 +634,10 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             expsettings->setSelectedSpot(pp->locallab.selspot);
             disableListener();
 
+            if (pp->locallab.spots.size() > 0) {
+                spotName = pp->locallab.spots.at(pp->locallab.selspot).name;
+            }
+
             for (auto tool : locallabTools) {
                 tool->read(pp, pedited);
             }
@@ -655,18 +655,19 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     toollist->addToolRow(tool->getToolName(), toolNb);
                 }
             }
-
+/*
             // Update locallab tools mask background
             if (pp->locallab.selspot < (int)maskBackRef.size()) {
                 const double huer = maskBackRef.at(pp->locallab.selspot).huer;
                 const double lumar = maskBackRef.at(pp->locallab.selspot).lumar;
                 const double chromar = maskBackRef.at(pp->locallab.selspot).chromar;
+                const float fab = maskBackRef.at(pp->locallab.selspot).fab;
 
                 for (auto tool : locallabTools) {
-                    tool->refChanged(huer, lumar, chromar);
+                    tool->refChanged(huer, lumar, chromar, fab);
                 }
             }
-
+*/
             // Update Locallab Retinex tool min/max
             if (pp->locallab.selspot < (int)retiMinMax.size()) {
                 const double cdma = retiMinMax.at(pp->locallab.selspot).cdma;
@@ -678,7 +679,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                 const double Tmin = retiMinMax.at(pp->locallab.selspot).Tmin;
                 const double Tmax = retiMinMax.at(pp->locallab.selspot).Tmax;
 
-                expreti->updateMinMax(cdma, cdmin, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+                expreti.updateMinMax(cdma, cdmin, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
             }
 
             // Update default values according to selected spot
@@ -740,6 +741,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             } else {
                 r->shapeMethod = 3;
             }
+            //printf("n0=%f n1=%f n2=%f n3=%f\n", (double) newSpot->loc.at(0), (double) newSpot->loc.at(1), (double) newSpot->loc.at(2), (double) newSpot->loc.at(3));
 
             // Calculate spot size and center position according to preview area
             if (provider && !batchMode) {
@@ -752,17 +754,27 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     newSpot->centerX = rtengine::LIM(int(int((double)prX - (double)imW / 2.) * 2000. / (double)imW), -1000, 1000);
                     newSpot->centerY = rtengine::LIM(int(int((double)prY - (double)imH / 2.) * 2000. / (double)imH), -1000, 1000);
                     // Ellipse/rectangle size computation
+                    /*
                     newSpot->loc.at(0) = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->loc.at(0));
                     newSpot->loc.at(1) = rtengine::LIM(int(((double)prW / 2. - 5.) * 2000. / (double)imW), 2, newSpot->loc.at(1));
                     newSpot->loc.at(2) = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->loc.at(2));
                     newSpot->loc.at(3) = rtengine::LIM(int(((double)prH / 2. - 5.) * 2000. / (double)imH), 2, newSpot->loc.at(3));
+                    */
                 }
             }
 
-            r->locX = newSpot->loc.at(0);
-            r->locXL = newSpot->loc.at(1);
-            r->locY = newSpot->loc.at(2);
-            r->locYT = newSpot->loc.at(3);
+            if(r->spotMethod != 2) {
+                r->locX = newSpot->loc.at(0);
+                r->locXL = newSpot->loc.at(1);
+                r->locY = newSpot->loc.at(2);
+                r->locYT = newSpot->loc.at(3);
+            } else {
+                r->locX = 3000.;
+                r->locXL = 3000.;
+                r->locY = 3000.;
+                r->locYT = 3000.;
+            }
+
             r->centerX = newSpot->centerX;
             r->centerY = newSpot->centerY;
 
@@ -794,6 +806,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->laplac = newSpot->laplac;
             r->deltae = newSpot->deltae;
             r->scopemask = newSpot->scopemask;
+            r->denoichmask = newSpot->denoichmask;
             r->shortc = newSpot->shortc;
             r->lumask = newSpot->lumask;
             r->savrest = newSpot->savrest;
@@ -830,6 +843,8 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
 
             // Update Locallab tools GUI with new created spot
             disableListener();
+
+            spotName = pp->locallab.spots.at(pp->locallab.selspot).name;
 
             for (auto tool : locallabTools) {
                 tool->read(pp, pedited);
@@ -947,6 +962,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).laplac = r->laplac;
                     pp->locallab.spots.at(pp->locallab.selspot).deltae = r->deltae;
                     pp->locallab.spots.at(pp->locallab.selspot).scopemask = r->scopemask;
+                    pp->locallab.spots.at(pp->locallab.selspot).denoichmask = r->denoichmask;
                     pp->locallab.spots.at(pp->locallab.selspot).shortc = r->shortc;
                     pp->locallab.spots.at(pp->locallab.selspot).lumask = r->lumask;
                     pp->locallab.spots.at(pp->locallab.selspot).savrest = r->savrest;
@@ -1027,21 +1043,37 @@ void Locallab::minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int 
         const double cdmin = retiMinMax.at(selspot).cdmin;
         const double mini = retiMinMax.at(selspot).mini;
         const double maxi = retiMinMax.at(selspot).maxi;
-        const double Tmean = retiMinMax.at(selspot).Tmean;
+        const  double Tmean = retiMinMax.at(selspot).Tmean;
         const double Tsigma = retiMinMax.at(selspot).Tsigma;
         const double Tmin = retiMinMax.at(selspot).Tmin;
         const double Tmax = retiMinMax.at(selspot).Tmax;
 
-        expreti->updateMinMax(cdma, cdmin, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
+        expreti.updateMinMax(cdma, cdmin, mini, maxi, Tmean, Tsigma, Tmin, Tmax);
     }
 }
 
-void Locallab::logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg)
+void Locallab::logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1)
 {
-    // Update Locallab Log Encoding accordingly
-    explog->updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg);
-}
+    // Update Locallab Log Encoding and Ciecam accordingly
+    if(autocomput) {
+        explog.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg, jz1);
+    }
+    if(autocie) {
+        expcie.updateAutocompute(blackev, whiteev, sourceg, sourceab, targetg, jz1);
+    }
 
+}
+void Locallab::refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot)
+{
+        const double huer = huerefp[selspot];
+        const double lumar = lumarefp[selspot];
+        const double chromar = chromarefp[selspot];
+        const float fab = fabrefp[selspot];
+        for (auto tool : locallabTools) {
+            tool->refChanged(huer, lumar, chromar, fab);
+        }
+}
+/*
 void Locallab::refChanged(const std::vector<locallabRef> &ref, int selspot)
 {
     // Saving transmitted mask background data
@@ -1052,13 +1084,14 @@ void Locallab::refChanged(const std::vector<locallabRef> &ref, int selspot)
         const double huer = maskBackRef.at(selspot).huer;
         const double lumar = maskBackRef.at(selspot).lumar;
         const double chromar = maskBackRef.at(selspot).chromar;
+        const float fab = maskBackRef.at(selspot).fab;
 
         for (auto tool : locallabTools) {
-            tool->refChanged(huer, lumar, chromar);
+            tool->refChanged(huer, lumar, chromar, fab);
         }
     }
 }
-
+*/
 void Locallab::resetMaskVisibility()
 {
     // Indicate to spot control panel that no more mask preview is active
@@ -1079,20 +1112,20 @@ Locallab::llMaskVisibility Locallab::getMaskVisibility() const
     const bool prevDeltaE = expsettings->isDeltaEPrevActive();
 
     // Get mask preview from Locallab tools
-    int colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, logMask, maskMask;
+    int colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, logMask, maskMask, cieMask;
 
     for (auto tool : locallabTools) {
-        tool->getMaskView(colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, logMask, maskMask);
+        tool->getMaskView(colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, logMask, maskMask, cieMask);
     }
 
     // Indicate to spot control panel if one mask preview is active
     const bool isMaskActive = (colorMask == 0) || (colorMaskinv == 0) || (expMask == 0) || (expMaskinv == 0) ||
                               (shMask == 0) || (shMaskinv == 0) || (vibMask == 0) || (softMask == 0) ||
                               (blMask == 0) || (tmMask == 0) || (retiMask == 0) || (sharMask == 0) ||
-                              (lcMask == 0) || (cbMask == 0) || (logMask == 0) || (maskMask == 0);
+                              (lcMask == 0) || (cbMask == 0) || (logMask == 0) || (maskMask == 0) || (cieMask == 0);
     expsettings->setMaskPrevActive(isMaskActive);
 
-    return {prevDeltaE, colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, logMask, maskMask};
+    return {prevDeltaE, colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, logMask, maskMask, cieMask};
 }
 
 void Locallab::resetshowPressed()
@@ -1169,12 +1202,18 @@ void Locallab::updateShowtooltipVisibility(bool showtooltip)
     }
 }
 
+void Locallab::spotNameChanged(const Glib::ustring &newName)
+{
+    spotName = newName;
+}
+
 void Locallab::addTool(Gtk::Box* where, LocallabTool* tool)
 {
     tool->getExpander()->setLevel(3);
     where->pack_start(*tool->getExpander(), false, false);
     locallabTools.push_back(tool);
     tool->setLocallabToolListener(this);
+    tool->setSpotNameSource(&spotName);
 }
 
 void Locallab::setParamEditable(bool cond)

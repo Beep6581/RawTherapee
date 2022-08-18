@@ -76,6 +76,7 @@
 #include "sharpening.h"
 #include "sharpenmicro.h"
 #include "softlight.h"
+#include "spot.h"
 #include "tonecurve.h"
 #include "toolbar.h"
 #include "toolpanel.h"
@@ -133,6 +134,7 @@ protected:
     ToneCurve* toneCurve;
     ShadowsHighlights* shadowshighlights;
     LocalContrast *localContrast;
+    Spot* spot;
     Defringe* defringe;
     ImpulseDenoise* impulsedenoise;
     DirPyrDenoise* dirpyrdenoise;
@@ -252,8 +254,12 @@ public:
     }
 
     // toolpanellistener interface
+    void refreshPreview(const rtengine::ProcEvent& event) override;
     void panelChanged(const rtengine::ProcEvent& event, const Glib::ustring& descr) override;
+    void setTweakOperator (rtengine::TweakOperator *tOperator) override;
+    void unsetTweakOperator (rtengine::TweakOperator *tOperator) override;
 
+    // FilmNegProvider interface
     void imageTypeChanged (bool isRaw, bool isBayer, bool isXtrans, bool isMono = false) override;
 
     // profilechangelistener interface
@@ -315,7 +321,6 @@ public:
     void autoCropRequested () override;
     void autoPerspRequested (bool corr_pitch, bool corr_yaw, double& rot, double& pitch, double& yaw, const std::vector<rtengine::ControlLine> *lines = nullptr) override;
     double autoDistorRequested () override;
-    void updateTransformPreviewRequested (rtengine::ProcEvent event, bool render_perspective) override;
 
     // spotwblistener interface
     void spotWBRequested (int size) override;

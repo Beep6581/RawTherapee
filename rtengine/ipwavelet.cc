@@ -209,7 +209,7 @@ std::unique_ptr<LUTf> ImProcFunctions::buildMeaLut(const float inVals[11], const
             }
         }
     }
-    lutFactor = 1.f / lutDiff;
+    lutFactor = lutDiff == 0.f ? 0.f : 1.f / lutDiff;
     return std::unique_ptr<LUTf>(new LUTf(lutVals));
 }
 
@@ -448,7 +448,11 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     for (int m = 0; m < maxmul; m++) {
         cp.mulC[m] = waparams.ch[m];
     }
-
+    for (int m = maxmul; m < 9; m++) {
+        cp.mulC[m] = 0.f;
+    }
+    
+//printf("maxmul=%i\n", maxmul);
     cp.factor = WaveletParams::LABGRID_CORR_MAX * 3.276f;
     cp.scaling = WaveletParams::LABGRID_CORR_SCALE;
     cp.scaledirect = WaveletParams::LABGRIDL_DIRECT_SCALE;
@@ -535,6 +539,9 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
     for (int m = 0; m < maxmul; m++) {
         cp.mul[m] = waparams.c[m];
+    }
+    for (int m = maxmul; m < 10; m++) {
+        cp.mul[m] = 0.f;
     }
 
     cp.mul[9] = (float) waparams.sup;
@@ -651,7 +658,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         maxlevelcrop = 10;
     }
 
-    // adap maximum level wavelet to size of crop
+    // adapt maximum level wavelet to size of crop
     if (minwin * skip < 1024) {
         maxlevelcrop = 9;    //sampling wavelet 512
     }
@@ -687,7 +694,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
     levwav = rtengine::min(maxlevelcrop, levwav);
 
-    // I suppress this fonctionality ==> crash for level < 3
+    // I suppress this functionality ==> crash for level < 3
     if (levwav < 1) {
         return;    // nothing to do
     }
@@ -1038,13 +1045,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         cp.mul[0] = 0.01f;
                     }
                 }
-                    
-                
-                if (!exblurL && cp.contrast == 0.f && cp.blurres == 0.f && !cp.noiseena && !cp.tonemap && !cp.resena && !cp.chromena && !cp.toningena && !cp.finena && !cp.edgeena && cp.conres == 0.f && cp.conresH == 0.f && cp.val == 0  && !ref0 && params->wavelet.CLmethod == "all") { // no processing of residual L or edge=> we probably can reduce the number of levels
-                    while (levwavL > 0 && cp.mul[levwavL - 1] == 0.f) { // cp.mul[level] == 0.f means no changes to level
-                        levwavL--;
-                    }
-                }
+              //  printf("cp4=%f cpmul5=%f cp6=%f cp7=%f cp8=%f\n", (double)cp.mul[4], (double)cp.mul[5],(double)cp.mul[6],(double)cp.mul[7],(double)cp.mul[8]);
 
                 if (levwavL == 6  && cp.noiseena && cp.chromfi == 0.f) {
                     cp.chromfi = 0.01f;
@@ -1055,12 +1056,17 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                         levwavL = 7;
                     }
                 }
-                bool isdenoisL = (cp.lev0n > 0.1f || cp.lev1n > 0.1f || cp.lev2n > 0.1f || cp.lev3n > 0.1f || cp.lev4n > 0.1f);
-
                 if (levwavL < 5 && cp.noiseena) {
                     levwavL = 6;    //to allow edge and denoise  => I always allocate 3 (4) levels..because if user select wavelet it is to do something !!
                 }
                 
+                if (!exblurL && cp.contrast == 0.f && cp.blurres == 0.f && !cp.noiseena && !cp.tonemap && !cp.resena && !cp.chromena && !cp.toningena && !cp.finena && !cp.edgeena && cp.conres == 0.f && cp.conresH == 0.f && cp.val == 0  && !ref0 && params->wavelet.CLmethod == "all") { // no processing of residual L or edge=> we probably can reduce the number of levels
+                    while (levwavL > 0 && cp.mul[levwavL - 1] == 0.f) { // cp.mul[level] == 0.f means no changes to level
+                        levwavL--;
+                    }
+                }
+                bool isdenoisL = (cp.lev0n > 0.1f || cp.lev1n > 0.1f || cp.lev2n > 0.1f || cp.lev3n > 0.1f || cp.lev4n > 0.1f);
+
                 
 /*
                 if(cp.denoicurvh  || cp.levdenhigh > 0.01f) {

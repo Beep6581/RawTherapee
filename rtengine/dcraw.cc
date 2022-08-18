@@ -21,7 +21,6 @@
 /*RT*/#define LOCALTIME
 /*RT*/#define DJGPP
 /*RT*/#include "jpeg.h"
-/*RT*/#include "lj92.h"
 /*RT*/#ifdef _OPENMP
 /*RT*/#include <omp.h>
 /*RT*/#endif
@@ -923,7 +922,7 @@ ushort * CLASS ljpeg_row (int jrow, struct jhead *jh)
     }
     getbits(-1);
   }
-  FORC3 row[c] = (jh->row + ((jrow & 1) + 1) * (jh->wide*jh->clrs*((jrow+c) & 1)));
+  FORC3 row[c] = jh->row + jh->wide*jh->clrs*((jrow+c) & 1);
   for (col=0; col < jh->wide; col++)
     FORC(jh->clrs) {
       diff = ljpeg_diff (jh->huff[c]);
@@ -1124,61 +1123,6 @@ void CLASS ljpeg_idct (struct jhead *jh)
       FORC(8) work[2][i][j] += work[1][c][j] * cs[(i*2+1)*c];
 
   FORC(64) jh->idct[c] = CLIP(((float *)work[2])[c]+0.5);
-}
-
-void CLASS lossless_dnglj92_load_raw()
-{
-    BENCHFUN
-
-    tiff_bps = 16;
-
-    int save = ifp->pos;
-    uint16_t *lincurve = !strncmp(make,"Blackmagic",10) ? curve : nullptr;
-    tile_width = tile_length < INT_MAX ? tile_width : raw_width;
-    size_t tileCount = raw_width / tile_width;
-
-    size_t dataOffset[tileCount];
-    if(tile_length < INT_MAX) {
-        for (size_t t = 0; t < tileCount; ++t) {
-            dataOffset[t] = get4();
-        }
-    } else {
-        dataOffset[0] = ifp->pos;
-    }
-    const int data_length = ifp->size;
-    const std::unique_ptr<uint8_t[]> data(new uint8_t[data_length]);
-    fseek(ifp, 0, SEEK_SET);
-    // read whole file
-    fread(data.get(), 1, data_length, ifp);
-    lj92 lj;
-    int newwidth, newheight, newbps;
-    lj92_open(&lj, &data[dataOffset[0]], data_length, &newwidth, &newheight, &newbps);
-    lj92_close(lj);
-    if (newwidth * newheight * tileCount != raw_width * raw_height) {
-        // not a lj92 file
-        fseek(ifp, save, SEEK_SET);
-        lossless_dng_load_raw();
-        return;
-    }
-
-#ifdef _OPENMP
-    #pragma omp parallel for num_threads(std::min<int>(tileCount, omp_get_max_threads()))
-#endif
-    for (size_t t = 0; t < tileCount; ++t) {
-        size_t tcol = t * tile_width;
-        lj92 lj;
-        int newwidth, newheight, newbps;
-        lj92_open(&lj, &data[dataOffset[t]], data_length, &newwidth, &newheight, &newbps);
-
-        const std::unique_ptr<uint16_t[]> target(new uint16_t[newwidth * newheight]);
-        lj92_decode(lj, target.get(), tile_width, 0, lincurve, 0x1000);
-        for (int y = 0; y < height; ++y) {
-            for(int x = 0; x < tile_width; ++x) {
-                RAW(y, x + tcol) = target[y * tile_width + x];
-            }
-        }
-        lj92_close(lj);
-    }
 }
 
 void CLASS lossless_dng_load_raw()
@@ -2019,7 +1963,7 @@ void CLASS phase_one_load_raw_c()
 #endif
 {
     int len[2], pred[2];
-    IMFILE ifpthr = *ifp;
+    rtengine::IMFILE ifpthr = *ifp;
     ifpthr.plistener = nullptr;
 
 #ifdef _OPENMP
@@ -3373,7 +3317,7 @@ void CLASS sony_arw2_load_raw()
 {
     uchar *data = new (std::nothrow) uchar[raw_width + 1];
     merror(data, "sony_arw2_load_raw()");
-    IMFILE ifpthr = *ifp;
+    rtengine::IMFILE ifpthr = *ifp;
     int pos = ifpthr.pos;
     ushort pix[16];
 
@@ -4453,6 +4397,12 @@ void CLASS crop_masked_pixels()
       }
     }
   } else {
+    if (height + top_margin > raw_height) {
+      top_margin = raw_height - height;
+    }
+    if (width + left_margin > raw_width) {
+      left_margin = raw_width - width;
+    }
 #ifdef _OPENMP
 #pragma omp parallel for
 #endif
@@ -6111,6 +6061,48 @@ get2_256:
       offsetChannelBlackLevel2 = save1 + (0x0149 << 1);
       offsetWhiteLevels = save1 + (0x031c << 1);
       break;
+    case 2024: // 1D X Mark III, ColorDataSubVer 32
+      // imCanon.ColorDataVer = 10;
+      imCanon.ColorDataSubVer = get2();
+      fseek(ifp, save1 + (0x0055 << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)/*RGGB_2_RGBG(c)*/] = (float)get2();
+      // get2();
+      // FORC4 icWBC[LIBRAW_WBI_Auto][RGGB_2_RGBG(c)] = get2();
+      // get2();
+      // FORC4 icWBC[LIBRAW_WBI_Measured][RGGB_2_RGBG(c)] = get2();
+      // fseek(ifp, save1 + (0x0096 << 1), SEEK_SET);
+      // Canon_WBpresets(2, 12);
+      // fseek(ifp, save1 + (0x0118 << 1), SEEK_SET);
+      // Canon_WBCTpresets(0);
+      offsetChannelBlackLevel = save1 + (0x0326 << 1);
+      offsetChannelBlackLevel2 = save1 + (0x0157 << 1);
+      offsetWhiteLevels = save1 + (0x032a << 1);
+      break;
+     case 3656: // EOS R6, ColorDataSubVer 33
+      // imCanon.ColorDataVer = 10;
+      imCanon.ColorDataSubVer = get2();
+
+      // The constant 0x0055 was found in LibRaw; more specifically by
+      // spelunking in LibRaw:src/metadata/canon.cpp.
+      fseek(ifp, save1 + (0x0055 << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
+
+      offsetChannelBlackLevel = save1 + (0x326 << 1);
+      offsetChannelBlackLevel2 = save1 + (0x157 << 1);
+      offsetWhiteLevels = save1 + (0x32a << 1);
+      break;
+    case 3973: // R3; ColorDataSubVer: 34
+    case 3778: // R7, R10; ColorDataSubVer: 48
+      // imCanon.ColorDataVer = 11;
+      imCanon.ColorDataSubVer = get2();
+
+      fseek(ifp, save1 + ((0x0069+0x0064) << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
+
+      offsetChannelBlackLevel2 = save1 + ((0x0069+0x0102) << 1);
+      offsetChannelBlackLevel  = save1 + ((0x0069+0x0213) << 1);
+      offsetWhiteLevels        = save1 + ((0x0069+0x0217) << 1);
+      break;
     }
 
     if (offsetChannelBlackLevel)
@@ -6387,7 +6379,7 @@ int CLASS parse_tiff_ifd (int base)
   unsigned sony_curve[] = { 0,0,0,0,0,4095 };
   unsigned *buf, sony_offset=0, sony_length=0, sony_key=0;
   struct jhead jh;
-/*RT*/  IMFILE *sfp;
+/*RT*/  rtengine::IMFILE *sfp;
 /*RT*/  int pana_raw = 0;
 
   if (tiff_nifds >= sizeof tiff_ifd / sizeof tiff_ifd[0])
@@ -6453,6 +6445,9 @@ int CLASS parse_tiff_ifd (int base)
 	break;
       case 3: case 257: case 61442:	/* ImageHeight */
 	tiff_ifd[ifd].height = getint(type);
+	break;
+      case 254:
+	tiff_ifd[ifd].new_sub_file_type = getint(type);
 	break;
       case 258:				/* BitsPerSample */
       case 61443:
@@ -6787,14 +6782,17 @@ guess_cfa_pc:
 	linear_table (len);
 	break;
       case 50713:			/* BlackLevelRepeatDim */
+	if (tiff_ifd[ifd].new_sub_file_type != 0) continue;
 	cblack[4] = get2();
 	cblack[5] = get2();
 	if (cblack[4] * cblack[5] > sizeof cblack / sizeof *cblack - 6)
 	    cblack[4] = cblack[5] = 1;
 	break;
       case 61450:
+	if (tiff_ifd[ifd].new_sub_file_type != 0) continue;
 	cblack[4] = cblack[5] = MIN(sqrt(len),64);
       case 50714:			/* BlackLevel */
+	if (tiff_ifd[ifd].new_sub_file_type != 0) continue;
                 RT_blacklevel_from_constant = ThreeValBool::F;
 //-----------------------------------------------------------------------------
 // taken from LibRaw.
@@ -6951,7 +6949,7 @@ it under the terms of the one of two licenses as you choose:
     fread (buf, sony_length, 1, ifp);
     sony_decrypt (buf, sony_length/4, 1, sony_key);
     sfp = ifp;
-/*RT*/ ifp = fopen (buf, sony_length);
+/*RT*/ ifp = rtengine::fopen (buf, sony_length);
 // if ((ifp = tmpfile())) {
 // fwrite (buf, sony_length, 1, ifp);
 // fseek (ifp, 0, SEEK_SET);
@@ -7259,7 +7257,7 @@ void CLASS parse_external_jpeg()
 {
   const char *file, *ext;
   char *jname, *jfile, *jext;
-/*RT*/  IMFILE *save=ifp;
+/*RT*/  rtengine::IMFILE *save=ifp;
 
   ext  = strrchr (ifname, '.');
   file = strrchr (ifname, '/');
@@ -7287,7 +7285,7 @@ void CLASS parse_external_jpeg()
       *jext = '0';
     }
   if (strcmp (jname, ifname)) {
-/*RT*/    if ((ifp = fopen (jname))) {
+/*RT*/    if ((ifp = rtengine::fopen (jname))) {
 //    if ((ifp = fopen (jname, "rb"))) {
       if (verbose)
 	fprintf (stderr,_("Reading metadata from %s ...\n"), jname);
@@ -9078,7 +9076,7 @@ void CLASS adobe_coeff (const char *make, const char *model)
     RT_matrix_from_constant = ThreeValBool::T;
   }
   // -- RT --------------------------------------------------------------------
-  
+
   for (i=0; i < sizeof table / sizeof *table; i++)
     if (!strncmp (name, table[i].prefix, strlen(table[i].prefix))) {
       if (RT_blacklevel_from_constant == ThreeValBool::T && table[i].black)   black   = (ushort) table[i].black;
@@ -9231,6 +9229,7 @@ void CLASS identify()
     { 3944, 2622,  30, 18,  6,  2 },
     { 3948, 2622,  42, 18,  0,  2 },
     { 3984, 2622,  76, 20,  0,  2, 14 },
+    { 4032, 2656, 112, 44, 10,  0 },
     { 4104, 3048,  48, 12, 24, 12 },
     { 4116, 2178,   4,  2,  0,  0 },
     { 4152, 2772, 192, 12,  0,  0 },
@@ -9768,7 +9767,7 @@ void CLASS identify()
     switch (tiff_compress) {
       case 0:
       case 1:     load_raw = &CLASS   packed_dng_load_raw;  break;
-      case 7:     load_raw = (!strncmp(make,"Blackmagic",10) || !strncmp(make,"Canon",5)) ? &CLASS lossless_dnglj92_load_raw : &CLASS lossless_dng_load_raw;  break;
+      case 7:     load_raw = &CLASS lossless_dng_load_raw;  break;
       case 8:     load_raw = &CLASS  deflate_dng_load_raw;  break;
       case 34892: load_raw = &CLASS    lossy_dng_load_raw;  break;
       default:    load_raw = 0;

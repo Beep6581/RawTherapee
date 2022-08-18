@@ -764,6 +764,8 @@ HISTORY_MSG_SHARPENING_CONTRAST;Netteté - Seuil de contraste
 HISTORY_MSG_SH_COLORSPACE;O/HL - Espace couleur
 HISTORY_MSG_SOFTLIGHT_ENABLED;Lumière douce
 HISTORY_MSG_SOFTLIGHT_STRENGTH;Lumière douce - Force
+HISTORY_MSG_SPOT;Retrait de taches
+HISTORY_MSG_SPOT_ENTRY;Retrait de taches - Modif. de points
 HISTORY_MSG_TM_FATTAL_ANCHOR;CPD - Ancre
 HISTORY_NEWSNAPSHOT;Ajouter
 HISTORY_NEWSNAPSHOT_TOOLTIP;Raccourci: <b>Alt-s</b>
@@ -1024,6 +1026,7 @@ PARTIALPASTE_SHARPENEDGE;Bords
 PARTIALPASTE_SHARPENING;Netteté
 PARTIALPASTE_SHARPENMICRO;Microcontraste
 PARTIALPASTE_SOFTLIGHT;Lumière douce
+PARTIALPASTE_SPOT;Retrait de taches
 PARTIALPASTE_TM_FATTAL;Compression de plage dynamique
 PARTIALPASTE_VIBRANCE;Vibrance
 PARTIALPASTE_VIGNETTING;Correction du vignettage
@@ -2069,7 +2072,8 @@ TP_LOCALLAB_LOGLIGHTQ;Brillance (Q)
 TP_LOCALLAB_LOGLIGHTQ_TOOLTIP;Taux de perception de lumière émanant d'un stimulus.\nIndicateur qu'un stimulus apparaît être plus ou moins brillant, clair. 
 TP_LOCALLAB_LOGLIN;Logarithme mode
 TP_LOCALLAB_LOGPFRA;Niveaux d'Exposition relatif
-TP_LOCALLAB_LOGREPART;Force
+TP_LOCALLAB_LOGREPART;Force globale
+TP_LOCALLAB_LOGREPART_TOOLTIP;Vous permet d'ajuster le nivaeu de l'image 'codage log' par rapport à l'image originale.\nNe concerne pas la composante Ciecam.
 TP_LOCALLAB_LOGSATURL_TOOLTIP;Saturation (s) CIECAM16 correspond à la couleur d'un stimulus en relation avec sa propre brillance.\nAgit principalement sur les tons moyens et hauts.
 TP_LOCALLAB_LOGSCENE_TOOLTIP;Correspond aux conditions de prise de vue.
 TP_LOCALLAB_LOGSURSOUR_TOOLTIP;Change les tons et couleurs en prenant en compte les conditions de prise de vue.\n\n<b>Moyen</b>: Environnement lumineux moyen (standard). L'image ne change pas.\n\n<b>Tamisé</b>: Environnement tamisé. L'iamge va devenir un peu plus claire.
@@ -2244,6 +2248,12 @@ TP_LOCALLAB_RECURS_TOOLTIP;Recalcule les références pour  teinte, luma, chroma
 TP_LOCALLAB_REFLABEL;Ref. (0..1) Chroma=%1 Luma=%2 teinte=%3
 TP_LOCALLAB_REN_DIALOG_LAB;Entrer le nouveau nom de Spot
 TP_LOCALLAB_REN_DIALOG_NAME;Renomme le Controle Spot
+TP_LOCALLAB_REPARW_TOOLTIP;Vous permet d'ajuster le niveau de l'image modifiée par Contraste local et Ondelettes par rapport à l'image originale.
+TP_LOCALLAB_REPARCOL_TOOLTIP;Vous permet d'ajuster le niveau de l'image modifiée par Couleurs et lumiéres par rapport à l'image originale.
+TP_LOCALLAB_REPARDEN_TOOLTIP;Vous permet d'ajuster le niveau de l'image modifiée par De-bruite par rapport à l'image originale.
+TP_LOCALLAB_REPARSH_TOOLTIP;Vous permet d'ajuster le niveau de l'image modifiée Ombres et Lumières et Egaliseur par rapport à l'image originale..
+TP_LOCALLAB_REPAREXP_TOOLTIP;Vous permet d'ajuster le niveau de l'image modifiée par Compression dynammique et Exposition par rapport à l'image originale..
+TP_LOCALLAB_REPARTM_TOOLTIP;Vous permet d'ajuster le niveau de l'image modifiée par Compression tonale par rapport à l'image originale..
 TP_LOCALLAB_RESETSHOW;Annuler Montrer Toutes les Modifications
 TP_LOCALLAB_RESID;Image Résiduelle
 TP_LOCALLAB_RESIDBLUR;Flouter Image Résiduelle
@@ -2738,6 +2748,11 @@ TP_SHARPENMICRO_MATRIX;Matrice 3×3 au lieu de 5×5
 TP_SHARPENMICRO_UNIFORMITY;Uniformité
 TP_SOFTLIGHT_LABEL;Lumière douce
 TP_SOFTLIGHT_STRENGTH;Force
+TP_SPOT_COUNTLABEL;%1 point(s)
+TP_SPOT_DEFAULT_SIZE;Taille par défault des points
+TP_SPOT_ENTRYCHANGED;Modification d'un point
+TP_SPOT_HINT;Cliquez sur ce bouton pour pouvoir opérer sur la zone de prévisualisation.\n\nPour ajouter un spot, pressez Ctrl et le bouton gauche de la souris, tirez le cercle (la touche Ctrl peut être relâchée) vers la position source, puis relâchez le bouton de la souris.\n\nPour éditer un spot, placez le curseur au-dessus de la marque blanche situant une zone éditée, faisant apparaître la géométrie d'édition.\n\nPour déplacer le spot source ou destination, placez le curseur en son centre et tirez le.\n\nLe cercle intérieur (zone d'effet maximum) et le cercle "d'adoucicement" peuvent être redimmensionné en plaçant le curseur dessus (le cercle devient orange) et en le tirant (le cercle devient rouge).\n\nQuand les changements sont terminés, un clic droit en dehors de tout spot termine le mode d'édition, ou cliquez à nouveau sur ce bouton.
+TP_SPOT_LABEL;Retrait de taches
 TP_TM_FATTAL_AMOUNT;Quantité
 TP_TM_FATTAL_ANCHOR;Ancre
 TP_TM_FATTAL_LABEL;Compression de Plage Dynamique
@@ -3013,7 +3028,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_PDSHARPEN_ITERATIONS;CS - Iterations
 !HISTORY_MSG_PDSHARPEN_RADIUS;CS - Radius
 !HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
-!HISTORY_MSG_TRANS_Method;Geometry - Method
+!HISTORY_MSG_TRANS_METHOD;Geometry - Method
 !MAIN_FRAME_PLACES_DEL;Remove
 !PARTIALPASTE_FILMNEGATIVE;Film Negative
 !PROGRESSBAR_DECODING;Decoding...

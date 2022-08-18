@@ -160,10 +160,10 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
 
     Gtk::Box* camera_vbox = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
 
-    camera_focal_length = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_FOCAL_LENGTH"), 0.5, 2000, 0.01, 24));
+    camera_focal_length = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_FOCAL_LENGTH"), 0.5, 2000, 0.01, PerspectiveParams::DEFAULT_CAMERA_FOCAL_LENGTH));
     camera_focal_length->setAdjusterListener (this);
 
-    camera_crop_factor = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_CROP_FACTOR"), 0.1, 30, 0.01, 1));
+    camera_crop_factor = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_CROP_FACTOR"), 0.1, 30, 0.01, PerspectiveParams::DEFAULT_CAMERA_CROP_FACTOR));
     camera_crop_factor->setAdjusterListener (this);
 
     camera_shift_horiz = Gtk::manage (new Adjuster (M("TP_PERSPECTIVE_CAMERA_SHIFT_HORIZONTAL"), -50, 50, 0.01, 0));
@@ -351,18 +351,37 @@ void PerspCorrection::read (const ProcParams* pp, const ParamsEdited* pedited)
         method->set_active (1);
     }
 
+    updateApplyDeleteButtons();
+
     enableListener ();
 }
 
 void PerspCorrection::write (ProcParams* pp, ParamsEdited* pedited)
 {
+    // If any of these are non-zero, the focal length and crop factor must be
+    // updated to ensure they won't be auto-filled from metadata later. This
+    // prevents surprise changes to the perspective correction results.
+    const bool update_fl = camera_pitch->getValue() != 0 ||
+                           camera_yaw->getValue() != 0 ||
+                           projection_pitch->getValue() != 0 ||
+                           projection_yaw->getValue() != 0;
 
     pp->perspective.render = render;
 
     pp->perspective.horizontal  = horiz->getValue ();
     pp->perspective.vertical = vert->getValue ();
-    pp->perspective.camera_crop_factor= camera_crop_factor->getValue ();
-    pp->perspective.camera_focal_length = camera_focal_length->getValue ();
+    if (update_fl || pp->perspective.camera_crop_factor > 0 ||
+        std::abs(camera_crop_factor->getValue() - PerspectiveParams::DEFAULT_CAMERA_CROP_FACTOR) > 1e-5) {
+        // Update if update_fl is true or the crop factor has previously been
+        // set or if the adjuster has changed from the default value.
+        pp->perspective.camera_crop_factor = camera_crop_factor->getValue ();
+    }
+    if (update_fl || pp->perspective.camera_focal_length > 0 ||
+        std::abs(camera_focal_length->getValue() - PerspectiveParams::DEFAULT_CAMERA_FOCAL_LENGTH) > 1e-4) {
+        // Update if update_fl is true or the focal length has previously been
+        // set or if the adjuster has changed from the default value.
+        pp->perspective.camera_focal_length = camera_focal_length->getValue ();
+    }
     pp->perspective.camera_pitch = camera_pitch->getValue ();
     pp->perspective.camera_roll = camera_roll->getValue ();
     pp->perspective.camera_shift_horiz = camera_shift_horiz->getValue ();
@@ -410,8 +429,12 @@ void PerspCorrection::setDefaults (const ProcParams* defParams, const ParamsEdit
 
     horiz->setDefault (defParams->perspective.horizontal);
     vert->setDefault (defParams->perspective.vertical);
-    camera_crop_factor->setDefault (defParams->perspective.camera_crop_factor);
-    camera_focal_length->setDefault (defParams->perspective.camera_focal_length);
+    camera_crop_factor->setDefault(defParams->perspective.camera_crop_factor > 0
+                                       ? defParams->perspective.camera_crop_factor
+                                       : PerspectiveParams::DEFAULT_CAMERA_CROP_FACTOR);
+    camera_focal_length->setDefault(defParams->perspective.camera_focal_length > 0
+                                        ? defParams->perspective.camera_focal_length
+                                        : PerspectiveParams::DEFAULT_CAMERA_FOCAL_LENGTH);
     camera_pitch->setDefault (defParams->perspective.camera_pitch);
     camera_roll->setDefault (defParams->perspective.camera_roll);
     camera_shift_horiz->setDefault (defParams->perspective.camera_shift_horiz);
@@ -517,22 +540,16 @@ void PerspCorrection::applyControlLines(void)
     }
 
     std::vector<rtengine::ControlLine> control_lines;
-    int h_count = 0, v_count = 0;
     double rot = camera_roll->getValue();
     double pitch = camera_pitch->getValue();
     double yaw = camera_yaw->getValue();
 
     lines->toControlLines(control_lines);
 
-    for (unsigned int i = 0; i < lines->size(); i++) {
-        if (control_lines[i].type == rtengine::ControlLine::HORIZONTAL) {
-            h_count++;
-        } else if (control_lines[i].type == rtengine::ControlLine::VERTICAL) {
-            v_count++;
-        }
-    }
-    lens_geom_listener->autoPerspRequested(v_count > 1, h_count > 1, rot, pitch,
-            yaw, &control_lines);
+    lens_geom_listener->autoPerspRequested(
+            lines->getVerticalCount() >= MIN_VERT_LINES,
+            lines->getHorizontalCount() >= MIN_HORIZ_LINES,
+            rot, pitch, yaw, &control_lines);
 
     disableListener();
     camera_pitch->setValue(pitch);
@@ -541,6 +558,11 @@ void PerspCorrection::applyControlLines(void)
     enableListener();
 
     adjusterChanged(camera_pitch, pitch);
+}
+
+void PerspCorrection::tweakParams(rtengine::procparams::ProcParams &pparams)
+{
+    pparams.perspective.render = render;
 }
 
 void PerspCorrection::autoCorrectionPressed(Gtk::Button* b)
@@ -635,8 +657,13 @@ void PerspCorrection::trimValues (rtengine::procparams::ProcParams* pp)
 
     horiz->trimValue(pp->perspective.horizontal);
     vert->trimValue(pp->perspective.vertical);
-    camera_crop_factor->trimValue(pp->perspective.camera_crop_factor);
-    camera_focal_length->trimValue(pp->perspective.camera_focal_length);
+    // Only update crop factor and focal length if they have been manually set.
+    if (pp->perspective.camera_crop_factor > 0) {
+        camera_crop_factor->trimValue(pp->perspective.camera_crop_factor);
+    }
+    if (pp->perspective.camera_focal_length > 0) {
+        camera_focal_length->trimValue(pp->perspective.camera_focal_length);
+    }
     camera_pitch->trimValue(pp->perspective.camera_pitch);
     camera_roll->trimValue(pp->perspective.camera_roll);
     camera_shift_horiz->trimValue(pp->perspective.camera_shift_horiz);
@@ -678,10 +705,25 @@ void PerspCorrection::setBatchMode (bool batchMode)
 
 void PerspCorrection::setFocalLengthValue (const ProcParams* pparams, const FramesMetaData* metadata)
 {
-    const double pp_crop_factor = pparams->perspective.camera_crop_factor;
-    const double pp_focal_length = pparams->perspective.camera_focal_length;
-    double default_crop_factor = 1.0;
-    double default_focal_length = 24.0;
+    double pp_crop_factor = pparams->perspective.camera_crop_factor;
+    double pp_focal_length = pparams->perspective.camera_focal_length;
+    double default_crop_factor = PerspectiveParams::DEFAULT_CAMERA_CROP_FACTOR;
+    double default_focal_length = PerspectiveParams::DEFAULT_CAMERA_FOCAL_LENGTH;
+
+    // If any of these values are non-zero, don't set the crop factor or focal
+    // length from metadata to avoid a surprise change in perspective correction
+    // results.
+    if (pparams->perspective.camera_pitch != 0 ||
+        pparams->perspective.camera_yaw != 0 ||
+        pparams->perspective.projection_pitch != 0 ||
+        pparams->perspective.projection_yaw != 0) {
+        if (pp_crop_factor <= 0) {
+            pp_crop_factor = PerspectiveParams::DEFAULT_CAMERA_CROP_FACTOR;
+        }
+        if (pp_focal_length <= 0) {
+            pp_focal_length = PerspectiveParams::DEFAULT_CAMERA_FOCAL_LENGTH;
+        }
+    }
 
     // Defaults from metadata.
     if (metadata && (pp_crop_factor <= 0 || pp_focal_length <= 0)) {
@@ -709,13 +751,13 @@ void PerspCorrection::setFocalLengthValue (const ProcParams* pparams, const Fram
 
     // Change value if those from the ProcParams are invalid.
     if (pp_crop_factor > 0) {
-        camera_crop_factor->setValue(pparams->perspective.camera_crop_factor);
+        camera_crop_factor->setValue(pp_crop_factor);
     } else {
         camera_crop_factor->setDefault(default_crop_factor);
         camera_crop_factor->setValue(default_crop_factor);
     }
     if (pp_focal_length > 0) {
-        camera_focal_length->setValue(pparams->perspective.camera_focal_length);
+        camera_focal_length->setValue(pp_focal_length);
     } else {
         camera_focal_length->setDefault(default_focal_length);
         camera_focal_length->setValue(default_focal_length);
@@ -734,9 +776,27 @@ void PerspCorrection::setEditProvider(EditDataProvider* provider)
 
 void PerspCorrection::lineChanged(void)
 {
+    updateApplyDeleteButtons();
+
     if (listener) {
         listener->panelChanged(EvPerspControlLines, M("HISTORY_CHANGED"));
     }
+}
+
+void PerspCorrection::updateApplyDeleteButtons()
+{
+    if (batchMode) {
+        return;
+    }
+
+    bool edit_mode = lines_button_edit->get_active();
+    bool enough_lines = lines->getHorizontalCount() >= MIN_HORIZ_LINES || lines->getVerticalCount() >= MIN_VERT_LINES;
+    const auto tooltip = M("GENERAL_APPLY")
+        + ((edit_mode && !enough_lines) ? "\n\n" + M("TP_PERSPECTIVE_CONTROL_LINE_APPLY_INVALID_TOOLTIP") : "");
+
+    lines_button_apply->set_sensitive(edit_mode && enough_lines);
+    lines_button_apply->set_tooltip_text(tooltip);
+    lines_button_erase->set_sensitive(edit_mode && lines->size() > 0);
 }
 
 void PerspCorrection::linesApplyButtonPressed(void)
@@ -754,8 +814,9 @@ void PerspCorrection::linesEditButtonPressed(void)
         lines->setActive(true);
         lines->setDrawMode(true);
         render = false;
-        if (lens_geom_listener) {
-            lens_geom_listener->updateTransformPreviewRequested(EvPerspRender, false);
+        if (listener) {
+            listener->setTweakOperator(this);
+            listener->refreshPreview(EvPerspRender);
         }
         lines_button_apply->set_sensitive(true);
         lines_button_erase->set_sensitive(true);
@@ -768,15 +829,18 @@ void PerspCorrection::linesEditButtonPressed(void)
         lines_button_apply->set_sensitive(false);
         lines_button_erase->set_sensitive(false);
         render = true;
-        if (lens_geom_listener) {
-            lens_geom_listener->updateTransformPreviewRequested(EvPerspRender, true);
+        if (listener) {
+            listener->unsetTweakOperator(this);
+            listener->refreshPreview(EvPerspRender);
         }
+        lines->releaseEdit();
         lines->setDrawMode(false);
         lines->setActive(false);
         if (panel_listener) {
             panel_listener->controlLineEditModeChanged(false);
         }
     }
+    updateApplyDeleteButtons();
 }
 
 void PerspCorrection::linesEraseButtonPressed(void)
@@ -788,6 +852,8 @@ void PerspCorrection::requestApplyControlLines(void)
 {
     if (lines_button_apply->is_sensitive()) {
         linesApplyButtonPressed();
+    } else if (lines_button_edit->get_active()) {
+        lines_button_edit->set_active(false);
     }
 }
 

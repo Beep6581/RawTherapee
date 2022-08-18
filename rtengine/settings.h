@@ -59,12 +59,14 @@ public:
     Glib::ustring   rec2020;                // filename of Rec2020      profile (default to the bundled one)
     Glib::ustring   ACESp0;                 // filename of ACES P0      profile (default to the bundled one)
     Glib::ustring   ACESp1;                 // filename of ACES P1      profile (default to the bundled one)
+    Glib::ustring   DCIP3;                 // filename of DCIP3         profile (default to the bundled one)
 
     bool            gamutICC; // no longer used
     bool            gamutLch;
     bool            HistogramWorking;       // true: histogram is display the value of the image computed in the Working profile
     // false: histogram is display the value of the image computed in the Output profile
     int             amchroma;
+    int             amchromajz;
     int             protectred;
     double          protectredh;
     double          nrauto;

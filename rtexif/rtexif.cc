@@ -139,7 +139,7 @@ TagDirectory*  TagDirectory::getRoot()
     }
 }
 
-const TagAttrib* TagDirectory::getAttrib (int id)
+const TagAttrib* TagDirectory::getAttrib (int id) const
 {
 
     if (attribs)

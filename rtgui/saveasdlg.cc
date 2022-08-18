@@ -281,9 +281,9 @@ void SaveAsDialog::okPressed ()
                 + ": "
                 + M("SAVEDLG_WARNFILENAME")
                 + " \""
-                + Glib::path_get_basename (fname)
+                + escapeHtmlChars(Glib::path_get_basename (fname))
                 + '.'
-                + formatOpts->getFormat().format
+                + escapeHtmlChars(formatOpts->getFormat().format)
                 + "\"</b>",
             true,
             Gtk::MESSAGE_WARNING,

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # By Maciej Dworak
-# Version 2018-07-21
+# Version 2021-06-04
+# Compatible with Inkscape 1.0
 # This script generates PNG icons from SVG files using Inkscape.
 # If pngquant is installed, it will automatically use it to compress the PNGs.
 #
@@ -96,17 +97,17 @@ printf '%s\n' "Output folder: ${outDir}" ""
 convertSvg() {
     if [[ ${OSTYPE^^} = "MSYS" ]]; then
         "/c/Program Files/Inkscape/inkscape.exe" \
-            --without-gui \
             --export-area-page \
             --export-background-opacity="0" \
-            --export-png="$1" \
+            --export-type=png \
+            --export-filename="$1" \
             "$2"
     else
         inkscape \
-            --without-gui \
             --export-area-page \
             --export-background-opacity="0" \
-            --export-png="$1" \
+            --export-type=png \
+            --export-filename="$1" \
             "$2"
     fi
 

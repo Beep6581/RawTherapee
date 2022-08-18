@@ -468,8 +468,8 @@ bool ImProcFunctions::transCoord (int W, int H, const std::vector<Coord2D> &src,
     double hpcospt = (hpdeg >= 0 ? 1.0 : -1.0) * cos (hpteta), hptanpt = tan (hpteta);
     // Camera-based.
     const double f =
-            ((params->perspective.camera_focal_length > 0) ? params->perspective.camera_focal_length : 24.0)
-            * ((params->perspective.camera_crop_factor > 0) ? params->perspective.camera_crop_factor : 1.0)
+            ((params->perspective.camera_focal_length > 0) ? params->perspective.camera_focal_length : PerspectiveParams::DEFAULT_CAMERA_FOCAL_LENGTH)
+            * ((params->perspective.camera_crop_factor > 0) ? params->perspective.camera_crop_factor : PerspectiveParams::DEFAULT_CAMERA_CROP_FACTOR)
             * (maxRadius / sqrt(18.0*18.0 + 12.0*12.0));
     const double p_camera_yaw = params->perspective.camera_yaw / 180.0 * rtengine::RT_PI;
     const double p_camera_pitch = params->perspective.camera_pitch / 180.0 * rtengine::RT_PI;
@@ -1162,8 +1162,8 @@ void ImProcFunctions::transformGeneral(bool highQuality, Imagefloat *original, I
     const double hptanpt = tan(hpteta);
     // Camera-based.
     const double f =
-            ((params->perspective.camera_focal_length > 0) ? params->perspective.camera_focal_length : 24.0)
-            * ((params->perspective.camera_crop_factor > 0) ? params->perspective.camera_crop_factor : 1.0)
+            ((params->perspective.camera_focal_length > 0) ? params->perspective.camera_focal_length : PerspectiveParams::DEFAULT_CAMERA_FOCAL_LENGTH)
+            * ((params->perspective.camera_crop_factor > 0) ? params->perspective.camera_crop_factor : PerspectiveParams::DEFAULT_CAMERA_CROP_FACTOR)
             * (maxRadius / sqrt(18.0*18.0 + 12.0*12.0));
     const double p_camera_yaw = params->perspective.camera_yaw / 180.0 * rtengine::RT_PI;
     const double p_camera_pitch = params->perspective.camera_pitch / 180.0 * rtengine::RT_PI;
