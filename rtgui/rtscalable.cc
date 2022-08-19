@@ -248,9 +248,8 @@ int RTScalable::getScale ()
 
 double RTScalable::getGlobalScale()
 {
-    return (static_cast<double>(RTScalable::getDPI()) /
-        static_cast<double>(RTScalable::baseDPI) *
-        RTScalable::getScale());
+    return (RTScalable::getDPI() / RTScalable::baseDPI *
+        static_cast<double>(RTScalable::getScale()));
 }
 
 int RTScalable::scalePixelSize(const int pixel_size)

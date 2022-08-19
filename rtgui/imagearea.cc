@@ -155,7 +155,20 @@ void ImageArea::setInfoText (Glib::ustring text)
 
     // update font
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    fontd.set_size (10 * Pango::SCALE);
+    const int fontSize = 10; // pt
+    // Converting font size to "px" based on DPI and scale
+#ifndef __APPLE__
+    const double fontScale = RTScalable::getDPI() / RTScalable::pangoDPI
+        * static_cast<double>(RTScalable::getScale()); // Refer to notes in rtscalable.h
+#else
+    // On MacOS, font is already scaled by the System library
+    // Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c
+    const double fontScale = 1.;
+#endif
+    const double absoluteFontSize = static_cast<double>(fontSize) * fontScale; // px
+    // Absolute size is defined in "Pango units" and shall be multiplied by
+    // Pango::SCALE from "px":
+    fontd.set_absolute_size (absoluteFontSize * static_cast<double>(Pango::SCALE));
     context->set_font_description (fontd);
 
     // create text layout

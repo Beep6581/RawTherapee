@@ -195,7 +195,22 @@ void SHCSelector::updateBackBuffer()
 
         // update font
         fontd.set_weight (Pango::WEIGHT_NORMAL);
-        fontd.set_absolute_size((double)h * 0.8 * (double)Pango::SCALE);
+        // Absolute size is defined in "Pango units" and shall be multiplied by
+        // Pango::SCALE from "px"
+        const double fontSize = static_cast<double>(h) * 0.8; // pt
+        // Converting font size to "px" based on DPI and scale
+#ifndef __APPLE__
+        const double fontScale = RTScalable::getDPI() / RTScalable::pangoDPI
+            * static_cast<double>(RTScalable::getScale()); // Refer to notes in rtscalable.h
+#else
+        // On MacOS, font is already scaled by the System library
+        // Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c
+        const double fontScale = 1.;
+#endif
+        const double absoluteFontSize = static_cast<double>(fontSize) * fontScale; // px
+        // Absolute size is defined in "Pango units" and shall be multiplied by
+        // Pango::SCALE from "px":
+        fontd.set_absolute_size (absoluteFontSize * static_cast<double>(Pango::SCALE));
         context->set_font_description (fontd);
 
         Glib::RefPtr<Pango::Layout> layout = create_pango_layout(Glib::ustring::format(std::setprecision(2), positions[i]));

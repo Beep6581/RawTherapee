@@ -64,21 +64,20 @@ CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDet
     Glib::RefPtr<Pango::Context> context = parent->get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    // Absolute size is defined in "Pango units" and shall be multiplied by
-    // Pango::SCALE from "px"
-    const int fontSize = 8;
-    const int absoluteFontSize = fontSize * Pango::SCALE;
-    // Guessing that absolute pixel size is given for a 96 DPI reference:
+    const int fontSize = 8; // pt
+    // Converting font size to "px" based on DPI and scale
 #ifndef __APPLE__
-    const double fontScale = static_cast<double>(RTScalable::getDPI())
-        / static_cast<double>(RTScalable::pangoDPI)
-        * RTScalable::getScale(); // Refer to notes in rtscalable.h
+    const double fontScale = RTScalable::getDPI() / RTScalable::pangoDPI
+        * static_cast<double>(RTScalable::getScale()); // Refer to notes in rtscalable.h
 #else
     // On MacOS, font is already scaled by the System library
     // Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c
     const double fontScale = 1.;
 #endif
-    fontd.set_absolute_size (static_cast<double>(absoluteFontSize) * fontScale);
+    const double absoluteFontSize = static_cast<double>(fontSize) * fontScale; // px
+    // Absolute size is defined in "Pango units" and shall be multiplied by
+    // Pango::SCALE from "px":
+    fontd.set_absolute_size (absoluteFontSize * static_cast<double>(Pango::SCALE));
     context->set_font_description (fontd);
     Glib::RefPtr<Pango::Layout> cllayout = parent->create_pango_layout("1000%");
 
@@ -2465,21 +2464,20 @@ void CropWindow::drawDecoration (Cairo::RefPtr<Cairo::Context> cr)
     Glib::RefPtr<Pango::Context> context = iarea->get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    // Absolute size is defined in "Pango units" and shall be multiplied by
-    // Pango::SCALE from "px"
-    const int fontSize = 8;
-    const int absoluteFontSize = fontSize * Pango::SCALE;
-    // Guessing that absolute pixel size is given for a 96 DPI reference:
+    const int fontSize = 8; // pt
+    // Converting font size to "px" based on DPI and scale
 #ifndef __APPLE__
-    const double fontScale = static_cast<double>(RTScalable::getDPI())
-        / static_cast<double>(RTScalable::pangoDPI)
-        * RTScalable::getScale(); // Refer to notes in rtscalable.h
+    const double fontScale = RTScalable::getDPI() / RTScalable::pangoDPI
+        * static_cast<double>(RTScalable::getScale()); // Refer to notes in rtscalable.h
 #else
     // On MacOS, font is already scaled by the System library
     // Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c
     const double fontScale = 1.;
 #endif
-    fontd.set_absolute_size (static_cast<double>(absoluteFontSize) * fontScale);
+    const double absoluteFontSize = static_cast<double>(fontSize) * fontScale; // px
+    // Absolute size is defined in "Pango units" and shall be multiplied by
+    // Pango::SCALE from "px":
+    fontd.set_absolute_size (absoluteFontSize * static_cast<double>(Pango::SCALE));
     context->set_font_description (fontd);
     Glib::RefPtr<Pango::Layout> cllayout = iarea->create_pango_layout(cropLabel);
     int iw, ih;
@@ -2543,21 +2541,20 @@ void CropWindow::drawStraightenGuide (Cairo::RefPtr<Cairo::Context> cr)
     Glib::RefPtr<Pango::Context> context = iarea->get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    // Absolute size is defined in "Pango units" and shall be multiplied by
-    // Pango::SCALE from "px"
-    const int fontSize = 8;
-    const int absoluteFontSize = fontSize * Pango::SCALE;
-    // Guessing that absolute pixel size is given for a 96 DPI reference:
+    const int fontSize = 8; // pt
+    // Converting font size to "px" based on DPI and scale
 #ifndef __APPLE__
-    const double fontScale = static_cast<double>(RTScalable::getDPI())
-        / static_cast<double>(RTScalable::pangoDPI)
-        * RTScalable::getScale(); // Refer to notes in rtscalable.h
+    const double fontScale = RTScalable::getDPI() / RTScalable::pangoDPI
+        * static_cast<double>(RTScalable::getScale()); // Refer to notes in rtscalable.h
 #else
     // On MacOS, font is already scaled by the System library
     // Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c
     const double fontScale = 1.;
 #endif
-    fontd.set_absolute_size (static_cast<double>(absoluteFontSize) * fontScale);
+    const double absoluteFontSize = static_cast<double>(fontSize) * fontScale; // px
+    // Absolute size is defined in "Pango units" and shall be multiplied by
+    // Pango::SCALE from "px":
+    fontd.set_absolute_size (absoluteFontSize * static_cast<double>(Pango::SCALE));
     context->set_font_description (fontd);
     Glib::RefPtr<Pango::Layout> deglayout = iarea->create_pango_layout(Glib::ustring::compose ("%1 deg", Glib::ustring::format(std::setprecision(2), rot_deg)));
 
