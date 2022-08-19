@@ -72,14 +72,14 @@ ControlSpotPanel::ControlSpotPanel():
     struc_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRES"), 1.0, 12.0, 0.1, 4.0))),
     thresh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_THRESDELTAE"), 0.0, 10.0, 0.1, 2.0))),
     iter_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_PROXI"), 0.2, 10.0, 0.1, 2.0))),
-    balan_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALAN"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16.png")),  Gtk::manage(new RTImage("circle-white-small.png"))))),
-    balanh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANH"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee-logo-16.png")), Gtk::manage(new RTImage("circle-red-green-small.png"))))),
-    colorde_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COLORDE"), -15, 15, 2, 5, Gtk::manage(new RTImage("circle-blue-yellow-small.png")), Gtk::manage(new RTImage("circle-gray-green-small.png"))))),
+    balan_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALAN"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee")),  Gtk::manage(new RTImage("circle-white-small"))))),
+    balanh_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BALANH"), 0.2, 2.5, 0.1, 1.0, Gtk::manage(new RTImage("rawtherapee")), Gtk::manage(new RTImage("circle-red-green-small"))))),
+    colorde_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COLORDE"), -15, 15, 2, 5, Gtk::manage(new RTImage("circle-blue-yellow-small")), Gtk::manage(new RTImage("circle-gray-green-small"))))),
     colorscope_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COLORSCOPE"), 0., 100.0, 1., 30.))),
     avoidrad_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_AVOIDRAD"), 0., 30.0, 0.1, 0.7))),
     scopemask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SCOPEMASK"), 0, 100, 1, 60))),
     denoichmask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_DENOIMASK"), 0., 100., 0.5, 0))),
-    lumask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LUMASK"), -50, 30, 1, 10, Gtk::manage(new RTImage("circle-yellow-small.png")), Gtk::manage(new RTImage("circle-gray-small.png")) ))),
+    lumask_(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LUMASK"), -50, 30, 1, 10, Gtk::manage(new RTImage("circle-yellow-small")), Gtk::manage(new RTImage("circle-gray-small")) ))),
 
     hishow_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_PREVSHOW")))),
     activ_(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_ACTIVSPOT")))),
@@ -121,7 +121,7 @@ ControlSpotPanel::ControlSpotPanel():
     prevMethodconn_ = prevMethod_->signal_changed().connect(
                           sigc::mem_fun(
                               *this, &ControlSpotPanel::prevMethodChanged));
-    
+
 //    ctboxprevmethod->pack_start(*prevMethod_);
     pack_start(*ctboxprevmethod);
 
@@ -253,7 +253,7 @@ ControlSpotPanel::ControlSpotPanel():
     sensiexclu_->setAdjusterListener(this);
     structexclu_->setAdjusterListener(this);
     structexclu_->setLogScale(10, 0);
-    
+
     excluBox->pack_start(*sensiexclu_);
     excluBox->pack_start(*structexclu_);
     excluFrame->add(*excluBox);
@@ -385,7 +385,7 @@ ControlSpotPanel::ControlSpotPanel():
     expShapeDetect_->add(*artifBox, false);
     pack_start(*expShapeDetect_, false, false);
     ToolParamBlock* const artifBox2 = Gtk::manage(new ToolParamBlock());
-    
+
     artifBox2->pack_start(*preview_);
     artifBox2->pack_start(*colorscope_);
     pack_start(*artifBox2);
@@ -401,7 +401,7 @@ ControlSpotPanel::ControlSpotPanel():
                       sigc::mem_fun(*this, &ControlSpotPanel::avoidChanged));
     avoidmunConn_  = avoidmun_->signal_toggled().connect(
                       sigc::mem_fun(*this, &ControlSpotPanel::avoidmunChanged));
-    
+
     Gtk::Frame* const avFrame = Gtk::manage(new Gtk::Frame());
     ToolParamBlock* const avbox = Gtk::manage(new ToolParamBlock());
     avFrame->set_label_align(0.025, 0.5);
@@ -455,7 +455,7 @@ ControlSpotPanel::ControlSpotPanel():
     ctboxwavmethod->pack_start(*wavMethod_);
     specCaseBox->pack_start(*ctboxwavmethod);
 
-    
+
     expSpecCases_->add(*specCaseBox, false);
     pack_start(*expSpecCases_, false, false);
 
@@ -1297,7 +1297,7 @@ void ControlSpotPanel::updateParamVisibility()
         ctboxshape->show();
     }
 
-    
+
 }
 
 void ControlSpotPanel::adjusterChanged(Adjuster* a, double newval)

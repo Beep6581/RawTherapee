@@ -187,18 +187,18 @@ BlackWhite::BlackWhite (): FoldableToolPanel(this, "blackwhite", M("TP_BWMIX_LAB
 
     //----------- RGB / ROYGCBPM Mixer ------------------------------
 
-    imgIcon[0] = Gtk::manage (new RTImage ("circle-red-small.png"));
-    imgIcon[1] = Gtk::manage (new RTImage ("circle-orange-small.png"));
-    imgIcon[2] = Gtk::manage (new RTImage ("circle-yellow-small.png"));
-    imgIcon[3] = Gtk::manage (new RTImage ("circle-green-small.png"));
-    imgIcon[4] = Gtk::manage (new RTImage ("circle-cyan-small.png"));
-    imgIcon[5] = Gtk::manage (new RTImage ("circle-blue-small.png"));
-    imgIcon[6] = Gtk::manage (new RTImage ("circle-purple-small.png"));
-    imgIcon[7] = Gtk::manage (new RTImage ("circle-magenta-small.png"));
+    imgIcon[0] = Gtk::manage (new RTImage ("circle-red-small"));
+    imgIcon[1] = Gtk::manage (new RTImage ("circle-orange-small"));
+    imgIcon[2] = Gtk::manage (new RTImage ("circle-yellow-small"));
+    imgIcon[3] = Gtk::manage (new RTImage ("circle-green-small"));
+    imgIcon[4] = Gtk::manage (new RTImage ("circle-cyan-small"));
+    imgIcon[5] = Gtk::manage (new RTImage ("circle-blue-small"));
+    imgIcon[6] = Gtk::manage (new RTImage ("circle-purple-small"));
+    imgIcon[7] = Gtk::manage (new RTImage ("circle-magenta-small"));
 
-    imgIcon[8]  = Gtk::manage (new RTImage ("circle-empty-red-small.png"));
-    imgIcon[9]  = Gtk::manage (new RTImage ("circle-empty-green-small.png"));
-    imgIcon[10] = Gtk::manage (new RTImage ("circle-empty-blue-small.png"));
+    imgIcon[8]  = Gtk::manage (new RTImage ("circle-empty-red-small"));
+    imgIcon[9]  = Gtk::manage (new RTImage ("circle-empty-green-small"));
+    imgIcon[10] = Gtk::manage (new RTImage ("circle-empty-blue-small"));
 
     mixerVBox->pack_start (*Gtk::manage (new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL)));
 

@@ -260,7 +260,7 @@ void MyDiagonalCurve::draw (int handle)
         return;
     }
 
-    const double s = (double)RTScalable::getScale();
+    const double s = RTScalable::scalePixelSize(1.);
 
     // re-calculate curve if dimensions changed
     int currLUTSize = point.getUpperBound();
@@ -594,7 +594,7 @@ bool MyDiagonalCurve::handleEvents (GdkEvent* event)
         return false;
     }
 
-    double s = RTScalable::getScale();
+    const double s = RTScalable::scalePixelSize(1.);
 
     double minDistanceX = double(MIN_DISTANCE) / graphW * s;
     double minDistanceY = double(MIN_DISTANCE) / graphH * s;
@@ -1069,7 +1069,7 @@ void MyDiagonalCurve::pipetteMouseOver (CurveEditor *ce, EditDataProvider *provi
         return;
     }
 
-    double s = (double)RTScalable::getScale();
+    const double s = RTScalable::scalePixelSize(1.);
     double minDistanceX = MIN_DISTANCE / graphW * s;
 
     if (curve.type == DCT_Linear || curve.type == DCT_Spline || curve.type == DCT_NURBS || curve.type == DCT_CatumullRom) {
@@ -1124,7 +1124,7 @@ bool MyDiagonalCurve::pipetteButton1Pressed(EditDataProvider *provider, int modi
         return false;
     }
 
-    double s = (double)RTScalable::getScale();
+    const double s = RTScalable::scalePixelSize(1.);
     double minDistanceX = double(MIN_DISTANCE) * s / graphW;
 
     snapToElmt = -100;
@@ -1201,7 +1201,7 @@ void MyDiagonalCurve::pipetteButton1Released(EditDataProvider *provider)
         return;
     }
 
-    double s = (double)RTScalable::getScale();
+    const double s = RTScalable::scalePixelSize(1.);
     double minDistanceX = double(MIN_DISTANCE) * s / graphW;
 
     snapToElmt = -100;

@@ -21,48 +21,62 @@
 #include <glib/gstdio.h>
 
 #include "multilangmgr.h"
-#include "rtimage.h"
 
 extern Glib::ustring creditsPath;
 extern Glib::ustring licensePath;
 extern Glib::ustring versionString;
 
-SplashImage::SplashImage () : surface(RTImage::createImgSurfFromFile("splash.png"))
+SplashImage::SplashImage () : surface(new RTSurface("splash.svg"))
 {
 }
 
 bool SplashImage::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
+    if (surface->hasSurface()) {
+        cr->set_source(surface->get(), 0., 0.);
+        cr->rectangle(0, 0, surface->get()->get_width(), surface->get()->get_height());
+        cr->fill();
 
-    cr->set_source(surface, 0., 0.);
-    cr->rectangle(0, 0, surface->get_width(), surface->get_height());
-    cr->fill();
+        Cairo::FontOptions cfo;
+        cfo.set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
+        Glib::RefPtr<Pango::Context> context = get_pango_context ();
+        context->set_cairo_font_options (cfo);
+        Pango::FontDescription fontd = context->get_font_description ();
+        fontd.set_weight (Pango::WEIGHT_LIGHT);
+        // Absolute size is defined in "Pango units" and shall be multiplied by
+        // Pango::SCALE from "px"
+        const int fontSize = 12;
+        const int absoluteFontSize = fontSize * Pango::SCALE;
+        // Guessing that absolute pixel size is given for a 96 DPI reference:
+#ifndef __APPLE__
+        const double fontScale = static_cast<double>(RTScalable::getDPI())
+            / static_cast<double>(RTScalable::pangoDPI)
+            * RTScalable::getScale(); // Refer to notes in rtscalable.h
+#else
+        // On MacOS, font is already scaled by the System library
+        // Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c
+        const double fontScale = 1.;
+#endif
+        fontd.set_absolute_size (static_cast<double>(absoluteFontSize) * fontScale);
+        context->set_font_description (fontd);
 
-    Cairo::FontOptions cfo;
-    cfo.set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
-    Glib::RefPtr<Pango::Context> context = get_pango_context ();
-    context->set_cairo_font_options (cfo);
-    Pango::FontDescription fontd = context->get_font_description ();
-    fontd.set_weight (Pango::WEIGHT_LIGHT);
-    fontd.set_absolute_size (12 * Pango::SCALE);
-    context->set_font_description (fontd);
+        int w, h;
+        Glib::ustring versionStr(versionString);
 
-    int w, h;
-    Glib::ustring versionStr(versionString);
-
-    version = create_pango_layout (versionStr);
-    version->set_text(versionStr);
-    version->get_pixel_size (w, h);
-    cr->set_source_rgb (0., 0., 0.);
-    cr->set_line_width(3.);
-    cr->set_line_join(Cairo::LINE_JOIN_ROUND);
-    cr->move_to (surface->get_width() - w - 32, surface->get_height() - h - 20);
-    version->add_to_cairo_context (cr);
-    cr->stroke_preserve();
-    cr->set_source_rgb (1., 1., 1.);
-    cr->set_line_width(0.5);
-    cr->stroke_preserve();
-    cr->fill();
+        version = create_pango_layout (versionStr);
+        version->set_text(versionStr);
+        version->get_pixel_size (w, h);
+        cr->set_source_rgb (0., 0., 0.);
+        cr->set_line_width(3.);
+        cr->set_line_join(Cairo::LINE_JOIN_ROUND);
+        cr->move_to (surface->get()->get_width() - w - 32, surface->get()->get_height() - h - 20);
+        version->add_to_cairo_context (cr);
+        cr->stroke_preserve();
+        cr->set_source_rgb (1., 1., 1.);
+        cr->set_line_width(0.5);
+        cr->stroke_preserve();
+        cr->fill();
+    }
 
     return true;
 }
@@ -74,12 +88,12 @@ Gtk::SizeRequestMode SplashImage::get_request_mode_vfunc () const
 
 void SplashImage::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
 {
-    minimum_height = natural_height = surface ? surface->get_height() : 100 * RTScalable::getScale();
+    minimum_height = natural_height = surface ? surface->get()->get_height() : RTScalable::scalePixelSize(100);
 }
 
 void SplashImage::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = natural_width = surface ? surface->get_width() : 100 * RTScalable::getScale();
+    minimum_width = natural_width = surface ? surface->get()->get_width() : RTScalable::scalePixelSize(100);
 }
 
 void SplashImage::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
@@ -111,6 +125,8 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
 
     // Tab 1: the image
     splashImage = Gtk::manage(new SplashImage ());
+    splashImage->set_halign(Gtk::ALIGN_CENTER);
+    splashImage->set_valign(Gtk::ALIGN_CENTER);
     nb->append_page (*splashImage,  M("ABOUT_TAB_SPLASH"));
     splashImage->show ();
 
@@ -241,7 +257,6 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
             nb->append_page (*releaseNotesSW, M("ABOUT_TAB_RELEASENOTES"));
         }
     }
-
 
     set_position (Gtk::WIN_POS_CENTER);
     //add_events(Gdk::BUTTON_RELEASE_MASK);

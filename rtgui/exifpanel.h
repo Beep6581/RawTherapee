@@ -39,7 +39,7 @@ private:
     class ExifColumns : public Gtk::TreeModelColumnRecord
     {
     public:
-        Gtk::TreeModelColumn<Glib::RefPtr<Gdk::Pixbuf> > icon;
+        Gtk::TreeModelColumn<Glib::ustring> icon;
         Gtk::TreeModelColumn<Glib::ustring> field;
         Gtk::TreeModelColumn<Glib::ustring> field_nopango;
         Gtk::TreeModelColumn<Glib::ustring> value;
@@ -64,9 +64,10 @@ private:
             add (isSeparator);
         }
     };
-    Glib::RefPtr<Gdk::Pixbuf> delicon;
-    Glib::RefPtr<Gdk::Pixbuf> keepicon;
-    Glib::RefPtr<Gdk::Pixbuf> editicon;
+
+    Glib::ustring delicon;
+    Glib::ustring keepicon;
+    Glib::ustring editicon;
 
     ExifColumns exifColumns;
     Gtk::TreeView* exifTree;

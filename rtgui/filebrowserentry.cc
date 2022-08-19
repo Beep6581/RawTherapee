@@ -25,7 +25,7 @@
 #include "cursormanager.h"
 #include "guiutils.h"
 #include "inspector.h"
-#include "rtimage.h"
+#include "rtsurface.h"
 #include "threadutils.h"
 #include "thumbbrowserbase.h"
 #include "thumbnail.h"
@@ -38,11 +38,11 @@
 //extern Glib::Threads::Thread* mainThread;
 
 bool FileBrowserEntry::iconsLoaded(false);
-Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::editedIcon;
-Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::recentlySavedIcon;
-Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::enqueuedIcon;
-Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::hdr;
-Glib::RefPtr<Gdk::Pixbuf> FileBrowserEntry::ps;
+std::shared_ptr<RTPixbuf> FileBrowserEntry::editedIcon(std::shared_ptr<RTPixbuf>(nullptr));
+std::shared_ptr<RTPixbuf> FileBrowserEntry::recentlySavedIcon(std::shared_ptr<RTPixbuf>(nullptr));
+std::shared_ptr<RTPixbuf> FileBrowserEntry::enqueuedIcon(std::shared_ptr<RTPixbuf>(nullptr));
+std::shared_ptr<RTPixbuf> FileBrowserEntry::hdr(std::shared_ptr<RTPixbuf>(nullptr));
+std::shared_ptr<RTPixbuf> FileBrowserEntry::ps(std::shared_ptr<RTPixbuf>(nullptr));
 
 FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
     : ThumbBrowserEntryBase (fname), wasInside(false), iatlistener(nullptr), press_x(0), press_y(0), action_x(0), action_y(0), rot_deg(0.0), landscape(true), cropParams(new rtengine::procparams::CropParams), cropgl(nullptr), state(SNormal), crop_custom_ratio(0.f)
@@ -61,11 +61,11 @@ FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
     scale = 1;
 
     if (!iconsLoaded) {
-        editedIcon = RTImage::createPixbufFromFile ("tick-small.png");
-        recentlySavedIcon = RTImage::createPixbufFromFile ("save-small.png");
-        enqueuedIcon = RTImage::createPixbufFromFile ("gears-small.png");
-        hdr = RTImage::createPixbufFromFile ("filetype-hdr.png");
-        ps = RTImage::createPixbufFromFile ("filetype-ps.png");
+        editedIcon = std::shared_ptr<RTPixbuf>(new RTPixbuf("tick-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+        recentlySavedIcon = std::shared_ptr<RTPixbuf>(new RTPixbuf("save-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+        enqueuedIcon = std::shared_ptr<RTPixbuf>(new RTPixbuf("gears-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+        hdr = std::shared_ptr<RTPixbuf>(new RTPixbuf("filetype-hdr", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+        ps = std::shared_ptr<RTPixbuf>(new RTPixbuf("filetype-ps", Gtk::ICON_SIZE_SMALL_TOOLBAR));
         iconsLoaded = true;
     }
 
@@ -134,15 +134,15 @@ std::vector<Glib::RefPtr<Gdk::Pixbuf>> FileBrowserEntry::getIconsOnImageArea ()
     std::vector<Glib::RefPtr<Gdk::Pixbuf>> ret;
 
     if (thumbnail->hasProcParams() && editedIcon) {
-        ret.push_back(editedIcon);
+        ret.push_back(editedIcon->get());
     }
 
     if (thumbnail->isRecentlySaved() && recentlySavedIcon) {
-        ret.push_back(recentlySavedIcon);
+        ret.push_back(recentlySavedIcon->get());
     }
 
     if (thumbnail->isEnqueued () && enqueuedIcon) {
-        ret.push_back(enqueuedIcon);
+        ret.push_back(enqueuedIcon->get());
     }
 
     return ret;
@@ -157,11 +157,11 @@ std::vector<Glib::RefPtr<Gdk::Pixbuf>> FileBrowserEntry::getSpecificityIconsOnIm
     std::vector<Glib::RefPtr<Gdk::Pixbuf>> ret;
 
     if (thumbnail->isHDR() && hdr) {
-        ret.push_back (hdr);
+        ret.push_back (hdr->get());
     }
 
     if (thumbnail->isPixelShift() && ps) {
-        ret.push_back (ps);
+        ret.push_back (ps->get());
     }
 
     return ret;
@@ -195,8 +195,8 @@ void FileBrowserEntry::customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c)
 void FileBrowserEntry::getIconSize (int& w, int& h) const
 {
 
-    w = editedIcon->get_width ();
-    h = editedIcon->get_height ();
+    w = editedIcon->get()->get_width ();
+    h = editedIcon->get()->get_height ();
 }
 
 FileThumbnailButtonSet* FileBrowserEntry::getThumbButtonSet ()

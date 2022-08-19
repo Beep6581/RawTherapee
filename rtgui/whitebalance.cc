@@ -21,6 +21,7 @@
 #include <iomanip>
 
 #include "rtimage.h"
+#include "rtsurface.h"
 #include "options.h"
 
 #define MINTEMP 1500   //1200
@@ -33,32 +34,6 @@
 
 using namespace rtengine;
 using namespace rtengine::procparams;
-
-Glib::RefPtr<Gdk::Pixbuf> WhiteBalance::wbPixbufs[toUnderlying(WBEntry::Type::CUSTOM) + 1];
-
-void WhiteBalance::init ()
-{
-    wbPixbufs[toUnderlying(WBEntry::Type::CAMERA)]      = RTImage::createPixbufFromFile ("wb-camera-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::AUTO)]        = RTImage::createPixbufFromFile ("wb-auto-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::DAYLIGHT)]    = RTImage::createPixbufFromFile ("wb-sun-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::CLOUDY)]      = RTImage::createPixbufFromFile ("wb-cloudy-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::SHADE)]       = RTImage::createPixbufFromFile ("wb-shade-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::WATER)]       = RTImage::createPixbufFromFile ("wb-water-small.png");
-  //wbPixbufs[toUnderlying(WBEntry::Type::WATER2)]      = RTImage::createPixbufFromFile ("wb-water-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::TUNGSTEN)]    = RTImage::createPixbufFromFile ("wb-tungsten-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::FLUORESCENT)] = RTImage::createPixbufFromFile ("wb-fluorescent-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::LAMP)]        = RTImage::createPixbufFromFile ("wb-lamp-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::FLASH)]       = RTImage::createPixbufFromFile ("wb-flash-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::LED)]         = RTImage::createPixbufFromFile ("wb-led-small.png");
-    wbPixbufs[toUnderlying(WBEntry::Type::CUSTOM)]      = RTImage::createPixbufFromFile ("wb-custom-small.png");
-}
-
-void WhiteBalance::cleanup ()
-{
-    for (int i = 0; i < toUnderlying(WBEntry::Type::CUSTOM) + 1; i++) {
-        wbPixbufs[i].reset();
-    }
-}
 
 static double wbSlider2Temp(double sval)
 {
@@ -144,6 +119,19 @@ static double wbTemp2Slider(double temp)
 
 WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WBALANCE_LABEL"), true, true), wbp(nullptr), wblistener(nullptr)
 {
+    // Assign icon name to wbIcons
+    wbIcons[toUnderlying(WBEntry::Type::CAMERA)]      = "wb-camera-small";
+    wbIcons[toUnderlying(WBEntry::Type::AUTO)]        = "wb-auto-small";
+    wbIcons[toUnderlying(WBEntry::Type::DAYLIGHT)]    = "wb-sun-small";
+    wbIcons[toUnderlying(WBEntry::Type::CLOUDY)]      = "wb-cloudy-small";
+    wbIcons[toUnderlying(WBEntry::Type::SHADE)]       = "wb-shade-small";
+    wbIcons[toUnderlying(WBEntry::Type::WATER)]       = "wb-water-small";
+    wbIcons[toUnderlying(WBEntry::Type::TUNGSTEN)]    = "wb-tungsten-small";
+    wbIcons[toUnderlying(WBEntry::Type::FLUORESCENT)] = "wb-fluorescent-small";
+    wbIcons[toUnderlying(WBEntry::Type::LAMP)]        = "wb-lamp-small";
+    wbIcons[toUnderlying(WBEntry::Type::FLASH)]       = "wb-flash-small";
+    wbIcons[toUnderlying(WBEntry::Type::LED)]         = "wb-led-small";
+    wbIcons[toUnderlying(WBEntry::Type::CUSTOM)]      = "wb-custom-small";
 
     Gtk::Grid* methodgrid = Gtk::manage(new Gtk::Grid());
     methodgrid->get_style_context()->add_class("grid-spacing");
@@ -159,6 +147,15 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     setExpandAlignProperties(method, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     // Assign the model to the Combobox
     method->set_model(refTreeModel);
+    method->clear(); // Clear default cell layout to add custom one
+    Gtk::CellRendererPixbuf* const renderer_icon = Gtk::manage(new Gtk::CellRendererPixbuf());
+    renderer_icon->property_stock_size() = Gtk::ICON_SIZE_MENU;
+    method->pack_start(*renderer_icon, false);
+    method->add_attribute(*renderer_icon, "icon-name", methodColumns.colIcon);
+    Gtk::CellRendererText* const renderer_label = Gtk::manage(new Gtk::CellRendererText());
+    renderer_label->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
+    method->pack_start(*renderer_label, true);
+    method->add_attribute(*renderer_label, "markup", methodColumns.colLabel);
 
     WBEntry::Type oldType = WBParams::getWbEntries()[0].type;
     WBEntry::Type currType;
@@ -170,7 +167,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
             if (currType == WBEntry::Type::FLUORESCENT) {
                 // Creating the Fluorescent subcategory header
                 row = *(refTreeModel->append());
-                row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
+                row[methodColumns.colIcon] = wbIcons[toUnderlying(currType)];
                 row[methodColumns.colLabel] = M("TP_WBALANCE_FLUO_HEADER");
                 row[methodColumns.colId] = i + 100;
             }
@@ -178,7 +175,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
             if (currType == WBEntry::Type::AUTO) {
                 // Creating the auto category
                 row = *(refTreeModel->append());
-                row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
+                row[methodColumns.colIcon] = wbIcons[toUnderlying(currType)];
                 row[methodColumns.colLabel] = M("TP_WBALANCE_AUTO_HEADER");
                 row[methodColumns.colId] = i + 100;
             }
@@ -186,7 +183,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
             if (currType == WBEntry::Type::WATER) {
                 // Creating the under water subcategory header
                 row = *(refTreeModel->append());
-                row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
+                row[methodColumns.colIcon] = wbIcons[toUnderlying(currType)];
                 row[methodColumns.colLabel] = M("TP_WBALANCE_WATER_HEADER");
                 row[methodColumns.colId] = i + 100;
             }
@@ -194,7 +191,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
             if (currType == WBEntry::Type::LAMP) {
                 // Creating the Lamp subcategory header
                 row = *(refTreeModel->append());
-                row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
+                row[methodColumns.colIcon] = wbIcons[toUnderlying(currType)];
                 row[methodColumns.colLabel] = M("TP_WBALANCE_LAMP_HEADER");
                 row[methodColumns.colId] = i + 100;
             }
@@ -202,7 +199,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
             if (currType == WBEntry::Type::LED) {
                 // Creating the LED subcategory header
                 row = *(refTreeModel->append());
-                row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
+                row[methodColumns.colIcon] = wbIcons[toUnderlying(currType)];
                 row[methodColumns.colLabel] = M("TP_WBALANCE_LED_HEADER");
                 row[methodColumns.colId] = i + 100;
             }
@@ -210,7 +207,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
             if (currType == WBEntry::Type::FLASH) {
                 // Creating the Flash subcategory header
                 row = *(refTreeModel->append());
-                row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
+                row[methodColumns.colIcon] = wbIcons[toUnderlying(currType)];
                 row[methodColumns.colLabel] = M("TP_WBALANCE_FLASH_HEADER");
                 row[methodColumns.colId] = i + 100;
             }
@@ -224,12 +221,12 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
                 || currType == WBEntry::Type::AUTO
            ) {
             childrow = *(refTreeModel->append(row.children()));
-            childrow[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
+            childrow[methodColumns.colIcon] = wbIcons[toUnderlying(currType)];
             childrow[methodColumns.colLabel] = WBParams::getWbEntries()[i].GUILabel;
             childrow[methodColumns.colId] = i;
         } else {
             row = *(refTreeModel->append());
-            row[methodColumns.colIcon] = wbPixbufs[toUnderlying(currType)];
+            row[methodColumns.colIcon] = wbIcons[toUnderlying(currType)];
             row[methodColumns.colLabel] = WBParams::getWbEntries()[i].GUILabel;
             row[methodColumns.colId] = i;
         }
@@ -240,20 +237,11 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
         custom_equal = 1.0;
     }
 
-    //Add the model columns to the Combo (which is a kind of view),
-    //rendering them in the default way:
-    method->pack_start(methodColumns.colIcon, false);
-    method->pack_start(methodColumns.colLabel, true);
-
-    std::vector<Gtk::CellRenderer*> cells = method->get_cells();
-    Gtk::CellRendererText* cellRenderer = dynamic_cast<Gtk::CellRendererText*>(cells.at(1));
-    cellRenderer->property_ellipsize() = Pango::ELLIPSIZE_MIDDLE;
-    
     resetButton = Gtk::manage (new Gtk::Button()); // No label, keep it short
     setExpandAlignProperties(resetButton, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     resetButton->set_relief(Gtk::RELIEF_NONE);
     resetButton->get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
-    resetButton->set_image (*Gtk::manage (new RTImage ("undo-small.png")));
+    resetButton->set_image (*Gtk::manage (new RTImage ("undo-small", Gtk::ICON_SIZE_BUTTON)));
 
     method->set_active (0); // Camera
     methodgrid->attach (*lab, 0, 0, 1, 1);
@@ -270,7 +258,7 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     setExpandAlignProperties(spotbutton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     spotbutton->get_style_context()->add_class("independent");
     spotbutton->set_tooltip_text(M("TP_WBALANCE_SPOTWB"));
-    spotbutton->set_image (*Gtk::manage (new RTImage ("color-picker-small.png")));
+    spotbutton->set_image (*Gtk::manage (new RTImage ("color-picker-small", Gtk::ICON_SIZE_BUTTON)));
 
     Gtk::Label* slab = Gtk::manage (new Gtk::Label (M("TP_WBALANCE_SIZE")));
     setExpandAlignProperties(slab, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
@@ -322,14 +310,14 @@ WhiteBalance::WhiteBalance () : FoldableToolPanel(this, "whitebalance", M("TP_WB
     separator->get_style_context()->add_class("grid-row-separator");
     pack_start (*separator, Gtk::PACK_SHRINK, 0);
 
-    Gtk::Image* itempL =  Gtk::manage (new RTImage ("circle-blue-small.png"));
-    Gtk::Image* itempR =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
-    Gtk::Image* igreenL = Gtk::manage (new RTImage ("circle-magenta-small.png"));
-    Gtk::Image* igreenR = Gtk::manage (new RTImage ("circle-green-small.png"));
-    Gtk::Image* iblueredL = Gtk::manage (new RTImage ("circle-blue-small.png"));
-    Gtk::Image* iblueredR = Gtk::manage (new RTImage ("circle-red-small.png"));
-    Gtk::Image* itempbiasL =  Gtk::manage (new RTImage ("circle-blue-small.png"));
-    Gtk::Image* itempbiasR =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
+    Gtk::Image* itempL =  Gtk::manage (new RTImage ("circle-blue-small", Gtk::ICON_SIZE_BUTTON));
+    Gtk::Image* itempR =  Gtk::manage (new RTImage ("circle-yellow-small", Gtk::ICON_SIZE_BUTTON));
+    Gtk::Image* igreenL = Gtk::manage (new RTImage ("circle-magenta-small", Gtk::ICON_SIZE_BUTTON));
+    Gtk::Image* igreenR = Gtk::manage (new RTImage ("circle-green-small", Gtk::ICON_SIZE_BUTTON));
+    Gtk::Image* iblueredL = Gtk::manage (new RTImage ("circle-blue-small", Gtk::ICON_SIZE_BUTTON));
+    Gtk::Image* iblueredR = Gtk::manage (new RTImage ("circle-red-small", Gtk::ICON_SIZE_BUTTON));
+    Gtk::Image* itempbiasL =  Gtk::manage (new RTImage ("circle-blue-small", Gtk::ICON_SIZE_BUTTON));
+    Gtk::Image* itempbiasR =  Gtk::manage (new RTImage ("circle-yellow-small", Gtk::ICON_SIZE_BUTTON));
 
     StudLabel = Gtk::manage(new Gtk::Label("---", Gtk::ALIGN_CENTER));
     StudLabel->set_tooltip_text(M("TP_WBALANCE_STUDLABEL_TOOLTIP"));
@@ -719,7 +707,7 @@ void WhiteBalance::read (const ProcParams* pp, const ParamsEdited* pedited)
         } else {
             StudLabel->hide();
         }
-        
+
     }
 
     setEnabled(pp->wb.enabled);
@@ -954,7 +942,7 @@ void WhiteBalance::WBChanged(double temperature, double greenVal, float studgood
             StudLabel->set_text(
                 Glib::ustring::compose(M("TP_WBALANCE_STUDLABEL"),
                                    Glib::ustring::format(std::fixed, std::setprecision(4), studgood))
-            );            
+            );
             temp->setDefault(temperature);
             green->setDefault(greenVal);
             enableListener();

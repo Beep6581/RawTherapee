@@ -25,6 +25,7 @@
 #include "../rtengine/array2D.h"
 #include "../rtengine/LUT.h"
 #include "rtimage.h"
+#include "rtscalable.h"
 #include "../rtengine/color.h"
 
 using namespace rtengine;
@@ -114,30 +115,30 @@ HistogramPanel::HistogramPanel () :
     histogramRGBAreaHori->set_no_show_all();
     histogramRGBAreaVert->set_no_show_all();
 
-    redImage   = new RTImage ("histogram-red-on-small.png");
-    greenImage = new RTImage ("histogram-green-on-small.png");
-    blueImage  = new RTImage ("histogram-blue-on-small.png");
-    valueImage = new RTImage ("histogram-silver-on-small.png");
-    chroImage  = new RTImage ("histogram-gold-on-small.png");
-    barImage   = new RTImage ("histogram-bar-on-small.png");
+    redImage   = new RTImage ("histogram-red-on-small", Gtk::ICON_SIZE_BUTTON);
+    greenImage = new RTImage ("histogram-green-on-small", Gtk::ICON_SIZE_BUTTON);
+    blueImage  = new RTImage ("histogram-blue-on-small", Gtk::ICON_SIZE_BUTTON);
+    valueImage = new RTImage ("histogram-silver-on-small", Gtk::ICON_SIZE_BUTTON);
+    chroImage  = new RTImage ("histogram-gold-on-small", Gtk::ICON_SIZE_BUTTON);
+    barImage   = new RTImage ("histogram-bar-on-small", Gtk::ICON_SIZE_BUTTON);
 
-    redImage_g   = new RTImage ("histogram-red-off-small.png");
-    greenImage_g = new RTImage ("histogram-green-off-small.png");
-    blueImage_g  = new RTImage ("histogram-blue-off-small.png");
-    valueImage_g = new RTImage ("histogram-silver-off-small.png");
-    chroImage_g  = new RTImage ("histogram-gold-off-small.png");
-    barImage_g   = new RTImage ("histogram-bar-off-small.png");
+    redImage_g   = new RTImage ("histogram-red-off-small", Gtk::ICON_SIZE_BUTTON);
+    greenImage_g = new RTImage ("histogram-green-off-small", Gtk::ICON_SIZE_BUTTON);
+    blueImage_g  = new RTImage ("histogram-blue-off-small", Gtk::ICON_SIZE_BUTTON);
+    valueImage_g = new RTImage ("histogram-silver-off-small", Gtk::ICON_SIZE_BUTTON);
+    chroImage_g  = new RTImage ("histogram-gold-off-small", Gtk::ICON_SIZE_BUTTON);
+    barImage_g   = new RTImage ("histogram-bar-off-small", Gtk::ICON_SIZE_BUTTON);
 
-    mode0Image  = new RTImage ("histogram-mode-linear-small.png");
-    mode1Image  = new RTImage ("histogram-mode-logx-small.png");
-    mode2Image  = new RTImage ("histogram-mode-logxy-small.png");
+    mode0Image  = new RTImage ("histogram-mode-linear-small", Gtk::ICON_SIZE_BUTTON);
+    mode1Image  = new RTImage ("histogram-mode-logx-small", Gtk::ICON_SIZE_BUTTON);
+    mode2Image  = new RTImage ("histogram-mode-logxy-small", Gtk::ICON_SIZE_BUTTON);
 
-    Gtk::Image* histImage = Gtk::manage(new RTImage("histogram-type-histogram-small.png"));
-    Gtk::Image* histRawImage = Gtk::manage(new RTImage("histogram-type-histogram-raw-small.png"));
-    Gtk::Image* paradeImage = Gtk::manage(new RTImage("histogram-type-parade-small.png"));
-    Gtk::Image* waveImage = Gtk::manage(new RTImage("histogram-type-waveform-small.png"));
-    Gtk::Image* vectHcImage = Gtk::manage(new RTImage("histogram-type-vectorscope-hc-small.png"));
-    Gtk::Image* vectHsImage = Gtk::manage(new RTImage("histogram-type-vectorscope-hs-small.png"));
+    Gtk::Image* histImage = Gtk::manage(new RTImage("histogram-type-histogram-small", Gtk::ICON_SIZE_BUTTON));
+    Gtk::Image* histRawImage = Gtk::manage(new RTImage("histogram-type-histogram-raw-small", Gtk::ICON_SIZE_BUTTON));
+    Gtk::Image* paradeImage = Gtk::manage(new RTImage("histogram-type-parade-small", Gtk::ICON_SIZE_BUTTON));
+    Gtk::Image* waveImage = Gtk::manage(new RTImage("histogram-type-waveform-small", Gtk::ICON_SIZE_BUTTON));
+    Gtk::Image* vectHcImage = Gtk::manage(new RTImage("histogram-type-vectorscope-hc-small", Gtk::ICON_SIZE_BUTTON));
+    Gtk::Image* vectHsImage = Gtk::manage(new RTImage("histogram-type-vectorscope-hs-small", Gtk::ICON_SIZE_BUTTON));
 
     showRed   = Gtk::manage (new Gtk::ToggleButton ());
     showGreen = Gtk::manage (new Gtk::ToggleButton ());
@@ -275,7 +276,7 @@ HistogramPanel::HistogramPanel () :
         case ScopeType::NONE:
             break;
     }
-    scopeOptions->set_image(*Gtk::manage(new RTImage("histogram-ellipsis-small.png")));
+    scopeOptions->set_image(*Gtk::manage(new RTImage("histogram-ellipsis-small")));
     showBAR->set_image   (showBAR->get_active()   ? *barImage   : *barImage_g);
 
     setExpandAlignProperties(showRed  , false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
@@ -760,21 +761,18 @@ void HistogramRGBArea::getPreferredThickness(int& min_thickness, int& natural_th
 
 void HistogramRGBArea::getPreferredLength(int& min_length, int& natural_length) const
 {
-    int s = RTScalable::getScale();
-    min_length = 60 * s;
-    natural_length = 200 * s;
+    min_length = RTScalable::scalePixelSize(60);
+    natural_length = RTScalable::scalePixelSize(200);
 }
 
 void HistogramRGBArea::getPreferredThicknessForLength(int length, int& min_thickness, int& natural_thickness) const
 {
     int bThickness = length / 30;
 
-    int s = RTScalable::getScale();
-
-    if (bThickness > (10 * s)) {
-        bThickness = 10 * s;
-    } else if (bThickness < (5 * s)) {
-        bThickness = 5 * s;
+    if (bThickness > RTScalable::scalePixelSize(10)) {
+        bThickness = RTScalable::scalePixelSize(10);
+    } else if (bThickness < RTScalable::scalePixelSize(5)) {
+        bThickness = RTScalable::scalePixelSize(5);
     }
 
     min_thickness = bThickness;
@@ -814,7 +812,7 @@ void HistogramRGBArea::updateBackBuffer (int r, int g, int b, const Glib::ustrin
     int winx, winy, winw, winh;
     window->get_geometry(winx, winy, winw, winh);
 
-    double s = RTScalable::getScale();
+    const double s = RTScalable::scalePixelSize(1.);
 
     // This will create or update the size of the BackBuffer::surface
     setDrawRectangle(Cairo::FORMAT_ARGB32, 0, 0, winw, winh, true);
@@ -1032,7 +1030,7 @@ void HistogramRGBAreaVert::get_preferred_height_vfunc (int &minimum_height, int 
 
 void HistogramRGBAreaVert::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    minimum_width = 10 * RTScalable::getScale();
+    minimum_width = RTScalable::scalePixelSize(10);
     natural_width = minimum_width;
 }
 
@@ -1103,22 +1101,18 @@ Gtk::SizeRequestMode HistogramArea::get_request_mode_vfunc () const
 
 void HistogramArea::get_preferred_height_vfunc (int &minimum_height, int &natural_height) const
 {
-    int s = RTScalable::getScale();
-    minimum_height = 100 * s;
-    natural_height = 200 * s;
+    minimum_height = RTScalable::scalePixelSize(100);
+    natural_height = RTScalable::scalePixelSize(200);
 }
 
 void HistogramArea::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-
-    int s = RTScalable::getScale();
-    minimum_width = 200 * s;
-    natural_width = 400 * s;
+    minimum_width = RTScalable::scalePixelSize(200);
+    natural_width = RTScalable::scalePixelSize(400);
 }
 
 void HistogramArea::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
 {
-
     minimum_height = 0;
     natural_height = 0;
 }
@@ -1252,7 +1246,7 @@ void HistogramArea::updateBackBuffer ()
     Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(surface);
     const Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
 
-    double s = RTScalable::getScale();
+    const double s = RTScalable::scalePixelSize(1.);
 
     // Setup drawing
     cr->set_source_rgba (0., 0., 0., 0.);
@@ -1471,7 +1465,7 @@ void HistogramArea::on_realize ()
 void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
                               const LUTu & data, double scale, int hsize, int vsize)
 {
-    double s = RTScalable::getScale();
+    const double s = RTScalable::scalePixelSize(1.);
 
     cr->set_line_width(s);
     cr->move_to (padding, vsize - 1);
@@ -1501,7 +1495,7 @@ void HistogramArea::drawCurve(Cairo::RefPtr<Cairo::Context> &cr,
 void HistogramArea::drawMarks(Cairo::RefPtr<Cairo::Context> &cr,
                               const LUTu & data, double scale, int hsize, int & ui, int & oi)
 {
-    int s = 8 * RTScalable::getScale();
+    const double s = RTScalable::scalePixelSize(1.);
 
     if(data[0] > scale) {
         cr->rectangle(padding, (ui++)*s, s, s);
@@ -1674,7 +1668,7 @@ void HistogramArea::drawVectorscope(Cairo::RefPtr<Cairo::Context> &cr, int w, in
         scope_scale * std::max<double>(vect_width, vect_height) : std::min<float>(w, h) - 2 * padding;
     const float o_x = (w - scope_scale * vect_width) / 2;
     const float o_y = (h - scope_scale * vect_height) / 2;
-    const double s = RTScalable::getScale();
+    const double s = RTScalable::scalePixelSize(1.);
     auto orig_matrix = cr->get_matrix();
     const double line_length = scope_size / 2.0;
     std::valarray<double> ch_ds(1);

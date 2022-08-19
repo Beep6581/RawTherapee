@@ -234,7 +234,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     genFrame->set_tooltip_markup (M ("TP_COLORAPP_GEN_TOOLTIP"));
     genVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     genVBox->set_spacing (2);
-    
+
     complexmethod = Gtk::manage (new MyComboBoxText ());
     complexmethod->append(M("TP_WAVELET_COMPNORMAL"));
     complexmethod->append(M("TP_WAVELET_COMPEXPERT"));
@@ -245,7 +245,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     complexHBox->pack_start(*complexLabel, Gtk::PACK_SHRINK, 4);
     complexHBox->pack_start(*complexmethod);
     genVBox->pack_start (*complexHBox, Gtk::PACK_SHRINK);
-    
+
     modelmethod = Gtk::manage (new MyComboBoxText ());
     modelmethod->append(M("TP_COLORAPP_MOD02"));
     modelmethod->append(M("TP_COLORAPP_MOD16"));
@@ -268,7 +268,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     catHBox->pack_start(*catLabel, Gtk::PACK_SHRINK, 4);
     catHBox->pack_start(*catmethod);
     genVBox->pack_start (*catHBox, Gtk::PACK_SHRINK);
-    
+
     presetcat02 = Gtk::manage (new Gtk::CheckButton  (M ("TP_COLORAPP_PRESETCAT02")));
     presetcat02->set_tooltip_markup (M("TP_COLORAPP_PRESETCAT02_TIP"));
     presetcat02conn = presetcat02->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::presetcat02pressed));
@@ -324,7 +324,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
 
     wbmHBox = Gtk::manage (new Gtk::Box ());
-    
+
     wbmHBox->set_spacing (2);
     wbmHBox->set_tooltip_markup (M ("TP_COLORAPP_MODEL_TOOLTIP"));
     Gtk::Label* wbmLab = Gtk::manage (new Gtk::Label (M ("TP_COLORAPP_MODEL") + ":"));
@@ -358,10 +358,10 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     illumHBox->pack_start (*illum);
     p1VBox->pack_start (*illumHBox);
 
-    Gtk::Image* itempL =  Gtk::manage (new RTImage ("circle-blue-small.png"));
-    Gtk::Image* itempR =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
-    Gtk::Image* igreenL = Gtk::manage (new RTImage ("circle-magenta-small.png"));
-    Gtk::Image* igreenR = Gtk::manage (new RTImage ("circle-green-small.png"));
+    Gtk::Image* itempL =  Gtk::manage (new RTImage ("circle-blue-small"));
+    Gtk::Image* itempR =  Gtk::manage (new RTImage ("circle-yellow-small"));
+    Gtk::Image* igreenL = Gtk::manage (new RTImage ("circle-magenta-small"));
+    Gtk::Image* igreenR = Gtk::manage (new RTImage ("circle-green-small"));
 
 
     tempsc = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempL, itempR, &wbSlider2Temp, &wbTemp2Slider));
@@ -649,10 +649,10 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     p3VBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     p3VBox->set_spacing (2);
 
-    Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("circle-blue-small.png"));
-    Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
-    Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("circle-magenta-small.png"));
-    Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("circle-green-small.png"));
+    Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("circle-blue-small"));
+    Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("circle-yellow-small"));
+    Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("circle-magenta-small"));
+    Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("circle-green-small"));
     adaplum = Gtk::manage (new Adjuster (M ("TP_COLORAPP_ABSOLUTELUMINANCE"), MINLA0, MAXLA0, 0.01, 16.));//, NULL, NULL, &wbSlider2la, &wbla2Slider));
     adaplum->setLogScale(500, 0);
 
@@ -662,8 +662,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     adaplum->set_tooltip_markup (M ("TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP"));
     p3VBox->pack_start (*adaplum);
 
-//   Gtk::Image* iblueredL = Gtk::manage (new RTImage ("circle-blue-small.png"));
-//   Gtk::Image* iblueredR = Gtk::manage (new RTImage ("circle-red-small.png"));
+//   Gtk::Image* iblueredL = Gtk::manage (new RTImage ("circle-blue-small"));
+//   Gtk::Image* iblueredR = Gtk::manage (new RTImage ("circle-red-small"));
 
     degreeout  = Gtk::manage (new Adjuster (M ("TP_COLORAPP_CIECAT_DEGREE"),    0.,  100.,  1.,   90.));
 
@@ -675,10 +675,10 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     degreeout->addAutoButton (M ("TP_COLORAPP_CAT02ADAPTATION_TOOLTIP"));
     p3VBox->pack_start (*degreeout);
     /*
-        Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("circle-blue-small.png"));
-        Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("circle-yellow-small.png"));
-        Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("circle-magenta-small.png"));
-        Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("circle-green-small.png"));
+        Gtk::Image* itempL1 =  Gtk::manage (new RTImage ("circle-blue-small"));
+        Gtk::Image* itempR1 =  Gtk::manage (new RTImage ("circle-yellow-small"));
+        Gtk::Image* igreenL1 = Gtk::manage (new RTImage ("circle-magenta-small"));
+        Gtk::Image* igreenR1 = Gtk::manage (new RTImage ("circle-green-small"));
     */
     tempout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_TEMPERATURE"), MINTEMP0, MAXTEMP0, 5, CENTERTEMP0, itempR1, itempL1, &wbSlider2Temp, &wbTemp2Slider));
     greenout = Gtk::manage (new Adjuster (M ("TP_WBALANCE_GREEN"), MINGREEN0, MAXGREEN0, 0.001, 1.0, igreenR1, igreenL1));
@@ -742,7 +742,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     //reset button
     neutral = Gtk::manage (new Gtk::Button (M ("TP_COLORAPP_NEUTRAL")));
     setExpandAlignProperties (neutral, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_START);
-    RTImage *resetImg = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
+    RTImage* const resetImg = Gtk::manage (new RTImage ("undo-small", Gtk::ICON_SIZE_BUTTON));
     setExpandAlignProperties (resetImg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     neutral->set_image (*resetImg);
     neutral->set_tooltip_text (M ("TP_COLORAPP_NEUTRAL_TIP"));
@@ -887,7 +887,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
 
     nexttemp = pp->wb.temperature;
     nextgreen = 1.; //pp->wb.green;
-    
+
     if (pedited) {
         degree->setEditedState        (pedited->colorappearance.degree ? Edited : UnEdited);
         degreeout->setEditedState        (pedited->colorappearance.degreeout ? Edited : UnEdited);
@@ -959,7 +959,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     } else if (pp->colorappearance.complexmethod == "expert") {
         complexmethod->set_active(1);
     }
-    
+
     modelmethod->set_active(0);
 
     if (pp->colorappearance.modelmethod == "02") {
@@ -1374,7 +1374,7 @@ void ColorAppearance::updateGUIToMode(int mode)
         badpixsl->hide();
         datacie->hide();
     } else {
-        alHBox->show(); 
+        alHBox->show();
         wbmHBox->show();
         curveEditorG->show();
         curveEditorG2->show();
@@ -1416,7 +1416,7 @@ void ColorAppearance::convertParamToNormal()
 }
 
 void ColorAppearance::complexmethodChanged()
-{    
+{
     if (complexmethod->get_active_row_number() == 0) {
         updateGUIToMode(0);
         convertParamToNormal();
@@ -1431,7 +1431,7 @@ void ColorAppearance::complexmethodChanged()
 }
 
 void ColorAppearance::modelmethodChanged()
-{    
+{
 
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged(EvCATmodel, modelmethod->get_active_text());
@@ -1439,7 +1439,7 @@ void ColorAppearance::modelmethodChanged()
 }
 
 void ColorAppearance::catmethodChanged()
-{    
+{
 
     if (catmethod->get_active_row_number() == 1) {
         disableListener();
@@ -1488,7 +1488,7 @@ void ColorAppearance::catmethodChanged()
         degreeout->setValue(90);
         ybout->setValue(18);
         tempout->setValue (nexttemp);
-    
+
 /*    if(tempout->getAutoValue()) {
         tempout->resetValue (false);
     } else {
@@ -1498,7 +1498,7 @@ void ColorAppearance::catmethodChanged()
 */
         greenout->setValue (nextgreen);
         enableListener();
-    
+
     }  else if (catmethod->get_active_row_number() == 0) {
         disableListener();
         degree->setAutoValue (true);
@@ -1756,7 +1756,7 @@ void ColorAppearance::presetcat02pressed () //keep in case of...
     degreeout->setValue(90);
     ybout->setValue(18);
     tempout->setValue (nexttemp);
-    
+
 /*    if(tempout->getAutoValue()) {
         tempout->resetValue (false);
     } else {
@@ -1816,7 +1816,7 @@ void ColorAppearance::presetcat02pressed () //keep in case of...
     tempout->resetValue (false);
     greenout->resetValue (false);
     enableListener();
-     
+
  }
     if (batchMode) {
         if (presetcat02->get_inconsistent()) {
@@ -2005,7 +2005,7 @@ void ColorAppearance::adapCamChanged (double cadap)
     if(presetcat02->get_active()){
         return;
     }
-    
+
     idle_register.add(
         [this, cadap]() -> bool
         {
@@ -2020,7 +2020,7 @@ void ColorAppearance::adapCamChanged (double cadap)
 
 void ColorAppearance::wbCamChanged (double temp, double tin)
 {
-    
+
     idle_register.add(
         [this, temp, tin]() -> bool
         {
@@ -2132,7 +2132,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
             tempout->setAutoValue (true);
         }
     }
-*/    
+*/
     if (multiImage) {
         if (degree->getAutoInconsistent()) {
             degree->setAutoInconsistent (false);
@@ -2276,7 +2276,7 @@ void ColorAppearance::wbmodelChanged ()
         tempsc->hide();
         greensc->hide();
         tempsc->setValue (5003);
-        greensc->setValue (1);   
+        greensc->setValue (1);
     }
 
     if (wbmodel->get_active_row_number() == 2) {

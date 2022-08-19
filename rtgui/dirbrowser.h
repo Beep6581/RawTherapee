@@ -23,6 +23,8 @@
 
 #include "guiutils.h"
 
+class RTPixbuf;
+
 class DirBrowser : public Gtk::Box
 {
 public:
@@ -62,13 +64,13 @@ private:
 
     void fillRoot ();
 
-    Glib::RefPtr<Gdk::Pixbuf> openfolder;
-    Glib::RefPtr<Gdk::Pixbuf> closedfolder;
-    Glib::RefPtr<Gdk::Pixbuf> icdrom;
-    Glib::RefPtr<Gdk::Pixbuf> ifloppy;
-    Glib::RefPtr<Gdk::Pixbuf> ihdd;
-    Glib::RefPtr<Gdk::Pixbuf> inetwork;
-    Glib::RefPtr<Gdk::Pixbuf> iremovable;
+    std::shared_ptr<RTPixbuf> openfolder;
+    std::shared_ptr<RTPixbuf> closedfolder;
+    std::shared_ptr<RTPixbuf> icdrom;
+    std::shared_ptr<RTPixbuf> ifloppy;
+    std::shared_ptr<RTPixbuf> ihdd;
+    std::shared_ptr<RTPixbuf> inetwork;
+    std::shared_ptr<RTPixbuf> iremovable;
 
     bool expandSuccess;
 

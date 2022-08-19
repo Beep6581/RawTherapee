@@ -28,7 +28,7 @@
 #endif
 
 #include "guiutils.h"
-#include "rtimage.h"
+#include "rtsurface.h"
 #include "multilangmgr.h"
 #include "options.h"
 
@@ -121,13 +121,13 @@ DirBrowser::~DirBrowser()
 void DirBrowser::fillDirTree ()
 {
 
-    openfolder = RTImage::createPixbufFromFile ("folder-open-small.png");
-    closedfolder = RTImage::createPixbufFromFile ("folder-closed-small.png");
-    icdrom = RTImage::createPixbufFromFile ("device-optical.png");
-    ifloppy = RTImage::createPixbufFromFile ("device-floppy.png");
-    ihdd = RTImage::createPixbufFromFile ("device-hdd.png");
-    iremovable = RTImage::createPixbufFromFile ("device-usb.png");
-    inetwork = RTImage::createPixbufFromFile ("device-network.png");
+    openfolder = std::shared_ptr<RTPixbuf>(new RTPixbuf("folder-open-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+    closedfolder = std::shared_ptr<RTPixbuf>(new RTPixbuf("folder-closed-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+    icdrom = std::shared_ptr<RTPixbuf>(new RTPixbuf("device-optical", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+    ifloppy = std::shared_ptr<RTPixbuf>(new RTPixbuf("device-floppy", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+    ihdd = std::shared_ptr<RTPixbuf>(new RTPixbuf("device-hdd", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+    iremovable = std::shared_ptr<RTPixbuf>(new RTPixbuf("device-usb", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+    inetwork = std::shared_ptr<RTPixbuf>(new RTPixbuf("device-network", Gtk::ICON_SIZE_SMALL_TOOLBAR));
 
     //Create the Tree model:
     dirTreeModel = Gtk::TreeStore::create(dtColumns);
@@ -175,22 +175,22 @@ void DirBrowser::addRoot (char letter)
     int type = GetDriveType (volume);
 
     if (type == DRIVE_CDROM) {
-        root->set_value (0, icdrom);
-        root->set_value (1, icdrom);
+        root->set_value (0, icdrom->get());
+        root->set_value (1, icdrom->get());
     } else if (type == DRIVE_REMOVABLE) {
         if (letter - 'A' < 2) {
-            root->set_value (0, ifloppy);
-            root->set_value (1, ifloppy);
+            root->set_value (0, ifloppy->get());
+            root->set_value (1, ifloppy->get());
         } else {
-            root->set_value (0, iremovable);
-            root->set_value (1, iremovable);
+            root->set_value (0, iremovable->get());
+            root->set_value (1, iremovable->get());
         }
     } else if (type == DRIVE_REMOTE) {
-        root->set_value (0, inetwork);
-        root->set_value (1, inetwork);
+        root->set_value (0, inetwork->get());
+        root->set_value (1, inetwork->get());
     } else if (type == DRIVE_FIXED) {
-        root->set_value (0, ihdd);
-        root->set_value (1, ihdd);
+        root->set_value (0, ihdd->get());
+        root->set_value (1, ihdd->get());
     }
 
     Gtk::TreeModel::iterator child = dirTreeModel->append (root->children());
@@ -366,8 +366,8 @@ void DirBrowser::addDir (const Gtk::TreeModel::iterator& iter, const Glib::ustri
 
     Gtk::TreeModel::iterator child = dirTreeModel->append(iter->children());
     child->set_value (dtColumns.filename, dirname);
-    child->set_value (dtColumns.icon1, openfolder);
-    child->set_value (dtColumns.icon2, closedfolder);
+    child->set_value (dtColumns.icon1, openfolder->get());
+    child->set_value (dtColumns.icon2, closedfolder->get());
     Glib::ustring fullname = Glib::build_filename (iter->get_value (dtColumns.dirname), dirname);
     child->set_value (dtColumns.dirname, fullname);
     Gtk::TreeModel::iterator fooRow = dirTreeModel->append(child->children());

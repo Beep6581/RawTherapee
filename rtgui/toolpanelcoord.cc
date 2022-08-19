@@ -143,7 +143,7 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     addfavoritePanel (detailsPanel, dehaze);
     addfavoritePanel (advancedPanel, wavelet);
     addfavoritePanel(locallabPanel, locallab);
-    
+
     addfavoritePanel (transformPanel, crop);
     addfavoritePanel (transformPanel, resize);
     addPanel (resize->getPackBox(), prsharpening, 2);
@@ -189,12 +189,12 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
     transformPanelSW   = Gtk::manage (new MyScrolledWindow ());
     rawPanelSW         = Gtk::manage (new MyScrolledWindow ());
     advancedPanelSW    = Gtk::manage (new MyScrolledWindow ());
-    locallabPanelSW     = Gtk::manage(new MyScrolledWindow());    
+    locallabPanelSW     = Gtk::manage(new MyScrolledWindow());
 
     // load panel endings
     for (int i = 0; i < 8; i++) {
         vbPanelEnd[i] = Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-        imgPanelEnd[i] = Gtk::manage (new RTImage ("ornament1.png"));
+        imgPanelEnd[i] = Gtk::manage (new RTImage ("ornament1"));
         imgPanelEnd[i]->show();
         vbPanelEnd[i]->pack_start(*imgPanelEnd[i], Gtk::PACK_SHRINK);
         vbPanelEnd[i]->show_all();
@@ -220,23 +220,23 @@ ToolPanelCoordinator::ToolPanelCoordinator (bool batch) : ipc (nullptr), favorit
 
     locallabPanelSW->add(*locallabPanel);
     locallabPanel->pack_start(*vbPanelEnd[7], Gtk::PACK_SHRINK, 4);
-    
+
     transformPanelSW->add (*transformPanel);
     transformPanel->pack_start (*vbPanelEnd[4], Gtk::PACK_SHRINK, 4);
 
     rawPanelSW->add       (*rawPanel);
     rawPanel->pack_start (*vbPanelEnd[5], Gtk::PACK_SHRINK, 0);
 
-    toiF = Gtk::manage (new TextOrIcon ("star.png", M ("MAIN_TAB_FAVORITES"), M ("MAIN_TAB_FAVORITES_TOOLTIP")));
-    toiE = Gtk::manage (new TextOrIcon ("exposure.png", M ("MAIN_TAB_EXPOSURE"), M ("MAIN_TAB_EXPOSURE_TOOLTIP")));
-    toiD = Gtk::manage (new TextOrIcon ("detail.png", M ("MAIN_TAB_DETAIL"), M ("MAIN_TAB_DETAIL_TOOLTIP")));
-    toiC = Gtk::manage (new TextOrIcon ("color-circles.png", M ("MAIN_TAB_COLOR"), M ("MAIN_TAB_COLOR_TOOLTIP")));
-    toiW = Gtk::manage (new TextOrIcon ("atom.png", M ("MAIN_TAB_ADVANCED"), M ("MAIN_TAB_ADVANCED_TOOLTIP")));
-    toiL = Gtk::manage(new TextOrIcon("hand-open.png", M("MAIN_TAB_LOCALLAB"), M("MAIN_TAB_LOCALLAB_TOOLTIP")));
+    toiF = Gtk::manage (new TextOrIcon ("star", M ("MAIN_TAB_FAVORITES"), M ("MAIN_TAB_FAVORITES_TOOLTIP")));
+    toiE = Gtk::manage (new TextOrIcon ("exposure", M ("MAIN_TAB_EXPOSURE"), M ("MAIN_TAB_EXPOSURE_TOOLTIP")));
+    toiD = Gtk::manage (new TextOrIcon ("detail", M ("MAIN_TAB_DETAIL"), M ("MAIN_TAB_DETAIL_TOOLTIP")));
+    toiC = Gtk::manage (new TextOrIcon ("color-circles", M ("MAIN_TAB_COLOR"), M ("MAIN_TAB_COLOR_TOOLTIP")));
+    toiW = Gtk::manage (new TextOrIcon ("atom", M ("MAIN_TAB_ADVANCED"), M ("MAIN_TAB_ADVANCED_TOOLTIP")));
+    toiL = Gtk::manage(new TextOrIcon("hand-open", M("MAIN_TAB_LOCALLAB"), M("MAIN_TAB_LOCALLAB_TOOLTIP")));
 
-    toiT = Gtk::manage (new TextOrIcon ("transform.png", M ("MAIN_TAB_TRANSFORM"), M ("MAIN_TAB_TRANSFORM_TOOLTIP")));
-    toiR = Gtk::manage (new TextOrIcon ("bayer.png", M ("MAIN_TAB_RAW"), M ("MAIN_TAB_RAW_TOOLTIP")));
-    toiM = Gtk::manage (new TextOrIcon ("metadata.png", M ("MAIN_TAB_METADATA"), M ("MAIN_TAB_METADATA_TOOLTIP")));
+    toiT = Gtk::manage (new TextOrIcon ("transform", M ("MAIN_TAB_TRANSFORM"), M ("MAIN_TAB_TRANSFORM_TOOLTIP")));
+    toiR = Gtk::manage (new TextOrIcon ("bayer", M ("MAIN_TAB_RAW"), M ("MAIN_TAB_RAW_TOOLTIP")));
+    toiM = Gtk::manage (new TextOrIcon ("metadata", M ("MAIN_TAB_METADATA"), M ("MAIN_TAB_METADATA_TOOLTIP")));
     if (favoritePanelSW) {
         toolPanelNotebook->append_page (*favoritePanelSW,  *toiF);
     }

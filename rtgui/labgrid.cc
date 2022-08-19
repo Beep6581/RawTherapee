@@ -1,5 +1,5 @@
 /** -*- C++ -*-
- *  
+ *
  *  This file is part of RawTherapee.
  *
  *  Copyright (c) 2017 Alberto Griggio <alberto.griggio@gmail.com>
@@ -43,6 +43,7 @@
 #include "../rtengine/color.h"
 #include "options.h"
 #include "rtimage.h"
+#include "rtscalable.h"
 
 using rtengine::Color;
 
@@ -86,7 +87,7 @@ LabGridArea::LabGridArea(rtengine::ProcEvent evt, const Glib::ustring &msg, bool
     isDragged(false),
     low_enabled(enable_low),
     ciexy_enabled(ciexy)
-    
+
 {
     set_can_focus(false); // prevent moving the grid while you're moving a point
     add_events(Gdk::EXPOSURE_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK | Gdk::POINTER_MOTION_MASK);
@@ -120,7 +121,7 @@ void LabGridArea::setParams(double la, double lb, double ha, double hb, double g
     gre_y = rtengine::LIM(gy, lo, hi);
     whi_x = rtengine::LIM(wx, lo, hi);
     whi_y = rtengine::LIM(wy, lo, hi);
-    
+
     queue_draw();
     if (notify) {
         notifyListener();
@@ -200,7 +201,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         int width = allocation.get_width();
         int height = allocation.get_height();
 
-        int s = RTScalable::getScale();
+        const double s = RTScalable::scalePixelSize(1.);
 
         cr->set_line_cap(Cairo::LINE_CAP_SQUARE);
 
@@ -210,23 +211,24 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
         cr->paint ();
         cr->set_operator (Cairo::OPERATOR_OVER);
         style->render_background(cr,
-                inset * s + padding.get_left() - s,
-                inset * s + padding.get_top() - s,
-                width - 2 * inset * s - padding.get_right() - padding.get_left() + 2 * s,
-                height - 2 * inset * s - padding.get_top() - padding.get_bottom() + 2 * s
+                (int)(inset * s + padding.get_left() - s + 0.5),
+                (int)(inset * s + padding.get_top() - s + 0.5),
+                (int)(width - 2 * inset * s - padding.get_right() - padding.get_left() + 2 * s + 0.5),
+                (int)(height - 2 * inset * s - padding.get_top() - padding.get_bottom() + 2 * s + 0.5)
                 );
 
         // drawing the cells
-        cr->translate(inset * s + padding.get_left(), inset * s + padding.get_top());
+        cr->translate((int)(inset * s + padding.get_left() + 0.5),
+            (int)(inset * s + padding.get_top() + 0.5));
         cr->set_antialias(Cairo::ANTIALIAS_NONE);
-        width -= 2 * inset * s + padding.get_right() + padding.get_left();
-        height -= 2 * inset * s + padding.get_top() + padding.get_bottom();
+        width -= (int)(2 * inset * s + 0.5) + padding.get_right() + padding.get_left();
+        height -= (int)(2 * inset * s + 0.5) + padding.get_top() + padding.get_bottom();
 
         // flip y:
         cr->translate(0, height);
         cr->scale(1., -1.);
 
-        if (! ciexy_enabled) {//draw cells for Labgrid 
+        if (! ciexy_enabled) {//draw cells for Labgrid
             int cells = 8;
             float step = 12000.f / float(cells/2);
             double cellW = double(width) / double(cells);
@@ -270,7 +272,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
             // this graph is not accurate...I replace curve by polygon or parabolic
             float xa = 0.2653f / (0.7347f - 0.17f);
             float xb = -0.17f * xa;
-            //linear values 
+            //linear values
             //  float ax = (0.1f - 0.6f) / 0.08f;
             //  float bx = 0.6f;
             //   float ax0 = -0.1f / (0.17f - 0.08f);
@@ -306,16 +308,16 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                     // float y3 = axss * x + bxss;
                     // float y4 = axsss * x + bxsss;
                     // float y5 = bx4s;
-                    float y6 = 22.52f * x * x - 7.652f * x + 0.65f;//parabolic passing in x=0.17 y=0 - x=0.1 y =0.11 - x=0 y= 0.65 
+                    float y6 = 22.52f * x * x - 7.652f * x + 0.65f;//parabolic passing in x=0.17 y=0 - x=0.1 y =0.11 - x=0 y= 0.65
                     float y3 = -1.266666f * x * x -0.170002f * x + 0.859686f;//other parabolic for green passing in x=0.35 y=0.65 - x=0.20 y=0.775 - x=0.1 y=0.83
                     float y4 = -60.71428f * x * x + 6.821428f * x + 0.65f;//other parabolic x=0 y=0.65 - x=0.03 y=0.8 - x=0.07 y=0.83
                     //small difference  in the connection of the 2 last parabolic
-                
+
                     Color::xyz2srgb(XX, YY, ZZ, R, G, B);
                     //replace color by gray
                     if(y < yr && x > 0.17f) {
                         R = 0.7f; G = 0.7f; B = 0.7f;
-                    } 
+                    }
                     /*
                     if(y < y0 && x <= 0.17f && x >= 0.08f) {
                         R = 0.7f; G = 0.7f; B = 0.7f;
@@ -327,7 +329,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                     if(y < y6 && y < 0.65f && x < 0.17f) {
                         R = 0.7f; G = 0.7f; B = 0.7f;
                     }
-                        
+
                     if(y > y2  && x > 0.35f) {//0.35
                         R = 0.7f; G = 0.7f; B = 0.7f;
                     }
@@ -396,7 +398,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
                 cr->line_to(width, 0.04545 * i * height);
             }
 
-            cr->stroke(); 
+            cr->stroke();
             //draw abciss and ordonate
             cr->set_line_width(1.f * double(s));
             cr->set_source_rgb(0.4, 0., 0.);
@@ -404,7 +406,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
             cr->line_to(0.04545 * 2 * width, height);
             cr->move_to(0., 0.04545 * 2 * height );
             cr->line_to(width, 0.04545 * 2 * height);
-            cr->stroke(); 
+            cr->stroke();
 
             //draw 0 and 1 with circle and lines
             cr->set_line_width(1.2f * double(s));
@@ -420,7 +422,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
             cr->line_to(0.07 * width,  0.965 * height);
 
             cr->stroke();
-             
+
         }
 
 
@@ -468,7 +470,7 @@ bool LabGridArea::on_draw(const ::Cairo::RefPtr<Cairo::Context> &crf)
 bool LabGridArea::on_button_press_event(GdkEventButton *event)
 {
     if (event->button == 1) {
-      if (!ciexy_enabled) {        
+      if (!ciexy_enabled) {
         if (event->type == GDK_2BUTTON_PRESS) {
             switch (litPoint) {
             case NONE:
@@ -527,9 +529,9 @@ bool LabGridArea::on_motion_notify_event(GdkEventMotion *event)
 
     State oldLitPoint = litPoint;
 
-    int s = RTScalable::getScale();
-    int width = get_allocated_width() - 2 * inset * s - padding.get_right() - padding.get_left();
-    int height = get_allocated_height() - 2 * inset * s - padding.get_top() - padding.get_bottom();
+    const double s = RTScalable::scalePixelSize(1.);
+    int width = (int)(get_allocated_width() - 2 * inset * s - padding.get_right() - padding.get_left() + 0.5);
+    int height = (int)(get_allocated_height() - 2 * inset * s - padding.get_top() - padding.get_bottom() + 0.5);
     const float mouse_x = std::min(double(std::max(event->x - inset * s - padding.get_right(), 0.)), double(width));
     const float mouse_y = std::min(double(std::max(get_allocated_height() - 1 - event->y - inset * s - padding.get_bottom(), 0.)), double(height));
     const float ma = (2.f * mouse_x - width) / width;
@@ -590,11 +592,11 @@ void LabGridArea::get_preferred_width_vfunc(int &minimum_width, int &natural_wid
 {
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     Gtk::Border padding = getPadding(style);  // already scaled
-    int s = RTScalable::getScale();
+    const double s = RTScalable::scalePixelSize(1.);
     int p = padding.get_left() + padding.get_right();
 
-    minimum_width = 50 * s + p;
-    natural_width = 150 * s + p;  // same as GRAPH_SIZE from mycurve.h
+    minimum_width = (int)(50 * s + p + 0.5);
+    natural_width = (int)(150 * s + p + 0.5);  // same as GRAPH_SIZE from mycurve.h
 }
 
 
@@ -643,7 +645,7 @@ LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_
     Gtk::Button *reset = Gtk::manage(new Gtk::Button());
     reset->set_tooltip_markup(M("ADJUSTER_RESET_TO_DEFAULT"));
     if(!ciexy) {//disabled for Cie xy
-        reset->add(*Gtk::manage(new RTImage("undo-small.png", "redo-small.png")));
+        reset->add(*Gtk::manage(new RTImage("undo-small", Gtk::ICON_SIZE_BUTTON)));
     }
     reset->signal_button_release_event().connect(sigc::mem_fun(*this, &LabGrid::resetPressed));
 
@@ -662,5 +664,5 @@ LabGrid::LabGrid(rtengine::ProcEvent evt, const Glib::ustring &msg, bool enable_
 bool LabGrid::resetPressed(GdkEventButton *event)
 {
     grid.reset(event->state & GDK_CONTROL_MASK);
-    return false;    
+    return false;
 }

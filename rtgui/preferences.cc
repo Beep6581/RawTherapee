@@ -527,7 +527,7 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     iprofiles->set_size_request(50, -1);
     setExpandAlignProperties(iprofiles, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
     ipconn = iprofiles->signal_changed().connect(sigc::mem_fun(*this, &Preferences::forImageComboChanged));
-    
+
     Gtk::Grid* defpt = Gtk::manage(new Gtk::Grid());
     defpt->set_row_spacing(2);
     defpt->attach(*drlab, 0, 0, 1, 1);
@@ -535,7 +535,7 @@ Gtk::Widget* Preferences::getImageProcessingPanel ()
     defpt->attach(*drimg, 0, 1, 1, 1);
     defpt->attach(*iprofiles, 1, 1, 1, 1);
     vbpp->pack_start(*defpt, Gtk::PACK_SHRINK, 4);
-    
+
     useBundledProfiles = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_USEBUNDLEDPROFILES")));
     bpconn = useBundledProfiles->signal_clicked().connect(sigc::mem_fun(*this, &Preferences::bundledProfilesChanged));
     vbpp->pack_start(*useBundledProfiles, Gtk::PACK_SHRINK, 4);
@@ -779,7 +779,7 @@ Gtk::Widget* Preferences::getColorManPanel ()
 
     vbColorMan->pack_start (*iccdgrid, Gtk::PACK_SHRINK);
 
-    
+
     //------------------------- MONITOR ----------------------
 
     Gtk::Frame* fmonitor = Gtk::manage(new Gtk::Frame(M("PREFERENCES_MONITOR")));
@@ -898,7 +898,7 @@ Gtk::Widget* Preferences::getColorManPanel ()
     fprinter->add(*gprinter);
 
     vbColorMan->pack_start (*fprinter, Gtk::PACK_SHRINK);
-    
+
     //-------------CIECAM
     Gtk::Frame* fcie = Gtk::manage(new Gtk::Frame(M("PREFERENCES_CIE")));
     Gtk::Grid* gcie = Gtk::manage(new Gtk::Grid());
@@ -1118,7 +1118,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
     setExpandAlignProperties(pseudoHiDPI, false, false, Gtk::ALIGN_START, Gtk::ALIGN_BASELINE);
 
     Gtk::Separator *vSep = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
-    
+
 
     appearanceGrid->attach(*themeLbl,           0, 0, 1, 1);
     appearanceGrid->attach(*themeCBT,           1, 0, 1, 1);
@@ -1281,7 +1281,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
         hb->pack_start(*editor_dir_custom_path, Gtk::PACK_EXPAND_WIDGET, 2);
         vb->pack_start(*hb);
         f->add(*vb);
-        
+
         hb = Gtk::manage(new Gtk::Box());
         hb->pack_start(*externaleditorGrid);
         hb->pack_start(*f, Gtk::PACK_EXPAND_WIDGET, 4);
@@ -1298,8 +1298,8 @@ Gtk::Widget* Preferences::getGeneralPanel()
         vb->show();
         fdg->add(*vb);
     }
- 
- 
+
+
     vbGeneral->attach_next_to (*fdg, *fclip, Gtk::POS_BOTTOM, 2, 1);
     langAutoDetectConn = ckbLangAutoDetect->signal_toggled().connect(sigc::mem_fun(*this, &Preferences::langAutoDetectToggled));
     tconn = themeCBT->signal_changed().connect ( sigc::mem_fun (*this, &Preferences::themeChanged) );
@@ -1326,7 +1326,7 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     startupdir = Gtk::manage(new Gtk::Entry());
 
     Gtk::Button* sdselect = Gtk::manage(new Gtk::Button());
-    sdselect->set_image (*Gtk::manage (new RTImage ("folder-open-small.png")));
+    sdselect->set_image (*Gtk::manage (new RTImage ("folder-open-small", Gtk::ICON_SIZE_BUTTON)));
 
     Gtk::RadioButton::Group opts = sdcurrent->get_group();
     sdlast->set_group(opts);
@@ -1437,10 +1437,10 @@ Gtk::Widget* Preferences::getFileBrowserPanel()
     delExt->set_tooltip_text(M("PREFERENCES_PARSEDEXTDELHINT"));
     moveExtUp->set_tooltip_text(M("PREFERENCES_PARSEDEXTUPHINT"));
     moveExtDown->set_tooltip_text(M("PREFERENCES_PARSEDEXTDOWNHINT"));
-    Gtk::Image* addExtImg = Gtk::manage ( new RTImage ("add-small.png") );
-    Gtk::Image* delExtImg = Gtk::manage ( new RTImage ("remove-small.png") );
-    Gtk::Image* moveExtUpImg = Gtk::manage(new RTImage("arrow-up-small.png"));
-    Gtk::Image* moveExtDownImg = Gtk::manage(new RTImage("arrow-down-small.png"));
+    Gtk::Image* addExtImg = Gtk::manage ( new RTImage ("add-small", Gtk::ICON_SIZE_BUTTON) );
+    Gtk::Image* delExtImg = Gtk::manage ( new RTImage ("remove-small", Gtk::ICON_SIZE_BUTTON) );
+    Gtk::Image* moveExtUpImg = Gtk::manage(new RTImage("arrow-up-small", Gtk::ICON_SIZE_BUTTON));
+    Gtk::Image* moveExtDownImg = Gtk::manage(new RTImage("arrow-down-small", Gtk::ICON_SIZE_BUTTON));
     addExt->add(*addExtImg);
     delExt->add(*delExtImg);
     moveExtUp->set_image(*moveExtUpImg);
@@ -2133,7 +2133,7 @@ void Preferences::fillPreferences()
     }
 
     curveBBoxPosC->set_active(moptions.curvebboxpos);
-    complexitylocal->set_active(moptions.complexity); 
+    complexitylocal->set_active(moptions.complexity);
     inspectorWindowCB->set_active(moptions.inspectorWindow);
     zoomOnScrollCB->set_active(moptions.zoomOnScroll);
 
@@ -2263,7 +2263,6 @@ void Preferences::cancelPressed()
 {
     // set the initial theme back
     if (themeFNames.at (themeCBT->get_active_row_number ()).longFName != options.theme) {
-        RTImage::updateImages();
         switchThemeTo(options.theme);
     }
 
@@ -2320,7 +2319,6 @@ void Preferences::themeChanged()
 {
 
     moptions.theme = themeFNames.at (themeCBT->get_active_row_number ()).longFName;
-    RTImage::updateImages();
     switchThemeTo(moptions.theme);
 }
 

@@ -33,6 +33,7 @@
 #include "rtimage.h"
 #include "options.h"
 #include "popuptogglebutton.h"
+#include "rtscalable.h"
 
 #include "../rtengine/curves.h"
 
@@ -85,18 +86,18 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     }
 
     editPointCustom = Gtk::manage (new Gtk::ToggleButton ());
-    initButton(*editPointCustom, Glib::ustring("edit-point.png"), Gtk::ALIGN_START, false, "CURVEEDITOR_EDITPOINT_HINT");
+    initButton(*editPointCustom, Glib::ustring("edit-point"), Gtk::ALIGN_START, false, "CURVEEDITOR_EDITPOINT_HINT");
     editCustom = Gtk::manage (new Gtk::ToggleButton());
-    initButton(*editCustom, Glib::ustring("crosshair-node-curve.png"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
+    initButton(*editCustom, Glib::ustring("crosshair-node-curve"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
     editCustom->hide();
     copyCustom = Gtk::manage (new Gtk::Button ());
-    initButton(*copyCustom, Glib::ustring("copy.png"), Gtk::ALIGN_END, true);
+    initButton(*copyCustom, Glib::ustring("copy"), Gtk::ALIGN_END, true);
     pasteCustom = Gtk::manage (new Gtk::Button ());
-    initButton(*pasteCustom, Glib::ustring("paste.png"), Gtk::ALIGN_END, false);
+    initButton(*pasteCustom, Glib::ustring("paste"), Gtk::ALIGN_END, false);
     loadCustom = Gtk::manage (new Gtk::Button ());
-    initButton(*loadCustom, Glib::ustring("folder-open.png"), Gtk::ALIGN_END, false);
+    initButton(*loadCustom, Glib::ustring("folder-open"), Gtk::ALIGN_END, false);
     saveCustom = Gtk::manage (new Gtk::Button ());
-    initButton(*saveCustom, Glib::ustring("save.png"), Gtk::ALIGN_END, false);
+    initButton(*saveCustom, Glib::ustring("save"), Gtk::ALIGN_END, false);
 
     custombbox->attach_next_to(*editPointCustom, sideStart, 1, 1);
     custombbox->attach_next_to(*editCustom,      sideStart, 1, 1);
@@ -177,18 +178,18 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     }
 
     editPointNURBS = Gtk::manage (new Gtk::ToggleButton ());
-    initButton(*editPointNURBS, Glib::ustring("edit-point.png"), Gtk::ALIGN_START, false, "CURVEEDITOR_EDITPOINT_HINT");
+    initButton(*editPointNURBS, Glib::ustring("edit-point"), Gtk::ALIGN_START, false, "CURVEEDITOR_EDITPOINT_HINT");
     editNURBS = Gtk::manage (new Gtk::ToggleButton());
-    initButton(*editNURBS, Glib::ustring("crosshair-node-curve.png"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
+    initButton(*editNURBS, Glib::ustring("crosshair-node-curve"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
     editNURBS->hide();
     copyNURBS = Gtk::manage (new Gtk::Button ());
-    initButton(*copyNURBS, Glib::ustring("copy.png"), Gtk::ALIGN_END, true);
+    initButton(*copyNURBS, Glib::ustring("copy"), Gtk::ALIGN_END, true);
     pasteNURBS = Gtk::manage (new Gtk::Button ());
-    initButton(*pasteNURBS, Glib::ustring("paste.png"), Gtk::ALIGN_END, false);
+    initButton(*pasteNURBS, Glib::ustring("paste"), Gtk::ALIGN_END, false);
     loadNURBS = Gtk::manage (new Gtk::Button ());
-    initButton(*loadNURBS, Glib::ustring("folder-open.png"), Gtk::ALIGN_END, false);
+    initButton(*loadNURBS, Glib::ustring("folder-open"), Gtk::ALIGN_END, false);
     saveNURBS = Gtk::manage (new Gtk::Button ());
-    initButton(*saveNURBS, Glib::ustring("save.png"), Gtk::ALIGN_END, false);
+    initButton(*saveNURBS, Glib::ustring("save"), Gtk::ALIGN_END, false);
 
     NURBSbbox->attach_next_to(*editPointNURBS, sideStart, 1, 1);
     NURBSbbox->attach_next_to(*editNURBS,      sideStart, 1, 1);
@@ -273,16 +274,16 @@ DiagonalCurveEditorSubGroup::DiagonalCurveEditorSubGroup (CurveEditorGroup* prt,
     paramCurveBox->attach_next_to(*shcSelector, *paramCurve, Gtk::POS_BOTTOM, 1, 1);
 
     editParam = Gtk::manage (new Gtk::ToggleButton());
-    initButton(*editParam, Glib::ustring("crosshair-node-curve.png"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
+    initButton(*editParam, Glib::ustring("crosshair-node-curve"), Gtk::ALIGN_START, false, "EDIT_PIPETTE_TOOLTIP");
     editParam->hide();
     copyParam = Gtk::manage (new Gtk::Button ());
-    initButton(*copyParam, Glib::ustring("copy.png"), Gtk::ALIGN_END, true);
+    initButton(*copyParam, Glib::ustring("copy"), Gtk::ALIGN_END, true);
     pasteParam = Gtk::manage (new Gtk::Button ());
-    initButton(*pasteParam, Glib::ustring("paste.png"), Gtk::ALIGN_END, false);
+    initButton(*pasteParam, Glib::ustring("paste"), Gtk::ALIGN_END, false);
     loadParam = Gtk::manage (new Gtk::Button ());
-    initButton(*loadParam, Glib::ustring("folder-open.png"), Gtk::ALIGN_END, false);
+    initButton(*loadParam, Glib::ustring("folder-open"), Gtk::ALIGN_END, false);
     saveParam = Gtk::manage (new Gtk::Button ());
-    initButton(*saveParam, Glib::ustring("save.png"), Gtk::ALIGN_END, false);
+    initButton(*saveParam, Glib::ustring("save"), Gtk::ALIGN_END, false);
 
     parambbox->attach_next_to(*editParam,  sideStart, 1, 1);
     parambbox->attach_next_to(*copyParam,  sideEnd,   1, 1);
@@ -753,7 +754,6 @@ void DiagonalCurveEditorSubGroup::switchGUI()
                 dCurve->paramCurveEd.at(3)
             );
 
-            double s = (double)RTScalable::getScale();
             highlights->setValue (dCurve->paramCurveEd.at(4));
             highlights->setLabel(label[3]);
             lights->setValue (dCurve->paramCurveEd.at(5));
@@ -765,8 +765,8 @@ void DiagonalCurveEditorSubGroup::switchGUI()
             shcSelector->coloredBar.setColorProvider(barColorProvider, dCurve->getBottomBarCallerId());
             shcSelector->coloredBar.setBgGradient(bgGradient);
             shcSelector->setMargins(
-                    (int)( ((leftBar ? (double)CBAR_WIDTH + 2. + (double)CBAR_MARGIN + RADIUS : RADIUS) - 1.5) * s ),
-                    (int)((RADIUS - 1.5) * s)
+                    (int)( RTScalable::scalePixelSize((leftBar ? (double)CBAR_WIDTH + 2. + (double)CBAR_MARGIN + RADIUS : RADIUS) - 1.5) ),
+                    (int)( RTScalable::scalePixelSize(RADIUS - 1.5) )
                     );
             paramCurve->setColoredBar(leftBar, nullptr);
             paramCurve->queue_resize_no_redraw();

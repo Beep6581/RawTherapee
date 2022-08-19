@@ -56,21 +56,21 @@ PopUpCommon::~PopUpCommon ()
     delete buttonImage;
 }
 
-bool PopUpCommon::addEntry (const Glib::ustring& fileName, const Glib::ustring& label)
+bool PopUpCommon::addEntry (const Glib::ustring& iconName, const Glib::ustring& label)
 {
     if (label.empty ())
          return false;
 
     // Create the menu item and image
-    MyImageMenuItem* newItem = Gtk::manage (new MyImageMenuItem (label, fileName));
-    imageFilenames.push_back (fileName);
+    MyImageMenuItem* newItem = Gtk::manage (new MyImageMenuItem (label, iconName));
+    imageFilenames.push_back (iconName);
     images.push_back (newItem->getImage ());
 
     if (selected == -1) {
         // Create the menu on the first item
         menu = new Gtk::Menu ();
         // Create the image for the button
-        buttonImage = new RTImage(fileName);
+        buttonImage = new RTImage(iconName, Gtk::ICON_SIZE_BUTTON);
         setExpandAlignProperties(buttonImage, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
         // Use the first image by default
         imageContainer->attach_next_to(*buttonImage, Gtk::POS_RIGHT, 1, 1);
@@ -80,8 +80,7 @@ bool PopUpCommon::addEntry (const Glib::ustring& fileName, const Glib::ustring& 
     // When there is at least 1 choice, we add the arrow button
     if (images.size() == 1) {
         Gtk::Button* arrowButton = Gtk::manage( new Gtk::Button() );
-        Gtk::Image *arrowImage = Gtk::manage(new Gtk::Image());
-        arrowImage->set_from_icon_name("pan-down-symbolic", Gtk::ICON_SIZE_BUTTON);
+        Gtk::Image *arrowImage = Gtk::manage(new RTImage("pan-down-symbolic", Gtk::ICON_SIZE_BUTTON));
         setExpandAlignProperties(arrowButton, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_FILL);
         arrowButton->add(*arrowImage); //menuSymbol);
         buttonGroup->attach_next_to(*arrowButton, *button, Gtk::POS_RIGHT, 1, 1);
@@ -125,12 +124,12 @@ void PopUpCommon::setItemSensitivity (int index, bool isSensitive) {
 bool PopUpCommon::setSelected (int entryNum)
 {
     entryNum = indexToPos(entryNum);
-    
+
     if (entryNum < 0 || entryNum > ((int)images.size() - 1) || (int)entryNum == selected) {
         return false;
     } else {
         // Maybe we could do something better than loading the image file each time the selection is changed !?
-        buttonImage->changeImage(imageFilenames.at(entryNum));
+        buttonImage->set_from_icon_name(imageFilenames.at(entryNum), Gtk::ICON_SIZE_BUTTON);
         selected = entryNum;
         setButtonHint();
         return true;

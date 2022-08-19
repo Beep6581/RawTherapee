@@ -35,6 +35,7 @@
 
 class FileBrowserEntry;
 class Thumbnail;
+class RTPixbuf;
 
 struct FileBrowserEntryIdleHelper {
     FileBrowserEntry* fbentry;
@@ -72,11 +73,11 @@ class FileBrowserEntry final : public ThumbBrowserEntryBase,
 
 public:
 
-    static Glib::RefPtr<Gdk::Pixbuf> editedIcon;
-    static Glib::RefPtr<Gdk::Pixbuf> recentlySavedIcon;
-    static Glib::RefPtr<Gdk::Pixbuf> enqueuedIcon;
-    static Glib::RefPtr<Gdk::Pixbuf> hdr;
-    static Glib::RefPtr<Gdk::Pixbuf> ps;
+    static std::shared_ptr<RTPixbuf> editedIcon;
+    static std::shared_ptr<RTPixbuf> recentlySavedIcon;
+    static std::shared_ptr<RTPixbuf> enqueuedIcon;
+    static std::shared_ptr<RTPixbuf> hdr;
+    static std::shared_ptr<RTPixbuf> ps;
 
     FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname);
     ~FileBrowserEntry () override;

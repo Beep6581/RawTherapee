@@ -354,34 +354,32 @@ class OPIcon : public Geometry    // OP stands for "On Preview"
 {
 
 private:
-    Cairo::RefPtr<RTSurface> normalImg;
-    Cairo::RefPtr<RTSurface> prelightImg;
-    Cairo::RefPtr<RTSurface> activeImg;
-    Cairo::RefPtr<RTSurface> draggedImg;
-    Cairo::RefPtr<RTSurface> insensitiveImg;
+    std::shared_ptr<RTSurface> normalImg;
+    std::shared_ptr<RTSurface> prelightImg;
+    std::shared_ptr<RTSurface> activeImg;
+    std::shared_ptr<RTSurface> draggedImg;
+    std::shared_ptr<RTSurface> insensitiveImg;
 
-    static void updateImages();
-    void changeImage(Glib::ustring &newImage);
-    void drawImage (Cairo::RefPtr<RTSurface> &img, Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
-    void drawMOImage (Cairo::RefPtr<RTSurface> &img, Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
+    void drawImage (std::shared_ptr<RTSurface> &img, Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
+    void drawMOImage (std::shared_ptr<RTSurface> &img, Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem);
     void drivenPointToRectangle(const rtengine::Coord &pos, rtengine::Coord &topLeft, rtengine::Coord &bottomRight, int W, int H);
 
 public:
     DrivenPoint drivenPoint;
     rtengine::Coord position;
 
-    OPIcon (const Cairo::RefPtr<RTSurface> &normal,
-            const Cairo::RefPtr<RTSurface> &active,
-            const Cairo::RefPtr<RTSurface> &prelight = {},
-            const Cairo::RefPtr<RTSurface> &dragged = {},
-            const Cairo::RefPtr<RTSurface> &insensitive = {},
+    OPIcon (const std::shared_ptr<RTSurface> &normal,
+            const std::shared_ptr<RTSurface> &active,
+            const std::shared_ptr<RTSurface> &prelight = nullptr,
+            const std::shared_ptr<RTSurface> &dragged = nullptr,
+            const std::shared_ptr<RTSurface> &insensitive = nullptr,
             DrivenPoint drivenPoint = DP_CENTERCENTER);
     OPIcon (Glib::ustring normalImage, Glib::ustring activeImage, Glib::ustring  prelightImage = "", Glib::ustring  draggedImage = "", Glib::ustring insensitiveImage = "", DrivenPoint drivenPoint = DP_CENTERCENTER);
-    const Cairo::RefPtr<RTSurface> getNormalImg();
-    const Cairo::RefPtr<RTSurface> getPrelightImg();
-    const Cairo::RefPtr<RTSurface> getActiveImg();
-    const Cairo::RefPtr<RTSurface> getDraggedImg();
-    const Cairo::RefPtr<RTSurface> getInsensitiveImg();
+    const std::shared_ptr<RTSurface> getNormalImg();
+    const std::shared_ptr<RTSurface> getPrelightImg();
+    const std::shared_ptr<RTSurface> getActiveImg();
+    const std::shared_ptr<RTSurface> getDraggedImg();
+    const std::shared_ptr<RTSurface> getInsensitiveImg();
     void drawOuterGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
     void drawInnerGeometry (Cairo::RefPtr<Cairo::Context> &cr, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;
     void drawToMOChannel (Cairo::RefPtr<Cairo::Context> &cr, unsigned short id, ObjectMOBuffer *objectBuffer, EditCoordSystem &coordSystem) override;

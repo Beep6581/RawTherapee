@@ -204,13 +204,13 @@ FilmNegative::FilmNegative() :
     refInputLabel(Gtk::manage(new Gtk::Label(Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), "- - -")))),
     refSpotButton(Gtk::manage(new Gtk::ToggleButton(M("TP_FILMNEGATIVE_REF_PICK")))),
     outputLevel(createLevelAdjuster(this, M("TP_FILMNEGATIVE_OUT_LEVEL"))),  // ref level
-    greenBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_GREENBALANCE"), -3.0, 3.0, 0.0, "circle-magenta-small.png", "circle-green-small.png")),  // green balance
-    blueBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_BLUEBALANCE"), -3.0, 3.0, 0.0, "circle-blue-small.png", "circle-yellow-small.png"))  // blue balance
+    greenBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_GREENBALANCE"), -3.0, 3.0, 0.0, "circle-magenta-small", "circle-green-small")),  // green balance
+    blueBalance(createBalanceAdjuster(this, M("TP_FILMNEGATIVE_BLUEBALANCE"), -3.0, 3.0, 0.0, "circle-blue-small", "circle-yellow-small"))  // blue balance
 {
     setExpandAlignProperties(spotButton, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
     spotButton->get_style_context()->add_class("independent");
     spotButton->set_tooltip_text(M("TP_FILMNEGATIVE_GUESS_TOOLTIP"));
-    spotButton->set_image(*Gtk::manage(new RTImage("color-picker-small.png")));
+    spotButton->set_image(*Gtk::manage(new RTImage("color-picker-small", Gtk::ICON_SIZE_BUTTON)));
 
     refSpotButton->set_tooltip_text(M("TP_FILMNEGATIVE_REF_TOOLTIP"));
 
@@ -518,18 +518,18 @@ void FilmNegative::filmRefValuesChanged(const RGB &refInput, const RGB &refOutpu
         [this, refInput, refOutput]() -> bool {
             refInputValues = refInput;
             paramsUpgraded = true;
-    
+
             disableListener();
-    
+
             refInputLabel->set_markup(
                 Glib::ustring::compose(M("TP_FILMNEGATIVE_REF_LABEL"), fmt(refInputValues)));
-    
+
             writeOutputSliders(refOutput);
-    
+
             outputLevel->show();
             blueBalance->show();
             greenBalance->show();
-    
+
             enableListener();
             return false;
         }

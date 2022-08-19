@@ -167,7 +167,7 @@ void ThresholdSelector::get_preferred_height_vfunc (int &minimum_height, int &na
 
 void ThresholdSelector::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    int s = RTScalable::getScale();
+    const int s = RTScalable::scalePixelSize(1);
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     Gtk::Border padding = getPadding(style);  // already scaled
     int margins = padding.get_left() + padding.get_right();
@@ -177,7 +177,7 @@ void ThresholdSelector::get_preferred_width_vfunc (int &minimum_width, int &natu
 
 void ThresholdSelector::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
 {
-    int s = RTScalable::getScale();
+    const int s = RTScalable::scalePixelSize(1);
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     Gtk::Border padding = getPadding(style);  // already scaled
     int margins = padding.get_left() + padding.get_right();
@@ -275,7 +275,7 @@ void ThresholdSelector::updateBackBuffer()
     cr->paint ();
     cr->set_operator (Cairo::OPERATOR_OVER);
 
-    double s = (double)RTScalable::getScale();
+    const double s = RTScalable::scalePixelSize(1.);
 
     double positions01[4];
     int w = get_allocated_width ();
@@ -499,7 +499,7 @@ bool ThresholdSelector::on_motion_notify_event (GdkEventMotion* event)
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     Gtk::Border padding = getPadding(style);  // already scaled
 
-    double s = (double)RTScalable::getScale();
+    const double s = RTScalable::scalePixelSize(1.);
     double wslider = sliderWidth * s;  // constant must be an odd value
     double hwslider = wslider / 2.;
 
@@ -586,7 +586,7 @@ void ThresholdSelector::findLitCursor(int posX, int posY)
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
     Gtk::Border padding = getPadding(style);  // already scaled
 
-    double s = (double)RTScalable::getScale();
+    const double s = RTScalable::scalePixelSize(1.);
     double wslider = sliderWidth * s;  // constant must be an odd value
     double hwslider = wslider / 2.;
 

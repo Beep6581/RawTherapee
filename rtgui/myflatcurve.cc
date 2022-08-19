@@ -140,7 +140,7 @@ void MyFlatCurve::draw ()
         return;
     }
 
-    double s = (double)RTScalable::getScale();
+    const double s = RTScalable::scalePixelSize(1.);
 
     // re-calculate curve if dimensions changed
     int currLUTSize = point.getUpperBound();
@@ -535,7 +535,7 @@ bool MyFlatCurve::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
     allocation.set_x(0);
     allocation.set_y(0);
 
-    int s = RTScalable::getScale();
+    const int s = RTScalable::scalePixelSize(1);
 
     // setDrawRectangle will allocate the backbuffer Surface
     if (setDrawRectangle(Cairo::FORMAT_ARGB32, allocation)) {
@@ -619,7 +619,7 @@ bool MyFlatCurve::handleEvents (GdkEvent* event)
         return false;
     }
 
-    double s = RTScalable::getScale();
+    const double s = RTScalable::scalePixelSize(1.);
 
     minDistanceX = double(MIN_DISTANCE) / graphW * s;
     minDistanceY = double(MIN_DISTANCE) / graphH * s;
@@ -1321,7 +1321,7 @@ bool MyFlatCurve::pipetteButton1Pressed(EditDataProvider *provider, int modifier
     // hide the tangent handles
     tanHandlesDisplayed = false;
 
-    int s = RTScalable::getScale();
+    const int s = RTScalable::scalePixelSize(1);
 
     // Action on BUTTON_PRESS and no edited point
     switch (area) {

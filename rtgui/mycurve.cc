@@ -41,9 +41,7 @@ MyCurve::MyCurve () :
     snapToValX(0.0),
     snapToValY(0.0)
 {
-
-    int s = RTScalable::getScale();
-    int pointDiameter = (int)(RADIUS * 2.) * s;
+    int pointDiameter = RTScalable::scalePixelSize((int)(RADIUS * 2.));
     graphW = get_allocation().get_width() - pointDiameter;
     graphH = get_allocation().get_height() - pointDiameter;
     prevGraphW = graphW;
@@ -78,7 +76,7 @@ MyCurve::~MyCurve ()
 void MyCurve::calcDimensions ()
 {
     double newRequestedW, newRequestedH;
-    double s = (double)RTScalable::getScale();
+    const double s = RTScalable::scalePixelSize(1.);
 
     newRequestedW = newRequestedH = get_allocation().get_width();
 
@@ -103,21 +101,19 @@ void MyCurve::get_preferred_height_vfunc (int &minimum_height, int &natural_heig
 
 void MyCurve::get_preferred_width_vfunc (int &minimum_width, int &natural_width) const
 {
-    int s = RTScalable::getScale();
-    natural_width = minimum_width = (GRAPH_SIZE + (int)(RADIUS * 2.) + (leftBar ? (CBAR_WIDTH + 2 + CBAR_MARGIN) : 0)) * s;
+    natural_width = minimum_width = (GRAPH_SIZE + (int)(RADIUS * 2.) + RTScalable::scalePixelSize(leftBar ? (CBAR_WIDTH + 2 + CBAR_MARGIN) : 0));
 }
 
 void MyCurve::get_preferred_height_for_width_vfunc (int width, int &minimum_height, int &natural_height) const
 {
     minimum_height = width;
 
-    int s = RTScalable::getScale();
     if (leftBar && !bottomBar) {
-        minimum_height -= (CBAR_WIDTH + 2 + CBAR_MARGIN) * s;
+        minimum_height -= RTScalable::scalePixelSize(CBAR_WIDTH + 2 + CBAR_MARGIN);
     }
 
     if (!leftBar && bottomBar) {
-        minimum_height += (CBAR_WIDTH + 2 + CBAR_MARGIN) * s;
+        minimum_height += RTScalable::scalePixelSize(CBAR_WIDTH + 2 + CBAR_MARGIN);
     }
 
     natural_height = minimum_height;

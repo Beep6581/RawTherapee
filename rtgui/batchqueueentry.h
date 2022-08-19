@@ -29,6 +29,7 @@
 #include "../rtengine/noncopyable.h"
 
 class Thumbnail;
+class RTPixbuf;
 
 namespace rtengine
 {
@@ -61,7 +62,7 @@ class BatchQueueEntry final : public ThumbBrowserEntryBase, public BQEntryUpdate
 
 public:
 
-    static Glib::RefPtr<Gdk::Pixbuf> savedAsIcon;
+    static std::shared_ptr<RTPixbuf> savedAsIcon;
 
     rtengine::ProcessingJob* job;
     const std::unique_ptr<rtengine::procparams::ProcParams> params;

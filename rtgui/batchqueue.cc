@@ -57,16 +57,16 @@ BatchQueue::BatchQueue (FileCatalog* aFileCatalog) : processing(nullptr), fileCa
     pmenu.attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
     p++;
 
-    pmenu.attach (*Gtk::manage(head = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEHEAD"), "goto-start-small.png")), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(head = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEHEAD"), "goto-start-small")), 0, 1, p, p + 1);
     p++;
 
-    pmenu.attach (*Gtk::manage(tail = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEEND"), "goto-end-small.png")), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(tail = new MyImageMenuItem (M("FILEBROWSER_POPUPMOVEEND"), "goto-end-small")), 0, 1, p, p + 1);
     p++;
 
     pmenu.attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
     p++;
 
-    pmenu.attach (*Gtk::manage(cancel = new MyImageMenuItem (M("FILEBROWSER_POPUPCANCELJOB"), "cancel-small.png")), 0, 1, p, p + 1);
+    pmenu.attach (*Gtk::manage(cancel = new MyImageMenuItem (M("FILEBROWSER_POPUPCANCELJOB"), "cancel-small")), 0, 1, p, p + 1);
 
     pmenu.show_all ();
 

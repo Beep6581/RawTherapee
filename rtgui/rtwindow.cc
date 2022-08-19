@@ -34,11 +34,8 @@
 #include "filepanel.h"
 #include "filmsimulation.h"
 
-float fontScale = 1.f;
 Glib::RefPtr<Gtk::CssProvider> cssForced;
 Glib::RefPtr<Gtk::CssProvider> cssRT;
-
-extern unsigned char initialGdkScale;
 
 #if defined(__APPLE__)
 static gboolean
@@ -104,10 +101,6 @@ RTWindow::RTWindow ()
     , epanel (nullptr)
     , fpanel (nullptr)
 {
-
-    if (options.is_new_version()) {
-        RTImage::cleanup(true);
-    }
     cacheMgr->init ();
     ProfilePanel::init (this);
 
@@ -116,9 +109,15 @@ RTWindow::RTWindow ()
     Glib::RefPtr<Gdk::Screen> screen = Gdk::Screen::get_default();
 
     if (screen) {
+        // Setting default theme and icon theme (bases for custom themes)
         Gtk::Settings::get_for_screen (screen)->property_gtk_theme_name() = "Adwaita";
         Gtk::Settings::get_for_screen (screen)->property_gtk_application_prefer_dark_theme() = true;
+        Gtk::Settings::get_for_screen (screen)->property_gtk_icon_theme_name() = "RawTherapee";
 
+        // Initialize RTScalable for Hi-DPI support
+        RTScalable::init(this);
+
+        // Look for theme and set it
         Glib::RefPtr<Glib::Regex> regex = Glib::Regex::create (THEMEREGEXSTR, Glib::RegexCompileFlags::REGEX_CASELESS);
         Glib::ustring filename;
         Glib::MatchInfo mInfo;
@@ -169,63 +168,84 @@ RTWindow::RTWindow ()
 
         // Set the font face and size
         Glib::ustring css;
-        if (options.fontFamily != "default") {
-            //GTK318
-            #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
-            css = Glib::ustring::compose ("* { font-family: %1; font-size: %2px}", options.fontFamily, options.fontSize * (int)initialGdkScale);
-            #else
-            css = Glib::ustring::compose ("* { font-family: %1; font-size: %2pt}", options.fontFamily, options.fontSize * (int)initialGdkScale);
-            #endif
-            //GTK318
-            if (options.pseudoHiDPISupport) {
-                fontScale = options.fontSize / (float)RTScalable::baseFontSize;
-            }
+
+#ifndef __APPLE__
+        const double fontScale = static_cast<double>(RTScalable::getDPI())
+            / static_cast<double>(RTScalable::pangoDPI)
+            * RTScalable::getScale(); // Refer to notes in rtscalable.h
+#else
+        // On MacOS, font is already scaled by the System library
+        // Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c
+        const double fontScale = 1.;
+#endif
+        auto style = get_pango_context();
+
+        if (options.fontFamily != "default") { // Set font and size according to user choice
+            // Scale font size based on DPI and Scale
+            const int scaledFontSize = static_cast<int>(options.fontSize * fontScale + 0.5);
+
+            // Set font and size in css
+            css = Glib::ustring::compose ("* { font-family: %1; font-size: %2px}", options.fontFamily, scaledFontSize);
+
             if (rtengine::settings->verbose) {
-                printf("\"Non-Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", options.fontSize, (int)initialGdkScale, static_cast<double>(fontScale));
+                printf("\"Non-Default\" font size in pt(%d) * scale(%.3f) = font size in px(%d)\n", options.fontSize, fontScale, scaledFontSize);
             }
-        } else {
+        } else { // Set font and size according to default values
+            // Retrieve default style values
             Glib::RefPtr<Gtk::StyleContext> style = Gtk::StyleContext::create();
             Pango::FontDescription pfd = style->get_font(Gtk::STATE_FLAG_NORMAL);
+
             if (pfd.get_set_fields() & Pango::FONT_MASK_SIZE) {
-                int pt;
-                int fontSize = pfd.get_size();
-                bool isPix = pfd.get_size_is_absolute();
-                int resolution = (int)style->get_screen()->get_resolution();
-                if (isPix) {
-                    // HOMBRE: guessing here...
-                    // if resolution is lower than baseHiDPI, we're supposing that it's already expressed in a scale==1 scenario
-                    if (resolution >= int(RTScalable::baseHiDPI)) {
-                        // converting the resolution to a scale==1 scenario
-                        resolution /= 2;
-                    }
-                    // 1pt =  1/72in @ 96 ppi
-                    // HOMBRE: If the font unit is px, is it already scaled up to match the resolution ?
-                    //                 px         >inch                 >pt    >"scaled pt"
-                    pt = (int)(double(fontSize) / RTScalable::baseDPI * 72. * (96. / (double)resolution) + 0.49);
-                } else {
-                    pt = fontSize / Pango::SCALE;
-                }
-                if (options.pseudoHiDPISupport) {
-                    fontScale = (float)pt / (float)RTScalable::baseFontSize;
-                }
-                if ((int)initialGdkScale > 1 || pt != RTScalable::baseFontSize) {
-                    css = Glib::ustring::compose ("* { font-size: %1pt}", pt * (int)initialGdkScale);
+                const int fontSize = pfd.get_size();
+                const bool isAbsoluteFontSize = pfd.get_size_is_absolute();
+                int newFontSize;
+
+                if (isAbsoluteFontSize) {
+                    // Absolute size is defined in "Pango units" and shall be divided by
+                    // Pango::SCALE to get "px"
+                    newFontSize = fontSize / Pango::SCALE;
+
+                    // Guessing that pixel size is given for a 96 DPI reference:
+#ifndef __APPLE__
+                    const double newFontScale = static_cast<double>(RTScalable::getDPI())
+                        / static_cast<double>(RTScalable::pangoDPI)
+                        * RTScalable::getScale(); // Refer to notes in rtscalable.h
+#else
+                    // On MacOS, font is already scaled by the System library
+                    // Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c
+                    const double newFontScale = 1.;
+#endif
+                    newFontSize = static_cast<int>(newFontSize * newFontScale + 0.5);
+
                     if (rtengine::settings->verbose) {
-                        printf("\"Default\" font size(%d) * scale(%d) / fontScale(%.3f)\n", pt, (int)initialGdkScale, static_cast<double>(fontScale));
+                        printf("\"Default\" absolute font size(%d)\n", newFontSize);
+                    }
+                } else {
+                    // Non-absolute size is defined in "pt" and shall be converted to "px"
+                    newFontSize = static_cast<int>(fontSize * fontScale + 0.5);
+
+                    if (rtengine::settings->verbose) {
+                        printf("\"Default\" non-absolute font size in pt(%d) * scale(%.3f) = font size in px(%d)\n", fontSize, fontScale, newFontSize);
                     }
                 }
+
+                // Set font and size in css
+                css = Glib::ustring::compose ("* { font-size: %1px}", newFontSize);
+                printf("newFontSize: %d\n", newFontSize);
             }
         }
+
+        // Load custom CSS for font
         if (!css.empty()) {
             if (rtengine::settings->verbose) {
                 printf("CSS:\n%s\n\n", css.c_str());
             }
+
             try {
                 cssForced = Gtk::CssProvider::create();
                 cssForced->load_from_data (css);
 
                 Gtk::StyleContext::add_provider_for_screen (screen, cssForced, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
-
             } catch (Glib::Error &err) {
                 printf ("Error: \"%s\"\n", err.what().c_str());
             } catch (...) {
@@ -236,22 +256,10 @@ RTWindow::RTWindow ()
 
     // ------- end loading theme files
 
-    RTScalable::init(this);
-    RTSurface::init();
-    RTImage::init();
-    WhiteBalance::init();
-    MyExpander::init();
-
+    // For UNIX system, set app icon
 #ifndef WIN32
-    const std::vector<Glib::RefPtr<Gdk::Pixbuf>> appIcons = {
-        RTImage::createPixbufFromFile("rawtherapee-logo-16.png"),
-        RTImage::createPixbufFromFile("rawtherapee-logo-24.png"),
-        RTImage::createPixbufFromFile("rawtherapee-logo-48.png"),
-        RTImage::createPixbufFromFile("rawtherapee-logo-128.png"),
-        RTImage::createPixbufFromFile("rawtherapee-logo-256.png")
-    };
     try {
-        set_default_icon_list(appIcons);
+        set_default_icon_name("rawtherapee");
     } catch (Glib::Exception& ex) {
         printf ("%s\n", ex.what().c_str());
     }
@@ -324,11 +332,11 @@ RTWindow::RTWindow ()
         if (options.mainNBVertical) {
             mainNB->set_tab_pos (Gtk::POS_LEFT);
             fpl->set_angle (90);
-            RTImage* folderIcon = Gtk::manage (new RTImage ("folder-closed.png"));
+            RTImage* folderIcon = Gtk::manage (new RTImage ("folder-closed", Gtk::ICON_SIZE_LARGE_TOOLBAR));
             fpanelLabelGrid->attach_next_to (*folderIcon, Gtk::POS_TOP, 1, 1);
             fpanelLabelGrid->attach_next_to (*fpl, Gtk::POS_TOP, 1, 1);
         } else {
-            RTImage* folderIcon = Gtk::manage (new RTImage ("folder-closed.png"));
+            RTImage* folderIcon = Gtk::manage (new RTImage ("folder-closed", Gtk::ICON_SIZE_LARGE_TOOLBAR));
             fpanelLabelGrid->attach_next_to (*folderIcon, Gtk::POS_RIGHT, 1, 1);
             fpanelLabelGrid->attach_next_to (*fpl, Gtk::POS_RIGHT, 1, 1);
         }
@@ -361,27 +369,27 @@ RTWindow::RTWindow ()
         //mainBox->pack_start (*mainNB);
 
         // filling bottom box
-        iFullscreen = new RTImage ("fullscreen-enter.png");
-        iFullscreen_exit = new RTImage ("fullscreen-leave.png");
+        iFullscreen = new RTImage ("fullscreen-enter", Gtk::ICON_SIZE_LARGE_TOOLBAR);
+        iFullscreen_exit = new RTImage ("fullscreen-leave", Gtk::ICON_SIZE_LARGE_TOOLBAR);
 
         Gtk::Button* iccProfileCreator = Gtk::manage (new Gtk::Button ());
         setExpandAlignProperties (iccProfileCreator, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
         iccProfileCreator->set_relief(Gtk::RELIEF_NONE);
-        iccProfileCreator->set_image (*Gtk::manage (new RTImage ("gamut-plus.png")));
+        iccProfileCreator->set_image (*Gtk::manage (new RTImage ("gamut-plus", Gtk::ICON_SIZE_LARGE_TOOLBAR)));
         iccProfileCreator->set_tooltip_markup (M ("MAIN_BUTTON_ICCPROFCREATOR"));
         iccProfileCreator->signal_clicked().connect ( sigc::mem_fun (*this, &RTWindow::showICCProfileCreator) );
 
         Gtk::Button* helpBtn = Gtk::manage (new Gtk::Button ());
         setExpandAlignProperties (helpBtn, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
         helpBtn->set_relief(Gtk::RELIEF_NONE);
-        helpBtn->set_image (*Gtk::manage (new RTImage ("questionmark.png")));
+        helpBtn->set_image (*Gtk::manage (new RTImage("questionmark", Gtk::ICON_SIZE_LARGE_TOOLBAR)));
         helpBtn->set_tooltip_markup (M ("GENERAL_HELP"));
         helpBtn->signal_clicked().connect (sigc::mem_fun (*this, &RTWindow::showRawPedia));
 
         Gtk::Button* preferences = Gtk::manage (new Gtk::Button ());
         setExpandAlignProperties (preferences, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
         preferences->set_relief(Gtk::RELIEF_NONE);
-        preferences->set_image (*Gtk::manage (new RTImage ("preferences.png")));
+        preferences->set_image (*Gtk::manage (new RTImage ("preferences", Gtk::ICON_SIZE_LARGE_TOOLBAR)));
         preferences->set_tooltip_markup (M ("MAIN_BUTTON_PREFERENCES"));
         preferences->signal_clicked().connect ( sigc::mem_fun (*this, &RTWindow::showPreferences) );
 
@@ -454,7 +462,6 @@ RTWindow::~RTWindow()
     delete fpanel;
     delete iFullscreen;
     delete iFullscreen_exit;
-    RTImage::cleanup();
 }
 
 void RTWindow::on_realize ()
@@ -529,8 +536,8 @@ bool RTWindow::on_configure_event (GdkEventConfigure* event)
         get_position (options.windowX, options.windowY);
     }
 
-    RTImage::setDPInScale(RTScalable::getDPI(), RTScalable::getScale());   // will update the RTImage   on scale/resolution change
-    RTSurface::setDPInScale(RTScalable::getDPI(), RTScalable::getScale()); // will update the RTSurface on scale/resolution change
+    // With update the RTScalable on scale or resolution change
+    RTScalable::setDPInScale(this);
 
     return Gtk::Widget::on_configure_event (event);
 }
@@ -541,7 +548,7 @@ bool RTWindow::on_window_state_event (GdkEventWindowState* event)
     options.windowMaximized = event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED;
     is_minimized = event->new_window_state & GDK_WINDOW_STATE_ICONIFIED;
     is_fullscreen = event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN;
-    
+
     return Gtk::Widget::on_window_state_event (event);
 }
 
@@ -592,7 +599,7 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
         // construct closeable tab for the image
         Gtk::Grid* titleGrid = Gtk::manage (new Gtk::Grid ());
         titleGrid->set_tooltip_markup (name);
-        RTImage *closebimg = Gtk::manage (new RTImage ("cancel-small.png"));
+        RTImage *closebimg = Gtk::manage (new RTImage ("cancel-small", Gtk::ICON_SIZE_LARGE_TOOLBAR));
         Gtk::Button* closeb = Gtk::manage (new Gtk::Button ());
         closeb->set_name ("CloseButton");
         closeb->add (*closebimg);
@@ -601,7 +608,7 @@ void RTWindow::addEditorPanel (EditorPanel* ep, const std::string &name)
         closeb->signal_clicked().connect ( sigc::bind (sigc::mem_fun (*this, &RTWindow::remEditorPanel), ep));
 
         if (!EditWindow::isMultiDisplayEnabled()) {
-            titleGrid->attach_next_to (*Gtk::manage (new RTImage ("aperture.png")), Gtk::POS_RIGHT, 1, 1);
+            titleGrid->attach_next_to (*Gtk::manage (new RTImage ("aperture", Gtk::ICON_SIZE_LARGE_TOOLBAR)), Gtk::POS_RIGHT, 1, 1);
         }
         titleGrid->attach_next_to (*Gtk::manage (new Gtk::Label (Glib::path_get_basename (name))), Gtk::POS_RIGHT, 1, 1);
         titleGrid->attach_next_to (*closeb, Gtk::POS_RIGHT, 1, 1);
@@ -855,12 +862,8 @@ bool RTWindow::on_delete_event (GdkEventAny* event)
     }
 
     cacheMgr->closeCache ();  // also makes cleanup if too large
-    WhiteBalance::cleanup();
     ProfilePanel::cleanup();
     ClutComboBox::cleanup();
-    MyExpander::cleanup();
-    mainWindowCursorManager.cleanup();
-    editWindowCursorManager.cleanup();
     BatchQueueEntry::savedAsIcon.reset();
     FileBrowserEntry::editedIcon.reset();
     FileBrowserEntry::recentlySavedIcon.reset();
@@ -997,7 +1000,7 @@ void RTWindow::error(const Glib::ustring& descr)
 void RTWindow::toggle_fullscreen ()
 {
     onConfEventConn.block(true); // Avoid getting size and position while window is getting fullscreen
-    
+
     if (is_fullscreen) {
         unfullscreen();
 
@@ -1013,7 +1016,7 @@ void RTWindow::toggle_fullscreen ()
             btn_fullscreen->set_image (*iFullscreen_exit);
         }
     }
-    
+
     onConfEventConn.block(false);
 }
 
@@ -1121,7 +1124,7 @@ bool RTWindow::splashClosed (GdkEventAny* event)
 void RTWindow::setWindowSize ()
 {
     onConfEventConn.block(true); // Avoid getting size and position while window is being moved, maximized, ...
-    
+
     Gdk::Rectangle lMonitorRect;
     const auto display = get_screen()->get_display();
     display->get_monitor (std::min (options.windowMonitor, display->get_n_monitors() - 1))->get_geometry(lMonitorRect);
@@ -1160,7 +1163,7 @@ void RTWindow::setWindowSize ()
         unmaximize();
         resize (options.windowWidth, options.windowHeight);
     }
-    
+
     onConfEventConn.block(false);
 }
 
@@ -1168,7 +1171,7 @@ void RTWindow::get_position(int& x, int& y) const
 {
     // Call native function
     Gtk::Window::get_position (x, y);
-    
+
     // Retrieve display (concatenation of all monitors) size
     int width = 0, height = 0;
     const auto display = get_screen()->get_display();
@@ -1253,7 +1256,7 @@ void RTWindow::createSetmEditor()
         el->set_angle (90);
     }
 
-    editorLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("aperture.png")), pos, 1, 1);
+    editorLabelGrid->attach_next_to (*Gtk::manage (new RTImage ("aperture", Gtk::ICON_SIZE_LARGE_TOOLBAR)), pos, 1, 1);
     editorLabelGrid->attach_next_to (*el, pos, 1, 1);
 
     editorLabelGrid->set_tooltip_markup (M ("MAIN_FRAME_EDITOR_TOOLTIP"));

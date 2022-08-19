@@ -50,7 +50,7 @@ protected:
     class MethodColumns : public Gtk::TreeModel::ColumnRecord
     {
     public:
-        Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > colIcon;
+        Gtk::TreeModelColumn<Glib::ustring> colIcon;
         Gtk::TreeModelColumn<Glib::ustring> colLabel;
         Gtk::TreeModelColumn<int> colId;
         MethodColumns()
@@ -61,7 +61,7 @@ protected:
         }
     };
 
-    static Glib::RefPtr<Gdk::Pixbuf> wbPixbufs[rtengine::toUnderlying(rtengine::procparams::WBEntry::Type::CUSTOM) + 1];
+    Glib::ustring wbIcons[rtengine::toUnderlying(rtengine::procparams::WBEntry::Type::CUSTOM) + 1];
     Glib::RefPtr<Gtk::TreeStore> refTreeModel;
     MethodColumns methodColumns;
     MyComboBox* method;
@@ -102,8 +102,6 @@ public:
     WhiteBalance ();
     ~WhiteBalance () override;
 
-    static void init    ();
-    static void cleanup ();
     void read           (const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited = nullptr) override;
     void write          (rtengine::procparams::ProcParams* pp, ParamsEdited* pedited = nullptr) override;
     void setDefaults    (const rtengine::procparams::ProcParams* defParams, const ParamsEdited* pedited = nullptr) override;

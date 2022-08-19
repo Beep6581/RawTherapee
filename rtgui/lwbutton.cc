@@ -20,7 +20,7 @@
 #include "guiutils.h"
 #include "rtsurface.h"
 
-LWButton::LWButton (Cairo::RefPtr<RTSurface> i, int aCode, void* aData, Alignment ha, Alignment va, Glib::ustring* tooltip)
+LWButton::LWButton (std::shared_ptr<RTSurface> i, int aCode, void* aData, Alignment ha, Alignment va, Glib::ustring* tooltip)
     : xpos(0), ypos(0), halign(ha), valign(va), icon(i), bgr(0.0), bgg(0.0), bgb(0.0), fgr(0.0), fgg(0.0), fgb(0.0), state(Normal), listener(nullptr), actionCode(aCode), actionData(aData), toolTip(tooltip)
 {
 
@@ -32,7 +32,7 @@ LWButton::LWButton (Cairo::RefPtr<RTSurface> i, int aCode, void* aData, Alignmen
     }
 }
 
-void LWButton::getSize (int& minw, int& minh) const 
+void LWButton::getSize (int& minw, int& minh) const
 {
 
     minw = w;
@@ -59,7 +59,7 @@ void LWButton::getPosition (int& x, int& y) const
     y = ypos;
 }
 
-void LWButton::setIcon (Cairo::RefPtr<RTSurface> i)
+void LWButton::setIcon (std::shared_ptr<RTSurface> i)
 {
 
     icon = i;
@@ -72,7 +72,7 @@ void LWButton::setIcon (Cairo::RefPtr<RTSurface> i)
     }
 }
 
-Cairo::RefPtr<RTSurface> LWButton::getIcon () const
+std::shared_ptr<RTSurface> LWButton::getIcon () const
 {
 
     return icon;
@@ -211,7 +211,7 @@ void LWButton::redraw (Cairo::RefPtr<Cairo::Context> context)
         dilat++;
     }
 
-    if (icon) {
+    if (icon && icon->hasSurface()) {
         context->set_source (icon->get(), xpos + dilat, ypos + dilat);
         context->paint ();
     }

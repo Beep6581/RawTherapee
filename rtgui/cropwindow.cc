@@ -64,7 +64,21 @@ CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDet
     Glib::RefPtr<Pango::Context> context = parent->get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    fontd.set_size(8 * Pango::SCALE);
+    // Absolute size is defined in "Pango units" and shall be multiplied by
+    // Pango::SCALE from "px"
+    const int fontSize = 8;
+    const int absoluteFontSize = fontSize * Pango::SCALE;
+    // Guessing that absolute pixel size is given for a 96 DPI reference:
+#ifndef __APPLE__
+    const double fontScale = static_cast<double>(RTScalable::getDPI())
+        / static_cast<double>(RTScalable::pangoDPI)
+        * RTScalable::getScale(); // Refer to notes in rtscalable.h
+#else
+    // On MacOS, font is already scaled by the System library
+    // Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c
+    const double fontScale = 1.;
+#endif
+    fontd.set_absolute_size (static_cast<double>(absoluteFontSize) * fontScale);
     context->set_font_description (fontd);
     Glib::RefPtr<Pango::Layout> cllayout = parent->create_pango_layout("1000%");
 
@@ -80,11 +94,11 @@ CropWindow::CropWindow (ImageArea* parent, bool isLowUpdatePriority_, bool isDet
         closett = "Close";
         initialized = true;
     }
-    bZoomOut = new LWButton(Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-minus-small.png")), 0, nullptr, LWButton::Left, LWButton::Center, &zoomOuttt);
-    bZoomIn  = new LWButton(Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-plus-small.png")), 1, nullptr, LWButton::Left, LWButton::Center, &zoomIntt);
-    bZoom100 = new LWButton(Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-1to1-small.png")), 2, nullptr, LWButton::Left, LWButton::Center, &zoom100tt);
-     //bZoomFit = new LWButton (Cairo::RefPtr<RTSurface>(new RTSurface("magnifier-fit.png")), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
-    bClose   = new LWButton(Cairo::RefPtr<RTSurface>(new RTSurface("cancel-small.png")), 4, nullptr, LWButton::Right, LWButton::Center, &closett);
+    bZoomOut = new LWButton(std::shared_ptr<RTSurface>(new RTSurface("magnifier-minus-small", Gtk::ICON_SIZE_BUTTON)), 0, nullptr, LWButton::Left, LWButton::Center, &zoomOuttt);
+    bZoomIn  = new LWButton(std::shared_ptr<RTSurface>(new RTSurface("magnifier-plus-small", Gtk::ICON_SIZE_BUTTON)), 1, nullptr, LWButton::Left, LWButton::Center, &zoomIntt);
+    bZoom100 = new LWButton(std::shared_ptr<RTSurface>(new RTSurface("magnifier-1to1-small", Gtk::ICON_SIZE_BUTTON)), 2, nullptr, LWButton::Left, LWButton::Center, &zoom100tt);
+     //bZoomFit = new LWButton (std::shared_ptr<RTSurface>(new RTSurface("magnifier-fit", Gtk::ICON_SIZE_BUTTON)), 3, NULL, LWButton::Left, LWButton::Center, "Zoom Fit");
+    bClose   = new LWButton(std::shared_ptr<RTSurface>(new RTSurface("cancel-small", Gtk::ICON_SIZE_BUTTON)), 4, nullptr, LWButton::Right, LWButton::Center, &closett);
 
     buttonSet.add (bZoomOut);
     buttonSet.add (bZoomIn);
@@ -2451,7 +2465,21 @@ void CropWindow::drawDecoration (Cairo::RefPtr<Cairo::Context> cr)
     Glib::RefPtr<Pango::Context> context = iarea->get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    fontd.set_size(8 * Pango::SCALE);
+    // Absolute size is defined in "Pango units" and shall be multiplied by
+    // Pango::SCALE from "px"
+    const int fontSize = 8;
+    const int absoluteFontSize = fontSize * Pango::SCALE;
+    // Guessing that absolute pixel size is given for a 96 DPI reference:
+#ifndef __APPLE__
+    const double fontScale = static_cast<double>(RTScalable::getDPI())
+        / static_cast<double>(RTScalable::pangoDPI)
+        * RTScalable::getScale(); // Refer to notes in rtscalable.h
+#else
+    // On MacOS, font is already scaled by the System library
+    // Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c
+    const double fontScale = 1.;
+#endif
+    fontd.set_absolute_size (static_cast<double>(absoluteFontSize) * fontScale);
     context->set_font_description (fontd);
     Glib::RefPtr<Pango::Layout> cllayout = iarea->create_pango_layout(cropLabel);
     int iw, ih;
@@ -2515,7 +2543,21 @@ void CropWindow::drawStraightenGuide (Cairo::RefPtr<Cairo::Context> cr)
     Glib::RefPtr<Pango::Context> context = iarea->get_pango_context () ;
     Pango::FontDescription fontd = context->get_font_description ();
     fontd.set_weight (Pango::WEIGHT_BOLD);
-    fontd.set_size (8 * Pango::SCALE);
+    // Absolute size is defined in "Pango units" and shall be multiplied by
+    // Pango::SCALE from "px"
+    const int fontSize = 8;
+    const int absoluteFontSize = fontSize * Pango::SCALE;
+    // Guessing that absolute pixel size is given for a 96 DPI reference:
+#ifndef __APPLE__
+    const double fontScale = static_cast<double>(RTScalable::getDPI())
+        / static_cast<double>(RTScalable::pangoDPI)
+        * RTScalable::getScale(); // Refer to notes in rtscalable.h
+#else
+    // On MacOS, font is already scaled by the System library
+    // Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c
+    const double fontScale = 1.;
+#endif
+    fontd.set_absolute_size (static_cast<double>(absoluteFontSize) * fontScale);
     context->set_font_description (fontd);
     Glib::RefPtr<Pango::Layout> deglayout = iarea->create_pango_layout(Glib::ustring::compose ("%1 deg", Glib::ustring::format(std::setprecision(2), rot_deg)));
 

@@ -46,7 +46,7 @@ endif()
 
 # Warning for GCC vectorization issues, which causes problems #5749 and #6384:
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND ((CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "10.0" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "10.2") OR (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "11.0")))
-    message(STATUS "WARNING: gcc ${CMAKE_CXX_COMPILER_VERSION} is known to miscompile RawTherapee when using -ftree-loop-vectorize, forcing the option to be off")    
+    message(STATUS "WARNING: gcc ${CMAKE_CXX_COMPILER_VERSION} is known to miscompile RawTherapee when using -ftree-loop-vectorize, forcing the option to be off")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-tree-loop-vectorize")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-tree-loop-vectorize")
 endif()
@@ -438,13 +438,9 @@ endif()
 # Check for libraries:
 find_package(PkgConfig)
 
-if(WIN32)
-    pkg_check_modules(GTK REQUIRED gtk+-3.0>=3.22.24)
-    pkg_check_modules(GTKMM REQUIRED gtkmm-3.0>=3.22)
-else()
-    pkg_check_modules(GTK REQUIRED gtk+-3.0>=3.16)
-    pkg_check_modules(GTKMM REQUIRED gtkmm-3.0>=3.16)
-endif()
+# Gtk version shall be greater than 3.24.3 for fixed Hi-DPI support
+pkg_check_modules(GTK REQUIRED gtk+-3.0>=3.24.3)
+pkg_check_modules(GTKMM REQUIRED gtkmm-3.0>=3.24)
 
 if(GTK_VERSION VERSION_GREATER "3.24.1" AND GTK_VERSION VERSION_LESS "3.24.7")
     if(GTK_VERSION VERSION_EQUAL "3.24.5")
@@ -471,7 +467,7 @@ pkg_check_modules(GTHREAD REQUIRED gthread-2.0>=2.48)
 pkg_check_modules(GOBJECT REQUIRED gobject-2.0>=2.48)
 pkg_check_modules(SIGC REQUIRED sigc++-2.0>=2.3.1)
 pkg_check_modules(LENSFUN REQUIRED lensfun>=0.2)
-pkg_check_modules(RSVG REQUIRED librsvg-2.0>=2.40)
+pkg_check_modules(RSVG REQUIRED librsvg-2.0>=2.46)
 
 if(WIN32)
     add_definitions(-DWIN32)
