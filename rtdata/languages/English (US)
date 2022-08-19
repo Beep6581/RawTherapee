@@ -248,7 +248,6 @@
 !HISTOGRAM_TOOLTIP_L;Show/Hide CIELab luminance histogram.
 !HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 !HISTOGRAM_TOOLTIP_R;Show/Hide red histogram.
-!HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram.
 !HISTORY_CHANGED;Changed
 !HISTORY_CUSTOMCURVE;Custom curve
 !HISTORY_FROMCLIPBOARD;From clipboard

@@ -236,7 +236,6 @@ HISTOGRAM_TOOLTIP_G;Montrer/cacher l'histogramme VERT
 HISTOGRAM_TOOLTIP_L;Montrer/cacher l'histogramme Luminance CIELAB
 HISTOGRAM_TOOLTIP_MODE;Bascule entre une échelle linéaire, linéaire-log et log-log de l'histogramme.
 HISTOGRAM_TOOLTIP_R;Montrer/cacher l'histogramme ROUGE
-HISTOGRAM_TOOLTIP_RAW;Montrer/Cacher l'histogramme des données RAW
 HISTORY_CHANGED;Changé
 HISTORY_CUSTOMCURVE;Courbe personnelle
 HISTORY_FROMCLIPBOARD;Du presse-papier

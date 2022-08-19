@@ -255,7 +255,6 @@ HISTOGRAM_TOOLTIP_G;グリーン・ヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_L;CIEL*a*b* 輝度・ヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_MODE;ヒストグラムの尺度を線形、対数-線形、対数-対数でトグルします
 HISTOGRAM_TOOLTIP_R;レッド・ヒストグラム 表示/非表示
-HISTOGRAM_TOOLTIP_RAW;rawヒストグラム 表示/非表示
 HISTORY_CHANGED;変更されました
 HISTORY_CUSTOMCURVE;カスタムカーブ
 HISTORY_FROMCLIPBOARD;クリップボードから
