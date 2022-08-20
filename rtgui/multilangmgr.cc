@@ -51,7 +51,8 @@ struct LocaleToLang : private std::map<std::pair<Glib::ustring, Glib::ustring>, 
         emplace (key ("en", "GB"), "English (UK)");
 #endif
         emplace (key ("en", "US"), "English (US)");
-        emplace (key ("es", "ES"), "Espanol");
+        emplace (key ("es", "419"), "Espanol");
+        emplace (key ("es", "ES"), "Castellano");
         emplace (key ("eu", "ES"), "Euskara");
         emplace (key ("fr", "FR"), "Francais");
         emplace (key ("el", "GR"), "Greek");
@@ -79,12 +80,15 @@ struct LocaleToLang : private std::map<std::pair<Glib::ustring, Glib::ustring>, 
     {
         Glib::ustring major, minor;
 
+        // TODO: Support 3 character language code when needed.
         if (locale.length () >= 2) {
             major = locale.substr (0, 2).lowercase ();
         }
 
         if (locale.length () >= 5) {
-            minor = locale.substr (3, 2).uppercase ();
+            const Glib::ustring::size_type length =
+                locale.length() > 5 && g_unichar_isalnum(locale[5]) ? 3 : 2;
+            minor = locale.substr (3, length).uppercase ();
         }
 
         // Look for matching language and country.
