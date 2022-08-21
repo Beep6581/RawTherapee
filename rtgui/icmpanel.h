@@ -62,9 +62,9 @@ protected:
 
     Gtk::Label* labmga;
     Gtk::Box* gabox;
-    Gtk::Label* blr;
-    Gtk::Label* blg;
-    Gtk::Label* blb;
+    //Gtk::Label* blr;
+    //Gtk::Label* blg;
+    //Gtk::Label* blb;
     Gtk::Button* neutral;
 
     sigc::connection neutralconn;
@@ -86,12 +86,12 @@ private:
     rtengine::ProcEvent EvICMprimariMethod;
     rtengine::ProcEvent EvICMprofileMethod;
     rtengine::ProcEvent EvICMtempMethod;
-    rtengine::ProcEvent EvICMpredx;
-    rtengine::ProcEvent EvICMpredy;
-    rtengine::ProcEvent EvICMpgrex;
-    rtengine::ProcEvent EvICMpgrey;
-    rtengine::ProcEvent EvICMpblux;
-    rtengine::ProcEvent EvICMpbluy;
+    //rtengine::ProcEvent EvICMpredx;
+    //rtengine::ProcEvent EvICMpredy;
+    //rtengine::ProcEvent EvICMpgrex;
+    //rtengine::ProcEvent EvICMpgrey;
+    //rtengine::ProcEvent EvICMpblux;
+    //rtengine::ProcEvent EvICMpbluy;
     rtengine::ProcEvent EvICMgamm;
     rtengine::ProcEvent EvICMslop;
     rtengine::ProcEvent EvICMtrcinMethod;

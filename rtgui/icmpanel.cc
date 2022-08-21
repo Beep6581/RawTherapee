@@ -41,12 +41,12 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     EvICMprimariMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICM_OUTPUT_PRIMARIES");
     EvICMprofileMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICM_OUTPUT_TYPE");
     EvICMtempMethod = m->newEvent(GAMMA, "HISTORY_MSG_ICM_OUTPUT_TEMP");
-    EvICMpredx = m->newEvent(GAMMA, "HISTORY_MSG_ICMPREDX");
-    EvICMpredy = m->newEvent(GAMMA, "HISTORY_MSG_ICMPREDY");
-    EvICMpgrex = m->newEvent(GAMMA, "HISTORY_MSG_ICMPGREX");
-    EvICMpgrey = m->newEvent(GAMMA, "HISTORY_MSG_ICMPGREY");
-    EvICMpblux = m->newEvent(GAMMA, "HISTORY_MSG_ICMPBLUX");
-    EvICMpbluy = m->newEvent(GAMMA, "HISTORY_MSG_ICMPBLUY");
+    //EvICMpredx = m->newEvent(GAMMA, "HISTORY_MSG_ICMPREDX");
+    //EvICMpredy = m->newEvent(GAMMA, "HISTORY_MSG_ICMPREDY");
+    //EvICMpgrex = m->newEvent(GAMMA, "HISTORY_MSG_ICMPGREX");
+    //EvICMpgrey = m->newEvent(GAMMA, "HISTORY_MSG_ICMPGREY");
+    //EvICMpblux = m->newEvent(GAMMA, "HISTORY_MSG_ICMPBLUX");
+    //EvICMpbluy = m->newEvent(GAMMA, "HISTORY_MSG_ICMPBLUY");
     EvICMgamm = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WORKING_GAMMA");
     EvICMslop = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WORKING_SLOPE");
     EvICMtrcinMethod = m->newEvent(LUMINANCECURVE, "HISTORY_MSG_ICM_WORKING_TRC_METHOD");
@@ -311,23 +311,21 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     redx->set_tooltip_text(M("TP_ICM_PRIMRED_TOOLTIP"));
     grex->set_tooltip_text(M("TP_ICM_PRIMGRE_TOOLTIP"));
     blux->set_tooltip_text(M("TP_ICM_PRIMBLU_TOOLTIP"));
-    blr = Gtk::manage(new Gtk::Label(M(" ")));
-    blg = Gtk::manage(new Gtk::Label(M(" ")));
-    blb = Gtk::manage(new Gtk::Label(M("   ")));
 
     redBox = Gtk::manage(new Gtk::Box());
     redBox->pack_start(*redx);//, Gtk::PACK_SHRINK);
-    redBox->pack_start(*blr, Gtk::PACK_SHRINK);
+    //redBox->pack_start(*blr, Gtk::PACK_SHRINK);
     redBox->pack_start(*redy);//, Gtk::PACK_SHRINK);
     redFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_REDFRAME")));
     redFrame->set_label_align(0.025, 0.5);
+    // TODO: Change redVBox into a grid to hold all primaries coordinates.
     Gtk::Box *redVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     redVBox->pack_start(*redBox, Gtk::PACK_EXPAND_WIDGET);
     redFrame->set_tooltip_text(M("TP_ICM_WORKING_PRIMFRAME_TOOLTIP"));
 
     greBox = Gtk::manage(new Gtk::Box());
     greBox->pack_start(*grex);//, Gtk::PACK_SHRINK, 2);
-    greBox->pack_start(*blg, Gtk::PACK_SHRINK);
+    //greBox->pack_start(*blg, Gtk::PACK_SHRINK);
     greBox->pack_start(*grey);//, Gtk::PACK_SHRINK, 2);
     redVBox->pack_start(*greBox, Gtk::PACK_EXPAND_WIDGET);
     Gtk::Separator* const separator1 = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
@@ -335,7 +333,7 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
 
     bluBox = Gtk::manage(new Gtk::Box());
     bluBox->pack_start(*blux);//, Gtk::PACK_SHRINK);
-    bluBox->pack_start(*blb, Gtk::PACK_SHRINK);
+    //bluBox->pack_start(*blb, Gtk::PACK_SHRINK);
     bluBox->pack_start(*bluy);//, Gtk::PACK_SHRINK);
     redVBox->pack_start(*bluBox, Gtk::PACK_EXPAND_WIDGET);
     preser = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_PRESER"), 0., 100., 0.5, 0.));

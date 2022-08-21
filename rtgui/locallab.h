@@ -127,7 +127,7 @@ private:
     std::vector<locallabRef> maskBackRef;
 
     // Other widgets
-    Gtk::Button* const resetshowButton;
+    //Gtk::Button* const resetshowButton;
 
     Glib::ustring spotName;
 
@@ -176,7 +176,7 @@ public:
     llMaskVisibility getMaskVisibility() const;
 
     // Other widgets event functions
-    void resetshowPressed();
+    //void resetshowPressed();
 
     // EditProvider management function
     void setEditProvider(EditDataProvider* provider) override;
