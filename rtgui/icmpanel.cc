@@ -312,35 +312,29 @@ ICMPanel::ICMPanel() : FoldableToolPanel(this, "icm", M("TP_ICM_LABEL")), iuncha
     grex->set_tooltip_text(M("TP_ICM_PRIMGRE_TOOLTIP"));
     blux->set_tooltip_text(M("TP_ICM_PRIMBLU_TOOLTIP"));
 
-    redBox = Gtk::manage(new Gtk::Box());
-    redBox->pack_start(*redx);//, Gtk::PACK_SHRINK);
-    //redBox->pack_start(*blr, Gtk::PACK_SHRINK);
-    redBox->pack_start(*redy);//, Gtk::PACK_SHRINK);
     redFrame = Gtk::manage(new Gtk::Frame(M("TP_ICM_REDFRAME")));
     redFrame->set_label_align(0.025, 0.5);
-    // TODO: Change redVBox into a grid to hold all primaries coordinates.
-    Gtk::Box *redVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
-    redVBox->pack_start(*redBox, Gtk::PACK_EXPAND_WIDGET);
     redFrame->set_tooltip_text(M("TP_ICM_WORKING_PRIMFRAME_TOOLTIP"));
 
-    greBox = Gtk::manage(new Gtk::Box());
-    greBox->pack_start(*grex);//, Gtk::PACK_SHRINK, 2);
-    //greBox->pack_start(*blg, Gtk::PACK_SHRINK);
-    greBox->pack_start(*grey);//, Gtk::PACK_SHRINK, 2);
-    redVBox->pack_start(*greBox, Gtk::PACK_EXPAND_WIDGET);
+    Gtk::Box *redVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    primCoordGrid = Gtk::manage(new Gtk::Grid());
+    primCoordGrid->set_column_homogeneous(true);
+    primCoordGrid->attach(*redx, 0, 0, 1, 1);
+    primCoordGrid->attach_next_to(*redy, *redx, Gtk::PositionType::POS_RIGHT, 1, 1);
+    primCoordGrid->attach_next_to(*grex, *redx, Gtk::PositionType::POS_BOTTOM, 1, 1);
+    primCoordGrid->attach_next_to(*grey, *grex, Gtk::PositionType::POS_RIGHT, 1, 1);
+    primCoordGrid->attach_next_to(*blux, *grex, Gtk::PositionType::POS_BOTTOM, 1, 1);
+    primCoordGrid->attach_next_to(*bluy, *blux, Gtk::PositionType::POS_RIGHT, 1, 1);
+    redVBox->pack_start(*primCoordGrid, Gtk::PACK_EXPAND_WIDGET);
+
     Gtk::Separator* const separator1 = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
     Gtk::Separator* const separator2 = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_VERTICAL));
 
-    bluBox = Gtk::manage(new Gtk::Box());
-    bluBox->pack_start(*blux);//, Gtk::PACK_SHRINK);
-    //bluBox->pack_start(*blb, Gtk::PACK_SHRINK);
-    bluBox->pack_start(*bluy);//, Gtk::PACK_SHRINK);
-    redVBox->pack_start(*bluBox, Gtk::PACK_EXPAND_WIDGET);
     preser = Gtk::manage(new Adjuster(M("TP_ICM_WORKING_PRESER"), 0., 100., 0.5, 0.));
     preser->setAdjusterListener(this);
     
     preBox = Gtk::manage(new Gtk::Box());
-    preBox->pack_start(*preser, Gtk::PACK_SHRINK);
+    preBox->pack_start(*preser, Gtk::PACK_EXPAND_WIDGET);
     redVBox->pack_start(*separator1, Gtk::PACK_SHRINK);
     redVBox->pack_start(*preBox, Gtk::PACK_EXPAND_WIDGET);
     redVBox->pack_start(*separator2, Gtk::PACK_SHRINK);
@@ -947,9 +941,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
                     && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
                 ) {
                   will->set_sensitive(false);
-                  redBox->set_sensitive(false);
-                  greBox->set_sensitive(false);
-                  bluBox->set_sensitive(false);
+                  primCoordGrid->set_sensitive(false);
                   labgridcie->set_sensitive(false);
 
                 } else {
@@ -957,9 +949,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
                   if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM) {
                     will->set_sensitive(true);
                   }
-                  redBox->set_sensitive(true);
-                  greBox->set_sensitive(true);
-                  bluBox->set_sensitive(true);
+                  primCoordGrid->set_sensitive(true);
                   labgridcie->set_sensitive(true);
                 }
 
@@ -1089,9 +1079,7 @@ void ICMPanel::read(const ProcParams* pp, const ParamsEdited* pedited)
 
         case ColorManagementParams::Primaries::CUSTOM_GRID: {
             labgridcie->set_sensitive(true);
-            redBox->set_sensitive(false);
-            greBox->set_sensitive(false);
-            bluBox->set_sensitive(false);
+            primCoordGrid->set_sensitive(false);
             will->set_sensitive(false);
             break;
         }
@@ -1300,13 +1288,9 @@ void ICMPanel::wtrcinChanged()
                     ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
                     && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
                 ) {
-                   redBox->set_sensitive(false);
-                   greBox->set_sensitive(false);
-                   bluBox->set_sensitive(false);
+                   primCoordGrid->set_sensitive(false);
                 } else {
-                   redBox->set_sensitive(true);
-                   greBox->set_sensitive(true);
-                   bluBox->set_sensitive(true);
+                   primCoordGrid->set_sensitive(true);
                 }
             }
             riaHBox->set_sensitive(true);
@@ -1338,9 +1322,7 @@ void ICMPanel::wtrcinChanged()
                     ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
                     && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
                 ) {
-                    redBox->set_sensitive(false);
-                    greBox->set_sensitive(false);
-                    bluBox->set_sensitive(false);
+                    primCoordGrid->set_sensitive(false);
                 }
             }
             riaHBox->set_sensitive(true);
@@ -1365,13 +1347,9 @@ void ICMPanel::wtrcinChanged()
                     ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
                     && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
                 ) {
-                    redBox->set_sensitive(false);
-                    greBox->set_sensitive(false);
-                    bluBox->set_sensitive(false);
+                    primCoordGrid->set_sensitive(false);
                 } else {
-                    redBox->set_sensitive(true);
-                    greBox->set_sensitive(true);
-                    bluBox->set_sensitive(true);
+                    primCoordGrid->set_sensitive(true);
                 }
             }
             break;
@@ -1396,13 +1374,9 @@ void ICMPanel::wtrcinChanged()
                     ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
                     && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
                 ) {
-                    redBox->set_sensitive(false);
-                    greBox->set_sensitive(false);
-                    bluBox->set_sensitive(false);
+                    primCoordGrid->set_sensitive(false);
                 } else {
-                    redBox->set_sensitive(true);
-                    greBox->set_sensitive(true);
-                    bluBox->set_sensitive(true);
+                    primCoordGrid->set_sensitive(true);
                 }
             }
             break;
@@ -1427,13 +1401,9 @@ void ICMPanel::wtrcinChanged()
                     ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
                     && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
                 ) {
-                    redBox->set_sensitive(false);
-                    greBox->set_sensitive(false);
-                    bluBox->set_sensitive(false);
+                    primCoordGrid->set_sensitive(false);
                 } else {
-                    redBox->set_sensitive(true);
-                    greBox->set_sensitive(true);
-                    bluBox->set_sensitive(true);
+                    primCoordGrid->set_sensitive(true);
                 }
             }
             break;
@@ -1458,13 +1428,9 @@ void ICMPanel::wtrcinChanged()
                     ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM
                     && ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM_GRID
                 ) {
-                    redBox->set_sensitive(false);
-                    greBox->set_sensitive(false);
-                    bluBox->set_sensitive(false);
+                    primCoordGrid->set_sensitive(false);
                 } else {
-                    redBox->set_sensitive(true);
-                    greBox->set_sensitive(true);
-                    bluBox->set_sensitive(true);
+                    primCoordGrid->set_sensitive(true);
                 }
             }
             break;
@@ -1759,18 +1725,14 @@ void ICMPanel::wprimChanged()
         redFrame->show();
 
         if (ColorManagementParams::Primaries(wprim->get_active_row_number()) != ColorManagementParams::Primaries::CUSTOM) {
-            redBox->set_sensitive(false);
-            greBox->set_sensitive(false);
-            bluBox->set_sensitive(false);
+            primCoordGrid->set_sensitive(false);
             labgridcie->set_sensitive(false);
             will->set_sensitive(false);
             if (ColorManagementParams::Primaries(wprim->get_active_row_number()) == ColorManagementParams::Primaries::CUSTOM_GRID) {
                 labgridcie->set_sensitive(true);
             }
         } else {
-            redBox->set_sensitive(true);
-            greBox->set_sensitive(true);
-            bluBox->set_sensitive(true);
+            primCoordGrid->set_sensitive(true);
             labgridcie->set_sensitive(false);
             will->set_sensitive(true);
         }

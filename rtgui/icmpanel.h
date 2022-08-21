@@ -115,9 +115,7 @@ private:
     Gtk::Box* wprimBox;
     Gtk::Label* wprimlab;
     Gtk::Label* cielab;
-    Gtk::Box* redBox;
-    Gtk::Box* greBox;
-    Gtk::Box* bluBox;
+    Gtk::Grid* primCoordGrid;
     Gtk::Box* riaHBox;
     Gtk::Box* preBox;
     Gtk::Box* iVBox;
