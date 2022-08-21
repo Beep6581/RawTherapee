@@ -467,7 +467,7 @@ pkg_check_modules(GTHREAD REQUIRED gthread-2.0>=2.48)
 pkg_check_modules(GOBJECT REQUIRED gobject-2.0>=2.48)
 pkg_check_modules(SIGC REQUIRED sigc++-2.0>=2.3.1)
 pkg_check_modules(LENSFUN REQUIRED lensfun>=0.2)
-pkg_check_modules(RSVG REQUIRED librsvg-2.0>=2.46)
+pkg_check_modules(RSVG REQUIRED librsvg-2.0>=2.52)
 
 if(WIN32)
     add_definitions(-DWIN32)

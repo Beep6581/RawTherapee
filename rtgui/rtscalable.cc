@@ -36,7 +36,13 @@ void RTScalable::updateDPInScale(const Gtk::Window* window, double &newDPI, int 
     if (window) {
         const auto screen = window->get_screen();
         newDPI = screen->get_resolution(); // Get DPI retrieved from the OS
-        newScale = window->get_scale_factor(); // Get scale factor associated to the window
+
+        if (window->get_scale_factor() > 0) {
+             // Get scale factor associated to the window
+            newScale = window->get_scale_factor();
+        } else {
+            newScale = 1; // Default minimum value of 1 as scale is used to scale surface
+        }
     }
 }
 
@@ -87,21 +93,6 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromIcon(const Glib::u
             surf = RTScalable::loadSurfaceFromSVG(iconPath, size, size, true);
         }
     }
-
-    /*
-    // Scale current surface size to desired scaled size
-    if (surface) {
-        // Note: surface is considered made from squared icon
-        const double scale_factor = static_cast<double>(size) / static_cast<double>(surface->get_width());
-        surf = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32,
-            static_cast<int>(surface->get_width() * scale_factor + 0.5),
-            static_cast<int>(surface->get_height() * scale_factor + 0.5));
-        const auto cr = Cairo::Context::create(surf);
-        cr->scale(scale_factor, scale_factor);
-        cr->set_source(surface, 0, 0);
-        cr->paint();
-    }
-    */
 
     return surf;
 }
@@ -174,15 +165,28 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromSVG(const Glib::us
             return surf;
         }
 
+        int w, h;
+
         if (width == -1 || height == -1) {
             // Use SVG image natural width and height
-            RsvgDimensionData dim;
-            rsvg_handle_get_dimensions(handle, &dim); // Get SVG image dimensions
-            surf = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, dim.width, dim.height);
+            double _w, _h;
+            const bool has_dim = rsvg_handle_get_intrinsic_size_in_pixels(handle, &_w, &_h); // Get SVG image dimensions
+            if (has_dim) {
+                w = std::ceil(_w);
+                h = std::ceil(_h);
+            } else {
+                w = h = 16; // Set to a default size of 16px (i.e. Gtk::ICON_SIZE_SMALL_TOOLBAR one)
+            }
         } else {
             // Use given width and height
-            surf = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, width, height);
+            w = width;
+            h = height;
         }
+
+        // Create an upscaled surface to avoid blur effect
+        surf = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32,
+            w * RTScalable::getScale(),
+            h * RTScalable::getScale());
 
         // Render (and erase with) default surface background
         Cairo::RefPtr<Cairo::Context> c = Cairo::Context::create(surf);
@@ -190,17 +194,15 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromSVG(const Glib::us
         c->set_operator (Cairo::OPERATOR_CLEAR);
         c->paint();
 
-        // Render surface based on SVG image
+        // Render upscaled surface based on SVG image
         error = nullptr;
         RsvgRectangle rect = {
             .x = 0.,
             .y = 0.,
-            .width = static_cast<double>(width * RTScalable::getScale()), // SVG image is upscaled to avoid blur effect
-            .height = static_cast<double>(height * RTScalable::getScale()) // SVG image is upscaled to avoid blur effect
+            .width = static_cast<double>(w * RTScalable::getScale()),
+            .height = static_cast<double>(h * RTScalable::getScale())
         };
         c->set_operator (Cairo::OPERATOR_OVER);
-        c->scale(1. / RTScalable::getScale(), 1. / RTScalable::getScale()); // Cairo surface is scaled to match image dimensions
-
         const bool success = rsvg_handle_render_document(handle, c->cobj(), &rect, &error);
 
         if (!success && error) {
@@ -210,6 +212,11 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromSVG(const Glib::us
         }
 
         rsvg_handle_free(handle);
+
+        // Set device scale to avoid blur effect
+        cairo_surface_set_device_scale(surf->cobj(),
+            static_cast<double>(RTScalable::getScale()),
+            static_cast<double>(RTScalable::getScale()));
     } else {
         if (rtengine::settings->verbose) {
             std::cerr << "Failed to load SVG file \"" << fname << "\"" << std::endl;

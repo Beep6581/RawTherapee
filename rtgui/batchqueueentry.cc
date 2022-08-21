@@ -168,8 +168,8 @@ std::vector<Glib::RefPtr<Gdk::Pixbuf>> BatchQueueEntry::getIconsOnImageArea ()
 void BatchQueueEntry::getIconSize (int& w, int& h) const
 {
 
-    w = savedAsIcon->get()->get_width ();
-    h = savedAsIcon->get()->get_height ();
+    w = savedAsIcon->getWidth ();
+    h = savedAsIcon->getHeight ();
 }
 
 

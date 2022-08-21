@@ -195,8 +195,8 @@ void FileBrowserEntry::customBackBufferUpdate (Cairo::RefPtr<Cairo::Context> c)
 void FileBrowserEntry::getIconSize (int& w, int& h) const
 {
 
-    w = editedIcon->get()->get_width ();
-    h = editedIcon->get()->get_height ();
+    w = editedIcon->getWidth ();
+    h = editedIcon->getHeight ();
 }
 
 FileThumbnailButtonSet* FileBrowserEntry::getThumbButtonSet ()

@@ -25,8 +25,8 @@ LWButton::LWButton (std::shared_ptr<RTSurface> i, int aCode, void* aData, Alignm
 {
 
     if (i)  {
-        w = i->getWidth () + 2;
-        h = i->getHeight () + 2;
+        w = i->getWidth ();
+        h = i->getHeight ();
     } else {
         w = h = 2;
     }
@@ -65,8 +65,8 @@ void LWButton::setIcon (std::shared_ptr<RTSurface> i)
     icon = i;
 
     if (i)  {
-        w = i->getWidth () + 2;
-        h = i->getHeight () + 2;
+        w = i->getWidth ();
+        h = i->getHeight ();
     } else {
         w = h = 2;
     }
@@ -186,9 +186,9 @@ void LWButton::redraw (Cairo::RefPtr<Cairo::Context> context)
 {
 
     GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
-    context->set_line_width (1.0);
+    context->set_line_width (2.0); // Line width shall be even to avoid blur effect when upscaling
     context->set_antialias (Cairo::ANTIALIAS_SUBPIXEL);
-    context->rectangle (xpos + 0.5, ypos + 0.5, w - 1.0, h - 1.0);
+    context->rectangle (xpos, ypos, w, h);
 
     if (state == Pressed_In) {
         context->set_source_rgb (fgr, fgg, fgb);
@@ -205,7 +205,7 @@ void LWButton::redraw (Cairo::RefPtr<Cairo::Context> context)
     }
 
     context->stroke ();
-    int dilat = 1;
+    int dilat = 0;
 
     if (state == Pressed_In) {
         dilat++;

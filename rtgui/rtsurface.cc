@@ -90,7 +90,7 @@ int RTSurface::getWidth()
 {
     return
         surface
-            ? surface->get_width()
+            ? (surface->get_width() / RTScalable::getScale())
             : -1;
 }
 
@@ -98,7 +98,7 @@ int RTSurface::getHeight()
 {
     return
         surface
-            ? surface->get_height()
+            ? (surface->get_height() / RTScalable::getScale())
             : -1;
 }
 
@@ -152,8 +152,22 @@ RTPixbuf::RTPixbuf(const Glib::ustring &icon_name, const Gtk::IconSize iconSize)
     const Cairo::RefPtr<Cairo::ImageSurface> surface = RTScalable::loadSurfaceFromIcon(icon_name, iconSize);
 
     if (surface) {
+        // Downscale surface before creating pixbuf
+        const Cairo::RefPtr<Cairo::Surface> _surface = Cairo::Surface::create(surface,
+            Cairo::CONTENT_COLOR_ALPHA,
+            surface->get_width() / RTScalable::getScale(),
+            surface->get_height() / RTScalable::getScale());
+        const auto c = Cairo::Context::create(_surface);
+        c->scale(1. / static_cast<double>(RTScalable::getScale()), 1. / static_cast<double>(RTScalable::getScale()));
+        c->set_source(surface, 0., 0.);
+        c->paint();
+
         // Create pixbuf from surface
-        pixbuf = Gdk::Pixbuf::create(surface, 0, 0, surface->get_width(), surface->get_height());
+        pixbuf = Gdk::Pixbuf::create(_surface,
+            0,
+            0,
+            surface->get_width() / RTScalable::getScale(),
+            surface->get_height() / RTScalable::getScale());
 
         // Save private parameters
         type = RTPixbuf::IconType;
@@ -177,8 +191,22 @@ RTPixbuf::RTPixbuf(const Glib::ustring &fname) :
             const Cairo::RefPtr<Cairo::ImageSurface> surface = RTScalable::loadSurfaceFromPNG(fname);
 
             if (surface) {
+                // Downscale surface before creating pixbuf
+                const Cairo::RefPtr<Cairo::Surface> _surface = Cairo::Surface::create(surface,
+                    Cairo::CONTENT_COLOR_ALPHA,
+                    surface->get_width() / RTScalable::getScale(),
+                    surface->get_height() / RTScalable::getScale());
+                const auto c = Cairo::Context::create(_surface);
+                c->scale(1. / static_cast<double>(RTScalable::getScale()), 1. / static_cast<double>(RTScalable::getScale()));
+                c->set_source(surface, 0., 0.);
+                c->paint();
+
                 // Create pixbuf from surface
-                pixbuf = Gdk::Pixbuf::create(surface, 0, 0, surface->get_width(), surface->get_height());
+                pixbuf = Gdk::Pixbuf::create(_surface,
+                    0,
+                    0,
+                    surface->get_width() / RTScalable::getScale(),
+                    surface->get_height() / RTScalable::getScale());
 
                 // Save private parameter
                 type = RTPixbuf::PNGType;
@@ -192,8 +220,22 @@ RTPixbuf::RTPixbuf(const Glib::ustring &fname) :
             const Cairo::RefPtr<Cairo::ImageSurface> surface = RTScalable::loadSurfaceFromSVG(fname);
 
             if (surface) {
+                // Downscale surface before creating pixbuf
+                const Cairo::RefPtr<Cairo::Surface> _surface = Cairo::Surface::create(surface,
+                    Cairo::CONTENT_COLOR_ALPHA,
+                    surface->get_width() / RTScalable::getScale(),
+                    surface->get_height() / RTScalable::getScale());
+                const auto c = Cairo::Context::create(_surface);
+                c->scale(1. / static_cast<double>(RTScalable::getScale()), 1. / static_cast<double>(RTScalable::getScale()));
+                c->set_source(surface, 0., 0.);
+                c->paint();
+
                 // Create pixbuf from surface
-                pixbuf = Gdk::Pixbuf::create(surface, 0, 0, surface->get_width(), surface->get_height());
+                pixbuf = Gdk::Pixbuf::create(_surface,
+                    0,
+                    0,
+                    surface->get_width() / RTScalable::getScale(),
+                    surface->get_height() / RTScalable::getScale());
 
                 // Save private parameter
                 type = RTPixbuf::SVGType;
