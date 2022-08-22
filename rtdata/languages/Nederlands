@@ -235,7 +235,6 @@ HISTOGRAM_TOOLTIP_CHRO;Toon/Verberg Chromaticiteit histogram
 HISTOGRAM_TOOLTIP_G;Toon/verberg groen histogram
 HISTOGRAM_TOOLTIP_L;Toon/verberg CIELAB-luminantiehistogram
 HISTOGRAM_TOOLTIP_R;Toon/verberg rood histogram
-HISTOGRAM_TOOLTIP_RAW;Toon/verberg RAW-histogram
 HISTORY_CHANGED;Veranderd
 HISTORY_CUSTOMCURVE;Handmatig
 HISTORY_FROMCLIPBOARD;Van klembord

@@ -251,7 +251,6 @@ HISTOGRAM_TOOLTIP_G;Show/Hide green histogram.
 HISTOGRAM_TOOLTIP_L;Show/Hide CIELab luminance histogram.
 HISTOGRAM_TOOLTIP_MODE;Toggle between linear, log-linear and log-log scaling of the histogram.
 HISTOGRAM_TOOLTIP_R;Show/Hide red histogram.
-HISTOGRAM_TOOLTIP_RAW;Show/Hide raw histogram.
 HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Toggle visibility of the scope option buttons.
 HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Adjust scope brightness.
 HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Histogram
