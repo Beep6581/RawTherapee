@@ -1403,7 +1403,7 @@ TP_COLORAPP_HUE;Teinte (h)
 TP_COLORAPP_HUE_TOOLTIP;Teinte (h) - angle entre 0° et 360°
 TP_COLORAPP_LABEL;Apparence de la Couleur (CIECAM02)
 TP_COLORAPP_LABEL_CAM02;Édition de l'image avec CIE-CAM 2002
-TP_COLORAPP_LABEL_SCENE;Conditions de la scène
+TP_COLORAPP_LABEL_SCENE;Conditions de visionnage
 TP_COLORAPP_LABEL_VIEWING;Conditions de visionnage
 TP_COLORAPP_LIGHT;Luminosité (J)
 TP_COLORAPP_LIGHT_TOOLTIP;Luminosité dans CIECAM02 est différent de celui de Lab et RVB
@@ -2082,20 +2082,32 @@ TP_LOCALLAB_JZWAVEXP;Ondelettes Jz
 TP_LOCALLAB_JZLOG;Log encoding Jz
 TP_LOCALLAB_LOG;Log Encoding
 TP_LOCALLAB_LOG1FRA;CAM16 Adjustment Images
-TP_LOCALLAB_LOG2FRA;Conditions de la scène
+TP_LOCALLAB_LOG2FRA;Conditions de visionnage
 TP_LOCALLAB_LOGAUTO;Automatique
-TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Automatically calculates the 'Mean luminance' for the scene conditions when the ‘Automatic’ button in Relative Exposure Levels is pressed.
-TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the dynamic range and 'Mean luminance' for the scene conditions if the "Auto mean luminance (Yb%)” is checked).\nAlso calculates the absolute luminance at the time of shooting.\nPress the button again to adjust the automatically calculated values.
+!TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Automatically calculates the 'Mean luminance' for the scene conditions when the ‘Automatic’ button in Relative Exposure Levels is pressed.
+TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Calcule automatiquement la « luminance moyenne » pour les conditions de la scène lorsque le bouton « Automatique » dans les niveaux d'exposition relatifs est enfoncé.
+!TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the dynamic range and 'Mean luminance' for the scene conditions if the "Auto mean luminance (Yb%)” is checked).\nAlso calculates the absolute luminance at the time of shooting.\nPress the button again to adjust the automatically calculated values.
+TP_LOCALLAB_LOGAUTO_TOOLTIP;Appuyez sur ce bouton pour calculer la plage dynamique et la « Luminance moyenne » pour les conditions de la scène si la « Luminance moyenne automatique (Yb %) » est cochée).\nCalcule également la luminance absolue au moment de la prise de vue.\nAppuyez à nouveau sur le bouton pour ajuster les valeurs calculées automatiquement.
 TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm making the shadows darker and the highlights brighter.\nWith values greater than 2, the shadows are grayer and the highlights become more washed out.
-TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Estimated values of dynamic range i.e. Black Ev and White Ev
-TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance deviates significantly from the D50 reference.\nAdapts colors to the illuminant of the output device.
+TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Valeurs estimées du dynamic range entre Black Ev et White Ev
+! TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance deviates significantly from the D50 reference.\nAdapts colors to the illuminant of the output device.
+TP_LOCALLAB_LOGCATAD_TOOLTIP;L'adaptation chromatique permet d'interpréter une couleur en fonction de son environnement spatio-temporel.\nUtile lorsque la balance des blancs s'écarte sensiblement de la référence D50.\nAdapte les couleurs à l'illuminant du périphérique de sortie.
 TP_LOCALLAB_LOGCOLORFL;Colorfulness (M)
 TP_LOCALLAB_LOGCIE;Log encoding au lieu de Sigmoid
-TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using Log encoding Q.
-TP_LOCALLAB_LOGCOLORF_TOOLTIP;Perceived amount of hue in relation to gray.\nIndicator that a stimulus appears more or less colored.
+TP_LOCALLAB_LOGCIE_TOOLTIP;Vous permet d'utiliser Black Ev, White Ev, Scene Mean luminance (Yb%) et Viewing Mean luminance (Yb%) pour le mappage des tons à l'aide de l'encodage Log Q.
+!TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using Log encoding Q.
+!TP_LOCALLAB_LOGCOLORF_TOOLTIP;Perceived amount of hue in relation to gray.\nIndicator that a stimulus appears more or less colored.
 TP_LOCALLAB_LOGCONQL;Contraste (Q)
 TP_LOCALLAB_LOGCONTL;Contraste (J)
+!TP_LOCALLAB_LOGCOLORF_TOOLTIP;Perceived amount of hue in relation to gray.\nIndicator that a stimulus appears more or less colored.
+TP_LOCALLAB_LOGCOLORF_TOOLTIP;Quantité de teinte perçue par rapport au gris.\nIndicateur qu'un stimulus apparaît plus ou moins coloré.
+!TP_LOCALLAB_LOGCONTL_TOOLTIP;Contrast (J) in CIECAM16 takes into account the increase in perceived coloration with luminance (lightness).
+TP_LOCALLAB_LOGCONTL_TOOLTIP;Le contraste (J) dans CIECAM16 prend en compte l'augmentation de la coloration perçue avec la luminance
+!TP_LOCALLAB_LOGCONTQ_TOOLTIP;Contrast (Q) in CIECAM16 takes into account the increase in perceived coloration with brightness.
+TP_LOCALLAB_LOGCONTQ_TOOLTIP;Le contraste (Q) dans CIECAM16 prend en compte l'augmentation de la coloration perçue avec la luminosité (brightness).
 TP_LOCALLAB_LOGCONTHRES;Contrast seuil (J & Q)
+!TP_LOCALLAB_LOGCONTTHRES_TOOLTIP;Adjusts the mid-tone contrast range (J & Q).\nPositive values progressively reduce the effect of the Contrast sliders (J & Q). Negative values progressively increase the effect of the Contrast sliders.
+TP_LOCALLAB_LOGCONTTHRES_TOOLTIP;Ajuste la plage de contraste des tons moyens (J et Q).\nLes valeurs positives réduisent progressivement l'effet des curseurs Contraste (J et Q). Les valeurs négatives augmentent progressivement l'effet des curseurs Contraste.
 TP_LOCALLAB_LOGCONTL_TOOLTIP;Contrast (J) in CIECAM16 takes into account the increase in perceived coloration with luminance.
 TP_LOCALLAB_LOGCONTQ_TOOLTIP;Contrast (Q) in CIECAM16 takes into account the increase in perceived coloration with brightness.
 TP_LOCALLAB_LOGCONTTHRES_TOOLTIP;Adjusts the mid-tone contrast range (J & Q).\nPositive values progressively reduce the effect of the Contrast sliders (J & Q). Negative values progressively increase the effect of the Contrast sliders.
@@ -2397,6 +2409,7 @@ TP_LOCALLAB_REWEI;Repondération iterations
 TP_LOCALLAB_RGB;RGB Courbe de tonalité
 TP_LOCALLAB_ROW_NVIS;Pas visible
 TP_LOCALLAB_ROW_VIS;Visible
+TP_LOCALLAB_RSTPROTECT_TOOLTIP;La protection des rouges et des tons chair affecte les curseurs Saturation, Chroma et Colorfulness.
 TP_LOCALLAB_SATUR;Saturation
 TP_LOCALLAB_SAVREST;Sauve - Récupère Image Courante
 TP_LOCALLAB_SCALEGR;Echelle
