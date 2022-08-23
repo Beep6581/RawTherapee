@@ -42,19 +42,6 @@ using namespace std;
 namespace
 {
 
-Glib::ustring replaceBackslash(Glib::ustring path)
-{
-	size_t pos;
-	
-	pos = path.find("\\");
-	while (pos != string::npos) {
-		path.replace(pos, 1, "/");
-		pos = path.find("\\", pos);
-	}
-	return path;
-}
-
-
 Glib::ustring expandRelativePath(const Glib::ustring &procparams_fname, const Glib::ustring &prefix, Glib::ustring embedded_fname)
 {
     if (embedded_fname.empty() || !Glib::path_is_absolute(procparams_fname)) {
@@ -76,6 +63,40 @@ Glib::ustring expandRelativePath(const Glib::ustring &procparams_fname, const Gl
     Glib::ustring absPath = prefix + Glib::path_get_dirname(procparams_fname) + G_DIR_SEPARATOR_S + embedded_fname;
     return absPath;
 }
+
+Glib::ustring expandRelativePath2(const Glib::ustring &procparams_fname, const Glib::ustring &procparams_fname2, const Glib::ustring &prefix, Glib::ustring embedded_fname)
+{
+	#if defined (WIN32)
+	// if this is Windows, replace any "/" in the filename with "\\"
+	size_t pos = embedded_fname.find("/");
+	while (pos != string::npos) {
+		embedded_fname.replace(pos, 1, "\\");
+		pos = embedded_fname.find("/", pos);
+	}
+	#endif
+	#if !defined (WIN32)
+	// if this is not Windows, replace any "\\" in the filename with "/"
+	size_t pos = embedded_fname.find("\\");
+	while (pos != string::npos) {
+		embedded_fname.replace(pos, 1, "/");
+		pos = embedded_fname.find("\\", pos);
+	}
+	#endif
+
+	// if embedded_fname is not already an absolute path,
+	// try to convert it using procparams_fname (the directory of the raw file) as prefix
+	Glib::ustring rPath = expandRelativePath(procparams_fname, prefix, embedded_fname);
+	if (rPath.length() >= prefix.length()
+		&& !Glib::file_test(rPath.substr(prefix.length()), Glib::FILE_TEST_IS_REGULAR)
+		&& !procparams_fname2.empty()
+		&& Glib::path_is_absolute(procparams_fname2)) {
+		// embedded_fname is not a valid path;
+		// try with procparams_fname2 (the path defined in Preferences) as a prefix 
+		rPath = expandRelativePath(procparams_fname2 + G_DIR_SEPARATOR_S, prefix, embedded_fname);
+	}
+	return(rPath);
+}
+
 
 Glib::ustring relativePathIfInside(const Glib::ustring &procparams_fname, bool fnameAbsolute, Glib::ustring embedded_fname)
 {
@@ -104,6 +125,25 @@ Glib::ustring relativePathIfInside(const Glib::ustring &procparams_fname, bool f
 
     return prefix + embedded_fname.substr(dir1.length());
 }
+
+Glib::ustring relativePathIfInside2(const Glib::ustring &procparams_fname, const Glib::ustring &procparams_fname2, bool fnameAbsolute, Glib::ustring embedded_fname)
+{
+	// try to convert embedded_fname to a path relative to procparams_fname
+	// (the directory of the raw file)
+	// (note: fnameAbsolute seems to be always true, so this will never return a relative path)
+	Glib::ustring rPath = relativePathIfInside(procparams_fname, fnameAbsolute, embedded_fname);
+	if ((Glib::path_is_absolute(rPath)
+		 ||	(rPath.length() >= 5 && rPath.substr(0, 5) == "file:" && Glib::path_is_absolute(rPath.substr(5))))
+		&& !procparams_fname2.empty()
+		&& Glib::path_is_absolute(procparams_fname2)) {
+		// if path is not relative to the directory of the raw file,
+		// try to convert embedded_fname to a path relative to procparams_fname2
+		// (the path defined in Preferences)
+		rPath = relativePathIfInside(procparams_fname2 + G_DIR_SEPARATOR_S, false, embedded_fname);
+	}
+	return(rPath);		
+}
+
 
 void getFromKeyfile(
     const Glib::KeyFile& keyfile,
@@ -6300,14 +6340,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
 
 // Lens profile
         saveToKeyfile(!pedited || pedited->lensProf.lcMode, "LensProfile", "LcMode", lensProf.getMethodString(lensProf.lcMode), keyFile);
-		if (options.rtSettings.lensProfilesPath.empty()
-			|| !Glib::path_is_absolute(options.rtSettings.lensProfilesPath)) {
-			saveToKeyfile(!pedited || pedited->lensProf.lcpFile, "LensProfile", "LCPFile", relativePathIfInside(fname, fnameAbsolute, lensProf.lcpFile), keyFile);
-		} else {
-			// if the "lens profiles directory" in Preferences exists and is an absolute path, try to save
-			// the path to the LCP file as relative to this directory
-			saveToKeyfile(!pedited || pedited->lensProf.lcpFile, "LensProfile", "LCPFile", replaceBackslash(relativePathIfInside(options.rtSettings.lensProfilesPath + G_DIR_SEPARATOR_S, false, lensProf.lcpFile)), keyFile);
-		}
+		saveToKeyfile(!pedited || pedited->lensProf.lcpFile, "LensProfile", "LCPFile", relativePathIfInside2(fname, options.rtSettings.lensProfilesPath, fnameAbsolute, lensProf.lcpFile), keyFile);
         saveToKeyfile(!pedited || pedited->lensProf.useDist, "LensProfile", "UseDistortion", lensProf.useDist, keyFile);
         saveToKeyfile(!pedited || pedited->lensProf.useVign, "LensProfile", "UseVignette", lensProf.useVign, keyFile);
         saveToKeyfile(!pedited || pedited->lensProf.useCA, "LensProfile", "UseCA", lensProf.useCA, keyFile);
@@ -7128,14 +7161,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->prsharpening.deconviter, "PostResizeSharpening", "DeconvIterations", prsharpening.deconviter, keyFile);
 
 // Color management
-		if (options.rtSettings.cameraProfilesPath.empty()
-			|| !Glib::path_is_absolute(options.rtSettings.cameraProfilesPath)) {
-			saveToKeyfile(!pedited || pedited->icm.inputProfile, "Color Management", "InputProfile", relativePathIfInside(fname, fnameAbsolute, icm.inputProfile), keyFile);
-		} else {
-			// if the "camera profiles directory" in Preferences exists and is an absolute path, try to save
-			// the path to the Custom Input Profile as relative to this directory
-			saveToKeyfile(!pedited || pedited->icm.inputProfile, "Color Management", "InputProfile", replaceBackslash(relativePathIfInside(options.rtSettings.cameraProfilesPath + G_DIR_SEPARATOR_S, false, icm.inputProfile)), keyFile);
-		}
+		saveToKeyfile(!pedited || pedited->icm.inputProfile, "Color Management", "InputProfile", relativePathIfInside2(fname, options.rtSettings.cameraProfilesPath, fnameAbsolute, icm.inputProfile), keyFile);
         saveToKeyfile(!pedited || pedited->icm.toneCurve, "Color Management", "ToneCurve", icm.toneCurve, keyFile);
         saveToKeyfile(!pedited || pedited->icm.applyLookTable, "Color Management", "ApplyLookTable", icm.applyLookTable, keyFile);
         saveToKeyfile(!pedited || pedited->icm.applyBaselineExposureOffset, "Color Management", "ApplyBaselineExposureOffset", icm.applyBaselineExposureOffset, keyFile);
@@ -7507,9 +7533,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->colorToning.labregionsShowMask, "ColorToning", "LabRegionsShowMask", colorToning.labregionsShowMask, keyFile);
 
 // Raw
-        saveToKeyfile(!pedited || pedited->raw.darkFrame, "RAW", "DarkFrame", relativePathIfInside(fname, fnameAbsolute, raw.dark_frame), keyFile);
+        saveToKeyfile(!pedited || pedited->raw.darkFrame, "RAW", "DarkFrame", relativePathIfInside2(fname, options.rtSettings.darkFramesPath, fnameAbsolute, raw.dark_frame), keyFile);
         saveToKeyfile(!pedited || pedited->raw.df_autoselect, "RAW", "DarkFrameAuto", raw.df_autoselect, keyFile);
-        saveToKeyfile(!pedited || pedited->raw.ff_file, "RAW", "FlatFieldFile", relativePathIfInside(fname, fnameAbsolute, raw.ff_file), keyFile);
+        saveToKeyfile(!pedited || pedited->raw.ff_file, "RAW", "FlatFieldFile", relativePathIfInside2(fname, options.rtSettings.flatFieldsPath, fnameAbsolute, raw.ff_file), keyFile);       
         saveToKeyfile(!pedited || pedited->raw.ff_AutoSelect, "RAW", "FlatFieldAutoSelect", raw.ff_AutoSelect, keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_BlurRadius, "RAW", "FlatFieldBlurRadius", raw.ff_BlurRadius, keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_BlurType, "RAW", "FlatFieldBlurType", raw.ff_BlurType, keyFile);
@@ -8347,14 +8373,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
 
             if (keyFile.has_key("LensProfile", "LCPFile")) {
-				if (options.rtSettings.lensProfilesPath.empty()
-					|| !Glib::path_is_absolute(options.rtSettings.lensProfilesPath)) {
-					lensProf.lcpFile = expandRelativePath(fname, "", keyFile.get_string("LensProfile", "LCPFile"));
-				} else {
-					// if the "lens profiles directory" in Preferences exists and is an absolute path,
-					// use it as a prefix if the path to the LCP file is relative
-					lensProf.lcpFile = expandRelativePath(options.rtSettings.lensProfilesPath + G_DIR_SEPARATOR_S, "", keyFile.get_string("LensProfile", "LCPFile"));
-				}
+				lensProf.lcpFile = expandRelativePath2(fname, options.rtSettings.lensProfilesPath, "", keyFile.get_string("LensProfile", "LCPFile"));
 
                 if (pedited) {
                     pedited->lensProf.lcpFile = true;
@@ -9384,20 +9403,12 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("Color Management")) {
             if (keyFile.has_key("Color Management", "InputProfile")) {
-				if (options.rtSettings.cameraProfilesPath.empty()
-					|| !Glib::path_is_absolute(options.rtSettings.cameraProfilesPath)) {
-					icm.inputProfile = expandRelativePath(fname, "file:", keyFile.get_string("Color Management", "InputProfile"));
-				} else {
-					// if the "camera profiles directory" in Preferences exists and is an absolute path,
-					// use it as a prefix if the path to the Custom Input Profile is relative
-					icm.inputProfile = expandRelativePath(options.rtSettings.cameraProfilesPath + G_DIR_SEPARATOR_S, "file:", keyFile.get_string("Color Management", "InputProfile"));
-				}
+				icm.inputProfile = expandRelativePath2(fname, options.rtSettings.cameraProfilesPath, "file:", keyFile.get_string("Color Management", "InputProfile"));
 
                 if (pedited) {
                     pedited->icm.inputProfile = true;
                 }
-            }
-
+			}
             assignFromKeyfile(keyFile, "Color Management", "ToneCurve", pedited, icm.toneCurve, pedited->icm.toneCurve);
             assignFromKeyfile(keyFile, "Color Management", "ApplyLookTable", pedited, icm.applyLookTable, pedited->icm.applyLookTable);
             assignFromKeyfile(keyFile, "Color Management", "ApplyBaselineExposureOffset", pedited, icm.applyBaselineExposureOffset, pedited->icm.applyBaselineExposureOffset);
@@ -10169,23 +10180,20 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
 
         if (keyFile.has_group("RAW")) {
             if (keyFile.has_key("RAW", "DarkFrame")) {
-                raw.dark_frame = expandRelativePath(fname, "", keyFile.get_string("RAW", "DarkFrame"));
+                raw.dark_frame = expandRelativePath2(fname, options.rtSettings.darkFramesPath, "", keyFile.get_string("RAW", "DarkFrame"));
 
                 if (pedited) {
                     pedited->raw.darkFrame = true;
                 }
             }
-
             assignFromKeyfile(keyFile, "RAW", "DarkFrameAuto", pedited, raw.df_autoselect, pedited->raw.df_autoselect);
-
             if (keyFile.has_key("RAW", "FlatFieldFile")) {
-                raw.ff_file = expandRelativePath(fname, "", keyFile.get_string("RAW", "FlatFieldFile"));
+                raw.ff_file = expandRelativePath2(fname, options.rtSettings.flatFieldsPath, "", keyFile.get_string("RAW", "FlatFieldFile"));
 
                 if (pedited) {
                     pedited->raw.ff_file = true;
                 }
             }
-
             assignFromKeyfile(keyFile, "RAW", "FlatFieldAutoSelect", pedited, raw.ff_AutoSelect, pedited->raw.ff_AutoSelect);
             assignFromKeyfile(keyFile, "RAW", "FlatFieldBlurRadius", pedited, raw.ff_BlurRadius, pedited->raw.ff_BlurRadius);
             assignFromKeyfile(keyFile, "RAW", "FlatFieldBlurType", pedited, raw.ff_BlurType, pedited->raw.ff_BlurType);
