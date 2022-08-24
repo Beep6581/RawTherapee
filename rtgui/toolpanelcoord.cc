@@ -557,7 +557,7 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
                 maskStruc.blMask, maskStruc.tmMask, maskStruc.retiMask, maskStruc.sharMask,
                 maskStruc.lcMask, maskStruc.cbMask, maskStruc.logMask, maskStruc.maskMask, maskStruc.cieMask);
     } else if (event == rtengine::EvLocallabSpotCreated || event == rtengine::EvLocallabSpotSelectedWithMask ||
-            event == rtengine::EvLocallabSpotDeleted || event == rtengine::Evlocallabshowreset ||
+            event == rtengine::EvLocallabSpotDeleted /*|| event == rtengine::Evlocallabshowreset*/ ||
             event == rtengine::EvlocallabToolRemovedWithRefresh) {
         locallab->resetMaskVisibility();
         ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);

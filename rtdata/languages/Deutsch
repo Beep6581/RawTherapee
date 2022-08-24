@@ -338,7 +338,6 @@ HISTOGRAM_TOOLTIP_G;Grün-Histogramm ein-/ausblenden.
 HISTOGRAM_TOOLTIP_L;CIELab-Luminanz-Histogramm ein-/ausblenden.
 HISTOGRAM_TOOLTIP_MODE;Schaltet zwischen linearer, logarithmisch-linearer und\nlogarithmisch-logarithmischer Skalierung um.
 HISTOGRAM_TOOLTIP_R;Rot-Histogramm ein-/ausblenden.
-HISTOGRAM_TOOLTIP_RAW;Raw-Histogramm ein-/ausblenden 
 HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Histogrammoptionen ein-/ ausschalten
 HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Helligkeitsbereich anpassen
 HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Histogramm

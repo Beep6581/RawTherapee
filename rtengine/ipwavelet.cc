@@ -301,17 +301,18 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     }
 
 
-    if (params->wavelet.denmethod == "equ") {
-        cp.denmet = 0;
-    } else if (params->wavelet.denmethod == "high") {
-        cp.denmet = 1;
-    } else if (params->wavelet.denmethod == "low") {
-        cp.denmet = 2;
-    } else if (params->wavelet.denmethod == "12high") {
-        cp.denmet = 3;
-    } else if (params->wavelet.denmethod == "12low") {
-        cp.denmet = 4;
-    }
+    cp.denmet = 4;
+    //if (params->wavelet.denmethod == "equ") {
+    //    cp.denmet = 0;
+    //} else if (params->wavelet.denmethod == "high") {
+    //    cp.denmet = 1;
+    //} else if (params->wavelet.denmethod == "low") {
+    //    cp.denmet = 2;
+    //} else if (params->wavelet.denmethod == "12high") {
+    //    cp.denmet = 3;
+    //} else if (params->wavelet.denmethod == "12low") {
+    //    cp.denmet = 4;
+    //}
 
     if (params->wavelet.mixmethod == "nois") {
         cp.mixmet = 0;

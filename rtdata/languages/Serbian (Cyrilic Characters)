@@ -171,7 +171,6 @@ HISTOGRAM_TOOLTIP_CHRO;Прикажи/сакриј хистограм хроми
 HISTOGRAM_TOOLTIP_G;Приказује зелени хистограм
 HISTOGRAM_TOOLTIP_L;Приказује ЦиеЛаб хитограм
 HISTOGRAM_TOOLTIP_R;Приказује црвени хистограм
-HISTOGRAM_TOOLTIP_RAW;Приказује/скрива RAW хистограм
 HISTORY_CHANGED;Измењено
 HISTORY_CUSTOMCURVE;Произвољна крива
 HISTORY_FROMCLIPBOARD;Из оставе

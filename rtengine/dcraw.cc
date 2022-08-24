@@ -6109,7 +6109,8 @@ get2_256:
     {
       fseek(ifp, offsetChannelBlackLevel, SEEK_SET);
       FORC4
-          bls += (cblack/*imCanon.ChannelBlackLevel*/[c ^ (c >> 1)] = get2());
+          bls += (RT_canon_levels_data.cblack/*imCanon.ChannelBlackLevel*/[c ^ (c >> 1)] = get2());
+      RT_canon_levels_data.black_ok = true;
       imCanon.AverageBlackLevel = bls / 4;
       // RT_blacklevel_from_constant = ThreeValBool::F;
     }
@@ -6121,7 +6122,8 @@ get2_256:
       imCanon.SpecularWhiteLevel = get2();
       // FORC4
       //   imgdata.color.linear_max[c] = imCanon.SpecularWhiteLevel;
-      maximum = imCanon.SpecularWhiteLevel;
+      RT_canon_levels_data.white = imCanon.SpecularWhiteLevel;
+      RT_canon_levels_data.white_ok = true;
       // RT_whitelevel_from_constant = ThreeValBool::F;
     }
 
@@ -6129,7 +6131,8 @@ get2_256:
     {
         fseek(ifp, offsetChannelBlackLevel2, SEEK_SET);
         FORC4
-            bls += (cblack/*imCanon.ChannelBlackLevel*/[c ^ (c >> 1)] = get2());
+            bls += (RT_canon_levels_data.cblack/*imCanon.ChannelBlackLevel*/[c ^ (c >> 1)] = get2());
+        RT_canon_levels_data.black_ok = true;
         imCanon.AverageBlackLevel = bls / 4;
         // RT_blacklevel_from_constant = ThreeValBool::F;
     }
@@ -9864,7 +9867,8 @@ void CLASS identify()
     filters = 0;
     tiff_samples = colors = 3;
     load_raw = &CLASS canon_sraw_load_raw;
-    FORC4 cblack[c] = 0; // ALB
+    //FORC4 cblack[c] = 0; // ALB
+    RT_canon_levels_data.black_ok = RT_canon_levels_data.white_ok = false;
   } else if (!strcmp(model,"PowerShot 600")) {
     height = 613;
     width  = 854;
@@ -10530,6 +10534,14 @@ bw:   colors = 1;
     }
   }
 dng_skip:
+  if (!dng_version && is_raw) {
+      if (RT_canon_levels_data.black_ok) {
+          FORC4 cblack[c] = RT_canon_levels_data.cblack[c];
+      }
+      if (RT_canon_levels_data.white_ok) {
+          maximum = RT_canon_levels_data.white;
+      }
+  }
   if ((use_camera_matrix & (use_camera_wb || dng_version))
         && cmatrix[0][0] > 0.125
         && strncmp(RT_software.c_str(), "Adobe DNG Converter", 19) != 0

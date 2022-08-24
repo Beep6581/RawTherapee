@@ -236,7 +236,6 @@ HISTOGRAM_TOOLTIP_G;Montrer/cacher l'histogramme VERT
 HISTOGRAM_TOOLTIP_L;Montrer/cacher l'histogramme Luminance CIELAB
 HISTOGRAM_TOOLTIP_MODE;Bascule entre une échelle linéaire, linéaire-log et log-log de l'histogramme.
 HISTOGRAM_TOOLTIP_R;Montrer/cacher l'histogramme ROUGE
-HISTOGRAM_TOOLTIP_RAW;Montrer/Cacher l'histogramme des données RAW
 HISTORY_CHANGED;Changé
 HISTORY_CUSTOMCURVE;Courbe personnelle
 HISTORY_FROMCLIPBOARD;Du presse-papier
@@ -1404,7 +1403,7 @@ TP_COLORAPP_HUE;Teinte (h)
 TP_COLORAPP_HUE_TOOLTIP;Teinte (h) - angle entre 0° et 360°
 TP_COLORAPP_LABEL;Apparence de la Couleur (CIECAM02)
 TP_COLORAPP_LABEL_CAM02;Édition de l'image avec CIE-CAM 2002
-TP_COLORAPP_LABEL_SCENE;Conditions de la scène
+TP_COLORAPP_LABEL_SCENE;Conditions de visionnage
 TP_COLORAPP_LABEL_VIEWING;Conditions de visionnage
 TP_COLORAPP_LIGHT;Luminosité (J)
 TP_COLORAPP_LIGHT_TOOLTIP;Luminosité dans CIECAM02 est différent de celui de Lab et RVB
@@ -1434,6 +1433,7 @@ TP_COLORAPP_TONECIE;Compression Tonale utilisant CIECAM02
 TP_COLORAPP_TONECIE_TOOLTIP;Si cette option est désactivée, la compression tonale est faite dans l'espace Lab.\nSi cette options est activée, la compression tonale est faite en utilisant CIECAM02.\nL'outil Compression Tonale doit être activé pour que ce réglage prenne effet
 TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Luminance absolue de l'environnement de visionnage\n(souvent 16cd/m²)
 TP_COLORAPP_YBOUT_TOOLTIP;Yb est la luminance relative de l'arrière plan, exprimée e % de gris. Un gris à 18% correspond à une luminance exprimée en CIE L de 50%.\nCette donnée prend en compte la luminance moyenne de l'image.
+TP_COLORAPP_YBSCEN_TOOLTIP;Yb est la luminance relative du fond, exprimée en % de gris. 18 % de gris correspondent à une luminance de fond de 50 % exprimée en CIE L.\nLes données sont basées sur la luminance moyenne de l'image
 TP_COLORAPP_WBCAM;BB [RT+CAT02] + [sortie]
 TP_COLORAPP_WBRT;BB [RT] + [sortie]
 TP_COLORTONING_AB;o C/L
@@ -1807,6 +1807,15 @@ TP_LOCALLAB_BUTTON_DEL;Effacer
 TP_LOCALLAB_BUTTON_DUPL;Dupliquer
 TP_LOCALLAB_BUTTON_REN;Renommer
 TP_LOCALLAB_BUTTON_VIS;Montrer/Cacher
+TP_LOCALLAB_BWFORCE;Utilise Black Ev & White Ev
+TP_LOCALLAB_CAM16_FRA;Cam16 Adjustements Image
+TP_LOCALLAB_CAM16PQREMAP;HDR PQ (Pic Luminance)
+TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) adapté au CAM16. Vous permet de modifier la fonction PQ interne (généralement 10 000 cd/m2 - 100 cd/m2 par défaut - désactivée pour 100 cd/m2).\nPeut être utilisé pour s'adapter à différents appareils et images.
+TP_LOCALLAB_CAMMODE;CAM modèle
+TP_LOCALLAB_CAMMODE_ALL;CAM 16 + Jz Cz Hz
+TP_LOCALLAB_CAMMODE_CAM16;CAM 16
+TP_LOCALLAB_CAMMODE_ZCAM;ZCAM only
+TP_LOCALLAB_CAMMODE_JZ;Jz Cz Hz
 TP_LOCALLAB_CBDL;Contr. par niveaux détail
 TP_LOCALLAB_CBDLCLARI_TOOLTIP;Ajuste les tons moyens et les réhausse.
 TP_LOCALLAB_CBDL_ADJ_TOOLTIP;Agit comme un outil ondelettes.\nLe premier niveau (0) agit sur des détails de 2x2.\nLe dernier niveau (5) agit sur des détails de 64x64.
@@ -1824,6 +1833,23 @@ TP_LOCALLAB_CHROMALEV;Niveaux de Chroma
 TP_LOCALLAB_CHROMASKCOL;Chroma
 TP_LOCALLAB_CHROMASK_TOOLTIP;Vous pouvez utiliser ce curseur pour désaturer l'arrière plan (inverse masque - courbe proche de 0).\nEgalement pour atténier ou accroître l'action du masque sur la chroma
 TP_LOCALLAB_CHRRT;Chroma
+TP_LOCALLAB_CIE_TOOLNAME;Apparance de couleurs (Cam16 & JzCzHz)
+TP_LOCALLAB_CIE;Apparance de couleurs(Cam16 & JzCzHz)
+TP_LOCALLAB_CIEC;Utilise les paramètres de CIECAM
+TP_LOCALLAB_CIECAMLOG_TOOLTIP;Ce module est basé sur le modèle d'apparence des couleurs CIECAM qui a été conçu pour mieux simuler la façon dont la vision humaine perçoit les couleurs dans différentes conditions d'éclairage. le moment de la prise de vue.\nLe deuxième processus Ciecam "Réglages d'image" est simplifié et n'utilise que 3 variables (contraste local, contraste J, saturation s).\nLe troisième processus Ciecam "Conditions de visualisation" adapte la sortie aux conditions de visualisation souhaitées ( moniteur, téléviseur, projecteur, imprimante, etc.) afin que l'aspect chromatique et le contraste soient préservés dans l'environnement d'affichage.
+TP_LOCALLAB_CIEMODE;Change position outils
+TP_LOCALLAB_CIEMODE_COM;Défaut
+TP_LOCALLAB_CIEMODE_DR;Dynamic Range
+TP_LOCALLAB_CIEMODE_TM;Tone-Mapping
+TP_LOCALLAB_CIEMODE_WAV;Ondelettes
+TP_LOCALLAB_CIEMODE_LOG;Log Encoding
+!TP_LOCALLAB_CIEMODE_TOOLTIP;In Default mode, Ciecam is added at the end of the process. "Mask and modifications" and "Recovery based on luminance mask" are available for"Cam16 and JzCzHz" at your disposal .\nYou can also integrate Ciecam into other tools if you wish (TM, Wavelet, Dynamic Range, Log Encoding). The results for these tools will be different to those without Ciecam. In this mode, you can also use "Mask and modifications" and "Recovery based on luminance mask"
+TP_LOCALLAB_CIEMODE_TOOLTIP;En Mode par défaut, Ciecam est ajouté en fin de processus. "Masque et modifications" et "Recovery based on luminance mask" sont disponibles pour "Cam16 et JzCzHz" à votre disposition.\nVous pouvez également intégrer Ciecam dans d'autres outils si vous le souhaitez (TM, Wavelet, Dynamic Range, Log Encoding). Les résultats pour ces outils seront différents de ceux sans Ciecam. Dans ce mode, vous pouvez également utiliser "Masque et modifications" et "Récupération basée sur le masque de luminance"
+TP_LOCALLAB_CIETOOLEXP;Courbes
+TP_LOCALLAB_CIECOLORFRA;Couleur
+TP_LOCALLAB_CIECONTFRA;Contraste
+TP_LOCALLAB_CIELIGHTFRA;Eclaicir
+TP_LOCALLAB_CIELIGHTCONTFRA;Eclaircir & Contraste
 TP_LOCALLAB_CIRCRADIUS;Taille Spot
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Contient les références du RT-spot, utile pour la détection de forme (couleur, luma, chroma, Sobel).\nLes faibles valeurs peuvent être utiles pour les feuillages.\nLes valeurs élevées peuvent être utile pour la peau
 TP_LOCALLAB_CLARICRES;Fusion Chroma
@@ -2010,6 +2036,82 @@ TP_LOCALLAB_INVERS_TOOLTIP;Si sélectionné (inverse) moins de possibilités.\n\
 TP_LOCALLAB_INVBL_TOOLTIP;Alternative\nPremier Spot:\n image entière - delimiteurs en dehors de la prévisualisation\n RT-spot forme sélection : rectangle. Transition 100\n\nDeuxième spot : Spot Exclusion
 TP_LOCALLAB_INVMASK;Algorithme inverse
 TP_LOCALLAB_ISOGR;Plus gros (ISO)
+TP_LOCALLAB_JAB;Utilise Black Ev & White Ev
+TP_LOCALLAB_JABADAP_TOOLTIP;Perceptual Uniform adaptation.\nAutomatically adjusts the relationship between Jz and saturation taking into account "Absolute luminance".
+TP_LOCALLAB_JZ100;Jz référence 100cd/m2
+TP_LOCALLAB_JZCLARILRES;Mélange Jz
+TP_LOCALLAB_JZCLARICRES;Mélange chroma Cz
+TP_LOCALLAB_JZFORCE;Force max Jz à 1
+TP_LOCALLAB_JZFORCE_TOOLTIP;Vous permet de forcer la valeur Jz maximale à 1 pour une meilleure réponse du curseur et de la courbe
+TP_LOCALLAB_JZMODECAM_TOOLTIP;Jz (uniquement en mode 'Avancé'). Opérationnel uniquement si le périphérique de sortie (moniteur) est HDR (luminance crête supérieure à 100 cd/m2 - idéalement entre 4000 et 10000 cd/m2. Luminance du point noir inférieure à 0,005 cd/m2). Cela suppose a) que l'ICC-PCS pour l'écran utilise Jzazbz (ou XYZ), b) fonctionne en précision réelle, c) que le moniteur soit calibré (si possible avec un gamut DCI-P3 ou Rec-2020), d) que le gamma habituel (sRGB ou BT709) est remplacé par une fonction Perceptual Quantiser (PQ).
+TP_LOCALLAB_JZPQFRA;Jz remappage
+TP_LOCALLAB_JZPQFRA_TOOLTIP;Permet d'adapter l'algorithme Jz à un environnement SDR ou aux caractéristiques (performances) d'un environnement HDR comme suit :\n a) pour des valeurs de luminance comprises entre 0 et 100 cd/m2, le système se comporte comme s'il était dans un environnement SDR .\n b) pour des valeurs de luminance comprises entre 100 et 10000 cd/m2, vous pouvez adapter l'algorithme aux caractéristiques HDR de l'image et du moniteur.\n\nSi "PQ - Peak luminance" est réglé sur 10000, "Jz remappping" se comporte de la même manière que l'algorithme original de Jzazbz.
+TP_LOCALLAB_JZPQREMAP;PQ - Pic luminance 
+TP_LOCALLAB_JZPQREMAP_TOOLTIP;PQ (Perceptual Quantizer) - vous permet de modifier la fonction PQ interne (généralement 10000 cd/m2 - par défaut 120 cd/m2).\nPeut être utilisé pour s'adapter à différentes images, processus et appareils.
+TP_LOCALLAB_JZ100_TOOLTIP;Ajuste automatiquement le niveau de référence Jz 100 cd/m2 (signal d'image).\nModifie le niveau de saturation et l'action de "l'adaptation PU" (adaptation uniforme perceptuelle).
+TP_LOCALLAB_JZADAP;PU adaptation
+TP_LOCALLAB_JZFRA;Jz Cz Hz Adjustments Images
+TP_LOCALLAB_JZLIGHT;Brightness
+TP_LOCALLAB_JZCONT;Contraste
+TP_LOCALLAB_JZCH;Chroma
+TP_LOCALLAB_JZCHROM;Chroma
+TP_LOCALLAB_JZHFRA;Courbes Hz
+TP_LOCALLAB_JZHJZFRA;Courbe Jz(Hz)
+TP_LOCALLAB_JZHUECIE;Rotation de teinte
+TP_LOCALLAB_JZLOGWB_TOOLTIP;Si Auto est activé, il calculera et ajustera les niveaux Ev et la 'luminance moyenne Yb%' pour la zone du spot. Les valeurs résultantes seront utilisées par toutes les opérations Jz, y compris "Log Encoding Jz".\nCalcule également la luminance absolue au moment de la prise de vue.
+TP_LOCALLAB_JZLOGWBS_TOOLTIP;Les réglages Black Ev et White Ev peuvent être différents selon que l'encodage Log ou Sigmoid est utilisé.\nPour Sigmoid, un changement (augmentation dans la plupart des cas) de White Ev peut être nécessaire pour obtenir un meilleur rendu des hautes lumières, du contraste et de la saturation.
+TP_LOCALLAB_JZSAT;Saturation
+TP_LOCALLAB_JZSHFRA;Ombres/Lumières Jz
+TP_LOCALLAB_JZSOFTCIE;Rayon adoucir (GuidedFilter)
+TP_LOCALLAB_JZTARGET_EV;Luminance moyenne (Yb%)
+TP_LOCALLAB_JZSTRSOFTCIE;GuidedFilter Force
+TP_LOCALLAB_JZQTOJ;Luminance relative
+TP_LOCALLAB_JZQTOJ_TOOLTIP;Vous permet d'utiliser "Luminance relative" au lieu de "Luminance absolue" - La luminosité devient Brightness.\nLes changements affectent : le curseur Luminosité, le curseur Contraste et la courbe Jz(Jz).
+TP_LOCALLAB_JZTHRHCIE;Seuik Chroma pour Jz(Hz)
+TP_LOCALLAB_JZWAVEXP;Ondelettes Jz
+TP_LOCALLAB_JZLOG;Log encoding Jz
+TP_LOCALLAB_LOG;Log Encoding
+TP_LOCALLAB_LOG1FRA;CAM16 Adjustment Images
+TP_LOCALLAB_LOG2FRA;Conditions de visionnage
+TP_LOCALLAB_LOGAUTO;Automatique
+TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Calcule automatiquement la « luminance moyenne » pour les conditions de la scène lorsque le bouton « Automatique » dans les niveaux d'exposition relatifs est enfoncé.
+TP_LOCALLAB_LOGAUTO_TOOLTIP;Appuyez sur ce bouton pour calculer la plage dynamique et la « Luminance moyenne » pour les conditions de la scène si la « Luminance moyenne automatique (Yb %) » est cochée).\nCalcule également la luminance absolue au moment de la prise de vue.\nAppuyez à nouveau sur le bouton pour ajuster les valeurs calculées automatiquement.
+TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm making the shadows darker and the highlights brighter.\nWith values greater than 2, the shadows are grayer and the highlights become more washed out.
+TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Valeurs estimées du dynamic range entre Black Ev et White Ev
+TP_LOCALLAB_LOGCATAD_TOOLTIP;L'adaptation chromatique permet d'interpréter une couleur en fonction de son environnement spatio-temporel.\nUtile lorsque la balance des blancs s'écarte sensiblement de la référence D50.\nAdapte les couleurs à l'illuminant du périphérique de sortie.
+TP_LOCALLAB_LOGCOLORFL;Colorfulness (M)
+TP_LOCALLAB_LOGCIE;Log encoding au lieu de Sigmoid
+TP_LOCALLAB_LOGCIE_TOOLTIP;Vous permet d'utiliser Black Ev, White Ev, Scene Mean luminance (Yb%) et Viewing Mean luminance (Yb%) pour le mappage des tons à l'aide de l'encodage Log Q.
+TP_LOCALLAB_LOGCONQL;Contraste (Q)
+TP_LOCALLAB_LOGCONTL;Contraste (J)
+TP_LOCALLAB_LOGCOLORF_TOOLTIP;Quantité de teinte perçue par rapport au gris.\nIndicateur qu'un stimulus apparaît plus ou moins coloré.
+TP_LOCALLAB_LOGCONTL_TOOLTIP;Le contraste (J) dans CIECAM16 prend en compte l'augmentation de la coloration perçue avec la luminance
+TP_LOCALLAB_LOGCONTQ_TOOLTIP;Le contraste (Q) dans CIECAM16 prend en compte l'augmentation de la coloration perçue avec la luminosité (brightness).
+TP_LOCALLAB_LOGCONTHRES;Contrast seuil (J & Q)
+TP_LOCALLAB_LOGCONTTHRES_TOOLTIP;Ajuste la plage de contraste des tons moyens (J et Q).\nLes valeurs positives réduisent progressivement l'effet des curseurs Contraste (J et Q). Les valeurs négatives augmentent progressivement l'effet des curseurs Contraste.
+TP_LOCALLAB_LOGCONTL_TOOLTIP;Contrast (J) in CIECAM16 takes into account the increase in perceived coloration with luminance.
+TP_LOCALLAB_LOGCONTQ_TOOLTIP;Contrast (Q) in CIECAM16 takes into account the increase in perceived coloration with brightness.
+TP_LOCALLAB_LOGCONTTHRES_TOOLTIP;Adjusts the mid-tone contrast range (J & Q).\nPositive values progressively reduce the effect of the Contrast sliders (J & Q). Negative values progressively increase the effect of the Contrast sliders.
+TP_LOCALLAB_LOGDETAIL_TOOLTIP;Agit principalement sur les hautes frequences.
+TP_LOCALLAB_LOGENCOD_TOOLTIP;Tone Mapping with Logarithmic encoding (ACES).\nUtile pour les images sous-exposées ou les images avec une plage dynamique élevée.\n\nProcessus en deux étapes : 1) Calcul de la plage dynamique 2) Réglage manuel
+TP_LOCALLAB_LOGEXP;Tous les outils
+TP_LOCALLAB_LOGFRA;Scene Conditions
+TP_LOCALLAB_LOGFRAME_TOOLTIP;Vous permet de calculer et d'ajuster les niveaux Ev et la 'luminance moyenne Yb%' (point gris source) pour la zone du spot. Les valeurs résultantes seront utilisées par toutes les opérations Lab et la plupart des opérations RVB du pipeline.\nCalcule également la luminance absolue au moment de la prise de vue.
+TP_LOCALLAB_LOGIMAGE_TOOLTIP;Prend en compte les variables Ciecam correspondantes : c'est-à-dire le contraste (J) et la saturation (s), ainsi que le contraste (Q), la luminosité (Q), la luminosité (J) et la couleur (M) (en mode avancé)
+TP_LOCALLAB_LOGLIGHTL;Lightness (J)
+TP_LOCALLAB_LOGLIGHTL_TOOLTIP;Proche de lightness (L*a*b*). Prend en compte l'augmentation de la coloration perçue
+TP_LOCALLAB_LOGLIGHTQ;Brightness (Q)
+TP_LOCALLAB_LOGLIGHTQ_TOOLTIP;Quantité de lumière perçue émanant d'un stimulus.\nIndicateur qu'un stimulus semble être plus ou moins brillant, clair.
+TP_LOCALLAB_LOGLIN;Logarithm mode
+TP_LOCALLAB_LOGPFRA;Niveaux Exposition relatifs
+TP_LOCALLAB_LOGREPART;Force Globale
+TP_LOCALLAB_LOGREPART_TOOLTIP;Vous permet d'ajuster la force relative de l'image encodée en journal par rapport à l'image d'origine.\nN'affecte pas le composant Ciecam.
+TP_LOCALLAB_LOGSATURL_TOOLTIP;La saturation(s) dans CIECAM16 correspond à la couleur d'un stimulus par rapport à sa propre luminosité.\nAgit principalement sur les tons moyens et sur les hautes lumières.
+TP_LOCALLAB_LOGSCENE_TOOLTIP;Correspond aux conditions de prise de vue.
+TP_LOCALLAB_LOGSURSOUR_TOOLTIP;Modifie les tonalités et les couleurs pour prendre en compte les conditions de la scène.\n\n<b>Moyen</b> : conditions d'éclairage moyennes (standard). L'image ne changera pas.\n\n<b>Dim</b> : conditions de luminosité. L'image deviendra légèrement plus lumineuse.\n\n<b>Sombre</b> : conditions sombres. L'image deviendra plus lumineuse.
+TP_LOCALLAB_LOGVIEWING_TOOLTIP;Correspond au support sur lequel sera visualisée l'image finale (moniteur, TV, projecteur, imprimante...), ainsi qu'aux conditions environnantes.
+TP_LOCALLAB_JZLOGYBOUT_TOOLTIP;Yb est la luminance relative du fond, exprimée en pourcentage de gris. 18 % de gris correspond à une luminance d'arrière-plan de 50 % lorsqu'elle est exprimée en CIE L.\nLes données sont basées sur la luminance moyenne de l'image.\nLorsqu'elle est utilisée avec Log Encoding, la luminance moyenne est utilisée pour déterminer la quantité de gain nécessaire à appliquer au signal avant le codage logarithmique. Des valeurs inférieures de luminance moyenne se traduiront par un gain accru.
+TP_LOCALLAB_LOG_TOOLNAME;Log Encoding
 TP_LOCALLAB_LABBLURM;Masque Flouter
 TP_LOCALLAB_LABEL;Ajustements Locaux
 TP_LOCALLAB_LABGRID;Grille correction couleurs
@@ -2045,7 +2147,7 @@ TP_LOCALLAB_LOC_CONTRASTPYR2;Pyramide 2:
 TP_LOCALLAB_LOC_CONTRASTPYR2LAB; Contr. par niveaux/TM/Cont.Dir.
 TP_LOCALLAB_LOC_CONTRASTPYRLAB; Filtre Gradué/Netteté bords/Flou
 TP_LOCALLAB_LOC_RESIDPYR;Image Residuelle
-TP_LOCALLAB_LOG;Codage log
+TP_LOCALLAB_LOG;Codage logbwforce
 TP_LOCALLAB_LOG1FRA;Ajustements Image
 TP_LOCALLAB_LOG2FRA;Conditions de visionnage
 TP_LOCALLAB_LOGAUTO;Automatique
@@ -2280,6 +2382,7 @@ TP_LOCALLAB_REWEI;Repondération iterations
 TP_LOCALLAB_RGB;RGB Courbe de tonalité
 TP_LOCALLAB_ROW_NVIS;Pas visible
 TP_LOCALLAB_ROW_VIS;Visible
+TP_LOCALLAB_RSTPROTECT_TOOLTIP;La protection des rouges et des tons chair affecte les curseurs Saturation, Chroma et Colorfulness.
 TP_LOCALLAB_SATUR;Saturation
 TP_LOCALLAB_SAVREST;Sauve - Récupère Image Courante
 TP_LOCALLAB_SCALEGR;Echelle
@@ -2354,6 +2457,13 @@ TP_LOCALLAB_SHRESFRA;Ombres/Lumières
 TP_LOCALLAB_SHTRC_TOOLTIP;Modifie les tons de l'image en agissant sur la TRC (Tone Response Curve).\nGamma agit principalement sur les tons lumineux.\nSlope (pente) agit principalement sur les tons sombres.
 TP_LOCALLAB_SH_TOOLNAME;Ombres/lumières & Egaliseur tonal - 5
 TP_LOCALLAB_SIGMAWAV;Atténuation Réponse
+TP_LOCALLAB_SIGFRA;Sigmoid Q & Log encoding Q
+TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
+TP_LOCALLAB_SIGMOIDLAMBDA;Contraste
+TP_LOCALLAB_SIGMOIDTH;Seuil (Gray point)
+TP_LOCALLAB_SIGMOIDBL;Mélange
+TP_LOCALLAB_SIGMOIDQJ;Utilise Black Ev & White Ev
+TP_LOCALLAB_SIGMOID_TOOLTIP;Permet de simuler une apparence de Tone-mapping en utilisant à la fois la fonction 'Ciecam' (ou 'Jz') et 'Sigmoïde'.\nTrois curseurs : a) Le contraste agit sur la forme de la courbe sigmoïde et par conséquent sur la force ; b) Seuil (Point gris) distribue l'action en fonction de la luminance ; c)Blend agit sur l'aspect final de l'image, le contraste et la luminance.
 TP_LOCALLAB_SIM;Simple
 TP_LOCALLAB_SLOMASKCOL;Pente (slope)
 TP_LOCALLAB_SLOMASK_TOOLTIP;Gamma et Pente (Slope) autorise une transformation du masque en douceur et sans artefacts en modifiant progressivement "L" pour éviter les discontinuité.
@@ -2505,6 +2615,30 @@ TP_PCVIGNETTE_STRENGTH_TOOLTIP;Force du filtre en EV (maximum dans les coins)
 TP_PERSPECTIVE_HORIZONTAL;Horizontale
 TP_PERSPECTIVE_LABEL;Perspective
 TP_PERSPECTIVE_VERTICAL;Verticale
+TP_PERSPECTIVE_CONTROL_LINE_APPLY_INVALID_TOOLTIP;Au moins deux lignes de contrôle horizontales ou deux verticales requises.
+TP_PERSPECTIVE_CAMERA_CROP_FACTOR;Facteur de réduction (crop)
+TP_PERSPECTIVE_CAMERA_FOCAL_LENGTH;Longueur focale
+TP_PERSPECTIVE_CAMERA_FRAME;Correction
+TP_PERSPECTIVE_CAMERA_PITCH;Vertical
+TP_PERSPECTIVE_CAMERA_ROLL;Rotation
+TP_PERSPECTIVE_CAMERA_SHIFT_HORIZONTAL;Décalage Horizontal
+TP_PERSPECTIVE_CAMERA_SHIFT_VERTICAL;Décalage Vertical
+TP_PERSPECTIVE_CAMERA_YAW;Horizontal
+TP_PERSPECTIVE_CONTROL_LINES;Lignes de contrôle
+TP_PERSPECTIVE_CONTROL_LINES_TOOLTIP;<b>Ctrl</b>+<b>faire glisser</b> : dessiner une nouvelle ligne\n<b>Clic droit</b> : supprimer la ligne
+TP_PERSPECTIVE_HORIZONTAL;Horizontal
+TP_PERSPECTIVE_LABEL;Perspective
+TP_PERSPECTIVE_METHOD;Méthode
+TP_PERSPECTIVE_METHOD_CAMERA_BASED;Basé sur Camera
+TP_PERSPECTIVE_METHOD_SIMPLE;Simple
+TP_PERSPECTIVE_POST_CORRECTION_ADJUSTMENT_FRAME;Ajustement post-correction
+TP_PERSPECTIVE_PROJECTION_PITCH;Vertical
+TP_PERSPECTIVE_PROJECTION_ROTATE;Rotation
+TP_PERSPECTIVE_PROJECTION_SHIFT_HORIZONTAL;Décalage Horizontal
+TP_PERSPECTIVE_PROJECTION_SHIFT_VERTICAL;Décalage Vertical
+TP_PERSPECTIVE_PROJECTION_YAW;Horizontal
+TP_PERSPECTIVE_RECOVERY_FRAME;Récupération
+TP_PERSPECTIVE_VERTICAL;Vertical
 TP_PFCURVE_CURVEEDITOR_CH;Teinte
 TP_PFCURVE_CURVEEDITOR_CH_TOOLTIP;Contrôle la force du défrangeage en fonction de la couleur. En haut = action maxi, en bas = pas d'action sur la couleur.
 TP_PREPROCESS_DEADPIXFILT;Filtrer les pixels morts
@@ -3019,8 +3153,11 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !GENERAL_HELP;Help
 !HISTORY_MSG_494;Capture Sharpening
 !HISTORY_MSG_DEHAZE_LUMINANCE;Dehaze - Luminance only
-!HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
-!HISTORY_MSG_FILMNEGATIVE_VALUES;Film negative values
+HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negatif
+HISTORY_MSG_FILMNEGATIVE_VALUES;Film negatif valeurs
+HISTORY_MSG_FILMNEGATIVE_BALANCE;FN - Réference Sortie
+HISTORY_MSG_FILMNEGATIVE_COLORSPACE;Film negativf Espace couleur
+HISTORY_MSG_FILMNEGATIVE_REF_SPOT;FN - Référence entrée
 !HISTORY_MSG_PDSHARPEN_AUTO_CONTRAST;CS - Auto threshold
 !HISTORY_MSG_PDSHARPEN_AUTO_RADIUS;CS - Auto radius
 !HISTORY_MSG_PDSHARPEN_CHECKITER;CS - Auto limit iterations
@@ -3030,7 +3167,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !HISTORY_MSG_PDSHARPEN_RADIUS_BOOST;CS - Corner radius boost
 !HISTORY_MSG_TRANS_METHOD;Geometry - Method
 !MAIN_FRAME_PLACES_DEL;Remove
-!PARTIALPASTE_FILMNEGATIVE;Film Negative
+!PARTIALPASTE_FILMNEGATIVE;Film Negatif
 !PROGRESSBAR_DECODING;Decoding...
 !PROGRESSBAR_GREENEQUIL;Green equilibration...
 !PROGRESSBAR_HLREC;Highlight reconstruction...
@@ -3040,12 +3177,23 @@ ZOOMPANEL_ZOOMOUT;Zoom Arrière\nRaccourci: <b>-</b>
 !QUEUE_LOCATION_TITLE;Output Location
 !TP_CROP_PPI;PPI
 !TP_DEHAZE_LUMINANCE;Luminance only
-!TP_FILMNEGATIVE_BLUE;Blue ratio
-!TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
-!TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness. Set the white balance afterwards.
-!TP_FILMNEGATIVE_LABEL;Film Negative
-!TP_FILMNEGATIVE_PICK;Pick neutral spots
-!TP_FILMNEGATIVE_RED;Red ratio
+TP_FILMNEGATIVE_BLUE;Ratio bleu
+TP_FILMNEGATIVE_BLUEBALANCE;Froid/Chaud
+TP_FILMNEGATIVE_COLORSPACE;Inversion espace couleur:
+TP_FILMNEGATIVE_COLORSPACE_INPUT;Espace couleur -entrée
+TP_FILMNEGATIVE_COLORSPACE_TOOLTIP;Sélectionnez l'espace colorimétrique utilisé pour effectuer l'inversion négative :\n<b>Espace colorimétrique d'entrée</b> : effectuez l'inversion avant l'application du profil d'entrée, comme dans les versions précédentes de RT.\n<b>Espace colorimétrique de travail< /b> : effectue l'inversion après le profil d'entrée, en utilisant le profil de travail actuellement sélectionné.
+TP_FILMNEGATIVE_COLORSPACE_WORKING;Espace couleur de travail
+TP_FILMNEGATIVE_REF_LABEL;Entrée RGB: %1
+TP_FILMNEGATIVE_REF_PICK;Choisissez le point de la balance des blancs
+TP_FILMNEGATIVE_REF_TOOLTIP;Choisissez un patch gris pour équilibrer les blancs de la sortie, image positive.
+TP_FILMNEGATIVE_GREEN;Exposant de référence
+TP_FILMNEGATIVE_GREENBALANCE;Magenta/Vert
+!TP_FILMNEGATIVE_GUESS_TOOLTIP;Automatically set the red and blue ratios by picking two patches which had a neutral hue (no color) in the original scene. The patches should differ in brightness.
+TP_FILMNEGATIVE_LABEL;Film Negatif
+TP_FILMNEGATIVE_OUT_LEVEL;Niveau de sortie
+TP_FILMNEGATIVE_PICK;Choix des endroits neutres
+TP_FILMNEGATIVE_RED;Ratio Rouge
+TP_FILMNEGATIVE_GUESS_TOOLTIP;Définissez automatiquement les ratios rouge et bleu en choisissant deux patchs qui avaient une teinte neutre (pas de couleur) dans la scène d'origine. Les patchs doivent différer en luminosité.
 !TP_LENSGEOM_LIN;Linear
 !TP_LENSGEOM_LOG;Logarithmic
 !TP_LENSPROFILE_CORRECTION_AUTOMATCH;Automatically selected

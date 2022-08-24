@@ -247,7 +247,6 @@ HISTOGRAM_TOOLTIP_G;Prikaži/Skrij histogram za zeleno.
 HISTOGRAM_TOOLTIP_L;Prikaži/Skrij histogram CIELab svetlosti.
 HISTOGRAM_TOOLTIP_MODE;Preklopi med linearno, log-linearno in log-log merilom histograma.
 HISTOGRAM_TOOLTIP_R;Prikaži/Skrij histogram za rdečo.
-HISTOGRAM_TOOLTIP_RAW;Prikaži/Skrij surovi histogram.
 HISTORY_CHANGED;Spremenjeno
 HISTORY_CUSTOMCURVE;Prilagojena krivulja
 HISTORY_FROMCLIPBOARD;Iz odložišča
