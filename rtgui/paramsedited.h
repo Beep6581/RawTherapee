@@ -1281,7 +1281,7 @@ struct WaveletParamsEdited {
     bool Backmethod;
     bool Tilesmethod;
     bool complexmethod;
-    bool denmethod;
+    //bool denmethod;
     bool mixmethod;
     bool slimethod;
     bool quamethod;
@@ -1335,7 +1335,7 @@ struct WaveletParamsEdited {
     bool levelsigm;
     bool ccwcurve;
     bool blcurve;
-    bool opacityCurveSH;
+    //bool opacityCurveSH;
     bool opacityCurveBY;
     bool wavdenoise;
     bool wavdenoiseh;

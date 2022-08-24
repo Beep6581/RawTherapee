@@ -162,7 +162,6 @@ HISTOGRAM_TOOLTIP_BAR;Mostra/amaga la barra indicadora RGB\nClic botó dret a la
 HISTOGRAM_TOOLTIP_G;Mostra/amaga l'histograma VERD
 HISTOGRAM_TOOLTIP_L;Mostra/amaga l'histograma de luminància CIELAB
 HISTOGRAM_TOOLTIP_R;Mostra/amaga l'histograma VERMELL
-HISTOGRAM_TOOLTIP_RAW;Mostra/Amaga l'histograma RAW
 HISTORY_CHANGED;Canviat
 HISTORY_CUSTOMCURVE;Corba particular
 HISTORY_FROMCLIPBOARD;Del portapapers

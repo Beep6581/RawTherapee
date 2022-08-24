@@ -47,7 +47,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}\{#MyAppVersion}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
-LicenseFile={#MyBuildBasePath}\LICENSE.txt
+LicenseFile={#MyBuildBasePath}\LICENSE
 OutputDir={#MyBuildBasePath}\..\
 OutputBaseFilename={#MyAppName}_{#MyAppVersion}_{#MySystemName}_{#MyBitDepth}
 SetupIconFile={#MySourceBasePath}\rtdata\images\rawtherapee.ico
@@ -112,7 +112,7 @@ Source: "{#MyBuildBasePath}\sounds\*"; DestDir: "{app}\sounds\"; Flags: ignoreve
 Source: "{#MyBuildBasePath}\themes\*"; DestDir: "{app}\themes\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "{#MyBuildBasePath}\AboutThisBuild.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\AUTHORS.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#MyBuildBasePath}\LICENSE.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#MyBuildBasePath}\LICENSE"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\RELEASE_NOTES.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\options"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#MyBuildBasePath}\*.dll"; DestDir: "{app}"; Flags: ignoreversion

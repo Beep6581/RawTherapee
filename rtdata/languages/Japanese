@@ -260,7 +260,6 @@ HISTOGRAM_TOOLTIP_G;グリーン・ヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_L;CIEL*a*b* 輝度・ヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_MODE;ヒストグラムの尺度を線形、対数-線形、対数-対数でトグルします
 HISTOGRAM_TOOLTIP_R;レッド・ヒストグラム 表示/非表示
-HISTOGRAM_TOOLTIP_RAW;rawヒストグラム 表示/非表示
 HISTOGRAM_TOOLTIP_SHOW_OPTIONS;スコープオプションボタンの見え方をトグル
 HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;スコープの明るさを調整
 HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;ヒストグラム
