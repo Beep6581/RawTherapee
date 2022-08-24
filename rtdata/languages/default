@@ -662,7 +662,7 @@ HISTORY_MSG_421;Retinex - Gamma
 HISTORY_MSG_422;Retinex - Gamma
 HISTORY_MSG_423;Retinex - Gamma slope
 HISTORY_MSG_424;Retinex - HL threshold
-HISTORY_MSG_425;Retinex - Log base
+HISTORY_MSG_425;--unused--
 HISTORY_MSG_426;Retinex - Hue equalizer
 HISTORY_MSG_427;Output rendering intent
 HISTORY_MSG_428;Monitor rendering intent
@@ -683,31 +683,31 @@ HISTORY_MSG_442;Retinex - Scale
 HISTORY_MSG_443;Output black point compensation
 HISTORY_MSG_444;WB - Temp bias
 HISTORY_MSG_445;Raw Sub-Image
-HISTORY_MSG_446;EvPixelShiftMotion
-HISTORY_MSG_447;EvPixelShiftMotionCorrection
-HISTORY_MSG_448;EvPixelShiftStddevFactorGreen
+HISTORY_MSG_446;--unused--
+HISTORY_MSG_447;--unused--
+HISTORY_MSG_448;--unused--
 HISTORY_MSG_449;PS ISO adaption
-HISTORY_MSG_450;EvPixelShiftNreadIso
-HISTORY_MSG_451;EvPixelShiftPrnu
+HISTORY_MSG_450;--unused--
+HISTORY_MSG_451;--unused--
 HISTORY_MSG_452;PS Show motion
 HISTORY_MSG_453;PS Show mask only
-HISTORY_MSG_454;EvPixelShiftAutomatic
-HISTORY_MSG_455;EvPixelShiftNonGreenHorizontal
-HISTORY_MSG_456;EvPixelShiftNonGreenVertical
+HISTORY_MSG_454;--unused--
+HISTORY_MSG_455;--unused--
+HISTORY_MSG_456;--unused--
 HISTORY_MSG_457;PS Check red/blue
-HISTORY_MSG_458;EvPixelShiftStddevFactorRed
-HISTORY_MSG_459;EvPixelShiftStddevFactorBlue
-HISTORY_MSG_460;EvPixelShiftGreenAmaze
-HISTORY_MSG_461;EvPixelShiftNonGreenAmaze
+HISTORY_MSG_458;--unused--
+HISTORY_MSG_459;--unused--
+HISTORY_MSG_460;--unused--
+HISTORY_MSG_461;--unused--
 HISTORY_MSG_462;PS Check green
-HISTORY_MSG_463;EvPixelShiftRedBlueWeight
+HISTORY_MSG_463;--unused--
 HISTORY_MSG_464;PS Blur motion mask
 HISTORY_MSG_465;PS Blur radius
-HISTORY_MSG_466;EvPixelShiftSum
-HISTORY_MSG_467;EvPixelShiftExp0
+HISTORY_MSG_466;--unused--
+HISTORY_MSG_467;--unused--
 HISTORY_MSG_468;PS Fill holes
 HISTORY_MSG_469;PS Median
-HISTORY_MSG_470;EvPixelShiftMedian3
+HISTORY_MSG_470;--unused--
 HISTORY_MSG_471;PS Motion correction
 HISTORY_MSG_472;PS Smooth transitions
 HISTORY_MSG_474;PS Equalize
@@ -815,7 +815,7 @@ HISTORY_MSG_576;Local - cbdl mult
 HISTORY_MSG_577;Local - cbdl chroma
 HISTORY_MSG_578;Local - cbdl threshold
 HISTORY_MSG_579;Local - cbdl scope
-HISTORY_MSG_580;Local - Denoise
+HISTORY_MSG_580;--unused--
 HISTORY_MSG_581;Local - deNoise lum f 1
 HISTORY_MSG_582;Local - deNoise lum c
 HISTORY_MSG_583;Local - deNoise lum detail
@@ -898,7 +898,7 @@ HISTORY_MSG_660;Local - cbdl clarity
 HISTORY_MSG_661;Local - cbdl contrast residual
 HISTORY_MSG_662;Local - deNoise lum f 0
 HISTORY_MSG_663;Local - deNoise lum f 2
-HISTORY_MSG_664;Local - cbdl Blur
+HISTORY_MSG_664;--unused--
 HISTORY_MSG_665;Local - cbdl mask Blend
 HISTORY_MSG_666;Local - cbdl mask radius
 HISTORY_MSG_667;Local - cbdl mask chroma
@@ -1146,7 +1146,7 @@ HISTORY_MSG_920;Local - Wavelet sigma LC
 HISTORY_MSG_921;Local - Wavelet Graduated sigma LC2
 HISTORY_MSG_922;Local - changes In Black and White
 HISTORY_MSG_923;Local - Tool complexity mode
-HISTORY_MSG_924;Local - Tool complexity mode
+HISTORY_MSG_924;--unused--
 HISTORY_MSG_925;Local - Scope color tools
 HISTORY_MSG_926;Local - Show mask type
 HISTORY_MSG_927;Local - Shadow
@@ -1323,7 +1323,6 @@ HISTORY_MSG_1095;Local - Jz highligths thr
 HISTORY_MSG_1096;Local - Jz shadows
 HISTORY_MSG_1097;Local - Jz shadows thr
 HISTORY_MSG_1098;Local - Jz radius SH
-//HISTORY_MSG_1099;Local - Hz(Hz) Curve
 HISTORY_MSG_1099;Local - Cz(Hz) Curve
 HISTORY_MSG_1100;Local - Jz reference 100
 HISTORY_MSG_1101;Local - Jz PQ remap
@@ -1494,7 +1493,6 @@ HISTORY_MSG_WAVCHROMFI;Chroma fine
 HISTORY_MSG_WAVCHR;Blur levels - blur chroma
 HISTORY_MSG_WAVCLARI;Clarity
 HISTORY_MSG_WAVDENLH;Level 5
-HISTORY_MSG_WAVDENMET;Local equalizer
 HISTORY_MSG_WAVDENOISE;Local contrast
 HISTORY_MSG_WAVDENOISEH;High levels Local contrast
 HISTORY_MSG_WAVDETEND;Details soft
@@ -2651,7 +2649,6 @@ TP_LOCALCONTRAST_RADIUS;Radius
 TP_LOCALLAB_ACTIV;Luminance only
 TP_LOCALLAB_ACTIVSPOT;Enable Spot
 TP_LOCALLAB_ADJ;Equalizer Color
-TP_LOCALLAB_ALL;All rubrics
 TP_LOCALLAB_AMOUNT;Amount
 TP_LOCALLAB_ARTIF;Shape detection
 TP_LOCALLAB_ARTIF_TOOLTIP;ΔE scope threshold increases the range of deltaE scope. High values are for very wide gamut images.\nIncreasing deltaE decay can improve shape detection, but can also reduce the scope.
@@ -2769,8 +2766,6 @@ TP_LOCALLAB_COLOR_TOOLNAME;Color & Light
 TP_LOCALLAB_COL_NAME;Name
 TP_LOCALLAB_COL_VIS;Status
 TP_LOCALLAB_COMPFRA;Directional contrast
-TP_LOCALLAB_COMPLEX_METHOD;Software Complexity
-TP_LOCALLAB_COMPLEX_TOOLTIP; Allow user to select Local adjustments complexity.
 TP_LOCALLAB_COMPREFRA;Wavelet level tone mapping
 TP_LOCALLAB_CONTCOL;Contrast threshold
 TP_LOCALLAB_CONTFRA;Contrast by level
@@ -2877,7 +2872,6 @@ TP_LOCALLAB_FATDETAIL;Detail
 TP_LOCALLAB_FATFRA;Dynamic Range Compression ƒ
 TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal – uses the Fattal Tone-mapping algorithm.
 TP_LOCALLAB_FATLEVEL;Sigma
-TP_LOCALLAB_FATRES;Amount Residual Image
 TP_LOCALLAB_FATSHFRA;Dynamic Range Compression Mask ƒ
 TP_LOCALLAB_FEATH_TOOLTIP;Gradient width as a percentage of the Spot diagonal\nUsed by all graduated filters in all tools.\nNo action if a graduated filter hasn’t been activated.
 TP_LOCALLAB_FEATVALUE;Feather gradient (Grad. Filters)
@@ -3107,7 +3101,6 @@ TP_LOCALLAB_MASKUSABLE;Mask enabled (Mask & modifications)
 TP_LOCALLAB_MASKUNUSABLE;Mask disabled (Mask & modifications)
 TP_LOCALLAB_MASKRECOTHRES;Recovery threshold
 TP_LOCALLAB_MASK_TOOLTIP;You can enable multiple masks for a tool by activating another tool and using only the mask (set the tool sliders to 0 ).\n\nYou can also duplicate the RT-spot and place it close to the first spot. The small variations in the spot references allow you to make fine adjustments. 
-TP_LOCALLAB_MED;Medium
 TP_LOCALLAB_MEDIAN;Median Low
 TP_LOCALLAB_MEDIANITER_TOOLTIP;The number of successive iterations carried out by the median filter.
 TP_LOCALLAB_MEDIAN_TOOLTIP;You can choose a median value in the range 3x3 to 9x9 pixels. Higher values increase noise reduction and blur. 
@@ -3244,7 +3237,6 @@ TP_LOCALLAB_ROW_VIS;Visible
 TP_LOCALLAB_RSTPROTECT_TOOLTIP;Red and skin-tone protection affects the Saturation, Chroma and Colorfulness sliders.
 TP_LOCALLAB_SATUR;Saturation
 TP_LOCALLAB_SATURV;Saturation (s)
-TP_LOCALLAB_SAVREST;Save - Restore Current Image
 TP_LOCALLAB_SCALEGR;Scale
 TP_LOCALLAB_SCALERETI;Scale
 TP_LOCALLAB_SCALTM;Scale
@@ -3318,7 +3310,6 @@ TP_LOCALLAB_SIGMOIDTH;Threshold (Gray point)
 TP_LOCALLAB_SIGMOIDBL;Blend
 TP_LOCALLAB_SIGMOIDQJ;Uses Black Ev & White Ev
 TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the'Ciecam' (or 'Jz') and 'Sigmoid' function.\nThree sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Blend acts on the final aspect of the image, contrast and luminance. 
-TP_LOCALLAB_SIM;Simple
 TP_LOCALLAB_SLOMASKCOL;Slope
 TP_LOCALLAB_SLOMASK_TOOLTIP;Adjusting Gamma and Slope can provide a soft and artifact-free transformation of the mask by progressively modifying ‘L’ to avoid any discontinuities.
 TP_LOCALLAB_SLOSH;Slope
@@ -3846,7 +3837,6 @@ TP_WAVELET_CONTEDIT;'After' contrast curve
 TP_WAVELET_CONTFRAME;Contrast - Compression
 TP_WAVELET_CONTR;Gamut
 TP_WAVELET_CONTRA;Contrast
-TP_WAVELET_CONTRASTEDIT;Finer - Coarser levels
 TP_WAVELET_CONTRAST_MINUS;Contrast -
 TP_WAVELET_CONTRAST_PLUS;Contrast +
 TP_WAVELET_CONTRA_TOOLTIP;Changes the residual image contrast.
@@ -3869,13 +3859,7 @@ TP_WAVELET_DAUB14;D14 - high
 TP_WAVELET_DAUBLOCAL;Wavelet Edge performance
 TP_WAVELET_DAUB_TOOLTIP;Changes Daubechies coefficients:\nD4 = Standard,\nD14 = Often best performance, 10% more time-intensive.\n\nAffects edge detection as well as the general quality of the first levels. However the quality is not strictly related to this coefficient and can vary depending on image and use.
 TP_WAVELET_DEN5THR;Guided threshold
-TP_WAVELET_DEN12LOW;1 2 Low
-TP_WAVELET_DEN12PLUS;1 2 High
-TP_WAVELET_DEN14LOW;1 4 Low
-TP_WAVELET_DEN14PLUS;1 4 High
-TP_WAVELET_DENCONTRAST;Local contrast Equalizer
 TP_WAVELET_DENCURV;Curve
-TP_WAVELET_DENEQUAL;1 2 3 4 Equal
 TP_WAVELET_DENL;Correction structure
 TP_WAVELET_DENLH;Guided threshold levels 1-4
 TP_WAVELET_DENLOCAL_TOOLTIP;Use a curve in order to guide the denoising according to the local contrast.\nThe areas are denoised, the structures are maintained
@@ -3918,7 +3902,6 @@ TP_WAVELET_EDTYPE;Local contrast method
 TP_WAVELET_EDVAL;Strength
 TP_WAVELET_FINAL;Final Touchup
 TP_WAVELET_FINCFRAME;Final local contrast
-TP_WAVELET_FINCOAR_TOOLTIP;The left (positive) part of the curve acts on the finer levels (increase).\nThe 2 points on the abscissa represent the respective action limits of finer and coarser levels 5 and 6 (default).\nThe right (negative) part of the curve acts on the coarser levels (increase).\nAvoid moving the left part of the curve with negative values. Avoid moving the right part of the curve with positives values
 TP_WAVELET_FINEST;Finest
 TP_WAVELET_FINTHR_TOOLTIP;Uses local contrast to reduce or increase the action of the guided filter
 TP_WAVELET_GUIDFRAME;Final smoothing (guided filter)
