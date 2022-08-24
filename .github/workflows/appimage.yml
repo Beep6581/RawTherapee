@@ -89,7 +89,7 @@ jobs:
         id: appimage-tools-cache
         uses: actions/cache@v2
         with:
-          key: appimage-tools
+          key: appimage-tools-1
           path: |
             ./build/linuxdeploy-x86_64.AppImage
             ./build/linuxdeploy-plugin-gtk.sh
