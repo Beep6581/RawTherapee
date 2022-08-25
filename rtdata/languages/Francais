@@ -1854,6 +1854,8 @@ TP_LOCALLAB_CIRCRADIUS;Taille Spot
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Contient les références du RT-spot, utile pour la détection de forme (couleur, luma, chroma, Sobel).\nLes faibles valeurs peuvent être utiles pour les feuillages.\nLes valeurs élevées peuvent être utile pour la peau
 TP_LOCALLAB_CLARICRES;Fusion Chroma
 TP_LOCALLAB_CLARIFRA;Clarté & Masque netteté/Fusion & adoucir
+TP_LOCALLAB_CLARIJZ_TOOLTIP;En dessous ou égal à 4, 'Masque netteté' est actif.\nAu dessus du niveau ondelettes 5 'Clarté' est actif.
+TP_LOCALLAB_CLARISOFTJZ_TOOLTIP;Le curseur « Rayon adoucir » (algorithme de filtre guidé) réduit les halos et les irrégularités pour les ondelettes de clarté, de masque net et de contraste local Jz.
 TP_LOCALLAB_CLARILRES;Fusion Luma
 TP_LOCALLAB_CLARISOFT;Rayon adoucir
 TP_LOCALLAB_CLARISOFT_TOOLTIP;Actif pour Clarté et Masque de netteté si différent de zéro.\n\nActif pour toutes les pyramides ondelettes.\nInactif si rayon = 0
@@ -2037,12 +2039,13 @@ TP_LOCALLAB_INVBL_TOOLTIP;Alternative\nPremier Spot:\n image entière - delimite
 TP_LOCALLAB_INVMASK;Algorithme inverse
 TP_LOCALLAB_ISOGR;Plus gros (ISO)
 TP_LOCALLAB_JAB;Utilise Black Ev & White Ev
-TP_LOCALLAB_JABADAP_TOOLTIP;Perceptual Uniform adaptation.\nAutomatically adjusts the relationship between Jz and saturation taking into account "Absolute luminance".
+TP_LOCALLAB_JABADAP_TOOLTIP;Perceptual Uniform adaptation.\nAjuste automatiquement la relation entre Jz et la saturation en tenant compte de la "luminance absolue".
 TP_LOCALLAB_JZ100;Jz référence 100cd/m2
-TP_LOCALLAB_JZCLARILRES;Mélange Jz
-TP_LOCALLAB_JZCLARICRES;Mélange chroma Cz
+TP_LOCALLAB_JZCLARILRES;Fusion luma Jz
+TP_LOCALLAB_JZCLARICRES;Fusion chroma Cz
 TP_LOCALLAB_JZFORCE;Force max Jz à 1
 TP_LOCALLAB_JZFORCE_TOOLTIP;Vous permet de forcer la valeur Jz maximale à 1 pour une meilleure réponse du curseur et de la courbe
+TP_LOCALLAB_JZFRA;Jz Cz Hz Ajustements Image
 TP_LOCALLAB_JZMODECAM_TOOLTIP;Jz (uniquement en mode 'Avancé'). Opérationnel uniquement si le périphérique de sortie (moniteur) est HDR (luminance crête supérieure à 100 cd/m2 - idéalement entre 4000 et 10000 cd/m2. Luminance du point noir inférieure à 0,005 cd/m2). Cela suppose a) que l'ICC-PCS pour l'écran utilise Jzazbz (ou XYZ), b) fonctionne en précision réelle, c) que le moniteur soit calibré (si possible avec un gamut DCI-P3 ou Rec-2020), d) que le gamma habituel (sRGB ou BT709) est remplacé par une fonction Perceptual Quantiser (PQ).
 TP_LOCALLAB_JZPQFRA;Jz remappage
 TP_LOCALLAB_JZPQFRA_TOOLTIP;Permet d'adapter l'algorithme Jz à un environnement SDR ou aux caractéristiques (performances) d'un environnement HDR comme suit :\n a) pour des valeurs de luminance comprises entre 0 et 100 cd/m2, le système se comporte comme s'il était dans un environnement SDR .\n b) pour des valeurs de luminance comprises entre 100 et 10000 cd/m2, vous pouvez adapter l'algorithme aux caractéristiques HDR de l'image et du moniteur.\n\nSi "PQ - Peak luminance" est réglé sur 10000, "Jz remappping" se comporte de la même manière que l'algorithme original de Jzazbz.
@@ -2066,7 +2069,7 @@ TP_LOCALLAB_JZSOFTCIE;Rayon adoucir (GuidedFilter)
 TP_LOCALLAB_JZTARGET_EV;Luminance moyenne (Yb%)
 TP_LOCALLAB_JZSTRSOFTCIE;GuidedFilter Force
 TP_LOCALLAB_JZQTOJ;Luminance relative
-TP_LOCALLAB_JZQTOJ_TOOLTIP;Vous permet d'utiliser "Luminance relative" au lieu de "Luminance absolue" - La luminosité devient Brightness.\nLes changements affectent : le curseur Luminosité, le curseur Contraste et la courbe Jz(Jz).
+TP_LOCALLAB_JZQTOJ_TOOLTIP;Vous permet d'utiliser "Luminance relative" au lieu de "Luminance absolue" - Brightness devient Lightness.\nLes changements affectent : le curseur Luminosité, le curseur Contraste et la courbe Jz(Jz).
 TP_LOCALLAB_JZTHRHCIE;Seuik Chroma pour Jz(Hz)
 TP_LOCALLAB_JZWAVEXP;Ondelettes Jz
 TP_LOCALLAB_JZLOG;Log encoding Jz
@@ -2075,6 +2078,7 @@ TP_LOCALLAB_LOG1FRA;CAM16 Adjustment Images
 TP_LOCALLAB_LOG2FRA;Conditions de visionnage
 TP_LOCALLAB_LOGAUTO;Automatique
 TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Calcule automatiquement la « luminance moyenne » pour les conditions de la scène lorsque le bouton « Automatique » dans les niveaux d'exposition relatifs est enfoncé.
+TP_LOCALLAB_LOGAUTOGRAYJZ_TOOLTIP;Calcule automatiquement la « luminance moyenne » pour les conditions de la scène.
 TP_LOCALLAB_LOGAUTO_TOOLTIP;Appuyez sur ce bouton pour calculer la plage dynamique et la « Luminance moyenne » pour les conditions de la scène si la « Luminance moyenne automatique (Yb %) » est cochée).\nCalcule également la luminance absolue au moment de la prise de vue.\nAppuyez à nouveau sur le bouton pour ajuster les valeurs calculées automatiquement.
 TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm making the shadows darker and the highlights brighter.\nWith values greater than 2, the shadows are grayer and the highlights become more washed out.
 TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Valeurs estimées du dynamic range entre Black Ev et White Ev
@@ -2559,7 +2563,7 @@ TP_LOCALLAB_WAT_BLURLC_TOOLTIP;Par défaut les 3 dimensions de L*a*b* luminance 
 TP_LOCALLAB_WAT_THRESHOLDWAV_TOOLTIP;Etendue des niveaux d’ondelettes utilisée dans l’ensemble du module “wavelets” 
 TP_LOCALLAB_WAT_EXPRESID_TOOLTIP;Image résiduelle, a le même comportement que l'image principale
 TP_LOCALLAB_WAT_CLARIL_TOOLTIP;"Fusion luma" est utilisée pour selectionner l'intensité de l'effet désiré sur la luminance.
-TP_LOCALLAB_WAT_CLARIC_TOOLTIP;"Fusion chroma"  est utilisée pour selectionner l'intensité de l'effet désiré sur la luminance.
+TP_LOCALLAB_WAT_CLARIC_TOOLTIP;"Fusion chroma"  est utilisée pour selectionner l'intensité de l'effet désiré sur la chrominance.
 TP_LOCALLAB_WAT_ORIGLC_TOOLTIP;"Fusion seulement avec image originale", empêche les actions "Wavelet Pyramid" d'interférer avec "Claté" and "Masque netteté"
 TP_LOCALLAB_WAT_STRWAV_TOOLTIP;Permet au contraste local de varier en fonction d'un gradient et d'un angle. La variation du signal de la luminance signal est prise en compte et non pas la luminance.
 TP_LOCALLAB_WAT_CONTOFFSET_TOOLTIP;Décalage modifie la balance entre faible contraste et contraste élévé.\nLes hautes valeurs amplifient les changements de contraste pour les détails à contraste élévé, alors que les faibles valeurs vont amplifier les détails à contraste faible .\nEn selectionant des valeurs faibles vous pouvez ainsi sélectionner les zones de contrastes qui seront accentuées.
