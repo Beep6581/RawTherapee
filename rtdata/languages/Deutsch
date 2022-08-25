@@ -3097,6 +3097,7 @@ TP_LOCALLAB_LOG1FRA;CAM16 Bildkorrekturen
 TP_LOCALLAB_LOG2FRA;Betrachtungsbedingungen
 TP_LOCALLAB_LOGAUTO;Automatisch
 TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Berechnet automatisch die 'Mittlere Luminanz' für die Szenenbedingungen, wenn die Schaltfläche 'Automatisch' in 'Relative Belichtungsebenen' gedrückt wird.
+TP_LOCALLAB_LOGAUTOGRAYJZ_TOOLTIP;Berechnet automatisch die 'Mittlere Luminanz' für die Szenenbedingungen.
 TP_LOCALLAB_LOGAUTO_TOOLTIP;Mit Drücken dieser Taste werden der 'Dynamikbereich' und die 'Mittlere Luminanz' für die Szenenbedingungen berechnet, wenn die Option 'Automatische mittlere Luminanz (Yb%)' aktiviert ist.\nBerechnet auch die absolute Luminanz zum Zeitpunkt der Aufnahme.\nDrücken Sie die Taste erneut, um die automatisch berechneten Werte anzupassen.
 TP_LOCALLAB_LOGBASE_TOOLTIP;Standard = 2.\nWerte unter 2 reduzieren die Wirkung des Algorithmus, wodurch die Schatten dunkler und die Glanzlichter heller werden.\nMit Werten über 2 sind die Schatten grauer und die Glanzlichter werden verwaschener.
 TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Geschätzte Werte des Dynamik-Bereiches d.h. 'Schwarz-Ev' und 'Weiß-Ev'
