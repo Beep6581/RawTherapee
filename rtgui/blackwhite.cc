@@ -1205,7 +1205,6 @@ void BlackWhite::setBatchMode (bool batchMode)
 {
     removeIfThere (autoHBox, autoch, false);
     autoch = Gtk::manage (new Gtk::CheckButton (M("TP_BWMIX_AUTOCH")));
-    autoch->set_tooltip_markup (M("TP_BWMIX_AUTOCH_TIP"));
     autoconn = autoch->signal_toggled().connect( sigc::mem_fun(*this, &BlackWhite::autoch_toggled) );
     autoHBox->pack_start (*autoch);
 

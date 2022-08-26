@@ -617,6 +617,7 @@ struct local_params {
     float laplacexp;
     float balanexp;
     float linear;
+    int fullim;
     int expmet;
     int softmet;
     int blurmet;
@@ -895,7 +896,15 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.laplacexp = locallab.spots.at(sp).laplacexp;
     lp.balanexp = locallab.spots.at(sp).balanexp;
     lp.linear = locallab.spots.at(sp).linear;
-
+    if (locallab.spots.at(sp).spotMethod == "norm") {
+        lp.fullim = 0;
+    } else if(locallab.spots.at(sp).spotMethod == "exc"){
+        lp.fullim = 1;
+    } else if (locallab.spots.at(sp).spotMethod == "full"){
+        lp.fullim = 2;
+    }
+   // printf("Lpfullim=%i\n", lp.fullim);
+    
     lp.fftColorMask = locallab.spots.at(sp).fftColorMask;
     lp.prevdE = prevDeltaE;
     lp.showmaskcolmet = llColorMask;
@@ -3316,7 +3325,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 }
             }
         }
-        //others "Lab" threatment...to adapt
+        //others "Lab" treatment...to adapt
         
         if(wavcurvejz  || mjjz != 0.f || lp.mCjz != 0.f) {//local contrast wavelet and clarity
 #ifdef _OPENMP
@@ -3680,7 +3689,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2 vibrance warm-cool - call = 10 take into account "mean luminance Yb for Jz 
 //begin ciecam
  if (settings->verbose && (mocam == 0 || mocam == 1  || call == 1)) {//display only if choice cam16
-     //informations on Cam16 scene conditions - allows user to see choices's incidences
+     //information on Cam16 scene conditions - allows user to see choices's incidences
     float maxicam = -1000.f;
     float maxicamq = -1000.f;
     float maxisat = -1000.f;
@@ -8089,7 +8098,8 @@ void ImProcFunctions::InverseColorLight_Local(bool tonequ, bool tonecurv, int sp
 void ImProcFunctions::calc_ref(int sp, LabImage * original, LabImage * transformed, int cx, int cy, int oW, int oH, int sk, double & huerefblur, double & chromarefblur, double & lumarefblur, double & hueref, double & chromaref, double & lumaref, double & sobelref, float & avg, const LocwavCurve & locwavCurveden, bool locwavdenutili)
 {
     if (params->locallab.enabled) {
-        //always calculate hueref, chromaref, lumaref  before others operations use in normal mode for all modules exceprt denoise
+        // always calculate hueref, chromaref, lumaref before others operations
+        // use in normal mode for all modules except denoise
         struct local_params lp;
         calcLocalParams(sp, oW, oH, params->locallab, lp, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, locwavCurveden, locwavdenutili);
         int begy = lp.yc - lp.lyT;
@@ -8317,10 +8327,20 @@ const int fftw_size[] = {18144, 18000, 17920, 17836, 17820, 17640, 17600, 17550,
 int N_fftwsize = sizeof(fftw_size) / sizeof(fftw_size[0]);
 
 
-void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct local_params& lp, int H, int W, int &xstart, int &ystart, int &xend, int &yend, int cx, int cy)
+void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct local_params& lp, int H, int W, int &xstart, int &ystart, int &xend, int &yend, int cx, int cy, int fulima)
 {
     int ftsizeH = 1;
     int ftsizeW = 1;
+    int deltaw = 150;
+    int deltah = 150;
+    
+    if(W < 4000) {
+        deltaw = 80;
+    }
+    if(H < 4000) {
+        deltah = 80;
+    }
+
 
     for (int ft = 0; ft < N_fftwsize; ft++) { //find best values
         if (fftw_size[ft] <= bfh) {
@@ -8335,6 +8355,31 @@ void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct loc
             break;
         }
     }
+    
+    if(fulima == 2) {// if full image, the ftsizeH and ftsizeW is a bit larger (about 10 to 200 pixels) than the image dimensions so that it is fully processed (consumes a bit more resources)
+        for (int ftfu = 0; ftfu < N_fftwsize; ftfu++) { //find best values
+            if (fftw_size[ftfu] <= (H + deltah)) {
+                ftsizeH = fftw_size[ftfu];
+                break;
+            }
+        }
+        for (int ftfu = 0; ftfu < N_fftwsize; ftfu++) { //find best values
+            if (fftw_size[ftfu] <= (W + deltaw)) {
+                ftsizeW = fftw_size[ftfu];
+                break;
+            }
+        }
+    }
+
+    if (settings->verbose) {
+        if(fulima == 2) {
+            printf("Full image: ftsizeWF=%i ftsizeH=%i\n", ftsizeW, ftsizeH);
+
+        } else {
+            printf("ftsizeW=%i ftsizeH=%i\n", ftsizeW, ftsizeH);
+        }
+    }
+
 
     //optimize with size fftw
     bool reduW = false;
@@ -8373,7 +8418,6 @@ void optfft(int N_fftwsize, int &bfh, int &bfw, int &bfhr, int &bfwr, struct loc
         reduW = true;
         exec = false;
     }
-
     //new values optimized
     ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
     yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, H);
@@ -8552,7 +8596,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     int bfhr = bfh;
     int bfwr = bfw;
     if (lp.blurcolmask >= 0.25f && lp.fftColorMask && call == 2) {
-        optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+        optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
     }
 
     bfh = bfhr;
@@ -10495,7 +10539,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
     }
     
     
-    //gamma and slope residual image - be carefull memory
+    //gamma and slope residual image - be careful memory
     bool tonecur = false;
     const Glib::ustring profile = params->icm.workingProfile;
     bool isworking = (profile == "sRGB" || profile == "Adobe RGB" || profile == "ProPhoto" || profile == "WideGamut" || profile == "BruceRGB" || profile == "Beta RGB" || profile == "BestRGB" || profile == "Rec2020" || profile == "ACESp0" || profile == "ACESp1");
@@ -10542,7 +10586,7 @@ void ImProcFunctions::wavcontrast4(struct local_params& lp, float ** tmp, float 
         cmsHTRANSFORM dummy = nullptr;
         int ill =0;
         workingtrc(tmpImage, tmpImage, W_Level, H_Level, -5, prof, 2.4, 12.92310, ill, 0, dummy, true, false, false);
-        workingtrc(tmpImage, tmpImage, W_Level, H_Level, 1, prof, lp.residgam, lp.residslop, ill, 0, dummy, false, true, true);//be carefull no gamut control
+        workingtrc(tmpImage, tmpImage, W_Level, H_Level, 1, prof, lp.residgam, lp.residslop, ill, 0, dummy, false, true, true);//be careful no gamut control
         rgb2lab(*tmpImage, *labresid, params->icm.workingProfile);
         delete tmpImage;
 
@@ -10925,7 +10969,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
             float gamma = lp.noisegam;
             rtengine::GammaValues g_a; //gamma parameters
             double pwr = 1.0 / (double) lp.noisegam;//default 3.0 - gamma Lab
-            double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+            double ts = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
             rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
 
             if(gamma > 1.f) {
@@ -11640,7 +11684,7 @@ void ImProcFunctions::DeNoise(int call, float * slidL, float * slida, float * sl
                 float gamma = lp.noisegam;
                 rtengine::GammaValues g_a; //gamma parameters
                 double pwr = 1.0 / (double) lp.noisegam;//default 3.0 - gamma Lab
-                double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                double ts = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                 rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
                 if(gamma > 1.f) {
 #ifdef _OPENMP
@@ -13660,7 +13704,7 @@ void ImProcFunctions::Lab_Local(
 
         if (bfw >= mSP && bfh >= mSP) {
             if (lp.blurmet == 0 && (fft || lp.rad > 30.0)) {
-                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
 
             const std::unique_ptr<LabImage> bufgbi(new LabImage(TW, TH));
@@ -14977,7 +15021,7 @@ void ImProcFunctions::Lab_Local(
 
         if (bfw >= mSP && bfh > mSP) {
             if (lp.ftwreti) {
-                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
 
             array2D<float> buflight(bfw, bfh);
@@ -15732,7 +15776,7 @@ void ImProcFunctions::Lab_Local(
                     float gamma1 = params->locallab.spots.at(sp).vibgam;
                     rtengine::GammaValues g_a; //gamma parameters
                     double pwr1 = 1.0 / (double) gamma1;//default 3.0 - gamma Lab
-                    double ts1 = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    double ts1 = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                     rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
                     if(gamma1 != 1.f) {
 #ifdef _OPENMP
@@ -15757,7 +15801,7 @@ void ImProcFunctions::Lab_Local(
                     // float gamma =  params->locallab.spots.at(sp).vibgam;
                     //  rtengine::GammaValues g_a; //gamma parameters
                     // double pwr = 1.0 / (double) gamma;//default 3.0 - gamma Lab
-                    // double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    // double ts = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                    // rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
 
                     if(gamma1 != 1.f) {
@@ -16141,7 +16185,7 @@ void ImProcFunctions::Lab_Local(
         if (bfw >= mSP && bfh >= mSP) {
 
             if (lp.softmet == 1) {
-                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
 
             const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
@@ -16267,7 +16311,7 @@ void ImProcFunctions::Lab_Local(
 
         if (bfw >= mSPwav && bfh >= mSPwav) {//avoid too small spot for wavelet
             if (lp.ftwlc) {
-                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
 
             std::unique_ptr<LabImage> bufmaskblurlc;
@@ -16483,7 +16527,7 @@ void ImProcFunctions::Lab_Local(
                     float gamma = lp.gamlc;
                     rtengine::GammaValues g_a; //gamma parameters
                     double pwr = 1.0 / (double) lp.gamlc;//default 3.0 - gamma Lab
-                    double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    double ts = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                     rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
 
                     if(gamma != 1.f) {
@@ -16782,7 +16826,7 @@ void ImProcFunctions::Lab_Local(
                     float gamma1 = params->locallab.spots.at(sp).shargam;
                     rtengine::GammaValues g_a; //gamma parameters
                     double pwr1 = 1.0 / (double) gamma1;//default 3.0 - gamma Lab
-                    double ts1 = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    double ts1 = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                     rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
                     if(gamma1 != 1.f) {
 #ifdef _OPENMP
@@ -16808,7 +16852,7 @@ void ImProcFunctions::Lab_Local(
                     /*
                     float gamma =  params->locallab.spots.at(sp).shargam;
                     double pwr = 1.0 / (double) gamma;//default 3.0 - gamma Lab
-                    double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    double ts = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                     rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
                     */
                     if(gamma1 != 1.f) {
@@ -16837,7 +16881,7 @@ void ImProcFunctions::Lab_Local(
                     float gamma1 = params->locallab.spots.at(sp).shargam;
                     rtengine::GammaValues g_a; //gamma parameters
                     double pwr1 = 1.0 / (double) gamma1;//default 3.0 - gamma Lab
-                    double ts1 = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    double ts1 = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                     rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
                     if(gamma1 != 1.f) {
 #ifdef _OPENMP
@@ -16861,7 +16905,7 @@ void ImProcFunctions::Lab_Local(
                     /*
                     float gamma =  params->locallab.spots.at(sp).shargam;
                     double pwr = 1.0 / (double) gamma;//default 3.0 - gamma Lab
-                    double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    double ts = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                     rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
                     */
                     if(gamma1 != 1.f) {
@@ -16903,7 +16947,7 @@ void ImProcFunctions::Lab_Local(
         float gamma1 = params->locallab.spots.at(sp).shargam;
         rtengine::GammaValues g_a; //gamma parameters
         double pwr1 = 1.0 / (double) gamma1;//default 3.0 - gamma Lab
-        double ts1 = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+        double ts1 = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
         rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
         if(gamma1 != 1.f) {
 #ifdef _OPENMP
@@ -16928,7 +16972,7 @@ void ImProcFunctions::Lab_Local(
         /*
         float gamma =  params->locallab.spots.at(sp).shargam;
         double pwr = 1.0 / (double) gamma;//default 3.0 - gamma Lab
-        double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+        double ts = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
         rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
         */
         if(gamma1 != 1.f) {
@@ -16983,7 +17027,7 @@ void ImProcFunctions::Lab_Local(
         if (bfw >= mSP && bfh >= mSP) {
 
             if (lp.expmet == 1  || lp.expmet == 0) {
-                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
 
             const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh));
@@ -17014,7 +17058,7 @@ void ImProcFunctions::Lab_Local(
                 float gamma1 = lp.gamex;
                 rtengine::GammaValues g_a; //gamma parameters
                 double pwr1 = 1.0 / (double) lp.gamex;//default 3.0 - gamma Lab
-                double ts1 = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                double ts1 = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                 rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
 
                 if(gamma1 != 1.f) {
@@ -17334,7 +17378,7 @@ void ImProcFunctions::Lab_Local(
                     float gamma = lp.gamex;
                     rtengine::GammaValues g_a; //gamma parameters
                     double pwr = 1.0 / (double) lp.gamex;//default 3.0 - gamma Lab
-                    double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    double ts = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                     rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
                     */
                     if(gamma1 != 1.f) {
@@ -17513,7 +17557,7 @@ void ImProcFunctions::Lab_Local(
         if (bfw >= mSP && bfh >= mSP) {
 
             if (lp.blurcolmask >= 0.25f && lp.fftColorMask && call == 2) {
-                optfft(N_fftwsize, bfh, bfw, bfh, bfw, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfh, bfw, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
 
             std::unique_ptr<LabImage> bufcolorig;
@@ -17573,7 +17617,7 @@ void ImProcFunctions::Lab_Local(
                     float gamma1 = lp.gamc;
                     rtengine::GammaValues g_a; //gamma parameters
                     double pwr1 = 1.0 / (double) lp.gamc;//default 3.0 - gamma Lab
-                    double ts1 = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                    double ts1 = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                     rtengine::Color::calcGamma(pwr1, ts1, g_a); // call to calcGamma with selected gamma and slope
 
                     if(gamma1 != 1.f) {
@@ -18601,7 +18645,7 @@ void ImProcFunctions::Lab_Local(
                         float gamma = lp.gamc;
                         rtengine::GammaValues g_a; //gamma parameters
                         double pwr = 1.0 / (double) lp.gamc;//default 3.0 - gamma Lab
-                        double ts = 9.03296;//always the same 'slope' in the extrem shadows - slope Lab
+                        double ts = 9.03296;//always the same 'slope' in the extreme shadows - slope Lab
                         rtengine::Color::calcGamma(pwr, ts, g_a); // call to calcGamma with selected gamma and slope
 */
                         if(gamma1 != 1.f) {
@@ -18783,7 +18827,7 @@ void ImProcFunctions::Lab_Local(
         if (bfw >= mSP && bfh >= mSP) {
 
             if (lp.blurma >= 0.25f && lp.fftma && call == 2) {
-                optfft(N_fftwsize, bfh, bfw, bfh, bfw, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy);
+                optfft(N_fftwsize, bfh, bfw, bfh, bfw, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
             }
             array2D<float> blechro(bfw, bfh);
             array2D<float> ble(bfw, bfh);

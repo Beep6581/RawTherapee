@@ -3,10 +3,14 @@
     <dict>
         <key>LSEnvironment</key>
         <dict>
-            <key>XDG_DATA_DIRS</key>
+            <key>XDG_CONFIG_DIRS</key>
+            <string>/Applications/RawTherapee.app/Contents/Resources/share/gtk-3.0</string>
+            <key>XDG_CONFIG_HOME</key>
             <string>/Applications/RawTherapee.app/Contents/Resources/share</string>
+            <key>XDG_DATA_DIRS</key>
+            <string>/Applications/RawTherapee.app/Contents/Resources/share/gtk-3.0</string>
             <key>GTK_PATH</key>
-            <string>/Applications/RawTherapee.app/Contents/Frameworks</string>
+            <string>/Applications/RawTherapee.app/Contents/Resources/share/gtk-3.0</string>
             <key>GTK_IM_MODULE_FILE</key>
             <string>/Applications/RawTherapee.app/Contents/Resources/etc/gtk-3.0/gtk.immodules</string>
             <key>XDG_DATA_HOME</key>
@@ -28,8 +32,13 @@
         </dict>
         <key>LSMultipleInstancesProhibited</key>
         <true />
-        <key>LSMinimumSystemVersion</key>
-        <string>@minimum_macos_version@</string>
+        <key>LSMinimumSystemVersionByArchitecture</key>
+        <dict>
+            <key>arm64</key>
+            <string>@minimum_arm64_version@</string>
+            <key>x86_64</key>
+            <string>@minimum_x86_64_version@</string>
+        </dict>
         <key>CFBundleAllowMixedLocalizations</key>
         <true />
         <key>CFBundleDisplayName</key>
@@ -156,9 +165,10 @@
         <string>????</string>
         <key>CFBundleVersion</key>
         <string>@shortVersion@</string>
-        <key>LSExecutableArchitectures</key>
+        <key>LSArchitecturePriority</key>
         <array>
-            <string>@arch@</string>
+            <string>arm64</string>
+            <string>x86_64</string>
         </array>
         <key>NSHighResolutionCapable</key>
         <true />

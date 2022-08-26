@@ -301,17 +301,18 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
     }
 
 
-    if (params->wavelet.denmethod == "equ") {
-        cp.denmet = 0;
-    } else if (params->wavelet.denmethod == "high") {
-        cp.denmet = 1;
-    } else if (params->wavelet.denmethod == "low") {
-        cp.denmet = 2;
-    } else if (params->wavelet.denmethod == "12high") {
-        cp.denmet = 3;
-    } else if (params->wavelet.denmethod == "12low") {
-        cp.denmet = 4;
-    }
+    cp.denmet = 4;
+    //if (params->wavelet.denmethod == "equ") {
+    //    cp.denmet = 0;
+    //} else if (params->wavelet.denmethod == "high") {
+    //    cp.denmet = 1;
+    //} else if (params->wavelet.denmethod == "low") {
+    //    cp.denmet = 2;
+    //} else if (params->wavelet.denmethod == "12high") {
+    //    cp.denmet = 3;
+    //} else if (params->wavelet.denmethod == "12low") {
+    //    cp.denmet = 4;
+    //}
 
     if (params->wavelet.mixmethod == "nois") {
         cp.mixmet = 0;
@@ -658,7 +659,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
         maxlevelcrop = 10;
     }
 
-    // adap maximum level wavelet to size of crop
+    // adapt maximum level wavelet to size of crop
     if (minwin * skip < 1024) {
         maxlevelcrop = 9;    //sampling wavelet 512
     }
@@ -694,7 +695,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
 
     levwav = rtengine::min(maxlevelcrop, levwav);
 
-    // I suppress this fonctionality ==> crash for level < 3
+    // I suppress this functionality ==> crash for level < 3
     if (levwav < 1) {
         return;    // nothing to do
     }

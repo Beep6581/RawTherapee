@@ -106,9 +106,9 @@ if(WIN32)
     elseif(BIT_DEPTH EQUAL 8)
         set(BUILD_BIT_DEPTH 64)
         # Restricting the 64 bits builds to 64 bits systems only
-        set(ARCHITECTURE_ALLOWED "x64 ia64")
+        set(ARCHITECTURE_ALLOWED "x64 ia64 arm64")
         # installing in 64 bits mode for all 64 bits processors, even for itanium architecture
-        set(INSTALL_MODE "x64 ia64")
+        set(INSTALL_MODE "x64 ia64 arm64")
     endif()
     # set part of the output archive name
     set(SYSTEM_NAME "WinVista")
