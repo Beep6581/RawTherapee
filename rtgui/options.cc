@@ -773,6 +773,9 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("General", "Language")) {
                     language = keyFile.get_string("General", "Language");
+                    if (!language.compare("Espanol")) {
+                        language = "Espanol (Latin America)";
+                    }
                 }
 
                 if (keyFile.has_key("General", "LanguageAutoDetect")) {
