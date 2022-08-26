@@ -2759,6 +2759,7 @@ bool crxMakeQStep(CrxImage *img, CrxTile *tile, std::int32_t *qpTable, std::uint
         }
         // continue to the next level - we always decode all levels
         ++qStep;
+        // fall through
     case 2:
         qStep->qStepTbl = qStepTbl;
         qStep->width = qpWidth;
@@ -2777,6 +2778,7 @@ bool crxMakeQStep(CrxImage *img, CrxTile *tile, std::int32_t *qpTable, std::uint
         }
         // continue to the next level - we always decode all levels
         ++qStep;
+        // fall through
     case 1:
         qStep->qStepTbl = qStepTbl;
         qStep->width = qpWidth;

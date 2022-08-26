@@ -290,6 +290,7 @@ int processLineParams ( int argc, char **argv )
 
                 case 'O':
                     copyParamsFile = true;
+                    // fall through
 
                 case 'o': // outputfile or dir
                     if ( iArg + 1 < argc ) {
@@ -341,6 +342,7 @@ int processLineParams ( int argc, char **argv )
 
                 case 'S':
                     skipIfNoSidecar = true;
+                    // fall through
 
                 case 's': // Processing params next to file (file extension appended)
                     sideProcParams = true;

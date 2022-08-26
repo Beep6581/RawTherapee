@@ -169,7 +169,7 @@ int processLineParams ( int argc, char **argv )
                         break;
                     }
 
-                // no break here on purpose
+                // fall through
 
                 case 'h':
                 case '?':
