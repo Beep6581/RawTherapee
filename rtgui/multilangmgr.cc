@@ -44,34 +44,34 @@ struct LocaleToLang : private std::map<std::pair<Glib::ustring, Glib::ustring>, 
         emplace (key ("ca", "ES"), "Catala");
         emplace (key ("cs", "CZ"), "Czech");
         emplace (key ("da", "DK"), "Dansk");
-        emplace (key ("de", "DE"), "Deutsch");
+        emplace (key ("de", ""  ), "Deutsch");
 #ifdef __APPLE__
         emplace (key ("en", "UK"), "English (UK)");
 #else
         emplace (key ("en", "GB"), "English (UK)");
 #endif
         emplace (key ("en", "US"), "English (US)");
-        emplace (key ("es", "419"), "Espanol (Latin America)");
+        emplace (key ("es", ""  ), "Espanol (Latin America)");
         emplace (key ("es", "ES"), "Espanol (Castellano)");
         emplace (key ("eu", "ES"), "Euskara");
-        emplace (key ("fr", "FR"), "Francais");
+        emplace (key ("fr", ""  ), "Francais");
         emplace (key ("el", "GR"), "Greek");
         emplace (key ("he", "IL"), "Hebrew");
-        emplace (key ("it", "IT"), "Italiano");
+        emplace (key ("it", ""  ), "Italiano");
         emplace (key ("ja", "JP"), "Japanese");
-        emplace (key ("lv", "LV"), "Latvian");
-        emplace (key ("hu", "HU"), "Magyar");
-        emplace (key ("nl", "NL"), "Nederlands");
+        emplace (key ("lv", ""  ), "Latvian");
+        emplace (key ("hu", ""  ), "Magyar");
+        emplace (key ("nl", ""  ), "Nederlands");
         emplace (key ("nn", "NO"), "Norsk BM");
         emplace (key ("nb", "NO"), "Norsk BM");
-        emplace (key ("pl", "PL"), "Polish");
-        emplace (key ("pt", "PT"), "Portugues (Brasil)");
-        emplace (key ("ru", "RU"), "Russian");
+        emplace (key ("pl", ""  ), "Polish");
+        emplace (key ("pt", ""  ), "Portugues (Brasil)");
+        emplace (key ("ru", ""  ), "Russian");
         emplace (key ("sr", "RS"), "Serbian (Cyrilic Characters)");
-        emplace (key ("sk", "SK"), "Slovak");
-        emplace (key ("fi", "FI"), "Suomi");
+        emplace (key ("sk", ""  ), "Slovak");
+        emplace (key ("fi", ""  ), "Suomi");
         emplace (key ("sv", "SE"), "Swedish");
-        emplace (key ("tr", "TR"), "Turkish");
+        emplace (key ("tr", ""  ), "Turkish");
         emplace (key ("zh", "CN"), "Chinese (Simplified)");
         emplace (key ("zh", "SG"), "Chinese (Traditional)");
     }
@@ -99,7 +99,7 @@ struct LocaleToLang : private std::map<std::pair<Glib::ustring, Glib::ustring>, 
         }
 
         // Look for matching language only.
-        iterator = find (key (major, major.uppercase()));
+        iterator = find (key (major, ""));
 
         if (iterator != end ()) {
             return iterator->second;
