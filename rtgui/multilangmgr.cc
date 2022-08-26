@@ -51,8 +51,8 @@ struct LocaleToLang : private std::map<std::pair<Glib::ustring, Glib::ustring>, 
         emplace (key ("en", "GB"), "English (UK)");
 #endif
         emplace (key ("en", "US"), "English (US)");
-        emplace (key ("es", "419"), "Espanol");
-        emplace (key ("es", "ES"), "Castellano");
+        emplace (key ("es", "419"), "Espanol (Latin America)");
+        emplace (key ("es", "ES"), "Espanol (Castellano)");
         emplace (key ("eu", "ES"), "Euskara");
         emplace (key ("fr", "FR"), "Francais");
         emplace (key ("el", "GR"), "Greek");
