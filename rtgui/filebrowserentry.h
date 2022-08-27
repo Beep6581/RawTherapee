@@ -35,7 +35,7 @@
 
 class FileBrowserEntry;
 class Thumbnail;
-class RTPixbuf;
+class RTSurface;
 
 struct FileBrowserEntryIdleHelper {
     FileBrowserEntry* fbentry;
@@ -73,11 +73,11 @@ class FileBrowserEntry final : public ThumbBrowserEntryBase,
 
 public:
 
-    static std::shared_ptr<RTPixbuf> editedIcon;
-    static std::shared_ptr<RTPixbuf> recentlySavedIcon;
-    static std::shared_ptr<RTPixbuf> enqueuedIcon;
-    static std::shared_ptr<RTPixbuf> hdr;
-    static std::shared_ptr<RTPixbuf> ps;
+    static std::shared_ptr<RTSurface> editedIcon;
+    static std::shared_ptr<RTSurface> recentlySavedIcon;
+    static std::shared_ptr<RTSurface> enqueuedIcon;
+    static std::shared_ptr<RTSurface> hdr;
+    static std::shared_ptr<RTSurface> ps;
 
     FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname);
     ~FileBrowserEntry () override;
@@ -94,8 +94,8 @@ public:
     void refreshQuickThumbnailImage () override;
     void calcThumbnailSize () override;
 
-    std::vector<Glib::RefPtr<Gdk::Pixbuf>> getIconsOnImageArea () override;
-    std::vector<Glib::RefPtr<Gdk::Pixbuf>> getSpecificityIconsOnImageArea () override;
+    std::vector<std::shared_ptr<RTSurface>> getIconsOnImageArea () override;
+    std::vector<std::shared_ptr<RTSurface>> getSpecificityIconsOnImageArea () override;
     void getIconSize (int& w, int& h) const override;
 
     // thumbnaillistener interface

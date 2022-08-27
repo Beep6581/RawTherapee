@@ -88,18 +88,68 @@ RTSurface::RTSurface(const Glib::ustring &fname) :
 
 int RTSurface::getWidth()
 {
-    return
-        surface
-            ? (surface->get_width() / RTScalable::getScale())
-            : -1;
+    int w, h;
+
+    if (hasSurface()) {
+        switch (type) {
+            case RTSurface::IconType:
+                // Get width from Gtk::IconSize
+                if (!Gtk::IconSize::lookup(icon_size, w, h)) { // Size in invalid
+                    w = h = -1; // Invalid case
+                }
+
+                return w;
+
+            case RTSurface::PNGType:
+                // Directly return surface width
+                return surface->get_width();
+
+            case RTSurface::SVGType:
+                // Returned size shall consider the scaling
+                return (surface->get_width() / RTScalable::getScale());
+
+            case RTSurface::InvalidType:
+            default:
+                // Invalid case
+                return -1;
+        }
+    } else {
+        // Invalid case
+        return -1;
+    }
 }
 
 int RTSurface::getHeight()
 {
-    return
-        surface
-            ? (surface->get_height() / RTScalable::getScale())
-            : -1;
+    int w, h;
+
+    if (hasSurface()) {
+        switch (type) {
+            case RTSurface::IconType:
+                // Get width from Gtk::IconSize
+                if (!Gtk::IconSize::lookup(icon_size, w, h)) { // Size in invalid
+                    w = h = -1; // Invalid case
+                }
+
+                return h;
+
+            case RTSurface::PNGType:
+                // Directly return surface width
+                return surface->get_height();
+
+            case RTSurface::SVGType:
+                // Returned size shall consider the scaling
+                return (surface->get_height() / RTScalable::getScale());
+
+            case RTSurface::InvalidType:
+            default:
+                // Invalid case
+                return -1;
+        }
+    } else {
+        // Invalid case
+        return -1;
+    }
 }
 
 bool RTSurface::hasSurface()
@@ -131,169 +181,4 @@ Cairo::RefPtr<Cairo::ImageSurface> RTSurface::get()
         }
 
     return surface;
-}
-
-RTPixbuf::RTPixbuf()
-{
-    // Initialize "back" parameters from RTScalable
-    dpiBack = RTPixbuf::getDPI();
-    scaleBack = RTPixbuf::getScale();
-
-    // Initialize other private parameters
-    type = RTPixbuf::InvalidType;
-    name = "";
-    icon_size = Gtk::ICON_SIZE_INVALID;
-}
-
-RTPixbuf::RTPixbuf(const Glib::ustring &icon_name, const Gtk::IconSize iconSize) :
-    RTPixbuf()
-{
-    // Create surface
-    const Cairo::RefPtr<Cairo::ImageSurface> surface = RTScalable::loadSurfaceFromIcon(icon_name, iconSize);
-
-    if (surface) {
-        // Downscale surface before creating pixbuf
-        const Cairo::RefPtr<Cairo::Surface> _surface = Cairo::Surface::create(surface,
-            Cairo::CONTENT_COLOR_ALPHA,
-            surface->get_width() / RTScalable::getScale(),
-            surface->get_height() / RTScalable::getScale());
-        const auto c = Cairo::Context::create(_surface);
-        c->scale(1. / static_cast<double>(RTScalable::getScale()), 1. / static_cast<double>(RTScalable::getScale()));
-        c->set_source(surface, 0., 0.);
-        c->paint();
-
-        // Create pixbuf from surface
-        pixbuf = Gdk::Pixbuf::create(_surface,
-            0,
-            0,
-            surface->get_width() / RTScalable::getScale(),
-            surface->get_height() / RTScalable::getScale());
-
-        // Save private parameters
-        type = RTPixbuf::IconType;
-        name = icon_name;
-        icon_size = iconSize;
-    }
-}
-
-RTPixbuf::RTPixbuf(const Glib::ustring &fname) :
-    RTPixbuf()
-{
-    // Create surface based on file extension
-    const auto pos = fname.find_last_of('.');
-
-    if (pos >= 0 && pos < fname.length()) {
-        const auto fext = fname.substr(pos + 1, fname.length()).lowercase();
-
-        // Case where fname is a PNG file
-        if (fext == "png") {
-            // Create surface from PNG file
-            const Cairo::RefPtr<Cairo::ImageSurface> surface = RTScalable::loadSurfaceFromPNG(fname);
-
-            if (surface) {
-                // Downscale surface before creating pixbuf
-                const Cairo::RefPtr<Cairo::Surface> _surface = Cairo::Surface::create(surface,
-                    Cairo::CONTENT_COLOR_ALPHA,
-                    surface->get_width() / RTScalable::getScale(),
-                    surface->get_height() / RTScalable::getScale());
-                const auto c = Cairo::Context::create(_surface);
-                c->scale(1. / static_cast<double>(RTScalable::getScale()), 1. / static_cast<double>(RTScalable::getScale()));
-                c->set_source(surface, 0., 0.);
-                c->paint();
-
-                // Create pixbuf from surface
-                pixbuf = Gdk::Pixbuf::create(_surface,
-                    0,
-                    0,
-                    surface->get_width() / RTScalable::getScale(),
-                    surface->get_height() / RTScalable::getScale());
-
-                // Save private parameter
-                type = RTPixbuf::PNGType;
-                name = fname;
-            }
-        }
-
-        // Case where fname is a SVG file
-        if (fext == "svg") {
-            // Create surface from SVG file
-            const Cairo::RefPtr<Cairo::ImageSurface> surface = RTScalable::loadSurfaceFromSVG(fname);
-
-            if (surface) {
-                // Downscale surface before creating pixbuf
-                const Cairo::RefPtr<Cairo::Surface> _surface = Cairo::Surface::create(surface,
-                    Cairo::CONTENT_COLOR_ALPHA,
-                    surface->get_width() / RTScalable::getScale(),
-                    surface->get_height() / RTScalable::getScale());
-                const auto c = Cairo::Context::create(_surface);
-                c->scale(1. / static_cast<double>(RTScalable::getScale()), 1. / static_cast<double>(RTScalable::getScale()));
-                c->set_source(surface, 0., 0.);
-                c->paint();
-
-                // Create pixbuf from surface
-                pixbuf = Gdk::Pixbuf::create(_surface,
-                    0,
-                    0,
-                    surface->get_width() / RTScalable::getScale(),
-                    surface->get_height() / RTScalable::getScale());
-
-                // Save private parameter
-                type = RTPixbuf::SVGType;
-                name = fname;
-            }
-        }
-    }
-}
-
-int RTPixbuf::getWidth()
-{
-    return
-        pixbuf
-            ? pixbuf->get_width()
-            : -1;
-}
-
-int RTPixbuf::getHeight()
-{
-    return
-        pixbuf
-            ? pixbuf->get_height()
-            : -1;
-}
-
-bool RTPixbuf::hasPixbuf()
-{
-    return static_cast<bool>(pixbuf);
-}
-
-Glib::RefPtr<Gdk::Pixbuf> RTPixbuf::get()
-{
-    if (dpiBack != RTScalable::getDPI() ||
-        scaleBack != RTScalable::getScale()) {
-            Cairo::RefPtr<Cairo::ImageSurface> surface;
-
-            // Surface needs to be regenerated
-            switch (type) {
-                case RTPixbuf::IconType :
-                    surface = RTScalable::loadSurfaceFromIcon(name, icon_size);
-                    pixbuf = Gdk::Pixbuf::create(surface, 0, 0, surface->get_width(), surface->get_height());
-                    break;
-                case RTPixbuf::PNGType :
-                    surface = RTScalable::loadSurfaceFromPNG(name);
-                    pixbuf = Gdk::Pixbuf::create(surface, 0, 0, surface->get_width(), surface->get_height());
-                    break;
-                case RTPixbuf::SVGType :
-                    surface = RTScalable::loadSurfaceFromSVG(name);
-                    pixbuf = Gdk::Pixbuf::create(surface, 0, 0, surface->get_width(), surface->get_height());
-                    break;
-                default :
-                    break;
-            }
-
-            // Save new DPI and scale
-            dpiBack = RTScalable::getDPI();
-            scaleBack = RTScalable::getScale();
-        }
-
-    return pixbuf;
 }

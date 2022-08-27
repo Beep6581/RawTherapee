@@ -138,7 +138,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromSVG(const Glib::us
         // Directly use fname as a path
         path = fname;
     } else {
-        // Look for PNG file in "images" folder
+        // Look for SVG file in "images" folder
         Glib::ustring imagesFolder = Glib::build_filename(DATA_SEARCH_PATH, "images");
         path = Glib::build_filename(imagesFolder, fname);
     }

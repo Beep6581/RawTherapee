@@ -29,7 +29,7 @@
 #include "../rtengine/noncopyable.h"
 
 class Thumbnail;
-class RTPixbuf;
+class RTSurface;
 
 namespace rtengine
 {
@@ -62,7 +62,7 @@ class BatchQueueEntry final : public ThumbBrowserEntryBase, public BQEntryUpdate
 
 public:
 
-    static std::shared_ptr<RTPixbuf> savedAsIcon;
+    static std::shared_ptr<RTSurface> savedAsIcon;
 
     rtengine::ProcessingJob* job;
     const std::unique_ptr<rtengine::procparams::ProcParams> params;
@@ -85,7 +85,7 @@ public:
 
     void removeButtonSet ();
 
-    std::vector<Glib::RefPtr<Gdk::Pixbuf>> getIconsOnImageArea () override;
+    std::vector<std::shared_ptr<RTSurface>> getIconsOnImageArea () override;
     void getIconSize (int& w, int& h) const override;
     std::tuple<Glib::ustring, bool> getToolTip (int x, int y) const override;
 

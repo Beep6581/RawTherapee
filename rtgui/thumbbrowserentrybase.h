@@ -31,6 +31,7 @@
 
 class Thumbnail;
 class ThumbBrowserBase;
+class RTSurface;
 class ThumbBrowserEntryBase
 {
 
@@ -83,8 +84,8 @@ protected:
     Glib::RefPtr<BackBuffer> backBuffer;
     bool bbSelected, bbFramed;
     guint8* bbPreview;
-    std::vector<Glib::RefPtr<Gdk::Pixbuf>> bbIcons;
-    std::vector<Glib::RefPtr<Gdk::Pixbuf>> bbSpecificityIcons;
+    std::vector<std::shared_ptr<RTSurface>> bbIcons;
+    std::vector<std::shared_ptr<RTSurface>> bbSpecificityIcons;
     CursorShape cursor_type;
 
     void drawFrame (Cairo::RefPtr<Cairo::Context> cr, const Gdk::RGBA& bg, const Gdk::RGBA& fg);
@@ -185,8 +186,8 @@ public:
 
     virtual void drawProgressBar (Glib::RefPtr<Gdk::Window> win, const Gdk::RGBA& foregr, const Gdk::RGBA& backgr, int x, int w, int y, int h) {}
 
-    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf>> getIconsOnImageArea ();
-    virtual std::vector<Glib::RefPtr<Gdk::Pixbuf>> getSpecificityIconsOnImageArea ();
+    virtual std::vector<std::shared_ptr<RTSurface>> getIconsOnImageArea ();
+    virtual std::vector<std::shared_ptr<RTSurface>> getSpecificityIconsOnImageArea ();
     virtual void getIconSize (int& w, int& h) const = 0;
 
     virtual bool motionNotify (int x, int y);

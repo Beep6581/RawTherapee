@@ -38,11 +38,11 @@
 //extern Glib::Threads::Thread* mainThread;
 
 bool FileBrowserEntry::iconsLoaded(false);
-std::shared_ptr<RTPixbuf> FileBrowserEntry::editedIcon(std::shared_ptr<RTPixbuf>(nullptr));
-std::shared_ptr<RTPixbuf> FileBrowserEntry::recentlySavedIcon(std::shared_ptr<RTPixbuf>(nullptr));
-std::shared_ptr<RTPixbuf> FileBrowserEntry::enqueuedIcon(std::shared_ptr<RTPixbuf>(nullptr));
-std::shared_ptr<RTPixbuf> FileBrowserEntry::hdr(std::shared_ptr<RTPixbuf>(nullptr));
-std::shared_ptr<RTPixbuf> FileBrowserEntry::ps(std::shared_ptr<RTPixbuf>(nullptr));
+std::shared_ptr<RTSurface> FileBrowserEntry::editedIcon(std::shared_ptr<RTSurface>(nullptr));
+std::shared_ptr<RTSurface> FileBrowserEntry::recentlySavedIcon(std::shared_ptr<RTSurface>(nullptr));
+std::shared_ptr<RTSurface> FileBrowserEntry::enqueuedIcon(std::shared_ptr<RTSurface>(nullptr));
+std::shared_ptr<RTSurface> FileBrowserEntry::hdr(std::shared_ptr<RTSurface>(nullptr));
+std::shared_ptr<RTSurface> FileBrowserEntry::ps(std::shared_ptr<RTSurface>(nullptr));
 
 FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
     : ThumbBrowserEntryBase (fname), wasInside(false), iatlistener(nullptr), press_x(0), press_y(0), action_x(0), action_y(0), rot_deg(0.0), landscape(true), cropParams(new rtengine::procparams::CropParams), cropgl(nullptr), state(SNormal), crop_custom_ratio(0.f)
@@ -61,11 +61,11 @@ FileBrowserEntry::FileBrowserEntry (Thumbnail* thm, const Glib::ustring& fname)
     scale = 1;
 
     if (!iconsLoaded) {
-        editedIcon = std::shared_ptr<RTPixbuf>(new RTPixbuf("tick-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
-        recentlySavedIcon = std::shared_ptr<RTPixbuf>(new RTPixbuf("save-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
-        enqueuedIcon = std::shared_ptr<RTPixbuf>(new RTPixbuf("gears-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
-        hdr = std::shared_ptr<RTPixbuf>(new RTPixbuf("filetype-hdr", Gtk::ICON_SIZE_SMALL_TOOLBAR));
-        ps = std::shared_ptr<RTPixbuf>(new RTPixbuf("filetype-ps", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+        editedIcon = std::shared_ptr<RTSurface>(new RTSurface("tick-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+        recentlySavedIcon = std::shared_ptr<RTSurface>(new RTSurface("save-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+        enqueuedIcon = std::shared_ptr<RTSurface>(new RTSurface("gears-small", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+        hdr = std::shared_ptr<RTSurface>(new RTSurface("filetype-hdr", Gtk::ICON_SIZE_SMALL_TOOLBAR));
+        ps = std::shared_ptr<RTSurface>(new RTSurface("filetype-ps", Gtk::ICON_SIZE_SMALL_TOOLBAR));
         iconsLoaded = true;
     }
 
@@ -125,43 +125,43 @@ void FileBrowserEntry::calcThumbnailSize ()
     }
 }
 
-std::vector<Glib::RefPtr<Gdk::Pixbuf>> FileBrowserEntry::getIconsOnImageArea ()
+std::vector<std::shared_ptr<RTSurface>> FileBrowserEntry::getIconsOnImageArea ()
 {
     if (!thumbnail) {
         return {};
     }
 
-    std::vector<Glib::RefPtr<Gdk::Pixbuf>> ret;
+    std::vector<std::shared_ptr<RTSurface>> ret;
 
     if (thumbnail->hasProcParams() && editedIcon) {
-        ret.push_back(editedIcon->get());
+        ret.push_back(editedIcon);
     }
 
     if (thumbnail->isRecentlySaved() && recentlySavedIcon) {
-        ret.push_back(recentlySavedIcon->get());
+        ret.push_back(recentlySavedIcon);
     }
 
     if (thumbnail->isEnqueued () && enqueuedIcon) {
-        ret.push_back(enqueuedIcon->get());
+        ret.push_back(enqueuedIcon);
     }
 
     return ret;
 }
 
-std::vector<Glib::RefPtr<Gdk::Pixbuf>> FileBrowserEntry::getSpecificityIconsOnImageArea ()
+std::vector<std::shared_ptr<RTSurface>> FileBrowserEntry::getSpecificityIconsOnImageArea ()
 {
     if (!thumbnail) {
         return {};
     }
 
-    std::vector<Glib::RefPtr<Gdk::Pixbuf>> ret;
+    std::vector<std::shared_ptr<RTSurface>> ret;
 
     if (thumbnail->isHDR() && hdr) {
-        ret.push_back (hdr->get());
+        ret.push_back (hdr);
     }
 
     if (thumbnail->isPixelShift() && ps) {
-        ret.push_back (ps->get());
+        ret.push_back (ps);
     }
 
     return ret;

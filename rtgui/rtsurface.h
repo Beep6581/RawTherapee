@@ -53,36 +53,3 @@ public:
 
     Cairo::RefPtr<Cairo::ImageSurface> get();
 };
-
-/**
- * @brief A custom class in order to handle Hi-DPI pixbuf.
- */
-class RTPixbuf final : public RTScalable
-{
-public:
-    enum RTPixbufType {
-        InvalidType = 1,
-        IconType = 2,
-        PNGType = 3,
-        SVGType = 4
-    };
-
-private:
-    double dpiBack; // Used to identify dpi change
-    int scaleBack;  // Used to identify scale change
-    RTPixbufType type;
-    Glib::ustring name;
-    Gtk::IconSize icon_size;
-    Glib::RefPtr<Gdk::Pixbuf> pixbuf;
-
-public:
-    RTPixbuf();
-    explicit RTPixbuf(const Glib::ustring &icon_name, const Gtk::IconSize iconSize);
-    explicit RTPixbuf(const Glib::ustring &fname);
-
-    int getWidth();
-    int getHeight();
-    bool hasPixbuf();
-
-    Glib::RefPtr<Gdk::Pixbuf> get();
-};
