@@ -237,7 +237,6 @@ HISTOGRAM_TOOLTIP_G;Mostrar histograma verde.
 HISTOGRAM_TOOLTIP_L;Mostrar histograma de luminância CIELab.
 HISTOGRAM_TOOLTIP_MODE;Alternar entre redimensionar linear, log-linear e log-log do histograma.
 HISTOGRAM_TOOLTIP_R;Mostrar histograma vermelho.
-HISTOGRAM_TOOLTIP_RAW;Mostrar histograma raw.
 HISTORY_CHANGED;Alterado
 HISTORY_CUSTOMCURVE;Curva personalizada
 HISTORY_FROMCLIPBOARD;Da área de transferência

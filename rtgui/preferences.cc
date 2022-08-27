@@ -2639,8 +2639,8 @@ void Preferences::darkFrameChanged()
 {
     //Glib::ustring s(darkFrameDir->get_filename());
     Glib::ustring s(darkFrameDir->get_current_folder());
-    //if( s.compare( rtengine::dfm.getPathname()) !=0 ){
-    rtengine::dfm.init(s);
+    //if( s.compare( rtengine::DFManager::getInstance().getPathname()) !=0 ){
+    rtengine::DFManager::getInstance().init(s);
     updateDFinfos();
     //}
 }
@@ -2658,7 +2658,7 @@ void Preferences::flatFieldChanged()
 void Preferences::updateDFinfos()
 {
     int t1, t2;
-    rtengine::dfm.getStat(t1, t2);
+    rtengine::DFManager::getInstance().getStat(t1, t2);
     Glib::ustring s = Glib::ustring::compose("%1: %2 %3, %4 %5", M("PREFERENCES_DARKFRAMEFOUND"), t1, M("PREFERENCES_DARKFRAMESHOTS"), t2, M("PREFERENCES_DARKFRAMETEMPLATES"));
     dfLabel->set_text(s);
 }

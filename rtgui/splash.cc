@@ -193,7 +193,7 @@ Splash::Splash (Gtk::Window& parent) : Gtk::Dialog(M("GENERAL_ABOUT"), parent, t
     }
 
     // Tab 4: the license
-    std::string licenseFileName = Glib::build_filename (licensePath, "LICENSE.txt");
+    std::string licenseFileName = Glib::build_filename (licensePath, "LICENSE");
 
     if ( Glib::file_test(licenseFileName, (Glib::FILE_TEST_EXISTS)) ) {
         FILE *f = g_fopen (licenseFileName.c_str (), "rt");

@@ -191,7 +191,6 @@ HISTOGRAM_TOOLTIP_CHRO;Mostra/Nascondi l'istogramma di cromaticità.
 HISTOGRAM_TOOLTIP_G;Mostra/Nascondi l'istogramma del Verde.
 HISTOGRAM_TOOLTIP_L;Mostra/Nascondi l'istogramma di Luminanza CIELAB.
 HISTOGRAM_TOOLTIP_R;Mostra/Nascondi l'istogramma del Rosso.
-HISTOGRAM_TOOLTIP_RAW;Mostra/Nascondi l'istogramma del raw.
 HISTORY_CHANGED;Modificato
 HISTORY_CUSTOMCURVE;Curva personalizzata
 HISTORY_FROMCLIPBOARD;Dagli appunti

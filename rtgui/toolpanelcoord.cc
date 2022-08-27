@@ -557,7 +557,7 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
                 maskStruc.blMask, maskStruc.tmMask, maskStruc.retiMask, maskStruc.sharMask,
                 maskStruc.lcMask, maskStruc.cbMask, maskStruc.logMask, maskStruc.maskMask, maskStruc.cieMask);
     } else if (event == rtengine::EvLocallabSpotCreated || event == rtengine::EvLocallabSpotSelectedWithMask ||
-            event == rtengine::EvLocallabSpotDeleted || event == rtengine::Evlocallabshowreset ||
+            event == rtengine::EvLocallabSpotDeleted /*|| event == rtengine::Evlocallabshowreset*/ ||
             event == rtengine::EvlocallabToolRemovedWithRefresh) {
         locallab->resetMaskVisibility();
         ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
@@ -944,7 +944,7 @@ void ToolPanelCoordinator::autoCropRequested()
     crop->cropManipReady();
 }
 
-rtengine::RawImage* ToolPanelCoordinator::getDF()
+const rtengine::RawImage* ToolPanelCoordinator::getDF()
 {
     if (!ipc) {
         return nullptr;
@@ -959,7 +959,7 @@ rtengine::RawImage* ToolPanelCoordinator::getDF()
         std::string model(imd->getModel());
         time_t timestamp = imd->getDateTimeAsTS();
 
-        return rtengine::dfm.searchDarkFrame(maker, model, iso, shutter, timestamp);
+        return rtengine::DFManager::getInstance().searchDarkFrame(maker, model, iso, shutter, timestamp);
     }
 
     return nullptr;

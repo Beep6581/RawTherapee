@@ -148,11 +148,11 @@ Locallab::Locallab():
     expsettings(Gtk::manage(new ControlSpotPanel())),
 
     // Tool list widget
-    toollist(Gtk::manage(new LocallabToolList())),
+    toollist(Gtk::manage(new LocallabToolList()))
 
   //  expcie(Gtk::manage(new Locallabcie())),
     // Other widgets
-    resetshowButton(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_RESETSHOW"))))
+    //resetshowButton(Gtk::manage(new Gtk::Button(M("TP_LOCALLAB_RESETSHOW"))))
 {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
     
@@ -197,7 +197,7 @@ Locallab::Locallab():
  //   panel->pack_start(*separator2, false, false);
 
     // Add mask reset button to panel widget
-    resetshowButton->signal_pressed().connect(sigc::mem_fun(*this, &Locallab::resetshowPressed));
+    //resetshowButton->signal_pressed().connect(sigc::mem_fun(*this, &Locallab::resetshowPressed));
    // panel->pack_start(*resetshowButton);
 
     // Add panel widget to Locallab GUI
@@ -316,7 +316,7 @@ void Locallab::read(const rtengine::procparams::ProcParams* pp, const ParamsEdit
         r->denoichmask = pp->locallab.spots.at(i).denoichmask;
         r->shortc = pp->locallab.spots.at(i).shortc;
         r->lumask = pp->locallab.spots.at(i).lumask;
-        r->savrest = pp->locallab.spots.at(i).savrest;
+        //r->savrest = pp->locallab.spots.at(i).savrest;
 
         if (pp->locallab.spots.at(i).complexMethod == "sim") {
             r->complexMethod = 0;
@@ -498,7 +498,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->denoichmask = newSpot->denoichmask;
             r->shortc = newSpot->shortc;
             r->lumask = newSpot->lumask;
-            r->savrest = newSpot->savrest;
+            //r->savrest = newSpot->savrest;
 
             if (newSpot->complexMethod == "sim") {
                 r->complexMethod = 0;
@@ -809,7 +809,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
             r->denoichmask = newSpot->denoichmask;
             r->shortc = newSpot->shortc;
             r->lumask = newSpot->lumask;
-            r->savrest = newSpot->savrest;
+            //r->savrest = newSpot->savrest;
 
             if (newSpot->complexMethod == "sim") {
                 r->complexMethod = 0;
@@ -965,7 +965,7 @@ void Locallab::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedited
                     pp->locallab.spots.at(pp->locallab.selspot).denoichmask = r->denoichmask;
                     pp->locallab.spots.at(pp->locallab.selspot).shortc = r->shortc;
                     pp->locallab.spots.at(pp->locallab.selspot).lumask = r->lumask;
-                    pp->locallab.spots.at(pp->locallab.selspot).savrest = r->savrest;
+                    //pp->locallab.spots.at(pp->locallab.selspot).savrest = r->savrest;
 
                     if (r->complexMethod == 0) {
                         pp->locallab.spots.at(pp->locallab.selspot).complexMethod = "sim";
@@ -1128,13 +1128,13 @@ Locallab::llMaskVisibility Locallab::getMaskVisibility() const
     return {prevDeltaE, colorMask, colorMaskinv, expMask, expMaskinv, shMask, shMaskinv, vibMask, softMask, blMask, tmMask, retiMask, sharMask, lcMask, cbMask, logMask, maskMask, cieMask};
 }
 
-void Locallab::resetshowPressed()
-{
-    // Raise event to reset mask
-    if (listener) {
-        listener->panelChanged(Evlocallabshowreset, "");
-    }
-}
+//void Locallab::resetshowPressed()
+//{
+//    // Raise event to reset mask
+//    if (listener) {
+//        listener->panelChanged(Evlocallabshowreset, "");
+//    }
+//}
 
 void Locallab::setEditProvider(EditDataProvider * provider)
 {

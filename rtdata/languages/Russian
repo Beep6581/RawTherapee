@@ -225,7 +225,6 @@ HISTOGRAM_TOOLTIP_CHRO;Показать/скрыть хроматическую 
 HISTOGRAM_TOOLTIP_G;Показать/скрыть зелёный канал гистограммы
 HISTOGRAM_TOOLTIP_L;Показать/скрыть CIELAB гистограмму
 HISTOGRAM_TOOLTIP_R;Показать/скрыть красный канал гистограммы
-HISTOGRAM_TOOLTIP_RAW;Показать/скрыть Raw гистограмму
 HISTORY_CHANGED;Изменено
 HISTORY_CUSTOMCURVE;Пользовательская кривая
 HISTORY_FROMCLIPBOARD;Из буфера обмена

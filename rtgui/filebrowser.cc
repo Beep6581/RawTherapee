@@ -875,7 +875,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
                 }
 
                 // Reinit cache
-                rtengine::dfm.init( options.rtSettings.darkFramesPath );
+                rtengine::DFManager::getInstance().init( options.rtSettings.darkFramesPath );
             } else {
                 // Target directory creation failed, we clear the darkFramesPath setting
                 options.rtSettings.darkFramesPath.clear();

@@ -291,7 +291,6 @@ HISTOGRAM_TOOLTIP_G;Skrýt/Zobrazit histogram zelené.
 HISTOGRAM_TOOLTIP_L;Skrýt/Zobrazit CIELab histogram jasu.
 HISTOGRAM_TOOLTIP_MODE;Přepíná mezi lineárním, log-lineárním a log-log škálováním histogramu.
 HISTOGRAM_TOOLTIP_R;Skrýt/Zobrazit histogram červené.
-HISTOGRAM_TOOLTIP_RAW;Skrýt/Zobrazit raw histogram.
 HISTORY_CHANGED;Změněno
 HISTORY_CUSTOMCURVE;Vlastní křivka
 HISTORY_FROMCLIPBOARD;Ze schránky

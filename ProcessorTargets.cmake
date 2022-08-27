@@ -38,5 +38,8 @@ set(PROC_TARGET_8_FLAGS "-march=athlon64" CACHE STRING "Processor-8 flags")
 set(PROC_TARGET_9_LABEL phenomX4 CACHE STRING "Processor-9 label - use it to provide a phenomX4 optimized build, if you have this processor")
 set(PROC_TARGET_9_FLAGS "-march=amdfam10" CACHE STRING "Processor-9 flags")
 
+set(PROC_TARGET_10_LABEL sandybridge-ivybridge CACHE STRING "Processor set-10 label")
+set(PROC_TARGET_10_FLAGS "-march=sandybridge -mtune=ivybridge" CACHE STRING "Processors set-10 flags")
+
 #set(PROC_TARGET__LABEL procLabel CACHE STRING "Processor- label")
 #set(PROC_TARGET__FLAGS "procFlags" CACHE STRING "Processor- flags")

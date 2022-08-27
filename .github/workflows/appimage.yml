@@ -76,6 +76,8 @@ jobs:
 
       - name: Include Lensfun
         run: |
+          echo "Patching lensfun-update-data script."
+          sudo sed -i 's/HTTPError\(, ValueError\)/URLError\1/' $(which lensfun-update-data)
           echo "Updating Lensfun database."
           lensfun-update-data
           echo "Creating Lensfun directory in the build directory."
@@ -87,7 +89,7 @@ jobs:
         id: appimage-tools-cache
         uses: actions/cache@v2
         with:
-          key: appimage-tools
+          key: appimage-tools-1
           path: |
             ./build/linuxdeploy-x86_64.AppImage
             ./build/linuxdeploy-plugin-gtk.sh
@@ -99,7 +101,9 @@ jobs:
           echo "Downloading linuxdeploy."
           curl --location 'https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage' > linuxdeploy-x86_64.AppImage
           echo "Downloading GTK plugin for linuxdeploy."
-          curl --location 'https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh' > linuxdeploy-plugin-gtk.sh
+          curl --location 'https://raw.githubusercontent.com/linuxdeploy/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh' \
+            | sed 's/^\(export GTK_THEME\)/#\1/' \
+            > linuxdeploy-plugin-gtk.sh
           echo "Setting execute bit on all AppImage tools."
           chmod u+x linuxdeploy-*
 

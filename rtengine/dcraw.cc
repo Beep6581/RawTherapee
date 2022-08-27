@@ -6091,13 +6091,26 @@ get2_256:
       offsetChannelBlackLevel2 = save1 + (0x157 << 1);
       offsetWhiteLevels = save1 + (0x32a << 1);
       break;
+    case 3973: // R3; ColorDataSubVer: 34
+    case 3778: // R7, R10; ColorDataSubVer: 48
+      // imCanon.ColorDataVer = 11;
+      imCanon.ColorDataSubVer = get2();
+
+      fseek(ifp, save1 + ((0x0069+0x0064) << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
+
+      offsetChannelBlackLevel2 = save1 + ((0x0069+0x0102) << 1);
+      offsetChannelBlackLevel  = save1 + ((0x0069+0x0213) << 1);
+      offsetWhiteLevels        = save1 + ((0x0069+0x0217) << 1);
+      break;
     }
 
     if (offsetChannelBlackLevel)
     {
       fseek(ifp, offsetChannelBlackLevel, SEEK_SET);
       FORC4
-          bls += (cblack/*imCanon.ChannelBlackLevel*/[c ^ (c >> 1)] = get2());
+          bls += (RT_canon_levels_data.cblack/*imCanon.ChannelBlackLevel*/[c ^ (c >> 1)] = get2());
+      RT_canon_levels_data.black_ok = true;
       imCanon.AverageBlackLevel = bls / 4;
       // RT_blacklevel_from_constant = ThreeValBool::F;
     }
@@ -6109,7 +6122,8 @@ get2_256:
       imCanon.SpecularWhiteLevel = get2();
       // FORC4
       //   imgdata.color.linear_max[c] = imCanon.SpecularWhiteLevel;
-      maximum = imCanon.SpecularWhiteLevel;
+      RT_canon_levels_data.white = imCanon.SpecularWhiteLevel;
+      RT_canon_levels_data.white_ok = true;
       // RT_whitelevel_from_constant = ThreeValBool::F;
     }
 
@@ -6117,7 +6131,8 @@ get2_256:
     {
         fseek(ifp, offsetChannelBlackLevel2, SEEK_SET);
         FORC4
-            bls += (cblack/*imCanon.ChannelBlackLevel*/[c ^ (c >> 1)] = get2());
+            bls += (RT_canon_levels_data.cblack/*imCanon.ChannelBlackLevel*/[c ^ (c >> 1)] = get2());
+        RT_canon_levels_data.black_ok = true;
         imCanon.AverageBlackLevel = bls / 4;
         // RT_blacklevel_from_constant = ThreeValBool::F;
     }
@@ -9852,7 +9867,8 @@ void CLASS identify()
     filters = 0;
     tiff_samples = colors = 3;
     load_raw = &CLASS canon_sraw_load_raw;
-    FORC4 cblack[c] = 0; // ALB
+    //FORC4 cblack[c] = 0; // ALB
+    RT_canon_levels_data.black_ok = RT_canon_levels_data.white_ok = false;
   } else if (!strcmp(model,"PowerShot 600")) {
     height = 613;
     width  = 854;
@@ -10518,6 +10534,14 @@ bw:   colors = 1;
     }
   }
 dng_skip:
+  if (!dng_version && is_raw) {
+      if (RT_canon_levels_data.black_ok) {
+          FORC4 cblack[c] = RT_canon_levels_data.cblack[c];
+      }
+      if (RT_canon_levels_data.white_ok) {
+          maximum = RT_canon_levels_data.white;
+      }
+  }
   if ((use_camera_matrix & (use_camera_wb || dng_version))
         && cmatrix[0][0] > 0.125
         && strncmp(RT_software.c_str(), "Adobe DNG Converter", 19) != 0

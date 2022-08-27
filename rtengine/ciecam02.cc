@@ -738,7 +738,7 @@ void Ciecam02::jzczhzxyz (double &x, double &y, double &z, double jz, double az,
     Lp = Iz + 0.138605043271539 * az + 0.0580473161561189 * bz;
     Mp = Iz - 0.138605043271539 * az - 0.0580473161561189 * bz;
     Sp = Iz - 0.0960192420263189 * az - 0.811891896056039 * bz;
-    //I change optionnaly 10000 for pl function of la(absolute luminance) default 10000
+    //I change optionally 10000 for pl function of la(absolute luminance) default 10000
    
     tmp = pow(Lp, Jzazbz_pi);
     if(std::isnan(tmp)) {//to avoid crash

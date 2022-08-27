@@ -156,7 +156,6 @@ HISTOGRAM_TOOLTIP_BAR;RGB jelzősáv megjelenítése/elrejtése.\nKattints jobb 
 HISTOGRAM_TOOLTIP_G;Zöld csatorna hisztogrammja (mutat/elrejt)
 HISTOGRAM_TOOLTIP_L;CIELAB Luminancia hisztogramm (mutat/elrejt)
 HISTOGRAM_TOOLTIP_R;Piros csatorna hisztogrammja (mutat/elrejt)
-HISTOGRAM_TOOLTIP_RAW;Raw hisztogram megjelenítése/elrejtése
 HISTORY_CHANGED;Változott
 HISTORY_CUSTOMCURVE;Saját görbe
 HISTORY_FROMCLIPBOARD;Vágólapról

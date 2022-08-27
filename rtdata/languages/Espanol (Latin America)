@@ -297,7 +297,6 @@ HISTOGRAM_TOOLTIP_G;Mostrar/Ocultar Histograma Verde
 HISTOGRAM_TOOLTIP_L;Mostrar/Ocultar Histograma de Luminancia CIELAB
 HISTOGRAM_TOOLTIP_MODE;Alterne entre la escala lineal, log-linear y log-log del histograma.
 HISTOGRAM_TOOLTIP_R;Mostrar/Ocultar Histograma Rojo
-HISTOGRAM_TOOLTIP_RAW;Mostrar/ocultar Histograma Raw
 HISTORY_CHANGED;Cambiado
 HISTORY_CUSTOMCURVE;Curva a medida
 HISTORY_FROMCLIPBOARD;Desde el portapapeles

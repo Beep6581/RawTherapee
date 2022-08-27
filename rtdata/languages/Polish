@@ -238,7 +238,6 @@ HISTOGRAM_TOOLTIP_CHRO;Pokaż/Ukryj histogram chromatyczności.
 HISTOGRAM_TOOLTIP_G;Pokaż/Ukryj histogram zieleni.
 HISTOGRAM_TOOLTIP_L;Pokaż/Ukryj histogram luminancji CIELab.
 HISTOGRAM_TOOLTIP_R;Pokaż/Ukryj histogram czerwieni.
-HISTOGRAM_TOOLTIP_RAW;Pokaż/Ukryj histogram raw.
 HISTORY_CHANGED;Zmieniono
 HISTORY_CUSTOMCURVE;Krzywa własna
 HISTORY_FROMCLIPBOARD;Ze schowka

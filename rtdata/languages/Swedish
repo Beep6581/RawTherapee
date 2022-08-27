@@ -204,7 +204,6 @@ HISTOGRAM_TOOLTIP_CHRO;Visa/Dölj kromananshistogrammet
 HISTOGRAM_TOOLTIP_G;Visa/dölj grönt histogram
 HISTOGRAM_TOOLTIP_L;Visa/dölj CIELAB histogram för luminans
 HISTOGRAM_TOOLTIP_R;Visa/dölj rött histogram
-HISTOGRAM_TOOLTIP_RAW;Visa/dölj råbildens histogram
 HISTORY_CHANGED;Ändrad
 HISTORY_CUSTOMCURVE;Egen kurva
 HISTORY_FROMCLIPBOARD;Från klippbordet
