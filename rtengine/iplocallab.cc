@@ -3201,7 +3201,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             avgm + (1. - avgm) * (0.6 - contreal / 250.0), avgm + (1. - avgm) * (0.6 + contreal / 250.0),
             1, 1
         });
-        //all calculus in double to best results...but slow
+        //all calculations in double for best results...but slow
         double lightreal = 0.2 *  params->locallab.spots.at(sp).lightjzcie;
         double chromz =  params->locallab.spots.at(sp).chromjzcie;
         double saturz =  params->locallab.spots.at(sp).saturjzcie;
@@ -4244,7 +4244,7 @@ if(mocam == 3) {//Zcam not use but keep in case off
             1, 1
         });
 
-        //all calculus in double to best results...but slow
+        //all calculations in double for best results...but slow
         double lqz = 0.4 *  params->locallab.spots.at(sp).lightqzcam;
         if(params->locallab.spots.at(sp).lightqzcam < 0) {
             lqz = 0.2 * params->locallab.spots.at(sp).lightqzcam; //0.4 less effect, no need 1.
@@ -17292,7 +17292,7 @@ void ImProcFunctions::Lab_Local(
                                         evnoise *= 0.4f;
                                     }
 
-                                    //soft denoise, user must use Local Denoise to best result
+                                    //soft denoise, user must use Local Denoise for best result
                                     Median med;
                                     if (evnoise < -18000.f) {
                                         med = Median::TYPE_5X5_STRONG;
