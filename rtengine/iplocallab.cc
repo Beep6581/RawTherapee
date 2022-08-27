@@ -3201,7 +3201,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             avgm + (1. - avgm) * (0.6 - contreal / 250.0), avgm + (1. - avgm) * (0.6 + contreal / 250.0),
             1, 1
         });
-        //all calculs in double to best results...but slow
+        //all calculus in double to best results...but slow
         double lightreal = 0.2 *  params->locallab.spots.at(sp).lightjzcie;
         double chromz =  params->locallab.spots.at(sp).chromjzcie;
         double saturz =  params->locallab.spots.at(sp).saturjzcie;
@@ -4244,7 +4244,7 @@ if(mocam == 3) {//Zcam not use but keep in case off
             1, 1
         });
 
-        //all calculs in double to best results...but slow
+        //all calculus in double to best results...but slow
         double lqz = 0.4 *  params->locallab.spots.at(sp).lightqzcam;
         if(params->locallab.spots.at(sp).lightqzcam < 0) {
             lqz = 0.2 * params->locallab.spots.at(sp).lightqzcam; //0.4 less effect, no need 1.
@@ -15565,7 +15565,7 @@ void ImProcFunctions::Lab_Local(
 
 //vibrance
     float vibg = params->locallab.spots.at(sp).vibgam;
-    if (lp.expvib && (lp.past != 0.f  || lp.satur != 0.f || lp.strvib != 0.f || vibg != 1.f  || lp.war != 0 || lp.strvibab != 0.f  || lp.strvibh != 0.f || lp.showmaskvibmet == 2 || lp.enavibMask || lp.showmaskvibmet == 3 || lp.showmaskvibmet == 4 || lp.prevdE) && lp.vibena) { //interior ellipse renforced lightness and chroma  //locallutili
+    if (lp.expvib && (lp.past != 0.f  || lp.satur != 0.f || lp.strvib != 0.f || vibg != 1.f  || lp.war != 0 || lp.strvibab != 0.f  || lp.strvibh != 0.f || lp.showmaskvibmet == 2 || lp.enavibMask || lp.showmaskvibmet == 3 || lp.showmaskvibmet == 4 || lp.prevdE) && lp.vibena) { //interior ellipse reinforced lightness and chroma  //locallutili
         if (call <= 3) { //simpleprocess, dcrop, improccoordinator
             const int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
             const int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
@@ -17545,7 +17545,7 @@ void ImProcFunctions::Lab_Local(
     const float a_scalemerg = (lp.highAmerg - lp.lowAmerg) / factor / scaling;
     const float b_scalemerg = (lp.highBmerg - lp.lowBmerg) / factor / scaling;
 
-    if (!lp.inv && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.mergemet > 0 ||  lp.strcol != 0.f ||  lp.strcolab != 0.f || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5 || lp.prevdE) && lp.colorena) { // || lllocalcurve)) { //interior ellipse renforced lightness and chroma  //locallutili
+    if (!lp.inv && (lp.chro != 0 || lp.ligh != 0.f || lp.cont != 0 || ctoning || lp.mergemet > 0 ||  lp.strcol != 0.f ||  lp.strcolab != 0.f || lp.qualcurvemet != 0 || lp.showmaskcolmet == 2 || lp.enaColorMask || lp.showmaskcolmet == 3  || lp.showmaskcolmet == 4 || lp.showmaskcolmet == 5 || lp.prevdE) && lp.colorena) { // || lllocalcurve)) { //interior ellipse reinforced lightness and chroma  //locallutili
         int ystart = rtengine::max(static_cast<int>(lp.yc - lp.lyT) - cy, 0);
         int yend = rtengine::min(static_cast<int>(lp.yc + lp.ly) - cy, original->H);
         int xstart = rtengine::max(static_cast<int>(lp.xc - lp.lxL) - cx, 0);

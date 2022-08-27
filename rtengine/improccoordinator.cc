@@ -2408,7 +2408,7 @@ bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, dou
         if (lastAwbEqual != equal || lastAwbTempBias != tempBias || lastAwbauto != params->wb.method) {
 // Issue 2500            MyMutex::MyLock lock(minit);  // Also used in crop window
             double rm, gm, bm;
-            params->wb.method = "autold";//same result as before muliple Auto WB
+            params->wb.method = "autold";//same result as before multiple Auto WB
             
            // imgsrc->getAutoWBMultipliers(rm, gm, bm);
             double tempitc = 5000.;

@@ -2032,7 +2032,7 @@ void ImProcFunctions::ip_wavelet(LabImage * lab, LabImage * dst, int kall, const
                                 }
 
                                 a = 327.68f * Chprov * sincosv.y; // apply Munsell
-                                b = 327.68f * Chprov * sincosv.x; //aply Munsell
+                                b = 327.68f * Chprov * sincosv.x; // apply Munsell
                             } else {//general case
                                 L = labco->L[i1][j1];
                                 const float Lin = std::max(0.f, L);
