@@ -2997,6 +2997,7 @@ TP_LOCALLAB_LOG1FRA;Ajustes de imagen CAM16
 TP_LOCALLAB_LOG2FRA;Condiciones de visualización
 TP_LOCALLAB_LOGAUTO;Automático
 TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Calcula automáticamente la «luminancia media» para las condiciones de la escena cuando está pulsado el botón «Automático» en Niveles relativos de exposición.
+TP_LOCALLAB_LOGAUTOGRAYJZ_TOOLTIP;Calcula automáticamente la «luminancia media» para las condiciones de la escena.
 TP_LOCALLAB_LOGAUTO_TOOLTIP;Al pulsar este botón se calculará el «rango dinámico» y la «luminancia media» para las condiciones de la escena si está activada la casilla «Luminancia media automática (Yb%)».\nTambién se calcula la luminancia absoluta en el momento de la toma.\nPara ajustar los valores calculados automáticamente hay que volver a pulsar el botón.
 TP_LOCALLAB_LOGBASE_TOOLTIP;Valor predeterminado = 2.\nLos valores menores que 2 reducen la acción del algoritmo, haciendo las sombras más oscuras y las luces más brillantes.\nCon valores mayores que 2, las sombras son más grises y las luces son más desteñidas.
 TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Valores estimados del Rango dinámico, por ejemplo Ev negro y Ev blanco
