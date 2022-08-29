@@ -30,9 +30,7 @@
  *
  * About Pango size convention (for font):
  *     Pango size can be expressed in two different units:
- *         - Absolute size (i.e. "px"): If size is int type, absolute size is given in "Pango unit"
- *             shall be divided by Pango::SCALE (i.e. 1024) to get "px". If size is double, absolute
- *             is already given in "px".
+ *         - Absolute size (i.e. "px")
  *         - Non-absolute size (i.e. "pt"): The default resolution is 72 DPI (i.e. pt per inch). To
  *             convert the size to "px", use the following formula:
  *                 "size in px" = "size in pt" * ("device resolution" / 72) * "device scale"

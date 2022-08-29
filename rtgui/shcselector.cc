@@ -195,8 +195,7 @@ void SHCSelector::updateBackBuffer()
 
         // update font
         fontd.set_weight (Pango::WEIGHT_NORMAL);
-        // Absolute size is defined in "Pango units" and shall be multiplied by
-        // Pango::SCALE from "px"
+
         const double fontSize = static_cast<double>(h) * 0.8; // pt
         // Converting font size to "px" based on DPI and scale
 #ifndef __APPLE__

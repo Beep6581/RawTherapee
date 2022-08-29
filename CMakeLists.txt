@@ -368,6 +368,8 @@ if(NOT DEFINED ICONSDIR)
         else()
             set(ICONSDIR "${CMAKE_INSTALL_PREFIX}/share/icons")
         endif()
+    else()
+        set(ICONSDIR "${DATADIR}/icons")
     endif()
 endif()
 

@@ -314,8 +314,10 @@ void DirBrowser::row_expanded (const Gtk::TreeModel::iterator& iter, const Gtk::
 
     expandSuccess = true;
 
-    // Update row icon
-    iter->set_value(dtColumns.icon_name, openfolder);
+    // Update row icon (only if row icon is not a volume one or is empty)
+    if (iter->get_value(dtColumns.icon_name) == closedfolder || iter->get_value(dtColumns.icon_name) == "") {
+        iter->set_value(dtColumns.icon_name, openfolder);
+    }
 
     Glib::RefPtr<Gio::FileMonitor> monitor = dir->monitor_directory ();
     iter->set_value (dtColumns.monitor, monitor);
@@ -324,8 +326,10 @@ void DirBrowser::row_expanded (const Gtk::TreeModel::iterator& iter, const Gtk::
 
 void DirBrowser::row_collapsed (const Gtk::TreeModel::iterator& iter, const Gtk::TreeModel::Path& path)
 {
-    // Update row icon
-    iter->set_value(dtColumns.icon_name, closedfolder);
+    // Update row icon (only if row icon is not a volume one)
+    if (iter->get_value(dtColumns.icon_name) == openfolder) {
+        iter->set_value(dtColumns.icon_name, closedfolder);
+    }
 }
 
 void DirBrowser::updateDir (const Gtk::TreeModel::iterator& iter)

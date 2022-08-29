@@ -195,14 +195,14 @@ RTWindow::RTWindow ()
             Pango::FontDescription pfd = style->get_font(Gtk::STATE_FLAG_NORMAL);
 
             if (pfd.get_set_fields() & Pango::FONT_MASK_SIZE) {
-                const int fontSize = pfd.get_size();
+                int fontSize = pfd.get_size();
                 const bool isAbsoluteFontSize = pfd.get_size_is_absolute();
                 int newFontSize;
 
                 if (isAbsoluteFontSize) {
                     // Absolute size is defined in "Pango units" and shall be divided by
                     // Pango::SCALE to get "px"
-                    newFontSize = fontSize / Pango::SCALE;
+                    fontSize = fontSize / Pango::SCALE;
 
 #ifndef __APPLE__
                     // Guessing that pixel size is given for a 96 DPI reference:
@@ -213,12 +213,16 @@ RTWindow::RTWindow ()
                     // Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c
                     const double newFontScale = 1.;
 #endif
-                    newFontSize = static_cast<int>(newFontSize * newFontScale + 0.5);
+                    newFontSize = static_cast<int>(fontSize * newFontScale + 0.5);
 
                     if (rtengine::settings->verbose) {
                         printf("\"Default\" absolute font size(%d)\n", newFontSize);
                     }
                 } else {
+                    // Non-absolute size is defined in "Pango units" and shall be divided by
+                    // Pango::SCALE to get "px"
+                    fontSize = fontSize / Pango::SCALE;
+
                     // Non-absolute size is defined in "pt" and shall be converted to "px"
                     newFontSize = static_cast<int>(fontSize * fontScale + 0.5);
 
