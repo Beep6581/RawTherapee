@@ -124,7 +124,7 @@ LOCAL_PREFIX="$(cmake .. -L -N | grep LOCAL_PREFIX)"; LOCAL_PREFIX="${LOCAL_PREF
 #Out: https:// etc.
 UNIVERSAL_URL="$(cmake .. -L -N | grep OSX_UNIVERSAL_URL)"; UNIVERSAL_URL="${UNIVERSAL_URL#*=}"
 if [[ -n $UNIVERSAL_URL ]]; then
-    echo "Univeral app is ON. The URL is ${UNIVERSAL_URL}"
+    echo "Universal app is ON. The URL is ${UNIVERSAL_URL}"
 fi
 
 #In: pkgcfg_lib_EXPAT_expat:FILEPATH=/opt/local/lib/libexpat.dylib
@@ -313,7 +313,7 @@ install_name_tool -delete_rpath RawTherapee.app/Contents/Frameworks "${EXECUTABL
 install_name_tool -add_rpath /Applications/"${LIB}" "${EXECUTABLE}"-cli 2>/dev/null
 ditto "${EXECUTABLE}"-cli "${APP}"/..
 
-# Merge the app with the other archictecture to create the Universal app.
+# Merge the app with the other architecture to create the Universal app.
 if [[ -n $UNIVERSAL_URL ]]; then
     msg "Getting Universal countercomponent."
     curl -L ${UNIVERSAL_URL} -o univ.zip
