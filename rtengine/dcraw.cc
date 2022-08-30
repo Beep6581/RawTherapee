@@ -9763,6 +9763,8 @@ void CLASS identify()
      if(!dng_version) {top_margin = 18; height -= top_margin; }
   if (height == 3014 && width == 4096)	/* Ricoh GX200 */
 			width  = 4014;
+  if (height == 3280 && width == 4992 && !strncmp(model, "D5100", 5))
+    { --height; } // Last row contains corrupt data. See issue #5654.
   if (dng_version) {
     if (filters == UINT_MAX) filters = 0;
     if (filters) is_raw *= tiff_samples;
