@@ -221,16 +221,16 @@ bool DynamicProfileRules::loadRules()
             rule.profilepath = kf.get_string (group, "profilepath");
 			#if defined (WIN32)
 			// if this is Windows, replace any "/" in the path with "\\"
-			int pos = rule.profilepath.find("/");
-			while (pos != -1) {
+			size_t pos = rule.profilepath.find("/");
+			while (pos != Glib::ustring::npos) {
 				rule.profilepath.replace(pos, 1, "\\");
 				pos = rule.profilepath.find("/", pos);
 			}
 			#endif
 			#if !defined (WIN32)
 			// if this is not Windows, replace any "\\" in the path with "/"
-			int pos = rule.profilepath.find("\\");
-			while (pos != -1) {
+			size_t pos = rule.profilepath.find("\\");
+			while (pos != Glib::ustring::npos) {
 				rule.profilepath.replace(pos, 1, "/");
 				pos = rule.profilepath.find("\\", pos);
 			}
