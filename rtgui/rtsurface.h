@@ -52,4 +52,5 @@ public:
     bool hasSurface();
 
     Cairo::RefPtr<Cairo::ImageSurface> get();
+    void updateSurface();
 };

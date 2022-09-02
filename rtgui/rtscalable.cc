@@ -68,10 +68,22 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadSurfaceFromIcon(const Glib::u
 
     // Looking for corresponding icon (if existing)
     const auto iconInfo = theme->lookup_icon(iconName, size);
+
+    if (!iconInfo) {
+        if (rtengine::settings->verbose) {
+            std::cerr << "Failed to load icon \"" << iconName << "\" for size " << size << "px" << std::endl;
+        }
+
+        return surf;
+    }
+
     const auto iconPath = iconInfo.get_filename();
 
-    if ((iconPath.empty() || !iconInfo) && rtengine::settings->verbose) {
-        std::cerr << "Failed to load icon \"" << iconName << "\" for size " << size << "px" << std::endl;
+    if (iconPath.empty()) {
+        if (rtengine::settings->verbose) {
+            std::cerr << "Failed to load icon \"" << iconName << "\" for size " << size << "px" << std::endl;
+        }
+
         return surf;
     }
 

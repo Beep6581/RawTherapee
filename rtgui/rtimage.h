@@ -20,7 +20,18 @@
  */
 #pragma once
 
-#include <gtkmm/image.h>
+#include <gtkmm.h>
+
+class RTSurface;
+class RTImageCache final
+{
+private:
+    static std::map<std::pair<Glib::ustring, Gtk::IconSize>, std::shared_ptr<RTSurface>> cache;
+
+public:
+    static std::shared_ptr<RTSurface> getCachedSurface(const Glib::ustring &icon_name, const Gtk::IconSize icon_size);
+    static void updateCache();
+};
 
 /**
  * @brief A derived class of Gtk::Image in order to handle theme-related icon sets.
@@ -29,6 +40,8 @@ class RTImage final : public Gtk::Image
 {
 private:
     Gtk::IconSize size;
+    Glib::ustring icon_name;
+    std::shared_ptr<RTSurface> surface;
 
 public:
     RTImage ();
@@ -36,4 +49,7 @@ public:
 
     void set_from_icon_name(const Glib::ustring& iconName);
     void set_from_icon_name(const Glib::ustring& iconName, const Gtk::IconSize iconSize);
+
+    int get_width();
+    int get_height();
 };

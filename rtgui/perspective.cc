@@ -120,7 +120,7 @@ PerspCorrection::PerspCorrection () : FoldableToolPanel(this, "perspective", M("
     RTImage* const ipersVL = Gtk::manage (new RTImage ("perspective-vertical-bottom-small"));
     RTImage* const ipersVR = Gtk::manage (new RTImage ("perspective-vertical-top-small"));
 
-    RTImage* const ipers_auto_pitch = Gtk::manage (new RTImage ("perspective-vertical-botton", Gtk::ICON_SIZE_BUTTON));
+    RTImage* const ipers_auto_pitch = Gtk::manage (new RTImage ("perspective-vertical-bottom", Gtk::ICON_SIZE_BUTTON));
     RTImage* const ipers_auto_yaw = Gtk::manage (new RTImage ("perspective-horizontal-left", Gtk::ICON_SIZE_BUTTON));
     RTImage* const ipers_auto_pitch_yaw = Gtk::manage (new RTImage ("perspective-horizontal-vertical", Gtk::ICON_SIZE_BUTTON));
 

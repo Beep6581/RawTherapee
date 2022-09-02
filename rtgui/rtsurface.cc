@@ -161,19 +161,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTSurface::get()
 {
     if (dpiBack != RTScalable::getDPI() ||
         scaleBack != RTScalable::getScale()) {
-            switch (type) {
-                case RTSurface::IconType :
-                    surface = RTScalable::loadSurfaceFromIcon(name, icon_size);
-                    break;
-                case RTSurface::PNGType :
-                    surface = RTScalable::loadSurfaceFromPNG(name);
-                    break;
-                case RTSurface::SVGType :
-                    surface = RTScalable::loadSurfaceFromSVG(name);
-                    break;
-                default :
-                    break;
-            }
+            updateSurface();
 
             // Save new DPI and scale
             dpiBack = RTScalable::getDPI();
@@ -181,4 +169,22 @@ Cairo::RefPtr<Cairo::ImageSurface> RTSurface::get()
         }
 
     return surface;
+}
+
+void RTSurface::updateSurface()
+{
+    // Update surface based on the scale
+    switch (type) {
+        case RTSurface::IconType :
+            surface = RTScalable::loadSurfaceFromIcon(name, icon_size);
+            break;
+        case RTSurface::PNGType :
+            surface = RTScalable::loadSurfaceFromPNG(name);
+            break;
+        case RTSurface::SVGType :
+            surface = RTScalable::loadSurfaceFromSVG(name);
+            break;
+        default :
+            break;
+    }
 }

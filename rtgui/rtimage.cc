@@ -21,21 +21,95 @@
 
 #include "rtimage.h"
 
+#include "rtsurface.h"
+
+std::map<std::pair<Glib::ustring, Gtk::IconSize>, std::shared_ptr<RTSurface>> RTImageCache::cache;
+
+std::shared_ptr<RTSurface> RTImageCache::getCachedSurface(const Glib::ustring &icon_name, const Gtk::IconSize icon_size)
+{
+    // Look for an existing cached icon
+    const auto key = std::pair<Glib::ustring, Gtk::IconSize>(icon_name, icon_size);
+    const auto item = cache.find(key);
+
+    if (item != cache.end()) { // A cached icon exists
+        return item->second;
+    } else { // Create the icon
+        auto surface = std::shared_ptr<RTSurface>(new RTSurface(icon_name, icon_size));
+
+        // Add the surface to the cache if the icon exist
+        if (surface) {
+            cache.insert({key, surface});
+        }
+
+        return surface;
+    }
+}
+
+void RTImageCache::updateCache()
+{
+    // Iterate over cache to updated RTSurface
+    for (auto const& item : cache) {
+        item.second->updateSurface();
+    }
+}
+
 RTImage::RTImage () {}
 
 RTImage::RTImage (const Glib::ustring& iconName, const Gtk::IconSize iconSize) :
-    Gtk::Image(iconName, iconSize),
-    size(iconSize)
+    Gtk::Image(),
+    size(iconSize),
+    icon_name(iconName)
 {
+    // Set surface from icon cache
+    surface = RTImageCache::getCachedSurface(this->icon_name, this->size);
+
+    // Add it to the RTImage if surface exists
+    if (surface) {
+        set(surface->get());
+    }
 }
 
 void RTImage::set_from_icon_name(const Glib::ustring& iconName)
 {
-    Gtk::Image::set_from_icon_name(iconName, this->size);
+    this->icon_name = iconName;
+
+    // Set surface from icon cache
+    surface = RTImageCache::getCachedSurface(this->icon_name, this->size);
+
+    // Add it to the RTImage if surface exists
+    if (surface) {
+        set(surface->get());
+    }
 }
 
 void RTImage::set_from_icon_name(const Glib::ustring& iconName, const Gtk::IconSize iconSize)
 {
+    this->icon_name = iconName;
     this->size = iconSize;
-    Gtk::Image::set_from_icon_name(iconName, this->size);
+
+    // Set surface from icon cache
+    surface = RTImageCache::getCachedSurface(this->icon_name, this->size);
+
+    // Add it to the RTImage if surface exists
+    if (surface) {
+        set(surface->get());
+    }
+}
+
+int RTImage::get_width()
+{
+    if (surface) {
+        return surface->getWidth();
+    }
+
+    return -1;
+}
+
+int RTImage::get_height()
+{
+    if (surface) {
+        return surface->getHeight();
+    }
+
+    return -1;
 }
