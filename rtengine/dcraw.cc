@@ -1131,9 +1131,13 @@ void CLASS lossless_dng_load_raw()
   struct jhead jh;
   ushort *rp;
 
+  size_t tilesWide = (raw_width + tile_width - 1) / tile_width;
+  size_t tilesHigh = (raw_height + tile_length - 1) / tile_length;
+  size_t tileCount = tilesWide * tilesHigh;
+
   while (trow < raw_height) {
     save = ftell(ifp);
-    if (tile_length < INT_MAX)
+    if (tileCount > 1)
       fseek (ifp, get4(), SEEK_SET);
     if (!ljpeg_start (&jh, 0)) break;
     jwide = jh.wide;
@@ -6550,8 +6554,6 @@ int CLASS parse_tiff_ifd (int base)
 	break;
       case 324:				/* TileOffsets */
 	tiff_ifd[ifd].offset = len > 1 ? ftell(ifp) : get4();
-	if (len == 1)
-	  tiff_ifd[ifd].tile_width = tiff_ifd[ifd].tile_length = 0;
 	if (len == 4) {
 	  load_raw = &CLASS sinar_4shot_load_raw;
 	  is_raw = 5;
@@ -10909,8 +10911,12 @@ void CLASS deflate_dng_load_raw() {
     size_t tileCount = tilesWide * tilesHigh;
     //fprintf(stderr, "%dx%d tiles, %d total\n", tilesWide, tilesHigh, tileCount);
     size_t tileOffsets[tileCount];
-    for (size_t t = 0; t < tileCount; ++t) {
-      tileOffsets[t] = get4();
+    if (tileCount == 1) {
+      tileOffsets[0] = ifd->offset;
+    } else {
+      for (size_t t = 0; t < tileCount; ++t) {
+        tileOffsets[t] = get4();
+      }
     }
     size_t tileBytes[tileCount];
     uLongf maxCompressed = 0;
