@@ -38,7 +38,7 @@ int RTImage::scaleBack = 0;
 
 RTImage::RTImage () {}
 
-RTImage::RTImage (RTImage &other) : Gtk::Image(), surface(other.surface), pixbuf(other.pixbuf)
+RTImage::RTImage (RTImage &other) : sigc::trackable(), Glib::ObjectBase(), Gtk::Image(), surface(other.surface), pixbuf(other.pixbuf)
 {
     if (pixbuf) {
         set(pixbuf);

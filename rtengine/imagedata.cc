@@ -16,6 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <https://www.gnu.org/licenses/>.
  */
+#include <cstdint>
 #include <functional>
 
 #include <strings.h>
@@ -601,7 +602,7 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
     // -----------------------  Special file type detection (HDR, PixelShift) ------------------------
 
 
-    uint16 bitspersample = 0, samplesperpixel = 0, sampleformat = 0, photometric = 0, compression = 0;
+    uint16_t bitspersample = 0, samplesperpixel = 0, sampleformat = 0, photometric = 0, compression = 0;
     const rtexif::Tag* const bps = frameRootDir->findTag("BitsPerSample");
     const rtexif::Tag* const spp = frameRootDir->findTag("SamplesPerPixel");
     const rtexif::Tag* const sf = frameRootDir->findTag("SampleFormat");
