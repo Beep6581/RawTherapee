@@ -665,7 +665,7 @@ int ImageIO::getTIFFSampleFormat (const Glib::ustring &fname, IIOSampleFormat &s
         return IMIO_CANNOTREADFILE;
     }
 
-    uint16_t bitspersample = 0, samplesperpixel = 0, sampleformat = 0;
+    std::uint16_t bitspersample = 0, samplesperpixel = 0, sampleformat = 0;
     int hasTag = TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &bitspersample);
     hasTag &= TIFFGetField(in, TIFFTAG_SAMPLESPERPIXEL, &samplesperpixel);
 
@@ -690,7 +690,7 @@ int ImageIO::getTIFFSampleFormat (const Glib::ustring &fname, IIOSampleFormat &s
         sampleformat = SAMPLEFORMAT_UINT;
     }
 
-    uint16_t config;
+    std::uint16_t config;
     TIFFGetField(in, TIFFTAG_PLANARCONFIG, &config);
 
     if (config == PLANARCONFIG_CONTIG) {
@@ -702,14 +702,14 @@ int ImageIO::getTIFFSampleFormat (const Glib::ustring &fname, IIOSampleFormat &s
         return IMIO_VARIANTNOTSUPPORTED;
     }
 
-    uint16_t photometric;
+    std::uint16_t photometric;
 
     if (!TIFFGetField(in, TIFFTAG_PHOTOMETRIC, &photometric)) {
         TIFFClose(in);
         return IMIO_VARIANTNOTSUPPORTED;
     }
 
-    uint16_t compression;
+    std::uint16_t compression;
 
     if (photometric == PHOTOMETRIC_LOGLUV)
         if (!TIFFGetField(in, TIFFTAG_COMPRESSION, &compression)) {
@@ -787,7 +787,7 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
     TIFFGetField(in, TIFFTAG_IMAGEWIDTH, &width);
     TIFFGetField(in, TIFFTAG_IMAGELENGTH, &height);
 
-    uint16_t bitspersample, samplesperpixel;
+    std::uint16_t bitspersample, samplesperpixel;
     int hasTag = TIFFGetField(in, TIFFTAG_BITSPERSAMPLE, &bitspersample);
     hasTag &= TIFFGetField(in, TIFFTAG_SAMPLESPERPIXEL, &samplesperpixel);
 
@@ -799,7 +799,7 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
         return IMIO_VARIANTNOTSUPPORTED;
     }
 
-    uint16_t config;
+    std::uint16_t config;
     TIFFGetField(in, TIFFTAG_PLANARCONFIG, &config);
 
     if (config != PLANARCONFIG_CONTIG) {
@@ -820,7 +820,7 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
      */
     if (settings->verbose) {
         printf("Information of \"%s\":\n", fname.c_str());
-        uint16_t tiffDefaultScale, tiffBaselineExposure, tiffLinearResponseLimit;
+        std::uint16_t tiffDefaultScale, tiffBaselineExposure, tiffLinearResponseLimit;
         if (TIFFGetField(in, TIFFTAG_DEFAULTSCALE, &tiffDefaultScale)) {
             printf("   DefaultScale: %d\n", tiffDefaultScale);
         }
@@ -837,7 +837,7 @@ int ImageIO::loadTIFF (const Glib::ustring &fname)
         else
             printf("   No LinearResponseLimit value!\n");
 
-        uint16_t tiffMinValue, tiffMaxValue;
+        std::uint16_t tiffMinValue, tiffMaxValue;
         if (TIFFGetField(in, TIFFTAG_SMINSAMPLEVALUE, &tiffMinValue)) {
             printf("   MinValue: %d\n", tiffMinValue);
         }
@@ -1557,15 +1557,15 @@ int ImageIO::saveTIFF (const Glib::ustring &fname, int bps, bool isFloat, bool u
      */
     if (applyExifPatch) {
         unsigned char b[10];
-        uint16_t tagCount = 0;
+        std::uint16_t tagCount = 0;
         lseek(fileno, 4, SEEK_SET);
         read(fileno, b, 4);
-        uint32_t ifd0Offset = rtexif::sget4(b, exifRoot->getOrder());
+        std::uint32_t ifd0Offset = rtexif::sget4(b, exifRoot->getOrder());
         lseek(fileno, ifd0Offset, SEEK_SET);
         read(fileno, b, 2);
         tagCount = rtexif::sget2(b, exifRoot->getOrder());
         for (size_t i = 0; i < tagCount ; ++i) {
-            uint16_t tagID = 0;
+            std::uint16_t tagID = 0;
             read(fileno, b, 2);
             tagID = rtexif::sget2(b, exifRoot->getOrder());
             if (tagID == 0x8769) {

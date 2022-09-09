@@ -602,7 +602,7 @@ FrameData::FrameData(rtexif::TagDirectory* frameRootDir_, rtexif::TagDirectory* 
     // -----------------------  Special file type detection (HDR, PixelShift) ------------------------
 
 
-    uint16_t bitspersample = 0, samplesperpixel = 0, sampleformat = 0, photometric = 0, compression = 0;
+    std::uint16_t bitspersample = 0, samplesperpixel = 0, sampleformat = 0, photometric = 0, compression = 0;
     const rtexif::Tag* const bps = frameRootDir->findTag("BitsPerSample");
     const rtexif::Tag* const spp = frameRootDir->findTag("SamplesPerPixel");
     const rtexif::Tag* const sf = frameRootDir->findTag("SampleFormat");
