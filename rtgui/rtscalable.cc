@@ -241,7 +241,7 @@ Cairo::RefPtr<Cairo::ImageSurface> RTScalable::loadImage(const Glib::ustring &fn
     c->set_operator (Cairo::OPERATOR_OVER);
     c->scale(r, r);
     rsvg_handle_render_cairo(handle, c->cobj());
-    rsvg_handle_free(handle);
+    g_object_unref(handle);
 
     // -------------------- Saving the image in cache --------------------
 
