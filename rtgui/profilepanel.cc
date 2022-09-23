@@ -56,7 +56,7 @@ ProfilePanel::ProfilePanel () : storedPProfile(nullptr), lastSavedPSE(nullptr), 
     fillMode->set_active(options.filledProfile);
     fillMode->add( options.filledProfile ? *profileFillModeOnImage : *profileFillModeOffImage );
     fillMode->signal_toggled().connect ( sigc::mem_fun(*this, &ProfilePanel::profileFillModeToggled) );
-    fillMode->set_tooltip_text(M("PROFILEPANEL_MODE_TIP"));
+    fillMode->set_tooltip_text(M("PROFILEPANEL_MODE_TOOLTIP"));
 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
     fillMode->set_margin_right(2);
