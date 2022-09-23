@@ -417,39 +417,39 @@ HISTORY_MSG_170;Vibrance - HH curve
 HISTORY_MSG_171;L*a*b* - LC curve
 HISTORY_MSG_172;L*a*b* - Restrict LC
 HISTORY_MSG_173;NR - Detail recovery
-HISTORY_MSG_174;CIECAM02/16
-HISTORY_MSG_175;CAM02/16 - CAT02/16 adaptation
-HISTORY_MSG_176;CAM02/16 - Viewing surround
-HISTORY_MSG_177;CAM02/16 - Scene luminosity
-HISTORY_MSG_178;CAM02/16 - Viewing luminosity
-HISTORY_MSG_179;CAM02/16 - White-point model
-HISTORY_MSG_180;CAM02/16 - Lightness (J)
-HISTORY_MSG_181;CAM02/16 - Chroma (C)
-HISTORY_MSG_182;CAM02/16 - Automatic CAT02/16
-HISTORY_MSG_183;CAM02/16 - Contrast (J)
-HISTORY_MSG_184;CAM02/16 - Scene surround
-HISTORY_MSG_185;CAM02/16 - Gamut control
-HISTORY_MSG_186;CAM02/16 - Algorithm
-HISTORY_MSG_187;CAM02/16 - Red/skin prot.
-HISTORY_MSG_188;CAM02/16 - Brightness (Q)
-HISTORY_MSG_189;CAM02/16 - Contrast (Q)
-HISTORY_MSG_190;CAM02/16 - Saturation (S)
-HISTORY_MSG_191;CAM02/16 - Colorfulness (M)
-HISTORY_MSG_192;CAM02/16 - Hue (h)
-HISTORY_MSG_193;CAM02/16 - Tone curve 1
-HISTORY_MSG_194;CAM02/16 - Tone curve 2
-HISTORY_MSG_195;CAM02/16 - Tone curve 1
-HISTORY_MSG_196;CAM02/16 - Tone curve 2
-HISTORY_MSG_197;CAM02/16 - Color curve
-HISTORY_MSG_198;CAM02/16 - Color curve
-HISTORY_MSG_199;CAM02/16 - Output histograms
-HISTORY_MSG_200;CAM02/16 - Tone mapping
+HISTORY_MSG_174;Color Appearance &amp; Lighting
+HISTORY_MSG_175;CAL - SC - Adaptation
+HISTORY_MSG_176;CAL - VC - Surround
+HISTORY_MSG_177;CAL - SC - Absolute luminance
+HISTORY_MSG_178;CAL - VC - Absolute luminance
+HISTORY_MSG_179;CAL - SC - WP model
+HISTORY_MSG_180;CAL - IA - Lightness (J)
+HISTORY_MSG_181;CAL - IA - Chroma (C)
+HISTORY_MSG_182;CAL - SC - Auto adaptation
+HISTORY_MSG_183;CAL - IA - Contrast (J)
+HISTORY_MSG_184;CAL - SC - Surround
+HISTORY_MSG_185;CAL - Gamut control
+HISTORY_MSG_186;CAL - IA - Algorithm
+HISTORY_MSG_187;CAL - IA - Red/skin protection
+HISTORY_MSG_188;CAL - IA - Brightness (Q)
+HISTORY_MSG_189;CAL - IA - Contrast (Q)
+HISTORY_MSG_190;CAL - IA - Saturation (S)
+HISTORY_MSG_191;CAL - IA - Colorfulness (M)
+HISTORY_MSG_192;CAL - IA - Hue (h)
+HISTORY_MSG_193;CAL - IA - Tone curve 1
+HISTORY_MSG_194;CAL - IA - Tone curve 2
+HISTORY_MSG_195;CAL - IA - Tone curve 1 mode
+HISTORY_MSG_196;CAL - IA - Tone curve 2 mode
+HISTORY_MSG_197;CAL - IA - Color curve
+HISTORY_MSG_198;CAL - IA - Color curve mode
+HISTORY_MSG_199;CAL - IA - Use CAM output for histograms
+HISTORY_MSG_200;CAL - IA - Use CAM for tone mapping
 HISTORY_MSG_201;NR - Chrominance - R&amp;G
 HISTORY_MSG_202;NR - Chrominance - B&amp;Y
 HISTORY_MSG_203;NR - Color space
 HISTORY_MSG_204;LMMSE enhancement steps
-HISTORY_MSG_205;CAT02/16 - Hot/bad pixel filter
-HISTORY_MSG_206;CAT02/16 - Auto scene luminosity
+HISTORY_MSG_205;CAL - Hot/bad pixel filter
+HISTORY_MSG_206;CAL - SC - Auto absolute luminance
 HISTORY_MSG_207;Defringe - Hue curve
 HISTORY_MSG_208;WB - B/R equalizer
 HISTORY_MSG_210;GF - Angle
@@ -712,15 +712,15 @@ HISTORY_MSG_471;PS Motion correction
 HISTORY_MSG_472;PS Smooth transitions
 HISTORY_MSG_474;PS Equalize
 HISTORY_MSG_475;PS Equalize channel
-HISTORY_MSG_476;CAM02/16 - Temp out
-HISTORY_MSG_477;CAM02/16 - Green out
-HISTORY_MSG_478;CAM02/16 - Yb out
-HISTORY_MSG_479;CAM02/16 - CAT02/16 adaptation out
-HISTORY_MSG_480;CAM02/16 - Automatic CAT02/16 out
-HISTORY_MSG_481;CAM02/16 - Temp scene
-HISTORY_MSG_482;CAM02/16 - Green scene
-HISTORY_MSG_483;CAM02/16 - Yb scene
-HISTORY_MSG_484;CAM02/16 - Auto Yb scene
+HISTORY_MSG_476;CAL - VC - Temperature
+HISTORY_MSG_477;CAL - VC - Tint
+HISTORY_MSG_478;CAL - VC - Mean luminance
+HISTORY_MSG_479;CAL - VC - Adaptation
+HISTORY_MSG_480;CAL - VC - Auto adaptation
+HISTORY_MSG_481;CAL - SC - Temperature
+HISTORY_MSG_482;CAL - SC - Tint
+HISTORY_MSG_483;CAL - SC - Mean luminance
+HISTORY_MSG_484;CAL - SC - Auto mean luminance
 HISTORY_MSG_485;Lens Correction
 HISTORY_MSG_486;Lens Correction - Camera
 HISTORY_MSG_487;Lens Correction - Lens
@@ -1379,10 +1379,10 @@ HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
 HISTORY_MSG_BLUWAV;Attenuation response
-HISTORY_MSG_CATCAT;Cat02/16 mode
-HISTORY_MSG_CAT02PRESET;Cat02/16 automatic preset
-HISTORY_MSG_CATCOMPLEX;Ciecam complexity
-HISTORY_MSG_CATMODEL;CAM Model
+HISTORY_MSG_CATCAT;CAL - Settings - Mode
+HISTORY_MSG_CAT02PRESET;CAT02/16 automatic preset
+HISTORY_MSG_CATCOMPLEX;CAL - Settings - Complexity
+HISTORY_MSG_CATMODEL;CAL - Settings - CAM
 HISTORY_MSG_CLAMPOOG;Clip out-of-gamut colors
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;CT - Color correction
 HISTORY_MSG_COLORTONING_LABREGION_AB;CT - Color correction
@@ -1431,7 +1431,7 @@ HISTORY_MSG_ICM_BLUX;Primaries Blue X
 HISTORY_MSG_ICM_BLUY;Primaries Blue Y
 HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy
 HISTORY_MSG_ICM_AINTENT;Abstract profile intent
-HISTORY_MSG_ILLUM;Illuminant
+HISTORY_MSG_ILLUM;CAL - SC - Illuminant
 HISTORY_MSG_ICM_FBW;Black and White
 HISTORY_MSG_ICM_PRESER;Preserve neutral
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Local Contrast - Amount
@@ -1715,7 +1715,7 @@ PARTIALPASTE_CACORRECTION;Chromatic aberration correction
 PARTIALPASTE_CHANNELMIXER;Channel mixer
 PARTIALPASTE_CHANNELMIXERBW;Black-and-white
 PARTIALPASTE_COARSETRANS;Coarse rotation/flipping
-PARTIALPASTE_COLORAPP;CIECAM02/16
+PARTIALPASTE_COLORAPP;Color Appearance & Lighting
 PARTIALPASTE_COLORGROUP;Color Related Settings
 PARTIALPASTE_COLORTONING;Color toning
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto-fill
@@ -2160,39 +2160,39 @@ TP_COLORAPP_ALGO_TOOLTIP;Lets you choose between parameter subsets or all parame
 TP_COLORAPP_BADPIXSL;Hot/bad pixel filter
 TP_COLORAPP_BADPIXSL_TOOLTIP;Suppression of hot/bad (brightly colored) pixels.\n0 = No effect\n1 = Median\n2 = Gaussian.\nAlternatively, adjust the image to avoid very dark shadows.\n\nThese artifacts are due to limitations of CIECAM02.
 TP_COLORAPP_BRIGHT;Brightness (Q)
-TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM02/16 is the amount of perceived light emanating from a stimulus and differs from L*a*b* and RGB brightness.
+TP_COLORAPP_BRIGHT_TOOLTIP;Brightness in CIECAM is the amount of perceived light emanating from a stimulus. It differs from L*a*b* and RGB brightness.
 TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;When setting manually, values above 65 are recommended.
 TP_COLORAPP_CATMET_TOOLTIP;Classic - traditional CIECAM operation. The chromatic adaptation transforms are applied separately on ‘Scene conditions’ and basic illuminant on the one hand, and on basic illuminant and ‘Viewing conditions’ on the other.\n\nSymmetric – The chromatic adaptation is based on the white balance. The ‘Scene conditions’, ‘Image adjustments’ and ‘Viewing conditions’ settings are neutralized.\n\nMixed – Same as the ‘Classic’ option but in this case, the chromatic adaptation is based on the white balance.
-TP_COLORAPP_CATMOD;Cat02/16 mode
+TP_COLORAPP_CATMOD;Mode
 TP_COLORAPP_CATCLASSIC;Classic
 TP_COLORAPP_CATSYMGEN;Automatic Symmetric
 TP_COLORAPP_CATSYMSPE;Mixed
 TP_COLORAPP_CHROMA;Chroma (C)
 TP_COLORAPP_CHROMA_M;Colorfulness (M)
-TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM02/16 is the perceived amount of hue in relation to gray, an indicator that a stimulus appears to be more or less colored.
+TP_COLORAPP_CHROMA_M_TOOLTIP;Colorfulness in CIECAM is the perceived amount of hue in relation to gray, an indicator that a stimulus appears to be more or less colored.
 TP_COLORAPP_CHROMA_S;Saturation (S)
-TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM02/16 corresponds to the color of a stimulus in relation to its own brightness, differs from L*a*b* and RGB saturation.
-TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM02/16 corresponds to the color of a stimulus relative to the clarity of a stimulus that appears white under identical conditions, differs from L*a*b* and RGB chroma.
-TP_COLORAPP_CIECAT_DEGREE;CAT02/16 adaptation
+TP_COLORAPP_CHROMA_S_TOOLTIP;Saturation in CIECAM corresponds to the color of a stimulus in relation to its own brightness. It differs from L*a*b* and RGB saturation.
+TP_COLORAPP_CHROMA_TOOLTIP;Chroma in CIECAM corresponds to the color of a stimulus relative to the clarity of a stimulus that appears white under identical conditions. It differs from L*a*b* and RGB chroma.
+TP_COLORAPP_CIECAT_DEGREE;Adaptation
 TP_COLORAPP_CONTRAST;Contrast (J) 
 TP_COLORAPP_CONTRAST_Q;Contrast (Q)
-TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast (Q) in CIECAM02/16 is based on brightness, differs from L*a*b* and RGB contrast.
-TP_COLORAPP_CONTRAST_TOOLTIP;Contrast (J) in CIECAM02/16 is based on lightness, differs from L*a*b* and RGB contrast.
+TP_COLORAPP_CONTRAST_Q_TOOLTIP;Contrast (Q) in CIECAM is based on brightness. It differs from L*a*b* and RGB contrast.
+TP_COLORAPP_CONTRAST_TOOLTIP;Contrast (J) in CIECAM is based on lightness. It differs from L*a*b* and RGB contrast.
 TP_COLORAPP_CURVEEDITOR1;Tone curve 1
-TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L* (L*a*b*) before CIECAM02/16.\nIf the "CIECAM02/16 output histograms in curves" checkbox is enabled, shows the histogram of J after CIECAM02/16.\n\nJ is not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel.
+TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Shows the histogram of L* (L*a*b*) before CIECAM.\nIf the "Show CIECAM output histograms in CAL curves" checkbox is enabled, shows the histogram of J after CIECAM.\n\nJ is not shown in the main histogram panel.\n\nFor final output refer to the main histogram panel.
 TP_COLORAPP_CURVEEDITOR2;Tone curve 2
 TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Same usage as with the first J(J) tone curve.
 TP_COLORAPP_CURVEEDITOR3;Color curve
-TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM02/16.\nIf the "CIECAM02/16 output histograms in curves" checkbox is enabled, shows the histogram of C, S or M after CIECAM02/16.\n\nC, S and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
-TP_COLORAPP_DATACIE;CIECAM02/16 output histograms in curves
-TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02/16 curves show approximate values/ranges for J, and C, s or M after the CIECAM02/16 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02/16 curves show L*a*b* values before CIECAM02/16 adjustments.
-TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 is a chromatic adaptation, it converts the values of an image whose white point is that of a given illuminant (for example D65), into new values whose white point is that of the new illuminant - see WP Model (for example D50 or D55).
-TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02/16 is a chromatic adaptation, it converts the values of an image whose white point is that of a given illuminant (for example D50), into new values whose white point is that of the new illuminant - see WP model (for example D75).
+TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Adjust either chroma, saturation or colorfulness.\n\nShows the histogram of chromaticity (L*a*b*) before CIECAM.\nIf the "Show CIECAM output histograms in CAL curves" checkbox is enabled, shows the histogram of C, S or M after CIECAM.\n\nC, S and M are not shown in the main histogram panel.\nFor final output refer to the main histogram panel.
+TP_COLORAPP_DATACIE;Show CIECAM output histograms in CAL curves
+TP_COLORAPP_DATACIE_TOOLTIP;Affects histograms shown in Color Appearance &amp; Lightning curves. Does not affect RawTherapee's main histogram.\n\nEnabled: show approximate values for J and C, S or M after the CIECAM adjustments.\nDisabled: show L*a*b* values before CIECAM adjustments.
+TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 is a chromatic adaptation. It converts the values of an image whose white point is that of a given illuminant (for example D65) into new values whose white point is that of the new illuminant - see WP model (for example D50 or D55).
+TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02/16 is a chromatic adaptation. It converts the values of an image whose white point is that of a given illuminant (for example D50) into new values whose white point is that of the new illuminant - see WP model (for example D75).
 TP_COLORAPP_FREE;Free temp + tint + CAT02/16 +[output]
-TP_COLORAPP_GAMUT;Gamut control (L*a*b*)
+TP_COLORAPP_GAMUT;Use gamut control in L*a*b* mode
 TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in L*a*b* mode.
-TP_COLORAPP_GEN;Settings - Preset
-TP_COLORAPP_GEN_TOOLTIP;This module is based on the CIECAM color appearance model, which was designed to better simulate how human vision perceives colors under different lighting conditions, e.g., against different backgrounds.\nIt takes into account the environment of each color and modifies its appearance to get as close as possible to human perception.\nIt also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic appearance is preserved across the scene and display environments.
+TP_COLORAPP_GEN;Settings
+TP_COLORAPP_GEN_TOOLTIP;This module is based on the CIECAM color appearance models, which were designed to better simulate how human vision perceives colors under different lighting conditions, e.g. against different backgrounds. It takes into account the environment of each color and modifies its appearance to get as close as possible to human perception. It also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic appearance is preserved across the scene and display environments.
 TP_COLORAPP_HUE;Hue (h)
 TP_COLORAPP_HUE_TOOLTIP;Hue (h) is the degree to which a stimulus can be described as similar to a color described as red, green, blue and yellow.
 TP_COLORAPP_IL41;D41
@@ -2205,34 +2205,34 @@ TP_COLORAPP_ILA;Incandescent StdA 2856K
 TP_COLORAPP_ILFREE;Free
 TP_COLORAPP_ILLUM;Illuminant
 TP_COLORAPP_ILLUM_TOOLTIP;Select the illuminant closest to the shooting conditions.\nIn general D50, but it can change depending on the time and latitude.
-TP_COLORAPP_LABEL;Color Appearance & Lighting (CIECAM02/16)
+TP_COLORAPP_LABEL;Color Appearance & Lighting
 TP_COLORAPP_LABEL_CAM02;Image Adjustments
 TP_COLORAPP_LABEL_SCENE;Scene Conditions
 TP_COLORAPP_LABEL_VIEWING;Viewing Conditions
 TP_COLORAPP_LIGHT;Lightness (J)
-TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM02/16 is the clarity of a stimulus relative to the clarity of a stimulus that appears white under similar viewing conditions, differs from L*a*b* and RGB lightness.
+TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM is the clarity of a stimulus relative to the clarity of a stimulus that appears white under similar viewing conditions. It differs from L*a*b* and RGB lightness.
 TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
-TP_COLORAPP_MODEL;WP Model
-TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02/16 is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02/16] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp + tint + CAT02/16 + [output]:</b> temp and tint are selected by the user, the output device's white balance is set in Viewing Conditions.
-TP_COLORAPP_MODELCAT;CAM Model
-TP_COLORAPP_MODELCAT_TOOLTIP;Allows you to choose between CIECAM02 or CIECAM16.\n CIECAM02 will sometimes be more accurate.\n CIECAM16 should generate fewer artifacts
+TP_COLORAPP_MODEL;WP model
+TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02/16] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp + tint + CAT02/16 + [output]:</b> temp and tint are selected by the user, the output device's white balance is set in Viewing Conditions.
+TP_COLORAPP_MODELCAT;CAM
+TP_COLORAPP_MODELCAT_TOOLTIP;Allows you to choose between CIECAM02 or CIECAM16.\nCIECAM02 will sometimes be more accurate.\nCIECAM16 should generate fewer artifacts.
 TP_COLORAPP_MOD02;CIECAM02
 TP_COLORAPP_MOD16;CIECAM16
 TP_COLORAPP_NEUTRAL;Reset
 TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
-TP_COLORAPP_PRESETCAT02;Preset cat02/16 automatic - Symmetric mode
-TP_COLORAPP_PRESETCAT02_TIP;Set combobox, sliders, temp, green so that Cat02/16 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change Cat02/16 adaptation Viewing conditions if needed.\nYou can change Temperature and Tint Viewing conditions if needed, and other settings if needed.\nAll auto checkbox are disabled 
+TP_COLORAPP_PRESETCAT02;Preset CAT02/16 automatic - Symmetric mode
+TP_COLORAPP_PRESETCAT02_TIP;Set combobox, sliders, temp, green so that CAT02/16 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change CAT02/16 adaptation Viewing conditions if needed.\nYou can change Temperature and Tint Viewing conditions if needed, and other settings if needed.\nAll auto checkbox are disabled
 TP_COLORAPP_RSTPRO;Red & skin-tones protection
 TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
 TP_COLORAPP_SOURCEF_TOOLTIP;Corresponds to the shooting conditions and how to bring the conditions and data back to a "normal" area. Normal" means average or standard conditions and data, i.e. without taking into account CIECAM corrections.
 TP_COLORAPP_SURROUND;Surround
-TP_COLORAPP_SURROUNDSRC;Surround - Scene Lighting
+TP_COLORAPP_SURROUNDSRC;Surround
 TP_COLORAPP_SURROUND_AVER;Average
 TP_COLORAPP_SURROUND_DARK;Dark
 TP_COLORAPP_SURROUND_DIM;Dim
 TP_COLORAPP_SURROUND_EXDARK;Extremly Dark (Cutsheet)
-TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colors to take into account the viewing conditions of the output device.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment (TV). The image will become slightly dark.\n\n<b>Dark</b>: Dark environment (projector). The image will become more dark.\n\n<b>Extremly Dark</b>: Extremly dark environment (cutsheet). The image will become very dark.
-TP_COLORAPP_SURSOURCE_TOOLTIP;Changes tones and colors to take into account the Scene conditions.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment. The image will become slightly bright.\n\n<b>Dark</b>: Dark environment. The image will become more bright.\n\n<b>Extremly Dark</b>: Extremly dark environment. The image will become very bright.
+TP_COLORAPP_SURROUND_TOOLTIP;Changes tones and colors to take into account the viewing conditions of the output device. The darker the viewing conditions, the darker the image will become. Image brightness will not be changed when the viewing conditions are set to average.
+TP_COLORAPP_SURSOURCE_TOOLTIP;Changes tones and colors to take into account the surround conditions of the scene lighting. The darker the surround conditions, the brighter the image will become. Image brightness will not be changed when the surround is set to average.
 TP_COLORAPP_TCMODE_BRIGHTNESS;Brightness
 TP_COLORAPP_TCMODE_CHROMA;Chroma
 TP_COLORAPP_TCMODE_COLORF;Colorfulness
@@ -2244,9 +2244,9 @@ TP_COLORAPP_TCMODE_SATUR;Saturation
 TP_COLORAPP_TEMP2_TOOLTIP;Either symmetrical mode temp = White balance.\nEither select illuminant always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
 TP_COLORAPP_TEMPOUT_TOOLTIP;Disable to change temperature and tint
 TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
-TP_COLORAPP_TONECIE;Tone mapping using CIECAM02/16
+TP_COLORAPP_TONECIE;Use CIECAM for tone mapping
 TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
-TP_COLORAPP_VIEWINGF_TOOLTIP;Takes into account the support on which the final image will be viewed (monitor, TV, projector, printer, ...), as well as its environment. This process will take the data coming from process "Image Adjustments" and "bring" it to the support in such a way that the viewing conditions and its environment are taken into account.
+TP_COLORAPP_VIEWINGF_TOOLTIP;Takes into account the support on which the final image will be viewed (monitor, TV, projector, printer, etc.), as well as its environment. This process will take the data coming from process "Image Adjustments" and "bring" it to the support in such a way that the viewing conditions and its environment are taken into account.
 TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Absolute luminance of the viewing environment\n(usually 16 cd/m²).
 TP_COLORAPP_WBCAM;WB [RT+CAT02/16] + [output]
 TP_COLORAPP_WBRT;WB [RT] + [output]
@@ -2848,7 +2848,7 @@ TP_LOCALLAB_EXPCOLOR_TOOLTIP;Adjust color, lightness, contrast and correct small
 TP_LOCALLAB_EXPCOMP;Exposure compensation ƒ
 TP_LOCALLAB_EXPCOMPINV;Exposure compensation
 TP_LOCALLAB_EXPCOMP_TOOLTIP;For portraits or images with a low color gradient. You can change ‘Shape detection’ in "Settings":\n\nIncrease 'ΔE scope threshold'\nReduce 'ΔE decay'\nIncrease 'ab-L balance (ΔE)’ 
-TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;See the documentation for Wavelet Levels.\nThere are some differences in the Local Adjustments version, which has more tools and more possibilities for working on individual detail levels.\ne.g. Wavelet-level tone mapping. 
+TP_LOCALLAB_EXPCONTRASTPYR_TOOLTIP;See the documentation for Wavelet Levels.\nThere are some differences in the Local Adjustments version, which has more tools and more possibilities for working on individual detail levels.\nE.g. wavelet-level tone mapping.
 TP_LOCALLAB_EXPCONTRAST_TOOLTIP;Avoid spots that are too small ( < 32x32 pixels).\nUse low ‘Transition value’ and high ‘Transition decay’ and ‘Scope’ to simulate small RT-spots and deal with defects.\nUse 'Clarity and Sharp mask and Blend and Soften Images' if necessary by adjusting 'Soft radius' to reduce artifacts.
 TP_LOCALLAB_EXPCURV;Curves
 TP_LOCALLAB_EXPGRAD;Graduated Filter
@@ -3430,7 +3430,7 @@ TP_LOCALLAB_WAVGRAD_TOOLTIP;Allows the local contrast to be varied according to 
 TP_LOCALLAB_WAVHUE_TOOLTIP;Allows you to reduce or increase the denoise based on hue.
 TP_LOCALLAB_WAVLEV;Blur by level
 TP_LOCALLAB_WAVMASK;Local contrast
-TP_LOCALLAB_WAVMASK_TOOLTIP;Uses wavelets to modify the local contrast of the mask and reinforce or reduce the structure (skin, buildings...)
+TP_LOCALLAB_WAVMASK_TOOLTIP;Uses wavelets to modify the local contrast of the mask and reinforce or reduce the structure (skin, buildings, etc.)
 TP_LOCALLAB_WEDIANHI;Median Hi
 TP_LOCALLAB_WHITE_EV;White Ev
 TP_LOCALLAB_ZCAMFRA;ZCAM Image Adjustments

@@ -718,7 +718,6 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
 
     gamut = Gtk::manage (new Gtk::CheckButton (M ("TP_COLORAPP_GAMUT")));
-    gamut->set_tooltip_markup (M ("TP_COLORAPP_GAMUT_TOOLTIP"));
     gamutconn = gamut->signal_toggled().connect ( sigc::mem_fun (*this, &ColorAppearance::gamut_toggled) );
     pack_start (*gamut, Gtk::PACK_SHRINK);
 
