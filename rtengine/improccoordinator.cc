@@ -1927,20 +1927,20 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 ipf.ciecam_02float(ncie, float (adap), pW, 2, nprevl, params.get(), customColCurve1, customColCurve2, customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 0, scale, execsharp, d, dj, yb, 1);
 
-                if ((params->colorappearance.autodegree || params->colorappearance.autodegreeout) && acListener && params->colorappearance.enabled && !params->colorappearance.presetcat02) {
+                if ((params->colorappearance.autodegree || params->colorappearance.autodegreeout) && acListener && params->colorappearance.enabled) {
                     acListener->autoCamChanged(100.* (double)d, 100.* (double)dj);
                 }
 
-                if (params->colorappearance.autoadapscen && acListener && params->colorappearance.enabled && !params->colorappearance.presetcat02) {
+                if (params->colorappearance.autoadapscen && acListener && params->colorappearance.enabled) {
                     acListener->adapCamChanged(adap);    //real value of adapt scene
                 }
 
-                if (params->colorappearance.autoybscen && acListener && params->colorappearance.enabled && !params->colorappearance.presetcat02) {
+                if (params->colorappearance.autoybscen && acListener && params->colorappearance.enabled) {
                     acListener->ybCamChanged((int) yb);    //real value Yb scene
                 }
 
-             //   if (params->colorappearance.enabled && params->colorappearance.presetcat02  && params->colorappearance.autotempout) {
-              //  if (params->colorappearance.enabled && params->colorappearance.presetcat02) {
+             //   if (params->colorappearance.enabled  && params->colorappearance.autotempout) {
+              //  if (params->colorappearance.enabled) {
               //      acListener->wbCamChanged(params->wb.temperature, params->wb.green);    //real temp and tint
                //     acListener->wbCamChanged(params->wb.temperature, 1.f);    //real temp and tint = 1.
                // }
