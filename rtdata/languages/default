@@ -2214,9 +2214,9 @@ TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
 TP_COLORAPP_MODEL;WP Model
 TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02/16 is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02/16] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp + tint + CAT02/16 + [output]:</b> temp and tint are selected by the user, the output device's white balance is set in Viewing Conditions.
 TP_COLORAPP_MODELCAT;CAM Model
-TP_COLORAPP_MODELCAT_TOOLTIP;Allows you to choose between CIECAM02 or CIECAM16.\n CIECAM02 will sometimes be more accurate.\n CIECAM16 should generate fewer artifacts
-TP_COLORAPP_MOD02;CIECAM02
-TP_COLORAPP_MOD16;CIECAM16
+TP_COLORAPP_MODELCAT_TOOLTIP;Allows you to choose between CAM02 or CAM16.\n CAM02 will sometimes be more accurate.\n CAM16 should generate fewer artifacts
+TP_COLORAPP_MOD02;CAM02
+TP_COLORAPP_MOD16;CAM16
 TP_COLORAPP_NEUTRAL;Reset
 TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
 TP_COLORAPP_RSTPRO;Red & skin-tones protection
