@@ -1377,7 +1377,6 @@ HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
 HISTORY_MSG_BLUWAV;Attenuation response
-HISTORY_MSG_CAT02PRESET;CAT02/16 automatic preset
 HISTORY_MSG_CATCAT;CAL - Settings - Mode
 HISTORY_MSG_CATCOMPLEX;CAL - Settings - Complexity
 HISTORY_MSG_CATMODEL;CAL - Settings - CAM
@@ -2216,16 +2215,14 @@ TP_COLORAPP_LABEL_VIEWING;Viewing Conditions
 TP_COLORAPP_LIGHT;Lightness (J)
 TP_COLORAPP_LIGHT_TOOLTIP;Lightness in CIECAM is the clarity of a stimulus relative to the clarity of a stimulus that appears white under similar viewing conditions. It differs from L*a*b* and RGB lightness.
 TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
-TP_COLORAPP_MOD02;CIECAM02
-TP_COLORAPP_MOD16;CIECAM16
+TP_COLORAPP_MOD02;CAM02
+TP_COLORAPP_MOD16;CAM16
 TP_COLORAPP_MODEL;WP model
 TP_COLORAPP_MODELCAT;CAM
-TP_COLORAPP_MODELCAT_TOOLTIP;Allows you to choose between CIECAM02 or CIECAM16.\nCIECAM02 will sometimes be more accurate.\nCIECAM16 should generate fewer artifacts.
+TP_COLORAPP_MODELCAT_TOOLTIP;Allows you to choose between CAM02 or CAM16.\nCAM02 will sometimes be more accurate.\nCAM16 should generate fewer artifacts.
 TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02/16] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp + tint + CAT02/16 + [output]:</b> temp and tint are selected by the user, the output device's white balance is set in Viewing Conditions.
 TP_COLORAPP_NEUTRAL;Reset
 TP_COLORAPP_NEUTRAL_TOOLTIP;Reset all sliders checkbox and curves to their default values.
-TP_COLORAPP_PRESETCAT02;Preset CAT02/16 automatic - Symmetric mode
-TP_COLORAPP_PRESETCAT02_TOOLTIP;Set combobox, sliders, temp, green so that CAT02/16 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change CAT02/16 adaptation Viewing conditions if needed.\nYou can change Temperature and Tint Viewing conditions if needed, and other settings if needed.\nAll auto checkbox are disabled.
 TP_COLORAPP_RSTPRO;Red & skin-tones protection
 TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
 TP_COLORAPP_SOURCEF_TOOLTIP;Corresponds to the shooting conditions and how to bring the conditions and data back to a 'normal' area. Normal means average or standard conditions and data, i.e. without taking into account CIECAM corrections.
