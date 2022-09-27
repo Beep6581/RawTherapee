@@ -1168,7 +1168,7 @@ Wavelet::Wavelet() :
     //RTImage *resetImg = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
     //neutral->set_image(*resetImg);
     Gtk::Button* const neutral = Gtk::manage(new Gtk::Button(M("TP_COLORTONING_NEUTRAL")));
-    neutral->set_tooltip_text(M("TP_COLORTONING_NEUTRAL_TIP"));
+    neutral->set_tooltip_text(M("TP_COLORTONING_NEUTRAL_TOOLTIP"));
     neutralconn = neutral->signal_pressed().connect(sigc::mem_fun(*this, &Wavelet::neutral_pressed));
     neutral->show();
     neutrHBox->pack_start(*neutral, Gtk::PACK_EXPAND_WIDGET);
