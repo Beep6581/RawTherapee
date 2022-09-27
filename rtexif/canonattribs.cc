@@ -633,7 +633,7 @@ public:
             {37, "Tamron AF 28-300mm f/3.5-6.3 XR Di VC LD Aspherical [IF] Macro (A20)"},
             {37, "Tamron SP AF 17-50mm f/2.8 XR Di II VC LD Aspherical [IF]"},
             {37, "Tamron AF 18-270mm f/3.5-6.3 Di II VC LD Aspherical [IF] Macro"},
-            {38, "Canon EF 80-200mm f/4.5-5.6"},
+            {38, "Canon EF 80-200mm f/4.5-5.6 II"},
             {39, "Canon EF 75-300mm f/4-5.6"},
             {40, "Canon EF 28-80mm f/3.5-5.6"},
             {41, "Canon EF 28-90mm f/4-5.6"},
@@ -654,6 +654,7 @@ public:
             {53, "Canon EF-S 18-55mm f/3.5-5.6 III"},
             {54, "Canon EF-S 55-250mm f/4-5.6 IS II"},
             {60, "Irix 11mm f/4"},
+            {63, "Irix 30mm F1.4 Dragonfly"},
             {80, "Canon TS-E 50mm f/2.8L Macro"},
             {81, "Canon TS-E 90mm f/2.8L Macro"},
             {82, "Canon TS-E 135mm f/4L Macro"},
@@ -916,12 +917,13 @@ public:
             {252, "Canon EF 70-200mm f/2.8L IS III USM + 1.4x"},
             {253, "Canon EF 70-200mm f/2.8L IS II USM + 2x"},
             {253, "Canon EF 70-200mm f/2.8L IS III USM + 2x"},
-            {254, "Canon EF 100mm f/2.8L Macro IS USM"},
+            {254, "Canon EF 100mm f/2.8L Macro IS USM or Tamron Lens"},
+            {254, "Tamron SP 90mm f/2.8 Di VC USD 1:1 Macro (F017)"},
             {255, "Sigma 24-105mm f/4 DG OS HSM | A or Other Lens"},
             {255, "Sigma 180mm f/2.8 EX DG OS HSM APO Macro"},
             {255, "Tamron SP 70-200mm f/2.8 Di VC USD"},
             {368, "Sigma 14-24mm f/2.8 DG HSM | A or other Sigma Lens"},
-            {368, "Sigma 35mm f/1.4 DG HSM | A"},
+            {368, "Sigma 20mm f/1.4 DG HSM | A"},
             {368, "Sigma 50mm f/1.4 DG HSM | A"},
             {368, "Sigma 40mm f/1.4 DG HSM | A"},
             {368, "Sigma 60-600mm f/4.5-6.3 DG OS HSM | S"},
@@ -930,7 +932,9 @@ public:
             {368, "Sigma 85mm f/1.4 DG HSM | A"},
             {368, "Sigma 105mm f/1.4 DG HSM"},
             {368, "Sigma 14-24mm f/2.8 DG HSM"},
+            {368, "Sigma 35mm f/1.4 DG HSM | A"},
             {368, "Sigma 70mm f/2.8 DG Macro"},
+            {368, "Sigma 18-35mm f/1.8 DC HSM | A"},
             {488, "Canon EF-S 15-85mm f/3.5-5.6 IS USM"},
             {489, "Canon EF 70-300mm f/4-5.6L IS USM"},
             {490, "Canon EF 8-15mm f/4L Fisheye USM"},
@@ -958,7 +962,8 @@ public:
             {507, "Canon EF 16-35mm f/4L IS USM"},
             {508, "Canon EF 11-24mm f/4L USM or Tamron Lens"},
             {508, "Tamron 10-24mm f/3.5-4.5 Di II VC HLD (B023)"},
-            {624, "Sigma 70-200mm f/2.8 DG OS HSM | S"},
+            {624, "Sigma 70-200mm f/2.8 DG OS HSM | S or other Sigma Lens"},
+            {624, "Sigma 150-600mm f/5-6.3 | C"},
             {747, "Canon EF 100-400mm f/4.5-5.6L IS II USM or Tamron Lens"},
             {747, "Tamron SP 150-600mm f/5-6.3 Di VC USD G2"},
             {748, "Canon EF 100-400mm f/4.5-5.6L IS II USM + 1.4x or Tamron Lens"},
@@ -994,7 +999,8 @@ public:
             {4158, "Canon EF-S 18-55mm f/4-5.6 IS STM"},
             {4159, "Canon EF-M 32mm f/1.4 STM"},
             {4160, "Canon EF-S 35mm f/2.8 Macro IS STM"},
-            {4208, "Sigma 56mm f/1.4 DC DN | C"},
+            {4208, "Sigma 56mm f/1.4 DC DN | C or other Sigma Lens"},
+            {4208, "Sigma 30mm F1.4 DC DN | C"},
             {36910, "Canon EF 70-300mm f/4-5.6 IS II USM"},
             {36912, "Canon EF-S 18-135mm f/3.5-5.6 IS USM"},
             {61182, "Canon RF 35mm F1.8 Macro IS STM or other Canon RF Lens"},
@@ -1002,9 +1008,41 @@ public:
             {61182, "Canon RF 24-105mm F4 L IS USM"},
             {61182, "Canon RF 28-70mm F2 L USM"},
             {61182, "Canon RF 85mm F1.2L USM"},
+            {61182, "Canon RF 85mm F1.2L USM DS"},
+            {61182, "Canon RF 24-70mm F2.8L IS USM"},
+            {61182, "Canon RF 15-35mm F2.8L IS USM"},
             {61182, "Canon RF 24-240mm F4-6.3 IS USM"},
-            {61182, "Canon RF 24-70mm F2.8 L IS USM"},
-            {61182, "Canon RF 15-35mm F2.8 L IS USM"},
+            {61182, "Canon RF 70-200mm F2.8L IS USM"},
+            {61182, "Canon RF 85mm F2 MACRO IS STM"},
+            {61182, "Canon RF 600mm F11 IS STM"},
+            {61182, "Canon RF 600mm F11 IS STM + RF1.4x"},
+            {61182, "Canon RF 600mm F11 IS STM + RF2x"},
+            {61182, "Canon RF 800mm F11 IS STM"},
+            {61182, "Canon RF 800mm F11 IS STM + RF1.4x"},
+            {61182, "Canon RF 800mm F11 IS STM + RF2x"},
+            {61182, "Canon RF 24-105mm F4-7.1 IS STM"},
+            {61182, "Canon RF 100-500mm F4.5-7.1L IS USM"},
+            {61182, "Canon RF 100-500mm F4.5-7.1L IS USM + RF1.4x"},
+            {61182, "Canon RF 100-500mm F4.5-7.1L IS USM + RF2x"},
+            {61182, "Canon RF 70-200mm F4L IS USM"},
+            {61182, "Canon RF 100mm F2.8L MACRO IS USM"},
+            {61182, "Canon RF 50mm F1.8 STM"},
+            {61182, "Canon RF 14-35mm F4L IS USM"},
+            {61182, "Canon RF-S 18-45mm F4.5-6.3 IS STM"},
+            {61182, "Canon RF 100-400mm F5.6-8 IS USM"},
+            {61182, "Canon RF 100-400mm F5.6-8 IS USM + RF1.4x"},
+            {61182, "Canon RF 100-400mm F5.6-8 IS USM + RF2x"},
+            {61182, "Canon RF-S 18-150mm F3.5-6.3 IS STM"},
+            {61182, "Canon RF 24mm F1.8 MACRO IS STM"},
+            {61182, "Canon RF 16mm F2.8 STM"},
+            {61182, "Canon RF 400mm F2.8L IS USM"},
+            {61182, "Canon RF 400mm F2.8L IS USM + RF1.4x"},
+            {61182, "Canon RF 400mm F2.8L IS USM + RF2x"},
+            {61182, "Canon RF 600mm F4L IS USM"},
+            {61182, "Canon RF 15-30mm F4.5-6.3 IS STM"},
+            {61182, "Canon RF 800mm F5.6L IS USM"},
+            {61182, "Canon RF 1200mm F8L IS USM"},
+            {61182, "Canon RF 5.2mm F2.8L Dual Fisheye 3D VR"},
             {61491, "Canon CN-E 14mm T3.1 L F"},
             {61492, "Canon CN-E 24mm T1.5 L F"},
             {61494, "Canon CN-E 85mm T1.3 L F"},
@@ -1898,6 +1936,7 @@ public:
         choices[2147484678] = "EOS 6D Mark II";
         choices[2147484680] = "EOS 77D / 9000D";
         choices[2147484695] = "EOS Rebel SL2 / 200D / Kiss X9";
+        choices[2147484705] = "EOS R5";
         choices[2147484706] = "EOS Rebel T100 / 4000D / 3000D";
         choices[2147484708] = "EOS R";
         choices[2147484712] = "EOS-1D X Mark III";
@@ -1906,6 +1945,12 @@ public:
         choices[2147484725] = "EOS Rebel T8i / 850D / X10i";
         choices[2147484726] = "EOS SL3 / 250D / Kiss X10";
         choices[2147484727] = "EOS 90D";
+        choices[2147484752] = "EOS R3";
+        choices[2147484755] = "EOS R6";
+        choices[2147484772] = "EOS R7";
+        choices[2147484773] = "EOS R10";
+        choices[2147484775] = "PowerShot ZOOM";
+        choices[2147484776] = "EOS M50 Mark II / Kiss M2";
         choices[2147484960] = "EOS D2000C";
         choices[2147485024] = "EOS D6000C";
     }
