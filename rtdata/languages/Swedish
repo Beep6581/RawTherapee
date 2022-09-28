@@ -916,7 +916,7 @@ PROFILEPANEL_GLOBALPROFILES;Förinstallerade profiler
 PROFILEPANEL_LABEL;Efterbehandlingsprofiler
 PROFILEPANEL_LOADDLGLABEL;Ladda efterbehandlingsparametrar...
 PROFILEPANEL_LOADPPASTE;Parametrar att ladda
-PROFILEPANEL_MODE_TIP;Ifyllnadsläge för profil.\n\nKnappen nedtryckt: partiell profil konverteras till full profil; de saknade värdena kommer att fyllas i mha standardvärden.\n\nKnapp släppt: Profilen kommer att appliceras som den är, och förändrar bara de värden som den själv innehåller.
+PROFILEPANEL_MODE_TOOLTIP;Ifyllnadsläge för profil.\n\nKnappen nedtryckt: partiell profil konverteras till full profil; de saknade värdena kommer att fyllas i mha standardvärden.\n\nKnapp släppt: Profilen kommer att appliceras som den är, och förändrar bara de värden som den själv innehåller.
 PROFILEPANEL_MYPROFILES;Mina profiler
 PROFILEPANEL_PASTEPPASTE;Parametrar att klistra in
 PROFILEPANEL_PCUSTOM;Egen
@@ -1128,7 +1128,7 @@ TP_COLORTONING_LUMAMODE_TOOLTIP;Om aktiverad så kommer luminansen för varje pi
 TP_COLORTONING_METHOD;Metod
 TP_COLORTONING_MIDTONES;Mellantoner
 TP_COLORTONING_NEUTRAL;Återställ reglage
-TP_COLORTONING_NEUTRAL_TIP;Återställ alla värden (skuggor, mellantoner, högdagrar) till standardvärdena.
+TP_COLORTONING_NEUTRAL_TOOLTIP;Återställ alla värden (skuggor, mellantoner, högdagrar) till standardvärdena.
 TP_COLORTONING_OPACITY;Opacitet
 TP_COLORTONING_RGBCURVES;RGB - Kurvor
 TP_COLORTONING_RGBSLIDERS;RGB - Reglage
@@ -1229,11 +1229,11 @@ TP_EPD_REWEIGHTINGITERATES;Återviktade iterationer
 TP_EPD_SCALE;Skala
 TP_EPD_STRENGTH;Styrka
 TP_EXPOSURE_AUTOLEVELS;Autonivåer
-TP_EXPOSURE_AUTOLEVELS_TIP;Slå av/på autonivåer för att automatiskt beräkna och använda värden baserat på bildanalys\nAktiverar högdageråterställning om nödvändigt
+TP_EXPOSURE_AUTOLEVELS_TOOLTIP;Slå av/på autonivåer för att automatiskt beräkna och använda värden baserat på bildanalys\nAktiverar högdageråterställning om nödvändigt
 TP_EXPOSURE_BLACKLEVEL;Svärta
 TP_EXPOSURE_BRIGHTNESS;Ljushet
 TP_EXPOSURE_CLIP;Klippnivå %
-TP_EXPOSURE_CLIP_TIP;Andelen pixlar som ska klippas när autonivåer används.
+TP_EXPOSURE_CLIP_TOOLTIP;Andelen pixlar som ska klippas när autonivåer används.
 TP_EXPOSURE_COMPRHIGHLIGHTS;Högdageråterställning
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Högdageråterställning, tröskelvärde
 TP_EXPOSURE_COMPRSHADOWS;Skuggåterställning
@@ -1355,7 +1355,7 @@ TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminans enligt nyans L=f(H)
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminans enligt luminans L=f(L)
 TP_LABCURVE_LABEL;Labjusteringar
 TP_LABCURVE_LCREDSK;Begränsa LC till röda färger och hudtoner
-TP_LABCURVE_LCREDSK_TIP;Om aktiverad så påverkar LC-kurvan enbart röda färger och hudtoner.\nOm ej aktiverad så appliceras den till alla färger och toner.
+TP_LABCURVE_LCREDSK_TOOLTIP;Om aktiverad så påverkar LC-kurvan enbart röda färger och hudtoner.\nOm ej aktiverad så appliceras den till alla färger och toner.
 TP_LABCURVE_RSTPROTECTION;Skydda röda färger och hudtoner
 TP_LABCURVE_RSTPRO_TOOLTIP;Kan användas med kromareglaget och CC-kurvan
 TP_LENSGEOM_AUTOCROP;Autobeskärning
@@ -1363,7 +1363,7 @@ TP_LENSGEOM_FILL;Fyll automatiskt
 TP_LENSGEOM_LABEL;Geometrisk- och distorsionskorrigering
 TP_LENSPROFILE_LABEL;Objektivkorrigeringsprofil
 TP_NEUTRAL;Återställ
-TP_NEUTRAL_TIP;Återställ exponeringsreglagen till neutrala värden.\nGäller för samma reglage som autonivåer, oavsett om du använder autonivåer eller ej
+TP_NEUTRAL_TOOLTIP;Återställ exponeringsreglagen till neutrala värden.\nGäller för samma reglage som autonivåer, oavsett om du använder autonivåer eller ej
 TP_PCVIGNETTE_FEATHER;Fjäder
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Fjäder: 0=enbart kanter, 50=halvvägs till mitten, 100=i mitten
 TP_PCVIGNETTE_LABEL;Vinjetteringsfilter
@@ -1466,7 +1466,7 @@ TP_RETINEX_MAP_NONE;Ingen
 TP_RETINEX_METHOD;Metod
 TP_RETINEX_NEIGHBOR;Radie
 TP_RETINEX_NEUTRAL;Återställ
-TP_RETINEX_NEUTRAL_TIP;Återställer alla reglage och kurvor till sina ursprungliga värden.
+TP_RETINEX_NEUTRAL_TOOLTIP;Återställer alla reglage och kurvor till sina ursprungliga värden.
 TP_RETINEX_OFFSET;Kompensation (ljushet)
 TP_RETINEX_SCALES;Gaussisk gradient
 TP_RETINEX_SCALES_TOOLTIP;Om reglaget är på 0 så kommer alla iterationer att vara lika.\nOm > 0 så kommer skalan och radien reduceras när iterationerna ökar och omvänt.
@@ -1496,7 +1496,7 @@ TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Grader
 TP_ROTATE_LABEL;Rotera
 TP_ROTATE_SELECTLINE;Välj rak linje
-TP_SAVEDIALOG_OK_TIP;Kortkommando: <b>Ctrl-Enter</b>
+TP_SAVEDIALOG_OK_TOOLTIP;Kortkommando: <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Högdager
 TP_SHADOWSHLIGHTS_HLTONALW;Tonvidd (Högdagrar)
 TP_SHADOWSHLIGHTS_LABEL;Skugg- och högdageråterställning
@@ -1757,7 +1757,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !EXPORT_BYPASS;Processing steps to bypass
 !EXPORT_PIPELINE;Processing pipeline
 !EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
-!EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
+!EXPORT_USE_FAST_PIPELINE_TOOLTIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
 !EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
@@ -2078,7 +2078,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
 !TP_COLORAPP_NEUTRAL;Reset
-!TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
+!TP_COLORAPP_NEUTRAL_TOOLTIP;Reset all sliders checkbox and curves to their default values
 !TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
 !TP_COLORTONING_CURVEEDITOR_CL_TOOLTIP;Chroma opacity as a function of luminance oC=f(L)
 !TP_COLORTONING_LABEL;Color Toning
@@ -2127,7 +2127,7 @@ ZOOMPANEL_ZOOMOUT;Förminska.\nKortkommando: <b>-</b>
 !TP_DIRPYRDENOISE_MEDIAN_TYPE;Median type
 !TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
 !TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected.
-!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
+!TP_DISTORTION_AUTO_TOOLTIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colors
 !TP_EXPOSURE_HISTMATCHING;Auto-Matched Tone Curve
 !TP_EXPOSURE_HISTMATCHING_TOOLTIP;Automatically adjust sliders and curves (except exposure compensation) to match the look of the embedded JPEG thumbnail.

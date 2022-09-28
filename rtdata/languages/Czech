@@ -147,7 +147,7 @@ EXPORT_PIPELINE;Fronta zpracování
 EXPORT_PUTTOQUEUEFAST;  Vložit do fronty pro rychlý export
 EXPORT_RAW_DMETHOD;Metoda demozajkování
 EXPORT_USE_FAST_PIPELINE;Vyhrazený (kompletní zpracování zmenšeného obrázku)
-EXPORT_USE_FAST_PIPELINE_TIP;Použije vyhrazenou frontu zpracování v režimu rychlého exportu a vymění tak kvalitu za rychlost. Zmenšení obrázku se provede co nejdříve po zahájení zpracování, na rozdíl od standardního zpracování, kde se provádí až na závěr. Zrychlení může být velmi významné, ale připravte se na artefakty a celkové zhoršení kvality výstupu.
+EXPORT_USE_FAST_PIPELINE_TOOLTIP;Použije vyhrazenou frontu zpracování v režimu rychlého exportu a vymění tak kvalitu za rychlost. Zmenšení obrázku se provede co nejdříve po zahájení zpracování, na rozdíl od standardního zpracování, kde se provádí až na závěr. Zrychlení může být velmi významné, ale připravte se na artefakty a celkové zhoršení kvality výstupu.
 EXPORT_USE_NORMAL_PIPELINE;Standardní (přeskočí některé kroky, zmenší až na konci)
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;Zpracování fronty
@@ -1308,7 +1308,7 @@ PROFILEPANEL_GLOBALPROFILES;Přiložené profily
 PROFILEPANEL_LABEL;Profily zpracování
 PROFILEPANEL_LOADDLGLABEL;Načíst parametry zpracování...
 PROFILEPANEL_LOADPPASTE;Parametry nahrávání
-PROFILEPANEL_MODE_TIP;Režim uplatnění profilu zpracování.\n\nTlačítko je stisknuto: částečné profily budou aplikovány jako kompletní; chybějící hodnoty budou doplněny přednastavenými hodnotami.\n\nTlačítko není stisknuto: profily budou aplikovány tak jak jsou, změní se pouze v profilu obsažené hodnoty.
+PROFILEPANEL_MODE_TOOLTIP;Režim uplatnění profilu zpracování.\n\nTlačítko je stisknuto: částečné profily budou aplikovány jako kompletní; chybějící hodnoty budou doplněny přednastavenými hodnotami.\n\nTlačítko není stisknuto: profily budou aplikovány tak jak jsou, změní se pouze v profilu obsažené hodnoty.
 PROFILEPANEL_MYPROFILES;Mé profily
 PROFILEPANEL_PASTEPPASTE;Parametry pro vložení
 PROFILEPANEL_PCUSTOM;Vlastní
@@ -1525,9 +1525,9 @@ TP_COLORAPP_MEANLUMINANCE;Střední jas (Yb%)
 TP_COLORAPP_MODEL;VB - Model
 TP_COLORAPP_MODEL_TOOLTIP;Model bílého bodu.\n\n<b>WB [RT] + [výstup]</b>: Pro scénu je použito vyvážení bílé RawTherapee , CIECAM02 je nastaven na D50 a vyvážení bílé výstupního zařízení je nastaveno v Podmínkách prohlížení.\n\n<b>WB [RT+CAT02] + [výstup]</b>: CAT02 používá RawTherapee nastavení vyvážení bílé a vyvážení bílé výstupního zařízení je nastaveno v Podmínkách prohlížení.\n\n<b>Volná teplota+zelená + CAT02 + [výstup]:</b> teplota a zelená je vybrána uživatelem, vyvážení bílé výstupního zařízení je nastaveno v Podmínkách prohlížení.
 TP_COLORAPP_NEUTRAL;Obnovit
-TP_COLORAPP_NEUTRAL_TIP;Obnoví původní hodnoty u všech posuvníků a křivek.
+TP_COLORAPP_NEUTRAL_TOOLTIP;Obnoví původní hodnoty u všech posuvníků a křivek.
 TP_COLORAPP_PRESETCAT02;Automatické přednastavení Cat02
-TP_COLORAPP_PRESETCAT02_TIP;Nastaví volby, posuvníky, teplotu a zelenou podle Cat02 automatického přednastavení.\nMusíte nastavit světelné podmínky při fotografování.\nPokud je potřeba, musíte změnit Cat02 podmínky přizpůsobení pro prohlížení.\nPokud je potřeba, můžete změnit teplotu a odstín podmínek při prohlížení a také další nastavení.
+TP_COLORAPP_PRESETCAT02_TOOLTIP;Nastaví volby, posuvníky, teplotu a zelenou podle Cat02 automatického přednastavení.\nMusíte nastavit světelné podmínky při fotografování.\nPokud je potřeba, musíte změnit Cat02 podmínky přizpůsobení pro prohlížení.\nPokud je potřeba, můžete změnit teplotu a odstín podmínek při prohlížení a také další nastavení.
 TP_COLORAPP_RSTPRO;Ochrana červených a pleťových tónů
 TP_COLORAPP_RSTPRO_TOOLTIP;Ochrana červených a pleťových tónů ovlivňuje posuvníky i křivky.
 TP_COLORAPP_SURROUND;Okolí
@@ -1591,7 +1591,7 @@ TP_COLORTONING_METHOD;Metoda
 TP_COLORTONING_METHOD_TOOLTIP;"Mísení L*a*b*", "RGB posuvníky" a "RGB křivky" používají interpolované mísení barev.\n"Vyvážení barev (Stíny, střední tóny a světla)" a "Nasycení dvou barev" používají přímé barvy.\n\nNástroj Černobílá může být povolen při použití kterékoli metody barevného tónování.
 TP_COLORTONING_MIDTONES;Střední tóny
 TP_COLORTONING_NEUTRAL;Vrátit posuvníky
-TP_COLORTONING_NEUTRAL_TIP;Vrátí všechny hodnoty (stíny, střední tóny a světla) na výchozí pozice.
+TP_COLORTONING_NEUTRAL_TOOLTIP;Vrátí všechny hodnoty (stíny, střední tóny a světla) na výchozí pozice.
 TP_COLORTONING_OPACITY;Neprůhlednost
 TP_COLORTONING_RGBCURVES;RGB - křivky
 TP_COLORTONING_RGBSLIDERS;RGB - Posuvníky
@@ -1707,7 +1707,7 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;Hodnota -100:  zaměřeno na pleťové tóny.\nH
 TP_DIRPYREQUALIZER_THRESHOLD;Práh
 TP_DIRPYREQUALIZER_TOOLTIP;Počet pokusů pro redukci artefaktů vzniklých přenosem barvy (odstín, barevnost a jas) pleti na zbytek obrázku.
 TP_DISTORTION_AMOUNT;Míra
-TP_DISTORTION_AUTO_TIP;Automaticky opraví zkreslení objektivu v raw souborech podle vložených JPEG obrázků (pokud existují a byly automaticky opraveny fotoaparátem).
+TP_DISTORTION_AUTO_TOOLTIP;Automaticky opraví zkreslení objektivu v raw souborech podle vložených JPEG obrázků (pokud existují a byly automaticky opraveny fotoaparátem).
 TP_DISTORTION_LABEL;Korekce zkreslení
 TP_EPD_EDGESTOPPING;Zachování hran
 TP_EPD_GAMMA;Gama
@@ -1716,12 +1716,12 @@ TP_EPD_REWEIGHTINGITERATES;Počet průchodů převážení
 TP_EPD_SCALE;Měřítko
 TP_EPD_STRENGTH;Síla
 TP_EXPOSURE_AUTOLEVELS;Automatické úrovně
-TP_EXPOSURE_AUTOLEVELS_TIP;Přepne provedení Automatické úrovně na automatickou sadu hodnot parametrů založených na analýze obrázku\nPokud to je nezbytné, povolí rekonstrukci světel.
+TP_EXPOSURE_AUTOLEVELS_TOOLTIP;Přepne provedení Automatické úrovně na automatickou sadu hodnot parametrů založených na analýze obrázku\nPokud to je nezbytné, povolí rekonstrukci světel.
 TP_EXPOSURE_BLACKLEVEL;Černá
 TP_EXPOSURE_BRIGHTNESS;Světlost
 TP_EXPOSURE_CLAMPOOG;Oříznout barvy mimo gamut
 TP_EXPOSURE_CLIP;Oříznutí %
-TP_EXPOSURE_CLIP_TIP;Podíl klipujících bodů v automatických operacích úrovní.
+TP_EXPOSURE_CLIP_TOOLTIP;Podíl klipujících bodů v automatických operacích úrovní.
 TP_EXPOSURE_COMPRHIGHLIGHTS;Komprese světel
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Práh komprese světel
 TP_EXPOSURE_COMPRSHADOWS;Komprese stínů
@@ -1867,7 +1867,7 @@ TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Jas dle jasu odstínu L=f(H)
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Jas dle jasu L=f(L)
 TP_LABCURVE_LABEL;L*a*b* úpravy
 TP_LABCURVE_LCREDSK;Omezit LC na tóny červené a pleti
-TP_LABCURVE_LCREDSK_TIP;Pokud je povoleno, je LC křivka omezena pouze na červené a pleťové tóny\nPokud je zakázáno, aplikuje se na všechny tóny
+TP_LABCURVE_LCREDSK_TOOLTIP;Pokud je povoleno, je LC křivka omezena pouze na červené a pleťové tóny\nPokud je zakázáno, aplikuje se na všechny tóny
 TP_LABCURVE_RSTPROTECTION;Ochrana červených a pleťových tónů
 TP_LABCURVE_RSTPRO_TOOLTIP;Pracuje s posuvníkem barevnosti a CC křivkou.
 TP_LENSGEOM_AUTOCROP;Automatický ořez
@@ -1895,7 +1895,7 @@ TP_METADATA_MODE;Režim kopírování metadat
 TP_METADATA_STRIP;Odstranit všechna metadata
 TP_METADATA_TUNNEL;Kopírovat beze změny
 TP_NEUTRAL;Obnovit
-TP_NEUTRAL_TIP;Nastaví posuvníky expozice na neutrální hodnoty,\nPoužije stejné kontroly jako volba "Automatické úrovně" bez ohledu na to, zda jsou nebo nejsou Automatické úrovně použity.
+TP_NEUTRAL_TOOLTIP;Nastaví posuvníky expozice na neutrální hodnoty,\nPoužije stejné kontroly jako volba "Automatické úrovně" bez ohledu na to, zda jsou nebo nejsou Automatické úrovně použity.
 TP_PCVIGNETTE_FEATHER;Rozptyl
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Rozptyl:\n0 = pouze rohy,\n50 = napůl do středu,\n100 = do středu.
 TP_PCVIGNETTE_LABEL;Viněta
@@ -2084,7 +2084,7 @@ TP_RETINEX_MLABEL;Obnovený bez závoje Min=%1 Max=%2
 TP_RETINEX_MLABEL_TOOLTIP;Mělo by být poblíž min=0 max=32768\nObnovený obraz bez příměsí.
 TP_RETINEX_NEIGHBOR;Poloměr
 TP_RETINEX_NEUTRAL;Obnovit
-TP_RETINEX_NEUTRAL_TIP;Obnoví původní hodnoty u všech posuvníků a křivek.
+TP_RETINEX_NEUTRAL_TOOLTIP;Obnoví původní hodnoty u všech posuvníků a křivek.
 TP_RETINEX_OFFSET;Posun (jasu)
 TP_RETINEX_SCALES;Gaussův gradient
 TP_RETINEX_SCALES_TOOLTIP;Pokud je posuvník na nule jsou všechny průchody stejné,\nPokud je větší než nula, tak jsou Rozsah a Průměr s přibývajícími průběhy omezovány. A obráceně.
@@ -2120,7 +2120,7 @@ TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Stupně
 TP_ROTATE_LABEL;Otočení
 TP_ROTATE_SELECTLINE;Vyznačit rovinu
-TP_SAVEDIALOG_OK_TIP;Zkratka: <b>Ctrl-Enter</b>
+TP_SAVEDIALOG_OK_TOOLTIP;Zkratka: <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Světla
 TP_SHADOWSHLIGHTS_HLTONALW;Tónový rozsah světel
 TP_SHADOWSHLIGHTS_LABEL;Stíny/Světla

@@ -162,7 +162,7 @@ EXPORT_PIPELINE;Fuente de procesamiento
 EXPORT_PUTTOQUEUEFAST;  Poner en la cola de Exportación Rápida
 EXPORT_RAW_DMETHOD;Método de interpolado
 EXPORT_USE_FAST_PIPELINE;Dedicado (procesamiento completo en imagen redimensionada)
-EXPORT_USE_FAST_PIPELINE_TIP;Usar un conducto de procesamiento dedicado para las imágenes en el modo Exportación rápida, que cambia la velocidad por la calidad. El cambio de tamaño de la imagen se realiza lo antes posible, en lugar de hacerlo al final como en el conducto normal. La aceleración puede ser importante, pero prepárese para ver elementos extraños y una degradación general de la calidad de salida.
+EXPORT_USE_FAST_PIPELINE_TOOLTIP;Usar un conducto de procesamiento dedicado para las imágenes en el modo Exportación rápida, que cambia la velocidad por la calidad. El cambio de tamaño de la imagen se realiza lo antes posible, en lugar de hacerlo al final como en el conducto normal. La aceleración puede ser importante, pero prepárese para ver elementos extraños y una degradación general de la calidad de salida.
 EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
 EXTPROGTARGET_1;Raw
 EXTPROGTARGET_2;procesado en cola
@@ -1258,7 +1258,7 @@ PROFILEPANEL_GLOBALPROFILES;Perfiles empaquetados
 PROFILEPANEL_LABEL;Perfiles de procesamiento
 PROFILEPANEL_LOADDLGLABEL;Cargar parámetros de procesamiento...
 PROFILEPANEL_LOADPPASTE;Parámetros a cargar
-PROFILEPANEL_MODE_TIP;Modo de procesamiento de perfiles.\n\nBotón Presionado: los perfiles parciales son completados; Los valores faltantes son llenados usando valores predeterminados de fábrica.\n\nBotón Liberado: Los perfiles son aplicados tal como están, alterando solo los valores que contienen; los parámetros sin valores en el perfil se dejan en la imagen tal como están.
+PROFILEPANEL_MODE_TOOLTIP;Modo de procesamiento de perfiles.\n\nBotón Presionado: los perfiles parciales son completados; Los valores faltantes son llenados usando valores predeterminados de fábrica.\n\nBotón Liberado: Los perfiles son aplicados tal como están, alterando solo los valores que contienen; los parámetros sin valores en el perfil se dejan en la imagen tal como están.
 PROFILEPANEL_MYPROFILES;Mis perfiles
 PROFILEPANEL_PASTEPPASTE;Parámetros
 PROFILEPANEL_PCUSTOM;A medida
@@ -1458,7 +1458,7 @@ TP_COLORAPP_MEANLUMINANCE;Luminancia media (Yb%)
 TP_COLORAPP_MODEL;Modelo de Punto Blanco
 TP_COLORAPP_MODEL_TOOLTIP;Modelo de Punto Blanco\n\n<b>WB [RT] + [salida]:</b>\nEl Balance de Blancos de RT es usado para la escena, CIECAM02 es establecido a D50, y el Balance de Blancos del dispositivo de salida es el establecido en <i>Preferencias > Gestión de Color</i>\n\n<b>WB [RT+CAT02] + [salida]:</b>\nEl Balance de Blancos de RT es usado por CAT02 y el del dispositivo de salida es el establecido en preferencias
 TP_COLORAPP_NEUTRAL;Restablecer
-TP_COLORAPP_NEUTRAL_TIP;Restablecer todos los controles deslizantes y las curvas a sus valores predeterminados
+TP_COLORAPP_NEUTRAL_TOOLTIP;Restablecer todos los controles deslizantes y las curvas a sus valores predeterminados
 TP_COLORAPP_RSTPRO; Protección de tonos rojos y color piel
 TP_COLORAPP_RSTPRO_TOOLTIP;Intensidad de protección de tonos rojos y color piel (en curvas y en controles deslizantes)
 TP_COLORAPP_SURROUND;Entorno
@@ -1520,7 +1520,7 @@ TP_COLORTONING_METHOD;Método
 TP_COLORTONING_METHOD_TOOLTIP;"Mezcla Lab", "Controles deslizantes RGB" y "Curvas RGB" utilizan mezcla de color interpolada.\n"Balance de Color (Sombras/Tonos Medios/Luces Altas)" y "Saturación 2 colores" utilizan colores directos.\n\nCualquier método de tonificación de color puede ser aplicado aún estando la herramienta Blanco y Negro activada.
 TP_COLORTONING_MIDTONES;Tonos Medios
 TP_COLORTONING_NEUTRAL;Restablecer controles deslizantes
-TP_COLORTONING_NEUTRAL_TIP;Restablecer todos los valores predeterminados(Sombras, Tonos Medios, Luces Altas).
+TP_COLORTONING_NEUTRAL_TOOLTIP;Restablecer todos los valores predeterminados(Sombras, Tonos Medios, Luces Altas).
 TP_COLORTONING_OPACITY;Opacidad
 TP_COLORTONING_RGBCURVES;RGB - Curvas
 TP_COLORTONING_RGBSLIDERS;RGB - Controles deslizantes
@@ -1634,7 +1634,7 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;A -100 se focalizan los tonos de piel.\nA 0 todo
 TP_DIRPYREQUALIZER_THRESHOLD;Umbral
 TP_DIRPYREQUALIZER_TOOLTIP;Reduce los elementos extraños producidos en la transición entre los colores de piel (matiz, crominancia, luminancia) y el resto de la imagen.
 TP_DISTORTION_AMOUNT;Cantidad
-TP_DISTORTION_AUTO_TIP;Corrige automáticamente la distorsión de la lente en archivos sin procesar al compararla con la imagen JPEG incrustada, si existe, y la cámara ha corregido automáticamente la distorsión de la lente.
+TP_DISTORTION_AUTO_TOOLTIP;Corrige automáticamente la distorsión de la lente en archivos sin procesar al compararla con la imagen JPEG incrustada, si existe, y la cámara ha corregido automáticamente la distorsión de la lente.
 TP_DISTORTION_LABEL;Corrección de Distorsión
 TP_EPD_EDGESTOPPING;Parada en los bordes
 TP_EPD_GAMMA;Gamma
@@ -1643,12 +1643,12 @@ TP_EPD_REWEIGHTINGITERATES;Iteraciones de reponderación
 TP_EPD_SCALE;Escala
 TP_EPD_STRENGTH;Intensidad
 TP_EXPOSURE_AUTOLEVELS;Niveles automáticos
-TP_EXPOSURE_AUTOLEVELS_TIP;Ejecuta Niveles Automáticos. Establece automáticamente los valores de los parámetros basándose en el análisis de la imagen.\nHabilita la reconstrucción de luces altas si es necesario
+TP_EXPOSURE_AUTOLEVELS_TOOLTIP;Ejecuta Niveles Automáticos. Establece automáticamente los valores de los parámetros basándose en el análisis de la imagen.\nHabilita la reconstrucción de luces altas si es necesario
 TP_EXPOSURE_BLACKLEVEL;Nivel de Negro
 TP_EXPOSURE_BRIGHTNESS;Brillo
 TP_EXPOSURE_CLAMPOOG;Corte fuera de la gama de colores
 TP_EXPOSURE_CLIP;Recorte %
-TP_EXPOSURE_CLIP_TIP;Fracción de los píxeles que se recortará en una operación de Niveles Automáticos
+TP_EXPOSURE_CLIP_TOOLTIP;Fracción de los píxeles que se recortará en una operación de Niveles Automáticos
 TP_EXPOSURE_COMPRHIGHLIGHTS;Compresión de luces altas
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Umbral de recuperación de luces altas
 TP_EXPOSURE_COMPRSHADOWS;Compresión de sombras
@@ -1785,7 +1785,7 @@ TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminancia en función del Matiz L=f(M)
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminancia en función de la Luminancia L=f(L)
 TP_LABCURVE_LABEL;Ajustes Lab
 TP_LABCURVE_LCREDSK;Restringe LC a tonos rojos y piel
-TP_LABCURVE_LCREDSK_TIP;Si se activa, la 'Curva LC' afecta solo a los tonos rojos y piel\nSi se desactiva, se aplica a todos los colores
+TP_LABCURVE_LCREDSK_TOOLTIP;Si se activa, la 'Curva LC' afecta solo a los tonos rojos y piel\nSi se desactiva, se aplica a todos los colores
 TP_LABCURVE_RSTPROTECTION;Protección de rojos y tonos piel
 TP_LABCURVE_RSTPRO_TOOLTIP;Puede usarse con el deslizador Cromaticidad y con la curva CC.
 TP_LENSGEOM_AUTOCROP;Auto recorte
@@ -1806,7 +1806,7 @@ TP_METADATA_MODE;Modo de copia de metadatos
 TP_METADATA_STRIP;Eliminar todos los metadatos
 TP_METADATA_TUNNEL;Copiar sin cambios
 TP_NEUTRAL;Reiniciar
-TP_NEUTRAL_TIP;Restablecer controles de exposición a valores neutros\nAplica a los mismos controles que son afectados por Niveles Automáticos, sin importar si usa o no Niveles Automáticos
+TP_NEUTRAL_TOOLTIP;Restablecer controles de exposición a valores neutros\nAplica a los mismos controles que son afectados por Niveles Automáticos, sin importar si usa o no Niveles Automáticos
 TP_PCVIGNETTE_FEATHER;Difuminado
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Difuminación: \n0=Solo Esquinas\n50=Hasta medio camino al centro\n100=Hasta el Centro
 TP_PCVIGNETTE_LABEL;Filtro quitar Viñeteado
@@ -1988,7 +1988,7 @@ TP_RETINEX_MLABEL;Restaurado sin turbidez Min. =% 1 Max =% 2.
 TP_RETINEX_MLABEL_TOOLTIP;Debe estar cerca del mín = 0 máx = 32768 \nImagen restaurada sin mezcla.
 TP_RETINEX_NEIGHBOR;Radio
 TP_RETINEX_NEUTRAL;Restablecer
-TP_RETINEX_NEUTRAL_TIP;Restablecer todos los controles deslizantes y curvas a sus valores predeterminados.
+TP_RETINEX_NEUTRAL_TOOLTIP;Restablecer todos los controles deslizantes y curvas a sus valores predeterminados.
 TP_RETINEX_OFFSET;compensar(brillo)
 TP_RETINEX_SCALES;Gradiente gaussiano
 TP_RETINEX_SCALES_TOOLTIP;Si el control deslizante está en 0, todas las iteraciones son idénticas. \nSi es mayor a 0 la escala y el radio se reducen cuando aumentan las iteraciones, y viceversa.
@@ -2024,7 +2024,7 @@ TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Grados
 TP_ROTATE_LABEL;Rotar
 TP_ROTATE_SELECTLINE;Seleccionar línea recta
-TP_SAVEDIALOG_OK_TIP;Tecla de Atajo <b>Ctrl-Enter</b>
+TP_SAVEDIALOG_OK_TOOLTIP;Tecla de Atajo <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Luces altas
 TP_SHADOWSHLIGHTS_HLTONALW;Ancho tonal de Luces Altas
 TP_SHADOWSHLIGHTS_LABEL;Sombras/Luces altas

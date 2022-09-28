@@ -1044,7 +1044,7 @@ PROFILEPANEL_GLOBALPROFILES;Załączone profile przetwarzania
 PROFILEPANEL_LABEL;Profil przetwarzania
 PROFILEPANEL_LOADDLGLABEL;Wczytaj profil przetwarzania końcowego...
 PROFILEPANEL_LOADPPASTE;Parametry do załadowania
-PROFILEPANEL_MODE_TIP;Tryb wypełnienia parametrów przetwarzania.\n\nWduszone: częściowe profile zostaną przetworzone w profile pełne; brakujące wartości zostana wypełnione domyślnymi, zakodowanymi w silniku RawTherapee.\n\nWyłączone: profile zostaną zastosowane takie, jakie są, zmieniając tylko te wartości, które zawierają.
+PROFILEPANEL_MODE_TOOLTIP;Tryb wypełnienia parametrów przetwarzania.\n\nWduszone: częściowe profile zostaną przetworzone w profile pełne; brakujące wartości zostana wypełnione domyślnymi, zakodowanymi w silniku RawTherapee.\n\nWyłączone: profile zostaną zastosowane takie, jakie są, zmieniając tylko te wartości, które zawierają.
 PROFILEPANEL_MYPROFILES;Moje profile przetwarzania
 PROFILEPANEL_PASTEPPASTE;Parametry do wklejenia
 PROFILEPANEL_PCUSTOM;Własny
@@ -1242,7 +1242,7 @@ TP_COLORAPP_LIGHT_TOOLTIP;Światłość w CIECAM02 różni się od światłości
 TP_COLORAPP_MODEL;Model PB
 TP_COLORAPP_MODEL_TOOLTIP;Model punktu bieli.\n\n<b>BB [RT] + [wyjściowy]:</b>\nBalans bieli RawTherapee jest użyty dla sceny, CIECAM02 jest ustawione na D50, i balans bieli urządzenia wyjściowego ustawiony jest w <i>Ustawieniach > Zarządzanie Kolorami</i>\n\n<b>BB [RT+CAT02] + [wyjściowe]:</b>\nUstawienia balansu bieli RawTherapee są używane przez CAT02, i balans bieli urządzenia wyjściowego jest ustawione w <i>Ustawieniach > Zarządzanie Kolorami</i>.
 TP_COLORAPP_NEUTRAL;Reset
-TP_COLORAPP_NEUTRAL_TIP;Przywróć wszystkie suwaki oraz krzywe do wartości domyślnych
+TP_COLORAPP_NEUTRAL_TOOLTIP;Przywróć wszystkie suwaki oraz krzywe do wartości domyślnych
 TP_COLORAPP_RSTPRO;Ochrona odcieni skóry i czerwieni
 TP_COLORAPP_RSTPRO_TOOLTIP;Ochrona odcieni skóry i czerwieni (suwaki i krzywe)
 TP_COLORAPP_SURROUND;Otoczenie
@@ -1298,7 +1298,7 @@ TP_COLORTONING_METHOD;Metoda
 TP_COLORTONING_METHOD_TOOLTIP;"Mieszanie L*a*b*", "Suwaki RGB" oraz "Krzywe RGB" stosują interpolację do mieszania kolorów.\n"Balansowanie kolorów (cienie, półcienie, podświetlenia)" oraz "Nasycenie - Dwa Kolory" stosują kolory bezpośrednio.\n\nNarzędzie "Czarno-białe" można używac jednocześnie z narzędziem "Koloryzacji", co umożliwi tonowanie zdjęcia.
 TP_COLORTONING_MIDTONES;Półcienie
 TP_COLORTONING_NEUTRAL;Zresetuj suwaki
-TP_COLORTONING_NEUTRAL_TIP;Zresetuj wszystkie wartości (cienie, półcienie, podświetlenia) na domyślne.
+TP_COLORTONING_NEUTRAL_TOOLTIP;Zresetuj wszystkie wartości (cienie, półcienie, podświetlenia) na domyślne.
 TP_COLORTONING_OPACITY;Przezroczystość
 TP_COLORTONING_RGBCURVES;RGB - Krzywe
 TP_COLORTONING_RGBSLIDERS;RGB - Suwaki
@@ -1406,12 +1406,12 @@ TP_EPD_REWEIGHTINGITERATES;Powtarzanie rozważania
 TP_EPD_SCALE;Skala
 TP_EPD_STRENGTH;Siła
 TP_EXPOSURE_AUTOLEVELS;Wyrównaj poziomy
-TP_EXPOSURE_AUTOLEVELS_TIP;Dokonaj automatycznego ustawienia parametrów ekspozycji na podstawie analizy obrazu
+TP_EXPOSURE_AUTOLEVELS_TOOLTIP;Dokonaj automatycznego ustawienia parametrów ekspozycji na podstawie analizy obrazu
 TP_EXPOSURE_BLACKLEVEL;Czerń
 TP_EXPOSURE_BRIGHTNESS;Jasność
 TP_EXPOSURE_CLAMPOOG;Przytnij kolory spoza gamy kolorów
 TP_EXPOSURE_CLIP;Przytnij %
-TP_EXPOSURE_CLIP_TIP;Ułamek pikseli ktore mają zostać rozjaśnione do punktu prześwietlenia podczas automatycznego wyrównania poziomów.
+TP_EXPOSURE_CLIP_TOOLTIP;Ułamek pikseli ktore mają zostać rozjaśnione do punktu prześwietlenia podczas automatycznego wyrównania poziomów.
 TP_EXPOSURE_COMPRHIGHLIGHTS;Kompresja podświetleń
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Próg kompresji podświetleń
 TP_EXPOSURE_COMPRSHADOWS;Kompresja cieni
@@ -1541,7 +1541,7 @@ TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance według odcieni (hue) L=f(H)
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminancja według luminancji L=f(L)
 TP_LABCURVE_LABEL;Regulacja L*a*b*
 TP_LABCURVE_LCREDSK;Ogranicz LC do odcieni skóry oraz czerwieni
-TP_LABCURVE_LCREDSK_TIP;Kiedy opcja jest włączona, wpływ krzywej LC (Luminancja według chromatyczności) jest ograniczony do odcieni skóry oraz czerwieni.\nKiedy opcja jest wyłączona, krzywa LC wpływa na wszystkie barwy.
+TP_LABCURVE_LCREDSK_TOOLTIP;Kiedy opcja jest włączona, wpływ krzywej LC (Luminancja według chromatyczności) jest ograniczony do odcieni skóry oraz czerwieni.\nKiedy opcja jest wyłączona, krzywa LC wpływa na wszystkie barwy.
 TP_LABCURVE_RSTPROTECTION;Ochrona skóry oraz czerwieni
 TP_LABCURVE_RSTPRO_TOOLTIP;Ma wpływ na suwak Chromatyczności oraz na krzywą CC.
 TP_LENSGEOM_AUTOCROP;Auto-kadrowanie
@@ -1568,7 +1568,7 @@ TP_METADATA_MODE;Tryb kopiowania metadanych
 TP_METADATA_STRIP;Usuń wszystkie metadane
 TP_METADATA_TUNNEL;Kopiuj niezmienione
 TP_NEUTRAL;Reset
-TP_NEUTRAL_TIP;Zresetuj ustawienia do wartości neutralnych.\nDziała na tych samych suwakach na których funkcja "Wyrównaj poziomy" działa, niezależnie od tego czy funkcja ta była użyta czy nie.
+TP_NEUTRAL_TOOLTIP;Zresetuj ustawienia do wartości neutralnych.\nDziała na tych samych suwakach na których funkcja "Wyrównaj poziomy" działa, niezależnie od tego czy funkcja ta była użyta czy nie.
 TP_PCVIGNETTE_FEATHER;Wtapianie
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Wtapianie:\n0 = tylko brzegi,\n50 = w pół drogi do środka,\n100 = aż do środka.
 TP_PCVIGNETTE_LABEL;Winietowanie
@@ -1728,7 +1728,7 @@ TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Stopnie
 TP_ROTATE_LABEL;Obrót
 TP_ROTATE_SELECTLINE;Wyprostuj obraz
-TP_SAVEDIALOG_OK_TIP;Skrót: <b>Ctrl-Enter</b>
+TP_SAVEDIALOG_OK_TOOLTIP;Skrót: <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Podświetlenia
 TP_SHADOWSHLIGHTS_HLTONALW;Szerokość tonalna
 TP_SHADOWSHLIGHTS_LABEL;Cienie/Podświetlenia
@@ -1957,7 +1957,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !EXPORT_BYPASS_EQUALIZER;Bypass Wavelet Levels
 !EXPORT_PIPELINE;Processing pipeline
 !EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
-!EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
+!EXPORT_USE_FAST_PIPELINE_TOOLTIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
 !EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_DELETEDIALOG_ALL;Are you sure you want to <b>permanently</b> delete all <b>%1</b> files in trash?
@@ -2172,7 +2172,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_DIRPYRDENOISE_MEDIAN_METHOD_WEIGHTED;Weighted L* (little) + a*b* (normal)
 !TP_DIRPYRDENOISE_MEDIAN_PASSES_TOOLTIP;Applying three median filter iterations with a 3×3 window size often leads to better results than using one median filter iteration with a 7×7 window size.
 !TP_DIRPYRDENOISE_MEDIAN_TYPE_TOOLTIP;Apply a median filter of the desired window size. The larger the window's size, the longer it takes.\n\n3×3 soft: treats 5 pixels in a 3×3 pixel window.\n3×3: treats 9 pixels in a 3×3 pixel window.\n5×5 soft: treats 13 pixels in a 5×5 pixel window.\n5×5: treats 25 pixels in a 5×5 pixel window.\n7×7: treats 49 pixels in a 7×7 pixel window.\n9×9: treats 81 pixels in a 9×9 pixel window.\n\nSometimes it is possible to achieve higher quality running several iterations with a smaller window size than one iteration with a larger one.
-!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
+!TP_DISTORTION_AUTO_TOOLTIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_EXPOSURE_HISTMATCHING;Auto-Matched Tone Curve
 !TP_EXPOSURE_HISTMATCHING_TOOLTIP;Automatically adjust sliders and curves (except exposure compensation) to match the look of the embedded JPEG thumbnail.
 !TP_FILMNEGATIVE_GREEN;Reference exponent (contrast)
@@ -2234,7 +2234,7 @@ ZOOMPANEL_ZOOMOUT;Oddal\nSkrót: <b>-</b>
 !TP_RETINEX_METHOD_TOOLTIP;Low = Reinforce low light.\nUniform = Equalize action.\nHigh = Reinforce high light.\nHighlights = Remove magenta in highlights.
 !TP_RETINEX_MLABEL;Restored haze-free Min=%1 Max=%2
 !TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
-!TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
+!TP_RETINEX_NEUTRAL_TOOLTIP;Reset all sliders and curves to their default values.
 !TP_RETINEX_SCALES;Gaussian gradient
 !TP_RETINEX_SCALES_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Scale and radius are reduced when iterations increase, and conversely.
 !TP_RETINEX_SLOPE;Free gamma slope

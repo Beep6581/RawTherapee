@@ -671,7 +671,7 @@ PROFILEPANEL_GLOBALPROFILES;Профили из програма
 PROFILEPANEL_LABEL;Профили обраде
 PROFILEPANEL_LOADDLGLABEL;Учитај профил за обраду...
 PROFILEPANEL_LOADPPASTE;Параметри за учитавање
-PROFILEPANEL_MODE_TIP;Начин допуне профила који се користи за обраду.\n\nПритиснута дугмад: делимични профили се преводе у потпуне профиле, а недостајуће вредносоти се мењају подразумеваним вредностим.\n\nПуштена дугмад: профили ће бити примењени какви јесу, уз измени само оних вредности које садржи профил.
+PROFILEPANEL_MODE_TOOLTIP;Начин допуне профила који се користи за обраду.\n\nПритиснута дугмад: делимични профили се преводе у потпуне профиле, а недостајуће вредносоти се мењају подразумеваним вредностим.\n\nПуштена дугмад: профили ће бити примењени какви јесу, уз измени само оних вредности које садржи профил.
 PROFILEPANEL_MYPROFILES;Моји профили
 PROFILEPANEL_PASTEPPASTE;Параметри за убацивање
 PROFILEPANEL_PCUSTOM;Произвољно
@@ -902,11 +902,11 @@ TP_EPD_REWEIGHTINGITERATES;Број поновних мерења
 TP_EPD_SCALE;Размера
 TP_EPD_STRENGTH;Јачина
 TP_EXPOSURE_AUTOLEVELS;Ауто-нивои
-TP_EXPOSURE_AUTOLEVELS_TIP;Омогућава аутоматско одређивање нивоа, који подешава клизаче експозиције на основу податка о самој слици.\nУкључује чупање светлих делова уколико је неопходно.
+TP_EXPOSURE_AUTOLEVELS_TOOLTIP;Омогућава аутоматско одређивање нивоа, који подешава клизаче експозиције на основу податка о самој слици.\nУкључује чупање светлих делова уколико је неопходно.
 TP_EXPOSURE_BLACKLEVEL;Црна
 TP_EXPOSURE_BRIGHTNESS;Осветљеност
 TP_EXPOSURE_CLIP;Одсеци
-TP_EXPOSURE_CLIP_TIP;Део пиксела које ће бити одсечени применом аутоматских нивоа.
+TP_EXPOSURE_CLIP_TOOLTIP;Део пиксела које ће бити одсечени применом аутоматских нивоа.
 TP_EXPOSURE_COMPRHIGHLIGHTS;Сабијање светлог
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Праг за чупање светлих делова
 TP_EXPOSURE_COMPRSHADOWS;Сабијање сенки
@@ -1013,7 +1013,7 @@ TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Светлост као функција ни
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Светлост као функција светлости L=f(L)
 TP_LABCURVE_LABEL;Лаб крива
 TP_LABCURVE_LCREDSK;Ограничи LC на црвену и боју коже
-TP_LABCURVE_LCREDSK_TIP;Уколико је укључено, LC крива ће утицати само на црвену и боју коже.\nУ супротном се примењује на све тонове.
+TP_LABCURVE_LCREDSK_TOOLTIP;Уколико је укључено, LC крива ће утицати само на црвену и боју коже.\nУ супротном се примењује на све тонове.
 TP_LABCURVE_RSTPROTECTION;Заштита црвене и боје коже
 TP_LABCURVE_RSTPRO_TOOLTIP;Може се користити са клизачем за Хроминансу и CC кривом.
 TP_LENSGEOM_AUTOCROP;Сам исеци
@@ -1021,7 +1021,7 @@ TP_LENSGEOM_FILL;Сам попуни
 TP_LENSGEOM_LABEL;Објектив и геометрија
 TP_LENSPROFILE_LABEL;Профили за исправљање изобличења објектива
 TP_NEUTRAL;Неутрално
-TP_NEUTRAL_TIP;Враћа клизаче експозиције на неутралне вредности.\nПримењује се на исте контроле као у Ауто нивои, без обзира на то да ли сте користили Ауто нивое или не.
+TP_NEUTRAL_TOOLTIP;Враћа клизаче експозиције на неутралне вредности.\nПримењује се на исте контроле као у Ауто нивои, без обзира на то да ли сте користили Ауто нивое или не.
 TP_PCVIGNETTE_FEATHER;Умекшавање
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Умекшавање:\n0 = само углове,\n50 = на половину од центра,\n100 = центар.
 TP_PCVIGNETTE_LABEL;Филтер вињетарења
@@ -1078,7 +1078,7 @@ TP_RGBCURVES_RED;Ц
 TP_ROTATE_DEGREE;Степени:
 TP_ROTATE_LABEL;Ротација
 TP_ROTATE_SELECTLINE;    Постави праву линију
-TP_SAVEDIALOG_OK_TIP;Пречица: <b>Ctrl-Enter</b>
+TP_SAVEDIALOG_OK_TOOLTIP;Пречица: <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Светло
 TP_SHADOWSHLIGHTS_HLTONALW;Ширина тонова
 TP_SHADOWSHLIGHTS_LABEL;Сенке/Светло
@@ -1219,7 +1219,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !EXPORT_BYPASS_EQUALIZER;Bypass Wavelet Levels
 !EXPORT_PIPELINE;Processing pipeline
 !EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
-!EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
+!EXPORT_USE_FAST_PIPELINE_TOOLTIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
 !EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
@@ -1786,7 +1786,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
 !TP_COLORAPP_NEUTRAL;Reset
-!TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
+!TP_COLORAPP_NEUTRAL_TOOLTIP;Reset all sliders checkbox and curves to their default values
 !TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
 !TP_COLORTONING_AB;o C/L
 !TP_COLORTONING_AUTOSAT;Automatic
@@ -1827,7 +1827,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_COLORTONING_METHOD_TOOLTIP;"L*a*b* blending", "RGB sliders" and "RGB curves" use interpolated color blending.\n"Color balance (Shadows/Midtones/Highlights)" and "Saturation 2 colors" use direct colors.\n\nThe Black-and-White tool can be enabled when using any color toning method, which allows for color toning.
 !TP_COLORTONING_MIDTONES;Midtones
 !TP_COLORTONING_NEUTRAL;Reset sliders
-!TP_COLORTONING_NEUTRAL_TIP;Reset all values (Shadows, Midtones, Highlights) to default.
+!TP_COLORTONING_NEUTRAL_TOOLTIP;Reset all values (Shadows, Midtones, Highlights) to default.
 !TP_COLORTONING_OPACITY;Opacity
 !TP_COLORTONING_RGBCURVES;RGB - Curves
 !TP_COLORTONING_RGBSLIDERS;RGB - Sliders
@@ -1907,7 +1907,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_DIRPYREQUALIZER_SKIN;Skin targetting/protection
 !TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 !TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
-!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
+!TP_DISTORTION_AUTO_TOOLTIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_EPD_GAMMA;Gamma
 !TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colors
 !TP_EXPOSURE_HISTMATCHING;Auto-Matched Tone Curve
@@ -2105,7 +2105,7 @@ ZOOMPANEL_ZOOMOUT;Умањује приказ слике <b>-</b>
 !TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
 !TP_RETINEX_NEIGHBOR;Radius
 !TP_RETINEX_NEUTRAL;Reset
-!TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
+!TP_RETINEX_NEUTRAL_TOOLTIP;Reset all sliders and curves to their default values.
 !TP_RETINEX_OFFSET;Offset (brightness)
 !TP_RETINEX_SCALES;Gaussian gradient
 !TP_RETINEX_SCALES_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Scale and radius are reduced when iterations increase, and conversely.

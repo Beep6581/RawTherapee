@@ -108,7 +108,7 @@ EXPORT_PIPELINE;Verwerken
 EXPORT_PUTTOQUEUEFAST;Plaats in verwerkingsrij voor Snelle Export
 EXPORT_RAW_DMETHOD;Demozaïekmethode
 EXPORT_USE_FAST_PIPELINE;Snel (volledige verwerking op gewijzigd formaat van de afbeelding)
-EXPORT_USE_FAST_PIPELINE_TIP;Gebruikt een speciale verwerkingslijn waarbij kwaliteit ten koste gaat van snelheid. Het formaat van de afbeelding wordt zo snel mogelijk gewijzigd, ipv aan het eind van de verwerking. De snelheidswinst is aanzienlijk, maar de kwaliteit van de afbeelding zal minder zijn.
+EXPORT_USE_FAST_PIPELINE_TOOLTIP;Gebruikt een speciale verwerkingslijn waarbij kwaliteit ten koste gaat van snelheid. Het formaat van de afbeelding wordt zo snel mogelijk gewijzigd, ipv aan het eind van de verwerking. De snelheidswinst is aanzienlijk, maar de kwaliteit van de afbeelding zal minder zijn.
 EXPORT_USE_NORMAL_PIPELINE;Standaard (wijzigt formaat aan het eind)
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;verwerkingsrij
@@ -1023,7 +1023,7 @@ PROFILEPANEL_GLOBALPROFILES;Gebundelde profielen
 PROFILEPANEL_LABEL;Profielen
 PROFILEPANEL_LOADDLGLABEL;Kies profiel...
 PROFILEPANEL_LOADPPASTE;Te laden parameters
-PROFILEPANEL_MODE_TIP;Profiel aanvullen.\n\nKnop ingedrukt: gedeeltelijke profielen worden omgezet naar volledige profielen. De ontbrekende waarden worden vervangen door hard-coded defaults.\n\nKnop neutraal: profielen worden toegepast zo als ze zijn, alleen de aanwezige waarden worden gewijzigd.
+PROFILEPANEL_MODE_TOOLTIP;Profiel aanvullen.\n\nKnop ingedrukt: gedeeltelijke profielen worden omgezet naar volledige profielen. De ontbrekende waarden worden vervangen door hard-coded defaults.\n\nKnop neutraal: profielen worden toegepast zo als ze zijn, alleen de aanwezige waarden worden gewijzigd.
 PROFILEPANEL_MYPROFILES;Mijn profielen
 PROFILEPANEL_PASTEPPASTE;Te plakken parameters
 PROFILEPANEL_PCUSTOM;Handmatig
@@ -1240,7 +1240,7 @@ TP_COLORTONING_METHOD;Methode
 TP_COLORTONING_METHOD_TOOLTIP;"L*a*b* menging", "RGB schuifbalk" en "RGB curven" gebruiken interpolatie kleurmenging.\n"Kleurbalans" (Schaduwen/Midden tonen/Hoge lichten) en "Verzadigen 2 kleuren" gebruiken directe kleuren.\nAlle methodes werken ook op Zwart-Wit.
 TP_COLORTONING_MIDTONES;Midden tonen
 TP_COLORTONING_NEUTRAL;Terug naar beginstand
-TP_COLORTONING_NEUTRAL_TIP;Zet alle waarden (Schaduwen, Midden tonen, Hoge lichten) terug naar default.
+TP_COLORTONING_NEUTRAL_TOOLTIP;Zet alle waarden (Schaduwen, Midden tonen, Hoge lichten) terug naar default.
 TP_COLORTONING_OPACITY;Dekking
 TP_COLORTONING_RGBCURVES;RGB - Curven
 TP_COLORTONING_RGBSLIDERS;RGB - Schuifbalken
@@ -1346,7 +1346,7 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;Bij -100 huidtinten worden gewijzigd.\nBij 0 all
 TP_DIRPYREQUALIZER_THRESHOLD;Drempel
 TP_DIRPYREQUALIZER_TOOLTIP;Probeert artefacten te verminderen die het gevolg zijn van kleurverschuiving  van de huidtinten(hue, chroma, luma) en de rest van de afbeelding
 TP_DISTORTION_AMOUNT;Hoeveelheid
-TP_DISTORTION_AUTO_TIP;Corrigeert automatisch lens afwijkingen in raw afbeeldingen op basis van de ingebedde JPEG indien deze is gecorrigeerd door de camera.
+TP_DISTORTION_AUTO_TOOLTIP;Corrigeert automatisch lens afwijkingen in raw afbeeldingen op basis van de ingebedde JPEG indien deze is gecorrigeerd door de camera.
 TP_DISTORTION_LABEL;Corrigeer lensvervorming
 TP_EPD_EDGESTOPPING;Randen
 TP_EPD_GAMMA;Gamma
@@ -1355,11 +1355,11 @@ TP_EPD_REWEIGHTINGITERATES;Herhaling
 TP_EPD_SCALE;Schaal
 TP_EPD_STRENGTH;Sterkte
 TP_EXPOSURE_AUTOLEVELS;Autom. niveaus
-TP_EXPOSURE_AUTOLEVELS_TIP;Activeer automatische niveaus\nActiveer Herstel Hoge lichten indien nodig.
+TP_EXPOSURE_AUTOLEVELS_TOOLTIP;Activeer automatische niveaus\nActiveer Herstel Hoge lichten indien nodig.
 TP_EXPOSURE_BLACKLEVEL;Schaduwen
 TP_EXPOSURE_BRIGHTNESS;Helderheid
 TP_EXPOSURE_CLIP;Clip %
-TP_EXPOSURE_CLIP_TIP;Het deel van de pixels dat moet worden hersteld bij gebruik van automatische niveaus.
+TP_EXPOSURE_CLIP_TOOLTIP;Het deel van de pixels dat moet worden hersteld bij gebruik van automatische niveaus.
 TP_EXPOSURE_COMPRHIGHLIGHTS;Hoge lichten Comprimeren
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Drempel Hoge lichten Comprimeren
 TP_EXPOSURE_COMPRSHADOWS;Schaduwcompressie
@@ -1489,7 +1489,7 @@ TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminantie volgens hue L=f(H)
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminantie volgens luminantie L=f(L)
 TP_LABCURVE_LABEL;Lab
 TP_LABCURVE_LCREDSK;Beperkt LC tot Rode en Huidtinten
-TP_LABCURVE_LCREDSK_TIP;Indien ingeschakeld, beïnvloed de LC Curve alleen rode en huidtinten\nIndien uitgeschakeld, is het van toepassing op all tinten
+TP_LABCURVE_LCREDSK_TOOLTIP;Indien ingeschakeld, beïnvloed de LC Curve alleen rode en huidtinten\nIndien uitgeschakeld, is het van toepassing op all tinten
 TP_LABCURVE_RSTPROTECTION;Rode en huidtinten Bescherming
 TP_LABCURVE_RSTPRO_TOOLTIP;Kan worden gebruikt met de chromaticiteits schuifbalk en de CC curve.
 TP_LENSGEOM_AUTOCROP;Automatisch bijsnijden
@@ -1497,7 +1497,7 @@ TP_LENSGEOM_FILL;Automatisch uitvullen
 TP_LENSGEOM_LABEL;Objectief / Geometrie
 TP_LENSPROFILE_LABEL;Lenscorrectie Profielen
 TP_NEUTRAL;Terugzetten
-TP_NEUTRAL_TIP;Alle belichtingsinstellingen naar 0
+TP_NEUTRAL_TOOLTIP;Alle belichtingsinstellingen naar 0
 TP_PCVIGNETTE_FEATHER;Straal
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Straal: \n0=alleen hoeken \n50=halverwege tot het centrum \n100=tot aan het centrum
 TP_PCVIGNETTE_LABEL;Vignettering Filter
@@ -1647,7 +1647,7 @@ TP_RETINEX_MLABEL;Teruggeplaatst sluier-vrij Min=%1 Max=%2
 TP_RETINEX_MLABEL_TOOLTIP;Zou min=0 en max=32768 moeten benaderen\nTeruggeplaatste afbeelding zonder mixture.
 TP_RETINEX_NEIGHBOR;Naburige pixels
 TP_RETINEX_NEUTRAL;Beginwaarde
-TP_RETINEX_NEUTRAL_TIP;Zet alles terug naar de beginwaarde.
+TP_RETINEX_NEUTRAL_TOOLTIP;Zet alles terug naar de beginwaarde.
 TP_RETINEX_OFFSET;Beginpunt
 TP_RETINEX_SCALES;Gaussiaans verloop
 TP_RETINEX_SCALES_TOOLTIP;Indien schuifbalk=0: alle herhalingen zijn gelijk.\nIndien > 0 Schaal en straal worden verkleind als herhaling toeneemt, en omgekeerd.
@@ -1683,7 +1683,7 @@ TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Graden
 TP_ROTATE_LABEL;Roteren
 TP_ROTATE_SELECTLINE;Bepaal rechte lijn
-TP_SAVEDIALOG_OK_TIP;Sneltoets: <b>Ctrl-Enter</b>
+TP_SAVEDIALOG_OK_TOOLTIP;Sneltoets: <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Hoge lichten
 TP_SHADOWSHLIGHTS_HLTONALW;Toonomvang
 TP_SHADOWSHLIGHTS_LABEL;Schaduwen/hoge lichten
@@ -2209,7 +2209,7 @@ TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;Bij manuele aanpassing worden waardon boven 
 TP_COLORAPP_FREE;Vrije temp+groen + CAT02 + [uitvoer]
 TP_COLORAPP_MEANLUMINANCE;Gemiddelde luminantie (Yb%)
 TP_COLORAPP_NEUTRAL;Terugzetten
-TP_COLORAPP_NEUTRAL_TIP;Zet alle regelaars, vinkjes en curves terug naar hun standaardwaarde
+TP_COLORAPP_NEUTRAL_TOOLTIP;Zet alle regelaars, vinkjes en curves terug naar hun standaardwaarde
 TP_COLORAPP_TEMP_TOOLTIP;Zet altijd Tint=1 om een lichtbron te selecteren.\n\nA temp=2856\nD50 temp=5003\nD55 temp=5503\nD65 temp=6504\nD75 temp=7504
 TP_COLORTONING_LABGRID;L*a*b* kleurcorrectie raster
 TP_COLORTONING_LABGRID_VALUES;HL: a=%1 b=%2\nS: a=%3 b=%4

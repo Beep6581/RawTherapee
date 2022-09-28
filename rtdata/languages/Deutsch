@@ -190,7 +190,7 @@ EXPORT_PIPELINE;Verarbeitungspipeline
 EXPORT_PUTTOQUEUEFAST;Zur Warteschlange 'Schneller Export' hinzufügen
 EXPORT_RAW_DMETHOD;Demosaikmethode
 EXPORT_USE_FAST_PIPELINE;Priorität Geschwindigkeit
-EXPORT_USE_FAST_PIPELINE_TIP;Wendet alle Bearbeitungsschritte, im Gegensatz zu 'Standard', auf das bereits skalierte Bild an.\nDadurch steigt die Verarbeitungsgeschwindigkeit auf Kosten der Qualität.
+EXPORT_USE_FAST_PIPELINE_TOOLTIP;Wendet alle Bearbeitungsschritte, im Gegensatz zu 'Standard', auf das bereits skalierte Bild an.\nDadurch steigt die Verarbeitungsgeschwindigkeit auf Kosten der Qualität.
 EXPORT_USE_NORMAL_PIPELINE;Standard
 EXTPROGTARGET_1;RAW
 EXTPROGTARGET_2;Stapelverarbeitung beendet
@@ -2076,7 +2076,7 @@ PROFILEPANEL_GLOBALPROFILES;Standardprofile
 PROFILEPANEL_LABEL;Bearbeitungsprofile
 PROFILEPANEL_LOADDLGLABEL;Bearbeitungsparameter laden...
 PROFILEPANEL_LOADPPASTE;Zu ladende Parameter
-PROFILEPANEL_MODE_TIP;Ist der Button aktiviert, werden Teilprofile\nals vollständige Profile geladen.\nFehlende Parameter werden durch\nStandardwerte aufgefüllt.
+PROFILEPANEL_MODE_TOOLTIP;Ist der Button aktiviert, werden Teilprofile\nals vollständige Profile geladen.\nFehlende Parameter werden durch\nStandardwerte aufgefüllt.
 PROFILEPANEL_MYPROFILES;Meine Profile
 PROFILEPANEL_PASTEPPASTE;Einzufügende Parameter
 PROFILEPANEL_PCUSTOM;Benutzerdefiniert
@@ -2308,9 +2308,9 @@ TP_COLORAPP_MODELCAT_TOOLTIP;Ermöglicht die Auswahl zwischen CIECAM02 oder CIEC
 TP_COLORAPP_MOD02;CIECAM02
 TP_COLORAPP_MOD16;CIECAM16
 TP_COLORAPP_NEUTRAL;Zurücksetzen
-TP_COLORAPP_NEUTRAL_TIP;Setzt alle CIECAM02-Parameter auf Vorgabewerte zurück.
+TP_COLORAPP_NEUTRAL_TOOLTIP;Setzt alle CIECAM02-Parameter auf Vorgabewerte zurück.
 TP_COLORAPP_PRESETCAT02;Voreinstellung Modus CAT02/16 Automatisch - Symmetrisch
-TP_COLORAPP_PRESETCAT02_TIP;Stellen Sie die Combobox-Schieberegler Temp, Grün so ein, dass Cat02/16 automatisch voreingestellt ist.\nSie können die Beleuchtungsbedingungen für die Aufnahme ändern.\nCAT02/16-Anpassung an die Betrachtungsbedingungen, Temperatur, Farbton und andere Einstellungen können, falls erforderlich, geändert werden.\nAlle automatischen Kontrollkästchen sind deaktiviert.
+TP_COLORAPP_PRESETCAT02_TOOLTIP;Stellen Sie die Combobox-Schieberegler Temp, Grün so ein, dass Cat02/16 automatisch voreingestellt ist.\nSie können die Beleuchtungsbedingungen für die Aufnahme ändern.\nCAT02/16-Anpassung an die Betrachtungsbedingungen, Temperatur, Farbton und andere Einstellungen können, falls erforderlich, geändert werden.\nAlle automatischen Kontrollkästchen sind deaktiviert.
 TP_COLORAPP_RSTPRO;Hautfarbtöne schützen
 TP_COLORAPP_RSTPRO_TOOLTIP;Hautfarbtöne schützen\nWirkt sich auf Regler und Kurven aus.
 TP_COLORAPP_SOURCEF_TOOLTIP;Entspricht den Aufnahmebedingungen und wie man die Bedingungen und Daten wieder in einen normalen Bereich bringt. 'Normal' bedeutet Durchschnitts- oder Standardbedingungen und Daten, d. h. ohne Berücksichtigung von CIECAM-Korrekturen.
@@ -2380,7 +2380,7 @@ TP_COLORTONING_METHOD;Methode
 TP_COLORTONING_METHOD_TOOLTIP;L*a*b*-Überlagerung, RGB-Regler und RGB-Kurven\nverwenden eine interpolierte Farbüberlagerung.\n\nFarbausgleich (Schatten/Mitten/Lichter) und Sättigung\n(2-Farben) verwenden direkte Farben.
 TP_COLORTONING_MIDTONES;Mitten
 TP_COLORTONING_NEUTRAL;Regler zurücksetzen
-TP_COLORTONING_NEUTRAL_TIP;Alle Werte auf Standard zurücksetzen.\n(Schatten, Mitten, Lichter)
+TP_COLORTONING_NEUTRAL_TOOLTIP;Alle Werte auf Standard zurücksetzen.\n(Schatten, Mitten, Lichter)
 TP_COLORTONING_OPACITY;Deckkraft
 TP_COLORTONING_RGBCURVES;RGB-Kurven
 TP_COLORTONING_RGBSLIDERS;RGB-Regler
@@ -2497,7 +2497,7 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;-100: Nur Farben innerhalb des Bereichs werden v
 TP_DIRPYREQUALIZER_THRESHOLD;Schwelle
 TP_DIRPYREQUALIZER_TOOLTIP;Verringert Artefakte an den Übergängen\nzwischen Hautfarbtönen und dem Rest des Bildes.
 TP_DISTORTION_AMOUNT;Intensität
-TP_DISTORTION_AUTO_TIP;Korrigiert die Verzeichnung in RAW-Bildern durch Vergleich mit dem eingebetteten JPEG, falls dieses existiert und die Verzeichnung durch die Kamera korrigiert wurde.
+TP_DISTORTION_AUTO_TOOLTIP;Korrigiert die Verzeichnung in RAW-Bildern durch Vergleich mit dem eingebetteten JPEG, falls dieses existiert und die Verzeichnung durch die Kamera korrigiert wurde.
 TP_DISTORTION_LABEL;Verzeichnungskorrektur
 TP_EPD_EDGESTOPPING;Kantenschutz
 TP_EPD_GAMMA;Gamma
@@ -2506,12 +2506,12 @@ TP_EPD_REWEIGHTINGITERATES;Iterationen
 TP_EPD_SCALE;Faktor
 TP_EPD_STRENGTH;Intensität
 TP_EXPOSURE_AUTOLEVELS;Auto
-TP_EXPOSURE_AUTOLEVELS_TIP;Automatische Belichtungseinstellung\nBasierend auf Bildanalyse.
+TP_EXPOSURE_AUTOLEVELS_TOOLTIP;Automatische Belichtungseinstellung\nBasierend auf Bildanalyse.
 TP_EXPOSURE_BLACKLEVEL;Schwarzwert
 TP_EXPOSURE_BRIGHTNESS;Helligkeit
 TP_EXPOSURE_CLAMPOOG;Farben auf Farbraum beschränken
 TP_EXPOSURE_CLIP;Clip %:
-TP_EXPOSURE_CLIP_TIP;Anteil der Pixel, die sich bei automatischer\nBelichtungseinstellung im Bereich der\nSpitzlichter und Schatten befinden sollen.
+TP_EXPOSURE_CLIP_TOOLTIP;Anteil der Pixel, die sich bei automatischer\nBelichtungseinstellung im Bereich der\nSpitzlichter und Schatten befinden sollen.
 TP_EXPOSURE_COMPRHIGHLIGHTS;Lichterkompression
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Lichterkompression Schwelle
 TP_EXPOSURE_COMPRSHADOWS;Schattenkompression
@@ -2712,7 +2712,7 @@ TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminanz als Funktion des Farbtons L=f(H)
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminanz als Funktion der Luminanz L=f(L)
 TP_LABCURVE_LABEL;L*a*b* - Anpassungen
 TP_LABCURVE_LCREDSK;LC-Kurve auf Hautfarbtöne beschränken
-TP_LABCURVE_LCREDSK_TIP;Wenn aktiviert, wird die LC-Kurve auf\nHautfarbtöne beschränkt.\nWenn deaktiviert, wird die LC-Kurve auf\nalle Farbtöne angewendet.
+TP_LABCURVE_LCREDSK_TOOLTIP;Wenn aktiviert, wird die LC-Kurve auf\nHautfarbtöne beschränkt.\nWenn deaktiviert, wird die LC-Kurve auf\nalle Farbtöne angewendet.
 TP_LABCURVE_RSTPROTECTION;Hautfarbtöne schützen
 TP_LABCURVE_RSTPRO_TOOLTIP;Kann mit dem Chromatizitätsregler und\nder CC-Kurve verwendet werden.
 TP_LENSGEOM_AUTOCROP;Auto-Schneiden
@@ -3541,7 +3541,7 @@ TP_METADATA_MODE;Kopiermodus
 TP_METADATA_STRIP;Keine
 TP_METADATA_TUNNEL;Unveränderte Daten
 TP_NEUTRAL;Zurücksetzen
-TP_NEUTRAL_TIP;Belichtungseinstellungen auf neutrale Werte zurücksetzen.
+TP_NEUTRAL_TOOLTIP;Belichtungseinstellungen auf neutrale Werte zurücksetzen.
 TP_PCVIGNETTE_FEATHER;Bereich
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Bereich:\n0 = nur Bildecken\n50 = halbe Strecke zum Mittelpunkt\n100 = bis zum Mittelpunkt
 TP_PCVIGNETTE_LABEL;Vignettierungsfilter
@@ -3766,7 +3766,7 @@ TP_RETINEX_MLABEL;Schleierred: Min = %1, Max = %2
 TP_RETINEX_MLABEL_TOOLTIP;Sollte nahe bei Min = 0 und Max = 32768 sein aber auch andere Werte sind möglich.
 TP_RETINEX_NEIGHBOR;Radius
 TP_RETINEX_NEUTRAL;Zurücksetzen
-TP_RETINEX_NEUTRAL_TIP;Setzt alle Regler und Kurven\nauf ihre Standardwerte zurück.
+TP_RETINEX_NEUTRAL_TOOLTIP;Setzt alle Regler und Kurven\nauf ihre Standardwerte zurück.
 TP_RETINEX_OFFSET;Versatz (Helligkeit)
 TP_RETINEX_SCALES;Gauß'scher Gradient
 TP_RETINEX_SCALES_TOOLTIP;Steht der Regler auf 0 sind alle Iterationen identisch.\nBei > 0 werden Skalierung und Radius reduziert,\nbei &lt; 0 erhöht.
@@ -3802,7 +3802,7 @@ TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Winkel
 TP_ROTATE_LABEL;Drehen
 TP_ROTATE_SELECTLINE;Leitlinie wählen
-TP_SAVEDIALOG_OK_TIP;Taste: <b>Strg</b> + <b>Enter</b>
+TP_SAVEDIALOG_OK_TOOLTIP;Taste: <b>Strg</b> + <b>Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Lichter
 TP_SHADOWSHLIGHTS_HLTONALW;Tonwertbreite Lichter
 TP_SHADOWSHLIGHTS_LABEL;Schatten/Lichter

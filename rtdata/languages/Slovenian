@@ -101,7 +101,7 @@ EXPORT_PIPELINE;Vrstni red obdelav
 EXPORT_PUTTOQUEUEFAST;  Vstavi v čakalno vrsto za hiter izvoz
 EXPORT_RAW_DMETHOD;Demosaic method
 EXPORT_USE_FAST_PIPELINE;Namenska (polna obdelava na sliki spremenjene velikosti)
-EXPORT_USE_FAST_PIPELINE_TIP;Uporabite namenski tok obdelav za hitri izvoz za primer, kjer je hitrost pomembnejša od kakovosti. Sprememba velikosti slike se izvede čimprej namesto na koncu kot pri običajnem toku obdelav. Delovanje je bistveno hitrejše a bodite pripravljeni na pojav artefaktov in splošno znužanje kakovosti izdelanih slik.
+EXPORT_USE_FAST_PIPELINE_TOOLTIP;Uporabite namenski tok obdelav za hitri izvoz za primer, kjer je hitrost pomembnejša od kakovosti. Sprememba velikosti slike se izvede čimprej namesto na koncu kot pri običajnem toku obdelav. Delovanje je bistveno hitrejše a bodite pripravljeni na pojav artefaktov in splošno znužanje kakovosti izdelanih slik.
 EXPORT_USE_NORMAL_PIPELINE;Standardno (preskoči nekatere korake, spremeni velikost na koncu)
 EXTPROGTARGET_1;surovo
 EXTPROGTARGET_2;čakalna vrsta-obdelano
@@ -1227,7 +1227,7 @@ PROFILEPANEL_GLOBALPROFILES;Skupni profili
 PROFILEPANEL_LABEL;Profili za obdelovanje
 PROFILEPANEL_LOADDLGLABEL;Naloži parametre obdelovanja...
 PROFILEPANEL_LOADPPASTE;Parametri za nalaganje
-PROFILEPANEL_MODE_TIP;Vnosni način profila za obdelovanje.\n\nPritisnjen gumb: delni profili bodo spremenjeni v polne profile; manjkajoče vrednosti bodo zamenjale fiksne privzete vrednosti.\n\nSproščen gumb: profili bodo uporabljeni kakršni so, zamenjajo se samo vnesene vrednosti.
+PROFILEPANEL_MODE_TOOLTIP;Vnosni način profila za obdelovanje.\n\nPritisnjen gumb: delni profili bodo spremenjeni v polne profile; manjkajoče vrednosti bodo zamenjale fiksne privzete vrednosti.\n\nSproščen gumb: profili bodo uporabljeni kakršni so, zamenjajo se samo vnesene vrednosti.
 PROFILEPANEL_MYPROFILES;Moji profili
 PROFILEPANEL_PASTEPPASTE;Parameteri za lepljenje
 PROFILEPANEL_PCUSTOM;Po meri
@@ -1434,7 +1434,7 @@ TP_COLORAPP_MEANLUMINANCE;Povprečna svetlost (Yb%)
 TP_COLORAPP_MODEL;WP Model
 TP_COLORAPP_MODEL_TOOLTIP;Model bele točke.\n\n<b>WB [RT] + [output]</b>: za sceno se uporabi RT-jevo ravnotežje beline, CIECAM02 je nastavljen na D50, nastavitev beline izhodne naprave je nastavljena v Pogojih gledanja.\n\n<b>WB [RT+CAT02] + [output]</b>: RT-jevo ravnotežje beline uporablja CAT02, ravnotežje beline izhodne naprave pa je nastavljeno v Pogojih gledanja.\n\n<b>Prosta temp+zelena + CAT02 + [output]:</b> temp in zeleno določi uporabnik, ravnotežje beline izhodne naprave pa je nastavljeno v Pogojih gledanja.
 TP_COLORAPP_NEUTRAL;Ponastavi
-TP_COLORAPP_NEUTRAL_TIP;Ponastavi vse potrditvena polja in krivulje na njihove privzete vrednosti
+TP_COLORAPP_NEUTRAL_TOOLTIP;Ponastavi vse potrditvena polja in krivulje na njihove privzete vrednosti
 TP_COLORAPP_RSTPRO;Varovanje rdečih in kožnih tonov
 TP_COLORAPP_RSTPRO_TOOLTIP;Varovanje rdečih in kožnih tonov ima vpliv tako na drsnike kot na krivulje.
 TP_COLORAPP_SURROUND;Obkroži
@@ -1496,7 +1496,7 @@ TP_COLORTONING_METHOD;Metoda
 TP_COLORTONING_METHOD_TOOLTIP;"L*a*b* mešanje", "RGB drsniki" in "RGB krivulje" uporabljajo interpolirno mešanje barv.\n"Uravnoteženje barv (Sence/Srednji toni/Bleščave)" and "Nasičenje 2 barv" uporabljajo neposredne barve.\n\nČrno-belo orodje lahko uporabimo pri katerikoli metodi barvega toniranja.
 TP_COLORTONING_MIDTONES;Srednji toni
 TP_COLORTONING_NEUTRAL;Ponastavi drsnike
-TP_COLORTONING_NEUTRAL_TIP;Ponastavi vse vrednosti (Sence, Srednji toni, Bleščave) na prizeto vrednost.
+TP_COLORTONING_NEUTRAL_TOOLTIP;Ponastavi vse vrednosti (Sence, Srednji toni, Bleščave) na prizeto vrednost.
 TP_COLORTONING_OPACITY;Neprosojnost
 TP_COLORTONING_RGBCURVES;RGB - Krivulje
 TP_COLORTONING_RGBSLIDERS;RGB - Drsniki
@@ -1612,7 +1612,7 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;Pri -100 so ciljani toni kože.\nPri 0 so vsi to
 TP_DIRPYREQUALIZER_THRESHOLD;Prag
 TP_DIRPYREQUALIZER_TOOLTIP;Poskusi zmanjšati artefakte pri spremembi barve kože (odtenek, barvitost, luma) in preostankom slike.
 TP_DISTORTION_AMOUNT;Količina
-TP_DISTORTION_AUTO_TIP;Avtomatsko popravi popačitve objektiva pri surovih slikah s primerjavo z vgrajeno sliko JPEG, če obstaja in so popravki objektiva izvedeni v fotoaparatu.
+TP_DISTORTION_AUTO_TOOLTIP;Avtomatsko popravi popačitve objektiva pri surovih slikah s primerjavo z vgrajeno sliko JPEG, če obstaja in so popravki objektiva izvedeni v fotoaparatu.
 TP_DISTORTION_LABEL;Popravek popačenja
 TP_EPD_EDGESTOPPING;Zaustavljanje roba
 TP_EPD_GAMMA;Gama
@@ -1621,12 +1621,12 @@ TP_EPD_REWEIGHTINGITERATES;Ponovno tehtanje ponovitev
 TP_EPD_SCALE;Merilo
 TP_EPD_STRENGTH;Moč
 TP_EXPOSURE_AUTOLEVELS;Avto nivoji
-TP_EXPOSURE_AUTOLEVELS_TIP;Preklaplja izvajanje avto nivojev z vrednostmi izračunani iz analize slike.\nOmogoča rekonstrukcijo bleščav, če je potrebna.
+TP_EXPOSURE_AUTOLEVELS_TOOLTIP;Preklaplja izvajanje avto nivojev z vrednostmi izračunani iz analize slike.\nOmogoča rekonstrukcijo bleščav, če je potrebna.
 TP_EXPOSURE_BLACKLEVEL;Črna
 TP_EXPOSURE_BRIGHTNESS;Svetlost
 TP_EXPOSURE_CLAMPOOG;Posnetek barv izven obsega
 TP_EXPOSURE_CLIP;Posnetek %
-TP_EXPOSURE_CLIP_TIP;Delež pikslov, ki naj bodo posneti v operaciji avto nivoji.
+TP_EXPOSURE_CLIP_TOOLTIP;Delež pikslov, ki naj bodo posneti v operaciji avto nivoji.
 TP_EXPOSURE_COMPRHIGHLIGHTS;Stiskanje bleščav
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Prag stiskanja bleščav
 TP_EXPOSURE_COMPRSHADOWS;Stiskanje senc
@@ -1769,7 +1769,7 @@ TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Svetlost glede na odtenek L=f(H)
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Svetlost glede na svetlost L=f(L)
 TP_LABCURVE_LABEL;Prilagoditve L*a*b*
 TP_LABCURVE_LCREDSK;Omeji LC na rdečo in kožne barve
-TP_LABCURVE_LCREDSK_TIP;Če je aktivna, krivulja LC vpliva samo na rdečo in kožne barve.\nČe je onemogočen, se nanaša na vse tone.
+TP_LABCURVE_LCREDSK_TOOLTIP;Če je aktivna, krivulja LC vpliva samo na rdečo in kožne barve.\nČe je onemogočen, se nanaša na vse tone.
 TP_LABCURVE_RSTPROTECTION;Zaščita rdeče in kožnih barv
 TP_LABCURVE_RSTPRO_TOOLTIP;Deluje na drsniku kromatičnost in krivulji CC.
 TP_LENSGEOM_AUTOCROP;Avtomatska obrezava
@@ -1795,7 +1795,7 @@ TP_METADATA_MODE;Način kopiranja metapodatkov
 TP_METADATA_STRIP;Odstrani vse metapodatke
 TP_METADATA_TUNNEL;Kopiraj nespremenjeno
 TP_NEUTRAL;Ponastavi
-TP_NEUTRAL_TIP;Ponastavi drsnike ekspozicije v nevtralno stanje.\nUporablja enake parametre kot pri Avtomatskih nivojih, ne glede na to ali so uporabljeni ali ne..
+TP_NEUTRAL_TOOLTIP;Ponastavi drsnike ekspozicije v nevtralno stanje.\nUporablja enake parametre kot pri Avtomatskih nivojih, ne glede na to ali so uporabljeni ali ne..
 TP_PCVIGNETTE_FEATHER;Pero
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Perje:\n0 = samo vogali,\n50 = na polovici do centra,\n100 = v centru.
 TP_PCVIGNETTE_LABEL;Filter vinjetiranja
@@ -1980,7 +1980,7 @@ TP_RETINEX_MLABEL;Obnovi brez meglic Min=%1 Max=%2
 TP_RETINEX_MLABEL_TOOLTIP;Mora biti blizu min=0 max=32768\nObnovljena slika brez mešanja.
 TP_RETINEX_NEIGHBOR;Radij
 TP_RETINEX_NEUTRAL;Ponastavi
-TP_RETINEX_NEUTRAL_TIP;Ponastavi vse drsnike in klrivulje na njihove privzete vrednosti.
+TP_RETINEX_NEUTRAL_TOOLTIP;Ponastavi vse drsnike in klrivulje na njihove privzete vrednosti.
 TP_RETINEX_OFFSET;Odmik (svetlost)
 TP_RETINEX_SCALES;Gaussov gradient
 TP_RETINEX_SCALES_TOOLTIP;Če je drsnik na 0, so vse iteracije identične.\nČe je > 0 merilo in radij pojemata pri vsaki iteraciji in obratno.
@@ -2016,7 +2016,7 @@ TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Stopnja
 TP_ROTATE_LABEL;Zavrti
 TP_ROTATE_SELECTLINE;Izberi ravno črto
-TP_SAVEDIALOG_OK_TIP;Bližnjica: <b>Ctrl-Enter</b>
+TP_SAVEDIALOG_OK_TOOLTIP;Bližnjica: <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Bleščave
 TP_SHADOWSHLIGHTS_HLTONALW;Tonska širina bleščav
 TP_SHADOWSHLIGHTS_LABEL;Sence/bleščave

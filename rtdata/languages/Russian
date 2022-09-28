@@ -845,7 +845,7 @@ PROFILEPANEL_GLOBALPROFILES;Предустановленные профили
 PROFILEPANEL_LABEL;Профиль обработки
 PROFILEPANEL_LOADDLGLABEL;Загрузить профиль обработки...
 PROFILEPANEL_LOADPPASTE;Параметры для загрузки
-PROFILEPANEL_MODE_TIP;Режим применения профиля\n\nКнопка зажата: Частичные профили будут сконвертированы в полные профили, отсутствующие значения заменятся на значения по умолчанию.\n\nКнопка отжата: Профили будут применяться как они есть, изменяя только те параметры, которые в них прописаны.
+PROFILEPANEL_MODE_TOOLTIP;Режим применения профиля\n\nКнопка зажата: Частичные профили будут сконвертированы в полные профили, отсутствующие значения заменятся на значения по умолчанию.\n\nКнопка отжата: Профили будут применяться как они есть, изменяя только те параметры, которые в них прописаны.
 PROFILEPANEL_MYPROFILES;Мои профили
 PROFILEPANEL_PASTEPPASTE;Параметры для вставки
 PROFILEPANEL_PCUSTOM;Пользовательский
@@ -1091,12 +1091,12 @@ TP_EPD_REWEIGHTINGITERATES;Перевзвешивание проходов
 TP_EPD_SCALE;Масштаб
 TP_EPD_STRENGTH;Интенсивность
 TP_EXPOSURE_AUTOLEVELS;Автоуровни
-TP_EXPOSURE_AUTOLEVELS_TIP;Переключение выполнения автоуровней для автоматической установки параметров экспозиции на основе анализа изображения
+TP_EXPOSURE_AUTOLEVELS_TOOLTIP;Переключение выполнения автоуровней для автоматической установки параметров экспозиции на основе анализа изображения
 TP_EXPOSURE_BLACKLEVEL;Уровень чёрного
 TP_EXPOSURE_BRIGHTNESS;Яркость
 TP_EXPOSURE_CLAMPOOG;Обрезать цвета за пределами охвата
 TP_EXPOSURE_CLIP;Ограничить
-TP_EXPOSURE_CLIP_TIP;Часть пикселей, обрезаемая операцией автоматических уровней
+TP_EXPOSURE_CLIP_TOOLTIP;Часть пикселей, обрезаемая операцией автоматических уровней
 TP_EXPOSURE_COMPRHIGHLIGHTS;Сжатие светов
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Порог восстановления светов
 TP_EXPOSURE_COMPRSHADOWS;Сжатие теней
@@ -1211,7 +1211,7 @@ TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Яркость в соответствии с
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Яркость в соответствии с яркостью.\n<i>L=f(L)</i>
 TP_LABCURVE_LABEL;Кривые L*a*b*
 TP_LABCURVE_LCREDSK;Ограничить применение кривой ЯЦ
-TP_LABCURVE_LCREDSK_TIP;Если включено, то кривая яркости от цвета применится лишь для тонов кожи и красных оттенков.\nИначе применится для всех тонов
+TP_LABCURVE_LCREDSK_TOOLTIP;Если включено, то кривая яркости от цвета применится лишь для тонов кожи и красных оттенков.\nИначе применится для всех тонов
 TP_LABCURVE_RSTPROTECTION;Защита красного и тонов кожи
 TP_LABCURVE_RSTPRO_TOOLTIP;Защита красных тонов и оттенков кожи\nМожно использовать вместе со слайдером Цветность и кривой ЦЦ.
 TP_LENSGEOM_AUTOCROP;Автокадрирование
@@ -1232,7 +1232,7 @@ TP_METADATA_MODE;Режим копирования метаданных
 TP_METADATA_STRIP;Удалить всё
 TP_METADATA_TUNNEL;Скопировать неизменённо
 TP_NEUTRAL;Сбросить
-TP_NEUTRAL_TIP;Сбросить настройки выдержки на средние значения
+TP_NEUTRAL_TOOLTIP;Сбросить настройки выдержки на средние значения
 TP_PCVIGNETTE_FEATHER;Размытие
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Размытие:\n0=только углы, 50=наполовину к центру, 100=к центру.
 TP_PCVIGNETTE_LABEL;Фильтр виньетирования
@@ -1326,7 +1326,7 @@ TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Угол
 TP_ROTATE_LABEL;Поворот
 TP_ROTATE_SELECTLINE;Выбрать прямую линию
-TP_SAVEDIALOG_OK_TIP;Горячая клавиша <b>Ctrl-Enter</b>
+TP_SAVEDIALOG_OK_TOOLTIP;Горячая клавиша <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Света
 TP_SHADOWSHLIGHTS_HLTONALW;Уровень
 TP_SHADOWSHLIGHTS_LABEL;Тени/света
@@ -1459,7 +1459,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !EXPORT_BYPASS_EQUALIZER;Bypass Wavelet Levels
 !EXPORT_PIPELINE;Processing pipeline
 !EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
-!EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
+!EXPORT_USE_FAST_PIPELINE_TOOLTIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
 !EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
@@ -1877,7 +1877,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_COLORAPP_MEANLUMINANCE;Mean luminance (Yb%)
 !TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02 is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp+green + CAT02 + [output]:</b> temp and green are selected by the user, the output device's white balance is set in Viewing Conditions.
 !TP_COLORAPP_NEUTRAL;Reset
-!TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
+!TP_COLORAPP_NEUTRAL_TOOLTIP;Reset all sliders checkbox and curves to their default values
 !TP_COLORAPP_RSTPRO;Red & skin-tones protection
 !TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
 !TP_COLORAPP_SURROUND;Surround
@@ -1938,7 +1938,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_COLORTONING_METHOD_TOOLTIP;"L*a*b* blending", "RGB sliders" and "RGB curves" use interpolated color blending.\n"Color balance (Shadows/Midtones/Highlights)" and "Saturation 2 colors" use direct colors.\n\nThe Black-and-White tool can be enabled when using any color toning method, which allows for color toning.
 !TP_COLORTONING_MIDTONES;Midtones
 !TP_COLORTONING_NEUTRAL;Reset sliders
-!TP_COLORTONING_NEUTRAL_TIP;Reset all values (Shadows, Midtones, Highlights) to default.
+!TP_COLORTONING_NEUTRAL_TOOLTIP;Reset all values (Shadows, Midtones, Highlights) to default.
 !TP_COLORTONING_OPACITY;Opacity
 !TP_COLORTONING_RGBCURVES;RGB - Curves
 !TP_COLORTONING_RGBSLIDERS;RGB - Sliders
@@ -1985,7 +1985,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_DIRPYREQUALIZER_SKIN;Skin targetting/protection
 !TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 !TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
-!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
+!TP_DISTORTION_AUTO_TOOLTIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_EXPOS_BLACKPOINT_LABEL;Raw Black Points
 !TP_EXPOS_WHITEPOINT_LABEL;Raw White Points
 !TP_FILMNEGATIVE_BLUE;Blue ratio
@@ -2122,7 +2122,7 @@ ZOOMPANEL_ZOOMOUT;Отдалить\nГорячая клавиша: <b>-</b>
 !TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
 !TP_RETINEX_NEIGHBOR;Radius
 !TP_RETINEX_NEUTRAL;Reset
-!TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
+!TP_RETINEX_NEUTRAL_TOOLTIP;Reset all sliders and curves to their default values.
 !TP_RETINEX_OFFSET;Offset (brightness)
 !TP_RETINEX_SCALES;Gaussian gradient
 !TP_RETINEX_SCALES_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Scale and radius are reduced when iterations increase, and conversely.

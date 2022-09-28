@@ -101,7 +101,7 @@ EXPORT_PIPELINE;Redigeringspipeline
 EXPORT_PUTTOQUEUEFAST;  Sæt i kø for hurtig eksport
 EXPORT_RAW_DMETHOD;Demosaisk metode
 EXPORT_USE_FAST_PIPELINE;Dedikeret (fuld redigering på ændret billedstørrelse)
-EXPORT_USE_FAST_PIPELINE_TIP;Brug en dedikeret redigeringspipeline til billeder i hurtig eksporttilstand, der bruger hastighed frem for kvalitet. Ændring af størrelsen på billedet udføres så tidligt som muligt, i stedet for at gøre det til sidst som i den normale pipeline. Hastighedsforbedringen kan være betydelig, men vær forberedt på at se artefakter, og en generel forringelse af outputkvaliteten.
+EXPORT_USE_FAST_PIPELINE_TOOLTIP;Brug en dedikeret redigeringspipeline til billeder i hurtig eksporttilstand, der bruger hastighed frem for kvalitet. Ændring af størrelsen på billedet udføres så tidligt som muligt, i stedet for at gøre det til sidst som i den normale pipeline. Hastighedsforbedringen kan være betydelig, men vær forberedt på at se artefakter, og en generel forringelse af outputkvaliteten.
 EXPORT_USE_NORMAL_PIPELINE;Standard (spring over enkelte trin, ændre størrelse til sidst)
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;kø-bearbejdet
@@ -1226,7 +1226,7 @@ PROFILEPANEL_GLOBALPROFILES;Medfølgende profiler
 PROFILEPANEL_LABEL;Redigeringsprofiler
 PROFILEPANEL_LOADDLGLABEL;Indlæs redigeringsparametre...
 PROFILEPANEL_LOADPPASTE;Parametre til indlæsning
-PROFILEPANEL_MODE_TIP;Behandler profiludfyldningstilstand.\n\nKnap trykket: delvise profiler vil blive konverteret til hele profiler; de manglende værdier vil blive erstattet med hårdtkodede standarder.\n\nKnap frigivet: profiler vil blive anvendt, som de er, og ændrer kun de værdier, som de indeholder.
+PROFILEPANEL_MODE_TOOLTIP;Behandler profiludfyldningstilstand.\n\nKnap trykket: delvise profiler vil blive konverteret til hele profiler; de manglende værdier vil blive erstattet med hårdtkodede standarder.\n\nKnap frigivet: profiler vil blive anvendt, som de er, og ændrer kun de værdier, som de indeholder.
 PROFILEPANEL_MYPROFILES;Mine profiler
 PROFILEPANEL_PASTEPPASTE;Parametre der skal indsættes
 PROFILEPANEL_PCUSTOM;Standard
@@ -1433,7 +1433,7 @@ TP_COLORAPP_MEANLUMINANCE;Gennemsnitlig luminans (Yb%)
 TP_COLORAPP_MODEL;Hvidpunktsmodel
 TP_COLORAPP_MODEL_TOOLTIP;Hvidpunktsmodel.\n\n<b>WB [RT] + [output]</b>: RTs hvidbalance bruges til scenen, CIEFM02 er sat til D50, og outputenhedens hvidbalance er indstillet i visningsbetingelser.\n \n<b>WB [RT+CAT02] + [output]</b>: RTs hvidbalance-indstillinger bruges af CAT02, og output-enhedens hvidbalance er indstillet i visningsbetingelser.\n\n<b>Fri temp+grøn + CAT02 + [output]:</b> temp og grøn vælges af brugeren, outputenhedens hvidbalance indstilles i Visningsbetingelser.
 TP_COLORAPP_NEUTRAL;Nulstil
-TP_COLORAPP_NEUTRAL_TIP;Nulstil alle skydere i afkrydsningsfeltet og kurverne til deres standardværdier
+TP_COLORAPP_NEUTRAL_TOOLTIP;Nulstil alle skydere i afkrydsningsfeltet og kurverne til deres standardværdier
 TP_COLORAPP_RSTPRO;Rød- & hud-toner beskyttelse
 TP_COLORAPP_RSTPRO_TOOLTIP;Rød- & hud-toner; hudtone beskyttelse påvirker både skydere og kurver.
 TP_COLORAPP_SURROUND;Efter omgivelserne
@@ -1495,7 +1495,7 @@ TP_COLORTONING_METHOD;Metode
 TP_COLORTONING_METHOD_TOOLTIP;"L*a*b*-blanding", "RGB-skydere" og "RGB-kurver" bruger interpoleret farveblanding.\n"Farvebalance (Skygger/Mellemtoner/Højlys)" og "Mætning 2 farver" bruger direkte farver.\n\ nSort-og-Hvid-værktøjet kan aktiveres, når du bruger enhver farvetonemetode, som giver mulighed for farvetoning.
 TP_COLORTONING_MIDTONES;Mellemtoner
 TP_COLORTONING_NEUTRAL;Nulstil skydere
-TP_COLORTONING_NEUTRAL_TIP;Nulstil alle værdier (Skygger, Mellemtoner, Højlys) til standard.
+TP_COLORTONING_NEUTRAL_TOOLTIP;Nulstil alle værdier (Skygger, Mellemtoner, Højlys) til standard.
 TP_COLORTONING_OPACITY;Opacitet
 TP_COLORTONING_RGBCURVES;RGB - Kurver
 TP_COLORTONING_RGBSLIDERS;RGB - Skydere
@@ -1611,7 +1611,7 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;Ved -100 bliver hudtoner angrebet.\nVed 0 behand
 TP_DIRPYREQUALIZER_THRESHOLD;Tærskel
 TP_DIRPYREQUALIZER_TOOLTIP;Forsøger at reducere artefakter i overgangene mellem hudfarver (nuance, kroma, luma) og resten af billedet.
 TP_DISTORTION_AMOUNT;Mængde
-TP_DISTORTION_AUTO_TIP;Korrigerer automatisk objektivforvrængning i raw filer ved at matche dem med det indlejrede JPEG-billede, hvis et sådant findes og har fået dets objektivforvrængning automatisk korrigeret af kameraet.
+TP_DISTORTION_AUTO_TOOLTIP;Korrigerer automatisk objektivforvrængning i raw filer ved at matche dem med det indlejrede JPEG-billede, hvis et sådant findes og har fået dets objektivforvrængning automatisk korrigeret af kameraet.
 TP_DISTORTION_LABEL;Forvrængningskorrektion
 TP_EPD_EDGESTOPPING;Kantstopper
 TP_EPD_GAMMA;Gamma
@@ -1620,12 +1620,12 @@ TP_EPD_REWEIGHTINGITERATES;Genvægtning gentages
 TP_EPD_SCALE;Vægt
 TP_EPD_STRENGTH;Styrke
 TP_EXPOSURE_AUTOLEVELS;Auto Niveauer
-TP_EXPOSURE_AUTOLEVELS_TIP;Skifter udførelse af Auto Niveauer til automatisk at indstille Eksponeringsskyderværdier baseret på en billedanalyse.\nAktivér Højlys Rekonstruktion om nødvendigt.
+TP_EXPOSURE_AUTOLEVELS_TOOLTIP;Skifter udførelse af Auto Niveauer til automatisk at indstille Eksponeringsskyderværdier baseret på en billedanalyse.\nAktivér Højlys Rekonstruktion om nødvendigt.
 TP_EXPOSURE_BLACKLEVEL;Sort
 TP_EXPOSURE_BRIGHTNESS;Lyshed
 TP_EXPOSURE_CLAMPOOG;Klip udenfor-farveskala farver
 TP_EXPOSURE_CLIP;Klip %
-TP_EXPOSURE_CLIP_TIP;Den del af pixels, der skal klippes i Auto Niveauer-indstilling.
+TP_EXPOSURE_CLIP_TOOLTIP;Den del af pixels, der skal klippes i Auto Niveauer-indstilling.
 TP_EXPOSURE_COMPRHIGHLIGHTS;Højlys kompression
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Tærskel for højlys kompression
 TP_EXPOSURE_COMPRSHADOWS;Skygge kompression
@@ -1768,7 +1768,7 @@ TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminans i forhold til farvetone L=f(H)
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminans i forhold til luminans L=f(L)
 TP_LABCURVE_LABEL;L*a*b* Justeringer
 TP_LABCURVE_LCREDSK;Begræns LC til rød og hudtoner
-TP_LABCURVE_LCREDSK_TIP;Hvis den er aktiveret, påvirker LC-kurven kun rød og hudtoner.\nHvis den er deaktiveret, gælder den for alle toner.
+TP_LABCURVE_LCREDSK_TOOLTIP;Hvis den er aktiveret, påvirker LC-kurven kun rød og hudtoner.\nHvis den er deaktiveret, gælder den for alle toner.
 TP_LABCURVE_RSTPROTECTION;Rød og hudtone beskyttelse
 TP_LABCURVE_RSTPRO_TOOLTIP;Virker på Kromaticitet-skyderen og CC-kurven. TP_LENSGEOM_AUTOCROP;Auto-beskæring
 TP_LENSGEOM_FILL;Auto-udfyld
@@ -1795,7 +1795,7 @@ TP_METADATA_MODE;Metadata kopiér mode
 TP_METADATA_STRIP;Fjern alle metadata
 TP_METADATA_TUNNEL;Kopiér uændret
 TP_NEUTRAL;Nulstil
-TP_NEUTRAL_TIP;Nulstiller eksponeringsskyderne til neutrale værdier.\nGælder for de samme kontroller, som Auto Niveauer gælder for, uanset om du har brugt Auto Niveauer eller ej.
+TP_NEUTRAL_TOOLTIP;Nulstiller eksponeringsskyderne til neutrale værdier.\nGælder for de samme kontroller, som Auto Niveauer gælder for, uanset om du har brugt Auto Niveauer eller ej.
 TP_PCVIGNETTE_FEATHER;Fjer
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Fler(blødgøring):\n0 = kun hjørner,\n50 = halvvejs til center,\n100 = til center.
 TP_PCVIGNETTE_LABEL;Vignetteringsfilter
@@ -1980,7 +1980,7 @@ TP_RETINEX_MLABEL;Gendannet dis-fri Min=%1 Max=%2
 TP_RETINEX_MLABEL_TOOLTIP;Bør være tæt på min=0 max=32768\nGendannet billede uden blanding.
 TP_RETINEX_NEIGHBOR;Radius
 TP_RETINEX_NEUTRAL;Nulstil
-TP_RETINEX_NEUTRAL_TIP;Nulstil alle skydere og kurver til deres standardværdier.
+TP_RETINEX_NEUTRAL_TOOLTIP;Nulstil alle skydere og kurver til deres standardværdier.
 TP_RETINEX_OFFSET;Offset (lysstyrke)
 TP_RETINEX_SCALES;Gaussian gradient
 TP_RETINEX_SCALES_TOOLTIP;Hvis skyderen står på 0, er alle iterationer identiske.\nHvis > 0 Vægt og radius reduceres, når iterationer øges, og omvendt.
@@ -2016,7 +2016,7 @@ TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Grad
 TP_ROTATE_LABEL;Rotér
 TP_ROTATE_SELECTLINE;Vælg lige linje
-TP_SAVEDIALOG_OK_TIP;Genvej: <b>Ctrl-Enter</b>
+TP_SAVEDIALOG_OK_TOOLTIP;Genvej: <b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Højlys
 TP_SHADOWSHLIGHTS_HLTONALW;Højlys tonal bredde
 TP_SHADOWSHLIGHTS_LABEL;Skygger/Højlys
@@ -3123,7 +3123,7 @@ ZOOMPANEL_ZOOMOUT;Zoom Ud\nGenvej: <b>-</b>
 !TP_COLORAPP_MODELCAT;CAM Model
 !TP_COLORAPP_MODELCAT_TOOLTIP;Allows you to choose between CIECAM02 or CIECAM16.\n CIECAM02 will sometimes be more accurate.\n CIECAM16 should generate fewer artifacts
 !TP_COLORAPP_PRESETCAT02;Preset cat02/16 automatic - Symmetric mode
-!TP_COLORAPP_PRESETCAT02_TIP;Set combobox, sliders, temp, green so that Cat02/16 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change Cat02/16 adaptation Viewing conditions if needed.\nYou can change Temperature and Tint Viewing conditions if needed, and other settings if needed.\nAll auto checkbox are disabled
+!TP_COLORAPP_PRESETCAT02_TOOLTIP;Set combobox, sliders, temp, green so that Cat02/16 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change Cat02/16 adaptation Viewing conditions if needed.\nYou can change Temperature and Tint Viewing conditions if needed, and other settings if needed.\nAll auto checkbox are disabled
 !TP_COLORAPP_SOURCEF_TOOLTIP;Corresponds to the shooting conditions and how to bring the conditions and data back to a "normal" area. Normal" means average or standard conditions and data, i.e. without taking into account CIECAM corrections.
 !TP_COLORAPP_SURROUNDSRC;Surround - Scene Lighting
 !TP_COLORAPP_SURSOURCE_TOOLTIP;Changes tones and colors to take into account the Scene conditions.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment. The image will become slightly bright.\n\n<b>Dark</b>: Dark environment. The image will become more bright.\n\n<b>Extremly Dark</b>: Extremly dark environment. The image will become very bright.

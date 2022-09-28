@@ -102,7 +102,7 @@ EXPORT_PIPELINE;Circuito de revelado
 EXPORT_PUTTOQUEUEFAST;Enviar a la cola para exportación rápida
 EXPORT_RAW_DMETHOD;Método de desentramado
 EXPORT_USE_FAST_PIPELINE;Circuito rápido (cambia el tamaño al principio)
-EXPORT_USE_FAST_PIPELINE_TIP;Usa un circuito de revelado que favorece la velocidad a costa de la calidad: el cambio de tamaño de la imagen se realiza lo antes posible, en lugar de hacerlo al final como en el circuito normal.\n\nEl incremento de velocidad puede ser importante, pero probablemente aparecerán artefactos de compresión y se producirá una degradación general de la calidad en el archivo de salida.
+EXPORT_USE_FAST_PIPELINE_TOOLTIP;Usa un circuito de revelado que favorece la velocidad a costa de la calidad: el cambio de tamaño de la imagen se realiza lo antes posible, en lugar de hacerlo al final como en el circuito normal.\n\nEl incremento de velocidad puede ser importante, pero probablemente aparecerán artefactos de compresión y se producirá una degradación general de la calidad en el archivo de salida.
 EXPORT_USE_NORMAL_PIPELINE;Circuito estándar (cambia el tamaño al final)
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;revelado en la cola
@@ -1967,7 +1967,7 @@ PROFILEPANEL_GLOBALPROFILES;Perfiles incorporados
 PROFILEPANEL_LABEL;Perfiles de procesamiento
 PROFILEPANEL_LOADDLGLABEL;Cargar parámetros de procesamiento...
 PROFILEPANEL_LOADPPASTE;Parámetros a cargar
-PROFILEPANEL_MODE_TIP;Modo de rellenado del perfil de revelado.\n\nBotón pulsado: los perfiles parciales se convertirán en completos; los valores no presentes se reemplazarán por los internos predeterminados del programa.\n\nBotón no pulsado: los perfiles se aplicarán tal como están, alterando solamente los valores de los parámetros que contienen.
+PROFILEPANEL_MODE_TOOLTIP;Modo de rellenado del perfil de revelado.\n\nBotón pulsado: los perfiles parciales se convertirán en completos; los valores no presentes se reemplazarán por los internos predeterminados del programa.\n\nBotón no pulsado: los perfiles se aplicarán tal como están, alterando solamente los valores de los parámetros que contienen.
 PROFILEPANEL_MYPROFILES;Mis perfiles
 PROFILEPANEL_PASTEPPASTE;Parámetros a pegar
 PROFILEPANEL_PCUSTOM;Personalizado
@@ -2067,7 +2067,7 @@ TP_BWMIX_ALGO_LI;Lineal
 TP_BWMIX_ALGO_SP;Efectos especiales
 TP_BWMIX_ALGO_TOOLTIP;Lineal: producirá una respuesta <b>lineal</b> normal.\nEfectos especiales: se producirán efectos especiales mediante la mezcla <b>no lineal</b> de canales.
 TP_BWMIX_AUTOCH;Automático
-TP_BWMIX_AUTOCH_TIP;Automático
+TP_BWMIX_AUTOCH_TOOLTIP;Automático
 TP_BWMIX_CC_ENABLED;Ajustar color complementario
 TP_BWMIX_CC_TOOLTIP;Actívese para permitir el ajuste automático de los colores complementarios en modo ROYGCBPM.
 TP_BWMIX_CHANNEL;Ecualizador de luminancia
@@ -2207,9 +2207,9 @@ TP_COLORAPP_MODELCAT;Modelo CAM
 TP_COLORAPP_MODELCAT_TOOLTIP;Permite elegir entre CIECAM02 o CIECAM16.\nA veces CIECAM02 será más preciso.\nCIECAM16 debería generar menos artefactos.
 TP_COLORAPP_MODEL_TOOLTIP;Modelo de punto blanco.\n\n<b>WB [RT] + [salida]</b>: Se usa el balance de blancos de RT para la escena, CIECAM02/16 se ajusta a D50, y el balance de blancos del dispositivo de salida se ajusta en Condiciones de visualización.\n\n<b>WB [RT+CAT02/16] + [salida]</b>: CAT02 usa los ajustes de balance de blancos de RT, y el balance de blancos del dispositivo de salida se ajusta en Condiciones de visualización.\n\n<b>Temperatura+verde libres + CAT02 + [salida]:</b>El usuario elige la temperatura y el nivel de verde, y el balance de blancos del dispositivo de salida se ajusta en Condiciones de visualización.
 TP_COLORAPP_NEUTRAL;Restablecer
-TP_COLORAPP_NEUTRAL_TIP;Restablece todos los deslizadores, casillas de verificación y curvas a sus valores predeterminados.
+TP_COLORAPP_NEUTRAL_TOOLTIP;Restablece todos los deslizadores, casillas de verificación y curvas a sus valores predeterminados.
 TP_COLORAPP_PRESETCAT02;Preselección CAT02/16 automática - Modo simétrico
-TP_COLORAPP_PRESETCAT02_TIP;Ajusta las listas desplegables, deslizadores, temperatura y verde de modo que se preselecciona CAT02/16 automático.\nSe pueden cambiar las condiciones de toma del iluminante.\nDeben cambiarse las condiciones de visualización de la adaptación CAT02/16 si es necesario.\nSe pueden cambiar las condiciones de visualización Temperatura y Tinte si es necesario, así como otros ajustes.\nTodas las casillas auto se desactivan.
+TP_COLORAPP_PRESETCAT02_TOOLTIP;Ajusta las listas desplegables, deslizadores, temperatura y verde de modo que se preselecciona CAT02/16 automático.\nSe pueden cambiar las condiciones de toma del iluminante.\nDeben cambiarse las condiciones de visualización de la adaptación CAT02/16 si es necesario.\nSe pueden cambiar las condiciones de visualización Temperatura y Tinte si es necesario, así como otros ajustes.\nTodas las casillas auto se desactivan.
 TP_COLORAPP_RSTPRO;Protección de rojo y tonos de piel
 TP_COLORAPP_RSTPRO_TOOLTIP;La Protección de rojo y tonos de piel afecta tanto a los deslizadores como a las curvas.
 TP_COLORAPP_SOURCEF_TOOLTIP;Corresponde a las condiciones de toma y cómo llevar las condiciones y los datos a una zona «normal». «Normal» significa aquí condiciones y datos promedio o estándar, es decir, sin tener en cuenta las correcciones CIECAM.
@@ -2280,7 +2280,7 @@ TP_COLORTONING_METHOD;Método
 TP_COLORTONING_METHOD_TOOLTIP;Los métodos «Mezcla L*a*b*», «Deslizadores RGB» y «Curvas RGB» usan la mezcla interpolada de color.\n\nLos métodos «Balance de color (Sombras/Tonos medios/Luces)» y «Saturación 2 colores» usan colores directos.\n\nLa herramienta Blanco y negro se puede activar mientras se usa cualquier método de virado de color, lo que permite el virado.
 TP_COLORTONING_MIDTONES;Tonos medios
 TP_COLORTONING_NEUTRAL;Reiniciar deslizadores
-TP_COLORTONING_NEUTRAL_TIP;Reiniciar todos los valores (Sombras, Tonos medios, Luces) a los predeterminados.
+TP_COLORTONING_NEUTRAL_TOOLTIP;Reiniciar todos los valores (Sombras, Tonos medios, Luces) a los predeterminados.
 TP_COLORTONING_OPACITY;Opacidad
 TP_COLORTONING_RGBCURVES;RGB - Curvas
 TP_COLORTONING_RGBSLIDERS;RGB - Deslizadores
@@ -2398,7 +2398,7 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;Al valor -100, el efecto se focaliza en los tono
 TP_DIRPYREQUALIZER_THRESHOLD;Umbral
 TP_DIRPYREQUALIZER_TOOLTIP;Intenta reducir los artefactos en las transiciones entre colores de piel (matiz, cromaticidad, luminancia) y el resto de la imagen.
 TP_DISTORTION_AMOUNT;Cantidad
-TP_DISTORTION_AUTO_TIP;Corrige automáticamente la distorsión del objetivo en archivos raw, contrastándola con la imagen JPEG embebida, si ésta existe y su distorsión de objetivo ha sido corregida automáticamente por la cámara.
+TP_DISTORTION_AUTO_TOOLTIP;Corrige automáticamente la distorsión del objetivo en archivos raw, contrastándola con la imagen JPEG embebida, si ésta existe y su distorsión de objetivo ha sido corregida automáticamente por la cámara.
 TP_DISTORTION_LABEL;Corrección de distorsión
 TP_EPD_EDGESTOPPING;Parada en bordes
 TP_EPD_GAMMA;Gamma
@@ -2407,12 +2407,12 @@ TP_EPD_REWEIGHTINGITERATES;Iteraciones de reponderación
 TP_EPD_SCALE;Escala
 TP_EPD_STRENGTH;Intensidad
 TP_EXPOSURE_AUTOLEVELS;Niveles automáticos
-TP_EXPOSURE_AUTOLEVELS_TIP;Activa/desactiva la ejecución de Niveles automáticos, que ajusta automáticamente los valores de los deslizadores de Exposición basándose en un análisis de la imagen.\nSi es necesario, se activa la Reconstrucción de luces.
+TP_EXPOSURE_AUTOLEVELS_TOOLTIP;Activa/desactiva la ejecución de Niveles automáticos, que ajusta automáticamente los valores de los deslizadores de Exposición basándose en un análisis de la imagen.\nSi es necesario, se activa la Reconstrucción de luces.
 TP_EXPOSURE_BLACKLEVEL;Negro
 TP_EXPOSURE_BRIGHTNESS;Brillo
 TP_EXPOSURE_CLAMPOOG;Recortar colores fuera de rango
 TP_EXPOSURE_CLIP;% Recorte
-TP_EXPOSURE_CLIP_TIP;La fracción de píxels que quedarán recortados tras la ejecución de Niveles automáticos.
+TP_EXPOSURE_CLIP_TOOLTIP;La fracción de píxels que quedarán recortados tras la ejecución de Niveles automáticos.
 TP_EXPOSURE_COMPRHIGHLIGHTS;Compresión de luces
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Umbral de compresión de luces
 TP_EXPOSURE_COMPRSHADOWS;Compresión de sombras
@@ -2613,7 +2613,7 @@ TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminancia en función del matiz L=f(H)
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminancia en función de la luminancia L=f(L)
 TP_LABCURVE_LABEL;Ajustes L*a*b*
 TP_LABCURVE_LCREDSK;Restringir LC a rojos y tonos de piel
-TP_LABCURVE_LCREDSK_TIP;Si se activa, la curva LC afecta solamente a los rojos y los tonos de piel.\nSi se desactiva, afecta a todos los tonos.
+TP_LABCURVE_LCREDSK_TOOLTIP;Si se activa, la curva LC afecta solamente a los rojos y los tonos de piel.\nSi se desactiva, afecta a todos los tonos.
 TP_LABCURVE_RSTPROTECTION;Protección de rojos y tonos de piel
 TP_LABCURVE_RSTPRO_TOOLTIP;Opera sobre el deslizador de Cromaticidad y la curva CC.
 TP_LENSGEOM_AUTOCROP;Auto-recorte
@@ -3437,7 +3437,7 @@ TP_METADATA_MODE;Modo de copia de metadatos
 TP_METADATA_STRIP;Eliminar todos los metadatos
 TP_METADATA_TUNNEL;Copiar sin cambios
 TP_NEUTRAL;Reiniciar
-TP_NEUTRAL_TIP;Reinicia los deslizadores de exposición a valores neutros.\nActúa sobre los mismos controles que Niveles automáticos, independientemente de si se ha usado Niveles automáticos o no.
+TP_NEUTRAL_TOOLTIP;Reinicia los deslizadores de exposición a valores neutros.\nActúa sobre los mismos controles que Niveles automáticos, independientemente de si se ha usado Niveles automáticos o no.
 TP_PCVIGNETTE_FEATHER;Anchura de gradiente
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Anchura de gradiente:\n0 = sólo en las esquinas,\n50 = hasta mitad de camino al centro,\n100 = hasta el centro.
 TP_PCVIGNETTE_LABEL;Filtro de viñeteado
@@ -3658,7 +3658,7 @@ TP_RETINEX_MLABEL;Datos restaurados Min=%1 Max=%2
 TP_RETINEX_MLABEL_TOOLTIP;Los valores deberían estar cerca de min=0 max=32768 (modo logarítmico), pero son posibles otros valores. Se puede ajustar «Recortar datos restaurados (ganancia)» y «Desplazamiento» para normalizar.\nRecupera los datos de la imagen sin mezclar.
 TP_RETINEX_NEIGHBOR;Radio
 TP_RETINEX_NEUTRAL;Reiniciar
-TP_RETINEX_NEUTRAL_TIP;Reinicia todos los deslizadores y curvas a sus valores predeterminados.
+TP_RETINEX_NEUTRAL_TOOLTIP;Reinicia todos los deslizadores y curvas a sus valores predeterminados.
 TP_RETINEX_OFFSET;Desplazamiento (brillo)
 TP_RETINEX_SCALES;Gradiente gaussiano
 TP_RETINEX_SCALES_TOOLTIP;Si el deslizador está a 0, todas las iteraciones son idénticas.\nSi es > 0, la Escala y el Radio se reducen al incrementarse las iteraciones, y viceversa.
@@ -3694,7 +3694,7 @@ TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Grados
 TP_ROTATE_LABEL;Rotación
 TP_ROTATE_SELECTLINE;Seleccionar línea recta
-TP_SAVEDIALOG_OK_TIP;Atajo de teclado: <b>Ctrl-Intro</b>
+TP_SAVEDIALOG_OK_TOOLTIP;Atajo de teclado: <b>Ctrl-Intro</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Luces
 TP_SHADOWSHLIGHTS_HLTONALW;Anchura tonal de las luces
 TP_SHADOWSHLIGHTS_LABEL;Sombras/Luces

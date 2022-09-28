@@ -101,7 +101,7 @@ EXPORT_PIPELINE;Pipeline de Traitement
 EXPORT_PUTTOQUEUEFAST;Mettre dans la file de traitement\npour Export Rapide
 EXPORT_RAW_DMETHOD;Méthode de dématriçage
 EXPORT_USE_FAST_PIPELINE;Dédié\n(traitement complet sur une image rédimmentionnée)
-EXPORT_USE_FAST_PIPELINE_TIP;Utilise un pipeline de traitement dédié pour les images en Export Rapide, qui privilégie la vitesse sur la qualité. Le redimensionnement des images est fait dès que possible, au lieu d'être fait à la fin comme dans le pipeline normal. L'accélération peut être significative, mais soyez prêt à voir des artéfacts et une dégradation générale de la qualité de sortie.
+EXPORT_USE_FAST_PIPELINE_TOOLTIP;Utilise un pipeline de traitement dédié pour les images en Export Rapide, qui privilégie la vitesse sur la qualité. Le redimensionnement des images est fait dès que possible, au lieu d'être fait à la fin comme dans le pipeline normal. L'accélération peut être significative, mais soyez prêt à voir des artéfacts et une dégradation générale de la qualité de sortie.
 EXPORT_USE_NORMAL_PIPELINE;Standard\n(ignore des étapes, redimentionne à la fin)
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;file de traitement
@@ -1210,7 +1210,7 @@ PROFILEPANEL_GLOBALPROFILES;Profils fournis
 PROFILEPANEL_LABEL;Profils de post-traitement
 PROFILEPANEL_LOADDLGLABEL;Charger les paramètres de post-traitement...
 PROFILEPANEL_LOADPPASTE;Paramètres à charger
-PROFILEPANEL_MODE_TIP;Mode de complètement des profils de traitement.\n\nBouton pressé: les profils partiels seront convertis en profils complets; les valeurs manquantes seront remplacées par les valeurs internes par défaut\n\nBouton relevé: les profils seront appliqués tel quel, altérant seulement les paramètres qu'ils contiennent.
+PROFILEPANEL_MODE_TOOLTIP;Mode de complètement des profils de traitement.\n\nBouton pressé: les profils partiels seront convertis en profils complets; les valeurs manquantes seront remplacées par les valeurs internes par défaut\n\nBouton relevé: les profils seront appliqués tel quel, altérant seulement les paramètres qu'ils contiennent.
 PROFILEPANEL_MYPROFILES;Mes profils
 PROFILEPANEL_PASTEPPASTE;Paramètres à coller
 PROFILEPANEL_PCUSTOM;Personnel
@@ -1411,7 +1411,7 @@ TP_COLORAPP_MEANLUMINANCE;Luminance moyenne (Yb%)
 TP_COLORAPP_MODEL;Modèle de Point Blanc
 TP_COLORAPP_MODEL_TOOLTIP;Modèle de Point Blanc\n\n<b>BB [RT] + [sortie]:</b>\nLa BB de RT est utilisée pour la scène, CIECAM est réglé sur D50, le blanc du périphérique de sortie utilise la valeur réglée dans Préférences\n\n<b>BB [RT+CAT02] + [sortie]:</b>\nLes réglages de BB de RT sont utilisés par CAT02 et le blanc du périphérique de sortie utilise la valeur réglée dans Préférences
 TP_COLORAPP_NEUTRAL;Résinitialiser
-TP_COLORAPP_NEUTRAL_TIP;Réinitialiser tous les curseurs, cases à cocher et courbes à leurs valeur par défaut
+TP_COLORAPP_NEUTRAL_TOOLTIP;Réinitialiser tous les curseurs, cases à cocher et courbes à leurs valeur par défaut
 TP_COLORAPP_RSTPRO;Protection des tons chairs et rouges
 TP_COLORAPP_RSTPRO_TOOLTIP;Protection des tons chairs et rouges (curseurs et courbes)
 TP_COLORAPP_SURROUND;Entourage
@@ -1475,7 +1475,7 @@ TP_COLORTONING_METHOD;Méthode
 TP_COLORTONING_METHOD_TOOLTIP;Mixage Lab - RVB courbes - RVB curseurs utilise une interpolation\nBalance couleur(ombres / tons moyens / hautes lumières)\nSaturation 2 couleurs utilise couleurs directes\nDans tous les méthodes vous pouvez activer Noir et Blanc
 TP_COLORTONING_MIDTONES;Tons Moyens
 TP_COLORTONING_NEUTRAL;Réinit. curseurs
-TP_COLORTONING_NEUTRAL_TIP;Réinitialise toutes les valeurs (Ombres, Tons moyens, Hautes lumières) à leur valeur par défaut.
+TP_COLORTONING_NEUTRAL_TOOLTIP;Réinitialise toutes les valeurs (Ombres, Tons moyens, Hautes lumières) à leur valeur par défaut.
 TP_COLORTONING_OPACITY;Opacité
 TP_COLORTONING_RGBCURVES;RVB - Courbes
 TP_COLORTONING_RGBSLIDERS;RVB - Curseurs
@@ -1589,7 +1589,7 @@ TP_DIRPYREQUALIZER_SKIN_TOOLTIP;A -100, les tons chairs sont ciblés.\nA 0 tous 
 TP_DIRPYREQUALIZER_THRESHOLD;Seuil
 TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts due to the transitions between the color (hue, chroma, luma) of the skin and the rest of the image.
 TP_DISTORTION_AMOUNT;Quantité
-TP_DISTORTION_AUTO_TIP;Corrige automatiquement la distortion optique dans les fichiers raw en opérant une mise en correspondance avec le fichier JPEG incorporé, si elle existe, et sur laquelle la correction de la distortion a été appliqué par le boitier.
+TP_DISTORTION_AUTO_TOOLTIP;Corrige automatiquement la distortion optique dans les fichiers raw en opérant une mise en correspondance avec le fichier JPEG incorporé, si elle existe, et sur laquelle la correction de la distortion a été appliqué par le boitier.
 TP_DISTORTION_LABEL;Distorsion
 TP_EPD_EDGESTOPPING;Arrêt des bords
 TP_EPD_GAMMA;Gamma
@@ -1598,12 +1598,12 @@ TP_EPD_REWEIGHTINGITERATES;Itérations de la pondération
 TP_EPD_SCALE;Échelle
 TP_EPD_STRENGTH;Force
 TP_EXPOSURE_AUTOLEVELS;Niveaux Auto
-TP_EXPOSURE_AUTOLEVELS_TIP;Bascule l'usage de Niveaux automatiques afin de régler automatiquement les valeurs basé sur l'analyse de l'image\nActive la Reconstruction des Hautes Lumières si nécessaire.
+TP_EXPOSURE_AUTOLEVELS_TOOLTIP;Bascule l'usage de Niveaux automatiques afin de régler automatiquement les valeurs basé sur l'analyse de l'image\nActive la Reconstruction des Hautes Lumières si nécessaire.
 TP_EXPOSURE_BLACKLEVEL;Noir
 TP_EXPOSURE_BRIGHTNESS;Luminosité
 TP_EXPOSURE_CLAMPOOG;Tronquer les couleurs hors gamut
 TP_EXPOSURE_CLIP;Rognage %
-TP_EXPOSURE_CLIP_TIP;La fraction de pixels que l'outil <b>Niveaux Auto</b> passera en dehors du domaine
+TP_EXPOSURE_CLIP_TOOLTIP;La fraction de pixels que l'outil <b>Niveaux Auto</b> passera en dehors du domaine
 TP_EXPOSURE_COMPRHIGHLIGHTS;Compression hautes lumières
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Seuil de compression\ndes hautes lumières
 TP_EXPOSURE_COMPRSHADOWS;Compression des ombres
@@ -1740,7 +1740,7 @@ TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminance en fonction de la Teinte L=f(T)
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminance en fonction de la Luminance L=f(L)
 TP_LABCURVE_LABEL;Ajustements Lab
 TP_LABCURVE_LCREDSK;Restreindre LC aux tons rouge et peau
-TP_LABCURVE_LCREDSK_TIP;Si activé, la courbe 'LC' est limitée au tons rouge et peau.\nSi désactivé, elle s'applique à toutes les teintes.
+TP_LABCURVE_LCREDSK_TOOLTIP;Si activé, la courbe 'LC' est limitée au tons rouge et peau.\nSi désactivé, elle s'applique à toutes les teintes.
 TP_LABCURVE_RSTPROTECTION;Protection des tons rouges et chair
 TP_LABCURVE_RSTPRO_TOOLTIP;Peut être utilisé avec le curseur Chromaticité et la courbe CC.
 TP_LENSGEOM_AUTOCROP;Recadrage auto
@@ -2608,7 +2608,7 @@ TP_METADATA_MODE;Mode de copie des métadonnées
 TP_METADATA_STRIP;Retirer toutes les métadonnées
 TP_METADATA_TUNNEL;Copier à l'identique
 TP_NEUTRAL;Réinit.
-TP_NEUTRAL_TIP;Réinitialise les valeurs de l'exposition à des valeurs neutres
+TP_NEUTRAL_TOOLTIP;Réinitialise les valeurs de l'exposition à des valeurs neutres
 TP_PCVIGNETTE_FEATHER;Étendue
 TP_PCVIGNETTE_FEATHER_TOOLTIP;Étendue: 0=bords uniquement, 50=mi-chemin du centre, 100=jusqu'au centre
 TP_PCVIGNETTE_LABEL;Filtre Vignettage
@@ -2815,7 +2815,7 @@ TP_RETINEX_MLABEL;Recomposition sans 'brume' Min=%1 Max=%2
 TP_RETINEX_MLABEL_TOOLTIP;Devrait être proche de min=0 max=32768\nImage recomposée sans mélange.
 TP_RETINEX_NEIGHBOR;Rayon
 TP_RETINEX_NEUTRAL;Réinit.
-TP_RETINEX_NEUTRAL_TIP;Réinitialise tous les curseurs et courbes à leur valeur par défaut.
+TP_RETINEX_NEUTRAL_TOOLTIP;Réinitialise tous les curseurs et courbes à leur valeur par défaut.
 TP_RETINEX_OFFSET;Décalage (brillance)
 TP_RETINEX_SCALES;Gradient gaussien
 TP_RETINEX_SCALES_TOOLTIP;Si le curseur est à 0, toutes les itérations sont identiques.\nSi > 0, l'Échelle et le Rayon sont réduit à chaque nouvelle itération, et inversement.
@@ -2851,7 +2851,7 @@ TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;Degré
 TP_ROTATE_LABEL;Rotation
 TP_ROTATE_SELECTLINE;Choisir la ligne d'horizon
-TP_SAVEDIALOG_OK_TIP;Raccourci: <b>Ctrl-Entrée</b>
+TP_SAVEDIALOG_OK_TOOLTIP;Raccourci: <b>Ctrl-Entrée</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Hautes lumières
 TP_SHADOWSHLIGHTS_HLTONALW;Amplitude tonale des\nhautes lumières
 TP_SHADOWSHLIGHTS_LABEL;Ombres/Hautes lumières

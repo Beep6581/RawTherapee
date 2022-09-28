@@ -109,7 +109,7 @@ EXPORT_PIPELINE;输出流水线
 EXPORT_PUTTOQUEUEFAST;放入快速导出队列
 EXPORT_RAW_DMETHOD;去马赛克算法
 EXPORT_USE_FAST_PIPELINE;专门（对缩放大小的图片应用全部处理）
-EXPORT_USE_FAST_PIPELINE_TIP;使用专门的处理流水线来对图片进行处理，通过牺牲质量来换取速度。图片的缩小操作会提前，而非在正常流水线中那样在最后进行。这能够大幅提升速度，但是输出的图片中可能会杂点较多，画质较低。
+EXPORT_USE_FAST_PIPELINE_TOOLTIP;使用专门的处理流水线来对图片进行处理，通过牺牲质量来换取速度。图片的缩小操作会提前，而非在正常流水线中那样在最后进行。这能够大幅提升速度，但是输出的图片中可能会杂点较多，画质较低。
 EXPORT_USE_NORMAL_PIPELINE;标准（跳过某些步骤，并在最后缩放图片）
 EXTPROGTARGET_1;raw
 EXTPROGTARGET_2;队列已处理
@@ -1024,7 +1024,7 @@ PROFILEPANEL_GLOBALPROFILES;附带档案
 PROFILEPANEL_LABEL;处理参数配置
 PROFILEPANEL_LOADDLGLABEL;加载处理参数为...
 PROFILEPANEL_LOADPPASTE;要加载的参数
-PROFILEPANEL_MODE_TIP;后期档案应用模式。\n\n按下按钮：部分性档案将被转化为全面性档案；没有被使用的工具将会用预定的参数得到处理。\n\n松开按钮：档案按照其制作时的形式被应用，只有被调整过的工具参数会被应用。
+PROFILEPANEL_MODE_TOOLTIP;后期档案应用模式。\n\n按下按钮：部分性档案将被转化为全面性档案；没有被使用的工具将会用预定的参数得到处理。\n\n松开按钮：档案按照其制作时的形式被应用，只有被调整过的工具参数会被应用。
 PROFILEPANEL_MYPROFILES;我的档案
 PROFILEPANEL_PASTEPPASTE;要粘贴的参数
 PROFILEPANEL_PCUSTOM;自定义
@@ -1208,7 +1208,7 @@ TP_COLORAPP_MEANLUMINANCE;平均亮度(Yb%)
 TP_COLORAPP_MODEL;白点模型
 TP_COLORAPP_MODEL_TOOLTIP;<b>白平衡[RT]+[输出]</b>：RT的白平衡被应用到场景，CIECAM02/16被设为D50，输出设备的白平衡被设置为观察条件\n\n<b>白平衡[RT+CAT02/16]+[输出]</b>：CAT02/16使用RT的白平衡设置，输出设备的白平衡被设置为观察条件\n\n<b>自由色温+色调+CAT02/16+[输出]：</b>用户指定色温和色调，输出设备的白平衡被设置为观察条件
 TP_COLORAPP_NEUTRAL;重置
-TP_COLORAPP_NEUTRAL_TIP;将所有复选框、滑条和曲线还原到默认状态
+TP_COLORAPP_NEUTRAL_TOOLTIP;将所有复选框、滑条和曲线还原到默认状态
 TP_COLORAPP_RSTPRO;红色与肤色保护
 TP_COLORAPP_RSTPRO_TOOLTIP;滑条和曲线均受红色与肤色保护影响
 TP_COLORAPP_SURROUND;周围环境
@@ -1262,7 +1262,7 @@ TP_COLORTONING_METHOD;方法
 TP_COLORTONING_METHOD_TOOLTIP;L*a*b*混合，RGB滑条和RGB曲线使用插值色彩混合。\n阴影/中间调/高光色彩平衡和饱和度2种颜色使用直接颜色。\n\n使用任意一种色调分离方法时都可以启用黑白工具，来为黑白照片进行色调分离
 TP_COLORTONING_MIDTONES;中间调
 TP_COLORTONING_NEUTRAL;重置滑条
-TP_COLORTONING_NEUTRAL_TIP;重置所有数值（阴影，中间调，高光）为默认
+TP_COLORTONING_NEUTRAL_TOOLTIP;重置所有数值（阴影，中间调，高光）为默认
 TP_COLORTONING_OPACITY;不透明度
 TP_COLORTONING_RGBCURVES;RGB-曲线
 TP_COLORTONING_RGBSLIDERS;RGB-滑条
@@ -1380,12 +1380,12 @@ TP_EPD_REWEIGHTINGITERATES;再加权迭代
 TP_EPD_SCALE;规模度
 TP_EPD_STRENGTH;力度
 TP_EXPOSURE_AUTOLEVELS;自动色阶
-TP_EXPOSURE_AUTOLEVELS_TIP;使用自动色阶来让程序分析图像，调整曝光滑条的数值\n如果有需要的话，启用高光还原
+TP_EXPOSURE_AUTOLEVELS_TOOLTIP;使用自动色阶来让程序分析图像，调整曝光滑条的数值\n如果有需要的话，启用高光还原
 TP_EXPOSURE_BLACKLEVEL;黑点
 TP_EXPOSURE_BRIGHTNESS;亮度
 TP_EXPOSURE_CLAMPOOG;令超出色域的色彩溢出
 TP_EXPOSURE_CLIP;可溢出％
-TP_EXPOSURE_CLIP_TIP;自动色阶功能可以让占总数的多少比例的像素溢出
+TP_EXPOSURE_CLIP_TOOLTIP;自动色阶功能可以让占总数的多少比例的像素溢出
 TP_EXPOSURE_COMPRHIGHLIGHTS;高光压缩
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;高光压缩阈值
 TP_EXPOSURE_COMPRSHADOWS;阴影压缩
@@ -1495,7 +1495,7 @@ TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;根据色相(H)调整亮度(L)，L=f(H)
 TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;根据亮度(L)调整亮度(L)，L=f(L)
 TP_LABCURVE_LABEL;Lab调整
 TP_LABCURVE_LCREDSK;将LC曲线的效果限定于红色和肤色
-TP_LABCURVE_LCREDSK_TIP;勾选该选项框，LC曲线就只会影响红色和肤色。\n取消勾选，它的效果就会应用到所有色彩上
+TP_LABCURVE_LCREDSK_TOOLTIP;勾选该选项框，LC曲线就只会影响红色和肤色。\n取消勾选，它的效果就会应用到所有色彩上
 TP_LABCURVE_RSTPROTECTION;红色与肤色保护
 TP_LABCURVE_RSTPRO_TOOLTIP;作用在色度滑条和CC曲线的调整上
 TP_LENSGEOM_AUTOCROP;自动剪切
@@ -1523,7 +1523,7 @@ TP_METADATA_MODE;元数据复制模式
 TP_METADATA_STRIP;移除所有元数据
 TP_METADATA_TUNNEL;原样复制
 TP_NEUTRAL;重置
-TP_NEUTRAL_TIP;还原各个曝光控制滑条的值\n自动色阶所能调整的滑条都会被此还原，不论你是否使用了自动色阶功能
+TP_NEUTRAL_TOOLTIP;还原各个曝光控制滑条的值\n自动色阶所能调整的滑条都会被此还原，不论你是否使用了自动色阶功能
 TP_PCVIGNETTE_FEATHER;羽化
 TP_PCVIGNETTE_FEATHER_TOOLTIP;羽化：\n0 = 仅边角\n50 = 到达一半的位置\n100 = 到达中心
 TP_PCVIGNETTE_LABEL;暗角滤镜
@@ -1661,7 +1661,7 @@ TP_RGBCURVES_RED;R
 TP_ROTATE_DEGREE;角度
 TP_ROTATE_LABEL;旋转
 TP_ROTATE_SELECTLINE;选择基准线
-TP_SAVEDIALOG_OK_TIP;快捷键：<b>Ctrl-Enter</b>
+TP_SAVEDIALOG_OK_TOOLTIP;快捷键：<b>Ctrl-Enter</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;高光
 TP_SHADOWSHLIGHTS_HLTONALW;色调范围
 TP_SHADOWSHLIGHTS_LABEL;阴影/高光
@@ -2918,7 +2918,7 @@ TP_COLORAPP_GEN;设置 - 预设
 TP_COLORAPP_MODELCAT;色貌模型
 TP_COLORAPP_MODELCAT_TOOLTIP;允许你在CIECAM02或CIECAM16之间进行选择\nCIECAM02在某些时候会更加准确\nCIECAM16的杂点应该更少
 !TP_COLORAPP_PRESETCAT02;Preset cat02/16 automatic - Symmetric mode
-!TP_COLORAPP_PRESETCAT02_TIP;Set combobox, sliders, temp, green so that Cat02/16 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change Cat02/16 adaptation Viewing conditions if needed.\nYou can change Temperature and Tint Viewing conditions if needed, and other settings if needed.\nAll auto checkbox are disabled
+!TP_COLORAPP_PRESETCAT02_TOOLTIP;Set combobox, sliders, temp, green so that Cat02/16 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change Cat02/16 adaptation Viewing conditions if needed.\nYou can change Temperature and Tint Viewing conditions if needed, and other settings if needed.\nAll auto checkbox are disabled
 !TP_COLORAPP_SOURCEF_TOOLTIP;Corresponds to the shooting conditions and how to bring the conditions and data back to a "normal" area. Normal" means average or standard conditions and data, i.e. without taking into account CIECAM corrections.
 TP_COLORAPP_SURROUNDSRC;周围 - 场景亮度
 TP_COLORAPP_SURSOURCE_TOOLTIP;改变色调与色彩以计入场景条件\n\n<b>平均</b>：平均的亮度条件（标准）。图像不被改变\n\n<b>昏暗</b>：较暗的场景。图像会被略微提亮\n\n<b>黑暗</b>：黑暗的环境。图像会被提亮\n\n<b>极暗</b>：非常暗的环境。图片会变得非常亮
@@ -2943,7 +2943,7 @@ TP_DEHAZE_SATURATION;饱和度
 !TP_DIRPYREQUALIZER_ALGO_TOOLTIP;Fine: closer to the colors of the skin, minimizing the action on other colors\nLarge: avoid more artifacts.
 !TP_DIRPYREQUALIZER_HUESKIN_TOOLTIP;This pyramid is for the upper part, so far as the algorithm at its maximum efficiency.\nTo the lower part, the transition zones.\nIf you need to move the area significantly to the left or right - or if there are artifacts: the <b>white balance is incorrect</b>\nYou can slightly reduce the zone to prevent the rest of the image is affected.
 !TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
-TP_DISTORTION_AUTO_TIP;如果Raw文件内有矫正畸变的内嵌JPEG，则会将Raw图像与其对比并自动矫正畸变
+TP_DISTORTION_AUTO_TOOLTIP;如果Raw文件内有矫正畸变的内嵌JPEG，则会将Raw图像与其对比并自动矫正畸变
 TP_FILMNEGATIVE_BLUEBALANCE;冷/暖
 TP_FILMNEGATIVE_COLORSPACE;反转色彩空间:
 TP_FILMNEGATIVE_COLORSPACE_INPUT;输入色彩空间
@@ -3966,7 +3966,7 @@ TP_RETINEX_ITERF;色调映射
 !TP_RETINEX_MLABEL_TOOLTIP;The values should be close to Min=0 Max=32768 (log mode) but other values are possible.You can adjust ‘Clip restored data (gain)’ and ‘Offset’ to normalize.\nRecovers image data without blending
 TP_RETINEX_NEIGHBOR;半径
 TP_RETINEX_NEUTRAL;重置
-!TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
+!TP_RETINEX_NEUTRAL_TOOLTIP;Reset all sliders and curves to their default values.
 !TP_RETINEX_OFFSET;Offset (brightness)
 !TP_RETINEX_SCALES;Gaussian gradient
 !TP_RETINEX_SCALES_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Scale and radius are reduced when iterations increase, and conversely.

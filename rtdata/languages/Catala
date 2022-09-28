@@ -662,11 +662,11 @@ TP_EPD_REWEIGHTINGITERATES;Iteracions de ponderació
 TP_EPD_SCALE;Escala
 TP_EPD_STRENGTH;Intensitat
 TP_EXPOSURE_AUTOLEVELS;Nivells automàtics
-TP_EXPOSURE_AUTOLEVELS_TIP;Activa auto-nivells per a ajustar automàticament els valors dels paràmetres segons anàlisi de la imatge
+TP_EXPOSURE_AUTOLEVELS_TOOLTIP;Activa auto-nivells per a ajustar automàticament els valors dels paràmetres segons anàlisi de la imatge
 TP_EXPOSURE_BLACKLEVEL;Negre
 TP_EXPOSURE_BRIGHTNESS;Brillantor
 TP_EXPOSURE_CLIP;Retall
-TP_EXPOSURE_CLIP_TIP;Conjunt de píxels que es retallaran en l'anivellament automàtic
+TP_EXPOSURE_CLIP_TOOLTIP;Conjunt de píxels que es retallaran en l'anivellament automàtic
 TP_EXPOSURE_COMPRHIGHLIGHTS;Quantitat recuperació de clars
 TP_EXPOSURE_COMPRHIGHLIGHTSTHRESHOLD;Llindar recup. clars intensos
 TP_EXPOSURE_COMPRSHADOWS;Recuperació de foscos
@@ -748,14 +748,14 @@ TP_LABCURVE_CURVEEDITOR_LC;LC
 TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Cromaticitat segons la luminància
 TP_LABCURVE_LABEL;Ajustos Lab
 TP_LABCURVE_LCREDSK;LC limitat als tons vermell i pell
-TP_LABCURVE_LCREDSK_TIP;Si habilitat, la corba LC (luminància segons cromaticitat) es limita als tons vermell i de pell\nSi no ho està, s'aplica a tots els tons
+TP_LABCURVE_LCREDSK_TOOLTIP;Si habilitat, la corba LC (luminància segons cromaticitat) es limita als tons vermell i de pell\nSi no ho està, s'aplica a tots els tons
 TP_LABCURVE_RSTPROTECTION;Protecció de tons vermells i de pell
 TP_LABCURVE_RSTPRO_TOOLTIP;Es maneja amb el control de cromaticitat i la corba CC.
 TP_LENSGEOM_AUTOCROP;Auto cropa
 TP_LENSGEOM_FILL;Auto omple
 TP_LENSGEOM_LABEL;Lent / Geometria
 TP_LENSPROFILE_LABEL;Perfil de correcció de lent
-TP_NEUTRAL_TIP;Torna els controls d'exposició a valors neutrals
+TP_NEUTRAL_TOOLTIP;Torna els controls d'exposició a valors neutrals
 TP_PERSPECTIVE_HORIZONTAL;Horitzontal
 TP_PERSPECTIVE_LABEL;Perspectiva
 TP_PERSPECTIVE_VERTICAL;Vertical
@@ -931,7 +931,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !EXPORT_BYPASS_RAW_LMMSE_ITERATIONS;Bypass [raw] LMMSE Enhancement Steps
 !EXPORT_PIPELINE;Processing pipeline
 !EXPORT_USE_FAST_PIPELINE;Dedicated (full processing on resized image)
-!EXPORT_USE_FAST_PIPELINE_TIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
+!EXPORT_USE_FAST_PIPELINE_TOOLTIP;Use a dedicated processing pipeline for images in Fast Export mode, that trades speed for quality. Resizing of the image is done as early as possible, instead of doing it at the end like in the normal pipeline. The speedup can be significant, but be prepared to see artifacts and a general degradation of output quality.
 !EXPORT_USE_NORMAL_PIPELINE;Standard (bypass some steps, resize at the end)
 !FILEBROWSER_BROWSEPATHBUTTONHINT;Click to open specified path, reload folder and apply "find" keywords.
 !FILEBROWSER_CACHECLEARFROMFULL;Clear all including cached profiles
@@ -1568,7 +1568,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !PREFERENCES_THUMBNAIL_INSPECTOR_RAW_IF_NO_JPEG_FULLSIZE;Embedded JPEG if fullsize, neutral raw otherwise
 !PREFERENCES_USEBUNDLEDPROFILES;Use bundled profiles
 !PROFILEPANEL_GLOBALPROFILES;Bundled profiles
-!PROFILEPANEL_MODE_TIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
+!PROFILEPANEL_MODE_TOOLTIP;Processing profile fill mode.\n\nButton pressed: partial profiles will be converted to full profiles; the missing values will be replaced with hard-coded defaults.\n\nButton released: profiles will be applied as they are, altering only those values which they contain.
 !PROFILEPANEL_MYPROFILES;My profiles
 !PROFILEPANEL_PDYNAMIC;Dynamic
 !PROFILEPANEL_PINTERNAL;Neutral
@@ -1708,7 +1708,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_COLORAPP_MODEL;WP Model
 !TP_COLORAPP_MODEL_TOOLTIP;White-Point Model.\n\n<b>WB [RT] + [output]</b>: RT's white balance is used for the scene, CIECAM02 is set to D50, and the output device's white balance is set in Viewing Conditions.\n\n<b>WB [RT+CAT02] + [output]</b>: RT's white balance settings are used by CAT02 and the output device's white balance is set in Viewing Conditions.\n\n<b>Free temp+green + CAT02 + [output]:</b> temp and green are selected by the user, the output device's white balance is set in Viewing Conditions.
 !TP_COLORAPP_NEUTRAL;Reset
-!TP_COLORAPP_NEUTRAL_TIP;Reset all sliders checkbox and curves to their default values
+!TP_COLORAPP_NEUTRAL_TOOLTIP;Reset all sliders checkbox and curves to their default values
 !TP_COLORAPP_RSTPRO;Red & skin-tones protection
 !TP_COLORAPP_RSTPRO_TOOLTIP;Red &amp; skin-tones protection affects both sliders and curves.
 !TP_COLORAPP_SURROUND;Surround
@@ -1770,7 +1770,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_COLORTONING_METHOD_TOOLTIP;"L*a*b* blending", "RGB sliders" and "RGB curves" use interpolated color blending.\n"Color balance (Shadows/Midtones/Highlights)" and "Saturation 2 colors" use direct colors.\n\nThe Black-and-White tool can be enabled when using any color toning method, which allows for color toning.
 !TP_COLORTONING_MIDTONES;Midtones
 !TP_COLORTONING_NEUTRAL;Reset sliders
-!TP_COLORTONING_NEUTRAL_TIP;Reset all values (Shadows, Midtones, Highlights) to default.
+!TP_COLORTONING_NEUTRAL_TOOLTIP;Reset all values (Shadows, Midtones, Highlights) to default.
 !TP_COLORTONING_OPACITY;Opacity
 !TP_COLORTONING_RGBCURVES;RGB - Curves
 !TP_COLORTONING_RGBSLIDERS;RGB - Sliders
@@ -1856,7 +1856,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_DIRPYREQUALIZER_SKIN;Skin targetting/protection
 !TP_DIRPYREQUALIZER_SKIN_TOOLTIP;At -100 skin-tones are targetted.\nAt 0 all tones are treated equally.\nAt +100 skin-tones are protected while all other tones are affected.
 !TP_DIRPYREQUALIZER_TOOLTIP;Attempts to reduce artifacts in the transitions between skin colors (hue, chroma, luma) and the rest of the image.
-!TP_DISTORTION_AUTO_TIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
+!TP_DISTORTION_AUTO_TOOLTIP;Automatically corrects lens distortion in raw files by matching it against the embedded JPEG image if one exists and has had its lens disortion auto-corrected by the camera.
 !TP_EPD_GAMMA;Gamma
 !TP_EXPOSURE_CLAMPOOG;Clip out-of-gamut colors
 !TP_EXPOSURE_HISTMATCHING;Auto-Matched Tone Curve
@@ -2093,7 +2093,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RETINEX_MLABEL_TOOLTIP;Should be near min=0 max=32768\nRestored image with no mixture.
 !TP_RETINEX_NEIGHBOR;Radius
 !TP_RETINEX_NEUTRAL;Reset
-!TP_RETINEX_NEUTRAL_TIP;Reset all sliders and curves to their default values.
+!TP_RETINEX_NEUTRAL_TOOLTIP;Reset all sliders and curves to their default values.
 !TP_RETINEX_OFFSET;Offset (brightness)
 !TP_RETINEX_SCALES;Gaussian gradient
 !TP_RETINEX_SCALES_TOOLTIP;If slider at 0, all iterations are identical.\nIf > 0 Scale and radius are reduced when iterations increase, and conversely.
@@ -2121,7 +2121,7 @@ ZOOMPANEL_ZOOMOUT;Allunya\nDrecera: <b>-</b>
 !TP_RETINEX_VIEW_UNSHARP;Unsharp mask
 !TP_RGBCURVES_LUMAMODE;Luminosity mode
 !TP_RGBCURVES_LUMAMODE_TOOLTIP;<b>Luminosity mode</b> allows to vary the contribution of R, G and B channels to the luminosity of the image, without altering image color.
-!TP_SAVEDIALOG_OK_TIP;Shortcut: <b>Ctrl-Enter</b>
+!TP_SAVEDIALOG_OK_TOOLTIP;Shortcut: <b>Ctrl-Enter</b>
 !TP_SHARPENING_BLUR;Blur radius
 !TP_SHARPENING_CONTRAST;Contrast threshold
 !TP_SHARPENING_ITERCHECK;Auto limit iterations
