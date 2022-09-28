@@ -1576,7 +1576,6 @@ HISTORY_MSG_WAVCHROMCO;(Erweitert - Wavelet)\nRauschreduzierung\nChrominanz grob
 HISTORY_MSG_WAVCHROMFI;(Erweitert - Wavelet)\nRauschreduzierung\nChrominanz fein
 HISTORY_MSG_WAVCLARI;(Erweitert - Wavelet)\nSchärfemaske und Klarheit
 HISTORY_MSG_WAVDENLH;(Erweitert - Wavelet)\nRauschreduzierung\nEbenen 5-6
-HISTORY_MSG_WAVDENMET;(Erweitert - Wavelet)\nLokaler Equalizer
 HISTORY_MSG_WAVDENOISE;(Erweitert - Wavelet)\nRauschreduzierung\nKurve Lokaler Kontrast
 HISTORY_MSG_WAVDENOISEH;(Erweitert - Wavelet)\nLokaler Kontrast der oberen Ebenen
 HISTORY_MSG_WAVDETEND;(Erweitert - Wavelet)\nEndretusche - finales Glätten\nDetails
@@ -2329,7 +2328,6 @@ TP_COLORAPP_TCMODE_LABEL3;Farbkurve Modus
 TP_COLORAPP_TCMODE_LIGHTNESS;Helligkeit (J)
 TP_COLORAPP_TCMODE_SATUR;Sättigung (S)
 TP_COLORAPP_TEMP2_TOOLTIP;Symmetrischer Modus Temp = Weißabgleich.\nBei Auswahl einer Beleuchtung setze Tönung=1.\n\nA Temp=2856\nD41 Temp=4100\nD50 Temp=5003\nD55 Temp=5503\nD60 Temp=6000\nD65 Temp=6504\nD75 Temp=7504
-TP_COLORAPP_TEMPOUT_TOOLTIP;Deaktivieren um Temperatur und Tönung zu ändern.
 TP_COLORAPP_TEMP_TOOLTIP;Um eine Beleuchtungsart auszuwählen, setzen Sie die Tönung immer auf '1'.\nA Temp=2856\nD50 Temp=5003\nD55 Temp=5503\nD65 Temp=6504\nD75 Temp=7504
 TP_COLORAPP_TONECIE;Tonwertkorrektur mittels CIECAM02/16
 TP_COLORAPP_TONECIE_TOOLTIP;Wenn diese Option ausgeschaltet ist, wird die Tonwertkorrektur im L*a*b*-Farbraum durchgeführt.\nWenn die Option eingeschaltet ist, wird CIECAM02 für die Tonwertkorrektur verwendet. Das Werkzeug Tonwertkorrektur muss aktiviert sein, damit diese Option berücksichtigt wird.
@@ -2736,13 +2734,11 @@ TP_LOCALCONTRAST_RADIUS;Radius
 TP_LOCALLAB_ACTIV;Nur Luminanz
 TP_LOCALLAB_ACTIVSPOT;Spot aktivieren
 TP_LOCALLAB_ADJ;Equalizer Blau/Gelb-Rot/Grün
-TP_LOCALLAB_ALL;Alle Rubriken
 TP_LOCALLAB_AMOUNT;Intensität
 TP_LOCALLAB_ARTIF;Kantenerkennung
 TP_LOCALLAB_ARTIF_TOOLTIP;Schwellenwert Bereich ΔE erhöht den Anwendungsbereich des ΔE. Hohe Werte sind für große Gamutbereiche.\nErhöhung der ΔE-Zerfallrate kann die Kantenerkennung erhöhen, aber auch den Bereich verringern.
 TP_LOCALLAB_AUTOGRAY;Automatisch mittlere Luminanz (Yb%)
 TP_LOCALLAB_AUTOGRAYCIE;Automatisch
-TP_LOCALLAB_AUTOGRAYCIE_TOOLTIP;Berechnet automatisch die 'mittlere Luminanz' und 'absolute Luminanz'.\nFür Jz Cz Hz: automatische Berechnung von 'PU Anpassung', 'Schwarz-Ev' und 'Weiß-Ev'.
 TP_LOCALLAB_AVOID;vermeide Farbverschiebungen
 TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Passt Farben an den Arbeitsfarbraum an und wendet die Munsell-Korrektur an (Uniform Perceptual Lab).\nMunsell-Korrektur ist deaktiviert wenn Jz oder CAM16 angewandt wird.
 TP_LOCALLAB_AVOIDMUN;Nur Munsell-Korrektur
@@ -2792,10 +2788,8 @@ TP_LOCALLAB_CAM16PQREMAP;HDR PQ (Spitzenleuchtdichte)
 TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) angepasst an CAM16. Ermöglicht die Änderung der internen PQ-Funktion (normalerweise 10000 cd/m2 - Standard 100 cd/m2 - deaktiviert für 100 cd/m2).\nKann zur Anpassung an verschiedene Geräte und Bilder verwendet werden.
 TP_LOCALLAB_CAM16_FRA;CAM16 Bildanpassungen
 TP_LOCALLAB_CAMMODE;CAM-Modell
-TP_LOCALLAB_CAMMODE_ALL;CAM 16 + Jz Cz Hz
 TP_LOCALLAB_CAMMODE_CAM16;CAM 16
 TP_LOCALLAB_CAMMODE_JZ;Jz Cz Hz
-TP_LOCALLAB_CAMMODE_ZCAM;nur ZCAM
 TP_LOCALLAB_CATAD;Chromatische Adaptation/Cat16
 TP_LOCALLAB_CBDL;Detailebenenkontrast
 TP_LOCALLAB_CBDLCLARI_TOOLTIP;Verstärkt den lokalen Kontrast der Mitteltöne.
@@ -2825,7 +2819,6 @@ TP_LOCALLAB_CIELIGHTFRA;Beleuchtung
 TP_LOCALLAB_CIEMODE;Werkzeugposition ändern
 TP_LOCALLAB_CIEMODE_COM;Standard
 TP_LOCALLAB_CIEMODE_DR;Dynamikbereich
-TP_LOCALLAB_CIEMODE_LOG;LOG-Kodierung
 TP_LOCALLAB_CIEMODE_TM;Tone-Mapping
 TP_LOCALLAB_CIEMODE_TOOLTIP;Im Standardmodus wird CIECAM am Ende des Prozesses hinzugefügt. 'Maske und Anpassungen' und 'Wiederherstellung auf Luminanzmaske' stehen für 'CAM16 und JzCzHz' zur Verfügung.\nAuf Wunsch kann CIECAM in andere Werkzeuge (TM, Wavelet, Dynamik, LOG-Kodierung) integriert werden. Das Ergebnis dieser Werkzeuge wird sich von denen ohne CIECAM unterscheiden. In diesem Modus können auch 'Maske und Anpassungen' und 'Wiederherstellung auf Luminanzmaske' angewandt werden.
 TP_LOCALLAB_CIEMODE_WAV;Wavelet
@@ -2854,8 +2847,6 @@ TP_LOCALLAB_COLOR_TOOLNAME;Farbe und Licht
 TP_LOCALLAB_COL_NAME;Name
 TP_LOCALLAB_COL_VIS;Status
 TP_LOCALLAB_COMPFRA;Direktionaler Kontrast
-TP_LOCALLAB_COMPLEX_METHOD;Software Komplexität
-TP_LOCALLAB_COMPLEX_TOOLTIP;Erlaubt dem Benutzer die Rubrik 'Lokale Anpassungen' auszuwählen.
 TP_LOCALLAB_COMPREFRA;Tonwertkorrektur
 TP_LOCALLAB_CONTCOL;Schwellenwert Kontrast 
 TP_LOCALLAB_CONTFRA;Ebenenkontrast
@@ -2948,7 +2939,6 @@ TP_LOCALLAB_EXPLAPGAMM_TOOLTIP;Verändert das Verhalten des Bildes mit wenig ode
 TP_LOCALLAB_EXPLAPLIN_TOOLTIP;Verändert das Verhalten unterbelichteter Bilder indem eine lineare Komponente vor Anwendung der Laplace-Transformation hinzugefügt wird.
 TP_LOCALLAB_EXPLAP_TOOLTIP;Regler nach rechts reduziert schrittweise den Kontrast.
 TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Ermöglicht die Verwendung von GIMP oder Photoshop(c)-Ebenen-Mischmodi wie Differenz, Multiplikation, Weiches Licht, Überlagerung etc., mit Transparenzkontrolle.\nOriginalbild: Führe aktuellen RT-Spot mit Original zusammen.\nVorheriger Spot: Führe aktuellen RT-Spot mit vorherigem zusammen - bei nur einem vorherigen = Original.\nHintergrund: Führe aktuellen RT-Spot mit einem Farb- oder Luminanzhintergrund zusammen (weniger Möglichkeiten). 
-TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard: Verwendet einen Algorithmus ähnlich der Hauptbelichtung, jedoch in L * a * b * und unter Berücksichtigung von ΔE.\n\nKontrastdämpfung: Verwendet einen anderen Algorithmus auch mit ΔE und mit der Poisson-Gleichung, um Laplace im Fourierraum zu lösen.\nKontrastdämpfung, Dynamikkomprimierung und Standard können kombiniert werden.\nDie Fourier-Transformation ist in der Größe optimiert, um die Verarbeitungszeit zu verkürzen.\nReduziert Artefakte und Rauschen.
 TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Wendet einen Median-Filter vor der Laplace-Transformation an, um (Rausch-)Artefakte zu vermeiden.\nAlternativ kann das Werkzeug zur Rauschreduzierung angewandt werden.
 TP_LOCALLAB_EXPOSE;Dynamik und Belichtung
 TP_LOCALLAB_EXPOSURE_TOOLTIP;Anpassung der Belichtung im L*a*b-Raum mittels Laplace PDE-Algorithmus um ΔE zu berücksichtigen und Artefakte zu minimieren.
@@ -2962,7 +2952,6 @@ TP_LOCALLAB_FATDETAIL;Detail
 TP_LOCALLAB_FATFRA;Dynamikkompression
 TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal - es wird der Fattal-Algorithmus zur Tonwertkorrektur angewandt.
 TP_LOCALLAB_FATLEVEL;Sigma
-TP_LOCALLAB_FATRES;Betrag Restbild
 TP_LOCALLAB_FATSHFRA;Maske für den Bereich der Dynamikkompression
 TP_LOCALLAB_FEATH_TOOLTIP;Verlaufsbreite als Prozentsatz der Spot-Diagonalen.\nWird von allen Verlaufsfiltern in allen Werkzeugen verwendet.\nKeine Aktion, wenn kein Verlaufsfilter aktiviert wurde.
 TP_LOCALLAB_FEATVALUE;Verlaufsbreite
@@ -3098,7 +3087,6 @@ TP_LOCALLAB_LOGAUTOGRAYJZ_TOOLTIP;Berechnet automatisch die 'Mittlere Luminanz' 
 TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Berechnet automatisch die 'Mittlere Luminanz' für die Szenenbedingungen, wenn die Schaltfläche 'Automatisch' in 'Relative Belichtungsebenen' gedrückt wird.
 TP_LOCALLAB_LOGAUTO_TOOLTIP;Mit Drücken dieser Taste werden der 'Dynamikbereich' und die 'Mittlere Luminanz' für die Szenenbedingungen berechnet, wenn die Option 'Automatische mittlere Luminanz (Yb%)' aktiviert ist.\nBerechnet auch die absolute Luminanz zum Zeitpunkt der Aufnahme.\nDrücken Sie die Taste erneut, um die automatisch berechneten Werte anzupassen.
 TP_LOCALLAB_LOGBASE_TOOLTIP;Standard = 2.\nWerte unter 2 reduzieren die Wirkung des Algorithmus, wodurch die Schatten dunkler und die Glanzlichter heller werden.\nMit Werten über 2 sind die Schatten grauer und die Glanzlichter werden verwaschener.
-TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Geschätzte Werte des Dynamik-Bereiches d.h. 'Schwarz-Ev' und 'Weiß-Ev'
 TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatische Anpassung ermöglicht, eine Farbe entsprechend ihrer räumlich-zeitlichen Umgebung zu interpretieren.\nNützlich, wenn der Weißabgleich weit von Referenz D50 entfernt ist.\nPasst Farben an das Leuchtmittel des Ausgabegeräts an.
 TP_LOCALLAB_LOGCIE;LOG-Kodierung statt Sigmoid
 TP_LOCALLAB_LOGCIE_TOOLTIP;Ermöglicht die Verwendung von 'Schwarz-Ev', 'Weiß-Ev', 'Szenen-Mittlere-Leuchtdichte (Yb%)' und 'sichtbare mittlere Leuchtdichte (Yb%)' für die Tonzuordnung mit 'LOG-Kodierung Q'.
@@ -3139,7 +3127,6 @@ TP_LOCALLAB_MASFRAME;Maskieren und Zusammenführen
 TP_LOCALLAB_MASFRAME_TOOLTIP;Für alle Masken.\nBerücksichtigt das ΔE-Bild, um zu vermeiden, dass der Auswahlbereich geändert wird, wenn die folgenden Maskenwerkzeuge verwendet werden: 'Gamma', 'Steigung', 'Chroma', 'Kontrastkurve', 'Lokaler Kontrast' (nach Wavelet-Ebene), 'Unschärfemaske' und 'Strukturmaske' (falls aktiviert).\nDeaktiviert, wenn der Inverse-Modus verwendet wird.
 TP_LOCALLAB_MASK;Kontrast
 TP_LOCALLAB_MASK2;Kontrastkurve
-TP_LOCALLAB_MASKCOL;Maskenkurven
 TP_LOCALLAB_MASKCOM;Normale Farbmaske
 TP_LOCALLAB_MASKCOM_TOOLNAME;Normale Farbmaske 
 TP_LOCALLAB_MASKCOM_TOOLTIP;Ein eigenständiges Werkzeug.\nKann verwendet werden, um das Erscheinungsbild (Chrominanz, Luminanz, Kontrast) und die Textur in Abhängigkeit des Bereiches anzupassen.
@@ -3236,7 +3223,6 @@ TP_LOCALLAB_MRFIV;Hintergrund
 TP_LOCALLAB_MRFOU;Vorheriger Spot
 TP_LOCALLAB_MRONE;Keine
 TP_LOCALLAB_MRTHR;Original Bild
-TP_LOCALLAB_MRTWO;Maske Short L-Kurve
 TP_LOCALLAB_MULTIPL_TOOLTIP;Weitbereichs-Toneinstellung: -18 EV bis + 4 EV. Der erste Regler wirkt auf sehr dunkle Töne zwischen -18 EV und -6 EV. Der letzte Regler wirkt auf helle Töne bis zu 4 EV.
 TP_LOCALLAB_NEIGH;Radius
 TP_LOCALLAB_NLDENOISENLGAM_TOOLTIP;Niedrigere Werte bewahren Details und Textur, höhere Werte erhöhen die Rauschunterdrückung.\nIst Gamma = 3, wird Luminanz 'linear' angewandt.
@@ -3301,7 +3287,6 @@ TP_LOCALLAB_REPAREXP_TOOLTIP;Ermöglicht, die relative Stärke von 'Dynamik und 
 TP_LOCALLAB_REPARSH_TOOLTIP;Ermöglicht, die relative Stärke von 'Schatten/Lichter' und 'Tonwert' in Bezug auf das Originalbild anzupassen.
 TP_LOCALLAB_REPARTM_TOOLTIP;Ermöglicht, die relative Stärke des 'Tone-Mappings' in Bezug auf das Originalbild anzupassen.
 TP_LOCALLAB_REPARW_TOOLTIP;Ermöglicht, die relative Stärke des'Lokalen Kontrasts' und der 'Wavelets' in Bezug auf das Originalbild anzupassen.
-TP_LOCALLAB_RESETSHOW;Alle sichtbaren Änderungen zurücksetzen
 TP_LOCALLAB_RESID;Restbild
 TP_LOCALLAB_RESIDBLUR;Unschärfe Restbild
 TP_LOCALLAB_RESIDCHRO;Chroma Restbild
@@ -3330,7 +3315,6 @@ TP_LOCALLAB_ROW_VIS;Sichtbar
 TP_LOCALLAB_RSTPROTECT_TOOLTIP;'Rot- und Hauttöne schützen' beeinflusst die Schieberegler von Sättigung , Chromatizität und Buntheit.
 TP_LOCALLAB_SATUR;Sättigung
 TP_LOCALLAB_SATURV;Sättigung (s)
-TP_LOCALLAB_SAVREST;Sichern - Wiederherstellen des aktuellen Bildes
 TP_LOCALLAB_SCALEGR;Korngröße
 TP_LOCALLAB_SCALERETI;Skalieren
 TP_LOCALLAB_SCALTM;Skalieren
@@ -3403,7 +3387,6 @@ TP_LOCALLAB_SIGMOIDLAMBDA;Kontrast
 TP_LOCALLAB_SIGMOIDQJ;Schwarz-Ev und Weiß-Ev verwenden
 TP_LOCALLAB_SIGMOIDTH;Schwellenwert (Graupunkt)
 TP_LOCALLAB_SIGMOID_TOOLTIP;Ermöglicht, ein Tone-Mapping-Erscheinungsbild zu simulieren, indem sowohl die 'CIECAM' (oder 'Jz') als auch die 'Sigmoid'-Funktion verwendet werden. Drei Schieberegler:\na) 'Kontrast' wirkt sich auf die Form der Sigmoidkurve und folglich auf die Stärke aus;\nb) 'Schwellenwert' (Graupunkt) verteilt die Aktion entsprechend der Leuchtdichte;\nc) 'Überlagern' wirkt sich auf den endgültigen Aspekt des Bildes, Kontrast und Leuchtdichte aus.
-TP_LOCALLAB_SIM;Einfach
 TP_LOCALLAB_SLOMASKCOL;Steigung
 TP_LOCALLAB_SLOMASK_TOOLTIP;Gamma und Steigung ermöglichen eine weiche und artefaktfreie Transformation der Maske, indem 'L' schrittweise geändert wird, um Diskontinuitäten zu vermeiden.
 TP_LOCALLAB_SLOSH;Steigung
@@ -3481,9 +3464,7 @@ TP_LOCALLAB_WARM_TOOLTIP;Dieser Regler verwendet den CIECAM-Algorithmus und fung
 TP_LOCALLAB_WASDEN_TOOLTIP;Reduzierung des Luminanz-Rauschens: Die linke Seite der Kurve einschließlich der dunkelgrauen/hellgrauen Grenze entspricht den ersten 3 Stufen 0, 1, 2 (feines Detail). Die rechte Seite der Kurve entspricht den gröberen Details (Ebene 3, 4, 5, 6).
 TP_LOCALLAB_WAT_BALTHRES_TOOLTIP;Gleicht die Aktion innerhalb jeder Ebene an.
 TP_LOCALLAB_WAT_BLURLC_TOOLTIP;Die Standardeinstellung für Unschärfe wirkt sich auf alle 3 L*a*b* -Komponenten (Luminanz und Farbe) aus.\nWenn diese Option aktiviert ist, wird nur die Luminanz unscharf.
-TP_LOCALLAB_WAT_CLARICJZ_TOOLTIP;Mit 'Chroma zusammenführen' wird die Intensität des gewünschten Effekts auf die Chrominanz ausgewählt.\nEs wird nur der maximale Wert der Wavelet Ebenen (unten rechts) berücksichtigt.
 TP_LOCALLAB_WAT_CLARIC_TOOLTIP;Mit 'Chroma zusammenführen' wird die Intensität des gewünschten Effekts auf die Chrominanz ausgewählt.
-TP_LOCALLAB_WAT_CLARILJZ_TOOLTIP;Mit 'Luma zusammenführen' wird die Intensität des gewünschten Effekts auf die Luminanz ausgewählt.\nEs wird nur der maximale Wert der Wavelet Ebenen (unten rechts) berücksichtigt.
 TP_LOCALLAB_WAT_CLARIL_TOOLTIP;Mit 'Luma zusammenführen' wird die Intensität des gewünschten Effekts auf die Luminanz ausgewählt.
 TP_LOCALLAB_WAT_CONTCHROMALEV_TOOLTIP;'Chroma Ebenen': Passt die 'a'- und 'b'- Komponenten von L*a*b* als Anteil des Luminanzwertes an.
 TP_LOCALLAB_WAT_CONTOFFSET_TOOLTIP;Durch den Versatz wird die Balance zwischen kontrastarmen und kontrastreichen Details geändert.\nHohe Werte verstärken die Kontraständerungen zu den kontrastreicheren Details, während niedrige Werte die Kontraständerungen zu kontrastarmen Details verstärken.\nMit Verwendung eines geringeren Wertes der 'Dämpfungsreaktion' kann bestimmt werden, welche Kontrastwerte verbessert werden sollen.
@@ -3925,7 +3906,6 @@ TP_WAVELET_CONTEDIT;'Danach'-Kontrastkurve
 TP_WAVELET_CONTFRAME;Kompression
 TP_WAVELET_CONTR;Gamut
 TP_WAVELET_CONTRA;Kontrast
-TP_WAVELET_CONTRASTEDIT;Feinere - Grobere Ebenen
 TP_WAVELET_CONTRAST_MINUS;Kontrast -
 TP_WAVELET_CONTRAST_PLUS;Kontrast +
 TP_WAVELET_CONTRA_TOOLTIP;Ändert den Kontrast des Restbildes.
@@ -3948,13 +3928,7 @@ TP_WAVELET_DAUB14;D14 - Hoch
 TP_WAVELET_DAUBLOCAL;Wavelet Kantenperformance
 TP_WAVELET_DAUB_TOOLTIP;Ändert den Daubechies-Koeffizienten:\nD4 = Standard\nD14 = Häufig bestes Ergebnis auf Kosten\nvon ca. 10% längerer Verarbeitungszeit.\n\nVerbessert die Kantenerkennung sowie die Qualität\nder ersten Waveletebene. Jedoch hängt die Qualität\nnicht ausschließlich mit diesem Koeffizienten zusammen\nund kann je nach Bild und Einsatz variieren.
 TP_WAVELET_DEN5THR;Schwellenwert
-TP_WAVELET_DEN12LOW;1 2 Niedrig
-TP_WAVELET_DEN12PLUS;1 2 Hoch
-TP_WAVELET_DEN14LOW;1 4 Niedrig
-TP_WAVELET_DEN14PLUS;1 4 Hoch
-TP_WAVELET_DENCONTRAST;Ausgleich Lokaler Kontrast
 TP_WAVELET_DENCURV;Kurve
-TP_WAVELET_DENEQUAL;1 2 3 4 Ausgleich
 TP_WAVELET_DENL;Korrektur Struktur 
 TP_WAVELET_DENLH;Schwellenwert Ebenen 1-4
 TP_WAVELET_DENLOCAL_TOOLTIP;Verwenden Sie eine Kurve, um die Rauschreduzierung entsprechend dem lokalen Kontrast anzupassen.\nFlächen werden entrauscht, die Strukturen bleiben erhalten.
@@ -3997,7 +3971,6 @@ TP_WAVELET_EDTYPE;Lokale Kontrastmethode
 TP_WAVELET_EDVAL;Intensität
 TP_WAVELET_FINAL;Endretusche
 TP_WAVELET_FINCFRAME;Endgültiger Lokaler Kontrast
-TP_WAVELET_FINCOAR_TOOLTIP;Der linke (positive) Teil der Kurve wirkt auf die feineren Ebenen (Erhöhung).\nDie 2 Punkte auf der Abszisse repräsentieren die jeweiligen Aktionsgrenzen feinerer und gröberer Ebenen 5 und 6 (default).\nDer rechte (negative) Teil der Kurve wirkt auf die gröberen Ebenen (Erhöhung).\nVermeiden Sie es, den linken Teil der Kurve mit negativen Werten zu verschieben. Vermeiden Sie es, den rechten Teil der Kurve mit positiven Werten zu verschieben.
 TP_WAVELET_FINEST;Fein
 TP_WAVELET_FINTHR_TOOLTIP;Nutzt den lokalen Kontrast um die Wirkung des anpassbaren Filters zu erhöhen oder zu reduzieren.
 TP_WAVELET_GUIDFRAME;Finales Glätten (anpassbarer Filter)
@@ -4050,7 +4023,6 @@ TP_WAVELET_MIXNOISE;Rauschen
 TP_WAVELET_NEUTRAL;Neutral
 TP_WAVELET_NOIS;Rauschreduzierung
 TP_WAVELET_NOISE;Rauschreduzierung
-TP_WAVELET_NOISE_TOOLTIP;Wenn die Helligkeit der Ebene den Wert 50 übersteigt, wird der aggressive Modus angewandt.\nLiegt die Chrominanz grob über 20 wird der aggressive Modus angewandt.
 TP_WAVELET_NPHIGH;Hoch
 TP_WAVELET_NPLOW;Niedrig
 TP_WAVELET_NPNONE;Keine
@@ -4108,7 +4080,6 @@ TP_WAVELET_THRH;Schwelle Lichter
 TP_WAVELET_TILESBIG;Große Kacheln
 TP_WAVELET_TILESFULL;Ganzes Bild
 TP_WAVELET_TILESIZE;Kachelgröße
-TP_WAVELET_TILESLIT;Kleine Kacheln
 TP_WAVELET_TILES_TOOLTIP;'Ganzes Bild' (empfohlen) liefert eine bessere Qualität.\n'Kacheln' benötigen weniger Speicher und ist nur für Computer mit wenig RAM zu empfehlen.
 TP_WAVELET_TMEDGS;Kantenschutz
 TP_WAVELET_TMSCALE;Skalieren

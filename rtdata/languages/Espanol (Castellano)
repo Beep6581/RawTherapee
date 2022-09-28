@@ -250,7 +250,6 @@ HISTOGRAM_TOOLTIP_G;Muestra/oculta el canal verde en el histograma.
 HISTOGRAM_TOOLTIP_L;Muestra/oculta el histograma de luminancia CIELAB.
 HISTOGRAM_TOOLTIP_MODE;Cambia entre la escala lineal, la logarítmica-lineal y la escala logarítmica (o doble logarítmica) del histograma.
 HISTOGRAM_TOOLTIP_R;Muestra/oculta el canal rojo en el histograma.
-HISTOGRAM_TOOLTIP_RAW;Muestra/oculta el histograma raw.
 HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Muestra/oculta opciones adicionales.
 HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Ajusta el brillo del vectorscopio.
 HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Histograma
@@ -1380,7 +1379,6 @@ HISTORY_MSG_COMPLEX;Complejidad ondículas
 HISTORY_MSG_COMPLEXRETI;Complejidad Retinex
 HISTORY_MSG_DEHAZE_DEPTH;Elim. neblina - Profundidad
 HISTORY_MSG_DEHAZE_ENABLED;Elim. neblina
-HISTORY_MSG_DEHAZE_LUMINANCE;Elim. neblina - Sólo luminancia
 HISTORY_MSG_DEHAZE_SATURATION;Elim. neblina - Saturación
 HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;Elim. neblina - Mostrar mapa profundidad
 HISTORY_MSG_DEHAZE_STRENGTH;Elim. neblina - Intensidad
@@ -1472,7 +1470,6 @@ HISTORY_MSG_WAVCHROMCO;Cromaticidad grueso
 HISTORY_MSG_WAVCHROMFI;Cromaticidad fino
 HISTORY_MSG_WAVCLARI;Claridad
 HISTORY_MSG_WAVDENLH;Nivel 5
-HISTORY_MSG_WAVDENMET;Ecualizador local
 HISTORY_MSG_WAVDENOISE;Contraste local
 HISTORY_MSG_WAVDENOISEH;Contraste local niveles altos
 HISTORY_MSG_WAVDETEND;Detalles suaves
@@ -1864,7 +1861,6 @@ PREFERENCES_HISTOGRAMPOSITIONLEFT;Histograma en panel izquierdo
 PREFERENCES_HISTOGRAM_TOOLTIP;Si se activa, se usará el perfil de trabajo para mostrar el histograma principal y el panel del Navegador. Si se desactiva, se usará el perfil de salida con corrección gamma.
 PREFERENCES_HLTHRESHOLD;Umbral de recorte de luces
 PREFERENCES_ICCDIR;Carpeta de perfiles de color
-PREFERENCES_IMG_RELOAD_NEEDED;Estos cambios requieren que se vuelva a cargar la imagen (o que se abra una nueva) para que tengan efecto.
 PREFERENCES_IMPROCPARAMS;Perfil de revelado predeterminado
 PREFERENCES_INSPECTORWINDOW;Abrir inspector en su propia ventana o en pantalla completa
 PREFERENCES_INSPECT_LABEL;Inspeccionar
@@ -1939,7 +1935,6 @@ PREFERENCES_SHOWTOOLTIP;Mostrar información emergente de herramientas de Ajuste
 PREFERENCES_SHTHRESHOLD;Umbral de recorte de sombras
 PREFERENCES_SINGLETAB;Modo de Editor de pestaña única
 PREFERENCES_SINGLETABVERTAB;Modo de Editor de pestaña única, pestañas verticales
-PREFERENCES_SND_BATCHQUEUEDONE;Procesado de la cola terminado
 PREFERENCES_SND_HELP;Para configurar un sonido, se introduce aquí una ruta completa y nombre de archivo, o bien se deja en blanco si no se desea sonido.\nPara los sonidos de sistema en Windows, se usa «SystemDefault», «SystemAsterisk», etc., y en Linux se usa «complete», «window-attention», etc.
 PREFERENCES_SND_LNGEDITPROCDONE;Procesado del Editor terminado
 PREFERENCES_SND_QUEUEDONE;Procesado de la cola terminado
@@ -2066,7 +2061,6 @@ TP_BWMIX_ALGO_LI;Lineal
 TP_BWMIX_ALGO_SP;Efectos especiales
 TP_BWMIX_ALGO_TOOLTIP;Lineal: producirá una respuesta <b>lineal</b> normal.\nEfectos especiales: se producirán efectos especiales mediante la mezcla <b>no lineal</b> de canales.
 TP_BWMIX_AUTOCH;Automático
-TP_BWMIX_AUTOCH_TOOLTIP;Automático
 TP_BWMIX_CC_ENABLED;Ajustar color complementario
 TP_BWMIX_CC_TOOLTIP;Actívese para permitir el ajuste automático de los colores complementarios en modo ROYGCBPM.
 TP_BWMIX_CHANNEL;Ecualizador de luminancia
@@ -2131,7 +2125,6 @@ TP_CHMIXER_BLUE;Canal azul
 TP_CHMIXER_GREEN;Canal verde
 TP_CHMIXER_LABEL;Mezclador de canales
 TP_CHMIXER_RED;Canal rojo
-TP_CHROMATABERR_LABEL;Aberración cromática
 TP_COARSETRAF_TOOLTIP_HFLIP;Voltea horizontalmente.
 TP_COARSETRAF_TOOLTIP_ROTLEFT;Gira a la izquierda.\n\nAtajos de teclado:\n<b>[</b> - Modo de Editor de varias pestañas,\n<b>Alt-[</b> - Modo de Editor de pestaña única.
 TP_COARSETRAF_TOOLTIP_ROTRIGHT;Gira a la derecha.\n\nAtajos de teclado:\n<b>]</b> - Modo de Editor de varias pestañas,\n<b>Alt-]</b> - Modo de Editor de pestaña única.
@@ -2227,7 +2220,6 @@ TP_COLORAPP_TCMODE_LABEL3;Modo de curva de cromaticidad
 TP_COLORAPP_TCMODE_LIGHTNESS;Claridad
 TP_COLORAPP_TCMODE_SATUR;Saturación
 TP_COLORAPP_TEMP2_TOOLTIP;O bien modo simétrico, Temp = balance de blancos.\nO bien, se selecciona el iluminante, poniendo siempre Tinte=1.\n\nA Temp=2856 K\nD41 Temp=4100 K\nD50 Temp=5003 K\nD55 Temp=5503 K\nD60 Temp=6000 K\nD65 Temp=6504 K\nD75 Temp=7504 K
-TP_COLORAPP_TEMPOUT_TOOLTIP;Desactívese para cambiar la temperatura y el tinte.
 TP_COLORAPP_TEMP_TOOLTIP;Para seleccionar un iluminante, se ajusta siempre Tinte=1.\n\nTemp A=2856 K\nTemp D50=5003 K\nTemp D55=5503 K\nTemp D65=6504 K\nTemp D75=7504 K
 TP_COLORAPP_TONECIE;Mapeo tonal mediante CIECAM02
 TP_COLORAPP_TONECIE_TOOLTIP;Si esta opción está desactivada, el mapeo tonal se realiza en el espacio L*a*b*.\nSi está activada, el mapeo tonal se realiza mediante CIECAM02.\nLa herramienta Mapeo tonal debe estar activada para que este ajuste tenga efectos.
@@ -2321,7 +2313,6 @@ TP_DEFRINGE_RADIUS;Radio
 TP_DEFRINGE_THRESHOLD;Umbral
 TP_DEHAZE_DEPTH;Profundidad
 TP_DEHAZE_LABEL;Eliminación de neblina
-TP_DEHAZE_LUMINANCE;Sólo luminancia
 TP_DEHAZE_SATURATION;Saturación
 TP_DEHAZE_SHOW_DEPTH_MAP;Mostrar mapa de profundidad
 TP_DEHAZE_STRENGTH;Intensidad
@@ -2635,13 +2626,11 @@ TP_LOCALCONTRAST_RADIUS;Radio
 TP_LOCALLAB_ACTIV;Sólo luminancia
 TP_LOCALLAB_ACTIVSPOT;Activar punto
 TP_LOCALLAB_ADJ;Ecualizador Azul-Amarillo/Rojo-Verde
-TP_LOCALLAB_ALL;Todas las rúbricas
 TP_LOCALLAB_AMOUNT;Cantidad
 TP_LOCALLAB_ARTIF;Detección de forma
 TP_LOCALLAB_ARTIF_TOOLTIP;El umbral de ámbito de ΔE aumenta el rango de ámbito de ΔE. Los valores altos son para imágenes con una gama de colores muy extensa.\nEl aumento del decaimiento de ΔE puede mejorar la detección de forma, pero también puede reducir el ámbito.
 TP_LOCALLAB_AUTOGRAY;Luminancia media Auto (Yb%)
 TP_LOCALLAB_AUTOGRAYCIE;Auto
-TP_LOCALLAB_AUTOGRAYCIE_TOOLTIP;Calcula automáticamente la «luminancia media» y la «luminancia absoluta».\nPara Jz Cz Hz: calcula automáticamente la «adaptación PU», «Ev Negro» y «Ev Blanco».
 TP_LOCALLAB_AVOID;Evitar la deriva de colores
 TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Encaja los colores en el rango del espacio de color de trabajo y aplica la corrección de Munsell (L*a*b* Perceptual Uniforme).\nLa corrección de Munsell siempre se desactiva cuando se usa Jz o CAM16.
 TP_LOCALLAB_AVOIDMUN;Sólo corrección de Munsell
@@ -2691,10 +2680,8 @@ TP_LOCALLAB_CAM16PQREMAP;LP HDR (Luminancia pico)
 TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;CP (Cuantificador perceptual) adaptado a CAM16. Permite cambiar la función CP interna (normalmente 10000 cd/m² - predeterminado 100 cd/m² - desactivada para 100 cd/m²).\nSe puede usar para adaptar a diferentes dispositivos e imágenes.
 TP_LOCALLAB_CAM16_FRA;Ajustes de imagen Cam16
 TP_LOCALLAB_CAMMODE;Modelo CAM
-TP_LOCALLAB_CAMMODE_ALL;CAM 16 + Jz Cz Hz
 TP_LOCALLAB_CAMMODE_CAM16;CAM 16
 TP_LOCALLAB_CAMMODE_JZ;Jz Cz Hz
-TP_LOCALLAB_CAMMODE_ZCAM;Sólo ZCAM
 TP_LOCALLAB_CATAD;Adaptación cromática - Cat16
 TP_LOCALLAB_CBDL;Contraste por niveles de detalle
 TP_LOCALLAB_CBDLCLARI_TOOLTIP;Realza el contraste local de los tonos medios.
@@ -2724,7 +2711,6 @@ TP_LOCALLAB_CIELIGHTFRA;Iluminación
 TP_LOCALLAB_CIEMODE;Cambiar la posición de la herramienta
 TP_LOCALLAB_CIEMODE_COM;Predeterminado
 TP_LOCALLAB_CIEMODE_DR;Rango dinámico
-TP_LOCALLAB_CIEMODE_LOG;Codificación log
 TP_LOCALLAB_CIEMODE_TM;Mapeo tonal
 TP_LOCALLAB_CIEMODE_TOOLTIP;En modo Predeterminado, se añade Ciecam al final del proceso. «Máscara y modificaciones» y «Recuperación basada en la máscara de luminancia» están disponibles para «Cam16 y JzCzHz».\nTambién se puede integrar Ciecam en otras herramientas si se desea (Mapeo tonal, Ondícula, Rango dinámico, Codificación log). Los resultados para estas herramientas serán diferentes de los obtenidos sin Ciecam. En este modo, también es posible usar «Máscara y modificaciones» y «Recuperación basada en la máscara de luminancia».
 TP_LOCALLAB_CIEMODE_WAV;Ondícula
@@ -2753,8 +2739,6 @@ TP_LOCALLAB_COLOR_TOOLNAME;Color y Luz - 11
 TP_LOCALLAB_COL_NAME;Nombre
 TP_LOCALLAB_COL_VIS;Estado
 TP_LOCALLAB_COMPFRA;Contraste direccional
-TP_LOCALLAB_COMPLEX_METHOD;Complejidad del software
-TP_LOCALLAB_COMPLEX_TOOLTIP;Permite al usuario seleccionar rúbricas de Ajustes locales.
 TP_LOCALLAB_COMPREFRA;Mapeo tonal por niveles de ondículas
 TP_LOCALLAB_CONTCOL;Umbral de contraste
 TP_LOCALLAB_CONTFRA;Contraste por nivel
@@ -2847,7 +2831,6 @@ TP_LOCALLAB_EXPLAPGAMM_TOOLTIP;Cambia el comportamiento en imágenes con demasia
 TP_LOCALLAB_EXPLAPLIN_TOOLTIP;Cambia el comportamiento en imágenes subexpuestas, añadiendo un componente lineal antes de aplicar la transformada de Laplace.
 TP_LOCALLAB_EXPLAP_TOOLTIP;Si se desplaza el deslizador hacia la derecha, el contraste se reducirá progresivamente.
 TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Permite usar los modos de fusión de capas de GIMP o Photoshop (c), como Diferencia, Multiplicar, Luz suave, Superponer, etc., con control de opacidad.\n\nImagen original: fusiona el punto RT actual con la imagen original.\n\nPunto anterior: fusiona el punto RT actual con el anterior (si existe un punto anterior). Si sólo hay un punto RT, anterior = original.\n\nFondo: fusiona el punto RT con la luminancia y el color del fondo (menos posibilidades).
-TP_LOCALLAB_EXPMETHOD_TOOLTIP;Estándar: usa un algoritmo similar a la Exposición del menú principal, pero en el espacio L*a*b*, y teniendo en cuenta ΔE.\n\nAtenuador de contraste: usa otro algoritmo, también con ΔE y con una ecuación de Poisson para resolver la Laplaciana en el espacio de Fourier.\n\nAtenuador de contraste, Compresión de rango dinámico y Estándar pueden combinarse.\n\nEl tamaño de la transformada de Fourier FFTW se optimiza para reducir el tiempo de procesamiento.\n\nReduce los artefactos y el ruido.
 TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Aplica un filtro de mediana antes de la transformada de Laplace para evitar artefactos (ruido).\nTambién se puede usar la herramienta «Reducción de ruido».
 TP_LOCALLAB_EXPOSE;Rango dinámico y Exposición
 TP_LOCALLAB_EXPOSURE_TOOLTIP;Modifica la exposición en el espacio L*a*b, usando algoritmos PDE de Laplaciana para tener en cuenta ΔE y minimizar los artefactos.
@@ -2861,7 +2844,6 @@ TP_LOCALLAB_FATDETAIL;Detalle
 TP_LOCALLAB_FATFRA;Compresión de rango dinámico ƒ
 TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal – usa el algoritmo de mapeo tonal Fattal.
 TP_LOCALLAB_FATLEVEL;Sigma
-TP_LOCALLAB_FATRES;Cantidad de imagen residual
 TP_LOCALLAB_FATSHFRA;Máscara de compresión de rango dinámico ƒ
 TP_LOCALLAB_FEATH_TOOLTIP;Anchura del gradiente como porcentaje de la diagonal del punto.\nUsado por todos los filtros graduados en todas las herramientas.\nNo realiza ninguna acción si no se ha activado un filtro graduado.
 TP_LOCALLAB_FEATVALUE;Gradiente de degradado (Filtros graduados)
@@ -2996,7 +2978,6 @@ TP_LOCALLAB_LOGAUTOGRAYJZ_TOOLTIP;Calcula automáticamente la «luminancia media
 TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Calcula automáticamente la «luminancia media» para las condiciones de la escena cuando está pulsado el botón «Automático» en Niveles relativos de exposición.
 TP_LOCALLAB_LOGAUTO_TOOLTIP;Al pulsar este botón se calculará el «rango dinámico» y la «luminancia media» para las condiciones de la escena si está activada la casilla «Luminancia media automática (Yb%)».\nTambién se calcula la luminancia absoluta en el momento de la toma.\nPara ajustar los valores calculados automáticamente hay que volver a pulsar el botón.
 TP_LOCALLAB_LOGBASE_TOOLTIP;Valor predeterminado = 2.\nLos valores menores que 2 reducen la acción del algoritmo, haciendo las sombras más oscuras y las luces más brillantes.\nCon valores mayores que 2, las sombras son más grises y las luces son más desteñidas.
-TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Valores estimados del Rango dinámico, por ejemplo Ev negro y Ev blanco
 TP_LOCALLAB_LOGCATAD_TOOLTIP;La adaptación cromática permite interpretar un color en función de su entorno espacio-temporal.\nEs útil cuando el balance de blancos está lejos de la referencia D50.\nAdapta los colores al iluminante del dispositivo de salida.
 TP_LOCALLAB_LOGCOLORFL;Colorido (M)
 TP_LOCALLAB_LOGCOLORF_TOOLTIP;Cantidad de matiz percibida en relación al gris.\nIndicador de que un estímulo parece más o menos coloreado.
@@ -3034,7 +3015,6 @@ TP_LOCALLAB_MASFRAME;Enmascarar y Fusionar
 TP_LOCALLAB_MASFRAME_TOOLTIP;Para todas las máscaras.\n\nTiene en cuenta la ΔE de la imagen para evitar modificar el área seleccionada cuando se usan las siguientes herramientas de máscara: Gamma, Pendiente, Cromaticidad, Curva de contraste, Contraste local (por niveles de ondículas), Máscara de difuminado y Máscara de Estructura (si está activada) .\n\nDesactivada cuando se usa el modo Inverso.
 TP_LOCALLAB_MASK;Contraste
 TP_LOCALLAB_MASK2;Curva de contraste
-TP_LOCALLAB_MASKCOL;Curvas de máscara
 TP_LOCALLAB_MASKCOM;Máscara de color común
 TP_LOCALLAB_MASKCOM_TOOLNAME;Máscara de color común - 13
 TP_LOCALLAB_MASKCOM_TOOLTIP;Una herramienta por derecho propio.\nPuede usarse para ajustar la apariencia de la imagen (cromaticidad, luminancia, contraste) y la textura en función del Ámbito.
@@ -3131,7 +3111,6 @@ TP_LOCALLAB_MRFIV;Fondo
 TP_LOCALLAB_MRFOU;Punto anterior
 TP_LOCALLAB_MRONE;Ninguno
 TP_LOCALLAB_MRTHR;Imagen original
-TP_LOCALLAB_MRTWO;Máscara Curvas «L» corto
 TP_LOCALLAB_MULTIPL_TOOLTIP;Ajuste de tono de rango extenso: de -18EV a +4EV. El primer deslizador actúa sobre tonos muy oscuros, entre -18EV y -6EV. El último deslizador actúa sobre tonos claros, hasta 4EV.
 TP_LOCALLAB_NEIGH;Radio
 TP_LOCALLAB_NLDENOISENLGAM_TOOLTIP;Los valores bajos preservan detalles y textura, los altos aumentan la reducción de ruido.\nSi gamma = 3.0, se usa Luminancia "lineal".
@@ -3196,7 +3175,6 @@ TP_LOCALLAB_REPAREXP_TOOLTIP;Permite ajustar la intensidad relativa de la imagen
 TP_LOCALLAB_REPARSH_TOOLTIP;Permite ajustar la intensidad relativa de la imagen de Sombras/Luces y Ecualizador de tono respecto a la imagen original.
 TP_LOCALLAB_REPARTM_TOOLTIP;Permite ajustar la intensidad relativa de la imagen de Mapeo tonal respecto a la imagen original.
 TP_LOCALLAB_REPARW_TOOLTIP;Permite ajustar la intensidad relativa de la imagen de Contraste local y Ondículas respecto a la imagen original.
-TP_LOCALLAB_RESETSHOW;Reiniciar todo Mostrar modificaciones
 TP_LOCALLAB_RESID;Imagen residual
 TP_LOCALLAB_RESIDBLUR;Difuminar imagen residual
 TP_LOCALLAB_RESIDCHRO;Cromaticidad Imagen residual
@@ -3225,7 +3203,6 @@ TP_LOCALLAB_ROW_VIS;Visible
 TP_LOCALLAB_RSTPROTECT_TOOLTIP;La protección de rojo y tonos de piel afecta a los deslizadores de Saturación, Cromaticidad y Colorido.
 TP_LOCALLAB_SATUR;Saturación
 TP_LOCALLAB_SATURV;Saturación (s)
-TP_LOCALLAB_SAVREST;Guardar/Restaurar la imagen actual
 TP_LOCALLAB_SCALEGR;Escala
 TP_LOCALLAB_SCALERETI;Escala
 TP_LOCALLAB_SCALTM;Escala
@@ -3298,7 +3275,6 @@ TP_LOCALLAB_SIGMOIDLAMBDA;Contraste
 TP_LOCALLAB_SIGMOIDQJ;Usar Q en lugar de J
 TP_LOCALLAB_SIGMOIDTH;Umbral (Punto gris)
 TP_LOCALLAB_SIGMOID_TOOLTIP;Permite simular una apariencia de mapeo tonal mediante el uso de las dos funciones, «Ciecam» y «Sigmoide».\nSe dispone de tres deslizadores: a) Intensidad acúa en la forma de la curva sigmoide, y en consecuencia en la intensidad; b) Umbral distribute la acción en función de la luminancia; c)Fusionar actúa en el aspecto final de la imagen, el contraste y la luminancia.
-TP_LOCALLAB_SIM;Simple
 TP_LOCALLAB_SLOMASKCOL;Pendiente
 TP_LOCALLAB_SLOMASK_TOOLTIP;La Gamma y la Pendiente permiten una transformación de la máscara suave y libre de artefactos, modificando progresivamente «L» para evitar cualquier discontinuidad.
 TP_LOCALLAB_SLOSH;Pendiente
@@ -3376,9 +3352,7 @@ TP_LOCALLAB_WARM_TOOLTIP;Este deslizador usa el algoritmo CIECAM y actúa como u
 TP_LOCALLAB_WASDEN_TOOLTIP;Reducción de ruido de luminancia: el lado izquierdo de la curva, incluyendo la frontera gris oscuro/gris claro, corresponde a los tres primeros niveles 0, 1, 2 (detalle fino). El lado derecho de la curva corresponde a los detalles más gruesos (niveles 3, 4, 5, 6).
 TP_LOCALLAB_WAT_BALTHRES_TOOLTIP;Equilibra la acción dentro de cada nivel.
 TP_LOCALLAB_WAT_BLURLC_TOOLTIP;El ajuste predeterminado de difuminado afecta a los tres componentes de L*a*b* (luminancia y color).\nSi se activa, sólo se difuminará la luminancia.
-TP_LOCALLAB_WAT_CLARICJZ_TOOLTIP;«Fusionar cromaticidad» se usa para seleccionar la intensidad del efecto deseado en la cromaticidad.\nSólo se tiene en cuenta el máximo valor de los niveles de ondícula (abajo a la derecha.
 TP_LOCALLAB_WAT_CLARIC_TOOLTIP;«Fusionar cromaticidad» se usa para seleccionar la intensidad del efecto deseado sobre la cromaticidad.
-TP_LOCALLAB_WAT_CLARILJZ_TOOLTIP;«Fusionar luminancia» se usa para seleccionar la intensidad del efecto deseado en la luminancia.\nSólo se tiene en cuenta el máximo valor de los niveles de ondícula (abajo a la derecha.
 TP_LOCALLAB_WAT_CLARIL_TOOLTIP;«Fusionar luminancia» se usa para seleccionar la intensidad del efecto deseado sobre la luminancia.
 TP_LOCALLAB_WAT_CONTCHROMALEV_TOOLTIP;«Niveles de cromaticidad»: ajusta los componentes «a» y «b» de L*a*b* como una proporción del valor de la luminancia.
 TP_LOCALLAB_WAT_CONTOFFSET_TOOLTIP;El desplazamiento modifica el balance entre detalles de bajo y alto contraste.\n\nLos valores altos amplificarán cambios de contraste hacia detalles de mayor contraste, mientras que los valores bajos amplificarán cambios de contraste hacia detalles de bajo contraste.\n\nEl uso de “Respuesta de atenuación” permite seleccionar qué valores de contraste se intensificarán.
@@ -3503,7 +3477,6 @@ TP_RAWEXPOS_BLACK_BLUE;Azul
 TP_RAWEXPOS_BLACK_GREEN;Verde
 TP_RAWEXPOS_BLACK_RED;Rojo
 TP_RAWEXPOS_LINEAR;Corrección de punto blanco
-TP_RAWEXPOS_PRESER;Preservación de luces
 TP_RAWEXPOS_RGB;Rojo, Verde, Azul
 TP_RAWEXPOS_TWOGREEN;Vincular verdes
 TP_RAW_1PASSMEDIUM;1 paso (Markesteijn)
@@ -3616,7 +3589,6 @@ TP_RETINEX_GAIN;Ganancia
 TP_RETINEX_GAINOFFS;Ganancia y desplazamiento (brillo)
 TP_RETINEX_GAINTRANSMISSION;Ganancia de transmisión
 TP_RETINEX_GAINTRANSMISSION_TOOLTIP;Amplifica o reduce el mapa de transmisión para conseguir la luminancia deseada.\nEl eje x es la transmisión.\nEl eje y es la ganancia.
-TP_RETINEX_GAIN_TOOLTIP;Actúa en la imagen restaurada.\n\nEsto es muy diferente de los demás ajustes. Se usa para píxels negros o blancos, y para ayudar a equilibrar el histograma.
 TP_RETINEX_GAMMA;Gamma
 TP_RETINEX_GAMMA_FREE;Libre
 TP_RETINEX_GAMMA_HIGH;Alta
@@ -3694,7 +3666,6 @@ TP_SAVEDIALOG_OK_TOOLTIP;Atajo de teclado: <b>Ctrl-Intro</b>
 TP_SHADOWSHLIGHTS_HIGHLIGHTS;Luces
 TP_SHADOWSHLIGHTS_HLTONALW;Anchura tonal de las luces
 TP_SHADOWSHLIGHTS_LABEL;Sombras/Luces
-TP_SHADOWSHLIGHTS_LOCALCONTR;Contraste local
 TP_SHADOWSHLIGHTS_RADIUS;Radio
 TP_SHADOWSHLIGHTS_SHADOWS;Sombras
 TP_SHADOWSHLIGHTS_SHTONALW;Anchura tonal de las sombras
@@ -3823,7 +3794,6 @@ TP_WAVELET_CONTEDIT;Curva de contraste «Después»
 TP_WAVELET_CONTFRAME;Contraste - Compresión
 TP_WAVELET_CONTR;Rango de colores
 TP_WAVELET_CONTRA;Contraste
-TP_WAVELET_CONTRASTEDIT;Niveles más finos - más gruesos
 TP_WAVELET_CONTRAST_MINUS;Contraste -
 TP_WAVELET_CONTRAST_PLUS;Contraste +
 TP_WAVELET_CONTRA_TOOLTIP;Cambia el contraste de la imagen residual.
@@ -3846,13 +3816,7 @@ TP_WAVELET_DAUB14;D14 - alto
 TP_WAVELET_DAUBLOCAL;Rendimiento de ondículas en bordes
 TP_WAVELET_DAUB_TOOLTIP;Cambia los coeficientes de Daubechies:\nD4 = Estándar,\nD14 = A menudo ofrece el mejor rendimiento, con un 10% más de tiempo de ejecución.\n\nAfecta a la detección de bordes, así como a la calidad general de los primeros niveles. No obstante, la calidad no está estrictamente relacionada con este coeficiente, y puede variar de unas imágenes y usos a otros/as.
 TP_WAVELET_DEN5THR;Umbral guiado
-TP_WAVELET_DEN12LOW;1 2 Bajo
-TP_WAVELET_DEN12PLUS;1 2 Alto
-TP_WAVELET_DEN14LOW;1 4 Bajo
-TP_WAVELET_DEN14PLUS;1 4 Alto
-TP_WAVELET_DENCONTRAST;Ecualizador de contraste local
 TP_WAVELET_DENCURV;Curva
-TP_WAVELET_DENEQUAL;1 2 3 4 Ecual
 TP_WAVELET_DENL;Corrección estructura
 TP_WAVELET_DENLH;Umbral guiado por niveles de detalle 1-4
 TP_WAVELET_DENLOCAL_TOOLTIP;Usa una curva para guiar la reducción de ruido en función del contraste local.\nSe reduce el ruido de las zonas, manteniendo las estructuras.
@@ -3895,7 +3859,6 @@ TP_WAVELET_EDTYPE;Método de contraste local
 TP_WAVELET_EDVAL;Intensidad
 TP_WAVELET_FINAL;Retoque final
 TP_WAVELET_FINCFRAME;Contraste local final
-TP_WAVELET_FINCOAR_TOOLTIP;La parte izquierda (positiva) de la curva actúa en los niveles más finos (aumento).\nLos 2 puntos en la abscisa representan los respectivos límites de acción de los niveles más finos y más gruesos 5 y 6 (predeterminado).\nLa parte derecha (negativa) de la curva actúa sobre los niveles más gruesos (aumento).\nSe debe evitar mover la parte izquierda de la curva con valores negativos. Se debe evitar mover la parte derecha de la curva con valores positivos.
 TP_WAVELET_FINEST;El más fino
 TP_WAVELET_FINTHR_TOOLTIP;Usa el contraste local para reducir o aumentar la acción del filtro guiado.
 TP_WAVELET_GUIDFRAME;Suavizado final (filtro guiado)
@@ -3948,7 +3911,6 @@ TP_WAVELET_MIXNOISE;Ruido
 TP_WAVELET_NEUTRAL;Neutro
 TP_WAVELET_NOIS;Reducción de ruido
 TP_WAVELET_NOISE;Reducción de ruido y refinado
-TP_WAVELET_NOISE_TOOLTIP;Si la reducción de ruido de luminancia del nivel 4 es superior a 50, se usa el modo Agresivo.\nSi la cromaticidad gruesa es superior a 20, se usa el modo Agresivo.
 TP_WAVELET_NPHIGH;Alto
 TP_WAVELET_NPLOW;Bajo
 TP_WAVELET_NPNONE;Ninguno
@@ -4006,7 +3968,6 @@ TP_WAVELET_THRH;Umbral de luces
 TP_WAVELET_TILESBIG;Teselas grandes
 TP_WAVELET_TILESFULL;Imagen entera
 TP_WAVELET_TILESIZE;Método de teselado
-TP_WAVELET_TILESLIT;Teselas pequeñas
 TP_WAVELET_TILES_TOOLTIP;El procesado de la imagen entera proporciona mejor calidad y es la opción recomendada, mientras que el uso de teselas es una solución alternativa para usuarios con poca memoria RAM. Consúltese RawPedia para averiguar los requisitos de memoria.
 TP_WAVELET_TMEDGS;Parada en bordes
 TP_WAVELET_TMSCALE;Escala

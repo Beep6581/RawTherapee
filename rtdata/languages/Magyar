@@ -289,12 +289,6 @@ HISTORY_MSG_127;Flat Field automatikus kivál.
 HISTORY_MSG_128;Flat Field elmosás sugara
 HISTORY_MSG_129;Flat Field elmosás típusa
 HISTORY_MSG_130;Auto torzítás
-HISTORY_MSG_131;Zajszűrés - luminencia
-HISTORY_MSG_132;Zajszűrés - szín
-HISTORY_MSG_133;Gamma
-HISTORY_MSG_134;Gamma - Position
-HISTORY_MSG_135;Gamma - szabad
-HISTORY_MSG_136;Gamma - meredekség
 HISTORY_MSG_137;Feketeszint - zöld 1
 HISTORY_MSG_138;Feketeszint - vörös
 HISTORY_MSG_139;Feketeszint - kék
@@ -2487,7 +2481,6 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_COLORAPP_TCMODE_LIGHTNESS;Lightness
 !TP_COLORAPP_TCMODE_SATUR;Saturation
 !TP_COLORAPP_TEMP2_TOOLTIP;Either symmetrical mode temp = White balance.\nEither select illuminant always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
-!TP_COLORAPP_TEMPOUT_TOOLTIP;Disable to change temperature and tint.
 !TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
 !TP_COLORAPP_TONECIE;Use CIECAM for tone mapping
 !TP_COLORAPP_TONECIE_TOOLTIP;If this option is disabled, tone mapping is done in L*a*b* space.\nIf this option is enabled, tone mapping is done using CIECAM02.\nThe Tone Mapping tool must be enabled for this setting to take effect.
@@ -2808,7 +2801,6 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_LOCALLAB_ARTIF_TOOLTIP;ΔE scope threshold increases the range of ΔE scope. High values are for very wide gamut images.\nIncreasing ΔE decay can improve shape detection, but can also reduce the scope.
 !TP_LOCALLAB_AUTOGRAY;Auto mean luminance (Yb%)
 !TP_LOCALLAB_AUTOGRAYCIE;Auto
-!TP_LOCALLAB_AUTOGRAYCIE_TOOLTIP;Automatically calculates the 'Mean luminance' and 'Absolute luminance'.\nFor Jz Cz Hz: automatically calculates 'PU adaptation', 'Black Ev' and 'White Ev'.
 !TP_LOCALLAB_AVOID;Avoid color shift
 !TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).\nMunsell correction always disabled when Jz or CAM16 is used.
 !TP_LOCALLAB_AVOIDMUN;Munsell correction only
@@ -2858,10 +2850,8 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) adapted to CAM16. Allows you to change the internal PQ function (usually 10000 cd/m2 - default 100 cd/m2 - disabled for 100 cd/m2).\nCan be used to adapt to different devices and images.
 !TP_LOCALLAB_CAM16_FRA;Cam16 Image Adjustments
 !TP_LOCALLAB_CAMMODE;CAM model
-!TP_LOCALLAB_CAMMODE_ALL;CAM 16 + Jz Cz Hz
 !TP_LOCALLAB_CAMMODE_CAM16;CAM 16
 !TP_LOCALLAB_CAMMODE_JZ;Jz Cz Hz
-!TP_LOCALLAB_CAMMODE_ZCAM;ZCAM only
 !TP_LOCALLAB_CATAD;Chromatic adaptation/Cat16
 !TP_LOCALLAB_CBDL;Contrast by Detail Levels
 !TP_LOCALLAB_CBDLCLARI_TOOLTIP;Enhances local contrast of the midtones.
@@ -2891,7 +2881,6 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_LOCALLAB_CIEMODE;Change tool position
 !TP_LOCALLAB_CIEMODE_COM;Default
 !TP_LOCALLAB_CIEMODE_DR;Dynamic Range
-!TP_LOCALLAB_CIEMODE_LOG;Log Encoding
 !TP_LOCALLAB_CIEMODE_TM;Tone-Mapping
 !TP_LOCALLAB_CIEMODE_TOOLTIP;In Default mode, Ciecam is added at the end of the process. 'Mask and modifications' and 'Recovery based on luminance mask' are available for'Cam16 and JzCzHz' at your disposal .\nYou can also integrate Ciecam into other tools if you wish (TM, Wavelet, Dynamic Range, Log Encoding). The results for these tools will be different to those without Ciecam. In this mode, you can also use 'Mask and modifications' and 'Recovery based on luminance mask'.
 !TP_LOCALLAB_CIEMODE_WAV;Wavelet
@@ -3012,7 +3001,6 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_LOCALLAB_EXPLAPLIN_TOOLTIP;Changes the behaviour for underexposed images by adding a linear component prior to applying the Laplace transform.
 !TP_LOCALLAB_EXPLAP_TOOLTIP;Moving the slider to the right progressively reduces the contrast.
 !TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Allows you to use GIMP or Photoshop (c) layer blend modes i.e. Difference, Multiply, Soft Light, Overlay etc., with opacity control.\nOriginal Image : merge current RT-Spot with Original.\nPrevious spot : merge current Rt-Spot with previous - if there is only one spot, previous = original.\nBackground : merge current RT-Spot with a color and luminance background (fewer possibilties).
-!TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposure but in L*a*b* and taking account of ΔE.\n\nContrast attenuator : use another algorithm also with ΔE and with Poisson equation to solve Laplacian in Fourier space.\nContrast attenuator, Dynamic range compression and Standard can be combined.\nFFTW Fourier Transform is optimized in size to reduce processing time.\nReduce artifacts and noise.
 !TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Applies a median filter before the Laplace transform to prevent artifacts (noise).\nYou can also use the 'Denoise' tool.
 !TP_LOCALLAB_EXPOSE;Dynamic Range & Exposure
 !TP_LOCALLAB_EXPOSURE_TOOLTIP;Modify exposure in L*a*b space using Laplacian PDE algorithms to take into account dE and minimize artifacts.
@@ -3161,7 +3149,6 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Automatically calculates the 'Mean luminance' for the scene conditions when the 'Automatic' button in Relative Exposure Levels is pressed.
 !TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the dynamic range and 'Mean luminance' for the scene conditions if the 'Auto mean luminance (Yb%)' is checked).\nAlso calculates the absolute luminance at the time of shooting.\nPress the button again to adjust the automatically calculated values.
 !TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm making the shadows darker and the highlights brighter.\nWith values greater than 2, the shadows are grayer and the highlights become more washed out.
-!TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Estimated values of dynamic range i.e. Black Ev and White Ev.
 !TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance deviates significantly from the D50 reference.\nAdapts colors to the illuminant of the output device.
 !TP_LOCALLAB_LOGCIE;Log encoding instead of Sigmoid
 !TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using Log encoding Q.
@@ -3202,7 +3189,6 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTakes into account the ΔE image to avoid modifying the selection area when the following Mask Tools are used: Gamma, Slope, Chroma, Contrast curve, Local contrast (by wavelet level), Blur Mask and Structure Mask (if enabled ).\nDisabled when Inverse mode is used.
 !TP_LOCALLAB_MASK;Curves
 !TP_LOCALLAB_MASK2;Contrast curve
-!TP_LOCALLAB_MASKCOL;
 !TP_LOCALLAB_MASKCOM;Common Color Mask
 !TP_LOCALLAB_MASKCOM_TOOLNAME;Common Color Mask
 !TP_LOCALLAB_MASKCOM_TOOLTIP;A tool in its own right.\nCan be used to adjust the image appearance (chrominance, luminance, contrast) and texture as a function of Scope.
@@ -3298,7 +3284,6 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_LOCALLAB_MRFOU;Previous Spot
 !TP_LOCALLAB_MRONE;None
 !TP_LOCALLAB_MRTHR;Original Image
-!TP_LOCALLAB_MRTWO;Short Curves 'L' Mask
 !TP_LOCALLAB_MULTIPL_TOOLTIP;Wide-range tone adjustment: -18EV to +4EV. The first slider acts on very dark tones between -18EV and -6EV. The last slider acts on light tones up to 4EV.
 !TP_LOCALLAB_NEIGH;Radius
 !TP_LOCALLAB_NLDENOISENLGAM_TOOLTIP;Lower values preserve details and texture, higher values increase denoise.\nIf gamma = 3.0 Luminance 'linear' is used.
@@ -3363,7 +3348,6 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_LOCALLAB_REPARSH_TOOLTIP;Allows you to adjust the relative strength of the Shadows/Highlights and Tone Equalizer image with respect to the original image.
 !TP_LOCALLAB_REPARTM_TOOLTIP;Allows you to adjust the relative strength of the Tone mapping image with respect to the original image.
 !TP_LOCALLAB_REPARW_TOOLTIP;Allows you to adjust the relative strength of the local contrast and wavelet image with respect to the original image.
-!TP_LOCALLAB_RESETSHOW;Reset All Show Modifications
 !TP_LOCALLAB_RESID;Residual Image
 !TP_LOCALLAB_RESIDBLUR;Blur residual image
 !TP_LOCALLAB_RESIDCHRO;Residual image Chroma
@@ -3541,9 +3525,7 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_LOCALLAB_WASDEN_TOOLTIP;Luminance noise reduction: the left-hand side of the curve including the dark-gray/light-gray boundary corresponds to the first 3 levels 0, 1, 2 (fine detail). The right hand side of the curve corresponds to the coarser details (level 3, 4, 5, 6).
 !TP_LOCALLAB_WAT_BALTHRES_TOOLTIP;Balances the action within each level.
 !TP_LOCALLAB_WAT_BLURLC_TOOLTIP;The default blur setting affects all 3 L*a* b* components (luminance and colour).\nWhen checked, only luminance is blurred.
-!TP_LOCALLAB_WAT_CLARICJZ_TOOLTIP;'Merge chroma' is used to select the intensity of the desired effect on chrominance.\nOnly the maximum value of wavelet levels (bottom-right) is taken into account.
 !TP_LOCALLAB_WAT_CLARIC_TOOLTIP;'Merge chroma' is used to select the intensity of the desired effect on chrominance.
-!TP_LOCALLAB_WAT_CLARILJZ_TOOLTIP;'Merge luma' is used to select the intensity of the desired effect on luminance.\nOnly the maximum value of wavelet levels (bottom-right) is taken into account.
 !TP_LOCALLAB_WAT_CLARIL_TOOLTIP;'Merge luma' is used to select the intensity of the desired effect on luminance.
 !TP_LOCALLAB_WAT_CONTCHROMALEV_TOOLTIP;'Chroma levels': adjusts the 'a' and 'b' components of Lab* as a proportion of the luminance value.
 !TP_LOCALLAB_WAT_CONTOFFSET_TOOLTIP;Offset modifies the balance between low-contrast and high-contrast details.\nHigh values will amplify contrast changes to the higher-contrast details, whereas low values will amplify contrast changes to low-contrast details.\nBy using a low 'Attenuation response' value you can select which contrast values will be enhanced.
@@ -4018,7 +4000,6 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_WAVELET_NEUTRAL;Neutral
 !TP_WAVELET_NOIS;Denoise
 !TP_WAVELET_NOISE;Denoise and Refine
-!TP_WAVELET_NOISE_TOOLTIP;If level 4 luminance denoise superior to 50, mode Aggressive is used.\nIf chrominance coarse superior to 20, mode Aggressive is used.
 !TP_WAVELET_NPHIGH;High
 !TP_WAVELET_NPLOW;Low
 !TP_WAVELET_NPNONE;None
@@ -4076,7 +4057,6 @@ ZOOMPANEL_ZOOMOUT;Kicsinyítés <b>-</b>
 !TP_WAVELET_TILESBIG;Tiles
 !TP_WAVELET_TILESFULL;Full image
 !TP_WAVELET_TILESIZE;Tiling method
-!TP_WAVELET_TILESLIT;Little tiles
 !TP_WAVELET_TILES_TOOLTIP;Processing the full image leads to better quality and is the recommended option, while using tiles is a fall-back solution for users with little RAM. Refer to RawPedia for memory requirements.
 !TP_WAVELET_TMEDGS;Edge stopping
 !TP_WAVELET_TMSCALE;Scale

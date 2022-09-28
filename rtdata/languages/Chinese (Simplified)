@@ -397,8 +397,6 @@ HISTORY_MSG_127;平场-自动选择
 HISTORY_MSG_128;平场-模糊半径
 HISTORY_MSG_129;平场-模糊类型
 HISTORY_MSG_130;自动畸变矫正
-HISTORY_MSG_131;降噪-亮度
-HISTORY_MSG_132;降噪-色度
 HISTORY_MSG_142;边缘锐化-迭代
 HISTORY_MSG_143;边缘锐化-数量
 HISTORY_MSG_144;微反差-数量
@@ -644,7 +642,6 @@ HISTORY_MSG_468;像素偏移-填洞
 HISTORY_MSG_469;像素偏移-中值
 HISTORY_MSG_471;像素偏移-动体补正
 HISTORY_MSG_472;像素偏移-顺滑过渡
-HISTORY_MSG_473;像素偏移-使用LMMSE
 HISTORY_MSG_474;像素偏移-亮度均等
 HISTORY_MSG_475;像素偏移-均等各通道
 HISTORY_MSG_476;CAM02/16-输出色温
@@ -798,7 +795,6 @@ HISTORY_MSG_COLORTONING_LABREGION_SLOPE;色调分离-区域斜率
 HISTORY_MSG_COMPLEX;小波复杂度
 HISTORY_MSG_DEHAZE_DEPTH;去雾-纵深
 HISTORY_MSG_DEHAZE_ENABLED;去雾
-HISTORY_MSG_DEHAZE_LUMINANCE;去雾-仅亮度
 HISTORY_MSG_DEHAZE_SATURATION;去雾-饱和度
 HISTORY_MSG_DEHAZE_SHOW_DEPTH_MAP;去雾-显示纵深蒙版
 HISTORY_MSG_DEHAZE_STRENGTH;去雾-力度
@@ -1010,7 +1006,6 @@ PARTIALPASTE_LENSPROFILE;镜片修正档案
 PARTIALPASTE_LOCALCONTRAST;局部反差
 PARTIALPASTE_LOCALLAB;局部调整
 PARTIALPASTE_LOCALLABGROUP;局部调整设置
-PARTIALPASTE_LOCGROUP;局部
 PARTIALPASTE_METADATA;元数据模式
 PARTIALPASTE_METAGROUP;元数据
 PARTIALPASTE_PCVIGNETTE;暗角滤镜
@@ -1523,7 +1518,6 @@ TP_DEFRINGE_RADIUS;半径
 TP_DEFRINGE_THRESHOLD;阈值
 TP_DEHAZE_DEPTH;纵深
 TP_DEHAZE_LABEL;去雾
-TP_DEHAZE_LUMINANCE;仅亮度
 TP_DEHAZE_SATURATION;饱和度
 TP_DEHAZE_SHOW_DEPTH_MAP;显示纵深蒙版
 TP_DEHAZE_STRENGTH;力度
@@ -1798,7 +1792,6 @@ TP_LOCALLAB_CIECONTFRA;对比度
 TP_LOCALLAB_CIEMODE;改变工具位置
 TP_LOCALLAB_CIEMODE_COM;默认
 TP_LOCALLAB_CIEMODE_DR;动态范围
-TP_LOCALLAB_CIEMODE_LOG;Log编码
 TP_LOCALLAB_CIEMODE_TM;色调映射
 TP_LOCALLAB_CIEMODE_WAV;小波
 TP_LOCALLAB_CIETOOLEXP;曲线
@@ -1812,7 +1805,6 @@ TP_LOCALLAB_COLOR_CIE;色彩曲线
 TP_LOCALLAB_COLOR_TOOLNAME;色彩 & 亮度
 TP_LOCALLAB_COL_NAME;名称
 TP_LOCALLAB_COL_VIS;状态
-TP_LOCALLAB_CONTL;对比度 (J)
 TP_LOCALLAB_CONTRAST;对比度
 TP_LOCALLAB_CONTTHR;反差阈值
 TP_LOCALLAB_CONTWFRA;局部反差
@@ -1823,7 +1815,6 @@ TP_LOCALLAB_DEHAFRA;去雾
 TP_LOCALLAB_DEHAZ;力度
 TP_LOCALLAB_DEHAZFRAME_TOOLTIP;移除环境雾，提升总体饱和度与细节\n可以移除偏色倾向，但也可能导致图片整体偏蓝，此现象可以用其他工具进行修正
 TP_LOCALLAB_DEHAZ_TOOLTIP;负值会增加雾
-TP_LOCALLAB_DENOIS;去噪
 TP_LOCALLAB_DENOI_EXP;去噪
 TP_LOCALLAB_DEPTH;纵深
 TP_LOCALLAB_DETAIL;局部反差
@@ -1853,17 +1844,14 @@ TP_LOCALLAB_EXPCURV;曲线
 TP_LOCALLAB_EXPGRAD;渐变滤镜
 TP_LOCALLAB_EXPOSE;动态范围 & 曝光
 TP_LOCALLAB_EXPTOOL;曝光工具 
-TP_LOCALLAB_EXPTRC;色调响应曲线（TRC）
 TP_LOCALLAB_EXP_TOOLNAME;动态范围 & 曝光
 TP_LOCALLAB_FATAMOUNT;数量
 TP_LOCALLAB_FATANCHOR;锚点
-TP_LOCALLAB_FATANCHORA;偏移量
 TP_LOCALLAB_FATDETAIL;细节
 TP_LOCALLAB_FATFRA;动态范围压缩ƒ
 TP_LOCALLAB_FATSHFRA;动态范围压缩蒙版 ƒ
 TP_LOCALLAB_FFTMASK_TOOLTIP;使用傅立叶变换以得到更高的质量（处理用时与内存占用会上升）
 TP_LOCALLAB_FFTW;ƒ - 使用快速傅立叶变换
-TP_LOCALLAB_FFTW2;ƒ - 使用快速傅立叶变换(TIF, JPG,..)
 TP_LOCALLAB_FFTWBLUR;ƒ - 永远使用快速傅立叶变换
 TP_LOCALLAB_FULLIMAGE;Black-Ev and White-Ev for whole image
 TP_LOCALLAB_GAM;伽马
@@ -1918,7 +1906,6 @@ TP_LOCALLAB_LOG_TOOLNAME;Log编码
 TP_LOCALLAB_LUMADARKEST;最暗
 TP_LOCALLAB_LUMAWHITESEST;最亮
 TP_LOCALLAB_LUMFRA;L*a*b*标准
-TP_LOCALLAB_LUMONLY;仅亮度
 TP_LOCALLAB_MASK;曲线
 TP_LOCALLAB_MASK2;对比度曲线
 TP_LOCALLAB_MASKDDECAY;衰减力度
@@ -1992,7 +1979,6 @@ TP_LOCALLAB_SHRESFRA;阴影/高光 & 色调响应曲线
 TP_LOCALLAB_SH_TOOLNAME;阴影/高光 & 色调均衡器
 TP_LOCALLAB_SIGMAWAV;衰减响应
 TP_LOCALLAB_SIGMOIDLAMBDA;对比度
-TP_LOCALLAB_SIM;简单
 TP_LOCALLAB_SOFTM;柔光
 TP_LOCALLAB_SOFTRETI;减少ΔE杂点
 TP_LOCALLAB_SOURCE_ABS;绝对亮度
@@ -2315,8 +2301,6 @@ TP_WAVELET_DAUB6;D6-标准增强
 TP_WAVELET_DAUB10;D10-中等
 TP_WAVELET_DAUB14;D14-高
 TP_WAVELET_DAUB_TOOLTIP;改变多贝西系数：\nD4 = 标准\nD14 = 一般而言表现最好，但会增加10%的处理耗时\n\n影响边缘检测以及较低层级的质量。但是质量不完全和该系数有关，可能会随具体的图像和处理方式而变化
-TP_WAVELET_DENCONTRAST;局部反差均衡器
-TP_WAVELET_DENH;阈值
 TP_WAVELET_DENOISEHUE;去噪色相均衡器
 TP_WAVELET_DENQUA;模式
 TP_WAVELET_DENSLI;滑条
@@ -2385,7 +2369,6 @@ TP_WAVELET_PASTEL;欠饱和色
 TP_WAVELET_PROC;处理
 TP_WAVELET_QUAAGRES;激进
 TP_WAVELET_QUACONSER;保守
-TP_WAVELET_QUANONE;关闭
 TP_WAVELET_RE1;增强
 TP_WAVELET_RE2;不变
 TP_WAVELET_RE3;减弱
@@ -2413,7 +2396,6 @@ TP_WAVELET_THRH;高光阈值
 TP_WAVELET_TILESBIG;大切片
 TP_WAVELET_TILESFULL;整张图片
 TP_WAVELET_TILESIZE;切片缓存方法
-TP_WAVELET_TILESLIT;小切片
 TP_WAVELET_TILES_TOOLTIP;处理整张图片可以让图像质量更好，所以推荐使用该选项，切片缓存是给小内存用户的备用方法。阅读RawPedia的文章以了解具体的内存需求
 TP_WAVELET_TMSTRENGTH;压缩力度
 TP_WAVELET_TMSTRENGTH_TOOLTIP;控制对于残差图的色调映射/对比度压缩力度
@@ -3290,7 +3272,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_COLORAPP_MOD16;CAM16
 !TP_COLORAPP_SOURCEF_TOOLTIP;Corresponds to the shooting conditions and how to bring the conditions and data back to a 'normal' area. Normal means average or standard conditions and data, i.e. without taking into account CIECAM corrections.
 !TP_COLORAPP_TEMP2_TOOLTIP;Either symmetrical mode temp = White balance.\nEither select illuminant always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
-!TP_COLORAPP_TEMPOUT_TOOLTIP;Disable to change temperature and tint.
 !TP_COLORAPP_TEMP_TOOLTIP;To select an illuminant, always set Tint=1.\n\nA temp=2856\nD41 temp=4100\nD50 temp=5003\nD55 temp=5503\nD60 temp=6000\nD65 temp=6504\nD75 temp=7504
 !TP_COLORAPP_VIEWINGF_TOOLTIP;Takes into account the support on which the final image will be viewed (monitor, TV, projector, printer, etc.), as well as its environment. This process will take the data coming from process 'Image Adjustments' and 'bring' it to the support in such a way that the viewing conditions and its environment are taken into account.
 !TP_COLORAPP_YBOUT_TOOLTIP;Yb is the relative luminance of the background, expressed in % of gray. 18% gray corresponds to a background luminance of 50% expressed in CIE L.\nThe data is based on the mean luminance of the image.
@@ -3390,7 +3371,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_LOCALLAB_ACTIV;Luminance only
 !TP_LOCALLAB_ADJ;Equalizer Color
 !TP_LOCALLAB_ARTIF_TOOLTIP;ΔE scope threshold increases the range of ΔE scope. High values are for very wide gamut images.\nIncreasing ΔE decay can improve shape detection, but can also reduce the scope.
-!TP_LOCALLAB_AUTOGRAYCIE_TOOLTIP;Automatically calculates the 'Mean luminance' and 'Absolute luminance'.\nFor Jz Cz Hz: automatically calculates 'PU adaptation', 'Black Ev' and 'White Ev'.
 !TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Fit colors into gamut of the working color space and apply Munsell correction (Uniform Perceptual Lab).\nMunsell correction always disabled when Jz or CAM16 is used.
 !TP_LOCALLAB_AVOIDMUN;Munsell correction only
 !TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell correction always disabled when Jz or CAM16 is used.
@@ -3418,10 +3398,8 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_LOCALLAB_BWFORCE;Uses Black Ev & White Ev
 !TP_LOCALLAB_CAM16PQREMAP;HDR PQ (Peak Luminance)
 !TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) adapted to CAM16. Allows you to change the internal PQ function (usually 10000 cd/m2 - default 100 cd/m2 - disabled for 100 cd/m2).\nCan be used to adapt to different devices and images.
-!TP_LOCALLAB_CAMMODE_ALL;CAM 16 + Jz Cz Hz
 !TP_LOCALLAB_CAMMODE_CAM16;CAM 16
 !TP_LOCALLAB_CAMMODE_JZ;Jz Cz Hz
-!TP_LOCALLAB_CAMMODE_ZCAM;ZCAM only
 !TP_LOCALLAB_CH;CL - LC
 !TP_LOCALLAB_CHROMABLU;Chroma levels
 !TP_LOCALLAB_CHROMABLU_TOOLTIP;Increases or reduces the effect depending on the luma settings.\nValues under 1 reduce the effect. Values greater than 1 increase the effect.
@@ -3502,7 +3480,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_LOCALLAB_EXPLAPLIN_TOOLTIP;Changes the behaviour for underexposed images by adding a linear component prior to applying the Laplace transform.
 !TP_LOCALLAB_EXPLAP_TOOLTIP;Moving the slider to the right progressively reduces the contrast.
 !TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Allows you to use GIMP or Photoshop (c) layer blend modes i.e. Difference, Multiply, Soft Light, Overlay etc., with opacity control.\nOriginal Image : merge current RT-Spot with Original.\nPrevious spot : merge current Rt-Spot with previous - if there is only one spot, previous = original.\nBackground : merge current RT-Spot with a color and luminance background (fewer possibilties).
-!TP_LOCALLAB_EXPMETHOD_TOOLTIP;Standard : use an algorithm similar as main Exposure but in L*a*b* and taking account of ΔE.\n\nContrast attenuator : use another algorithm also with ΔE and with Poisson equation to solve Laplacian in Fourier space.\nContrast attenuator, Dynamic range compression and Standard can be combined.\nFFTW Fourier Transform is optimized in size to reduce processing time.\nReduce artifacts and noise.
 !TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Applies a median filter before the Laplace transform to prevent artifacts (noise).\nYou can also use the 'Denoise' tool.
 !TP_LOCALLAB_EXPOSURE_TOOLTIP;Modify exposure in L*a*b space using Laplacian PDE algorithms to take into account dE and minimize artifacts.
 !TP_LOCALLAB_EXPRETITOOLS;Advanced Retinex Tools
@@ -3598,7 +3575,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Automatically calculates the 'Mean luminance' for the scene conditions when the 'Automatic' button in Relative Exposure Levels is pressed.
 !TP_LOCALLAB_LOGAUTO_TOOLTIP;Pressing this button will calculate the dynamic range and 'Mean luminance' for the scene conditions if the 'Auto mean luminance (Yb%)' is checked).\nAlso calculates the absolute luminance at the time of shooting.\nPress the button again to adjust the automatically calculated values.
 !TP_LOCALLAB_LOGBASE_TOOLTIP;Default = 2.\nValues less than 2 reduce the action of the algorithm making the shadows darker and the highlights brighter.\nWith values greater than 2, the shadows are grayer and the highlights become more washed out.
-!TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Estimated values of dynamic range i.e. Black Ev and White Ev.
 !TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatic adaptation allows us to interpret a color according to its spatio-temporal environment.\nUseful when the white balance deviates significantly from the D50 reference.\nAdapts colors to the illuminant of the output device.
 !TP_LOCALLAB_LOGCIE;Log encoding instead of Sigmoid
 !TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using Log encoding Q.
@@ -3626,7 +3602,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_LOCALLAB_LUMASK_TOOLTIP;Adjusts the shade of gray or color of the mask background in Show Mask (Mask and modifications).
 !TP_LOCALLAB_MASFRAME;Mask and Merge
 !TP_LOCALLAB_MASFRAME_TOOLTIP;For all masks.\nTakes into account the ΔE image to avoid modifying the selection area when the following Mask Tools are used: Gamma, Slope, Chroma, Contrast curve, Local contrast (by wavelet level), Blur Mask and Structure Mask (if enabled ).\nDisabled when Inverse mode is used.
-!TP_LOCALLAB_MASKCOL;
 !TP_LOCALLAB_MASKCOM;Common Color Mask
 !TP_LOCALLAB_MASKCOM_TOOLNAME;Common Color Mask
 !TP_LOCALLAB_MASKCOM_TOOLTIP;A tool in its own right.\nCan be used to adjust the image appearance (chrominance, luminance, contrast) and texture as a function of Scope.
@@ -3715,7 +3690,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_LOCALLAB_MLABEL_TOOLTIP;The values should be close to Min=0 Max=32768 (log mode) but other values are possible.You can adjust 'Clip restored data (gain)' and 'Offset' to normalize.\nRecovers image data without blending.
 !TP_LOCALLAB_MRFIV;Background
 !TP_LOCALLAB_MRFOU;Previous Spot
-!TP_LOCALLAB_MRTWO;Short Curves 'L' Mask
 !TP_LOCALLAB_MULTIPL_TOOLTIP;Wide-range tone adjustment: -18EV to +4EV. The first slider acts on very dark tones between -18EV and -6EV. The last slider acts on light tones up to 4EV.
 !TP_LOCALLAB_NLDENOISENLGAM_TOOLTIP;Lower values preserve details and texture, higher values increase denoise.\nIf gamma = 3.0 Luminance 'linear' is used.
 !TP_LOCALLAB_NLDENOISENLPAT_TOOLTIP;Use this slider to adapt the amount of denoise to the size of the objects to be processed.
@@ -3756,7 +3730,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_LOCALLAB_REPARSH_TOOLTIP;Allows you to adjust the relative strength of the Shadows/Highlights and Tone Equalizer image with respect to the original image.
 !TP_LOCALLAB_REPARTM_TOOLTIP;Allows you to adjust the relative strength of the Tone mapping image with respect to the original image.
 !TP_LOCALLAB_REPARW_TOOLTIP;Allows you to adjust the relative strength of the local contrast and wavelet image with respect to the original image.
-!TP_LOCALLAB_RESETSHOW;Reset All Show Modifications
 !TP_LOCALLAB_RESIDBLUR;Blur residual image
 !TP_LOCALLAB_RESIDCHRO;Residual image Chroma
 !TP_LOCALLAB_RESIDCOMP;Compress residual image
@@ -3868,9 +3841,7 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_LOCALLAB_WASDEN_TOOLTIP;Luminance noise reduction: the left-hand side of the curve including the dark-gray/light-gray boundary corresponds to the first 3 levels 0, 1, 2 (fine detail). The right hand side of the curve corresponds to the coarser details (level 3, 4, 5, 6).
 !TP_LOCALLAB_WAT_BALTHRES_TOOLTIP;Balances the action within each level.
 !TP_LOCALLAB_WAT_BLURLC_TOOLTIP;The default blur setting affects all 3 L*a* b* components (luminance and colour).\nWhen checked, only luminance is blurred.
-!TP_LOCALLAB_WAT_CLARICJZ_TOOLTIP;'Merge chroma' is used to select the intensity of the desired effect on chrominance.\nOnly the maximum value of wavelet levels (bottom-right) is taken into account.
 !TP_LOCALLAB_WAT_CLARIC_TOOLTIP;'Merge chroma' is used to select the intensity of the desired effect on chrominance.
-!TP_LOCALLAB_WAT_CLARILJZ_TOOLTIP;'Merge luma' is used to select the intensity of the desired effect on luminance.\nOnly the maximum value of wavelet levels (bottom-right) is taken into account.
 !TP_LOCALLAB_WAT_CLARIL_TOOLTIP;'Merge luma' is used to select the intensity of the desired effect on luminance.
 !TP_LOCALLAB_WAT_CONTCHROMALEV_TOOLTIP;'Chroma levels': adjusts the 'a' and 'b' components of Lab* as a proportion of the luminance value.
 !TP_LOCALLAB_WAT_CONTOFFSET_TOOLTIP;Offset modifies the balance between low-contrast and high-contrast details.\nHigh values will amplify contrast changes to the higher-contrast details, whereas low values will amplify contrast changes to low-contrast details.\nBy using a low 'Attenuation response' value you can select which contrast values will be enhanced.
@@ -4076,7 +4047,6 @@ ZOOMPANEL_ZOOMOUT;缩放拉远\n快捷键：<b>-</b>
 !TP_WAVELET_MIXCONTRAST;Reference
 !TP_WAVELET_MIXMIX;Mixed 50% noise - 50% denoise
 !TP_WAVELET_MIXMIX70;Mixed 30% noise - 70% denoise
-!TP_WAVELET_NOISE_TOOLTIP;If level 4 luminance denoise superior to 50, mode Aggressive is used.\nIf chrominance coarse superior to 20, mode Aggressive is used.
 !TP_WAVELET_NPTYPE_TOOLTIP;This algorithm uses the proximity of a pixel and eight of its neighbors. If less difference, edges are reinforced.
 !TP_WAVELET_OFFSET_TOOLTIP;Offset modifies the balance between low contrast and high contrast details.\nHigh values will amplify contrast changes to the higher contrast details, whereas low values will amplify contrast changes to low contrast details.\nBy using a low Attenuation response value you can select which contrast values will be enhanced.
 !TP_WAVELET_OLDSH;Algorithm using negatives values
