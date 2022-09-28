@@ -1,4 +1,6 @@
+#01 Developers should add translations to this file and then run the 'generateTranslationDiffs' Bash script to update other locales.
 #01 keenonkites; Aktualisierte Version für 2.3 beta2
+#02 Translators please append a comment here with the current date and your name(s) as used in the RawTherapee forum or GitHub page, e.g.:
 #02 phberlin; basiert auf keenonkites' Erstübersetzung
 #03 2007-12-20
 #04 2007-12-22
@@ -85,10 +87,8 @@
 #84 06.10.2019 Erweiterung (TooWaBoo) RT 5.7
 #84 18.07.2019 Erweiterung (TooWaBoo) RT 5.6
 #85 29.07.2022 Erweiterung (marter, mozzihh) RT 5.9
-
-#01 Developers should add translations to this file and then run the 'generateTranslationDiffs' Bash script to update other locales.
-#02 Translators please append a comment here with the current date and your name(s) as used in the RawTherapee forum or GitHub page, e.g.:
 #2022-07, Version RT 5.9 (marter, mozzihh)
+
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
 ABOUT_TAB_LICENSE;Lizenz
@@ -1373,9 +1373,6 @@ HISTORY_MSG_1061;(Lokal - CIECAM)\nSzenebasierte Bedingungen\nAbsolute Luminanz
 HISTORY_MSG_1062;(Lokal - CIECAM)\nSzenebasierte Bedingungen\nUmgebung
 HISTORY_MSG_1063;(Lokal - CIECAM)\nCAM16 - Farbe\nSättigung
 HISTORY_MSG_1064;(Lokal - CIECAM)\nCAM16 - Farbe\nChroma
-HISTORY_MSG_1062;(Lokal - CIECAM)\nHelligkeit
-HISTORY_MSG_1063;(Lokal - CIECAM)\nHelligkeit
-HISTORY_MSG_1064;(Lokal - CIECAM)\nSchwellenwert
 HISTORY_MSG_1065;(Lokal - CIECAM)\nCAM16 - Beleuchtung\nHelligkeit (J)
 HISTORY_MSG_1066;(Lokal - CIECAM)\nCAM16 - Beleuchtung\nHelligkeit (Q)
 HISTORY_MSG_1067;(Lokal - CIECAM)\nCAM16 - Kontrast\nKontrast (J)
@@ -1410,7 +1407,6 @@ HISTORY_MSG_1095;(Lokal - CIECAM)\nTonwertbreite Jz Lichter
 HISTORY_MSG_1096;(Lokal - CIECAM)\nJz Schatten
 HISTORY_MSG_1097;(Lokal - CIECAM)\nTonwertbreite Jz Schatten
 HISTORY_MSG_1098;(Lokal - CIECAM)\nJz Radius
-//HISTORY_MSG_1099;(Lokal) - Hz(Hz)-Kurve
 HISTORY_MSG_1099;(Lokal - CIECAM)\nJz Cz Hz\nKurve Cz(Hz)
 HISTORY_MSG_1100;(Lokal - CIECAM)\nJz Zuordnung\nReferenz 100
 HISTORY_MSG_1101;(Lokal - CIECAM)\nJz Zuordnung\nPQ Peak Luminanz
@@ -1502,25 +1498,25 @@ HISTORY_MSG_FILMNEGATIVE_REF_SPOT;(Farbe - Negativfilm)\nReferenz Eingabe
 HISTORY_MSG_FILMNEGATIVE_VALUES;(Farbe - Negativfilm)\nWerte
 HISTORY_MSG_HISTMATCHING;(Belichtung)\nAuto-Tonwertkurve
 HISTORY_MSG_HLBL;Farbübertragung - Unschärfe
+HISTORY_MSG_ICL_LABGRIDCIEXY;CIE xy
+HISTORY_MSG_ICM_AINTENT;(Farbe - Farbmanagement)\nAbstraktes Profil Ziel
+HISTORY_MSG_ICM_BLUX;(Farbe - Farbmanagement)\nAbstraktes Profil\nPrimär Blau X
+HISTORY_MSG_ICM_BLUY;(Farbe - Farbmanagement)\nAbstraktes Profil\nPrimär Blau Y
+HISTORY_MSG_ICM_FBW;(Farbe - Farbmanagement)\nAbstraktes Profil\nSchwarz-Weiß
+HISTORY_MSG_ICM_GREX;(Farbe - Farbmanagement)\nAbstraktes Profil\nPrimär Grün X
+HISTORY_MSG_ICM_GREY;(Farbe - Farbmanagement)\nAbstraktes Profil\nPrimär Grün Y
 HISTORY_MSG_ICM_OUTPUT_PRIMARIES;(Farbe - Farbmanagement)\nAusgabeprofil\nVorlagen
 HISTORY_MSG_ICM_OUTPUT_TEMP;(Farbe - Farbmanagement)\nAusgabeprofil\nIccV4-Illuminant D
 HISTORY_MSG_ICM_OUTPUT_TYPE;(Farbe - Farbmanagement)\nAusgabeprofil\nTyp
-HISTORY_MSG_ICM_WORKING_GAMMA;(Farbe - Farbmanagement)\nAbstraktes Profil\nGamma Farbtonkennlinie
-HISTORY_MSG_ICM_WORKING_SLOPE;(Farbe - Farbmanagement)\nAbstraktes Profil\nSteigung Farbtonkennlinie
-HISTORY_MSG_ICM_WORKING_TRC_METHOD;(Farbe - Farbmanagement)\nAbstraktes Profil\nFarbtonkennlinie
-HISTORY_MSG_ICM_WORKING_ILLUM_METHOD;(Farbe - Farbmanagement)\nAbstraktes Profil\nBeleuchtung
-HISTORY_MSG_ICM_WORKING_PRIM_METHOD;(Farbe - Farbmanagement)\nAbstraktes Profil\nZielvorwahl
+HISTORY_MSG_ICM_PRESER;(Farbe - Farbmanagement)\nAbstraktes Profil\nPastelltöne erhalten
 HISTORY_MSG_ICM_REDX;(Farbe - Farbmanagement)\nAbstraktes Profil\nPrimär Rot X
 HISTORY_MSG_ICM_REDY;(Farbe - Farbmanagement)\nAbstraktes Profil\nPrimär Rot Y
-HISTORY_MSG_ICM_GREX;(Farbe - Farbmanagement)\nAbstraktes Profil\nPrimär Grün X
-HISTORY_MSG_ICM_GREY;(Farbe - Farbmanagement)\nAbstraktes Profil\nPrimär Grün Y
-HISTORY_MSG_ICM_BLUX;(Farbe - Farbmanagement)\nAbstraktes Profil\nPrimär Blau X
-HISTORY_MSG_ICM_BLUY;(Farbe - Farbmanagement)\nAbstraktes Profil\nPrimär Blau Y
-HISTORY_MSG_ICL_LABGRIDCIEXY;CIE xy
-HISTORY_MSG_ICM_AINTENT;(Farbe - Farbmanagement)\nAbstraktes Profil Ziel
+HISTORY_MSG_ICM_WORKING_GAMMA;(Farbe - Farbmanagement)\nAbstraktes Profil\nGamma Farbtonkennlinie
+HISTORY_MSG_ICM_WORKING_ILLUM_METHOD;(Farbe - Farbmanagement)\nAbstraktes Profil\nBeleuchtung
+HISTORY_MSG_ICM_WORKING_PRIM_METHOD;(Farbe - Farbmanagement)\nAbstraktes Profil\nZielvorwahl
+HISTORY_MSG_ICM_WORKING_SLOPE;(Farbe - Farbmanagement)\nAbstraktes Profil\nSteigung Farbtonkennlinie
+HISTORY_MSG_ICM_WORKING_TRC_METHOD;(Farbe - Farbmanagement)\nAbstraktes Profil\nFarbtonkennlinie
 HISTORY_MSG_ILLUM;Beleuchtung
-HISTORY_MSG_ICM_FBW;(Farbe - Farbmanagement)\nAbstraktes Profil\nSchwarz-Weiß
-HISTORY_MSG_ICM_PRESER;(Farbe - Farbmanagement)\nAbstraktes Profil\nPastelltöne erhalten
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;(Details - Lokaler Kontrast)\nIntensität
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;(Details - Lokaler Kontrast)\nDunkle Bereiche
 HISTORY_MSG_LOCALCONTRAST_ENABLED;(Details - Lokaler Kontrast)
@@ -1575,9 +1571,9 @@ HISTORY_MSG_TRANS_METHOD;(Transformieren - Objektivkorrektur)\nMethode
 HISTORY_MSG_WAVBALCHROM;(Erweitert - Wavelet)\nRauschreduzierung\nFarb-Equalizer
 HISTORY_MSG_WAVBALLUM;(Erweitert - Wavelet)\nRauschreduzierung\nEqualizer Luminanz
 HISTORY_MSG_WAVBL;(Erweitert - Wavelet)\nUnschärfeebenen
+HISTORY_MSG_WAVCHR;(Erweitert - Wavelet)\nUnschärfeebenen\nChroma-Unschärfe
 HISTORY_MSG_WAVCHROMCO;(Erweitert - Wavelet)\nRauschreduzierung\nChrominanz grob
 HISTORY_MSG_WAVCHROMFI;(Erweitert - Wavelet)\nRauschreduzierung\nChrominanz fein
-HISTORY_MSG_WAVCHR;(Erweitert - Wavelet)\nUnschärfeebenen\nChroma-Unschärfe
 HISTORY_MSG_WAVCLARI;(Erweitert - Wavelet)\nSchärfemaske und Klarheit
 HISTORY_MSG_WAVDENLH;(Erweitert - Wavelet)\nRauschreduzierung\nEbenen 5-6
 HISTORY_MSG_WAVDENMET;(Erweitert - Wavelet)\nLokaler Equalizer
@@ -1587,10 +1583,10 @@ HISTORY_MSG_WAVDETEND;(Erweitert - Wavelet)\nEndretusche - finales Glätten\nDet
 HISTORY_MSG_WAVEDGS;(Erweitert - Wavelet)\nRestbild - Kompression\nKantenschutz
 HISTORY_MSG_WAVGUIDH;(Erweitert - Wavelet)\nEndretusche - finales Glätten\nEqualizer Farbton
 HISTORY_MSG_WAVHUE;(Erweitert - Wavelet)\nEqualizer Farbton
-HISTORY_MSG_WAVLEVDEN;(Erweitert - Wavelet)\nKontrast\nSchwellenwert hoher Kontrast
-HISTORY_MSG_WAVLEVSIGM;(Erweitert - Wavelet)\nRauschreduzierung\nRadius
 HISTORY_MSG_WAVLABGRID_VALUE;(Erweitert - Wavelet)\nTönung\nAusgeschlossene Farben
+HISTORY_MSG_WAVLEVDEN;(Erweitert - Wavelet)\nKontrast\nSchwellenwert hoher Kontrast
 HISTORY_MSG_WAVLEVELSIGM;(Erweitert - Wavelet)\nRauschreduzierung\nRadius
+HISTORY_MSG_WAVLEVSIGM;(Erweitert - Wavelet)\nRauschreduzierung\nRadius
 HISTORY_MSG_WAVLIMDEN;(Erweitert - Wavelet)\nRauschreduzierung\nInteraktion der Ebenen 5-6 mit 1-4
 HISTORY_MSG_WAVLOWTHR;(Erweitert - Wavelet)\nKontrast\nSchwellenwert niedriger Kontrast
 HISTORY_MSG_WAVMERGEC;(Erweitert - Wavelet)\nSchärfemaske und Klarheit\nChroma zusammenführen
@@ -1953,13 +1949,13 @@ PREFERENCES_DIRSELECTDLG;Wähle das Bild-Verzeichnis beim Programmstart...
 PREFERENCES_DIRSOFTWARE;Installationsverzeichnis
 PREFERENCES_EDITORCMDLINE;Benutzerdefinierte Befehlszeile
 PREFERENCES_EDITORLAYOUT;Editor-Layout
-PREFERENCES_EXTERNALEDITOR;Externer Editor
+PREFERENCES_EXTEDITOR_BYPASS_OUTPUT_PROFILE;Bypass Ausgabeprofil
 PREFERENCES_EXTEDITOR_DIR;Ausgabeverzeichnis
-PREFERENCES_EXTEDITOR_DIR_TEMP;Temp-Ordner Betriebssystem
 PREFERENCES_EXTEDITOR_DIR_CURRENT;Derselbe Ordner wie Bild
 PREFERENCES_EXTEDITOR_DIR_CUSTOM;Benutzerdefiniert
+PREFERENCES_EXTEDITOR_DIR_TEMP;Temp-Ordner Betriebssystem
 PREFERENCES_EXTEDITOR_FLOAT32;Ausgabe in 32-bit (float) TIFF
-PREFERENCES_EXTEDITOR_BYPASS_OUTPUT_PROFILE;Bypass Ausgabeprofil
+PREFERENCES_EXTERNALEDITOR;Externer Editor
 PREFERENCES_FBROWSEROPTS;Bildinformationen und Miniaturbilder
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Einzeilige Toolbar
 PREFERENCES_FLATFIELDFOUND;Gefunden
@@ -2151,6 +2147,12 @@ SAVEDLG_WARNFILENAME;Die Datei wird gespeichert als
 SHCSELECTOR_TOOLTIP;Um die 3 Regler zurückzusetzen, rechte Maustaste klicken.
 SOFTPROOF_GAMUTCHECK_TOOLTIP;Markiert Pixel, deren Farbe außerhalb des Farbumfangs liegen in Abhängigkeit des:\n- Druckerprofils, wenn eines eingestellt und Soft-Proofing aktiviert ist.\n- Ausgabeprofils, wenn ein Druckerprofil nicht eingestellt und Soft-Proofing aktiviert ist.\n- Monitorprofils, wenn Soft-Proofing deaktiviert ist.
 SOFTPROOF_TOOLTIP;Soft-Proofing simuliert das Aussehen des Bildes:\n- für den Druck, wenn ein Druckerprofil unter Einstellungen > Farbmanagement eingestellt ist.\n- wenn es auf einem Bildschirm dargestellt wird, der das aktuelle Ausgabeprofil verwendet und kein Druckerprofil eingestellt ist.
+TC_PRIM_BLUX;Bx
+TC_PRIM_BLUY;By
+TC_PRIM_GREX;Gx
+TC_PRIM_GREY;Gy
+TC_PRIM_REDX;Rx
+TC_PRIM_REDY;Ry
 THRESHOLDSELECTOR_B;Unten
 THRESHOLDSELECTOR_BL;Unten-Links
 THRESHOLDSELECTOR_BR;Unten-Rechts
@@ -2250,9 +2252,9 @@ TP_COLORAPP_BADPIXSL_TOOLTIP;Unterdrückt Hot-/Dead-Pixel (hell gefärbt).\n0 = 
 TP_COLORAPP_BRIGHT;Helligkeit (Q)
 TP_COLORAPP_BRIGHT_TOOLTIP;Helligkeit in CIECAM02/16 berücksichtigt die Weißintensität und unterscheidet sich von L*a*b* und RGB-Helligkeit.
 TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;Bei manueller Einstellung werden Werte über 65 empfohlen.
+TP_COLORAPP_CATCLASSIC;Klassisch
 TP_COLORAPP_CATMET_TOOLTIP;Klassisch - traditionelle CIECAM-Berechnung. Die Transformationen der chromatischen Adaption werden separat auf 'Szenenbedingungen' und 'Grundlichtart' einerseits und auf 'Grundlichtart' und 'Betrachtungsbedingungen' andererseits angewandt.\n\nSymmetrisch - Die chromatische Anpassung basiert auf dem Weißabgleich. Die Einstellungen 'Szenenbedingungen', 'Bildeinstellungen' und 'Betrachtungsbedingungen' werden neutralisiert.\n\nGemischt - Wie die Option 'Klassisch', aber in diesem Fall basiert die chromatische Anpassung auf dem Weißabgleich.
 TP_COLORAPP_CATMOD;Modus CAT02/16 
-TP_COLORAPP_CATCLASSIC;Klassisch
 TP_COLORAPP_CATSYMGEN;Automatisch Symmetrisch
 TP_COLORAPP_CATSYMSPE;Gemischt
 TP_COLORAPP_CHROMA;Buntheit (H)
@@ -2299,12 +2301,12 @@ TP_COLORAPP_LABEL_VIEWING;Betrachtungsbedingungen
 TP_COLORAPP_LIGHT;Helligkeit (J)
 TP_COLORAPP_LIGHT_TOOLTIP;Helligkeit in CIECAM02/16 unterscheidet sich von L*a*b* und RGB Helligkeit.
 TP_COLORAPP_MEANLUMINANCE;Mittlere Leuchtdichte (Yb%)
-TP_COLORAPP_MODEL;Weißpunktmodell
-TP_COLORAPP_MODEL_TOOLTIP;<b>Weißabgleich [RT] + [Ausgabe]:</b>\nRTs Weißabgleich wird für die Szene verwendet,\nCIECAM02/16 auf D50 gesetzt und der Weißabgleich\ndes Ausgabegerätes kann unter:\n<i>Einstellungen > Farb-Management</i>\neingestellt werden.\n\n<b>Weißabgleich [RT+CAT02/16] + [Ausgabe]:</b>\nRTs Weißabgleich wird für CAT02 verwendet und\nder Weißabgleich des Ausgabegerätes kann unter\n<i>Einstellungen > Farb-Management</i>\neingestellt werden.
-TP_COLORAPP_MODELCAT;CAM Modell
-TP_COLORAPP_MODELCAT_TOOLTIP;Ermöglicht die Auswahl zwischen CIECAM02 oder CIECAM16.\nCIECAM02 ist manchmal genauer.\nCIECAM16 sollte weniger Artefakte erzeugen.
 TP_COLORAPP_MOD02;CIECAM02
 TP_COLORAPP_MOD16;CIECAM16
+TP_COLORAPP_MODEL;Weißpunktmodell
+TP_COLORAPP_MODELCAT;CAM Modell
+TP_COLORAPP_MODELCAT_TOOLTIP;Ermöglicht die Auswahl zwischen CIECAM02 oder CIECAM16.\nCIECAM02 ist manchmal genauer.\nCIECAM16 sollte weniger Artefakte erzeugen.
+TP_COLORAPP_MODEL_TOOLTIP;<b>Weißabgleich [RT] + [Ausgabe]:</b>\nRTs Weißabgleich wird für die Szene verwendet,\nCIECAM02/16 auf D50 gesetzt und der Weißabgleich\ndes Ausgabegerätes kann unter:\n<i>Einstellungen > Farb-Management</i>\neingestellt werden.\n\n<b>Weißabgleich [RT+CAT02/16] + [Ausgabe]:</b>\nRTs Weißabgleich wird für CAT02 verwendet und\nder Weißabgleich des Ausgabegerätes kann unter\n<i>Einstellungen > Farb-Management</i>\neingestellt werden.
 TP_COLORAPP_NEUTRAL;Zurücksetzen
 TP_COLORAPP_NEUTRAL_TOOLTIP;Setzt alle CIECAM02-Parameter auf Vorgabewerte zurück.
 TP_COLORAPP_RSTPRO;Hautfarbtöne schützen
@@ -2536,9 +2538,6 @@ TP_FILMNEGATIVE_COLORSPACE;Farbraum
 TP_FILMNEGATIVE_COLORSPACE_INPUT;Eingangsfarbraum
 TP_FILMNEGATIVE_COLORSPACE_TOOLTIP;Wählen Sie den Farbraum aus, der verwendet werden soll, um die Negativ-Umkehrung durchzuführen:\n<b>Eingangsfarbraum</b>: Führt die Umkehrung durch, bevor das Eingangsprofil angewendet wird, wie in den vorherigen Versionen von RT.\n<b>Arbeitsfarbraum< /b>: Führt die Umkehrung nach dem Eingabeprofil durch, wobei das aktuell ausgewählte Arbeitsprofil angewandt wird.
 TP_FILMNEGATIVE_COLORSPACE_WORKING;Arbeitsfarbraum
-TP_FILMNEGATIVE_REF_LABEL;Eingang RGB: %1
-TP_FILMNEGATIVE_REF_PICK;Farbwähler
-TP_FILMNEGATIVE_REF_TOOLTIP;Auswahl eines Graupunktes, um den Weißabgleich für das Positivbild zu setzen.
 TP_FILMNEGATIVE_GREEN;Bezugsexponent
 TP_FILMNEGATIVE_GREENBALANCE;Balance Magenta/Grün
 TP_FILMNEGATIVE_GUESS_TOOLTIP;Setzt automatisch die Rot- und Blau-Werte, indem mit der Pipette zwei Punkte ohne Farbinformation im Originalbild genommen werden. Diese Punkte sollten in der Helligkeit unterschiedlich sein. Der Weißabgleich sollte erst danach vorgenommen werden.
@@ -2546,6 +2545,9 @@ TP_FILMNEGATIVE_LABEL;Negativfilm
 TP_FILMNEGATIVE_OUT_LEVEL;Ausgabestärke
 TP_FILMNEGATIVE_PICK;Neutrale Punkte anwählen
 TP_FILMNEGATIVE_RED;Rotverhältnis
+TP_FILMNEGATIVE_REF_LABEL;Eingang RGB: %1
+TP_FILMNEGATIVE_REF_PICK;Farbwähler
+TP_FILMNEGATIVE_REF_TOOLTIP;Auswahl eines Graupunktes, um den Weißabgleich für das Positivbild zu setzen.
 TP_FILMSIMULATION_LABEL;Filmsimulation
 TP_FILMSIMULATION_SLOWPARSEDIR;RawTherapee sucht nach Hald-CLUT-Bildern, die für die Filmsimulation benötigt werden, in einem Ordner, der zu viel Zeit zum Laden benötigt.\nGehen Sie zu\n< Einstellungen > Bildbearbeitung > Filmsimulation >\nund prüfen Sie, welcher Order benutzt wird. Wählen Sie den Ordner aus, der nur die Hald-CLUT-Bilder beinhaltet oder einen leeren Ordner, wenn Sie die Filmsimulation nicht verwenden möchten.\n\nWeitere Informationen über die Filmsimulation finden Sie auf RawPedia.\n\nMöchten Sie die Suche beenden?
 TP_FILMSIMULATION_STRENGTH;Intensität
@@ -2576,8 +2578,8 @@ TP_GRADIENT_STRENGTH_TOOLTIP;Filterstärke in Blendenstufen.
 TP_HLREC_BLEND;Überlagerung
 TP_HLREC_CIELAB;CIELab-Überlagerung
 TP_HLREC_COLOR;Farbübertragung
-TP_HLREC_HLBLUR;Unschärfe
 TP_HLREC_ENA_TOOLTIP;Wird bei Verwendung der automatischen\nBelichtungskorrektur möglicherweise\naktiviert.
+TP_HLREC_HLBLUR;Unschärfe
 TP_HLREC_LABEL;Lichter rekonstruieren
 TP_HLREC_LUMINANCE;Luminanz wiederherstellen
 TP_HLREC_METHOD;Methode:
@@ -2616,9 +2618,10 @@ TP_ICM_NEUTRAL;Zurücksetzen
 TP_ICM_NOICM;Kein ICM: sRGB-Ausgabe
 TP_ICM_OUTPUTPROFILE;Ausgabeprofil
 TP_ICM_OUTPUTPROFILE_TOOLTIP;Standardmäßig sind alle RTv4- oder RTv2-Profile mit TRC - sRGB: g=2.4 s=12.92 voreingestellt.\n\nMit 'ICC Profile Creator' können Sie v4- oder v2-Profile mit den folgenden Auswahlmöglichkeiten erstellen:\n- Primär: Aces AP0, Aces AP1 , AdobeRGB, Prophoto, Rec2020, sRGB, Widegamut, BestRGB, BetaRGB, BruceRGB, Benutzerdefiniert\n- TRC: BT709, sRGB, linear, Standard g=2,2, Standard g=1,8, Benutzerdefiniert\n- Lichtart: D41, D50, D55 , D60, D65, D80, stdA 2856K
-TP_ICM_PRIMRED_TOOLTIP;Primäreinstellungen Rot:\nsRGB x=0.64 y=0.33\nAdobe x=0.64 y=0.33\nWidegamut x=0.735 y=0.265\nRec2020 x=0.708 y=0.292\nACES P1 x=0.713 y= 0.293\nACES P0 x=0.7347 y=0.2653\nProphoto x=0.7347 y=0.2653\nBruceRGB x=0.64 y=0.33\nBeta RGB x=0.688 y=0.3112\nBestRGB x=0.7347 y=0.2653
-TP_ICM_PRIMGRE_TOOLTIP;Primäreinstellungen Grün:\nsRGB x=0.3 y=0.6\nAdobe x=0.21 y=0.71\nWidegamut x=0.115 y=0.826\nRec2020 x=0.17 y=0.797\nACES P1 x=0.165 y= 0.83\nACES P0 x=0.0 y=1.0\nProphoto x=0.1596 y=0.8404\nBruceRGB x=0.28 y=0.65\nBeta RGB x=0.1986 y=0.7551\nBest RGB x=0.2150 0.7750 
 TP_ICM_PRIMBLU_TOOLTIP;Primäreinstellungen Blau:\nsRGB x=0.15 y=0.06\nAdobe x=0.15 y=0.06\nWidegamut x=0.157 y=0.018\nRec2020 x=0.131 y=0.046\nACES P1 x=0.128 y= 0.044\nACES P0 x=0.0001 y=-0.077\nProphoto x=0.0366 y=0.0001\nBruceRGB x=0.15 y=0.06\nBeta RGB x=0.1265 y=0.0352\nBestRGB x=0.131 y=0.046 
+TP_ICM_PRIMGRE_TOOLTIP;Primäreinstellungen Grün:\nsRGB x=0.3 y=0.6\nAdobe x=0.21 y=0.71\nWidegamut x=0.115 y=0.826\nRec2020 x=0.17 y=0.797\nACES P1 x=0.165 y= 0.83\nACES P0 x=0.0 y=1.0\nProphoto x=0.1596 y=0.8404\nBruceRGB x=0.28 y=0.65\nBeta RGB x=0.1986 y=0.7551\nBest RGB x=0.2150 0.7750 
+TP_ICM_PRIMILLUM_TOOLTIP;Sie können ein Bild von seinem ursprünglichen Modus ('Arbeitsprofil') in einen anderen Modus ('Zielvorwahl') ändern. Wenn Sie einen anderen Farbmodus für ein Bild auswählen, ändern Sie die Farbwerte im Bild dauerhaft.\n\nDas Ändern der 'Primärfarben' ist ziemlich komplex und schwierig zu verwenden. Es erfordert viel Experimentieren.\nEs kann exotische Farbanpassungen als Primärfarben des Kanalmischers vornehmen.\nEs ermöglicht Ihnen, die Kamerakalibrierung mit 'Benutzerdefiniert (Schieberegler)' zu ändern.
+TP_ICM_PRIMRED_TOOLTIP;Primäreinstellungen Rot:\nsRGB x=0.64 y=0.33\nAdobe x=0.64 y=0.33\nWidegamut x=0.735 y=0.265\nRec2020 x=0.708 y=0.292\nACES P1 x=0.713 y= 0.293\nACES P0 x=0.7347 y=0.2653\nProphoto x=0.7347 y=0.2653\nBruceRGB x=0.64 y=0.33\nBeta RGB x=0.688 y=0.3112\nBestRGB x=0.7347 y=0.2653
 TP_ICM_PROFILEINTENT;Wiedergabe
 TP_ICM_REDFRAME;Benutzerdefinierte Voreinstellungen
 TP_ICM_SAVEREFERENCE;Referenzbild speichern
@@ -2629,22 +2632,12 @@ TP_ICM_TONECURVE;Tonwertkurve
 TP_ICM_TONECURVE_TOOLTIP;Eingebettete DCP-Tonwertkurve verwenden.\nDie Einstellung ist nur verfügbar, wenn sie vom Eingangsfarbprofil unterstützt wird.
 TP_ICM_TRCFRAME;Abstraktes Profil
 TP_ICM_TRCFRAME_TOOLTIP;Auch bekannt als 'synthetisches' oder 'virtuelles' Profil, das am Ende der Verarbeitungspipeline (vor CIECAM) angewendet wird, sodass Sie benutzerdefinierte Bildeffekte erstellen können.\nSie können Änderungen vornehmen an:\n'Farbtonkennlinie': Ändert die Farbtöne des Bildes.\n'Beleuchtungsart': Ermöglicht Ihnen, die Profil-Primärfarben zu ändern, um sie an die Aufnahmebedingungen anzupassen.\n'Ziel-Primärfarben': Ermöglicht Ihnen, die Ziel-Primärfarben mit zwei Hauptanwendungen zu ändern - Kanalmischer und -kalibrierung.\nHinweis: Abstrakte Profile berücksichtigen die integrierten Arbeitsprofile, ohne sie zu ändern. Sie funktionieren nicht mit benutzerdefinierten Arbeitsprofilen.
-TP_ICM_WORKING_CIEDIAG;CIE xy-Diagramm
-TP_ICM_WORKINGPROFILE;Arbeitsfarbraum
-TP_ICM_WORKING_PRESER;Pastelltöne erhalten
-TP_ICM_WORKING_TRC;Farbtonkennlinie:
-TP_ICM_WORKING_TRC_BT709;BT709 g=2.22 s=4.5
-TP_ICM_WORKING_TRC_SRGB;sRGB g=2.4 s=12.92
-TP_ICM_WORKING_TRC_22;Adobe g=2.2
-TP_ICM_WORKING_TRC_18;ProPhoto g=1.8
-TP_ICM_WORKING_TRC_LIN;Linear g=1
-TP_ICM_WORKING_TRC_CUSTOM;Benutzerdefiniert
-TP_ICM_WORKING_TRC_GAMMA;Gamma
-TP_ICM_WORKING_TRC_NONE;Keine
-TP_ICM_WORKING_TRC_SLOPE;Steigung
 TP_ICM_TRC_TOOLTIP;Ermöglicht Ihnen, die standardmäßige sRGB-'Farbtonkennlinie' in RT (g=2,4 s=12,92) zu ändern.\nDiese Farbtonkennlinie modifiziert die Farbtöne des Bildes. Die RGB- und Lab-Werte, das Histogramm und die Ausgabe (Bildschirm, TIF, JPG) werden geändert:\nGamma wirkt hauptsächlich auf helle Töne, Steigung wirkt hauptsächlich auf dunkle Töne.\nSie können ein beliebiges Paar von 'Gamma' und 'Steigung' (Werte >1) wählen, und der Algorithmus stellt sicher, dass zwischen den linearen und parabolischen Teilen der Kurve Kontinuität besteht.\nEine andere Auswahl als 'Keine' aktiviert die Menüs 'Lichtart' und 'Ziel-Primärfarben'.
+TP_ICM_WORKINGPROFILE;Arbeitsfarbraum
+TP_ICM_WORKING_CIEDIAG;CIE xy-Diagramm
 TP_ICM_WORKING_ILLU;Beleuchtung
-TP_ICM_WORKING_ILLU_NONE;Standard
+TP_ICM_WORKING_ILLU_1500;Tungsten 1500K
+TP_ICM_WORKING_ILLU_2000;Tungsten 2000K
 TP_ICM_WORKING_ILLU_D41;D41
 TP_ICM_WORKING_ILLU_D50;D50
 TP_ICM_WORKING_ILLU_D55;D55
@@ -2652,25 +2645,34 @@ TP_ICM_WORKING_ILLU_D60;D60
 TP_ICM_WORKING_ILLU_D65;D65
 TP_ICM_WORKING_ILLU_D80;D80
 TP_ICM_WORKING_ILLU_D120;D120
+TP_ICM_WORKING_ILLU_NONE;Standard
 TP_ICM_WORKING_ILLU_STDA;Glühbirne Normlicht A 2875K
-TP_ICM_WORKING_ILLU_2000;Tungsten 2000K
-TP_ICM_WORKING_ILLU_1500;Tungsten 1500K
+TP_ICM_WORKING_PRESER;Pastelltöne erhalten
 TP_ICM_WORKING_PRIM;Zielvorwahl
-TP_ICM_PRIMILLUM_TOOLTIP;Sie können ein Bild von seinem ursprünglichen Modus ('Arbeitsprofil') in einen anderen Modus ('Zielvorwahl') ändern. Wenn Sie einen anderen Farbmodus für ein Bild auswählen, ändern Sie die Farbwerte im Bild dauerhaft.\n\nDas Ändern der 'Primärfarben' ist ziemlich komplex und schwierig zu verwenden. Es erfordert viel Experimentieren.\nEs kann exotische Farbanpassungen als Primärfarben des Kanalmischers vornehmen.\nEs ermöglicht Ihnen, die Kamerakalibrierung mit 'Benutzerdefiniert (Schieberegler)' zu ändern.
-TP_ICM_WORKING_PRIM_NONE;Standard
-TP_ICM_WORKING_PRIM_SRGB;sRGB
-TP_ICM_WORKING_PRIM_ADOB;Adobe RGB
-TP_ICM_WORKING_PRIM_PROP;ProPhoto
-TP_ICM_WORKING_PRIM_REC;Rec2020
-TP_ICM_WORKING_PRIM_ACE;ACESp1
-TP_ICM_WORKING_PRIM_WID;WideGamut
+TP_ICM_WORKING_PRIMFRAME_TOOLTIP;Wenn 'Benutzerdefiniert CIE xy-Diagramm' in der Combobox 'Zielvorwahl' ausgewählt ist, können die Werte der 3 Primärfarben direkt im Diagramm geändert werden.\nBeachten Sie, dass in diesem Fall die Weißpunktposition im Diagramm nicht aktualisiert wird.
 TP_ICM_WORKING_PRIM_AC0;ACESp0
-TP_ICM_WORKING_PRIM_BRU;BruceRGB
+TP_ICM_WORKING_PRIM_ACE;ACESp1
+TP_ICM_WORKING_PRIM_ADOB;Adobe RGB
 TP_ICM_WORKING_PRIM_BET;Beta RGB
+TP_ICM_WORKING_PRIM_BRU;BruceRGB
 TP_ICM_WORKING_PRIM_BST;BestRGB
 TP_ICM_WORKING_PRIM_CUS;Benutzerdefiniert (Regler)
 TP_ICM_WORKING_PRIM_CUSGR;Benutzerdefiniert (CIE xy-Diagramm)
-TP_ICM_WORKING_PRIMFRAME_TOOLTIP;Wenn 'Benutzerdefiniert CIE xy-Diagramm' in der Combobox 'Zielvorwahl' ausgewählt ist, können die Werte der 3 Primärfarben direkt im Diagramm geändert werden.\nBeachten Sie, dass in diesem Fall die Weißpunktposition im Diagramm nicht aktualisiert wird.
+TP_ICM_WORKING_PRIM_NONE;Standard
+TP_ICM_WORKING_PRIM_PROP;ProPhoto
+TP_ICM_WORKING_PRIM_REC;Rec2020
+TP_ICM_WORKING_PRIM_SRGB;sRGB
+TP_ICM_WORKING_PRIM_WID;WideGamut
+TP_ICM_WORKING_TRC;Farbtonkennlinie:
+TP_ICM_WORKING_TRC_18;ProPhoto g=1.8
+TP_ICM_WORKING_TRC_22;Adobe g=2.2
+TP_ICM_WORKING_TRC_BT709;BT709 g=2.22 s=4.5
+TP_ICM_WORKING_TRC_CUSTOM;Benutzerdefiniert
+TP_ICM_WORKING_TRC_GAMMA;Gamma
+TP_ICM_WORKING_TRC_LIN;Linear g=1
+TP_ICM_WORKING_TRC_NONE;Keine
+TP_ICM_WORKING_TRC_SLOPE;Steigung
+TP_ICM_WORKING_TRC_SRGB;sRGB g=2.4 s=12.92
 TP_ICM_WORKING_TRC_TOOLTIP;Auswahl der mitgelieferten Profile.
 TP_IMPULSEDENOISE_LABEL;Impulsrauschreduzierung
 TP_IMPULSEDENOISE_THRESH;Schwelle
@@ -2743,9 +2745,9 @@ TP_LOCALLAB_AUTOGRAYCIE;Automatisch
 TP_LOCALLAB_AUTOGRAYCIE_TOOLTIP;Berechnet automatisch die 'mittlere Luminanz' und 'absolute Luminanz'.\nFür Jz Cz Hz: automatische Berechnung von 'PU Anpassung', 'Schwarz-Ev' und 'Weiß-Ev'.
 TP_LOCALLAB_AVOID;vermeide Farbverschiebungen
 TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Passt Farben an den Arbeitsfarbraum an und wendet die Munsell-Korrektur an (Uniform Perceptual Lab).\nMunsell-Korrektur ist deaktiviert wenn Jz oder CAM16 angewandt wird.
-TP_LOCALLAB_AVOIDRAD;Radius
 TP_LOCALLAB_AVOIDMUN;Nur Munsell-Korrektur
 TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell-Korrektur ist deaktiviert, wenn Jz or CAM16 angewandt wird
+TP_LOCALLAB_AVOIDRAD;Radius
 TP_LOCALLAB_BALAN;ab-L Balance (ΔE)
 TP_LOCALLAB_BALANEXP;Laplace Balance
 TP_LOCALLAB_BALANH;C-H Balance (ΔE)
@@ -2786,14 +2788,14 @@ TP_LOCALLAB_BUTTON_DUPL;Duplizieren
 TP_LOCALLAB_BUTTON_REN;Umbenennen
 TP_LOCALLAB_BUTTON_VIS;Ein-/Ausblenden
 TP_LOCALLAB_BWFORCE;Schwarz-Ev & Weiß-Ev verwenden
-TP_LOCALLAB_CAM16_FRA;CAM16 Bildanpassungen
 TP_LOCALLAB_CAM16PQREMAP;HDR PQ (Spitzenleuchtdichte)
 TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) angepasst an CAM16. Ermöglicht die Änderung der internen PQ-Funktion (normalerweise 10000 cd/m2 - Standard 100 cd/m2 - deaktiviert für 100 cd/m2).\nKann zur Anpassung an verschiedene Geräte und Bilder verwendet werden.
+TP_LOCALLAB_CAM16_FRA;CAM16 Bildanpassungen
 TP_LOCALLAB_CAMMODE;CAM-Modell
 TP_LOCALLAB_CAMMODE_ALL;CAM 16 + Jz Cz Hz
 TP_LOCALLAB_CAMMODE_CAM16;CAM 16
-TP_LOCALLAB_CAMMODE_ZCAM;nur ZCAM
 TP_LOCALLAB_CAMMODE_JZ;Jz Cz Hz
+TP_LOCALLAB_CAMMODE_ZCAM;nur ZCAM
 TP_LOCALLAB_CATAD;Chromatische Adaptation/Cat16
 TP_LOCALLAB_CBDL;Detailebenenkontrast
 TP_LOCALLAB_CBDLCLARI_TOOLTIP;Verstärkt den lokalen Kontrast der Mitteltöne.
@@ -2813,41 +2815,41 @@ TP_LOCALLAB_CHROMASKCOL;Chrominanz
 TP_LOCALLAB_CHROMASK_TOOLTIP;Ändert die Chrominanz der Maske, wenn eine existiert (d.h. C(C) oder LC(H) ist aktiviert).
 TP_LOCALLAB_CHROML;Chroma (C)
 TP_LOCALLAB_CHRRT;Chrominanz
-TP_LOCALLAB_CIE_TOOLNAME;CIECAM (CAM16 & JzCzHz)
 TP_LOCALLAB_CIE;CIECAM (CAM16 & JzCzHz)
 TP_LOCALLAB_CIEC;CIECAM-Umgebungsparameter
 TP_LOCALLAB_CIECAMLOG_TOOLTIP;Dieses Modul basiert auf dem CIECAM-Farberscheinungsmodell, das entwickelt wurde, um das Sehen der menschlichen Farbwahrnehmung unter verschiedenen Lichtbedingungen zu simulieren.\nDer erste CIECAM-Prozess 'Szenebasierte Bedingungen' wird per LOG-Kodierung durchgeführt und verwendet 'Absolute Luminanz' zum Zeitpunkt der Aufnahme.\nDer zweite CIECAM-Prozess 'Bildkorrektur' wurde vereinfacht und nutzt nur 3 Variablen ('Lokaler Kontrast', 'Kontrast J', 'Sättigung s').\nDer dritte CIECAM-Prozess 'Anzeigebedingungen' passt die Ausgabe an das beabsichtigte Anzeigegerät (Monitor, TV, Projektor, Drucker, etc.) an, damit das chromatische und kontrastreiche Erscheinungsbild in der gesamten Anzeigeumgebung erhalten bleibt. 
+TP_LOCALLAB_CIECOLORFRA;Farbe
+TP_LOCALLAB_CIECONTFRA;Kontrast
+TP_LOCALLAB_CIELIGHTCONTFRA;Beleuchtung & Kontrast
+TP_LOCALLAB_CIELIGHTFRA;Beleuchtung
 TP_LOCALLAB_CIEMODE;Werkzeugposition ändern
 TP_LOCALLAB_CIEMODE_COM;Standard
 TP_LOCALLAB_CIEMODE_DR;Dynamikbereich
-TP_LOCALLAB_CIEMODE_TM;Tone-Mapping
-TP_LOCALLAB_CIEMODE_WAV;Wavelet
 TP_LOCALLAB_CIEMODE_LOG;LOG-Kodierung
+TP_LOCALLAB_CIEMODE_TM;Tone-Mapping
 TP_LOCALLAB_CIEMODE_TOOLTIP;Im Standardmodus wird CIECAM am Ende des Prozesses hinzugefügt. 'Maske und Anpassungen' und 'Wiederherstellung auf Luminanzmaske' stehen für 'CAM16 und JzCzHz' zur Verfügung.\nAuf Wunsch kann CIECAM in andere Werkzeuge (TM, Wavelet, Dynamik, LOG-Kodierung) integriert werden. Das Ergebnis dieser Werkzeuge wird sich von denen ohne CIECAM unterscheiden. In diesem Modus können auch 'Maske und Anpassungen' und 'Wiederherstellung auf Luminanzmaske' angewandt werden.
+TP_LOCALLAB_CIEMODE_WAV;Wavelet
 TP_LOCALLAB_CIETOOLEXP;Kurven
-TP_LOCALLAB_CIECOLORFRA;Farbe
-TP_LOCALLAB_CIECONTFRA;Kontrast
-TP_LOCALLAB_CIELIGHTFRA;Beleuchtung
-TP_LOCALLAB_CIELIGHTCONTFRA;Beleuchtung & Kontrast
+TP_LOCALLAB_CIE_TOOLNAME;CIECAM (CAM16 & JzCzHz)
 TP_LOCALLAB_CIRCRADIUS;Spot-Größe
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Die Spot-Größe bestimmt die Referenzen des RT-Spots, die für die Formerkennung nützlich sind (Farbton, Luma, Chroma, Sobel).\nNiedrige Werte können für die Bearbeitung kleiner Flächen und Strukturen nützlich sein.\nHohe Werte können für die Behandlung von größeren Flächen oder auch Haut nützlich sein.
 TP_LOCALLAB_CLARICRES;Chroma zusammenführen
 TP_LOCALLAB_CLARIFRA;Klarheit u. Schärfemaske - Überlagern u. Abschwächen
+TP_LOCALLAB_CLARIJZ_TOOLTIP;Levels 0 bis 4 (einschließlich): ‘Schärfemaske’ ist aktiviert\nLevel 5 und darüber: 'Klarheit' ist aktiviert.
 TP_LOCALLAB_CLARILRES;Luma zusammenführen
 TP_LOCALLAB_CLARISOFT;Radius
-TP_LOCALLAB_CLARISOFT_TOOLTIP;Der Regler 'Radius' (Algorithmus des anpassbaren Filters) reduziert Lichthöfe und Unregelmäßigkeiten für die Klarheit, die Schärfemaske und für alle Pyramiden-Wavelet-Prozesse. Zum Deaktivieren setzen Sie den Schieberegler auf Null.
 TP_LOCALLAB_CLARISOFTJZ_TOOLTIP;Der Regler ‘Radius’ (Algorithmus des anpassbaren Filters) reduziert Lichthöfe und Unregelmäßigkeiten für Klarheit, Schärfemaske und Wavelets Jz des lokalen Kontrastes.
+TP_LOCALLAB_CLARISOFT_TOOLTIP;Der Regler 'Radius' (Algorithmus des anpassbaren Filters) reduziert Lichthöfe und Unregelmäßigkeiten für die Klarheit, die Schärfemaske und für alle Pyramiden-Wavelet-Prozesse. Zum Deaktivieren setzen Sie den Schieberegler auf Null.
 TP_LOCALLAB_CLARITYML;Klarheit
 TP_LOCALLAB_CLARI_TOOLTIP;Levels 0 bis 4 (einschließlich): 'Schärfemaske' ist aktiviert\nLevel 5 und darüber: 'Klarheit' ist aktiviert.\nHilfreich bei 'Wavelet - Tonwertkorrektur'
-TP_LOCALLAB_CLARIJZ_TOOLTIP;Levels 0 bis 4 (einschließlich): ‘Schärfemaske’ ist aktiviert\nLevel 5 und darüber: 'Klarheit' ist aktiviert.
 TP_LOCALLAB_CLIPTM;Wiederhergestellte Daten beschneiden
 TP_LOCALLAB_COFR;Farbe und Licht
-TP_LOCALLAB_COLOR_CIE;Farbkurve
 TP_LOCALLAB_COLORDE;Vorschau Farbe - Intensität (ΔE)
 TP_LOCALLAB_COLORDEPREV_TOOLTIP;Die Schaltfläche 'Vorschau ΔE' funktioniert nur, wenn Sie eines (und nur eines) der Werkzeuge im Menü 'Werkzeug zum aktuellen Spot hinzufügen' aktiviert haben.\nUm eine Vorschau von ΔE mit mehreren aktivierten Werkzeugen anzuzeigen, verwenden Sie 'Maske und Anpassungen' - Vorschau ΔE.
 TP_LOCALLAB_COLORDE_TOOLTIP;Zeigt eine blaue Farbvorschau für die ΔE-Auswahl an, wenn negativ, und grün, wenn positiv.\n\nMaske und Anpassungen (geänderte Bereiche ohne Maske anzeigen): Zeigt tatsächliche Änderungen an, wenn sie positiv sind, erweiterte Änderungen (nur Luminanz) mit Blau und Gelb, wenn sie negativ sind.
 TP_LOCALLAB_COLORSCOPE;Bereich (Farbwerkzeuge)
 TP_LOCALLAB_COLORSCOPE_TOOLTIP;Regler für Farbe, Licht, Schatten, Highlights und Dynamik.\nAndere Werkzeuge haben ihre eigenen Kontrollregler für den Anwendungsbereich.
+TP_LOCALLAB_COLOR_CIE;Farbkurve
 TP_LOCALLAB_COLOR_TOOLNAME;Farbe und Licht
 TP_LOCALLAB_COL_NAME;Name
 TP_LOCALLAB_COL_VIS;Status
@@ -2873,8 +2875,8 @@ TP_LOCALLAB_CURVEEDITOR_LL_TOOLTIP;Um die Kurven zu aktivieren, setzen Sie das K
 TP_LOCALLAB_CURVEEDITOR_TONES_LABEL;Tonkurve
 TP_LOCALLAB_CURVEEDITOR_TONES_TOOLTIP;L=f(L), kann mit L(H) in Farbe und Licht verwendet werden.
 TP_LOCALLAB_CURVEMETHOD_TOOLTIP;'Normal': die Kurve L=f(L) verwendet den selben Algorithmus wie der Helligkeitsregler.
-TP_LOCALLAB_CURVNONE;Kurven deaktivieren
 TP_LOCALLAB_CURVES_CIE;Tonkurve
+TP_LOCALLAB_CURVNONE;Kurven deaktivieren
 TP_LOCALLAB_DARKRETI;Dunkelheit
 TP_LOCALLAB_DEHAFRA;Dunst entfernen
 TP_LOCALLAB_DEHAZ;Intensität
@@ -2882,14 +2884,14 @@ TP_LOCALLAB_DEHAZFRAME_TOOLTIP;Entfernt atmosphärischen Dunst. Erhöht Sättigu
 TP_LOCALLAB_DEHAZ_TOOLTIP;Negative Werte fügen Dunst hinzu.
 TP_LOCALLAB_DELTAD;Ebenenbalance
 TP_LOCALLAB_DELTAEC;ΔE-Bildmaske
+TP_LOCALLAB_DENOI1_EXP;Rauschreduzierung auf Luminanz-Maske
+TP_LOCALLAB_DENOI2_EXP;Wiederherstellung auf Luminanz-Maske
 TP_LOCALLAB_DENOIBILAT_TOOLTIP;Ermöglicht Impulsrauschen zu reduzieren oder auch 'Salz-& Pfefferrauschen'.
 TP_LOCALLAB_DENOICHROC_TOOLTIP;Ermöglicht den Umgang mit Flecken und Rauschen.
 TP_LOCALLAB_DENOICHRODET_TOOLTIP;Ermöglicht die Wiederherstellung von Chrominanz-Details durch schrittweise Anwendung einer Fourier-Transformation (DCT).
 TP_LOCALLAB_DENOICHROF_TOOLTIP;Ermöglicht die Detailjustierung von Chrominanz-Rauschen
 TP_LOCALLAB_DENOIEQUALCHRO_TOOLTIP;Ermöglicht das Reduzieren von Chrominanz-Rauschen in Richtung Blau/Gelb oder Rot/Grün.
 TP_LOCALLAB_DENOIEQUAL_TOOLTIP;Ermöglicht das Reduzieren von Rauschen entweder in den Schatten oder in den Lichtern.
-TP_LOCALLAB_DENOI1_EXP;Rauschreduzierung auf Luminanz-Maske
-TP_LOCALLAB_DENOI2_EXP;Wiederherstellung auf Luminanz-Maske
 TP_LOCALLAB_DENOILUMDETAIL_TOOLTIP;Ermöglicht die Wiederherstellung von Luminanz-Details durch schrittweise Anwendung einer Fourier-Transformation (DCT).
 TP_LOCALLAB_DENOIMASK;Maske Farbrauschen reduzieren
 TP_LOCALLAB_DENOIMASK_TOOLTIP;Für alle Werkzeuge, ermöglicht die Kontrolle des chromatischen Rauschens der Maske.\nNützlich für eine bessere Kontrolle der Chrominanz und Vermeidung von Artefakten bei Verwendung der LC(h)-Kurve.
@@ -2927,8 +2929,8 @@ TP_LOCALLAB_EXCLUF_TOOLTIP;Der 'Ausschlussmodus' verhindert, dass benachbarte Pu
 TP_LOCALLAB_EXCLUTYPE;Art des Spots
 TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Der normale Spot verwendet rekursive Daten.\n\nDer ausschließende Spot reinitialisiert alle lokalen Anpassungen.\nEr kann ganz oder partiell angewandt werden, um vorherige lokale Anpassungen zu relativieren oder zurückzusetzen.\n\n'Ganzes Bild' erlaubt lokale Anpassungen auf das gesamte Bild.\nDie RT Spot-Begrenzung wird außerhalb der Vorschau gesetzt.\nDer Übergangswert wird auf 100 gesetzt.\nMöglicherweise muss der RT-Spot neu positioniert oder in der Größe angepasst werden, um das erwünschte Ergebnis zu erzielen.\nAchtung: Die Anwendung von Rauschreduzierung, Wavelet oder schnelle Fouriertransformation im 'Ganzes Bild-Modus' benötigt viel Speicher und Rechenleistung und könnte bei schwachen Systemen zu unerwünschtem Abbruch oder Abstürzen führen.
 TP_LOCALLAB_EXECLU;Ausschließender Spot
-TP_LOCALLAB_EXNORM;Normaler Spot
 TP_LOCALLAB_EXFULL;Gesamtes Bild
+TP_LOCALLAB_EXNORM;Normaler Spot
 TP_LOCALLAB_EXPCBDL_TOOLTIP;Kann zur Entfernung von Sensorflecken oder Objektivfehlern verwendet werden, indem Kontrast auf der entsprechenden Detailebene verringert wird.
 TP_LOCALLAB_EXPCHROMA;Kompensation Farbsättigung 
 TP_LOCALLAB_EXPCHROMA_TOOLTIP;In Verbindung mit 'Belichtungskorrektur' und 'Kontrastdämpfung' kann eine Entsättigung der Farben vermieden werden.
@@ -2971,7 +2973,6 @@ TP_LOCALLAB_FFTWBLUR;Schnelle Fouriertransformation
 TP_LOCALLAB_FULLIMAGE;Schwarz-Ev und Weiß-Ev für das gesamte Bild
 TP_LOCALLAB_FULLIMAGELOG_TOOLTIP;Berechnet die Ev-Level für das gesamte Bild.
 TP_LOCALLAB_GAM;Gamma
-TP_LOCALLAB_GAMW;Gamma (Wavelet Pyramiden)
 TP_LOCALLAB_GAMC;Gamma
 TP_LOCALLAB_GAMCOL_TOOLTIP;Gamma auf Luminanz L*a*b*-Daten anwenden.\nWenn Gamma = 3 wird Luminanz 'linear' angewandt.
 TP_LOCALLAB_GAMC_TOOLTIP;Gamma auf Luminanz L*a*b*-Daten vor und nach der Behandlung von Pyramide 1 und Pyramide 2 anwenden.\nWenn Gamma = 3 wird Luminanz linear angewandt.
@@ -2980,6 +2981,7 @@ TP_LOCALLAB_GAMM;Gamma
 TP_LOCALLAB_GAMMASKCOL;Gamma
 TP_LOCALLAB_GAMMASK_TOOLTIP;'Gamma' und 'Bereich' erlauben eine weiche und artefaktfreie Transformation der Maske, indem 'L' schrittweise geändert wird, um Diskontinuitäten zu vermeiden.
 TP_LOCALLAB_GAMSH;Gamma
+TP_LOCALLAB_GAMW;Gamma (Wavelet Pyramiden)
 TP_LOCALLAB_GRADANG;Rotationswinkel
 TP_LOCALLAB_GRADANG_TOOLTIP;Rotationswinkel in Grad: -180°   0°  +180°
 TP_LOCALLAB_GRADFRA;Verlaufsfiltermaske
@@ -3021,38 +3023,38 @@ TP_LOCALLAB_ISOGR;Verteilung (ISO)
 TP_LOCALLAB_JAB;Schwarz-Ev & Weiß-Ev verwenden
 TP_LOCALLAB_JABADAP_TOOLTIP;Vereinheitliche Wahrnehmungsanpassung.\nPasst automatisch das Verhältnis zwischen Jz und Sättigung unter Berücksichtigung der 'absoluten Leuchtdichte' an.
 TP_LOCALLAB_JZ100;Jz Referenz 100cd/m2
-TP_LOCALLAB_JZLOGYBOUT_TOOLTIP;Yb ist die relative Helligkeit des Hintergrunds, ausgedrückt als Prozentsatz von Grau. 18 % Grau entspricht einer Hintergrundhelligkeit von 50 %, ausgedrückt in CIE L.\nDie Daten basieren auf der mittleren Helligkeit des Bildes.\nBei Verwendung mit LOG-Kodierung wird die mittlere Helligkeit verwendet, um die erforderliche Verstärkung zu bestimmen, die dem Signal vor der LOG-Kodierung hinzugefügt werden muss. Niedrigere Werte der mittleren Helligkeit führen zu einer erhöhten Verstärkung.
-TP_LOCALLAB_JZCLARILRES;Luma zusammenführen Jz 
+TP_LOCALLAB_JZ100_TOOLTIP;Passt automatisch den Referenz-Jz-Pegel von 100 cd/m2 (Bildsignal) an.\nÄndert den Sättigungspegel und die Aktion der 'PU-Anpassung' (Perceptual Uniform Adaption).
+TP_LOCALLAB_JZADAP;PU Anpassung
+TP_LOCALLAB_JZCH;Chroma
+TP_LOCALLAB_JZCHROM;Chroma
 TP_LOCALLAB_JZCLARICRES;Chroma zusammenführen Cz 
+TP_LOCALLAB_JZCLARILRES;Luma zusammenführen Jz 
+TP_LOCALLAB_JZCONT;Kontrast
 TP_LOCALLAB_JZFORCE;Erzwinge max. Jz auf 1
 TP_LOCALLAB_JZFORCE_TOOLTIP;Ermöglicht, den Jz-Wert für eine bessere Regler- und Kurvenreaktion auf 1 anzuheben.
+TP_LOCALLAB_JZFRA;Jz Cz Hz Bildanpassungen
+TP_LOCALLAB_JZHFRA;Kurven Hz
+TP_LOCALLAB_JZHJZFRA;Kurve Jz(Hz)
+TP_LOCALLAB_JZHUECIE;Farbton
+TP_LOCALLAB_JZLIGHT;Helligkeit
+TP_LOCALLAB_JZLOG;LOG-Kodierung Jz
+TP_LOCALLAB_JZLOGWBS_TOOLTIP;Die Anpassungen von Schwarz-Ev und Weiß-Ev können unterschiedlich sein, je nachdem, ob LOG-Kodierung oder Sigmoid verwendet wird.\nFür Sigmoid kann eine Änderung (in den meisten Fällen eine Erhöhung) von Weiß-Ev erforderlich sein, um eine bessere Wiedergabe von Glanzlichtern, Kontrast und Sättigung zu erhalten.
+TP_LOCALLAB_JZLOGWB_TOOLTIP;Wenn Auto aktiviert ist, werden die Ev-Werte und die 'mittlere Leuchtdichte Yb%' für den Spotbereich berechnet und angepasst. Die resultierenden Werte werden von allen Jz-Vorgängen verwendet, einschließlich 'LOG-Kodierung Jz'.\nBerechnet auch die absolute Leuchtdichte zum Zeitpunkt der Aufnahme.
+TP_LOCALLAB_JZLOGYBOUT_TOOLTIP;Yb ist die relative Helligkeit des Hintergrunds, ausgedrückt als Prozentsatz von Grau. 18 % Grau entspricht einer Hintergrundhelligkeit von 50 %, ausgedrückt in CIE L.\nDie Daten basieren auf der mittleren Helligkeit des Bildes.\nBei Verwendung mit LOG-Kodierung wird die mittlere Helligkeit verwendet, um die erforderliche Verstärkung zu bestimmen, die dem Signal vor der LOG-Kodierung hinzugefügt werden muss. Niedrigere Werte der mittleren Helligkeit führen zu einer erhöhten Verstärkung.
 TP_LOCALLAB_JZMODECAM_TOOLTIP;Jz (Modus 'Erweitert'). Nur funktionsfähig, wenn das Ausgabegerät (Monitor) HDR ist (Spitzenleuchtdichte höher als 100 cd/m2 - idealerweise zwischen 4000 und 10000 cd/m2. Schwarzpunktleuchtdichte unter 0,005 cd/m2). Dies setzt voraus, dass\na) das ICC-PCS für den Bildschirm Jzazbz (oder XYZ) verwendet,\nb) mit echter Präzision arbeitet,\nc) dass der Monitor kalibriert ist (möglichst mit einem DCI-P3- oder Rec-2020-Farbraum),\nd) dass das übliche Gamma (sRGB oder BT709) durch eine Perceptual Quantiser (PQ)-Funktion ersetzt wird.
 TP_LOCALLAB_JZPQFRA;Jz Zuordnung
 TP_LOCALLAB_JZPQFRA_TOOLTIP;Ermöglicht, den Jz-Algorithmus wie folgt an eine SDR-Umgebung oder an die Eigenschaften (Leistung) einer HDR-Umgebung anzupassen:\na) Bei Luminanzwerten zwischen 0 und 100 cd/m2 verhält sich das System so, als ob es sich in einer SDR-Umgebung befände .\nb) für Luminanzwerte zwischen 100 und 10000 cd/m2 können Sie den Algorithmus an die HDR-Eigenschaften des Bildes und des Monitors anpassen.\n\nWenn 'PQ - Peak Luminance' auf 10000 eingestellt ist, verhält sich 'Jz Zuordnung' genauso wie der ursprüngliche Jzazbz-Algorithmus.
 TP_LOCALLAB_JZPQREMAP;PQ - Peak Luminanz
 TP_LOCALLAB_JZPQREMAP_TOOLTIP;PQ (Perceptual Quantizer) - ermöglicht die Änderung der internen PQ-Funktion (normalerweise 10000 cd/m2 - Standard 120 cd/m2).\nKann zur Anpassung an verschiedene Bilder, Prozesse und Geräte verwendet werden.
-TP_LOCALLAB_JZ100_TOOLTIP;Passt automatisch den Referenz-Jz-Pegel von 100 cd/m2 (Bildsignal) an.\nÄndert den Sättigungspegel und die Aktion der 'PU-Anpassung' (Perceptual Uniform Adaption).
-TP_LOCALLAB_JZADAP;PU Anpassung
-TP_LOCALLAB_JZFRA;Jz Cz Hz Bildanpassungen
-TP_LOCALLAB_JZLIGHT;Helligkeit
-TP_LOCALLAB_JZCONT;Kontrast
-TP_LOCALLAB_JZCH;Chroma
-TP_LOCALLAB_JZCHROM;Chroma
-TP_LOCALLAB_JZHFRA;Kurven Hz
-TP_LOCALLAB_JZHJZFRA;Kurve Jz(Hz)
-TP_LOCALLAB_JZHUECIE;Farbton
-TP_LOCALLAB_JZLOGWB_TOOLTIP;Wenn Auto aktiviert ist, werden die Ev-Werte und die 'mittlere Leuchtdichte Yb%' für den Spotbereich berechnet und angepasst. Die resultierenden Werte werden von allen Jz-Vorgängen verwendet, einschließlich 'LOG-Kodierung Jz'.\nBerechnet auch die absolute Leuchtdichte zum Zeitpunkt der Aufnahme.
-TP_LOCALLAB_JZLOGWBS_TOOLTIP;Die Anpassungen von Schwarz-Ev und Weiß-Ev können unterschiedlich sein, je nachdem, ob LOG-Kodierung oder Sigmoid verwendet wird.\nFür Sigmoid kann eine Änderung (in den meisten Fällen eine Erhöhung) von Weiß-Ev erforderlich sein, um eine bessere Wiedergabe von Glanzlichtern, Kontrast und Sättigung zu erhalten.
+TP_LOCALLAB_JZQTOJ;Relative Helligkeit
+TP_LOCALLAB_JZQTOJ_TOOLTIP;Ermöglicht die Verwendung von 'Relative Leuchtdichte' anstelle von 'Absolute Leuchtdichte'.\nDie Änderungen wirken sich auf: den Schieberegler 'Helligkeit', den Schieberegler 'Kontrast' und die Jz(Jz)-Kurve aus.
 TP_LOCALLAB_JZSAT;Sättigung
 TP_LOCALLAB_JZSHFRA;Schatten/Lichter Jz
 TP_LOCALLAB_JZSOFTCIE;Radius (anpassbarer Filter)
-TP_LOCALLAB_JZTARGET_EV;Ansicht mittlere Helligkeit (Yb%)
 TP_LOCALLAB_JZSTRSOFTCIE;Intensität anpassbarer Filter
-TP_LOCALLAB_JZQTOJ;Relative Helligkeit
-TP_LOCALLAB_JZQTOJ_TOOLTIP;Ermöglicht die Verwendung von 'Relative Leuchtdichte' anstelle von 'Absolute Leuchtdichte'.\nDie Änderungen wirken sich auf: den Schieberegler 'Helligkeit', den Schieberegler 'Kontrast' und die Jz(Jz)-Kurve aus.
+TP_LOCALLAB_JZTARGET_EV;Ansicht mittlere Helligkeit (Yb%)
 TP_LOCALLAB_JZTHRHCIE;Schwellenwert Chroma für Jz(Hz)
 TP_LOCALLAB_JZWAVEXP;Wavelet Jz
-TP_LOCALLAB_JZLOG;LOG-Kodierung Jz
 TP_LOCALLAB_LABBLURM;Unschärfemaske
 TP_LOCALLAB_LABEL;Lokale Anpassungen
 TP_LOCALLAB_LABGRID;Farbkorrektur
@@ -3092,19 +3094,19 @@ TP_LOCALLAB_LOG;LOG-Kodierung
 TP_LOCALLAB_LOG1FRA;CAM16 Bildkorrekturen
 TP_LOCALLAB_LOG2FRA;Betrachtungsbedingungen
 TP_LOCALLAB_LOGAUTO;Automatisch
-TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Berechnet automatisch die 'Mittlere Luminanz' für die Szenenbedingungen, wenn die Schaltfläche 'Automatisch' in 'Relative Belichtungsebenen' gedrückt wird.
 TP_LOCALLAB_LOGAUTOGRAYJZ_TOOLTIP;Berechnet automatisch die 'Mittlere Luminanz' für die Szenenbedingungen.
+TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Berechnet automatisch die 'Mittlere Luminanz' für die Szenenbedingungen, wenn die Schaltfläche 'Automatisch' in 'Relative Belichtungsebenen' gedrückt wird.
 TP_LOCALLAB_LOGAUTO_TOOLTIP;Mit Drücken dieser Taste werden der 'Dynamikbereich' und die 'Mittlere Luminanz' für die Szenenbedingungen berechnet, wenn die Option 'Automatische mittlere Luminanz (Yb%)' aktiviert ist.\nBerechnet auch die absolute Luminanz zum Zeitpunkt der Aufnahme.\nDrücken Sie die Taste erneut, um die automatisch berechneten Werte anzupassen.
 TP_LOCALLAB_LOGBASE_TOOLTIP;Standard = 2.\nWerte unter 2 reduzieren die Wirkung des Algorithmus, wodurch die Schatten dunkler und die Glanzlichter heller werden.\nMit Werten über 2 sind die Schatten grauer und die Glanzlichter werden verwaschener.
 TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Geschätzte Werte des Dynamik-Bereiches d.h. 'Schwarz-Ev' und 'Weiß-Ev'
 TP_LOCALLAB_LOGCATAD_TOOLTIP;Chromatische Anpassung ermöglicht, eine Farbe entsprechend ihrer räumlich-zeitlichen Umgebung zu interpretieren.\nNützlich, wenn der Weißabgleich weit von Referenz D50 entfernt ist.\nPasst Farben an das Leuchtmittel des Ausgabegeräts an.
-TP_LOCALLAB_LOGCOLORFL;Buntheit (M)
 TP_LOCALLAB_LOGCIE;LOG-Kodierung statt Sigmoid
 TP_LOCALLAB_LOGCIE_TOOLTIP;Ermöglicht die Verwendung von 'Schwarz-Ev', 'Weiß-Ev', 'Szenen-Mittlere-Leuchtdichte (Yb%)' und 'sichtbare mittlere Leuchtdichte (Yb%)' für die Tonzuordnung mit 'LOG-Kodierung Q'.
+TP_LOCALLAB_LOGCOLORFL;Buntheit (M)
 TP_LOCALLAB_LOGCOLORF_TOOLTIP;Wahrgenommene Intensität des Farbtones im Vergleich zu Grau.\nAnzeige, dass ein Reiz mehr oder weniger farbig erscheint.
 TP_LOCALLAB_LOGCONQL;Kontrast (Q)
-TP_LOCALLAB_LOGCONTL;Kontrast (J)
 TP_LOCALLAB_LOGCONTHRES;Schwellenwert Kontrast (J & Q)
+TP_LOCALLAB_LOGCONTL;Kontrast (J)
 TP_LOCALLAB_LOGCONTL_TOOLTIP;Der Kontrast (J) in CIECAM16 berücksichtigt die Zunahme der wahrgenommenen Färbung mit der Luminanz.
 TP_LOCALLAB_LOGCONTQ_TOOLTIP;Der Kontrast (Q) in CIECAM16 berücksichtigt die Zunahme der wahrgenommenen Färbung mit der Helligkeit.
 TP_LOCALLAB_LOGCONTTHRES_TOOLTIP;Passt den Kontrastbereich (J & Q) der Mitteltöne an.\nPositive Werte verringern den Effekt der Kontrastregler (J & Q) schrittweise. Negative Werte erhöhen den Effekt der Kontrastregler zunehmend.
@@ -3144,52 +3146,52 @@ TP_LOCALLAB_MASKCOM_TOOLTIP;Ein eigenständiges Werkzeug.\nKann verwendet werden
 TP_LOCALLAB_MASKCURVE_TOOLTIP;Die 3 Kurven sind standardmäßig auf 1 (maximal) eingestellt:\nC=f(C) Die Farbintensität variiert je nach Chrominanz. Sie können die Chrominanz verringern, um die Auswahl zu verbessern. Wenn Sie diese Kurve nahe Null setzen (mit einem niedrigen Wert von C, um die Kurve zu aktivieren), können Sie den Hintergrund im inversen Modus entsättigen.\nL= f(L) Die Luminanz variiert je nach Luminanz, so dass Sie die Helligkeit verringern können um die Auswahl zu verbessern.\nL und C = f(H) Luminanz und Chrominanz variieren mit dem Farbton, sodass Sie Luminanz und Chrominanz verringern können, um die Auswahl zu verbessern.
 TP_LOCALLAB_MASKDDECAY;Zerfallrate
 TP_LOCALLAB_MASKDECAY_TOOLTIP;Verwaltet die Zerfallrate für die Graustufen in der Maske.\nZerfallrate = 1 linear\nZerfallrate > 1 schärfere parabolische Übergänge\nZerfallrate < 1 allmählichere Übergänge.
-TP_LOCALLAB_MASKH;Farbtonkurve
-TP_LOCALLAB_MASKLC_TOOLTIP;Auf diese Weise können Sie die Rauschreduzierung anhand der in der L(L)- oder LC(H)-Maske (Maske und Anpassungen) enthaltenen Luminanz-Informationen ausrichten.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\n'Luminanzschwelle Dunkle Bereiche': Wenn 'Rauschreduzierung in dunklen und hellen Bereichen verstärken' > 1, wird die Rauschreduzierung schrittweise von 0% bei den Schwellenwerteinstellungen auf 100% beim maximalen Schwarzwert (bestimmt durch die Maske) erhöht.\n'Luminanzschwelle Helle Bereiche': Die Rauschreduzierung wird schrittweise von 100% bei der Schwellenwerteinstellung auf 0% beim maximalen Weißwert (bestimmt durch die Maske) verringert.\nIn dem Bereich zwischen den beiden Schwellenwerten werden die Einstellungen zur Rauschverminderung von der Maske nicht beeinflusst.
+TP_LOCALLAB_MASKDEINV_TOOLTIP;Kehrt die Art und Weise um, wie der Algorithmus die Maske interpretiert.\nWenn aktiviert, werden Schwarz und sehr helle Bereiche verringert.
 TP_LOCALLAB_MASKDE_TOOLTIP;Wird verwendet, um die Rauschreduzierung als Funktion der in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen einzustellen.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nWenn die Maske unterhalb des Schwellenwertes 'dunkel' oder oberhalb des Schwellenwertes 'hell' liegt, wird die Rauschreduzierung schrittweise angewendet.\nDazwischen bleiben die Bildeinstellungen ohne Rauschreduzierung erhalten, es sei denn, die Regler 'Luminanz-Rauschreduzierung Graubereiche' oder 'Chrominanz-Rauschreduzierung Graubereiche' werden verändert.
 TP_LOCALLAB_MASKGF_TOOLTIP;Wird verwendet, um den anpassbaren Filter als Funktion der in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen auszurichten.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nBefindet sich die Maske unterhalb der 'dunklen' oder oberhalb der 'hellen' Schwelle, wird der anpassbare Filter schrittweise angewendet.\nZwischen diesen beiden Bereichen bleiben die Bildeinstellungen ohne anpassbaren Filter erhalten.
-TP_LOCALLAB_MASKRECOL_TOOLTIP;Wird verwendet, um den Effekt der Farb- und Lichteinstellungen basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H) -Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb der entsprechenden Schwellenwerte werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Einstellungen für Farbe und Licht geändert werden.\nZwischen diesen beiden Bereichen wird der volle Wert der Einstellungen für Farbe und Licht angewendet.
-TP_LOCALLAB_MASKREEXP_TOOLTIP;Wird verwendet, um den Effekt der Einstellungen für 'Dynamik und Belichtung' basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb der entsprechenden Schwellenwerte werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Einstellungen 'Dynamik und Belichtung' geändert werden.\nZwischen diesen beiden Bereichen wird der volle Wert der Einstellungen für 'Dynamik und Belichtung' angewendet.
-TP_LOCALLAB_MASKRESH_TOOLTIP;Wird verwendet, um den Effekt der Einstellungen für Schatten/Lichter basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb der entsprechenden Schwellenwerte werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Einstellungen für Schatten/Lichter geändert werden.\nZwischen diesen beiden Bereichen wird der volle Wert der Einstellungen für Schatten/Lichter angewendet.
-TP_LOCALLAB_MASKRESCB_TOOLTIP;Wird verwendet, um den Effekt der CBDL-Einstellungen (nur Luminanz) basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb der entsprechenden Schwellenwerte werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die CBDL-Einstellungen geändert werden.\nZwischen diesen beiden Bereichen wird der volle Wert der CBDL-Einstellungen angewendet.
-TP_LOCALLAB_MASKRESRETI_TOOLTIP;Wird verwendet, um den Effekt der Retinex-Einstellungen (nur Luminanz) basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb der entsprechenden Schwellenwerte werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Retinex-Einstellungen geändert werden.\nZwischen diesen beiden Bereichen wird der volle Wert der Retinex-Einstellungen angewendet.
-TP_LOCALLAB_MASKRESTM_TOOLTIP;Wird verwendet, um den Effekt der Tonwertkorrektur-Einstellungen basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske müssen aktiviert sein, um diese Funktion zu verwenden.\nDie Bereiche 'dunkel' und 'hell' unterhalb des Dunkelschwellenwertes und oberhalb des Helligkeitsschwellenwertes werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Einstellungen der Tonwertkorrektur geändert werden.\nZwischen diesen beiden Bereichen wird der volle Einstellungswert der Tonwertkorrektur angewandt.
-TP_LOCALLAB_MASKRESVIB_TOOLTIP;Wird verwendet, um den Effekt der Einstellungen für Lebhaftigkeit und Warm/Kalt basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb des entsprechenden Schwellenwertes werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Einstellungen Lebhaftigkeit und Farbtemperatur geändert werden.\nZwischen diesen beiden Bereichen wird der volle Wert der Einstellungen für Lebhaftigkeit und Warm/Kalt angewendet.
-TP_LOCALLAB_MASKRESWAV_TOOLTIP;Wird verwendet, um den Effekt der Einstellungen für lokalen Kontrast und Wavelet basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb der entsprechenden Schwellenwerte werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Einstellungen für lokalen Kontrast und Wavelet geändert werden. Zwischen diesen beiden Bereichen wird der volle Wert der Einstellungen für lokalen Kontrast und Wavelet angewendet.
-TP_LOCALLAB_MASKRELOG_TOOLTIP;Wird verwendet, um den Effekt der Einstellungen für die LOG-Kodierung basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb der entsprechenden Schwellenwerte werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die LOG-Kodierungseinstellungen geändert werden - kann zur Rekonstruktion von Glanzlichtern durch Farbübertragung verwendet werden.\nZwischen diesen beiden Bereichen wird der volle Wert der Protokoll-Kodierungseinstellungen angewendet.
-TP_LOCALLAB_MASKDEINV_TOOLTIP;Kehrt die Art und Weise um, wie der Algorithmus die Maske interpretiert.\nWenn aktiviert, werden Schwarz und sehr helle Bereiche verringert.
-TP_LOCALLAB_MASKHIGTHRESC_TOOLTIP;Hellere Tonwertgrenze, oberhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die 'Farbe und Licht'-Einstellungen geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Strukturmaske' , 'Unschärfemaske', 'Glättradius', 'Gamma', 'Steigung', 'Kontrastkurve', 'Lokaler Kontrast' (Wavelets).\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
-TP_LOCALLAB_MASKHIGTHRESS_TOOLTIP;Hellere Tonwertgrenze, oberhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Einstellungen für 'Schatten/Lichter' geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius', 'Gamma', 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
+TP_LOCALLAB_MASKH;Farbtonkurve
 TP_LOCALLAB_MASKHIGTHRESCB_TOOLTIP;Hellere Tonwertgrenze, oberhalb derer die Parameter der 'Detailebenenkontraste' (nur Luminanz) nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Einstellungen des Detailebenenkontrastes geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius', 'Gamma', 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
+TP_LOCALLAB_MASKHIGTHRESC_TOOLTIP;Hellere Tonwertgrenze, oberhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die 'Farbe und Licht'-Einstellungen geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Strukturmaske' , 'Unschärfemaske', 'Glättradius', 'Gamma', 'Steigung', 'Kontrastkurve', 'Lokaler Kontrast' (Wavelets).\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
+TP_LOCALLAB_MASKHIGTHRESD_TOOLTIP;Die Rauschreduzierung wird schrittweise von 100% bei der Schwellenwerteinstellung auf 0% beim maximalen Weißwert (wie von der Maske festgelegt) verringert.\nEs können bestimmte Werkzeuge in 'Maske und Anpassungen' verwendet werden, um die Graustufen zu ändern: 'Strukturmaske' , 'Glättradius', 'Gamma', 'Steigung', 'Kontrastkurve' und 'Lokaler Kontrast (Wavelet)'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
+TP_LOCALLAB_MASKHIGTHRESE_TOOLTIP;Hellere Tonwertgrenze, oberhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Einstellungen für 'Dynamik und Belichtung' geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius', 'Gamma', 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
+TP_LOCALLAB_MASKHIGTHRESL_TOOLTIP;Hellere Tonwertgrenze, oberhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Einstellungen der 'LOG-Kodierung' geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
 TP_LOCALLAB_MASKHIGTHRESRETI_TOOLTIP;Hellere Tonwertgrenze, oberhalb derer Retinex-Parameter (nur Luminanz) nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Retinex-Einstellungen geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius', 'Gamma', 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
+TP_LOCALLAB_MASKHIGTHRESS_TOOLTIP;Hellere Tonwertgrenze, oberhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Einstellungen für 'Schatten/Lichter' geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius', 'Gamma', 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
 TP_LOCALLAB_MASKHIGTHRESTM_TOOLTIP;Hellere Tonwertgrenze, oberhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Tone-Mapping-Einstellungen geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius', 'Gamma' , 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
 TP_LOCALLAB_MASKHIGTHRESVIB_TOOLTIP;Hellere Tonwertgrenze, oberhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Farbtemperatur-Einstellungen geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius' , 'Gamma', 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
 TP_LOCALLAB_MASKHIGTHRESWAV_TOOLTIP;Hellere Tonwertgrenze, oberhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die 'Lokalen Kontrast-' und 'Wavelet-Einstellungen' geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius', 'Gamma', 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
-TP_LOCALLAB_MASKHIGTHRESE_TOOLTIP;Hellere Tonwertgrenze, oberhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Einstellungen für 'Dynamik und Belichtung' geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius', 'Gamma', 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
-TP_LOCALLAB_MASKHIGTHRESL_TOOLTIP;Hellere Tonwertgrenze, oberhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Einstellungen der 'LOG-Kodierung' geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
-TP_LOCALLAB_MASKHIGTHRESD_TOOLTIP;Die Rauschreduzierung wird schrittweise von 100% bei der Schwellenwerteinstellung auf 0% beim maximalen Weißwert (wie von der Maske festgelegt) verringert.\nEs können bestimmte Werkzeuge in 'Maske und Anpassungen' verwendet werden, um die Graustufen zu ändern: 'Strukturmaske' , 'Glättradius', 'Gamma', 'Steigung', 'Kontrastkurve' und 'Lokaler Kontrast (Wavelet)'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
 TP_LOCALLAB_MASKHIGTHRES_TOOLTIP;Der anpassbare Filter wird schrittweise von 100% bei der Schwellenwerteinstellung auf 0% beim maximalen Weißwert (wie von der Maske festgelegt) verringert.\nEs können bestimmte Werkzeuge in 'Maske und Anpassungen' verwendet werden, um die Graustufen zu ändern: 'Strukturmaske', 'Glättradius', 'Gamma', 'Steigung', 'Kontrastkurve', 'Lokaler Kontrast (Wavelet)'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
 TP_LOCALLAB_MASKLCTHR;Schwellenwert helle Bereiche
 TP_LOCALLAB_MASKLCTHR2;Schwelle helle Bereiche
 TP_LOCALLAB_MASKLCTHRLOW;Schwellenwert dunkle Bereiche
 TP_LOCALLAB_MASKLCTHRLOW2;Schwelle dunkle Bereiche
+TP_LOCALLAB_MASKLCTHRMID;Luminanz Graubereiche 
+TP_LOCALLAB_MASKLCTHRMIDCH;Chrominanz Graubereiche
+TP_LOCALLAB_MASKLC_TOOLTIP;Auf diese Weise können Sie die Rauschreduzierung anhand der in der L(L)- oder LC(H)-Maske (Maske und Anpassungen) enthaltenen Luminanz-Informationen ausrichten.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\n'Luminanzschwelle Dunkle Bereiche': Wenn 'Rauschreduzierung in dunklen und hellen Bereichen verstärken' > 1, wird die Rauschreduzierung schrittweise von 0% bei den Schwellenwerteinstellungen auf 100% beim maximalen Schwarzwert (bestimmt durch die Maske) erhöht.\n'Luminanzschwelle Helle Bereiche': Die Rauschreduzierung wird schrittweise von 100% bei der Schwellenwerteinstellung auf 0% beim maximalen Weißwert (bestimmt durch die Maske) verringert.\nIn dem Bereich zwischen den beiden Schwellenwerten werden die Einstellungen zur Rauschverminderung von der Maske nicht beeinflusst.
 TP_LOCALLAB_MASKLNOISELOW;In dunklen und hellen Bereichen verstärken
-TP_LOCALLAB_MASKLOWTHRES_TOOLTIP;Der anpassbare Filter wird schrittweise von 0% bei der Schwellenwerteinstellung auf 100% beim maximalen Schwarzwert (wie von der Maske festgelegt) erhöht.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Strukturmaske', 'Glättradius', 'Gamma und Steigung', 'Kontrastkurve, ' Lokaler Kontrast (Wavelet)'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
-TP_LOCALLAB_MASKLOWTHRESD_TOOLTIP;Die Rauschreduzierung wird bei der Einstellung des Schwellenwertes schrittweise von 0% auf 100% beim maximalen Schwarzwert (wie von der Maske festgelegt) erhöht.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Strukturmaske', 'Glättradius', 'Gamma', 'Steigung', 'Kontrastkurve' und ' Lokaler Kontrast(Wavelet)'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass in den 'Einstellungen' Hintergrundfarbmaske = 0 gesetzt ist.
-TP_LOCALLAB_MASKLOWTHRESC_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch 'Farbe- und Licht'-Einstellungen geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Strukturmaske' , 'Unschärfemaske', 'Glättradius', 'Gamma', 'Steigung', 'Kontrastkurve', 'Lokaler Kontrast (Wavelets)'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
-TP_LOCALLAB_MASKLOWTHRESL_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Einstellungen der 'LOG-Kodierung' geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
-TP_LOCALLAB_MASKLOWTHRESE_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte wieder hergestellt werden, bevor sie durch die 'Dynamik und Belichtung'-Einstellungen geändert werden.\nSie können die Grauwerte mit verschiedenen Werkzeugen in ‘Maske und Anpassungen’ ändern: 'Glättradius', 'Gamma', 'Steigung‘ und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
-TP_LOCALLAB_MASKLOWTHRESS_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte wieder hergestellt werden, bevor sie durch die 'Schatten - Lichter'-Einstellungen geändert werden.\n Sie können die Grauwerte mit verschiedenen Werkzeugen in 'Maske und Anpassungen' ändern: 'Glättradius', 'Gamma', 'Steigung‘ und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
 TP_LOCALLAB_MASKLOWTHRESCB_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter der Detailebenenkontraste (nur Luminanz) nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Einstellungen des Detailebenenkontrastes geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius', 'Gamma', 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
+TP_LOCALLAB_MASKLOWTHRESC_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch 'Farbe- und Licht'-Einstellungen geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Strukturmaske' , 'Unschärfemaske', 'Glättradius', 'Gamma', 'Steigung', 'Kontrastkurve', 'Lokaler Kontrast (Wavelets)'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
+TP_LOCALLAB_MASKLOWTHRESD_TOOLTIP;Die Rauschreduzierung wird bei der Einstellung des Schwellenwertes schrittweise von 0% auf 100% beim maximalen Schwarzwert (wie von der Maske festgelegt) erhöht.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Strukturmaske', 'Glättradius', 'Gamma', 'Steigung', 'Kontrastkurve' und ' Lokaler Kontrast(Wavelet)'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass in den 'Einstellungen' Hintergrundfarbmaske = 0 gesetzt ist.
+TP_LOCALLAB_MASKLOWTHRESE_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte wieder hergestellt werden, bevor sie durch die 'Dynamik und Belichtung'-Einstellungen geändert werden.\nSie können die Grauwerte mit verschiedenen Werkzeugen in ‘Maske und Anpassungen’ ändern: 'Glättradius', 'Gamma', 'Steigung‘ und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
+TP_LOCALLAB_MASKLOWTHRESL_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Einstellungen der 'LOG-Kodierung' geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
 TP_LOCALLAB_MASKLOWTHRESRETI_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer Retinex-Parameter (nur Luminanz) nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Retinex-Einstellungen geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius', 'Gamma', 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
+TP_LOCALLAB_MASKLOWTHRESS_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte wieder hergestellt werden, bevor sie durch die 'Schatten - Lichter'-Einstellungen geändert werden.\n Sie können die Grauwerte mit verschiedenen Werkzeugen in 'Maske und Anpassungen' ändern: 'Glättradius', 'Gamma', 'Steigung‘ und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
 TP_LOCALLAB_MASKLOWTHRESTM_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die 'Tone-Mapping'-Einstellungen geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius', 'Gamma' , 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
 TP_LOCALLAB_MASKLOWTHRESVIB_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Einstellungen für 'Farbtemperatur' geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius', 'Gamma', 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
 TP_LOCALLAB_MASKLOWTHRESWAV_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die 'Kontrast- und Wavelet'-Einstellungen geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius', 'Gamma', 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
-TP_LOCALLAB_MASKLCTHRMID;Luminanz Graubereiche 
-TP_LOCALLAB_MASKLCTHRMIDCH;Chrominanz Graubereiche
-TP_LOCALLAB_MASKUSABLE;Maske aktiviert (siehe Maske u. Anpassungen)
-TP_LOCALLAB_MASKUNUSABLE;Maske deaktiviert (siehe Maske u. Anpassungen)
+TP_LOCALLAB_MASKLOWTHRES_TOOLTIP;Der anpassbare Filter wird schrittweise von 0% bei der Schwellenwerteinstellung auf 100% beim maximalen Schwarzwert (wie von der Maske festgelegt) erhöht.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Strukturmaske', 'Glättradius', 'Gamma und Steigung', 'Kontrastkurve, ' Lokaler Kontrast (Wavelet)'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
+TP_LOCALLAB_MASKRECOL_TOOLTIP;Wird verwendet, um den Effekt der Farb- und Lichteinstellungen basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H) -Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb der entsprechenden Schwellenwerte werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Einstellungen für Farbe und Licht geändert werden.\nZwischen diesen beiden Bereichen wird der volle Wert der Einstellungen für Farbe und Licht angewendet.
 TP_LOCALLAB_MASKRECOTHRES;Schwellenwert Wiederherstellung
+TP_LOCALLAB_MASKREEXP_TOOLTIP;Wird verwendet, um den Effekt der Einstellungen für 'Dynamik und Belichtung' basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb der entsprechenden Schwellenwerte werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Einstellungen 'Dynamik und Belichtung' geändert werden.\nZwischen diesen beiden Bereichen wird der volle Wert der Einstellungen für 'Dynamik und Belichtung' angewendet.
+TP_LOCALLAB_MASKRELOG_TOOLTIP;Wird verwendet, um den Effekt der Einstellungen für die LOG-Kodierung basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb der entsprechenden Schwellenwerte werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die LOG-Kodierungseinstellungen geändert werden - kann zur Rekonstruktion von Glanzlichtern durch Farbübertragung verwendet werden.\nZwischen diesen beiden Bereichen wird der volle Wert der Protokoll-Kodierungseinstellungen angewendet.
+TP_LOCALLAB_MASKRESCB_TOOLTIP;Wird verwendet, um den Effekt der CBDL-Einstellungen (nur Luminanz) basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb der entsprechenden Schwellenwerte werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die CBDL-Einstellungen geändert werden.\nZwischen diesen beiden Bereichen wird der volle Wert der CBDL-Einstellungen angewendet.
+TP_LOCALLAB_MASKRESH_TOOLTIP;Wird verwendet, um den Effekt der Einstellungen für Schatten/Lichter basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb der entsprechenden Schwellenwerte werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Einstellungen für Schatten/Lichter geändert werden.\nZwischen diesen beiden Bereichen wird der volle Wert der Einstellungen für Schatten/Lichter angewendet.
+TP_LOCALLAB_MASKRESRETI_TOOLTIP;Wird verwendet, um den Effekt der Retinex-Einstellungen (nur Luminanz) basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb der entsprechenden Schwellenwerte werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Retinex-Einstellungen geändert werden.\nZwischen diesen beiden Bereichen wird der volle Wert der Retinex-Einstellungen angewendet.
+TP_LOCALLAB_MASKRESTM_TOOLTIP;Wird verwendet, um den Effekt der Tonwertkorrektur-Einstellungen basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske müssen aktiviert sein, um diese Funktion zu verwenden.\nDie Bereiche 'dunkel' und 'hell' unterhalb des Dunkelschwellenwertes und oberhalb des Helligkeitsschwellenwertes werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Einstellungen der Tonwertkorrektur geändert werden.\nZwischen diesen beiden Bereichen wird der volle Einstellungswert der Tonwertkorrektur angewandt.
+TP_LOCALLAB_MASKRESVIB_TOOLTIP;Wird verwendet, um den Effekt der Einstellungen für Lebhaftigkeit und Warm/Kalt basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb des entsprechenden Schwellenwertes werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Einstellungen Lebhaftigkeit und Farbtemperatur geändert werden.\nZwischen diesen beiden Bereichen wird der volle Wert der Einstellungen für Lebhaftigkeit und Warm/Kalt angewendet.
+TP_LOCALLAB_MASKRESWAV_TOOLTIP;Wird verwendet, um den Effekt der Einstellungen für lokalen Kontrast und Wavelet basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb der entsprechenden Schwellenwerte werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Einstellungen für lokalen Kontrast und Wavelet geändert werden. Zwischen diesen beiden Bereichen wird der volle Wert der Einstellungen für lokalen Kontrast und Wavelet angewendet.
+TP_LOCALLAB_MASKUNUSABLE;Maske deaktiviert (siehe Maske u. Anpassungen)
+TP_LOCALLAB_MASKUSABLE;Maske aktiviert (siehe Maske u. Anpassungen)
 TP_LOCALLAB_MASK_TOOLTIP;Sie können mehrere Masken für ein Werkzeug aktivieren, indem Sie ein anderes Werkzeug aktivieren und nur die Maske verwenden (setzen Sie die Werkzeugregler auf 0).\n\nSie können den RT-Spot auch duplizieren und nahe am ersten Punkt platzieren. Die kleinen Abweichungen in den Punktreferenzen ermöglichen Feineinstellungen.
 TP_LOCALLAB_MED;Medium
 TP_LOCALLAB_MEDIAN;Median niedrig
@@ -3237,15 +3239,15 @@ TP_LOCALLAB_MRTHR;Original Bild
 TP_LOCALLAB_MRTWO;Maske Short L-Kurve
 TP_LOCALLAB_MULTIPL_TOOLTIP;Weitbereichs-Toneinstellung: -18 EV bis + 4 EV. Der erste Regler wirkt auf sehr dunkle Töne zwischen -18 EV und -6 EV. Der letzte Regler wirkt auf helle Töne bis zu 4 EV.
 TP_LOCALLAB_NEIGH;Radius
-TP_LOCALLAB_NLDENOISE_TOOLTIP;'Detailwiederherstellung' basiert auf einer Laplace-Transformation, um einheitliche Bereiche und keine Bereiche mit Details zu erfassen.
+TP_LOCALLAB_NLDENOISENLGAM_TOOLTIP;Niedrigere Werte bewahren Details und Textur, höhere Werte erhöhen die Rauschunterdrückung.\nIst Gamma = 3, wird Luminanz 'linear' angewandt.
 TP_LOCALLAB_NLDENOISENLPAT_TOOLTIP;Passt die Intensität der Rauschreduzierung an die Größe der zu verarbeitenden Objekte an.
 TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP;Höhere Werte erhöhen die Rauschreduzierung auf Kosten der Verarbeitungszeit.
-TP_LOCALLAB_NLDENOISENLGAM_TOOLTIP;Niedrigere Werte bewahren Details und Textur, höhere Werte erhöhen die Rauschunterdrückung.\nIst Gamma = 3, wird Luminanz 'linear' angewandt.
+TP_LOCALLAB_NLDENOISE_TOOLTIP;'Detailwiederherstellung' basiert auf einer Laplace-Transformation, um einheitliche Bereiche und keine Bereiche mit Details zu erfassen.
+TP_LOCALLAB_NLDET;Detailwiederherstellung
 TP_LOCALLAB_NLFRA;Nicht-lokales Mittel - Luminanz
 TP_LOCALLAB_NLFRAME_TOOLTIP;Nicht-lokales Mittel bedeutet, dass bei der Rauschreduzierung ein Mittelwert aller Pixel im Bild verwendet wird, gewichtet danach, wie ähnlich sie dem Zielpixel sind.\nReduziert den Detailverlust im Vergleich zu lokalen Mittelwertalgorithmen.\nBei dieser Methode wird nur das Luminanz-Rauschen berücksichtigt. Chrominanz-Rauschen wird am besten mit Wavelets und Fourier-Transformationen (DCT) verarbeitet.\nKann in Verbindung mit 'Luminanz-Rauschreduzierung nach Ebenen' oder alleine verwendet werden.
-TP_LOCALLAB_NLLUM;Intensität
-TP_LOCALLAB_NLDET;Detailwiederherstellung
 TP_LOCALLAB_NLGAM;Gamma
+TP_LOCALLAB_NLLUM;Intensität
 TP_LOCALLAB_NLPAT;Maximale Objektgröße
 TP_LOCALLAB_NLRAD;Maximaler Radius
 TP_LOCALLAB_NOISECHROCOARSE;Grobe Chrominanz
@@ -3278,27 +3280,27 @@ TP_LOCALLAB_PREVHIDE;Mehr Einstellungen ausblenden
 TP_LOCALLAB_PREVIEW;Vorschau ΔE
 TP_LOCALLAB_PREVSHOW;Mehr Einstellungen einblenden
 TP_LOCALLAB_PROXI;Zerfallrate (ΔE)
+TP_LOCALLAB_QUAAGRES;Aggressiv
+TP_LOCALLAB_QUACONSER;Konservativ
 TP_LOCALLAB_QUALCURV_METHOD;Kurventyp
 TP_LOCALLAB_QUAL_METHOD;Globale Qualität
-TP_LOCALLAB_QUACONSER;Konservativ
-TP_LOCALLAB_QUAAGRES;Aggressiv
-TP_LOCALLAB_QUANONEWAV;Nur nicht-lokales Mittel
 TP_LOCALLAB_QUANONEALL;Aus
+TP_LOCALLAB_QUANONEWAV;Nur nicht-lokales Mittel
 TP_LOCALLAB_RADIUS;Radius
 TP_LOCALLAB_RADIUS_TOOLTIP;Verwendet eine schnelle Fouriertransformation bei Radius > 30
 TP_LOCALLAB_RADMASKCOL;Glättradius
-TP_LOCALLAB_RECT;Rechteck
 TP_LOCALLAB_RECOTHRES02_TOOLTIP;Wenn der Wert 'Wiederherstellungsschwelle' > 1 ist, berücksichtigt die Maske in 'Maske und Anpassungen' alle vorherigen Änderungen am Bild aber nicht die mit dem aktuellen Werkzeug (z.B. Farbe und Licht, Wavelet, Cam16 usw.).\nWenn der Wert der 'Wiederherstellungsschwelle' < 1 ist, berücksichtigt die Maske in 'Maske und Anpassungen' keine vorherigen Änderungen am Bild.\n\nIn beiden Fällen wirkt der 'Wiederherstellungsschwellenwert' auf das maskierte Bild modifiziert durch das aktuelle Tool (Farbe und Licht, Wavelet, CAM16 usw.).
+TP_LOCALLAB_RECT;Rechteck
 TP_LOCALLAB_RECURS;Referenzen rekursiv
 TP_LOCALLAB_RECURS_TOOLTIP;Erzwingt, dass der Algorithmus die Referenzen neu berechnet, nachdem jedes Werkzeug angewendet wurde.\nAuch hilfreich bei der Arbeit mit Masken.
 TP_LOCALLAB_REN_DIALOG_LAB;Neuer Spot Name
 TP_LOCALLAB_REN_DIALOG_NAME;Spot umbenennen
-TP_LOCALLAB_REPARW_TOOLTIP;Ermöglicht, die relative Stärke des'Lokalen Kontrasts' und der 'Wavelets' in Bezug auf das Originalbild anzupassen.
 TP_LOCALLAB_REPARCOL_TOOLTIP;Ermöglicht, die relative Stärke von 'Farbe und Licht' in Bezug auf das Originalbild anzupassen.
 TP_LOCALLAB_REPARDEN_TOOLTIP;Ermöglicht, die relative Stärke der 'Rauschreduzierung' in Bezug auf das Originalbild anzupassen.
-TP_LOCALLAB_REPARSH_TOOLTIP;Ermöglicht, die relative Stärke von 'Schatten/Lichter' und 'Tonwert' in Bezug auf das Originalbild anzupassen.
 TP_LOCALLAB_REPAREXP_TOOLTIP;Ermöglicht, die relative Stärke von 'Dynamik und und Belichtung' in Bezug auf das Originalbild anzupassen.
+TP_LOCALLAB_REPARSH_TOOLTIP;Ermöglicht, die relative Stärke von 'Schatten/Lichter' und 'Tonwert' in Bezug auf das Originalbild anzupassen.
 TP_LOCALLAB_REPARTM_TOOLTIP;Ermöglicht, die relative Stärke des 'Tone-Mappings' in Bezug auf das Originalbild anzupassen.
+TP_LOCALLAB_REPARW_TOOLTIP;Ermöglicht, die relative Stärke des'Lokalen Kontrasts' und der 'Wavelets' in Bezug auf das Originalbild anzupassen.
 TP_LOCALLAB_RESETSHOW;Alle sichtbaren Änderungen zurücksetzen
 TP_LOCALLAB_RESID;Restbild
 TP_LOCALLAB_RESIDBLUR;Unschärfe Restbild
@@ -3393,13 +3395,13 @@ TP_LOCALLAB_SHOWVI;Maske und Anpassungen
 TP_LOCALLAB_SHRESFRA;Schatten/Lichter & TRC
 TP_LOCALLAB_SHTRC_TOOLTIP;Basierend auf den (bereitgestellten) 'Arbeitsprofil'(en) werden die Farbtöne des Bildes geändert, indem das Arbeitsprofil auf eine Farbtonkennlinie einwirkt. \n'Gamma' wirkt hauptsächlich auf helle Töne.\n'Steigung' wirkt hauptsächlich auf dunkle Töne.\nEs wird empfohlen, die Farbtonkennlinie beider Geräte (Monitor- und Ausgabeprofil) auf sRGB (Standard) zu setzen.
 TP_LOCALLAB_SH_TOOLNAME;Schatten/Lichter - Equalizer
-TP_LOCALLAB_SIGMAWAV;Dämpfungsreaktion
 TP_LOCALLAB_SIGFRA;Sigmoid Q & LOG-Kodierung Q
 TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
-TP_LOCALLAB_SIGMOIDLAMBDA;Kontrast
-TP_LOCALLAB_SIGMOIDTH;Schwellenwert (Graupunkt)
+TP_LOCALLAB_SIGMAWAV;Dämpfungsreaktion
 TP_LOCALLAB_SIGMOIDBL;Überlagern
+TP_LOCALLAB_SIGMOIDLAMBDA;Kontrast
 TP_LOCALLAB_SIGMOIDQJ;Schwarz-Ev und Weiß-Ev verwenden
+TP_LOCALLAB_SIGMOIDTH;Schwellenwert (Graupunkt)
 TP_LOCALLAB_SIGMOID_TOOLTIP;Ermöglicht, ein Tone-Mapping-Erscheinungsbild zu simulieren, indem sowohl die 'CIECAM' (oder 'Jz') als auch die 'Sigmoid'-Funktion verwendet werden. Drei Schieberegler:\na) 'Kontrast' wirkt sich auf die Form der Sigmoidkurve und folglich auf die Stärke aus;\nb) 'Schwellenwert' (Graupunkt) verteilt die Aktion entsprechend der Leuchtdichte;\nc) 'Überlagern' wirkt sich auf den endgültigen Aspekt des Bildes, Kontrast und Leuchtdichte aus.
 TP_LOCALLAB_SIM;Einfach
 TP_LOCALLAB_SLOMASKCOL;Steigung
@@ -3479,10 +3481,10 @@ TP_LOCALLAB_WARM_TOOLTIP;Dieser Regler verwendet den CIECAM-Algorithmus und fung
 TP_LOCALLAB_WASDEN_TOOLTIP;Reduzierung des Luminanz-Rauschens: Die linke Seite der Kurve einschließlich der dunkelgrauen/hellgrauen Grenze entspricht den ersten 3 Stufen 0, 1, 2 (feines Detail). Die rechte Seite der Kurve entspricht den gröberen Details (Ebene 3, 4, 5, 6).
 TP_LOCALLAB_WAT_BALTHRES_TOOLTIP;Gleicht die Aktion innerhalb jeder Ebene an.
 TP_LOCALLAB_WAT_BLURLC_TOOLTIP;Die Standardeinstellung für Unschärfe wirkt sich auf alle 3 L*a*b* -Komponenten (Luminanz und Farbe) aus.\nWenn diese Option aktiviert ist, wird nur die Luminanz unscharf.
-TP_LOCALLAB_WAT_CLARIC_TOOLTIP;Mit 'Chroma zusammenführen' wird die Intensität des gewünschten Effekts auf die Chrominanz ausgewählt.
-TP_LOCALLAB_WAT_CLARIL_TOOLTIP;Mit 'Luma zusammenführen' wird die Intensität des gewünschten Effekts auf die Luminanz ausgewählt.
 TP_LOCALLAB_WAT_CLARICJZ_TOOLTIP;Mit 'Chroma zusammenführen' wird die Intensität des gewünschten Effekts auf die Chrominanz ausgewählt.\nEs wird nur der maximale Wert der Wavelet Ebenen (unten rechts) berücksichtigt.
+TP_LOCALLAB_WAT_CLARIC_TOOLTIP;Mit 'Chroma zusammenführen' wird die Intensität des gewünschten Effekts auf die Chrominanz ausgewählt.
 TP_LOCALLAB_WAT_CLARILJZ_TOOLTIP;Mit 'Luma zusammenführen' wird die Intensität des gewünschten Effekts auf die Luminanz ausgewählt.\nEs wird nur der maximale Wert der Wavelet Ebenen (unten rechts) berücksichtigt.
+TP_LOCALLAB_WAT_CLARIL_TOOLTIP;Mit 'Luma zusammenführen' wird die Intensität des gewünschten Effekts auf die Luminanz ausgewählt.
 TP_LOCALLAB_WAT_CONTCHROMALEV_TOOLTIP;'Chroma Ebenen': Passt die 'a'- und 'b'- Komponenten von L*a*b* als Anteil des Luminanzwertes an.
 TP_LOCALLAB_WAT_CONTOFFSET_TOOLTIP;Durch den Versatz wird die Balance zwischen kontrastarmen und kontrastreichen Details geändert.\nHohe Werte verstärken die Kontraständerungen zu den kontrastreicheren Details, während niedrige Werte die Kontraständerungen zu kontrastarmen Details verstärken.\nMit Verwendung eines geringeren Wertes der 'Dämpfungsreaktion' kann bestimmt werden, welche Kontrastwerte verbessert werden sollen.
 TP_LOCALLAB_WAT_DELTABAL_TOOLTIP;Durch Bewegen des Reglers nach links werden die unteren Ebenen akzentuiert. Nach Rechts werden die niedrigeren Ebenen reduziert und die höheren Ebenen akzentuiert.
@@ -3545,7 +3547,6 @@ TP_PCVIGNETTE_ROUNDNESS_TOOLTIP;Form:\n0 = Rechteck\n50 = Ellipse\n100 = Kreis
 TP_PCVIGNETTE_STRENGTH;Intensität
 TP_PCVIGNETTE_STRENGTH_TOOLTIP;Filterstärke in Blendenstufen (bezogen auf die Bildecken).
 TP_PDSHARPENING_LABEL;Eingangsschärfung
-TP_PERSPECTIVE_CONTROL_LINE_APPLY_INVALID_TOOLTIP;Es werden mindestens zwei horizontale oder zwei vertikale Kontroll-Linien benötigt.
 TP_PERSPECTIVE_CAMERA_CROP_FACTOR;Crop-Faktor
 TP_PERSPECTIVE_CAMERA_FOCAL_LENGTH;Fokale Länge
 TP_PERSPECTIVE_CAMERA_FRAME;Korrektur
@@ -3556,6 +3557,7 @@ TP_PERSPECTIVE_CAMERA_SHIFT_VERTICAL;Vertikale Verschiebung
 TP_PERSPECTIVE_CAMERA_YAW;Horizontal
 TP_PERSPECTIVE_CONTROL_LINES;Kontroll-Linien
 TP_PERSPECTIVE_CONTROL_LINES_TOOLTIP;<b>Strg</b>+<b>ziehen</b>: Zeichne neue Linien (mind. 2)\n<b>Rechts-Klick</b>: Lösche Linie
+TP_PERSPECTIVE_CONTROL_LINE_APPLY_INVALID_TOOLTIP;Es werden mindestens zwei horizontale oder zwei vertikale Kontroll-Linien benötigt.
 TP_PERSPECTIVE_HORIZONTAL;Horizontal
 TP_PERSPECTIVE_LABEL;Perspektive
 TP_PERSPECTIVE_METHOD;Methode
@@ -3589,12 +3591,6 @@ TP_PREPROCWB_LABEL;Vorverarbeitung Weißabgleich
 TP_PREPROCWB_MODE;Modus
 TP_PREPROCWB_MODE_AUTO;Auto
 TP_PREPROCWB_MODE_CAMERA;Kamera
-TC_PRIM_BLUX;Bx
-TC_PRIM_BLUY;By
-TC_PRIM_GREX;Gx
-TC_PRIM_GREY;Gy
-TC_PRIM_REDX;Rx
-TC_PRIM_REDY;Ry
 TP_PRSHARPENING_LABEL;Nach Skalierung schärfen
 TP_PRSHARPENING_TOOLTIP;Schärft das Bild nach der Größenänderung.\nFunktioniert nur mit der Methode 'Lanczos'.\nDas Ergebnis wird nicht in RawTherapee\nangezeigt.\n\nWeitere Informationen finden Sie auf 'RawPedia'.
 TP_RAWCACORR_AUTO;Autokorrektur
@@ -3703,9 +3699,9 @@ TP_RESIZE_LONG;Lange Kante
 TP_RESIZE_METHOD;Methode:
 TP_RESIZE_NEAREST;Nächster Nachbar
 TP_RESIZE_SCALE;Maßstab
-TP_RESIZE_SPECIFY;Basierend auf:
 TP_RESIZE_SE;Kurze Kante:
 TP_RESIZE_SHORT;Kurze Kante
+TP_RESIZE_SPECIFY;Basierend auf:
 TP_RESIZE_W;Breite:
 TP_RESIZE_WIDTH;Breite
 TP_RETINEX_CONTEDIT_HSL;HSL-Kurve
@@ -4187,3 +4183,5 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Ausschnitt an Bildschirm anpassen.\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen.\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
+//HISTORY_MSG_1099;(Lokal) - Hz(Hz)-Kurve
+

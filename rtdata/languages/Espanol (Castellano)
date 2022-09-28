@@ -2992,8 +2992,8 @@ TP_LOCALLAB_LOG;Codificación logarítmica
 TP_LOCALLAB_LOG1FRA;Ajustes de imagen CAM16
 TP_LOCALLAB_LOG2FRA;Condiciones de visualización
 TP_LOCALLAB_LOGAUTO;Automático
-TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Calcula automáticamente la «luminancia media» para las condiciones de la escena cuando está pulsado el botón «Automático» en Niveles relativos de exposición.
 TP_LOCALLAB_LOGAUTOGRAYJZ_TOOLTIP;Calcula automáticamente la «luminancia media» para las condiciones de la escena.
+TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Calcula automáticamente la «luminancia media» para las condiciones de la escena cuando está pulsado el botón «Automático» en Niveles relativos de exposición.
 TP_LOCALLAB_LOGAUTO_TOOLTIP;Al pulsar este botón se calculará el «rango dinámico» y la «luminancia media» para las condiciones de la escena si está activada la casilla «Luminancia media automática (Yb%)».\nTambién se calcula la luminancia absoluta en el momento de la toma.\nPara ajustar los valores calculados automáticamente hay que volver a pulsar el botón.
 TP_LOCALLAB_LOGBASE_TOOLTIP;Valor predeterminado = 2.\nLos valores menores que 2 reducen la acción del algoritmo, haciendo las sombras más oscuras y las luces más brillantes.\nCon valores mayores que 2, las sombras son más grises y las luces son más desteñidas.
 TP_LOCALLAB_LOGBLACKWHEV_TOOLTIP;Valores estimados del Rango dinámico, por ejemplo Ev negro y Ev blanco
@@ -4088,22 +4088,22 @@ xTP_LOCALLAB_LOGSURSOUR_TOOLTIP;Cambia los tonos y colores para tener en cuenta 
 ! Untranslated keys follow; remove the ! prefix after an entry is translated.
 !!!!!!!!!!!!!!!!!!!!!!!!!
 
-!HISTORY_MSG_446;EvPixelShiftMotion
-!HISTORY_MSG_447;EvPixelShiftMotionCorrection
-!HISTORY_MSG_448;EvPixelShiftStddevFactorGreen
-!HISTORY_MSG_450;EvPixelShiftNreadIso
-!HISTORY_MSG_451;EvPixelShiftPrnu
-!HISTORY_MSG_454;EvPixelShiftAutomatic
-!HISTORY_MSG_455;EvPixelShiftNonGreenHorizontal
-!HISTORY_MSG_456;EvPixelShiftNonGreenVertical
-!HISTORY_MSG_458;EvPixelShiftStddevFactorRed
-!HISTORY_MSG_459;EvPixelShiftStddevFactorBlue
-!HISTORY_MSG_460;EvPixelShiftGreenAmaze
-!HISTORY_MSG_461;EvPixelShiftNonGreenAmaze
-!HISTORY_MSG_463;EvPixelShiftRedBlueWeight
-!HISTORY_MSG_466;EvPixelShiftSum
-!HISTORY_MSG_467;EvPixelShiftExp0
-!HISTORY_MSG_470;EvPixelShiftMedian3
+!HISTORY_MSG_446;--unused--
+!HISTORY_MSG_447;--unused--
+!HISTORY_MSG_448;--unused--
+!HISTORY_MSG_450;--unused--
+!HISTORY_MSG_451;--unused--
+!HISTORY_MSG_454;--unused--
+!HISTORY_MSG_455;--unused--
+!HISTORY_MSG_456;--unused--
+!HISTORY_MSG_458;--unused--
+!HISTORY_MSG_459;--unused--
+!HISTORY_MSG_460;--unused--
+!HISTORY_MSG_461;--unused--
+!HISTORY_MSG_463;--unused--
+!HISTORY_MSG_466;--unused--
+!HISTORY_MSG_467;--unused--
+!HISTORY_MSG_470;--unused--
 !HISTORY_MSG_1149;Local - Q Sigmoid
 !HISTORY_MSG_1150;Local - Log encoding Q instead Sigmoid Q
 !ICCPROFCREATOR_ILL_63;D63 : DCI-P3 Theater
