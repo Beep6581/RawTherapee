@@ -863,7 +863,6 @@ TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Regola Croma, Saturazione o Pienezza.\nL'Istogr
 TP_COLORAPP_DATACIE;Mostra gli istogrammi di uscita CIECAM02 nelle curve
 TP_COLORAPP_DATACIE_TOOLTIP;Quando abilitato, gli istogrammi nelle curve CIECAM02 mostrano valori e intervalli approssimati di J o Q, e C, s o M dopo le regolazioni CIECAM02.\nQuesta selezione non ha effetto nel pannello Istogramma principale.\n\nQuando disabilitato, gli istogrammi nelle curve CIECAM02 mostrano i valori Lab, come sono prima delle regolazioni CIECAM02.
 TP_COLORAPP_GAMUT;Controllo Gamut (Lab)
-TP_COLORAPP_GAMUT_TOOLTIP;Consenti il controllo gamut nella modalità Lab
 TP_COLORAPP_HUE;Tinta (h)
 TP_COLORAPP_HUE_TOOLTIP;Tinta (h) - angolo tra 0° e 360°
 TP_COLORAPP_LABEL;Modello di Aspetto Colore CIE 2002

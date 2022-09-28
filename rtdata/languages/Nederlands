@@ -1190,7 +1190,6 @@ TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Wijzigt ofwel chroma, verzadiging of kleurrijkh
 TP_COLORAPP_DATACIE;CIECAM02 uitvoer histogram in de curven
 TP_COLORAPP_DATACIE_TOOLTIP;Indien aangezet, tonen de histogrammen van de CIECAM02 curven bij benadering de waarden/reeksen voor J of Q, en C, s of M na de CIECAM02 aanpassingen.\nDit beïnvloed niet het hoofd histogram paneel.\n\nIndien uitgezet tonen de histogrammen van de CIECAM02 curven de Lab waarden zoals deze waren voor de CIECAM02 aanpassingen
 TP_COLORAPP_GAMUT;Gamut controle (Lab)
-TP_COLORAPP_GAMUT_TOOLTIP;Sta gamut controle toe in Lab mode
 TP_COLORAPP_HUE;Tint (h)
 TP_COLORAPP_HUE_TOOLTIP;Tint (h) - hoek tussen 0° en 360°
 TP_COLORAPP_LABEL;CIE Color Appearance Model 2002

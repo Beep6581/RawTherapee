@@ -1358,7 +1358,6 @@ HISTORY_MSG_BLSHAPE;Difuminado por niveles
 HISTORY_MSG_BLURCWAV;Difuminar cromaticidad
 HISTORY_MSG_BLURWAV;Difuminar luminancia
 HISTORY_MSG_BLUWAV;Respuesta de atenuación
-HISTORY_MSG_CAT02PRESET;Preselección automática Cat02/16
 HISTORY_MSG_CATCAT;Modo Cat02/16
 HISTORY_MSG_CATCOMPLEX;Complejidad CIECAM
 HISTORY_MSG_CATMODEL;Modelo CAM
@@ -2178,7 +2177,6 @@ TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 es una adaptación cromática. Convierte los
 TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02/16 es una adaptación cromática. Convierte los valores de una imagen cuyo punto blanco es el de un iluminante dado (por ejemplo D50) a nuevos valores cuyo punto blanco es el del nuevo iluminante. Consúltese el Modelo de Punto Blanco (por ejemplo D75).
 TP_COLORAPP_FREE;Temperatura+verde libres + CAT02/16 + [salida]
 TP_COLORAPP_GAMUT;Control de rango de colores (L*a*b*)
-TP_COLORAPP_GAMUT_TOOLTIP;Permite el control del rango de colores en modo L*a*b*.
 TP_COLORAPP_GEN;Ajustes - Preselección
 TP_COLORAPP_GEN_TOOLTIP;Este módulo está basado en el modelo de apariencia de color CIECAM, que se diseñó para simular mejor cómo la visión humana percibe los colores bajo diferentes condiciones de iluminación, por ejemplo, contra fondos diferentes.\n\nTiene en cuenta el entorno de cada color y modifica su apariencia para que sea lo más cercana posible a la percepción humana.\n\nTambién adapta la salida a las condiciones de visualización previstas (monitor, TV, proyector, impresora, etc.) de modo que la apariencia cromática se preserve para todos los entornos de escena y visualización.
 TP_COLORAPP_HUE;Matiz (h)
@@ -2208,8 +2206,6 @@ TP_COLORAPP_MODELCAT_TOOLTIP;Permite elegir entre CIECAM02 o CIECAM16.\nA veces 
 TP_COLORAPP_MODEL_TOOLTIP;Modelo de punto blanco.\n\n<b>WB [RT] + [salida]</b>: Se usa el balance de blancos de RT para la escena, CIECAM02/16 se ajusta a D50, y el balance de blancos del dispositivo de salida se ajusta en Condiciones de visualización.\n\n<b>WB [RT+CAT02/16] + [salida]</b>: CAT02 usa los ajustes de balance de blancos de RT, y el balance de blancos del dispositivo de salida se ajusta en Condiciones de visualización.\n\n<b>Temperatura+verde libres + CAT02 + [salida]:</b>El usuario elige la temperatura y el nivel de verde, y el balance de blancos del dispositivo de salida se ajusta en Condiciones de visualización.
 TP_COLORAPP_NEUTRAL;Restablecer
 TP_COLORAPP_NEUTRAL_TOOLTIP;Restablece todos los deslizadores, casillas de verificación y curvas a sus valores predeterminados.
-TP_COLORAPP_PRESETCAT02;Preselección CAT02/16 automática - Modo simétrico
-TP_COLORAPP_PRESETCAT02_TOOLTIP;Ajusta las listas desplegables, deslizadores, temperatura y verde de modo que se preselecciona CAT02/16 automático.\nSe pueden cambiar las condiciones de toma del iluminante.\nDeben cambiarse las condiciones de visualización de la adaptación CAT02/16 si es necesario.\nSe pueden cambiar las condiciones de visualización Temperatura y Tinte si es necesario, así como otros ajustes.\nTodas las casillas auto se desactivan.
 TP_COLORAPP_RSTPRO;Protección de rojo y tonos de piel
 TP_COLORAPP_RSTPRO_TOOLTIP;La Protección de rojo y tonos de piel afecta tanto a los deslizadores como a las curvas.
 TP_COLORAPP_SOURCEF_TOOLTIP;Corresponde a las condiciones de toma y cómo llevar las condiciones y los datos a una zona «normal». «Normal» significa aquí condiciones y datos promedio o estándar, es decir, sin tener en cuenta las correcciones CIECAM.
@@ -4117,4 +4113,3 @@ xTP_LOCALLAB_LOGSURSOUR_TOOLTIP;Cambia los tonos y colores para tener en cuenta 
 !TP_LOCALLAB_LOGCIE;Log encoding instead of Sigmoid
 !TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using Log encoding Q.
 !TP_LOCALLAB_LOGSURSOUR_TOOLTIP;Changes tones and colors to take into account the Scene conditions.\n\n<b>Average</b>: Average light conditions (standard). The image will not change.\n\n<b>Dim</b>: Dim conditions. The image will become slightly brighter.\n\n<b>Dark</b>: Dark conditions. The image will become more bright.
-!//TP_LOCALLAB_SHOWMASKTYP_TOOLTIP;Mask and modifications can be chosen.\nBlur and noise : in this case it is not used for 'denoise'.\nDenoise : in this case it is not used for 'blur and noise'.\n\nBlur and noise + denoise : mask is shared, be careful to 'show modifications' and 'scope'

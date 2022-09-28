@@ -1230,7 +1230,6 @@ TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Ustawienie chromy, nasycenia bądź barwistośc
 TP_COLORAPP_DATACIE;Pokaż histogramy wyjściowe CIECAM02 za krzywymi
 TP_COLORAPP_DATACIE_TOOLTIP;Kiedy opcja jest włączona, histogramy za krzywymi CIECAM02 pokazują przybliżone wartości/zakresy J lub Q, oraz C, s lub M po korekcjach CIECAM02.\nTen wybór nie ma wpływu na główny histogram.\n\nKiedy opcja jest wyłączona, histogramy za krzywymi CIECAM02 pokazują wartości L*a*b* przed korekcjami CIECAM02.
 TP_COLORAPP_GAMUT;Kontrola gamma (L*a*b*).
-TP_COLORAPP_GAMUT_TOOLTIP;Włącz kontrolę gamma w trybie L*a*b*.
 TP_COLORAPP_HUE;Odcień (hue, h)
 TP_COLORAPP_HUE_TOOLTIP;Odcień (hue, h) - kąt pomiędzy 0° a 360°.
 TP_COLORAPP_LABEL;CIE Color Appearance Model 2002

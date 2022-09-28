@@ -1081,7 +1081,6 @@ TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Justera antingen kroma, mättnad eller colorful
 TP_COLORAPP_DATACIE;Resultat av CIECAM02-histogram i kurvor
 TP_COLORAPP_DATACIE_TOOLTIP;När detta är aktiverat, visar CIECAM02-histogram ungefärliga värden/intervall för J eller Q, och C, s eller M efter justeringar i CIECAM02.\nDet här valet påverkar inte huvudhistogrammet.\n\nNär detta är avaktiverat, visar histogrammet för CIECAM02-kurvor Lab-värden innan justeringar av CIECAM02
 TP_COLORAPP_GAMUT;Kontroll av tonomfång (Lab)
-TP_COLORAPP_GAMUT_TOOLTIP;Tillåt kontroll av tonomfång i Lab-läge
 TP_COLORAPP_HUE;Nyans(h)
 TP_COLORAPP_HUE_TOOLTIP;Nyans h) - vinkel mellan 0° och 360°
 TP_COLORAPP_LABEL;CIE Color Appearance Model 2002

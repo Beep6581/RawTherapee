@@ -1468,7 +1468,6 @@ HISTORY_MSG_BLURCWAV;(Erweitert - Wavelet)\nRestbild - Unschärfe\nUnschärfe Bu
 HISTORY_MSG_BLURWAV;(Erweitert - Wavelet)\nRestbild - Unschärfe\nUnschärfe Helligkeit
 HISTORY_MSG_BLUWAV;(Erweitert - Wavelet)\nUnschärfeebenen\nDämpfungsreaktion
 HISTORY_MSG_CATCAT;CAT02/16 Modus
-HISTORY_MSG_CAT02PRESET;CAT02/16 automatisch 
 HISTORY_MSG_CATCOMPLEX;(Erweitert - CIECAM)\nKomplexität
 HISTORY_MSG_CATMODEL;(Erweitert - CIECAM)\nCAM Modell
 HISTORY_MSG_CLAMPOOG;(Belichtung) - Farben\nAuf Farbraum beschränken
@@ -2279,7 +2278,6 @@ TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 ist eine Methode, die die Werte eines Bildes
 TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02/16 ist eine Methode, die die Werte eines Bildes, dessen Weißpunkt der einer gegebenen Lichtart (z.B. D50) entspricht, in Werte umwandelt, deren Weißpunkt einer anderen Lichtart entspricht (z.B. D75).
 TP_COLORAPP_FREE;Farbtemperatur + Tönung + CAT02 + [Ausgabe]
 TP_COLORAPP_GAMUT;Gamutkontrolle (L*a*b*)
-TP_COLORAPP_GAMUT_TOOLTIP;Gamutkontrolle im L*a*b*-Modus erlauben.
 TP_COLORAPP_GEN;Voreinstellungen
 TP_COLORAPP_GEN_TOOLTIP;Dieses Modul basiert auf dem CIECAM-Farberscheinungsmodell, das entwickelt wurde, um die Farbwahrnehmung des menschlichen Auges unter verschiedenen Lichtverhältnissen besser zu simulieren, z.B. vor unterschiedlichen Hintergründen.\nEs berücksichtigt die Umgebung jeder Farbe und modifiziert ihr Erscheinungsbild, um sie so nah wie möglich an die menschliche Wahrnehmung wiederzugeben.\nDie Ausgabe wird auch an die beabsichtigten Betrachtungsbedingungen (Monitor, Fernseher, Projektor, Drucker usw.) angepasst, sodass das chromatische Erscheinungsbild über die Szene und die Anzeigeumgebung hinweg erhalten bleibt.
 TP_COLORAPP_HUE;Farbton (H)
@@ -2309,8 +2307,6 @@ TP_COLORAPP_MOD02;CIECAM02
 TP_COLORAPP_MOD16;CIECAM16
 TP_COLORAPP_NEUTRAL;Zurücksetzen
 TP_COLORAPP_NEUTRAL_TOOLTIP;Setzt alle CIECAM02-Parameter auf Vorgabewerte zurück.
-TP_COLORAPP_PRESETCAT02;Voreinstellung Modus CAT02/16 Automatisch - Symmetrisch
-TP_COLORAPP_PRESETCAT02_TOOLTIP;Stellen Sie die Combobox-Schieberegler Temp, Grün so ein, dass Cat02/16 automatisch voreingestellt ist.\nSie können die Beleuchtungsbedingungen für die Aufnahme ändern.\nCAT02/16-Anpassung an die Betrachtungsbedingungen, Temperatur, Farbton und andere Einstellungen können, falls erforderlich, geändert werden.\nAlle automatischen Kontrollkästchen sind deaktiviert.
 TP_COLORAPP_RSTPRO;Hautfarbtöne schützen
 TP_COLORAPP_RSTPRO_TOOLTIP;Hautfarbtöne schützen\nWirkt sich auf Regler und Kurven aus.
 TP_COLORAPP_SOURCEF_TOOLTIP;Entspricht den Aufnahmebedingungen und wie man die Bedingungen und Daten wieder in einen normalen Bereich bringt. 'Normal' bedeutet Durchschnitts- oder Standardbedingungen und Daten, d. h. ohne Berücksichtigung von CIECAM-Korrekturen.
@@ -3379,7 +3375,6 @@ TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP;Ermöglicht die Visualisierung der verschiedene
 TP_LOCALLAB_SHOWMASKTYP1;Unschärfe-Rauschen
 TP_LOCALLAB_SHOWMASKTYP2;Rauschreduzierung
 TP_LOCALLAB_SHOWMASKTYP3;Unschärfe-Rauschen + Rauschreduzierung
-//TP_LOCALLAB_SHOWMASKTYP_TOOLTIP;Maske und Anpassungen können gewählt werden.\nUnschärfe und Rauschen: In diesem Fall wird es nicht für 'Rauschreduzierung' verwendet.\nRauschreduzierung: In diesem Fall wird es nicht für 'Unschärfe und Rauschen' verwendet.\n\nUnschärfe/Rauschen-Rauschreduzierung: Maske wird geteilt, seien Sie vorsichtig mit 'Änderungen anzeigen' und 'Umfang'.
 TP_LOCALLAB_SHOWMASKTYP_TOOLTIP;Kann mit 'Maske und Anpassungen' verwendet werden.\nWenn 'Unschärfe und Rauschen' gewählt wurde, kann die Maske nicht für 'Rauschreduzierung' angewandt werden.\nWenn 'Rauschreduzierung' gewählt wurde, kann die Maske nicht für 'Unschärfe und Rauschen' angewandt werden.\nWenn 'Unschärfe und Rauschen + Rauschreduzierung' gewählt wurde, wird die Maske geteilt. Beachten Sie, dass in diesem Falle die Regler sowohl für 'Unschärfe und Rauschen' und 'Rauschreduzierung' aktiv sind, so dass sich empfiehlt, bei Anpassungen die Option 'Zeige Modifikationen mit Maske' zu verwenden.
 TP_LOCALLAB_SHOWMNONE;Anzeige des modifizierten Bildes
 TP_LOCALLAB_SHOWMODIF;Anzeige der modifizierten Bereiche ohne Maske

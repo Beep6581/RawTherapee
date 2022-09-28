@@ -775,7 +775,6 @@ HISTORY_MSG_BLSHAPE;Rozmazat dle úrovně
 HISTORY_MSG_BLURCWAV;Rozmazat barevnost
 HISTORY_MSG_BLURWAV;Rozmazat jas
 HISTORY_MSG_BLUWAV;Útlum
-HISTORY_MSG_CAT02PRESET;Automatické přednastavení Cat02
 HISTORY_MSG_CLAMPOOG;Oříznout barvy mimo gamut
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;Barevné tónování - Korekce barev
 HISTORY_MSG_COLORTONING_LABREGION_AB;Barevné tónování - Korekce barev
@@ -1502,7 +1501,6 @@ TP_COLORAPP_DATACIE;CIECAM02 histogramy výstupu v křivkách
 TP_COLORAPP_DATACIE_TOOLTIP;Pokud je povoleno, zobrazuje histogram v CIECAM02 křivkách přibližné hodnoty/rozsahy po CIECAM02 úpravách J nebo Q, a C, S nebo M.\nVýběr neovlivňuje histogram na hlavním panelu.\n\nPokud je zakázáno, zobrazuje histogram v CIECAM02 křivkách L*a*b* hodnoty před CIECAM02 úpravami.
 TP_COLORAPP_FREE;Volná teplota + zelená + CAT02 + [výstup]
 TP_COLORAPP_GAMUT;Kontrola gamutu (L*a*b*)
-TP_COLORAPP_GAMUT_TOOLTIP;Povolí kontrolu gamutu v L*a*b* režimu.
 TP_COLORAPP_HUE;Odstín (h)
 TP_COLORAPP_HUE_TOOLTIP;Odstín (h) - úhel mezi 0° a 360°.
 TP_COLORAPP_IL41;D41
@@ -1526,8 +1524,6 @@ TP_COLORAPP_MODEL;VB - Model
 TP_COLORAPP_MODEL_TOOLTIP;Model bílého bodu.\n\n<b>WB [RT] + [výstup]</b>: Pro scénu je použito vyvážení bílé RawTherapee , CIECAM02 je nastaven na D50 a vyvážení bílé výstupního zařízení je nastaveno v Podmínkách prohlížení.\n\n<b>WB [RT+CAT02] + [výstup]</b>: CAT02 používá RawTherapee nastavení vyvážení bílé a vyvážení bílé výstupního zařízení je nastaveno v Podmínkách prohlížení.\n\n<b>Volná teplota+zelená + CAT02 + [výstup]:</b> teplota a zelená je vybrána uživatelem, vyvážení bílé výstupního zařízení je nastaveno v Podmínkách prohlížení.
 TP_COLORAPP_NEUTRAL;Obnovit
 TP_COLORAPP_NEUTRAL_TOOLTIP;Obnoví původní hodnoty u všech posuvníků a křivek.
-TP_COLORAPP_PRESETCAT02;Automatické přednastavení Cat02
-TP_COLORAPP_PRESETCAT02_TOOLTIP;Nastaví volby, posuvníky, teplotu a zelenou podle Cat02 automatického přednastavení.\nMusíte nastavit světelné podmínky při fotografování.\nPokud je potřeba, musíte změnit Cat02 podmínky přizpůsobení pro prohlížení.\nPokud je potřeba, můžete změnit teplotu a odstín podmínek při prohlížení a také další nastavení.
 TP_COLORAPP_RSTPRO;Ochrana červených a pleťových tónů
 TP_COLORAPP_RSTPRO_TOOLTIP;Ochrana červených a pleťových tónů ovlivňuje posuvníky i křivky.
 TP_COLORAPP_SURROUND;Okolí

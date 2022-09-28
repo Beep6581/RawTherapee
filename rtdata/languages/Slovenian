@@ -1421,7 +1421,6 @@ TP_COLORAPP_DATACIE;CIECAM02 izhodni histogrami v krivuljah
 TP_COLORAPP_DATACIE_TOOLTIP;Kadar je aktivirano so histogrami, CIECAM02 krivulje prikazujejo približne vrednosti oz. intervale  z J ali Q, in C, s ali M po prilagoditvah CIECAM02.\nTa izbira ne vpliva na glavni pano histogramov.\n\nKadar je deaktiviran, histogrami v CIECAM02 krivuljah kažejo vrednosti L*a*b* pred prilagoditvami CIECAM02.
 TP_COLORAPP_FREE;Prosta temp+zelena + CAT02 + [output]
 TP_COLORAPP_GAMUT;Lontrola barvega obsega (L*a*b*)
-TP_COLORAPP_GAMUT_TOOLTIP;Dovoli kontrolo barvnega obsega v L*a*b* načinu.
 TP_COLORAPP_HUE;Odtenek (h)
 TP_COLORAPP_HUE_TOOLTIP;Odtenek (h) - kot med 0° in 360°.
 TP_COLORAPP_LABEL;CIE Prikaz barv Model 2002

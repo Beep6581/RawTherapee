@@ -1409,7 +1409,6 @@ HISTORY_MSG_BLSHAPE;レベルによるぼかし
 HISTORY_MSG_BLURCWAV;色度のぼかし
 HISTORY_MSG_BLURWAV;輝度のぼかし
 HISTORY_MSG_BLUWAV;減衰応答
-HISTORY_MSG_CAT02PRESET;Cat02 自動プリセット
 HISTORY_MSG_CATCAT;モード　Cat02/16
 HISTORY_MSG_CATCOMPLEX;色の見えモデルの機能水準
 HISTORY_MSG_CATMODEL;色の見えモデルのバージョン
@@ -2222,7 +2221,6 @@ TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16は色順応変換の一つで、一定の光
 TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02/16は色順応変換の一つで、一定の光源（例えばD50）のホワイトポイントの値を、別な光源（例えばD75）のホワイトポイントの値に変換することです（WPモデルを参照）。
 TP_COLORAPP_FREE;任意の色温度と色偏差 + CAT02/16 + [出力]
 TP_COLORAPP_GAMUT;色域制御 (L*a*b*)
-TP_COLORAPP_GAMUT_TOOLTIP;L*a*b*モードの色域制御を可能にします
 TP_COLORAPP_GEN;設定 - プリセット
 TP_COLORAPP_GEN_TOOLTIP;この機能モジュールは、CIECAM02/16（色の見えモデル）をベースにしています。異なる光源の下での、人間の視覚の知覚を、より適切に真似るように設計された色モデルです（例えば、青白い光の中で見る物の色）。\n各色の条件を計算に入れながら、人間の視覚が認識する色に可能な限り近づくように変換します。\nまた、画像の場面や表示デバイスに応じて、その色が維持されるように、予定している出力条件（モニター、TV、プロジェクター、プリンターなど）を考慮します。
 TP_COLORAPP_HUE;色相 (h)
@@ -2252,8 +2250,6 @@ TP_COLORAPP_MODELCAT_TOOLTIP;色の見えモデルはCIECAM02或いはCIECAM16�
 TP_COLORAPP_MODEL_TOOLTIP;ホワイトポイントモデル\n\n<b>WB [RT] + [出力]</b>\：周囲環境のホワイトバランスは、カラータブのホワイトバランスが使われます。CIECAM02/16の光源にはD50が使われ, 出力デバイスのホワイトバランスには観視環境のホワイトバランスが使われます\n\n<b>WB [RT+CAT02] + [出力]</b>：カラータブのホワイトバランスがCAT02で使われます。出力デバイスのホワイトバランスには観視環境のホワイトバランスが使われます\n\n<b>任意の色温度と色偏差 + CAT02 + [出力]</b>：色温度と色偏差はユーザーが設定します。出力デバイスのホワイトバランスには観視環境のホワイトバランスが使われます
 TP_COLORAPP_NEUTRAL;リセット
 TP_COLORAPP_NEUTRAL_TOOLTIP;全てのスライダーチェックボックスとカーブをデフォルトにリセットします
-TP_COLORAPP_PRESETCAT02;cat02/16の自動プリセット　シンメトリックモード
-TP_COLORAPP_PRESETCAT02_TOOLTIP;これを有効にすると、CAT02/16のためのスライダー、色温度、色偏差が自動的に設定されます。\n　撮影環境の輝度は変えることが出来ます。\n　必要であれば、CAT02/16の観視環境を変更します。\n　必要に応じて観視環境の色温度、色偏差、を変更します。\n　全ての自動チェックボックスが無効になります。
 TP_COLORAPP_RSTPRO;レッドと肌色トーンを保護
 TP_COLORAPP_RSTPRO_TOOLTIP;レッドと肌色トーンを保護はスライダーとカーブの両方に影響します
 TP_COLORAPP_SOURCEF_TOOLTIP;撮影条件に合わせて、その条件とデータを通常の範囲に収めます。ここで言う“通常”とは、平均的或いは標準的な条件とデータのことです。例えば、CIECAM02の補正を計算に入れずに収める。

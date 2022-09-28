@@ -1195,7 +1195,6 @@ TP_COLORAPP_DATACIE;在曲线中显示CIECAM02/16输出直方图
 TP_COLORAPP_DATACIE_TOOLTIP;启用后，CIECAM02/16直方图中会显示CIECAM02/16应用后的J，以及C，S或M的大概值/范围。\n勾选此选项不会影响主直方图\n\n关闭选项后，CIECAM02/16直方图中会显示CIECAM02/16应用前的L*a*b*值
 TP_COLORAPP_FREE;自由色温+色调+CAT02/16+[输出]
 TP_COLORAPP_GAMUT;色域控制(L*a*b*)
-TP_COLORAPP_GAMUT_TOOLTIP;允许在L*a*b*模式下进行色域控制
 TP_COLORAPP_HUE;色相(h)
 TP_COLORAPP_HUE_TOOLTIP;色相(h)是一个刺激物可以被描述为接近于红，绿，蓝，黄色的一个角度
 TP_COLORAPP_LABEL;CIE色貌模型02/16
@@ -2669,7 +2668,6 @@ HISTORY_MSG_1108;局部-CIECAM 色彩曲线
 !HISTORY_MSG_BLURCWAV;Blur chroma
 !HISTORY_MSG_BLURWAV;Blur luminance
 HISTORY_MSG_BLUWAV;衰减响应
-HISTORY_MSG_CAT02PRESET;Cat02/16自动预设
 HISTORY_MSG_CATCAT;Cat02/16模式
 HISTORY_MSG_CATCOMPLEX;Ciecam复杂度
 HISTORY_MSG_CATMODEL;CAM模型
@@ -2917,8 +2915,6 @@ TP_COLORAPP_GEN;设置 - 预设
 !TP_COLORAPP_MOD16;CIECAM16
 TP_COLORAPP_MODELCAT;色貌模型
 TP_COLORAPP_MODELCAT_TOOLTIP;允许你在CIECAM02或CIECAM16之间进行选择\nCIECAM02在某些时候会更加准确\nCIECAM16的杂点应该更少
-!TP_COLORAPP_PRESETCAT02;Preset cat02/16 automatic - Symmetric mode
-!TP_COLORAPP_PRESETCAT02_TOOLTIP;Set combobox, sliders, temp, green so that Cat02/16 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change Cat02/16 adaptation Viewing conditions if needed.\nYou can change Temperature and Tint Viewing conditions if needed, and other settings if needed.\nAll auto checkbox are disabled
 !TP_COLORAPP_SOURCEF_TOOLTIP;Corresponds to the shooting conditions and how to bring the conditions and data back to a "normal" area. Normal" means average or standard conditions and data, i.e. without taking into account CIECAM corrections.
 TP_COLORAPP_SURROUNDSRC;周围 - 场景亮度
 TP_COLORAPP_SURSOURCE_TOOLTIP;改变色调与色彩以计入场景条件\n\n<b>平均</b>：平均的亮度条件（标准）。图像不被改变\n\n<b>昏暗</b>：较暗的场景。图像会被略微提亮\n\n<b>黑暗</b>：黑暗的环境。图像会被提亮\n\n<b>极暗</b>：非常暗的环境。图片会变得非常亮

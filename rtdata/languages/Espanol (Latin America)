@@ -1445,7 +1445,6 @@ TP_COLORAPP_DATACIE;Curvas con histogramas de salida CIECAM02
 TP_COLORAPP_DATACIE_TOOLTIP;Si está seleccionada, los histogramas en las curvas CIECAM02 muestran aproximadamente <b>valores/rangos de J o Q, y C, s o M después</b> de los ajustes CIECAM02.\nEsta selección no influye en el histograma del panel principal.\n\nCuando no está seleccionada, los histogramas en las curvas CIECAM02 muestran <b>valores Lab antes</b> de los ajustes CIECAM02
 TP_COLORAPP_FREE;Libre tempera+verde + CAT02 + [output]
 TP_COLORAPP_GAMUT;Control de Gamut (Lab)
-TP_COLORAPP_GAMUT_TOOLTIP;Permite control de gamut en modo Lab
 TP_COLORAPP_HUE;Matiz (h)
 TP_COLORAPP_HUE_TOOLTIP;Matiz (h) - ángulo entre 0° y 360°
 TP_COLORAPP_LABEL;CIE Modelo de Apariencia de Color 2002

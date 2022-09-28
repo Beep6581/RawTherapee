@@ -1398,7 +1398,6 @@ TP_COLORAPP_DATACIE;Histogrammes post CIECAM dans les courbes
 TP_COLORAPP_DATACIE_TOOLTIP;Quand activé, les histogrammes de fond des courbes CIECAM02 montrent des valeurs/amplitudes approximatives de J/Q, ou de C:s/M après les ajustements CIECAM.\nCette sélection n'a pas d'incidence sur l'histogramme général.\n\nQuand désactivé, les histogrammes de fond des courbes CIECAM affichent les valeurs Lab avant les ajustements CIECAM
 TP_COLORAPP_FREE;Temp libre+vert + CAT02 + [sortie]
 TP_COLORAPP_GAMUT;Contrôle du gamut (Lab)
-TP_COLORAPP_GAMUT_TOOLTIP;Permet le controle du gamut en mode Lab
 TP_COLORAPP_HUE;Teinte (h)
 TP_COLORAPP_HUE_TOOLTIP;Teinte (h) - angle entre 0° et 360°
 TP_COLORAPP_LABEL;Apparence de la Couleur (CIECAM02)

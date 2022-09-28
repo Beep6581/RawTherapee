@@ -1422,7 +1422,6 @@
 !TP_COLORAPP_DATACIE_TOOLTIP;When enabled, histograms in CIECAM02 curves show approximate values/ranges for J or Q, and C, s or M after the CIECAM02 adjustments.\nThis selection does not impact the main histogram panel.\n\nWhen disabled, histograms in CIECAM02 curves show L*a*b* values before CIECAM02 adjustments.
 !TP_COLORAPP_FREE;Free temp+green + CAT02 + [output]
 !TP_COLORAPP_GAMUT;Gamut control (L*a*b*)
-!TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in L*a*b* mode.
 !TP_COLORAPP_HUE;Hue (h)
 !TP_COLORAPP_HUE_TOOLTIP;Hue (h) - angle between 0° and 360°.
 !TP_COLORAPP_LABEL;CIE Color Appearance Model 2002

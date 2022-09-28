@@ -1010,7 +1010,6 @@ TP_COLORAPP_CURVEEDITOR3;Цветовая кривая
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Позволяет настроить цвет (C), насыщенность (S) или красочность (M).\n\nПоказывает гистограмму насыщенности (L*a*b*) перед CIECAM02.\nЕсли стоит галка "Показывать кривые в CIECAM02", показывает в гистограмме значения C, s или M. C, s и M не показываются в основной гистограмме.\nИтоговый вывод смотрите на основной гистограмме.
 TP_COLORAPP_DATACIE;Показывать кривые в CIECAM02
 TP_COLORAPP_GAMUT;Контроль гаммы (L*a*b*)
-TP_COLORAPP_GAMUT_TOOLTIP;Позволяет контролировать гамму в режиме L*a*b*.
 TP_COLORAPP_HUE;Цвет (h)
 TP_COLORAPP_MODEL;Модель точки белого
 TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Абсолютная яркость при просмотре.\n(Обычно 16 кд/м²)

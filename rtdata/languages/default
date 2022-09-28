@@ -2193,7 +2193,6 @@ TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 is a chromatic adaptation. It converts the v
 TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02/16 is a chromatic adaptation. It converts the values of an image whose white point is that of a given illuminant (for example D50) into new values whose white point is that of the new illuminant - see WP model (for example D75).
 TP_COLORAPP_FREE;Free temp + tint + CAT02/16 +[output]
 TP_COLORAPP_GAMUT;Use gamut control in L*a*b* mode
-TP_COLORAPP_GAMUT_TOOLTIP;Allow gamut control in L*a*b* mode.
 TP_COLORAPP_GEN;Settings
 TP_COLORAPP_GEN_TOOLTIP;This module is based on the CIECAM color appearance models, which were designed to better simulate how human vision perceives colors under different lighting conditions, e.g. against different backgrounds. It takes into account the environment of each color and modifies its appearance to get as close as possible to human perception. It also adapts the output to the intended viewing conditions (monitor, TV, projector, printer, etc.) so that the chromatic appearance is preserved across the scene and display environments.
 TP_COLORAPP_HUE;Hue (h)

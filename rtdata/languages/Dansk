@@ -1420,7 +1420,6 @@ TP_COLORAPP_DATACIE;CIEFM02 output histogrammer i kurver
 TP_COLORAPP_DATACIE_TOOLTIP;Når det er aktiveret, viser histogrammer i CIEFM02-kurver omtrentlige værdier/intervaller for J eller Q, og C, s eller M efter CIEFM02-justeringerne.\nDette valg påvirker ikke hovedhistogrampanelet.\n\nNår de er deaktiveret, viser histogrammer i CIEFM02-kurverne L*a*b*-værdier før CIEFM02-justeringer.
 TP_COLORAPP_FREE;Fri temp+grøn + CAT02 + [output]
 TP_COLORAPP_GAMUT;Farveskalakontrol (L*a*b*)
-TP_COLORAPP_GAMUT_TOOLTIP;Tillad farveskalakontrol i L*a*b*-tilstand.
 TP_COLORAPP_HUE;Farvetone (h)
 TP_COLORAPP_HUE_TOOLTIP;Farvetone (h) - vinkel mellem 0° og 360°.
 TP_COLORAPP_LABEL;CIE Farveudseende Model 2002
@@ -2979,7 +2978,6 @@ ZOOMPANEL_ZOOMOUT;Zoom Ud\nGenvej: <b>-</b>
 !HISTORY_MSG_BLURCWAV;Blur chroma
 !HISTORY_MSG_BLURWAV;Blur luminance
 !HISTORY_MSG_BLUWAV;Attenuation response
-!HISTORY_MSG_CAT02PRESET;Cat02/16 automatic preset
 !HISTORY_MSG_CATCAT;Cat02/16 mode
 !HISTORY_MSG_CATCOMPLEX;Ciecam complexity
 !HISTORY_MSG_CATMODEL;CAM Model
@@ -3122,8 +3120,6 @@ ZOOMPANEL_ZOOMOUT;Zoom Ud\nGenvej: <b>-</b>
 !TP_COLORAPP_MOD16;CIECAM16
 !TP_COLORAPP_MODELCAT;CAM Model
 !TP_COLORAPP_MODELCAT_TOOLTIP;Allows you to choose between CIECAM02 or CIECAM16.\n CIECAM02 will sometimes be more accurate.\n CIECAM16 should generate fewer artifacts
-!TP_COLORAPP_PRESETCAT02;Preset cat02/16 automatic - Symmetric mode
-!TP_COLORAPP_PRESETCAT02_TOOLTIP;Set combobox, sliders, temp, green so that Cat02/16 automatic is preset.\nYou can change illuminant shooting conditions.\nYou must change Cat02/16 adaptation Viewing conditions if needed.\nYou can change Temperature and Tint Viewing conditions if needed, and other settings if needed.\nAll auto checkbox are disabled
 !TP_COLORAPP_SOURCEF_TOOLTIP;Corresponds to the shooting conditions and how to bring the conditions and data back to a "normal" area. Normal" means average or standard conditions and data, i.e. without taking into account CIECAM corrections.
 !TP_COLORAPP_SURROUNDSRC;Surround - Scene Lighting
 !TP_COLORAPP_SURSOURCE_TOOLTIP;Changes tones and colors to take into account the Scene conditions.\n\n<b>Average</b>: Average light environment (standard). The image will not change.\n\n<b>Dim</b>: Dim environment. The image will become slightly bright.\n\n<b>Dark</b>: Dark environment. The image will become more bright.\n\n<b>Extremly Dark</b>: Extremly dark environment. The image will become very bright.
