@@ -1,6 +1,4 @@
-#01 Developers should add translations to this file and then run the 'generateTranslationDiffs' Bash script to update other locales.
 #01 keenonkites; Aktualisierte Version für 2.3 beta2
-#02 Translators please append a comment here with the current date and your name(s) as used in the RawTherapee forum or GitHub page, e.g.:
 #02 phberlin; basiert auf keenonkites' Erstübersetzung
 #03 2007-12-20
 #04 2007-12-22
@@ -86,8 +84,7 @@
 #83 06.07.2019 Erweiterung (TooWaBoo) RT 5.6
 #84 06.10.2019 Erweiterung (TooWaBoo) RT 5.7
 #84 18.07.2019 Erweiterung (TooWaBoo) RT 5.6
-#85 29.07.2022 Erweiterung (marter, mozzihh) RT 5.9
-#2022-07, Version RT 5.9 (marter, mozzihh)
+#85 29.07.2022 Erweiterung (marter, mozzihh) RT 5.9 
 
 ABOUT_TAB_BUILD;Version
 ABOUT_TAB_CREDITS;Danksagungen
@@ -191,7 +188,7 @@ EXPORT_PUTTOQUEUEFAST;Zur Warteschlange 'Schneller Export' hinzufügen
 EXPORT_RAW_DMETHOD;Demosaikmethode
 EXPORT_USE_FAST_PIPELINE;Priorität Geschwindigkeit
 EXPORT_USE_FAST_PIPELINE_TOOLTIP;Wendet alle Bearbeitungsschritte, im Gegensatz zu 'Standard', auf das bereits skalierte Bild an.\nDadurch steigt die Verarbeitungsgeschwindigkeit auf Kosten der Qualität.
-EXPORT_USE_NORMAL_PIPELINE;Standard
+EXPORT_USE_NORMAL_PIPELINE;Standard (überspringt einige Schritte, Skalieren zuletzt) 
 EXTPROGTARGET_1;RAW
 EXTPROGTARGET_2;Stapelverarbeitung beendet
 FILEBROWSER_APPLYPROFILE;Profil anwenden
@@ -504,39 +501,39 @@ HISTORY_MSG_170;(Farbe - Dynamik)\nHH-Kurve
 HISTORY_MSG_171;(Belichtung - L*a*b*)\nLC-Kurve
 HISTORY_MSG_172;(Belichtung - L*a*b*)\nLC-Kurve beschränken
 HISTORY_MSG_173;(Details - Rauschreduzierung)\nLuminanzdetails
-HISTORY_MSG_174;(Erweitert - CIECAM)
-HISTORY_MSG_175;(Erweitert - CIECAM)\nSzene\nCAT02/16-Adaptation
-HISTORY_MSG_176;(Erweitert - CIECAM)\nBetrachtungsbed.\nUmgebung
-HISTORY_MSG_177;(Erweitert - CIECAM)\nSzene\nLeuchtdichte
-HISTORY_MSG_178;(Erweitert - CIECAM)\nBetrachtungsbed.\nLeuchtdichte
-HISTORY_MSG_179;(Erweitert - CIECAM)\nSzene\nWeißpunktmodell
-HISTORY_MSG_180;(Erweitert - CIECAM)\nBildanpassungen\nHelligkeit (J)
-HISTORY_MSG_181;(Erweitert - CIECAM)\nBildanpassungen\nBuntheit (H)
-HISTORY_MSG_182;(Erweitert - CIECAM)\nSzene\nCAT02/16-Automatisch
-HISTORY_MSG_183;(Erweitert - CIECAM)\nBildanpassungen\nKontrast (J)
-HISTORY_MSG_184;(Erweitert - CIECAM)\nSzene\nDunkle Umgebung
-HISTORY_MSG_185;(Erweitert - CIECAM)\nBetrachtungsbed.\nGamutkontrolle
-HISTORY_MSG_186;(Erweitert - CIECAM)\nAlgorithmus
-HISTORY_MSG_187;(Erweitert - CIECAM)\nBildanpassungen\nHautfarbtöne schützen
-HISTORY_MSG_188;(Erweitert - CIECAM)\nHelligkeit (Q)
-HISTORY_MSG_189;(Erweitert - CIECAM)\nKontrast (Q)
-HISTORY_MSG_190;(Erweitert - CIECAM)\nSättigung (S)
-HISTORY_MSG_191;(Erweitert - CIECAM)\nFarbigkeit (M)
-HISTORY_MSG_192;(Erweitert - CIECAM)\nFarbton (H)
-HISTORY_MSG_193;(Erweitert - CIECAM)\nTonwertkurve 1
-HISTORY_MSG_194;(Erweitert - CIECAM)\nTonwertkurve 2
-HISTORY_MSG_195;(Erweitert - CIECAM)\nTonwertkurve 1 - Modus
-HISTORY_MSG_196;(Erweitert - CIECAM)\nTonwertkurve 2 - Modus
-HISTORY_MSG_197;(Erweitert - CIECAM)\nFarbkurve
-HISTORY_MSG_198;(Erweitert - CIECAM)\nFarbkurve\nModus
-HISTORY_MSG_199;(Erweitert - CIECAM)\nAusgabe-Histogramm in Kurven anzeigen
-HISTORY_MSG_200;(Erweitert - CIECAM)\nTonwertkorrektur
+HISTORY_MSG_174;(Erweitert - Farberscheinung und Beleuchtung)
+HISTORY_MSG_175;(Erweitert - FuB)\nSzene\nAdaptation
+HISTORY_MSG_176;(Erweitert - FuB)\nBetrachtungsbed.\nUmgebung
+HISTORY_MSG_177;(Erweitert - FuB)\nSzene\nabsolute Leuchtdichte
+HISTORY_MSG_178;(Erweitert - FuB)\nBetrachtungsbed.\nabsolute Leuchtdichte
+HISTORY_MSG_179;(Erweitert - FuB)\nSzene\nWeißpunktmodell
+HISTORY_MSG_180;(Erweitert - FuB)\nBildanpassungen\nHelligkeit (J)
+HISTORY_MSG_181;(Erweitert - FuB)\nBildanpassungen\nBuntheit (C)
+HISTORY_MSG_182;(Erweitert - FuB)\nSzene\nAutomatisch
+HISTORY_MSG_183;(Erweitert - FuB)\nBildanpassungen\nKontrast (J)
+HISTORY_MSG_184;(Erweitert - FuB)\nSzene\nUmgebung
+HISTORY_MSG_185;(Erweitert - FuB)\nBetrachtungsbed.\nGamutkontrolle
+HISTORY_MSG_186;(Erweitert - FuB)\nBildanpassungen\nAlgorithmus
+HISTORY_MSG_187;(Erweitert - FuB)\nBildanpassungen\nHautfarbtöne schützen
+HISTORY_MSG_188;(Erweitert - FuB)\nBildanpassungen\nHelligkeit (Q)
+HISTORY_MSG_189;(Erweitert - FuB)\nBildanpassungen\nKontrast (Q)
+HISTORY_MSG_190;(Erweitert - FuB)\nBildanpassungen\nSättigung (S)
+HISTORY_MSG_191;(Erweitert - FuB)\nBildanpassungen\nFarbigkeit (M)
+HISTORY_MSG_192;(Erweitert - FuB)\nBildanpassungen\nFarbton (H)
+HISTORY_MSG_193;(Erweitert - FuB)\nBildanpassungen\nTonwertkurve 1
+HISTORY_MSG_194;(Erweitert - FuB)\nBildanpassungen\nTonwertkurve 2
+HISTORY_MSG_195;(Erweitert - FuB)\nBildanpassungen\nTonwertkurve 1 - Modus
+HISTORY_MSG_196;(Erweitert - FuB)\nBildanpassungen\nTonwertkurve 2 - Modus
+HISTORY_MSG_197;(Erweitert - FuB)\nBildanpassungen\nFarbkurve
+HISTORY_MSG_198;(Erweitert - FuB)\nBildanpassungen\nFarbkurve\nModus
+HISTORY_MSG_199;(Erweitert - FuB)\nBildanpassungen\nFarberscheinung für Histogramm-Ausgabe verwenden
+HISTORY_MSG_200;(Erweitert - FuB)\nBildanpassungen\nFarberscheinung für Tonwertkorrektur anwenden
 HISTORY_MSG_201;(Details - Rauschreduzierung)\nDelta-Chrominanz\nRot/Grün
 HISTORY_MSG_202;(Details - Rauschreduzierung)\nDelta-Chrominanz\nBlau/Gelb
 HISTORY_MSG_203;(Details - Rauschreduzierung)\nFarbraum
 HISTORY_MSG_204;(RAW - Sensor-Matrix)\nFarbinterpolation\nLMMSE-Verbesserung
-HISTORY_MSG_205;(Erweitert - CIECAM)\nBetrachtungsbed.\nHot-/Dead-Pixelfilter
-HISTORY_MSG_206;(Erweitert - CIECAM)\nSzene\nAuto-Luminanz
+HISTORY_MSG_205;(Erweitert - FuB)\nHot-/Bad-Pixelfilter
+HISTORY_MSG_206;(Erweitert - FuB)\nSzene\nAuto absolute Luminanz
 HISTORY_MSG_207;(Details - Farbsaum entfernen)\nFarbtonkurve
 HISTORY_MSG_208;(Farbe - Weißabgleich)\nBlau/Rot-Korrektur
 HISTORY_MSG_210;(Belichtung - Grauverlaufsfilter)\nRotationswinkel
@@ -749,7 +746,7 @@ HISTORY_MSG_421;(Erweitert - Retinex)\nEinstellungen\nKorrekturen\nGammakorrektu
 HISTORY_MSG_422;(Erweitert - Retinex)\nEinstellungen\nGamma
 HISTORY_MSG_423;(Erweitert - Retinex)\nEinstellungen\nGammasteigung
 HISTORY_MSG_424;(Erweitert - Retinex)\nEinstellungen\nHL-Schwelle
-HISTORY_MSG_425;(Erweitert - Retinex)\nEinstellungen\nBasis-Logarithmus
+HISTORY_MSG_425;--nicht verwendet--
 HISTORY_MSG_426;(Erweitert - Retinex)\nEinstellungen\nKorrekturen - Farbton (H)
 HISTORY_MSG_427;(Farbe - Farbmanagement)\nAusgabeprofil\nArt der Wiedergabe
 HISTORY_MSG_428;Monitorbasierte Wiedergabe
@@ -770,44 +767,44 @@ HISTORY_MSG_442;(Erweitert - Retinex)\nEinstellungen\nÜbertragung - Skalierung
 HISTORY_MSG_443;(Farbe - Farbmanagement)\nAusgabeprofil\nSchwarzpunkt-Kompensation
 HISTORY_MSG_444;(Farbe - Weißabgleich)\nAWB-Temperatur-Korrektur
 HISTORY_MSG_445;(RAW - Sensor-Matrix)\nFarbinterpolation\nUnterbild
-HISTORY_MSG_446;(EvPixelShift)\nBewegung
-HISTORY_MSG_447;(EvPixelShift)\nBewegung - Korrektur
-HISTORY_MSG_448;(EvPixelShiftStddev)\nFaktor Grün
+HISTORY_MSG_446;--nicht verwendet--
+HISTORY_MSG_447;--nicht verwendet--
+HISTORY_MSG_448;--nicht verwendet--
 HISTORY_MSG_449;(RAW - Sensor-Matrix)\nFarbinterpolation - PS\nISO-Anpassung
-HISTORY_MSG_450;(EvPixelShift)\nNreadIso
-HISTORY_MSG_451;(EvPixelShift)\nPrnu
+HISTORY_MSG_450;--nicht verwendet--
+HISTORY_MSG_451;--nicht verwendet--
 HISTORY_MSG_452;(RAW - Sensor-Matrix)\nFarbinterpolation - PS\nBewegungsmaske anzeigen
 HISTORY_MSG_453;(RAW - Sensor-Matrix)\nFarbinterpolation - PS\nNur Maske anzeigen
-HISTORY_MSG_454;(EvPixelShift)\nAutomatisch
-HISTORY_MSG_455;(EvPixelShift)\nNicht grün horizontal
-HISTORY_MSG_456;(EvPixelShift(\nNicht grün vertikal
+HISTORY_MSG_454;--nicht verwendet--
+HISTORY_MSG_455;--nicht verwendet--
+HISTORY_MSG_456;--nicht verwendet--
 HISTORY_MSG_457;(RAW - Sensor-Matrix)\nFarbinterpolation - PS\nBewegung im Rot/Blau-Kanal erkennen
-HISTORY_MSG_458;(EvPixelShiftStddev)Faktor Rot
-HISTORY_MSG_459;(EvPixelShiftStddev)\nFaktor Blau
-HISTORY_MSG_460;(EvPixelShift)\nAmaze Grün
-HISTORY_MSG_461;(EvPixelShift)\nAmaze nicht Grün
+HISTORY_MSG_458;--nicht verwendet--
+HISTORY_MSG_459;--nicht verwendet--
+HISTORY_MSG_460;--nicht verwendet--
+HISTORY_MSG_461;--nicht verwendet--
 HISTORY_MSG_462;(RAW - Sensor-Matrix)\nFarbinterpolation - PS\nBewegung im Grün-Kanal erkennen
-HISTORY_MSG_463;(EvPixelShift)\nRot/Blau-Wichtung
+HISTORY_MSG_463;--nicht verwendet--
 HISTORY_MSG_464;(RAW - Sensor-Matrix)\nFarbinterpolation - PS\nUnschärfebewegungsmaske
 HISTORY_MSG_465;(RAW - Sensor-Matrix)\nFarbinterpolation - PS\nUnschärferadius
-HISTORY_MSG_466;(EvPixelShift)\nSumme
-HISTORY_MSG_467;(EvPixelShift)\nExp1
+HISTORY_MSG_466;--nicht verwendet--
+HISTORY_MSG_467;--nicht verwendet--
 HISTORY_MSG_468;(RAW - Sensor-Matrix)\nFarbinterpolation - PS\nLücken in der Bewegungsmaske erkennen
 HISTORY_MSG_469;(RAW - Sensor-Matrix)\nFarbinterpolation - PS\nMedian
-HISTORY_MSG_470;(EvPixelShift)\nMedian3
+HISTORY_MSG_470;--nicht verwendet--
 HISTORY_MSG_471;(RAW - Sensor-Matrix)\nFarbinterpolation - PS\nBewegungskorrektur
 HISTORY_MSG_472;(RAW - Sensor-Matrix)\nFarbinterpolation - PS\nWeicher Übergang
 HISTORY_MSG_474;(RAW - Sensor-Matrix)\nFarbinterpolation - PS\nFrame-Helligkeit angleichen
 HISTORY_MSG_475;(RAW - Sensor-Matrix)\nFarbinterpolation - PS\nAusgleich pro Kanal
-HISTORY_MSG_476;(Erweitert - CIECAM)\nBetrachtungsbed.\nFarbtemperatur
-HISTORY_MSG_477;(Erweitert - CIECAM)\nBetrachtungsbed.\nTönung
-HISTORY_MSG_478;(Erweitert - CIECAM)\nBetrachtungsbed.\nYb% (Ø Leuchtdichte)
-HISTORY_MSG_479;(Erweitert - CIECAM)\nBetrachtungsbed.\nCAT02 Adaptation
-HISTORY_MSG_480;(Erweitert - CIECAM)\nBetrachtungsbed.\nAuto CAT02 Adaptation
-HISTORY_MSG_481;(Erweitert - CIECAM)\nSzene\nFarbtemperatur
-HISTORY_MSG_482;(Erweitert - CIECAM)\nSzene\nTönung
-HISTORY_MSG_483;(Erweitert - CIECAM)\nSzene\nYb% (Ø Leuchtdichte)
-HISTORY_MSG_484;(Erweitert - CIECAM)\nSzene\nAuto Yb%
+HISTORY_MSG_476;(Erweitert - FuB)\nBetrachtungsbed.\nFarbtemperatur
+HISTORY_MSG_477;(Erweitert - FuB)\nBetrachtungsbed.\nTönung
+HISTORY_MSG_478;(Erweitert - FuB)\nBetrachtungsbed.\nmittlere Leuchtdichte
+HISTORY_MSG_479;(Erweitert - FuB)\nBetrachtungsbed.\nAdaptation
+HISTORY_MSG_480;(Erweitert - FuB)\nBetrachtungsbed.\nAuto-Adaptation
+HISTORY_MSG_481;(Erweitert - FuB)\nSzene\nFarbtemperatur
+HISTORY_MSG_482;(Erweitert - FuB)\nSzene\nTönung
+HISTORY_MSG_483;(Erweitert - FuB)\nSzene\nmittlere Leuchtdichte
+HISTORY_MSG_484;(Erweitert - FuB)\nSzene\nAuto mittlere Leuchtdichte
 HISTORY_MSG_485;(Transformieren - Objektivkorrektur)\nProfil
 HISTORY_MSG_486;(Transformieren - Objektivkorrektur)\nProfil - Kamera
 HISTORY_MSG_487;(Transformieren - Objektivkorrektur)\nProfil - Objektiv
@@ -834,7 +831,7 @@ HISTORY_MSG_508;(Lokal - Spot)\nSpotgröße
 HISTORY_MSG_509;(Lokal - Spot)\nQualitäts-Methode
 HISTORY_MSG_510;(Lokal - Spot)\nÜbergangsgradient\nIntensität
 HISTORY_MSG_511;(Lokal - Spot)\nKantenerkennung\nSchwellenwert
-HISTORY_MSG_512;(Lokal - Spot)\nKantenerkennung\nΔE -Zerfall
+HISTORY_MSG_512;(Lokal - Spot)\nKantenerkennung\nΔE Zerfall
 HISTORY_MSG_513;(Lokal - Spot)\nBereich
 HISTORY_MSG_514;(Lokal - Spot)\nStruktur
 HISTORY_MSG_515;(Lokal - Lokale Anpassungen)
@@ -902,7 +899,7 @@ HISTORY_MSG_576;(Lokal - Detailebenen)\nMulti
 HISTORY_MSG_577;(Lokal - Detailebenen)\nChroma
 HISTORY_MSG_578;(Lokal - Detailebenen)\nSchwelle
 HISTORY_MSG_579;(Lokal - Detailebenen)\nUmfang
-HISTORY_MSG_580;(Lokal) - Rauschminderung
+HISTORY_MSG_580;--nicht verwendet--
 HISTORY_MSG_581;(Lokal - Rauschminderung)\nLuminanz f 1
 HISTORY_MSG_582;(Lokal - Rauschminderung)\nLuminanz c
 HISTORY_MSG_583;(Lokal - Rauschminderung)\nLuminanz Detailwiederherstellung
@@ -985,7 +982,7 @@ HISTORY_MSG_660;(Lokal - Detailebenen)\nKlarheit
 HISTORY_MSG_661;(Lokal - Detailebenen)\nVerbleibend
 HISTORY_MSG_662;(Lokal - Rauschminderung)\nLuminanz f 0
 HISTORY_MSG_663;(Lokal - Rauschminderung)\nLuminanz f 2
-HISTORY_MSG_664;(Lokal - Detailebenen)\nUnschärfe
+HISTORY_MSG_664;--nicht verwendet--
 HISTORY_MSG_665;(Lokal - Detailebenen)\nMaske\nÜberlagerung
 HISTORY_MSG_666;(Lokal - Detailebenen)\nMaske\nRadius
 HISTORY_MSG_667;(Lokal - Detailebenen)\nMaske\nFarbintensität
@@ -1233,7 +1230,7 @@ HISTORY_MSG_920;(Lokal - Wavelet)\nKontrast\nDämpfungsreaktion
 HISTORY_MSG_921;(Lokal - Wavelet)\nVerlaufsfilter\nDämpfungsreaktion
 HISTORY_MSG_922;(Lokal - Spot)\nSpeziell\nÄnderungen in Schwarz-Weiß erzwingen
 HISTORY_MSG_923;(Lokal - Werkzeug)\nKomplexität
-HISTORY_MSG_924;(Lokal - Werkzeug)\nKomplexität
+HISTORY_MSG_924;--nicht verwendet--
 HISTORY_MSG_925;(Lokal - Spot)\nAnwendungsbereich\nFarbwerkzeuge
 HISTORY_MSG_926;(Lokal - Unschärfe) Rauschreduzierung\nMaskenauswahl
 HISTORY_MSG_927;(Lokal - Unschärfe)\nMaske\nSchatten
@@ -1373,9 +1370,9 @@ HISTORY_MSG_1061;(Lokal - CIECAM)\nSzenebasierte Bedingungen\nAbsolute Luminanz
 HISTORY_MSG_1062;(Lokal - CIECAM)\nSzenebasierte Bedingungen\nUmgebung
 HISTORY_MSG_1063;(Lokal - CIECAM)\nCAM16 - Farbe\nSättigung
 HISTORY_MSG_1064;(Lokal - CIECAM)\nCAM16 - Farbe\nChroma
-HISTORY_MSG_1065;(Lokal - CIECAM)\nCAM16 - Beleuchtung\nHelligkeit (J)
-HISTORY_MSG_1066;(Lokal - CIECAM)\nCAM16 - Beleuchtung\nHelligkeit (Q)
-HISTORY_MSG_1067;(Lokal - CIECAM)\nCAM16 - Kontrast\nKontrast (J)
+HISTORY_MSG_1065;(Lokal - CIECAM)\nHelligkeit J
+HISTORY_MSG_1066;(Lokal - CIECAM)\nHelligkeit
+HISTORY_MSG_1067;(Lokal - CIECAM)\nKontrast J
 HISTORY_MSG_1068;(Lokal - CIECAM)\nCAM16 - Kontrast\nSchwellenwert Kontrast
 HISTORY_MSG_1069;(Lokal - CIECAM)\nCAM16 - Kontrast\nKontrast (Q)
 HISTORY_MSG_1070;(Lokal - CIECAM)\nCAM16 - Farbe\nBuntheit
@@ -1400,7 +1397,7 @@ HISTORY_MSG_1088;(Lokal - CIECAM)\nJz Cz Hz\nFarbton
 HISTORY_MSG_1089;(Lokal - CIECAM)\nSigmoid Jz\nKontraststärke
 HISTORY_MSG_1090;(Lokal - CIECAM)\nSigmoid Jz\nSchwellenwert
 HISTORY_MSG_1091;(Lokal - CIECAM)\nSigmoid Jz\nÜberlagern
-HISTORY_MSG_1092;(Lokal - CIECAM)\nJz Zuordnung\nPU Anpassung
+HISTORY_MSG_1092;(Lokal - CIECAM)\nJz Zuordnung\nAnpassung
 HISTORY_MSG_1093;(Lokal - CIECAM)\nCAM Modell
 HISTORY_MSG_1094;(Lokal - CIECAM)\nJz Lichter
 HISTORY_MSG_1095;(Lokal - CIECAM)\nTonwertbreite Jz Lichter 
@@ -1463,9 +1460,9 @@ HISTORY_MSG_BLSHAPE;(Erweitert - Wavelet)\nUnschärfeebenen\nUnschärfe nach Ebe
 HISTORY_MSG_BLURCWAV;(Erweitert - Wavelet)\nRestbild - Unschärfe\nUnschärfe Buntheit
 HISTORY_MSG_BLURWAV;(Erweitert - Wavelet)\nRestbild - Unschärfe\nUnschärfe Helligkeit
 HISTORY_MSG_BLUWAV;(Erweitert - Wavelet)\nUnschärfeebenen\nDämpfungsreaktion
-HISTORY_MSG_CATCAT;CAT02/16 Modus
-HISTORY_MSG_CATCOMPLEX;(Erweitert - CIECAM)\nKomplexität
-HISTORY_MSG_CATMODEL;(Erweitert - CIECAM)\nCAM Modell
+HISTORY_MSG_CATCAT;(Erweitert - FuB)\Einstellungen Modus
+HISTORY_MSG_CATCOMPLEX;(Erweitert - FuB)\nEinstellungen Komplexität
+HISTORY_MSG_CATMODEL;(Erweitert - FuB)\nEinstellungen Modell
 HISTORY_MSG_CLAMPOOG;(Belichtung) - Farben\nAuf Farbraum beschränken
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;(Farbe - Farbanpassungen)\nL*a*b*-Farbkorrektur
 HISTORY_MSG_COLORTONING_LABREGION_AB;(Farbe - Farbanpassungen)\nL*a*b*-Farbkorrektur\nBereich
@@ -1498,25 +1495,25 @@ HISTORY_MSG_FILMNEGATIVE_REF_SPOT;(Farbe - Negativfilm)\nReferenz Eingabe
 HISTORY_MSG_FILMNEGATIVE_VALUES;(Farbe - Negativfilm)\nWerte
 HISTORY_MSG_HISTMATCHING;(Belichtung)\nAuto-Tonwertkurve
 HISTORY_MSG_HLBL;Farbübertragung - Unschärfe
-HISTORY_MSG_ICL_LABGRIDCIEXY;CIE xy
-HISTORY_MSG_ICM_AINTENT;(Farbe - Farbmanagement)\nAbstraktes Profil Ziel
-HISTORY_MSG_ICM_BLUX;(Farbe - Farbmanagement)\nAbstraktes Profil\nPrimär Blau X
-HISTORY_MSG_ICM_BLUY;(Farbe - Farbmanagement)\nAbstraktes Profil\nPrimär Blau Y
+HISTORY_MSG_ICL_LABGRIDCIEXY;Cie xy-Diagramm
+HISTORY_MSG_ICM_AINTENT;Absicht Abstraktes Profil
+HISTORY_MSG_ICM_BLUX;(Farbe - Farbmanagement)\nAbstraktes Profil\nVorgabe Blau X
+HISTORY_MSG_ICM_BLUY;(Farbe - Farbmanagement)\nAbstraktes Profil\nVorgabe Blau Y
 HISTORY_MSG_ICM_FBW;(Farbe - Farbmanagement)\nAbstraktes Profil\nSchwarz-Weiß
-HISTORY_MSG_ICM_GREX;(Farbe - Farbmanagement)\nAbstraktes Profil\nPrimär Grün X
-HISTORY_MSG_ICM_GREY;(Farbe - Farbmanagement)\nAbstraktes Profil\nPrimär Grün Y
-HISTORY_MSG_ICM_OUTPUT_PRIMARIES;(Farbe - Farbmanagement)\nAusgabeprofil\nVorlagen
+HISTORY_MSG_ICM_GREX;(Farbe - Farbmanagement)\nAbstraktes Profil\nVorgabe Grün X
+HISTORY_MSG_ICM_GREY;(Farbe - Farbmanagement)\nAbstraktes Profil\nVorgabe Grün Y
+HISTORY_MSG_ICM_OUTPUT_PRIMARIES;(Farbe - Farbmanagement)\nAbstraktes Profil\nAusgabeprofil Vorgaben
 HISTORY_MSG_ICM_OUTPUT_TEMP;(Farbe - Farbmanagement)\nAusgabeprofil\nIccV4-Illuminant D
 HISTORY_MSG_ICM_OUTPUT_TYPE;(Farbe - Farbmanagement)\nAusgabeprofil\nTyp
 HISTORY_MSG_ICM_PRESER;(Farbe - Farbmanagement)\nAbstraktes Profil\nPastelltöne erhalten
-HISTORY_MSG_ICM_REDX;(Farbe - Farbmanagement)\nAbstraktes Profil\nPrimär Rot X
-HISTORY_MSG_ICM_REDY;(Farbe - Farbmanagement)\nAbstraktes Profil\nPrimär Rot Y
+HISTORY_MSG_ICM_REDX;(Farbe - Farbmanagement)\nAbstraktes Profil\nVorgabe Rot X
+HISTORY_MSG_ICM_REDY;(Farbe - Farbmanagement)\nAbstraktes Profil\nVorgabe Rot Y
 HISTORY_MSG_ICM_WORKING_GAMMA;(Farbe - Farbmanagement)\nAbstraktes Profil\nGamma Farbtonkennlinie
-HISTORY_MSG_ICM_WORKING_ILLUM_METHOD;(Farbe - Farbmanagement)\nAbstraktes Profil\nBeleuchtung
+HISTORY_MSG_ICM_WORKING_ILLUM_METHOD;(Farbe - Farbmanagement)\nAbstraktes Profil\nBelechtungsmethode
 HISTORY_MSG_ICM_WORKING_PRIM_METHOD;(Farbe - Farbmanagement)\nAbstraktes Profil\nZielvorwahl
 HISTORY_MSG_ICM_WORKING_SLOPE;(Farbe - Farbmanagement)\nAbstraktes Profil\nSteigung Farbtonkennlinie
 HISTORY_MSG_ICM_WORKING_TRC_METHOD;(Farbe - Farbmanagement)\nAbstraktes Profil\nFarbtonkennlinie
-HISTORY_MSG_ILLUM;Beleuchtung
+HISTORY_MSG_ILLUM;(Farbe - Farbmanagement)\nSzene\nBeleuchtung
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;(Details - Lokaler Kontrast)\nIntensität
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;(Details - Lokaler Kontrast)\nDunkle Bereiche
 HISTORY_MSG_LOCALCONTRAST_ENABLED;(Details - Lokaler Kontrast)
@@ -1571,7 +1568,7 @@ HISTORY_MSG_TRANS_METHOD;(Transformieren - Objektivkorrektur)\nMethode
 HISTORY_MSG_WAVBALCHROM;(Erweitert - Wavelet)\nRauschreduzierung\nFarb-Equalizer
 HISTORY_MSG_WAVBALLUM;(Erweitert - Wavelet)\nRauschreduzierung\nEqualizer Luminanz
 HISTORY_MSG_WAVBL;(Erweitert - Wavelet)\nUnschärfeebenen
-HISTORY_MSG_WAVCHR;(Erweitert - Wavelet)\nUnschärfeebenen\nChroma-Unschärfe
+HISTORY_MSG_WAVCHR;(Erweitert - Wavelet\nUnschärfeebenen\nChroma-Unschärfe 
 HISTORY_MSG_WAVCHROMCO;(Erweitert - Wavelet)\nRauschreduzierung\nChrominanz grob
 HISTORY_MSG_WAVCHROMFI;(Erweitert - Wavelet)\nRauschreduzierung\nChrominanz fein
 HISTORY_MSG_WAVCLARI;(Erweitert - Wavelet)\nSchärfemaske und Klarheit
@@ -1582,7 +1579,7 @@ HISTORY_MSG_WAVDETEND;(Erweitert - Wavelet)\nEndretusche - finales Glätten\nDet
 HISTORY_MSG_WAVEDGS;(Erweitert - Wavelet)\nRestbild - Kompression\nKantenschutz
 HISTORY_MSG_WAVGUIDH;(Erweitert - Wavelet)\nEndretusche - finales Glätten\nEqualizer Farbton
 HISTORY_MSG_WAVHUE;(Erweitert - Wavelet)\nEqualizer Farbton
-HISTORY_MSG_WAVLABGRID_VALUE;(Erweitert - Wavelet)\nTönung\nAusgeschlossene Farben
+HISTORY_MSG_WAVLABGRID_VALUE;(Erweitert - Wavelet)\nTönung\nausgeschlossene Farben
 HISTORY_MSG_WAVLEVDEN;(Erweitert - Wavelet)\nKontrast\nSchwellenwert hoher Kontrast
 HISTORY_MSG_WAVLEVELSIGM;(Erweitert - Wavelet)\nRauschreduzierung\nRadius
 HISTORY_MSG_WAVLEVSIGM;(Erweitert - Wavelet)\nRauschreduzierung\nRadius
@@ -1798,7 +1795,7 @@ PARTIALPASTE_CACORRECTION;Farbsaum entfernen
 PARTIALPASTE_CHANNELMIXER;RGB-Kanalmixer
 PARTIALPASTE_CHANNELMIXERBW;Schwarz/Weiß
 PARTIALPASTE_COARSETRANS;Drehen/Spiegeln
-PARTIALPASTE_COLORAPP;CIE CAM (Farberscheinungsmodell) 02/16
+PARTIALPASTE_COLORAPP;Farberscheinung und Beleuchtung
 PARTIALPASTE_COLORGROUP;Farbparameter
 PARTIALPASTE_COLORTONING;Farbanpassungen
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto-Füllen
@@ -2242,45 +2239,45 @@ TP_COLORAPP_ABSOLUTELUMINANCE;Leuchtdichte
 TP_COLORAPP_ADAPSCEN_TOOLTIP;Entspricht der Leuchtdichte in Candela pro m2 zum Zeitpunkt der Aufnahme, automatisch berechnet aus den Exif-Daten.
 TP_COLORAPP_ALGO;Algorithmus
 TP_COLORAPP_ALGO_ALL;Alle
-TP_COLORAPP_ALGO_JC;Helligkeit + Buntheit (JH)
+TP_COLORAPP_ALGO_JC;Helligkeit + Buntheit (JC)
 TP_COLORAPP_ALGO_JS;Helligkeit + Sättigung (JS)
 TP_COLORAPP_ALGO_QM;Helligkeit + Farbigkeit (QM)
 TP_COLORAPP_ALGO_TOOLTIP;Auswahl zwischen Parameter-Teilmengen\nund allen Parametern.
-TP_COLORAPP_BADPIXSL;Hot-/Dead-Pixelfilter
+TP_COLORAPP_BADPIXSL;Hot-/Bad-Pixelfilter
 TP_COLORAPP_BADPIXSL_TOOLTIP;Unterdrückt Hot-/Dead-Pixel (hell gefärbt).\n0 = Kein Effekt\n1 = Median\n2 = Gaussian\nAlternativ kann das Bild angepasst werden, um sehr dunkle Schatten zu vermeiden.\n\nDiese Artefakte sind auf Einschränkungen von CIECAM02 zurückzuführen.
 TP_COLORAPP_BRIGHT;Helligkeit (Q)
-TP_COLORAPP_BRIGHT_TOOLTIP;Helligkeit in CIECAM02/16 berücksichtigt die Weißintensität und unterscheidet sich von L*a*b* und RGB-Helligkeit.
+TP_COLORAPP_BRIGHT_TOOLTIP;Helligkeit in CIECAM berücksichtigt die Weißintensität.Sie unterscheidet sich von L*a*b* und RGB-Helligkeit.
 TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;Bei manueller Einstellung werden Werte über 65 empfohlen.
 TP_COLORAPP_CATCLASSIC;Klassisch
 TP_COLORAPP_CATMET_TOOLTIP;Klassisch - traditionelle CIECAM-Berechnung. Die Transformationen der chromatischen Adaption werden separat auf 'Szenenbedingungen' und 'Grundlichtart' einerseits und auf 'Grundlichtart' und 'Betrachtungsbedingungen' andererseits angewandt.\n\nSymmetrisch - Die chromatische Anpassung basiert auf dem Weißabgleich. Die Einstellungen 'Szenenbedingungen', 'Bildeinstellungen' und 'Betrachtungsbedingungen' werden neutralisiert.\n\nGemischt - Wie die Option 'Klassisch', aber in diesem Fall basiert die chromatische Anpassung auf dem Weißabgleich.
-TP_COLORAPP_CATMOD;Modus CAT02/16 
+TP_COLORAPP_CATMOD;Modus
 TP_COLORAPP_CATSYMGEN;Automatisch Symmetrisch
 TP_COLORAPP_CATSYMSPE;Gemischt
-TP_COLORAPP_CHROMA;Buntheit (H)
+TP_COLORAPP_CHROMA;Buntheit (C)
 TP_COLORAPP_CHROMA_M;Farbigkeit (M)
-TP_COLORAPP_CHROMA_M_TOOLTIP;Die Farbigkeit in CIECAM02/16 unterscheidet sich von L*a*b*- und RGB-Farbigkeit.
+TP_COLORAPP_CHROMA_M_TOOLTIP;Die Farbigkeit in CIECAM unterscheidet sich von L*a*b*- und RGB-Farbigkeit.
 TP_COLORAPP_CHROMA_S;Sättigung (S)
-TP_COLORAPP_CHROMA_S_TOOLTIP;Die Sättigung in CIECAM02/16 unterscheidet sich von L*a*b* und RGB-Sättigung.
-TP_COLORAPP_CHROMA_TOOLTIP;Die Buntheit in CIECAM02/16 unterscheidet sich von L*a*b* und RGB-Buntheit.
-TP_COLORAPP_CIECAT_DEGREE;CAT02 Adaptation
+TP_COLORAPP_CHROMA_S_TOOLTIP;Die Sättigung in CIECAM unterscheidet sich von L*a*b* und RGB-Sättigung.
+TP_COLORAPP_CHROMA_TOOLTIP;Die Buntheit in CIECAM unterscheidet sich von L*a*b* und RGB-Buntheit.
+TP_COLORAPP_CIECAT_DEGREE;Adaptation
 TP_COLORAPP_CONTRAST;Kontrast (J)
 TP_COLORAPP_CONTRAST_Q;Kontrast (Q)
-TP_COLORAPP_CONTRAST_Q_TOOLTIP;Kontrast (Q) in CIECAM02/16 unterscheidet sich vom L*a*b*- und RGB-Kontrast.
-TP_COLORAPP_CONTRAST_TOOLTIP;Kontrast (J) in CIECAM02/16 unterscheidet sich vom L*a*b*- und RGB-Kontrast.
+TP_COLORAPP_CONTRAST_Q_TOOLTIP;Kontrast (Q) in CIECAM basiert auf Helligkeit. Er unterscheidet sich vom L*a*b*- und RGB-Kontrast.
+TP_COLORAPP_CONTRAST_TOOLTIP;Kontrast (J) in CIECAM beruht auf Helligkeit. Er unterscheidet sich vom L*a*b*- und RGB-Kontrast.
 TP_COLORAPP_CURVEEDITOR1;Tonwertkurve 1
-TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Zeigt das Histogramm von L (L*a*b*) vor CIECAM02/16.\nWenn 'CIECAM02/16-Ausgabe-Histogramm in Kurven anzeigen' aktiviert ist, wird das Histogramm von J oder Q nach CIECAM02/16-Anpassungen angezeigt.\n\nJ und Q werden nicht im Haupt-Histogramm angezeigt.\nFür die endgültige Ausgabe verwenden Sie das Haupt-Histogramm.
+TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Zeigt das Histogramm von L (L*a*b*) vor CIECAM.\nWenn 'CIECAM-Ausgabe-Histogramm in Kurven anzeigen' aktiviert ist, wird das Histogramm von J oder Q nach CIECAM-Anpassungen angezeigt.\n\nJ und Q werden nicht im Haupt-Histogramm angezeigt.\nFür die endgültige Ausgabe verwenden Sie das Haupt-Histogramm.
 TP_COLORAPP_CURVEEDITOR2;Tonwertkurve 2
 TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Gleiche Verwendung wie bei der ersten Belichtungstonwertkurve.
 TP_COLORAPP_CURVEEDITOR3;Farbkurve
-TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Korrigiert Buntheit, Sättigung oder Farbigkeit.\n\nZeigt das Histogramm der Chromatizität (L*a*b* ) VOR den CIECAM02/16-Änderungen an.\nWenn 'CIECAM02/16-Ausgabe-Histogramm in Kurven anzeigen' aktiviert ist, wird das Histogramm von C, S oder M NACH den CIECAM02/16-Änderungen angezeigt.\n\nC, S und M werden nicht im Haupt-Histogramm angezeigt.\nFür die endgültige Ausgabe verwenden Sie das Haupt-Histogramm.
-TP_COLORAPP_DATACIE;CIECAM02/16-Ausgabe-Histogramm in Kurven anzeigen
-TP_COLORAPP_DATACIE_TOOLTIP;Wenn aktiviert, zeigen die Histogramme der CIECAM02/16-Kurven die angenäherten Werte/Bereiche für <b>J oder Q</b> und <b>C, S oder M</b> NACH den CIECAM02/16-Anpassungen an. Das betrifft nicht das Haupt-Histogramm.\n\nWenn deaktiviert, zeigen die Histogramme der CIECAM02/16-Kurven die L*a*b*-Werte VOR den CIECAM02/16-Anpassungen an.
+TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Korrigiert Buntheit, Sättigung oder Farbigkeit.\n\nZeigt das Histogramm der Chromatizität (L*a*b* ) VOR den CIECAM-Änderungen an.\nWenn 'CIECAM-Ausgabe-Histogramm in Kurven anzeigen' aktiviert ist, wird das Histogramm von C, S oder M NACH den CIECAM-Änderungen angezeigt.\n\nC, S und M werden nicht im Haupt-Histogramm angezeigt.\nFür die endgültige Ausgabe verwenden Sie das Haupt-Histogramm.
+TP_COLORAPP_DATACIE;CIECAM-Ausgabe-Histogramm in CAL-Kurven anzeigen
+TP_COLORAPP_DATACIE_TOOLTIP;Beeinflusst die Histogramme in FuB. Beeinflusst nicht das Haupthistogramm von RawTherapee.\n\nAktiviert: zeigt ungefähre Werte für J und C, S oder M NACH den CIECAM-Anpassungen.\nDeaktiviert: zeigt L*a*b*-Werte VOR den CIECAM-Anpassungen.
 TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 ist eine Methode, die die Werte eines Bildes, dessen Weißpunkt der einer gegebenen Lichtart (z.B. D65) entspricht, in Werte umwandelt, deren Weißpunkt einer anderen Lichtart entspricht (z.B. D50 oder D55).
 TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02/16 ist eine Methode, die die Werte eines Bildes, dessen Weißpunkt der einer gegebenen Lichtart (z.B. D50) entspricht, in Werte umwandelt, deren Weißpunkt einer anderen Lichtart entspricht (z.B. D75).
-TP_COLORAPP_FREE;Farbtemperatur + Tönung + CAT02 + [Ausgabe]
-TP_COLORAPP_GAMUT;Gamutkontrolle (L*a*b*)
+TP_COLORAPP_FREE;Farbtemperatur + Tönung + CAT02/16 + [Ausgabe]
+TP_COLORAPP_GAMUT;Gamutkontrolle im L*a*b*-Modus anwenden
 TP_COLORAPP_GEN;Voreinstellungen
-TP_COLORAPP_GEN_TOOLTIP;Dieses Modul basiert auf dem CIECAM-Farberscheinungsmodell, das entwickelt wurde, um die Farbwahrnehmung des menschlichen Auges unter verschiedenen Lichtverhältnissen besser zu simulieren, z.B. vor unterschiedlichen Hintergründen.\nEs berücksichtigt die Umgebung jeder Farbe und modifiziert ihr Erscheinungsbild, um sie so nah wie möglich an die menschliche Wahrnehmung wiederzugeben.\nDie Ausgabe wird auch an die beabsichtigten Betrachtungsbedingungen (Monitor, Fernseher, Projektor, Drucker usw.) angepasst, sodass das chromatische Erscheinungsbild über die Szene und die Anzeigeumgebung hinweg erhalten bleibt.
+TP_COLORAPP_GEN_TOOLTIP;Dieses Modul basiert auf dem CIECAM-Farberscheinungsmodell, das entwickelt wurde, um die Farbwahrnehmung des menschlichen Auges unter verschiedenen Lichtverhältnissen besser zu simulieren, z.B. vor unterschiedlichen Hintergründen. Es berücksichtigt die Umgebung jeder Farbe und modifiziert ihr Erscheinungsbild, um sie so nah wie möglich an die menschliche Wahrnehmung wiederzugeben. Die Ausgabe wird auch an die beabsichtigten Betrachtungsbedingungen (Monitor, Fernseher, Projektor, Drucker usw.) angepasst, sodass das chromatische Erscheinungsbild über die Szene und die Anzeigeumgebung hinweg erhalten bleibt.
 TP_COLORAPP_HUE;Farbton (H)
 TP_COLORAPP_HUE_TOOLTIP;Farbton (H) - Winkel zwischen 0° und 360°.
 TP_COLORAPP_IL41;D41
@@ -2293,32 +2290,32 @@ TP_COLORAPP_ILA;Glühlampe Normlichtart A 2856K
 TP_COLORAPP_ILFREE;Frei
 TP_COLORAPP_ILLUM;Beleuchtung
 TP_COLORAPP_ILLUM_TOOLTIP;Wählen Sie die Lichtquelle, die den Aufnahmebedingungen am nächsten kommt.\nIm Allgemeinen kann D50 gewählt werden, das kann sich jedoch je nach Zeit und Breitengrad ändern.
-TP_COLORAPP_LABEL;CIE CAM (Farberscheinungsmodell) 02/16
+TP_COLORAPP_LABEL;Farberscheinung und Beleuchtung
 TP_COLORAPP_LABEL_CAM02;Bildanpassungen
 TP_COLORAPP_LABEL_SCENE;Umgebungsbedingungen (Szene)
 TP_COLORAPP_LABEL_VIEWING;Betrachtungsbedingungen
 TP_COLORAPP_LIGHT;Helligkeit (J)
-TP_COLORAPP_LIGHT_TOOLTIP;Helligkeit in CIECAM02/16 unterscheidet sich von L*a*b* und RGB Helligkeit.
+TP_COLORAPP_LIGHT_TOOLTIP;Helligkeit in CIECAM unterscheidet sich von L*a*b* und RGB Helligkeit.
 TP_COLORAPP_MEANLUMINANCE;Mittlere Leuchtdichte (Yb%)
-TP_COLORAPP_MOD02;CIECAM02
-TP_COLORAPP_MOD16;CIECAM16
+TP_COLORAPP_MOD02;CAM02
+TP_COLORAPP_MOD16;CAM16
 TP_COLORAPP_MODEL;Weißpunktmodell
-TP_COLORAPP_MODELCAT;CAM Modell
-TP_COLORAPP_MODELCAT_TOOLTIP;Ermöglicht die Auswahl zwischen CIECAM02 oder CIECAM16.\nCIECAM02 ist manchmal genauer.\nCIECAM16 sollte weniger Artefakte erzeugen.
-TP_COLORAPP_MODEL_TOOLTIP;<b>Weißabgleich [RT] + [Ausgabe]:</b>\nRTs Weißabgleich wird für die Szene verwendet,\nCIECAM02/16 auf D50 gesetzt und der Weißabgleich\ndes Ausgabegerätes kann unter:\n<i>Einstellungen > Farb-Management</i>\neingestellt werden.\n\n<b>Weißabgleich [RT+CAT02/16] + [Ausgabe]:</b>\nRTs Weißabgleich wird für CAT02 verwendet und\nder Weißabgleich des Ausgabegerätes kann unter\n<i>Einstellungen > Farb-Management</i>\neingestellt werden.
+TP_COLORAPP_MODELCAT;CAM
+TP_COLORAPP_MODELCAT_TOOLTIP;Ermöglicht die Auswahl zwischen CAM02 oder CAM16.\nCAM02 ist manchmal genauer.\nCAM16 sollte weniger Artefakte erzeugen.
+TP_COLORAPP_MODEL_TOOLTIP;<b>Weißabgleich [RT] + [Ausgabe]:</b>\nRTs Weißabgleich wird für die Szene verwendet,\nCIECAM auf D50 gesetzt und der Weißabgleich\ndes Ausgabegerätes kann unter:\n<i>Einstellungen > Farb-Management</i>\neingestellt werden.\n\n<b>Weißabgleich [RT+CAT02/16] + [Ausgabe]:</b>\nRTs Weißabgleich wird für CAT02 verwendet und\nder Weißabgleich des Ausgabegerätes kann unter\n<i>Einstellungen > Farb-Management</i>\neingestellt werden.
 TP_COLORAPP_NEUTRAL;Zurücksetzen
-TP_COLORAPP_NEUTRAL_TOOLTIP;Setzt alle CIECAM02-Parameter auf Vorgabewerte zurück.
+TP_COLORAPP_NEUTRAL_TOOLTIP;Setzt alle Parameter auf Vorgabewerte zurück.
 TP_COLORAPP_RSTPRO;Hautfarbtöne schützen
 TP_COLORAPP_RSTPRO_TOOLTIP;Hautfarbtöne schützen\nWirkt sich auf Regler und Kurven aus.
 TP_COLORAPP_SOURCEF_TOOLTIP;Entspricht den Aufnahmebedingungen und wie man die Bedingungen und Daten wieder in einen normalen Bereich bringt. 'Normal' bedeutet Durchschnitts- oder Standardbedingungen und Daten, d. h. ohne Berücksichtigung von CIECAM-Korrekturen.
 TP_COLORAPP_SURROUND;Umgebung
-TP_COLORAPP_SURROUNDSRC;Lichtumgebung
+TP_COLORAPP_SURROUNDSRC;Umgebung
 TP_COLORAPP_SURROUND_AVER;Durchschnitt
 TP_COLORAPP_SURROUND_DARK;Dunkel
 TP_COLORAPP_SURROUND_DIM;Gedimmt
 TP_COLORAPP_SURROUND_EXDARK;Extrem Dunkel (Cutsheet)
-TP_COLORAPP_SURROUND_TOOLTIP;Verändert Töne und Farben unter Berücksichtigung der\nBetrachtungsbedingungen des Ausgabegerätes.\n\n<b>Durchschnitt:</b>\nDurchschnittliche Lichtumgebung (Standard).\nDas Bild wird nicht angepasst.\n\n<b>Gedimmt:</b>\nGedimmte Umgebung (TV). Das Bild wird leicht dunkel.\n\n<b>Dunkel:</b>\nDunkle Umgebung (Projektor). Das Bild wird dunkler.\n\n<b>Extrem dunkel:</b>\nExtrem dunkle Umgebung. Das Bild wird sehr dunkel.
-TP_COLORAPP_SURSOURCE_TOOLTIP;Verändert Töne und Farben unter Berücksichtigung der Szenenbedingungen.\n\n<b>Durchschnitt</b>: Durchschnittliche Lichtumgebung (Standard). Das Bild wird nicht angepasst.\n\n<b>Gedimmt</b>: Gedimmte Umgebung. Das Bild wird leicht hell.\n\n<b>Dunkel</b>: Dunkle Umgebung. Das Bild wird heller.\n\n<b>Extrem dunkel</b>: Extrem dunkle Umgebung. Das Bild wird sehr hell.
+TP_COLORAPP_SURROUND_TOOLTIP;Ändert Töne und Farben, um die Betrachtungsbedingungen des Ausgabegeräts zu berücksichtigen. Je dunkler die Betrachtungsbedingungen sind, desto dunkler wird das Bild. Die Bildhelligkeit wird nicht geändert, wenn die Betrachtungsbedingungen auf durchschnittlich eingestellt sind.
+TP_COLORAPP_SURSOURCE_TOOLTIP;Ändert Töne und Farben, um die Umgebungsbedingungen der Szenenbeleuchtung zu berücksichtigen. Je dunkler die Umgebungsbedingungen sind, desto heller wird das Bild. Die Bildhelligkeit wird nicht geändert, wenn der Umgebungs-Wert auf Durchschnitt eingestellt ist.
 TP_COLORAPP_TCMODE_BRIGHTNESS;Helligkeit (Q)
 TP_COLORAPP_TCMODE_CHROMA;Buntheit (H)
 TP_COLORAPP_TCMODE_COLORF;Farbigkeit (M)
@@ -2329,9 +2326,9 @@ TP_COLORAPP_TCMODE_LIGHTNESS;Helligkeit (J)
 TP_COLORAPP_TCMODE_SATUR;Sättigung (S)
 TP_COLORAPP_TEMP2_TOOLTIP;Symmetrischer Modus Temp = Weißabgleich.\nBei Auswahl einer Beleuchtung setze Tönung=1.\n\nA Temp=2856\nD41 Temp=4100\nD50 Temp=5003\nD55 Temp=5503\nD60 Temp=6000\nD65 Temp=6504\nD75 Temp=7504
 TP_COLORAPP_TEMP_TOOLTIP;Um eine Beleuchtungsart auszuwählen, setzen Sie die Tönung immer auf '1'.\nA Temp=2856\nD50 Temp=5003\nD55 Temp=5503\nD65 Temp=6504\nD75 Temp=7504
-TP_COLORAPP_TONECIE;Tonwertkorrektur mittels CIECAM02/16
+TP_COLORAPP_TONECIE;verwende CIECAM für die Tonwertkorrektur
 TP_COLORAPP_TONECIE_TOOLTIP;Wenn diese Option ausgeschaltet ist, wird die Tonwertkorrektur im L*a*b*-Farbraum durchgeführt.\nWenn die Option eingeschaltet ist, wird CIECAM02 für die Tonwertkorrektur verwendet. Das Werkzeug Tonwertkorrektur muss aktiviert sein, damit diese Option berücksichtigt wird.
-TP_COLORAPP_VIEWINGF_TOOLTIP;Berücksichtigt, auf welchem Gerät das endgültige Bild angezeigt wird (Monitor, Fernseher, Projektor, Drucker, ...) sowie seine Umgebung. Dieser Prozess nimmt die Daten aus dem Prozess 'Image Adjustments' auf und "passt" sie so an das Gerät an, dass die Betrachtungsbedingungen und die Umgebung berücksichtigt werden.
+TP_COLORAPP_VIEWINGF_TOOLTIP;Berücksichtigt, auf welchem Gerät das endgültige Bild angezeigt wird (Monitor, Fernseher, Projektor, Drucker, etc.) sowie seine Umgebung. Dieser Prozess nimmt die Daten aus dem Prozess 'Image Adjustments' auf und "passt" sie so an das Gerät an, dass die Betrachtungsbedingungen und die Umgebung berücksichtigt werden.
 TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Absolute Luminanz der Betrachtungsumgebung\n(normalerweise 16cd/m²).
 TP_COLORAPP_WBCAM;[RT+CAT02/16] + [Ausgabe]
 TP_COLORAPP_WBRT;[RT] + [Ausgabe]
@@ -2373,7 +2370,7 @@ TP_COLORTONING_LUMA;Luminanz
 TP_COLORTONING_LUMAMODE;Luminanz schützen
 TP_COLORTONING_LUMAMODE_TOOLTIP;Wenn aktiviert, wird die Luminanz der Farben Rot, Grün, Cyan, Blau... geschützt.
 TP_COLORTONING_METHOD;Methode
-TP_COLORTONING_METHOD_TOOLTIP;L*a*b*-Überlagerung, RGB-Regler und RGB-Kurven\nverwenden eine interpolierte Farbüberlagerung.\n\nFarbausgleich (Schatten/Mitten/Lichter) und Sättigung\n(2-Farben) verwenden direkte Farben.
+TP_COLORTONING_METHOD_TOOLTIP;L*a*b*-Überlagerung, RGB-Regler und RGB-Kurven verwenden eine interpolierte Farbüberlagerung.\n\nFarbausgleich (Schatten/Mitten/Lichter) und Sättigung (2-Farben) verwenden direkte Farben.\n\Das Schwarz-Weiß-Werkzeug kann aktiviert werden, wenn eine beliebige Farbtönungsmethode verwendet wird, die eine Farbtönung ermöglicht.
 TP_COLORTONING_MIDTONES;Mitten
 TP_COLORTONING_NEUTRAL;Regler zurücksetzen
 TP_COLORTONING_NEUTRAL_TOOLTIP;Alle Werte auf Standard zurücksetzen.\n(Schatten, Mitten, Lichter)
@@ -2434,7 +2431,7 @@ TP_DIRPYRDENOISE_CHROMINANCE_MANUAL;Benutzerdefiniert
 TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Chrominanz (Master)
 TP_DIRPYRDENOISE_CHROMINANCE_METHOD;Methode
 TP_DIRPYRDENOISE_CHROMINANCE_METHODADVANCED_TOOLTIP;<b>Benutzerdefiniert:</b>\nManuelle Anpassung der Chrominanz-Rauschreduzierung.\n\n<b>Automatisch Global:</b>\nEs werden 9 Zonen für die Berechnung der Chrominanz-\nRauschreduzierung verwendet.\n\n<b>Vorschau:</b>\nNur der sichbare Teil des Bildes wird für die Berechnung\nder Chrominanz-Rauschreduzierung verwendet.
-TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP;<b>Benutzerdefiniert:</b>\nManuelle Anpassung der Chrominanz-Rauschreduzierung.\n\n<b>Automatisch Global:</b>\nEs werden 9 Zonen für die Berechnung der Chrominanz-\nRauschreduzierung verwendet.\n\n<b>Auto-Multizonen:</b>\nKeine Voransicht - wird erst beim Speichern angewendet.\nAbhängig von der Bildgröße, wird das Bild in ca. 10 bis 70\nKacheln aufgeteilt. Für jede Kachel wird die Chrominanz-\nRauschreduzierung individuell berechnet.\n\n<b>Vorschau:</b>\nNur der sichtbare Teil des Bildes wird für die Berechnung\nder Chrominanz-Rauschreduzierung verwendet.
+TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP;<b>Benutzerdefiniert:</b>\nManuelle Anpassung der Chrominanz-Rauschreduzierung.\n\n<b>Automatisch Global:</b>\nEs werden 9 Zonen für die Berechnung der Chrominanz-Rauschreduzierung verwendet.\n\n<b>Auto-Multizonen:</b>\nKeine Voransicht - wird erst beim Speichern angewendet. InAbhängig von der Bildgröße, wird das Bild in ca. 10 bis 70 Kacheln aufgeteilt. Für jede Kachel wird die Chrominanz-auschreduzierung individuell berechnet.\n\n<b>Vorschau:</b>\nNur der sichtbare Teil des Bildes wird für die Berechnung der Chrominanz-Rauschreduzierung verwendet.
 TP_DIRPYRDENOISE_CHROMINANCE_PMZ;Vorschau
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW;Vorschau
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP;Zeigt das Restrauschen des sichtbaren Bildbereichs\nin der 100%-Ansicht an.\n\n<50: Sehr wenig Rauschen\n50 - 100: Wenig Rauschen\n100 - 300: Durchschnittliches Rauschen\n>300: Hohes Rauschen\n\nDie Werte unterscheiden sich im L*a*b*- und RGB-Modus.\nDie RGB-Werte sind ungenauer, da der RGB-Modus\nLuminanz und Chrominanz nicht komplett trennt.
@@ -2514,7 +2511,7 @@ TP_EXPOSURE_COMPRSHADOWS;Schattenkompression
 TP_EXPOSURE_CONTRAST;Kontrast
 TP_EXPOSURE_CURVEEDITOR1;Tonwertkurve 1
 TP_EXPOSURE_CURVEEDITOR2;Tonwertkurve 2
-TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Um mit den doppelten Tonwert-Kurven die besten Ergenisse zu erzielen, lesen Sie bitte den Abschnitt im Handbuch unter:\nDer Werkzeugkasten > Reiter Belichtung > Belichtungsbereich > Tonwertkurve.
+TP_EXPOSURE_CURVEEDITOR2_TOOLTIP;Um mit den doppelten Tonwert-Kurven die besten Ergenisse zu erzielen, lesen Sie bitte den Abschnitt im Handbuch unter:\nDer Werkzeugkasten > Reiter Belichtung > Tonwertkurven.
 TP_EXPOSURE_EXPCOMP;Belichtungskorrektur
 TP_EXPOSURE_HISTMATCHING;Auto-Tonwertkurve
 TP_EXPOSURE_HISTMATCHING_TOOLTIP;Passt Regler und Kurven (mit Ausnahme der Belichtungskorrektur)\nautomatisch an, um das eingebettete JPEG-Bild zu simulieren.
@@ -2595,8 +2592,8 @@ TP_ICM_APPLYLOOKTABLE_TOOLTIP;Die eingebettete DCP-'Look'-Tabelle verwenden.\nDi
 TP_ICM_BPC;Schwarzpunkt-Kompensation
 TP_ICM_DCPILLUMINANT;Illumination
 TP_ICM_DCPILLUMINANT_INTERPOLATED;Interpoliert
-TP_ICM_DCPILLUMINANT_TOOLTIP;DCP-Illumination auswählen. Vorgabe ist\n'Interpoliert'. Die Einstellung ist nur verfügbar,\nwenn sie vom Eingangsfarbprofil unterstützt\nwird.
-TP_ICM_FBW;Schwarz und Weiß
+TP_ICM_DCPILLUMINANT_TOOLTIP;DCP-Illumination auswählen. Vorgabe ist 'Interpoliert'. Die Einstellung ist nur verfügbar, wenn sie vom Eingangsfarbprofil unterstützt wird.
+TP_ICM_FBW;Schwarz-Weiß
 TP_ICM_ILLUMPRIM_TOOLTIP;Wählen Sie die Lichtart, die den Aufnahmebedingungen am nächsten kommt.\nÄnderungen können nur vorgenommen werden, wenn die Auswahl 'Ziel-Primärfarben' auf 'Benutzerdefiniert (Schieberegler)' eingestellt ist.
 TP_ICM_INPUTCAMERA;Kamera-Standard
 TP_ICM_INPUTCAMERAICC;Kameraspezifisches Profil
@@ -2618,10 +2615,10 @@ TP_ICM_OUTPUTPROFILE;Ausgabeprofil
 TP_ICM_OUTPUTPROFILE_TOOLTIP;Standardmäßig sind alle RTv4- oder RTv2-Profile mit TRC - sRGB: g=2.4 s=12.92 voreingestellt.\n\nMit 'ICC Profile Creator' können Sie v4- oder v2-Profile mit den folgenden Auswahlmöglichkeiten erstellen:\n- Primär: Aces AP0, Aces AP1 , AdobeRGB, Prophoto, Rec2020, sRGB, Widegamut, BestRGB, BetaRGB, BruceRGB, Benutzerdefiniert\n- TRC: BT709, sRGB, linear, Standard g=2,2, Standard g=1,8, Benutzerdefiniert\n- Lichtart: D41, D50, D55 , D60, D65, D80, stdA 2856K
 TP_ICM_PRIMBLU_TOOLTIP;Primäreinstellungen Blau:\nsRGB x=0.15 y=0.06\nAdobe x=0.15 y=0.06\nWidegamut x=0.157 y=0.018\nRec2020 x=0.131 y=0.046\nACES P1 x=0.128 y= 0.044\nACES P0 x=0.0001 y=-0.077\nProphoto x=0.0366 y=0.0001\nBruceRGB x=0.15 y=0.06\nBeta RGB x=0.1265 y=0.0352\nBestRGB x=0.131 y=0.046 
 TP_ICM_PRIMGRE_TOOLTIP;Primäreinstellungen Grün:\nsRGB x=0.3 y=0.6\nAdobe x=0.21 y=0.71\nWidegamut x=0.115 y=0.826\nRec2020 x=0.17 y=0.797\nACES P1 x=0.165 y= 0.83\nACES P0 x=0.0 y=1.0\nProphoto x=0.1596 y=0.8404\nBruceRGB x=0.28 y=0.65\nBeta RGB x=0.1986 y=0.7551\nBest RGB x=0.2150 0.7750 
-TP_ICM_PRIMILLUM_TOOLTIP;Sie können ein Bild von seinem ursprünglichen Modus ('Arbeitsprofil') in einen anderen Modus ('Zielvorwahl') ändern. Wenn Sie einen anderen Farbmodus für ein Bild auswählen, ändern Sie die Farbwerte im Bild dauerhaft.\n\nDas Ändern der 'Primärfarben' ist ziemlich komplex und schwierig zu verwenden. Es erfordert viel Experimentieren.\nEs kann exotische Farbanpassungen als Primärfarben des Kanalmischers vornehmen.\nEs ermöglicht Ihnen, die Kamerakalibrierung mit 'Benutzerdefiniert (Schieberegler)' zu ändern.
+TP_ICM_PRIMILLUM_TOOLTIP;Sie können ein Bild von seinem ursprünglichen Modus 'Arbeitsprofil' in einen anderen Modus 'Ziel-Primärdateien' ändern. Wenn Sie für ein Bild einen anderen Farbmodus auswählen, ändern Sie dauerhaft die Farbwerte im Bild.\n\nDas Ändern der 'Primärfarben' ist ziemlich komplex und schwierig zu verwenden. Es erfordert viel Experimentieren.\nEs ist in der Lage, exotische Farbanpassungen als Kanalmixer-Primärfarben vorzunehmen.\nErmöglicht Ihnen, die Kamerakalibrierung mit Benutzerdefiniert (Schieberegler) zu ändern.
 TP_ICM_PRIMRED_TOOLTIP;Primäreinstellungen Rot:\nsRGB x=0.64 y=0.33\nAdobe x=0.64 y=0.33\nWidegamut x=0.735 y=0.265\nRec2020 x=0.708 y=0.292\nACES P1 x=0.713 y= 0.293\nACES P0 x=0.7347 y=0.2653\nProphoto x=0.7347 y=0.2653\nBruceRGB x=0.64 y=0.33\nBeta RGB x=0.688 y=0.3112\nBestRGB x=0.7347 y=0.2653
 TP_ICM_PROFILEINTENT;Wiedergabe
-TP_ICM_REDFRAME;Benutzerdefinierte Voreinstellungen
+TP_ICM_REDFRAME;Benutzerdefinierte Einstellungen
 TP_ICM_SAVEREFERENCE;Referenzbild speichern
 TP_ICM_SAVEREFERENCE_APPLYWB;Weißabgleich anwenden
 TP_ICM_SAVEREFERENCE_APPLYWB_TOOLTIP;Um ICC-Profile zu erstellen, den Weißabgleich beim Speichern anwenden. Um DCP-Profile zu erstellen, den Weißabgleich NICHT beim Speichern anwenden.
@@ -2694,18 +2691,18 @@ TP_LABCURVE_CURVEEDITOR_CC_RANGE1;Neutral
 TP_LABCURVE_CURVEEDITOR_CC_RANGE2;Matt
 TP_LABCURVE_CURVEEDITOR_CC_RANGE3;Pastell
 TP_LABCURVE_CURVEEDITOR_CC_RANGE4;Gesättigt
-TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromatizität als Funktion der Chromatizität C=f(C)
+TP_LABCURVE_CURVEEDITOR_CC_TOOLTIP;Chromatizität als Funktion der Chromatizität C=f(C).
 TP_LABCURVE_CURVEEDITOR_CH;CH
-TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromatizität als Funktion des Farbtons C=f(H)
+TP_LABCURVE_CURVEEDITOR_CH_TOOLTIP;Chromatizität als Funktion des Farbtons C=f(H).
 TP_LABCURVE_CURVEEDITOR_CL;CL
-TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromatizität als Funktion der Luminanz C=f(L)
+TP_LABCURVE_CURVEEDITOR_CL_TOOLTIP;Chromatizität als Funktion der Luminanz C=f(L).
 TP_LABCURVE_CURVEEDITOR_HH;HH
-TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Farbton als Funktion des Farbtons H=f(H)
+TP_LABCURVE_CURVEEDITOR_HH_TOOLTIP;Farbton als Funktion des Farbtons H=f(H).
 TP_LABCURVE_CURVEEDITOR_LC;LC
-TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminanz als Funktion der Chromatizität L=f(C)
+TP_LABCURVE_CURVEEDITOR_LC_TOOLTIP;Luminanz als Funktion der Chromatizität L=f(C).
 TP_LABCURVE_CURVEEDITOR_LH;LH
-TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminanz als Funktion des Farbtons L=f(H)
-TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminanz als Funktion der Luminanz L=f(L)
+TP_LABCURVE_CURVEEDITOR_LH_TOOLTIP;Luminanz als Funktion des Farbtons L=f(H).
+TP_LABCURVE_CURVEEDITOR_LL_TOOLTIP;Luminanz als Funktion der Luminanz L=f(L).
 TP_LABCURVE_LABEL;L*a*b* - Anpassungen
 TP_LABCURVE_LCREDSK;LC-Kurve auf Hautfarbtöne beschränken
 TP_LABCURVE_LCREDSK_TOOLTIP;Wenn aktiviert, wird die LC-Kurve auf\nHautfarbtöne beschränkt.\nWenn deaktiviert, wird die LC-Kurve auf\nalle Farbtöne angewendet.
@@ -2742,7 +2739,7 @@ TP_LOCALLAB_AUTOGRAYCIE;Automatisch
 TP_LOCALLAB_AVOID;vermeide Farbverschiebungen
 TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Passt Farben an den Arbeitsfarbraum an und wendet die Munsell-Korrektur an (Uniform Perceptual Lab).\nMunsell-Korrektur ist deaktiviert wenn Jz oder CAM16 angewandt wird.
 TP_LOCALLAB_AVOIDMUN;Nur Munsell-Korrektur
-TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell-Korrektur ist deaktiviert, wenn Jz or CAM16 angewandt wird
+TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell-Korrektur ist deaktiviert, wenn Jz or CAM16 angewandt wird.
 TP_LOCALLAB_AVOIDRAD;Radius
 TP_LOCALLAB_BALAN;ab-L Balance (ΔE)
 TP_LOCALLAB_BALANEXP;Laplace Balance
@@ -2823,7 +2820,7 @@ TP_LOCALLAB_CIEMODE_TM;Tone-Mapping
 TP_LOCALLAB_CIEMODE_TOOLTIP;Im Standardmodus wird CIECAM am Ende des Prozesses hinzugefügt. 'Maske und Anpassungen' und 'Wiederherstellung auf Luminanzmaske' stehen für 'CAM16 und JzCzHz' zur Verfügung.\nAuf Wunsch kann CIECAM in andere Werkzeuge (TM, Wavelet, Dynamik, LOG-Kodierung) integriert werden. Das Ergebnis dieser Werkzeuge wird sich von denen ohne CIECAM unterscheiden. In diesem Modus können auch 'Maske und Anpassungen' und 'Wiederherstellung auf Luminanzmaske' angewandt werden.
 TP_LOCALLAB_CIEMODE_WAV;Wavelet
 TP_LOCALLAB_CIETOOLEXP;Kurven
-TP_LOCALLAB_CIE_TOOLNAME;CIECAM (CAM16 & JzCzHz)
+TP_LOCALLAB_CIE_TOOLNAME;Farberscheinung (Cam16 & JzCzHz)
 TP_LOCALLAB_CIRCRADIUS;Spot-Größe
 TP_LOCALLAB_CIRCRAD_TOOLTIP;Die Spot-Größe bestimmt die Referenzen des RT-Spots, die für die Formerkennung nützlich sind (Farbton, Luma, Chroma, Sobel).\nNiedrige Werte können für die Bearbeitung kleiner Flächen und Strukturen nützlich sein.\nHohe Werte können für die Behandlung von größeren Flächen oder auch Haut nützlich sein.
 TP_LOCALLAB_CLARICRES;Chroma zusammenführen
@@ -3159,10 +3156,10 @@ TP_LOCALLAB_MASKLNOISELOW;In dunklen und hellen Bereichen verstärken
 TP_LOCALLAB_MASKLOWTHRESCB_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter der Detailebenenkontraste (nur Luminanz) nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Einstellungen des Detailebenenkontrastes geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius', 'Gamma', 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
 TP_LOCALLAB_MASKLOWTHRESC_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch 'Farbe- und Licht'-Einstellungen geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Strukturmaske' , 'Unschärfemaske', 'Glättradius', 'Gamma', 'Steigung', 'Kontrastkurve', 'Lokaler Kontrast (Wavelets)'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
 TP_LOCALLAB_MASKLOWTHRESD_TOOLTIP;Die Rauschreduzierung wird bei der Einstellung des Schwellenwertes schrittweise von 0% auf 100% beim maximalen Schwarzwert (wie von der Maske festgelegt) erhöht.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Strukturmaske', 'Glättradius', 'Gamma', 'Steigung', 'Kontrastkurve' und ' Lokaler Kontrast(Wavelet)'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass in den 'Einstellungen' Hintergrundfarbmaske = 0 gesetzt ist.
-TP_LOCALLAB_MASKLOWTHRESE_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte wieder hergestellt werden, bevor sie durch die 'Dynamik und Belichtung'-Einstellungen geändert werden.\nSie können die Grauwerte mit verschiedenen Werkzeugen in ‘Maske und Anpassungen’ ändern: 'Glättradius', 'Gamma', 'Steigung‘ und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
+TP_LOCALLAB_MASKLOWTHRESE_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte wieder hergestellt werden, bevor sie durch die 'Dynamik und Belichtung'-Einstellungen geändert werden.\nSie können die Grauwerte mit verschiedenen Werkzeugen in 'Maske und Anpassungen' ändern: 'Glättradius', 'Gamma', 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
 TP_LOCALLAB_MASKLOWTHRESL_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Einstellungen der 'LOG-Kodierung' geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
 TP_LOCALLAB_MASKLOWTHRESRETI_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer Retinex-Parameter (nur Luminanz) nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Retinex-Einstellungen geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius', 'Gamma', 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
-TP_LOCALLAB_MASKLOWTHRESS_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte wieder hergestellt werden, bevor sie durch die 'Schatten - Lichter'-Einstellungen geändert werden.\n Sie können die Grauwerte mit verschiedenen Werkzeugen in 'Maske und Anpassungen' ändern: 'Glättradius', 'Gamma', 'Steigung‘ und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
+TP_LOCALLAB_MASKLOWTHRESS_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte wieder hergestellt werden, bevor sie durch die 'Schatten - Lichter'-Einstellungen geändert werden.\n Sie können die Grauwerte mit verschiedenen Werkzeugen in 'Maske und Anpassungen' ändern: 'Glättradius', 'Gamma', 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
 TP_LOCALLAB_MASKLOWTHRESTM_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die 'Tone-Mapping'-Einstellungen geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius', 'Gamma' , 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
 TP_LOCALLAB_MASKLOWTHRESVIB_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die Einstellungen für 'Farbtemperatur' geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius', 'Gamma', 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
 TP_LOCALLAB_MASKLOWTHRESWAV_TOOLTIP;Dunklere Tonwertgrenze, unterhalb derer die Parameter nach und nach auf ihre ursprünglichen Werte zurückgesetzt werden, bevor sie durch die 'Kontrast- und Wavelet'-Einstellungen geändert werden.\nSie können bestimmte Werkzeuge in 'Maske und Anpassungen' verwenden, um die Graustufen zu ändern: 'Glättradius', 'Gamma', 'Steigung' und 'Kontrastkurve'.\nVerwenden Sie einen 'feststellbaren Farbwähler' auf der Maske, um zu sehen, welche Bereiche betroffen sind. Stellen Sie sicher, dass Sie in den Einstellungen 'Hintergrundfarbmaske' = 0 festlegen.
@@ -3180,7 +3177,6 @@ TP_LOCALLAB_MASKRESWAV_TOOLTIP;Wird verwendet, um den Effekt der Einstellungen f
 TP_LOCALLAB_MASKUNUSABLE;Maske deaktiviert (siehe Maske u. Anpassungen)
 TP_LOCALLAB_MASKUSABLE;Maske aktiviert (siehe Maske u. Anpassungen)
 TP_LOCALLAB_MASK_TOOLTIP;Sie können mehrere Masken für ein Werkzeug aktivieren, indem Sie ein anderes Werkzeug aktivieren und nur die Maske verwenden (setzen Sie die Werkzeugregler auf 0).\n\nSie können den RT-Spot auch duplizieren und nahe am ersten Punkt platzieren. Die kleinen Abweichungen in den Punktreferenzen ermöglichen Feineinstellungen.
-TP_LOCALLAB_MED;Medium
 TP_LOCALLAB_MEDIAN;Median niedrig
 TP_LOCALLAB_MEDIANITER_TOOLTIP;Anzahl der aufeinanderfolgenden Iterationen, die vom Medianfilter ausgeführt werden.
 TP_LOCALLAB_MEDIAN_TOOLTIP;Sie können Medianwerte im Bereich von 3 x 3 bis 9 x 9 Pixel auswählen. Höhere Werte erhöhen die Rauschreduzierung und Unschärfe.
@@ -3504,7 +3500,7 @@ TP_LOCALLAB_WAVGRAD_TOOLTIP;Anpassen des lokalen Kontrasts entsprechend einem ge
 TP_LOCALLAB_WAVHUE_TOOLTIP;Ermöglicht das Verringern oder Erhöhen der Rauschreduzierung basierend auf dem Farbton.
 TP_LOCALLAB_WAVLEV;Unschärfe nach Ebene
 TP_LOCALLAB_WAVMASK;Wavelets
-TP_LOCALLAB_WAVMASK_TOOLTIP;Verwendet Wavelets, um den lokalen Kontrast der Maske zu ändern und die Struktur (Haut, Gebäude ...) zu verstärken oder zu reduzieren.
+TP_LOCALLAB_WAVMASK_TOOLTIP;Verwendet Wavelets, um den lokalen Kontrast der Maske zu ändern und die Struktur (Haut, Gebäude, etc.) zu verstärken oder zu reduzieren.
 TP_LOCALLAB_WEDIANHI;Median hoch
 TP_LOCALLAB_WHITE_EV;Weiß-Ev
 TP_LOCALLAB_ZCAMFRA;ZCAM-Bildanpassungen
@@ -4154,5 +4150,3 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Ausschnitt an Bildschirm anpassen.\nTaste: <b>f</b>
 ZOOMPANEL_ZOOMFITSCREEN;An Bildschirm anpassen.\nTaste: <b>Alt</b> + <b>f</b>
 ZOOMPANEL_ZOOMIN;Hineinzoomen\nTaste: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Herauszoomen\nTaste: <b>-</b>
-//HISTORY_MSG_1099;(Lokal) - Hz(Hz)-Kurve
-
