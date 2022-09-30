@@ -1568,7 +1568,7 @@ HISTORY_MSG_TRANS_METHOD;(Transformieren - Objektivkorrektur)\nMethode
 HISTORY_MSG_WAVBALCHROM;(Erweitert - Wavelet)\nRauschreduzierung\nFarb-Equalizer
 HISTORY_MSG_WAVBALLUM;(Erweitert - Wavelet)\nRauschreduzierung\nEqualizer Luminanz
 HISTORY_MSG_WAVBL;(Erweitert - Wavelet)\nUnschärfeebenen
-HISTORY_MSG_WAVCHR;(Erweitert - Wavelet\nUnschärfeebenen\nChroma-Unschärfe 
+HISTORY_MSG_WAVCHR;(Erweitert - Wavelet)\nUnschärfeebenen\nChroma-Unschärfe 
 HISTORY_MSG_WAVCHROMCO;(Erweitert - Wavelet)\nRauschreduzierung\nChrominanz grob
 HISTORY_MSG_WAVCHROMFI;(Erweitert - Wavelet)\nRauschreduzierung\nChrominanz fein
 HISTORY_MSG_WAVCLARI;(Erweitert - Wavelet)\nSchärfemaske und Klarheit
@@ -2246,10 +2246,10 @@ TP_COLORAPP_ALGO_TOOLTIP;Auswahl zwischen Parameter-Teilmengen\nund allen Parame
 TP_COLORAPP_BADPIXSL;Hot-/Bad-Pixelfilter
 TP_COLORAPP_BADPIXSL_TOOLTIP;Unterdrückt Hot-/Dead-Pixel (hell gefärbt).\n0 = Kein Effekt\n1 = Median\n2 = Gaussian\nAlternativ kann das Bild angepasst werden, um sehr dunkle Schatten zu vermeiden.\n\nDiese Artefakte sind auf Einschränkungen von CIECAM02 zurückzuführen.
 TP_COLORAPP_BRIGHT;Helligkeit (Q)
-TP_COLORAPP_BRIGHT_TOOLTIP;Helligkeit in CIECAM berücksichtigt die Weißintensität.Sie unterscheidet sich von L*a*b* und RGB-Helligkeit.
+TP_COLORAPP_BRIGHT_TOOLTIP;Helligkeit in CIECAM berücksichtigt die Weißintensität. Sie unterscheidet sich von L*a*b* und RGB-Helligkeit.
 TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;Bei manueller Einstellung werden Werte über 65 empfohlen.
 TP_COLORAPP_CATCLASSIC;Klassisch
-TP_COLORAPP_CATMET_TOOLTIP;Klassisch - traditionelle CIECAM-Berechnung. Die Transformationen der chromatischen Adaption werden separat auf 'Szenenbedingungen' und 'Grundlichtart' einerseits und auf 'Grundlichtart' und 'Betrachtungsbedingungen' andererseits angewandt.\n\nSymmetrisch - Die chromatische Anpassung basiert auf dem Weißabgleich. Die Einstellungen 'Szenenbedingungen', 'Bildeinstellungen' und 'Betrachtungsbedingungen' werden neutralisiert.\n\nGemischt - Wie die Option 'Klassisch', aber in diesem Fall basiert die chromatische Anpassung auf dem Weißabgleich.
+TP_COLORAPP_CATMET_TOOLTIP;Klassisch - traditionelle CIECAM-Berechnung. Die Transformationen der chromatischen Adaption werden separat auf 'Szenenbedingungen' und 'Grundlichtart' einerseits und auf 'Grundlichtart' und 'Betrachtungsbedingungen' andererseits angewendet.\n\nSymmetrisch - Die chromatische Anpassung basiert auf dem Weißabgleich. Die Einstellungen 'Szenenbedingungen', 'Bildeinstellungen' und 'Betrachtungsbedingungen' werden neutralisiert.\n\nGemischt - Wie die Option 'Klassisch', aber in diesem Fall basiert die chromatische Anpassung auf dem Weißabgleich.
 TP_COLORAPP_CATMOD;Modus
 TP_COLORAPP_CATSYMGEN;Automatisch Symmetrisch
 TP_COLORAPP_CATSYMSPE;Gemischt
@@ -2271,7 +2271,7 @@ TP_COLORAPP_CURVEEDITOR2_TOOLTIP;Gleiche Verwendung wie bei der ersten Belichtun
 TP_COLORAPP_CURVEEDITOR3;Farbkurve
 TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Korrigiert Buntheit, Sättigung oder Farbigkeit.\n\nZeigt das Histogramm der Chromatizität (L*a*b* ) VOR den CIECAM-Änderungen an.\nWenn 'CIECAM-Ausgabe-Histogramm in Kurven anzeigen' aktiviert ist, wird das Histogramm von C, S oder M NACH den CIECAM-Änderungen angezeigt.\n\nC, S und M werden nicht im Haupt-Histogramm angezeigt.\nFür die endgültige Ausgabe verwenden Sie das Haupt-Histogramm.
 TP_COLORAPP_DATACIE;CIECAM-Ausgabe-Histogramm in CAL-Kurven anzeigen
-TP_COLORAPP_DATACIE_TOOLTIP;Beeinflusst die Histogramme in FuB. Beeinflusst nicht das Haupthistogramm von RawTherapee.\n\nAktiviert: zeigt ungefähre Werte für J und C, S oder M NACH den CIECAM-Anpassungen.\nDeaktiviert: zeigt L*a*b*-Werte VOR den CIECAM-Anpassungen.
+TP_COLORAPP_DATACIE_TOOLTIP;Beeinflusst die Histogramme in FuB. Beeinflusst nicht das Haupt-Histogramm von RawTherapee.\n\nAktiviert: zeigt ungefähre Werte für J und C, S oder M NACH den CIECAM-Anpassungen.\nDeaktiviert: zeigt L*a*b*-Werte VOR den CIECAM-Anpassungen.
 TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 ist eine Methode, die die Werte eines Bildes, dessen Weißpunkt der einer gegebenen Lichtart (z.B. D65) entspricht, in Werte umwandelt, deren Weißpunkt einer anderen Lichtart entspricht (z.B. D50 oder D55).
 TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02/16 ist eine Methode, die die Werte eines Bildes, dessen Weißpunkt der einer gegebenen Lichtart (z.B. D50) entspricht, in Werte umwandelt, deren Weißpunkt einer anderen Lichtart entspricht (z.B. D75).
 TP_COLORAPP_FREE;Farbtemperatur + Tönung + CAT02/16 + [Ausgabe]
@@ -2370,7 +2370,7 @@ TP_COLORTONING_LUMA;Luminanz
 TP_COLORTONING_LUMAMODE;Luminanz schützen
 TP_COLORTONING_LUMAMODE_TOOLTIP;Wenn aktiviert, wird die Luminanz der Farben Rot, Grün, Cyan, Blau... geschützt.
 TP_COLORTONING_METHOD;Methode
-TP_COLORTONING_METHOD_TOOLTIP;L*a*b*-Überlagerung, RGB-Regler und RGB-Kurven verwenden eine interpolierte Farbüberlagerung.\n\nFarbausgleich (Schatten/Mitten/Lichter) und Sättigung (2-Farben) verwenden direkte Farben.\n\Das Schwarz-Weiß-Werkzeug kann aktiviert werden, wenn eine beliebige Farbtönungsmethode verwendet wird, die eine Farbtönung ermöglicht.
+TP_COLORTONING_METHOD_TOOLTIP;L*a*b*-Überlagerung, RGB-Regler und RGB-Kurven verwenden eine interpolierte Farbüberlagerung.\n\nFarbausgleich (Schatten/Mitten/Lichter) und Sättigung (2-Farben) verwenden direkte Farben.\nDas Schwarz-Weiß-Werkzeug kann aktiviert werden, wenn eine beliebige Farbtönungsmethode verwendet wird, die eine Farbtönung ermöglicht.
 TP_COLORTONING_MIDTONES;Mitten
 TP_COLORTONING_NEUTRAL;Regler zurücksetzen
 TP_COLORTONING_NEUTRAL_TOOLTIP;Alle Werte auf Standard zurücksetzen.\n(Schatten, Mitten, Lichter)
@@ -2431,7 +2431,7 @@ TP_DIRPYRDENOISE_CHROMINANCE_MANUAL;Benutzerdefiniert
 TP_DIRPYRDENOISE_CHROMINANCE_MASTER;Chrominanz (Master)
 TP_DIRPYRDENOISE_CHROMINANCE_METHOD;Methode
 TP_DIRPYRDENOISE_CHROMINANCE_METHODADVANCED_TOOLTIP;<b>Benutzerdefiniert:</b>\nManuelle Anpassung der Chrominanz-Rauschreduzierung.\n\n<b>Automatisch Global:</b>\nEs werden 9 Zonen für die Berechnung der Chrominanz-\nRauschreduzierung verwendet.\n\n<b>Vorschau:</b>\nNur der sichbare Teil des Bildes wird für die Berechnung\nder Chrominanz-Rauschreduzierung verwendet.
-TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP;<b>Benutzerdefiniert:</b>\nManuelle Anpassung der Chrominanz-Rauschreduzierung.\n\n<b>Automatisch Global:</b>\nEs werden 9 Zonen für die Berechnung der Chrominanz-Rauschreduzierung verwendet.\n\n<b>Auto-Multizonen:</b>\nKeine Voransicht - wird erst beim Speichern angewendet. InAbhängig von der Bildgröße, wird das Bild in ca. 10 bis 70 Kacheln aufgeteilt. Für jede Kachel wird die Chrominanz-auschreduzierung individuell berechnet.\n\n<b>Vorschau:</b>\nNur der sichtbare Teil des Bildes wird für die Berechnung der Chrominanz-Rauschreduzierung verwendet.
+TP_DIRPYRDENOISE_CHROMINANCE_METHOD_TOOLTIP;<b>Benutzerdefiniert:</b>\nManuelle Anpassung der Chrominanz-Rauschreduzierung.\n\n<b>Automatisch Global:</b>\nEs werden 9 Zonen für die Berechnung der Chrominanz-Rauschreduzierung verwendet.\n\n<b>Auto-Multizonen:</b>\nKeine Voransicht - wird erst beim Speichern angewendet.\nIn Abhängigkeit von der Bildgröße, wird das Bild in ca. 10 bis 70 Kacheln aufgeteilt. Für jede Kachel wird die Chrominanz-Rauschreduzierung individuell berechnet.\n\n<b>Vorschau:</b>\nNur der sichtbare Teil des Bildes wird für die Berechnung der Chrominanz-Rauschreduzierung verwendet.
 TP_DIRPYRDENOISE_CHROMINANCE_PMZ;Vorschau
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEW;Vorschau
 TP_DIRPYRDENOISE_CHROMINANCE_PREVIEWRESIDUAL_INFO_TOOLTIP;Zeigt das Restrauschen des sichtbaren Bildbereichs\nin der 100%-Ansicht an.\n\n<50: Sehr wenig Rauschen\n50 - 100: Wenig Rauschen\n100 - 300: Durchschnittliches Rauschen\n>300: Hohes Rauschen\n\nDie Werte unterscheiden sich im L*a*b*- und RGB-Modus.\nDie RGB-Werte sind ungenauer, da der RGB-Modus\nLuminanz und Chrominanz nicht komplett trennt.
@@ -2531,7 +2531,7 @@ TP_FILMNEGATIVE_BLUE;Blauverhältnis
 TP_FILMNEGATIVE_BLUEBALANCE;Balance Kalt/Warm
 TP_FILMNEGATIVE_COLORSPACE;Farbraum
 TP_FILMNEGATIVE_COLORSPACE_INPUT;Eingangsfarbraum
-TP_FILMNEGATIVE_COLORSPACE_TOOLTIP;Wählen Sie den Farbraum aus, der verwendet werden soll, um die Negativ-Umkehrung durchzuführen:\n<b>Eingangsfarbraum</b>: Führt die Umkehrung durch, bevor das Eingangsprofil angewendet wird, wie in den vorherigen Versionen von RT.\n<b>Arbeitsfarbraum< /b>: Führt die Umkehrung nach dem Eingabeprofil durch, wobei das aktuell ausgewählte Arbeitsprofil angewandt wird.
+TP_FILMNEGATIVE_COLORSPACE_TOOLTIP;Wählen Sie den Farbraum aus, der verwendet werden soll, um die Negativ-Umkehrung durchzuführen:\n<b>Eingangsfarbraum</b>: Führt die Umkehrung durch, bevor das Eingangsprofil angewendet wird, wie in den vorherigen Versionen von RT.\n<b>Arbeitsfarbraum< /b>: Führt die Umkehrung nach dem Eingabeprofil durch, wobei das aktuell ausgewählte Arbeitsprofil angewendet wird.
 TP_FILMNEGATIVE_COLORSPACE_WORKING;Arbeitsfarbraum
 TP_FILMNEGATIVE_GREEN;Bezugsexponent
 TP_FILMNEGATIVE_GREENBALANCE;Balance Magenta/Grün
@@ -2737,9 +2737,9 @@ TP_LOCALLAB_ARTIF_TOOLTIP;Schwellenwert Bereich ΔE erhöht den Anwendungsbereic
 TP_LOCALLAB_AUTOGRAY;Automatisch mittlere Luminanz (Yb%)
 TP_LOCALLAB_AUTOGRAYCIE;Automatisch
 TP_LOCALLAB_AVOID;vermeide Farbverschiebungen
-TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Passt Farben an den Arbeitsfarbraum an und wendet die Munsell-Korrektur an (Uniform Perceptual Lab).\nMunsell-Korrektur ist deaktiviert wenn Jz oder CAM16 angewandt wird.
+TP_LOCALLAB_AVOIDCOLORSHIFT_TOOLTIP;Passt Farben an den Arbeitsfarbraum an und wendet die Munsell-Korrektur an (Uniform Perceptual Lab).\nMunsell-Korrektur ist deaktiviert wenn Jz oder CAM16 angewendet wird.
 TP_LOCALLAB_AVOIDMUN;Nur Munsell-Korrektur
-TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell-Korrektur ist deaktiviert, wenn Jz or CAM16 angewandt wird.
+TP_LOCALLAB_AVOIDMUN_TOOLTIP;Munsell-Korrektur ist deaktiviert, wenn Jz or CAM16 angewendet wird.
 TP_LOCALLAB_AVOIDRAD;Radius
 TP_LOCALLAB_BALAN;ab-L Balance (ΔE)
 TP_LOCALLAB_BALANEXP;Laplace Balance
@@ -2817,7 +2817,7 @@ TP_LOCALLAB_CIEMODE;Werkzeugposition ändern
 TP_LOCALLAB_CIEMODE_COM;Standard
 TP_LOCALLAB_CIEMODE_DR;Dynamikbereich
 TP_LOCALLAB_CIEMODE_TM;Tone-Mapping
-TP_LOCALLAB_CIEMODE_TOOLTIP;Im Standardmodus wird CIECAM am Ende des Prozesses hinzugefügt. 'Maske und Anpassungen' und 'Wiederherstellung auf Luminanzmaske' stehen für 'CAM16 und JzCzHz' zur Verfügung.\nAuf Wunsch kann CIECAM in andere Werkzeuge (TM, Wavelet, Dynamik, LOG-Kodierung) integriert werden. Das Ergebnis dieser Werkzeuge wird sich von denen ohne CIECAM unterscheiden. In diesem Modus können auch 'Maske und Anpassungen' und 'Wiederherstellung auf Luminanzmaske' angewandt werden.
+TP_LOCALLAB_CIEMODE_TOOLTIP;Im Standardmodus wird CIECAM am Ende des Prozesses hinzugefügt. 'Maske und Anpassungen' und 'Wiederherstellung auf Luminanzmaske' stehen für 'CAM16 und JzCzHz' zur Verfügung.\nAuf Wunsch kann CIECAM in andere Werkzeuge (TM, Wavelet, Dynamik, LOG-Kodierung) integriert werden. Das Ergebnis dieser Werkzeuge wird sich von denen ohne CIECAM unterscheiden. In diesem Modus können auch 'Maske und Anpassungen' und 'Wiederherstellung auf Luminanzmaske' angewendet werden.
 TP_LOCALLAB_CIEMODE_WAV;Wavelet
 TP_LOCALLAB_CIETOOLEXP;Kurven
 TP_LOCALLAB_CIE_TOOLNAME;Farberscheinung (Cam16 & JzCzHz)
@@ -2915,7 +2915,7 @@ TP_LOCALLAB_EV_VIS_ALL;Alle zeigen
 TP_LOCALLAB_EXCLUF;Ausschließend
 TP_LOCALLAB_EXCLUF_TOOLTIP;Der 'Ausschlussmodus' verhindert, dass benachbarte Punkte bestimmte Teile des Bildes beeinflussen. Durch Anpassen von 'Bereich' wird der Farbbereich erweitert.\nSie können einem Ausschluss-Spot auch Werkzeuge hinzufügen und diese auf die gleiche Weise wie für einen normalen Punkt verwenden.
 TP_LOCALLAB_EXCLUTYPE;Art des Spots
-TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Der normale Spot verwendet rekursive Daten.\n\nDer ausschließende Spot reinitialisiert alle lokalen Anpassungen.\nEr kann ganz oder partiell angewandt werden, um vorherige lokale Anpassungen zu relativieren oder zurückzusetzen.\n\n'Ganzes Bild' erlaubt lokale Anpassungen auf das gesamte Bild.\nDie RT Spot-Begrenzung wird außerhalb der Vorschau gesetzt.\nDer Übergangswert wird auf 100 gesetzt.\nMöglicherweise muss der RT-Spot neu positioniert oder in der Größe angepasst werden, um das erwünschte Ergebnis zu erzielen.\nAchtung: Die Anwendung von Rauschreduzierung, Wavelet oder schnelle Fouriertransformation im 'Ganzes Bild-Modus' benötigt viel Speicher und Rechenleistung und könnte bei schwachen Systemen zu unerwünschtem Abbruch oder Abstürzen führen.
+TP_LOCALLAB_EXCLUTYPE_TOOLTIP;Der normale Spot verwendet rekursive Daten.\n\nDer ausschließende Spot reinitialisiert alle lokalen Anpassungen.\nEr kann ganz oder partiell angewendet werden, um vorherige lokale Anpassungen zu relativieren oder zurückzusetzen.\n\n'Ganzes Bild' erlaubt lokale Anpassungen auf das gesamte Bild.\nDie RT Spot-Begrenzung wird außerhalb der Vorschau gesetzt.\nDer Übergangswert wird auf 100 gesetzt.\nMöglicherweise muss der RT-Spot neu positioniert oder in der Größe angepasst werden, um das erwünschte Ergebnis zu erzielen.\nAchtung: Die Anwendung von Rauschreduzierung, Wavelet oder schnelle Fouriertransformation im 'Ganzes Bild-Modus' benötigt viel Speicher und Rechenleistung und könnte bei schwachen Systemen zu unerwünschtem Abbruch oder Abstürzen führen.
 TP_LOCALLAB_EXECLU;Ausschließender Spot
 TP_LOCALLAB_EXFULL;Gesamtes Bild
 TP_LOCALLAB_EXNORM;Normaler Spot
@@ -2936,7 +2936,7 @@ TP_LOCALLAB_EXPLAPGAMM_TOOLTIP;Verändert das Verhalten des Bildes mit wenig ode
 TP_LOCALLAB_EXPLAPLIN_TOOLTIP;Verändert das Verhalten unterbelichteter Bilder indem eine lineare Komponente vor Anwendung der Laplace-Transformation hinzugefügt wird.
 TP_LOCALLAB_EXPLAP_TOOLTIP;Regler nach rechts reduziert schrittweise den Kontrast.
 TP_LOCALLAB_EXPMERGEFILE_TOOLTIP;Ermöglicht die Verwendung von GIMP oder Photoshop(c)-Ebenen-Mischmodi wie Differenz, Multiplikation, Weiches Licht, Überlagerung etc., mit Transparenzkontrolle.\nOriginalbild: Führe aktuellen RT-Spot mit Original zusammen.\nVorheriger Spot: Führe aktuellen RT-Spot mit vorherigem zusammen - bei nur einem vorherigen = Original.\nHintergrund: Führe aktuellen RT-Spot mit einem Farb- oder Luminanzhintergrund zusammen (weniger Möglichkeiten). 
-TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Wendet einen Median-Filter vor der Laplace-Transformation an, um (Rausch-)Artefakte zu vermeiden.\nAlternativ kann das Werkzeug zur Rauschreduzierung angewandt werden.
+TP_LOCALLAB_EXPNOISEMETHOD_TOOLTIP;Wendet einen Median-Filter vor der Laplace-Transformation an, um (Rausch-)Artefakte zu vermeiden.\nAlternativ kann das Werkzeug zur Rauschreduzierung angewendet werden.
 TP_LOCALLAB_EXPOSE;Dynamik und Belichtung
 TP_LOCALLAB_EXPOSURE_TOOLTIP;Anpassung der Belichtung im L*a*b-Raum mittels Laplace PDE-Algorithmus um ΔE zu berücksichtigen und Artefakte zu minimieren.
 TP_LOCALLAB_EXPRETITOOLS;Erweiterte Retinex Werkzeuge
@@ -2947,7 +2947,7 @@ TP_LOCALLAB_FATAMOUNT;Intensität
 TP_LOCALLAB_FATANCHOR;Versatz
 TP_LOCALLAB_FATDETAIL;Detail
 TP_LOCALLAB_FATFRA;Dynamikkompression
-TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal - es wird der Fattal-Algorithmus zur Tonwertkorrektur angewandt.
+TP_LOCALLAB_FATFRAME_TOOLTIP;PDE Fattal - es wird der Fattal-Algorithmus zur Tonwertkorrektur angewendet.
 TP_LOCALLAB_FATLEVEL;Sigma
 TP_LOCALLAB_FATSHFRA;Maske für den Bereich der Dynamikkompression
 TP_LOCALLAB_FEATH_TOOLTIP;Verlaufsbreite als Prozentsatz der Spot-Diagonalen.\nWird von allen Verlaufsfiltern in allen Werkzeugen verwendet.\nKeine Aktion, wenn kein Verlaufsfilter aktiviert wurde.
@@ -2960,8 +2960,8 @@ TP_LOCALLAB_FULLIMAGE;Schwarz-Ev und Weiß-Ev für das gesamte Bild
 TP_LOCALLAB_FULLIMAGELOG_TOOLTIP;Berechnet die Ev-Level für das gesamte Bild.
 TP_LOCALLAB_GAM;Gamma
 TP_LOCALLAB_GAMC;Gamma
-TP_LOCALLAB_GAMCOL_TOOLTIP;Gamma auf Luminanz L*a*b*-Daten anwenden.\nWenn Gamma = 3 wird Luminanz 'linear' angewandt.
-TP_LOCALLAB_GAMC_TOOLTIP;Gamma auf Luminanz L*a*b*-Daten vor und nach der Behandlung von Pyramide 1 und Pyramide 2 anwenden.\nWenn Gamma = 3 wird Luminanz linear angewandt.
+TP_LOCALLAB_GAMCOL_TOOLTIP;Gamma auf Luminanz L*a*b*-Daten anwenden.\nWenn Gamma = 3 wird Luminanz 'linear' angewendet.
+TP_LOCALLAB_GAMC_TOOLTIP;Gamma auf Luminanz L*a*b*-Daten vor und nach der Behandlung von Pyramide 1 und Pyramide 2 anwenden.\nWenn Gamma = 3 wird Luminanz linear angewendet.
 TP_LOCALLAB_GAMFRA;Farbtonkennlinie
 TP_LOCALLAB_GAMM;Gamma
 TP_LOCALLAB_GAMMASKCOL;Gamma
@@ -3171,7 +3171,7 @@ TP_LOCALLAB_MASKRELOG_TOOLTIP;Wird verwendet, um den Effekt der Einstellungen f�
 TP_LOCALLAB_MASKRESCB_TOOLTIP;Wird verwendet, um den Effekt der CBDL-Einstellungen (nur Luminanz) basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb der entsprechenden Schwellenwerte werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die CBDL-Einstellungen geändert werden.\nZwischen diesen beiden Bereichen wird der volle Wert der CBDL-Einstellungen angewendet.
 TP_LOCALLAB_MASKRESH_TOOLTIP;Wird verwendet, um den Effekt der Einstellungen für Schatten/Lichter basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb der entsprechenden Schwellenwerte werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Einstellungen für Schatten/Lichter geändert werden.\nZwischen diesen beiden Bereichen wird der volle Wert der Einstellungen für Schatten/Lichter angewendet.
 TP_LOCALLAB_MASKRESRETI_TOOLTIP;Wird verwendet, um den Effekt der Retinex-Einstellungen (nur Luminanz) basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb der entsprechenden Schwellenwerte werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Retinex-Einstellungen geändert werden.\nZwischen diesen beiden Bereichen wird der volle Wert der Retinex-Einstellungen angewendet.
-TP_LOCALLAB_MASKRESTM_TOOLTIP;Wird verwendet, um den Effekt der Tonwertkorrektur-Einstellungen basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske müssen aktiviert sein, um diese Funktion zu verwenden.\nDie Bereiche 'dunkel' und 'hell' unterhalb des Dunkelschwellenwertes und oberhalb des Helligkeitsschwellenwertes werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Einstellungen der Tonwertkorrektur geändert werden.\nZwischen diesen beiden Bereichen wird der volle Einstellungswert der Tonwertkorrektur angewandt.
+TP_LOCALLAB_MASKRESTM_TOOLTIP;Wird verwendet, um den Effekt der Tonwertkorrektur-Einstellungen basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske müssen aktiviert sein, um diese Funktion zu verwenden.\nDie Bereiche 'dunkel' und 'hell' unterhalb des Dunkelschwellenwertes und oberhalb des Helligkeitsschwellenwertes werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Einstellungen der Tonwertkorrektur geändert werden.\nZwischen diesen beiden Bereichen wird der volle Einstellungswert der Tonwertkorrektur angewendet.
 TP_LOCALLAB_MASKRESVIB_TOOLTIP;Wird verwendet, um den Effekt der Einstellungen für Lebhaftigkeit und Warm/Kalt basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb des entsprechenden Schwellenwertes werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Einstellungen Lebhaftigkeit und Farbtemperatur geändert werden.\nZwischen diesen beiden Bereichen wird der volle Wert der Einstellungen für Lebhaftigkeit und Warm/Kalt angewendet.
 TP_LOCALLAB_MASKRESWAV_TOOLTIP;Wird verwendet, um den Effekt der Einstellungen für lokalen Kontrast und Wavelet basierend auf den in den L(L)- oder LC(H)-Masken (Maske und Anpassungen) enthaltenen Luminanz-Informationen zu modulieren.\nDie L(L)-Maske oder die LC(H)-Maske muss aktiviert sein, um diese Funktion verwenden zu können.\nDie Bereiche 'dunkel' und 'hell' unterhalb und oberhalb der entsprechenden Schwellenwerte werden schrittweise auf ihre ursprünglichen Werte zurückgesetzt, bevor sie durch die Einstellungen für lokalen Kontrast und Wavelet geändert werden. Zwischen diesen beiden Bereichen wird der volle Wert der Einstellungen für lokalen Kontrast und Wavelet angewendet.
 TP_LOCALLAB_MASKUNUSABLE;Maske deaktiviert (siehe Maske u. Anpassungen)
@@ -3221,7 +3221,7 @@ TP_LOCALLAB_MRONE;Keine
 TP_LOCALLAB_MRTHR;Original Bild
 TP_LOCALLAB_MULTIPL_TOOLTIP;Weitbereichs-Toneinstellung: -18 EV bis + 4 EV. Der erste Regler wirkt auf sehr dunkle Töne zwischen -18 EV und -6 EV. Der letzte Regler wirkt auf helle Töne bis zu 4 EV.
 TP_LOCALLAB_NEIGH;Radius
-TP_LOCALLAB_NLDENOISENLGAM_TOOLTIP;Niedrigere Werte bewahren Details und Textur, höhere Werte erhöhen die Rauschunterdrückung.\nIst Gamma = 3, wird Luminanz 'linear' angewandt.
+TP_LOCALLAB_NLDENOISENLGAM_TOOLTIP;Niedrigere Werte bewahren Details und Textur, höhere Werte erhöhen die Rauschunterdrückung.\nIst Gamma = 3, wird Luminanz 'linear' angewendet.
 TP_LOCALLAB_NLDENOISENLPAT_TOOLTIP;Passt die Intensität der Rauschreduzierung an die Größe der zu verarbeitenden Objekte an.
 TP_LOCALLAB_NLDENOISENLRAD_TOOLTIP;Höhere Werte erhöhen die Rauschreduzierung auf Kosten der Verarbeitungszeit.
 TP_LOCALLAB_NLDENOISE_TOOLTIP;'Detailwiederherstellung' basiert auf einer Laplace-Transformation, um einheitliche Bereiche und keine Bereiche mit Details zu erfassen.
@@ -3237,7 +3237,7 @@ TP_LOCALLAB_NOISECHROC_TOOLTIP;Wenn der Wert über Null liegt, ist ein Algorithm
 TP_LOCALLAB_NOISECHRODETAIL;Chrominanz Detailwiederherstellung
 TP_LOCALLAB_NOISECHROFINE;Feine Chrominanz
 TP_LOCALLAB_NOISEGAM;Gamma
-TP_LOCALLAB_NOISEGAM_TOOLTIP;Ist Gamma = 1 wird Luminanz 'Lab' angewandt. Ist Gamma = 3 wird Luminanz 'linear' angewandt.\nNiedrige Werte erhalten Details und Texturen, höhere Werte erhöhen die Rauschminderung.
+TP_LOCALLAB_NOISEGAM_TOOLTIP;Ist Gamma = 1 wird Luminanz 'Lab' angewendet. Ist Gamma = 3 wird Luminanz 'linear' angewendet.\nNiedrige Werte erhalten Details und Texturen, höhere Werte erhöhen die Rauschminderung.
 TP_LOCALLAB_NOISELEQUAL;Equalizer Weiß-Schwarz
 TP_LOCALLAB_NOISELUMCOARSE;Grobe Luminanz
 TP_LOCALLAB_NOISELUMDETAIL;Luminanz Detailwiederherstellung
@@ -3357,7 +3357,7 @@ TP_LOCALLAB_SHOWMASKSOFT_TOOLTIP;Ermöglicht die Visualisierung der verschiedene
 TP_LOCALLAB_SHOWMASKTYP1;Unschärfe-Rauschen
 TP_LOCALLAB_SHOWMASKTYP2;Rauschreduzierung
 TP_LOCALLAB_SHOWMASKTYP3;Unschärfe-Rauschen + Rauschreduzierung
-TP_LOCALLAB_SHOWMASKTYP_TOOLTIP;Kann mit 'Maske und Anpassungen' verwendet werden.\nWenn 'Unschärfe und Rauschen' gewählt wurde, kann die Maske nicht für 'Rauschreduzierung' angewandt werden.\nWenn 'Rauschreduzierung' gewählt wurde, kann die Maske nicht für 'Unschärfe und Rauschen' angewandt werden.\nWenn 'Unschärfe und Rauschen + Rauschreduzierung' gewählt wurde, wird die Maske geteilt. Beachten Sie, dass in diesem Falle die Regler sowohl für 'Unschärfe und Rauschen' und 'Rauschreduzierung' aktiv sind, so dass sich empfiehlt, bei Anpassungen die Option 'Zeige Modifikationen mit Maske' zu verwenden.
+TP_LOCALLAB_SHOWMASKTYP_TOOLTIP;Kann mit 'Maske und Anpassungen' verwendet werden.\nWenn 'Unschärfe und Rauschen' gewählt wurde, kann die Maske nicht für 'Rauschreduzierung' angewendet werden.\nWenn 'Rauschreduzierung' gewählt wurde, kann die Maske nicht für 'Unschärfe und Rauschen' angewendet werden.\nWenn 'Unschärfe und Rauschen + Rauschreduzierung' gewählt wurde, wird die Maske geteilt. Beachten Sie, dass in diesem Falle die Regler sowohl für 'Unschärfe und Rauschen' und 'Rauschreduzierung' aktiv sind, so dass sich empfiehlt, bei Anpassungen die Option 'Zeige Modifikationen mit Maske' zu verwenden.
 TP_LOCALLAB_SHOWMNONE;Anzeige des modifizierten Bildes
 TP_LOCALLAB_SHOWMODIF;Anzeige der modifizierten Bereiche ohne Maske
 TP_LOCALLAB_SHOWMODIF2;Anzeige der modifizierten Bereiche
