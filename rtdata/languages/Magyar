@@ -161,7 +161,6 @@ HISTORY_CUSTOMCURVE;Saját görbe
 HISTORY_FROMCLIPBOARD;Vágólapról
 HISTORY_LABEL;Előzmények
 HISTORY_MSG_1;Kép betöltve
-HISTORY_MSG_2;Beállítások betöltése
 HISTORY_MSG_3;Beállítások változtatása
 HISTORY_MSG_4;Előzményböngészés
 HISTORY_MSG_5;Fényerő
@@ -175,9 +174,6 @@ HISTORY_MSG_12;Auto szint
 HISTORY_MSG_13;Vágás
 HISTORY_MSG_14;Luminancia, fényerő
 HISTORY_MSG_15;Luminancia, kontraszt
-HISTORY_MSG_16;Luminancia, fekete szint
-HISTORY_MSG_17;Luminancia, világos tónusok tömörítése
-HISTORY_MSG_18;Luminancia, sötét tónusok tömörítése
 HISTORY_MSG_19;Luminancia görbe
 HISTORY_MSG_20;Élesítés
 HISTORY_MSG_21;Élesítés sugara
@@ -203,10 +199,6 @@ HISTORY_MSG_40;Fehér árnyalat
 HISTORY_MSG_41;Színeltolás "A"
 HISTORY_MSG_42;Színeltolás "B"
 HISTORY_MSG_43;Luminanciazaj-csökkentés
-HISTORY_MSG_44;Lum. zajcsökkentés sugara
-HISTORY_MSG_45;Lum. zajcsökkentés éltoleranciája
-HISTORY_MSG_46;Színzaj-csökkentés
-HISTORY_MSG_47;Színzaj-csökkentés sugara
 HISTORY_MSG_48;Színzaj-csökkentés éltoleranciája
 HISTORY_MSG_49;Élérzékeny színzaj-csökkentés
 HISTORY_MSG_50;Árnyékok/Fények korrekció
@@ -214,7 +206,6 @@ HISTORY_MSG_51;Fényes részek
 HISTORY_MSG_52;Sötét részek 
 HISTORY_MSG_53;Világos tónustartomány
 HISTORY_MSG_54;Sötét tónustartomány
-HISTORY_MSG_55;Lokális kontraszt
 HISTORY_MSG_56;Árnyékok/Fények sugár
 HISTORY_MSG_57;Durva forgatás
 HISTORY_MSG_58;Vízszintes tükrözés
@@ -226,7 +217,6 @@ HISTORY_MSG_63;Pillanatkép kiválasztása
 HISTORY_MSG_64;Képkivágás
 HISTORY_MSG_65;Kromatikus aberráció korrekciója
 HISTORY_MSG_66;Kiégett részek megmentése
-HISTORY_MSG_67;Kiégett részek visszaállítása
 HISTORY_MSG_68;Kiégett részek algoritmus
 HISTORY_MSG_69;Feldolgozási (munka-) színprofil
 HISTORY_MSG_70;Kimeneti színprofil
@@ -237,12 +227,10 @@ HISTORY_MSG_74;Átméretezés szorzója
 HISTORY_MSG_75;Átméretezés algoritmusa
 HISTORY_MSG_76;EXIF Metaadatok 
 HISTORY_MSG_77;IPTC Metaadatok
-HISTORY_MSG_78;Data specified for resize
 HISTORY_MSG_79;Átméretezés szélesség szerint
 HISTORY_MSG_80;Átméretezés magasság szerint
 HISTORY_MSG_81;Átméretezés engedélyezve
 HISTORY_MSG_82;Megváltozott profil
-HISTORY_MSG_83;Árnyékok/csúcsfények - kiváló minőség
 HISTORY_MSG_84;Perspektívakorrekció
 HISTORY_MSG_85;Wavelet együtthatók
 HISTORY_MSG_86;Wavelet equalizer

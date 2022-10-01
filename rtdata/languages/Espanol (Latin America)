@@ -302,7 +302,6 @@ HISTORY_CUSTOMCURVE;Curva a medida
 HISTORY_FROMCLIPBOARD;Desde el portapapeles
 HISTORY_LABEL;Historial
 HISTORY_MSG_1;Foto abierta
-HISTORY_MSG_2;Perfil Abierto
 HISTORY_MSG_3;Perfil cambiado
 HISTORY_MSG_4;Búsqueda de historial
 HISTORY_MSG_5;Brillo
@@ -316,9 +315,6 @@ HISTORY_MSG_12;Exposición automática
 HISTORY_MSG_13;Recorte de exposición
 HISTORY_MSG_14;Lab - Claridad
 HISTORY_MSG_15;Lab - Contraste
-HISTORY_MSG_16;Luminancia - Negro
-HISTORY_MSG_17;Luminancia - Compr. de luces altas
-HISTORY_MSG_18;Luminancia - Compr. de sombras
 HISTORY_MSG_19;Curva 'L'
 HISTORY_MSG_20;Enfoque
 HISTORY_MSG_21;Enfoque - Radio
@@ -344,10 +340,6 @@ HISTORY_MSG_40;Equilibrio de Blancos - Tinte
 HISTORY_MSG_41;Curva tonal modo 1
 HISTORY_MSG_42;Curva tonal 2
 HISTORY_MSG_43;Curva tonal modo 2
-HISTORY_MSG_44;Red. ruido de lum. - Radio
-HISTORY_MSG_45;Red. ruido de lum. - Tolerancia de Bordes
-HISTORY_MSG_46;Red. ruido de color
-HISTORY_MSG_47;Mezcla luces altas ICC con matriz
 HISTORY_MSG_48;Usar curva de tono DCP
 HISTORY_MSG_49;Iluminante DCP
 HISTORY_MSG_50;Sombras/Luces altas (S/LA)
@@ -355,7 +347,6 @@ HISTORY_MSG_51;S/LA - Luces altas
 HISTORY_MSG_52;S/LA - Sombras
 HISTORY_MSG_53;S/LA - Ancho tonal Luces Altas
 HISTORY_MSG_54;S/LA - Ancho tonal Sombras
-HISTORY_MSG_55;S/LA - Contraste local
 HISTORY_MSG_56;S/LA - Radio
 HISTORY_MSG_57;Rotación basta
 HISTORY_MSG_58;Volteo horizontal
@@ -367,7 +358,6 @@ HISTORY_MSG_63;Marcador seleccionado
 HISTORY_MSG_64;Recortar foto
 HISTORY_MSG_65;Corrección aberraciones cromáticas
 HISTORY_MSG_66;Recuperación de luces altas
-HISTORY_MSG_67;Recuperación de luces altas - Cantidad
 HISTORY_MSG_68;Recuperación de luces altas - Método
 HISTORY_MSG_69;Espacio de color de trabajo
 HISTORY_MSG_70;Espacio de color de salida
@@ -378,12 +368,10 @@ HISTORY_MSG_74;Cambiar tamaño - Escala
 HISTORY_MSG_75;Cambiar tamaño - Método
 HISTORY_MSG_76;Metadatos de Exif
 HISTORY_MSG_77;Metadatos de IPTC
-HISTORY_MSG_78;Datos especificados para cambio tamaño
 HISTORY_MSG_79;Cambiar tamaño - Anchura
 HISTORY_MSG_80;Cambiar tamaño - Altura
 HISTORY_MSG_81;Cambio tamaño activado
 HISTORY_MSG_82;Perfil cambiado
-HISTORY_MSG_83;Sombras/Luces Altas - Enfoque
 HISTORY_MSG_84;Corrección de perspectiva
 HISTORY_MSG_85;Perfil Corrector de Lente
 HISTORY_MSG_86;Curvas RGB - Modo luminosidad

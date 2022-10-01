@@ -250,7 +250,6 @@ HISTORY_CUSTOMCURVE;Standardkurve
 HISTORY_FROMCLIPBOARD;Fra udklipsholder
 HISTORY_LABEL;Historik
 HISTORY_MSG_1;Foto indlæst
-HISTORY_MSG_2;PP3 indlæst
 HISTORY_MSG_3;PP3 ændret
 HISTORY_MSG_4;Historik browsing
 HISTORY_MSG_5;Eksponering - Lyshed
@@ -264,9 +263,6 @@ HISTORY_MSG_12;Eksponering - Autoniveauer
 HISTORY_MSG_13;Eksponering - Klip
 HISTORY_MSG_14;L*a*b* - Lyshed
 HISTORY_MSG_15;L*a*b* - Kontrast
-HISTORY_MSG_16;-
-HISTORY_MSG_17;-
-HISTORY_MSG_18;-
 HISTORY_MSG_19;L*a*b* - L* kurve
 HISTORY_MSG_20;Skærpe
 HISTORY_MSG_21;USM - Radius
@@ -292,10 +288,6 @@ HISTORY_MSG_40;WB - Farvenuance
 HISTORY_MSG_41;Eksponering - Tonekurve 1 mode
 HISTORY_MSG_42;Eksponering - Tonekurve 2
 HISTORY_MSG_43;Eksponering - Tonekurve 2 mode
-HISTORY_MSG_44;Lum. støjreduktionsradius
-HISTORY_MSG_45;Lum. støjreduktion kant tolerance
-HISTORY_MSG_46;Farvestøjreducering
-HISTORY_MSG_47;Bland ICC-højlys med matrix
 HISTORY_MSG_48;DCP - Tonekurve
 HISTORY_MSG_49;DCP lyskilde
 HISTORY_MSG_50;Skygger/Højlys
@@ -303,7 +295,6 @@ HISTORY_MSG_51;S/H - Højlys
 HISTORY_MSG_52;S/H - Skygger
 HISTORY_MSG_53;S/H – Højlysenes tonale bredde
 HISTORY_MSG_54;S/H – Skyggernes tonale bredde
-HISTORY_MSG_55;S/H - Lokal kontrast
 HISTORY_MSG_56;S/H - Radius
 HISTORY_MSG_57;Grov rotation
 HISTORY_MSG_58;Vandret vending
@@ -315,7 +306,6 @@ HISTORY_MSG_63;Snapshot valgt
 HISTORY_MSG_64;Beskær
 HISTORY_MSG_65;CA korrektion
 HISTORY_MSG_66;Eksponering – Højlys rekonstruktion
-HISTORY_MSG_67;Eksponering - HLR mængde
 HISTORY_MSG_68;Eksponering - HLR metode
 HISTORY_MSG_69;Arbejdsfarverum
 HISTORY_MSG_70;Output farverum
@@ -326,12 +316,10 @@ HISTORY_MSG_74;Ændre størrelse - Skala
 HISTORY_MSG_75;Ændre størrelse - Metode
 HISTORY_MSG_76;Exif metadata
 HISTORY_MSG_77;IPTC metadata
-HISTORY_MSG_78;-
 HISTORY_MSG_79;Ændre størrelse - Bredde
 HISTORY_MSG_80;Ændre størrelse - Højde
 HISTORY_MSG_81;Ændre størrelse
 HISTORY_MSG_82;Profil ændret
-HISTORY_MSG_83;S/H - Skærpemaske
 HISTORY_MSG_84;Perspektivkorrektion
 HISTORY_MSG_85;Objektivkorrektion - LCP fil
 HISTORY_MSG_86;RGB Kurver - Luminanstilstand
