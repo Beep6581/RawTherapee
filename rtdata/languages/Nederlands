@@ -266,7 +266,6 @@ HISTORY_CUSTOMCURVE;Handmatig
 HISTORY_FROMCLIPBOARD;Van klembord
 HISTORY_LABEL;Geschiedenis
 HISTORY_MSG_1;Foto geladen
-HISTORY_MSG_2;Profiel geladen
 HISTORY_MSG_3;Profiel aangepast
 HISTORY_MSG_4;Door geschiedenis bladeren
 HISTORY_MSG_5;Helderheid
@@ -280,9 +279,6 @@ HISTORY_MSG_12;Automatische belichting
 HISTORY_MSG_13;Drempel
 HISTORY_MSG_14;L*a*b* - Helderheid
 HISTORY_MSG_15;L*a*b* - Contrast
-HISTORY_MSG_16;-
-HISTORY_MSG_17;-
-HISTORY_MSG_18;-
 HISTORY_MSG_19;L*a*b* - L* curve
 HISTORY_MSG_20;Verscherpen
 HISTORY_MSG_21;OSM - Straal
@@ -308,10 +304,6 @@ HISTORY_MSG_40;Witbalans Groentint
 HISTORY_MSG_41;Tooncurve Mode 1
 HISTORY_MSG_42;Tooncurve 2
 HISTORY_MSG_43;Tooncurve Mode 2
-HISTORY_MSG_44;Lum. Straal ruisond.
-HISTORY_MSG_45;Lum. Randtolerantie ruisond.
-HISTORY_MSG_46;Ruisonderdrukking kleur
-HISTORY_MSG_47;Meng hoge lichten met matrix
 HISTORY_MSG_48;Gebruik DCP's toon curve
 HISTORY_MSG_49;DCP Illuminant
 HISTORY_MSG_50;Schaduwen/hoge lichten
@@ -319,7 +311,6 @@ HISTORY_MSG_51;S/HL - Hoge lichten
 HISTORY_MSG_52;S/HL - Schaduwen
 HISTORY_MSG_53;S/HL - Toonomvang HL.
 HISTORY_MSG_54;S/HL - Toonomvang S.
-HISTORY_MSG_55;S/HL - Lokaal contrast
 HISTORY_MSG_56;S/HL - Straal
 HISTORY_MSG_57;Grof roteren
 HISTORY_MSG_58;Horizontaal spiegelen
@@ -331,7 +322,6 @@ HISTORY_MSG_63;Snapshot
 HISTORY_MSG_64;Bijsnijden
 HISTORY_MSG_65;CA-correctie
 HISTORY_MSG_66;Hoge lichten herstellen
-HISTORY_MSG_67;HL herstellen hoeveelheid
 HISTORY_MSG_68;HL herstellen methode
 HISTORY_MSG_69;Kleurwerkruimte
 HISTORY_MSG_70;Uitvoerkleurruimte
@@ -342,12 +332,10 @@ HISTORY_MSG_74;Schalingsinstelling
 HISTORY_MSG_75;Schalingsmethode
 HISTORY_MSG_76;Exif-metadata
 HISTORY_MSG_77;IPTC-metadata
-HISTORY_MSG_78;Schalen
 HISTORY_MSG_79;Schalen - Breedte
 HISTORY_MSG_80;Schalen - Hoogte
 HISTORY_MSG_81;Schalen geactiveerd
 HISTORY_MSG_82;Profiel veranderd
-HISTORY_MSG_83;S/HL - Verscherpingsmasker
 HISTORY_MSG_84;Perspectiefcorrectie
 HISTORY_MSG_85;Lenscorrectie Profiel
 HISTORY_MSG_86;RGB Curven - Luminos. Mode

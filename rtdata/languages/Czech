@@ -297,7 +297,6 @@ HISTORY_CUSTOMCURVE;Vlastní křivka
 HISTORY_FROMCLIPBOARD;Ze schránky
 HISTORY_LABEL;Historie
 HISTORY_MSG_1;Fotka načtena
-HISTORY_MSG_2;PP3 načten
 HISTORY_MSG_3;PP3 změněn
 HISTORY_MSG_4;Prohlížení historie
 HISTORY_MSG_5;Expozice - Světlost
@@ -311,9 +310,6 @@ HISTORY_MSG_12;Expozice - Automatické úrovně
 HISTORY_MSG_13;Expozice - Oříznutí
 HISTORY_MSG_14;L*a*b* - Světlost
 HISTORY_MSG_15;L*a*b* - Kontrast
-HISTORY_MSG_16;-
-HISTORY_MSG_17;-
-HISTORY_MSG_18;-
 HISTORY_MSG_19;L*a*b* - L* křivka
 HISTORY_MSG_20;Doostření
 HISTORY_MSG_21;Doostření - Poloměr
@@ -339,10 +335,6 @@ HISTORY_MSG_40;VB - Odstín
 HISTORY_MSG_41;Expozice - Tónová křivka - mód 1
 HISTORY_MSG_42;Expozice - Tónová křivka 2
 HISTORY_MSG_43;Expozice - Tónová křivka - mód 2
-HISTORY_MSG_44;Poloměr redukce šumu v jasech
-HISTORY_MSG_45;Okrajová tolerance redukce šumu v jasech
-HISTORY_MSG_46;Redukce barevného šumu
-HISTORY_MSG_47;Smísení ICC světel s matici
 HISTORY_MSG_48;DCP - Tónová křivka
 HISTORY_MSG_49;DCP osvětlení
 HISTORY_MSG_50;Stíny/Světla
@@ -350,7 +342,6 @@ HISTORY_MSG_51;S/S - Světla
 HISTORY_MSG_52;S/S - Stíny
 HISTORY_MSG_53;S/S - Tónový rozsah světel
 HISTORY_MSG_54;S/S - Tónový rozsah stínů
-HISTORY_MSG_55;S/S - Místní kontrast
 HISTORY_MSG_56;S/S - Poloměr
 HISTORY_MSG_57;Hrubé otáčení
 HISTORY_MSG_58;Horizontální překlopení
@@ -362,7 +353,6 @@ HISTORY_MSG_63;Snímek vybrán
 HISTORY_MSG_64;Ořez
 HISTORY_MSG_65;Korekce CA
 HISTORY_MSG_66;Expozice - Rekonstrukce světel
-HISTORY_MSG_67;Expozice - míra HLR
 HISTORY_MSG_68;Expozice - metoda HLR
 HISTORY_MSG_69;Pracovní barevný prostor
 HISTORY_MSG_70;Výstupní barevný prostor
@@ -373,12 +363,10 @@ HISTORY_MSG_74;Změna rozměrů - Míra
 HISTORY_MSG_75;Změna rozměrů - Metoda
 HISTORY_MSG_76;Exif metadata
 HISTORY_MSG_77;IPTC metadata
-HISTORY_MSG_78;-
 HISTORY_MSG_79;Změna velikosti - šířka
 HISTORY_MSG_80;Změna velikosti - délka
 HISTORY_MSG_81;Změna velikosti
 HISTORY_MSG_82;Profil změněn
-HISTORY_MSG_83;S/S - Maska ostrosti
 HISTORY_MSG_84;Korekce perspektivy
 HISTORY_MSG_85;Korekce objektivu - LCP soubor
 HISTORY_MSG_86;RGB křivky - Režim svítivost

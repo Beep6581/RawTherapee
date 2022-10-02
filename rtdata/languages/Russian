@@ -230,7 +230,6 @@ HISTORY_CUSTOMCURVE;Пользовательская кривая
 HISTORY_FROMCLIPBOARD;Из буфера обмена
 HISTORY_LABEL;История
 HISTORY_MSG_1;Фото загружено
-HISTORY_MSG_2;Профиль загружен
 HISTORY_MSG_3;Профиль изменён
 HISTORY_MSG_4;Просмотр истории
 HISTORY_MSG_5;Яркость
@@ -244,9 +243,6 @@ HISTORY_MSG_12;Автоматические уровни
 HISTORY_MSG_13;Обрезка экспозиции
 HISTORY_MSG_14;L*a*b*: Яркость
 HISTORY_MSG_15;L*a*b*: Контраст
-HISTORY_MSG_16;Освещенность: Уровень чёрного
-HISTORY_MSG_17;Освещенность: Сжатие светов
-HISTORY_MSG_18;Освещенность: Сжатие теней
 HISTORY_MSG_19;Кривая 'L'
 HISTORY_MSG_20;Резкость
 HISTORY_MSG_21;Резкость: Радиус
@@ -272,10 +268,6 @@ HISTORY_MSG_40;Баланс белого: оттенок
 HISTORY_MSG_41;Режим тоновой кривой 1
 HISTORY_MSG_42;Тоновая кривая 2
 HISTORY_MSG_43;Режим тоновой кривой 2
-HISTORY_MSG_44;Удаление шума: радиус
-HISTORY_MSG_45;Удаление шума: чувств. к границам
-HISTORY_MSG_46;Удаление цв. шума
-HISTORY_MSG_47;Смешение ICC светов с матрицей
 HISTORY_MSG_48;Использование тональной кривой ICC 
 HISTORY_MSG_49;Источник цвета DCP
 HISTORY_MSG_50;Тени/Света
@@ -283,7 +275,6 @@ HISTORY_MSG_51;Т/С: Света
 HISTORY_MSG_52;Т/С: Тени
 HISTORY_MSG_53;Т/С: Уровень светов
 HISTORY_MSG_54;Т/С: Уровень теней
-HISTORY_MSG_55;Т/С: Локальный контраст
 HISTORY_MSG_56;Т/С: Радиус 
 HISTORY_MSG_57;Грубый поворот
 HISTORY_MSG_58;Горизонтальное отражение
@@ -295,7 +286,6 @@ HISTORY_MSG_63;Снимок выбран
 HISTORY_MSG_64;Кадрирование
 HISTORY_MSG_65;Коррекция ХА
 HISTORY_MSG_66;Восстановление пересветов
-HISTORY_MSG_67;ВП: Величина восстановления
 HISTORY_MSG_68;ВП: Способ восстановления
 HISTORY_MSG_69;Рабочая цветовая модель
 HISTORY_MSG_70;Выходная цветовая модель
@@ -306,12 +296,10 @@ HISTORY_MSG_74;Масштабирование: Величина
 HISTORY_MSG_75;Масштабирование: Способ
 HISTORY_MSG_76;Метаданные Exif
 HISTORY_MSG_77;Метаданные IPTC
-HISTORY_MSG_78;-
 HISTORY_MSG_79;Масштаб: Ширина
 HISTORY_MSG_80;Масштаб: Высота
 HISTORY_MSG_81;Масштабирование
 HISTORY_MSG_82;Изменение профиля
-HISTORY_MSG_83;Т/С: Маска резкости
 HISTORY_MSG_84;Коррекция перспективы
 HISTORY_MSG_85;Профиль коррекции объектива
 HISTORY_MSG_86;Кривая RGB: Яркость

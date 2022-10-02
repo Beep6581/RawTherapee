@@ -249,7 +249,6 @@ HISTORY_CUSTOMCURVE;Curva personalizada
 HISTORY_FROMCLIPBOARD;Da área de transferência
 HISTORY_LABEL;Histórico
 HISTORY_MSG_1;Foto Carregada
-HISTORY_MSG_2;PP3 Perfil carregado
 HISTORY_MSG_3;PP3 Perfil alterado
 HISTORY_MSG_4;Histórico de navegação
 HISTORY_MSG_5;Exposição - Claridade
@@ -263,9 +262,6 @@ HISTORY_MSG_12;Exposição - Níveis automáticos
 HISTORY_MSG_13;Exposição - Clip
 HISTORY_MSG_14;L*a*b* - Claridade
 HISTORY_MSG_15;L*a*b* - Contraste
-HISTORY_MSG_16;-
-HISTORY_MSG_17;-
-HISTORY_MSG_18;-
 HISTORY_MSG_19;L*a*b* - L* curva
 HISTORY_MSG_20;Nitidez
 HISTORY_MSG_21;USM - Raio
@@ -291,10 +287,6 @@ HISTORY_MSG_40;Balanço de Branco - Matiz
 HISTORY_MSG_41;Exposição - Modo de curva de tom 1
 HISTORY_MSG_42;Exposição - Curva de tom 2
 HISTORY_MSG_43;Exposição - Modo de curva de tom 2
-HISTORY_MSG_44;Raio de remoção de ruídos da Lum.
-HISTORY_MSG_45;Tolerância de bordas da remoção de ruídos da Lum.
-HISTORY_MSG_46;Remoção de ruídos da cor
-HISTORY_MSG_47;Misture os realces ICC com a matriz
 HISTORY_MSG_48;DCP - Curva de tom
 HISTORY_MSG_49;DCP iluminante
 HISTORY_MSG_50;Sombras/Realces
@@ -302,7 +294,6 @@ HISTORY_MSG_51;S/H - Realces
 HISTORY_MSG_52;S/H - Sombras
 HISTORY_MSG_53;S/H - Largura tonal dos realces
 HISTORY_MSG_54;S/H - Largura tonal das sombras
-HISTORY_MSG_55;S/H - Contraste local
 HISTORY_MSG_56;S/H - Raio
 HISTORY_MSG_57;Rotação grosseira
 HISTORY_MSG_58;Giro Horizontal
@@ -314,7 +305,6 @@ HISTORY_MSG_63;Instantâneo selecionado
 HISTORY_MSG_64;Cortar
 HISTORY_MSG_65;Correção CA
 HISTORY_MSG_66;Exposição - Reconstrução do realce
-HISTORY_MSG_67;Exposição - Montante HLR
 HISTORY_MSG_68;Exposição - Método HLR
 HISTORY_MSG_69;Espaço de cor de trabalho
 HISTORY_MSG_70;Espaço de cor de saída
@@ -325,12 +315,10 @@ HISTORY_MSG_74;Redimensionar - Escala
 HISTORY_MSG_75;Redimensionar - Método
 HISTORY_MSG_76;Metadados Exif
 HISTORY_MSG_77;Metadados IPTC
-HISTORY_MSG_78;-
 HISTORY_MSG_79;Redimensionar - Largura
 HISTORY_MSG_80;Redimensionar - Altura
 HISTORY_MSG_81;Redimensionar
 HISTORY_MSG_82;Perfil alterado
-HISTORY_MSG_83;S/H - Máscara de nitidez
 HISTORY_MSG_84;Correção de perspectiva
 HISTORY_MSG_85;Correção de Lente - Arquivo LCP
 HISTORY_MSG_86;Curvas RGB - Modo de Luminosidade

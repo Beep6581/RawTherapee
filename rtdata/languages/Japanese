@@ -273,7 +273,6 @@ HISTORY_CUSTOMCURVE;カスタムカーブ
 HISTORY_FROMCLIPBOARD;クリップボードから
 HISTORY_LABEL;履歴
 HISTORY_MSG_1;写真を読み込みました
-HISTORY_MSG_2;PP3を読み込みました
 HISTORY_MSG_3;PP3を変更しました
 HISTORY_MSG_4;履歴ブラウジング
 HISTORY_MSG_5;明るさ
@@ -287,9 +286,6 @@ HISTORY_MSG_12;自動露光補正
 HISTORY_MSG_13;露光 クリッピング
 HISTORY_MSG_14;L*a*b* - 明度
 HISTORY_MSG_15;L*a*b* - コントラスト
-HISTORY_MSG_16;輝度 黒レベル
-HISTORY_MSG_17;輝度 ハイライト圧縮
-HISTORY_MSG_18;輝度 シャドウ圧縮
 HISTORY_MSG_19;L*a*b* - L*カーブ
 HISTORY_MSG_20;シャープニング
 HISTORY_MSG_21;シャープニング 半径
@@ -315,10 +311,6 @@ HISTORY_MSG_40;色偏差
 HISTORY_MSG_41;トーンカーブ1のモード
 HISTORY_MSG_42;トーンカーブ 2
 HISTORY_MSG_43;トーンカーブ2のモード
-HISTORY_MSG_44;輝度ノイズ低減 半径
-HISTORY_MSG_45;輝度ノイズ低減 エッジの許容度
-HISTORY_MSG_46;色ノイズ低減
-HISTORY_MSG_47;マトリクスでICCハイライト・ブレンド
 HISTORY_MSG_48;DCPトーンカーブ使用
 HISTORY_MSG_49;色ノイズ低減 エッジの感度
 HISTORY_MSG_50;シャドウ/ハイライト
@@ -326,7 +318,6 @@ HISTORY_MSG_51;ハイライト
 HISTORY_MSG_52;シャドウ
 HISTORY_MSG_53;ハイライト トーンの幅
 HISTORY_MSG_54;シャドウ トーンの幅
-HISTORY_MSG_55;ローカルコントラスト
 HISTORY_MSG_56;シャドウ/ハイライト 半径
 HISTORY_MSG_57;90度 回転
 HISTORY_MSG_58;左右反転
@@ -338,7 +329,6 @@ HISTORY_MSG_63;スナップショット選択
 HISTORY_MSG_64;写真切り抜き
 HISTORY_MSG_65;色収差補正
 HISTORY_MSG_66;ハイライト復元
-HISTORY_MSG_67;ハイライト復元 量
 HISTORY_MSG_68;ハイライト復元 方式
 HISTORY_MSG_69;作業色空間
 HISTORY_MSG_70;出力色空間
@@ -349,12 +339,10 @@ HISTORY_MSG_74;リサイズ スケール
 HISTORY_MSG_75;リサイズ 方式
 HISTORY_MSG_76;Exif メタデータ
 HISTORY_MSG_77;IPTC メタデータ
-HISTORY_MSG_78;リサイズ指定のデータ
 HISTORY_MSG_79;リサイズ幅
 HISTORY_MSG_80;リサイズ 高さ
 HISTORY_MSG_81;リサイズの有効・無効
 HISTORY_MSG_82;プロファイル変更
-HISTORY_MSG_83;高画質 シャドウ/ハイライト
 HISTORY_MSG_84;パースペクティブの補正
 HISTORY_MSG_85;レンズ補正 プロファイル
 HISTORY_MSG_86;RGB カーブ - 輝度モード

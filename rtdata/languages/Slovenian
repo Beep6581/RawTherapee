@@ -249,7 +249,6 @@ HISTORY_CUSTOMCURVE;Prilagojena krivulja
 HISTORY_FROMCLIPBOARD;Iz odložišča
 HISTORY_LABEL;Zgodovina
 HISTORY_MSG_1;Slika naložena
-HISTORY_MSG_2;PP3 naložena
 HISTORY_MSG_3;PP3 spremenjena
 HISTORY_MSG_4;Brskanje po zgodovini
 HISTORY_MSG_5;Ekspozicija - Osvetljenost
@@ -263,9 +262,6 @@ HISTORY_MSG_12;Ekspozicija - Avtomatski nivoji
 HISTORY_MSG_13;Ekspozicija - Klip
 HISTORY_MSG_14;L*a*b* - Osvetljenost
 HISTORY_MSG_15;L*a*b* - Kontrast
-HISTORY_MSG_16;-
-HISTORY_MSG_17;-
-HISTORY_MSG_18;-
 HISTORY_MSG_19;L*a*b* - krivulja L*
 HISTORY_MSG_20;Ostrenje
 HISTORY_MSG_21;USM - Radij
@@ -291,10 +287,6 @@ HISTORY_MSG_40;WB - Odtenek
 HISTORY_MSG_41;Ekspozicija - način krivulje odtenkov 1
 HISTORY_MSG_42;Ekspozicija - krivulja odtenkov 2
 HISTORY_MSG_43;Ekspozicija - način krivulje odtenkov 2
-HISTORY_MSG_44;Lum. radij odstranjevanja šuma
-HISTORY_MSG_45;Lum. toleranca roba odstranjevanja šuma
-HISTORY_MSG_46;Odstranjevanje barvnega šuma
-HISTORY_MSG_47;Zmešaj ICC bleščave z matriko
 HISTORY_MSG_48;DCP - Krivulja tonov
 HISTORY_MSG_49;DCP osvetljava
 HISTORY_MSG_50;Sence/bleščave
@@ -302,7 +294,6 @@ HISTORY_MSG_51;S/H - Bleščave
 HISTORY_MSG_52;S/H - Sence
 HISTORY_MSG_53;S/H - Tonska širina bleščav
 HISTORY_MSG_54;S/H - Tonska širina senc
-HISTORY_MSG_55;S/H - Lokalni kontrast
 HISTORY_MSG_56;S/H - Radij
 HISTORY_MSG_57;Groba rotacija
 HISTORY_MSG_58;Horizontalni preobrat
@@ -314,7 +305,6 @@ HISTORY_MSG_63;Izbran posnetek stanja
 HISTORY_MSG_64;Izrez
 HISTORY_MSG_65;CA popravki
 HISTORY_MSG_66;Ekspozicija - Rekonstrukcija bleščav
-HISTORY_MSG_67;Ekspozicija - HLR količina
 HISTORY_MSG_68;Ekspozicija - HLR metoda
 HISTORY_MSG_69;Delovni barvni prostor
 HISTORY_MSG_70;Izhodni barvni prostor
@@ -325,12 +315,10 @@ HISTORY_MSG_74;Sprememba velikosti - Merilo
 HISTORY_MSG_75;Spremeba velikosti - Metoda
 HISTORY_MSG_76;Exif metapodatki
 HISTORY_MSG_77;IPTC metapodatki
-HISTORY_MSG_78;-
 HISTORY_MSG_79;Sprememba velikosti - Širina
 HISTORY_MSG_80;Sprememba velikosti - Višina
 HISTORY_MSG_81;Spremeni velikost
 HISTORY_MSG_82;Profil spremenjen
-HISTORY_MSG_83;S/H - maska ostrenja
 HISTORY_MSG_84;Popravek perspektive
 HISTORY_MSG_85;Popravek objektiva - datoteka LCP
 HISTORY_MSG_86;RGB krivulje - Način svetilnosti

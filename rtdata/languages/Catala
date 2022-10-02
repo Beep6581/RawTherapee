@@ -167,7 +167,6 @@ HISTORY_CUSTOMCURVE;Corba particular
 HISTORY_FROMCLIPBOARD;Del portapapers
 HISTORY_LABEL;Història
 HISTORY_MSG_1;Imatge oberta
-HISTORY_MSG_2;PP3 carregat
 HISTORY_MSG_3;PP3 canviat
 HISTORY_MSG_4;Repassant la història
 HISTORY_MSG_5;Brillantor
@@ -181,9 +180,6 @@ HISTORY_MSG_12;Exposició automàtica
 HISTORY_MSG_13;Pèrdua per exposició
 HISTORY_MSG_14;Luminància: Brillantor
 HISTORY_MSG_15;Luminància: Contrast
-HISTORY_MSG_16;Luminància: Negre
-HISTORY_MSG_17;Luminància: Compressió de clars
-HISTORY_MSG_18;Luminància: Compressió de foscos
 HISTORY_MSG_19;Corba 'L'
 HISTORY_MSG_20;Enfocant
 HISTORY_MSG_21;Enfocant -Radi
@@ -208,10 +204,6 @@ HISTORY_MSG_40;Tint de balanç de blancs
 HISTORY_MSG_41;Corba de to mode 1
 HISTORY_MSG_42;Corba de to 2
 HISTORY_MSG_43;Corba de to mode 2
-HISTORY_MSG_44;Lumin. dessoroll Radi
-HISTORY_MSG_45;Lumin. dessoroll, tolerància vores
-HISTORY_MSG_46;Dessorollant color
-HISTORY_MSG_47;Barreja clars intensos ICC amb la matriu
 HISTORY_MSG_48;Usa corba de to DCP
 HISTORY_MSG_49;Dessoroll de color, sensib. de vores
 HISTORY_MSG_50;Foscos/clars intensos
@@ -219,7 +211,6 @@ HISTORY_MSG_51;Clars intensos
 HISTORY_MSG_52;Foscos
 HISTORY_MSG_53;Amplada de to de clars
 HISTORY_MSG_54;Amplada de to de foscos
-HISTORY_MSG_55;Contrast local
 HISTORY_MSG_56;Radi foscos/clars intensos
 HISTORY_MSG_57;Rotació tosca
 HISTORY_MSG_58;Inversió horitzontal
@@ -231,7 +222,6 @@ HISTORY_MSG_63;Instantània seleccionada
 HISTORY_MSG_64;Cropa foto
 HISTORY_MSG_65;Correcció A.C.
 HISTORY_MSG_66;Recuperació de clars intensos
-HISTORY_MSG_67;Recup. de clars: quantitat
 HISTORY_MSG_68;Recup. de clars: mètode
 HISTORY_MSG_69;Espai de color de treball
 HISTORY_MSG_70;Espai de color de sortida
@@ -242,12 +232,10 @@ HISTORY_MSG_74;Canviar l'escala
 HISTORY_MSG_75;Mètode de canvi d'escala
 HISTORY_MSG_76;Metadades Exif
 HISTORY_MSG_77;Metadades IPTC
-HISTORY_MSG_78;Especificacions per a escalar
 HISTORY_MSG_79;Variar amplada
 HISTORY_MSG_80;Variar alçada
 HISTORY_MSG_81;Escalat activat
 HISTORY_MSG_82;Perfil canviat
-HISTORY_MSG_83;Alta qual. ombres/clars intensos
 HISTORY_MSG_84;Correcció de perspectiva
 HISTORY_MSG_85;Perfil de correcció de la lent
 HISTORY_MSG_86;Equalitzador d'ónula

@@ -176,7 +176,6 @@ HISTORY_CUSTOMCURVE;Произвољна крива
 HISTORY_FROMCLIPBOARD;Из оставе
 HISTORY_LABEL;Историјат
 HISTORY_MSG_1;Слика је учитана
-HISTORY_MSG_2;Профил је учитан
 HISTORY_MSG_3;Измена профила
 HISTORY_MSG_4;Разгледање историјата
 HISTORY_MSG_5;Осветљеност
@@ -190,9 +189,6 @@ HISTORY_MSG_12;Ауто експозиција
 HISTORY_MSG_13;Одсецање експозиције
 HISTORY_MSG_14;Светлина луминансе
 HISTORY_MSG_15;Контраст луминансе
-HISTORY_MSG_16;Црна луминансе
-HISTORY_MSG_17;Сабијање сенки л.
-HISTORY_MSG_18;Сабијање светлог л.
 HISTORY_MSG_19;Крива луминансе
 HISTORY_MSG_20;Оштрење
 HISTORY_MSG_21;Полупречник оштрења
@@ -218,10 +214,6 @@ HISTORY_MSG_40;Заленило боје
 HISTORY_MSG_41;Померање боје „А“
 HISTORY_MSG_42;Померање боје „Б“
 HISTORY_MSG_43;Уклањање светлосног шума
-HISTORY_MSG_44;Радијус укл. светлосног шума
-HISTORY_MSG_45;Толеранција ивице укл. с. шума
-HISTORY_MSG_46;Уклањање колорног шума
-HISTORY_MSG_47;Полупречник укл. колорног шума
 HISTORY_MSG_48;Толеранција ивице укл. к. шума
 HISTORY_MSG_49;Осетљивост ивице укл. к. шума
 HISTORY_MSG_50;Алат за сенке/светло
@@ -229,7 +221,6 @@ HISTORY_MSG_51;Појачавање светлине
 HISTORY_MSG_52;Појачавање сенки
 HISTORY_MSG_53;Ширина тонова за светло
 HISTORY_MSG_54;Ширина тонова за сенке
-HISTORY_MSG_55;Ликални контраст
 HISTORY_MSG_56;Полупречник сенки/светлог
 HISTORY_MSG_57;Груба ротација
 HISTORY_MSG_58;Хоризонтално извртање
@@ -241,7 +232,6 @@ HISTORY_MSG_63;Ибор снимка
 HISTORY_MSG_64;Исеци фотографију
 HISTORY_MSG_65;Исправљање хр. аберација
 HISTORY_MSG_66;Чупање светла
-HISTORY_MSG_67;Количина чупања светла
 HISTORY_MSG_68;Начин чупања светла
 HISTORY_MSG_69;Радни простор боја
 HISTORY_MSG_70;Излазни простор боја
@@ -252,12 +242,10 @@ HISTORY_MSG_74;Промена величине
 HISTORY_MSG_75;Начин промене величине
 HISTORY_MSG_76;Exif метаподаци
 HISTORY_MSG_77;ИПТЦ метаподаци
-HISTORY_MSG_78;Подаци за промени величине
 HISTORY_MSG_79;Ширина при промени величине
 HISTORY_MSG_80;Висина при промени величине
 HISTORY_MSG_81;Укључена промена величина
 HISTORY_MSG_82;Профил је измењен
-HISTORY_MSG_83;Квалитетно светлост/сенке
 HISTORY_MSG_84;Исправљање перспективе
 HISTORY_MSG_85;Талоасни коефицијенти
 HISTORY_MSG_86;Таласно уједначење

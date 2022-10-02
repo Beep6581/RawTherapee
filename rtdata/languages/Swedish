@@ -209,7 +209,6 @@ HISTORY_CUSTOMCURVE;Egen kurva
 HISTORY_FROMCLIPBOARD;Från klippbordet
 HISTORY_LABEL;Historia
 HISTORY_MSG_1;Fotot laddades
-HISTORY_MSG_2;Profil laddad
 HISTORY_MSG_3;Profil ändrad
 HISTORY_MSG_4;Historia-bläddrande
 HISTORY_MSG_5;Ljusstyrka
@@ -223,9 +222,6 @@ HISTORY_MSG_12;Autonivåer
 HISTORY_MSG_13;Exponeringsmarkering
 HISTORY_MSG_14;Lab - Ljushet
 HISTORY_MSG_15;Lab - Kontrast
-HISTORY_MSG_16;Svart luminans
-HISTORY_MSG_17;Luminans högdagerkompr.
-HISTORY_MSG_18;Luminans skuggkompr.
 HISTORY_MSG_19;'L'-kurva
 HISTORY_MSG_20;Skärpning
 HISTORY_MSG_21;USM - Radie
@@ -251,10 +247,6 @@ HISTORY_MSG_40;VB - Färgton
 HISTORY_MSG_41;Tonkurva läge 1
 HISTORY_MSG_42;Tonkurva 2
 HISTORY_MSG_43;Tonkurva läge 2
-HISTORY_MSG_44;Brusreduceringsradie
-HISTORY_MSG_45;Kanttolerans för lum.brusreducering
-HISTORY_MSG_46;Färgbrusreducering
-HISTORY_MSG_47;Mixa högdagrar med matris
 HISTORY_MSG_48;Använd tonkurvan i DCP
 HISTORY_MSG_49;DCP ljuskälla
 HISTORY_MSG_50;Skuggor/Högdagrar
@@ -262,7 +254,6 @@ HISTORY_MSG_51;S/H - Högdagrar
 HISTORY_MSG_52;S/H - Skuggor
 HISTORY_MSG_53;S/H - Högdagertonvidd
 HISTORY_MSG_54;S/H - Skuggtonvidd
-HISTORY_MSG_55;S/H - Lokal kontrast
 HISTORY_MSG_56;S/H - Radie
 HISTORY_MSG_57;Enkel rotering
 HISTORY_MSG_58;Vänd horisontellt
@@ -274,7 +265,6 @@ HISTORY_MSG_63;Bokmärke valt
 HISTORY_MSG_64;Beskär
 HISTORY_MSG_65;Korrigera kromatiska abberationer
 HISTORY_MSG_66;Högdageråterställning
-HISTORY_MSG_67;Mängd på högdageråterställning
 HISTORY_MSG_68;Metod för högdageråterställning
 HISTORY_MSG_69;Färgrymd
 HISTORY_MSG_70;Utmatningsfärgrymd
@@ -285,12 +275,10 @@ HISTORY_MSG_74;Ändra storleksskala
 HISTORY_MSG_75;Metod för ändring av storlek
 HISTORY_MSG_76;Exif Metadata
 HISTORY_MSG_77;IPTC Metadata
-HISTORY_MSG_78;Data som ska ändra storlek
 HISTORY_MSG_79;Storleksändring, bredd
 HISTORY_MSG_80;Storleksändring, höjd
 HISTORY_MSG_81;Storleksändring
 HISTORY_MSG_82;Profilen ändrades
-HISTORY_MSG_83;S/H - Skarp mask
 HISTORY_MSG_84;Korrigering av perspektiv
 HISTORY_MSG_85;LCP
 HISTORY_MSG_86;RGB-kurvor - Luminansläge

@@ -241,7 +241,6 @@ HISTORY_CUSTOMCURVE;Courbe personnelle
 HISTORY_FROMCLIPBOARD;Du presse-papier
 HISTORY_LABEL;Historique
 HISTORY_MSG_1;Photo chargée
-HISTORY_MSG_2;Profil chargé
 HISTORY_MSG_3;Profil changé
 HISTORY_MSG_4;Navigation dans l'historique
 HISTORY_MSG_5;Luminosité
@@ -255,9 +254,6 @@ HISTORY_MSG_12;Niveaux auto
 HISTORY_MSG_13;Rognage de l'exposition
 HISTORY_MSG_14;Lab - Luminosité
 HISTORY_MSG_15;Lab - Contraste
-HISTORY_MSG_16;Luminance - Noir
-HISTORY_MSG_17;Luminance - Compression hautes lumières
-HISTORY_MSG_18;Luminance - Compression des ombres
 HISTORY_MSG_19;Courbe 'L'
 HISTORY_MSG_20;Netteté
 HISTORY_MSG_21;Netteté (USM) - Rayon
@@ -283,10 +279,6 @@ HISTORY_MSG_40;BdB - Teinte
 HISTORY_MSG_41;Mode courbe tonale 1
 HISTORY_MSG_42;Courbe tonale2
 HISTORY_MSG_43;Mode courbe tonale 2
-HISTORY_MSG_44;Débruitage Lum. - Rayon
-HISTORY_MSG_45;Débruitage Lum. - Tolérance des bords
-HISTORY_MSG_46;Débruitage Chromatique
-HISTORY_MSG_47;Mélange HL du profil ICC et la matrice
 HISTORY_MSG_48;Courbe tonale du profil DCP
 HISTORY_MSG_49;Illuminant DCP
 HISTORY_MSG_50;Ombres/Hautes lumières
@@ -294,7 +286,6 @@ HISTORY_MSG_51;O/HL - Hautes lumières
 HISTORY_MSG_52;O/HL - Ombres
 HISTORY_MSG_53;O/HL - Amplitude tonale des HL
 HISTORY_MSG_54;O/HL - Amplitude tonale des ombres
-HISTORY_MSG_55;O/HL - Contraste Local
 HISTORY_MSG_56;O/HL - Rayon
 HISTORY_MSG_57;Rotation grossière
 HISTORY_MSG_58;Symétrisation / axe vertical
@@ -306,7 +297,6 @@ HISTORY_MSG_63;Signet sélectionné
 HISTORY_MSG_64;Recadrage
 HISTORY_MSG_65;Aberration chromatique
 HISTORY_MSG_66;Reconst. Hautes lumières
-HISTORY_MSG_67;Reconst. HL - Quantité
 HISTORY_MSG_68;Reconst. HL - Méthode
 HISTORY_MSG_69;Espace de couleur de travail
 HISTORY_MSG_70;Espace de couleur de sortie
@@ -317,12 +307,10 @@ HISTORY_MSG_74;Redim. - Échelle
 HISTORY_MSG_75;Méthode de redimensionnement
 HISTORY_MSG_76;Métadonnées EXIF
 HISTORY_MSG_77;Métadonnées IPTC
-HISTORY_MSG_78;Type de redimensionnement
 HISTORY_MSG_79;Redim. - Largeur
 HISTORY_MSG_80;Redim. - Hauteur
 HISTORY_MSG_81;Redimensionnement
 HISTORY_MSG_82;Changement de profil
-HISTORY_MSG_83;O/HL - Masque haute précision
 HISTORY_MSG_84;Correction de la perspective
 HISTORY_MSG_85;LCP
 HISTORY_MSG_86;Courbes RVB - Mode luminosité

@@ -196,7 +196,6 @@ HISTORY_CUSTOMCURVE;Curva personalizzata
 HISTORY_FROMCLIPBOARD;Dagli appunti
 HISTORY_LABEL;Cronologia
 HISTORY_MSG_1;Foto caricata
-HISTORY_MSG_2;PP3 caricato
 HISTORY_MSG_3;PP3 modificato
 HISTORY_MSG_4;Visualizzazione cronologia
 HISTORY_MSG_5;Luminosità
@@ -210,9 +209,6 @@ HISTORY_MSG_12;Livelli Automatici
 HISTORY_MSG_13;Tosaggio Esposizione
 HISTORY_MSG_14;Lab - Luminosità
 HISTORY_MSG_15;Lab - Contrasto
-HISTORY_MSG_16;Luminanza: Livello del nero
-HISTORY_MSG_17;Luminanza: Compr. alteluci
-HISTORY_MSG_18;Luminanza: Compr. ombre
 HISTORY_MSG_19;Curva per 'L'
 HISTORY_MSG_20;Nitidezza
 HISTORY_MSG_21;USM - Raggio
@@ -238,10 +234,6 @@ HISTORY_MSG_40;WB - Tinta
 HISTORY_MSG_41;Curva Tono Modo 1
 HISTORY_MSG_42;Curva Tono 2
 HISTORY_MSG_43;Curva Tono Modo 2
-HISTORY_MSG_44;Rid. rumore lum. - Raggio
-HISTORY_MSG_45;Rid. rumore lum. - Tolleranza bordi
-HISTORY_MSG_46;Riduzione Rumore Crominanza
-HISTORY_MSG_47;Fondi alteluci ICC con matrix
 HISTORY_MSG_48;Usa curva tono del DCP
 HISTORY_MSG_49;DCP - Illuminazione
 HISTORY_MSG_50;Ombre/Alteluci
@@ -249,7 +241,6 @@ HISTORY_MSG_51;S/H - Alteluci
 HISTORY_MSG_52;S/H - Ombre
 HISTORY_MSG_53;S/H - Ampiezza tonale - Alteluci
 HISTORY_MSG_54;S/H - Ampiezza tonale - Ombre
-HISTORY_MSG_55;S/H - Contrasto locale
 HISTORY_MSG_56;S/H - Ombre/Alteluci - Raggio
 HISTORY_MSG_57;Rotazione semplice
 HISTORY_MSG_58;Ribaltamento orizzontale
@@ -261,7 +252,6 @@ HISTORY_MSG_63;Istantanea Selezionata
 HISTORY_MSG_64;Ritaglia
 HISTORY_MSG_65;Correzione AC
 HISTORY_MSG_66;Ricostruzione Alteluci
-HISTORY_MSG_67;Ricostruzione Alteluci - Quantità
 HISTORY_MSG_68;Ricostruzione Alteluci - Metodo
 HISTORY_MSG_69;Spazio Colore di Lavoro
 HISTORY_MSG_70;Spazio Colore di Uscita
@@ -272,12 +262,10 @@ HISTORY_MSG_74;Ridimensiona - Scala
 HISTORY_MSG_75;Ridimensiona - Metodo
 HISTORY_MSG_76;Metadati Exif
 HISTORY_MSG_77;Metadati IPTC
-HISTORY_MSG_78;Misure specificate per Ridimensiona
 HISTORY_MSG_79;Ridimensiona - Larghezza
 HISTORY_MSG_80;Ridimensiona - Altezza
 HISTORY_MSG_81;Ridimensiona - Abilitato
 HISTORY_MSG_82;Profilo modificato
-HISTORY_MSG_83;S/H - Maschera di Nitidezza
 HISTORY_MSG_84;Correzione prospettiva
 HISTORY_MSG_85;Profilo di Correzione Obiettivo
 HISTORY_MSG_86;Curve RGB - Modalità Luminosità

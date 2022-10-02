@@ -243,7 +243,6 @@ HISTORY_CUSTOMCURVE;Krzywa własna
 HISTORY_FROMCLIPBOARD;Ze schowka
 HISTORY_LABEL;Historia
 HISTORY_MSG_1;Zdjęcie załadowane
-HISTORY_MSG_2;Profil załadowany
 HISTORY_MSG_3;Profil zmieniony
 HISTORY_MSG_4;Przeglądanie historii
 HISTORY_MSG_5;Światłość
@@ -257,9 +256,6 @@ HISTORY_MSG_12;Automatyczna ekspozycja
 HISTORY_MSG_13;Przycinanie ekspozycji
 HISTORY_MSG_14;L*a*b* - Światłość
 HISTORY_MSG_15;L*a*b* - Kontrast
-HISTORY_MSG_16;-
-HISTORY_MSG_17;-
-HISTORY_MSG_18;-
 HISTORY_MSG_19;Krzywa L*
 HISTORY_MSG_20;Wyostrzanie
 HISTORY_MSG_21;USM - Promień
@@ -285,10 +281,6 @@ HISTORY_MSG_40;BB - Odcień
 HISTORY_MSG_41;Tryb krzywej 1
 HISTORY_MSG_42;Krzywa 1
 HISTORY_MSG_43;Tryb krzywej 2
-HISTORY_MSG_44;Odszumianie lum. - Promień
-HISTORY_MSG_45;Odszumianie lum. - Tolerancja krawędzi
-HISTORY_MSG_46;Odszumianie koloru
-HISTORY_MSG_47;Mieszanie podświetleń ICC z matrycą
 HISTORY_MSG_48;Użycie krzywej tonalnej z DCP
 HISTORY_MSG_49;Illuminant DCP
 HISTORY_MSG_50;Cienie/Podświetlenia
@@ -296,7 +288,6 @@ HISTORY_MSG_51;C/P - Podświetlenia
 HISTORY_MSG_52;C/P - Cienie
 HISTORY_MSG_53;C/P - Szerokość tonalna podśw.
 HISTORY_MSG_54;C/P - Szerokość tonalna cieni
-HISTORY_MSG_55;C/P - Kontrast lokalny
 HISTORY_MSG_56;C/P - Promień
 HISTORY_MSG_57;Obrót dyskretny
 HISTORY_MSG_58;Odbicie w poziomie
@@ -308,7 +299,6 @@ HISTORY_MSG_63;Migawka wybrana
 HISTORY_MSG_64;Kadrowanie
 HISTORY_MSG_65;Korekcja aberracji chromatycznej
 HISTORY_MSG_66;Rekonstrukcja prześwietleń
-HISTORY_MSG_67;Rekonstrukcja prześwietleń - Siła
 HISTORY_MSG_68;Rekonstrukcja prześwietleń - Metoda
 HISTORY_MSG_69;Robocza przestrzeń kolorów
 HISTORY_MSG_70;Wyjściowa przestrzeń kolorów
@@ -319,12 +309,10 @@ HISTORY_MSG_74;Zmiany rozmiaru - Skala
 HISTORY_MSG_75;Zmiany rozmiaru - Metoda
 HISTORY_MSG_76;Metadane Exif
 HISTORY_MSG_77;Metadane IPTC
-HISTORY_MSG_78;-
 HISTORY_MSG_79;Zmiany rozmiaru - Szerokość
 HISTORY_MSG_80;Zmiany rozmiaru - Wysokość
 HISTORY_MSG_81;Zmiany rozmiaru
 HISTORY_MSG_82;Profil zmieniony
-HISTORY_MSG_83;C/P - Ostra maska
 HISTORY_MSG_84;Korekcja perspektywy
 HISTORY_MSG_85;LCP
 HISTORY_MSG_86;Krzywe RGB - Tryb luminancji
