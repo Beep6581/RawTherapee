@@ -1,6 +1,6 @@
 RAWTHERAPEE 5.9-rc1 RELEASE NOTES
 
-This is Release Candidate 1 of RawTherapee 5.9, release on 2022-10-07. This is not the final release yet.
+This is Release Candidate 1 of RawTherapee 5.9, released on 2022-10-07. This is not the final release yet.
 
 
 
@@ -29,11 +29,11 @@ NEW FEATURES SINCE 5.8
 - The Local Adjustments tool (Local tab) was added, for performing a wide range of operations on an area of the image determined by its geometry or color.
 - The Wavelet Levels tool (Advanced tab) received various improvements.
 - The White Balance tool (Color tab) received new automatic white balance methods.
-- The Film Negative tool (Color tab) received various improvements including support for non-raw files. TODO new or improved?
+- The Film Negative tool (Color tab) received various improvements including support for non-raw files.
 - The Preprocess White Balance tool (Raw tab) was added, allowing you to specify whether channels should be balanced automatically or whether the white balance values recorded by the camera should be used instead.
-- The Perspective Correction tool (Transform tab) received various improvements, including automatic modes. TODO is auto new?
+- A new Perspective Correction tool (Transform tab) was added which includes an automated perspective correction feature.
 - The Main Histogram was improved with new modes: waveform, vectorscope and RGB parade.
-- Improvements to the Inspect feature (File Browser tab). TODO undocumented, and don't work for me.
+- Improvements to the Inspect feature (File Browser tab).
 - New dual-demosaicing methods in the Demosaicing tool (Raw tab).
 - The Haze Removal tool (Detail tab) received a saturation adjuster.
 - The RawTherapee theme was improved, including changes to make it easier to see which tools are enabled.
@@ -41,23 +41,26 @@ NEW FEATURES SINCE 5.8
 - The Resize tool (Transform tab) now allows to resize by the long or short edge.
 - The Crop tool (Transform tab) received a "centered square" crop guide, useful when the resulting non-square image will also be used on social media which crop to a square format.
 - The Pixel Shift demosaicing method (Raw tab) now allows using an average of all frames for regions with motion.
-- Support for Canon CR3 raw files [TODO wasn't basic support added in 5.8? What exactly is new? What is still lacking?]
-- Added support for and improvement of (raw formats and color profiles):
-    - Canon EOS 100D / Rebel SL1 / Kiss X7 (#6187)
+- Added or improved support for cameras, raw formats and color profiles:
+    - Canon EOS 100D / Rebel SL1 / Kiss X7
+    - Canon EOS 1DX Mark III
     - Canon EOS 1DX Mark III
     - Canon EOS 2000D / Rebel T7 / Kiss X90
     - Canon EOS 400D DIGITAL
+    - Canon EOS 5D Mark II
     - Canon EOS 5D Mark II
     - Canon EOS 5D Mark IV (DCP)
     - Canon EOS 90D (DCP)
     - Canon EOS M6 Mark II (DCP)
     - Canon EOS R (DCP)
     - Canon EOS R3, R7 and R10
+    - Canon EOS R3, R7 and R10.
     - Canon EOS R5 (DCP)
     - Canon EOS R6 (DCP)
     - Canon EOS RP
     - Canon EOS-1D Mark III
     - Canon EOS-1Ds
+    - Canon EOS-1Ds Mark II
     - Canon EOS-1Ds Mark II
     - Canon PowerShot G1 X Mark II (DCP)
     - Canon PowerShot G9 X Mark II
@@ -67,16 +70,6 @@ NEW FEATURES SINCE 5.8
     - DJI FC3170
     - FUJIFILM X-A5 (DCP)
     - FUJIFILM X-E4
-    - Nikon Z fc
-    - Sony ILCE-7M4
-    - Support for compressed CR3, affects Canon EOS M50, R, R5, R6 and 1D X Mark III, etc.
-    - Canon EOS R3, R7 and R10.
-    - Samsung Galaxy S7
-    - Canon EOS 1DX Mark III
-    - Canon EOS 5D Mark II
-    - Canon EOS-1Ds Mark II
-    - Fujifilm X-T4
-    - Nikon D5100
     - FUJIFILM X-H1 (DCP)
     - FUJIFILM X-PRO2
     - FUJIFILM X-PRO3 (DCP)
@@ -89,11 +82,13 @@ NEW FEATURES SINCE 5.8
     - FUJIFILM X-T4
     - FUJIFILM X100V
     - Fujifilm GFX 100
-    - Fujifilm GFX100S Note that lossy compression is not supported, nor are alternative crop modes (e.g. 4:3)
+    - Fujifilm GFX100S though lossy compression and alternative crop modes (e.g. 4:3) are not supported yet
     - Fujifilm X-A20
+    - Fujifilm X-T4
     - Fujifilm X-T4
     - HASSELBLAD NEX-7 (Lunar)
     - Hasselblad L1D-20c (DJI Mavic 2 Pro)
+    - Improved support for the Canon CR3 raw format, added support for compressed files, affects Canon EOS M50, R, R5, R6 and 1D X Mark III, etc.
     - LEICA C-LUX
     - LEICA CAM-DC25
     - LEICA D-LUX 7
@@ -117,14 +112,16 @@ NEW FEATURES SINCE 5.8
     - Nikon D300s
     - Nikon D3500
     - Nikon D5100
+    - Nikon D5100
     - Nikon D6
     - Nikon D70s
     - Nikon D780
     - Nikon D810A
-    - Nikon Z 5 (#5905)
-    - Nikon Z 50 (#5851) (DCP)
+    - Nikon Z 5
+    - Nikon Z 50 (DCP)
     - Nikon Z 6_2
     - Nikon Z 7_2
+    - Nikon Z fc
     - Nikon Z fc
     - OLYMPUS E-M10MarkIV
     - OLYMPUS E-M1MarkIII
@@ -160,6 +157,7 @@ NEW FEATURES SINCE 5.8
     - SONY ILCE-9 (DCP)
     - SONY NEX-7
     - Samsung Galaxy S7
+    - Samsung Galaxy S7
     - Sigma fp
     - Sony DCZV1B
     - Sony DSC-HX95
@@ -181,12 +179,12 @@ NEW FEATURES SINCE 5.8
     - Sony ILCE-7C
     - Sony ILCE-7M3
     - Sony ILCE-7M4
+    - Sony ILCE-7M4
     - Sony ILCE-7RM4 (DCP)
     - Sony ILCE-7SM3
     - Sony ILCE-9M2
     - Sony NEX-F3
     - Sony SLT-A99V
-    - Support for compressed CR3, affects Canon EOS M50, R, R5, R6 and 1D X Mark III, etc.
 
 
 
