@@ -1,20 +1,13 @@
-RAWTHERAPEE 5.8-dev RELEASE NOTES
+RAWTHERAPEE 5.9-rc1 RELEASE NOTES
 
-This is a development version of RawTherapee. We update the code almost daily. Every few months, once enough changes have accumulated and the code is stabilized, we make a new official release. Every code change between these releases is known as a "development" version, and this is one of them.
+This is Release Candidate 1 of RawTherapee 5.9, release on 2022-10-07. This is not the final release yet.
+
+
+
+IN GENERAL
 
 Start by reading the "Getting Started" article on RawPedia:
 https://rawpedia.rawtherapee.com/
-
-While we only commit tested and relatively stable code and so the development versions should be fairly stable, you should be aware that:
-- Development versions only had limited testing, so there may be bugs unknown to us.
-- You should report these bugs so that they get fixed for the next stable release. See
-  https://rawpedia.rawtherapee.com/How_to_write_useful_bug_reports
-- The way new tools work in the development versions is likely to change as we tweak and tune them, so your processing profiles may produce different results when used in a future stable version.
-- Bugs present in the stable versions get fixed in the development versions, and make it into the next stable version when we make a new official release. That means that in some ways the development versions can be "more stable" than the latest stable release. At the same time, new features may introduce new bugs. This is a trade-off you should be aware of.
-
-
-
-NEWS RELEVANT TO PHOTOGRAPHERS
 
 RawTherapee supports most raw formats, including Pentax and Sony Pixel Shift, Canon Dual-Pixel, and those from Foveon and X-Trans sensors.
 If you're wondering whether it supports your camera's raw format, first download RawTherapee and try for yourself. If a raw format is not supported it will either not open, or the preview in the Editor tab will appear black, white, or have a strong color cast - usually magenta. In that case, read the "Adding Support for New Raw Formats" RawPedia article.
@@ -25,16 +18,184 @@ In order to use RawTherapee efficiently you should know that:
 - To change slider values or drop-down list items with the mouse scroll-wheel, hold the Shift key. This is so that you can safely scroll the panels without accidentally changing a slider or other tool setting.
 - All curves support the Shift and Ctrl keys while dragging a point. Shift+drag makes the point snap to a meaningful axis (top, bottom, diagonal, other), while Ctrl+drag makes your mouse movement super-fine for precise point positioning.
 - There are many keyboard shortcuts which make working with RawTherapee much faster and give you greater control. Make sure you familiarize yourself with them on RawPedia's "Keyboard Shortcuts" page!
+- All sliders support a fine-tuning mode which you can toggle by pressing the Shift key while dragging a slider.
 
-New features since 5.8:
-- TODO
+
+
+NEW FEATURES SINCE 5.8
+
+- The Spot Removal tool (Detail tab) was added, for removing dust specks and small objects.
+- The Color Appearance & Lighting tool (Advanced tab), formerly known as CIECAM02, now includes CAM16. By taking into account the conditions of the photographed scene and the conditions under which the image is viewed, it allows you to adjust the image in a way which matches human color perception.
+- The Local Adjustments tool (Local tab) was added, for performing a wide range of operations on an area of the image determined by its geometry or color.
+- The Wavelet Levels tool (Advanced tab) received various improvements.
+- The White Balance tool (Color tab) received new automatic white balance methods.
+- The Film Negative tool (Color tab) received various improvements including support for non-raw files. TODO new or improved?
+- The Preprocess White Balance tool (Raw tab) was added, allowing you to specify whether channels should be balanced automatically or whether the white balance values recorded by the camera should be used instead.
+- The Perspective Correction tool (Transform tab) received various improvements, including automatic modes. TODO is auto new?
+- The Main Histogram was improved with new modes: waveform, vectorscope and RGB parade.
+- Improvements to the Inspect feature (File Browser tab). TODO undocumented, and don't work for me.
+- New dual-demosaicing methods in the Demosaicing tool (Raw tab).
+- The Haze Removal tool (Detail tab) received a saturation adjuster.
+- The RawTherapee theme was improved, including changes to make it easier to see which tools are enabled.
+- The Navigator (Editor tab) can now be resized.
+- The Resize tool (Transform tab) now allows to resize by the long or short edge.
+- The Crop tool (Transform tab) received a "centered square" crop guide, useful when the resulting non-square image will also be used on social media which crop to a square format.
+- The Pixel Shift demosaicing method (Raw tab) now allows using an average of all frames for regions with motion.
+- Support for Canon CR3 raw files [TODO wasn't basic support added in 5.8? What exactly is new? What is still lacking?]
+- Added support for and improvement of (raw formats and color profiles):
+    - Canon EOS 100D / Rebel SL1 / Kiss X7 (#6187)
+    - Canon EOS 1DX Mark III
+    - Canon EOS 2000D / Rebel T7 / Kiss X90
+    - Canon EOS 400D DIGITAL
+    - Canon EOS 5D Mark II
+    - Canon EOS 5D Mark IV (DCP)
+    - Canon EOS 90D (DCP)
+    - Canon EOS M6 Mark II (DCP)
+    - Canon EOS R (DCP)
+    - Canon EOS R3, R7 and R10
+    - Canon EOS R5 (DCP)
+    - Canon EOS R6 (DCP)
+    - Canon EOS RP
+    - Canon EOS-1D Mark III
+    - Canon EOS-1Ds
+    - Canon EOS-1Ds Mark II
+    - Canon PowerShot G1 X Mark II (DCP)
+    - Canon PowerShot G9 X Mark II
+    - Canon PowerShot S120 (DCP)
+    - Canon PowerShot SX50 HS
+    - Canon PowerShot SX70 HS
+    - DJI FC3170
+    - FUJIFILM X-A5 (DCP)
+    - FUJIFILM X-E4
+    - Nikon Z fc
+    - Sony ILCE-7M4
+    - Support for compressed CR3, affects Canon EOS M50, R, R5, R6 and 1D X Mark III, etc.
+    - Canon EOS R3, R7 and R10.
+    - Samsung Galaxy S7
+    - Canon EOS 1DX Mark III
+    - Canon EOS 5D Mark II
+    - Canon EOS-1Ds Mark II
+    - Fujifilm X-T4
+    - Nikon D5100
+    - FUJIFILM X-H1 (DCP)
+    - FUJIFILM X-PRO2
+    - FUJIFILM X-PRO3 (DCP)
+    - FUJIFILM X-S10
+    - FUJIFILM X-T1
+    - FUJIFILM X-T100
+    - FUJIFILM X-T2
+    - FUJIFILM X-T3 (DCP)
+    - FUJIFILM X-T30
+    - FUJIFILM X-T4
+    - FUJIFILM X100V
+    - Fujifilm GFX 100
+    - Fujifilm GFX100S Note that lossy compression is not supported, nor are alternative crop modes (e.g. 4:3)
+    - Fujifilm X-A20
+    - Fujifilm X-T4
+    - HASSELBLAD NEX-7 (Lunar)
+    - Hasselblad L1D-20c (DJI Mavic 2 Pro)
+    - LEICA C-LUX
+    - LEICA CAM-DC25
+    - LEICA D-LUX 7
+    - LEICA M8
+    - LEICA V-LUX 5
+    - Leica SL2-S
+    - NIKON COOLPIX P1000
+    - NIKON D500 (DCP)
+    - NIKON D5300 (DCP)
+    - NIKON D610 (DCP)
+    - NIKON D7100 (DCP)
+    - NIKON D7500 (DCP)
+    - NIKON D800 (DCP)
+    - NIKON D850 (DCP)
+    - NIKON Z 6 (DCP)
+    - NIKON Z 7 (DCP)
+    - Nikon 1 J4
+    - Nikon COOLPIX P950
+    - Nikon D2Hs
+    - Nikon D2Xs
+    - Nikon D300s
+    - Nikon D3500
+    - Nikon D5100
+    - Nikon D6
+    - Nikon D70s
+    - Nikon D780
+    - Nikon D810A
+    - Nikon Z 5 (#5905)
+    - Nikon Z 50 (#5851) (DCP)
+    - Nikon Z 6_2
+    - Nikon Z 7_2
+    - Nikon Z fc
+    - OLYMPUS E-M10MarkIV
+    - OLYMPUS E-M1MarkIII
+    - OLYMPUS E-M1X
+    - OLYMPUS E-M5MarkII (DCP)
+    - OLYMPUS E-M5MarkIII
+    - OLYMPUS E-PL10
+    - OLYMPUS E-PL9
+    - OLYMPUS STYLUS1
+    - OLYMPUS STYLUS1,1s
+    - OLYMPUS TG-6
+    - PENTAX K-50 (DCP)
+    - PENTAX K10D
+    - Panasonic DC-FZ1000M2
+    - Panasonic DC-FZ80
+    - Panasonic DC-FZ81
+    - Panasonic DC-FZ82
+    - Panasonic DC-FZ83
+    - Panasonic DC-G100
+    - Panasonic DC-G110
+    - Panasonic DC-G90
+    - Panasonic DC-G95
+    - Panasonic DC-G99
+    - Panasonic DC-S1H
+    - Panasonic DC-S5 (DCP)
+    - Panasonic DC-TZ95
+    - Panasonic DC-ZS80
+    - Panasonic DMC-TZ80
+    - Panasonic DMC-TZ85
+    - Panasonic DMC-ZS60
+    - RICOH PENTAX K-1 Mark II
+    - RICOH PENTAX K-3 MARK III
+    - SONY ILCE-9 (DCP)
+    - SONY NEX-7
+    - Samsung Galaxy S7
+    - Sigma fp
+    - Sony DCZV1B
+    - Sony DSC-HX95
+    - Sony DSC-HX99
+    - Sony DSC-RX0
+    - Sony DSC-RX0M2
+    - Sony DSC-RX100
+    - Sony DSC-RX100M5A
+    - Sony DSC-RX100M6
+    - Sony DSC-RX100M7
+    - Sony DSC-RX10M2
+    - Sony DSC-RX10M3
+    - Sony DSC-RX10M4
+    - Sony DSC-RX1R
+    - Sony ILCE-1
+    - Sony ILCE-6100
+    - Sony ILCE-6400 (DCP)
+    - Sony ILCE-6600 (DCP)
+    - Sony ILCE-7C
+    - Sony ILCE-7M3
+    - Sony ILCE-7M4
+    - Sony ILCE-7RM4 (DCP)
+    - Sony ILCE-7SM3
+    - Sony ILCE-9M2
+    - Sony NEX-F3
+    - Sony SLT-A99V
+    - Support for compressed CR3, affects Canon EOS M50, R, R5, R6 and 1D X Mark III, etc.
 
 
 
 NEWS RELEVANT TO PACKAGE MAINTAINERS
 
 New since 5.8:
-- TODO
+- Automated build system moved from Travis CI to GitHub Actions:
+  https://github.com/Beep6581/RawTherapee/actions
+- libcanberra made optional in CMake via USE_LIBCANBERRA, default ON.
 
 In general:
 - To get the source code, either clone from git or use the tarball from https://rawtherapee.com/shared/source/ . Do not use the auto-generated GitHub release tarballs.
@@ -71,18 +232,6 @@ FORUM
 
 RawTherapee shares a forum with users and developers of other Free/Libre/Open Source Software:
 https://discuss.pixls.us/c/software/rawtherapee
-
-
-
-LIVE CHAT WITH USERS AND DEVELOPERS
-
-Network: freenode
-Server: chat.freenode.net
-Channel: #rawtherapee
-
-You can use freenode webchat to communicate without installing anything:
-https://webchat.freenode.net/?randomnick=1&channels=rawtherapee&prompt=1
-More information here: https://rawpedia.rawtherapee.com/IRC
 
 
 
