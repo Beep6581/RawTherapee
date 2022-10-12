@@ -28,7 +28,7 @@ NEW FEATURES SINCE 5.8
 - The Color Appearance & Lighting tool (Advanced tab), formerly known as CIECAM02, now includes CAM16. By taking into account the conditions of the photographed scene and the conditions under which the image is viewed, it allows you to adjust the image in a way which matches human color perception.
 - The Local Adjustments tool (Local tab) was added, for performing a wide range of operations on an area of the image determined by its geometry or color.
 - The Wavelet Levels tool (Advanced tab) received various improvements.
-- The White Balance tool (Color tab) received new automatic white balance methods.
+- The White Balance tool (Color tab) received a new automatic white balance method named "temperature correlation" (the old one was renamed to "RGB grey").
 - The Film Negative tool (Color tab) received various improvements including support for non-raw files.
 - The Preprocess White Balance tool (Raw tab) was added, allowing you to specify whether channels should be balanced automatically or whether the white balance values recorded by the camera should be used instead.
 - A new Perspective Correction tool (Transform tab) was added which includes an automated perspective correction feature.
