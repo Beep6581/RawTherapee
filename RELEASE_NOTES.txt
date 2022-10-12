@@ -44,23 +44,19 @@ NEW FEATURES SINCE 5.8
 - Added or improved support for cameras, raw formats and color profiles:
     - Canon EOS 100D / Rebel SL1 / Kiss X7
     - Canon EOS 1DX Mark III
-    - Canon EOS 1DX Mark III
     - Canon EOS 2000D / Rebel T7 / Kiss X90
     - Canon EOS 400D DIGITAL
-    - Canon EOS 5D Mark II
     - Canon EOS 5D Mark II
     - Canon EOS 5D Mark IV (DCP)
     - Canon EOS 90D (DCP)
     - Canon EOS M6 Mark II (DCP)
     - Canon EOS R (DCP)
     - Canon EOS R3, R7 and R10
-    - Canon EOS R3, R7 and R10.
     - Canon EOS R5 (DCP)
     - Canon EOS R6 (DCP)
     - Canon EOS RP
     - Canon EOS-1D Mark III
     - Canon EOS-1Ds
-    - Canon EOS-1Ds Mark II
     - Canon EOS-1Ds Mark II
     - Canon PowerShot G1 X Mark II (DCP)
     - Canon PowerShot G9 X Mark II
@@ -84,7 +80,6 @@ NEW FEATURES SINCE 5.8
     - Fujifilm GFX 100
     - Fujifilm GFX100S though lossy compression and alternative crop modes (e.g. 4:3) are not supported yet
     - Fujifilm X-A20
-    - Fujifilm X-T4
     - Fujifilm X-T4
     - HASSELBLAD NEX-7 (Lunar)
     - Hasselblad L1D-20c (DJI Mavic 2 Pro)
@@ -112,26 +107,24 @@ NEW FEATURES SINCE 5.8
     - Nikon D300s
     - Nikon D3500
     - Nikon D5100
-    - Nikon D5100
     - Nikon D6
     - Nikon D70s
     - Nikon D780
     - Nikon D810A
     - Nikon Z 5
     - Nikon Z 50 (DCP)
-    - Nikon Z 6_2
-    - Nikon Z 7_2
+    - Nikon Z 6II
+    - Nikon Z 7II
     - Nikon Z fc
-    - Nikon Z fc
-    - OLYMPUS E-M10MarkIV
-    - OLYMPUS E-M1MarkIII
+    - OLYMPUS E-M10 Mark IV
+    - OLYMPUS E-M1 Mark III
     - OLYMPUS E-M1X
-    - OLYMPUS E-M5MarkII (DCP)
-    - OLYMPUS E-M5MarkIII
+    - OLYMPUS E-M5 Mark II (DCP)
+    - OLYMPUS E-M5 Mark III
     - OLYMPUS E-PL10
     - OLYMPUS E-PL9
-    - OLYMPUS STYLUS1
-    - OLYMPUS STYLUS1,1s
+    - OLYMPUS Stylus 1
+    - OLYMPUS Stylus 1s
     - OLYMPUS TG-6
     - PENTAX K-50 (DCP)
     - PENTAX K10D
@@ -153,10 +146,9 @@ NEW FEATURES SINCE 5.8
     - Panasonic DMC-TZ85
     - Panasonic DMC-ZS60
     - RICOH PENTAX K-1 Mark II
-    - RICOH PENTAX K-3 MARK III
+    - RICOH PENTAX K-3 Mark III
     - SONY ILCE-9 (DCP)
     - SONY NEX-7
-    - Samsung Galaxy S7
     - Samsung Galaxy S7
     - Sigma fp
     - Sony DCZV1B
@@ -178,7 +170,6 @@ NEW FEATURES SINCE 5.8
     - Sony ILCE-6600 (DCP)
     - Sony ILCE-7C
     - Sony ILCE-7M3
-    - Sony ILCE-7M4
     - Sony ILCE-7M4
     - Sony ILCE-7RM4 (DCP)
     - Sony ILCE-7SM3
