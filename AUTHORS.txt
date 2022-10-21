@@ -70,6 +70,7 @@ Other contributors (profiles, ideas, mockups, testing, forum activity, translati
   Wim ter Meer
   Alberto Righetto
   Kostia (Kildor) Romanov
+  Henning Sidow
   Kalle Söderman
   Wayne Sutton
   Johan Thor
@@ -77,3 +78,4 @@ Other contributors (profiles, ideas, mockups, testing, forum activity, translati
   TooWaBoo
   Franz Trischberger
   Colin Walker
+  Martin Werner
