@@ -1,5 +1,5 @@
 #01 Español - Castellano
-#02 2022-07-22 Francisco Lorés y Javier Bartol, para la versión 5.9
+#02 2022-10-08 Francisco Lorés y Javier Bartol, para la versión 5.9
 
 ABOUT_TAB_BUILD;Versión
 ABOUT_TAB_CREDITS;Reconocimientos
@@ -250,7 +250,7 @@ HISTOGRAM_TOOLTIP_G;Muestra/oculta el canal verde en el histograma.
 HISTOGRAM_TOOLTIP_L;Muestra/oculta el histograma de luminancia CIELAB.
 HISTOGRAM_TOOLTIP_MODE;Cambia entre la escala lineal, la logarítmica-lineal y la escala logarítmica (o doble logarítmica) del histograma.
 HISTOGRAM_TOOLTIP_R;Muestra/oculta el canal rojo en el histograma.
-HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Muestra/oculta opciones adicionales.
+HISTOGRAM_TOOLTIP_SHOW_OPTIONS;Muestra/oculta opciones adicionales del histograma.
 HISTOGRAM_TOOLTIP_TRACE_BRIGHTNESS;Ajusta el brillo del vectorscopio.
 HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM;Histograma
 HISTOGRAM_TOOLTIP_TYPE_HISTOGRAM_RAW;Histograma raw
@@ -416,39 +416,39 @@ HISTORY_MSG_170;Vivacidad - curva HH
 HISTORY_MSG_171;L*a*b* - curva LC
 HISTORY_MSG_172;L*a*b* - Restringir curva LC
 HISTORY_MSG_173;Reducción de ruido - Reconstrucción de detalle
-HISTORY_MSG_174;CIECAM02/16
-HISTORY_MSG_175;CIECAM02/16 - Adaptación CAT02
-HISTORY_MSG_176;CIECAM02/16 - Contexto visual
-HISTORY_MSG_177;CIECAM02/16 - Luminosidad de la escena
-HISTORY_MSG_178;CIECAM02/16 - Luminosidad ambiental
-HISTORY_MSG_179;CIECAM02/16 - Modelo de punto blanco
-HISTORY_MSG_180;CIECAM02/16 - Claridad (J)
-HISTORY_MSG_181;CIECAM02/16 - Cromaticidad (C)
-HISTORY_MSG_182;CIECAM02/16 - CAT02 automático
-HISTORY_MSG_183;CIECAM02/16 - Contraste (J)
-HISTORY_MSG_184;CIECAM02/16 - Contexto de la escena
-HISTORY_MSG_185;CIECAM02/16 - Control del rango de colores
-HISTORY_MSG_186;CIECAM02/16 - Algoritmo
-HISTORY_MSG_187;CIECAM02/16 - Protección de rojos/piel
-HISTORY_MSG_188;CIECAM02/16 - Brillo (Q)
-HISTORY_MSG_189;CIECAM02/16 - Contraste (Q)
-HISTORY_MSG_190;CIECAM02/16 - Saturación (S)
-HISTORY_MSG_191;CIECAM02/16 - Colorido (M)
-HISTORY_MSG_192;CIECAM02/16 - Matiz (h)
-HISTORY_MSG_193;CIECAM02/16 - Curva tonal 1
-HISTORY_MSG_194;CIECAM02/16 - Curva tonal 2
-HISTORY_MSG_195;CIECAM02/16 - Curva tonal 1
-HISTORY_MSG_196;CIECAM02/16 - Curva tonal 2
-HISTORY_MSG_197;CIECAM02/16 - Curva de color
-HISTORY_MSG_198;CIECAM02/16 - Curva de color
-HISTORY_MSG_199;CIECAM02/16 - Histogramas de salida
-HISTORY_MSG_200;CIECAM02/16 - Mapeo tonal
+HISTORY_MSG_174;Apariencia de color e Iluminación (AC & I)
+HISTORY_MSG_175;AC & I - Condic. escena - Adaptación
+HISTORY_MSG_176;AC & I - Condic. visualiz. - Contexto visual
+HISTORY_MSG_177;AC & I - Condic. escena - Luminosidad absoluta
+HISTORY_MSG_178;AC & I - Condic. visualiz. - Luminosidad absoluta
+HISTORY_MSG_179;AC & I - Condic. escena - Modelo de punto blanco
+HISTORY_MSG_180;AC & I - Ajustes imagen - Claridad (J)
+HISTORY_MSG_181;AC & I - Ajustes imagen - Cromaticidad (C)
+HISTORY_MSG_182;AC & I - Condic. escena - Adapt. automática
+HISTORY_MSG_183;AC & I - Ajustes imagen - Contraste (J)
+HISTORY_MSG_184;AC & I - Condic. escena - Contexto de la escena
+HISTORY_MSG_185;AC & I - Control del rango de colores
+HISTORY_MSG_186;AC & I - Ajustes imagen - Algoritmo
+HISTORY_MSG_187;AC & I - Ajustes imagen - Protección de rojos/piel
+HISTORY_MSG_188;AC & I - Ajustes imagen - Brillo (Q)
+HISTORY_MSG_189;AC & I - Ajustes imagen - Contraste (Q)
+HISTORY_MSG_190;AC & I - Ajustes imagen - Saturación (S)
+HISTORY_MSG_191;AC & I - Ajustes imagen - Colorido (M)
+HISTORY_MSG_192;AC & I - Ajustes imagen - Matiz (h)
+HISTORY_MSG_193;AC & I - Ajustes imagen - Curva tonal 1
+HISTORY_MSG_194;AC & I - Ajustes imagen - Curva tonal 2
+HISTORY_MSG_195;AC & I - Ajustes imagen - Curva tonal 1
+HISTORY_MSG_196;AC & I - Ajustes imagen - Curva tonal 2
+HISTORY_MSG_197;AC & I - Ajustes imagen - Curva de color
+HISTORY_MSG_198;AC & I - Ajustes imagen - Modo curva de color
+HISTORY_MSG_199;AC & I - Ajustes imagen - Usar salida CAM para histogramas de salida
+HISTORY_MSG_200;AC & I - Ajustes imagen - Usar CAM para mapeo tonal
 HISTORY_MSG_201;Reducción de ruido - Cromaticidad R/V
 HISTORY_MSG_202;Reducción de ruido - Cromaticidad A/Am
 HISTORY_MSG_203;Reducción de ruido - Espacio de color
 HISTORY_MSG_204;Pasos de mejora de LMMSE
-HISTORY_MSG_205;CAT02/16 - Filtro de píxel caliente/muerto
-HISTORY_MSG_206;CAT02/16 - Luminosidad automática de la escena
+HISTORY_MSG_205;AC & I - Filtro de píxel caliente/muerto
+HISTORY_MSG_206;AC & I - Luminosidad automática de la escena
 HISTORY_MSG_207;Quitar borde púrpura - Curva de matiz
 HISTORY_MSG_208;Balance de blancos - Compensador azul/rojo
 HISTORY_MSG_210;Filtro graduado - Ángulo
@@ -661,7 +661,7 @@ HISTORY_MSG_421;Retinex - Gamma
 HISTORY_MSG_422;Retinex - Gamma
 HISTORY_MSG_423;Retinex - Pendiente de gamma
 HISTORY_MSG_424;Retinex - Umbral luces
-HISTORY_MSG_425;Retinex - Base del logaritmo
+HISTORY_MSG_425;-- no usado --
 HISTORY_MSG_426;Retinex - Ecualizador de matiz
 HISTORY_MSG_427;Tipo de conversión del rango de colores de salida
 HISTORY_MSG_428;Tipo de conversión del rango de colores del monitor
@@ -682,28 +682,44 @@ HISTORY_MSG_442;Retinex - Escala
 HISTORY_MSG_443;Compensación punto negro de salida
 HISTORY_MSG_444;Balance de blancos - Sesgo de temperatura
 HISTORY_MSG_445;Sub-imagen raw
+HISTORY_MSG_446;-- no usado --
+HISTORY_MSG_447;-- no usado --
+HISTORY_MSG_448;-- no usado --
 HISTORY_MSG_449;PixelShift - Adaptación ISO
+HISTORY_MSG_450;-- no usado --
+HISTORY_MSG_451;-- no usado --
 HISTORY_MSG_452;PixelShift - Mostrar movimiento
 HISTORY_MSG_453;PixelShift - Mostrar sólo la máscara
+HISTORY_MSG_454;-- no usado --
+HISTORY_MSG_455;-- no usado --
+HISTORY_MSG_456;-- no usado --
 HISTORY_MSG_457;PixelShift - Comprobar rojo/azul
+HISTORY_MSG_458;-- no usado --
+HISTORY_MSG_459;-- no usado --
+HISTORY_MSG_460;-- no usado --
+HISTORY_MSG_461;-- no usado --
 HISTORY_MSG_462;PixelShift - Comprobar verde
+HISTORY_MSG_463;-- no usado --
 HISTORY_MSG_464;PixelShift - Difuminar máscara de movimiento
 HISTORY_MSG_465;PixelShift - Radio de difuminado
+HISTORY_MSG_466;-- no usado --
+HISTORY_MSG_467;-- no usado --
 HISTORY_MSG_468;PixelShift - Rellenar huecos
 HISTORY_MSG_469;PixelShift - Mediana
+HISTORY_MSG_470;-- no usado --
 HISTORY_MSG_471;PixelShift - Corrección de movimiento
 HISTORY_MSG_472;PixelShift - Suavizar transiciones
 HISTORY_MSG_474;PixelShift - Ecualizar
 HISTORY_MSG_475;PixelShift - Ecualizar canal
-HISTORY_MSG_476;CAM02 - Temperatura de salida
-HISTORY_MSG_477;CAM02 - Verde de salida
-HISTORY_MSG_478;CAM02 - Yb de salida
-HISTORY_MSG_479;CAM02 - Adaptación CAT02 de salida
-HISTORY_MSG_480;CAM02 - Salida automática CAT02
-HISTORY_MSG_481;CAM02 - Temperatura de la escena
-HISTORY_MSG_482;CAM02 - Verde de la escena
-HISTORY_MSG_483;CAM02 - Yb de la escena
-HISTORY_MSG_484;CAM02 - Yb automático de la escena
+HISTORY_MSG_476;AC & I - Condic. visualiz. - Temperatura
+HISTORY_MSG_477;AC & I - Condic. visualiz. - Tinte
+HISTORY_MSG_478;AC & I - Condic. visualiz. - Luminancia media
+HISTORY_MSG_479;AC & I - Condic. visualiz. - Adaptación
+HISTORY_MSG_480;AC & I - Condic. visualiz. - Adaptac. automática
+HISTORY_MSG_481;AC & I - Condic. escena - Temperatura
+HISTORY_MSG_482;AC & I - Condic. escena - Tinte
+HISTORY_MSG_483;AC & I - Condic. escena - Luminancia media
+HISTORY_MSG_484;AC & I - Condic. escena -Lumin. media auto
 HISTORY_MSG_485;Corrección de objetivo
 HISTORY_MSG_486;Corrección de objetivo - Cámara
 HISTORY_MSG_487;Corrección de objetivo - Objetivo
@@ -716,23 +732,23 @@ HISTORY_MSG_493;Ajustes L*a*b*
 HISTORY_MSG_494;Nitidez en captura
 HISTORY_MSG_496;Local - Punto borrado
 HISTORY_MSG_497;Local - Punto seleccionado
-HISTORY_MSG_498;Local - Nombre de punto
-HISTORY_MSG_499;Local - Visibilidad de punto
-HISTORY_MSG_500;Local - Forma de punto
-HISTORY_MSG_501;Local - Método de punto
-HISTORY_MSG_502;Local - Método de forma de punto
-HISTORY_MSG_503;Local - locX de punto
-HISTORY_MSG_504;Local - locXL de punto
-HISTORY_MSG_505;Local - locY de punto
-HISTORY_MSG_506;Local - locYT de punto
-HISTORY_MSG_507;Local - Centro de punto
-HISTORY_MSG_508;Local - Radio circular de punto
-HISTORY_MSG_509;Local - Método de calidad de punto
-HISTORY_MSG_510;Local - Transición de punto
-HISTORY_MSG_511;Local - Umbral de punto
-HISTORY_MSG_512;Local - Decaimiento de ΔE de punto
-HISTORY_MSG_513;Local - Ámbito de punto
-HISTORY_MSG_514;Local - Estructura de punto
+HISTORY_MSG_498;Local - Nombre del punto
+HISTORY_MSG_499;Local - Visibilidad del punto
+HISTORY_MSG_500;Local - Forma del punto
+HISTORY_MSG_501;Local - Método del punto
+HISTORY_MSG_502;Local - Método de forma del punto
+HISTORY_MSG_503;Local - locX del punto
+HISTORY_MSG_504;Local - locXL del punto
+HISTORY_MSG_505;Local - locY del punto
+HISTORY_MSG_506;Local - locYT del punto
+HISTORY_MSG_507;Local - Centro del punto
+HISTORY_MSG_508;Local - Radio circular del punto
+HISTORY_MSG_509;Local - Método de calidad del punto
+HISTORY_MSG_510;Local - Transición del punto
+HISTORY_MSG_511;Local - Umbral del punto
+HISTORY_MSG_512;Local - Decaimiento de ΔE del punto
+HISTORY_MSG_513;Local - Ámbito del punto
+HISTORY_MSG_514;Local - Estructura del punto
 HISTORY_MSG_515;Ajustes Locales
 HISTORY_MSG_516;Local - Color y luz
 HISTORY_MSG_517;Local - Activar super
@@ -798,7 +814,7 @@ HISTORY_MSG_576;Local - CPND Mult
 HISTORY_MSG_577;Local - CPND Cromaticidad
 HISTORY_MSG_578;Local - CPND Umbral
 HISTORY_MSG_579;Local - CPND Ámbito
-HISTORY_MSG_580;Local - Reducción ruido
+HISTORY_MSG_580;-- no usado --
 HISTORY_MSG_581;Local - RD Lumin. fino 1
 HISTORY_MSG_582;Local - RD Lumin. grueso
 HISTORY_MSG_583;Local - RD Lumin. detalle
@@ -881,7 +897,7 @@ HISTORY_MSG_660;Local - CPND Claridad
 HISTORY_MSG_661;Local - CPND Contraste residual
 HISTORY_MSG_662;Local - Reducc. ruido Lumin. fino 0
 HISTORY_MSG_663;Local - Reducc. ruido Lumin. fino 2
-HISTORY_MSG_664;Local - CPND Difuminado
+HISTORY_MSG_664;-- no usado --
 HISTORY_MSG_665;Local - CPND Mezcla máscara
 HISTORY_MSG_666;Local - CPND Radio máscara
 HISTORY_MSG_667;Local - CPND Cromaticidad máscara
@@ -1129,7 +1145,7 @@ HISTORY_MSG_920;Local - Ondíc. sigma LC
 HISTORY_MSG_921;Local - Ondíc. Graduado sigma LC2
 HISTORY_MSG_922;Local - Cambios en B/N
 HISTORY_MSG_923;Local - Modo Complejidad herram.
-HISTORY_MSG_924;Local - Modo Complejidad herram.
+HISTORY_MSG_924;-- no usado --
 HISTORY_MSG_925;Local - Ámbito herram. color
 HISTORY_MSG_926;Local - Mostrar tipo máscara
 HISTORY_MSG_927;Local - Sombras
@@ -1353,13 +1369,15 @@ HISTORY_MSG_1145;Local - Jz Codific. Log
 HISTORY_MSG_1146;Local - Jz Codific. Log gris objetivo
 HISTORY_MSG_1147;Local - Jz Ev Negro Ev Blanco
 HISTORY_MSG_1148;Local - Jz Sigmoide
+HISTORY_MSG_1149;Local - Sigmoide Q
+HISTORY_MSG_1150;Local - Codif. log. Q en vez de Sigmoide Q
 HISTORY_MSG_BLSHAPE;Difuminado por niveles
 HISTORY_MSG_BLURCWAV;Difuminar cromaticidad
 HISTORY_MSG_BLURWAV;Difuminar luminancia
 HISTORY_MSG_BLUWAV;Respuesta de atenuación
-HISTORY_MSG_CATCAT;Modo Cat02/16
-HISTORY_MSG_CATCOMPLEX;Complejidad CIECAM
-HISTORY_MSG_CATMODEL;Modelo CAM
+HISTORY_MSG_CATCAT;AC & I - Ajustes - Modo
+HISTORY_MSG_CATCOMPLEX;AC & I - Ajustes - Complejidad
+HISTORY_MSG_CATMODEL;AC & I - Ajustes - CAM
 HISTORY_MSG_CLAMPOOG;Recortar colores fuera de rango
 HISTORY_MSG_COLORTONING_LABGRID_VALUE;Virado - Corrección de color
 HISTORY_MSG_COLORTONING_LABREGION_AB;Virado - Corrección de color
@@ -1410,7 +1428,7 @@ HISTORY_MSG_ICM_WORKING_ILLUM_METHOD;Método de iluminante
 HISTORY_MSG_ICM_WORKING_PRIM_METHOD;Método de primarios
 HISTORY_MSG_ICM_WORKING_SLOPE;Espacio trabajo - Pendiente
 HISTORY_MSG_ICM_WORKING_TRC_METHOD;Espacio trabajo - Método TRC
-HISTORY_MSG_ILLUM;Iluminante
+HISTORY_MSG_ILLUM;AC & I - Condic. escena - Iluminante
 HISTORY_MSG_LOCALCONTRAST_AMOUNT;Contraste local - Cantidad
 HISTORY_MSG_LOCALCONTRAST_DARKNESS;Contraste local - Oscuridad
 HISTORY_MSG_LOCALCONTRAST_ENABLED;Contraste local
@@ -1517,6 +1535,7 @@ ICCPROFCREATOR_ILL_41;D41
 ICCPROFCREATOR_ILL_50;D50
 ICCPROFCREATOR_ILL_55;D55
 ICCPROFCREATOR_ILL_60;D60
+ICCPROFCREATOR_ILL_63;D63: DCI-P3 Sala de cine
 ICCPROFCREATOR_ILL_65;D65
 ICCPROFCREATOR_ILL_80;D80
 ICCPROFCREATOR_ILL_DEF;Predeterminado
@@ -1531,6 +1550,7 @@ ICCPROFCREATOR_PRIM_BETA;BetaRGB
 ICCPROFCREATOR_PRIM_BLUX;Azul X
 ICCPROFCREATOR_PRIM_BLUY;Azul Y
 ICCPROFCREATOR_PRIM_BRUCE;BruceRGB
+ICCPROFCREATOR_PRIM_DCIP3;DCI-P3
 ICCPROFCREATOR_PRIM_GREX;Verde X
 ICCPROFCREATOR_PRIM_GREY;Verde Y
 ICCPROFCREATOR_PRIM_PROPH;Prophoto
@@ -1586,7 +1606,7 @@ IPTCPANEL_SUPPCATEGORIES;Categorías adicionales
 IPTCPANEL_SUPPCATEGORIESHINT;Refina aún más el tema de la imagen.
 IPTCPANEL_TITLE;Título
 IPTCPANEL_TITLEHINT;Nombre verbal y legible para la imagen. Puede ser el nombre del archivo de imagen.
-IPTCPANEL_TRANSREFERENCE;Job ID
+IPTCPANEL_TRANSREFERENCE;Identificador del trabajo
 IPTCPANEL_TRANSREFERENCEHINT;Número o identificador necesario para el control del flujo de trabajo o el seguimiento.
 MAIN_BUTTON_FULLSCREEN;Pantalla completa
 MAIN_BUTTON_ICCPROFCREATOR;Creador de perfiles ICC
@@ -1690,7 +1710,7 @@ PARTIALPASTE_CACORRECTION;Corrección de aberración cromática
 PARTIALPASTE_CHANNELMIXER;Mezclador de canales
 PARTIALPASTE_CHANNELMIXERBW;Blanco y negro
 PARTIALPASTE_COARSETRANS;Rotación/Volteo grueso
-PARTIALPASTE_COLORAPP;CIECAM02/16
+PARTIALPASTE_COLORAPP;Apariencia de color e Iluminación
 PARTIALPASTE_COLORGROUP;Ajustes de color
 PARTIALPASTE_COLORTONING;Virado de color
 PARTIALPASTE_COMMONTRANSFORMPARAMS;Auto-llenado
@@ -1762,6 +1782,7 @@ PARTIALPASTE_SHARPENEDGE;Bordes
 PARTIALPASTE_SHARPENING;Nitidez (USM/RL)
 PARTIALPASTE_SHARPENMICRO;Microcontraste
 PARTIALPASTE_SOFTLIGHT;Luz suave
+PARTIALPASTE_SPOT;Eliminación de manchas
 PARTIALPASTE_TM_FATTAL;Compresión de rango dinámico
 PARTIALPASTE_VIBRANCE;Vivacidad
 PARTIALPASTE_VIGNETTING;Corrección de viñeteado
@@ -1902,7 +1923,7 @@ PREFERENCES_PERFORMANCE_MEASURE_HINT;Anota los tiempos de procesamiento en la co
 PREFERENCES_PERFORMANCE_THREADS;Hilos de ejecución
 PREFERENCES_PERFORMANCE_THREADS_LABEL;Número máximo de hilos para Reducción de ruido y Niveles de ondículas (0 = Automático)
 PREFERENCES_PREVDEMO;Método de desentramado de la vista previa
-PREFERENCES_PREVDEMO_FAST;Fast
+PREFERENCES_PREVDEMO_FAST;Rápido
 PREFERENCES_PREVDEMO_LABEL;Método de desentramado usado para la vista previa a ampliaciones <100%:
 PREFERENCES_PREVDEMO_SIDECAR;Como en PP3
 PREFERENCES_PRINTER;Impresora (Prueba de impresión)
@@ -2037,12 +2058,12 @@ SAVEDLG_WARNFILENAME;El archivo se nombrará
 SHCSELECTOR_TOOLTIP;La posición de estos tres deslizadores se reinicia haciendo clic en el botón derecho del ratón.
 SOFTPROOF_GAMUTCHECK_TOOLTIP;Destaca los píxels con colores fuera de rango con respecto a:\n\n- el perfil de la impresora, si éste está establecido y la prueba de impresión está activada,\n- el perfil de salida, si no se ha establecido un perfil de impresora y la prueba de impresión está activada,\n- el perfil del monitor, si la prueba de impresión está desactivada.
 SOFTPROOF_TOOLTIP;La prueba de impresión simula la apariencia de la imagen:\n\n- cuando se imprima, si se ha establecido un perfil de impresora en Preferencias > Gestión de color,\n- cuando se visualiza en una pantalla que usa el perfil de salida actual, si no se ha establecido un perfil de impresora.
-TC_PRIM_BLUX;Bx
-TC_PRIM_BLUY;By
-TC_PRIM_GREX;Gx
-TC_PRIM_GREY;Gy
-TC_PRIM_REDX;Rx
-TC_PRIM_REDY;Ry
+TC_PRIM_BLUX;Azul X
+TC_PRIM_BLUY;Azul Y
+TC_PRIM_GREX;Verde X
+TC_PRIM_GREY;Verde Y
+TC_PRIM_REDX;Rojo X
+TC_PRIM_REDY;Rojo Y
 THRESHOLDSELECTOR_B;Inferior
 THRESHOLDSELECTOR_BL;Inferior-izquierda
 THRESHOLDSELECTOR_BR;Inferior-derecha
@@ -2140,7 +2161,7 @@ TP_COLORAPP_ALGO_TOOLTIP;Permite escoger entre subconjuntos de parámetros o tod
 TP_COLORAPP_BADPIXSL;Filtro de píxels calientes/muertos
 TP_COLORAPP_BADPIXSL_TOOLTIP;Supresión de píxels calientes/muertos (de un color brillante).\n0 = Sin efecto\n1 = Mediana\n2 = Gaussiano.\nAlternativamente, ajusta la imagen para evitar sombras muy oscuras.\n\nEstos artefactos se deben a limitaciones de CIECAM02.
 TP_COLORAPP_BRIGHT;Brillo (Q)
-TP_COLORAPP_BRIGHT_TOOLTIP;El Brillo en CIECAM02/16 es la cantidad de luz percibida que emana de un estímulo, y difiere del brillo de L*a*b* y RGB.
+TP_COLORAPP_BRIGHT_TOOLTIP;El Brillo en CIECAM es la cantidad de luz percibida que emana de un estímulo. Difiere del brillo de L*a*b* y RGB.
 TP_COLORAPP_CAT02ADAPTATION_TOOLTIP;Si se ajusta manualmente, se recomiendan valores por encima de 65.
 TP_COLORAPP_CATCLASSIC;Clásico
 TP_COLORAPP_CATMET_TOOLTIP;Clásico: funcionamiento tradicional de CIECAM. Las transformaciones de adaptación cromática se aplican separadamente en «Condiciones de la escena» e iluminante básico por un lado, y en el iluminante básico y «Condiciones de entorno» por otro.\n\nSimétrico: La adaptación cromática se basa en el balance de blancos. Los ajustes «Condiciones de la escena», «Ajustes de imagen» y «Condiciones de entorno» se neutralizan.\n\nMezcla: Como la opción «Clásico», pero en este caso, la adaptación cromática se basa en el balance de blancos.
@@ -2149,29 +2170,29 @@ TP_COLORAPP_CATSYMGEN;Automático simétrico
 TP_COLORAPP_CATSYMSPE;Mezcla
 TP_COLORAPP_CHROMA;Cromaticidad (C)
 TP_COLORAPP_CHROMA_M;Colorido (M)
-TP_COLORAPP_CHROMA_M_TOOLTIP;El colorido en CIECAM02/16 es la cantidad percibida de matiz en relación al gris, un indicador de que un estímulo parece estar más o menos coloreado.
+TP_COLORAPP_CHROMA_M_TOOLTIP;El colorido en CIECAM es la cantidad percibida de matiz en relación al gris, un indicador de que un estímulo parece estar más o menos coloreado.
 TP_COLORAPP_CHROMA_S;Saturación (S)
-TP_COLORAPP_CHROMA_S_TOOLTIP;La Saturación en CIECAM02/16 corresponde al color de un estímulo en relación a su propio brillo. Difiere de la saturación L*a*b* y RGB.
-TP_COLORAPP_CHROMA_TOOLTIP;La Cromaticidad en CIECAM02/16 corresponde al color de un estímulo relativo a la claridad de un estímulo que parece blanco bajo idénticas condiciones. Difiere de la cromaticidad L*a*b* y RGB.
-TP_COLORAPP_CIECAT_DEGREE;Adaptación CAT02
+TP_COLORAPP_CHROMA_S_TOOLTIP;La Saturación en CIECAM corresponde al color de un estímulo en relación a su propio brillo. Difiere de la saturación L*a*b* y RGB.
+TP_COLORAPP_CHROMA_TOOLTIP;La Cromaticidad en CIECAM corresponde al color de un estímulo relativo a la claridad de un estímulo que parece blanco bajo idénticas condiciones. Difiere de la cromaticidad L*a*b* y RGB.
+TP_COLORAPP_CIECAT_DEGREE;Adaptación
 TP_COLORAPP_CONTRAST;Contraste (J)
 TP_COLORAPP_CONTRAST_Q;Contraste (Q)
-TP_COLORAPP_CONTRAST_Q_TOOLTIP;El Contraste (Q) en CIECAM02/16 se basa en el brillo. Difiere del contraste en L*a*b* y RGB.
-TP_COLORAPP_CONTRAST_TOOLTIP;El Contraste (J) en CIECAM02/16 se basa en la claridad. Difiere del contraste en L*a*b* y RGB.
+TP_COLORAPP_CONTRAST_Q_TOOLTIP;El Contraste (Q) en CIECAM se basa en el brillo. Difiere del contraste en L*a*b* y RGB.
+TP_COLORAPP_CONTRAST_TOOLTIP;El Contraste (J) en CIECAM se basa en la claridad. Difiere del contraste en L*a*b* y RGB.
 TP_COLORAPP_CURVEEDITOR1;Curva tonal 1
-TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Muestra el histograma de L* (L*a*b*) antes de CIECAM02/16.\nSi la casilla «Mostrar histogramas de salida de CIECAM02/16 en curvas» está activada, muestra el histograma de J después de CIECAM02/16.\n\nJ no se muestra en el panel del histograma principal.\n\nPara la salida final, se puede consultar el panel del histograma principal.
+TP_COLORAPP_CURVEEDITOR1_TOOLTIP;Muestra el histograma de L* (L*a*b*) antes de CIECAM.\nSi la casilla «Mostrar histogramas de salida de CIECAM en curvas» está activada, muestra el histograma de J después de CIECAM.\n\nJ no se muestra en el panel del histograma principal.\n\nPara la salida final, se puede consultar el panel del histograma principal.
 TP_COLORAPP_CURVEEDITOR2;Curva tonal 2
 TP_COLORAPP_CURVEEDITOR2_TOOLTIP;El mismo uso que la primera curva tonal J(J).
 TP_COLORAPP_CURVEEDITOR3;Curva de color
-TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Ajusta la cromaticidad, la saturación o el colorido.\n\nMuestra el histograma de cromaticidad (L*a*b*) antes de CIECAM02/16.\nSi la casilla «Mostrar histogramas de salida de CIECAM02/16 en curvas» está activada, muestra el histograma de C, S o M después de CIECAM02/16.\n\nC, S y M no se muestran en el panel del histograma principal.\nPara la salida final, se puede consultar el panel del histograma principal.
-TP_COLORAPP_DATACIE;Histogramas de salida CIECAM02/16 en curvas
-TP_COLORAPP_DATACIE_TOOLTIP;Si está activado, los histogramas en las curvas CIECAM02/16 muestran los valores/rangos aproximados de J, y C, S o M después de los ajustes de CIECAM02/16.\nEsta selección no influye en el histograma principal.\n\nSi está desactivado, los histogramas en las curvas CIECAM02/16 muestran los valores L*a*b* antes de los ajustes de CIECAM02/16.
+TP_COLORAPP_CURVEEDITOR3_TOOLTIP;Ajusta la cromaticidad, la saturación o el colorido.\n\nMuestra el histograma de cromaticidad (L*a*b*) antes de CIECAM.\nSi la casilla «Mostrar histogramas de salida de CIECAM en curvas» está activada, muestra el histograma de C, S o M después de CIECAM.\n\nC, S y M no se muestran en el panel del histograma principal.\nPara la salida final, se puede consultar el panel del histograma principal.
+TP_COLORAPP_DATACIE;Histogramas de salida CIECAM en las curvas
+TP_COLORAPP_DATACIE_TOOLTIP;Si está activado, los histogramas en las curvas CIECAM muestran los valores/rangos aproximados de J, y C, S o M después de los ajustes de CIECAM.\nEsta selección no influye en el histograma principal.\n\nSi está desactivado, los histogramas en las curvas CIECAM muestran los valores L*a*b* antes de los ajustes de CIECAM.
 TP_COLORAPP_DEGREE_TOOLTIP;CAT02/16 es una adaptación cromática. Convierte los valores de una imagen cuyo punto blanco es el de un iluminante dado (por ejemplo D65) a nuevos valores cuyo punto blanco es el del nuevo iluminante. Consúltese el Modelo de Punto Blanco (por ejemplo, D50 or D55).
 TP_COLORAPP_DEGREOUT_TOOLTIP;CAT02/16 es una adaptación cromática. Convierte los valores de una imagen cuyo punto blanco es el de un iluminante dado (por ejemplo D50) a nuevos valores cuyo punto blanco es el del nuevo iluminante. Consúltese el Modelo de Punto Blanco (por ejemplo D75).
 TP_COLORAPP_FREE;Temperatura+verde libres + CAT02/16 + [salida]
-TP_COLORAPP_GAMUT;Control de rango de colores (L*a*b*)
-TP_COLORAPP_GEN;Ajustes - Preselección
-TP_COLORAPP_GEN_TOOLTIP;Este módulo está basado en el modelo de apariencia de color CIECAM, que se diseñó para simular mejor cómo la visión humana percibe los colores bajo diferentes condiciones de iluminación, por ejemplo, contra fondos diferentes.\n\nTiene en cuenta el entorno de cada color y modifica su apariencia para que sea lo más cercana posible a la percepción humana.\n\nTambién adapta la salida a las condiciones de visualización previstas (monitor, TV, proyector, impresora, etc.) de modo que la apariencia cromática se preserve para todos los entornos de escena y visualización.
+TP_COLORAPP_GAMUT;Emplear el control de rango de colores en el modo L*a*b*
+TP_COLORAPP_GEN;Ajustes
+TP_COLORAPP_GEN_TOOLTIP;Este módulo está basado en los modelos de apariencia de color CIECAM, que se diseñaron para simular mejor cómo la visión humana percibe los colores bajo diferentes condiciones de iluminación, por ejemplo, contra fondos diferentes.\n\nTiene en cuenta el entorno de cada color y modifica su apariencia para que sea lo más cercana posible a la percepción humana.\n\nTambién adapta la salida a las condiciones de visualización previstas (monitor, TV, proyector, impresora, etc.) de modo que la apariencia cromática se preserve para todos los entornos de escena y visualización.
 TP_COLORAPP_HUE;Matiz (h)
 TP_COLORAPP_HUE_TOOLTIP;Matiz (h) es el grado en que un estímulo puede describirse como similar a un color descrito como rojo, verde, azul y amarillo.
 TP_COLORAPP_IL41;D41
@@ -2184,12 +2205,12 @@ TP_COLORAPP_ILA;Incandescente StdA 2856K
 TP_COLORAPP_ILFREE;Libre
 TP_COLORAPP_ILLUM;Iluminante
 TP_COLORAPP_ILLUM_TOOLTIP;Selecciona el iluminante más cercano a las condiciones de toma.\nEn general será D50, pero puede cambiar en función de la hora y la latitud.
-TP_COLORAPP_LABEL;Apariencia de Color e Iluminación (CIECAM02/16)
+TP_COLORAPP_LABEL;Apariencia de Color e Iluminación
 TP_COLORAPP_LABEL_CAM02;Ajustes de imagen
 TP_COLORAPP_LABEL_SCENE;Condiciones de la escena
 TP_COLORAPP_LABEL_VIEWING;Condiciones de visualización
 TP_COLORAPP_LIGHT;Claridad (J)
-TP_COLORAPP_LIGHT_TOOLTIP;La Claridad en CIECAM02/16 es la claridad de un estímulo relativa a la claridad de un estímulo que parece blanco bajo condiciones de visualización similares. Difiere de la claridad en L*a*b* y RGB.
+TP_COLORAPP_LIGHT_TOOLTIP;La Claridad en CIECAM es la claridad de un estímulo relativa a la claridad de un estímulo que parece blanco bajo condiciones de visualización similares. Difiere de la claridad en L*a*b* y RGB.
 TP_COLORAPP_MEANLUMINANCE;Luminancia media (Yb%)
 TP_COLORAPP_MOD02;CIECAM02
 TP_COLORAPP_MOD16;CIECAM16
@@ -2202,14 +2223,13 @@ TP_COLORAPP_NEUTRAL_TOOLTIP;Restablece todos los deslizadores, casillas de verif
 TP_COLORAPP_RSTPRO;Protección de rojo y tonos de piel
 TP_COLORAPP_RSTPRO_TOOLTIP;La Protección de rojo y tonos de piel afecta tanto a los deslizadores como a las curvas.
 TP_COLORAPP_SOURCEF_TOOLTIP;Corresponde a las condiciones de toma y cómo llevar las condiciones y los datos a una zona «normal». «Normal» significa aquí condiciones y datos promedio o estándar, es decir, sin tener en cuenta las correcciones CIECAM.
-TP_COLORAPP_SURROUND;Entorno
-TP_COLORAPP_SURROUNDSRC;Entorno - Iluminación de escena
+TP_COLORAPP_SURROUND;Entorno de visualización
+TP_COLORAPP_SURROUNDSRC;Entorno (Iluminación de escena)
 TP_COLORAPP_SURROUND_AVER;Promedio
 TP_COLORAPP_SURROUND_DARK;Oscuro
 TP_COLORAPP_SURROUND_DIM;Luz tenue
 TP_COLORAPP_SURROUND_EXDARK;Muy oscuro
 TP_COLORAPP_SURROUND_TOOLTIP;Cambia los tonos y colores teniendo en cuenta las condiciones de visualización del dispositivo de salida.\n\n<b>Promedio</b>: Entorno de luz promedio (estándar). La imagen no cambiará.\n\n<b>Luz tenue</b>: Entorno con luz tenue (TV). La imagen se volverá un poco oscura.\n\n<b>Oscuro</b>: Entorno oscuro (proyector). La imagen se volverá más oscura.\n\n<b>Muy oscuro</b>: Entorno muy oscuro. La imagen se volverá muy oscura.
-TP_COLORAPP_SURSOURCE;Entorno origen
 TP_COLORAPP_SURSOURCE_TOOLTIP;Cambia tonos y colores para tener en cuenta las condiciones de la escena.\n\n<b>Promedio</b>: Entorno de luz promedio (estándar). La imagen no cambiará.\n\n<b>Tenue</b>: Entorno tenue. La imagen se volverá ligeramente brillante.\n\n<b>Oscuro</b>: Entorno oscuro. La imagen se volverá más brillante.\n\n<b>Muy oscuro</b>: Entorno muy oscuro. La imagen se volverá muy brillante.
 TP_COLORAPP_TCMODE_BRIGHTNESS;Brillo
 TP_COLORAPP_TCMODE_CHROMA;Cromaticidad
@@ -2221,9 +2241,9 @@ TP_COLORAPP_TCMODE_LIGHTNESS;Claridad
 TP_COLORAPP_TCMODE_SATUR;Saturación
 TP_COLORAPP_TEMP2_TOOLTIP;O bien modo simétrico, Temp = balance de blancos.\nO bien, se selecciona el iluminante, poniendo siempre Tinte=1.\n\nA Temp=2856 K\nD41 Temp=4100 K\nD50 Temp=5003 K\nD55 Temp=5503 K\nD60 Temp=6000 K\nD65 Temp=6504 K\nD75 Temp=7504 K
 TP_COLORAPP_TEMP_TOOLTIP;Para seleccionar un iluminante, se ajusta siempre Tinte=1.\n\nTemp A=2856 K\nTemp D50=5003 K\nTemp D55=5503 K\nTemp D65=6504 K\nTemp D75=7504 K
-TP_COLORAPP_TONECIE;Mapeo tonal mediante CIECAM02
+TP_COLORAPP_TONECIE;Mapeo tonal mediante CIECAM
 TP_COLORAPP_TONECIE_TOOLTIP;Si esta opción está desactivada, el mapeo tonal se realiza en el espacio L*a*b*.\nSi está activada, el mapeo tonal se realiza mediante CIECAM02.\nLa herramienta Mapeo tonal debe estar activada para que este ajuste tenga efectos.
-TP_COLORAPP_VIEWINGF_TOOLTIP;Tiene en cuenta el medio en el que se visualizará la imagen final (monitor, TV, proyector, impresora, ...), así como su entorno. Este proceso tomará los datos procedentes del proceso «Ajustes de imagen» y los «llevará» al medio de visualización, de tal modo que se tendrán en cuenta las condiciones de visualización.
+TP_COLORAPP_VIEWINGF_TOOLTIP;Tiene en cuenta el medio en el que se visualizará la imagen final (monitor, TV, proyector, impresora, etc.), así como su entorno. Este proceso tomará los datos procedentes del proceso «Ajustes de imagen» y los «llevará» al medio de visualización, de tal modo que se tendrán en cuenta las condiciones de visualización.
 TP_COLORAPP_VIEWING_ABSOLUTELUMINANCE_TOOLTIP;Luminancia absoluta del entorno de visualización\n(normalmente 16 cd/m²).
 TP_COLORAPP_WBCAM;WB [RT+CAT02] + [salida]
 TP_COLORAPP_WBRT;WB [RT] + [salida]
@@ -2919,6 +2939,7 @@ TP_LOCALLAB_JZHJZFRA;Curva Jz(Hz)
 TP_LOCALLAB_JZHUECIE;Rotación de matiz
 TP_LOCALLAB_JZLIGHT;Luminosidad
 TP_LOCALLAB_JZLOG;Codificación Log Jz
+TP_LOCALLAB_JZLOGWBS_TOOLTIP;Los ajustes Ev de Negro y Ev de Blanco pueden ser diferentes, dependiendo de si se usa Codificación logarítmica o Sigmoide.\nEn el caso de Sigmoide, puede ser necesario un cambio (aumento en la mayoría de los casos) de Ev de Blanco, para obtener una mejor representación de las altas luces, el contraste y la saturación.
 TP_LOCALLAB_JZLOGWB_TOOLTIP;Si Auto está activado, calculará y ajustará los niveles Ev y la «luminancia media Yb%» en el área del punto de edición. Los valores resultantes se usarán en todas las operaciones Jz, incluyendo «Codificación Log Jz».\nTambién calcula la luminancia absoluta en el momento de la toma.
 TP_LOCALLAB_JZLOGYBOUT_TOOLTIP;Yb es la luminosidad relativa del fondo, expresada como un porcentaje de gris. Un 18% de gris corresponde a una luminosidad del fondo del 50%, expresada en CIE L.\nLos datos se basan en la luminosidad media de la imagen.\nSi se usa con la Codificación logarítmica, la luminosidad media se utilizará para determinar la cantidad de ganancia que se necesita aplicar a la señal antes de la codificación logarítimica. Los valores bajos de luminosidad media darán como resultado un aumento de la ganancia.
 TP_LOCALLAB_JZMODECAM_TOOLTIP;Jz (sólo en modo «Avanzado»). Sólo funcionará si el dispositivo de salida (monitor) es HDR (luminancia pico mayor que 100 cd/m², idealmente entre 4000 y 10000 cd/m², y luminancia del punto negro inferior a 0.005 cd/m²). Esto supone que: a) el espacio de conexión de perfiles ICC (ICC-PCS) para la pantalla usa Jzazbz (o XYZ), b) trabaja con precisión de números reales (de coma flotante), c) el monitor está calibrado (si es posible, con un rango de colores DCI-P3 o Rec-2020), d) la gamma usual (sRGB o BT709) se substituye por una función Cuantificadora Perceptual (CP).
@@ -2979,6 +3000,8 @@ TP_LOCALLAB_LOGAUTOGRAY_TOOLTIP;Calcula automáticamente la «luminancia media»
 TP_LOCALLAB_LOGAUTO_TOOLTIP;Al pulsar este botón se calculará el «rango dinámico» y la «luminancia media» para las condiciones de la escena si está activada la casilla «Luminancia media automática (Yb%)».\nTambién se calcula la luminancia absoluta en el momento de la toma.\nPara ajustar los valores calculados automáticamente hay que volver a pulsar el botón.
 TP_LOCALLAB_LOGBASE_TOOLTIP;Valor predeterminado = 2.\nLos valores menores que 2 reducen la acción del algoritmo, haciendo las sombras más oscuras y las luces más brillantes.\nCon valores mayores que 2, las sombras son más grises y las luces son más desteñidas.
 TP_LOCALLAB_LOGCATAD_TOOLTIP;La adaptación cromática permite interpretar un color en función de su entorno espacio-temporal.\nEs útil cuando el balance de blancos está lejos de la referencia D50.\nAdapta los colores al iluminante del dispositivo de salida.
+TP_LOCALLAB_LOGCIE;Codificación logarítmica en lugar de Sigmoide
+TP_LOCALLAB_LOGCIE_TOOLTIP;Permite el uso de Ev de Negro, Ev de Blanco, Luminancia media de la escena (Yb%) y Luminancia media de la visualización (Yb%) para el mapeo tonal con Codificación logarítmica Q.
 TP_LOCALLAB_LOGCOLORFL;Colorido (M)
 TP_LOCALLAB_LOGCOLORF_TOOLTIP;Cantidad de matiz percibida en relación al gris.\nIndicador de que un estímulo parece más o menos coloreado.
 TP_LOCALLAB_LOGCONQL;Contraste (Q)
@@ -3003,6 +3026,7 @@ TP_LOCALLAB_LOGREPART;Intensidad
 TP_LOCALLAB_LOGREPART_TOOLTIP;Permite ajustar la intensidad relativa de la imagen codificada logarítmicamente con respecto a la imagen original.\nNo afecta al componente Ciecam.
 TP_LOCALLAB_LOGSATURL_TOOLTIP;La Saturación (s) en CIECAM16 corresponde al color de un estímulo en relación a su propio brillo.\nActúa principalmente en tonos medios y luces.
 TP_LOCALLAB_LOGSCENE_TOOLTIP;Corresponde a las condiciones de toma.
+TP_LOCALLAB_LOGSURSOUR_TOOLTIP;Cambia los tonos y colores teniendo en cuenta las condiciones de la escena.\n\n<b>Promedio</b>: Condiciones de luz promedio (estándar). La imagen no cambiará.\n\n<b>Tenue</b>: Condiciones de luz tenue. La imagen será ligeramente más brillante.\n\n<b>Oscuro</b>: Condiciones de oscuridad. La imagen será más brillante.
 TP_LOCALLAB_LOGVIEWING_TOOLTIP;Corresponde al medio en el que se visualizará la imagen final (monitor, TV, proyector, impresora,..), así como su entorno.
 TP_LOCALLAB_LOG_TOOLNAME;Codificación logarítmica - 0
 TP_LOCALLAB_LUM;Curvas LL - CC
@@ -3068,7 +3092,6 @@ TP_LOCALLAB_MASKRESWAV_TOOLTIP;Usado para modular el efecto de los ajustes de Co
 TP_LOCALLAB_MASKUNUSABLE;Máscara desactivada (Máscara y modificaciones)
 TP_LOCALLAB_MASKUSABLE;Máscara activada (Máscara y modificaciones)
 TP_LOCALLAB_MASK_TOOLTIP;Se puede activar varias máscaras para una herramienta, activando otra herramienta y usando solamente la máscara (ajusta los deslizadores de la herramienta a 0 ).\n\nTambién es posible duplicar el punto RT y situarlo cerca del primer punto. Las pequeñas variaciones en las referencias del punto permiten hacer ajustes finos.
-TP_LOCALLAB_MED;Medio
 TP_LOCALLAB_MEDIAN;Mediana baja
 TP_LOCALLAB_MEDIANITER_TOOLTIP;El número de iteraciones sucesivas llevadas a cabo por el filtro de mediana.
 TP_LOCALLAB_MEDIAN_TOOLTIP;Se puede elegir un valor de mediana en el rango de 3x3 a 9x9 píxels. Los valores altos aumentan la reducción de ruido y el difuminado.
@@ -3480,9 +3503,9 @@ TP_RAWEXPOS_LINEAR;Corrección de punto blanco
 TP_RAWEXPOS_RGB;Rojo, Verde, Azul
 TP_RAWEXPOS_TWOGREEN;Vincular verdes
 TP_RAW_1PASSMEDIUM;1 paso (Markesteijn)
-TP_RAW_2PASS;1 paso + fast
+TP_RAW_2PASS;1 paso + rápido
 TP_RAW_3PASSBEST;3 pasos (Markesteijn)
-TP_RAW_4PASS;3 pasos + fast
+TP_RAW_4PASS;3 pasos + rápido
 TP_RAW_AHD;AHD
 TP_RAW_AMAZE;AMaZE
 TP_RAW_AMAZEBILINEAR;AMaZE+Bilineal
@@ -3502,7 +3525,7 @@ TP_RAW_DUALDEMOSAICAUTOCONTRAST_TOOLTIP;Si la casilla está activada (recomendad
 TP_RAW_DUALDEMOSAICCONTRAST;Umbral de contraste
 TP_RAW_EAHD;EAHD
 TP_RAW_FALSECOLOR;Pasos de supresión de falso color
-TP_RAW_FAST;Fast
+TP_RAW_FAST;Rápido
 TP_RAW_HD;Umbral
 TP_RAW_HD_TOOLTIP;Los valores bajos hacen más agresiva la detección de píxels muertos/calientes, pero los falsos positivos pueden dar lugar a artefactos. Si se observa la aparición de cualquier artefacto al activar el filtro de píxel muerto/caliente, debe incrementarse gradualmente el umbral hasta que desaparezcan.
 TP_RAW_HPHD;HPHD
@@ -3549,11 +3572,11 @@ TP_RAW_RCD;RCD
 TP_RAW_RCDBILINEAR;RCD+Bilineal
 TP_RAW_RCDVNG4;RCD+VNG4
 TP_RAW_SENSOR_BAYER_LABEL;Sensor con matriz Bayer
-TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;El método de 3 pasos da los mejores resultados (recomendado para imágenes de ISO baja).\nEl método de 1 paso es casi indistinguible del de 3 pasos para imágenes de ISO alta y es más rápido.\n+fast genera menos artefactos en zonas planas.
+TP_RAW_SENSOR_XTRANS_DMETHOD_TOOLTIP;El método de 3 pasos da los mejores resultados (recomendado para imágenes de ISO baja).\nEl método de 1 paso es casi indistinguible del de 3 pasos para imágenes de ISO alta y es más rápido.\n+rápido genera menos artefactos en zonas planas.
 TP_RAW_SENSOR_XTRANS_LABEL;Sensor con matriz X-Trans
 TP_RAW_VNG4;VNG4
 TP_RAW_XTRANS;X-Trans
-TP_RAW_XTRANSFAST;Fast X-Trans
+TP_RAW_XTRANSFAST;X-Trans rápido
 TP_RESIZE_ALLOW_UPSCALING;Permitir aumento de tamaño
 TP_RESIZE_APPLIESTO;Se aplica a:
 TP_RESIZE_CROPPEDAREA;Área recortada
@@ -4042,35 +4065,4 @@ ZOOMPANEL_ZOOMFITCROPSCREEN;Encajar recorte en la vista previa\nAtajo de teclado
 ZOOMPANEL_ZOOMFITSCREEN;Encajar la imagen entera en la vista previa\nAtajo de teclado: <b>Alt</b>-<b>f</b>
 ZOOMPANEL_ZOOMIN;Acercar\nAtajo de teclado: <b>+</b>
 ZOOMPANEL_ZOOMOUT;Alejar\nAtajo de teclado: <b>-</b>
-xTP_LOCALLAB_LOGSURSOUR_TOOLTIP;Cambia los tonos y colores para tener en cuenta las condiciones de la escena.\n\n<b>Promedio</b>: Entorno de luz promedio (estándar). La imagen no cambiará.\n\n<b>Tenue</b>: Entorno tenue. La imagen aumentará su brillo ligeramente.
-//HISTORY_MSG_1099;Local - Curva Hz(Hz)
 
-!!!!!!!!!!!!!!!!!!!!!!!!!
-! Untranslated keys follow; remove the ! prefix after an entry is translated.
-!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!HISTORY_MSG_446;--unused--
-!HISTORY_MSG_447;--unused--
-!HISTORY_MSG_448;--unused--
-!HISTORY_MSG_450;--unused--
-!HISTORY_MSG_451;--unused--
-!HISTORY_MSG_454;--unused--
-!HISTORY_MSG_455;--unused--
-!HISTORY_MSG_456;--unused--
-!HISTORY_MSG_458;--unused--
-!HISTORY_MSG_459;--unused--
-!HISTORY_MSG_460;--unused--
-!HISTORY_MSG_461;--unused--
-!HISTORY_MSG_463;--unused--
-!HISTORY_MSG_466;--unused--
-!HISTORY_MSG_467;--unused--
-!HISTORY_MSG_470;--unused--
-!HISTORY_MSG_1149;Local - Q Sigmoid
-!HISTORY_MSG_1150;Local - Log encoding Q instead Sigmoid Q
-!ICCPROFCREATOR_ILL_63;D63 : DCI-P3 Theater
-!ICCPROFCREATOR_PRIM_DCIP3;DCI-P3
-!PARTIALPASTE_SPOT;Spot removal
-!TP_LOCALLAB_JZLOGWBS_TOOLTIP;Black Ev and White Ev adjustments can be different depending on whether Log encoding or Sigmoid is used.\nFor Sigmoid, a change (increase in most cases) of White Ev may be necessary to obtain a better rendering of highlights, contrast and saturation.
-!TP_LOCALLAB_LOGCIE;Log encoding instead of Sigmoid
-!TP_LOCALLAB_LOGCIE_TOOLTIP;Allows you tu use Black Ev, White Ev, Scene Mean luminance(Yb%) and Viewing Mean luminance(Yb%) for tone-mapping using Log encoding Q.
-!TP_LOCALLAB_LOGSURSOUR_TOOLTIP;Changes tones and colors to take into account the Scene conditions.\n\n<b>Average</b>: Average light conditions (standard). The image will not change.\n\n<b>Dim</b>: Dim conditions. The image will become slightly brighter.\n\n<b>Dark</b>: Dark conditions. The image will become more bright.
