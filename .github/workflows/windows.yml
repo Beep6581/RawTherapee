@@ -10,9 +10,10 @@ on:
     branches:
       - dev
   workflow_dispatch:
+
 jobs:
   build:
-    runs-on: windows-2022
+    runs-on: windows-latest
     defaults:
       run:
         shell: msys2 {0}
@@ -22,7 +23,7 @@ jobs:
         build_type: [release, debug]
     steps:
       - name: Checkout source
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -49,7 +50,7 @@ jobs:
       - name: Configure build
         run: |
           export REF_NAME_FILTERED="$(echo '${{github.ref_name}}' | sed 's/[^A-z0-9_.-]//g')"
-          
+
           if [ '${{github.ref_type}}' == 'tag' ]; then
             export CACHE_SUFFIX=""
           else
@@ -249,14 +250,14 @@ jobs:
           7z a -tzip "%ARTIFACT_NAME%.zip" "./%ARTIFACT_NAME%"
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{env.ARTIFACT_NAME}}
           path: build\${{env.ARTIFACT_NAME}}
 
       - name: Upload installer
         if: ${{matrix.build_type == 'release' && (github.ref_type == 'tag' || github.ref_name == 'dev')}}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{env.ARTIFACT_NAME}}.exe
           path: build\${{env.ARTIFACT_NAME}}.exe
