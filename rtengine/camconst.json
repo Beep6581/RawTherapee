@@ -1238,7 +1238,9 @@ Camera constants:
 
     { // Quality C
         "make_model": "Canon EOS R10",
-        "dcraw_matrix" : [9269, -2012, -1107, -3990, 11762,  2527,  -569,  2093,  4913]
+        "dcraw_matrix" : [9269, -2012, -1107, -3990, 11762,  2527,  -569,  2093,  4913],
+        "raw_crop": [ 144, 40, 6048, 4020 ],
+        "masked_areas" : [ 38, 20, 4052, 138 ]
     },
 
     { // Quality C, CHDK DNGs, raw frame correction
