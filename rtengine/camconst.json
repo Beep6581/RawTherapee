@@ -1231,7 +1231,9 @@ Camera constants:
 
     { // Quality C
         "make_model": "Canon EOS R7",
-        "dcraw_matrix" : [10424, -3138, -1300, -4221, 11938,  2584,  -547,  1658,  6183]
+        "dcraw_matrix" : [10424, -3138, -1300, -4221, 11938,  2584,  -547,  1658,  6183],
+        "raw_crop": [ 144, 72, 6984, 4660 ],
+        "masked_areas" : [ 70, 20, 4724, 138 ]
     },
 
     { // Quality C
