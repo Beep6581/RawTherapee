@@ -42,7 +42,7 @@ HistogramPanel::HistogramPanel () :
     pointer_moved_delayed_call(
         [this](bool validPos, const Glib::ustring &profile, const Glib::ustring &profileW, int r, int g, int b)
         {
-            bool update_hist_area, update_hist_rgb_area;
+            bool update_hist_area = false, update_hist_rgb_area = false;
 
             if (!validPos) {
                 // do something to un-show vertical bars
@@ -1202,10 +1202,8 @@ void HistogramArea::updateDrawingArea (const ::Cairo::RefPtr< Cairo::Context> &c
     int winx, winy, winw, winh;
     window->get_geometry(winx, winy, winw, winh);
 
-    // const Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
-
     // Setup drawing
-    cr->set_operator (Cairo::OPERATOR_SOURCE);
+    cr->set_operator (Cairo::OPERATOR_OVER);
 
     // Prepare drawing gridlines first
     cr->set_source_rgba (1., 1., 1., 0.25);
@@ -1401,7 +1399,7 @@ bool HistogramArea::updatePointer(const int r, const int g, const int b, const G
 
     // Set pointer parameters to invalid if r = g = b = -1
     if (r == -1 || g == -1 || b == -1) {
-        pointer_red = pointer_green = pointer_green = -1;
+        pointer_red = pointer_green = pointer_blue = -1;
         pointer_a = pointer_b = 0.;
         pointer_valid = false;
     } else {
