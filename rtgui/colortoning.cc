@@ -315,7 +315,7 @@ ColorToning::ColorToning () : FoldableToolPanel(this, "colortoning", M("TP_COLOR
     neutrHBox = Gtk::manage (new Gtk::Box());
 
     neutral = Gtk::manage (new Gtk::Button (M("TP_COLORTONING_NEUTRAL")));
-    neutral->set_tooltip_text (M("TP_COLORTONING_NEUTRAL_TIP"));
+    neutral->set_tooltip_text (M("TP_COLORTONING_NEUTRAL_TOOLTIP"));
     neutralconn = neutral->signal_pressed().connect( sigc::mem_fun(*this, &ColorToning::neutral_pressed) );
     neutral->show();
     neutrHBox->pack_start (*neutral);

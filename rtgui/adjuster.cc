@@ -199,7 +199,7 @@ void Adjuster::addAutoButton (const Glib::ustring &tooltip)
         autoChange = automatic->signal_toggled().connect( sigc::mem_fun(*this, &Adjuster::autoToggled) );
 
         if (grid) {
-            // Hombre, adding the checbox next to the reset button because adding it next to the spin button (as before)
+            // Hombre, adding the checkbox next to the reset button because adding it next to the spin button (as before)
             // would diminish the available size for the label and would require a much heavier reorganization of the grid !
             grid->attach_next_to(*automatic, *reset, Gtk::POS_RIGHT, 1, 1);
         } else {

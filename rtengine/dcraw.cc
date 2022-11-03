@@ -9082,8 +9082,21 @@ void CLASS adobe_coeff (const char *make, const char *model)
 
   for (i=0; i < sizeof table / sizeof *table; i++)
     if (!strncmp (name, table[i].prefix, strlen(table[i].prefix))) {
-      if (RT_blacklevel_from_constant == ThreeValBool::T && table[i].black)   black   = (ushort) table[i].black;
-      if (RT_whitelevel_from_constant == ThreeValBool::T && table[i].maximum) maximum = (ushort) table[i].maximum;
+      if (RT_blacklevel_from_constant == ThreeValBool::T && table[i].black) {
+        if (RT_canon_levels_data.black_ok) {
+          unsigned c;
+          FORC4 RT_canon_levels_data.cblack[c] = (ushort) table[i].black;
+        } else {
+          black = (ushort) table[i].black;
+        }
+      }
+      if (RT_whitelevel_from_constant == ThreeValBool::T && table[i].maximum) {
+        if (RT_canon_levels_data.white_ok) {
+          RT_canon_levels_data.white = (ushort) table[i].maximum;
+        } else {
+          maximum = (ushort) table[i].maximum;
+        }
+      }
       if (RT_matrix_from_constant == ThreeValBool::T && table[i].trans[0]) {
 	for (raw_color = j=0; j < 12; j++)
 	  ((double *)cam_xyz)[j] = table[i].trans[j] / 10000.0;
@@ -9763,6 +9776,8 @@ void CLASS identify()
      if(!dng_version) {top_margin = 18; height -= top_margin; }
   if (height == 3014 && width == 4096)	/* Ricoh GX200 */
 			width  = 4014;
+  if (height == 3280 && width == 4992 && !strncmp(model, "D5100", 5))
+    { --height; } // Last row contains corrupt data. See issue #5654.
   if (dng_version) {
     if (filters == UINT_MAX) filters = 0;
     if (filters) is_raw *= tiff_samples;
