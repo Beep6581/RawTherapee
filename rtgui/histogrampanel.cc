@@ -1147,9 +1147,7 @@ void HistogramArea::update(
                     chist = histChroma;
                     break;
                 case ScopeType::HISTOGRAM_RAW:
-                    rhistRaw = histRedRaw;
-                    ghistRaw = histGreenRaw;
-                    bhistRaw = histBlueRaw;
+                    // Raw histogram data are always provided (refer below)
                     break;
                 case ScopeType::PARADE:
                 case ScopeType::WAVEFORM: {
@@ -1175,6 +1173,11 @@ void HistogramArea::update(
                 case ScopeType::NONE:
                     break;
             }
+            // Raw histogram data are always provided
+            rhistRaw = histRedRaw;
+            ghistRaw = histGreenRaw;
+            bhistRaw = histBlueRaw;
+
             LUT_valid = true;
         } else {
             LUT_valid = false;
@@ -1278,11 +1281,11 @@ void HistogramArea::updateDrawingArea (const ::Cairo::RefPtr< Cairo::Context> &c
         const int scale = (rawMode ? 8 : 1);
 
         for (int i = 0; i < 256; i++) {
-            if (needLuma) {
+            if (needLuma && !rawMode) {
                 lhisttemp[i] = lhist[i];
             }
 
-            if (needChroma) {
+            if (needChroma && !rawMode) {
                 chisttemp[i] = chist[i];
             }
 
@@ -1305,11 +1308,11 @@ void HistogramArea::updateDrawingArea (const ::Cairo::RefPtr< Cairo::Context> &c
         unsigned int histheight = 0;
 
         for (int i = 1; i < 255; i++) {
-            if (needLuma && lhisttemp[i] > histheight) {
+            if (needLuma  && !rawMode && lhisttemp[i] > histheight) {
                 histheight = lhisttemp[i];
             }
 
-            if (needChroma && chisttemp[i] > histheight) {
+            if (needChroma  && !rawMode && chisttemp[i] > histheight) {
                 histheight = chisttemp[i];
             }
 
