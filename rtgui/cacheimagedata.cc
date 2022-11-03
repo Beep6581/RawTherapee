@@ -20,6 +20,7 @@
 #include <vector>
 #include <glib/gstdio.h>
 #include <glibmm/keyfile.h>
+#include <glibmm/fileutils.h>
 #include "version.h"
 #include <locale.h>
 
@@ -250,7 +251,9 @@ int CacheImageData::save (const Glib::ustring& fname)
     Glib::KeyFile keyFile;
 
     try {
-        keyFile.load_from_file (fname);
+        if (Glib::file_test(fname, Glib::FILE_TEST_EXISTS)) {
+            keyFile.load_from_file (fname);
+        }
     } catch (Glib::Error&) {}
 
     keyFile.set_string  ("General", "MD5", md5);
