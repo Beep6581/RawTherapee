@@ -25,7 +25,9 @@ jobs:
            brew uninstall --ignore-dependencies libtiff
            brew install libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig libomp shared-mime-info | tee -a depslog
            brew reinstall libomp
+           launchctl load -w /System/Library/LaunchDaemons/com.apple.locate.plist
            locate libomp.dylib
+           find / -iname "libomp.dylib" 2>/dev/null
            date -u
            echo "----====Pourage====----"
            cat depslog | grep Pouring
