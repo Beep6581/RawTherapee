@@ -24,8 +24,6 @@ jobs:
            date +%s > build/stamp
            brew uninstall --ignore-dependencies libtiff
            brew install libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig libomp shared-mime-info | tee -a depslog
-           brew reinstall libomp
-           find / -iname "libomp.dylib" 2>/dev/null
            date -u
            echo "----====Pourage====----"
            cat depslog | grep Pouring
@@ -37,7 +35,7 @@ jobs:
           RAW_THERAPEE_MAJOR: '5'
           RAW_THERAPEE_MINOR: '8'
           C_FLAGS: >
-            -arch x86_64 -mtune=generic -Xpreprocessor -fopenmp /usr/local/lib/libomp.dylib -I/usr/local/include -I/usr/local/opt/gdk-pixbuf/include -I/usr/local/opt/libiconv/include -I/usr/local/opt/libxml2/include -I/usr/local/opt/expat/include -I/usr/local/opt/libtiff/include
+            -arch x86_64 -mtune=generic -Xpreprocessor -fopenmp /usr/local/Cellar/libomp/15.0.2/lib/libomp.dylib -I/usr/local/include -I/usr/local/opt/gdk-pixbuf/include -I/usr/local/opt/libiconv/include -I/usr/local/opt/libxml2/include -I/usr/local/opt/expat/include -I/usr/local/opt/libtiff/include
         run: |
           # GITHUB_REF is the ref that triggered the build, like
           # refs/heads/new-feature - the next line parses that to REF: the branch
@@ -62,7 +60,7 @@ jobs:
             -DOpenMP_CXX_FLAGS="${C_FLAGS}" \
             -DOpenMP_C_LIB_NAMES=libomp \
             -DOpenMP_CXX_LIB_NAMES=libomp \
-            -DOpenMP_libomp_LIBRARY=/usr/local/lib/libomp.dylib \
+            -DOpenMP_libomp_LIBRARY=/usr/local/Cellar/libomp/15.0.2/lib/libomp.dylib \
             -DCMAKE_AR=/usr/bin/ar \
             -DCMAKE_RANLIB=/usr/bin/ranlib \
             -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15 \
