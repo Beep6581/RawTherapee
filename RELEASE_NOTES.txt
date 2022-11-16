@@ -1,6 +1,6 @@
 RAWTHERAPEE 5.9-rc1 RELEASE NOTES
 
-This is Release Candidate 1 of RawTherapee 5.9, released on 2022-11-15. This is not the final release yet.
+This is Release Candidate 1 of RawTherapee 5.9, released on 2022-11-16. This is not the final release yet.
 
 
 
