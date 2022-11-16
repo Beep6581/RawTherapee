@@ -1,4 +1,4 @@
-name: Build AppImage
+name: AppImage Build
 on:
   push:
     branches:
