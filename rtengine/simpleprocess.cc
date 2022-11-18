@@ -924,6 +924,16 @@ private:
         //ImProcFunctions ipf (&params, true);
         ImProcFunctions &ipf = * (ipf_p.get());
 
+		int sharplablocal = 0;
+        for (int sp = 0; sp < (int)params.locallab.spots.size(); sp++) {
+			if(params.locallab.spots.at(sp).expsharp) {
+				sharplablocal = 1;
+			}
+		}
+		if (sharplablocal == 1) {
+			params.dirpyrequalizer.cbdlMethod = "aft";
+		}
+
         if (params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
             const int W = baseImg->getWidth();
             const int H = baseImg->getHeight();
