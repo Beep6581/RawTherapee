@@ -731,14 +731,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         // Remove transformation if unneeded
         bool needstransform = ipf.needsTransform(fw, fh, imgsrc->getRotateDegree(), imgsrc->getMetaData());
 
-		int sharplablocal = 0;//detect if Locallab sharpening is active
+		bool sharplablocal = false;//detect if Locallab sharpening is active
         for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
 			if(params->locallab.spots.at(sp).expsharp) {
-				sharplablocal = 1;
+				sharplablocal = true;
 			}
 		}
 				
-		if (sharplablocal == 1) {
+		if (sharplablocal == true) {
 			params->dirpyrequalizer.cbdlMethod = "aft";
 		}
 

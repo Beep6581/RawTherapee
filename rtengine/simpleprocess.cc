@@ -924,13 +924,13 @@ private:
         //ImProcFunctions ipf (&params, true);
         ImProcFunctions &ipf = * (ipf_p.get());
 
-		int sharplablocal = 0;
+		bool sharplablocal = false;
         for (int sp = 0; sp < (int)params.locallab.spots.size(); sp++) {
 			if(params.locallab.spots.at(sp).expsharp) {
-				sharplablocal = 1;
+				sharplablocal = true;
 			}
 		}
-		if (sharplablocal == 1) {
+		if (sharplablocal == true) {
 			params.dirpyrequalizer.cbdlMethod = "aft";
 		}
 
