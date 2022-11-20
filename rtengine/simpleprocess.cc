@@ -924,14 +924,12 @@ private:
         //ImProcFunctions ipf (&params, true);
         ImProcFunctions &ipf = * (ipf_p.get());
 
-		bool sharplablocal = false;
         for (int sp = 0; sp < (int)params.locallab.spots.size(); sp++) {
-			if(params.locallab.spots.at(sp).expsharp) {
-				sharplablocal = true;
+			if(params.locallab.spots.at(sp).expsharp  && params.dirpyrequalizer.cbdlMethod == "bef") {
+				if(params.locallab.spots.at(sp).shardamping < 1) {
+					params.locallab.spots.at(sp).shardamping = 1;
+				}				
 			}
-		}
-		if (sharplablocal == true) {
-			params.dirpyrequalizer.cbdlMethod = "aft";
 		}
 
         if (params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {

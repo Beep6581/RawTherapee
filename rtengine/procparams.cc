@@ -5299,7 +5299,7 @@ DirPyrEqualizerParams::DirPyrEqualizerParams() :
     threshold(0.2),
     skinprotect(0.0),
     hueskin(-5, 25, 170, 120, false),
-    cbdlMethod("aft")
+    cbdlMethod("bef")
 {
 }
 
