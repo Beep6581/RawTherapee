@@ -731,6 +731,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         // Remove transformation if unneeded
         bool needstransform = ipf.needsTransform(fw, fh, imgsrc->getRotateDegree(), imgsrc->getMetaData());
 
+
         if ((needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && !params->colorappearance.enabled))) {
             // Forking the image
             assert(oprevi);
@@ -744,6 +745,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 op->copyData(oprevi);
             }
         }
+
+        for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
+			if(params->locallab.spots.at(sp).expsharp  && params->dirpyrequalizer.cbdlMethod == "bef") {
+				if(params->locallab.spots.at(sp).shardamping < 1) {
+					params->locallab.spots.at(sp).shardamping = 1;
+				}				
+			}
+		}
 
         if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && !params->colorappearance.enabled) {
             const int W = oprevi->getWidth();
