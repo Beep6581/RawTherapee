@@ -64,7 +64,7 @@ jobs:
             -DCMAKE_RANLIB=/usr/bin/ranlib \
             -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15 \
             ..
-            ls /usr/local/lib
+            curl -L https://github.com/Homebrew/homebrew-core/raw/679923b4eb48a8dc7ecc1f05d06063cd79b3fc00/Formula/libomp.rb -o libomp.rb && brew install libomp.rb
             zsh -c 'echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"'
       - name: Compile RawTherapee
         run: |
