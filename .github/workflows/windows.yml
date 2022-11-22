@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - dev
+      - releases
     tags:
       - '[0-9]+.*'
   pull_request:
@@ -150,7 +151,7 @@ jobs:
             "libpangoft2-1.0-0.dll" \
             "libpangomm-1.4-1.dll" \
             "libpangowin32-1.0-0.dll" \
-            "libpcre-1.dll" \
+            "libpcre2-8-0.dll" \
             "libpixman-1-0.dll" \
             "libpng16-16.dll" \
             "librsvg-2-2.dll" \

@@ -1,8 +1,9 @@
-name: Build AppImage
+name: AppImage Build
 on:
   push:
     branches:
       - dev
+      - releases
     tags:
       - '[0-9]+.*'
   pull_request:

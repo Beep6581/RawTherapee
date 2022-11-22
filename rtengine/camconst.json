@@ -2144,7 +2144,8 @@ Camera constants:
 
     { // Quality C
         "make_model": [ "Panasonic DC-G90", "Panasonic DC-G95", "Panasonic DC-G99" ],
-        "dcraw_matrix": [ 9657, -3963, -748, -3361, 11378, 2258, -568, 1414, 5158 ] // DNG
+        "dcraw_matrix": [ 9657, -3963, -748, -3361, 11378, 2258, -568, 1414, 5158 ], // DNG
+        "ranges": { "black": 15 } // see above: RT already reads a value from exif
     },
 
     { // Quality C

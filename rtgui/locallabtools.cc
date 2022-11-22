@@ -6717,7 +6717,7 @@ LocallabBlur::LocallabBlur():
     RTImage *resetImg = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
     setExpandAlignProperties (resetImg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     neutral->set_image (*resetImg);
-    neutral->set_tooltip_text (M ("TP_RETINEX_NEUTRAL_TIP"));
+    neutral->set_tooltip_text (M ("TP_RETINEX_NEUTRAL_TOOLTIP"));
     neutralconn = neutral->signal_pressed().connect ( sigc::mem_fun (*this, &LocallabBlur::neutral_pressed) );
     neutral->show();
 
