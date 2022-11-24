@@ -425,12 +425,14 @@ int main (int argc, char **argv)
     }
 
     options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
+    options.rtSettings.lensfunDbBundleDirectory = LENSFUN_DB_PATH;
 
 #else
     argv0 = DATA_SEARCH_PATH;
     creditsPath = CREDITS_SEARCH_PATH;
     licensePath = LICENCE_SEARCH_PATH;
     options.rtSettings.lensfunDbDirectory = LENSFUN_DB_PATH;
+    options.rtSettings.lensfunDbBundleDirectory = LENSFUN_DB_PATH;
 #endif
 
 #ifdef WIN32
