@@ -16793,22 +16793,35 @@ void ImProcFunctions::Lab_Local(
     if (!lp.invshar && lp.shrad > 0.42 && call < 3 && lp.sharpena && sk == 1) { //interior ellipse for sharpening, call = 1 and 2 only with Dcrop and simpleprocess
         int bfh = call == 2 ? int (lp.ly + lp.lyT) + del : original->H; //bfw bfh real size of square zone
         int bfw = call == 2 ? int (lp.lx + lp.lxL) + del : original->W;
-        JaggedArray<float> loctemp(bfw, bfh);
 
         if (call == 2) { //call from simpleprocess
-          //  printf("bfw=%i bfh=%i\n", bfw, bfh);
 
             if (bfw < mSPsharp || bfh < mSPsharp) {
                 printf("too small RT-spot - minimum size 39 * 39\n");
                 return;
             }
 
-            JaggedArray<float> bufsh(bfw, bfh, true);
-            JaggedArray<float> hbuffer(bfw, bfh);
             int begy = lp.yc - lp.lyT;
             int begx = lp.xc - lp.lxL;
             int yEn = lp.yc + lp.ly;
             int xEn = lp.xc + lp.lx;
+
+			if(lp.fullim == 2) {//limit sharpening to image dimension...no more...to avoid a long treatment
+				begy = 0;
+				begx = 0;
+				yEn = original->H;
+				xEn = original->W;
+				lp.lxL = lp.xc;
+				lp.lyT = lp.yc;
+				lp.ly = yEn - lp.yc;
+				lp.lx = xEn - lp.xc;		
+				bfh= yEn;
+				bfw = xEn;
+			}
+            //printf("begy=%i begx=%i yen=%i xen=%i\n", begy, begx, yEn, xEn);
+			JaggedArray<float> bufsh(bfw, bfh, true);
+			JaggedArray<float> hbuffer(bfw, bfh);
+			JaggedArray<float> loctemp2(bfw, bfh);
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic,16) if (multiThread)
@@ -16846,9 +16859,8 @@ void ImProcFunctions::Lab_Local(
                     }
 
 
-
-                    //sharpen only square area instead of all image
-                    ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur, 1);
+                    //sharpen only square area instead of all image, but limited to image dimensions (full image)
+                    ImProcFunctions::deconvsharpeningloc(bufsh, hbuffer, bfw, bfh, loctemp2, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur, 1);
                     /*
                     float gamma =  params->locallab.spots.at(sp).shargam;
                     double pwr = 1.0 / (double) gamma;//default 3.0 - gamma Lab
@@ -16864,20 +16876,20 @@ void ImProcFunctions::Lab_Local(
 #ifdef __SSE2__
                             for (; x < bfw - 3; x += 4) {
                                 STVFU(bufsh[y][x], F2V(32768.f) * gammalog(LVFU(bufsh[y][x]) / F2V(32768.f), F2V(gamma1), F2V(ts1), F2V(g_a[3]), F2V(g_a[4])));
-                                STVFU(loctemp[y][x], F2V(32768.f) * gammalog(LVFU(loctemp[y][x]) / F2V(32768.f), F2V(gamma1), F2V(ts1), F2V(g_a[3]), F2V(g_a[4])));
+                                STVFU(loctemp2[y][x], F2V(32768.f) * gammalog(LVFU(loctemp2[y][x]) / F2V(32768.f), F2V(gamma1), F2V(ts1), F2V(g_a[3]), F2V(g_a[4])));
                             }
 #endif
                             for (; x < bfw; ++x) {
                                 bufsh[y][x] = 32768.f * gammalog(bufsh[y][x] / 32768.f, gamma1, ts1, g_a[3], g_a[4]);
-                                loctemp[y][x] = 32768.f * gammalog(loctemp[y][x] / 32768.f, gamma1, ts1, g_a[3], g_a[4]);
+                                loctemp2[y][x] = 32768.f * gammalog(loctemp2[y][x] / 32768.f, gamma1, ts1, g_a[3], g_a[4]);
                             }
                         }
                     }
-
-
-
-
+			//sharpen simpleprocess
+			Sharp_Local(call, loctemp2, 0, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
         } else { //call from dcrop.cc
+					JaggedArray<float> loctemp(bfw, bfh);
+		
                     float gamma1 = params->locallab.spots.at(sp).shargam;
                     rtengine::GammaValues g_a; //gamma parameters
                     double pwr1 = 1.0 / (double) gamma1;//default 3.0 - gamma Lab
@@ -16926,13 +16938,11 @@ void ImProcFunctions::Lab_Local(
                             }
                         }
                     }
-                        
-
+			//sharpen dcrop
+			Sharp_Local(call, loctemp, 0, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
         }
 
-        //sharpen ellipse and transition
-        Sharp_Local(call, loctemp, 0, hueref, chromaref, lumaref, lp, original, transformed, cx, cy, sk);
-
+		
         if (lp.recur) {
             original->CopyFrom(transformed, multiThread);
             float avge;
@@ -16965,7 +16975,6 @@ void ImProcFunctions::Lab_Local(
                 }
             }
         }
-
 
 
         ImProcFunctions::deconvsharpeningloc(original->L, shbuffer, GW, GH, loctemp, params->locallab.spots.at(sp).shardamping, (double)params->locallab.spots.at(sp).sharradius, params->locallab.spots.at(sp).shariter, params->locallab.spots.at(sp).sharamount, params->locallab.spots.at(sp).sharcontrast, (double)params->locallab.spots.at(sp).sharblur, sk);
