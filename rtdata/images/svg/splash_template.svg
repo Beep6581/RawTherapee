@@ -151,10 +151,10 @@
          style="stop-color:#feab27;stop-opacity:1;" />
     </linearGradient>
     <filter
-       width="1.481184"
+       width="1.4802108"
        height="4.2913185"
        y="-1.6456592"
-       x="-0.24059201"
+       x="-0.24010539"
        inkscape:label="RawTherapee white"
        id="filter4749"
        style="color-interpolation-filters:sRGB"
@@ -929,7 +929,24 @@
       <cc:Work
          rdf:about="">
         <dc:title>RawTherapee splash screen</dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
       </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
     </rdf:RDF>
   </metadata>
   <g
@@ -1159,143 +1176,143 @@
        style="font-size:16px;line-height:1.25;font-family:'Eras BQ';-inkscape-font-specification:'Eras BQ';white-space:pre;shape-inside:url(#rect183260)"><tspan
          x="-430.18945"
          y="2.7826123"
-         id="tspan4445"><tspan
+         id="tspan708"><tspan
            style="font-weight:bold;font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4441">Prerequisites</tspan><tspan
+           id="tspan704">Prerequisites</tspan><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4443">
+           id="tspan706">
 </tspan></tspan><tspan
          x="-430.18945"
          y="22.782612"
-         id="tspan4449"><tspan
+         id="tspan712"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4447">Obtain and install the font family ITC Eras Std.
+           id="tspan710">Obtain and install the font family ITC Eras Std.
 </tspan></tspan><tspan
          x="-430.18945"
          y="42.782612"
-         id="tspan4453"><tspan
+         id="tspan716"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4451">
+           id="tspan714">
 </tspan></tspan><tspan
          x="-430.18945"
          y="62.782612"
-         id="tspan4459"><tspan
+         id="tspan722"><tspan
            style="font-weight:bold"
-           id="tspan4455">Details</tspan><tspan
+           id="tspan718">Details</tspan><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4457">
+           id="tspan720">
 </tspan></tspan><tspan
          x="-430.18945"
          y="82.782612"
-         id="tspan4463"><tspan
+         id="tspan726"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4461">The color wheel is copied from rt-logo.svg and a glow filter is added
+           id="tspan724">The color wheel is copied from rt-logo.svg and a glow filter is added
 </tspan></tspan><tspan
          x="-430.18945"
          y="102.78261"
-         id="tspan4467"><tspan
+         id="tspan730"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4465">to each segment and the wheel as a whole.
+           id="tspan728">to each segment and the wheel as a whole.
 </tspan></tspan><tspan
          x="-430.18945"
          y="122.78261"
-         id="tspan4471"><tspan
+         id="tspan734"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4469">&quot;Raw&quot;: font ITC Eras Ultra-Bold, 60 pt, -3 px letter spacing
+           id="tspan732">&quot;Raw&quot;: font ITC Eras Ultra-Bold, 60 pt, -3 px letter spacing
 </tspan></tspan><tspan
          x="-430.18945"
          y="142.78261"
-         id="tspan4475"><tspan
+         id="tspan738"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4473">&quot;Therapee&quot;: font ITC Eras Medium, 60 pt, +1,5 pt letter spacing
+           id="tspan736">&quot;Therapee&quot;: font ITC Eras Medium, 60 pt, +1,5 pt letter spacing
 </tspan></tspan><tspan
          x="-430.18945"
          y="162.78261"
-         id="tspan4479"><tspan
+         id="tspan742"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4477">Version (big number): ITC Eras Bold, 58 pt, skewed -3°
+           id="tspan740">Version (big number): ITC Eras Bold, 58 pt, skewed -3°
 </tspan></tspan><tspan
          x="-430.18945"
          y="182.78261"
-         id="tspan4483"><tspan
+         id="tspan746"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4481">Version (period + small number): ITC Eras Bold, 34 pt, skewed -3°
+           id="tspan744">Version (period + small number): ITC Eras Bold, 34 pt, skewed -3°
 </tspan></tspan><tspan
          x="-430.18945"
          y="202.78261"
-         id="tspan4487"><tspan
+         id="tspan750"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4485">Release-type: ITC Eras Bold, 16 pt, skewed -3°
+           id="tspan748">Release-type: ITC Eras Bold, 16 pt, skewed -3°
 </tspan></tspan><tspan
          x="-430.18945"
          y="222.78261"
-         id="tspan4491"><tspan
+         id="tspan754"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4489">
+           id="tspan752">
 </tspan></tspan><tspan
          x="-430.18945"
          y="242.78261"
-         id="tspan4497"><tspan
+         id="tspan760"><tspan
            style="font-weight:bold"
-           id="tspan4493">Publishing</tspan><tspan
+           id="tspan756">Publishing</tspan><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4495">
+           id="tspan758">
 </tspan></tspan><tspan
          x="-430.18945"
          y="262.78261"
-         id="tspan4503"><tspan
+         id="tspan766"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4499">1. To prepare a splash screen for deployment, select all text and </tspan><tspan
+           id="tspan762">1. To prepare a splash screen for deployment, select all text and </tspan><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4501">choose </tspan></tspan><tspan
+           id="tspan764">choose </tspan></tspan><tspan
          x="-430.18945"
          y="282.78261"
-         id="tspan4507"><tspan
+         id="tspan770"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4505">Path &gt; Object to Path. 
+           id="tspan768">Path &gt; Object to Path. 
 </tspan></tspan><tspan
          x="-430.18945"
          y="302.78261"
-         id="tspan4511"><tspan
+         id="tspan774"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4509">2. Change release type text to whatever is required, or hide the layer </tspan></tspan><tspan
+           id="tspan772">2. Change release type text to whatever is required, or hide the layer </tspan></tspan><tspan
          x="-430.18945"
          y="322.78261"
-         id="tspan4515"><tspan
+         id="tspan778"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4513">&quot;Release type&quot; entirely.
+           id="tspan776">&quot;Release type&quot; entirely.
 </tspan></tspan><tspan
          x="-430.18945"
          y="342.78261"
-         id="tspan4519"><tspan
+         id="tspan782"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4517">3. Remove this text field.
+           id="tspan780">3. Remove this text field.
 </tspan></tspan><tspan
          x="-430.18945"
          y="362.78261"
-         id="tspan4525"><tspan
+         id="tspan788"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4521">4</tspan><tspan
+           id="tspan784">4</tspan><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4523">. Save as &quot;splash.svg&quot; into &quot;./rtdata/images/svg&quot;.
+           id="tspan786">. Save as &quot;splash.svg&quot; into &quot;./rtdata/images/svg&quot;.
 </tspan></tspan><tspan
          x="-430.18945"
          y="382.78261"
-         id="tspan4529"><tspan
+         id="tspan792"><tspan
            style="font-family:sans-serif;-inkscape-font-specification:sans-serif"
-           id="tspan4527">
+           id="tspan790">
 </tspan></tspan><tspan
          x="-430.18945"
          y="402.78261"
-         id="tspan4533"><tspan
+         id="tspan796"><tspan
            style="font-style:italic"
-           id="tspan4531">RawTherapee splash screen design 1.5 (March 2022)
+           id="tspan794">RawTherapee splash screen design 1.5 (March 2022)
 </tspan></tspan><tspan
          x="-430.18945"
          y="422.78261"
-         id="tspan4537"><tspan
+         id="tspan800"><tspan
            style="font-style:italic"
-           id="tspan4535">www.rawtherapee.com</tspan></tspan></text>
+           id="tspan798">www.rawtherapee.com</tspan></tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"
