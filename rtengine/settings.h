@@ -83,6 +83,7 @@ public:
     double          level0_cbdl;
     double          level123_cbdl;
     Glib::ustring   lensfunDbDirectory; // The directory containing the lensfun database. If empty, the system defaults will be used, as described in https://lensfun.github.io/manual/latest/dbsearch.html
+    Glib::ustring   lensfunDbBundleDirectory;
     int             cropsleep;
     double          reduchigh;
     double          reduclow;
