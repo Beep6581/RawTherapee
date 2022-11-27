@@ -11,6 +11,7 @@ on:
   release:
     types:
       - created
+  workflow_dispatch:
 jobs:
   build:
     runs-on: macos-11
