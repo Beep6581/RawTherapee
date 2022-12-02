@@ -1543,6 +1543,12 @@ Camera constants:
         "ranges": { "white": 4040 }
     },
 
+    { // Quality B
+        "make_model": [ "FUJIFILM X-T5", "FUJIFILM X-H2" ],
+        "dcraw_matrix": [ 11809, -5358, -1141, -4248, 12164, 2343, -514, 1097, 5848 ], // RawSpeed / DNG
+        "raw_crop": [ 0, 5, 7752, 5184 ]
+    },
+
     { // Quality C, Leica C-Lux names can differ?
         "make_model" : [ "LEICA C-LUX", "LEICA CAM-DC25" ],
         "dcraw_matrix" : [7790, -2736, -755, -3452, 11870, 1769, -628, 1647, 4898]
