@@ -684,7 +684,9 @@ struct local_params {
     float lowthrcie;
     float higthrcie;
     float decaycie;
-    
+    float blurciemask;
+    float contciemask;
+   
     int noiselequal;
     float noisechrodetail;
     float bilat;
@@ -814,6 +816,7 @@ struct local_params {
     float mLjz;
     float mCjz;
     float softrjz;
+    bool fftcieMask;
 
 };
 
@@ -925,6 +928,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.showmasklogmet = lllogMask;
     lp.showmask_met = ll_Mask;
     lp.showmaskciemet = llcieMask;
+    lp.fftcieMask = locallab.spots.at(sp).fftcieMask;
+	
 //printf("CIEmask=%i\n", lp.showmaskciemet);
     lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llsoftMask == 0 && llColorMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llExpMaskinv == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaColorMaskinv = locallab.spots.at(sp).enaColorMask && llColorMaskinv == 0 && llSHMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
@@ -1428,6 +1433,9 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     float blendmaskcie = ((float) locallab.spots.at(sp).blendmaskcie) / 100.f ;
     float radmaskcie = ((float) locallab.spots.at(sp).radmaskcie);
     float chromaskcie = ((float) locallab.spots.at(sp).chromaskcie);
+    float blurciemask = (float) locallab.spots.at(sp).blurcie;
+    float contciemask = (float) locallab.spots.at(sp).contcie;
+	
     lp.deltaem = locallab.spots.at(sp).deltae;
     lp.scalereti = scaleret;
     lp.cir = circr;
@@ -1683,6 +1691,8 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.blurma = (float) locallab.spots.at(sp).blurmask;
     lp.fftma = locallab.spots.at(sp).fftmask;
     lp.contma = (float) locallab.spots.at(sp).contmask;
+    lp.blurciemask = blurciemask;
+    lp.contciemask = 0.01f * contciemask;
 
     lp.blendmacie = blendmaskcie;
     lp.radmacie = radmaskcie;
@@ -8596,6 +8606,9 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     int bfhr = bfh;
     int bfwr = bfw;
     if (lp.blurcolmask >= 0.25f && lp.fftColorMask && call == 2) {
+        optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
+    }
+    if (lp.blurciemask >= 0.25f && lp.fftcieMask && call == 2) {
         optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
     }
 
@@ -19005,6 +19018,11 @@ void ImProcFunctions::Lab_Local(
             int bfw = xend - xstart;
 
             if (bfh >= mSP && bfw >= mSP) {
+				
+				if (lp.blurciemask >= 0.25f && lp.fftcieMask && call == 2) {
+					optfft(N_fftwsize, bfh, bfw, bfh, bfw, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
+				}
+				
                 const std::unique_ptr<LabImage> bufexporig(new LabImage(bfw, bfh)); //buffer for data in zone limit
                 const std::unique_ptr<LabImage> bufexpfin(new LabImage(bfw, bfh)); //buffer for data in zone limit
                 std::unique_ptr<LabImage> bufmaskorigcie;
@@ -19124,7 +19142,7 @@ void ImProcFunctions::Lab_Local(
                         locccmascieCurve, lcmascieutili, locllmascieCurve, llmascieutili, lochhmascieCurve, lhmascieutili, lochhhmasCurve, false, multiThread,
                         enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmaskcielocalcurve, localmaskcieutili, dummy, false, 1, 1, 5, 5,
                         shortcu, delt, hueref, chromaref, lumaref,
-                        maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, false, 0.f, 0.f, -1, fab
+                        maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, lp.fftcieMask, lp.blurciemask, lp.contciemask, -1, fab
                        );
 
                 if (lp.showmaskciemet == 3) {
