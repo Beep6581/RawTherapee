@@ -19116,8 +19116,11 @@ void ImProcFunctions::Lab_Local(
                 float amountcd = 0.f;
                 float anchorcd = 50.f;
                 LocHHmaskCurve lochhhmasCurve;
+                bool astool = params->locallab.spots.at(sp).toolcie;
+                const float strumask = 0.02 * params->locallab.spots.at(sp).strumaskcie;
+						
                 maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskorigcie.get(), originalmaskcie.get(), original, reserved, inv, lp,
-                        0.f, false,
+                        strumask, astool,
                         locccmascieCurve, lcmascieutili, locllmascieCurve, llmascieutili, lochhmascieCurve, lhmascieutili, lochhhmasCurve, false, multiThread,
                         enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmaskcielocalcurve, localmaskcieutili, dummy, false, 1, 1, 5, 5,
                         shortcu, delt, hueref, chromaref, lumaref,
