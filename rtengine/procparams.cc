@@ -4540,8 +4540,10 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     recothrescie(1.),
     lowthrescie(12.),
     higthrescie(85.),
-    decaycie(2.)
-    
+    decaycie(2.),
+    strumaskcie(0.),
+	toolcie(false)
+   
 
 {
 }
@@ -5251,8 +5253,9 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && recothrescie == other.recothrescie
         && lowthrescie == other.lowthrescie
         && higthrescie == other.higthrescie
-        && decaycie == other.decaycie;
-       
+        && decaycie == other.decaycie
+        && strumaskcie == other.strumaskcie
+        && toolcie == other.toolcie;       
 
 }
 
@@ -7043,6 +7046,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->lowthrescie, "Locallab", "Lowthrescie_" + index_str, spot.lowthrescie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->higthrescie, "Locallab", "Higthrescie_" + index_str, spot.higthrescie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->decaycie, "Locallab", "Decaycie_" + index_str, spot.decaycie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->strumaskcie, "Locallab", "strumaskcie_" + index_str, spot.strumaskcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->toolcie, "Locallab", "toolcie_" + index_str, spot.toolcie, keyFile);
 
 
 
@@ -9221,6 +9226,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Lowthrescie_" + index_str, pedited, spot.lowthrescie, spotEdited.lowthrescie);
                 assignFromKeyfile(keyFile, "Locallab", "Higthrescie_" + index_str, pedited, spot.higthrescie, spotEdited.higthrescie);
                 assignFromKeyfile(keyFile, "Locallab", "Decaycie_" + index_str, pedited, spot.decaycie, spotEdited.decaycie);
+                assignFromKeyfile(keyFile, "Locallab", "strumaskcie_" + index_str, pedited, spot.strumaskcie, spotEdited.strumaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "toolcie_" + index_str, pedited, spot.toolcie, spotEdited.toolcie);
 
                 // Append LocallabSpot and LocallabParamsEdited
                 locallab.spots.push_back(spot);

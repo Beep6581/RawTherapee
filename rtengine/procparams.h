@@ -1697,7 +1697,8 @@ struct LocallabParams {
         double lowthrescie;
         double higthrescie;
         double decaycie;
-
+        double strumaskcie;
+		bool toolcie;
         LocallabSpot();
 
         bool operator ==(const LocallabSpot& other) const;

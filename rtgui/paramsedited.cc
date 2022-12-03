@@ -1777,6 +1777,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).clarilresjz = locallab.spots.at(j).clarilresjz && pSpot.clarilresjz == otherSpot.clarilresjz;
                 locallab.spots.at(j).claricresjz = locallab.spots.at(j).claricresjz && pSpot.claricresjz == otherSpot.claricresjz;
                 locallab.spots.at(j).clarisoftjz = locallab.spots.at(j).clarisoftjz && pSpot.clarisoftjz == otherSpot.clarisoftjz;
+                locallab.spots.at(j).strumaskcie = locallab.spots.at(j).strumaskcie && pSpot.strumaskcie == otherSpot.strumaskcie;
+                locallab.spots.at(j).toolcie = locallab.spots.at(j).toolcie && pSpot.toolcie == otherSpot.toolcie;
 
 
             }
@@ -6096,6 +6098,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).decaycie = mods.locallab.spots.at(i).decaycie;
         }
 
+        if (locallab.spots.at(i).strumaskcie) {
+            toEdit.locallab.spots.at(i).strumaskcie= mods.locallab.spots.at(i).strumaskcie;
+        }
+
+        if (locallab.spots.at(i).toolcie) {
+            toEdit.locallab.spots.at(i).toolcie = mods.locallab.spots.at(i).toolcie;
+        }
+
     }
 
     if (spot.enabled) {
@@ -8080,7 +8090,9 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     recothrescie(v),
     lowthrescie(v),
     higthrescie(v),
-    decaycie(v)
+    decaycie(v),
+    strumaskcie(v),
+    toolcie(v)
 
 {
 }
@@ -8780,6 +8792,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     lowthrescie = v;
     higthrescie = v;
     decaycie = v;
+    strumaskcie = v;
+    toolcie = v;
 
 }
 

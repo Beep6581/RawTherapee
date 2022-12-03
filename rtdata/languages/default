@@ -1372,6 +1372,8 @@ HISTORY_MSG_1147;Local - Jz BlackEv WhiteEv
 HISTORY_MSG_1148;Local - Jz Sigmoid
 HISTORY_MSG_1149;Local - Q Sigmoid
 HISTORY_MSG_1150;Local - Log encoding Q instead Sigmoid Q
+HISTORY_MSG_1151;Local - Cie mask Structure
+HISTORY_MSG_1152;Local - Tool mask Structure
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance

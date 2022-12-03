@@ -1079,6 +1079,8 @@ public:
         bool lowthrescie;
         bool higthrescie;
         bool decaycie;
+        bool strumaskcie;
+        bool toolcie;
 
         LocallabSpotEdited(bool v);
 

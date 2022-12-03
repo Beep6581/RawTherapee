@@ -568,6 +568,7 @@ void LocallabTone::adjusterChanged(Adjuster* a, double newval)
         } else if (a == decayt) {
             listener->panelChanged(Evlocallabdecayt, decayt->getTextValue() + spName);
         }
+
     }
 }
 
@@ -7522,7 +7523,10 @@ Locallabcie::Locallabcie():
     CCmaskcieshape(static_cast<FlatCurveEditor*>(maskcieCurveEditorG->addCurve(CT_Flat, "C", nullptr, false, false))),
     LLmaskcieshape(static_cast<FlatCurveEditor*>(maskcieCurveEditorG->addCurve(CT_Flat, "L", nullptr, false, false))),
     HHmaskcieshape(static_cast<FlatCurveEditor*>(maskcieCurveEditorG->addCurve(CT_Flat, "LC(h)", nullptr, false, true))),
-    blendmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
+    struFramecie(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABSTRUM")))),
+    strumaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0., 200., 0.1, 0.))),
+    toolcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TOOLCOL")))),
+	blendmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     radmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     lapmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     chromaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
@@ -8088,6 +8092,13 @@ Locallabcie::Locallabcie():
     HHmaskcieshape->setBottomBarColorProvider(this, 2);
 
     maskcieCurveEditorG->curveListComplete();
+	
+    struFramecie->set_label_align(0.025, 0.5);
+    
+	strumaskcie->setAdjusterListener(this);
+
+    toolcieConn  = toolcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::toolcieChanged));
+
     blendmaskcie->setAdjusterListener(this);
 
     radmaskcie->setAdjusterListener(this);
@@ -8118,6 +8129,11 @@ Locallabcie::Locallabcie():
     maskcieBox->pack_start(*showmaskcieMethod, Gtk::PACK_SHRINK, 4);
     maskcieBox->pack_start(*enacieMask, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*maskcieCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    ToolParamBlock* const strumBoxcie = Gtk::manage(new ToolParamBlock());
+    strumBoxcie->pack_start(*strumaskcie);
+    strumBoxcie->pack_start(*toolcie);
+    struFramecie->add(*strumBoxcie);
+    maskcieBox->pack_start(*struFramecie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*blendmaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*radmaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*lapmaskcie, Gtk::PACK_SHRINK, 0);
@@ -8125,6 +8141,8 @@ Locallabcie::Locallabcie():
     maskcieBox->pack_start(*gammaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*slomaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*mask2cieCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+
+
     expmaskcie->add(*maskcieBox, false);
     pack_start(*expmaskcie, false, false);
     
@@ -8228,6 +8246,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         mask2cieCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_CONTRASTCURVMASK_TOOLTIP"));
         Lmaskcieshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
         exprecovcie->set_tooltip_markup(M("TP_LOCALLAB_MASKRESH_TOOLTIP"));
+        strumaskcie->set_tooltip_text(M("TP_LOCALLAB_STRUSTRMASK_TOOLTIP"));
 
 
     } else {
@@ -8285,6 +8304,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         wavshapejz->setTooltip("");
         LocalcurveEditorwavjz->set_tooltip_markup("");
         csThresholdjz->set_tooltip_markup("");
+        strumaskcie->set_tooltip_text("");
 
     }
 }
@@ -8377,6 +8397,22 @@ void Locallabcie::enacieMaskChanged()
         }
     }
 }
+
+void Locallabcie::toolcieChanged()
+{
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (toolcie->get_active()) {
+                listener->panelChanged(EvLocallabtoolcie,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(EvLocallabtoolcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
 
 void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsEdited* pedited)
 {
@@ -8558,6 +8594,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         lowthrescie->setValue((double)spot.lowthrescie);
         higthrescie->setValue((double)spot.higthrescie);
         decaycie->setValue((double)spot.decaycie);
+        strumaskcie->setValue(spot.strumaskcie);
+        toolcie->set_active(spot.toolcie);
 
        
     }
@@ -8728,6 +8766,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.lowthrescie = lowthrescie->getValue();
         spot.higthrescie = higthrescie->getValue();
         spot.decaycie = decaycie->getValue();
+        spot.strumaskcie = strumaskcie->getValue();
+        spot.toolcie = toolcie->get_active();
 
     }
 }
@@ -9394,6 +9434,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             lapmaskcie->hide();
             gammaskcie->hide();
             slomaskcie->hide();
+            struFramecie->hide();
+			
             if (enacieMask->get_active()) {
                 maskusablecie->show();
                 maskunusablecie->hide();
@@ -9485,6 +9527,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             slomaskcie->show();
             expmaskcie->show();
             exprecovcie->show();
+            struFramecie->show();
 
             if (enacieMask->get_active()) {
                 maskusablecie->show();
@@ -9778,6 +9821,8 @@ void Locallabcie::convertParamToNormal()
     lapmaskcie->setValue(defSpot.lapmaskcie);
     gammaskcie->setValue(defSpot.gammaskcie);
     slomaskcie->setValue(defSpot.slomaskcie);
+    strumaskcie->setValue(defSpot.strumaskcie);
+    toolcie->set_active(defSpot.toolcie);
     
     // Enable all listeners
     enableListener();
@@ -9850,6 +9895,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         lowthrescie->setDefault((double)defSpot.lowthrescie);
         higthrescie->setDefault((double)defSpot.higthrescie);
         decaycie->setDefault((double)defSpot.decaycie);
+        strumaskcie->setDefault(defSpot.strumaskcie);
 
     }
 }
@@ -9940,7 +9986,6 @@ void Locallabcie::curveChanged(CurveEditor* ce)
                                        M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
-
 
     }
 }
@@ -10430,6 +10475,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabdecaycie,
                                        decaycie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == strumaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabstrumaskcie,
+                                       strumaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 
