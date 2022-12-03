@@ -7526,6 +7526,10 @@ Locallabcie::Locallabcie():
     struFramecie(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABSTRUM")))),
     strumaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_STRUMASKCOL"), 0., 200., 0.1, 0.))),
     toolcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_TOOLCOL")))),
+    blurFramecie(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_LABBLURM")))),
+    fftcieMask(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_FFTCOL_MASK")))),
+    contcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CONTCOL"), 0., 200., 0.5, 0.))),
+    blurcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLURCOL"), 0.2, 100., 0.5, 0.2))),
 	blendmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_BLENDMASKCOL"), -100, 100, 1, 0))),
     radmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_RADMASKCOL"), 0.0, 100.0, 0.1, 0.))),
     lapmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_LAPMASKCOL"), 0.0, 100.0, 0.1, 0.))),
@@ -8099,6 +8103,14 @@ Locallabcie::Locallabcie():
 
     toolcieConn  = toolcie->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::toolcieChanged));
 
+    blurFramecie->set_label_align(0.025, 0.5);
+
+    fftcieMaskConn = fftcieMask->signal_toggled().connect(sigc::mem_fun(*this, &Locallabcie::fftcieMaskChanged));
+
+    contcie->setAdjusterListener(this);
+
+    blurcie->setAdjusterListener(this);
+
     blendmaskcie->setAdjusterListener(this);
 
     radmaskcie->setAdjusterListener(this);
@@ -8134,6 +8146,13 @@ Locallabcie::Locallabcie():
     strumBoxcie->pack_start(*toolcie);
     struFramecie->add(*strumBoxcie);
     maskcieBox->pack_start(*struFramecie, Gtk::PACK_SHRINK, 0);
+    ToolParamBlock* const blurcieBox = Gtk::manage(new ToolParamBlock());
+    blurcieBox->pack_start(*fftcieMask, Gtk::PACK_SHRINK, 0);
+    blurcieBox->pack_start(*contcie);
+    blurcieBox->pack_start(*blurcie);
+    blurFramecie->add(*blurcieBox);
+    maskcieBox->pack_start(*blurFramecie, Gtk::PACK_SHRINK, 0);
+		
     maskcieBox->pack_start(*blendmaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*radmaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*lapmaskcie, Gtk::PACK_SHRINK, 0);
@@ -8247,6 +8266,9 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         Lmaskcieshape->setTooltip(M("TP_LOCALLAB_LMASK_LL_TOOLTIP"));
         exprecovcie->set_tooltip_markup(M("TP_LOCALLAB_MASKRESH_TOOLTIP"));
         strumaskcie->set_tooltip_text(M("TP_LOCALLAB_STRUSTRMASK_TOOLTIP"));
+        fftcieMask->set_tooltip_text(M("TP_LOCALLAB_FFTMASK_TOOLTIP"));
+        contcie->set_tooltip_text(M("TP_LOCALLAB_CONTTHMASK_TOOLTIP"));
+        blurcie->set_tooltip_text(M("TP_LOCALLAB_BLURRMASK_TOOLTIP"));
 
 
     } else {
@@ -8305,6 +8327,9 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         LocalcurveEditorwavjz->set_tooltip_markup("");
         csThresholdjz->set_tooltip_markup("");
         strumaskcie->set_tooltip_text("");
+        fftcieMask->set_tooltip_text("");
+        contcie->set_tooltip_text("");
+        blurcie->set_tooltip_text("");
 
     }
 }
@@ -8329,7 +8354,9 @@ void Locallabcie::disableListener()
     toneMethodcieConn.block(true);
     toneMethodcieConn2.block(true);
     showmaskcieMethodConn.block(true);
+    toolcieConn.block(true);
     enacieMaskConn.block(true);
+    fftcieMaskConn.block(true);
 }
 
 void Locallabcie::enableListener()
@@ -8353,7 +8380,9 @@ void Locallabcie::enableListener()
     toneMethodcieConn.block(false);
     toneMethodcieConn2.block(false);
     showmaskcieMethodConn.block(false);
+    toolcieConn.block(false);
     enacieMaskConn.block(false);
+    fftcieMaskConn.block(false);
 }
 
 void Locallabcie::showmaskcieMethodChanged()
@@ -8407,6 +8436,24 @@ void Locallabcie::toolcieChanged()
                                        M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             } else {
                 listener->panelChanged(EvLocallabtoolcie,
+                                       M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+    }
+}
+
+
+void Locallabcie::fftcieMaskChanged()
+{
+   // updateColorGUI3(); // Update GUI according to fftColorMash button state
+
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            if (fftcieMask->get_active()) {
+                listener->panelChanged(EvLocallabfftcieMask,
+                                       M("GENERAL_ENABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            } else {
+                listener->panelChanged(EvLocallabfftcieMask,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
@@ -8596,6 +8643,10 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         decaycie->setValue((double)spot.decaycie);
         strumaskcie->setValue(spot.strumaskcie);
         toolcie->set_active(spot.toolcie);
+        fftcieMask->set_active(spot.fftcieMask);
+        contcie->setValue(spot.contcie);
+//        updateColorGUI3();
+        blurcie->setValue(spot.blurcie);
 
        
     }
@@ -8768,6 +8819,9 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.decaycie = decaycie->getValue();
         spot.strumaskcie = strumaskcie->getValue();
         spot.toolcie = toolcie->get_active();
+        spot.fftcieMask = fftcieMask->get_active();
+        spot.contcie = contcie->getValue();
+        spot.blurcie = blurcie->getValue();
 
     }
 }
@@ -9435,6 +9489,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             gammaskcie->hide();
             slomaskcie->hide();
             struFramecie->hide();
+			blurFramecie->hide();
 			
             if (enacieMask->get_active()) {
                 maskusablecie->show();
@@ -9528,6 +9583,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             expmaskcie->show();
             exprecovcie->show();
             struFramecie->show();
+			blurFramecie->show();
 
             if (enacieMask->get_active()) {
                 maskusablecie->show();
@@ -9823,6 +9879,9 @@ void Locallabcie::convertParamToNormal()
     slomaskcie->setValue(defSpot.slomaskcie);
     strumaskcie->setValue(defSpot.strumaskcie);
     toolcie->set_active(defSpot.toolcie);
+    fftcieMask->set_active(defSpot.fftcieMask);
+    contcie->setValue(defSpot.contcie);
+    blurcie->setValue(defSpot.blurcie);
     
     // Enable all listeners
     enableListener();
@@ -9896,6 +9955,8 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         higthrescie->setDefault((double)defSpot.higthrescie);
         decaycie->setDefault((double)defSpot.decaycie);
         strumaskcie->setDefault(defSpot.strumaskcie);
+        contcie->setDefault(defSpot.contcie);
+        blurcie->setDefault(defSpot.blurcie);
 
     }
 }
@@ -10482,6 +10543,20 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabstrumaskcie,
                                        strumaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == contcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabcontcie,
+                                       contcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == blurcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabblurcie,
+                                       blurcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 

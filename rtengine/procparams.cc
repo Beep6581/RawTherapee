@@ -4542,8 +4542,11 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     higthrescie(85.),
     decaycie(2.),
     strumaskcie(0.),
-	toolcie(false)
-   
+	toolcie(false),
+	fftcieMask(true),
+    contcie(0.),
+    blurcie(0.2)
+ 
 
 {
 }
@@ -5255,7 +5258,10 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && higthrescie == other.higthrescie
         && decaycie == other.decaycie
         && strumaskcie == other.strumaskcie
-        && toolcie == other.toolcie;       
+        && toolcie == other.toolcie       
+        && blurcie == other.blurcie
+        && contcie == other.contcie
+        && fftcieMask == other.fftcieMask;
 
 }
 
@@ -7048,6 +7054,9 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->decaycie, "Locallab", "Decaycie_" + index_str, spot.decaycie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->strumaskcie, "Locallab", "strumaskcie_" + index_str, spot.strumaskcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->toolcie, "Locallab", "toolcie_" + index_str, spot.toolcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->fftcieMask, "Locallab", "FftcieMask_" + index_str, spot.fftcieMask, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->contcie, "Locallab", "contcie_" + index_str, spot.contcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->blurcie, "Locallab", "blurcie_" + index_str, spot.blurcie, keyFile);
 
 
 
@@ -9228,6 +9237,9 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Decaycie_" + index_str, pedited, spot.decaycie, spotEdited.decaycie);
                 assignFromKeyfile(keyFile, "Locallab", "strumaskcie_" + index_str, pedited, spot.strumaskcie, spotEdited.strumaskcie);
                 assignFromKeyfile(keyFile, "Locallab", "toolcie_" + index_str, pedited, spot.toolcie, spotEdited.toolcie);
+                assignFromKeyfile(keyFile, "Locallab", "FftcieMask_" + index_str, pedited, spot.fftcieMask, spotEdited.fftcieMask);
+                assignFromKeyfile(keyFile, "Locallab", "contcie_" + index_str, pedited, spot.contcie, spotEdited.contcie);
+                assignFromKeyfile(keyFile, "Locallab", "blurcie_" + index_str, pedited, spot.blurcie, spotEdited.blurcie);
 
                 // Append LocallabSpot and LocallabParamsEdited
                 locallab.spots.push_back(spot);

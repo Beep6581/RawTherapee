@@ -1779,6 +1779,9 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).clarisoftjz = locallab.spots.at(j).clarisoftjz && pSpot.clarisoftjz == otherSpot.clarisoftjz;
                 locallab.spots.at(j).strumaskcie = locallab.spots.at(j).strumaskcie && pSpot.strumaskcie == otherSpot.strumaskcie;
                 locallab.spots.at(j).toolcie = locallab.spots.at(j).toolcie && pSpot.toolcie == otherSpot.toolcie;
+                locallab.spots.at(j).fftcieMask = locallab.spots.at(j).fftcieMask && pSpot.fftcieMask == otherSpot.fftcieMask;
+                locallab.spots.at(j).blurcie = locallab.spots.at(j).blurcie && pSpot.blurcie == otherSpot.blurcie;
+                locallab.spots.at(j).contcie = locallab.spots.at(j).contcie && pSpot.contcie == otherSpot.contcie;
 
 
             }
@@ -6106,6 +6109,18 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).toolcie = mods.locallab.spots.at(i).toolcie;
         }
 
+        if (locallab.spots.at(i).fftcieMask) {
+            toEdit.locallab.spots.at(i).fftcieMask = mods.locallab.spots.at(i).fftcieMask;
+        }
+
+        if (locallab.spots.at(i).blurcie) {
+            toEdit.locallab.spots.at(i).blurcie = mods.locallab.spots.at(i).blurcie;
+        }
+
+        if (locallab.spots.at(i).contcie) {
+            toEdit.locallab.spots.at(i).contcie = mods.locallab.spots.at(i).contcie;
+        }
+
     }
 
     if (spot.enabled) {
@@ -8092,8 +8107,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     higthrescie(v),
     decaycie(v),
     strumaskcie(v),
-    toolcie(v)
-
+    toolcie(v),
+    fftcieMask(v),
+	contcie(v),
+	blurcie(v)
 {
 }
 
@@ -8794,6 +8811,9 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     decaycie = v;
     strumaskcie = v;
     toolcie = v;
+    fftcieMask = v;
+	contcie = v;
+	blurcie = v;
 
 }
 

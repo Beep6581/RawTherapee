@@ -1662,7 +1662,12 @@ private:
     FlatCurveEditor* const HHmaskcieshape;
     Gtk::Frame* const struFramecie;
     Adjuster* const strumaskcie;
-    Gtk::CheckButton* const toolcie;	
+    Gtk::CheckButton* const toolcie;
+    Gtk::Frame* const blurFramecie;
+    Gtk::CheckButton* const fftcieMask;
+    Adjuster* const contcie;
+    Adjuster* const blurcie;
+	
     Adjuster* const blendmaskcie;
     Adjuster* const radmaskcie;
     Adjuster* const lapmaskcie;
@@ -1673,7 +1678,7 @@ private:
     CurveEditorGroup* const mask2cieCurveEditorG;
     DiagonalCurveEditor* const Lmaskcieshape;
     
-    sigc::connection AutograycieConn,  forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, logcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn;
+    sigc::connection AutograycieConn,  forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, logcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, fftcieMaskConn;
 public:
     Locallabcie();
     ~Locallabcie();
@@ -1728,6 +1733,7 @@ private:
     void showmaskcieMethodChanged();
     void enacieMaskChanged();
     void toolcieChanged();
+	void fftcieMaskChanged();
 
 };
 

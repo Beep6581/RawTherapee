@@ -1373,7 +1373,11 @@ HISTORY_MSG_1148;Local - Jz Sigmoid
 HISTORY_MSG_1149;Local - Q Sigmoid
 HISTORY_MSG_1150;Local - Log encoding Q instead Sigmoid Q
 HISTORY_MSG_1151;Local - Cie mask Structure
-HISTORY_MSG_1152;Local - Tool mask Structure
+HISTORY_MSG_1152;Local - Cie Tool mask Structure
+HISTORY_MSG_1153;Local - Cie Blur mask FFtw
+HISTORY_MSG_1154;Local - Cie Blur mask threshold
+HISTORY_MSG_1155;Local - Cie Blur mask radius
+
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance

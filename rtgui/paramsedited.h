@@ -1081,7 +1081,10 @@ public:
         bool decaycie;
         bool strumaskcie;
         bool toolcie;
-
+		bool fftcieMask;
+		bool contcie;
+		bool blurcie;
+		
         LocallabSpotEdited(bool v);
 
         void set(bool v);
