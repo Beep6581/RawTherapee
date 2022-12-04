@@ -102,7 +102,7 @@ ToneCurve::ToneCurve() : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LAB
     hrVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     hrVBox->set_spacing(2);
 
-    method->set_active(0);
+    method->set_active(3);
     Gtk::Frame* const hrFrame = Gtk::manage(new Gtk::Frame());
     hrFrame->set_label_align(0.025, 0.5);
     hrFrame->set_label_widget(*hrenabled);
@@ -310,7 +310,7 @@ void ToneCurve::read(const ProcParams* pp, const ParamsEdited* pedited)
     enaconn.block(false);
 
     if (pedited && !pedited->toneCurve.method) {
-        method->set_active(4);
+        method->set_active(3);
     } else if (pp->toneCurve.method == "Luminance") {
         method->set_active(0);
     } else if (pp->toneCurve.method == "CIELab blending") {

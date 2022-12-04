@@ -409,11 +409,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         if (imageTypeListener) {
             imageTypeListener->imageTypeChanged(imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono());
         }
-
+		bool iscolor = (params->toneCurve.method == "Color" || params->toneCurve.method == "Coloropp");
         if ((todo & M_RAW)
                 || (!highDetailRawComputed && highDetailNeeded)
-                || (params->toneCurve.hrenabled && params->toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
-                || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
+               // || (params->toneCurve.hrenabled && params->toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
+               // || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
+                || (params->toneCurve.hrenabled && !iscolor && imgsrc->isRGBSourceModified())
+                || (!params->toneCurve.hrenabled && iscolor && imgsrc->isRGBSourceModified())) {
 
             if (settings->verbose) {
                 if (imgsrc->getSensorType() == ST_BAYER) {
@@ -466,8 +468,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
         if ((todo & M_RAW)
                 || (!highDetailRawComputed && highDetailNeeded)
-                || (params->toneCurve.hrenabled && params->toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
-                || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
+              //  || (params->toneCurve.hrenabled && params->toneCurve.method != "Color" && imgsrc->isRGBSourceModified())
+              //  || (!params->toneCurve.hrenabled && params->toneCurve.method == "Color" && imgsrc->isRGBSourceModified())) {
+                || (params->toneCurve.hrenabled && !iscolor && imgsrc->isRGBSourceModified())
+                || (!params->toneCurve.hrenabled && iscolor && imgsrc->isRGBSourceModified())) {
             if (highDetailNeeded) {
                 highDetailRawComputed = true;
             } else {
