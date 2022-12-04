@@ -96,6 +96,7 @@ ToneCurve::ToneCurve() : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LAB
     method->append (M("TP_HLREC_LUMINANCE"));
     method->append (M("TP_HLREC_CIELAB"));
     method->append (M("TP_HLREC_COLOR"));
+    method->append (M("TP_HLREC_COLOROPP"));
     method->append (M("TP_HLREC_BLEND"));
     Gtk::Box *hrVBox;
     hrVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
@@ -316,8 +317,10 @@ void ToneCurve::read(const ProcParams* pp, const ParamsEdited* pedited)
         method->set_active(1);
     } else if (pp->toneCurve.method == "Color") {
         method->set_active(2);
-    } else if (pp->toneCurve.method == "Blend") {
+    } else if (pp->toneCurve.method == "Coloropp") {
         method->set_active(3);
+    } else if (pp->toneCurve.method == "Blend") {
+        method->set_active(4);
     }
 
     hrenabledChanged();
@@ -412,7 +415,7 @@ void ToneCurve::write(ProcParams* pp, ParamsEdited* pedited)
         pedited->toneCurve.curve2 = !shape2->isUnChanged();
         pedited->toneCurve.curveMode = toneCurveMode->get_active_row_number() != 6;
         pedited->toneCurve.curveMode2 = toneCurveMode2->get_active_row_number() != 6;
-        pedited->toneCurve.method = method->get_active_row_number() != 4;
+        pedited->toneCurve.method = method->get_active_row_number() != 5;
         pedited->toneCurve.hrenabled = !hrenabled->get_inconsistent();
         pedited->toneCurve.histmatching = !histmatching->get_inconsistent();
         pedited->toneCurve.fromHistMatching = true;
@@ -428,6 +431,8 @@ void ToneCurve::write(ProcParams* pp, ParamsEdited* pedited)
     } else if (method->get_active_row_number() == 2) {
         pp->toneCurve.method = "Color";
     } else if (method->get_active_row_number() == 3) {
+        pp->toneCurve.method = "Coloropp";
+    } else if (method->get_active_row_number() == 4) {
         pp->toneCurve.method = "Blend";
     }
 }

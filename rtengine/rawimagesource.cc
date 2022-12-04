@@ -655,9 +655,9 @@ void RawImageSource::wbMul2Camera(double &rm, double &gm, double &bm)
         b = bb;
     }
 
-    rm = get_pre_mul(0) / r;
-    gm = get_pre_mul(1) / g;
-    bm = get_pre_mul(2) / b;
+    rm = ri->get_pre_mul(0) / r;
+    gm = ri->get_pre_mul(1) / g;
+    bm = ri->get_pre_mul(2) / b;
 
     rm /= gm;
     bm /= gm;
@@ -755,7 +755,9 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
         gm = ri->get_pre_mul(1);
         bm = ri->get_pre_mul(2);
     } else {
-        ctemp.getMultipliers (r, g, b);
+      // ctemp.getMultipliers (r, g, b);
+		r = g = b = 1;
+		wbCamera2Mul(r, g, b);   
         rm = imatrices.cam_rgb[0][0] * r + imatrices.cam_rgb[0][1] * g + imatrices.cam_rgb[0][2] * b;
         gm = imatrices.cam_rgb[1][0] * r + imatrices.cam_rgb[1][1] * g + imatrices.cam_rgb[1][2] * b;
         bm = imatrices.cam_rgb[2][0] * r + imatrices.cam_rgb[2][1] * g + imatrices.cam_rgb[2][2] * b;
@@ -841,26 +843,32 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     int maxx = this->W, maxy = this->H, skip = pp.getSkip();
 
     // raw clip levels after white balance
-//    hlmax[0] = clmax[0] * rm;
- //   hlmax[1] = clmax[1] * gm;
- //   hlmax[2] = clmax[2] * bm;
- //   const bool hrenabled = hrp.enabled && hrp.hrmode != procparams::ExposureParams::HR_OFF;
- //   const bool clampOOG = !hrp.enabled;
-
+	//    hlmax[0] = clmax[0] * rm;
+	//   hlmax[1] = clmax[1] * gm;
+	//   hlmax[2] = clmax[2] * bm;
+	//   const bool hrenabled = hrp.enabled && hrp.hrmode != procparams::ExposureParams::HR_OFF;
+	//   const bool clampOOG = !hrp.enabled;
+	
     const bool doClip = (chmax[0] >= clmax[0] || chmax[1] >= clmax[1] || chmax[2] >= clmax[2]) && !hrp.hrenabled && hrp.clampOOG;
-    bool doHr = (hrp.hrenabled && hrp.method != "Color");
- //   const bool doClip = (chmax[0] >= clmax[0] || chmax[1] >= clmax[1] || chmax[2] >= clmax[2]) && !hrenabled && clampOOG;
- //   bool doHr = (hrenabled && hrp.hrmode != "Color");
+    bool doHr = (hrp.hrenabled && (hrp.method != "Color" || hrp.method != "Coloropp"));
+	//   const bool doClip = (chmax[0] >= clmax[0] || chmax[1] >= clmax[1] || chmax[2] >= clmax[2]) && !hrenabled && clampOOG;
+	//   bool doHr = (hrenabled && hrp.hrmode != "Color");
 
- if (hrp.hrenabled && hrp.method == "Color") {
+	if (hrp.hrenabled && (hrp.method == "Color" || hrp.method == "Coloropp")) {
         if (!rgbSourceModified) {
-            if (settings->verbose) {
-                printf ("Applying Highlight Recovery: Color propagation 2...\n");
-            }
-
-           // HLRecovery_inpaint (red, green, blue, hrp.hlbl);
-                float s[3] = { rm, gm, bm };
-                highlight_recovery_opposed(s, ctemp);
+			if(hrp.method == "Color") {
+				if (settings->verbose) {
+					printf ("Applying Highlight Recovery: Color propagation.\n");
+				}
+				HLRecovery_inpaint (red, green, blue, hrp.hlbl);			
+			}
+			if(hrp.method == "Coloropp") {
+				if (settings->verbose) {
+					printf ("Applying Highlight Recovery: Color opposition\n");
+				}		   
+				float s[3] = { rm, gm, bm };
+				highlight_recovery_opposed(s, ctemp);
+			}
 			
             rgbSourceModified = true;
         }
@@ -890,12 +898,10 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     gm /= area;
     bm /= area;
    
-	
 	/*
 	hlmax[0] = clmax[0] * rm;
     hlmax[1] = clmax[1] * gm;
     hlmax[2] = clmax[2] * bm;
-
 
     float area = skip * skip;
     rm /= area;
@@ -906,7 +912,6 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     rm *= expcomp;
     gm *= expcomp;
     bm *= expcomp;
-	
 	*/
     
 #ifdef _OPENMP
