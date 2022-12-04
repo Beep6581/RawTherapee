@@ -8603,17 +8603,6 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
     int bfw = xend - xstart;
     int bfh = yend - ystart;
 
-    int bfhr = bfh;
-    int bfwr = bfw;
-    if (lp.blurcolmask >= 0.25f && lp.fftColorMask && call == 2) {
-        optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
-    }
-    if (lp.blurciemask >= 0.25f && lp.fftcieMask && call == 2) {
-        optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
-    }
-
-    bfh = bfhr;
-    bfw = bfwr;
 
     //initialize scope
     float varsens = lp.sensex;//exposure
@@ -8639,6 +8628,20 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
      } else if (senstype == 31) { //ciecam
         varsens = lp.sensicie;
    }
+   
+    int bfhr = bfh;
+    int bfwr = bfw;
+    if (lp.blurcolmask >= 0.25f && lp.fftColorMask && call == 2 && senstype == 0) {
+        optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
+    }
+    if (lp.blurciemask >= 0.25f && lp.fftcieMask && call == 2 && senstype == 31) {
+        optfft(N_fftwsize, bfh, bfw, bfhr, bfwr, lp, original->H, original->W, xstart, ystart, xend, yend, cx, cy, lp.fullim);
+    }
+
+    bfh = bfhr;
+    bfw = bfwr;
+   
+   
     bool delt = lp.deltaem;
     //sobel
     sobelref /= 100.f;
@@ -19123,8 +19126,6 @@ void ImProcFunctions::Lab_Local(
                 bool delt = params->locallab.spots.at(sp).deltae;
                 int sco = params->locallab.spots.at(sp).scopemask;
                 int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
-                int shado = 0;
-                const int highl = 0;
 
                 const float mindE = 2.f + MINSCOPE * sco * lp.thr;
                 const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
@@ -19136,6 +19137,8 @@ void ImProcFunctions::Lab_Local(
                 LocHHmaskCurve lochhhmasCurve;
                 bool astool = params->locallab.spots.at(sp).toolcie;
                 const float strumask = 0.02 * params->locallab.spots.at(sp).strumaskcie;
+				const int shado = params->locallab.spots.at(sp).shadmaskcie;
+                const int highl = params->locallab.spots.at(sp).highmaskcie;
 						
                 maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskorigcie.get(), originalmaskcie.get(), original, reserved, inv, lp,
                         strumask, astool,

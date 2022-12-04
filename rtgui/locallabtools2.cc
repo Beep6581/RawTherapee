@@ -7536,6 +7536,9 @@ Locallabcie::Locallabcie():
     chromaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_CHROMASKCOL"), -100.0, 100.0, 0.1, 0.))),
     gammaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_GAMMASKCOL"), 0.25, 4.0, 0.01, 1.))),
     slomaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
+    highmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HIGHMASKCOL"), 0, 100, 1, 0))),
+    shadmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHAMASKCOL"), 0, 100, 1, 0))),
+
     mask2cieCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmaskcieshape(static_cast<DiagonalCurveEditor*>(mask2cieCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
    
@@ -8117,6 +8120,8 @@ Locallabcie::Locallabcie():
     lapmaskcie->setAdjusterListener(this);
     gammaskcie->setAdjusterListener(this);
     slomaskcie->setAdjusterListener(this);
+    highmaskcie->setAdjusterListener(this);
+    shadmaskcie->setAdjusterListener(this);
 
     chromaskcie->setAdjusterListener(this);
     mask2cieCurveEditorG->setCurveListener(this);
@@ -8159,6 +8164,9 @@ Locallabcie::Locallabcie():
     maskcieBox->pack_start(*chromaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*gammaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*slomaskcie, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*highmaskcie, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*shadmaskcie, Gtk::PACK_SHRINK, 0);
+	
     maskcieBox->pack_start(*mask2cieCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
 
 
@@ -8636,7 +8644,9 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         lapmaskcie->setValue(spot.lapmaskcie);
         gammaskcie->setValue(spot.gammaskcie);
         slomaskcie->setValue(spot.slomaskcie);
-        Lmaskcieshape->setCurve(spot.Lmaskciecurve);
+        highmaskcie->setValue(spot.highmaskcie);
+        shadmaskcie->setValue(spot.shadmaskcie);
+		Lmaskcieshape->setCurve(spot.Lmaskciecurve);
         recothrescie->setValue((double)spot.recothrescie);
         lowthrescie->setValue((double)spot.lowthrescie);
         higthrescie->setValue((double)spot.higthrescie);
@@ -8812,6 +8822,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.lapmaskcie = lapmaskcie->getValue();
         spot.gammaskcie = gammaskcie->getValue();
         spot.slomaskcie = slomaskcie->getValue();
+        spot.highmaskcie = highmaskcie->getValue();
+        spot.shadmaskcie = shadmaskcie->getValue();
         spot.Lmaskciecurve = Lmaskcieshape->getCurve();
         spot.recothrescie = recothrescie->getValue();
         spot.lowthrescie = lowthrescie->getValue();
@@ -9488,6 +9500,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             lapmaskcie->hide();
             gammaskcie->hide();
             slomaskcie->hide();
+            highmaskcie->hide();
+            shadmaskcie->hide();
             struFramecie->hide();
 			blurFramecie->hide();
 			
@@ -9580,6 +9594,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             lapmaskcie->show();
             gammaskcie->show();
             slomaskcie->show();
+            highmaskcie->show();
+            shadmaskcie->show();
             expmaskcie->show();
             exprecovcie->show();
             struFramecie->show();
@@ -9877,6 +9893,8 @@ void Locallabcie::convertParamToNormal()
     lapmaskcie->setValue(defSpot.lapmaskcie);
     gammaskcie->setValue(defSpot.gammaskcie);
     slomaskcie->setValue(defSpot.slomaskcie);
+    highmaskcie->setValue(defSpot.highmaskcie);
+    shadmaskcie->setValue(defSpot.shadmaskcie);
     strumaskcie->setValue(defSpot.strumaskcie);
     toolcie->set_active(defSpot.toolcie);
     fftcieMask->set_active(defSpot.fftcieMask);
@@ -9950,6 +9968,8 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         lapmaskcie->setDefault(defSpot.lapmaskcie);
         gammaskcie->setDefault(defSpot.gammaskcie);
         slomaskcie->setDefault(defSpot.slomaskcie);
+        highmaskcie->setDefault(defSpot.highmaskcie);
+        shadmaskcie->setDefault(defSpot.shadmaskcie);
         recothrescie->setDefault((double)defSpot.recothrescie);
         lowthrescie->setDefault((double)defSpot.lowthrescie);
         higthrescie->setDefault((double)defSpot.higthrescie);
@@ -10507,6 +10527,20 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabslomaskcie,
                                        slomaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == highmaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabhighmaskcie,
+                                       highmaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (a == shadmaskcie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabshadmaskcie,
+                                       shadmaskcie->getTextValue() + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }
 

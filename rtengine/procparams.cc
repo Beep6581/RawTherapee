@@ -4545,7 +4545,9 @@ LocallabParams::LocallabSpot::LocallabSpot() :
 	toolcie(false),
 	fftcieMask(true),
     contcie(0.),
-    blurcie(0.2)
+    blurcie(0.2),
+	highmaskcie(0.),
+	shadmaskcie(0.)
  
 
 {
@@ -5261,6 +5263,8 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && toolcie == other.toolcie       
         && blurcie == other.blurcie
         && contcie == other.contcie
+        && highmaskcie == other.highmaskcie
+        && shadmaskcie == other.shadmaskcie
         && fftcieMask == other.fftcieMask;
 
 }
@@ -7057,6 +7061,8 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->fftcieMask, "Locallab", "FftcieMask_" + index_str, spot.fftcieMask, keyFile);
                     saveToKeyfile(!pedited || spot_edited->contcie, "Locallab", "contcie_" + index_str, spot.contcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blurcie, "Locallab", "blurcie_" + index_str, spot.blurcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->blurcie, "Locallab", "highmaskcie_" + index_str, spot.highmaskcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->blurcie, "Locallab", "shadmaskcie_" + index_str, spot.shadmaskcie, keyFile);
 
 
 
@@ -9240,6 +9246,8 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "FftcieMask_" + index_str, pedited, spot.fftcieMask, spotEdited.fftcieMask);
                 assignFromKeyfile(keyFile, "Locallab", "contcie_" + index_str, pedited, spot.contcie, spotEdited.contcie);
                 assignFromKeyfile(keyFile, "Locallab", "blurcie_" + index_str, pedited, spot.blurcie, spotEdited.blurcie);
+                assignFromKeyfile(keyFile, "Locallab", "highmaskcie_" + index_str, pedited, spot.highmaskcie, spotEdited.highmaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "shadmaskcie_" + index_str, pedited, spot.shadmaskcie, spotEdited.shadmaskcie);
 
                 // Append LocallabSpot and LocallabParamsEdited
                 locallab.spots.push_back(spot);

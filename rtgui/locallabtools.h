@@ -1674,7 +1674,9 @@ private:
     Adjuster* const chromaskcie;
     Adjuster* const gammaskcie;
     Adjuster* const slomaskcie;
-    
+    Adjuster* const highmaskcie;
+    Adjuster* const shadmaskcie;
+   
     CurveEditorGroup* const mask2cieCurveEditorG;
     DiagonalCurveEditor* const Lmaskcieshape;
     

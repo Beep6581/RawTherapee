@@ -1084,6 +1084,8 @@ public:
 		bool fftcieMask;
 		bool contcie;
 		bool blurcie;
+        bool highmaskcie;
+        bool shadmaskcie;
 		
         LocallabSpotEdited(bool v);
 
