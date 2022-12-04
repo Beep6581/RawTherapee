@@ -49,6 +49,7 @@ namespace rtengine
 class ColorAppearance;
 class ColorGradientCurve;
 class DCPProfile;
+class DCPProfileApplyState;
 class FlatCurve;
 class FramesMetaData;
 class LensCorrection;
@@ -168,13 +169,13 @@ enum class BlurType {
                  const OpacityCurve& ctOpacityCurve, bool opautili, const LUTf& clcurve, const LUTf& cl2curve, const ToneCurve& customToneCurve1,
                  const ToneCurve& customToneCurve2, const ToneCurve& customToneCurvebw1, const ToneCurve& customToneCurvebw2,
                  double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, DCPProfile *dcpProf,
-                 const DCPProfile::ApplyState& asIn, LUTu& histToneCurve, size_t chunkSize = 1, bool measure = false);
+                 const DCPProfileApplyState& asIn, LUTu& histToneCurve, size_t chunkSize = 1, bool measure = false);
     void rgbProc(Imagefloat* working, LabImage* lab, PipetteBuffer *pipetteBuffer, const LUTf& hltonecurve, const LUTf& shtonecurve, const LUTf& tonecurve,
                  int sat, const LUTf& rCurve, const LUTf& gCurve, const LUTf& bCurve, float satLimit, float satLimitOpacity, const ColorGradientCurve& ctColorCurve,
                  const OpacityCurve& ctOpacityCurve, bool opautili, const LUTf& clcurve, const LUTf& cl2curve, const ToneCurve& customToneCurve1,
                  const ToneCurve& customToneCurve2, const ToneCurve& customToneCurvebw1, const ToneCurve& customToneCurvebw2,
                  double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr,
-                 int hlcomprthresh, DCPProfile *dcpProf, const DCPProfile::ApplyState& asIn, LUTu& histToneCurve, size_t chunkSize = 1, bool measure = false);
+                 int hlcomprthresh, DCPProfile *dcpProf, const DCPProfileApplyState& asIn, LUTu& histToneCurve, size_t chunkSize = 1, bool measure = false);
     void labtoning(float r, float g, float b, float &ro, float &go, float &bo, int algm, int metchrom, int twoc, float satLimit, float satLimitOpacity, const ColorGradientCurve & ctColorCurve, const OpacityCurve & ctOpacityCurve, const LUTf & clToningcurve, const LUTf & cl2Toningcurve, float iplow, float iphigh, double wp[3][3], double wip[3][3]);
     void toning2col(float r, float g, float b, float &ro, float &go, float &bo, float iplow, float iphigh, float rl, float gl, float bl, float rh, float gh, float bh, float SatLow, float SatHigh, float balanS, float balanH, float reducac, int mode, int preser, float strProtect);
     void toningsmh(float r, float g, float b, float &ro, float &go, float &bo, float RedLow, float GreenLow, float BlueLow, float RedMed, float GreenMed, float BlueMed, float RedHigh, float GreenHigh, float BlueHigh, float reducac, int mode, float strProtect);

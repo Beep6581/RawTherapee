@@ -1300,7 +1300,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 double ggm = 33.;
                 double bbm = 33.;
 
-                DCPProfile::ApplyState as;
+                DCPProfileApplyState as;
                 DCPProfile *dcpProf = imgsrc->getDCP(params->icm, as);
 
                 ipf.rgbProc(oprevi, oprevl, nullptr, hltonecurve, shtonecurve, tonecurve, params->toneCurve.saturation,

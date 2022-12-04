@@ -2021,7 +2021,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                int sat, const LUTf& rCurve, const LUTf& gCurve, const LUTf& bCurve, float satLimit, float satLimitOpacity,
                                const ColorGradientCurve& ctColorCurve, const OpacityCurve& ctOpacityCurve, bool opautili, const LUTf& clToningcurve, const LUTf& cl2Toningcurve,
                                const ToneCurve& customToneCurve1, const ToneCurve& customToneCurve2, const ToneCurve& customToneCurvebw1, const ToneCurve& customToneCurvebw2,
-                               double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, DCPProfile *dcpProf, const DCPProfile::ApplyState& asIn,
+                               double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, DCPProfile *dcpProf, const DCPProfileApplyState& asIn,
                                LUTu& histToneCurve, size_t chunkSize, bool measure)
 {
     rgbProc(working, lab, pipetteBuffer, hltonecurve, shtonecurve, tonecurve, sat, rCurve, gCurve, bCurve, satLimit, satLimitOpacity, ctColorCurve, ctOpacityCurve, opautili,
@@ -2035,7 +2035,7 @@ void ImProcFunctions::rgbProc (Imagefloat* working, LabImage* lab, PipetteBuffer
                                const ColorGradientCurve& ctColorCurve, const OpacityCurve& ctOpacityCurve, bool opautili, const LUTf& clToningcurve, const LUTf& cl2Toningcurve,
                                const ToneCurve& customToneCurve1, const ToneCurve& customToneCurve2, const ToneCurve& customToneCurvebw1, const ToneCurve& customToneCurvebw2,
                                double &rrm, double &ggm, double &bbm, float &autor, float &autog, float &autob, double expcomp, int hlcompr, int hlcomprthresh,
-                               DCPProfile *dcpProf, const DCPProfile::ApplyState& asIn, LUTu& histToneCurve, size_t chunkSize, bool measure)
+                               DCPProfile *dcpProf, const DCPProfileApplyState& asIn, LUTu& histToneCurve, size_t chunkSize, bool measure)
 {
 
     std::unique_ptr<StopWatch> stop;

@@ -980,7 +980,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     }
 }
 
-DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfile::ApplyState &as)
+DCPProfile *RawImageSource::getDCP(const ColorManagementParams &cmp, DCPProfileApplyState &as)
 {
     if (cmp.inputProfile == "(camera)" || cmp.inputProfile == "(none)") {
         return nullptr;
