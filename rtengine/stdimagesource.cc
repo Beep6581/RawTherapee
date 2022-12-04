@@ -367,6 +367,20 @@ void StdImageSource::flush() {
     img->allocate(0, 0);
 };
 
+void StdImageSource::wbMul2Camera(double &rm, double &gm, double &bm)
+{
+    rm = 1.0 / rm;
+    gm = 1.0 / gm;
+    bm = 1.0 / bm;
+}
+
+
+void StdImageSource::wbCamera2Mul(double &rm, double &gm, double &bm)
+{
+    rm = 1.0 / rm;
+    gm = 1.0 / gm;
+    bm = 1.0 / bm;
+}
 
 }
 

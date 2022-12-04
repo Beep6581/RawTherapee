@@ -638,6 +638,57 @@ float calculate_scale_mul(float scale_mul[4], const float pre_mul_[4], const flo
     return gain;
 }
 
+void RawImageSource::wbMul2Camera(double &rm, double &gm, double &bm)
+{
+    double r = rm;
+    double g = gm;
+    double b = bm;
+
+    auto imatrices = getImageMatrices();
+
+    if (imatrices) {
+        double rr = imatrices->cam_rgb[0][0] * r + imatrices->cam_rgb[0][1] * g + imatrices->cam_rgb[0][2] * b;
+        double gg = imatrices->cam_rgb[1][0] * r + imatrices->cam_rgb[1][1] * g + imatrices->cam_rgb[1][2] * b;
+        double bb = imatrices->cam_rgb[2][0] * r + imatrices->cam_rgb[2][1] * g + imatrices->cam_rgb[2][2] * b;
+        r = rr;
+        g = gg;
+        b = bb;
+    }
+
+    rm = get_pre_mul(0) / r;
+    gm = get_pre_mul(1) / g;
+    bm = get_pre_mul(2) / b;
+
+    rm /= gm;
+    bm /= gm;
+    gm = 1.0;
+}
+
+
+void RawImageSource::wbCamera2Mul(double &rm, double &gm, double &bm)
+{
+    auto imatrices = getImageMatrices();
+
+    double r = ri->get_pre_mul(0) / rm;
+    double g = ri->get_pre_mul(1) / gm;
+    double b = ri->get_pre_mul(2) / bm;
+    
+    if (imatrices) {
+        double rr = imatrices->rgb_cam[0][0] * r + imatrices->rgb_cam[0][1] * g + imatrices->rgb_cam[0][2] * b;
+        double gg = imatrices->rgb_cam[1][0] * r + imatrices->rgb_cam[1][1] * g + imatrices->rgb_cam[1][2] * b;
+        double bb = imatrices->rgb_cam[2][0] * r + imatrices->rgb_cam[2][1] * g + imatrices->rgb_cam[2][2] * b;
+        r = rr;
+        g = gg;
+        b = bb;
+    }
+
+    rm = r / g;
+    bm = b / g;
+    gm = 1.0;
+}
+
+
+
 
 void RawImageSource::getWBMults (const ColorTemp &ctemp, const RAWParams &raw, std::array<float, 4>& out_scale_mul, float &autoGainComp, float &rm, float &gm, float &bm) const
 {
@@ -790,11 +841,61 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     int maxx = this->W, maxy = this->H, skip = pp.getSkip();
 
     // raw clip levels after white balance
+//    hlmax[0] = clmax[0] * rm;
+ //   hlmax[1] = clmax[1] * gm;
+ //   hlmax[2] = clmax[2] * bm;
+ //   const bool hrenabled = hrp.enabled && hrp.hrmode != procparams::ExposureParams::HR_OFF;
+ //   const bool clampOOG = !hrp.enabled;
+
+    const bool doClip = (chmax[0] >= clmax[0] || chmax[1] >= clmax[1] || chmax[2] >= clmax[2]) && !hrp.hrenabled && hrp.clampOOG;
+    bool doHr = (hrp.hrenabled && hrp.method != "Color");
+ //   const bool doClip = (chmax[0] >= clmax[0] || chmax[1] >= clmax[1] || chmax[2] >= clmax[2]) && !hrenabled && clampOOG;
+ //   bool doHr = (hrenabled && hrp.hrmode != "Color");
+
+ if (hrp.hrenabled && hrp.method == "Color") {
+        if (!rgbSourceModified) {
+            if (settings->verbose) {
+                printf ("Applying Highlight Recovery: Color propagation 2...\n");
+            }
+
+           // HLRecovery_inpaint (red, green, blue, hrp.hlbl);
+                float s[3] = { rm, gm, bm };
+                highlight_recovery_opposed(s, ctemp);
+			
+            rgbSourceModified = true;
+        }
+    }
+	
+    // now apply the wb coefficients
+    if (ctemp.getTemp() >= 0) {
+        double r, g, b;
+        ctemp.getMultipliers(r, g, b);
+        wbMul2Camera(r, g, b);
+
+        rm *= r;
+        gm *= g;
+        bm *= b;
+    }
     hlmax[0] = clmax[0] * rm;
     hlmax[1] = clmax[1] * gm;
     hlmax[2] = clmax[2] * bm;
 
-    const bool doClip = (chmax[0] >= clmax[0] || chmax[1] >= clmax[1] || chmax[2] >= clmax[2]) && !hrp.hrenabled && hrp.clampOOG;
+    const float expcomp = std::pow(2, ri->getBaselineExposure());
+    rm *= expcomp;
+    gm *= expcomp;
+    bm *= expcomp;
+
+    float area = skip * skip;
+    rm /= area;
+    gm /= area;
+    bm /= area;
+   
+	
+	/*
+	hlmax[0] = clmax[0] * rm;
+    hlmax[1] = clmax[1] * gm;
+    hlmax[2] = clmax[2] * bm;
+
 
     float area = skip * skip;
     rm /= area;
@@ -805,6 +906,8 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     rm *= expcomp;
     gm *= expcomp;
     bm *= expcomp;
+	
+	*/
     
 #ifdef _OPENMP
     #pragma omp parallel if(!d1x)       // omp disabled for D1x to avoid race conditions (see Issue 1088 http://code.google.com/p/rawtherapee/issues/detail?id=1088)
@@ -2446,6 +2549,7 @@ void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
             }
 
             HLRecovery_inpaint (red, green, blue, hrp.hlbl);
+			
             rgbSourceModified = true;
         }
     }

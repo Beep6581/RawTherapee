@@ -194,6 +194,9 @@ public:
     }
     virtual void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) = 0;
     virtual void captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold, double &radius) = 0;
+    virtual void wbMul2Camera(double &rm, double &gm, double &bm) = 0;
+    virtual void wbCamera2Mul(double &rm, double &gm, double &bm) = 0;
+
 };
 
 }
