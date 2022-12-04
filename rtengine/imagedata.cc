@@ -26,7 +26,6 @@
 
 #include "imagedata.h"
 #include "imagesource.h"
-#include "procparams.h"
 #include "rt_math.h"
 #include "utils.h"
 
@@ -34,6 +33,20 @@
 #define PRINT_HDR_PS_DETECTION 0
 
 using namespace rtengine;
+
+namespace
+{
+
+const std::string& validateUft8(const std::string& str, const std::string& on_error = "???")
+{
+    if (Glib::ustring(str).validate()) {
+        return str;
+    }
+
+    return on_error;
+}
+
+}
 
 namespace rtengine {
 
@@ -58,15 +71,6 @@ Exiv2::Image::AutoPtr open_exiv2(const Glib::ustring& fname)
 }
 
 } // namespace rtengine
-
-const std::string& validateUft8(const std::string& str, const std::string& on_error = "???")
-{
-    if (Glib::ustring(str).validate()) {
-        return str;
-    }
-
-    return on_error;
-}
 
 FramesMetaData* FramesMetaData::fromFile(const Glib::ustring& fname)
 {
@@ -644,7 +648,7 @@ std::string FramesMetaData::expcompToString(double expcomp, bool maskZeroexpcomp
 
 double FramesMetaData::shutterFromString(std::string s)
 {
-    const std::string::size_type i = s.find_first_of ('/');
+    const std::string::size_type i = s.find_first_of('/');
 
     if (i == std::string::npos) {
         return std::atof(s.c_str());

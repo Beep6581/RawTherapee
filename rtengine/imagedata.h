@@ -21,18 +21,24 @@
 #include <cstdio>
 #include <memory>
 #include <string>
-#include <glibmm.h>
+
 #include <exiv2/exiv2.hpp>
 
-#include "rawimage.h"
-#include "rtengine.h"
+#include "imageio.h"
+
+namespace Glib
+{
+
+class ustring;
+
+}
 
 namespace rtengine
 {
 
 Exiv2::Image::AutoPtr open_exiv2(const Glib::ustring &fname); // TODO: Global function?
 
-class FramesData :
+class FramesData final :
     public FramesMetaData
 {
 private:
@@ -56,7 +62,7 @@ private:
     bool isHDR;
 
 public:
-    FramesData(const Glib::ustring& fname);
+    explicit FramesData(const Glib::ustring& fname);
 
     void setDCRawFrameCount(unsigned int frameCount);
     unsigned int getFrameCount() const override;

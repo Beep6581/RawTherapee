@@ -1733,17 +1733,12 @@ private:
         MetadataInfo info(imgsrc->getFileName());
         switch (params.metadata.mode) {
         case MetaDataParams::TUNNEL:
-            // Sending back the whole first root, which won't necessarily be the selected frame number
-            // and may contain subframe depending on initial raw's hierarchy
-            // readyImg->setMetadata (ii->getMetaData()->getRootExifData ());
             readyImg->setMetadata(std::move(info));
             break;
         case MetaDataParams::EDIT:
             info.setExif(params.exif);
             info.setIptc(params.iptc);
             readyImg->setMetadata(std::move(info));
-            // ask for the correct frame number, but may contain subframe depending on initial raw's hierarchy
-            // readyImg->setMetadata (ii->getMetaData()->getBestExifData(imgsrc, &params.raw), params.exif, params.iptc);
             break;
         default: // case MetaDataParams::STRIP
             // nothing to do

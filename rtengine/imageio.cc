@@ -24,7 +24,6 @@
 #include <cstdio>
 #include <cstring>
 #include <fcntl.h>
-#include <libiptcdata/iptc-jpeg.h>
 #include <memory>
 #include "rt_math.h"
 #include "procparams.h"

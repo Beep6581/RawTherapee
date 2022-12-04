@@ -170,10 +170,10 @@ private:
     std::vector<Glib::ustring> profileDir;
 
     // these contain standard profiles from RT. keys are all in uppercase, file path is value
-    std::map<Glib::ustring, Glib::ustring> file_std_profiles;
+    std::map<std::string, Glib::ustring> file_std_profiles;
 
     // Maps file name to profile as cache
-    mutable std::map<Glib::ustring, DCPProfile*> profile_cache;
+    mutable std::map<std::string, DCPProfile*> profile_cache;
 };
 
 }

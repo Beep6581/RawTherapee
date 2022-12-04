@@ -43,7 +43,6 @@
 #include "paramsedited.h"
 #include "ppversion.h"
 #include "procparamchangers.h"
-#include "profilestorecombobox.h"
 #include "version.h"
 
 
