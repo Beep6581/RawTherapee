@@ -850,7 +850,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 	const bool doClip = (chmax[0] >= clmax[0] || chmax[1] >= clmax[1] || chmax[2] >= clmax[2]) && !hrp.hrenabled && hrp.clampOOG;
     bool doHr = (hrp.hrenabled && !iscolor);
 
-	if (hrp.hrenabled && (hrp.method == "Color" || hrp.method == "Coloropp")) {
+	if (hrp.hrenabled && iscolor) {
         if (!rgbSourceModified) {
 			if(hrp.method == "Color") {
 				if (settings->verbose) {
@@ -858,9 +858,6 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 				}
 				HLRecovery_inpaint (red, green, blue, hrp.hlbl);			
 			} else if(hrp.method == "Coloropp") {
-				if (settings->verbose) {
-					printf ("Applying Highlight Recovery: Inpait opposed.\n");
-				}		   
 				float s[3] = { rm, gm, bm };
 				highlight_recovery_opposed(s, ctemp);
 			}

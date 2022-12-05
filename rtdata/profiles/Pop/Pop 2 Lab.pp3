@@ -1,4 +1,5 @@
 [Exposure]
+[Exposure]
 Auto=false
 Clip=0.02
 Compensation=1
@@ -19,7 +20,7 @@ Curve2=0;
 
 [HLRecovery]
 Enabled=true
-Method=Blend
+Method=Coloropp
 
 [Luminance Curve]
 Enabled=true
