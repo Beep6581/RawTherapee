@@ -95,14 +95,14 @@ ToneCurve::ToneCurve() : FoldableToolPanel(this, "tonecurve", M("TP_EXPOSURE_LAB
     method = Gtk::manage (new MyComboBoxText ());
     method->append (M("TP_HLREC_LUMINANCE"));
     method->append (M("TP_HLREC_CIELAB"));
+    method->append (M("TP_HLREC_BLEND"));
     method->append (M("TP_HLREC_COLOR"));
     method->append (M("TP_HLREC_COLOROPP"));
-    method->append (M("TP_HLREC_BLEND"));
     Gtk::Box *hrVBox;
     hrVBox = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
     hrVBox->set_spacing(2);
 
-    method->set_active(3);
+    method->set_active(4);
     Gtk::Frame* const hrFrame = Gtk::manage(new Gtk::Frame());
     hrFrame->set_label_align(0.025, 0.5);
     hrFrame->set_label_widget(*hrenabled);
@@ -309,17 +309,17 @@ void ToneCurve::read(const ProcParams* pp, const ParamsEdited* pedited)
     hrenabled->set_active(pp->toneCurve.hrenabled);
     enaconn.block(false);
 
-    if (pedited && !pedited->toneCurve.method) {
-        method->set_active(3);
-    } else if (pp->toneCurve.method == "Luminance") {
+   if (pedited && !pedited->toneCurve.method) {
+        method->set_active(5);
+	} else if (pp->toneCurve.method == "Luminance") {
         method->set_active(0);
     } else if (pp->toneCurve.method == "CIELab blending") {
         method->set_active(1);
-    } else if (pp->toneCurve.method == "Color") {
-        method->set_active(2);
-    } else if (pp->toneCurve.method == "Coloropp") {
-        method->set_active(3);
     } else if (pp->toneCurve.method == "Blend") {
+        method->set_active(2);
+    } else if (pp->toneCurve.method == "Color") {
+        method->set_active(3);
+    } else if (pp->toneCurve.method == "Coloropp") {
         method->set_active(4);
     }
 
@@ -429,11 +429,11 @@ void ToneCurve::write(ProcParams* pp, ParamsEdited* pedited)
     } else if (method->get_active_row_number() == 1) {
         pp->toneCurve.method = "CIELab blending";
     } else if (method->get_active_row_number() == 2) {
-        pp->toneCurve.method = "Color";
-    } else if (method->get_active_row_number() == 3) {
-        pp->toneCurve.method = "Coloropp";
-    } else if (method->get_active_row_number() == 4) {
         pp->toneCurve.method = "Blend";
+    } else if (method->get_active_row_number() == 3) {
+        pp->toneCurve.method = "Color";
+    } else if (method->get_active_row_number() == 4) {
+        pp->toneCurve.method = "Coloropp";
     }
 }
 
@@ -457,7 +457,7 @@ void ToneCurve::hrenabledChanged()
         if (hrenabled->get_active()) {
             hlrbox->show();
             hlrbox->set_sensitive(true);
-            if (method->get_active_row_number() == 2) {
+            if (method->get_active_row_number() == 3) {
                 hlbl->show();
             } else {
                 hlbl->hide();
@@ -490,7 +490,7 @@ void ToneCurve::hrenabledChanged()
 void ToneCurve::methodChanged()
 {
 
-    if (method->get_active_row_number() == 2) {
+    if (method->get_active_row_number() == 3) {
         hlbl->show();
     } else {
         hlbl->hide();    
@@ -999,7 +999,7 @@ void ToneCurve::autoExpChanged(double expcomp, int bright, int contr, int black,
             if (nextHLRecons) {
                 hlrbox->show();
                 hlrbox->set_sensitive(true);
-                if (method->get_active_row_number() == 2) {
+                if (method->get_active_row_number() == 3) {
                     hlbl->show();
                 } else {
                     hlbl->hide();
