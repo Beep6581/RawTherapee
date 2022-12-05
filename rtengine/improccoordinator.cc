@@ -1,6 +1,6 @@
 /*
  *  This file is part of RawTherapee.
- *f
+ * 
  *  Copyright (c) 2004-2010 Gabor Horvath <hgabor@rawtherapee.com>
  *
  *  RawTherapee is free software: you can redistribute it and/or modify
