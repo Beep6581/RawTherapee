@@ -2611,6 +2611,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie; 
     const bool sigmoidqj = params->locallab.spots.at(sp).sigmoidqjcie; 
 
+	float senssig = (float) params->locallab.spots.at(sp).sigmoidsenscie;
     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
     const double wip[3][3] = {//improve precision with double
         {wiprof[0][0], wiprof[0][1], wiprof[0][2]},
@@ -2652,7 +2653,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
     const float ath = sigmoidth - 1.f;
     const float bth = 1;
-    float sila = pow_F(sigmoidlambda, 0.5f);
+    float sila = pow_F(sigmoidlambda, senssig);
     const float sigm = 3.3f + 7.1f *(1.f - sila);//e^10.4 = 32860 => sigm vary from 3.3 to 10.4
     const float bl = sigmoidbl;
     //end sigmoid

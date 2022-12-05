@@ -1661,6 +1661,7 @@ struct LocallabParams {
         double targetjz;
         double sigmoidldacie;
         double sigmoidthcie;
+        double sigmoidsenscie;
         double sigmoidblcie;
         double sigmoidldajzcie;
         double sigmoidthjzcie;

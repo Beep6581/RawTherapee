@@ -1037,6 +1037,7 @@ public:
         bool targetjz;
         bool sigmoidldacie;
         bool sigmoidthcie;
+        bool sigmoidsenscie;
         bool sigmoidblcie;
         bool sigmoidldajzcie;
         bool sigmoidthjzcie;

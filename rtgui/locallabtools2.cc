@@ -7448,6 +7448,7 @@ Locallabcie::Locallabcie():
     sigq(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGFRA")))),
     sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.0, 1., 0.01, 0.5))),
     sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.1, 4., 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
+    sigmoidsenscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDSENSI"), 0.1, 0.9, 0.01, 0.5))),
     sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.5, 1.5, 0.01, 1.))),
     sigmoidqjcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDQJ")))),
     logcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGCIE")))),
@@ -7631,6 +7632,7 @@ Locallabcie::Locallabcie():
     
     sigBox->pack_start(*sigmoidldacie);
     sigBox->pack_start(*sigmoidthcie);
+    sigBox->pack_start(*sigmoidsenscie);
     sigBox->pack_start(*sigmoidblcie);
     sigBox->pack_start(*sigmoidqjcie);
     sigBox->pack_start(*separatorsig);    
@@ -7936,6 +7938,7 @@ Locallabcie::Locallabcie():
     targetjz->setLogScale(10, 18, true);
     sigmoidldacie->setAdjusterListener(this);
     sigmoidthcie->setAdjusterListener(this);
+    sigmoidsenscie->setAdjusterListener(this);
     sigmoidblcie->setAdjusterListener(this);
     sigmoidldajzcie->setAdjusterListener(this);
     sigmoidthjzcie->setAdjusterListener(this);
@@ -8542,11 +8545,13 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         if(logcie->get_active()) {
             sigmoidldacie->set_sensitive(false);
             sigmoidthcie->set_sensitive(false);
+            sigmoidsenscie->set_sensitive(false);
             sigmoidblcie->set_sensitive(false);
             sigmoidqjcie->set_sensitive(false);
         } else {
             sigmoidldacie->set_sensitive(true);
             sigmoidthcie->set_sensitive(true);
+            sigmoidsenscie->set_sensitive(true);
             sigmoidblcie->set_sensitive(true);
             sigmoidqjcie->set_sensitive(true);
         }
@@ -8614,6 +8619,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         targetjz->setValue(spot.targetjz);
         sigmoidldacie->setValue(spot.sigmoidldacie);
         sigmoidthcie->setValue(spot.sigmoidthcie);
+        sigmoidsenscie->setValue(spot.sigmoidsenscie);
         sigmoidblcie->setValue(spot.sigmoidblcie);
         sigmoidldajzcie->setValue(spot.sigmoidldajzcie);
         sigmoidthjzcie->setValue(spot.sigmoidthjzcie);
@@ -8792,6 +8798,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.targetjz = targetjz->getValue();
         spot.sigmoidldacie = sigmoidldacie->getValue();
         spot.sigmoidthcie = sigmoidthcie->getValue();
+        spot.sigmoidsenscie = sigmoidsenscie->getValue();
         spot.sigmoidblcie = sigmoidblcie->getValue();
         spot.sigmoidldajzcie = sigmoidldajzcie->getValue();
         spot.sigmoidthjzcie = sigmoidthjzcie->getValue();
@@ -9030,11 +9037,13 @@ void Locallabcie::logcieChanged()
     if(logcie->get_active()) {
         sigmoidldacie->set_sensitive(false);
         sigmoidthcie->set_sensitive(false);
+        sigmoidsenscie->set_sensitive(false);
         sigmoidblcie->set_sensitive(false);
         sigmoidqjcie->set_sensitive(false);
     } else {
         sigmoidldacie->set_sensitive(true);
         sigmoidthcie->set_sensitive(true);
+        sigmoidsenscie->set_sensitive(true);
         sigmoidblcie->set_sensitive(true);
         sigmoidqjcie->set_sensitive(true);
     }
@@ -9392,6 +9401,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             sensicie->show();
             reparcie->show();
             sigmoidblcie->hide();
+            sigmoidsenscie->hide();
             
             expjz->hide();
             jzFrame->hide();
@@ -9480,6 +9490,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             sensicie->show();
             reparcie->show();
             sigmoidblcie->show();
+            sigmoidsenscie->hide();
             expjz->hide();
             forcejz->hide();
 
@@ -9582,6 +9593,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             detailcie->show();
             modeHBoxcie->show();
             sigmoidblcie->show();
+            sigmoidsenscie->show();
             targetGraycie->show();
             targabscie->show();
             surrHBoxcie->show();
@@ -9900,7 +9912,7 @@ void Locallabcie::convertParamToNormal()
     fftcieMask->set_active(defSpot.fftcieMask);
     contcie->setValue(defSpot.contcie);
     blurcie->setValue(defSpot.blurcie);
-    
+	sigmoidsenscie->setValue(defSpot.sigmoidsenscie);    
     // Enable all listeners
     enableListener();
     
@@ -9952,6 +9964,7 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         targetjz->setDefault(defSpot.targetjz);
         sigmoidldacie->setDefault(defSpot.sigmoidldacie);
         sigmoidthcie->setDefault(defSpot.sigmoidthcie);
+        sigmoidsenscie->setDefault(defSpot.sigmoidsenscie);
         sigmoidblcie->setDefault(defSpot.sigmoidblcie);
         sigmoidldajzcie->setDefault(defSpot.sigmoidldajzcie);
         sigmoidthjzcie->setDefault(defSpot.sigmoidthjzcie);
@@ -10365,6 +10378,13 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
             if (listener) {
                 listener->panelChanged(Evlocallabsigmoidthcie,
                                        sigmoidthcie->getTextValue() + spName);
+            }
+        }
+
+        if (a == sigmoidsenscie) {
+            if (listener) {
+                listener->panelChanged(Evlocallabsigmoidsenscie,
+                                       sigmoidsenscie->getTextValue() + spName);
             }
         }
 

@@ -1735,6 +1735,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).targetjz = locallab.spots.at(j).targetjz && pSpot.targetjz == otherSpot.targetjz;
                 locallab.spots.at(j).sigmoidldacie = locallab.spots.at(j).sigmoidldacie && pSpot.sigmoidldacie == otherSpot.sigmoidldacie;
                 locallab.spots.at(j).sigmoidthcie = locallab.spots.at(j).sigmoidthcie && pSpot.sigmoidthcie == otherSpot.sigmoidthcie;
+                locallab.spots.at(j).sigmoidsenscie = locallab.spots.at(j).sigmoidsenscie && pSpot.sigmoidsenscie == otherSpot.sigmoidsenscie;
                 locallab.spots.at(j).sigmoidblcie = locallab.spots.at(j).sigmoidblcie && pSpot.sigmoidblcie == otherSpot.sigmoidblcie;
                 locallab.spots.at(j).sigmoidldajzcie = locallab.spots.at(j).sigmoidldajzcie && pSpot.sigmoidldajzcie == otherSpot.sigmoidldajzcie;
                 locallab.spots.at(j).sigmoidthjzcie = locallab.spots.at(j).sigmoidthjzcie && pSpot.sigmoidthjzcie == otherSpot.sigmoidthjzcie;
@@ -5942,6 +5943,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).sigmoidthcie = mods.locallab.spots.at(i).sigmoidthcie;
         }
 
+        if (locallab.spots.at(i).sigmoidsenscie) {
+            toEdit.locallab.spots.at(i).sigmoidsenscie = mods.locallab.spots.at(i).sigmoidsenscie;
+        }
+
         if (locallab.spots.at(i).sigmoidblcie) {
             toEdit.locallab.spots.at(i).sigmoidblcie = mods.locallab.spots.at(i).sigmoidblcie;
         }
@@ -8074,6 +8079,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     targetjz(v),
     sigmoidldacie(v),
     sigmoidthcie(v),
+    sigmoidsenscie(v),
     sigmoidblcie(v),
     sigmoidldajzcie(v),
     sigmoidthjzcie(v),
@@ -8779,6 +8785,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     targetjz = v;
     sigmoidldacie = v;
     sigmoidthcie = v;
+    sigmoidsenscie = v;
     sigmoidblcie = v;
     sigmoidldajzcie = v;
     sigmoidthjzcie = v;

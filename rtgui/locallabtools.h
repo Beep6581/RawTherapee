@@ -1583,6 +1583,7 @@ private:
     Gtk::CheckButton* const sigq;
     Adjuster* const sigmoidldacie;
     Adjuster* const sigmoidthcie;
+    Adjuster* const sigmoidsenscie;
     Adjuster* const sigmoidblcie;
     Gtk::CheckButton* const sigmoidqjcie;
     Gtk::CheckButton* const logcie;

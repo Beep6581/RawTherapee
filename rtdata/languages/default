@@ -1379,6 +1379,7 @@ HISTORY_MSG_1154;Local - Cie Blur mask threshold
 HISTORY_MSG_1155;Local - Cie Blur mask radius
 HISTORY_MSG_1156;Local - Cie mask highlight
 HISTORY_MSG_1157;Local - Cie mask shadows
+HISTORY_MSG_1158;Local - CIECAM Sigmoid adaptability
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -3304,6 +3305,7 @@ TP_LOCALLAB_SIGMAWAV;Attenuation response
 TP_LOCALLAB_SIGMOIDBL;Blend
 TP_LOCALLAB_SIGMOIDLAMBDA;Contrast
 TP_LOCALLAB_SIGMOIDQJ;Uses Black Ev & White Ev
+TP_LOCALLAB_SIGMOIDSENSI;Adaptability
 TP_LOCALLAB_SIGMOIDTH;Threshold (Gray point)
 TP_LOCALLAB_SIGMOID_TOOLTIP;Allows you to simulate a Tone-mapping appearance using both the'Ciecam' (or 'Jz') and 'Sigmoid' function.\nThree sliders: a) Contrast acts on the shape of the sigmoid curve and consequently on the strength; b) Threshold (Gray point) distributes the action according to the luminance; c)Blend acts on the final aspect of the image, contrast and luminance.
 TP_LOCALLAB_SLOMASKCOL;Slope
