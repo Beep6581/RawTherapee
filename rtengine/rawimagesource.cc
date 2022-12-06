@@ -3558,6 +3558,7 @@ bool RawImageSource::findInputProfile(Glib::ustring inProfile, cmsHPROFILE embed
 //  very effective to reduce (or remove) the magenta, but with levels of grey !
 void RawImageSource::HLRecovery_blend(float* rin, float* gin, float* bin, int width, float maxval, float* hlmax)
 {
+
     constexpr int ColorCount = 3;
 
     // Transform matrixes rgb>lab and back
@@ -3782,6 +3783,7 @@ void RawImageSource::HLRecovery_CIELab (float* rin, float* gin, float* bin, floa
 
 void RawImageSource::hlRecovery (const std::string &method, float* red, float* green, float* blue, int width, float* hlmax)
 {
+//	BENCHFUN
 
     if (method == "Luminance") {
         HLRecovery_Luminance (red, green, blue, red, green, blue, width, 65535.0);
