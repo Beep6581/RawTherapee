@@ -2536,23 +2536,23 @@ void RawImageSource::flush()
         blueloc(0, 0);
     }
 }
-/*
+
 void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
 {
-    if (hrp.hrenabled && hrp.method == "Color") {
-        if (!rgbSourceModified) {
-            if (settings->verbose) {
-                printf ("Applying Highlight Recovery: Color propagation...\n");
-            }
-
-            HLRecovery_inpaint (red, green, blue, hrp.hlbl);
-			
-            rgbSourceModified = true;
-        }
-    }
+ //   if (hrp.hrenabled && hrp.method == "Color") {
+ //       if (!rgbSourceModified) {
+ //           if (settings->verbose) {
+ //               printf ("Applying Highlight Recovery: Color propagation...\n");
+ //           }
+//
+ //           HLRecovery_inpaint (red, green, blue, hrp.hlbl);
+//			
+//            rgbSourceModified = true;
+ //       }
+//    }
 
 }
-*/
+
 /* Copy original pixel data and
  * subtract dark frame (if present) from current image and apply flat field correction (if present)
  */

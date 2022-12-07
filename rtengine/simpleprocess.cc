@@ -261,7 +261,7 @@ private:
             pl->setProgress(0.40);
         }
 
-        //imgsrc->HLRecovery_Global(params.toneCurve);
+        // imgsrc->HLRecovery_Global(params.toneCurve);
 
 
         if (pl) {
