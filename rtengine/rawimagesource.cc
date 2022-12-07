@@ -2536,7 +2536,7 @@ void RawImageSource::flush()
         blueloc(0, 0);
     }
 }
-
+/*
 void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
 {
     if (hrp.hrenabled && hrp.method == "Color") {
@@ -2552,7 +2552,7 @@ void RawImageSource::HLRecovery_Global(const ToneCurveParams &hrp)
     }
 
 }
-
+*/
 /* Copy original pixel data and
  * subtract dark frame (if present) from current image and apply flat field correction (if present)
  */
