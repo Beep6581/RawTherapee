@@ -1785,6 +1785,8 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).contcie = locallab.spots.at(j).contcie && pSpot.contcie == otherSpot.contcie;
                 locallab.spots.at(j).highmaskcie = locallab.spots.at(j).highmaskcie && pSpot.highmaskcie == otherSpot.highmaskcie;
                 locallab.spots.at(j).shadmaskcie = locallab.spots.at(j).shadmaskcie && pSpot.shadmaskcie == otherSpot.shadmaskcie;
+                locallab.spots.at(j).LLmaskciecurvewav = locallab.spots.at(j).LLmaskciecurvewav && pSpot.LLmaskciecurvewav == otherSpot.LLmaskciecurvewav;
+                locallab.spots.at(j).csthresholdcie = locallab.spots.at(j).csthresholdcie && pSpot.csthresholdcie == otherSpot.csthresholdcie;
 
 
             }
@@ -6135,6 +6137,14 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         if (locallab.spots.at(i).shadmaskcie) {
             toEdit.locallab.spots.at(i).shadmaskcie = mods.locallab.spots.at(i).shadmaskcie;
         }
+ 
+		if (locallab.spots.at(i).LLmaskciecurvewav) {
+            toEdit.locallab.spots.at(i).LLmaskciecurvewav = mods.locallab.spots.at(i).LLmaskciecurvewav;
+        }
+
+        if (locallab.spots.at(i).csthresholdcie) {
+            toEdit.locallab.spots.at(i).csthresholdcie = mods.locallab.spots.at(i).csthresholdcie;
+        }
 
     }
 
@@ -8128,7 +8138,10 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
 	contcie(v),
 	blurcie(v),
 	highmaskcie(v),
-	shadmaskcie(v)
+	shadmaskcie(v),
+    LLmaskciecurvewav(v),
+    csthresholdcie(v)
+	
 {
 }
 
@@ -8835,6 +8848,8 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
 	blurcie = v;
 	highmaskcie = v;
 	shadmaskcie = v;
+    LLmaskciecurvewav = v;
+    csthresholdcie = v;
 
 }
 

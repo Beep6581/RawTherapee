@@ -7539,10 +7539,14 @@ Locallabcie::Locallabcie():
     slomaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
     highmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HIGHMASKCOL"), 0, 100, 1, 0))),
     shadmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHAMASKCOL"), 0, 100, 1, 0))),
-
     mask2cieCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
-    Lmaskcieshape(static_cast<DiagonalCurveEditor*>(mask2cieCurveEditorG->addCurve(CT_Diagonal, "L(L)")))
-   
+    Lmaskcieshape(static_cast<DiagonalCurveEditor*>(mask2cieCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
+    wavFramecie(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK_2")))),
+    mask2cieCurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
+    LLmaskcieshapewav(static_cast<FlatCurveEditor*>(mask2cieCurveEditorGwav->addCurve(CT_Flat, "L(L)", nullptr, false, false))),
+    quaHcieBox(Gtk::manage(new Gtk::Box())),
+    csThresholdcie(Gtk::manage(new ThresholdAdjuster(M("TP_LOCALLAB_CSTHRESHOLDBLUR"), 0, 9, 0, 0, 6, 5, 0, false)))
+  
    
     {
     set_orientation(Gtk::ORIENTATION_VERTICAL);
@@ -8135,6 +8139,16 @@ Locallabcie::Locallabcie():
 
     mask2cieCurveEditorG->curveListComplete();
 
+    mask2cieCurveEditorGwav->setCurveListener(this);
+
+    LLmaskcieshapewav->setIdentityValue(0.);
+    LLmaskcieshapewav->setResetCurve(FlatCurveType(defSpot.LLmaskciecurvewav.at(0)), defSpot.LLmaskciecurvewav);
+    LLmaskcieshapewav->setBottomBarBgGradient({{0., 0., 0., 0.}, {1., 1., 1., 1.}});
+
+    mask2cieCurveEditorGwav->curveListComplete();
+    csThresholdcie->setAdjusterListener(this);
+
+
     ToolParamBlock* const cieBox3 = Gtk::manage(new ToolParamBlock());
     cieBox3->pack_start(*maskusablecie, Gtk::PACK_SHRINK, 0);
     cieBox3->pack_start(*maskunusablecie, Gtk::PACK_SHRINK, 0);
@@ -8171,6 +8185,12 @@ Locallabcie::Locallabcie():
     maskcieBox->pack_start(*shadmaskcie, Gtk::PACK_SHRINK, 0);
 	
     maskcieBox->pack_start(*mask2cieCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    wavFramecie->set_label_align(0.025, 0.5);
+    ToolParamBlock* const toolcieBox2 = Gtk::manage(new ToolParamBlock());
+    toolcieBox2->pack_start(*mask2cieCurveEditorGwav, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
+    toolcieBox2->pack_start(*csThresholdcie, Gtk::PACK_SHRINK, 0);
+    wavFramecie->add(*toolcieBox2);
+    maskcieBox->pack_start(*wavFramecie);
 
 
     expmaskcie->add(*maskcieBox, false);
@@ -8189,7 +8209,7 @@ Locallabcie::~Locallabcie()
     delete maskcieCurveEditorG;
     delete mask2cieCurveEditorG;
     delete LocalcurveEditorwavjz;
-
+	delete mask2cieCurveEditorGwav;
 }
 
 bool Locallabcie::isMaskViewActive()
@@ -8280,6 +8300,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         fftcieMask->set_tooltip_text(M("TP_LOCALLAB_FFTMASK_TOOLTIP"));
         contcie->set_tooltip_text(M("TP_LOCALLAB_CONTTHMASK_TOOLTIP"));
         blurcie->set_tooltip_text(M("TP_LOCALLAB_BLURRMASK_TOOLTIP"));
+        LLmaskcieshapewav->setTooltip(M("TP_LOCALLAB_LMASK_LEVEL_TOOLTIP"));
 
 
     } else {
@@ -8341,6 +8362,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         fftcieMask->set_tooltip_text("");
         contcie->set_tooltip_text("");
         blurcie->set_tooltip_text("");
+        LLmaskcieshapewav->setTooltip("");
 
     }
 }
@@ -8663,6 +8685,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         contcie->setValue(spot.contcie);
 //        updateColorGUI3();
         blurcie->setValue(spot.blurcie);
+        LLmaskcieshapewav->setCurve(spot.LLmaskciecurvewav);
+        csThresholdcie->setValue<int>(spot.csthresholdcie);
 
        
     }
@@ -8841,6 +8865,8 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.fftcieMask = fftcieMask->get_active();
         spot.contcie = contcie->getValue();
         spot.blurcie = blurcie->getValue();
+        spot.LLmaskciecurvewav = LLmaskcieshapewav->getCurve();
+        spot.csthresholdcie = csThresholdcie->getValue<int>();
 
     }
 }
@@ -9515,6 +9541,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             shadmaskcie->hide();
             struFramecie->hide();
 			blurFramecie->hide();
+			wavFramecie->hide();
 			
             if (enacieMask->get_active()) {
                 maskusablecie->show();
@@ -9612,6 +9639,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             exprecovcie->show();
             struFramecie->show();
 			blurFramecie->show();
+			wavFramecie->show();
 
             if (enacieMask->get_active()) {
                 maskusablecie->show();
@@ -9913,6 +9941,9 @@ void Locallabcie::convertParamToNormal()
     contcie->setValue(defSpot.contcie);
     blurcie->setValue(defSpot.blurcie);
 	sigmoidsenscie->setValue(defSpot.sigmoidsenscie);    
+    LLmaskcieshapewav->setCurve(defSpot.LLmaskciecurvewav);
+    csThresholdcie->setValue<int>(defSpot.csthresholdcie);
+
     // Enable all listeners
     enableListener();
     
@@ -9990,9 +10021,12 @@ void Locallabcie::setDefaults(const rtengine::procparams::ProcParams* defParams,
         strumaskcie->setDefault(defSpot.strumaskcie);
         contcie->setDefault(defSpot.contcie);
         blurcie->setDefault(defSpot.blurcie);
+        csThresholdcie->setDefault<int>(defSpot.csthresholdcie);
 
     }
 }
+
+
 
 void Locallabcie::curveChanged(CurveEditor* ce)
 {
@@ -10081,6 +10115,13 @@ void Locallabcie::curveChanged(CurveEditor* ce)
             }
         }
 
+        if (ce == LLmaskcieshapewav) {
+            if (listener) {
+                listener->panelChanged(EvlocallabLLmaskcieshapewav,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
     }
 }
 
@@ -10093,6 +10134,14 @@ void Locallabcie::adjusterChanged2(ThresholdAdjuster* a, int newBottomL, int new
                                    csThresholdjz->getHistoryString() + " (" + escapeHtmlChars(getSpotName()) + ")");
         }
     }
+	
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabcsThresholdcie,
+                                   csThresholdcie->getHistoryString() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    }
+	
 }
 
 

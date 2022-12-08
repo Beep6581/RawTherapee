@@ -1705,6 +1705,9 @@ struct LocallabParams {
 		double blurcie;
 		double highmaskcie;
 		double shadmaskcie;
+        std::vector<double> LLmaskciecurvewav;
+        Threshold<int> csthresholdcie;
+		
         LocallabSpot();
 
         bool operator ==(const LocallabSpot& other) const;

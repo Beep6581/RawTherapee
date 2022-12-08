@@ -4548,8 +4548,20 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     contcie(0.),
     blurcie(0.2),
 	highmaskcie(0.),
-	shadmaskcie(0.)
- 
+	shadmaskcie(0.),
+     LLmaskciecurvewav{
+        static_cast<double>(FCT_MinMaxCPoints),
+        0.0,
+        0.5,
+        0.35,
+        0.35,
+        1.,
+        0.5,
+        0.35,
+        0.35
+    },
+    csthresholdcie(0, 0, 6, 5, false)
+
 
 {
 }
@@ -5267,7 +5279,9 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && contcie == other.contcie
         && highmaskcie == other.highmaskcie
         && shadmaskcie == other.shadmaskcie
-        && fftcieMask == other.fftcieMask;
+        && fftcieMask == other.fftcieMask
+        && LLmaskciecurvewav == other.LLmaskciecurvewav
+        && csthresholdcie == other.csthresholdcie;
 
 }
 
@@ -7066,11 +7080,12 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->blurcie, "Locallab", "blurcie_" + index_str, spot.blurcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blurcie, "Locallab", "highmaskcie_" + index_str, spot.highmaskcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->blurcie, "Locallab", "shadmaskcie_" + index_str, spot.shadmaskcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->LLmaskciecurvewav, "Locallab", "LLmaskcieCurvewav_" + index_str, spot.LLmaskciecurvewav, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->csthresholdcie, "Locallab", "CSThresholdcie_" + index_str, spot.csthresholdcie.toVector(), keyFile);
 
 
 
                 }
-                
             }
         }
 
@@ -9252,6 +9267,17 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "blurcie_" + index_str, pedited, spot.blurcie, spotEdited.blurcie);
                 assignFromKeyfile(keyFile, "Locallab", "highmaskcie_" + index_str, pedited, spot.highmaskcie, spotEdited.highmaskcie);
                 assignFromKeyfile(keyFile, "Locallab", "shadmaskcie_" + index_str, pedited, spot.shadmaskcie, spotEdited.shadmaskcie);
+                assignFromKeyfile(keyFile, "Locallab", "LLmaskcieCurvewav_" + index_str, pedited, spot.LLmaskciecurvewav, spotEdited.LLmaskciecurvewav);
+
+                if (keyFile.has_key("Locallab", "CSThresholdcie_" + index_str)) {
+                    const std::vector<int> thresh = keyFile.get_integer_list("Locallab", "CSThresholdcie_" + index_str);
+
+                    if (thresh.size() >= 4) {
+                        spot.csthresholdcie.setValues(thresh[0], thresh[1], min(thresh[2], 10), min(thresh[3], 10));
+                    }
+
+                    spotEdited.csthresholdcie = true;
+                }
 
                 // Append LocallabSpot and LocallabParamsEdited
                 locallab.spots.push_back(spot);

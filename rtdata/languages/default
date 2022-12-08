@@ -1380,6 +1380,8 @@ HISTORY_MSG_1155;Local - Cie Blur mask radius
 HISTORY_MSG_1156;Local - Cie mask highlight
 HISTORY_MSG_1157;Local - Cie mask shadows
 HISTORY_MSG_1158;Local - CIECAM Sigmoid adaptability
+HISTORY_MSG_1159;Local - Cie mask wavelet
+HISTORY_MSG_1160;Local - Cie mask threshold
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance

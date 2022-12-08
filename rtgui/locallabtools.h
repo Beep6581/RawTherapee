@@ -1677,10 +1677,14 @@ private:
     Adjuster* const slomaskcie;
     Adjuster* const highmaskcie;
     Adjuster* const shadmaskcie;
-   
     CurveEditorGroup* const mask2cieCurveEditorG;
     DiagonalCurveEditor* const Lmaskcieshape;
-    
+    Gtk::Frame* const wavFramecie;   
+    CurveEditorGroup* const mask2cieCurveEditorGwav;
+    FlatCurveEditor* const LLmaskcieshapewav;
+    Gtk::Box* const quaHcieBox;
+    ThresholdAdjuster* const csThresholdcie;
+   
     sigc::connection AutograycieConn,  forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, logcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, fftcieMaskConn;
 public:
     Locallabcie();

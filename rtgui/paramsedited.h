@@ -1087,6 +1087,8 @@ public:
 		bool blurcie;
         bool highmaskcie;
         bool shadmaskcie;
+        bool LLmaskciecurvewav;
+        bool csthresholdcie;
 		
         LocallabSpotEdited(bool v);
 
