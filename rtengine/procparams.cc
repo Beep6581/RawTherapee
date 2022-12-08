@@ -4459,6 +4459,7 @@ LocallabParams::LocallabSpot::LocallabSpot() :
     sigmoidthcie(1.),
     sigmoidsenscie(0.5),
     sigmoidblcie(1.),
+    comprcie(0.),
     sigmoidldajzcie(0.5),
     sigmoidthjzcie(1.),
     sigmoidbljzcie(1.),
@@ -5239,6 +5240,7 @@ bool LocallabParams::LocallabSpot::operator ==(const LocallabSpot& other) const
         && sigmoidthcie == other.sigmoidthcie
         && sigmoidsenscie == other.sigmoidsenscie
         && sigmoidblcie == other.sigmoidblcie
+        && comprcie == other.comprcie
         && sigmoidldajzcie == other.sigmoidldajzcie
         && sigmoidthjzcie == other.sigmoidthjzcie
         && sigmoidbljzcie == other.sigmoidbljzcie
@@ -7038,6 +7040,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
                     saveToKeyfile(!pedited || spot_edited->sigmoidthcie, "Locallab", "Sigmoidthcie_" + index_str, spot.sigmoidthcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmoidsenscie, "Locallab", "Sigmoidsenscie_" + index_str, spot.sigmoidsenscie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmoidblcie, "Locallab", "Sigmoidblcie_" + index_str, spot.sigmoidblcie, keyFile);
+                    saveToKeyfile(!pedited || spot_edited->comprcie, "Locallab", "comprcie_" + index_str, spot.comprcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmoidldajzcie, "Locallab", "Sigmoidldajzcie_" + index_str, spot.sigmoidldajzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmoidthjzcie, "Locallab", "Sigmoidthjzcie_" + index_str, spot.sigmoidthjzcie, keyFile);
                     saveToKeyfile(!pedited || spot_edited->sigmoidbljzcie, "Locallab", "Sigmoidbljzcie_" + index_str, spot.sigmoidbljzcie, keyFile);
@@ -9224,6 +9227,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
                 assignFromKeyfile(keyFile, "Locallab", "Sigmoidthcie_" + index_str, pedited, spot.sigmoidthcie, spotEdited.sigmoidthcie);
                 assignFromKeyfile(keyFile, "Locallab", "Sigmoidsenscie_" + index_str, pedited, spot.sigmoidsenscie, spotEdited.sigmoidsenscie);
                 assignFromKeyfile(keyFile, "Locallab", "Sigmoidblcie_" + index_str, pedited, spot.sigmoidblcie, spotEdited.sigmoidblcie);
+                assignFromKeyfile(keyFile, "Locallab", "comprcie_" + index_str, pedited, spot.comprcie, spotEdited.comprcie);
                 assignFromKeyfile(keyFile, "Locallab", "Sigmoidldajzcie_" + index_str, pedited, spot.sigmoidldajzcie, spotEdited.sigmoidldajzcie);
                 assignFromKeyfile(keyFile, "Locallab", "Sigmoidthjzcie_" + index_str, pedited, spot.sigmoidthjzcie, spotEdited.sigmoidthjzcie);
                 assignFromKeyfile(keyFile, "Locallab", "Sigmoidbljzcie_" + index_str, pedited, spot.sigmoidbljzcie, spotEdited.sigmoidbljzcie);

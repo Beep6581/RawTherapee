@@ -3798,12 +3798,17 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
             printf("Base logarithm encoding Q=%5.1f\n", (double) linbase);
         }
     }
-
+	const bool compr = params->locallab.spots.at(sp).comprcie > 0.;
+	const float comprfactor = params->locallab.spots.at(sp).comprcie;
     const auto applytoq =
     [ = ](float x) -> float {
 
         x = rtengine::max(x, (float) noise);
         x = rtengine::max(x / gray, (float) noise);//gray = gain - before log conversion
+        if (compr && x >= 1.f) {
+			x = intp(comprfactor, std::tanh(x-1.f)+1.f, x);
+        }
+
         x = rtengine::max((xlogf(x) / log2f - (float) shadows_range) / (float) dynamic_range, (float) noise);//x in range EV
         assert(x == x);
 
@@ -3955,6 +3960,7 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
                         if(issigq && iscie && !islogq) {//sigmoid Q only with ciecam module
                             float val = Qpro * coefq;
                             if(sigmoidqj == true) {
+								
                                 val = std::max((xlog(val) / log2 - shadows_range) / (dynamic_range + 1.5), noise);//in range EV
                             }
                             if(sigmoidth >= 1.f) {
