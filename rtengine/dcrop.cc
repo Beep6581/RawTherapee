@@ -933,6 +933,7 @@ void Crop::update(int todo)
         auto& locwavCurvejz = parent->locwavCurvejz;
         auto& loclmasCurveblwav = parent->loclmasCurveblwav;
         auto& loclmasCurvecolwav = parent->loclmasCurvecolwav;
+        auto& loclmasCurveciewav = parent->loclmasCurveciewav;
         auto& loclevwavCurve = parent->loclevwavCurve;
         auto& locconwavCurve = parent->locconwavCurve;
         auto& loccompwavCurve = parent->loccompwavCurve;
@@ -1000,6 +1001,7 @@ void Crop::update(int todo)
             const bool lmasutili_wav = loclmasCurve_wav.Set(params.locallab.spots.at(sp).LLmask_curvewav);
             const bool lmasutiliblwav = loclmasCurveblwav.Set(params.locallab.spots.at(sp).LLmaskblcurvewav);
             const bool lmasutilicolwav = loclmasCurvecolwav.Set(params.locallab.spots.at(sp).LLmaskcolcurvewav);
+            const bool lmasutiliciewav = loclmasCurveciewav.Set(params.locallab.spots.at(sp).LLmaskciecurvewav);
             const bool lcmaslcutili = locccmaslcCurve.Set(params.locallab.spots.at(sp).CCmasklccurve);
             const bool llmaslcutili = locllmaslcCurve.Set(params.locallab.spots.at(sp).LLmasklccurve);
             const bool lhmaslcutili = lochhmaslcCurve.Set(params.locallab.spots.at(sp).HHmasklccurve);
@@ -1125,6 +1127,7 @@ void Crop::update(int todo)
                         lochhhmas_Curve, lhhmas_utili,
                         loclmasCurveblwav,lmasutiliblwav,
                         loclmasCurvecolwav,lmasutilicolwav,
+                        loclmasCurveciewav,lmasutiliciewav,
                         locwavCurve, locwavutili,
                         locwavCurvejz, locwavutilijz,
                         loclevwavCurve, loclevwavutili,
@@ -1213,6 +1216,7 @@ void Crop::update(int todo)
 
                         loclmasCurveblwav,lmasutiliblwav,
                         loclmasCurvecolwav,lmasutilicolwav,
+                        loclmasCurveciewav,lmasutiliciewav,
                         locwavCurve, locwavutili,
                         locwavCurvejz, locwavutilijz,
                         loclevwavCurve, loclevwavutili,

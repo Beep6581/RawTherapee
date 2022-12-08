@@ -346,6 +346,7 @@ enum class BlurType {
 
                 const LocwavCurve& loclmasCurveblwav, bool lmasutiliblwav,
                 const LocwavCurve& loclmasCurvecolwav, bool lmasutilicolwav,
+                const LocwavCurve& loclmasCurveciewav, bool lmasutiliciewav,
                 const LocwavCurve& locwavCurve, bool locwavutili,
                 const LocwavCurve& locwavCurvejz, bool locwavutilijz,
                 const LocwavCurve& loclevwavCurve, bool loclevwavutili,

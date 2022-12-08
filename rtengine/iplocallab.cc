@@ -13274,6 +13274,7 @@ void ImProcFunctions::Lab_Local(
     const LocHHmaskCurve& lochhhmas_Curve, bool lhhmas_utili,
     const LocwavCurve& loclmasCurveblwav, bool lmasutiliblwav,
     const LocwavCurve& loclmasCurvecolwav, bool lmasutilicolwav,
+    const LocwavCurve& loclmasCurveciewav, bool lmasutiliciewav,
     const LocwavCurve& locwavCurve, bool locwavutili,
     const LocwavCurve& locwavCurvejz, bool locwavutilijz,
     const LocwavCurve& loclevwavCurve, bool loclevwavutili,
@@ -19127,6 +19128,10 @@ void ImProcFunctions::Lab_Local(
                 bool delt = params->locallab.spots.at(sp).deltae;
                 int sco = params->locallab.spots.at(sp).scopemask;
                 int shortcu = 0;//lp.mergemet; //params->locallab.spots.at(sp).shortc;
+                const int level_bl = params->locallab.spots.at(sp).csthresholdcie.getBottomLeft();
+                const int level_hl = params->locallab.spots.at(sp).csthresholdcie.getTopLeft();
+                const int level_br = params->locallab.spots.at(sp).csthresholdcie.getBottomRight();
+                const int level_hr = params->locallab.spots.at(sp).csthresholdcie.getTopRight();
 
                 const float mindE = 2.f + MINSCOPE * sco * lp.thr;
                 const float maxdE = 5.f + MAXSCOPE * sco * (1 + 0.1f * lp.thr);
@@ -19144,8 +19149,9 @@ void ImProcFunctions::Lab_Local(
                 maskcalccol(false, pde, bfw, bfh, xstart, ystart, sk, cx, cy, bufexporig.get(), bufmaskorigcie.get(), originalmaskcie.get(), original, reserved, inv, lp,
                         strumask, astool,
                         locccmascieCurve, lcmascieutili, locllmascieCurve, llmascieutili, lochhmascieCurve, lhmascieutili, lochhhmasCurve, false, multiThread,
-                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmaskcielocalcurve, localmaskcieutili, dummy, false, 1, 1, 5, 5,
-                        shortcu, delt, hueref, chromaref, lumaref,
+                        enaMask, showmaske, deltaE, modmask, zero, modif, chrom, rad, lap, gamma, slope, blendm, blendm, shado, highl, amountcd, anchorcd, lmaskcielocalcurve, localmaskcieutili, loclmasCurveciewav, lmasutiliciewav,
+                        level_bl, level_hl, level_br, level_hr,
+						shortcu, delt, hueref, chromaref, lumaref,
                         maxdE, mindE, maxdElim, mindElim, lp.iterat, limscope, sco, lp.fftcieMask, lp.blurciemask, lp.contciemask, -1, fab
                        );
 

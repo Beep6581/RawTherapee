@@ -342,6 +342,7 @@ protected:
     LocwavCurve locwavCurve;
     LocwavCurve loclmasCurveblwav;
     LocwavCurve loclmasCurvecolwav;
+    LocwavCurve loclmasCurveciewav;
     LocwavCurve loclevwavCurve;
     LocwavCurve locconwavCurve;
     LocwavCurve loccompwavCurve;
