@@ -52,7 +52,7 @@ install(DIRECTORY "${THEMEDIR}" DESTINATION "${DATADIR}")
 
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/png/empty.png" DESTINATION "${ICONSDIR}/rawtherapee/24x24/apps")
 install(FILES ${IMG_SVG} DESTINATION "${ICONSDIR}/rawtherapee/scalable/apps")
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/svg/Index.theme" DESTINATION "${ICONSDIR}/rawtherapee")
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/svg/index.theme" DESTINATION "${ICONSDIR}/rawtherapee")
 install(FILES ${IMG_ICO} DESTINATION "${DATADIR}/images")
 
 if(APPLE)

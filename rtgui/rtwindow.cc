@@ -112,7 +112,7 @@ RTWindow::RTWindow ()
         // Setting default theme and icon theme (bases for custom themes)
         Gtk::Settings::get_for_screen (screen)->property_gtk_theme_name() = "Adwaita";
         Gtk::Settings::get_for_screen (screen)->property_gtk_application_prefer_dark_theme() = true;
-        Gtk::Settings::get_for_screen (screen)->property_gtk_icon_theme_name() = "RawTherapee";
+        Gtk::Settings::get_for_screen (screen)->property_gtk_icon_theme_name() = "rawtherapee";
 
         // Initialize RTScalable for Hi-DPI support
         RTScalable::init(this);
