@@ -33,7 +33,7 @@
  *         - Absolute size (i.e. "px")
  *         - Non-absolute size (i.e. "pt"): The default resolution is 72 DPI (i.e. pt per inch). To
  *             convert the size to "px", use the following formula:
- *                 "size in px" = "size in pt" * ("device resolution" / 72) * "device scale"
+ *                 "size in px" = "size in pt" * ("device resolution" / 72)
  *
  * Hi-DPI implementation according to the OS (source: GDK code):
  *     - Windows: A default DPI of 96 is considered. Current DPI parameter is provided by the OS.
@@ -41,7 +41,8 @@
  *        forced to 96.
  *     - MacOS: Scale is calculated from OS parameters (= "Retina screen width" / "Virtual width").
  *        DPI is forced to 72.
- *     - Linux: DPI is calculated from OS parameter (= 96 * "text-scaling-factor").
+ *     - Linux: DPI is calculated from OS parameter (= 96 * "text-scaling-factor"). Note: "text-scaling-factor"
+ *        is different from "device factor".
  */
 class RTScalable
 {

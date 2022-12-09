@@ -158,8 +158,7 @@ void ImageArea::setInfoText (Glib::ustring text)
     const int fontSize = 10; // pt
     // Converting font size to "px" based on DPI and scale
 #ifndef __APPLE__
-    const double fontScale = RTScalable::getDPI() / RTScalable::pangoDPI
-        * static_cast<double>(RTScalable::getScale()); // Refer to notes in rtscalable.h
+    const double fontScale = RTScalable::getDPI() / RTScalable::pangoDPI; // Refer to notes in rtscalable.h
 #else
     // On MacOS, font is already scaled by the System library
     // Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c

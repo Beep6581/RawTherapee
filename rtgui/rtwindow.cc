@@ -170,8 +170,7 @@ RTWindow::RTWindow ()
         Glib::ustring css;
 
 #ifndef __APPLE__
-        const double fontScale = RTScalable::getDPI() / RTScalable::pangoDPI
-            * static_cast<double>(RTScalable::getScale()); // Refer to notes in rtscalable.h
+        const double fontScale = RTScalable::getDPI() / RTScalable::pangoDPI; // Refer to notes in rtscalable.h
 #else
         // On MacOS, font is already scaled by the System library
         // Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c
@@ -206,8 +205,7 @@ RTWindow::RTWindow ()
 
 #ifndef __APPLE__
                     // Guessing that pixel size is given for a 96 DPI reference:
-                    const double newFontScale = RTScalable::getDPI() / RTScalable::baseDPI
-                        * static_cast<double>(RTScalable::getScale()); // Refer to notes in rtscalable.h
+                    const double newFontScale = RTScalable::getDPI() / RTScalable::baseDPI; // Refer to notes in rtscalable.h
 #else
                     // On MacOS, font is already scaled by the System library
                     // Refer to https://gitlab.gnome.org/GNOME/gtk/-/blob/gtk-3-24/gdk/quartz/gdkscreen-quartz.c
