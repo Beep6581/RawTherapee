@@ -8575,7 +8575,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             sigmoidthcie->set_sensitive(false);
             sigmoidsenscie->set_sensitive(false);
             sigmoidblcie->set_sensitive(false);
-            sigmoidqjcie->set_sensitive(false);
+            sigmoidqjcie->set_sensitive(false);		
 			comprcie->set_sensitive(true);
 			comprcieth->set_sensitive(true);
         } else {
@@ -8584,8 +8584,13 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             sigmoidsenscie->set_sensitive(true);
             sigmoidblcie->set_sensitive(true);
             sigmoidqjcie->set_sensitive(true);
-			comprcie->set_sensitive(false);
-			comprcieth->set_sensitive(false);
+			if(sigmoidqjcie->get_active()) {
+				comprcie->set_sensitive(true);
+				comprcieth->set_sensitive(true);
+			} else {
+				comprcie->set_sensitive(false);
+				comprcieth->set_sensitive(false);
+			}
         }
         
         if (spot.sursourcie == "Average") {
@@ -9059,6 +9064,15 @@ void Locallabcie::jabcieChanged()
 void Locallabcie::sigmoidqjcieChanged()
 {
     if (isLocActivated && exp->getEnabled()) {
+		
+		if(sigmoidqjcie->get_active()) {
+			comprcie->set_sensitive(true);
+			comprcieth->set_sensitive(true);
+		} else {
+			comprcie->set_sensitive(false);
+			comprcieth->set_sensitive(false);
+		}
+		
         if (listener) {
             if (sigmoidqjcie->get_active()) {
                 listener->panelChanged(Evlocallabsigmoidqjcie,
@@ -9088,8 +9102,15 @@ void Locallabcie::logcieChanged()
         sigmoidsenscie->set_sensitive(true);
         sigmoidblcie->set_sensitive(true);
         sigmoidqjcie->set_sensitive(true);
- 		comprcie->set_sensitive(false);
- 		comprcieth->set_sensitive(false);
+		if(sigmoidqjcie->get_active()) {
+			comprcie->set_sensitive(true);
+			comprcieth->set_sensitive(true);
+		} else {
+			comprcie->set_sensitive(false);
+			comprcieth->set_sensitive(false);
+		}
+
+
  }
     
     if (isLocActivated && exp->getEnabled()) {

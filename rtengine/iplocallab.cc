@@ -3578,6 +3578,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     } else {
                         thjz = atjz * val + btjz;
                     }
+					
                     sigmoidla (val, thjz, sigmjz);//sigmz "slope" of sigmoid
                     
 
@@ -3786,9 +3787,9 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
 
     float base = 10.;
     float linbase = 10.;
-    float gray = 15.;
-    if(islogq) {//with brightness Jz
-        gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
+	float gray = 15.;
+    if(islogq  || sigmoidqj) {
+		gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
         gray = pow_F(gray, 1.2f);//or 1.15 => modification to increase sensitivity gain, only on defaults, of course we can change this value manually...take into account suuround and Yb Cam16
         const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;
         float targetgraycor = pow_F(0.01f * targetgraycie, 1.15f);
@@ -3960,9 +3961,14 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
 
                         if(issigq && iscie && !islogq) {//sigmoid Q only with ciecam module
                             float val = Qpro * coefq;
-                            if(sigmoidqj == true) {
-								
-                                val = std::max((xlog(val) / log2 - shadows_range) / (dynamic_range + 1.5), noise);//in range EV
+							
+                            if(sigmoidqj) {	
+								if (val > (float) noise) {
+									float mm = applytoq(val);
+									float f = mm / val;
+									Qpro *=  f;
+									val = Qpro * coefq;
+								}
                             }
                             if(sigmoidth >= 1.f) {
                                 th = ath * val + bth;
