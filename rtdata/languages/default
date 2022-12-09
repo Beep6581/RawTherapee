@@ -1383,6 +1383,7 @@ HISTORY_MSG_1158;Local - CIECAM Sigmoid adaptability
 HISTORY_MSG_1159;Local - Cie mask wavelet
 HISTORY_MSG_1160;Local - Cie mask threshold
 HISTORY_MSG_1161;Local - Cie Q compression
+HISTORY_MSG_1162;Local - Cie Q comp. threshold
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance
@@ -2773,6 +2774,7 @@ TP_LOCALLAB_COL_VIS;Status
 TP_LOCALLAB_COMPFRA;Directional contrast
 TP_LOCALLAB_COMPREFRA;Wavelet level tone mapping
 TP_LOCALLAB_COMPRCIE;Brightness compression
+TP_LOCALLAB_COMPRCIETH;Compression threshold
 TP_LOCALLAB_CONTCOL;Contrast threshold
 TP_LOCALLAB_CONTFRA;Contrast by level
 TP_LOCALLAB_CONTRAST;Contrast

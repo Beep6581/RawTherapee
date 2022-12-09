@@ -1196,7 +1196,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,    //Evlocallabsigmoidsenscie
     AUTOEXP,    //EvlocallabLLmaskcieshapewav
     AUTOEXP,    //EvlocallabcsThresholdcie
-    AUTOEXP    //Evlocallabcomprcie
+    AUTOEXP,    //Evlocallabcomprcie
+    AUTOEXP    //Evlocallabcomprcieth
 
 };
 

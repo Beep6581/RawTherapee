@@ -3800,13 +3800,14 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
     }
 	const bool compr = params->locallab.spots.at(sp).comprcie > 0.;
 	const float comprfactor = params->locallab.spots.at(sp).comprcie;
+	const float comprth = 0.1 +  params->locallab.spots.at(sp).comprcieth;
     const auto applytoq =
     [ = ](float x) -> float {
 
         x = rtengine::max(x, (float) noise);
         x = rtengine::max(x / gray, (float) noise);//gray = gain - before log conversion
         if (compr && x >= 1.f) {
-			x = intp(comprfactor, std::tanh(x-1.f)+1.f, x);
+			x = intp(comprfactor, std::tanh(x-comprth) + comprth, x);
         }
 
         x = rtengine::max((xlogf(x) / log2f - (float) shadows_range) / (float) dynamic_range, (float) noise);//x in range EV

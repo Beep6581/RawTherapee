@@ -1040,6 +1040,7 @@ public:
         bool sigmoidsenscie;
         bool sigmoidblcie;
         bool comprcie;
+        bool comprcieth;
         bool sigmoidldajzcie;
         bool sigmoidthjzcie;
         bool sigmoidbljzcie;
