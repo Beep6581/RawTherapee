@@ -3806,7 +3806,7 @@ if(mocam == 0 || mocam == 1  || call == 1  || call == 2 || call == 10) {//call=2
 
         x = rtengine::max(x, (float) noise);
         x = rtengine::max(x / gray, (float) noise);//gray = gain - before log conversion
-        if (compr && x >= 1.f) {
+        if (compr && x >= comprth) {
 			x = intp(comprfactor, std::tanh(x-comprth) + comprth, x);
         }
 
