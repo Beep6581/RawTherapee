@@ -132,6 +132,7 @@ class Preferences final :
     Gtk::CheckButton* cbdaubech;
     Gtk::SpinButton*  hlThresh;
     Gtk::SpinButton*  shThresh;
+    Gtk::CheckButton* mwba;
 
     Gtk::SpinButton*  panFactor;
     Gtk::CheckButton* rememberZoomPanCheckbutton;
@@ -237,7 +238,7 @@ class Preferences final :
 
     Options moptions;
     sigc::connection tconn, sconn, fconn, cpfconn, addc, setc, dfconn, ffconn, bpconn, rpconn, ipconn;
-    sigc::connection autoMonProfileConn, sndEnableConn, langAutoDetectConn, autocielabConn;
+    sigc::connection autoMonProfileConn, sndEnableConn, langAutoDetectConn, autocielabConn, observer10Conn;
     Glib::ustring initialTheme;
     Glib::ustring initialFontFamily;
     int initialFontSize;
@@ -298,6 +299,7 @@ public:
     void sndEnableToggled ();
     void langAutoDetectToggled ();
     void autocielabToggled ();
+    void observer10Toggled (); 
 
     void selectStartupDir ();
     void addExtPressed ();

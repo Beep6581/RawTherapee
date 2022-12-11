@@ -2963,6 +2963,13 @@ void ColorTemp::temp2mulxyz (double temp, const std::string &method, double &Xxy
 
     // We first test for specially handled methods
     const auto iterator = spectMap.find(method);
+    if (settings->observer10 == true) {
+        for (int i = 0; i < 97; i++) {
+            cie_colour_match_jd2[i][0] = cie_colour_match_jd[i][0];
+            cie_colour_match_jd2[i][1] = cie_colour_match_jd[i][1];;
+            cie_colour_match_jd2[i][2] = cie_colour_match_jd[i][2];
+        }
+    }
 
     if (iterator != spectMap.end()) {
         spectrum_to_xyz_preset(iterator->second, x, y, z);

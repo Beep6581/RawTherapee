@@ -911,6 +911,21 @@ Gtk::Widget* Preferences::getColorManPanel ()
     fcie->add(*gcie);
 
     vbColorMan->pack_start (*fcie, Gtk::PACK_SHRINK);
+
+	//------------White-Balance
+    Gtk::Frame* fwba = Gtk::manage(new Gtk::Frame(M("PREFERENCES_WBA")));
+    Gtk::Grid* gwba = Gtk::manage(new Gtk::Grid());
+    gwba->set_column_spacing(4);
+    mwba = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBAOBS")));
+    setExpandAlignProperties(mwba, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    mwba->set_active(false);
+    int roww = 0;
+    gwba->attach(*mwba, 0, roww, 1, 1);
+    fwba->add(*gwba);
+    vbColorMan->pack_start (*fwba, Gtk::PACK_SHRINK);
+	
+	//-------------
+	
     swColorMan->add(*vbColorMan);
     return swColorMan;
 }
@@ -1845,6 +1860,7 @@ void Preferences::storePreferences()
     moptions.rtSettings.monitorBPC = monBPC->get_active();
     moptions.rtSettings.autoMonitorProfile = cbAutoMonProfile->get_active();
     moptions.rtSettings.autocielab = mcie->get_active();
+    moptions.rtSettings.observer10 = mwba->get_active();
 
 #endif
 
@@ -2001,6 +2017,7 @@ void Preferences::fillPreferences()
 
     monBPC->set_active(moptions.rtSettings.monitorBPC);
     mcie->set_active(moptions.rtSettings.autocielab);
+    mwba->set_active(moptions.rtSettings.observer10);
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif
 
