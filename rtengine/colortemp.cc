@@ -3769,7 +3769,7 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         }
     }
 
-    if (settings->itcwb_stdobserver10 == false) {
+    if (settings->itcwb_stdobserver10 == true) {
         for (int i = 0; i < 97; i++) {
             cie_colour_match_jd2[i][0] = cie_colour_match_jd[i][0];
             cie_colour_match_jd2[i][1] = cie_colour_match_jd[i][1];;
