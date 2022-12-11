@@ -176,6 +176,7 @@ if(LENSFUN_HAS_LOAD_DIRECTORY)
     set_source_files_properties(rtlensfun.cc PROPERTIES COMPILE_DEFINITIONS RT_LENSFUN_HAS_LOAD_DIRECTORY)
 endif()
 
+
 if(WITH_BENCHMARK)
     add_definitions(-DBENCHMARK)
 endif()

@@ -120,7 +120,7 @@ SaveAsDialog::SaveAsDialog (const Glib::ustring &initialDir, Gtk::Window* parent
     Gtk::Button* ok     = Gtk::manage( new Gtk::Button (M("GENERAL_OK")) );
     Gtk::Button* cancel = Gtk::manage( new Gtk::Button (M("GENERAL_CANCEL")) );
 
-    ok->set_tooltip_markup (M("TP_SAVEDIALOG_OK_TIP"));
+    ok->set_tooltip_markup (M("TP_SAVEDIALOG_OK_TOOLTIP"));
 
     ok->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::okPressed) );
     cancel->signal_clicked().connect( sigc::mem_fun(*this, &SaveAsDialog::cancelPressed) );
@@ -281,9 +281,9 @@ void SaveAsDialog::okPressed ()
                 + ": "
                 + M("SAVEDLG_WARNFILENAME")
                 + " \""
-                + Glib::path_get_basename (fname)
+                + escapeHtmlChars(Glib::path_get_basename (fname))
                 + '.'
-                + formatOpts->getFormat().format
+                + escapeHtmlChars(formatOpts->getFormat().format)
                 + "\"</b>",
             true,
             Gtk::MESSAGE_WARNING,

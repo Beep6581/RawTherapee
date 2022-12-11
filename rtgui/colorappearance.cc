@@ -270,7 +270,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     genVBox->pack_start (*catHBox, Gtk::PACK_SHRINK);
     
     presetcat02 = Gtk::manage (new Gtk::CheckButton  (M ("TP_COLORAPP_PRESETCAT02")));
-    presetcat02->set_tooltip_markup (M("TP_COLORAPP_PRESETCAT02_TIP"));
+    presetcat02->set_tooltip_markup (M("TP_COLORAPP_PRESETCAT02_TOOLTIP"));
     presetcat02conn = presetcat02->signal_toggled().connect( sigc::mem_fun(*this, &ColorAppearance::presetcat02pressed));
 //    genVBox->pack_start (*presetcat02, Gtk::PACK_SHRINK);
 
@@ -534,6 +534,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     curveEditorG->setTooltip (M ("TP_COLORAPP_CURVEEDITOR1_TOOLTIP"));
 
     shape = static_cast<DiagonalCurveEditor*> (curveEditorG->addCurve (CT_Diagonal, "", toneCurveMode));
+ //   shape = static_cast<DiagonalCurveEditor*> (curveEditorG->addCurve (CT_Diagonal, "J(J)"));
 
 
 
@@ -549,6 +550,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     curveEditorG2->setCurveListener (this);
 
     shape2 = static_cast<DiagonalCurveEditor*> (curveEditorG2->addCurve (CT_Diagonal, "", toneCurveMode2));
+//    shape2 = static_cast<DiagonalCurveEditor*> (curveEditorG2->addCurve (CT_Diagonal, "J(J)"));
 
     tcmode2conn = toneCurveMode2->signal_changed().connect ( sigc::mem_fun (*this, &ColorAppearance::curveMode2Changed), true );
 
@@ -716,7 +718,6 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
 
 
     gamut = Gtk::manage (new Gtk::CheckButton (M ("TP_COLORAPP_GAMUT")));
-    gamut->set_tooltip_markup (M ("TP_COLORAPP_GAMUT_TOOLTIP"));
     gamutconn = gamut->signal_toggled().connect ( sigc::mem_fun (*this, &ColorAppearance::gamut_toggled) );
     pack_start (*gamut, Gtk::PACK_SHRINK);
 
@@ -743,7 +744,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     RTImage *resetImg = Gtk::manage (new RTImage ("undo-small.png", "redo-small.png"));
     setExpandAlignProperties (resetImg, false, false, Gtk::ALIGN_CENTER, Gtk::ALIGN_CENTER);
     neutral->set_image (*resetImg);
-    neutral->set_tooltip_text (M ("TP_COLORAPP_NEUTRAL_TIP"));
+    neutral->set_tooltip_text (M ("TP_COLORAPP_NEUTRAL_TOOLTIP"));
     neutralconn = neutral->signal_pressed().connect ( sigc::mem_fun (*this, &ColorAppearance::neutral_pressed) );
     neutral->show();
 
@@ -835,7 +836,7 @@ void ColorAppearance::neutral_pressed ()
     wbmodel->set_active (0);
     illum->set_active (2);
     toneCurveMode->set_active (0);
-    toneCurveMode2->set_active (0);
+    toneCurveMode2->set_active (1);
     toneCurveMode3->set_active (0);
     shape->reset();
     shape2->reset();
@@ -1398,9 +1399,11 @@ void ColorAppearance::convertParamToNormal()
     wbmodel->set_active (0);
     if (presetcat02->get_active ()) {
         wbmodel->set_active (2);
+        illumChanged();
     }
     if (catmethod->get_active_row_number() == 1  || catmethod->get_active_row_number() == 2) {
             wbmodel->set_active (2);
+        illumChanged();
     }
 
     greenout->setValue(def_params.greenout);
@@ -1456,7 +1459,7 @@ void ColorAppearance::catmethodChanged()
         badpixsl->resetValue (false);
         illum->set_active (2);
         toneCurveMode->set_active (0);
-        toneCurveMode2->set_active (0);
+        toneCurveMode2->set_active (1);
         toneCurveMode3->set_active (0);
         shape->reset();
         shape2->reset();
@@ -1724,7 +1727,7 @@ void ColorAppearance::presetcat02pressed () //keep in case of...
     wbmodel->set_active (0);
     illum->set_active (2);
     toneCurveMode->set_active (0);
-    toneCurveMode2->set_active (0);
+    toneCurveMode2->set_active (1);
     toneCurveMode3->set_active (0);
     shape->reset();
     shape2->reset();

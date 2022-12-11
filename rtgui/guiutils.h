@@ -232,7 +232,7 @@ public:
      */
     MyExpander(bool useEnabled, Glib::ustring titleLabel);
 
-    /** Create a custom expander with a a custom - and responsive - widget
+    /** Create a custom expander with a custom - and responsive - widget
      * @param useEnabled Set whether to handle an enabled/disabled toggle button and display the appropriate image
      * @param titleWidget A widget to display in the header. Warning: you won't be able to switch to a string label.
      */

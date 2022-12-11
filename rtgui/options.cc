@@ -592,10 +592,12 @@ void Options::setDefaults()
     rtSettings.monitorProfile = Glib::ustring();
     rtSettings.monitorIntent = rtengine::RI_RELATIVE;
     rtSettings.monitorBPC = true;
+    rtSettings.autocielab = false;
     rtSettings.autoMonitorProfile = false;
     rtSettings.adobe = "RTv2_Medium"; // put the name of yours profiles (here windows)
     rtSettings.prophoto = "RTv2_Large"; // these names appear in the menu "output profile"
     rtSettings.widegamut = "RTv2_Wide";
+    rtSettings.DCIP3 = "RTv2_DCIP3";
     rtSettings.srgb = "RTv4_sRGB";
     rtSettings.bruce = "RTv2_Bruce";
     rtSettings.beta = "RTv2_Beta";
@@ -607,6 +609,7 @@ void Options::setDefaults()
     rtSettings.gamutICC = true;
     rtSettings.gamutLch = true;
     rtSettings.amchroma = 40;//between 20 and 140   low values increase effect..and also artifacts, high values reduces
+    rtSettings.amchromajz = 40;//between 5 and 100  low values increase effect..and also artifacts, high values reduces
     rtSettings.level0_cbdl = 0;
     rtSettings.level123_cbdl = 30;
 //locallab
@@ -638,7 +641,7 @@ void Options::setDefaults()
     rtSettings.protectred = 60;
     rtSettings.protectredh = 0.3;
     rtSettings.CRI_color = 0;
-    rtSettings.autocielab = true;
+ //   rtSettings.autocielab = true;
     rtSettings.denoiselabgamma = 2;
     rtSettings.HistogramWorking = false;
 
@@ -772,6 +775,9 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("General", "Language")) {
                     language = keyFile.get_string("General", "Language");
+                    if (!language.compare("Espanol")) {
+                        language = "Espanol (Latin America)";
+                    }
                 }
 
                 if (keyFile.has_key("General", "LanguageAutoDetect")) {
@@ -1717,9 +1723,6 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.autoMonitorProfile = keyFile.get_boolean("Color Management", "AutoMonitorProfile");
                 }
 
-                if (keyFile.has_key("Color Management", "Autocielab")) {
-                    rtSettings.autocielab = keyFile.get_boolean("Color Management", "Autocielab");
-                }
 
                 if (keyFile.has_key("Color Management", "RGBcurvesLumamode_Gamut")) {
                     rtSettings.rgbcurveslumamode_gamut = keyFile.get_boolean("Color Management", "RGBcurvesLumamode_Gamut");
@@ -1731,6 +1734,10 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("Color Management", "MonitorBPC")) {
                     rtSettings.monitorBPC = keyFile.get_boolean("Color Management", "MonitorBPC");
+                }
+
+                if (keyFile.has_key("Color Management", "Autocielab")) {
+                    rtSettings.autocielab = keyFile.get_boolean("Color Management", "Autocielab");
                 }
 
                 if (keyFile.has_key("Color Management", "CRI")) {
@@ -1832,6 +1839,13 @@ void Options::readFromFile(Glib::ustring fname)
                     }
                 }
 
+                if (keyFile.has_key("Color Management", "DCIP3")) {
+                    rtSettings.DCIP3 = keyFile.get_string("Color Management", "DCIP3");
+                    if (rtSettings.DCIP3 == "RTv4_DCIP3") {
+                        rtSettings.DCIP3 = "RTv2_DCIP3";
+                    }
+                }
+
                 if (keyFile.has_key("Color Management", "sRGB")) {
                     rtSettings.srgb = keyFile.get_string("Color Management", "sRGB");
                     if (rtSettings.srgb == "RT_sRGB"  || rtSettings.srgb == "RTv2_sRGB") {
@@ -1897,6 +1911,10 @@ void Options::readFromFile(Glib::ustring fname)
 
                 if (keyFile.has_key("Color Management", "Amountchroma")) {
                     rtSettings.amchroma = keyFile.get_integer("Color Management", "Amountchroma");
+                }
+
+                if (keyFile.has_key("Color Management", "JzAmountchroma")) {
+                    rtSettings.amchromajz = keyFile.get_integer("Color Management", "JzAmountchroma");
                 }
 
                 if (keyFile.has_key("Color Management", "ClutsDirectory")) {
@@ -2525,6 +2543,8 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("Color Management", "RGBcurvesLumamode_Gamut", rtSettings.rgbcurveslumamode_gamut);
         keyFile.set_integer("Color Management", "Intent", rtSettings.monitorIntent);
         keyFile.set_boolean("Color Management", "MonitorBPC", rtSettings.monitorBPC);
+
+
         //keyFile.set_integer ("Color Management", "view", rtSettings.viewingdevice);
         //keyFile.set_integer ("Color Management", "grey", rtSettings.viewingdevicegrey);
 //        keyFile.set_integer ("Color Management", "greySc", rtSettings.viewinggreySc);
@@ -2532,6 +2552,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_string("Color Management", "AdobeRGB", rtSettings.adobe);
         keyFile.set_string("Color Management", "ProPhoto", rtSettings.prophoto);
         keyFile.set_string("Color Management", "WideGamut", rtSettings.widegamut);
+        keyFile.set_string("Color Management", "DCIP3", rtSettings.DCIP3);
         keyFile.set_string("Color Management", "sRGB", rtSettings.srgb);
         keyFile.set_string("Color Management", "Beta", rtSettings.beta);
         keyFile.set_string("Color Management", "Best", rtSettings.best);
@@ -2544,6 +2565,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_boolean("Color Management", "GamutLch", rtSettings.gamutLch);
         keyFile.set_integer("Color Management", "ProtectRed", rtSettings.protectred);
         keyFile.set_integer("Color Management", "Amountchroma", rtSettings.amchroma);
+        keyFile.set_integer("Color Management", "JzAmountchroma", rtSettings.amchromajz);
         keyFile.set_double("Color Management", "ProtectRedH", rtSettings.protectredh);
         keyFile.set_integer("Color Management", "CRI", rtSettings.CRI_color);
         keyFile.set_integer("Color Management", "DenoiseLabgamma", rtSettings.denoiselabgamma);

@@ -782,6 +782,7 @@ Gtk::Widget* Preferences::getColorManPanel ()
 
     vbColorMan->pack_start (*iccdgrid, Gtk::PACK_SHRINK);
 
+    
     //------------------------- MONITOR ----------------------
 
     Gtk::Frame* fmonitor = Gtk::manage(new Gtk::Frame(M("PREFERENCES_MONITOR")));
@@ -900,6 +901,19 @@ Gtk::Widget* Preferences::getColorManPanel ()
     fprinter->add(*gprinter);
 
     vbColorMan->pack_start (*fprinter, Gtk::PACK_SHRINK);
+    
+    //-------------CIECAM
+    Gtk::Frame* fcie = Gtk::manage(new Gtk::Frame(M("PREFERENCES_CIE")));
+    Gtk::Grid* gcie = Gtk::manage(new Gtk::Grid());
+    gcie->set_column_spacing(4);
+    mcie = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_CIEARTIF")));
+    setExpandAlignProperties(mcie, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    mcie->set_active(true);
+    int rowc = 0;
+    gcie->attach(*mcie, 0, rowc, 1, 1);
+    fcie->add(*gcie);
+
+    vbColorMan->pack_start (*fcie, Gtk::PACK_SHRINK);
     swColorMan->add(*vbColorMan);
     return swColorMan;
 }
@@ -1293,7 +1307,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
         vb = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
         vb->pack_start(*hb);
         hb = Gtk::manage(new Gtk::Box());
-        //I disabled these 2 functionnalities...easy to enable
+        //I disabled these 2 functionalities...easy to enable
 //        hb->pack_start(*editor_float32, Gtk::PACK_SHRINK);
 //        hb->pack_start(*editor_bypass_output_profile, Gtk::PACK_SHRINK, 4);
         vb->pack_start(*hb, Gtk::PACK_SHRINK, 4);
@@ -1863,6 +1877,8 @@ void Preferences::storePreferences()
 
     moptions.rtSettings.monitorBPC = monBPC->get_active();
     moptions.rtSettings.autoMonitorProfile = cbAutoMonProfile->get_active();
+    moptions.rtSettings.autocielab = mcie->get_active();
+
 #endif
 
     moptions.rtSettings.iccDirectory = iccDir->get_filename();
@@ -2017,6 +2033,7 @@ void Preferences::fillPreferences()
     }
 
     monBPC->set_active(moptions.rtSettings.monitorBPC);
+    mcie->set_active(moptions.rtSettings.autocielab);
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif
 
@@ -2687,8 +2704,8 @@ void Preferences::darkFrameChanged()
 {
     //Glib::ustring s(darkFrameDir->get_filename());
     Glib::ustring s(darkFrameDir->get_current_folder());
-    //if( s.compare( rtengine::dfm.getPathname()) !=0 ){
-    rtengine::dfm.init(s);
+    //if( s.compare( rtengine::DFManager::getInstance().getPathname()) !=0 ){
+    rtengine::DFManager::getInstance().init(s);
     updateDFinfos();
     //}
 }
@@ -2706,7 +2723,7 @@ void Preferences::flatFieldChanged()
 void Preferences::updateDFinfos()
 {
     int t1, t2;
-    rtengine::dfm.getStat(t1, t2);
+    rtengine::DFManager::getInstance().getStat(t1, t2);
     Glib::ustring s = Glib::ustring::compose("%1: %2 %3, %4 %5", M("PREFERENCES_DARKFRAMEFOUND"), t1, M("PREFERENCES_DARKFRAMESHOTS"), t2, M("PREFERENCES_DARKFRAMETEMPLATES"));
     dfLabel->set_text(s);
 }

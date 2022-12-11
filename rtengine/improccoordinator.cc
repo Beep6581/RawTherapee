@@ -216,6 +216,12 @@ ImProcCoordinator::ImProcCoordinator() :
     lmasklclocalcurve(65536, LUT_CLIP_OFF),
     lmaskloglocalcurve(65536, LUT_CLIP_OFF),
     lmasklocal_curve(65536, LUT_CLIP_OFF),
+    lmaskcielocalcurve(65536, LUT_CLIP_OFF),
+    cielocalcurve(65536, LUT_CLIP_OFF),
+    cielocalcurve2(65536, LUT_CLIP_OFF),
+    jzlocalcurve(65536, LUT_CLIP_OFF),
+    czlocalcurve(65536, LUT_CLIP_OFF),
+    czjzlocalcurve(65536, LUT_CLIP_OFF),
     lastspotdup(false),
     previewDeltaE(false),
     locallColorMask(0),
@@ -234,6 +240,7 @@ ImProcCoordinator::ImProcCoordinator() :
     locallsharMask(0),
     localllogMask(0),
     locall_Mask(0),
+    locallcieMask(0),
     retistrsav(nullptr)
 {
 }
@@ -569,13 +576,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 params->wb.green = currWB.getGreen();
             }
 
-            if (autowb && awbListener && params->wb.method ==  "autitcgreen") {
-                awbListener->WBChanged(params->wb.temperature, params->wb.green, studgood);
-            } 
-
-            if (autowb && awbListener && params->wb.method ==  "autold") {
-                awbListener->WBChanged(params->wb.temperature, params->wb.green, -1.f);
-            } 
+            if (autowb && awbListener) {
+                if (params->wb.method ==  "autitcgreen") {
+                    awbListener->WBChanged(params->wb.temperature, params->wb.green, studgood);
+                } else if (params->wb.method ==  "autold") {
+                    awbListener->WBChanged(params->wb.temperature, params->wb.green, -1.f);
+                }
+            }
 
             /*
                     GammaValues g_a;
@@ -724,6 +731,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         // Remove transformation if unneeded
         bool needstransform = ipf.needsTransform(fw, fh, imgsrc->getRotateDegree(), imgsrc->getMetaData());
 
+
         if ((needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && !params->colorappearance.enabled))) {
             // Forking the image
             assert(oprevi);
@@ -737,6 +745,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 op->copyData(oprevi);
             }
         }
+
+        for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
+			if(params->locallab.spots.at(sp).expsharp  && params->dirpyrequalizer.cbdlMethod == "bef") {
+				if(params->locallab.spots.at(sp).shardamping < 1) {
+					params->locallab.spots.at(sp).shardamping = 1;
+				}				
+			}
+		}
 
         if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && !params->colorappearance.enabled) {
             const int W = oprevi->getWidth();
@@ -785,6 +801,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             // Encoding log with locallab
             if (params->locallab.enabled && !params->locallab.spots.empty()) {
                 const int sizespot = (int)params->locallab.spots.size();
+                const LocallabParams::LocallabSpot defSpot;
 
                 float *sourceg = nullptr;
                 sourceg = new float[sizespot];
@@ -794,6 +811,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 targetg = new float[sizespot];
                 bool *log = nullptr;
                 log = new bool[sizespot];
+                bool *cie = nullptr;
+                cie = new bool[sizespot];
                 bool *autocomput = nullptr;
                 autocomput = new bool[sizespot];
                 float *blackev = nullptr;
@@ -802,7 +821,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 whiteev = new float[sizespot];
                 bool *Autogr = nullptr;
                 Autogr = new bool[sizespot];
-                
+                bool *autocie = nullptr;
+                autocie = new bool[sizespot];
+
+
                 float *locx = nullptr;
                 locx = new float[sizespot];
                 float *locy = nullptr;
@@ -818,7 +840,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 
                 for (int sp = 0; sp < sizespot; sp++) {
                     log[sp] = params->locallab.spots.at(sp).explog;
+                    cie[sp] = params->locallab.spots.at(sp).expcie;
                     autocomput[sp] = params->locallab.spots.at(sp).autocompute;
+                    autocie[sp] = params->locallab.spots.at(sp).Autograycie;
                     blackev[sp] = params->locallab.spots.at(sp).blackEv;
                     whiteev[sp] = params->locallab.spots.at(sp).whiteEv;
                     sourceg[sp] = params->locallab.spots.at(sp).sourceGray;
@@ -832,9 +856,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     centx[sp] = params->locallab.spots.at(sp).centerX / 2000.0 + 0.5;
                     centy[sp] = params->locallab.spots.at(sp).centerY / 2000.0 + 0.5;
 
-                    const bool fullim = params->locallab.spots.at(sp).fullimage;
+                    const bool fullimstd = params->locallab.spots.at(sp).fullimage;//for log encoding standard
+                    const bool fullimjz = true;//always force fullimage in log encoding Jz - always possible to put a checkbox if need
 
-                    if (log[sp] && autocomput[sp]) {
+                    if ((log[sp] && autocomput[sp]) || (cie[sp] && autocie[sp])) {
                         constexpr int SCALE = 10;
                         int fw, fh, tr = TR_NONE;
                         imgsrc->getFullSize(fw, fh, tr);
@@ -845,7 +870,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         float xsta = std::max(static_cast<float>(centx[sp] - locxL[sp]), 0.f);
                         float xend = std::min(static_cast<float>(centx[sp] + locx[sp]), 1.f);
 
-                        if (fullim) {
+                        if (fullimstd  && (log[sp] && autocomput[sp])) {
+                            ysta = 0.f;
+                            yend = 1.f;
+                            xsta = 0.f;
+                            xend = 1.f;
+                        }
+
+                        if (fullimjz  && (cie[sp] && autocie[sp])) {
                             ysta = 0.f;
                             yend = 1.f;
                             xsta = 0.f;
@@ -853,14 +885,18 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         }
 
                         ipf.getAutoLogloc(sp, imgsrc, sourceg, blackev, whiteev, Autogr, sourceab, fw, fh, xsta, xend, ysta, yend, SCALE);
-                        //printf("sg=%f sab=%f\n", sourceg[sp], sourceab[sp]);
+                       // printf("sp=%i sg=%f sab=%f\n", sp, sourceg[sp], sourceab[sp]);
                         params->locallab.spots.at(sp).blackEv = blackev[sp];
                         params->locallab.spots.at(sp).whiteEv = whiteev[sp];
+                        params->locallab.spots.at(sp).blackEvjz = blackev[sp];
+                        params->locallab.spots.at(sp).whiteEvjz = whiteev[sp];
                         params->locallab.spots.at(sp).sourceGray = sourceg[sp];
                         params->locallab.spots.at(sp).sourceabs = sourceab[sp];
-
+                        params->locallab.spots.at(sp).sourceGraycie = sourceg[sp];
+                        params->locallab.spots.at(sp).sourceabscie = sourceab[sp];
+                        float jz1 = defSpot.jz100;
                         if (locallListener) {
-                            locallListener->logencodChanged(blackev[sp], whiteev[sp], sourceg[sp], sourceab[sp], targetg[sp]);
+                            locallListener->logencodChanged(blackev[sp], whiteev[sp], sourceg[sp], sourceab[sp], targetg[sp], autocomput[sp], autocie[sp], jz1);
                         }
                     }
                 }
@@ -872,12 +908,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 delete [] centx;
                 delete [] centy;
 
+                delete [] autocie;
                 delete [] Autogr;
                 delete [] whiteev;
                 delete [] blackev;
                 delete [] targetg;
                 delete [] sourceab;
                 delete [] sourceg;
+                delete [] cie;
                 delete [] log;
                 delete [] autocomput;
             }
@@ -923,7 +961,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             int sca = 1;
             double huere, chromare, lumare, huerefblu, chromarefblu, lumarefblu, sobelre;
             float avge, meantme, stdtme, meanretie, stdretie;
-            std::vector<LocallabListener::locallabRef> locallref;
+            //std::vector<LocallabListener::locallabRef> locallref;
             std::vector<LocallabListener::locallabRetiMinMax> locallretiminmax;
             huerefs.resize(params->locallab.spots.size());
             huerefblurs.resize(params->locallab.spots.size());
@@ -937,6 +975,16 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             stdtms.resize(params->locallab.spots.size());
             meanretis.resize(params->locallab.spots.size());
             stdretis.resize(params->locallab.spots.size());
+            const int sizespot = (int)params->locallab.spots.size();
+
+            float *huerefp = nullptr;
+            huerefp = new float[sizespot];
+            float *chromarefp = nullptr;
+            chromarefp = new float[sizespot];
+            float *lumarefp = nullptr;
+            lumarefp = new float[sizespot];
+            float *fabrefp = nullptr;
+            fabrefp = new float[sizespot];
 
             for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
 
@@ -953,6 +1001,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 const bool LHutili = loclhCurve.Set(params->locallab.spots.at(sp).LHcurve);
                 const bool HHutili = lochhCurve.Set(params->locallab.spots.at(sp).HHcurve);
                 const bool CHutili = locchCurve.Set(params->locallab.spots.at(sp).CHcurve);
+                const bool HHutilijz = lochhCurvejz.Set(params->locallab.spots.at(sp).HHcurvejz);
+                const bool CHutilijz = locchCurvejz.Set(params->locallab.spots.at(sp).CHcurvejz);
+                const bool LHutilijz = loclhCurvejz.Set(params->locallab.spots.at(sp).LHcurvejz);
                 const bool lcmasutili = locccmasCurve.Set(params->locallab.spots.at(sp).CCmaskcurve);
                 const bool llmasutili = locllmasCurve.Set(params->locallab.spots.at(sp).LLmaskcurve);
                 const bool lhmasutili = lochhmasCurve.Set(params->locallab.spots.at(sp).HHmaskcurve);
@@ -984,6 +1035,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 const bool llmaslogutili = locllmaslogCurve.Set(params->locallab.spots.at(sp).LLmaskcurveL);
                 const bool lcmaslogutili = locccmaslogCurve.Set(params->locallab.spots.at(sp).CCmaskcurveL);
                 const bool lhmaslogutili = lochhmaslogCurve.Set(params->locallab.spots.at(sp).HHmaskcurveL);
+                const bool llmascieutili = locllmascieCurve.Set(params->locallab.spots.at(sp).LLmaskciecurve);
+                const bool lcmascieutili = locccmascieCurve.Set(params->locallab.spots.at(sp).CCmaskciecurve);
+                const bool lhmascieutili = lochhmascieCurve.Set(params->locallab.spots.at(sp).HHmaskciecurve);
                 
                 const bool lcmas_utili = locccmas_Curve.Set(params->locallab.spots.at(sp).CCmask_curve);
                 const bool llmas_utili = locllmas_Curve.Set(params->locallab.spots.at(sp).LLmask_curve);
@@ -992,6 +1046,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 const bool lmasutiliblwav = loclmasCurveblwav.Set(params->locallab.spots.at(sp).LLmaskblcurvewav);
                 const bool lmasutilicolwav = loclmasCurvecolwav.Set(params->locallab.spots.at(sp).LLmaskcolcurvewav);
                 const bool locwavutili = locwavCurve.Set(params->locallab.spots.at(sp).locwavcurve);
+                const bool locwavutilijz = locwavCurvejz.Set(params->locallab.spots.at(sp).locwavcurvejz);
                 const bool loclevwavutili = loclevwavCurve.Set(params->locallab.spots.at(sp).loclevwavcurve);
                 const bool locconwavutili = locconwavCurve.Set(params->locallab.spots.at(sp).locconwavcurve);
                 const bool loccompwavutili = loccompwavCurve.Set(params->locallab.spots.at(sp).loccompwavcurve);
@@ -1017,6 +1072,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 const bool localmasklcutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmasklccurve, lmasklclocalcurve, sca);
                 const bool localmasklogutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).LmaskcurveL, lmaskloglocalcurve, sca);
                 const bool localmask_utili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmask_curve, lmasklocal_curve, sca);
+                const bool localmaskcieutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).Lmaskciecurve, lmaskcielocalcurve, sca);
+                const bool localcieutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).ciecurve, cielocalcurve, sca);
+                const bool localcieutili2 = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).ciecurve2, cielocalcurve2, sca);
+                const bool localjzutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).jzcurve, jzlocalcurve, sca);
+                const bool localczutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).czcurve, czlocalcurve, sca);
+                const bool localczjzutili = CurveFactory::diagonalCurve2Lut(params->locallab.spots.at(sp).czjzcurve, czjzlocalcurve, sca);
                 double ecomp = params->locallab.spots.at(sp).expcomp;
                 double black = params->locallab.spots.at(sp).black;
                 double hlcompr = params->locallab.spots.at(sp).hlcompr;
@@ -1035,12 +1096,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 } else {
                     ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
                 }
-                      //
+
                 meantme = 0.f;
                 stdtme = 0.f;
                 meanretie = 0.f;
                 stdretie = 0.f;
-
+                float fab = 1.f;
                 bool istm = params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap;
                 bool isreti = params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti;
                 //preparation for mean and sigma on current RT-spot
@@ -1093,17 +1154,24 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float stdtm = stdtms[sp] = stdtme;
                 float meanreti = meanretis[sp] = meanretie;
                 float stdreti = stdretis[sp] = stdretie;
+
+                huerefp[sp] = huer;
+                chromarefp[sp] = chromar;
+                lumarefp[sp] = lumar;
                 
                 CurveFactory::complexCurvelocal(ecomp, black / 65535., hlcompr, hlcomprthresh, shcompr, br, cont, lumar,
                                                 hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc, avg,
                                                 sca);
 
                 // Save Locallab mask curve references for current spot
+                /*
                 LocallabListener::locallabRef spotref;
                 spotref.huer = huer;
                 spotref.lumar = lumar;
                 spotref.chromar = chromar;
+                spotref.fab = 1.f;
                 locallref.push_back(spotref);
+                */
                 // Locallab tools computation
                 /* Notes:
                  * - shbuffer is used as nullptr
@@ -1119,11 +1187,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Tmin;
                 float Tmax;
                 int lastsav;
-                ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), savenormtm.get(), savenormreti.get(), lastorigimp.get(), 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
+
+                ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), savenormtm.get(), savenormreti.get(), lastorigimp.get(), fw, fh, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
                               lllocalcurve, locallutili,
                               cllocalcurve, localclutili,
                               lclocalcurve, locallcutili,
                               loclhCurve,  lochhCurve, locchCurve,
+                              lochhCurvejz, locchCurvejz, loclhCurvejz,
                               lmasklocalcurve, localmaskutili,
                               lmaskexplocalcurve, localmaskexputili,
                               lmaskSHlocalcurve, localmaskSHutili,
@@ -1135,6 +1205,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               lmasklclocalcurve, localmasklcutili,
                               lmaskloglocalcurve, localmasklogutili,
                               lmasklocal_curve, localmask_utili,
+                              lmaskcielocalcurve, localmaskcieutili,
+                              cielocalcurve, localcieutili,
+                              cielocalcurve2, localcieutili2,
+                              jzlocalcurve, localjzutili,
+                              czlocalcurve, localczutili,
+                              czjzlocalcurve, localczjzutili,
 
                               locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                               locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
@@ -1147,10 +1223,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               locccmaslogCurve, lcmaslogutili, locllmaslogCurve, llmaslogutili, lochhmaslogCurve, lhmaslogutili,
                               
                               locccmas_Curve, lcmas_utili, locllmas_Curve, llmas_utili, lochhmas_Curve, lhmas_utili,
+                              locccmascieCurve, lcmascieutili, locllmascieCurve, llmascieutili, lochhmascieCurve, lhmascieutili,
+
                               lochhhmas_Curve, lhhmas_utili,
                               loclmasCurveblwav, lmasutiliblwav,
                               loclmasCurvecolwav, lmasutilicolwav,
                               locwavCurve, locwavutili,
+                              locwavCurvejz, locwavutilijz,
                               loclevwavCurve, loclevwavutili,
                               locconwavCurve, locconwavutili,
                               loccompwavCurve, loccompwavutili,
@@ -1159,13 +1238,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               locwavCurveden, locwavdenutili,
                               locedgwavCurve, locedgwavutili,
                               loclmasCurve_wav, lmasutili_wav,
-                              LHutili, HHutili, CHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                              huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                              LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
+                              huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                              meantm, stdtm, meanreti, stdreti);
+                              meantm, stdtm, meanreti, stdreti, fab);
 
 
-                
+                fabrefp[sp] = fab;
                 if (istm) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;
                     float stdf = 0.f;
@@ -1209,20 +1288,46 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 } else {
                     ipf.calc_ref(sp, nprevl, nprevl, 0, 0, pW, pH, scale, huerefblu, chromarefblu, lumarefblu, huer, chromar, lumar, sobeler, avg, locwavCurveden, locwavdenutili);
                 }
-
                 // Update Locallab reference values according to recurs parameter
                 if (params->locallab.spots.at(sp).recurs) {
+                    /*
+                    spotref.huer = huer;
+                    spotref.lumar = lumar;
+                    spotref.chromar = chromar;
+                    spotref.fab = fab;
                     locallref.at(sp).chromar = chromar;
                     locallref.at(sp).lumar = lumar;
                     locallref.at(sp).huer = huer;
+                    locallref.at(sp).fab = fab;
+                    */
+                    huerefp[sp] = huer;
+                    chromarefp[sp] = chromar;
+                    lumarefp[sp] = lumar;
+                    fabrefp[sp] = fab;
+                    
                 }
+            //    spotref.fab = fab;
+            //    locallref.at(sp).fab = fab;
+
+            //    locallref.push_back(spotref);
+            if (locallListener) {
+              //  locallListener->refChanged(locallref, params->locallab.selspot);
+                locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
+                locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
             }
 
+            }
+            delete [] huerefp;
+            delete [] chromarefp;
+            delete [] lumarefp;
+            delete [] fabrefp;
             // Transmit Locallab reference values and Locallab Retinex min/max to LocallabListener
+            /*
             if (locallListener) {
                 locallListener->refChanged(locallref, params->locallab.selspot);
                 locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
             }
+            */
             ipf.lab2rgb(*nprevl, *oprevi, params->icm.workingProfile);
             //*************************************************************
             // end locallab
@@ -1802,8 +1907,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     adap = 2000.;
                 } else {
                     double E_V = fcomp + log2(double ((fnum * fnum) / fspeed / (fiso / 100.f)));
-                    E_V += params->toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
-                    E_V += log2(params->raw.expos);  // exposure raw white point ; log2 ==> linear to EV
+                    double kexp = 0.;
+                    E_V += kexp * params->toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
+                    E_V += 0.5 * log2(params->raw.expos);  // exposure raw white point ; log2 ==> linear to EV
                     adap = pow(2.0, E_V - 3.0);  // cd / m2
                     // end calculation adaptation scene luminosity
                 }
@@ -2311,7 +2417,7 @@ bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, dou
         if (lastAwbEqual != equal || lastAwbTempBias != tempBias || lastAwbauto != params->wb.method) {
 // Issue 2500            MyMutex::MyLock lock(minit);  // Also used in crop window
             double rm, gm, bm;
-            params->wb.method = "autold";//same result as before muliple Auto WB
+            params->wb.method = "autold";//same result as before multiple Auto WB
             
            // imgsrc->getAutoWBMultipliers(rm, gm, bm);
             double tempitc = 5000.;

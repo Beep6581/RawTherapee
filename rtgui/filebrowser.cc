@@ -875,11 +875,11 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
                 }
 
                 // Reinit cache
-                rtengine::dfm.init( options.rtSettings.darkFramesPath );
+                rtengine::DFManager::getInstance().init( options.rtSettings.darkFramesPath );
             } else {
                 // Target directory creation failed, we clear the darkFramesPath setting
                 options.rtSettings.darkFramesPath.clear();
-                Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), options.rtSettings.darkFramesPath)
+                Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), escapeHtmlChars(options.rtSettings.darkFramesPath))
                                      + "\n\n" + M("MAIN_MSG_OPERATIONCANCELLED");
                 Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
                 msgd.set_title(M("TP_DARKFRAME_LABEL"));
@@ -955,7 +955,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
             } else {
                 // Target directory creation failed, we clear the flatFieldsPath setting
                 options.rtSettings.flatFieldsPath.clear();
-                Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), options.rtSettings.flatFieldsPath)
+                Glib::ustring msg_ = Glib::ustring::compose (M("MAIN_MSG_PATHDOESNTEXIST"), escapeHtmlChars(options.rtSettings.flatFieldsPath))
                                      + "\n\n" + M("MAIN_MSG_OPERATIONCANCELLED");
                 Gtk::MessageDialog msgd (msg_, true, Gtk::MESSAGE_ERROR, Gtk::BUTTONS_OK, true);
                 msgd.set_title(M("TP_FLATFIELD_LABEL"));

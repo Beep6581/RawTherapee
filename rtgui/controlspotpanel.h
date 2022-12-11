@@ -34,6 +34,7 @@ public:
     virtual ~ControlPanelListener() {};
 
     virtual void resetToolMaskView() = 0;
+    virtual void spotNameChanged(const Glib::ustring &newName) = 0;
 };
 
 
@@ -85,9 +86,10 @@ public:
         bool laplac;
         bool deltae;
         int scopemask;
+        double denoichmask;
         bool shortc;
         int lumask;
-        bool savrest;
+        //bool savrest;
         int complexMethod; // 0 = Simple, 1 = Moderate, 2 = all
         int wavMethod; // 0 = D2, 1 = D4, 2 = D6, 3 = D10, 4 = D14
     };
@@ -241,7 +243,7 @@ private:
     void spotMethodChanged();
     void shapeMethodChanged();
     void qualityMethodChanged();
-    void complexMethodChanged();
+    //void complexMethodChanged();
     void wavMethodChanged();
 
     void updateParamVisibility();
@@ -257,7 +259,7 @@ private:
     void laplacChanged();
     void deltaeChanged();
     void shortcChanged();
-    void savrestChanged();
+    //void savrestChanged();
 
     void previewChanged();
 
@@ -320,9 +322,10 @@ private:
         Gtk::TreeModelColumn<bool> laplac;
         Gtk::TreeModelColumn<bool> deltae;
         Gtk::TreeModelColumn<int> scopemask;
+        Gtk::TreeModelColumn<int> denoichmask;
         Gtk::TreeModelColumn<bool> shortc;
         Gtk::TreeModelColumn<int> lumask;
-        Gtk::TreeModelColumn<bool> savrest;
+        //Gtk::TreeModelColumn<bool> savrest;
         Gtk::TreeModelColumn<int> complexMethod; // 0 = Simple, 1 = mod, 2 = all
         Gtk::TreeModelColumn<int> wavMethod; // 0 = D2, 1 = D4, 2 = D6, 3 = D10, 4 = D14
     };
@@ -374,8 +377,8 @@ private:
     sigc::connection shapeMethodconn_;
     MyComboBoxText* const qualityMethod_;
     sigc::connection qualityMethodconn_;
-    MyComboBoxText* const complexMethod_;
-    sigc::connection complexMethodconn_;
+    //MyComboBoxText* const complexMethod_;
+    //sigc::connection complexMethodconn_;
     MyComboBoxText* const wavMethod_;
     sigc::connection wavMethodconn_;
 
@@ -401,6 +404,7 @@ private:
     Adjuster* const colorscope_;
     Adjuster* const avoidrad_;
     Adjuster* const scopemask_;
+    Adjuster* const denoichmask_;
     Adjuster* const lumask_;
 
     Gtk::CheckButton* const hishow_;
@@ -421,8 +425,8 @@ private:
     sigc::connection deltaeConn_;
     Gtk::CheckButton* const shortc_;
     sigc::connection shortcConn_;
-    Gtk::CheckButton* const savrest_;
-    sigc::connection savrestConn_;
+    //Gtk::CheckButton* const savrest_;
+    //sigc::connection savrestConn_;
 
     MyExpander* const expTransGrad_;
     MyExpander* const expShapeDetect_;

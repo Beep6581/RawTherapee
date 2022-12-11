@@ -23,6 +23,7 @@
 #include <gtkmm.h>
 #include "toolpanel.h"
 #include "editwidgets.h"
+#include "adjuster.h"
 #include "../rtengine/procparams.h"
 #include "../rtengine/tweakoperator.h"
 
@@ -90,6 +91,7 @@ protected:
     Gtk::Label* countLabel;
     Gtk::ToggleButton* edit;
     Gtk::Button* reset;
+    Adjuster* spotSize;
     sigc::connection editConn, editedConn;
 
     void editToggled ();

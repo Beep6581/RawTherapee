@@ -465,7 +465,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 
     }
  
-    if (mul == 1 ||(params->icm.wprim == ColorManagementParams::Primaries::DEFAULT && params->icm.will == ColorManagementParams::Illuminant::DEFAULT)) {//shortcut and speedup when no call primaries and illuminant - no gamut control...in this case be carefull
+    if (mul == 1 ||(params->icm.wprim == ColorManagementParams::Primaries::DEFAULT && params->icm.will == ColorManagementParams::Illuminant::DEFAULT)) {//shortcut and speedup when no call primaries and illuminant - no gamut control...in this case be careful
         GammaValues g_a; //gamma parameters
         double pwr = 1.0 / static_cast<double>(gampos);
         Color::calcGamma(pwr, slpos, g_a); // call to calcGamma with selected gamma and slope
@@ -513,12 +513,20 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         bluxx = 0.55f * (blugraphx + 1.f) - 0.1f;
         bluxx = rtengine::LIM(bluxx, -0.1f, 0.5f);
         bluyy = 0.55f * (blugraphy + 1.f) - 0.1f;
-        bluyy = rtengine::LIM(bluyy, -0.1f, 0.5f);
+        bluyy = rtengine::LIM(bluyy, -0.1f, 0.49f);
         grexx = 0.55f * (gregraphx + 1.f) - 0.1f;
         grexx = rtengine::LIM(grexx, -0.1f, 0.4f);
         greyy = 0.55f * (gregraphy + 1.f) - 0.1f;
         greyy = rtengine::LIM(greyy, 0.5f, 1.f);
     }
+    //fixed crash when there is no space or too small..just a line...Possible if bx, by aligned with Gx,Gy Rx,Ry
+    float ac = (greyy - redyy) / (grexx - redxx);
+    float bc = greyy - ac * grexx;
+    float yc = ac * bluxx + bc;
+    if ((bluyy < yc + 0.0004f) &&  (bluyy > yc - 0.0004f)) {//under 0.0004 in some case crash because space too small
+        return;
+    }
+
 
     switch (ColorManagementParams::Primaries(prim)) {
         case ColorManagementParams::Primaries::DEFAULT: {

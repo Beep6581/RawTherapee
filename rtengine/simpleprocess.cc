@@ -924,6 +924,14 @@ private:
         //ImProcFunctions ipf (&params, true);
         ImProcFunctions &ipf = * (ipf_p.get());
 
+        for (int sp = 0; sp < (int)params.locallab.spots.size(); sp++) {
+			if(params.locallab.spots.at(sp).expsharp  && params.dirpyrequalizer.cbdlMethod == "bef") {
+				if(params.locallab.spots.at(sp).shardamping < 1) {
+					params.locallab.spots.at(sp).shardamping = 1;
+				}				
+			}
+		}
+
         if (params.dirpyrequalizer.cbdlMethod == "bef" && params.dirpyrequalizer.enabled && !params.colorappearance.enabled) {
             const int W = baseImg->getWidth();
             const int H = baseImg->getHeight();
@@ -952,6 +960,9 @@ private:
             LocLHCurve loclhCurve;
             LocHHCurve lochhCurve;
             LocCHCurve locchCurve;
+            LocHHCurve lochhCurvejz;
+            LocCHCurve locchCurvejz;
+            LocLHCurve loclhCurvejz;
             LocCCmaskCurve locccmasCurve;
             LocLLmaskCurve locllmasCurve;
             LocHHmaskCurve lochhmasCurve;
@@ -983,6 +994,9 @@ private:
             LocCCmaskCurve locccmaslogCurve;
             LocLLmaskCurve locllmaslogCurve;
             LocHHmaskCurve lochhmaslogCurve;
+            LocCCmaskCurve locccmascieCurve;
+            LocLLmaskCurve locllmascieCurve;
+            LocHHmaskCurve lochhmascieCurve;
 
             LocCCmaskCurve locccmas_Curve;
             LocLLmaskCurve locllmas_Curve;
@@ -993,6 +1007,7 @@ private:
             LocwavCurve loclmasCurvecolwav;
             LocwavCurve loclmasCurve_wav;
             LocwavCurve locwavCurve;
+            LocwavCurve locwavCurvejz;
             LocwavCurve loclevwavCurve;
             LocwavCurve locconwavCurve;
             LocwavCurve loccompwavCurve;
@@ -1021,6 +1036,12 @@ private:
             LUTf lmasklclocalcurve(65536, LUT_CLIP_OFF);
             LUTf lmaskloglocalcurve(65536, LUT_CLIP_OFF);
             LUTf lmasklocal_curve(65536, LUT_CLIP_OFF);
+            LUTf lmaskcielocalcurve(65536, LUT_CLIP_OFF);
+            LUTf cielocalcurve(65536, LUT_CLIP_OFF);
+            LUTf cielocalcurve2(65536, LUT_CLIP_OFF);
+            LUTf jzlocalcurve(65536, LUT_CLIP_OFF);
+            LUTf czlocalcurve(65536, LUT_CLIP_OFF);
+            LUTf czjzlocalcurve(65536, LUT_CLIP_OFF);
 
             array2D<float> shbuffer;
             for (size_t sp = 0; sp < params.locallab.spots.size(); sp++) {
@@ -1038,6 +1059,9 @@ private:
                 const bool LHutili = loclhCurve.Set(params.locallab.spots.at(sp).LHcurve);
                 const bool HHutili = lochhCurve.Set(params.locallab.spots.at(sp).HHcurve);
                 const bool CHutili = locchCurve.Set(params.locallab.spots.at(sp).CHcurve);
+                const bool HHutilijz = lochhCurvejz.Set(params.locallab.spots.at(sp).HHcurvejz);
+                const bool CHutilijz = locchCurvejz.Set(params.locallab.spots.at(sp).CHcurvejz);
+                const bool LHutilijz = loclhCurvejz.Set(params.locallab.spots.at(sp).LHcurvejz);
                 const bool lcmasutili = locccmasCurve.Set(params.locallab.spots.at(sp).CCmaskcurve);
                 const bool llmasutili = locllmasCurve.Set(params.locallab.spots.at(sp).LLmaskcurve);
                 const bool lhmasutili = lochhmasCurve.Set(params.locallab.spots.at(sp).HHmaskcurve);
@@ -1067,6 +1091,9 @@ private:
                 const bool lcmaslogutili = locccmaslogCurve.Set(params.locallab.spots.at(sp).CCmaskcurveL);
                 const bool llmaslogutili = locllmaslogCurve.Set(params.locallab.spots.at(sp).LLmaskcurveL);
                 const bool lhmaslogutili = lochhmaslogCurve.Set(params.locallab.spots.at(sp).HHmaskcurveL);
+                const bool lcmascieutili = locccmascieCurve.Set(params.locallab.spots.at(sp).CCmaskciecurve);
+                const bool llmascieutili = locllmascieCurve.Set(params.locallab.spots.at(sp).LLmaskciecurve);
+                const bool lhmascieutili = lochhmascieCurve.Set(params.locallab.spots.at(sp).HHmaskciecurve);
                 
                 const bool lcmas_utili = locccmas_Curve.Set(params.locallab.spots.at(sp).CCmask_curve);
                 const bool llmas_utili = locllmas_Curve.Set(params.locallab.spots.at(sp).LLmask_curve);
@@ -1078,6 +1105,7 @@ private:
                 const bool llmaslcutili = locllmaslcCurve.Set(params.locallab.spots.at(sp).LLmasklccurve);
                 const bool lmasutili_wav = loclmasCurve_wav.Set(params.locallab.spots.at(sp).LLmask_curvewav);
                 const bool locwavutili = locwavCurve.Set(params.locallab.spots.at(sp).locwavcurve);
+                const bool locwavutilijz = locwavCurvejz.Set(params.locallab.spots.at(sp).locwavcurvejz);
                 const bool locwavhueutili = locwavCurvehue.Set(params.locallab.spots.at(sp).locwavcurvehue);
                 const bool locwavdenutili = locwavCurveden.Set(params.locallab.spots.at(sp).locwavcurveden);
                 const bool loclevwavutili = loclevwavCurve.Set(params.locallab.spots.at(sp).loclevwavcurve);
@@ -1102,6 +1130,12 @@ private:
                 const bool localmasklcutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmasklccurve, lmasklclocalcurve, 1);
                 const bool localmasklogutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).LmaskcurveL, lmaskloglocalcurve, 1);
                 const bool localmask_utili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmask_curve, lmasklocal_curve, 1);
+                const bool localmaskcieutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).Lmaskciecurve, lmaskcielocalcurve, 1);
+                const bool localcieutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).ciecurve, cielocalcurve, 1);
+                const bool localcieutili2 = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).ciecurve2, cielocalcurve2, 1);
+                const bool localjzutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).jzcurve, jzlocalcurve, 1);
+                const bool localczutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).czcurve, czlocalcurve, 1);
+                const bool localczjzutili = CurveFactory::diagonalCurve2Lut(params.locallab.spots.at(sp).czjzcurve, czjzlocalcurve, 1);
 
                 //provisory
                 double ecomp = params.locallab.spots.at(sp).expcomp;
@@ -1123,6 +1157,7 @@ private:
                 float stdtme;
                 float meanretie;
                 float stdretie;
+                float fab = 1.f;
                 
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reservView.get(), reservView.get(), 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
@@ -1142,11 +1177,12 @@ private:
                 float Tmax;
 
                 // No Locallab mask is shown in exported picture
-                ipf.Lab_Local(2, sp, shbuffer, labView, labView, reservView.get(), savenormtmView.get(), savenormretiView.get(), lastorigView.get(), 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, 
+                ipf.Lab_Local(2, sp, shbuffer, labView, labView, reservView.get(), savenormtmView.get(), savenormretiView.get(), lastorigView.get(), fw, fh, 0, 0, fw, fh,  1, locRETgainCurve, locRETtransCurve, 
                         lllocalcurve, locallutili, 
                         cllocalcurve, localclutili,
                         lclocalcurve, locallcutili,
                         loclhCurve, lochhCurve, locchCurve,
+                        lochhCurvejz, locchCurvejz,loclhCurvejz,
                         lmasklocalcurve, localmaskutili,
                         lmaskexplocalcurve, localmaskexputili,
                         lmaskSHlocalcurve, localmaskSHutili,
@@ -1158,6 +1194,12 @@ private:
                         lmasklclocalcurve, localmasklcutili,
                         lmaskloglocalcurve, localmasklogutili,
                         lmasklocal_curve, localmask_utili,
+                        lmaskcielocalcurve, localmaskcieutili,
+                        cielocalcurve, localcieutili, 
+                        cielocalcurve2, localcieutili2, 
+                        jzlocalcurve, localjzutili, 
+                        czlocalcurve, localczutili, 
+                        czjzlocalcurve, localczjzutili, 
                         
                         locccmasCurve, lcmasutili, locllmasCurve, llmasutili, lochhmasCurve, lhmasutili, lochhhmasCurve, lhhmasutili, locccmasexpCurve, lcmasexputili, locllmasexpCurve, llmasexputili, lochhmasexpCurve, lhmasexputili,
                         locccmasSHCurve, lcmasSHutili, locllmasSHCurve, llmasSHutili, lochhmasSHCurve, lhmasSHutili,
@@ -1170,10 +1212,12 @@ private:
                         locccmaslogCurve, lcmaslogutili, locllmaslogCurve, llmaslogutili, lochhmaslogCurve, lhmaslogutili,
 
                         locccmas_Curve, lcmas_utili, locllmas_Curve, llmas_utili, lochhmas_Curve, lhmas_utili,
+                        locccmascieCurve, lcmascieutili, locllmascieCurve, llmascieutili, lochhmascieCurve, lhmascieutili,
                         lochhhmas_Curve, lhhmas_utili,
                         loclmasCurveblwav,lmasutiliblwav,
                         loclmasCurvecolwav,lmasutilicolwav,
                         locwavCurve, locwavutili,
+                        locwavCurvejz, locwavutilijz,
                         loclevwavCurve, loclevwavutili,
                         locconwavCurve, locconwavutili,
                         loccompwavCurve, loccompwavutili,
@@ -1182,10 +1226,10 @@ private:
                         locwavCurveden, locwavdenutili,
                         locedgwavCurve, locedgwavutili,
                         loclmasCurve_wav,lmasutili_wav,
-                        LHutili, HHutili, CHutili, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
-                        huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                        LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
+                        huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                        meantme, stdtme, meanretie, stdretie
+                        meantme, stdtme, meanretie, stdretie, fab
 );
 
                 if (sp + 1u < params.locallab.spots.size()) {
@@ -1653,8 +1697,9 @@ private:
             }//if no exif data or wrong
             else {
                 double E_V = fcomp + log2 ((fnum * fnum) / fspeed / (fiso / 100.f));
-                E_V += params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
-                E_V += log2(params.raw.expos); // exposure raw white point ; log2 ==> linear to EV
+                double kexp = 0.;
+                E_V += kexp * params.toneCurve.expcomp;// exposure compensation in tonecurve ==> direct EV
+                E_V += 0.5 * log2(params.raw.expos); // exposure raw white point ; log2 ==> linear to EV
                 adap = std::pow(2.0, E_V - 3.0); //cd / m2
             }
 

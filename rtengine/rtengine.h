@@ -424,6 +424,7 @@ public:
         double huer;
         double lumar;
         double chromar;
+        float fab;
     };
 
     struct locallabRetiMinMax {
@@ -438,9 +439,10 @@ public:
     };
 
     virtual ~LocallabListener() = default;
-    virtual void refChanged(const std::vector<locallabRef> &ref, int selspot) = 0;
+//    virtual void refChanged(const std::vector<locallabRef> &ref, int selspot) = 0;
     virtual void minmaxChanged(const std::vector<locallabRetiMinMax> &minmax, int selspot) = 0;
-    virtual void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg) = 0;
+    virtual void logencodChanged(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const bool autocomput, const bool autocie, const float jz1) = 0;
+    virtual void refChanged2(float *huerefp, float *chromarefp, float *lumarefp, float *fabrefp, int selspot) = 0;
 };
 
 class AutoColorTonListener
@@ -566,7 +568,7 @@ public:
       * Since the ProcParams can be tweaked by a GUI to operate on the image at a specific stage or with disabled tool,
       * you'll have to specify if you want the tweaked version for the current special mode, or the untweaked one.
       * @param dst is the location where the image processing parameters are copied (it is assumed that the memory is allocated by the caller)
-      * @param tweaked is used to chose betwen the tweaked ProcParams (if there is one) or the untweaked one */
+      * @param tweaked is used to choose between the tweaked ProcParams (if there is one) or the untweaked one */
     virtual void        getParams (procparams::ProcParams* dst, bool tweaked=false) = 0;
     /** An essential member function. Call this when a setting has been changed. This function returns a pointer to the
       * processing parameters, that you have to update to reflect the changed situation. When ready, call the paramsUpdateReady
@@ -610,7 +612,7 @@ public:
 
     virtual void        updateUnLock() = 0;
 
-    virtual void        setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int localllogMask, int locall_Mask) = 0;
+    virtual void        setLocallabMaskVisibility(bool previewDeltaE, int locallColorMask, int locallColorMaskinv, int locallExpMask, int locallExpMaskinv, int locallSHMask, int locallSHMaskinv, int locallvibMask, int locallsoftMask, int locallblMask, int localltmMask, int locallretiMask, int locallsharMask, int localllcMask, int locallcbMask, int localllogMask, int locall_Mask, int locallcieMask) = 0;
 
     /** Creates and returns a Crop instance that acts as a window on the image
       * @param editDataProvider pointer to the EditDataProvider that communicates with the EditSubscriber

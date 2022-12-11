@@ -127,6 +127,7 @@ class Preferences final :
     Gtk::CheckButton* prtBPC;
     Gtk::ComboBoxText* monProfile;
     Gtk::ComboBoxText* monIntent;
+    Gtk::CheckButton* mcie;
     Gtk::CheckButton* monBPC;
     Gtk::CheckButton* cbAutoMonProfile;
     //Gtk::CheckButton* cbAutocielab;
