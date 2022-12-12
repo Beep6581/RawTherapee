@@ -927,16 +927,23 @@ Gtk::Widget* Preferences::getColorManPanel ()
 	//------------White-Balance auto temperature correlation
 	
     Gtk::Frame* fwbacorr = Gtk::manage(new Gtk::Frame(M("PREFERENCES_WBACORR")));
+    fwbacorr->set_tooltip_text(M("PREFERENCES_WBA_TOOLTIP"));
     fwbacorr->set_label_align(0.025, 0.5);
     Gtk::Box* wbaVB = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL) );
     Gtk::Box* wbah = Gtk::manage ( new Gtk::Box () );
     wbah->set_spacing (4);
-	
     mwbacorr = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBAOBS")));
 	setExpandAlignProperties(mwbacorr, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     mwbacorr->set_active(true);
     wbah->pack_start(*mwbacorr, Gtk::PACK_SHRINK, 0);
+//   wbaVB->add(*wbah);
+
+    mwbasort = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBASORT")));
+	setExpandAlignProperties(mwbasort, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    mwbasort->set_active(false);
+    wbah->pack_start(*mwbasort, Gtk::PACK_SHRINK, 0);
     wbaVB->add(*wbah);
+	
     placeSpinBox(wbaVB, wbacorrnb, "PREFERENCES_WBPATCH", 0, 1, 5, 2, 10, 55);
     fwbacorr->add (*wbaVB);
 	vbColorMan->pack_start (*fwbacorr, Gtk::PACK_SHRINK);
@@ -1878,6 +1885,7 @@ void Preferences::storePreferences()
     moptions.rtSettings.autocielab = mcie->get_active();
     moptions.rtSettings.observer10 = mwba->get_active();
 	moptions.rtSettings.itcwb_stdobserver10 = mwbacorr->get_active();
+	moptions.rtSettings.itcwb_sort = mwbasort->get_active();
     moptions.rtSettings.itcwb_thres = wbacorrnb->get_value_as_int();
 
 #endif
@@ -2037,6 +2045,7 @@ void Preferences::fillPreferences()
     mcie->set_active(moptions.rtSettings.autocielab);
     mwba->set_active(moptions.rtSettings.observer10);
 	mwbacorr->set_active(moptions.rtSettings.itcwb_stdobserver10);
+	mwbasort->set_active(moptions.rtSettings.itcwb_sort);
     wbacorrnb->set_value (moptions.rtSettings.itcwb_thres);
 	
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);

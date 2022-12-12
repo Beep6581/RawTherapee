@@ -134,6 +134,7 @@ class Preferences final :
     Gtk::SpinButton*  shThresh;
     Gtk::CheckButton* mwba;
     Gtk::CheckButton* mwbacorr;
+    Gtk::CheckButton* mwbasort;
     Gtk::SpinButton*  wbacorrnb;
 
     Gtk::SpinButton*  panFactor;
