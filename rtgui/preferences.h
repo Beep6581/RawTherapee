@@ -133,6 +133,8 @@ class Preferences final :
     Gtk::SpinButton*  hlThresh;
     Gtk::SpinButton*  shThresh;
     Gtk::CheckButton* mwba;
+    Gtk::CheckButton* mwbacorr;
+    Gtk::SpinButton*  wbacorrnb;
 
     Gtk::SpinButton*  panFactor;
     Gtk::CheckButton* rememberZoomPanCheckbutton;
