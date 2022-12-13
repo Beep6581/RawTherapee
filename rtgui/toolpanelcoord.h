@@ -220,6 +220,7 @@ private:
     EditDataProvider *editDataProvider;
     sigc::connection notebookconn;
     bool photoLoadedOnce; // Used to indicated that a photo has been loaded yet
+    std::shared_ptr<RTSurface> ornamentSurface;
     Gtk::Widget* prevPage;
 
 public:
