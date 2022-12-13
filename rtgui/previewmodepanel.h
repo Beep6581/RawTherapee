@@ -20,7 +20,6 @@
 #include <gtkmm.h>
 
 class ImageArea;
-class RTImage;
 
 class PreviewModePanel :
     public Gtk::Box
@@ -45,14 +44,6 @@ protected:
     const Glib::ustring nBC1, ngBC1;
     const Glib::ustring nBC2, ngBC2;
     const Glib::ustring nBC3, ngBC3;
-    RTImage* const iR;
-    RTImage* const iG;
-    RTImage* const iB;
-    RTImage* const iL;
-    RTImage* const iBC0;
-    RTImage* const iBC1;
-    RTImage* const iBC2;
-    RTImage* const iBC3;
 
 public:
     explicit PreviewModePanel (ImageArea* ia);
