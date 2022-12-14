@@ -176,7 +176,6 @@ if(LENSFUN_HAS_LOAD_DIRECTORY)
     set_source_files_properties(rtlensfun.cc PROPERTIES COMPILE_DEFINITIONS RT_LENSFUN_HAS_LOAD_DIRECTORY)
 endif()
 
-set_source_files_properties(procparams.cc PROPERTIES COMPILE_FLAGS -fno-tree-pta)
 
 if(WITH_BENCHMARK)
     add_definitions(-DBENCHMARK)
