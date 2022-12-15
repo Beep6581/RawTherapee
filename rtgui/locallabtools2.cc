@@ -8305,7 +8305,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         sourceGraycie->set_tooltip_text(M("TP_LOCALLAB_JZLOGYBOUT_TOOLTIP"));
         sourceabscie->set_tooltip_text(M("TP_COLORAPP_ADAPSCEN_TOOLTIP"));
         cie1Frame->set_tooltip_text(M("TP_LOCALLAB_LOGIMAGE_TOOLTIP"));
-        sigmoidFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID_TOOLTIP"));
+        sigmoidFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID16_TOOLTIP"));
         sigmoidjzFrame->set_tooltip_text(M("TP_LOCALLAB_SIGMOID_TOOLTIP"));
         contlcie->set_tooltip_text(M("TP_LOCALLAB_LOGCONTL_TOOLTIP"));
         contqcie->set_tooltip_text(M("TP_LOCALLAB_LOGCONTQ_TOOLTIP"));
@@ -8337,8 +8337,9 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         blurcie->set_tooltip_text(M("TP_LOCALLAB_BLURRMASK_TOOLTIP"));
         LLmaskcieshapewav->setTooltip(M("TP_LOCALLAB_LMASK_LEVEL_TOOLTIP"));
         maskcieHCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_HHMASK_TOOLTIP"));
-
-
+		sigmoidqjcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDQJCIE_TOOLTIP"));
+		comprcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP"));
+		comprcieth->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP"));
     } else {
         reparcie->set_tooltip_text("");
         recothrescie->set_tooltip_text("");
@@ -8400,6 +8401,9 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         blurcie->set_tooltip_text("");
         LLmaskcieshapewav->setTooltip("");
         maskcieHCurveEditorG->set_tooltip_text("");
+		sigmoidqjcie->set_tooltip_text("");
+		comprcie->set_tooltip_text("");
+		comprcieth->set_tooltip_text("");
 
     }
 }
