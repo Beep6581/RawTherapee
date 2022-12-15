@@ -7470,7 +7470,7 @@ Locallabcie::Locallabcie():
     sigmoidqjcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDQJ")))),
     logcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGCIE")))),
     comprcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.))),
-    comprcieth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIETH"), 0., 10., 0.01, 4.))),
+    comprcieth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIETH"), 0., 10., 0.01, 2.))),
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
     sigjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoidldajzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 1.0, 0.01, 0.5))),
