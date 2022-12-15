@@ -304,6 +304,7 @@ protected:
     LocLLmaskCurve locllmasCurve;
     LocHHmaskCurve lochhmasCurve;
     LocHHmaskCurve lochhhmasCurve;
+    LocHHmaskCurve lochhhmascieCurve;
     LocCCmaskCurve locccmasexpCurve;
     LocLLmaskCurve locllmasexpCurve;
     LocHHmaskCurve lochhmasexpCurve;

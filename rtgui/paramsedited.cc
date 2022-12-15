@@ -1763,6 +1763,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).CCmaskciecurve = locallab.spots.at(j).CCmaskciecurve && pSpot.CCmaskciecurve == otherSpot.CCmaskciecurve;
                 locallab.spots.at(j).LLmaskciecurve = locallab.spots.at(j).LLmaskciecurve && pSpot.LLmaskciecurve == otherSpot.LLmaskciecurve;
                 locallab.spots.at(j).HHmaskciecurve = locallab.spots.at(j).HHmaskciecurve && pSpot.HHmaskciecurve == otherSpot.HHmaskciecurve;
+                locallab.spots.at(j).HHhmaskciecurve = locallab.spots.at(j).HHhmaskciecurve && pSpot.HHhmaskciecurve == otherSpot.HHhmaskciecurve;
                 locallab.spots.at(j).blendmaskcie = locallab.spots.at(j).blendmaskcie && pSpot.blendmaskcie == otherSpot.blendmaskcie;
                 locallab.spots.at(j).radmaskcie = locallab.spots.at(j).radmaskcie && pSpot.radmaskcie == otherSpot.radmaskcie;
                 locallab.spots.at(j).chromaskcie = locallab.spots.at(j).chromaskcie && pSpot.chromaskcie == otherSpot.chromaskcie;
@@ -6076,6 +6077,10 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).HHmaskciecurve = mods.locallab.spots.at(i).HHmaskciecurve;
         }
 
+        if (locallab.spots.at(i).HHhmaskciecurve) {
+            toEdit.locallab.spots.at(i).HHhmaskciecurve = mods.locallab.spots.at(i).HHhmaskciecurve;
+        }
+
         if (locallab.spots.at(i).blendmaskcie) {
             toEdit.locallab.spots.at(i).blendmaskcie = mods.locallab.spots.at(i).blendmaskcie;
         }
@@ -8127,6 +8132,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     CCmaskciecurve(v),
     LLmaskciecurve(v),
     HHmaskciecurve(v),
+    HHhmaskciecurve(v),
     blendmaskcie(v),
     radmaskcie(v),
     sigmalcjz(v),
@@ -8838,6 +8844,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     CCmaskciecurve = v;
     LLmaskciecurve = v;
     HHmaskciecurve = v;
+    HHhmaskciecurve = v;
     blendmaskcie = v;
     radmaskcie = v;
     sigmalcjz = v;

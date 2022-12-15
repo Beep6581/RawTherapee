@@ -1065,6 +1065,7 @@ public:
         bool CCmaskciecurve;
         bool LLmaskciecurve;
         bool HHmaskciecurve;
+        bool HHhmaskciecurve;
         bool blendmaskcie;
         bool radmaskcie;
         bool sigmalcjz;

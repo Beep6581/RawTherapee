@@ -7558,7 +7558,9 @@ Locallabcie::Locallabcie():
     slomaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SLOMASKCOL"), 0.0, 15.0, 0.1, 0.))),
     highmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_HIGHMASKCOL"), 0, 100, 1, 0))),
     shadmaskcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SHAMASKCOL"), 0, 100, 1, 0))),
-    mask2cieCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
+    maskcieHCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, "")),
+    HHhmaskcieshape(static_cast<FlatCurveEditor *>(maskcieHCurveEditorG->addCurve(CT_Flat, "h(h)", nullptr, false, true))),
+	mask2cieCurveEditorG(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_MASK2"))),
     Lmaskcieshape(static_cast<DiagonalCurveEditor*>(mask2cieCurveEditorG->addCurve(CT_Diagonal, "L(L)"))),
     wavFramecie(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_TOOLMASK_2")))),
     mask2cieCurveEditorGwav(new CurveEditorGroup(options.lastlocalCurvesDir, M("TP_LOCALLAB_WAVMASK"))),
@@ -8154,6 +8156,12 @@ Locallabcie::Locallabcie():
     slomaskcie->setAdjusterListener(this);
     highmaskcie->setAdjusterListener(this);
     shadmaskcie->setAdjusterListener(this);
+    maskcieHCurveEditorG->setCurveListener(this);
+    HHhmaskcieshape->setIdentityValue(0.);
+    HHhmaskcieshape->setResetCurve(FlatCurveType(defSpot.HHhmaskciecurve.at(0)), defSpot.HHhmaskciecurve);
+    HHhmaskcieshape->setCurveColorProvider(this, 2);
+    HHhmaskcieshape->setBottomBarColorProvider(this, 2);
+    maskcieHCurveEditorG->curveListComplete();
 
     chromaskcie->setAdjusterListener(this);
     mask2cieCurveEditorG->setCurveListener(this);
@@ -8208,6 +8216,7 @@ Locallabcie::Locallabcie():
     maskcieBox->pack_start(*slomaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*highmaskcie, Gtk::PACK_SHRINK, 0);
     maskcieBox->pack_start(*shadmaskcie, Gtk::PACK_SHRINK, 0);
+    maskcieBox->pack_start(*maskcieHCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
 
     maskcieBox->pack_start(*mask2cieCurveEditorG, Gtk::PACK_SHRINK, 4); // Padding is mandatory to correct behavior of curve editor
     wavFramecie->set_label_align(0.025, 0.5);
@@ -8232,6 +8241,7 @@ Locallabcie::~Locallabcie()
     delete cieCurveEditorG;
     delete cieCurveEditorG2;
     delete maskcieCurveEditorG;
+    delete maskcieHCurveEditorG;
     delete mask2cieCurveEditorG;
     delete LocalcurveEditorwavjz;
     delete mask2cieCurveEditorGwav;
@@ -8326,6 +8336,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         contcie->set_tooltip_text(M("TP_LOCALLAB_CONTTHMASK_TOOLTIP"));
         blurcie->set_tooltip_text(M("TP_LOCALLAB_BLURRMASK_TOOLTIP"));
         LLmaskcieshapewav->setTooltip(M("TP_LOCALLAB_LMASK_LEVEL_TOOLTIP"));
+        maskcieHCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_HHMASK_TOOLTIP"));
 
 
     } else {
@@ -8388,6 +8399,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         contcie->set_tooltip_text("");
         blurcie->set_tooltip_text("");
         LLmaskcieshapewav->setTooltip("");
+        maskcieHCurveEditorG->set_tooltip_text("");
 
     }
 }
@@ -8712,6 +8724,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         slomaskcie->setValue(spot.slomaskcie);
         highmaskcie->setValue(spot.highmaskcie);
         shadmaskcie->setValue(spot.shadmaskcie);
+        HHhmaskcieshape->setCurve(spot.HHhmaskciecurve);
         Lmaskcieshape->setCurve(spot.Lmaskciecurve);
         recothrescie->setValue((double)spot.recothrescie);
         lowthrescie->setValue((double)spot.lowthrescie);
@@ -8897,6 +8910,7 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
         spot.slomaskcie = slomaskcie->getValue();
         spot.highmaskcie = highmaskcie->getValue();
         spot.shadmaskcie = shadmaskcie->getValue();
+        spot.HHhmaskciecurve = HHhmaskcieshape->getCurve();
         spot.Lmaskciecurve = Lmaskcieshape->getCurve();
         spot.recothrescie = recothrescie->getValue();
         spot.lowthrescie = lowthrescie->getValue();
@@ -8953,7 +8967,7 @@ void Locallabcie::updateMaskBackground(const double normChromar, const double no
         LLmaskcieshape->updateLocallabBackground(normLumar);
         HHmaskcieshape->updateLocallabBackground(normHuer);
         Lmaskcieshape->updateLocallabBackground(normLumar);
-
+		HHhmaskcieshape->updateLocallabBackground(normHuer);
         return false;
     }
     );
@@ -9626,6 +9640,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             struFramecie->hide();
             blurFramecie->hide();
             wavFramecie->hide();
+            maskcieHCurveEditorG->hide();
 
             if (enacieMask->get_active()) {
                 maskusablecie->show();
@@ -9724,6 +9739,7 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             slomaskcie->show();
             highmaskcie->show();
             shadmaskcie->show();
+            maskcieHCurveEditorG->show();
             expmaskcie->show();
             exprecovcie->show();
             struFramecie->show();
@@ -10042,6 +10058,7 @@ void Locallabcie::convertParamToNormal()
     slomaskcie->setValue(defSpot.slomaskcie);
     highmaskcie->setValue(defSpot.highmaskcie);
     shadmaskcie->setValue(defSpot.shadmaskcie);
+    HHhmaskcieshape->setCurve(defSpot.HHhmaskciecurve);
     strumaskcie->setValue(defSpot.strumaskcie);
     toolcie->set_active(defSpot.toolcie);
     fftcieMask->set_active(defSpot.fftcieMask);
@@ -10207,6 +10224,13 @@ void Locallabcie::curveChanged(CurveEditor* ce)
         if (ce == HHmaskcieshape) {
             if (listener) {
                 listener->panelChanged(EvlocallabHHmaskcieshape,
+                                       M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
+            }
+        }
+
+        if (ce == HHhmaskcieshape) {
+            if (listener) {
+                listener->panelChanged(EvlocallabHHhmaskcieshape,
                                        M("HISTORY_CUSTOMCURVE") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
         }

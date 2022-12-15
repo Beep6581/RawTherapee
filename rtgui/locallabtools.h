@@ -1679,6 +1679,9 @@ private:
     Adjuster* const slomaskcie;
     Adjuster* const highmaskcie;
     Adjuster* const shadmaskcie;
+    CurveEditorGroup* const maskcieHCurveEditorG;
+    FlatCurveEditor* const HHhmaskcieshape;
+	
     CurveEditorGroup* const mask2cieCurveEditorG;
     DiagonalCurveEditor* const Lmaskcieshape;
     Gtk::Frame* const wavFramecie;   
