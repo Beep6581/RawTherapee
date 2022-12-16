@@ -1585,7 +1585,7 @@ private:
     Adjuster* const sigmoidthcie;
     Adjuster* const sigmoidsenscie;
     Adjuster* const sigmoidblcie;
-    Gtk::CheckButton* const sigmoidqjcie;
+    Gtk::CheckButton* const comprcieauto;
     Gtk::Box* const modeHBoxbwev;
     MyComboBoxText* const bwevMethod;	
     Gtk::CheckButton* const logcie;
@@ -1692,7 +1692,7 @@ private:
     Gtk::Box* const quaHcieBox;
     ThresholdAdjuster* const csThresholdcie;
    
-    sigc::connection AutograycieConn,  forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, logcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn;
+    sigc::connection AutograycieConn,  forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, logcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn;
 public:
     Locallabcie();
     ~Locallabcie();
@@ -1737,7 +1737,7 @@ private:
     void forcebwChanged();
     void qtojChanged();
     void jabcieChanged();
-    void sigmoidqjcieChanged();
+    void comprcieautoChanged();
     void logcieChanged();
     void logjzChanged();
     void sigjzChanged();

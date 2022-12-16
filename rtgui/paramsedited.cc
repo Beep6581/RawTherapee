@@ -1684,7 +1684,7 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
                 locallab.spots.at(j).forcebw = locallab.spots.at(j).forcebw && pSpot.forcebw == otherSpot.forcebw;
                 locallab.spots.at(j).qtoj = locallab.spots.at(j).qtoj && pSpot.qtoj == otherSpot.qtoj;
                 locallab.spots.at(j).jabcie = locallab.spots.at(j).jabcie && pSpot.jabcie == otherSpot.jabcie;
-                locallab.spots.at(j).sigmoidqjcie = locallab.spots.at(j).sigmoidqjcie && pSpot.sigmoidqjcie == otherSpot.sigmoidqjcie;
+                locallab.spots.at(j).comprcieauto = locallab.spots.at(j).comprcieauto && pSpot.comprcieauto == otherSpot.comprcieauto;
                 locallab.spots.at(j).logcie = locallab.spots.at(j).logcie && pSpot.logcie == otherSpot.logcie;
                 locallab.spots.at(j).logjz = locallab.spots.at(j).logjz && pSpot.logjz == otherSpot.logjz;
                 locallab.spots.at(j).sigjz = locallab.spots.at(j).sigjz && pSpot.sigjz == otherSpot.sigjz;
@@ -5749,8 +5749,8 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
             toEdit.locallab.spots.at(i).jabcie = mods.locallab.spots.at(i).jabcie;
         }
 
-        if (locallab.spots.at(i).sigmoidqjcie) {
-            toEdit.locallab.spots.at(i).sigmoidqjcie = mods.locallab.spots.at(i).sigmoidqjcie;
+        if (locallab.spots.at(i).comprcieauto) {
+            toEdit.locallab.spots.at(i).comprcieauto = mods.locallab.spots.at(i).comprcieauto;
         }
 
         if (locallab.spots.at(i).logcie) {
@@ -8058,7 +8058,7 @@ LocallabParamsEdited::LocallabSpotEdited::LocallabSpotEdited(bool v) :
     forcebw(v),
     qtoj(v),
     jabcie(v),
-    sigmoidqjcie(v),
+    comprcieauto(v),
     logcie(v),
     logjz(v),
     sigjz(v),
@@ -8771,7 +8771,7 @@ void LocallabParamsEdited::LocallabSpotEdited::set(bool v)
     forcebw = v;
     qtoj = v;
     jabcie = v;
-    sigmoidqjcie = v;
+    comprcieauto = v;
     logcie = v;
     logjz = v;
     sigjz = v;

@@ -986,7 +986,7 @@ public:
         bool forcebw;
         bool qtoj;
         bool jabcie;
-        bool sigmoidqjcie;
+        bool comprcieauto;
         bool logcie;
         bool logjz;
         bool sigjz;

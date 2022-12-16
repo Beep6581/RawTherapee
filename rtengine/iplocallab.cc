@@ -2659,7 +2659,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie;
     const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie;
     const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie;
-    const bool sigmoidqj = params->locallab.spots.at(sp).sigmoidqjcie;
+    const bool sigmoidqj = params->locallab.spots.at(sp).comprcieauto;
 	int mobwev = 0;
     if (params->locallab.spots.at(sp).bwevMethod == "none") {
         mobwev = 0;
