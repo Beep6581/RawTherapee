@@ -996,6 +996,7 @@ public:
         bool sourceabscie;
         bool sursourcie;
         bool modecam;
+        bool bwevMethod;
         bool modecie;
         bool saturlcie;
         bool rstprotectcie;

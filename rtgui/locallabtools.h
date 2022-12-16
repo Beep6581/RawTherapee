@@ -1586,6 +1586,8 @@ private:
     Adjuster* const sigmoidsenscie;
     Adjuster* const sigmoidblcie;
     Gtk::CheckButton* const sigmoidqjcie;
+    Gtk::Box* const modeHBoxbwev;
+    MyComboBoxText* const bwevMethod;	
     Gtk::CheckButton* const logcie;
     Adjuster* const comprcie;
     Adjuster* const comprcieth;
@@ -1690,7 +1692,7 @@ private:
     Gtk::Box* const quaHcieBox;
     ThresholdAdjuster* const csThresholdcie;
    
-    sigc::connection AutograycieConn,  forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, logcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, fftcieMaskConn;
+    sigc::connection AutograycieConn,  forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, sigmoidqjcieconn, logcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn;
 public:
     Locallabcie();
     ~Locallabcie();
@@ -1721,6 +1723,7 @@ public:
     void curveChanged(CurveEditor* ce) override;
     void toneMethodcieChanged();
     void toneMethodcie2Changed();
+    void bwevMethodChanged();
     void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const float jz1);
 
 private:

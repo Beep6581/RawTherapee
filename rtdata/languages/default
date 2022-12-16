@@ -2709,6 +2709,9 @@ TP_LOCALLAB_BUTTON_DEL;Delete
 TP_LOCALLAB_BUTTON_DUPL;Duplicate
 TP_LOCALLAB_BUTTON_REN;Rename
 TP_LOCALLAB_BUTTON_VIS;Show/Hide
+TP_LOCALLAB_BWEVNONE;None
+TP_LOCALLAB_BWEVSIG;Sigmoid Q only
+TP_LOCALLAB_BWEVSIGLOG;Sigmoid & Log-Encoding Q
 TP_LOCALLAB_BWFORCE;Uses Black Ev & White Ev
 TP_LOCALLAB_CAM16PQREMAP;HDR PQ (Peak Luminance)
 TP_LOCALLAB_CAM16PQREMAP_TOOLTIP;PQ (Perceptual Quantizer) adapted to CAM16. Allows you to change the internal PQ function (usually 10000 cd/m2 - default 100 cd/m2 - disabled for 100 cd/m2).\nCan be used to adapt to different devices and images.
@@ -3311,6 +3314,7 @@ TP_LOCALLAB_SIGJZFRA;Sigmoid Jz
 TP_LOCALLAB_SIGMAWAV;Attenuation response
 TP_LOCALLAB_SIGMOIDBL;Blend
 TP_LOCALLAB_SIGMOIDLAMBDA;Contrast
+TP_LOCALLAB_SIGMOIDLOGAUTO;Auto threshold
 TP_LOCALLAB_SIGMOIDQJ;Uses Black Ev & White Ev
 TP_LOCALLAB_SIGMOIDSENSI;Adaptability
 TP_LOCALLAB_SIGMOIDTH;Threshold (Gray point)

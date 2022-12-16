@@ -7467,8 +7467,10 @@ Locallabcie::Locallabcie():
     sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.1, 4., 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     sigmoidsenscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDSENSI"), 0.1, 0.9, 0.01, 0.5))),
     sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.5, 1.5, 0.01, 1.))),
-    sigmoidqjcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDQJ")))),
-    logcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGCIE")))),
+    sigmoidqjcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDLOGAUTO")))),
+    modeHBoxbwev(Gtk::manage(new Gtk::Box())),
+    bwevMethod(Gtk::manage(new MyComboBoxText())),
+	logcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGCIE")))),
     comprcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.))),
     comprcieth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIETH"), 0., 10., 0.01, 2.))),
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
@@ -7654,16 +7656,27 @@ Locallabcie::Locallabcie():
     sigmoidFrame->set_label_widget(*sigq);
     ToolParamBlock* const sigBox = Gtk::manage(new ToolParamBlock());
     Gtk::Separator* const separatorsig = Gtk::manage(new Gtk::Separator(Gtk::ORIENTATION_HORIZONTAL));
+    modeHBoxbwev->set_spacing(2);
+    //modeHBoxcam->set_tooltip_markup (M ("TP_LOCALLAB_CAMMODE_TOOLTIP"));
+    Gtk::Label* modeLabelbwev = Gtk::manage(new Gtk::Label(M("TP_LOCALLAB_SIGMOIDQJ") + ":"));
+    modeHBoxbwev->pack_start(*modeLabelbwev, Gtk::PACK_SHRINK);
 
+    bwevMethod->append(M("TP_LOCALLAB_BWEVNONE"));
+    bwevMethod->append(M("TP_LOCALLAB_BWEVSIG"));
+    bwevMethod->append(M("TP_LOCALLAB_BWEVSIGLOG"));
+    bwevMethod->set_active(0);
+    bwevMethodConn = bwevMethod->signal_changed().connect(sigc::mem_fun(*this, &Locallabcie::bwevMethodChanged));
+	modeHBoxbwev->pack_start(*bwevMethod);
     sigBox->pack_start(*sigmoidldacie);
     sigBox->pack_start(*sigmoidthcie);
     sigBox->pack_start(*sigmoidsenscie);
     sigBox->pack_start(*sigmoidblcie);
-    sigBox->pack_start(*sigmoidqjcie);
+    sigBox->pack_start(*modeHBoxbwev);
     sigBox->pack_start(*separatorsig);
     sigBox->pack_start(*logcie);
     sigBox->pack_start(*comprcie);
     sigBox->pack_start(*comprcieth);
+//   sigBox->pack_start(*sigmoidqjcie);
     sigmoidFrame->add(*sigBox);
     cieFBox->pack_start(*sigmoidFrame);
 
@@ -8425,6 +8438,7 @@ void Locallabcie::disableListener()
     surroundcieconn.block(true);
     modecieconn.block(true);
     modecamconn.block(true);
+    bwevMethodConn.block(true);
     toneMethodcieConn.block(true);
     toneMethodcieConn2.block(true);
     showmaskcieMethodConn.block(true);
@@ -8451,6 +8465,7 @@ void Locallabcie::enableListener()
     surroundcieconn.block(false);
     modecieconn.block(false);
     modecamconn.block(false);
+    bwevMethodConn.block(false);
     toneMethodcieConn.block(false);
     toneMethodcieConn2.block(false);
     showmaskcieMethodConn.block(false);
@@ -8604,29 +8619,42 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         jabcie->set_active(spot.jabcie);
         jabcieChanged();
         modecamChanged();
+		bwevMethodChanged();
+		
+        if (spot.bwevMethod == "none") {
+			bwevMethod->set_active(0);
+        } else if (spot.bwevMethod == "sig") {
+            bwevMethod->set_active(1);
+        } else if (spot.bwevMethod == "logsig") {
+            bwevMethod->set_active(2);
+        }
 
         if (logcie->get_active()) {
             sigmoidldacie->set_sensitive(false);
             sigmoidthcie->set_sensitive(false);
             sigmoidsenscie->set_sensitive(false);
             sigmoidblcie->set_sensitive(false);
-            sigmoidqjcie->set_sensitive(false);
+          //  sigmoidqjcie->set_sensitive(false);
+            modeHBoxbwev->set_sensitive(false);
             comprcie->set_sensitive(true);
             comprcieth->set_sensitive(true);
         } else {
             sigmoidldacie->set_sensitive(true);
             sigmoidthcie->set_sensitive(true);
-            sigmoidsenscie->set_sensitive(true);
+          //  sigmoidsenscie->set_sensitive(true);
             sigmoidblcie->set_sensitive(true);
             sigmoidqjcie->set_sensitive(true);
-
-            if (sigmoidqjcie->get_active()) {
+            modeHBoxbwev->set_sensitive(true);
+			if(bwevMethod->get_active_row_number() == 2) {
+            //if (sigmoidqjcie->get_active()) {
                 comprcie->set_sensitive(true);
                 comprcieth->set_sensitive(true);
+				sigmoidqjcie->set_sensitive(true);
             } else {
                 comprcie->set_sensitive(false);
                 comprcieth->set_sensitive(false);
-            }
+ 				sigmoidqjcie->set_sensitive(false);
+           }
         }
 
         if (spot.sursourcie == "Average") {
@@ -8636,6 +8664,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         } else if (spot.sursourcie == "Dark") {
             sursourcie->set_active(2);
         }
+
 
         if (spot.surroundcie == "Average") {
             surroundcie->set_active(0);
@@ -8822,6 +8851,14 @@ void Locallabcie::write(rtengine::procparams::ProcParams* pp, ParamsEdited* pedi
             spot.sursourcie = "Dim";
         } else if (sursourcie->get_active_row_number() == 2) {
             spot.sursourcie = "Dark";
+        }
+
+        if (bwevMethod->get_active_row_number() == 0) {
+            spot.bwevMethod = "none";
+        } else if (bwevMethod->get_active_row_number() == 1) {
+            spot.bwevMethod = "sig";
+        } else if (bwevMethod->get_active_row_number() == 2) {
+            spot.bwevMethod = "logsig";
         }
 
         if (surroundcie->get_active_row_number() == 0) {
@@ -9106,7 +9143,7 @@ void Locallabcie::jabcieChanged()
 void Locallabcie::sigmoidqjcieChanged()
 {
     if (isLocActivated && exp->getEnabled()) {
-
+/*
         if (sigmoidqjcie->get_active()) {
             comprcie->set_sensitive(true);
             comprcieth->set_sensitive(true);
@@ -9114,7 +9151,7 @@ void Locallabcie::sigmoidqjcieChanged()
             comprcie->set_sensitive(false);
             comprcieth->set_sensitive(false);
         }
-
+*/
         if (listener) {
             if (sigmoidqjcie->get_active()) {
                 listener->panelChanged(Evlocallabsigmoidqjcie,
@@ -9135,22 +9172,30 @@ void Locallabcie::logcieChanged()
         sigmoidthcie->set_sensitive(false);
         sigmoidsenscie->set_sensitive(false);
         sigmoidblcie->set_sensitive(false);
-        sigmoidqjcie->set_sensitive(false);
+      //  sigmoidqjcie->set_sensitive(false);
+		modeHBoxbwev->set_sensitive(false);
         comprcie->set_sensitive(true);
         comprcieth->set_sensitive(true);
+		comprcie->setValue(0.);//to test
+
     } else {
         sigmoidldacie->set_sensitive(true);
         sigmoidthcie->set_sensitive(true);
         sigmoidsenscie->set_sensitive(true);
         sigmoidblcie->set_sensitive(true);
-        sigmoidqjcie->set_sensitive(true);
-
-        if (sigmoidqjcie->get_active()) {
+      //  sigmoidqjcie->set_sensitive(true);
+		modeHBoxbwev->set_sensitive(true);
+		if(bwevMethod->get_active_row_number() == 2) {
+        //if (sigmoidqjcie->get_active()) {
             comprcie->set_sensitive(true);
             comprcieth->set_sensitive(true);
+			sigmoidqjcie->set_sensitive(true);
+			//comprcie->setValue(0.4);//to test
+
         } else {
             comprcie->set_sensitive(false);
             comprcieth->set_sensitive(false);
+			sigmoidqjcie->set_sensitive(false);
         }
 
 
@@ -9486,6 +9531,28 @@ void Locallabcie::sursourcieChanged()
         }
     }
 }
+
+void Locallabcie::bwevMethodChanged()
+{
+	    if (bwevMethod->get_active_row_number() == 2) {
+            comprcie->set_sensitive(true);
+            comprcieth->set_sensitive(true);
+        } else {
+            comprcie->set_sensitive(false);
+            comprcieth->set_sensitive(false);
+        }
+        if (bwevMethod->get_active_row_number() == 2) {
+			comprcie->setValue(0.4);//to test
+		}
+	
+    if (isLocActivated && exp->getEnabled()) {
+        if (listener) {
+            listener->panelChanged(EvlocallabbwevMethod,
+                                   bwevMethod->get_active_text() + " (" + escapeHtmlChars(getSpotName()) + ")");
+        }
+    }
+}
+
 
 void Locallabcie::surroundcieChanged()
 {

@@ -2660,6 +2660,14 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie;
     const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie;
     const bool sigmoidqj = params->locallab.spots.at(sp).sigmoidqjcie;
+	int mobwev = 0;
+    if (params->locallab.spots.at(sp).bwevMethod == "none") {
+        mobwev = 0;
+    } else if (params->locallab.spots.at(sp).bwevMethod == "sig") {
+        mobwev = 1;
+    } else if (params->locallab.spots.at(sp).bwevMethod == "logsig") {
+        mobwev = 2;
+    }
 
     float senssig = (float) params->locallab.spots.at(sp).sigmoidsenscie;
     TMatrix wiprof = ICCStore::getInstance()->workingSpaceInverseMatrix(params->icm.workingProfile);
@@ -3940,7 +3948,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         float linbase = 10.;
         float gray = 15.;
 
-        if (islogq  || sigmoidqj) {
+        if (islogq  || mobwev != 0) {
             gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
             gray = pow_F(gray, 1.2f);//or 1.15 => modification to increase sensitivity gain, only on defaults, of course we can change this value manually...take into account suuround and Yb Cam16
             const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;
@@ -4121,17 +4129,17 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                         }
 
 
-                        if (issigq && iscie && !islogq) { //sigmoid Q only with ciecam module
+                        if (issigq && iscie && !islogq && mobwev == 2) { //sigmoid Q only with ciecam module
                             float val = Qpro * coefq;
 
-                            if (sigmoidqj) {
+                          //  if (sigmoidqj) {
                                 if (val > (float) noise) {
                                     float mm = applytoq(val);
                                     float f = mm / val;
                                     Qpro *=  f;
                                     val = Qpro * coefq;
                                 }
-                            }
+                         //   }
 
                             if (sigmoidth >= 1.f) {
                                 th = ath * val + bth;
@@ -4144,6 +4152,20 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                             Qpro = std::max(bl * Qpro + bl2 * val / coefq, 0.f);
                         }
 
+                        if(issigq && iscie && !islogq && mobwev != 2) {//sigmoid Q only with ciecam module
+                            float val = Qpro * coefq;
+                            if(mobwev == 1) {
+                                val = std::max((xlog(val) / log2 - shadows_range) / (dynamic_range + 1.5), noise);//in range EV
+                            }
+                            if(sigmoidth >= 1.f) {
+                                th = ath * val + bth;
+                            } else {
+                                th = at * val + bt;
+                            }
+                            sigmoidla (val, th, sigm);
+                            float bl2 = 1.f;
+                            Qpro = std::max(bl * Qpro + bl2 * val / coefq, 0.f);
+                        }
 
                         float Mp, sres;
                         Mp = Mpro / 100.0f;
