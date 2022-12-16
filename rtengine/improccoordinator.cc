@@ -985,6 +985,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             lumarefp = new float[sizespot];
             float *fabrefp = nullptr;
             fabrefp = new float[sizespot];
+            float *maxicamp = nullptr;
+            maxicamp = new float[sizespot];
+            bool *autocam = nullptr;
+            autocam = new bool[sizespot];
 
             for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
 
@@ -995,6 +999,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 if (params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti) {
                     savenormreti.reset(new LabImage(*oprevl, true));
                 }
+				
+				autocam[sp] = params->locallab.spots.at(sp).comprcieauto;
+
                 // Set local curves of current spot to LUT
                 locRETgainCurve.Set(params->locallab.spots.at(sp).localTgaincurve);
                 locRETtransCurve.Set(params->locallab.spots.at(sp).localTtranscurve);
@@ -1104,6 +1111,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 meanretie = 0.f;
                 stdretie = 0.f;
                 float fab = 1.f;
+				float maxicam = -1000.f;
                 bool istm = params->locallab.spots.at(sp).equiltm  && params->locallab.spots.at(sp).exptonemap;
                 bool isreti = params->locallab.spots.at(sp).equilret  && params->locallab.spots.at(sp).expreti;
                 //preparation for mean and sigma on current RT-spot
@@ -1244,10 +1252,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                               huerblu, chromarblu, lumarblu, huer, chromar, lumar, sobeler, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                              meantm, stdtm, meanreti, stdreti, fab);
+                              meantm, stdtm, meanreti, stdreti, fab, maxicam);
 
 
                 fabrefp[sp] = fab;
+                maxicamp[sp] = 0.7f * maxicam;//0.7 arbitrary coef.
+				printf("maxicamimp=%f\n", maxicam);
                 if (istm) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;
                     float stdf = 0.f;
@@ -1317,6 +1327,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
               //  locallListener->refChanged(locallref, params->locallab.selspot);
                 locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
                 locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
+                locallListener->maxcam(maxicamp, autocam, params->locallab.selspot);
             }
 
             }
@@ -1324,6 +1335,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             delete [] chromarefp;
             delete [] lumarefp;
             delete [] fabrefp;
+            delete [] maxicamp;
+			
             // Transmit Locallab reference values and Locallab Retinex min/max to LocallabListener
             /*
             if (locallListener) {

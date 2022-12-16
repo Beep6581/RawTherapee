@@ -1725,6 +1725,7 @@ public:
     void toneMethodcie2Changed();
     void bwevMethodChanged();
     void updateAutocompute(const float blackev, const float whiteev, const float sourceg, const float sourceab, const float targetg, const float jz1);
+    void updateAutocam(const float maxicam);
 
 private:
     void enabledChanged() override;

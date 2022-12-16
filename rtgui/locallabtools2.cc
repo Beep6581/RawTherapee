@@ -9041,6 +9041,23 @@ void Locallabcie::updateAutocompute(const float blackev, const float whiteev, co
     }
 }
 
+void Locallabcie::updateAutocam(const float maxicam)
+{
+    if (comprcieauto->get_active()) {
+        idle_register.add(
+        [this, maxicam]() -> bool {
+            GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
+            disableListener();
+            comprcieth->setValue(maxicam);
+            enableListener();
+
+            return false;
+        }
+        );
+    }
+	
+}
+
 
 
 void Locallabcie::AutograycieChanged()

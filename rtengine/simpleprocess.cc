@@ -1162,6 +1162,7 @@ private:
                 float meanretie;
                 float stdretie;
                 float fab = 1.f;
+				float maxicam = -1000.f;
                 
                 if (params.locallab.spots.at(sp).spotMethod == "exc") {
                     ipf.calc_ref(sp, reservView.get(), reservView.get(), 0, 0, fw, fh, 1, huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, avge, locwavCurveden, locwavdenutili);
@@ -1234,7 +1235,7 @@ private:
                         LHutili, HHutili, CHutili, HHutilijz, CHutilijz, LHutilijz, cclocalcurve, localcutili, rgblocalcurve, localrgbutili, localexutili, exlocalcurve, hltonecurveloc, shtonecurveloc, tonecurveloc, lightCurveloc,
                         huerefblu, chromarefblu, lumarefblu, huere, chromare, lumare, sobelre, lastsav, false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                         minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
-                        meantme, stdtme, meanretie, stdretie, fab
+                        meantme, stdtme, meanretie, stdretie, fab, maxicam
 );
 
                 if (sp + 1u < params.locallab.spots.size()) {

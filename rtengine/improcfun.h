@@ -191,7 +191,8 @@ enum class BlurType {
     void moyeqt(Imagefloat* working, float &moyS, float &eqty);
 
     void luminanceCurve(LabImage* lold, LabImage* lnew, const LUTf &curve);
-    void ciecamloc_02float(const struct local_params& lp, int sp, LabImage* lab, int bfw, int bfh, int call, int sk, const LUTf& cielocalcurve, bool localcieutili, const LUTf& cielocalcurve2, bool localcieutili2, const LUTf& jzlocalcurve, bool localjzutili, const LUTf& czlocalcurve, bool localczutili, const LUTf& czjzlocalcurve, bool localczjzutili, const LocCHCurve& locchCurvejz, const LocHHCurve& lochhCurve, const LocLHCurve& loclhCurve, bool HHcurvejz, bool CHcurvejz, bool LHcurvejz, const LocwavCurve& locwavCurvejz, bool locwavutilijz);
+    void ciecamloc_02float(const struct local_params& lp, int sp, LabImage* lab, int bfw, int bfh, int call, int sk, const LUTf& cielocalcurve, bool localcieutili, const LUTf& cielocalcurve2, bool localcieutili2, const LUTf& jzlocalcurve, bool localjzutili, const LUTf& czlocalcurve, bool localczutili, const LUTf& czjzlocalcurve, bool localczjzutili, const LocCHCurve& locchCurvejz, const LocHHCurve& lochhCurve, const LocLHCurve& loclhCurve, bool HHcurvejz, bool CHcurvejz, bool LHcurvejz, 
+		const LocwavCurve& locwavCurvejz, bool locwavutilijz, float &maxicam);
 
     void ciecam_02float(CieImage* ncie, float adap, int pW, int pwb, LabImage* lab, const procparams::ProcParams* params,
                         const ColorAppearance & customColCurve1, const ColorAppearance & customColCurve, const ColorAppearance & customColCurve3,
@@ -361,7 +362,7 @@ enum class BlurType {
                 double& huerefblur, double &chromarefblur, double& lumarefblur, double &hueref, double &chromaref, double &lumaref, double &sobelref, int &lastsav,
                 bool prevDeltaE, int llColorMask, int llColorMaskinv, int llExpMask, int llExpMaskinv, int llSHMask, int llSHMaskinv, int llvibMask, int lllcMask, int llsharMask, int llcbMask, int llretiMask, int llsoftMask, int lltmMask, int llblMask, int lllogMask, int ll_Mask, int llcieMask,
                 float &minCD, float &maxCD, float &mini, float &maxi, float &Tmean, float &Tsigma, float &Tmin, float &Tmax,
-                float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab);
+                float& meantm, float& stdtm, float& meanreti, float& stdreti, float &fab, float &maxicam);
 
     void addGaNoise(LabImage *lab, LabImage *dst, const float mean, const float variance, const int sk);
     void BlurNoise_Localold(int call, const struct local_params& lp, LabImage* original, LabImage* transformed, const LabImage* const tmp1, int cx, int cy);
