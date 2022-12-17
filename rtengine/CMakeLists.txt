@@ -177,6 +177,8 @@ if(LENSFUN_HAS_LOAD_DIRECTORY)
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "12.0")
+    # procparams.cc takes a long time to compile with optimizations starting
+    # with GCC 12.1 due to PTA (see issue #6548)
     get_source_file_property(PROCPARAMS_COMPILE_OPTIONS procparams.cc COMPILE_OPTIONS)
     if(PROCPARAMS_COMPILE_OPTIONS STREQUAL "NOTFOUND")
         set(PROCPARAMS_COMPILE_OPTIONS "")
