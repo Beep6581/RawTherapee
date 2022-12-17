@@ -33,7 +33,7 @@
 namespace rtengine
 {
 
-static const double cie_colour_match_jd2[97][3] = {//350nm to 830nm   5 nm J.Desmis 2° Standard Observer.
+static double cie_colour_match_jd2[97][3] = {//350nm to 830nm   5 nm J.Desmis 2° Standard Observer.
     {0.0000000, 0.000000, 0.000000}, {0.0000000, 0.000000, 0.000000}, {0.0001299, 0.0003917, 0.0006061},
     {0.0002321, 0.000006965, 0.001086}, {0.0004149, 0.00001239, 0.001946}, {0.0007416, 0.00002202, 0.003846},
     {0.001368, 0.000039, 0.006450001}, {0.002236, 0.000064, 0.01054999}, {0.004243, 0.000120, 0.02005001},
@@ -70,7 +70,7 @@ static const double cie_colour_match_jd2[97][3] = {//350nm to 830nm   5 nm J.Des
 };
 
 
-static double cie_colour_match_jd[97][3] = {//350nm to 830nm   5 nm J.Desmis 10° Standard Observer.
+static const double cie_colour_match_jd[97][3] = {//350nm to 830nm   5 nm J.Desmis 10° Standard Observer.
 {0.000000000000, 0.000000000000, 0.000000000000},
 {0.000000000000, 0.000000000000, 0.000000000000},
 {0.000000122200, 0.000000013398, 0.000000535027},
@@ -3388,7 +3388,7 @@ The next 3 methods are inspired from:
 
 this values are often called xBar yBar zBar and are characteristics of a color / illuminant
 
-values cie_colour_match[][3] = 2° Standard Observer x2, y2, z2
+values cie_colour_match2[][3] = 2° Standard Observer x2, y2, z2
 E.g. for 380nm: x2=0.001368  y2=0.000039  z2=0.006451  round in J.Walker to 0.0014  0.0000 0.0065 above
 I have increase precision used by J.Walker  and pass to 350nm to 830nm
 And also add 10°  standard observer
@@ -3401,9 +3401,9 @@ void ColorTemp::spectrum_to_xyz_daylight(double _m1, double _m2, double &x, doub
 
     for (i = 0, lambda = 350.; lambda < 830.1; i++, lambda += 5.) {
         double Me = daylight_spect(lambda, _m1, _m2);
-        X += Me * cie_colour_match_jd[i][0];
-        Y += Me * cie_colour_match_jd[i][1];
-        Z += Me * cie_colour_match_jd[i][2];
+        X += Me * cie_colour_match_jd2[i][0];
+        Y += Me * cie_colour_match_jd2[i][1];
+        Z += Me * cie_colour_match_jd2[i][2];
     }
 
     XYZ = (X + Y + Z);
@@ -3419,9 +3419,9 @@ void ColorTemp::spectrum_to_xyz_blackbody(double _temp, double &x, double &y, do
 
     for (i = 0, lambda = 350.; lambda < 830.1; i++, lambda += 5.) {
         double Me = blackbody_spect(lambda, _temp);
-        X += Me * cie_colour_match_jd[i][0];
-        Y += Me * cie_colour_match_jd[i][1];
-        Z += Me * cie_colour_match_jd[i][2];
+        X += Me * cie_colour_match_jd2[i][0];
+        Y += Me * cie_colour_match_jd2[i][1];
+        Z += Me * cie_colour_match_jd2[i][2];
     }
 
     XYZ = (X + Y + Z);
@@ -3447,16 +3447,16 @@ void ColorTemp::spectrum_to_xyz_preset(const double* spec_intens, double &x, dou
 
     this values are often called xBar yBar zBar and are characteristics of a color / illuminant
 
-    values cie_colour_match[][3] = 2° Standard Observer x2, y2, z2
+    values cie_colour_match_jd2[][3] = 2° Standard Observer x2, y2, z2
     E.g. for 380nm: x2=0.001368  y2=0.000039  z2=0.006451  round in J.Walker to 0.0014  0.0000 0.0065 above
     I have increased the precision used by J.Walker and pass from 350nm to 830nm
     And also add standard observer 10°
     */
     for (i = 0, lambda = 350.; lambda < 830.1; i++, lambda += 5.) {
         double Me = get_spectral_color(lambda, spec_intens);
-        X += Me * cie_colour_match_jd[i][0];
-        Y += Me * cie_colour_match_jd[i][1];
-        Z += Me * cie_colour_match_jd[i][2];
+        X += Me * cie_colour_match_jd2[i][0];
+        Y += Me * cie_colour_match_jd2[i][1];
+        Z += Me * cie_colour_match_jd2[i][2];
     }
 
     XYZ = (X + Y + Z);
@@ -3478,9 +3478,9 @@ void ColorTemp::spectrum_to_color_xyz_preset(const double* spec_color, const dou
 
         Me = get_spectral_color(lambda, spec_color);
         Mc = get_spectral_color(lambda, spec_intens);
-        X += Mc * cie_colour_match_jd[i][0] * Me;
-        Y += Mc * cie_colour_match_jd[i][1] * Me;
-        Z += Mc * cie_colour_match_jd[i][2] * Me;
+        X += Mc * cie_colour_match_jd2[i][0] * Me;
+        Y += Mc * cie_colour_match_jd2[i][1] * Me;
+        Z += Mc * cie_colour_match_jd2[i][2] * Me;
     }
 
     for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
@@ -3488,7 +3488,7 @@ void ColorTemp::spectrum_to_color_xyz_preset(const double* spec_color, const dou
         double Ms;
 
         Ms = get_spectral_color(lambda, spec_intens);
-        Yo += cie_colour_match_jd[i][1] * Ms;
+        Yo += cie_colour_match_jd2[i][1] * Ms;
     }
 
     xx = X / Yo;
@@ -3505,9 +3505,9 @@ void ColorTemp::spectrum_to_color_xyz_daylight(const double* spec_color, double 
     for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
         const double Me = spec_color[i];
         const double Mc = daylight_spect(lambda, _m1, _m2);
-        X += Mc * cie_colour_match_jd[i][0] * Me;
-        Y += Mc * cie_colour_match_jd[i][1] * Me;
-        Z += Mc * cie_colour_match_jd[i][2] * Me;
+        X += Mc * cie_colour_match_jd2[i][0] * Me;
+        Y += Mc * cie_colour_match_jd2[i][1] * Me;
+        Z += Mc * cie_colour_match_jd2[i][2] * Me;
     }
 
     xx = X / Y;
@@ -3524,9 +3524,9 @@ void ColorTemp::spectrum_to_color_xyz_blackbody(const double* spec_color, double
     for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
         const double Me = spec_color[i];
         const double Mc = blackbody_spect(lambda, _temp);
-        X += Mc * cie_colour_match_jd[i][0] * Me;
-        Y += Mc * cie_colour_match_jd[i][1] * Me;
-        Z += Mc * cie_colour_match_jd[i][2] * Me;
+        X += Mc * cie_colour_match_jd2[i][0] * Me;
+        Y += Mc * cie_colour_match_jd2[i][1] * Me;
+        Z += Mc * cie_colour_match_jd2[i][2] * Me;
     }
 
     xx = X / Y;
@@ -3769,11 +3769,11 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         }
     }
 
-    if (settings->itcwb_stdobserver10 == false) {
+    if (settings->itcwb_stdobserver10 == true) {
         for (int i = 0; i < 97; i++) {
-            cie_colour_match_jd[i][0] = cie_colour_match_jd2[i][0];
-            cie_colour_match_jd[i][1] = cie_colour_match_jd2[i][1];;
-            cie_colour_match_jd[i][2] = cie_colour_match_jd2[i][2];
+            cie_colour_match_jd2[i][0] = cie_colour_match_jd[i][0];
+            cie_colour_match_jd2[i][1] = cie_colour_match_jd[i][1];;
+            cie_colour_match_jd2[i][2] = cie_colour_match_jd[i][2];
         }
     }
 
