@@ -1256,8 +1256,9 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
 
                 fabrefp[sp] = fab;
-                maxicamp[sp] = 0.7f * maxicam;//0.7 arbitrary coef.
-				printf("maxicamimp=%f\n", maxicam);
+				float maxth = std::min(maxicam, 5.f); //5.f arbitrary value
+                maxicamp[sp] = 0.8f * maxth;//0.8 arbitrary coef.
+				printf("maxicamimp=%f\n", maxth);
                 if (istm) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;
                     float stdf = 0.f;

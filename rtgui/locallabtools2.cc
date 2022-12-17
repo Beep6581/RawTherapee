@@ -8351,7 +8351,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         LLmaskcieshapewav->setTooltip(M("TP_LOCALLAB_LMASK_LEVEL_TOOLTIP"));
         maskcieHCurveEditorG->set_tooltip_text(M("TP_LOCALLAB_HHMASK_TOOLTIP"));
 		modeHBoxbwev->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDLOGEV_TOOLTIP"));
-		comprcieauto->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDCOMPRCIEAUTO_TOOLTIP"));
+	//	comprcieauto->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDCOMPRCIEAUTO_TOOLTIP"));
 		comprcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP"));
 		comprcieth->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP"));
     } else {
@@ -8415,7 +8415,7 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
         blurcie->set_tooltip_text("");
         LLmaskcieshapewav->setTooltip("");
         maskcieHCurveEditorG->set_tooltip_text("");
-		comprcieauto->set_tooltip_text("");
+	//	comprcieauto->set_tooltip_text("");
 		comprcie->set_tooltip_text("");
 		comprcieth->set_tooltip_text("");
 		modeHBoxbwev->set_tooltip_text("");

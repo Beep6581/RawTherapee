@@ -3953,12 +3953,12 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         if (islogq  || mobwev != 0) {
             gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
             gray = pow_F(gray, 1.2f);//or 1.15 => modification to increase sensitivity gain, only on defaults, of course we can change this value manually...take into account suuround and Yb Cam16
-            const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;
+            printf("Gray=%f \n", (double) gray);
+			const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;
             float targetgraycor = pow_F(0.01f * targetgraycie, 1.15f);
             base = targetgraycie > 1.f && targetgraycie < 100.f && (float) dynamic_range > 0.f ?  find_gray(std::abs((float) shadows_range) / (float) dynamic_range, (targetgraycor)) : 0.f;
             linbase = std::max(base, 2.f);//2. minimal base log to avoid very bad results
             float maxQgray = coefq * maxicam / gray;
-			printf("maxQgray=%f\n", (double) maxQgray);
 			maxicam =  maxQgray;
 			if (settings->verbose) {
                 printf("Base logarithm encoding Q=%5.1f\n", (double) linbase);
@@ -3976,7 +3976,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             if (compr && x >= comprth)
             {
-				//printf("x=%f", (double) x);
                 x = intp(comprfactor, std::tanh(x - comprth) + comprth, x);//as sigmoid... but tanh (tg hyperbolic)
             }
 
@@ -4122,7 +4121,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                         }
 
                         Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
-						//printf("Qp=%f", (double) Qpro);
                         if (islogq && issigq) {
                             float val =  Qpro *  coefq;
 
