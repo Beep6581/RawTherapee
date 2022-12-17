@@ -3153,7 +3153,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 #endif
     const float epsil = 0.0001f;
     const float coefQ = 32767.f / wh;
-    const float coefq = 1 / wh;
+    const float coefq = 1.f / wh;
 	
     const float pow1n = pow_F(1.64f - pow_F(0.29f, nj), 0.73f);
     const float coe = pow_F(fl, 0.25f);
@@ -3165,7 +3165,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const double noise = pow(2., -16.6);//16.6 instead of 16 a little less than others, but we work in double
     const double log2 = xlog(2.);
     const float log2f = xlogf(2.f);
-	printf("COEFQ=%f coefq=%f\n",(double) coefQ, (double) coefq);
     if ((mocam == 0 || mocam == 2)  && call == 0) { //Jz az bz ==> Jz Cz Hz before Ciecam16
         double mini = 1000.;
         double maxi = -1000.;
@@ -3953,7 +3952,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         if (islogq  || mobwev != 0) {
             gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
             gray = pow_F(gray, 1.2f);//or 1.15 => modification to increase sensitivity gain, only on defaults, of course we can change this value manually...take into account suuround and Yb Cam16
-            printf("Gray=%f \n", (double) gray);
+           // printf("Gray=%f \n", (double) gray);
 			const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;
             float targetgraycor = pow_F(0.01f * targetgraycie, 1.15f);
             base = targetgraycie > 1.f && targetgraycie < 100.f && (float) dynamic_range > 0.f ?  find_gray(std::abs((float) shadows_range) / (float) dynamic_range, (targetgraycor)) : 0.f;
@@ -4107,20 +4106,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     if (ciec) {
                         bool jp = false;
 
-                        if ((cielocalcurve && localcieutili) && mecamcurve == 1) {
-                            jp = true;
-                            float Qq = Qpro * coefQ;
-                            float Qold = Qpro;
-                            Qq = 0.5f * cielocalcurve[Qq * 2.f];
-                            Qq = Qq / coefQ;
-                            Qpro = 0.2f * (Qq - Qold) + Qold;
-
-                            if (jp) {
-                                Jpro = SQR((10.f * Qpro) / wh);
-                            }
-                        }
-
-                        Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
+						
                         if (islogq && issigq) {
                             float val =  Qpro *  coefq;
 
@@ -4167,6 +4153,21 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                             float bl2 = 1.f;
                             Qpro = std::max(bl * Qpro + bl2 * val / coefq, 0.f);
                         }
+
+                        if ((cielocalcurve && localcieutili) && mecamcurve == 1) {
+                            jp = true;
+                            float Qq = Qpro * coefQ;
+                            float Qold = Qpro;
+                            Qq = 0.5f * cielocalcurve[Qq * 2.f];
+                            Qq = Qq / coefQ;
+                            Qpro = 0.2f * (Qq - Qold) + Qold;
+
+                            if (jp) {
+                                Jpro = SQR((10.f * Qpro) / wh);
+                            }
+                        }
+
+                        Qpro = CAMBrightCurveQ[(float)(Qpro * coefQ)] / coefQ;   //brightness and contrast
 
                         float Mp, sres;
                         Mp = Mpro / 100.0f;
