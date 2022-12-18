@@ -324,6 +324,7 @@ void setUserOnlyPermission(const Glib::RefPtr<Gio::File> file, bool execute)
 Glib::ustring getTmpDirectory()
 {
 #if defined(__linux__) || defined(__APPLE__) || defined(WIN32)
+    static Glib::ustring recent_dir = "";
     const Glib::ustring tmp_dir_root = Glib::get_tmp_dir();
     const Glib::ustring subdir_base =
         Glib::ustring::compose("rawtherapee-%1", Glib::get_user_name());
@@ -334,13 +335,18 @@ Glib::ustring getTmpDirectory()
         return !Glib::file_test(dir_path, Glib::FILE_TEST_EXISTS) || (Glib::file_test(dir_path, Glib::FILE_TEST_IS_DIR) && hasUserOnlyPermission(dir_path));
     };
 
+    if (!(is_usable_dir(dir) || recent_dir.empty())) {
+        // Try to reuse the random suffix directory.
+        dir = recent_dir;
+    }
+
     if (!is_usable_dir(dir)) {
         // Create new directory with random suffix.
         gchar *const rand_dir = g_dir_make_tmp((subdir_base + "-XXXXXX").c_str(), nullptr);
         if (!rand_dir) {
             return tmp_dir_root;
         }
-        dir = rand_dir;
+        dir = recent_dir = rand_dir;
         g_free(rand_dir);
         Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(dir);
         setUserOnlyPermission(file, true);
