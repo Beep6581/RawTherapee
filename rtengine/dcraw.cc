@@ -6319,12 +6319,13 @@ void CLASS parse_mos (int offset)
 
 void CLASS linear_table (unsigned len)
 {
-  int i;
-  if (len > 0x10000) len = 0x10000;
-  read_shorts (curve, len);
-  for (i=len; i < 0x10000; i++)
-    curve[i] = curve[i-1];
-  maximum = curve[0xffff];
+  const unsigned maxLen = std::min(0x10000ull, 1ull << tiff_bps);
+  len = std::min(len, maxLen);
+  read_shorts(curve, len);
+  maximum = curve[len - 1];
+  for (std::size_t i = len; i < maxLen; ++i) {
+    curve[i] = maximum;
+  }
 }
 
 void CLASS parse_kodak_ifd (int base)
