@@ -130,9 +130,12 @@ public:
         lenses["00 32 00"] = "Olympus Zuiko Digital ED 14-35mm f/2.0 SWD";
         lenses["00 32 10"] = "Olympus M.Zuiko Digital ED 12-200mm f/3.5-6.3";
         lenses["00 33 00"] = "Olympus Zuiko Digital 25mm f/2.8";
+        lenses["00 33 10"] = "Olympus M.Zuiko Digital 150-400mm f/4.5 TC1.25x IS Pro";
         lenses["00 34 00"] = "Olympus Zuiko Digital ED 9-18mm f/4.0-5.6";
         lenses["00 34 10"] = "Olympus M.Zuiko Digital ED 12-45mm f/4.0 Pro";
         lenses["00 35 00"] = "Olympus Zuiko Digital 14-54mm f/2.8-3.5 II";
+        lenses["00 35 10"] = "Olympus M.Zuiko 100-400mm f/5.0-6.3";
+        lenses["00 36 10"] = "Olympus M.Zuiko Digital ED 8-25mm f/4 Pro";
         lenses["01 01 00"] = "Sigma 18-50mm f/3.5-5.6 DC";
         lenses["01 01 10"] = "Sigma 30mm f/2.8 EX DN";
         lenses["01 02 00"] = "Sigma 55-200mm f/4.0-5.6 DC";
@@ -200,6 +203,7 @@ public:
         lenses["02 36 10"] = "Leica DG Elmarit 200mm f/2.8 Power OIS";
         lenses["02 37 10"] = "Leica DG Vario-Elmarit 50-200mm f/2.8-4 Asph. Power OIS";
         lenses["02 38 10"] = "Leica DG Vario-Summilux 10-25mm f/1.7 Asph.";
+        lenses["02 40 10"] = "Leica DG Vario-Summilux 25-50mm f/1.7 Asph.";
         lenses["03 01 00"] = "Leica D Vario Elmarit 14-50mm f/2.8-3.5 Asph.";
         lenses["03 02 00"] = "Leica D Summilux 25mm f/1.4 Asph.";
         lenses["05 01 10"] = "Tamron 14-150mm f/3.5-5.8 Di III";

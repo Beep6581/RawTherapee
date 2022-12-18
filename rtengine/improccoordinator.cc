@@ -731,6 +731,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         // Remove transformation if unneeded
         bool needstransform = ipf.needsTransform(fw, fh, imgsrc->getRotateDegree(), imgsrc->getMetaData());
 
+
         if ((needstransform || ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && !params->colorappearance.enabled))) {
             // Forking the image
             assert(oprevi);
@@ -744,6 +745,14 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 op->copyData(oprevi);
             }
         }
+
+        for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
+			if(params->locallab.spots.at(sp).expsharp  && params->dirpyrequalizer.cbdlMethod == "bef") {
+				if(params->locallab.spots.at(sp).shardamping < 1) {
+					params->locallab.spots.at(sp).shardamping = 1;
+				}				
+			}
+		}
 
         if ((todo & (M_TRANSFORM | M_RGBCURVE))  && params->dirpyrequalizer.cbdlMethod == "bef" && params->dirpyrequalizer.enabled && !params->colorappearance.enabled) {
             const int W = oprevi->getWidth();
@@ -2408,7 +2417,7 @@ bool ImProcCoordinator::getAutoWB(double& temp, double& green, double equal, dou
         if (lastAwbEqual != equal || lastAwbTempBias != tempBias || lastAwbauto != params->wb.method) {
 // Issue 2500            MyMutex::MyLock lock(minit);  // Also used in crop window
             double rm, gm, bm;
-            params->wb.method = "autold";//same result as before muliple Auto WB
+            params->wb.method = "autold";//same result as before multiple Auto WB
             
            // imgsrc->getAutoWBMultipliers(rm, gm, bm);
             double tempitc = 5000.;

@@ -1225,6 +1225,11 @@ Camera constants:
     },
 
     { // Quality C
+        "make_model": "Canon EOS R3",
+        "dcraw_matrix" : [9423,-2839,-1195,-4532,12377,2415,-483,1374,5276]
+    },
+
+    { // Quality C
         "make_model": "Canon EOS R5",
         "dcraw_matrix" : [9766, -2953, -1254, -4276, 12116, 2433, -437, 1336, 5131],
         "raw_crop" : [
@@ -1235,7 +1240,7 @@ Camera constants:
             { "frame" : [ 8352, 5586 ], "areas": [ 94, 20, 5578, 122 ] },
             { "frame" : [ 5248, 3510 ], "areas": [ 94, 20, 3510, 122 ] }
         ],
-        "ranges" : { "white" : 16382 } 
+        "ranges" : { "white" : 16382 }
     },
 
     { // Quality C
@@ -1250,6 +1255,16 @@ Camera constants:
             { "frame": [3584, 2386], "areas": [ 40, 10, 2374, 110 ] }
         ],
         "ranges" : { "white" : 16382 }
+    },
+
+    { // Quality C
+        "make_model": "Canon EOS R7",
+        "dcraw_matrix" : [10424, -3138, -1300, -4221, 11938,  2584,  -547,  1658,  6183]
+    },
+
+    { // Quality C
+        "make_model": "Canon EOS R10",
+        "dcraw_matrix" : [9269, -2012, -1107, -3990, 11762,  2527,  -569,  2093,  4913]
     },
 
     { // Quality C, CHDK DNGs, raw frame correction
@@ -1560,6 +1575,12 @@ Camera constants:
         "ranges": { "white": 4040 }
     },
 
+    { // Quality B
+        "make_model": [ "FUJIFILM X-T5", "FUJIFILM X-H2" ],
+        "dcraw_matrix": [ 11809, -5358, -1141, -4248, 12164, 2343, -514, 1097, 5848 ], // RawSpeed / DNG
+        "raw_crop": [ 0, 5, 7752, 5184 ]
+    },
+
     { // Quality C, Leica C-Lux names can differ?
         "make_model" : [ "LEICA C-LUX", "LEICA CAM-DC25" ],
         "dcraw_matrix" : [7790, -2736, -755, -3452, 11870, 1769, -628, 1647, 4898]
@@ -1577,11 +1598,12 @@ Camera constants:
         "raw_crop": [ 4, 4, -4, -4 ] // full raw 6016x4016, Official 6000x4000
     },
 
-    { // Quality C
-        "make_model": "LEICA M8",
-        "dcraw_matrix": [ 7675, -2196, -305, -5860, 14119, 1855, -2425, 4006, 6578 ] // DNG
-        // Do not set white level, probably special handling by dcraw (see #6237)
-    },
+    // TODO: Temporary workaround for issues #6237 and #6498.
+    //{ // Quality C
+    //    "make_model": "LEICA M8",
+    //    "dcraw_matrix": [ 7675, -2196, -305, -5860, 14119, 1855, -2425, 4006, 6578 ], // DNG
+    //    "ranges": { "white": 16383 }
+    //},
 
     { // Quality C
         "make_model": "LEICA Q2",
@@ -1733,7 +1755,7 @@ Camera constants:
     { // Quality A, samples provided by dimonoid (#5842)
         "make_model": "NIKON COOLPIX P1000",
         "dcraw_matrix": [ 14294, -6116, -1333, -1628, 10219, 1637, -14, 1158, 5022 ], // ColorMatrix2 from Adobe DNG Converter 11.4
-        "ranges": { 
+        "ranges": {
             "black": 200,
             "white": [ 4000, 4050, 3950 ] // Typical values without LENR: 4009, 4093, 3963
         } // No significant influence of ISO
@@ -2160,7 +2182,8 @@ Camera constants:
 
     { // Quality C
         "make_model": [ "Panasonic DC-G90", "Panasonic DC-G95", "Panasonic DC-G99" ],
-        "dcraw_matrix": [ 9657, -3963, -748, -3361, 11378, 2258, -568, 1414, 5158 ] // DNG
+        "dcraw_matrix": [ 9657, -3963, -748, -3361, 11378, 2258, -568, 1414, 5158 ], // DNG
+        "ranges": { "black": 15 } // see above: RT already reads a value from exif
     },
 
     { // Quality C

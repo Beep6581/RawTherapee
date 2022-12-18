@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - dev
+      - releases
     tags:
       - '[0-9]+.*'
   pull_request:
@@ -82,6 +83,8 @@ jobs:
 
       - name: Include Lensfun
         run: |
+          echo "Patching lensfun-update-data script."
+          sed -i 's/HTTPError\(, ValueError\)/URLError\1/' $(which lensfun-update-data)
           echo "Updating Lensfun database."
           lensfun-update-data
           echo "Creating Lensfun directory in the build directory."
@@ -115,7 +118,7 @@ jobs:
             "libdeflate.dll" \
             "libepoxy-0.dll" \
             "libexpat-1.dll" \
-            "libffi-7.dll" \
+            libffi-*.dll \
             "libfftw3f-3.dll" \
             "libfontconfig-1.dll" \
             "libfreetype-6.dll" \
@@ -148,7 +151,7 @@ jobs:
             "libpangoft2-1.0-0.dll" \
             "libpangomm-1.4-1.dll" \
             "libpangowin32-1.0-0.dll" \
-            "libpcre-1.dll" \
+            "libpcre2-8-0.dll" \
             "libpixman-1-0.dll" \
             "libpng16-16.dll" \
             "librsvg-2-2.dll" \
