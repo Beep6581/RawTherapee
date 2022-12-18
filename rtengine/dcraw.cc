@@ -6320,11 +6320,11 @@ void CLASS parse_mos (int offset)
 void CLASS linear_table (unsigned len)
 {
   int i;
-  if (len > 0x1000) len = 0x1000;
+  if (len > 0x10000) len = 0x10000;
   read_shorts (curve, len);
-  for (i=len; i < 0x1000; i++)
+  for (i=len; i < 0x10000; i++)
     curve[i] = curve[i-1];
-  maximum = curve[0xfff];
+  maximum = curve[0xffff];
 }
 
 void CLASS parse_kodak_ifd (int base)
