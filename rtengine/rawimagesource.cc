@@ -856,8 +856,9 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 				if (settings->verbose) {
 					printf ("Applying Highlight Recovery: Color propagation.\n");
 				}
+				
 				HLRecovery_inpaint (red, green, blue, hrp.hlbl);			
-			} else if(hrp.method == "Coloropp") {
+			} else if(hrp.method == "Coloropp"  && ctemp.getTemp() >= 0) {
 				float s[3] = { rm, gm, bm };
 				highlight_recovery_opposed(s, ctemp);
 			}
