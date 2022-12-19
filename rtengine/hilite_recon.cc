@@ -1350,7 +1350,7 @@ void RawImageSource::highlight_recovery_opposed(float scale_mul[3], const ColorT
 	 BENCHFUN
 
     if (settings->verbose) {
-        std::cout << "Applying Highlight Recovery: Inpaint opposed..." << std::endl;
+        std::cout << "Applying Highlight Recovery: Inpaint opposed" << std::endl;
     }
 
     if (plistener) {

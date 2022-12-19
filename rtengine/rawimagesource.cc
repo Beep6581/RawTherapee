@@ -842,10 +842,6 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 
     int maxx = this->W, maxy = this->H, skip = pp.getSkip();
 
-    // raw clip levels after white balance
-	//    hlmax[0] = clmax[0] * rm;
-	//   hlmax[1] = clmax[1] * gm;
-	//   hlmax[2] = clmax[2] * bm;
 	bool iscolor = (hrp.method == "Color" || hrp.method == "Coloropp");
 	const bool doClip = (chmax[0] >= clmax[0] || chmax[1] >= clmax[1] || chmax[2] >= clmax[2]) && !hrp.hrenabled && hrp.clampOOG;
     bool doHr = (hrp.hrenabled && !iscolor);
@@ -855,14 +851,12 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 			if(hrp.method == "Color") {
 				if (settings->verbose) {
 					printf ("Applying Highlight Recovery: Color propagation.\n");
-				}
-				
+				}				
 				HLRecovery_inpaint (red, green, blue, hrp.hlbl);			
 			} else if(hrp.method == "Coloropp"  && ctemp.getTemp() >= 0) {
 				float s[3] = { rm, gm, bm };
 				highlight_recovery_opposed(s, ctemp);
-			}
-			
+			}			
             rgbSourceModified = true;
         }
     }
@@ -891,21 +885,6 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
     gm /= area;
     bm /= area;
    
-	/*
-	hlmax[0] = clmax[0] * rm;
-    hlmax[1] = clmax[1] * gm;
-    hlmax[2] = clmax[2] * bm;
-
-    float area = skip * skip;
-    rm /= area;
-    gm /= area;
-    bm /= area;
-    bool doHr = (hrp.hrenabled && hrp.method != "Color");
-    const float expcomp = std::pow(2, ri->getBaselineExposure());
-    rm *= expcomp;
-    gm *= expcomp;
-    bm *= expcomp;
-	*/
     
 #ifdef _OPENMP
     #pragma omp parallel if(!d1x)       // omp disabled for D1x to avoid race conditions (see Issue 1088 http://code.google.com/p/rawtherapee/issues/detail?id=1088)
