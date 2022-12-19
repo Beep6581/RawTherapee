@@ -512,7 +512,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         if (settings->verbose) {
             printf("automethod=%s \n", params->wb.method.c_str());
         }
-        if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
+        if (todo & (M_INIT | M_LINDENOISE | M_HDR | M_RETINEX)) {
             MyMutex::MyLock initLock(minit);  // Also used in crop window
 			//	imgsrc->HLRecovery_Global(params->toneCurve);   // this handles Color HLRecovery
 
