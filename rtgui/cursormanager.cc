@@ -41,8 +41,8 @@ void CursorManager::init (Glib::RefPtr<Gdk::Window> mainWindow)
         auto cursor_surf = RTSurface(name, Gtk::ICON_SIZE_MENU);
         auto cursor = Gdk::Cursor::create(this->display,
             cursor_surf.get(),
-            cursor_surf.getWidth() / 2,
-            cursor_surf.getHeight() / 2);
+            cursor_surf.getWidth(),
+            cursor_surf.getHeight());
 
         if (!cursor) {
             cursor = Gdk::Cursor::create(this->display, fb_cursor);
