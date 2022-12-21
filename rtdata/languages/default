@@ -1822,11 +1822,11 @@ PREFERENCES_CHUNKSIZE_RGB;RGB processing
 PREFERENCES_CIE;Ciecam
 PREFERENCES_CIEARTIF;Avoid artifacts
 PREFERENCES_WBA;White Balance
-PREFERENCES_WBA_TOOLTIP;These three settings allow, depending on the images (type of raw, colorimetry, etc.), an adaptation of the 'Temperature correlation' algorithm. There is no absolute rule linking these parameters to the results obtained.
 PREFERENCES_WBACORR;White Balance - Automatic temperature correlation
+PREFERENCES_WBACORR_TOOLTIP;These three settings allow, depending on the images (type of raw, colorimetry, etc.), an adaptation of the 'Temperature correlation' algorithm. There is no absolute rule linking these parameters to the results obtained.
 PREFERENCES_WBAOBS;Observer 10° instead of Observer 2°
+PREFERENCES_WBAPATCH;Number maximum of colors used in picture
 PREFERENCES_WBASORT;Sort values in chroma order instead of histogram 
-PREFERENCES_WBPATCH;Number maximum of colors used in picture
 PREFERENCES_CLIPPINGIND;Clipping Indication
 PREFERENCES_CLUTSCACHE;HaldCLUT Cache
 PREFERENCES_CLUTSCACHE_LABEL;Maximum number of cached CLUTs

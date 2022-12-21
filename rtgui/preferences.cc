@@ -927,7 +927,7 @@ Gtk::Widget* Preferences::getColorManPanel ()
 	//------------White-Balance auto temperature correlation
 	
     Gtk::Frame* fwbacorr = Gtk::manage(new Gtk::Frame(M("PREFERENCES_WBACORR")));
-    fwbacorr->set_tooltip_text(M("PREFERENCES_WBA_TOOLTIP"));
+    fwbacorr->set_tooltip_text(M("PREFERENCES_WBACORR_TOOLTIP"));
     fwbacorr->set_label_align(0.025, 0.5);
     Gtk::Box* wbaVB = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL) );
     Gtk::Box* wbah = Gtk::manage ( new Gtk::Box () );
@@ -944,7 +944,7 @@ Gtk::Widget* Preferences::getColorManPanel ()
     wbah->pack_start(*mwbasort, Gtk::PACK_SHRINK, 0);
     wbaVB->add(*wbah);
 	
-    placeSpinBox(wbaVB, wbacorrnb, "PREFERENCES_WBPATCH", 0, 1, 5, 2, 10, 55);
+    placeSpinBox(wbaVB, wbacorrnb, "PREFERENCES_WBAPATCH", 0, 1, 5, 2, 10, 55);
     fwbacorr->add (*wbaVB);
 	vbColorMan->pack_start (*fwbacorr, Gtk::PACK_SHRINK);
 	//-------------
