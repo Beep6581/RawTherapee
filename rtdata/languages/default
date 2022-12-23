@@ -1385,6 +1385,8 @@ HISTORY_MSG_1160;Local - Cie mask threshold
 HISTORY_MSG_1161;Local - Cie Q compression
 HISTORY_MSG_1162;Local - Cie Q comp. threshold
 HISTORY_MSG_1163;Local - Cie mask curve H(H)
+HISTORY_MSG_1164;Local - Cie BlackEv WhiteEv method
+HISTORY_MSG_1165;Local - Cie Normalize L
 HISTORY_MSG_BLSHAPE;Blur by level
 HISTORY_MSG_BLURCWAV;Blur chroma
 HISTORY_MSG_BLURWAV;Blur luminance

@@ -7474,7 +7474,7 @@ Locallabcie::Locallabcie():
     modeHBoxbwev(Gtk::manage(new Gtk::Box())),
     bwevMethod(Gtk::manage(new MyComboBoxText())),
 	logcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGCIE")))),
-    comprcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.))),
+    comprcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.4))),
     comprcieth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIETH"), 0., 10., 0.01, 2.))),
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
     sigjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGJZFRA")))),
@@ -9225,7 +9225,7 @@ void Locallabcie::logcieChanged()
 		modeHBoxbwev->set_sensitive(false);
         comprcie->set_sensitive(true);
         comprcieth->set_sensitive(true);
-		comprcie->setValue(0.);//to test
+		comprcie->setValue(0.5);//to test
 		comprcieauto->set_sensitive(true);
 
     } else {
@@ -9590,7 +9590,7 @@ void Locallabcie::bwevMethodChanged()
             comprcieauto->set_sensitive(false);
         }
         if (bwevMethod->get_active_row_number() == 2) {
-			comprcie->setValue(0.4);//to test
+			comprcie->setValue(0.5);//to test
 		}
 	
     if (isLocActivated && exp->getEnabled()) {
