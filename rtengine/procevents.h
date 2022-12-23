@@ -1191,6 +1191,8 @@ enum ProcEventCode {
 	Evlocallabcomprcieth = 1161,
 	EvlocallabHHhmaskcieshape = 1162,
 	EvlocallabbwevMethod = 1163,
+	Evlocallabnormcie = 1164,
+
     NUMOFEVENTS
 };
 

@@ -1605,6 +1605,7 @@ struct LocallabParams {
         bool qtoj;
         bool jabcie;
         bool comprcieauto;
+        bool normcie;
         bool logcie;
         bool logjz;
         bool sigjz;

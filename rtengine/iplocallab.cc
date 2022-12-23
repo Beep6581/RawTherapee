@@ -2661,7 +2661,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const float sigmoidlambda = params->locallab.spots.at(sp).sigmoidldacie;
     const float sigmoidth = params->locallab.spots.at(sp).sigmoidthcie;
     const float sigmoidbl = params->locallab.spots.at(sp).sigmoidblcie;
-//    const bool sigmoidlogaut = params->locallab.spots.at(sp).comprcieauto;
+    const bool sigmoidnorm = params->locallab.spots.at(sp).normcie;
 	int mobwev = 0;
     if (params->locallab.spots.at(sp).bwevMethod == "none") {
         mobwev = 0;
@@ -3989,8 +3989,24 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             return x;
         };
 
-
-
+		//prepare Normalize luminance
+        float *datain = nullptr;
+        float *data = nullptr;
+        float *datanorm = nullptr;
+		if(sigmoidnorm  && issigq) {
+			datain = new float[width * height];
+			data = new float[width * height];
+			datanorm = new float[width * height];
+			
+#ifdef _OPENMP 
+            #pragma omp parallel for schedule(dynamic, 16)
+#endif
+			for (int y = 0; y < height; y++){
+				for (int x = 0; x < width; x++) {
+					datain[(y) * width + (x)] = lab->L[y][x];
+				}
+			}
+		}
 //Ciecam "old" code not change except sigmoid added
 #ifdef __SSE2__
         int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
@@ -4136,7 +4152,9 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
                             sigmoidla(val, th, sigm);
                             float bl2 = 1.f;
-                            Qpro = std::max(bl * Qpro + bl2 * val / coefq, 0.f);
+                         //   Qpro = std::max(bl * Qpro + bl2 * val / coefq, 0.f);
+                            Qpro = std::max(1.f * Qpro + bl2 * val / coefq, 0.f);
+							
                         }
 
                         if(issigq && iscie && !islogq && mobwev != 2) {//sigmoid Q only with ciecam module
@@ -4151,7 +4169,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                             }
                             sigmoidla (val, th, sigm);
                             float bl2 = 1.f;
-                            Qpro = std::max(bl * Qpro + bl2 * val / coefq, 0.f);
+                           // Qpro = std::max(bl * Qpro + bl2 * val / coefq, 0.f);
+                            Qpro = std::max(1.f * Qpro + bl2 * val / coefq, 0.f);
                         }
 
                         if ((cielocalcurve && localcieutili) && mecamcurve == 1) {
@@ -4330,8 +4349,35 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
 #endif
             }
-
         }
+			if(sigmoidnorm && issigq) { //Normalize luminance
+
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic, 16)
+#endif		
+				for (int y = 0; y < height; y++){
+					for (int x = 0; x < width; x++) {
+						data[(y) * width + (x)] = lab->L[y][x];				
+						datanorm[(y) * width + (x)] = lab->L[y][x];
+					}
+				}
+				normalize_mean_dt(datanorm, datain, height * width, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
+		
+#ifdef _OPENMP
+            #pragma omp parallel for schedule(dynamic, 16)
+#endif		
+				for (int ir = 0; ir < height; ir++) {
+					for (int jr = 0; jr < width; jr++) {
+						data[ir * width + jr] = intp(bl, data[ir * width + jr], datanorm[ir * width + jr]);
+
+						lab->L[ir][jr] = data[ir * width + jr];
+					}
+				}
+			}
+        delete [] datain;
+        delete [] data;
+        delete [] datanorm;
+		
     }
 
     if (mocam == 3) { //Zcam not use but keep in case off
