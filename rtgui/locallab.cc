@@ -1078,7 +1078,7 @@ void Locallab::maxcam(float *maxicamp, bool *autocam, int selspot)
 {
         const float maxicam = maxicamp[selspot];
 		if(autocam) {
-			expcie.updateAutocam(maxicam);
+			expcie.updateAutocam(maxicam, autocam);
 		}
 
 }

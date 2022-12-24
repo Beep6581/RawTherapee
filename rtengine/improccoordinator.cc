@@ -989,6 +989,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             maxicamp = new float[sizespot];
             bool *autocam = nullptr;
             autocam = new bool[sizespot];
+            bool *rebelo = nullptr;
+            rebelo = new bool[sizespot];
 
             for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
 
@@ -1001,7 +1003,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
 				
 				autocam[sp] = params->locallab.spots.at(sp).comprcieauto;
-
+				rebelo[sp] = true;
                 // Set local curves of current spot to LUT
                 locRETgainCurve.Set(params->locallab.spots.at(sp).localTgaincurve);
                 locRETtransCurve.Set(params->locallab.spots.at(sp).localTtranscurve);
@@ -1197,7 +1199,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 float Tmin;
                 float Tmax;
                 int lastsav;
-
+				
                 ipf.Lab_Local(3, sp, (float**)shbuffer, nprevl, nprevl, reserv.get(), savenormtm.get(), savenormreti.get(), lastorigimp.get(), fw, fh, 0, 0, pW, pH, scale, locRETgainCurve, locRETtransCurve,
                               lllocalcurve, locallutili,
                               cllocalcurve, localclutili,
@@ -1254,11 +1256,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                               minCD, maxCD, mini, maxi, Tmean, Tsigma, Tmin, Tmax,
                               meantm, stdtm, meanreti, stdreti, fab, maxicam);
 
-
                 fabrefp[sp] = fab;
-				float maxth = std::min(maxicam, 5.f); //5.f arbitrary value to limit threshold
-                maxicamp[sp] = 0.8f * maxth;//0.8 arbitrary coef.
-//				printf("maxicamimp=%f\n", maxth);
+				float maxth = std::min(maxicam, 20.f); //20.f arbitrary value to limit threshold
+                maxicamp[sp] = 0.65f * maxth;//0.65 arbitrary coef.
+				printf("maxicamimp=%f\n", maxth);
                 if (istm) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;
                     float stdf = 0.f;
@@ -1324,13 +1325,12 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             //    locallref.at(sp).fab = fab;
 
             //    locallref.push_back(spotref);
-            if (locallListener) {
-              //  locallListener->refChanged(locallref, params->locallab.selspot);
-                locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
-                locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
-                locallListener->maxcam(maxicamp, autocam, params->locallab.selspot);
-            }
-
+				if (locallListener) {
+				//  locallListener->refChanged(locallref, params->locallab.selspot);
+					locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
+					locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
+				//	locallListener->maxcam(maxicamp, autocam, params->locallab.selspot);
+				}
             }
             delete [] huerefp;
             delete [] chromarefp;

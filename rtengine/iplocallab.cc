@@ -3852,6 +3852,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         if (settings->verbose && (mocam == 0 || mocam == 1  || call == 1)) {//display only if choice cam16
             //information on Cam16 scene conditions - allows user to see choices's incidences
             float maxicamq = -1000.f;
+            float maxicamj = -1000.f;
             float maxisat = -1000.f;
             float maxiM = -1000.f;
             float minicam = 1000000.f;
@@ -3868,10 +3869,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                 plum = 100.f;
             }
 
-
-
 #ifdef _OPENMP
-            #pragma omp parallel for reduction(min:minicam) reduction(max:maxicam) reduction(min:minicamq) reduction(max:maxicamq) reduction(min:minisat) reduction(max:maxisat) reduction(min:miniM) reduction(max:maxiM) reduction(+:sumcam) reduction(+:sumcamq) reduction(+:sumsat) reduction(+:sumM)if(multiThread)
+            #pragma omp parallel for reduction(min:minicam) reduction(max:maxicamj) reduction(min:minicamq) reduction(max:maxicamq) reduction(min:minisat) reduction(max:maxisat) reduction(min:miniM) reduction(max:maxiM) reduction(+:sumcam) reduction(+:sumcamq) reduction(+:sumsat) reduction(+:sumM)if(multiThread)
 #endif
 
             for (int i = 0; i < height; i += 1) {
@@ -3892,8 +3891,8 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                                                        xw1, yw1,  zw1,
                                                        c,  nc, pow1, nbb, ncb, pfl, cz, d, c16, plum);
 
-                    if (J > maxicam) {
-                        maxicam = J;
+                    if (J > maxicamj) {
+                        maxicamj = J;
                     }
 
                     if (J < minicam) {
@@ -3931,7 +3930,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     }
 
                     sumM += M;
-
                 }
             }
 
@@ -3941,9 +3939,10 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             sumsat /= nccam;
             sumM /= nccam;
 
-            printf("Cam16 Scene  Lighness_J Brightness_Q- HDR-PQ=%5.1f minJ=%3.1f maxJ=%3.1f meanJ=%3.1f minQ=%3.1f maxQ=%4.1f meanQ=%4.1f\n", (double) plum, (double) minicam, (double) maxicam, (double) sumcam, (double) minicamq, (double) maxicamq, (double) sumcamq);
+            printf("Cam16 Scene  Lighness_J Brightness_Q- HDR-PQ=%5.1f minJ=%3.1f maxJ=%3.1f meanJ=%3.1f minQ=%3.1f maxQ=%4.1f  meanQ=%4.1f\n", (double) plum, (double) minicam, (double) maxicamj, (double) sumcam, (double) minicamq, (double) maxicamq, (double) sumcamq);
             printf("Cam16 Scene  Saturati-s Colorfulln_M- minSat=%3.1f maxSat=%3.1f meanSat=%3.1f minM=%3.1f maxM=%3.1f meanM=%3.1f\n", (double) minisat, (double) maxisat, (double) sumsat, (double) miniM, (double) maxiM, (double) sumM);
-        }
+			maxicam = maxicamq;
+		}
 
         float base = 10.;
         float linbase = 10.;
@@ -3958,9 +3957,10 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             base = targetgraycie > 1.f && targetgraycie < 100.f && (float) dynamic_range > 0.f ?  find_gray(std::abs((float) shadows_range) / (float) dynamic_range, (targetgraycor)) : 0.f;
             linbase = std::max(base, 2.f);//2. minimal base log to avoid very bad results
             float maxQgray = coefq * maxicam / gray;
+			
 			maxicam =  maxQgray;
 			if (settings->verbose) {
-                printf("Base logarithm encoding Q=%5.1f\n", (double) linbase);
+                printf("gray=%f maxicam=%f Base logarithm encoding Q=%5.1f\n", (double) gray, (double) maxicam, (double) linbase);
             }
         }
 
@@ -3975,7 +3975,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             if (compr && x >= comprth)
             {
-                x = intp(comprfactor, std::tanh(x - comprth) + comprth, x);//as sigmoid... but tanh (tg hyperbolic)
+                x = intp(comprfactor, std::tanh((x - comprth)/comprth) + comprth, x);//as sigmoid... but tanh (tg hyperbolic)
             }
 
             x = rtengine::max((xlogf(x) / log2f - (float) shadows_range) / (float) dynamic_range, (float) noise);//x in range EV

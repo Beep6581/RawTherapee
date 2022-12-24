@@ -7475,7 +7475,7 @@ Locallabcie::Locallabcie():
     bwevMethod(Gtk::manage(new MyComboBoxText())),
 	logcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGCIE")))),
     comprcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.4))),
-    comprcieth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIETH"), 0., 10., 0.01, 2.))),
+    comprcieth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIETH"), 0., 25., 0.01, 6.))),
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
     sigjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGJZFRA")))),
     sigmoidldajzcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0., 1.0, 0.01, 0.5))),
@@ -7684,7 +7684,7 @@ Locallabcie::Locallabcie():
     sigBox->pack_start(*logcie);
     sigBox->pack_start(*comprcie);
     sigBox->pack_start(*comprcieth);
-	sigBox->pack_start(*comprcieauto);
+//	sigBox->pack_start(*comprcieauto);
     sigBox->pack_start(*separatorsig2);
 //	signormBox->pack_start(*normcie);
     signormBox->pack_start(*sigmoidblcie);
@@ -8640,7 +8640,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         modecamChanged();
 		bwevMethodChanged();
 		normcieChanged();
-		
+		comprcieautoChanged();	
         if (spot.bwevMethod == "none") {
 			bwevMethod->set_active(0);
         } else if (spot.bwevMethod == "sig") {
@@ -9060,14 +9060,15 @@ void Locallabcie::updateAutocompute(const float blackev, const float whiteev, co
     }
 }
 
-void Locallabcie::updateAutocam(const float maxicam)
+void Locallabcie::updateAutocam(const float maxicam, const bool autocam)
 {
     if (comprcieauto->get_active()) {
         idle_register.add(
-        [this, maxicam]() -> bool {
+        [this, maxicam, autocam]() -> bool {
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
             disableListener();
             comprcieth->setValue(maxicam);
+			comprcieauto->set_active(autocam);
             enableListener();
 
             return false;

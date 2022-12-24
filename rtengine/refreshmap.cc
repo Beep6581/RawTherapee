@@ -1108,7 +1108,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,    //Evlocallabsigmoidldacie
     AUTOEXP,    //Evlocallabsigmoidthcie
     AUTOEXP,    //Evlocallabsigmoidblcie
-    AUTOEXP,    //Evlocallabcomprcieauto
+    HDR,    //Evlocallabcomprcieauto
     AUTOEXP,    //Evlocallabhuecie
     AUTOEXP,    //Evlocallabjabcie
     AUTOEXP,    //Evlocallablightjzcie
@@ -1196,8 +1196,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,    //Evlocallabsigmoidsenscie
     AUTOEXP,    //EvlocallabLLmaskcieshapewav
     AUTOEXP,    //EvlocallabcsThresholdcie
-    AUTOEXP,    //Evlocallabcomprcie
-    AUTOEXP,    //Evlocallabcomprcieth
+    HDR,    //Evlocallabcomprcie
+    HDR,    //Evlocallabcomprcieth
     AUTOEXP,    //EvlocallabHHhmaskcieshape
     AUTOEXP,    //EvlocallabbwevMethod
     AUTOEXP    //Evlocallabnormcie
