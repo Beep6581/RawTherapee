@@ -989,8 +989,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             maxicamp = new float[sizespot];
             bool *autocam = nullptr;
             autocam = new bool[sizespot];
-            bool *rebelo = nullptr;
-            rebelo = new bool[sizespot];
 
             for (int sp = 0; sp < (int)params->locallab.spots.size(); sp++) {
 
@@ -1003,7 +1001,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
 				
 				autocam[sp] = params->locallab.spots.at(sp).comprcieauto;
-				rebelo[sp] = true;
                 // Set local curves of current spot to LUT
                 locRETgainCurve.Set(params->locallab.spots.at(sp).localTgaincurve);
                 locRETtransCurve.Set(params->locallab.spots.at(sp).localTtranscurve);
