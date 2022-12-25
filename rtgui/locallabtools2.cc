@@ -7469,7 +7469,8 @@ Locallabcie::Locallabcie():
     sigmoidsenscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDSENSI"), 0.1, 0.9, 0.01, 0.5))),
   //  sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.5, 1.5, 0.01, 1.))),
     sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0., 1., 0.01, 0.6))),
-    comprcieauto(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDLOGAUTO")))),
+    autocomprHBox(Gtk::manage(new Gtk::Box())),
+	comprcieauto(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_SIGMOIDLOGAUTO")))),
     normcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGMOIDNORMCIE")))),
     modeHBoxbwev(Gtk::manage(new Gtk::Box())),
     bwevMethod(Gtk::manage(new MyComboBoxText())),
@@ -7684,7 +7685,9 @@ Locallabcie::Locallabcie():
     sigBox->pack_start(*logcie);
     sigBox->pack_start(*comprcie);
     sigBox->pack_start(*comprcieth);
-//	sigBox->pack_start(*comprcieauto);
+	autocomprHBox->pack_start(*comprcieauto);
+    autocomprHBox->pack_end (*Gtk::manage (new Gtk::Label ("  ")));
+	sigBox->pack_start(*autocomprHBox);	
     sigBox->pack_start(*separatorsig2);
 //	signormBox->pack_start(*normcie);
     signormBox->pack_start(*sigmoidblcie);
@@ -9068,9 +9071,16 @@ void Locallabcie::updateAutocam(const float maxicam, const bool autocam)
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
             disableListener();
             comprcieth->setValue(maxicam);
-			comprcieauto->set_active(autocam);
+			nextcount++;
+			adjusterChanged(comprcieth,comprcieth->getValue());
+			comprcieautoconn.block (true);
+			comprcieauto->set_active (false);
+			comprcieautoconn.block (false);
+			
             enableListener();
-
+		if (listener  && nextcount <= 1 ) {
+			listener->panelChanged (Evlocallabcomprcieauto, M("GENERAL_ENABLED"));
+		}
             return false;
         }
         );
@@ -9179,6 +9189,7 @@ void Locallabcie::jabcieChanged()
 
 void Locallabcie::comprcieautoChanged()
 {
+
     if (isLocActivated && exp->getEnabled()) {
         if (listener) {
             if (comprcieauto->get_active()) {
@@ -9188,6 +9199,8 @@ void Locallabcie::comprcieautoChanged()
                 listener->panelChanged(Evlocallabcomprcieauto,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
             }
+		//	adjusterChanged(comprcieth, 0);
+			
         }
     }
 }
@@ -10716,6 +10729,8 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
         }
 
         if (a == comprcieth) {
+			nextcount = 0;
+
             if (listener) {
                 listener->panelChanged(Evlocallabcomprcieth,
                                        comprcieth->getTextValue() + spName);

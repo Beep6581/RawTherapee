@@ -1586,7 +1586,8 @@ private:
     Adjuster* const sigmoidthcie;
     Adjuster* const sigmoidsenscie;
     Adjuster* const sigmoidblcie;
-    Gtk::CheckButton* const comprcieauto;
+    Gtk::Box* autocomprHBox;
+    Gtk::ToggleButton* const comprcieauto;
     Gtk::CheckButton* const normcie;
     Gtk::Box* const modeHBoxbwev;
     MyComboBoxText* const bwevMethod;	
@@ -1693,6 +1694,7 @@ private:
     FlatCurveEditor* const LLmaskcieshapewav;
     Gtk::Box* const quaHcieBox;
     ThresholdAdjuster* const csThresholdcie;
+    int nextcount = 0;
    
     sigc::connection AutograycieConn,  forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn;
 public:

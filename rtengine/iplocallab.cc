@@ -3975,7 +3975,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             if (compr && x >= comprth)
             {
-                x = intp(comprfactor, std::tanh((x - comprth)/comprth) + comprth, x);//as sigmoid... but tanh (tg hyperbolic)
+                x = intp(comprfactor, (std::tanh((x - comprth)/comprth) + 1.f) * comprth, x);//as sigmoid... but tanh (tg hyperbolic)
             }
 
             x = rtengine::max((xlogf(x) / log2f - (float) shadows_range) / (float) dynamic_range, (float) noise);//x in range EV

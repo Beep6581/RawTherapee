@@ -1255,7 +1255,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 
                 fabrefp[sp] = fab;
 				float maxth = std::min(maxicam, 20.f); //20.f arbitrary value to limit threshold
-                maxicamp[sp] = 0.65f * maxth;//0.65 arbitrary coef.
+                maxicamp[sp] = 0.5f * maxth;//0.65 arbitrary coef.
 				printf("maxicamimp=%f\n", maxth);
                 if (istm) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;
@@ -1326,7 +1326,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 				//  locallListener->refChanged(locallref, params->locallab.selspot);
 					locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
 					locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
-				//	locallListener->maxcam(maxicamp, autocam, params->locallab.selspot);
+					locallListener->maxcam(maxicamp, autocam, params->locallab.selspot);
 				}
             }
             delete [] huerefp;
