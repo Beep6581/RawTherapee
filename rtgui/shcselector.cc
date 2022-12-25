@@ -112,64 +112,46 @@ void SHCSelector::on_realize()
     add_events(Gdk::POINTER_MOTION_MASK | Gdk::BUTTON_PRESS_MASK | Gdk::BUTTON_RELEASE_MASK);
 }
 
-void SHCSelector::updateBackBuffer()
+void SHCSelector::updateDrawingArea (const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
 
-    if (!get_realized() || !isDirty() || !get_width() || !get_height())  {
+    if (!get_realized() || !get_width() || !get_height())  {
         return;
     }
 
-    // This will create or update the size of the BackBuffer::surface
-    setDrawRectangle(Cairo::FORMAT_ARGB32, 0, 0, get_width(), get_height(), true);
-
-    if (!surface) {
-        return;
-    }
-
-    Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(surface);
     Glib::RefPtr<Gtk::StyleContext> style = get_style_context();
 
-    cr->set_source_rgba (0., 0., 0., 0.);
-    cr->set_operator (Cairo::OPERATOR_CLEAR);
-    cr->paint ();
+    // Setup drawing
     cr->set_operator (Cairo::OPERATOR_OVER);
 
-    int w = get_width () - leftMargin - rightMargin;
-    int h = get_height ();
+    // Get drawing area size
+    const int w = get_width () - leftMargin - rightMargin;
+    const int h = get_height ();
 
-    const double s = RTScalable::scalePixelSize(1.);
+    // Compute slider parameters
+    wslider = static_cast<double>(std::max(h / 5, 10));
+    const double hwslider = wslider / 2.;
 
-    wslider = (double)std::max(h / 5, 10) * s;
-    double hwslider = wslider / 2.;
-
-    // clear bg
-    cr->set_source_rgba (0., 0., 0., 0.);
-    cr->set_operator (Cairo::OPERATOR_CLEAR);
-    cr->paint ();
-    cr->set_operator (Cairo::OPERATOR_OVER);
-
-
-    // set the box's colors
-    cr->set_line_width (1.0 * s);
+    // Set the box's colors
+    cr->set_line_width (1.0);
     cr->set_antialias(Cairo::ANTIALIAS_SUBPIXEL);
     cr->set_line_cap(Cairo::LINE_CAP_BUTT);
 
-    int coloredBarHeight = (int)((double)h * 5.5 / 7. + 0.5);
+    int coloredBarHeight = static_cast<int>(static_cast<double>(h) * 5.5 / 7. + 0.5);
     if (is_sensitive() && coloredBar.canGetColors()) {
-        // gradient background
-
-        // this will eventually create/update the off-screen BackBuffer
-        coloredBar.setDrawRectangle(leftMargin + 1 * (int)s, 1 * (int)s, w - 2 * (int)s, coloredBarHeight - 2 * (int)s);
-        // that we're displaying here
-        coloredBar.expose(*this, cr);
+        // Gradient background
+        coloredBar.setColoredBarSize(leftMargin + 1, 1, w - 2, coloredBarHeight - 2);
+        coloredBar.updateColoredBar(cr);
     } else {
-        style->render_background(cr, leftMargin + 1 * (int)s, 1 * (int)s, w - 2 * (int)s, coloredBarHeight - 2 * (int)s);
+        // Style background
+        style->render_background(cr, leftMargin + 1, 1, w - 2, coloredBarHeight - 2);
     }
-    // draw the box's borders
+
+    // Draw the box's borders
     style->render_frame(cr, leftMargin, 0, w, coloredBarHeight);
 
 
-    // draw sliders
+    // Draw sliders
     for (int i = 0; i < 3; i++) {
         if (i == movingPosition) {
             style->set_state(Gtk::STATE_FLAG_ACTIVE);
@@ -180,11 +162,16 @@ void SHCSelector::updateBackBuffer()
             style->set_state(Gtk::STATE_FLAG_NORMAL);
         }
 
-        style->render_slider(cr, (double)leftMargin + 1. * s + ((double)w - 2. * s) * positions[i] - (double)hwslider, (double)vb * s, wslider, (double)h - (double)vb * s, Gtk::ORIENTATION_VERTICAL);
+        style->render_slider(cr,
+                static_cast<double>(leftMargin) + 1. + (static_cast<double>(w) - 2.) * positions[i] - static_cast<double>(hwslider),
+                static_cast<double>(vb),
+                wslider,
+                static_cast<double>(h) - static_cast<double>(vb),
+                Gtk::ORIENTATION_VERTICAL);
         style->set_state(Gtk::STATE_FLAG_NORMAL);
     }
 
-    // draw text for the slider that is being moved
+    // Draw text for the slider that is being moved
     if (movingPosition >= 0) {
         int i = movingPosition;
         int offset;
@@ -193,7 +180,7 @@ void SHCSelector::updateBackBuffer()
         Glib::RefPtr<Pango::Context> context = get_pango_context () ;
         Pango::FontDescription fontd(get_style_context()->get_font());
 
-        // update font
+        // Update font
         fontd.set_weight (Pango::WEIGHT_NORMAL);
 
         const double fontSize = static_cast<double>(h) * 0.8; // pt
@@ -213,17 +200,17 @@ void SHCSelector::updateBackBuffer()
 
         Glib::RefPtr<Pango::Layout> layout = create_pango_layout(Glib::ustring::format(std::setprecision(2), positions[i]));
         layout->get_pixel_size(layout_width, layout_height);
-        offset = positions[i] > 0.5 ? -layout_width - 1 * (int)s - hwslider : 1 * (int)s + hwslider;
+        offset = positions[i] > 0.5 ? -layout_width - 1 - hwslider : 1 + hwslider;
         cr->set_source_rgb (0., 0., 0.);
 
-        cr->set_line_width(3. * s);
+        cr->set_line_width(3.);
         cr->set_line_join(Cairo::LINE_JOIN_ROUND);
         cr->set_line_cap(Cairo::LINE_CAP_ROUND);
 
-        cr->move_to ((double)leftMargin + (double)w * positions[i] + (double)offset, 0.);
+        cr->move_to (static_cast<double>(leftMargin) + static_cast<double>(w) * positions[i] + static_cast<double>(offset), 0.);
         layout->add_to_cairo_context (cr);
         cr->stroke_preserve();
-        cr->set_line_width(0.5 * s);
+        cr->set_line_width(0.5);
         cr->set_source_rgb (1., 1., 1.);
         cr->fill ();
     }
@@ -231,17 +218,9 @@ void SHCSelector::updateBackBuffer()
 
 bool SHCSelector::on_draw(const ::Cairo::RefPtr< Cairo::Context> &cr)
 {
-
-    // on_realize & updateBackBuffer have to be called before
-    if (get_realized() && get_width() && get_height()) {
-        if (isDirty()) {
-            updateBackBuffer();
-        }
-
-        if (surface) {
-            copySurface(cr);
-        }
-    }
+    // Draw drawing area
+    // Note: As drawing area surface is updated inside on_draw function, hidpi is automatically supported
+    updateDrawingArea(cr);
 
     return true;
 }
@@ -250,14 +229,12 @@ bool SHCSelector::on_button_press_event (GdkEventButton* event)
 {
 
     // check if a slider is under the cursor
-    double w = double(get_width () - leftMargin - rightMargin);
+    const double w = static_cast<double>(get_width () - leftMargin - rightMargin);
     movingPosition = -1;
 
-    const double s = RTScalable::scalePixelSize(1.);
-
     for (int i = 0; i < 3; i++) {
-        double currPos = double(leftMargin) + 1. * s + (w - 2. * s) * positions[i];
-        double hwslider = wslider / 2.;
+        const double currPos = static_cast<double>(leftMargin) + 1. + (w - 2.) * positions[i];
+        const double hwslider = wslider / 2.;
         if (event->x >= currPos - hwslider && event->x <= currPos + hwslider) {
             movingPosition = i;
             tmpX = event->x;
@@ -299,8 +276,7 @@ bool SHCSelector::on_motion_notify_event (GdkEventMotion* event)
 {
 
     if (movingPosition >= 0) {
-        const double s = RTScalable::scalePixelSize(1.);
-        double innerw = double(get_width () - leftMargin - rightMargin) - 2. * s;
+        const double innerw = static_cast<double>(get_width () - leftMargin - rightMargin) - 2.;
         positions[movingPosition] = tmpPos + (event->x - tmpX) / innerw;
 
         if (positions[movingPosition] < 0) {
@@ -323,7 +299,6 @@ bool SHCSelector::on_motion_notify_event (GdkEventMotion* event)
             cl->shcChanged ();
         }
 
-        setDirty(true);
         queue_draw ();
     }
 
@@ -333,7 +308,6 @@ bool SHCSelector::on_motion_notify_event (GdkEventMotion* event)
 void SHCSelector::styleChanged (const Glib::RefPtr<Gtk::StyleContext>& style)
 {
 
-    setDirty(true);
     queue_draw ();
 }
 
@@ -347,7 +321,6 @@ bool SHCSelector::reset ()      //  : movingPosition(-1), cl(NULL) {
         positions[0] = defaults[0];
         positions[1] = defaults[1];
         positions[2] = defaults[2];
-        setDirty(true);
         queue_draw ();
         return true;
     }
@@ -357,7 +330,6 @@ bool SHCSelector::reset ()      //  : movingPosition(-1), cl(NULL) {
 
 void SHCSelector::refresh()
 {
-    setDirty(true);
     Glib::RefPtr<Gdk::Window> win = get_window();
     if (win) {
         win->invalidate(true);

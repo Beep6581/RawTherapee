@@ -206,7 +206,6 @@ void FlatCurveEditorSubGroup::editModeSwitchedOff ()
     bool prevState = editCPointsConn.block(true);
     editCPoints->set_active(false);
     CPointsCurve->pipetteMouseOver(nullptr, nullptr, 0);
-    CPointsCurve->setDirty(true);
 
     if (!prevState) {
         editCPointsConn.block(false);
@@ -220,7 +219,6 @@ void FlatCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, int m
     switch((FlatCurveType)(curveEditor->curveType->getSelected())) {
     case (FCT_MinMaxCPoints):
         CPointsCurve->pipetteMouseOver(curveEditor, provider, modifierKey);
-        CPointsCurve->setDirty(true);
         break;
 
     default:    // (DCT_Linear, DCT_Unchanged)
@@ -238,7 +236,6 @@ bool FlatCurveEditorSubGroup::pipetteButton1Pressed(EditDataProvider *provider, 
     switch((FlatCurveType)(curveEditor->curveType->getSelected())) {
     case (FCT_MinMaxCPoints):
         isDragging = CPointsCurve->pipetteButton1Pressed(provider, modifierKey);
-        CPointsCurve->setDirty(true);
         break;
 
     default:    // (DCT_Linear, DCT_Unchanged)
@@ -256,7 +253,6 @@ void FlatCurveEditorSubGroup::pipetteButton1Released(EditDataProvider *provider)
     switch((FlatCurveType)(curveEditor->curveType->getSelected())) {
     case (FCT_MinMaxCPoints):
         CPointsCurve->pipetteButton1Released(provider);
-        CPointsCurve->setDirty(true);
         break;
 
     default:    // (DCT_Linear, DCT_Unchanged)
@@ -272,7 +268,6 @@ void FlatCurveEditorSubGroup::pipetteDrag(EditDataProvider *provider, int modifi
     switch((FlatCurveType)(curveEditor->curveType->getSelected())) {
     case (FCT_MinMaxCPoints):
         CPointsCurve->pipetteDrag(provider, modifierKey);
-        CPointsCurve->setDirty(true);
         break;
 
     default:    // (DCT_Linear, DCT_Unchanged)
@@ -441,7 +436,6 @@ void FlatCurveEditorSubGroup::loadPressed ()
 
             if (p[0] == (double)(FCT_MinMaxCPoints)) {
                 CPointsCurve->setPoints (p);
-                CPointsCurve->queue_draw ();
                 CPointsCurve->notifyListener ();
             }
         }
@@ -481,7 +475,6 @@ void FlatCurveEditorSubGroup::pastePressed ()
         switch (type) {
         case FCT_MinMaxCPoints:    // min/max control points
             CPointsCurve->setPoints (curve);
-            CPointsCurve->queue_draw ();
             CPointsCurve->notifyListener ();
             break;
 

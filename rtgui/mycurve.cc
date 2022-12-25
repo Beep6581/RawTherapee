@@ -41,7 +41,7 @@ MyCurve::MyCurve () :
     snapToValX(0.0),
     snapToValY(0.0)
 {
-    int pointDiameter = RTScalable::scalePixelSize((int)(RADIUS * 2.));
+    int pointDiameter = (int)(RADIUS * 2.);
     graphW = get_allocation().get_width() - pointDiameter;
     graphH = get_allocation().get_height() - pointDiameter;
     prevGraphW = graphW;
@@ -76,13 +76,12 @@ MyCurve::~MyCurve ()
 void MyCurve::calcDimensions ()
 {
     double newRequestedW, newRequestedH;
-    const double s = RTScalable::scalePixelSize(1.);
 
     newRequestedW = newRequestedH = get_allocation().get_width();
 
-    graphX = ((double)RADIUS + (leftBar ? (double)CBAR_WIDTH + 2. + (double)CBAR_MARGIN : 0.)) * s;
-    graphH = graphW = newRequestedW - graphX - (double)RADIUS * s;
-    graphY = (double)RADIUS * s + graphW;
+    graphX = (double)RADIUS + (leftBar ? (double)CBAR_WIDTH + 2. + (double)CBAR_MARGIN : 0.);
+    graphH = graphW = newRequestedW - graphX - (double)RADIUS;
+    graphY = (double)RADIUS + graphW;
     return;
 }
 
@@ -109,11 +108,11 @@ void MyCurve::get_preferred_height_for_width_vfunc (int width, int &minimum_heig
     minimum_height = width;
 
     if (leftBar && !bottomBar) {
-        minimum_height -= RTScalable::scalePixelSize(CBAR_WIDTH + 2 + CBAR_MARGIN);
+        minimum_height -= CBAR_WIDTH + 2 + CBAR_MARGIN;
     }
 
     if (!leftBar && bottomBar) {
-        minimum_height += RTScalable::scalePixelSize(CBAR_WIDTH + 2 + CBAR_MARGIN);
+        minimum_height += CBAR_WIDTH + 2 + CBAR_MARGIN;
     }
 
     natural_height = minimum_height;
@@ -185,22 +184,11 @@ float MyCurve::getVal(LUTf &curve, int x)
 
 void MyCurve::on_style_updated ()
 {
-    setDirty(true);
     queue_draw ();
 }
 
 void MyCurve::refresh()
 {
-    if (leftBar != nullptr) {
-        leftBar->setDirty(true);
-    }
-
-    if (bottomBar != nullptr) {
-        bottomBar->setDirty(true);
-    }
-
-    setDirty(true);
-
     Glib::RefPtr<Gdk::Window> win = get_window();
 
     if (win) {

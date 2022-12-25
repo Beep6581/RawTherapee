@@ -33,7 +33,6 @@
 #include "rtimage.h"
 #include "options.h"
 #include "popuptogglebutton.h"
-#include "rtscalable.h"
 
 #include "../rtengine/curves.h"
 
@@ -429,7 +428,6 @@ void DiagonalCurveEditorSubGroup::editModeSwitchedOff ()
     prevState = editCustomConn.block(true);
     editCustom->set_active(false);
     customCurve->pipetteMouseOver(nullptr, nullptr, 0);
-    customCurve->setDirty(true);
 
     if (!prevState) {
         editCustomConn.block(false);
@@ -438,7 +436,6 @@ void DiagonalCurveEditorSubGroup::editModeSwitchedOff ()
     prevState = editNURBSConn.block(true);
     editNURBS->set_active(false);
     NURBSCurve->pipetteMouseOver(nullptr, nullptr, 0);
-    NURBSCurve->setDirty(true);
 
     if (!prevState) {
         editNURBSConn.block(false);
@@ -447,7 +444,6 @@ void DiagonalCurveEditorSubGroup::editModeSwitchedOff ()
     prevState = editParamConn.block(true);
     editParam->set_active(false);
     paramCurve->pipetteMouseOver(nullptr, nullptr, 0);
-    paramCurve->setDirty(true);
 
     if (!prevState) {
         editParamConn.block(false);
@@ -462,12 +458,10 @@ void DiagonalCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, i
     case (DCT_Spline):
     case (DCT_CatumullRom):
         customCurve->pipetteMouseOver(curveEditor, provider, modifierKey);
-        customCurve->setDirty(true);
         break;
 
     case (DCT_Parametric): {
         paramCurve->pipetteMouseOver(curveEditor, provider, modifierKey);
-        paramCurve->setDirty(true);
         float pipetteVal = 0.f;
         editedAdjuster = nullptr;
         int n = 0;
@@ -518,7 +512,6 @@ void DiagonalCurveEditorSubGroup::pipetteMouseOver(EditDataProvider *provider, i
 
     case (DCT_NURBS):
         NURBSCurve->pipetteMouseOver(curveEditor, provider, modifierKey);
-        NURBSCurve->setDirty(true);
         break;
 
     default:    // (DCT_Linear, DCT_Unchanged)
@@ -765,8 +758,8 @@ void DiagonalCurveEditorSubGroup::switchGUI()
             shcSelector->coloredBar.setColorProvider(barColorProvider, dCurve->getBottomBarCallerId());
             shcSelector->coloredBar.setBgGradient(bgGradient);
             shcSelector->setMargins(
-                    (int)( RTScalable::scalePixelSize((leftBar ? (double)CBAR_WIDTH + 2. + (double)CBAR_MARGIN + RADIUS : RADIUS) - 1.5) ),
-                    (int)( RTScalable::scalePixelSize(RADIUS - 1.5) )
+                    (int)( (leftBar ? (double)CBAR_WIDTH + 2. + (double)CBAR_MARGIN + RADIUS : RADIUS) - 1.5 ),
+                    (int)( RADIUS - 1.5 )
                     );
             paramCurve->setColoredBar(leftBar, nullptr);
             paramCurve->queue_resize_no_redraw();
@@ -895,11 +888,9 @@ void DiagonalCurveEditorSubGroup::loadPressed ()
 
             if (p[0] == (double)(DCT_Spline) || p[0] == (double)(DCT_CatumullRom)) {
                 customCurve->setPoints (p);
-                customCurve->queue_draw ();
                 customCurve->notifyListener ();
             } else if (p[0] == (double)(DCT_NURBS)) {
                 NURBSCurve->setPoints (p);
-                NURBSCurve->queue_draw ();
                 NURBSCurve->notifyListener ();
             } else if (p[0] == (double)(DCT_Parametric)) {
                 shcSelector->setPositions ( p[1], p[2], p[3] );
@@ -908,7 +899,6 @@ void DiagonalCurveEditorSubGroup::loadPressed ()
                 darks->setValue (p[6]);
                 shadows->setValue (p[7]);
                 paramCurve->setPoints (p);
-                paramCurve->queue_draw ();
                 paramCurve->notifyListener ();
             }
         }
@@ -966,7 +956,6 @@ void DiagonalCurveEditorSubGroup::pastePressed ()
         case DCT_Spline:           // custom
         case DCT_CatumullRom:
             customCurve->setPoints (curve);
-            customCurve->queue_draw ();
             customCurve->notifyListener ();
             break;
 
@@ -981,13 +970,11 @@ void DiagonalCurveEditorSubGroup::pastePressed ()
             darks->setValue (curve[6]);
             shadows->setValue (curve[7]);
             paramCurve->setPoints (curve);
-            paramCurve->queue_draw ();
             paramCurve->notifyListener ();
             break;
 
         case DCT_NURBS:            // NURBS
             NURBSCurve->setPoints (curve);
-            NURBSCurve->queue_draw ();
             NURBSCurve->notifyListener ();
             break;
 

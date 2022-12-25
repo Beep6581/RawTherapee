@@ -442,7 +442,7 @@ void CurveEditorSubGroup::initButton (Gtk::Button &button, const Glib::ustring &
         vAlign = options.curvebboxpos == 0 || options.curvebboxpos == 2 ?  Gtk::ALIGN_FILL : Gtk::ALIGN_END;
     }
 
-    button.add (*Gtk::manage (new RTImage(iconName, Gtk::ICON_SIZE_BUTTON)));
+    button.add (*Gtk::manage (new RTImage(iconName, Gtk::ICON_SIZE_LARGE_TOOLBAR)));
     button.get_style_context()->add_class(GTK_STYLE_CLASS_FLAT);
     if (!tooltip.empty()) {
         button.set_tooltip_text(M(tooltip));
