@@ -2006,8 +2006,10 @@ inline float gray2ev(float gray)
 
 inline float norm2(float r, float g, float b, TMatrix ws)
 {
-    return (power_norm(r, g, b) + Color::rgbLuminance(r, g, b, ws)) / 2.f;
+    constexpr float hi = std::numeric_limits<float>::max() / 100.f;
+    return std::min(hi, power_norm(r, g, b) / 2.f + Color::rgbLuminance(r, g, b, ws) / 2.f);
 }
+	
 
 inline float norm(float r, float g, float b, TMatrix ws)
 {
@@ -2214,8 +2216,8 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
         }
     }
 
-    maxVal *= 1.45f; //(or 1.5f...) slightly increase max to take into account illuminance incident light
-    minVal *= 0.55f; //(or 0.5f...) slightly decrease min to take into account illuminance incident light
+    maxVal *= 1.5f;
+    minVal *= 0.5f;
 
     //E = 2.5*2^EV => e=2.5 depends on the sensor type C=250 e=2.5 to C=330 e=3.3
     //repartition with 2.5 between 1.45 Light and shadows 0.58 => a little more 0.55...
@@ -2243,7 +2245,7 @@ void ImProcFunctions::getAutoLogloc(int sp, ImageSource *imgsrc, float *sourceg,
 
             for (int y = hsta; y < hend; ++y) {
                 for (int x = wsta; x < wend; ++x) {
-                    const float l = img.g(y, x) / 65535.f;
+                    const float l = YY[y][x];
 
                     if (l >= gmin && l <= gmax) {
                         tot += static_cast<double>(l);
