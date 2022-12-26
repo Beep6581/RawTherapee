@@ -3970,7 +3970,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         const float comprfactor = params->locallab.spots.at(sp).comprcie;
         float comprth = 0.1 +  params->locallab.spots.at(sp).comprcieth;
 		if(mobwev == 2) {
-			comprth *= 0.5f;
+			comprth *= 0.4f;
 		}
         const auto applytoq =
         [ = ](float x) -> float {

@@ -7467,7 +7467,6 @@ Locallabcie::Locallabcie():
     sigmoidldacie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDLAMBDA"), 0.0, 1., 0.01, 0.5))),
     sigmoidthcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDTH"), 0.1, 4., 0.01, 1., Gtk::manage(new RTImage("circle-black-small.png")), Gtk::manage(new RTImage("circle-white-small.png"))))),
     sigmoidsenscie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDSENSI"), 0.1, 0.9, 0.01, 0.5))),
-  //  sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0.5, 1.5, 0.01, 1.))),
     sigmoidblcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_SIGMOIDBL"), 0., 1., 0.01, 0.6))),
     autocomprHBox(Gtk::manage(new Gtk::Box())),
 	comprcieauto(Gtk::manage(new Gtk::ToggleButton(M("TP_LOCALLAB_SIGMOIDLOGAUTO")))),
@@ -7679,7 +7678,6 @@ Locallabcie::Locallabcie():
     sigBox->pack_start(*sigmoidldacie);
     sigBox->pack_start(*sigmoidthcie);
     sigBox->pack_start(*sigmoidsenscie);
-   // sigBox->pack_start(*sigmoidblcie);
     sigBox->pack_start(*modeHBoxbwev);
     sigBox->pack_start(*separatorsig);
     sigBox->pack_start(*logcie);
@@ -7689,7 +7687,6 @@ Locallabcie::Locallabcie():
     autocomprHBox->pack_end (*Gtk::manage (new Gtk::Label ("  ")));
 	sigBox->pack_start(*autocomprHBox);	
     sigBox->pack_start(*separatorsig2);
-//	signormBox->pack_start(*normcie);
     signormBox->pack_start(*sigmoidblcie);
     sigmoidnormFrame->add(*signormBox);
     sigBox->pack_start(*sigmoidnormFrame);	
@@ -8371,6 +8368,8 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
 	//	comprcieauto->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDCOMPRCIEAUTO_TOOLTIP"));
 		comprcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP"));
 		comprcieth->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDQJCOMPRCIE_TOOLTIP"));
+		normcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDNORMCIE_TOOLTIP"));
+		sigmoidblcie->set_tooltip_text(M("TP_LOCALLAB_SIGMOIDNORMCIEBLEND_TOOLTIP"));
     } else {
         reparcie->set_tooltip_text("");
         recothrescie->set_tooltip_text("");
@@ -8436,6 +8435,8 @@ void Locallabcie::updateAdviceTooltips(const bool showTooltips)
 		comprcie->set_tooltip_text("");
 		comprcieth->set_tooltip_text("");
 		modeHBoxbwev->set_tooltip_text("");
+		normcie->set_tooltip_text("");
+		sigmoidblcie->set_tooltip_text("");
 
     }
 }
