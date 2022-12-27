@@ -3870,7 +3870,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             if (lp.logena && !(params->locallab.spots.at(sp).expcie && mocam == 1)) { //Log encoding only, but enable for log encoding if we use Cam16 module both with log encoding
                 plum = 100.f;
             }
-
+			//find main values Cam16
 #ifdef _OPENMP
             #pragma omp parallel for reduction(min:minicam) reduction(max:maxicamj) reduction(min:minicamq) reduction(max:maxicamq) reduction(min:minisat) reduction(max:maxisat) reduction(min:miniM) reduction(max:maxiM) reduction(+:sumcam) reduction(+:sumcamq) reduction(+:sumsat) reduction(+:sumM)if(multiThread)
 #endif
@@ -3953,7 +3953,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         if (islogq  || mobwev != 0) {
             gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
             gray = pow_F(gray, 1.2f);//or 1.15 => modification to increase sensitivity gain, only on defaults, of course we can change this value manually...take into account suuround and Yb Cam16
-           // printf("Gray=%f \n", (double) gray);
 			const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;
             float targetgraycor = pow_F(0.01f * targetgraycie, 1.15f);
             base = targetgraycie > 1.f && targetgraycie < 100.f && (float) dynamic_range > 0.f ?  find_gray(std::abs((float) shadows_range) / (float) dynamic_range, (targetgraycor)) : 0.f;
@@ -3962,14 +3961,14 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 			
 			maxicam =  maxQgray;
 			if (settings->verbose) {
-                printf("gray=%f maxicam=%f Base logarithm encoding Q=%5.1f\n", (double) gray, (double) maxicam, (double) linbase);
+                printf("Gray=%f MaxicamQ=%f Base logarithm encoding Q=%5.1f\n", (double) gray, (double) maxicam, (double) linbase);
             }
         }
 
         const bool compr = params->locallab.spots.at(sp).comprcie > 0.;
         const float comprfactor = params->locallab.spots.at(sp).comprcie;
         float comprth = 0.1 +  params->locallab.spots.at(sp).comprcieth;
-		if(mobwev == 2) {
+		if(mobwev == 2) {//sigmoid & log encode
 			comprth *= 0.4f;
 		}
         const auto applytoq =
@@ -3998,6 +3997,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         float *datain = nullptr;
         float *data = nullptr;
         float *datanorm = nullptr;
+		
 		if(sigmoidnorm  && issigq) {
 			datain = new float[width * height];
 			data = new float[width * height];
@@ -4012,7 +4012,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 				}
 			}
 		}
-//Ciecam "old" code not change except sigmoid added
 #ifdef __SSE2__
         int bufferLength = ((width + 3) / 4) * 4; // bufferLength has to be a multiple of 4
 #endif
@@ -4122,13 +4121,11 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                     Mpro = M;
                     spro = s;
 
-                    /*
-                    */
                     if (ciec) {
                         bool jp = false;
 
 						
-                        if (islogq && issigq) {
+                        if (islogq && issigq) {//log encoding Q
                             float val =  Qpro *  coefq;
 
                             if (val > (float) noise) {
@@ -4139,7 +4136,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                         }
 
 
-                        if (issigq && iscie && !islogq && mobwev == 2) { //sigmoid Q only with ciecam module
+                        if (issigq && iscie && !islogq && mobwev == 2) { //sigmoid Q and Log encode
                             float val = Qpro * coefq;
 
                                 if (val > (float) noise) {
@@ -4156,13 +4153,11 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                             }
 
                             sigmoidla(val, th, sigm);
-                            float bl2 = 1.f;
-                         //   Qpro = std::max(bl * Qpro + bl2 * val / coefq, 0.f);
-                            Qpro = std::max(1.f * Qpro + bl2 * val / coefq, 0.f);
+                            Qpro = std::max(Qpro + val / coefq, 0.f);
 							
                         }
 
-                        if(issigq && iscie && !islogq && mobwev != 2) {//sigmoid Q only with ciecam module
+                        if(issigq && iscie && !islogq && mobwev != 2) {//sigmoid Q only and black & white Ev
                             float val = Qpro * coefq;
                             if(mobwev == 1) {
                                 val = std::max((xlog(val) / log2 - shadows_range) / (dynamic_range + 1.5), noise);//in range EV
@@ -4173,12 +4168,10 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                                 th = at * val + bt;
                             }
                             sigmoidla (val, th, sigm);
-                            float bl2 = 1.f;
-                           // Qpro = std::max(bl * Qpro + bl2 * val / coefq, 0.f);
-                            Qpro = std::max(1.f * Qpro + bl2 * val / coefq, 0.f);
+                            Qpro = std::max(Qpro + val / coefq, 0.f);
                         }
 
-                        if ((cielocalcurve && localcieutili) && mecamcurve == 1) {
+                        if ((cielocalcurve && localcieutili) && mecamcurve == 1) {//curve Q
                             jp = true;
                             float Qq = Qpro * coefQ;
                             float Qold = Qpro;
@@ -4229,7 +4222,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                             hpro += 360.0f;    //hue
                         }
 
-                        if ((cielocalcurve && localcieutili) && mecamcurve == 0) {
+                        if ((cielocalcurve && localcieutili) && mecamcurve == 0) {//curve J
                             float Jj = (float) Jpro * 327.68f;
                             float Jold = Jj;
                             Jj = 0.5f * cielocalcurve[Jj * 2.f];
@@ -4242,7 +4235,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                         }
 
                         if (cielocalcurve2 && localcieutili2) {
-                            if (mecamcurve2 == 0) {
+                            if (mecamcurve2 == 0) {//chroma
                                 float parsat = 0.8f; //0.68;
                                 float coef = 327.68f / parsat;
                                 float Cc = (float) Cpro * coef;
@@ -4253,7 +4246,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                                 int sk1 = 1;
                                 float ko = 1.f / coef;
                                 Color::skinredfloat(Jpro, hpro, Cc, Ccold, dred, protect_red, sk1, rstprotection, ko, Cpro);
-                            } else if (mecamcurve2 == 1) {
+                            } else if (mecamcurve2 == 1) {//saturation
                                 float parsat = 0.8f; //0.6
                                 float coef = 327.68f / parsat;
                                 float Ss = (float) spro * coef;
@@ -4268,7 +4261,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                                 Color::skinredfloat(Jpro, hpro, Ss, Sold, dred, protect_red, 0, rstprotection, ko, spro);
                                 Qpro = (4.0f / c) * sqrtf(Jpro / 100.0f) * (aw + 4.0f) ;
                                 Cpro = (spro * spro * Qpro) / (10000.0f);
-                            } else if (mecamcurve2 == 2) {
+                            } else if (mecamcurve2 == 2) {//colorfullness
                                 float parsat = 0.8f; //0.68;
                                 float coef = 327.68f / parsat;
                                 float Mm = (float) Mpro * coef;
@@ -4360,7 +4353,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic, 16)
 #endif		
-				for (int y = 0; y < height; y++){
+				for (int y = 0; y < height; y++){//data after ciecam
 					for (int x = 0; x < width; x++) {
 						data[(y) * width + (x)] = lab->L[y][x];				
 						datanorm[(y) * width + (x)] = lab->L[y][x];
@@ -4372,7 +4365,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             #pragma omp parallel for schedule(dynamic, 16)
 #endif		
 				for (int ir = 0; ir < height; ir++) {
-					for (int jr = 0; jr < width; jr++) {
+					for (int jr = 0; jr < width; jr++) {//blend
 						data[ir * width + jr] = intp(bl, data[ir * width + jr], datanorm[ir * width + jr]);
 
 						lab->L[ir][jr] = data[ir * width + jr];
