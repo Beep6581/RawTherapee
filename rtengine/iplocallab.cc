@@ -2720,7 +2720,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
     const float bth = 1;
     float sila = pow_F(sigmoidlambda, senssig);
     const float sigm = 3.3f + 7.1f * (1.f - sila); //e^10.4 = 32860 => sigm vary from 3.3 to 10.4
-    const float bl = sigmoidbl;
+    const float bl = std::min(sigmoidbl, 1.f);//reused old slider
     //end sigmoid
 
     int width = lab->W, height = lab->H;
@@ -3979,7 +3979,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
             if (compr && x >= comprth)
             {
-                x = intp(comprfactor, (std::tanh((x - comprth)/comprth) + 1.f) * comprth, x);//as sigmoid... but tanh (tg hyperbolic)
+                x = intp(comprfactor, (std::tanh((x - comprth)/comprth) + 1.f) * comprth, x);//as sigmoid... but tanh (tg hyperbolic), inspired by the work of alberto Grigio
             }
 
             x = rtengine::max((xlogf(x) / log2f - (float) shadows_range) / (float) dynamic_range, (float) noise);//x in range EV
