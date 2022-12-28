@@ -7474,7 +7474,7 @@ Locallabcie::Locallabcie():
     modeHBoxbwev(Gtk::manage(new Gtk::Box())),
     bwevMethod(Gtk::manage(new MyComboBoxText())),
 	logcie(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_LOGCIE")))),
-    comprcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.4))),
+    comprcie(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIE"), 0., 1., 0.01, 0.5))),
     comprcieth(Gtk::manage(new Adjuster(M("TP_LOCALLAB_COMPRCIETH"), 0., 25., 0.01, 6.))),
     sigmoidjzFrame(Gtk::manage(new Gtk::Frame(M("TP_LOCALLAB_SIGJZFRA")))),
     sigjz(Gtk::manage(new Gtk::CheckButton(M("TP_LOCALLAB_SIGJZFRA")))),
@@ -9077,7 +9077,6 @@ void Locallabcie::updateAutocam(const float maxicam, const bool autocam)
 			comprcieautoconn.block (true);
 			comprcieauto->set_active (false);
 			comprcieautoconn.block (false);
-			
             enableListener();
 		if (listener  && nextcount <= 1 ) {
 			listener->panelChanged (Evlocallabcomprcieauto, M("GENERAL_ENABLED"));
@@ -9199,9 +9198,7 @@ void Locallabcie::comprcieautoChanged()
             } else {
                 listener->panelChanged(Evlocallabcomprcieauto,
                                        M("GENERAL_DISABLED") + " (" + escapeHtmlChars(getSpotName()) + ")");
-            }
-		//	adjusterChanged(comprcieth, 0);
-			
+            }			
         }
     }
 }
@@ -9231,6 +9228,7 @@ void Locallabcie::normcieChanged()
 
 void Locallabcie::logcieChanged()
 {
+    const LocallabParams::LocallabSpot defSpot;
 
     if (logcie->get_active()) {
         sigmoidldacie->set_sensitive(false);
@@ -9240,7 +9238,7 @@ void Locallabcie::logcieChanged()
 		modeHBoxbwev->set_sensitive(false);
         comprcie->set_sensitive(true);
         comprcieth->set_sensitive(true);
-		comprcie->setValue(0.5);//to test
+		comprcie->setValue(defSpot.comprcie);//to test
 		comprcieauto->set_sensitive(true);
 
     } else {
@@ -9595,6 +9593,8 @@ void Locallabcie::sursourcieChanged()
 
 void Locallabcie::bwevMethodChanged()
 {
+    const LocallabParams::LocallabSpot defSpot;
+	
 	    if (bwevMethod->get_active_row_number() == 2) {
             comprcie->set_sensitive(true);
             comprcieth->set_sensitive(true);
@@ -9605,7 +9605,7 @@ void Locallabcie::bwevMethodChanged()
             comprcieauto->set_sensitive(false);
         }
         if (bwevMethod->get_active_row_number() == 2) {
-			comprcie->setValue(0.5);//to test
+			comprcie->setValue(defSpot.comprcie);//to test
 		}
 	
     if (isLocActivated && exp->getEnabled()) {
@@ -10140,7 +10140,6 @@ void Locallabcie::convertParamToSimple()
     // Disable all listeners
     disableListener();
    // sigmoidblcie->setValue(defSpot.sigmoidblcie);
-    //comprcie->setValue(defSpot.comprcie);
     showmaskcieMethod->set_active(0);
     enacieMask->set_active(defSpot.enacieMask);
     modecie->set_active(0);

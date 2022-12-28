@@ -3950,6 +3950,10 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         float linbase = 10.;
         float gray = 15.;
 
+        const bool compr = params->locallab.spots.at(sp).comprcie > 0.;
+        const float comprfactor = params->locallab.spots.at(sp).comprcie;
+        float comprth = 0.1 +  params->locallab.spots.at(sp).comprcieth;
+
         if (islogq  || mobwev != 0) {
             gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
             gray = pow_F(gray, 1.2f);//or 1.15 => modification to increase sensitivity gain, only on defaults, of course we can change this value manually...take into account suuround and Yb Cam16
@@ -3961,26 +3965,22 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 			
 			maxicam =  maxQgray;
 			if (settings->verbose) {
-                printf("Gray=%f MaxicamQ=%f Base logarithm encoding Q=%5.1f\n", (double) gray, (double) maxicam, (double) linbase);
+                printf("Gray=%1.3f MaxicamQ=%3.2f Base logarithm encoding Q=%5.1f\n", (double) gray, (double) maxicam, (double) linbase);
             }
         }
 
-        const bool compr = params->locallab.spots.at(sp).comprcie > 0.;
-        const float comprfactor = params->locallab.spots.at(sp).comprcie;
-        float comprth = 0.1 +  params->locallab.spots.at(sp).comprcieth;
 		if(mobwev == 2) {//sigmoid & log encode
-			comprth *= 0.4f;
+			comprth *= 0.4f;//empirical
 		}
         const auto applytoq =
         [ = ](float x) -> float {
 
             x = rtengine::max(x, (float) noise);
             x = rtengine::max(x / gray, (float) noise);//gray = gain - before log conversion
-
             if (compr && x >= comprth)
             {
-                x = intp(comprfactor, (std::tanh((x - comprth)/comprth) + 1.f) * comprth, x);//as sigmoid... but tanh (tg hyperbolic), inspired by the work of alberto Grigio
-            }
+                x = intp(comprfactor, (std::tanh((x - comprth)/comprth) + 1.f) * comprth, x);//as sigmoid... but tanh (tg hyperbolic), inspired by the work of alberto Grigio	
+			}
 
             x = rtengine::max((xlogf(x) / log2f - (float) shadows_range) / (float) dynamic_range, (float) noise);//x in range EV
             assert(x == x);
