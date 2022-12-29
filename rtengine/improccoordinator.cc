@@ -885,7 +885,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                         }
 
                         ipf.getAutoLogloc(sp, imgsrc, sourceg, blackev, whiteev, Autogr, sourceab, fw, fh, xsta, xend, ysta, yend, SCALE);
-                       // printf("sp=%i sg=%f sab=%f\n", sp, sourceg[sp], sourceab[sp]);
                         params->locallab.spots.at(sp).blackEv = blackev[sp];
                         params->locallab.spots.at(sp).whiteEv = whiteev[sp];
                         params->locallab.spots.at(sp).blackEvjz = blackev[sp];
@@ -1134,7 +1133,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     yend = std::min(static_cast<float>(centy + locy), 1.f);
                     xsta = std::max(static_cast<float>(centx - locxl), 0.f);
                     xend = std::min(static_cast<float>(centx + locx), 1.f);
-                   // printf("xsta=%f xend=%f ysta=%f yend=%f \n", xsta, xend, ysta, yend);
                 }
                 int ww = nprevl->W;
                 int hh = nprevl->H;
@@ -1172,14 +1170,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                                                 sca);
 
                 // Save Locallab mask curve references for current spot
-                /*
-                LocallabListener::locallabRef spotref;
-                spotref.huer = huer;
-                spotref.lumar = lumar;
-                spotref.chromar = chromar;
-                spotref.fab = 1.f;
-                locallref.push_back(spotref);
-                */
                 // Locallab tools computation
                 /* Notes:
                  * - shbuffer is used as nullptr
@@ -1255,7 +1245,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 fabrefp[sp] = fab;
 				float maxth = std::min(maxicam, 20.f); //20.f arbitrary value to limit threshold
                 maxicamp[sp] = 0.2f * maxth;//0.25 arbitrary coef.
-				//printf("maxicamimp=%f\n", maxth);
                 if (istm) { //calculate mean and sigma on full image for use by normalize_mean_dt
                     float meanf = 0.f;
                     float stdf = 0.f;
@@ -1301,28 +1290,13 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
                 // Update Locallab reference values according to recurs parameter
                 if (params->locallab.spots.at(sp).recurs) {
-                    /*
-                    spotref.huer = huer;
-                    spotref.lumar = lumar;
-                    spotref.chromar = chromar;
-                    spotref.fab = fab;
-                    locallref.at(sp).chromar = chromar;
-                    locallref.at(sp).lumar = lumar;
-                    locallref.at(sp).huer = huer;
-                    locallref.at(sp).fab = fab;
-                    */
                     huerefp[sp] = huer;
                     chromarefp[sp] = chromar;
                     lumarefp[sp] = lumar;
                     fabrefp[sp] = fab;
                     
                 }
-            //    spotref.fab = fab;
-            //    locallref.at(sp).fab = fab;
-
-            //    locallref.push_back(spotref);
 				if (locallListener) {
-				//  locallListener->refChanged(locallref, params->locallab.selspot);
 					locallListener->refChanged2(huerefp, chromarefp, lumarefp, fabrefp, params->locallab.selspot);
 					locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
 					locallListener->maxcam(maxicamp, autocam, params->locallab.selspot);
@@ -1335,13 +1309,6 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             delete [] maxicamp;
             delete [] autocam;
 			
-            // Transmit Locallab reference values and Locallab Retinex min/max to LocallabListener
-            /*
-            if (locallListener) {
-                locallListener->refChanged(locallref, params->locallab.selspot);
-                locallListener->minmaxChanged(locallretiminmax, params->locallab.selspot);
-            }
-            */
             ipf.lab2rgb(*nprevl, *oprevi, params->icm.workingProfile);
             //*************************************************************
             // end locallab

@@ -7744,7 +7744,6 @@ Locallabcie::Locallabcie():
     shapecz->setResetCurve(DiagonalCurveType(defSpot.czcurve.at(0)), defSpot.czcurve);
 
     std::vector<GradientMilestone> shapeczMilestones;
-//    float R, G, B;
     shapecz->setBottomBarColorProvider(this, 1);
     shapecz->setLeftBarColorProvider(this, 1);
     shapecz->setRangeDefaultMilestones(0.05, 0.2, 0.58);
@@ -9072,15 +9071,15 @@ void Locallabcie::updateAutocam(const float maxicam, const bool autocam)
             GThreadLock lock; // All GUI access from idle_add callbacks or separate thread HAVE to be protected
             disableListener();
             comprcieth->setValue(maxicam);
-			nextcount++;
+			nextcomprciecount++;
 			adjusterChanged(comprcieth,comprcieth->getValue());
 			comprcieautoconn.block (true);
 			comprcieauto->set_active (false);
 			comprcieautoconn.block (false);
             enableListener();
-		if (listener  && nextcount <= 1 ) {
-			listener->panelChanged (Evlocallabcomprcieauto, M("GENERAL_ENABLED"));
-		}
+			if (listener  && nextcomprciecount <= 1 ) {
+				listener->panelChanged (Evlocallabcomprcieauto, M("GENERAL_ENABLED"));
+			}
             return false;
         }
         );
@@ -10729,7 +10728,7 @@ void Locallabcie::adjusterChanged(Adjuster* a, double newval)
         }
 
         if (a == comprcieth) {
-			nextcount = 0;
+			nextcomprciecount = 0;
 
             if (listener) {
                 listener->panelChanged(Evlocallabcomprcieth,

@@ -16,7 +16,7 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with RawTherapee.  If not, see <http://www.gnu.org/licenses/>.
- *  2016 - 2020 Jacques Desmis <jdesmis@gmail.com>
+ *  2016 - 2022 Jacques Desmis <jdesmis@gmail.com>
  *  2016 - 2020 Ingo Weyrich <heckflosse@i-weyrich.de>
 
  */
@@ -922,8 +922,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.fullim = 2;
     }
 
-    // printf("Lpfullim=%i\n", lp.fullim);
-
     lp.fftColorMask = locallab.spots.at(sp).fftColorMask;
     lp.prevdE = prevDeltaE;
     lp.showmaskcolmet = llColorMask;
@@ -946,7 +944,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
     lp.showmaskciemet = llcieMask;
     lp.fftcieMask = locallab.spots.at(sp).fftcieMask;
 
-//printf("CIEmask=%i\n", lp.showmaskciemet);
     lp.enaColorMask = locallab.spots.at(sp).enaColorMask && llsoftMask == 0 && llColorMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llExpMaskinv == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaColorMaskinv = locallab.spots.at(sp).enaColorMask && llColorMaskinv == 0 && llSHMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llExpMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
     lp.enaExpMask = locallab.spots.at(sp).enaExpMask && llExpMask == 0 && llExpMaskinv == 0 && llSHMaskinv == 0 && llColorMask == 0 && llColorMaskinv == 0 && llsoftMask == 0 && lllcMask == 0 && llsharMask == 0 && llSHMask == 0 && llcbMask == 0 && llretiMask == 0 && lltmMask == 0 && llblMask == 0 && llvibMask == 0 && lllogMask == 0 && ll_Mask == 0 && llcieMask == 0;// Exposure mask is deactivated if Color & Light mask is visible
@@ -1006,7 +1003,6 @@ static void calcLocalParams(int sp, int oW, int oH, const LocallabParams& locall
         lp.quamet = 3;
     }
 
-//    printf("lpqualmet=%i\n", lp.quamet);
 
     if (locallab.spots.at(sp).shMethod == "std") {
         lp.shmeth = 0;
@@ -3692,9 +3688,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
                         double mm = applytojz(jmz);
                         double f = mm / jmz;
                         Jz *= f;
-                        //Cz *= f;
                         Jz = LIM01(Jz);//clip values
-                        //Cz = clipcz(Cz);
                     }
                 }
 
@@ -3946,9 +3940,9 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 			maxicam = maxicamq;
 		}
 
-        float base = 10.;
-        float linbase = 10.;
-        float gray = 15.;
+        float base = 10.f;
+        float linbase = 10.f;
+        float gray = 15.f;
 
         const bool compr = params->locallab.spots.at(sp).comprcie > 0.;
         const float comprfactor = params->locallab.spots.at(sp).comprcie;

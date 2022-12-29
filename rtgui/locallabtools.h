@@ -1694,7 +1694,7 @@ private:
     FlatCurveEditor* const LLmaskcieshapewav;
     Gtk::Box* const quaHcieBox;
     ThresholdAdjuster* const csThresholdcie;
-    int nextcount = 0;
+    int nextcomprciecount = 0;
    
     sigc::connection AutograycieConn,  forcejzConn, forcebwConn, qtojConn, showmaskcieMethodConn, enacieMaskConn, jabcieConn, sursourcieconn, surroundcieconn, modecieconn, modecamconn, comprcieautoconn, normcieconn, logcieconn, logjzconn, sigjzconn, sigqconn, chjzcieconn, toneMethodcieConn, toneMethodcieConn2, toolcieConn, bwevMethodConn, fftcieMaskConn;
 public:
