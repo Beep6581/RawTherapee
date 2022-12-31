@@ -307,7 +307,7 @@ public:
     }
 
     //DFProvider interface
-    rtengine::RawImage* getDF() override;
+    const rtengine::RawImage* getDF() override;
 
     //FFProvider interface
     rtengine::RawImage* getFF() override;

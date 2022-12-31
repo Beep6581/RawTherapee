@@ -28,7 +28,7 @@
 // Aligned so the first entry starts on line 30.
 int refreshmap[rtengine::NUMOFEVENTS] = {
     ALL,              // EvPhotoLoaded,
-    ALL,              // EvProfileLoaded,
+    0,              // EvProfileLoaded : obsolete,
     ALL,              // EvProfileChanged,
     ALL,              // EvHistoryBrowsed,
     AUTOEXP,         // EvBrightness,
@@ -42,9 +42,9 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,          // EvClip,
     LUMINANCECURVE,   // EvLBrightness,
     LUMINANCECURVE,   // EvLContrast,
-    LUMINANCECURVE,   // EvLBlack,
-    LUMINANCECURVE,   // EvLHLCompr,
-    LUMINANCECURVE,   // EvLSHCompr,
+    0,   // EvLBlack : obsolete,
+    0,   // EvLHLCompr : obsolete,
+    0,   // EvLSHCompr : obsolete,
     LUMINANCECURVE,   // EvLLCurve,
     SHARPENING,       // EvShrEnabled,
     SHARPENING,       // EvShrRadius,
@@ -81,7 +81,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,         // EvSHShadows,
     LUMINANCECURVE,         // EvSHHLTonalW,
     LUMINANCECURVE,         // EvSHSHTonalW,
-    AUTOEXP,         // EvSHLContrast,
+    0,         // EvSHLContrast : obsolete,
     LUMINANCECURVE,          // EvSHRadius,
     ALLNORAW,         // EvCTRotate,
     ALLNORAW,         // EvCTHFlip,
@@ -93,7 +93,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     CROP,             // EvCrop,
     HDR,        // EvCACorr,
     ALLNORAW,         // EvHREnabled,
-    ALLNORAW,         // EvHRAmount,
+    0,         // EvHRAmount : obsolete,
     ALLNORAW,         // EvHRMethod,
     DEMOSAIC,         // EvWProfile,
     OUTPUTPROFILE,    // EvOProfile,
@@ -104,12 +104,12 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RESIZE,           // EvResizeMethod,
     EXIF,             // EvExif,
     IPTC,             // EvIPTC
-    RESIZE,           // EvResizeSpec,
+    0,           // EvResizeSpec : obsolete,
     RESIZE,           // EvResizeWidth
     RESIZE,           // EvResizeHeight
     RESIZE,           // EvResizeEnabled
     ALL,              // EvProfileChangeNotification
-    RETINEX,          // EvShrHighQuality
+    0,          // EvSHHighQuality : obsolete
     HDR,        // EvPerspCorr
     DARKFRAME,        // EvLCPFile
     AUTOEXP,         // EvRGBrCurveLumamode
@@ -157,12 +157,12 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     FLATFIELD,        // EvFlatFieldBlurRadius,
     FLATFIELD,        // EvFlatFieldBlurType,
     HDR,        // EvAutoDIST,
-    ALLNORAW,         // EvDPDNLumCurve,
-    ALLNORAW,         // EvDPDNChromCurve,
-    GAMMA,            // EvGAMMA
-    GAMMA,            // EvGAMPOS
-    GAMMA,            // EvGAMFREE
-    GAMMA,            // EvSLPOS
+    0,         // EvDPDNLumCurve : obsolete
+    0,         // EvDPDNChromCurve : obsolete
+    0,            // EvGAMMA : obsolete
+    0,            // EvGAMPOS : obsolete
+    0,            // EvGAMFREE : obsolete
+    0,            // EvSLPOS : obsolete
     DARKFRAME,        // EvPreProcessExpBlackzero
     DARKFRAME,        // EvPreProcessExpBlackone
     DARKFRAME,        // EvPreProcessExpBlacktwo
@@ -200,7 +200,6 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // EvLLCCurve
     LUMINANCECURVE,   // EvLLCredsk
     ALLNORAW,         // EvDPDNLdetail
-    //ALLNORAW,         // EvCATEnabled
     LUMINANCECURVE,         // EvCATEnabled
     LUMINANCECURVE,   // EvCATDegree
     LUMINANCECURVE,   // EvCATMethodsur
@@ -236,7 +235,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // EvCATAutoadap
     DEFRINGE,         // EvPFCurve
     ALLNORAW,         // EvWBequal
-    ALLNORAW,         // EvWBequalbo
+    0,         // EvWBequalbo : obsolete
     HDR,        // EvGradientDegree
     HDR,        // EvGradientEnabled
     HDR,        // EvPCVignetteStrength
@@ -277,7 +276,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // EvLLHCurve
     LUMINANCECURVE,   // EvLHHCurve
     ALLNORAW,         // EvDirPyrEqualizerThreshold
-    ALLNORAW,         // EvDPDNenhance
+    0,         // EvDPDNenhance : obsolete
     AUTOEXP,         // EvBWMethodalg
     ALLNORAW,         // EvDirPyrEqualizerSkin
     ALLNORAW,         // EvDirPyrEqlgamutlab
@@ -301,8 +300,8 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,         // EvColorToningbluehigh
     AUTOEXP,         // EvColorToningbalance
     AUTOEXP,         // EvColorToningNeutral
-    AUTOEXP,         // EvColorToningsatlow
-    AUTOEXP,         // EvColorToningsathigh
+    0,         // EvColorToningsatlow : obsolete
+    0,         // EvColorToningsathigh : obsolete
     AUTOEXP,         // EvColorToningTwocolor
     AUTOEXP,         // EvColorToningNeutralcur
     AUTOEXP,         // EvColorToningLumamode
@@ -327,7 +326,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     ALLNORAW,         // EvDPDNsmet
     DARKFRAME,        // EvPreProcessDeadPixel
     ALLNORAW,         // EvDPDNCCCurve
-    ALLNORAW,         // EvDPDNautochroma
+    0,         // EvDPDNautochroma : obsolete
     ALLNORAW,         // EvDPDNLmet
     ALLNORAW,         // EvDPDNCmet
     ALLNORAW,         // EvDPDNC2met
@@ -436,7 +435,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DIRPYREQUALIZER,  // EvWavNPmet
     DEMOSAIC,         // EvretinexMethod
     RETINEX,          // EvLneigh
-    RETINEX,          // EvLgain
+    0,          // EvLgain : obsolete
     RETINEX,          // EvLoffs
     RETINEX,          // EvLstr
     RETINEX,          // EvLscal
@@ -500,7 +499,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     0,                // unused
     DEMOSAIC,         // EvPixelShiftMotionMethod
     DEMOSAIC,         // EvPixelShiftSmooth
-    DEMOSAIC,         // EvPixelShiftLmmse
+    0,         // EvPixelShiftLmmse : obsolete
     DEMOSAIC,         // EvPixelShiftEqualBright
     DEMOSAIC,         // EvPixelShiftEqualBrightChannel
     LUMINANCECURVE,   // EvCATtempout
@@ -524,7 +523,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DEMOSAIC,         // EvPdShrEnabled
     CAPTURESHARPEN,    // EvPdShrMaskToggled
     AUTOEXP,   // EvLocallabSpotDeleted
-    M_VOID,           // EvLocallabSpotSelected
+    HDR,           // EvLocallabSpotSelected
     M_VOID,           // EvLocallabSpotName
     M_VOID,           // EvLocallabSpotVisibility
     AUTOEXP,   // EvLocallabSpotShape
@@ -631,7 +630,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,   // EvLocallabstreng
     AUTOEXP,   // EvLocallabsensisf
     AUTOEXP,   // Evlocallabsharblur
-    AUTOEXP,   // EvLocenalabregion
+    0,   // EvLocenalabregion : obsolete
     AUTOEXP,   // EvlocallabshowmaskMethod
     AUTOEXP,   // EvLocallabSpotSelectedWithMask
     AUTOEXP,   // EvlocallabCCmaskshape
@@ -875,7 +874,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP | M_AUTOEXP,   // EvLocenalog
     HDR,          // EvLocallabAuto
     AUTOEXP,   // EvlocallabsourceGray
-    HDR,          // EvlocallabsourceGrayAuto
+    0,          // EvlocallabsourceGrayAuto : obsolete
     HDR,          // EvlocallabAutoGray
     AUTOEXP,   // EvlocallabblackEv
     AUTOEXP,   // EvlocallabwhiteEv
@@ -1077,8 +1076,116 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     AUTOEXP,   // Evlocallabreparsh
     AUTOEXP,   // Evlocallabreparexp
     AUTOEXP,   // Evlocallabrepartm
-    AUTOEXP   // Evlocallabchroml
-
+    AUTOEXP,   // Evlocallabchroml
+    AUTOEXP,   // Evlocallabresidgam
+    AUTOEXP,   // Evlocallabresidslop
+    AUTOEXP,   // Evlocallabnoisegam
+    AUTOEXP,    //Evlocallabgamlc
+    AUTOEXP,    //Evlocallabgamc
+    AUTOEXP,    //Evlocallabgamex
+    AUTOEXP | M_AUTOEXP,    // EvLocenacie
+    AUTOEXP,     //Evlocallabreparcie
+    HDR,     //EvlocallabAutograycie
+    HDR,    //EvlocallabsourceGraycie
+    HDR,    //Evlocallabsourceabscie
+    AUTOEXP,    //Evlocallabsursourcie
+    AUTOEXP,    //Evlocallabsaturlcie
+    AUTOEXP,    //Evlocallabchromlcie
+    AUTOEXP,    //Evlocallablightlcie
+    AUTOEXP,    //Evlocallablightqcie
+    AUTOEXP,    //Evlocallabcontlcie
+    AUTOEXP,    //Evlocallabcontthrescie
+    AUTOEXP,    //Evlocallabcontqcie
+    AUTOEXP,    //Evlocallabcolorflcie
+    AUTOEXP,    //Evlocallabtargabscie
+    AUTOEXP,    //EvlocallabtargetGraycie
+    AUTOEXP,    //Evlocallabcatadcie
+    AUTOEXP,    //Evlocallabdetailcie
+    AUTOEXP,    //Evlocallabsurroundcie
+    AUTOEXP,    //Evlocallabsensicie
+    AUTOEXP,    //Evlocallabmodecie
+    AUTOEXP,    //Evlocallabrstprotectcie
+    AUTOEXP,    //Evlocallabsigmoidldacie
+    AUTOEXP,    //Evlocallabsigmoidthcie
+    AUTOEXP,    //Evlocallabsigmoidblcie
+    AUTOEXP,    //Evlocallabsigmoidqjcie
+    AUTOEXP,    //Evlocallabhuecie
+    AUTOEXP,    //Evlocallabjabcie
+    AUTOEXP,    //Evlocallablightjzcie
+    AUTOEXP,    //Evlocallabcontjzcie
+    AUTOEXP,    //Evlocallabchromjzcie
+    AUTOEXP,    //Evlocallabhuejzcie
+    AUTOEXP,    //Evlocallabsigmoidldajzcie
+    AUTOEXP,    //Evlocallabsigmoidthjzcie
+    AUTOEXP,    //Evlocallabsigmoidbljzcie
+    AUTOEXP,    //Evlocallabadapjzcie
+    AUTOEXP,    //Evlocallabmodecam
+    AUTOEXP,    //Evlocallabhljzcie
+    AUTOEXP,    //Evlocallabhlthjzcie
+    AUTOEXP,    //Evlocallabshjzcie
+    AUTOEXP,    //Evlocallabshthjzcie
+    AUTOEXP,    //Evlocallabradjzcie
+//    AUTOEXP,    //EvlocallabHHshapejz
+    AUTOEXP,    //EvlocallabCHshapejz
+    AUTOEXP,    //Evlocallabjz100
+    AUTOEXP,    //Evlocallabpqremap
+    AUTOEXP,    //EvlocallabLHshapejz
+    AUTOEXP,    //Evlocallabshargam
+    AUTOEXP,    //Evlocallabvibgam
+    AUTOEXP,    //EvLocallabtoneMethodcie
+    AUTOEXP,    //Evlocallabshapecie
+    AUTOEXP,    //EvLocallabtoneMethodcie2
+    AUTOEXP,    //Evlocallabshapecie2
+    AUTOEXP,    //Evlocallabshapejz
+    AUTOEXP,    //Evlocallabshapecz
+    AUTOEXP,    //Evlocallabshapeczjz
+    AUTOEXP,    //Evlocallabforcejz
+//    AUTOEXP,    //Evlocallablightlzcam
+//    AUTOEXP,    //Evlocallablightqzcam
+//    AUTOEXP,    //Evlocallabcontlzcam
+//    AUTOEXP,    //Evlocallabcontqzcam
+//    AUTOEXP,    //Evlocallabcontthreszcam
+//    AUTOEXP,    //Evlocallabcolorflzcam
+//    AUTOEXP,    //Evlocallabsaturzcam
+//    AUTOEXP,    //Evlocallabchromzcam
+    AUTOEXP,    //Evlocallabpqremapcam16
+    AUTOEXP,    //EvLocallabEnacieMask    
+    AUTOEXP,    //EvlocallabCCmaskcieshape
+    AUTOEXP,    //EvlocallabLLmaskcieshape
+    AUTOEXP,    //EvlocallabHHmaskcieshape
+    AUTOEXP,    //Evlocallabblendmaskcie
+    AUTOEXP,    //Evlocallabradmaskcie
+    AUTOEXP,    //Evlocallabchromaskcie
+    AUTOEXP,    //EvlocallabLmaskcieshape 
+    AUTOEXP,    //Evlocallabrecothrescie
+    AUTOEXP,    //Evlocallablowthrescie
+    AUTOEXP,    //Evlocallabhigthrescie
+    AUTOEXP,    //Evlocallabdecaycie
+    AUTOEXP,    //Evlocallablapmaskcie
+    AUTOEXP,    //Evlocallabgammaskcie
+    AUTOEXP,    //Evlocallabslomaskcie
+    AUTOEXP,    //Evlocallabqtoj
+    AUTOEXP,    //Evlocallabsaturjzcie
+    AUTOEXP,    //EvLocallabSpotdenoichmask
+    AUTOEXP,    //Evlocallabsigmalcjz
+    AUTOEXP,    //EvlocallabcsThresholdjz
+    AUTOEXP,    //EvlocallabwavCurvejz
+    AUTOEXP,    //Evlocallabclarilresjz
+    AUTOEXP,    //Evlocallabclaricresjz
+    AUTOEXP,    //Evlocallabclarisoftjz
+    AUTOEXP,    //EvlocallabHHshapejz
+    AUTOEXP,    //Evlocallabsoftjzcie
+    AUTOEXP,    //Evlocallabthrhjzcie
+    AUTOEXP,    //Evlocallabchjzcie
+    AUTOEXP,    //Evlocallabstrsoftjzcie
+    AUTOEXP,    //EvlocallabblackEvjz
+    AUTOEXP,    //EvlocallabwhiteEvjz
+    AUTOEXP,    //Evlocallablogjz
+    AUTOEXP,    //Evlocallabtargetjz
+    AUTOEXP,    //Evlocallabforcebw
+    AUTOEXP,    //Evlocallabsigjz
+    AUTOEXP,    //Evlocallabsigq
+    AUTOEXP    //Evlocallablogcie
 
 };
 

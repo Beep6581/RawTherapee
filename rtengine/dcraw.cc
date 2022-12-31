@@ -6061,13 +6061,56 @@ get2_256:
       offsetChannelBlackLevel2 = save1 + (0x0149 << 1);
       offsetWhiteLevels = save1 + (0x031c << 1);
       break;
+    case 2024: // 1D X Mark III, ColorDataSubVer 32
+      // imCanon.ColorDataVer = 10;
+      imCanon.ColorDataSubVer = get2();
+      fseek(ifp, save1 + (0x0055 << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)/*RGGB_2_RGBG(c)*/] = (float)get2();
+      // get2();
+      // FORC4 icWBC[LIBRAW_WBI_Auto][RGGB_2_RGBG(c)] = get2();
+      // get2();
+      // FORC4 icWBC[LIBRAW_WBI_Measured][RGGB_2_RGBG(c)] = get2();
+      // fseek(ifp, save1 + (0x0096 << 1), SEEK_SET);
+      // Canon_WBpresets(2, 12);
+      // fseek(ifp, save1 + (0x0118 << 1), SEEK_SET);
+      // Canon_WBCTpresets(0);
+      offsetChannelBlackLevel = save1 + (0x0326 << 1);
+      offsetChannelBlackLevel2 = save1 + (0x0157 << 1);
+      offsetWhiteLevels = save1 + (0x032a << 1);
+      break;
+     case 3656: // EOS R6, ColorDataSubVer 33
+      // imCanon.ColorDataVer = 10;
+      imCanon.ColorDataSubVer = get2();
+
+      // The constant 0x0055 was found in LibRaw; more specifically by
+      // spelunking in LibRaw:src/metadata/canon.cpp.
+      fseek(ifp, save1 + (0x0055 << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
+
+      offsetChannelBlackLevel = save1 + (0x326 << 1);
+      offsetChannelBlackLevel2 = save1 + (0x157 << 1);
+      offsetWhiteLevels = save1 + (0x32a << 1);
+      break;
+    case 3973: // R3; ColorDataSubVer: 34
+    case 3778: // R7, R10; ColorDataSubVer: 48
+      // imCanon.ColorDataVer = 11;
+      imCanon.ColorDataSubVer = get2();
+
+      fseek(ifp, save1 + ((0x0069+0x0064) << 1), SEEK_SET);
+      FORC4 cam_mul[c ^ (c >> 1)] = (float)get2();
+
+      offsetChannelBlackLevel2 = save1 + ((0x0069+0x0102) << 1);
+      offsetChannelBlackLevel  = save1 + ((0x0069+0x0213) << 1);
+      offsetWhiteLevels        = save1 + ((0x0069+0x0217) << 1);
+      break;
     }
 
     if (offsetChannelBlackLevel)
     {
       fseek(ifp, offsetChannelBlackLevel, SEEK_SET);
       FORC4
-          bls += (cblack/*imCanon.ChannelBlackLevel*/[c ^ (c >> 1)] = get2());
+          bls += (RT_canon_levels_data.cblack/*imCanon.ChannelBlackLevel*/[c ^ (c >> 1)] = get2());
+      RT_canon_levels_data.black_ok = true;
       imCanon.AverageBlackLevel = bls / 4;
       // RT_blacklevel_from_constant = ThreeValBool::F;
     }
@@ -6079,7 +6122,8 @@ get2_256:
       imCanon.SpecularWhiteLevel = get2();
       // FORC4
       //   imgdata.color.linear_max[c] = imCanon.SpecularWhiteLevel;
-      maximum = imCanon.SpecularWhiteLevel;
+      RT_canon_levels_data.white = imCanon.SpecularWhiteLevel;
+      RT_canon_levels_data.white_ok = true;
       // RT_whitelevel_from_constant = ThreeValBool::F;
     }
 
@@ -6087,7 +6131,8 @@ get2_256:
     {
         fseek(ifp, offsetChannelBlackLevel2, SEEK_SET);
         FORC4
-            bls += (cblack/*imCanon.ChannelBlackLevel*/[c ^ (c >> 1)] = get2());
+            bls += (RT_canon_levels_data.cblack/*imCanon.ChannelBlackLevel*/[c ^ (c >> 1)] = get2());
+        RT_canon_levels_data.black_ok = true;
         imCanon.AverageBlackLevel = bls / 4;
         // RT_blacklevel_from_constant = ThreeValBool::F;
     }
@@ -6274,12 +6319,13 @@ void CLASS parse_mos (int offset)
 
 void CLASS linear_table (unsigned len)
 {
-  int i;
-  if (len > 0x1000) len = 0x1000;
-  read_shorts (curve, len);
-  for (i=len; i < 0x1000; i++)
-    curve[i] = curve[i-1];
-  maximum = curve[0xfff];
+  const unsigned maxLen = std::min(0x10000ull, 1ull << tiff_bps);
+  len = std::min(len, maxLen);
+  read_shorts(curve, len);
+  maximum = curve[len - 1];
+  for (std::size_t i = len; i < maxLen; ++i) {
+    curve[i] = maximum;
+  }
 }
 
 void CLASS parse_kodak_ifd (int base)
@@ -6403,6 +6449,9 @@ int CLASS parse_tiff_ifd (int base)
 	break;
       case 3: case 257: case 61442:	/* ImageHeight */
 	tiff_ifd[ifd].height = getint(type);
+	break;
+      case 254:
+	tiff_ifd[ifd].new_sub_file_type = getint(type);
 	break;
       case 258:				/* BitsPerSample */
       case 61443:
@@ -6737,14 +6786,17 @@ guess_cfa_pc:
 	linear_table (len);
 	break;
       case 50713:			/* BlackLevelRepeatDim */
+	if (tiff_ifd[ifd].new_sub_file_type != 0) continue;
 	cblack[4] = get2();
 	cblack[5] = get2();
 	if (cblack[4] * cblack[5] > sizeof cblack / sizeof *cblack - 6)
 	    cblack[4] = cblack[5] = 1;
 	break;
       case 61450:
+	if (tiff_ifd[ifd].new_sub_file_type != 0) continue;
 	cblack[4] = cblack[5] = MIN(sqrt(len),64);
       case 50714:			/* BlackLevel */
+	if (tiff_ifd[ifd].new_sub_file_type != 0) continue;
                 RT_blacklevel_from_constant = ThreeValBool::F;
 //-----------------------------------------------------------------------------
 // taken from LibRaw.
@@ -9070,8 +9122,21 @@ void CLASS adobe_coeff (const char *make, const char *model)
 
   for (i=0; i < sizeof table / sizeof *table; i++)
     if (!strncmp (name, table[i].prefix, strlen(table[i].prefix))) {
-      if (RT_blacklevel_from_constant == ThreeValBool::T && table[i].black)   black   = (ushort) table[i].black;
-      if (RT_whitelevel_from_constant == ThreeValBool::T && table[i].maximum) maximum = (ushort) table[i].maximum;
+      if (RT_blacklevel_from_constant == ThreeValBool::T && table[i].black) {
+        if (RT_canon_levels_data.black_ok) {
+          unsigned c;
+          FORC4 RT_canon_levels_data.cblack[c] = (ushort) table[i].black;
+        } else {
+          black = (ushort) table[i].black;
+        }
+      }
+      if (RT_whitelevel_from_constant == ThreeValBool::T && table[i].maximum) {
+        if (RT_canon_levels_data.white_ok) {
+          RT_canon_levels_data.white = (ushort) table[i].maximum;
+        } else {
+          maximum = (ushort) table[i].maximum;
+        }
+      }
       if (RT_matrix_from_constant == ThreeValBool::T && table[i].trans[0]) {
 	for (raw_color = j=0; j < 12; j++)
 	  ((double *)cam_xyz)[j] = table[i].trans[j] / 10000.0;
@@ -9751,6 +9816,8 @@ void CLASS identify()
      if(!dng_version) {top_margin = 18; height -= top_margin; }
   if (height == 3014 && width == 4096)	/* Ricoh GX200 */
 			width  = 4014;
+  if (height == 3280 && width == 4992 && !strncmp(model, "D5100", 5))
+    { --height; } // Last row contains corrupt data. See issue #5654.
   if (dng_version) {
     if (filters == UINT_MAX) filters = 0;
     if (filters) is_raw *= tiff_samples;
@@ -9855,7 +9922,8 @@ void CLASS identify()
     filters = 0;
     tiff_samples = colors = 3;
     load_raw = &CLASS canon_sraw_load_raw;
-    FORC4 cblack[c] = 0; // ALB
+    //FORC4 cblack[c] = 0; // ALB
+    RT_canon_levels_data.black_ok = RT_canon_levels_data.white_ok = false;
   } else if (!strcmp(model,"PowerShot 600")) {
     height = 613;
     width  = 854;
@@ -10521,6 +10589,14 @@ bw:   colors = 1;
     }
   }
 dng_skip:
+  if (!dng_version && is_raw) {
+      if (RT_canon_levels_data.black_ok) {
+          FORC4 cblack[c] = RT_canon_levels_data.cblack[c];
+      }
+      if (RT_canon_levels_data.white_ok) {
+          maximum = RT_canon_levels_data.white;
+      }
+  }
   if ((use_camera_matrix & (use_camera_wb || dng_version))
         && cmatrix[0][0] > 0.125
         && strncmp(RT_software.c_str(), "Adobe DNG Converter", 19) != 0

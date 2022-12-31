@@ -35,13 +35,23 @@
 
 namespace {
 
-template<typename T>
-T calcBlendFactor(T val, T threshold) {
+float calcBlendFactor(float val, float threshold) {
     // sigmoid function
     // result is in ]0;1] range
     // inflexion point is at (x, y) (threshold, 0.5)
-    return 1.f / (1.f + xexpf(16.f - (16.f / threshold) * val));
+    const float x = -16.f + (16.f / threshold) * val;
+    return 0.5f * (1.f + x / std::sqrt(1.f + rtengine::SQR(x)));
 }
+
+#ifdef __SSE2__
+vfloat calcBlendFactor(vfloat val, vfloat threshold) {
+    // sigmoid function
+    // result is in ]0;1] range
+    // inflexion point is at (x, y) (threshold, 0.5)
+    const vfloat x = -16.f + (16.f / threshold) * val;
+    return 0.5f * (1.f + x * _mm_rsqrt_ps(1.f + rtengine::SQR(x)));
+}
+#endif
 
 float tileAverage(const float * const *data, size_t tileY, size_t tileX, size_t tilesize) {
 
