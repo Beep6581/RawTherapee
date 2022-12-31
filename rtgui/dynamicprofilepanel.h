@@ -55,6 +55,7 @@ private:
             add (expcomp);
             add (camera);
             add (lens);
+            add (path);
             add (profilepath);
             add (imagetype);
         }
@@ -66,6 +67,7 @@ private:
         Gtk::TreeModelColumn<DynamicProfileRule::Range<double>> expcomp;
         Gtk::TreeModelColumn<DynamicProfileRule::Optional> camera;
         Gtk::TreeModelColumn<DynamicProfileRule::Optional> lens;
+        Gtk::TreeModelColumn<DynamicProfileRule::Optional> path;
         Gtk::TreeModelColumn<DynamicProfileRule::Optional> imagetype;
         Gtk::TreeModelColumn<Glib::ustring> profilepath;
     };
@@ -78,6 +80,7 @@ private:
     void render_expcomp (Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
     void render_camera (Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
     void render_lens (Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
+    void render_path (Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
     void render_imagetype (Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
     void render_profilepath (Gtk::CellRenderer* cell, const Gtk::TreeModel::iterator& iter);
 
@@ -113,6 +116,9 @@ private:
 
         Gtk::CheckButton *has_lens_;
         Gtk::Entry *lens_;
+
+        Gtk::CheckButton *has_path_;
+        Gtk::Entry *path_;
 
         MyComboBoxText *imagetype_;
 
