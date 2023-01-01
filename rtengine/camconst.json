@@ -1586,6 +1586,12 @@ Camera constants:
         "raw_crop": [ 0, 5, 7752, 5184 ]
     },
 
+    { // Quality C
+        "make_model": "FUJIFILM DBP for GX680",
+        "dcraw_matrix": [ 12741, -4916, -1420, -8510, 16791, 1715, -1767, 2302, 7771 ], // same as S2Pro as per LibRaw
+        "ranges": { "white": 4096, "black": 128 }
+    },
+
     { // Quality C, Leica C-Lux names can differ?
         "make_model" : [ "LEICA C-LUX", "LEICA CAM-DC25" ],
         "dcraw_matrix" : [7790, -2736, -755, -3452, 11870, 1769, -628, 1647, 4898]

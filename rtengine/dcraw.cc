@@ -2464,6 +2464,30 @@ void CLASS unpacked_load_raw()
   }
 }
 
+// RT - from LibRaw
+void CLASS unpacked_load_raw_FujiDBP()
+/*
+for Fuji DBP for GX680, aka DX-2000
+  DBP_tile_width = 688;
+  DBP_tile_height = 3856;
+  DBP_n_tiles = 8;
+*/
+{
+    int scan_line, tile_n;
+    int nTiles = 8;
+    tile_width = raw_width / nTiles;
+    ushort *tile;
+    tile = (ushort *) calloc(raw_height, tile_width * 2);
+    for (tile_n = 0; tile_n < nTiles; tile_n++) {
+        read_shorts(tile, tile_width * raw_height);
+        for (scan_line = 0; scan_line < raw_height; scan_line++) {
+            memcpy(&raw_image[scan_line * raw_width + tile_n * tile_width],
+                &tile[scan_line * tile_width], tile_width * 2);
+        }
+    }
+    free(tile);
+    fseek(ifp, -2, SEEK_CUR); // avoid EOF error
+}
 
 // RT
 void CLASS sony_arq_load_raw()
@@ -10067,6 +10091,9 @@ canon_a5:
     } else if (!strcmp(model, "X-Pro3") || !strcmp(model, "X-T3") || !strcmp(model, "X-T30") || !strcmp(model, "X-T4") || !strcmp(model, "X100V") || !strcmp(model, "X-S10")) {
         width = raw_width = 6384;
         height = raw_height = 4182;
+    } else if (!strcmp(model, "DBP for GX680")) { // Special case for #4204
+        width = raw_width = 5504;
+        height = raw_height = 3856;
     }
     top_margin = (raw_height - height) >> 2 << 1;
     left_margin = (raw_width - width ) >> 2 << 1;
@@ -10074,6 +10101,16 @@ canon_a5:
     if (width == 4032 || width == 4952 || width == 6032 || width == 8280) left_margin = 0;
     if (width == 3328 && (width -= 66)) left_margin = 34;
     if (width == 4936) left_margin = 4;
+    if (width == 5504) { // #4204, taken from LibRaw
+        left_margin = 32;
+        top_margin = 8;
+        width = raw_width - 2*left_margin;
+        height = raw_height - 2*top_margin;
+        load_raw = &CLASS unpacked_load_raw_FujiDBP;
+        filters = 0x16161616;
+        load_flags = 0;
+        flip = 6;
+    }
     if (!strcmp(model,"HS50EXR") ||
 	!strcmp(model,"F900EXR")) {
       width += 2;

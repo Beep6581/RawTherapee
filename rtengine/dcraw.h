@@ -432,6 +432,7 @@ void parse_hasselblad_gain();
 void hasselblad_load_raw();
 void leaf_hdr_load_raw();
 void unpacked_load_raw();
+void unpacked_load_raw_FujiDBP();
 void sinar_4shot_load_raw();
 void imacon_full_load_raw();
 void packed_load_raw();
