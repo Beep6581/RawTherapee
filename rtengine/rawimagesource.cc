@@ -467,6 +467,7 @@ RawImageSource::RawImageSource ()
 {
     embProfile = nullptr;
     rgbSourceModified = false;
+
     for (int i = 0; i < 4; ++i) {
         psRedBrightness[i] = psGreenBrightness[i] = psBlueBrightness[i] = 1.f;
     }
@@ -742,7 +743,6 @@ void RawImageSource::getWBMults (const ColorTemp &ctemp, const RAWParams &raw, s
 void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw)
 {
     MyMutex::MyLock lock(getImageMutex);
-
     tran = defTransform (tran);
 
     // compute channel multipliers
@@ -845,8 +845,10 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 	bool iscolor = (hrp.method == "Color" || hrp.method == "Coloropp");
 	const bool doClip = (chmax[0] >= clmax[0] || chmax[1] >= clmax[1] || chmax[2] >= clmax[2]) && !hrp.hrenabled && hrp.clampOOG;
     bool doHr = (hrp.hrenabled && !iscolor);
-
 	if (hrp.hrenabled && iscolor) {
+		if(hrp.method == "Coloropp") {//force Inpaint opposed if WB change
+			rgbSourceModified  = false;
+		}
         if (!rgbSourceModified) {
 			if(hrp.method == "Color") {
 				if (settings->verbose) {
@@ -1774,7 +1776,6 @@ void RawImageSource::demosaic(const RAWParams &raw, bool autoContrast, double &c
 
 
     rgbSourceModified = false;
-
     if (cache) {
         if (!redCache) {
             redCache = new array2D<float>(W, H);
@@ -2473,7 +2474,6 @@ void RawImageSource::retinex(const ColorManagementParams& cmp, const RetinexPara
     }
 
     rgbSourceModified = false; // tricky handling for Color propagation
-
     t5.set();
 
     if (settings->verbose) {
