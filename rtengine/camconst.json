@@ -3025,7 +3025,10 @@ Camera constants:
     { // Quality B, correction for frame width
         "make_model": [ "Sony ILCE-7S", "Sony ILCE-7SM2" ],
         "dcraw_matrix": [ 5838,-1430,-246,-3497,11477,2297,-748,1885,5778 ], // DNG_v9.2 D65
-        "raw_crop": [ 0, 0, 4254, 2848 ],
+        "raw_crop" : [
+            { "frame" : [ 2816, 1872 ], "crop" : [ 0, 0, 2792, 1872 ] },
+            { "frame" : [ 4254, 2848 ], "crop" : [ 0, 0, 4254, 2848 ] }
+        ],
         "ranges": { "black": 512, "white": 16300 }
     },
 
