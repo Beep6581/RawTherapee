@@ -1226,7 +1226,8 @@ Camera constants:
 
     { // Quality C
         "make_model": "Canon EOS R3",
-        "dcraw_matrix" : [9423,-2839,-1195,-4532,12377,2415,-483,1374,5276]
+        "dcraw_matrix" : [ 9423, -2839, -1195, -4532, 12377, 2415, -483, 1374, 5276 ],
+        "raw_crop": [ 160, 120, 6024, 4024 ]
     },
 
     { // Quality C
