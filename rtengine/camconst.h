@@ -1,9 +1,11 @@
-/*
+/* -*- C++ -*-
+ *
  *  This file is part of RawTherapee.
  */
 #pragma once
 
 #include <map>
+#include <array>
 #include <string>
 #include <vector>
 
@@ -17,17 +19,17 @@ class ustring;
 namespace rtengine
 {
 
-struct camera_const_levels {
-    int levels[4];
-};
-
 class CameraConst final
 {
 private:
+    struct camera_const_levels {
+        int levels[4];
+    };
+
     std::string make_model;
     short dcraw_matrix[12];
-    int raw_crop[4];
-    int raw_mask[2][4];
+    std::map<std::pair<int, int>, std::array<int, 4>> raw_crop;
+    std::map<std::pair<int, int>, std::array<std::array<int, 4>, 2>> raw_mask;
     int white_max;
     std::map<int, camera_const_levels> mLevels[2];
     std::map<float, float> mApertureScaling;
@@ -47,10 +49,10 @@ public:
     const short *get_dcrawMatrix(void) const;
     const std::vector<int>& get_pdafPattern() const;
     int get_pdafOffset() const {return pdafOffset;};
-    bool has_rawCrop(void) const;
-    void get_rawCrop(int& left_margin, int& top_margin, int& width, int& height) const;
-    bool has_rawMask(int idx) const;
-    void get_rawMask(int idx, int& top, int& left, int& bottom, int& right) const;
+    bool has_rawCrop(int raw_width, int raw_height) const;
+    void get_rawCrop(int raw_width, int raw_height, int& left_margin, int& top_margin, int& width, int& height) const;
+    bool has_rawMask(int raw_width, int raw_height, int idx) const;
+    void get_rawMask(int raw_width, int raw_height, int idx, int& top, int& left, int& bottom, int& right) const;
     int get_BlackLevel(int idx, int iso_speed) const;
     int get_WhiteLevel(int idx, int iso_speed, float fnumber) const;
     bool has_globalGreenEquilibration() const;
@@ -77,4 +79,5 @@ public:
     const CameraConst *get(const char make[], const char model[]) const;
 };
 
-}
+} // namespace rtengine
+
