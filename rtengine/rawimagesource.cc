@@ -740,7 +740,7 @@ void RawImageSource::getWBMults (const ColorTemp &ctemp, const RAWParams &raw, s
     autoGainComp = camInitialGain / initialGain;
 }
 
-void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw)
+void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw, int opposed)
 {
     MyMutex::MyLock lock(getImageMutex);
     tran = defTransform (tran);
@@ -846,7 +846,8 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 	const bool doClip = (chmax[0] >= clmax[0] || chmax[1] >= clmax[1] || chmax[2] >= clmax[2]) && !hrp.hrenabled && hrp.clampOOG;
     bool doHr = (hrp.hrenabled && !iscolor);
 	if (hrp.hrenabled && iscolor) {
-		if(hrp.method == "Coloropp") {//force Inpaint opposed if WB change
+		
+		if(hrp.method == "Coloropp" && opposed == 1) {//force Inpaint opposed if WB change, and opposed limited tne number to 1
 			rgbSourceModified  = false;
 		}
         if (!rgbSourceModified) {

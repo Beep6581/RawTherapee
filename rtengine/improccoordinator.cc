@@ -512,7 +512,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         if (settings->verbose) {
             printf("automethod=%s \n", params->wb.method.c_str());
         }
-        if (todo & (M_INIT | M_LINDENOISE | M_HDR | M_RETINEX)) {
+        if (todo & (M_INIT | M_LINDENOISE | M_HDR)) {
             MyMutex::MyLock initLock(minit);  // Also used in crop window
 			//	imgsrc->HLRecovery_Global(params->toneCurve);   // this handles Color HLRecovery
 
@@ -620,7 +620,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             PreviewProps pp(0, 0, fw, fh, scale);
             // Tells to the ImProcFunctions' tools what is the preview scale, which may lead to some simplifications
             ipf.setScale(scale);
-            imgsrc->getImage(currWB, tr, orig_prev, pp, params->toneCurve, params->raw);
+            imgsrc->getImage(currWB, tr, orig_prev, pp, params->toneCurve, params->raw, 1);
 
             if ((todo & M_SPOT) && params->spot.enabled && !params->spot.entries.empty()) {
                 spotsDone = true;
@@ -2613,7 +2613,7 @@ void ImProcCoordinator::saveInputICCReference(const Glib::ustring& fname, bool a
         currWB = ColorTemp(); // = no white balance
     }
 
-    imgsrc->getImage(currWB, tr, im, pp, ppar.toneCurve, ppar.raw);
+    imgsrc->getImage(currWB, tr, im, pp, ppar.toneCurve, ppar.raw, 0);
     ImProcFunctions ipf(&ppar, true);
 
     if (ipf.needsTransform(fW, fH, imgsrc->getRotateDegree(), imgsrc->getMetaData())) {

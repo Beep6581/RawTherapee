@@ -64,9 +64,9 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     DARKFRAME,        // EvLCPUseVign,
     HDR,        // EvLCPUseCA,
     M_VOID,           // EvFixedExp
-    RETINEX,         // EvWBMethod,
-    RETINEX,         // EvWBTemp,
-    RETINEX,         // EvWBGreen,
+    ALLNORAW,         // EvWBMethod,
+    ALLNORAW,         // EvWBTemp,
+    ALLNORAW,         // EvWBGreen,
     AUTOEXP,         // EvToneCurveMode1,
     AUTOEXP,         // EvToneCurve2,
     AUTOEXP,         // EvToneCurveMode2,
@@ -234,7 +234,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     LUMINANCECURVE,   // EvCATbadpix
     LUMINANCECURVE,   // EvCATAutoadap
     DEFRINGE,         // EvPFCurve
-    RETINEX,         // EvWBequal
+    ALLNORAW,         // EvWBequal
     0,         // EvWBequalbo : obsolete
     HDR,        // EvGradientDegree
     HDR,        // EvGradientEnabled
@@ -470,7 +470,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     RETINEX,          // EvRetinexgaintransmission
     RETINEX,          // EvLskal
     OUTPUTPROFILE,    // EvOBPCompens
-    RETINEX,         // EvWBtempBias
+    ALLNORAW,         // EvWBtempBias
     DARKFRAME,        // EvRawImageNum
     0,                // unused
     0,                // unused
@@ -517,7 +517,7 @@ int refreshmap[rtengine::NUMOFEVENTS] = {
     ALLNORAW,         // EvTMFattalEnabled
     HDR,              // EvTMFattalThreshold
     HDR,              // EvTMFattalAmount
-    RETINEX,         // EvWBEnabled
+    ALLNORAW,         // EvWBEnabled
     AUTOEXP,         // EvRGBEnabled
     LUMINANCECURVE,   // EvLEnabled
     DEMOSAIC,         // EvPdShrEnabled

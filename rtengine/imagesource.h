@@ -109,7 +109,7 @@ public:
     virtual void        getWBMults  (const ColorTemp &ctemp, const procparams::RAWParams &raw, std::array<float, 4>& scale_mul, float &autoGainComp, float &rm, float &gm, float &bm) const = 0;
 
     // use right after demosaicing image, add coarse transformation and put the result in the provided Imagefloat*
-    virtual void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const procparams::ToneCurveParams &hlp, const procparams::RAWParams &raw) = 0;
+    virtual void        getImage    (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const procparams::ToneCurveParams &hlp, const procparams::RAWParams &raw, int opposed) = 0;
     virtual eSensorType getSensorType () const = 0;
     virtual bool        isMono () const = 0;
     // true is ready to provide the AutoWB, i.e. when the image has been demosaiced for RawImageSource
