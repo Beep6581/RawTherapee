@@ -901,12 +901,12 @@ ToolPanelCoordinator::~ToolPanelCoordinator ()
     delete toolBar;
 }
 
-void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans, bool isMono)
+void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtrans, bool isMono, bool isGainMapSupported)
 {
     if (isRaw) {
         if (isBayer) {
             idle_register.add(
-                [this]() -> bool
+                [this, isGainMapSupported]() -> bool
                 {
                     rawPanelSW->set_sensitive(true);
                     sensorxtrans->FoldableToolPanel::hide();
@@ -920,6 +920,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     preprocessWB->FoldableToolPanel::show();
                     preprocess->FoldableToolPanel::show();
                     flatfield->FoldableToolPanel::show();
+                    flatfield->setGainMap(isGainMapSupported);
                     pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
                     return false;
@@ -927,7 +928,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
             );
         } else if (isXtrans) {
             idle_register.add(
-                [this]() -> bool
+                [this, isGainMapSupported]() -> bool
                 {
                     rawPanelSW->set_sensitive(true);
                     sensorxtrans->FoldableToolPanel::show();
@@ -941,6 +942,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     preprocessWB->FoldableToolPanel::show();
                     preprocess->FoldableToolPanel::show();
                     flatfield->FoldableToolPanel::show();
+                    flatfield->setGainMap(isGainMapSupported);
                     pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
                     return false;
@@ -948,7 +950,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
             );
         } else if (isMono) {
             idle_register.add(
-                [this]() -> bool
+                [this, isGainMapSupported]() -> bool
                 {
                     rawPanelSW->set_sensitive(true);
                     sensorbayer->FoldableToolPanel::hide();
@@ -961,6 +963,7 @@ void ToolPanelCoordinator::imageTypeChanged(bool isRaw, bool isBayer, bool isXtr
                     preprocessWB->FoldableToolPanel::hide();
                     preprocess->FoldableToolPanel::hide();
                     flatfield->FoldableToolPanel::show();
+                    flatfield->setGainMap(isGainMapSupported);
                     pdSharpening->FoldableToolPanel::show();
                     retinex->FoldableToolPanel::setGrayedOut(false);
                     return false;
@@ -1113,12 +1116,12 @@ void ToolPanelCoordinator::panelChanged(const rtengine::ProcEvent& event, const 
         ipc->setLocallabMaskVisibility(maskStruc.previewDeltaE, maskStruc.colorMask, maskStruc.colorMaskinv, maskStruc.expMask, maskStruc.expMaskinv,
                 maskStruc.SHMask, maskStruc.SHMaskinv, maskStruc.vibMask, maskStruc.softMask,
                 maskStruc.blMask, maskStruc.tmMask, maskStruc.retiMask, maskStruc.sharMask,
-                maskStruc.lcMask, maskStruc.cbMask, maskStruc.logMask, maskStruc.maskMask);
+                maskStruc.lcMask, maskStruc.cbMask, maskStruc.logMask, maskStruc.maskMask, maskStruc.cieMask);
     } else if (event == rtengine::EvLocallabSpotCreated || event == rtengine::EvLocallabSpotSelectedWithMask ||
-            event == rtengine::EvLocallabSpotDeleted || event == rtengine::Evlocallabshowreset ||
+            event == rtengine::EvLocallabSpotDeleted /*|| event == rtengine::Evlocallabshowreset*/ ||
             event == rtengine::EvlocallabToolRemovedWithRefresh) {
         locallab->resetMaskVisibility();
-        ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
     ipc->endUpdateParams(changeFlags);    // starts the IPC processing
@@ -1228,7 +1231,7 @@ void ToolPanelCoordinator::profileChange(
 
     // Reset Locallab mask visibility
     locallab->resetMaskVisibility();
-    ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    ipc->setLocallabMaskVisibility(false, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
     // start the IPC processing
     if (filterRawRefresh) {
@@ -1502,7 +1505,7 @@ void ToolPanelCoordinator::autoCropRequested()
     crop->cropManipReady();
 }
 
-rtengine::RawImage* ToolPanelCoordinator::getDF()
+const rtengine::RawImage* ToolPanelCoordinator::getDF()
 {
     if (!ipc) {
         return nullptr;
@@ -1517,7 +1520,7 @@ rtengine::RawImage* ToolPanelCoordinator::getDF()
         std::string model(imd->getModel());
         time_t timestamp = imd->getDateTimeAsTS();
 
-        return rtengine::dfm.searchDarkFrame(maker, model, iso, shutter, timestamp);
+        return rtengine::DFManager::getInstance().searchDarkFrame(maker, model, iso, shutter, timestamp);
     }
 
     return nullptr;
@@ -1579,6 +1582,16 @@ void ToolPanelCoordinator::autoPerspRequested (bool corr_pitch, bool corr_yaw, d
 
     rtengine::procparams::ProcParams params;
     ipc->getParams(&params);
+
+    // If focal length or crop factor are undetermined, use the defaults.
+    if (params.perspective.camera_focal_length <= 0) {
+        params.perspective.camera_focal_length =
+            PerspectiveParams::DEFAULT_CAMERA_FOCAL_LENGTH;
+    }
+    if (params.perspective.camera_crop_factor <= 0) {
+        params.perspective.camera_crop_factor =
+            PerspectiveParams::DEFAULT_CAMERA_CROP_FACTOR;
+    }
 
     auto res = rtengine::PerspectiveCorrection::autocompute(src, corr_pitch, corr_yaw, &params, src->getMetaData(), lines);
     rot = res.angle;

@@ -26,6 +26,7 @@
 #include "options.h"
 #include "../rtengine/profilestore.h"
 
+class ExternalEditorPreferences;
 class RTWindow;
 class Splash;
 class ToolLocationPreference;
@@ -102,6 +103,7 @@ class Preferences final :
     Gtk::RadioButton* edGimp;
     Gtk::RadioButton* edPS;
     Gtk::RadioButton* edOther;
+    ExternalEditorPreferences *externalEditors;
     
     Gtk::RadioButton *editor_dir_temp;
     Gtk::RadioButton *editor_dir_current;

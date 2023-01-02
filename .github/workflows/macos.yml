@@ -1,20 +1,18 @@
-name: macOS build
+name: macOS Build
 on:
   push:
     branches:
       - dev
-      - patch**
-      - newlocallab
+      - releases
+    tags:
+      - '[0-9]+.*'
   pull_request:
     branches:
       - dev
-      - newlocallab
-  release:
-    types:
-      - created
+  workflow_dispatch:
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-11
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
@@ -23,7 +21,7 @@ jobs:
            mkdir build
            date +%s > build/stamp
            brew uninstall --ignore-dependencies libtiff
-           brew install libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig libomp shared-mime-info | tee -a depslog
+           brew install libtiff gtk+3 gtkmm3 gtk-mac-integration adwaita-icon-theme libsigc++@2 little-cms2 libiptcdata fftw lensfun expat pkgconfig llvm shared-mime-info | tee -a depslog
            date -u
            echo "----====Pourage====----"
            cat depslog | grep Pouring
@@ -52,8 +50,8 @@ jobs:
             -DPROC_LABEL="generic processor" \
             -DWITH_LTO="OFF" \
             -DLENSFUNDBDIR="/Applications/RawTherapee.app/Contents/Resources/share/lensfun" \
-            -DCMAKE_C_COMPILER=/usr/local/opt/llvm/bin/clang \
-            -DCMAKE_CXX_COMPILER=/usr/local/opt/llvm/bin/clang++ \
+            -DCMAKE_C_COMPILER=clang \
+            -DCMAKE_CXX_COMPILER=clang++ \
             -DCMAKE_C_FLAGS="-arch x86_64 -Wno-pass-failed -Wno-deprecated-register -Wno-unused-command-line-argument" \
             -DCMAKE_CXX_FLAGS="-arch x86_64 -Wno-pass-failed -Wno-deprecated-register -Wno-unused-command-line-argument" \
             -DOpenMP_C_FLAGS="${C_FLAGS}" \
@@ -65,6 +63,7 @@ jobs:
             -DCMAKE_RANLIB=/usr/bin/ranlib \
             -DCMAKE_OSX_DEPLOYMENT_TARGET=10.15 \
             ..
+            curl -L https://github.com/Homebrew/homebrew-core/raw/679923b4eb48a8dc7ecc1f05d06063cd79b3fc00/Formula/libomp.rb -o libomp.rb && brew install libomp.rb
             zsh -c 'echo "Configured in $(printf "%0.2f" $(($[$(date +%s)-$(cat configstamp)]/$((60.))))) minutes"'
       - name: Compile RawTherapee
         run: |
@@ -85,6 +84,12 @@ jobs:
           echo "ARTIFACT_PATH=${GITHUB_WORKSPACE}/build/${ARTIFACT}" >> $GITHUB_ENV
           echo "ARTIFACT_FILE=${ARTIFACT}" >> $GITHUB_ENV
           zsh -c 'echo "Bundled in $(printf "%0.2f" $(($[$(date +%s)-$(cat bundlestamp)]/$((60.))))) minutes"'
+          printf '%s\n' \
+            "REF: ${REF}" \
+            "ARTIFACT: ${ARTIFACT}" \
+            "ARTIFACT_PATH: ${ARTIFACT_PATH}" \
+            "ARTIFACT_FILE: ${ARTIFACT_FILE}" \
+            "PUBLISH_NAME: ${PUBLISH_NAME}"
           exit
       - uses: actions/upload-artifact@v2
         with:
@@ -94,3 +99,11 @@ jobs:
         run: |
           date -u
           zsh -c 'echo "Build completed in $(printf "%0.2f" $(($[$(date +%s)-$(cat build/stamp)]/$((60.))))) minutes"'
+
+      - name: Publish artifacts
+        uses: softprops/action-gh-release@v1
+        if: ${{github.ref_type == 'tag' || github.ref_name == 'dev'}}
+        with:
+          tag_name: nightly-github-actions
+          files: |
+            ${{env.ARTIFACT_PATH}}

@@ -66,6 +66,7 @@ FilmSimulation::FilmSimulation()
     :   FoldableToolPanel( this, TOOL_NAME, M("TP_FILMSIMULATION_LABEL"), false, true )
 {
     m_clutComboBox = Gtk::manage( new ClutComboBox(options.clutsDir) );
+
     int foundClutsCount = m_clutComboBox->foundClutsCount();
 
     if ( foundClutsCount == 0 ) {
@@ -220,7 +221,11 @@ ClutComboBox::ClutComboBox(const Glib::ustring &path):
     set_model(m_model());
 
     if (cm->count > 0) {
-        pack_start(m_columns().label, false);
+		// Pack a CellRendererText in order to display long Clut file names properly
+		Gtk::CellRendererText* const renderer = Gtk::manage(new Gtk::CellRendererText);
+		renderer->property_ellipsize() = Pango::ELLIPSIZE_END;
+		pack_start(*renderer, false); 
+		add_attribute(*renderer, "text", 0);
     }
 
     if (!options.multiDisplayMode) {

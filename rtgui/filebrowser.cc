@@ -168,6 +168,41 @@ FileBrowser::FileBrowser () :
     p++;
 
     /***********************
+     * sort
+     ***********************/
+    const std::array<std::string, 2> cnameSortOrders = {
+        M("SORT_ASCENDING"),
+        M("SORT_DESCENDING"),
+    };
+
+    const std::array<std::string, Options::SORT_METHOD_COUNT> cnameSortMethods = {
+        M("SORT_BY_NAME"),
+        M("SORT_BY_DATE"),
+        M("SORT_BY_EXIF"),
+        M("SORT_BY_RANK"),
+        M("SORT_BY_LABEL"),
+    };
+
+    pmenu->attach (*Gtk::manage(menuSort = new Gtk::MenuItem (M("FILEBROWSER_POPUPSORTBY"))), 0, 1, p, p + 1);
+    p++;
+    Gtk::Menu* submenuSort = Gtk::manage (new Gtk::Menu ());
+    Gtk::RadioButtonGroup sortOrderGroup, sortMethodGroup;
+    for (size_t i = 0; i < cnameSortOrders.size(); i++) {
+        submenuSort->attach (*Gtk::manage(sortOrder[i] = new Gtk::RadioMenuItem (sortOrderGroup, cnameSortOrders[i])), 0, 1, p, p + 1);
+        p++;
+        sortOrder[i]->set_active (i == options.sortDescending);
+    }
+    submenuSort->attach (*Gtk::manage(new Gtk::SeparatorMenuItem ()), 0, 1, p, p + 1);
+    p++;
+    for (size_t i = 0; i < cnameSortMethods.size(); i++) {
+        submenuSort->attach (*Gtk::manage(sortMethod[i] = new Gtk::RadioMenuItem (sortMethodGroup, cnameSortMethods[i])), 0, 1, p, p + 1);
+        p++;
+        sortMethod[i]->set_active (i == options.sortMethod);
+    }
+    submenuSort->show_all ();
+    menuSort->set_submenu (*submenuSort);
+
+    /***********************
      * rank
      ***********************/
     if (options.menuGroupRank) {
@@ -427,6 +462,14 @@ FileBrowser::FileBrowser () :
         inspect->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), inspect));
     }
 
+    for (int i = 0; i < 2; i++) {
+        sortOrder[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), sortOrder[i]));
+    }
+
+    for (int i = 0; i < Options::SORT_METHOD_COUNT; i++) {
+        sortMethod[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), sortMethod[i]));
+    }
+
     for (int i = 0; i < 6; i++) {
         rank[i]->signal_activate().connect (sigc::bind(sigc::mem_fun(*this, &FileBrowser::menuItemActivated), rank[i]));
     }
@@ -610,27 +653,7 @@ void FileBrowser::addEntry_ (FileBrowserEntry* entry)
     entry->getThumbButtonSet()->setButtonListener(this);
     entry->resize(getThumbnailHeight());
     entry->filtered = !checkFilter(entry);
-
-    // find place in abc order
-    {
-        MYWRITERLOCK(l, entryRW);
-
-        fd.insert(
-            std::lower_bound(
-                fd.begin(),
-                fd.end(),
-                entry,
-                [](const ThumbBrowserEntryBase* a, const ThumbBrowserEntryBase* b)
-                {
-                    return *a < *b;
-                }
-            ),
-            entry
-        );
-
-        initEntry(entry);
-    }
-    redraw(entry);
+    insertEntry(entry);
 }
 
 FileBrowserEntry* FileBrowser::delEntry (const Glib::ustring& fname)
@@ -723,6 +746,18 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
     if (!tbl || (m != selall && mselected.empty()) ) {
         return;
     }
+
+    for (int i = 0; i < 2; i++)
+        if (m == sortOrder[i]) {
+            sortOrderRequested (i);
+            return;
+        }
+
+    for (int i = 0; i < Options::SORT_METHOD_COUNT; i++)
+        if (m == sortMethod[i]) {
+            sortMethodRequested (i);
+            return;
+        }
 
     for (int i = 0; i < 6; i++)
         if (m == rank[i]) {
@@ -875,7 +910,7 @@ void FileBrowser::menuItemActivated (Gtk::MenuItem* m)
                 }
 
                 // Reinit cache
-                rtengine::dfm.init( options.rtSettings.darkFramesPath );
+                rtengine::DFManager::getInstance().init( options.rtSettings.darkFramesPath );
             } else {
                 // Target directory creation failed, we clear the darkFramesPath setting
                 options.rtSettings.darkFramesPath.clear();
@@ -1630,6 +1665,18 @@ void FileBrowser::fromTrashRequested (std::vector<FileBrowserEntry*> tbe)
 
     trash_changed().emit();
     applyFilter (filter);
+}
+
+void FileBrowser::sortMethodRequested (int method)
+{
+    options.sortMethod = Options::SortMethod(method);
+    resort ();
+}
+
+void FileBrowser::sortOrderRequested (int order)
+{
+    options.sortDescending = !!order;
+    resort ();
 }
 
 void FileBrowser::rankingRequested (std::vector<FileBrowserEntry*> tbe, int rank)

@@ -245,11 +245,6 @@ public:
         return zero_is_bad == 1;
     }
 
-    bool isBayer() const
-    {
-        return (filters != 0 && filters != 9);
-    }
-
     bool isXtrans() const
     {
         return filters == 9;

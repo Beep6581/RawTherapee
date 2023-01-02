@@ -72,7 +72,7 @@ protected:
 
 public:
 
-    FrameData (rtexif::TagDirectory* frameRootDir, rtexif::TagDirectory* rootDir, rtexif::TagDirectory* firstRootDir);
+    FrameData (rtexif::TagDirectory* frameRootDir, rtexif::TagDirectory* rootDir, rtexif::TagDirectory* firstRootDir, time_t ts = 0);
     virtual ~FrameData ();
 
     bool getPixelShift () const;
@@ -109,6 +109,8 @@ private:
     std::vector<rtexif::TagDirectory*> roots;
     IptcData* iptc;
     unsigned int dcrawFrameCount;
+    struct tm modTime;
+    time_t modTimeStamp;
 
 public:
     explicit FramesData (const Glib::ustring& fname, std::unique_ptr<RawMetaDataLocation> rml = nullptr, bool firstFrameOnly = false);

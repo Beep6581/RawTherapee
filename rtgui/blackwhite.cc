@@ -812,7 +812,6 @@ void BlackWhite::filterChanged ()
 
     if (listener && (multiImage || getEnabled())) {
         listener->panelChanged (EvBWfilter, filter->get_active_text ());
-        listener->panelChanged (EvAutoch, M("GENERAL_ENABLED"));
     }
 }
 
@@ -1207,7 +1206,6 @@ void BlackWhite::setBatchMode (bool batchMode)
 {
     removeIfThere (autoHBox, autoch, false);
     autoch = Gtk::manage (new Gtk::CheckButton (M("TP_BWMIX_AUTOCH")));
-    autoch->set_tooltip_markup (M("TP_BWMIX_AUTOCH_TIP"));
     autoconn = autoch->signal_toggled().connect( sigc::mem_fun(*this, &BlackWhite::autoch_toggled) );
     autoHBox->pack_start (*autoch);
 

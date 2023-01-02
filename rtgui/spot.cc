@@ -76,13 +76,16 @@ Spot::Spot() :
     reset->set_border_width (0);
     reset->signal_clicked().connect ( sigc::mem_fun (*this, &Spot::resetPressed) );
 
+    spotSize = Gtk::manage(new Adjuster(M("TP_SPOT_DEFAULT_SIZE"), SpotParams::minRadius, SpotParams::maxRadius, 1, 25));
+
     labelBox = Gtk::manage (new Gtk::Box());
     labelBox->set_spacing (2);
     labelBox->pack_start (*countLabel, false, false, 0);
     labelBox->pack_end (*edit, false, false, 0);
     labelBox->pack_end (*reset, false, false, 0);
+    labelBox->pack_end (*spotSize, false, false, 0);
     pack_start (*labelBox);
-
+    
     sourceIcon.datum = Geometry::IMAGE;
     sourceIcon.setActive (false);
     sourceIcon.state = Geometry::ACTIVE;
@@ -116,8 +119,8 @@ Spot::Spot() :
     link.setActive (false);
 
     auto m = ProcEventMapper::getInstance();
-    EvSpotEnabled = m->newEvent(ALLNORAW, "TP_SPOT_LABEL");
-    EvSpotEnabledOPA = m->newEvent(SPOTADJUST, "TP_SPOT_LABEL");
+    EvSpotEnabled = m->newEvent(ALLNORAW, "HISTORY_MSG_SPOT");
+    EvSpotEnabledOPA = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT");
     EvSpotEntry = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT_ENTRY");
     EvSpotEntryOPA = m->newEvent(SPOTADJUST, "HISTORY_MSG_SPOT_ENTRY");
 
@@ -477,6 +480,7 @@ void Spot::addNewEntry()
     EditDataProvider* editProvider = getEditProvider();
     // we create a new entry
     SpotEntry se;
+    se.radius = spotSize->getIntValue();
     se.targetPos = editProvider->posImage;
     se.sourcePos = se.targetPos;
     spots.push_back (se); // this make a copy of se ...
@@ -857,6 +861,7 @@ void Spot::switchOffEditMode ()
     listener->unsetTweakOperator(this);
     listener->refreshPreview(EvSpotEnabled); // reprocess the preview w/o creating History entry
 }
+
 
 void Spot::tweakParams(procparams::ProcParams& pparams)
 {

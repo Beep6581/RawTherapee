@@ -501,8 +501,11 @@ private:
     RTImage *image;
     Gtk::Label *label;
 
+    void construct(Glib::ustring label, RTImage* image);
+
 public:
     MyImageMenuItem (Glib::ustring label, Glib::ustring imageFileName);
+    MyImageMenuItem (Glib::ustring label, RTImage* image);
     const RTImage *getImage () const;
     const Gtk::Label* getLabel () const;
 };
