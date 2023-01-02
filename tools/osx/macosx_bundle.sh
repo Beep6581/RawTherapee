@@ -24,7 +24,7 @@ function msgError {
 }
 
 function GetDependencies {
-    otool -L "$1" | awk 'NR >= 2 && $1 !~ /^(\/usr\/lib|\/System|@executable_path|@rpath)\// { print $1 }'
+    otool -L "$1" | awk 'NR >= 2 && $1 !~ /^(\/usr\/lib|\/System|@executable_path|@rpath)\// { print $1 }'  2>&1
 }
 
 function CheckLink {
@@ -40,11 +40,11 @@ function ModifyInstallNames {
         {
             # id
             if [[ ${x:(-6)} == ".dylib" ]] || [[ f${x:(-3)} == ".so" ]]; then
-                install_name_tool -id /Applications/"${LIB}"/$(basename ${x}) ${x}
+                install_name_tool -id /Applications/"${LIB}"/$(basename ${x}) ${x} 2>/dev/null
             fi
             GetDependencies "${x}" | while read -r y
             do
-                install_name_tool -change ${y} /Applications/"${LIB}"/$(basename ${y}) ${x}
+                install_name_tool -change ${y} /Applications/"${LIB}"/$(basename ${y}) ${x} 2>/dev/null
             done
         } | bash -v
     done
@@ -120,6 +120,13 @@ minimum_macos_version=${MINIMUM_SYSTEM_VERSION}
 #Out: /opt
 LOCAL_PREFIX="$(cmake .. -L -N | grep LOCAL_PREFIX)"; LOCAL_PREFIX="${LOCAL_PREFIX#*=}"
 
+#In: OSX_UNIVERSAL_URL=https:// etc.
+#Out: https:// etc.
+UNIVERSAL_URL="$(cmake .. -L -N | grep OSX_UNIVERSAL_URL)"; UNIVERSAL_URL="${UNIVERSAL_URL#*=}"
+if [[ -n $UNIVERSAL_URL ]]; then
+    echo "Universal app is ON. The URL is ${UNIVERSAL_URL}"
+fi
+
 #In: pkgcfg_lib_EXPAT_expat:FILEPATH=/opt/local/lib/libexpat.dylib
 #Out: /opt/local/lib/libexpat.dylib
 EXPATLIB="$(cmake .. -LA -N | grep pkgcfg_lib_EXPAT_expat)"; pkgcfg_lib_EXPAT_expat="${pkgcfg_lib_EXPAT_expat#*=}"
@@ -139,6 +146,13 @@ if [[ -n $FANCY_DMG ]]; then
     echo "Fancy .dmg build is ON."
 fi
 
+# In: OSX_NIGHTLY:BOOL=ON
+# Out: ON
+OSX_NIGHTLY="$(cmake .. -L -N | grep OSX_NIGHTLY)"; NIGHTLY="${OSX_NIGHTLY#*=}"
+if [[ -n $NIGHTLY ]]; then
+    echo "Nightly/generically-named zip is ON."
+fi
+
 APP="${PROJECT_NAME}.app"
 CONTENTS="${APP}/Contents"
 RESOURCES="${CONTENTS}/Resources"
@@ -149,7 +163,7 @@ EXECUTABLE="${MACOS}/rawtherapee"
 GDK_PREFIX="${LOCAL_PREFIX}/"
 
 msg "Removing old files:"
-rm -rf "${APP}" *.dmg *.zip
+rm -rf "${APP}" *.dmg *.zip *.app
 
 msg "Creating bundle container:"
 install -d "${RESOURCES}"
@@ -188,10 +202,10 @@ ditto ${LOCAL_PREFIX}/lib/liblensfun.2.dylib "${CONTENTS}/Frameworks/liblensfun.
 ditto ${LOCAL_PREFIX}/lib/libomp.dylib "${CONTENTS}/Frameworks"
 
 msg "Copying dependencies from ${GTK_PREFIX}."
-CheckLink "${EXECUTABLE}"
+CheckLink "${EXECUTABLE}" 2>&1
 
 # dylib install names
-ModifyInstallNames
+ModifyInstallNames 2>&1
 
 # Copy libjpeg-turbo ("62") into the app bundle
 ditto ${LOCAL_PREFIX}/lib/libjpeg.62.dylib "${CONTENTS}/Frameworks/libjpeg.62.dylib"
@@ -246,20 +260,22 @@ cp -RL "${LOCAL_PREFIX}/share/icons/hicolor" "${RESOURCES}/share/icons/hicolor"
 
 # fix libfreetype install name
 for lib in "${LIB}"/*; do
-    install_name_tool -change libfreetype.6.dylib "${LIB}"/libfreetype.6.dylib "${lib}"
+    install_name_tool -change libfreetype.6.dylib "${LIB}"/libfreetype.6.dylib "${lib}" 2>/dev/null
 done
 
 # Build GTK3 pixbuf loaders & immodules database
 msg "Build GTK3 databases:"
+mkdir -p "${RESOURCES}"/share/gtk-3.0
+mkdir -p "${ETC}"/gtk-3.0
 "${LOCAL_PREFIX}"/bin/gdk-pixbuf-query-loaders "${LIB}"/libpixbufloader-*.so > "${ETC}"/gtk-3.0/gdk-pixbuf.loaders
 "${LOCAL_PREFIX}"/bin/gtk-query-immodules-3.0 "${LIB}"/im-* > "${ETC}"/gtk-3.0/gtk.immodules || "${LOCAL_PREFIX}"/bin/gtk-query-immodules "${LIB}"/im-* > "${ETC}"/gtk-3.0/gtk.immodules
 sed -i.bak -e "s|${PWD}/RawTherapee.app/Contents/|/Applications/RawTherapee.app/Contents/|" "${ETC}"/gtk-3.0/gdk-pixbuf.loaders "${ETC}/gtk-3.0/gtk.immodules"
 sed -i.bak -e "s|${LOCAL_PREFIX}/share/|/Applications/RawTherapee.app/Contents/Resources/share/|" "${ETC}"/gtk-3.0/gtk.immodules
 sed -i.bak -e "s|${LOCAL_PREFIX}/|/Applications/RawTherapee.app/Contents/Frameworks/|" "${ETC}"/gtk-3.0/gtk.immodules
-rm "${ETC}"/*.bak
+rm "${ETC}"/*/*.bak
 
 # Install names
-ModifyInstallNames
+ModifyInstallNames 2>/dev/null
 
 # Mime directory
 msg "Copying shared files from ${GTK_PREFIX}:"
@@ -271,8 +287,8 @@ ditto "${PROJECT_SOURCE_DIR}/rtdata/fonts" "${ETC}/fonts"
 
 # App bundle resources
 ditto "${PROJECT_SOURCE_DATA_DIR}/"{rawtherapee,profile}.icns "${RESOURCES}"
-ditto "${PROJECT_SOURCE_DATA_DIR}/PkgInfo" "${CONTENTS}"
-cmake -DPROJECT_SOURCE_DATA_DIR=${PROJECT_SOURCE_DATA_DIR} -DCONTENTS=${CONTENTS} -Dversion=${PROJECT_FULL_VERSION} -DshortVersion=${PROJECT_VERSION} -Darch=${arch} -P "${PROJECT_SOURCE_DATA_DIR}/info-plist.cmake"
+#ditto "${PROJECT_SOURCE_DATA_DIR}/PkgInfo" "${CONTENTS}"
+
 update-mime-database -V  "${RESOURCES}/share/mime"
 cp -RL "${LOCAL_PREFIX}/share/locale" "${RESOURCES}/share/locale"
 
@@ -283,19 +299,60 @@ cp -LR {"${LOCAL_PREFIX}","${RESOURCES}"}/share/glib-2.0/schemas
 
 # Append an LC_RPATH
 msg "Registering @rpath into the main executable."
-install_name_tool -add_rpath /Applications/"${LIB}" "${EXECUTABLE}"
+install_name_tool -add_rpath /Applications/"${LIB}" "${EXECUTABLE}" 2>/dev/null
 
-ModifyInstallNames
+ModifyInstallNames 2>/dev/null
 
 # fix @rpath in Frameworks
 msg "Registering @rpath in Frameworks folder."
 for frameworklibs in "${LIB}"/*{dylib,so,cli}; do
-    install_name_tool -delete_rpath ${LOCAL_PREFIX}/lib "${frameworklibs}"
-    install_name_tool -add_rpath /Applications/"${LIB}" "${frameworklibs}"
+    install_name_tool -delete_rpath ${LOCAL_PREFIX}/lib "${frameworklibs}" 2>/dev/null
+    install_name_tool -add_rpath /Applications/"${LIB}" "${frameworklibs}" 2>/dev/null
 done
-install_name_tool -delete_rpath RawTherapee.app/Contents/Frameworks "${EXECUTABLE}"-cli
-install_name_tool -add_rpath /Applications/"${LIB}" "${EXECUTABLE}"-cli
+install_name_tool -delete_rpath RawTherapee.app/Contents/Frameworks "${EXECUTABLE}"-cli 2>/dev/null
+install_name_tool -add_rpath /Applications/"${LIB}" "${EXECUTABLE}"-cli 2>/dev/null
 ditto "${EXECUTABLE}"-cli "${APP}"/..
+
+# Merge the app with the other architecture to create the Universal app.
+if [[ -n $UNIVERSAL_URL ]]; then
+    msg "Getting Universal countercomponent."
+    curl -L ${UNIVERSAL_URL} -o univ.zip
+    msg "Extracting app."
+    unzip univ.zip -d univapp
+    hdiutil attach -mountpoint ./RawTherapeeuniv univapp/*/*dmg
+    if [[ $arch = "arm64" ]]; then
+        cp -R RawTherapee.app RawTherapee-arm64.app
+        minimum_arm64_version=$(f=$(cat RawTherapee-arm64.app/Contents/Resources/AboutThisBuild.txt | grep mmacosx-version); echo "${f#*min=}" | cut -d ' ' -f1)
+        cp -R RawTherapeeuniv/RawTherapee.app RawTherapee-x86_64.app
+        minimum_x86_64_version=$(f=$(cat RawTherapee-x86_64.app/Contents/Resources/AboutThisBuild.txt | grep mmacosx-version); echo "${f#*min=}" | cut -d ' ' -f1)
+        echo "\n\n=====================================\n\n" >> RawTherapee.app/Contents/Resources/AboutThisBuild.txt
+        cat RawTherapee-x86_64.app/Contents/Resources/AboutThisBuild.txt >> RawTherapee.app/Contents/Resources/AboutThisBuild.txt
+    else
+        cp -R RawTherapee.app RawTherapee-x86_64.app
+        minimum_x86_64_version=$(f=$(cat RawTherapee-x86_64.app/Contents/Resources/AboutThisBuild.txt | grep mmacosx-version); echo "${f#*min=}" | cut -d ' ' -f1)
+        cp -R RawTherapeeuniv/RawTherapee.app RawTherapee-arm64.app
+        minimum_arm64_version=$(f=$(cat RawTherapee-arm64.app/Contents/Resources/AboutThisBuild.txt | grep mmacosx-version); echo "${f#*min=}" | cut -d ' ' -f1)
+        echo "\n\n=====================================\n\n" >> RawTherapee.app/Contents/Resources/AboutThisBuild.txt
+        cat RawTherapee-arm64.app/Contents/Resources/AboutThisBuild.txt >> RawTherapee.app/Contents/Resources/AboutThisBuild.txt
+    fi
+    cmake -DPROJECT_SOURCE_DATA_DIR=${PROJECT_SOURCE_DATA_DIR} -DCONTENTS=${CONTENTS} -Dversion=${PROJECT_FULL_VERSION} -DshortVersion=${PROJECT_VERSION} -Dminimum_arm64_version=${minimum_arm64_version} -Dminimum_x86_64_version=${minimum_x86_64_version} -Darch=${arch} -P ${PROJECT_SOURCE_DATA_DIR}/info-plist.cmake
+    hdiutil unmount ./RawTherapeeuniv
+    rm -r univapp
+    # Create the fat main RawTherapee binary and move it into the new bundle
+    lipo -create -output RawTherapee RawTherapee-arm64.app/Contents/MacOS/RawTherapee RawTherapee-x86_64.app/Contents/MacOS/RawTherapee
+    mv RawTherapee RawTherapee.app/Contents/MacOS
+    # Create all the fat dependencies and move them into the bundle
+    for lib in RawTherapee-arm64.app/Contents/Frameworks/* ; do
+        lipo -create -output $(basename $lib) RawTherapee-arm64.app/Contents/Frameworks/$(basename $lib) RawTherapee-x86_64.app/Contents/Frameworks/$(basename $lib)
+    done
+    sudo mv *cli *so *dylib RawTherapee.app/Contents/Frameworks
+    rm -r RawTherapee-arm64.app
+    rm -r RawTherapee-x86_64.app
+else
+    minimum_arm64_version=$(f=$(cat RawTherapee.app/Contents/Resources/AboutThisBuild.txt | grep mmacosx-version); echo "${f#*min=}" | cut -d ' ' -f1)
+    minimum_x86_64_version=${minimum_arm64_version}
+        cmake -DPROJECT_SOURCE_DATA_DIR=${PROJECT_SOURCE_DATA_DIR} -DCONTENTS=${CONTENTS} -Dversion=${PROJECT_FULL_VERSION} -DshortVersion=${PROJECT_VERSION} -Dminimum_arm64_version=${minimum_arm64_version} -Dminimum_x86_64_version=${minimum_x86_64_version} -Darch=${arch} -P ${PROJECT_SOURCE_DATA_DIR}/info-plist.cmake
+fi
 
 # Codesign the app
 if [[ -n $CODESIGNID ]]; then
@@ -339,7 +396,7 @@ function CreateDmg {
     
     msg "Preparing disk image sources at ${srcDir}:"
     cp -R "${APP}" "${srcDir}"
-    cp "${RESOURCES}"/LICENSE.txt "${srcDir}"
+    cp "${RESOURCES}"/LICENSE "${srcDir}"
     ln -s /Applications "${srcDir}"
     
     # Web bookmarks
@@ -353,6 +410,9 @@ function CreateDmg {
     CreateWebloc    'Report Bug' 'https://github.com/Beep6581/RawTherapee/issues/new'
     
     # Disk image name
+    if [[ -n $UNIVERSAL_URL ]]; then
+        arch="Universal"
+    fi
     dmg_name="${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}"
     lower_build_type="$(tr '[:upper:]' '[:lower:]' <<< "$CMAKE_BUILD_TYPE")"
     if [[ $lower_build_type != release ]]; then
@@ -368,6 +428,7 @@ function CreateDmg {
         SetFile -c incC "${srcDir}/.VolumeIcon.icns"
         create-dmg "${dmg_name}.dmg" "${srcDir}" \
         --volname "${PROJECT_NAME}_${PROJECT_FULL_VERSION}" \
+        --appname "${PROJECT_NAME}" \
         --volicon "${srcDir}/.VolumeIcon.icns" \
         --sandbox-safe \
         --no-internet-enable \
@@ -389,8 +450,8 @@ function CreateDmg {
         msg "Notarizing the dmg:"
         zip "${dmg_name}.dmg.zip" "${dmg_name}.dmg"
         echo "Uploading..."
-        uuid=`xcrun altool --notarize-app --primary-bundle-id "com.rawtherapee" ${NOTARY} --file "${dmg_name}.dmg.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }'`
-        echo "dmg Result= $uuid" # Display identifier string
+        uuid=$(xcrun altool --notarize-app --primary-bundle-id "com.rawtherapee" ${NOTARY} --file "${dmg_name}.dmg.zip" 2>&1 | grep 'RequestUUID' | awk '{ print $3 }')
+        echo "dmg Result= ${uuid}" # Display identifier string
         sleep 15
         while :
         do
@@ -416,8 +477,11 @@ function CreateDmg {
     # Zip disk image for redistribution
     msg "Zipping disk image for redistribution:"
     mkdir "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder"
-        ditto {"${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.dmg","rawtherapee-cli","${PROJECT_SOURCE_DATA_DIR}/INSTALL.readme.rtf"} "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder"
+        ditto {"${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.dmg","rawtherapee-cli","${PROJECT_SOURCE_DATA_DIR}/INSTALL.txt"} "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder"
     zip -r "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.zip" "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}_folder/"
+    if [[ -n $NIGHTLY ]]; then
+        cp "${PROJECT_NAME}_macOS_${MINIMUM_SYSTEM_VERSION}_${arch}_${PROJECT_FULL_VERSION}.zip" "${PROJECT_NAME}_macOS_${arch}_latest.zip"
+    fi
 }
 CreateDmg
 msg "Finishing build:"

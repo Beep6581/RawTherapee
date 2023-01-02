@@ -45,10 +45,14 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION
 endif()
 
 # Warning for GCC vectorization issues, which causes problems #5749 and #6384:
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND ((CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "10.0" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "10.2") OR (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "11.0")))
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "10.0" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "10.2")
     message(STATUS "WARNING: gcc ${CMAKE_CXX_COMPILER_VERSION} is known to miscompile RawTherapee when using -ftree-loop-vectorize, forcing the option to be off")    
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-tree-loop-vectorize")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-tree-loop-vectorize")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "11.0")
+    message(STATUS "WARNING: gcc ${CMAKE_CXX_COMPILER_VERSION} is known to miscompile RawTherapee when using --ffp-contract=fast, forcing the option to be off")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -ffp-contract=off")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffp-contract=off")
 endif()
 
 # We might want to build using the old C++ ABI, even when using a new GCC
@@ -79,6 +83,24 @@ set(CACHE_NAME_SUFFIX
 # paths. Consequently, for development builds, application can be launching without
 # being bundled. However, file access can be restricted for some folder.
 option(OSX_DEV_BUILD "Generate macOS development builds" OFF)
+
+# On macOS, optionally generate the final zip artifact file without version in the name for nightly upload purposes.
+option(OSX_NIGHTLY "Generate a generically-named zip" OFF)
+
+# Generate a universal macOS build
+option(OSX_UNIVERSAL "Generate a universal app" OFF)
+
+# On macOS: merge the app via a specific url to generate a universal bundle with both x86_64 and arm64
+if(OSX_UNIVERSAL)
+    if(NOT "${OSX_UNIVERSAL_URL}")
+        if(CMAKE_OSX_ARCHITECTURES STREQUAL "arm64")
+            set(OSX_UNIVERSAL_URL "https://kd6kxr.keybase.pub/RawTherapee_macOS_x86_64_latest.zip" CACHE STRING "URL of x86_64 app for lipo")
+        else()
+            set(OSX_UNIVERSAL_URL "https://kd6kxr.keybase.pub/RawTherapee_macOS_arm64_latest.zip" CACHE STRING "URL of arm64 app for lipo")
+        endif()
+    endif()
+endif()
+
 
 # By default we don't use a specific processor target, so PROC_TARGET_NUMBER is
 # set to 0. Specify other values to optimize for specific processor architecture
@@ -725,7 +747,7 @@ add_custom_target(
 # End generating AboutThisBuild.txt
 
 install(FILES AUTHORS.txt DESTINATION "${CREDITSDIR}")
-install(FILES LICENSE.txt DESTINATION "${LICENCEDIR}")
+install(FILES LICENSE DESTINATION "${LICENCEDIR}")
 install(FILES "${CMAKE_BINARY_DIR}/AboutThisBuild.txt"
         DESTINATION "${CREDITSDIR}")
 install(

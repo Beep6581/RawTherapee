@@ -21,10 +21,14 @@
 namespace rtengine
 {
 
+
+
+
+
 // Aligned so the first entry starts on line 30
 enum ProcEventCode {
     EvPhotoLoaded = 0,
-    EvProfileLoaded = 1,
+    obsolete_1 = 1,
     EvProfileChanged = 2,
     EvHistoryBrowsed = 3,
     EvBrightness = 4,
@@ -38,9 +42,9 @@ enum ProcEventCode {
     EvClip = 12,
     EvLBrightness = 13,
     EvLContrast = 14,
-    EvLBlack = 15,
-    EvLHLCompr = 16,
-    EvLSHCompr = 17,
+    obsolete_15 = 15, // obsolete
+    obsolete_16 = 16, // obsolete
+    obsolete_17 = 17, // obsolete
     EvLLCurve = 18,
     EvShrEnabled = 19,
     EvShrRadius = 20,
@@ -77,7 +81,7 @@ enum ProcEventCode {
     EvSHShadows = 51,
     EvSHHLTonalW = 52,
     EvSHSHTonalW = 53,
-    EvSHLContrast = 54,
+    obsolete_54 = 54, // obsolete
     EvSHRadius = 55,
     EvCTRotate = 56,
     EvCTHFlip = 57,
@@ -89,7 +93,7 @@ enum ProcEventCode {
     EvCrop = 63,
     EvCACorr = 64,
     EvHREnabled = 65,
-    obsolete_66 = 66, //obsolete
+    obsolete_66 = 66, // obsolete
     EvHRMethod = 67,
     EvWProfile = 68,
     EvOProfile = 69,
@@ -100,12 +104,12 @@ enum ProcEventCode {
     EvResizeMethod = 74,
     EvExif = 75,
     EvIPTC = 76,
-    EvResizeSpec = 77,
+    obsolete_77 = 77, // obsolete
     EvResizeWidth = 78,
     EvResizeHeight = 79,
     EvResizeEnabled = 80,
     EvProfileChangeNotification = 81,
-    EvSHHighQuality = 82,
+    obsolete_82 = 82, // obsolete
     EvPerspCorr = 83,
     EvLCPFile = 84,
     EvRGBrCurveLumamode = 85,
@@ -153,12 +157,12 @@ enum ProcEventCode {
     EvFlatFieldBlurRadius = 127,
     EvFlatFieldBlurType = 128,
     EvAutoDIST = 129,
-    EvDPDNLumCurve = 130,
-    EvDPDNChromCurve = 131,
-    EvGAMMA = 132,
-    EvGAMPOS = 133,
-    EvGAMFREE = 134,
-    EvSLPOS = 135,
+    obsolete_130 = 130, // obsolete
+    obsolete_131 = 131, // obsolete
+    obsolete_132 = 132, // obsolete
+    obsolete_133 = 133, // obsolete
+    obsolete_134 = 134, // obsolete
+    obsolete_135 = 135, // obsolete
     EvPreProcessExpBlackzero = 136,
     EvPreProcessExpBlackone = 137,
     EvPreProcessExpBlacktwo = 138,
@@ -231,7 +235,7 @@ enum ProcEventCode {
     EvCATAutoAdap = 205,
     EvPFCurve = 206,
     EvWBequal = 207,
-    EvWBequalbo = 208,
+    obsolete_208 = 208,
     EvGradientDegree = 209,
     EvGradientEnabled = 210,
     EvPCVignetteStrength = 211,
@@ -272,7 +276,7 @@ enum ProcEventCode {
     EvLLHCurve = 246,
     EvLHHCurve = 247,
     EvDirPyrEqualizerThreshold = 248,
-    EvDPDNenhance = 249,
+    obsolete_249 = 249,
     EvBWMethodalg = 250,
     EvDirPyrEqualizerSkin = 251,
     EvDirPyrEqlgamutlab = 252,
@@ -296,8 +300,8 @@ enum ProcEventCode {
     EvColorToningbluehigh = 270,
     EvColorToningbalance = 271,
     EvColorToningNeutral = 272,
-    EvColorToningsatlow = 273,
-    EvColorToningsathigh = 274,
+    obsolete_273 = 273,
+    obsolete_274 = 274,
     EvColorToningTwocolor = 275,
     EvColorToningNeutralcur = 276,
     EvColorToningLumamode = 277,
@@ -322,7 +326,7 @@ enum ProcEventCode {
     EvDPDNsmet = 296,
     EvPreProcessDeadPixel = 297,
     EvDPDNCCCurve = 298,
-    EvDPDNautochroma = 299,
+    obsolete_299 = 299,
     EvDPDNLmet = 300,
     EvDPDNCmet = 301,
     EvDPDNC2met = 302,
@@ -431,7 +435,7 @@ enum ProcEventCode {
     EvWavNPmet = 405,
     EvretinexMethod = 406,
     EvLneigh = 407,
-    EvLgain = 408,
+    obsolete_408 = 408,
     EvLoffs = 409,
     EvLstr = 410,
     EvLscal = 411,
@@ -495,7 +499,7 @@ enum ProcEventCode {
 //    EvPixelShiftMedian3 = 469,
     EvPixelShiftMotionMethod = 470,
     EvPixelShiftSmooth = 471,
-    EvPixelShiftLmmse = 472,
+    obsolete_472 = 472,
     EvPixelShiftEqualBright = 473,
     EvPixelShiftEqualBrightChannel = 474,
     EvCATtempout = 475,
@@ -626,7 +630,7 @@ enum ProcEventCode {
     Evlocallabstreng = 600,
     Evlocallabsensisf = 601,
     Evlocallabsharblur = 602,
-    EvLocenalabregion = 603,
+    obsolete_603 = 603,
     EvlocallabshowmaskMethod = 604,
     EvLocallabSpotSelectedWithMask = 605,
     EvlocallabCCmaskshape = 606,
@@ -870,7 +874,7 @@ enum ProcEventCode {
     EvLocenalog = 844,
     EvLocallabAuto = 845,
     EvlocallabsourceGray = 846,
-    EvlocallabsourceGrayAuto = 847,
+    obsolete_847 = 847,
     EvlocallabAutogray = 848,
     EvlocallabblackEv = 849,
     EvlocallabwhiteEv = 850,
@@ -889,7 +893,7 @@ enum ProcEventCode {
     Evlocallabsigmadc = 863,
     Evlocallabdeltad = 864,
     EvlocallabwavCurvecomp = 865,
-    Evlocallabfatres = 866,
+    //Evlocallabfatres = 866,
     EvLocallabSpotbalanh = 867,
     EvlocallabwavCurveden = 868,
     EvlocallabHHmasklcshape = 869,
@@ -918,7 +922,7 @@ enum ProcEventCode {
     Evlocallabanglog = 892,
     EvLocallabSpotcolorde = 893,
     // EvlocallabshowmasksharMethod = 894,
-    Evlocallabshowreset = 895,
+    //Evlocallabshowreset = 895,
     Evlocallabstrengthw = 896,
     Evlocallabradiusw = 897,
     Evlocallabdetailw = 898,
@@ -998,7 +1002,7 @@ enum ProcEventCode {
     EvLocallabchromaskL = 972,
     EvlocallabLmaskshapeL = 973,
     Evlocallablightl = 974,
-    EvlocallabLshapeL = 975,
+    //EvlocallabLshapeL = 975,
     Evlocallabcontq = 976,
     Evlocallabsursour = 977,
     Evlocallablightq = 978,
@@ -1121,7 +1125,6 @@ enum ProcEventCode {
     Evlocallabshjzcie = 1095,
     Evlocallabshthjzcie = 1096,
     Evlocallabradjzcie = 1097,
-//    EvlocallabHHshapejz = 1098,
     EvlocallabCHshapejz = 1098,
     Evlocallabjz100 = 1099,
     Evlocallabpqremap = 1100,
@@ -1136,14 +1139,6 @@ enum ProcEventCode {
     Evlocallabshapecz = 1109,
     Evlocallabshapeczjz = 1110,
     Evlocallabforcejz = 1111,
-    //Evlocallablightlzcam = 1113,
-    //Evlocallablightqzcam = 1114,
-    //Evlocallabcontlzcam = 1115,
-    //Evlocallabcontqzcam = 1116,
-    //Evlocallabcontthreszcam = 1117,
-    //Evlocallabcolorflzcam = 1118,
-    //Evlocallabsaturzcam = 1119,
-    //Evlocallabchromzcam = 1120,
     Evlocallabpqremapcam16 = 1112,
     EvLocallabEnacieMask = 1113,
     EvlocallabCCmaskcieshape = 1114,

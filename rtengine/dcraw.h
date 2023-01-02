@@ -193,8 +193,17 @@ public:
         int crx_track_selected;
         short CR3_CTMDtag;
     };
+    struct CanonLevelsData {
+        unsigned cblack[4];
+        unsigned white;
+        bool black_ok;
+        bool white_ok;
+        CanonLevelsData(): cblack{0}, white{0}, black_ok(false), white_ok(false) {}
+    };
 protected:
     CanonCR3Data RT_canon_CR3_data;
+    
+    CanonLevelsData RT_canon_levels_data;
 
     float cam_mul[4], pre_mul[4], cmatrix[3][4], rgb_cam[3][4];
 
@@ -423,6 +432,7 @@ void parse_hasselblad_gain();
 void hasselblad_load_raw();
 void leaf_hdr_load_raw();
 void unpacked_load_raw();
+void unpacked_load_raw_FujiDBP();
 void sinar_4shot_load_raw();
 void imacon_full_load_raw();
 void packed_load_raw();

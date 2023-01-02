@@ -33,7 +33,7 @@
 namespace rtengine
 {
 
-static const double cie_colour_match_jd2[97][3] = {//350nm to 830nm   5 nm J.Desmis 2° Standard Observer.
+static double cie_colour_match_jd2[97][3] = {//350nm to 830nm   5 nm J.Desmis 2° Standard Observer.
     {0.0000000, 0.000000, 0.000000}, {0.0000000, 0.000000, 0.000000}, {0.0001299, 0.0003917, 0.0006061},
     {0.0002321, 0.000006965, 0.001086}, {0.0004149, 0.00001239, 0.001946}, {0.0007416, 0.00002202, 0.003846},
     {0.001368, 0.000039, 0.006450001}, {0.002236, 0.000064, 0.01054999}, {0.004243, 0.000120, 0.02005001},
@@ -70,7 +70,7 @@ static const double cie_colour_match_jd2[97][3] = {//350nm to 830nm   5 nm J.Des
 };
 
 
-static double cie_colour_match_jd[97][3] = {//350nm to 830nm   5 nm J.Desmis 10° Standard Observer.
+static const double cie_colour_match_jd[97][3] = {//350nm to 830nm   5 nm J.Desmis 10° Standard Observer.
 {0.000000000000, 0.000000000000, 0.000000000000},
 {0.000000000000, 0.000000000000, 0.000000000000},
 {0.000000122200, 0.000000013398, 0.000000535027},
@@ -3388,7 +3388,7 @@ The next 3 methods are inspired from:
 
 this values are often called xBar yBar zBar and are characteristics of a color / illuminant
 
-values cie_colour_match[][3] = 2° Standard Observer x2, y2, z2
+values cie_colour_match2[][3] = 2° Standard Observer x2, y2, z2
 E.g. for 380nm: x2=0.001368  y2=0.000039  z2=0.006451  round in J.Walker to 0.0014  0.0000 0.0065 above
 I have increase precision used by J.Walker  and pass to 350nm to 830nm
 And also add 10°  standard observer
@@ -3401,9 +3401,9 @@ void ColorTemp::spectrum_to_xyz_daylight(double _m1, double _m2, double &x, doub
 
     for (i = 0, lambda = 350.; lambda < 830.1; i++, lambda += 5.) {
         double Me = daylight_spect(lambda, _m1, _m2);
-        X += Me * cie_colour_match_jd[i][0];
-        Y += Me * cie_colour_match_jd[i][1];
-        Z += Me * cie_colour_match_jd[i][2];
+        X += Me * cie_colour_match_jd2[i][0];
+        Y += Me * cie_colour_match_jd2[i][1];
+        Z += Me * cie_colour_match_jd2[i][2];
     }
 
     XYZ = (X + Y + Z);
@@ -3419,9 +3419,9 @@ void ColorTemp::spectrum_to_xyz_blackbody(double _temp, double &x, double &y, do
 
     for (i = 0, lambda = 350.; lambda < 830.1; i++, lambda += 5.) {
         double Me = blackbody_spect(lambda, _temp);
-        X += Me * cie_colour_match_jd[i][0];
-        Y += Me * cie_colour_match_jd[i][1];
-        Z += Me * cie_colour_match_jd[i][2];
+        X += Me * cie_colour_match_jd2[i][0];
+        Y += Me * cie_colour_match_jd2[i][1];
+        Z += Me * cie_colour_match_jd2[i][2];
     }
 
     XYZ = (X + Y + Z);
@@ -3447,16 +3447,16 @@ void ColorTemp::spectrum_to_xyz_preset(const double* spec_intens, double &x, dou
 
     this values are often called xBar yBar zBar and are characteristics of a color / illuminant
 
-    values cie_colour_match[][3] = 2° Standard Observer x2, y2, z2
+    values cie_colour_match_jd2[][3] = 2° Standard Observer x2, y2, z2
     E.g. for 380nm: x2=0.001368  y2=0.000039  z2=0.006451  round in J.Walker to 0.0014  0.0000 0.0065 above
     I have increased the precision used by J.Walker and pass from 350nm to 830nm
     And also add standard observer 10°
     */
     for (i = 0, lambda = 350.; lambda < 830.1; i++, lambda += 5.) {
         double Me = get_spectral_color(lambda, spec_intens);
-        X += Me * cie_colour_match_jd[i][0];
-        Y += Me * cie_colour_match_jd[i][1];
-        Z += Me * cie_colour_match_jd[i][2];
+        X += Me * cie_colour_match_jd2[i][0];
+        Y += Me * cie_colour_match_jd2[i][1];
+        Z += Me * cie_colour_match_jd2[i][2];
     }
 
     XYZ = (X + Y + Z);
@@ -3478,9 +3478,9 @@ void ColorTemp::spectrum_to_color_xyz_preset(const double* spec_color, const dou
 
         Me = get_spectral_color(lambda, spec_color);
         Mc = get_spectral_color(lambda, spec_intens);
-        X += Mc * cie_colour_match_jd[i][0] * Me;
-        Y += Mc * cie_colour_match_jd[i][1] * Me;
-        Z += Mc * cie_colour_match_jd[i][2] * Me;
+        X += Mc * cie_colour_match_jd2[i][0] * Me;
+        Y += Mc * cie_colour_match_jd2[i][1] * Me;
+        Z += Mc * cie_colour_match_jd2[i][2] * Me;
     }
 
     for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
@@ -3488,7 +3488,7 @@ void ColorTemp::spectrum_to_color_xyz_preset(const double* spec_color, const dou
         double Ms;
 
         Ms = get_spectral_color(lambda, spec_intens);
-        Yo += cie_colour_match_jd[i][1] * Ms;
+        Yo += cie_colour_match_jd2[i][1] * Ms;
     }
 
     xx = X / Yo;
@@ -3505,9 +3505,9 @@ void ColorTemp::spectrum_to_color_xyz_daylight(const double* spec_color, double 
     for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
         const double Me = spec_color[i];
         const double Mc = daylight_spect(lambda, _m1, _m2);
-        X += Mc * cie_colour_match_jd[i][0] * Me;
-        Y += Mc * cie_colour_match_jd[i][1] * Me;
-        Z += Mc * cie_colour_match_jd[i][2] * Me;
+        X += Mc * cie_colour_match_jd2[i][0] * Me;
+        Y += Mc * cie_colour_match_jd2[i][1] * Me;
+        Z += Mc * cie_colour_match_jd2[i][2] * Me;
     }
 
     xx = X / Y;
@@ -3524,9 +3524,9 @@ void ColorTemp::spectrum_to_color_xyz_blackbody(const double* spec_color, double
     for (i = 0, lambda = 350; lambda < 830.1; i++, lambda += 5) {
         const double Me = spec_color[i];
         const double Mc = blackbody_spect(lambda, _temp);
-        X += Mc * cie_colour_match_jd[i][0] * Me;
-        Y += Mc * cie_colour_match_jd[i][1] * Me;
-        Z += Mc * cie_colour_match_jd[i][2] * Me;
+        X += Mc * cie_colour_match_jd2[i][0] * Me;
+        Y += Mc * cie_colour_match_jd2[i][1] * Me;
+        Z += Mc * cie_colour_match_jd2[i][2] * Me;
     }
 
     xx = X / Y;
@@ -3544,14 +3544,14 @@ double ColorTemp::daylight_spect(double wavelength, double m1, double m2)
                                   53.30, 56.10, 58.90, 60.40, 61.90
                                  };
     //s1
-    static const double s1[97] = {41.60, 39.80, 38.00, 40.70, 43.40, 40.95, 38.50, 36.75, 35.00, 39.20, 43.40, 44.85, 46.30, 45.10, 43.90, 40.50, 37.10, 36.90, 36.70, 36.30, 35.90, 34.25, 32.60, 30.25, 27.90, 26.10, 24.30, 22.20, 20.10, 18.15, 16.20, 14.70,
+    static const double s1[97] = {41.60, 39.80, 38.00, 40.20, 42.40, 40.45, 38.50, 36.75, 35.00, 39.20, 43.40, 44.85, 46.30, 45.10, 43.90, 40.50, 37.10, 36.90, 36.70, 36.30, 35.90, 34.25, 32.60, 30.25, 27.90, 26.10, 24.30, 22.20, 20.10, 18.15, 16.20, 14.70,
                                   13.20, 10.90, 8.60, 7.35, 6.10, 5.15, 4.20, 3.05, 1.90, 0.95, 0.00, -0.80, -1.60, -2.55, -3.50, -3.50, -3.50, -4.65, -5.80, -6.50, -7.20, -7.90, -8.60, -9.05, -9.50, -10.20, -10.90, -10.80, -10.70, -11.35, -12.00, -13.00, -14.00,
-                                  -13.80, -13.60, -12.80, -12.00, -12.65, -13.30, -13.10, -12.90, -11.75, -10.60, -11.10, -11.60, -11.90, -12.20, -11.20, -10.20, -9.00, -7.80, -9.50, -11.20, -10.80, -10.50, -10.60, -10.15, -9.70, -9.00, -8.30,
+                                  -13.80, -13.60, -12.80, -12.00, -12.65, -13.30, -13.10, -12.90, -11.75, -10.60, -11.10, -11.60, -11.90, -12.20, -11.20, -10.20, -9.00, -7.80, -9.50, -11.20, -10.80, -10.40, -10.50, -10.60, -10.15, -9.70, -9.00, -8.30,
                                   -8.80, -9.30, -9.55, -9.80
                                  };
     //s2
     static const double s2[97] = {6.70, 6.00, 5.30, 5.70, 6.10, 4.55, 3.00, 2.10, 1.20, 0.05, -1.10, -0.80, -0.50, -0.60, -0.70, -0.95, -1.20, -1.90, -2.60, -2.75, -2.90, -2.85, -2.80, -2.70, -2.60, -2.60, -2.60, -2.20, -1.80, -1.65, -1.50, -1.40, -1.30,
-                                  -1.25, -1.20, -1.10, -1.00, -0.75, -0.50, -0.40, -0.30, -0.15, 0.00, 0.10, 0.20, 0.35, 0.50, 1.30, 2.10, 2.65, 3.65, 4.10, 4.40, 4.70, 4.90, 5.10, 5.90, 6.70, 7.00, 7.30, 7.95, 8.60, 9.20, 9.80, 10.00, 10.20, 9.25, 8.30, 8.95,
+                                  -1.25, -1.20, -1.10, -1.00, -0.75, -0.50, -0.40, -0.30, -0.15, 0.00, 0.10, 0.20, 0.35, 0.50, 1.30, 2.10, 2.65, 3.20, 3.65, 4.10, 4.40, 4.70, 4.90, 5.10, 5.90, 6.70, 7.00, 7.30, 7.95, 8.60, 9.20, 9.80, 10.00, 10.20, 9.25, 8.30, 8.95,
                                   9.60, 9.05, 8.50, 7.75, 7.00, 7.30, 7.60, 7.80, 8.00, 7.35, 6.70, 5.95, 5.20, 6.30, 7.40, 7.10, 6.80, 6.90, 7.00, 6.70, 6.40, 5.95, 5.50, 5.80, 6.10, 6.30, 6.50
                                  };
 
@@ -3769,11 +3769,11 @@ void ColorTemp::tempxy(bool separated, int repref, float **Tx, float **Ty, float
         }
     }
 
-    if (settings->itcwb_stdobserver10 == false) {
+    if (settings->itcwb_stdobserver10 == true) {
         for (int i = 0; i < 97; i++) {
-            cie_colour_match_jd[i][0] = cie_colour_match_jd2[i][0];
-            cie_colour_match_jd[i][1] = cie_colour_match_jd2[i][1];;
-            cie_colour_match_jd[i][2] = cie_colour_match_jd2[i][2];
+            cie_colour_match_jd2[i][0] = cie_colour_match_jd[i][0];
+            cie_colour_match_jd2[i][1] = cie_colour_match_jd[i][1];;
+            cie_colour_match_jd2[i][2] = cie_colour_match_jd[i][2];
         }
     }
 

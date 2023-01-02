@@ -56,7 +56,7 @@ ProfilePanel::ProfilePanel () : storedPProfile(nullptr), lastSavedPSE(nullptr), 
     fillMode->set_active(options.filledProfile);
     fillMode->add( options.filledProfile ? *profileFillModeOnImage : *profileFillModeOffImage );
     fillMode->signal_toggled().connect ( sigc::mem_fun(*this, &ProfilePanel::profileFillModeToggled) );
-    fillMode->set_tooltip_text(M("PROFILEPANEL_MODE_TIP"));
+    fillMode->set_tooltip_text(M("PROFILEPANEL_MODE_TOOLTIP"));
 //GTK318
 #if GTK_MAJOR_VERSION == 3 && GTK_MINOR_VERSION < 20
     fillMode->set_margin_right(2);
@@ -494,6 +494,12 @@ void ProfilePanel::load_clicked (GdkEventButton* event)
 
                 // Clearing all LocallabSpotEdited to be compliant with default pparams
                 custom->pedited->locallab.spots.clear();
+            }
+
+            // For each Locallab spot, loaded profile pp only contains activated tools params
+            // Missing tool params in pe shall be also set to true to avoid a "spot merge" issue
+            for (int i = 0; i < (int)pe.locallab.spots.size(); i++) {
+                pe.locallab.spots.at(i).set(true);
             }
 
             custom->set(true);

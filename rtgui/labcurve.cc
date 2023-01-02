@@ -66,7 +66,7 @@ LCurve::LCurve () : FoldableToolPanel(this, "labcurves", M("TP_LABCURVE_LABEL"),
     pack_start (*avoidcolorshift, Gtk::PACK_SHRINK, 4);
 
     lcredsk = Gtk::manage (new Gtk::CheckButton (M("TP_LABCURVE_LCREDSK")));
-    lcredsk->set_tooltip_markup (M("TP_LABCURVE_LCREDSK_TIP"));
+    lcredsk->set_tooltip_markup (M("TP_LABCURVE_LCREDSK_TOOLTIP"));
     pack_start (*lcredsk);
 
     rstprotection = Gtk::manage ( new Adjuster (M("TP_LABCURVE_RSTPROTECTION"), 0., 100., 0.1, 0.) );

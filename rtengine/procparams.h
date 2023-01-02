@@ -2070,7 +2070,7 @@ struct WaveletParams {
     std::vector<double> blcurve;
     std::vector<double> levelshc;
     std::vector<double> opacityCurveRG;
-    std::vector<double> opacityCurveSH;
+    //std::vector<double> opacityCurveSH;
     std::vector<double> opacityCurveBY;
     std::vector<double> opacityCurveW;
     std::vector<double> opacityCurveWL;
@@ -2143,7 +2143,7 @@ struct WaveletParams {
     Glib::ustring Backmethod;
     Glib::ustring Tilesmethod;
     Glib::ustring complexmethod;
-    Glib::ustring denmethod;
+    //Glib::ustring denmethod;
     Glib::ustring mixmethod;
     Glib::ustring slimethod;
     Glib::ustring quamethod;
