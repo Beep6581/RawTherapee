@@ -620,7 +620,8 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
             PreviewProps pp(0, 0, fw, fh, scale);
             // Tells to the ImProcFunctions' tools what is the preview scale, which may lead to some simplifications
             ipf.setScale(scale);
-            imgsrc->getImage(currWB, tr, orig_prev, pp, params->toneCurve, params->raw, 1);
+			int inpaintopposed = 1;//force getimage to use inpaint-opposed if enable, only once
+            imgsrc->getImage(currWB, tr, orig_prev, pp, params->toneCurve, params->raw, inpaintopposed);
 
             if ((todo & M_SPOT) && params->spot.enabled && !params->spot.entries.empty()) {
                 spotsDone = true;

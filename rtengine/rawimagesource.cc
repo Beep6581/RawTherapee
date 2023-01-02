@@ -741,7 +741,7 @@ void RawImageSource::getWBMults (const ColorTemp &ctemp, const RAWParams &raw, s
 }
 
 void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* image, const PreviewProps &pp, const ToneCurveParams &hrp, const RAWParams &raw, int opposed)
-{
+{// added int opposed to force getimage to use inpaint-opposed if enable, only once
     MyMutex::MyLock lock(getImageMutex);
     tran = defTransform (tran);
 
