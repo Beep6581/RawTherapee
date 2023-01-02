@@ -34,8 +34,6 @@
 #include <omp.h>
 #endif
 
-//#define EXT_EDITORS_RADIOS // TODO: Remove the corresponding code after testing.
-
 namespace {
 void placeSpinBox(Gtk::Container* where, Gtk::SpinButton* &spin, const std::string &labelText, int digits, int inc0, int inc1, int maxLength, int range0, int range1, const std::string &toolTip = "") {
     Gtk::Box* HB = Gtk::manage ( new Gtk::Box () );
@@ -1205,78 +1203,16 @@ Gtk::Widget* Preferences::getGeneralPanel()
 
     Gtk::Frame* fdg = Gtk::manage(new Gtk::Frame(M("PREFERENCES_EXTERNALEDITOR")));
     setExpandAlignProperties(fdg, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
-#ifdef EXT_EDITORS_RADIOS
-    Gtk::Grid* externaleditorGrid = Gtk::manage(new Gtk::Grid());
-    externaleditorGrid->set_column_spacing(4);
-    externaleditorGrid->set_row_spacing(4);
-    setExpandAlignProperties(externaleditorGrid, false, false, Gtk::ALIGN_FILL, Gtk::ALIGN_FILL);
-
-    edOther = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_EDITORCMDLINE") + ":"));
-    setExpandAlignProperties(edOther, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    editorToSendTo = Gtk::manage(new Gtk::Entry());
-    setExpandAlignProperties(editorToSendTo, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_BASELINE);
-    Gtk::RadioButton::Group ge = edOther->get_group();
-
-#ifdef __APPLE__
-    edGimp = Gtk::manage(new Gtk::RadioButton("GIMP"));
-    setExpandAlignProperties(edGimp, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    edGimp->set_group(ge);
-    externaleditorGrid->attach_next_to(*edGimp, Gtk::POS_TOP, 2, 1);
-
-    edPS = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_PSPATH") + ":"));
-    setExpandAlignProperties(edPS, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    psDir = Gtk::manage(new MyFileChooserButton(M("PREFERENCES_PSPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
-    setExpandAlignProperties(psDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    externaleditorGrid->attach_next_to(*edPS, *edGimp, Gtk::POS_BOTTOM, 1, 1);
-    externaleditorGrid->attach_next_to(*psDir, *edPS, Gtk::POS_RIGHT, 1, 1);
-    edPS->set_group(ge);
-
-    externaleditorGrid->attach_next_to(*edOther, *edPS, Gtk::POS_BOTTOM, 1, 1);
-    externaleditorGrid->attach_next_to(*editorToSendTo, *edOther, Gtk::POS_RIGHT, 1, 1);
-#elif defined WIN32
-    edGimp = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_GIMPPATH") + ":"));
-    setExpandAlignProperties(edGimp, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    gimpDir = Gtk::manage(new MyFileChooserButton(M("PREFERENCES_GIMPPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
-    setExpandAlignProperties(gimpDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    externaleditorGrid->attach_next_to(*edGimp, Gtk::POS_TOP, 1, 1);
-    externaleditorGrid->attach_next_to(*gimpDir, *edGimp, Gtk::POS_RIGHT, 1, 1);
-    edGimp->set_group(ge);
-
-    edPS = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_PSPATH") + ":"));
-    setExpandAlignProperties(edPS, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    psDir = Gtk::manage(new MyFileChooserButton(M("PREFERENCES_PSPATH"), Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
-    setExpandAlignProperties(psDir, true, false, Gtk::ALIGN_FILL, Gtk::ALIGN_CENTER);
-    externaleditorGrid->attach_next_to(*edPS, *edGimp, Gtk::POS_BOTTOM, 1, 1);
-    externaleditorGrid->attach_next_to(*psDir, *edPS, Gtk::POS_RIGHT, 1, 1);
-    edPS->set_group(ge);
-
-    externaleditorGrid->attach_next_to(*edOther, *edPS, Gtk::POS_BOTTOM, 1, 1);
-    externaleditorGrid->attach_next_to(*editorToSendTo, *edOther, Gtk::POS_RIGHT, 1, 1);
-#else
-    edGimp = Gtk::manage(new Gtk::RadioButton("GIMP"));
-    setExpandAlignProperties(edGimp, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    externaleditorGrid->attach_next_to(*edGimp, Gtk::POS_TOP, 2, 1);
-    edGimp->set_group(ge);
-
-    externaleditorGrid->attach_next_to(*edOther, *edGimp, Gtk::POS_BOTTOM, 1, 1);
-    externaleditorGrid->attach_next_to(*editorToSendTo, *edOther, Gtk::POS_RIGHT, 1, 1);
-#endif
-#endif
 
     externalEditors = Gtk::manage(new ExternalEditorPreferences());
     externalEditors->set_size_request(-1, 200);
-#ifdef EXT_EDITORS_RADIOS
-    externaleditorGrid->attach_next_to(*externalEditors, *edOther, Gtk::POS_BOTTOM, 2, 1);
-#endif
 
  //   fdg->add(*externaleditorGrid);
     editor_dir_temp = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_EXTEDITOR_DIR_TEMP")));
     editor_dir_current = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_EXTEDITOR_DIR_CURRENT")));
     editor_dir_custom = Gtk::manage(new Gtk::RadioButton(M("PREFERENCES_EXTEDITOR_DIR_CUSTOM") + ": "));
     editor_dir_custom_path = Gtk::manage(new MyFileChooserButton("", Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER));
-#ifndef EXT_EDITORS_RADIOS
     Gtk::RadioButton::Group ge;
-#endif
     ge = editor_dir_temp->get_group();
     editor_dir_current->set_group(ge);
     editor_dir_custom->set_group(ge);
@@ -1296,12 +1232,7 @@ Gtk::Widget* Preferences::getGeneralPanel()
         f->add(*vb);
         
         hb = Gtk::manage(new Gtk::Box());
-#ifdef EXT_EDITORS_RADIOS
-        externaleditorGrid->attach_next_to(*externalEditors, *edOther, Gtk::POS_BOTTOM, 2, 1);
-        hb->pack_start(*externaleditorGrid);
-#else
         hb->pack_start(*externalEditors);
-#endif
         hb->pack_start(*f, Gtk::PACK_EXPAND_WIDGET, 4);
 
         vb = Gtk::manage(new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
@@ -1773,35 +1704,6 @@ void Preferences::storePreferences()
 
     moptions.pseudoHiDPISupport = pseudoHiDPI->get_active();
 
-#ifdef EXT_EDITORS_RADIOS
-#ifdef WIN32
-    moptions.gimpDir = gimpDir->get_filename();
-    moptions.psDir = psDir->get_filename();
-#elif defined __APPLE__
-    moptions.psDir = psDir->get_filename();
-#endif
-    moptions.customEditorProg = editorToSendTo->get_text();
-
-    if (edGimp->get_active()) {
-        moptions.editorToSendTo = 1;
-    }
-
-#ifdef WIN32
-    else if (edPS->get_active()) {
-        moptions.editorToSendTo = 2;
-    }
-
-#elif defined __APPLE__
-    else if (edPS->get_active()) {
-        moptions.editorToSendTo = 2;
-    }
-
-#endif
-    else if (edOther->get_active()) {
-        moptions.editorToSendTo = 3;
-    }
-#endif
-
     const std::vector<ExternalEditorPreferences::EditorInfo> &editors = externalEditors->getEditors();
     moptions.externalEditors.resize(editors.size());
     moptions.externalEditorIndex = -1;
@@ -2082,37 +1984,6 @@ void Preferences::fillPreferences()
 
     hlThresh->set_value(moptions.highlightThreshold);
     shThresh->set_value(moptions.shadowThreshold);
-
-#ifdef EXT_EDITORS_RADIOS
-    edGimp->set_active(moptions.editorToSendTo == 1);
-    edOther->set_active(moptions.editorToSendTo == 3);
-#ifdef WIN32
-    edPS->set_active(moptions.editorToSendTo == 2);
-
-    if (Glib::file_test(moptions.gimpDir, Glib::FILE_TEST_IS_DIR)) {
-        gimpDir->set_current_folder(moptions.gimpDir);
-    } else {
-        gimpDir->set_current_folder(Glib::get_home_dir());
-    }
-
-    if (Glib::file_test(moptions.psDir, Glib::FILE_TEST_IS_DIR)) {
-        psDir->set_current_folder(moptions.psDir);
-    } else {
-        psDir->set_current_folder(Glib::get_home_dir());
-    }
-
-#elif defined __APPLE__
-    edPS->set_active(moptions.editorToSendTo == 2);
-
-    if (Glib::file_test(moptions.psDir, Glib::FILE_TEST_IS_DIR)) {
-        psDir->set_current_folder(moptions.psDir);
-    } else {
-        psDir->set_current_folder(Glib::get_home_dir());
-    }
-
-#endif
-    editorToSendTo->set_text(moptions.customEditorProg);
-#endif
 
     std::vector<ExternalEditorPreferences::EditorInfo> editorInfos;
     for (const auto &editor : moptions.externalEditors) {
