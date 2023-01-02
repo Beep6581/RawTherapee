@@ -3961,10 +3961,15 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 			if (settings->verbose) {
                 printf("Gray=%1.3f MaxicamQ=%3.2f Base logarithm encoding Q=%5.1f\n", (double) gray, (double) maxicam, (double) linbase);
             }
+			float basecor = 200.f;
+			if(linbase > basecor) {
+				float corlin = (linbase - basecor)/ basecor;
+				maxicam /= corlin;
+			}
         }
 
 		if(mobwev == 2) {//sigmoid & log encode
-			comprth *= 0.4f;//empirical
+			//comprth *= 0.4f;//empirical
 		}
         const auto applytoq =
         [ = ](float x) -> float {
@@ -3991,18 +3996,31 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         float *datain = nullptr;
         float *data = nullptr;
         float *datanorm = nullptr;
-		
+/*
+        float *datainC = nullptr;
+        float *dataC = nullptr;
+        float *datanormC = nullptr;
+        float *datainH = nullptr;
+        float *datadifC = nullptr;
+*/		
 		if(sigmoidnorm  && issigq) {
 			datain = new float[width * height];
 			data = new float[width * height];
 			datanorm = new float[width * height];
-			
+/*			datainC = new float[width * height];
+			dataC = new float[width * height];
+			datadifC = new float[width * height];
+			datanormC = new float[width * height];
+			datainH = new float[width * height];
+*/			
 #ifdef _OPENMP 
             #pragma omp parallel for schedule(dynamic, 16)
 #endif
 			for (int y = 0; y < height; y++){
 				for (int x = 0; x < width; x++) {
 					datain[(y) * width + (x)] = lab->L[y][x];
+				//	datainC[(y) * width + (x)] = sqrt(SQR(lab->a[y][x]) + SQR(lab->b[y][x]));
+				//	datainH[(y) * width + (x)] = xatan2f(lab->b[y][x], lab->a[y][x]);;
 				}
 			}
 		}
@@ -4343,6 +4361,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             }
         }
 			if(sigmoidnorm && issigq) { //Normalize luminance
+		//	float meandifc = 0.f;
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic, 16)
@@ -4351,9 +4370,21 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 					for (int x = 0; x < width; x++) {
 						data[(y) * width + (x)] = lab->L[y][x];				
 						datanorm[(y) * width + (x)] = lab->L[y][x];
+					//	dataC[(y) * width + (x)] = sqrt(SQR(lab->a[y][x]) + SQR(lab->b[y][x]));
+					//	datanormC[(y) * width + (x)] = sqrt(SQR(lab->a[y][x]) + SQR(lab->b[y][x]));
+					//	datadifC[(y) * width + (x)] = fabs(dataC[(y) * width + (x)] - datainC[(y) * width + (x)]);
+				
 					}
 				}
+//				for (int y = 0; y < height; y++){
+//					for (int x = 0; x < width; x++) {
+//						meandifc += datadifC[(y) * width + (x)];
+//					}
+//				}
+//				meandifc /= (width * height);
+//				printf("meandifc=%f \n", (double) meandifc);
 				normalize_mean_dt(datanorm, datain, height * width, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
+//				normalize_mean_dt(datanormC, datainC, height * width, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
 		
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic, 16)
@@ -4361,15 +4392,25 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 				for (int ir = 0; ir < height; ir++) {
 					for (int jr = 0; jr < width; jr++) {//blend
 						data[ir * width + jr] = intp(bl, data[ir * width + jr], datanorm[ir * width + jr]);
-
 						lab->L[ir][jr] = data[ir * width + jr];
+						
+					//	if(bl > 0.5f){
+					//		dataC[ir * width + jr] = intp(bl, dataC[ir * width + jr], datanormC[ir * width + jr]);
+					//		lab->a[ir][jr] = dataC[ir * width + jr] * cos(datainH[ir * width + jr]);
+					//		lab->b[ir][jr] = dataC[ir * width + jr] * sin(datainH[ir * width + jr]);
+					//	}
+						
 					}
 				}
 			}
         delete [] datain;
         delete [] data;
         delete [] datanorm;
-		
+/*        delete [] datainC;
+        delete [] dataC;
+        delete [] datanormC;
+        delete [] datainH;
+*/		
     }
 
     if (mocam == 3) { //Zcam not use but keep in case off
