@@ -39,6 +39,7 @@
 #include "rawimage.h"
 #include "rawimagesource_i.h"
 #include "rawimagesource.h"
+#include "rescale.h"
 #include "rt_math.h"
 #include "rtengine.h"
 #include "rtlensfun.h"
@@ -1347,7 +1348,6 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
         rif = ffm.searchFlatField(idata->getMake(), idata->getModel(), idata->getLens(), idata->getFocalLen(), idata->getFNumber(), idata->getDateTimeAsTS());
     }
 
-
     bool hasFlatField = (rif != nullptr);
 
     if (hasFlatField && settings->verbose) {
@@ -1387,6 +1387,9 @@ void RawImageSource::preprocess  (const RAWParams &raw, const LensProfParams &le
     }
     //FLATFIELD end
 
+    if (raw.ff_FromMetaData && isGainMapSupported()) {
+        applyDngGainMap(c_black, ri->getGainMaps());
+    }
 
     // Always correct camera badpixels from .badpixels file
     const std::vector<badPix> *bp = DFManager::getInstance().getBadPixels(ri->get_maker(), ri->get_model(), idata->getSerialNumber());
@@ -6256,6 +6259,36 @@ void RawImageSource::getRawValues(int x, int y, int rotate, int &R, int &G, int 
         R = 0; G = 0; B = val;
     } else {
         R = 0; G = val; B = 0;
+    }
+}
+
+bool RawImageSource::isGainMapSupported() const {
+    return ri->isGainMapSupported();
+}
+
+void RawImageSource::applyDngGainMap(const float black[4], const std::vector<GainMap> &gainMaps) {
+    // now we can apply each gain map to raw_data
+    array2D<float> mvals[2][2];
+    for (auto &m : gainMaps) {
+        mvals[m.Top & 1][m.Left & 1](m.MapPointsH, m.MapPointsV, m.MapGain.data());
+    }
+
+    // now we assume, col_scale and row scale is the same for all maps
+    const float col_scale = float(gainMaps[0].MapPointsH-1) / float(W);
+    const float row_scale = float(gainMaps[0].MapPointsV-1) / float(H);
+
+#ifdef _OPENMP
+    #pragma omp parallel for schedule(dynamic, 16)
+#endif
+    for (std::size_t y = 0; y < static_cast<size_t>(H); ++y) {
+        const float rowBlack[2] = {black[FC(y,0)], black[FC(y,1)]};
+        const float ys = y * row_scale;
+        float xs = 0.f;
+        for (std::size_t x = 0; x < static_cast<std::size_t>(W); ++x, xs += col_scale) {
+            const float f = getBilinearValue(mvals[y & 1][x & 1], xs, ys);
+            const float b = rowBlack[x & 1];
+            rawData[y][x] = rtengine::max((rawData[y][x] - b) * f + b, 0.f);
+        }
     }
 }
 

@@ -1489,6 +1489,7 @@ struct RAWParamsEdited {
     bool df_autoselect;
     bool ff_file;
     bool ff_AutoSelect;
+    bool ff_FromMetaData;
     bool ff_BlurRadius;
     bool ff_BlurType;
     bool ff_AutoClipControl;

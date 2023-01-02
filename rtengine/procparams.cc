@@ -5633,6 +5633,7 @@ bool RAWParams::PreprocessWB::operator !=(const PreprocessWB& other) const
 RAWParams::RAWParams() :
     df_autoselect(false),
     ff_AutoSelect(false),
+    ff_FromMetaData(false),
     ff_BlurRadius(32),
     ff_BlurType(getFlatFieldBlurTypeString(FlatFieldBlurType::AREA)),
     ff_AutoClipControl(false),
@@ -5658,6 +5659,7 @@ bool RAWParams::operator ==(const RAWParams& other) const
         && df_autoselect == other.df_autoselect
         && ff_file == other.ff_file
         && ff_AutoSelect == other.ff_AutoSelect
+        && ff_FromMetaData == other.ff_FromMetaData
         && ff_BlurRadius == other.ff_BlurRadius
         && ff_BlurType == other.ff_BlurType
         && ff_AutoClipControl == other.ff_AutoClipControl
@@ -7484,6 +7486,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->raw.df_autoselect, "RAW", "DarkFrameAuto", raw.df_autoselect, keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_file, "RAW", "FlatFieldFile", relativePathIfInside(fname, fnameAbsolute, raw.ff_file), keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_AutoSelect, "RAW", "FlatFieldAutoSelect", raw.ff_AutoSelect, keyFile);
+        saveToKeyfile(!pedited || pedited->raw.ff_FromMetaData, "RAW", "FlatFieldFromMetaData", raw.ff_FromMetaData, keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_BlurRadius, "RAW", "FlatFieldBlurRadius", raw.ff_BlurRadius, keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_BlurType, "RAW", "FlatFieldBlurType", raw.ff_BlurType, keyFile);
         saveToKeyfile(!pedited || pedited->raw.ff_AutoClipControl, "RAW", "FlatFieldAutoClipControl", raw.ff_AutoClipControl, keyFile);
@@ -10130,6 +10133,7 @@ int ProcParams::load(const Glib::ustring& fname, ParamsEdited* pedited)
             }
 
             assignFromKeyfile(keyFile, "RAW", "FlatFieldAutoSelect", pedited, raw.ff_AutoSelect, pedited->raw.ff_AutoSelect);
+            assignFromKeyfile(keyFile, "RAW", "FlatFieldFromMetaData", pedited, raw.ff_FromMetaData, pedited->raw.ff_FromMetaData);
             assignFromKeyfile(keyFile, "RAW", "FlatFieldBlurRadius", pedited, raw.ff_BlurRadius, pedited->raw.ff_BlurRadius);
             assignFromKeyfile(keyFile, "RAW", "FlatFieldBlurType", pedited, raw.ff_BlurType, pedited->raw.ff_BlurType);
             assignFromKeyfile(keyFile, "RAW", "FlatFieldAutoClipControl", pedited, raw.ff_AutoClipControl, pedited->raw.ff_AutoClipControl);

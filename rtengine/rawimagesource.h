@@ -24,6 +24,7 @@
 
 #include "array2D.h"
 #include "colortemp.h"
+#include "dnggainmap.h"
 #include "iimage.h"
 #include "imagesource.h"
 #include "procparams.h"
@@ -177,6 +178,8 @@ public:
         return true;
     }
 
+    bool        isGainMapSupported() const override;
+
     void        setProgressListener (ProgressListener* pl) override
     {
         plistener = pl;
@@ -304,6 +307,7 @@ protected:
     void    vflip       (Imagefloat* im);
     void getRawValues(int x, int y, int rotate, int &R, int &G, int &B) override;
     void captureSharpening(const procparams::CaptureSharpeningParams &sharpeningParams, bool showMask, double &conrastThreshold, double &radius) override;
+    void applyDngGainMap(const float black[4], const std::vector<GainMap> &gainMaps);
 };
 
 }

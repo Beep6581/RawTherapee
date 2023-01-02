@@ -19,9 +19,12 @@
 
 #pragma once
 
+#include <iostream>
+
 #include "myfile.h"
 #include <csetjmp>
-
+#include "dnggainmap.h"
+#include "settings.h"
 
 class DCraw
 {
@@ -165,6 +168,8 @@ protected:
         PanasonicRW2Info(): bpp(0), encoding(0) {}
     };
     PanasonicRW2Info RT_pana_info;
+    std::vector<GainMap> gainMaps;
+
 public:
     struct CanonCR3Data {
         // contents of tag CMP1 for relevant track in CR3 file
@@ -193,6 +198,18 @@ public:
         int crx_track_selected;
         short CR3_CTMDtag;
     };
+
+    bool isBayer() const
+    {
+        return (filters != 0 && filters != 9);
+    }
+
+    const std::vector<GainMap>& getGainMaps() const {
+        return gainMaps;
+    }
+
+    bool isGainMapSupported() const;
+
     struct CanonLevelsData {
         unsigned cblack[4];
         unsigned white;
@@ -200,6 +217,7 @@ public:
         bool white_ok;
         CanonLevelsData(): cblack{0}, white{0}, black_ok(false), white_ok(false) {}
     };
+
 protected:
     CanonCR3Data RT_canon_CR3_data;
     

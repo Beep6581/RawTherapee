@@ -407,7 +407,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
         // If high detail (=100%) is newly selected, do a demosaic update, since the last was just with FAST
 
         if (imageTypeListener) {
-            imageTypeListener->imageTypeChanged(imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono());
+            imageTypeListener->imageTypeChanged(imgsrc->isRAW(), imgsrc->getSensorType() == ST_BAYER, imgsrc->getSensorType() == ST_FUJI_XTRANS, imgsrc->isMono(), imgsrc->isGainMapSupported());
         }
 
         if ((todo & M_RAW)
