@@ -44,6 +44,8 @@
 
 #ifdef WIN32
 #include "windows.h"
+
+#include "../rtengine/winutils.h"
 #endif
 
 using namespace rtengine::procparams;
@@ -134,6 +136,235 @@ bool find_default_monitor_profile (GdkWindow *rootwin, Glib::ustring &defprof, G
 }
 #endif
 
+bool hasUserOnlyPermission(const Glib::ustring &dirname)
+{
+#if defined(__linux__) || defined(__APPLE__)
+    const Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(dirname);
+    const Glib::RefPtr<Gio::FileInfo> file_info = file->query_info("owner::user,unix::mode");
+
+    if (!file_info) {
+        return false;
+    }
+
+    const Glib::ustring owner = file_info->get_attribute_string("owner::user");
+    const guint32 mode = file_info->get_attribute_uint32("unix::mode");
+
+    return (mode & 0777) == 0700 && owner == Glib::get_user_name();
+#elif defined(WIN32)
+    const Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(dirname);
+    const Glib::RefPtr<Gio::FileInfo> file_info = file->query_info("owner::user");
+    if (!file_info) {
+        return false;
+    }
+
+    // Current user must be the owner.
+    const Glib::ustring user_name = Glib::get_user_name();
+    const Glib::ustring owner = file_info->get_attribute_string("owner::user");
+    if (user_name != owner) {
+        return false;
+    }
+
+    // Get security descriptor and discretionary access control list.
+    PACL dacl = nullptr;
+    PSECURITY_DESCRIPTOR sec_desc_raw_ptr = nullptr;
+    auto win_error = GetNamedSecurityInfo(
+        dirname.c_str(),
+        SE_FILE_OBJECT,
+        DACL_SECURITY_INFORMATION,
+        nullptr,
+        nullptr,
+        &dacl,
+        nullptr,
+        &sec_desc_raw_ptr
+    );
+    const WinLocalPtr<PSECURITY_DESCRIPTOR> sec_desc_ptr(sec_desc_raw_ptr);
+    if (win_error != ERROR_SUCCESS) {
+        return false;
+    }
+
+    // Must not inherit permissions.
+    SECURITY_DESCRIPTOR_CONTROL sec_desc_control;
+    DWORD revision;
+    if (!(
+        GetSecurityDescriptorControl(sec_desc_ptr, &sec_desc_control, &revision)
+        && sec_desc_control & SE_DACL_PROTECTED
+    )) {
+        return false;
+    }
+
+    // Check that there is one entry allowing full access.
+    ULONG acl_entry_count;
+    PEXPLICIT_ACCESS acl_entry_list_raw = nullptr;
+    win_error = GetExplicitEntriesFromAcl(dacl, &acl_entry_count, &acl_entry_list_raw);
+    const WinLocalPtr<PEXPLICIT_ACCESS> acl_entry_list(acl_entry_list_raw);
+    if (win_error != ERROR_SUCCESS || acl_entry_count != 1) {
+        return false;
+    }
+    const EXPLICIT_ACCESS &ace = acl_entry_list[0];
+    if (
+        ace.grfAccessMode != GRANT_ACCESS
+        || (ace.grfAccessPermissions & FILE_ALL_ACCESS) != FILE_ALL_ACCESS
+        || ace.Trustee.TrusteeForm != TRUSTEE_IS_SID // Should already be SID, but double check.
+    ) {
+        return false;
+    }
+
+    // ACE must be for the current user.
+    HANDLE process_token_raw;
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_READ, &process_token_raw)) {
+        return false;
+    }
+    const WinHandle process_token(process_token_raw);
+    DWORD actual_token_info_size = 0;
+    GetTokenInformation(process_token, TokenUser, nullptr, 0, &actual_token_info_size);
+    if (!actual_token_info_size) {
+        return false;
+    }
+    const WinHeapPtr<PTOKEN_USER> user_token_ptr(actual_token_info_size);
+    if (!user_token_ptr || !GetTokenInformation(
+        process_token,
+        TokenUser,
+        user_token_ptr,
+        actual_token_info_size,
+        &actual_token_info_size
+    )) {
+        return false;
+    }
+    return EqualSid(ace.Trustee.ptstrName, user_token_ptr->User.Sid);
+#endif
+    return false;
+}
+
+/**
+ * Sets read and write permissions, and optionally the execute permission, for
+ * the user and no permissions for others.
+ */
+void setUserOnlyPermission(const Glib::RefPtr<Gio::File> file, bool execute)
+{
+#if defined(__linux__) || defined(__APPLE__)
+    const Glib::RefPtr<Gio::FileInfo> file_info = file->query_info("unix::mode");
+    if (!file_info) {
+        return;
+    }
+
+    guint32 mode = file_info->get_attribute_uint32("unix::mode");
+    mode = (mode & ~0777) | (execute ? 0700 : 0600);
+    try {
+        file->set_attribute_uint32("unix::mode", mode, Gio::FILE_QUERY_INFO_NONE);
+    } catch (Gio::Error &) {
+    }
+#elif defined(WIN32)
+    // Get the current user's SID.
+    HANDLE process_token_raw;
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_READ, &process_token_raw)) {
+        return;
+    }
+    const WinHandle process_token(process_token_raw);
+    DWORD actual_token_info_size = 0;
+    GetTokenInformation(process_token, TokenUser, nullptr, 0, &actual_token_info_size);
+    if (!actual_token_info_size) {
+        return;
+    }
+    const WinHeapPtr<PTOKEN_USER> user_token_ptr(actual_token_info_size);
+    if (!user_token_ptr || !GetTokenInformation(
+        process_token,
+        TokenUser,
+        user_token_ptr,
+        actual_token_info_size,
+        &actual_token_info_size
+    )) {
+        return;
+    }
+    const PSID user_sid = user_token_ptr->User.Sid;
+
+    // Get a handle to the file.
+    const Glib::ustring filename = file->get_path();
+    const HANDLE file_handle_raw = CreateFile(
+        filename.c_str(),
+        READ_CONTROL | WRITE_DAC,
+        0,
+        nullptr,
+        OPEN_EXISTING,
+        execute ? FILE_FLAG_BACKUP_SEMANTICS : FILE_ATTRIBUTE_NORMAL,
+        nullptr
+    );
+    if (file_handle_raw == INVALID_HANDLE_VALUE) {
+        return;
+    }
+    const WinHandle file_handle(file_handle_raw);
+
+    // Create the user-only permission and set it.
+    EXPLICIT_ACCESS ea = {
+        .grfAccessPermissions = FILE_ALL_ACCESS,
+        .grfAccessMode = GRANT_ACCESS,
+        .grfInheritance = NO_INHERITANCE,
+    };
+    BuildTrusteeWithSid(&(ea.Trustee), user_sid);
+    PACL new_dacl_raw = nullptr;
+    auto win_error = SetEntriesInAcl(1, &ea, nullptr, &new_dacl_raw);
+    if (win_error != ERROR_SUCCESS) {
+        return;
+    }
+    const WinLocalPtr<PACL> new_dacl(new_dacl_raw);
+    SetSecurityInfo(
+        file_handle,
+        SE_FILE_OBJECT,
+        DACL_SECURITY_INFORMATION | PROTECTED_DACL_SECURITY_INFORMATION,
+        nullptr,
+        nullptr,
+        new_dacl,
+        nullptr
+    );
+#endif
+}
+
+/**
+ * Gets the path to the temp directory, creating it if necessary.
+ */
+Glib::ustring getTmpDirectory()
+{
+#if defined(__linux__) || defined(__APPLE__) || defined(WIN32)
+    static Glib::ustring recent_dir = "";
+    const Glib::ustring tmp_dir_root = Glib::get_tmp_dir();
+    const Glib::ustring subdir_base =
+        Glib::ustring::compose("rawtherapee-%1", Glib::get_user_name());
+    Glib::ustring dir = Glib::build_filename(tmp_dir_root, subdir_base);
+
+    // Returns true if the directory doesn't exist or has the right permissions.
+    auto is_usable_dir = [](const Glib::ustring &dir_path) {
+        return !Glib::file_test(dir_path, Glib::FILE_TEST_EXISTS) || (Glib::file_test(dir_path, Glib::FILE_TEST_IS_DIR) && hasUserOnlyPermission(dir_path));
+    };
+
+    if (!(is_usable_dir(dir) || recent_dir.empty())) {
+        // Try to reuse the random suffix directory.
+        dir = recent_dir;
+    }
+
+    if (!is_usable_dir(dir)) {
+        // Create new directory with random suffix.
+        gchar *const rand_dir = g_dir_make_tmp((subdir_base + "-XXXXXX").c_str(), nullptr);
+        if (!rand_dir) {
+            return tmp_dir_root;
+        }
+        dir = recent_dir = rand_dir;
+        g_free(rand_dir);
+        Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(dir);
+        setUserOnlyPermission(file, true);
+    } else if (!Glib::file_test(dir, Glib::FILE_TEST_EXISTS)) {
+        // Create the directory.
+        Glib::RefPtr<Gio::File> file = Gio::File::create_for_path(dir);
+        bool dir_created = file->make_directory();
+        if (!dir_created) {
+            return tmp_dir_root;
+        }
+        setUserOnlyPermission(file, true);
+    }
+
+    return dir;
+#else
+    return Glib::get_tmp_dir();
+#endif
+}
 }
 
 class EditorPanel::ColorManagementToolbar
@@ -2058,7 +2289,7 @@ bool EditorPanel::idle_sendToGimp ( ProgressConnector<rtengine::IImagefloat*> *p
             dirname = options.editor_custom_out_dir;
             break;
         default: // Options::EDITOR_OUT_DIR_TEMP
-            dirname = Glib::get_tmp_dir();
+            dirname = getTmpDirectory();
             break;
         }
         Glib::ustring fullFileName = Glib::build_filename(dirname, shortname);
@@ -2118,6 +2349,8 @@ bool EditorPanel::idle_sentToGimp (ProgressConnector<int> *pc, rtengine::IImagef
         parent->setProgressStr ("");
         parent->setProgress (0.);
         bool success = false;
+
+        setUserOnlyPermission(Gio::File::create_for_path(filename), false);
 
         if (options.editorToSendTo == 1) {
             success = ExtProgStore::openInGimp (filename);
