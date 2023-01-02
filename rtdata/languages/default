@@ -210,6 +210,7 @@ FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size.\n\nShortcuts:\n<b>-</b> - Multi
 FILECHOOSER_FILTER_ANY;All files
 FILECHOOSER_FILTER_COLPROF;Color profiles (*.icc)
 FILECHOOSER_FILTER_CURVE;Curve files
+FILECHOOSER_FILTER_EXECUTABLE;Executable files
 FILECHOOSER_FILTER_LCP;Lens correction profiles
 FILECHOOSER_FILTER_PP;Processing profiles
 FILECHOOSER_FILTER_SAME;Same format as current photo
@@ -237,6 +238,7 @@ GENERAL_NO;No
 GENERAL_NONE;None
 GENERAL_OK;OK
 GENERAL_OPEN;Open
+GENERAL_OTHER;Other
 GENERAL_PORTRAIT;Portrait
 GENERAL_RESET;Reset
 GENERAL_SAVE;Save
@@ -1621,7 +1623,7 @@ MAIN_BUTTON_PREFERENCES;Preferences
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue.\nShortcut: <b>Ctrl+b</b>
 MAIN_BUTTON_SAVE_TOOLTIP;Save current image.\nShortcut: <b>Ctrl+s</b>\nSave current profile (.pp3).\nShortcut: <b>Ctrl+Shift+s</b>
 MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
-MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+e</b>
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+e</b>\nCurrent editor:
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels.\nShortcut: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
 MAIN_FRAME_EDITOR;Editor
@@ -1872,6 +1874,10 @@ PREFERENCES_EXTEDITOR_DIR_CUSTOM;Custom
 PREFERENCES_EXTEDITOR_DIR_TEMP;OS temp dir
 PREFERENCES_EXTEDITOR_FLOAT32;32-bit float TIFF output
 PREFERENCES_EXTERNALEDITOR;External Editor
+PREFERENCES_EXTERNALEDITOR_CHANGE;Change Application
+PREFERENCES_EXTERNALEDITOR_CHANGE_FILE;Change Executable
+PREFERENCES_EXTERNALEDITOR_COLUMN_NAME;Name
+PREFERENCES_EXTERNALEDITOR_COLUMN_COMMAND;Command
 PREFERENCES_FBROWSEROPTS;File Browser / Thumbnail Options
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
 PREFERENCES_FLATFIELDFOUND;Found
