@@ -100,6 +100,11 @@ public:
         return false;
     }
 
+    bool        isGainMapSupported() const override
+    {
+        return false;
+    }
+
     void        setProgressListener (ProgressListener* pl) override
     {
         plistener = pl;
