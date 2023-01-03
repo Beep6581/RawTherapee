@@ -709,7 +709,6 @@ struct ColorAppearanceParams {
     double greenout;
     int tempsc;
     double greensc;
-    bool presetcat02;
 
     ColorAppearanceParams();
 

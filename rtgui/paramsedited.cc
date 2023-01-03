@@ -254,7 +254,6 @@ void ParamsEdited::set(bool v)
     colorappearance.ybout     = v;
     colorappearance.tempsc     = v;
     colorappearance.greensc     = v;
-    colorappearance.presetcat02 = v;
 
     //colorBoost.amount         = v;
     //colorBoost.avoidclip      = v;
@@ -955,7 +954,6 @@ void ParamsEdited::initFrom(const std::vector<rtengine::procparams::ProcParams>&
         colorappearance.ybout = colorappearance.ybout && p.colorappearance.ybout == other.colorappearance.ybout;
         colorappearance.tempsc = colorappearance.tempsc && p.colorappearance.tempsc == other.colorappearance.tempsc;
         colorappearance.greensc = colorappearance.greensc && p.colorappearance.greensc == other.colorappearance.greensc;
-        colorappearance.presetcat02 = colorappearance.presetcat02 && p.colorappearance.presetcat02 == other.colorappearance.presetcat02;
 
         //colorBoost.amount = colorBoost.amount && p.colorBoost.amount == other.colorBoost.amount;
         //colorBoost.avoidclip = colorBoost.avoidclip && p.colorBoost.avoidclip == other.colorBoost.avoidclip;
@@ -3034,9 +3032,6 @@ void ParamsEdited::combine(rtengine::procparams::ProcParams& toEdit, const rteng
         toEdit.colorappearance.tonecie = mods.colorappearance.tonecie;
     }
 
-    if (colorappearance.presetcat02) {
-        toEdit.colorappearance.presetcat02 = mods.colorappearance.presetcat02;
-    }
 
 //  if (colorappearance.sharpcie)           toEdit.colorappearance.sharpcie = mods.colorappearance.sharpcie;
     if (impulseDenoise.enabled) {
