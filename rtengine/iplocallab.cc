@@ -3961,10 +3961,10 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 			if (settings->verbose) {
                 printf("Gray=%1.3f MaxicamQ=%3.2f Base logarithm encoding Q=%5.1f\n", (double) gray, (double) maxicam, (double) linbase);
             }
-			float basecor = 200.f;
+			float basecor = settings->basecorlog;//default 150
 			if(linbase > basecor) {
 				float corlin = (linbase - basecor)/ basecor;
-				maxicam /= corlin;
+				maxicam /= corlin;//adapt threshold 
 			}
         }
 
