@@ -9362,7 +9362,11 @@ void Locallabcie::modecamChanged()
         adapjzcie->hide();
         jz100->hide();
         pqremap->hide();
-        pqremapcam16->show();
+		if(mode != Simple) {
+			pqremapcam16->show();
+		} else {
+			pqremapcam16->hide();
+		}
         jabcie->hide();
         PQFrame->hide();
         logjzFrame->hide();
@@ -9455,6 +9459,10 @@ void Locallabcie::modecamChanged()
 
         forcejz->hide();
         pqremapcam16->show();
+		if(mode == Simple) {
+			pqremapcam16->hide();
+		}
+
         catadcie->show();
         sourceGraycie->show();
 
@@ -9525,6 +9533,10 @@ void Locallabcie::modecamChanged()
         surrHBoxcie->show();
         cie2Frame->show();
         pqremapcam16->show();
+		if(mode == Simple) {
+			pqremapcam16->hide();
+		}
+
     }
 
 
@@ -9654,13 +9666,14 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
        //     sigmoidblcie->hide();
             sigmoidsenscie->hide();
             //   comprcie->hide();
-
+			sigmoidnormFrame->hide();
+			pqremapcam16->hide();
             expjz->hide();
             jzFrame->hide();
             adapjzcie->hide();
             jz100->hide();
             pqremap->show();
-            pqremapcam16->show();
+         //   pqremapcam16->show();
             jabcie->hide();
             targetGraycie->show();
             targabscie->show();
@@ -9775,7 +9788,8 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             blurFramecie->hide();
             wavFramecie->hide();
             maskcieHCurveEditorG->hide();
-
+			sigmoidnormFrame->show();
+		//	pqremapcam16->show();
             if (enacieMask->get_active()) {
                 maskusablecie->show();
                 maskunusablecie->hide();
@@ -9856,15 +9870,17 @@ void Locallabcie::updateGUIToMode(const modeType new_type)
             detailcie->show();
             modeHBoxcie->show();
             sigmoidblcie->show();
+			pqremapcam16->show();
             comprcie->show();
             comprcieth->show();
             comprcieauto->show();
             sigmoidsenscie->show();
+			sigmoidnormFrame->show();
             targetGraycie->show();
             targabscie->show();
             surrHBoxcie->show();
             forcejz->hide();
-            pqremapcam16->show();
+           // pqremapcam16->show();
             sourceGraycie->show();
             cieFrame->show();
             exprecovcie->show();
@@ -10138,7 +10154,9 @@ void Locallabcie::convertParamToSimple()
 
     // Disable all listeners
     disableListener();
-   // sigmoidblcie->setValue(defSpot.sigmoidblcie);
+	sigmoidblcie->setValue(defSpot.sigmoidblcie);
+    sigq->set_active(defSpot.sigq);
+	pqremapcam16->setValue(defSpot.pqremapcam16);
     showmaskcieMethod->set_active(0);
     enacieMask->set_active(defSpot.enacieMask);
     modecie->set_active(0);
