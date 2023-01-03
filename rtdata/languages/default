@@ -166,6 +166,7 @@ FILEBROWSER_POPUPREMOVE;Delete permanently
 FILEBROWSER_POPUPREMOVEINCLPROC;Delete permanently, including queue-processed version
 FILEBROWSER_POPUPRENAME;Rename
 FILEBROWSER_POPUPSELECTALL;Select all
+FILEBROWSER_POPUPSORTBY;Sort Files
 FILEBROWSER_POPUPTRASH;Move to trash
 FILEBROWSER_POPUPUNRANK;Unrank
 FILEBROWSER_POPUPUNTRASH;Remove from trash
@@ -209,6 +210,7 @@ FILEBROWSER_ZOOMOUTHINT;Decrease thumbnail size.\n\nShortcuts:\n<b>-</b> - Multi
 FILECHOOSER_FILTER_ANY;All files
 FILECHOOSER_FILTER_COLPROF;Color profiles (*.icc)
 FILECHOOSER_FILTER_CURVE;Curve files
+FILECHOOSER_FILTER_EXECUTABLE;Executable files
 FILECHOOSER_FILTER_LCP;Lens correction profiles
 FILECHOOSER_FILTER_PP;Processing profiles
 FILECHOOSER_FILTER_SAME;Same format as current photo
@@ -236,6 +238,7 @@ GENERAL_NO;No
 GENERAL_NONE;None
 GENERAL_OK;OK
 GENERAL_OPEN;Open
+GENERAL_OTHER;Other
 GENERAL_PORTRAIT;Portrait
 GENERAL_RESET;Reset
 GENERAL_SAVE;Save
@@ -1420,6 +1423,7 @@ HISTORY_MSG_DEHAZE_STRENGTH;Dehaze - Strength
 HISTORY_MSG_DUALDEMOSAIC_AUTO_CONTRAST;Dual demosaic - Auto threshold
 HISTORY_MSG_DUALDEMOSAIC_CONTRAST;Dual demosaic - Contrast threshold
 HISTORY_MSG_EDGEFFECT;Edge Attenuation response
+HISTORY_MSG_FF_FROMMETADATA;Flat-Field - From Metadata
 HISTORY_MSG_FILMNEGATIVE_BALANCE;FN - Reference output
 HISTORY_MSG_FILMNEGATIVE_COLORSPACE;Film negative color space
 HISTORY_MSG_FILMNEGATIVE_ENABLED;Film Negative
@@ -1634,7 +1638,7 @@ MAIN_BUTTON_PREFERENCES;Preferences
 MAIN_BUTTON_PUTTOQUEUE_TOOLTIP;Put current image to processing queue.\nShortcut: <b>Ctrl+b</b>
 MAIN_BUTTON_SAVE_TOOLTIP;Save current image.\nShortcut: <b>Ctrl+s</b>\nSave current profile (.pp3).\nShortcut: <b>Ctrl+Shift+s</b>
 MAIN_BUTTON_SENDTOEDITOR;Edit image in external editor
-MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+e</b>
+MAIN_BUTTON_SENDTOEDITOR_TOOLTIP;Edit current image in external editor.\nShortcut: <b>Ctrl+e</b>\nCurrent editor:
 MAIN_BUTTON_SHOWHIDESIDEPANELS_TOOLTIP;Show/hide all side panels.\nShortcut: <b>m</b>
 MAIN_BUTTON_UNFULLSCREEN;Exit fullscreen
 MAIN_FRAME_EDITOR;Editor
@@ -1750,6 +1754,7 @@ PARTIALPASTE_EXPOSURE;Exposure
 PARTIALPASTE_FILMNEGATIVE;Film negative
 PARTIALPASTE_FILMSIMULATION;Film simulation
 PARTIALPASTE_FLATFIELDAUTOSELECT;Flat-field auto-selection
+PARTIALPASTE_FLATFIELDFROMMETADATA;Flat-field from Metadata
 PARTIALPASTE_FLATFIELDBLURRADIUS;Flat-field blur radius
 PARTIALPASTE_FLATFIELDBLURTYPE;Flat-field blur type
 PARTIALPASTE_FLATFIELDCLIPCONTROL;Flat-field clip control
@@ -1884,6 +1889,10 @@ PREFERENCES_EXTEDITOR_DIR_CUSTOM;Custom
 PREFERENCES_EXTEDITOR_DIR_TEMP;OS temp dir
 PREFERENCES_EXTEDITOR_FLOAT32;32-bit float TIFF output
 PREFERENCES_EXTERNALEDITOR;External Editor
+PREFERENCES_EXTERNALEDITOR_CHANGE;Change Application
+PREFERENCES_EXTERNALEDITOR_CHANGE_FILE;Change Executable
+PREFERENCES_EXTERNALEDITOR_COLUMN_NAME;Name
+PREFERENCES_EXTERNALEDITOR_COLUMN_COMMAND;Command
 PREFERENCES_FBROWSEROPTS;File Browser / Thumbnail Options
 PREFERENCES_FILEBROWSERTOOLBARSINGLEROW;Compact toolbars in File Browser
 PREFERENCES_FLATFIELDFOUND;Found
@@ -2075,6 +2084,13 @@ SAVEDLG_WARNFILENAME;File will be named
 SHCSELECTOR_TOOLTIP;Click right mouse button to reset the position of those 3 sliders.
 SOFTPROOF_GAMUTCHECK_TOOLTIP;Highlight pixels with out-of-gamut colors with respect to:\n- the printer profile, if one is set and soft-proofing is enabled,\n- the output profile, if a printer profile is not set and soft-proofing is enabled,\n- the monitor profile, if soft-proofing is disabled.
 SOFTPROOF_TOOLTIP;Soft-proofing simulates the appearance of the image:\n- when printed, if a printer profile is set in Preferences > Color Management,\n- when viewed on a display that uses the current output profile, if a printer profile is not set.
+SORT_ASCENDING;Ascending
+SORT_BY_NAME;By Name
+SORT_BY_DATE;By Date
+SORT_BY_EXIF;By EXIF
+SORT_BY_RANK;By Rank
+SORT_BY_LABEL;By Color Label
+SORT_DESCENDING;Descending
 TC_PRIM_BLUX;Bx
 TC_PRIM_BLUY;By
 TC_PRIM_GREX;Gx
@@ -2488,6 +2504,7 @@ TP_FLATFIELD_BT_VERTHORIZ;Vertical + Horizontal
 TP_FLATFIELD_BT_VERTICAL;Vertical
 TP_FLATFIELD_CLIPCONTROL;Clip control
 TP_FLATFIELD_CLIPCONTROL_TOOLTIP;Clip control avoids clipped highlights caused by applying the flat field. If there are already clipped highlights before applying the flat field, value 0 is used.
+TP_FLATFIELD_FROMMETADATA;From Metadata
 TP_FLATFIELD_LABEL;Flat-Field
 TP_GENERAL_11SCALE_TOOLTIP;The effects of this tool are only visible or only accurate at a preview scale of 1:1.
 TP_GRADIENT_CENTER;Center
