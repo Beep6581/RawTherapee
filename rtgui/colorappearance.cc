@@ -681,8 +681,8 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     ybout->set_tooltip_markup (M ("TP_COLORAPP_YBOUT_TOOLTIP"));
 
     tempout->set_tooltip_markup (M ("TP_COLORAPP_TEMP2_TOOLTIP"));
- //   tempout->throwOnButtonRelease();
- //   tempout->addAutoButton (M ("TP_COLORAPP_TEMPOUT_TOOLTIP"));
+    tempout->throwOnButtonRelease();
+    tempout->addAutoButton (M ("TP_COLORAPP_TEMPOUT_TOOLTIP"));
 
     tempout->show();
     greenout->show();
@@ -822,7 +822,7 @@ void ColorAppearance::neutral_pressed ()
     qcontrast->resetValue (false);
     colorh->resetValue (false);
     tempout->resetValue (false);
-//   tempout->setAutoValue (true);
+	tempout->setAutoValue (true);
     greenout->resetValue (false);
     ybout->resetValue (false);
     tempsc->resetValue (false);
@@ -913,7 +913,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
         adapscen->setAutoInconsistent (multiImage && !pedited->colorappearance.autoadapscen);
         ybscen->setAutoInconsistent (multiImage && !pedited->colorappearance.autoybscen);
         set_inconsistent              (multiImage && !pedited->colorappearance.enabled);
-    //    tempout->setAutoInconsistent   (multiImage && !pedited->colorappearance.autotempout);
+        tempout->setAutoInconsistent   (multiImage && !pedited->colorappearance.autotempout);
 
         shape->setUnChanged (!pedited->colorappearance.curve);
         shape2->setUnChanged (!pedited->colorappearance.curve2);
@@ -1098,7 +1098,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     lastAutoAdapscen = pp->colorappearance.autoadapscen;
     lastAutoDegreeout = pp->colorappearance.autodegreeout;
     lastAutoybscen = pp->colorappearance.autoybscen;
-//    lastAutotempout = pp->colorappearance.autotempout;
+    lastAutotempout = pp->colorappearance.autotempout;
 
     degree->setValue (pp->colorappearance.degree);
     degree->setAutoValue (pp->colorappearance.autodegree);
@@ -1121,7 +1121,7 @@ void ColorAppearance::read (const ProcParams* pp, const ParamsEdited* pedited)
     qcontrast->setValue (pp->colorappearance.qcontrast);
     colorh->setValue (pp->colorappearance.colorh);
     tempout->setValue (pp->colorappearance.tempout);
-//    tempout->setAutoValue (pp->colorappearance.autotempout);
+	tempout->setAutoValue (pp->colorappearance.autotempout);
     greenout->setValue (pp->colorappearance.greenout);
     ybout->setValue (pp->colorappearance.ybout);
     tempsc->setValue (pp->colorappearance.tempsc);
@@ -1185,7 +1185,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
     pp->colorappearance.curve2        = shape2->getCurve ();
     pp->colorappearance.curve3        = shape3->getCurve ();
     pp->colorappearance.tempout        = tempout->getValue ();
-//    pp->colorappearance.autotempout    = tempout->getAutoValue ();
+    pp->colorappearance.autotempout    = tempout->getAutoValue ();
     pp->colorappearance.greenout        = greenout->getValue ();
     pp->colorappearance.ybout        = ybout->getValue ();
     pp->colorappearance.tempsc        = tempsc->getValue ();
@@ -1263,7 +1263,7 @@ void ColorAppearance::write (ProcParams* pp, ParamsEdited* pedited)
         pedited->colorappearance.ybout        = ybout->getEditedState ();
         pedited->colorappearance.tempsc        = tempsc->getEditedState ();
         pedited->colorappearance.greensc        = greensc->getEditedState ();
-//        pedited->colorappearance.autotempout    = !tempout->getAutoInconsistent();
+        pedited->colorappearance.autotempout    = !tempout->getAutoInconsistent();
 
     }
 
@@ -1470,13 +1470,13 @@ void ColorAppearance::catmethodChanged()
         ybout->setValue(18);
         tempout->setValue (nexttemp);
     
-/*    if(tempout->getAutoValue()) {
+    if(tempout->getAutoValue()) {
         tempout->resetValue (false);
     } else {
         tempout->setValue (nexttemp);
         tempout->setAutoValue (true);
     }
-*/
+
         greenout->setValue (nextgreen);
         enableListener();
     
@@ -1525,7 +1525,7 @@ void ColorAppearance::catmethodChanged()
         adaplum->resetValue (false);
         degreeout->resetValue (false);
         ybout->resetValue (false);
-       // tempout->resetValue (false);
+        tempout->resetValue (false);
         tempout->setValue (nexttemp);
         greenout->resetValue (false);
         enableListener();
@@ -1870,7 +1870,7 @@ void ColorAppearance::wbCamChanged (double temp, double tin)
         {
             disableListener();
             tempout->setValue(temp);
-            greenout->setValue(tin);
+           // greenout->setValue(tin);
             enableListener();
             return false;
         }
@@ -1999,7 +1999,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
             ybscen->setAutoInconsistent (true);
         }
 
-/*        lastAutotempout = tempout->getAutoValue();
+        lastAutotempout = tempout->getAutoValue();
 
         if (tempout->getAutoInconsistent()) {
             tempout->setAutoInconsistent (false);
@@ -2009,7 +2009,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
         }
 
         lastAutotempout = tempout->getAutoValue();
-*/
+
     }
     if (listener && (multiImage || getEnabled()) ) {
 
@@ -2053,7 +2053,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
                 listener->panelChanged (EvCATAutoyb, M ("GENERAL_DISABLED"));
             }
         }
-/*
+
         if (a == tempout) {
             if (tempout->getAutoInconsistent()) {
                 listener->panelChanged (EvCATAutotempout, M ("GENERAL_UNCHANGED"));
@@ -2063,7 +2063,7 @@ void ColorAppearance::adjusterAutoToggled(Adjuster* a)
                 listener->panelChanged (EvCATAutotempout, M ("GENERAL_DISABLED"));
             }
         }
-*/
+
     }
 }
 void ColorAppearance::enabledChanged ()
