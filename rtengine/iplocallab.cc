@@ -3950,7 +3950,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 
         if (islogq  || mobwev != 0) {
             gray = 0.01f * (float) params->locallab.spots.at(sp).sourceGraycie;
-            gray = pow_F(gray, 1.2f);//or 1.15 => modification to increase sensitivity gain, only on defaults, of course we can change this value manually...take into account suuround and Yb Cam16
+            gray = pow_F(gray, 1.15f);//or 1.15 => modification to increase sensitivity gain, only on defaults, of course we can change this value manually...take into account suuround and Yb Cam16
 			const float targetgraycie = params->locallab.spots.at(sp).targetGraycie;
             float targetgraycor = pow_F(0.01f * targetgraycie, 1.15f);
             base = targetgraycie > 1.f && targetgraycie < 100.f && (float) dynamic_range > 0.f ?  find_gray(std::abs((float) shadows_range) / (float) dynamic_range, (targetgraycor)) : 0.f;
@@ -3958,14 +3958,16 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             float maxQgray = coefq * maxicam / gray;
 			
 			maxicam =  maxQgray;
-			if (settings->verbose) {
-                printf("Gray=%1.3f MaxicamQ=%3.2f Base logarithm encoding Q=%5.1f\n", (double) gray, (double) maxicam, (double) linbase);
-            }
 			float basecor = settings->basecorlog;//default 150
 			if(linbase > basecor) {
 				float corlin = (linbase - basecor)/ basecor;
-				maxicam /= corlin;//adapt threshold 
+				maxicam /= (1.f + corlin);//adapt threshold 
 			}
+			
+			if (settings->verbose) {
+                printf("Gray=%1.3f MaxicamQ=%3.2f Base logarithm encoding Q=%5.1f\n", (double) gray, (double) maxicam, (double) linbase);
+            }
+			
         }
 
 		if(mobwev == 2) {//sigmoid & log encode
