@@ -1939,7 +1939,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 ipf.ciecam_02float(ncie, float (adap), pW, 2, nprevl, params.get(), customColCurve1, customColCurve2, customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 0, scale, execsharp, d, dj, yb, 1);
 
                 if ((params->colorappearance.autodegree || params->colorappearance.autodegreeout) && acListener && params->colorappearance.enabled) {
-					if(params->colorappearance.catmethod == "symg") {
+					if(params->colorappearance.catmethod == "symg") {//force chromatic adaptation to 90 in symmetric
 						d = 0.9;
 						dj = 0.9;
 					}
@@ -1951,26 +1951,26 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
 
                 if (params->colorappearance.autoybscen && acListener && params->colorappearance.enabled) {
-					if(params->colorappearance.catmethod == "symg") {
+					if(params->colorappearance.catmethod == "symg") {//force yb scene to 18 in symmetric
 						yb = 18;
 					}
 
                     acListener->ybCamChanged((int) yb);    //real value Yb scene
                 }
 				double tempsym = 5003.;
-				int wmodel = 0;
+				int wmodel = 0;//allows - arbitrary - choice of illuminant and temp with choice
 				if (params->colorappearance.wbmodel == "RawT") {
 					wmodel = 0;
 				} else if (params->colorappearance.wbmodel == "RawTCAT02") {
 					wmodel = 1;
 				} else if (params->colorappearance.wbmodel == "free") {
-					wmodel = 2;
+					wmodel = 2;//force white balance in symmetric
 				}
 				
 				if(params->colorappearance.catmethod == "symg" && wmodel == 2) {
-					tempsym = params->wb.temperature;
+					tempsym = params->wb.temperature;//force white balance in symmetric
 				} else {
-					if (params->colorappearance.illum == "iA") {
+					if (params->colorappearance.illum == "iA") {//otherwise force illuminant source
 						tempsym = 2856.;
 					} else if (params->colorappearance.illum == "i41") {
 						tempsym = 4100.;
@@ -1985,12 +1985,10 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
 					} else if (params->colorappearance.illum == "i75") {
 						tempsym = 7504.;
 					} else if (params->colorappearance.illum == "ifree") {
-						tempsym = params->wb.temperature;		
+						tempsym = params->wb.temperature;//force white balance in symmetric		
 					}
 				}
                 if (params->colorappearance.enabled  && params->colorappearance.autotempout) {
-              //  if (params->colorappearance.enabled) {
-              //      acListener->wbCamChanged(params->wb.temperature, params->wb.green);    //real temp and tint
 						acListener->wbCamChanged(tempsym, 1.f);    //real temp and tint = 1.
                 }
                 

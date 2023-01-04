@@ -1870,7 +1870,7 @@ void ColorAppearance::wbCamChanged (double temp, double tin)
         {
             disableListener();
             tempout->setValue(temp);
-           // greenout->setValue(tin);
+			greenout->setValue(tin);
             enableListener();
             return false;
         }
