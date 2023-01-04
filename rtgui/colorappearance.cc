@@ -683,7 +683,7 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     tempout->set_tooltip_markup (M ("TP_COLORAPP_TEMP2_TOOLTIP"));
     tempout->throwOnButtonRelease();
     tempout->addAutoButton (M ("TP_COLORAPP_TEMPOUT_TOOLTIP"));
-
+	// I renable tempout with addautobutton to work properly (and all code disabled). There are certainly some redundancies, but it doesn't matter
     tempout->show();
     greenout->show();
     ybout->show();
@@ -1470,12 +1470,12 @@ void ColorAppearance::catmethodChanged()
         ybout->setValue(18);
         tempout->setValue (nexttemp);
     
-    if(tempout->getAutoValue()) {
-        tempout->resetValue (false);
-    } else {
-        tempout->setValue (nexttemp);
-        tempout->setAutoValue (true);
-    }
+		if(tempout->getAutoValue()) {
+			tempout->resetValue (false);
+		} else {
+			tempout->setValue (nexttemp);
+			tempout->setAutoValue (true);
+		}
 
         greenout->setValue (nextgreen);
         enableListener();
@@ -1863,7 +1863,7 @@ void ColorAppearance::adapCamChanged (double cadap)
 
 
 void ColorAppearance::wbCamChanged (double temp, double tin)
-{
+{//reactivate this function
     
     idle_register.add(
         [this, temp, tin]() -> bool

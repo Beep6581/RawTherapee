@@ -1913,7 +1913,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     adap = pow(2.0, E_V - 3.0);  // cd / m2
                     // end calculation adaptation scene luminosity
                 }
-				if(params->colorappearance.catmethod == "symg") {
+				if(params->colorappearance.catmethod == "symg") {//force abolute luminance scenescene to 400 in symmetric
 					adap = 400.;
 				}
                 float d, dj, yb;
@@ -1937,7 +1937,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 CAMBrightCurveQ.dirty = true;
 
                 ipf.ciecam_02float(ncie, float (adap), pW, 2, nprevl, params.get(), customColCurve1, customColCurve2, customColCurve3, histLCAM, histCCAM, CAMBrightCurveJ, CAMBrightCurveQ, CAMMean, 0, scale, execsharp, d, dj, yb, 1);
-
+				//call listener
                 if ((params->colorappearance.autodegree || params->colorappearance.autodegreeout) && acListener && params->colorappearance.enabled) {
 					if(params->colorappearance.catmethod == "symg") {//force chromatic adaptation to 90 in symmetric
 						d = 0.9;
@@ -1947,7 +1947,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                 }
 
                 if (params->colorappearance.autoadapscen && acListener && params->colorappearance.enabled) {
-                    acListener->adapCamChanged(adap);    //real value of adapt scene
+                    acListener->adapCamChanged(adap);    //real value of adapt scene, force to 400 in symmetric
                 }
 
                 if (params->colorappearance.autoybscen && acListener && params->colorappearance.enabled) {
@@ -1958,7 +1958,7 @@ void ImProcCoordinator::updatePreviewImage(int todo, bool panningRelatedChange)
                     acListener->ybCamChanged((int) yb);    //real value Yb scene
                 }
 				double tempsym = 5003.;
-				int wmodel = 0;//allows - arbitrary - choice of illuminant and temp with choice
+				int wmodel = 0;//wmodel allows - arbitrary - choice of illuminant and temp with choice
 				if (params->colorappearance.wbmodel == "RawT") {
 					wmodel = 0;
 				} else if (params->colorappearance.wbmodel == "RawTCAT02") {
