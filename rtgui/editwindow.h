@@ -39,6 +39,8 @@ private:
     std::set<Glib::ustring> filesEdited;
     std::map<Glib::ustring, EditorPanel*> epanels;
 
+    sigc::signal<void> externalEditorChangedSignal;
+
     bool isFullscreen;
     bool isClosed;
     bool isMinimized;

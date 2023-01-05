@@ -20,9 +20,15 @@
 
 #include <vector>
 
+#include <glibmm/refptr.h>
 #include <glibmm/ustring.h>
 
 #include "threadutils.h"
+
+namespace Gio
+{
+    class AppInfo;
+}
 
 struct ExtProgAction
 {
@@ -64,6 +70,7 @@ public:
     static bool openInGimp (const Glib::ustring& fileName);
     static bool openInPhotoshop (const Glib::ustring& fileName);
     static bool openInCustomEditor (const Glib::ustring& fileName);
+    static bool openInExternalEditor(const Glib::ustring &fileName, const Glib::RefPtr<Gio::AppInfo> &editorInfo);
 };
 
 #define extProgStore ExtProgStore::getInstance()

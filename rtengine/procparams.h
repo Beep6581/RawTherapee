@@ -709,7 +709,6 @@ struct ColorAppearanceParams {
     double greenout;
     int tempsc;
     double greensc;
-    bool presetcat02;
 
     ColorAppearanceParams();
 
@@ -2440,6 +2439,7 @@ struct RAWParams {
 
     Glib::ustring ff_file;
     bool ff_AutoSelect;
+    bool ff_FromMetaData;
     int ff_BlurRadius;
     Glib::ustring ff_BlurType;
     bool ff_AutoClipControl;

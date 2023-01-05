@@ -743,7 +743,7 @@ int processLineParams ( int argc, char **argv )
                 if (options.defProfRaw == DEFPROFILE_DYNAMIC) {
                     rawParams->deleteInstance();
                     delete rawParams;
-                    rawParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData());
+                    rawParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData(), inputFile);
                 }
 
                 std::cout << "  Merging default raw processing profile." << std::endl;
@@ -752,7 +752,7 @@ int processLineParams ( int argc, char **argv )
                 if (options.defProfImg == DEFPROFILE_DYNAMIC) {
                     imgParams->deleteInstance();
                     delete imgParams;
-                    imgParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData());
+                    imgParams = ProfileStore::getInstance()->loadDynamicProfile (ii->getMetaData(), inputFile);
                 }
 
                 std::cout << "  Merging default non-raw processing profile." << std::endl;

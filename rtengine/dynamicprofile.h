@@ -51,7 +51,7 @@ public:
     };
 
     DynamicProfileRule();
-    bool matches (const rtengine::FramesMetaData *im) const;
+    bool matches (const rtengine::FramesMetaData *im,  const Glib::ustring& filename) const;
     bool operator< (const DynamicProfileRule &other) const;
 
     int serial_number;
@@ -62,6 +62,7 @@ public:
     Range<double> expcomp;
     Optional camera;
     Optional lens;
+    Optional path;
     Optional imagetype;
     Glib::ustring profilepath;
 };
