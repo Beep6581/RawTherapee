@@ -687,8 +687,16 @@ ColorAppearance::ColorAppearance () : FoldableToolPanel (this, "colorappearance"
     tempout->show();
     greenout->show();
     ybout->show();
-    p3VBox->pack_start (*tempout);
-    p3VBox->pack_start (*greenout);
+    Gtk::Frame *tempgreenFrame;
+    tempgreenFrame = Gtk::manage(new Gtk::Frame());
+    tempgreenFrame->set_label_align (0.025, 0.5);
+    Gtk::Box* tempgreenVBox;
+    tempgreenVBox = Gtk::manage ( new Gtk::Box(Gtk::ORIENTATION_VERTICAL));
+    tempgreenVBox->set_spacing (2);
+    tempgreenVBox->pack_start (*tempout);
+	tempgreenVBox->pack_start (*greenout);
+	tempgreenFrame->add(*tempgreenVBox);
+    p3VBox->pack_start(*tempgreenFrame);
     p3VBox->pack_start (*ybout);
 
     Gtk::Box* surrHBox = Gtk::manage (new Gtk::Box ());
@@ -1355,7 +1363,9 @@ void ColorAppearance::updateGUIToMode(int mode)
         curveEditorG->hide();
         curveEditorG2->hide();
         curveEditorG3->hide();
-        greenout->hide();
+        //greenout->hide();
+        greenout->set_sensitive(false);
+		
         badpixsl->hide();
         datacie->hide();
     } else {
@@ -1364,7 +1374,8 @@ void ColorAppearance::updateGUIToMode(int mode)
         curveEditorG->show();
         curveEditorG2->show();
         curveEditorG3->show();
-        greenout->show();
+      //  greenout->show();
+        greenout->set_sensitive(true);
         badpixsl->show();
         datacie->show();
     }
