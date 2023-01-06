@@ -5915,7 +5915,7 @@ int ProcParams::save(const Glib::ustring& fname, const Glib::ustring& fname2, bo
         saveToKeyfile(!pedited || pedited->toneCurve.hrenabled, "HLRecovery", "Enabled", toneCurve.hrenabled, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.method, "HLRecovery", "Method", toneCurve.method, keyFile);
         saveToKeyfile(!pedited || pedited->toneCurve.hlbl, "HLRecovery", "Hlbl", toneCurve.hlbl, keyFile);
-        saveToKeyfile(!pedited || pedited->toneCurve.hlbl, "HLRecovery", "Hlth", toneCurve.hlth, keyFile);
+        saveToKeyfile(!pedited || pedited->toneCurve.hlth, "HLRecovery", "Hlth", toneCurve.hlth, keyFile);
 
         const std::map<ToneCurveMode, const char*> tc_mapping = {
             {ToneCurveMode::STD, "Standard"},
