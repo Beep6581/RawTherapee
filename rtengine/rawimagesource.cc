@@ -859,7 +859,7 @@ void RawImageSource::getImage (const ColorTemp &ctemp, int tran, Imagefloat* ima
 				HLRecovery_inpaint (red, green, blue, hrp.hlbl);			
 			} else if(hrp.method == "Coloropp"  && ctemp.getTemp() >= 0) {
 				float s[3] = { rm, gm, bm };
-				highlight_recovery_opposed(s, ctemp);
+				highlight_recovery_opposed(s, ctemp, hrp.hlth);
 			}			
             rgbSourceModified = true;
         }

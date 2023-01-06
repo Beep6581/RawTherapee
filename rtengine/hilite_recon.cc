@@ -1345,7 +1345,7 @@ void dilating(const int *img, int *o, int w1, int height)
 
 } // namespace
 
-void RawImageSource::highlight_recovery_opposed(float scale_mul[3], const ColorTemp &wb)
+void RawImageSource::highlight_recovery_opposed(float scale_mul[3], const ColorTemp &wb, float gainth)
 {
 	 BENCHFUN
 
@@ -1362,8 +1362,9 @@ void RawImageSource::highlight_recovery_opposed(float scale_mul[3], const ColorT
     wb.getMultipliers(rr, gg, bb);
     wbMul2Camera(rr, gg, bb);
     
-    constexpr float gain = 1.2f;
-    constexpr float clipval = 0.987f / gain;
+	float gain = 1.2f * gainth;
+	
+	float clipval = 0.987f / gain;
     const float scalecoeffs[3] = {
         scale_mul[0] * float(rr) / 65535.f,
         scale_mul[1] * float(gg) / 65535.f,

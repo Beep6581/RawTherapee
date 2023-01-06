@@ -52,6 +52,7 @@ struct ToneCurveParamsEdited {
     bool shcompr;
     bool hlcompr;
     bool hlbl;
+    bool hlth;
     bool hlcomprthresh;
     bool autoexp;
     bool clip;
