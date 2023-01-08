@@ -4002,8 +4002,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
         float *datainC = nullptr;
         float *dataC = nullptr;
         float *datanormC = nullptr;
-        float *datainH = nullptr;
-        float *datadifC = nullptr;
 */		
 		if(sigmoidnorm  && issigq) {
 			datain = new float[width * height];
@@ -4011,9 +4009,7 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 			datanorm = new float[width * height];
 /*			datainC = new float[width * height];
 			dataC = new float[width * height];
-			datadifC = new float[width * height];
 			datanormC = new float[width * height];
-			datainH = new float[width * height];
 */			
 #ifdef _OPENMP 
             #pragma omp parallel for schedule(dynamic, 16)
@@ -4022,7 +4018,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 				for (int x = 0; x < width; x++) {
 					datain[(y) * width + (x)] = lab->L[y][x];
 				//	datainC[(y) * width + (x)] = sqrt(SQR(lab->a[y][x]) + SQR(lab->b[y][x]));
-				//	datainH[(y) * width + (x)] = xatan2f(lab->b[y][x], lab->a[y][x]);;
 				}
 			}
 		}
@@ -4363,7 +4358,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
             }
         }
 			if(sigmoidnorm && issigq) { //Normalize luminance
-		//	float meandifc = 0.f;
 
 #ifdef _OPENMP
             #pragma omp parallel for schedule(dynamic, 16)
@@ -4374,18 +4368,14 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 						datanorm[(y) * width + (x)] = lab->L[y][x];
 					//	dataC[(y) * width + (x)] = sqrt(SQR(lab->a[y][x]) + SQR(lab->b[y][x]));
 					//	datanormC[(y) * width + (x)] = sqrt(SQR(lab->a[y][x]) + SQR(lab->b[y][x]));
-					//	datadifC[(y) * width + (x)] = fabs(dataC[(y) * width + (x)] - datainC[(y) * width + (x)]);
 				
 					}
 				}
-//				for (int y = 0; y < height; y++){
-//					for (int x = 0; x < width; x++) {
-//						meandifc += datadifC[(y) * width + (x)];
-//					}
-//				}
-//				meandifc /= (width * height);
-//				printf("meandifc=%f \n", (double) meandifc);
-				normalize_mean_dt(datanorm, datain, height * width, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
+				double nbs = 1.;
+				if(bl > 0.5f) {
+					nbs = (double) (2.f * bl);
+				}
+				normalize_mean_dt(datanorm, datain, height * width, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f, nbs);
 //				normalize_mean_dt(datanormC, datainC, height * width, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
 		
 #ifdef _OPENMP
@@ -4411,7 +4401,6 @@ void ImProcFunctions::ciecamloc_02float(const struct local_params& lp, int sp, L
 /*        delete [] datainC;
         delete [] dataC;
         delete [] datanormC;
-        delete [] datainH;
 */		
     }
 
@@ -6248,7 +6237,7 @@ void ImProcFunctions::rex_poisson_dct(float * data, size_t nx, size_t ny, double
 
 }
 
-void ImProcFunctions::mean_dt(const float* data, size_t size, double& mean_p, double& dt_p)
+void ImProcFunctions::mean_dt(const float* data, size_t size, double& mean_p, double& dt_p, double nbstd)
 {
 
     double mean = 0.;
@@ -6267,10 +6256,10 @@ void ImProcFunctions::mean_dt(const float* data, size_t size, double& mean_p, do
     dt /= size;
     dt -= SQR(mean);
     mean_p = mean;
-    dt_p = std::sqrt(dt);
+    dt_p = nbstd * std::sqrt(dt);
 }
 
-void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, size_t size, float mod, float sigm, float mdef, float sdef, float mdef2, float sdef2)
+void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, size_t size, float mod, float sigm, float mdef, float sdef, float mdef2, float sdef2, double nbstd)
 {
     /*
      * Copyright 2009-2011 IPOL Image Processing On Line http://www.ipol.im/
@@ -6295,15 +6284,14 @@ void ImProcFunctions::normalize_mean_dt(float * data, const float * ref, size_t 
         mean_ref = mdef;
         dt_ref = sdef;
     } else {
-        mean_dt(ref, size, mean_ref, dt_ref);
+        mean_dt(ref, size, mean_ref, dt_ref, nbstd);
     }
 
     if (mdef2 != 0.f && sdef2 != 0.f) {
-        // printf("OK shortcut\n");
         mean_data = mdef2;
         dt_data = sdef2;
     } else {
-        mean_dt(data, size, mean_data, dt_data);
+        mean_dt(data, size, mean_data, dt_data, 1.0);
     }
 
     /* compute the normalization coefficients */
@@ -6462,7 +6450,7 @@ void ImProcFunctions::retinex_pde(const float * datain, float * dataout, int bfw
     fftwf_free(data_fft);
 
     if (show != 4 && normalize == 1) {
-        normalize_mean_dt(data_tmp, datain, bfw * bfh, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
+        normalize_mean_dt(data_tmp, datain, bfw * bfh, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.);
     }
 
     if (show == 0 || show == 4) {
@@ -7967,7 +7955,7 @@ void ImProcFunctions::transit_shapedetect(int senstype, const LabImage * bufexpo
                 data[(y - ystart)* bfw + (x - xstart)] = bufexporig->L[y - ystart][x - xstart];
             }
 
-        normalize_mean_dt(data, datain, bfh * bfw, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
+        normalize_mean_dt(data, datain, bfh * bfw, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.);
 #ifdef _OPENMP
         #pragma omp parallel for if (multiThread)
 #endif
@@ -9156,7 +9144,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
             }
 
         if (call == 3 || call == 2) { //improccoordinator and simpleprocess
-            normalize_mean_dt(data, datain, bfw * bfh, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
+            normalize_mean_dt(data, datain, bfw * bfh, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.);
         } else if (call == 1) { //dcrop
             float ma = meantm;
             float sa = stdtm;
@@ -9164,7 +9152,7 @@ void ImProcFunctions::transit_shapedetect2(int sp, float meantm, float stdtm, in
             float sa2 = (float) params->locallab.spots.at(sp).softradiustm;
             //printf("ma=%f sa=%f ma2=%f sa2=%f\n", (double) ma, (double) sa, (double) ma2, (double) sa2);
             //use normalize with mean and stdv
-            normalize_mean_dt(data, datain, bfw * bfh, 1.f, 1.f, ma, sa, ma2, sa2);
+            normalize_mean_dt(data, datain, bfw * bfh, 1.f, 1.f, ma, sa, ma2, sa2, 1.);
         }
 
 
@@ -9451,7 +9439,7 @@ void ImProcFunctions::exposure_pde(float * dataor, float * datain, float * datao
 
 #endif
 
-    normalize_mean_dt(data, dataor, bfw * bfh, mod, 1.f, 0.f, 0.f, 0.f, 0.f);
+    normalize_mean_dt(data, dataor, bfw * bfh, mod, 1.f, 0.f, 0.f, 0.f, 0.f, 1.);
     {
 
 #ifdef _OPENMP
@@ -15508,7 +15496,7 @@ void ImProcFunctions::Lab_Local(
 
                 if (params->locallab.spots.at(sp).equilret) {
                     if (call == 3) { //improccoordinator
-                        normalize_mean_dt(data, datain, Hd * Wd, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
+                        normalize_mean_dt(data, datain, Hd * Wd, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.);
                     } else if (call == 1) { //dcrop
                         float ma =  meanreti;
                         float sa = stdreti;
@@ -15516,7 +15504,7 @@ void ImProcFunctions::Lab_Local(
                         float sa2 = (float) params->locallab.spots.at(sp).sensiv;
                         //printf("ma=%f sa=%f ma2=%f sa2=%f\n", (double) ma, (double) sa, (double) ma2, (double) sa2);
                         //use normalize with mean and stdv
-                        normalize_mean_dt(data, datain, Hd * Wd, 1.f, 1.f, ma, sa, ma2, sa2);
+                        normalize_mean_dt(data, datain, Hd * Wd, 1.f, 1.f, ma, sa, ma2, sa2, 1.);
 
                     }
                 }
@@ -15871,7 +15859,7 @@ void ImProcFunctions::Lab_Local(
                     }
                 }
 
-                normalize_mean_dt(data.get(), datain.get(), Hd * Wd, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f);
+                normalize_mean_dt(data.get(), datain.get(), Hd * Wd, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.);
 #ifdef _OPENMP
                 #pragma omp parallel for if (multiThread)
 #endif
