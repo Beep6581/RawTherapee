@@ -8630,6 +8630,10 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
         qtoj->set_active(spot.qtoj);
         sourceGraycie->setValue(spot.sourceGraycie);
         comprcieauto->set_active(spot.comprcieauto);
+		if(Autograycie->get_active()) {
+			comprcieauto->set_active(true);
+		} 
+		
         normcie->set_active(spot.normcie);
         logcie->set_active(spot.logcie);
         logjz->set_active(spot.logjz);
@@ -9081,7 +9085,8 @@ void Locallabcie::updateAutocam(const float maxicam, const bool autocam)
 				listener->panelChanged (Evlocallabcomprcieauto, M("GENERAL_ENABLED"));
 			}
             return false;
-        }
+		}
+        
         );
     }
 	
@@ -9099,6 +9104,8 @@ void Locallabcie::AutograycieChanged()
         jz100->set_sensitive(false);
         blackEvjz->set_sensitive(false);
         whiteEvjz->set_sensitive(false);
+		comprcieauto->set_active(true);
+		
     } else {
         sourceGraycie->set_sensitive(true);
         sourceabscie->set_sensitive(true);
@@ -10125,6 +10132,8 @@ void Locallabcie::updatecieGUI()
         jz100->set_sensitive(false);
         blackEvjz->set_sensitive(false);
         whiteEvjz->set_sensitive(false);
+		comprcieauto->set_active(true);
+		
     } else {
         sourceGraycie->set_sensitive(true);
         sourceabscie->set_sensitive(true);
