@@ -8665,6 +8665,8 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
             comprcie->set_sensitive(true);
             comprcieth->set_sensitive(true);
 			comprcieauto->set_sensitive(true);
+			comprcieauto->set_active(true);
+
         } else {
             sigmoidldacie->set_sensitive(true);
             sigmoidthcie->set_sensitive(true);
@@ -8675,6 +8677,7 @@ void Locallabcie::read(const rtengine::procparams::ProcParams* pp, const ParamsE
                 comprcie->set_sensitive(true);
                 comprcieth->set_sensitive(true);
 				comprcieauto->set_sensitive(true);
+				comprcieauto->set_active(true);
             } else {
                 comprcie->set_sensitive(false);
                 comprcieth->set_sensitive(false);
@@ -9246,6 +9249,7 @@ void Locallabcie::logcieChanged()
         comprcieth->set_sensitive(true);
 		comprcie->setValue(defSpot.comprcie);//to test
 		comprcieauto->set_sensitive(true);
+		comprcieauto->set_active(true);
 
     } else {
         sigmoidldacie->set_sensitive(true);
@@ -9257,6 +9261,8 @@ void Locallabcie::logcieChanged()
             comprcie->set_sensitive(true);
             comprcieth->set_sensitive(true);
 			comprcieauto->set_sensitive(true);
+			comprcieauto->set_active(true);
+
         } else {
             comprcie->set_sensitive(false);
             comprcieth->set_sensitive(false);
@@ -9617,6 +9623,8 @@ void Locallabcie::bwevMethodChanged()
             comprcie->set_sensitive(true);
             comprcieth->set_sensitive(true);
             comprcieauto->set_sensitive(true);
+			comprcieauto->set_active(true);
+
         } else {
             comprcie->set_sensitive(false);
             comprcieth->set_sensitive(false);
