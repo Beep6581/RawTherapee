@@ -417,7 +417,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
 	double wprofprim[3][3];//store primaries to XYZ 
-
+	bool gamutcontrol = params->icm.gamut;
     const float toxyz[3][3] = {
         {
             static_cast<float>(wprof[0][0] / ((normalizeIn ? 65535.0 : 1.0))), //I have suppressed / Color::D50x
@@ -882,13 +882,15 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             }
         }
 		double wprofpri[9];
+		if(gamutcontrol) {
 		//xyz in functiuon primaries and illuminant
-		Color::primaries_to_xyz (p, Wx, Wz, wprofpri);
+			Color::primaries_to_xyz (p, Wx, Wz, wprofpri);
 		
-		for (int i = 0; i < 3; ++i) {
-			for (int j = 0; j < 3; ++j) {
-				wprofprim[i][j]= (double) wprofpri[j* 3 + i];
-				//xyz in TMatrix format				
+			for (int i = 0; i < 3; ++i) {
+				for (int j = 0; j < 3; ++j) {
+					wprofprim[i][j]= (double) wprofpri[j* 3 + i];
+					//xyz in TMatrix format				
+				}
 			}
 		}
 		
@@ -953,7 +955,9 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 					float X = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
 					float Y = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
 					float Z = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
-					Color::gamutmap(X, Y, Z, wprofprim);//gamut control
+					if(gamutcontrol) {
+						Color::gamutmap(X, Y, Z, wprofprim);//gamut control
+					}
 					*(p++) = X;
 					*(p++) = Y;
 					*(p++) = Z;
