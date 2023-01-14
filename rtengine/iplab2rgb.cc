@@ -416,6 +416,8 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 {
     const TMatrix wprof = ICCStore::getInstance()->workingSpaceMatrix(params->icm.workingProfile);
 
+	double wprofprim[3][3];//store primaries to XYZ 
+
     const float toxyz[3][3] = {
         {
             static_cast<float>(wprof[0][0] / ((normalizeIn ? 65535.0 : 1.0))), //I have suppressed / Color::D50x
@@ -564,7 +566,6 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         }
 
         case ColorManagementParams::Primaries::ACES_P0: {
-            profile = "ACESp0";
             break;
         }
 
@@ -622,7 +623,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 
         };
         double tempv4 = 5003.;
-        float p[6]; //primaries
+       double p[6]; //primaries
 
         //primaries for 10 working profiles ==> output profiles
         if (profile == "WideGamut") {
@@ -747,6 +748,10 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 
         // 7 parameters for smoother curves
         cmsCIExyY xyD;
+        double Wx = 1.0;
+ //       double Wy = 1.0;
+        double Wz = 1.0;
+		
         Glib::ustring ills = "D50";
         switch (ColorManagementParams::Illuminant(illum)) {
             case ColorManagementParams::Illuminant::DEFAULT:
@@ -802,55 +807,91 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         cmsWhitePointFromTemp(&xyD, tempv4);
 
         switch (ColorManagementParams::Illuminant(illum)) {
-            case ColorManagementParams::Illuminant::DEFAULT:
-            case ColorManagementParams::Illuminant::D55:
+            case ColorManagementParams::Illuminant::DEFAULT:{
+                Wx = 0.95045471;
+                Wz = 1.08905029;				
+				break;
+			}
+            case ColorManagementParams::Illuminant::D55:{
+                Wx = 0.956565934;
+                Wz = 0.920253249;
+				break;
+			}
             case ColorManagementParams::Illuminant::D80: {
+                Wx = 0.950095542;
+                Wz = 1.284213976;
                 break;
             }
 
             case ColorManagementParams::Illuminant::D41: {
+                Wx = 0.991488263;
+                Wz = 0.631604625;
                 break;
             }
 
             case ColorManagementParams::Illuminant::D50: {
                 xyD = {0.3457, 0.3585, 1.0}; // near LCMS values but not perfect... it's a compromise!!
+                Wx = 0.964295676;
+                Wz = 0.825104603;
                 break;
             }
 
             case ColorManagementParams::Illuminant::D60: {
-                xyD = {0.32168, 0.33767, 1.0};
+                Wx = 0.952646075;
+                Wz = 1.008825184;
+				xyD = {0.32168, 0.33767, 1.0};
                 break;
             }
 
             case ColorManagementParams::Illuminant::D65: {
+                Wx = 0.95045471;
+                Wz = 1.08905029;
                 xyD = {0.312700492, 0.329000939, 1.0};
                 break;
             }
 
             case ColorManagementParams::Illuminant::D120: {
+				Wx = 0.979182;
+				Wz = 1.623623;
                 xyD = {0.269669, 0.28078, 1.0};
                 break;
             }
 
             case ColorManagementParams::Illuminant::STDA: {
+                Wx = 1.098500393;
+                Wz = 0.355848714;
                 xyD = {0.447573, 0.407440, 1.0};
                 ills = "stdA 2875K";
                 break;
             }
 
             case ColorManagementParams::Illuminant::TUNGSTEN_2000K: {
+				Wx = 1.274335;
+				Wz = 0.145233;
                 xyD = {0.526591, 0.41331, 1.0};
                 ills = "Tungsten 2000K";
                 break;
             }
 
             case ColorManagementParams::Illuminant::TUNGSTEN_1500K: {
+				Wx = 1.489921;
+				Wz = 0.053826;
                 xyD = {0.585703, 0.393157, 1.0};
                 ills = "Tungsten 1500K";
                 break;
             }
         }
-
+		double wprofpri[9];
+		//xyz in functiuon primaries and illuminant
+		Color::primaries_to_xyz (p, Wx, Wz, wprofpri);
+		
+		for (int i = 0; i < 3; ++i) {
+			for (int j = 0; j < 3; ++j) {
+				wprofprim[i][j]= (double) wprofpri[j* 3 + i];
+				//xyz in TMatrix format				
+			}
+		}
+		
         //D41  0.377984  0.381229
         //D55  0.332424  0.347426
         //D80  0.293755  0.309185
@@ -890,6 +931,8 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         }
     }
     if (hTransform) {
+		
+		
 #ifdef _OPENMP
         #pragma omp parallel if (multiThread)
 #endif
@@ -907,10 +950,13 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
                     const float r = src->r(i, j);
                     const float g = src->g(i, j);
                     const float b = src->b(i, j);
-
-                    *(p++) = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
-                    *(p++) = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
-                    *(p++) = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
+					float X = toxyz[0][0] * r + toxyz[0][1] * g + toxyz[0][2] * b;
+					float Y = toxyz[1][0] * r + toxyz[1][1] * g + toxyz[1][2] * b;
+					float Z = toxyz[2][0] * r + toxyz[2][1] * g + toxyz[2][2] * b;
+					Color::gamutmap(X, Y, Z, wprofprim);//gamut control
+					*(p++) = X;
+					*(p++) = Y;
+					*(p++) = Z;
                 }
                 p = pBuf.data;
                 cmsDoTransform(hTransform, p, p, cw);

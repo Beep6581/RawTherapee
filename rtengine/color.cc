@@ -24,6 +24,7 @@
 #include "sleef.h"
 #include "opthelper.h"
 #include "iccstore.h"
+#include <iostream>
 
 using namespace std;
 
@@ -1910,6 +1911,147 @@ void Color::Lch2Luv(float c, float h, float &u, float &v)
     v = c * sincosval.y;
 }
 
+void Color::primaries_to_xyz (double p[6], double Wx, double Wz, double *pxyz)
+{
+	//calculate Xr, Xg, Xb, Yr, Yb, Tg, Zr,Zg Zb
+	double Wy = 1.0;
+    double Xr = p[0] / p[1];
+    double Yr = 1.0;
+    double Zr = (1.0 - p[0] - p[1]) / p[1];
+    double Xg = p[2] / p[3];
+    double Yg = 1.0;
+    double Zg = (1.0 - p[2] - p[3]) / p[3];
+    double Xb = p[4] / p[5];
+    double Yb = 1.0;
+    double Zb = (1.0 - p[4] - p[5]) / p[5];
+
+    using Triple = std::array<double, 3>;
+
+    using Matrix = std::array<Triple, 3>;
+
+    Matrix input_prim;
+    Matrix inv_input_prim = {};
+
+	input_prim[0][0] = Xr;
+    input_prim[0][1] = Yr;
+    input_prim[0][2] = Zr;
+    input_prim[1][0] = Xg;
+    input_prim[1][1] = Yg;
+	input_prim[1][2] = Zg;
+    input_prim[2][0] = Xb;
+    input_prim[2][1] = Yb;
+    input_prim[2][2] = Zb;
+	//invert matrix
+    if (!rtengine::invertMatrix(input_prim, inv_input_prim)) {
+        std::cout << "Matrix is not invertible, skipping" << std::endl;
+    }
+
+    //white point D50 used by LCMS
+	double Wdx = 0.96420;
+    double Wdy = 1.0;
+    double Wdz = 0.82490;
+
+    double Sr = Wx * inv_input_prim [0][0] + Wy * inv_input_prim [1][0] + Wz * inv_input_prim [2][0];
+    double Sg = Wx * inv_input_prim [0][1] + Wy * inv_input_prim [1][1] + Wz * inv_input_prim [2][1];
+    double Sb = Wx * inv_input_prim [0][2] + Wy * inv_input_prim [1][2] + Wz * inv_input_prim [2][2];
+
+    //XYZ matrix for primaries and temp
+    Matrix mat_xyz = {};
+    mat_xyz[0][0] = Sr * Xr;
+    mat_xyz[0][1] = Sr * Yr;
+    mat_xyz[0][2] = Sr * Zr;
+    mat_xyz[1][0] = Sg * Xg;
+    mat_xyz[1][1] = Sg * Yg;
+    mat_xyz[1][2] = Sg * Zg;
+    mat_xyz[2][0] = Sb * Xb;
+    mat_xyz[2][1] = Sb * Yb;
+    mat_xyz[2][2] = Sb * Zb;
+
+    //chromatic adaptation Bradford
+    Matrix MaBradford = {};
+    MaBradford[0][0] = 0.8951;
+    MaBradford[0][1] = -0.7502;
+    MaBradford[0][2] = 0.0389;
+    MaBradford[1][0] = 0.2664;
+    MaBradford[1][1] = 1.7135;
+    MaBradford[1][2] = -0.0685;
+    MaBradford[2][0] = -0.1614;
+    MaBradford[2][1] = 0.0367;
+    MaBradford[2][2] = 1.0296;
+
+    Matrix Ma_oneBradford = {};
+    Ma_oneBradford[0][0] = 0.9869929;
+    Ma_oneBradford[0][1] = 0.4323053;
+    Ma_oneBradford[0][2] = -0.0085287;
+    Ma_oneBradford[1][0] = -0.1470543;
+    Ma_oneBradford[1][1] = 0.5183603;
+    Ma_oneBradford[1][2] = 0.0400428;
+    Ma_oneBradford[2][0] = 0.1599627;
+    Ma_oneBradford[2][1] = 0.0492912;
+	Ma_oneBradford[2][2] = 0.9684867;
+
+    //R G B source
+    double Rs = Wx * MaBradford[0][0] + Wy * MaBradford[1][0] + Wz * MaBradford[2][0];
+    double Gs = Wx * MaBradford[0][1] + Wy * MaBradford[1][1] + Wz * MaBradford[2][1];
+    double Bs = Wx * MaBradford[0][2] + Wy * MaBradford[1][2] + Wz * MaBradford[2][2];
+
+    // R G B destination
+    double Rd = Wdx * MaBradford[0][0] + Wdy * MaBradford[1][0] + Wdz * MaBradford[2][0];
+    double Gd = Wdx * MaBradford[0][1] + Wdy * MaBradford[1][1] + Wdz * MaBradford[2][1];
+    double Bd = Wdx * MaBradford[0][2] + Wdy * MaBradford[1][2] + Wdz * MaBradford[2][2];
+
+    //cone destination
+    Matrix cone_dest_sourc = {};
+    cone_dest_sourc [0][0] = Rd / Rs;
+    cone_dest_sourc [0][1] = 0.;
+    cone_dest_sourc [0][2] = 0.;
+    cone_dest_sourc [1][0] = 0.;
+    cone_dest_sourc [1][1] = Gd / Gs;
+    cone_dest_sourc [1][2] = 0.;
+    cone_dest_sourc [2][0] = 0.;
+	cone_dest_sourc [2][1] = 0.;
+    cone_dest_sourc [2][2] = Bd / Bs;
+
+	//cone dest
+    Matrix cone_ma_one = {};
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            cone_ma_one[i][j] = 0;
+
+            for (int k = 0; k < 3; ++k) {
+                cone_ma_one[i][j] += cone_dest_sourc [i][k] * Ma_oneBradford[k][j];
+            }
+        }
+	}
+    //generate adaptation bradford matrix
+    Matrix adapt_chroma = {};
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            adapt_chroma [i][j] = 0;
+
+            for (int k = 0; k < 3; ++k) {
+                adapt_chroma[i][j] +=  MaBradford[i][k] * cone_ma_one[k][j];
+            }
+        }
+    }
+    Matrix mat_xyz_brad = {};
+
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            mat_xyz_brad[i][j] = 0;
+
+            for (int k = 0; k < 3; ++k) {
+                mat_xyz_brad[i][j] +=  mat_xyz[i][k] * adapt_chroma[k][j];
+            }
+        }
+    }
+	//push result in pxyz
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            pxyz[i * 3 + j] =  mat_xyz_brad[i][j];
+		}
+	}	
+}
 
 /*
  * Gamut mapping algorithm
@@ -1931,6 +2073,7 @@ void Color::Lch2Luv(float c, float h, float &u, float &v)
  * columns of the matrix p=xyz_rgb are RGB tristimulus primaries in XYZ
  * c is the color fixed on the boundary; and m=0 for c=0, m=1 for c=255
  */
+ 
 void Color::gamutmap(float &X, float Y, float &Z, const double p[3][3])
 {
     float u = 4 * X / (X + 15 * Y + 3 * Z) - u0;
