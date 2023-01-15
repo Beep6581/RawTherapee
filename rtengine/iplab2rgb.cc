@@ -622,8 +622,10 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             D60 = 6005  // for ACES AP0 and AP1
 
         };
-        double tempv4 = 5003.;
-       double p[6]; //primaries
+		double tempv4 = 5003.;
+		double p[6]; //primaries
+        double Wx = 1.0;
+        double Wz = 1.0;
 
         //primaries for 10 working profiles ==> output profiles
         if (profile == "WideGamut") {
@@ -634,6 +636,9 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.1570;
             p[5] = 0.0180;
             illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+            Wx = 0.964295676;
+            Wz = 0.825104603;
+			
         } else if (profile == "Adobe RGB") {
             p[0] = 0.6400;    //Adobe primaries
             p[1] = 0.3300;
@@ -643,6 +648,9 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[5] = 0.0600;
             tempv4 = 6504.;
             illum = toUnderlying(ColorManagementParams::Illuminant::D65);
+            Wx = 0.95045471;
+            Wz = 1.08905029;
+			
         } else if (profile == "sRGB") {
             p[0] = 0.6400;    // sRGB primaries
             p[1] = 0.3300;
@@ -652,6 +660,9 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[5] = 0.0600;
             tempv4 = 6504.;
             illum = toUnderlying(ColorManagementParams::Illuminant::D65);
+            Wx = 0.95045471;
+            Wz = 1.08905029;
+			
         } else if (profile == "BruceRGB") {
             p[0] = 0.6400;    // Bruce primaries
             p[1] = 0.3300;
@@ -661,6 +672,9 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[5] = 0.0600;
             tempv4 = 6504.;
             illum = toUnderlying(ColorManagementParams::Illuminant::D65);
+            Wx = 0.95045471;
+            Wz = 1.08905029;
+
        } else if (profile == "Beta RGB") {
             p[0] = 0.6888;    // Beta primaries
             p[1] = 0.3112;
@@ -669,6 +683,9 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.1265;
             p[5] = 0.0352;
             illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+            Wx = 0.964295676;
+            Wz = 0.825104603;
+			
         } else if (profile == "BestRGB") {
             p[0] = 0.7347;    // Best primaries
             p[1] = 0.2653;
@@ -677,6 +694,9 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.1300;
             p[5] = 0.0350;
             illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+            Wx = 0.964295676;
+            Wz = 0.825104603;
+			
         } else if (profile == "Rec2020") {
             p[0] = 0.7080;    // Rec2020 primaries
             p[1] = 0.2920;
@@ -686,6 +706,9 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[5] = 0.0460;
             tempv4 = 6504.;
             illum = toUnderlying(ColorManagementParams::Illuminant::D65);
+            Wx = 0.95045471;
+            Wz = 1.08905029;
+
         } else if (profile == "ACESp0") {
             p[0] = 0.7347;    // ACES P0 primaries
             p[1] = 0.2653;
@@ -695,6 +718,9 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[5] = -0.0770;
             tempv4 = 6004.;
             illum = toUnderlying(ColorManagementParams::Illuminant::D60);
+            Wx = 0.952646075;
+            Wz = 1.008825184;
+			
         } else if (profile == "ACESp1") {
             p[0] = 0.713;    // ACES P1 primaries
             p[1] = 0.293;
@@ -704,6 +730,9 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[5] = 0.044;
             tempv4 = 6004.;
             illum = toUnderlying(ColorManagementParams::Illuminant::D60);
+            Wx = 0.952646075;
+            Wz = 1.008825184;
+			
         } else if (profile == "ProPhoto") {
             p[0] = 0.7347;    //ProPhoto and default primaries
             p[1] = 0.2653;
@@ -712,6 +741,9 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
             p[4] = 0.0366;
             p[5] = 0.0001;
             illum = toUnderlying(ColorManagementParams::Illuminant::D50);
+            Wx = 0.964295676;
+            Wz = 0.825104603;
+			
         } else if (profile == "Custom") {
             p[0] = redxx;   
             p[1] = redyy;
@@ -748,9 +780,6 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 
         // 7 parameters for smoother curves
         cmsCIExyY xyD;
-        double Wx = 1.0;
- //       double Wy = 1.0;
-        double Wz = 1.0;
 		
         Glib::ustring ills = "D50";
         switch (ColorManagementParams::Illuminant(illum)) {
@@ -808,8 +837,6 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
 
         switch (ColorManagementParams::Illuminant(illum)) {
             case ColorManagementParams::Illuminant::DEFAULT:{
-                Wx = 0.95045471;
-                Wz = 1.08905029;				
 				break;
 			}
             case ColorManagementParams::Illuminant::D55:{
