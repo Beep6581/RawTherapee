@@ -940,8 +940,14 @@ Gtk::Widget* Preferences::getColorManPanel ()
 
     mwbasort = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBASORT")));
 	setExpandAlignProperties(mwbasort, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
-    mwbasort->set_active(false);
+    mwbasort->set_active(true);
     wbah->pack_start(*mwbasort, Gtk::PACK_SHRINK, 0);
+	
+    mwbaforc = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBAFORC")));
+	setExpandAlignProperties(mwbaforc, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    mwbaforc->set_active(true);
+    wbah->pack_start(*mwbaforc, Gtk::PACK_SHRINK, 0);
+	
     wbaVB->add(*wbah);
 	
     placeSpinBox(wbaVB, wbacorrnb, "PREFERENCES_WBAPATCH", 0, 1, 5, 2, 10, 55);
@@ -1886,6 +1892,8 @@ void Preferences::storePreferences()
     moptions.rtSettings.observer10 = mwba->get_active();
 	moptions.rtSettings.itcwb_stdobserver10 = mwbacorr->get_active();
 	moptions.rtSettings.itcwb_sort = mwbasort->get_active();
+	moptions.rtSettings.itcwb_forceextra = mwbaforc->get_active();
+
     moptions.rtSettings.itcwb_thres = wbacorrnb->get_value_as_int();
 
 #endif
@@ -2046,6 +2054,7 @@ void Preferences::fillPreferences()
     mwba->set_active(moptions.rtSettings.observer10);
 	mwbacorr->set_active(moptions.rtSettings.itcwb_stdobserver10);
 	mwbasort->set_active(moptions.rtSettings.itcwb_sort);
+	mwbaforc->set_active(moptions.rtSettings.itcwb_forceextra);
     wbacorrnb->set_value (moptions.rtSettings.itcwb_thres);
 	
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
