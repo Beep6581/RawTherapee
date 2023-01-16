@@ -622,7 +622,7 @@ void Options::setDefaults()
     rtSettings.fftwsigma = true; //choice between sigma^2 or empirical formula
 
     rtSettings.itcwb_thres = 34;//between 10 to 55
-    rtSettings.itcwb_sort = false;
+    rtSettings.itcwb_sort = true;
     rtSettings.itcwb_greenrange = 0;//between 0 to 2
     rtSettings.itcwb_greendeltatemp = 2;//between 0 and 4
     rtSettings.itcwb_forceextra = true;
