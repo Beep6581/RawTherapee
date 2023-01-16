@@ -4604,10 +4604,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     You can change  parameters in option.cc
     Itcwb_thres : 34 by default ==> number of color used in final algorithm - between 10 and max 55
-    Itcwb_sort : false by default, can improve algorithm if true, ==> sort value in something near chroma order, instead of histogram number
+    Itcwb_sorted : true by default, can improve algorithm if true, ==> sort value in something near chroma order, instead of histogram number
     Itcwb_greenrange : 0 amplitude of green variation - between 0 to 2
     Itcwb_greendeltatemp : 1 - delta temp in green iterate loop for "extra" - between 0 to 4
-    Itcwb_forceextra : false - if true force algorithm "extra" ("extra" is used when camera wbsettings are wrong) to all images
+    Itcwb_forceextra : true by default - if true force algorithm "extra" ("extra" is used when camera wbsettings are wrong) to all images
     Itcwb_sizereference : 3 by default, can be set to 5 ==> size of reference color compare to size of histogram real color
     itcwb_delta : 1 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
     itcwb_stdobserver10 : true by default - use standard observer 10°, false = standard observer 2°
@@ -5162,7 +5162,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     if (settings->verbose) {   
         printf("estimchrom=%f\n", estimchrom);
     }
-    if (settings->itcwb_sort) { //sort in ascending with chroma values
+    if (settings->itcwb_sorted) { //sort in ascending with chroma values
         std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
     }
 
