@@ -1891,7 +1891,7 @@ void Preferences::storePreferences()
     moptions.rtSettings.autocielab = mcie->get_active();
     moptions.rtSettings.observer10 = mwba->get_active();
 	moptions.rtSettings.itcwb_stdobserver10 = mwbacorr->get_active();
-	moptions.rtSettings.itcwb_sort = mwbasort->get_active();
+	moptions.rtSettings.itcwb_sorted = mwbasort->get_active();
 	moptions.rtSettings.itcwb_forceextra = mwbaforc->get_active();
 
     moptions.rtSettings.itcwb_thres = wbacorrnb->get_value_as_int();
@@ -2053,7 +2053,7 @@ void Preferences::fillPreferences()
     mcie->set_active(moptions.rtSettings.autocielab);
     mwba->set_active(moptions.rtSettings.observer10);
 	mwbacorr->set_active(moptions.rtSettings.itcwb_stdobserver10);
-	mwbasort->set_active(moptions.rtSettings.itcwb_sort);
+	mwbasort->set_active(moptions.rtSettings.itcwb_sorted);
 	mwbaforc->set_active(moptions.rtSettings.itcwb_forceextra);
     wbacorrnb->set_value (moptions.rtSettings.itcwb_thres);
 	

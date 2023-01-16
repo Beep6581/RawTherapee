@@ -95,7 +95,7 @@ public:
 //    bool            showtooltip;
 
     int             itcwb_thres;
-    bool            itcwb_sort;
+    bool            itcwb_sorted;
     int             itcwb_greenrange;
     int             itcwb_greendeltatemp;
     bool            itcwb_forceextra;
