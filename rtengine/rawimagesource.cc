@@ -4038,11 +4038,12 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end)
 }
 
 
-static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const array2D<float> & yc, const array2D<float> & Yc, LUTf &xxx, LUTf &yyy, LUTf &YYY, LUTu &histxy)
+static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const array2D<float> & yc, const array2D<float> & Yc, LUTf &xxx, LUTf &yyy, LUTf &YYY, LUTu &histxy, bool purp)
 {
-    //calculate histogram x y in a range of 210 colors
+    //calculate histogram x y in a range of 236 colors
     //this "choice" are guided by generally colors who are in nature skin, sky, etc. in those cases "steps" are small
     // of course we can change to be more precise
+	// purp enable or not purple color in xyY
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -4055,6 +4056,7 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
         yyythr.clear();
         LUTf YYYthr(YYY.getSize());
         YYYthr.clear();
+	//	bool purp = false;
 #ifdef _OPENMP
         #pragma omp for schedule(dynamic, 4) nowait
 #endif
@@ -4440,15 +4442,15 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
                         nh = 176;
                     }
                 } else if (xc[y][x] < 0.405f && yc[y][x] > 0.15f) {//45
-                    if (yc[y][x] < 0.2f) {
+                    if (yc[y][x] < 0.2f && purp) {
                         nh = 177;
-                    } else if (yc[y][x] < 0.22f) {
+                    } else if (yc[y][x] < 0.22f && purp) {
                         nh = 178;
-                    } else if (yc[y][x] < 0.24f) {
+                    } else if (yc[y][x] < 0.24f && purp) {
                         nh = 179;
-                    } else if (yc[y][x] < 0.26f) {
+                    } else if (yc[y][x] < 0.26f && purp) {
                         nh = 180;
-                    } else if (yc[y][x] < 0.29f) {
+                    } else if (yc[y][x] < 0.29f && purp) {
                         nh = 181;
                     } else if (yc[y][x] < 0.32f) {
                         nh = 182;
@@ -4468,19 +4470,19 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
                         nh = 189;
                     }
                 } else if (xc[y][x] < 0.445f && yc[y][x] > 0.15f) {//45
-                    if (yc[y][x] < 0.2f) {
+                    if (yc[y][x] < 0.2f && purp) {
                         nh = 190;
-                    } else if (yc[y][x] < 0.22f) {
+                    } else if (yc[y][x] < 0.22f && purp) {
                         nh = 191;
-                    } else if (yc[y][x] < 0.24f) {
+                    } else if (yc[y][x] < 0.24f && purp) {
                         nh = 192;
-                    } else if (yc[y][x] < 0.26f) {
+                    } else if (yc[y][x] < 0.26f && purp) {
                         nh = 193;
-                    } else if (yc[y][x] < 0.29f) {
+                    } else if (yc[y][x] < 0.29f && purp) {
                         nh = 194;
-                    } else if (yc[y][x] < 0.32f) {
+                    } else if (yc[y][x] < 0.32f && purp) {
                         nh = 195;
-                    } else if (yc[y][x] < 0.34f) {
+                    } else if (yc[y][x] < 0.34f && purp) {
                         nh = 196;
                     } else if (yc[y][x] < 0.37f) {
                         nh = 197;
@@ -4496,19 +4498,19 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
                         nh = 202;
                     }
                 } else if (xc[y][x] < 0.495f && yc[y][x] > 0.15f) {
-                    if (yc[y][x] < 0.2f) {
+                    if (yc[y][x] < 0.2f && purp) {
                         nh = 203;
-                    } else if (yc[y][x] < 0.22f) {
+                    } else if (yc[y][x] < 0.22f && purp) {
                         nh = 204;
-                    } else if (yc[y][x] < 0.24f) {
+                    } else if (yc[y][x] < 0.24f && purp) {
                         nh = 205;
-                    } else if (yc[y][x] < 0.26f) {
+                    } else if (yc[y][x] < 0.26f && purp) {
                         nh = 206;
-                    } else if (yc[y][x] < 0.29f) {
+                    } else if (yc[y][x] < 0.29f && purp) {
                         nh = 207;
-                    } else if (yc[y][x] < 0.32f) {
+                    } else if (yc[y][x] < 0.32f && purp) {
                         nh = 208;
-                    } else if (yc[y][x] < 0.34f) {
+                    } else if (yc[y][x] < 0.34f && purp) {
                         nh = 209;
                     } else if (yc[y][x] < 0.37f) {
                         nh = 210;
@@ -4522,19 +4524,19 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
                         nh = 214;
                     }
                 } else if (xc[y][x] < 0.545f && yc[y][x] > 0.15f) {
-                    if (yc[y][x] < 0.2f) {
+                    if (yc[y][x] < 0.2f && purp) {
                         nh = 215;
-                    } else if (yc[y][x] < 0.22f) {
+                    } else if (yc[y][x] < 0.22f && purp) {
                         nh = 216;
-                    } else if (yc[y][x] < 0.24f) {
+                    } else if (yc[y][x] < 0.24f && purp) {
                         nh = 217;
-                    } else if (yc[y][x] < 0.26f) {
+                    } else if (yc[y][x] < 0.26f && purp) {
                         nh = 218;
-                    } else if (yc[y][x] < 0.29f) {
+                    } else if (yc[y][x] < 0.29f && purp) {
                         nh = 219;
-                    } else if (yc[y][x] < 0.32f) {
+                    } else if (yc[y][x] < 0.32f && purp) {
                         nh = 220;
-                    } else if (yc[y][x] < 0.34f) {
+                    } else if (yc[y][x] < 0.34f && purp) {
                         nh = 221;
                     } else if (yc[y][x] < 0.37f) {
                         nh = 222;
@@ -4638,7 +4640,7 @@ float static studentXY(const array2D<float> & YYcurr, const array2D<float> & ref
     //student coeeficient
 }
 
-void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar)
+void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
 {
     /*
     Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com
@@ -5154,9 +5156,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         //blue sky x=0.25 y=0.28  and x=0.29 y=0.32
         // step about 0.02   x 0.32 0.34  y= 0.34 0.36 skin    --  sky x 0.24 0.30 y 0.28 0.32
         //big step about 0.2
+		
+		bool purp = true;//if inpaint-opposed or something else enable purp 
+		if (hrp.hrenabled && hrp.method == "Coloropp") {
+			purp = false;
+		}
 
-        histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy);
-        //return histogram x and y for each temp and in a range of 158 colors (siza)
+        histoxyY(bfhitc, bfwitc, xc, yc, Yc, xxx,  yyy, YYY, histxy, purp);//purp enable,  enable purple color in WB
+        //return histogram x and y for each temp and in a range of 235 colors (siza)
     }
 
     // free some memory
@@ -5219,7 +5226,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
     int sizcurr2ref = sizcurrref - ntr;
     const int sizcu30 = sizcurrref - n30;
-    const int sizcu4 = rtengine::min(sizcu30, 55);
+    const int sizcu4 = rtengine::min(sizcu30, 55);//
     if (settings->verbose) {   
 		printf("ntr=%i sizcurr2ref=%i sizcu30=%i sizcu4=%i\n", ntr, sizcurr2ref, sizcu30, sizcu4);
 	}
@@ -5256,8 +5263,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     if (settings->itcwb_sorted) { //sort in ascending with chroma values
         std::sort(wbchro, wbchro + sizcu4, wbchro[0]);
     }
-
-    const int maxval = rtengine::LIM(settings->itcwb_thres, 10, 55);//max values of color to find correlation
+	
+	const int maxval = rtengine::LIM(settings->itcwb_thres, 10, 55);//max values of color to find correlation
 
     sizcurr2ref = rtengine::min(sizcurr2ref, maxval);    //keep about the biggest values,
 
@@ -5518,7 +5525,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     }
 }
 
-void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double & avg_rm, double & avg_gm, double & avg_bm, double & tempitc, double & greenitc, float & studgood, bool & twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams & cmp, const RAWParams & raw)
+void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double & avg_rm, double & avg_gm, double & avg_bm, double & tempitc, double & greenitc, float & studgood, bool & twotimes, const WBParams & wbpar, int begx, int begy, int yEn, int xEn, int cx, int cy, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
 {
 //    BENCHFUN
     //auto white balance
@@ -5540,7 +5547,7 @@ void RawImageSource::WBauto(double & tempref, double & greenref, array2D<float> 
 
         tempitc = 5000.;
 
-        ItcWB(extra, tempref, greenref, tempitc, greenitc, studgood, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, cmp, raw, wbpar);
+        ItcWB(extra, tempref, greenref, tempitc, greenitc, studgood, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, cmp, raw, wbpar, hrp);
     }
 }
 
@@ -5619,7 +5626,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     }
 }
 
-void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref, double & tempitc, double & greenitc, float &studgood,  int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw)
+void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref, double & tempitc, double & greenitc, float &studgood,  int begx, int begy, int yEn, int xEn, int cx, int cy, int bf_h, int bf_w, double & rm, double & gm, double & bm, const WBParams & wbpar, const ColorManagementParams & cmp, const RAWParams & raw, const ToneCurveParams &hrp)
 {
 //    BENCHFUN
     constexpr double clipHigh = 64000.0;
@@ -5821,7 +5828,7 @@ void RawImageSource::getAutoWBMultipliersitc(double & tempref, double & greenref
         
         const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
         const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
-        WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw);
+        WBauto(tempref, greenref, redloc, greenloc, blueloc, bfw, bfh, avg_rm, avg_gm, avg_bm, tempitc, greenitc, studgood, twotimes, wbpar, begx, begy, yEn,  xEn,  cx,  cy, cmp, raw, hrp);
     }
 
     redloc(0, 0);
