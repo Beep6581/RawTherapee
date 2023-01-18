@@ -630,6 +630,7 @@ void Options::setDefaults()
     rtSettings.itcwb_delta = 1;//between 0 and 5
     rtSettings.itcwb_stdobserver10 = true;
     rtSettings.itcwb_precis = 5;//3  or 5 or 9
+    rtSettings.itcwb_nopurple = true;
 // end locallab
 
 //wavelet
@@ -1798,6 +1799,10 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.itcwb_forceextra = keyFile.get_boolean("Color Management", "Itcwb_forceextra");
                 }
 
+                if (keyFile.has_key("Color Management", "Itcwb_nopurple")) {
+                    rtSettings.itcwb_nopurple = keyFile.get_boolean("Color Management", "Itcwb_nopurple");
+                }
+
                 if (keyFile.has_key("Color Management", "Itcwb_stdobserver10")) {
                     rtSettings.itcwb_stdobserver10 = keyFile.get_boolean("Color Management", "Itcwb_stdobserver10");
                 }
@@ -2594,6 +2599,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("Color Management", "Itcwb_greenrange", rtSettings.itcwb_greenrange);
         keyFile.set_integer("Color Management", "Itcwb_greendeltatemp", rtSettings.itcwb_greendeltatemp);
         keyFile.set_boolean("Color Management", "Itcwb_forceextra", rtSettings.itcwb_forceextra);
+        keyFile.set_boolean("Color Management", "Itcwb_nopurple", rtSettings.itcwb_nopurple);
         keyFile.set_integer("Color Management", "Itcwb_sizereference", rtSettings.itcwb_sizereference);
         keyFile.set_integer("Color Management", "Itcwb_delta", rtSettings.itcwb_delta);
         keyFile.set_boolean("Color Management", "Itcwb_stdobserver10", rtSettings.itcwb_stdobserver10);

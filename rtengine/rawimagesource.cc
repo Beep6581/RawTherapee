@@ -4643,10 +4643,10 @@ float static studentXY(const array2D<float> & YYcurr, const array2D<float> & ref
 void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double &tempitc, double &greenitc, float &studgood, array2D<float> &redloc, array2D<float> &greenloc, array2D<float> &blueloc, int bfw, int bfh, double &avg_rm, double &avg_gm, double &avg_bm, const ColorManagementParams &cmp, const RAWParams &raw, const WBParams & wbpar, const ToneCurveParams &hrp)
 {
     /*
-    Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com
+    Copyright (c) Jacques Desmis 6 - 2018 jdesmis@gmail.com, update 1 - 2023
     Copyright (c) Ingo Weyrich 3 - 2020 (heckflosse67@gmx.de)
 
-    This algorithm try to find temperature correlation between 20 to 201 color between 201 spectral color and about 20 to 55 color found in the image between 192, I just found the idea in the web "correlate with chroma" instead of RGB grey point,but I don't use any algo found on the web.
+    This algorithm try to find temperature correlation between 20 to 80 colors between 201 spectral color and about 20 to 55 color found in the image between 236, I just found the idea in the web "correlate with chroma" instead of RGB grey point,but I don't use any algo found on the web.
 
     I have test many many algorithms to find the first one that work :)
     Probably (sure) there are improvement to do...
@@ -4703,6 +4703,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     itcwb_delta : 1 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
     itcwb_stdobserver10 : true by default - use standard observer 10°, false = standard observer 2°
     itcwb_precis : 5 by default - can be set to 3 or 9 - 3 best sampling but more time...9 "old" settings - but low differences in times with 3 instead of 9 about twice time 160ms instead of 80ms for a big raw file
+    itcwb_nopurple : true default - allow to bypass highlight recovery and inpait opposed when need flowers and not purple due to highlights...
     */
 //    BENCHFUN
  
@@ -5158,7 +5159,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         //big step about 0.2
 		
 		bool purp = true;//if inpaint-opposed or something else enable purp 
-		if (hrp.hrenabled && hrp.method == "Coloropp") {
+		if (hrp.hrenabled && hrp.method == "Coloropp" && settings->itcwb_nopurple == true) {//we disabled if image are naturally with purple (flowers...)
 			purp = false;
 		}
 

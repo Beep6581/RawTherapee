@@ -102,6 +102,7 @@ public:
     int             itcwb_delta;
     bool            itcwb_stdobserver10;
     int             itcwb_precis;
+    bool            itcwb_nopurple;
 //wavelet levels
     double          edghi;
     double          edglo;
