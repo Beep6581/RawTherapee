@@ -1827,6 +1827,10 @@ PREFERENCES_WBACORR_TOOLTIP;These three settings allow, depending on the images 
 PREFERENCES_WBAOBS;Observer 10° instead of Observer 2°
 PREFERENCES_WBAPATCH;Number maximum of colors used in picture
 PREFERENCES_WBAFORC;Forces Extra algoritm
+PREFERENCES_WBAGREENDELTA;Delta temperature in green iterate loop (if Force Extra enabled)
+PREFERENCES_WBANOPURP;No purple color used
+PREFERENCES_WBAPRECIS;Precision algorithm - scale used
+PREFERENCES_WBASIZEREF;Size of reference color compare to size of histogram color
 PREFERENCES_WBASORT;Sort in chroma order instead of histogram 
 PREFERENCES_CLIPPINGIND;Clipping Indication
 PREFERENCES_CLUTSCACHE;HaldCLUT Cache

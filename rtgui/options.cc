@@ -620,7 +620,7 @@ void Options::setDefaults()
     rtSettings.previewselection = 5;//between 1 to 40
     rtSettings.cbdlsensi = 1.0;//between 0.001 to 1
     rtSettings.fftwsigma = true; //choice between sigma^2 or empirical formula
-
+// end locallab
     rtSettings.itcwb_thres = 34;//between 10 to 55
     rtSettings.itcwb_sorted = true;
     rtSettings.itcwb_greenrange = 0;//between 0 to 2
@@ -630,7 +630,9 @@ void Options::setDefaults()
     rtSettings.itcwb_delta = 1;//between 0 and 5
     rtSettings.itcwb_stdobserver10 = true;
     rtSettings.itcwb_precis = 5;//3  or 5 or 9
-// end locallab
+    rtSettings.itcwb_nopurple = true;
+
+
 
 //wavelet
     rtSettings.edghi = 3.0;//1.1 and 5.
@@ -1636,6 +1638,10 @@ void Options::readFromFile(Glib::ustring fname)
                     rtSettings.itcwb_forceextra = keyFile.get_boolean("Color Management", "Itcwb_forceextra");
                 }
 
+                if (keyFile.has_key("Color Management", "Itcwb_nopurple")) {
+                    rtSettings.itcwb_nopurple = keyFile.get_boolean("Color Management", "Itcwb_nopurple");
+                }
+
                 if (keyFile.has_key("Color Management", "Itcwb_stdobserver10")) {
                     rtSettings.itcwb_stdobserver10 = keyFile.get_boolean("Color Management", "Itcwb_stdobserver10");
                 }
@@ -2412,6 +2418,7 @@ void Options::saveToFile(Glib::ustring fname)
         keyFile.set_integer("Color Management", "Itcwb_greenrange", rtSettings.itcwb_greenrange);
         keyFile.set_integer("Color Management", "Itcwb_greendeltatemp", rtSettings.itcwb_greendeltatemp);
         keyFile.set_boolean("Color Management", "Itcwb_forceextra", rtSettings.itcwb_forceextra);
+        keyFile.set_boolean("Color Management", "Itcwb_nopurple", rtSettings.itcwb_nopurple);
         keyFile.set_integer("Color Management", "Itcwb_sizereference", rtSettings.itcwb_sizereference);
         keyFile.set_integer("Color Management", "Itcwb_delta", rtSettings.itcwb_delta);
         keyFile.set_boolean("Color Management", "Itcwb_stdobserver10", rtSettings.itcwb_stdobserver10);

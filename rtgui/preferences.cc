@@ -947,10 +947,19 @@ Gtk::Widget* Preferences::getColorManPanel ()
 	setExpandAlignProperties(mwbaforc, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
     mwbaforc->set_active(true);
     wbah->pack_start(*mwbaforc, Gtk::PACK_SHRINK, 0);
+
+    mwbanopurp = Gtk::manage(new Gtk::CheckButton(M("PREFERENCES_WBANOPURP")));
+	setExpandAlignProperties(mwbanopurp, false, false, Gtk::ALIGN_START, Gtk::ALIGN_CENTER);
+    mwbanopurp->set_active(true);
+    wbah->pack_start(*mwbanopurp, Gtk::PACK_SHRINK, 0);
 	
     wbaVB->add(*wbah);
 	
     placeSpinBox(wbaVB, wbacorrnb, "PREFERENCES_WBAPATCH", 0, 1, 5, 2, 10, 55);
+    placeSpinBox(wbaVB, wbaprecis, "PREFERENCES_WBAPRECIS", 0, 1, 5, 2, 3, 9);
+    placeSpinBox(wbaVB, wbasizeref, "PREFERENCES_WBASIZEREF", 0, 1, 5, 2, 1, 5);
+    placeSpinBox(wbaVB, wbagreendelta, "PREFERENCES_WBAGREENDELTA", 0, 1, 5, 2, 1, 4);
+	
     fwbacorr->add (*wbaVB);
 	vbColorMan->pack_start (*fwbacorr, Gtk::PACK_SHRINK);
 	//-------------
@@ -1893,8 +1902,12 @@ void Preferences::storePreferences()
 	moptions.rtSettings.itcwb_stdobserver10 = mwbacorr->get_active();
 	moptions.rtSettings.itcwb_sorted = mwbasort->get_active();
 	moptions.rtSettings.itcwb_forceextra = mwbaforc->get_active();
+	moptions.rtSettings.itcwb_nopurple = mwbanopurp->get_active();
 
     moptions.rtSettings.itcwb_thres = wbacorrnb->get_value_as_int();
+    moptions.rtSettings.itcwb_precis = wbaprecis->get_value_as_int();
+    moptions.rtSettings.itcwb_sizereference = wbasizeref->get_value_as_int();
+    moptions.rtSettings.itcwb_greendeltatemp = wbagreendelta->get_value_as_int();
 
 #endif
 
@@ -2055,7 +2068,11 @@ void Preferences::fillPreferences()
 	mwbacorr->set_active(moptions.rtSettings.itcwb_stdobserver10);
 	mwbasort->set_active(moptions.rtSettings.itcwb_sorted);
 	mwbaforc->set_active(moptions.rtSettings.itcwb_forceextra);
+	mwbanopurp->set_active(moptions.rtSettings.itcwb_nopurple);
     wbacorrnb->set_value (moptions.rtSettings.itcwb_thres);
+    wbaprecis->set_value (moptions.rtSettings.itcwb_precis);
+    wbasizeref->set_value (moptions.rtSettings.itcwb_sizereference);
+    wbagreendelta->set_value (moptions.rtSettings.itcwb_greendeltatemp);
 	
     cbAutoMonProfile->set_active(moptions.rtSettings.autoMonitorProfile);
 #endif
