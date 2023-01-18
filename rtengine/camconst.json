@@ -2170,6 +2170,16 @@ Camera constants:
         "dcraw_matrix" : [8360, -2420, -880, -3928, 12353, 1739, -1381, 2416, 5173] // DNG
     },
 
+    { // Quality C
+        "make_model": ["OM Digital Solutions OM-1"],
+        "ranges": { "white": 4095 },
+        "raw_crop" : [
+           { "frame" : [10400, 7792], "crop": [0, 0, 10390, 7792] },
+           { "frame" : [8180, 6132], "crop": [0, 0, 8172, 6132] },
+           { "frame" : [5220, 3912], "crop": [0, 0, 5220, 3912] }
+        ]
+    },
+
     { // Quality B
         "make_model": [ "Panasonic DC-LX100M2" ],
         "dcraw_matrix": [ 11577, -4230, -1106, -3967, 12211, 1957, -759, 1762, 5610 ], // DNG v13.2
