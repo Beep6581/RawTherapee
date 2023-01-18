@@ -4040,10 +4040,10 @@ void RawImageSource::getRowStartEnd (int x, int &start, int &end)
 
 static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const array2D<float> & yc, const array2D<float> & Yc, LUTf &xxx, LUTf &yyy, LUTf &YYY, LUTu &histxy, bool purp)
 {
-    //calculate histogram x y in a range of 236 colors
-    //this "choice" are guided by generally colors who are in nature skin, sky, etc. in those cases "steps" are small
+    // calculate histogram x y in a range of 236 colors
+    // this "choice" are guided by generally colors who are in nature skin, sky, etc. in those cases "steps" are small
     // of course we can change to be more precise
-	// purp enable or not purple color in xyY
+	// purp enable or not purple color in xyY - approximation...
 #ifdef _OPENMP
     #pragma omp parallel
 #endif
@@ -4442,7 +4442,7 @@ static void histoxyY(int bfhitc, int bfwitc, const array2D<float> & xc, const ar
                         nh = 176;
                     }
                 } else if (xc[y][x] < 0.405f && yc[y][x] > 0.15f) {//45
-                    if (yc[y][x] < 0.2f && purp) {
+                    if (yc[y][x] < 0.2f && purp) {//no take into account if purp = false
                         nh = 177;
                     } else if (yc[y][x] < 0.22f && purp) {
                         nh = 178;
@@ -4746,7 +4746,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {0.590, 1.f},
         {0.600, 1.f},
         {0.610, 1.f},
-        {0.620, 1.f},
+        {0.620, 1.f},//extended range
         {0.630, 1.f},
         {0.640, 1.f},
         {0.650, 1.f},
@@ -4755,7 +4755,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {0.680, 1.f},
         {0.690, 1.f},
         {0.700, 1.f},
-        {0.714, 1.f},
+        {0.714, 1.f},//usual range 
         {0.727, 1.f},
         {0.741, 1.f},
         {0.755, 1.f},
@@ -4786,7 +4786,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {0.971, 1.f},
         {0.980, 1.f},
         {0.990, 1.f},
-        {1.000, 1.f},//55
+        {1.000, 1.f},//55 reference
         {1.010, 1.f},
         {1.020, 1.f},
         {1.030, 1.f},
@@ -4817,14 +4817,14 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {1.325, 1.f},
         {1.350, 1.f},
         {1.375, 1.f},
-        {1.400, 1.f},
+        {1.400, 1.f},//usual range
         {1.425, 1.f},
         {1.450, 1.f},
         {1.475, 1.f},
         {1.500, 1.f},
         {1.525, 1.f},
         {1.550, 1.f},
-        {1.575, 1.f},
+        {1.575, 1.f},//extended range
         {1.600, 1.f},
         {1.633, 1.f},
         {1.666, 1.f},
@@ -4873,7 +4873,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         int end;
     } RangeGreen;
 
-    constexpr RangeGreen Rangestandard = {24, 86};
+    constexpr RangeGreen Rangestandard = {24, 86};//usual green range
     constexpr RangeGreen Rangeextended = {15, 93};
     const RangeGreen Rangemax = {0, N_g};
 
@@ -4954,7 +4954,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         {4927., 0.965414, 0.809229},
         {4952., 0.964908, 0.814366},
         {4977., 0.964415, 0.819412},
-        {5002., 0.963934, 0.824438},
+        {5002., 0.963934, 0.824438},//57 reference
         {5027., 0.963465, 0.829444},
         {5052., 0.963008, 0.834429},
         {5077., 0.962563, 0.839395},
@@ -5035,8 +5035,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     constexpr int siza = 237; //192 untill 01/2023 size of histogram
 
-    //tempref and greenref are camera wb values.
-    // I used them by default to select good spectral values !!
+    // tempref and greenref are camera wb values.
+    // I used them by default to select good spectral values !! but they are changed after
     tempref = rtengine::min(tempref, 12000.0);
 
     int repref = 0;
@@ -5159,7 +5159,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         //big step about 0.2
 		
 		bool purp = true;//if inpaint-opposed or something else enable purp 
-		if (hrp.hrenabled && hrp.method == "Coloropp" && settings->itcwb_nopurple == true) {//we disabled if image are naturally with purple (flowers...)
+		if (hrp.hrenabled && hrp.method == "Coloropp" && settings->itcwb_nopurple == true) {//we disabled (user) with settings if image are naturally with purple (flowers...)
 			purp = false;
 		}
 
@@ -5288,7 +5288,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
     for (int nb = 1; nb <= maxnb; ++nb) { //max 5 iterations for Itcwb_thres=33, after trial 3 is good in most cases but in some cases 5
         for (int i = 0; i < w; ++i) {
-            float mindeltaE = 100000.f;
+            float mindeltaE = 100000.f;//we can change this value...
             int kN = 0;
 
             for (int j = 0; j < Nc ; j++) {
@@ -5375,7 +5375,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         }
     }
 
-    if (extra) {//always used because I made this choice, brings better results
+    if (extra) {//always used if extra = true because I made this choice, brings better results
         struct Tempgreen {
             float student;
             int tempref;
@@ -5389,8 +5389,8 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         for (int i = 0; i < N_g; ++i) {//init variables with
             Tgstud[i].student = 1000.f;//max value to initialize
-            Tgstud[i].tempref = 57;//5002K
-            Tgstud[i].greenref = 55;// 1.f
+            Tgstud[i].tempref = 57;//5002K position in the list
+            Tgstud[i].greenref = 55;// 1.f position in the list
 
         }
 
@@ -5465,10 +5465,10 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
 
         std::sort(Tgstud, Tgstud + N_g, Tgstud[0]);
 
-        //now search the value of green the nearest of 1 with a good student value
+        // now search the value of green the nearest of 1 with a good student value, I think it is a good choice, perhaps no...
         // I take the 3 first values
-        //I admit a symetrie in green coefiicient for rgb multiplier...probably not exactly true
-        //perhaps we can used a Snedecor test ? but why...at least we have confidence interval > 90%
+        // I admit a symetrie in green coefiicient for rgb multiplier...probably not exactly true
+        // perhaps we can used a Snedecor test ? but why...at least we have confidence interval > 90%
         int greengood;
         int greengoodprov;
         int goodrefprov;
