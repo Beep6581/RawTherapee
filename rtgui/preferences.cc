@@ -954,9 +954,9 @@ Gtk::Widget* Preferences::getColorManPanel ()
     wbah->pack_start(*mwbanopurp, Gtk::PACK_SHRINK, 0);
 	
     wbaVB->add(*wbah);
-	
+	//int digits, int inc0, int inc1, int maxLength, int range0, int range1,
     placeSpinBox(wbaVB, wbacorrnb, "PREFERENCES_WBAPATCH", 0, 1, 5, 2, 10, 55);
-    placeSpinBox(wbaVB, wbaprecis, "PREFERENCES_WBAPRECIS", 0, 1, 5, 2, 3, 9);
+    placeSpinBox(wbaVB, wbaprecis, "PREFERENCES_WBAPRECIS", 0, 2, 5, 2, 3, 7);
     placeSpinBox(wbaVB, wbasizeref, "PREFERENCES_WBASIZEREF", 0, 1, 5, 2, 1, 5);
     placeSpinBox(wbaVB, wbagreendelta, "PREFERENCES_WBAGREENDELTA", 0, 1, 5, 2, 1, 4);
 	

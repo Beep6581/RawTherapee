@@ -629,7 +629,7 @@ void Options::setDefaults()
     rtSettings.itcwb_sizereference = 3;//between 1 and 5
     rtSettings.itcwb_delta = 1;//between 0 and 5
     rtSettings.itcwb_stdobserver10 = true;
-    rtSettings.itcwb_precis = 5;//3  or 5 or 9
+    rtSettings.itcwb_precis = 3;//3  or 5 or 9
     rtSettings.itcwb_nopurple = true;
 
 
