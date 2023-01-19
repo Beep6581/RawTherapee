@@ -4702,7 +4702,7 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
     Itcwb_sizereference : 3 by default, can be set to 5 ==> size of reference color compare to size of histogram real color
     itcwb_delta : 1 by default can be set between 0 to 5 ==> delta temp to build histogram xy - if camera temp is not probably good
     itcwb_stdobserver10 : true by default - use standard observer 10°, false = standard observer 2°
-    itcwb_precis : 5 by default - can be set to 3 or 9 - 3 best sampling but more time...9 "old" settings - but low differences in times with 3 instead of 9 about twice time 160ms instead of 80ms for a big raw file
+    itcwb_precis : 3 by default - can be set to 3 or 9 - 3 best sampling but more time...9 "old" settings - but low differences in times with 3 instead of 9 about twice time 160ms instead of 80ms for a big raw file
     itcwb_nopurple : true default - allow to bypass highlight recovery and inpait opposed when need flowers and not purple due to highlights...
     */
 //    BENCHFUN
@@ -5466,44 +5466,30 @@ void RawImageSource::ItcWB(bool extra, double &tempref, double &greenref, double
         std::sort(Tgstud, Tgstud + N_g, Tgstud[0]);
 
         // now search the value of green the nearest of 1 with a good student value, I think it is a good choice, perhaps no...
-        // I take the 3 first values
+        // I take the 5 first values
         // I admit a symetrie in green coefiicient for rgb multiplier...probably not exactly true
         // perhaps we can used a Snedecor test ? but why...at least we have confidence interval > 90%
-        int greengood;
-        int greengoodprov;
-        int goodrefprov;
-        float studprov;
-        const int goodref0 = Tgstud[0].tempref;
-        const int greengood0 = Tgstud[0].greenref - 55;//55 green = 1
-        const float stud0 = Tgstud[0].student;
-        const int goodref1 = Tgstud[1].tempref;
-        const float stud1 = Tgstud[1].student;
-        const int greengood1 = Tgstud[1].greenref - 55;
-        const int goodref2 = Tgstud[2].tempref;
-        const int greengood2 = Tgstud[2].greenref - 55;
-        const float stud2 = Tgstud[2].student;
+        int greengood = 55;
+		
+		int maxkgood = 5;//we can change ...to test 3, 4, 5. High values perhaps less good student, but it is a compromise...
+		int mingood = std::min(std::fabs(Tgstud[0].greenref - 55),std::fabs(Tgstud[1].greenref - 55));
+		
+		for (int k =2; k < maxkgood; ++k) {
+			mingood = std::min(std::fabs(mingood),std::fabs(Tgstud[k].greenref - 55));
+		}
 
-        if (std::fabs(greengood2) < std::fabs(greengood1)) {
-            greengoodprov = greengood2;
-            goodrefprov = goodref2;
-            studprov = stud2;
-        } else {
-            greengoodprov = greengood1;
-            goodrefprov = goodref1;
-            studprov = stud1;
+		for (int k = 0; k < maxkgood ; ++k) {
+			if(mingood == fabs(Tgstud[k].greenref - 55)) {
+				greengood = Tgstud[k].greenref ;
+				goodref = Tgstud[k].tempref;
+				studgood = Tgstud[k].student;;			
+			}			
+		}
 
-        }
-
-        if (std::fabs(greengoodprov) < std::fabs(greengood0)) {
-            goodref = goodrefprov;
-            greengood = greengoodprov + 55;
-            studgood = studprov;
-
-        } else {
-            goodref = goodref0;
-            greengood = greengood0 + 55;
-            studgood = stud0;
-        }
+		if (settings->verbose) {
+			printf("Student_0=%f Student_k= %f\n", Tgstud[0].student, Tgstud[maxkgood-1].student);
+			printf("mingood=%i greeng=%i goodref=%i stud=%f\n", mingood, greengood, goodref, (double) studgood);
+		}
 
         tempitc = Txyz[goodref].Tem;
         greenitc = gree[greengood].green;
@@ -5556,7 +5542,8 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
 {
 //    BENCHFUN
     //used by auto WB local to calculate red, green, blue in local region
-    int precision = 5;
+    
+	int precision = 5;
     if (settings->itcwb_precis == 5) {
         precision = 5;
     } else if (settings->itcwb_precis < 5) {
@@ -5564,6 +5551,7 @@ void RawImageSource::getrgbloc(int begx, int begy, int yEn, int xEn, int cx, int
     } else if (settings->itcwb_precis > 5) {
         precision = 9;
     }
+	
 
     const int bfw = W / precision + ((W % precision) > 0 ? 1 : 0);// 5 arbitrary value can be change to 3 or 9 ;
     const int bfh = H / precision + ((H % precision) > 0 ? 1 : 0);
