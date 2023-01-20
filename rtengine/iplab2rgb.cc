@@ -500,6 +500,7 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
     float bluyy = params->icm.bluy;
     float grexx = params->icm.grex;
     float greyy = params->icm.grey;
+	float epsil = 0.0001f;
 
     if (prim == 12) {//convert datas area to xy
         float redgraphx =  params->icm.labgridcieALow;
@@ -522,7 +523,25 @@ void ImProcFunctions::workingtrc(const Imagefloat* src, Imagefloat* dst, int cw,
         greyy = rtengine::LIM(greyy, 0.5f, 1.f);
     }
     //fixed crash when there is no space or too small..just a line...Possible if bx, by aligned with Gx,Gy Rx,Ry
-    float ac = (greyy - redyy) / (grexx - redxx);
+	//fix crash if user select 0 for redyy, bluyy, greyy
+	if(redyy == 0.f) {
+		redyy = epsil;
+	}
+	if(bluyy == 0.f) {
+		bluyy = epsil;
+	}
+	if(greyy == 0.f) {
+		greyy = epsil;
+	}
+
+	//fix crash if	grexx - redxx = 0
+	float grered = 1.f;
+	grered = grexx - redxx;
+	if(grered == 0.f) {
+		grered = epsil;
+	}
+	
+    float ac = (greyy - redyy) / grered;
     float bc = greyy - ac * grexx;
     float yc = ac * bluxx + bc;
     if ((bluyy < yc + 0.0004f) &&  (bluyy > yc - 0.0004f)) {//under 0.0004 in some case crash because space too small
